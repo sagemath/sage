@@ -5,7 +5,7 @@ SAGE_SPKG_CONFIGURE([fplll], [
     dnl a system that ships fplll without fplll.pc file, falling
     dnl back to a manual header/library search is pointless.
     dnl
-    dnl Trac #31025: FPLLL/FPyLLL make no guarantee regarding compatibility
+    dnl Issue #31025: FPLLL/FPyLLL make no guarantee regarding compatibility
     dnl other than "whatever versions were released at the same time should work together"
     PKG_CHECK_MODULES([FPLLL],
         [fplll >= 5.4.5 fplll <= 5.4.5],

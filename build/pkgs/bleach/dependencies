@@ -1,4 +1,4 @@
- packaging six webencodings | $(PYTHON_TOOLCHAIN) $(PYTHON)
+ six webencodings | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

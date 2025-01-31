@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 r"""
 Homset categories
 """
@@ -27,8 +27,8 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
         INPUT:
 
-         - ``cls`` -- the category class for the functor `F`
-         - ``category`` -- a category `Cat`
+        - ``cls`` -- the category class for the functor `F`
+        - ``category`` -- a category `Cat`
 
         OUTPUT: a category
 
@@ -122,7 +122,7 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
     def _test_homsets_category(self, **options):
         r"""
-        Run generic tests on this homsets category
+        Run generic tests on this homsets category.
 
         .. SEEALSO:: :class:`TestSuite`.
 
@@ -148,13 +148,13 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
             sage: ModulesWithBasis(ZZ).Homsets().base()
             Integer Ring
-
         """
         from sage.categories.category_types import Category_over_base
         for C in self._all_super_categories_proper:
             if isinstance(C,Category_over_base):
                 return C.base()
         raise AttributeError("This hom category has no base")
+
 
 class HomsetsOf(HomsetsCategory):
     """
@@ -219,6 +219,7 @@ class HomsetsOf(HomsetsCategory):
         """
         return [Homsets()]
 
+
 class Homsets(Category_singleton):
     """
     The category of all homsets.
@@ -238,7 +239,7 @@ class Homsets(Category_singleton):
     or equivalently that we only implement locally small categories.
     See :wikipedia:`Category_(mathematics)`.
 
-    :trac:`17364`: every homset category shall be a subcategory of the
+    :issue:`17364`: every homset category shall be a subcategory of the
     category of all homsets::
 
         sage: Schemes().Homsets().is_subcategory(Homsets())

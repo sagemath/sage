@@ -32,9 +32,9 @@ otimizado cujo foco primário é teoria de números. Existem duas
 interfaces distintas que podem ser usadas no Sage:
 
 
--  ``gp`` - o "**G** do **P** ARI" interpretador, e
+-  ``gp`` -- o "**G** do **P** ARI" interpretador, e
 
--  ``pari`` - a biblioteca C do PARI.
+-  ``pari`` -- a biblioteca C do PARI.
 
 Por exemplo, os seguintes comandos são duas formas de realizar a mesma
 coisa. Eles parecem idênticos, mas o resultado é na verdade
@@ -197,8 +197,8 @@ digite ``...``):
     sage: R1 = singular.ring(0, '(x,y)', 'dp')
     sage: R1
     polynomial ring, over a field, global ordering
-    //   coefficients: QQ
-    //   number of vars : 2
+    // coefficients: QQ...
+    // number of vars : 2
     //        block   1 : ordering dp
     //                  : names    x y
     //        block   2 : ordering C

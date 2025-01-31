@@ -1,1 +1,2 @@
-gf2x gf2x-devel
+gf2x
+gf2x-devel

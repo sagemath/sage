@@ -11,5 +11,6 @@ with `L`-functions.
    sage/lfunctions/sympow
    sage/lfunctions/dokchitser
    sage/lfunctions/zero_sums
+   sage/lfunctions/pari
 
 .. include:: ../footer.txt

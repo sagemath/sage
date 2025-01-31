@@ -164,25 +164,29 @@ AUTHOR:
 - Jonathan Kliem (2019-04)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cython.parallel cimport prange, threadid
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_check
 from memory_allocator cimport MemoryAllocator
 
+from sage.misc.lazy_import import LazyImport
+
 from sage.geometry.polyhedron.combinatorial_polyhedron.base cimport CombinatorialPolyhedron
 from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport bit_rep_to_Vrep_list
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
-from sage.geometry.polyhedron.face import combinatorial_face_to_polyhedral_face, PolyhedronFace
+
+combinatorial_face_to_polyhedral_face = LazyImport('sage.geometry.polyhedron.face', 'combinatorial_face_to_polyhedral_face')
+PolyhedronFace = LazyImport('sage.geometry.polyhedron.face', 'PolyhedronFace')
 
 
 cdef extern from "Python.h":
@@ -243,7 +247,6 @@ cdef class FaceIterator_base(SageObject):
         if dual and not C.is_bounded():
             raise ValueError("cannot iterate over dual of unbounded Polyedron")
         cdef int i
-        cdef size_t j
 
         self.dual = dual
         self.structure.dual = dual
@@ -636,7 +639,7 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -722,7 +725,7 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -847,7 +850,7 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator(2)
             sage: it._meet_of_coatoms(1,2)
@@ -957,7 +960,7 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -973,7 +976,7 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator(2)
             sage: it._join_of_atoms(1,2)
@@ -1188,7 +1191,7 @@ cdef class FaceIterator_base(SageObject):
         cdef size_t yet_to_visit = self.structure.yet_to_visit
 
         if unlikely(yet_to_visit >= faces[0].n_faces
-                or not faces_are_identical(faces[0].faces[yet_to_visit], self.structure.face)):
+                    or not faces_are_identical(faces[0].faces[yet_to_visit], self.structure.face)):
             raise ValueError("iterator is not set to the correct face")
 
         swap_faces(faces[0].faces[yet_to_visit], faces[0].faces[faces[0].n_faces - 1])
@@ -1200,7 +1203,7 @@ cdef class FaceIterator_base(SageObject):
         # for the dimension. By this time the current dimension has changed.
         self.structure.highest_dimension = self.structure.current_dimension - 1
 
-    cdef inline CombinatorialFace next_face(self) noexcept:
+    cdef inline CombinatorialFace next_face(self):
         r"""
         Set attribute ``face`` to the next face and return it as
         :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace`.
@@ -1293,7 +1296,7 @@ cdef class FaceIterator_base(SageObject):
             self.structure.current_dimension = -1
             return 0
 
-        cdef int d = self.next_dimension()
+        self.next_dimension()
         while self.structure.current_dimension != self.structure.dimension:
             if face_issubset(face, self.structure.face):
                 if face_issubset(self.structure.face, face):
@@ -1303,7 +1306,7 @@ cdef class FaceIterator_base(SageObject):
                 # The face is not a subface/supface of the current face.
                 self.ignore_subsets()
 
-            d = self.next_dimension()
+            self.next_dimension()
 
         raise ValueError("the face appears to be incorrect")
 
@@ -1882,7 +1885,7 @@ cdef class FaceIterator_geom(FaceIterator_base):
         if unlikely(self._trivial_faces):
             if self._trivial_faces == -1:
                 raise StopIteration
-            if self._trivial_faces in (2,4):  # Return the polyhedron.
+            if self._trivial_faces in (2, 4):  # Return the polyhedron.
                 if self._trivial_faces == 2:
                     self._trivial_faces = 1  # Return the empty face next.
                 else:
@@ -2075,30 +2078,29 @@ cdef int parallel_f_vector(iter_t* structures, size_t num_threads, size_t parall
     if num_threads == 0:
         num_threads = 1
 
-    cdef size_t thread_id
     cdef MemoryAllocator mem = MemoryAllocator()
 
     # Setting up for each thread some storage space.
     cdef parallel_f_t* parallel_structs = \
-            <parallel_f_t*> mem.allocarray(num_threads, sizeof(parallel_f_t))
+        <parallel_f_t*> mem.allocarray(num_threads, sizeof(parallel_f_t))
 
     for i in range(num_threads):
         # Partial f-vectors.
         parallel_structs[i].f_vector = \
-                <size_t*> mem.calloc(dim+2, sizeof(size_t))
+            <size_t*> mem.calloc(dim+2, sizeof(size_t))
         parallel_structs[i].current_job_id = \
-                <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
+            <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
 
         # Keeping back of the original number of faces allows faster starting the next job.
         parallel_structs[i].original_n_faces = \
-                <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
+            <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
         parallel_structs[i].original_n_faces[0] = \
-                structures[0].new_faces[dim - 1].n_faces
+            structures[0].new_faces[dim - 1].n_faces
 
         parallel_structs[i].original_n_visited_all = \
-                <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
+            <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
         parallel_structs[i].original_n_visited_all[0] = \
-                structures[0].visited_all[dim - 1].n_faces
+            structures[0].visited_all[dim - 1].n_faces
 
     for i in prange(n_jobs, schedule='dynamic', chunksize=1,
                     num_threads=num_threads, nogil=True):
@@ -2138,7 +2140,7 @@ cdef inline int prepare_face_iterator_for_partial_job(
     The first digit determines which facet to visit.
     The next digit determines which facet of the facet should be visited.
 
-    OUTPUT: ``1`` if the job exists and ``0`` otherwise.
+    OUTPUT: ``1`` if the job exists and ``0`` otherwise
 
     In addition, the first job treating a face will "visit" this face
     and increase the corresponding entry of the f-vector.
@@ -2154,9 +2156,9 @@ cdef inline int prepare_face_iterator_for_partial_job(
 
         # Recover all faces.
         structure.new_faces[d].n_faces = \
-                parallel_struct.original_n_faces[current_depth -1]
+            parallel_struct.original_n_faces[current_depth -1]
         structure.visited_all[d].n_faces = \
-                parallel_struct.original_n_visited_all[current_depth -1]
+            parallel_struct.original_n_visited_all[current_depth -1]
         structure.first_time[d] = True
         structure.yet_to_visit = 0  # just to be on the safe side
 
@@ -2171,7 +2173,6 @@ cdef inline int prepare_face_iterator_for_partial_job(
     cdef size_t n_coatoms = structure.n_coatoms
     cdef size_t job_id_c
     cdef size_t i
-    cdef size_t diff
     cdef size_t new_faces_counter
 
     for current_depth in range(1, parallelization_depth + 1):

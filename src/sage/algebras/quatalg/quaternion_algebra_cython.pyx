@@ -15,7 +15,6 @@ from a list of n rational quaternions.
 AUTHORS:
 
 - William Stein
-
 """
 
 # ****************************************************************************
@@ -35,7 +34,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
-from .quaternion_algebra_element cimport QuaternionAlgebraElement_rational_field
+from sage.algebras.quatalg.quaternion_algebra_element cimport QuaternionAlgebraElement_rational_field
 
 from sage.libs.gmp.mpz cimport mpz_t, mpz_lcm, mpz_init, mpz_set, mpz_clear, mpz_init_set, mpz_mul, mpz_fdiv_q, mpz_cmp_si
 
@@ -52,7 +51,7 @@ def integral_matrix_and_denom_from_rational_quaternions(v, reverse=False):
 
     INPUT:
 
-    - ``v`` -- a list of quaternions in a rational quaternion algebra
+    - ``v`` -- list of quaternions in a rational quaternion algebra
     - ``reverse`` -- whether order of the coordinates as well as the
       order of the list ``v`` should be reversed
 
@@ -132,13 +131,11 @@ def rational_matrix_from_rational_quaternions(v, reverse=False):
 
     INPUT:
 
-    - ``v`` -- a list of quaternions in a rational quaternion algebra
+    - ``v`` -- list of quaternions in a rational quaternion algebra
     - ``reverse`` -- whether order of the coordinates as well as the
       order of the list ``v`` should be reversed
 
-    OUTPUT:
-
-    - a matrix over `\QQ`
+    OUTPUT: a matrix over `\QQ`
 
     EXAMPLES::
 

@@ -49,9 +49,9 @@ import os
 import re
 from sage.rings.integer import Integer
 from sage.databases.sql_db import SQLDatabase, SQLQuery
-from sage.env import GRAPHS_DATA_DIR
+from sage.features.databases import DatabaseGraphs
 from sage.graphs.graph import Graph
-dblocation = os.path.join(GRAPHS_DATA_DIR, 'graphs.db')
+dblocation = DatabaseGraphs().absolute_filename()
 
 
 def degseq_to_data(degree_sequence):
@@ -99,7 +99,7 @@ def data_to_degseq(data, graph6=None):
     """
     degseq = Integer(data).digits(10)
     if not degseq:
-        # compute number of 0's in list from graph6 string
+        # compute number of 0s in list from graph6 string
         from sage.graphs.generic_graph_pyx import length_and_string_from_graph6
         return length_and_string_from_graph6(str(graph6))[0] * [0]
     return degseq
@@ -266,12 +266,12 @@ class GenericGraphQuery(SQLQuery):
 
         INPUT:
 
-        - ``query_string`` -- a string representing the SQL query
+        - ``query_string`` -- string representing the SQL query
 
-        - ``database`` -- (default: ``None``); the :class:`~GraphDatabase`
+        - ``database`` -- (default: ``None``) the :class:`~GraphDatabase`
           instance to query (if ``None`` then a new instance is created)
 
-        - ``param_tuple`` -- a tuple of strings (default: ``None``); what to
+        - ``param_tuple`` -- tuple of strings (default: ``None``); what to
           replace question marks in ``query_string`` with (optional, but a good
           idea)
 
@@ -343,8 +343,8 @@ class GraphQuery(GenericGraphQuery):
         - ``graph_db`` -- :class:`~GraphDatabase` (default: ``None``); instance
           to apply the query to (If ``None``, then a new instance is created)
 
-        - ``query_dict`` -- dict (default: ``None``); a dictionary specifying
-          the query itself. Format is: ``{'table_name': 'tblname',
+        - ``query_dict`` -- dictionary (default: ``None``); a dictionary
+          specifying the query itself. Format is: ``{'table_name': 'tblname',
           'display_cols': ['col1', 'col2'], 'expression': [col, operator,
           value]}``. If not ``None``, ``query_dict`` will take precedence over
           all other arguments.
@@ -428,7 +428,7 @@ class GraphQuery(GenericGraphQuery):
             SQLQuery.__init__(self, graph_db)
 
             # if display_cols is None:
-            #    raise TypeError, 'Nonetype display_cols cannot retrieve data.'
+            #     raise TypeError('Nonetype display_cols cannot retrieve data')
 
             master_join = {}
 
@@ -728,7 +728,7 @@ class GraphDatabase(SQLDatabase):
 
     def __init__(self):
         """
-        Graph Database
+        Graph Database.
 
         This class interfaces with the ``sqlite`` database ``graphs.db``. It is
         an immutable database that inherits from

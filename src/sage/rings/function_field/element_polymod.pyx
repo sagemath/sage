@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.function_field
 r"""
 Elements of function fields: extension
 """
@@ -112,9 +112,9 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         """
         return hash(self._x)
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
-        Do rich comparison with the other element with respect to ``op``
+        Do rich comparison with the other element with respect to ``op``.
 
         EXAMPLES::
 
@@ -129,7 +129,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         cdef FunctionFieldElement right = <FunctionFieldElement>other
         return richcmp(left._x, right._x, op)
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add the element with the other element.
 
@@ -152,7 +152,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         res._x = self._x + (<FunctionFieldElement>right)._x
         return res
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract the other element from the element.
 
@@ -173,7 +173,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         res._x = self._x - (<FunctionFieldElement>right)._x
         return res
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply the element with the other element.
 
@@ -192,7 +192,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         res._x = (self._x * (<FunctionFieldElement>right)._x) % self._parent.polynomial()
         return res
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Divide the element with the other element.
 
@@ -231,7 +231,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         P = self._parent
         return P(self._x.xgcd(P._polynomial)[1])
 
-    cpdef list list(self) noexcept:
+    cpdef list list(self):
         """
         Return the list of the coefficients representing the element.
 
@@ -251,13 +251,13 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         """
         return self._x.padded_list(self._parent.degree())
 
-    cpdef FunctionFieldElement nth_root(self, n) noexcept:
+    cpdef FunctionFieldElement nth_root(self, n):
         r"""
         Return an ``n``-th root of this element in the function field.
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -293,7 +293,6 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
             x
             sage: L(x^9).nth_root(-27)^-27
             x^9
-
         """
         if n == 1:
             return self
@@ -323,7 +322,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         ALGORITHM:
 
@@ -345,7 +344,6 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
             False
             sage: L(x).is_nth_power(2)
             True
-
         """
         if n == 0:
             return self.is_one()
@@ -367,7 +365,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         raise NotImplementedError("is_nth_power() not implemented for this n")
 
-    cdef FunctionFieldElement _pth_root(self) noexcept:
+    cdef FunctionFieldElement _pth_root(self):
         r"""
         Helper method for :meth:`nth_root` and :meth:`is_nth_power` which
         computes a `p`-th root if the characteristic is `p` and the constant
@@ -385,7 +383,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         if deg == 1:
             return self._parent(self._x[0].nth_root(self._parent.characteristic()))
 
-        from .function_field_rational import RationalFunctionField
+        from sage.rings.function_field.function_field_rational import RationalFunctionField
         if not isinstance(self.base_ring(), RationalFunctionField):
             raise NotImplementedError("only implemented for simple extensions of function fields")
         # compute a representation of the generator y of the field in terms of powers of y^p

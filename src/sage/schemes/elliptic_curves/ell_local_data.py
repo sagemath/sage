@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Local data for elliptic curves over number fields
 
@@ -77,7 +76,6 @@ AUTHORS:
   ``ell_number_field.py`` and ``ell_rational_field.py``)
 
 - Chris Wuthrich: more documentation 2010-01
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -101,10 +99,10 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
+from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
 
 from sage.rings.number_field.number_field_base import NumberField
-from sage.rings.ideal import is_Ideal
+from sage.rings.ideal import Ideal_generic
 
 from .constructor import EllipticCurve
 from .kodaira_symbol import KodairaSymbol
@@ -120,17 +118,17 @@ class EllipticCurveLocalData(SageObject):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve defined over a number field, or `\QQ`.
+    - ``E`` -- an elliptic curve defined over a number field, or `\QQ`
 
-    - ``P`` -- a prime ideal of the field, or a prime integer if the field is `\QQ`.
+    - ``P`` -- a prime ideal of the field, or a prime integer if the field is `\QQ`
 
-    - ``proof`` (bool) -- if ``True``, only use provably correct
-      methods (default controlled by global proof module).  Note
+    - ``proof`` -- boolean; if ``True``, only use provably correct
+      methods (default: controlled by global proof module).  Note
       that the proof module is number_field, not elliptic_curves,
       since the functions that actually need the flag are in
       number fields.
 
-    - ``algorithm`` (string, default: "pari") -- Ignored unless the
+    - ``algorithm`` -- string (default: ``'pari'``); ignored unless the
       base field is `\QQ`.  If "pari", use the PARI C-library
       ``ellglobalred`` implementation of Tate's algorithm over
       `\QQ`. If "generic", use the general number field
@@ -157,29 +155,29 @@ class EllipticCurveLocalData(SageObject):
           Tamagawa Number: 2
     """
 
-    def __init__(self, E, P, proof=None, algorithm="pari", globally=False):
+    def __init__(self, E, P, proof=None, algorithm='pari', globally=False):
         r"""
         Initialize the reduction data for the elliptic curve `E` at the prime `P`.
 
         INPUT:
 
-        - ``E`` -- an elliptic curve defined over a number field, or `\QQ`.
+        - ``E`` -- an elliptic curve defined over a number field, or `\QQ`
 
-        - ``P`` -- a prime ideal of the field, or a prime integer if the field is `\QQ`.
+        - ``P`` -- a prime ideal of the field, or a prime integer if the field is `\QQ`
 
-        - ``proof`` (bool)-- if True, only use provably correct
-          methods (default controlled by global proof module).  Note
+        - ``proof`` -- boolean; if ``True``, only use provably correct
+          methods (default: controlled by global proof module).  Note
           that the proof module is number_field, not elliptic_curves,
           since the functions that actually need the flag are in
           number fields.
 
-        - ``algorithm`` (string, default: "pari") -- Ignored unless the
+        - ``algorithm`` -- string (default: ``'pari'``); ignored unless the
           base field is `\QQ`.  If "pari", use the PARI C-library
           ``ellglobalred`` implementation of Tate's algorithm over
           `\QQ`. If "generic", use the general number field
           implementation.
 
-        - ``globally`` (bool, default: False) -- If True, the algorithm
+        - ``globally`` -- boolean (default: ``False``); if ``True``, the algorithm
           uses the generators of principal ideals rather than an arbitrary
           uniformizer.
 
@@ -205,7 +203,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
-            sage: EllipticCurveLocalData(E, 2, algorithm="generic")
+            sage: EllipticCurveLocalData(E, 2, algorithm='generic')
             Local data at Principal ideal (2) of Integer Ring:
               Reduction type: bad non-split multiplicative
               Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6
@@ -217,7 +215,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
-            sage: EllipticCurveLocalData(E, 2, algorithm="pari")
+            sage: EllipticCurveLocalData(E, 2, algorithm='pari')
             Local data at Principal ideal (2) of Integer Ring:
               Reduction type: bad non-split multiplicative
               Local minimal model: Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6
@@ -229,7 +227,7 @@ class EllipticCurveLocalData(SageObject):
 
         ::
 
-            sage: EllipticCurveLocalData(E, 2, algorithm="unknown")
+            sage: EllipticCurveLocalData(E, 2, algorithm='unknown')
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be one of 'pari', 'generic'
@@ -317,7 +315,7 @@ class EllipticCurveLocalData(SageObject):
 
         INPUT:
 
-        - ``reduce`` -- (default: ``True``) if set to ``True`` and if
+        - ``reduce`` -- boolean (default: ``True``); if set to ``True`` and if
           the initial elliptic curve had globally integral
           coefficients, then the elliptic curve returned by Tate's
           algorithm will be "reduced" as specified in _reduce_model()
@@ -348,18 +346,18 @@ class EllipticCurveLocalData(SageObject):
              over Number Field in a with defining polynomial x^3 + x + 1
 
             sage: E = EllipticCurve([2, 1, 0, -2, -1])
-            sage: E.local_data(ZZ.ideal(2), algorithm="generic").minimal_model(reduce=False)
+            sage: E.local_data(ZZ.ideal(2), algorithm='generic').minimal_model(reduce=False)
             Elliptic Curve defined by y^2 + 2*x*y + 2*y = x^3 + x^2 - 4*x - 2 over Rational Field
-            sage: E.local_data(ZZ.ideal(2), algorithm="pari").minimal_model(reduce=False)
+            sage: E.local_data(ZZ.ideal(2), algorithm='pari').minimal_model(reduce=False)
             Traceback (most recent call last):
             ...
             ValueError: the argument reduce must not be False if algorithm=pari is used
-            sage: E.local_data(ZZ.ideal(2), algorithm="generic").minimal_model()
+            sage: E.local_data(ZZ.ideal(2), algorithm='generic').minimal_model()
             Elliptic Curve defined by y^2 = x^3 - x^2 - 3*x + 2 over Rational Field
-            sage: E.local_data(ZZ.ideal(2), algorithm="pari").minimal_model()
+            sage: E.local_data(ZZ.ideal(2), algorithm='pari').minimal_model()
             Elliptic Curve defined by y^2 = x^3 - x^2 - 3*x + 2 over Rational Field
 
-        :trac:`14476`::
+        :issue:`14476`::
 
             sage: # needs sage.rings.number_field
             sage: t = QQ['t'].0
@@ -510,7 +508,7 @@ class EllipticCurveLocalData(SageObject):
 
         OUTPUT:
 
-        (int or ``None``):
+        integer or ``None``:
 
         - +1 for split multiplicative reduction
         - -1 for non-split multiplicative reduction
@@ -699,14 +697,14 @@ class EllipticCurveLocalData(SageObject):
 
         (tuple) ``(Emin, p, val_disc, fp, KS, cp)`` where:
 
-        - ``Emin`` (EllipticCurve) is a model (integral and) minimal at P
-        - ``p`` (int) is the residue characteristic
-        - ``val_disc`` (int) is the valuation of the local minimal discriminant
-        - ``fp`` (int) is the valuation of the conductor
-        - ``KS`` (string) is the Kodaira symbol
-        - ``cp`` (int) is the Tamagawa number
+        - ``Emin`` -- :class:`EllipticCurve`; a model (integral and) minimal at P
+        - ``p`` -- integer; the residue characteristic
+        - ``val_disc`` -- integer; the valuation of the local minimal discriminant
+        - ``fp`` -- integer; the valuation of the conductor
+        - ``KS`` -- string; the Kodaira symbol
+        - ``cp`` -- integer; the Tamagawa number
 
-        EXAMPLES (this raised a type error in sage prior to 4.4.4, see :trac:`7930`) ::
+        EXAMPLES (this raised a type error in sage prior to 4.4.4, see :issue:`7930`) ::
 
             sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('99d1')
@@ -721,7 +719,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES:
 
-        The following example shows that the bug at :trac:`9324` is fixed::
+        The following example shows that the bug at :issue:`9324` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
@@ -730,7 +728,7 @@ class EllipticCurveLocalData(SageObject):
             sage: E.conductor() # indirect doctest
             Fractional ideal (18, 6*a)
 
-        The following example shows that the bug at :trac:`9417` is fixed::
+        The following example shows that the bug at :issue:`9417` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^2 + 18*x + 1)
@@ -738,12 +736,12 @@ class EllipticCurveLocalData(SageObject):
             sage: E.tamagawa_number(K.ideal(2))
             4
 
-        This is to show that the bug :trac:`11630` is fixed. (The computation of the class group would produce a warning)::
+        This is to show that the bug :issue:`11630` is fixed. (The computation of the class group would produce a warning)::
 
             sage: # needs sage.rings.number_field
             sage: K.<t> = NumberField(x^7 - 2*x + 177)
             sage: E = EllipticCurve([0,1,0,t,t])
-            sage: P = K.ideal(2,t^3 + t + 1)
+            sage: P = K.ideal(2, t^3 + t + 1)
             sage: E.local_data(P).kodaira_symbol()
             II
         """
@@ -761,7 +759,7 @@ class EllipticCurveLocalData(SageObject):
         # reduce (mod P) elements of K which are not integral (but are
         # P-integral).  However, if the model is non-minimal and we
         # end up dividing a_i by pi^i then at that point we use a
-        # uniformiser pi which has non-positive valuation at all other
+        # uniformiser pi which has nonpositive valuation at all other
         # primes, so that we can divide by it without losing
         # integrality at other primes.
 
@@ -807,7 +805,8 @@ class EllipticCurveLocalData(SageObject):
 
         def _pquadroots(a, b, c):
             r"""
-            Local function returning True iff `ax^2 + bx + c` has roots modulo `P`
+            Local function returning ``True`` iff `ax^2 + bx + c` has roots
+            modulo `P`.
             """
             (a, b, c) = (F(a), F(b), F(c))
             if a == 0:
@@ -1131,29 +1130,27 @@ def check_prime(K, P):
 
     INPUT:
 
-    - ``K`` -- a number field (including `\QQ`).
+    - ``K`` -- a number field (including `\QQ`)
 
-    - ``P`` -- an element of ``K`` or a (fractional) ideal of ``K``.
+    - ``P`` -- an element of ``K`` or a (fractional) ideal of ``K``
 
-    OUTPUT:
-
-    - If ``K`` is `\QQ`: the prime integer equal to or which generates `P`.
+    OUTPUT: if ``K`` is `\QQ`: the prime integer equal to or which generates `P`
 
     - If ``K`` is not `\QQ`: the prime ideal equal to or generated by `P`.
 
     .. NOTE::
 
-        If `P` is not a prime and does not generate a prime, a ``TypeError``
+        If `P` is not a prime and does not generate a prime, a :exc:`TypeError`
         is raised.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.ell_local_data import check_prime
-        sage: check_prime(QQ,3)
+        sage: check_prime(QQ, 3)
         3
-        sage: check_prime(QQ,QQ(3))
+        sage: check_prime(QQ, QQ(3))
         3
-        sage: check_prime(QQ,ZZ.ideal(31))
+        sage: check_prime(QQ, ZZ.ideal(31))
         31
 
         sage: # needs sage.rings.number_field
@@ -1161,11 +1158,11 @@ def check_prime(K, P):
         sage: K.<a> = NumberField(x^2 - 5)
         sage: check_prime(K, a)
         Fractional ideal (a)
-        sage: check_prime(K,a+1)
+        sage: check_prime(K, a + 1)
         Fractional ideal (a + 1)
-        sage: [check_prime(K,P) for P in K.primes_above(31)]
+        sage: [check_prime(K, P) for P in K.primes_above(31)]
         [Fractional ideal (5/2*a + 1/2), Fractional ideal (5/2*a - 1/2)]
-        sage: L.<b> = NumberField(x^2+3)
+        sage: L.<b> = NumberField(x^2 + 3)
         sage: check_prime(K, L.ideal(5))
         Traceback (most recent call last):
         ...
@@ -1187,7 +1184,7 @@ def check_prime(K, P):
                 raise TypeError("The element %s is not prime" % (P,))
         elif P in QQ:
             raise TypeError("The element %s is not prime" % (P,))
-        elif is_Ideal(P) and P.base_ring() is ZZ:
+        elif isinstance(P, Ideal_generic) and P.base_ring() is ZZ:
             if P.is_prime():
                 return P.gen()
             else:
@@ -1198,8 +1195,8 @@ def check_prime(K, P):
     if not isinstance(K, NumberField):
         raise TypeError("%s is not a number field" % (K,))
 
-    if is_NumberFieldFractionalIdeal(P) or P in K:
-        # if P is an ideal, making sure it is an fractional ideal of K
+    if isinstance(P, NumberFieldFractionalIdeal) or P in K:
+        # if P is an ideal, making sure it is a fractional ideal of K
         P = K.fractional_ideal(P)
         if P.is_prime():
             return P

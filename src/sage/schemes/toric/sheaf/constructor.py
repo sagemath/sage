@@ -13,7 +13,7 @@ equivariant with respect to the algebraic torus action.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.schemes.toric.variety import is_ToricVariety
+from sage.schemes.toric.variety import ToricVariety_field
 from sage.modules.filtered_vector_space import FilteredVectorSpace
 
 
@@ -23,11 +23,9 @@ def TangentBundle(X):
 
     INPUT:
 
-    - ``X`` -- a toric variety. The base space of the bundle.
+    - ``X`` -- a toric variety; the base space of the bundle
 
-    OUTPUT:
-
-    The tangent bundle as a Klyachko bundle.
+    OUTPUT: the tangent bundle as a Klyachko bundle
 
     EXAMPLES::
 
@@ -36,11 +34,11 @@ def TangentBundle(X):
         sage: TangentBundle(dP7)
         Rank 2 bundle on 2-d CPR-Fano toric variety covered by 5 affine patches.
     """
-    if not is_ToricVariety(X):
+    if not isinstance(X, ToricVariety_field):
         raise ValueError('not a toric variety')
 
     fan = X.fan()
-    filtrations = dict()
+    filtrations = {}
     from sage.modules.filtered_vector_space import FilteredVectorSpace
     for i, ray in enumerate(fan.rays()):
         F = FilteredVectorSpace(fan.rays(), {0: range(fan.nrays()), 1: [i]})
@@ -55,11 +53,9 @@ def CotangentBundle(X):
 
     INPUT:
 
-    - ``X`` -- a toric variety. The base space of the bundle.
+    - ``X`` -- a toric variety; the base space of the bundle
 
-    OUTPUT:
-
-    The cotangent bundle as a Klyachko bundle.
+    OUTPUT: the cotangent bundle as a Klyachko bundle
 
     EXAMPLES::
 
@@ -77,13 +73,11 @@ def TrivialBundle(X, rank=1):
 
     INPUT:
 
-    - ``X`` -- a toric variety. The base space of the bundle.
+    - ``X`` -- a toric variety; the base space of the bundle
 
-    - ``rank`` -- the rank of the bundle.
+    - ``rank`` -- the rank of the bundle
 
-    OUTPUT:
-
-    The trivial bundle as a Klyachko bundle.
+    OUTPUT: the trivial bundle as a Klyachko bundle
 
     EXAMPLES::
 
@@ -94,7 +88,7 @@ def TrivialBundle(X, rank=1):
         sage: I3.cohomology(weight=(0,0), dim=True)
         (3, 0, 0)
     """
-    if not is_ToricVariety(X):
+    if not isinstance(X, ToricVariety_field):
         raise ValueError('not a toric variety')
 
     base_ring = X.base_ring()
@@ -110,9 +104,9 @@ def LineBundle(X, D):
 
     INPUT:
 
-    - ``X`` -- a toric variety. The base space of the bundle.
+    - ``X`` -- a toric variety; the base space of the bundle
 
-    - ``D`` -- a toric divisor.
+    - ``D`` -- a toric divisor
 
     OUTPUT:
 
@@ -127,7 +121,7 @@ def LineBundle(X, D):
         sage: O_D.cohomology(dim=True, weight=(0,0))
         (1, 0, 0)
     """
-    if not is_ToricVariety(X):
+    if not isinstance(X, ToricVariety_field):
         raise ValueError('not a toric variety')
 
     base_ring = X.base_ring()
@@ -138,7 +132,7 @@ def LineBundle(X, D):
     return klyachko.Bundle(X, filtrations, check=True)
 
 
-class SheafLibrary():
+class SheafLibrary:
 
     def __init__(self, toric_variety):
         """
@@ -162,9 +156,7 @@ class SheafLibrary():
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -179,12 +171,9 @@ class SheafLibrary():
 
         INPUT:
 
-        - ``rank`` -- integer (optional; default: `1`). The rank of
-          the bundle.
+        - ``rank`` -- integer (default: `1`); the rank of the bundle
 
-        OUTPUT:
-
-        The trivial bundle as a Klyachko bundle.
+        OUTPUT: the trivial bundle as a Klyachko bundle
 
         EXAMPLES::
 
@@ -202,7 +191,7 @@ class SheafLibrary():
 
         INPUT:
 
-        - ``divisor`` -- a toric divisor.
+        - ``divisor`` -- a toric divisor
 
         OUTPUT:
 
@@ -223,9 +212,7 @@ class SheafLibrary():
         r"""
         Return the tangent bundle of the toric variety.
 
-        OUTPUT:
-
-        The tangent bundle as a Klyachko bundle.
+        OUTPUT: the tangent bundle as a Klyachko bundle
 
         EXAMPLES::
 
@@ -238,9 +225,7 @@ class SheafLibrary():
         r"""
         Return the cotangent bundle of the toric variety.
 
-        OUTPUT:
-
-        The cotangent bundle as a Klyachko bundle.
+        OUTPUT: the cotangent bundle as a Klyachko bundle
 
         EXAMPLES::
 
@@ -301,9 +286,7 @@ class SheafLibrary():
         By abuse of notation, you can usually use the divisor `D`
         interchangeably with the line bundle `O(D)`.
 
-        OUTPUT:
-
-        A toric divisor.
+        OUTPUT: a toric divisor
 
         EXAMPLES::
 

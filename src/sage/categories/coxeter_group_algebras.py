@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Coxeter Group Algebras
@@ -6,12 +7,13 @@ import functools
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebra_functor import AlgebrasCategory
 
+
 class CoxeterGroupAlgebras(AlgebrasCategory):
 
     class ParentMethods:
 
         def demazure_lusztig_operator_on_basis(self, w, i, q1, q2,
-                                               side="right"):
+                                               side='right'):
             r"""
             Return the result of applying the `i`-th Demazure Lusztig
             operator on ``w``.
@@ -20,8 +22,8 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
 
             - ``w`` -- an element of the Coxeter group
             - ``i`` -- an element of the index set
-            - ``q1,q2`` -- two elements of the ground ring
-            - ``bar`` -- a boolean (default ``False``)
+            - ``q1``, ``q2`` -- two elements of the ground ring
+            - ``bar`` -- boolean (default: ``False``)
 
             See :meth:`demazure_lusztig_operators` for details.
 
@@ -34,13 +36,13 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 sage: KW = W.algebra(K)
                 sage: w = W.an_element()
                 sage: KW.demazure_lusztig_operator_on_basis(w, 0, q1, q2)
-                (-q2)*323123 + (q1+q2)*123
+                -q2*323123 + (q1+q2)*123
                 sage: KW.demazure_lusztig_operator_on_basis(w, 1, q1, q2)
                 q1*1231
                 sage: KW.demazure_lusztig_operator_on_basis(w, 2, q1, q2)
                 q1*1232
                 sage: KW.demazure_lusztig_operator_on_basis(w, 3, q1, q2)
-                (q1+q2)*123 + (-q2)*12
+                (q1+q2)*123 - q2*12
 
             At `q_1=1` and `q_2=0` we recover the action of the
             isobaric divided differences `\pi_i`::
@@ -68,16 +70,16 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             """
             return (q1+q2) * self.monomial(w.apply_simple_projection(i,side=side)) - self.term(w.apply_simple_reflection(i, side=side), q2)
 
-        def demazure_lusztig_operators(self, q1, q2, side="right", affine=True):
+        def demazure_lusztig_operators(self, q1, q2, side='right', affine=True):
             r"""
             Return the Demazure Lusztig operators acting on ``self``.
 
             INPUT:
 
-            - ``q1,q2`` -- two elements of the ground ring `K`
-            - ``side`` -- ``"left"`` or ``"right"`` (default: ``"right"``);
+            - ``q1``, ``q2`` -- two elements of the ground ring `K`
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``);
               which side to act upon
-            - ``affine`` -- a boolean (default: ``True``)
+            - ``affine`` -- boolean (default: ``True``)
 
             The Demazure-Lusztig operator `T_i` is the linear map
             `R \to R` obtained by interpolating between the
@@ -110,13 +112,13 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 sage: x = KW.monomial(W.an_element()); x
                 123
                 sage: T[0](x)
-                (-q2)*323123 + (q1+q2)*123
+                -q2*323123 + (q1+q2)*123
                 sage: T[1](x)
                 q1*1231
                 sage: T[2](x)
                 q1*1232
                 sage: T[3](x)
-                (q1+q2)*123 + (-q2)*12
+                (q1+q2)*123 - q2*12
 
                 sage: T._test_relations()
 
@@ -144,7 +146,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             INPUT:
 
             - ``self`` -- a finite Coxeter group `W`
-            - ``q1,q2`` -- two elements of the ground ring `K`
+            - ``q1``, ``q2`` -- two elements of the ground ring `K`
 
             The affine Hecke algebra `H_{q_1,q_2}(\tilde W)` acts on
             the group algebra of `W` through the Demazure-Lusztig
@@ -172,7 +174,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 Weyl Group of type ['B', 2] (as a matrix group acting on the ambient space)
                 sage: w = W.an_element()
                 sage: E[w]                                                              # needs sage.rings.number_field
-                (q2/(-q1+q2))*2121 + ((-q2)/(-q1+q2))*121 - 212 + 12
+                (q2/(-q1+q2))*2121 - (q2/(-q1+q2))*121 - 212 + 12
             """
             W = self.basis().keys()
             if not W.cartan_type().is_finite():

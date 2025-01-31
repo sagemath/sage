@@ -19,18 +19,18 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import math
 
-from sage.libs.flint.fmpz_poly import Fmpz_poly
+from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
 from sage.misc.verbose import verbose
 from sage.rings.big_oh import O as bigO
 from sage.rings.finite_rings.integer_mod_ring import Integers
@@ -53,69 +53,49 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
 
     INPUT:
 
-    - ``k`` -- an integer
+    - ``k`` -- integer
 
     - ``prec`` -- (default: 10) a positive integer
 
-    - ``cusp_only`` -- bool (default: False)
+    - ``cusp_only`` -- boolean (default: ``False``)
 
-    - ``var`` -- string (default: 'q')
+    - ``var`` -- string (default: ``'q'``)
 
-    OUTPUT:
-
-        A sequence whose entries are power series in ``ZZ[[var]]``.
+    OUTPUT: a sequence whose entries are power series in ``ZZ[[var]]``
 
     EXAMPLES::
 
         sage: victor_miller_basis(1, 6)
         []
         sage: victor_miller_basis(0, 6)
-        [
-        1 + O(q^6)
-        ]
+        [1 + O(q^6)]
         sage: victor_miller_basis(2, 6)
         []
         sage: victor_miller_basis(4, 6)
-        [
-        1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6)
-        ]
+        [1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6)]
 
         sage: victor_miller_basis(6, 6, var='w')
-        [
-        1 - 504*w - 16632*w^2 - 122976*w^3 - 532728*w^4 - 1575504*w^5 + O(w^6)
-        ]
+        [1 - 504*w - 16632*w^2 - 122976*w^3 - 532728*w^4 - 1575504*w^5 + O(w^6)]
 
         sage: victor_miller_basis(6, 6)
-        [
-        1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)
-        ]
+        [1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
         sage: victor_miller_basis(12, 6)
-        [
-        1 + 196560*q^2 + 16773120*q^3 + 398034000*q^4 + 4629381120*q^5 + O(q^6),
-        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-        ]
+        [1 + 196560*q^2 + 16773120*q^3 + 398034000*q^4 + 4629381120*q^5 + O(q^6),
+         q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)]
 
         sage: victor_miller_basis(12, 6, cusp_only=True)
-        [
-        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-        ]
+        [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)]
         sage: victor_miller_basis(24, 6, cusp_only=True)
-        [
-        q + 195660*q^3 + 12080128*q^4 + 44656110*q^5 + O(q^6),
-        q^2 - 48*q^3 + 1080*q^4 - 15040*q^5 + O(q^6)
-        ]
+        [q + 195660*q^3 + 12080128*q^4 + 44656110*q^5 + O(q^6),
+         q^2 - 48*q^3 + 1080*q^4 - 15040*q^5 + O(q^6)]
         sage: victor_miller_basis(24, 6)
-        [
-        1 + 52416000*q^3 + 39007332000*q^4 + 6609020221440*q^5 + O(q^6),
-        q + 195660*q^3 + 12080128*q^4 + 44656110*q^5 + O(q^6),
-        q^2 - 48*q^3 + 1080*q^4 - 15040*q^5 + O(q^6)
-        ]
+        [1 + 52416000*q^3 + 39007332000*q^4 + 6609020221440*q^5 + O(q^6),
+         q + 195660*q^3 + 12080128*q^4 + 44656110*q^5 + O(q^6),
+         q^2 - 48*q^3 + 1080*q^4 - 15040*q^5 + O(q^6)]
         sage: victor_miller_basis(32, 6)
-        [
-        1 + 2611200*q^3 + 19524758400*q^4 + 19715347537920*q^5 + O(q^6),
-        q + 50220*q^3 + 87866368*q^4 + 18647219790*q^5 + O(q^6),
-        q^2 + 432*q^3 + 39960*q^4 - 1418560*q^5 + O(q^6)
-        ]
+        [1 + 2611200*q^3 + 19524758400*q^4 + 19715347537920*q^5 + O(q^6),
+         q + 50220*q^3 + 87866368*q^4 + 18647219790*q^5 + O(q^6),
+         q^2 + 432*q^3 + 39960*q^4 - 1418560*q^5 + O(q^6)]
 
         sage: victor_miller_basis(40,200)[1:] == victor_miller_basis(40,200,cusp_only=True)
         True
@@ -132,7 +112,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     if k % 2 == 1 or k == 2:
         return Sequence([])
     elif k < 0:
-        raise ValueError("k must be non-negative")
+        raise ValueError("k must be nonnegative")
     elif k == 0:
         return Sequence([PowerSeriesRing(ZZ,var)(1).add_bigoh(prec)], cr=True)
     e = k.mod(12)
@@ -158,22 +138,22 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
             ls[i] = err
         return Sequence(ls, cr=True)
 
-    F6 = eisenstein_series_poly(6,prec)
+    F6 = eisenstein_series_poly(6, prec)
 
     if e == 0:
         A = Fmpz_poly(1)
     elif e == 4:
-        A = eisenstein_series_poly(4,prec)
+        A = eisenstein_series_poly(4, prec)
     elif e == 6:
         A = F6
     elif e == 8:
-        A = eisenstein_series_poly(8,prec)
+        A = eisenstein_series_poly(8, prec)
     elif e == 10:
-        A = eisenstein_series_poly(10,prec)
-    else: # e == 14
-        A = eisenstein_series_poly(14,prec)
+        A = eisenstein_series_poly(10, prec)
+    else:  # e == 14
+        A = eisenstein_series_poly(14, prec)
 
-    if A[0] == -1 :
+    if A[0] == -1:
         A = -A
 
     if n == 0:
@@ -188,9 +168,9 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     if cusp_only:
         ls = [Fmpz_poly(0)] + [A] * n
     else:
-        ls = [A] * (n+1)
+        ls = [A] * (n + 1)
 
-    for i in range(1,n+1):
+    for i in range(1, n + 1):
         ls[n-i] *= Fprod
         ls[i] *= Dprod
         ls[n-i]._unsafe_mutate_truncate(prec)
@@ -203,22 +183,22 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
 
     P = PowerSeriesRing(ZZ, var)
     if cusp_only:
-        for i in range(1,n+1) :
-            for j in range(1, i) :
+        for i in range(1, n + 1):
+            for j in range(1, i):
                 ls[j] = ls[j] - ls[j][i]*ls[i]
 
-        return Sequence([P(l.list()).add_bigoh(prec) for l in ls[1:]],cr=True)
-    else :
-        for i in range(1,n+1):
-            for j in range(i):
-                ls[j] = ls[j] - ls[j][i]*ls[i]
+        return Sequence([P(l.list()).add_bigoh(prec) for l in ls[1:]], cr=True)
 
-        return Sequence([P(l.list()).add_bigoh(prec) for l in ls], cr=True)
+    for i in range(1, n + 1):
+        for j in range(i):
+            ls[j] = ls[j] - ls[j][i] * ls[i]
+
+    return Sequence([P(l.list()).add_bigoh(prec) for l in ls], cr=True)
 
 
 def _delta_poly(prec=10):
     """
-    Return the q-expansion of Delta as a FLINT polynomial. Used internally by
+    Return the `q`-expansion of Delta as a FLINT polynomial. Used internally by
     the :func:`~delta_qexp` function. See the docstring of :func:`~delta_qexp`
     for more information.
 
@@ -228,7 +208,7 @@ def _delta_poly(prec=10):
 
     OUTPUT:
 
-        the q-expansion of Delta to precision ``prec``, as a FLINT
+        the `q`-expansion of Delta to precision ``prec``, as a FLINT
         :class:`~sage.libs.flint.fmpz_poly.Fmpz_poly` object.
 
     EXAMPLES::
@@ -274,21 +254,21 @@ def _delta_poly(prec=10):
 
 def _delta_poly_modulo(N, prec=10):
     r"""
-    Return the q-expansion of `\Delta` modulo `N`. Used internally by
+    Return the `q`-expansion of `\Delta` modulo `N`. Used internally by
     the :func:`~delta_qexp` function. See the docstring of :func:`~delta_qexp`
     for more information.
 
     INPUT:
 
-    - `N` -- positive integer modulo which we want to compute `\Delta`
+    - ``N`` -- positive integer modulo which we want to compute `\Delta`
 
     - ``prec`` -- integer; the absolute precision of the output
 
     OUTPUT:
 
-        the polynomial of degree ``prec``-1 which is the truncation
-        of `\Delta` modulo `N`, as an element of the polynomial
-        ring in `q` over the integers modulo `N`.
+    the polynomial of degree ``prec``-1 which is the truncation
+    of `\Delta` modulo `N`, as an element of the polynomial
+    ring in `q` over the integers modulo `N`.
 
     EXAMPLES::
 
@@ -299,7 +279,7 @@ def _delta_poly_modulo(N, prec=10):
         2*q^11 + 7*q^9 + 6*q^7 + 2*q^6 + 8*q^4 + 2*q^3 + 6*q^2 + q
     """
     if prec <= 0:
-        raise ValueError( "prec must be positive" )
+        raise ValueError("prec must be positive")
     v = [0] * prec
 
     # Let F = \sum_{n >= 0} (-1)^n (2n+1) q^(floor(n(n+1)/2)).
@@ -326,23 +306,21 @@ def _delta_poly_modulo(N, prec=10):
     return f
 
 
-def delta_qexp(prec=10, var='q', K=ZZ) :
+def delta_qexp(prec=10, var='q', K=ZZ):
     r"""
     Return the `q`-expansion of the weight 12 cusp form `\Delta` as a power
     series with coefficients in the ring K (`= \ZZ` by default).
 
     INPUT:
 
-    - ``prec`` -- integer (default 10), the absolute precision of the output
+    - ``prec`` -- integer (default: 10); the absolute precision of the output
       (must be positive)
 
-    - ``var`` -- string (default: 'q'), variable name
+    - ``var`` -- string (default: ``'q'``); variable name
 
-    - ``K`` -- ring (default: `\ZZ`), base ring of answer
+    - ``K`` -- ring (default: `\ZZ`); base ring of answer
 
-    OUTPUT:
-
-    a power series over K in the variable ``var``
+    OUTPUT: a power series over K in the variable ``var``
 
     ALGORITHM:
 
@@ -376,7 +354,7 @@ def delta_qexp(prec=10, var='q', K=ZZ) :
 
     TESTS:
 
-    Test algorithm with modular arithmetic (see also :trac:`11804`)::
+    Test algorithm with modular arithmetic (see also :issue:`11804`)::
 
         sage: delta_qexp(10^4).change_ring(GF(13)) == delta_qexp(10^4, K=GF(13))
         True

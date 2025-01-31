@@ -13,12 +13,23 @@
 from sage_docbuild.conf import release, latex_elements
 from sage_docbuild.conf import *  # NOQA
 
+
+for tag in feature_tags():
+    tags.add(tag)
+
+
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite the
 # builtin "default.css". html_common_static_path imported from sage_docbuild.conf
 # contains common paths.
 html_static_path = [] + html_common_static_path
+
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/fr/tutorial', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/fr/tutorial', '{filename}'),
+})
 
 # General information about the project.
 project = "Tutoriel Sage"
@@ -38,10 +49,3 @@ latex_documents = [
   ('index', name + '.tex', project,
    'The Sage Group', 'manual'),
 ]
-
-# Additional LaTeX stuff for the French version
-#latex_elements['preamble'] += '\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}\n'
-
-# the definition of \\at in the standard preamble of the sphinx doc
-# conflicts with that in babel/french[b]
-latex_elements['preamble'] += '\\let\\at\\undefined'

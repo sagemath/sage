@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Algebra ideals
 """
@@ -10,10 +11,10 @@ Algebra ideals
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from .algebra_modules import AlgebraModules
-from .algebras import Algebras
-from .rings import Rings
-from .category_types import Category_ideal
+from sage.categories.algebra_modules import AlgebraModules
+from sage.categories.algebras import Algebras
+from sage.categories.category_types import Category_ideal
+from sage.categories.rings import Rings
 
 
 class AlgebraIdeals(Category_ideal):
@@ -84,7 +85,6 @@ class AlgebraIdeals(Category_ideal):
             sage: C = AlgebraIdeals(FreeAlgebra(QQ, 2, 'a,b'))                          # needs sage.combinat sage.modules
             sage: C.super_categories()                                                  # needs sage.combinat sage.modules
             []
-
         """
         R = self.algebra()
         try:

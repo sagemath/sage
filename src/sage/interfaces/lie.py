@@ -17,7 +17,6 @@ using LiE (and get the result back as a string).
 
 To access the LiE interpreter directly, run lie_console().
 
-
 EXAMPLES::
 
     sage: a4 = lie('A4')             # optional - lie
@@ -53,36 +52,38 @@ The following examples are taken from Section 2.1 of the LiE manual.
 
 You can perform basic arithmetic operations in LiE. ::
 
-    sage: lie.eval('19+68') # optional - lie
+    sage: # optional - lie
+    sage: lie.eval('19+68')
     '87'
-    sage: a = lie('1111111111*1111111111') # optional - lie
-    sage: a # optional - lie
+    sage: a = lie('1111111111*1111111111')
+    sage: a
     1234567900987654321
-    sage: a/1111111111 # optional - lie
+    sage: a/1111111111
     1111111111
-    sage: a = lie('345') # optional - lie
-    sage: a^2+3*a-5 # optional - lie
+    sage: a = lie('345')
+    sage: a^2+3*a-5
     120055
-    sage: _ / 7*a # optional - lie
+    sage: _ / 7*a
     5916750
 
 Vectors in LiE are created using square brackets.  Notice that
 the indexing in LiE is 1-based, unlike Python/Sage which is 0-based. ::
 
-    sage: v = lie('[3,2,6873,-38]') # optional - lie
-    sage: v # optional - lie
+    sage: # optional - lie
+    sage: v = lie('[3,2,6873,-38]')
+    sage: v
     [3,2,6873,-38]
-    sage: v[3] # optional - lie
+    sage: v[3]
     6873
-    sage: v+v # optional - lie
+    sage: v+v
     [6,4,13746,-76]
-    sage: v*v # optional - lie
+    sage: v*v
     47239586
-    sage: v+234786 # optional - lie
+    sage: v+234786
     [3,2,6873,-38,234786]
-    sage: v-3 # optional - lie
+    sage: v-3
     [3,2,-38]
-    sage: v^v # optional - lie
+    sage: v^v
     [3,2,6873,-38,3,2,6873,-38]
 
 You can also work with matrices in LiE. ::
@@ -101,19 +102,20 @@ You can also work with matrices in LiE. ::
          ,[3, 7, 0, 9]
          ]
 
-    sage: m^3 # optional - lie
+    sage: # optional - lie
+    sage: m^3
          [[ 220,   87, 81, 375]
          ,[-168,-1089, 13,1013]
          ,[1550,  357,-55,1593]
          ,[-854, -652, 98,-170]
          ]
-    sage: v*m # optional - lie
+    sage: v*m
     [-6960,62055,55061,-319]
-    sage: m*v # optional - lie
+    sage: m*v
     [20508,-27714,54999,-14089]
-    sage: v*m*v # optional - lie
+    sage: v*m*v
     378549605
-    sage: m+v # optional - lie
+    sage: m+v
          [[ 1, 0,   3,  3]
          ,[12, 4,  -4,  7]
          ,[-1, 9,   8,  0]
@@ -130,17 +132,18 @@ You can also work with matrices in LiE. ::
 
 LiE handles multivariate (Laurent) polynomials. ::
 
-    sage: lie('X[1,2]') # optional - lie
+    sage: # optional - lie
+    sage: lie('X[1,2]')
     1X[1,2]
-    sage: -3*_ # optional - lie
+    sage: -3*_
     -3X[1,2]
-    sage: _ + lie('4X[-1,4]') # optional - lie
+    sage: _ + lie('4X[-1,4]')
     4X[-1,4] - 3X[ 1,2]
-    sage: _^2 # optional - lie
+    sage: _^2
     16X[-2,8] - 24X[ 0,6] +  9X[ 2,4]
-    sage: lie('(4X[-1,4]-3X[1,2])*(X[2,0]-X[0,-4])') # optional - lie
+    sage: lie('(4X[-1,4]-3X[1,2])*(X[2,0]-X[0,-4])')
     -4X[-1, 0] + 3X[ 1,-2] + 4X[ 1, 4] - 3X[ 3, 2]
-    sage: _ - _ # optional - lie
+    sage: _ - _
     0X[0,0]
 
 
@@ -172,17 +175,17 @@ You can define your own functions in LiE using lie.eval .  Once you've defined
 a function (say f), you can call it using lie.f ; however, user-defined functions
 do not show up when using tab-completion. ::
 
-    sage: lie.eval('f(int x) = 2*x') # optional - lie
+    sage: # optional - lie
+    sage: lie.eval('f(int x) = 2*x')
     ''
-    sage: lie.f(984) # optional - lie
+    sage: lie.f(984)
     1968
-    sage: lie.eval('f(int n) = a=3*n-7; if a < 0 then a = -a fi; 7^a+a^3-4*a-57') # optional - lie
+    sage: lie.eval('f(int n) = a=3*n-7; if a < 0 then a = -a fi; 7^a+a^3-4*a-57')
     ''
-    sage: lie.f(2) # optional - lie
+    sage: lie.f(2)
     -53
-    sage: lie.f(5) # optional - lie
+    sage: lie.f(5)
     5765224
-
 
 
 LiE's help can be accessed through lie.help('functionname') where
@@ -197,7 +200,6 @@ functionname is the function you want to receive help for. ::
       the order of the coordinates of root- and weight vectors used in LiE.
 
 This can also be accessed with lie.functionname? .
-
 
 
 With the exception of groups, all LiE data types can be converted into
@@ -250,7 +252,8 @@ of the manual gives an example of a function written in LiE's language
 which evaluates a polynomial at a point.  Below is a (roughly) direct
 translation of that program into Python / Sage. ::
 
-    sage: def eval_pol(p, pt): # optional - lie
+    sage: # optional - lie
+    sage: def eval_pol(p, pt):
     ....:     s = 0
     ....:     for i in range(1,p.length().sage()+1):
     ....:         m = 1
@@ -258,15 +261,13 @@ translation of that program into Python / Sage. ::
     ....:             m *= pt[j]^p.expon(i)[j]
     ....:         s += p.coef(i)*m
     ....:     return s
-    sage: a = lie('X[1,2]') # optional - lie
-    sage: b1 = lie('[1,2]') # optional - lie
-    sage: b2 = lie('[2,3]') # optional - lie
-    sage: eval_pol(a, b1) # optional - lie
+    sage: a = lie('X[1,2]')
+    sage: b1 = lie('[1,2]')
+    sage: b2 = lie('[2,3]')
+    sage: eval_pol(a, b1)
     4
-    sage: eval_pol(a, b2) # optional - lie
+    sage: eval_pol(a, b2)
     18
-
-
 
 AUTHORS:
 
@@ -284,6 +285,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #
 ##########################################################################
+from itertools import chain
+import os
 
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 from sage.interfaces.interface import AsciiArtString
@@ -292,7 +295,6 @@ from sage.env import DOT_SAGE, LIE_INFO_DIR
 from sage.misc.sage_eval import sage_eval
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
-import os
 
 
 COMMANDS_CACHE = '%s/lie_commandlist_cache.sobj' % DOT_SAGE
@@ -389,7 +391,7 @@ class LiE(ExtraTabCompletion, Expect):
                 self._tab_completion_dict = trait_dict
                 self._help_dict = help_dict
                 return
-            except IOError:
+            except OSError:
                 pass
 
         # Go through INFO.3 and get the necessary information
@@ -447,9 +449,7 @@ class LiE(ExtraTabCompletion, Expect):
         info.close()
 
         # Build the list of all possible command completions
-        l = []
-        for key in commands:
-            l += commands[key]
+        l = list(chain(*commands.values()))
 
         # Save the data
         self._tab_completion_dict = commands
@@ -530,11 +530,11 @@ class LiE(ExtraTabCompletion, Expect):
         else:
             return self._tab_completion_list
 
-    def _an_element_impl(self):
+    def _an_element_(self):
         """
         EXAMPLES::
 
-            sage: lie._an_element_impl() # optional - lie
+            sage: lie._an_element_() # optional - lie
             0
         """
         return self(0)
@@ -573,7 +573,7 @@ class LiE(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: lie.version() # optional - lie
-            '2.2'
+            '2...'
         """
         return lie_version()
 
@@ -803,7 +803,6 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
             [ 3 -5 -2  9]
             sage: lie('-1X[1,1]').sage() # optional - lie
             -x0*x1
-
         """
         t = self.type()
         if t == 'grp':
@@ -943,7 +942,7 @@ def lie_version():
 
         sage: from sage.interfaces.lie import lie_version
         sage: lie_version() # optional - lie
-        '2.2'
+        '2...'
     """
     with open(os.path.join(LIE_INFO_DIR, 'INFO.0')) as f:
         lines = f.readlines()

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 `L`-series for elliptic curves
 
@@ -10,7 +9,6 @@ AUTHORS:
   instead of floats.
 
 - William Stein et al. (2005 and later)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein
@@ -19,16 +17,16 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.rings.real_mpfr import RealField
-from sage.rings.rational_field import RationalField
-from math import sqrt, log, ceil
-import sage.functions.exp_integral as exp_integral
-from sage.misc.verbose import verbose
+from math import ceil, log, sqrt
+
 from sage.misc.cachefunc import cached_method
+from sage.misc.verbose import verbose
+from sage.rings.rational_field import RationalField
+from sage.rings.real_mpfr import RealField
+from sage.structure.sage_object import SageObject
 
 
 class Lseries_ell(SageObject):
@@ -72,9 +70,9 @@ class Lseries_ell(SageObject):
         INPUT:
 
         - ``a`` -- complex number
-        - ``prec`` -- integer, precision in bits (default 53)
-        - ``series_prec`` -- integer (default 6)
-        - ``var`` -- variable (default 'z')
+        - ``prec`` -- integer; precision in bits (default: 53)
+        - ``series_prec`` -- integer (default: 6)
+        - ``var`` -- variable (default: ``'z'``)
 
         EXAMPLES::
 
@@ -113,25 +111,25 @@ class Lseries_ell(SageObject):
 
         INPUT:
 
-        - ``prec`` -- optional integer (default 53) bits precision
+        - ``prec`` -- integer (default: 53); bits precision
 
-        - ``max_imaginary_part`` -- optional real number (default 0)
+        - ``max_imaginary_part`` -- real number (default: 0)
 
-        - ``max_asymp_coeffs`` -- optional integer (default 40)
+        - ``max_asymp_coeffs`` -- integer (default: 40)
 
-        - ``algorithm`` -- optional string: 'gp' (default), 'pari' or 'magma'
+        - ``algorithm`` -- string; ``'gp'`` (default), ``'pari'``, or ``'magma'``
 
-        If algorithm is "gp", this returns an interface to Tim
-        Dokchitser's program for computing with the L-functions.
+        If algorithm is ``'gp'``, this returns an interface to Tim
+        Dokchitser's program for computing with the `L`-functions.
 
         If algorithm is "pari", this returns instead an interface to Pari's
-        own general implementation of L-functions.
+        own general implementation of `L`-functions.
 
         .. NOTE::
 
             If algorithm='magma', then the precision is in digits rather
-            than bits and the object returned is a Magma L-series, which has
-            different functionality from the Sage L-series.
+            than bits and the object returned is a Magma `L`-series, which has
+            different functionality from the Sage `L`-series.
 
         EXAMPLES::
 
@@ -145,7 +143,7 @@ class Lseries_ell(SageObject):
 
         If the curve has too large a conductor, it is not possible to
         compute with the `L`-series using this command.  Instead a
-        ``RuntimeError`` is raised::
+        :exc:`RuntimeError` is raised::
 
             sage: e = EllipticCurve([1,1,0,-63900,-1964465932632])
             sage: L = e.lseries().dokchitser(15, algorithm='gp')
@@ -156,7 +154,7 @@ class Lseries_ell(SageObject):
         Using the "pari" algorithm::
 
             sage: E = EllipticCurve('37a')
-            sage: L = E.lseries().dokchitser(algorithm="pari")
+            sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L(2)
             0.381575408260711
         """
@@ -210,9 +208,7 @@ class Lseries_ell(SageObject):
 
         - ``prec`` -- integer
 
-        OUTPUT:
-
-        - (string) -- real number to ``prec`` digits of precision as a string.
+        OUTPUT: string; real number to ``prec`` digits of precision as a string
 
         .. NOTE::
 
@@ -235,20 +231,18 @@ class Lseries_ell(SageObject):
 
     def sympow_derivs(self, n, prec, d):
         r"""
-        Return 0-th to `d`-th derivatives of `L( Sym^{(n)}(E,
+        Return `0`-th to `d`-th derivatives of `L( Sym^{(n)}(E,
         \text{edge}))` to ``prec`` digits of precision.
 
         INPUT:
 
-        - n -- integer
+        - ``n`` -- integer
 
-        - prec -- integer
+        - ``prec`` -- integer
 
-        - d -- integer
+        - ``d`` -- integer
 
-        OUTPUT:
-
-        - a string, exactly as output by sympow
+        OUTPUT: string; exactly as output by sympow
 
         .. NOTE::
 
@@ -314,8 +308,8 @@ class Lseries_ell(SageObject):
 
         INPUT:
 
-        - ``x``-- positive floating point number
-        - ``y``-- positive floating point number
+        - ``x`` -- positive floating point number
+        - ``y`` -- positive floating point number
         - ``stepsize`` -- positive floating point number
 
         OUTPUT:
@@ -381,7 +375,7 @@ class Lseries_ell(SageObject):
 
         .. NOTE::
 
-            The L-series is normalized so that the center of the
+            The `L`-series is normalized so that the center of the
             critical strip is 1.
 
         INPUT:
@@ -434,7 +428,7 @@ class Lseries_ell(SageObject):
 
         .. NOTE::
 
-            The L-series is normalized so that the center of the
+            The `L`-series is normalized so that the center of the
             critical strip is 1.
 
         INPUT:
@@ -447,8 +441,8 @@ class Lseries_ell(SageObject):
 
         OUTPUT:
 
-        - dict -- keys are the discriminants `d`, and
-                  values are list of corresponding zeros.
+        - ``dict`` -- keys are the discriminants `d`, and
+          values are list of corresponding zeros
 
         EXAMPLES::
 
@@ -469,11 +463,11 @@ class Lseries_ell(SageObject):
 
         INPUT:
 
-        - ``k`` -- number of terms of the series. If zero or ``None``,
-          use `k = \sqrt{N}`, where `N` is the conductor.
+        - ``k`` -- number of terms of the series; if zero or ``None``,
+          use `k = \sqrt{N}`, where `N` is the conductor
 
-        - ``prec`` -- numerical precision in bits. If zero or ``None``,
-          use a reasonable automatic default.
+        - ``prec`` -- numerical precision in bits; if zero or ``None``,
+          use a reasonable automatic default
 
         OUTPUT:
 
@@ -615,11 +609,11 @@ class Lseries_ell(SageObject):
 
         INPUT:
 
-        - ``k`` -- number of terms of the series. If zero or ``None``,
-          use `k = \sqrt{N}`, where `N` is the conductor.
+        - ``k`` -- number of terms of the series; if zero or ``None``,
+          use `k = \sqrt{N}`, where `N` is the conductor
 
-        - ``prec`` -- numerical precision in bits. If zero or ``None``,
-          use a reasonable automatic default.
+        - ``prec`` -- numerical precision in bits; if zero or ``None``,
+          use a reasonable automatic default
 
         OUTPUT:
 
@@ -718,10 +712,12 @@ class Lseries_ell(SageObject):
             # positive, so L'(E,1) = 0.
             return (R.zero(), Rerror.zero())
 
+        from sage.functions.exp_integral import exponential_integral_1
+
         an = self.__E.anlist(k)  # list of Sage Integers
         pi = R.pi()
         sqrtN = R(self.__E.conductor()).sqrt()
-        v = exp_integral.exponential_integral_1(2*pi/sqrtN, k)
+        v = exponential_integral_1(2*pi/sqrtN, k)
 
         # Compute series sum and accumulate floating point errors
         L = R.zero()
@@ -751,7 +747,7 @@ class Lseries_ell(SageObject):
 
     def __call__(self, s):
         r"""
-        Returns the value of the L-series of the elliptic curve E at s, where s
+        Return the value of the `L`-series of the elliptic curve E at s, where s
         must be a real number.
 
         .. NOTE::
@@ -775,7 +771,7 @@ class Lseries_ell(SageObject):
 
     def L1_vanishes(self):
         r"""
-        Returns whether or not `L(E,1) = 0`. The result is provably
+        Return whether or not `L(E,1) = 0`. The result is provably
         correct if the Manin constant of the associated optimal
         quotient is <= 2.  This hypothesis on the Manin constant
         is true for all curves of conductor <= 40000 (by Cremona) and
@@ -843,7 +839,7 @@ class Lseries_ell(SageObject):
             sage: E.lseries().L_ratio()
             2
 
-        See :trac:`3651` and :trac:`15299`::
+        See :issue:`3651` and :issue:`15299`::
 
             sage: EllipticCurve([0,0,0,-193^2,0]).sha().an()
             4
@@ -924,14 +920,12 @@ class Lseries_ell(SageObject):
 
         INPUT:
 
-        - ``N`` -- (default: ``None``) If not ``None``, the conductor of the
+        - ``N`` -- (default: ``None``) if not ``None``, the conductor of the
           elliptic curve attached to ``self``. This is passable so that zero
           sum computations can be done on curves for which the conductor
           has been precomputed.
 
-        OUTPUT:
-
-        A ``LFunctionZeroSum_EllipticCurve`` instance.
+        OUTPUT: a ``LFunctionZeroSum_EllipticCurve`` instance
 
         EXAMPLES::
 

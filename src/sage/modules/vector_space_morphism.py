@@ -329,10 +329,11 @@ TESTS::
 ####################################################################################
 
 
-import sage.modules.matrix_morphism as matrix_morphism
 import sage.modules.free_module_morphism as free_module_morphism
-from . import vector_space_homspace
-from sage.structure.element import is_Matrix
+import sage.modules.matrix_morphism as matrix_morphism
+from sage.modules import vector_space_homspace
+from sage.structure.element import Matrix
+
 
 def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     r"""
@@ -344,7 +345,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     the same field that are the domain and codomain
     (respectively) of the linear transformation.
 
-    ``side`` is a keyword that is either 'left' or 'right'.
+    ``side`` is a keyword that is either ``'left'`` or ``'right'``.
     When a matrix is used to specify a linear transformation,
     as in the first two call formats below, you may specify
     if the function is given by matrix multiplication with
@@ -692,20 +693,20 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         ArithmeticError: some image of the function is not in the codomain, because
         element [1, 0] is not in free module
     """
-    from sage.matrix.constructor import matrix
-    from sage.modules.module import is_VectorSpace
-    from sage.modules.free_module import VectorSpace
     from sage.categories.homset import Hom
+    from sage.matrix.constructor import matrix
+    from sage.modules.free_module import VectorSpace
+    from sage.modules.module import Module
     try:
-        from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense
+        from sage.modules.vector_callable_symbolic_dense import (
+            Vector_callable_symbolic_dense,
+        )
     except ImportError:
         Vector_callable_symbolic_dense = ()
 
     if side not in ['left', 'right']:
-        raise ValueError("side must be 'left' or 'right', not {0}".format(side))
-    if not (is_Matrix(arg0) or is_VectorSpace(arg0)):
-        raise TypeError('first argument must be a matrix or a vector space, not {0}'.format(arg0))
-    if is_Matrix(arg0):
+        raise ValueError("side must be 'left' or 'right', not {}".format(side))
+    if isinstance(arg0, Matrix):
         R = arg0.base_ring()
         if not R.is_field():
             try:
@@ -719,14 +720,15 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         arg2 = arg0
         arg0 = VectorSpace(R, arg2.nrows())
         arg1 = VectorSpace(R, arg2.ncols())
-    elif is_VectorSpace(arg0):
-        if not is_VectorSpace(arg1):
+    elif isinstance(arg0, Module) and arg0.base_ring().is_field():
+        if not (isinstance(arg1, Module) and arg1.base_ring().is_field()):
             msg = 'if first argument is a vector space, then second argument must be a vector space, not {0}'
             raise TypeError(msg.format(arg1))
         if arg0.base_ring() != arg1.base_ring():
             msg = 'vector spaces must have the same field of scalars, not {0} and {1}'
             raise TypeError(msg.format(arg0.base_ring(), arg1.base_ring()))
-
+    else:
+        raise TypeError('first argument must be a matrix or a vector space, not {}'.format(arg0))
     # Now arg0 = domain D, arg1 = codomain C, and
     #   both are vector spaces with common field of scalars
     #   use these to make a VectorSpaceHomSpace
@@ -738,7 +740,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     # Examine arg2 as the "rule" for the linear transformation
     # Pass on matrices, Python functions and lists to homspace call
     # Convert symbolic function here, to a matrix
-    if is_Matrix(arg2):
+    if isinstance(arg2, Matrix):
         if side == 'right':
             arg2 = arg2.transpose()
     elif isinstance(arg2, (list, tuple)):
@@ -760,7 +762,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
             msg = 'symbolic function must be linear in all the inputs:\n' + e.args[0]
             raise ValueError(msg)
         # have matrix with respect to standard bases, now consider user bases
-        images = [v*arg2 for v in D.basis()]
+        images = [v * arg2 for v in D.basis()]
         try:
             arg2 = matrix([C.coordinates(C(a)) for a in images])
         except (ArithmeticError, TypeError) as e:
@@ -776,13 +778,16 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     # __init__ will check matrix sizes versus domain/codomain dimensions
     return H(arg2)
 
-def is_VectorSpaceMorphism(x):
+
+def is_VectorSpaceMorphism(x) -> bool:
     r"""
-    Returns ``True`` if ``x`` is a vector space morphism (a linear transformation).
+    Return ``True`` if ``x`` is a vector space morphism (a linear transformation).
+
+    This function is deprecated.
 
     INPUT:
 
-    ``x`` - anything
+    - ``x`` -- anything
 
     OUTPUT:
 
@@ -793,26 +798,34 @@ def is_VectorSpaceMorphism(x):
 
         sage: V = QQ^2; f = V.hom([V.1,-2*V.0])
         sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism(f)
+        doctest:warning...
+        DeprecationWarning: is_VectorSpaceMorphism is deprecated;
+        use isinstance(..., VectorSpaceMorphism) or categories instead
+        See https://github.com/sagemath/sage/issues/37731 for details.
         True
         sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37731,
+                "is_VectorSpaceMorphism is deprecated; "
+                "use isinstance(..., VectorSpaceMorphism) or categories instead")
     return isinstance(x, VectorSpaceMorphism)
 
 
 class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
 
-    def __init__(self, homspace, A, side="left"):
+    def __init__(self, homspace, A, side='left'):
         r"""
         Create a linear transformation, a morphism between vector spaces.
 
         INPUT:
 
-        -  ``homspace`` - a homspace (of vector spaces) to serve
-           as a parent for the linear transformation and a home for
-           the domain and codomain of the morphism
-        -  ``A`` - a matrix representing the linear transformation,
-           which will act on vectors placed to the left of the matrix
+        - ``homspace`` -- a homspace (of vector spaces) to serve
+          as a parent for the linear transformation and a home for
+          the domain and codomain of the morphism
+        - ``A`` -- a matrix representing the linear transformation,
+          which will act on vectors placed to the left of the matrix
 
         EXAMPLES:
 
@@ -855,11 +868,11 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             sage: type(rho)
             <class 'sage.modules.vector_space_morphism.VectorSpaceMorphism'>
         """
-        if not vector_space_homspace.is_VectorSpaceHomspace(homspace):
-            raise TypeError('homspace must be a vector space hom space, not {0}'.format(homspace))
+        if not isinstance(homspace, vector_space_homspace.VectorSpaceHomspace):
+            raise TypeError('homspace must be a vector space hom space, not {}'.format(homspace))
         if isinstance(A, matrix_morphism.MatrixMorphism):
             A = A.matrix()
-        if not is_Matrix(A):
+        if not isinstance(A, Matrix):
             msg = 'input must be a matrix representation or another matrix morphism, not {0}'
             raise TypeError(msg.format(A))
         # now have a vector space homspace, and a matrix, check compatibility

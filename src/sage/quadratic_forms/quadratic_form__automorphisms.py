@@ -22,9 +22,7 @@ def basis_of_short_vectors(self, show_lengths=False):
     r"""
     Return a basis for `\ZZ^n` made of vectors with minimal lengths `Q(v)`.
 
-    OUTPUT:
-
-    a tuple of vectors, and optionally a tuple of values for each vector.
+    OUTPUT: a tuple of vectors, and optionally a tuple of values for each vector
 
     This uses :pari:`qfminim`.
 
@@ -78,10 +76,8 @@ def basis_of_short_vectors(self, show_lengths=False):
         vector_list_by_length[l].append(vector([-x for x in v]))
 
     # Make a matrix from the column vectors (in order of ascending length).
-    sorted_list = []
-    for i in range(len(vector_list_by_length)):
-        for v in vector_list_by_length[i]:
-            sorted_list.append(v)
+    sorted_list = [v for i in range(len(vector_list_by_length))
+                   for v in vector_list_by_length[i]]
     sorted_matrix = Matrix(sorted_list).transpose()
 
     # Determine a basis of vectors of minimal length
@@ -107,8 +103,8 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
 
     - ``len_bound`` -- bound for the length of the vectors
 
-    - ``up_to_sign_flag`` -- (default: ``False``) if set to True, then
-      only one of the vectors of the pair `[v, -v]` is listed.
+    - ``up_to_sign_flag`` -- boolean (default: ``False``); if set to ``True``,
+      then only one of the vectors of the pair `[v, -v]` is listed
 
     OUTPUT:
 
@@ -205,7 +201,7 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     parilens = pari(r"(M,v) -> vector(#v, i, (v[i]~ * M * v[i])\2)")(self, parilist)
 
     # Sort the vectors into lists by their length
-    vec_sorted_list = [list() for i in range(len_bound)]
+    vec_sorted_list = [[] for i in range(len_bound)]
     for i in range(len(parilist)):
         length = int(parilens[i])
         # In certain trivial cases, PARI can sometimes return longer
@@ -233,7 +229,7 @@ def short_primitive_vector_list_up_to_length(self, len_bound, up_to_sign_flag=Fa
 
         This processes the PARI/GP output to always give elements of type `\ZZ`.
 
-    OUTPUT: a list of lists of vectors.
+    OUTPUT: list of lists of vectors
 
     EXAMPLES::
 
@@ -264,7 +260,7 @@ def _compute_automorphisms(self):
 
     This uses :pari:`qfauto`.
 
-    OUTPUT: None, this just caches the result.
+    OUTPUT: none, this just caches the result
 
     TESTS::
 
@@ -340,7 +336,7 @@ def automorphisms(self):
     """
     Return the list of the automorphisms of the quadratic form.
 
-    OUTPUT: a list of matrices
+    OUTPUT: list of matrices
 
     EXAMPLES::
 
@@ -349,7 +345,7 @@ def automorphisms(self):
         48
         sage: 2^3 * factorial(3)
         48
-        sage: len(Q.automorphisms())
+        sage: len(Q.automorphisms())                                                    # needs sage.libs.gap
         48
 
     ::
@@ -357,14 +353,14 @@ def automorphisms(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
         sage: Q.number_of_automorphisms()
         16
-        sage: aut = Q.automorphisms()
-        sage: len(aut)
+        sage: aut = Q.automorphisms()                                                   # needs sage.libs.gap
+        sage: len(aut)                                                                  # needs sage.libs.gap
         16
-        sage: all(Q(M) == Q for M in aut)
+        sage: all(Q(M) == Q for M in aut)                                               # needs sage.libs.gap
         True
 
         sage: Q = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
-        sage: sorted(Q.automorphisms())
+        sage: sorted(Q.automorphisms())                                                 # needs sage.libs.gap
         [
         [-1  0  0]  [1 0 0]
         [ 0 -1  0]  [0 1 0]
@@ -379,7 +375,7 @@ def number_of_automorphisms(self):
     Return the number of automorphisms (of det `1` and `-1`) of
     the quadratic form.
 
-    OUTPUT: an integer `\geq 2`.
+    OUTPUT: integer `\geq 2`
 
     EXAMPLES::
 
@@ -411,7 +407,7 @@ def set_number_of_automorphisms(self, num_autos):
     internal list of external initializations, accessible by the
     method :meth:`list_external_initializations`.
 
-    OUTPUT: None
+    OUTPUT: none
 
     EXAMPLES::
 

@@ -24,7 +24,6 @@ where `E`, `V`, and `F` denote the number of orbits of `e`, `v`, and
 
 We make several optimizations to the naive algorithm, which are
 described throughout the file.
-
 """
 
 # ****************************************************************************
@@ -143,7 +142,7 @@ cdef class simple_connected_genus_backtracker:
         cdef int *w = <int *> self.mem.malloc((self.num_verts + self.num_darts) * sizeof(int))
         cdef int *s = <int *> self.mem.malloc(2 * (self.num_darts - self.num_verts) * sizeof(int))
 
-        cdef int i, j, du, dv, u, v
+        cdef int i, j, dv, u, v
 
         for v in range(self.num_verts):
             if not G.has_vertex(v):
@@ -236,7 +235,6 @@ cdef class simple_connected_genus_backtracker:
             sage: gb = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
             sage: gb.get_embedding()
             {}
-
         """
         if not self.num_verts:
             return {}
@@ -341,7 +339,6 @@ cdef class simple_connected_genus_backtracker:
         before the flip, the cycle breaks into three.  Otherwise, the number of
         cycles stays the same.
         """
-        cdef int cycles = 0
         cdef int *w = self.vertex_darts[v]
         cdef int *face_map = self.face_map
 
@@ -393,7 +390,7 @@ cdef class simple_connected_genus_backtracker:
         """
         Count all cycles.
         """
-        cdef int i, j, c, m
+        cdef int i
         self.num_cycles = 0
 
         for i in range(self.num_darts):
@@ -404,7 +401,7 @@ cdef class simple_connected_genus_backtracker:
 
     def genus(self, int style=1, int cutoff=0, bint record_embedding=False):
         r"""
-        Compute the minimal or maximal genus of self's graph.
+        Compute the minimal or maximal genus of ``self``'s graph.
 
         Note, this is a remarkably naive algorithm for a very difficult problem.
         Most interesting cases will take millennia to finish, with the exception
@@ -412,10 +409,10 @@ cdef class simple_connected_genus_backtracker:
 
         INPUT:
 
-        - ``style`` -- integer (default: ``1``); find minimum genus if 1,
+        - ``style`` -- integer (default: `1`); find minimum genus if 1,
           maximum genus if 2
 
-        - ``cutoff`` -- integer (default: ``0``); stop searching if search style
+        - ``cutoff`` -- integer (default: `0`); stop searching if search style
           is 1 and ``genus`` `\leq` ``cutoff``, or if style is 2 and ``genus``
           `\geq` ``cutoff``.  This is useful where the genus of the graph has a
           known bound.
@@ -424,9 +421,7 @@ cdef class simple_connected_genus_backtracker:
           to remember the best embedding seen. This embedding can be retrieved
           with ``self.get_embedding()``.
 
-        OUTPUT:
-
-            the minimal or maximal genus for self's graph.
+        OUTPUT: the minimal or maximal genus for ``self``'s graph
 
         EXAMPLES::
 
@@ -447,7 +442,7 @@ cdef class simple_connected_genus_backtracker:
             sage: gb.genus()
             0
         """
-        cdef int g, i
+        cdef int g
 
         # in the original genus implementation, this case resulted in infinite
         # recursion.  oops.  Let's skip that.
@@ -478,12 +473,12 @@ cdef class simple_connected_genus_backtracker:
     cdef int genus_backtrack(self,
                              int cutoff,
                              bint record_embedding,
-                             (int (*)(simple_connected_genus_backtracker, int, bint, int))check_embedding) noexcept:
+                             (int (*)(simple_connected_genus_backtracker, int, bint, int) noexcept) check_embedding) noexcept:
         """
         Here's the main backtracking routine.
 
-        We iterate over all embeddings of self's graph by considering all
-        cyclic orderings of `self.vertex_darts`.  We use the Steinhaus-
+        We iterate over all embeddings of ``self``'s graph by considering all
+        cyclic orderings of ``self.vertex_darts``.  We use the Steinhaus-
         Johnson-Trotter algorithm to enumerate these by walking over a poly-ary
         Gray code, and each time the Gray code would flip a bit, we apply the
         next adjacent transposition from S-J-T at that vertex.
@@ -590,7 +585,6 @@ def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=Tru
     REFERENCES:
 
     [1] http://www.springerlink.com/content/0776127h0r7548v7/
-
     """
     cdef int style, cutoff
     oG = G  # original graph

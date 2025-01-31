@@ -91,7 +91,6 @@ elements. But some old stuff in Sage doesn't use it.  **Volunteers for
 refactoring are welcome!**
 
 
-
 The parent
 ----------
 
@@ -114,54 +113,30 @@ This base class provides a lot more methods than a general parent::
      '_coerce_',
      '_coerce_c',
      '_coerce_impl',
-     '_coerce_try',
      '_default_category',
      '_gens',
-     '_ideal_class_',
-     '_ideal_monoid',
      '_latex_names',
      '_list',
      '_one_element',
      '_pseudo_fraction_field',
-     '_random_nonzero_element',
-     '_unit_ideal',
      '_zero_element',
-     '_zero_ideal',
      'algebraic_closure',
+     'an_embedding',
      'base_extend',
-     'class_group',
-     'content',
-     'derivation',
-     'derivation_module',
      'divides',
      'epsilon',
      'extension',
      'fraction_field',
-     'frobenius_endomorphism',
-     'gcd',
      'gen',
      'gens',
-     'ideal',
-     'ideal_monoid',
      'integral_closure',
-     'is_commutative',
      'is_field',
-     'is_integral_domain',
-     'is_integrally_closed',
-     'is_noetherian',
-     'is_prime_field',
-     'is_subring',
-     'krull_dimension',
-     'localization',
      'ngens',
      'one',
      'order',
      'prime_subfield',
-     'principal_ideal',
      'random_element',
-     'unit_ideal',
      'zero',
-     'zero_ideal',
      'zeta',
      'zeta_order']
 
@@ -725,7 +700,7 @@ A first note on performance
 ---------------------------
 
 The category framework is sometimes blamed for speed regressions, as in
-:trac:`9138` and :trac:`11900`. But if the category framework is *used
+:issue:`9138` and :issue:`11900`. But if the category framework is *used
 properly*, then it is fast. For illustration, we determine the time needed to
 access an attribute inherited from the element class. First, we consider an
 element that uses the class that we implemented above, but does not use the
@@ -839,7 +814,7 @@ The four axioms requested for coercions
           sage: ZZ(P2.gen(1))
           Traceback (most recent call last):
           ...
-          TypeError: not a constant polynomial
+          TypeError: v is not a constant polynomial
 
       Hence, we only have a *partial* map. This is fine for a *conversion*,
       but a partial map does not qualify as a *coercion*.
@@ -860,7 +835,9 @@ The four axioms requested for coercions
       rational field is a homomorphism of euclidean domains::
 
           sage: QQ.coerce_map_from(ZZ).category_for()
-          Join of Category of euclidean domains and Category of infinite sets
+          Join of Category of euclidean domains
+          and Category of noetherian rings
+          and Category of infinite sets
           and Category of metric spaces
 
       .. end of output
@@ -1429,7 +1406,7 @@ Being able to do arithmetics involving elements of different parents, with the
 automatic creation of a pushout to contain the result, is certainly
 convenient\---but one should not rely on it, if speed matters. Simply the
 conversion of elements into different parents takes time. Moreover, by
-:trac:`14058`, the pushout may be subject to Python's cyclic garbage
+:issue:`14058`, the pushout may be subject to Python's cyclic garbage
 collection. Hence, if one does not keep a strong reference to it, the same
 parent may be created repeatedly, which is a waste of time. In the following
 example, we illustrate the slow\--down resulting from blindly relying on

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Slot wrappers
 
@@ -30,7 +31,7 @@ Pure Python classes have normal methods, not slot wrappers::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .string import bytes_to_str
+from sage.cpython.string import bytes_to_str
 
 
 def wrapperdescr_call(slotwrapper, self, *args, **kwds):
@@ -43,13 +44,13 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
 
     INPUT:
 
-    - ``slotwrapper`` -- a slot wrapper (for example ``int.__add__``).
+    - ``slotwrapper`` -- a slot wrapper (for example ``int.__add__``)
 
     - ``self`` -- the first positional argument. Normally, this should
       be of the correct type (an ``int`` when calling ``int.__add__``).
       However, this check is skipped: you can pass an arbitrary object.
 
-    - ``*args``, ``**kwds`` -- further arguments.
+    - ``*args``, ``**kwds`` -- further arguments
 
     .. WARNING::
 
@@ -87,7 +88,7 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
     return wrapperdescr_fastcall(slotwrapper, self, args, kwds)
 
 
-cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds) noexcept:
+cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds):
     # Cython implementation of wrapperdescr_call
     cdef wrapperbase* slotdef = slotwrapper.d_base
 

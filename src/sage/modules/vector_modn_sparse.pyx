@@ -130,7 +130,7 @@ cdef bint is_entry_zero_unsafe(c_vector_modint* v, Py_ssize_t n) noexcept:
     """
     return binary_search0_modn(v.positions, v.num_nonzero, n) == -1
 
-cdef object to_list(c_vector_modint* v) noexcept:
+cdef object to_list(c_vector_modint* v):
     """
     Return a Python list of 2-tuples (i,x), where x=v[i] runs
     through the nonzero elements of x, in order.
@@ -152,7 +152,6 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
     if n < 0 or n >= v.degree:
         raise IndexError("index (=%s) must be between 0 and %s" % (n, v.degree-1))
     cdef Py_ssize_t i, m, ins
-    cdef Py_ssize_t m2, ins2
     cdef Py_ssize_t *pos
     cdef int_fast64_t *e
 
@@ -174,7 +173,7 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
             e = v.entries
             pos = v.positions
             allocate_c_vector_modint(v, v.num_nonzero - 1)
-            for i from 0 <= i < m:
+            for i in range(m):
                 v.entries[i] = e[i]
                 v.positions[i] = pos[i]
             for i from m < i < v.num_nonzero:
@@ -198,7 +197,7 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
         e = v.entries
         pos = v.positions
         allocate_c_vector_modint(v, v.num_nonzero)
-        for i from 0 <= i < ins:
+        for i in range(ins):
             v.entries[i] = e[i]
             v.positions[i] = pos[i]
         v.entries[ins] = x
@@ -252,7 +251,7 @@ cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v,
     while i < v.num_nonzero or j < w.num_nonzero:
         if i >= v.num_nonzero:   # just copy w in
             z.positions[k] = w.positions[j]
-            z.entries[k] = (multiple*w.entries[j])%v.p
+            z.entries[k] = (multiple * w.entries[j]) % v.p
             j = j + 1
             k = k + 1
         elif j >= w.num_nonzero:  # just copy v in
@@ -266,7 +265,7 @@ cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v,
             i = i + 1
             k = k + 1
         elif v.positions[i] > w.positions[j]: # copy entry from w in
-            s = (multiple*w.entries[j])%v.p
+            s = (multiple * w.entries[j]) % v.p
             if s != 0:
                 z.positions[k] = w.positions[j]
                 z.entries[k] = s

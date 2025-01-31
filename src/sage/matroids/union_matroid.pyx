@@ -1,6 +1,4 @@
-
 from sage.matroids.matroid cimport Matroid
-
 
 cdef class MatroidUnion(Matroid):
     r"""
@@ -21,26 +19,24 @@ cdef class MatroidUnion(Matroid):
         {}
         Matroid of rank 1 on 2 elements with 2 bases
         sage: M.bases()
-        Iterator over a system of subsets
-        sage: M.circuits()
+        SetSystem of 2 sets over 5 elements
+        sage: list(M.circuits())
         [frozenset({3, 4})]
 
     INPUT:
 
-    - ``matroids`` -- a iterator of matroids.
+    - ``matroids`` -- iterator
 
-    OUTPUT:
-
-    A ``MatroidUnion`` instance, it's a matroid union of all matroids in ``matroids``.
+    OUTPUT: a ``MatroidUnion`` instance; a matroid union of all matroids in ``matroids``
     """
     def __init__(self, matroids):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
             sage: from sage.matroids.union_matroid import *
-            sage: MatroidUnion([matroids.Uniform(2,4),matroids.Uniform(5,8)])
+            sage: MatroidUnion([matroids.Uniform(2, 4), matroids.Uniform(5, 8)])
             Matroid of rank 7 on 8 elements as matroid union of
             Matroid of rank 2 on 4 elements with circuit-closures
             {2: {{0, 1, 2, 3}}}
@@ -53,15 +49,13 @@ cdef class MatroidUnion(Matroid):
             E.update(M.groundset())
         self._groundset = frozenset(E)
 
-    cpdef groundset(self) noexcept:
+    cpdef frozenset groundset(self):
         """
         Return the groundset of the matroid.
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -72,7 +66,7 @@ cdef class MatroidUnion(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X) noexcept:
+    cpdef int _rank(self, frozenset X) except? -1:
         r"""
         Return the rank of a set ``X``.
 
@@ -81,36 +75,33 @@ cdef class MatroidUnion(Matroid):
 
         INPUT:
 
-        - ``X`` -- an object with Python's ``frozenset`` interface.
+        - ``X`` -- an object with Python's ``frozenset`` interface
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
             sage: from sage.matroids.union_matroid import *
             sage: M = MatroidSum([matroids.Uniform(2,4),matroids.Uniform(2,4)])
-            sage: M._rank([(0,0),(1,0)])
+            sage: M._rank(frozenset([(0,0),(1,0)]))
             2
-            sage: M._rank([(0,0),(0,1),(0,2),(1,0),(1,1)])
+            sage: M._rank(frozenset([(0,0),(0,1),(0,2),(1,0),(1,1)]))
             4
 
         ALGORITHM:
 
             Matroid intersection of a matroid sum and partition matroid.
-
         """
         summands = []
         for e in self.matroids:
             summands.append(e.delete(e.groundset()-X))
         sum_matroid = MatroidSum(summands)
         d = {}
-        for (i,x) in sum_matroid.groundset():
+        for i, x in sum_matroid.groundset():
             if x not in d:
-                d[x]=set()
+                d[x] = set()
             d[x].add(i)
-        part_matroid = PartitionMatroid([[(i,x) for i in d[x]] for x in d])
+        part_matroid = PartitionMatroid([[(i, x) for i in d[x]] for x in d])
         return len(sum_matroid._intersection_unweighted(part_matroid))
 
     def _repr_(self):
@@ -141,7 +132,7 @@ cdef class MatroidSum(Matroid):
 
     INPUT:
 
-    - ``matroids`` -- a iterator of matroids.
+    - ``matroids`` -- iterator of matroids
 
     OUTPUT:
 
@@ -149,7 +140,7 @@ cdef class MatroidSum(Matroid):
     """
     def __init__(self, summands):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -165,7 +156,7 @@ cdef class MatroidSum(Matroid):
         E = set()
         for i in range(len(self.summands)):
             g = self.summands[i].groundset()
-            E.update(zip([i]*len(g),g))
+            E.update(zip([i] * len(g), g))
         self._groundset = frozenset(E)
 
     def _repr_(self):
@@ -187,15 +178,13 @@ cdef class MatroidSum(Matroid):
             S = S + M._repr_() +"\n"
         return S[:-1]
 
-    cpdef groundset(self) noexcept:
+    cpdef frozenset groundset(self):
         """
         Return the groundset of the matroid.
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -206,7 +195,7 @@ cdef class MatroidSum(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X) noexcept:
+    cpdef int _rank(self, frozenset X) except? -1:
         r"""
         Return the rank of a set ``X``.
 
@@ -215,30 +204,28 @@ cdef class MatroidSum(Matroid):
 
         INPUT:
 
-        - ``X`` -- an object with Python's ``frozenset`` interface.
+        - ``X`` -- an object with Python's ``frozenset`` interface
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
             sage: from sage.matroids.union_matroid import *
             sage: M = MatroidSum([matroids.Uniform(2,4),matroids.Uniform(2,4)])
-            sage: M._rank([(0,0),(1,0)])
+            sage: M._rank(frozenset([(0, 0), (1, 0)]))
             2
-            sage: M._rank([(0,0),(0,1),(0,2),(1,0),(1,1)])
+            sage: M._rank(frozenset([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1)]))
             4
         """
         partition = {}
-        for (i,x) in X:
+        for (i, x) in X:
             if i not in partition:
                 partition[i] = set()
             partition[i].add(x)
-        rk = 0
-        for i, Xi in partition.iteritems():
-            rk+= self.summands[i]._rank(Xi)
-        return rk
+        r = 0
+        for (i, Xi) in partition.iteritems():
+            r += self.summands[i]._rank(frozenset(Xi))
+        return r
 
 cdef class PartitionMatroid(Matroid):
     r"""
@@ -251,7 +238,7 @@ cdef class PartitionMatroid(Matroid):
 
     INPUT:
 
-    - ``partition`` -- an iterator of disjoint sets.
+    - ``partition`` -- iterator of disjoint sets
 
     OUTPUT:
 
@@ -259,7 +246,7 @@ cdef class PartitionMatroid(Matroid):
     """
     def __init__(self, partition):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -286,15 +273,13 @@ cdef class PartitionMatroid(Matroid):
             E.update(P)
         self._groundset = frozenset(E)
 
-    cpdef groundset(self) noexcept:
+    cpdef frozenset groundset(self):
         """
         Return the groundset of the matroid.
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -305,7 +290,7 @@ cdef class PartitionMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X) noexcept:
+    cpdef int _rank(self, frozenset X) except? -1:
         r"""
         Return the rank of a set ``X``.
 
@@ -314,19 +299,17 @@ cdef class PartitionMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- an object with Python's ``frozenset`` interface.
+        - ``X`` -- an object with Python's ``frozenset`` interface
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
             sage: from sage.matroids.union_matroid import *
-            sage: M = PartitionMatroid([[1,2,3],[4,5,6]])
-            sage: M._rank([1,5])
+            sage: M = PartitionMatroid([[1, 2, 3], [4, 5, 6]])
+            sage: M._rank(frozenset([1, 5]))
             2
-            sage: M._rank([1,2])
+            sage: M._rank(frozenset([1, 2]))
             1
         """
         return len(set(map(self.p.get, X)))
@@ -338,7 +321,7 @@ cdef class PartitionMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.union_matroid import *
-            sage: PartitionMatroid([[1,2,3],[4,5,6]])
+            sage: PartitionMatroid([[1, 2, 3], [4, 5, 6]])
             Partition Matroid of rank 2 on 6 elements
         """
         return "Partition " + Matroid._repr_(self)

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite Complex Reflection Groups
 """
@@ -118,7 +119,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 The category of well generated finite complex
                 reflection groups is currently implemented as an
-                axiom. See discussion on :trac:`11187`. This may be a
+                axiom. See discussion on :issue:`11187`. This may be a
                 bit of overkill. Still it's nice to have a full
                 subcategory.
 
@@ -200,7 +201,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W._test_degrees()                    # optional - gap3
 
                 sage: W = SymmetricGroup(5)                                             # needs sage.groups
-                sage: W._test_degrees()                                                 # needs sage.groups
+                sage: W._test_degrees()                                                 # needs sage.groups sage.rings.number_field
 
             We now break the implementation of W.degrees and check that this is caught::
 
@@ -219,7 +220,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
             We restore W to its normal state::
 
                 sage: del W.degrees                                                     # needs sage.groups
-                sage: W._test_degrees()                                                 # needs sage.groups
+                sage: W._test_degrees()                                                 # needs sage.groups sage.rings.number_field
 
             See the documentation for :class:`TestSuite` for more information.
             """
@@ -255,7 +256,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W._test_codegrees()                  # optional - gap3
 
                 sage: W = SymmetricGroup(5)                                             # needs sage.groups
-                sage: W._test_codegrees()                                               # needs sage.groups
+                sage: W._test_codegrees()                                               # needs sage.groups sage.rings.number_field
 
             We now break the implementation of W.degrees and check that this is caught::
 
@@ -274,7 +275,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
             We restore W to its normal state::
 
                 sage: del W.codegrees                                                   # needs sage.groups
-                sage: W._test_codegrees()                                               # needs sage.groups
+                sage: W._test_codegrees()                                               # needs sage.groups sage.rings.number_field
 
             See the documentation for :class:`TestSuite` for more information.
             """
@@ -321,8 +322,10 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: W = ColoredPermutations(4,3)
                 sage: W.number_of_reflection_hyperplanes()
                 15
-                sage: W = ReflectionGroup((4,2,3))          # optional - gap3
-                sage: W.number_of_reflection_hyperplanes()  # optional - gap3
+
+                sage: # optional - gap3, needs sage.combinat
+                sage: W = ReflectionGroup((4,2,3))
+                sage: W.number_of_reflection_hyperplanes()
                 15
             """
             from sage.rings.integer_ring import ZZ
@@ -343,7 +346,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: [SymmetricGroup(i).number_of_reflections()                        # needs sage.groups
+                sage: [SymmetricGroup(i).number_of_reflections()                        # needs sage.groups sage.rings.number_field
                 ....:  for i in range(int(8))]
                 [0, 0, 1, 3, 6, 10, 15, 21]
 
@@ -487,7 +490,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 True
 
                 sage: W = ColoredPermutations(4,3)                                      # needs sage.combinat
-                sage: W.is_real()                                                       # needs sage.combinat sage.groups
+                sage: W.is_real()                                                       # needs sage.combinat sage.graphs
                 False
 
             .. TODO::
@@ -547,6 +550,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat
                 sage: W = ColoredPermutations(3, 2)
                 sage: P = W.milnor_fiber_poset()
                 sage: P
@@ -555,29 +559,29 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: sum(x**P.rank(elt) for elt in P)
                 18*x^2 + 15*x + 1
 
-                sage: W = ReflectionGroup(4)                     # optional - gap3
-                sage: P = W.milnor_fiber_poset()                 # optional - gap3
-                sage: P                                          # optional - gap3
+                sage: # optional - gap3
+                sage: W = ReflectionGroup(4)
+                sage: P = W.milnor_fiber_poset(); P
                 Finite meet-semilattice containing 41 elements
-                sage: sum(x**P.rank(elt) for elt in P)           # optional - gap3
+                sage: sum(x**P.rank(elt) for elt in P)
                 24*x^2 + 16*x + 1
 
-                sage: W = ReflectionGroup([4,2,2])               # optional - gap3
-                sage: W.is_well_generated()                      # optional - gap3
+                sage: # optional - gap3
+                sage: W = ReflectionGroup([4,2,2])
+                sage: W.is_well_generated()
                 False
-                sage: P = W.milnor_fiber_poset()                 # optional - gap3
-                sage: P                                          # optional - gap3
+                sage: P = W.milnor_fiber_poset(); P
                 Finite poset containing 47 elements
-                sage: sum(x**P.rank(elt) for elt in P)           # optional - gap3
+                sage: sum(x**P.rank(elt) for elt in P)
                 16*x^3 + 24*x^2 + 6*x + 1
-                sage: P.is_meet_semilattice()                    # optional - gap3
+                sage: P.is_meet_semilattice()
                 False
             """
             I = self.index_set()
             data = {}
-            next_reprs = {(): [g for g in self]}
+            next_reprs = {(): list(self)}
             next_cosets = {(): [frozenset([g]) for g in next_reprs[()]]}
-            next_level = set((i, ()) for i in range(len(next_cosets[()])))
+            next_level = {(i, ()) for i in range(len(next_cosets[()]))}
             while next_level:
                 cur = next_level
                 cosets = next_cosets
@@ -727,8 +731,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``in_unitary_group`` -- (default: ``False``) if ``True``,
-              the reflection length is computed in the unitary group
+            - ``in_unitary_group`` -- boolean (default: ``False``); if
+              ``True``, the reflection length is computed in the unitary group
               which is the dimension of the move space of ``self``
 
             EXAMPLES::
@@ -834,28 +838,26 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                   Otherwise, the standard Coxeter element is used as unique
                   maximal element.
 
-                - ``in_unitary_group`` (default:``True``) determines the
+                - ``in_unitary_group`` -- (default: ``True``) determines the
                   length function used to compute the order.
                   For real groups, both possible orders coincide, and for
                   complex non-real groups, the order in the unitary group
                   is much faster to compute.
 
-                - ``return_lengths`` (default:``False``) whether or not
-                  to also return the lengths of the elements.
+                - ``return_lengths`` -- (default: ``False``) whether or not
+                  to also return the lengths of the elements
 
                 EXAMPLES::
 
-                    sage: W = ReflectionGroup((1,1,3))     # optional - gap3
-
-                    sage: sorted(w.reduced_word()          # optional - gap3
+                    sage: # optional - gap3
+                    sage: W = ReflectionGroup((1,1,3))
+                    sage: sorted(w.reduced_word()
                     ....:        for w in W.absolute_order_ideal())
                     [[], [1], [1, 2], [1, 2, 1], [2]]
-
-                    sage: sorted(w.reduced_word()          # optional - gap3
+                    sage: sorted(w.reduced_word()
                     ....:        for w in W.absolute_order_ideal(W.from_reduced_word([2,1])))
                     [[], [1], [1, 2, 1], [2], [2, 1]]
-
-                    sage: sorted(w.reduced_word()          # optional - gap3
+                    sage: sorted(w.reduced_word()
                     ....:        for w in W.absolute_order_ideal(W.from_reduced_word([2])))
                     [[], [2]]
 
@@ -918,8 +920,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                   of ``self`` is given, it is used as the underlying set (only
                   cover relations are checked).
 
-                - ``in_unitary_group`` -- (default: ``False``) if ``False``, the
-                  relation is given by `\sigma \leq \tau` if
+                - ``in_unitary_group`` -- boolean (default: ``False``); if
+                  ``False``, the relation is given by `\sigma \leq \tau` if
                   `l_R(\sigma) + l_R(\sigma^{-1}\tau) = l_R(\tau)`;
                   if ``True``, the relation is given by `\sigma \leq \tau` if
                   `\dim(\mathrm{Fix}(\sigma)) + \dim(\mathrm{Fix}(\sigma^{-1}\tau))
@@ -931,7 +933,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: W = SymmetricGroup(4)                                         # needs sage.combinat sage.groups
+                    sage: W = SymmetricGroup(4)                                         # needs sage.groups
                     sage: W.noncrossing_partition_lattice()                             # needs sage.combinat sage.groups
                     Finite lattice containing 14 elements
 
@@ -939,19 +941,17 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     sage: W.noncrossing_partition_lattice()                             # needs sage.combinat sage.groups
                     Finite lattice containing 8 elements
 
-                    sage: W = ReflectionGroup((1,1,3))     # optional - gap3
-
-                    sage: sorted(w.reduced_word()          # optional - gap3
+                    sage: # optional - gap3
+                    sage: W = ReflectionGroup((1,1,3))
+                    sage: sorted(w.reduced_word()
                     ....:        for w in W.noncrossing_partition_lattice())
                     [[], [1], [1, 2], [1, 2, 1], [2]]
-
-                    sage: c21 = W.from_reduced_word([2,1]) # optional - gap3
-                    sage: sorted(w.reduced_word()          # optional - gap3
+                    sage: c21 = W.from_reduced_word([2,1])
+                    sage: sorted(w.reduced_word()
                     ....:        for w in W.noncrossing_partition_lattice(c21))
                     [[], [1], [1, 2, 1], [2], [2, 1]]
-
-                    sage: c2 = W.from_reduced_word([2])    # optional - gap3
-                    sage: sorted(w.reduced_word()          # optional - gap3
+                    sage: c2 = W.from_reduced_word([2])
+                    sage: sorted(w.reduced_word()
                     ....:        for w in W.noncrossing_partition_lattice(c2))
                     [[], [2]]
                 """
@@ -966,7 +966,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 else:
                     L = [(pi, pi.reflection_length()) for pi in L]
                 rels = []
-                ref_lens = {pi: l for (pi, l) in L}
+                ref_lens = dict(L)
                 for (pi, l) in L:
                     for t in R:
                         tau = pi * t
@@ -980,7 +980,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             def generalized_noncrossing_partitions(self, m, c=None, positive=False):
                 r"""
-                Return the set of all chains of length ``m`` in the
+                Return the set of all chains of length `m` in the
                 noncrossing partition lattice of ``self``, see
                 :meth:`noncrossing_partition_lattice`.
 
@@ -990,11 +990,12 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 INPUT:
 
-                - ``c`` -- (default: ``None``) if an element ``c`` in ``self``
+                - ``c`` -- (default: ``None``) if an element `c` in ``self``
                   is given, it is used as the maximal element in the interval
 
-                - ``positive`` -- (default: ``False``) if ``True``, only those
-                  generalized noncrossing partitions of full support are returned
+                - ``positive`` -- boolean (default: ``False``); if ``True``,
+                  only those generalized noncrossing partitions of full support
+                  are returned
 
                 EXAMPLES::
 
@@ -1067,8 +1068,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 INPUT:
 
-                - ``in_unitary_group`` -- (default: ``False``) if ``False``,
-                  the relation is given by ``\sigma \leq \tau`` if
+                - ``in_unitary_group`` -- boolean (default: ``False``); if
+                  ``False``, the relation is given by ``\sigma \leq \tau`` if
                   `l_R(\sigma) + l_R(\sigma^{-1}\tau) = l_R(\tau)`
                   If ``True``, the relation is given by `\sigma \leq \tau` if
                   `\dim(\mathrm{Fix}(\sigma)) + \dim(\mathrm{Fix}(\sigma^{-1}\tau))
@@ -1197,9 +1198,9 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: W = ColoredPermutations(3, 2)
-                    sage: C = W.milnor_fiber_complex()
-                    sage: C.homology()
+                    sage: W = ColoredPermutations(3, 2)                                 # needs sage.combinat
+                    sage: C = W.milnor_fiber_complex()                                  # needs sage.combinat
+                    sage: C.homology()                                                  # needs sage.combinat
                     {0: 0, 1: Z x Z x Z x Z}
 
                     sage: W = ReflectionGroup(5)                  # optional - gap3
@@ -1215,7 +1216,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     for g in self:
                         if any(g in C for C in cosets[Ip]):
                             continue
-                        H = set([g])
+                        H = {g}
                         to_test = [(g, j) for j in Ip]
                         while to_test:
                             h, j = to_test.pop()
@@ -1226,8 +1227,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                             to_test.extend((hp, j) for j in Ip)
                         cosets[Ip].append(frozenset(H))
                 verts = {}
-                for Ip in cosets:
-                    for C in cosets[Ip]:
+                for Ip, cosetsIp in cosets.items():
+                    for C in cosetsIp:
                         verts[C, Ip] = len(verts)
                 facets = [[verts[k] for k in verts if g in k[0]] for g in self]
                 from sage.topology.simplicial_complex import SimplicialComplex
@@ -1332,7 +1333,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     INPUT:
 
-                    - ``polynomial`` -- optional boolean (default ``False``)
+                    - ``polynomial`` -- boolean (default: ``False``);
                       if ``True``, return instead the `q`-analogue as a
                       polynomial in `q`
 
@@ -1388,12 +1389,11 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     INPUT:
 
-                    - ``positive`` -- optional boolean (default ``False``)
-                      if ``True``, return instead the positive Fuss-Catalan
-                      number
-                    - ``polynomial`` -- optional boolean (default ``False``)
-                      if ``True``, return instead the `q`-analogue as a
-                      polynomial in `q`
+                    - ``positive`` -- boolean (default: ``False``); if
+                      ``True``, return instead the positive Fuss-Catalan number
+                    - ``polynomial`` -- boolean (default: ``False``); if
+                      ``True``, return instead the `q`-analogue as a polynomial
+                      in `q`
 
                     See [Ar2006]_ for further information.
 
@@ -1465,12 +1465,11 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     INPUT:
 
-                    - ``positive`` -- optional boolean (default ``False``)
-                      if ``True``, return instead the positive Catalan
-                      number
-                    - ``polynomial`` -- optional boolean (default ``False``)
-                      if ``True``, return instead the `q`-analogue as a
-                      polynomial in `q`
+                    - ``positive`` -- boolean (default: ``False``); if
+                      ``True``, return instead the positive Catalan number
+                    - ``polynomial`` -- boolean (default: ``False``); if
+                      ``True``, return instead the `q`-analogue as a polynomial
+                      in `q`
 
                     .. NOTE::
 

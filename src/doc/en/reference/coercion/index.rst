@@ -271,7 +271,7 @@ discovered between steps 1 and 2 above.
     sage: f(3).parent()
     Rational Field
 
-Note that by :trac:`14711` Sage's coercion system uses maps with weak
+Note that by :issue:`14711` Sage's coercion system uses maps with weak
 references to the domain. Such maps should only be used internally, and so a
 copy should be used instead (unless one knows what one is doing)::
 
@@ -323,7 +323,7 @@ Methods to implement
   the function is called on the potential codomain.  To indicate that
   there is no coercion from S to R (self), return ``False`` or
   ``None``. This is the default behavior.  If there is a coercion,
-  return ``True`` (in which case an morphism using
+  return ``True`` (in which case a morphism using
   ``R._element_constructor_`` will be created) or an actual
   :class:`Morphism` object with S as the domain and R as the codomain.
 
@@ -386,87 +386,97 @@ but that would obscure the main points being made here.)
 
 ::
 
-    class Localization(Ring):
-       def __init__(self, primes):
-           """
-           Localization of `\ZZ` away from primes.
-           """
-           Ring.__init__(self, base=ZZ)
-           self._primes = primes
-           self._populate_coercion_lists_()
+    sage: from sage.structure.richcmp import richcmp
+    sage: from sage.structure.element import Element
 
-       def _repr_(self):
-           """
-           How to print self.
-           """
-           return "%s localized at %s" % (self.base(), self._primes)
+    sage: class MyLocalization(Parent):
+    ....:     def __init__(self, primes):
+    ....:         r"""
+    ....:         Localization of `\ZZ` away from primes.
+    ....:         """
+    ....:         Parent.__init__(self, base=ZZ, category=Rings().Commutative())
+    ....:         self._primes = primes
+    ....:         self._populate_coercion_lists_()
+    ....:
+    ....:     def _repr_(self) -> str:
+    ....:         """
+    ....:         How to print ``self``.
+    ....:         """
+    ....:         return "%s localized at %s" % (self.base(), self._primes)
+    ....:
+    ....:     def _element_constructor_(self, x):
+    ....:         """
+    ....:         Make sure ``x`` is a valid member of ``self``, and return the constructed element.
+    ....:         """
+    ....:         if isinstance(x, MyLocalizationElement):
+    ....:             x = x._value
+    ....:         else:
+    ....:             x = QQ(x)
+    ....:         for p, e in x.denominator().factor():
+    ....:             if p not in self._primes:
+    ....:                 raise ValueError("not integral at %s" % p)
+    ....:         return self.element_class(self, x)
+    ....:
+    ....:     def _an_element_(self):
+    ....:         return self.element_class(self, 6)
+    ....:
+    ....:     def _coerce_map_from_(self, S):
+    ....:         """
+    ....:         The only things that coerce into this ring are:
+    ....:
+    ....:         - the integer ring
+    ....:
+    ....:         - other localizations away from fewer primes
+    ....:         """
+    ....:         if S is ZZ:
+    ....:             return True
+    ....:         if isinstance(S, MyLocalization):
+    ....:             return all(p in self._primes for p in S._primes)
 
-       def _element_constructor_(self, x):
-           """
-           Make sure x is a valid member of self, and return the constructed element.
-           """
-           if isinstance(x, LocalizationElement):
-               x = x._value
-           else:
-               x = QQ(x)
-           for p, e in x.denominator().factor():
-               if p not in self._primes:
-                   raise ValueError("Not integral at %s" % p)
-           return LocalizationElement(self, x)
+    sage: class MyLocalizationElement(Element):
+    ....:
+    ....:     def __init__(self, parent, x):
+    ....:         Element.__init__(self, parent)
+    ....:         self._value = x
+    ....:
+    ....:     # We are just printing out this way to make it easy to see what's going on in the examples.
+    ....:
+    ....:     def _repr_(self) -> str:
+    ....:         return f"LocalElt({self._value})"
+    ....:
+    ....:     # Now define addition, subtraction and multiplication of elements.
+    ....:     # Note that self and right always have the same parent.
+    ....:
+    ....:     def _add_(self, right):
+    ....:         return self.parent()(self._value + right._value)
+    ....:
+    ....:     def _sub_(self, right):
+    ....:         return self.parent()(self._value - right._value)
+    ....:
+    ....:     def _mul_(self, right):
+    ....:         return self.parent()(self._value * right._value)
+    ....:
+    ....:     # The basering was set to ZZ, so c is guaranteed to be in ZZ
+    ....:
+    ....:     def _rmul_(self, c):
+    ....:         return self.parent()(c * self._value)
+    ....:
+    ....:     def _lmul_(self, c):
+    ....:         return self.parent()(self._value * c)
+    ....:
+    ....:     def _richcmp_(self, other, op):
+    ....:         return richcmp(self._value, other._value, op)
 
-       def _coerce_map_from_(self, S):
-           """
-           The only things that coerce into this ring are:
-
-           - the integer ring
-
-           - other localizations away from fewer primes
-           """
-           if S is ZZ:
-               return True
-           elif isinstance(S, Localization):
-               return all(p in self._primes for p in S._primes)
-
-
-    class LocalizationElement(RingElement):
-
-       def __init__(self, parent, x):
-           RingElement.__init__(self, parent)
-           self._value = x
-
-
-       # We're just printing out this way to make it easy to see what's going on in the examples.
-
-       def _repr_(self):
-           return "LocalElt(%s)" % self._value
-
-       # Now define addition, subtraction, and multiplication of elements.
-       # Note that left and right always have the same parent.
-
-       def _add_(left, right):
-           return LocalizationElement(left.parent(), left._value + right._value)
-
-       def _sub_(left, right):
-           return LocalizationElement(left.parent(), left._value - right._value)
-
-       def _mul_(left, right):
-           return LocalizationElement(left.parent(), left._value * right._value)
-
-       # The basering was set to ZZ, so c is guaranteed to be in ZZ
-
-       def _rmul_(self, c):
-           return LocalizationElement(self.parent(), c * self._value)
-
-       def _lmul_(self, c):
-           return LocalizationElement(self.parent(), self._value * c)
+    sage: MyLocalization.element_class = MyLocalizationElement
 
 That's all there is to it. Now we can test it out:
 
-.. skip
+.. link
 
 ::
 
-    sage: R = Localization([2]); R
+    sage: TestSuite(R).run(skip="_test_pickling")
+    sage: R = MyLocalization([2]); R
     Integer Ring localized at [2]
     sage: R(1)
     LocalElt(1)
@@ -475,12 +485,12 @@ That's all there is to it. Now we can test it out:
     sage: R(1/3)
     Traceback (most recent call last):
     ...
-    ValueError: Not integral at 3
+    ValueError: not integral at 3
 
     sage: R.coerce(1)
     LocalElt(1)
     sage: R.coerce(1/4)
-    Traceback (click to the left for traceback)
+    Traceback (most recent call last):
     ...
     TypeError: no canonical coercion from Rational Field to Integer Ring localized at [2]
 
@@ -497,12 +507,10 @@ That's all there is to it. Now we can test it out:
     sage: R(3/4) * 7
     LocalElt(21/4)
 
-    sage: R.get_action(ZZ)
-    Right scalar multiplication by Integer Ring on Integer Ring localized at [2]
     sage: cm = sage.structure.element.get_coercion_model()
     sage: cm.explain(R, ZZ, operator.add)
     Coercion on right operand via
-       Conversion map:
+       Coercion map:
          From: Integer Ring
          To:   Integer Ring localized at [2]
     Arithmetic performed after coercions.
@@ -510,12 +518,15 @@ That's all there is to it. Now we can test it out:
     Integer Ring localized at [2]
 
     sage: cm.explain(R, ZZ, operator.mul)
-    Action discovered.
-       Right scalar multiplication by Integer Ring on Integer Ring localized at [2]
+    Coercion on right operand via
+        Coercion map:
+          From: Integer Ring
+          To:   Integer Ring localized at [2]
+    Arithmetic performed after coercions.
     Result lives in Integer Ring localized at [2]
     Integer Ring localized at [2]
 
-    sage: R6 = Localization([2,3]); R6
+    sage: R6 = MyLocalization([2,3]); R6
     Integer Ring localized at [2, 3]
     sage: R6(1/3) - R(1/2)
     LocalElt(-1/6)
@@ -525,12 +536,12 @@ That's all there is to it. Now we can test it out:
     sage: R.has_coerce_map_from(ZZ)
     True
     sage: R.coerce_map_from(ZZ)
-    Conversion map:
+    Coercion map:
      From: Integer Ring
      To:   Integer Ring localized at [2]
 
     sage: R6.coerce_map_from(R)
-    Conversion map:
+    Coercion map:
      From: Integer Ring localized at [2]
      To:   Integer Ring localized at [2, 3]
 
@@ -539,7 +550,7 @@ That's all there is to it. Now we can test it out:
 
     sage: cm.explain(R, R6, operator.mul)
     Coercion on left operand via
-       Conversion map:
+       Coercion map:
          From: Integer Ring localized at [2]
          To:   Integer Ring localized at [2, 3]
     Arithmetic performed after coercions.

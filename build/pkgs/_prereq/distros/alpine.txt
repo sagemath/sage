@@ -1,3 +1,12 @@
+# This file, build/pkgs/_prereq/distros/alpine.txt, contains names of
+# Alpine Linux packages needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/distros/alpine.txt contain
+# the names of packages that provide the equivalent of SPKG.
+#
+# One package per line. No need to escape special characters.
+# Everything on a line after a # character is ignored.
+#
 binutils
 make
 m4

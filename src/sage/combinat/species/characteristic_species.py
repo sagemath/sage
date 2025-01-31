@@ -60,23 +60,22 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
 
     def transport(self, perm):
         """
-        Returns the transport of this structure along the permutation
-        perm.
+        Return the transport of this structure along the permutation ``perm``.
 
         EXAMPLES::
 
             sage: F = species.CharacteristicSpecies(3)
             sage: a = F.structures(["a", "b", "c"]).random_element(); a
             {'a', 'b', 'c'}
-            sage: p = PermutationGroupElement((1,2))
-            sage: a.transport(p)
+            sage: p = PermutationGroupElement((1,2))                                    # needs sage.groups
+            sage: a.transport(p)                                                        # needs sage.groups
             {'a', 'b', 'c'}
         """
         return self
 
     def automorphism_group(self):
         """
-        Returns the group of permutations whose action on this structure
+        Return the group of permutations whose action on this structure
         leave it fixed. For the characteristic species, there is only one
         structure, so every permutation is in its automorphism group.
 
@@ -85,7 +84,7 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.CharacteristicSpecies(3)
             sage: a = F.structures(["a", "b", "c"]).random_element(); a
             {'a', 'b', 'c'}
-            sage: a.automorphism_group()
+            sage: a.automorphism_group()                                                # needs sage.groups
             Symmetric group of order 3! as a permutation group
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -111,7 +110,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             [0, 1, 0, 0]
             sage: X.isotype_generating_series()[0:4]
             [0, 1, 0, 0]
-            sage: X.cycle_index_series()[0:4]
+            sage: X.cycle_index_series()[0:4]                                           # needs sage.modules
             [0, p[1], 0, 0]
 
             sage: F = species.CharacteristicSpecies(3)
@@ -170,7 +169,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _order(self):
         """
-        Returns the order of the generating series.
+        Return the order of the generating series.
 
         EXAMPLES::
 
@@ -204,8 +203,8 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: F = species.CharacteristicSpecies(2)
-            sage: g = F.cycle_index_series()
-            sage: g[0:5]
+            sage: g = F.cycle_index_series()                                            # needs sage.modules
+            sage: g[0:5]                                                                # needs sage.modules
             [0, 0, 1/2*p[1, 1] + 1/2*p[2], 0, 0]
         """
         cis = SetSpecies(weight=self._weight).cycle_index_series(base_ring)
@@ -213,18 +212,18 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _equation(self, var_mapping):
         """
-        Returns the right hand side of an algebraic equation satisfied by
+        Return the right hand side of an algebraic equation satisfied by
         this species. This is a utility function called by the
         algebraic_equation_system method.
 
         EXAMPLES::
 
             sage: C = species.CharacteristicSpecies(2)
-                sage: Qz = QQ['z']
-                sage: R.<node0> = Qz[]
-                sage: var_mapping = {'z':Qz.gen(), 'node0':R.gen()}
-                sage: C._equation(var_mapping)
-                z^2
+            sage: Qz = QQ['z']
+            sage: R.<node0> = Qz[]
+            sage: var_mapping = {'z':Qz.gen(), 'node0':R.gen()}
+            sage: C._equation(var_mapping)
+            z^2
         """
         return var_mapping['z']**(self._n)
 
@@ -236,7 +235,7 @@ CharacteristicSpecies_class = CharacteristicSpecies
 class EmptySetSpecies(CharacteristicSpecies):
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the empty set species.
+        Return the empty set species.
 
         This species has exactly one structure on the empty set. It is
         the same (and is implemented) as ``CharacteristicSpecies(0)``.
@@ -252,7 +251,7 @@ class EmptySetSpecies(CharacteristicSpecies):
             [1, 0, 0, 0]
             sage: X.isotype_generating_series()[0:4]
             [1, 0, 0, 0]
-            sage: X.cycle_index_series()[0:4]
+            sage: X.cycle_index_series()[0:4]                                           # needs sage.modules
             [p[], 0, 0, 0]
 
         TESTS::
@@ -280,7 +279,7 @@ EmptySetSpecies_class = EmptySetSpecies._cached_constructor = EmptySetSpecies
 class SingletonSpecies(CharacteristicSpecies):
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the species of singletons.
+        Return the species of singletons.
 
         This species has exactly one structure on a set of size `1`. It
         is the same (and is implemented) as ``CharacteristicSpecies(1)``.
@@ -296,7 +295,7 @@ class SingletonSpecies(CharacteristicSpecies):
             [0, 1, 0, 0]
             sage: X.isotype_generating_series()[0:4]
             [0, 1, 0, 0]
-            sage: X.cycle_index_series()[0:4]
+            sage: X.cycle_index_series()[0:4]                                           # needs sage.modules
             [0, p[1], 0, 0]
 
         TESTS::

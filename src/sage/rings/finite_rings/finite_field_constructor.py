@@ -8,11 +8,11 @@ Sage for several sizes of primes `p`. These implementations
 are
 
 
--  ``sage.rings.finite_rings.integer_mod.IntegerMod_int``,
+- ``sage.rings.finite_rings.integer_mod.IntegerMod_int``,
 
--  ``sage.rings.finite_rings.integer_mod.IntegerMod_int64``, and
+- ``sage.rings.finite_rings.integer_mod.IntegerMod_int64``, and
 
--  ``sage.rings.finite_rings.integer_mod.IntegerMod_gmp``.
+- ``sage.rings.finite_rings.integer_mod.IntegerMod_gmp``.
 
 
 Small extension fields of cardinality `< 2^{16}` are
@@ -229,16 +229,15 @@ class FiniteFieldFactory(UniqueFactory):
     - ``impl`` -- (optional) a string specifying the implementation of
       the finite field. Possible values are:
 
-      - ``'modn'`` -- ring of integers modulo `p` (only for prime
-        fields).
+      - ``'modn'`` -- ring of integers modulo `p` (only for prime fields)
 
       - ``'givaro'`` -- Givaro, which uses Zech logs (only for fields
-        of at most 65521 elements).
+        of at most 65521 elements)
 
-      - ``'ntl'`` -- NTL using GF2X (only in characteristic 2).
+      - ``'ntl'`` -- NTL using GF2X (only in characteristic 2)
 
       - ``'pari'`` or ``'pari_ffelt'`` -- PARI's ``FFELT`` type (only
-        for extension fields).
+        for extension fields)
 
     - ``elem_cache`` -- (default: order < 500) cache all elements to
       avoid creation time; ignored unless ``impl='givaro'``
@@ -258,8 +257,8 @@ class FiniteFieldFactory(UniqueFactory):
     - ``check_irreducible`` -- verify that the polynomial modulus is
       irreducible
 
-    - ``proof`` -- bool (default: ``True``): if ``True``, use provable
-      primality test; otherwise only use pseudoprimality test.
+    - ``proof`` -- boolean (default: ``True``); if ``True``, use provable
+      primality test; otherwise only use pseudoprimality test
 
     ALIAS: You can also use ``GF`` instead of ``FiniteField`` -- they
     are identical.
@@ -279,7 +278,7 @@ class FiniteFieldFactory(UniqueFactory):
     .. NOTE::
 
         Magma only supports ``proof=False`` for making finite fields,
-        so falsely appears to be faster than Sage -- see :trac:`10975`.
+        so falsely appears to be faster than Sage -- see :issue:`10975`.
 
     ::
 
@@ -304,7 +303,7 @@ class FiniteFieldFactory(UniqueFactory):
         7105427357601001858711242675781
         sage: a.is_square()
         True
-        sage: K.<b> = GF(5^45, modulus="primitive")
+        sage: K.<b> = GF(5^45, modulus='primitive')
         sage: b.multiplicative_order()
         28421709430404007434844970703124
 
@@ -358,7 +357,7 @@ class FiniteFieldFactory(UniqueFactory):
     change how Sage computes in this field, but it will change the
     result of the :meth:`modulus` and :meth:`gen` methods::
 
-        sage: k.<a> = GF(5, modulus="primitive")
+        sage: k.<a> = GF(5, modulus='primitive')
         sage: k.modulus()
         x + 3
         sage: a
@@ -448,9 +447,9 @@ class FiniteFieldFactory(UniqueFactory):
         sage: GF(3^40).gen().minimal_polynomial()(k.gen()^((3^120-1)/(3^40-1)))  # long time (because of previous line)
         0
 
-    Before :trac:`17569`, the boolean keyword argument ``conway``
+    Before :issue:`17569`, the boolean keyword argument ``conway``
     was required when creating finite fields without a variable
-    name.  This keyword argument is now removed (:trac:`21433`).
+    name.  This keyword argument is now removed (:issue:`21433`).
     You can still pass in ``prefix`` as an argument, which has the
     effect of changing the variable name of the algebraic closure::
 
@@ -463,15 +462,15 @@ class FiniteFieldFactory(UniqueFactory):
 
     TESTS:
 
-    Check that :trac:`16934` has been fixed::
+    Check that :issue:`16934` has been fixed::
 
-        sage: k1.<a> = GF(17^14, impl="pari")
+        sage: k1.<a> = GF(17^14, impl='pari')
         sage: _ = a/2
-        sage: k2.<a> = GF(17^14, impl="pari")
+        sage: k2.<a> = GF(17^14, impl='pari')
         sage: k1 is k2
         True
 
-    Check that :trac:`21433` has been fixed::
+    Check that :issue:`21433` has been fixed::
 
         sage: K = GF(5^2)
         sage: L = GF(5^4)
@@ -479,12 +478,12 @@ class FiniteFieldFactory(UniqueFactory):
         sage: pushout(K,L) is L
         True
 
-    Check that :trac:`25182` has been fixed::
+    Check that :issue:`25182` has been fixed::
 
         sage: GF(next_prime(2^63)^6)
         Finite Field in z6 of size 9223372036854775837^6
 
-    Check that :trac:`31547` has been fixed::
+    Check that :issue:`31547` has been fixed::
 
         sage: q=2**152
         sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')
@@ -547,7 +546,7 @@ class FiniteFieldFactory(UniqueFactory):
 
         We explicitly take ``structure``, ``implementation`` and ``prec`` attributes
         for compatibility with :class:`~sage.categories.pushout.AlgebraicExtensionFunctor`
-        but we ignore them as they are not used, see :trac:`21433`::
+        but we ignore them as they are not used, see :issue:`21433`::
 
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)                  # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})

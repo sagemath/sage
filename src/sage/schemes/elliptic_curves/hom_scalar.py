@@ -81,16 +81,31 @@ The zero endomorphism `[0]` is supported::
     sage: zero(E.random_point())
     (0 : 1 : 0)
 
-Due to a bug (:trac:`6413`), retrieving multiplication-by-`m` maps
-when `m` is divisible by the characteristic currently fails::
+Retrieving multiplication-by-`m` maps when `m` is divisible by the
+characteristic also works (since :issue:`37096`)::
 
     sage: E = EllipticCurve(GF(7), [1,0])
     sage: phi = E.scalar_multiplication(7); phi
     Scalar-multiplication endomorphism [7] of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7
-    sage: phi.rational_maps()   # known bug -- #6413
-    (x^49, y^49)
+    sage: phi.rational_maps()
+    (x^49, -y^49)
     sage: phi.x_rational_map()
     x^49
+    sage: psi = E.scalar_multiplication(-2); psi
+    Scalar-multiplication endomorphism [-2] of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7
+    sage: chi = E.scalar_multiplication(-14); chi
+    Scalar-multiplication endomorphism [-14] of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7
+    sage: chi == psi * phi
+    True
+    sage: chi.rational_maps()
+    ((x^196 - 2*x^98 + 1)/(-3*x^147 - 3*x^49),
+     (-x^294*y^49 + 2*x^196*y^49 - 2*x^98*y^49 + y^49)/(-x^294 - 2*x^196 - x^98))
+    sage: chi.x_rational_map()
+    (2*x^196 + 3*x^98 + 2)/(x^147 + x^49)
+    sage: chi.rational_maps() == tuple(f(*phi.rational_maps()) for f in psi.rational_maps())
+    True
+    sage: chi.x_rational_map() == psi.x_rational_map()(phi.x_rational_map())
+    True
 
 ::
 
@@ -194,7 +209,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
-            sage: E = EllipticCurve(j=Mod(1728,419))
+            sage: E = EllipticCurve(j=GF(419)(1728))
             sage: psi = EllipticCurveHom_scalar(E, 13)
             sage: P = E.change_ring(GF(419**2)).lift_x(5)
             sage: P = min({P, -P})  # fix choice of y
@@ -381,8 +396,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             sage: u = phi.scaling_factor()
             sage: u == phi.formal()[1]
             True
-            sage: u == E.multiplication_by_m_isogeny(5).scaling_factor()
-            doctest:warning ... DeprecationWarning: ...
+            sage: u == 5
             True
 
         The scaling factor lives in the base ring::
@@ -452,69 +466,38 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
         """
         return self
 
-    def is_separable(self):
-        """
-        Determine whether this scalar-multiplication map is a
-        separable isogeny. (This is the case if and only if the
-        scalar `m` is coprime to the characteristic.)
+    def inseparable_degree(self):
+        r"""
+        Return the inseparable degree of this scalar-multiplication map.
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(11), [4,4])
-            sage: E.scalar_multiplication(11).is_separable()
+            sage: E = EllipticCurve(GF(7), [0,1])
+            sage: E.is_supersingular()
             False
-            sage: E.scalar_multiplication(-11).is_separable()
-            False
-            sage: E.scalar_multiplication(777).is_separable()
-            True
-            sage: E.scalar_multiplication(-1).is_separable()
-            True
-            sage: E.scalar_multiplication(77).is_separable()
-            False
-            sage: E.scalar_multiplication(121).is_separable()
-            False
+            sage: E.scalar_multiplication(4).inseparable_degree()
+            1
+            sage: E.scalar_multiplication(-7).inseparable_degree()
+            7
 
-        TESTS::
+        ::
 
-            sage: E.scalar_multiplication(0).is_separable()
-            Traceback (most recent call last):
-            ...
-            ValueError: [0] is not an isogeny
+            sage: E = EllipticCurve(GF(7), [1,0])
+            sage: E.is_supersingular()
+            True
+            sage: E.scalar_multiplication(4).inseparable_degree()
+            1
+            sage: E.scalar_multiplication(-7).inseparable_degree()
+            49
         """
-        if self._m.is_zero():
-            raise ValueError('[0] is not an isogeny')
-        return bool(self.scaling_factor())
-
-    def is_injective(self):
-        """
-        Determine whether this scalar multiplication defines an
-        injective map (over the algebraic closure).
-
-        Equivalently, return ``True`` if and only if this scalar
-        multiplication is a purely inseparable isogeny.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(23), [1,0])
-            sage: E.scalar_multiplication(4).is_injective()
-            False
-            sage: E.scalar_multiplication(5).is_injective()
-            False
-            sage: E.scalar_multiplication(1).is_injective()
-            True
-            sage: E.scalar_multiplication(-1).is_injective()
-            True
-            sage: E.scalar_multiplication(23).is_injective()
-            True
-            sage: E.scalar_multiplication(-23).is_injective()
-            True
-            sage: E.scalar_multiplication(0).is_injective()
-            False
-        """
-        if self._m.is_zero():
-            return False
-        p = self._domain.base_ring().characteristic()
-        return self._m.abs().is_power_of(p) and self._domain.is_supersingular()
+        p = self.base_ring().characteristic()
+        if not p:
+            return ZZ.one()
+        v = self._m.valuation(p)
+        if not v:
+            return ZZ.one()
+        rk = 1 + self._domain.is_supersingular()
+        return p**(rk*v)
 
     def __neg__(self):
         """

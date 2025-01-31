@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Modules
 """
@@ -11,21 +12,22 @@ Modules
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.abstract_method import abstract_method
-from sage.misc.lazy_import import LazyImport
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from sage.categories.morphism import SetMorphism
-from sage.categories.homsets import HomsetsCategory
-from sage.categories.homset import Hom
-from .category import Category
-from .category_types import Category_module
-from sage.categories.tensor import TensorProductsCategory, TensorProductFunctor, tensor
-from .dual import DualObjectsCategory
-from sage.categories.cartesian_product import CartesianProductsCategory
-from sage.categories.sets_cat import Sets
 from sage.categories.bimodules import Bimodules
+from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.category import Category
+from sage.categories.category_types import Category_module
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.dual import DualObjectsCategory
 from sage.categories.fields import Fields
+from sage.categories.homset import Hom
+from sage.categories.homsets import HomsetsCategory
+from sage.categories.morphism import SetMorphism
+from sage.categories.sets_cat import Sets
+from sage.categories.tensor import TensorProductFunctor, TensorProductsCategory, tensor
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
+
 _Fields = Fields()
 
 
@@ -43,7 +45,7 @@ class Modules(Category_module):
     INPUT:
 
     - ``base_ring`` -- a ring `R` or subcategory of ``Rings()``
-    - ``dispatch`` -- a boolean (for internal use; default: ``True``)
+    - ``dispatch`` -- boolean (for internal use; default: ``True``)
 
     When the base ring is a field, the category of vector spaces is
     returned instead (unless ``dispatch == False``).
@@ -111,7 +113,7 @@ class Modules(Category_module):
         - Implement a ``FreeModules(R)`` category, when so prompted by a
           concrete use case: e.g.  modeling a free module with several
           bases (using :meth:`Sets.SubcategoryMethods.Realizations`)
-          or with an atlas of local maps (see e.g. :trac:`15916`).
+          or with an atlas of local maps (see e.g. :issue:`15916`).
     """
 
     @staticmethod
@@ -221,7 +223,7 @@ class Modules(Category_module):
                 sage: C2.base_ring.__module__
                 'sage.categories.modules'
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: C3 = DescentAlgebra(QQ,3).B().category()
                 sage: C3.base_ring.__module__
                 'sage.categories.modules'
@@ -285,7 +287,7 @@ class Modules(Category_module):
 
                 - Typically, the category of graded modules should
                   define a separate ``graded_dual`` construction (see
-                  :trac:`15647`). For now the two constructions are
+                  :issue:`15647`). For now the two constructions are
                   not distinguished which is an oversimplified model.
 
             .. SEEALSO::
@@ -556,7 +558,6 @@ class Modules(Category_module):
                     sage: Modules(QQ).FiniteDimensional().TensorProducts().FiniteDimensional()
                     Category of tensor products of finite dimensional vector spaces
                      over Rational Field
-
                 """
                 return [self.base_category()]
 
@@ -635,7 +636,7 @@ class Modules(Category_module):
         @cached_method
         def tensor_square(self):
             """
-            Returns the tensor square of ``self``
+            Return the tensor square of ``self``.
 
             EXAMPLES::
 
@@ -658,7 +659,7 @@ class Modules(Category_module):
 
             INPUT:
 
-            - ``self`` -- a parent `X` in ``Modules(R)``.
+            - ``self`` -- a parent `X` in ``Modules(R)``
 
             - ``function`` -- a function `f` from `X` to `Y`
 
@@ -679,7 +680,6 @@ class Modules(Category_module):
                  2-dimensional vector space over the Rational Field
                 sage: neg(e[0])
                 Element -e_0 of the 2-dimensional vector space over the Rational Field
-
             """
             # Make sure that we only create a module morphism, even if
             # domain and codomain have more structure
@@ -697,7 +697,7 @@ class Modules(Category_module):
               something that can be turned into one via
               ``self.submodule(submodule)``
 
-            - ``check``, other keyword arguments: passed on to
+            - ``check``, other keyword arguments -- passed on to
               :meth:`quotient_module`.
 
             This method just delegates to :meth:`quotient_module`.
@@ -715,7 +715,6 @@ class Modules(Category_module):
                 <bound method Rings.ParentMethods.quotient of
                  Tensor Algebra of Free module generated by {'a', 'b', 'c'}
                  over Rational Field>
-
             """
             return self.quotient_module(submodule, check=check, **kwds)
 
@@ -835,7 +834,7 @@ class Modules(Category_module):
 
     class CartesianProducts(CartesianProductsCategory):
         """
-        The category of modules constructed as Cartesian products of modules
+        The category of modules constructed as Cartesian products of modules.
 
         This construction gives the direct product of modules. The
         implementation is based on the following resources:
@@ -875,7 +874,7 @@ class Modules(Category_module):
                     sage: C.base_ring()
                     Integer Ring
 
-                Check that :trac:`29225` is fixed::
+                Check that :issue:`29225` is fixed::
 
                     sage: M = cartesian_product((ZZ^2, ZZ^3)); M                        # needs sage.modules
                     The Cartesian product of
@@ -883,7 +882,9 @@ class Modules(Category_module):
                       Ambient free module of rank 3 over the principal ideal domain Integer Ring)
                     sage: M.category()                                                  # needs sage.modules
                     Category of Cartesian products of modules with basis
-                     over (euclidean domains and infinite enumerated sets and metric spaces)
+                     over (Dedekind domains and euclidean domains
+                      and noetherian rings
+                      and infinite enumerated sets and metric spaces)
                     sage: M.base_ring()                                                 # needs sage.modules
                     Integer Ring
 
@@ -892,7 +893,7 @@ class Modules(Category_module):
                      (Vector space of dimension 2 over Rational Field,
                       Univariate Polynomial Ring in x over Rational Field)
                     sage: A.category()                                                  # needs sage.modules
-                    Category of Cartesian products of vector spaces
+                    Category of Cartesian products of vector spaces with basis
                      over (number fields and quotient fields and metric spaces)
                     sage: A.base_ring()                                                 # needs sage.modules
                     Rational Field
@@ -966,16 +967,10 @@ class Modules(Category_module):
                      (Free Algebra on 2 generators (None0, None1) over Rational Field,
                       Free Algebra on 2 generators (None0, None1) over Rational Field))
                 """
-                try:
-                    factors = self.tensor_factors()
-                except (TypeError, NotImplementedError):
-                    from sage.misc.superseded import deprecation
-                    deprecation(34393, "implementations of Modules().TensorProducts() now must define the method tensor_factors")
-                    return None
-                return (TensorProductFunctor(),
-                        factors)
+                factors = self.tensor_factors()
+                return (TensorProductFunctor(), factors)
 
-            @abstract_method(optional=True)
+            @abstract_method
             def tensor_factors(self):
                 """
                 Return the tensor factors of this tensor product.
@@ -984,21 +979,11 @@ class Modules(Category_module):
 
                     sage: # needs sage.modules
                     sage: F = CombinatorialFreeModule(ZZ, [1,2])
-                    sage: F.rename("F")
+                    sage: F.rename('F')
                     sage: G = CombinatorialFreeModule(ZZ, [3,4])
-                    sage: G.rename("G")
+                    sage: G.rename('G')
                     sage: T = tensor([F, G]); T
                     F # G
                     sage: T.tensor_factors()
                     (F, G)
-
-                TESTS::
-
-                    sage: Cat = ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts()
-                    sage: M = CombinatorialFreeModule(ZZ, ((1, 1), (1, 2), (2, 1), (2, 2)), category=Cat)               # needs sage.modules
-                    sage: M.construction()                                              # needs sage.modules
-                    doctest:warning...
-                    DeprecationWarning: implementations of Modules().TensorProducts() now must define the method tensor_factors
-                    See https://github.com/sagemath/sage/issues/34393 for details.
-                    (VectorFunctor, Integer Ring)
                 """

@@ -25,7 +25,7 @@ from sage.rings.integer_ring import ZZ
 
 
 # TO DO -- Add second argument
-#  def __call__(self,v,w=None):
+#  def __call__(self, v, w=None):
 #    if w is None:
 #        return half(v * self._matrix_() * v)
 #    else:
@@ -53,7 +53,6 @@ def disc(self):
         4
         sage: DiagonalQuadraticForm(ZZ, [1,1,1,1]).disc()
         16
-
     """
     if is_odd(self.dim()):
         # This is not so good for characteristic 2.
@@ -129,10 +128,8 @@ def adjoint(self):
         [ 39 2 8 ]
         [ * 19 4 ]
         [ * * 8 ]
-
     """
-    from sage.quadratic_forms.quadratic_form import QuadraticForm as QuadraticForm
-
+    from sage.quadratic_forms.quadratic_form import QuadraticForm
     if is_odd(self.dim()):
         return QuadraticForm(self.matrix().adjoint_classical() * 2)
     return QuadraticForm(self.matrix().adjoint_classical())

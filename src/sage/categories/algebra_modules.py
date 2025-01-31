@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Algebra modules
 """
@@ -10,10 +11,11 @@ Algebra modules
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_module
-from .commutative_algebras import CommutativeAlgebras
-from .commutative_rings import CommutativeRings
-from .modules import Modules
+from sage.categories.category_types import Category_module
+from sage.categories.commutative_algebras import CommutativeAlgebras
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.modules import Modules
+
 
 class AlgebraModules(Category_module):
     """
@@ -30,7 +32,6 @@ class AlgebraModules(Category_module):
     the categories of left and right modules are isomorphic. Feedback
     and use cases for potential generalizations to the non commutative
     case are welcome.
-
     """
     def __init__(self, A):
         """
@@ -65,7 +66,7 @@ class AlgebraModules(Category_module):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 

@@ -38,7 +38,7 @@ from sage.interfaces.gap_workspace import prepare_workspace_dir
 
 cdef class ObjWrapper():
     """
-    Wrapper for GAP master pointers
+    Wrapper for GAP master pointers.
 
     EXAMPLES::
 
@@ -55,13 +55,11 @@ cdef class ObjWrapper():
 
         INPUT:
 
-        - ``lhs``, ``rhs`` -- :class:`ObjWrapper`.
+        - ``lhs``, ``rhs`` -- :class:`ObjWrapper`
 
-        - ``op`` -- integer. The comparison operation to be performed.
+        - ``op`` -- integer; the comparison operation to be performed
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -91,7 +89,7 @@ cdef class ObjWrapper():
 
     def __hash__(self):
         """
-        Return a hash value
+        Return a hash value.
 
         EXAMPLES::
 
@@ -103,7 +101,7 @@ cdef class ObjWrapper():
         return <Py_hash_t>(self.value)
 
 
-cdef ObjWrapper wrap_obj(Obj obj) noexcept:
+cdef ObjWrapper wrap_obj(Obj obj):
     """
     Constructor function for :class:`ObjWrapper`
     """
@@ -120,7 +118,7 @@ cdef dict owned_objects_refcount = dict()
 #
 # used in Sage's libgap.Gap.count_GAP_objects
 #
-cpdef get_owned_objects() noexcept:
+cpdef get_owned_objects():
     """
     Helper to access the refcount dictionary from Python code
     """
@@ -184,12 +182,12 @@ MakeImmutable(libgap_errout);
 """
 
 
-cdef initialize() noexcept:
+cdef initialize():
     """
     Initialize the GAP library, if it hasn't already been
     initialized.  It is safe to call this multiple times. One can set
-    :envvar:`SAGE_GAP_MEMORY` to a particular value, as desribed in
-    `GAP Manual <https://www.gap-system.org/Manuals/doc/ref/chap3.html>`_
+    :envvar:`SAGE_GAP_MEMORY` to a particular value, as described in
+    the :gap:`GAP Manual <chap3>`.
     Specifically, the value is for `-s` and `-o` options.
 
     TESTS::
@@ -217,28 +215,29 @@ cdef initialize() noexcept:
     # initialize GAP.
     cdef char* argv[16]
     argv[0] = "sage"
-    argv[1] = "-l"
-    s = str_to_bytes(sage.env.GAP_LIB_DIR + ";" + sage.env.GAP_SHARE_DIR, FS_ENCODING, "surrogateescape")
-    argv[2] = s
+    argv[1] = "-A"
+    argv[2] = "-l"
+    s = str_to_bytes(sage.env.GAP_ROOT_PATHS, FS_ENCODING, "surrogateescape")
+    argv[3] = s
 
-    argv[3] = "-m"
-    argv[4] = "64m"
+    argv[4] = "-m"
+    argv[5] = "64m"
 
-    argv[5] = "-q"    # no prompt!
-    argv[6] = "-E"   # don't use readline as this will interfere with Python
-    argv[7] = "--nointeract"  # Implies -T
-    argv[8] = "-x"    # set the "screen" width so that GAP is less likely to
-    argv[9] = "4096"  # insert newlines when printing objects
+    argv[6] = "-q"    # no prompt!
+    argv[7] = "-E"   # don't use readline as this will interfere with Python
+    argv[8] = "--nointeract"  # Implies -T
+    argv[9] = "-x"    # set the "screen" width so that GAP is less likely to
+    argv[10] = "4096"  # insert newlines when printing objects
                       # 4096 unfortunately is the hard-coded max, but should
                       # be long enough for most cases
-    cdef int argc = 10   # argv[argc] must be NULL
+    cdef int argc = 11   # argv[argc] must be NULL
     gap_mem = sage.env.SAGE_GAP_MEMORY
     if gap_mem is not None:
         argc += 2
-        argv[10] = "-s"
+        argv[11] = "-s"
         s1 = str_to_bytes(gap_mem, FS_ENCODING, "surrogateescape")
-        argv[11] = s1
-        argv[4] = s1
+        argv[12] = s1
+        argv[5] = s1
 
     from sage.libs.gap.saved_workspace import workspace
     workspace, workspace_is_up_to_date = workspace()
@@ -296,7 +295,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
 
     INPUT:
 
-    - ``gap_string`` -- string. A valid statement in GAP.
+    - ``gap_string`` -- string; a valid statement in GAP
 
     OUTPUT:
 
@@ -369,7 +368,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # here if the error handler was set; but in case it wasn't
         # let's still check the result...
         nresults = GAP_LenList(result)
-        if nresults > 1:  # to mimick the old libGAP
+        if nresults > 1:  # to mimic the old libGAP
             # TODO: Get rid of this restriction eventually?
             raise GAPError("can only evaluate a single statement")
 
@@ -404,7 +403,7 @@ class GAPError(ValueError):  # ValueError for historical reasons
     """
 
 
-cdef str extract_libgap_errout() noexcept:
+cdef str extract_libgap_errout():
     """
     Reads the global variable libgap_errout and returns a Python string
     containing the error message (with some boilerplate removed).
@@ -432,7 +431,7 @@ cdef void error_handler() noexcept with gil:
     """
     The libgap error handler.
 
-    If an error occurred, we raise a ``GAPError``; when the original
+    If an error occurred, we raise a :exc:`GAPError`; when the original
     ``GAP_EvalString`` returns, this exception will be seen.
 
     TODO: We should probably prevent re-entering this function if we

@@ -1,11 +1,13 @@
 cd src
 
 if [ "$CONDA_PREFIX" != "" ]; then
-    # Quoted quotes so that whitespace in CONDA_PREFIX works correctly.
-    # Below we run the command line through eval.
     PILLOW_CONFIG_SETTINGS="$PILLOW_CONFIG_SETTINGS -C platform-guessing=disable"
 fi
 
-PILLOW_CONFIG_SETTINGS="-C debug=true -C jpeg=disable $PILLOW_CONFIG_SETTINGS"
+if [ "$SAGE_HAVE_LIBJPEG" != 1 ]; then
+    PILLOW_CONFIG_SETTINGS="-C jpeg=disable $PILLOW_CONFIG_SETTINGS"
+fi
+
+PILLOW_CONFIG_SETTINGS="-C debug=true $PILLOW_CONFIG_SETTINGS"
 
 eval sdh_pip_install $PILLOW_CONFIG_SETTINGS .

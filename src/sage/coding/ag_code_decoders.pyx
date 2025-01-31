@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings sage.schemes
+# sage.doctest: needs sage.rings.finite_rings sage.schemes
 r"""
 Decoders for AG codes
 
@@ -29,23 +29,23 @@ EXAMPLES::
 The ``decoder`` is now ready for correcting vectors received from a noisy
 channel::
 
-    sage: channel = channels.StaticErrorRateChannel(code.ambient_space(), tau)  # long time
-    sage: message_space = decoder.message_space()                   # long time
-    sage: message = message_space.random_element()                  # long time
-    sage: encoder = decoder.connected_encoder()                     # long time
-    sage: sent_codeword = encoder.encode(message)                   # long time
-    sage: received_vector = channel(sent_codeword)                  # long time
-    sage: (received_vector - sent_codeword).hamming_weight()        # long time
+    sage: # long time
+    sage: channel = channels.StaticErrorRateChannel(code.ambient_space(), tau)
+    sage: message_space = decoder.message_space()
+    sage: message = message_space.random_element()
+    sage: encoder = decoder.connected_encoder()
+    sage: sent_codeword = encoder.encode(message)
+    sage: received_vector = channel(sent_codeword)
+    sage: (received_vector - sent_codeword).hamming_weight()
     4
-    sage: decoder.decode_to_code(received_vector) == sent_codeword  # long time
+    sage: decoder.decode_to_code(received_vector) == sent_codeword
     True
-    sage: decoder.decode_to_message(received_vector) == message     # long time
+    sage: decoder.decode_to_message(received_vector) == message
     True
 
 AUTHORS:
 
 - Kwankyu Lee (2019-03): initial version
-
 """
 
 # ****************************************************************************
@@ -76,7 +76,7 @@ from sage.rings.polynomial.polynomial_element cimport Polynomial
 
 class EvaluationAGCodeEncoder(Encoder):
     """
-    Encoder of an evaluation AG code
+    Encoder of an evaluation AG code.
 
     INPUT:
 
@@ -1464,7 +1464,7 @@ cdef class Decoder_K():
         - ``detect_Q_polynomial`` -- boolean; if ``True``, a Q-polynomial is
           detected for fast decoding
 
-        If decoding fails for some reason, ``DecodingError`` is raised. The
+        If decoding fails for some reason, :exc:`DecodingError` is raised. The
         message contained in the exception indicates the type of the decoding
         failure.
 
@@ -1811,13 +1811,13 @@ cdef class EvaluationAGCodeDecoder_K(Decoder_K):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
     - ``Q`` -- a rational place not in ``pls``
 
-    - ``verbose`` -- if ``True``, verbose information is printed.
+    - ``verbose`` -- if ``True``, verbose information is printed
 
     EXAMPLES::
 
@@ -2066,7 +2066,7 @@ cdef class DifferentialAGCodeDecoder_K(Decoder_K):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2320,7 +2320,7 @@ cdef class Decoder_K_extension():
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2538,7 +2538,7 @@ cdef class EvaluationAGCodeDecoder_K_extension(Decoder_K_extension):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2592,7 +2592,7 @@ cdef class DifferentialAGCodeDecoder_K_extension(Decoder_K_extension):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 

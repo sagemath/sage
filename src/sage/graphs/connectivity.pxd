@@ -16,9 +16,9 @@ cdef class _Component:
     cdef _LinkedList * edge_list
     cdef int component_type
 
-    cdef add_edge(self, Py_ssize_t e_index) noexcept
-    cdef finish_tric_or_poly(self, Py_ssize_t e_index) noexcept
-    cdef list get_edge_list(self) noexcept
+    cdef add_edge(self, Py_ssize_t e_index)
+    cdef finish_tric_or_poly(self, Py_ssize_t e_index)
+    cdef list get_edge_list(self)
 
 cdef class TriconnectivitySPQR:
     cdef MemoryAllocator mem
@@ -36,7 +36,7 @@ cdef class TriconnectivitySPQR:
     cdef int* edge_extremity_first
     cdef int* edge_extremity_second
     cdef list int_to_original_edge_label
-    cdef int virtual_edge_num # number of created virtual edges
+    cdef int virtual_edge_num  # number of created virtual edges
 
     cdef int* edge_status
     cdef bint* reverse_edges
@@ -48,25 +48,25 @@ cdef class TriconnectivitySPQR:
 
     # Translates DFS number of a vertex to its new number
     cdef int* old_to_new
-    cdef int* newnum  # new number of vertex i
-    cdef int* node_at # node at dfs number of i
-    cdef int* lowpt1  # lowpt1 number of vertex i
-    cdef int* lowpt2  # lowpt2 number of vertex i
+    cdef int* newnum   # new number of vertex i
+    cdef int* node_at  # node at dfs number of i
+    cdef int* lowpt1   # lowpt1 number of vertex i
+    cdef int* lowpt2   # lowpt2 number of vertex i
 
     cdef _LinkedList ** adj
     cdef _LinkedListNode ** in_adj
     cdef int* nd        # Number of descendants of vertex i
     cdef int* parent    # Parent vertex of vertex i in the palm tree
-    cdef int* degree    # Degree of vertex i
-    cdef int* tree_arc  # Tree arc entering the vertex i
-    cdef int* vertex_at # vertex with DFS number of i
+    cdef int* degree     # Degree of vertex i
+    cdef int* tree_arc   # Tree arc entering the vertex i
+    cdef int* vertex_at  # vertex with DFS number of i
 
     cdef int dfs_counter
-    cdef list components_list # list of components of `graph_copy`
-    cdef list graph_copy_adjacency # Stores adjacency list
+    cdef list components_list  # list of components of `graph_copy`
+    cdef list graph_copy_adjacency  # Stores adjacency list
 
-    cdef bint* starts_path # Does edge e_index start a path
-    cdef int start_vertex # First vertex of exploration
+    cdef bint* starts_path   # Does edge e_index start a path
+    cdef int start_vertex    # First vertex of exploration
 
     # Stacks used in `path_search` function
     cdef list e_stack
@@ -75,10 +75,10 @@ cdef class TriconnectivitySPQR:
     cdef int* t_stack_b
     cdef int t_stack_top
 
-    cdef list comp_final_edge_list # entry i is list of edges in component i
-    cdef list comp_type            # entry i is type of component i
-    cdef dict final_edge_to_edge_index # associate final edge e to its index in int_to_edge
-    cdef GenericGraph_pyx spqr_tree # The final SPQR tree is stored
+    cdef list comp_final_edge_list  # entry i is list of edges in component i
+    cdef list comp_type             # entry i is type of component i
+    cdef dict final_edge_to_edge_index  # associate final edge e to its index in int_to_edge
+    cdef GenericGraph_pyx spqr_tree  # The final SPQR tree is stored
 
     # Arrays used in different methods. Allocated only once
     cdef int* tmp_array_n_int_1
@@ -86,9 +86,9 @@ cdef class TriconnectivitySPQR:
     cdef int* tmp_array_n_int_3
     cdef bint* tmp_array_n_bint_1
 
-    ### Methods ###
+    # === Methods ===
 
-    cdef inline __tstack_push(self, int h, int a, int b) noexcept:
+    cdef inline __tstack_push(self, int h, int a, int b):
         """
         Push ``(h, a, b)`` triple on ``Tstack``.
         """
@@ -97,7 +97,7 @@ cdef class TriconnectivitySPQR:
         self.t_stack_a[self.t_stack_top] = a
         self.t_stack_b[self.t_stack_top] = b
 
-    cdef inline __tstack_push_eos(self) noexcept:
+    cdef inline __tstack_push_eos(self):
         """
         Push end-of-stack marker on ``Tstack``.
         """
@@ -116,7 +116,7 @@ cdef class TriconnectivitySPQR:
         """
         return <int> self.e_stack.pop()
 
-    cdef inline __new_component(self, list edges, int type_c) noexcept:
+    cdef inline __new_component(self, list edges, int type_c):
         """
         Create a new component and add ``edges`` to it.
 
@@ -142,17 +142,15 @@ cdef class TriconnectivitySPQR:
             return self.edge_extremity_second[e_index]
         return self.edge_extremity_first[e_index]
 
-
     cdef int __new_virtual_edge(self, int u, int v) noexcept
     cdef _LinkedListNode * __new_LinkedListNode(self, Py_ssize_t e_index) noexcept
     cdef Py_ssize_t __high(self, Py_ssize_t v) noexcept
-    cdef __del_high(self, int e_index) noexcept
-    cdef __split_multiple_edges(self) noexcept
+    cdef __del_high(self, int e_index)
+    cdef __split_multiple_edges(self)
     cdef int __dfs1(self, int start, bint check=*) noexcept
-    cdef __build_acceptable_adj_struct(self) noexcept
-    cdef __path_finder(self, int start) noexcept
-    cdef __dfs2(self) noexcept
+    cdef __build_acceptable_adj_struct(self)
+    cdef __path_finder(self, int start)
+    cdef __dfs2(self)
     cdef int __path_search(self, int start) except -1
-    cdef __assemble_triconnected_components(self) noexcept
-    cdef __build_spqr_tree(self) noexcept
-
+    cdef __assemble_triconnected_components(self)
+    cdef __build_spqr_tree(self)

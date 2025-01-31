@@ -25,6 +25,7 @@ cdef extern from "limits.h":
     long INT_MIN
 
 import os
+from warnings import warn
 
 from libc.stdint cimport int64_t
 from sage.libs.singular.decl cimport *
@@ -56,22 +57,20 @@ ctypedef struct fraction "fractionObject":
 
 _saved_options = (int(0),0,0)
 
-cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring) noexcept:
+cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
     """
     Create a sage rational number from a singular one.
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular rational number
+    - ``n`` -- a (pointer to) a singular rational number
 
-    - ``*n`` - a pointer to a pointer like before
+    - ``*n`` -- a pointer to a pointer like before
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    OUTPUT:
-
-    - A sage Rational
+    OUTPUT: a sage Rational
 
     TESTS::
 
@@ -128,20 +127,18 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring) noexcept:
     mpq_clear(_z)
     return z
 
-cdef Integer si2sa_ZZ(number *n, ring *_ring) noexcept:
+cdef Integer si2sa_ZZ(number *n, ring *_ring):
     """
     Create a sage integer number from a singular one.
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular integer number
+    - ``n`` -- a (pointer to) a singular integer number
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    OUTPUT:
-
-    - A sage Integer
+    OUTPUT: a sage Integer
 
 
     TESTS::
@@ -163,22 +160,20 @@ cdef Integer si2sa_ZZ(number *n, ring *_ring) noexcept:
     z.set_from_mpz(<mpz_ptr>n)
     return z
 
-cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache) noexcept:
+cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache):
     """
     Create a sage element of a small finite field from a singular one.
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a finite field
+    - ``n`` -- a (pointer to) a singular number in a finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``cache`` - A Givaro number field
+    - ``cache`` -- a Givaro number field
 
-    OUTPUT:
-
-        - A sage element of ``cache``
+    OUTPUT: a sage element of ``cache``
 
     TESTS::
 
@@ -218,23 +213,21 @@ cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache) noexcept
         z = <poly*>pNext(<poly*>z)
     return (<FFgivE>cache._zero_element)._new_c(ret)
 
-cdef FFgf2eE si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache) noexcept:
+cdef FFgf2eE si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache):
     """
     Create a sage element of a finite field of characteristic 2 from a
     singular one.
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a finite field
+    - ``n`` -- a (pointer to) a singular number in a finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``cache`` - A ntl_gf2e number field
+    - ``cache`` -- a ntl_gf2e number field
 
-    OUTPUT:
-
-    - A sage element of ``cache``
+    OUTPUT: a sage element of ``cache``
 
 
     TESTS::
@@ -270,22 +263,20 @@ cdef FFgf2eE si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache) noex
         z = <poly*>pNext(<poly*>z)
     return ret
 
-cdef object si2sa_GFq_generic(number *n, ring *_ring, object base) noexcept:
+cdef object si2sa_GFq_generic(number *n, ring *_ring, object base):
     """
     Create a sage element of a generic finite field from a singular one.
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a finite field
+    - ``n`` -- a (pointer to) a singular number in a finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` - A sage finite field
+    - ``base`` -- a sage finite field
 
-    OUTPUT:
-
-    - A sage element of ``base``
+    OUTPUT: a sage element of ``base``
 
     TESTS::
 
@@ -312,6 +303,9 @@ cdef object si2sa_GFq_generic(number *n, ring *_ring, object base) noexcept:
     cdef object ret
     cdef ring *cfRing = _ring.cf.extRing
 
+    if _ring.cf.type in (n_Zn, n_Znm):
+        return si2sa_ZZmod(n, _ring, base)
+
     if _ring.cf.cfIsZero(n,_ring.cf):
         return base.zero()
     elif _ring.cf.cfIsOne(n,_ring.cf):
@@ -332,24 +326,22 @@ cdef object si2sa_GFq_generic(number *n, ring *_ring, object base) noexcept:
         z = <poly*>pNext(<poly*>z)
     return ret
 
-cdef object si2sa_transext_QQ(number *n, ring *_ring, object base) noexcept:
+cdef object si2sa_transext_QQ(number *n, ring *_ring, object base):
     """
     Create a sage element of a transcendental extension of ``QQ`` from a
     singular one.
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a transcendental extension
+    - ``n`` -- a (pointer to) a singular number in a transcendental extension
         of the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` - A sage FractionField
+    - ``base`` -- a sage FractionField
 
-    OUTPUT:
-
-    - A sage element of ``base``
+    OUTPUT: a sage element of ``base``
 
     TESTS::
 
@@ -421,24 +413,22 @@ cdef object si2sa_transext_QQ(number *n, ring *_ring, object base) noexcept:
 
     return snumer/sdenom
 
-cdef object si2sa_transext_FF(number *n, ring *_ring, object base) noexcept:
+cdef object si2sa_transext_FF(number *n, ring *_ring, object base):
     """
     Create a sage element of a transcendental extension of a prime field from a
     singular one.
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a transcendental extension
+    - ``n`` -- a (pointer to) a singular number in a transcendental extension
       of the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` - A sage FractionField
+    - ``base`` -- a sage FractionField
 
-    OUTPUT:
-
-    - A sage element of ``base``
+    OUTPUT: a sage element of ``base``
 
     TESTS::
 
@@ -476,8 +466,6 @@ cdef object si2sa_transext_FF(number *n, ring *_ring, object base) noexcept:
 
     while numer:
 
-
-
         c = p_GetCoeff(numer, cfRing)
         coeff = base(cfRing.cf.cfInt(c, cfRing.cf))
         numer.coef = c
@@ -504,23 +492,21 @@ cdef object si2sa_transext_FF(number *n, ring *_ring, object base) noexcept:
 
     return snumer/sdenom
 
-cdef object si2sa_NF(number *n, ring *_ring, object base) noexcept:
+cdef object si2sa_NF(number *n, ring *_ring, object base):
     """
     Create a sage element of a number field from a singular one.
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in an algebraic extension of
+    - ``n`` -- a (pointer to) a singular number in an algebraic extension of
       the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` - A sage NumberField
+    - ``base`` -- a sage NumberField
 
-    OUTPUT:
-
-    - A sage element of ``base``
+    OUTPUT: a sage element of ``base``
 
 
     TESTS::
@@ -570,22 +556,20 @@ cdef object si2sa_NF(number *n, ring *_ring, object base) noexcept:
         z = <poly*>pNext(<poly*>z)
     return base(ret)
 
-cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base) noexcept:
+cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base):
     """
     Create a sage element of a ring of integers modulo n from a singular one.
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a ring of integers modulo n
+    - ``n`` -- a (pointer to) a singular number in a ring of integers modulo n
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` - A sage IntegerModRing
+    - ``base`` -- a sage IntegerModRing
 
-    OUTPUT:
-
-    - A sage element of ``base``
+    OUTPUT: a sage element of ``base``
 
     TESTS::
 
@@ -632,7 +616,7 @@ cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base) noexcept:
     return base(_ring.cf.cfInt(n,_ring.cf))
 
 
-cdef list singular_monomial_exponents(poly *p, ring *r) noexcept:
+cdef list singular_monomial_exponents(poly *p, ring *r):
     r"""
     Return the list of exponents of monomial ``p``.
     """
@@ -643,7 +627,7 @@ cdef list singular_monomial_exponents(poly *p, ring *r) noexcept:
         ml[v-1] = p_GetExp(p, v, r)
     return ml
 
-cpdef list si2sa_resolution(Resolution res) noexcept:
+cpdef list si2sa_resolution(Resolution res):
     r"""
     Pull the data from Singular resolution ``res`` to construct a Sage
     resolution.
@@ -760,7 +744,7 @@ cpdef list si2sa_resolution(Resolution res) noexcept:
 
     return res_mats
 
-cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees) noexcept:
+cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees):
     """
     Pull the data from Singular resolution ``res`` to construct a Sage
     resolution.
@@ -906,7 +890,7 @@ cdef number *sa2si_QQ(Rational r, ring *_ring) noexcept:
 
     - ``r`` -- a sage rational number
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -934,9 +918,9 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring) noexcept:
 
     INPUT:
 
-    - ``quo`` -- a sage integer
+    - ``quo`` -- sage integer
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1004,7 +988,7 @@ cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a ntl_gf2e finite field
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1069,7 +1053,7 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a generic finite field
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1095,6 +1079,9 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring) noexcept:
     cdef number *coeff
     cdef number *apow1
     cdef number *apow2
+
+    if _ring.cf.type in (n_Zn, n_Znm):
+        return sa2si_ZZmod(elem, _ring)
     elem = elem.polynomial()
 
     if _ring != currRing: rChangeCurrRing(_ring)
@@ -1135,7 +1122,7 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1203,13 +1190,13 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring) noexcept:
 
     ngens = elem.parent().ngens()
 
-    nMapFuncPtr =  naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
+    nMapFuncPtr = naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
 
     if nMapFuncPtr is NULL:
         raise RuntimeError("Failed to determine nMapFuncPtr")
 
-    numerdic = elem.numerator().dict()
-    denomdic = elem.denominator().dict()
+    numerdic = elem.numerator().monomial_coefficients()
+    denomdic = elem.denominator().monomial_coefficients()
 
     if numerdic and not isinstance(list(numerdic)[0], (tuple, ETuple)):
         numerdic = {(k,):b for k,b in numerdic.items()}
@@ -1285,7 +1272,7 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1318,13 +1305,13 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
 
     ngens = elem.parent().ngens()
 
-    nMapFuncPtr =  naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
+    nMapFuncPtr = naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
 
     if nMapFuncPtr is NULL:
         raise RuntimeError("Failed to determine nMapFuncPtr")
 
-    numerdic = elem.numerator().dict()
-    denomdic = elem.denominator().dict()
+    numerdic = elem.numerator().monomial_coefficients()
+    denomdic = elem.denominator().monomial_coefficients()
 
     if numerdic and not isinstance(list(numerdic)[0], (tuple, ETuple)):
         numerdic = {(k,):b for k,b in numerdic.items()}
@@ -1341,11 +1328,11 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
             a = _ring.cf.cfParameter(j+1, _ring.cf)
             for k in range(ex):
                 aux1 = naCoeff
-                naCoeff = _ring.cf.cfMult(aux1, a ,_ring.cf)
+                naCoeff = _ring.cf.cfMult(aux1, a, _ring.cf)
                 _ring.cf.cfDelete(&aux1, _ring.cf)
             _ring.cf.cfDelete(&a, _ring.cf)
         aux2 = numerator
-        numerator = _ring.cf.cfAdd(aux2, naCoeff,_ring.cf)
+        numerator = _ring.cf.cfAdd(aux2, naCoeff, _ring.cf)
         _ring.cf.cfDelete(&naCoeff, _ring.cf)
         _ring.cf.cfDelete(&aux2, _ring.cf)
 
@@ -1358,7 +1345,7 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
                 a = _ring.cf.cfParameter(j+1, _ring.cf)
                 for k in range(ex):
                     aux1 = naCoeff
-                    naCoeff = _ring.cf.cfMult(aux1, a ,_ring.cf)
+                    naCoeff = _ring.cf.cfMult(aux1, a, _ring.cf)
                     _ring.cf.cfDelete(&aux1, _ring.cf)
                 _ring.cf.cfDelete(&a, _ring.cf)
             aux2 = denominator
@@ -1385,7 +1372,7 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a NumberField
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1406,6 +1393,13 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
         (a + 1)
         sage: R(F.gen()^5) + 1
         (-a^2 + a + 2)
+
+    Ensures :issue:`36101` is fixed::
+
+        sage: RR.<x, y, r, s0, c0, s1, c1> = AA[]
+        sage: f = -4*r^2+(((1+2*AA(cos(pi/6)))*c0*r+2*c1*r+(1+2*AA(cos(pi/6)))*s0*r+2*s1*r)/2-1/2)^2+((1-(1+2*AA(cos(pi/6)))*c0*r-2*c1*r+(1+2*AA(cos(pi/6)))*s0*r+2*s1*r)/2-1/2)^2
+        sage: f.change_ring( QuadraticField(3) )
+        ...
     """
     cdef int i
     cdef number *n1
@@ -1415,13 +1409,6 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     cdef number *naCoeff
     cdef number *apow1
     cdef number *apow2
-
-    cdef nMapFunc nMapFuncPtr = NULL
-
-    nMapFuncPtr =  naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
-
-    if nMapFuncPtr is NULL:
-        raise RuntimeError("Failed to determine nMapFuncPtr")
 
     elem = list(elem)
 
@@ -1445,11 +1432,14 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     rComplete(qqr,1)
     qqr.ShortOut = 0
 
-    nMapFuncPtr =  naSetMap( qqr.cf , _ring.cf ) # choose correct mapping function
+    assert _ring.cf.type == n_algExt  # if false naSetMap will segmentation fault (should never happen)
+    cdef nMapFunc nMapFuncPtr = naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
+    if nMapFuncPtr is NULL:
+        raise RuntimeError("Failed to determine nMapFuncPtr")
     cdef poly *_p
     for i from 0 <= i < len(elem):
         nlCoeff = nlInit2gmp( mpq_numref((<Rational>elem[i]).value), mpq_denref((<Rational>elem[i]).value),  qqr.cf )
-        naCoeff = nMapFuncPtr(nlCoeff, qqr.cf , _ring.cf )
+        naCoeff = nMapFuncPtr(nlCoeff, qqr.cf, _ring.cf)
         nlDelete(&nlCoeff, _ring.cf)
 
         # faster would be to assign the coefficient directly
@@ -1477,7 +1467,7 @@ cdef number *sa2si_ZZ(Integer d, ring *_ring) noexcept:
 
     - ``elem`` -- a sage Integer
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1506,9 +1496,9 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
     INPUT:
 
-    - ``elem`` - a sage IntegerMod
+    - ``elem`` -- a sage IntegerMod
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     TESTS::
 
@@ -1532,7 +1522,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
         sage: P.<x,y,z> = Integers(2^32)[]
         sage: P(2^32-1)
-        4294967295
+        -1
 
         sage: P(3)
         3
@@ -1544,7 +1534,6 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         sage: P(3)
         3
     """
-    nr2mModul = d.parent().characteristic()
     if _ring != currRing: rChangeCurrRing(_ring)
 
     cdef number *nn
@@ -1555,8 +1544,11 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
     cdef nMapFunc nMapFuncPtr = NULL
 
+    if _ring.cf.type == n_unknown:
+        return n_Init(int(d), _ring.cf)
+
     if _ring.cf.type == n_Z2m:
-        _d = long(d)
+        _d = d
         return nr2mMapZp(<number *>_d, currRing.cf, _ring.cf)
     elif _ring.cf.type == n_Zn or _ring.cf.type == n_Znm:
         lift = d.lift()
@@ -1569,9 +1561,9 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         _name = omStrDup("a")
         _ext_names = <char**>omAlloc0(sizeof(char*))
         _ext_names[0] = omStrDup(_name)
-        _cf = nInitChar( n_Z, NULL) # integer coefficient ring
-        ZZr = rDefault (_cf ,1, _ext_names)
-        rComplete(ZZr,1)
+        _cf = nInitChar(n_Z, NULL)  # integer coefficient ring
+        ZZr = rDefault (_cf, 1, _ext_names)
+        rComplete(ZZr, 1)
         ZZr.ShortOut = 0
 
         nn = nrzInit(0, ZZr.cf)
@@ -1582,23 +1574,23 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
     else:
         raise ValueError
 
-cdef object si2sa(number *n, ring *_ring, object base) noexcept:
+cdef object si2sa(number *n, ring *_ring, object base):
     r"""
-    Create a sage number from a singular one
+    Create a sage number from a singular one.
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number
+    - ``n`` -- a (pointer to) a singular number
 
-    - ``_ring`` - a (pointer to) the singular ring where ``n`` lives
+    - ``_ring`` -- a (pointer to) the singular ring where ``n`` lives
 
-    - ``object`` - the sage parent where the result will live
+    - ``object`` -- the sage parent where the result will live
 
     OUTPUT:
 
     An element of ``base``
     """
-    if isinstance(base, FiniteField_prime_modn):
+    if isinstance(base, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return base(_ring.cf.cfInt(n, _ring.cf))
 
     elif isinstance(base, RationalField):
@@ -1626,8 +1618,6 @@ cdef object si2sa(number *n, ring *_ring, object base) noexcept:
         return si2sa_transext_FF(n, _ring, base)
 
     elif isinstance(base, IntegerModRing_generic):
-        if _ring.cf.type == n_unknown:
-            return base(_ring.cf.cfInt(n, _ring.cf))
         return si2sa_ZZmod(n, _ring, base)
 
     else:
@@ -1639,17 +1629,18 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
 
     INPUT:
 
-    - ``elem`` - a sage element from a parent. The parent must have a
-      corresponding singular coefficient type.
+    - ``elem`` -- a sage element from a parent; the parent must have a
+      corresponding singular coefficient type
 
-    - ``_ring`` - a (pointer to) the singular ring where the result will live.
+    - ``_ring`` -- a (pointer to) the singular ring where the result will live
 
     OUTPUT:
 
     a (pointer to) a singular number
     """
     cdef int i = 0
-    if isinstance(elem._parent, FiniteField_prime_modn):
+
+    if isinstance(elem._parent, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return n_Init(int(elem),_ring.cf)
 
     elif isinstance(elem._parent, RationalField):
@@ -1670,8 +1661,6 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
     elif isinstance(elem._parent, NumberField) and elem._parent.is_absolute():
         return sa2si_NF(elem, _ring)
     elif isinstance(elem._parent, IntegerModRing_generic):
-        if _ring.cf.type == n_unknown:
-            return n_Init(int(elem),_ring.cf)
         return sa2si_ZZmod(elem, _ring)
     elif isinstance(elem._parent, FractionField_generic) and isinstance(elem._parent.base(), (MPolynomialRing_libsingular, PolynomialRing_field)):
         if isinstance(elem._parent.base().base_ring(), RationalField):
@@ -1681,9 +1670,9 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
 
     raise ValueError("cannot convert to SINGULAR number")
 
-cdef object si2sa_intvec(intvec *v) noexcept:
+cdef object si2sa_intvec(intvec *v):
     r"""
-    create a sage tuple from a singular vector of integers
+    Create a sage tuple from a singular vector of integers.
 
     INPUT:
 
@@ -1699,6 +1688,25 @@ cdef object si2sa_intvec(intvec *v) noexcept:
         l.append(v.get(r))
     return tuple(l)
 
+cdef object si2sa_bigintvec(bigintmat *v):
+    r"""
+    Create a sage tuple from a singular vector of big integers.
+
+    INPUT:
+
+    - ``v`` -- a (pointer to) singular bigintmat
+
+    OUTPUT:
+
+    a sage tuple
+    """
+    cdef int r
+    cdef list l = list()
+    for r in range(v.length()):
+        n = v.get(r)
+        l.append(si2sa_QQ(n, &n, currRing))
+    return tuple(l)
+
 # ==============
 # Initialisation
 # ==============
@@ -1710,22 +1718,21 @@ from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 
 cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     """
-    Raise an ``OverflowError`` if e is > max degree per variable.
+    Raise an :exc:`OverflowError` if e is > max degree per variable.
 
     INPUT:
 
-    - ``e`` -- some integer representing a degree.
+    - ``e`` -- some integer representing a degree
 
-    - ``_ring`` -- a pointer to some ring.
+    - ``_ring`` -- a pointer to some ring
 
     Whether an overflow occurs or not partially depends
 
     on the number of variables in the ring. See github issue
-    :trac:`11856`. With Singular 4, it is by default optimized
+    :issue:`11856`. With Singular 4, it is by default optimized
     for at least 4 variables on 64-bit and 2 variables on 32-bit,
     which in both cases makes a maximal default exponent of
     2^16-1.
-
 
     EXAMPLES::
 
@@ -1744,7 +1751,7 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     if unlikely(e > _ring.bitmask):
         raise OverflowError("exponent overflow (%d)"%(e))
 
-cdef init_libsingular() noexcept:
+cdef init_libsingular():
     """
     This initializes the SINGULAR library. This is a hack to some
     extent.
@@ -1762,7 +1769,6 @@ cdef init_libsingular() noexcept:
 
     cdef void *handle = NULL
 
-
     # This is a workaround for https://github.com/Singular/Singular/issues/1113
     # and can be removed once that fix makes it into release of Singular that
     # is supported by sage.
@@ -1776,14 +1782,12 @@ cdef init_libsingular() noexcept:
     else:
         os.environ["SINGULAR_BIN_DIR"] = dirname(singular_executable)
 
-    import platform
-    if not platform.system().startswith("CYGWIN"):
-        # reload the current module to force reload of libSingular (see #33446)
-        lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
-        handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
-        if not handle:
-            err = dlerror()
-            raise RuntimeError(f"Could not reload Singular library with RTLD_GLOBAL ({err})")
+    # reload the current module to force reload of libSingular (see #33446)
+    lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
+    handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
+    if not handle:
+        err = dlerror()
+        raise RuntimeError(f"Could not reload Singular library with RTLD_GLOBAL ({err})")
 
     # load SINGULAR
     siInit(lib)
@@ -1812,9 +1816,100 @@ saved_PATH = os.environ["PATH"]
 init_libsingular()
 os.environ["PATH"] = saved_PATH
 
+cdef bint catching_error = False
+
 cdef void libsingular_error_callback(const_char_ptr s) noexcept:
     _s = char_to_str(s)
-    error_messages.append(_s)
+    if catching_error:
+        error_messages.append(_s)
+    else:
+        warn(f"error in Singular ignored: {_s}")
+
+cdef int start_catch_error() except -1:
+    """
+    Helper function to convert Singular errors to Python exceptions.
+
+    Must be used as follows::
+
+        start_catch_error()
+        ...
+        s = check_error()  # nonempty tuple[str, ...] (error messages) or None
+        if s:
+            # at this point global variable ``error_messages`` is cleared
+            raise RuntimeError(...)
+
+    Return value is ignored, only used for exception handling.
+
+    Note that :func:`check_error` can only be called exactly once.
+
+    Note that this *must not* be used in conjunction with :func:`sig_on` as follows::
+
+        start_catch_error()
+        sig_on()
+        ...
+        sig_off()
+        if check_error():
+            raise RuntimeError(...)
+
+    because if the code is interrupted, then :func:`check_error` is never called.
+
+    Use the following instead::
+
+        start_catch_error()
+        try:
+            sig_on()
+            ...  # long time
+            sig_off()
+        finally:
+            if check_error():
+                raise RuntimeError(...)
+
+    If the code inside (marked `# long time`) can also raise a Python exception,
+    the above is still wrong --- :func:`sig_off` may not be called. In this case
+    use a nested ``try`` as suggested in ``cysignals`` documentation::
+
+        start_catch_error()
+        try:
+            sig_on()  # This must be OUTSIDE the inner try
+            try:
+                ...  # long time
+            finally:
+                sig_off()
+        finally:
+            if check_error():
+                raise RuntimeError(...)
+    """
+    global errorreported, catching_error, error_messages
+    if catching_error:
+        warn("internal error: previous start_catch_error not ended with check_error")
+    catching_error = True
+
+    if errorreported:
+        warn(f"error in Singular ignored: {', '.join(error_messages)}")
+        errorreported = False
+        error_messages.clear()
+    else:
+        assert not error_messages
+    return 0
+
+cdef object check_error():
+    """
+    See :func:`start_catch_error`.
+    """
+    global errorreported, catching_error, error_messages
+    if not catching_error:
+        warn("internal error: check_error not preceded with start_catch_error")
+    catching_error = False
+
+    if errorreported:
+        result = tuple(error_messages)
+        assert result
+        errorreported = False
+        error_messages.clear()
+        return result
+    assert not error_messages
+    return None
+
 
 def get_resource(id):
     """
@@ -1825,9 +1920,7 @@ def get_resource(id):
     - ``id`` -- a single-character string; see
       https://github.com/Singular/Singular/blob/spielwiese/resources/feResource.cc
 
-    OUTPUT:
-
-    A string, or ``None``.
+    OUTPUT: string or ``None``
 
     EXAMPLES::
 

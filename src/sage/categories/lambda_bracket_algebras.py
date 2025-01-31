@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Lambda Bracket Algebras
 
@@ -16,13 +17,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .category_types import Category_over_base_ring
-from sage.misc.abstract_method import abstract_method
-from sage.categories.modules import Modules
-from sage.structure.element import coerce_binop
-from sage.misc.cachefunc import cached_method
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.modules import Modules
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+from sage.structure.element import coerce_binop
+
 _CommutativeRings = CommutativeRings()
 
 
@@ -32,15 +34,14 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
     This is an abstract base category for Lie conformal algebras and
     super Lie conformal algebras.
-
     """
     @staticmethod
     def __classcall_private__(cls, R, check=True):
         r"""
         INPUT:
 
-        - `R` -- a commutative ring
-        - ``check`` -- a boolean (default: ``True``); whether to check
+        - ``R`` -- a commutative ring
+        - ``check`` -- boolean (default: ``True``); whether to check
           that `R` is a commutative ring
 
         EXAMPLES::
@@ -53,7 +54,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             Category of Lie conformal algebras over Integer Ring
         """
         if check:
-            if not (R in _CommutativeRings):
+            if R not in _CommutativeRings:
                     raise ValueError("base must be a commutative ring got {}".format(R))
         return super().__classcall__(cls, R)
 
@@ -91,7 +92,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: LieConformalAlgebras(QQ).FinitelyGenerated()
-                Category of finitely generated lie conformal algebras over Rational Field
+                Category of finitely generated Lie conformal algebras over Rational Field
             """
             return self._with_axiom("FinitelyGeneratedAsLambdaBracketAlgebra")
 
@@ -102,7 +103,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: LieConformalAlgebras(QQ).FinitelyGenerated()
-                Category of finitely generated lie conformal algebras over Rational Field
+                Category of finitely generated Lie conformal algebras over Rational Field
             """
             return self._with_axiom("FinitelyGeneratedAsLambdaBracketAlgebra")
 
@@ -249,7 +250,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
             INPUT:
 
-            - ``n`` -- integer (default:``1``); how many times
+            - ``n`` -- integer (default: `1`); how many times
               to apply `T` to this element
 
             OUTPUT:

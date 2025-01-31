@@ -1,2 +1,0 @@
-ipython >=7.13.0, <8.9.0
-# ipython >= 8.9.0 requires prompt_toolkit too new for Sage

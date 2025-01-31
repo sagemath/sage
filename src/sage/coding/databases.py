@@ -1,16 +1,19 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Access functions to online databases for coding theory
 """
-from sage.features.gap import GapPackage
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('sage.libs.gap.libgap', 'libgap')
+# Import the following function so that it is available as
+# - sage.coding.databases.self_dual_binary_codes
+# - codes.databases.self_dual_binary_codes (which functions as a catalog).
+lazy_import('sage.coding.self_dual_codes', 'self_dual_binary_codes')
 
 del lazy_import
 
 # Do not put any global imports here since this module is accessible as
-# sage.codes.databases.<tab>
+# - sage.coding.databases.<tab>
+# - codes.databases.<tab>
 
 
 def best_linear_code_in_guava(n, k, F):
@@ -29,9 +32,7 @@ def best_linear_code_in_guava(n, k, F):
 
     - ``F`` -- the base field of the code to look up
 
-    OUTPUT:
-
-    A :class:`LinearCode` which is a best linear code of the given parameters known to GUAVA.
+    OUTPUT: a :class:`LinearCode` which is a best linear code of the given parameters known to GUAVA
 
     EXAMPLES::
 
@@ -47,9 +48,11 @@ def best_linear_code_in_guava(n, k, F):
     between 2 and 4. Use ``bounds_on_minimum_distance_in_guava(10,5,GF(2))``
     for further details.
     """
+    from sage.features.gap import GapPackage
     from .linear_code import LinearCode
-    GapPackage("guava", spkg="gap_packages").require()
-    libgap.load_package("guava")
+    GapPackage('guava', spkg='gap_packages').require()
+    from sage.libs.gap.libgap import libgap
+    libgap.load_package('guava')
     C = libgap.BestKnownLinearCode(n, k, F)
     return LinearCode(C.GeneratorMat()._matrix_(F))
 
@@ -80,9 +83,7 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
 
     - ``F`` -- the base field of the code to look up
 
-    OUTPUT:
-
-    - A GAP record object. See below for an example.
+    OUTPUT: a GAP record object. See below for an example
 
     EXAMPLES::
 
@@ -107,8 +108,10 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
           upperBound := 4,
           upperBoundExplanation := ... )
     """
-    GapPackage("guava", spkg="gap_packages").require()
-    libgap.load_package("guava")
+    from sage.features.gap import GapPackage
+    GapPackage('guava', spkg='gap_packages').require()
+    from sage.libs.gap.libgap import libgap
+    libgap.load_package('guava')
     return libgap.BoundsMinimumDistance(n, k, F)
 
 
@@ -119,17 +122,15 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
 
     INPUT:
 
-    -  ``n`` - Integer, the length of the code
+    - ``n`` -- integer; the length of the code
 
-    -  ``k`` - Integer, the dimension of the code
+    - ``k`` -- integer; the dimension of the code
 
-    -  ``F`` - Finite field, of order 2, 3, 4, 5, 7, 8, or 9
+    - ``F`` -- finite field, of order 2, 3, 4, 5, 7, 8, or 9
 
-    -  ``verbose`` - Bool (default: ``False``)
+    - ``verbose`` -- boolean (default: ``False``)
 
-    OUTPUT:
-
-    -  An unparsed text explaining the construction of the code.
+    OUTPUT: an unparsed text explaining the construction of the code
 
     EXAMPLES::
 
@@ -146,8 +147,8 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
         <BLANKLINE>
         last modified: 2002-03-20
 
-    This function raises an :class:`IOError` if an error occurs downloading data or
-    parsing it. It raises a :class:`ValueError` if the ``q`` input is invalid.
+    This function raises an :exc:`IOError` if an error occurs downloading data or
+    parsing it. It raises a :exc:`ValueError` if the ``q`` input is invalid.
 
     AUTHORS:
 
@@ -174,42 +175,43 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
     i = s.find("<PRE>")
     j = s.find("</PRE>")
     if i == -1 or j == -1:
-        raise IOError("Error parsing data (missing pre tags).")
+        raise OSError("Error parsing data (missing pre tags).")
     return s[i+5:j].strip()
 
 
 def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     in_test=None):
     """
-    Returns a Python iterator which generates a complete set of
+    Return a Python iterator which generates a complete set of
     representatives of all permutation equivalence classes of
     self-orthogonal binary linear codes of length in ``[1..n]`` and
     dimension in ``[1..k]``.
 
     INPUT:
 
-    -  ``n`` -- Integer, maximal length
+    - ``n`` -- integer; maximal length
 
-    -  ``k`` -- Integer, maximal dimension
+    - ``k`` -- integer; maximal dimension
 
-    -  ``b`` -- Integer, requires that the generators all have weight divisible
-       by ``b`` (if ``b=2``, all self-orthogonal codes are generated, and if
-       ``b=4``, all doubly even codes are generated). Must be an even positive
-       integer.
+    - ``b`` -- integer; requires that the generators all have weight divisible
+      by ``b`` (if ``b=2``, all self-orthogonal codes are generated, and if
+      ``b=4``, all doubly even codes are generated). Must be an even positive
+      integer.
 
-    -  ``parent``- - Used in recursion (default: ``None``)
+    - ``parent`` -- used in recursion (default: ``None``)
 
-    -  ``BC`` -- Used in recursion (default: ``None``)
+    - ``BC`` -- used in recursion (default: ``None``)
 
-    -  ``equal`` -- If ``True``, generates only [n, k] codes (default: ``False``)
+    - ``equal`` -- if ``True``, generates only [n, k] codes (default: ``False``)
 
-    -  ``in_test`` -- Used in recursion (default: ``None``)
+    - ``in_test`` -- used in recursion (default: ``None``)
 
     EXAMPLES:
 
     Generate all self-orthogonal codes of length up to 7 and dimension up
     to 3::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,3):
         ....:    print(B)
         [2, 1] linear code over GF(2)
@@ -224,6 +226,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all doubly-even codes of length up to 7 and dimension up
     to 3::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,3,4):
         ....:    print(B); print(B.generator_matrix())
         [4, 1] linear code over GF(2)
@@ -239,6 +242,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all doubly-even codes of length up to 7 and dimension up
     to 2::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,2,4):
         ....:    print(B); print(B.generator_matrix())
         [4, 1] linear code over GF(2)
@@ -250,6 +254,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all self-orthogonal codes of length equal to 8 and
     dimension equal to 4::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(8, 4, equal=True):
         ....:     print(B); print(B.generator_matrix())
         [8, 4] linear code over GF(2)
@@ -308,9 +313,3 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
                     for N in self_orthogonal_binary_codes(n, k, d, child, BC, in_test=in_test):
                         if out_test(N):
                             yield N
-
-
-# Import the following function so that it is available as
-# sage.codes.databases.self_dual_binary_codes sage.codes.databases functions
-# somewhat like a catalog in this respect.
-from sage.coding.self_dual_codes import self_dual_binary_codes

@@ -1,1 +1,1 @@
-"pkgconfig(freetype2)"
+pkgconfig(freetype2)

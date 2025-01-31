@@ -455,7 +455,7 @@ following libraries are currently supported:
 * `CPLEX
   <https://www.ibm.com/products/ilog-cplex-optimization-studio/>`_:
   Proprietary, but available for free for researchers and students through
-  IBM's Academic Initiative.  Since :trac:`27790`, only versions 12.8 and
+  IBM's Academic Initiative.  Since :issue:`27790`, only versions 12.8 and
   above are supported.
 
   Install CPLEX according to the instructions on the

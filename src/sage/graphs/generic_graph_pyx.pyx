@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 GenericGraph Cython functions
 
@@ -124,7 +123,7 @@ def layout_split(layout_function, G, **options):
 def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True,
                        bint height=False, by_component=False, **options):
     """
-    Spring force model layout
+    Spring force model layout.
 
     This function primarily acts as a wrapper around :func:`run_spring`,
     converting to and from raw C types.
@@ -135,7 +134,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
     INPUT:
 
-    - ``by_component`` -- a boolean
+    - ``by_component`` -- boolean
 
     EXAMPLES::
 
@@ -258,7 +257,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
 
 @cython.cdivision(True)
-cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height) noexcept:
+cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height):
     r"""
     Find a locally optimal layout for this graph, according to the
     constraints that neighboring nodes want to be a fixed distance
@@ -273,25 +272,21 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
 
     INPUT:
 
-        iterations -- number of steps to take
-        _dim       -- number of dimensions of freedom. Provide a value of type
-                      `D_TWO` for 2 dimensions, or type `D_THREE` for three
-                      dimensions. The actual value does not matter: only its
-                      type is important.
-        pos        -- already initialized initial positions
-                      Each vertex is stored as [dim] consecutive doubles.
-                      These doubles are then placed consecutively in the array.
-                      For example, if dim=3, we would have
-                      pos = [x_1, y_1, z_1, x_2, y_2, z_2, ... , x_n, y_n, z_n]
-        edges      -- List of edges, sorted lexicographically by the first
-                      (smallest) vertex, terminated by -1, -1.
-                      The first two entries represent the first edge, and so on.
-        n          -- number of vertices in the graph
-        height     -- if True, do not update the last coordinate ever
+    - ``iterations`` -- number of steps to take
+    - ``_dim`` -- number of dimensions of freedom. Provide a value of type `D_TWO`
+      for 2 dimensions, or type `D_THREE` for three dimensions. The actual
+      value does not matter: only its type is important.
+    - ``pos`` -- already initialized initial positions. Each vertex is stored as
+      [dim] consecutive doubles. These doubles are then placed consecutively
+      in the array. For example, if dim=3, we would have
+      pos = [x_1, y_1, z_1, x_2, y_2, z_2, ... , x_n, y_n, z_n]
+    - ``edges`` -- List of edges, sorted lexicographically by the first (smallest)
+      vertex, terminated by -1, -1. The first two entries represent the first
+      edge, and so on.
+    - ``n`` -- number of vertices in the graph
+    - ``height`` -- if ``True``, do not update the last coordinate ever
 
-    OUTPUT:
-
-    Modifies contents of pos.
+    OUTPUT: modifies contents of pos
 
     AUTHOR:
 
@@ -395,12 +390,12 @@ cdef inline double sqrt_approx(double x, double y, double xx, double yy) noexcep
     Assuming that `x > y > 0`, it is a taylor expansion at `x^2`. To see how
     'bad' the approximation is::
 
-        sage: def dist(x,y):
+        sage: def dist(x, y):
         ....:    x = abs(x)
         ....:    y = abs(y)
         ....:    return max(x,y) + min(x,y)**2/(2*max(x,y))
 
-        sage: polar_plot([1,lambda x:dist(cos(x),sin(x))], (0, 2*math.pi))              # needs sage.plot
+        sage: polar_plot([1, lambda x: dist(cos(x), sin(x))], (0, 2*math.pi))           # needs sage.plot sage.symbolic
         Graphics object consisting of 2 graphics primitives
     """
     if xx < yy:
@@ -418,7 +413,7 @@ def int_to_binary_string(n):
 
     INPUT:
 
-    - ``n`` (integer)
+    - ``n`` -- integer
 
     EXAMPLES::
 
@@ -448,7 +443,7 @@ def binary_string_to_graph6(x):
 
     INPUT:
 
-    - ``x`` -- a binary string.
+    - ``x`` -- a binary string
 
     EXAMPLES::
 
@@ -475,7 +470,7 @@ def small_integer_to_graph6(n):
 
     INPUT:
 
-    - ``n`` (integer)
+    - ``n`` -- integer
 
     EXAMPLES::
 
@@ -501,8 +496,8 @@ def length_and_string_from_graph6(s):
 
     INPUT:
 
-    - ``s`` -- a graph6 string describing an binary vector (and encoding its
-      length).
+    - ``s`` -- a graph6 string describing a binary vector (and encoding its
+      length)
 
     EXAMPLES::
 
@@ -537,7 +532,7 @@ def length_and_string_from_graph6(s):
 
 def binary_string_from_graph6(s, n):
     r"""
-    Decode a binary string from its graph6 representation
+    Decode a binary string from its graph6 representation.
 
     This helper function is the inverse of `R` from [McK2015]_.
 
@@ -545,7 +540,7 @@ def binary_string_from_graph6(s, n):
 
     - ``s`` -- a graph6 string
 
-    - ``n`` -- the length of the binary string encoded by ``s``.
+    - ``n`` -- the length of the binary string encoded by ``s``
 
     EXAMPLES::
 
@@ -583,7 +578,7 @@ def binary_string_from_dig6(s, n):
 
     - ``s`` -- a graph6 string
 
-    - ``n`` -- the length of the binary string encoded by ``s``.
+    - ``n`` -- the length of the binary string encoded by ``s``
 
     EXAMPLES::
 
@@ -612,6 +607,7 @@ def binary_string_from_dig6(s, n):
     m = "".join(l)
     return m[:n*n]
 
+
 # Exhaustive search in graphs
 
 cdef class SubgraphSearch:
@@ -637,11 +633,10 @@ cdef class SubgraphSearch:
     .. NOTE::
 
         This algorithm does not take vertex/edge labels into account.
-
     """
     def __init__(self, G, H, induced=False):
         r"""
-        Constructor
+        Constructor.
 
         This constructor only checks there is no inconsistency in the
         input : `G` and `H` are both graphs or both digraphs and that `H`
@@ -655,7 +650,7 @@ cdef class SubgraphSearch:
 
         TESTS:
 
-        Test proper initialization and deallocation, see :trac:`14067`.
+        Test proper initialization and deallocation, see :issue:`14067`.
         We intentionally only create the class without doing any
         computations with it::
 
@@ -705,7 +700,7 @@ cdef class SubgraphSearch:
 
     def cardinality(self):
         r"""
-        Returns the number of labelled subgraphs of `G` isomorphic to
+        Return the number of labelled subgraphs of `G` isomorphic to
         `H`.
 
         .. NOTE::
@@ -726,7 +721,7 @@ cdef class SubgraphSearch:
             6
 
         Check that the method is working even when vertices or edges are of
-        incomparable types (see :trac:`35904`)::
+        incomparable types (see :issue:`35904`)::
 
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: G = Graph()
@@ -777,7 +772,7 @@ cdef class SubgraphSearch:
 
         TESTS:
 
-        Check that :trac:`21828` is fixed::
+        Check that :issue:`21828` is fixed::
 
             sage: Poset().is_incomparable_chain_free(1,1)   # indirect doctest          # needs sage.modules
             True
@@ -807,7 +802,7 @@ cdef class SubgraphSearch:
 
     def __cinit__(self, G, H, induced=False):
         r"""
-        Cython constructor
+        Cython constructor.
 
         This method initializes all the C values.
 
@@ -831,16 +826,16 @@ cdef class SubgraphSearch:
         # whether both are of the same type)
         self.directed = G.is_directed()
 
-        cdef int i, j, k
+        cdef int i, j
 
         # A vertex is said to be busy if it is already part of the partial copy
         # of H in G.
-        self.busy       = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.tmp_array  = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.stack      = <int *>  self.mem.allocarray(self.nh, sizeof(int))
-        self.vertices   = <int *>  self.mem.allocarray(self.nh, sizeof(int))
+        self.busy = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.tmp_array = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.stack = <int *> self.mem.allocarray(self.nh, sizeof(int))
+        self.vertices = <int *> self.mem.allocarray(self.nh, sizeof(int))
         self.line_h_out = <int **> self.mem.allocarray(self.nh, sizeof(int *))
-        self.line_h_in  = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
+        self.line_h_in = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
 
         self.line_h_out[0] = <int *> self.mem.allocarray(self.nh*self.nh,
                                                          sizeof(int))
@@ -895,7 +890,7 @@ cdef class SubgraphSearch:
 
     def __next__(self):
         r"""
-        Returns the next isomorphic subgraph if any, and raises a
+        Return the next isomorphic subgraph if any, and raises a
         ``StopIteration`` otherwise.
 
         EXAMPLES::
@@ -981,20 +976,18 @@ cdef class SubgraphSearch:
 
 cdef inline bint vectors_equal(int n, int *a, int *b) noexcept:
     r"""
-    Tests whether the two given vectors are equal. Two integer vectors
+    Test whether the two given vectors are equal. Two integer vectors
     `a = (a_1, a_2, \dots, a_n)` and `b = (b_1, b_2, \dots, b_n)` are equal
     iff `a_i = b_i` for all `i = 1, 2, \dots, n`. See the function
     ``_test_vectors_equal_inferior()`` for unit tests.
 
     INPUT:
 
-    - ``n`` -- positive integer; length of the vectors.
+    - ``n`` -- positive integer; length of the vectors
 
-    - ``a``, ``b`` -- two vectors of integers.
+    - ``a``, ``b`` -- two vectors of integers
 
-    OUTPUT:
-
-    - ``True`` if ``a`` and ``b`` are the same vector; ``False`` otherwise.
+    OUTPUT: ``True`` if ``a`` and ``b`` are the same vector; ``False`` otherwise
     """
     cdef int i
     for i in range(n):
@@ -1004,7 +997,7 @@ cdef inline bint vectors_equal(int n, int *a, int *b) noexcept:
 
 cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
     r"""
-    Tests whether the second vector of integers is inferior to the first. Let
+    Test whether the second vector of integers is inferior to the first. Let
     `u = (u_1, u_2, \dots, u_k)` and `v = (v_1, v_2, \dots, v_k)` be two
     integer vectors of equal length. Then `u` is said to be less than
     (or inferior to) `v` if `u_i \leq v_i` for all `i = 1, 2, \dots, k`. See
@@ -1015,9 +1008,9 @@ cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
 
     INPUT:
 
-    - ``n`` -- positive integer; length of the vectors.
+    - ``n`` -- positive integer; length of the vectors
 
-    - ``a``, ``b`` -- two vectors of integers.
+    - ``a``, ``b`` -- two vectors of integers
 
     OUTPUT:
 
@@ -1029,6 +1022,7 @@ cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
         if a[i] < b[i]:
             return False
     return True
+
 
 ##############################
 # Further tests. Unit tests for methods, functions, classes defined with cdef.
@@ -1157,7 +1151,7 @@ def _test_vectors_equal_inferior():
 
 
 cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
-                             long backtrack_bound=1000, find_path=False) noexcept:
+                             long backtrack_bound=1000, find_path=False):
     r"""
     Randomized backtracking for finding Hamiltonian cycles and paths.
 
@@ -1181,14 +1175,14 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     - ``max_iter`` -- maximum number of iterations
 
     - ``reset_bound`` -- number of iterations before restarting the
-       procedure
+      procedure
 
     - ``backtrack_bound`` -- number of iterations to elapse before
-       discarding the last 5 vertices of the path.
+      discarding the last 5 vertices of the path
 
-    - ``find_path`` -- (default: ``False``) if set to ``True``, will
-       search a Hamiltonian path; if ``False``, will search for a
-       Hamiltonian cycle
+    - ``find_path`` -- boolean (default: ``False``); if set to ``True``, will
+      search a Hamiltonian path. If ``False``, will search for a Hamiltonian
+      cycle.
 
     OUTPUT:
 
@@ -1283,7 +1277,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
     TESTS:
 
-    :trac:`10206` -- Hamiltonian cycle in small (di)graphs::
+    :issue:`10206` -- Hamiltonian cycle in small (di)graphs::
 
         sage: for n in range(3):
         ....:     for G in graphs(n):
@@ -1301,7 +1295,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         order 2 and size 1: (False, [0, 1])
         order 2 and size 2: (False, [0, 1])
 
-    :trac:`10206` -- Hamiltonian path in small (di)graphs::
+    :issue:`10206` -- Hamiltonian path in small (di)graphs::
 
         sage: for n in range(3):
         ....:     for G in graphs(n):
@@ -1319,7 +1313,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         order 2 and size 1: (True, [0, 1])
         order 2 and size 2: (True, [0, 1])
 
-    :trac:`10206` -- disconnected graphs::
+    :issue:`10206` -- disconnected graphs::
 
         sage: G = graphs.CompleteGraph(4) + Graph(1)
         sage: fh(G, find_path=False)
@@ -1347,7 +1341,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     find_path = (find_path > 0)
 
     if G.is_clique(induced=False):
-        # We have an hamiltonian path since n >= 2, but we have an hamiltonian
+        # We have a hamiltonian path since n >= 2, but we have a hamiltonian
         # cycle only if n >= 3
         return find_path or n >= 3, list(G)
 
@@ -1570,7 +1564,7 @@ def transitive_reduction_acyclic(G):
 
     INPUT:
 
-    - ``G`` -- an acyclic digraph.
+    - ``G`` -- an acyclic digraph
 
     EXAMPLES::
 

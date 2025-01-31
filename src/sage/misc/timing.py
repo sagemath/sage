@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Timing functions
 """
@@ -32,8 +33,7 @@ def cputime(t=0, subprocesses=False):
     ``cputime()`` implementation into account.
 
     The measurement for the main Sage process is done via a call to
-    :func:`resource.getrusage()`, so it avoids the wraparound problems in
-    :func:`time.clock()` on Cygwin.
+    :func:`resource.getrusage()`.
 
     INPUT:
 
@@ -41,8 +41,7 @@ def cputime(t=0, subprocesses=False):
       from an earlier call with ``subprocesses=True``, then
       ``subprocesses=True`` is assumed.
 
-    - subprocesses -- (optional), include subprocesses (default:
-      ``False``)
+    - ``subprocesses`` -- boolean (default: ``False``); include subprocesses
 
     OUTPUT:
 
@@ -139,7 +138,7 @@ class GlobalCputime:
         sage: t = cputime(subprocesses=True)
         sage: P = PolynomialRing(QQ,7,'x')
         sage: I = sage.rings.ideal.Katsura(P)                                           # needs sage.libs.singular
-        sage: gb = I.groebner_basis() # calls Singular                                  # needs sage.libs.singular
+        sage: gb = I.groebner_basis()  # calls Singular                                 # needs sage.libs.singular
         sage: cputime(subprocesses=True) - t    # output random
         0.462987
 
@@ -185,7 +184,7 @@ class GlobalCputime:
             sage: t = cputime(subprocesses=True)
             sage: P = PolynomialRing(QQ,7,'x')
             sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.libs.singular
-            sage: gb = I.groebner_basis() # calls Singular                              # needs sage.libs.singular
+            sage: gb = I.groebner_basis()  # calls Singular                             # needs sage.libs.singular
             sage: cputime(subprocesses=True) + t # output random
             2.798708
         """
@@ -201,7 +200,7 @@ class GlobalCputime:
             sage: t = cputime(subprocesses=True)
             sage: P = PolynomialRing(QQ,7,'x')
             sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.libs.singular
-            sage: gb = I.groebner_basis() # calls Singular                              # needs sage.libs.singular
+            sage: gb = I.groebner_basis()  # calls Singular                             # needs sage.libs.singular
             sage: cputime(subprocesses=True) - t # output random
             0.462987
         """
@@ -229,13 +228,9 @@ def walltime(t=0):
 
     INPUT:
 
+    - ``t`` -- (optional) float, time in CPU seconds
 
-    -  ``t`` -- (optional) float, time in CPU seconds
-
-    OUTPUT:
-
-    -  ``float`` -- time in seconds
-
+    OUTPUT: ``float`` -- time in seconds
 
     EXAMPLES::
 

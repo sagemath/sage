@@ -1,4 +1,4 @@
-# sage.doctest: optional - gap_package_quagroup
+# sage.doctest: optional - gap_package_quagroup sage.combinat sage.libs.gap sage.modules
 """
 Quantum Groups Using GAP's QuaGroup Package
 
@@ -6,9 +6,8 @@ AUTHORS:
 
 - Travis Scrimshaw (03-2017): initial version
 
-The documentation for GAP's QuaGroup package, originally authored by
-Willem Adriaan de Graaf, can be found at
-https://www.gap-system.org/Packages/quagroup.html.
+See the :gap_package:`documentation for GAP's QuaGroup package <quagroup/doc/chap0_mj.html>`,
+originally authored by Willem Adriaan de Graaf.
 """
 
 # ****************************************************************************
@@ -21,7 +20,12 @@ https://www.gap-system.org/Packages/quagroup.html.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import re
+
+from copy import copy
+
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -33,7 +37,6 @@ from sage.sets.family import Family
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.libs.gap.libgap import libgap
 from sage.features.gap import GapPackage
-from sage.graphs.digraph import DiGraph
 from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.cartesian_product import cartesian_product
@@ -44,8 +47,7 @@ from sage.categories.modules import Modules
 from sage.categories.morphism import Morphism
 from sage.categories.rings import Rings
 
-from copy import copy
-import re
+lazy_import('sage.graphs.digraph', 'DiGraph')
 
 
 class QuaGroupModuleElement(Element):
@@ -369,7 +371,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
             sage: TestSuite(Q).run()            # long time
         """
         self._cartan_type = cartan_type
-        GapPackage("QuaGroup", spkg="gap_package_quagroup").require()
+        GapPackage("QuaGroup", spkg='gap_package_quagroup').require()
         libgap.LoadPackage('QuaGroup')
         R = libgap.eval('RootSystem("%s",%s)' % (cartan_type.type(), cartan_type.rank()))
         Q = self._cartan_type.root_system().root_lattice()
@@ -836,7 +838,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
                 constant = R(str(ext_rep.pop(2 * i)))  # Pop the coefficient
                 break
         # To reconstruct, we need the following
-        F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(self._libgap))
+        F = self._libgap.FamilyObj().ElementsFamily()
         elt = F.ObjByExtRep(ext_rep)
         co = self._libgap.CounitMap()
         return R(str(co(elt))) + constant
@@ -1082,7 +1084,7 @@ class QuantumGroupMorphism(Morphism):
             sage: Q = QuantumGroup(['A',1])
             sage: F, K, Ki, E = Q.gens()
             sage: phi = Q.hom([E, Ki, K, F])
-            sage: TestSuite(phi).run(skip="_test_category")
+            sage: TestSuite(phi).run(skip='_test_category')
         """
         self._repr_type_str = "Quantum group homomorphism"
         Morphism.__init__(self, parent)
@@ -1697,7 +1699,7 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
         G = DiGraph([vertices, edges], format='vertices_and_edges')
         from sage.graphs.dot2tex_utils import have_dot2tex
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex",
+            G.set_latex_options(format='dot2tex',
                                 edge_labels=True,
                                 color_by_label=self._cartan_type._index_set_coloring)
         return G
@@ -2022,7 +2024,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
         """
         B = list(self.basis())
         d = {self.highest_weight_vector(): self._gen}
-        todo = set([self.highest_weight_vector()])
+        todo = {self.highest_weight_vector()}
         I = self._cartan_type.index_set()
         while todo:
             x = todo.pop()
@@ -2071,7 +2073,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
              + q^-1*(F[a1+a2]*v0<x>F[a1]*v0) + 1*(F[a1+a2]*v0<x>F[a1+a2]*v0)
         """
         return self.module_morphism(self._ambient_basis_map.__getitem__,
-                                    codomain=self._ambient, unitriangular="lower")
+                                    codomain=self._ambient, unitriangular='lower')
 
     def retract(self, elt):
         """
@@ -2151,7 +2153,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
         G = DiGraph([vertices, edges], format='vertices_and_edges')
         from sage.graphs.dot2tex_utils import have_dot2tex
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex",
+            G.set_latex_options(format='dot2tex',
                                 edge_labels=True,
                                 color_by_label=self._cartan_type._index_set_coloring)
         return G
@@ -2328,7 +2330,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
             sage: B._construct_monomial((3,0,1))
             F[a1]^(3)*F[a2]
         """
-        F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(self._libgap))
+        F = self._libgap.FamilyObj().ElementsFamily()
         one = self._libgap_base.One()
         data = []
         for i, val in enumerate(k):
@@ -2362,7 +2364,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
             F[a1]*F[a2]^(4)
         """
         I = cartesian_product([NonNegativeIntegers()]*len(self._pos_roots))
-        return Family(I, self._construct_monomial, name="monomial")
+        return Family(I, self._construct_monomial, name='monomial')
 
     def _construct_canonical_basis_elts(self, k):
         r"""
@@ -2682,7 +2684,7 @@ def _unpickle_generic_element(parent, data):
         sage: loads(dumps(x)) == x  # indirect doctest
         True
     """
-    F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(parent._libgap))
+    F = parent._libgap.FamilyObj().ElementsFamily()
     ret = []
     # We need to multiply by this to get the right type in GAP
     one = parent._libgap_base.One()

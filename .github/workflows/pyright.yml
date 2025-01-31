@@ -1,0 +1,84 @@
+name: Static check with Pyright
+
+on:
+  pull_request:
+  merge_group:
+  push:
+    branches:
+      - master
+      - develop
+  workflow_dispatch:
+    # Allow to run manually
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pyright:
+    runs-on: ubuntu-latest
+    container: ghcr.io/sagemath/sage/sage-ubuntu-jammy-standard-with-targets:dev
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Update system packages
+        id: prepare
+        run: |
+          export PATH="build/bin:$PATH"
+          eval $(sage-print-system-package-command auto update)
+          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
+
+      - name: Install GH CLI
+        uses: dev-hanz-ops/install-gh-cli-action@v0.2.1
+        with:
+          gh-cli-version: 2.32.0
+
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          .ci/merge-fixes.sh
+
+      - name: Add prebuilt tree as a worktree
+        id: worktree
+        run: |
+          set -ex
+          .ci/retrofit-worktree.sh worktree-image /sage
+
+      - name: Incremental build (sagelib deps)
+        id: incremental
+        run: |
+          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
+          # pyright does not need a built sagelib; it only needs
+          # the libraries from which sagelib imports.
+          ./bootstrap && make sagelib-build-deps
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2 --output-sync=recurse
+          SAGE_NUM_THREADS: 2
+
+      - name: Static code check with pyright
+        uses: jakebailey/pyright-action@v1
+        with:
+          version: 1.1.332
+          # Many warnings issued by pyright are not yet helpful because there is not yet enough type information.
+          no-comments: true
+          working-directory: ./worktree-image
+        env:
+          # To avoid out of memory errors
+          NODE_OPTIONS: --max-old-space-size=8192
+
+      - name: Static code check with pyright (annotated)
+        if: (success() || failure()) && steps.incremental.outcome == 'success'
+        uses: jakebailey/pyright-action@v1
+        with:
+          version: 1.1.332
+          # Issue errors
+          no-comments: false
+          level: error
+          working-directory: ./worktree-image
+        env:
+          # To avoid out of memory errors
+          NODE_OPTIONS: --max-old-space-size=8192

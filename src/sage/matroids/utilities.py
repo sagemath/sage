@@ -11,7 +11,6 @@ See also :mod:`sage.matroids.advanced`.
 AUTHORS:
 
 - Stefan van Zwam (2011-06-24): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
@@ -49,11 +48,9 @@ def setprint(X):
 
     INPUT:
 
-    - ``X`` -- Any Python object
+    - ``X`` -- any Python object
 
-    OUTPUT:
-
-    ``None``. However, the function prints a nice representation of ``X``.
+    OUTPUT: none; however, the function prints a nice representation of ``X``
 
     EXAMPLES:
 
@@ -69,9 +66,9 @@ def setprint(X):
     Note that for iterables, the effect can be undesirable::
 
         sage: from sage.matroids.advanced import setprint
-        sage: M = matroids.named_matroids.Fano().delete('efg')
+        sage: M = matroids.catalog.Fano().delete('efg')
         sage: M.bases()
-        Iterator over a system of subsets
+        SetSystem of 3 sets over 4 elements
         sage: setprint(M.bases())
         [{'a', 'b', 'c'}, {'a', 'b', 'd'}, {'a', 'c', 'd'}]
 
@@ -94,8 +91,8 @@ def setprint_s(X, toplevel=False):
     INPUT:
 
     - ``X`` -- any Python object
-    - ``toplevel`` -- (default: ``False``) indicates whether this is a
-      recursion or not.
+    - ``toplevel`` -- boolean (default: ``False``); indicates whether this is a
+      recursion or not
 
     OUTPUT:
 
@@ -140,11 +137,9 @@ def newlabel(groundset):
 
     INPUT:
 
-    - ``groundset`` -- A set of objects.
+    - ``groundset`` -- set of objects
 
-    OUTPUT:
-
-    A string not in the set ``groundset``.
+    OUTPUT: string not in the set ``groundset``
 
     For direct access to ``newlabel``, run::
 
@@ -172,7 +167,6 @@ def newlabel(groundset):
         63
         sage: t[0]
         'e'
-
     """
     char_list = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
     char_list.difference_update([str(e) for e in groundset])
@@ -190,13 +184,11 @@ def sanitize_contractions_deletions(matroid, contractions, deletions):
     INPUT:
 
     - ``matroid`` -- a :class:`Matroid <sage.matroids.matroid.Matroid>`
-      instance.
-    - ``contractions`` -- a subset of the groundset.
-    - ``deletions`` -- a subset of the groundset.
+      instance
+    - ``contractions`` -- a subset of the groundset
+    - ``deletions`` -- a subset of the groundset
 
-    OUTPUT:
-
-    An independent set ``C`` and a coindependent set ``D`` such that
+    OUTPUT: an independent set ``C`` and a coindependent set ``D`` such that
 
         ``matroid / contractions \ deletions == matroid / C \ D``
 
@@ -210,7 +202,7 @@ def sanitize_contractions_deletions(matroid, contractions, deletions):
 
         sage: from sage.matroids.utilities import setprint
         sage: from sage.matroids.utilities import sanitize_contractions_deletions
-        sage: M = matroids.named_matroids.Fano()
+        sage: M = matroids.catalog.Fano()
         sage: setprint(sanitize_contractions_deletions(M, 'abc', 'defg'))
         [{'a', 'b', 'c'}, {'d', 'e', 'f', 'g'}]
         sage: setprint(sanitize_contractions_deletions(M, 'defg', 'abc'))
@@ -227,7 +219,6 @@ def sanitize_contractions_deletions(matroid, contractions, deletions):
         Traceback (most recent call last):
         ...
         ValueError: contraction and deletion sets are not disjoint.
-
     """
     if not contractions:
         contractions = frozenset()
@@ -254,7 +245,7 @@ def make_regular_matroid_from_matroid(matroid):
 
     INPUT:
 
-    - ``matroid`` -- a matroid.
+    - ``matroid`` -- matroid
 
     OUTPUT:
 
@@ -331,7 +322,7 @@ def get_nonisomorphic_matroids(MSet):
 
     INPUT:
 
-    - ``MSet`` -- an iterable whose members are matroids.
+    - ``MSet`` -- an iterable whose members are matroids
 
     OUTPUT:
 
@@ -367,12 +358,13 @@ def spanning_forest(M):
     INPUT:
 
     - ``M`` -- a matrix defining a bipartite graph G. The vertices are the
-      rows and columns, if `M[i,j]` is non-zero, then there is an edge
+      rows and columns, if `M[i,j]` is nonzero, then there is an edge
       between row `i` and column `j`.
 
     OUTPUT:
 
-    A list of tuples `(r_i,c_i)` representing edges between row `r_i` and column `c_i`.
+    A list of tuples `(r_i,c_i)` representing edges between row `r_i` and
+    column `c_i`.
 
     EXAMPLES::
 
@@ -411,12 +403,13 @@ def spanning_stars(M):
     INPUT:
 
     - ``M`` -- a matrix defining a bipartite graph G. The vertices are the
-      rows and columns, if `M[i,j]` is non-zero, then there is an edge
+      rows and columns, if `M[i,j]` is nonzero, then there is an edge
       between row i and column 0.
 
     OUTPUT:
 
-    A list of tuples `(row,column)` in a spanning forest of the bipartite graph defined by ``M``
+    A list of tuples `(row,column)` in a spanning forest of the bipartite graph
+    defined by ``M``.
 
     EXAMPLES::
 
@@ -495,13 +488,12 @@ def lift_cross_ratios(A, lift_map=None):
 
     INPUT:
 
-    - ``A`` -- a matrix over a ring ``source_ring``.
-    - ``lift_map`` -- a python dictionary, mapping each cross ratio of ``A`` to some element
-      of a target ring, and such that ``lift_map[source_ring(1)] = target_ring(1)``.
+    - ``A`` -- a matrix over a ring ``source_ring``
+    - ``lift_map`` -- a Python dictionary, mapping each cross ratio of ``A`` to
+      some element of a target ring, and such that
+      ``lift_map[source_ring(1)] = target_ring(1)``
 
-    OUTPUT:
-
-    - ``Z`` -- a matrix over the ring ``target_ring``.
+    OUTPUT: ``Z`` -- a matrix over the ring ``target_ring``
 
     The intended use of this method is to create a (reduced) matrix representation of a
     matroid ``M`` over a ring ``target_ring``, given a (reduced) matrix representation of
@@ -557,7 +549,6 @@ def lift_cross_ratios(A, lift_map=None):
         [-z + 1, z]
         sage: M.is_isomorphism(N, {e:e for e in M.groundset()})                         # needs sage.rings.finite_rings sage.rings.number_field
         True
-
     """
     from sage.graphs.graph import Graph
 
@@ -674,11 +665,9 @@ def lift_map(target):
 
     INPUT:
 
-    - ``target`` -- a string describing the target (partial) field.
+    - ``target`` -- string describing the target (partial) field
 
-    OUTPUT:
-
-    - a dictionary
+    OUTPUT: dictionary
 
     Depending on the value of ``target``, the following lift maps will be created:
 
@@ -711,7 +700,6 @@ def lift_map(target):
         ....:         for z in lm:
         ....:             if (x*y==z) and not (lm[x]*lm[y]==lm[z]):
         ....:                 print('not a proper lift map')
-
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
 
@@ -755,11 +743,11 @@ def split_vertex(G, u, v=None, edges=None):
 
     INPUT:
 
-    - ``G`` -- A SageMath :class:`Graph`.
-    - ``u`` -- A vertex in ``G``.
-    - ``v`` -- (optional) The name of the new vertex after the splitting. If
+    - ``G`` -- a SageMath :class:`Graph`
+    - ``u`` -- a vertex in ``G``
+    - ``v`` -- (optional) the name of the new vertex after the splitting. If
       ``v`` is specified and already in the graph, it must be an isolated vertex.
-    - ``edges`` -- (optional) An iterable container of edges on ``u`` that
+    - ``edges`` -- (optional) iterable container of edges on ``u`` that
       move to ``v`` after the splitting. If ``None``, ``v`` will be an isolated
       vertex. The edge labels must be specified.
 
@@ -804,4 +792,17 @@ def split_vertex(G, u, v=None, edges=None):
         G.delete_edge(e)
 
     # This modifies the graph without needing to return anything
-    return
+
+
+def cmp_elements_key(x):
+    """
+    A helper function to compare elements which may be integers or strings.
+
+    EXAMPLES::
+
+        sage: from sage.matroids.utilities import cmp_elements_key
+        sage: l = ['a', 'b', 1, 3, 2, 10, 111, 100, 'c', 'aa']
+        sage: sorted(l, key=cmp_elements_key)
+        [1, 2, 3, 10, 100, 111, 'a', 'aa', 'b', 'c']
+    """
+    return (isinstance(x, str), x)

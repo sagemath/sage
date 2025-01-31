@@ -32,9 +32,9 @@ primary focus is number theory. There are two very distinct
 interfaces that you can use in Sage:
 
 
--  ``gp`` - the "**G** o **P** ARI" interpreter, and
+-  ``gp`` -- the "**G** o **P** ARI" interpreter, and
 
--  ``pari`` - the PARI C library.
+-  ``pari`` -- the PARI C library.
 
 
 For example, the following are two ways of doing the same thing.
@@ -195,8 +195,8 @@ Singular (do not type the ``....:``):
     sage: R1 = singular.ring(0, '(x,y)', 'dp')
     sage: R1
     polynomial ring, over a field, global ordering
-    //   coefficients: QQ
-    //   number of vars : 2
+    // coefficients: QQ...
+    // number of vars : 2
     //        block   1 : ordering dp
     //                  : names    x y
     //        block   2 : ordering C

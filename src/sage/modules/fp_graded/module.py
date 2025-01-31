@@ -319,7 +319,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         INPUT:
 
-        - ``d`` -- a dictionary
+        - ``d`` -- dictionary
 
         This code is taken from the method of the same name for
         ``sage.combinat.free_module.FreeModule``.
@@ -402,7 +402,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         INPUT:
 
-        - ``x`` -- a tuple of coefficients, an element of FPModule, or the
+        - ``x`` -- tuple of coefficients, an element of FPModule, or the
           zero integer constant
 
         OUTPUT:
@@ -644,11 +644,9 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         INPUT:
 
-        - ``n`` --  (optional) the degree of the element to construct
+        - ``n`` -- (optional) the degree of the element to construct
 
-        OUTPUT:
-
-        A module element of the given degree.
+        OUTPUT: a module element of the given degree
 
         EXAMPLES::
 
@@ -683,8 +681,8 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         INPUT:
 
-        - ``n`` -- an integer
-        - ``verbose`` -- (default: ``False``) a boolean to control if log
+        - ``n`` -- integer
+        - ``verbose`` -- boolean (default: ``False``); controls whether log
           messages should be emitted
 
         OUTPUT:
@@ -798,9 +796,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         - ``n`` -- the degree of the presentation
 
-        OUTPUT:
-
-        A vector space.
+        OUTPUT: a vector space
 
         .. SEEALSO::
 
@@ -1068,7 +1064,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         INPUT:
 
-        - ``t`` -- an integer degree by which the module is suspended
+        - ``t`` -- integer degree by which the module is suspended
 
         OUTPUT:
 
@@ -1113,11 +1109,9 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         INPUT:
 
-        - ``spanning_elements``  -- an iterable of elements
+        - ``spanning_elements`` -- an iterable of elements
 
-        OUTPUT:
-
-        The inclusion of the submodule into this module.
+        OUTPUT: the inclusion of the submodule into this module
 
         Because a submodule of a finitely presented module need not be
         finitely presented, this method will only work if the
@@ -1155,16 +1149,14 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         INPUT:
 
-        - ``k`` -- an non-negative integer
+        - ``k`` -- nonnegative integer
         - ``top_dim`` -- stop the computation at this degree
-          (optional, default ``None``, but required if the algebra is
+          (default: ``None``, but required if the algebra is
           not finite-dimensional)
-        - ``verbose`` -- (default: ``False``) a boolean to control if
+        - ``verbose`` -- boolean (default: ``False``); control if
           log messages should be emitted
 
-        OUTPUT:
-
-        A list of homomorphisms `[\epsilon, f_1, \ldots, f_k]` such that
+        OUTPUT: list of homomorphisms `[\epsilon, f_1, \ldots, f_k]` such that
 
         .. MATH::
 
@@ -1315,7 +1307,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
                 print('Computing f_%d (%d/%d)' % (i, i, k))
 
         if k < 0:
-            raise ValueError('the length of the resolution must be non-negative')
+            raise ValueError('the length of the resolution must be nonnegative')
 
         ret_complex = []
 

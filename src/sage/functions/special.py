@@ -166,7 +166,7 @@ lazy_import('mpmath',
 
 class SphericalHarmonic(BuiltinFunction):
     r"""
-    Returns the spherical harmonic function `Y_n^m(\theta, \varphi)`.
+    Return the spherical harmonic function `Y_n^m(\theta, \varphi)`.
 
     For integers `n > -1`, `|m| \leq n`, simplification is done automatically.
     Numeric evaluation is supported for complex `n` and `m`.
@@ -216,8 +216,16 @@ class SphericalHarmonic(BuiltinFunction):
 
         sage: spherical_harmonic(1, 1, pi/2, pi).n()  # abs tol 1e-14                   # needs sage.symbolic
         0.345494149471335
-        sage: from scipy.special import sph_harm  # NB: arguments x and y are swapped   # needs scipy
-        sage: sph_harm(1, 1, pi.n(), (pi/2).n())  # abs tol 1e-14                       # needs scipy sage.symbolic
+        sage: import numpy as np                                                        # needs scipy
+        sage: if int(np.version.short_version[0]) > 1:                                  # needs scipy
+        ....:     np.set_printoptions(legacy="1.25")                                    # needs scipy
+        sage: import scipy.version
+        sage: if scipy.version.version < '1.15.0':
+        ....:     from scipy.special import sph_harm # NB: arguments x and y are swapped   # needs scipy
+        ....:     sph_harm(1, 1, pi.n(), (pi/2).n())  # abs tol 1e-14                   # needs scipy sage.symbolic
+        ....: else:
+        ....:     from scipy.special import sph_harm_y                                  # needs scipy
+        ....:     sph_harm_y(1, 1, (pi/2).n(), pi.n()).item()  # abs tol 1e-9           # needs scipy sage.symbolic
         (0.3454941494713355-4.231083042742082e-17j)
 
     Note that this convention differs from the one in Maxima, as revealed by
@@ -233,7 +241,6 @@ class SphericalHarmonic(BuiltinFunction):
     REFERENCES:
 
     - :wikipedia:`Spherical_harmonics`
-
     """
     def __init__(self):
         r"""
@@ -269,7 +276,7 @@ class SphericalHarmonic(BuiltinFunction):
             sage: spherical_harmonic(3 + I, 2., 1, 2)
             -0.351154337307488 - 0.415562233975369*I
 
-        Check that :trac:`20939` is fixed::
+        Check that :issue:`20939` is fixed::
 
             sage: ex = spherical_harmonic(3, 2, 1, 2*pi/3)                              # needs sage.symbolic
             sage: QQbar(ex * sqrt(pi)/cos(1)/sin(1)^2).minpoly()                        # needs sage.rings.number_field sage.symbolic
@@ -277,7 +284,7 @@ class SphericalHarmonic(BuiltinFunction):
 
         Check whether Sage yields correct results compared to Maxima,
         up to the Condon-Shortley phase factor `(-1)^m`
-        (see :trac:`25034` and :trac:`33117`)::
+        (see :issue:`25034` and :issue:`33117`)::
 
             sage: # needs sage.symbolic
             sage: spherical_harmonic(1, 1, pi/3, pi/6).n()  # abs tol 1e-14
@@ -289,13 +296,12 @@ class SphericalHarmonic(BuiltinFunction):
             sage: maxima.spherical_harmonic(1, -1, pi/3, pi/6).n()  # abs tol 1e-14
             -0.259120612103502 + 0.149603355150537*I
 
-        Check that :trac:`33501` is fixed::
+        Check that :issue:`33501` is fixed::
 
             sage: spherical_harmonic(2, 1, x, y)                                        # needs sage.symbolic
             -1/4*sqrt(6)*sqrt(5)*cos(x)*e^(I*y)*sin(x)/sqrt(pi)
             sage: spherical_harmonic(5, -3, x, y)                                       # needs sage.symbolic
             -1/32*(9*sqrt(385)*sin(x)^4 - 8*sqrt(385)*sin(x)^2)*e^(-3*I*y)*sin(x)/sqrt(pi)
-
         """
         if n in ZZ and m in ZZ and n > -1:
             if abs(m) > n:
@@ -327,7 +333,6 @@ class SphericalHarmonic(BuiltinFunction):
             sage: ab = [(0, 0), (1, -1), (1, 0), (1, 1), (3, 2), (3, 3)]
             sage: all(d(a, b) < 1e-14 for a, b in ab)                                   # needs sage.symbolic
             True
-
         """
         return _mpmath_utils_call(_mpmath_spherharm, n, m, theta, phi, parent=parent)
 
@@ -344,7 +349,7 @@ class SphericalHarmonic(BuiltinFunction):
             sage: Ynm.diff(phi)
             I*m*spherical_harmonic(n, m, theta, phi)
 
-        Check that :trac:`33117` is fixed::
+        Check that :issue:`33117` is fixed::
 
             sage: # needs sage.symbolic
             sage: DY_theta.subs({n: 1, m: 0})
@@ -357,7 +362,6 @@ class SphericalHarmonic(BuiltinFunction):
             True
             sage: bool(DY_theta.subs({n: 1, m: -1}) == Ynm.subs({n: 1, m: -1}).diff(theta))
             True
-
         """
         if diff_param == 2:
             return (m * cot(theta) * spherical_harmonic(n, m, theta, phi) +
@@ -397,17 +401,15 @@ spherical_harmonic = SphericalHarmonic()
 
 def elliptic_j(z, prec=53):
     r"""
-    Returns the elliptic modular `j`-function evaluated at `z`.
+    Return the elliptic modular `j`-function evaluated at `z`.
 
     INPUT:
 
-    - ``z`` (complex) -- a complex number with positive imaginary part.
+    - ``z`` -- complex; a complex number with positive imaginary part
 
-    - ``prec`` (default: 53) -- precision in bits for the complex field.
+    - ``prec`` -- (default: 53) precision in bits for the complex field
 
-    OUTPUT:
-
-    (complex) The value of `j(z)`.
+    OUTPUT: (complex) the value of `j(z)`
 
     ALGORITHM:
 
@@ -436,7 +438,7 @@ def elliptic_j(z, prec=53):
         640320
 
     This example shows the need for higher precision than the default one of
-    the `ComplexField`, see :trac:`28355`::
+    the `ComplexField`, see :issue:`28355`::
 
         sage: # needs sage.symbolic
         sage: -elliptic_j(tau)  # rel tol 1e-2
@@ -508,10 +510,10 @@ class EllipticE(BuiltinFunction):
             sage: elliptic_e(x, x)._sympy_()                                            # needs sympy sage.symbolic
             elliptic_e(x, x)
 
-        Check that :trac:`34085` is fixed::
+        Check that :issue:`34085` is fixed::
 
             sage: _ = var("x y")                                                        # needs sage.symbolic
-            sage: fricas(elliptic_e(x, y))                                      # optional - fricas, needs sage.symbolic
+            sage: fricas(elliptic_e(x, y))                                          # optional - fricas, needs sage.symbolic
             ellipticE(sin(x),y)
 
         However, the conversion is only correct in the interval
@@ -525,7 +527,7 @@ class EllipticE(BuiltinFunction):
             sage: f = lambda x, y: elliptic_e(arcsin(x), y).subs(x=x, y=y)
             sage: g = lambda x, y: fricas.ellipticE(x, y).sage()
             sage: d = lambda x, y: f(x, y) - g(x, y)
-            sage: [d(N(-pi/2 + x), y)                           # tol 1e-8      # optional - fricas, needs sage.symbolic
+            sage: [d(N(-pi/2 + x), y)                           # abs tol 1e-8      # optional - fricas, needs sage.symbolic
             ....:  for x in range(1, 3) for y in range(-2, 2)]
             [0.000000000000000,
              0.000000000000000,
@@ -535,7 +537,6 @@ class EllipticE(BuiltinFunction):
              0.000000000000000,
              0.000000000000000,
              0.000000000000000]
-
         """
         BuiltinFunction.__init__(self, 'elliptic_e', nargs=2,
                                  # Maple conversion left out since it uses
@@ -585,7 +586,7 @@ class EllipticE(BuiltinFunction):
 
         TESTS:
 
-        This gave an error in Maxima (:trac:`15046`)::
+        This gave an error in Maxima (:issue:`15046`)::
 
             sage: elliptic_e(2.5, 2.5)                                                  # needs mpmath
             0.535647771608740 + 1.63996015168665*I
@@ -874,10 +875,10 @@ class EllipticF(BuiltinFunction):
             sage: elliptic_f(x, 2)._sympy_()                                            # needs sympy sage.symbolic
             elliptic_f(x, 2)
 
-        Check that :trac:`34186` is fixed::
+        Check that :issue:`34186` is fixed::
 
             sage: _ = var("x y")                                                        # needs sage.symbolic
-            sage: fricas(elliptic_f(x, y))                                      # optional - fricas, needs sage.symbolic
+            sage: fricas(elliptic_f(x, y))                                          # optional - fricas, needs sage.symbolic
             ellipticF(sin(x),y)
 
         However, the conversion is only correct in the interval
@@ -891,7 +892,7 @@ class EllipticF(BuiltinFunction):
             sage: f = lambda x, y: elliptic_f(arcsin(x), y).subs(x=x, y=y)
             sage: g = lambda x, y: fricas.ellipticF(x, y).sage()
             sage: d = lambda x, y: f(x, y) - g(x, y)
-            sage: [d(N(-pi/2 + x), y)                          # tol 1e-8       # optional - fricas, needs sage.symbolic
+            sage: [d(N(-pi/2 + x), y)                          # abs tol 1e-8       # optional - fricas, needs sage.symbolic
             ....:  for x in range(1, 3) for y in range(-2,2)]
             [0.000000000000000,
              0.000000000000000,
@@ -901,7 +902,6 @@ class EllipticF(BuiltinFunction):
              0.000000000000000,
              0.000000000000000,
              0.000000000000000]
-
         """
         BuiltinFunction.__init__(self, 'elliptic_f', nargs=2,
                                  conversions=dict(mathematica='EllipticF',
@@ -1040,7 +1040,7 @@ class EllipticKC(BuiltinFunction):
         TESTS:
 
         Check if complex numbers in the arguments are converted to maxima
-        correctly (see :trac:`7557`)::
+        correctly (see :issue:`7557`)::
 
             sage: t = jacobi_sn(1.2 + 2*I*elliptic_kc(1 - .5), .5)                      # needs sage.symbolic
             sage: maxima(t)  # abs tol 1e-13                                            # needs sage.symbolic

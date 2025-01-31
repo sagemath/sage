@@ -9,7 +9,7 @@ AUTHORS:
 This module implements simplicial sets.
 
 A *simplicial set* `X` is a collection of sets `X_n` indexed by the
-non-negative integers; the set `X_n` is called the set of
+nonnegative integers; the set `X_n` is called the set of
 `n`-simplices. These sets are connected by maps
 
 .. MATH::
@@ -284,16 +284,17 @@ class AbstractSimplex_class(SageObject):
 
     INPUT:
 
-    - ``dim`` -- integer, the dimension
-    - ``degeneracies`` (optional) -- iterable, the indices of the
+    - ``dim`` -- integer; the dimension
+    - ``degeneracies`` -- (optional) iterable, the indices of the
       degeneracy maps
-    - ``underlying`` (optional) -- a non-degenerate simplex
-    - ``name`` (optional) -- string
-    - ``latex_name`` (optional) -- string
+    - ``underlying`` -- (optional) a non-degenerate simplex
+    - ``name`` -- (optional) string
+    - ``latex_name`` -- (optional) string
 
     Users should not call this directly, but instead use
     :func:`AbstractSimplex`. See that function for more documentation.
     """
+
     def __init__(self, dim, degeneracies=(), underlying=None, name=None,
                  latex_name=None):
         """
@@ -301,11 +302,11 @@ class AbstractSimplex_class(SageObject):
 
         INPUT:
 
-        - ``dim`` -- integer, the dimension
-        - ``degeneracies`` (optional) -- iterable, the indices of the degeneracy maps
-        - ``underlying`` (optional) -- a non-degenerate simplex
-        - ``name`` (optional) -- string
-        - ``latex_name`` (optional) -- string
+        - ``dim`` -- integer; the dimension
+        - ``degeneracies`` -- (optional) iterable, the indices of the degeneracy maps
+        - ``underlying`` -- (optional) a non-degenerate simplex
+        - ``name`` -- (optional) string
+        - ``latex_name`` -- (optional) string
 
         Users should not call this directly, but instead use
         :func:`AbstractSimplex`. See that function for more
@@ -333,7 +334,7 @@ class AbstractSimplex_class(SageObject):
             sage: AbstractSimplex(-3, None)
             Traceback (most recent call last):
             ...
-            ValueError: the dimension must be non-negative
+            ValueError: the dimension must be nonnegative
 
             sage: AbstractSimplex(0, (1,))
             Traceback (most recent call last):
@@ -377,7 +378,7 @@ class AbstractSimplex_class(SageObject):
         except TypeError:
             raise ValueError('the dimension must be an integer')
         if dim < 0:
-            raise ValueError('the dimension must be non-negative')
+            raise ValueError('the dimension must be nonnegative')
         self._dim = dim
         if degeneracies:
             self._degens = standardize_degeneracies(*degeneracies)
@@ -454,7 +455,7 @@ class AbstractSimplex_class(SageObject):
 
     def __ne__(self, other):
         """
-        This returns the negation of `__eq__`.
+        This returns the negation of ``__eq__``.
 
         EXAMPLES::
 
@@ -666,7 +667,7 @@ class AbstractSimplex_class(SageObject):
 
     def is_degenerate(self):
         """
-        True if this simplex is degenerate.
+        Return ``True`` if this simplex is degenerate.
 
         EXAMPLES::
 
@@ -680,7 +681,7 @@ class AbstractSimplex_class(SageObject):
 
     def is_nondegenerate(self):
         """
-        True if this simplex is non-degenerate.
+        Return ``True`` if this simplex is non-degenerate.
 
         EXAMPLES::
 
@@ -716,7 +717,7 @@ class AbstractSimplex_class(SageObject):
 
         INPUT:
 
-        - ``args`` -- integers
+        - ``args`` -- integer
 
         EXAMPLES::
 
@@ -747,7 +748,7 @@ class AbstractSimplex_class(SageObject):
             sage: e.apply_degeneracies([1,0])
             Traceback (most recent call last):
             ...
-            TypeError: degeneracies are indexed by non-negative integers; do not use an explicit list or tuple
+            TypeError: degeneracies are indexed by nonnegative integers; do not use an explicit list or tuple
         """
         if not args:
             return self
@@ -921,12 +922,12 @@ class NonDegenerateSimplex(AbstractSimplex_class, WithEqualityById):
 
         INPUT:
 
-        - ``dim`` -- non-negative integer, the dimension
+        - ``dim`` -- nonnegative integer; the dimension
 
-        - ``name`` (optional) -- string, a name for this simplex.
+        - ``name`` -- (optional) string; a name for this simplex
 
-        - ``latex_name`` (optional) -- string, a name for this simplex to
-          use in the LaTeX representation.
+        - ``latex_name`` -- (optional) string; a name for this simplex to
+          use in the LaTeX representation
 
         EXAMPLES::
 
@@ -969,19 +970,19 @@ def AbstractSimplex(dim, degeneracies=(), underlying=None,
 
     INPUT:
 
-    - ``dim`` -- a non-negative integer, the dimension of the
-      underlying non-degenerate simplex.
+    - ``dim`` -- nonnegative integer; the dimension of the
+      underlying non-degenerate simplex
 
-    - ``degeneracies`` (optional, default ``None``) -- a list or tuple of
-      non-negative integers, the degeneracies to be applied.
+    - ``degeneracies`` -- (default: ``None``) list or tuple of
+      nonnegative integers, the degeneracies to be applied
 
-    - ``underlying`` (optional) -- a non-degenerate simplex to which
-      the degeneracies are being applied.
+    - ``underlying`` -- (optional) a non-degenerate simplex to which
+      the degeneracies are being applied
 
-    - ``name`` (optional) -- string, a name for this simplex.
+    - ``name`` -- (optional) string; a name for this simplex
 
-    - ``latex_name`` (optional) -- string, a name for this simplex to
-      use in the LaTeX representation.
+    - ``latex_name`` -- (optional) string; a name for this simplex to
+      use in the LaTeX representation
 
     So to define a simplex formed by applying the degeneracy maps `s_2
     s_1` to a 1-simplex, call ``AbstractSimplex(1, (2, 1))``.
@@ -1098,7 +1099,7 @@ class SimplicialSet_arbitrary(Parent):
     A simplicial set.
 
     A simplicial set `X` is a collection of sets `X_n`, the
-    *n-simplices*, indexed by the non-negative integers, together with
+    *n-simplices*, indexed by the nonnegative integers, together with
     maps
 
     .. MATH::
@@ -1277,9 +1278,9 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``dim_left`` -- integer, the dimension of the left-hand factor
+        - ``dim_left`` -- integer; the dimension of the left-hand factor
 
-        OUTPUT: a list containing the triple ``(c, left, right)``,
+        OUTPUT: list containing the triple ``(c, left, right)``,
         where ``left`` and ``right`` are the two simplices described
         above. If either ``left`` or ``right`` is degenerate, ``c`` is
         0; otherwise, ``c`` is 1. This is so that, when used to
@@ -1317,7 +1318,7 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``max_dim`` -- optional, default ``None``. If specified,
+        - ``max_dim`` -- (default: ``None``) if specified,
           return the non-degenerate simplices of this dimension or
           smaller. This argument is required if this simplicial set is
           infinite.
@@ -1375,11 +1376,11 @@ class SimplicialSet_arbitrary(Parent):
         if self.is_finite():
             if max_dim is None:
                 return list(self._simplices)
-            return list(sigma for sigma in self._simplices if sigma.dimension() <= max_dim)
+            return [sigma for sigma in self._simplices if sigma.dimension() <= max_dim]
         if max_dim is None:
             raise NotImplementedError('this simplicial set may be '
                                       'infinite, so specify max_dim')
-        return list(sigma for sigma in self.n_skeleton(max_dim)._simplices)
+        return list(self.n_skeleton(max_dim)._simplices)
 
     def cells(self, subcomplex=None, max_dim=None):
         """
@@ -1387,11 +1388,11 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``subcomplex`` (optional) -- a subsimplicial set of this
+        - ``subcomplex`` -- (optional) a subsimplicial set of this
           simplicial set. If ``subcomplex`` is specified, then return the
           simplices in the quotient by the subcomplex.
 
-        - ``max_dim`` -- optional, default ``None``. If specified,
+        - ``max_dim`` -- (default: ``None``) if specified,
           return the non-degenerate simplices of this dimension or
           smaller. This argument is required if this simplicial set is
           infinite.
@@ -1468,7 +1469,7 @@ class SimplicialSet_arbitrary(Parent):
 
         - ``n`` -- the dimension
 
-        - ``subcomplex`` (optional, default ``None``) -- a subcomplex
+        - ``subcomplex`` -- (default: ``None``) a subcomplex
           of this cell complex. Return the cells which are in the
           quotient by this subcomplex.
 
@@ -1546,8 +1547,8 @@ class SimplicialSet_arbitrary(Parent):
              f^2 * f,
              f^2 * f^2, s_0 f, s_0 f^2, s_1 f, s_1 f^2, s_1 s_0 1]
         """
-        non_degen = [_ for _ in self.nondegenerate_simplices(max_dim=n)]
-        ans = set([_ for _ in non_degen if _.dimension() == n])
+        non_degen = list(self.nondegenerate_simplices(max_dim=n))
+        ans = {_ for _ in non_degen if _.dimension() == n}
         for sigma in non_degen:
             d = sigma.dimension()
             ans.update([sigma.apply_degeneracies(*_)
@@ -1602,14 +1603,14 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``codomain`` -- optional, default ``None``. If ``None``, the
+        - ``codomain`` -- (default: ``None``) if ``None``, the
           codomain is the standard one-point space constructed by
           :func:`Point`. Otherwise, either the codomain must be a
           pointed simplicial set, in which case the map is constant at
           the base point, or ``point`` must be specified.
-        - ``point`` -- optional, default ``None``. If specified, it
+        - ``point`` -- (default: ``None``) if specified, it
           must be a 0-simplex in the codomain, and it will be the
-          target of the constant map.
+          target of the constant map
 
         EXAMPLES::
 
@@ -1843,7 +1844,7 @@ class SimplicialSet_arbitrary(Parent):
                 d = f.dimension()
                 found = False
                 for x in self.n_cells(d):
-                    if str(x) == str(tuple(sorted(tuple(f), key=str))):
+                    if str(x) == str(tuple(sorted(f, key=str))):
                         new.append(x)
                         found = True
                         break
@@ -1895,24 +1896,24 @@ class SimplicialSet_arbitrary(Parent):
           chain complex in those dimensions, setting the chain groups
           in all other dimensions to zero.
 
-        - ``base_ring`` (optional, default ``ZZ``) -- commutative ring
+        - ``base_ring`` -- (default: `\ZZ`) commutative ring
 
-        - ``augmented`` (optional, default ``False``) -- if ``True``,
+        - ``augmented`` -- boolean (default: ``False``); if ``True``,
           return the augmented chain complex (that is, include a class
-          in dimension `-1` corresponding to the empty cell).
+          in dimension `-1` corresponding to the empty cell)
 
-        - ``cochain`` (optional, default ``False``) -- if ``True``,
+        - ``cochain`` -- boolean (default: ``False``); if ``True``,
           return the cochain complex (that is, the dual of the chain
-          complex).
+          complex)
 
-        - ``verbose`` (optional, default ``False``) -- ignored.
+        - ``verbose`` -- boolean (default: ``False``); ignored
 
-        - ``subcomplex`` (optional, default ``None``) -- if present,
-          compute the chain complex relative to this subcomplex.
+        - ``subcomplex`` -- (default: ``None``) if present,
+          compute the chain complex relative to this subcomplex
 
-        - ``check`` (optional, default ``False``) -- If ``True``, make
+        - ``check`` -- boolean (default: ``False``); if ``True``, make
           sure that the chain complex is actually a chain complex:
-          the differentials are composable and their product is zero.
+          the differentials are composable and their product is zero
 
         .. NOTE::
 
@@ -1958,14 +1959,14 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``dim`` (optional, default ``None`` -- If ``None``, then
+        - ``dim`` -- (default: ``None``) if ``None``, then
           return the homology in every dimension.  If ``dim`` is an
           integer or list, return the homology in the given
           dimensions.  (Actually, if ``dim`` is a list, return the
           homology in the range from ``min(dim)`` to ``max(dim)``.)
 
-        - ``base_ring`` (optional, default ``ZZ``) -- commutative
-          ring, must be ``ZZ`` or a field.
+        - ``base_ring`` -- (default: ``ZZ``) commutative
+          ring; must be ``ZZ`` or a field
 
         Other arguments are also allowed: see the documentation for
         :meth:`.cell_complex.GenericCellComplex.homology`.
@@ -2036,14 +2037,14 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``dim`` (optional, default ``None`` -- If ``None``, then
+        - ``dim`` -- (default: ``None``) if ``None``, then
           return the homology in every dimension.  If ``dim`` is an
           integer or list, return the homology in the given
           dimensions.  (Actually, if ``dim`` is a list, return the
           homology in the range from ``min(dim)`` to ``max(dim)``.)
 
-        - ``base_ring`` (optional, default ``ZZ``) -- commutative
-          ring, must be ``ZZ`` or a field.
+        - ``base_ring`` -- (default: ``ZZ``) commutative
+          ring; must be ``ZZ`` or a field
 
         Other arguments are also allowed, the same as for the
         :meth:`homology` method -- see
@@ -2085,19 +2086,19 @@ class SimplicialSet_arbitrary(Parent):
         r"""
         The Betti numbers of this simplicial complex as a dictionary
         (or a single Betti number, if only one dimension is given):
-        the ith Betti number is the rank of the ith homology group.
+        the `i`-th Betti number is the rank of the `i`-th homology group.
 
         INPUT:
 
-        - ``dim`` (optional, default ``None`` -- If ``None``, then
+        - ``dim`` -- (default: ``None``) if ``None``, then
           return the homology in every dimension.  If ``dim`` is an
           integer or list, return the homology in the given
           dimensions.  (Actually, if ``dim`` is a list, return the
           homology in the range from ``min(dim)`` to ``max(dim)``.)
 
-        - ``subcomplex`` (optional, default ``None``) -- a subcomplex
-           of this cell complex.  Compute the Betti numbers of the
-           homology relative to this subcomplex.
+        - ``subcomplex`` -- (default: ``None``) a subcomplex
+          of this cell complex.  Compute the Betti numbers of the
+          homology relative to this subcomplex.
 
         .. NOTE::
 
@@ -2118,16 +2119,17 @@ class SimplicialSet_arbitrary(Parent):
             sage: BC3.betti(range(4))                                                   # needs sage.groups sage.modules
             {0: 1, 1: 0, 2: 0, 3: 0}
         """
-        dict = {}
+        dic = {}
         H = self.homology(dim, base_ring=QQ, subcomplex=subcomplex)
         try:
             for n in H.keys():
-                dict[n] = H[n].dimension()
+                dic[n] = H[n].dimension()
                 if n == 0:
-                    dict[n] += 1
-            return dict
+                    dic[n] += 1
         except AttributeError:
             return H.dimension()
+        else:
+            return dic
 
     def n_chains(self, n, base_ring=ZZ, cochains=False):
         r"""
@@ -2140,13 +2142,13 @@ class SimplicialSet_arbitrary(Parent):
         INPUT:
 
         - ``n`` -- integer
-        - ``base_ring`` -- ring (optional, default `\ZZ`)
-        - ``cochains`` -- boolean (optional, default ``False``); if
+        - ``base_ring`` -- ring (default: `\ZZ`)
+        - ``cochains`` -- boolean (default: ``False``); if
           ``True``, return cochains instead
 
         The only difference between chains and cochains is notation:
         the generator corresponding to the dual of a simplex
-        ``sigma`` is written as ``"\chi_sigma"`` in the group of
+        ``sigma`` is written as ``'\chi_sigma'`` in the group of
         cochains.
 
         EXAMPLES::
@@ -2187,10 +2189,10 @@ class SimplicialSet_arbitrary(Parent):
 
         - ``subcomplex`` -- subsimplicial set of this simplicial set,
           or a list, tuple, or set of simplices defining a
-          subsimplicial set.
+          subsimplicial set
 
-        - ``vertex_name`` (optional) -- string, name to be given to the new
-          vertex. By default, use ``'*'``.
+        - ``vertex_name`` -- string (default: ``'*'``); name to be given to the
+          new vertex
 
         In Sage, from a quotient simplicial set, you can recover the
         ambient space, the subcomplex, and (if the ambient space is
@@ -2381,7 +2383,6 @@ class SimplicialSet_arbitrary(Parent):
             sage: Y = S2.unset_base_point()
             sage: Z = K.unset_base_point()
 
-            sage:
             sage: S2.coproduct(K).is_pointed()
             True
             sage: S2.coproduct(K)
@@ -2898,8 +2899,7 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``n`` (optional, default 1) -- integer, suspend this many
-          times.
+        - ``n`` -- integer (default: 1); suspend this many times
 
         If this simplicial set `X` is not pointed, return the
         suspension: the quotient `CX/X`, where `CX` is the (ordinary,
@@ -2930,12 +2930,12 @@ class SimplicialSet_arbitrary(Parent):
             sage: RP4.suspension(-3)                                                    # needs sage.groups
             Traceback (most recent call last):
             ...
-            ValueError: n must be non-negative
+            ValueError: n must be nonnegative
         """
         from .simplicial_set_constructions import \
             SuspensionOfSimplicialSet, SuspensionOfSimplicialSet_finite
         if n < 0:
-            raise ValueError('n must be non-negative')
+            raise ValueError('n must be nonnegative')
         if n == 0:
             return self
         if self.is_finite():
@@ -3020,7 +3020,7 @@ class SimplicialSet_arbitrary(Parent):
         INPUT:
 
         - ``other`` -- another simplicial set
-        - ``category`` -- optional, the category in which to compute
+        - ``category`` -- (optional) the category in which to compute
           the maps. By default this is ``SimplicialSets``, and it must
           be a subcategory of this or else an error is raised.
 
@@ -3059,7 +3059,7 @@ class SimplicialSet_arbitrary(Parent):
 
         INPUT:
 
-        - ``s`` -- string, the LaTeX representation. Or ``s`` can be
+        - ``s`` -- string; the LaTeX representation. Or ``s`` can be
           ``None``, in which case the LaTeX name is unset.
 
         EXAMPLES::
@@ -3140,7 +3140,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
     A finite simplicial set.
 
     A simplicial set `X` is a collection of sets `X_n`, the
-    *n-simplices*, indexed by the non-negative integers, together with
+    *n-simplices*, indexed by the nonnegative integers, together with
     face maps `d_i` and degeneracy maps `s_j`.  A simplex is
     *degenerate* if it is in the image of some `s_j`, and a simplicial
     set is *finite* if there are only finitely many non-degenerate
@@ -3148,26 +3148,26 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
 
     INPUT:
 
-    - ``data`` -- the data defining the simplicial set. See below for
-      details.
+    - ``data`` -- the data defining the simplicial set; see below for
+      details
 
-    - ``base_point`` (optional, default ``None``) -- 0-simplex in this
+    - ``base_point`` -- (default: ``None``) 0-simplex in this
       simplicial set, its base point
 
-    - ``name`` (optional, default ``None``) -- string, the name of the
+    - ``name`` -- string (default: ``None``); the name of the
       simplicial set
 
-    - ``check`` (optional, default ``True``) -- boolean. If ``True``,
+    - ``check`` -- boolean (default: ``True``); if ``True``,
       check the simplicial identity on the face maps when defining the
-      simplicial set.
+      simplicial set
 
-    - ``category`` (optional, default ``None``) -- the category in
+    - ``category`` -- (default: ``None``) the category in
       which to define this simplicial set. The default is either
       finite simplicial sets or finite pointed simplicial sets,
       depending on whether a base point is defined.
 
-    - ``latex_name`` (optional, default ``None``) -- string, the LaTeX
-      representation of the simplicial set.
+    - ``latex_name`` -- string (default: ``None``); the LaTeX
+      representation of the simplicial set
 
     ``data`` should have one of the following forms: it could be a
     simplicial complex or `\Delta`-complex, in case it is converted to
@@ -3202,6 +3202,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         sage: X
         Y
     """
+
     def __init__(self, data, base_point=None, name=None, check=True,
                  category=None, latex_name=None):
         r"""
@@ -3286,7 +3287,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                     faces = {}
                     for idx, sigma in enumerate(data.n_cells(d)):
                         new_sigma = AbstractSimplex(d)
-                        new_sigma.rename(str(tuple(sorted(tuple(sigma), key=str))))
+                        new_sigma.rename(str(tuple(sorted(sigma, key=str))))
                         if d > 0:
                             simplices[new_sigma] = [old_faces[_] for _ in sigma.faces()]
                         else:
@@ -3359,7 +3360,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         # simplicial set.
         self._data = tuple(data.items())
         # self._simplices: a sorted tuple of non-degenerate simplices.
-        self._simplices = sorted(tuple(simplices))
+        self._simplices = sorted(simplices)
         # self._basepoint: the base point, or None.
         if base_point is not None:
             if base_point not in simplices:
@@ -3616,22 +3617,22 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
           chain complex in those dimensions, setting the chain groups
           in all other dimensions to zero.
 
-        - ``base_ring`` (optional, default ``ZZ``) -- commutative ring
+        - ``base_ring`` -- commutative ring (default: `\ZZ`)
 
-        - ``augmented`` (optional, default ``False``) -- if ``True``,
+        - ``augmented`` -- boolean (default: ``False``); if ``True``,
           return the augmented chain complex (that is, include a class
           in dimension `-1` corresponding to the empty cell).
 
-        - ``cochain`` (optional, default ``False``) -- if ``True``,
+        - ``cochain`` -- boolean (default: ``False``); if ``True``,
           return the cochain complex (that is, the dual of the chain
           complex).
 
-        - ``verbose`` (optional, default ``False``) -- ignored.
+        - ``verbose`` -- boolean (default: ``False``); ignored
 
-        - ``subcomplex`` (optional, default ``None``) -- if present,
-          compute the chain complex relative to this subcomplex.
+        - ``subcomplex`` -- (default: ``None``) if present,
+          compute the chain complex relative to this subcomplex
 
-        - ``check`` (optional, default ``False``) -- If ``True``, make
+        - ``check`` -- boolean (default: ``False``); if ``True``, make
           sure that the chain complex is actually a chain complex:
           the differentials are composable and their product is zero.
 
@@ -3783,8 +3784,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` - coefficient ring (optional, default
-          ``QQ``). Must be a field.
+        - ``base_ring`` -- coefficient ring (default: ``QQ``); must be a field
 
         Denote by `C` the chain complex associated to this simplicial
         set. The algebraic topological model is a chain complex `M`
@@ -3849,8 +3849,8 @@ def standardize_degeneracies(*L):
 
     INPUT:
 
-    - ``L`` -- list of integers, representing a composition of
-      degeneracies in a simplicial set.
+    - ``L`` -- list of integers representing a composition of
+      degeneracies in a simplicial set
 
     OUTPUT:
 
@@ -3880,21 +3880,21 @@ def standardize_degeneracies(*L):
         sage: standardize_degeneracies(2, -1)
         Traceback (most recent call last):
         ...
-        ValueError: degeneracies are indexed by non-negative integers
+        ValueError: degeneracies are indexed by nonnegative integers
         sage: standardize_degeneracies([2, 1])
         Traceback (most recent call last):
         ...
-        TypeError: degeneracies are indexed by non-negative integers; do not use an explicit list or tuple
+        TypeError: degeneracies are indexed by nonnegative integers; do not use an explicit list or tuple
     """
     J = list(L)
     for m in J:
         try:
             if Integer(m) < 0:
-                raise ValueError('degeneracies are indexed by non-negative integers')
+                raise ValueError('degeneracies are indexed by nonnegative integers')
         except TypeError:
             # Likely if called via standard_degeneracies([1,2,3])
             # rather than          standard_degeneracies(1,2,3).
-            raise TypeError('degeneracies are indexed by non-negative integers; do not use an explicit list or tuple')
+            raise TypeError('degeneracies are indexed by nonnegative integers; do not use an explicit list or tuple')
     inadmissible = True
     while inadmissible:
         inadmissible = False
@@ -3940,13 +3940,13 @@ def all_degeneracies(n, l=1):
         {(2, 1, 0), (3, 1, 0), (3, 2, 0), (3, 2, 1)}
     """
     if l == 0:
-        return set(())
+        return set()
     if l == 1:
-        return set([tuple([_]) for _ in range(n+1)])
+        return {(_,) for _ in range(n+1)}
     ans = set()
     for i in range(n+l):
-        ans.update(set([tuple(standardize_degeneracies(*([i] + list(_))))
-                        for _ in all_degeneracies(n, l-1)]))
+        ans.update({tuple(standardize_degeneracies(*([i] + list(_))))
+                        for _ in all_degeneracies(n, l-1)})
     return ans
 
 
@@ -3957,8 +3957,8 @@ def standardize_face_maps(*L):
 
     INPUT:
 
-    - ``L`` -- list of integers, representing a composition of
-      face maps in a simplicial set.
+    - ``L`` -- list of integers representing a composition of
+      face maps in a simplicial set
 
     OUTPUT:
 
@@ -3984,7 +3984,7 @@ def standardize_face_maps(*L):
     J = list(L)
     for m in J:
         if Integer(m) < 0:
-            raise ValueError('faces are indexed by non-negative integers')
+            raise ValueError('faces are indexed by nonnegative integers')
     inadmissible = True
     while inadmissible:
         inadmissible = False
@@ -4005,8 +4005,8 @@ def face_degeneracies(m, I):
     INPUT:
 
     - ``m`` -- integer
-    - ``I`` -- tuple ``(i_1, i_2, ..., i_n)`` of integers. We assume
-      that this sequence is strictly decreasing.
+    - ``I`` -- tuple ``(i_1, i_2, ..., i_n)`` of integers; we assume
+      that this sequence is strictly decreasing
 
     Using the simplicial identities (see :mod:`.simplicial_set`), we
     can rewrite
@@ -4022,9 +4022,8 @@ def face_degeneracies(m, I):
         s_{j_1} s_{j_2} ... s_{j_n} d_t, \quad
         s_{j_1} s_{j_2} ... s_{j_{n-1}}.
 
-
-    OUTPUT: the pair ``(J, t)`` or ``(J, None)``. ``J`` is returned as
-    a list.
+    OUTPUT: the pair ``(J, t)`` or ``(J, None)``; ``J`` is returned as
+    a list
 
     EXAMPLES::
 

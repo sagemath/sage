@@ -48,13 +48,13 @@ def Spec(R, S=None):
         sage: TestSuite(X).run()                                                        # needs sage.rings.finite_rings
 
     Applying ``Spec`` twice to the same ring gives identical output
-    (see :trac:`17008`)::
+    (see :issue:`17008`)::
 
         sage: A = Spec(ZZ); B = Spec(ZZ)
         sage: A is B
         True
 
-    A ``TypeError`` is raised if the input is not a commutative ring::
+    A :exc:`TypeError` is raised if the input is not a commutative ring::
 
         sage: Spec(5)
         Traceback (most recent call last):

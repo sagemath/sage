@@ -1,4 +1,4 @@
- | $(PYTHON_TOOLCHAIN) ipython jupyter_client ipykernel nbconvert nbformat jinja2 tornado terminado send2trash prometheus_client argon2_cffi $(PYTHON)
+jupyter_server jupyterlab_server jupyterlab notebook_shim | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

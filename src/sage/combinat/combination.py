@@ -8,7 +8,6 @@ AUTHORS:
 - Vincent Delecroix (2011): cleaning, bug corrections, doctests
 
 - Antoine Genitrini (2020) : new implementation of the lexicographic unranking of combinations
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -153,6 +152,13 @@ def Combinations(mset, k=None):
 
     TESTS:
 
+    Run the test suites::
+
+        sage: C = Combinations([2,3])
+        sage: TestSuite(C).run()
+        sage: C = Combinations([2,3], 1)
+        sage: TestSuite(C).run()
+
     We check that the code works even for non mutable objects::
 
         sage: l = [vector((0,0)), vector((0,1))]                                        # needs sage.modules
@@ -199,7 +205,7 @@ class Combinations_mset(Parent):
         self.mset = mset
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -218,7 +224,7 @@ class Combinations_mset(Parent):
 
         return all(i in self.mset for i in x) and len(set(x)) == len(x)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test for equality.
 
@@ -232,7 +238,7 @@ class Combinations_mset(Parent):
         """
         return isinstance(other, Combinations_mset) and self.mset == other.mset
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for unequality.
 
@@ -244,7 +250,7 @@ class Combinations_mset(Parent):
         """
         return not (self == other)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -263,7 +269,7 @@ class Combinations_mset(Parent):
         for k in range(len(self.mset) + 1):
             yield from Combinations_msetk(self.mset, k)
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         """
         TESTS::
 
@@ -272,10 +278,8 @@ class Combinations_mset(Parent):
             sage: Combinations(['a','a','b']).cardinality()                             # needs sage.libs.gap
             6
         """
-        c = 0
-        for k in range(len(self.mset) + 1):
-            c += Combinations_msetk(self.mset, k).cardinality()
-        return c
+        return ZZ.sum(Combinations_msetk(self.mset, k).cardinality()
+                      for k in range(len(self.mset) + 1))
 
 
 class Combinations_set(Combinations_mset):
@@ -332,7 +336,7 @@ class Combinations_set(Combinations_mset):
             sage: Combinations(range(16000)).cardinality() == 2^16000
             True
         """
-        return 2**len(self.mset)
+        return ZZ(2)**len(self.mset)
 
 
 class Combinations_msetk(Parent):
@@ -348,7 +352,7 @@ class Combinations_msetk(Parent):
         self.k = k
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -370,7 +374,7 @@ class Combinations_msetk(Parent):
             return False
         return x in Combinations_mset(self.mset) and len(x) == self.k
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test for equality.
 
@@ -385,7 +389,7 @@ class Combinations_msetk(Parent):
         return (isinstance(other, Combinations_msetk) and
                 self.mset == other.mset and self.k == other.k)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for unequality.
 
@@ -397,7 +401,7 @@ class Combinations_msetk(Parent):
         """
         return not (self == other)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -422,7 +426,7 @@ class Combinations_msetk(Parent):
             yield sum([[self.mset[indices[i]]] * iv[i]
                        for i in range(len(indices))], [])
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         """
         Return the size of combinations(mset, k).
 
@@ -490,7 +494,7 @@ class Combinations_setk(Combinations_msetk):
         else:
             return self._iterator(self.mset, self.k)
 
-    def list(self):
+    def list(self) -> list:
         """
         EXAMPLES::
 
@@ -529,7 +533,7 @@ class Combinations_setk(Combinations_msetk):
         x = [self.mset.index(i) for i in x]
         return rank(x, len(self.mset))
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         """
         Return the size of combinations(set, k).
 
@@ -538,7 +542,7 @@ class Combinations_setk(Combinations_msetk):
             sage: Combinations(range(16000), 5).cardinality()
             8732673194560003200
         """
-        return binomial(len(self.mset), self.k)
+        return ZZ(binomial(len(self.mset), self.k))
 
 
 def rank(comb, n, check=True):
@@ -638,7 +642,7 @@ def from_rank(r, n, k):
     TESTS::
 
         sage: from sage.combinat.combination import from_rank
-        sage: def _comb_largest(a,b,x):
+        sage: def _comb_largest(a, b, x):
         ....:     w = a - 1
         ....:     while binomial(w,b) > x:
         ....:         w -= 1

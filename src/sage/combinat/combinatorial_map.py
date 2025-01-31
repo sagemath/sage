@@ -57,7 +57,7 @@ thereof, for all the combinatorial maps that apply to it.
 
 def combinatorial_map_trivial(f=None, order=None, name=None):
     r"""
-    Combinatorial map decorator
+    Combinatorial map decorator.
 
     See :ref:`sage.combinat.combinatorial_map` for a description of
     this decorator and its purpose. This default implementation does
@@ -65,14 +65,11 @@ def combinatorial_map_trivial(f=None, order=None, name=None):
 
     INPUT:
 
-
     - ``f`` -- (default: ``None``, if combinatorial_map is used as a decorator) a function
     - ``name`` -- (default: ``None``) the name for nicer outputs on combinatorial maps
     - ``order`` -- (default: ``None``) the order of the combinatorial map, if it is known. Is not used, but might be helpful later
 
-    OUTPUT:
-
-    - ``f`` unchanged
+    OUTPUT: ``f`` unchanged
 
     EXAMPLES::
 
@@ -119,9 +116,7 @@ def combinatorial_map_wrapper(f=None, order=None, name=None):
     - ``name`` -- (default: ``None``) the name for nicer outputs on combinatorial maps
     - ``order`` -- (default: ``None``) the order of the combinatorial map, if it is known. Is not used, but might be helpful later
 
-    OUTPUT:
-
-    - A combinatorial map. This is an instance of the :class:`CombinatorialMap`.
+    OUTPUT: a combinatorial map; this is an instance of the :class:`CombinatorialMap`
 
     EXAMPLES:
 
@@ -182,7 +177,6 @@ def combinatorial_map_wrapper(f=None, order=None, name=None):
         <function major_index at ...>
         sage: combinatorial_map(major_index)
         Combinatorial map: major_index
-
     """
     if f is None:
         return lambda f: CombinatorialMap(f, order=order, name=name)
@@ -197,7 +191,7 @@ combinatorial_map = combinatorial_map_trivial
 # combinatorial_map = combinatorial_map_wrapper
 
 
-class CombinatorialMap():
+class CombinatorialMap:
     r"""
     This is a wrapper class for methods that are *combinatorial maps*.
 
@@ -276,7 +270,7 @@ class CombinatorialMap():
 
     def __get__(self, inst, cls=None):
         """
-        Bounds the method of self to the given instance.
+        Bounds the method of ``self`` to the given instance.
 
         EXAMPLES::
 
@@ -292,7 +286,7 @@ class CombinatorialMap():
 
     def __call__(self, *args, **kwds):
         """
-        Calls the combinatorial map.
+        Call the combinatorial map.
 
         EXAMPLES::
 
@@ -336,7 +330,7 @@ class CombinatorialMap():
 
     def order(self):
         """
-        Returns the order of ``self``, or ``None`` if the order is not known.
+        Return the order of ``self``, or ``None`` if the order is not known.
 
         EXAMPLES::
 
@@ -355,7 +349,7 @@ class CombinatorialMap():
 
     def name(self):
         """
-        Returns the name of a combinatorial map.
+        Return the name of a combinatorial map.
         This is used for the string representation of ``self``.
 
         EXAMPLES::

@@ -7,11 +7,6 @@ set -e
 # -- this also affects numpy
 export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
 
-if [ "$UNAME" = "CYGWIN" ]; then
-    # Trac #30643
-    export CPPFLAGS="${CPPFLAGS} -D_GNU_SOURCE"
-fi
-
 if [ "$SAGE_FAT_BINARY" = "yes" ]; then
     export NUMPY_FCONFIG="--cpu-baseline=NONE"
 else

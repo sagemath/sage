@@ -49,6 +49,7 @@ DEVEL = False
 if DEVEL:
     extra_compile_args.append('-ggdb')
 
+
 class sage_build_cython(Command):
     name = 'build_cython'
     description = "compile Cython extensions into C/C++ extensions"
@@ -167,7 +168,7 @@ class sage_build_cython(Command):
                 # we remove the version_file now to force a
                 # recythonization the next time we build Sage.
                 os.unlink(self._version_file)
-        except IOError:
+        except OSError:
             # Most likely, the version_file does not exist
             # => (re)cythonize all Cython code.
             force = True

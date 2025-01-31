@@ -4,6 +4,7 @@ from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces            
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure       cimport face_t
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator             cimport FaceIterator
 
+
 @cython.final
 cdef class CombinatorialFace(SageObject):
     cdef readonly bint _dual        # if 1, then iterate over dual Polyhedron
@@ -31,7 +32,7 @@ cdef class CombinatorialFace(SageObject):
     # If ``dual == 0``, then coatoms are facets, atoms vertices and vice versa.
     cdef ListOfFaces atoms, coatoms
 
-    cpdef dimension(self) noexcept
+    cpdef dimension(self)
     cdef size_t n_atom_rep(self) except -1
     cdef size_t set_coatom_rep(self) except -1
     cdef size_t set_atom_rep(self) except -1

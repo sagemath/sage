@@ -45,11 +45,11 @@ def _create_relations_matrix(module, relations, source_degs, target_degs):
     INPUT:
 
     - ``module`` -- the module where the relations acts
-    - ``relations`` -- a list of lists of algebra coefficients defining the
+    - ``relations`` -- list of lists of algebra coefficients defining the
       matrix `R`
-    - ``source_degs`` -- a list of integer degrees; its length should be
+    - ``source_degs`` -- list of integer degrees; its length should be
       equal to the number of columns of `R`
-    - ``target_degs`` -- a list of integer degrees; its length should be
+    - ``target_degs`` -- list of integer degrees; its length should be
       equal to the number of rows of `R`
 
     Furthermore must the degrees given by the input satisfy the following::
@@ -60,12 +60,12 @@ def _create_relations_matrix(module, relations, source_degs, target_degs):
 
     OUTPUT:
 
-    - ``block_matrix`` -- A list of lists representing a matrix of linear
+    - ``block_matrix`` -- list of lists representing a matrix of linear
       transformations `(T_{ij})`.  Each transformtion `T_{ij}` is the linear map
       representing multiplication by the coefficient `r_{ij}` restricted to
       the module elements of degree ``source_degs[j]``.
-    - ``R`` -- A matrix representing ``block_matrix`` as a single linear
-      transformation.
+    - ``R`` -- a matrix representing ``block_matrix`` as a single linear
+      transformation
 
     TESTS::
 
@@ -151,7 +151,7 @@ class FPModuleMorphism(Morphism):
     INPUT:
 
     - ``parent`` -- a homspace of finitely presented graded modules
-    - ``values`` -- a list of elements in the codomain; each element
+    - ``values`` -- list of elements in the codomain; each element
       corresponds to a module generator in the domain
     - ``check`` -- boolean (default: ``True``); if ``True``, check
       that the morphism is well-defined
@@ -292,19 +292,16 @@ class FPModuleMorphism(Morphism):
         """
         new_codomain = self.codomain().change_ring(algebra)
         # We have to change the ring for the values, too:
-        new_values = []
-        for v in self._values:
-            new_values.append(new_codomain([algebra(a)
-                                            for a in v.dense_coefficient_list()]))
+        new_values = [new_codomain([algebra(a)
+                                    for a in v.dense_coefficient_list()])
+                      for v in self._values]
         return Hom(self.domain().change_ring(algebra), new_codomain)(new_values)
 
     def degree(self):
         r"""
         The degree of ``self``.
 
-        OUTPUT:
-
-        The integer degree of ``self``.
+        OUTPUT: the integer degree of ``self``
 
         EXAMPLES::
 
@@ -347,9 +344,7 @@ class FPModuleMorphism(Morphism):
         r"""
         The values under ``self`` of the module generators of the domain module.
 
-        OUTPUT:
-
-        A sequence of module elements of the codomain.
+        OUTPUT: a sequence of module elements of the codomain
 
         EXAMPLES::
 
@@ -620,9 +615,7 @@ class FPModuleMorphism(Morphism):
         r"""
         Decide if ``self`` is the zero homomorphism.
 
-        OUTPUT:
-
-        The boolean value ``True`` if ``self`` is trivial and ``False`` otherwise.
+        OUTPUT: the boolean value ``True`` if ``self`` is trivial and ``False`` otherwise
 
         EXAMPLES::
 
@@ -701,7 +694,7 @@ class FPModuleMorphism(Morphism):
 
         INPUT:
 
-        -  ``x`` -- an element of the domain of the homomorphism
+        - ``x`` -- an element of the domain of the homomorphism
 
         OUTPUT:
 
@@ -776,7 +769,7 @@ class FPModuleMorphism(Morphism):
         Return the restriction of ``self`` to the domain module elements
         of degree ``n``.
 
-        The restriction of a non-zero module homomorphism to the free module
+        The restriction of a nonzero module homomorphism to the free module
         of module elements of degree `n` is a linear function into the free
         module of elements of degree `n+d` belonging to the codomain.
         Here `d` is the degree of this homomorphism.
@@ -787,7 +780,7 @@ class FPModuleMorphism(Morphism):
 
         INPUT:
 
-        - ``n`` -- an integer degree
+        - ``n`` -- integer degree
 
         OUTPUT:
 
@@ -1145,7 +1138,7 @@ class FPModuleMorphism(Morphism):
         M = f.domain()
 
         # It is an error to call this function with incompatible arguments.
-        if not f.codomain() is N:
+        if f.codomain() is not N:
             raise ValueError('the codomains of this homomorphism and the homomorphism '
                              'we are lifting over are different')
 
@@ -1251,7 +1244,7 @@ class FPModuleMorphism(Morphism):
 
         INPUT:
 
-        - ``verbose`` --  boolean (default: ``False``); enable progress messages
+        - ``verbose`` -- boolean (default: ``False``); enable progress messages
 
         OUTPUT:
 
@@ -1351,11 +1344,9 @@ class FPModuleMorphism(Morphism):
 
         INPUT:
 
-        - ``t`` -- an integer by which the morphism is suspended
+        - ``t`` -- integer by which the morphism is suspended
 
-        OUTPUT:
-
-        The morphism which is the suspension of ``self`` by the degree ``t``.
+        OUTPUT: the morphism which is the suspension of ``self`` by the degree ``t``
 
         EXAMPLES::
 
@@ -1747,7 +1738,7 @@ class FPModuleMorphism(Morphism):
             if not kernel_n:
                 continue
 
-            generator_degrees = tuple((x.degree() for x in F_.generators()))
+            generator_degrees = tuple(x.degree() for x in F_.generators())
 
             if j.is_zero():
                 # The map j is not onto in degree `n` of the kernel.
@@ -1875,7 +1866,7 @@ class FPModuleMorphism(Morphism):
             if image_n.dimension() == 0:
                 continue
 
-            generator_degrees = tuple((x.degree() for x in F_.generators()))
+            generator_degrees = tuple(x.degree() for x in F_.generators())
             if j.is_zero():
                 # The map j is not onto in degree `n` of the image.
                 new_generator_degrees = image_n.rank() * (n,)
@@ -1968,7 +1959,7 @@ class FPModuleMorphism(Morphism):
 @cached_function
 def _top_dim(algebra):
     r"""
-    The top dimension of ``algebra``
+    The top dimension of ``algebra``.
 
     This returns infinity if the algebra is infinite-dimensional. If
     the algebra has a ``top_class`` method, then it is used in the

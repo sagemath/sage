@@ -84,7 +84,7 @@ class PermutationGroupMorphism(Morphism):
             sage: G.is_isomorphic(pr1.kernel())
             True
         """
-        return self.domain().subgroup(gap_group=self._gap_().Kernel())
+        return self.domain().subgroup(gap_group=self._libgap_().Kernel())
 
     def image(self, J):
         r"""
@@ -116,7 +116,7 @@ class PermutationGroupMorphism(Morphism):
             sage: G.is_isomorphic(pr1.image(G))
             True
 
-        Check that :trac:`28324` is fixed::
+        Check that :issue:`28324` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
@@ -133,10 +133,10 @@ class PermutationGroupMorphism(Morphism):
         H = self.codomain()
         if J in self.domain():
             J = PermutationGroup([J])
-            G = self._gap_().Image(J)
+            G = self._libgap_().Image(J)
             return H.subgroup(gap_group=G).gens()[0]
         else:
-            G = self._gap_().Image(J)
+            G = self._libgap_().Image(J)
             return H.subgroup(gap_group=G)
 
     def __call__(self, g):
@@ -210,7 +210,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
         """
         return str(self._gap_hom).replace('\n', '')
 
-    def _gap_(self, gap=None):
+    def _libgap_(self):
         r"""
         Return a GAP version of this morphism.
 
@@ -220,7 +220,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4)]])
             sage: H = G.subgroup([G([(1,2,3,4)])])
             sage: phi = PermutationGroupMorphism_from_gap(H, G, gap.Identity)
-            sage: phi._gap_()
+            sage: phi._libgap_()
             Identity
         """
         return self._gap_hom
@@ -239,7 +239,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
             sage: [pr1(g) for g in G.gens()]
             [(3,7,5)(4,8,6), (1,2,6)(3,4,8)]
         """
-        return self.codomain()(self._gap_().Image(g))
+        return self.codomain()(self._libgap_().Image(g))
 
 
 class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
@@ -247,8 +247,8 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         r"""
         Some python code for wrapping GAP's ``GroupHomomorphismByImages``
         function but only for permutation groups. Can be expensive if G is
-        large. This returns "fail" if gens does not generate self or if the map
-        does not extend to a group homomorphism, self - other.
+        large. This returns "fail" if gens does not generate ``self`` or if the map
+        does not extend to a group homomorphism, ``self`` - ``other``.
 
         EXAMPLES::
 
@@ -295,7 +295,7 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         """
         return "%s -> %s" % (list(self.domain().gens()), self._images)
 
-    def _gap_(self):
+    def _libgap_(self):
         r"""
         Return a GAP representation of this morphism.
 
@@ -304,11 +304,10 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
             sage: G = CyclicPermutationGroup(4)
             sage: H = DihedralGroup(4)
             sage: phi = PermutationGroupMorphism_im_gens(G, H, map(H, G.gens()))
-            sage: phi._gap_()
-            GroupHomomorphismByImages( Group( [ (1,2,3,4) ] ), Group(
-            [ (1,2,3,4), (1,4)(2,3) ] ), [ (1,2,3,4) ], [ (1,2,3,4) ] )
+            sage: phi._libgap_()
+            [ (1,2,3,4) ] -> [ (1,2,3,4) ]
         """
-        return self.domain()._gap_().GroupHomomorphismByImages(self.codomain(), self.domain().gens(), self._images)
+        return self.domain()._libgap_().GroupHomomorphismByImages(self.codomain(), self.domain().gens(), self._images)
 
 
 def is_PermutationGroupMorphism(f) -> bool:
@@ -322,6 +321,14 @@ def is_PermutationGroupMorphism(f) -> bool:
         sage: H = DihedralGroup(4)
         sage: phi = PermutationGroupMorphism_im_gens(G, H, map(H, G.gens()))
         sage: is_PermutationGroupMorphism(phi)
+        doctest:warning...
+        DeprecationWarning: The function is_PermutationGroupMorphism is deprecated;
+        use 'isinstance(..., PermutationGroupMorphism)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_PermutationGroupMorphism is deprecated; "
+                "use 'isinstance(..., PermutationGroupMorphism)' instead.")
     return isinstance(f, PermutationGroupMorphism)

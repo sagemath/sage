@@ -140,8 +140,8 @@ It is an error to create a formula with bad syntax::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-### TODO:
-### converts (cnf) returns w/o change
+# TODO:
+# converts (cnf) returns w/o change
 
 from . import boolformula
 from . import logicparser
@@ -154,11 +154,9 @@ def formula(s):
 
     INPUT:
 
-    - ``s`` -- a string that contains a logical expression
+    - ``s`` -- string that contains a logical expression
 
-    OUTPUT:
-
-    An instance of :class:`BooleanFormula`.
+    OUTPUT: an instance of :class:`BooleanFormula`
 
     EXAMPLES:
 
@@ -189,6 +187,7 @@ def formula(s):
         raise SyntaxError(msg)
     return f
 
+
 def get_formulas(*statements):
     r"""
     Convert statements and parse trees into instances of
@@ -200,9 +199,7 @@ def get_formulas(*statements):
       full syntax parse tree of a formula, and a string must
       be a string representation of a formula
 
-    OUTPUT:
-
-    The converted formulas in a list.
+    OUTPUT: the converted formulas in a list
 
     EXAMPLES:
 
@@ -261,6 +258,7 @@ def get_formulas(*statements):
             raise TypeError
     return formulas
 
+
 def consistent(*formulas):
     r"""
     Determine if the formulas are logically consistent.
@@ -269,13 +267,11 @@ def consistent(*formulas):
 
     - ``*formulas`` -- instances of :class:`BooleanFormula`
 
-    OUTPUT:
+    OUTPUT: a boolean value to be determined as follows:
 
-    A boolean value to be determined as follows:
+    - ``True`` -- if the formulas are logically consistent
 
-    - ``True`` - if the formulas are logically consistent
-
-    - ``False`` - if the formulas are not logically consistent
+    - ``False`` -- if the formulas are not logically consistent
 
     EXAMPLES:
 

@@ -4,7 +4,7 @@ Minors of matroids
 Theory
 ======
 
-Let `M` be a matroid with ground set `E`. There are two standard ways to
+Let `M` be a matroid with groundset `E`. There are two standard ways to
 remove an element from `E` so that the result is again a matroid, *deletion*
 and *contraction*. Deletion is simply omitting the elements from a set `D`
 from `E` and keeping all remaining independent sets. This is denoted ``M \ D``
@@ -13,7 +13,7 @@ from `E` and keeping all remaining independent sets. This is denoted ``M \ D``
 
 EXAMPLES::
 
-    sage: M = matroids.named_matroids.Fano()
+    sage: M = matroids.catalog.Fano()
     sage: M.delete(['a', 'c' ]) == M.delete(['a', 'c'])
     True
     sage: M / 'a' == M.contract('a')
@@ -24,7 +24,7 @@ EXAMPLES::
 If a contraction set is not independent (or a deletion set not coindependent),
 this is taken care of::
 
-    sage: M = matroids.named_matroids.Fano()
+    sage: M = matroids.catalog.Fano()
     sage: M.rank('abf')
     2
     sage: M / 'abf' == (M / 'ab').delete('f')
@@ -74,8 +74,8 @@ Methods
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .matroid import Matroid
-from .utilities import setprint_s
+from sage.matroids.matroid import Matroid
+from sage.matroids.utilities import setprint_s
 
 
 class MinorMatroid(Matroid):
@@ -91,11 +91,11 @@ class MinorMatroid(Matroid):
 
     INPUT:
 
-    - ``matroid`` -- a matroid.
-    - ``contractions`` -- An object with Python's ``frozenset`` interface
+    - ``matroid`` -- matroid
+    - ``contractions`` -- an object with Python's ``frozenset`` interface
       containing a subset of ``self.groundset()``.
-    - ``deletions`` -- An object with Python's ``frozenset`` interface
-      containing a subset of ``self.groundset()``.
+    - ``deletions`` -- an object with Python's ``frozenset`` interface
+      containing a subset of ``self.groundset()``
 
     OUTPUT:
 
@@ -114,7 +114,7 @@ class MinorMatroid(Matroid):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import *
-        sage: M = matroids.named_matroids.Vamos()
+        sage: M = matroids.catalog.Vamos()
         sage: N = MinorMatroid(matroid=M, contractions=set(['a']),
         ....:                  deletions=set())
         sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
@@ -127,12 +127,12 @@ class MinorMatroid(Matroid):
 
     def __init__(self, matroid, contractions=None, deletions=None):
         """
-        See class docstring for documentation.
+        See the class docstring for documentation.
 
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Fano(),  # indirect doctest
+            sage: M = MinorMatroid(matroids.catalog.Fano(),  # indirect doctest
             ....:                  contractions=set(), deletions=set(['g']))
             sage: M.is_isomorphic(matroids.Wheel(3))
             True
@@ -152,7 +152,7 @@ class MinorMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Pappus().contract(['c'])
+            sage: M = matroids.catalog.Pappus().contract(['c'])
             sage: sorted(M.groundset())
             ['a', 'b', 'd', 'e', 'f', 'g', 'h', 'i']
         """
@@ -167,16 +167,14 @@ class MinorMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- an object with Python's ``frozenset`` interface.
+        - ``X`` -- an object with Python's ``frozenset`` interface
 
-        OUTPUT:
-
-        The rank of ``X`` in the matroid.
+        OUTPUT: the rank of ``X`` in the matroid
 
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.NonPappus(),
+            sage: M = MinorMatroid(matroids.catalog.NonPappus(),
             ....:                  contractions=set(), deletions={'f', 'g'})
             sage: M._rank(frozenset('abc'))
             2
@@ -189,17 +187,15 @@ class MinorMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        The corank of ``X``.
+        OUTPUT: the corank of ``X``
 
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: M._corank(set(['a', 'e', 'g', 'd', 'h']))
             2
@@ -212,19 +208,17 @@ class MinorMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        A maximal independent subset of ``X``.
+        OUTPUT: a maximal independent subset of ``X``
 
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
-            sage: X = M._max_independent(set(['a', 'd', 'e', 'g']))
+            sage: X = M._max_independent(frozenset(['a', 'd', 'e', 'g']))
             sage: sorted(X) # random
             ['a', 'd', 'e']
             sage: M.is_independent(X)
@@ -240,21 +234,18 @@ class MinorMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        The smallest closed set containing ``X``.
+        OUTPUT: the smallest closed set containing ``X``
 
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
-            sage: sorted(M._closure(set(['a', 'e', 'd'])))
+            sage: sorted(M._closure(frozenset(['a', 'e', 'd'])))
             ['a', 'd', 'e', 'g', 'h']
-
         """
         return self._matroid._closure(self._contractions.union(X)).difference(self._contractions.union(self._deletions))
 
@@ -264,19 +255,17 @@ class MinorMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        A maximal coindependent subset of ``X``.
+        OUTPUT: a maximal coindependent subset of ``X``
 
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
-            sage: X = M._max_coindependent(set(['a', 'd', 'e', 'g']))
+            sage: X = M._max_coindependent(frozenset(['a', 'd', 'e', 'g']))
             sage: sorted(X) # random
             ['d', 'g']
             sage: M.is_coindependent(X)
@@ -292,21 +281,18 @@ class MinorMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        The smallest coclosed set containing ``X``.
+        OUTPUT: the smallest coclosed set containing ``X``
 
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
-            sage: sorted(M._coclosure(set(['a', 'b', 'c'])))
+            sage: sorted(M._coclosure(frozenset(['a', 'b', 'c'])))
             ['a', 'd', 'e', 'g', 'h']
-
         """
         return self._matroid._coclosure(self._deletions.union(X)).difference(self._contractions.union(self._deletions))
 
@@ -316,10 +302,10 @@ class MinorMatroid(Matroid):
 
         INPUT:
 
-        - ``contractions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
-        - ``deletions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
+        - ``contractions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
+        - ``deletions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
 
         OUTPUT:
 
@@ -337,7 +323,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(), contractions=set('c'), deletions={'b', 'f'})
+            sage: M = MinorMatroid(matroids.catalog.Vamos(), contractions=set('c'), deletions={'b', 'f'})
             sage: N = M._minor(contractions=set(['a']), deletions=set([]))
             sage: N._minor(contractions=set([]), deletions=set(['d']))
             M / {'a', 'c'} \ {'b', 'd', 'f'}, where M is Vamos:
@@ -357,7 +343,7 @@ class MinorMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos().dual()
+            sage: M = matroids.catalog.Vamos().dual()
             sage: print(M._repr_())
             Dual of 'Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
@@ -386,18 +372,18 @@ class MinorMatroid(Matroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
-            sage: N = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: N = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 deletions={'b', 'f'}, contractions=set('c'))
-            sage: O = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: O = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions={'b', 'f'}, deletions=set('c'))
             sage: hash(M) == hash(N)
             True
@@ -412,7 +398,7 @@ class MinorMatroid(Matroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
         OUTPUT:
 
@@ -423,7 +409,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M1 = MinorMatroid(M, set('ab'), set('f'))
             sage: M2 = MinorMatroid(M, set('af'), set('b'))
             sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())
@@ -444,7 +430,7 @@ class MinorMatroid(Matroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
         OUTPUT:
 
@@ -455,7 +441,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M1 = MinorMatroid(M, set('ab'), set('f'))
             sage: M2 = MinorMatroid(M, set('af'), set('b'))
             sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())
@@ -468,51 +454,7 @@ class MinorMatroid(Matroid):
         """
         return not self == other
 
-    # Copying, loading, saving:
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroid=matroids.named_matroids.Vamos(),
-            ....:                  contractions={'a', 'b'}, deletions={'f'})
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M._matroid is N._matroid
-            True
-        """
-        N = MinorMatroid(self._matroid, self._contractions, self._deletions)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo={}):
-        """
-        Create a deep copy.
-
-        .. NOTE::
-
-            Since matroids are immutable, a shallow copy normally suffices.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroid=matroids.named_matroids.Vamos(),
-            ....:                  contractions={'a', 'b'}, deletions={'f'})
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M._matroid is N._matroid
-            False
-        """
-        from copy import deepcopy
-        # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
-        N = MinorMatroid(deepcopy(self._matroid, memo), deepcopy(self._contractions, memo), deepcopy(self._deletions, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
+    # copying, loading, saving
 
     def __reduce__(self):
         r"""
@@ -520,7 +462,7 @@ class MinorMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos().minor('abc', 'g')
+            sage: M = matroids.catalog.Vamos().minor('abc', 'g')
             sage: M == loads(dumps(M))  # indirect doctest
             True
             sage: loads(dumps(M))

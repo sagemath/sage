@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat
 r"""
 Coalgebras
@@ -10,14 +11,14 @@ Coalgebras
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from .category_types import Category_over_base_ring
-from sage.categories.modules import Modules
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from sage.categories.tensor import TensorProductsCategory
 from sage.categories.dual import DualObjectsCategory
 from sage.categories.filtered_modules import FilteredModulesCategory
-from sage.categories.super_modules import SuperModulesCategory
+from sage.categories.modules import Modules
 from sage.categories.realizations import RealizationsCategory
+from sage.categories.super_modules import SuperModulesCategory
+from sage.categories.tensor import TensorProductsCategory
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -26,7 +27,7 @@ from sage.misc.lazy_import import LazyImport
 
 class Coalgebras(Category_over_base_ring):
     """
-    The category of coalgebras
+    The category of coalgebras.
 
     EXAMPLES::
 
@@ -48,7 +49,7 @@ class Coalgebras(Category_over_base_ring):
         """
         return [Modules(self.base_ring())]
 
-    WithBasis = LazyImport('sage.categories.coalgebras_with_basis',  'CoalgebrasWithBasis')
+    WithBasis = LazyImport('sage.categories.coalgebras_with_basis', 'CoalgebrasWithBasis')
     Graded = LazyImport('sage.categories.graded_coalgebras', 'GradedCoalgebras')
 
     class ParentMethods:
@@ -67,10 +68,11 @@ class Coalgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.modules
+                sage: # needs sage.groups sage.modules
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
                 An example of Hopf algebra with basis:
-                 the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
+                 the group algebra of the Dihedral group of order 6 as a permutation group
+                 over Rational Field
                 sage: [a,b] = A.algebra_generators()
                 sage: a, A.counit(a)
                 (B[(1,2,3)], 1)
@@ -92,10 +94,11 @@ class Coalgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.modules
+                sage: # needs sage.groups sage.modules
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
                 An example of Hopf algebra with basis:
-                 the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
+                 the group algebra of the Dihedral group of order 6 as a permutation group
+                 over Rational Field
                 sage: [a,b] = A.algebra_generators()
                 sage: a, A.coproduct(a)
                 (B[(1,2,3)], B[(1,2,3)] # B[(1,2,3)])
@@ -111,10 +114,11 @@ class Coalgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.modules
+                sage: # needs sage.groups sage.modules
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
                 An example of Hopf algebra with basis:
-                 the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
+                 the group algebra of the Dihedral group of order 6 as a permutation group
+                 over Rational Field
                 sage: [a,b] = A.algebra_generators()
                 sage: a, a.coproduct()
                 (B[(1,2,3)], B[(1,2,3)] # B[(1,2,3)])
@@ -129,10 +133,11 @@ class Coalgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.modules
+                sage: # needs sage.groups sage.modules
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
                 An example of Hopf algebra with basis:
-                 the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
+                 the group algebra of the Dihedral group of order 6 as a permutation group
+                 over Rational Field
                 sage: [a,b] = A.algebra_generators()
                 sage: a, a.counit()
                 (B[(1,2,3)], 1)
@@ -224,7 +229,7 @@ class Coalgebras(Category_over_base_ring):
             .. WARNING::
 
                 This is only correct in certain cases (finite dimension, ...).
-                See :trac:`15647`.
+                See :issue:`15647`.
             """
             from sage.categories.algebras import Algebras
             return [Algebras(self.base_category().base_ring())]
@@ -357,7 +362,7 @@ class Coalgebras(Category_over_base_ring):
                     NotImplemented
                     sage: m.coproduct == m.coproduct_by_coercion
                     True
-                    sage: f.coproduct()
+                    sage: f.coproduct()                                                 # needs lrcalc_python
                     m[] # m[2, 1] + m[1] # m[2] + m[2] # m[1] + m[2, 1] # m[]
 
                 ::
@@ -384,16 +389,16 @@ class Coalgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: sp = SymmetricFunctions(QQ).sp()                              # needs sage.modules
-                    sage: sp.an_element()                                               # needs sage.modules
+                    sage: # needs lrcalc_python sage.modules
+                    sage: sp = SymmetricFunctions(QQ).sp()
+                    sage: sp.an_element()
                     2*sp[] + 2*sp[1] + 3*sp[2]
-                    sage: sp.counit(sp.an_element())                                    # needs sage.modules
+                    sage: sp.counit(sp.an_element())
                     2
-
-                    sage: o = SymmetricFunctions(QQ).o()                                # needs sage.modules
-                    sage: o.an_element()                                                # needs sage.modules
+                    sage: o = SymmetricFunctions(QQ).o()
+                    sage: o.an_element()
                     2*o[] + 2*o[1] + 3*o[2]
-                    sage: o.counit(o.an_element())                                      # needs sage.modules
+                    sage: o.counit(o.an_element())
                     -1
                 """
                 R = self.realization_of().a_realization()

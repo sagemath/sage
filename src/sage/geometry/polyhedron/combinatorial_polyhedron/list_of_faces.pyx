@@ -178,9 +178,9 @@ cdef class ListOfFaces:
         """
         assert face_list_check_alignment(self.data)
 
-    cpdef ListOfFaces __copy__(self) noexcept:
+    cpdef ListOfFaces __copy__(self):
         r"""
-        Return a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -294,7 +294,7 @@ cdef class ListOfFaces:
 
         # Calculating ``newfaces``
         # such that ``newfaces`` points to all facets of ``faces[n_faces -1]``.
-        cdef size_t new_n_faces = get_next_level(self.data, new_faces.data, empty_forbidden)
+        get_next_level(self.data, new_faces.data, empty_forbidden)
 
         # Undo what ``get_next_level`` does.
         self.data.n_faces += 1
@@ -303,7 +303,7 @@ cdef class ListOfFaces:
         # by calculating dimension of one of its faces.
         return new_faces.compute_dimension() + 1
 
-    cpdef ListOfFaces pyramid(self) noexcept:
+    cpdef ListOfFaces pyramid(self):
         r"""
         Return the list of faces of the pyramid.
 
@@ -381,7 +381,7 @@ cdef class ListOfFaces:
 
         return copy
 
-    cdef ListOfFaces delete_atoms_unsafe(self, bint *delete, face_t face) noexcept:
+    cdef ListOfFaces delete_atoms_unsafe(self, bint *delete, face_t face):
         r"""
         Return a copy of ``self`` where bits in ``delete`` have been
         removed/contracted.
@@ -423,7 +423,7 @@ cdef class ListOfFaces:
 
     cdef void delete_faces_unsafe(self, bint *delete, face_t face) noexcept:
         r"""
-        Deletes face ``i`` if and only if ``delete[i]``.
+        Delete face ``i`` if and only if ``delete[i]``.
 
         Alternatively, deletes all faces such that the ``i``-th bit in ``face`` is not set.
 
@@ -478,7 +478,7 @@ cdef class ListOfFaces:
 
     def matrix(self):
         r"""
-        Obtain the matrix of self.
+        Obtain the matrix of ``self``.
 
         Each row represents a face and each column an atom.
 
@@ -518,7 +518,7 @@ cdef class ListOfFaces:
         M.set_immutable()
         return M
 
-cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep, face_t face, bint dual) noexcept:
+cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep, face_t face, bint dual):
     r"""
     Obtain facets and Vrepresentation of ``face`` as new combinatorial polyhedron.
 
@@ -529,7 +529,7 @@ cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep
     - ``face`` -- face in Vrepresentation or ``NULL``
     - ``dual`` -- boolean
 
-    OUTPUT: A tuple of new facets and new Vrepresentation as :class:`ListOfFaces`.
+    OUTPUT: a tuple of new facets and new Vrepresentation as :class:`ListOfFaces`.
     """
     cdef ListOfFaces new_facets, new_Vrep
     cdef bint* delete
@@ -547,7 +547,7 @@ cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep
     else:
         delete = <bint*> mem.allocarray(max(facets.n_faces(), facets.n_atoms()), sizeof(bint))
 
-        # Set ``delete[i]`` to one if ``i`` is not an vertex of ``face``.
+        # Set ``delete[i]`` to one if ``i`` is not a vertex of ``face``.
         for i in range(Vrep.n_faces()):
             if face_issubset(face, Vrep.data.faces[i]):
                 delete[i] = 0

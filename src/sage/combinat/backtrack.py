@@ -9,7 +9,6 @@ tree or graph structure.
   described by a ``children`` function, with branch pruning, etc.
 
 This module has mostly been superseded by ``RecursivelyEnumeratedSet``.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
@@ -36,7 +35,7 @@ from sage.rings.integer_ring import ZZ
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
 
 
-class GenericBacktracker():
+class GenericBacktracker:
     r"""
     A generic backtrack tool for exploring a search space organized as a tree,
     with branch pruning, etc.
@@ -153,7 +152,7 @@ class PositiveIntegerSemigroup(UniqueRepresentation, RecursivelyEnumeratedSet_fo
 
     def children(self, x):
         r"""
-        Return the single child ``x+1`` of the integer ``x``
+        Return the single child ``x+1`` of the integer ``x``.
 
         EXAMPLES::
 

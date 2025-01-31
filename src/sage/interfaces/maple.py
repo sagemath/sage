@@ -37,7 +37,7 @@ EXAMPLES::
     (x-y)*(x^4+x^3*y+x^2*y^2+x*y^3+y^4)
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Maple, a :class:`RuntimeError` exception is raised.
+anything from Maple, a :exc:`RuntimeError` exception is raised.
 
 Tutorial
 --------
@@ -556,7 +556,7 @@ connection to a server running Maple; for hints, type
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nBuilding Maple command completion list (this takes")
@@ -750,10 +750,8 @@ connection to a server running Maple; for hints, type
 
         INPUT:
 
-
-        -  ``s`` - a string representing the function whose
-           source code you want
-
+        - ``s`` -- string representing the function whose
+          source code you want
 
         EXAMPLES::
 
@@ -785,8 +783,8 @@ connection to a server running Maple; for hints, type
 
         INPUT:
 
-        -  ``string`` - a string to search for in the maple help
-           system
+        - ``string`` -- string to search for in the maple help
+          system
 
         EXAMPLES::
 
@@ -802,7 +800,7 @@ connection to a server running Maple; for hints, type
 
         INPUT:
 
-        -  ``package`` -- string
+        - ``package`` -- string
 
         EXAMPLES: Some functions are unknown to Maple until you use with to
         include the appropriate package.
@@ -852,7 +850,7 @@ class MapleFunction(ExpectFunction):
     def _instancedoc_(self):
         """
         Return the Maple help for this function. This gets called when
-        doing "?" on self.
+        doing ``?`` on ``self``.
 
         EXAMPLES::
 
@@ -923,7 +921,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
     def __float__(self):
         """
-        Return a floating point version of self.
+        Return a floating point version of ``self``.
 
         EXAMPLES::
 
@@ -936,7 +934,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
     def __hash__(self):
         """
-        Return a 64-bit integer representing the hash of self. Since
+        Return a 64-bit integer representing the hash of ``self``. Since
         Python uses 32-bit hashes, it will automatically convert the result
         of this to a 32-bit hash.
 
@@ -961,7 +959,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
     def _richcmp_(self, other, op):
         """
-        Compare equality between self and other, using maple.
+        Compare equality between ``self`` and ``other``, using maple.
 
         These examples are optional, and require Maple to be installed. You
         don't need to install any Sage packages for this.
@@ -1093,7 +1091,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
             sage: print(maple(pi - e^3)._latex_())              # optional - maple
             \pi-{{\rm e}^{3}}
 
-        .. note::
+        .. NOTE::
 
            Some expressions might require the Maple style file
            ``maple2e.sty`` in order to latex correctly.
@@ -1102,11 +1100,11 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
     def op(self, i=None):
         """
-        Return the i-th operand of this expression.
+        Return the `i`-th operand of this expression.
 
         INPUT:
 
-        - i -- an integer or ``None``
+        - ``i`` -- integer or ``None``
 
         EXAMPLES::
 

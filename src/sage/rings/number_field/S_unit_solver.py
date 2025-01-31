@@ -1,24 +1,10 @@
 # sage.doctest: needs sage.rings.number_field sage.rings.padics
 r"""
-Solve S-unit equation x + y = 1
+Solver for the `S`-unit equation `x + y = 1`
 
-Inspired by work of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the LLL methods in Sage to implement an algorithm that returns all `S`-unit solutions to the equation `x + y = 1`.
-
-REFERENCES:
-
-- [MR2016]_
-
-- [Sma1995]_
-
-- [Sma1998]_
-
-- [Yu2007]_
-
-- [AKMRVW]_
-
-AUTHORS:
-
-- Alejandra Alvarado, Angelos Koutsianas, Beth Malmskog, Christopher Rasmussen, David Roe, Christelle Vincent, Mckenzie West (2018-04-25 to 2018-11-09): original version
+Inspired by works of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the
+LLL methods to implement an algorithm that returns all `S`-unit solutions to
+the equation `x + y = 1`.
 
 EXAMPLES::
 
@@ -37,6 +23,20 @@ EXAMPLES::
 .. TODO::
 
     - Use Cython to improve timings on the sieve
+
+REFERENCES:
+
+- [MR2016]_
+- [Sma1995]_
+- [Sma1998]_
+- [Yu2007]_
+- [AKMRVW]_
+
+AUTHORS:
+
+- Alejandra Alvarado, Angelos Koutsianas, Beth Malmskog, Christopher Rasmussen,
+  David Roe, Christelle Vincent, Mckenzie West (2018-04-25 to 2018-11-09):
+  original version
 """
 
 
@@ -88,12 +88,10 @@ def column_Log(SUK, iota, U, prec=106):
 
     - ``SUK`` -- a group of `S`-units
     - ``iota`` -- an element of ``K``
-    - ``U`` -- a list of places (finite or infinite) of ``K``
+    - ``U`` -- list of places (finite or infinite) of ``K``
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The log vector as a list of real numbers
+    OUTPUT: the log vector as a list of real numbers
 
     EXAMPLES::
 
@@ -126,9 +124,7 @@ def c3_func(SUK, prec=106):
     - ``SUK`` -- a group of `S`-units
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `c_3`, as a real number
+    OUTPUT: the constant `c_3`, as a real number
 
     EXAMPLES::
 
@@ -147,25 +143,22 @@ def c3_func(SUK, prec=106):
     REFERENCES:
 
     - [AKMRVW]_ :arxiv:`1903.00977`
-
     """
-
     R = RealField(prec)
 
     all_places = list(SUK.primes()) + SUK.number_field().places(prec)
     Possible_U = Combinations(all_places, SUK.rank())
-    c1 = R(1) # guarantees final c1 >= 1
+    c1 = R(1)  # guarantees final c1 >= 1
     for U in Possible_U:
         # first, build the matrix C_{i,U}
-        columns_of_C = []
-        for unit in SUK.fundamental_units():
-            columns_of_C.append(column_Log(SUK, unit, U, prec))
+        columns_of_C = [column_Log(SUK, unit, U, prec)
+                        for unit in SUK.fundamental_units()]
         C = matrix(SUK.rank(), SUK.rank(), columns_of_C)
         # Is it invertible?
         if abs(C.determinant()) > 10**(-10):
             poss_c1 = C.inverse().apply_map(abs).norm(Infinity)
             c1 = R(max(poss_c1, c1))
-    return R(0.9999999) / (c1*SUK.rank())
+    return R(0.9999999) / (c1 * SUK.rank())
 
 
 def c4_func(SUK, v, A, prec=106):
@@ -179,9 +172,7 @@ def c4_func(SUK, v, A, prec=106):
     - ``A`` -- the set of the product of the coefficients of the ``S``-unit equation with each root of unity of ``K``
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `c_4`, as a real number
+    OUTPUT: the constant `c_4`, as a real number
 
     EXAMPLES::
 
@@ -212,15 +203,18 @@ def c4_func(SUK, v, A, prec=106):
 
 def beta_k(betas_and_ns):
     r"""
-    Return a pair `[\beta_k,|beta_k|_v]`, where `\beta_k` has the smallest nonzero valuation in absolute value of the list ``betas_and_ns``.
+    Return a pair `[\beta_k,|beta_k|_v]`, where `\beta_k` has the smallest
+    nonzero valuation in absolute value of the list ``betas_and_ns``.
 
     INPUT:
 
-    - ``betas_and_ns`` -- a list of pairs ``[beta,val_v(beta)]`` outputted from the function where ``beta`` is an element of ``SUK.fundamental_units()``
+    - ``betas_and_ns`` -- list of pairs ``[beta,val_v(beta)]`` outputted from
+      the function where ``beta`` is an element of ``SUK.fundamental_units()``
 
     OUTPUT:
 
-    The pair ``[beta_k,v(beta_k)]``, where ``beta_k`` is an element of ``K`` and ``val_v(beta_k)`` is a integer
+    The pair ``[beta_k,v(beta_k)]``, where ``beta_k`` is an element of ``K``
+    and ``val_v(beta_k)`` is a integer.
 
     EXAMPLES::
 
@@ -257,9 +251,7 @@ def mus(SUK, v):
     - ``SUK`` -- a group of `S`-units
     - ``v`` -- a finite place of ``K``
 
-    OUTPUT:
-
-    A list ``[mus]`` where each ``mu`` is an element of ``K``
+    OUTPUT: list ``[mus]`` where each ``mu`` is an element of ``K``
 
     EXAMPLES::
 
@@ -275,7 +267,6 @@ def mus(SUK, v):
     REFERENCES:
 
     - [AKMRVW]_
-
     """
     betas = SUK.fundamental_units()
     beta_and_ns = [[beta,beta.valuation(v)] for beta in betas]
@@ -297,9 +288,7 @@ def possible_mu0s(SUK, v):
     - ``SUK`` -- a group of `S`-units
     - ``v`` -- a finite place of ``K``
 
-    OUTPUT:
-
-    A list ``[mu0s]`` where each ``mu0`` is an element of ``K``
+    OUTPUT: list ``[mu0s]`` where each ``mu0`` is an element of ``K``
 
     EXAMPLES::
 
@@ -323,7 +312,6 @@ def possible_mu0s(SUK, v):
 
     - [AKMRVW]_
     - [Sma1995]_ pp. 824-825, but we modify the definition of ``sigma`` (``sigma_tilde``) to make it easier to code
-
     """
     beta_and_ns = [[beta,beta.valuation(v)] for beta in SUK.fundamental_units()]
     betak, nk = beta_k(beta_and_ns)
@@ -478,7 +466,7 @@ def Yu_modified_height(mu, n, v, prec=106):
     INPUT:
 
     - ``mu`` -- an element of a field K
-    - ``n`` -- number of mu_j to be considered in Yu's Theorem.
+    - ``n`` -- number of mu_j to be considered in Yu's Theorem
     - ``v`` -- a place of K
     - ``prec`` -- the precision of the real field
 
@@ -531,12 +519,11 @@ def Omega_prime(dK, v, mu_list, prec=106):
 
     - ``dK`` -- the degree of a number field `K`
     - ``v`` -- a finite place of `K`
-    - ``mu_list`` -- a list of nonzero elements of `K`. It is assumed that the sublist ``mu_list[1:]`` is multiplicatively independent.
+    - ``mu_list`` -- list of nonzero elements of `K`. It is assumed that the
+      sublist ``mu_list[1:]`` is multiplicatively independent
     - ``prec`` -- the precision of the real field
 
-    OUTPUT:
-
-    The constant `\Omega'`.
+    OUTPUT: the constant `\Omega'`
 
     EXAMPLES::
 
@@ -578,9 +565,7 @@ def Yu_C1_star(n, v, prec=106):
     - ``v`` -- a finite place of `K` (a fractional ideal)
     - ``prec`` -- the precision of the real field
 
-    OUTPUT:
-
-    The constant `C_1^*` as a real number.
+    OUTPUT: the constant `C_1^*` as a real number
 
     EXAMPLES::
 
@@ -640,9 +625,7 @@ def Yu_bound(SUK, v, prec=106):
     - ``v`` -- a finite place of `K` (a fractional ideal)
     - ``prec`` -- the precision of the real field
 
-    OUTPUT:
-
-    The constant `c_8` as a real number.
+    OUTPUT: the constant `c_8` as a real number
 
     EXAMPLES::
 
@@ -723,9 +706,7 @@ def K0_func(SUK, A, prec=106):
     - ``A`` -- the set of the products of the coefficients of the `S`-unit equation with each root of unity of `K`
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `K_0`, a real number.
+    OUTPUT: the constant `K_0`, a real number
 
     EXAMPLES::
 
@@ -774,9 +755,7 @@ def c11_func(SUK, v, A, prec=106):
     - ``A`` -- the set of the product of the coefficients of the `S`-unit equation with each root of unity of `K`
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `c_{11}`, a real number
+    OUTPUT: the constant `c_{11}`, a real number
 
     EXAMPLES::
 
@@ -815,9 +794,7 @@ def c13_func(SUK, v, prec=106):
     - ``v`` -- an infinite place of ``K`` (element of ``SUK.number_field().places(prec)``)
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `c_{13}`, as a real number
+    OUTPUT: the constant `c_{13}`, as a real number
 
     EXAMPLES::
 
@@ -865,12 +842,11 @@ def K1_func(SUK, v, A, prec=106):
 
     - ``SUK`` -- a group of `S`-units
     - ``v`` -- an infinite place of `K` (element of ``SUK.number_field().places(prec)``)
-    - ``A`` -- a list of all products of each potential `a`, `b` in the `S`-unit equation `ax + by + 1 = 0` with each root of unity of `K`
+    - ``A`` -- list of all products of each potential `a`, `b` in the `S`-unit
+      equation `ax + by + 1 = 0` with each root of unity of `K`
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `K_1`, a real number
+    OUTPUT: the constant `K_1`, a real number
 
     EXAMPLES::
 
@@ -891,7 +867,6 @@ def K1_func(SUK, v, A, prec=106):
     REFERENCES:
 
     - [Sma1995]_ p. 825
-
     """
     R = RealField(prec)
 
@@ -935,9 +910,7 @@ def minimal_vector(A, y, prec=106):
     - ``y`` -- a row (1 by `n`) vector with integer coordinates
     - ``prec`` -- precision of real field (default: 106)
 
-    OUTPUT:
-
-    A lower bound for the square of
+    OUTPUT: a lower bound for the square of
 
     .. MATH::
 
@@ -997,13 +970,11 @@ def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
 
     - ``place`` -- (ring morphism) an infinite place of a number field `K`
     - ``B0`` -- the initial bound
-    - ``list_of_gens`` -- a set of generators of the free part of the group
+    - ``list_of_gens`` -- set of generators of the free part of the group
     - ``torsion_gen`` -- an element of the torsion part of the group
     - ``c13`` -- a positive real number
 
-    OUTPUT:
-
-    A tuple consisting of:
+    OUTPUT: a tuple consisting of:
 
     1. a new upper bound, an integer
     2. a boolean value, ``True`` if we have to increase precision, otherwise ``False``
@@ -1070,7 +1041,7 @@ def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
 
                 A = A.transpose()
 
-                # Note that l is the an lower bound on the square of the magnitude of the shortest non-zero vector in the lattice generated by A
+                # Note that l is the lower bound on the square of the magnitude of the shortest nonzero vector in the lattice generated by A
                 l = minimal_vector(A, zero_vector(ZZ,n+1))
                 # Checking hypotheses of Lemma 5.3 in our paper:
 
@@ -1109,7 +1080,7 @@ def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
                 # We apply Lemma 5.3 from [AKMRVW]
                 A = A.transpose()
                 l = minimal_vector(A, zero_vector(ZZ,n+1))
-                # Note that l is the a lower bound on the square of the magnitude of the shortest non-zero vector in the lattice generated by A
+                # Note that l is the a lower bound on the square of the magnitude of the shortest nonzero vector in the lattice generated by A
                 # Checking hypothesis of lemma 5.3 in [AKMRVW]
                 if l <= T**2 + S:
                     C *= 2
@@ -1156,7 +1127,7 @@ def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
                 # We apply Lemma 5.2 from [AKMRVW]
                 A = A.transpose()
                 l = minimal_vector(A, zero_vector(ZZ,n+1))
-                # Note that l is the a lower bound on the square of the magnitude of the shortest non-zero vector in the lattice generated by A
+                # Note that l is the a lower bound on the square of the magnitude of the shortest nonzero vector in the lattice generated by A
                 # Checking hypothesis of lemma 5.2 in [AKMRVW]
                 if l <= T**2 + S:
                     C *= 2
@@ -1180,12 +1151,11 @@ def cx_LLL_bound(SUK, A, prec=106):
     INPUT:
 
     - ``SUK`` -- a group of `S`-units
-    - ``A`` -- a list of all products of each potential `a`, `b` in the `S`-unit equation `ax + by + 1 = 0` with each root of unity of `K`
+    - ``A`` -- list of all products of each potential `a`, `b` in the `S`-unit
+      equation `ax + by + 1 = 0` with each root of unity of `K`
     - ``prec`` -- precision of real field (default: 106)
 
-    OUTPUT:
-
-    A bound for the exponents at the infinite place, as a real number
+    OUTPUT: a bound for the exponents at the infinite place, as a real number
 
     EXAMPLES::
 
@@ -1236,15 +1206,18 @@ def log_p(a, prime, prec):
 
     - ``a`` -- an element of a number field `K`
     - ``prime`` -- a prime ideal of the number field `K`
-    - ``prec`` -- a positive integer
+    - ``prec`` -- positive integer
 
     OUTPUT:
 
-    An element of `K` which is congruent to the ``prime``-adic logarithm of `a` with respect to ``prime`` modulo ``p^prec``, where `p` is the rational prime below ``prime``
+    An element of `K` which is congruent to the ``prime``-adic logarithm of `a`
+    with respect to ``prime`` modulo ``p^prec``, where `p` is the rational
+    prime below ``prime``.
 
     .. NOTE::
 
-        Here we take into account the other primes in `K` above `p` in order to get coefficients with small values
+        Here we take into account the other primes in `K` above `p` in order to
+        get coefficients with small values.
 
     EXAMPLES::
 
@@ -1301,15 +1274,16 @@ def log_p_series_part(a, prime, prec):
 
     - ``a`` -- an element of a number field `K`
     - ``prime`` -- a prime ideal of the number field `K`
-    - ``prec`` -- a positive integer
+    - ``prec`` -- positive integer
 
     OUTPUT:
 
-    The ``prime``-adic logarithm of `a` and accuracy ``p^prec``, where `p` is the rational prime below ``prime``
+    The ``prime``-adic logarithm of `a` and accuracy ``p^prec``, where `p` is
+    the rational prime below ``prime``.
 
     ALGORITHM:
 
-    The algorithm is based on the algorithm on page 30 of [Sma1998]_
+    The algorithm is based on the algorithm on page 30 of [Sma1998]_.
 
     EXAMPLES::
 
@@ -1396,9 +1370,7 @@ def defining_polynomial_for_Kp(prime, prec=106):
     - ``prime`` -- a prime ideal of a number field `K`
     - ``prec`` -- a positive natural number (default: 106)
 
-    OUTPUT:
-
-    A polynomial with integer coefficients that is equivalent ``mod p^prec`` to a defining polynomial for the completion of `K` associated to the specified prime.
+    OUTPUT: a polynomial with integer coefficients that is equivalent ``mod p^prec`` to a defining polynomial for the completion of `K` associated to the specified prime
 
     .. NOTE::
 
@@ -1506,15 +1478,14 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
 
     - ``prime`` -- a prime ideal of a number field `K`
     - ``B0`` -- the initial bound
-    - ``M`` -- a list of elements of `K`, the `\mu_i`'s from Lemma IX.3 of [Sma1998]_
-    - ``M_logp`` -- the p-adic logarithm of elements in `M`
+    - ``M`` -- list of elements of `K`, the `\mu_i`'s from Lemma IX.3 of [Sma1998]_
+    - ``M_logp`` -- the `p`-adic logarithm of elements in `M`
     - ``m0`` -- an element of `K`, this is `\mu_0` from Lemma IX.3 of [Sma1998]_
     - ``c3`` -- a positive real constant
-    - ``prec`` -- the precision of the calculations (default: 106), i.e., values are known to ``O(p^prec)``
+    - ``prec`` -- the precision of the calculations (default: 106), i.e.,
+      values are known to ``O(p^prec)``
 
-    OUTPUT:
-
-    A pair consisting of:
+    OUTPUT: a pair consisting of:
 
     1. a new upper bound, an integer
     2. a boolean value, ``True`` if we have to increase precision, otherwise ``False``
@@ -1564,7 +1535,7 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
         False
     """
     if any(g.valuation(prime) != 0 for g in M+[m0]):
-        raise ValueError('There is an element with non zero valuation')
+        raise ValueError('There is an element with nonzero valuation')
 
     K = prime.ring()
     w = K.number_of_roots_of_unity()
@@ -1653,13 +1624,15 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
 
 def p_adic_LLL_bound(SUK, A, prec=106):
     r"""
-    Return the maximum of all of the `K_0`'s as they are LLL-optimized for each finite place `v`.
+    Return the maximum of all of the `K_0`'s as they are LLL-optimized for each
+    finite place `v`.
 
     INPUT:
 
     - ``SUK`` -- a group of `S`-units
-    - ``A`` -- a list of all products of each potential `a`, `b` in the `S`-unit equation `ax + by + 1 = 0` with each root of unity of `K`
-    - ``prec``-- precision for p-adic LLL calculations (default: 106)
+    - ``A`` -- list of all products of each potential `a`, `b` in the `S`-unit
+      equation `ax + by + 1 = 0` with each root of unity of `K`
+    - ``prec`` -- precision for `p`-adic LLL calculations (default: 106)
 
     OUTPUT:
 
@@ -1704,8 +1677,7 @@ def p_adic_LLL_bound(SUK, A, prec=106):
                     Log_p_Mus = [embedding_to_Kp(a, v, local_prec) for a in Log_p_Mus]
                     m0_Kv_new,increase_precision = p_adic_LLL_bound_one_prime(v, m0_Kv_old, Mus, Log_p_Mus, m0, c3_func(SUK, local_prec), local_prec)
 
-            if m0_Kv_old > val:
-                val = m0_Kv_old
+            val = max(m0_Kv_old, val)
 
         LLL_K0_by_finite_place.append(val)
     return max(LLL_K0_by_finite_place)
@@ -1713,16 +1685,15 @@ def p_adic_LLL_bound(SUK, A, prec=106):
 
 def split_primes_large_lcm(SUK, bound):
     r"""
-    Return a list `L` of rational primes `q` which split completely in `K` and which have desirable properties (see NOTE).
+    Return a list `L` of rational primes `q` which split completely in `K` and
+    which have desirable properties (see NOTE).
 
     INPUT:
 
-    - ``SUK`` -- the `S`-unit group of an absolute number field `K`.
-    - ``bound`` -- a positive integer
+    - ``SUK`` -- the `S`-unit group of an absolute number field `K`
+    - ``bound`` -- positive integer
 
-    OUTPUT:
-
-    A list `L` of rational primes `q`, with the following properties:
+    OUTPUT: list `L` of rational primes `q`, with the following properties:
 
     - each prime `q` in `L` splits completely in `K`
     - if `Q` is a prime in `S` and `q` is the rational
@@ -1759,7 +1730,6 @@ def split_primes_large_lcm(SUK, bound):
         Traceback (most recent call last):
         ...
         ValueError: Not enough split primes found. Increase bound.
-
     """
 
     K = SUK.number_field()
@@ -1788,11 +1758,10 @@ def sieve_ordering(SUK, q):
     INPUT:
 
     - ``SUK`` -- the `S`-unit group of a number field `K`
-    - ``q``   -- a rational prime number which splits completely in `K`
+    - ``q`` -- a rational prime number which splits completely in `K`
 
-    OUTPUT:
-
-    A list of tuples, ``[ideals_over_q, residue_fields, rho_images, product_rho_orders]``, where
+    OUTPUT: list of tuples;
+    ``[ideals_over_q, residue_fields, rho_images, product_rho_orders]``, where:
 
     1. ``ideals_over_q`` is a list of the `d = [K:\QQ]` ideals in `K` over `q`
     2. ``residue_fields[i]`` is the residue field of ``ideals_over_q[i]``
@@ -1857,11 +1826,10 @@ def clean_rfv_dict(rfv_dictionary):
 
     INPUT:
 
-    - ``rfv_dictionary`` -- a dictionary whose keys are exponent vectors and whose values are residue field vectors
+    - ``rfv_dictionary`` -- dictionary whose keys are exponent vectors and
+      whose values are residue field vectors
 
-    OUTPUT:
-
-    ``None``. But it removes some keys from the input dictionary.
+    OUTPUT: none, but it removes some keys from the input dictionary
 
     .. NOTE::
 
@@ -1893,14 +1861,17 @@ def clean_rfv_dict(rfv_dictionary):
 
 def construct_rfv_to_ev(rfv_dictionary, q, d, verbose=False):
     r"""
-    Return a reverse lookup dictionary, to find the exponent vectors associated to a given residue field vector.
+    Return a reverse lookup dictionary, to find the exponent vectors associated
+    to a given residue field vector.
 
     INPUT:
 
-    - ``rfv_dictionary`` -- a dictionary whose keys are exponent vectors and whose values are the associated residue field vectors
+    - ``rfv_dictionary`` -- dictionary whose keys are exponent vectors and
+      whose values are the associated residue field vectors
     - ``q`` -- a prime (assumed to split completely in the relevant number field)
     - ``d`` -- the number of primes in `K` above the rational prime `q`
-    - ``verbose`` -- a boolean flag to indicate more detailed output is desired (default: ``False``)
+    - ``verbose`` -- boolean (default: ``False``); flag to indicate more
+      detailed output is desired
 
     OUTPUT:
 
@@ -2028,16 +1999,17 @@ def construct_rfv_to_ev(rfv_dictionary, q, d, verbose=False):
 
 def construct_comp_exp_vec(rfv_to_ev_dict, q):
     r"""
-    Constructs a dictionary associating complement vectors to residue field vectors.
+    Construct a dictionary associating complement vectors to residue field vectors.
 
     INPUT:
 
-    - ``rfv_to_ev_dict`` -- a dictionary whose keys are residue field vectors and whose values are lists of exponent vectors with the associated residue field vector.
+    - ``rfv_to_ev_dict`` -- dictionary whose keys are residue field vectors and
+      whose values are lists of exponent vectors with the associated residue
+      field vector
     - ``q`` -- the characteristic of the residue field
 
-    OUTPUT:
-
-    A dictionary whose typical key is an exponent vector ``a``, and whose associated value is a list of complementary exponent vectors to ``a``.
+    OUTPUT: a dictionary whose typical key is an exponent vector ``a``, and
+    whose associated value is a list of complementary exponent vectors to ``a``
 
     EXAMPLES:
 
@@ -2104,13 +2076,12 @@ def drop_vector(ev, p, q, complement_ev_dict):
     - ``ev`` -- an exponent vector modulo `p-1`
     - ``p`` -- the prime such that ``ev`` is an exponent vector modulo `p-1`
     - ``q`` -- a prime, distinct from `p`, that is a key in the ``complement_ev_dict``
-    - ``complement_ev_dict`` -- a dictionary of dictionaries, whose keys are primes.
+    - ``complement_ev_dict`` -- dictionary of dictionaries, whose keys are primes
       ``complement_ev_dict[q]`` is a dictionary whose keys are exponent vectors modulo `q-1`
       and whose values are lists of complementary exponent vectors modulo `q-1`
 
-    OUTPUT:
-
-    Returns ``True`` if ``ev`` may be dropped from the complement exponent vector dictionary, and ``False`` if not.
+    OUTPUT: ``True`` if ``ev`` may be dropped from the complement exponent
+    vector dictionary, and ``False`` if not
 
     .. NOTE::
 
@@ -2167,15 +2138,17 @@ def construct_complement_dictionaries(split_primes_list, SUK, verbose=False):
 
     INPUT:
 
-    - ``split_primes_list`` -- a list of rational primes which split completely in the number field `K`
+    - ``split_primes_list`` -- list of rational primes which split completely
+      in the number field `K`
     - ``SUK`` -- the `S`-unit group for a number field `K`
-    - ``verbose`` -- a boolean to provide additional feedback (default: False)
+    - ``verbose`` -- boolean to provide additional feedback (default: ``False``)
 
     OUTPUT:
 
-    A dictionary of dictionaries. The keys coincide with the primes in ``split_primes_list``
-    For each `q`, ``comp_exp_vec[q]`` is a dictionary whose keys are exponent vectors modulo `q-1`,
-    and whose values are lists of exponent vectors modulo `q-1`
+    A dictionary of dictionaries. The keys coincide with the primes in
+    ``split_primes_list``. For each `q`, ``comp_exp_vec[q]`` is a dictionary
+    whose keys are exponent vectors modulo `q-1`, and whose values are lists of
+    exponent vectors modulo `q-1`.
 
     If `w` is an exponent vector in ``comp_exp_vec[q][v]``, then the residue field vectors modulo `q` for
     `v` and `w` sum to ``[1,1,...,1]``
@@ -2387,9 +2360,7 @@ def compatible_vectors_check(a0, a1, g, l):
     - ``g`` -- the gcd of ``m0`` and ``m1``
     - ``l`` -- the length of ``a0`` and of ``a1``
 
-    OUTPUT:
-
-    ``True`` if there is an integer exponent vector a satisfying
+    OUTPUT: ``True`` if there is an integer exponent vector a satisfying
 
     .. MATH::
 
@@ -2427,18 +2398,17 @@ def compatible_vectors(a, m0, m1, g):
 
     INPUT:
 
-    - ``a``  -- an exponent vector for the modulus ``m0``
-    - ``m0`` -- a positive integer (specifying the modulus for ``a``)
-    - ``m1`` -- a positive integer (specifying the alternate modulus)
+    - ``a`` -- an exponent vector for the modulus ``m0``
+    - ``m0`` -- positive integer (specifying the modulus for ``a``)
+    - ``m1`` -- positive integer (specifying the alternate modulus)
     - ``g`` -- the gcd of ``m0`` and ``m1``
 
-    OUTPUT:
-
-    A list of exponent vectors modulo ``m1`` which are compatible with ``a``.
+    OUTPUT: list of exponent vectors modulo ``m1`` which are compatible with ``a``
 
     .. NOTE::
 
-        - Exponent vectors must agree exactly in the 0th position in order to be compatible.
+        Exponent vectors must agree exactly in the 0th position in order to be
+        compatible.
 
     EXAMPLES::
 
@@ -2468,16 +2438,16 @@ def compatible_vectors(a, m0, m1, g):
 
 def compatible_systems(split_prime_list, complement_exp_vec_dict):
     r"""
-    Given dictionaries of complement exponent vectors for various primes that split in `K`, compute all possible compatible systems.
+    Given dictionaries of complement exponent vectors for various primes that
+    split in `K`, compute all possible compatible systems.
 
     INPUT:
 
-    - ``split_prime_list`` -- a list of rational primes that split completely in `K`
-    - ``complement_exp_vec_dict`` -- a dictionary of dictionaries. The keys are primes from ``split_prime_list``.
+    - ``split_prime_list`` -- list of rational primes that split completely in `K`
+    - ``complement_exp_vec_dict`` -- dictionary of dictionaries; the keys are
+      primes from ``split_prime_list``
 
-    OUTPUT:
-
-    A list of compatible systems of exponent vectors.
+    OUTPUT: list of compatible systems of exponent vectors
 
     .. NOTE::
 
@@ -2534,17 +2504,17 @@ def compatible_systems(split_prime_list, complement_exp_vec_dict):
 
 def compatible_system_lift(compatible_system, split_primes_list):
     r"""
-    Given a compatible system of exponent vectors and complementary exponent vectors, return a lift to the integers.
+    Given a compatible system of exponent vectors and complementary exponent
+    vectors, return a lift to the integers.
 
     INPUT:
 
-    - ``compatible_system`` -- a list of pairs ``[ [v0, w0], [v1, w1], .., [vk, wk] ]``
-      where [vi, wi] is a pair of complementary exponent vectors modulo ``qi - 1``, and all pairs are compatible.
-    - ``split_primes_list`` -- a list of primes ``[ q0, q1, .., qk ]``
+    - ``compatible_system`` -- list of pairs ``[ [v0, w0], [v1, w1], .., [vk, wk] ]``
+      where [vi, wi] is a pair of complementary exponent vectors modulo ``qi - 1``,
+      and all pairs are compatible
+    - ``split_primes_list`` -- list of primes ``[ q0, q1, .., qk ]``
 
-    OUTPUT:
-
-    A pair of vectors ``[v, w]`` satisfying:
+    OUTPUT: a pair of vectors ``[v, w]`` satisfying:
 
     1. ``v[0] == vi[0]`` for all ``i``
     2. ``w[0] == wi[0]`` for all ``i``
@@ -2595,15 +2565,17 @@ def compatible_system_lift(compatible_system, split_primes_list):
 
 def solutions_from_systems(SUK, bound, cs_list, split_primes_list):
     r"""
-    Lift compatible systems to the integers and return the `S`-unit equation solutions that the lifts yield.
+    Lift compatible systems to the integers and return the `S`-unit equation
+    solutions that the lifts yield.
 
     INPUT:
 
     - ``SUK`` -- the group of `S`-units where we search for solutions
     - ``bound`` -- a bound for the entries of all entries of all lifts
-    - ``cs_list`` -- a list of compatible systems of exponent vectors modulo `q-1` for
-      various primes `q`
-    - ``split_primes_list`` -- a list of primes giving the moduli of the exponent vectors in ``cs_list``
+    - ``cs_list`` -- list of compatible systems of exponent vectors modulo
+      `q-1` for various primes `q`
+    - ``split_primes_list`` -- list of primes giving the moduli of the exponent
+      vectors in ``cs_list``
 
     OUTPUT:
 
@@ -2656,11 +2628,9 @@ def clean_sfs(sfs_list):
 
     INPUT:
 
-    - ``sfs_list`` -- a list of solutions to the `S`-unit equation
+    - ``sfs_list`` -- list of solutions to the `S`-unit equation
 
-    OUTPUT:
-
-    A list of solutions to the `S`-unit equation
+    OUTPUT: list of solutions to the `S`-unit equation
 
     .. NOTE::
 
@@ -2688,17 +2658,23 @@ def clean_sfs(sfs_list):
 
 def sieve_below_bound(K, S, bound=10, bump=10, split_primes_list=[], verbose=False):
     r"""
-    Return all solutions to the `S`-unit equation `x + y = 1` over `K` with exponents below the given bound.
+    Return all solutions to the `S`-unit equation `x + y = 1` over `K` with
+    exponents below the given bound.
 
     INPUT:
 
     - ``K`` -- a number field (an absolute extension of the rationals)
-    - ``S`` -- a list of finite primes of `K`
-    - ``bound`` -- a positive integer upper bound for exponents, solutions with exponents having absolute value below this bound will be found (default: 10)
-    - ``bump`` -- a positive integer by which the minimum LCM will be increased if not enough split primes are found in sieving step (default: 10)
-    - ``split_primes_list`` -- a list of rational primes that split completely in the extension `K/\QQ`, used for sieving.
-      For complete list of solutions should have lcm of `\{(p_i-1)\} for primes `p_i` greater than bound (default: ``[]``)
-    - ``verbose`` -- an optional parameter allowing the user to print information during the sieving process (default: ``False``)
+    - ``S`` -- list of finite primes of `K`
+    - ``bound`` -- positive integer upper bound for exponents, solutions with
+      exponents having absolute value below this bound will be found (default: 10)
+    - ``bump`` -- positive integer by which the minimum LCM will be increased
+      if not enough split primes are found in sieving step (default: 10)
+    - ``split_primes_list`` -- list of rational primes that split completely in
+      the extension `K/\QQ`, used for sieving. For complete list of solutions
+      should have lcm of `\{(p_i-1)\} for primes `p_i` greater than bound
+      (default: ``[]``).
+    - ``verbose`` -- an optional parameter allowing the user to print
+      information during the sieving process (default: ``False``)
 
     OUTPUT:
 
@@ -2755,11 +2731,15 @@ def solve_S_unit_equation(K, S, prec=106, include_exponents=True, include_bound=
     INPUT:
 
     - ``K`` -- a number field (an absolute extension of the rationals)
-    - ``S`` -- a list of finite primes of `K`
-    - ``prec`` -- precision used for computations in real, complex, and p-adic fields (default: 106)
-    - ``include_exponents`` -- whether to include the exponent vectors in the returned value (default: ``True``).
-    - ``include_bound`` -- whether to return the final computed bound (default: ``False``)
-    - ``verbose`` -- whether to print information during the sieving step (default: ``False``)
+    - ``S`` -- list of finite primes of `K`
+    - ``prec`` -- precision used for computations in real, complex, and `p`-adic
+      fields (default: 106)
+    - ``include_exponents`` -- whether to include the exponent vectors in the
+      returned value (default: ``True``)
+    - ``include_bound`` -- whether to return the final computed bound
+      (default: ``False``)
+    - ``verbose`` -- whether to print information during the sieving step
+      (default: ``False``)
 
     OUTPUT:
 

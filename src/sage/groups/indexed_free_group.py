@@ -24,7 +24,8 @@ from sage.categories.groups import Groups
 from sage.categories.poor_man_map import PoorManMap
 from sage.groups.group import Group, AbelianGroup
 from sage.monoids.indexed_free_monoid import (IndexedMonoid,
-        IndexedFreeMonoidElement, IndexedFreeAbelianMonoidElement)
+                                              IndexedFreeMonoidElement,
+                                              IndexedFreeAbelianMonoidElement)
 from sage.misc.cachefunc import cached_method
 import sage.data_structures.blas_dict as blas
 from sage.rings.integer import Integer
@@ -136,6 +137,7 @@ class IndexedGroup(IndexedMonoid):
 
     gens = group_generators
 
+
 class IndexedFreeGroup(IndexedGroup, Group):
     """
     An indexed free group.
@@ -165,7 +167,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
 
     def _repr_(self):
         """
-        Return a string representation of ``self``
+        Return a string representation of ``self``.
 
         TESTS::
 
@@ -296,6 +298,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
             return [ (k, sign(e)) for k,e in self._sorted_items()
                      for dummy in range(abs(e))]
 
+
 class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
     """
     An indexed free abelian group.
@@ -346,9 +349,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
             sage: G({1: 3, -2: 12})
             F[-2]^12*F[1]^3
             sage: G(-5)
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert -5, use gen() instead
+            F[-5]
 
         TESTS::
 
@@ -363,7 +364,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
             1
         """
         if isinstance(x, (list, tuple)):
-            d = dict()
+            d = {}
             for k, v in x:
                 if k in d:
                     d[k] += v

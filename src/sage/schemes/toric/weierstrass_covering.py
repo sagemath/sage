@@ -134,7 +134,7 @@ def WeierstrassMap(polynomial, variables=None):
       hypersurface in `\mathbb{P}^2[1,1,2]`. The equation need not be
       in any standard form, only its Newton polyhedron is used.
 
-    - ``variables`` -- a list of variables of the parent polynomial
+    - ``variables`` -- list of variables of the parent polynomial
       ring or ``None`` (default). In the latter case, all variables
       are taken to be polynomial ring variables. If a subset of
       polynomial ring variables are given, the Weierstrass form is
@@ -255,10 +255,10 @@ def WeierstrassMap(polynomial, variables=None):
         result = vector(ZZ, result)
         result.set_immutable()
         return result
-    X_dict = dict((homogenize(e, 2), v) for e, v in X.dict().items())
-    Y_dict = dict((homogenize(e, 3), v) for e, v in Y.dict().items())
-    Z_dict = dict((homogenize(e, 1), v) for e, v in Z.dict().items())
-    # shift to non-negative exponents if necessary
+    X_dict = {homogenize(e, 2): v for e, v in X.monomial_coefficients().items()}
+    Y_dict = {homogenize(e, 3): v for e, v in Y.monomial_coefficients().items()}
+    Z_dict = {homogenize(e, 1): v for e, v in Z.monomial_coefficients().items()}
+    # shift to nonnegative exponents if necessary
     min_deg = [0] * R.ngens()
     for var in variables:
         i = R.gens().index(var)
@@ -267,9 +267,9 @@ def WeierstrassMap(polynomial, variables=None):
         min_Z = min([e[i] for e in Z_dict]) if Z_dict else 0
         min_deg[i] = min(min_X / 2, min_Y / 3, min_Z)
     min_deg = vector(min_deg)
-    X_dict = dict((tuple(e - 2 * min_deg), v) for e, v in X_dict.items())
-    Y_dict = dict((tuple(e - 3 * min_deg), v) for e, v in Y_dict.items())
-    Z_dict = dict((tuple(e - 1 * min_deg), v) for e, v in Z_dict.items())
+    X_dict = {tuple(e - 2 * min_deg): v for e, v in X_dict.items()}
+    Y_dict = {tuple(e - 3 * min_deg): v for e, v in Y_dict.items()}
+    Z_dict = {tuple(e - 1 * min_deg): v for e, v in Z_dict.items()}
     return (R(X_dict), R(Y_dict), R(Z_dict))
 
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Detecting external software
 
@@ -8,7 +9,7 @@ which require certain external software installed on the system.
 Even though the functions in this module should also work when an external
 software is not present, most doctests in this module are only tested if
 testing of external software is explicitly enabled in order to avoid invoking
-external software otherwise. See :trac:`28819` for details.
+external software otherwise. See :issue:`28819` for details.
 
 AUTHORS:
 
@@ -31,18 +32,19 @@ AUTHORS:
 #*****************************************************************************
 
 import multiprocessing
-import os
+import platform
 
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
-if os.uname().sysname == 'Darwin':
+if platform.system() == 'Darwin':
     multiprocessing.set_start_method('fork', force=True)
 Array = multiprocessing.Array
 
 # Functions in this module whose name is of the form 'has_xxx' tests if the
 # software xxx is available to Sage.
 prefix = 'has_'
+
 
 def has_internet():
     """
@@ -60,6 +62,7 @@ def has_internet():
     from sage.features.internet import Internet
     return Internet().is_present()
 
+
 def has_latex():
     """
     Test if Latex is available.
@@ -72,6 +75,7 @@ def has_latex():
     """
     from sage.features.latex import latex
     return latex().is_present()
+
 
 def has_xelatex():
     """
@@ -86,6 +90,7 @@ def has_xelatex():
     from sage.features.latex import xelatex
     return xelatex().is_present()
 
+
 def has_pdflatex():
     """
     Test if pdflatex is available.
@@ -98,6 +103,7 @@ def has_pdflatex():
     """
     from sage.features.latex import pdflatex
     return pdflatex().is_present()
+
 
 def has_lualatex():
     """
@@ -112,6 +118,7 @@ def has_lualatex():
     from sage.features.latex import lualatex
     return lualatex().is_present()
 
+
 def has_magma():
     """
     Test if Magma is available.
@@ -124,6 +131,7 @@ def has_magma():
     """
     from sage.features.interfaces import Magma
     return Magma().is_present()
+
 
 def has_matlab():
     """
@@ -138,6 +146,7 @@ def has_matlab():
     from sage.features.interfaces import Matlab
     return Matlab().is_present()
 
+
 def has_mathematica():
     """
     Test if Mathematica is available.
@@ -150,6 +159,7 @@ def has_mathematica():
     """
     from sage.features.interfaces import Mathematica
     return Mathematica().is_present()
+
 
 def has_maple():
     """
@@ -164,6 +174,7 @@ def has_maple():
     from sage.features.interfaces import Maple
     return Maple().is_present()
 
+
 def has_macaulay2():
     """
     Test if Macaulay2 is available.
@@ -176,6 +187,7 @@ def has_macaulay2():
     """
     from sage.features.interfaces import Macaulay2
     return Macaulay2().is_present()
+
 
 def has_octave():
     """
@@ -190,6 +202,7 @@ def has_octave():
     from sage.features.interfaces import Octave
     return Octave().is_present()
 
+
 def has_pandoc():
     """
     Test if pandoc is available.
@@ -202,6 +215,7 @@ def has_pandoc():
     """
     from sage.features.pandoc import Pandoc
     return Pandoc().is_present()
+
 
 def has_scilab():
     """
@@ -220,6 +234,7 @@ def has_scilab():
     except Exception:
         return False
 
+
 def has_cplex():
     """
     Test if CPLEX is available.
@@ -232,6 +247,7 @@ def has_cplex():
     """
     from sage.features.mip_backends import CPLEX
     return CPLEX().is_present()
+
 
 def has_gurobi():
     """
@@ -246,6 +262,7 @@ def has_gurobi():
     from sage.features.mip_backends import Gurobi
     return Gurobi().is_present()
 
+
 def has_graphviz():
     """
     Test if graphviz (dot, twopi, neato) are available.
@@ -258,6 +275,7 @@ def has_graphviz():
     """
     from sage.features.graphviz import Graphviz
     return Graphviz().is_present()
+
 
 def has_ffmpeg():
     """
@@ -272,9 +290,10 @@ def has_ffmpeg():
     from sage.features.ffmpeg import FFmpeg
     return FFmpeg().is_present()
 
+
 def has_imagemagick():
     """
-    Test if ImageMagick (command convert) is available.
+    Test if ImageMagick (command magick or convert) is available.
 
     EXAMPLES::
 
@@ -284,6 +303,7 @@ def has_imagemagick():
     """
     from sage.features.imagemagick import ImageMagick
     return ImageMagick().is_present()
+
 
 def has_dvipng():
     """
@@ -298,6 +318,7 @@ def has_dvipng():
     from sage.features.dvipng import dvipng
     return dvipng().is_present()
 
+
 def has_pdf2svg():
     """
     Test if pdf2svg is available.
@@ -310,6 +331,7 @@ def has_pdf2svg():
     """
     from sage.features.pdf2svg import pdf2svg
     return pdf2svg().is_present()
+
 
 def has_rubiks():
     """
@@ -325,6 +347,7 @@ def has_rubiks():
     from sage.features.rubiks import Rubiks
     return Rubiks().is_present()
 
+
 def has_4ti2():
     """
     Test if the 4ti2 package is available.
@@ -337,6 +360,7 @@ def has_4ti2():
     """
     from sage.features.four_ti_2 import FourTi2
     return FourTi2().is_present()
+
 
 def external_features():
     r"""
@@ -355,12 +379,15 @@ def external_features():
     import sage.features.ffmpeg
     yield from sage.features.ffmpeg.all_features()
     import sage.features.interfaces
-    yield from sage.features.interfaces.all_features()
+    for feature in sage.features.interfaces.all_features():
+        if feature.name != 'mathics':
+            yield feature
     from sage.features.mip_backends import CPLEX, Gurobi
     yield CPLEX()
     yield Gurobi()
 
-def external_software():
+
+def external_software() -> list[str]:
     """
     Return the alphabetical list of external software supported by this module.
 
@@ -376,7 +403,7 @@ def external_software():
 external_software = external_software()
 
 
-class AvailableSoftware():
+class AvailableSoftware:
     """
     This class keeps the set of available software whose availability is detected lazily
     from the list of external software.
@@ -429,6 +456,7 @@ class AvailableSoftware():
         self._features = sorted(features, key=lambda feature: feature.name)
         self._indices = {feature.name: idx for idx, feature in enumerate(self._features)}
         self._seen = Array('i', len(self._features)) # initialized to zeroes
+        self._hidden = Array('i', len(self._features)) # initialized to zeroes
 
     def __contains__(self, item):
         """
@@ -444,19 +472,26 @@ class AvailableSoftware():
             idx = self._indices[item]
         except KeyError:
             return False
-        if not self._seen[idx]:
-            if not self._allow_external and self._features[idx] in self._external_features:
-                self._seen[idx] = -1 # not available
-            elif self._features[idx].is_present():
-                self._seen[idx] = 1 # available
-            else:
-                self._seen[idx] = -1 # not available
-        if self._seen[idx] == 1:
-            return True
-        elif self._seen[idx] == -1:
-            return False
+        feature = self._features[idx]
+        if feature.is_hidden():
+            if not self._hidden[idx]:
+                self._hidden[idx] = 1
+            available = False  # a hidden feature is considered to be not available
         else:
-            raise AssertionError("Invalid value for self.seen")
+            if not self._allow_external and feature in self._external_features:
+                # an external feature is considered to be not available
+                # if this is not allowed
+                available = False
+            elif feature.is_present():
+                available = True
+            else:
+                available = False
+        if available:
+            if not self._seen[idx]:
+                self._seen[idx] = 1
+            return True
+        else:
+            return False
 
     def issuperset(self, other):
         """
@@ -494,6 +529,30 @@ class AvailableSoftware():
         return [feature.name
                 for feature, seen in zip(self._features, self._seen)
                 if seen > 0]
+
+    def hidden(self):
+        """
+        Return the list of detected hidden external software.
+
+        EXAMPLES::
+
+            sage: # needs conway_polynomials database_cremona_mini_ellcurve database_ellcurves database_graphs
+            sage: from sage.doctest.external import available_software
+            sage: from sage.features.databases import all_features
+            sage: for f in all_features():
+            ....:    f.hide()
+            ....:    if f._spkg_type() == 'standard':
+            ....:         test = f.name in available_software
+            ....:    f.unhide()
+            sage: sorted(available_software.hidden())
+            [...'conway_polynomials',...
+             'database_cremona_mini_ellcurve',...
+             'database_ellcurves',...
+             'database_graphs'...]
+        """
+        return [feature.name
+                for feature, hidden in zip(self._features, self._hidden)
+                if hidden > 0]
 
 
 available_software = AvailableSoftware()

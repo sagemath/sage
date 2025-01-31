@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Down-Up Algebras
 
@@ -27,6 +28,7 @@ from sage.sets.family import Family
 from sage.misc.lazy_list import lazy_list
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
+
 
 class DownUpAlgebra(CombinatorialFreeModule):
     r"""
@@ -98,7 +100,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         b*u^2*d + a*u*(d*u) + g*u
 
     We verify some examples of Proposition 3.5 in [BR1998]_, which states
-    that the 0-th degree part is commutative::
+    that the `0`-th degree part is commutative::
 
         sage: DU0 = [u^i * (d*u)^j * d^i for i,j in
         ....:        cartesian_product([range(3), range(3)])]
@@ -539,12 +541,13 @@ class VermaModule(CombinatorialFreeModule):
     construction of the irreducible representation `V(5)` (but they are
     different as `\mathfrak{gl}_2` weights)::
 
-        sage: B = crystals.Tableaux(['A',1], shape=[5])
-        sage: [b.weight() for b in B]
+        sage: B = crystals.Tableaux(['A',1], shape=[5])                                 # needs sage.graphs
+        sage: [b.weight() for b in B]                                                   # needs sage.graphs
         [(5, 0), (4, 1), (3, 2), (2, 3), (1, 4), (0, 5)]
 
     An example with periodic weights (see Theorem 2.13 of [BR1998]_)::
 
+        sage: # needs sage.rings.number_field
         sage: k.<z6> = CyclotomicField(6)
         sage: al = z6 + 1
         sage: (al - 1)^6 == 1
@@ -803,7 +806,6 @@ class VermaModule(CombinatorialFreeModule):
 
             P = self.parent()
             R = P.base_ring()
-            weights = P._weights
 
             def get_wt(n):
                 if not n:
@@ -850,9 +852,8 @@ class VermaModule(CombinatorialFreeModule):
             P = self.parent()
             R = P.base_ring()
             V = FreeModule(R, 2)
-            weights = P._weights
             it = iter(self._monomial_coefficients)
             n = next(it)
             if not n:
                 return V([P._weights[0], R.zero()])
-            return V([P._weights[n], P._weights[n-1]])
+            return V([P._weights[n], P._weights[n - 1]])

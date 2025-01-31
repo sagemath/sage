@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Output functions
 
@@ -25,13 +24,14 @@ lr_macro = Template(r'\def\lr#1{\multicolumn{1}{$bar@{\hspace{.6ex}}c@{\hspace{.
 
 def tex_from_array(array, with_lines=True):
     r"""
-    Return a latex string for a two dimensional array of partition, composition or skew composition shape
+    Return a latex string for a two dimensional array of partition, composition
+    or skew composition shape.
 
     INPUT:
 
-    - ``array`` -- a list of list
-    - ``with_lines`` -- a boolean (default: ``True``)
-       Whether to draw a line to separate the entries in the array.
+    - ``array`` -- list of list
+    - ``with_lines`` -- boolean (default: ``True``); whether to draw a line to
+      separate the entries in the array
 
     Empty rows are allowed; however, such rows should be given as
     ``[None]`` rather than ``[]``.
@@ -249,9 +249,9 @@ def tex_from_array_tuple(a_tuple, with_lines=True):
 
     INPUT:
 
-    - ``a_tuple`` -- a tuple of lists of lists
-    - ``with_lines`` -- a boolean (default: ``True``)
-      Whether to draw lines to separate the entries in the components of ``a_tuple``.
+    - ``a_tuple`` -- tuple of lists of lists
+    - ``with_lines`` -- boolean (default: ``True``); whether to draw lines to
+      separate the entries in the components of ``a_tuple``
 
     .. SEEALSO:: :meth:`tex_from_array` for the description of each array
 
@@ -348,12 +348,12 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
 
     INPUT:
 
-    - ``array`` -- The array
+    - ``array`` -- the array
 
-    - ``with_lines`` -- (Default: ``False``) If ``True`` lines are drawn, if
+    - ``with_lines`` -- (default: ``False``) if ``True`` lines are drawn, if
       ``False`` they are not
 
-    - ``align`` -- (Default: ``'b'``) Determines the alignment on the latex
+    - ``align`` -- (default: ``'b'``) determine the alignment on the latex
       array environments
 
     EXAMPLES::
@@ -413,7 +413,7 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     return tex+r'\end{array}$'+raisebox_end
 
 
-def ascii_art_table(data, use_unicode=False, convention="English"):
+def ascii_art_table(data, use_unicode=False, convention='English'):
     r"""
     Return an ascii art table of ``data``.
 
@@ -505,7 +505,7 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
         def get_len(e):
             if e is None:
                 return 0
-            return len(e) - list(str(e)).count(u"\u0304")
+            return len(e) - list(str(e)).count("\u0304")
     else:
         def get_len(e):
             if e is None:
@@ -692,7 +692,7 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
         def get_len(e):
             if e is None:
                 return 0
-            return len(e) - list(str(e)).count(u"\u0304")
+            return len(e) - list(str(e)).count("\u0304")
     else:
         def get_len(e):
             if e is None:
@@ -738,7 +738,7 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
                         st += ' '
                     if E_box:
                         st_num = str_tab[k-j][j]
-                        ln_left = int((len(st_num) - (len(st_num) % 2))/2)
+                        ln_left = len(st_num) // 2
                         st += st_num.rjust(row_height - 1 - ln_left + len(st_num), ' ').ljust(diag_length, ' ')
                     else:
                         st += ' ' * diag_length
@@ -761,19 +761,19 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
     import re
     mm = min(len(re.search('^ +', l)[0]) for l in str_list) - 1
     str_list = [l[mm:].rstrip() for l in str_list]
-    while str_list[-1] == '':
+    while not str_list[-1]:
         str_list.pop()
     return "\n".join(str_list)
 
 
-def box_exists(tab, i, j):
+def box_exists(tab, i, j) -> bool:
     r"""
     Return ``True`` if ``tab[i][j]`` exists and is not ``None``; in particular this
     allows for `tab[i][j]` to be ``''`` or ``0``.
 
     INPUT:
 
-    - ``tab`` -- a list of lists
+    - ``tab`` -- list of lists
     - ``i`` -- first coordinate
     - ``j`` -- second coordinate
 

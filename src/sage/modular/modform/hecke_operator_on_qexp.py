@@ -19,12 +19,13 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.power_series_ring_element import is_PowerSeries
+from sage.rings.power_series_ring_element import PowerSeries
 
 lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 
-from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
-from .element import is_ModularFormElement
+from sage.modular.dirichlet import DirichletGroup, DirichletCharacter
+from .element import ModularFormElement
+
 
 def hecke_operator_on_qexp(f, n, k, eps=None,
                            prec=None, check=True, _return_list=False):
@@ -87,16 +88,16 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
         # ZZ can coerce to GF(p), but QQ can't.
         eps = DirichletGroup(1, base_ring=ZZ)[0]
     if check:
-        if not (is_PowerSeries(f) or is_ModularFormElement(f)):
+        if not isinstance(f, (PowerSeries, ModularFormElement)):
             raise TypeError("f (=%s) must be a power series or modular form" % f)
-        if not is_DirichletCharacter(eps):
+        if not isinstance(eps, DirichletCharacter):
             raise TypeError("eps (=%s) must be a Dirichlet character" % eps)
         k = Integer(k)
         n = Integer(n)
     v = []
 
     if prec is None:
-        if is_ModularFormElement(f):
+        if isinstance(f, ModularFormElement):
             # always want at least three coefficients, but not too many, unless
             # requested
             pr = max(f.prec(), f.parent().prec(), (n+1)*3)
@@ -123,7 +124,7 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
             v.append(am)
     if _return_list:
         return v
-    if is_ModularFormElement(f):
+    if isinstance(f, ModularFormElement):
         R = f.parent()._q_expansion_ring()
     else:
         R = f.parent()
@@ -132,7 +133,7 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
 
 def _hecke_operator_on_basis(B, V, n, k, eps):
     """
-    Does the work for hecke_operator_on_basis once the input
+    Do the work for hecke_operator_on_basis once the input
     is normalized.
 
     EXAMPLES::
@@ -142,7 +143,7 @@ def _hecke_operator_on_basis(B, V, n, k, eps):
         [       0 14348908]
 
     The following used to cause a segfault due to accidentally
-    transposed second and third argument (:trac:`2107`)::
+    transposed second and third argument (:issue:`2107`)::
 
         sage: B = victor_miller_basis(100,30)
         sage: t2 = hecke_operator_on_basis(B, 100, 2)
@@ -163,7 +164,7 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
     with character `\varepsilon` to precision at least `\#B\cdot n+1`,
     this function computes the matrix of `T_n` relative to `B`.
 
-    .. note::
+    .. NOTE::
 
        If the elements of B are not known to sufficient precision,
        this function will report that the vectors are linearly
@@ -171,26 +172,23 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
 
     INPUT:
 
-    - ``B`` - list of q-expansions
+    - ``B`` -- list of `q`-expansions
 
-    - ``n`` - an integer >= 1
+    - ``n`` -- integer >= 1
 
-    - ``k`` - an integer
+    - ``k`` -- integer
 
-    - ``eps`` - Dirichlet character
+    - ``eps`` -- Dirichlet character
 
-    - ``already_echelonized`` -- bool (default: False); if True, use that the
-      basis is already in Echelon form, which saves a lot of time.
+    - ``already_echelonized`` -- boolean (default: ``False``); if ``True``, use
+      that the basis is already in Echelon form, which saves a lot of time
 
     EXAMPLES::
 
         sage: sage.modular.modform.constructor.ModularForms_clear_cache()
         sage: ModularForms(1,12).q_expansion_basis()
-        [
-        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6),
-        1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3
-          + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)
-        ]
+        [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6),
+         1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)]
         sage: hecke_operator_on_basis(ModularForms(1,12).q_expansion_basis(), 3, 12)
         Traceback (most recent call last):
         ...
@@ -202,14 +200,14 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
 
     TESTS:
 
-    This shows that the problem with finite fields reported at :trac:`8281` is solved::
+    This shows that the problem with finite fields reported at :issue:`8281` is solved::
 
         sage: bas_mod5 = [f.change_ring(GF(5)) for f in victor_miller_basis(12, 20)]
         sage: hecke_operator_on_basis(bas_mod5, 2, 12)
         [4 0]
         [0 1]
 
-    This shows that empty input is handled sensibly (:trac:`12202`)::
+    This shows that empty input is handled sensibly (:issue:`12202`)::
 
         sage: # needs sage.rings.number_field
         sage: x = hecke_operator_on_basis([], 3, 12); x
@@ -235,7 +233,7 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
         eps = DirichletGroup(1, R)[0]
     all_powerseries = True
     for x in B:
-        if not is_PowerSeries(x):
+        if not isinstance(x, PowerSeries):
             all_powerseries = False
     if not all_powerseries:
         raise TypeError("each element of B must be a power series")

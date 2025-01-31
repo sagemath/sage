@@ -129,7 +129,7 @@ def Associahedron(cartan_type, backend='ppl'):
     return parent(cartan_type)
 
 
-class Associahedron_class_base():
+class Associahedron_class_base:
     r"""
     The base class of the Python class of an associahedron
 
@@ -321,7 +321,7 @@ def Associahedra(base_ring, ambient_dim, backend='ppl'):
         raise ValueError("unknown backend")
 
 
-class Associahedra_base():
+class Associahedra_base:
     """
     Base class of parent of Associahedra of specified dimension
 
@@ -337,7 +337,7 @@ class Associahedra_base():
 
     Importantly, the parent knows the dimension of the ambient
     space. If you try to construct an associahedron of a different
-    dimension, a :class:`ValueError` is raised::
+    dimension, a :exc:`ValueError` is raised::
 
         sage: parent(['A',3])
         Traceback (most recent call last):
@@ -387,15 +387,13 @@ class Associahedra_base():
 
     def _coerce_map_from_(self, X):
         r"""
-        Return whether there is a coercion from ``X``
+        Return whether there is a coercion from ``X``.
 
         INPUT:
 
-        - ``X`` -- anything.
+        - ``X`` -- anything
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

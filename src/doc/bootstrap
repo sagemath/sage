@@ -19,7 +19,6 @@ fi
 
 cd "$SAGE_ROOT"
 
-STRIP_COMMENTS="sed s/#.*//;"
 OUTPUT_DIR="src/doc/en/installation"
 mkdir -p "$OUTPUT_DIR"
 
@@ -28,7 +27,7 @@ shopt -s extglob
 RECOMMENDED_SPKG_PATTERN="@(_recommended$(for a in $(head -n 1 build/pkgs/_recommended/dependencies); do echo -n "|"$a; done))"
 DEVELOP_SPKG_PATTERN="@(_develop$(for a in $(head -n 1 build/pkgs/_develop/dependencies); do echo -n "|"$a; done))"
 
-for SYSTEM in arch debian fedora cygwin homebrew opensuse; do
+for SYSTEM in arch debian fedora homebrew opensuse void; do
     SYSTEM_PACKAGES=
     OPTIONAL_SYSTEM_PACKAGES=
     SAGELIB_SYSTEM_PACKAGES=
@@ -37,9 +36,8 @@ for SYSTEM in arch debian fedora cygwin homebrew opensuse; do
     DEVELOP_SYSTEM_PACKAGES=
     for PKG_BASE in $(sage-package list --has-file distros/$SYSTEM.txt); do
                 PKG_SCRIPTS=build/pkgs/$PKG_BASE
-                SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/$SYSTEM.txt
                 PKG_TYPE=$(cat $PKG_SCRIPTS/type)
-                PKG_SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE))
+                PKG_SYSTEM_PACKAGES=$(sage-get-system-packages $SYSTEM $PKG_BASE)
                 if [ -n "PKG_SYSTEM_PACKAGES" ]; then
                     if [ -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
                        case "$PKG_BASE:$PKG_TYPE" in
@@ -75,10 +73,10 @@ for SYSTEM in arch debian fedora cygwin homebrew opensuse; do
     if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
         echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM"*.txt"
     fi
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM.txt
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $RECOMMENDED_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $DEVELOP_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-develop.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo $(echo $RECOMMENDED_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo $(echo $DEVELOP_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-develop.txt
 done
 
 OUTPUT_DIR="src/doc/en/reference/spkg"
@@ -86,111 +84,80 @@ mkdir -p "$OUTPUT_DIR"
 if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
     echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/"*.rst"
 fi
-OUTPUT_INDEX="$OUTPUT_DIR"/index.rst
-cat > "$OUTPUT_INDEX" <<EOF
-
-Packages and Features
-=====================
-
-Standard Packages
------------------
-
-The Sage distribution includes most programs and libraries on which
-Sage depends.  It installs them automatically if it does not find
-equivalent system packages.
+(cat <<EOF
+Mathematics
+~~~~~~~~~~~
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :standard: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
-done >> "$OUTPUT_INDEX"
-cat >> "$OUTPUT_INDEX" <<EOF
+done
+cat <<EOF
 
-Optional Packages
------------------
-
-For additional functionality, you can install some of the following
-optional packages.
+Front-end, graphics, document preparation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :optional: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --has-file front-end :standard: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
-done >> "$OUTPUT_INDEX"
-cat >> "$OUTPUT_INDEX" <<EOF
+done
+cat <<EOF
 
-Features
---------
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/features
-   sage/features/join_feature
-   sage/features/all
-   sage/features/sagemath
-   sage/features/pkg_systems
-   sage/features/bliss
-   sage/features/csdp
-   sage/features/databases
-   sage/features/dvipng
-   sage/features/ffmpeg
-   sage/features/four_ti_2
-   sage/features/gap
-   sage/features/graph_generators
-   sage/features/graphviz
-   sage/features/imagemagick
-   sage/features/interfaces
-   sage/features/internet
-   sage/features/kenzo
-   sage/features/latex
-   sage/features/latte
-   sage/features/lrs
-   sage/features/mcqd
-   sage/features/meataxe
-   sage/features/mip_backends
-   sage/features/normaliz
-   sage/features/pandoc
-   sage/features/pdf2svg
-   sage/features/polymake
-   sage/features/rubiks
-   sage/features/tdlib
-EOF
-cat >> "$OUTPUT_INDEX" <<EOF
-
-Distribution Packages of the Sage Library
------------------------------------------
+Other dependencies
+~~~~~~~~~~~~~~~~~~
 
 EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --no-file front-end :standard: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done) > "$OUTPUT_DIR"/index_standard.rst
+(cat <<EOF
+Mathematics
+~~~~~~~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :optional: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done
+cat <<EOF
+
+Front-end, graphics, document preparation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --has-file front-end :optional: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done
+cat <<EOF
+
+Other dependencies
+~~~~~~~~~~~~~~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --no-file front-end :optional: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done) > "$OUTPUT_DIR"/index_optional.rst
 for PKG_BASE in $(sage-package list --has-file SPKG.rst | grep '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
-done >> "$OUTPUT_INDEX"
-cat >> "$OUTPUT_INDEX" <<EOF
-
-Experimental Packages
----------------------
-
-Some packages that provide additional functionality are marked as
-"experimental".  Developers are needed in order to improve the
-integration of these packages into the Sage distribution.
+done > "$OUTPUT_DIR"/index_sagemath.rst
+(cat <<EOF
+Mathematics
+~~~~~~~~~~~
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :experimental: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
-done >> "$OUTPUT_INDEX"
+done
 
-cat >> "$OUTPUT_INDEX" <<EOF
+cat <<EOF
 
-All External Packages
----------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   index_alph
+Other dependencies
+~~~~~~~~~~~~~~~~~~
 
 EOF
-
-OUTPUT_INDEX="$OUTPUT_DIR"/index_alph.rst
-cat >> "$OUTPUT_INDEX" <<EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math :experimental: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done) > "$OUTPUT_DIR"/index_experimental.rst
+(cat <<EOF
 
 Details of external packages
 ============================
@@ -204,16 +171,12 @@ Packages are in alphabetical order.
 
 EOF
 for PKG_BASE in $(sage-package list --has-file SPKG.rst); do
-            PKG_SCRIPTS=build/pkgs/$PKG_BASE
-            # Instead of just copying, we may want to call
-            # a version of sage-spkg-info to format extra information.
-            # for sphinx 4.4 we need to replace all direct links by some "extlink" (issue 33272)
-
-            (echo ".. _spkg_$PKG_BASE:" && echo && OUTPUT_RST=1 sage-spkg-info $PKG_BASE) | sed -e "s|https://github.com/sagemath/sage/issues/\([0-9]*\)|:issue:\`\1\`|g" -e "s|https://arxiv.org/abs/cs/\([0-9]*\)|:arxiv:\`cs/\1\`|g" > "$OUTPUT_DIR"/$PKG_BASE.rst
-            echo >> "$OUTPUT_INDEX" "   $PKG_BASE"
+    echo "   $PKG_BASE"
 done
-cat >> "$OUTPUT_INDEX" <<EOF
+cat <<EOF
 
 .. default-role::
 
 EOF
+) > "$OUTPUT_DIR"/index_alph.rst
+sage-package list --has-file SPKG.rst | OUTPUT_DIR=$OUTPUT_DIR OUTPUT_RST=1 xargs -P 99 -n 1 sage-spkg-info

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Super Hopf algebras with basis
 """
@@ -18,11 +19,11 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
     EXAMPLES::
 
         sage: C = HopfAlgebras(ZZ).WithBasis().Super(); C
-        Category of super hopf algebras with basis over Integer Ring
+        Category of super Hopf algebras with basis over Integer Ring
         sage: sorted(C.super_categories(), key=str)
-        [Category of super algebras with basis over Integer Ring,
-         Category of super coalgebras with basis over Integer Ring,
-         Category of super hopf algebras over Integer Ring]
+        [Category of super Hopf algebras over Integer Ring,
+         Category of super algebras with basis over Integer Ring,
+         Category of super coalgebras with basis over Integer Ring]
 
     TESTS::
 

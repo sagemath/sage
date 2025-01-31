@@ -11,58 +11,8 @@ if [ "x$SAGE_DEBUG" = "xyes" ]; then
     SINGULAR_CONFIGURE="$SINGULAR_CONFIGURE --enable-debug --disable-optimizationflags"
 fi
 
-remove_old_version()
-{
-    # the following is a little verbose but it ensures we leave no trace of 3.x
-    # _or_ 4.x
-    rm -f "$SAGE_LOCAL"/bin/*Singular*
-    rm -f "$SAGE_LOCAL"/bin/*singular*
-    rm -rf "$SAGE_LOCAL/include/singular" # 3.x and 4.x
-    rm -rf "$SAGE_LOCAL/include/factory" # 3.x and 4.x
-    rm -f "$SAGE_LOCAL/include/factor.h" # 3.x only
-    rm -f "$SAGE_LOCAL/include/factoryconf.h" # 3.x only
-    rm -rf "$SAGE_LOCAL/include/omalloc" #4.x only
-    rm -f "$SAGE_LOCAL/include/omalloc.h" # 3.x only
-    rm -f "$SAGE_LOCAL/include/omlimits.h" # 3.x only
-    rm -rf "$SAGE_LOCAL/include/resources" #4.x only
-    rm -rf "$SAGE_LOCAL/include/gfanlib" #4.x only
-
-    # Clean up all Singular-related libraries
-    libs=(
-        singular  # 3.x with lower case
-        singcf    # 3.x only additional archives
-        singfac   # 3.x only additional archives
-        Singular  # 4.x with upper case
-        polys
-        factory
-        omalloc
-        resources           # 3.x
-        singular_resources  # 4.x and up
-        gfan
-    )
-    if [ "$UNAME" = "CYGWIN" ]; then
-        for name in ${libs[*]}; do
-            rm -f "$SAGE_LOCAL"/bin/cyg${name}*.dll
-            rm -f "$SAGE_LOCAL"/lib/lib${name}*.a
-        done
-    else
-        for name in ${libs[*]}; do
-            rm -f "$SAGE_LOCAL"/lib/lib${name}*
-        done
-    fi
-
-    rm -f "$SAGE_LOCAL"/lib/p_Procs_Field* # 3.x only
-    rm -rf "$SAGE_LOCAL/share/singular"
-    rm -f "$SAGE_LOCAL"/share/info/singular*
-}
-
 config()
 {
-    if [ "$UNAME" = "CYGWIN" ]; then
-        # from Hans Schoenemann - https://github.com/Singular/Singular/issues/1017
-        SINGULAR_CONFIGURE="$SINGULAR_CONFIGURE --disable-p-procs-dynamic --enable-p-procs-static --with-builtinmodules=gfanlib,gitfan,interval,loctriv,partialgb,syzextra,customstd,cohomo,subsets,freealgebra,systhreads --disable-cf-inline --disable-Order-module --disable-bigintm-module --disable-pyobject-module"
-    fi
-
     # configure notes (dates from Singular 3.x, maybe outdated for 4.x):
     # 1) We really need to add --exec-prefix and --bindir as Singular
     #    uses some weird defaults.
@@ -104,7 +54,7 @@ build_singular()
 
 
 # Actually run all the functions defined above
-for i in remove_old_version config build_singular; do
+for i in config build_singular; do
     echo "############### Singular stage $i ###############"
     cd "$SRC" && $i
 done

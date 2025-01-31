@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 """
 Element Wrapper
 
@@ -84,7 +84,7 @@ cdef class ElementWrapper(Element):
 
     .. WARNING::
 
-        Versions before :trac:`14519` had parent as the second argument and
+        Versions before :issue:`14519` had parent as the second argument and
         the value as the first.
     """
     def __init__(self, parent, value):
@@ -112,7 +112,7 @@ cdef class ElementWrapper(Element):
 
         This emulates :meth:`Element.__getstate__`, playing as if
         ``self.value`` was in the dictionary of ``self`` as it used to
-        be before :trac:`14519`.
+        be before :issue:`14519`.
 
         EXAMPLES::
 
@@ -143,7 +143,7 @@ cdef class ElementWrapper(Element):
 
         This emulates :meth:`Element.__setstate__`, playing as if
         ``self.value`` was to be put in the dictionary of ``self`` as
-        it used to be before :trac:`14519`.
+        it used to be before :issue:`14519`.
 
         EXAMPLES::
 
@@ -273,7 +273,7 @@ cdef class ElementWrapper(Element):
         TESTS:
 
         Check that elements of equal-but-not-identical parents compare
-        properly (see :trac:`19488`)::
+        properly (see :issue:`19488`)::
 
             sage: from sage.misc.test_nested_class import TestParent4
             sage: P = TestParent4()
@@ -293,7 +293,7 @@ cdef class ElementWrapper(Element):
             return left._richcmp_(right, op)
         return coercion_model.richcmp(left, right, op)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 

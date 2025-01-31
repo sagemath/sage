@@ -35,7 +35,6 @@ cpdef int bitcount(n) noexcept:
         2
         sage: bitcount(2L)
         2
-
     """
     cdef Integer m
     if isinstance(n, Integer):
@@ -46,7 +45,7 @@ cpdef int bitcount(n) noexcept:
         return 0
     return mpz_sizeinbase(m.value, 2)
 
-cpdef isqrt(n) noexcept:
+cpdef isqrt(n):
     """
     Square root (rounded to floor) of a Sage Integer or Python int/long.
     The result is a Sage Integer.
@@ -64,7 +63,6 @@ cpdef isqrt(n) noexcept:
         3
         sage: isqrt(10L)
         3
-
     """
     cdef Integer m, y
     if isinstance(n, Integer):
@@ -77,7 +75,7 @@ cpdef isqrt(n) noexcept:
     mpz_sqrt(y.value, m.value)
     return y
 
-cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd') noexcept:
+cpdef from_man_exp(man, exp, long prec=0, str rnd='d'):
     """
     Create normalized mpf value tuple from mantissa and exponent.
 
@@ -106,7 +104,7 @@ cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd') noexcept:
     else:
         return normalize(0, res, exp, bc, prec, rnd)
 
-cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd) noexcept:
+cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
     """
     Create normalized mpf value tuple from full list of components.
 
@@ -154,7 +152,7 @@ cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd) noexce
     bc = mpz_sizeinbase(res.value, 2)
     return (sign, res, int(exp), bc)
 
-cdef mpfr_from_mpfval(mpfr_t res, tuple x) noexcept:
+cdef mpfr_from_mpfval(mpfr_t res, tuple x):
     """
     Set value of an MPFR number (in place) to that of a given mpmath mpf
     data tuple.
@@ -180,7 +178,7 @@ cdef mpfr_from_mpfval(mpfr_t res, tuple x) noexcept:
     else:
         mpfr_set_nan(res)
 
-cdef mpfr_to_mpfval(mpfr_t value) noexcept:
+cdef mpfr_to_mpfval(mpfr_t value):
     """
     Given an MPFR value, return an mpmath mpf data tuple representing
     the same number.
@@ -210,6 +208,7 @@ cdef mpfr_to_mpfval(mpfr_t value) noexcept:
         exp += trailing
     bc = mpz_sizeinbase(man.value, 2)
     return (sign, man, int(exp), bc)
+
 
 def mpmath_to_sage(x, prec):
     """
@@ -280,6 +279,7 @@ def mpmath_to_sage(x, prec):
     else:
         raise TypeError("cannot convert %r to Sage", x)
 
+
 def sage_to_mpmath(x, prec):
     """
     Convert any Sage number that can be coerced into a RealNumber
@@ -315,7 +315,6 @@ def sage_to_mpmath(x, prec):
         (mpf('0.5'), mpf('1.5'))
         sage: a.sage_to_mpmath({'n':0.5}, 53)
         {'n': mpf('0.5')}
-
     """
     cdef RealNumber y
     if isinstance(x, Element):
@@ -339,6 +338,7 @@ def sage_to_mpmath(x, prec):
     if isinstance(x, dict):
         return dict([(k, sage_to_mpmath(v, prec)) for (k, v) in x.items()])
     return x
+
 
 def call(func, *args, **kwargs):
     """
@@ -409,16 +409,15 @@ def call(func, *args, **kwargs):
         sage: type(_)
         <class 'sage.rings.real_double...RealDoubleElement...'>
 
-    Check that :trac:`11885` is fixed::
+    Check that :issue:`11885` is fixed::
 
         sage: a.call(a.ei, 1.0r, parent=float)
         1.8951178163559366
 
-    Check that :trac:`14984` is fixed::
+    Check that :issue:`14984` is fixed::
 
         sage: a.call(a.log, -1.0r, parent=float)
         3.141592653589793j
-
     """
     from mpmath import mp
     orig = mp.prec

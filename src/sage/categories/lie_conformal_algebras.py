@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Lie Conformal Algebras
 
@@ -59,8 +60,7 @@ operation (called the `\lambda`-bracket) `L\otimes L \rightarrow L[\lambda]`
 .. NOTE::
 
     In the literature arbitrary gradings are allowed. In this
-    implementation we only support non-negative rational gradings.
-
+    implementation we only support nonnegative rational gradings.
 
 EXAMPLES:
 
@@ -125,10 +125,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .category_types import Category_over_base_ring
-from sage.misc.cachefunc import cached_method
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.lambda_bracket_algebras import LambdaBracketAlgebras
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+
 
 class LieConformalAlgebras(Category_over_base_ring):
     r"""
@@ -185,12 +186,12 @@ class LieConformalAlgebras(Category_over_base_ring):
             sage: C.super_categories()
             [Category of Lambda bracket algebras over Rational Field]
             sage: C = LieConformalAlgebras(QQ).FinitelyGenerated(); C
-            Category of finitely generated lie conformal algebras over Rational Field
+            Category of finitely generated Lie conformal algebras over Rational Field
             sage: C.super_categories()
             [Category of finitely generated lambda bracket algebras over Rational Field,
              Category of Lie conformal algebras over Rational Field]
             sage: C.all_super_categories()
-            [Category of finitely generated lie conformal algebras over Rational Field,
+            [Category of finitely generated Lie conformal algebras over Rational Field,
              Category of finitely generated lambda bracket algebras over Rational Field,
              Category of Lie conformal algebras over Rational Field,
              Category of Lambda bracket algebras over Rational Field,
@@ -224,8 +225,9 @@ class LieConformalAlgebras(Category_over_base_ring):
             sage: LieConformalAlgebras(QQ).example()                                    # needs sage.combinat sage.modules
             The Virasoro Lie conformal algebra over Rational Field
         """
-        from sage.algebras.lie_conformal_algebras.virasoro_lie_conformal_algebra\
-                                            import VirasoroLieConformalAlgebra
+        from sage.algebras.lie_conformal_algebras.virasoro_lie_conformal_algebra import (
+            VirasoroLieConformalAlgebra,
+        )
         return VirasoroLieConformalAlgebra(self.base_ring())
 
     def _repr_object_names(self):
@@ -284,8 +286,8 @@ class LieConformalAlgebras(Category_over_base_ring):
             """
             tester = self._tester(**options)
             S = tester.some_elements()
-            from sage.misc.misc import some_tuples
             from sage.arith.misc import binomial
+            from sage.misc.misc import some_tuples
             pz = tester._instance.zero()
             for x,y,z in some_tuples(S, 3, tester._max_runs):
                 brxy = x.bracket(y)

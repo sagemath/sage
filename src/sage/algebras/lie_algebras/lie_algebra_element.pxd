@@ -4,24 +4,25 @@ from sage.structure.sage_object cimport SageObject
 from sage.modules.with_basis.indexed_element cimport IndexedFreeModuleElement
 
 cdef class LieAlgebraElement(IndexedFreeModuleElement):
-    cpdef lift(self) noexcept
+    cpdef lift(self)
 
 cdef class LieAlgebraElementWrapper(ElementWrapper):
-    cpdef _add_(self, right) noexcept
-    cpdef _sub_(self, right) noexcept
+    cpdef _add_(self, right)
+    cpdef _sub_(self, right)
 
 cdef class LieAlgebraMatrixWrapper(LieAlgebraElementWrapper):
     pass
 
 cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
     cdef dict _monomial_coefficients
-    cpdef dict monomial_coefficients(self, bint copy=*) noexcept
+    cpdef dict monomial_coefficients(self, bint copy=*)
 
 cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
-    cpdef bracket(self, right) noexcept
-    cpdef _bracket_(self, right) noexcept
-    cpdef to_vector(self, bint sparse=*) noexcept
-    cpdef dict monomial_coefficients(self, bint copy=*) noexcept
+    cpdef bracket(self, right)
+    cpdef _bracket_(self, right)
+    cpdef _vector_(self, bint sparse=*, order=*)
+    cpdef to_vector(self, bint sparse=*, order=*)
+    cpdef dict monomial_coefficients(self, bint copy=*)
     # cpdef lift(self)
 
 cdef class UntwistedAffineLieAlgebraElement(Element):
@@ -30,33 +31,34 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
     cdef _d_coeff
     cdef long _hash
 
-    cpdef _add_(self, other) noexcept
-    cpdef _sub_(self, other) noexcept
-    cpdef _neg_(self) noexcept
+    cpdef _add_(self, other)
+    cpdef _sub_(self, other)
+    cpdef _neg_(self)
 
-    cpdef dict t_dict(self) noexcept
-    cpdef c_coefficient(self) noexcept
-    cpdef d_coefficient(self) noexcept
+    cpdef dict t_dict(self)
+    cpdef c_coefficient(self)
+    cpdef d_coefficient(self)
 
-    cpdef bracket(self, y) noexcept
-    cpdef _bracket_(self, y) noexcept
-    cpdef canonical_derivation(self) noexcept
-    cpdef monomial_coefficients(self, bint copy=*) noexcept
+    cpdef bracket(self, y)
+    cpdef _bracket_(self, y)
+    cpdef canonical_derivation(self)
+    cpdef monomial_coefficients(self, bint copy=*)
 
 cdef class LieObject(SageObject):
     cdef tuple _word
     cdef public tuple _index_word
-    cpdef tuple to_word(self) noexcept
+    cpdef tuple to_word(self)
 
 cdef class LieGenerator(LieObject):
     cdef public str _name
+    cpdef lift(self, dict UEA_gens_dict)
 
 cdef class LieBracket(LieObject):
     cdef public LieObject _left
     cdef public LieObject _right
     cdef long _hash
 
-    cpdef lift(self, dict UEA_gens_dict) noexcept
+    cpdef lift(self, dict UEA_gens_dict)
 
 cdef class GradedLieBracket(LieBracket):
     cdef public _grade

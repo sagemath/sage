@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Ordered Rooted Trees
 
@@ -23,10 +22,10 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_attribute import lazy_class_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.combinat.abstract_tree import (AbstractClonableTree,
                                          AbstractLabelledClonableTree)
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.dyck_word import CompleteDyckWords_size
 from sage.misc.cachefunc import cached_method
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.rings.integer import Integer
@@ -34,6 +33,8 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.rings.infinity import Infinity
+
+lazy_import('sage.combinat.dyck_word', 'CompleteDyckWords_size')
 
 
 class OrderedTree(AbstractClonableTree, ClonableList,
@@ -276,7 +277,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         """
         return False
 
-    def _to_binary_tree_rec(self, bijection="left"):
+    def _to_binary_tree_rec(self, bijection='left'):
         r"""
         Internal recursive method to obtain a binary tree from an ordered
         tree.
@@ -289,12 +290,12 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             sage: T = OrderedTree([[],[]])
             sage: T._to_binary_tree_rec()
             [[., .], .]
-            sage: T._to_binary_tree_rec(bijection="right")
+            sage: T._to_binary_tree_rec(bijection='right')
             [., [., .]]
             sage: T = OrderedTree([[], [[], []], [[], [[]]]])
             sage: T._to_binary_tree_rec()
             [[[., .], [[., .], .]], [[., .], [., .]]]
-            sage: T._to_binary_tree_rec(bijection="right")
+            sage: T._to_binary_tree_rec(bijection='right')
             [., [[., [., .]], [[., [[., .], .]], .]]]
         """
         from sage.combinat.binary_tree import BinaryTree
@@ -492,7 +493,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             sage: T == T.to_binary_tree_right_branch().to_ordered_tree_right_branch()
             True
         """
-        return self._to_binary_tree_rec(bijection="right")
+        return self._to_binary_tree_rec(bijection='right')
 
     @combinatorial_map(name="To Dyck path")
     def to_dyck_word(self):
@@ -590,8 +591,8 @@ class OrderedTree(AbstractClonableTree, ClonableList,
 
         INPUT:
 
-        - ``root_to_leaf`` -- boolean, true if the poset orientation should
-          be from root to leaves. It is false by default.
+        - ``root_to_leaf`` -- boolean (default: ``False``); ``True`` if the
+          poset orientation should be from root to leaves
 
         EXAMPLES::
 
@@ -708,8 +709,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         except AttributeError:
             root = 1
             g = self.canonical_labelling().to_undirected_graph()
-        return g.plot(layout='tree', tree_root=root,
-                      tree_orientation="down")
+        return g.plot(layout='tree', tree_root=root, tree_orientation='down')
 
     def sort_key(self):
         """
@@ -774,7 +774,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
 
         INPUT:
 
-        - ``inplace`` -- boolean, (default ``False``) if ``True``,
+        - ``inplace`` -- boolean (default: ``False``); if ``True``,
           then ``self`` is modified and nothing returned. Otherwise
           the normalized tree is returned.
 
@@ -834,11 +834,11 @@ class OrderedTree(AbstractClonableTree, ClonableList,
 # Abstract class to serve as a Factory no instance are created.
 class OrderedTrees(UniqueRepresentation, Parent):
     """
-    Factory for ordered trees
+    Factory for ordered trees.
 
     INPUT:
 
-    - ``size`` -- (optional) an integer
+    - ``size`` -- integer (optional)
 
     OUTPUT:
 
@@ -880,13 +880,13 @@ class OrderedTrees(UniqueRepresentation, Parent):
             return OrderedTrees_all()
         else:
             if not (isinstance(n, (Integer, int)) and n >= 0):
-                raise ValueError("n must be a non negative integer")
+                raise ValueError("n must be a nonnegative integer")
             return OrderedTrees_size(Integer(n))
 
     @cached_method
     def leaf(self):
         """
-        Return a leaf tree with ``self`` as parent
+        Return a leaf tree with ``self`` as parent.
 
         EXAMPLES::
 
@@ -934,7 +934,7 @@ class OrderedTrees_all(DisjointUnionEnumeratedSets, OrderedTrees):
             sage: B is OrderedTrees_all()
             True
             sage: TestSuite(B).run() # long time
-            """
+        """
         DisjointUnionEnumeratedSets.__init__(
             self, Family(NonNegativeIntegers(), OrderedTrees_size),
             facade=True, keepkey=False)
@@ -962,7 +962,7 @@ class OrderedTrees_all(DisjointUnionEnumeratedSets, OrderedTrees):
 
     def unlabelled_trees(self):
         """
-        Return the set of unlabelled trees associated to ``self``
+        Return the set of unlabelled trees associated to ``self``.
 
         EXAMPLES::
 
@@ -973,7 +973,7 @@ class OrderedTrees_all(DisjointUnionEnumeratedSets, OrderedTrees):
 
     def labelled_trees(self):
         """
-        Return the set of labelled trees associated to ``self``
+        Return the set of labelled trees associated to ``self``.
 
         EXAMPLES::
 
@@ -1005,7 +1005,7 @@ from sage.combinat.composition import Compositions
 
 class OrderedTrees_size(OrderedTrees):
     """
-    The enumerated sets of binary trees of a given size
+    The enumerated sets of binary trees of a given size.
 
     EXAMPLES::
 
@@ -1062,7 +1062,7 @@ class OrderedTrees_size(OrderedTrees):
 
     def cardinality(self):
         """
-        The cardinality of ``self``
+        The cardinality of ``self``.
 
         This is a Catalan number.
 
@@ -1111,7 +1111,7 @@ class OrderedTrees_size(OrderedTrees):
 
     def __iter__(self):
         """
-        A basic generator
+        A basic generator.
 
         .. TODO:: could be optimized.
 
@@ -1137,7 +1137,7 @@ class OrderedTrees_size(OrderedTrees):
     @lazy_attribute
     def _parent_for(self):
         """
-        Return the parent of the element generated by ``self``
+        Return the parent of the element generated by ``self``.
 
         TESTS::
 
@@ -1149,7 +1149,7 @@ class OrderedTrees_size(OrderedTrees):
     @lazy_attribute
     def element_class(self):
         """
-        The class of the element of ``self``
+        The class of the element of ``self``.
 
         EXAMPLES::
 
@@ -1191,7 +1191,7 @@ class LabelledOrderedTree(AbstractLabelledClonableTree, OrderedTree):
 
     INPUT:
 
-    - ``children`` -- a list or tuple or more generally any iterable
+    - ``children`` -- list or tuple or more generally any iterable
       of trees or object convertible to trees
     - ``label`` -- any Sage object (default: ``None``)
 
@@ -1397,7 +1397,7 @@ class LabelledOrderedTrees(UniqueRepresentation, Parent):
         t = LT([], label=3)
         t1 = LT([t, t], label=42)
         t2 = LT([[]], label=5)
-        return LT([t, t1, t2], label="toto")
+        return LT([t, t1, t2], label='toto')
 
     def _element_constructor_(self, *args, **keywords):
         """

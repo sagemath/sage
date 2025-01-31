@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.groups
 r"""
 Finite groups
@@ -48,7 +49,7 @@ class FiniteGroups(CategoryWithAxiom):
 
         def semigroup_generators(self):
             """
-            Returns semigroup generators for self.
+            Return semigroup generators for ``self``.
 
             For finite groups, the group generators are also semigroup
             generators. Hence, this default implementation calls
@@ -58,7 +59,7 @@ class FiniteGroups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.semigroup_generators()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             return self.group_generators()
 
@@ -74,13 +75,13 @@ class FiniteGroups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.monoid_generators()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             return self.group_generators()
 
         def cardinality(self):
             """
-            Returns the cardinality of ``self``, as per
+            Return the cardinality of ``self``, as per
             :meth:`EnumeratedSets.ParentMethods.cardinality`.
 
             This default implementation calls :meth:`.order` if
@@ -94,19 +95,16 @@ class FiniteGroups(CategoryWithAxiom):
             We need to use a finite group which uses this default
             implementation of cardinality::
 
-                sage: G = groups.misc.SemimonomialTransformation(GF(5), 3); G
+                sage: G = groups.misc.SemimonomialTransformation(GF(5), 3); G           # needs sage.rings.number_field
                 Semimonomial transformation group over Finite Field of size 5 of degree 3
-                sage: G.cardinality.__module__
+                sage: G.cardinality.__module__                                          # needs sage.rings.number_field
                 'sage.categories.finite_groups'
-                sage: G.cardinality()
+                sage: G.cardinality()                                                   # needs sage.rings.number_field
                 384
             """
-            try:
-                o = self.order
-            except AttributeError:
-                return self._cardinality_from_iterator()
-            else:
-                return o()
+            if hasattr(self, 'order'):
+                return self.order()
+            return self._cardinality_from_iterator()
 
         def some_elements(self):
             """
@@ -116,7 +114,7 @@ class FiniteGroups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.some_elements()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             return self.group_generators()
 
@@ -153,9 +151,9 @@ class FiniteGroups(CategoryWithAxiom):
             Return a list with all the conjugacy classes of the group.
 
             This will eventually be a fall-back method for groups not defined
-            over GAP. Right now just raises a ``NotImplementedError``, until
-            we include a non-GAP way of listing the conjugacy classes
-            representatives.
+            over GAP. Right now, it just raises a
+            :exc:`NotImplementedError`, until we include a non-GAP
+            way of listing the conjugacy classes representatives.
 
             EXAMPLES::
 
@@ -175,9 +173,9 @@ class FiniteGroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: G = SymmetricGroup(3)
-                sage: G.conjugacy_classes_representatives()
+                sage: G.conjugacy_classes_representatives()                             # needs sage.combinat
                 [(), (1,2), (1,2,3)]
-           """
+            """
             return [C.representative() for C in self.conjugacy_classes()]
 
     class ElementMethods:
@@ -234,7 +232,7 @@ class FiniteGroups(CategoryWithAxiom):
                     sage: A in Algebras.Semisimple
                     False
 
-                    sage: G = groups.misc.AdditiveCyclic(4)
+                    sage: G = groups.misc.AdditiveCyclic(4)                             # needs sage.rings.number_field
                     sage: Cat = CommutativeAdditiveGroups().Finite()
                     sage: A = G.algebra(GF(5), category=Cat)
                     sage: A in Algebras.Semisimple

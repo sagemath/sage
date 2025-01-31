@@ -1,11 +1,11 @@
 name: Lint
 
-on: 
+on:
   push:
     branches:
       - master
       - develop
-  pull_request: 
+  pull_request:
   merge_group:
 
 concurrency:
@@ -26,24 +26,30 @@ jobs:
         .ci/merge-fixes.sh
       env:
         GH_TOKEN: ${{ github.token }}
+        SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-
-    - name: Install dependencies
+    - name: Install test prerequisites
       id: deps
-      run: pip install tox
+      # From docker.yml
+      run: |
+        sudo DEBIAN_FRONTEND=noninteractive apt-get update
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
 
-    - name: Code style check with pycodestyle
-      if: always() && steps.deps.outcome == 'success'
+    - name: Code style check with ruff-minimal
+      if: (success() || failure()) && steps.deps.outcome == 'success'
+      run: tox -e ruff-minimal
+      env:
+        # https://github.com/ChartBoost/ruff-action/issues/7#issuecomment-1887780308
+        RUFF_OUTPUT_FORMAT: github
+
+    - name: Code style check with pycodestyle-minimal
+      if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e pycodestyle-minimal
 
     - name: Code style check with relint
-      if: always() && steps.deps.outcome == 'success'
+      if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e relint -- src/sage/
 
     - name: Validate docstring markup as RST
-      if: always() && steps.deps.outcome == 'success'
+      if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e rst

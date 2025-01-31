@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Abstract Recursive Trees
 
@@ -73,7 +72,7 @@ from sage.misc.misc_c import prod
 # of it later.
 
 
-class AbstractTree():
+class AbstractTree:
     """
     Abstract Tree.
 
@@ -738,8 +737,8 @@ class AbstractTree():
 
         INPUT:
 
-        - depth -- an integer
-        - path -- optional given path (as a list) used in the recursion
+        - ``depth`` -- integer
+        - ``path`` -- (optional) list; given path used in the recursion
 
         .. WARNING::
 
@@ -791,7 +790,7 @@ class AbstractTree():
 
         INPUT:
 
-        - depth -- an integer
+        - ``depth`` -- integer
 
         .. SEEALSO::
 
@@ -815,7 +814,7 @@ class AbstractTree():
 
         TESTS:
 
-        Check that the empty tree has no nodes (:trac:`29134`)::
+        Check that the empty tree has no nodes (:issue:`29134`)::
 
             sage: T = BinaryTree()
             sage: T
@@ -1276,7 +1275,7 @@ class AbstractTree():
             if hasattr(t, "label"):
                 return str(t.label())
             else:
-                return u"o"
+                return "o"
         # other possible choices for nodes would be u"█ ▓ ░ ╋ ╬"
 
         if self.is_empty():
@@ -1291,9 +1290,9 @@ class AbstractTree():
 
         if len(self) == 1:
             repr_child = self[0]._unicode_art_()
-            sep = UnicodeArt([u" " * repr_child._root])
+            sep = UnicodeArt([" " * repr_child._root])
             t_repr = UnicodeArt([node_to_str(self)])
-            repr_root = (sep + t_repr) * (sep + UnicodeArt([u"│"]))
+            repr_root = (sep + t_repr) * (sep + UnicodeArt(["│"]))
             t_repr = repr_root * repr_child
             t_repr._root = repr_child._root
             t_repr._baseline = t_repr._h - 1
@@ -1303,17 +1302,17 @@ class AbstractTree():
         l_repr = [subtree._unicode_art_() for subtree in self]
         acc = l_repr.pop(0)
         whitesep = acc._root
-        lf_sep = u" " * whitesep + u"╭" + u"─" * (acc._l - acc._root)
-        ls_sep = u" " * whitesep + u"│" + u" " * (acc._l - acc._root)
+        lf_sep = " " * whitesep + "╭" + "─" * (acc._l - acc._root)
+        ls_sep = " " * whitesep + "│" + " " * (acc._l - acc._root)
         while l_repr:
             tr = l_repr.pop(0)
-            acc += UnicodeArt([u" "]) + tr
+            acc += UnicodeArt([" "]) + tr
             if not len(l_repr):
-                lf_sep += u"─" * (tr._root) + u"╮"
-                ls_sep += u" " * (tr._root) + u"│"
+                lf_sep += "─" * (tr._root) + "╮"
+                ls_sep += " " * (tr._root) + "│"
             else:
-                lf_sep += u"─" * (tr._root) + u"┬" + u"─" * (tr._l - tr._root)
-                ls_sep += u" " * (tr._root) + u"│" + u" " * (tr._l - tr._root)
+                lf_sep += "─" * (tr._root) + "┬" + "─" * (tr._l - tr._root)
+                ls_sep += " " * (tr._root) + "│" + " " * (tr._l - tr._root)
         mid = whitesep + (len(lf_sep) - whitesep) // 2
         node = node_to_str(self)
         lf_sep = (lf_sep[:mid - len(node) // 2] + node +
@@ -1358,10 +1357,10 @@ class AbstractTree():
 
     def to_hexacode(self):
         r"""
-        Transform a tree into an hexadecimal string.
+        Transform a tree into a hexadecimal string.
 
         The definition of the hexacode is recursive. The first letter is
-        the valence of the root as an hexadecimal (up to 15), followed by
+        the valence of the root as a hexadecimal (up to 15), followed by
         the concatenation of the hexacodes of the subtrees.
 
         This method only works for trees where every vertex has
@@ -1501,7 +1500,7 @@ class AbstractTree():
                   . the matrix
                   . and the edges
                 """
-                name = "".join((chr(ord(x) + 49) for x in str(num[0])))
+                name = "".join(chr(ord(x) + 49) for x in str(num[0]))
                 node = cmd + name
                 nodes.append((name,
                     (str(self.label()) if hasattr(self, "label") else ""))
@@ -1858,7 +1857,7 @@ class AbstractClonableTree(AbstractTree):
             The tree ``self`` must be in a mutable state. See
             :mod:`sage.structure.list_clone` for more details about
             mutability.  The default implementation here assume that the
-            container of the node implement a method `_setitem` with signature
+            container of the node implement a method ``_setitem`` with signature
             `self._setitem(idx, value)`. It is usually provided by inheriting
             from :class:`~sage.structure.list_clone.ClonableArray`.
 
@@ -1959,7 +1958,7 @@ class AbstractClonableTree(AbstractTree):
 
         INPUT:
 
-        - ``idx`` -- an integer, or a valid path in ``self`` identifying a node
+        - ``idx`` -- integer; or a valid path in ``self`` identifying a node
 
         .. NOTE::
 
@@ -2062,7 +2061,7 @@ class AbstractLabelledTree(AbstractTree):
             None[None[], None[None[], None[]], None[]]
 
         We test that inheriting from `LabelledOrderedTree` allows construction from a
-        `LabelledOrderedTree` (:trac:`16314`)::
+        `LabelledOrderedTree` (:issue:`16314`)::
 
             sage: LBTS = LabelledOrderedTrees()
             sage: class Foo(LabelledOrderedTree):
@@ -2193,7 +2192,7 @@ class AbstractLabelledTree(AbstractTree):
 
     def __eq__(self, other):
         """
-        Test if ``self`` is equal to ``other``
+        Test if ``self`` is equal to ``other``.
 
         TESTS::
 
@@ -2217,7 +2216,7 @@ class AbstractLabelledTree(AbstractTree):
 
     def _hash_(self):
         """
-        Return the hash value for ``self``
+        Return the hash value for ``self``.
 
         TESTS::
 
@@ -2305,7 +2304,7 @@ class AbstractLabelledTree(AbstractTree):
         from sage.graphs.digraph import DiGraph
         resu = {self.label():
                 [t.label() for t in self if not t.is_empty()]}
-        resu = DiGraph(resu, format="dict_of_lists")
+        resu = DiGraph(resu, format='dict_of_lists')
         for t in self:
             if not t.is_empty():
                 resu = resu.union(t.as_digraph())
@@ -2315,7 +2314,7 @@ class AbstractLabelledTree(AbstractTree):
 class AbstractLabelledClonableTree(AbstractLabelledTree,
                                    AbstractClonableTree):
     """
-    Abstract Labelled Clonable Tree
+    Abstract Labelled Clonable Tree.
 
     This class takes care of modification for the label by the clone protocol.
 
@@ -2328,9 +2327,11 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
         """
         Set the label of the root of ``self``.
 
-        INPUT: ``label`` -- any Sage object
+        INPUT:
 
-        OUTPUT: ``None``, ``self`` is modified in place
+        - ``label`` -- any Sage object
+
+        OUTPUT: none, ``self`` is modified in place
 
         .. NOTE::
 
@@ -2387,11 +2388,11 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
         INPUT:
 
         - ``path`` -- ``None`` (default) or a path (list or tuple of children
-                      index in the tree)
+          index in the tree)
 
         - ``label`` -- any sage object
 
-        OUTPUT: Nothing, ``self`` is modified in place
+        OUTPUT: nothing, ``self`` is modified in place
 
         .. NOTE::
 
@@ -2433,7 +2434,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
 
     def map_labels(self, f):
         """
-        Apply the function `f` to the labels of ``self``
+        Apply the function `f` to the labels of ``self``.
 
         This method returns a copy of ``self`` on which the function `f` has
         been applied on all labels (a label `x` is replaced by `f(x)`).
@@ -2460,11 +2461,11 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
 
 def from_hexacode(ch, parent=None, label='@'):
     r"""
-    Transform an hexadecimal string into a tree.
+    Transform a hexadecimal string into a tree.
 
     INPUT:
 
-    - ``ch`` -- an hexadecimal string
+    - ``ch`` -- a hexadecimal string
 
     - ``parent`` -- kind of trees to be produced. If ``None``, this will
       be ``LabelledOrderedTrees``
@@ -2510,13 +2511,13 @@ def from_hexacode(ch, parent=None, label='@'):
 
 def _from_hexacode_aux(ch, parent, label='@'):
     r"""
-    Transform an hexadecimal string into a tree and a remainder string.
+    Transform a hexadecimal string into a tree and a remainder string.
 
     INPUT:
 
-    - ``ch`` -- an hexadecimal string
+    - ``ch`` -- a hexadecimal string
 
-    - ``parent`` -- kind of trees to be produced.
+    - ``parent`` -- kind of trees to be produced
 
     - ``label`` -- a label (default: ``'@'``) to be used for every vertex
       of the tree

@@ -28,7 +28,6 @@ in the module.
 AUTHOR:
 
 - Andrew Hou (11/06/2009)
-
 """
 # ***********************************************************************
 #          Copyright (C) 2009, Andrew Hou <amhou@uw.edu>
@@ -61,11 +60,9 @@ def mean(v):
 
     INPUT:
 
-    - ``v`` -- a list of numbers
+    - ``v`` -- list of numbers
 
-    OUTPUT:
-
-    - a number
+    OUTPUT: a number
 
     EXAMPLES::
 
@@ -108,7 +105,7 @@ def mode(v):
     in `v`, then the mode is the list of elements of `v` that
     occur `n` times. The list is sorted if possible.
 
-    This function is deprecated.  Use :func:`scipy.stats.mode` or
+    This function is deprecated.  Use :func:`scipy:scipy.stats.mode` or
     :func:`statistics.mode` instead.
 
     .. NOTE::
@@ -117,11 +114,9 @@ def mode(v):
 
     INPUT:
 
-    - ``v`` -- a list
+    - ``v`` -- list
 
-    OUTPUT:
-
-    - a list (sorted if possible)
+    OUTPUT: list (sorted if possible)
 
     EXAMPLES::
 
@@ -187,15 +182,13 @@ def std(v, bias=False):
 
     INPUT:
 
-    - ``v`` -- a list of numbers
+    - ``v`` -- list of numbers
 
-    - ``bias`` -- bool (default: ``False``); if ``False``, divide by
+    - ``bias`` -- boolean (default: ``False``); if ``False``, divide by
       ``len(v) - 1`` instead of ``len(v)`` to give a less biased
       estimator (sample) for the standard deviation.
 
-    OUTPUT:
-
-    - a number
+    OUTPUT: a number
 
     EXAMPLES::
 
@@ -228,6 +221,8 @@ def std(v, bias=False):
 
         sage: # needs numpy
         sage: import numpy
+        sage: if int(numpy.version.short_version[0]) > 1:
+        ....:     numpy.set_printoptions(legacy="1.25")
         sage: x = numpy.array([1,2,3,4,5])
         sage: std(x, bias=False)
         1.5811388300841898
@@ -275,15 +270,13 @@ def variance(v, bias=False):
 
     INPUT:
 
-    - ``v`` -- a list of numbers
+    - ``v`` -- list of numbers
 
-    - ``bias`` -- bool (default: ``False``); if ``False``, divide by
+    - ``bias`` -- boolean (default: ``False``); if ``False``, divide by
       ``len(v) - 1`` instead of ``len(v)`` to give a less biased
       estimator (sample) for the standard deviation.
 
-    OUTPUT:
-
-    - a number
+    OUTPUT: a number
 
     EXAMPLES::
 
@@ -305,6 +298,8 @@ def variance(v, bias=False):
         sage: variance([RIF(1.0103, 1.0103), RIF(2)])
         0.4897530450000000?
         sage: import numpy                                                              # needs numpy
+        sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
+        ....:     numpy.set_printoptions(legacy="1.25")                                 # needs numpy
         sage: x = numpy.array([1,2,3,4,5])                                              # needs numpy
         sage: variance(x, bias=False)                                                   # needs numpy
         2.5
@@ -335,7 +330,7 @@ def variance(v, bias=False):
 
     TESTS:
 
-    The performance issue from :trac:`10019` is solved::
+    The performance issue from :issue:`10019` is solved::
 
         sage: variance([1] * 2^18)
         0
@@ -373,11 +368,11 @@ def variance(v, bias=False):
 
 def median(v):
     """
-    Return the median (middle value) of the elements of `v`
+    Return the median (middle value) of the elements of `v`.
 
     If `v` is empty, we define the median to be NaN, which is
     consistent with NumPy (note that R returns NULL).
-    If `v` is comprised of strings, :class:`TypeError` occurs.
+    If `v` is comprised of strings, :exc:`TypeError` occurs.
     For elements other than numbers, the median is a result of :func:`sorted`.
 
     This function is deprecated.  Use :func:`numpy.median` or :func:`numpy.nanmedian`
@@ -385,11 +380,9 @@ def median(v):
 
     INPUT:
 
-    - ``v`` -- a list
+    - ``v`` -- list
 
-    OUTPUT:
-
-    - median element of `v`
+    OUTPUT: median element of `v`
 
     EXAMPLES::
 
@@ -440,13 +433,11 @@ def moving_average(v, n):
 
     INPUT:
 
-    - ``v`` -- a list
+    - ``v`` -- list
 
-    - ``n`` -- the number of values used in computing each average.
+    - ``n`` -- the number of values used in computing each average
 
-    OUTPUT:
-
-    - a list of length ``len(v)-n+1``, since we do not fabric any values
+    OUTPUT: list of length ``len(v)-n+1``, since we do not fabric any values
 
     EXAMPLES::
 
@@ -474,7 +465,6 @@ def moving_average(v, n):
         [2.0000, 3.0000, 4.0000, 5.0000, 6.0000, 7.0000, 8.0000, 9.0000]
         sage: stats.moving_average(list(a), 3)                                          # needs numpy
         [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-
     """
     deprecation(29662, 'sage.stats.basic_stats.moving_average is deprecated; use pandas.Series.rolling instead')
 

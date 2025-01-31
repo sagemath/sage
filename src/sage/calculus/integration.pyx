@@ -10,7 +10,7 @@ AUTHORS:
 
 - Robert Bradshaw (2008-08): fast float integration
 
-- Jeroen Demeyer (2011-11-23): :trac:`12047`: return 0 when the
+- Jeroen Demeyer (2011-11-23): :issue:`12047`: return 0 when the
   integration interval is a point; reformat documentation and add to
   the reference manual.
 """
@@ -31,7 +31,10 @@ from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
 from sage.rings.real_double import RDF
-from sage.libs.gsl.all cimport *
+from sage.libs.gsl.errno cimport gsl_set_error_handler_off
+from sage.libs.gsl.integration cimport *
+from sage.libs.gsl.monte cimport *
+from sage.libs.gsl.rng cimport *
 from sage.misc.sageinspect import sage_getargspec
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 from sage.ext.fast_callable import fast_callable
@@ -56,7 +59,13 @@ cdef double c_f(double t, void *params) noexcept:
         else:
             value = wrapper.the_function(t)
     except Exception as msg:
-        print(msg)
+        try:
+            if str(msg).strip():
+                print(msg)
+            else:
+                print(f"Unable to evaluate function at {t}")
+        except Exception:
+            pass
         return 0
 
     return value
@@ -72,7 +81,7 @@ def numerical_integral(func, a, b=None,
 
     INPUT:
 
-    - ``a``, ``b`` -- The interval of integration, specified as two
+    - ``a``, ``b`` -- the interval of integration, specified as two
       numbers or as a tuple/list with the first element the lower bound
       and the second element the upper bound.  Use ``+Infinity`` and
       ``-Infinity`` for plus or minus infinity.
@@ -87,7 +96,7 @@ def numerical_integral(func, a, b=None,
     - ``eps_abs``, ``eps_rel`` -- sets the absolute and relative error
       tolerances which satisfies the relation ``|RESULT - I|  <= max(eps_abs,
       eps_rel * |I|)``, where ``I = \int_a^b f(x) d x``.
-    - ``rule`` -- This controls the Gauss-Kronrod rule used in the adaptive integration:
+    - ``rule`` -- this controls the Gauss-Kronrod rule used in the adaptive integration:
 
       * rule=1 -- 15 point rule
       * rule=2 -- 21 point rule
@@ -141,17 +150,19 @@ def numerical_integral(func, a, b=None,
     For a Python function with parameters::
 
         sage: f(x,a) = 1/(a+x^2)
-        sage: [numerical_integral(f, 1, 2, max_points=100, params=[n]) for n in range(10)]  # random output (architecture and os dependent)
-        [(0.49999999999998657, 5.5511151231256336e-15),
-         (0.32175055439664557, 3.5721487367706477e-15),
-         (0.24030098317249229, 2.6678768435816325e-15),
-         (0.19253082576711697, 2.1375215571674764e-15),
-         (0.16087527719832367, 1.7860743683853337e-15),
-         (0.13827545676349412, 1.5351659583939151e-15),
-         (0.12129975935702741, 1.3466978571966261e-15),
-         (0.10806674191683065, 1.1997818507228991e-15),
-         (0.09745444625548845, 1.0819617008493815e-15),
-         (0.088750683050217577, 9.8533051773561173e-16)]
+        sage: [numerical_integral(f, 1, 2, max_points=100, params=[n])[0]  # abs tol 1.0e-6
+        ....:           for n in range(10)]
+        [0.5000000000000000,
+         0.3217505543966422,
+         0.24030098317248832,
+         0.19253082576711372,
+         0.1608752771983211,
+         0.138275456763492,
+         0.1212997593570257,
+         0.10806674191683492,
+         0.09745444625553161,
+         0.08875068305030848]
+
         sage: y = var('y')
         sage: numerical_integral(x*y, 0, 1)
         Traceback (most recent call last):
@@ -195,7 +206,7 @@ def numerical_integral(func, a, b=None,
 
     If the interval of integration is a point, then the result is
     always zero (this makes sense within the Lebesgue theory of
-    integration), see :trac:`12047`::
+    integration), see :issue:`12047`::
 
         sage: numerical_integral(log, 0, 0)
         (0.0, 0.0)
@@ -225,7 +236,7 @@ def numerical_integral(func, a, b=None,
     TESTS:
 
     Make sure that constant Expressions, not merely uncallable arguments,
-    can be integrated (:trac:`10088`), at least if we can coerce them
+    can be integrated (:issue:`10088`), at least if we can coerce them
     to float::
 
         sage: f, g = x, x-1
@@ -238,7 +249,7 @@ def numerical_integral(func, a, b=None,
         ...
         TypeError: unable to simplify to float approximation
 
-    Check for :trac:`15496`::
+    Check for :issue:`15496`::
 
         sage: f = x^2/exp(-1/(x^2+1))/(x^2+1)
         sage: D = integrate(f,(x,-infinity,infinity),hold=True)
@@ -248,12 +259,11 @@ def numerical_integral(func, a, b=None,
         ValueError: integral does not converge at -infinity
 
     Symbolic functions can be integrated as conveniently as symbolic
-    expressions, as in :trac:`15219`::
+    expressions, as in :issue:`15219`::
 
         sage: h(x) = x
         sage: numerical_integral(h,0,1)[0] # abs tol 1e-8
         0.5
-
     """
     cdef double abs_err  # step size
     cdef double result
@@ -321,6 +331,9 @@ def numerical_integral(func, a, b=None,
                     if ell.is_numeric() and not ell.is_zero():
                         raise ValueError('integral does not converge at infinity')
             func = fast_callable(func, vars=[v], domain=float)
+            # `func` is now a function of one variable,
+            # so it no longer needs any parameters
+            params = []
 
     if not isinstance(func, compiled_integrand):
         wrapper = PyFunctionWrapper()
@@ -499,7 +512,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         (4.0, 0.0)
         sage: monte_carlo_integral(lambda u,v: u*v, [0,0], [2,2], 10000)  # abs tol 0.1
         (4.0, 0.0)
-        sage: def f(x1,x2,x3,x4): return x1*x2*x3*x4
+        sage: def f(x1, x2, x3, x4): return x1*x2*x3*x4
         sage: monte_carlo_integral(f, [0,0], [2,2], 1000, params=[0.6,2])  # abs tol 0.2
         (4.8, 0.0)
 
@@ -523,7 +536,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         ValueError: The function to be integrated depends on 2 variables (x, y),
         and so cannot be integrated in 3 dimensions. Please fix additional
         variables with the 'params' argument
-        sage: def f(x,y): return x*y
+        sage: def f(x, y): return x*y
         sage: monte_carlo_integral(f, [0,0,0], [2,2,2], 100)
         Traceback (most recent call last):
         ...

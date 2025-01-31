@@ -1,13 +1,17 @@
-# -*- coding: utf-8 -*-
 """
 Power Series Methods
 
 The class ``PowerSeries_poly`` provides additional methods for univariate power series.
 """
-from .power_series_ring_element cimport PowerSeries
+from sage.rings.power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element
-from .infinity import infinity
-from sage.libs.pari.all import pari_gen, PariError
+from sage.rings.infinity import infinity
+
+try:
+    from sage.libs.pari.all import pari_gen, PariError
+except ImportError:
+    pari_gen = ()
+    PariError = ()
 
 
 cdef class PowerSeries_poly(PowerSeries):
@@ -30,7 +34,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: a*b
             1 + O(t^5)
 
-        Check that :trac:`22216` is fixed::
+        Check that :issue:`22216` is fixed::
 
             sage: R.<T> = PowerSeriesRing(QQ)
             sage: R(pari('1 + O(T)'))                                                   # needs sage.libs.pari
@@ -170,21 +174,21 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __call__(self, *x, **kwds):
         """
-        Evaluate the series at x=a.
+        Evaluate the series at `x=a`.
 
         INPUT:
 
-        -  ``x``:
+        - ``x``:
 
-           - a tuple of elements the first of which can be meaningfully
-             substituted in ``self``, with the remainder used for substitution
-             in the coefficients of ``self``.
+          - a tuple of elements the first of which can be meaningfully
+            substituted in ``self``, with the remainder used for substitution
+            in the coefficients of ``self``.
 
-           - a dictionary for kwds:value pairs. If the variable name of
-             self is a keyword it is substituted for.  Other keywords
-             are used for substitution in the coefficients of self.
+          - a dictionary for kwds:value pairs. If the variable name of
+            ``self`` is a keyword it is substituted for.  Other keywords
+            are used for substitution in the coefficients of ``self``.
 
-        OUTPUT: the value of ``self`` after substitution.
+        OUTPUT: the value of ``self`` after substitution
 
         EXAMPLES::
 
@@ -199,8 +203,8 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: f(f)(f) == f(f(f))
             True
 
-        The following demonstrates that the problems raised in :trac:`3979`
-        and :trac:`5367` are solved::
+        The following demonstrates that the problems raised in :issue:`3979`
+        and :issue:`5367` are solved::
 
             sage: [f(t^2 + O(t^n)) for n in [9, 10, 11]]
             [t^4 + t^6 + O(t^11), t^4 + t^6 + O(t^12), t^4 + t^6 + O(t^12)]
@@ -228,7 +232,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: f(2*u + u^3 + O(u^5))
             4*u^2 + u^3 + 4*u^4 + 5*u^5 + O(u^6)
 
-        As can a p-adic integer as long as the coefficient ring is compatible::
+        As can a `p`-adic integer as long as the coefficient ring is compatible::
 
             sage: f(100 + O(5^7))                                                       # needs sage.rings.padics
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)
@@ -405,7 +409,7 @@ cdef class PowerSeries_poly(PowerSeries):
         Return the ``n``-th coefficient of ``self``.
 
         This returns 0 for negative coefficients and raises an
-        ``IndexError`` if trying to access beyond known coefficients.
+        :exc:`IndexError` if trying to access beyond known coefficients.
 
         If ``n`` is a slice object ``[:k]``, this will return a power
         series of the same precision, whose coefficients are the same
@@ -485,7 +489,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, -self.__f,
                                          self._prec, check=False)
 
-    cpdef _add_(self, right_m) noexcept:
+    cpdef _add_(self, right_m):
         """
         EXAMPLES::
 
@@ -499,7 +503,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         TESTS:
 
-        In the past this could die with EXC_BAD_ACCESS (:trac:`8029`)::
+        In the past this could die with EXC_BAD_ACCESS (:issue:`8029`)::
 
             sage: # needs sage.rings.real_mpfr
             sage: A.<x> = RR['x']
@@ -517,7 +521,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f + right.__f,
                                 self.common_prec_c(right), check=True)
 
-    cpdef _sub_(self, right_m) noexcept:
+    cpdef _sub_(self, right_m):
         """
         Return the difference of two power series.
 
@@ -532,7 +536,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f - right.__f,
                                 self.common_prec_c(right), check=True)
 
-    cpdef _mul_(self, right_r) noexcept:
+    cpdef _mul_(self, right_r):
         """
         Return the product of two power series.
 
@@ -548,7 +552,7 @@ cdef class PowerSeries_poly(PowerSeries):
                                 prec=prec,
                                 check=True)  # check, since truncation may be needed
 
-    cpdef _rmul_(self, Element c) noexcept:
+    cpdef _rmul_(self, Element c):
         """
         Multiply ``self`` on the right by a scalar.
 
@@ -561,7 +565,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         return PowerSeries_poly(self._parent, self.__f * c, self._prec, check=False)
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         """
         Multiply ``self`` on the left by a scalar.
 
@@ -671,7 +675,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: u*v
             1 + O(t^12)
 
-        If we try a non-zero, non-unit constant term, we end up in
+        If we try a nonzero, non-unit constant term, we end up in
         the fraction field, i.e. the Laurent series ring::
 
             sage: R.<t> = PowerSeriesRing(ZZ)
@@ -696,7 +700,6 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: must be an integral domain
-
         """
         if self.is_one():
             return self
@@ -745,7 +748,7 @@ cdef class PowerSeries_poly(PowerSeries):
         else:
             return self.__f.truncate(prec)
 
-    cdef _inplace_truncate(self, long prec) noexcept:
+    cdef _inplace_truncate(self, long prec):
         """
         Truncate ``self`` to precision ``prec`` in place.
 
@@ -761,7 +764,7 @@ cdef class PowerSeries_poly(PowerSeries):
     def truncate_powerseries(self, long prec):
         r"""
         Given input ``prec`` = `n`, returns the power series of degree
-        `< n` which is equivalent to self modulo `x^n`.
+        `< n` which is equivalent to ``self`` modulo `x^n`.
 
         EXAMPLES::
 
@@ -791,7 +794,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         return self.__f.list()
 
-    def dict(self):
+    def monomial_coefficients(self, copy=True):
         """
         Return a dictionary of coefficients for ``self``.
 
@@ -803,10 +806,17 @@ cdef class PowerSeries_poly(PowerSeries):
 
             sage: R.<t> = ZZ[[]]
             sage: f = 1 + t^10 + O(t^12)
+            sage: f.monomial_coefficients()
+            {0: 1, 10: 1}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {0: 1, 10: 1}
         """
-        return self.__f.dict()
+        return self.__f.monomial_coefficients(copy=copy)
+
+    dict = monomial_coefficients
 
     def _derivative(self, var=None):
         """
@@ -860,12 +870,11 @@ cdef class PowerSeries_poly(PowerSeries):
             except AttributeError:
                 raise ValueError('cannot differentiate with respect to {}'.format(var))
 
-
         # compute formal derivative with respect to generator
         return PowerSeries_poly(self._parent, self.__f._derivative(),
                                 self.prec()-1, check=False)
 
-    def integral(self,var=None):
+    def integral(self, var=None):
         """
         Return the integral of this power series.
 
@@ -1119,9 +1128,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         - ``m``, ``n`` -- integers, describing the degrees of the polynomials
 
-        OUTPUT:
-
-        a ratio of two polynomials
+        OUTPUT: a ratio of two polynomials
 
         ALGORITHM:
 
@@ -1168,7 +1175,7 @@ cdef class PowerSeries_poly(PowerSeries):
             ...
             ValueError: the precision of the series is not large enough
 
-        Check that :trac:`21212` is fixed::
+        Check that :issue:`21212` is fixed::
 
             sage: QQx.<x> = QQ[[]]
             sage: (1 + x + O(x^100)).pade(2,2)
@@ -1213,7 +1220,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         TESTS:
 
-        Check that :trac:`18094` is fixed::
+        Check that :issue:`18094` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: SR(R(0).add_bigoh(20))                                                # needs sage.symbolic
@@ -1242,11 +1249,12 @@ def make_powerseries_poly_v0(parent, f, prec, is_gen):
     """
     return PowerSeries_poly(parent, f, prec, 0, is_gen)
 
+
 cdef class BaseRingFloorDivAction(Action):
     """
     The floor division action of the base ring on a formal power series.
     """
-    cpdef _act_(self, g, x) noexcept:
+    cpdef _act_(self, g, x):
         r"""
         Let ``g`` act on ``x`` under ``self``.
 

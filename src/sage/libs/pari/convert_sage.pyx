@@ -27,18 +27,32 @@ from sage.libs.pari.convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_sgn, mpz_get_ui, mpz_set, mpz_set_si, mpz_set_ui
 from sage.libs.gmp.mpq cimport mpq_denref, mpq_numref
+from sage.misc.lazy_import import LazyImport
 from sage.rings.integer cimport smallInteger
-from sage.rings.real_mpfr import RealField
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.number_field.number_field import QuadraticField
-from sage.matrix.args cimport (MatrixArgs, MA_ENTRIES_SEQ_SEQ,
-                               MA_ENTRIES_SEQ_FLAT, MA_ENTRIES_CALLABLE,
-                               MA_ENTRIES_UNKNOWN, MA_ENTRIES_SCALAR)
-from sage.rings.padics.factory import Qp
 from sage.rings.infinity import Infinity
 
+try:
+    from sage.rings.real_mpfr import RealField
+    from sage.rings.complex_mpfr import ComplexField
+except ImportError:
+    pass
 
-cpdef gen_to_sage(Gen z, locals=None) noexcept:
+try:
+    from sage.rings.number_field.number_field import QuadraticField
+except ImportError:
+    pass
+else:
+    QQi = QuadraticField(-1, 'i')
+
+try:
+    from sage.rings.padics.factory import Qp
+except ImportError:
+    pass
+
+pari_typ_to_entries_type = LazyImport('sage.libs.pari.convert_sage_matrix', 'pari_typ_to_entries_type')
+
+
+cpdef gen_to_sage(Gen z, locals=None):
     """
     Convert a PARI gen to a Sage/Python object.
 
@@ -46,12 +60,10 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
 
     - ``z`` -- PARI ``gen``
 
-    - ``locals`` -- optional dictionary used in fallback cases that
+    - ``locals`` -- (optional) dictionary used in fallback cases that
       involve :func:`sage_eval`
 
-    OUTPUT:
-
-    One of the following depending on the PARI type of ``z``
+    OUTPUT: one of the following depending on the PARI type of ``z``
 
     - a :class:`~sage.rings.integer.Integer` if ``z`` is an integer (type ``t_INT``)
 
@@ -74,7 +86,7 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
 
     - a matrix if ``z`` is a matrix (type ``t_MAT``)
 
-    - a padic element (type ``t_PADIC``)
+    - a `p`-adic element (type ``t_PADIC``)
 
     - a :class:`~sage.rings.infinity.Infinity` if ``z`` is an infinity
       (type ``t_INF``)
@@ -117,15 +129,15 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
         15
         sage: z = pari('1.234'); z
         1.234000000000000000000000000000000000000000000000000000000000000000000
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.real_mpfr
         1.234000000000000000000000000000000000000000000000000000000000000000000000000
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.real_mpfr
         Real Field with 256 bits of precision
         sage: pari.set_real_precision(15)
         70
-        sage: a = gen_to_sage(pari('1.234')); a
+        sage: a = gen_to_sage(pari('1.234')); a                                         # needs sage.rings.real_mpfr
         1.23400000000000000
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.real_mpfr
         Real Field with 64 bits of precision
 
     For complex numbers, the parent depends on the PARI type::
@@ -134,37 +146,37 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
         3 + I
         sage: z.type()
         't_COMPLEX'
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.number_field
         i + 3
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.number_field
         Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         sage: z = pari('(3+I)/2'); z
         3/2 + 1/2*I
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.number_field
         1/2*i + 3/2
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.number_field
         Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         sage: z = pari('1.0 + 2.0*I'); z
         1.00000000000000 + 2.00000000000000*I
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.real_mpfr
         1.00000000000000000 + 2.00000000000000000*I
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.real_mpfr
         Complex Field with 64 bits of precision
 
         sage: z = pari('1 + 1.0*I'); z
         1 + 1.00000000000000*I
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.real_mpfr
         1.00000000000000000 + 1.00000000000000000*I
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.real_mpfr
         Complex Field with 64 bits of precision
 
         sage: z = pari('1.0 + 1*I'); z
         1.00000000000000 + I
-        sage: a = gen_to_sage(z); a
+        sage: a = gen_to_sage(z); a                                                     # needs sage.rings.real_mpfr
         1.00000000000000000 + 1.00000000000000000*I
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.real_mpfr
         Complex Field with 64 bits of precision
 
     Converting polynomials::
@@ -179,6 +191,7 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
         sage: parent(gen_to_sage(f, {'x': x, 'y': y}))
         Multivariate Polynomial Ring in x, y over Rational Field
 
+        sage: # needs sage.symbolic
         sage: x,y = SR.var('x,y')
         sage: gen_to_sage(f, {'x': x, 'y': y})
         2/3*x^3 + x + y - 5/7
@@ -192,6 +205,7 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
 
     Converting vectors::
 
+        sage: # needs sage.rings.number_field sage.rings.real_mpfr
         sage: z1 = pari('[-3, 2.1, 1+I]'); z1
         [-3, 2.10000000000000, 1 + I]
         sage: z2 = pari('[1.0*I, [1,2]]~'); z2
@@ -224,14 +238,17 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
         sage: z = pari('[1,2;3,4]')
         sage: z.type()
         't_MAT'
+
+        sage: # needs sage.modules
         sage: a = gen_to_sage(z); a
         [1 2]
         [3 4]
         sage: a.parent()
         Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
 
-    Conversion of p-adics::
+    Conversion of `p`-adics::
 
+        sage: # needs sage.rings.padics
         sage: z = pari('569 + O(7^8)'); z
         2 + 4*7 + 4*7^2 + 7^3 + O(7^8)
         sage: a = gen_to_sage(z); a
@@ -294,20 +311,14 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
             C = ComplexField(sage_prec)
             return C(R(real), R(imag))
         else:
-            K = QuadraticField(-1, 'i')
-            return K([gen_to_sage(real), gen_to_sage(imag)])
+            return QQi([gen_to_sage(real), gen_to_sage(imag)])
     elif t == t_VEC or t == t_COL:
         return [gen_to_sage(x, locals) for x in z.python_list()]
     elif t == t_VECSMALL:
         return z.python_list_small()
     elif t == t_MAT:
-        nc = lg(g) - 1
-        nr = 0 if nc == 0 else lg(gel(g,1)) - 1
-        ma = MatrixArgs.__new__(MatrixArgs)
-        ma.nrows = nr
-        ma.ncols = nc
-        ma.entries = [gen_to_sage(z[i,j], locals) for i in range(nr) for j in range(nc)]
-        return ma.matrix()
+        from .convert_sage_matrix import gen_to_sage_matrix
+        return gen_to_sage_matrix(z, locals)
     elif t == t_PADIC:
         p = z.padicprime()
         K = Qp(Integer(p), precp(g))
@@ -326,11 +337,11 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
     return sage_eval(str(z), locals=locals)
 
 
-cpdef set_integer_from_gen(Integer self, Gen x) noexcept:
+cpdef set_integer_from_gen(Integer self, Gen x):
     r"""
     EXAMPLES::
 
-        sage: [Integer(pari(x)) for x in [1, 2^60, 2., GF(3)(1), GF(9,'a')(2)]]
+        sage: [Integer(pari(x)) for x in [1, 2^60, 2., GF(3)(1), GF(9,'a')(2)]]         # needs sage.rings.finite_rings
         [1, 1152921504606846976, 2, 1, 2]
         sage: Integer(pari(2.1)) # indirect doctest
         Traceback (most recent call last):
@@ -368,13 +379,13 @@ cpdef set_integer_from_gen(Integer self, Gen x) noexcept:
             sig_on()
             x = new_gen(FF_to_FpXQ_i((<Gen>x).g))
         else:
-            raise TypeError("Unable to coerce PARI %s to an Integer"%x)
+            raise TypeError("Unable to coerce PARI %s to an Integer" % x)
 
     # Now we have a true PARI integer, convert it to Sage
     INT_to_mpz(self.value, (<Gen>x).g)
 
 
-cpdef Gen new_gen_from_integer(Integer self) noexcept:
+cpdef Gen new_gen_from_integer(Integer self):
     """
     TESTS::
 
@@ -386,11 +397,11 @@ cpdef Gen new_gen_from_integer(Integer self) noexcept:
     return new_gen_from_mpz_t(self.value)
 
 
-cpdef set_rational_from_gen(Rational self, Gen x) noexcept:
+cpdef set_rational_from_gen(Rational self, Gen x):
     r"""
     EXAMPLES::
 
-        sage: [Rational(pari(x)) for x in [1, 1/2, 2^60, 2., GF(3)(1), GF(9,'a')(2)]]
+        sage: [Rational(pari(x)) for x in [1, 1/2, 2^60, 2., GF(3)(1), GF(9,'a')(2)]]   # needs sage.rings.finite_rings
         [1, 1/2, 1152921504606846976, 2, 1, 2]
         sage: Rational(pari(2.1)) # indirect doctest
         Traceback (most recent call last):
@@ -406,7 +417,7 @@ cpdef set_rational_from_gen(Rational self, Gen x) noexcept:
         mpz_set_si(mpq_denref(self.value), 1)
 
 
-cpdef Gen new_gen_from_rational(Rational self) noexcept:
+cpdef Gen new_gen_from_rational(Rational self):
     """
     TESTS::
 
@@ -418,7 +429,7 @@ cpdef Gen new_gen_from_rational(Rational self) noexcept:
     return new_gen_from_mpq_t(self.value)
 
 
-cpdef list pari_divisors_small(Integer self) noexcept:
+cpdef list pari_divisors_small(Integer self):
     r"""
     Return the list of divisors of this number using PARI ``divisorsu``.
 
@@ -464,7 +475,7 @@ cpdef list pari_divisors_small(Integer self) noexcept:
         avma = ltop
 
 
-cpdef pari_is_prime(Integer p) noexcept:
+cpdef pari_is_prime(Integer p):
     r"""
     Return whether ``p`` is a prime.
 
@@ -491,7 +502,7 @@ cpdef pari_is_prime(Integer p) noexcept:
     return bool(uisprime(mpz_get_ui(p.value)))
 
 
-cpdef pari_is_prime_power(Integer q, bint get_data) noexcept:
+cpdef pari_is_prime_power(Integer q, bint get_data):
     r"""
     Return whether ``q`` is a prime power.
 
@@ -548,7 +559,7 @@ cpdef unsigned long pari_maxprime() noexcept:
     return maxprime()
 
 
-cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False) noexcept:
+cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False):
     """
     Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
 
@@ -576,83 +587,3 @@ cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False) noexc
             res.append(z)
         NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
     return res
-
-
-def pari_typ_to_entries_type(MatrixArgs self):
-    """
-    Determine the ``entries_type`` of a :class:`sage.matrix.args.MatrixArgs`
-    with PARI entries.
-
-    This will modify the entries.
-
-    TESTS:
-
-    ``MA_ENTRIES_SEQ_SEQ``::
-
-        sage: from sage.libs.pari.convert_sage import pari_typ_to_entries_type
-        sage: from sage.matrix.args import MatrixArgs
-        sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]"))
-        sage: 0x10_03 == pari_typ_to_entries_type(ma)
-        True
-
-    ``MA_ENTRIES_SEQ_FLAT``::
-
-        sage: ma = MatrixArgs(QQ, entries=pari("[1,2]"))
-        sage: 0x10_04 == pari_typ_to_entries_type(ma)
-        True
-        sage: ma = MatrixArgs(QQ, entries=pari(vector([1,2])))
-        sage: 0x10_04 == pari_typ_to_entries_type(ma)
-        True
-        sage: ma = MatrixArgs(QQ, entries=pari(matrix(2, range(4))[0]))
-        sage: 0x10_04 == pari_typ_to_entries_type(ma)
-        True
-
-    ``MA_ENTRIES_CALLABLE``::
-
-        sage: ma = MatrixArgs(QQ, entries=pari(lambda x: x))
-        sage: 0x13_06 == pari_typ_to_entries_type(ma)
-        True
-
-    ``MA_ENTRIES_SCALAR``::
-
-        sage: ma = MatrixArgs(QQ, entries=pari(1/2))
-        sage: 0x17_02 == pari_typ_to_entries_type(ma)
-        True
-
-    ``MA_ENTRIES_UNKNOWN``::
-
-        sage: ma = MatrixArgs(QQ, entries=pari('"2"'))
-        sage: 0 == pari_typ_to_entries_type(ma)
-        True
-
-    A second call gives an error::
-
-        sage: ma = MatrixArgs(QQ, entries=pari("[1,2]"))
-        sage: 0x10_04 == pari_typ_to_entries_type(ma)
-        True
-        sage: 0x10_04 == pari_typ_to_entries_type(ma)
-        Traceback (most recent call last):
-        ...
-        ValueError: entries are not a PARI generator
-    """
-    if not isinstance(self.entries, Gen):
-        raise ValueError("entries are not a PARI generator")
-    cdef long t = typ((<Gen>self.entries).g)
-    if t == t_MAT:
-        R = self.base
-        if R is None:
-            self.entries = self.entries.Col().sage()
-        else:
-            self.entries = [[R(x) for x in v]
-                            for v in self.entries.mattranspose()]
-        return MA_ENTRIES_SEQ_SEQ
-    elif t in [t_VEC, t_COL, t_VECSMALL, t_LIST]:
-        self.entries = self.entries.sage()
-        return MA_ENTRIES_SEQ_FLAT
-    elif t == t_CLOSURE:
-        return MA_ENTRIES_CALLABLE
-    elif t == t_STR:
-        return MA_ENTRIES_UNKNOWN
-    else:
-        self.entries = self.entries.sage()
-        return MA_ENTRIES_SCALAR

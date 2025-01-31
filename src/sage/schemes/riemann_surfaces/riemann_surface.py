@@ -116,7 +116,6 @@ from scipy.spatial import Voronoi
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD, algdep
 from sage.ext.fast_callable import fast_callable
-from sage.functions.log import lambert_w
 from sage.graphs.graph import Graph
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -157,7 +156,7 @@ def voronoi_ghost(cpoints, n=6, CC=CDF):
 
     INPUT:
 
-    - ``cpoints`` -- a list of complex numbers
+    - ``cpoints`` -- list of complex numbers
 
     OUTPUT:
 
@@ -201,14 +200,12 @@ def bisect(L, t):
 
     INPUT:
 
-    - ``L`` -- A list of tuples such that the first term of each tuple is a real
-      number between 0 and 1. These real numbers must be increasing.
+    - ``L`` -- list of tuples such that the first term of each tuple is a real
+      number between 0 and 1. These real numbers must be increasing
 
-    - ``t`` -- A real number between `t_0` and `t_n`.
+    - ``t`` -- real number between `t_0` and `t_n`
 
-    OUTPUT:
-
-    An integer i, giving the position in L where t would be in
+    OUTPUT: integer i, giving the position in L where t would be in
 
     EXAMPLES:
 
@@ -253,11 +250,11 @@ def bisect(L, t):
 
 def numerical_inverse(C):
     """
-    Compute numerical inverse of a matrix via LU decomposition
+    Compute numerical inverse of a matrix via LU decomposition.
 
     INPUT:
 
-    - ``C`` -- A real or complex invertible square matrix
+    - ``C`` -- a real or complex invertible square matrix
 
     EXAMPLES::
 
@@ -305,7 +302,7 @@ class ConvergenceError(ValueError):
 
 def differential_basis_baker(f):
     r"""
-    Compute a differential basis for a curve that is nonsingular outside (1:0:0),(0:1:0),(0:0:1)
+    Compute a differential basis for a curve that is nonsingular outside (1:0:0),(0:1:0),(0:0:1).
 
     Baker's theorem tells us that if a curve has its singularities at the coordinate vertices and meets
     some further easily tested genericity criteria,
@@ -322,7 +319,7 @@ def differential_basis_baker(f):
 
     INPUT:
 
-    - `f` -- a bivariate polynomial
+    - ``f`` -- a bivariate polynomial
 
     EXAMPLES::
 
@@ -344,7 +341,6 @@ def differential_basis_baker(f):
         sage: f = y^12 - x*(x - 1)^7
         sage: differential_basis_baker(f) is None
         True
-
     """
     k = f.base_ring()
     R = PolynomialRing(k, 3, "x,y,z")
@@ -362,7 +358,7 @@ def differential_basis_baker(f):
             return None
     from sage.geometry.polyhedron.constructor import Polyhedron
 
-    D = {(k[0], k[1]): v for k, v in f.dict().items()}
+    D = {(k[0], k[1]): v for k, v in f.monomial_coefficients().items()}
     P = Polyhedron(D)
     kT = k["t"]
     # here we check the additional genericity conditions: that the polynomials
@@ -424,9 +420,7 @@ def reparameterize_differential_minpoly(minpoly, z0):
     - ``z0`` -- complex number or infinity; the point about which to
       reparameterize
 
-    OUTPUT:
-
-    A polynomial in two variables giving the reparameterize minimal polynomial.
+    OUTPUT: a polynomial in two variables giving the reparameterize minimal polynomial
 
     EXAMPLES:
 
@@ -481,7 +475,7 @@ def reparameterize_differential_minpoly(minpoly, z0):
     return mt
 
 
-class RiemannSurface():
+class RiemannSurface:
     r"""
     Construct a Riemann Surface. This is specified by the zeroes of a bivariate
     polynomial with rational coefficients `f(z,w) = 0`.
@@ -495,11 +489,11 @@ class RiemannSurface():
     - ``prec`` -- the desired precision of computations on the surface in bits
       (default: 53)
 
-    - ``certification`` -- a boolean (default: ``True``) value indicating
+    - ``certification`` -- boolean (default: ``True``); value indicating
       whether homotopy continuation is certified or not. Uncertified
       homotopy continuation can be faster.
 
-    - ``differentials`` -- (default: ``None``). If specified, provides a list
+    - ``differentials`` -- (default: ``None``) if specified, provides a list
       of polynomials `h` such that `h/(df/dw) dz` is a regular
       differential on the Riemann surface. This is taken as a basis of
       the regular differentials, so the genus is assumed to be equal
@@ -776,7 +770,7 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``z0`` -- (complex) a point in the complex z-plane.
+        - ``z0`` -- complex number; a point in the complex z-plane
 
         OUTPUT:
 
@@ -864,9 +858,7 @@ class RiemannSurface():
         The result of this routine can be useful to interpret the labelling of
         the vertices. See also :meth:`upstairs_graph`.
 
-        OUTPUT:
-
-        The Voronoi decomposition as a graph, with appropriate planar embedding.
+        OUTPUT: the Voronoi decomposition as a graph, with appropriate planar embedding
 
         EXAMPLES::
 
@@ -926,17 +918,15 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``z1`` -- a complex number in the z-plane
+        - ``z1`` -- complex number in the z-plane
 
-        - ``epsilon`` -- a real number, which is the minimum distance between
+        - ``epsilon`` -- real number which is the minimum distance between
           the w-values above ``z1``
 
-        - ``wvalues`` -- a list (default: ``None``). If specified, saves
-          recomputation.
+        - ``wvalues`` -- list (default: ``None``); if specified, saves
+          recomputation
 
-        OUTPUT:
-
-        A real number, which is a step size for moving along a path.
+        OUTPUT: a real number, which is a step size for moving along a path
 
         EXAMPLES:
 
@@ -1019,8 +1009,8 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``edge`` -- a tuple ``(z_start, z_end)`` indicating the straight line
-          over which to perform the homotopy continutation
+        - ``edge`` -- tuple ``(z_start, z_end)`` indicating the straight line
+          over which to perform the homotopy continuation
 
         OUTPUT:
 
@@ -1102,10 +1092,10 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``z0`` -- a complex number
+        - ``z0`` -- complex number
 
-        - ``oldw`` -- a list of w-values which are presumed to be guesses of
-          the w-values above ``z0``.
+        - ``oldw`` -- list of w-values which are presumed to be guesses of
+          the w-values above ``z0``
 
         - ``epsilon`` -- the minimum distance between the points of ``oldw``
           divided by 3
@@ -1204,12 +1194,12 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``z0`` -- a complex number.
+        - ``z0`` -- complex number
 
         - ``oldw`` -- a w-value which is presumed to be a guess of one of
-          the w-values above ``z0``.
+          the w-values above ``z0``
 
-        - ``epsilon`` -- the minimum distance between the w-values divided by 3.
+        - ``epsilon`` -- the minimum distance between the w-values divided by 3
 
         OUTPUT:
 
@@ -1684,14 +1674,14 @@ class RiemannSurface():
             # Range over the size of the Gram matrix.
             for j in range(cn):
                 # Forms the acycles and bcycles. If the entry in the
-                # transformation matrix is non-zero, it adds the coefficient at
+                # transformation matrix is nonzero, it adds the coefficient at
                 # that entry, and the corresponding cycle. (also, forms it
                 # into a loop)
                 if P[i][j] != 0:
-                    acycles[i] += [(P[i][j], [x for x in cycles[j]] + [cycles[j][0]])]
+                    acycles[i] += [(P[i][j], list(cycles[j]) + [cycles[j][0]])]
                 if P[self.genus + i][j] != 0:
                     bcycles[i] += [
-                        (P[self.genus + i][j], [x for x in cycles[j]] + [cycles[j][0]])
+                        (P[self.genus + i][j], list(cycles[j]) + [cycles[j][0]])
                     ]
         return acycles + bcycles
 
@@ -1793,18 +1783,16 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``upstairs_edge`` -- tuple. Either a pair of integer tuples
+        - ``upstairs_edge`` -- tuple; either a pair of integer tuples
           corresponding to an edge of the upstairs graph, or a tuple
           ``((z_start, sb), (z_end, ))`` as in the input of
-          ``make_zw_interpolator``.
+          ``make_zw_interpolator``
 
-        - ``differentials`` -- a list of polynomials; a polynomial `g`
+        - ``differentials`` -- list of polynomials; a polynomial `g`
           represents the differential `g(z,w)/(df/dw) dz` where `f(z,w)=0` is
-          the equation defining the Riemann surface.
+          the equation defining the Riemann surface
 
-        OUTPUT:
-
-        A complex number, the value of the line integral.
+        OUTPUT: a complex number, the value of the line integral
 
         EXAMPLES::
 
@@ -1856,7 +1844,7 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``option`` -- Presently, this routine uses Singular's ``adjointIdeal``
+        - ``option`` -- presently, this routine uses Singular's ``adjointIdeal``
           and passes the ``option`` parameter on. Legal values are 1, 2, 3 ,4,
           where 1 is the default. See the Singular documentation for the
           meaning. The backend for this function may change, and support for
@@ -1886,7 +1874,7 @@ class RiemannSurface():
             base = self.f.base_ring()
             # It's important we use a degree ordering; see below.
             R = self._R
-            k = PolynomialRing(base, names="Z,W,U", order="degrevlex")
+            k = PolynomialRing(base, names='Z,W,U', order='degrevlex')
             dehom = k.Hom(R)([R.gen(0), R.gen(1), R.one()])
             fnew = self.f(k.gen(0) / k.gen(2), k.gen(1) / k.gen(2)).numerator()
 
@@ -1943,19 +1931,19 @@ class RiemannSurface():
         notation ``RBzg = PolynomialRing(self._R, ['z','g'])`` and
         ``CCzg = PolynomialRing(self._CC, ['z','g'])``, we have that:
 
-         - ``Rzg`` is either ``RBzg`` or ``CCzg`` depending on the value of
-           ``exact``,
-         - ``g`` is the full rational function in ``self._R.fraction_field()``
-           giving the differential,
-         - ``dgdz`` is the derivative of ``g`` with respect to ``self._R.gen(0)``,
-           written in terms of ``self._R.gen(0)`` and ``g``, hence laying in
-           ``RBzg``,
-         - ``F`` is the minimal polynomial of ``g`` over ``self._R.gen(0)``,
-           laying in the polynomial ring ``Rzg``,
-         - ``a0_info`` is a tuple ``(lc, roots)`` where ``lc`` and ``roots`` are
-           the leading coefficient and roots of the polynomial in ``CCzg.gen(0)``
-           that is the coefficient of the term of ``F`` of highest degree in
-           ``CCzg.gen(1)``.
+        - ``Rzg`` is either ``RBzg`` or ``CCzg`` depending on the value of
+          ``exact``,
+        - ``g`` is the full rational function in ``self._R.fraction_field()``
+          giving the differential,
+        - ``dgdz`` is the derivative of ``g`` with respect to ``self._R.gen(0)``,
+          written in terms of ``self._R.gen(0)`` and ``g``, hence laying in
+          ``RBzg``,
+        - ``F`` is the minimal polynomial of ``g`` over ``self._R.gen(0)``,
+          laying in the polynomial ring ``Rzg``,
+        - ``a0_info`` is a tuple ``(lc, roots)`` where ``lc`` and ``roots`` are
+          the leading coefficient and roots of the polynomial in ``CCzg.gen(0)``
+          that is the coefficient of the term of ``F`` of highest degree in
+          ``CCzg.gen(1)``.
 
         EXAMPLES::
 
@@ -2057,22 +2045,20 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``upstairs_edge`` -- tuple. Either a pair of integer tuples
+        - ``upstairs_edge`` -- tuple; either a pair of integer tuples
           corresponding to an edge of the upstairs graph, or a tuple
           ``((z_start, sb), (z_end, ))`` as in the input of
-          ``make_zw_interpolator``.
+          ``make_zw_interpolator``
 
-        - ``differentials`` -- a list of polynomials; a polynomial `g`
+        - ``differentials`` -- list of polynomials; a polynomial `g`
           represents the differential `g(z,w)/(df/dw) dz` where `f(z,w)=0` is
-          the equation defining the Riemann surface.
+          the equation defining the Riemann surface
 
         - ``bounding_data`` -- tuple containing the data required for bounding
           the integrands. This should be in the form of the output from
           :meth:`_bounding_data`.
 
-        OUTPUT:
-
-        A complex number, the value of the line integral.
+        OUTPUT: a complex number, the value of the line integral
 
         EXAMPLES::
 
@@ -2152,7 +2138,10 @@ class RiemannSurface():
         z1 = zwt(1)[0]
 
         # list of (centre, radius) pairs that still need to be processed
-        ball_stack = [(self._RR(1 / 2), self._RR(1 / 2), 0)]
+        # None is a sentinel value to indicate that the minimum number of
+        # nodes required to integrate on the corresponding segment within
+        # the required error tolerance is not yet known.
+        ball_stack = [(self._RR(1 / 2), self._RR(1 / 2), None)]
         alpha = self._RR(912 / 1000)
         # alpha set manually for scaling purposes. Basic benchmarking shows
         # that ~0.9 is a sensible value.
@@ -2186,8 +2175,21 @@ class RiemannSurface():
             rho_z = min(distances)
             rho_t = rho_z / (z1_minus_z0).abs()
             rho_t = alpha * rho_t + (1 - alpha) * rt  # sqrt(rho_t*rt) could also work
-            rho_z = rho_t * (z1 - z0).abs()
+            rho_z = rho_t * (z1_minus_z0).abs()
             delta_z = (alpha * rho_t + (1 - alpha) * rt) * (z1_minus_z0).abs()
+            # delta_z and delta_z^2 / (rho_z * (rho_z - delta_z)) are the two
+            # prefactors that occur in the computation of the magnitude bound
+            # M. delta_z should never be infinite, but the second factor could
+            # be if rho_z - delta_z is 0. Mathematically it would never be 0
+            # as we ensure rho_t > rt before running local_N, but the
+            # floating point operations can ruin this.
+            # The second prefactor is actually homogeneous in
+            # z1_minus_z0.abs(), so we shall compute this factor without those
+            # multiplications as a function of rho_t / rt which should thus be
+            # more resistance to floating-point errors.
+            pf2 = (alpha + (1 - alpha) * (rt / rho_t))**2 / (
+                  (1 - alpha) * (1 - rt / rho_t)
+            )
             expr = (
                 rho_t / rt + ((rho_t / rt)**2 - 1).sqrt()
             )  # Note this is really exp(arcosh(rho_t/rt))
@@ -2208,15 +2210,14 @@ class RiemannSurface():
                 )
                 cg = g(cz, cw)
                 cdgdz = dgdz(cz, cg)
-                Delta = delta_z * cdgdz.abs() + (delta_z**2) * M_tilde / (
-                    rho_z * (rho_z - delta_z)
-                )
-                M = Delta
+                M = delta_z * cdgdz.abs() + pf2 * M_tilde
                 N_required = (
                     (M * (self._RR.pi() + 64 / (15 * (expr**2 - 1))) / E_global).log()
                     / (2 * expr.log())
-                ).ceil()
-                Ni = max(Ni, N_required)
+                )
+                if N_required.is_positive_infinity():
+                    return 2**max(60, self._prec)
+                Ni = max(Ni, N_required.ceil())
             return Ni
 
         while ball_stack:
@@ -2224,15 +2225,15 @@ class RiemannSurface():
             ncts = [ct - rt / 2, ct + rt / 2]
             nrt = rt / 2
 
-            if not lN:
+            if lN is None:
                 cz = (1 - ct) * z0 + ct * z1
                 distances = [(cz - b).abs() for b in self.branch_locus]
                 rho_z = min(distances)
                 rho_t = rho_z / (z1_minus_z0).abs()
 
                 if rho_t <= rt:
-                    ball_stack.append((ncts[0], nrt, 0))
-                    ball_stack.append((ncts[1], nrt, 0))
+                    ball_stack.append((ncts[0], nrt, None))
+                    ball_stack.append((ncts[1], nrt, None))
                     continue
 
                 lN = local_N(ct, rt)
@@ -2259,7 +2260,7 @@ class RiemannSurface():
 
         return output * z1_minus_z0
 
-    def matrix_of_integral_values(self, differentials, integration_method="heuristic"):
+    def matrix_of_integral_values(self, differentials, integration_method='heuristic'):
         r"""
         Compute the path integrals of the given differentials along the homology
         basis.
@@ -2271,9 +2272,9 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``differentials`` -- a list of polynomials.
+        - ``differentials`` -- list of polynomials
 
-        - ``integration_method`` -- (default: ``'heuristic'``). String specifying
+        - ``integration_method`` -- (default: ``'heuristic'``) string specifying
           the integration method to use. The options are ``'heuristic'`` and
           ``'rigorous'``.
 
@@ -2300,7 +2301,6 @@ class RiemannSurface():
             of the integrals along the edges are written to ``self._integral_dict``.
             This is as this data will be required when computing the Abel-Jacobi
             map, and so it is helpful to have is stored rather than recomputing.
-
         """
         cycles = self.homology_basis()
 
@@ -2326,7 +2326,7 @@ class RiemannSurface():
             integral_dict = self._integral_dict
         else:
             fcd = [fast_callable(omega, domain=self._CC) for omega in differentials]
-            integral_dict = dict()
+            integral_dict = {}
 
         if integration_method == "heuristic":
             line_int = lambda edge: self.simple_vector_line_integral(edge, fcd)
@@ -2358,9 +2358,7 @@ class RiemannSurface():
         r"""
         Compute the period matrix of the surface.
 
-        OUTPUT:
-
-        A matrix of complex values.
+        OUTPUT: a matrix of complex values
 
         EXAMPLES::
 
@@ -2385,8 +2383,8 @@ class RiemannSurface():
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
             sage: f = y^2 - x^3 + 1
-            sage: S = RiemannSurface(f, integration_method="rigorous")
-            sage: T = RiemannSurface(f, integration_method="heuristic")
+            sage: S = RiemannSurface(f, integration_method='rigorous')
+            sage: T = RiemannSurface(f, integration_method='heuristic')
             sage: RM_S = S.riemann_matrix()
             sage: RM_T = T.riemann_matrix()
             sage: (RM_S-RM_T).norm() < 1e-10
@@ -2399,9 +2397,7 @@ class RiemannSurface():
         r"""
         Compute the Riemann matrix.
 
-        OUTPUT:
-
-        A matrix of complex values.
+        OUTPUT: a matrix of complex values
 
         EXAMPLES::
 
@@ -2415,7 +2411,7 @@ class RiemannSurface():
         field::
 
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^2-x+2)
+            sage: K.<a> = NumberField(x^2 - x + 2)
             sage: all(len(m.algdep(6).roots(K)) > 0 for m in M.list())
             True
         """
@@ -2461,7 +2457,7 @@ class RiemannSurface():
 
             T = self._L[e]
             P += [path(t[0]) for t in T]
-        return point2d(P, size=1) + point2d(self.branch_locus, color="red")
+        return point2d(P, size=1) + point2d(self.branch_locus, color='red')
 
     def plot_paths3d(self, thickness=0.01):
         r"""
@@ -2511,7 +2507,7 @@ class RiemannSurface():
                 for w in ws:
                     P += point3d(
                         [z.real_part(), z.imag_part(), w.imag_part()],
-                        color="purple",
+                        color='purple',
                         size=20,
                     )
         return P
@@ -2530,12 +2526,12 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``b`` -- integer (default provided). The equation coefficients are
-          scaled by `2^b` before rounding to integers.
+        - ``b`` -- integer (default provided); the equation coefficients are
+          scaled by `2^b` before rounding to integers
 
-        - ``r`` -- integer (default: ``b/4``). Solutions that have all
+        - ``r`` -- integer (default: ``b/4``); solutions that have all
           coefficients smaller than `2^r` in absolute value are reported as
-          actual solutions.
+          actual solutions
 
         OUTPUT:
 
@@ -2554,7 +2550,6 @@ class RiemannSurface():
             ]
             sage: sorted([b.minpoly().disc() for b in B])
             [-3, 1]
-
         """
         M = self.riemann_matrix()
         return integer_matrix_relations(M, M, b, r)
@@ -2575,12 +2570,12 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``b`` -- integer (default provided). The equation coefficients are
-          scaled by `2^b` before rounding to integers.
+        - ``b`` -- integer (default provided); the equation coefficients are
+          scaled by `2^b` before rounding to integers
 
-        - ``r`` -- integer (default: ``b/4``). Solutions that have all
+        - ``r`` -- integer (default: ``b/4``); solutions that have all
           coefficients smaller than `2^r` in absolute value are reported as
-          actual solutions.
+          actual solutions
 
         OUTPUT:
 
@@ -2614,15 +2609,13 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``Rs`` -- a set of matrices on homology to be converted to their
-          tangent representations.
+        - ``Rs`` -- set of matrices on homology to be converted to their
+          tangent representations
 
-        - ``other`` (default: ``self``) -- the codomain, another Riemann
-          surface.
+        - ``other`` -- (default: ``self``) the codomain; another Riemann
+          surface
 
-        OUTPUT:
-
-        The numerical tangent representations of the matrices in ``Rs``.
+        OUTPUT: the numerical tangent representations of the matrices in ``Rs``
 
         EXAMPLES::
 
@@ -2666,19 +2659,17 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``Rs`` -- a set of matrices on homology to be converted to their
-          tangent representations.
+        - ``Rs`` -- set of matrices on homology to be converted to their
+          tangent representations
 
-        - ``other`` (default: ``self``) -- the codomain, another Riemann
-          surface.
+        - ``other`` -- (default: ``self``) the codomain; another Riemann
+          surface
 
         - ``epscomp`` -- real number (default: ``2^(-prec + 30)``). Used to
           determine whether a complex number is close enough to a root of a
           polynomial.
 
-        OUTPUT:
-
-        The algebraic tangent representations of the matrices in ``Rs``.
+        OUTPUT: the algebraic tangent representations of the matrices in ``Rs``
 
         EXAMPLES::
 
@@ -2736,11 +2727,9 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``R`` -- integral matrix.
+        - ``R`` -- integral matrix
 
-        OUTPUT:
-
-        The result of applying the Rosati involution to ``R``.
+        OUTPUT: the result of applying the Rosati involution to ``R``
 
         EXAMPLES::
 
@@ -2771,22 +2760,22 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``other`` (default: ``self``) -- the codomain, another Riemann
-          surface.
+        - ``other`` -- (default: ``self``) the codomain; another Riemann
+          surface
 
-        - ``hom_basis`` (default: ``None``) -- a `\ZZ`-basis of the
+        - ``hom_basis`` -- (default: ``None``) a `\ZZ`-basis of the
           homomorphisms from ``self`` to ``other``, as obtained from
           :meth:`homomorphism_basis`. If you have already calculated this
           basis, it saves time to pass it via this keyword argument. Otherwise
           the method will calculate it.
 
-        - ``b`` -- integer (default provided): as for
+        - ``b`` -- integer (default provided); as for
           :meth:`homomorphism_basis`, and used in its invocation if
-          (re)calculating said basis.
+          (re)calculating said basis
 
-        - ``r`` -- integer (default: ``b/4``).  as for
+        - ``r`` -- integer (default: ``b/4``);  as for
           :meth:`homomorphism_basis`, and used in its invocation if
-          (re)calculating said basis.
+          (re)calculating said basis
 
         OUTPUT:
 
@@ -2850,19 +2839,19 @@ class RiemannSurface():
 
         INPUT:
 
-        - ``endo_basis`` (default: ``None``) -- a `\ZZ`-basis of the
+        - ``endo_basis`` -- (default: ``None``) a `\ZZ`-basis of the
           endomorphisms of ``self``, as obtained from
           :meth:`endomorphism_basis`. If you have already calculated this
           basis, it saves time to pass it via this keyword argument. Otherwise
           the method will calculate it.
 
-        - ``b`` -- integer (default provided): as for
+        - ``b`` -- integer (default provided); as for
           :meth:`homomorphism_basis`, and used in its invocation if
-          (re)calculating said basis.
+          (re)calculating said basis
 
-        - ``r`` -- integer (default: ``b/4``).  as for
+        - ``r`` -- integer (default: ``b/4``);  as for
           :meth:`homomorphism_basis`, and used in its invocation if
-          (re)calculating said basis.
+          (re)calculating said basis
 
         OUTPUT:
 
@@ -2924,17 +2913,17 @@ class RiemannSurface():
           along, where ``z_start`` may be infinite, in which case ``w_start``
           must be an integer specifying the branch.
 
-        - ``cutoff_individually`` -- boolean (default: False). Whether to truncate
-          the integrand uniformly or not. If ``None``, then no truncation is
-          applied.
+        - ``cutoff_individually`` -- boolean (default: ``False``); whether to
+          truncate the integrand uniformly or not. If ``None``, then no
+          truncation is applied
 
-        - ``raise_errors`` -- boolean (default: True). By default the code uses
-          convergence errors to ensure any answers returned are accurate. This
-          can be turned off to return answers faster that are not necessarily
-          correct.
+        - ``raise_errors`` -- boolean (default: ``True``); by default the code
+          uses convergence errors to ensure any answers returned are accurate.
+          This can be turned off to return answers faster that are not
+          necessarily correct.
 
-        - ``prec`` -- integer (default: ``self._prec``). The precision to try
-          and achieve, defined as `2^{-\text{prec}+3}`.
+        - ``prec`` -- integer (default: ``self._prec``); the precision to try
+          and achieve, defined as `2^{-\text{prec}+3}`
 
         OUTPUT:
 
@@ -2950,10 +2939,10 @@ class RiemannSurface():
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<z,w> = QQ[]
-            sage: S = RiemannSurface(w^2+z^4-1, prec=100)
+            sage: S = RiemannSurface(w^2 + z^4 - 1, prec=100)
             sage: branch = 0
             sage: eps = S._RR(2)**(-S._prec)
-            sage: z_start = 1-eps
+            sage: z_start = 1 - eps
             sage: z_end = 0
             sage: w_start = S.w_values(z_start)[0]
             sage: s = sign(w_start)
@@ -3024,7 +3013,7 @@ class RiemannSurface():
                 return newg
 
         # As multiple calls of the minimal polynomial and it's derivative will
-        # be required for the homotopy continuaiton, we create fast-callable
+        # be required for the homotopy continuation, we create fast-callable
         # versions of these.
         fc_mp_list = [fast_callable(mp, domain=self._CC) for mp in mp_list]
         fc_dmp_list = [
@@ -3035,7 +3024,7 @@ class RiemannSurface():
             prec = self._prec
         # tau here is playing the role of the desired error.
         tau = self._RR(2)**(-prec + 3)
-        one = self._RR(1)
+        one = self._RR.one()
         la = self._RR.pi() / 2
 
         # Cutoffs are used to allow us to not have to integrate as close into
@@ -3055,7 +3044,7 @@ class RiemannSurface():
             A = PolynomialRing(self._CC, "xyz")
             aes = []
             for mp in mp_list:
-                d = mp.dict()
+                d = mp.monomial_coefficients()
                 mp = sum(
                     [
                         d[k] * CCzg.gen(0)**k[0] * CCzg.gen(1)**k[1]
@@ -3092,6 +3081,8 @@ class RiemannSurface():
             n_steps = self._prec - 1
         else:
             n_steps = 15
+
+        from sage.functions.log import lambert_w
 
         V = VectorSpace(self._CC, self.genus)
         h = one
@@ -3269,7 +3260,7 @@ class RiemannSurface():
           we are using the convention that the `w` value over `\infty` is given by
           the limit as ``z`` tends to `\infty` of ``self.w_values(z)[branch]``.
 
-        OUTPUT: A vector of length ``self.genus``.
+        OUTPUT: a vector of length ``self.genus``
 
         EXAMPLES:
 
@@ -3296,7 +3287,6 @@ class RiemannSurface():
             sage: AJx2 = [2*z for z in AJ]
             sage: bool(S.reduce_over_period_lattice(AJx2).norm() < 1e-10)
             True
-
         """
         #####
         fcd = self._fastcall_cohomology_basis
@@ -3495,11 +3485,11 @@ class RiemannSurface():
           where ``v`` is the valuation of the divisor at point ``P``, ``P`` as per
           the input to :meth:`_aj_based`.
 
-        - ``verbose`` -- logical (default: False). Whether to report the progress
+        - ``verbose`` -- logical (default: ``False``); whether to report the progress
           of the computation, in terms of how many elements of the list ``divisor``
-          have been completed.
+          have been completed
 
-        OUTPUT: A vector of length ``self.genus``.
+        OUTPUT: a vector of length ``self.genus``
 
         EXAMPLES:
 
@@ -3532,7 +3522,7 @@ class RiemannSurface():
         return ans
 
     def reduce_over_period_lattice(
-        self, vector, method="ip", b=None, r=None, normalised=False
+        self, vector, method='ip', b=None, r=None, normalised=False
     ):
         r"""
         Reduce a vector over the period lattice.
@@ -3548,20 +3538,20 @@ class RiemannSurface():
         INPUT:
 
         - ``vector`` -- vector. A vector of length ``self.genus`` to reduce over
-          the lattice.
+          the lattice
 
-        - ``method`` -- string (default: ``'ip'``). String specifying the method
-          to use to reduce the vector. THe options are ``'ip'`` and ``'svp'``.
+        - ``method`` -- string (default: ``'ip'``) specifying the method
+          to use to reduce the vector; the options are ``'ip'`` and ``'svp'``
 
-        - ``b`` -- integer (default provided): as for
+        - ``b`` -- integer (default provided); as for
           :meth:`homomorphism_basis`, and used in its invocation if
-          (re)calculating said basis.
+          (re)calculating said basis
 
-        - ``r`` -- integer (default: ``b/4``).  as for
+        - ``r`` -- integer (default: ``b/4``);  as for
           :meth:`homomorphism_basis`, and used in its invocation if
-          (re)calculating said basis.
+          (re)calculating said basis
 
-        - ``normalised`` -- logical (default: ``False``). Whether to use the
+        - ``normalised`` -- logical (default: ``False``); whether to use the
           period matrix with the differentials normalised s.t. the `A`-matrix
           is the identity.
 
@@ -3577,7 +3567,7 @@ class RiemannSurface():
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
-            sage: S = RiemannSurface(y^2-x^5+1)
+            sage: S = RiemannSurface(y^2 - x^5 + 1)
             sage: epsilon = S._RR(2)^(-S._prec+1)
             sage: for vector in S.period_matrix().columns():
             ....:     print(bool(S.reduce_over_period_lattice(vector).norm()<epsilon))
@@ -3591,7 +3581,7 @@ class RiemannSurface():
 
             sage: for vector in S.period_matrix().columns():
             ....:     n1 = S.reduce_over_period_lattice(vector).norm()
-            ....:     n2 = S.reduce_over_period_lattice(vector, method="svp").norm()
+            ....:     n2 = S.reduce_over_period_lattice(vector, method='svp').norm()
             ....:     print(bool(n2<=n1))
             True
             True
@@ -3666,7 +3656,7 @@ class RiemannSurface():
         For others, the curve is constructed and cached, so that an identical curve is
         returned upon subsequent calls.
 
-        OUTPUT: Curve from which Riemann surface is obtained.
+        OUTPUT: curve from which Riemann surface is obtained
 
         EXAMPLES::
 
@@ -3912,9 +3902,9 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
     r"""
     Determine integer relations between complex matrices.
 
-    Given two square matrices with complex entries of size g, h respectively,
-    numerically determine an (approximate) ZZ-basis for the 2g x 2h matrices
-    with integer entries of the shape (D, B; C, A) such that B+M1*A=(D+M1*C)*M2.
+    Given two square matrices with complex entries of size `g`, `h` respectively,
+    numerically determine an (approximate) `\ZZ`-basis for the `2g \times 2h` matrices
+    with integer entries of the shape `(D, B; C, A)` such that `B+M_1*A=(D+M_1*C)*M2`.
     By considering real and imaginary parts separately we obtain `2gh` equations
     with real coefficients in `4gh` variables. We scale the coefficients by a
     constant `2^b` and round them to integers, in order to obtain an integer
@@ -3929,26 +3919,26 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
 
     - ``M1`` -- square complex valued matrix
 
-    - ``M2`` -- square complex valued matrix of same size as M1
+    - ``M2`` -- square complex valued matrix of same size as ``M1``
 
-    - ``b`` -- integer (default provided). The equation coefficients are scaled
-      by `2^b` before rounding to integers.
+    - ``b`` -- integer (default provided); the equation coefficients are scaled
+      by `2^b` before rounding to integers
 
-    - ``r`` -- integer (default: ``b/4``). The vectors found by LLL that satisfy
-      the scaled equations to within `2^r` are reported as solutions.
+    - ``r`` -- integer (default: ``b/4``); the vectors found by LLL that satisfy
+      the scaled equations to within `2^r` are reported as solutions
 
     OUTPUT:
 
-    A list of 2g x 2h integer matrices that, for large enough `r`, `b-r`,
-    generate the ZZ-module of relevant transformations.
+    A list of `2g \times 2h` integer matrices that, for large enough `r`, `b-r`,
+    generate the `\ZZ`-module of relevant transformations.
 
     EXAMPLES::
 
         sage: from sage.schemes.riemann_surfaces.riemann_surface import integer_matrix_relations
-        sage: M1=M2=matrix(CC,2,2,[sqrt(d) for d in [2,-3,-3,-6]])
-        sage: T=integer_matrix_relations(M1,M2)
-        sage: id=parent(M1)(1)
-        sage: M1t=[id.augment(M1) * t for t in T]
+        sage: M1 = M2 = matrix(CC, 2, 2, [CC(d).sqrt() for d in [2,-3,-3,-6]])
+        sage: T = integer_matrix_relations(M1,M2)
+        sage: id = parent(M1)(1)
+        sage: M1t = [id.augment(M1) * t for t in T]
         sage: [((m[:,:2]^(-1)*m)[:,2:]-M2).norm() < 1e-13 for m in M1t]
         [True, True]
     """
@@ -4011,7 +4001,7 @@ class RiemannSurfaceSum(RiemannSurface):
 
     INPUT:
 
-    - L -- list of RiemannSurface objects
+    - ``L`` -- list of RiemannSurface objects
 
     EXAMPLES::
 

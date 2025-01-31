@@ -35,7 +35,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
 
     def transport(self, perm):
         """
-        Returns the transport of this structure along the permutation
+        Return the transport of this structure along the permutation
         perm.
 
         EXAMPLES::
@@ -43,15 +43,15 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.LinearOrderSpecies()
             sage: a = F.structures(["a", "b", "c"])[0]; a
             ['a', 'b', 'c']
-            sage: p = PermutationGroupElement((1,2))
-            sage: a.transport(p)
+            sage: p = PermutationGroupElement((1,2))                                    # needs sage.groups
+            sage: a.transport(p)                                                        # needs sage.groups
             ['b', 'a', 'c']
         """
         return LinearOrderSpeciesStructure(self.parent(), self._labels, [perm(i) for i in self._list])
 
     def automorphism_group(self):
         """
-        Returns the group of permutations whose action on this structure
+        Return the group of permutations whose action on this structure
         leave it fixed. For the species of linear orders, there is no
         non-trivial automorphism.
 
@@ -60,7 +60,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.LinearOrderSpecies()
             sage: a = F.structures(["a", "b", "c"])[0]; a
             ['a', 'b', 'c']
-            sage: a.automorphism_group()
+            sage: a.automorphism_group()                                                # needs sage.groups
             Symmetric group of order 1! as a permutation group
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -81,7 +81,7 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the species of linear orders.
+        Return the species of linear orders.
 
         EXAMPLES::
 
@@ -155,8 +155,8 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: L = species.LinearOrderSpecies()
-            sage: g = L.cycle_index_series()
-            sage: g[0:5]
+            sage: g = L.cycle_index_series()                                            # needs sage.modules
+            sage: g[0:5]                                                                # needs sage.modules
             [p[], p[1], p[1, 1], p[1, 1, 1], p[1, 1, 1, 1]]
         """
         from sage.combinat.sf.sf import SymmetricFunctions

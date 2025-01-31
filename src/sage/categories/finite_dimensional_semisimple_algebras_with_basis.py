@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite dimensional semisimple algebras with basis
 """
@@ -9,14 +10,15 @@ Finite dimensional semisimple algebras with basis
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.algebras import Algebras
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.semisimple_algebras import SemisimpleAlgebras
 from sage.misc.cachefunc import cached_method
-from .algebras import Algebras
-from .semisimple_algebras import SemisimpleAlgebras
+
 
 class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
-    The category of finite dimensional semisimple algebras with a distinguished basis
+    The category of finite dimensional semisimple algebras with a distinguished basis.
 
     EXAMPLES::
 
@@ -43,19 +45,19 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
             r"""
             Return a basis of the Jacobson radical of this algebra.
 
-            - ``keywords`` -- for compatibility; ignored.
+            - ``keywords`` -- for compatibility; ignored
 
-            OUTPUT: the empty list since this algebra is semisimple.
+            OUTPUT: the empty list since this algebra is semisimple
 
             EXAMPLES::
 
-                sage: A = SymmetricGroup(4).algebra(QQ)                                 # needs sage.groups sage.modules
-                sage: A.radical_basis()                                                 # needs sage.groups sage.modules
+                sage: A = SymmetricGroup(4).algebra(QQ)                                 # needs sage.combinat sage.groups sage.modules
+                sage: A.radical_basis()                                                 # needs sage.combinat sage.groups sage.modules
                 ()
 
             TESTS::
 
-                sage: A.radical_basis.__module__                                        # needs sage.groups sage.modules
+                sage: A.radical_basis.__module__                                        # needs sage.combinat sage.groups sage.modules
                 'sage.categories.finite_dimensional_semisimple_algebras_with_basis'
             """
             return ()
@@ -95,7 +97,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
             For the semisimple quotient of a quiver algebra,
             we recover the vertices of the quiver::
 
-                sage: # needs sage.graphs sage.modules
+                sage: # needs sage.graphs sage.modules sage.rings.number_field
                 sage: A = FiniteDimensionalAlgebrasWithBasis(QQ).example(); A
                 An example of a finite dimensional algebra with basis:
                 the path algebra of the Kronecker quiver (containing
@@ -119,12 +121,10 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
 
                 INPUT:
 
-                - ``generators`` -- a list of generators of
+                - ``generators`` -- list of generators of
                   ``self`` (default: the basis of ``self``)
 
-                OUTPUT:
-
-                A list of quasi-idempotent elements of ``self``.
+                OUTPUT: list of quasi-idempotent elements of ``self``
 
                 Each quasi-idempotent `e` spans a one
                 dimensional (non unital) subalgebra of
@@ -144,7 +144,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 dimension 1 subalgebras. The algorithm is
                 recursive and proceeds as follows:
 
-                0. If `A` is of dimension 1, return a non zero
+                0. If `A` is of dimension 1, return a nonzero
                    element.
 
                 1. Otherwise: find one of the generators such
@@ -159,8 +159,8 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 center of the algebra of the symmetric group
                 `S_4`::
 
-                    sage: Z4 = SymmetricGroup(4).algebra(QQ).center()                   # needs sage.groups sage.modules
-                    sage: Z4._orthogonal_decomposition()                                # needs sage.groups sage.modules
+                    sage: Z4 = SymmetricGroup(4).algebra(QQ).center()                   # needs sage.combinat sage.groups sage.modules
+                    sage: Z4._orthogonal_decomposition()                                # needs sage.combinat sage.groups sage.modules
                     (B[0] + B[1] + B[2] + B[3] + B[4],
                      B[0] + 1/3*B[1] - 1/3*B[2] - 1/3*B[4],
                      B[0] + B[2] - 1/2*B[3],
@@ -215,13 +215,11 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 of the identity into primitive orthogonal
                 idempotents.
 
-                OUTPUT:
-
-                A list of orthogonal idempotents of ``self``.
+                OUTPUT: list of orthogonal idempotents of ``self``
 
                 EXAMPLES::
 
-                    sage: # needs sage.groups sage.modules
+                    sage: # needs sage.combinat sage.groups sage.modules
                     sage: A4 = SymmetricGroup(4).algebra(QQ)
                     sage: Z4 = A4.center()
                     sage: idempotents = Z4.central_orthogonal_idempotents()
@@ -236,7 +234,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 recognize among them the sum and alternating
                 sum of all permutations::
 
-                    sage: [e.lift() for e in idempotents]                               # needs sage.groups sage.modules
+                    sage: [e.lift() for e in idempotents]                               # needs sage.combinat sage.groups sage.modules
                     [1/24*() + 1/24*(3,4) + 1/24*(2,3) + 1/24*(2,3,4) + 1/24*(2,4,3)
                      + 1/24*(2,4) + 1/24*(1,2) + 1/24*(1,2)(3,4) + 1/24*(1,2,3)
                      + 1/24*(1,2,3,4) + 1/24*(1,2,4,3) + 1/24*(1,2,4) + 1/24*(1,3,2)
@@ -254,7 +252,8 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 We check that they indeed form a decomposition
                 of the identity of `Z_4` into orthogonal idempotents::
 
-                    sage: Z4.is_identity_decomposition_into_orthogonal_idempotents(idempotents)     # needs sage.groups sage.modules
+                    sage: # needs sage.combinat sage.groups sage.modules
+                    sage: Z4.is_identity_decomposition_into_orthogonal_idempotents(idempotents)
                     True
                 """
                 return tuple([(e.leading_coefficient()/(e*e).leading_coefficient())*e

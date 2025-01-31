@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Lie Conformal Algebra Element
 
@@ -28,12 +29,12 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
     """
     def T(self, n=1):
         r"""
-        The n-th derivative of this element.
+        The `n`-th derivative of this element.
 
         INPUT:
 
-        - ``n`` -- a non-negative integer (default:``1``); how many
-          times to apply `T` to this element.
+        - ``n`` -- nonnegative integer (default: `1`); how many
+          times to apply `T` to this element
 
         We use the *divided powers* notation
         `T^{(j)} = \frac{T^j}{j!}`.
@@ -96,7 +97,7 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
         """
         The lambda bracket of these two elements.
 
-        The result is a dictionary with non-negative integer keys.
+        The result is a dictionary with nonnegative integer keys.
         The value corresponding to the entry `j` is ``self_{(j)}right``.
 
         EXAMPLES::
@@ -221,12 +222,12 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
         except ValueError:
             names = None
         if names:
-            terms = [("T^{{({0})}}{1}".format(k1, names[p._index_to_pos[k0]]), v) if k1 > 1
+            terms = [("T^{{({})}}{}".format(k1, names[p._index_to_pos[k0]]), v) if k1 > 1
                      else ("T{}".format(names[p._index_to_pos[k0]]), v) if k1 == 1
                      else ("{}".format(names[p._index_to_pos[k0]]), v)
                      for (k0, k1), v in self.monomial_coefficients().items()]
         else:
-            terms = [("T^{{({0})}}{1}".format(k1, latex(k0)), v) if k1 > 1
+            terms = [("T^{{({})}}{}".format(k1, latex(k0)), v) if k1 > 1
                      else ("T{}".format(latex(k0)), v) if k1 == 1
                      else ("{}".format(latex(k0)), v)
                      for (k0, k1), v in self.monomial_coefficients().items()]

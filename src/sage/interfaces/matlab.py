@@ -30,53 +30,57 @@ Tutorial
 
 EXAMPLES::
 
-    sage: matlab('4+10')                    # optional - matlab
+    sage: # optional - matlab
+    sage: matlab('4+10')
     14
-    sage: matlab('date')                    # optional - matlab; random output
+    sage: matlab('date')
     18-Oct-2006
-    sage: matlab('5*10 + 6')                # optional - matlab
+    sage: matlab('5*10 + 6')
     56
-    sage: matlab('(6+6)/3')                 # optional - matlab
+    sage: matlab('(6+6)/3')
     4
-    sage: matlab('9')^2                     # optional - matlab
+    sage: matlab('9')^2
     81
-    sage: a = matlab(10); b = matlab(20); c = matlab(30)    # optional - matlab
-    sage: avg = (a+b+c)/3 ; avg             # optional - matlab
+    sage: a = matlab(10); b = matlab(20); c = matlab(30)
+    sage: avg = (a+b+c)/3 ; avg
     20
-    sage: parent(avg)                       # optional - matlab
+    sage: parent(avg)
     Matlab
 
 ::
 
-    sage: my_scalar = matlab('3.1415')       # optional - matlab
-    sage: my_scalar                          # optional - matlab
+    sage: # optional - matlab
+    sage: my_scalar = matlab('3.1415')
+    sage: my_scalar
     3.1415
-    sage: my_vector1 = matlab('[1,5,7]')     # optional - matlab
-    sage: my_vector1                         # optional - matlab
+    sage: my_vector1 = matlab('[1,5,7]')
+    sage: my_vector1
     1     5     7
-    sage: my_vector2 = matlab('[1;5;7]')     # optional - matlab
-    sage: my_vector2                         # optional - matlab
+    sage: my_vector2 = matlab('[1;5;7]')
+    sage: my_vector2
     1
     5
     7
-    sage: my_vector1 * my_vector2            # optional - matlab
+    sage: my_vector1 * my_vector2
     75
 
 ::
 
-    sage: row_vector1 = matlab('[1 2 3]')             # optional - matlab
-    sage: row_vector2 = matlab('[3 2 1]')             # optional - matlab
-    sage: matrix_from_row_vec = matlab('[%s; %s]'%(row_vector1.name(), row_vector2.name()))     # optional - matlab
-    sage: matrix_from_row_vec                            # optional - matlab
+    sage: # optional - matlab
+    sage: row_vector1 = matlab('[1 2 3]')
+    sage: row_vector2 = matlab('[3 2 1]')
+    sage: matrix_from_row_vec = matlab('[%s; %s]'%(row_vector1.name(), row_vector2.name()))
+    sage: matrix_from_row_vec
     1     2     3
     3     2     1
 
 ::
 
-    sage: column_vector1 = matlab('[1;3]')               # optional - matlab
-    sage: column_vector2 = matlab('[2;8]')               # optional - matlab
-    sage: matrix_from_col_vec = matlab('[%s %s]'%(column_vector1.name(), column_vector2.name()))                                    # optional - matlab
-    sage: matrix_from_col_vec                            # optional - matlab
+    sage: # optional - matlab
+    sage: column_vector1 = matlab('[1;3]')
+    sage: column_vector2 = matlab('[2;8]')
+    sage: matrix_from_col_vec = matlab('[%s %s]'%(column_vector1.name(), column_vector2.name()))
+    sage: matrix_from_col_vec
     1     2
     3     8
 
@@ -106,12 +110,13 @@ EXAMPLES::
 
 ::
 
-    sage: my_vector1 = matlab('[1,5,7]')                # optional - matlab
-    sage: my_vector1(1)                                 # optional - matlab
+    sage: # optional - matlab
+    sage: my_vector1 = matlab('[1,5,7]')
+    sage: my_vector1(1)
     1
-    sage: my_vector1(2)                                 # optional - matlab
+    sage: my_vector1(2)
     5
-    sage: my_vector1(3)                                 # optional - matlab
+    sage: my_vector1(3)
     7
 
 Matrix indexing works as follows::
@@ -132,7 +137,7 @@ language works). Use square brackets or the set function::
                8           1           1
 """
 
-##############################################################################
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL).
@@ -144,8 +149,8 @@ language works). Use square brackets or the set function::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-##############################################################################
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 
@@ -159,16 +164,17 @@ class Matlab(Expect):
 
     EXAMPLES::
 
-        sage: a = matlab('[ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]')    # optional - matlab
-        sage: b = matlab('[ 1; 3; 13]')                         # optional - matlab
-        sage: c = a * b                                         # optional - matlab
-        sage: print(c)                                          # optional - matlab
+        sage: # optional - matlab
+        sage: a = matlab('[ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]')
+        sage: b = matlab('[ 1; 3; 13]')
+        sage: c = a * b
+        sage: print(c)
             30
            122
            505
     """
     def __init__(self, maxread=None, script_subdirectory=None,
-                 logfile=None, server=None,server_tmpdir=None):
+                 logfile=None, server=None, server_tmpdir=None):
         Expect.__init__(self,
                         name='matlab',
                         prompt='>> ',
@@ -186,7 +192,7 @@ class Matlab(Expect):
 
     def _read_in_file_command(self, filename):
         """
-        Returns the command used to read in and execute a file in Matlab.
+        Return the command used to read in and execute a file in Matlab.
 
         EXAMPLES::
 
@@ -262,7 +268,7 @@ for hints on how to do that).
 
     def strip_answer(self, s):
         r"""
-        Returns the string s with Matlab's answer prompt removed.
+        Return the string s with Matlab's answer prompt removed.
 
         EXAMPLES::
 
@@ -288,17 +294,18 @@ for hints on how to do that).
             sage: matlab.chdir('/')          # optional - matlab
             sage: matlab.pwd()               # optional - matlab
             /
-
         """
         self.eval("cd('{0}')".format(directory))
 
     def sage2matlab_matrix_string(self, A):
         """
-        Return an matlab matrix from a Sage matrix.
+        Return a matlab matrix from a Sage matrix.
 
-        INPUT: A Sage matrix with entries in the rationals or reals.
+        INPUT:
 
-        OUTPUT: A string that evaluates to an Matlab matrix.
+        - ``A`` -- Sage matrix with entries in the rationals or reals
+
+        OUTPUT: string that evaluates to a Matlab matrix
 
         EXAMPLES::
 
@@ -311,7 +318,7 @@ for hints on how to do that).
 
         - David Joyner and William Stein
         """
-        return str(A.rows()).replace('), (', '; ').replace('(', '').replace(')','')
+        return str(A.rows()).replace('), (', '; ').replace('(', '').replace(')', '')
 
     def _object_class(self):
         return MatlabElement
@@ -328,19 +335,19 @@ class MatlabElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: A = matlab('[1,2;3,4]')       # optional - matlab
-            sage: matrix(ZZ, A)                 # optional - matlab
+            sage: # optional - matlab
+            sage: A = matlab('[1,2;3,4]')
+            sage: matrix(ZZ, A)
             [1 2]
             [3 4]
-            sage: A = matlab('[1,2;3,4.5]')     # optional - matlab
-            sage: matrix(RR, A)                 # optional - matlab
+            sage: A = matlab('[1,2;3,4.5]')
+            sage: matrix(RR, A)
             [1.00000000000000 2.00000000000000]
             [3.00000000000000 4.50000000000000]
 
             sage: a = matlab('eye(50)')         # optional - matlab
             sage: matrix(RR, a)                 # optional - matlab
             50 x 50 dense matrix over Real Field with 53 bits of precision
-
         """
         from sage.matrix.constructor import matrix
         matlab = self.parent()
@@ -359,6 +366,7 @@ class MatlabElement(ExpectElement):
 
 # An instance
 matlab = Matlab()
+
 
 def reduce_load_Matlab():
     return matlab

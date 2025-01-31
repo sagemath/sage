@@ -97,7 +97,6 @@ REFERENCE:
 
 - [1] McKay, Brendan D. Practical Graph Isomorphism. Congressus Numerantium,
   Vol. 30 (1981), pp. 45-87.
-
 """
 
 # ****************************************************************************
@@ -135,6 +134,7 @@ cdef int refine_and_return_invariant_trivial(PartitionStack *PS, void *S, int *c
 cdef int compare_structures_trivial(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     return 0
 
+
 def test_get_aut_gp_and_can_lab_trivially(int n=6,
     list partition=[[0,1,2],[3,4],[5]], canonical_label=True, base=False):
     """
@@ -171,6 +171,7 @@ def test_get_aut_gp_and_can_lab_trivially(int n=6,
     PS_dealloc(part)
     deallocate_agcl_output(output)
 
+
 def test_intersect_parabolic_with_alternating(int n=9, list partition=[[0,1,2],[3,4],[5,6,7,8]]):
     """
     A test for nontrivial input group in computing automorphism groups.
@@ -192,7 +193,6 @@ def test_intersect_parabolic_with_alternating(int n=9, list partition=[[0,1,2],[
         2520
         sage: tipwa(9, [[0,1,2,3],[4,5,6,7,8]])
         1440
-
     """
     cdef aut_gp_and_can_lab *output
     cdef Integer I = Integer(0)
@@ -212,6 +212,7 @@ def test_intersect_parabolic_with_alternating(int n=9, list partition=[[0,1,2],[
     SC_dealloc(group)
     deallocate_agcl_output(output)
 
+
 cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     cdef list MS1 = <list> S1
     cdef list MS2 = <list> S2
@@ -221,6 +222,7 @@ cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
         if j != 0:
             return j
     return 0
+
 
 def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
     """
@@ -261,7 +263,6 @@ def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
         ....:       reps.append(r)
         sage: len(reps)
         8
-
     """
     cdef int i, n = len(perm)
     assert all(len(g) == n for g in gens)
@@ -293,6 +294,7 @@ def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
     sig_free(c_perm)
     return label
 
+
 cdef aut_gp_and_can_lab *allocate_agcl_output(int n) noexcept:
     r"""
     Allocate an instance of the aut_gp_and_can_lab struct of degree n. This can
@@ -315,7 +317,7 @@ cdef aut_gp_and_can_lab *allocate_agcl_output(int n) noexcept:
 
 cdef void deallocate_agcl_output(aut_gp_and_can_lab *output) noexcept:
     r"""
-    Deallocates an aut_gp_and_can_lab struct.
+    Deallocate an aut_gp_and_can_lab struct.
     """
     if output is not NULL:
         SC_dealloc(output.group)
@@ -325,7 +327,7 @@ cdef void deallocate_agcl_output(aut_gp_and_can_lab *output) noexcept:
 
 cdef agcl_work_space *allocate_agcl_work_space(int n) noexcept:
     r"""
-    Allocates work space for the get_aut_gp_and_can_lab function. It can be
+    Allocate work space for the get_aut_gp_and_can_lab function. It can be
     input to the function in which case it must be deallocated after the
     function is called.
     """
@@ -408,43 +410,43 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     Traverse the search space for subgroup/canonical label calculation.
 
     INPUT:
-    S -- pointer to the structure
-    partition -- PartitionStack representing a partition of the points
-    len_partition -- length of the partition
-    n -- the number of points (points are assumed to be 0,1,...,n-1)
-    canonical_label -- whether to search for canonical label - if True, return
+
+    - ``S`` -- pointer to the structure
+    - ``partition`` -- PartitionStack representing a partition of the points
+    - ``len_partition`` -- length of the partition
+    - ``n`` -- the number of points (points are assumed to be 0,1,...,n-1)
+    - ``canonical_label`` -- whether to search for canonical label; if True, return
         the permutation taking S to its canonical label
-    all_children_are_equivalent -- pointer to a function
+    - ``all_children_are_equivalent`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
+        - ``PS`` -- pointer to a partition stack
+        - ``S`` -- pointer to the structure
         OUTPUT:
-        bint -- returns True if it can be determined that all refinements below
-            the current one will result in an equivalent discrete partition
-    refine_and_return_invariant -- pointer to a function
+        bint; returns ``True`` if it can be determined that all refinements below
+        the current one will result in an equivalent discrete partition
+    - ``refine_and_return_invariant`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
-        alpha -- an array consisting of numbers, which indicate the starting
-            positions of the cells to refine against (will likely be modified)
+        - ``PS`` -- pointer to a partition stack
+        - ``S`` -- pointer to the structure
+        - ``alpha`` -- an array consisting of numbers, which indicate the starting
+          positions of the cells to refine against (will likely be modified)
         OUTPUT:
-        int -- returns an invariant under application of arbitrary permutations
-    compare_structures -- pointer to a function
+        integer; returns an invariant under application of arbitrary permutations
+    - ``compare_structures`` -- pointer to a function
         INPUT:
-        gamma_1, gamma_2 -- (list) permutations of the points of S1 and S2
-        S1, S2 -- pointers to the structures
-        degree -- degree of gamma_1 and 2
+        - ``gamma_1``, ``gamma_2`` -- (list) permutations of the points of S1 and S2
+        - ``S1``, ``S2`` -- pointers to the structures
+        - ``degree`` -- degree of gamma_1 and 2
         OUTPUT:
-        int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
-            such that the set of all structures is well-ordered
+        integer; 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
+        such that the set of all structures is well-ordered
 
-    NOTE:
-    The partition ``partition1`` *must* satisfy the property that in each cell,
-    the smallest element occurs first!
+    .. NOTE::
 
-    OUTPUT:
-    pointer to a aut_gp_and_can_lab struct
+        The partition ``partition1`` *must* satisfy the property that in each
+        cell, the smallest element occurs first!
 
+    OUTPUT: a pointer to a ``aut_gp_and_can_lab`` struct
     """
     cdef PartitionStack *current_ps
     cdef PartitionStack *first_ps
@@ -527,12 +529,12 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     orbits_of_permutation              = work_space.orbits_of_permutation
 
     current_indicators                 = work_space.int_array
-    first_indicators                   = work_space.int_array +   n
-    permutation                        = work_space.int_array + 2*n
-    id_perm                            = work_space.int_array + 3*n
-    cells_to_refine_by                 = work_space.int_array + 4*n
-    vertices_determining_current_stack = work_space.int_array + 5*n
-    label_perm                         = work_space.int_array + 6*n
+    first_indicators                   = work_space.int_array + n
+    permutation                        = work_space.int_array + 2 * n
+    id_perm                            = work_space.int_array + 3 * n
+    cells_to_refine_by                 = work_space.int_array + 4 * n
+    vertices_determining_current_stack = work_space.int_array + 5 * n
+    label_perm                         = work_space.int_array + 6 * n
 
     fixed_points_of_generators         = work_space.bitset_array
     minimal_cell_reps_of_generators    = work_space.bitset_array + len_of_fp_and_mcr

@@ -4,6 +4,7 @@ from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure      
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure  cimport face_list_t
 from sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face        cimport CombinatorialFace
 
+
 @cython.final
 cdef class PolyhedronFaceLattice:
     cdef int dimension              # dimension of Polyhedron
@@ -40,7 +41,7 @@ cdef class PolyhedronFaceLattice:
 
     cdef int _sort(self) except -1
     cdef inline size_t find_face(self, int dimension, face_t face) except -2
-    cpdef CombinatorialFace get_face(self, int dimension, size_t index) noexcept
+    cpdef CombinatorialFace get_face(self, int dimension, size_t index)
     cdef size_t set_coatom_rep(self, int dimension, size_t index) except -1
     cdef size_t set_atom_rep(self, int dimension, size_t index) except -1
     cdef void incidence_init(self, int dimension_one, int dimension_two) noexcept

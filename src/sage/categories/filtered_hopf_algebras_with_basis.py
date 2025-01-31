@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Hopf algebras with basis
 """
@@ -31,9 +32,9 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
     EXAMPLES::
 
         sage: C = HopfAlgebrasWithBasis(ZZ).Filtered(); C
-        Category of filtered hopf algebras with basis over Integer Ring
+        Category of filtered Hopf algebras with basis over Integer Ring
         sage: C.super_categories()
-        [Category of hopf algebras with basis over Integer Ring,
+        [Category of Hopf algebras with basis over Integer Ring,
          Category of filtered algebras with basis over Integer Ring,
          Category of filtered coalgebras with basis over Integer Ring]
 
@@ -53,7 +54,7 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
             EXAMPLES::
 
                 sage: HopfAlgebrasWithBasis(QQ).Filtered().WithRealizations().super_categories()
-                [Join of Category of hopf algebras over Rational Field
+                [Join of Category of Hopf algebras over Rational Field
                      and Category of filtered algebras over Rational Field
                      and Category of filtered coalgebras over Rational Field]
 

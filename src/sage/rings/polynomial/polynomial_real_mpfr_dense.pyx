@@ -3,8 +3,8 @@ Dense univariate polynomials over `\RR`, implemented using MPFR
 
 TESTS:
 
-Check that operations with numpy elements work well (see :trac:`18076` and
-:trac:`8426`)::
+Check that operations with numpy elements work well (see :issue:`18076` and
+:issue:`8426`)::
 
     sage: # needs numpy
     sage: import numpy
@@ -30,7 +30,7 @@ from cpython.long cimport PyLong_AsLong
 from cpython.float cimport PyFloat_AS_DOUBLE
 
 from sage.structure.parent cimport Parent
-from .polynomial_element cimport Polynomial, _dict_to_list
+from sage.rings.polynomial.polynomial_element cimport Polynomial, _dict_to_list
 from sage.rings.real_mpfr cimport RealField_class, RealNumber
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.rational cimport Rational
@@ -55,7 +55,6 @@ cdef class PolynomialRealDense(Polynomial):
         sage: from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
         sage: isinstance(f, PolynomialRealDense)
         True
-
     """
 
     cdef Py_ssize_t _degree
@@ -84,7 +83,7 @@ cdef class PolynomialRealDense(Polynomial):
 
         TESTS:
 
-        Check that errors and interrupts are handled properly (see :trac:`10100`)::
+        Check that errors and interrupts are handled properly (see :issue:`10100`)::
 
             sage: a = var('a')                                                          # needs sage.symbolic
             sage: PolynomialRealDense(RR['x'], [1,a])                                   # needs sage.symbolic
@@ -99,7 +98,7 @@ cdef class PolynomialRealDense(Polynomial):
             sage: sig_on_count()
             0
 
-        Test that we don't clean up uninitialized coefficients (:trac:`9826`)::
+        Test that we don't clean up uninitialized coefficients (:issue:`9826`)::
 
             sage: k.<a> = GF(7^3)                                                       # needs sage.rings.finite_rings
             sage: P.<x> = PolynomialRing(k)                                             # needs sage.rings.finite_rings
@@ -108,7 +107,7 @@ cdef class PolynomialRealDense(Polynomial):
             ...
             TypeError: unable to convert 'a' to a real number
 
-        Check that :trac:`17190` is fixed::
+        Check that :issue:`17190` is fixed::
 
             sage: RR['x']({})
             0
@@ -184,7 +183,7 @@ cdef class PolynomialRealDense(Polynomial):
         """
         return make_PolynomialRealDense, (self._parent, self.list())
 
-    cdef _normalize(self) noexcept:
+    cdef _normalize(self):
         """
         Remove all leading 0's.
         """
@@ -197,7 +196,7 @@ cdef class PolynomialRealDense(Polynomial):
             self._coeffs = <mpfr_t*>check_reallocarray(self._coeffs, i+1, sizeof(mpfr_t))
             self._degree = i
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         Return the `i`-th coefficient of ``self``.
 
@@ -225,7 +224,7 @@ cdef class PolynomialRealDense(Polynomial):
         mpfr_set(r.value, self._coeffs[i], self._base_ring.rnd)
         return r
 
-    cdef PolynomialRealDense _new(self, Py_ssize_t degree) noexcept:
+    cdef PolynomialRealDense _new(self, Py_ssize_t degree):
         cdef Py_ssize_t i
         cdef int prec = self._base_ring._prec
         cdef PolynomialRealDense f = <PolynomialRealDense>PolynomialRealDense.__new__(PolynomialRealDense)
@@ -257,9 +256,9 @@ cdef class PolynomialRealDense(Polynomial):
         """
         return smallInteger(self._degree)
 
-    cpdef Polynomial truncate(self, long n) noexcept:
+    cpdef Polynomial truncate(self, long n):
         r"""
-        Returns the polynomial of degree `< n` which is equivalent to self
+        Return the polynomial of degree `< n` which is equivalent to ``self``
         modulo `x^n`.
 
         EXAMPLES::
@@ -310,9 +309,9 @@ cdef class PolynomialRealDense(Polynomial):
                 return self.truncate(i+1)
         return self._new(-1)
 
-    cpdef shift(self, Py_ssize_t n) noexcept:
+    cpdef shift(self, Py_ssize_t n):
         r"""
-        Returns this polynomial multiplied by the power `x^n`. If `n`
+        Return this polynomial multiplied by the power `x^n`. If `n`
         is negative, terms below `x^n` will be discarded. Does not
         change this polynomial.
 
@@ -351,7 +350,7 @@ cdef class PolynomialRealDense(Polynomial):
                 mpfr_set(f._coeffs[i], self._coeffs[i-n], self._base_ring.rnd)
         return f
 
-    cpdef list list(self, bint copy=True) noexcept:
+    cpdef list list(self, bint copy=True):
         """
         EXAMPLES::
 
@@ -386,7 +385,7 @@ cdef class PolynomialRealDense(Polynomial):
             mpfr_neg(f._coeffs[i], self._coeffs[i], rnd)
         return f
 
-    cpdef _add_(left, _right) noexcept:
+    cpdef _add_(left, _right):
         """
         EXAMPLES::
 
@@ -419,7 +418,7 @@ cdef class PolynomialRealDense(Polynomial):
         f._normalize()
         return f
 
-    cpdef _sub_(left, _right) noexcept:
+    cpdef _sub_(left, _right):
         """
         EXAMPLES::
 
@@ -450,7 +449,7 @@ cdef class PolynomialRealDense(Polynomial):
         f._normalize()
         return f
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         """
         EXAMPLES::
 
@@ -472,7 +471,7 @@ cdef class PolynomialRealDense(Polynomial):
             mpfr_mul(f._coeffs[i], self._coeffs[i], a.value, rnd)
         return f
 
-    cpdef _mul_(left, _right) noexcept:
+    cpdef _mul_(left, _right):
         """
         Here we use the naive `O(n^2)` algorithm, as asymptotically faster algorithms such
         as Karatsuba can have very inaccurate results due to intermediate rounding errors.
@@ -567,8 +566,8 @@ cdef class PolynomialRealDense(Polynomial):
 
         INPUT:
 
-        - ``degree`` (``None`` or an integer) - if specified, truncate or zero
-          pad the list of coefficients to this degree before reversing it.
+        - ``degree`` -- ``None`` or an integer; if specified, truncate or zero
+          pad the list of coefficients to this degree before reversing it
 
         EXAMPLES::
 
@@ -634,7 +633,7 @@ cdef class PolynomialRealDense(Polynomial):
 
         TESTS:
 
-        Check that :trac:`18467` is fixed::
+        Check that :issue:`18467` is fixed::
 
             sage: S.<x> = RR[]
             sage: z = S.zero()
@@ -705,7 +704,7 @@ cdef class PolynomialRealDense(Polynomial):
 
         TESTS::
 
-            sage: R.<x> = RR[]       # trac #17311
+            sage: R.<x> = RR[]  # Issue #17311
             sage: (x^2+1)(x=5)
             26.0000000000000
         """

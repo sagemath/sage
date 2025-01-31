@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Cartesian Product Functorial Construction
 
@@ -16,7 +17,8 @@ from sage.misc.lazy_import import lazy_import
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
 from sage.categories.pushout import MultivariateConstructionFunctor
 
-native_python_containers = set([tuple, list, set, frozenset, range])
+native_python_containers = {tuple, list, set, frozenset, range}
+
 
 class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConstructionFunctor):
     """
@@ -103,7 +105,6 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
     <sage.categories.monoids.Monoids.CartesianProducts>` of
     ``Monoids(QQ)``. This nested class is itself a subclass of
     :class:`CartesianProductsCategory`.
-
     """
     _functor_name = "cartesian_product"
     _functor_category = "CartesianProducts"
@@ -216,6 +217,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
         """
         return not (self == other)
 
+
 class CartesianProductsCategory(CovariantConstructionCategory):
     r"""
     An abstract base class for all ``CartesianProducts`` categories.
@@ -239,7 +241,6 @@ class CartesianProductsCategory(CovariantConstructionCategory):
 
             sage: ModulesWithBasis(QQ).CartesianProducts() # indirect doctest
             Category of Cartesian products of vector spaces with basis over Rational Field
-
         """
         # This method is only required for the capital `C`
         return "Cartesian products of %s" % (self.base_category()._repr_object_names())

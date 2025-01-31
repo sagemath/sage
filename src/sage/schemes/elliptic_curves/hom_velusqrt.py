@@ -136,6 +136,37 @@ from .ell_finite_field import EllipticCurve_finite_field
 from .hom import EllipticCurveHom, compare_via_evaluation
 
 
+class _VeluBoundObj:
+    """
+    Helper object to define the point in which isogeny
+    computation should start using square-roor Velu formulae
+    instead of Velu.
+
+    EXAMPLES ::
+
+        sage: from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
+        sage: _velu_sqrt_bound.get()
+        1000
+        sage: _velu_sqrt_bound.set(50)
+        sage: _velu_sqrt_bound.get()
+        50
+    """
+    def __init__(self):
+        self.bound = Integer(1000)
+
+    def set(self, b):
+        self.bound = b
+
+    def get(self):
+        return self.bound
+
+    def __repr__(self):
+        return f"VeluSqrtBound Object with bound = {self.bound}"
+
+
+_velu_sqrt_bound = _VeluBoundObj()
+
+
 def _choose_IJK(n):
     r"""
     Helper function to choose an "index system" for the set
@@ -171,6 +202,7 @@ def _choose_IJK(n):
     J = range(1, 2*b, 2)
     K = range(4*b*c+1, n, 2)
     return I, J, K
+
 
 def _points_range(rr, P, Q=None):
     r"""
@@ -260,7 +292,7 @@ class FastEllipticPolynomial:
         Fast elliptic polynomial prod(Z - x(i*P) for i in range(1,n,2)) with n = 19, P = (4 : 35 : 1)
         sage: hP(7)
         19
-        sage: prod(7 - (i*P).xy()[0] for i in range(1,P.order(),2))
+        sage: prod(7 - (i*P).x() for i in range(1,P.order(),2))
         19
 
     Passing `Q` changes the index set::
@@ -269,7 +301,7 @@ class FastEllipticPolynomial:
         sage: hPQ = FastEllipticPolynomial(E, P.order(), P, Q)
         sage: hPQ(7)
         58
-        sage: prod(7 - (Q+i*P).xy()[0] for i in range(P.order()))
+        sage: prod(7 - (Q+i*P).x() for i in range(P.order()))
         58
 
     The call syntax has an optional keyword argument ``derivative``, which
@@ -279,7 +311,7 @@ class FastEllipticPolynomial:
         sage: hP(7, derivative=True)
         (19, 15)
         sage: R.<Z> = E.base_field()[]
-        sage: HP = prod(Z - (i*P).xy()[0] for i in range(1,P.order(),2))
+        sage: HP = prod(Z - (i*P).x() for i in range(1,P.order(),2))
         sage: HP
         Z^9 + 16*Z^8 + 57*Z^7 + 6*Z^6 + 45*Z^5 + 31*Z^4 + 46*Z^3 + 10*Z^2 + 28*Z + 41
         sage: HP(7)
@@ -292,7 +324,7 @@ class FastEllipticPolynomial:
         sage: hPQ(7, derivative=True)
         (58, 62)
         sage: R.<Z> = E.base_field()[]
-        sage: HPQ = prod(Z - (Q+i*P).xy()[0] for i in range(P.order()))
+        sage: HPQ = prod(Z - (Q+i*P).x() for i in range(P.order()))
         sage: HPQ
         Z^19 + 53*Z^18 + 67*Z^17 + 39*Z^16 + 56*Z^15 + 32*Z^14 + 44*Z^13 + 6*Z^12 + 27*Z^11 + 29*Z^10 + 38*Z^9 + 48*Z^8 + 38*Z^7 + 43*Z^6 + 21*Z^5 + 25*Z^4 + 33*Z^3 + 49*Z^2 + 60*Z
         sage: HPQ(7)
@@ -342,9 +374,9 @@ class FastEllipticPolynomial:
             )
 
         I, J, K = IJK
-        xI = (R.xy()[0] for R in _points_range(I, P, Q))
-        xJ = [R.xy()[0] for R in _points_range(J, P   )]
-        xK = (R.xy()[0] for R in _points_range(K, P, Q))
+        xI = (R.x() for R in _points_range(I, P, Q))
+        xJ = [R.x() for R in _points_range(J, P   )]
+        xK = (R.x() for R in _points_range(K, P, Q))
 
         self.hItree = ProductTree(Z - xi for xi in xI)
 
@@ -670,7 +702,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             Elliptic-curve isogeny (using square-root Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 385*x + 42 over Finite Field of size 419
-            sage: EllipticCurveHom_velusqrt(E, K, model="montgomery")
+            sage: EllipticCurveHom_velusqrt(E, K, model='montgomery')
             Elliptic-curve isogeny (using square-root Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Finite Field of size 419
@@ -682,7 +714,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         over `\GF{3}`, the point `Q` required in the formulas has to be
         defined over a cubic extension rather than an at most quadratic
         extension, which can result in the constructed isogeny being
-        irrational. See :trac:`34467`. The assertion in the following
+        irrational. See :issue:`34467`. The assertion in the following
         example currently fails if the minimum degree is lowered::
 
             sage: E = EllipticCurve(GF(3), [2,1])
@@ -766,7 +798,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: phi._raw_codomain
             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 65537
             sage: Q = E(42, 15860)
-            sage: phi._raw_eval(Q.xy()[0])
+            sage: phi._raw_eval(Q.x())
             11958
             sage: phi._raw_eval(*Q.xy())
             (11958, 42770)
@@ -794,8 +826,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             h0, h0d = self._h0(x, derivative=True)
             h1, h1d = self._h1(x, derivative=True)
 
-#        assert h0 == prod(x - (        i*self._P).xy()[0] for i in range(1,self._P.order(),2))
-#        assert h1 == prod(x - (self._Q+i*self._P).xy()[0] for i in range(  self._P.order()  ))
+#        assert h0 == prod(x - (        i*self._P).x() for i in range(1,self._P.order(),2))
+#        assert h1 == prod(x - (self._Q+i*self._P).x() for i in range(  self._P.order()  ))
 
         if not h0:
             return ()
@@ -805,8 +837,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         if y is None:
             return xx
 
-#        assert h0d == sum(prod(x - (        i*self._P).xy()[0] for i in range(1,self._P.order(),2) if i!=j) for j in range(1,self._P.order(),2))
-#        assert h1d == sum(prod(x - (self._Q+i*self._P).xy()[0] for i in range(  self._P.order()  ) if i!=j) for j in range(  self._P.order()  ))
+#        assert h0d == sum(prod(x - (        i*self._P).x() for i in range(1,self._P.order(),2) if i!=j) for j in range(1,self._P.order(),2))
+#        assert h1d == sum(prod(x - (self._Q+i*self._P).x() for i in range(  self._P.order()  ) if i!=j) for j in range(  self._P.order()  ))
 
         yy = y * (h1d - 2 * h1 / h0 * h0d) / h0**2
 
@@ -983,7 +1015,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
         INPUT:
 
-        - ``left, right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom` objects
+        - ``left``, ``right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+          objects
 
         ALGORITHM:
 
@@ -1026,7 +1059,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             x^15 + 21562*x^14 + 8571*x^13 + 20029*x^12 + 1775*x^11 + 60402*x^10 + 17481*x^9 + 46543*x^8 + 46519*x^7 + 18590*x^6 + 36554*x^5 + 36499*x^4 + 48857*x^3 + 3066*x^2 + 23264*x + 53937
             sage: h == E.isogeny(K).kernel_polynomial()
             True
-            sage: h(K.xy()[0])
+            sage: h(K.x())
             0
 
         TESTS::
@@ -1173,21 +1206,21 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         """
         return self._pre_iso.scaling_factor() * self._post_iso.scaling_factor()
 
-    def is_separable(self):
+    def inseparable_degree(self):
         r"""
-        Determine whether or not this isogeny is separable.
+        Return the inseparable degree of this square-root Vélu
+        isogeny.
 
         Since :class:`EllipticCurveHom_velusqrt` only implements
-        separable isogenies, this method always returns ``True``.
+        separable isogenies, this method always returns one.
 
-        EXAMPLES::
+        TESTS::
 
-            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
-            sage: phi = E.isogeny(E((1,2)), algorithm='velusqrt')
-            sage: phi.is_separable()
-            True
+            sage: from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
+            sage: EllipticCurveHom_velusqrt.inseparable_degree(None)
+            1
         """
-        return True
+        return Integer(1)
 
 
 def _random_example_for_testing():

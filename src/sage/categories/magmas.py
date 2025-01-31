@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Magmas
 """
@@ -255,7 +256,7 @@ class Magmas(Category_singleton):
 
                 The use of this shorthand should be reserved for casual
                 interactive use or when there is no risk of ambiguity.
-                """
+            """
             from sage.categories.additive_magmas import AdditiveMagmas
             if self.is_subcategory(AdditiveMagmas()):
                 raise ValueError("FinitelyGenerated is ambiguous for {}.\nPlease use explicitly one of the FinitelyGeneratedAsXXX methods".format(self))
@@ -323,7 +324,7 @@ class Magmas(Category_singleton):
 
             This axiom is in fact only meaningful for
             :class:`semigroups <Semigroups>`. This stub definition is
-            here as a workaround for :trac:`20515`, in order to define
+            here as a workaround for :issue:`20515`, in order to define
             the `J`-trivial axiom as the intersection of the `L` and
             `R`-trivial axioms.
 
@@ -379,15 +380,15 @@ class Magmas(Category_singleton):
                 Return ``True`` if ``self`` is a field.
 
                 For a magma algebra `RS` this is always false unless
-                `S` is trivial and the base ring `R`` is a field.
+                `S` is trivial and the base ring `R` is a field.
 
                 EXAMPLES::
 
-                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.groups
+                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
                     True
-                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.groups
+                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.combinat sage.groups
                     False
-                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.groups
+                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
                     False
                 """
                 if not self.base_ring().is_field(proof):
@@ -397,7 +398,7 @@ class Magmas(Category_singleton):
     class Commutative(CategoryWithAxiom):
 
         class ParentMethods:
-            def is_commutative(self):
+            def is_commutative(self) -> bool:
                 """
                 Return ``True``, since commutative magmas are commutative.
 
@@ -438,7 +439,7 @@ class Magmas(Category_singleton):
             def extra_super_categories(self):
                 r"""
                 Implement the fact that a Cartesian product of commutative
-                additive magmas is still an commutative additive magmas.
+                additive magmas is still a commutative additive magmas.
 
                 EXAMPLES::
 
@@ -834,9 +835,9 @@ class Magmas(Category_singleton):
 
         def multiplication_table(self, names='letters', elements=None):
             r"""
-            Returns a table describing the multiplication operation.
+            Return a table describing the multiplication operation.
 
-            .. note:: The order of the elements in the row and column
+            .. NOTE:: The order of the elements in the row and column
               headings is equal to the order given by the table's
               :meth:`~sage.matrix.operation_table.OperationTable.list`
               method.  The association can also be retrieved with the
@@ -845,22 +846,22 @@ class Magmas(Category_singleton):
 
             INPUT:
 
-            - ``names`` - the type of names used
+            - ``names`` -- the type of names used
 
-              * ``'letters'`` - lowercase ASCII letters are used
+              * ``'letters'`` -- lowercase ASCII letters are used
                 for a base 26 representation of the elements'
                 positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading 'a's.
-              * ``'digits'`` - base 10 representation of the
+              * ``'digits'`` -- base 10 representation of the
                 elements' positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading zeros.
-              * ``'elements'`` - the string representations
+              * ``'elements'`` -- the string representations
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
-            - ``elements`` - default = ``None``.  A list of
+            - ``elements`` -- (default: ``None``) a list of
               elements of the magma, in forms that can be
               coerced into the structure, eg. their string
               representations. This may be used to impose an
@@ -986,15 +987,13 @@ class Magmas(Category_singleton):
         @abstract_method(optional=True)
         def _mul_(self, right):
             """
-            Product of two elements
+            Product of two elements.
 
             INPUT:
 
             - ``self``, ``right`` -- two elements with the same parent
 
-            OUTPUT:
-
-            - an element of the same parent
+            OUTPUT: an element of the same parent
 
             EXAMPLES::
 
@@ -1030,7 +1029,6 @@ class Magmas(Category_singleton):
                 'x'
                 sage: x.is_idempotent()
                 True
-
             """
             return self * self == self
 
@@ -1141,9 +1139,9 @@ class Magmas(Category_singleton):
 
                 Here is a more elaborate example involving a sub algebra::
 
-                    sage: Z = SymmetricGroup(5).algebra(QQ).center()                    # needs sage.groups
-                    sage: B = Z.basis()                                                 # needs sage.groups
-                    sage: B[3] * B[2]                                                   # needs sage.groups
+                    sage: Z = SymmetricGroup(5).algebra(QQ).center()                    # needs sage.combinat sage.groups
+                    sage: B = Z.basis()                                                 # needs sage.combinat sage.groups
+                    sage: B[3] * B[2]                                                   # needs sage.combinat sage.groups
                     4*B[2] + 6*B[3] + 5*B[6]
                 """
                 assert x in self
@@ -1179,7 +1177,6 @@ class Magmas(Category_singleton):
                     sage: y = Out.an_element()
                     sage: Out.product(x, y)
                     Out[{}] + 4*Out[{1}] + 9*Out[{2}] + Out[{1, 2}]
-
                 """
                 R = self.realization_of().a_realization()
                 return self(R(left) * R(right))

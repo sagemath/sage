@@ -1,5 +1,22 @@
 """
-Database of Hilbert Polynomials
+Database of Hilbert polynomials
+
+This module gives access to the database of Hilbert class polynomials. To use
+the database, you need to install the optional :ref:`database_kohel
+<spkg_database_kohel>` package by the Sage command ::
+
+    sage -i database_kohel
+
+EXAMPLES::
+
+    sage: # optional - database_kohel
+    sage: db = HilbertClassPolynomialDatabase()
+    sage: db[32]
+    x^2 - 52250000*x + 12167000000
+
+AUTHORS:
+
+- David Kohel (2006-08-04): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
@@ -13,8 +30,8 @@ Database of Hilbert Polynomials
 
 from .db_modular_polynomials import _dbz_to_integers
 
-disc_format = "%07d"  #  disc_length = 7
-level_format = "%03d" #  level_length = 3
+disc_format = "%07d"   # disc_length = 7
+level_format = "%03d"  # level_length = 3
 
 
 class ClassPolynomialDatabase:
@@ -35,7 +52,7 @@ class ClassPolynomialDatabase:
         if level != 1:
             raise NotImplementedError("Level (= %s) > 1 not yet implemented" % level)
         n1 = 5000*((abs(disc)-1)//5000)
-        s1 = disc_format % (n1+1) #_pad_int(n1+1, disc_length)
+        s1 = disc_format % (n1+1)  # _pad_int(n1+1, disc_length)
         s2 = disc_format % (n1+5000)
         subdir = "%s-%s" % (s1, s2)
         discstr = disc_format % abs(disc)
@@ -45,8 +62,9 @@ class ClassPolynomialDatabase:
         r"""
         TESTS::
 
+            sage: # optional - database_kohel
             sage: db = HilbertClassPolynomialDatabase()
-            sage: db[32]  # optional - database_kohel
+            sage: db[32]
             x^2 - 52250000*x + 12167000000
             sage: db[123913912]
             Traceback (most recent call last):
@@ -66,16 +84,17 @@ class HilbertClassPolynomialDatabase(ClassPolynomialDatabase):
 
     EXAMPLES::
 
+        sage: # optional - database_kohel
         sage: db = HilbertClassPolynomialDatabase()
-        sage: db[-4]                     # optional - database_kohel
+        sage: db[-4]
         x - 1728
-        sage: db[-7]                     # optional - database_kohel
+        sage: db[-7]
         x + 3375
-        sage: f = db[-23]; f             # optional - database_kohel
+        sage: f = db[-23]; f
         x^3 + 3491750*x^2 - 5151296875*x + 12771880859375
-        sage: f.discriminant().factor()  # optional - database_kohel
+        sage: f.discriminant().factor()
         -1 * 5^18 * 7^12 * 11^4 * 17^2 * 19^2 * 23
-        sage: db[-23]                    # optional - database_kohel
+        sage: db[-23]
         x^3 + 3491750*x^2 - 5151296875*x + 12771880859375
     """
     model = "Cls"
@@ -86,6 +105,7 @@ class HilbertClassPolynomialDatabase(ClassPolynomialDatabase):
 ######################################################
 # None of the following are implemented yet.
 ######################################################
+
 
 class AtkinClassPolynomialDatabase(ClassPolynomialDatabase):
     """

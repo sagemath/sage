@@ -82,10 +82,6 @@ sdh_pip_install .
 
 if [ "x$SAGE_SPKG_INSTALL_DOCS" = xyes ] ; then
    cd doc
-   # checking to see if there is previously installed documentation.
-   if [ -d $SAGE_LOCAL/share/doc/cvxopt/html ] ; then
-      rm -rf $SAGE_LOCAL/share/doc/cvxopt/html
-   fi
    mkdir -p "${SAGE_DESTDIR}${SAGE_LOCAL}/share/doc/cvxopt/html"
    cp -r html/* "${SAGE_DESTDIR}${SAGE_LOCAL}/share/doc/cvxopt/html/"
 fi

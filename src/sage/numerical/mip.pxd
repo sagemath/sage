@@ -3,8 +3,11 @@ cdef extern from *:
     cdef int REAL = -1
     cdef int INTEGER = 0
 
+from sage.sets.family cimport FiniteFamily
 from sage.structure.sage_object cimport SageObject
 from sage.numerical.backends.generic_backend cimport GenericBackend
+
+
 cdef class MIPVariable
 
 
@@ -23,16 +26,14 @@ cdef class MixedIntegerLinearProgram(SageObject):
     cpdef int number_of_variables(self) noexcept
     cdef int _check_redundant
     cdef list _constraints
-    cpdef sum(self, L) noexcept
+    cpdef sum(self, L)
 
 
-cdef class MIPVariable(SageObject):
+cdef class MIPVariable(FiniteFamily):
     cdef MixedIntegerLinearProgram _p
-    cdef dict _dict
-    cdef bint _dynamic_indices
     cdef int _vtype
     cdef str _name
     cdef object _lower_bound
     cdef object _upper_bound
-    cdef _matrix_rmul_impl(self, m) noexcept
-    cdef _matrix_lmul_impl(self, m) noexcept
+    cdef _matrix_rmul_impl(self, m)
+    cdef _matrix_lmul_impl(self, m)

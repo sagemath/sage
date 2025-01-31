@@ -33,7 +33,7 @@ cdef class SatSolver:
 
         INPUT:
 
-        - ``decision`` - is this variable a decision variable?
+        - ``decision`` -- is this variable a decision variable?
 
         EXAMPLES::
 
@@ -67,7 +67,7 @@ cdef class SatSolver:
 
         INPUT:
 
-        - ``lits`` - a tuple of integers != 0
+        - ``lits`` -- tuple of nonzero integers
 
         .. NOTE::
 
@@ -98,7 +98,7 @@ cdef class SatSolver:
         http://elis.dvo.ru/~lab_11/glpk-doc/cnfsat.pdf.
 
         The differences were summarized in the discussion on the issue
-        :trac:`16924`. This method assumes the following DIMACS format:
+        :issue:`16924`. This method assumes the following DIMACS format:
 
         - Any line starting with "c" is a comment
         - Any line starting with "p" is a header
@@ -111,7 +111,7 @@ cdef class SatSolver:
 
         INPUT:
 
-        - ``filename`` - The name of a file as a string or a file object
+        - ``filename`` -- the name of a file as a string or a file object
 
         EXAMPLES::
 
@@ -139,9 +139,9 @@ cdef class SatSolver:
 
             sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
-            sage: from sage.sat.solvers.sat_lp import SatLP
-            sage: solver = SatLP()
-            sage: solver.read(file_object)
+            sage: from sage.sat.solvers.sat_lp import SatLP                             # needs sage.numerical.mip
+            sage: solver = SatLP()                                                      # needs sage.numerical.mip
+            sage: solver.read(file_object)                                              # needs sage.numerical.mip
             Traceback (most recent call last):
             ...
             NotImplementedError: the solver "an ILP-based SAT Solver" does not support xor clauses
@@ -176,7 +176,7 @@ cdef class SatSolver:
 
         INPUT:
 
-        - ``assumptions`` - assumed variable assignments (default: ``None``)
+        - ``assumptions`` -- assumed variable assignments (default: ``None``)
 
         OUTPUT:
 
@@ -222,7 +222,7 @@ cdef class SatSolver:
 
         INPUT:
 
-        - ``unitary_only`` - return only unitary learnt clauses (default: ``False``)
+        - ``unitary_only`` -- return only unitary learnt clauses (default: ``False``)
 
         EXAMPLES::
 
@@ -257,7 +257,7 @@ cdef class SatSolver:
 
         INPUT:
 
-        - ``filename'' - if not ``None`` clauses are written to ``filename`` in
+        - ``filename'' -- if not ``None`` clauses are written to ``filename`` in
           DIMACS format (default: ``None``)
 
         OUTPUT:
@@ -268,7 +268,6 @@ cdef class SatSolver:
 
             If ``filename`` points to a writable file, then the list of original
             clauses is written to that file in DIMACS format.
-
 
         EXAMPLES::
 
@@ -320,58 +319,58 @@ def SAT(solver=None, *args, **kwds):
 
     INPUT:
 
-    - ``solver`` (string) -- select a solver. Admissible values are:
+    - ``solver`` -- string; select a solver. Admissible values are:
 
-        - ``"cryptominisat"`` -- note that the cryptominisat package must be
-          installed.
+        - ``'cryptominisat'`` -- note that the pycryptosat package must be
+          installed
 
-        - ``"picosat"`` -- note that the pycosat package must be installed.
+        - ``'picosat'`` -- note that the pycosat package must be installed
 
-        - ``"glucose"`` -- note that the glucose package must be installed.
+        - ``'glucose'`` -- note that the glucose package must be installed
 
-        - ``"glucose-syrup"`` -- note that the glucose package must be installed.
+        - ``'glucose-syrup'`` -- note that the glucose package must be installed
 
-        - ``"LP"`` -- use :class:`~sage.sat.solvers.sat_lp.SatLP` to solve the
-          SAT instance.
+        - ``'LP'`` -- use :class:`~sage.sat.solvers.sat_lp.SatLP` to solve the
+          SAT instance
 
-        - ``None`` (default) -- use CryptoMiniSat if available, else PicoSAT if
-          available, and a LP solver otherwise.
+        - ``None`` -- default; use CryptoMiniSat if available, else PicoSAT if
+          available, and a LP solver otherwise
 
     EXAMPLES::
 
-        sage: SAT(solver="LP")
+        sage: SAT(solver='LP')                                                          # needs sage.numerical.mip
         an ILP-based SAT Solver
 
     TESTS::
 
-        sage: SAT(solver="Wouhouuuuuu")
+        sage: SAT(solver='Wouhouuuuuu')
         Traceback (most recent call last):
         ...
         ValueError: Solver 'Wouhouuuuuu' is not available
 
     Forcing CryptoMiniSat::
 
-        sage: SAT(solver="cryptominisat") # optional - pycryptosat
+        sage: SAT(solver='cryptominisat')                                   # optional - pycryptosat
         CryptoMiniSat solver: 0 variables, 0 clauses.
 
     Forcing PicoSat::
 
-        sage: SAT(solver="picosat") # optional - pycosat
+        sage: SAT(solver='picosat')                                         # optional - pycosat
         PicoSAT solver: 0 variables, 0 clauses.
 
     Forcing Glucose::
 
-        sage: SAT(solver="glucose")
+        sage: SAT(solver='glucose')
         DIMACS Solver: 'glucose -verb=0 -model {input}'
 
     Forcing Glucose Syrup::
 
-        sage: SAT(solver="glucose-syrup")
+        sage: SAT(solver='glucose-syrup')
         DIMACS Solver: 'glucose-syrup -model -verb=0 {input}'
 
     Forcing Kissat::
 
-        sage: SAT(solver="kissat")
+        sage: SAT(solver='kissat')
         DIMACS Solver: 'kissat -q {input}'
     """
     if solver is None:
@@ -390,16 +389,16 @@ def SAT(solver=None, *args, **kwds):
         from sage.sat.solvers.picosat import PicoSAT
         return PicoSAT(*args, **kwds)
     elif solver == "LP":
-        from .sat_lp import SatLP
+        from sage.sat.solvers.sat_lp import SatLP
         return SatLP()
     elif solver == 'glucose':
-        from .dimacs import Glucose
+        from sage.sat.solvers.dimacs import Glucose
         return Glucose(*args, **kwds)
     elif solver == 'glucose-syrup':
-        from .dimacs import GlucoseSyrup
+        from sage.sat.solvers.dimacs import GlucoseSyrup
         return GlucoseSyrup(*args, **kwds)
     elif solver == 'kissat':
-        from .dimacs import Kissat
+        from sage.sat.solvers.dimacs import Kissat
         return Kissat(*args, **kwds)
     else:
         raise ValueError("Solver '{}' is not available".format(solver))

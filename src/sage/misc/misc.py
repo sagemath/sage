@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous functions
 
@@ -12,7 +13,7 @@ AUTHORS:
 
 TESTS:
 
-The following test, verifying that :trac:`16181` has been resolved, needs
+The following test, verifying that :issue:`16181` has been resolved, needs
 to stay at the beginning of this file so that its context is not
 poisoned by other tests::
 
@@ -20,7 +21,7 @@ poisoned by other tests::
     sage: a
     0
 
-Check the fix from :trac:`8323`::
+Check the fix from :issue:`8323`::
 
     sage: 'name' in globals()
     False
@@ -45,22 +46,12 @@ import pdb
 import sys
 import warnings
 
-from .lazy_string import lazy_string
+from sage.misc.lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 
 lazy_import("sage.combinat.subset", ["powerset", "subsets", "uniq"],
             deprecation=35564)
-
-lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
-            deprecation=29869)
-
-lazy_import("sage.misc.verbose", ["verbose", "set_verbose", "set_verbose_files",
-                                  "get_verbose_files", "unset_verbose_files", "get_verbose"],
-            deprecation=17815)
-
-lazy_import("sage.misc.repr", ["coeff_repr", "repr_lincomb"],
-            deprecation=29892)
 
 lazy_import("sage.misc.timing", ["cputime", "GlobalCputime", "walltime"],
             deprecation=35816)
@@ -70,44 +61,6 @@ LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 #################################################################
 # File and directory utilities
 #################################################################
-
-
-def sage_makedirs(dirname, mode=0o777):
-    """
-    Python version of ``mkdir -p``: try to create a directory, and also
-    create all intermediate directories as necessary.  Succeed silently
-    if the directory already exists (unlike ``os.makedirs()``).
-    Raise other errors (like permission errors) normally.
-
-    This function is deprecated; use ``os.makedirs(..., exist_ok=True)``
-    instead.
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import sage_makedirs
-        sage: sage_makedirs(DOT_SAGE) # no output
-        doctest:warning...
-        DeprecationWarning: sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead
-        See https://github.com/sagemath/sage/issues/32987 for details.
-
-    The following fails because we are trying to create a directory in
-    place of an ordinary file::
-
-        sage: filename = tmp_filename()
-        sage: sage_makedirs(filename)
-        Traceback (most recent call last):
-        ...
-        FileExistsError: [Errno ...] File exists: ...
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32987,
-                'sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead')
-    try:
-        os.makedirs(dirname)
-    except OSError:
-        if not os.path.isdir(dirname):
-            raise
-
 
 # We create the DOT_SAGE directory (if it does not exist yet; note in particular
 # that it may already have been created by the bin/sage script) with
@@ -134,10 +87,10 @@ def try_read(obj, splitlines=False):
     INPUT:
 
     - ``obj`` -- typically a `file` or `io.BaseIO` object, but any other
-      object with a ``read()`` method is accepted.
+      object with a ``read()`` method is accepted
 
-    - ``splitlines`` -- `bool`, optional; if True, return a list of lines
-      instead of a string.
+    - ``splitlines`` -- boolean (default: ``False``); if ``True``, return a
+      list of lines instead of a string
 
     EXAMPLES::
 
@@ -216,79 +169,6 @@ def try_read(obj, splitlines=False):
     return data
 
 
-#################################################
-# Next we create the Sage temporary directory.
-#################################################
-
-
-@lazy_string
-def SAGE_TMP():
-    """
-    EXAMPLES::
-
-        sage: from sage.misc.misc import SAGE_TMP
-        sage: SAGE_TMP
-        doctest:warning...
-        DeprecationWarning: SAGE_TMP is deprecated; please use python's
-        "tempfile" module instead.
-        See https://github.com/sagemath/sage/issues/33213 for details.
-        l'.../temp/...'
-
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(33213, "SAGE_TMP is deprecated; please use python's \"tempfile\" module instead.")
-    d = os.path.join(DOT_SAGE, 'temp', HOSTNAME, str(os.getpid()))
-    os.makedirs(d, exist_ok=True)
-    return d
-
-
-@lazy_string
-def ECL_TMP():
-    """
-    Temporary directory that should be used by ECL interfaces launched from
-    Sage.
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import ECL_TMP
-        sage: ECL_TMP
-        doctest:warning...
-        DeprecationWarning: ECL_TMP is deprecated and is no longer used
-        by the ECL interface in sage
-        See https://github.com/sagemath/sage/issues/33213 for details.
-        ...
-
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(33213, "ECL_TMP is deprecated and is no longer used by the ECL interface in sage")
-    import atexit
-    import tempfile
-    d = tempfile.TemporaryDirectory()
-    result = os.path.join(d.name, 'ecl')
-    atexit.register(lambda: d.cleanup())
-    return result
-
-
-@lazy_string
-def SPYX_TMP():
-    r"""
-    EXAMPLES::
-
-        sage: from sage.misc.misc import SPYX_TMP
-        sage: SPYX_TMP
-        doctest:warning...
-        DeprecationWarning: SPYX_TMP is deprecated;
-        use sage.misc.temporary_file.spyx_tmp instead
-        See https://github.com/sagemath/sage/issues/33213 for details.
-        ...
-
-    """
-    from sage.misc.temporary_file import spyx_tmp
-    from sage.misc.superseded import deprecation
-    deprecation(33213, "SPYX_TMP is deprecated; use sage.misc.temporary_file.spyx_tmp instead")
-    return spyx_tmp()
-
-
 SAGE_DB = os.path.join(DOT_SAGE, 'db')
 os.makedirs(SAGE_DB, exist_ok=True)
 
@@ -299,41 +179,6 @@ except KeyError:
     pass
 
 
-def union(x, y=None):
-    """
-    Return the union of x and y, as a list. The resulting list need not
-    be sorted and can change from call to call.
-
-    INPUT:
-
-
-    -  ``x`` - iterable
-
-    -  ``y`` - iterable (may optionally omitted)
-
-
-    OUTPUT: list
-
-    EXAMPLES::
-
-        sage: answer = union([1,2,3,4], [5,6]); answer
-        doctest:...: DeprecationWarning: sage.misc.misc.union is deprecated...
-        See https://github.com/sagemath/sage/issues/32096 for details.
-        [1, 2, 3, 4, 5, 6]
-        sage: union([1,2,3,4,5,6], [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), set([5,6])) == answer
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32096, "sage.misc.misc.union is deprecated, use 'list(set(x).union(y))' or a more suitable replacement")
-    if y is None:
-        return list(set(x))
-    return list(set(x).union(y))
-
-
 def exactly_one_is_true(iterable):
     r"""
     Return whether exactly one element of ``iterable`` evaluates ``True``.
@@ -342,9 +187,7 @@ def exactly_one_is_true(iterable):
 
     - ``iterable`` -- an iterable object
 
-    OUTPUT:
-
-    A boolean.
+    OUTPUT: boolean
 
     .. NOTE::
 
@@ -402,9 +245,7 @@ def newton_method_sizes(N):
 
     INPUT:
 
-
-    -  ``N`` - positive integer
-
+    - ``N`` -- positive integer
 
     EXAMPLES::
 
@@ -441,16 +282,16 @@ def newton_method_sizes(N):
 
 def compose(f, g):
     r"""
-    Return the composition of one-variable functions: `f \circ g`
+    Return the composition of one-variable functions: `f \circ g`.
 
     See also :func:`nest()`
 
     INPUT:
-        - `f` -- a function of one variable
-        - `g` -- another function of one variable
 
-    OUTPUT:
-        A function, such that compose(f,g)(x) = f(g(x))
+    - ``f`` -- a function of one variable
+    - ``g`` -- another function of one variable
+
+    OUTPUT: a function, such that compose(f,g)(x) = f(g(x))
 
     EXAMPLES::
 
@@ -470,7 +311,6 @@ def compose(f, g):
         sage: _ = var('x')                                                              # needs sage.symbolic
         sage: compose(f, g)(x)                                                          # needs sage.symbolic
         f(g(x))
-
     """
     return lambda x: f(g(x))
 
@@ -482,12 +322,12 @@ def nest(f, n, x):
     See also :func:`compose()` and :func:`self_compose()`
 
     INPUT:
-        - `f` -- a function of one variable
-        - `n` -- a nonnegative integer
-        - `x` -- any input for `f`
 
-    OUTPUT:
-        `f(f(...f(x)...))`, where the composition occurs n times
+    - ``f`` -- a function of one variable
+    - ``n`` -- nonnegative integer
+    - ``x`` -- any input for `f`
+
+    OUTPUT: `f(f(...f(x)...))`, where the composition occurs n times
 
     EXAMPLES::
 
@@ -509,7 +349,6 @@ def nest(f, n, x):
         sage: _ = var('x')                                                              # needs sage.symbolic
         sage: nest(f, 0, x)                                                             # needs sage.symbolic
         x
-
     """
     from sage.rings.integer import Integer
     n = Integer(n)
@@ -528,7 +367,7 @@ def nest(f, n, x):
 
 class BackslashOperator:
     r"""
-    Implements Matlab-style backslash operator for solving systems::
+    Implement Matlab-style backslash operator for solving systems::
 
         A \ b
 
@@ -581,7 +420,7 @@ class BackslashOperator:
         r"""
         EXAMPLES::
 
-            sage: # needs sage.modules
+            sage: # needs scipy sage.modules
             sage: A = matrix(RDF, 5, 5, 2)
             sage: b = vector(RDF, 5, range(5))
             sage: v = A \ b
@@ -613,7 +452,7 @@ class BackslashOperator:
 #################################################################
 def is_iterator(it) -> bool:
     """
-    Tests if it is an iterator.
+    Test if it is an iterator.
 
     The mantra ``if hasattr(it, 'next')`` was used to tests if ``it`` is an
     iterator. This is not quite correct since ``it`` could have a ``next``
@@ -672,11 +511,9 @@ def random_sublist(X, s):
 
     INPUT:
 
+    - ``X`` -- list
 
-    -  ``X`` - list
-
-    -  ``s`` - floating point number between 0 and 1
-
+    - ``s`` -- floating point number between 0 and 1
 
     OUTPUT: list
 
@@ -731,12 +568,12 @@ def some_tuples(elements, repeat, bound, max_samples=None):
     INPUT:
 
     - ``elements`` -- an iterable
-    - ``repeat`` -- integer (default ``None``), the length of the tuples to be returned.
+    - ``repeat`` -- integer (default: ``None``); the length of the tuples to be returned.
       If ``None``, just returns entries from ``elements``.
     - ``bound`` -- the maximum number of tuples returned (ignored if ``max_samples`` given)
-    - ``max_samples`` -- non-negative integer (default ``None``).  If given,
+    - ``max_samples`` -- nonnegative integer (default: ``None``); if given,
       then a sample of the possible tuples will be returned,
-      instead of the first few in the standard order.
+      instead of the first few in the standard order
 
     OUTPUT:
 
@@ -816,8 +653,8 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
 
 def exists(S, P):
     """
-    If S contains an element x such that P(x) is True, this function
-    returns True and the element x. Otherwise it returns False and
+    If S contains an element x such that P(x) is ``True``, this function
+    returns ``True`` and the element x. Otherwise it returns ``False`` and
     None.
 
     Note that this function is NOT suitable to be used in an
@@ -828,20 +665,16 @@ def exists(S, P):
 
     INPUT:
 
+    - ``S`` -- object (that supports enumeration)
 
-    -  ``S`` - object (that supports enumeration)
-
-    -  ``P`` - function that returns True or False
-
+    - ``P`` -- function that returns ``True`` or ``False``
 
     OUTPUT:
 
+    - ``bool`` -- whether or not P is ``True`` for some element
+      x of S
 
-    -  ``bool`` - whether or not P is True for some element
-       x of S
-
-    -  ``object`` - x
-
+    - ``object`` -- x
 
     EXAMPLES: lambda functions are very useful when using the exists
     function::
@@ -868,8 +701,8 @@ def exists(S, P):
 
 def forall(S, P):
     """
-    If P(x) is true every x in S, return True and None. If there is
-    some element x in S such that P is not True, return False and x.
+    If `P(x)` is true every x in S, return ``True`` and ``None``. If there is
+    some element x in S such that P is not ``True``, return ``False`` and `x`.
 
     Note that this function is NOT suitable to be used in an
     if-statement or in any place where a boolean expression is
@@ -879,18 +712,16 @@ def forall(S, P):
 
     INPUT:
 
-    -  ``S`` - object (that supports enumeration)
+    - ``S`` -- object (that supports enumeration)
 
-    -  ``P`` - function that returns True or False
+    - ``P`` -- function that returns ``True`` or ``False``
 
     OUTPUT:
 
+    - ``bool`` -- whether or not P is ``True`` for all elements
+      of S
 
-    -  ``bool`` - whether or not P is True for all elements
-       of S
-
-    -  ``object`` - x
-
+    - ``object`` -- x
 
     EXAMPLES: lambda functions are very useful when using the forall
     function. As a toy example we test whether certain integers are
@@ -1083,9 +914,9 @@ def inject_variable(name, value, warn=True):
 
     INPUT:
 
-    - ``name``  -- a string
+    - ``name`` -- string
     - ``value`` -- anything
-    - ``warn`` -- a boolean (default: :obj:`False`)
+    - ``warn`` -- boolean (default: ``False``)
 
     EXAMPLES::
 
@@ -1133,7 +964,7 @@ def inject_variable(name, value, warn=True):
 
 def inject_variable_test(name, value, depth):
     """
-    A function for testing deep calls to inject_variable
+    A function for testing deep calls to ``inject_variable``.
 
     EXAMPLES::
 
@@ -1161,7 +992,7 @@ def inject_variable_test(name, value, depth):
 # from https://stackoverflow.com/questions/4103773/efficient-way-of-having-a-function-only-execute-once-in-a-loop
 def run_once(func):
     """
-    Runs a function (successfully) only once.
+    Run a function (successfully) only once.
 
     The running can be reset by setting the ``has_run`` attribute to False
 
@@ -1199,7 +1030,7 @@ def increase_recursion_limit(increment):
 
     INPUT:
 
-    - `increment`: increment to add to the current limit
+    - ``increment`` -- increment to add to the current limit
 
     EXAMPLES::
 

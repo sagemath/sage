@@ -34,36 +34,42 @@ jobs:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "1"
+      timeout: 14400
 
   stage-2:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2"
     needs: [stage-1]
+    if: ${{ success() || failure() }}
 
   stage-2-optional-0-o:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-0-o"
     needs: [stage-2]
+    if: ${{ success() || failure() }}
 
   stage-2-optional-p-z:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-p-z"
     needs: [stage-2-optional-0-o]
+    if: ${{ success() || failure() }}
 
   stage-2-experimental-0-o:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-0-o"
     needs: [stage-2-optional-p-z]
+    if: ${{ success() || failure() }}
 
   stage-2-experimental-p-z:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-experimental-p-z"
     needs: [stage-2-experimental-0-o]
+    if: ${{ success() || failure() }}
 
   dist:
 
@@ -85,11 +91,11 @@ jobs:
         run: |
           git config --global user.email "nobody@example.com"
           git config --global user.name "Sage GitHub CI"
-          SAGE_ROOT=. SAGE_SRC=./src src/bin/sage-update-version $(git describe --tags) || echo "(ignoring error)"
+          SAGE_ROOT=. SAGE_SRC=./src src/bin/sage-update-version $(cat src/VERSION.txt).dev0 || echo "(ignoring error)"
       - name: make dist
         run: |
           ./configure --enable-download-from-upstream-url && make dist
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: "dist/*.tar.gz"
           name: dist
@@ -103,7 +109,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        os: [ macos-11, macos-12 ]
+        os: [ macos-12, macos-13, macos-14 ]
         tox_system_factor: [macos-nobootstrap]
         tox_packages_factor: [minimal]
         xcode_version_factor: [default]
@@ -113,7 +119,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         if: "!contains(matrix.tox_system_factor, 'nobootstrap')"
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: .
           name: dist
@@ -124,7 +130,7 @@ jobs:
         if: contains(matrix.tox_system_factor, 'nobootstrap')
       - name: Move homebrew away
         run: |
-          (cd /usr/local && for a in bin etc include lib opt sbin share; do sudo mv $a $a-moved; done)
+          (cd $(brew --prefix) && for a in bin etc include lib opt sbin share; do sudo mv $a $a-moved; done)
       - name: Select Xcode version
         run: |
           if [ ${{ matrix.xcode_version_factor }} != default ]; then sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode_version_factor }}.app; fi
@@ -135,12 +141,13 @@ jobs:
         # We use a high parallelization on purpose in order to catch possible parallelization bugs in the build scripts.
         # For doctesting, we use a lower parallelization to avoid timeouts.
         run: |
-          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=4 $TARGETS
+          (sleep 20000; pkill make) &
+          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=6 $TARGETS
       - name: Prepare logs artifact
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
         if: always()
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Super modules
 """
@@ -23,6 +24,7 @@ axiom_whitelist = frozenset(["Facade", "Finite", "Infinite",
                              "AdditiveInverse", "AdditiveUnital",
                              "NoZeroDivisors", "Distributive"])
 
+
 class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_ring):
     @classmethod
     def default_super_categories(cls, category, *args):
@@ -36,9 +38,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
         - ``category`` -- a category `Cat`
         - ``*args`` -- further arguments for the functor
 
-        OUTPUT:
-
-        A join category.
+        OUTPUT: a join category
 
         This implements the property that subcategories constructed by
         the set of whitelisted axioms is a subcategory.
@@ -46,7 +46,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
         EXAMPLES::
 
             sage: HopfAlgebras(ZZ).WithBasis().FiniteDimensional().Super()  # indirect doctest
-            Category of finite dimensional super hopf algebras with basis over Integer Ring
+            Category of finite dimensional super Hopf algebras with basis over Integer Ring
         """
         axioms = axiom_whitelist.intersection(category.axioms())
         C = super().default_super_categories(category, *args)
@@ -82,6 +82,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
             Category of super algebras with basis over Rational Field
         """
         return "super {}".format(self.base_category()._repr_object_names())
+
 
 class SuperModules(SuperModulesCategory):
     r"""
@@ -131,7 +132,7 @@ class SuperModules(SuperModulesCategory):
 
     def extra_super_categories(self):
         r"""
-        Adds :class:`VectorSpaces` to the super categories of ``self`` if
+        Add :class:`VectorSpaces` to the super categories of ``self`` if
         the base ring is a field.
 
         EXAMPLES::

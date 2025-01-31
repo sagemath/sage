@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Load Python, Sage, Cython, Fortran and Magma files in Sage
 """
@@ -10,8 +11,8 @@ Load Python, Sage, Cython, Fortran and Magma files in Sage
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-import os
 import base64
+from pathlib import Path
 
 from sage.cpython.string import str_to_bytes, bytes_to_str, FS_ENCODING
 
@@ -28,11 +29,9 @@ def is_loadable_filename(filename):
 
     INPUT:
 
-    - ``filename`` -- a string
+    - ``filename`` -- string or :class:`Path` object
 
-    OUTPUT:
-
-    - a boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -46,8 +45,12 @@ def is_loadable_filename(filename):
         True
         sage: sage.repl.load.is_loadable_filename('foo.m')
         True
+
+        sage: from pathlib import Path
+        sage: sage.repl.load.is_loadable_filename(Path('foo.py'))
+        True
     """
-    ext = os.path.splitext(filename)[1].lower()
+    ext = Path(filename).suffix.lower()
     return ext in ('.py', '.pyx', '.sage', '.spyx', '.f', '.f90', '.m')
 
 
@@ -65,10 +68,10 @@ def load_cython(name):
       module.
     """
     from sage.misc.cython import cython
-    mod, dir = cython(name, compile_message=True, use_cache=True)
+    mod, dir = cython(str(name), compile_message=True, use_cache=True)
     import sys
     sys.path.append(dir)
-    return 'from {} import *'.format(mod)
+    return f'from {mod} import *'
 
 
 def load(filename, globals, attach=False):
@@ -84,23 +87,33 @@ def load(filename, globals, attach=False):
 
             from t import *
 
+    .. NOTE::
+
+        The global ``load`` function is :func:`sage.misc.persist.load`,
+        which delegates to this function for code file formats.
+
+        ``%runfile`` magic can also be used, see
+        :meth:`~sage.repl.ipython_extension.SageMagics.runfile`.
+
     INPUT:
 
-    - ``filename`` -- a string denoting a filename or URL.
+    - ``filename`` -- string (denoting a filename or URL) or a :class:`Path` object
 
-    - ``globals`` -- a string:object dictionary; the context in which
-      to execute the file contents.
+    - ``globals`` -- string:object dictionary; the context in which
+      to execute the file contents
 
-    - ``attach`` -- a boolean (default: False); whether to add the
-      file to the list of attached files.
+    - ``attach`` -- boolean (default: ``False``); whether to add the
+      file to the list of attached files
 
-    Loading an executable Sage script from the command prompt will run whatever
-    code is inside an
+    Loading an executable Sage script from the :ref:`command line <section-command-line>`
+    will run whatever code is inside an
+
+    ::
 
         if __name__ == "__main__":
 
     section, as the condition on ``__name__`` will hold true (code run from the
-    command prompt is considered to be running in the ``__main__`` module.)
+    command line is considered to be running in the ``__main__`` module.)
 
     EXAMPLES:
 
@@ -138,10 +151,10 @@ def load(filename, globals, attach=False):
         sage: z
         -7
 
-    If the file is not a Cython, Python, or Sage file, a ``ValueError``
+    If the file is not a Cython, Python, or Sage file, a :exc:`ValueError`
     is raised::
 
-        sage: sage.repl.load.load(tmp_filename(ext=".foo"), globals())
+        sage: sage.repl.load.load(tmp_filename(ext='.foo'), globals())
         Traceback (most recent call last):
         ...
         ValueError: unknown file extension '.foo' for load or attach (supported extensions: .py, .pyx, .sage, .spyx, .f, .f90, .m)
@@ -156,7 +169,8 @@ def load(filename, globals, attach=False):
 
         sage: sage.repl.load.load('https://raw.githubusercontent.com/sagemath/sage-patchbot/3.0.0/sage_patchbot/util.py', globals())  # optional - internet
 
-    We attach a file::
+    We attach a file (note that :func:`~sage.repl.attach.attach`
+    is equivalent, but available at the global scope by default)::
 
         sage: t = tmp_filename(ext='.py')
         sage: with open(t, 'w') as f:
@@ -180,7 +194,7 @@ def load(filename, globals, attach=False):
         sage: import tempfile
         sage: sage.repl.attach.reset(); reset_load_attach_path()
         sage: load_attach_path()
-        ['.']
+        [PosixPath('.')]
         sage: with tempfile.TemporaryDirectory() as t_dir:
         ....:     fname = 'test.py'
         ....:     fullpath = os.path.join(t_dir, fname)
@@ -224,31 +238,30 @@ def load(filename, globals, attach=False):
         # rest of this functions operate on filename as a str
         filename = bytes_to_str(filename, FS_ENCODING, 'surrogateescape')
 
-    filename = os.path.expanduser(filename)
-
-    if filename.lower().startswith(('http://', 'https://')):
+    if isinstance(filename, str) and filename.lower().startswith(('http://', 'https://')):
         if attach:
             # But see https://en.wikipedia.org/wiki/HTTP_ETag for how
             # we will do this.
-            # http://www.diveintopython.net/http_web_services/etags.html
+            # https://diveintopython3.net/http-web-services.html#etags
             raise NotImplementedError("you cannot attach a URL")
         from sage.misc.remote_file import get_remote_file
         filename = get_remote_file(filename, verbose=False)
 
+    filename = Path(filename).expanduser()
+
     from sage.repl.attach import load_attach_path
     for path in load_attach_path():
-        fpath = os.path.join(path, filename)
-        fpath = os.path.expanduser(fpath)
-        if os.path.isfile(fpath):
+        fpath = (path / filename).expanduser()
+        if fpath.is_file():
             break
     else:
-        raise IOError('did not find file %r to load or attach' % filename)
+        raise OSError('did not find file %r to load or attach' % str(filename))
 
-    ext = os.path.splitext(fpath)[1].lower()
+    ext = fpath.suffix.lower()
     if ext == '.py':
         if attach:
             add_attached_file(fpath)
-        with open(fpath) as f:
+        with fpath.open() as f:
             code = compile(f.read(), fpath, 'exec')
             exec(code, globals)
     elif ext == '.sage':
@@ -262,22 +275,23 @@ def load(filename, globals, attach=False):
             # See Issue 11812.
             if attach:
                 add_attached_file(fpath)
-            with open(preparse_file_named(fpath)) as f:
-                code = compile(f.read(), preparse_file_named(fpath), 'exec')
+            parsed_file = preparse_file_named(fpath)
+            with parsed_file.open() as f:
+                code = compile(f.read(), parsed_file, 'exec')
                 exec(code, globals)
         else:
             # Preparse in memory only for speed.
             if attach:
                 add_attached_file(fpath)
-            with open(fpath) as f:
+            with fpath.open() as f:
                 exec(preparse_file(f.read()) + "\n", globals)
-    elif ext == '.spyx' or ext == '.pyx':
+    elif ext in ['.spyx', '.pyx']:
         if attach:
             add_attached_file(fpath)
         exec(load_cython(fpath), globals)
-    elif ext == '.f' or ext == '.f90':
+    elif ext in ['.f', '.f90']:
         from sage.misc.inline_fortran import fortran
-        with open(fpath) as f:
+        with fpath.open() as f:
             fortran(f.read(), globals)
     elif ext == '.m':
         # Assume magma for now, though maybe .m is used by maple and
@@ -296,15 +310,13 @@ def load_wrap(filename, attach=False):
 
     INPUT:
 
-    - ``filename`` - a string; the argument to the load or attach
-      command
+    - ``filename`` -- string or :class:`Path` object; the argument
+      to the load or attach command
 
-    - ``attach`` - a boolean (default: False); whether to attach
+    - ``attach`` -- boolean (default: ``False``); whether to attach
       ``filename``, instead of loading it
 
-    OUTPUT:
-
-    - a string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -316,6 +328,8 @@ def load_wrap(filename, attach=False):
         sage: m == b'foo.sage'
         True
     """
+    if isinstance(filename, Path):
+        filename = str(filename)
     # Note: In Python 3, b64encode only accepts bytes, and returns bytes.
     b64 = base64.b64encode(str_to_bytes(filename, FS_ENCODING,
                                         "surrogateescape"))

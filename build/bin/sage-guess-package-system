@@ -11,6 +11,8 @@ if conda --version > /dev/null 2>&1; then
 fi
 if brew --version > /dev/null 2>&1; then
     echo homebrew
+elif port version > /dev/null 2>&1; then
+    echo macports
 elif emerge --version > /dev/null 2>&1; then
     echo gentoo
 elif apt-get --version > /dev/null 2>&1; then
@@ -30,12 +32,5 @@ elif xbps-install --version > /dev/null 2>&1; then
 elif pkg -v > /dev/null 2>&1; then
     echo freebsd
 else
-    case `uname -s` in
-        CYGWIN*)
-            echo cygwin
-            ;;
-        *)
-            echo unknown
-            ;;
-    esac
+    echo unknown
 fi

@@ -60,31 +60,32 @@ For example,
 
 ::
 
-    sage: octave("airy(3,2)")         # optional - octave
+    sage: # optional - octave
+    sage: octave("airy(3,2)")
     4.10068
-    sage: octave("beta(2,2)")         # optional - octave
+    sage: octave("beta(2,2)")
     0.166667
-    sage: octave("betainc(0.2,2,2)")  # optional - octave
+    sage: octave("betainc(0.2,2,2)")
     0.104
-    sage: octave("besselh(0,2)")      # optional - octave
+    sage: octave("besselh(0,2)")
     (0.223891,0.510376)
-    sage: octave("besselh(0,1)")      # optional - octave
+    sage: octave("besselh(0,1)")
     (0.765198,0.088257)
-    sage: octave("besseli(1,2)")      # optional - octave
+    sage: octave("besseli(1,2)")
     1.59064
-    sage: octave("besselj(1,2)")      # optional - octave
+    sage: octave("besselj(1,2)")
     0.576725
-    sage: octave("besselk(1,2)")      # optional - octave
+    sage: octave("besselk(1,2)")
     0.139866
-    sage: octave("erf(0)")            # optional - octave
+    sage: octave("erf(0)")
     0
-    sage: octave("erf(1)")            # optional - octave
+    sage: octave("erf(1)")
     0.842701
-    sage: octave("erfinv(0.842)")     # optional - octave
+    sage: octave("erfinv(0.842)")
     0.998315
-    sage: octave("gamma(1.5)")        # optional - octave
+    sage: octave("gamma(1.5)")
     0.886227
-    sage: octave("gammainc(1.5,1)")   # optional - octave
+    sage: octave("gammainc(1.5,1)")
     0.77687
 
 Tutorial
@@ -92,37 +93,39 @@ Tutorial
 
 EXAMPLES::
 
-    sage: octave('4+10')              # optional - octave
+    sage: # optional - octave
+    sage: octave('4+10')
     14
-    sage: octave('date')              # optional - octave; random output
+    sage: octave('date')
     18-Oct-2007
-    sage: octave('5*10 + 6')          # optional - octave
+    sage: octave('5*10 + 6')
     56
-    sage: octave('(6+6)/3')           # optional - octave
+    sage: octave('(6+6)/3')
     4
-    sage: octave('9')^2               # optional - octave
+    sage: octave('9')^2
     81
-    sage: a = octave(10); b = octave(20); c = octave(30)    # optional - octave
-    sage: avg = (a+b+c)/3             # optional - octave
-    sage: avg                         # optional - octave
+    sage: a = octave(10); b = octave(20); c = octave(30)
+    sage: avg = (a+b+c)/3
+    sage: avg
     20
-    sage: parent(avg)                 # optional - octave
+    sage: parent(avg)
     Octave
 
 ::
 
-    sage: my_scalar = octave('3.1415')       # optional - octave
-    sage: my_scalar                          # optional - octave
+    sage: # optional - octave
+    sage: my_scalar = octave('3.1415')
+    sage: my_scalar
     3.1415
-    sage: my_vector1 = octave('[1,5,7]')     # optional - octave
-    sage: my_vector1                         # optional - octave
+    sage: my_vector1 = octave('[1,5,7]')
+    sage: my_vector1
     1     5     7
-    sage: my_vector2 = octave('[1;5;7]')     # optional - octave
-    sage: my_vector2                         # optional - octave
+    sage: my_vector2 = octave('[1;5;7]')
+    sage: my_vector2
     1
     5
     7
-    sage: my_vector1 * my_vector2            # optional - octave
+    sage: my_vector1 * my_vector2
     75
 """
 
@@ -170,7 +173,7 @@ class Octave(Expect):
 
     TESTS:
 
-    We check that the interface can handle large inputs (see :trac:`940`)::
+    We check that the interface can handle large inputs (see :issue:`940`)::
 
         sage: t = '"{}"'.format(10^10000)
         sage: a = octave(t)                     # optional - octave
@@ -267,7 +270,7 @@ class Octave(Expect):
         return """
         You must get the program "octave" in order to use Octave
         from Sage.   You can read all about Octave at
-                http://www.gnu.org/software/octave/
+                https://www.gnu.org/software/octave/
 
         LINUX:
            Do apt-get install octave as root on your machine (Ubuntu/Debian).
@@ -300,12 +303,12 @@ class Octave(Expect):
             E = self._expect
             # debug
             # self._synchronize(cmd='1+%s\n')
-            verbose("in = '%s'" % line,level=3)
+            verbose("in = '%s'" % line, level=3)
             E.sendline(line)
             E.expect(self._prompt)
             out = bytes_to_str(E.before)
             # debug
-            verbose("out = '%s'" % out,level=3)
+            verbose("out = '%s'" % out, level=3)
         except EOF:
             if self._quit_string() in line:
                 return ''
@@ -326,7 +329,7 @@ class Octave(Expect):
             try:
                 self._expect.close(force=1)
             except pexpect.ExceptionPexpect as msg:
-                raise RuntimeError( "THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
+                raise RuntimeError("THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
             self._start()
             raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)" % self)
         else:
@@ -348,7 +351,6 @@ class Octave(Expect):
         if self._expect is not None:
             if verbose:
                 print("Exiting spawned %s process." % self)
-        return
 
     def _start(self):
         """
@@ -356,11 +358,12 @@ class Octave(Expect):
 
         EXAMPLES::
 
-            sage: o = Octave()    # optional - octave
-            sage: o.is_running()  # optional - octave
+            sage: # optional - octave
+            sage: o = Octave()
+            sage: o.is_running()
             False
-            sage: o._start()      # optional - octave
-            sage: o.is_running()  # optional - octave
+            sage: o._start()
+            sage: o.is_running()
             True
         """
         Expect._start(self)
@@ -482,7 +485,7 @@ class Octave(Expect):
 
     def solve_linear_system(self, A, b):
         r"""
-        Use octave to compute a solution x to A\*x = b, as a list.
+        Use Octave to compute a solution x to ``A*x = b``, as a list.
 
         INPUT:
 
@@ -490,7 +493,7 @@ class Octave(Expect):
 
         - ``b`` -- m-vector b entries in `\QQ` or `\RR` (resp)
 
-        OUTPUT: A list x (if it exists) which solves M\*x = b
+        OUTPUT: list x (if it exists) which solves ``M*x = b``
 
         EXAMPLES::
 
@@ -510,16 +513,16 @@ class Octave(Expect):
             raise ValueError("dimensions of A and b must be compatible")
         from sage.matrix.matrix_space import MatrixSpace
         from sage.rings.rational_field import QQ
-        MS = MatrixSpace(QQ,m,1)
-        b = MS(list(b)) # converted b to a "column vector"
+        MS = MatrixSpace(QQ, m, 1)
+        b = MS(list(b))  # converted b to a "column vector"
         sA = self.sage2octave_matrix_string(A)
         sb = self.sage2octave_matrix_string(b)
-        self.eval("a = " + sA )
-        self.eval("b = " + sb )
+        self.eval("a = " + sA)
+        self.eval("b = " + sb)
         soln = octave.eval(r"c = a \ b")
-        soln = soln.replace("\n\n ","[")
+        soln = soln.replace("\n\n ", "[")
         soln = soln.rstrip() + "]"
-        soln = soln.replace("\n",",")
+        soln = soln.replace("\n", ",")
         sol = soln[3:]
         return eval(sol)
 
@@ -527,9 +530,11 @@ class Octave(Expect):
         """
         Return an octave matrix from a Sage matrix.
 
-        INPUT: A Sage matrix with entries in the rationals or reals.
+        INPUT:
 
-        OUTPUT: A string that evaluates to an Octave matrix.
+        - ``A`` - Sage matrix with entries in the rationals or reals
+
+        OUTPUT: string that evaluates to an Octave matrix
 
         EXAMPLES::
 
@@ -542,7 +547,7 @@ class Octave(Expect):
 
         - David Joyner and William Stein
         """
-        return str(A.rows()).replace('), (', '; ').replace('(', '').replace(')','')
+        return str(A.rows()).replace('), (', '; ').replace('(', '').replace(')', '')
 
     def de_system_plot(self, f, ics, trange):
         r"""
@@ -551,16 +556,13 @@ class Octave(Expect):
 
         INPUT:
 
+        - ``f`` -- a pair of strings representing the
+          differential equations; the independent variable must be called x
+          and the dependent variable must be called y
 
-        -  ``f`` - a pair of strings representing the
-           differential equations; The independent variable must be called x
-           and the dependent variable must be called y.
+        - ``ics`` -- a pair [x0,y0] such that x(t0) = x0, y(t0) = y0
 
-        -  ``ics`` - a pair [x0,y0] such that x(t0) = x0, y(t0)
-           = y0
-
-        -  ``trange`` - a pair [t0,t1]
-
+        - ``trange`` -- a pair [t0,t1]
 
         OUTPUT: a gnuplot window appears
 
@@ -576,8 +578,8 @@ class Octave(Expect):
 
                        x' = x+y, x(0) = 1;\qquad y' = x-y, y(0) = -1,                     \quad\text{for}\quad 0 < t < 2.
         """
-        eqn1 = f[0].replace('x','x(1)').replace('y','x(2)')
-        eqn2 = f[1].replace('x','x(1)').replace('y','x(2)')
+        eqn1 = f[0].replace('x', 'x(1)').replace('y', 'x(2)')
+        eqn2 = f[1].replace('x', 'x(1)').replace('y', 'x(2)')
         fcn = "function xdot = f(x,t) xdot(1) = %s; xdot(2) = %s; endfunction" % (eqn1, eqn2)
         self.eval(fcn)
         x0_eqn = "x0 = [%s; %s]" % (ics[0], ics[1])
@@ -600,9 +602,10 @@ class Octave(Expect):
 
 octave_functions = set()
 
+
 def to_complex(octave_string, R):
     r"""
-    Helper function to convert octave complex number
+    Helper function to convert octave complex number.
 
     TESTS::
 
@@ -647,13 +650,14 @@ class OctaveElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: bool(octave('0'))                 # optional - octave
+            sage: # optional - octave
+            sage: bool(octave('0'))
             False
-            sage: bool(octave('[]'))                # optional - octave
+            sage: bool(octave('[]'))
             False
-            sage: bool(octave('[0,0]'))             # optional - octave
+            sage: bool(octave('[0,0]'))
             False
-            sage: bool(octave('[0,0,0;0,0,0]'))     # optional - octave
+            sage: bool(octave('[0,0,0;0,0,0]'))
             False
 
             sage: bool(octave('0.1'))               # optional - octave
@@ -685,12 +689,13 @@ class OctaveElement(ExpectElement):
             sage: _.base_ring()                 # optional - octave
             Complex Double Field
 
-            sage: A = octave('[1,2;3,4]')       # optional - octave
-            sage: matrix(ZZ, A)                 # optional - octave
+            sage: # optional - octave
+            sage: A = octave('[1,2;3,4]')
+            sage: matrix(ZZ, A)
             [1 2]
             [3 4]
-            sage: A = octave('[1,2;3,4.5]')     # optional - octave
-            sage: matrix(RR, A)                 # optional - octave
+            sage: A = octave('[1,2;3,4.5]')
+            sage: matrix(RR, A)
             [1.00000000000000 2.00000000000000]
             [3.00000000000000 4.50000000000000]
         """
@@ -705,7 +710,7 @@ class OctaveElement(ExpectElement):
         ncols = len(w[0])
 
         if self.iscomplex():
-            w = [[to_complex(x,R) for x in row] for row in w]
+            w = [[to_complex(x, R) for x in row] for row in w]
 
         from sage.matrix.matrix_space import MatrixSpace
         return MatrixSpace(R, nrows, ncols)(w)
@@ -716,14 +721,15 @@ class OctaveElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: A = octave('[1,2,3,4]')       # optional - octave
-            sage: vector(ZZ, A)                 # optional - octave
+            sage: # optional - octave
+            sage: A = octave('[1,2,3,4]')
+            sage: vector(ZZ, A)
             (1, 2, 3, 4)
-            sage: A = octave('[1,2.3,4.5]')     # optional - octave
-            sage: vector(A)                     # optional - octave
+            sage: A = octave('[1,2.3,4.5]')
+            sage: vector(A)
             (1.0, 2.3, 4.5)
-            sage: A = octave('[1,I]')           # optional - octave
-            sage: vector(A)                     # optional - octave
+            sage: A = octave('[1,I]')
+            sage: vector(A)
             (1.0, 1.0*I)
         """
         from sage.modules.free_module import FreeModule
@@ -780,23 +786,24 @@ class OctaveElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: A = octave('2833')           # optional - octave
-            sage: A.sage()                     # optional - octave
+            sage: # optional - octave
+            sage: A = octave('2833')
+            sage: A.sage()
             2833.0
-            sage: B = sqrt(A)                  # optional - octave
-            sage: B.sage()                     # optional - octave
+            sage: B = sqrt(A)
+            sage: B.sage()
             53.2259
-            sage: C = sqrt(-A)                 # optional - octave
-            sage: C.sage()                     # optional - octave
+            sage: C = sqrt(-A)
+            sage: C.sage()
             53.2259*I
-            sage: A = octave('[1,2,3,4]')      # optional - octave
-            sage: A.sage()                     # optional - octave
+            sage: A = octave('[1,2,3,4]')
+            sage: A.sage()
             (1.0, 2.0, 3.0, 4.0)
-            sage: A = octave('[1,2.3,4.5]')    # optional - octave
-            sage: A.sage()                     # optional - octave
+            sage: A = octave('[1,2.3,4.5]')
+            sage: A.sage()
             (1.0, 2.3, 4.5)
-            sage: A = octave('[1,2.3+I,4.5]')  # optional - octave
-            sage: A.sage()                     # optional - octave
+            sage: A = octave('[1,2.3+I,4.5]')
+            sage: A.sage()
             (1.0, 2.3 + 1.0*I, 4.5)
         """
         if self.isscalar():
@@ -811,6 +818,7 @@ class OctaveElement(ExpectElement):
 
 # An instance
 octave = Octave()
+
 
 def reduce_load_Octave():
     """

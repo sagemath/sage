@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Sage categories quickref
 
@@ -27,131 +28,133 @@ Module layout:
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
-from . import primer
+from sage.categories import primer
 
 from sage.misc.lazy_import import lazy_import
 
-from .all__sagemath_objects import *
+from sage.categories.all__sagemath_objects import *
 
-from .basic import *
+from sage.categories.basic import *
 
-from .chain_complexes import ChainComplexes, HomologyFunctor
+from sage.categories.chain_complexes import ChainComplexes, HomologyFunctor
 
-from .simplicial_complexes import SimplicialComplexes
+from sage.categories.simplicial_complexes import SimplicialComplexes
 
-from .tensor import tensor
-from .signed_tensor import tensor_signed
+from sage.categories.tensor import tensor
+from sage.categories.signed_tensor import tensor_signed
 
-from .g_sets import GSets
-from .pointed_sets import PointedSets
+from sage.categories.g_sets import GSets
+from sage.categories.pointed_sets import PointedSets
 
-from .sets_with_grading import SetsWithGrading
+from sage.categories.sets_with_grading import SetsWithGrading
 
-from .groupoid import Groupoid
-from .permutation_groups import PermutationGroups
+from sage.categories.groupoid import Groupoid
+from sage.categories.permutation_groups import PermutationGroups
 
 # enumerated sets
-from .finite_sets import FiniteSets
-from .enumerated_sets import EnumeratedSets
-from .finite_enumerated_sets import FiniteEnumeratedSets
-from .infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.finite_sets import FiniteSets
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 
 # posets
-from .posets import Posets
-from .finite_posets import FinitePosets
-from .lattice_posets import LatticePosets
-from .finite_lattice_posets import FiniteLatticePosets
+from sage.categories.posets import Posets
+from sage.categories.finite_posets import FinitePosets
+from sage.categories.lattice_posets import LatticePosets
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
 
 # finite groups/...
-from .finite_semigroups import FiniteSemigroups
-from .finite_monoids import FiniteMonoids
-from .finite_groups import FiniteGroups
-from .finite_permutation_groups import FinitePermutationGroups
+from sage.categories.finite_semigroups import FiniteSemigroups
+from sage.categories.finite_monoids import FiniteMonoids
+from sage.categories.finite_groups import FiniteGroups
+from sage.categories.finite_permutation_groups import FinitePermutationGroups
 
 # fields
-from .number_fields import NumberFields
-from .function_fields import FunctionFields
+from sage.categories.number_fields import NumberFields
+from sage.categories.function_fields import FunctionFields
 
 # modules
-from .left_modules import LeftModules
-from .right_modules import RightModules
-from .bimodules import Bimodules
+from sage.categories.left_modules import LeftModules
+from sage.categories.right_modules import RightModules
+from sage.categories.bimodules import Bimodules
 
-from .modules import Modules
+from sage.categories.modules import Modules
 RingModules = Modules
-from .vector_spaces import VectorSpaces
+from sage.categories.vector_spaces import VectorSpaces
 
-# (hopf) algebra structures
-from .algebras import Algebras
-from .commutative_algebras import CommutativeAlgebras
-from .coalgebras import Coalgebras
-from .bialgebras import Bialgebras
-from .hopf_algebras import HopfAlgebras
-from .lie_algebras import LieAlgebras
+# (Hopf) algebra structures
+from sage.categories.algebras import Algebras
+from sage.categories.commutative_algebras import CommutativeAlgebras
+from sage.categories.coalgebras import Coalgebras
+from sage.categories.bialgebras import Bialgebras
+from sage.categories.hopf_algebras import HopfAlgebras
+from sage.categories.lie_algebras import LieAlgebras
 
 # specific algebras
-from .monoid_algebras import MonoidAlgebras
-from .group_algebras import GroupAlgebras
-from .matrix_algebras import MatrixAlgebras
+from sage.categories.monoid_algebras import MonoidAlgebras
+from sage.categories.group_algebras import GroupAlgebras
+from sage.categories.matrix_algebras import MatrixAlgebras
 
 # ideals
-from .ring_ideals import RingIdeals
+from sage.categories.ring_ideals import RingIdeals
 Ideals = RingIdeals
-from .commutative_ring_ideals import CommutativeRingIdeals
-from .algebra_modules import AlgebraModules
-from .algebra_ideals import AlgebraIdeals
-from .commutative_algebra_ideals import CommutativeAlgebraIdeals
+from sage.categories.commutative_ring_ideals import CommutativeRingIdeals
+from sage.categories.algebra_modules import AlgebraModules
+from sage.categories.algebra_ideals import AlgebraIdeals
+from sage.categories.commutative_algebra_ideals import CommutativeAlgebraIdeals
 
 # schemes and varieties
-from .modular_abelian_varieties import ModularAbelianVarieties
-from .schemes import Schemes
+from sage.categories.modular_abelian_varieties import ModularAbelianVarieties
+from sage.categories.schemes import Schemes, AbelianVarieties, Jacobians
 
 # * with basis
-from .modules_with_basis import ModulesWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
 FreeModules = ModulesWithBasis
-from .hecke_modules            import HeckeModules
-from .algebras_with_basis      import AlgebrasWithBasis
-from .coalgebras_with_basis    import CoalgebrasWithBasis
-from .bialgebras_with_basis    import BialgebrasWithBasis
-from .hopf_algebras_with_basis import HopfAlgebrasWithBasis
+from sage.categories.hecke_modules import HeckeModules
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.coalgebras_with_basis import CoalgebrasWithBasis
+from sage.categories.bialgebras_with_basis import BialgebrasWithBasis
+from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 
 # finite dimensional * with basis
-from .finite_dimensional_modules_with_basis       import FiniteDimensionalModulesWithBasis
-from .finite_dimensional_algebras_with_basis      import FiniteDimensionalAlgebrasWithBasis
-from .finite_dimensional_coalgebras_with_basis    import FiniteDimensionalCoalgebrasWithBasis
-from .finite_dimensional_bialgebras_with_basis    import FiniteDimensionalBialgebrasWithBasis
-from .finite_dimensional_hopf_algebras_with_basis import FiniteDimensionalHopfAlgebrasWithBasis
+from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
+from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
+from sage.categories.finite_dimensional_coalgebras_with_basis import FiniteDimensionalCoalgebrasWithBasis
+from sage.categories.finite_dimensional_bialgebras_with_basis import FiniteDimensionalBialgebrasWithBasis
+from sage.categories.finite_dimensional_hopf_algebras_with_basis import FiniteDimensionalHopfAlgebrasWithBasis
 
 # graded *
-from .graded_modules       import GradedModules
-from .graded_algebras      import GradedAlgebras
-from .graded_coalgebras    import GradedCoalgebras
-from .graded_bialgebras    import GradedBialgebras
-from .graded_hopf_algebras import GradedHopfAlgebras
+from sage.categories.graded_modules import GradedModules
+from sage.categories.graded_algebras import GradedAlgebras
+from sage.categories.graded_coalgebras import GradedCoalgebras
+from sage.categories.graded_bialgebras import GradedBialgebras
+from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 
 # graded * with basis
-from .graded_modules_with_basis       import GradedModulesWithBasis
-from .graded_algebras_with_basis      import GradedAlgebrasWithBasis
-from .graded_coalgebras_with_basis    import GradedCoalgebrasWithBasis
-from .graded_bialgebras_with_basis    import GradedBialgebrasWithBasis
-from .graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
+from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+from sage.categories.graded_coalgebras_with_basis import GradedCoalgebrasWithBasis
+from sage.categories.graded_bialgebras_with_basis import GradedBialgebrasWithBasis
+from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
 
 # Coxeter groups
-from .coxeter_groups import CoxeterGroups
+from sage.categories.coxeter_groups import CoxeterGroups
 lazy_import('sage.categories.finite_coxeter_groups', 'FiniteCoxeterGroups')
-from .weyl_groups import WeylGroups
-from .finite_weyl_groups import FiniteWeylGroups
-from .affine_weyl_groups import AffineWeylGroups
+from sage.categories.weyl_groups import WeylGroups
+from sage.categories.finite_weyl_groups import FiniteWeylGroups
+from sage.categories.affine_weyl_groups import AffineWeylGroups
 
 # crystal bases
-from .crystals import Crystals
-from .highest_weight_crystals import HighestWeightCrystals
-from .regular_crystals import RegularCrystals
-from .finite_crystals import FiniteCrystals
-from .classical_crystals import ClassicalCrystals
+from sage.categories.crystals import Crystals
+from sage.categories.highest_weight_crystals import HighestWeightCrystals
+from sage.categories.regular_crystals import RegularCrystals
+from sage.categories.finite_crystals import FiniteCrystals
+from sage.categories.classical_crystals import ClassicalCrystals
 
 # polyhedra
 lazy_import('sage.categories.polyhedra', 'PolyhedralSets')
 
 # lie conformal algebras
 lazy_import('sage.categories.lie_conformal_algebras', 'LieConformalAlgebras')
+del lazy_import
+del install_doc

@@ -95,6 +95,7 @@ def _make_integral_poly(exact_modulus, p, prec):
     except TypeError:
         return exact_modulus.change_ring(Zmod(p**prec)).change_ring(ZZ)
 
+
 class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCappedRelativeRingGeneric):
     """
     TESTS::
@@ -117,7 +118,7 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -153,6 +154,7 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
             self.register_coercion(pAdicCoercion_ZZ_CR(self))
             self.register_conversion(pAdicConvert_QQ_CR(self))
 
+
 class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCappedRelativeFieldGeneric):
     """
     TESTS::
@@ -175,7 +177,7 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -261,7 +263,7 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -298,12 +300,13 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
             self.register_coercion(pAdicCoercion_ZZ_CA(self))
             self.register_conversion(pAdicConvert_QQ_CA(self))
 
+
 class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModRingGeneric):
     """
     TESTS::
 
         sage: R.<a> = ZqFM(27,1000)                                                     # needs sage.libs.flint
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4) # long time                 # needs sage.libs.flint
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4)     # long time             # needs sage.libs.flint
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
         """
@@ -320,7 +323,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -360,6 +363,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
     #        return Morphism_ZpFM_UnrFM(S, self)
     #    return None
 
+
 class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloatingPointRingGeneric):
     """
     TESTS::
@@ -382,7 +386,7 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -397,11 +401,10 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
 
         TESTS:
 
-        Check that :trac:`23228` has been resolved::
+        Check that :issue:`23228` has been resolved::
 
             sage: a % R.prime()                                                         # needs sage.libs.flint
             a
-
         """
         self._shift_seed = None
         self._exact_modulus = exact_modulus
@@ -439,7 +442,7 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -485,6 +488,7 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
 
         return super()._coerce_map_from_(R)
 
+
 class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCappedRelativeRingGeneric):
     """
     TESTS::
@@ -508,7 +512,7 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -540,6 +544,7 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
         self._implementation = implementation
         EisensteinExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicZZpXCRElement)
 
+
 class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCappedRelativeFieldGeneric):
     """
     TESTS::
@@ -563,7 +568,7 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -596,6 +601,7 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
         self._implementation = implementation
         EisensteinExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicZZpXCRElement)
 
+
 class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCappedAbsoluteRingGeneric):
     """
     TESTS::
@@ -619,7 +625,7 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 
@@ -651,6 +657,7 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
         self._implementation = implementation
         EisensteinExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicZZpXCAElement)
 
+
 class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModRingGeneric):
     """
     TESTS::
@@ -674,7 +681,7 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
 
         - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- a dictionary of print options
+        - ``print_mode`` -- dictionary of print options
 
         - ``shift_seed`` -- unused
 

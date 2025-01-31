@@ -21,9 +21,9 @@ AUTHORS:
 from .satsolver import SatSolver
 
 from sage.misc.lazy_import import lazy_import
-from sage.features import PythonModule
-lazy_import('pycosat', ['solve'],
-            feature=PythonModule('pycosat', spkg='pycosat'))
+from sage.features.sat import Pycosat
+
+lazy_import('pycosat', ['solve'], feature=Pycosat())
 
 
 class PicoSAT(SatSolver):
@@ -32,9 +32,9 @@ class PicoSAT(SatSolver):
 
     INPUT:
 
-    - ``verbosity`` -- an integer between 0 and 2 (default: 0); verbosity
+    - ``verbosity`` -- integer between 0 and 2 (default: 0)
 
-    - ``prop_limit`` -- an integer (default: 0); the propagation limit
+    - ``prop_limit`` -- integer (default: 0); the propagation limit
 
     EXAMPLES::
 
@@ -112,7 +112,7 @@ class PicoSAT(SatSolver):
 
         INPUT:
 
-        - ``lits`` -- a tuple of nonzero integers
+        - ``lits`` -- tuple of nonzero integers
 
         .. NOTE::
 
@@ -147,20 +147,21 @@ class PicoSAT(SatSolver):
 
         EXAMPLES::
 
+            sage: # optional - pycosat
             sage: from sage.sat.solvers.picosat import PicoSAT
-            sage: solver = PicoSAT()                       # optional - pycosat
-            sage: solver.add_clause((1,2))                 # optional - pycosat
-            sage: solver.add_clause((-1,2))                # optional - pycosat
-            sage: solver.add_clause((-1,-2))               # optional - pycosat
-            sage: solver()                                 # optional - pycosat
+            sage: solver = PicoSAT()
+            sage: solver.add_clause((1,2))
+            sage: solver.add_clause((-1,2))
+            sage: solver.add_clause((-1,-2))
+            sage: solver()
             (None, False, True)
 
             sage: solver.add_clause((1,-2))                # optional - pycosat
             sage: solver()                                 # optional - pycosat
             False
         """
-        #import pycosat
-        #self._solve = pycosat.solve
+        # import pycosat
+        # self._solve = pycosat.solve
         sol = self._solve(self._clauses, verbose=self._verbosity,
                           prop_limit=self._prop_limit, vars=self._nvars)
         # sol = pycosat.solve(self._clauses)
@@ -207,13 +208,14 @@ class PicoSAT(SatSolver):
 
         DIMACS format output::
 
+            sage: # optional - pycosat
             sage: from sage.sat.solvers.picosat import PicoSAT
-            sage: solver = PicoSAT()                       # optional - pycosat
-            sage: solver.add_clause((1, 2, 4))             # optional - pycosat
-            sage: solver.add_clause((1, 2, -4))            # optional - pycosat
-            sage: fn = tmp_filename()                      # optional - pycosat
-            sage: solver.clauses(fn)                       # optional - pycosat
-            sage: print(open(fn).read())                   # optional - pycosat
+            sage: solver = PicoSAT()
+            sage: solver.add_clause((1, 2, 4))
+            sage: solver.add_clause((1, 2, -4))
+            sage: fn = tmp_filename()
+            sage: solver.clauses(fn)
+            sage: print(open(fn).read())
             p cnf 4 2
             1 2 4 0
             1 2 -4 0

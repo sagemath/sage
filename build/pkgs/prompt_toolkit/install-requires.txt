@@ -1,2 +1,0 @@
-# https://github.com/sagemath/sage/issues/33428 - prompt_toolkit 3.0.25+ breaks Ctrl-C
-prompt_toolkit >=3.0.5, <3.0.25

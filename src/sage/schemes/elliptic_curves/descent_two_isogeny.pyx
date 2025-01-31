@@ -25,7 +25,9 @@ import sage.libs.ntl.all as ntl
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
 from sage.libs.flint.nmod_poly cimport *
+from sage.libs.flint.nmod_poly_factor cimport *
 from sage.libs.flint.ulong_extras cimport *
 
 from cypari2.paridecl cimport (GEN, cgetg, t_POL, set_gel, gel, stoi, lg,
@@ -87,7 +89,7 @@ def test_valuation(a, p):
 
 cdef int padic_square(mpz_t a, mpz_t p) noexcept:
     """
-    Test if a is a p-adic square.
+    Test if a is a `p`-adic square.
     """
     cdef unsigned long v
     cdef mpz_t aa
@@ -132,7 +134,7 @@ def test_padic_square(a, p):
 cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
                 mpz_t x, mpz_t p, unsigned long nu) noexcept:
     """
-    Implements Lemma 6 of BSD's "Notes on elliptic curves, I" for odd p.
+    Implement Lemma 6 of BSD's "Notes on elliptic curves, I" for odd `p`.
 
     Returns -1 for insoluble, 0 for undecided, +1 for soluble.
     """
@@ -182,7 +184,7 @@ cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
                 mpz_t x, mpz_t p, unsigned long nu) noexcept:
     """
-    Implements Lemma 7 of BSD's "Notes on elliptic curves, I" for p=2.
+    Implement Lemma 7 of BSD's "Notes on elliptic curves, I" for `p=2`.
 
     Returns -1 for insoluble, 0 for undecided, +1 for soluble.
     """
@@ -202,7 +204,7 @@ cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
     if padic_square(g_of_x, p):
         mpz_clear(g_of_x)
-        return +1 # soluble
+        return +1  # soluble
 
     mpz_init_set(g_prime_of_x, x)
     mpz_mul(g_prime_of_x, a, x)
@@ -233,8 +235,8 @@ cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             elif lambd+1 == mu+nu and (lambd & 1) == 0:
                 result = 1  # soluble
             elif lambd+2 == mu+nu and (lambd & 1) == 0 and g_of_x_odd_part_mod_4 == 1:
-                result = 1 # soluble
-        else: # nu <= mu
+                result = 1  # soluble
+        else:  # nu <= mu
             if lambd >= 2*nu:
                 result = 0  # undecided
             elif lambd+2 == 2*nu and g_of_x_odd_part_mod_4==1:
@@ -333,7 +335,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         nmod_poly_set_coeff_ui(f, 4, mpz_fdiv_ui(a, pp_ui))
 
         result = 0
-        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0 # reset data struct
+        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0  # reset data struct
         qq = nmod_poly_factor(f_factzn, f)
         for i in range(f_factzn.num):
             if f_factzn.exp[i]&1:
@@ -350,7 +352,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             for j in range(f_factzn.exp[i]>>1):
                 nmod_poly_mul(f, f, &f_factzn.p[i])
 
-        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0 # reset data struct
+        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0  # reset data struct
         nmod_poly_factor(f_factzn, f)
         has_roots = 0
         j = 0
@@ -369,13 +371,13 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         mpz_init(ddd)
         mpz_init(eee)
 
-        if i == 0: # g == 1
+        if i == 0:  # g == 1
             mpz_set(aaa, a)
             mpz_set(bbb, b)
             mpz_set(ccc, c)
             mpz_set(ddd, d)
             mpz_sub_ui(eee, e, qq)
-        elif i == 1: # g == x + rr
+        elif i == 1:  # g == x + rr
             mpz_set(aaa, a)
             mpz_set(bbb, b)
             mpz_sub_ui(ccc, c, qq)
@@ -385,7 +387,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_sub_ui(ddd, ddd, ss*2)
             mpz_set(eee,e)
             mpz_sub_ui(eee, eee, ss*rr)
-        elif i == 2: # g == x^2 + rr*x + ss
+        elif i == 2:  # g == x^2 + rr*x + ss
             mpz_sub_ui(aaa, a, qq)
             rr = nmod_poly_get_coeff_ui(f, 1)
             mpz_init(tt)
@@ -468,7 +470,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         nmod_poly_set_coeff_ui(f, 2, mpz_fdiv_ui(c, pp_ui))
         nmod_poly_set_coeff_ui(f, 3, mpz_fdiv_ui(b, pp_ui))
         nmod_poly_set_coeff_ui(f, 4, mpz_fdiv_ui(a, pp_ui))
-        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0 # reset data struct
+        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0  # reset data struct
         nmod_poly_factor(f_factzn, f)
         has_roots = 0
         has_single_roots = 0
@@ -617,13 +619,13 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         mpz_init(ddd)
         mpz_init(eee)
 
-        if i == 0: # g == 1
+        if i == 0:  # g == 1
             mpz_set(aaa, a)
             mpz_set(bbb, b)
             mpz_set(ccc, c)
             mpz_set(ddd, d)
             mpz_sub(eee, e, qq)
-        elif i == 1: # g == x + rr
+        elif i == 1:  # g == x + rr
             mpz_set(aaa, a)
             mpz_set(bbb, b)
             mpz_sub(ccc, c, qq)
@@ -637,7 +639,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_mul(ss, ss, rr)
             mpz_sub(eee, eee, ss)
             mpz_divexact(ss, ss, rr)
-        elif i == 2: # g == x^2 + rr*x + ss
+        elif i == 2:  # g == x^2 + rr*x + ss
             mpz_sub(aaa, a, qq)
             A = Integer(f[1])
             mpz_set(rr, A.value)
@@ -946,7 +948,7 @@ def test_qpls(a, b, c, d, e, p):
 
 cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e) except -1:
     """
-    Returns whether the quartic has local solutions at all primes p.
+    Return whether the quartic has local solutions at all primes `p`.
     """
     cdef Integer A, B, C, D, E, Delta,p
     cdef mpz_t mpz_2

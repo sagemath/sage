@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Goppa code
 
@@ -20,7 +20,6 @@ EXAMPLES::
 AUTHORS:
 
 - Filip Ion, Marketa Slukova (2019-06): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2019 Filip Ion <filip.alexandru.ion@gmail.com>,
@@ -35,6 +34,7 @@ from sage.coding.linear_code import AbstractLinearCode
 from sage.coding.encoder import Encoder
 from sage.modules.free_module_element import vector
 from sage.coding.all import codes
+
 
 def _columnize(element):
     """
@@ -80,7 +80,7 @@ class GoppaCode(AbstractLinearCode):
     - ``generating_pol`` -- a monic polynomial with coefficients in a finite
       field `\GF{p^m}`, the code is defined over `\GF{p}`, `p` must be a prime number
 
-    - ``defining_set`` -- a set of elements of `\GF{p^m}` that are not roots
+    - ``defining_set`` -- set of elements of `\GF{p^m}` that are not roots
       of `g`, its cardinality is the length of the code
 
     EXAMPLES::
@@ -127,7 +127,7 @@ class GoppaCode(AbstractLinearCode):
 
     def _repr_(self):
         """
-        Representation of a Goppa code
+        Representation of a Goppa code.
 
         EXAMPLES::
 
@@ -308,7 +308,7 @@ class GoppaCode(AbstractLinearCode):
             [8, 2] Goppa code over GF(2)
             sage: C.distance_bound()
             3
-            sage: C.minimum_distance()
+            sage: C.minimum_distance()                                                  # needs sage.libs.gap
             5
         """
         return 1 + (self._generating_pol).degree()
@@ -316,7 +316,7 @@ class GoppaCode(AbstractLinearCode):
 
 class GoppaCodeEncoder(Encoder):
     r"""
-    Encoder for Goppa codes
+    Encoder for Goppa codes.
 
     Encodes words represented as vectors of length `k`, where `k` is
     the dimension of ``self``, with entries from `\GF{p}`, the prime field of
@@ -394,7 +394,7 @@ class GoppaCodeEncoder(Encoder):
 
     def __eq__(self, other):
         """
-        Test equality with ``other``
+        Test equality with ``other``.
 
         EXAMPLES::
 
@@ -413,7 +413,7 @@ class GoppaCodeEncoder(Encoder):
 
     def generator_matrix(self):
         r"""
-        A generator matrix for ``self``
+        A generator matrix for ``self``.
 
         Dimension of resulting matrix is `k \times n`, where `k` is
         the dimension of ``self`` and `n` is the length of ``self``.

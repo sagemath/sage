@@ -1,5 +1,5 @@
 """
-Big O for various types (power series, p-adics, etc.)
+Big O for various types (power series, `p`-adics, etc.)
 
 .. SEEALSO::
 
@@ -11,6 +11,7 @@ Big O for various types (power series, p-adics, etc.)
 
 from sage.arith.misc import factor
 from sage.misc.lazy_import import lazy_import
+
 lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
 lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -25,10 +26,12 @@ try:
 except ImportError:
     PuiseuxSeries = ()
 
-from . import power_series_ring_element
-from . import integer
-from . import rational
-from . import multi_power_series_ring_element
+from sage.rings import (
+    integer,
+    multi_power_series_ring_element,
+    power_series_ring_element,
+    rational,
+)
 
 
 def O(*x, **kwds):

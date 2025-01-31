@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Shephard Groups
 """
@@ -14,6 +15,7 @@ Shephard Groups
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.generalized_coxeter_groups import GeneralizedCoxeterGroups
 from sage.misc.cachefunc import cached_method
+
 
 class ShephardGroups(Category_singleton):
     r"""
@@ -36,6 +38,6 @@ class ShephardGroups(Category_singleton):
 
             sage: from sage.categories.shephard_groups import ShephardGroups
             sage: ShephardGroups().super_categories()
-            [Category of finite generalized coxeter groups]
+            [Category of finite generalized Coxeter groups]
         """
         return [GeneralizedCoxeterGroups().Finite()]

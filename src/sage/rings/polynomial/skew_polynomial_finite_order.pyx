@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.rings.finite_rings
+# sage.doctest: needs sage.combinat sage.rings.finite_rings
 r"""
 Univariate dense skew polynomials over a field with a finite order automorphism
 
@@ -19,7 +19,7 @@ AUTHOR::
 #    (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-from sage.rings.ring cimport Ring
+from sage.structure.parent cimport Parent
 from sage.structure.element cimport RingElement
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.skew_polynomial_element cimport SkewPolynomial_generic_dense
@@ -70,8 +70,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         self._charpoly = None
         self._optbound = None
 
-
-    cdef _matphir_c(self) noexcept:
+    cdef _matphir_c(self):
         r"""
         Return the matrix of the multiplication by `X^r` on
         the quotient `K[X,\sigma] / K[X,\sigma]*self`.
@@ -95,7 +94,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         else:
             col = 0
             exp = r
-        cdef SkewPolynomial_finite_order_dense powx = <SkewPolynomial_finite_order_dense>self._new_c([zero,one], parent)
+        cdef SkewPolynomial_finite_order_dense powx = <SkewPolynomial_finite_order_dense>self._new_c([zero, one], parent)
         cdef SkewPolynomial_finite_order_dense v
         if (exp % 2 == 1):
             v = <SkewPolynomial_finite_order_dense>self._new_c([zero,one], parent)
@@ -122,7 +121,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             phir.append(line)
         return matrix(k, phir)
 
-    cdef _matmul_c(self) noexcept:
+    cdef _matmul_c(self):
         r"""
         Return the matrix of the multiplication by ``self`` on
         `K[X,\sigma]` considered as a free module over `K[X^r]`
@@ -131,7 +130,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         from sage.matrix.constructor import matrix
         cdef Py_ssize_t i, j, deb, k, r = self.parent()._order
         cdef Py_ssize_t d = self.degree ()
-        cdef Ring base_ring = <Ring?>self.parent().base_ring()
+        cdef Parent base_ring = <Parent?>self.parent().base_ring()
         cdef RingElement minusone = <RingElement?>base_ring(-1)
         cdef RingElement zero = <RingElement?>base_ring(0)
         cdef Polk = PolynomialRing (base_ring, 'xr')
@@ -152,15 +151,14 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
                 l[i] = self._parent.twisting_morphism()(l[i])
         return matrix(Polk, r, r, M)
 
-
     def reduced_trace(self, var=None):
         r"""
         Return the reduced trace of this skew polynomial.
 
         INPUT:
 
-        - ``var`` -- a string or ``False`` or ``None`` (default: ``None``);
-          the variable name; if ``False``, return the list of coefficients
+        - ``var`` -- string or ``False`` or ``None`` (default: ``None``);
+          the variable name. If ``False``, return the list of coefficients.
 
         EXAMPLES::
 
@@ -230,8 +228,8 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         INPUT:
 
-        - ``var`` -- a string or ``False`` or ``None`` (default: ``None``);
-          the variable name; if ``False``, return the list of coefficients
+        - ``var`` -- string or ``False`` or ``None`` (default: ``None``);
+          the variable name. If ``False``, return the list of coefficients.
 
         .. NOTE::
 
@@ -343,7 +341,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         INPUT:
 
-        - ``var`` -- a string, a pair of strings or ``None``
+        - ``var`` -- string, a pair of strings or ``None``
           (default: ``None``); the variable names used for the
           characteristic polynomial and the center
 
@@ -415,7 +413,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         coeffs = [center(c) for c in self._charpoly]
         return PolynomialRing(center, name=varcharpoly)(coeffs)
 
-    def is_central(self):
+    def is_central(self) -> bool:
         r"""
         Return ``True`` if this skew polynomial lies in the center.
 
@@ -439,7 +437,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         except ValueError:
             return False
 
-
     def bound(self):
         r"""
         Return a bound of this skew polynomial (i.e. a multiple
@@ -452,7 +449,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         ALGORITHM:
 
-        #. Sage first checks whether ``self`` is itself in the
+        #. Sage first checks whether self is itself in the
            center. It if is, it returns ``self``
 
         #. If an optimal bound was previously computed and
@@ -520,7 +517,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         if self._optbound is not None:
             return center(self._optbound)
         return self.reduced_norm()
-
 
     def optimal_bound(self):
         r"""

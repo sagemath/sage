@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
@@ -9,7 +10,7 @@ Object persistence
 You can load and save most Sage object to disk using the load and
 save member functions and commands.
 
-.. note::
+.. NOTE::
 
    It is impossible to save certain Sage objects to disk. For example,
    if `x` is a MAGMA object, i.e., a wrapper around an object
@@ -42,7 +43,7 @@ import bz2
 comp = zlib
 comp_other = bz2
 
-from .sage_unittest import TestSuite
+from sage.misc.sage_unittest import TestSuite
 
 
 # We define two global dictionaries `already_pickled` and
@@ -56,7 +57,7 @@ from .sage_unittest import TestSuite
 # Apart from this, you are free to use these variables as you like.
 #
 # However, the standard utilisation is the following.
-# The pickling method (namely `__reduce__`) checks if the id of the
+# The pickling method (namely ``__reduce__``) checks if the id of the
 # current element appears in the dictionary `already_pickled`. If it
 # does not, the methods records that this element is about to be
 # pickled by adding the entry { id: True } to `already_pickled`.
@@ -71,11 +72,11 @@ from .sage_unittest import TestSuite
 # `already_unpickled` and finally returns the element.
 #
 # For a working example, see sage.rings.padics.lazy_template.LazyElement_unknown
-already_pickled = { }
-already_unpickled = { }
+already_pickled = {}
+already_unpickled = {}
 
 
-cdef _normalize_filename(s) noexcept:
+cdef _normalize_filename(s):
     """
     Append the .sobj extension to a filename if it doesn't already have it.
     """
@@ -91,7 +92,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     an ``.sobj`` extension added if it doesn't have one.  Or, if the input
     is a filename ending in ``.py``, ``.pyx``, ``.sage``, ``.spyx``,
     ``.f``, ``.f90`` or ``.m``, load that file into the current running
-    session.
+    session using :func:`sage.repl.load.load`.
 
     Loaded files are not loaded into their own namespace, i.e., this is
     much more like Python's ``execfile`` than Python's ``import``.
@@ -141,7 +142,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     Files with a ``.sage`` extension are preparsed. Also note that we
     can access global variables::
 
-        sage: t = tmp_filename(ext=".sage")
+        sage: t = tmp_filename(ext='.sage')
         sage: with open(t, 'w') as f:
         ....:     _ = f.write("a += Mod(2/3, 11)")  # This evaluates to Mod(8, 11)
         sage: a = -1
@@ -152,7 +153,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     We can load Fortran files::
 
         sage: code = '      subroutine hello\n         print *, "Hello World!"\n      end subroutine hello\n'
-        sage: t = tmp_filename(ext=".F")
+        sage: t = tmp_filename(ext='.F')
         sage: with open(t, 'w') as f:
         ....:     _ = f.write(code)
         sage: load(t)                                                                   # needs numpy
@@ -175,7 +176,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         sage.repl.load.load(filename, globals())
         return
 
-    ## Check if filename starts with "http://" or "https://"
+    # Check if filename starts with "http://" or "https://"
     lower = filename.lower()
     if lower.startswith("http://") or lower.startswith("https://"):
         from sage.misc.remote_file import get_remote_file
@@ -185,7 +186,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         tmpfile_flag = False
         filename = _normalize_filename(filename)
 
-    ## Load file by absolute filename
+    # Load file by absolute filename
     with open(filename, 'rb') as fobj:
         X = loads(fobj.read(), compress=compress, **kwargs)
     try:
@@ -193,7 +194,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     except AttributeError:
         pass
 
-    ## Delete the tempfile, if it exists
+    # Delete the tempfile, if it exists
     if tmpfile_flag:
         os.unlink(filename)
 
@@ -269,10 +270,10 @@ def save(obj, filename, compress=True, **kwargs):
 
     TESTS:
 
-    Check that :trac:`11577` is fixed::
+    Check that :issue:`11577` is fixed::
 
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".bar") as f:
+        sage: with tempfile.NamedTemporaryFile(suffix='.bar') as f:
         ....:     save((1,1), f.name)
         ....:     load(f.name)
         (1, 1)
@@ -302,7 +303,7 @@ def _base_dumps(obj, compress=True):
 
     global already_pickled
     gherkin = SagePickler.dumps(obj)
-    already_pickled = { }
+    already_pickled = {}
 
     if compress:
         return comp.compress(gherkin)
@@ -333,12 +334,13 @@ def dumps(obj, compress=True):
         ans = obj.dumps(compress)
     except (AttributeError, RuntimeError, TypeError):
         ans = _base_dumps(obj, compress=compress)
-    already_pickled = { }
+    already_pickled = {}
     return ans
 
 
 # This is used below, and also by explain_pickle.py
 unpickle_override = {}
+
 
 def register_unpickle_override(module, name, callable, call_name=None):
     r"""
@@ -454,14 +456,14 @@ def register_unpickle_override(module, name, callable, call_name=None):
     ::
 
         sage: class A():
-        ....:    def __init__(self,value):
+        ....:    def __init__(self, value):
         ....:        self.original_attribute = value
         ....:    def __repr__(self):
         ....:        return 'A(%s)' % self.original_attribute
         sage: class B():
-        ....:    def __init__(self,value):
+        ....:    def __init__(self, value):
         ....:        self.new_attribute = value
-        ....:    def __setstate__(self,state):
+        ....:    def __setstate__(self, state):
         ....:        try:
         ....:            self.new_attribute = state['new_attribute']
         ....:        except KeyError:      # an old pickle
@@ -523,7 +525,6 @@ def register_unpickle_override(module, name, callable, call_name=None):
             # tuple as input. All kinds of problems happen
             # if we don't do this.
             return sage.rings.integer.make_integer, (self.str(32),)
-
     """
     unpickle_override[(module, name)] = (callable, call_name)
 
@@ -587,8 +588,7 @@ def unpickle_global(module, name):
 
     def error():
         raise ImportError("cannot import {1} from {0}, call "
-            "register_unpickle_override({0!r}, {1!r}, ...) to fix this".format(
-                module, name))
+                          "register_unpickle_override({0!r}, {1!r}, ...) to fix this".format(module, name))
 
     mod = sys.modules.get(module)
     if mod is not None:
@@ -623,9 +623,9 @@ class _BasePickler(pickle.Pickler):
     """
 
     def __init__(self, file_obj, protocol=None, persistent_id=None, *,
-                    fix_imports=True):
+                 fix_imports=True):
         super(_BasePickler, self).__init__(file_obj, protocol,
-                                            fix_imports=fix_imports)
+                                           fix_imports=fix_imports)
         self._persistent_id = persistent_id
 
         def persistent_id(self, obj):
@@ -712,7 +712,7 @@ class SagePickler(_BasePickler):
     INPUT:
 
     - ``file_obj`` -- a readable file-like object returning ``bytes`` from
-      which the pickle data will be loaded.
+      which the pickle data will be loaded
 
     - ``persistent_id`` -- callable or None; if given this callable takes a
       single object to be pickled, and returns an "ID" (a key with which to
@@ -729,7 +729,7 @@ class SagePickler(_BasePickler):
     - Further arguments are passed to :func:`pickle.load`, where in Python-3
       Sage sets the default ``encoding='latin1'``. This is essential to make
       pickles readable in Python-3 that were created in Python-2. See
-      :trac:`28444` for details.
+      :issue:`28444` for details.
 
     .. _pickling and unpickling external objects: https://docs.python.org/2.7/library/pickle.html#pickling-and-unpickling-external-objects
 
@@ -780,13 +780,12 @@ class SagePickler(_BasePickler):
         sage: type(g), g.bar
         (<class '__main__.Foo'>, '\x80\x07')
 
-    The following line demonstrates what would happen without :trac:`28444`::
+    The following line demonstrates what would happen without :issue:`28444`::
 
         sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')
         Traceback (most recent call last):
         ...
         UnicodeDecodeError: 'ascii' codec can...t decode byte 0x80 in position 0: ordinal not in range(128)
-
     """
 
     def __init__(self, file_obj, persistent_id=None, py2compat=True):
@@ -806,14 +805,12 @@ class SagePickler(_BasePickler):
 
         INPUT:
 
-        - ``obj`` - the object to pickle.
+        - ``obj`` -- the object to pickle
 
-        - ``kwargs`` - keyword arguments passed to the
-          :class:`sage.misc.persist.SagePickler` constructor.
+        - ``kwargs`` -- keyword arguments passed to the
+          :class:`sage.misc.persist.SagePickler` constructor
 
-        OUTPUT:
-
-        - ``pickle`` - the pickled object as ``bytes``.
+        OUTPUT: ``pickle`` -- the pickled object as ``bytes``
 
         EXAMPLES::
 
@@ -827,7 +824,7 @@ class SagePickler(_BasePickler):
         buf = io.BytesIO()
         pickler = cls(buf, **kwargs)
         pickler.dump(obj)
-        already_pickled = { }
+        already_pickled = {}
         return buf.getvalue()
 
 
@@ -845,7 +842,7 @@ class SageUnpickler(_BaseUnpickler):
     INPUT:
 
     - ``file_obj`` -- a readable file-like object returning ``bytes`` from
-      which the pickle data will be loaded.
+      which the pickle data will be loaded
 
     - ``persistent_load`` -- callable or None; if given this callable
       implements loading of persistent external objects.  The function
@@ -854,7 +851,7 @@ class SageUnpickler(_BaseUnpickler):
       for more details.
 
     - ``kwargs`` -- additional keyword arguments passed to the
-      ``pickle.Unpickler`` constructor.
+      ``pickle.Unpickler`` constructor
 
     .. _pickling and unpickling external objects: https://docs.python.org/2.7/library/pickle.html#pickling-and-unpickling-external-objects
 
@@ -892,15 +889,12 @@ class SageUnpickler(_BaseUnpickler):
 
         INPUT:
 
-        - ``data`` - the pickle data as ``bytes``.
+        - ``data`` -- the pickle data as ``bytes``
 
-        - ``kwargs`` - keyword arguments passed to the
-          :class:`sage.misc.persist.SageUnpickler` constructor.
+        - ``kwargs`` -- keyword arguments passed to the
+          :class:`sage.misc.persist.SageUnpickler` constructor
 
-        OUTPUT:
-
-        - ``obj`` - the object that was serialized to the given pickle data.
-
+        OUTPUT: ``obj`` -- the object that was serialized to the given pickle data
 
         EXAMPLES::
 
@@ -929,9 +923,9 @@ def loads(s, compress=True, **kwargs):
         [   1    2]
         [   3 -4/3]
 
-    If compress is True (the default), it will try to decompress
+    If compress is ``True`` (the default), it will try to decompress
     the data with zlib and with bz2 (in turn); if neither succeeds,
-    it will assume the data is actually uncompressed.  If compress=False
+    it will assume the data is actually uncompressed.  If ``compress==False``
     is explicitly specified, then no decompression is attempted.
     Further arguments are passed to python's :func:`pickle.load`.
 
@@ -950,7 +944,7 @@ def loads(s, compress=True, **kwargs):
     The next example demonstrates that Sage strives to avoid data loss
     in the transition from Python-2 to Python-3. The problem is that Python-3
     by default would not be able to unpickle a non-ASCII Python-2 string appearing
-    in a pickle. See :trac:`28444` for details.
+    in a pickle. See :issue:`28444` for details.
     ::
 
         sage: class Foo():
@@ -970,7 +964,7 @@ def loads(s, compress=True, **kwargs):
         sage: type(g), g.bar
         (<class '__main__.Foo'>, '\x80\x07')
 
-    The following line demonstrates what would happen without :trac:`28444`::
+    The following line demonstrates what would happen without :issue:`28444`::
 
         sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')
         Traceback (most recent call last):
@@ -993,11 +987,12 @@ def loads(s, compress=True, **kwargs):
     unpickler = SageUnpickler(io.BytesIO(s), **kwargs)
     global already_unpickled
     ans = unpickler.load()
-    already_unpickled = { }
+    already_unpickled = {}
     return ans
 
 
 cdef bint make_pickle_jar = 'SAGE_PICKLE_JAR' in os.environ
+
 
 def picklejar(obj, dir=None):
     """
@@ -1017,7 +1012,7 @@ def picklejar(obj, dir=None):
 
     - ``obj`` -- a pickleable object
 
-    - ``dir`` -- a string or None; if None then ``dir`` defaults to
+    - ``dir`` -- string or ``None``; if ``None`` then ``dir`` defaults to
       ``DOT_SAGE/pickle_jar``
 
     EXAMPLES::
@@ -1041,8 +1036,6 @@ def picklejar(obj, dir=None):
         ....:     uid = -1
         sage: if uid == 0:
         ....:     print("OK (cannot test this as root)")
-        ....: elif sys.platform == 'cygwin':
-        ....:     print("OK (cannot test this on Cygwin)")
         ....: else:
         ....:     try:
         ....:         sage.misc.persist.picklejar(1, dir + '/noaccess')
@@ -1066,7 +1059,7 @@ def picklejar(obj, dir=None):
 
     global already_pickled
     s = comp.compress(SagePickler.dumps(obj))
-    already_pickled = { }
+    already_pickled = {}
 
     typ = str(type(obj))
     name = ''.join([x if (x.isalnum() or x == '_') else '_' for x in typ])
@@ -1097,14 +1090,14 @@ def unpickle_all(target, debug=False, run_test_suite=False):
 
     INPUT:
 
-    - ``target`` -- a string; the name of a directory or of a (possibly
+    - ``target`` -- string; the name of a directory or of a (possibly
       compressed) tar archive that contains a single directory of
       ``.sobj`` files.  The tar archive can be in any format that
       python's ``tarfile`` module understands; for example,
       ``.tar.gz`` or ``.tar.bz2``.
-    - ``debug`` -- a boolean (default: ``False``)
+    - ``debug`` -- boolean (default: ``False``)
       whether to report a stacktrace in case of failure
-    - ``run_test_suite`` -- a boolean (default: ``False``)
+    - ``run_test_suite`` -- boolean (default: ``False``)
       whether to run ``TestSuite(x).run()`` on the unpickled objects
 
     OUTPUT:
@@ -1113,7 +1106,7 @@ def unpickle_all(target, debug=False, run_test_suite=False):
     of successfully unpickled files, and the second reporting the
     number (zero) of failures. If there are failures, however, then a
     list of failed files will be printed before either of those lines,
-    and the failure count will of course be non-zero.
+    and the failure count will of course be nonzero.
 
     .. WARNING::
 
@@ -1146,7 +1139,7 @@ def unpickle_all(target, debug=False, run_test_suite=False):
             # 706 for background.
             with tarfile.open(target) as tf:
                 if hasattr(tarfile, "data_filter"):
-                    tf.extractall(T, filter="data")
+                    tf.extractall(T, filter='data')
                 else:
                     tf.extractall(T)
 
@@ -1237,8 +1230,8 @@ def db(name):
 
     The database directory is ``$HOME/.sage/db``.
     """
-    from .misc import SAGE_DB
-    return load('%s/%s'%(SAGE_DB,name))
+    from sage.misc.misc import SAGE_DB
+    return load('%s/%s' % (SAGE_DB, name))
 
 
 def db_save(x, name=None):
@@ -1250,5 +1243,5 @@ def db_save(x, name=None):
     try:
         x.db(name)
     except AttributeError:
-        from .misc import SAGE_DB
-        save(x, '%s/%s'%(SAGE_DB,name))
+        from sage.misc.misc import SAGE_DB
+        save(x, '%s/%s' % (SAGE_DB, name))

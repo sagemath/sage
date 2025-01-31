@@ -50,22 +50,22 @@ class SetSpeciesStructure(GenericSpeciesStructure):
 
     def transport(self, perm):
         """
-        Returns the transport of this set along the permutation perm.
+        Return the transport of this set along the permutation perm.
 
         EXAMPLES::
 
             sage: F = species.SetSpecies()
             sage: a = F.structures(["a", "b", "c"]).random_element(); a
             {'a', 'b', 'c'}
-            sage: p = PermutationGroupElement((1,2))
-            sage: a.transport(p)
+            sage: p = PermutationGroupElement((1,2))                                    # needs sage.groups
+            sage: a.transport(p)                                                        # needs sage.groups
             {'a', 'b', 'c'}
         """
         return self
 
     def automorphism_group(self):
         """
-        Returns the group of permutations whose action on this set leave it
+        Return the group of permutations whose action on this set leave it
         fixed. For the species of sets, there is only one isomorphism
         class, so every permutation is in its automorphism group.
 
@@ -74,7 +74,7 @@ class SetSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.SetSpecies()
             sage: a = F.structures(["a", "b", "c"]).random_element(); a
             {'a', 'b', 'c'}
-            sage: a.automorphism_group()
+            sage: a.automorphism_group()                                                # needs sage.groups
             Symmetric group of order 3! as a permutation group
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -95,7 +95,7 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the species of sets.
+        Return the species of sets.
 
         EXAMPLES::
 
@@ -170,8 +170,8 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = species.SetSpecies()
-            sage: g = S.cycle_index_series()
-            sage: g[0:5]
+            sage: g = S.cycle_index_series()                                            # needs sage.modules
+            sage: g[0:5]                                                                # needs sage.modules
             [p[],
              p[1],
              1/2*p[1, 1] + 1/2*p[2],

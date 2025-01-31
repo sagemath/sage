@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Interface to Frobby for fast computations on monomial ideals.
 
@@ -38,14 +37,12 @@ class Frobby:
 
         INPUT:
 
-        - action -- A string telling Frobby what to do.
-        - input -- None or a string that is passed to Frobby as standard in.
-        - options -- A list of options without the dash in front.
-        - verbose -- bool (default: false) Print detailed information.
+        - ``action`` -- string telling Frobby what to do
+        - ``input`` -- ``None`` or string that is passed to Frobby as standard in
+        - ``options`` -- list of options without the dash in front
+        - ``verbose`` -- boolean (default: ``False``); print detailed information
 
-        OUTPUT:
-
-        - string -- What Frobby wrote to the standard output stream.
+        OUTPUT: string; what Frobby wrote to the standard output stream
 
         EXAMPLES:
 
@@ -105,33 +102,31 @@ class Frobby:
 
         INPUT:
 
-        - monomial_ideal -- The monomial ideal to decompose.
+        - ``monomial_ideal`` -- the monomial ideal to decompose
 
-        OUTPUT:
-
-        The monomial corresponding to the Alexander dual.
+        OUTPUT: the monomial corresponding to the Alexander dual
 
         EXAMPLES:
 
         This is a simple example of computing irreducible decomposition. ::
 
-            sage: (a, b, c, d) = QQ['a,b,c,d'].gens() # optional - frobby
-            sage: id = ideal(a * b, b * c, c * d, d * a) # optional - frobby
-            sage: alexander_dual = frobby.alexander_dual(id) # optional - frobby
-            sage: true_alexander_dual = ideal(b * d, a * c) # optional - frobby
-            sage: alexander_dual == true_alexander_dual # use sets to ignore order # optional - frobby
+            sage: # optional - frobby
+            sage: (a, b, c, d) = QQ['a,b,c,d'].gens()
+            sage: id = ideal(a * b, b * c, c * d, d * a)
+            sage: alexander_dual = frobby.alexander_dual(id)
+            sage: true_alexander_dual = ideal(b * d, a * c)
+            sage: alexander_dual == true_alexander_dual # use sets to ignore order
             True
 
         We see how it is much faster to compute this with frobby than the built-in
         procedure for simplicial complexes::
 
-            sage: t=simplicial_complexes.PoincareHomologyThreeSphere() # optional - frobby
-            sage: R=PolynomialRing(QQ,16,'x') # optional - frobby
-            sage: I=R.ideal([prod([R.gen(i-1) for i in a]) for a in t.facets()])  # optional - frobby
-            sage: len(frobby.alexander_dual(I).gens()) # optional - frobby
+            sage: # optional - frobby
+            sage: t=simplicial_complexes.PoincareHomologyThreeSphere()
+            sage: R=PolynomialRing(QQ,16,'x')
+            sage: I=R.ideal([prod([R.gen(i-1) for i in a]) for a in t.facets()])
+            sage: len(frobby.alexander_dual(I).gens())
             643
-
-
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('alexdual', input=frobby_input)
@@ -139,7 +134,7 @@ class Frobby:
 
     def hilbert(self, monomial_ideal):
         r"""
-        Computes the multigraded Hilbert-Poincaré series of the input
+        Compute the multigraded Hilbert-Poincaré series of the input
         ideal. Use the -univariate option to get the univariate series.
 
         The Hilbert-Poincaré series of a monomial ideal is the sum of all
@@ -150,13 +145,11 @@ class Frobby:
 
         INPUT:
 
-
-            monomial_ideal -- A monomial ideal.
+        - ``monomial_ideal`` -- a monomial ideal
 
         OUTPUT:
 
-
-            A polynomial in the same ring as the ideal.
+        A polynomial in the same ring as the ideal.
 
         EXAMPLES::
 
@@ -164,7 +157,6 @@ class Frobby:
             sage: I=[d*b*c,b^2*c,b^10,d^10]*R # optional - frobby
             sage: frobby.hilbert(I) # optional - frobby
             d^10*b^10*c + d^10*b^10 + d^10*b*c + b^10*c + d^10 + b^10 + d*b^2*c + d*b*c + b^2*c + 1
-
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('hilbert', input=frobby_input)
@@ -188,7 +180,7 @@ class Frobby:
 
         INPUT:
 
-        - monomial_ideal -- The monomial ideal to decompose.
+        - ``monomial_ideal`` -- the monomial ideal to decompose
 
         OUTPUT:
 
@@ -202,7 +194,6 @@ class Frobby:
             sage: frobby.associated_primes(I)   # optional - frobby
             [Ideal (d, b) of Multivariate Polynomial Ring in d, b, c over Rational Field,
             Ideal (d, b, c) of Multivariate Polynomial Ring in d, b, c over Rational Field]
-
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('assoprimes', input=frobby_input)
@@ -223,11 +214,9 @@ class Frobby:
 
         INPUT:
 
-        - monomial_ideal -- The monomial ideal to decompose.
+        - ``monomial_ideal`` -- the monomial ideal to decompose
 
-        OUTPUT:
-
-        The dimension of the zero set of the ideal.
+        OUTPUT: the dimension of the zero set of the ideal
 
         EXAMPLES::
 
@@ -235,7 +224,6 @@ class Frobby:
             sage: I=[d*b*c,b^2*c,b^10,d^10]*R # optional - frobby
             sage: frobby.dimension(I)   # optional - frobby
             1
-
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
         frobby_output = self('dimension', input=frobby_input)
@@ -249,7 +237,7 @@ class Frobby:
 
         INPUT:
 
-        - monomial_ideal -- The monomial ideal to decompose.
+        - ``monomial_ideal`` -- the monomial ideal to decompose
 
         OUTPUT:
 
@@ -261,37 +249,40 @@ class Frobby:
 
         This is a simple example of computing irreducible decomposition. ::
 
-            sage: (x, y, z) = QQ['x,y,z'].gens() # optional - frobby
-            sage: id = ideal(x ** 2, y ** 2, x * z, y * z) # optional - frobby
-            sage: decom = frobby.irreducible_decomposition(id) # optional - frobby
-            sage: true_decom = [ideal(x, y), ideal(x ** 2, y ** 2, z)] # optional - frobby
-            sage: set(decom) == set(true_decom) # use sets to ignore order # optional - frobby
+            sage: # optional - frobby
+            sage: (x, y, z) = QQ['x,y,z'].gens()
+            sage: id = ideal(x ** 2, y ** 2, x * z, y * z)
+            sage: decom = frobby.irreducible_decomposition(id)
+            sage: true_decom = [ideal(x, y), ideal(x ** 2, y ** 2, z)]
+            sage: set(decom) == set(true_decom) # use sets to ignore order
             True
 
         We now try the special case of the zero ideal in different rings.
 
         We should also try PolynomialRing(QQ, names=[]), but it has a bug
-        which makes that impossible (see :trac:`3028`). ::
+        which makes that impossible (see :issue:`3028`). ::
 
-            sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
-            sage: allOK = True # optional - frobby
-            sage: for ring in rings:  # optional - frobby
+            sage: # optional - frobby
+            sage: rings = [ZZ['x'], CC['x,y']]
+            sage: allOK = True
+            sage: for ring in rings:
             ....:     id0 = ring.ideal(0)
             ....:     decom0 = frobby.irreducible_decomposition(id0)
             ....:     allOK = allOK and decom0 == [id0]
-            sage: allOK # optional - frobby
+            sage: allOK
             True
 
         Finally, we try the ideal that is all of the ring in different
         rings. ::
 
-            sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
-            sage: allOK = True # optional - frobby
-            sage: for ring in rings: # optional - frobby
+            sage: # optional - frobby
+            sage: rings = [ZZ['x'], CC['x,y']]
+            sage: allOK = True
+            sage: for ring in rings:
             ....:     id1 = ring.ideal(1)
             ....:     decom1 = frobby.irreducible_decomposition(id1)
             ....:     allOK = allOK and decom1 == [id1]
-            sage: allOK # optional - frobby
+            sage: allOK
             True
         """
         frobby_input = self._ideal_to_string(monomial_ideal)
@@ -305,9 +296,9 @@ class Frobby:
 
         INPUT:
 
-        - string -- The string to be parsed.
-        - ring -- The ring within which to construct the irreducible
-          monomial ideals within.
+        - ``string`` -- the string to be parsed
+        - ``ring`` -- the ring within which to construct the irreducible
+          monomial ideals within
 
         OUTPUT:
 
@@ -316,13 +307,13 @@ class Frobby:
 
         EXAMPLES::
 
-            sage: ring = QQ['x,y,z'] # optional - frobby
-            sage: (x, y, z) = ring.gens() # optional - frobby
-            sage: string = '2 3\n1 2 3\n0 5 0\n2 3\n1 2 3\n4 5 6' # optional - frobby
-            sage: frobby._parse_ideals(string, ring) # optional - frobby
+            sage: # optional - frobby
+            sage: ring = QQ['x,y,z']
+            sage: (x, y, z) = ring.gens()
+            sage: string = '2 3\n1 2 3\n0 5 0\n2 3\n1 2 3\n4 5 6'
+            sage: frobby._parse_ideals(string, ring)
             [Ideal (x*y^2*z^3, y^5) of Multivariate Polynomial Ring in x, y, z over Rational Field,
             Ideal (x*y^2*z^3, x^4*y^5*z^6) of Multivariate Polynomial Ring in x, y, z over Rational Field]
-
         """
         lines = string.split('\n')
         if lines[-1] == '':
@@ -354,7 +345,7 @@ class Frobby:
 
         INPUT:
 
-        - string -- The string to be parsed.
+        - ``string`` -- the string to be parsed
 
         OUTPUT:
 
@@ -365,10 +356,11 @@ class Frobby:
 
         The format is straight-forward, as this example shows. ::
 
-            sage: string = '2 3\n1 2  3\n  0 5 0' # optional - frobby
-            sage: parsed_matrix = frobby._parse_4ti2_matrix(string) # optional - frobby
-            sage: reference_matrix = [[1, 2, 3], [0, 5, 0]] # optional - frobby
-            sage: parsed_matrix == reference_matrix # optional - frobby
+            sage: # optional - frobby
+            sage: string = '2 3\n1 2  3\n  0 5 0'
+            sage: parsed_matrix = frobby._parse_4ti2_matrix(string)
+            sage: reference_matrix = [[1, 2, 3], [0, 5, 0]]
+            sage: parsed_matrix == reference_matrix
             True
 
         A number of syntax errors lead to exceptions. ::
@@ -406,18 +398,17 @@ class Frobby:
 
         INPUT:
 
-        - monomial_ideal -- The monomial ideal to be formatted as a string.
+        - ``monomial_ideal`` -- the monomial ideal to be formatted as a string
 
-        OUTPUT:
-
-        A string in 4ti2 format representing the ideal.
+        OUTPUT: string in ``4ti2`` format representing the ideal
 
         EXAMPLES::
 
-            sage: ring = QQ['x,y,z'] # optional - frobby
-            sage: (x, y, z) = ring.gens() # optional - frobby
-            sage: id = ring.ideal(x ** 2, x * y * z) # optional - frobby
-            sage: frobby._ideal_to_string(id) == "2 3\n2 0 0\n1 1 1\n" # optional - frobby
+            sage: # optional - frobby
+            sage: ring = QQ['x,y,z']
+            sage: (x, y, z) = ring.gens()
+            sage: id = ring.ideal(x ** 2, x * y * z)
+            sage: frobby._ideal_to_string(id) == "2 3\n2 0 0\n1 1 1\n"
             True
         """
         # There is no exponent vector that represents zero as a generator, so
@@ -439,18 +430,17 @@ class Frobby:
 
         INPUT:
 
-        - monomial -- The monomial whose exponent vector is to be formatted.
+        - ``monomial`` -- the monomial whose exponent vector is to be formatted
 
-        OUTPUT:
-
-        A string representing the exponent vector of monomial.
+        OUTPUT: string representing the exponent vector of monomial
 
         EXAMPLES::
 
-            sage: ring = QQ['x,y,z'] # optional - frobby
-            sage: (x, y, z) = ring.gens() # optional - frobby
-            sage: monomial = x * x * z # optional - frobby
-            sage: frobby._monomial_to_string(monomial) == '2 0 1\n' # optional - frobby
+            sage: # optional - frobby
+            sage: ring = QQ['x,y,z']
+            sage: (x, y, z) = ring.gens()
+            sage: monomial = x * x * z
+            sage: frobby._monomial_to_string(monomial) == '2 0 1\n'
             True
         """
         exponents = monomial.exponents()

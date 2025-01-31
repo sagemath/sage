@@ -15,7 +15,7 @@ AUTHORS:
 
 - Paul Scurek (2013-08-03): updated docstring formatting
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Chris Gorecki <chris.k.gorecki@gmail.com>
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #       Copyright (C) 2013 Paul Scurek <scurek86@gmail.com>
@@ -23,8 +23,8 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import string
 
@@ -35,6 +35,7 @@ operators = '()&|!<->'
 # variables
 vars = {}
 vars_order = []
+
 
 class SymbolicLogic:
     """
@@ -60,21 +61,19 @@ class SymbolicLogic:
     """
     def statement(self, s):
         r"""
-        Return a token list to be used by other functions in the class
+        Return a token list to be used by other functions in the class.
 
         INPUT:
 
-        - ``s`` -- a string containing the logic expression to be manipulated
+        - ``s`` -- string containing the logic expression to be manipulated
 
-        - ``global vars`` -- a dictionary with variable names as keys and the
+        - ``global vars`` -- dictionary with variable names as keys and the
           variables' current boolean values as dictionary values
 
-        - ``global vars_order`` -- a list of the variables in the order
+        - ``global vars_order`` -- list of the variables in the order
           that they are found
 
-        OUTPUT:
-
-        A list of length three containing the following in this order:
+        OUTPUT: list of length three containing the following in this order:
 
         1. a list of tokens
         2. a dictionary of variable/value pairs
@@ -118,13 +117,13 @@ class SymbolicLogic:
 
         INPUT:
 
-        - ``statement`` -- a list; it contains the tokens and the two global
+        - ``statement`` -- list; it contains the tokens and the two global
           variables vars and vars_order
 
-        - ``start`` -- (default: 0) an integer; this represents the row of
+        - ``start`` -- integer (default: 0); this represents the row of
           the truth table from which to start
 
-        - ``end`` -- (default: -1) an integer; this represents the last row
+        - ``end`` -- integer (default: -1); this represents the last row
           of the truth table to be created
 
         OUTPUT:
@@ -170,7 +169,7 @@ class SymbolicLogic:
 
         TESTS:
 
-        Verify that :trac:`32676` is fixed::
+        Verify that :issue:`32676` is fixed::
 
             sage: s = log.statement("a&b|!(c|a)")
             sage: copy_s2 = copy(s[2])
@@ -184,7 +183,7 @@ class SymbolicLogic:
             end = 2 ** len(vars)
         table = [statement]
         keys = vars_order
-        for i in range(start,end):
+        for i in range(start, end):
             j = 0
             row = []
             for key in reversed(keys):
@@ -205,9 +204,7 @@ class SymbolicLogic:
         - ``table`` -- object created by :meth:`truthtable()` method; it
           contains the variable values and the evaluation of the statement
 
-        OUTPUT:
-
-        A formatted version of the truth table.
+        OUTPUT: a formatted version of the truth table
 
         EXAMPLES:
 
@@ -242,7 +239,7 @@ class SymbolicLogic:
 
         TESTS:
 
-        Verify that :trac:`32676` is fixed::
+        Verify that :issue:`32676` is fixed::
 
             sage: table = log.truthtable(log.statement("A->B"))
             sage: table_copy = table.copy()
@@ -270,10 +267,7 @@ class SymbolicLogic:
             line = s = ""
             i = 0
             for e in row:
-                if e == 'True':
-                    j = 2
-                else:
-                    j = 1
+                j = 2 if e == 'True' else 1
                 s = e + ' ' * j
                 if i < len(vars_len):
                     while len(s) <= vars_len[i]:
@@ -294,9 +288,7 @@ class SymbolicLogic:
         - ``statement1`` -- the first statement
         - ``statement2`` -- the second statement
 
-        OUTPUT:
-
-        A new statement which or'd the given statements together.
+        OUTPUT: a new statement which or'd the given statements together
 
         EXAMPLES::
 
@@ -370,19 +362,18 @@ class SymbolicLogic:
         """
         raise NotImplementedError
 
+
 def get_bit(x, c):
     r"""
     Determine if bit ``c`` of the number ``x`` is 1.
 
     INPUT:
 
-    - ``x`` -- an integer; this is the number from which to take the bit
+    - ``x`` -- integer; this is the number from which to take the bit
 
-    - ``c`` -- an integer; this is the bit number to be taken
+    - ``c`` -- integer; this is the bit number to be taken
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if bit ``c`` of ``x`` is 1.
 
@@ -402,10 +393,7 @@ def get_bit(x, c):
     """
     bits = []
     while x > 0:
-        if x % 2 == 0:
-            b = 'False'
-        else:
-            b = 'True'
+        b = 'False' if x % 2 == 0 else 'True'
         x = x // 2
         bits.append(b)
     if c > len(bits) - 1:
@@ -420,11 +408,9 @@ def eval(toks):
 
     INPUT:
 
-    - ``toks`` -- a list of tokens; this represents a boolean expression
+    - ``toks`` -- list of tokens; this represents a boolean expression
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if expression evaluates to ``True``.
 
@@ -456,18 +442,17 @@ def eval(toks):
         raise RuntimeError
     return stack[0]
 
+
 def eval_ltor_toks(lrtoks):
     r"""
     Evaluates the expression contained in ``lrtoks``.
 
     INPUT:
 
-    - ``lrtoks`` -- a list of tokens; this represents a part of a boolean
+    - ``lrtoks`` -- list of tokens; this represents a part of a boolean
       formula that contains no inner parentheses
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if expression evaluates to ``True``.
 
@@ -494,13 +479,14 @@ def eval_ltor_toks(lrtoks):
         raise RuntimeError
     return lrtoks[0]
 
+
 def reduce_bins(lrtoks):
     r"""
     Evaluate ``lrtoks`` to a single boolean value.
 
     INPUT:
 
-    - ``lrtoks`` -- a list of tokens; this represents a part of a boolean
+    - ``lrtoks`` -- list of tokens; this represents a part of a boolean
       formula that contains no inner parentheses or monotonic operators
 
     OUTPUT:
@@ -531,13 +517,14 @@ def reduce_bins(lrtoks):
             reduce_bins(lrtoks)
         i += 1
 
+
 def reduce_monos(lrtoks):
     r"""
     Replace monotonic operator/variable pairs with a boolean value.
 
     INPUT:
 
-    - ``lrtoks`` -- a list of tokens; this represents a part of a boolean
+    - ``lrtoks`` -- list of tokens; this represents a part of a boolean
       expression that contains now inner parentheses
 
     OUTPUT:
@@ -566,6 +553,7 @@ def reduce_monos(lrtoks):
             del lrtoks[i + 1]
         i += 1
 
+
 def eval_mon_op(args):
     r"""
     Return a boolean value based on the truth table of the operator
@@ -573,12 +561,10 @@ def eval_mon_op(args):
 
     INPUT:
 
-    - ``args`` -- a list of length 2; this contains the token 'NOT' and
+    - ``args`` -- list of length 2; this contains the token 'NOT' and
       then a variable name
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if the variable in ``args`` is ``False``.
 
@@ -592,21 +578,17 @@ def eval_mon_op(args):
 
         sage: log = SymbolicLogic()
         sage: s = log.statement("!(a&b)|!a"); s
-        [['OPAREN', 'NOT', 'OPAREN', 'a', 'AND', 'b', 'CPAREN', 'OR', 'NOT', 'a', 'CPAREN'],
+        [['OPAREN', 'NOT', 'OPAREN', 'a', 'AND', 'b', 'CPAREN', 'OR',
+         'NOT', 'a', 'CPAREN'],
          {'a': 'False', 'b': 'False'},
          ['a', 'b']]
         sage: sage.logic.logic.eval_mon_op(['NOT', 'a'])
         'True'
     """
-    if args[1] != 'True' and args[1] != 'False':
-        val = vars[args[1]]
-    else:
-        val = args[1]
+    val = vars[args[1]] if args[1] != 'True' and args[1] != 'False' else args[1]
 
-    if val == 'True':
-        return 'False'
-    else:
-        return 'True'
+    return 'False' if val == 'True' else 'True'
+
 
 def eval_bin_op(args):
     r"""
@@ -615,7 +597,7 @@ def eval_bin_op(args):
 
     INPUT:
 
-    - ``args`` -- a list of length 3; this contains a variable name,
+    - ``args`` -- list of length 3; this contains a variable name,
       then a binary operator, and then a variable name, in that order
 
     OUTPUT:
@@ -660,21 +642,20 @@ def eval_bin_op(args):
     elif args[1] == 'IFF':
         return eval_iff_op(lval, rval)
 
+
 def eval_and_op(lval, rval):
     r"""
     Apply the 'and' operator to ``lval`` and ``rval``.
 
     INPUT:
 
-    - ``lval`` -- a string; this represents the value of the variable
+    - ``lval`` -- string; this represents the value of the variable
       appearing to the left of the 'and' operator
 
-    - ``rval`` -- a string; this represents the value of the variable
+    - ``rval`` -- string; this represents the value of the variable
       appearing to the right of the 'and' operator
 
-    OUTPUT:
-
-    The result of applying 'and' to ``lval`` and ``rval`` as a string.
+    OUTPUT: the result of applying 'and' to ``lval`` and ``rval`` as a string
 
     .. NOTE::
 
@@ -691,14 +672,8 @@ def eval_and_op(lval, rval):
         sage: sage.logic.logic.eval_and_op('True', 'True')
         'True'
     """
-    if lval == 'False' and rval == 'False':
-        return 'False'
-    elif lval == 'False' and rval == 'True':
-        return 'False'
-    elif lval == 'True' and rval == 'False':
-        return 'False'
-    elif lval == 'True' and rval == 'True':
-        return 'True'
+    return 'True' if (lval == 'True' == rval) else 'False'
+
 
 def eval_or_op(lval, rval):
     r"""
@@ -706,15 +681,13 @@ def eval_or_op(lval, rval):
 
     INPUT:
 
-    - ``lval`` -- a string; this represents the value of the variable
+    - ``lval`` -- string; this represents the value of the variable
       appearing to the left of the 'or' operator
 
-    - ``rval`` -- a string; this represents the value of the variable
+    - ``rval`` -- string; this represents the value of the variable
       appearing to the right of the 'or' operator
 
-    OUTPUT:
-
-    A string representing the result of applying 'or' to ``lval`` and ``rval``.
+    OUTPUT: string representing the result of applying 'or' to ``lval`` and ``rval``
 
     .. NOTE::
 
@@ -731,14 +704,8 @@ def eval_or_op(lval, rval):
         sage: sage.logic.logic.eval_or_op('True', 'True')
         'True'
     """
-    if lval == 'False' and rval == 'False':
-        return 'False'
-    elif lval == 'False' and rval == 'True':
-        return 'True'
-    elif lval == 'True' and rval == 'False':
-        return 'True'
-    elif lval == 'True' and rval == 'True':
-        return 'True'
+    return 'True' if (lval == 'True' or rval == 'True') else 'False'
+
 
 def eval_ifthen_op(lval, rval):
     r"""
@@ -746,10 +713,10 @@ def eval_ifthen_op(lval, rval):
 
     INPUT:
 
-    - ``lval`` -- a string; this represents the value of the variable
+    - ``lval`` -- string; this represents the value of the variable
       appearing to the left of the 'if then' operator
 
-    - ``rval`` -- a string;t his represents the value of the variable
+    - ``rval`` -- string; this represents the value of the variable
       appearing to the right of the 'if then' operator
 
     OUTPUT:
@@ -772,14 +739,8 @@ def eval_ifthen_op(lval, rval):
         sage: sage.logic.logic.eval_ifthen_op('True', 'True')
         'True'
     """
-    if lval == 'False' and rval == 'False':
-        return 'True'
-    elif lval == 'False' and rval == 'True':
-        return 'True'
-    elif lval == 'True' and rval == 'False':
-        return 'False'
-    elif lval == 'True' and rval == 'True':
-        return 'True'
+    return 'False' if (lval == 'True' and rval == 'False') else 'True'
+
 
 def eval_iff_op(lval, rval):
     r"""
@@ -787,10 +748,10 @@ def eval_iff_op(lval, rval):
 
     INPUT:
 
-    - ``lval`` -- a string; this represents the value of the variable
+    - ``lval`` -- string; this represents the value of the variable
       appearing to the left of the 'if and only if' operator
 
-    - ``rval`` -- a string; this represents the value of the variable
+    - ``rval`` -- string; this represents the value of the variable
       appearing to the right of the 'if and only if' operator
 
     OUTPUT:
@@ -813,14 +774,8 @@ def eval_iff_op(lval, rval):
         sage: sage.logic.logic.eval_iff_op('True', 'True')
         'True'
     """
-    if lval == 'False' and rval == 'False':
-        return 'True'
-    elif lval == 'False' and rval == 'True':
-        return 'False'
-    elif lval == 'True' and rval == 'False':
-        return 'False'
-    elif lval == 'True' and rval == 'True':
-        return 'True'
+    return 'True' if (lval == rval) else 'False'
+
 
 def tokenize(s, toks):
     r"""
@@ -828,13 +783,11 @@ def tokenize(s, toks):
 
     INPUT:
 
-    - ``s`` -- a string; this contains a boolean expression
+    - ``s`` -- string; this contains a boolean expression
 
-    - ``toks`` -- a list; this will be populated with the tokens of ``s``
+    - ``toks`` -- list; this will be populated with the tokens of ``s``
 
-    OUTPUT:
-
-    ``None``; the tokens of ``s`` are placed in ``toks``.
+    OUTPUT: none; the tokens of ``s`` are placed in ``toks``
 
     .. NOTE::
 
@@ -887,7 +840,8 @@ def tokenize(s, toks):
                 if tok[0] not in string.ascii_letters:
                     valid = 0
                 for c in tok:
-                    if c not in string.ascii_letters and c not in string.digits and c != '_':
+                    if not (c in string.ascii_letters
+                            or c in string.digits or c == '_'):
                         valid = 0
 
             if valid == 1:

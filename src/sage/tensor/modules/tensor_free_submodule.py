@@ -95,7 +95,6 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
         'T^{2,3}(M)⊗T^{6,7}(M*)⊗Sym^{0,1}(M)⊗ASym^{4,5}(M*)'
         sage: latex(T)
         T^{\{2,3\}}(M) \otimes T^{\{6,7\}}(M^*) \otimes \mathrm{Sym}^{\{0,1\}}(M) \otimes \mathrm{ASym}^{\{4,5\}}(M^*)
-
     """
     def __init__(self, fmodule, tensor_type, name=None, latex_name=None,
                  sym=None, antisym=None, *, category=None, ambient=None):
@@ -211,7 +210,6 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
             Free module of fully symmetric type-(2,0) tensors on the Rank-3 free module M over the Integer Ring
             sage: c = Sym2M._basis_sym(); c
             Fully symmetric 2-indices components w.r.t. (0, 1, 2)
-
         """
         frame = tuple(self.base_module().irange())
         # Need to call _element_constructor_ explicitly, or the passed arguments are dropped
@@ -228,7 +226,6 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
             sage: Sym2M = M.tensor_module(2, 0, sym=range(2)); Sym2M
             Free module of fully symmetric type-(2,0) tensors
              on the Rank-3 free module M over the Integer Ring
-
         """
         prefix, suffix = self._basis_sym()._repr_symmetry()
         return "Free module of {}type-({},{}) tensors on the {}{}".format(
@@ -240,7 +237,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
 
         INPUT:
 
-        - ``coarser_comp``, ``finer_comp``: :class:`~sage.tensor.modules.comp.Components`
+        - ``coarser_comp``, ``finer_comp`` -- :class:`~sage.tensor.modules.comp.Components`
 
         EXAMPLES::
 
@@ -386,7 +383,6 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
             False
             sage: all(S.is_submodule(T60M) for S in (Sym0123x45M, Sym012x345M, Sym012345M))
             True
-
         """
         if super().is_submodule(other):
             return True
@@ -420,7 +416,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
                      with symmetry on the index positions (0, 1, 2, 3),
                      with symmetry on the index positions (4, 5)
               To:   Free module of type-(6,0) tensors on the Rank-3 free module M over the Integer Ring
-         """
+        """
         return self.module_morphism(function=lambda x: x, codomain=self.ambient())
 
     @lazy_attribute

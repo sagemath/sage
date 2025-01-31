@@ -39,7 +39,6 @@ EXAMPLES::
 
     from sage.plot.plot3d.shapes import *
     sphinx_plot(Torus(.7, .2, color=(0,.3,0)))
-
 """
 
 # ****************************************************************************
@@ -118,22 +117,22 @@ class Box(IndexFaceSet):
 
     A red rectangular box::
 
-        sage: show(Box([2,3,4], color="red"))
+        sage: show(Box([2,3,4], color='red'))
 
     .. PLOT::
 
         from sage.plot.plot3d.shapes import Box
-        sphinx_plot(Box([2,3,4], color="red"))
+        sphinx_plot(Box([2,3,4], color='red'))
 
     A stack of boxes::
 
-        sage: show(sum(Box([2,3,1], color="red").translate((0,0,6*i))
+        sage: show(sum(Box([2,3,1], color='red').translate((0,0,6*i))
         ....:          for i in [0..3]))
 
     .. PLOT::
 
         from sage.plot.plot3d.shapes import Box
-        P = sum([Box([2,3,1], color="red").translate((0,0,6*i)) for i in range(0,4)])
+        P = sum([Box([2,3,1], color='red').translate((0,0,6*i)) for i in range(0,4)])
         sphinx_plot(P)
 
     A sinusoidal stack of multicolored boxes::
@@ -148,7 +147,6 @@ class Box(IndexFaceSet):
         from sage.plot.plot3d.shapes import Box
         B = sum([Box([2,4,1/4], color=(i/4.0,i/5.0,1)).translate((sin(i),0,5-i)) for i in range(0,21)])
         sphinx_plot(B)
-
     """
     def __init__(self, *size, **kwds):
         """
@@ -197,13 +195,11 @@ def ColorCube(size, colors, opacity=1, **kwds):
     INPUT:
 
     - ``size`` -- 3-tuple of sizes (same as for box and frame)
-    - ``colors`` -- a list of either 3 or 6 colors
+    - ``colors`` -- list of either 3 or 6 colors
     - ``opacity`` -- (default: 1) opacity of cube sides
     - ``**kwds`` -- passed to the face constructor
 
-    OUTPUT:
-
-    a 3d graphics object
+    OUTPUT: a 3d graphics object
 
     EXAMPLES:
 
@@ -234,7 +230,6 @@ def ColorCube(size, colors, opacity=1, **kwds):
         from sage.plot.plot3d.shapes import ColorCube
         c = ColorCube([0.5,0.5,0.5], ['red', 'blue', 'green'])
         sphinx_plot(c)
-
     """
     if not isinstance(size, (tuple, list)):
         size = (size, size, size)
@@ -263,7 +258,7 @@ cdef class Cone(ParametricSurface):
 
     - ``height`` -- positive real number
 
-    - ``closed`` -- whether or not to include the base (default ``True``)
+    - ``closed`` -- whether or not to include the base (default: ``True``)
 
     - ``**kwds`` -- passed to the ParametricSurface constructor
 
@@ -315,7 +310,6 @@ cdef class Cone(ParametricSurface):
         T = sum(Cone(exp(-n/5.0), 4/3*exp(-n/5.0), color=(0, .5, 0)).translate(0, 0, -3*exp(-n/5.0)) for n in range(8))
         T += Cone(1/8, 1, color='brown').translate(0, 0, -3)
         sphinx_plot(T)
-
     """
     def __init__(self, radius, height, closed=True, **kwds):
         """
@@ -383,7 +377,7 @@ cdef class Cylinder(ParametricSurface):
 
     - ``height`` -- positive real number
 
-    - ``closed`` -- whether or not to include the ends (default ``True``)
+    - ``closed`` -- whether or not to include the ends (default: ``True``)
 
     - ``**kwds`` -- passed to the :class:`ParametricSurface` constructor
 
@@ -428,7 +422,6 @@ cdef class Cylinder(ParametricSurface):
         G += G.translate(2.3, 0, -.5)
         G += G.translate(3.5, 2, -1)
         sphinx_plot(G)
-
     """
     def __init__(self, radius, height, closed=True, **kwds):
         """
@@ -490,7 +483,7 @@ cdef class Cylinder(ParametricSurface):
    Base %s %s %s
    Apex %s %s %s
    Rad %s
-   %s     """%(base[0], base[1], base[2], top[0], top[1], top[2], rad, self.texture.id)
+   %s     """ % (base[0], base[1], base[2], top[0], top[1], top[2], rad, self.texture.id)
         if self.closed:
             normal = (0,0,1)
             if transform is not None:
@@ -498,7 +491,7 @@ cdef class Cylinder(ParametricSurface):
             base_cap = """Ring Center %s %s %s Normal %s %s %s Inner 0 Outer %s %s"""  \
                        % (base[0], base[1], base[2], normal[0], normal[1], normal[2], rad, self.texture.id)
             top_cap  = """Ring Center %s %s %s Normal %s %s %s Inner 0 Outer %s %s"""  \
-                       % ( top[0],  top[1],  top[2], normal[0], normal[1], normal[2], rad, self.texture.id)
+                       % (top[0], top[1], top[2], normal[0], normal[1], normal[2], rad, self.texture.id)
             return [base_cap, cyl, top_cap]
         else:
             return cyl
@@ -685,10 +678,10 @@ def arrow3d(start, end, width=1, radius=None, head_radius=None, head_len=None, *
 
     - ``start`` -- (x,y,z) point; the starting point of the arrow
     - ``end`` -- (x,y,z) point; the end point
-    - ``width`` -- (default: 1); how wide the arrow is
+    - ``width`` -- (default: 1) how wide the arrow is
     - ``radius`` -- (default: ``width/50.0``) the radius of the arrow
-    - ``head_radius`` -- (default: ``3*radius``); radius of arrow head
-    - ``head_len`` -- (default: ``3*head_radius``); len of arrow head
+    - ``head_radius`` -- (default: ``3*radius``) radius of arrow head
+    - ``head_len`` -- (default: ``3*head_radius``) len of arrow head
 
     EXAMPLES:
 
@@ -840,7 +833,6 @@ cdef class Sphere(ParametricSurface):
         from sage.plot.plot3d.shapes import Sphere
         S = Sphere(1).scale(1,2,1/2)
         sphinx_plot(S)
-
     """
     def __init__(self, radius, **kwds):
         """
@@ -874,7 +866,7 @@ cdef class Sphere(ParametricSurface):
             sage: Sphere(12).x3d_geometry()
             "<Sphere radius='12.0'/>"
         """
-        return "<Sphere radius='%s'/>"%(self.radius)
+        return "<Sphere radius='%s'/>" % (self.radius)
 
     def tachyon_repr(self, render_params):
         r"""
@@ -974,7 +966,7 @@ cdef class Sphere(ParametricSurface):
         if u == -10:
             res.x, res.y, res.z = 0, 0, -self.radius
         elif u == 10:
-            res.x, res.y, res.z = 0, 0,  self.radius
+            res.x, res.y, res.z = 0, 0, self.radius
         else:
             res.x = self.radius * cos(v) * cos(u)
             res.y = self.radius * sin(v) * cos(u)
@@ -988,9 +980,7 @@ cdef class Torus(ParametricSurface):
     - ``R`` -- (default: ``1``) outer radius
     - ``r`` -- (default: ``.3``) inner radius
 
-    OUTPUT:
-
-    a 3d torus
+    OUTPUT: a 3d torus
 
     EXAMPLES::
 
@@ -1037,7 +1027,6 @@ cdef class Torus(ParametricSurface):
         D = Torus(1, .4, color=(.5, .3, .2)) + Torus(1, .3, color='yellow').translate(0, 0, .15)
         G = sum(D.translate(RDF.random_element(-.2, .2), RDF.random_element(-.2, .2), .8*t) for t in range(10))
         sphinx_plot(G)
-
     """
     def __init__(self, R=1, r=.3, **kwds):
         """
@@ -1102,7 +1091,6 @@ class Text(PrimitiveObject):
         from sage.plot.plot3d.shapes import Text
         pts = [(RealField(10)**3).random_element() for k in range(20)]
         sphinx_plot(sum(Text(str(P)).translate(P) for P in pts))
-
     """
     def __init__(self, string, **kwds):
         """
@@ -1123,7 +1111,7 @@ class Text(PrimitiveObject):
             sage: Text("Hi").x3d_geometry()
             "<Text string='Hi' solid='true'/>"
         """
-        return "<Text string='%s' solid='true'/>"%self.string
+        return "<Text string='%s' solid='true'/>" % self.string
 
     def obj_repr(self, render_params):
         """
@@ -1174,14 +1162,14 @@ class Text(PrimitiveObject):
             [[['select atomno = 1', 'color atom  [102,102,255]', 'label "Hi"']],
              [['select atomno = 2', 'color atom  [102,102,255]', 'label "Bye"']]]
         """
-        cen = (0,0,0)
+        cen = (0, 0, 0)
         if render_params.transform is not None:
             cen = render_params.transform.transform_point(cen)
         render_params.atom_list.append(cen)
         atom_no = len(render_params.atom_list)
         return ['select atomno = %s' % atom_no,
                 self.get_texture().jmol_str("atom"),
-                'label "%s"' % self.string] #.replace('\n', '|')]
+                'label "%s"' % self.string]  # .replace('\n', '|')]
 
     def threejs_repr(self, render_params):
         r"""
@@ -1224,7 +1212,6 @@ class Text(PrimitiveObject):
                'x': 0.0,
                'y': 0.0,
                'z': 0.0})]
-
         """
         center = (float(0), float(0), float(0))
         if render_params.transform is not None:
@@ -1252,7 +1239,7 @@ def _validate_threejs_text_style(style):
 
     INPUT:
 
-    - ``style`` -- a dict optionally containing keys: 'color', 'fontSize',
+    - ``style`` -- dictionary optionally containing keys: 'color', 'fontSize',
       'fontFamily', 'fontStyle', 'fontWeight', and 'opacity'
 
     OUTPUT:
@@ -1326,7 +1313,6 @@ def _validate_threejs_text_style(style):
 
         sage: validate(dict(opacity=0.5))
         {...'opacity': 0.5}
-
     """
     default_color = '#000000' # black
     color = style.get('color', default_color)

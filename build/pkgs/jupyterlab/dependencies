@@ -1,4 +1,4 @@
- vcversioner jupyter_core jupyter_client jinja2 tornado ipython packaging terminado traitlets nbconvert send2trash nbformat prometheus_client ipython_genutils argon2_cffi pyzmq idna requests jsonschema babel notebook | $(PYTHON_TOOLCHAIN) $(PYTHON)
+async_lru importlib_metadata ipykernel jinja2 jupyter_core jupyter_lsp jupyter_server jupyterlab_server notebook_shim packaging traitlets tornado tomli httpx | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

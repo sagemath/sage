@@ -9,7 +9,6 @@ list of handled properties.
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
@@ -206,12 +205,10 @@ class AnalyticTypeElement(LatticePosetElement):
 
         INPUT:
 
-        - ``reduce_type``  -- an analytic type or something which is
+        - ``reduce_type`` -- an analytic type or something which is
           convertible to an analytic type
 
-        OUTPUT:
-
-        The new reduced analytic type.
+        OUTPUT: the new reduced analytic type
 
         EXAMPLES::
 
@@ -236,12 +233,10 @@ class AnalyticTypeElement(LatticePosetElement):
 
         INPUT:
 
-        - ``extend_type``  -- an analytic type or something which is
+        - ``extend_type`` -- an analytic type or something which is
           convertible to an analytic type
 
-        OUTPUT:
-
-        The new extended analytic type.
+        OUTPUT: the new extended analytic type
 
         EXAMPLES::
 
@@ -294,16 +289,16 @@ class AnalyticType(FiniteLatticePoset):
 
     The basic ``analytic properties`` are:
 
-    - ``quasi``  - Whether the element is quasi modular (and not modular)
-                   or modular.
-    - ``mero``   - ``meromorphic``: If the element is meromorphic
-                   and meromorphic at infinity.
-    - ``weak``   - ``weakly holomorphic``: If the element is holomorphic
-                   and meromorphic at infinity.
-    - ``holo``   - ``holomorphic``: If the element is holomorphic and
-                   holomorphic at infinity.
-    - ``cusp``   - ``cuspidal``: If the element additionally has a positive
-                   order at infinity.
+    - ``quasi`` -- whether the element is quasi modular (and not modular)
+      or modular.
+    - ``mero`` -- ``meromorphic`` -- if the element is meromorphic
+      and meromorphic at infinity
+    - ``weak`` -- ``weakly holomorphic`` -- if the element is holomorphic
+      and meromorphic at infinity
+    - ``holo`` -- ``holomorphic`` -- if the element is holomorphic and
+      holomorphic at infinity
+    - ``cusp`` -- ``cuspidal`` -- if the element additionally has a positive
+      order at infinity
 
     The ``zero`` elements/property have no analytic properties (or only ``quasi``).
 
@@ -445,7 +440,7 @@ class AnalyticType(FiniteLatticePoset):
                                  linear_extension=True, facade=False)
 
         L = self._base_poset.order_ideals_lattice()
-        H = L._hasse_diagram.relabel({i: x for i, x in enumerate(L._elements)},
+        H = L._hasse_diagram.relabel(dict(enumerate(L._elements)),
                                      inplace=False)
         FiniteLatticePoset.__init__(self, hasse_diagram=H,
                                     elements=L._elements, category=L.category(),
@@ -485,7 +480,7 @@ class AnalyticType(FiniteLatticePoset):
             True
         """
         if len(args) > 1:
-            return super().__call__([arg for arg in args], **kwargs)
+            return super().__call__(list(args), **kwargs)
         else:
             return super().__call__(*args, **kwargs)
 
@@ -495,12 +490,9 @@ class AnalyticType(FiniteLatticePoset):
 
         INPUT:
 
-        - ``element``  -- Either something which coerces in the
-                          ``FiniteLatticePoset`` of ``self`` or
-                          a string or a list of strings of basic
-                          properties that should be contained in
-                          the new element.
-
+        - ``element`` -- either something which coerces in the
+          ``FiniteLatticePoset`` of ``self`` or a string or a list of strings
+          of basic properties that should be contained in the new element
 
         OUTPUT:
 

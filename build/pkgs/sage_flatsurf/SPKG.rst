@@ -1,5 +1,5 @@
-sage_flatsurf: computation with flat surfaces
-=============================================
+sage_flatsurf: Flat surfaces in SageMath
+========================================
 
 Description
 -----------

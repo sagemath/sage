@@ -123,7 +123,11 @@ https://github.com/alice/sage.
 
 Next if you don't have a local Git repo of Sage, then start afresh `cloning
 your fork
-<https://docs.github.com/en/get-started/quickstart/fork-a-repo#cloning-your-forked-repository>`_::
+<https://docs.github.com/en/get-started/quickstart/fork-a-repo#cloning-your-forked-repository>`_:
+
+.. tab:: By HTTPS protocol
+
+   ::
 
     [alice@localhost ~]$ git clone https://github.com/alice/sage.git
     Cloning into 'sage'...
@@ -139,7 +143,30 @@ your fork
     origin  https://github.com/alice/sage.git (fetch)
     origin  https://github.com/alice/sage.git (push)
 
-If you already have a local Git repo and only want to link your fork as ``origin`` remote, then do::
+.. tab:: By SSH protocol
+
+   ::
+
+    [alice@localhost ~]$ git clone git@github.com:alice/sage.git
+    Cloning into 'sage'...
+    remote: Enumerating objects: 914565, done.
+    remote: Counting objects: 100% (2738/2738), done.
+    remote: Compressing objects: 100% (855/855), done.
+    remote: Total 914565 (delta 1950), reused 2493 (delta 1875), pack-reused 911827
+    Receiving objects: 100% (914565/914565), 331.09 MiB | 11.22 MiB/s, done.
+    Resolving deltas: 100% (725438/725438), done.
+    Updating files: 100% (9936/9936), done.
+    [alice@localhost ~]$ cd sage
+    [alice@localhost sage]$ git remote -v
+    origin  git@github.com:alice/sage.git (fetch)
+    origin  git@github.com:alice/sage.git (push)
+
+
+If you already have a local Git repo and only want to link your fork as ``origin`` remote, then do:
+
+.. tab:: By HTTPS protocol
+
+   ::
 
     [alice@localhost sage]$ git remote add origin https://github.com/alice/sage.git
     [alice@localhost sage]$ git remote -v
@@ -155,7 +182,29 @@ If you already have a local Git repo and only want to link your fork as ``origin
     From https://github.com/alice/sage
      * [new branch]      develop     -> origin/develop
 
-You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``::
+.. tab:: By SSH protocol
+
+   ::
+
+    [alice@localhost sage]$ git remote add origin git@github.com:alice/sage.git
+    [alice@localhost sage]$ git remote -v
+    origin  git@github.com:alice/sage.git (fetch)
+    origin  git@github.com:alice/sage.git (push)
+    [alice@localhost sage]$ git fetch origin
+    remote: Enumerating objects: 1136, done.
+    remote: Counting objects: 100% (1084/1084), done.
+    remote: Compressing objects: 100% (308/308), done.
+    remote: Total 1136 (delta 825), reused 982 (delta 776), pack-reused 52
+    Receiving objects: 100% (1136/1136), 2.62 MiB | 5.30 MiB/s, done.
+    Resolving deltas: 100% (838/838), completed with 145 local objects.
+    From git@github.com:alice/sage
+     * [new branch]      develop     -> origin/develop
+
+You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``:
+
+.. tab:: By HTTPS protocol
+
+   ::
 
     [alice@localhost sage]$ git remote add upstream https://github.com/sagemath/sage.git
     [alice@localhost sage]$ git remote -v
@@ -164,19 +213,16 @@ You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``::
     upstream    https://github.com/sagemath/sage.git (fetch)
     upstream    https://github.com/sagemath/sage.git (push)
 
+.. tab:: By SSH protocol
 
-.. NOTE::
+   ::
 
-    If you linked your Git to GitHub by SSH protocol, then do the following
-    instead to set up remotes::
-
-        [alice@localhost sage]$ git remote add origin git@github.com:alice/sage.git
-        [alice@localhost sage]$ git remote add upstream git@github.com:sagemath/sage.git
-        [alice@localhost sage]$ git remote -v
-        origin  git@github.com:alice/sage.git (fetch)
-        origin  git@github.com:alice/sage.git (push)
-        upstream    git@github.com:sagemath/sage.git (fetch)
-        upstream    git@github.com:sagemath/sage.git (push)
+    [alice@localhost sage]$ git remote add upstream git@github.com:sagemath/sage.git
+    [alice@localhost sage]$ git remote -v
+    origin  git@github.com:alice/sage.git (fetch)
+    origin  git@github.com:alice/sage.git (push)
+    upstream    git@github.com:sagemath/sage.git (fetch)
+    upstream    git@github.com:sagemath/sage.git (push)
 
 To prevent accidental pushes to ``upstream`` (instead of ``origin``), you may want to disable it by running::
 

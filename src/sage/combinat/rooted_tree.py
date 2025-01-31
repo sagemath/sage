@@ -191,9 +191,9 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         try:
             children = list(children)
         except TypeError:
-            raise TypeError("input ({}) is not a valid tree".format(children))
-        #if not (children.__class__ is self.__class__
-        #        and children.parent() == parent):
+            raise TypeError(f"input ({children}) is not a valid tree")
+        # if not (children.__class__ is self.__class__
+        #         and children.parent() == parent):
         children = [self.__class__(parent, x) for x in children]
         NormalizedClonableList.__init__(self, parent, children, check=check)
 
@@ -215,7 +215,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         .. NOTE::
 
             The tree ``self`` must be normalized before calling this
-            method (see :meth:`normalize`). This doesn't matter
+            method (see :meth:`normalize`). This does not matter
             unless you are inside the :meth:`clone` context manager,
             because outside of it every rooted tree is already
             normalized.
@@ -425,11 +425,11 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
 
         INPUT:
 
-        - `x` -- a rooted tree
+        - ``x`` -- a rooted tree
 
-        - ``grafting_function`` -- a list of paths in ``self``
+        - ``grafting_function`` -- list of paths in ``self``
 
-        - ``path_prefix`` -- optional tuple (default ``()``)
+        - ``path_prefix`` -- tuple (default: ``()``)
 
         The ``path_prefix`` argument is only used for internal recursion.
 
@@ -467,7 +467,7 @@ class RootedTrees(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``size`` -- (optional) an integer
+    - ``size`` -- integer (optional)
 
     OUTPUT:
 
@@ -808,10 +808,14 @@ class LabelledRootedTree(AbstractLabelledClonableTree, RootedTree):
 
     INPUT:
 
-    - ``children`` -- a list or tuple or more generally any iterable
+    - ``children`` -- list or tuple or more generally any iterable
       of trees or objects convertible to trees
 
-    - ``label`` -- any hashable Sage object (default is ``None``)
+    - ``label`` -- any hashable Sage object (default: ``None``)
+
+    .. NOTE::
+
+        It is required that all labels are comparable.
 
     EXAMPLES::
 
@@ -904,7 +908,7 @@ class LabelledRootedTree(AbstractLabelledClonableTree, RootedTree):
         .. NOTE::
 
             The tree ``self`` must be normalized before calling this
-            method (see :meth:`normalize`). This doesn't matter
+            method (see :meth:`normalize`). This does not matter
             unless you are inside the :meth:`clone` context manager,
             because outside of it every rooted tree is already
             normalized.
@@ -1038,7 +1042,7 @@ class LabelledRootedTrees_all(LabelledRootedTrees):
         t = LT([], label=3)
         t1 = LT([t, t], label=42)
         t2 = LT([[]], label=5)
-        return LT([t, t1, t2], label="alpha")
+        return LT([t, t1, t2], label='alpha')
 
     def unlabelled_trees(self):
         """

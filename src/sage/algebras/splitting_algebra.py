@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari sage.modules
 r"""
 Splitting Algebras
 
@@ -102,7 +102,7 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
 
         return super().is_unit()
 
-    def dict(self):
+    def monomial_coefficients(self, copy=True):
         r"""
         Return the dictionary of ``self`` according to its lift to the cover.
 
@@ -110,15 +110,24 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
 
             sage: from sage.algebras.splitting_algebra import SplittingAlgebra
             sage: CR3.<e3> = SplittingAlgebra(cyclotomic_polynomial(3))
-            sage: (e3 + 42).dict()
+            sage: f = e3 + 42
+            sage: f.monomial_coefficients()
+            {0: 42, 1: 1}
+
+        ``dict`` is an alias::
+
+            sage: f.dict()
             {0: 42, 1: 1}
         """
-        return self.lift().dict()
+        return self.lift().monomial_coefficients(copy=copy)
 
+    dict = monomial_coefficients
 
 # ------------------------------------------------------------------------------------------------------------------
 # Parent class of the splitting algebra
 # --------------------------------------------------------------------------------------------------------
+
+
 class SplittingAlgebra(PolynomialQuotientRing_domain):
     r"""
     For a given monic polynomial `p(t)` of degree `n` over a commutative
@@ -138,11 +147,11 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     INPUT:
 
     - ``monic_polynomial`` -- the monic polynomial which should be split
-    - ``names``  -- names for the indeterminates to be adjoined to the
+    - ``names`` -- names for the indeterminates to be adjoined to the
       base ring of ``monic_polynomial``
-    - ``warning`` -- (default: ``True``) can be used (by setting to ``False``)
-      to suppress a warning which will be thrown whenever it cannot be
-      checked that the Galois group of ``monic_polynomial`` is maximal
+    - ``warning`` -- boolean (default: ``True``); can be used (by setting to
+      ``False``) to suppress a warning which will be thrown whenever it cannot
+      be checked that the Galois group of ``monic_polynomial`` is maximal
 
     EXAMPLES::
 
@@ -229,11 +238,11 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             if not base_ring.is_integral_domain():
                 raise TypeError("base_ring must be an integral domain")
         except NotImplementedError:
-            from sage.rings.ring import Ring
-            if not isinstance(base_ring, Ring):
-                raise TypeError("base_ring must be an instance of ring")
+            from sage.categories.rings import Rings
+            if base_ring not in Rings():
+                raise TypeError("base_ring must be a ring")
             if warning:
-                warn('Assuming %s to be an integral domain!' % (base_ring))
+                warn('Assuming %s to be an integral domain!' % base_ring)
 
         if deg < 1:
             raise ValueError("the degree of the polynomial must positive")
@@ -274,16 +283,16 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 
             verbose("base_ring_step %s defined:" % (base_ring_step))
 
-            # ------------------------------------------------------------------------------------
+            # -------------------------------------------------------------
             # splitting first root off
-            # ------------------------------------------------------------------------------------
+            # -------------------------------------------------------------
             from copy import copy
             root_names_reduces = copy(root_names)
             root_names_reduces.remove(root_name)
 
             P = base_ring_step[root_names_reduces[0]]
-            p = P(monic_polynomial.dict())
-            q, _ = p.quo_rem((P.gen() - first_root))
+            p = P(monic_polynomial.monomial_coefficients())
+            q, _ = p.quo_rem(P.gen() - first_root)
 
             verbose("Invoking recursion with: %s" % (q,))
 
@@ -349,13 +358,13 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
                 if not check.is_zero():
                     continue
                 root_inv = self.one()
-                for pos in range(deg_cf-1 ):
-                    root_inv = (-1 )**(pos+1 ) * cf[deg_cf-pos-1 ] - root_inv * root
+                for pos in range(deg_cf-1):
+                    root_inv = (-1)**(pos+1) * cf[deg_cf-pos-1] - root_inv * root
                 verbose("inverse %s of root %s" % (root_inv, root))
-                root_inv = (-1 )**(deg_cf) * cf0_inv * root_inv
+                root_inv = (-1)**(deg_cf) * cf0_inv * root_inv
                 self._invertible_elements.update({root:root_inv})
                 verbose("adding inverse %s of root %s" % (root_inv, root))
-            invert_items = [(k,v) for k, v in self._invertible_elements.items()]
+            invert_items = list(self._invertible_elements.items())
             for k, v in invert_items:
                 self._invertible_elements.update({v: k})
         return
@@ -524,7 +533,8 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 
     def is_completely_split(self):
         r"""
-        Return True if the defining polynomial of ``self`` splits into linear factors over ``self``.
+        Return ``True`` if the defining polynomial of ``self`` splits into
+        linear factors over ``self``.
 
         EXAMPLES::
 
@@ -576,7 +586,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     @cached_method
     def scalar_base_ring(self):
         r"""
-        Return the ring of scalars of ``self`` (considered as an algebra)
+        Return the ring of scalars of ``self`` (considered as an algebra).
 
         EXAMPLES::
 
@@ -637,16 +647,16 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
     INPUT:
 
     - ``monic_polynomial`` -- the monic polynomial whose roots should be created
-    - ``root_names``  -- names for the indeterminates needed to define the
+    - ``root_names`` -- names for the indeterminates needed to define the
       splitting algebra of the ``monic_polynomial`` (if necessary and possible)
-    - ``var``  -- (default: ``'x'``) for the indeterminate needed to define the
+    - ``var`` -- (default: ``'x'``) for the indeterminate needed to define the
       splitting field of the ``monic_polynomial`` (if necessary and possible)
-    - ``flatten`` -- (default: ``True``) if ``True`` the roots will not be
-      given as a list of pairs ``(root, multiplicity)`` but as a list of
+    - ``flatten`` -- boolean (default: ``True``); if ``True`` the roots will
+      not be given as a list of pairs ``(root, multiplicity)`` but as a list of
       roots repeated according to their multiplicity
-    - ``warning`` -- (default: ``True``) can be used (by setting to ``False``)
-      to suppress a warning which will be thrown whenever it cannot be checked
-      that the Galois group of ``monic_polynomial`` is maximal
+    - ``warning`` -- boolean (default: ``True``); can be used (by setting to
+      ``False``) to suppress a warning which will be thrown whenever it cannot
+      be checked that the Galois group of ``monic_polynomial`` is maximal
 
     OUTPUT:
 
@@ -682,9 +692,10 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
 
         - ``monic_polynomial`` -- the monic polynomial whose roots should
           be created
-        - ``warning`` -- (default: ``True``) can be used (by setting to ``False``)
-          to suppress a warning which will be thrown whenever it cannot be
-          checked that the Galois group of ``monic_polynomial`` is maximal
+        - ``warning`` -- boolean (default: ``True``); can be used (by setting
+          to ``False``) to suppress a warning which will be thrown whenever it
+          cannot be checked that the Galois group of ``monic_polynomial`` is
+          maximal
         """
         parent = monic_polynomial.parent()
         base_ring = parent.base_ring()

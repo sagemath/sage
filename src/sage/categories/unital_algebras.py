@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Unital algebras
 """
@@ -30,7 +31,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
     .. WARNING::
 
-        Until :trac:`15043` is implemented, :class:`Algebras` is the
+        Until :issue:`15043` is implemented, :class:`Algebras` is the
         category of associative unital algebras; thus, unlike the name
         suggests, :class:`UnitalAlgebras` is not a subcategory of
         :class:`Algebras` but of
@@ -93,7 +94,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
             TESTS:
 
-            Ensure that :trac:`28328` is fixed and that non-associative
+            Ensure that :issue:`28328` is fixed and that non-associative
             algebras are supported::
 
                 sage: # needs sage.modules
@@ -107,20 +108,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 0
                 sage: F(3)
                 3*B[0]
-
-                sage: class Bar(Parent):
-                ....:     _no_generic_basering_coercion = True
-                sage: Bar(category=Algebras(QQ))
-                doctest:warning...:
-                DeprecationWarning: the attribute _no_generic_basering_coercion is deprecated, implement _coerce_map_from_base_ring() instead
-                See https://github.com/sagemath/sage/issues/19225 for details.
-                <__main__.Bar_with_category object at 0x...>
             """
-            if getattr(self, '_no_generic_basering_coercion', False):
-                from sage.misc.superseded import deprecation
-                deprecation(19225, "the attribute _no_generic_basering_coercion is deprecated, implement _coerce_map_from_base_ring() instead")
-                return
-
             base_ring = self.base_ring()
             if base_ring is self:
                 # There are rings that are their own base rings. No need to register that.
@@ -147,7 +135,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
             TESTS:
 
-            Check that :trac:`19225` is solved::
+            Check that :issue:`19225` is solved::
 
                 sage: A = cartesian_product((QQ['z'],)); A
                 The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
@@ -185,7 +173,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 From: Rational Field
                 To:   The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
 
-            Check that :trac:`29312` is fixed::
+            Check that :issue:`29312` is fixed::
 
                 sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')         # needs sage.combinat sage.modules
                 sage: F._coerce_map_from_base_ring()                                    # needs sage.combinat sage.modules
@@ -311,7 +299,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                 TESTS:
 
-                Try to check that :trac:`5843` Heisenbug is fixed::
+                Try to check that :issue:`5843` Heisenbug is fixed::
 
                     sage: # needs sage.combinat sage.modules
                     sage: A = AlgebrasWithBasis(QQ).example()
@@ -323,15 +311,15 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                     sage: Aone is Bone
                     False
 
-               Even if called in the wrong order, they should returns their
-               respective one::
+                Even if called in the wrong order, they should returns their
+                respective one::
 
                     sage: Bone().parent() is B                                          # needs sage.combinat sage.modules
                     True
                     sage: Aone().parent() is A                                          # needs sage.combinat sage.modules
                     True
                 """
-                return self.monomial(self.one_basis()) #.
+                return self.monomial(self.one_basis())
 
             @lazy_attribute
             def one(self):
@@ -422,6 +410,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs sage.modules
                     sage: S2 = simplicial_complexes.Sphere(2)
                     sage: H = S2.cohomology_ring(QQ)
                     sage: C = cartesian_product([H, H])

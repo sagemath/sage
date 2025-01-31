@@ -10,3 +10,9 @@ License
 -------
 
 BSD
+
+Upstream Contact
+----------------
+
+https://pypi.org/project/sphinxcontrib-jsmath/
+

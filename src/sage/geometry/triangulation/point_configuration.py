@@ -18,13 +18,9 @@ more details.
 
 Finding a single triangulation and listing all connected
 triangulations is implemented natively in this package. However, for
-more advanced options [TOPCOM]_ needs to be installed. It is available
-as an optional package for Sage, and you can install it with the
-shell command ::
+more advanced options [TOPCOM]_ needs to be installed; see :ref:`spkg_topcom`.
 
-    sage -i topcom
-
-.. note::
+.. NOTE::
 
     TOPCOM and the internal algorithms tend to enumerate
     triangulations in a different order. This is why we always
@@ -182,10 +178,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
+import itertools
+
+from sage.features import FeatureNotPresentError
+from sage.features.topcom import TOPCOMExecutable
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 
-from sage.combinat.combination import Combinations
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
@@ -215,25 +215,25 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
     The constructor accepts the following arguments:
 
-    - ``points`` -- the points. Technically, any iterable of iterables
+    - ``points`` -- the points; technically, any iterable of iterables
       will do. In particular, a :class:`PointConfiguration` can be passed.
 
-    - ``projective`` -- boolean (default: ``False``). Whether the
+    - ``projective`` -- boolean (default: ``False``); whether the
       point coordinates should be interpreted as projective (``True``)
       or affine (``False``) coordinates. If necessary, points are
       projectivized by setting the last homogeneous coordinate to one
       and/or affine patches are chosen internally.
 
-    - ``connected`` -- boolean (default: ``True``). Whether the
+    - ``connected`` -- boolean (default: ``True``); whether the
       triangulations should be connected to the regular triangulations
       via bistellar flips. These are much easier to compute than all
       triangulations.
 
-    - ``fine`` -- boolean (default: ``False``). Whether the
+    - ``fine`` -- boolean (default: ``False``); whether the
       triangulations must be fine, that is, make use of all points of
-      the configuration.
+      the configuration
 
-    - ``regular`` -- boolean or ``None`` (default: ``None``). Whether
+    - ``regular`` -- boolean or ``None`` (default: ``None``); whether
       the triangulations must be regular. A regular triangulation is
       one that is induced by a piecewise-linear convex support
       function. In other words, the shadows of the faces of a
@@ -245,7 +245,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
       * ``None`` (default): Both kinds of triangulation.
 
-    - ``star`` -- either ``None`` or a point. Whether the
+    - ``star`` -- either ``None`` or a point; whether the
       triangulations must be star. A triangulation is star if all
       maximal simplices contain a common point. The central point can
       be specified by its index (an integer) in the given points or by
@@ -289,7 +289,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             PointConfiguration._have_TOPCOM_cached = True
             assert out == '{{0,1}}',\
                 'TOPCOM ran but did not produce the correct output!'
-        except pexpect.ExceptionPexpect:
+        except (FeatureNotPresentError, pexpect.ExceptionPexpect):
             PointConfiguration._have_TOPCOM_cached = False
 
         PointConfiguration.set_engine('auto')
@@ -402,7 +402,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         A :class:`~sage.geometry.triangulation.base.Point` if a
         distinguished star central point has been fixed.
-        :class:`ValueError` exception is raised otherwise.
+        :exc:`ValueError` exception is raised otherwise.
 
         EXAMPLES::
 
@@ -587,13 +587,13 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``executable`` -- string. The name of the executable.
+        - ``executable`` -- string; the name of the executable
 
-        - ``input_string`` -- string. Will be piped into the running
-          executable's stdin.
+        - ``input_string`` -- string; will be piped into the running
+          executable's stdin
 
-        - ``verbose`` -- boolean. Whether to print out the TOPCOM
-          interaction.
+        - ``verbose`` -- boolean; whether to print out the TOPCOM
+          interaction
 
         TESTS::
 
@@ -611,7 +611,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             ['{{0,1,2,4},{1,2,3,4}}']
         """
         timeout = 600
-        proc = pexpect.spawn(executable, timeout=timeout)
+        executable_name, *args = executable.split()
+        executable_absname = TOPCOMExecutable(executable_name).absolute_filename()
+        proc = pexpect.spawn(executable_absname, args, timeout=timeout)
         proc.expect(r'Evaluating Commandline Options \.\.\.')
         proc.expect(r'\.\.\. done\.')
         proc.setecho(0)
@@ -689,7 +691,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
     def _TOPCOM_triangulations(self, verbose=True):
         r"""
-        Returns all triangulations satisfying the restrictions imposed.
+        Return all triangulations satisfying the restrictions imposed.
 
         EXAMPLES::
 
@@ -727,13 +729,13 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``verbose`` -- boolean. Whether to print out the TOPCOM
-          interaction.
+        - ``verbose`` -- boolean; whether to print out the TOPCOM
+          interaction
 
         OUTPUT:
 
         A :class:`~sage.geometry.triangulation.element.Triangulation`
-        satisfying all restrictions imposed. Raises a ``ValueError``
+        satisfying all restrictions imposed. This raises a :exc:`ValueError`
         if no such triangulation exists.
 
         EXAMPLES::
@@ -769,9 +771,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``regular`` -- ``True``, ``False``, or ``None``. Whether to
+        - ``regular`` -- ``True``, ``False``, or ``None``; whether to
           restrict to regular triangulations, irregular
-          triangulations, or lift any restrictions on regularity.
+          triangulations, or lift any restrictions on regularity
 
         OUTPUT:
 
@@ -813,9 +815,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``connected`` -- boolean. Whether to restrict to
+        - ``connected`` -- boolean; whether to restrict to
           triangulations that are connected by bistellar flips to the
-          regular triangulations.
+          regular triangulations
 
         OUTPUT:
 
@@ -852,7 +854,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``fine`` -- boolean. Whether to restrict to fine triangulations.
+        - ``fine`` -- boolean; whether to restrict to fine triangulations
 
         OUTPUT:
 
@@ -925,10 +927,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
     def triangulations(self, verbose=False):
         r"""
-        Returns all triangulations.
+        Return all triangulations.
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to
-          print out the TOPCOM interaction, if any.
+        - ``verbose`` -- boolean (default: ``False``); whether to
+          print out the TOPCOM interaction, if any
 
         OUTPUT:
 
@@ -1002,8 +1004,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``verbose`` -- boolean. Whether to print out the TOPCOM
-          interaction, if any.
+        - ``verbose`` -- boolean; whether to print out the TOPCOM
+          interaction, if any
 
         OUTPUT:
 
@@ -1031,13 +1033,13 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``verbose`` -- boolean. Whether to print out the TOPCOM
-          interaction, if any.
+        - ``verbose`` -- boolean; whether to print out the TOPCOM
+          interaction, if any
 
         OUTPUT:
 
         A :class:`~sage.geometry.triangulation.element.Triangulation`
-        satisfying all restrictions imposed. Raises a ``ValueError``
+        satisfying all restrictions imposed. This raises a :exc:`ValueError`
         if no such triangulation exists.
 
         EXAMPLES::
@@ -1235,8 +1237,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``point_idx_list`` -- a list of integers. The indices of
-          points to exclude.
+        - ``point_idx_list`` -- list of integers; the indices of
+          points to exclude
 
         OUTPUT:
 
@@ -1269,8 +1271,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``simplex`` (optional argument) -- a simplex from a
-          triangulation T specified as a list of point indices.
+        - ``simplex`` -- (optional argument) a simplex from a
+          triangulation T specified as a list of point indices
 
         OUTPUT:
 
@@ -1295,7 +1297,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: p.volume()
             2
 
-        .. note::
+        .. NOTE::
 
             We return `n!` * (metric volume of the simplex) to ensure that
             the volume is an integer.  Essentially, this normalizes
@@ -1483,18 +1485,16 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
     def positive_circuits(self, *negative):
         r"""
-        Returns the positive part of circuits with fixed negative part.
+        Return the positive part of circuits with fixed negative part.
 
         A circuit is a pair `(C_+, C_-)`, each consisting of a subset
         (actually, an ordered tuple) of point indices.
 
         INPUT:
 
-        - ``*negative`` -- integer. The indices of points.
+        - ``*negative`` -- integer; the indices of points
 
-        OUTPUT:
-
-        A tuple of all circuits with `C_-` = ``negative``.
+        OUTPUT: a tuple of all circuits with `C_-` = ``negative``
 
         EXAMPLES::
 
@@ -1632,7 +1632,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                     triangulation.update([ frozenset([head]).union(tail) ])
 
             nonminimal = set()
-            for rel in Combinations(triangulation, 2):
+            for rel in itertools.combinations(triangulation, 2):
                 if rel[0].issubset(rel[1]):
                     nonminimal.update([rel[1]])
                 if rel[1].issubset(rel[0]):
@@ -1654,7 +1654,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
     @cached_method
     def distance_affine(self, x, y):
         r"""
-        Returns the distance between two points.
+        Return the distance between two points.
 
         The distance function used in this method is `d_{aff}(x,y)^2`,
         the square of the usual affine distance function
@@ -1665,7 +1665,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``x``, ``y`` -- two points of the point configuration.
+        - ``x``, ``y`` -- two points of the point configuration
 
         OUTPUT:
 
@@ -1689,7 +1689,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
     @cached_method
     def distance_FS(self, x, y):
         r"""
-        Returns the distance between two points.
+        Return the distance between two points.
 
         The distance function used in this method is `1-\cos
         d_{FS}(x,y)^2`, where `d_{FS}` is the Fubini-Study distance of
@@ -1701,7 +1701,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``x``, ``y`` -- two points of the point configuration.
+        - ``x``, ``y`` -- two points of the point configuration
 
         OUTPUT:
 
@@ -1726,11 +1726,11 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
     @cached_method
     def distance(self, x, y):
         """
-        Returns the distance between two points.
+        Return the distance between two points.
 
         INPUT:
 
-        - ``x``, ``y`` -- two points of the point configuration.
+        - ``x``, ``y`` -- two points of the point configuration
 
         OUTPUT:
 
@@ -1762,9 +1762,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``points`` -- a list of points.
+        - ``points`` -- list of points
 
-        - ``among`` -- a list of points or ``None`` (default). The set
+        - ``among`` -- list of points or ``None`` (default); the set
           of points from which to pick the farthest one. By default,
           all points of the configuration are considered.
 
@@ -1802,17 +1802,17 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``large`` -- boolean. Whether to attempt to return a large
-          simplex.
+        - ``large`` -- boolean; whether to attempt to return a large
+          simplex
 
         - ``initial_point`` -- a
           :class:`~sage.geometry.triangulation.base.Point` or ``None``
           (default). A specific point to start with when picking the
           simplex vertices.
 
-        - ``point_order`` -- a list or tuple of (some or all)
+        - ``point_order`` -- list or tuple of (some or all)
           :class:`~sage.geometry.triangulation.base.Point` s or ``None``
-          (default).
+          (default)
 
         OUTPUT:
 
@@ -1909,9 +1909,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
           will be placed in some arbitrary order that attempts to
           produce a small number of simplices.
 
-        OUTPUT:
-
-        A :class:`~sage.geometry.triangulation.triangulation.Triangulation`.
+        OUTPUT: a :class:`~sage.geometry.triangulation.triangulation.Triangulation`
 
         EXAMPLES::
 
@@ -2047,13 +2045,11 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``points`` -- a tuple of points or point indices or ``None``
+        - ``points`` -- tuple of points or point indices or ``None``
           (default). A subset of points for which to compute the Gale
           transform. By default, all points are used.
 
-        OUTPUT:
-
-        A matrix over :meth:`base_ring`.
+        OUTPUT: a matrix over :meth:`base_ring`
 
         EXAMPLES::
 

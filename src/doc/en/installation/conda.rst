@@ -7,19 +7,19 @@ SageMath can be installed on Linux and macOS via Conda from the
 `conda-forge <https://conda-forge.org>`_ conda channel.
 
 Both the ``x86_64`` (Intel) architecture and the ``arm64``/``aarch64``
-architectures (including Apple Silicon, M1) are supported.
+architectures (including Apple Silicon, M1, M2, M3, M4) are supported.
 
-You will need a working Conda installation: either Mambaforge/Miniforge,
+You will need a working Conda installation: either Miniforge (or Mambaforge),
 Miniconda or Anaconda. If you don't have one yet, we recommend installing
-`Mambaforge <https://github.com/conda-forge/miniforge#mambaforge>`_ as
+`Miniforge <https://github.com/conda-forge/miniforge>`_ as
 follows. In a terminal,
 
 .. code-block:: shell
 
-   $ curl -L -O https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh
-   $ sh Mambaforge-$(uname)-$(uname -m).sh
+   $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+   $ bash Miniforge3-$(uname)-$(uname -m).sh
 
-* Mambaforge and Miniforge use conda-forge as the default channel.
+* Miniforge (and Mambaforge) use conda-forge as the default channel.
 
 * If you are using Miniconda or Anaconda, set it up to use conda-forge:
 
@@ -27,14 +27,9 @@ follows. In a terminal,
 
   * Change channel priority to strict: ``conda config --set channel_priority strict``
 
-Optionally, use `mamba <https://github.com/mamba-org/mamba>`_,
+If you installed Miniforge (or Mambaforge), we recommend to use
+`mamba <https://mamba.readthedocs.io/en/latest/index.html>`_ in the following,
 which uses a faster dependency solver than ``conda``.
-If you installed Mambaforge, it is already provided. Otherwise, use
-
-.. code-block:: shell
-
-   $ conda install mamba
-
 
 .. _sec-installation-conda-binary:
 
@@ -43,10 +38,17 @@ Installing all of SageMath from conda (not for development)
 
 Create a new conda environment containing SageMath, either with ``mamba`` or ``conda``:
 
-.. code-block:: shell
+.. tab:: mamba
 
-    $ mamba create -n sage sage python=X        # either
-    $ conda create -n sage sage python=X        # or
+  .. code-block:: shell
+
+      $ mamba create -n sage sage python=X
+
+.. tab:: conda
+
+  .. code-block:: shell
+
+      $ conda create -n sage sage python=X
 
 where ``X`` is version of Python, e.g. ``3.9``.
 
@@ -58,41 +60,6 @@ To use Sage from there,
 If there are any installation failures, please report them to
 the conda-forge maintainers by opening a `GitHub Issue for
 conda-forge/sage-feedstock <https://github.com/conda-forge/sage-feedstock/issues>`_.
-
-
-.. _sec-installation-conda-source:
-
-Using conda to provide system packages for the Sage distribution
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If Conda is installed (check by typing ``conda info``), one can install SageMath
-from source as follows:
-
-  - If you are using a git checkout::
-
-      $ ./bootstrap-conda
-
-  - Create a new conda environment including all standard packages
-    recognized by sage, and activate it::
-
-      $ conda env create --file environment-3.11.yml --name sage-build
-      $ conda activate sage-build
-
-    Alternatively, use ``environment-optional-3.11.yml`` in place of
-    ``environment.yml`` to create an environment with all standard and optional
-    packages recognized by sage.
-
-    A different Python version can be selected by replacing ``3.11`` by ``3.9``
-    or ``3.10`` in these commands.
-
-  - Then the SageMath distribution will be built using the compilers provided by Conda
-    and using many packages installed by Conda::
-
-      $ ./bootstrap
-      $ ./configure --with-python=$CONDA_PREFIX/bin/python \
-                    --prefix=$CONDA_PREFIX
-      $ make
-
 
 .. _sec-installation-conda-develop:
 
@@ -106,46 +73,51 @@ environment for Sage development.
 
 Here we assume that you are using a git checkout.
 
-  - Optionally, set the build parallelism for the Sage library. Use
-    whatever the meaningful value for your machine is - no more than
-    the number of cores::
+- Optionally, set the build parallelism for the Sage library. Use
+  whatever the meaningful value for your machine is - no more than
+  the number of cores::
 
-      $ export SAGE_NUM_THREADS=24
+    $ export SAGE_NUM_THREADS=24
 
-  - As a recommended step, install the ``mamba`` package manager. If
-    you skip this step, replace ``mamba`` by ``conda`` in the
-    following steps::
+- Create and activate a new conda environment with the dependencies of Sage
+  and a few additional developer tools:
 
-      $ conda install mamba
+  .. tab:: mamba
 
-  - Generate the conda environment files ``src/environment*.yml`` used
-    in the next step::
+    .. code-block:: shell
 
-      $ ./bootstrap-conda
+        $ mamba env create --file environment-3.11-linux.yml --name sage-dev
+        $ conda activate sage-dev
 
-  - Create and activate a new conda environment with the dependencies of Sage
-    and a few additional developer tools::
+  .. tab:: conda
 
-      $ mamba env create --file src/environment-dev-3.11.yml --name sage-dev
-      $ conda activate sage-dev
+    .. code-block:: shell
 
-    Alternatively, you can use ``src/environment-3.11.yml`` or
-    ``src/environment-optional-3.11.yml``, which will only install standard
-    (and optional) packages without any additional developer tools.
+        $ conda env create --file environment-3.11-linux.yml --name sage-dev
+        $ conda activate sage-dev
 
-    A different Python version can be selected by replacing ``3.11`` by ``3.9``
-    or ``3.10`` in these commands.
+  Alternatively, you can use ``environment-3.11-linux.yml`` or
+  ``environment-optional-3.11-linux.yml``, which will only install standard
+  (and optional) packages without any additional developer tools.
 
-  - Bootstrap the source tree and install the build prerequisites and the Sage library::
+  A different Python version can be selected by replacing ``3.11`` by ``3.9``
+  or ``3.10`` in these commands.
 
-      $ ./bootstrap
-      $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf_conda ./pkgs/sage-setup
-      $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
+- Bootstrap the source tree and install the build prerequisites and the Sage library::
 
-  - Verify that Sage has been installed::
+    $ ./bootstrap
+    $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
 
-      $ sage -c 'print(version())'
-      SageMath version 10.2.beta4, Release Date: 2023-09-24
+  If you encounter any errors, try to install the ``sage-conf`` package first::
+
+    $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf_conda
+
+  and then run the last command again.
+
+- Verify that Sage has been installed::
+
+    $ sage -c 'print(version())'
+    SageMath version 10.2.beta4, Release Date: 2023-09-24
 
 Note that ``make`` is not used at all. All dependencies
 (including all Python packages) are provided by conda.
@@ -165,7 +137,7 @@ After editing any Cython files, rebuild the Sage library using::
 
 In order to update the conda environment later, you can run::
 
-  $ mamba env update --file src/environment-dev-3.11.yml --name sage-dev
+  $ mamba env update --file environment-3.11-linux.yml --name sage-dev
 
 To build the documentation, use::
 
@@ -179,3 +151,10 @@ To build the documentation, use::
    <https://setuptools.pypa.io/en/latest/userguide/development_mode.html>`_.
    Adventurous developers may omit this switch to try the modern,
    PEP-660 implementation of editable installations, see :issue:`34209`.
+
+.. NOTE::
+
+  You can update the conda lock files by running
+  ``.github/workflows/conda-lock-update.py`` or by running
+  ``conda-lock --platform linux-64 --filename environment-3.11-linux.yml --lockfile environment-3.11-linux.lock``
+  manually.

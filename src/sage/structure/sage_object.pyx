@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 r"""
 Abstract base class for Sage objects
 """
@@ -67,7 +67,7 @@ cdef class SageObject:
 
     def rename(self, x=None):
         r"""
-        Change self so it prints as x, where x is a string.
+        Change ``self`` so it prints as x, where x is a string.
 
         If x is ``None``, the existing custom name is removed.
 
@@ -346,7 +346,7 @@ cdef class SageObject:
             sage: type(_)
             <class 'sage.typeset.unicode_art.UnicodeArt'>
 
-        Check that breakpoints and baseline are preserved (:trac:`29202`)::
+        Check that breakpoints and baseline are preserved (:issue:`29202`)::
 
             sage: # needs sage.groups
             sage: F = FreeAbelianMonoid(index_set=ZZ)
@@ -362,7 +362,7 @@ cdef class SageObject:
 
     def __hash__(self):
         r"""
-        Not implemented: mutable objects inherit from this class
+        Not implemented: mutable objects inherit from this class.
 
         EXAMPLES::
 
@@ -431,7 +431,6 @@ cdef class SageObject:
             sage: d = a + O(2)                                                          # needs sage.rings.padics
             sage: b._cache_key() == d._cache_key()  # this would be True if the parents were not included               # needs sage.rings.padics
             False
-
         """
         try:
             hash(self)
@@ -446,7 +445,7 @@ cdef class SageObject:
 
     def save(self, filename=None, compress=True):
         """
-        Save self to the given filename.
+        Save ``self`` to the given filename.
 
         EXAMPLES::
 
@@ -454,7 +453,7 @@ cdef class SageObject:
             sage: x = SR.var("x")
             sage: f = x^3 + 5
             sage: from tempfile import NamedTemporaryFile
-            sage: with NamedTemporaryFile(suffix=".sobj") as t:
+            sage: with NamedTemporaryFile(suffix='.sobj') as t:
             ....:     f.save(t.name)
             ....:     load(t.name)
             x^3 + 5
@@ -606,7 +605,7 @@ cdef class SageObject:
 
     def _test_not_implemented_methods(self, **options):
         """
-        Checks that all required methods for this object are implemented
+        Check that all required methods for this object are implemented.
 
         TESTS::
 
@@ -626,7 +625,7 @@ cdef class SageObject:
             AssertionError: Not implemented method: bla
 
         Check that only errors triggered by ``AbstractMethod`` are caught
-        (:trac:`29694`)::
+        (:issue:`29694`)::
 
             sage: class NotAbstract(SageObject):
             ....:     @lazy_attribute
@@ -653,7 +652,7 @@ cdef class SageObject:
 
     def _test_pickling(self, **options):
         """
-        Checks that this object can be pickled and unpickled properly.
+        Check that this object can be pickled and unpickled properly.
 
         EXAMPLES::
 
@@ -689,11 +688,10 @@ cdef class SageObject:
 
     def _interface_(self, I):
         """
-        Return coercion of self to an object of the interface I.
+        Return coercion of ``self`` to an object of the interface I.
 
-        The result of coercion is cached, unless self is a C
-        extension class or ``self._interface_is_cached_()`` returns
-        False.
+        The result of coercion is cached, unless ``self`` is a C extension
+        class or ``self._interface_is_cached_()`` returns ``False``.
         """
         c = self._interface_is_cached_()
         if c:
@@ -721,7 +719,7 @@ cdef class SageObject:
             try:
                 s = self._interface_init_(I)
             except Exception:
-                raise NotImplementedError("coercion of object %s to %s not implemented:\n%s\n%s" % (repr(self), I))
+                raise NotImplementedError("coercion of object %s to %s not implemented" % (repr(self), I))
         X = I(s)
         if c:
             try:
@@ -735,7 +733,7 @@ cdef class SageObject:
 
     def _interface_is_cached_(self):
         """
-        Return True if the interface objects are cached.
+        Return ``True`` if the interface objects are cached.
 
         If you have an object x and do gp(x), the result is cached if
         this function returns True.
@@ -755,14 +753,7 @@ cdef class SageObject:
 
     def _libgap_(self):
         from sage.libs.gap.libgap import libgap
-        return libgap.eval(self._libgap_init_())
-
-    def _libgap_init_(self):
-        """
-        For consistency's sake we provide a ``_libgap_init_`` but in most cases
-        we can use the same as ``_gap_init_`` here.
-        """
-        return self._gap_init_()
+        return libgap.eval(self)
 
     def _gp_(self, G=None):
         if G is None:
@@ -838,16 +829,14 @@ cdef class SageObject:
     def _magma_init_(self, magma):
         """
         Given a Magma interpreter M, return a string that evaluates in
-        that interpreter to the Magma object corresponding to self.
+        that interpreter to the Magma object corresponding to ``self``.
         This function may call the magma interpreter when it runs.
 
         INPUT:
 
         - ``magma`` -- a Magma interface
 
-        OUTPUT:
-
-        - string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -953,9 +942,7 @@ cdef class SageObject:
         Return default string expression that evaluates in R to this
         object.
 
-        OUTPUT:
-
-        - string
+        OUTPUT: string
 
         EXAMPLES::
 

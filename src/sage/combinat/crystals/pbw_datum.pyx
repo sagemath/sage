@@ -22,7 +22,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-#from sage.misc.lazy_attribute import lazy_attribute
+# from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
@@ -44,7 +44,7 @@ class PBWDatum():
             sage: from sage.combinat.crystals.pbw_datum import PBWData, PBWDatum
             sage: P = PBWData("A2")
             sage: L = PBWDatum(P, (1,2,1), (1,4,7))
-            sage: TestSuite(L).run(skip="_test_pickling")
+            sage: TestSuite(L).run(skip='_test_pickling')
         """
         self.parent = parent
         self.long_word = tuple(long_word)
@@ -167,7 +167,7 @@ class PBWDatum():
     def star(self):
         """
         Return the starred version of ``self``, i.e.,
-        with reversed `long_word` and `lusztig_datum`
+        with reversed ``long_word`` and ``lusztig_datum``
 
         EXAMPLES::
 
@@ -195,7 +195,7 @@ class PBWData(): # UniqueRepresentation?
 
             sage: from sage.combinat.crystals.pbw_datum import PBWData
             sage: P = PBWData(["A",2])
-            sage: TestSuite(P).run(skip="_test_pickling")
+            sage: TestSuite(P).run(skip='_test_pickling')
         """
         self.cartan_type = CartanType(cartan_type)
         self.root_system = RootSystem(self.cartan_type)
@@ -243,7 +243,7 @@ class PBWData(): # UniqueRepresentation?
 
         INPUT:
 
-        - ``reduced_word`` -- a tuple corresponding to a reduced word
+        - ``reduced_word`` -- tuple corresponding to a reduced word
 
         EXAMPLES::
 
@@ -282,7 +282,7 @@ class PBWData(): # UniqueRepresentation?
 # enhanced_braid_chain is an ugly data structure.
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig_datum) noexcept:
+cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig_datum):
     """
     Return the Lusztig datum obtained by applying tropical Plücker
     relations along ``enhanced_braid_chain`` starting with
@@ -330,7 +330,7 @@ cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig
 # The tropical Plücker relations
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef tuple tropical_plucker_relation(tuple a, lusztig_datum) noexcept:
+cpdef tuple tropical_plucker_relation(tuple a, lusztig_datum):
     r"""
     Apply the tropical Plücker relation of type ``a`` to ``lusztig_datum``.
 
@@ -403,7 +403,7 @@ cpdef tuple tropical_plucker_relation(tuple a, lusztig_datum) noexcept:
 # TODO: Move to PBW_data?
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type) noexcept:
+cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
     r"""
     Return a list of tuples that records the data of the long words in
     ``braid_move_chain`` plus the data of the intervals where the braid moves
@@ -422,10 +422,10 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type) noexcept:
     ``(interval_of_change, cartan_sub_matrix)`` where
 
     - ``interval_of_change`` is the (half-open) interval of indices where
-      the braid move occurs; this is `None` for the first tuple
+      the braid move occurs; this is ``None`` for the first tuple
     - ``cartan_sub_matrix`` is the off-diagonal entries of the `2 \times 2`
       submatrix of the Cartan matrix corresponding to the braid move;
-      this is `None` for the first tuple
+      this is ``None`` for the first tuple
 
     For a matrix::
 

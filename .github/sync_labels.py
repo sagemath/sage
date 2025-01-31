@@ -141,6 +141,7 @@ class GhLabelSynchronizer:
         self._commits = None
         self._commit_date = None
         self._bot_login = None
+        self._gh_version = None
 
         s = url.split('/')
         self._owner = s[3]
@@ -235,13 +236,30 @@ class GhLabelSynchronizer:
         """
         if self._bot_login:
             return self._bot_login
-        cmd = 'gh auth status'
         from subprocess import run
+        cmd = 'gh version'
         capt = run(cmd, shell=True, capture_output=True)
-        l = str(capt.stderr).split()
-        if not 'as' in l:
-            l = str(capt.stdout).split()
-        self._bot_login = l[l.index('as')+1]
+        self._gh_version = str(capt.stdout).split('\\n')[0]
+        info('version: %s' % self._gh_version)
+        cmd = 'gh auth status'
+        capt = run(cmd, shell=True, capture_output=True)
+        errtxt = str(capt.stderr)
+        outtxt = str(capt.stdout)
+        debug('auth status err: %s' % errtxt)
+        debug('auth status out: %s' % outtxt)
+        def read_login(txt, position_mark):
+            for t in txt:
+                for p in position_mark:
+                    # the output text has changed from as to account
+                    # around version 2.40.0
+                    l = t.split()
+                    if p in l:
+                        return l[l.index(p)+1]
+        self._bot_login = read_login([errtxt, outtxt], ['account', 'as'])
+        if not self._bot_login:
+            self._bot_login = default_bot
+            warning('Bot is unknown')
+            return self._bot_login
         if self._bot_login.endswith('[bot]'):
             self._bot_login = self._bot_login.split('[bot]')[0]
         info('Bot is %s' % self._bot_login)
@@ -591,7 +609,7 @@ class GhLabelSynchronizer:
         for com in coms:
             for auth in com['authors']:
                 login = auth['login']
-                if not login in authors:
+                if login not in authors:
                     if not self.is_this_bot(login) and login != author:
                         debug('PR %s has recent commit by %s' % (self._issue, login))
                         authors.append(login)
@@ -728,7 +746,7 @@ class GhLabelSynchronizer:
         r"""
         Add the given label to the issue or PR.
         """
-        if not label in self.get_labels():
+        if label not in self.get_labels():
             self.edit(label, '--add-label')
             info('Add label to %s: %s' % (self._issue, label))
 

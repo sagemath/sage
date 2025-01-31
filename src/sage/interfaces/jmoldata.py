@@ -10,18 +10,18 @@ AUTHORS:
 - Jonathan Gutow (2012-03-21): initial version
 """
 
-#*******************************************************************************
+# ******************************************************************************
 #       Copyright (C) 2012 Jonathan Gutow (gutow@uwosh.edu)
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ******************************************************************************
 
 from sage.structure.sage_object import SageObject
 
-from sage.env import JMOL_DIR
+from sage.features.jmol import JmolDataJar
 from sage.misc.temporary_file import tmp_filename
 from sage.cpython.string import bytes_to_str
 
@@ -52,7 +52,7 @@ class JmolData(SageObject):
 
     def is_jvm_available(self):
         """
-        Returns True if the Java Virtual Machine is available and False if not.
+        Return ``True`` if the Java Virtual Machine is available and ``False`` if not.
 
         EXAMPLES:
 
@@ -71,38 +71,70 @@ class JmolData(SageObject):
         java_version_number = int(re.sub(r'.*version "(0\.|1\.)?(\d*)[\s\S]*', r'\2', version, flags=re.S))
         return java_version_number >= 7
 
+    def jmolpath(self):
+        """
+        Return the path to the jar file.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.jmoldata import JmolData
+            sage: JData = JmolData()
+            sage: JData.jmolpath()  # needs jmol
+            '.../JmolData.jar'
+        """
+        jmolpath = JmolDataJar().absolute_filename()
+
+        return jmolpath
+
+    def is_jmol_available(self):
+        """
+        Return ``True`` if jmol is available and ``False`` if not.
+
+        EXAMPLES:
+
+        Check that it returns a boolean::
+
+            sage: from sage.interfaces.jmoldata import JmolData
+            sage: JData = JmolData()
+            sage: type(JData.is_jmol_available())
+            <... 'bool'>
+        """
+        if not JmolDataJar().is_present():
+            return False
+
+        if not self.is_jvm_available():
+            return False
+
+        return True
+
     def export_image(self,
-        targetfile,
-        datafile, #name (path) of data file Jmol can read or script file telling it what to read or load
-        datafile_cmd='script', #"script" or "load"
-        image_type='PNG', #PNG, JPG, GIF
-        figsize=5,
-        **kwds):
+                     targetfile,
+                     datafile,  # name (path) of data file Jmol can read or script file telling it what to read or load
+                     datafile_cmd='script',  # "script" or "load"
+                     image_type='PNG',  # PNG, JPG, GIF
+                     figsize=5,
+                     **kwds):
         r"""
         This executes JmolData.jar to make an image file.
 
         INPUT:
 
-        - targetfile -- the full path to the file where the image
-          should be written.
+        - ``targetfile`` -- the full path to the file where the image
+          should be written
 
-        - datafile -- full path to the data file Jmol can read or
-          text of a script telling Jmol what to read or load.
-          If it is a script and the platform is cygwin, the filenames in
-          the script should be in native windows format.
+        - ``datafile`` -- full path to the data file Jmol can read or
+          text of a script telling Jmol what to read or load
 
-        - datafile_cmd -- (default ``'script'``)  ``'load'`` or ``'script'``
-          should be ``"load"`` for a data file.
+        - ``datafile_cmd`` -- (default: ``'script'``)  ``'load'`` or ``'script'``
+          should be ``'load'`` for a data file
 
-        - image_type -- (default ``"PNG"``) ``'PNG'`` ``'JPG'`` or ``'GIF'``
+        - ``image_type`` -- (default: ``"PNG"``) ``'PNG'`` ``'JPG'`` or ``'GIF'``
 
-        - figsize -- number (default 5) equal to (pixels/side)/100
+        - ``figsize`` -- number (default: 5) equal to (pixels/side)/100
 
-        OUTPUT:
+        OUTPUT: image file, .png, .gif or .jpg (default: .png)
 
-        Image file, .png, .gif or .jpg (default .png)
-
-        .. note::
+        .. NOTE::
 
             Examples will generate an error message if a functional Java Virtual Machine (JVM)
             is not installed on the machine the Sage instance is running on.
@@ -112,7 +144,7 @@ class JmolData(SageObject):
             Programmers using this module should check that the JVM is
             available before making calls to avoid the user getting
             error messages.  Check for the JVM using the function
-            :meth:`is_jvm_available`, which returns True if a JVM is available.
+            :meth:`is_jvm_available`, which returns ``True`` if a JVM is available.
 
         EXAMPLES:
 
@@ -134,18 +166,14 @@ class JmolData(SageObject):
 
             sage: from sage.interfaces.jmoldata import JmolData
             sage: JData = JmolData()
-            sage: D = dodecahedron()
+            sage: D = dodecahedron()                                                    # needs sage.plot
             sage: from tempfile import NamedTemporaryFile
-            sage: archive = NamedTemporaryFile(suffix=".zip")
-            sage: D.export_jmol(archive.name)
+            sage: archive = NamedTemporaryFile(suffix='.zip')
+            sage: D.export_jmol(archive.name)                                           # needs sage.plot
             sage: archive_native = archive.name
-            sage: import sys
-            sage: if sys.platform == 'cygwin':
-            ....:     import cygwin
-            ....:     archive_native = cygwin.cygpath(archive_native, 'w')
             sage: script  = f'set defaultdirectory "f{archive_native}"\n'
             sage: script += 'script SCRIPT\n'
-            sage: with NamedTemporaryFile(suffix=".png") as testfile:  # optional -- java
+            sage: with NamedTemporaryFile(suffix='.png') as testfile:   # optional - java, needs sage.plot
             ....:     JData.export_image(targetfile=testfile.name,
             ....:                        datafile=script,
             ....:                        image_type="PNG")
@@ -154,15 +182,8 @@ class JmolData(SageObject):
             sage: archive.close()
         """
         # Set up paths, file names and scripts
-        jmolpath = os.path.join(JMOL_DIR, "JmolData.jar")
+        jmolpath = self.jmolpath()
         target_native = targetfile
-
-        if sys.platform == 'cygwin':
-            import cygwin
-            jmolpath = cygwin.cygpath(jmolpath, 'w')
-            target_native = cygwin.cygpath(target_native, 'w')
-            if datafile_cmd != 'script':
-                datafile = cygwin.cygpath(datafile, 'w')
 
         launchscript = ""
         if (datafile_cmd != 'script'):
@@ -170,18 +191,18 @@ class JmolData(SageObject):
         launchscript = launchscript + datafile
 
         imagescript = 'write {} {!r}\n'.format(image_type, target_native)
-        size_arg = "%sx%s" % (figsize*100,figsize*100)
+        size_arg = "%sx%s" % (figsize * 100, figsize * 100)
         # Scratch file for Jmol errors
-        scratchout = tmp_filename(ext=".txt")
+        scratchout = tmp_filename(ext='.txt')
         with open(scratchout, 'w') as jout:
             # Now call the java application and write the file.
             env = dict(os.environ)
             env['LC_ALL'] = 'C'
             env['LANG'] = 'C'
             subprocess.call(["java", "-Xmx512m", "-Djava.awt.headless=true",
-                "-jar", jmolpath, "-iox", "-g", size_arg,
-                "-J", launchscript, "-j", imagescript],
-                stdout=jout, stderr=jout, env=env)
+                             "-jar", jmolpath, "-iox", "-g", size_arg,
+                             "-J", launchscript, "-j", imagescript],
+                            stdout=jout, stderr=jout, env=env)
         if not os.path.isfile(targetfile):
             raise RuntimeError(f"Jmol failed to create file {targetfile}: {Path(scratchout).read_text()}")
         os.unlink(scratchout)

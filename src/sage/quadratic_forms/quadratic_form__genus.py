@@ -133,10 +133,8 @@ def CS_genus_symbol_list(self, force_recomputation=False):
             pass
 
     # Otherwise recompute and cache the list
-    list_of_CS_genus_symbols = []
-
-    for p in prime_divisors(2 * self.det()):
-        list_of_CS_genus_symbols.append(self.local_genus_symbol(p))
+    list_of_CS_genus_symbols = [self.local_genus_symbol(p)
+                                for p in prime_divisors(2 * self.det())]
 
     self.__CS_genus_symbol_list = list_of_CS_genus_symbols
     return list_of_CS_genus_symbols

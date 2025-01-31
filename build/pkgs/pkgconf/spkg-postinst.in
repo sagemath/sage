@@ -1,7 +1,7 @@
 # pkgconf is an alternative to the "official" pkg-config, and does not
 # automatically install a "pkg-config" binary.
 # Make absolutely sure Sage's existing pkg-config is deleted first, or
-# else it will become self-referential; see Trac #25912
+# else it will become self-referential; see Issue #25912
 rm -f "$SAGE_LOCAL/bin/pkg-config"
 m4 -DSAGE_LOCAL="$SAGE_LOCAL" patches/pkg-config.in > pkg-config.out || \
     sdh_die "Error creating the pkg-config script."

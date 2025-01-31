@@ -44,7 +44,7 @@ include "matrix_modn_dense_template.pxi"
 
 cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
     r"""
-    Dense matrices over `\ZZ/n\ZZ` for `n < 2^{8}` using LinBox's ``Modular<float>``
+    Dense matrices over `\ZZ/n\ZZ` for `n < 2^{8}` using LinBox's ``Modular<float>``.
 
     These are matrices with integer entries mod ``n`` represented as
     floating-point numbers in a 32-bit word for use with LinBox routines.
@@ -57,7 +57,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
     """
     def __cinit__(self):
         """
-        The Cython constructor
+        The Cython constructor.
 
         TESTS::
 
@@ -69,7 +69,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
 
     cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         r"""
-        Set the (i,j) entry of self to the int value.
+        Set the (i,j) entry of ``self`` to the int value.
 
         EXAMPLES::
 
@@ -91,7 +91,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
         """
         self._matrix[i][j] = <float>value
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
         r"""
         Set the (i,j) entry with no bounds-checking, or any other checks.
 
@@ -121,7 +121,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
         """
         self._matrix[i][j] = <float>(<IntegerMod_int>x).ivalue
 
-    cdef IntegerMod_int get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef IntegerMod_int get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         r"""
         Return the (i,j) entry with no bounds-checking.
 

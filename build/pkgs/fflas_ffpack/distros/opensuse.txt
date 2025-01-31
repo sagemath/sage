@@ -1,1 +1,1 @@
-"pkgconfig(fflas-ffpack)"
+pkgconfig(fflas-ffpack)

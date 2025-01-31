@@ -10,9 +10,9 @@ contains the following functions:
     :widths: 30, 70
     :delim: |
 
-    :meth:`~sage.graphs.weakly_chordal.is_long_hole_free` | Tests whether ``g`` contains an induced cycle of length at least 5.
-    :meth:`~sage.graphs.weakly_chordal.is_long_antihole_free` | Tests whether ``g`` contains an induced anticycle of length at least 5.
-    :meth:`~sage.graphs.weakly_chordal.is_weakly_chordal` | Tests whether ``g`` is weakly chordal.
+    :meth:`~sage.graphs.weakly_chordal.is_long_hole_free` | Test whether ``g`` contains an induced cycle of length at least 5.
+    :meth:`~sage.graphs.weakly_chordal.is_long_antihole_free` | Test whether ``g`` contains an induced anticycle of length at least 5.
+    :meth:`~sage.graphs.weakly_chordal.is_weakly_chordal` | Test whether ``g`` is weakly chordal.
 
 Author:
 
@@ -51,7 +51,7 @@ cdef inline is_long_hole_free_process(g, short_digraph sd, bitset_t dense_graph,
                                       list id_label, int* path, int* InPath,
                                       int* neighbor_index, set VisitedP3,
                                       bint certificate,
-                                      int a, int b, int c, int n) noexcept:
+                                      int a, int b, int c, int n):
     """
     This method is part of method ``is_long_hole_free``.
 
@@ -136,7 +136,7 @@ cdef inline is_long_hole_free_process(g, short_digraph sd, bitset_t dense_graph,
 
 def is_long_hole_free(g, certificate=False):
     r"""
-    Tests whether ``g`` contains an induced cycle of length at least 5.
+    Test whether ``g`` contains an induced cycle of length at least 5.
 
     INPUT:
 
@@ -163,8 +163,9 @@ def is_long_hole_free(g, certificate=False):
     This is done through a depth-first-search. For efficiency, the auxiliary
     graph is constructed on-the-fly and never stored in memory.
 
-    The run time of this algorithm is `O(m^2)` [NP2007]_ ( where
-    `m` is the number of edges of the graph ) .
+    The run time of this algorithm is `O(n+m^2)` for ``SparseGraph`` and
+    `O(n^2 + m^2)` for ``DenseGraph`` [NP2007]_ (where `n` is the number of
+    vertices and `m` is the number of edges of the graph).
 
     EXAMPLES:
 
@@ -204,14 +205,13 @@ def is_long_hole_free(g, certificate=False):
     if g.order() < 5:
         return (True, []) if certificate else True
 
-    cdef int a, b, c, d, i, u, v, w, vv, ww
+    cdef int u, v, w, vv, ww
 
     # Make a copy of the graph as a short_digraph. This data structure is well
     # documented in the module sage.graphs.base.static_sparse_graph.
     # Vertices are relabeled in 0..n-1
     cdef int n = g.order()
     cdef list id_label = list(g)
-    cdef dict label_id = {label: i for i, label in enumerate(id_label)}
     cdef short_digraph sd
     init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
 
@@ -228,7 +228,6 @@ def is_long_hole_free(g, certificate=False):
     # Allocate some data structures
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* path = <int*> mem.allocarray(n, sizeof(int))
-    cdef int path_top
     cdef int* InPath = <int*> mem.allocarray(n, sizeof(int))
     for u in range(n):
         InPath[u] = -1
@@ -281,7 +280,7 @@ cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_gr
                                           list id_label, int* path, int* InPath,
                                           int* neighbor_index, set VisitedP3,
                                           bint certificate,
-                                          int a, int b, int c, int n) noexcept:
+                                          int a, int b, int c, int n):
     """
     This method is part of method ``is_long_antihole_free``.
 
@@ -364,7 +363,7 @@ cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_gr
 
 def is_long_antihole_free(g, certificate=False):
     r"""
-    Tests whether the given graph contains an induced subgraph that is
+    Test whether the given graph contains an induced subgraph that is
     isomorphic to the complement of a cycle of length at least 5.
 
     INPUT:
@@ -394,8 +393,9 @@ def is_long_antihole_free(g, certificate=False):
     This is done through a depth-first-search. For efficiency, the auxiliary
     graph is constructed on-the-fly and never stored in memory.
 
-    The run time of this algorithm is `O(m^2)` [NP2007]_ (where
-    `m` is the number of edges of the graph).
+    The run time of this algorithm is `O(n+m^2)` for ``SparseGraph`` and
+    `O(n^2\log{m} + m^2)` for ``DenseGraph`` [NP2007]_ (where `n` is the number
+    of vertices and `m` is the number of edges of the graph).
 
     EXAMPLES:
 
@@ -433,14 +433,13 @@ def is_long_antihole_free(g, certificate=False):
     if g.order() < 5:
         return (True, []) if certificate else True
 
-    cdef int a, b, c, d, i, u, v, w, vv, ww
+    cdef int u, v, w, vv, ww
 
     # Make a copy of the graph as a short_digraph. This data structure is well
     # documented in the module sage.graphs.base.static_sparse_graph.
     # Vertices are relabeled in 0..n-1
     cdef int n = g.order()
     cdef list id_label = list(g)
-    cdef dict label_id = {label: i for i, label in enumerate(id_label)}
     cdef short_digraph sd
     init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
 
@@ -457,7 +456,6 @@ def is_long_antihole_free(g, certificate=False):
     # Allocate some data structures
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* path = <int*> mem.allocarray(n, sizeof(int))
-    cdef int path_top
     cdef int* InPath = <int*> mem.allocarray(n, sizeof(int))
     for u in range(n):
         InPath[u] = -1
@@ -509,12 +507,12 @@ def is_long_antihole_free(g, certificate=False):
 
 def is_weakly_chordal(g, certificate=False):
     r"""
-    Tests whether the given graph is weakly chordal, i.e., the graph and its
+    Test whether the given graph is weakly chordal, i.e., the graph and its
     complement have no induced cycle of length at least 5.
 
     INPUT:
 
-    - ``certificate`` -- Boolean value (default: ``False``) whether to
+    - ``certificate`` -- boolean (default: ``False``); whether to
       return a certificate. If ``certificate = False``, return ``True`` or
       ``False`` according to the graph. If ``certificate = True``, return
 
@@ -529,7 +527,9 @@ def is_weakly_chordal(g, certificate=False):
     contain an induced cycle of length at least 5.
 
     Using is_long_hole_free() and is_long_antihole_free() yields a run time
-    of `O(m^2)` (where `m` is the number of edges of the graph).
+    of `O(n+m^2)` for ``SparseGraph`` and `O(n^2 + m^2)` for ``DenseGraph``
+    (where `n` is the number of vertices and `m` is the number of edges of the
+    graph).
 
     EXAMPLES:
 
@@ -547,7 +547,6 @@ def is_weakly_chordal(g, certificate=False):
 
         sage: graphs.EmptyGraph().is_weakly_chordal()
         True
-
     """
     if g.order() < 5:
         return (True, []) if certificate else True

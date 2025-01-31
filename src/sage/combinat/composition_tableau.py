@@ -37,7 +37,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
 
     INPUT:
 
-    - ``t`` -- A list of lists
+    - ``t`` -- list of lists
 
     EXAMPLES::
 
@@ -120,7 +120,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
 
         CombinatorialElement.__init__(self, parent, t)
 
-    def _repr_diagram(self):
+    def _repr_diagram(self) -> str:
         r"""
         Return a string representation of ``self`` as an array.
 
@@ -132,8 +132,8 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
               3  2
               4  4
         """
-        return '\n'.join(("".join(("%3s" % str(x) for x in row))
-                          for row in self))
+        return '\n'.join("".join("%3s" % str(x) for x in row)
+                         for row in self)
 
     def __call__(self, *cell):
         r"""
@@ -211,10 +211,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
             sage: CompositionTableau([[1],[3,2],[4,4]]).descent_set()
             [1, 3]
         """
-        cols = {}
-        for row in self:
-            for col, i in enumerate(row):
-                cols[i] = col
+        cols = {i: col for row in self for col, i in enumerate(row)}
         return sorted(i for i in cols if i + 1 in cols and cols[i + 1] >= cols[i])
 
     def descent_composition(self):
@@ -278,16 +275,12 @@ class CompositionTableaux(UniqueRepresentation, Parent):
 
     INPUT:
 
-    Keyword arguments:
-
     - ``size`` -- the size of the composition tableaux
     - ``shape`` -- the shape of the composition tableaux
     - ``max_entry`` -- the maximum entry for the composition tableaux
 
-    Positional arguments:
-
-    - The first argument is interpreted as ``size`` or ``shape`` depending on
-      whether it is an integer or a composition.
+    The first argument is interpreted as ``size`` or ``shape`` depending on
+    whether it is an integer or a composition.
 
     EXAMPLES::
 
@@ -403,7 +396,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
             if not isinstance(size, (int, Integer)):
                 raise ValueError("size must be an integer")
             elif size < 0:
-                raise ValueError("size must be non-negative")
+                raise ValueError("size must be nonnegative")
 
         if shape is not None:
             # use in (and not isinstance) below so that lists can be used as
@@ -411,7 +404,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
             if shape not in Compositions():
                 raise ValueError("shape must be a composition")
             if any(i == 0 for i in shape):
-                raise ValueError("shape must have non-zero parts")
+                raise ValueError("shape must have nonzero parts")
             shape = Composition(shape)
 
         if (size is not None) and (shape is not None):
@@ -460,9 +453,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
 
         - ``t`` -- data which can be interpreted as a composition tableau
 
-        OUTPUT:
-
-        - The corresponding CompositionTableau object
+        OUTPUT: the corresponding CompositionTableau object
 
         TESTS::
 
@@ -572,17 +563,15 @@ class CompositionTableaux_size(CompositionTableaux):
 
     INPUT:
 
-    - ``n`` -- a nonnegative integer.
-    - ``max_entry`` -- a nonnegative integer. This keyword argument defaults to ``n``.
+    - ``n`` -- nonnegative integer
+    - ``max_entry`` -- nonnegative integer (default: `n`)
 
-    OUTPUT:
-
-    - The class of composition tableaux of size ``n``.
+    OUTPUT: the class of composition tableaux of size `n`
     """
 
     def __init__(self, n, max_entry=None):
         r"""
-        Initializes the class of composition tableaux of size ``n``.
+        Initialize the class of composition tableaux of size `n`.
 
         TESTS::
 
@@ -674,9 +663,8 @@ class CompositionTableaux_shape(CompositionTableaux):
 
     INPUT:
 
-    - ``comp`` -- a composition.
-    - ``max_entry`` -- a nonnegative integer. This keyword argument defaults
-      to the size of ``comp``.
+    - ``comp`` -- a composition
+    - ``max_entry`` -- nonnegative integer (default: size of ``comp``)
     """
     def __init__(self, comp, max_entry=None):
         """
@@ -835,7 +823,7 @@ class CompositionTableauxBacktracker(GenericBacktracker):
             # We check to make sure that k does not violate the Triple Rule
             if j != 0 and i != 0 and any(k == obj_copy[m][j] for m in range(i)):
                 continue
-            if j != 0 and i != 0 and any(obj_copy[m][j] < k and k <= obj_copy[m][j - 1]
+            if j != 0 and i != 0 and any(obj_copy[m][j] < k <= obj_copy[m][j - 1]
                                          for m in range(i)):
                 continue
 

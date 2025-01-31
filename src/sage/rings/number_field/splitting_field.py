@@ -3,9 +3,8 @@ Splitting fields of polynomials over number fields
 
 AUTHORS:
 
-- Jeroen Demeyer (2014-01-02): initial version for :trac:`2217`
-
-- Jeroen Demeyer (2014-01-03): add ``abort_degree`` argument, :trac:`15626`
+- Jeroen Demeyer (2014-01-02): initial version for :issue:`2217`
+- Jeroen Demeyer (2014-01-03): added ``abort_degree`` argument, :issue:`15626`
 """
 
 #*****************************************************************************
@@ -22,7 +21,7 @@ from sage.rings.integer import Integer
 from sage.arith.misc import factorial
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import RationalField, is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.libs.pari.all import pari, PariError
 
 
@@ -91,7 +90,7 @@ class SplittingData:
 
     def poldegree(self):
         """
-        Return the degree of ``self.pol``
+        Return the degree of ``self.pol``.
 
         EXAMPLES::
 
@@ -133,7 +132,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     - ``name`` -- a variable name for the number field
 
-    - ``map`` -- (default: ``False``) also return an embedding of
+    - ``map`` -- boolean (default: ``False``); also return an embedding of
       ``poly`` into the resulting field. Note that computing this
       embedding might be expensive.
 
@@ -145,14 +144,14 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
       if it can be determined that the absolute degree of the splitting
       field is strictly larger than ``abort_degree``.
 
-    - ``simplify`` -- (default: ``True``) during the algorithm, try
+    - ``simplify`` -- boolean (default: ``True``); during the algorithm, try
       to find a simpler defining polynomial for the intermediate
-      number fields using PARI's ``polred()``.  This usually speeds
+      number fields using PARI's ``polredbest()``.  This usually speeds
       up the computation but can also considerably slow it down.
       Try and see what works best in the given situation.
 
-    - ``simplify_all`` -- (default: ``False``) If ``True``, simplify
-      intermediate fields and also the resulting number field.
+    - ``simplify_all`` -- boolean (default: ``False``); if ``True``, simplify
+      intermediate fields and also the resulting number field
 
     OUTPUT:
 
@@ -171,7 +170,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     The ``simplify`` and ``simplify_all`` flags usually yield
     fields defined by polynomials with smaller coefficients.
-    By default, ``simplify`` is True and ``simplify_all`` is False.
+    By default, ``simplify`` is ``True`` and ``simplify_all`` is ``False``.
 
     ::
 
@@ -383,7 +382,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     # Kpol = PARI polynomial in y defining the extension found so far
     F = poly.base_ring()
-    if is_RationalField(F):
+    if isinstance(F, RationalField):
         Kpol = pari("'y")
     else:
         Kpol = F.pari_polynomial("y")
@@ -549,11 +548,9 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
             # Find a simpler defining polynomial Lpol for Mpol
             verbose("New field before simplifying: %s" % Mpol, t)
             t = cputime()
-            M = Mpol.polred(flag=3)
-            n = len(M[0])-1
-            Lpol = M[1][n].change_variable_name("y")
-            LtoM = M[0][n].change_variable_name("y").Mod(Mpol.change_variable_name("y"))
-            MtoL = LtoM.modreverse()
+            M = Mpol.polredbest(1)
+            Lpol = M[0].change_variable_name("y")
+            MtoL = M[1].lift().change_variable_name("y").Mod(Lpol)
         else:
             # Lpol = Mpol
             Lpol = Mpol.change_variable_name("y")

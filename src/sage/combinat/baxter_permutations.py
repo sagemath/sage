@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Baxter permutations
 """
@@ -26,8 +25,8 @@ class BaxterPermutations(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``n`` -- (default: ``None``) a nonnegative integer, the size of
-      the permutations.
+    - ``n`` -- nonnegative integer (default: ``None``); the size of
+      the permutations
 
     OUTPUT:
 
@@ -86,7 +85,7 @@ class BaxterPermutations_size(BaxterPermutations):
 
     def _repr_(self):
         """
-        Return a string representation of ``self``
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -103,7 +102,7 @@ class BaxterPermutations_size(BaxterPermutations):
 
         INPUT:
 
-        - ``x`` -- a permutation.
+        - ``x`` -- a permutation
 
         EXAMPLES::
 
@@ -151,9 +150,7 @@ class BaxterPermutations_size(BaxterPermutations):
         r"""
         Efficient generation of Baxter permutations.
 
-        OUTPUT:
-
-        An iterator over the Baxter permutations of size ``self._n``.
+        OUTPUT: an iterator over the Baxter permutations of size ``self._n``
 
         EXAMPLES::
 
@@ -288,7 +285,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
 
         INPUT:
 
-        - ``x`` -- any object.
+        - ``x`` -- any object
 
         EXAMPLES::
 
@@ -313,7 +310,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
 
         INPUT:
 
-        - ``p`` -- a Baxter permutation.
+        - ``p`` -- a Baxter permutation
 
         OUTPUT:
 

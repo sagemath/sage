@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules sage.rings.number_field
 r"""
 N=2 Super Lie Conformal Algebra
 
@@ -39,7 +40,7 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
     INPUT:
 
     - ``R`` -- a commutative ring; the base ring of this super
-      Lie conformal algebra.
+      Lie conformal algebra
 
     EXAMPLES::
 
@@ -74,7 +75,7 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
     """
     def __init__(self, R):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

@@ -7,30 +7,30 @@ rendering is done using the matplotlib Python library.
 
 The following graphics primitives are supported:
 
--  :func:`~sage.plot.arrow.arrow` - an arrow from a min point to a max point.
+-  :func:`~sage.plot.arrow.arrow` -- an arrow from a min point to a max point
 
--  :func:`~sage.plot.circle.circle` - a circle with given radius
+-  :func:`~sage.plot.circle.circle` -- a circle with given radius
 
--  :func:`~sage.plot.ellipse.ellipse` - an ellipse with given radii
+-  :func:`~sage.plot.ellipse.ellipse` -- an ellipse with given radii
    and angle
 
--  :func:`~sage.plot.arc.arc` - an arc of a circle or an ellipse
+-  :func:`~sage.plot.arc.arc` -- an arc of a circle or an ellipse
 
--  :func:`~sage.plot.disk.disk` - a filled disk (i.e. a sector or wedge of a circle)
+-  :func:`~sage.plot.disk.disk` -- a filled disk (i.e. a sector or wedge of a circle)
 
--  :func:`~sage.plot.line.line` - a line determined by a sequence of points (this need not
+-  :func:`~sage.plot.line.line` -- a line determined by a sequence of points (this need not
    be straight!)
 
--  :func:`~sage.plot.point.point` - a point
+-  :func:`~sage.plot.point.point` -- a point
 
--  :func:`~sage.plot.text.text` - some text
+-  :func:`~sage.plot.text.text` -- some text
 
--  :func:`~sage.plot.polygon.polygon` - a filled polygon
+-  :func:`~sage.plot.polygon.polygon` -- a filled polygon
 
 The following plotting functions are supported:
 
--  :func:`plot` - plot of a function or other Sage object (e.g., elliptic
-   curve).
+-  :func:`plot` -- plot of a function or other Sage object (e.g., elliptic
+   curve)
 
 -  :func:`parametric_plot`
 
@@ -419,14 +419,14 @@ Cycliclink::
 Pi Axis::
 
     sage: g1 = plot(sin(x), 0, 2*pi)
-    sage: g2 = plot(cos(x), 0, 2*pi, linestyle="--")
+    sage: g2 = plot(cos(x), 0, 2*pi, linestyle='--')
     sage: (g1 + g2).show(ticks=pi/6,        # show their sum, nicely formatted  # long time
     ....:                tick_formatter=pi)
 
 .. PLOT::
 
     g1 = plot(sin(x), 0, 2*pi, ticks=pi/6, tick_formatter=pi)
-    g2 = plot(cos(x), 0, 2*pi, linestyle="--", ticks=pi/6, tick_formatter=pi)
+    g2 = plot(cos(x), 0, 2*pi, linestyle='--', ticks=pi/6, tick_formatter=pi)
     sphinx_plot(g1+g2)
 
 An illustration of integration::
@@ -477,24 +477,24 @@ For example,
     sage: t = plt.title('About as simple as it gets, folks')
     sage: plt.grid(True)
     sage: import tempfile
-    sage: with tempfile.NamedTemporaryFile(suffix=".png") as f1:
+    sage: with tempfile.NamedTemporaryFile(suffix='.png') as f1:
     ....:     plt.savefig(f1.name)
     sage: plt.clf()
-    sage: with tempfile.NamedTemporaryFile(suffix=".png") as f2:
+    sage: with tempfile.NamedTemporaryFile(suffix='.png') as f2:
     ....:     plt.savefig(f2.name)
     sage: plt.close()
     sage: plt.imshow([[1,2],[0,1]])
     <matplotlib.image.AxesImage object at ...>
 
 We test that ``imshow`` works as well, verifying that
-:trac:`2900` is fixed (in Matplotlib).
+:issue:`2900` is fixed (in Matplotlib).
 
 ::
 
     sage: plt.imshow([[(0.0,0.0,0.0)]])
     <matplotlib.image.AxesImage object at ...>
     sage: import tempfile
-    sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+    sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:
     ....:     plt.savefig(f.name)
 
 Since the above overwrites many Sage plotting functions, we reset
@@ -521,7 +521,7 @@ Verify that a clean sage startup does *not* import matplotlib::
     sage: os.system("sage -c \"if 'matplotlib' in sys.modules: sys.exit(1)\"")  # long time
     0
 
-Verify that :trac:`10980` is fixed::
+Verify that :issue:`10980` is fixed::
 
     sage: plot(x,0,2,gridlines=([sqrt(2)],[]))
     Graphics object consisting of 1 graphics primitive
@@ -559,11 +559,11 @@ AUTHORS:
 
 - Jason Grout (2010-10): rewrote aspect ratio portions of the code
 
-- Jeroen Demeyer (2012-04-19): move parts of this file to graphics.py (:trac:`12857`)
+- Jeroen Demeyer (2012-04-19): move parts of this file to graphics.py (:issue:`12857`)
 
 - Aaron Lauve (2016-07-13): reworked handling of 'color' when passed
   a list of functions; now more in-line with other CAS's. Added list functionality
-  to linestyle and legend_label options as well. (:trac:`12962`)
+  to linestyle and legend_label options as well. (:issue:`12962`)
 
 - Eric Gourgoulhon (2019-04-24): add :func:`multi_graphics` and insets
 """
@@ -580,17 +580,17 @@ AUTHORS:
 
 from functools import reduce
 
-## IMPORTANT: Do *not* import matplotlib at module scope.  It takes a
-## surprisingly long time to initialize itself.  It's better if it is
-## imported in functions, so it only gets started if it is actually
-## going to be used.
+# IMPORTANT: Do *not* import matplotlib at module scope.  It takes a
+# surprisingly long time to initialize itself.  It's better if it is
+# imported in functions, so it only gets started if it is actually
+# going to be used.
 
-#DEFAULT_FIGSIZE=(6, 3.70820393249937)
+# DEFAULT_FIGSIZE=(6, 3.70820393249937)
 import sage.misc.verbose
 from sage.arith.srange import srange
 
-from sage.misc.randstate import current_randstate #for plot adaptive refinement
-from math import sin, cos, pi, log, exp #for polar_plot and log scaling
+from sage.misc.randstate import current_randstate  # for plot adaptive refinement
+from math import sin, cos, pi, log, exp  # for polar_plot and log scaling
 
 from sage.ext.fast_eval import fast_float, is_fast_float
 from sage.structure.element import Expression
@@ -605,10 +605,10 @@ from sage.plot.line import line
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.plot.line', 'line2d', deprecation=28717)
 
-#Currently not used - see comment immediately above about
-#figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
+# Currently not used - see comment immediately above about
+# figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
 # TODO - figure out how to use this, add documentation
-#def pad_for_tick_labels(event):
+# def pad_for_tick_labels(event):
 #    import matplotlib.transforms as mtransforms
 #    figure=event.canvas.figure
 #    bboxes = []
@@ -638,10 +638,10 @@ lazy_import('sage.plot.line', 'line2d', deprecation=28717)
 #        figure.canvas.draw()
 #    return False
 #
-#Currently not used - see comment above about
-#figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
+# Currently not used - see comment above about
+# figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
 # TODO - figure out how to use this, add documentation
-#def adjust_figure_to_contain_bbox(fig, bbox,pad=1.1):
+# def adjust_figure_to_contain_bbox(fig, bbox, pad=1.1):
 #    """
 #    For each amount we are over (in axes coordinates), we adjust by over*pad
 #    to give ourselves a bit of padding.
@@ -673,6 +673,7 @@ lazy_import('sage.plot.line', 'line2d', deprecation=28717)
 
 _SelectiveFormatterClass = None
 
+
 def SelectiveFormatter(formatter, skip_values):
     """
     This matplotlib formatter selectively omits some tick values and
@@ -697,9 +698,8 @@ def SelectiveFormatter(formatter, skip_values):
         ....:                                skip_values=[0,1])
         sage: ax.xaxis.set_major_formatter(formatter)
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
+        sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:
         ....:     fig.savefig(f.name)
-
     """
     global _SelectiveFormatterClass
     if _SelectiveFormatterClass is None:
@@ -713,9 +713,9 @@ def SelectiveFormatter(formatter, skip_values):
 
                 INPUT:
 
-                  - formatter -- the formatter object to which we should pass labels
+                  - ``formatter`` -- the formatter object to which we should pass labels
 
-                  - skip_values -- a list of values that we should skip when
+                  - ``skip_values`` -- list of values that we should skip when
                     formatting the tick labels
 
                 EXAMPLES::
@@ -733,7 +733,7 @@ def SelectiveFormatter(formatter, skip_values):
                     ....:                                skip_values=[0,1])
                     sage: ax.xaxis.set_major_formatter(formatter)
                     sage: from tempfile import NamedTemporaryFile
-                    sage: with NamedTemporaryFile(suffix=".png") as f:
+                    sage: with NamedTemporaryFile(suffix='.png') as f:
                     ....:     fig.savefig(f.name)
                 """
                 self.formatter = formatter
@@ -755,7 +755,7 @@ def SelectiveFormatter(formatter, skip_values):
 
             def __call__(self, x, *args, **kwds):
                 """
-                Return the format for tick val *x* at position *pos*
+                Return the format for tick val *x* at position *pos*.
 
                 EXAMPLES::
 
@@ -772,6 +772,7 @@ def SelectiveFormatter(formatter, skip_values):
                     return self.formatter(x, *args, **kwds)
 
     return _SelectiveFormatterClass(formatter, skip_values)
+
 
 def xydata_from_point_list(points):
     r"""
@@ -791,7 +792,7 @@ def xydata_from_point_list(points):
         ([0.0, 1.0], [0.0, 0.0])
 
     This function should work for anything than can be turned into a
-    list, such as iterators and such (see :trac:`10478`)::
+    list, such as iterators and such (see :issue:`10478`)::
 
         sage: xydata_from_point_list(iter([(0,0), (sqrt(3), 2)]))
         ([0.0, 1.7320508075688772], [0.0, 2.0])
@@ -837,6 +838,7 @@ def xydata_from_point_list(points):
                 ydata.append(float(y))
     return xdata, ydata
 
+
 @options(alpha=1, thickness=1, fill=False, fillcolor='automatic',
          fillalpha=0.5, plot_points=200, adaptive_tolerance=0.01,
          adaptive_recursion=5, detect_poles=False, exclude=None,
@@ -844,7 +846,7 @@ def xydata_from_point_list(points):
          aspect_ratio='automatic', imaginary_tolerance=1e-8)
 def plot(funcs, *args, **kwds):
     r"""
-    Use plot by writing
+    Use plot by writing.
 
     ``plot(X, ...)``
 
@@ -865,40 +867,40 @@ def plot(funcs, *args, **kwds):
 
     PLOT OPTIONS:
 
-    - ``plot_points`` -- (default: `200`); the minimal number of plot points.
+    - ``plot_points`` -- (default: 200) the minimal number of plot points
 
-    - ``adaptive_recursion`` -- (default: `5`); how many levels of recursion to go
+    - ``adaptive_recursion`` -- (default: 5) how many levels of recursion to go
       before giving up when doing adaptive refinement.  Setting this to 0
       disables adaptive refinement.
 
-    - ``adaptive_tolerance`` -- (default: `0.01`); how large a difference should be
+    - ``adaptive_tolerance`` -- (default: 0.01) how large a difference should be
       before the adaptive refinement code considers it significant.  See the
       documentation further below for more information, starting at "the
       algorithm used to insert".
 
-    - ``imaginary_tolerance`` -- (default: ``1e-8``); if an imaginary
+    - ``imaginary_tolerance`` -- (default: ``1e-8``) if an imaginary
       number arises (due, for example, to numerical issues), this
       tolerance specifies how large it has to be in magnitude before
       we raise an error.  In other words, imaginary parts smaller than
       this are ignored in your plot points.
 
-    - ``base`` -- (default: `10`); the base of the logarithm if
+    - ``base`` -- (default: `10`) the base of the logarithm if
       a logarithmic scale is set. This must be greater than 1. The base
       can be also given as a list or tuple ``(basex, basey)``.
       ``basex`` sets the base of the logarithm along the horizontal
       axis and ``basey`` sets the base along the vertical axis.
 
-    - ``scale`` -- string (default: ``"linear"``); scale of the axes.
-      Possible values are ``"linear"``, ``"loglog"``, ``"semilogx"``,
-      ``"semilogy"``.
+    - ``scale`` -- string (default: ``'linear'``); scale of the axes.
+      Possible values are ``'linear'``, ``'loglog'``, ``'semilogx'``,
+      ``'semilogy'``.
 
       The scale can be also be given as single argument that is a list
       or tuple ``(scale, base)`` or ``(scale, basex, basey)``.
 
-      The ``"loglog"`` scale sets both the horizontal and vertical axes to
-      logarithmic scale. The ``"semilogx"`` scale sets the horizontal axis
-      to logarithmic scale. The ``"semilogy"`` scale sets the vertical axis
-      to logarithmic scale. The ``"linear"`` scale is the default value
+      The ``'loglog'`` scale sets both the horizontal and vertical axes to
+      logarithmic scale. The ``'semilogx'`` scale sets the horizontal axis
+      to logarithmic scale. The ``'semilogy'`` scale sets the vertical axis
+      to logarithmic scale. The ``'linear'`` scale is the default value
       when :class:`~sage.plot.graphics.Graphics` is initialized.
 
     - ``xmin`` -- starting x value in the rendered figure. This parameter is
@@ -913,7 +915,7 @@ def plot(funcs, *args, **kwds):
     - ``ymax`` -- ending y value in the rendered figure. This parameter is passed
       directly to the ``show`` procedure and it could be overwritten.
 
-    - ``detect_poles`` -- (default: ``False``) If set to ``True`` poles are detected.
+    - ``detect_poles`` -- boolean (default: ``False``); if set to ``True`` poles are detected.
       If set to "show" vertical asymptotes are drawn.
 
     - ``legend_label`` -- a (TeX) string serving as the label for `X` in the legend.
@@ -922,7 +924,7 @@ def plot(funcs, *args, **kwds):
 
     .. NOTE::
 
-        - If the ``scale`` is ``"linear"``, then irrespective of what
+        - If the ``scale`` is ``'linear'``, then irrespective of what
           ``base`` is set to, it will default to 10 and will remain unused.
 
         - If you want to limit the plot along the horizontal axis in the
@@ -948,11 +950,11 @@ def plot(funcs, *args, **kwds):
 
     COLOR OPTIONS:
 
-    - ``color`` - (Default: 'blue') One of:
+    - ``color`` -- (default: ``'blue'``) one of:
 
       - an RGB tuple (r,g,b) with each of r,g,b between 0 and 1.
 
-      - a color name as a string (e.g., 'purple').
+      - a color name as a string (e.g., ``'purple'``).
 
       - an HTML color such as '#aaff0b'.
 
@@ -960,14 +962,14 @@ def plot(funcs, *args, **kwds):
         if a dictionary, keys are taken from ``range(len(X))``;
         the entries/values of the list/dictionary may be any of the options above.
 
-      - 'automatic' -- maps to default ('blue') if `X` is a single Sage object; and
-        maps to a fixed sequence of regularly spaced colors if `X` is a list.
+      - ``'automatic'`` -- maps to default ('blue') if `X` is a single Sage object; and
+        maps to a fixed sequence of regularly spaced colors if `X` is a list
 
-    - ``legend_color`` - the color of the text for `X` (or each item in `X`) in the legend.
-        Default color is 'black'. Options are as in ``color`` above, except that the choice 'automatic' maps to 'black' if `X` is a single Sage object.
+    - ``legend_color`` -- the color of the text for `X` (or each item in `X`) in the legend.
+      Default color is 'black'. Options are as in ``color`` above, except that the choice 'automatic' maps to 'black' if `X` is a single Sage object
 
-    - ``fillcolor`` - The color of the fill for the plot of `X` (or each item in `X`).
-        Default color is 'gray' if `X` is a single Sage object or if ``color`` is a single color. Otherwise, options are as in ``color`` above.
+    - ``fillcolor`` -- the color of the fill for the plot of `X` (or each item in `X`).
+      Default color is 'gray' if `X` is a single Sage object or if ``color`` is a single color. Otherwise, options are as in ``color`` above
 
     APPEARANCE OPTIONS:
 
@@ -989,30 +991,30 @@ def plot(funcs, *args, **kwds):
 
     Any MATPLOTLIB line option may also be passed in.  E.g.,
 
-    - ``linestyle`` - (default: "-") The style of the line, which is one of
+    - ``linestyle`` -- (default: ``'-'``) the style of the line, which is one of
 
-      - ``"-"`` or ``"solid"``
-      - ``"--"`` or ``"dashed"``
-      - ``"-."`` or ``"dash dot"``
-      - ``":"`` or ``"dotted"``
+      - ``'-'`` or ``'solid'``
+      - ``'--'`` or ``'dashed'``
+      - ``'-.'`` or ``'dash dot'``
+      - ``':'`` or ``'dotted'``
       - ``"None"`` or ``" "`` or ``""`` (nothing)
       - a list or dictionary (see below)
 
-      The linestyle can also be prefixed with a drawing style (e.g., ``"steps--"``)
+      The linestyle can also be prefixed with a drawing style (e.g., ``'steps--'``)
 
-      - ``"default"`` (connect the points with straight lines)
-      - ``"steps"`` or ``"steps-pre"`` (step function; horizontal
+      - ``'default'`` (connect the points with straight lines)
+      - ``'steps'`` or ``'steps-pre'`` (step function; horizontal
         line is to the left of point)
-      - ``"steps-mid"`` (step function; points are in the middle of
+      - ``'steps-mid'`` (step function; points are in the middle of
         horizontal lines)
-      - ``"steps-post"`` (step function; horizontal line is to the
+      - ``'steps-post'`` (step function; horizontal line is to the
         right of point)
 
       If `X` is a list, then ``linestyle`` may be a list (with entries
       taken from the strings above) or a dictionary (with keys in ``range(len(X))``
       and values taken from the strings above).
 
-    - ``marker``  - The style of the markers, which is one of
+    - ``marker`` -- the style of the markers, which is one of
 
       - ``"None"`` or ``" "`` or ``""`` (nothing) -- default
       - ``","`` (pixel), ``"."`` (point)
@@ -1031,20 +1033,20 @@ def plot(funcs, *args, **kwds):
         - ``style`` -- ``0`` (regular polygon), ``1`` (star shape), ``2`` (asterisk), ``3`` (circle)
         - ``angle`` -- the angular rotation in degrees
 
-    - ``markersize`` - the size of the marker in points
+    - ``markersize`` -- the size of the marker in points
 
     - ``markeredgecolor`` -- the color of the marker edge
 
     - ``markerfacecolor`` -- the color of the marker face
 
-    - ``markeredgewidth`` - the size of the marker edge in points
+    - ``markeredgewidth`` -- the size of the marker edge in points
 
-    - ``exclude`` - (Default: None) values which are excluded from the plot range.
+    - ``exclude`` -- (default: ``None``) values which are excluded from the plot range.
       Either a list of real numbers, or an equation in one variable.
 
     FILLING OPTIONS:
 
-    - ``fill`` - (default: ``False``) One of:
+    - ``fill`` -- boolean (default: ``False``); one of:
 
       - "axis" or ``True``: Fill the area between the function and the x-axis.
 
@@ -1063,12 +1065,12 @@ def plot(funcs, *args, **kwds):
         the j-th function in the list.  (But if ``d[i] == j``: Fill the area
         between the i-th function in the list and the horizontal line y = j.)
 
-    - ``fillalpha`` - (default: `0.5`) How transparent the fill is.
-      A number between 0 and 1.
+    - ``fillalpha`` -- (default: 0.5) how transparent the fill is;
+      a number between 0 and 1
 
     MATPLOTLIB STYLE SHEET OPTION:
 
-    - ``stylesheet`` - (Default: classic) Support for loading a full matplotlib style sheet.
+    - ``stylesheet`` -- (default: classic) support for loading a full matplotlib style sheet.
       Any style sheet listed in ``matplotlib.pyplot.style.available`` is acceptable. If a
       non-existing style is provided the default classic is applied.
 
@@ -1318,7 +1320,7 @@ def plot(funcs, *args, **kwds):
         g = p1 + p2
         sphinx_plot(g)
 
-    Prior to :trac:`19485`, legends by default had a shadowless gray
+    Prior to :issue:`19485`, legends by default had a shadowless gray
     background. This behavior can be recovered by setting the legend
     options on your plot object::
 
@@ -1763,7 +1765,7 @@ def plot(funcs, *args, **kwds):
 
     .. PLOT::
 
-        g = plot(sin(pi*x), (x, -8, 8), ticks=[[-7,-3,0,3,7],[-1/2,0,1/2]])
+        g = plot(sin(pi*x), (x, -8, 8), ticks=[[-7,-3,0,3,7], [-1/2,0,1/2]])
         sphinx_plot(g)
 
     ::
@@ -1771,12 +1773,12 @@ def plot(funcs, *args, **kwds):
         sage: plot(2*x + 1, (x, 0, 5),
         ....:      ticks=[[0, 1, e, pi, sqrt(20)],
         ....:             [1, 3, 2*e + 1, 2*pi + 1, 2*sqrt(20) + 1]],
-        ....:      tick_formatter="latex")
+        ....:      tick_formatter='latex')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot(2*x + 1, (x, 0, 5), ticks=[[0, 1, e, pi, sqrt(20)], [1, 3, 2*e + 1, 2*pi + 1, 2*sqrt(20) + 1]], tick_formatter="latex")
+        g = plot(2*x + 1, (x, 0, 5), ticks=[[0, 1, e, pi, sqrt(20)], [1, 3, 2*e + 1, 2*pi + 1, 2*sqrt(20) + 1]], tick_formatter='latex')
         sphinx_plot(g)
 
     This is particularly useful when setting custom ticks in multiples of `\pi`.
@@ -1799,7 +1801,7 @@ def plot(funcs, *args, **kwds):
 
     .. PLOT::
 
-        g = plot(x**2, (x,0,3), ticks=[[1,2.5],[0.5,1,2]], tick_formatter=[["$x_1$","$x_2$"],["$y_1$","$y_2$","$y_3$"]])
+        g = plot(x**2, (x,0,3), ticks=[[1,2.5],[0.5,1,2]], tick_formatter=[["$x_1$","$x_2$"], ["$y_1$","$y_2$","$y_3$"]])
         sphinx_plot(g)
 
     You can force Type 1 fonts in your figures by providing the relevant
@@ -1891,7 +1893,7 @@ def plot(funcs, *args, **kwds):
 
         sage: plot(arcsec(x/2), -2, 2)  # plot should be empty; no valid points
         Graphics object consisting of 0 graphics primitives
-        sage: plot(sqrt(x^2-1), -2, 2)  # [-1, 1] is excluded automatically
+        sage: plot(sqrt(x^2 - 1), -2, 2)  # [-1, 1] is excluded automatically
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -1970,14 +1972,14 @@ def plot(funcs, *args, **kwds):
         ...
         ValueError: plot start point and end point must be different
 
-    We test that we can plot `f(x)=x` (see :trac:`10246`)::
+    We test that we can plot `f(x)=x` (see :issue:`10246`)::
 
         sage: f(x)=x; f
         x |--> x
         sage: plot(f,(x,-1,1))
         Graphics object consisting of 1 graphics primitive
 
-    Check that :trac:`15030` is fixed::
+    Check that :issue:`15030` is fixed::
 
         sage: plot(abs(log(x)), x)
         Graphics object consisting of 1 graphics primitive
@@ -1995,14 +1997,14 @@ def plot(funcs, *args, **kwds):
 
         sage: set_verbose(0)
 
-    Legends can contain variables with long names, :trac:`13543`::
+    Legends can contain variables with long names, :issue:`13543`::
 
         sage: hello = var('hello')
         sage: label = '$' + latex(hello) + '$'
         sage: plot(x, x, 0, 1, legend_label=label)
         Graphics object consisting of 1 graphics primitive
 
-    Extra keywords should be saved if object has a plot method, :trac:`20924`::
+    Extra keywords should be saved if object has a plot method, :issue:`20924`::
 
         sage: G = graphs.PetersenGraph()
         sage: p = G.plot()
@@ -2023,8 +2025,8 @@ def plot(funcs, *args, **kwds):
     original_opts = kwds.pop('__original_opts', {})
     do_show = kwds.pop('show',False)
 
-    from sage.structure.element import is_Vector
-    if kwds.get('parametric',False) and is_Vector(funcs):
+    from sage.structure.element import Vector
+    if kwds.get('parametric',False) and isinstance(funcs, Vector):
         funcs = tuple(funcs)
 
     if hasattr(funcs, 'plot'):
@@ -2049,13 +2051,15 @@ def plot(funcs, *args, **kwds):
         elif n == 1:
             G = _plot(funcs, *args, **kwds)
         elif n == 2:
-        # if there are two extra args, then pull them out and pass them as a tuple
+            # if there are two extra args, then pull them out
+            # and pass them as a tuple
             xmin = args[0]
             xmax = args[1]
             args = args[2:]
             G = _plot(funcs, (xmin, xmax), *args, **kwds)
         elif n == 3:
-        # if there are three extra args, then pull them out and pass them as a tuple
+            # if there are three extra args, then pull them out
+            # and pass them as a tuple
             var = args[0]
             xmin = args[1]
             xmax = args[2]
@@ -2066,15 +2070,16 @@ def plot(funcs, *args, **kwds):
             xmax = kwds.pop('xmax', 1)
             G = _plot(funcs, (xmin, xmax), *args, **kwds)
         else:
-            sage.misc.verbose.verbose("there were %s extra arguments (besides %s)" % (n, funcs), level=0)
+            sage.misc.verbose.verbose(f"there were {n} extra arguments (besides {funcs})", level=0)
 
     G._set_extra_kwds(G_kwds)
     if do_show:
         G.show()
     return G
 
+
 def _plot(funcs, xrange, parametric=False,
-              polar=False, fill=False, label='', randomize=True, **options):
+          polar=False, fill=False, label='', randomize=True, **options):
     """
     Internal function which does the actual plotting.
 
@@ -2093,7 +2098,7 @@ def _plot(funcs, xrange, parametric=False,
 
     The following option is deprecated in favor of ``legend_label``:
 
-    - ``label`` - (default: '') a string for the label
+    - ``label`` -- (default: ``''``) a string for the label
 
     All other usual plot options are also accepted, and a number
     are required (see the example below) which are normally passed
@@ -2119,7 +2124,7 @@ def _plot(funcs, xrange, parametric=False,
     TESTS:
 
     Make sure that we get the right number of legend entries as the number of
-    functions varies (:trac:`10514`)::
+    functions varies (:issue:`10514`)::
 
         sage: p1 = plot(1*x, legend_label='1x')
         sage: p2 = plot(2*x, legend_label='2x', color='green')
@@ -2144,24 +2149,23 @@ def _plot(funcs, xrange, parametric=False,
         Graphics object consisting of 2 graphics primitives
 
     Make sure that we don't get multiple legend labels for plot segments
-    (:trac:`11998`)::
+    (:issue:`11998`)::
 
-        sage: p1 = plot(1/(x^2-1),(x,-2,2),legend_label="foo",detect_poles=True)
+        sage: p1 = plot(1/(x^2-1),(x,-2,2),legend_label='foo',detect_poles=True)
         sage: len(p1.matplotlib().axes[0].legend().texts)
         1
         sage: p1.show(ymin=-10,ymax=10) # should be one legend
 
     Parametric plots that get evaluated at invalid points should still
-    plot properly (:trac:`13246`)::
+    plot properly (:issue:`13246`)::
 
         sage: parametric_plot((x, arcsec(x)), (x, -2, 2))
         Graphics object consisting of 1 graphics primitive
 
-    Verify that :trac:`31089` is fixed::
+    Verify that :issue:`31089` is fixed::
 
         sage: plot(x, -1, 1, detect_poles=True)
         Graphics object consisting of 1 graphics primitive
-
     """
     from sage.plot.colors import Color
     from sage.plot.misc import setup_for_eval_on_grid
@@ -2192,7 +2196,7 @@ def _plot(funcs, xrange, parametric=False,
 
     # Check to see if funcs is a list of functions that will be all plotted together.
     if isinstance(funcs, (list, tuple)) and not parametric:
-        def golden_rainbow(i,lightness=0.4):
+        def golden_rainbow(i, lightness=0.4):
             # note: sage's "blue" has hue-saturation-lightness values (2/3, 1, 1/2).
             g = 0.61803398875
             return Color((0.66666666666666 + i*g) % 1, 1, lightness, space='hsl')
@@ -2427,7 +2431,7 @@ def _plot(funcs, xrange, parametric=False,
                         fstr = 'max'
                     else:
                         fstr = 'min'
-                    msg = "WARNING: You use the built-in function %s for filling. You probably wanted the string '%s'." % (fstr, fstr)
+                    msg = "WARNING: You use the built-in function {} for filling. You probably wanted the string '{}'.".format(fstr, fstr)
                     sage.misc.verbose.verbose(msg, level=0)
                 if not is_fast_float(fill):
                     fill_f = fast_float(fill, expect_one_var=True)
@@ -2495,7 +2499,7 @@ def _plot(funcs, xrange, parametric=False,
             exclusion_point = excluded_points.pop()
         else:
             # default value of exclusion point must be outside the plot interval
-            # (see :trac:`31089`)
+            # (see :issue:`31089`)
             exclusion_point = xmax + 1
 
         flag = True
@@ -2565,15 +2569,15 @@ def parametric_plot(funcs, *args, **kwargs):
 
     INPUT:
 
-    -  ``funcs`` -- 2 or 3-tuple of functions, or a vector of dimension 2 or 3.
+    - ``funcs`` -- 2 or 3-tuple of functions, or a vector of dimension 2 or 3
 
-    -  ``other options`` -- passed to :func:`plot` or :func:`~sage.plot.plot3d.parametric_plot3d.parametric_plot3d`
+    - ``other options`` -- passed to :func:`plot` or :func:`~sage.plot.plot3d.parametric_plot3d.parametric_plot3d`
 
     EXAMPLES: We draw some 2d parametric plots.  Note that the default aspect ratio
     is 1, so that circles look like circles. ::
 
         sage: t = var('t')
-        sage: parametric_plot( (cos(t), sin(t)), (t, 0, 2*pi))
+        sage: parametric_plot((cos(t), sin(t)), (t, 0, 2*pi))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -2613,29 +2617,31 @@ def parametric_plot(funcs, *args, **kwargs):
 
     .. PLOT::
 
-        t =var('t')
+        t = var('t')
         g = parametric_plot((t, t**2), (t, -4, 4), fill=True)
         sphinx_plot(g)
 
     A filled Hypotrochoid::
 
-        sage: parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x,0, 8*pi), fill=True)
+        sage: parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)],
+        ....:                 (x, 0, 8*pi), fill=True)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
-        g = parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x,0, 8*pi), fill=True)
+        g = parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x, 0, 8*pi), fill=True)
         sphinx_plot(g)
 
     ::
 
-        sage: parametric_plot( (5*cos(x), 5*sin(x), x), (x,-12, 12), plot_points=150, color="red") # long time
+        sage: parametric_plot((5*cos(x), 5*sin(x), x), (x, -12, 12),  # long time
+        ....:                 plot_points=150, color='red')
         Graphics3d Object
 
     .. PLOT::
 
         #AttributeError: 'Line' object has no attribute 'plot'
-        #g = parametric_plot( (5*cos(x), 5*sin(x), x), (x,-12, 12), plot_points=150, color="red") # long time
+        #g = parametric_plot( (5*cos(x), 5*sin(x), x), (x,-12, 12), plot_points=150, color='red') # long time
         #sphinx_plot(g)
 
     ::
@@ -2723,7 +2729,7 @@ def parametric_plot(funcs, *args, **kwargs):
         ...
         ValueError: there are more variables than variable ranges
 
-    One test for :trac:`7165`::
+    One test for :issue:`7165`::
 
         sage: m = SR.var('m')
         sage: parametric_plot([real(exp(i*m)), imaginary(exp(i*m))], (m, 0, 7))
@@ -2757,6 +2763,7 @@ def parametric_plot(funcs, *args, **kwargs):
         return sage.plot.plot3d.parametric_plot3d.parametric_plot3d(funcs, *args, **kwargs)
     else:
         raise ValueError("the number of functions and the number of variable ranges is not a supported combination for a 2d or 3d parametric plots")
+
 
 @options(aspect_ratio=1.0)
 def polar_plot(funcs, *args, **kwds):
@@ -2829,7 +2836,8 @@ def polar_plot(funcs, *args, **kwds):
 
     Fill the area between two functions::
 
-        sage: polar_plot(cos(4*x) + 1.5, 0, 2*pi, fill=0.5 * cos(4*x) + 2.5, fillcolor='orange')
+        sage: polar_plot(cos(4*x) + 1.5, 0, 2*pi, fill=0.5 * cos(4*x) + 2.5,
+        ....:            fillcolor='orange')
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -2839,7 +2847,8 @@ def polar_plot(funcs, *args, **kwds):
 
     Fill the area between several spirals::
 
-        sage: polar_plot([(1.2+k*0.2)*log(x) for k in range(6)], 1, 3 * pi, fill={0: [1], 2: [3], 4: [5]})
+        sage: polar_plot([(1.2+k*0.2)*log(x) for k in range(6)], 1, 3 * pi,
+        ....:            fill={0: [1], 2: [3], 4: [5]})
         Graphics object consisting of 9 graphics primitives
 
     .. PLOT::
@@ -2856,10 +2865,10 @@ def polar_plot(funcs, *args, **kwds):
 
         g = polar_plot(log(floor(x)), (x, 1, 4*pi), exclude=list(range(1,13)))
         sphinx_plot(g)
-
     """
     kwds['polar'] = True
     return plot(funcs, *args, **kwds)
+
 
 @options(aspect_ratio='automatic')
 def list_plot(data, plotjoined=False, **kwargs):
@@ -2895,7 +2904,7 @@ def list_plot(data, plotjoined=False, **kwargs):
 
     EXAMPLES::
 
-        sage: list_plot([i^2 for i in range(5)]) # long time
+        sage: list_plot([i^2 for i in range(5)])  # long time
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -3008,7 +3017,9 @@ def list_plot(data, plotjoined=False, **kwargs):
         sage: list_plot(x_coords, y_coords)
         Traceback (most recent call last):
         ...
-        TypeError: The second argument 'plotjoined' should be boolean (True or False).  If you meant to plot two lists 'x' and 'y' against each other, use 'list_plot(list(zip(x,y)))'.
+        TypeError: The second argument 'plotjoined' should be boolean (True or False).
+        If you meant to plot two lists 'x' and 'y' against each other,
+        use 'list_plot(list(zip(x,y)))'.
 
     Dictionaries with numeric keys and values can be plotted::
 
@@ -3055,12 +3066,12 @@ def list_plot(data, plotjoined=False, **kwargs):
 
         Instead this will work. We drop the point `(0,1)`.::
 
-            sage: list_plot(list(zip(range(1,len(yl)), yl[1:])), scale='loglog') # long time
+            sage: list_plot(list(zip(range(1,len(yl)), yl[1:])), scale='loglog')  # long time
             Graphics object consisting of 1 graphics primitive
 
     We use :func:`list_plot_loglog` and plot in a different base.::
 
-        sage: list_plot_loglog(list(zip(range(1,len(yl)), yl[1:])), base=2) # long time
+        sage: list_plot_loglog(list(zip(range(1,len(yl)), yl[1:])), base=2)  # long time
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -3078,7 +3089,7 @@ def list_plot(data, plotjoined=False, **kwargs):
     TESTS:
 
     We check to see whether elements of the Symbolic Ring are properly
-    handled; see :trac:`16378` ::
+    handled; see :issue:`16378` ::
 
         sage: list_plot([1+I, 2+I])
         Graphics object consisting of 1 graphics primitive
@@ -3148,6 +3159,8 @@ def list_plot(data, plotjoined=False, **kwargs):
             return point(data, **kwargs)
 
 #------------------------ Graphs on log scale ---------------------------#
+
+
 @options(base=10)
 def plot_loglog(funcs, *args, **kwds):
     """
@@ -3156,12 +3169,12 @@ def plot_loglog(funcs, *args, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: `10`); the base of the logarithm. This must be
+    - ``base`` -- (default: `10`) the base of the logarithm; this must be
       greater than 1. The base can be also given as a list or tuple
       ``(basex, basey)``.  ``basex`` sets the base of the logarithm along the
       horizontal axis and ``basey`` sets the base along the vertical axis.
 
-    - ``funcs`` -- any Sage object which is acceptable to the :func:`plot`.
+    - ``funcs`` -- any Sage object which is acceptable to the :func:`plot`
 
     For all other inputs, look at the documentation of :func:`plot`.
 
@@ -3194,9 +3207,9 @@ def plot_loglog(funcs, *args, **kwds):
 
         g = plot_loglog(exp, (1,10), base=(2,3))
         sphinx_plot(g)
-
     """
     return plot(funcs, *args, scale='loglog', **kwds)
+
 
 @options(base=10)
 def plot_semilogx(funcs, *args, **kwds):
@@ -3206,10 +3219,10 @@ def plot_semilogx(funcs, *args, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: `10`); the base of the logarithm. This must be
-      greater than 1.
+    - ``base`` -- (default: `10`) the base of the logarithm; this must be
+      greater than 1
 
-    - ``funcs`` -- any Sage object which is acceptable to the :func:`plot`.
+    - ``funcs`` -- any Sage object which is acceptable to the :func:`plot`
 
     For all other inputs, look at the documentation of :func:`plot`.
 
@@ -3246,9 +3259,9 @@ def plot_semilogx(funcs, *args, **kwds):
         f = 4000000/(4000000 + 4000*s*i - s*s)
         g = plot_semilogx(20*log(abs(f), 10), (s, 1, 1e6))
         sphinx_plot(g)
-
     """
     return plot(funcs, *args, scale='semilogx', **kwds)
+
 
 @options(base=10)
 def plot_semilogy(funcs, *args, **kwds):
@@ -3258,35 +3271,35 @@ def plot_semilogy(funcs, *args, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: `10`); the base of the logarithm. This must be
-      greater than 1.
+    - ``base`` -- (default: `10`) the base of the logarithm; this must be
+      greater than 1
 
-    - ``funcs`` -- any Sage object which is acceptable to the :func:`plot`.
+    - ``funcs`` -- any Sage object which is acceptable to the :func:`plot`
 
     For all other inputs, look at the documentation of :func:`plot`.
 
     EXAMPLES::
 
-        sage: plot_semilogy(exp, (1,10)) # long time # plot in semilogy scale, base 10
+        sage: plot_semilogy(exp, (1, 10))  # long time # plot in semilogy scale, base 10
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot_semilogy(exp, (1,10)) # long time # plot in semilogy scale, base 10
+        g = plot_semilogy(exp, (1,10))  # long time # plot in semilogy scale, base 10
         sphinx_plot(g)
 
     ::
 
-        sage: plot_semilogy(exp, (1,10), base=2) # long time # with base 2
+        sage: plot_semilogy(exp, (1, 10), base=2)  # long time # with base 2
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot_semilogy(exp, (1,10), base=2) # long time # with base 2
+        g = plot_semilogy(exp, (1,10), base=2)  # long time # with base 2
         sphinx_plot(g)
-
     """
     return plot(funcs, *args, scale='semilogy', **kwds)
+
 
 @options(base=10)
 def list_plot_loglog(data, plotjoined=False, **kwds):
@@ -3296,7 +3309,7 @@ def list_plot_loglog(data, plotjoined=False, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: `10`); the base of the logarithm. This must be
+    - ``base`` -- (default: `10`) the base of the logarithm; this must be
       greater than 1. The base can be also given as a list or tuple
       ``(basex, basey)``.  ``basex`` sets the base of the logarithm along the
       horizontal axis and ``basey`` sets the base along the vertical axis.
@@ -3351,9 +3364,9 @@ def list_plot_loglog(data, plotjoined=False, **kwds):
 
             sage: list_plot_loglog(list(zip(range(1,len(yl)), yl[1:])))
             Graphics object consisting of 1 graphics primitive
-
     """
     return list_plot(data, plotjoined=plotjoined, scale='loglog', **kwds)
+
 
 @options(base=10)
 def list_plot_semilogx(data, plotjoined=False, **kwds):
@@ -3363,8 +3376,8 @@ def list_plot_semilogx(data, plotjoined=False, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: `10`); the base of the logarithm. This must be
-      greater than 1.
+    - ``base`` -- (default: `10`) the base of the logarithm; this must be
+      greater than 1
 
     For all other inputs, look at the documentation of :func:`list_plot`.
 
@@ -3406,9 +3419,9 @@ def list_plot_semilogx(data, plotjoined=False, **kwds):
 
         g = list_plot_semilogx([(1,2),(3,4),(3,-1),(25,3)], base=2)
         sphinx_plot(g)
-
     """
     return list_plot(data, plotjoined=plotjoined, scale='semilogx', **kwds)
+
 
 @options(base=10)
 def list_plot_semilogy(data, plotjoined=False, **kwds):
@@ -3418,8 +3431,8 @@ def list_plot_semilogy(data, plotjoined=False, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: `10`); the base of the logarithm. This must be
-      greater than 1.
+    - ``base`` -- (default: `10`) the base of the logarithm; this must be
+      greater than 1
 
     For all other inputs, look at the documentation of :func:`list_plot`.
 
@@ -3464,9 +3477,9 @@ def list_plot_semilogy(data, plotjoined=False, **kwds):
 
         g = list_plot_semilogy([2, 4, 6, 8, 16, 31], base=2)
         sphinx_plot(g)
-
     """
     return list_plot(data, plotjoined=plotjoined, scale='semilogy', **kwds)
+
 
 def to_float_list(v):
     """
@@ -3481,6 +3494,7 @@ def to_float_list(v):
     """
     return [float(x) for x in v]
 
+
 def reshape(v, n, m):
     """
     Helper function for creating graphics arrays.
@@ -3491,11 +3505,11 @@ def reshape(v, n, m):
 
     INPUT:
 
-    -  ``v`` -- a list of lists or tuples
+    - ``v`` -- list of lists or tuples
 
-    -  ``n, m`` -- integers
+    - ``n``, ``m`` -- integers
 
-    OUTPUT: a list of lists of graphics objects
+    OUTPUT: list of lists of graphics objects
 
     EXAMPLES::
 
@@ -3505,13 +3519,14 @@ def reshape(v, n, m):
 
     ::
 
-        sage: M = [[plot(sin(k*x),(x,-pi,pi)) for k in range(3)],[plot(cos(j*x),(x,-pi,pi)) for j in [3..5]]]
+        sage: M = [[plot(sin(k*x), (x,-pi,pi)) for k in range(3)],
+        ....:      [plot(cos(j*x), (x,-pi,pi)) for j in [3..5]]]
         sage: graphics_array(M,6,1)  # long time (up to 4s on sage.math, 2012)
         Graphics Array of size 6 x 1
 
     TESTS::
 
-        sage: L = [plot(sin(k*x),(x,-pi,pi)) for k in [1..3]]
+        sage: L = [plot(sin(k*x), (x,-pi,pi)) for k in [1..3]]
         sage: graphics_array(L,0,-1) # indirect doctest
         Traceback (most recent call last):
         ...
@@ -3546,6 +3561,7 @@ def reshape(v, n, m):
 
     return L
 
+
 def graphics_array(array, nrows=None, ncols=None):
     r"""
     Plot a list of lists (or tuples) of graphics objects on one canvas,
@@ -3557,7 +3573,7 @@ def graphics_array(array, nrows=None, ncols=None):
       :class:`~sage.plot.graphics.Graphics` elements or a
       single list of :class:`~sage.plot.graphics.Graphics` elements
 
-    - ``nrows, ncols`` -- (optional) integers. If both are given then
+    - ``nrows``, ``ncols`` -- (optional) integers. If both are given then
       the input array is flattened and turned into an ``nrows`` x
       ``ncols`` array, with blank graphics objects padded at the end,
       if necessary. If only one is specified, the other is chosen
@@ -3620,6 +3636,7 @@ def graphics_array(array, nrows=None, ncols=None):
     It is possible to use ``figsize`` to change the size of the plot
     as a whole::
 
+        sage: x = var('x')
         sage: L = [plot(sin(k*x), (x,-pi,pi)) for k in [1..3]]
         sage: ga = graphics_array(L)
         sage: ga.show(figsize=[5,3])  # smallish and compact
@@ -3685,7 +3702,6 @@ def graphics_array(array, nrows=None, ncols=None):
     .. SEEALSO::
 
         :class:`~sage.plot.multigraphics.GraphicsArray` for more examples
-
     """
     # TODO: refactor the whole array flattening and reshaping into a class
     if nrows is None and ncols is None:
@@ -3715,6 +3731,7 @@ def graphics_array(array, nrows=None, ncols=None):
         array = reshape(array, nrows, ncols)
     return GraphicsArray(array)
 
+
 def multi_graphics(graphics_list):
     r"""
     Plot a list of graphics at specified positions on a single canvas.
@@ -3724,7 +3741,7 @@ def multi_graphics(graphics_list):
 
     INPUT:
 
-    - ``graphics_list`` -- a list of graphics along with their
+    - ``graphics_list`` -- list of graphics along with their
       positions on the canvas; each element of ``graphics_list`` is either
 
       - a pair ``(graphics, position)``, where ``graphics`` is a
@@ -3785,9 +3802,9 @@ def multi_graphics(graphics_list):
     .. SEEALSO::
 
         :class:`~sage.plot.multigraphics.MultiGraphics` for more examples
-
     """
     return MultiGraphics(graphics_list)
+
 
 def minmax_data(xdata, ydata, dict=False):
     """
@@ -3824,6 +3841,7 @@ def minmax_data(xdata, ydata, dict=False):
     else:
         return xmin, xmax, ymin, ymax
 
+
 def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
                         adaptive_recursion=5, level=0, *, excluded=False):
     r"""
@@ -3834,19 +3852,19 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
 
     - ``f`` -- a function of one variable
 
-    - ``p1, p2`` -- two points to refine between
+    - ``p1``, ``p2`` -- two points to refine between
 
-    - ``adaptive_recursion`` -- (default: `5`); how many
+    - ``adaptive_recursion`` -- (default: `5`) how many
       levels of recursion to go before giving up when doing adaptive
       refinement. Setting this to 0 disables adaptive refinement.
 
-    - ``adaptive_tolerance`` -- (default: `0.01`); how large
+    - ``adaptive_tolerance`` -- (default: `0.01`) how large
       a relative difference should be before the adaptive refinement
       code considers it significant; see documentation for generate_plot_points
       for more information.  See the documentation for :func:`plot` for more
       information on how the adaptive refinement algorithm works.
 
-    - ``excluded`` -- (default: ``False``); also return locations where it has been
+    - ``excluded`` -- (default: ``False``) also return locations where it has been
       discovered that the function is not defined
       (y-value will be ``'NaN'`` in this case)
 
@@ -3860,7 +3878,8 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
     TESTS::
 
         sage: from sage.plot.plot import adaptive_refinement
-        sage: adaptive_refinement(sin, (0,0), (pi,0), adaptive_tolerance=0.01, adaptive_recursion=0)
+        sage: adaptive_refinement(sin, (0,0), (pi,0), adaptive_tolerance=0.01,
+        ....:                     adaptive_recursion=0)
         []
         sage: adaptive_refinement(sin, (0,0), (pi,0), adaptive_tolerance=0.01)
         [(0.125*pi, 0.3826834323650898), (0.1875*pi, 0.5555702330196022),
@@ -3881,7 +3900,8 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
         sage: f(x) = sin(1/x)
         sage: n1 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_tolerance=0.01)); n1
         15
-        sage: n2 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_recursion=10, adaptive_tolerance=0.01)); n2
+        sage: n2 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_recursion=10,
+        ....:                              adaptive_tolerance=0.01)); n2
         79
         sage: n3 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_tolerance=0.001)); n3
         26
@@ -3903,14 +3923,14 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
     try:
         y = float(f(x))
         if str(y) in ['nan', 'NaN', 'inf', '-inf']:
-            sage.misc.verbose.verbose("%s\nUnable to compute f(%s)" % (msg, x),1)
+            sage.misc.verbose.verbose(f"{msg}\nUnable to compute f({x})",1)
             # give up for this branch
             if excluded:
                 return [(x, 'NaN')]
             return []
 
     except (ZeroDivisionError, TypeError, ValueError, OverflowError) as msg:
-        sage.misc.verbose.verbose("%s\nUnable to compute f(%s)" % (msg, x), 1)
+        sage.misc.verbose.verbose(f"{msg}\nUnable to compute f({x})", 1)
         # give up for this branch
         if excluded:
             return [(x, 'NaN')]
@@ -3932,6 +3952,7 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
     else:
         return []
 
+
 def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01,
                          adaptive_recursion=5, randomize=True,
                          initial_points=None, *, excluded=False,
@@ -3945,28 +3966,28 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01,
 
     - ``f`` -- a function of one variable
 
-    - ``p1, p2`` -- two points to refine between
+    - ``p1``, ``p2`` -- two points to refine between
 
-    - ``plot_points`` -- (default: `5`); the minimal number of plot points. (Note
+    - ``plot_points`` -- (default: 5) the minimal number of plot points. (Note
       however that in any actual plot a number is passed to this, with default
       value 200.)
 
-    - ``adaptive_recursion`` -- (default: `5`); how many levels of recursion to go
+    - ``adaptive_recursion`` -- (default: 5) how many levels of recursion to go
       before giving up when doing adaptive refinement.  Setting this to 0
       disables adaptive refinement.
 
-    - ``adaptive_tolerance`` -- (default: `0.01`); how large the relative difference
+    - ``adaptive_tolerance`` -- (default: 0.01) how large the relative difference
       should be before the adaptive refinement code considers it significant.  If
       the actual difference is greater than adaptive_tolerance*delta, where delta
       is the initial subinterval size for the given xrange and plot_points, then
       the algorithm will consider it significant.
 
-    - ``initial_points`` -- (default: ``None``); a list of x-values that should be evaluated.
+    - ``initial_points`` -- (default: ``None``) a list of x-values that should be evaluated
 
-    - ``excluded`` -- (default: ``False``); add a list of discovered x-values, for
+    - ``excluded`` -- (default: ``False``) add a list of discovered x-values, for
       which ``f`` is not defined
 
-    - ``imaginary_tolerance`` -- (default: ``1e-8``); if an imaginary
+    - ``imaginary_tolerance`` -- (default: ``1e-8``) if an imaginary
       number arises (due, for example, to numerical issues), this
       tolerance specifies how large it has to be in magnitude before
       we raise an error.  In other words, imaginary parts smaller than
@@ -4063,7 +4084,7 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01,
                 exception_indices.append(i)
 
         except (ArithmeticError, TypeError, ValueError) as m:
-            sage.misc.verbose.verbose("%s\nUnable to compute f(%s)" % (m, xi), 1)
+            sage.misc.verbose.verbose(f"{m}\nUnable to compute f({xi})", 1)
 
             if i == 0: # Given an error for left endpoint, try to move it in slightly
                 for j in range(1, 99):

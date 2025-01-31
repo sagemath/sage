@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Weyl Lie Conformal Algebra
 
@@ -46,16 +47,15 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     INPUT:
 
     - ``R`` -- a commutative ring; the base ring of this Lie
-      conformal algebra.
-    - ``ngens``: an even positive Integer (default `2`); The number
-      of non-central generators of this Lie conformal algebra.
-    - ``gram_matrix``: a matrix (default: ``None``); A non-singular
-      skew-symmetric square matrix with coefficients in `R`.
-    - ``names`` -- a list or tuple of ``str``; alternative names
+      conformal algebra
+    - ``ngens`` -- an even positive Integer (default: `2`); the number
+      of non-central generators of this Lie conformal algebra
+    - ``gram_matrix`` -- a matrix (default: ``None``); a non-singular
+      skew-symmetric square matrix with coefficients in `R`
+    - ``names`` -- list or tuple of strings; alternative names
       for the generators
     - ``index_set`` -- an enumerated set; alternative indexing set
       for the generators
-
 
     OUTPUT:
 
@@ -123,7 +123,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
                  index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

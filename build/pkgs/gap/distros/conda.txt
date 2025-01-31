@@ -1,1 +1,1 @@
-gap-defaults>=4.12.2
+gap-defaults

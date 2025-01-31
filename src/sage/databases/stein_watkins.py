@@ -1,18 +1,16 @@
 r"""
 The Stein-Watkins table of elliptic curves
 
-Sage gives access to the Stein-Watkins table of elliptic curves, via an
-optional package that you must install. This is a huge database of elliptic
-curves. You can install the database (a 2.6GB package) with the command
-
-::
+Sage gives access to the Stein-Watkins table of elliptic curves, via the
+optional :ref:`database_stein_watkins <spkg_database_stein_watkins>` package
+that you must install. This is a huge database of elliptic curves. You can
+install the database (a 2.6GB package) with the command ::
 
     sage -i database_stein_watkins
 
 You can also automatically download a small version, which takes much less
-time, using the command
-
-::
+time, via the optional :ref:`database_stein_watkins_mini <spkg_database_stein_watkins_mini>`
+package using the command ::
 
     sage -i database_stein_watkins_mini
 
@@ -28,10 +26,9 @@ all curves of a given conductor. It lists the curves whose coefficients are not
    999, inclusive.
 
 -  The command ``SteinWatkinsPrimeData(n)`` returns an iterator over the curves
-   in the `n^{th}` Stein-Watkins prime table, which contains prime conductor
+   in the `n`-th Stein-Watkins prime table, which contains prime conductor
    elliptic curves of conductor between `n10^8` and `(n+1)10^8`. Here `n`
    varies between 0 and 99, inclusive.
-
 
 EXAMPLES: We obtain the first table of elliptic curves.
 
@@ -215,9 +212,9 @@ class SteinWatkinsAllData:
             Stein-Watkins isogeny class of conductor 20
         """
         try:
-            file = bz2.open(self._file, 'rt', encoding="utf-8")
-        except IOError:
-            raise IOError("The Stein-Watkins data file %s must be installed." % self._file)
+            file = bz2.open(self._file, 'rt', encoding='utf-8')
+        except OSError:
+            raise OSError("The Stein-Watkins data file %s must be installed." % self._file)
         C = None
         for L in file:
             if len(L) == 0:
@@ -350,7 +347,7 @@ def ecdb_num_curves(max_level=200000):
     """
     i = 0
     d = SteinWatkinsAllData(i)
-    v = [int(0) for _ in range(max_level + 1)]
+    v = [0 for _ in range(max_level + 1)]
     while True:
         try:
             C = next(d)

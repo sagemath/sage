@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 """
 Octonion Algebras
 
@@ -88,7 +89,7 @@ cdef class Octonion_generic(AlgebraElement):
 
     def __bool__(self):
         r"""
-        Return if ``self`` is non-zero or not.
+        Return if ``self`` is nonzero or not.
 
         EXAMPLES::
 
@@ -116,7 +117,7 @@ cdef class Octonion_generic(AlgebraElement):
         """
         return (self.__class__, (self._parent, self.vec))
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare ``self`` to ``other`` with type ``op``.
 
@@ -147,7 +148,7 @@ cdef class Octonion_generic(AlgebraElement):
         """
         return hash(self.vec)
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         r"""
         Return ``self`` plus ``other``.
 
@@ -161,7 +162,7 @@ cdef class Octonion_generic(AlgebraElement):
         """
         return self.__class__(self._parent, self.vec + (<Octonion_generic> other).vec)
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         r"""
         Return ``self`` minus ``other``.
 
@@ -191,7 +192,7 @@ cdef class Octonion_generic(AlgebraElement):
         """
         return self.__class__(self._parent, -self.vec)
 
-    cpdef _lmul_(self, Element other) noexcept:
+    cpdef _lmul_(self, Element other):
         r"""
         Return ``self * other`` for a scalar ``other``.
 
@@ -205,7 +206,7 @@ cdef class Octonion_generic(AlgebraElement):
         """
         return self.__class__(self._parent, self.vec * other)
 
-    cpdef _rmul_(self, Element other) noexcept:
+    cpdef _rmul_(self, Element other):
         r"""
         Return ``self * other`` for a scalar ``other``.
 
@@ -219,7 +220,7 @@ cdef class Octonion_generic(AlgebraElement):
         """
         return self.__class__(self._parent, other * self.vec)
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         r"""
         Return ``self`` multiplied by ``other``.
 
@@ -267,7 +268,7 @@ cdef class Octonion_generic(AlgebraElement):
                 ret[k] += cl * cr * coeff
         return self.__class__(P, P._module(ret))
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         """
         Return ``self`` divided by ``other``.
 
@@ -356,7 +357,7 @@ cdef class Octonion_generic(AlgebraElement):
             raise ZeroDivisionError
         return self.quadratic_form().inverse_of_unit() * self.conjugate()
 
-    cpdef Octonion_generic conjugate(self) noexcept:
+    cpdef Octonion_generic conjugate(self):
         r"""
         Return the conjugate of ``self``.
 
@@ -372,7 +373,7 @@ cdef class Octonion_generic(AlgebraElement):
         v.set_unsafe(0, -v.get_unsafe(0))
         return self.__class__(self._parent, v)
 
-    cpdef quadratic_form(self) noexcept:
+    cpdef quadratic_form(self):
         r"""
         Return the quadratic form of ``self``.
 
@@ -395,7 +396,7 @@ cdef class Octonion_generic(AlgebraElement):
             ret += -(<tuple> table[i])[i][1] * self.vec.get_unsafe(i) ** 2
         return ret
 
-    cpdef norm(self) noexcept:
+    cpdef norm(self):
         r"""
         Return the norm of ``self``.
 
@@ -415,7 +416,7 @@ cdef class Octonion_generic(AlgebraElement):
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.norm()
+            sage: elt.norm()                                                            # needs sage.symbolic
             2*sqrt(-61)
             sage: elt = sum(O.basis())
             sage: elt.norm()
@@ -423,7 +424,7 @@ cdef class Octonion_generic(AlgebraElement):
         """
         return sqrt(self.quadratic_form())
 
-    cpdef abs(self) noexcept:
+    cpdef abs(self):
         r"""
         Return the absolute value of ``self``.
 
@@ -438,7 +439,7 @@ cdef class Octonion_generic(AlgebraElement):
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.abs()
+            sage: elt.abs()                                                             # needs sage.symbolic
             2*sqrt(-61)
             sage: elt = sum(O.basis())
             sage: elt.abs()
@@ -446,13 +447,11 @@ cdef class Octonion_generic(AlgebraElement):
         """
         return self.norm()
 
-    cpdef real_part(self) noexcept:
+    cpdef real_part(self):
         r"""
         Return the real part of ``self``.
 
-        OUTPUT:
-
-        The real part of ``self`` as an element in the base ring.
+        OUTPUT: the real part of ``self`` as an element in the base ring
 
         EXAMPLES::
 
@@ -466,13 +465,11 @@ cdef class Octonion_generic(AlgebraElement):
         """
         return self.vec.get_unsafe(0)
 
-    cpdef Octonion_generic imag_part(self) noexcept:
+    cpdef Octonion_generic imag_part(self):
         r"""
         Return the imginary part of ``self``.
 
-        OUTPUT:
-
-        The imaginary part of ``self`` as an element in the octonion algebra.
+        OUTPUT: the imaginary part of ``self`` as an element in the octonion algebra
 
         EXAMPLES::
 
@@ -542,7 +539,7 @@ cdef class Octonion(Octonion_generic):
     This is an element of the octonion algebra with parameters
     `a = b = c = -1`, which is a classical octonion number.
     """
-    cpdef quadratic_form(self) noexcept:
+    cpdef quadratic_form(self):
         r"""
         Return the quadratic form of ``self``.
 
@@ -561,7 +558,7 @@ cdef class Octonion(Octonion_generic):
         """
         return self.vec * self.vec
 
-    cpdef norm(self) noexcept:
+    cpdef norm(self):
         r"""
         Return the norm of ``self``.
 
@@ -576,10 +573,10 @@ cdef class Octonion(Octonion_generic):
 
             sage: O = OctonionAlgebra(QQ)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.norm()
+            sage: elt.norm()                                                            # needs sage.symbolic
             2*sqrt(71)
             sage: elt = sum(O.basis())
-            sage: elt.norm()
+            sage: elt.norm()                                                            # needs sage.symbolic
             2*sqrt(2)
         """
         return self.vec.norm()
@@ -750,7 +747,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: O = OctonionAlgebra(QQ)
-            sage: TestSuite(O).run()
+            sage: TestSuite(O).run()                                                    # needs sage.symbolic
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: TestSuite(O).run()

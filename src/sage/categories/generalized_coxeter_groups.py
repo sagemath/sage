@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Generalized Coxeter Groups
 """
@@ -15,6 +16,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.complex_reflection_or_generalized_coxeter_groups import ComplexReflectionOrGeneralizedCoxeterGroups
+
 
 class GeneralizedCoxeterGroups(Category_singleton):
     r"""
@@ -34,7 +36,7 @@ class GeneralizedCoxeterGroups(Category_singleton):
 
         sage: from sage.categories.generalized_coxeter_groups import GeneralizedCoxeterGroups
         sage: C = GeneralizedCoxeterGroups(); C
-        Category of generalized coxeter groups
+        Category of generalized Coxeter groups
 
     TESTS::
 
@@ -47,7 +49,7 @@ class GeneralizedCoxeterGroups(Category_singleton):
 
             sage: from sage.categories.generalized_coxeter_groups import GeneralizedCoxeterGroups
             sage: GeneralizedCoxeterGroups().super_categories()
-            [Category of complex reflection or generalized coxeter groups]
+            [Category of complex reflection or generalized Coxeter groups]
         """
         return [ComplexReflectionOrGeneralizedCoxeterGroups()]
 

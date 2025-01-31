@@ -1,4 +1,4 @@
- jsonschema fastjsonschema jupyter_core traitlets | $(PYTHON_TOOLCHAIN) hatchling hatch_nodejs_version $(PYTHON)
+jsonschema fastjsonschema jupyter_core traitlets | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

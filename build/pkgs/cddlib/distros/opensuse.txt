@@ -1,2 +1,2 @@
 cddlib-tools
-"pkgconfig(cddlib)"
+pkgconfig(cddlib)

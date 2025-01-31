@@ -18,7 +18,7 @@ from sage.categories.homset import End
 
 class AmbientSpace(CombinatorialFreeModule):
     r"""
-    Abstract class for ambient spaces
+    Abstract class for ambient spaces.
 
     All subclasses should implement a class method
     ``smallest_base_ring`` taking a Cartan type as input, and a method
@@ -55,9 +55,10 @@ class AmbientSpace(CombinatorialFreeModule):
 
     TESTS::
 
-        sage: types = CartanType.samples(crystallographic = True)+[CartanType(["A",2],["C",5])]
+        sage: # needs sage.libs.gap
+        sage: types = CartanType.samples(crystallographic=True) + [CartanType(["A",2],["C",5])]
         sage: for e in [ct.root_system().ambient_space() for ct in types]:
-        ....:          TestSuite(e).run()
+        ....:     TestSuite(e).run()
 
         sage: e1 = RootSystem(['A',3]).ambient_lattice()
         sage: e2 = RootSystem(['B',3]).ambient_lattice()
@@ -139,7 +140,6 @@ class AmbientSpace(CombinatorialFreeModule):
             Traceback (most recent call last):
             ...
             NotImplementedError
-
         """
         raise NotImplementedError
 
@@ -168,7 +168,6 @@ class AmbientSpace(CombinatorialFreeModule):
             Ambient lattice of the Root system of type ['A', 4]
             sage: RootSystem(['B',4]).ambient_space()
             Ambient space of the Root system of type ['B', 4]
-
         """
         return self._name_string()
 
@@ -178,7 +177,6 @@ class AmbientSpace(CombinatorialFreeModule):
 
             sage: RootSystem(['A',4]).ambient_lattice()._name_string()
             "Ambient lattice of the Root system of type ['A', 4]"
-
         """
         return self._name_string_helper("ambient", capitalize=capitalize, base_ring=base_ring, type=type)
 
@@ -199,7 +197,7 @@ class AmbientSpace(CombinatorialFreeModule):
         else:
             return CombinatorialFreeModule.__call__(self, v)
 
-    def __getitem__(self,i):
+    def __getitem__(self, i):
         """
         Note that indexing starts at 1.
 
@@ -229,7 +227,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
     def simple_coroot(self, i):
         r"""
-        Returns the i-th simple coroot, as an element of this space
+        Return the `i`-th simple coroot, as an element of this space.
 
         EXAMPLES::
 
@@ -256,7 +254,6 @@ class AmbientSpace(CombinatorialFreeModule):
             sage: s_a = e.reflection(a)
             sage: s_a(b)
             (0, -1, 0, 0)
-
         """
         # TODO: get rid of this as one can use the generic implementation
         # (i.e. scalar and associated coroot are implemented)
@@ -265,7 +262,7 @@ class AmbientSpace(CombinatorialFreeModule):
     @cached_method
     def fundamental_weight(self, i):
         r"""
-        Returns the fundamental weight `\Lambda_i` in ``self``
+        Return the fundamental weight `\Lambda_i` in ``self``.
 
         In several of the ambient spaces, it is more convenient to
         construct all fundamental weights at once. To support this, we
@@ -290,13 +287,13 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         return self.fundamental_weights()[i]
 
-    def from_vector_notation(self, weight, style="lattice"):
+    def from_vector_notation(self, weight, style='lattice'):
         """
         INPUT:
 
-        - ``weight`` - a vector or tuple representing a weight
+        - ``weight`` -- a vector or tuple representing a weight
 
-        Returns an element of self. If the weight lattice is not
+        Returns an element of ``self``. If the weight lattice is not
         of full rank, it coerces it into the weight lattice, or
         its ambient space by orthogonal projection. This arises
         in two cases: for SL(r+1), the weight lattice is
@@ -306,7 +303,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
         If style="coroots" and the data is a tuple of integers, it
         is assumed that the data represent a linear combination of
-        fundamental weights. If style="coroots", and the root lattice
+        fundamental weights. If style='coroots', and the root lattice
         is not of full rank in the ambient space, it is projected
         into the subspace corresponding to the semisimple derived group.
         This arises with Cartan type A, E6 and E7.
@@ -317,7 +314,7 @@ class AmbientSpace(CombinatorialFreeModule):
             (1, 0, 0)
             sage: RootSystem("A2").ambient_space().from_vector_notation([1,0,0])
             (1, 0, 0)
-            sage: RootSystem("A2").ambient_space().from_vector_notation((1,0),style="coroots")
+            sage: RootSystem("A2").ambient_space().from_vector_notation((1,0),style='coroots')
             (2/3, -1/3, -1/3)
         """
         if style == "coroots" and isinstance(weight, tuple) and all(xv in ZZ for xv in weight):
@@ -372,8 +369,7 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
 
     def inner_product(self, lambdacheck):
         """
-        The scalar product with elements of the coroot lattice
-        embedded in the ambient space.
+        The scalar product with elements of the ambient space.
 
         EXAMPLES::
 
@@ -382,15 +378,32 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
             (-1, 0, 0)
             sage: a.inner_product(a)
             2
+
+        TESTS:
+
+        Verify that :issue:`15325` (A) is fixed::
+
+            sage: rt = RootSystem(['E', 8])
+            sage: lat = rt.root_lattice()
+            sage: spc = rt.ambient_space()
+            sage: spc.simple_root(1).scalar(lat.simple_coroot(2))
+            0
         """
+        if self.parent() is not lambdacheck.parent():
+            try:
+                # see if lambdacheck can be converted to the ambient space
+                lambdacheck = self.parent()(lambdacheck)
+            except (TypeError, ValueError):
+                raise TypeError(f"unable to coerce {lambdacheck} into {self.parent()}")
+
+        # self and lambdacheck both belong to the same ambient space, so use the inner product there
         self_mc = self._monomial_coefficients
         lambdacheck_mc = lambdacheck._monomial_coefficients
 
         result = self.parent().base_ring().zero()
         for t,c in lambdacheck_mc.items():
-            if t not in self_mc:
-                continue
-            result += c*self_mc[t]
+            if t in self_mc:
+                result += c*self_mc[t]
         return result
 
     scalar = inner_product
@@ -405,7 +418,6 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
             (1/2, -1/2, -1/2, -1/2)
             sage: a.associated_coroot()
             (1, -1, -1, -1)
-
         """
         # FIXME: make it work over ZZ!
         return self * self.base_ring()(2/self.inner_product(self))
@@ -507,7 +519,6 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
             (2, 2, 3)
             sage: v.to_ambient()
             (2, 2, 3)
-
         """
         return self
 

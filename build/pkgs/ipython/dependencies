@@ -1,4 +1,4 @@
-tornado pyzmq pickleshare traitlets decorator wcwidth prompt_toolkit pygments pexpect appnope backcall jedi stack_data | $(PYTHON_TOOLCHAIN) $(PYTHON)
+tornado pyzmq pickleshare traitlets decorator wcwidth prompt_toolkit pygments pexpect jedi stack_data exceptiongroup matplotlib_inline | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

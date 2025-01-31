@@ -173,9 +173,9 @@ cdef class CombinatorialFace(SageObject):
 
             # Copy data from FaceIterator.
             it = data
-            self._dual              = it.dual
-            self.atoms              = it.atoms
-            self.coatoms            = it.coatoms
+            self._dual = it.dual
+            self.atoms = it.atoms
+            self.coatoms = it.coatoms
 
             if it.structure.face_status == FaceStatus.NOT_INITIALIZED:
                 raise LookupError("face iterator not set to a face")
@@ -183,15 +183,15 @@ cdef class CombinatorialFace(SageObject):
             face_init(self.face, self.coatoms.n_atoms(), self.coatoms.n_coatoms())
             face_copy(self.face, it.structure.face)
 
-            self._dimension         = it.structure.current_dimension
+            self._dimension = it.structure.current_dimension
             self._ambient_dimension = it.structure.dimension
-            self._ambient_Vrep      = it._Vrep
-            self._ambient_facets    = it._facet_names
-            self._n_ambient_facets  = it._n_facets
-            self._equations         = it._equations
-            self._n_equations       = it._n_equations
-            self._hash_index        = it.structure._index
-            self._ambient_bounded   = it._bounded
+            self._ambient_Vrep = it._Vrep
+            self._ambient_facets = it._facet_names
+            self._n_ambient_facets = it._n_facets
+            self._equations = it._equations
+            self._n_equations = it._n_equations
+            self._hash_index = it.structure._index
+            self._ambient_bounded = it._bounded
 
             self._initialized_from_face_lattice = False
 
@@ -203,35 +203,35 @@ cdef class CombinatorialFace(SageObject):
             assert 0 <= index < all_faces.f_vector[dimension + 1], "index is out of range"
 
             # Copy data from PolyhedronFaceLattice.
-            self._dual              = all_faces.dual
-            self.atoms              = all_faces.atoms
-            self.coatoms            = all_faces.coatoms
+            self._dual = all_faces.dual
+            self.atoms = all_faces.atoms
+            self.coatoms = all_faces.coatoms
 
             face_init(self.face, self.coatoms.n_atoms(), self.coatoms.n_coatoms())
             face_copy(self.face, all_faces.faces[dimension+1].faces[index])
 
-            self._dimension         = dimension
+            self._dimension = dimension
             self._ambient_dimension = all_faces.dimension
-            self._ambient_Vrep      = all_faces._Vrep
-            self._ambient_facets    = all_faces._facet_names
-            self._equations         = all_faces._equations
-            self._n_equations       = len(self._equations) if self._equations else 0
+            self._ambient_Vrep = all_faces._Vrep
+            self._ambient_facets = all_faces._facet_names
+            self._equations = all_faces._equations
+            self._n_equations = len(self._equations) if self._equations else 0
             if self._dual:
                 self._n_ambient_facets = self.atoms.n_faces()
             else:
                 self._n_ambient_facets = self.coatoms.n_faces()
-            self._ambient_bounded   = all_faces._bounded
+            self._ambient_bounded = all_faces._bounded
 
             self._initialized_from_face_lattice = True
 
             self._hash_index = index
-            for i in range(-1,dimension):
+            for i in range(-1, dimension):
                 self._hash_index += all_faces.f_vector[i+1]
 
             # Add the complete ``f-vector`` to the hash index,
             # such that hash values obtained by an iterator or by the face lattice
             # do not collide.
-            for i in range(-1,self._ambient_dimension+1):
+            for i in range(-1, self._ambient_dimension+1):
                 self._hash_index += all_faces.f_vector[i+1]
         else:
             raise ValueError("data must be face iterator or a list of all faces")
@@ -273,7 +273,7 @@ cdef class CombinatorialFace(SageObject):
             'A 3-dimensional face of a 5-dimensional combinatorial polyhedron'
         """
         return "A {}-dimensional face of a {}-dimensional combinatorial polyhedron"\
-                .format(self.dimension(), self.ambient_dimension())
+            .format(self.dimension(), self.ambient_dimension())
 
     def __reduce__(self):
         r"""
@@ -497,7 +497,7 @@ cdef class CombinatorialFace(SageObject):
             else:
                 raise NotImplementedError("is_subface only implemented for faces of the same polyhedron")
 
-    cpdef dimension(self) noexcept:
+    cpdef dimension(self):
         r"""
         Return the dimension of the face.
 

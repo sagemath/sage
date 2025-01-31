@@ -24,10 +24,12 @@ import os
 import re
 import sys
 import shutil
+import webbrowser
+from pathlib import Path
 
 from sage.env import (SAGE_LOCAL, cython_aliases,
                       sage_include_directories)
-from .temporary_file import spyx_tmp, tmp_filename
+from sage.misc.temporary_file import spyx_tmp, tmp_filename
 from sage.repl.user_globals import get_globals
 from sage.misc.sage_ostools import restore_cwd, redirection
 from sage.cpython.string import str_to_bytes
@@ -78,13 +80,16 @@ def _standard_libs_libdirs_incdirs_aliases():
 sequence_number = {}
 
 
-# Only used on Cygwin; see note below about --enable-auto-image-base
-CYTHON_IMAGE_BASE = 0x580000000
+def _webbrowser_open_file(path):
+    """
+    Open a html file in a web browser.
+    """
+    webbrowser.open(Path(path).as_uri())
 
 
 def cython(filename, verbose=0, compile_message=False,
-           use_cache=False, create_local_c_file=False, annotate=True, sage_namespace=True,
-           create_local_so_file=False):
+           use_cache=False, create_local_c_file=False, annotate=True, view_annotate=False,
+           view_annotate_callback=_webbrowser_open_file, sage_namespace=True, create_local_so_file=False):
     r"""
     Compile a Cython file. This converts a Cython file to a C (or C++ file),
     and then compiles that. The .c file and the .so file are
@@ -92,33 +97,41 @@ def cython(filename, verbose=0, compile_message=False,
 
     INPUT:
 
-    - ``filename`` -- the name of the file to be compiled. Should end with
-      'pyx'.
+    - ``filename`` -- the name of the file to be compiled; should end with
+      'pyx'
 
-    - ``verbose`` (integer, default 0) -- level of verbosity. A negative
+    - ``verbose`` -- integer (default: 0); level of verbosity. A negative
       value ensures complete silence.
 
-    - ``compile_message`` (bool, default False) -- if True, print
-      ``'Compiling <filename>...'`` to the standard error.
+    - ``compile_message`` -- boolean (default: ``False``); if ``True``, print
+      ``'Compiling <filename>...'`` to the standard error
 
-    - ``use_cache`` (bool, default False) -- if True, check the
+    - ``use_cache`` -- boolean (default: ``False``); if ``True``, check the
       temporary build directory to see if there is already a
       corresponding .so file. If so, and if the .so file is newer than the
       Cython file, don't recompile, just reuse the .so file.
 
-    - ``create_local_c_file`` (bool, default False) -- if True, save a
-      copy of the ``.c`` or ``.cpp`` file in the current directory.
+    - ``create_local_c_file`` -- boolean (default: ``False``); if ``True``, save a
+      copy of the ``.c`` or ``.cpp`` file in the current directory
 
-    - ``annotate`` (bool, default True) -- if True, create an html file which
+    - ``annotate`` -- boolean (default: ``True``); if ``True``, create an html file which
       annotates the conversion from .pyx to .c. By default this is only created
       in the temporary directory, but if ``create_local_c_file`` is also True,
       then save a copy of the .html file in the current directory.
 
-    - ``sage_namespace`` (bool, default True) -- if True, import
-      ``sage.all``.
+    - ``view_annotate`` -- boolean (default: ``False``); if ``True``, open the
+      annotated html file in a web browser
 
-    - ``create_local_so_file`` (bool, default False) -- if True, save a
-      copy of the compiled .so file in the current directory.
+    - ``view_annotate_callback`` -- function; a function that takes a string
+      being the path to the html file. This can be overridden to change
+      what to do with the annotated html file. Have no effect unless
+      ``view_annotate`` is ``True``.
+
+    - ``sage_namespace`` -- boolean (default: ``True``); if ``True``, import
+      ``sage.all``
+
+    - ``create_local_so_file`` -- boolean (default: ``False``); if ``True``, save a
+      copy of the compiled .so file in the current directory
 
     OUTPUT: a tuple ``(name, dir)`` where ``name`` is the name
     of the compiled module and ``dir`` is the directory containing
@@ -126,10 +139,10 @@ def cython(filename, verbose=0, compile_message=False,
 
     TESTS:
 
-    Before :trac:`12975`, it would have been needed to write ``#clang c++``,
+    Before :issue:`12975`, it would have been needed to write ``#clang c++``,
     but upper case ``C++`` has resulted in an error.
     Using pkgconfig to find the libraries, headers and macros. This is a
-    work around while waiting for :trac:`22461` which will offer a better
+    work around while waiting for :issue:`22461` which will offer a better
     solution::
 
         sage: code = [
@@ -155,7 +168,7 @@ def cython(filename, verbose=0, compile_message=False,
         ....:        "cdef vector[int] * v = new vector[int](4)\n")
 
     Check that compiling C++ code works when creating a local C file,
-    first moving to a tempdir to avoid clutter.  Before :trac:`22113`,
+    first moving to a tempdir to avoid clutter.  Before :issue:`22113`,
     the create_local_c_file argument was not tested for C++ code::
 
         sage: orig_cwd = os.getcwd()
@@ -214,7 +227,7 @@ def cython(filename, verbose=0, compile_message=False,
         ...
         RuntimeError: ...
 
-    As of :trac:`29139` the default is ``cdivision=True``::
+    As of :issue:`29139` the default is ``cdivision=True``::
 
         sage: cython('''
         ....: cdef size_t foo = 3/2
@@ -230,17 +243,34 @@ def cython(filename, verbose=0, compile_message=False,
         ....: from sage.misc.cachefunc cimport cache_key
         ....: ''')
 
-    In Cython 0.29.33 using `from PACKAGE cimport MODULE` is broken
-    when `PACKAGE` is a namespace package, see :trac:`35322`::
+    Test ``view_annotate``::
 
         sage: cython('''
-        ....: from sage.misc cimport cachefunc
-        ....: ''')
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True)  # optional -- webbrowser
+
+    ::
+
+        sage: cython('''
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True, annotate=False)
         Traceback (most recent call last):
         ...
-        RuntimeError: Error compiling Cython file:
-        ...
-        ...: 'sage/misc.pxd' not found
+        ValueError: cannot view annotated file without creating it
+
+    ::
+
+        sage: collected_paths = []
+        sage: cython('''
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True, view_annotate_callback=collected_paths.append)
+        sage: collected_paths
+        ['...']
+        sage: len(collected_paths)
+        1
     """
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
@@ -344,30 +374,6 @@ def cython(filename, verbose=0, compile_message=False,
 
     extra_compile_args = ['-w']  # no warnings
     extra_link_args = []
-    if sys.platform == 'cygwin':
-        # Link using --enable-auto-image-base, reducing the likelihood of the
-        # new DLL colliding with existing DLLs in memory.
-        # Note: Cygwin locates --enable-auto-image-base DLLs in the range
-        # 0x4:00000000 up to 0x6:00000000; this is documented in heap.cc in the
-        # Cygwin sources, while 0x6:00000000 and up is reserved for the Cygwin
-        # heap.
-        # In practice, Sage has enough DLLs that when rebasing everything we
-        # use up through, approximately, 0x4:80000000 though there is nothing
-        # precise here.  When running 'rebase' it just start from 0x2:00000000
-        # (below that is reserved for Cygwin's DLL and some internal
-        # structures).
-        # Therefore, to minimize the likelihood of collision with one of Sage's
-        # standard DLLs, while giving ~2GB (should be more than enough) for
-        # Sage to grow, we base these DLLs from 0x5:8000000, leaving again ~2GB
-        # for temp DLLs which in normal use should be more than enough.
-        # See https://github.com/sagemath/sage/issues/28258
-        # It should be noted, this is not a bulletproof solution; there is
-        # still a potential for DLL overlaps with this.  But this reduces the
-        # probability thereof, especially in normal practice.
-        dll_filename = os.path.splitext(pyxfile)[0] + '.dll'
-        image_base = _compute_dll_image_base(dll_filename)
-        extra_link_args.extend(['-Wl,--disable-auto-image-base',
-                                '-Wl,--image-base=0x{:x}'.format(image_base)])
 
     ext = Extension(name,
                     sources=[pyxfile],
@@ -376,7 +382,7 @@ def cython(filename, verbose=0, compile_message=False,
                     libraries=standard_libs,
                     library_dirs=standard_libdirs)
 
-    directives = dict(language_level=3, cdivision=True)
+    directives = {'language_level': 3, 'cdivision': True}
 
     try:
         # Change directories to target_dir so that Cython produces the correct
@@ -398,7 +404,7 @@ def cython(filename, verbose=0, compile_message=False,
                 try:
                     with open(name + ".lis") as f:
                         cython_messages = f.read()
-                except IOError:
+                except OSError:
                     cython_messages = "Error compiling Cython file"
     except CompileError:
         raise RuntimeError(cython_messages.strip())
@@ -408,7 +414,7 @@ def cython(filename, verbose=0, compile_message=False,
         cython_messages = re.sub(
             "^.*The keyword 'nogil' should appear at the end of the function signature line. "
             "Placing it before 'except' or 'noexcept' will be disallowed in a future version of Cython.\n",
-            "", cython_messages, 0, re.MULTILINE)
+            "", cython_messages, flags=re.MULTILINE)
 
         sys.stderr.write(cython_messages)
         sys.stderr.flush()
@@ -419,6 +425,11 @@ def cython(filename, verbose=0, compile_message=False,
         if annotate:
             shutil.copy(os.path.join(target_dir, name + ".html"),
                         os.curdir)
+
+    if view_annotate:
+        if not annotate:
+            raise ValueError("cannot view annotated file without creating it")
+        view_annotate_callback(os.path.join(target_dir, name + ".html"))
 
     # This emulates running "setup.py build" with the correct options
     #
@@ -484,17 +495,17 @@ def cython_lambda(vars, expr, verbose=0, **kwds):
 
     INPUT:
 
-    - ``vars`` - list of pairs (variable name, c-data type), where the variable
+    - ``vars`` -- list of pairs (variable name, c-data type), where the variable
       names and data types are strings, OR a string such as ``'double x, int y,
       int z'``
 
-    - ``expr`` - an expression involving the vars and constants; you can access
+    - ``expr`` -- an expression involving the vars and constants; you can access
       objects defined in the current module scope ``globals()`` using
       ``sage.object_name``.
 
     .. warning::
 
-        Accessing ``globals()`` doesn't actually work, see :trac:`12446`.
+        Accessing ``globals()`` doesn't actually work, see :issue:`12446`.
 
     EXAMPLES:
 
@@ -528,7 +539,7 @@ def cython_lambda(vars, expr, verbose=0, **kwds):
     if isinstance(vars, str):
         v = vars
     else:
-        v = ', '.join(['%s %s' % (typ, var) for typ, var in vars])
+        v = ', '.join('%s %s' % (typ, var) for typ, var in vars)
 
     s = """
 cdef class _s:
@@ -551,7 +562,7 @@ def f(%s):
     """ % (v, expr)
     if verbose > 0:
         print(s)
-    tmpfile = tmp_filename(ext=".pyx")
+    tmpfile = tmp_filename(ext='.pyx')
     with open(tmpfile, 'w') as f:
         f.write(s)
 
@@ -566,19 +577,17 @@ def f(%s):
 def cython_import(filename, **kwds):
     """
     Compile a file containing Cython code, then import and return the
-    module.  Raises an ``ImportError`` if anything goes wrong.
+    module.  Raises an :exc:`ImportError` if anything goes wrong.
 
     INPUT:
 
-    - ``filename`` - a string; name of a file that contains Cython
+    - ``filename`` -- string; name of a file that contains Cython
       code
 
     See the function :func:`sage.misc.cython.cython` for documentation
     for the other inputs.
 
-    OUTPUT:
-
-    - the module that contains the compiled Cython code.
+    OUTPUT: the module that contains the compiled Cython code
     """
     name, build_dir = cython(filename, **kwds)
 
@@ -602,12 +611,15 @@ def cython_import_all(filename, globals, **kwds):
 
         from module import *
 
-    Raises an ``ImportError`` exception if anything goes wrong.
+    Raises an :exc:`ImportError` exception if anything goes wrong.
 
     INPUT:
 
-    - ``filename`` - a string; name of a file that contains Cython
+    - ``filename`` -- string; name of a file that contains Cython
       code
+
+    See the function :func:`sage.misc.cython.cython` for documentation
+    for the other inputs.
     """
     m = cython_import(filename, **kwds)
     for k, x in m.__dict__.items():
@@ -649,7 +661,10 @@ def compile_and_load(code, **kwds):
     INPUT:
 
     - ``code`` -- string containing code that could be in a .pyx file
-      that is attached or put in a %cython block in the notebook.
+      that is attached or put in a %cython block in the notebook
+
+    See the function :func:`sage.misc.cython.cython` for documentation
+    for the other inputs.
 
     OUTPUT: a module, which results from compiling the given code and
     importing it
@@ -666,7 +681,8 @@ def compile_and_load(code, **kwds):
         sage: code = '''
         ....: from sage.rings.rational cimport Rational
         ....: from sage.rings.polynomial.polynomial_rational_flint cimport Polynomial_rational_flint
-        ....: from sage.libs.flint.fmpq_poly cimport fmpq_poly_length, fmpq_poly_get_coeff_mpq, fmpq_poly_set_coeff_mpq
+        ....: from sage.libs.flint.fmpq_poly cimport fmpq_poly_length
+        ....: from sage.libs.flint.fmpq_poly_sage cimport fmpq_poly_get_coeff_mpq, fmpq_poly_set_coeff_mpq
         ....:
         ....: def evaluate_at_power_of_gen(Polynomial_rational_flint f, unsigned long n):
         ....:     assert n >= 1
@@ -683,7 +699,7 @@ def compile_and_load(code, **kwds):
         sage: module.evaluate_at_power_of_gen(x^3 + x - 7, 5)  # long time
         x^15 + x^5 - 7
     """
-    tmpfile = tmp_filename(ext=".pyx")
+    tmpfile = tmp_filename(ext='.pyx')
     with open(tmpfile, 'w') as f:
         f.write(code)
     return cython_import(tmpfile, **kwds)
@@ -716,89 +732,7 @@ def cython_compile(code, **kwds):
         Need to create a clever caching system so code only gets
         compiled once.
     """
-    tmpfile = tmp_filename(ext=".pyx")
+    tmpfile = tmp_filename(ext='.pyx')
     with open(tmpfile, 'w') as f:
         f.write(code)
     return cython_import_all(tmpfile, get_globals(), **kwds)
-
-
-# THe following utility functions are used on Cygwin only to work around a
-# shortcoming in ld/binutils; see https://github.com/sagemath/sage/issues/28258
-def _strhash(s):
-    """
-    Implementation of the strhash function from binutils
-
-    See
-    https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=binutils/dllwrap.c;hb=d0e6d77b3fb64561ca66535f8ed6ca523eac923e#l449
-
-    This is used to re-implement support for --enable-auto-image-base with a
-    custom base address, which is currently broken in ld/binutils for PE32+
-    binaries.
-
-    TESTS::
-
-        sage: from sage.misc.cython import _strhash
-        sage: hex(_strhash('test.pyx'))
-        '0x3d99a20'
-    """
-
-    s = str_to_bytes(s)
-    h = 0
-    l = len(s)
-
-    for c in s:
-        h += c + (c << 17)
-        h ^= h >> 2
-
-    h += l + (l << 17)
-    h ^= h >> 2
-    return h
-
-
-def _compute_dll_image_base(filename, auto_image_base=None):
-    """
-    Compute a DLL image base address from a hash of its filename, using the
-    same implementation as --enable-auto-image-base from binutils, but with
-    support for a custom minimum base address.
-
-    See
-    https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=ld/emultempl/pe.em;h=c18cb266beb23d14108044571382e0c7f4dbedb3;hb=d0e6d77b3fb64561ca66535f8ed6ca523eac923e#l919
-    which implements this for PE32 images (for PE32+ images the support for
-    custom base addresses is broken).
-
-    See also :trac:`28258`.
-
-    TESTS::
-
-        sage: from sage.misc.cython import _compute_dll_image_base
-        sage: hex(_compute_dll_image_base('test.pyx'))
-        '0x59a200000'
-
-    Test that given a random filename it is always below 0x6:00000000; in
-    principle this could fail randomly, but if it never fails then no problem.
-    We do not test for collisions since there is always a random chance of
-    collisions with two arbitrary filenames::
-
-        sage: from sage.misc.temporary_file import tmp_filename
-        sage: image_base = _compute_dll_image_base(tmp_filename(ext='.pyx'))
-        sage: hex(image_base)  # random
-        '0x59a200000'
-        sage: image_base <= (0x600000000 - 0x10000)
-        True
-    """
-
-    if auto_image_base is None:
-        # The default, which can in principle be modified at runtime if needed
-        auto_image_base = CYTHON_IMAGE_BASE
-
-    # See https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=ld/emultempl/pep.em;h=dca36cc341aabfa2ec9db139b8ec94690165201a;hb=d0e6d77b3fb64561ca66535f8ed6ca523eac923e#l113
-    # where move_default_addr_high=1 on Cygwin targets.
-    # This is actually derived from taking the upper limit 0x6:00000000 minus
-    # the lower limit 0x4:00000000 minus a gap of at least 0x10000.  I don't
-    # know why but this is supposed to work: https://narkive.com/HCyWCS6h.23
-    # Currently in binutils auto_image_base of 0x4:00000000 is hard-coded, so
-    # this comes out to 0x1:ffff0000, but here we must compute it.
-    NT_DLL_AUTO_IMAGE_MASK = 0x600000000 - auto_image_base - 0x10000
-
-    h = _strhash(filename)
-    return auto_image_base + ((h << 16) & NT_DLL_AUTO_IMAGE_MASK)

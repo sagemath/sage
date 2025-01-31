@@ -23,9 +23,10 @@ from sage.categories.number_fields import NumberFields
 from sage.misc.mrange import xmrange
 from sage.misc.misc_c import prod
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.generic.homset import SchemeHomset_points
+
 
 class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
     r"""
@@ -39,7 +40,7 @@ class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
         sage: SchemeHomset_points_product_projective_spaces_ring(
         ....:     Spec(QQ), ProductProjectiveSpaces([1, 1], QQ, 'z'))
         Set of rational points of Product of projective spaces P^1 x P^1 over Rational Field
-        """
+    """
 
     def _element_constructor_(self, v, **kwds):
         r"""
@@ -47,11 +48,9 @@ class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
 
         INPUT:
 
-        - ``v`` -- anything that determines a scheme morphism in the Hom-set.
+        - ``v`` -- anything that determines a scheme morphism in the Hom-set
 
-        OUTPUT:
-
-        The scheme morphism determined by ``v``.
+        OUTPUT: the scheme morphism determined by ``v``
 
         EXAMPLES::
 
@@ -64,6 +63,7 @@ class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
             (4 : 2 , 2 : 0)
         """
         return self.codomain()._point(self, v, **kwds)
+
 
 class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_product_projective_spaces_ring):
     def points(self, **kwds):
@@ -89,16 +89,19 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
 
         INPUT:
 
-        - ``bound`` - a real number
+        - ``bound`` -- a real number
 
-        - ``tolerance`` - a rational number in (0,1] used in Doyle-Krumm algorithm 4
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+          algorithm 4
 
-        - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
+        - ``precision`` -- the precision to use for computing the elements of
+          bounded height of number fields
 
-        - ``algorithm`` - either ``'sieve'`` or ``'enumerate'`` algorithms can be used over `\QQ`. If
-          not specified, ``'enumerate'`` is used only for small height bounds.
+        - ``algorithm`` -- either ``'sieve'`` or ``'enumerate'`` algorithms can
+          be used over `\QQ`. If not specified, ``'enumerate'`` is used only
+          for small height bounds
 
-        OUTPUT: A list of rational points of the projective scheme.
+        OUTPUT: list of rational points of the projective scheme
 
         EXAMPLES::
 
@@ -178,12 +181,12 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
             sage: X = PP.subscheme([x*u^2*a, b*z*u*v, z*v^2*c])
             sage: len(X.rational_points(bound=1, algorithm='enumerate'))                # needs sage.libs.singular
             232
-         """
+        """
         B = kwds.pop('bound', 0)
         X = self.codomain()
 
-        from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-        if not is_ProductProjectiveSpaces(X) and X.base_ring() in Fields():
+        from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+        if not isinstance(X, ProductProjectiveSpaces_ring) and X.base_ring() in Fields():
             # no points
             if X.dimension() == -1:
                 return []
@@ -199,7 +202,7 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
                 return list(points)
         R = self.value_ring()
         points = []
-        if is_RationalField(R):
+        if isinstance(R, RationalField):
             if not B > 0:
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             alg = kwds.pop('algorithm', None)

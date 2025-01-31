@@ -17,16 +17,14 @@ name: CI Linux incremental
 
 on:
   pull_request:
-    types:
-      # Defaults
-      - opened
-      - synchronize
-      - reopened
-      # When a CI label is added
-      - labeled
     paths:
       - 'build/pkgs/**'
-      - 'pkgs/**'
+      - '!build/pkgs/sage_conf/**'
+      - '!build/pkgs/sage_docbuild/**'
+      - '!build/pkgs/sage_setup/**'
+      - '!build/pkgs/sage_sws2rst/**'
+      - '!build/pkgs/sagelib/**'
+      - '!build/pkgs/sagemath_*/**'
   workflow_dispatch:
 
 concurrency:
@@ -43,13 +41,12 @@ jobs:
     runs-on: ubuntu-latest
     name: List changed packages
     outputs:
-      uninstall_targets: ${{ steps.build-targets.outputs.uninstall_targets }}
       build_targets:     ${{ steps.build-targets.outputs.build_targets }}
     steps:
       - uses: actions/checkout@v4
       - name: Get all packages that have changed
-        id: changed-packages
-        uses: tj-actions/changed-files@v38
+        id: changed-files
+        uses: tj-actions/changed-files@v45
         with:
           files_yaml: |
             configures:
@@ -60,20 +57,32 @@ jobs:
       - name: Determine targets to build
         id: build-targets
         run: |
-          echo "uninstall_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.configures_all_changed_files }}; do echo $a | sed -E 's,build/pkgs/([_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'; done | sort -u))" >> $GITHUB_OUTPUT
-          echo "build_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.pkgs_all_changed_files }}; do echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([-_.a-z0-9]*)/[^ ]* *,\2-ensure,;'; done | sort -u))" >> $GITHUB_OUTPUT
+          uninstall_targets=$(echo $(for a in '' ${{ steps.changed-files.outputs.configures_all_changed_files }}; do echo $a | sed -E 's,build/pkgs/([a-z0-9][_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'; done | sort -u))
+          build_targets=$(echo $(for a in '' ${{ steps.changed-files.outputs.pkgs_all_changed_files }}; do SPKG=$(echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([a-z0-9][-_.a-z0-9]*)/[^ ]* *,\2,;'); if [ -f "build/pkgs/$SPKG/checksums.ini" -o -f "build/pkgs/$SPKG/requirements.txt" -o -f "build/pkgs/$SPKG/spkg-install" ]; then echo "$SPKG-ensure"; fi; done | sort -u))
+          if [ -n "$uninstall_targets" ]; then
+              echo "build_targets=$uninstall_targets reconfigure $build_targets" >> $GITHUB_OUTPUT
+          else
+              echo "build_targets=$build_targets" >> $GITHUB_OUTPUT
+          fi
           cat $GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: worktree-base
+        if: github.base_ref && steps.changed-files.outputs.pkgs_all_changed_files
+      - name: Compute metrics
+        run: |
+          export PATH=build/bin:$PATH
+          if [ -d worktree-base ]; then
+            (echo "# $GITHUB_BASE_REF"; SAGE_ROOT=worktree-base sage-package metrics :all:) > base-metrics.txt
+            (echo "# $GITHUB_REF"; sage-package metrics :all:) > metrics.txt
+            diff --color=always --width=100 --side-by-side --left-column base-metrics.txt metrics.txt || true
+          else
+            sage-package metrics :all:
+          fi
 
   test:
     needs: [changed_files]
-    if: |
-      github.event_name != 'pull_request' ||
-      ((github.event.action != 'labeled' &&
-         (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
-          contains(github.event.pull_request.labels.*.name, 'c: packages: optional'))) ||
-       (github.event.action == 'labeled' &&
-         (github.event.label.name == 'c: packages: optional' ||
-          github.event.label.name == 'c: packages: standard')))
     uses: ./.github/workflows/docker.yml
     with:
       # Build incrementally from published Docker image
@@ -83,32 +92,47 @@ jobs:
       from_docker_target: "with-targets"
       from_docker_tag: "dev"
       docker_targets: "with-targets"
-      targets: "${{needs.changed_files.outputs.uninstall_targets}} ${{needs.changed_files.outputs.build_targets}} build doc-html ptest"
+      targets: "${{needs.changed_files.outputs.build_targets}} ci-build-with-fallback doc-html ptest-nodoc"
       tox_system_factors: >-
         ["ubuntu-focal",
-         "ubuntu-jammy",
-         "ubuntu-mantic",
+         "ubuntu-noble",
          "debian-bullseye",
          "debian-bookworm",
          "fedora-30",
-         "fedora-38",
+         "fedora-40",
          "gentoo-python3.11",
          "debian-bullseye-i386"]
       tox_packages_factors: >-
           ["standard",
            "minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 8
+
+  constraints_pkgs-norequirements:
+    needs: [changed_files]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from published Docker image
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/sagemath/sage/
+      from_docker_target: "with-targets-pre"
+      from_docker_tag: "dev"
+      docker_targets: "with-targets-pre"
+      targets_pre: "${{needs.changed_files.outputs.build_targets}} all-sage-local python3-ensure tox-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements"
+      tox_system_factors: >-
+        ["ubuntu-focal",
+         "ubuntu-noble",
+         "debian-bookworm",
+         "fedora-40",
+         "debian-bullseye-i386"]
+      tox_packages_factors: >-
+          ["standard"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 16
 
   site:
     needs: [changed_files]
-    if: |
-      github.event_name != 'pull_request' ||
-      ((github.event.action != 'labeled' &&
-         (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
-          contains(github.event.pull_request.labels.*.name, 'c: packages: optional'))) ||
-       (github.event.action == 'labeled' &&
-         (github.event.label.name == 'c: packages: optional' ||
-          github.event.label.name == 'c: packages: standard')))
     uses: ./.github/workflows/docker.yml
     with:
       # Build incrementally from published Docker image
@@ -118,18 +142,13 @@ jobs:
       from_docker_target: "with-targets"
       from_docker_tag: "dev"
       docker_targets: "with-targets"
-      targets: "${{needs.changed_files.outputs.uninstall_targets}} ${{needs.changed_files.outputs.build_targets}} build doc-html ptest"
+      targets: "${{needs.changed_files.outputs.build_targets}} doc-html ptest-nodoc"
       # Only test systems with a usable system python (>= 3.9)
+      # with only a small number of test failures as of 10.2.rc0
       tox_system_factors: >-
-        ["ubuntu-jammy",
-         "ubuntu-mantic",
-         "debian-bullseye",
-         "debian-bookworm",
-         "fedora-33",
-         "fedora-38",
-         "gentoo-python3.11",
-         "archlinux",
-         "debian-bullseye-i386"]
+        ["gentoo-python3.11",
+         "archlinux-latest",
+         "fedora-40"]
       tox_packages_factors: >-
           ["standard-sitepackages"]
       docker_push_repository: ghcr.io/${{ github.repository }}/

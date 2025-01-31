@@ -1,3 +1,6 @@
 pari=*=*_pthread
 # We add these data packages because they are checked by spkg-configure.m4
-pari-elldata pari-galdata pari-galpol pari-seadata
+pari-elldata
+pari-galdata
+pari-galpol
+pari-seadata

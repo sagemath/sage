@@ -24,3 +24,14 @@ Upstream Contact
 
 -  https://www.r-project.org
 -  R mailing list, #R in IRC
+
+
+Special Installation Instructions
+---------------------------------
+
+In the Sage distribution, ``r`` is a "dummy" package:
+It is here to provide information about equivalent system packages.
+R cannot be installed using the Sage distribution.
+Please install it manually, either using one of the system package
+commands shown here or following the upstream instructions
+at https://www.r-project.org

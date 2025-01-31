@@ -8,7 +8,7 @@
 	"remoteUser": "vscode",
 
 	// Setup conda environment
-	"onCreateCommand": ".devcontainer/onCreate-conda.sh",
+	"onCreateCommand": ".devcontainer/onCreate-conda.sh || true",
 
 	// Install additional features.
 	"features": {
@@ -22,13 +22,12 @@
 		"vscode": {
 			"extensions": [
 				"guyskk.language-cython",
-				"ms-python.isort",
 				"ms-toolsai.jupyter",
 				"ms-python.vscode-pylance",
-				"ms-python.pylint",
 				"ms-python.python",
 				"lextudio.restructuredtext",
-				"trond-snekvik.simple-rst"
+				"trond-snekvik.simple-rst",
+				"charliermarsh.ruff"
 			]
 		}
 	}

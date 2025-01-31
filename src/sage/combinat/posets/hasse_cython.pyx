@@ -27,15 +27,15 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
 
     INPUT:
 
-    - ``positions`` -- a list of sets of integers describing the poset,
-      as given by the lazy attribute ``_leq_storage`` of Hasse diagrams.
+    - ``positions`` -- list of sets of integers describing the poset,
+      as given by the lazy attribute ``_leq_storage`` of Hasse diagrams
 
     - ``element_constructor`` -- used to determine the type of chains,
-      for example ``list`` or ``tuple``
+      for example :class:`list` or :class:`tuple`
 
     - ``exclude`` -- list of integers that should not belong to the chains
 
-    - ``conversion`` -- optional list of elements of the poset
+    - ``conversion`` -- (optional) list of elements of the poset
 
     If ``conversion`` is provided, it is used to convert chain elements
     to elements of this list.
@@ -71,7 +71,7 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
             self._greater_than = positions
             self._vertices = list(range(n))
 
-        self._element_constructor = element_constructor
+        self._constructor = element_constructor
         self._conversion = conversion
         if conversion is not None:
             self._from_poset = {elt: i for i, elt in enumerate(conversion)}
@@ -92,8 +92,8 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
 
             sage: from sage.combinat.posets.hasse_cython import IncreasingChains
             sage: D = IncreasingChains([{0,1},{1}], list, [])
-            sage: [x in D for x in D]
-            [True, True, True, True]
+            sage: all(x in D for x in D)
+            True
             sage: [2] in D
             False
             sage: [1,1] in D
@@ -102,6 +102,13 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
             sage: P = Poset({'a':['b'],'b':[]})
             sage: ['a'] in P.chains()
             True
+
+        TESTS::
+
+            sage: from sage.combinat.posets.hasse_cython import IncreasingChains
+            sage: D = IncreasingChains([{0,1},{1}], list, [])
+            sage: all(tuple(x) in D for x in D)
+            True
         """
         cdef int k
         cdef Py_ssize_t i, x, y
@@ -109,9 +116,8 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
             return True
         if self._conversion is not None:
             tup = [self._from_poset[elt] for elt in tup]
-        for i in tup:
-            if not(0 <= i < self._n):
-                return False
+        if any(not(0 <= i < self._n) for i in tup):
+            return False
         y = tup[0]
         for k in range(1, len(tup)):
             x = y
@@ -142,8 +148,8 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
         """
         cdef Py_ssize_t i
         if self._conversion is not None:
-            return self._element_constructor(self._conversion[i] for i in chain)
-        return self._element_constructor(chain)
+            return self._constructor(self._conversion[i] for i in chain)
+        return self._constructor(chain)
 
     def children(self, chain):
         """
@@ -163,6 +169,5 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
         cdef Py_ssize_t x, y
         if not chain:
             return [(x,) for x in self._vertices]
-        else:
-            x = chain[-1]
-            return [chain + (y,) for y in self._greater_than[x] if x != y]
+        x = chain[-1]
+        return [chain + (y,) for y in self._greater_than[x] if x != y]

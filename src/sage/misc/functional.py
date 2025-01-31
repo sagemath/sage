@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Functional notation
 
@@ -107,10 +106,7 @@ def basis(x):
         sage: V = VectorSpace(QQ, 3)                                                    # needs sage.modules
         sage: S = V.subspace([[1,2,0], [2,2,-1]])                                       # needs sage.modules
         sage: basis(S)                                                                  # needs sage.modules
-        [
-        (1, 0, -1),
-        (0, 1, 1/2)
-        ]
+        [(1, 0, -1), (0, 1, 1/2)]
     """
     return x.basis()
 
@@ -156,7 +152,7 @@ def characteristic_polynomial(x, var='x'):
 
     Ensure the variable name of the polynomial does not conflict with
     variables used within the matrix, and that non-integral powers of
-    variables do not confuse the computation (:trac:`14403`)::
+    variables do not confuse the computation (:issue:`14403`)::
 
         sage: # needs sage.libs.pari sage.symbolic
         sage: y = var('y')
@@ -195,7 +191,7 @@ def coerce(P, x):
 
 def cyclotomic_polynomial(n, var='x'):
     """
-    Return the `n^{th}` cyclotomic polynomial.
+    Return the `n`-th cyclotomic polynomial.
 
     EXAMPLES::
 
@@ -222,9 +218,8 @@ def decomposition(x):
 
         sage: M = matrix([[2, 3], [3, 4]])                                              # needs sage.libs.pari sage.modules
         sage: M.decomposition()                                                         # needs sage.libs.pari sage.modules
-        [
-        (Ambient free module of rank 2 over the principal ideal domain Integer Ring, True)
-        ]
+        [(Ambient free module of rank 2 over the principal ideal domain Integer Ring,
+          True)]
 
         sage: # needs sage.groups
         sage: G.<a,b> = DirichletGroup(20)
@@ -422,25 +417,25 @@ def symbolic_sum(expression, *args, **kwds):
 
     INPUT:
 
-    - ``expression`` - a symbolic expression
+    - ``expression`` -- a symbolic expression
 
-    - ``v`` - a variable or variable name
+    - ``v`` -- a variable or variable name
 
-    - ``a`` - lower endpoint of the sum
+    - ``a`` -- lower endpoint of the sum
 
-    - ``b`` - upper endpoint of the sum
+    - ``b`` -- upper endpoint of the sum
 
-    - ``algorithm`` - (default: ``'maxima'``)  one of
+    - ``algorithm`` -- (default: ``'maxima'``)  one of
 
-      - ``'maxima'`` - use Maxima (the default)
+      - ``'maxima'`` -- use Maxima (the default)
 
-      - ``'maple'`` - (optional) use Maple
+      - ``'maple'`` -- (optional) use Maple
 
-      - ``'mathematica'`` - (optional) use Mathematica
+      - ``'mathematica'`` -- (optional) use Mathematica
 
-      - ``'giac'`` - (optional) use Giac
+      - ``'giac'`` -- (optional) use Giac
 
-      - ``'sympy'`` - use SymPy
+      - ``'sympy'`` -- use SymPy
 
     EXAMPLES::
 
@@ -519,7 +514,7 @@ def symbolic_sum(expression, *args, **kwds):
         sage: sum(2^(-k)/(k*(k+1)), k, 1, oo)                                           # needs sage.symbolic
         -log(2) + 1
 
-    Another binomial identity (:trac:`7952`)::
+    Another binomial identity (:issue:`7952`)::
 
         sage: t, k, i = var('t,k,i')                                                    # needs sage.symbolic
         sage: sum(binomial(i + t, t), i, 0, k)                                          # needs sage.symbolic
@@ -567,12 +562,12 @@ def symbolic_sum(expression, *args, **kwds):
         sage: sum(binomial(n, k) * x^k, k, 0, n, algorithm='maple')     # optional - maple, needs sage.symbolic
         (x + 1)^n
 
-    Python ints should work as limits of summation (:trac:`9393`)::
+    Python ints should work as limits of summation (:issue:`9393`)::
 
         sage: sum(x, x, 1r, 5r)                                                         # needs sage.symbolic
         15
 
-    .. note::
+    .. NOTE::
 
        #. Sage can currently only understand a subset of the output of Maxima, Maple and
           Mathematica, so even if the chosen backend can perform the summation the
@@ -580,21 +575,19 @@ def symbolic_sum(expression, *args, **kwds):
 
     TESTS:
 
-    Check that :trac:`34007` is fixed::
+    Check that :issue:`34007` is fixed::
 
         sage: sum([1, 2], start=1)
         4
         sage: sum([[1], [2]], start=[])
         [1, 2]
-
     """
     if hasattr(expression, 'sum'):
         return expression.sum(*args, **kwds)
-    elif max(len(args),len(kwds)) <= 1:
+    if max(len(args), len(kwds)) <= 1:
         return sum(expression, *args, **kwds)
-    else:
-        from sage.symbolic.ring import SR
-        return SR(expression).sum(*args, **kwds)
+    from sage.symbolic.ring import SR
+    return SR(expression).sum(*args, **kwds)
 
 
 def symbolic_prod(expression, *args, **kwds):
@@ -604,23 +597,23 @@ def symbolic_prod(expression, *args, **kwds):
 
     INPUT:
 
-    - ``expression`` - a symbolic expression
+    - ``expression`` -- a symbolic expression
 
-    - ``v`` - a variable or variable name
+    - ``v`` -- a variable or variable name
 
-    - ``a`` - lower endpoint of the product
+    - ``a`` -- lower endpoint of the product
 
-    - ``b`` - upper endpoint of the prduct
+    - ``b`` -- upper endpoint of the prduct
 
-    - ``algorithm`` - (default: ``'maxima'``)  one of
+    - ``algorithm`` -- (default: ``'maxima'``)  one of
 
-      - ``'maxima'`` - use Maxima (the default)
+      - ``'maxima'`` -- use Maxima (the default)
 
-      - ``'giac'`` - (optional) use Giac
+      - ``'giac'`` -- (optional) use Giac
 
-      - ``'sympy'`` - use SymPy
+      - ``'sympy'`` -- use SymPy
 
-    - ``hold`` - (default: ``False``) if ``True`` don't evaluate
+    - ``hold`` -- boolean (default: ``False``); if ``True`` don't evaluate
 
     EXAMPLES::
 
@@ -642,7 +635,6 @@ def symbolic_prod(expression, *args, **kwds):
         1/factorial(n + 1)
         sage: product(f(i), i, 1, n).log().log_expand()
         sum(log(f(i)), i, 1, n)
-
     """
     from .misc_c import prod as c_prod
     if hasattr(expression, 'prod'):
@@ -709,14 +701,14 @@ def integral(x, *args, **kwds):
 
     TESTS:
 
-    A symbolic integral from :trac:`11445` that was incorrect in
+    A symbolic integral from :issue:`11445` that was incorrect in
     earlier versions of Maxima::
 
         sage: f = abs(x - 1) + abs(x + 1) - 2*abs(x)                                    # needs sage.symbolic
         sage: integrate(f, (x, -Infinity, Infinity))                                    # needs sage.symbolic
         2
 
-    Another symbolic integral, from :trac:`11238`, that used to return
+    Another symbolic integral, from :issue:`11238`, that used to return
     zero incorrectly; with Maxima 5.26.0 one gets
     ``1/2*sqrt(pi)*e^(1/4)``, whereas with 5.29.1, and even more so
     with 5.33.0, the expression is less pleasant, but still has the
@@ -737,21 +729,21 @@ def integral(x, *args, **kwds):
         sage: sage.calculus.calculus.maxima('domain: complex')
         complex
 
-    An integral which used to return -1 before maxima 5.28. See :trac:`12842`::
+    An integral which used to return -1 before maxima 5.28. See :issue:`12842`::
 
         sage: f = e^(-2*x)/sqrt(1-e^(-2*x))                                             # needs sage.symbolic
         sage: integrate(f, x, 0, infinity)                                              # needs sage.symbolic
         1
 
     This integral would cause a stack overflow in earlier versions of
-    Maxima, crashing sage. See :trac:`12377`. We don't care about the
+    Maxima, crashing sage. See :issue:`12377`. We don't care about the
     result here, just that the computation completes successfully::
 
         sage: y = (x^2)*exp(x) / (1 + exp(x))^2                                         # needs sage.symbolic
         sage: _ = integrate(y, x, -1000, 1000)                                          # needs sage.symbolic
 
     When SymPy cannot solve an integral it gives it back, so we must
-    be able to convert SymPy's ``Integral`` (:trac:`14723`)::
+    be able to convert SymPy's ``Integral`` (:issue:`14723`)::
 
         sage: # needs sage.symbolic
         sage: x, y, z = var('x,y,z')
@@ -778,14 +770,13 @@ def integral(x, *args, **kwds):
         integrate(integrate(integrate(f(x, y, z), x), y), z)
 
     Ensure that the following integral containing a signum term from
-    :trac:`11590` can be integrated::
+    :issue:`11590` can be integrated::
 
         sage: x = SR.symbol('x', domain='real')                                         # needs sage.symbolic
         sage: result = integrate(x * sgn(x^2 - 1/4), x, -1, 0)                          # needs sage.symbolic
         ...
         sage: result                                                                    # needs sage.symbolic
         -1/4
-
     """
     if hasattr(x, 'integral'):
         return x.integral(*args, **kwds)
@@ -807,10 +798,10 @@ def integral_closure(x):
         Rational Field
         sage: K.<a> = QuadraticField(5)                                                 # needs sage.rings.number_field
         sage: O2 = K.order(2 * a); O2                                                   # needs sage.rings.number_field
-        Order in Number Field in a
+        Order of conductor 4 generated by 2*a in Number Field in a
          with defining polynomial x^2 - 5 with a = 2.236067977499790?
         sage: integral_closure(O2)                                                      # needs sage.rings.number_field
-        Maximal Order in Number Field in a
+        Maximal Order generated by 1/2*a + 1/2 in Number Field in a
          with defining polynomial x^2 - 5 with a = 2.236067977499790?
     """
     return x.integral_closure()
@@ -849,22 +840,6 @@ def xinterval(a, b):
     return range(a, b + 1)
 
 
-def is_commutative(x):
-    """
-    Return whether or not ``x`` is commutative.
-
-    EXAMPLES::
-
-        sage: R = PolynomialRing(QQ, 'x')
-        sage: is_commutative(R)
-        doctest:...DeprecationWarning: use X.is_commutative() or X in Rings().Commutative()
-        See https://github.com/sagemath/sage/issues/32347 for details.
-        True
-    """
-    deprecation(32347, "use X.is_commutative() or X in Rings().Commutative()")
-    return x.is_commutative()
-
-
 def is_even(x):
     """
     Return whether or not an integer ``x`` is even, e.g., divisible by 2.
@@ -882,45 +857,6 @@ def is_even(x):
         return x.is_even()
     except AttributeError:
         return x % 2 == 0
-
-
-def is_integrally_closed(x):
-    """
-    Return whether ``x`` is integrally closed.
-
-    EXAMPLES::
-
-        sage: is_integrally_closed(QQ)
-        doctest:...DeprecationWarning: use X.is_integrally_closed()
-        See https://github.com/sagemath/sage/issues/32347 for details.
-        True
-        sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^2 + 189*x + 394)                                    # needs sage.rings.number_field
-        sage: R = K.order(2*a)                                                          # needs sage.rings.number_field
-        sage: is_integrally_closed(R)                                                   # needs sage.rings.number_field
-        False
-    """
-    deprecation(32347, "use X.is_integrally_closed()")
-    return x.is_integrally_closed()
-
-
-def is_field(x, proof=True):
-    """
-    Return whether or not ``x`` is a field.
-
-    Alternatively, one can use ``x in Fields()``.
-
-    EXAMPLES::
-
-        sage: R = PolynomialRing(QQ, 'x')
-        sage: F = FractionField(R)
-        sage: is_field(F)
-        doctest:...DeprecationWarning: use X.is_field() or X in Fields()
-        See https://github.com/sagemath/sage/issues/32347 for details.
-        True
-    """
-    deprecation(32347, "use X.is_field() or X in Fields()")
-    return x.is_field(proof=proof)
 
 
 def is_odd(x):
@@ -971,11 +907,7 @@ def kernel(x):
         Basis matrix:
         []
         sage: kernel(A.transpose()).basis()
-        [
-        (1, 0, 0),
-        (0, 1, 0),
-        (0, 0, 1)
-        ]
+        [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     """
     return x.kernel()
 
@@ -987,16 +919,20 @@ def krull_dimension(x):
     EXAMPLES::
 
         sage: krull_dimension(QQ)
+        doctest:warning...:
+        DeprecationWarning: please use the krull_dimension method
+        See https://github.com/sagemath/sage/issues/39311 for details.
         0
-        sage: krull_dimension(ZZ)
+        sage: ZZ.krull_dimension()
         1
-        sage: krull_dimension(ZZ[sqrt(5)])                                              # needs sage.rings.number_field sage.symbolic
+        sage: ZZ[sqrt(5)].krull_dimension()                                              # needs sage.rings.number_field sage.symbolic
         1
-        sage: U.<x,y,z> = PolynomialRing(ZZ,3); U
+        sage: U.<x,y,z> = PolynomialRing(ZZ, 3); U
         Multivariate Polynomial Ring in x, y, z over Integer Ring
         sage: U.krull_dimension()
         4
     """
+    deprecation(39311, "please use the krull_dimension method")
     return x.krull_dimension()
 
 
@@ -1150,8 +1086,8 @@ def log(*args, **kwds):
         sage: log(F(9), 3)
         2
 
-    The log function also works for p-adics (see documentation for
-    p-adics for more information)::
+    The log function also works for `p`-adics (see documentation for
+    `p`-adics for more information)::
 
         sage: R = Zp(5); R                                                              # needs sage.rings.padics
         5-adic Ring with capped relative precision 20
@@ -1165,7 +1101,7 @@ def log(*args, **kwds):
 
     TESTS:
 
-    Check if :trac:`10136` is fixed::
+    Check if :issue:`10136` is fixed::
 
         sage: ln(x).operator() is ln                                                    # needs sage.symbolic
         True
@@ -1194,10 +1130,17 @@ def log(*args, **kwds):
         ...
         TypeError: log takes at most 2 arguments (3 given)
 
-    Check if :trac:`29164` is fixed::
+    Check if :issue:`29164` is fixed::
 
         sage: log(0, 2)
         -Infinity
+
+    Check if :issue:`37794` is fixed::
+
+        sage: log(int(0), 2)
+        -Infinity
+        sage: log(int(0), 1/2)
+        +Infinity
     """
     base = kwds.pop('base', None)
     if base:
@@ -1249,7 +1192,7 @@ minpoly = minimal_polynomial
 def multiplicative_order(x):
     r"""
     Return the multiplicative order of ``x``, if ``x`` is a unit, or
-    raise :class:`ArithmeticError` otherwise.
+    raise :exc:`ArithmeticError` otherwise.
 
     EXAMPLES::
 
@@ -1552,7 +1495,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         TypeError: cannot approximate to a precision of 53 bits, use at most 24 bits
 
     As an exceptional case, ``digits=1`` usually leads to 2 digits (one
-    significant) in the decimal output (see :trac:`11647`)::
+    significant) in the decimal output (see :issue:`11647`)::
 
         sage: # needs sage.symbolic
         sage: N(pi, digits=1)
@@ -1586,7 +1529,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         sage: type(numerical_approx(CC(1/2)))                                           # needs sage.rings.real_mpfr
         <class 'sage.rings.complex_mpfr.ComplexNumber'>
 
-    The following tests :trac:`10761`, in which ``n()`` would break when
+    The following tests :issue:`10761`, in which ``n()`` would break when
     called on complex-valued algebraic numbers.  ::
 
         sage: E = matrix(3, [3,1,6,5,2,9,7,3,13]).eigenvalues(); E                      # needs sage.modules sage.rings.number_field
@@ -1597,7 +1540,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         [18.1681536508882, -0.0840768254441065 - 0.219026148480291*I, -0.0840768254441065 + 0.219026148480291*I]
 
     Make sure we've rounded up log(10,2) enough to guarantee
-    sufficient precision (:trac:`10164`)::
+    sufficient precision (:issue:`10164`)::
 
         sage: ks = 4*10**5, 10**6
         sage: check_str_length = lambda k: len(str(numerical_approx(1+10**-k,digits=k+1)))-1 >= k+1
@@ -1605,7 +1548,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         sage: all(check_str_length(k) and check_precision(k) for k in ks)               # needs sage.rings.real_mpfr
         True
 
-    Testing we have sufficient precision for the golden ratio (:trac:`12163`), note
+    Testing we have sufficient precision for the golden ratio (:issue:`12163`), note
     that the decimal point adds 1 to the string length::
 
         sage: len(str(n(golden_ratio, digits=5000)))                                    # needs sage.symbolic
@@ -1613,7 +1556,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         sage: len(str(n(golden_ratio, digits=5000000)))         # long time (4s on sage.math, 2012), needs sage.symbolic
         5000001
 
-    Check that :trac:`14778` is fixed::
+    Check that :issue:`14778` is fixed::
 
         sage: n(0, algorithm='foo')                                                     # needs sage.rings.real_mpfr
         0.000000000000000
@@ -1744,7 +1687,7 @@ def round(x, ndigits=0):
         sage: round(b)
         5
 
-    This example addresses :trac:`23502`::
+    This example addresses :issue:`23502`::
 
         sage: n = round(6); type(n)
         <class 'sage.rings.integer.Integer'>
@@ -1790,9 +1733,9 @@ def quotient(x, y, *args, **kwds):
 
     EXAMPLES::
 
-        sage: quotient(5,6)
+        sage: quotient(5, 6)
         5/6
-        sage: quotient(5.,6.)
+        sage: quotient(5., 6.)
         0.833333333333333
         sage: R.<x> = ZZ[]; R
         Univariate Polynomial Ring in x over Integer Ring
@@ -1882,22 +1825,21 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
 
     INPUT:
 
-    -  ``x`` -- a number
+    - ``x`` -- a number
 
-    -  ``prec`` -- a positive integer (default: ``None``); when specified,
-       compute the square root with ``prec`` bits of precision
+    - ``prec`` -- positive integer (default: ``None``); when specified,
+      compute the square root with ``prec`` bits of precision
 
-    -  ``extend`` -- bool (default: ``True``); this is a placeholder, and is
-       always ignored since in the symbolic ring everything
-       has a square root.
+    - ``extend`` -- boolean (default: ``True``); this is a placeholder, and is
+      always ignored since in the symbolic ring everything
+      has a square root
 
-    -  ``extend`` -- bool (default: ``True``); whether to extend
-       the base ring to find roots. The extend parameter is ignored if
-       ``prec`` is a positive integer.
+    - ``extend`` -- boolean (default: ``True``); whether to extend
+      the base ring to find roots. The extend parameter is ignored if
+      ``prec`` is a positive integer.
 
-    -  ``all`` -- bool (default: ``False``); whether to return
-       a list of all the square roots of ``x``.
-
+    - ``all`` -- boolean (default: ``False``); whether to return
+      a list of all the square roots of ``x``
 
     EXAMPLES::
 
@@ -1941,18 +1883,18 @@ def sqrt(x, *args, **kwds):
     r"""
     INPUT:
 
-    -  ``x`` -- a number
+    - ``x`` -- a number
 
-    -  ``prec`` -- integer (default: ``None``): if ``None``, returns
-       an exact square root; otherwise returns a numerical square root if
-       necessary, to the given bits of precision.
+    - ``prec`` -- integer (default: ``None``); if ``None``, returns
+      an exact square root. Otherwise returns a numerical square root if
+      necessary, to the given bits of precision.
 
-    -  ``extend`` -- bool (default: ``True``); this is a placeholder, and
-       is always ignored or passed to the ``sqrt`` method of ``x``,
-       since in the symbolic ring everything has a square root.
+    - ``extend`` -- boolean (default: ``True``); this is a placeholder, and
+      is always ignored or passed to the ``sqrt`` method of ``x``,
+      since in the symbolic ring everything has a square root
 
-    -  ``all`` -- bool (default: ``False``); if ``True``, return all
-       square roots of ``self``, instead of just one.
+    - ``all`` -- boolean (default: ``False``); if ``True``, return all
+      square roots of ``self``, instead of just one
 
     EXAMPLES::
 
@@ -1998,7 +1940,7 @@ def sqrt(x, *args, **kwds):
         ...
         TypeError: ..._do_sqrt() got an unexpected keyword argument 'hold'
 
-    This illustrates that the bug reported in :trac:`6171` has been fixed::
+    This illustrates that the bug reported in :issue:`6171` has been fixed::
 
         sage: a = 1.1
         sage: a.sqrt(prec=100)  # this is supposed to fail

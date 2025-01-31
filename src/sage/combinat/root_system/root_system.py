@@ -158,7 +158,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     In finite type `A`, we recover the natural representation of the
     symmetric group as group of permutation matrices::
 
-        sage: RootSystem(["A",2]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.pari
+        sage: RootSystem(["A",2]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.gap sage.libs.pari
         Finite family {1: [0 1 0]
                           [1 0 0]
                           [0 0 1],
@@ -169,7 +169,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     In type `B`, `C`, and `D`, we recover the natural representation
     of the Weyl group as groups of signed permutation matrices::
 
-        sage: RootSystem(["B",3]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.pari
+        sage: RootSystem(["B",3]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.gap sage.libs.pari
         Finite family {1: [0 1 0]
                           [1 0 0]
                           [0 0 1],
@@ -203,15 +203,17 @@ class RootSystem(UniqueRepresentation, SageObject):
     Here is the orbit of the identity under the action of the finite
     group::
 
-        sage: W = L.weyl_group()                                                        # needs sage.libs.pari
-        sage: S3 = [ w.action(id) for w in W.classical() ]                              # needs sage.graphs sage.libs.pari
-        sage: [L.classical()(x) for x in S3]                                            # needs sage.graphs sage.libs.pari
+        sage: # needs sage.graphs sage.libs.gap sage.libs.pari
+        sage: W = L.weyl_group()
+        sage: S3 = [ w.action(id) for w in W.classical() ]
+        sage: [L.classical()(x) for x in S3]
         [(1, 2, 3), (3, 1, 2), (2, 3, 1), (2, 1, 3), (1, 3, 2), (3, 2, 1)]
 
     And the action of `s_0` on these yields::
 
-        sage: s = W.simple_reflections()                                                # needs sage.libs.pari
-        sage: [L.classical()(s[0].action(x)) for x in S3]                               # needs sage.graphs sage.libs.pari
+        sage: # needs sage.graphs sage.libs.gap sage.libs.pari
+        sage: s = W.simple_reflections()
+        sage: [L.classical()(s[0].action(x)) for x in S3]
         [(0, 2, 4), (-1, 1, 6), (-2, 3, 5), (0, 1, 5), (-1, 3, 4), (-2, 2, 6)]
 
     We can also plot various components of the ambient spaces::
@@ -299,7 +301,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     @staticmethod
     def __classcall__(cls, cartan_type, as_dual_of=None):
         """
-        Straighten arguments to enable unique representation
+        Straighten arguments to enable unique representation.
 
         .. SEEALSO:: :class:`UniqueRepresentation`
 
@@ -339,7 +341,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def _test_root_lattice_realizations(self, **options):
         """
-        Runs tests on all the root lattice realizations of this root
+        Run tests on all the root lattice realizations of this root
         system.
 
         EXAMPLES::
@@ -481,12 +483,14 @@ class RootSystem(UniqueRepresentation, SageObject):
         Return the (restricted) root poset associated to ``self``.
 
         The elements are given by the positive roots (resp. non-simple, positive roots), and
-        `\alpha \leq \beta` iff `\beta - \alpha` is a non-negative linear combination of simple roots.
+        `\alpha \leq \beta` iff `\beta - \alpha` is a nonnegative linear combination of simple roots.
 
         INPUT:
 
-        - ``restricted`` -- (default:False) if True, only non-simple roots are considered.
-        - ``facade`` -- (default:False) passes facade option to the poset generator.
+        - ``restricted`` -- boolean (default: ``False``); if ``True``, only
+          non-simple roots are considered
+        - ``facade`` -- boolean (default: ``False``); passes facade option to
+          the poset generator
 
         EXAMPLES::
 
@@ -556,7 +560,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     @cached_method
     def weight_space(self, base_ring=QQ, extended=False):
         """
-        Returns the weight space associated to ``self``.
+        Return the weight space associated to ``self``.
 
         .. SEEALSO::
 
@@ -783,6 +787,55 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         return self.dual.ambient_space(base_ring)
 
+    def coxeter_number(self):
+        """
+        Return the Coxeter number of an irreducible finite root system.
+
+        .. SEEALSO::
+
+            :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.coxeter_number`.
+
+        EXAMPLES::
+
+            sage: rt = RootSystem(['C', 5])
+            sage: rt.coxeter_number()
+            10
+        """
+        # Check if RootSystem is finite and irreducible
+        if not (self.is_finite() and self.is_irreducible()):
+            raise ValueError("the Coxeter number is defined only for finite and irreducible root systems")
+        # Hand over to CartanType method
+        return self._cartan_type.coxeter_number()
+
+    def dual_coxeter_number(self):
+        """
+        Return the dual Coxeter number of a irreducible finite root system.
+
+        The dual Coxeter number is equal to 1 plus the sum of the coefficients
+        of simple roots in the highest short root of the dual root system.
+
+        .. SEEALSO:: :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.dual_coxeter_number`
+
+        EXAMPLES::
+
+            sage: rt = RootSystem(['C', 5])
+            sage: rt.dual_coxeter_number()
+            6
+
+        The dual Coxeter number is not the same concept as the Coxeter number
+        of the dual root system::
+
+            sage: rt.dual
+            Dual of root system of type ['C', 5]
+            sage: rt.dual.coxeter_number()
+            10
+        """
+        # Check if RootSystem is finite and irreducible
+        if not (self.is_finite() and self.is_irreducible()):
+            raise ValueError("the dual Coxeter number is defined only for finite and irreducible root systems")
+        # Hand over to CartanType method
+        return self._cartan_type.dual_coxeter_number()
+
 
 def WeylDim(ct, coeffs):
     """
@@ -790,11 +843,9 @@ def WeylDim(ct, coeffs):
 
     INPUT:
 
+    - ``ct`` -- a Cartan type
 
-    -  ``ct`` -- a Cartan type
-
-    -  ``coeffs`` -- a list of nonnegative integers
-
+    - ``coeffs`` -- list of nonnegative integers
 
     The length of the list must equal the rank type[1]. A dominant
     weight hwv is constructed by summing the fundamental weights with

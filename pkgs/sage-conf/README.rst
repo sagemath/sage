@@ -66,8 +66,8 @@ this symlink is necessary for the prebuilt libraries and programs to
 work.
 
 ``/var/tmp`` is a sticky directory on all Linux distributions
-following the Filesystem Hierarchy Standard, as well as on macOS and
-on Cygwin.  On multi-user systems, only one user can use a given
+following the Filesystem Hierarchy Standard, as well as on macOS.
+On multi-user systems, only one user can use a given
 version of the distribution; other installation schemes are recommended
 for systems with multiple Sage users.
 
@@ -87,7 +87,7 @@ sage_conf for conda
 
 The version of the distribution package in the directory
 `pkgs/sage-conf_conda <https://github.com/sagemath/sage/tree/develop/pkgs/sage-conf_conda/>`_
-is used in an experimental installation method of SageMath, where all packages
+may be used in an installation method of SageMath, where all packages
 are provided by conda.  This method is described in
 https://doc.sagemath.org/html/en/installation/conda.html#using-conda-to-provide-all-dependencies-for-the-sage-library-experimental
 
