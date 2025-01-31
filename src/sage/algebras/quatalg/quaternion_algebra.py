@@ -332,7 +332,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
             if not set(arg2).issubset(set([0, QQ(1/2)])):
                 raise ValueError("list of local invariants specifying ramification should contain only 0 and 1/2")
             primes = set(arg1)
-            if not all([p.is_prime() for p in primes]):
+            if not all(p.is_prime() for p in primes):
                 raise ValueError("quaternion algebra constructor requires a list of primes specifying the ramification")
             if isinstance(K, RationalField):
                 if len(arg2) > 1 or (len(arg2) == 1 and is_odd(len(primes) + 2*arg2[0])):
@@ -368,7 +368,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
                 inv_arch_pari = [arg2[i-1] for i in perm]
 
                 # Compute the correct quaternion algebra over L in PARI
-                A = L.__pari__().alginit([2, [fin_places_pari, [QQ(1/2)] * len(fin_places_pari)],
+                A = L.__pari__().alginit([2, [fin_places_pari, [QQ((1,2))] * len(fin_places_pari)],
                                           inv_arch_pari], maxord=0)
 
                 # Obtain representation of A in terms of invariants in L
