@@ -411,6 +411,12 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             Traceback (most recent call last):
             ...
             NotImplementedError
+            sage: (2*y+1)^(-1)  # this cannot raise ValueError because...
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+            sage: (2*y+1) * (10*y+5)  # the element is in fact invertible
+            1
 
         Check that :issue:`29469` is fixed::
 
