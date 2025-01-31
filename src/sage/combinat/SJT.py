@@ -1,4 +1,6 @@
 r"""
+Steinhaus-Johnson-Trotter algorithm
+
 The Steinhaus-Johnson-Trotter algorithm generates all permutations of a list in
 an order such that each permutation is obtained by transposing two adjacent
 elements from the previous permutation.

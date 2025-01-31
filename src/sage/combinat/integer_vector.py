@@ -1,16 +1,16 @@
 """
-(Non-negative) Integer vectors
+Nonnegative integer vectors
 
 AUTHORS:
 
-* Mike Hansen (2007) - original module
-* Nathann Cohen, David Joyner (2009-2010) - Gale-Ryser stuff
-* Nathann Cohen, David Joyner (2011) - Gale-Ryser bugfix
-* Travis Scrimshaw (2012-05-12) - Updated doc-strings to tell the user of
-  that the class's name is a misnomer (that they only contains non-negative
+- Mike Hansen (2007): original module
+- Nathann Cohen, David Joyner (2009-2010): Gale-Ryser stuff
+- Nathann Cohen, David Joyner (2011): Gale-Ryser bugfix
+- Travis Scrimshaw (2012-05-12): updated docstrings to tell the user of
+  that the class's name is a misnomer (that they only contains nonnegative
   entries).
-* Federico Poloni (2013) - specialized ``rank()``
-* Travis Scrimshaw (2013-02-04) - Refactored to use ``ClonableIntArray``
+- Federico Poloni (2013): specialized ``rank()``
+- Travis Scrimshaw (2013-02-04): refactored to use ``ClonableIntArray``
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,

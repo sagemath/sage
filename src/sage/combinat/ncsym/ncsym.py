@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Symmetric Functions in Non-Commuting Variables
+Symmetric functions in noncommuting variables
 
 AUTHORS:
 
-- Travis Scrimshaw (08-04-2013): Initial version
+- Travis Scrimshaw (08-04-2013): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>

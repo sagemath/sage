@@ -1,5 +1,5 @@
 """
-Weighted Integer Vectors
+Weighted integer vectors
 
 AUTHORS:
 

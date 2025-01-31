@@ -1,16 +1,16 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Tensor Products of Crystal Elements
+Tensor products of crystal elements
 
 AUTHORS:
 
-- Anne Schilling, Nicolas Thiery (2007): Initial version
-- Ben Salisbury, Travis Scrimshaw (2013): Refactored tensor products to handle
+- Anne Schilling, Nicolas Thiery (2007): initial version
+- Ben Salisbury, Travis Scrimshaw (2013): refactored tensor products to handle
   non-regular crystals and created new subclass to take advantage of
   the regularity
-- Travis Scrimshaw (2017): Cythonized element classes
-- Franco Saliola (2017): Tensor products for crystal of super algebras
-- Anne Schilling (2018): Tensor products for crystals of queer super algebras
+- Travis Scrimshaw (2017): cythonized element classes
+- Franco Saliola (2017): tensor products for crystal of super algebras
+- Anne Schilling (2018): tensor products for crystals of queer super algebras
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
