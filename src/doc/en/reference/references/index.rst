@@ -568,6 +568,10 @@ REFERENCES:
              Springer Verlag 2006; pre-print available at
              http://eprint.iacr.org/2005/200
 
+.. [BQ2024] Asilata Bapat and Hoel Queffelec.
+            *Some remarks about the faithfulness of the Burau representation
+            of Artin-Tits groups*. Preprint, 2024. :arxiv:`2409.00144`.
+
 .. [BBS1982] \L. Blum, M. Blum, and M. Shub. Comparison of Two
              Pseudo-Random Number Generators. *Advances in Cryptology:
              Proceedings of Crypto '82*, pp.61--78, 1982.

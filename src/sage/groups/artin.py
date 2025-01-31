@@ -9,10 +9,17 @@ of the corresponding Coxeter group.
 AUTHORS:
 
 - Travis Scrimshaw (2018-02-05): Initial version
+- Travis Scrimshaw (2025-01-30): Allowed general construction; implemented
+  general Burau representation
+
+.. TODO::
+
+    Implement affine type Artin groups with their well-known embeddings into
+    the classical braid group.
 """
 
 # ****************************************************************************
-#       Copyright (C) 2018 Travis Scrimshaw <tcscrims at gmail.com>
+#       Copyright (C) 2018-2025 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +33,7 @@ from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.groups.free_group import FreeGroup
 from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.infinity import Infinity
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
@@ -155,6 +163,132 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         s = W.simple_reflections()
         In = W.index_set()
         return W.prod(s[In[abs(i)-1]] for i in self.Tietze())
+
+    def burau_matrix(self, var='t', reduced=False):
+        r"""
+        Return the Burau matrix of the Artin group element.
+
+        Following [BQ2024]_, the (generalized) Burau representation of an
+        Artin group is defined by deforming the reflection representation
+        of the corresponding Coxeter group. However, we substitute
+        `q \mapsto -t` from [BQ2024]_ to match the unitary
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'t'``); the name of the
+          variable in the entries of the matrix
+
+        OUTPUT:
+
+        The Burau matrix of the Artin group element over the Laurent
+        polynomial ring in the variable ``var``.
+
+        EXAMPLES::
+
+            sage: A.<s1,s2,s3> = ArtinGroup(['B',3])
+            sage: B1 = s1.burau_matrix()
+            sage: B2 = s2.burau_matrix()
+            sage: B3 = s3.burau_matrix()
+            sage: [B1, B2, B3]
+            [
+            [-t^2    t    0]  [   1    0    0]  [   1    0    0]
+            [   0    1    0]  [   t -t^2  a*t]  [   0    1    0]
+            [   0    0    1], [   0    0    1], [   0  a*t -t^2]
+            ]
+            sage: B1 * B2 * B1 == B2 * B1 * B2
+            True
+            sage: B2 * B3 * B2 * B3 == B3 * B2 * B3 * B2
+            True
+            sage: B1 * B3 == B3 * B1
+            True
+            sage: (~s1).burau_matrix() * B1 == 1
+            True
+
+        We verify the example in Theorem 4.1 of [BQ2024]_::
+
+            sage: A.<s1,s2,s3,s4> = ArtinGroup(['A', 3, 1])
+            sage: [g.burau_matrix() for g in A.gens()]
+            [
+            [-t^2    t    0    t]  [   1    0    0    0]  [   1    0    0    0]
+            [   0    1    0    0]  [   t -t^2    t    0]  [   0    1    0    0]
+            [   0    0    1    0]  [   0    0    1    0]  [   0    t -t^2    t]
+            [   0    0    0    1], [   0    0    0    1], [   0    0    0    1],
+            <BLANKLINE>
+            [   1    0    0    0]
+            [   0    1    0    0]
+            [   0    0    1    0]
+            [   t    0    t -t^2]
+            ]
+            sage: a = s3^2 * s4 * s3 * s2 *s1 * ~s3 * s4 * s3 * s2 * s1^-2 * s4
+            sage: b = s1^2 * ~s2 * s4 * s1 * ~s3 * s2 * ~s4 * s3 * s1 * s4 * s1 * ~s2 * s4^-2 * s3
+            sage: alpha = a * s3 * ~a
+            sage: beta = b * s2 * ~b
+            sage: elm = alpha * beta * ~alpha * ~beta
+            sage: print(elm.Tietze())
+            (3, 3, 4, 3, 2, 1, -3, 4, 3, 2, -1, -1, 4, 3, -4, 1, 1, -2, -3,
+             -4, 3, -1, -2, -3, -4, -3, -3, 1, 1, -2, 4, 1, -3, 2, -4, 3, 1,
+             4, 1, -2, -4, -4, 3, 2, -3, 4, 4, 2, -1, -4, -1, -3, 4, -2, 3,
+             -1, -4, 2, -1, -1, 3, 3, 4, 3, 2, 1, -3, 4, 3, 2, -1, -1, 4,
+             -3, -4, 1, 1, -2, -3, -4, 3, -1, -2, -3, -4, -3, -3, 1, 1, -2,
+             4, 1, -3, 2, -4, 3, 1, 4, 1, -2, -4, -4, 3, -2, -3, 4, 4, 2,
+             -1, -4, -1, -3, 4, -2, 3, -1, -4, 2, -1, -1)
+            sage: elm.burau_matrix()
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 1 0]
+            [0 0 0 1]
+
+        Next, we show ``elm`` is not the identity by using the embedding of
+        the affine braid group `\widetilde{B}_n \to B_{n+1}`::
+
+            sage: B.<t1,t2,t3,t4> = BraidGroup(5)
+            sage: D = t1 * t2 * t3 * t4^2
+            sage: t0 = D * t3 * ~D
+            sage: t0*t1*t0 == t1*t0*t1
+            True
+            sage: t0*t2 == t2*t0
+            True
+            sage: t0*t3*t0 == t3*t0*t3
+            True
+            sage: T = [t0, t1, t2, t3]
+            sage: emb = B.prod(T[i-1] if i > 0 else ~T[-i-1] for i in elm.Tietze())
+            sage: emb.is_one()
+            False
+
+        Since the Burau representation does not respect the group embedding,
+        the corresponding `B_5` element's Burau matrix is not the identity
+        (Bigelow gave an example of the representation not being faithful for
+        `B_5`, but it is still open for `B_4`)::
+
+            sage: emb.burau_matrix() != 1
+            True
+
+        We also verify the result using the elements in [BQ2024]_ Remark 4.2::
+
+            sage: ap = s3 * s1 * s2 * s1 * ~s3 * s4 * s2 * s3 * s2 * ~s3 * s1^-2 * s4
+            sage: bp = s1 * ~s4 * s1^2 * s3^-2 * ~s2 * s4 * s1 * ~s3 * s2 * ~s4 * s3 * s1 * s4 * s1 * ~s2 * s4^-2 * s3
+            sage: alpha = ap * s3 * ~ap
+            sage: beta = bp * s2 * ~bp
+            sage: elm = alpha * beta * ~alpha * ~beta
+            sage: elm.burau_matrix()
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 1 0]
+            [0 0 0 1]
+
+        REFERENCES:
+
+        - [BQ2024]_
+        """
+        gens, invs = self.parent()._burau_generators
+        MS = gens[0].parent()
+        ret = MS.prod(gens[i-1] if i > 0 else invs[-i-1] for i in self.Tietze())
+
+        if var == 't':
+            return ret
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        poly_ring = LaurentPolynomialRing(ret.base_ring().base_ring(), var)
+        return ret.change_ring(poly_ring)
 
 
 class FiniteTypeArtinGroupElement(ArtinGroupElement):
@@ -453,7 +587,7 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
             from sage.groups.raag import RightAngledArtinGroup
             return RightAngledArtinGroup(coxeter_data.coxeter_graph(), names)
         if not coxeter_data.is_finite():
-            raise NotImplementedError
+            return super().__classcall__(cls, coxeter_data, names)
         if coxeter_data.coxeter_type().cartan_type().type() == 'A':
             from sage.groups.braid import BraidGroup
             return BraidGroup(coxeter_data.rank()+1, names)
@@ -476,15 +610,17 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
         rels = []
         # Generate the relations based on the Coxeter graph
         I = coxeter_matrix.index_set()
+        gens = free_group.gens()
         for ii, i in enumerate(I):
-            for j in I[ii + 1:]:
+            for jj, j in enumerate(I[ii + 1:], start=ii+1):
                 m = coxeter_matrix[i, j]
                 if m == Infinity:  # no relation
                     continue
-                elt = [i, j] * m
-                for ind in range(m, 2*m):
-                    elt[ind] = -elt[ind]
-                rels.append(free_group(elt))
+                elt = (gens[ii] * gens[jj]) ** (m // 2)
+                if m % 2 == 1:
+                    elt = elt * gens[ii] * ~gens[jj]
+                elt = elt * (~gens[ii] * ~gens[jj]) ** (m // 2)
+                rels.append(elt)
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels))
 
     def _repr_(self):
@@ -687,6 +823,153 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
             s0*s1*s2*s3*s0*s1
         """
         return self(self._standard_lift_Tietze(w))
+
+    @lazy_attribute
+    def _burau_generators(self):
+        """
+        The Burau matrices for the generators of ``self`` and their inverses.
+
+        EXAMPLES::
+
+            sage: A = ArtinGroup(['G',2])
+            sage: A._burau_generators
+            [[
+            [-t^2  a*t]  [   1    0]
+            [   0    1], [ a*t -t^2]
+            ],
+             [
+            [ -t^-2 a*t^-1]  [     1      0]
+            [     0      1], [a*t^-1  -t^-2]
+            ]]
+
+            sage: A = ArtinGroup(['H',3])
+            sage: A._burau_generators
+            [[
+            [-t^2    t    0]  [              1               0               0]
+            [   0    1    0]  [              t            -t^2 (1/2*a + 1/2)*t]
+            [   0    0    1], [              0               0               1],
+            <BLANKLINE>
+            [              1               0               0]
+            [              0               1               0]
+            [              0 (1/2*a + 1/2)*t            -t^2]
+            ],
+             [
+            [-t^-2  t^-1     0]
+            [    0     1     0]
+            [    0     0     1],
+            <BLANKLINE>
+            [                 1                  0                  0]
+            [              t^-1              -t^-2 (1/2*a + 1/2)*t^-1]
+            [                 0                  0                  1],
+            <BLANKLINE>
+            [                 1                  0                  0]
+            [                 0                  1                  0]
+            [                 0 (1/2*a + 1/2)*t^-1              -t^-2]
+            ]]
+
+            sage: CM = matrix([[1,4,7], [4,1,10], [7,10,1]])
+            sage: A = ArtinGroup(CM)
+            sage: gens = A._burau_generators[0]; gens
+            [
+            [                -t^2    (E(8) - E(8)^3)*t (-E(7)^3 - E(7)^4)*t]
+            [                   0                    1                    0]
+            [                   0                    0                    1],
+            <BLANKLINE>
+            [                  1                   0                   0]
+            [  (E(8) - E(8)^3)*t                -t^2 (E(20) - E(20)^9)*t]
+            [                  0                   0                   1],
+            <BLANKLINE>
+            [                   1                    0                    0]
+            [                   0                    1                    0]
+            [(-E(7)^3 - E(7)^4)*t  (E(20) - E(20)^9)*t                 -t^2]
+            ]
+            sage: all(gens[i] * A._burau_generators[1][i] == 1 for i in range(3))
+            True
+            sage: B1, B2, B3 = gens
+            sage: (B1 * B2)^2 == (B2 * B1)^2
+            True
+            sage: (B2 * B3)^5 == (B3 * B2)^5
+            True
+            sage: B1 * B3 * B1 * B3 * B1 * B3 * B1 == B3 * B1 * B3 * B1 * B3 * B1 * B3
+            True
+        """
+        data = self.coxeter_type()
+        coxeter_matrix = self.coxeter_matrix()
+        n = coxeter_matrix.rank()
+
+        # Determine the base field
+        if data.is_simply_laced():
+            from sage.rings.integer_ring import ZZ
+            base_ring = ZZ
+        elif data.is_finite():
+            from sage.rings.number_field.number_field import QuadraticField
+            letter = data.cartan_type().type()
+            if letter in ['B', 'C', 'F']:
+                base_ring = QuadraticField(2)
+            elif letter == 'G':
+                base_ring = QuadraticField(3)
+            elif letter == 'H':
+                base_ring = QuadraticField(5)
+            else:
+                from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+                base_ring = UniversalCyclotomicField()
+        else:
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+            base_ring = UniversalCyclotomicField()
+
+        # Construct the matrices
+        from sage.matrix.args import SparseEntry
+        from sage.matrix.matrix_space import MatrixSpace
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        import sage.rings.abc
+        poly_ring = LaurentPolynomialRing(base_ring, 't')
+        q = -poly_ring.gen()
+        MS = MatrixSpace(poly_ring, n, sparse=True)
+        one = MS.one()
+        # FIXME: Hack because there is no ZZ \cup \{ \infty \}: -1 represents \infty
+        if isinstance(base_ring, sage.rings.abc.UniversalCyclotomicField):
+            E = base_ring.gen
+
+            def val(x):
+                if x == -1:
+                    return 2 * q
+                elif x == 1:
+                    return 1 + q**2
+                else:
+                    return q * (E(2*x) + ~E(2*x))
+        elif isinstance(base_ring, sage.rings.abc.NumberField_quadratic):
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+            E = UniversalCyclotomicField().gen
+
+            def val(x):
+                if x == -1:
+                    return 2 * q
+                elif x == 1:
+                    return 1 + q**2
+                else:
+                    return q * base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
+        else:
+            def val(x):
+                if x == -1:
+                    return 2 * q
+                elif x == 1:
+                    return 1 + q**2
+                elif x == 2:
+                    return 0
+                elif x == 3:
+                    return q
+                else:
+                    from sage.functions.trig import cos
+                    from sage.symbolic.constants import pi
+                    return q * base_ring(2 * cos(pi / x))
+        index_set = data.index_set()
+        gens = [one - MS([SparseEntry(i, j, val(coxeter_matrix[index_set[i], index_set[j]]))
+                          for j in range(n)])
+                for i in range(n)]
+        invs = [one - q**-2 * MS([SparseEntry(i, j, val(coxeter_matrix[index_set[i], index_set[j]]))
+                                  for j in range(n)])
+                for i in range(n)]
+        return [gens, invs]
 
     Element = ArtinGroupElement
 
