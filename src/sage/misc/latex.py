@@ -485,16 +485,16 @@ def default_engine():
 
         sage: from sage.misc.latex import default_engine
         sage: default_engine()  # random
-        ('lualatex', 'LuaLaTeX')
+        'lualatex'
     """
     from sage.features.latex import pdflatex, xelatex, lualatex
     if lualatex().is_present():
-        return 'lualatex', 'LuaLaTeX'
+        return 'lualatex'
     if xelatex().is_present():
-        return 'xelatex', 'XeLaTeX'
+        return 'xelatex'
     if pdflatex().is_present():
-        return 'pdflatex', 'pdfLaTeX'
-    return 'latex', 'LaTeX'
+        return 'pdflatex'
+    return 'latex'
 
 
 class _Latex_prefs_object(SageObject):
@@ -535,11 +535,9 @@ class _Latex_prefs_object(SageObject):
              'matrix_column_alignment': 'r',
              'macros': '',
              'preamble': '',
-             'engine': 'lualatex',
-             'engine_name': 'LuaLaTeX'}
+             'engine': 'lualatex'}
         """
-        self.__option["engine"] = default_engine()[0]
-        self.__option["engine_name"] = default_engine()[1]
+        self.__option["engine"] = default_engine()
         return self.__option
 
 
@@ -1535,16 +1533,12 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
 
         if e == "latex":
             _Latex_prefs._option["engine"] = "latex"
-            _Latex_prefs._option["engine_name"] = "LaTeX"
         elif e == "pdflatex":
             _Latex_prefs._option["engine"] = "pdflatex"
-            _Latex_prefs._option["engine_name"] = "PDFLaTeX"
         elif e == "xelatex":
             _Latex_prefs._option["engine"] = e
-            _Latex_prefs._option["engine_name"] = "XeLaTeX"
         elif e == "lualatex":
             _Latex_prefs._option["engine"] = e
-            _Latex_prefs._option["engine_name"] = "LuaLaTeX"
         else:
             raise ValueError("%s is not a supported LaTeX engine. Use latex, pdflatex, xelatex, or lualatex" % e)
 
