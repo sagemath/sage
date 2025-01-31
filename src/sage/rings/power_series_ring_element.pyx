@@ -1384,11 +1384,11 @@ cdef class PowerSeries(AlgebraElement):
             serie = (u - 1 - A * t) / (B * t ** 2)
         return tuple(resu)
 
-    def super_fraction(self, delta):
+    def super_delta_fraction(self, delta):
         """
         Return the super delta continued fraction of ``self``.
 
-        This is a fraction of the following shape::
+        This is a continued fraction of the following shape::
 
                                     v0 x^k0
              --------------------------------------------------------
@@ -1398,15 +1398,15 @@ cdef class PowerSeries(AlgebraElement):
                                 U2(x)    -  -------------------------
                                                      U3(x) - ...
 
-        where each `U_j(x) = 1 + u_j(x)x`.
+        where each `U_j(x) = 1 + u_j(x) x`.
 
         INPUT:
 
-        - ``delta`` -- positive integer
+        - ``delta`` -- positive integer, most usually 2
 
         OUTPUT:
 
-        The list of  ( vj, kj, U(j+1) ), j \geq 0.
+        list of `(v_j, k_j, U_{j+1}(x))_{j \geq 0}`
 
         REFERENCES:
 
@@ -1418,7 +1418,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: PS = PowerSeriesRing(QQ, 'q', default_prec=deg+1)
             sage: q = PS.gen()
             sage: F = prod([(1+q**k).add_bigoh(deg+1) for k in range(1,deg)])
-            sage: F.super_fraction(2)
+            sage: F.super_delta_fraction(2)
             [(1, 0, -q + 1),
              (1, 1, q + 1),
              (-1, 2, -q^3 + q^2 - q + 1),
@@ -1431,7 +1431,7 @@ cdef class PowerSeries(AlgebraElement):
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
             sage: s = sum(factorial(k) * t**k for k in range(12)).O(12)
-            sage: s.super_fraction(2)
+            sage: s.super_delta_fraction(2)
             [(1, 0, -t + 1),
             (1, 0, -3*t + 1),
             (4, 0, -5*t + 1),
@@ -1439,18 +1439,15 @@ cdef class PowerSeries(AlgebraElement):
             (16, 0, -9*t + 1),
             (25, 0, -11*t + 1)]
         """
-        ring = self.parent()
-        q = ring.gen()
-        Gi, Gj = ring.one(), self
-
+        q = self.parent().gen()
+        Gi, Gj = self.parent().one(), self
         deg = self.prec()
 
-        vkU = []
-
+        list_vkU = []
         di = Gi.valuation()
         ci = Gi[di]
 
-        while True:
+        while deg >= 0:
             dj = Gj.valuation()
             cj = Gj[dj]
             k, v = dj - di, cj / ci
@@ -1459,17 +1456,17 @@ cdef class PowerSeries(AlgebraElement):
             gj = Gj.add_bigoh(k + dj + delta)
             U = (c * gi / gj).truncate()
             Gk = (U * Gj - Gi * c) >> (k + delta)
-            deg = deg - 2 * k - delta
+            deg -= 2 * k + delta
             if deg < 0:
                 break
-            vkU.append((v, k, U))
+            list_vkU.append((v, k, U))
             if deg == 0:
                 break
             if Gk.degree() == -1:
                 break
             di, ci, Gi, Gj = dj, cj, Gj, Gk
 
-        return vkU
+        return list_vkU
 
     def stieltjes_continued_fraction(self):
         r"""
