@@ -519,6 +519,8 @@ class _Latex_prefs_object(SageObject):
         self.__option["matrix_column_alignment"] = matrix_column_alignment
         self.__option["macros"] = ""
         self.__option["preamble"] = ""
+
+        # If None, the default_engine() will be used.
         self.__option["engine"] = None
 
     @lazy_attribute
@@ -648,6 +650,8 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     """
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = default_engine()
 
     if not engine or engine == "latex":
         from sage.features.latex import latex
@@ -1061,10 +1065,12 @@ class Latex(LatexCall):
 
             O.close()
             if engine is None:
-                if self.__engine is None:
+                engine = self.__engine
+                if engine is None:
                     engine = _Latex_prefs._option["engine"]
-                else:
-                    engine = self.__engine
+                    if engine is None:
+                        engine = default_engine()
+
             e = _run_latex_(os.path.join(base, filename + ".tex"),
                             debug=debug,
                             density=density,
@@ -1530,18 +1536,16 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
             'pdflatex'
         """
         if e is None:
-            return _Latex_prefs._option["engine"]
+            e = _Latex_prefs._option["engine"]
+            if e is None:
+                return default_engine()
+            else:
+                return e
 
-        if e == "latex":
-            _Latex_prefs._option["engine"] = "latex"
-        elif e == "pdflatex":
-            _Latex_prefs._option["engine"] = "pdflatex"
-        elif e == "xelatex":
-            _Latex_prefs._option["engine"] = e
-        elif e == "lualatex":
-            _Latex_prefs._option["engine"] = e
-        else:
+        if e not in ["latex", "pdflatex", "xelatex", "luatex"]:
             raise ValueError("%s is not a supported LaTeX engine. Use latex, pdflatex, xelatex, or lualatex" % e)
+
+        _Latex_prefs._option["engine"] = e
 
 
 # Note: latex used to be a separate function, which by default was
@@ -1841,6 +1845,9 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     s = _latex_file_(objects, title=title, sep=sep, tiny=tiny, debug=debug, **latex_options)
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = default_engine()
+
     if viewer == "pdf" and engine == "latex":
         engine = "pdflatex"
     # command line or notebook with viewer
@@ -1942,6 +1949,9 @@ def pdf(x, filename, tiny=False, tightpage=True, margin=None, engine=None, debug
     s = _latex_file_([x], title='', tiny=tiny, debug=debug, **latex_options)
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = default_engine()
+
     # path name for permanent pdf output
     abs_path_to_pdf = os.path.abspath(filename)
     # temporary directory to store stuff
@@ -2002,6 +2012,9 @@ def png(x, filename, density=150, debug=False,
                      extra_preamble='\\textheight=2\\textheight')
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = default_engine()
+
     # path name for permanent png output
     abs_path_to_png = os.path.abspath(filename)
     # temporary directory to store stuff
