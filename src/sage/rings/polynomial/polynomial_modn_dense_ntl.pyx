@@ -608,10 +608,10 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, small_roots_algorithm="par
         sage: qbar = q + ZZ.random_element(0, 2^hidden - 1)
         sage: f = x - qbar
         sage: set_verbose(0)
-        sage: f.small_roots(X=2^hidden-1, beta=0.5, small_roots_algorithm="sage")  # time random
+        sage: f.small_roots(X=2^hidden-1, beta=0.5, small_roots_algorithm="sage")
         []
-        sage: f.small_roots(X=2^hidden-1, beta=0.5, small_roots_algorithm="pari")  # time random
-        [1203913112977791332288506012179577388]
+        sage: f.small_roots(X=2^hidden-1, beta=0.5, small_roots_algorithm="pari")
+        [895263106762898748967421612807738115]
         sage: qbar - q == _[0]
         True
 
