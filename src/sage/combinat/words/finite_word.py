@@ -3030,7 +3030,7 @@ class FiniteWord_class(Word_class):
             # Compute g_w
             alreadyFoundLetterPairs = set()
             for letter in self.letters():
-                if not((letter, f(letter)[0]) in alreadyFoundLetterPairs):
+                if (letter, f(letter)[0]) not in alreadyFoundLetterPairs:
                     alreadyFoundLetterPairs.add((letter, f(letter)[0]))
                     alreadyFoundLetterPairs.add((f(letter)[0], letter))
                     if letter != f(letter)[0]:
@@ -3283,7 +3283,7 @@ class FiniteWord_class(Word_class):
                             curLeftLetter, curRightLetter = specialLetter, specialLetter
                             if equivalenceLeftLetter != specialLetter:
                                 curLeftLetter, curRightLetter = morphism(equivalenceLeftLetter)[0], morphism(equivalenceRightLetter)[0]
-                            if not((gNode[2][i], curLeftLetter, curRightLetter) in nextDictsIdentifiers):
+                            if (gNode[2][i], curLeftLetter, curRightLetter) not in nextDictsIdentifiers:
                                 nextDictsIdentifiers[(gNode[2][i], curLeftLetter, curRightLetter)] = curMaxDictIndex
                                 curMaxDictIndex += 1
                                 nextDicts.append(dict())
@@ -3338,7 +3338,7 @@ class FiniteWord_class(Word_class):
         g_G = 0
         alreadyFoundLetters = set()
         for letter in self.letters():
-            if not(letter in alreadyFoundLetters):
+            if letter not in alreadyFoundLetters:
                 letterContributes = True
                 alreadyFoundLetters.add(letter)
                 for antimorphism in antimorphismsG:
@@ -4092,7 +4092,7 @@ class FiniteWord_class(Word_class):
 
         a tree -- tree graph, which contains data about
         palindromic factors of ``wordWithSpecialLetter``.
-        
+
         EXAMPLES::
 
             sage: Word()._build_palindromes_tree([[[0, 0, 1, []]], [[1, 0, 1, []]],
@@ -4120,7 +4120,7 @@ class FiniteWord_class(Word_class):
             [[{'0': 1}, None, 0, False], [{'a': 2}, 1, 0, True], [{}, 1, 2, False]]
             sage: Word()._build_palindromes_tree([[[1, 0, 1, []]]], 'a0a', '0')
             [[{'0': 1}, None, 0, False], [{}, 1, 0, True]]
-            sage: Word()._build_palindromes_tree([[[1, 0, 2, []]], 
+            sage: Word()._build_palindromes_tree([[[1, 0, 2, []]],
             ....: [[3, 0, 1, [1]], [7, 1, 4, []]], [[5, 0, 3, []]]], 'a0b0b0a0b0a', '0')
             [[{'0': 1}, None, 0, False],
              [{'a': 2, 'b': 5}, 1, 0, True],
@@ -4170,8 +4170,7 @@ class FiniteWord_class(Word_class):
                             nextPalindromeIndex = currentPalindrome[0][leftLetter]
                             currentPalindrome = palindromesTree[nextPalindromeIndex]
                             palindromeIndexes.append(nextPalindromeIndex)
-                            if centerIndex < currentPalindrome[1]:
-                                currentPalindrome[1] = centerIndex
+                            currentPalindrome[1] = min(currentPalindrome[1], centerIndex)
                         else:
                             nextPalindromeIndex = len(palindromesTree)
                             currentPalindrome[0][leftLetter] = nextPalindromeIndex
