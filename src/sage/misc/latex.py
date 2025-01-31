@@ -519,6 +519,7 @@ class _Latex_prefs_object(SageObject):
         self.__option["matrix_column_alignment"] = matrix_column_alignment
         self.__option["macros"] = ""
         self.__option["preamble"] = ""
+        self.__option["engine"] = None
 
     @lazy_attribute
     def _option(self):
@@ -528,16 +529,16 @@ class _Latex_prefs_object(SageObject):
         EXAMPLES::
 
             sage: from sage.misc.latex import _Latex_prefs_object
-            sage: _Latex_prefs_object()._option  # random
-            {'blackboard_bold': False,
-             'matrix_delimiters': ['(', ')'],
-             'vector_delimiters': ['(', ')'],
-             'matrix_column_alignment': 'r',
-             'macros': '',
-             'preamble': '',
-             'engine': 'lualatex'}
+            sage: sorted(_Latex_prefs_object()._option.items())
+            [('blackboard_bold', False),
+             ('engine', None),
+             ('macros', ''),
+             ('matrix_column_alignment', 'r'),
+             ('matrix_delimiters', ['(', ')']),
+             ('preamble', ''),
+             ('vector_delimiters', ['(', ')'])]
+
         """
-        self.__option["engine"] = default_engine()
         return self.__option
 
 
