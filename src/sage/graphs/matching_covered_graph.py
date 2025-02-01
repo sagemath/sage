@@ -3098,16 +3098,15 @@ class MatchingCoveredGraph(Graph):
         spqr_tree = self.spqr_tree()
         two_vertex_cut = []
 
-        # Check for 2-vertex cuts in P and S nodes
+        # Check for 2-vertex cuts in a P node
+        # Since the graph is matching covered, it is free of cut vertices
+        # It can be shown using counting arguments that the spqr tree
+        # decomposition for a bicritical graph, that is 2-connected but not
+        # 3-connected, is free of 'S' nodes
         for u in spqr_tree:
             if u[0] == 'P':
                 two_vertex_cut.extend(u[1])
                 break
-
-            elif u[0] == 'S' and u[1].order() > 3:
-                s_vertex_set = set(u[1])
-                s_vertex_set -= {next(u[1].vertex_iterator())} | set(u[1].neighbors(next(u[1].vertex_iterator())))
-                two_vertex_cut.extend([next(u[1].vertex_iterator()), next(iter(s_vertex_set))])
 
         # If no 2-vertex cut found, look for R nodes
         if not two_vertex_cut:
@@ -3117,6 +3116,9 @@ class MatchingCoveredGraph(Graph):
             for t, g in spqr_tree:
                 if t == 'R':
                     R_frequency.update(g)
+
+            # R frequency must be at least 2,
+            # since the graph is 2-connected but not 3-connected
             two_vertex_cut = [u for u, f in R_frequency.items() if f >= 2][:2]
 
         # We obtain a 2-vertex cut (u, v)
