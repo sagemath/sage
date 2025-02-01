@@ -171,7 +171,7 @@ def load_submodules(module=None, exclude_pattern=None):
         load sage.geometry.polyhedron.ppl_lattice_polygon... succeeded
     """
     from .package_dir import walk_packages
-    import importlib.util
+    import importlib
 
     if module is None:
         import sage
@@ -195,12 +195,8 @@ def load_submodules(module=None, exclude_pattern=None):
         try:
             sys.stdout.write("load %s..." % module_name)
             sys.stdout.flush()
-            # see
-            # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
-            spec = importer.find_spec(module_name)
-            module = importlib.util.module_from_spec(spec)
-            sys.modules[module_name] = module
-            spec.loader.exec_module(module)
+            module = importlib.import_module(module_name)
+            assert sys.modules[module_name] is module
             sys.stdout.write(" succeeded\n")
         except (ValueError, AttributeError, TypeError, ImportError):
             # we might get error because of cython code that has been
