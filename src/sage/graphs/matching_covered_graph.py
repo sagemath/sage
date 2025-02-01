@@ -2641,6 +2641,15 @@ class MatchingCoveredGraph(Graph):
             sage: cut_identifier == {a for u, v, *_ in nontrivial_tight_cut for a in [u, v] \
             ....: if a not in nontrivial_odd_component}
             True
+            sage: H = graphs.CompleteBipartiteGraph(3, 3)
+            sage: H.delete_edge(0, 3)
+            sage: G = MatchingCoveredGraph(G)
+            sage: G.is_brace(coNP_certificate=True)
+            (False,
+             [(1, 2, None), (1, 4, None), (3, 4, None)],
+             {0, 1, 3},
+             'nontrivial barrier cut',
+             {2, 4})
 
         If the input matching covered graph is nonbipartite, a
         :exc:`ValueError` is thrown::
