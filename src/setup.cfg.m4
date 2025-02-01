@@ -57,8 +57,6 @@ scripts =
     bin/sage-runtests
     bin/sage-fixdoctests
     bin/sage-coverage
-    # The following is deprecated but might still be used in user package install scripts
-    bin/sage-cython
     # Helper scripts invoked by sage script
     # (they would actually belong to something like libexec)
     bin/sage-cachegrind
