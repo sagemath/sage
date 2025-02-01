@@ -19,7 +19,7 @@ Hecke operators
 from sage.structure.element import AlgebraElement
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.categories.homset import End
-import sage.arith.all as arith
+import sage.arith.misc as arith
 from sage.rings.integer import Integer
 
 from . import algebra

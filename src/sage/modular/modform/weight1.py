@@ -17,7 +17,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.misc.verbose import verbose
 from sage.structure.sequence import Sequence
-from sage.modular.arithgroup.all import Gamma0, GammaH
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor as GammaH
 from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
 
 

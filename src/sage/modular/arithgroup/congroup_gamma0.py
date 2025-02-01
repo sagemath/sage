@@ -30,7 +30,7 @@ def is_Gamma0(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import is_Gamma0
+        sage: from sage.modular.arithgroup.congroup_gamma0 import is_Gamma0
         sage: is_Gamma0(SL2Z)
         doctest:warning...
         DeprecationWarning: The function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead.

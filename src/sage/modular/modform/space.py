@@ -1433,9 +1433,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             raise NotImplementedError
         if self.__sturm_bound is None:
             G = self.group()
-            from sage.modular.arithgroup.all import Gamma1_class
+            from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
             if isinstance(G, Gamma1_class) and self.character() is not None:
-                from sage.modular.arithgroup.all import Gamma0
+                from sage.modular.arithgroup.congroup_gamma0 import (
+                    Gamma0_constructor as Gamma0,
+                )
                 G = Gamma0(self.level())
             # the +1 below is because O(q^prec) has precision prec.
             self.__sturm_bound = G.sturm_bound(self.weight())+1

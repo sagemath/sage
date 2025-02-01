@@ -19,7 +19,7 @@ import operator
 from sage.arith.misc import crt
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method, cached_function
-from sage.modular.arithgroup.all import GammaH
+from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor as GammaH
 from sage.modular.modform.constructor import ModularForms
 from sage.modular.modform.element import Newform
 from sage.modular.modsym.modsym import ModularSymbols

@@ -18,7 +18,7 @@ from sage.matrix.constructor import matrix
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import randint
-from sage.modular.arithgroup.all import Gamma0
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
 from sage.modular.modsym.all import ModularSymbols
 from sage.modules.free_module_element import free_module_element as vector
 from sage.rings.complex_double import CDF

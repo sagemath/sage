@@ -50,7 +50,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import Gamma0
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
 from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor
 from sage.modular.dirichlet import DirichletGroup
 from sage.quadratic_forms.quadratic_form import QuadraticForm

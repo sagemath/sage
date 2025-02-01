@@ -769,7 +769,7 @@ class Cusp(Element):
             sage: G.dimension_cusp_forms(2)
             0
         """
-        from sage.modular.arithgroup.all import GammaH_class
+        from sage.modular.arithgroup.congroup_gammaH import GammaH_class
         if not isinstance(other, Cusp):
             other = Cusp(other)
         if not isinstance(G, GammaH_class):

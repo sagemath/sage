@@ -47,8 +47,10 @@ REFERENCES:
 
 from sage.arith.misc import factor, is_prime, valuation
 from sage.misc.misc_c import prod
-from sage.modular.arithgroup.all import (Gamma0, Gamma1, ArithmeticSubgroup,
-                                         GammaH_class)
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor as Gamma1
+from sage.modular.arithgroup.congroup_gammaH import GammaH_class
+from sage.modular.arithgroup.congroup_generic import ArithmeticSubgroup
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
