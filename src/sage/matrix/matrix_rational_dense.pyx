@@ -2930,6 +2930,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [ 1/28 -1/40 -1/18]
             [ 1/28 -1/40  1/18]
             [-1/14 -1/40     0]
+            sage: L, U = A.BKZ(transformation=True)
+            sage: U * A == L
+            True
 
             sage: A = random_matrix(QQ, 10, 10)
             sage: d = lcm(a.denom() for a in A.list())
@@ -2937,6 +2940,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
             True
         """
         A, d = self._clear_denom()
+        if kwargs.get('transformation', False):
+            L, U = A.BKZ(*args, **kwargs)
+            return L / d, U
         return A.BKZ(*args, **kwargs) / d
 
     def LLL(self, *args, **kwargs):
