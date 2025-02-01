@@ -847,8 +847,8 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
                 for i in range(1, k):
                     max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
                 ranges = [range(1, p) for p in max_powers]
-                ranges[0] = range(1, max_powers[0] + 1)
-                for combination in product(*(r for r in ranges)):
+                ranges[0] = range(1, max_powers[0])
+                for combination in product(*(ran for ran in ranges)):
                     # generating combinations for all powers up to max_powers
                     expression = R.one()
                     for val, c in zip(subset, combination):
