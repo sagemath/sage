@@ -248,7 +248,7 @@ def init_sage(controller: DocTestController | None = None) -> None:
 
     try:
         import sympy
-    except ImportError:
+    except (ImportError, AttributeError):
         # Do not require sympy for running doctests (Issue #25106).
         pass
     else:
