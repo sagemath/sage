@@ -3688,7 +3688,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: e.type()
             't_VEC'
             sage: e.disc()
-            37.0000000000000
+            37.00000000000000000
 
         Over a finite field::
 
@@ -3715,16 +3715,13 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: K.<a> = QuadraticField(2)                                             # needs sage.libs.pari sage.rings.number_field
             sage: E = EllipticCurve([1,a])                                              # needs sage.libs.pari sage.rings.number_field
             sage: E.pari_curve()                                                        # needs sage.libs.pari sage.rings.number_field
-            [0, 0, 0, Mod(1, y^2 - 2),
-             Mod(y, y^2 - 2), 0, Mod(2, y^2 - 2), Mod(4*y, y^2 - 2),
-             Mod(-1, y^2 - 2), Mod(-48, y^2 - 2), Mod(-864*y, y^2 - 2),
-             Mod(-928, y^2 - 2), Mod(3456/29, y^2 - 2),
-             Vecsmall([5]),
-             [[y^2 - 2, [2, 0], 8, 1, [[1, -1.41421356237310; 1, 1.41421356237310],
-             [1, -1.41421356237310; 1, 1.41421356237310],
-             [16, -23; 16, 23], [2, 0; 0, 4], [4, 0; 0, 2], [2, 0; 0, 1],
-             [2, [0, 2; 1, 0]], [2]], [-1.41421356237310, 1.41421356237310],
-             [1, y], [1, 0; 0, 1], [1, 0, 0, 2; 0, 1, 1, 0]]], [0, 0, 0, 0, 0]]
+            [0, 0, 0, Mod(1, y^2 - 2), Mod(y, y^2 - 2), 0, Mod(2, y^2 - 2), Mod(4*y, y^2 - 2),
+            Mod(-1, y^2 - 2), Mod(-48, y^2 - 2), Mod(-864*y, y^2 - 2), Mod(-928, y^2 - 2),
+            Mod(3456/29, y^2 - 2), Vecsmall([5]), [[y^2 - 2, [2, 0], 8, 1, [[1,
+            -1.414213562373095049; 1, 1.414213562373095049], [1, -1.414213562373095049; 1,
+            1.414213562373095049], [16, -23; 16, 23], [2, 0; 0, 4], [4, 0; 0, 2], [2, 0; 0, 1], [2,
+            [0, 2; 1, 0]], [2]], [-1.414213562373095049, 1.414213562373095049], [1, y], [1, 0; 0,
+            1], [1, 0, 0, 2; 0, 1, 1, 0]]], [0, 0, 0, 0, 0]]
 
         PARI no longer requires that the `j`-invariant has negative `p`-adic valuation::
 
