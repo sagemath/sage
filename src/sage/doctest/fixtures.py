@@ -50,6 +50,12 @@ def reproducible_repr(val):
     r"""
     String representation of an object in a reproducible way.
 
+    .. NOTE::
+
+        This function is mostly superseded by the automatic sorting
+        of dictionary keys by a displayhook. See
+        :func:`sage.doctest.forker.init_sage`.
+
     This tries to ensure that the returned string does not depend on
     factors outside the control of the doctest.
     One example is the order of elements in a hash-based structure.

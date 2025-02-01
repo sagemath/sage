@@ -1552,11 +1552,10 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         Without argument, a single arbitrary solution is returned::
 
             sage: # needs sage.rings.polynomial.pbori
-            sage: from sage.doctest.fixtures import reproducible_repr
             sage: R.<x,y,z> = BooleanPolynomialRing()
             sage: S = Sequence([x*y + z, y*z + x, x + y + z + 1])
             sage: sol = S.solve()
-            sage: print(reproducible_repr(sol))
+            sage: sol
             [{x: 0, y: 1, z: 0}]
 
         We check that it is actually a solution::
@@ -1567,7 +1566,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         We obtain all solutions::
 
             sage: sols = S.solve(n=Infinity)                                            # needs sage.rings.polynomial.pbori
-            sage: print(reproducible_repr(sols))                                        # needs sage.rings.polynomial.pbori
+            sage: sols                                                                  # needs sage.rings.polynomial.pbori
             [{x: 0, y: 1, z: 0}, {x: 1, y: 1, z: 1}]
             sage: [S.subs(x) for x in sols]                                             # needs sage.rings.polynomial.pbori
             [[0, 0, 0], [0, 0, 0]]
@@ -1576,7 +1575,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         package ``FES`` is present::
 
             sage: sol = S.solve(algorithm='exhaustive_search')  # optional - fes        # needs sage.rings.polynomial.pbori
-            sage: print(reproducible_repr(sol))                 # optional - fes        # needs sage.rings.polynomial.pbori
+            sage: sol                                           # optional - fes        # needs sage.rings.polynomial.pbori
             [{x: 1, y: 1, z: 1}]
             sage: S.subs(sol[0])                                # optional - fes        # needs sage.rings.polynomial.pbori
             [0, 0, 0]
@@ -1584,7 +1583,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         And we may use SAT-solvers if they are available::
 
             sage: sol = S.solve(algorithm='sat')        # optional - pycryptosat        # needs sage.rings.polynomial.pbori
-            sage: print(reproducible_repr(sol))         # optional - pycryptosat        # needs sage.rings.polynomial.pbori
+            sage: sol                                   # optional - pycryptosat        # needs sage.rings.polynomial.pbori
             [{x: 0, y: 1, z: 0}]
             sage: S.subs(sol[0])                                                        # needs sage.rings.polynomial.pbori
             [0, 0, 0]

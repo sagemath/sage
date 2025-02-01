@@ -5500,8 +5500,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
              of Multivariate Polynomial Ring in x0, x1, x2, x3, x4, y0, y1, y2, y3, y4,
              z0, z1, z2, z3, z4 over Finite Field of size 3
             sage: J += sage.rings.ideal.FieldIdeal(J.ring())  # ensure radical ideal
-            sage: from sage.doctest.fixtures import reproducible_repr
-            sage: print(reproducible_repr(J.variety()))
+            sage: J.variety()
             [{x0: 1, x1: 0, x2: 0, x3: 0, x4: 0,
               y0: 0, y1: 0, y2: 0, y3: 0, y4: 0,
               z0: 0, z1: 0, z2: 0, z3: 0, z4: 0}]

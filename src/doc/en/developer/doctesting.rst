@@ -1479,6 +1479,19 @@ to save any changes made in the file.
 After running the doctest fixer, it is a good idea to use ``git diff`` to check
 all edits that the automated tool made.
 
+Note that in some cases the output in doctest may be slightly different from
+the output in the actual Sage command-line (see :func:`sage.doctest.forker.init_sage`)::
+
+    sage: set_random_seed(1)
+    sage: randint(1, 100)
+    41                          # actual
+    83                          # in doctest
+    sage: {3: 4, 1: 2}
+    {3: 4, 1: 2}                # actual
+    {1: 2, 3: 4}                # in doctest
+
+.. this whole file is marked nodoctest, so the example above is not tested
+
 An alternative to this workflow is to use the option ``--keep-both``. When expected and
 actual output of an example differ, it duplicates the example, marking the two copies
 ``# optional - EXPECTED`` and ``# optional - GOT``. (Thus, when re-running the doctester,
