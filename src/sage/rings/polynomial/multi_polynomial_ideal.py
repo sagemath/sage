@@ -5501,9 +5501,21 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
              z0, z1, z2, z3, z4 over Finite Field of size 3
             sage: J += sage.rings.ideal.FieldIdeal(J.ring())  # ensure radical ideal
             sage: J.variety()
-            [{x0: 1, x1: 0, x2: 0, x3: 0, x4: 0,
-              y0: 0, y1: 0, y2: 0, y3: 0, y4: 0,
-              z0: 0, z1: 0, z2: 0, z3: 0, z4: 0}]
+            [{z4: 0,
+              z3: 0,
+              z2: 0,
+              z1: 0,
+              z0: 0,
+              y4: 0,
+              y3: 0,
+              y2: 0,
+              y1: 0,
+              y0: 0,
+              x4: 0,
+              x3: 0,
+              x2: 0,
+              x1: 0,
+              x0: 1}]
 
 
         Weil restrictions are often used to study elliptic curves over

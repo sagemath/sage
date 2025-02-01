@@ -31,7 +31,7 @@ We can construct a polynomial sequence for a random plaintext-ciphertext
 pair and study it::
 
     sage: set_random_seed(1)
-    sage: while True:  # workaround (see :issue:`31891`)                                 # needs sage.rings.polynomial.pbori
+    sage: while True:  # workaround (see :issue:`31891`)                                # needs sage.rings.polynomial.pbori
     ....:     try:
     ....:         F, s = sr.polynomial_system()
     ....:         break
@@ -122,7 +122,7 @@ Using these building blocks we can implement a simple XL algorithm
 easily::
 
     sage: sr = mq.SR(1,1,1,4, gf2=True, polybori=True, order='lex')                     # needs sage.rings.polynomial.pbori
-    sage: while True:  # workaround (see :issue:`31891`)                                 # needs sage.rings.polynomial.pbori
+    sage: while True:  # workaround (see :issue:`31891`)                                # needs sage.rings.polynomial.pbori
     ....:     try:
     ....:         F, s = sr.polynomial_system()
     ....:         break
@@ -1556,7 +1556,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             sage: S = Sequence([x*y + z, y*z + x, x + y + z + 1])
             sage: sol = S.solve()
             sage: sol
-            [{x: 0, y: 1, z: 0}]
+            [{z: 0, y: 1, x: 0}]
 
         We check that it is actually a solution::
 
@@ -1567,7 +1567,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
             sage: sols = S.solve(n=Infinity)                                            # needs sage.rings.polynomial.pbori
             sage: sols                                                                  # needs sage.rings.polynomial.pbori
-            [{x: 0, y: 1, z: 0}, {x: 1, y: 1, z: 1}]
+            [{z: 0, y: 1, x: 0}, {z: 1, y: 1, x: 1}]
             sage: [S.subs(x) for x in sols]                                             # needs sage.rings.polynomial.pbori
             [[0, 0, 0], [0, 0, 0]]
 

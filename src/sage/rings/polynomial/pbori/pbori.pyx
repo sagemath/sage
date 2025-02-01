@@ -5034,7 +5034,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             sage: R.<x,y,z> = BooleanPolynomialRing()
             sage: I = ideal( [ x*y*z + x*z + y + 1, x+y+z+1 ] )
             sage: I.variety()
-            [{x: 0, y: 1, z: 0}, {x: 1, y: 1, z: 1}]
+            [{z: 0, y: 1, x: 0}, {z: 1, y: 1, x: 1}]
 
         TESTS:
 
@@ -5052,13 +5052,15 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             ....:     x1*x2 + x1*x6 + x2*x4 + x2*x5 + x2*x6 + x3*x6 + x4*x6 + x5*x6 + x5]
             sage: I = R.ideal( polys )
             sage: I.variety()
-             [{x1: 0, x2: 0, x3: 0, x4: 0, x5: 0, x6: 0}, {x1: 1, x2: 1, x3: 1, x4: 0, x5: 0, x6: 1}]
+             [{x6: 0, x5: 0, x4: 0, x3: 0, x2: 0, x1: 0},
+              {x6: 1, x5: 0, x4: 0, x3: 1, x2: 1, x1: 1}]
 
             sage: R = PolynomialRing(GF(2), 6, ['x%d'%(i+1) for i in range(6)], order='lex')
             sage: I = R.ideal( polys )
             sage: v = (I + sage.rings.ideal.FieldIdeal(R)).variety()
             sage: v
-            [{x1: 0, x2: 0, x3: 0, x4: 0, x5: 0, x6: 0}, {x1: 1, x2: 1, x3: 1, x4: 0, x5: 0, x6: 1}]
+            [{x6: 0, x5: 0, x4: 0, x3: 0, x2: 0, x1: 0},
+             {x6: 1, x5: 0, x4: 0, x3: 1, x2: 1, x1: 1}]
 
 
         Check that :issue:`13976` is fixed::
