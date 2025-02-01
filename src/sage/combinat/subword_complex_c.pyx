@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.modules
 r"""
-Subword complex
+Subword complex: auxiliary Cython functions
 """
 
 cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
