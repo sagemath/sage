@@ -1,8 +1,12 @@
 #!/bin/bash
 
-# This script traverses files in .py and .pyx in directories under
-# src/<directory> of the Sage library and store the module names sorted by
-# their titles and subdirectories.
+# This script traverses files with .py and .pyx suffixes in src/<directory>
+# tree of the Sage library and store the module names sorted by their path
+# and titles.
+#
+# EXAMPLE:
+#
+# $ src/doc/en/reference/make_module_list.sh sage/combinat
 
 if [ $# -ne 1 ]; then
   echo "Usage: $0 <directory>"

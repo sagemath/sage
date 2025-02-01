@@ -1,7 +1,8 @@
-Comprehensive Module List
+Comprehensive module list
 =========================
 
-``sage.combinat``:
+``sage.combinat``
+-----------------
 
 .. toctree::
     :maxdepth: 1
@@ -143,7 +144,8 @@ Comprehensive Module List
     sage/combinat/q_analogues
     sage/combinat/sine_gordon
 
-``sage.combinat.chas``:
+``sage.combinat.chas``
+----------------------
 
 .. toctree::
     :maxdepth: 1
@@ -152,7 +154,8 @@ Comprehensive Module List
     sage/combinat/chas/fsym
     sage/combinat/chas/wqsym
 
-``sage.combinat.cluster_algebra_quiver``:
+``sage.combinat.cluster_algebra_quiver``
+----------------------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -165,7 +168,8 @@ Comprehensive Module List
     sage/combinat/cluster_algebra_quiver/quiver_mutation_type
     sage/combinat/cluster_algebra_quiver/mutation_class
 
-``sage.combinat.crystals``:
+``sage.combinat.crystals``
+--------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -207,7 +211,8 @@ Comprehensive Module List
     sage/combinat/crystals/pbw_crystal
     sage/combinat/crystals/infinity_crystals
 
-``sage.combinat.designs``:
+``sage.combinat.designs``
+-------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -237,7 +242,8 @@ Comprehensive Module List
     sage/combinat/designs/steiner_quadruple_systems
     sage/combinat/designs/twographs
 
-``sage.combinat.integer_lists``:
+``sage.combinat.integer_lists``
+-------------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -247,7 +253,8 @@ Comprehensive Module List
     sage/combinat/integer_lists/lists
     sage/combinat/integer_lists/nn
 
-``sage.combinat.matrices``:
+``sage.combinat.matrices``
+--------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -258,7 +265,8 @@ Comprehensive Module List
     sage/combinat/matrices/hadamard_matrix
     sage/combinat/matrices/latin
 
-``sage.combinat.ncsf_qsym``:
+``sage.combinat.ncsf_qsym``
+---------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -270,7 +278,8 @@ Comprehensive Module List
     sage/combinat/ncsf_qsym/all
     sage/combinat/ncsf_qsym/qsym
 
-``sage.combinat.ncsym``:
+``sage.combinat.ncsym``
+-----------------------
 
 .. toctree::
     :maxdepth: 1
@@ -280,7 +289,8 @@ Comprehensive Module List
     sage/combinat/ncsym/all
     sage/combinat/ncsym/ncsym
 
-``sage.combinat.path_tableaux``:
+``sage.combinat.path_tableaux``
+-------------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -292,7 +302,8 @@ Comprehensive Module List
     sage/combinat/path_tableaux/path_tableau
     sage/combinat/path_tableaux/semistandard
 
-``sage.combinat.posets``:
+``sage.combinat.posets``
+------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -314,7 +325,8 @@ Comprehensive Module List
     sage/combinat/posets/hasse_cython
     sage/combinat/posets/hasse_cython_flint
 
-``sage.combinat.rigged_configurations``:
+``sage.combinat.rigged_configurations``
+---------------------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -343,7 +355,8 @@ Comprehensive Module List
     sage/combinat/rigged_configurations/tensor_product_kr_tableaux
     sage/combinat/rigged_configurations/tensor_product_kr_tableaux_element
 
-``sage.combinat.root_system``:
+``sage.combinat.root_system``
+-----------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -406,7 +419,8 @@ Comprehensive Module List
     sage/combinat/root_system/weyl_characters
     sage/combinat/root_system/weyl_group
 
-``sage.combinat.sf``:
+``sage.combinat.sf``
+--------------------
 
 .. toctree::
     :maxdepth: 1
@@ -437,7 +451,8 @@ Comprehensive Module List
     sage/combinat/sf/witt
     sage/combinat/sf/new_kschur
 
-``sage.combinat.species``:
+``sage.combinat.species``
+-------------------------
 
 .. toctree::
     :maxdepth: 1
@@ -462,7 +477,8 @@ Comprehensive Module List
     sage/combinat/species/subset_species
     sage/combinat/species/sum_species
 
-``sage.combinat.words``:
+``sage.combinat.words``
+-----------------------
 
 .. toctree::
     :maxdepth: 1
@@ -487,6 +503,7 @@ Comprehensive Module List
     sage/combinat/words/paths
 
 See also
+--------
 
 .. toctree::
     :maxdepth: 1
