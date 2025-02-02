@@ -22,6 +22,7 @@ from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from sage.combinat.posets.posets import Poset
 from itertools import product, combinations
 
+
 class ChowRingIdeal(MPolynomialIdeal):
     def matroid(self):
         r"""
@@ -119,6 +120,7 @@ class ChowRingIdeal(MPolynomialIdeal):
         except ValueError:  # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(flats_groundset_el))
         return poly_ring
+
 
 class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
     r"""
@@ -360,6 +362,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
                     monomial_basis.append(expression)
         return PolynomialSequence(R, [monomial_basis])
 
+
 class ChowRingIdeal_nonaug_af(ChowRingIdeal):
     r"""
     The Chow ring ideal of a matroid `M` in atom-free presentation.
@@ -512,7 +515,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
         from sage.misc.latex import latex
         return '(I_{{{M}}} + J_{{{M}}} + K_{{{M}}}'.format(M=latex(self._matroid))
 
-    def groebner_basis(self, algorithm = '', *args, **kwargs):
+    def groebner_basis(self, algorithm='', *args, **kwargs):
         r"""
         Return a Groebner basis of ``self``.
 
@@ -552,7 +555,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
             gb.append(term ** ranks[F])
         return PolynomialSequence(poly_ring, [gb])
 
-    def normal_basis(self, algorithm = '', *args, **kwargs):
+    def normal_basis(self, algorithm='', *args, **kwargs):
         r"""
         Return the monomial basis of the quotient ring of this ideal.
 
@@ -594,6 +597,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
                             expression *= flats_gen[val] ** c
                         monomial_basis.append(expression)
         return PolynomialSequence(R, [monomial_basis])
+
 
 class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
     r"""
@@ -722,7 +726,7 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
         from sage.misc.latex import latex
         return '(I_{{{M}}} + J_{{{M}}}'.format(M=latex(self._matroid))
 
-    def groebner_basis(self, algorithm = '', *args, **kwargs):
+    def groebner_basis(self, algorithm='', *args, **kwargs):
         r"""
         Return a Groebner basis of ``self``.
 
@@ -769,8 +773,8 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
         for F in flats:
             gb.append(flats_gen[F] ** ranks[F])
         return PolynomialSequence(poly_ring, [gb])
-            
-    def normal_basis(self, algorithm = '', *args, **kwargs):
+
+    def normal_basis(self, algorithm='', *args, **kwargs):
         r"""
         Return the monomial basis of the quotient ring of this ideal.
 
