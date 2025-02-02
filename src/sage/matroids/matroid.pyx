@@ -8048,18 +8048,18 @@ cdef class Matroid(SageObject):
         - ``augmented`` -- boolean (default: ``False``); when ``True``, this
           is the augmented Chow ring and if ``False``, this is the
           non-augmented Chow ring
-        - ``presentation`` -- string; if ``augmented=True``, then this
-          must be one of the following (ignored if ``augmented=False``):
+        - ``presentation`` -- string; one of the following:
 
           * ``"fy"`` - the Feitchner-Yuzvinsky presentation
           * ``"atom-free"`` - the atom-free presentation
+          *``"simplicial"`` - the simplicial presentation
 
         EXAMPLES::
 
             sage: M = matroids.Wheel(2)
-            sage: A = M.chow_ring(R=ZZ, augmented=False); A
+            sage: A = M.chow_ring(R=ZZ, augmented=False, presentation='fy'); A
             Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements with
-            5 bases over Integer Ring
+            5 bases over Integer Ring in Feitchner-Yuzvinsky presentation
             sage: A.defining_ideal()._gens_constructor(A.defining_ideal().ring())
             [A0*A1, A0*A23, A1*A23, A0 + A0123, A1 + A0123, A23 + A0123]
             sage: A23 = A.gen(0)
@@ -8069,9 +8069,9 @@ cdef class Matroid(SageObject):
         We construct a more interesting example using the Fano matroid::
 
             sage: M = matroids.catalog.Fano()
-            sage: A = M.chow_ring(QQ); A
+            sage: A = M.chow_ring(QQ, False, 'fy'); A
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
-            over Rational Field
+            over Rational Field in Feitchner-Yuzvinsky presentation
 
         Next we get the non-trivial generators and do some computations::
 
