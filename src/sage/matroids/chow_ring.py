@@ -352,6 +352,27 @@ class ChowRing(QuotientRing_generic):
             new_el += hom_components1[i] * hom_components2[r - i]
         return new_el.degree()
 
+    def graded_character(self, G=None):
+        r"""
+        Return the graded character of ``self``.
+
+        EXAMPLES::
+
+            sage: ch = matroids.Z(3).chow_ring(QQ, False, 'simplicial')
+            sage: gchi = ch.graded_character(); gchi
+            (q^2 + 8*q + 1, q^2 + 8*q + 1, q^2 + 8*q + 1, q^2 + 8*q + 1,
+             q^2 + 8*q + 1, q^2 + 8*q + 1)
+        """
+        if G is None:
+            G = self._matroid.automorphism_group()
+        from sage.rings.rational_field import QQ
+        q = QQ['q'].gen()
+        B = self.basis()
+        from sage.modules.free_module_element import vector
+        return vector([sum(q**b.degree() * (g * b).lift().monomial_coefficient(b.lift()) for b in B)
+                       for g in G.conjugacy_classes_representatives()],
+                      immutable=True)
+
     class Element(QuotientRing_generic.Element):
         def to_vector(self, order=None):
             r"""
@@ -493,3 +514,37 @@ class ChowRing(QuotientRing_generic):
             if not f.is_homogeneous():
                 raise ValueError("element is not homogeneous")
             return f.degree()
+
+        def _acted_upon_(self, scalar, self_on_left=True):
+            r"""
+            Return the action of ``scalar`` on ``self``.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP22 = SGA.garsia_procesi_module([2, 2])
+                sage: x = SGA.an_element(); x
+                [1, 2, 3, 4] + 2*[1, 2, 4, 3] + [4, 1, 2, 3]
+                sage: v = GP22.an_element(); v
+                -gp1 - gp2 - gp3
+                sage: g = SGA.group().an_element(); g
+                [4, 1, 2, 3]
+                sage: g * v  # indirect doctest
+                gp3
+                sage: x * v  # indirect doctest
+                gp3
+                sage: 2 * v  # indirect doctest
+                gp1 + gp2 + gp3
+            """
+            P = self.parent()
+            if scalar in P.base_ring():
+                return super()._acted_upon_(scalar, self_on_left)
+            if scalar in P._matroid.automorphism_group():
+                gens = P.ambient().gens()
+                return P.retract(self.lift().subs({g: gens[scalar(i+1)-1] for i, g in enumerate(gens)}))
+            if not self_on_left and scalar in P._matroid.automorphism_group():
+                scalar = P._semigroup_algebra(scalar)
+                gens = P.ambient().gens()
+                return P.sum(c * P.retract(self.lift().subs({g: gens[sigma(i+1)-1] for i, g in enumerate(gens)}))
+                             for sigma, c in scalar.monomial_coefficients(copy=False).items())
+            return super()._acted_upon_(scalar, self_on_left)
