@@ -9235,6 +9235,60 @@ class Graph(GenericGraph):
         G.name("%sBipartite Double of %s" % (prefix, self.name()))
         return G
 
+    @doc_index("Graph properties")
+    def is_projective_planar(self, minor_map=False, **minor_kwargs):
+        r"""
+        Check whether this graph is projective planar.
+
+        Wraps :func:`get_p2_forbidden_minor
+        <sage.graphs.projective_plane_forbidden_minors.get_p2_forbidden_minor>`
+
+        INPUT:
+
+        - ``minor_map`` -- boolean (default: ``False``); if ``True``, returns
+          output as described in :meth:`~Graph.minor`
+
+        - ``minor_kwargs`` -- Optional keyword arguments to be passed to
+          :meth:`~Graph.minor`
+
+        OUTPUT:
+
+        If ``minor_map=False``, a boolean, whether this graph is projective
+        planar. If ``minor_map=True`` and it is not projective planar, the
+        output of :meth:`~Graph.minor`, ``None`` otherwise.
+
+        EXAMPLES:
+
+        #. The Peterson graph is a known projective planar graph::
+
+            sage: P = graphs.PetersenGraph()
+            sage: P.is_projective_planar()        # long
+            True
+
+        #. `K_{4,4}` has a projective plane crossing number of 2. One of the
+           minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
+           dictionary from :meth:`~Graph.minor`::
+
+            sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
+            sage: minor_map = K44.is_projective_planar(minor_map=True)
+            sage: minor_map
+            {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5], 6: [6], 7: [7]}
+
+        .. SEEALSO::
+
+            - :meth:`~Graph.minor`
+
+            - :func:`get_p2_forbidden_minor
+              <sage.graphs.projective_plane_forbidden_minors.get_p2_forbidden_minor>`
+              -- if you always want ``minor_map``
+        """
+        from sage.graphs.projective_plane_forbidden_minors import get_p2_forbidden_minor
+        p2_forbidden_minor = get_p2_forbidden_minor(self, **minor_kwargs)
+        if minor_map:
+            return p2_forbidden_minor
+        else:
+            return p2_forbidden_minor is None
+
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free
