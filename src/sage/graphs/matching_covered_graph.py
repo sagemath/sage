@@ -113,7 +113,6 @@ AUTHORS:
         ``is_removable_double_ear()`` | Check whether the pair of ears form a removable double ear.
         ``is_removable_doubleton()`` | Check whether the pair of edges constitute a removable doubleton.
         ``is_removable_ear()`` | Check whether the ear is removable.
-        ``is_removable_edge()`` | Check whether the edge is removable.
         ``optimal_ear_decomposition()`` | Return an optimal ear decomposition.
         ``removable_double_ears()`` | Return a list of removable double ears.
         ``removable_doubletons()`` | Return a list of removable doubletons.
@@ -2345,6 +2344,12 @@ class MatchingCoveredGraph(Graph):
 
         raise ValueError('algorithm must be set to \'Edmonds\', '
                          '\'LP_matching\' or \'LP\'')
+
+    def is_removable_edge(self, u, v=None, label=None):
+        r"""
+        Check whether the edge ``(u, v, 'label')`` is removable.
+        """
+        raise NotImplementedError()
 
     @doc_index('Overwritten methods')
     def loop_edges(self, labels=True):
