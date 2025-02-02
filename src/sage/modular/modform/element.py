@@ -550,7 +550,8 @@ class ModularForm_abstract(ModuleElement):
             self.__coefficients
         except AttributeError:
             self.__coefficients = {}
-        X = list(range(1, ZZ(X) + 1))
+        if isinstance(X, (int, Integer)):
+            X = list(range(1, ZZ(X) + 1))
         Y = [n for n in X if n not in self.__coefficients]
         v = self._compute(Y)
         for i in range(len(v)):
