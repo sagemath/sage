@@ -64,7 +64,10 @@ In contrast, input to the ``%time`` magic command is preparsed::
     sage: shell.quit()
 """
 
+import argparse
+
 from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
+from IPython.core.magic_arguments import argument, magic_arguments, parse_argstring
 from IPython.core.display import HTML
 from IPython.core.getipython import get_ipython
 
@@ -350,6 +353,16 @@ class SageMagics(Magics):
             except ValueError as err:
                 print(err)  # do not show traceback
 
+    @magic_arguments()
+    @argument("--verbose", "-v", type=int)
+    @argument("--compile-message", action=argparse.BooleanOptionalAction)
+    @argument("--use-cache", action=argparse.BooleanOptionalAction)
+    @argument("--create-local-c-file", action=argparse.BooleanOptionalAction)
+    @argument("--annotate", action=argparse.BooleanOptionalAction)
+    @argument("--view-annotate", choices=["none", "auto", "webbrowser", "displayhtml"],
+              nargs="?", const="auto", default="none")
+    @argument("--sage-namespace", action=argparse.BooleanOptionalAction)
+    @argument("--create-local-so-file", action=argparse.BooleanOptionalAction)
     @cell_magic
     def cython(self, line, cell):
         """
@@ -473,35 +486,10 @@ class SageMagics(Magics):
             ....: %%cython --a='
             ....: print(1)
             ....: ''')
-            ...
-            ValueError...Traceback (most recent call last)
-            ...
-            ValueError: No closing quotation
+            UsageError: argument --annotate/--no-annotate: ignored explicit argument "'"
         """
         from sage.misc.cython import cython_compile
-        import shlex
-        import argparse
-
-        class ExitCatchingArgumentParser(argparse.ArgumentParser):
-            def error(self, message):
-                # exit_on_error=False does not work completely in some Python versions
-                # see https://stackoverflow.com/q/67890157
-                # we raise UsageError to make the interface similar to what happens when e.g.
-                # IPython's ``%run`` gets unrecognized arguments
-                from IPython.core.error import UsageError
-                raise UsageError(message)
-
-        parser = ExitCatchingArgumentParser(prog="%%cython", add_help=False)
-        parser.add_argument("--verbose", "-v", type=int)
-        parser.add_argument("--compile-message", action=argparse.BooleanOptionalAction)
-        parser.add_argument("--use-cache", action=argparse.BooleanOptionalAction)
-        parser.add_argument("--create-local-c-file", action=argparse.BooleanOptionalAction)
-        parser.add_argument("--annotate", action=argparse.BooleanOptionalAction)
-        parser.add_argument("--view-annotate", choices=["none", "auto", "webbrowser", "displayhtml"],
-                            nargs="?", const="auto", default="none")
-        parser.add_argument("--sage-namespace", action=argparse.BooleanOptionalAction)
-        parser.add_argument("--create-local-so-file", action=argparse.BooleanOptionalAction)
-        args = parser.parse_args(shlex.split(line))
+        args = parse_argstring(self.cython, line)
         view_annotate = args.view_annotate
         del args.view_annotate
         if view_annotate == "auto":
