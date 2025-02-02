@@ -20,8 +20,7 @@ from sage.matroids.utilities import cmp_elements_key
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from sage.combinat.posets.posets import Poset
-from itertools import product
-
+from itertools import product, combinations
 
 class ChowRingIdeal(MPolynomialIdeal):
     def matroid(self):
@@ -30,7 +29,7 @@ class ChowRingIdeal(MPolynomialIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
+            sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False, 'simplicial')
             sage: ch.defining_ideal().matroid()
             U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
             {3: {{0, 1, 2, 3, 4, 5}}}
@@ -98,7 +97,23 @@ class ChowRingIdeal(MPolynomialIdeal):
         """
         return dict(self._flats_generator)
 
-    def poly_define(self, R, names, flats_groundset_el):
+    def _poly_define(self, R, names, flats_groundset_el):
+        r"""
+        Return the polynomial ring corresponding to the given Chow ring ideal.
+
+        EXAMPLES::
+
+            sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False, 'atom-free')
+            sage: flats = [X for i in range(1, ch.matroid().rank() + 1)
+            ....:                  for X in ch.matroid().flats(i)]
+            sage: from sage.matroids.utilities import cmp_elements_key
+            sage: names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
+            sage: ch.defining_ideal()._poly_define(ch.defining_ideal().ring(), names, flats)
+            Multivariate Polynomial Ring in Aa, Ab, Ac, Ad, Ae, Af, Ag, Aabf,
+            Aace, Aadg, Abcd, Abeg, Acfg, Ade, Adf, Aef, Aabcdefg over
+            Multivariate Polynomial Ring in Aabf, Aace, Aadg, Abcd, Abeg,
+            Acfg, Ade, Adf, Aef, Aabcdefg over Rational Field
+        """
         try:
             poly_ring = PolynomialRing(R, names, len(names))  # self.ring
         except ValueError:  # variables are not proper names
@@ -166,7 +181,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
         flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
-        poly_ring = self.poly_define(R, names, flats)
+        poly_ring = self._poly_define(R, names, flats)
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
@@ -239,7 +254,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
         EXAMPLES::
 
             sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
-            sage: ch = M1.chow_ring(QQ, False)
+            sage: ch = M1.chow_ring(QQ, False, 'fy')
             sage: ch.defining_ideal()._latex_()
             '(I_{\\text{\\texttt{Matroid{ }of{ }rank{ }2{ }on{ }4{ }elements{ }with{ }3{ }bases}}} + J_{\\text{\\texttt{Matroid{ }of{ }rank{ }2{ }on{ }4{ }elements{ }with{ }3{ }bases}}}'
         """
@@ -252,7 +267,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = Matroid(groundset='abc', bases=['ab', 'ac']).chow_ring(QQ, False)
+            sage: ch = Matroid(groundset='abc', bases=['ab', 'ac']).chow_ring(QQ, False, 'fy')
             sage: ch.defining_ideal().groebner_basis()
             [Aa*Abc, Aa + Aabc, Abc + Aabc, Aa*Aabc, Abc*Aabc, Aabc^2]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
@@ -263,7 +278,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
         Another example would be the Groebner basis of the Chow ring ideal of
         the matroid of the length 3 cycle graph::
 
-            sage: ch = Matroid(graphs.CycleGraph(3)).chow_ring(QQ, False)
+            sage: ch = Matroid(graphs.CycleGraph(3)).chow_ring(QQ, False, 'fy')
             sage: ch.defining_ideal().groebner_basis()
             [A0*A1, A0*A2, A1*A2, A0 + A3, A1 + A3, A2 + A3, A0*A3, A1*A3, A2*A3, A3^2]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
@@ -305,7 +320,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.Z(3).chow_ring(QQ, False)
+            sage: ch = matroids.Z(3).chow_ring(QQ, False, 'fy')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
             [1, Ax2x3y1, Ax1x3y2, Ax1x2y3, Ay1y2y3, Atx1y1, Atx2y2, Atx3y3, Atx1x2x3y1y2y3, Atx1x2x3y1y2y3^2]
@@ -390,7 +405,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
 
     Chow ring ideal of uniform matroid of rank 3 on 6 elements::
 
-        sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False, 'atom-free')
+        sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False, 'atom-free')
         sage: ch.defining_ideal()
         Chow ring ideal of NonFano: Ternary matroid of rank 3 on 7 elements,
         type 0- - non augmented in the atom-free presentation
@@ -408,7 +423,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
         flats = [X for i in range(2, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
-        poly_ring = self.poly_define(R, names, flats)
+        poly_ring = self._poly_define(R, names, flats)
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
@@ -419,39 +434,26 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False, 'atom-free')
+            sage: ch = matroids.Wheel(3).chow_ring(QQ, False, 'atom-free')
             sage: sorted(ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring()))
-            [0, Adef*Aabcdefg, Adef*Aabcdefg, Adef*Aabcdefg, 4*Adef*Aabcdefg,
-             Acfg*Aabcdefg, Acfg*Aabcdefg, Acfg*Aabcdefg, 4*Acfg*Aabcdefg,
-             Abeg*Aabcdefg, Abeg*Aabcdefg, Abeg*Aabcdefg, 4*Abeg*Aabcdefg,
-             Abcd*Aabcdefg, Abcd*Aabcdefg, Abcd*Aabcdefg, 4*Abcd*Aabcdefg,
-             Aadg*Aabcdefg, Aadg*Aabcdefg, Aadg*Aabcdefg,
-             Aadg*Aabcdefg + Abeg*Aabcdefg + Acfg*Aabcdefg,
-             Aadg*Aabcdefg + Abcd*Aabcdefg + Adef*Aabcdefg,
-             4*Aadg*Aabcdefg, Aace*Aabcdefg, Aace*Aabcdefg, Aace*Aabcdefg,
-             Aace*Aabcdefg + Abeg*Aabcdefg + Adef*Aabcdefg,
-             Aace*Aabcdefg + Abcd*Aabcdefg + Acfg*Aabcdefg,
-             4*Aace*Aabcdefg, Aabf*Aabcdefg, Aabf*Aabcdefg, Aabf*Aabcdefg,
-             Aabf*Aabcdefg + Acfg*Aabcdefg + Adef*Aabcdefg,
-             Aabf*Aabcdefg + Abcd*Aabcdefg + Abeg*Aabcdefg,
-             Aabf*Aabcdefg + Aace*Aabcdefg + Aadg*Aabcdefg, 4*Aabf*Aabcdefg,
-             Adef^2 + Aabcdefg^2, Adef^2 + Aabcdefg^2, Adef^2 + Aabcdefg^2,
-             Acfg*Adef, Abeg*Adef, Abcd*Adef, Aadg*Adef, Aace*Adef, Aabf*Adef,
-             Acfg^2 + Aabcdefg^2, Acfg^2 + Aabcdefg^2, Acfg^2 + Aabcdefg^2,
-             Abeg*Acfg, Abcd*Acfg, Aadg*Acfg, Aace*Acfg, Aabf*Acfg,
-             Abeg^2 + Aabcdefg^2, Abeg^2 + Aabcdefg^2, Abeg^2 + Aabcdefg^2,
-             Abcd*Abeg, Aadg*Abeg, Aace*Abeg, Aabf*Abeg, Abcd^2 + Aabcdefg^2,
-             Abcd^2 + Aabcdefg^2, Abcd^2 + Aabcdefg^2, Aadg*Abcd, Aace*Abcd,
-             Aabf*Abcd, Aadg^2 + Aabcdefg^2, Aadg^2 + Aabcdefg^2,
-             Aadg^2 + Aabcdefg^2, Aadg^2 + Abeg^2 + Acfg^2 + Aabcdefg^2, 
-             Aadg^2 + Abcd^2 + Adef^2 + Aabcdefg^2, Aace*Aadg, Aabf*Aadg,
-             Aace^2 + Aabcdefg^2, Aace^2 + Aabcdefg^2, Aace^2 + Aabcdefg^2,
-             Aace^2 + Abeg^2 + Adef^2 + Aabcdefg^2,
-             Aace^2 + Abcd^2 + Acfg^2 + Aabcdefg^2, Aabf*Aace,
-             Aabf^2 + Aabcdefg^2, Aabf^2 + Aabcdefg^2,
-             Aabf^2 + Aabcdefg^2, Aabf^2 + Acfg^2 + Adef^2 + Aabcdefg^2,
-             Aabf^2 + Abcd^2 + Abeg^2 + Aabcdefg^2,
-             Aabf^2 + Aace^2 + Aadg^2 + Aabcdefg^2]
+            [0, 3*A345*A012345, 4*A23*A012345, 4*A15*A012345, 3*A124*A012345,
+             4*A04*A012345, 3*A025*A012345, 3*A013*A012345, 
+             A345^2 + 2*A345*A012345 + A012345^2,
+             A345^2 + 2*A345*A012345 + A012345^2,
+             A345^2 + 2*A345*A012345 + A012345^2, A23*A345, A15*A345,
+             A124*A345, A04*A345, A025*A345, A013*A345,
+             A23^2 + 2*A23*A012345 + A012345^2, A15*A23, A124*A23, A04*A23,
+             A025*A23, A013*A23, A15^2 + 2*A15*A012345 + A012345^2, A124*A15,
+             A04*A15, A025*A15, A013*A15, A124^2 + 2*A124*A012345 + A012345^2,
+             A124^2 + 2*A124*A012345 + A012345^2,
+             A124^2 + 2*A124*A012345 + A012345^2, A04*A124, A025*A124,
+             A013*A124, A04^2 + 2*A04*A012345 + A012345^2, A025*A04, A013*A04,
+             A025^2 + 2*A025*A012345 + A012345^2,
+             A025^2 + 2*A025*A012345 + A012345^2,
+             A025^2 + 2*A025*A012345 + A012345^2, A013*A025,
+             A013^2 + 2*A013*A012345 + A012345^2,
+             A013^2 + 2*A013*A012345 + A012345^2,
+             A013^2 + 2*A013*A012345 + A012345^2]
         """
         E = list(self._matroid.groundset())
         flats = list(self._flats_generator)
@@ -470,18 +472,17 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
                         term += flats_gen[G]
             J.append(flats_gen[F] * term)
         K = []
-        for x, i in enumerate(E):  # use combinations from itertools
-            for j in E[x + 1:]:
-                term1 = poly_ring.zero()
-                term2 = poly_ring.zero()
-                for F in flats:
-                    H = frozenset({i}).union(frozenset({j}))
-                    if F >= H:
-                        term1 += flats_gen[F] ** 2
-                        for G in lattice_flats.order_filter([F]):
-                            if G != F:
-                                term2 += flats_gen[F]*flats_gen[G]
-                K.append(term1 + (2 * term2))
+        for i, j in combinations(E, 2):
+            term1 = poly_ring.zero()
+            term2 = poly_ring.zero()
+            for F in flats:
+                H = frozenset({i}).union(frozenset({j}))
+                if F >= H:
+                    term1 += flats_gen[F] ** 2
+                    for G in lattice_flats.order_filter([F]):
+                        if G != F:
+                            term2 += flats_gen[F]*flats_gen[G]
+            K.append(term1 + (2 * term2))
         return I + J + K
 
     def _repr_(self):
@@ -517,9 +518,9 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'atom-free')
+            sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False, 'atom-free')
             sage: ch.defining_ideal().groebner_basis()
-            Polynomial Sequence with 36 Polynomials in 8 Variables
+            Polynomial Sequence with 136 Polynomials in 16 Variables
             sage: ch.defining_ideal().groebner_basis().is_groebner()
             True
             sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().gens().ideal().hilbert_series()
@@ -662,7 +663,7 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
         flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
-        poly_ring = self.poly_define(R, names, flats)
+        poly_ring = self._poly_define(R, names, flats)
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
@@ -945,7 +946,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         self._flats_generator = dict()
         names_groundset = ['A{}'.format(''.join(str(x))) for x in E]
         names_flats = ['B{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
-        poly_ring = self.poly_define(R, names_flats + names_groundset, E + self._flats)
+        poly_ring = self._poly_define(R, names_flats + names_groundset, E + self._flats)
         for i, x in enumerate(E):
             self._flats_generator[x] = poly_ring.gens()[i]
         for i, F in enumerate(self._flats):
@@ -1193,7 +1194,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         self._flats = [X for i in range(1, self._matroid.rank() + 1)
                        for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
-        poly_ring = self.poly_define(R, names, self._flats)
+        poly_ring = self._poly_define(R, names, self._flats)
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(self._flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
