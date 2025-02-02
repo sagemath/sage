@@ -475,7 +475,7 @@ def has_latex_attr(x) -> bool:
 
 @cached_function
 def default_engine():
-    """
+    r"""
     Return the default latex engine and the official name of the engine.
 
     This is determined by availability of the popular engines on the user's
@@ -486,6 +486,25 @@ def default_engine():
         sage: from sage.misc.latex import default_engine
         sage: default_engine()  # random
         'lualatex'
+
+    TESTS:
+
+    Ensure that this (expensive) function is not necessary to obtain
+    the latex representation of a matrix (doing so probes the latex
+    options dict for the delimiters)::
+
+        sage: import sage.misc.latex
+        sage: real_de = sage.misc.latex.default_engine
+        sage: def crash():
+        ....:     raise ValueError
+        sage: sage.misc.latex.default_engine = crash
+        sage: latex(matrix.identity(QQ, 2))
+        \left(\begin{array}{rr}
+        1 & 0 \\
+        0 & 1
+        \end{array}\right)
+        sage: sage.misc.latex.default_engine = real_de
+
     """
     from sage.features.latex import pdflatex, xelatex, lualatex
     if lualatex().is_present():
