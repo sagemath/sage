@@ -130,7 +130,8 @@ class HyperplaneArrangementLibrary:
             sage: HA = hyperplane_arrangements.bigraphical(G, A)
             sage: HA.n_regions()
             63
-            sage: hyperplane_arrangements.bigraphical(G, 'generic').n_regions()
+            sage: hyperplane_arrangements.bigraphical(G, # random
+            ....:   'generic').n_regions()
             65
             sage: hyperplane_arrangements.bigraphical(G).n_regions()
             59
@@ -138,6 +139,15 @@ class HyperplaneArrangementLibrary:
         REFERENCES:
 
         - [HP2016]_
+
+        TESTS:
+
+        We try::
+
+            sage: G = graphs.CycleGraph(4)
+            sage: any(hyperplane_arrangements.bigraphical(G,
+            ....:   'generic').n_regions() == 65 for _ in range(5))
+            True
         """
         n = G.num_verts()
         if A is None:  # default to G-semiorder arrangement
