@@ -558,17 +558,10 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.Z(3).chow_ring(QQ, False, 'atom-free')
+            sage: ch = matroids.Uniform(3, 5).chow_ring(QQ, False, 'atom-free')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
-            [1, Ax2x3y1, Ax1x3y2, Ax1x2y3, Ay1y2y3, Atx1y1, Atx2y2, Atx3y3, Atx1x2x3y1y2y3, Atx1x2x3y1y2y3^2]
-            sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
-            True
-            sage: ch = matroids.AG(2,3).chow_ring(QQ, False, 'atom-free')
-            sage: I = ch.defining_ideal()
-            sage: I.normal_basis()
-            [1, A012, A236, A046, A156, A345, A247, A057, A137, A258, A678,
-            A038, A148, A012345678, A012345678^2]
+            [1, A01, A02, A12, A03, A13, A23, A04, A14, A24, A34, A01234, A01234^2]
             sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
             True
         """
@@ -640,15 +633,10 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
 
     Chow ring ideal of uniform matroid of rank 3 on 6 elements::
 
-        sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False, 'simplicial')
+        sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False, 'simplicial')
         sage: ch.defining_ideal()
-        Chow ring ideal of U(3, 6): Matroid of rank 3 on 6 elements with
-        circuit-closures {3: {{0, 1, 2, 3, 4, 5}}} - non augmented in
-        simplicial presentation
-        sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
-        sage: ch.defining_ideal()
-        Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
-        type (3, 0) - non augmented in simplicial presentation
+        Chow ring ideal of NonFano: Ternary matroid of rank 3 on 7 elements,
+        type 0- - non augmented in simplicial presentation
     """
     def __init__(self, M, R):
         r"""
@@ -656,7 +644,7 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: I = matroids.catalog.Fano().chow_ring(QQ, False, 'atom-free').defining_ideal()
+            sage: I = matroids.catalog.P8pp().chow_ring(QQ, False, 'simplicial').defining_ideal()
             sage: TestSuite(I).run(skip="_test_category")
         """
         self._matroid = M
@@ -674,39 +662,18 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False, 'simplicial')
+            sage: ch = matroids.Uniform(2, 5).chow_ring(QQ, False, 'simplicial')
             sage: sorted(ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring()))
-            [0, Adef*Aabcdefg, Adef*Aabcdefg, Adef*Aabcdefg, 4*Adef*Aabcdefg,
-             Acfg*Aabcdefg, Acfg*Aabcdefg, Acfg*Aabcdefg, 4*Acfg*Aabcdefg,
-             Abeg*Aabcdefg, Abeg*Aabcdefg, Abeg*Aabcdefg, 4*Abeg*Aabcdefg,
-             Abcd*Aabcdefg, Abcd*Aabcdefg, Abcd*Aabcdefg, 4*Abcd*Aabcdefg,
-             Aadg*Aabcdefg, Aadg*Aabcdefg, Aadg*Aabcdefg,
-             Aadg*Aabcdefg + Abeg*Aabcdefg + Acfg*Aabcdefg,
-             Aadg*Aabcdefg + Abcd*Aabcdefg + Adef*Aabcdefg,
-             4*Aadg*Aabcdefg, Aace*Aabcdefg, Aace*Aabcdefg, Aace*Aabcdefg,
-             Aace*Aabcdefg + Abeg*Aabcdefg + Adef*Aabcdefg,
-             Aace*Aabcdefg + Abcd*Aabcdefg + Acfg*Aabcdefg,
-             4*Aace*Aabcdefg, Aabf*Aabcdefg, Aabf*Aabcdefg, Aabf*Aabcdefg,
-             Aabf*Aabcdefg + Acfg*Aabcdefg + Adef*Aabcdefg,
-             Aabf*Aabcdefg + Abcd*Aabcdefg + Abeg*Aabcdefg,
-             Aabf*Aabcdefg + Aace*Aabcdefg + Aadg*Aabcdefg, 4*Aabf*Aabcdefg,
-             Adef^2 + Aabcdefg^2, Adef^2 + Aabcdefg^2, Adef^2 + Aabcdefg^2,
-             Acfg*Adef, Abeg*Adef, Abcd*Adef, Aadg*Adef, Aace*Adef, Aabf*Adef,
-             Acfg^2 + Aabcdefg^2, Acfg^2 + Aabcdefg^2, Acfg^2 + Aabcdefg^2,
-             Abeg*Acfg, Abcd*Acfg, Aadg*Acfg, Aace*Acfg, Aabf*Acfg,
-             Abeg^2 + Aabcdefg^2, Abeg^2 + Aabcdefg^2, Abeg^2 + Aabcdefg^2,
-             Abcd*Abeg, Aadg*Abeg, Aace*Abeg, Aabf*Abeg, Abcd^2 + Aabcdefg^2,
-             Abcd^2 + Aabcdefg^2, Abcd^2 + Aabcdefg^2, Aadg*Abcd, Aace*Abcd,
-             Aabf*Abcd, Aadg^2 + Aabcdefg^2, Aadg^2 + Aabcdefg^2,
-             Aadg^2 + Aabcdefg^2, Aadg^2 + Abeg^2 + Acfg^2 + Aabcdefg^2, 
-             Aadg^2 + Abcd^2 + Adef^2 + Aabcdefg^2, Aace*Aadg, Aabf*Aadg,
-             Aace^2 + Aabcdefg^2, Aace^2 + Aabcdefg^2, Aace^2 + Aabcdefg^2,
-             Aace^2 + Abeg^2 + Adef^2 + Aabcdefg^2,
-             Aace^2 + Abcd^2 + Acfg^2 + Aabcdefg^2, Aabf*Aace,
-             Aabf^2 + Aabcdefg^2, Aabf^2 + Aabcdefg^2,
-             Aabf^2 + Aabcdefg^2, Aabf^2 + Acfg^2 + Adef^2 + Aabcdefg^2,
-             Aabf^2 + Abcd^2 + Abeg^2 + Aabcdefg^2,
-             Aabf^2 + Aace^2 + Aadg^2 + Aabcdefg^2]
+            [A4, A3, A2, A1, A0, A3*A4 - A3*A01234 - A4*A01234 + A01234^2,
+             A2*A4 - A2*A01234 - A4*A01234 + A01234^2,
+             A1*A4 - A1*A01234 - A4*A01234 + A01234^2,
+             A0*A4 - A0*A01234 - A4*A01234 + A01234^2,
+             A2*A3 - A2*A01234 - A3*A01234 + A01234^2,
+             A1*A3 - A1*A01234 - A3*A01234 + A01234^2,
+             A0*A3 - A0*A01234 - A3*A01234 + A01234^2,
+             A1*A2 - A1*A01234 - A2*A01234 + A01234^2,
+             A0*A2 - A0*A01234 - A2*A01234 + A01234^2,
+             A0*A1 - A0*A01234 - A1*A01234 + A01234^2]
         """
         flats = list(self._flats_generator)
         lattice_flats = Poset((flats, lambda x, y: x <= y))
@@ -761,9 +728,9 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'simplicial')
+            sage: ch = matroids.Wheel(3).chow_ring(QQ, False, 'simplicial')
             sage: ch.defining_ideal().groebner_basis()
-            Polynomial Sequence with 36 Polynomials in 8 Variables
+            Polynomial Sequence with 105 Polynomials in 14 Variables
             sage: ch.defining_ideal().groebner_basis().is_groebner()
             True
             sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().gens().ideal().hilbert_series()
@@ -812,14 +779,8 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
             sage: ch = matroids.Z(3).chow_ring(QQ, False, 'simplicial')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
-            [1, Ax2x3y1, Ax1x3y2, Ax1x2y3, Ay1y2y3, Atx1y1, Atx2y2, Atx3y3, Atx1x2x3y1y2y3, Atx1x2x3y1y2y3^2]
-            sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
-            True
-            sage: ch = matroids.AG(2,3).chow_ring(QQ, False, 'simplicial')
-            sage: I = ch.defining_ideal()
-            sage: I.normal_basis()
-            [1, A012, A236, A046, A156, A345, A247, A057, A137, A258, A678,
-            A038, A148, A012345678, A012345678^2]
+            [1, Ax2x3y1, Ax1x3y2, Ax1x2y3, Ay1y2y3, Atx1y1, Atx2y2, Atx3y3,
+             Atx1x2x3y1y2y3, Atx1x2x3y1y2y3^2]
             sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
             True
         """
