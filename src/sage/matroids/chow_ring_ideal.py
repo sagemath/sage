@@ -440,7 +440,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
             sage: ch = matroids.Wheel(3).chow_ring(QQ, False, 'atom-free')
             sage: sorted(ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring()))
             [0, 3*A345*A012345, 4*A23*A012345, 4*A15*A012345, 3*A124*A012345,
-             4*A04*A012345, 3*A025*A012345, 3*A013*A012345, 
+             4*A04*A012345, 3*A025*A012345, 3*A013*A012345,
              A345^2 + 2*A345*A012345 + A012345^2,
              A345^2 + 2*A345*A012345 + A012345^2,
              A345^2 + 2*A345*A012345 + A012345^2, A23*A345, A15*A345,
