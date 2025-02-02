@@ -474,7 +474,7 @@ def has_latex_attr(x) -> bool:
 
 
 @cached_function
-def default_engine():
+def _default_engine():
     r"""
     Return the default latex engine and the official name of the engine.
 
@@ -483,8 +483,8 @@ def default_engine():
 
     EXAMPLES::
 
-        sage: from sage.misc.latex import default_engine
-        sage: default_engine()  # random
+        sage: from sage.misc.latex import _default_engine
+        sage: _default_engine()  # random
         'lualatex'
 
     TESTS:
@@ -494,16 +494,16 @@ def default_engine():
     options dict for the delimiters)::
 
         sage: import sage.misc.latex
-        sage: real_de = sage.misc.latex.default_engine
+        sage: real_de = sage.misc.latex._default_engine
         sage: def crash():
         ....:     raise ValueError
-        sage: sage.misc.latex.default_engine = crash
+        sage: sage.misc.latex._default_engine = crash
         sage: latex(matrix.identity(QQ, 2))
         \left(\begin{array}{rr}
         1 & 0 \\
         0 & 1
         \end{array}\right)
-        sage: sage.misc.latex.default_engine = real_de
+        sage: sage.misc.latex._default_engine = real_de
 
     """
     from sage.features.latex import pdflatex, xelatex, lualatex
@@ -539,7 +539,7 @@ class _Latex_prefs_object(SageObject):
         self.__option["macros"] = ""
         self.__option["preamble"] = ""
 
-        # If None, the default_engine() will be used.
+        # If None, the _default_engine() will be used.
         self.__option["engine"] = None
 
     @lazy_attribute
@@ -670,7 +670,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     if engine is None:
         engine = _Latex_prefs._option["engine"]
         if engine is None:
-            engine = default_engine()
+            engine = _default_engine()
 
     if not engine or engine == "latex":
         from sage.features.latex import latex
@@ -1088,7 +1088,7 @@ class Latex(LatexCall):
                 if engine is None:
                     engine = _Latex_prefs._option["engine"]
                     if engine is None:
-                        engine = default_engine()
+                        engine = _default_engine()
 
             e = _run_latex_(os.path.join(base, filename + ".tex"),
                             debug=debug,
@@ -1557,7 +1557,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
         if e is None:
             e = _Latex_prefs._option["engine"]
             if e is None:
-                return default_engine()
+                return _default_engine()
             else:
                 return e
 
@@ -1865,7 +1865,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     if engine is None:
         engine = _Latex_prefs._option["engine"]
         if engine is None:
-            engine = default_engine()
+            engine = _default_engine()
 
     if viewer == "pdf" and engine == "latex":
         engine = "pdflatex"
@@ -1969,7 +1969,7 @@ def pdf(x, filename, tiny=False, tightpage=True, margin=None, engine=None, debug
     if engine is None:
         engine = _Latex_prefs._option["engine"]
         if engine is None:
-            engine = default_engine()
+            engine = _default_engine()
 
     # path name for permanent pdf output
     abs_path_to_pdf = os.path.abspath(filename)
@@ -2032,7 +2032,7 @@ def png(x, filename, density=150, debug=False,
     if engine is None:
         engine = _Latex_prefs._option["engine"]
         if engine is None:
-            engine = default_engine()
+            engine = _default_engine()
 
     # path name for permanent png output
     abs_path_to_png = os.path.abspath(filename)
