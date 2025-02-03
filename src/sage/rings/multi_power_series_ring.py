@@ -1062,7 +1062,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         """
         return self.zero().O(prec)
 
-    O = add_bigoh
+    O = bigoh
 
     def _send_to_bg(self, f):
         """
