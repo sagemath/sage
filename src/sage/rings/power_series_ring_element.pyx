@@ -1385,7 +1385,7 @@ cdef class PowerSeries(AlgebraElement):
         return tuple(resu)
 
     def super_delta_fraction(self, delta):
-        """
+        r"""
         Return the super delta continued fraction of ``self``.
 
         This is a continued fraction of the following shape::
@@ -1460,9 +1460,7 @@ cdef class PowerSeries(AlgebraElement):
             if deg < 0:
                 break
             list_vkU.append((v, k, U))
-            if deg == 0:
-                break
-            if Gk.degree() == -1:
+            if deg == 0 or Gk.degree() == -1:
                 break
             di, ci, Gi, Gj = dj, cj, Gj, Gk
 
