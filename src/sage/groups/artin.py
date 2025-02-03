@@ -164,14 +164,36 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         In = W.index_set()
         return W.prod(s[In[abs(i)-1]] for i in self.Tietze())
 
-    def burau_matrix(self, var='t', reduced=False):
+    def burau_matrix(self, var='t'):
         r"""
         Return the Burau matrix of the Artin group element.
 
-        Following [BQ2024]_, the (generalized) Burau representation of an
-        Artin group is defined by deforming the reflection representation
-        of the corresponding Coxeter group. However, we substitute
-        `q \mapsto -t` from [BQ2024]_ to match the unitary
+        Following [BQ2024]_, the (generalized) Burau representation
+        of an Artin group is defined by deforming the reflection
+        representation of the corresponding Coxeter group. However,
+        we substitute `q \mapsto -t` from [BQ2024]_ to match one of
+        the unitary (reduced) Burau representations of the braid group
+        (see :meth:`sage.groups.braid.Braid.burau_matrix()` for details.)
+
+        More precisely, let `(m_{ij})_{i,j \in I}` be the
+        :meth:`Coxeter matrix<coxeter_matrix>`. Then the action is
+        given on the basis `(\alpha_1, \ldots \alpha_n)` (corresponding
+        to the reflection representation of the corresponding
+        :meth:`Coxeter group<coxeter_group>`) by
+
+        .. MATH::
+
+            \sigma_i(\alpha_j) = \alpha_j
+              - \langle \alpha_i, \alpha_j \rangle_q \alpha_i,
+            \qquad \text{ where }
+            \langle \alpha_i, \alpha_j \rangle_q := \begin{cases}
+             1 + t^2 & \text{if } i = j, \\
+             -2 t \cos(\pi/m_{ij}) & \text{if } i \neq j.
+            \end{cases}.
+
+        By convention `\cos(\pi/\infty) = 1`. Note that the inverse of the
+        generators act by `\sigma_i^{-1}(\alpha_j) = \alpha_j - q^{-2}
+        \langle \alpha_j, \alpha_i \rangle_q \alpha_i`.
 
         INPUT:
 
@@ -286,6 +308,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         if var == 't':
             return ret
+
         from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
         poly_ring = LaurentPolynomialRing(ret.base_ring().base_ring(), var)
         return ret.change_ring(poly_ring)
