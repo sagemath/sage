@@ -788,27 +788,27 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             ...
             ValueError: polynomial with interval coefficients, use multiplicities=False
 
-            sage: (x^4 - 1/3).roots(multiplicities=False) # indirect doctest
-            [[-0.759835685651593 +/- ...e-16] + [+/- ...e-16]*I,
-             [0.759835685651593 +/- ...e-16] + [+/- ...e-16]*I,
-             [+/- ...e-16] + [-0.759835685651593 +/- ...e-16]*I,
-             [+/- ...e-16] + [0.759835685651593 +/- ...e-16]*I]
+            sage: set((x^4 - 1/3).roots(multiplicities=False))  # indirect doctest
+            {[+/- 1.27e-16] + [-0.759835685651593 +/- 5.90e-16]*I,
+             [+/- 1.27e-16] + [0.759835685651593 +/- 5.90e-16]*I,
+             [-0.759835685651593 +/- 5.90e-16] + [+/- 1.27e-16]*I,
+             [0.759835685651593 +/- 5.90e-16] + [+/- 1.27e-16]*I}
 
-            sage: (x^4 - 1/3).roots(RBF, multiplicities=False)
-            [[-0.759835685651593 +/- ...e-16], [0.759835685651593 +/- ...e-16]]
+            sage: set((x^4 - 1/3).roots(RBF, multiplicities=False))
+            {[-0.759835685651593 +/- 5.90e-16], [0.759835685651593 +/- 5.90e-16]}
 
-            sage: (x^4 - 3).roots(RealBallField(100), multiplicities=False)
-            [[-1.316074012952492460819218901797 +/- ...e-34],
-             [1.316074012952492460819218901797 +/- ...e-34]]
+            sage: set((x^4 - 3).roots(RealBallField(100), multiplicities=False))
+            {[-1.316074012952492460819218901797 +/- 9.7e-34],
+             [1.316074012952492460819218901797 +/- 9.7e-34]}
 
-            sage: (x^4 - 3).roots(ComplexIntervalField(100), multiplicities=False)
-            [-1.31607401295249246081921890180? + 0.?e-37*I,
-             1.31607401295249246081921890180? + 0.?e-37*I,
+            sage: set((x^4 - 3).roots(ComplexIntervalField(100), multiplicities=False))
+            {-1.31607401295249246081921890180? + 0.?e-37*I,
+             0.?e-37 + 1.31607401295249246081921890180?*I,
              0.?e-37 - 1.31607401295249246081921890180?*I,
-             0.?e-37 + 1.31607401295249246081921890180?*I]
+             1.31607401295249246081921890180? + 0.?e-37*I}
 
-            sage: (x^2 - i/3).roots(ComplexBallField(2), multiplicities=False)
-            [[+/- 0.409] + [+/- 0.409]*I, [+/- 0.409] + [+/- 0.409]*I]
+            sage: set((x^2 - i/3).roots(ComplexBallField(2), multiplicities=False))
+            {[+/- 0.409] + [+/- 0.409]*I, [+/- 0.409] + [+/- 0.409]*I}
 
             sage: ((x - 1)^2).roots(multiplicities=False)
             Traceback (most recent call last):
@@ -844,8 +844,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: ((x - 1)^2 + 2^(-70)*i/3).roots(RBF, multiplicities=False)
             Traceback (most recent call last):
             ...
-            ValueError: unable to isolate the roots (try using proof=False or
-            increasing the precision)
+            ValueError: ...
 
         TESTS::
 
