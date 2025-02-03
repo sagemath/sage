@@ -20,9 +20,10 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.kahler_algebras import KahlerAlgebras
 from sage.categories.commutative_rings import CommutativeRings
 from sage.misc.cachefunc import cached_method
+from sage.modules.with_basis.representation import Representation_abstract
 
 
-class ChowRing(QuotientRing_generic):
+class ChowRing(QuotientRing_generic, Representation_abstract):
     r"""
     The Chow ring of a matroid.
 
@@ -141,6 +142,7 @@ class ChowRing(QuotientRing_generic):
                                       I=self._ideal,
                                       names=self._ideal.ring().variable_names(),
                                       category=C)
+        Representation_abstract.__init__(self, semigroup=M.automorphism_group(), side="left")
 
     def _repr_(self):
         r"""
@@ -521,20 +523,14 @@ class ChowRing(QuotientRing_generic):
 
             EXAMPLES::
 
-                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
-                sage: GP22 = SGA.garsia_procesi_module([2, 2])
-                sage: x = SGA.an_element(); x
-                [1, 2, 3, 4] + 2*[1, 2, 4, 3] + [4, 1, 2, 3]
-                sage: v = GP22.an_element(); v
-                -gp1 - gp2 - gp3
-                sage: g = SGA.group().an_element(); g
-                [4, 1, 2, 3]
-                sage: g * v  # indirect doctest
-                gp3
-                sage: x * v  # indirect doctest
-                gp3
-                sage: 2 * v  # indirect doctest
-                gp1 + gp2 + gp3
+                sage: ch = matroids.catalog.P8pp().chow_ring(QQ, False, 'atom-free')
+                sage: y = ch.an_element(); y
+                Aab
+                sage: semigroup = ch.semigroup()
+                sage: x = semigroup.an_element(); x
+                ('b','h','d','f')('a','e','c','g')
+                sage: x * y  # indirect doctest
+                Aab
             """
             P = self.parent()
             if scalar in P.base_ring():

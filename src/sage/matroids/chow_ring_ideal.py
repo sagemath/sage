@@ -460,7 +460,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
         """
         E = list(self._matroid.groundset())
         flats = list(self._flats_generator)
-        lattice_flats = Poset((flats, lambda x, y: x <= y))  # use lattice of flats of matroid, use Hasse diagram
+        lattice_flats = Poset((flats, lambda x, y: x <= y))  # use lattice of flats of matroid, use Hasse diagram!!!!!
         I = []
         flats_gen = self._flats_generator
         subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
@@ -480,10 +480,10 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
             term1 = poly_ring.zero()
             term2 = poly_ring.zero()
             for F in flats:
-                H = frozenset({i}).union(frozenset({j}))
+                H = frozenset({i}).union(frozenset({j}))  # take minimal element containing both elements
                 if F >= H:
                     term1 += flats_gen[F] ** 2
-                    for G in lattice_flats.order_filter([F]):
+                    for G in lattice_flats.order_filter([F]):  # use order_filter_generator
                         if G != F:
                             term2 += flats_gen[F]*flats_gen[G]
             K.append(term1 + (2 * term2))
