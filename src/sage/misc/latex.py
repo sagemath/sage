@@ -505,10 +505,10 @@ def default_engine():
 @cached_function
 def _default_engine():
     r"""
-    Return the default latex engine and the official name of the engine.
+    Return the name of the default latex engine.
 
-    This is determined by availability of the popular engines on the user's
-    system. It is assumed that at least latex is available.
+    This is determined by availability of the popular engines on the
+    user's system. It is assumed that at least "latex" is available.
 
     EXAMPLES::
 
