@@ -9,17 +9,10 @@ Big O for various types (power series, `p`-adics, etc.)
     - `polynomials <../../../polynomial_rings/index.html>`_
 """
 
-from sage.arith.misc import factor
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
-lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
 from sage.rings.polynomial.polynomial_element import Polynomial
-
-try:
-    from .laurent_series_ring_element import LaurentSeries
-except ImportError:
-    LaurentSeries = ()
 
 try:
     from .puiseux_series_ring_element import PuiseuxSeries
@@ -27,11 +20,11 @@ except ImportError:
     PuiseuxSeries = ()
 
 from sage.rings import (
-    integer,
     multi_power_series_ring_element,
     power_series_ring_element,
-    rational,
 )
+from sage.rings.integer import Integer
+from sage.rings.rational import Rational
 
 
 def O(*x, **kwds):
@@ -130,6 +123,37 @@ def O(*x, **kwds):
         Traceback (most recent call last):
         ...
         ArithmeticError: O(4, 2) not defined
+
+    ::
+
+        sage: R.<x> = QQ[]
+        sage: O(2*x)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: completion only currently defined for the maximal ideal (x)
+        sage: R.<x> = LazyPowerSeriesRing(QQ)
+        sage: O(x^5)
+        O(x^5)
+        sage: t = O(Zp(5)(2*5^2)); t
+        O(5^2)
+        sage: t.parent()
+        5-adic Ring with capped relative precision 20
+        sage: t = O(Qp(5)(2*5^-2)); t
+        O(5^-2)
+        sage: t.parent()
+        5-adic Field with capped relative precision 20
+        sage: O(-6)
+        Traceback (most recent call last):
+        ...
+        ArithmeticError: x must be a prime power >= 2
+        sage: O(6)
+        Traceback (most recent call last):
+        ...
+        ArithmeticError: x must be prime power
+        sage: O(11/2)
+        Traceback (most recent call last):
+        ...
+        ArithmeticError: x must be prime power
     """
     if len(x) > 1:
         if isinstance(x[0], multi_power_series_ring_element.MPowerSeries):
@@ -143,29 +167,31 @@ def O(*x, **kwds):
     if isinstance(x, power_series_ring_element.PowerSeries):
         return x.parent()(0, x.degree(), **kwds)
 
-    elif isinstance(x, Polynomial):
+    if isinstance(x, Polynomial):
         if x.parent().ngens() != 1:
             raise NotImplementedError("completion only currently defined "
                                       "for univariate polynomials")
         if not x.is_monomial():
             raise NotImplementedError("completion only currently defined "
                                       "for the maximal ideal (x)")
-        return x.parent().completion(x.parent().gen())(0, x.degree(), **kwds)
 
-    elif isinstance(x, LaurentSeries):
-        return LaurentSeries(x.parent(), 0).add_bigoh(x.valuation(), **kwds)
-
-    elif isinstance(x, PuiseuxSeries):
-        return x.add_bigoh(x.valuation(), **kwds)
-
-    elif isinstance(x, (int, integer.Integer, rational.Rational)):
+    if isinstance(x, (int, Integer, Rational)):
         # p-adic number
         if x <= 0:
             raise ArithmeticError("x must be a prime power >= 2")
-        F = factor(x)
-        if len(F) != 1:
+        if isinstance(x, (int, Integer)):
+            x = Integer(x)
+            p, r = x.perfect_power()
+        else:
+            if x.denominator() == 1:
+                p, r = x.numerator().perfect_power()
+            elif x.numerator() == 1:
+                p, r = x.denominator().perfect_power()
+                r = -r
+            else:
+                raise ArithmeticError("x must be prime power")
+        if not p.is_prime():
             raise ArithmeticError("x must be prime power")
-        p, r = F[0]
         if r >= 0:
             return Zp(p, prec=max(r, 20),
                       type='capped-rel')(0, absprec=r, **kwds)
@@ -173,8 +199,15 @@ def O(*x, **kwds):
             return Qp(p, prec=max(r, 20),
                       type='capped-rel')(0, absprec=r, **kwds)
 
-    elif isinstance(x, pAdicGenericElement):
-        return x.parent()(0, absprec=x.valuation(), **kwds)
-    elif hasattr(x, 'O'):
-        return x.O(**kwds)
-    raise ArithmeticError("O(%s) not defined" % (x,))
+    if isinstance(x, PuiseuxSeries):
+        # note that add_bigoh() of PuiseuxSeries adapts the precision
+        # to the ramification index of the input, thus we cannot do
+        # zero.add_bigoh() because zero has ramification index 1
+        return x.add_bigoh(x.valuation(), **kwds)
+
+    try:
+        return x.parent().zero().add_bigoh(x.valuation(), **kwds)
+    except AttributeError:
+        if hasattr(x, 'O'):  # this case is used for AsymptoticRing
+            return x.O(**kwds)
+        raise ArithmeticError("O(%s) not defined" % (x,))
