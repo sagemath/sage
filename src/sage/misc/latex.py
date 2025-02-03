@@ -474,6 +474,35 @@ def has_latex_attr(x) -> bool:
 
 
 @cached_function
+def default_engine():
+    """
+    Return the default latex engine and the official name of the engine.
+    This is determined by availability of the popular engines on the user's
+    system. It is assumed that at least latex is available.
+
+    This function is deprecated as part of the public API. There is
+    instead an internal counterpart :func:`_default_engine`, but no
+    stability promises are made with regards to its interface.
+
+    EXAMPLES::
+
+        sage: from sage.misc.latex import default_engine
+        sage: default_engine()  # random
+        ('lualatex', 'LuaLaTeX')
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(39351, "default_engine is being removed from the public API and replaced with the internal function _default_engine")
+
+    from sage.features.latex import pdflatex, xelatex, lualatex
+    if lualatex().is_present():
+        return 'lualatex', 'LuaLaTeX'
+    if xelatex().is_present():
+        return 'xelatex', 'XeLaTeX'
+    if pdflatex().is_present():
+        return 'pdflatex', 'pdfLaTeX'
+    return 'latex', 'LaTeX'
+
+@cached_function
 def _default_engine():
     r"""
     Return the default latex engine and the official name of the engine.
