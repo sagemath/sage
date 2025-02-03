@@ -9241,7 +9241,7 @@ class Graph(GenericGraph):
         Check whether this graph is projective planar.
 
         Wraps :func:`get_p2_forbidden_minor
-        <sage.graphs.projective_plane_forbidden_minors.get_p2_forbidden_minor>`
+        <sage.graphs.projective_planarity.get_p2_forbidden_minor>`
 
         INPUT:
 
@@ -9279,10 +9279,10 @@ class Graph(GenericGraph):
             - :meth:`~Graph.minor`
 
             - :func:`get_p2_forbidden_minor
-              <sage.graphs.projective_plane_forbidden_minors.get_p2_forbidden_minor>`
+              <sage.graphs.projective_planarity.get_p2_forbidden_minor>`
               -- if you always want ``minor_map``
         """
-        from sage.graphs.projective_plane_forbidden_minors import get_p2_forbidden_minor
+        from sage.graphs.projective_planarity import get_p2_forbidden_minor
         p2_forbidden_minor = get_p2_forbidden_minor(self, **minor_kwargs)
         if minor_map:
             return p2_forbidden_minor
