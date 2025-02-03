@@ -23,6 +23,7 @@ from cpython cimport *
 from cpython.object cimport Py_EQ, Py_NE
 
 import sage.matrix.matrix_space
+import sage.calculus.functional
 
 
 cdef class Matrix_sparse(matrix.Matrix):
@@ -810,13 +811,21 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
+
+        TESTS:
+
+            sage: m = matrix(3, 3, {(1, 1): 2, (0,2): 5})
+            sage: derivative(m, x)
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
         """
         # We would just use apply_map, except that Cython does not
         # allow lambda functions
 
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
-        v = [(ij, z.derivative(var)) for ij, z in self.dict().iteritems()]
+        v = [(ij, sage.calculus.functional.derivative(z, var)) for ij, z in self.dict().iteritems()]
         if R is None:
             w = [x for _, x in v]
             w = sage.structure.sequence.Sequence(w)
