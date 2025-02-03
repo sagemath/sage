@@ -1172,7 +1172,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: W.<w> = ZpFM(5).extension(x^3 - 5)
             sage: (1 + w)._polynomial_list()
             [1, 1]
-            sage: (1 + w + O(w^11))._polynomial_list(pad=True)
+            sage: (1 + w)._polynomial_list(pad=True)
             [1, 1, 0]
         """
         R = self.base_ring()
