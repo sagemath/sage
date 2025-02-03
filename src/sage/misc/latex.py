@@ -502,6 +502,7 @@ def default_engine():
         return 'pdflatex', 'pdfLaTeX'
     return 'latex', 'LaTeX'
 
+
 @cached_function
 def _default_engine():
     r"""
@@ -533,7 +534,6 @@ def _default_engine():
         0 & 1
         \end{array}\right)
         sage: sage.misc.latex._default_engine = real_de
-
     """
     from sage.features.latex import pdflatex, xelatex, lualatex
     if lualatex().is_present():
