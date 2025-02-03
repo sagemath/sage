@@ -829,7 +829,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         Return the truncated series at chosen precision ``prec``.
 
-        See also :meth:`O`.
+        This is the same as :meth:`O`.
 
         INPUT:
 
@@ -862,29 +862,7 @@ cdef class LaurentSeries(AlgebraElement):
         u = self.__u.add_bigoh(prec - self.__n)
         return type(self)(P, u, self.__n)
 
-    def O(self, prec):
-        r"""
-        Return the Laurent series of precision at most ``prec`` obtained by
-        adding `O(q^\text{prec})`, where `q` is the variable.
-
-        The precision of ``self`` and the integer ``prec`` can be arbitrary. The
-        resulting Laurent series will have precision equal to the minimum of
-        the precision of ``self`` and ``prec``. The term `O(q^\text{prec})` is the
-        zero series with precision ``prec``.
-
-        See also :meth:`add_bigoh`.
-
-        EXAMPLES::
-
-            sage: R.<t> = LaurentSeriesRing(QQ)
-            sage: f = t^-5 + t^-4 + t^3 + O(t^10); f
-            t^-5 + t^-4 + t^3 + O(t^10)
-            sage: f.O(-4)
-            t^-5 + O(t^-4)
-            sage: f.O(15)
-            t^-5 + t^-4 + t^3 + O(t^10)
-        """
-        return self.add_bigoh(prec)
+    O = add_bigoh
 
     def degree(self):
         """

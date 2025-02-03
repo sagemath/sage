@@ -1347,29 +1347,7 @@ class MPowerSeries(PowerSeries):
         """
         return self.parent(self._bg_value.add_bigoh(prec))
 
-    def O(self, prec):
-        """
-        Return a multivariate power series of precision ``prec``
-        obtained by truncating ``self`` at precision ``prec``.
-
-        This is the same as :meth:`add_bigoh`.
-
-        EXAMPLES::
-
-            sage: B.<x,y> = PowerSeriesRing(QQ); B
-            Multivariate Power Series Ring in x, y over Rational Field
-            sage: r = 1 - x*y + x^2
-            sage: r.O(4)
-            1 + x^2 - x*y + O(x, y)^4
-            sage: r.O(2)
-            1 + O(x, y)^2
-
-        Note that this does not change ``self``::
-
-            sage: r
-            1 + x^2 - x*y
-        """
-        return self.parent(self._bg_value.O(prec))
+    O = add_bigoh
 
     def truncate(self, prec=infinity):
         """

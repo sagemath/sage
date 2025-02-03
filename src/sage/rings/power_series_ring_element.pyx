@@ -823,6 +823,8 @@ cdef class PowerSeries(AlgebraElement):
         Return the power series of precision at most ``prec`` got by adding
         `O(q^\text{prec})` to `f`, where `q` is the variable.
 
+        This is the same as :meth:`O`.
+
         EXAMPLES::
 
             sage: R.<A> = RDF[[]]
@@ -833,11 +835,12 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.add_bigoh(5)
             1.0 + 5.0*A + 10.0*A^2 + 10.0*A^3 + 5.0*A^4 + O(A^5)
         """
-        if prec is infinity or prec > self.prec():
+        if prec is infinity or prec >= self.prec():
             return self
-        a = self.list()
-        v = [a[i] for i in range(min(prec, len(a)))]
-        return self._parent(v, prec)
+        coeffs = self[:prec]
+        return self._parent(coeffs, prec)
+
+    O = add_bigoh
 
     def __getitem__(self, n):
         r"""
@@ -2292,30 +2295,6 @@ cdef class PowerSeries(AlgebraElement):
                              'series with zero constant term')
         assert(self.valuation() >= 1)
         return self.sinh(prec) / self.cosh(prec)
-
-    def O(self, prec):
-        r"""
-        Return this series plus `O(x^\text{prec})`. Does not change
-        ``self``.
-
-        EXAMPLES::
-
-            sage: R.<x> = PowerSeriesRing(ZZ)
-            sage: p = 1 + x^2 + x^10; p
-            1 + x^2 + x^10
-            sage: p.O(15)
-            1 + x^2 + x^10 + O(x^15)
-            sage: p.O(5)
-            1 + x^2 + O(x^5)
-            sage: p.O(-5)
-            Traceback (most recent call last):
-            ...
-            ValueError: prec (= -5) must be nonnegative
-        """
-        if prec is infinity or prec >= self.prec():
-            return self
-        coeffs = self[:prec]
-        return self._parent(coeffs, prec)
 
     def solve_linear_de(self, prec=infinity, b=None, f0=None):
         r"""
