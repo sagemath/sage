@@ -154,7 +154,7 @@ intrinsic Sage(X::RngPad) -> MonStgElt, BoolElt
     prec := Precision(X);
     if prec eq Infinity then;
       return Sprintf("Zp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(Precision(X))), false;
-    else:
+    else
       return Sprintf("Zp(%o, %o, 'capped-rel')", Sage(Prime(X)), Sage(Precision(X))), false;
     end if;
 end intrinsic;
@@ -164,7 +164,7 @@ intrinsic Sage(X::FldPAd) -> MonStgElt, BoolElt
     prec := Precision(X);
     if prec eq Infinity then;
       return Sprintf("Qp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(Precision(X))), false;
-    else:
+    else
       return Sprintf("Qp(%o, %o, 'capped-rel')", Sage(Prime(X)), Sage(Precision(X))), false;
     end if;
 end intrinsic;
