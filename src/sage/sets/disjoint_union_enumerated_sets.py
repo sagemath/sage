@@ -392,32 +392,126 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         TESTS::
 
+            sage: from itertools import islice
             sage: U4 = DisjointUnionEnumeratedSets(
             ....:          Family(NonNegativeIntegers(), Permutations))
-            sage: it = iter(U4)
-            sage: [next(it), next(it), next(it), next(it), next(it), next(it)]
+            sage: list(islice(iter(U4), 6))
             [[], [1], [1, 2], [2, 1], [1, 2, 3], [1, 3, 2]]
 
             sage: # needs sage.combinat
             sage: U4 = DisjointUnionEnumeratedSets(
             ....:          Family(NonNegativeIntegers(), Permutations),
             ....:          keepkey=True, facade=False)
-            sage: it = iter(U4)
-            sage: [next(it), next(it), next(it), next(it), next(it), next(it)]
-            [(0, []), (1, [1]), (2, [1, 2]), (2, [2, 1]), (3, [1, 2, 3]), (3, [1, 3, 2])]
-            sage: el = next(it); el.parent() == U4
+            sage: l = list(islice(iter(U4), 7)); l
+            [(0, []), (1, [1]), (2, [1, 2]), (2, [2, 1]), (3, [1, 2, 3]), (3, [1, 3, 2]), (3, [2, 1, 3])]
+            sage: l[-1].parent() is U4
             True
-            sage: el.value == (3, Permutation([2,1,3]))
-            True
+
+        Check when both the set of keys and each element set is finite::
+
+            sage: list(DisjointUnionEnumeratedSets(
+            ....:          Family({1: FiniteEnumeratedSet([1,2,3]),
+            ....:                  2: FiniteEnumeratedSet([4,5,6])})))
+            [1, 2, 3, 4, 5, 6]
+
+        Check when the set of keys is finite but each element set is infinite::
+
+            sage: list(islice(DisjointUnionEnumeratedSets(
+            ....:                 Family({1: NonNegativeIntegers(),
+            ....:                         2: NonNegativeIntegers()}), keepkey=True), 0, 10))
+            [(1, 0), (1, 1), (2, 0), (1, 2), (2, 1), (1, 3), (2, 2), (1, 4), (2, 3), (1, 5)]
+
+        Check when the set of keys is infinite but each element set is finite::
+
+            sage: list(islice(DisjointUnionEnumeratedSets(
+            ....:                 Family(NonNegativeIntegers(), lambda x: FiniteEnumeratedSet(range(x))),
+            ....:                 keepkey=True), 0, 20))
+            [(1, 0), (2, 0), (2, 1), (3, 0), (3, 1), (3, 2), (4, 0), (4, 1), (4, 2), (4, 3),
+             (5, 0), (5, 1), (5, 2), (5, 3), (5, 4), (6, 0), (6, 1), (6, 2), (6, 3), (6, 4)]
+
+        Check when some element sets are empty (note that if there are infinitely many sets
+        but only finitely many elements in total, the iteration will hang)::
+
+            sage: list(DisjointUnionEnumeratedSets(
+            ....:          Family({1: FiniteEnumeratedSet([]),
+            ....:                  2: FiniteEnumeratedSet([]),
+            ....:                  3: FiniteEnumeratedSet([]),
+            ....:                  4: FiniteEnumeratedSet([]),
+            ....:                  5: FiniteEnumeratedSet([1,2,3]),
+            ....:                  6: FiniteEnumeratedSet([4,5,6])})))
+            [1, 2, 3, 4, 5, 6]
+
+        Check when there's one infinite set and infinitely many finite sets::
+
+            sage: list(islice(DisjointUnionEnumeratedSets(
+            ....:                 Family(NonNegativeIntegers(), lambda x: FiniteEnumeratedSet([]) if x else NonNegativeIntegers())),
+            ....:                 0, 10))
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+        The following cannot be determined to be finite, but the first elements can still be retrieved::
+
+            sage: U = DisjointUnionEnumeratedSets(
+            ....:         Family(NonNegativeIntegers(), lambda x: FiniteEnumeratedSet([] if x >= 2 else [1, 2])),
+            ....:         keepkey=True)
+            sage: list(U)  # not tested
+            sage: list(islice(iter(U), 5))  # not tested, hangs
+            sage: list(islice(iter(U), 4))
+            [(0, 1), (0, 2), (1, 1), (1, 2)]
         """
-        for k in self._family.keys():
-            for el in self._family[k]:
+        def wrap_element(el, k):
+            nonlocal self
+            if self._keepkey:
+                el = (k, el)
+            if self._facade:
+                return el
+            else:
+                return self.element_class(self, el)  # Bypass correctness tests
+
+        keys_iter = iter(self._family.keys())
+        if self._keepkey:
+            seen_keys = []
+        el_iters = []
+        while keys_iter is not None or el_iters:
+            if keys_iter is not None:
+                try:
+                    k = next(keys_iter)
+                except StopIteration:
+                    keys_iter = None
+                if keys_iter is not None:
+                    el_set = self._family[k]
+                    if el_set.is_finite():
+                        for el in el_set:
+                            yield wrap_element(el, k)
+                    else:
+                        el_iters.append(iter(el_set))
+                        if self._keepkey:
+                            seen_keys.append(k)
+            any_stopped = False
+            for i, obj in enumerate(zip(seen_keys, el_iters) if self._keepkey else el_iters):
                 if self._keepkey:
-                    el = (k, el)
-                if self._facade:
-                    yield el
+                    k, el_iter = obj
                 else:
-                    yield self.element_class(self, el)  # Bypass correctness tests
+                    k = None
+                    el_iter = obj
+                try:
+                    el = next(el_iter)
+                except StopIteration:
+                    el_iters[i] = None
+                    any_stopped = True
+                    continue
+                yield wrap_element(el, k)
+            if any_stopped:
+                if self._keepkey:
+                    filtered = [*zip(
+                        *[(k, el_iter) for k, el_iter in zip(seen_keys, el_iters) if el_iter is not None])]
+                    if filtered:
+                        seen_keys = list(filtered[0])
+                        el_iters = list(filtered[1])
+                    else:
+                        seen_keys = []
+                        el_iters = []
+                else:
+                    el_iters = [el_iter for el_iter in el_iters if el_iter is not None]
 
     def an_element(self):
         """
