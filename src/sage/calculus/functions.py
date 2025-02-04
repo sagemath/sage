@@ -167,6 +167,4 @@ def hessian(function, variables):
         variables = [variables]
 
     jacobian_matrix = jacobian(function, variables)
-    hessian_matrix = matrix([[diff(jacobian_matrix[0, j], v) for j, v in enumerate(variables)] for v in variables])
-    
-    return hessian_matrix
+    return matrix([[diff(jacobian_matrix[0, j], v) for j, v in enumerate(variables)] for v in variables])
