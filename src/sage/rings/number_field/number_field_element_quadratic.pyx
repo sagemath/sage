@@ -437,6 +437,21 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         return __make_NumberFieldElement_quadratic1, (self._parent, type(self), a, b, denom)
 
     cdef int _randomize(self, num_bound, den_bound, distribution) except -1:
+        """
+        TESTS ::
+            sage: a = ZZ.random_element(-100, 100)
+            sage: while a.is_square():
+            ....:     a = ZZ.random_element(-100, 100)
+            sage: K = QuadraticField(a)
+            sage: K.random_element().parent() is K  # indirect doctest
+            True
+            sage: len(set(K.random_element() for _ in range(100))) >= 40
+            True
+
+        Verify that :trac:`30017` is fixed ::
+            sage: all(K.random_element().is_integral() for s in range(100))
+            False
+        """
         cdef Integer temp, denom1, denom2
 
         # in theory, we could just generate two random numerators and
@@ -447,17 +462,20 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         # of the random element code, it's worth doing slightly more
         # work to make this possible.
 
-        # normalize denominator bound
-        if den_bound is None or den_bound < 1:
-            den_bound = 1
-
         # generate denominators
-        denom1 = <Integer>(ZZ.random_element(x=1,
-                                             y=den_bound+1,
-                                             distribution=distribution))
-        denom2 = <Integer>(ZZ.random_element(x=1,
-                                             y=den_bound+1,
-                                             distribution=distribution))
+        if den_bound is None:
+            denom1 = <Integer>(1 + abs(ZZ.random_element(distribution=distribution)))
+            denom2 = <Integer>(1 + abs(ZZ.random_element(distribution=distribution)))
+        else:
+            # normalize denominator bound
+            if den_bound < 1:
+                den_bound = 1
+            denom1 = <Integer>(ZZ.random_element(x=1,
+                                                 y=den_bound+1,
+                                                 distribution=distribution))
+            denom2 = <Integer>(ZZ.random_element(x=1,
+                                                 y=den_bound+1,
+                                                 distribution=distribution))
 
         # set a, b
         temp = <Integer>(ZZ.random_element(x=num_bound, distribution=distribution))
