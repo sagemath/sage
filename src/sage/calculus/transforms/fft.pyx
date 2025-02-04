@@ -166,7 +166,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         TESTS:
 
-        Verify that :issue:10758 is fixed. ::
+        Verify that :issue:`10758` is fixed. ::
 
             sage: F = FFT(1)
             sage: F[0] = (1,1)
