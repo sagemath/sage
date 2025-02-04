@@ -125,7 +125,7 @@ intrinsic Sage(X::RngIntRes) -> MonStgElt, BoolElt
   return Sprintf("Zmod(%o)", Characteristic(X)), false;
 end intrinsic;
 
-/* Approximate fields */
+/* Approximate real and complex fields */
 
 intrinsic Sage(X::FldRe) -> MonStgElt, BoolElt
 {}
@@ -146,6 +146,34 @@ intrinsic Sage(X::FldComElt) -> MonStgElt, BoolElt
 {}
   return Sprintf("%o([%o, %o])", Sage(Parent(X)), Sage(Real(X)), Sage(Imaginary(X))), true;
 end intrinsic;
+
+/* p-adic rings and fields */
+
+intrinsic Sage(X::RngPad) -> MonStgElt, BoolElt
+{p-adic rings, either free precision model or exact model}
+    prec := Precision(X);
+    if prec eq Infinity then;
+      return Sprintf("Zp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(Precision(X))), false;
+    else:
+      return Sprintf("Zp(%o, %o, 'capped-rel')", Sage(Prime(X)), Sage(Precision(X))), false;
+    end if;
+end intrinsic;
+
+intrinsic Sage(X::FldPAd) -> MonStgElt, BoolElt
+{p-adic fields, either free precision model or exact model}
+    prec := Precision(X);
+    if prec eq Infinity then;
+      return Sprintf("Qp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(Precision(X))), false;
+    else:
+      return Sprintf("Qp(%o, %o, 'capped-rel')", Sage(Prime(X)), Sage(Precision(X))), false;
+    end if;
+end intrinsic;
+
+intrinsic Sage(X::RngPadRes) -> MonStgElt, BoolElt
+{fixed precision model}
+    return Sprintf("Zp(%o, %o, 'fixed-mod')", Sage(Prime(X)), Sage(Precision(X))), false;
+end intrinsic;
+
 
 /* Polynomials */
 
