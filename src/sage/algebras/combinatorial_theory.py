@@ -880,7 +880,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 res += self(target_size, **blocks).afae()*coeff
             except:
                 raise ValueError(
-                    "The construction contains excluded structures: " + 
+                    "The construction contains excluded structures: ", 
                     self(target_size, **blocks)
                     )
         return res
@@ -1719,6 +1719,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return final_sol["primal"]*mult
 
     def round_solution(self, sdp_output_file, denom=1024, ring=QQ, certificate_file=None):
+        r"""
+        TODO Docstring
+        """
         if not sdp_output_file.endswith(".pickle"):
             sdp_output_file += ".pickle"
         with open(sdp_output_file, "rb") as file_handle:
@@ -2689,9 +2692,14 @@ def _flatten_matrix(mat, doubled=False):
     """
     res = []
     factor = 2 if doubled else 1
-    for ii in range(len(mat)):
-        res.append(mat[ii][ii])
-        res += [factor*mat[ii][jj] for jj in range(ii+1, len(mat))]
+    try:
+        for ii in range(len(mat)):
+            res.append(mat[ii][ii])
+            res += [factor*mat[ii][jj] for jj in range(ii+1, len(mat))]
+    except:
+        for ii in range(len(mat)):
+            res.append(mat[ii])
+            res += [0 for jj in range(ii+1, len(mat))]
     return res
 
 def _unflatten_matrix(ls, dim=-1, doubled=False, upper=False):
