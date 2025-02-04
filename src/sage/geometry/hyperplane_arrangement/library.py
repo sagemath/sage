@@ -142,7 +142,10 @@ class HyperplaneArrangementLibrary:
 
         TESTS:
 
-        We try::
+        One of the above examples was marked "# random" because the output is
+        not always the same. However, the answer is "65" more than 99.9% of the
+        time, so we can make a doctest by running it repeatedly
+        (see :issue:39167). ::
 
             sage: G = graphs.CycleGraph(4)
             sage: any(hyperplane_arrangements.bigraphical(G,
