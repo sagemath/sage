@@ -159,7 +159,7 @@ intrinsic Sage(X::RngPad) -> MonStgElt, BoolElt
     end if;
 end intrinsic;
 
-intrinsic Sage(X::FldPAd) -> MonStgElt, BoolElt
+intrinsic Sage(X::FldPad) -> MonStgElt, BoolElt
 {p-adic fields, either free precision model or exact model}
     prec := Precision(X);
     if Type(prec) eq Infty then
