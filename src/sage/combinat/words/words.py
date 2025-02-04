@@ -332,7 +332,24 @@ class FiniteWords(AbstractLanguage):
         sage: W = FiniteWords('ab')
         sage: W
         Finite words over {'a', 'b'}
+
+    TESTS::
+
+        sage: FiniteWords('ab').is_finite()
+        False
+        sage: FiniteWords([]).is_finite()
+        True
     """
+
+    def __init__(self, alphabet=None, category=None):
+        if category is None:
+            category = Sets()
+        if alphabet:
+            category = category.Infinite()
+        else:
+            category = category.Finite()
+        super().__init__(alphabet, category)
+
     def cardinality(self):
         r"""
         Return the cardinality of this set.
