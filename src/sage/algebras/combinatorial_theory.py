@@ -1745,6 +1745,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             phi_vectors_exact,
             denom=denom, ring=ring
             )
+        if rounding_output==None:
+            print("Rounding was unsuccessful!")
+            return
         value = rounding_output[0]*mult
         self.fprint("Final rounded bound is {}".format(value))
         
