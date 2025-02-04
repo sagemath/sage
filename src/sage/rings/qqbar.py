@@ -1313,7 +1313,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         except TypeError:
             return False
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a set of generators for this field.
 
@@ -1811,7 +1811,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
         from sage.rings.rational_field import QQ
         return (AlgebraicClosureFunctor(), QQ)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a set of generators for this field.
 
@@ -2711,7 +2711,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         -1
         sage: nfI^2
         -1
-        sage: sum = nfrt2 + nfrt3 + nfI + nfz3; sum
+        sage: sum = nfrt2 + nfrt3 + nfI + nfz3; sum  # random
         a^5 + a^4 - a^3 + 2*a^2 - a - 1
         sage: hom(sum)
         2.646264369941973? + 1.866025403784439?*I
@@ -7098,11 +7098,25 @@ class AlgebraicPolynomialTracker(SageObject):
             sage: cp.exactify()
             sage: cp._exact
             True
+
+        TESTS:
+
+        Check that interrupting ``exactify()`` does not lead to incoherent state::
+
+            sage: x = polygen(AA)
+            sage: p = AA(2)^(1/100) * x + AA(3)^(1/100)
+            sage: cp = AA.common_polynomial(p)
+            sage: alarm(0.5); cp.generator()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: alarm(0.5); cp.generator()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
         """
         if self._exact:
             return
-
-        self._exact = True
 
         if self._poly.base_ring() is QQ:
             self._factors = [fac_exp[0] for fac_exp in self._poly.factor()]
@@ -7127,6 +7141,8 @@ class AlgebraicPolynomialTracker(SageObject):
                 fp = fld_poly(coeffs)
 
                 self._factors = [fac_exp[0] for fac_exp in fp.factor()]
+
+        self._exact = True
 
     def factors(self):
         r"""

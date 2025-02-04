@@ -5841,7 +5841,7 @@ class SemistandardTableaux(Tableaux):
     OUTPUT:
 
     - The appropriate class, after checking basic consistency tests. (For
-      example, specifying ``eval`` implies a value for `max_entry`).
+      example, specifying ``eval`` implies a value for ``max_entry``).
 
     A semistandard tableau is a tableau whose entries are positive integers,
     which are weakly increasing in rows and strictly increasing down columns.
@@ -6973,15 +6973,12 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
         for row in x:
             for i in row:
                 content[i] = content.get(i, 0) + 1
-        content_list = [0]*int(max(content))
+        content_list = [0] * int(max(content))
 
-        for key in content:
-            content_list[key-1] = content[key]
+        for key, c in content.items():
+            content_list[key - 1] = c
 
-        if content_list != self.weight:
-            return False
-
-        return True
+        return content_list == self.weight
 
     def cardinality(self):
         """
@@ -8132,8 +8129,6 @@ class StandardTableaux_shape(StandardTableaux):
                 row_count[tableau_vector[i]] += 1
 
             yield self.element_class(self, tableau)
-
-        return
 
     def list(self):
         r"""

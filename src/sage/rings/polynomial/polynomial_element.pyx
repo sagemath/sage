@@ -118,7 +118,7 @@ from sage.arith.functions import lcm
 from sage.rings.polynomial import polynomial_fateman
 
 from sage.rings.ideal import Ideal_generic
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
@@ -2280,7 +2280,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         - ``degree`` -- ``None`` or positive integer (default: ``None``).
           Used for polynomials over finite fields. If ``None``, returns
-          the the first factor found (usually the smallest). Otherwise,
+          the first factor found (usually the smallest). Otherwise,
           attempts to return an irreducible factor of ``self`` of chosen
           degree ``degree``.
 
@@ -4461,7 +4461,7 @@ cdef class Polynomial(CommutativePolynomial):
                       if self.get_unsafe(n) else zero for n in range(self.degree() + 1)]
         return S(p)
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return a sparse dictionary representation of this univariate
         polynomial.
@@ -7177,9 +7177,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = R('e*i') * x + x^2
             sage: f._giac_init_()
             '((1)*1)*sageVARx^2+((1)*sageVARe*sageVARi)*sageVARx'
-            sage: giac(f)  # needs giac
+            sage: giac(f)                                                               # needs giac
             sageVARx^2+sageVARe*sageVARi*sageVARx
-            sage: giac(R.zero())  # needs giac
+            sage: giac(R.zero())                                                        # needs giac
             0
         """
         g = 'sageVAR' + self.variable_name()
@@ -7522,7 +7522,7 @@ cdef class Polynomial(CommutativePolynomial):
             raise TypeError("p2 must be a polynomial")
         p1, p2 = coercion_model.canonical_coercion(p1, p2)
         K = p1.parent()
-        assert isinstance(p1.parent(), PolynomialRing_general)
+        assert isinstance(p1.parent(), PolynomialRing_generic)
         S = K.base_ring()
         Sf = S.fraction_field()
 
@@ -7646,7 +7646,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: x = polygen(R)
             sage: f = (x - a) * (x - b) * (x - c)
             sage: f.compose_power(2).factor()                                           # needs sage.libs.singular sage.modules
-            (x - c^2) * (x - b^2) * (x - a^2) * (x - b*c)^2 * (x - a*c)^2 * (x - a*b)^2
+            (x - a^2) * (x - b^2) * (x - c^2) * (x - a*b)^2 * (x - a*c)^2 * (x - b*c)^2
 
             sage: # needs sage.libs.singular sage.modules
             sage: x = polygen(QQ)
@@ -7715,7 +7715,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(QQ)
             sage: f = x^2 - 2*x + 2
-            sage: f.adams_operator_on_roots(10)                                                  # needs sage.libs.singular
+            sage: f.adams_operator_on_roots(10)                                         # needs sage.libs.singular
             x^2 + 1024
 
         When ``self`` is monic, the output will have leading coefficient
@@ -7725,10 +7725,10 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x - a) * (x - b) * (x - c)
-            sage: f.adams_operator_on_roots(3).factor()                                          # needs sage.libs.singular
-            (-1) * (x - c^3) * (x - b^3) * (x - a^3)
-            sage: f.adams_operator_on_roots(3, monic=True).factor()                              # needs sage.libs.singular
-            (x - c^3) * (x - b^3) * (x - a^3)
+            sage: f.adams_operator_on_roots(3).factor()                                 # needs sage.libs.singular
+            (-1) * (x - a^3) * (x - b^3) * (x - c^3)
+            sage: f.adams_operator_on_roots(3, monic=True).factor()                     # needs sage.libs.singular
+            (x - a^3) * (x - b^3) * (x - c^3)
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -7768,8 +7768,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: [f.symmetric_power(k).factor() for k in range(5)]                     # needs sage.libs.singular
             [x - 1,
              (-x + d) * (-x + c) * (-x + b) * (-x + a),
-             (x - c*d) * (x - b*d) * (x - a*d) * (x - b*c) * (x - a*c) * (x - a*b),
-             (x - b*c*d) * (x - a*c*d) * (x - a*b*d) * (x - a*b*c),
+             (x - a*b) * (x - a*c) * (x - b*c) * (x - a*d) * (x - b*d) * (x - c*d),
+             (x - a*b*c) * (x - a*b*d) * (x - a*c*d) * (x - b*c*d),
              x - a*b*c*d]
         """
         try:
@@ -10038,7 +10038,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.is_irreducible()
             True
 
-        If the base ring implements `_is_irreducible_univariate_polynomial`,
+        If the base ring implements ``_is_irreducible_univariate_polynomial``,
         then this method gets used instead of the generic algorithm which just
         factors the input::
 
@@ -10285,7 +10285,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.is_squarefree.cache
             False
 
-        If the base ring implements `_is_squarefree_univariate_polynomial`,
+        If the base ring implements ``_is_squarefree_univariate_polynomial``,
         then this method gets used instead of the generic algorithm in
         :meth:`_is_squarefree_generic`::
 
@@ -11022,11 +11022,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         x, = self.variables()
 
-        if isinstance(var, int) or isinstance(var, Integer):
+        if isinstance(var, (int, Integer)):
             if var:
                 raise TypeError("Variable index %d must be < 1." % var)
-            else:
-                return sum(self.coefficients())*x**self.degree()
+            return sum(self.coefficients()) * x**self.degree()
 
         x_name = self.variable_name()
         var = str(var)

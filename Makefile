@@ -173,9 +173,8 @@ distclean: build-clean
 bootstrap-clean:
 	rm -rf config/install-sh config/compile config/config.guess config/config.sub config/missing configure build/make/Makefile-auto.in
 	rm -f src/doc/en/installation/*.txt
-	find src/doc/en/reference/spkg -name index.rst -prune -o -maxdepth 1 -name "*.rst" -exec rm -f {} \+
-	for a in environment environment-optional src/environment src/environment-dev src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
-	rm -f src/Pipfile
+	find src/doc/en/reference/spkg -maxdepth 1 -name index.rst -prune -o -name "*.rst" -exec rm -f {} \+
+	for a in environment environment-optional src/environment src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
 	rm -f src/requirements.txt
 	rm -f src/setup.cfg
 	rm -f build/pkgs/cypari/version_requirements.txt
