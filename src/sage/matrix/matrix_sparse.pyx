@@ -16,6 +16,7 @@ from cysignals.signals cimport sig_check
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix0 as matrix0
 from sage.categories.rings import Rings
+from sage.calculus.functional import derivative
 from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 
@@ -23,7 +24,6 @@ from cpython cimport *
 from cpython.object cimport Py_EQ, Py_NE
 
 import sage.matrix.matrix_space
-import sage.calculus.functional
 
 
 cdef class Matrix_sparse(matrix.Matrix):

@@ -11,9 +11,9 @@ TESTS::
 cimport sage.matrix.matrix as matrix
 
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
+from sage.calculus.functional import derivative
 import sage.matrix.matrix_space
 import sage.structure.sequence
-import sage.calculus.functional
 
 
 cdef class Matrix_dense(matrix.Matrix):
