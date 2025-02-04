@@ -2373,8 +2373,32 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     False
                     sage: cartesian_product([S1,S2,S1]).is_empty()
                     True
+
+                Even when some parent did not implement ``is_empty``,
+                as long as one element is nonempty, the result can be determined::
+
+                    sage: C = ConditionSet(QQ, lambda x: x > 0)
+                    sage: C.is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([C,[]]).is_empty()
+                    True
+                    sage: cartesian_product([C,C]).is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
                 """
-                return any(c.is_empty() for c in self.cartesian_factors())
+                last_exception = None
+                for c in self.cartesian_factors():
+                    try:
+                        if c.is_empty():
+                            return True
+                    except (AttributeError, NotImplementedError) as e:
+                        last_exception = e
+                if last_exception is not None:
+                    raise NotImplementedError from last_exception
+                return False
 
             def is_finite(self):
                 r"""
@@ -2391,18 +2415,52 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     False
                     sage: cartesian_product([ZZ, Set(), ZZ]).is_finite()
                     True
+
+                TESTS:
+
+                This should still work even if some parent does not implement
+                ``is_finite``::
+
+                    sage: known_infinite_set = ZZ
+                    sage: unknown_infinite_set = Set([1]) + ConditionSet(QQ, lambda x: x > 0)
+                    sage: unknown_infinite_set.is_empty()
+                    False
+                    sage: unknown_infinite_set.is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([unknown_infinite_set, known_infinite_set]).is_finite()
+                    False
+                    sage: unknown_empty_set = ConditionSet(QQ, lambda x: False)
+                    sage: cartesian_product([known_infinite_set, unknown_empty_set]).is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
+                    sage: cartesian_product([unknown_infinite_set, Set([])]).is_finite()
+                    True
                 """
-                f = self.cartesian_factors()
                 try:
                     # Note: some parent might not implement "is_empty". So we
                     # carefully isolate this test.
-                    test = any(c.is_empty() for c in f)
+                    if self.is_empty():
+                        return True
                 except (AttributeError, NotImplementedError):
-                    pass
-                else:
-                    if test:
-                        return test
-                return all(c.is_finite() for c in f)
+                    # it is unknown whether some set may be empty
+                    if all(c.is_finite() for c in self.cartesian_factors()):
+                        return True
+                    raise NotImplementedError
+
+                # in this case, all sets are definitely nonempty
+                last_exception = None
+                for c in self.cartesian_factors():
+                    try:
+                        if not c.is_finite():
+                            return False
+                    except (AttributeError, NotImplementedError) as e:
+                        last_exception = e
+                if last_exception is not None:
+                    raise NotImplementedError from last_exception
+                return True
 
             def cardinality(self):
                 r"""
