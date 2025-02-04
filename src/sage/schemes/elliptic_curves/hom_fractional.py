@@ -131,14 +131,14 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
               Denominator: 3
         """
         if not isinstance(phi, EllipticCurveHom):
-            raise TypeError(f'not an elliptic-curve morphism')
+            raise TypeError('not an elliptic-curve morphism')
 
         d = ZZ(d)
         if d < 0:
             phi = -phi
             d = -d
         if not d:
-            raise ZeroDivisionError(f'cannot divide isogeny by zero')
+            raise ZeroDivisionError('cannot divide isogeny by zero')
 
         if check:
             if not (d**2).divides(phi.degree()):
