@@ -810,129 +810,79 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     #Optimizing and rounding
 
     def blowup_construction(self, target_size, pattern_size, 
-                            symbolic=False, symmetric=True, unordered=False, 
+                            symbolic_parts=False, 
                             **kwargs):
         r"""
         Returns a blowup construction, based on a given pattern
 
         INPUT:
 
-        - ``target_size`` -- integer; size of the resulting FlagAlgebraElement
+        - ``target_size`` -- integer; size of the resulting FlagAlgebraElement.
+            Must match the target_size in the optimization problem!
         - ``pattern_size`` -- integer; size of the pattern of the blowup
-        - ``symbolic`` -- boolean (default: `False`); if the resulting 
+            the number of groups in the optimal construction. Can not be larger
+            than `target_size`
+        - ``symbolic_parts`` -- boolean (default: `False`); if the resulting 
             construction has part sizes symbolic variables
-        - ``symmetric`` -- boolean (default: `True`); if the construction is
-            symmetric. Speeds up calculation
-        - ``unordered`` -- boolean (default: `False`); if the construction's 
-            parts are unordered. Slows down calculation
         - ``**kwargs`` -- the parameters of the pattern, one for each signature
-            element.
+            element. Looks like a flag definition, but repeated elements are allowed.
 
         OUTPUT: A FlagAlgebraElement with values corresponding to the one 
             resulting from a blowup construction
         
         EXAMPLES::
-
             sage: GraphTheory.blowup_construction(3, 2, edges=[[0, 1]])
-            ...
-            Flag Algebra Element over Rational Field
-            1/4 - Flag on 3 points, ftype from () with edges=()
-            0   - Flag on 3 points, ftype from () with edges=(01)
-            3/4 - Flag on 3 points, ftype from () with edges=(01 02)
-            
-            sage: GraphTheory.reset()
-            sage: GraphTheory.blowup_construction(3, 2, edges=[[0, 1], [1, 1]], symbolic=True)
-            ...
-            Flag Algebra Element over Multivariate Polynomial Ring in X0, X1 over Rational Field
-            X0^3             - Flag on 3 points, ftype from () with edges=()
-            0                - Flag on 3 points, ftype from () with edges=(01)
-            3*X0^2*X1        - Flag on 3 points, ftype from () with edges=(01 02)
-            3*X0*X1^2 + X1^3 - Flag on 3 points, ftype from () with edges=(01 02 12)
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        R = PolynomialRing(QQ, pattern_size, "X")
-        gs = R.gens()
+        RX = PolynomialRing(QQ, pattern_size, "X")
+        Xs = RX.gens()
+
+        flat_edges = []
+        for kk in kwargs:
+            if kk not in self.signature():
+                continue
+            for ee in kwargs[kk]:
+                flat_edges.append((kk, ee))
+
         res = 0
-
-        if symmetric:
-            terms = ((sum(gs))**target_size).dict()
-            if self._printlevel>0:
-                iterator = tqdm(terms)
-            else:
-                iterator = terms
-            for exps in iterator:
-                verts = []
-                for ind, exp in enumerate(exps):
-                    verts += [ind]*exp
-                coeff = terms[exps]/(pattern_size**target_size)
-                if symbolic:
-                    coeff = terms[exps]
-                    for ind, exp in enumerate(exps):
-                        coeff *= gs[ind]**exp
-                blocks = {}
-                for rel in kwargs:
-                    if rel not in self.signature():
-                        continue
-                    reledges = kwargs[rel]
-                    bladd = []
-                    for edge in reledges:
-                        clusters = [
-                            [ii for ii in range(target_size) if verts[ii]==ee] \
-                                for ee in edge
-                            ]
-                        bladd += list( \
-                            set([tuple(sorted(xx)) \
-                            for xx in itertools.product(*clusters) \
-                            if len(set(xx))==len(edge)]) \
-                                    )
-                    blocks[rel] = bladd
-                try:
-                    res += self(target_size, **blocks).afae()*coeff
-                except:
-                    raise ValueError(
-                        "The construction contains excluded structures: " + 
-                        self(target_size, **blocks)
-                        )
+        terms = ((sum(Xs))**target_size).dict()
+        if self._printlevel>0:
+            iterator = tqdm(terms)
         else:
-            rep = int(target_size if not unordered else target_size - 1)
-            if self._printlevel>0:
-                iterator = tqdm(itertools.product(range(pattern_size), repeat=rep))
-            else:
-                iterator = itertools.product(range(pattern_size), repeat=rep)
-            for verts in iterator:
-                if unordered:
-                    verts = [0] + list(verts)
-
-                coeff = 1/(pattern_size**rep)
-                if symbolic:
-                    coeff = 1
-                    for ind in verts:
-                        coeff *= gs[ind]
-
-                blocks = {}
-                for rel in kwargs:
-                    if rel not in self.signature():
-                        continue
-                    reledges = kwargs[rel]
-                    bladd = []
-                    for edge in reledges:
-                        clusters = [
-                            [ii for ii in range(target_size) if verts[ii]==ee] \
+            iterator = terms
+        for exps in iterator:
+            verts = []
+            for ind, exp in enumerate(exps):
+                verts += [ind]*exp
+            coeff = terms[exps]/(pattern_size**target_size)
+            if symbolic_parts:
+                coeff = terms[exps]
+                for ind, exp in enumerate(exps):
+                    coeff *= Xs[ind]**exp
+            blocks = {}
+            for rel in kwargs:
+                if rel not in self.signature():
+                    continue
+                reledges = kwargs[rel]
+                bladd = []
+                for edge in reledges:
+                    clusters = [
+                        [ii for ii in range(target_size) if verts[ii]==ee] \
                             for ee in edge
-                            ]
-                        bladd += list( \
-                            set([tuple(sorted(xx)) \
-                            for xx in itertools.product(*clusters) \
-                            if len(set(xx))==len(edge)]) \
-                                    )
-                    blocks[rel] = bladd
-                try:
-                    res += self(target_size, **blocks).afae() * coeff
-                except:
-                    raise ValueError(
-                        "The construction contains excluded structures: " + 
-                        self(target_size, **blocks)
-                        )
+                        ]
+                    bladd += list( \
+                        set([tuple(sorted(xx)) \
+                        for xx in itertools.product(*clusters) \
+                        if len(set(xx))==len(edge)]) \
+                                )
+                blocks[rel] = bladd
+            try:
+                res += self(target_size, **blocks).afae()*coeff
+            except:
+                raise ValueError(
+                    "The construction contains excluded structures: " + 
+                    self(target_size, **blocks)
+                    )
         return res
 
     def _adjust_table_phi(self, table_constructor, phi_vectors_exact, 
@@ -1645,7 +1595,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                      "typed flags": typed_flags
                     }
         
-        if file!=None and file!="":
+        if file!=None and file!="" and file!="notebook":
             if not file.endswith(".pickle"):
                 file += ".pickle"
             with open(file, "wb") as file_handle:
@@ -1654,6 +1604,159 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             return cert_dict
         return result
     
+    def solve_sdp(self, target_element, target_size, construction, 
+                  maximize=True, positives=None, file=None, 
+                  specific_ftype=None, ring=QQ, params=None):
+        r"""
+        TODO Docstring
+        """
+        from csdpy import solve_sdp
+        import time
+
+        #
+        # Handling parameters
+        #
+
+        if self._printlevel != 1:
+            if params==None:
+                params = {"printlevel": self._printlevel}
+            else:
+                if "printlevel" not in params:
+                    params["printlevel"] = self._printlevel
+        if params!=None:
+            with open("param.csdp", "w") as paramsfile:
+                for key, value in params.items():
+                    paramsfile.write(f"{key}={value}\n")
+            if "printlevel" in params:
+                self._printlevel = params["printlevel"]
+            else:
+                self._printlevel = 1
+        
+        #
+        # Initial setup
+        #
+
+        base_flags = self.generate_flags(target_size)
+        self.fprint("Base flags generated, their number is {}".format(
+            len(base_flags)
+            ))
+        mult = -1 if maximize else 1
+        target_vector_exact = (
+            target_element.project()*(mult) << \
+                (target_size - target_element.size())
+                ).values()
+        sdp_data = self._target_to_sdp_data(target_vector_exact)
+        
+        #
+        # Create the relevant ftypes
+        #
+        
+        if specific_ftype==None:
+            ftype_data = self._get_relevant_ftypes(target_size)
+        else:
+            ftype_data = specific_ftype
+        self.fprint("The relevant ftypes are constructed, their " + 
+              "number is {}".format(len(ftype_data)))
+        flags = [self.generate_flags(dat[0], dat[1]) for dat in ftype_data]
+        flag_sizes = [len(xx) for xx in flags]
+        self.fprint("Block sizes before symmetric/asymmetric change is" + 
+              " applied: {}".format(flag_sizes))
+        
+        #
+        # Create the table constructor and adjust it based on construction
+        #
+        
+        table_constructor = self._create_table_constructor(
+            ftype_data, target_size
+            )
+        if isinstance(construction, FlagAlgebraElement):
+            phi_vectors_exact = [construction.values()]
+        else:
+            phi_vectors_exact = [xx.values() for xx in construction]
+        self.fprint("Adjusting table with kernels from construction")
+        table_constructor = self._adjust_table_phi(
+            table_constructor, phi_vectors_exact, ring=ring
+            )
+        sdp_data = self._tables_to_sdp_data(
+            table_constructor, prev_data=sdp_data
+            )
+        self.fprint("Tables finished")
+
+        #
+        # Add constraints data and add it to sdp_data
+        #
+        
+        constraints_data = self._create_constraints_data(
+            positives, target_element, target_size
+            )
+        sdp_data = self._constraints_to_sdp_data(
+            constraints_data, prev_data=sdp_data
+            )
+        self.fprint("Constraints finished")
+        
+        #
+        # Then run the optimizer
+        #
+        
+        self.fprint("Running SDP. Used block sizes are {}".format(sdp_data[0]))
+        time.sleep(float(0.1))
+        final_sol = solve_sdp(*sdp_data)
+        time.sleep(float(0.1))
+
+        if file!=None:
+            if not file.endswith(".pickle"):
+                file += ".pickle"
+            with open(file, "wb") as file_handle:
+                save_data = (
+                    final_sol, 
+                    (sdp_data[0], sdp_data[1], None, None), 
+                    table_constructor, 
+                    (constraints_data[0], None, constraints_data[2], None), 
+                    phi_vectors_exact, 
+                    mult)
+                pickle.dump(save_data, file_handle)
+
+        return final_sol["primal"]*mult
+
+    def round_solution(self, sdp_output_file, denom=1024, ring=QQ, certificate_file=None):
+        if not sdp_output_file.endswith(".pickle"):
+            sdp_output_file += ".pickle"
+        with open(sdp_output_file, "rb") as file_handle:
+            save_data = pickle.load(file_handle)
+        #
+        # Unpack the data
+        #
+        
+        sdp_result, sdp_data, table_constructor, \
+            constraints_data, phi_vectors_exact, \
+            mult = save_data
+        
+
+        #
+        # Perform the rounding
+        #
+
+        self.fprint("Starting the rounding of the result")
+        rounding_output = self._round_sdp_solution_phi( \
+            sdp_result,
+            sdp_data, 
+            table_constructor,
+            constraints_data,
+            phi_vectors_exact,
+            denom=denom, ring=ring
+            )
+        value = rounding_output[0]*mult
+        self.fprint("Final rounded bound is {}".format(value))
+        
+        if certificate_file==None:
+            return value
+        return self._format_optimizer_output(
+            table_constructor, 
+            mult=mult,  
+            rounding_output=rounding_output,
+            file=certificate_file
+            )
+
     def optimize_problem(self, target_element, target_size, maximize=True, 
                          positives=None, construction=None, file=None, 
                          exact=False, denom=1024, ring=QQ, specific_ftype=None, 
@@ -1993,7 +2096,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 ))
 
     def verify_certificate(self, file_or_cert, target_element, target_size, 
-                           maximize=True, positives=None, construction=None):
+                           maximize=True, positives=None, construction=None, 
+                           specific_ftype=None):
         r"""
         Verifies the certificate provided by the optimizer 
         written to `file`
