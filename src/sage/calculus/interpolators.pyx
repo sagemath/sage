@@ -223,7 +223,7 @@ cdef class CCSpline:
     cdef int N
     cdef np.ndarray avec, bvec, cvec, dvec
 
-    #standard cubic interpolation method
+    # standard cubic interpolation method
     def __init__(self, pts):
         """
         TESTS::

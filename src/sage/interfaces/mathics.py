@@ -397,12 +397,12 @@ from sage.structure.richcmp import rich_to_bool
 
 def _mathics_sympysage_symbol(self):
     r"""
-    Convert a Sympy symbol ``self`` to a correspondig element
+    Convert a Sympy symbol ``self`` to a corresponding element
     in Sage's symbolic ring.
 
     This function replaces ``_sympysage_symbol`` to
     take care of the special names used in Mathics.
-    It is set to the method `_sage_` of the Sympy class
+    It is set to the method ``_sage_`` of the Sympy class
     :class:`sympy.core.symbol.Sympol`.
 
     EXAMPLES::

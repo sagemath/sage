@@ -828,24 +828,20 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
             sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
             sage: phi.decomposition()                                                   # needs sage.libs.pari
-            [
-            Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [0 1],
-            Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [ 1 -1]
-            ]
+            [Free module of degree 2 and rank 1 over Integer Ring
+             Echelon basis matrix:
+             [0 1],
+             Free module of degree 2 and rank 1 over Integer Ring
+             Echelon basis matrix:
+             [ 1 -1]]
             sage: phi2 = V.hom(phi.matrix(), side='right')
             sage: phi2.decomposition()                                                  # needs sage.libs.pari
-            [
-            Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [1 1],
-            Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [1 0]
-            ]
+            [Free module of degree 2 and rank 1 over Integer Ring
+             Echelon basis matrix:
+             [1 1],
+             Free module of degree 2 and rank 1 over Integer Ring
+             Echelon basis matrix:
+             [1 0]]
         """
         if not self.is_endomorphism():
             raise ArithmeticError("matrix morphism must be an endomorphism")

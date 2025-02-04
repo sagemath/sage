@@ -339,8 +339,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
                 if SymmetryMutant.concordance_inverse in hp_sym.keys():
                     hp_sym[SymmetryMutant.concordance_inverse] = hpm
 
-            for sym_mut in hp_sym.keys():
-                hps = hp_sym[sym_mut]
+            for sym_mut, hps in hp_sym.items():
                 if hps.divides(hpoly):
                     Kgen = self((K, sym_mut))
                     h = hpoly // hps

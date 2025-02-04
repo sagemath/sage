@@ -645,7 +645,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 mpz_set_pylong(self.value, x)
 
             elif isinstance(x, float):
-                n = long(x)
+                n = int(x)
                 if n == x:
                     mpz_set_pylong(self.value, n)
                 else:
@@ -684,7 +684,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     mpz_set_str_python(self.value, str_to_bytes(x), base)
                     return
 
-                elif (isinstance(x, list) or isinstance(x, tuple)) and base > 1:
+                elif isinstance(x, (list, tuple)) and base > 1:
                     b = the_integer_ring(base)
                     if b == 2:  # we use a faster method
                         for j in range(len(x)):
@@ -7434,7 +7434,7 @@ cdef class int_to_Z(Morphism):
     def __init__(self):
         import sage.categories.homset
         from sage.sets.pythonclass import Set_PythonType
-        Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(long), integer_ring.ZZ))
+        Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(int), integer_ring.ZZ))
 
     cpdef Element _call_(self, a):
         cdef Integer r
