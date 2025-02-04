@@ -279,6 +279,8 @@ cdef class Matrix_dense(matrix.Matrix):
 
         TESTS:
 
+        Verify that :issue:`15067` is fixed::
+        
             sage: u = matrix(1, 2, [-1, 1])
             sage: derivative(u, x)
             [0 0]
