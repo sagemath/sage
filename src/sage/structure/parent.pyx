@@ -1235,13 +1235,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         return True
 
-    def is_empty(self):
-        """
-        Default implementation of the method :meth:`is_empty`.
-        Delegates to :meth:`__bool__`.
-        """
-        return not bool(self)
-
     # Should be moved and merged into the EnumeratedSets() category (#12955)
     def __getitem__(self, n):
         """

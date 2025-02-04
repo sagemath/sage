@@ -350,6 +350,19 @@ class FiniteWords(AbstractLanguage):
             category = category.Finite()
         super().__init__(alphabet, category)
 
+    def is_empty(self):
+        """
+        Return False, because the empty word is in the set.
+
+        TESTS::
+
+            sage: FiniteWords('ab').is_empty()
+            False
+            sage: FiniteWords([]).is_empty()
+            False
+        """
+        return False
+
     def cardinality(self):
         r"""
         Return the cardinality of this set.
