@@ -490,6 +490,11 @@ REFERENCES:
                         "Spook:  Sponge-Based Leakage-Resilient AuthenticatedEncryption with a Masked Tweakable Block Cipher"
                         https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/Spook-spec.pdf
 
+.. [BBC2000] Anne Berry, Jean-Paul Bordat, Olivier Cogis. *Generating all the
+             minimal separators of a graph*. International Journal of
+             Foundations of Computer Science, 11(3):397-403, 2000.
+             :doi:`10.1142/S0129054100000211`
+
 .. [BCDM2019] \T. Beyne, Y. L. Chen, C. Dobraunig, B. Mennink. *Elephant v1* (2019)
               https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/elephant-spec.pdf
 
@@ -1152,6 +1157,10 @@ REFERENCES:
              :doi:`10.1016/S0304-3975(97)00228-4`.
 
 .. [Bo2009] Bosch, S., Algebra, Springer 2009
+
+.. [Bon2017] Joseph E. Bonin, *Lattices Related to Extensions of
+             Presentations of Transversal Matroids*.
+             Electronic Journal of Combinatorics (2017), #P1.49.
 
 .. [Bor1993] Lev A. Borisov,
              "Towards the mirror symmetry for Calabi-Yau complete
