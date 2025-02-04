@@ -479,7 +479,11 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                     keys_iter = None
                 if keys_iter is not None:
                     el_set = self._family[k]
-                    if el_set.is_finite():
+                    try:
+                        is_finite = el_set.is_finite()
+                    except (AttributeError, NotImplementedError):
+                        is_finite = False
+                    if is_finite:
                         for el in el_set:
                             yield wrap_element(el, k)
                     else:
