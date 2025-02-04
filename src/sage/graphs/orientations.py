@@ -20,7 +20,7 @@ etc.). It also implements some iterators over all these orientations.
     :meth:`random_orientation` | Return a random orientation of a graph `G`
     :meth:`minimum_outdegree_orientation` | Return an orientation of `G` with the smallest possible maximum outdegree.
     :meth:`bounded_outdegree_orientation` | Return an orientation of `G` such that every vertex `v` has out-degree less than `b(v)`.
-    :meth:`eulerian_orientation(G)` | Return a DiGraph which is an Eulerian orientation of the graph `G`.
+    :meth:`eulerian_orientation` | Return an Eulerian orientation of the graph `G`.
 
 Authors
 -------
@@ -45,6 +45,165 @@ Methods
 
 from copy import copy
 from sage.graphs.digraph import DiGraph
+
+
+def _initialize_digraph(G, edges, name=None, weighted=None, sparse=None,
+                        data_structure=None, immutable=None, hash_labels=None):
+    r"""
+    Helper method to return a directed graph built from ``G``.
+
+    This method returns a digraph with the same set of vertices than the input
+    graph ``G`` and with specified edges. The data structure can be
+    specified. Furthermore, all attributes of the graph are copied to the
+    returned digraph.
+
+    INPUT:
+
+    - ``G`` -- a graph
+
+    - ``edges`` -- iterable; the edges of the digraph to return
+
+    - ``name`` -- string (default: ``None``); the name of the digraph to
+      return. By default (``None``), the returned digraph has the same name as
+      the input graph ``G``.
+
+    - ``weighted`` -- boolean (default: ``None``); weightedness for the oriented
+      digraph. By default (``None``), the graph and its orientation will behave
+      the same.
+
+    - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an alias for
+      ``data_structure="sparse"``, and ``sparse=False`` is an alias for
+      ``data_structure="dense"``. Only used when ``data_structure=None``.
+
+    - ``data_structure`` -- string (default: ``None``); one of ``'sparse'``,
+      ``'static_sparse'``, or ``'dense'``. See the documentation of
+      :class:`DiGraph`.
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable digraph. Only used when ``data_structure=None``.
+
+      * ``immutable=None`` (default) means that the graph and its orientation
+        will behave the same way.
+
+      * ``immutable=True`` is a shortcut for ``data_structure='static_sparse'``
+
+      * ``immutable=False`` means that the created digraph is mutable. When used
+        to orient an immutable graph, the data structure used is ``'sparse'``
+        unless anything else is specified.
+
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing of the oriented digraph. This parameter defaults to
+      ``True`` if the graph is weighted. This parameter is ignored when
+      parameter ``immutable`` is not ``True``. Beware that trying to hash
+      unhashable labels will raise an error.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.orientations import _initialize_digraph
+        sage: G = Graph([(1, 2)], immutable=True, loops=True, multiedges=True)
+        sage: D = _initialize_digraph(G, [])
+        sage: D.is_immutable()
+        True
+        sage: D.allows_loops()
+        True
+        sage: D.allows_multiple_edges()
+        True
+        sage: D.edges()
+        []
+        sage: D.add_edge((2, 3))
+        Traceback (most recent call last):
+        ...
+        ValueError: graph is immutable; please change a copy instead (use function copy())
+        sage: G = Graph([(1, 2)])
+        sage: D = _initialize_digraph(G, [])
+        sage: D.vertices()
+        [1, 2]
+        sage: D.edges()
+        []
+        sage: D.add_edge((2, 3)); D.edges()
+        [(2, 3, None)]
+
+    TESTS::
+
+        sage: from sage.graphs.orientations import _initialize_digraph
+        sage: _initialize_digraph(Graph(), [], data_structure='sparse', immutable=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: you cannot define 'immutable' or 'sparse' when 'data_structure' has a value
+        sage: _initialize_digraph(Graph(), [], data_structure='sparse', sparse=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: you cannot define 'immutable' or 'sparse' when 'data_structure' has a value
+    """
+    # Which data structure should be used ?
+    if data_structure is not None:
+        # data_structure is already defined so there is nothing left to do
+        # here. Did the user try to define too much ?
+        if immutable is not None or sparse is not None:
+            raise ValueError("you cannot define 'immutable' or 'sparse' "
+                             "when 'data_structure' has a value")
+    # At this point, data_structure is None.
+    elif immutable is True:
+        data_structure = 'static_sparse'
+        if sparse is False:
+            raise ValueError("there is no dense immutable backend at the moment")
+    elif immutable is False:
+        # If the user requests a mutable digraph and input is immutable, we
+        # choose the 'sparse' cgraph backend. Unless the user explicitly
+        # asked for something different.
+        if G.is_immutable():
+            data_structure = 'dense' if sparse is False else 'sparse'
+    # At this point, data_structure and immutable are None.
+    elif sparse is True:
+        data_structure = "sparse"
+    elif sparse is False:
+        data_structure = "dense"
+
+    if data_structure is None:
+        from sage.graphs.base.dense_graph import DenseGraphBackend
+        from sage.graphs.base.sparse_graph import SparseGraphBackend
+        if isinstance(G._backend, DenseGraphBackend):
+            data_structure = "dense"
+        elif isinstance(G._backend, SparseGraphBackend):
+            data_structure = "sparse"
+        else:
+            data_structure = "static_sparse"
+
+    if name is None:
+        name = G.name()
+    if weighted is None:
+        weighted = G.weighted()
+    if hash_labels is None:
+        hash_labels = G._hash_labels
+
+    D = DiGraph(data=[G, edges],
+                format='vertices_and_edges',
+                data_structure=data_structure,
+                multiedges=G.allows_multiple_edges(),
+                loops=G.allows_loops(),
+                weighted=weighted,
+                pos=copy(G.get_pos()),
+                name=name,
+                hash_labels=hash_labels)
+
+    D.set_vertices(G.get_vertices())
+
+    attributes_to_copy = ('_assoc', '_embedding')
+    for attr in attributes_to_copy:
+        if hasattr(G, attr):
+            copy_attr = {}
+            old_attr = getattr(G, attr)
+            if isinstance(old_attr, dict):
+                for v, value in old_attr.items():
+                    try:
+                        copy_attr[v] = value.copy()
+                    except AttributeError:
+                        copy_attr[v] = copy(value)
+                setattr(D, attr, copy_attr)
+            else:
+                setattr(D, attr, copy(old_attr))
+
+    return D
 
 
 def orient(G, f, weighted=None, data_structure=None, sparse=None,
@@ -164,64 +323,11 @@ def orient(G, f, weighted=None, data_structure=None, sparse=None,
         sage: H.orient(foo, data_structure=None, immutable=None, sparse=None)._backend
         <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
     """
-    # Which data structure should be used ?
-    if data_structure is not None:
-        # data_structure is already defined so there is nothing left to do
-        # here. Did the user try to define too much ?
-        if immutable is not None or sparse is not None:
-            raise ValueError("you cannot define 'immutable' or 'sparse' "
-                             "when 'data_structure' has a value")
-    # At this point, data_structure is None.
-    elif immutable is True:
-        data_structure = 'static_sparse'
-        if sparse is False:
-            raise ValueError("there is no dense immutable backend at the moment")
-    elif immutable is False:
-        # If the user requests a mutable digraph and input is immutable, we
-        # choose the 'sparse' cgraph backend. Unless the user explicitly
-        # asked for something different.
-        if G.is_immutable():
-            data_structure = 'dense' if sparse is False else 'sparse'
-    elif sparse is True:
-        data_structure = "sparse"
-    elif sparse is False:
-        data_structure = "dense"
-
-    if data_structure is None:
-        from sage.graphs.base.dense_graph import DenseGraphBackend
-        if isinstance(G._backend, DenseGraphBackend):
-            data_structure = "dense"
-        else:
-            data_structure = "sparse"
-
-    if weighted is None:
-        weighted = G.weighted()
-
     edges = (f(e) for e in G.edge_iterator())
-    D = DiGraph([G, edges], format='vertices_and_edges',
-                data_structure=data_structure,
-                loops=G.allows_loops(),
-                multiedges=G.allows_multiple_edges(),
-                name=f"Orientation of {G.name()}",
-                pos=copy(G._pos), weighted=weighted,
-                hash_labels=hash_labels)
-
-    attributes_to_copy = ('_assoc', '_embedding')
-    for attr in attributes_to_copy:
-        if hasattr(G, attr):
-            copy_attr = {}
-            old_attr = getattr(G, attr)
-            if isinstance(old_attr, dict):
-                for v, value in old_attr.items():
-                    try:
-                        copy_attr[v] = value.copy()
-                    except AttributeError:
-                        copy_attr[v] = copy(value)
-                setattr(D, attr, copy_attr)
-            else:
-                setattr(D, attr, copy(old_attr))
-
-    return D
+    name = f"Orientation of {G.name()}"
+    return _initialize_digraph(G, edges, name=name, weighted=weighted,
+                               data_structure=data_structure, sparse=sparse,
+                               immutable=immutable, hash_labels=hash_labels)
 
 
 def orientations(G, data_structure=None, sparse=None):
@@ -310,7 +416,7 @@ def orientations(G, data_structure=None, sparse=None):
         sage: next(G.orientations(data_structure='sparse', sparse=True))._backend
         Traceback (most recent call last):
         ...
-        ValueError: cannot specify both 'sparse' and 'data_structure'
+        ValueError: you cannot define 'immutable' or 'sparse' when 'data_structure' has a value
         sage: next(G.orientations(sparse=True))._backend
         <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
         sage: next(G.orientations(sparse=False))._backend
@@ -336,51 +442,21 @@ def orientations(G, data_structure=None, sparse=None):
         sage: next(G.orientations()).get_embedding() == {}
         True
     """
-    if sparse is not None:
-        if data_structure is not None:
-            raise ValueError("cannot specify both 'sparse' and 'data_structure'")
-        data_structure = "sparse" if sparse else "dense"
-    if data_structure is None:
-        from sage.graphs.base.dense_graph import DenseGraphBackend
-        from sage.graphs.base.sparse_graph import SparseGraphBackend
-        if isinstance(G._backend, DenseGraphBackend):
-            data_structure = "dense"
-        elif isinstance(G._backend, SparseGraphBackend):
-            data_structure = "sparse"
-        else:
-            data_structure = "static_sparse"
-
     name = G.name()
     if name:
         name = 'An orientation of ' + name
 
     if not G.size():
-        D = DiGraph(data=[G, []],
-                    format='vertices_and_edges',
-                    name=name,
-                    pos=G._pos,
-                    multiedges=G.allows_multiple_edges(),
-                    loops=G.allows_loops(),
-                    data_structure=data_structure)
-        if hasattr(G, '_embedding'):
-            D._embedding = copy(G._embedding)
-        yield D
+        yield _initialize_digraph(G, [], name=name,
+                                  data_structure=data_structure, sparse=sparse)
         return
 
     E = [[(u, v, label), (v, u, label)] if u != v else [(u, v, label)]
          for u, v, label in G.edge_iterator()]
     from itertools import product
     for edges in product(*E):
-        D = DiGraph(data=[G, edges],
-                    format='vertices_and_edges',
-                    name=name,
-                    pos=G._pos,
-                    multiedges=G.allows_multiple_edges(),
-                    loops=G.allows_loops(),
-                    data_structure=data_structure)
-        if hasattr(G, '_embedding'):
-            D._embedding = copy(G._embedding)
-        yield D
+        yield _initialize_digraph(G, edges, name=name,
+                                  data_structure=data_structure, sparse=sparse)
 
 
 def acyclic_orientations(G):
@@ -644,7 +720,8 @@ def acyclic_orientations(G):
 
     # Iterate over acyclic orientations and create relabeled graphs
     for orientation in orientations:
-        D = DiGraph([(u, v) if label else (v, u) for (u, v), label in orientation.items()])
+        edges = ((u, v) if label else (v, u) for (u, v), label in orientation.items())
+        D = _initialize_digraph(G, edges)
         D.relabel(perm=reverse_vertex_labels, inplace=True)
         yield D
 
@@ -711,7 +788,13 @@ def strong_orientation(G):
         sage: g.strong_orientation()
         Multi-digraph on 3 vertices
     """
-    d = DiGraph(multiedges=G.allows_multiple_edges())
+    from sage.graphs.base.dense_graph import DenseGraphBackend
+    if isinstance(G._backend, DenseGraphBackend):
+        data_structure = "dense"
+    else:
+        data_structure = "sparse"
+    d = _initialize_digraph(G, [], data_structure=data_structure)
+
     i = 0
 
     # The algorithm works through a depth-first search. Any edge used in the
@@ -1019,25 +1102,14 @@ def random_orientation(G):
     if not isinstance(G, Graph):
         raise ValueError("the input parameter must be a Graph")
 
-    D = DiGraph(data=[G.vertices(sort=False), []],
-                format='vertices_and_edges',
-                multiedges=G.allows_multiple_edges(),
-                loops=G.allows_loops(),
-                weighted=G.weighted(),
-                pos=G.get_pos(),
-                name="Random orientation of {}".format(G.name()))
-    if hasattr(G, '_embedding'):
-        D._embedding = copy(G._embedding)
-
     from sage.misc.prandom import getrandbits
     rbits = getrandbits(G.size())
+    edges = []
     for u, v, l in G.edge_iterator():
-        if rbits % 2:
-            D.add_edge(u, v, l)
-        else:
-            D.add_edge(v, u, l)
+        edges.append((u, v, l) if rbits % 2 else (v, u, l))
         rbits >>= 1
-    return D
+
+    return _initialize_digraph(G, edges, name=f"Random orientation of {G.name()}")
 
 
 def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose=0,
@@ -1155,15 +1227,8 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
 
     orientation = p.get_values(orientation, convert=bool, tolerance=integrality_tolerance)
 
-    # All the edges from G are doubled in O ( one in each direction )
-    O = DiGraph(G)
-
-    # Builds the list of edges that should be removed
-    edges = (e[::-1] if orientation[frozenset(e)] else e
-             for e in G.edge_iterator(labels=False))
-    O.delete_edges(edges)
-
-    return O
+    # Return the resulting orientation
+    return G.orient(lambda e: e if orientation[frozenset(e[:2])] else (e[1], e[0], e[2]))
 
 
 def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
@@ -1328,27 +1393,18 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
     if value != G.size():
         raise ValueError("No orientation exists for the given bound")
 
-    D = DiGraph()
-    D.add_vertices(vertices)
-
     # The flow graph may not contain all the vertices, if they are
     # not part of the flow...
+    edges = ((vertices[u], vertices[vv if vv != u else uu])
+             for u in (x for x in range(n) if x in flow)
+             for uu, vv in flow.neighbors_out(u))
 
-    for u in [x for x in range(n) if x in flow]:
-
-        for uu, vv in flow.neighbors_out(u):
-            v = vv if vv != u else uu
-            D.add_edge(vertices[u], vertices[v])
-
-    # I do not like when a method destroys the embedding ;-)
-    D.set_pos(G.get_pos())
-
-    return D
+    return _initialize_digraph(G, edges)
 
 
 def eulerian_orientation(G):
     r"""
-    Return a DiGraph which is an Eulerian orientation of the graph `G`.
+    Return an Eulerian orientation of the graph `G`.
 
     An Eulerian graph being a graph such that any vertex has an even degree, an
     Eulerian orientation of a graph is an orientation of its edges such that
@@ -1405,7 +1461,7 @@ def eulerian_orientation(G):
         sage: E4.eulerian_orientation()
         Digraph on 4 vertices
     """
-    d = DiGraph([G, []], format='vertices_and_edges')
+    d = _initialize_digraph(G, [], sparse=True, immutable=False)
 
     if not G.size():
         return d
