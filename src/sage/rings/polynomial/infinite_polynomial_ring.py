@@ -1265,7 +1265,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         return self.gens()[-n:]
 
     @cached_method
-    def gens_dict(self):
+    def gens_dict(self) -> GenDictWithBasering:
         """
         Return a dictionary-like object containing the infinitely many
         ``{var_name:variable}`` pairs.

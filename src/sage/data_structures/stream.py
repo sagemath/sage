@@ -4237,7 +4237,7 @@ class Stream_truncated(Stream_unary):
         true order at initialization::
 
             sage: f = Stream_function(fun, True, 0)
-            sage: [f[i] for i in range(0, 10)]
+            sage: [f[i] for i in range(10)]
             [0, 1, 1, 0, 1, 0, 0, 0, 1, 0]
             sage: f._cache
             {1: 1, 2: 1, 3: 0, 4: 1, 5: 0, 6: 0, 7: 0, 8: 1, 9: 0}
@@ -4247,7 +4247,7 @@ class Stream_truncated(Stream_unary):
             sage: s._approximate_order
             3
             sage: f = Stream_function(fun, False, 0)
-            sage: [f[i] for i in range(0, 10)]
+            sage: [f[i] for i in range(10)]
             [0, 1, 1, 0, 1, 0, 0, 0, 1, 0]
             sage: f._cache
             [1, 1, 0, 1, 0, 0, 0, 1, 0]
@@ -4422,7 +4422,7 @@ class Stream_truncated(Stream_unary):
             sage: from sage.data_structures.stream import Stream_function, Stream_truncated
             sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
             sage: f = Stream_function(fun, False, 0)
-            sage: [f[i] for i in range(0, 4)]
+            sage: [f[i] for i in range(4)]
             [0, 1, 1, 0]
             sage: f._cache
             [1, 1, 0]
@@ -4435,7 +4435,7 @@ class Stream_truncated(Stream_unary):
             True
 
             sage: f = Stream_function(fun, True, 0)
-            sage: [f[i] for i in range(0, 4)]
+            sage: [f[i] for i in range(4)]
             [0, 1, 1, 0]
             sage: f._cache
             {1: 1, 2: 1, 3: 0}
