@@ -304,6 +304,19 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
+    def _magma_init_(self, magma):
+        """
+        Conversion to magma.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: F = Qp(5,7,"capped-rel")
+            sage: magma(F)
+            ?
+        """
+        return f"pAdicRing({self.prime()},{self.precision_cap()})"
+
 
 class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGeneric):
     r"""
@@ -607,6 +620,19 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
+    def _magma_init_(self, magma):
+        """
+        Conversion to magma.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: F = Zp(5,7,"fixed-mod")
+            sage: magma(F)
+            ?
+        """
+        return f"pAdicQuotientRing({self.prime()},{self.precision_cap()})"
+
 
 class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGeneric):
     r"""
@@ -718,6 +744,19 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
             if N == p**n:
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
+
+    def _magma_init_(self, magma):
+        """
+        Conversion to magma.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: F = Qp(5,7,"capped-rel")
+            sage: magma(F)
+            ?
+        """
+        return f"pAdicField({self.prime()},{self.precision_cap()})"
 
     def random_element(self, algorithm='default'):
         r"""
