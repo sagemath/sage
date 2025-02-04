@@ -297,7 +297,8 @@ def Hom(X, Y, category=None, check=True):
         sage: R = Set_PythonType(int)
         sage: S = Set_PythonType(float)
         sage: Hom(R, S)
-        Set of Morphisms from Set of Python objects of class 'int' to Set of Python objects of class 'float' in Category of sets
+        Set of Morphisms from Set of Python objects of class 'int'
+         to Set of Python objects of class 'float' in Category of infinite sets
 
     Checks that the domain and codomain are in the specified
     category. Case of a non parent::
