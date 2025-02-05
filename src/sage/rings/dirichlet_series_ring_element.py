@@ -175,9 +175,9 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             if not ans:
                 ans = repr(coeffs[1])
             elif ans[0] == '-':
-                ans = repr(coeffs[1]) + " "
+                ans = repr(coeffs[1]) + " " + ans
             else:
-                ans = repr(coeffs[1]) + " + "
+                ans = repr(coeffs[1]) + " + " + ans
         # Append the precision marker.
         ans += f" + O({prec}^-s)"
         return ans
