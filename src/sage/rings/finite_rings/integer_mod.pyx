@@ -1586,15 +1586,14 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     if all:
                         return [K(s) for s in sign[:2]]
                     return K(sign[0])
-                if all:
-                    modp = [mod(self, 8)]
-                modp = mod(self, 8)
+                modp = [mod(self, 8)] if all else mod(self, 8)
             else:
                 sign = [1]
                 modp = self % p
                 self = self / K(R.teichmuller(modp))
                 modp = modp.nth_root(n, all=all, algorithm=algorithm)
-            # now self is congruent to 1 mod 4 or 1 mod p (for odd p), so the power series for p-adic log converges.
+            # now self is congruent to 1 mod 4 or 1 mod p (for odd p),
+            # so the power series for p-adic log converges.
             # Hensel lifting is probably better, but this is easier at the moment.
             plog = R(self).log()
             nval = n.valuation(p)

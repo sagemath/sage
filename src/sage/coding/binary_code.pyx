@@ -3370,8 +3370,8 @@ cdef class BinaryCodeClassifier:
                 # equal to its minimum element
                 v[k] = nu.new_first_smallest_nontrivial(k, W, self.Phi_size * k)
                 if not nu.sat_225(k): hh = k + 1
-                e[k] = 0 # see state 12 and 17
-                state = 2 # continue down the tree
+                e[k] = 0  # see state 12 and 17
+                state = 2  # continue down the tree
 
             elif state == 5:
                 # same as state 3, but in the case where we haven't yet defined zeta
@@ -3381,8 +3381,7 @@ cdef class BinaryCodeClassifier:
                 zb__Lambda_rho[k] = Lambda[k]
                 state = 4
 
-            elif state == 6:
-                # at this stage, there is no reason to continue downward, so backtrack
+            elif state == 6:  # at this stage, there is no reason to continue downward, so backtrack
                 j = k
 
                 # return to the longest ancestor nu[i] of nu that could have a
@@ -3473,7 +3472,7 @@ cdef class BinaryCodeClassifier:
 
                 state = 10
 
-            elif state == 9: # nu is a better guess at the canonical label than rho
+            elif state == 9:  # nu is a better guess at the canonical label than rho
                 rho = PartitionStack(nu)
                 k_rho = k
                 qzb = 0
@@ -3483,7 +3482,7 @@ cdef class BinaryCodeClassifier:
                 zb__Lambda_rho[k+1] = -1
                 state = 6
 
-            elif state == 10: # we have an automorphism to process
+            elif state == 10:  # we have an automorphism to process
                 # increment l
                 if l < self.L-1: l += 1
                 # store information about the automorphism to Omega and Phi
@@ -3504,8 +3503,8 @@ cdef class BinaryCodeClassifier:
                         Omega[ii] ^= (1<<j)  # so cancel
                         j = col_gamma[j]     # cellmates
                     i += 1
-                    while i < ncols and not Omega[ii]&(1<<i): # find minimal element
-                        i += 1                                # of next cell
+                    while i < ncols and not Omega[ii]&(1<<i):  # find minimal element
+                        i += 1                                 # of next cell
                 i = 0
                 jj = self.radix
                 while i < nwords:
