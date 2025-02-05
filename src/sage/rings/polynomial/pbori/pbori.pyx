@@ -223,6 +223,7 @@ order_dict = {"lp": pblp,
               "block_dp_asc": pbblock_dp_asc,
               "block_dp": pbblock_dp}
 
+OrderCode = type('OrderCode', (object,), order_dict)
 
 inv_order_dict = {pblp: "lex",
                   pbdlex: "deglex",
@@ -8098,3 +8099,7 @@ cdef class PolynomialFactory:
 
             raise TypeError("cannot convert %s to BooleanPolynomial" %
                             type(arg))
+
+Monomial = MonomialFactory()
+Polynomial = PolynomialFactory()
+Variable = VariableFactory()

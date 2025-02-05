@@ -65,15 +65,21 @@ AUTHOR:
         [a, b, c, d, e, y2]
 """
 
-from .pbori import (order_dict, TermOrder_from_pb_order, BooleanPolynomialRing,
-                    BooleanPolynomialVector, MonomialFactory,
-                    PolynomialFactory, VariableFactory, add_up_polynomials)
-from .pbori import gauss_on_polys as _gauss_on_polys
-
 import weakref
 
+from sage.rings.polynomial.pbori.pbori import (
+    BooleanPolynomialRing,
+    BooleanPolynomialVector,
+    TermOrder_from_pb_order,
+    add_up_polynomials,
+)
 
-OrderCode = type('OrderCode', (object,), order_dict)
+# The following imports are necessary to make these objects available for backward compatibility
+from sage.rings.polynomial.pbori.pbori import Monomial as Monomial
+from sage.rings.polynomial.pbori.pbori import OrderCode as OrderCode
+from sage.rings.polynomial.pbori.pbori import Polynomial as Polynomial
+from sage.rings.polynomial.pbori.pbori import Variable as Variable
+from sage.rings.polynomial.pbori.pbori import gauss_on_polys as _gauss_on_polys
 
 
 def Ring(n, order='lp', names=None, blocks=None):
@@ -92,12 +98,6 @@ BoolePolynomialVector = BooleanPolynomialVector
 # todo: PolyBoRi's original interface uses its WeakRingPtr here
 def WeakRingRef(ring):
     return weakref.weakref(ring)
-
-
-Monomial = MonomialFactory()
-Polynomial = PolynomialFactory()
-Variable = VariableFactory()
-
 
 _add_up_polynomials = add_up_polynomials
 
