@@ -801,11 +801,12 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             {[-1.316074012952492460819218901797 +/- 9.7e-34],
              [1.316074012952492460819218901797 +/- 9.7e-34]}
 
-            sage: set((x^4 - 3).roots(ComplexIntervalField(100), multiplicities=False))
-            {-1.31607401295249246081921890180? + 0.?e-37*I,
+            sage: sorted((x^4 - 3).roots(ComplexIntervalField(100),
+            ....:                        multiplicities=False), key=repr)
+            [-1.31607401295249246081921890180? + 0.?e-37*I,
              0.?e-37 + 1.31607401295249246081921890180?*I,
              0.?e-37 - 1.31607401295249246081921890180?*I,
-             1.31607401295249246081921890180? + 0.?e-37*I}
+             1.31607401295249246081921890180? + 0.?e-37*I]
 
             sage: set((x^2 - i/3).roots(ComplexBallField(2), multiplicities=False))
             {[+/- 0.409] + [+/- 0.409]*I, [+/- 0.409] + [+/- 0.409]*I}
