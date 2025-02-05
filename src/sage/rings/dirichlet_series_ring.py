@@ -38,7 +38,7 @@ AUTHORS:
 from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
 from sage.rings.fast_arith import prime_range
-from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.rings.dirichlet_series_ring_element import DirichletSeries_dense, DirichletSeries_sparse
 
 class DirichletSeriesRing(Parent):
@@ -71,7 +71,7 @@ class DirichletSeriesRing(Parent):
             True
         """
         self.Element = DirichletSeries_sparse if sparse else DirichletSeries_dense
-        Parent.__init__(self, base_ring, names=None, category=CommutativeRings())
+        Parent.__init__(self, base=base_ring, names=None, category=CommutativeAlgebras(base_ring))
         self.__precision = precision
         self.__is_sparse = sparse
 
