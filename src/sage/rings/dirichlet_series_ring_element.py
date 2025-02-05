@@ -36,8 +36,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from sage.misc.abstract_method import abstract_method
 from sage.structure.element import parent, CommutativeAlgebraElement
+
 
 class DirichletSeries_generic(CommutativeAlgebraElement):
     """
@@ -96,7 +97,7 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
                 if j != z:
                     self.data[i] = j
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test equality of Dirichlet series.
 
@@ -117,7 +118,7 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
         other = other - self
         return all(not other[i] for i in range(1, other.parent().precision()))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Convert a Dirichlet series to a boolean.
         """
@@ -152,7 +153,7 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
         """
         return DirichletSeriesIterator(self)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -167,17 +168,21 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
         from sage.misc.repr import repr_lincomb
         coeffs = self.coefficients()
         prec = self.parent().precision()
+        # Use repr_lincomb for the other coefficients.
+        ans = repr_lincomb([(f'{i}^-s', ci) for i, ci in sorted(coeffs.items()) if i > 1])
         # Handle the constant coefficient separately.
         if coeffs[1]:
-            ans = repr(coeffs[1]) + " + "
-        else:
-            ans = ""
-        # Use repr_lincomb for the other coefficients.
-        ans += repr_lincomb([(str(i) + '^-s', coeffs[i]) for i in sorted(coeffs.keys()) if i > 1])
+            if not ans:
+                ans = repr(coeffs[1])
+            elif ans[0] == '-':
+                ans = repr(coeffs[1]) + " "
+            else:
+                ans = repr(coeffs[1]) + " + "
         # Append the precision marker.
-        ans += " + O({}^-s)".format(prec)
+        ans += f" + O({prec}^-s)"
         return ans
 
+    @abstract_method
     def _add_(self, other):
         """
         Add two formal Dirichlet series.
@@ -190,8 +195,8 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             sage: f+g
             2 + 4*2^-s + 3*3^-s + 4*4^-s + O(8^-s)
         """
-        raise NotImplementedError
 
+    @abstract_method
     def _sub_(self, other):
         """
         Subtract two formal Dirichlet series.
@@ -204,8 +209,8 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             sage: f-g
             3*3^-s - 4*4^-s + O(8^-s)
         """
-        raise NotImplementedError
 
+    @abstract_method
     def _mul_(self, other):
         """
         Multiply two formal Dirichlet series.
@@ -227,7 +232,6 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             sage: f*g
             1 + 4*2^-s + 3*3^-s + 8*4^-s + 6*6^-s + O(8^-s)
         """
-        raise NotImplementedError
 
     def _div_(self, other):
         """
@@ -244,17 +248,18 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
         """
         c = other[1]
         if not c.is_unit():
-            raise ValueError("Leading coefficient must be a unit")
+            raise ValueError("leading coefficient must be a unit")
         inv = self.base_ring()(~c)
-        other1 = 1 - inv*other
+        other1 = 1 - inv * other
         assert other1[1] == 0
-        tmp = self.parent()(1)
+        tmp = self.parent().one()
         tmp2 = other1
         while tmp2:
             tmp += tmp2
             tmp2 *= other1
-        return self*inv*tmp
+        return self * inv * tmp
 
+    @abstract_method
     def coefficients(self):
         """
         Return a dictionary of coefficients.
@@ -269,13 +274,13 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             sage: f.coefficients()
             {1: 1, 2: 2, 3: 3, 6: 6}
         """
-        raise NotImplementedError
 
     def truncate(self, prec, new_parent=False):
         """
         Truncate to a specified precision.
 
-        By default, the result is returned in the same parent. If ``new_parent`` is True,
+        By default, the result is returned in the same parent.
+        If ``new_parent`` is ``True``,
         we instead create a new parent with the specified precision.
 
         EXAMPLES::
@@ -297,14 +302,15 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             parent = DirichletSeriesRing(parent.base_ring(), prec, parent.is_sparse())
         return parent({i: j for i,j in self.coefficients().items() if i < prec})
 
+
 class DirichletSeries_dense(DirichletSeries_generic):
     def __init__(self, parent, data=None):
         base_ring = parent.base_ring()
         zero = base_ring(0)
-        self.data = [zero for _ in range(parent.precision())]
+        self.data = [zero] * parent.precision()
         DirichletSeries_generic.__init__(self, parent, data)
 
-    def coefficients(self):
+    def coefficients(self) -> dict:
         return {i: j for i,j in enumerate(self.data) if j}
 
     def _add_(self, other):
@@ -332,12 +338,13 @@ class DirichletSeries_dense(DirichletSeries_generic):
                     ans[i*j-1] += x*y
         return parent(ans)
 
+
 class DirichletSeries_sparse(DirichletSeries_generic):
     def __init__(self, parent, data=None):
         self.data = {}
         DirichletSeries_generic.__init__(self, parent, data)
 
-    def coefficients(self):
+    def coefficients(self) -> dict:
         return {i: j for i,j in self.data.items() if j}
 
     def _add_(self, other):
@@ -367,6 +374,7 @@ class DirichletSeries_sparse(DirichletSeries_generic):
                 if k < prec:
                     out[k] = out[k] + x*y if k in out else x*y
         return parent(out)
+
 
 class DirichletSeriesIterator:
     def __init__(self, x):
