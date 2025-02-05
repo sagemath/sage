@@ -65,7 +65,7 @@ from cysignals.signals cimport sig_on, sig_off
 import operator
 import fractions
 
-from sage.rings.rational_field import Q
+from sage.rings.rational_field import QQ
 
 from sage.arith.long cimport integer_check_long_py
 from sage.categories.morphism cimport Morphism
@@ -180,16 +180,6 @@ cdef Rational_sub_(Rational self, Rational other):
     sig_off()
 
     return x
-
-cdef Parent the_rational_ring = Q
-
-# make sure zero/one elements are set
-cdef set_zero_one_elements():
-    global the_rational_ring
-    the_rational_ring._zero_element = Rational(0)
-    the_rational_ring._one_element = Rational(1)
-
-set_zero_one_elements()
 
 cpdef Integer integer_rational_power(Integer a, Rational b):
     """
@@ -506,9 +496,8 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: p.parent()
             Rational Field
         """
-        global the_rational_ring
         mpq_init(self.value)
-        self._parent = the_rational_ring
+        self._parent = QQ
 
     def __init__(self, x=None, unsigned int base=0):
         """
@@ -4124,10 +4113,10 @@ cdef class Z_to_Q(Morphism):
               From: Integer Ring
               To:   Rational Field
         """
-        from sage.rings import integer_ring
-        from sage.rings import rational_field
+        from sage.rings.integer_ring import ZZ
+
         import sage.categories.homset
-        Morphism.__init__(self, sage.categories.homset.Hom(integer_ring.ZZ, rational_field.QQ))
+        Morphism.__init__(self, sage.categories.homset.Hom(ZZ, QQ))
 
     cpdef Element _call_(self, x):
         """
