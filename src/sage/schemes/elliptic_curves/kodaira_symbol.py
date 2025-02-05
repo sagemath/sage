@@ -332,37 +332,40 @@ class KodairaSymbol_class(SageObject):
 
 
     def show(self):
-     
-        """
-        Show the ascii art representation of the Kodaira symbol.
+        r"""
+        Prints an ascii art representation of the Kodaira symbol.
         Returns None. 
 
+        EXAMPLES::
 
-        KodairaSymbol_class('In').show()
-
-        _/___\_
-        /  1  \ 1
-        :     :
-        :     :
-        \____/_
-         \  /  1
-           1
-
-       KodairaSymbol_class('III*').show()
-
-         \   \ / 3
-       1  \ 2/ \
-          / \   \
-         /   \  |\
-                |
-         _______|
-            2   |
-               4|
-                |/
-           \/   /
-           /\  /|
-         1/ 2\/3|
-         /   /\
+            sage: KodairaSymbol('In').show()
+            <BLANKLINE>
+            _/___\_
+            /  1  \ 1
+            :     :
+            :     :
+            _\____/_
+            1 \  / 1
+               1
+            <BLANKLINE>
+            <BLANKLINE>
+            sage: KodairaSymbol('III*').show()
+            <BLANKLINE>
+            \   \ / 3
+            1 \ 2/ \
+              / \   \
+             /   \  |\
+                    |
+             _______|
+                2   |
+                   4|
+                    |/
+               \/   /
+               /\  /|
+             1/ 2\/3|
+                /   /\
+            <BLANKLINE>
+            <BLANKLINE>
 
             
         """
@@ -394,16 +397,15 @@ def KodairaSymbol(symbol):
         [I0*, II*, III*, IV*, I1*, I2*, I3*, I4*, I5*]
         sage: all(KS(str(KS(n))) == KS(n) for n in range(-10,10) if n != 0)
         True
-
-    You can use the show() method here too: 
-
-    KS(2).show()
-
-     \     /
-      \   /
-       \ /
-        |
-     1  |
+        sage: KS(2).show()
+        <BLANKLINE>
+         \     /
+          \   /
+           \ /
+            |
+         1  |
+        <BLANKLINE>
+        <BLANKLINE>
 
 
     """
