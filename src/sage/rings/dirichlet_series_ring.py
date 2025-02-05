@@ -38,10 +38,10 @@ AUTHORS:
 from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
 from sage.rings.fast_arith import prime_range
-from sage.rings.ring import CommutativeRing
+from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.dirichlet_series_ring_element import DirichletSeries_dense, DirichletSeries_sparse
 
-class DirichletSeriesRing(CommutativeRing, Parent):
+class DirichletSeriesRing(Parent):
     """
     A ring of Dirichlet series over a base ring, truncated to a fixed precision.
 
@@ -71,8 +71,7 @@ class DirichletSeriesRing(CommutativeRing, Parent):
             True
         """
         self.Element = DirichletSeries_sparse if sparse else DirichletSeries_dense
-        CommutativeRing.__init__(self, base_ring, names=None, category=base_ring.category())
-        Parent.__init__(self, base_ring, names=None, category=base_ring.category())
+        Parent.__init__(self, base_ring, names=None, category=CommutativeRings())
         self.__precision = precision
         self.__is_sparse = sparse
 
@@ -115,7 +114,7 @@ class DirichletSeriesRing(CommutativeRing, Parent):
         """
         return self.__precision
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool | None:
         """
         Implement coercion.
 
@@ -133,7 +132,7 @@ class DirichletSeriesRing(CommutativeRing, Parent):
         base_ring = self.base_ring()
         if base_ring.has_coerce_map_from(S):
             return True
-        if isinstance(S, DirichletSeriesRing) and base_ring.has_coerce_map_from(S.base_ring()) and self.precision() <= S.precision() and (self.is_sparse() is True or S.is_sparse() is False):
+        if isinstance(S, DirichletSeriesRing) and base_ring.has_coerce_map_from(S.base_ring()) and self.precision() <= S.precision() and (self.is_sparse() or not S.is_sparse()):
             return True
 
     def euler_product(self, Lpoly):
