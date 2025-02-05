@@ -56,7 +56,7 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
         sage: h = R(lambda x: x); h
         1 + 2*2^-s + 3*3^-s + 4*4^-s + 5*5^-s + 6*6^-s + 7*7^-s + O(8^-s)
      """
-    def __init__(self, parent, data=None):
+    def __init__(self, parent, data=None) -> None:
         """
         Construct a Dirichlet series.
 
@@ -115,7 +115,10 @@ class DirichletSeries_generic(CommutativeAlgebraElement):
             sage: 1 == R(1)
             True
         """
-        other = other - self
+        try:
+            other = other - self
+        except TypeError:
+            return False
         return all(not other[i] for i in range(1, other.parent().precision()))
 
     def __bool__(self) -> bool:
