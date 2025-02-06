@@ -1130,6 +1130,120 @@ class EllipticCurveHom(Morphism):
         from sage.rings.finite_rings.integer_mod_ring import Zmod
         return matrix(Zmod(n), [vecP, vecQ])
 
+    def minimal_polynomial(self):
+        r"""
+        Return a minimal polynomial of this isogeny, as defined in
+        [EPSV2023]_, Definition 15: That is, some polynomial `f`
+        such that the points on the domain curve whose `x`-coordinates
+        are roots of `f` generate the kernel of this isogeny.
+
+        .. SEEALSO::
+
+            :meth:`EllipticCurve_field.kernel_polynomial_from_divisor()`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(419), [32, 41])
+            sage: phi = E.isogeny(E.lift_x(30)); phi
+            Isogeny of degree 7
+             from Elliptic Curve defined by y^2 = x^3 + 32*x + 41 over Finite Field of size 419
+             to Elliptic Curve defined by y^2 = x^3 + 316*x + 241 over Finite Field of size 419
+            sage: f = phi.minimal_polynomial(); f  # random -- one of x+161, x+201, x+389
+            x + 161
+            sage: f.divides(phi.kernel_polynomial())
+            True
+            sage: E.kernel_polynomial_from_divisor(f, 7) == phi.kernel_polynomial()
+            True
+
+        It also works for rational isogenies with irrational kernel points::
+
+            sage: E = EllipticCurve(GF(127^2), [1,0])
+            sage: phi = E.isogenies_prime_degree(17)[0]; phi
+            Isogeny of degree 17
+              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 127^2
+              to Elliptic Curve defined by y^2 = x^3 + (16*z2+26)*x over Finite Field in z2 of size 127^2
+            sage: phi.kernel_polynomial()
+            x^8 + (68*z2 + 97)*x^6 + (59*z2 + 40)*x^4 + (59*z2 + 38)*x^2 + 4*z2 + 13
+            sage: phi.kernel_polynomial().factor()
+            (x^4 + (11*z2 + 32)*x^2 + 48*z2 + 70) * (x^4 + (57*z2 + 65)*x^2 + 20*z2 + 25)
+            sage: phi.minimal_polynomial().factor()
+            x^4 + (57*z2 + 65)*x^2 + 20*z2 + 25
+        """
+        #FIXME This can probably be implemented better!
+        h = self.kernel_polynomial()
+        for f,_ in reversed(h.factor()):
+            if self.domain().kernel_polynomial_from_divisor(f, self.degree()) == h:
+                return f
+        raise ValueError('not a cyclic isogeny')
+
+    def push_subgroup(self, f):
+        r"""
+        Given a irreducible divisor `f` of an `l`-division polynomial on the
+        domain curve of this isogeny, return an irreducible polynomial `f'`
+        such that the subgroup defined by `f` is mapped to the subgroup
+        defined by `f'`. See :meth:`minimal_polynomial()`.
+
+        ALGORITHM: [EPSV2023]_, Algorithm 5 (``PushSubgroup'')
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(419), [32, 41])
+            sage: K = E.lift_x(30)
+            sage: phi = E.isogeny(K); phi
+            Isogeny of degree 7
+              from Elliptic Curve defined by y^2 = x^3 + 32*x + 41 over Finite Field of size 419
+              to Elliptic Curve defined by y^2 = x^3 + 316*x + 241 over Finite Field of size 419
+            sage: psi = E.isogeny(E.lift_x(54), algorithm='factored'); psi
+            Composite morphism of degree 15 = 3*5:
+              From: Elliptic Curve defined by y^2 = x^3 + 32*x + 41 over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 36*x + 305 over Finite Field of size 419
+            sage: f = phi.minimal_polynomial(); f   # random -- one of x+161, x+201, x+389
+            x + 161
+            sage: g = psi.push_subgroup(f); g       # random -- one of x+148, x+333, x+249
+            x + 148
+            sage: h = psi.codomain().kernel_polynomial_from_divisor(g, phi.degree()); h
+            x^3 + 311*x^2 + 196*x + 44
+            sage: chi = psi.codomain().isogeny(h); chi
+            Isogeny of degree 7
+              from Elliptic Curve defined by y^2 = x^3 + 36*x + 305 over Finite Field of size 419
+              to Elliptic Curve defined by y^2 = x^3 + 186*x + 37 over Finite Field of size 419
+            sage: (chi * psi)(K)
+            (0 : 1 : 0)
+
+        It also works for rational isogenies with irrational kernel points::
+
+            sage: E = EllipticCurve(GF(127^2), [1,0])
+            sage: phi = E.isogenies_prime_degree(13)[0]; phi
+            Isogeny of degree 13
+              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 127^2
+              to Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 127^2
+            sage: psi = E.isogenies_prime_degree(17)[0]; psi
+            Isogeny of degree 17
+              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 127^2
+              to Elliptic Curve defined by y^2 = x^3 + (16*z2+26)*x over Finite Field in z2 of size 127^2
+            sage: f_phi = phi.minimal_polynomial()
+            sage: g_phi = psi.push_subgroup(f_phi)
+            sage: h_phi = psi.codomain().kernel_polynomial_from_divisor(g_phi, phi.degree())
+            sage: phi_pushed = psi.codomain().isogeny(h_phi); phi_pushed
+            Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + (16*z2+26)*x over Finite Field in z2 of size 127^2 to Elliptic Curve defined by y^2 = x^3 + (110*z2+61)*x over Finite Field in z2 of size 127^2
+            sage: f_psi = psi.minimal_polynomial()
+            sage: g_psi = phi.push_subgroup(f_psi)
+            sage: h_psi = phi.codomain().kernel_polynomial_from_divisor(g_psi, psi.degree())
+            sage: psi_pushed = phi.codomain().isogeny(h_psi); psi_pushed
+            Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 127^2 to Elliptic Curve defined by y^2 = x^3 + (16*z2+26)*x over Finite Field in z2 of size 127^2
+            sage: any(iso * psi_pushed * phi == phi_pushed * psi
+            ....:     for iso in psi_pushed.codomain().isomorphisms(phi_pushed.codomain()))
+            True
+        """
+        g = self.x_rational_map()
+        g1, g2 = g.numerator(), g.denominator()
+        gker = g2.gcd(f)
+        f1 = f // gker
+        R = f1.parent()
+        S = R.quotient_ring(f1)
+        alpha = S(g1 * g2.inverse_mod(f1))
+        return alpha.minpoly()
+
 
 def compare_via_evaluation(left, right):
     r"""
