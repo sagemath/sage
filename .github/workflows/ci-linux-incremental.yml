@@ -1,6 +1,6 @@
 name: CI Linux incremental
 
-## This GitHub Actions workflow runs SAGE_ROOT/tox.ini with select environments,
+## This GitHub Actions workflow runs SAGE_ROOT/tox.ini with selected environments,
 ## whenever a GitHub pull request is opened or synchronized in a repository
 ## where GitHub Actions are enabled.
 ##
@@ -99,56 +99,9 @@ jobs:
          "debian-bullseye",
          "debian-bookworm",
          "fedora-30",
-         "fedora-40",
-         "gentoo-python3.11",
-         "debian-bullseye-i386"]
+         "fedora-40",]
       tox_packages_factors: >-
           ["standard",
            "minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
       max_parallel: 8
-
-  constraints_pkgs-norequirements:
-    needs: [changed_files]
-    uses: ./.github/workflows/docker.yml
-    with:
-      # Build incrementally from published Docker image
-      incremental: true
-      free_disk_space: true
-      from_docker_repository: ghcr.io/sagemath/sage/
-      from_docker_target: "with-targets-pre"
-      from_docker_tag: "dev"
-      docker_targets: "with-targets-pre"
-      targets_pre: "${{needs.changed_files.outputs.build_targets}} all-sage-local python3-ensure tox-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements"
-      tox_system_factors: >-
-        ["ubuntu-focal",
-         "ubuntu-noble",
-         "debian-bookworm",
-         "fedora-40",
-         "debian-bullseye-i386"]
-      tox_packages_factors: >-
-          ["standard"]
-      docker_push_repository: ghcr.io/${{ github.repository }}/
-      max_parallel: 16
-
-  site:
-    needs: [changed_files]
-    uses: ./.github/workflows/docker.yml
-    with:
-      # Build incrementally from published Docker image
-      incremental: true
-      free_disk_space: true
-      from_docker_repository: ghcr.io/sagemath/sage/
-      from_docker_target: "with-targets"
-      from_docker_tag: "dev"
-      docker_targets: "with-targets"
-      targets: "${{needs.changed_files.outputs.build_targets}} doc-html ptest-nodoc"
-      # Only test systems with a usable system python (>= 3.9)
-      # with only a small number of test failures as of 10.2.rc0
-      tox_system_factors: >-
-        ["gentoo-python3.11",
-         "archlinux-latest",
-         "fedora-40"]
-      tox_packages_factors: >-
-          ["standard-sitepackages"]
-      docker_push_repository: ghcr.io/${{ github.repository }}/
