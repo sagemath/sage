@@ -16,14 +16,13 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.structure.richcmp import richcmp, op_EQ, op_NE
-from sage.misc.cachefunc import cached_method
-from sage.misc.latex import latex
-
+from sage.categories.homset import Hom
 from sage.categories.map import Map
 from sage.categories.morphism import Morphism
-from sage.categories.homset import Hom
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.structure.element import AlgebraElement
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
 
 
 class OreFunction(AlgebraElement):

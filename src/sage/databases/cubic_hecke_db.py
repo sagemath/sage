@@ -1067,7 +1067,7 @@ class CubicHeckeFileCache(SageObject):
             sage: cha_fc.is_empty(CubicHeckeFileCache.section.braid_images)
             True
             sage: b2_img = CHA2(b2); b2_img
-            w*c^-1 + u*c + (-v)
+            w*c^-1 + u*c - v
             sage: cha_fc.write_braid_image(b2.Tietze(), b2_img.to_vector())
             sage: cha_fc.read_braid_image(b2.Tietze(), ring_of_definition)
             (-v, u, w)
@@ -1102,7 +1102,7 @@ class CubicHeckeFileCache(SageObject):
             sage: B2 = BraidGroup(2)
             sage: b, = B2.gens(); b3 = b**3
             sage: b3_img = CHA2(b3); b3_img
-            u*w*c^-1 + (u^2-v)*c + (-u*v+w)
+            u*w*c^-1 + (u^2-v)*c - (u*v-w)
             sage: cha_fc.write_braid_image(b3.Tietze(), b3_img.to_vector())
             sage: cha_fc.read_braid_image(b3.Tietze(), ring_of_definition)
             (-u*v + w, u^2 - v, u*w)
@@ -1153,7 +1153,6 @@ class CubicHeckeFileCache(SageObject):
         """
         self._data_library.update({self.section.basis_extensions: new_basis_extensions})
         self.write(self.section.basis_extensions)
-        return
 
 
 # -----------------------------------------------------------------------------
