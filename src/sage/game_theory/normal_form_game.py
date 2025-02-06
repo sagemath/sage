@@ -890,7 +890,7 @@ class NormalFormGame(SageObject, MutableMapping):
         """
         return len(self.utilities)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the strategy_profiles of the game.
 
@@ -909,7 +909,7 @@ class NormalFormGame(SageObject, MutableMapping):
         base_str = "Normal Form Game with the following utilities: {}"
         return base_str.format(pformat(self.utilities))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX code representing the ``NormalFormGame``.
 
@@ -1194,7 +1194,7 @@ class NormalFormGame(SageObject, MutableMapping):
             return False
         m1, m2 = self.payoff_matrices()
         c = m1 + m2
-        t = c[0,0]
+        t = c[0, 0]
 
         for row in c:
             for i in row:
@@ -2021,7 +2021,7 @@ class NormalFormGame(SageObject, MutableMapping):
                                powerset(range(player.num_strategies))]
                               for player in self.players]
 
-        potential_support_pairs = [pair for pair in product(*potential_supports) if len(pair[0]) == len(pair[1])]
+        potential_support_pairs = (pair for pair in product(*potential_supports) if len(pair[0]) == len(pair[1]))
 
         equilibria = []
         for pair in potential_support_pairs:
@@ -2230,7 +2230,7 @@ class NormalFormGame(SageObject, MutableMapping):
         p2_payoffs = [sum(v * col[j] for j, v in enumerate(a))
                       for col in M2.columns()]
 
-        #if p1_payoffs.index(max(p1_payoffs)) not in p1_support:
+        # if p1_payoffs.index(max(p1_payoffs)) not in p1_support:
         if not any(i in p1_support for i, x in enumerate(p1_payoffs)
                    if x == max(p1_payoffs)):
             return False
@@ -2239,89 +2239,6 @@ class NormalFormGame(SageObject, MutableMapping):
             return False
 
         return True
-
-    def _Hrepresentation(self, m1, m2):
-        r"""
-        Create the H-representation strings required to use ``lrsnash``.
-
-        Since lrslib 6.1, this format is referred to as "legacy format".
-
-        This method is deprecated.
-
-        EXAMPLES::
-
-            sage: A = matrix([[1, 2], [3, 4]])
-            sage: B = matrix([[3, 3], [1, 4]])
-            sage: C = NormalFormGame([A, B])
-            sage: print(C._Hrepresentation(A, B)[0])
-            doctest:warning...
-            DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
-            creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://github.com/sagemath/sage/issues/27745 for details.
-            H-representation
-            linearity 1 5
-            begin
-            5 4 rational
-            0 1 0 0
-            0 0 1 0
-            0 -3 -1 1
-            0 -3 -4 1
-            -1 1 1 0
-            end
-            <BLANKLINE>
-            sage: print(C._Hrepresentation(A, B)[1])
-            H-representation
-            linearity 1 5
-            begin
-            5 4 rational
-            0 -1 -2 1
-            0 -3 -4 1
-            0 1 0 0
-            0 0 1 0
-            -1 1 1 0
-            end
-            <BLANKLINE>
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(27745,
-                    "NormalFormGame._Hrepresentation is deprecated as it "
-                    "creates the legacy input format. "
-                    "Use NormalFormGame._lrs_nash_format instead")
-
-        from sage.geometry.polyhedron.misc import _to_space_separated_string
-        m = self.players[0].num_strategies
-        n = self.players[1].num_strategies
-        midentity = list(matrix.identity(m))
-        nidentity = list(matrix.identity(n))
-
-        s = 'H-representation\n'
-        s += 'linearity 1 ' + str(m + n + 1) + '\n'
-        s += 'begin\n'
-        s += str(m + n + 1) + ' ' + str(m + 2) + ' rational\n'
-        for f in list(midentity):
-            s += '0 ' + _to_space_separated_string(f) + ' 0 \n'
-        for e in list(m2.transpose()):
-            s += '0 ' + _to_space_separated_string(-e) + '  1 \n'
-        s += '-1 '
-        for g in range(m):
-            s += '1 '
-        s += '0 \n'
-        s += 'end\n'
-
-        t = 'H-representation\n'
-        t += 'linearity 1 ' + str(m + n + 1) + '\n'
-        t += 'begin\n'
-        t += str(m + n + 1) + ' ' + str(n + 2) + ' rational\n'
-        for e in list(m1):
-            t += '0 ' + _to_space_separated_string(-e) + '  1 \n'
-        for f in list(nidentity):
-            t += '0 ' + _to_space_separated_string(f) + ' 0 \n'
-        t += '-1 '
-        for g in range(n):
-            t += '1 '
-        t += '0 \n'
-        t += 'end\n'
-        return s, t
 
     def _lrs_nash_format(self, m1, m2):
         r"""
