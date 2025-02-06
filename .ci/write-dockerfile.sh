@@ -349,14 +349,9 @@ ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!
 $ADD .gitignore /new/.gitignore
 $ADD src /new/src
 RUN cd /new && rm -rf .git && \\
-    if /.ci/retrofit-worktree.sh worktree-pre /sage; then \\
-        cd /sage && touch configure build/make/Makefile; \\
-    else \\
-        echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"; \\
-        rm -rf /sage/src; \\
-        mv src /sage/src; \\
-        cd /sage && ./bootstrap && ./config.status; \\
-    fi; \\
+    rm -rf /sage/src; \\
+    mv src /sage/src; \\
+    cd /sage && ./bootstrap && ./config.status; \\
     cd /sage && rm -rf .git; rm -rf /new || echo "(error ignored)"
 ARG TARGETS="build"
 $RUN$CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS}$ENDRUN$THEN_SAVE_STATUS
