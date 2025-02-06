@@ -390,7 +390,7 @@ class Projection(SageObject):
 
         self(proj)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string describing the projection.
 
@@ -1234,7 +1234,7 @@ class Projection(SageObject):
     def tikz(self, view=[0, 0, 1], angle=0, scale=1,
              edge_color='blue!95!black', facet_color='blue!95!black',
              opacity=0.8, vertex_color='green', axis=False,
-             output_type=None):
+             output_type='TikzPicture'):
         r"""
         Return a tikz picture of ``self`` as a string or as a
         :class:`~sage.misc.latex_standalone.TikzPicture`
@@ -1256,8 +1256,8 @@ class Projection(SageObject):
         - ``opacity`` -- real number (default: 0.8) between 0 and 1 giving the opacity of
           the front facets
         - ``axis`` -- boolean (default: ``False``); draw the axes at the origin or not
-        - ``output_type`` -- string (default: ``None``); valid values
-          are ``None`` (deprecated), ``'LatexExpr'`` and ``'TikzPicture'``,
+        - ``output_type`` -- string (default: ``'TikzPicture'``); valid values
+          are ``'LatexExpr'`` and ``'TikzPicture'``,
           whether to return a :class:`LatexExpr` object (which inherits from Python
           :class:`str`) or a :class:`TikzPicture` object from module
           :mod:`sage.misc.latex_standalone`
@@ -1372,8 +1372,7 @@ class Projection(SageObject):
             sage: Image3 = P3.projection().tikz([0.5, -1, -0.1], 55, scale=3,
             ....:                               edge_color='blue!95!black',
             ....:                               facet_color='orange!95!black', opacity=0.7,
-            ....:                               vertex_color='yellow', axis=True,
-            ....:                               output_type='TikzPicture')
+            ....:                               vertex_color='yellow', axis=True)
             sage: Image3
             \documentclass[tikz]{standalone}
             \begin{document}
@@ -1425,39 +1424,30 @@ class Projection(SageObject):
         elif self.polyhedron_dim < 2 or self.polyhedron_dim > 3:
             raise NotImplementedError("The polytope has to be 2 or 3-dimensional.")
         elif self.polyhedron_ambient_dim == 2:  # self is a polygon in 2-space
-            tikz_string = self._tikz_2d(scale, edge_color, facet_color, opacity,
-                                 vertex_color, axis)
+            tikz_string = self._tikz_2d(scale, edge_color,
+                                        facet_color, opacity,
+                                        vertex_color, axis)
         elif self.polyhedron_dim == 2:  # self is a polygon in 3-space
             tikz_string = self._tikz_2d_in_3d(view, angle, scale, edge_color,
-                                       facet_color, opacity, vertex_color, axis)
+                                              facet_color, opacity,
+                                              vertex_color, axis)
         else:  # self is a 3-polytope in 3-space
             tikz_string = self._tikz_3d_in_3d(view, angle, scale, edge_color,
-                                       facet_color, opacity, vertex_color, axis)
-
-        # set default value
-        if output_type is None:
-            from sage.misc.superseded import deprecation
-            msg = ("The default type of the returned object will soon be "
-                   "changed from `sage.misc.latex.LatexExpr` to "
-                   "`sage.misc.latex_standalone.TikzPicture`.  Please "
-                   "update your code to specify the desired output type as "
-                   "`.tikz(output_type='LatexExpr')` to keep the old "
-                   "behavior or `.tikz(output_type='TikzPicture')` to use "
-                   "the future default behavior.")
-            deprecation(33002, msg)
-            output_type = 'LatexExpr'
+                                              facet_color, opacity,
+                                              vertex_color, axis)
 
         # return
         if output_type == 'LatexExpr':
             return tikz_string
-        elif output_type == 'TikzPicture':
+
+        if output_type == 'TikzPicture':
             from sage.misc.latex_standalone import TikzPicture
             return TikzPicture(tikz_string, standalone_config=None,
-                    usepackage=None, usetikzlibrary=None, macros=None,
-                    use_sage_preamble=False)
-        else:
-            raise ValueError("output_type (='{}') must be 'LatexExpr' or"
-                    " 'TikzPicture'".format(output_type))
+                               usepackage=None, usetikzlibrary=None,
+                               macros=None, use_sage_preamble=False)
+
+        raise ValueError("output_type (='{}') must be 'LatexExpr' or"
+                         " 'TikzPicture'".format(output_type))
 
     def _tikz_2d(self, scale, edge_color, facet_color, opacity, vertex_color, axis):
         r"""
