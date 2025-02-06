@@ -23,6 +23,7 @@ import builtins
 import math
 
 from sage.misc.lazy_import import lazy_import
+from sage.misc.superseded import deprecation
 
 lazy_import('sage.rings.complex_double', 'CDF')
 lazy_import('sage.rings.real_double', ['RDF', 'RealDoubleElement'])
@@ -105,10 +106,7 @@ def basis(x):
         sage: V = VectorSpace(QQ, 3)                                                    # needs sage.modules
         sage: S = V.subspace([[1,2,0], [2,2,-1]])                                       # needs sage.modules
         sage: basis(S)                                                                  # needs sage.modules
-        [
-        (1, 0, -1),
-        (0, 1, 1/2)
-        ]
+        [(1, 0, -1), (0, 1, 1/2)]
     """
     return x.basis()
 
@@ -220,9 +218,8 @@ def decomposition(x):
 
         sage: M = matrix([[2, 3], [3, 4]])                                              # needs sage.libs.pari sage.modules
         sage: M.decomposition()                                                         # needs sage.libs.pari sage.modules
-        [
-        (Ambient free module of rank 2 over the principal ideal domain Integer Ring, True)
-        ]
+        [(Ambient free module of rank 2 over the principal ideal domain Integer Ring,
+          True)]
 
         sage: # needs sage.groups
         sage: G.<a,b> = DirichletGroup(20)
@@ -910,11 +907,7 @@ def kernel(x):
         Basis matrix:
         []
         sage: kernel(A.transpose()).basis()
-        [
-        (1, 0, 0),
-        (0, 1, 0),
-        (0, 0, 1)
-        ]
+        [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     """
     return x.kernel()
 
@@ -926,16 +919,20 @@ def krull_dimension(x):
     EXAMPLES::
 
         sage: krull_dimension(QQ)
+        doctest:warning...:
+        DeprecationWarning: please use the krull_dimension method
+        See https://github.com/sagemath/sage/issues/39311 for details.
         0
-        sage: krull_dimension(ZZ)
+        sage: ZZ.krull_dimension()
         1
-        sage: krull_dimension(ZZ[sqrt(5)])                                              # needs sage.rings.number_field sage.symbolic
+        sage: ZZ[sqrt(5)].krull_dimension()                                              # needs sage.rings.number_field sage.symbolic
         1
         sage: U.<x,y,z> = PolynomialRing(ZZ, 3); U
         Multivariate Polynomial Ring in x, y, z over Integer Ring
         sage: U.krull_dimension()
         4
     """
+    deprecation(39311, "please use the krull_dimension method")
     return x.krull_dimension()
 
 
