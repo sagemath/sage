@@ -2018,10 +2018,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S1.disjoint_union(S2).homology()                                      # needs sage.modules
             {0: Z, 1: Z, 2: Z}
         """
-        facets = [tuple(["L" + str(v) for v in f])
-                  for f in self._facets]
-        facets.extend(tuple(["R" + str(v) for v in f])
-                      for f in right._facets)
+        facets = [tuple(f"L{v}" for v in f) for f in self._facets]
+        facets.extend(tuple(f"R{v}" for v in f) for f in right._facets)
         return SimplicialComplex(facets, is_mutable=is_mutable)
 
     def wedge(self, right, rename_vertices=True, is_mutable=True):
