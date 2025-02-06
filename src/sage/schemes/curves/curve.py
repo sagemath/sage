@@ -157,7 +157,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``base_ring`` -- the base ring of the divisor group. Usually, this is
+        - ``base_ring`` -- the base ring of the divisor group; usually, this is
           `\ZZ` (default) or `\QQ`.
 
         OUTPUT: the divisor group of the curve
@@ -264,7 +264,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C.geometric_genus()
             3
 
-            Addressing issue #28336
+        Addressing issue #28336::
+        
             sage: C = Curve(x^2+y^2)
             sage: C.geometric_genus()
             Traceback (most recent call last):
