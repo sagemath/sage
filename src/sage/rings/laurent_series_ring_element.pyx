@@ -1,4 +1,4 @@
-"""
+r"""
 Laurent Series
 
 EXAMPLES::
