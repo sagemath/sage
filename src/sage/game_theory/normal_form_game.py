@@ -2263,53 +2263,24 @@ class NormalFormGame(SageObject, MutableMapping):
             4 3
             <BLANKLINE>
 
-            sage: legacy_format = C._Hrepresentation(A, B)
-            doctest:warning...
-            DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
-            creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://github.com/sagemath/sage/issues/27745 for details.
-            sage: print('*game: player 1\n', legacy_format[0])
-            *game: player 1
-            H-representation
-            linearity 1 6
-            begin
-            6 5 rational
-            0 1 0 0 0
-            0 0 1 0 0
-            0 0 0 1 0
-            0 -1 0 -4  1
-            0 0 -2 -3  1
-            -1 1 1 1 0
-            end
-            <BLANKLINE>
-            sage: print('*game: player 2\n', legacy_format[1])
-            *game: player 2
-            H-representation
-            linearity 1 6
-            begin
-            6 4 rational
-            0 0 -6  1
-            0 -2 -5  1
-            0 -3 -3  1
-            0 1 0 0
-            0 0 1 0
-            -1 1 1 0
-            end
+        .. NOTE::
+
+            The former legacy format has been removed in :issue:`39464`.
         """
         from sage.geometry.polyhedron.misc import _to_space_separated_string
         m = self.players[0].num_strategies
         n = self.players[1].num_strategies
         s = f'{m} {n}\n\n'
-        for r in m1.rows():
-            s += _to_space_separated_string(r) + '\n'
+        s += '\n'.join(_to_space_separated_string(r) for r in m1.rows())
+        s += '\n\n'
+        s += '\n'.join(_to_space_separated_string(r) for r in m2.rows())
         s += '\n'
-        for r in m2.rows():
-            s += _to_space_separated_string(r) + '\n'
         return s
 
-    def is_degenerate(self, certificate=False):
+    def is_degenerate(self, certificate=False) -> bool:
         """
         A function to check whether the game is degenerate or not.
+
         Will return a boolean.
 
         A two-player game is called nondegenerate if no mixed strategy of
