@@ -24,6 +24,8 @@ on:
     # Allow to run manually
 
 env:
+  TARGETS_PRE: all-sage-local
+  TARGETS: build doc-html
   TARGETS_OPTIONAL: ptest
 
 permissions:
@@ -38,6 +40,7 @@ jobs:
       docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
       targets_pre: all-sage-local
       targets: build doc-html
+      targets_optional: ptest
       tox_packages_factors: >-
           ["maximal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
