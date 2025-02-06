@@ -229,9 +229,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E == loads(dumps(E))
             True
             sage: E.simon_two_descent()
-            (2, 2, [(0 : 0 : 1), (1/18*a + 7/18 : -5/54*a - 17/54 : 1)])
+            (2, 2, [(0 : 0 : 1), (1/8*a + 5/8 : -3/16*a - 7/16 : 1)])
             sage: E.simon_two_descent(lim1=5, lim3=5, limtriv=10, maxprob=7, limbigprime=10)
-            (2, 2, [(-1 : 0 : 1), (-2 : -1/2*a - 1/2 : 1)])
+            (2, 2, [(-1 : 0 : 1), (1/2*a - 5/2 : -1/2*a - 13/2 : 1)])
 
         ::
 
@@ -277,7 +277,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E.simon_two_descent()  # long time (4s on sage.math, 2013)
             (3,
              3,
-             [(1/8*zeta43_0^2 - 3/8*zeta43_0 - 1/4 : -5/16*zeta43_0^2 + 7/16*zeta43_0 + 1/8 : 1),
+             [(-1/2*zeta43_0^2 - 1/2*zeta43_0 + 7 : -3/2*zeta43_0^2 - 5/2*zeta43_0 + 18 : 1),
               (0 : 0 : 1)])
         """
         verbose = int(verbose)
@@ -873,7 +873,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<i> = NumberField(x^2 + 1)
             sage: E = EllipticCurve([1 + i, 0, 1, 0, 0])
             sage: E.local_data()
-            [Local data at Fractional ideal (2*i + 1):
+            [Local data at Fractional ideal (-2*i - 1):
                Reduction type: bad non-split multiplicative
                Local minimal model: Elliptic Curve defined by y^2 + (i+1)*x*y + y = x^3
                                     over Number Field in i with defining polynomial x^2 + 1
@@ -881,7 +881,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
                Conductor exponent: 1
                Kodaira Symbol: I1
                Tamagawa Number: 1,
-             Local data at Fractional ideal (-2*i + 3):
+             Local data at Fractional ideal (3*i + 2):
                Reduction type: bad split multiplicative
                Local minimal model: Elliptic Curve defined by y^2 + (i+1)*x*y + y = x^3
                                     over Number Field in i with defining polynomial x^2 + 1
@@ -899,7 +899,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
               Kodaira Symbol: I0
               Tamagawa Number: 1
             sage: E.local_data(2*i + 1)
-            Local data at Fractional ideal (2*i + 1):
+            Local data at Fractional ideal (-2*i - 1):
               Reduction type: bad non-split multiplicative
               Local minimal model: Elliptic Curve defined by y^2 + (i+1)*x*y + y = x^3
                                    over Number Field in i with defining polynomial x^2 + 1
@@ -1457,8 +1457,10 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<a> = NumberField(x^2 - 5)
             sage: E = EllipticCurve([20, 225, 750, 625*a + 6875, 31250*a + 46875])
             sage: bad_primes = E.discriminant().support(); bad_primes
-            [Fractional ideal (-a), Fractional ideal (7/2*a - 81/2),
-             Fractional ideal (-a - 52), Fractional ideal (2)]
+            [Fractional ideal (-a),
+             Fractional ideal (-7/2*a + 81/2),
+             Fractional ideal (-a - 52),
+             Fractional ideal (2)]
             sage: [E.kodaira_symbol(P) for P in bad_primes]
             [I0, I1, I1, II]
             sage: K.<a> = QuadraticField(-11)
@@ -1484,10 +1486,10 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
             sage: K.<i> = NumberField(x^2 + 1)
             sage: EllipticCurve([i, i - 1, i + 1, 24*i + 15, 14*i + 35]).conductor()
-            Fractional ideal (21*i - 3)
+            Fractional ideal (3*i + 21)
             sage: K.<a> = NumberField(x^2 - x + 3)
             sage: EllipticCurve([1 + a, -1 + a, 1 + a, -11 + a, 5 - 9*a]).conductor()
-            Fractional ideal (-6*a)
+            Fractional ideal (6*a)
 
         A not so well known curve with everywhere good reduction::
 
@@ -2585,8 +2587,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: [E1.ainvs() for E1 in C]
             [(0, 0, 0, 0, -27),
             (0, 0, 0, 0, 1),
-            (i + 1, i, i + 1, -i + 3, 4*i),
-            (i + 1, i, i + 1, -i + 33, -58*i)]
+            (i + 1, i, 0, 3, -i),
+            (i + 1, i, 0, 33, 91*i)]
 
         The matrix of degrees of cyclic isogenies between curves::
 
@@ -2617,13 +2619,13 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: [((i,j), isogs[i][j].x_rational_map())
             ....:  for i in range(4) for j in range(4) if isogs[i][j] != 0]
             [((0, 1), (1/9*x^3 - 12)/x^2),
-             ((0, 3), (-1/2*i*x^2 + i*x - 12*i)/(x - 3)),
+             ((0, 3), (1/2*i*x^2 - 2*i*x + 15*i)/(x - 3)),
              ((1, 0), (x^3 + 4)/x^2),
-             ((1, 2), (-1/2*i*x^2 - i*x - 2*i)/(x + 1)),
-             ((2, 1), (1/2*i*x^2 - x)/(x + 3/2*i)),
-             ((2, 3), (x^3 + 4*i*x^2 - 10*x - 10*i)/(x^2 + 4*i*x - 4)),
-             ((3, 0), (1/2*i*x^2 + x + 4*i)/(x - 5/2*i)),
-             ((3, 2), (1/9*x^3 - 4/3*i*x^2 - 34/3*x + 226/9*i)/(x^2 - 8*i*x - 16))]
+             ((1, 2), (1/2*i*x^2 + i)/(x + 1)),
+             ((2, 1), (-1/2*i*x^2 - 1/2*i)/(x - 1/2*i)),
+             ((2, 3), (x^3 - 2*i*x^2 - 7*x + 4*i)/(x^2 - 2*i*x - 1)),
+             ((3, 0), (-1/2*i*x^2 + 2*x - 5/2*i)/(x + 7/2*i)),
+             ((3, 2), (1/9*x^3 + 2/3*i*x^2 - 13/3*x - 116/9*i)/(x^2 + 10*i*x - 25))]
 
         The isogeny class may be visualized by obtaining its graph and
         plotting it::
@@ -3104,10 +3106,10 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<i> = QuadraticField(-1)
             sage: E1 = EllipticCurve([i + 1, 0, 1, -240*i - 400, -2869*i - 2627])
             sage: E1.conductor()
-            Fractional ideal (-4*i - 7)
+            Fractional ideal (4*i + 7)
             sage: E2 = EllipticCurve([1+i,0,1,0,0])
             sage: E2.conductor()
-            Fractional ideal (-4*i - 7)
+            Fractional ideal (4*i + 7)
             sage: E1.is_isogenous(E2) # long time
             True
             sage: E1.is_isogenous(E2, proof=False) # faster  (~170ms)
@@ -3434,8 +3436,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: Q = E(0,-1)
             sage: E.lll_reduce([P,Q])
             (
-                                                     [0 1]
-            [(0 : -1 : 1), (-2 : -1/2*a - 1/2 : 1)], [1 0]
+                                                    [ 0 -1]
+            [(0 : -1 : 1), (-2 : 1/2*a - 1/2 : 1)], [ 1  0]
             )
 
         ::
@@ -3446,9 +3448,10 @@ class EllipticCurve_number_field(EllipticCurve_field):
             ....:           E.point([-17/18*a - 1/9, -109/108*a - 277/108])]
             sage: E.lll_reduce(points)
             (
-            [(-a + 4 : -3*a + 7 : 1), (-17/18*a - 1/9 : 109/108*a + 277/108 : 1)],
-            [ 1  0]
-            [ 1 -1]
+            [(-a + 4 : -3*a + 7 : 1), (-17/18*a - 1/9 : -109/108*a - 277/108 : 1)],
+            <BLANKLINE>
+            [1 0]
+            [1 1]
             )
         """
         r = len(points)

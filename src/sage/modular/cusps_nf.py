@@ -1184,9 +1184,9 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
         sage: from sage.modular.cusps_nf import NFCusps_ideal_reps_for_levelN
         sage: NFCusps_ideal_reps_for_levelN(N)
         [(Fractional ideal (1),
-          Fractional ideal (67, a + 17),
-          Fractional ideal (127, a + 48),
-          Fractional ideal (157, a - 19))]
+          Fractional ideal (67, -4/7*a^3 + 13/7*a^2 + 39/7*a - 43),
+          Fractional ideal (127, -4/7*a^3 + 13/7*a^2 + 39/7*a - 42),
+          Fractional ideal (157, -4/7*a^3 + 13/7*a^2 + 39/7*a + 48))]
         sage: L = NFCusps_ideal_reps_for_levelN(N, 5)
         sage: all(len(L[i]) == k.class_number() for i in range(len(L)))
         True
@@ -1244,7 +1244,7 @@ def units_mod_ideal(I):
         sage: I = k.ideal(5, a + 1)
         sage: units_mod_ideal(I)
         [1,
-        -2*a^2 - 4*a + 1,
+        2*a^2 + 4*a - 1,
         ...]
 
     ::

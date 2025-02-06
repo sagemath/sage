@@ -994,9 +994,11 @@ class GaloisGroup_v2(GaloisGroup_perm):
             sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^4 - 2*x^2 + 2, 'a').galois_closure()
             sage: G = K.galois_group()
-            sage: [G.artin_symbol(P) for P in K.primes_above(7)]  # random (see remark in primes_above)
-            [(1,4)(2,3)(5,8)(6,7), (1,4)(2,3)(5,8)(6,7),
-             (1,5)(2,6)(3,7)(4,8), (1,5)(2,6)(3,7)(4,8)]
+            sage: sorted([G.artin_symbol(P) for P in K.primes_above(7)])  # random (see remark in primes_above)
+            [(1,4)(2,3)(5,8)(6,7),
+             (1,4)(2,3)(5,8)(6,7),
+             (1,5)(2,6)(3,7)(4,8),
+             (1,5)(2,6)(3,7)(4,8)]
             sage: G.artin_symbol(17)
             Traceback (most recent call last):
             ...
