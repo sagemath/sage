@@ -829,7 +829,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         Return the truncated series at chosen precision ``prec``.
 
-        This is the same as :meth:`O`.
+        The methods :meth:`add_bigoh` and :meth:`O` are synonyms.
 
         INPUT:
 

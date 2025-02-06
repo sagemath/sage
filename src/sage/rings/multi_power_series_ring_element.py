@@ -1328,7 +1328,7 @@ class MPowerSeries(PowerSeries):
         Return a multivariate power series of precision ``prec``
         obtained by truncating ``self`` at precision ``prec``.
 
-        This is the same as :meth:`O`.
+        The methods :meth:`add_bigoh` and :meth:`O` are synonyms.
 
         EXAMPLES::
 

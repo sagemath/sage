@@ -823,7 +823,7 @@ cdef class PowerSeries(AlgebraElement):
         Return the power series of precision at most ``prec`` got by adding
         `O(q^\text{prec})` to `f`, where `q` is the variable.
 
-        This is the same as :meth:`O`.
+        The methods :meth:`add_bigoh` and :meth:`O` are synonyms.
 
         EXAMPLES::
 
