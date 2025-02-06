@@ -1405,6 +1405,15 @@ class Projection(SageObject):
             ...
             NotImplementedError: The polytope has to live in 2 or 3 dimensions.
 
+        TESTS::
+
+            sage: P = Polyhedron(vertices=[[0,0,0], [1,0,0],
+            ....:                          [0,0,1], [0,1,0]])
+            sage: P.projection().tikz(output_type='kawai')
+            Traceback (most recent call last):
+            ...
+            ValueError: output_type (='kawai') must be 'LatexExpr' or 'TikzPicture'
+
         .. TODO::
 
             Make it possible to draw Schlegel diagram for 4-polytopes. ::
