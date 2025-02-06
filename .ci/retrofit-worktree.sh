@@ -7,6 +7,11 @@ fi
 WORKTREE_NAME="$1"
 WORKTREE_DIRECTORY="$2"
 
+if [ ! -f $WORKTREE_DIRECTORY/build/make/Makefile ]; then
+    echo >&2 "Error: This script must be run in a Sage directory that is configured."
+    exit 1
+fi
+
 export GIT_AUTHOR_NAME="ci-sage workflow"
 export GIT_AUTHOR_EMAIL="ci-sage@example.com"
 export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
