@@ -40,6 +40,10 @@ as a power of the variable times the unit part (which need not be a
 unit - it's a polynomial with nonzero constant term). The zero
 Laurent series has unit part 0.
 
+For a Laurent series internally represented as `t^n \cdot f` where
+`t` is the variable, `f` can be accessed through :meth:`valuation_zero_part`
+and `n` can be accessed through :meth:`valuation`.
+
 AUTHORS:
 
 - William Stein: original version
@@ -97,11 +101,9 @@ cdef class LaurentSeries(AlgebraElement):
     - ``parent`` -- a Laurent series ring
 
     - ``f`` -- a power series (or something can be coerced
-      to one); note that ``f`` does *not* have to be a unit.
-      This can be accessed through :meth:`valuation_zero_part`.
+      to one); note that ``f`` does *not* have to be a unit
 
-    - ``n`` -- (default: 0) integer. This can be accessed
-      through :meth:`valuation`.
+    - ``n`` -- (default: 0) integer
     """
     def __init__(self, parent, f, n=0):
         r"""
@@ -1303,7 +1305,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: g.valuation()
             0
 
-        Note that the valuation of an element undistinguishable from
+        Note that the valuation of an element indistinguishable from
         zero is infinite::
 
             sage: h = f - f; h
