@@ -67,7 +67,7 @@ def main():
         print("Deprecations over one year ago:")
         for filepath, pr_number, closed_date in old_deprecations:
             print(
-                f"File: {filepath}, PR: https://github.com/sagemath/sage/pull/{pr_number}, Closed Date: {closed_date:%Y-%m-%d}"
+                f"File: {filepath} ; PR: https://github.com/sagemath/sage/pull/{pr_number} ; Closed Date: {closed_date:%Y-%m-%d}"
             )
     else:
         print("No deprecations over one year ago found.")
