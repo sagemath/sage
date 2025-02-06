@@ -31,7 +31,6 @@ permissions:
 
 jobs:
   maximal:
-    if: ${{ success() || failure() }}
     uses: ./.github/workflows/docker.yml
     with:
       free_disk_space: true
