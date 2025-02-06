@@ -1,3 +1,7 @@
+r"""
+Cython helper methods to compute integral points in polyhedra
+"""
+
 try:
     from .integral_points_integer_dense import (
         parallelotope_points,
