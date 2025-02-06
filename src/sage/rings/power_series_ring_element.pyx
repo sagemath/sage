@@ -827,6 +827,20 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: R.<x> = PowerSeriesRing(ZZ)
+            sage: p = 1 + x^2 + x^10; p
+            1 + x^2 + x^10
+            sage: p.O(15)
+            1 + x^2 + x^10 + O(x^15)
+            sage: p.O(5)
+            1 + x^2 + O(x^5)
+            sage: p.O(-5)
+            Traceback (most recent call last):
+            ...
+            ValueError: prec (= -5) must be nonnegative
+
+        ::
+
             sage: R.<A> = RDF[[]]
             sage: f = (1+A+O(A^5))^5; f
             1.0 + 5.0*A + 10.0*A^2 + 10.0*A^3 + 5.0*A^4 + O(A^5)
