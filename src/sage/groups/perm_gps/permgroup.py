@@ -380,7 +380,7 @@ def PermutationGroup(gens=None, *args, **kwds):
         ...
         TypeError: gens must be a tuple, list, or GapElement
 
-    This now raises an error::
+    This now raises an error (:issue:`31510`)::
 
         sage: G = PermutationGroup([(1,2,3,4)], [(1,7,3,5)])
         Traceback (most recent call last):
