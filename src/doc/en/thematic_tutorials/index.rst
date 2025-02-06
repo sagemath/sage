@@ -75,6 +75,11 @@ Geometry
 
 * :ref:`geometry`
 
+Algebraic Geometry
+------------------
+
+* :ref:`chow`
+
 Combinatorics
 -------------
 

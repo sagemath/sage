@@ -133,6 +133,7 @@ Algebraic and Arithmetic Geometry
 * :doc:`Schemes <schemes/index>`
 * :doc:`Plane and Space Curves <curves/index>`
 * :doc:`Elliptic and Hyperelliptic Curves <arithmetic_curves/index>`
+* :doc:`Chow Rings and Intersection Theory  <chow/index>`
 
 Miscellaneous
 -------------
