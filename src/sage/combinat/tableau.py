@@ -1298,7 +1298,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                 raise ValueError("the entries must be nonnegative integers")
         from sage.matrix.matrix_space import MatrixSpace
         if max_entry is None:
-            max_entry = max([max(c) for c in self])
+            max_entry = max(max(c) for c in self)
         MS = MatrixSpace(ZZ, len(self[0]), max_entry)
         Tconj = self.conjugate()
         conj_len = len(Tconj)

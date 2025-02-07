@@ -854,8 +854,8 @@ class MultiSkewTableau(CombinatorialElement):
             sage: a.weight()
             [5, 3, 1]
         """
-        weights = [x.weight() for x in self]
-        m = max([len(x) for x in weights])
+        weights = (x.weight() for x in self)
+        m = max(len(x) for x in weights)
         weight = [0] * m
         for w in weights:
             for i in range(len(w)):
