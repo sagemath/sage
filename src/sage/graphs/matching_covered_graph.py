@@ -2397,7 +2397,7 @@ class MatchingCoveredGraph(Graph):
 
         OUTPUT:
 
-        - If the edge ``(u, v, 'label') does not exist in the graph, a
+        - If the edge ``(u, v, 'label')`` does not exist in the graph, a
           :exc:`ValueError` is returned.
 
         - If ``coNP_certificate`` is set to ``False``, a boolean ``True`` is
