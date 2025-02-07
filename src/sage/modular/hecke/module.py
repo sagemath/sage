@@ -1341,7 +1341,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         except AttributeError:
             return -1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple of basis elements of ``self``.
 

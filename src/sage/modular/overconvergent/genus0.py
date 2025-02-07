@@ -194,6 +194,7 @@ classical) does not apply.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Iterator
 
 import weakref
 
@@ -693,7 +694,7 @@ class OverconvergentModularFormsSpace(Module):
         """
         return self._radius
 
-    def gens(self):
+    def gens(self) -> Iterator:
         r"""
         Return a generator object that iterates over the (infinite) set of
         basis vectors of ``self``.

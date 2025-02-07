@@ -508,7 +508,7 @@ class Homspace(HomsetWithBase):
         self.calculate_generators()
         return len(self._gens)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return tuple of generators for this endomorphism ring.
 
