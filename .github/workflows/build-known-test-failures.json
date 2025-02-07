@@ -1,2 +1,5 @@
 {
+    "sage.rings.polynomial.polynomial_element": {
+        "failed": "random time outs; tracked by #39460"
+    }
 }
