@@ -1576,7 +1576,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
             sage: sol = S.solve(algorithm='exhaustive_search')  # optional - fes        # needs sage.rings.polynomial.pbori
             sage: sol                                           # optional - fes        # needs sage.rings.polynomial.pbori
-            [{x: 1, y: 1, z: 1}]
+            [{z: 1, y: 1, x: 1}]
             sage: S.subs(sol[0])                                # optional - fes        # needs sage.rings.polynomial.pbori
             [0, 0, 0]
 
@@ -1584,7 +1584,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
             sage: sol = S.solve(algorithm='sat')        # optional - pycryptosat        # needs sage.rings.polynomial.pbori
             sage: sol                                   # optional - pycryptosat        # needs sage.rings.polynomial.pbori
-            [{x: 0, y: 1, z: 0}]
+            [{z: 0, y: 1, x: 0}]
             sage: S.subs(sol[0])                                                        # needs sage.rings.polynomial.pbori
             [0, 0, 0]
 

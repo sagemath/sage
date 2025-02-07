@@ -2617,8 +2617,8 @@ class MPolynomialIdeal_singular_repr(
         See :mod:`~sage.rings.polynomial.msolve` for more information. ::
 
             sage: I.variety(RBF, algorithm='msolve', proof=False)   # optional - msolve
-            [{x: [2.76929235423863 +/- 2.08e-15], y: [0.361103080528647 +/- 4.53e-16]},
-             {x: 1.000000000000000, y: 1.000000000000000}]
+            [{y: [0.361103080528647 +/- 4.53e-16], x: [2.76929235423863 +/- 2.08e-15]},
+             {y: 1.000000000000000, x: 1.000000000000000}]
 
         Computation over floating point numbers may compute only a partial solution,
         or even none at all. Notice that x values are missing from the following variety::
@@ -2672,10 +2672,10 @@ class MPolynomialIdeal_singular_repr(
             sage: sorted(I.variety(algorithm='msolve',          # optional - msolve, needs sage.rings.finite_rings
             ....:                  proof=False),
             ....:        key=str)
-            [{x: 1, y: 1},
-             {x: 1, y: 536870908},
-             {x: 536870908, y: 1},
-             {x: 536870908, y: 536870908}]
+            [{y: 1, x: 1},
+             {y: 1, x: 536870908},
+             {y: 536870908, x: 1},
+             {y: 536870908, x: 536870908}]
 
         but may fail in small characteristic, especially with ideals of high
         degree with respect to the characteristic::
@@ -3482,7 +3482,7 @@ class MPolynomialIdeal_macaulay2_repr:
 
             sage: R.<x,y,z,w> = PolynomialRing(ZZ, 4)
             sage: I = ideal(x*y-z^2, y^2-w^2)
-            sage: I._reduce_using_macaulay2(x*y-z^2 + y^2)    # optional  - macaulay2
+            sage: I._reduce_using_macaulay2(x*y-z^2 + y^2)    # optional - macaulay2
             w^2
         """
         I = self._macaulay2_()
