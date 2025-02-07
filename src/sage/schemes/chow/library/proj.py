@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 r"""
 The Proj ChowScheme
+
 AUTHORS:
+
 - Manfred Lehn (2013)
+
 - Christoph Sorger (2013)
 """
 
@@ -29,8 +32,10 @@ def Proj(n, hyperplane_class='h', names=None, name=None, latex_name=None):
     - ``latex_name``-- An optional string, the latex representation of the ChowScheme
     OUTPUT:
     - The ChowScheme corresponding to the projective space in the sense of
-      Grothendieck, i.e. the rank 1 quotients of `mathbb{C}^{n+1}`.
+    Grothendieck, i.e. the rank 1 quotients of `mathbb{C}^{n+1}`.
+
     EXAMPLES::
+
         sage: X = Proj(3)  # P3 of rank 1 quotients of a 4 dim. vector space
         sage: X.sheaves["universal_sub"]
         Bundle(Proj(3, 'h'), 3, [1, -h, h^2, -h^3])
@@ -54,8 +59,10 @@ def ProjBundle(E, hyperplane_class='h',
     - ``latex_name``-- An optional string, the latex representation of the ProjBundle
     OUTPUT:
     - The ChowScheme corresponding to `\mathbb{P}(E)` in the sense of
-      Grothendieck, i.e. the rank 1 quotient modules of E.
+    Grothendieck, i.e. the rank 1 quotient modules of E.
+
     EXAMPLES::
+
         sage: P3 = Proj(3, name='P3')
         sage: S = P3.sheaves['universal_sub']
         sage: PS = ProjBundle(S); str(PS)

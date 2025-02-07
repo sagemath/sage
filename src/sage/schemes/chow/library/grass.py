@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 r"""
 The Grassmannian ChowScheme
+
 AUTHORS:
+
 - Manfred Lehn (2013)
+
 - Christoph Sorger (2013)
 """
 
@@ -117,7 +120,9 @@ def Grass(n, r, chern_class='c', names=None, name=None, latex_name=None):
     Return either depending respectively whether `n > r` or `n < r`:
     -  The Grassmannian of quotients of rank r of an n dimensional vector space;
     -  The Grassmannian of subspaces of rank n of an r dimensional vector space.
+
     EXAMPLES::
+
         sage: G = Grass(6, 4, chern_class='w')
         sage: G.dimension()
         8

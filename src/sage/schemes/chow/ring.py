@@ -115,7 +115,7 @@ might suspect, in order to get uniformly quotient rings::
     sage: A.gen()
     Traceback (most recent call last):
     ...
-    ValueError: Generator not defined.
+    ValueError: generator not defined
     sage: A.variable_names()
     ()
     sage: A.variable_name()
