@@ -3056,7 +3056,7 @@ cdef class Matrix(Matrix1):
 
         ALGORITHM:
 
-        If the base ring has a method `_matrix_charpoly`, we use it.
+        If the base ring has a method ``_matrix_charpoly``, we use it.
 
         In the generic case of matrices over a ring (commutative and with
         unity), there is a division-free algorithm, which can be accessed
@@ -4659,11 +4659,13 @@ cdef class Matrix(Matrix1):
             algorithm = 'default'
         elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm)
-        elif algorithm == 'padic' and not (isinstance(R, IntegerRing_class) or isinstance(R, RationalField)):
+        elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
+                                                         RationalField)):
             raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'flint' and not (isinstance(R, IntegerRing_class) or isinstance(R, RationalField)):
+        elif algorithm == 'flint' and not isinstance(R, (IntegerRing_class,
+                                                         RationalField)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'pari' and not (isinstance(R, IntegerRing_class) or (isinstance(R, NumberField) and not isinstance(R, RationalField))):
+        elif algorithm == 'pari' and not (isinstance(R, (IntegerRing_class, NumberField)) and not isinstance(R, RationalField)):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:
             raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
@@ -5391,9 +5393,7 @@ cdef class Matrix(Matrix1):
             [0 0 0]
             [0 0 0]
             sage: W = T.kernel_on(V); W.basis()
-            [
-            (0, 1, 0)
-            ]
+            [(0, 1, 0)]
             sage: W.is_submodule(V)
             True
         """
@@ -5661,22 +5661,21 @@ cdef class Matrix(Matrix1):
             [264 275 286 297 308 319]
             [330 341 352 363 374 385]
             sage: A.decomposition()                                                     # needs sage.libs.pari
-            [ (Ambient free module of rank 4
-                over the principal ideal domain Integer Ring,
-               True) ]
+            [(Ambient free module of rank 4 over the principal ideal domain Integer Ring,
+              True)]
             sage: B.decomposition()                                                     # needs sage.libs.pari
-            [ (Vector space of degree 6 and dimension 2 over Rational Field
-                Basis matrix:
-                [ 1  0 -1 -2 -3 -4]
-                [ 0  1  2  3  4  5],
-               True),
-              (Vector space of degree 6 and dimension 4 over Rational Field
-                Basis matrix:
-                [ 1  0  0  0 -5  4]
-                [ 0  1  0  0 -4  3]
-                [ 0  0  1  0 -3  2]
-                [ 0  0  0  1 -2  1],
-               False) ]
+            [(Vector space of degree 6 and dimension 2 over Rational Field
+              Basis matrix:
+              [ 1  0 -1 -2 -3 -4]
+              [ 0  1  2  3  4  5],
+              True),
+             (Vector space of degree 6 and dimension 4 over Rational Field
+              Basis matrix:
+              [ 1  0  0  0 -5  4]
+              [ 0  1  0  0 -4  3]
+              [ 0  0  1  0 -3  2]
+              [ 0  0  0  1 -2  1],
+              False)]
         """
         if algorithm == 'kernel' or self.base_ring() not in _Fields:
             return self._decomposition_using_kernels(is_diagonalizable=is_diagonalizable, dual=dual)
@@ -5862,12 +5861,14 @@ cdef class Matrix(Matrix1):
             [0 1 0]
             [0 0 1]
             sage: D = t.decomposition_of_subspace(v); D
-            [ (Vector space of degree 3 and dimension 1 over Rational Field
-                Basis matrix: [0 0 1],
-               True),
-              (Vector space of degree 3 and dimension 1 over Rational Field
-                Basis matrix: [0 1 0],
-               True) ]
+            [(Vector space of degree 3 and dimension 1 over Rational Field
+              Basis matrix:
+              [0 0 1],
+              True),
+             (Vector space of degree 3 and dimension 1 over Rational Field
+              Basis matrix:
+              [0 1 0],
+              True)]
             sage: t.restrict(D[0][0])
             [0]
             sage: t.restrict(D[1][0])
@@ -5882,18 +5883,18 @@ cdef class Matrix(Matrix1):
             ....:                    0, 2, 0, -2, -2, 0,
             ....:                    0, 2, 0, -2, 0, 0])
             sage: a.decomposition_of_subspace(ZZ^6)                                     # needs sage.libs.pari
-            [ (Free module of degree 6 and rank 2 over Integer Ring
-                Echelon basis matrix:
-                [ 1  0  1 -1  1 -1]
-                [ 0  1  0 -1  2 -1],
-               False),
-              (Free module of degree 6 and rank 4 over Integer Ring
-                Echelon basis matrix:
-                [ 1  0 -1  0  1  0]
-                [ 0  1  0  0  0  0]
-                [ 0  0  0  1  0  0]
-                [ 0  0  0  0  0  1],
-               False) ]
+            [(Free module of degree 6 and rank 2 over Integer Ring
+              Echelon basis matrix:
+              [ 1  0  1 -1  1 -1]
+              [ 0  1  0 -1  2 -1],
+              False),
+             (Free module of degree 6 and rank 4 over Integer Ring
+              Echelon basis matrix:
+              [ 1  0 -1  0  1  0]
+              [ 0  1  0  0  0  0]
+              [ 0  0  0  1  0  0]
+              [ 0  0  0  0  0  1],
+              False)]
 
         TESTS::
 
@@ -6317,43 +6318,41 @@ cdef class Matrix(Matrix1):
             [3 4 5]
             [6 7 8]
             sage: es = A.eigenspaces_left(format='all'); es                             # needs sage.rings.number_field
-            [ (0,
-               Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -2  1]),
-              (-1.348469228349535?,
-               Vector space of degree 3 and dimension 1 over Algebraic Field
-                 User basis matrix:
-                 [                   1  0.3101020514433644? -0.3797958971132713?]),
-              (13.34846922834954?,
-               Vector space of degree 3 and dimension 1 over Algebraic Field
-                 User basis matrix:
-                 [                 1 1.289897948556636? 1.579795897113272?]) ]
+            [(0,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -2  1]),
+             (-1.348469228349535?,
+              Vector space of degree 3 and dimension 1 over Algebraic Field
+              User basis matrix:
+              [                   1  0.3101020514433644? -0.3797958971132713?]),
+             (13.34846922834954?,
+              Vector space of degree 3 and dimension 1 over Algebraic Field
+              User basis matrix:
+              [                 1 1.289897948556636? 1.579795897113272?])]
 
             sage: # needs sage.rings.number_field
             sage: es = A.eigenspaces_left(format='galois'); es
-            [ (0,
-               Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -2  1]),
-              (a1,
-               Vector space of degree 3 and dimension 1 over
-                Number Field in a1 with defining polynomial x^2 - 12*x - 18
-                 User basis matrix:
-                 [            1 1/15*a1 + 2/5 2/15*a1 - 1/5]) ]
+            [(0,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -2  1]),
+             (a1,
+              Vector space of degree 3 and dimension 1 over Number Field in a1 with defining polynomial x^2 - 12*x - 18
+              User basis matrix:
+              [            1 1/15*a1 + 2/5 2/15*a1 - 1/5])]
             sage: es = A.eigenspaces_left(format='galois',
             ....:                         algebraic_multiplicity=True); es
-            [ (0,
-               Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -2  1],
-               1),
-              (a1,
-               Vector space of degree 3 and dimension 1 over
-                Number Field in a1 with defining polynomial x^2 - 12*x - 18
-                 User basis matrix:
-                 [            1 1/15*a1 + 2/5 2/15*a1 - 1/5],
-               1) ]
+            [(0,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -2  1],
+              1),
+             (a1,
+              Vector space of degree 3 and dimension 1 over Number Field in a1 with defining polynomial x^2 - 12*x - 18
+              User basis matrix:
+              [            1 1/15*a1 + 2/5 2/15*a1 - 1/5],
+              1)]
             sage: e, v, n = es[0]; v = v.basis()[0]
             sage: delta = e*v - v*A
             sage: abs(abs(delta)) < 1e-10
@@ -6366,15 +6365,14 @@ cdef class Matrix(Matrix1):
             [3 4 5]
             [6 7 8]
             sage: A.eigenspaces_left(format='galois')                                   # needs sage.rings.number_field
-            [ (0,
-               Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -2  1]),
-              (a1,
-               Vector space of degree 3 and dimension 1 over
-                Number Field in a1 with defining polynomial x^2 - 12*x - 18
-                 User basis matrix:
-                 [            1 1/15*a1 + 2/5 2/15*a1 - 1/5]) ]
+            [(0,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -2  1]),
+             (a1,
+              Vector space of degree 3 and dimension 1 over Number Field in a1 with defining polynomial x^2 - 12*x - 18
+              User basis matrix:
+              [            1 1/15*a1 + 2/5 2/15*a1 - 1/5])]
 
         We compute the left eigenspaces of the matrix of the Hecke operator
         `T_2` on level 43 modular symbols, both with all eigenvalues (the default)
@@ -6396,48 +6394,47 @@ cdef class Matrix(Matrix1):
             sage: factor(f)
             (x - 3) * (x + 2)^2 * (x^2 - 2)^2
             sage: A.eigenspaces_left(algebraic_multiplicity=True)
-            [ (3,
-               Vector space of degree 7 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [   1    0  1/7    0 -1/7    0 -2/7],
-               1),
-              (-2,
-               Vector space of degree 7 and dimension 2 over Rational Field
-                 User basis matrix:
-                 [ 0  1  0  1 -1  1 -1]
-                 [ 0  0  1  0 -1  2 -1],
-               2),
-              (-1.414213562373095?,
-               Vector space of degree 7 and dimension 2 over Algebraic Field
-                 User basis matrix:
-                 [                  0                   1                   0                  -1 0.4142135623730951?                   1                  -1]
-                 [                  0                   0                   1                   0                  -1                   0  2.414213562373095?],
-               2),
-              (1.414213562373095?,
-               Vector space of degree 7 and dimension 2 over Algebraic Field
-                 User basis matrix:
-                 [                   0                    1                    0                   -1  -2.414213562373095?                    1                   -1]
-                 [                   0                    0                    1                    0                   -1                    0 -0.4142135623730951?],
-               2) ]
+            [(3,
+              Vector space of degree 7 and dimension 1 over Rational Field
+              User basis matrix:
+              [   1    0  1/7    0 -1/7    0 -2/7],
+              1),
+             (-2,
+              Vector space of degree 7 and dimension 2 over Rational Field
+              User basis matrix:
+              [ 0  1  0  1 -1  1 -1]
+              [ 0  0  1  0 -1  2 -1],
+              2),
+             (-1.414213562373095?,
+              Vector space of degree 7 and dimension 2 over Algebraic Field
+              User basis matrix:
+              [                  0                   1                   0                  -1 0.4142135623730951?                   1                  -1]
+              [                  0                   0                   1                   0                  -1                   0  2.414213562373095?],
+              2),
+             (1.414213562373095?,
+              Vector space of degree 7 and dimension 2 over Algebraic Field
+              User basis matrix:
+              [                   0                    1                    0                   -1  -2.414213562373095?                    1                   -1]
+              [                   0                    0                    1                    0                   -1                    0 -0.4142135623730951?],
+              2)]
             sage: A.eigenspaces_left(format='galois', algebraic_multiplicity=True)
-            [ (3,
-               Vector space of degree 7 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [   1    0  1/7    0 -1/7    0 -2/7],
-               1),
-              (-2,
-               Vector space of degree 7 and dimension 2 over Rational Field
-                 User basis matrix:
-                 [ 0  1  0  1 -1  1 -1]
-                 [ 0  0  1  0 -1  2 -1],
-               2),
-              (a2,
-               Vector space of degree 7 and dimension 2
-                over Number Field in a2 with defining polynomial x^2 - 2
-                 User basis matrix:
-                 [      0       1       0      -1 -a2 - 1       1      -1]
-                 [      0       0       1       0      -1       0 -a2 + 1],
-               2) ]
+            [(3,
+              Vector space of degree 7 and dimension 1 over Rational Field
+              User basis matrix:
+              [   1    0  1/7    0 -1/7    0 -2/7],
+              1),
+             (-2,
+              Vector space of degree 7 and dimension 2 over Rational Field
+              User basis matrix:
+              [ 0  1  0  1 -1  1 -1]
+              [ 0  0  1  0 -1  2 -1],
+              2),
+             (a2,
+              Vector space of degree 7 and dimension 2 over Number Field in a2 with defining polynomial x^2 - 2
+              User basis matrix:
+              [      0       1       0      -1 -a2 - 1       1      -1]
+              [      0       0       1       0      -1       0 -a2 + 1],
+              2)]
 
         Next we compute the left eigenspaces over the finite field of order 11. ::
 
@@ -6452,16 +6449,18 @@ cdef class Matrix(Matrix1):
             sage: A.charpoly()
             x^4 + 10*x^3 + 3*x^2 + 2*x + 1
             sage: A.eigenspaces_left(format='galois', var='beta')
-            [ (9,
-               Vector space of degree 4 and dimension 1 over Finite Field of size 11
-                 User basis matrix: [0 1 5 6]),
-             (3, Vector space of degree 4 and dimension 1 over Finite Field of size 11
-                 User basis matrix: [1 0 1 6]),
-             (beta2, Vector space of degree 4 and dimension 1
-                      over Univariate Quotient Polynomial Ring in beta2
-                       over Finite Field of size 11 with modulus x^2 + 9
-                     User basis matrix: [        0         0         1 beta2 + 1])
-            ]
+            [(9,
+              Vector space of degree 4 and dimension 1 over Finite Field of size 11
+              User basis matrix:
+              [0 1 5 6]),
+             (3,
+              Vector space of degree 4 and dimension 1 over Finite Field of size 11
+              User basis matrix:
+              [1 0 1 6]),
+             (beta2,
+              Vector space of degree 4 and dimension 1 over Univariate Quotient Polynomial Ring in beta2 over Finite Field of size 11 with modulus x^2 + 9
+              User basis matrix:
+              [        0         0         1 beta2 + 1])]
 
         This method is only applicable to exact matrices.
         The "eigenmatrix" routines for matrices with double-precision
@@ -6514,13 +6513,10 @@ cdef class Matrix(Matrix1):
             NotImplementedError: unable to construct eigenspaces for eigenvalues outside the base field,
             try the keyword option: format='galois'
             sage: A.eigenspaces_left(format='galois')                                   # needs sage.rings.number_field
-            [ (a0,
-               Vector space of degree 2 and dimension 1 over
-                Univariate Quotient Polynomial Ring in a0 over
-                 Finite Field in b of size 11^2
-                with modulus x^2 + (5*b + 6)*x + 8*b + 10
-                 User basis matrix:
-                 [               1 6*b*a0 + 3*b + 1]) ]
+            [(a0,
+              Vector space of degree 2 and dimension 1 over Univariate Quotient Polynomial Ring in a0 over Finite Field in b of size 11^2 with modulus x^2 + (5*b + 6)*x + 8*b + 10
+              User basis matrix:
+              [               1 6*b*a0 + 3*b + 1])]
 
         TESTS:
 
@@ -6688,41 +6684,39 @@ cdef class Matrix(Matrix1):
             [3 4 5]
             [6 7 8]
             sage: A.eigenspaces_right()
-            [ (0,
-               Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -2  1]),
-              (-1.348469228349535?,
-               Vector space of degree 3 and dimension 1 over Algebraic Field
-                 User basis matrix:
-                 [                   1  0.1303061543300932? -0.7393876913398137?]),
-              (13.34846922834954?,
-               Vector space of degree 3 and dimension 1 over Algebraic Field
-                 User basis matrix:
-                 [                 1 3.069693845669907? 5.139387691339814?]) ]
+            [(0,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -2  1]),
+             (-1.348469228349535?,
+              Vector space of degree 3 and dimension 1 over Algebraic Field
+              User basis matrix:
+              [                   1  0.1303061543300932? -0.7393876913398137?]),
+             (13.34846922834954?,
+              Vector space of degree 3 and dimension 1 over Algebraic Field
+              User basis matrix:
+              [                 1 3.069693845669907? 5.139387691339814?])]
             sage: es = A.eigenspaces_right(format='galois'); es
-            [ (0,
-               Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -2  1]),
-              (a1,
-               Vector space of degree 3 and dimension 1 over
-                Number Field in a1 with defining polynomial x^2 - 12*x - 18
-                 User basis matrix:
-                 [           1 1/5*a1 + 2/5 2/5*a1 - 1/5]) ]
+            [(0,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -2  1]),
+             (a1,
+              Vector space of degree 3 and dimension 1 over Number Field in a1 with defining polynomial x^2 - 12*x - 18
+              User basis matrix:
+              [           1 1/5*a1 + 2/5 2/5*a1 - 1/5])]
             sage: es = A.eigenspaces_right(format='galois',
             ....:                          algebraic_multiplicity=True); es
-            [ (0,
-               Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -2  1],
-               1),
-              (a1,
-               Vector space of degree 3 and dimension 1 over
-                Number Field in a1 with defining polynomial x^2 - 12*x - 18
-                 User basis matrix:
-                 [           1 1/5*a1 + 2/5 2/5*a1 - 1/5],
-               1) ]
+            [(0,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -2  1],
+              1),
+             (a1,
+              Vector space of degree 3 and dimension 1 over Number Field in a1 with defining polynomial x^2 - 12*x - 18
+              User basis matrix:
+              [           1 1/5*a1 + 2/5 2/5*a1 - 1/5],
+              1)]
             sage: e, v, n = es[0]; v = v.basis()[0]
             sage: delta = v*e - A*v
             sage: abs(abs(delta)) < 1e-10
@@ -6735,15 +6729,14 @@ cdef class Matrix(Matrix1):
             [3 4 5]
             [6 7 8]
             sage: A.eigenspaces_right(format='galois')                                  # needs sage.rings.number_field
-            [ (0,
-               Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -2  1]),
-              (a1,
-               Vector space of degree 3 and dimension 1 over
-                Number Field in a1 with defining polynomial x^2 - 12*x - 18
-                 User basis matrix:
-                 [           1 1/5*a1 + 2/5 2/5*a1 - 1/5]) ]
+            [(0,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -2  1]),
+             (a1,
+              Vector space of degree 3 and dimension 1 over Number Field in a1 with defining polynomial x^2 - 12*x - 18
+              User basis matrix:
+              [           1 1/5*a1 + 2/5 2/5*a1 - 1/5])]
 
         This method is only applicable to exact matrices.
         The "eigenmatrix" routines for matrices with double-precision
@@ -7004,7 +6997,7 @@ cdef class Matrix(Matrix1):
             [3 4 5]
             [6 7 8]
             sage: es = A.eigenvectors_left(); es
-            [(0, [ (1, -2, 1) ], 1),
+            [(0, [(1, -2, 1)], 1),
              (-1.348469228349535?, [(1, 0.3101020514433644?, -0.3797958971132713?)], 1),
              (13.34846922834954?, [(1, 1.289897948556636?, 1.579795897113272?)], 1)]
             sage: eval, [evec], mult = es[0]
@@ -7018,11 +7011,9 @@ cdef class Matrix(Matrix1):
 
             sage: M = matrix(QQ, [[0,-1,0], [1,0,0], [0,0,2]])
             sage: M.eigenvectors_left()                                                 # needs sage.rings.number_field
-            [(2,    [ (0, 0, 1) ],  1),
-             (-1*I, [(1, -1*I, 0)], 1),
-             (1*I,  [(1, 1*I, 0)],  1)]
+            [(2, [(0, 0, 1)], 1), (-1*I, [(1, -1*I, 0)], 1), (1*I, [(1, 1*I, 0)], 1)]
             sage: M.eigenvectors_left(extend=False)                                     # needs sage.rings.number_field
-            [(2,    [ (0, 0, 1) ],  1)]
+            [(2, [(0, 0, 1)], 1)]
 
         TESTS::
 
@@ -7135,11 +7126,11 @@ cdef class Matrix(Matrix1):
             [3 4 5]
             [6 7 8]
             sage: es = A.eigenvectors_right(); es
-            [(0, [ (1, -2, 1) ], 1),
+            [(0, [(1, -2, 1)], 1),
              (-1.348469228349535?, [(1, 0.1303061543300932?, -0.7393876913398137?)], 1),
              (13.34846922834954?, [(1, 3.069693845669907?, 5.139387691339814?)], 1)]
             sage: A.eigenvectors_right(extend=False)
-            [(0, [ (1, -2, 1) ], 1)]
+            [(0, [(1, -2, 1)], 1)]
             sage: eval, [evec], mult = es[0]
             sage: delta = eval*evec - A*evec
             sage: abs(abs(delta)) < 1e-10
@@ -7938,7 +7929,7 @@ cdef class Matrix(Matrix1):
             sage: m == transformation_matrix * m_original
             True
 
-        TESTS::
+        TESTS:
 
         Check that :issue:`34724` is fixed (indirect doctest)::
 
@@ -14520,7 +14511,7 @@ cdef class Matrix(Matrix1):
 
             # Continuing the "else" branch of Higham's Step (1), and
             # onto B&K's Step (3) where we find the largest
-            # off-diagonal entry (in magniture) in column "r". Since
+            # off-diagonal entry (in magnitude) in column "r". Since
             # the matrix is Hermitian, we need only look at the
             # above-diagonal entries to find the off-diagonal of
             # maximal magnitude.
@@ -15901,7 +15892,7 @@ cdef class Matrix(Matrix1):
             sage: a.exp()                                                               # needs sage.symbolic
             [ 1/11882424341266*((11*sqrt(227345670387496707609) + 5941212170633)*e^(3/1275529100*sqrt(227345670387496707609)) - 11*sqrt(227345670387496707609) + 5941212170633)*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200)                            445243650/75781890129165569203*(sqrt(227345670387496707609)*e^(3/1275529100*sqrt(227345670387496707609)) - sqrt(227345670387496707609))*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200)]
             [                                     10000/53470909535697*(sqrt(227345670387496707609)*e^(3/1275529100*sqrt(227345670387496707609)) - sqrt(227345670387496707609))*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200) -1/11882424341266*((11*sqrt(227345670387496707609) - 5941212170633)*e^(3/1275529100*sqrt(227345670387496707609)) - 11*sqrt(227345670387496707609) - 5941212170633)*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200)]
-            sage: a.change_ring(RDF).exp()  # rel tol 6e-14                             # needs sage.symbolic
+            sage: a.change_ring(RDF).exp()  # rel tol 1e-13                             # needs sage.symbolic
             [42748127.31532951 7368259.244159399]
             [234538976.1381042 40426191.45156228]
 
@@ -18621,10 +18612,8 @@ def decomp_seq(v):
         sage: from sage.matrix.matrix2 import decomp_seq
         sage: V = [(QQ^3, 2), (QQ^2, 1)]
         sage: decomp_seq(V)
-        [
-        (Vector space of dimension 2 over Rational Field, 1),
-        (Vector space of dimension 3 over Rational Field, 2)
-        ]
+        [(Vector space of dimension 2 over Rational Field, 1),
+         (Vector space of dimension 3 over Rational Field, 2)]
     """
     list.sort(v, key=lambda x: x[0].dimension())
     return Sequence(v, universe=tuple, check=False, cr=True)

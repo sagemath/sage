@@ -868,7 +868,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [ 9 11 13]
             [ 9 11 13]
         """
-        cdef Matrix_integer_dense M = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense M = self._new(self._nrows, self._ncols)
 
         sig_on()
         fmpz_mat_add(M._matrix,self._matrix,(<Matrix_integer_dense> right)._matrix)
@@ -888,7 +888,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [-2  0  2]
             [ 4  6  8]
         """
-        cdef Matrix_integer_dense M = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense M = self._new(self._nrows, self._ncols)
 
         sig_on()
         fmpz_mat_sub(M._matrix,self._matrix,(<Matrix_integer_dense> right)._matrix)
@@ -2065,7 +2065,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 raise ValueError("ntl only computes HNF for square matrices of full rank.")
 
             import sage.libs.ntl.ntl_mat_ZZ
-            v =  sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols)
+            v = sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols)
             for i from 0 <= i < self._nrows:
                 for j from 0 <= j < self._ncols:
                     v[i,j] = self.get_unsafe(nr-i-1,nc-j-1)
@@ -4164,7 +4164,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise ArithmeticError("non-invertible matrix")
         return A
 
-    def _solve_right_nonsingular_square(self, B, check_rank=True, algorithm = 'iml'):
+    def _solve_right_nonsingular_square(self, B, check_rank=True, algorithm='iml'):
         r"""
         If ``self`` is a matrix `A` of full rank, then this function
         returns a vector or matrix `X` such that `A X = B`.
@@ -4606,7 +4606,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             M,d = self.transpose()._solve_flint(B.transpose(), right=True)
             return M.transpose(),d
 
-    def _rational_echelon_via_solve(self, solver = 'iml'):
+    def _rational_echelon_via_solve(self, solver='iml'):
         r"""
         Compute information that gives the reduced row echelon form (over
         QQ!) of a matrix with integer entries.
@@ -4813,14 +4813,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: w.charpoly().factor()
             (x - 3) * (x + 2)
             sage: w.decomposition()
-            [
-            (Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [ 5 -2], True),
-            (Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [0 1], True)
-            ]
+            [(Free module of degree 2 and rank 1 over Integer Ring
+              Echelon basis matrix:
+              [ 5 -2],
+              True),
+             (Free module of degree 2 and rank 1 over Integer Ring
+              Echelon basis matrix:
+              [0 1],
+              True)]
         """
         F = self.charpoly().factor()
         if len(F) == 1:
@@ -4954,11 +4954,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 row_i = A.row(i)
                 row_n = A.row(n)
 
-                ag = a//g
-                bg = b//g
+                ag = a // g
+                bg = b // g
 
-                new_top = s*row_i  +  t*row_n
-                new_bot = bg*row_i - ag*row_n
+                new_top = s * row_i + t * row_n
+                new_bot = bg * row_i - ag * row_n
 
                 # OK -- now we have to make sure the top part of the matrix
                 # but with row i replaced by
@@ -5029,7 +5029,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         t = verbose('hermite mod %s' % D, caller_name='matrix_integer_dense')
         if self._nrows != self._ncols:
             raise ValueError("matrix is not square")
-        cdef Matrix_integer_dense res = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense res = self._new(self._nrows, self._ncols)
         self._hnf_modn(res, D)
         verbose('finished hnf mod', t, caller_name='matrix_integer_dense')
         return res
@@ -5725,9 +5725,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         ri = nr
         for i from 0 <= i < nr:
             rj = nc
-            ri =  ri-1
+            ri -= 1
             for j from 0 <= j < nc:
-                rj = rj-1
+                rj -= 1
                 fmpz_init_set(fmpz_mat_entry(A._matrix, rj, ri),
                               fmpz_mat_entry(self._matrix, i, j))
         sig_off()

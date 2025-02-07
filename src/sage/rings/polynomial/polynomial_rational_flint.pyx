@@ -236,7 +236,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         elif isinstance(x, Rational):
             fmpq_poly_set_mpq(self._poly, (<Rational> x).value)
 
-        elif isinstance(x, list) or isinstance(x, tuple):
+        elif isinstance(x, (list, tuple)):
 
             if len(x) == 0:
                 return
@@ -1495,7 +1495,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             fmpz_get_mpz(den.value, <fmpz *> fmpq_poly_denref(self._poly))
         return den
 
-    def _derivative(self, var = None):
+    def _derivative(self, var=None):
         """
         Return the derivative of this polynomial with respect to ``var``.
 

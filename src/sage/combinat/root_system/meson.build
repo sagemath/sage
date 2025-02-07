@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'ambient_space.py',
   'associahedron.py',
@@ -64,13 +65,18 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name.startswith('reflection_group')
+    deps += [gap]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/combinat/root_system',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: deps,
   )
 endforeach
 

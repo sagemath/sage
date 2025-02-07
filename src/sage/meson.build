@@ -6,7 +6,7 @@ conf_data = configuration_data()
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 conf_data.set('SAGE_ROOT', meson.current_source_dir() / '..' / '..')
 # We use Python's prefix here to make it work with conda
-prefix = py.get_variable('prefix', '')
+prefix = fs.as_posix(py.get_variable('prefix', ''))
 conf_data.set('prefix', prefix)
 datadir = fs.expanduser(get_option('datadir'))
 if not fs.is_absolute(datadir)
@@ -56,7 +56,7 @@ ecm_bin = find_program(['ecm', 'gmp-ecm'], required: true)
 conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
 
 config_file = configure_file(
-  input: '../../pkgs/sage-conf_conda/_sage_conf/_conf.py.in',
+  input: '../../pkgs/sage-conf/_sage_conf/_conf.py.in',
   output: 'config.py',
   install_dir: py.get_install_dir() / 'sage',
   install: true,
@@ -86,6 +86,7 @@ foreach package : no_processing
 endforeach
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_bliss.py',
   'all__sagemath_categories.py',

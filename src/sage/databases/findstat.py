@@ -213,6 +213,7 @@ from sage.databases.oeis import FancyTuple
 
 from ast import literal_eval
 from copy import deepcopy
+from pathlib import Path
 import re
 import webbrowser
 import tempfile
@@ -491,8 +492,9 @@ def _submit(args, url):
         ....:         "CurrentEmail": ""}
         sage: _submit(args, url)                                                # optional -- webbrowser
     """
-    f = tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False)
+    f = tempfile.NamedTemporaryFile(mode='w', suffix='.html', encoding='utf-8', delete=False)
     verbose("Created temporary file %s" % f.name, caller_name='FindStat')
+    f.write('<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n')
     f.write(FINDSTAT_POST_HEADER)
     f.write(url)
     for key, value in args.items():
@@ -506,7 +508,7 @@ def _submit(args, url):
     f.write(FINDSTAT_FORM_FOOTER)
     f.close()
     verbose("Opening file with webbrowser", caller_name='FindStat')
-    webbrowser.open(f.name)
+    webbrowser.open(Path(f.name).as_uri())
 
 
 def _data_to_str(data, domain, codomain=None):
@@ -1784,7 +1786,7 @@ class FindStatFunction(SageObject):
         EXAMPLES::
 
             sage: q = findstat([(d, randint(1,1000)) for d in DyckWords(4)])              # optional -- internet
-            sage: q.set_sage_code("def statistic(x):\n    return randint(1,1000)")        # optional -- internet
+            sage: q.set_sage_code("def statistic(x):\n    return randint(1, 1000)")        # optional -- internet
             sage: print(q.sage_code())                                                    # optional -- internet
             def statistic(x):
                 return randint(1,1000)

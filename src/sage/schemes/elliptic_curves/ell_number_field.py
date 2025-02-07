@@ -290,7 +290,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
         # time (when known_points may have increased) will not cause
         # another execution of simon_two_descent.
         try:
-            result = self._simon_two_descent_data[lim1,lim3,limtriv,maxprob,limbigprime]
+            result = self._simon_two_descent_data[lim1, lim3, limtriv,
+                                                  maxprob, limbigprime]
             if verbose == 0:
                 return result
         except AttributeError:
@@ -541,7 +542,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             return all(self.is_local_integral_model(x) for x in P)
         return all(x.valuation(P) >= 0 for x in self.ainvs())
 
-    def local_integral_model(self,*P):
+    def local_integral_model(self, *P):
         r"""
         Return a model of ``self`` which is integral at the prime ideal `P`.
 
@@ -1898,7 +1899,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         raise ValueError("%s has no global minimal model!  For a semi-global minimal model use semi_global=True" % self)
 
-    def reduction(self,place):
+    def reduction(self, place):
         r"""
         Return the reduction of the elliptic curve at a place of good reduction.
 
@@ -2343,7 +2344,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: gg=E.gens(lim3=13); gg  # long time (about 4s)
             [(... : 1)]
 
-        Check that the the point found has infinite order, and that it is on the curve::
+        Check that the point found has infinite order, and that it is on the curve::
 
             sage: P=gg[0]; P.order()  # long time
             +Infinity
@@ -2447,7 +2448,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
              -0.14934463314391922099120107422 - 2.0661954627294548995621225062*I)
         """
         from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
-        return PeriodLattice_ell(self,embedding)
+        return PeriodLattice_ell(self, embedding)
 
     def real_components(self, embedding):
         """

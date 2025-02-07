@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'cone.py',
   'cone_catalog.py',
@@ -32,13 +33,18 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, flint, gmp]
+  if name == 'palp_normal_form'
+    deps += [gap]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/geometry',
     install: true,
     include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings],
-    dependencies: [py_dep, cysignals, flint, gmp],
+    dependencies: deps,
   )
 endforeach
 

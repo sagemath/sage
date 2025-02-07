@@ -238,12 +238,10 @@ class EllipticCurveHom(Morphism):
             sage: wE = identity_morphism(E)
             sage: wF = identity_morphism(F)
             sage: mE = E.scalar_multiplication(1)
-            sage: mF = F.multiplication_by_m_isogeny(1)
-            doctest:warning ... DeprecationWarning: ...
-            sage: [mE == wE, mF == wF]
-            [True, True]
-            sage: [a == b for a in (wE,mE) for b in (wF,mF)]
-            [False, False, False, False]
+            sage: mE == wE
+            True
+            sage: [a == wF for a in (wE,mE)]
+            [False, False]
 
         .. SEEALSO::
 
@@ -1199,7 +1197,7 @@ def compare_via_evaluation(left, right):
         for _ in range(100):
             P = E.lift_x(F.random_element(), extend=True)
             if P._has_order_at_least(4*d + 1, attempts=50):
-            # if P.height(precision=250) == 0:  # slow sometimes
+                # if P.height(precision=250) == 0:  # slow sometimes
                 return left._eval(P) == right._eval(P)
         else:
             assert False, "couldn't find a point of large enough order"

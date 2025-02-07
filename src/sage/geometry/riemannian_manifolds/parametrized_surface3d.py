@@ -276,11 +276,11 @@ class ParametrizedSurface3D(SageObject):
         sage: cc_array = [(ccc - K_min)/(K_max - K_min) for ccc in K_array]
         sage: points_array = [ellipsoid_equation(u_array[counter][0],
         ....:                                    u_array[counter][1])
-        ....:                 for counter in range(0,len(u_array))]
+        ....:                 for counter in range(len(u_array))]
         sage: curvature_ellipsoid_plot = sum(point([xx                                  # needs sage.plot
         ....:                                       for xx in points_array[counter]],
         ....:                                      color=hue(cc_array[counter]/2))
-        ....:                                for counter in range(0,len(u_array)))
+        ....:                                for counter in range(len(u_array)))
         sage: curvature_ellipsoid_plot.show(aspect_ratio=1)                             # needs sage.plot
 
     We can find the principal curvatures and principal directions of the
@@ -789,7 +789,7 @@ class ParametrizedSurface3D(SageObject):
             raise ValueError("Index %s out of bounds." % str(index))
 
     @cached_method
-    def rotation(self,theta):
+    def rotation(self, theta):
         r"""
         Give the matrix of the rotation operator over a given angle `\theta`
         with respect to the natural frame.
@@ -1185,7 +1185,7 @@ class ParametrizedSurface3D(SageObject):
                 self._compute_second_fundamental_form_coefficient(index)
         return coefficients
 
-    def second_fundamental_form(self,vector1,vector2):
+    def second_fundamental_form(self, vector1, vector2):
         r"""
         Evaluates the second fundamental form on two vectors on the surface.
         If the vectors are given by `v=(v^1,v^2)` and `w=(w^1,w^2)`, the
@@ -1569,7 +1569,7 @@ class ParametrizedSurface3D(SageObject):
                 pt_ode.function = lambda t, v1_v2: [fun1(t, v1_v2[0], v1_v2[1]), fun2(t, v1_v2[0], v1_v2[1])]
                 return pt_ode
 
-    def parallel_translation_numerical(self,curve,t,v0,tinterval):
+    def parallel_translation_numerical(self, curve, t, v0, tinterval):
         r"""
         Numerically solve the equations for parallel translation of a vector
         along a curve on the surface.  Explicitly, the equations for parallel

@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'refinement_generic.pxd',
   subdir: 'sage/groups/perm_gps/partn_ref2',
@@ -13,7 +14,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/groups/perm_gps/partn_ref2',
     install: true,
     include_directories: [inc_cpython, inc_data_structures, inc_partn_ref2],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: [py_dep, cysignals, gmp, gap],
   )
 endforeach
 

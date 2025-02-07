@@ -894,7 +894,7 @@ class R(ExtraTabCompletion, Interface):
         # The following was more structural, but breaks on my machine.  (stein)
         # p = p._sage_()
         # s = p['_Dim'][0]
-        # l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in range(0,s)]
+        # l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in range(s)]
         # return l
 
     def _object_class(self):
