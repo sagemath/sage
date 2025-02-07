@@ -21,12 +21,8 @@ on:
            "ubuntu-xenial-toolchain-gcc_9",
            "ubuntu-focal",
            "ubuntu-jammy",
-           "ubuntu-noble",
            "debian-bullseye",
            "debian-bookworm",
-           "debian-trixie",
-           "debian-sid",
-           "linuxmint-20.1",
            "linuxmint-20.2",
            "linuxmint-20.3",
            "linuxmint-21",
@@ -52,8 +48,6 @@ on:
            "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
            "opensuse-tumbleweed",
-           "conda-forge-python3.11",
-           "debian-bullseye-i386",
           ]
         # 'tox -e update_docker_platforms' updates above
       tox_packages_factors:
