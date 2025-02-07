@@ -126,6 +126,8 @@ from itertools import repeat
 from sage.rings.integer import Integer
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
+from sage.arith.misc import is_prime_power
+from sage.rings.finite_rings.finite_field_constructor import GF
 
 
 def are_mutually_orthogonal_latin_squares(l, verbose=False):
@@ -365,6 +367,19 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         _, construction = MOLS_constructions[n]
 
         matrices = construction()[:k]
+
+    elif is_prime_power(n):
+        F = list(GF(n))
+
+        # We need the first element of the list to be 0
+        assert F[0] == 0
+
+        # This dictionary is used to convert from field elements to integers
+        conv = {F[i] : i for i in range(n)}
+        
+        # Make the matrices
+        matrices = [Matrix([[conv[F[i] + F[r]*F[j]] for i in range(n)]
+                 for j in range(n)]) for r in range(1, k+1)]
 
     elif orthogonal_array(k + 2, n, existence=True) is not Unknown:
         # Forwarding non-existence results
