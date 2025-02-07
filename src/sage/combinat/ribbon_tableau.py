@@ -26,7 +26,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.skew_partition import SkewPartition, SkewPartitions
-from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, SemistandardSkewTableaux
+from sage.combinat.skew_tableau import (SkewTableau, SkewTableaux,
+                                        SemistandardSkewTableaux)
 from sage.combinat.tableau import Tableaux
 from sage.combinat.partition import Partition, _Partitions
 from sage.combinat.permutation import to_standard
@@ -94,7 +95,8 @@ class RibbonTableau(SkewTableau):
         try:
             rt = [tuple(row) for row in rt]
         except TypeError:
-            raise TypeError("each element of the ribbon tableau must be an iterable")
+            raise TypeError("each element of the ribbon tableau "
+                            "must be an iterable")
         if not all(row for row in rt):
             raise TypeError("a ribbon tableau cannot have empty rows")
         # calls the inherited __init__ method (of SkewTableau )
@@ -195,9 +197,10 @@ class RibbonTableaux(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [vanLeeuwen91] Marc. A. A. van Leeuwen, *Edge sequences, ribbon tableaux,
-       and an action of affine permutations*. Europe J. Combinatorics. **20**
-       (1999). http://wwwmathlabo.univ-poitiers.fr/~maavl/pdf/edgeseqs.pdf
+    .. [vanLeeuwen91] Marc. A. A. van Leeuwen, *Edge sequences,
+       ribbon tableaux, and an action of affine permutations*.
+       Europe J. Combinatorics. **20** (1999).
+       http://wwwmathlabo.univ-poitiers.fr/~maavl/pdf/edgeseqs.pdf
     """
     @staticmethod
     def __classcall_private__(cls, shape=None, weight=None, length=None):
@@ -318,10 +321,11 @@ class RibbonTableaux_shape_weight_length(RibbonTableaux):
             sage: RibbonTableaux([[2,2],[]],[1,1],2).list()
             [[[0, 0], [1, 2]], [[1, 0], [2, 0]]]
         """
-        for x in graph_implementation_rec(self._shape, self._weight, self._length, list_rec):
+        for x in graph_implementation_rec(self._shape, self._weight,
+                                          self._length, list_rec):
             yield self.from_expr(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -332,7 +336,7 @@ class RibbonTableaux_shape_weight_length(RibbonTableaux):
         """
         return "Ribbon tableaux of shape %s and weight %s with %s-ribbons" % (repr(self._shape), list(self._weight), self._length)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Note that this just checks to see if ``x`` appears in ``self``.
 
@@ -854,7 +858,7 @@ class MultiSkewTableau(CombinatorialElement):
             sage: a.weight()
             [5, 3, 1]
         """
-        weights = (x.weight() for x in self)
+        weights = [x.weight() for x in self]
         m = max(len(x) for x in weights)
         weight = [0] * m
         for w in weights:
