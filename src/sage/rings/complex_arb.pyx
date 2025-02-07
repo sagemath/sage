@@ -492,7 +492,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
         else:
             raise ValueError("only one generator")
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the tuple of generators of this complex ball field, i.e.
         ``(i,)``.

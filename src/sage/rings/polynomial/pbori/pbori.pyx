@@ -528,7 +528,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             raise ValueError("generator not defined")
         return new_BP_from_PBVar(self, self._pbring.variable(self.pbind[idx]))
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of variables in this ring.
 
@@ -1973,7 +1973,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
 
         return new_BM_from_PBVar(self, (<BooleanPolynomialRing>self._ring), newvar)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of generators of this monoid.
 
