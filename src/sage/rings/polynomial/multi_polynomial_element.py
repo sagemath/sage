@@ -551,6 +551,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = 3*x^2 - 2*y + 7*x^2*y^2 + 5
             sage: f.degrees()
             (2, 2, 0)
+            sage: type(f.degrees())
+            <class 'sage.rings.polynomial.polydict.ETuple'>
+            sage: type(f.degrees(as_ETuples=False))
+            <class 'tuple'>
             sage: f = x^2 + z^2
             sage: f.degrees()
             (2, 0, 2)
