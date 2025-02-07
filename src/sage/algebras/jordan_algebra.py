@@ -328,7 +328,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
     algebra_generators = basis
 
     # TODO: Keep this until we can better handle R.<...> shorthand
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -763,7 +763,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
 
     algebra_generators = basis
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -1316,7 +1316,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
 
     algebra_generators = basis
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 

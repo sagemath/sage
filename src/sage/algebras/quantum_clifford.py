@@ -301,7 +301,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         return Family(sorted(d), lambda i: d[i])
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 

@@ -532,7 +532,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             u = cyclotomic_parameters
 
             @cached_method
-            def gens(self):
+            def gens(self) -> tuple:
                 r"""
                 Return the generators of ``self``.
 

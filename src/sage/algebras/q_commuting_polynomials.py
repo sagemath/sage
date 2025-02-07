@@ -147,7 +147,7 @@ class qCommutingPolynomials_generic(CombinatorialFreeModule):
         return self.monomial(self._indices.gen(i))
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 

@@ -500,7 +500,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         return self.element_class(self, self._libgap.ZeroImmutable())
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 

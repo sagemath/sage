@@ -1694,7 +1694,7 @@ class QuaternionOrder(Parent):
         """
         return self.quaternion_algebra().one()
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return generators for ``self``.
 

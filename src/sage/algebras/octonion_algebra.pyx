@@ -952,7 +952,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         return 0
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 
