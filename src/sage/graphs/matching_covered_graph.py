@@ -2345,11 +2345,325 @@ class MatchingCoveredGraph(Graph):
         raise ValueError('algorithm must be set to \'Edmonds\', '
                          '\'LP_matching\' or \'LP\'')
 
-    def is_removable_edge(self, u, v=None, label=None):
+    @doc_index('Dependence Relation and Removable Classes')
+    def is_removable_edge(self, u, v=None, label=None, coNP_certificate=False):
         r"""
         Check whether the edge ``(u, v, 'label')`` is removable.
+
+        An edge `e` of a matching covered graph `G` is removable if `G - e`
+        is also matching covered. For example, every edge of `K_{3, 3}` is
+        removable, but no edge of `K_4` or of `\overline{C_6}` is. In the
+        context of matching covered graphs, by the deletion of an edge, we
+        always mean the deletion of a removable edge.
+
+        INPUT:
+
+        - The following forms are accepted:
+
+          + Specifying the edge without the label, without mentioning the value
+            for ``coNP_certificate``:
+
+            #. G.is_remoavble_edge(1, 2)
+            #. G.is_removable_edge((1, 2))
+
+          + Specifying the edge without the label while providing the value
+            for ``coNP_certificate``:
+
+            #. G.is_removable_edge(1, 2, coNP_certificate=True)
+            #. G.is_removable_edge((1, 2), coNP_certificate=True)
+
+          + Specifying the edge with the label without mentioning the value
+            for ``coNP_certificate``:
+
+            #. G.is_removable_edge(1, 2, 'label')
+            #. G.is_removable_edge((1, 2, 'label'))
+            #. G.is_removable_edge(1, 2, label='label')
+            #. G.is_removable_edge((1, 2), label='label')
+
+          + Providing the edge with the label as well as specifying the value
+            for ``coNP_certificate``:
+
+            #. G.is_removable_edge(1, 2, 'label', True)
+            #. G.is_removable_edge((1, 2, 'label'), coNP_certificate=True)
+            #. G.is_removable_edge(1, 2, label='label', coNP_certificate=True)
+            #. G.is_removable_edge((1, 2), label='label', coNP_certificate=True)
+
+        - ``coNP_certificate`` -- boolean (default: ``False``); if set to
+          ``True``, alongwith the boolean output referring whether the provided
+          edge (say `e`) is removable or not, an edge (say`f`) is returned if
+          the `e` is not removable (such that `f` is not matchable in the graph
+          `G - e`, hence `e` is not removable in `G`), otherwise if `e` is
+          removable in `G` then ``None`` is returned.
+
+        OUTPUT:
+
+        - If the edge ``(u, v, 'label') does not exist in the graph, a
+          :exc:`ValueError` is returned.
+
+        - If ``coNP_certificate`` is set to ``False``, a boolean ``True`` is
+          returned if the edge ``(u, v, 'label')`` is removable, otherwise
+          ``False`` is returned.
+
+        - If ``coNP_certificate`` is set to ``True``, a pair ``(True, None)``
+          is returned if the edge ``(u, v, 'label')`` is removable, otherwise
+          ``True`` is returned.
+
+        WARNING:
+
+        The following intuitive input results in nonintuitive output,
+        even though the resulting graph behind the intuition might be matching
+        covered::
+
+            sage: M = graphs.MurtyGraph()
+            sage: G = MatchingCoveredGraph(M)
+            sage: G.is_removable_edge(0, 1, True)  # Note that this sets label as True
+            Traceback (most recent call last):
+            ...
+            ValueError: the edge (0, 1, True) is not present in the graph
+            sage: G.is_removable_edge((0, 1), True)  # Here the edge provided is ((0, 1), True, None)
+            Traceback (most recent call last):
+            ...
+            ValueError: the edge ((0, 1), True, None) is not present in the graph
+            sage: G.is_removable_edge((0, 1), 'label')  # Here the edge provided is ((0, 1), 'label', None)
+            Traceback (most recent call last):
+            ...
+            ValueError: the edge ((0, 1), 'label', None) is not present in the graph
+            sage: G.is_removable_edge((0, 1), 'label', True)  # Here the edge provided is ((0, 1), 'label', True)
+            Traceback (most recent call last):
+            ...
+            ValueError: the edge ((0, 1), 'label', True) is not present in the graph
+
+        The key word ``label`` and ``coNP_certificate`` may be specified::
+
+            sage: M = graphs.MurtyGraph()
+            sage: G = MatchingCoveredGraph(M, multiedges=True)
+            sage: G.add_edge(0, 1, 'label')
+            sage: G.is_removable_edge(0, 1, label='label')
+            True
+            sage: G.is_removable_edge((0, 1), label='label')
+            True
+            sage: G.is_removable_edge(0, 1, label='label', coNP_certificate=True)
+            (True, None)
+            sage: G.is_removable_edge((0, 1), label='label', coNP_certificate=True)
+            (True, None)
+            sage: G.is_removable_edge(0, 1, coNP_certificate=True)  # Note that this is the edge (0, 1, None)
+            (True, None)
+            sage: G.is_removable_edge((0, 1), coNP_certificate=True)  # Note that this is the edge (0, 1, None)
+            (True, None)
+
+        EXAMPLES:
+
+        Each edge of the graph `K_{3, 3}` is removable::
+
+            sage: K = graphs.CompleteBipartiteGraph(3, 3)
+            sage: G = MatchingCoveredGraph(K)
+            sage: G.is_removable_edge(0, 3)
+            True
+
+        The graphs `K_4` and `\overline{C_6}` are free of removable edges::
+
+            sage: K4 = graphs.CompleteGraph(4)
+            sage: G = MatchingCoveredGraph(K4)
+            sage: G.is_removable_edge(0, 1) # K4 has a single edge orbit
+            False
+            sage: C6Bar = graphs.CircularLadderGraph(3)
+            sage: H = MatchingCoveredGraph(C6Bar)
+            sage: # C6Bar has two distinct edge orbits
+            sage: H.is_removable_edge(0, 1)
+            False
+            sage: H.is_removable_edge(0, 3)
+            False
+
+        Each spoke of an even-ordered wheel on at least six vertices is removable::
+
+            sage: W = graphs.WheelGraph(10)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.is_removable_edge(0, 1)
+            True
+            sage: Y = graphs.WheelGraph(16)
+            sage: H = MatchingCoveredGraph(Y)
+            sage: H.is_removable_edge(0, 8)
+            True
+
+        Each rung of a circular ladder graph of order eight or more is
+        removable::
+
+            sage: CL = graphs.CircularLadderGraph(14)  # A bipartite graph
+            sage: G = MatchingCoveredGraph(CL)
+            sage: for i in range(14):
+            ....:     assert G.is_removable_edge(i, i+14) == True
+            sage: CL = graphs.CircularLadderGraph(15)  # A nonbipartite graph
+            sage: G = MatchingCoveredGraph(CL)
+            sage: for i in range(15):
+            ....:     assert G.is_removable_edge(i, i+15) == True
+
+        Each stile of a circular ladder graph (aka an edge that is not a rung)
+        of order eight or more is removable if it is bipartite, otherwise it is
+        not::
+
+            sage: CL = graphs.CircularLadderGraph(14)  # A bipartite graph
+            sage: G = MatchingCoveredGraph(CL)
+            sage: for i in range(14):
+            ....:     assert G.is_removable_edge(i, (i+1) % 14) == True
+            ....:     assert G.is_removable_edge((i+14), (i+15)%14 + 14) == True
+            sage: CL = graphs.CircularLadderGraph(15)  # A nonbipartite graph
+            sage: G = MatchingCoveredGraph(CL)
+            sage: for i in range(15):
+            ....:     assert G.is_removable_edge(i, (i+1) % 15) == False
+            ....:     assert G.is_removable_edge((i+15), (i+16)%15 + 15) == False
+
+        Each rung of a Möbius ladder graph (aka an edge joining an antipodal
+        pair of points) of order six or more is removable::
+
+            sage: ML = graphs.MoebiusLadderGraph(3)  # A bipartite graph
+            sage: G = MatchingCoveredGraph(ML)
+            sage: for i in range(3):
+            ....:     assert G.is_removable_edge(i, i+3) == True
+            sage: ML = graphs.MoebiusLadderGraph(4)  # A nonbipartite graph
+            sage: G = MatchingCoveredGraph(ML)
+            sage: for i in range(4):
+            ....:     assert G.is_removable_edge(i, i+4) == True
+
+        Each stile of a Möbius ladder graph (aka an edge that does not join
+        an antipodal pair of vertices) of order six or more is removable, if it
+        is bipartite, otherwise it is not::
+
+            sage: ML = graphs.MoebiusLadderGraph(5)  # A bipartite graph
+            sage: G = MatchingCoveredGraph(ML)
+            sage: for i in range(10):
+            ....:     assert G.is_removable_edge(i, (i+1) % 10) == True
+            sage: ML = graphs.MoebiusLadderGraph(6)  # A nonbipartite graph
+            sage: G = MatchingCoveredGraph(ML)
+            sage: for i in range(12):
+            ....:     assert G.is_removable_edge(i, (i+1) % 12) == False
+
+        Each edge of the Petersen graph is removable::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.is_removable_edge(0, 1)  # P has a single edge orbit
+            True
+
+        The bicron graph is the only brick that has one removable edge::
+
+            sage: B = graphs.StaircaseGraph(4)
+            sage: G = MatchingCoveredGraph(B)
+            sage: G.is_removable_edge(1, 4)
+            True
+
+        The tricorn graph has three removable edges::
+
+            sage: T = graphs.TricornGraph()
+            sage: G = MatchingCoveredGraph(T)
+            sage: # Compute the edge orbits of G
+            sage: L = G.line_graph()
+            sage: _, edge_orbits = L.automorphism_group(orbits=True)
+            sage: removable_edges = []
+            sage: for orbit in edge_orbits:
+            ....:     edge = next(iter(orbit))
+            ....:     if G.is_removable_edge(edge):
+            ....:         removable_edges.extend(orbit)
+            sage: removable_edges
+            [(2, 3, None), (5, 6, None), (8, 9, None)]
+
+        Every edge in a brace of order at least six is removable::
+
+            sage: H = graphs.HeawoodGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_removable_edge(G.random_edge())
+            True
+
+        # TODO:
+        # 1. Every simple near-bipartite brick distinct from `K_4`,
+        #   `\overline{C_6}` and the bicorn graph has two nonadjacent
+        #   removable edges.
+        # 2. Add more relevant and interesting examples.
+        # 3. Add examples of staircase and truncated biwheel.
+        # 4. Add an example of the exchange property.
+        # 5. Parameter coNP certificate may be set to True.
+        # 6. Removing a nonexistent edge.
         """
-        raise NotImplementedError()
+        if label is None:
+            if v is None:
+                try:
+                    u, v, label = u
+                except Exception:
+                    try:
+                        u, v = u
+                    except Exception:
+                        pass
+
+        else:
+            if v is None:
+                try:
+                    u, v = u
+                except Exception:
+                    pass
+
+        e = (u, v, label)
+
+        if e not in self.edges():
+            raise ValueError(f'the edge {e} is not present in the graph')
+
+        # A multiple edge in a matching covered graph is removable
+        if isinstance(self.edge_label(u, v), list) and len(self.edge_label(u, v)) > 1:
+            return (True, None) if coNP_certificate else True
+
+        G = Graph(self)
+        G.delete_edge(e)
+
+        # If the edge e is not the part of the perfect matching,
+        # we may use the matching to check if the graph G - e is matching covered
+        M = Graph(self.get_matching())
+
+        if e not in M.edges():
+            return G.is_matching_covered(matching=M, coNP_certificate=coNP_certificate)
+
+        # The edge e is matched under the current perfect matching
+        # Compute a perfect matching of the graph G - e using the maximal matching M
+        M.delete_edge(e)
+
+        matched = {x: y for a, b, *_ in M.edge_iterator() for x, y in [(a, b), (b, a)]}
+
+        from queue import Queue
+        q, visited, parent = Queue(), {u}, {}
+        q.put(u)
+
+        while q:
+            x = q.get()
+
+            for y in G.neighbor_iterator(x):
+                if y in visited:
+                    continue
+
+                visited.add(y)
+                parent[y] = x
+
+                # if y is matched, put matched[y] to the queue q
+                if y in matched:
+                    z = matched[y]
+                    visited.add(z)
+                    parent[z] = y
+                    q.put(z)
+                    continue
+
+                # If y is not matched, y is v
+                # Obtain the M-alternating uv path
+                path, z = [], y
+                while z != u:
+                    path.append((parent[z], z))
+                    z = parent[z]
+
+                # Flip the matched edges along the path
+                for i, (a, b) in enumerate(path):
+                    if i % 2:
+                        M.delete_edge(a, b)
+                        continue
+
+                    label = G.edge_label(a, b)
+                    M.add_edge(a, b, next(iter(label)) if isinstance(label, list) else label)
+
+                return G.is_matching_covered(matching=M, coNP_certificate=coNP_certificate)
 
     @doc_index('Overwritten methods')
     def loop_edges(self, labels=True):
