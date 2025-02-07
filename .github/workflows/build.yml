@@ -356,7 +356,10 @@ jobs:
           ln -s $(pwd)/.coverage /sage/
           cd /sage
           ./sage -python -m pip install coverage
-          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --force-lib --long -p4 --format github --random-seed=286735480429121101562228604801325644303 ${{ matrix.tests }}
+          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests \
+            --force-lib --long -p4 --format github \
+            --random-seed=286735480429121101562228604801325644303 ${{ matrix.tests }} \
+            --baseline-stats-path=.github/workflows/build-known-test-failures.json
         shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Combine coverage results
