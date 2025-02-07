@@ -1606,7 +1606,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: G = PermutationGroup([[(2,3),(4,5)]])
                 sage: a = M(G, {0: [1, 2, 3], 1: [4, 5]})
                 sage: a
-                X*E_2(XY)
+                X*E_2(X*Y)
                 sage: list(a.structures([1, 2, 3], ["a", "b"]))
                 [((1,), (2, 3, 'a', 'b')),
                  ((1,), (2, 3, 'b', 'a')),
@@ -2195,6 +2195,37 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                     exponent)
                    for factor, exponent in factors]
         return Factorization(factors, unit=unit, sort=False)
+
+    def structures(self, *labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(ZZ, ["X"])
+            sage: C3 = P(CyclicPermutationGroup(3))
+            sage: X = P(SymmetricGroup(1))
+            sage: E2 = P(SymmetricGroup(2))
+            sage: f = 2*E2*X + E2^2
+            sage: list(f.structures([1, 2, 3]))
+            [(X*E_2, ((1, 3), (2,)), 0),
+             (X*E_2, ((2, 3), (1,)), 0),
+             (X*E_2, ((1, 2), (3,)), 0),
+             (X*E_2, ((1, 3), (2,)), 1),
+             (X*E_2, ((2, 3), (1,)), 1),
+             (X*E_2, ((1, 2), (3,)), 1)]
+        """
+        labels = _label_sets(self.parent()._arity, labels)
+        for M, c in self.monomial_coefficients().items():
+            if c not in ZZ or c < 0:
+                raise NotImplementedError("only implemented for proper non-virtual species")
+            if c == 1:
+                for s in M.structures(*labels):
+                    yield M, s
+            else:
+                for e, s in cartesian_product([range(c), M.structures(*labels)]):
+                    yield M, s, e
 
 
 class PolynomialSpecies(CombinatorialFreeModule):

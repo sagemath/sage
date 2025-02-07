@@ -25,20 +25,19 @@ EXAMPLES::
         sage: L.<X> = LazySpecies(QQ)
         sage: E = L.Sets()
         sage: E_2 = L(SymmetricGroup(2))
-        sage: Ep = L.Sets(1)
+        sage: Ep = L.Sets().restrict(1)
         sage: G = L.Graphs()
-        sage: E_2(X^2)[4].support()[0].support()[0].rename("E_2(X^2)")
 
     The molecular decomposition begins with::
 
         sage: P = G(Ep.revert())
         sage: P.truncate(6)
-        1 + X + E_2 + (E_3+X*E_2) + (E_4+X*E_3+P_4+X^2*E_2+E_2(X^2))
-        + (E_5+E_2*E_3+X*E_4+X*E_2^2+X^2*E_3+2*X*P_4+P_5+5*X*E_2(X^2)+3*X^3*E_2)
+        1 + X + E_2 + (E_3+X*E_2) + (E_4+X*E_3+E_2(E_2)+X^2*E_2+E_2(X^2))
+        + (E_5+E_2*E_3+X*E_4+X*E_2^2+X^2*E_3+2*X*E_2(E_2)+P_5+5*X*E_2(X^2)+3*X^3*E_2)
 
-    Note that [GL2011]_ write `E_2(E_2)` instead of `P_4` and `D_5`
-    instead of `P_5`, and there is apparently a misprint: `X*P_4 + 4
-    X^3 E_2` should be `2 X P_4 + 3 X^3 E_2`.
+    Note that [GL2011]_ write `D_5` instead of `P_5`, and there is
+    apparently a misprint: `X*E_2(E_2) + 4 X^3 E_2` should be `2 X
+    E_2(E_2) + 3 X^3 E_2`.
 
     To compute the molecular decomposition of the species of
     connected graphs with no endpoints, we use Equation (3.3) in
@@ -48,7 +47,7 @@ EXAMPLES::
         sage: Gc = Ep.revert()(G-1)
         sage: Mc = Gc(X*E(-X)) + E_2(-X)
         sage: E(Mc).truncate(5)
-        1 + X + E_2 + 2*E_3 + (2*E_4+P_4+E_2^2+X*E_3)
+        1 + X + E_2 + 2*E_3 + (2*E_4+E_2(E_2)+E_2^2+X*E_3)
 
     Note that [GL2011]_ apparently contains a misprint: `2 X E_3`
     should be `X E_3 + E_2^2`.  Indeed, the graphs on four vertices
@@ -64,6 +63,7 @@ EXAMPLES::
         sage: B = G(2*Ep.revert() - X)
         sage: B.truncate(6)
         1 + X + E_2(X^2) + (P_5+5*X*E_2(X^2))
+
 """
 
 from sage.misc.lazy_list import lazy_list
@@ -75,6 +75,7 @@ from sage.rings.lazy_series_ring import (LazyCompletionGradedAlgebra,
 from sage.rings.species import PolynomialSpecies, _label_sets
 from sage.data_structures.stream import (Stream_zero,
                                          Stream_exact,
+                                         Stream_truncated,
                                          Stream_function)
 from sage.categories.sets_cat import cartesian_product
 from sage.categories.tensor import tensor
@@ -148,6 +149,7 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
             m = weight_multiplicities[_w0]
             for v in map(list, IntegerVectors(s, length=m)):
                 yield v + c
+
 
 def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
     r"""
@@ -347,6 +349,29 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         return L(coefficient)
 
+    def restrict(self, min_degree=None, max_degree=None):
+        r"""
+        Return the series obtained by keeping only terms of
+        degree between ``min_degree`` and ``max_degree``.
+
+        INPUT:
+
+        - ``min_degree``, ``max_degree`` -- (optional) integers
+          indicating which degrees to keep
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(ZZ, "X")
+            sage: G = L.Graphs()
+            sage: list(G.isotypes(2))
+            [Graph on 2 vertices, Graph on 2 vertices]
+
+            sage: list(G.restrict(2, 2).isotypes(2))
+            [Graph on 2 vertices, Graph on 2 vertices]
+        """
+        return RestrictedSpeciesElement(self, min_degree, max_degree)
+
     def _add_(self, other):
         r"""
         Return the sum of ``self`` and ``other``.
@@ -446,17 +471,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: list(XY.structures([], [1, 2]))
             []
         """
-        labels = _label_sets(self.parent()._arity, labels)
-        F = self[sum(map(len, labels))]
-        for M, c in F.monomial_coefficients().items():
-            if c not in ZZ or c < 0:
-                raise NotImplementedError("only implemented for proper non-virtual species")
-            if c == 1:
-                for s in M.structures(*labels):
-                    yield M, s
-            else:
-                for e, s in cartesian_product([range(c), M.structures(*labels)]):
-                    yield M, s, e
+        yield from self[sum(map(len, labels))].structures(*labels)
 
     def isotypes(self, labels):
         pass
@@ -512,7 +527,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: L = LazySpecies(QQ, "X")
             sage: E2 = L(SymmetricGroup(2))
             sage: E2(E2)
-            P_4 + O^11
+            E_2(E_2) + O^11
 
             sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(QQ, "X")
@@ -542,7 +557,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: E1 = L(lambda n: SymmetricGroup(n) if n else 0)
             sage: E(q*E1)[4]
-            (q^4+q)*E_4 + q^2*P_4 + q^2*X*E_3 + q^3*E_2^2
+            (q^4+q)*E_4 + q^2*E_2(E_2) + q^2*X*E_3 + q^3*E_2^2
 
         TESTS::
 
@@ -551,7 +566,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: X(X + E2)
             X + E_2 + O^8
             sage: E2(X + E2)
-            E_2 + X*E_2 + P_4 + O^9
+            E_2 + X*E_2 + E_2(E_2) + O^9
 
             sage: (1+E2)(X)
             1 + E_2 + O^7
@@ -570,7 +585,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         poses theoretical problems::
 
             sage: L.<X> = LazySpecies(QQ)
-            sage: E1 = L.Sets(min=1)
+            sage: E1 = L.Sets().restrict(1)
             sage: Omega = L.undefined(1)
             sage: L.define_implicitly([Omega], [E1(Omega) - X])
             sage: Omega[1]  # not tested
@@ -593,6 +608,12 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                for g in args):
             return P(self[0])
 
+        # f is a constant polynomial
+        if (isinstance(self._coeff_stream, Stream_exact)
+            and not self._coeff_stream._constant
+            and self.polynomial().is_constant()):
+            return P(self.polynomial())
+
         return CompositionSpeciesElement(self, *args)
 
     def revert(self):
@@ -603,10 +624,10 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: from sage.rings.lazy_species import LazySpecies
             sage: L.<X> = LazySpecies(QQ)
-            sage: E1 = L.Sets(1)
+            sage: E1 = L.Sets().restrict(1)
             sage: g = E1.revert()
             sage: g[:5]
-            [X, -E_2, -E_3 + X*E_2, -E_4 + P_4 + X*E_3 - X^2*E_2]
+            [X, -E_2, -E_3 + X*E_2, -E_4 + E_2(E_2) + X*E_3 - X^2*E_2]
 
             sage: E = L.Sets()
             sage: P = E(X*E1(-X))*(1+X) - 1
@@ -727,12 +748,6 @@ class CompositionSpeciesElement(LazySpeciesElement):
         cm = get_coercion_model()
         P = cm.common_parent(left.base_ring(), *[parent(g) for g in args])
 
-        # f is a constant polynomial
-        if (isinstance(left._coeff_stream, Stream_exact)
-            and not left._coeff_stream._constant
-            and left.polynomial().is_constant()):
-            return P(left.polynomial())
-
         args = [P(g) for g in args]
 
         for g in args:
@@ -755,9 +770,11 @@ class CompositionSpeciesElement(LazySpeciesElement):
         # args_flat and weights contain one list for each g
         weight_exp = [lazy_list(lambda j, g=g: len(coeff(g, j+1)))
                       for g in args]
-        # work around python's scoping rules
+
         def flat(g):
+            # function needed to work around python's scoping rules
             return itertools.chain.from_iterable((coeff(g, j) for j in itertools.count()))
+
         args_flat1 = [lazy_list(flat(g)) for g in args]
 
         def coefficient(n):
@@ -802,7 +819,7 @@ class CompositionSpeciesElement(LazySpeciesElement):
             sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: E = L.Sets()
-            sage: E1 = L.Sets(min=1)
+            sage: E1 = L.Sets().restrict(1)
             sage: sorted(E(E1).structures([1,2,3]))
             [((((1, 'X'),), ((2, 'X'),), ((3, 'X'),)), ((1,), (2,), (3,))),
              ((((1, 'X'),), ((2, 'X'), (3, 'X'))), ((1,), (2, 3))),
@@ -924,13 +941,13 @@ class LazySpecies(LazyCompletionGradedAlgebra):
         if self._arity == 1:
             self.Graphs = lambda: GraphSpecies(self)
             self.SetPartitions = lambda: SetPartitionSpecies(self)
-            self.Sets = lambda min=0: SetSpecies(self, min)
+            self.Sets = lambda: SetSpecies(self)
             self.Cycles = lambda: CycleSpecies(self)
 
 
 class SetSpecies(LazySpeciesElement):
-    def __init__(self, parent, min):
-        S = parent(lambda n: SymmetricGroup(n) if n >= min else 0)
+    def __init__(self, parent):
+        S = parent(lambda n: SymmetricGroup(n))
         super().__init__(parent, S._coeff_stream)
 
     def structures(self, *labels):
@@ -988,7 +1005,7 @@ class GraphSpecies(LazySpeciesElement):
 class SetPartitionSpecies(LazySpeciesElement):
     def __init__(self, parent):
         E = parent.Sets()
-        E1 = parent.Sets(min=1)
+        E1 = parent.Sets().restrict(1)
         super().__init__(parent, E(E1)._coeff_stream)
 
     def isotypes(self, labels):
@@ -998,3 +1015,40 @@ class SetPartitionSpecies(LazySpeciesElement):
     def structures(self, labels):
         labels = _label_sets(self.parent()._arity, labels)
         yield from SetPartitions(labels)
+
+
+class RestrictedSpeciesElement(LazySpeciesElement):
+    def __init__(self, F, min_degree, max_degree):
+        self._F = F
+        self._min = min_degree
+        self._max = max_degree
+
+        if max_degree is None and min_degree is None:
+            coeff_stream = F._coeff_stream
+        elif max_degree is None:
+            v = max(F._coeff_stream._approximate_order, min_degree)
+            coeff_stream = Stream_truncated(F._coeff_stream, 0, v)
+        else:
+            if min_degree is None:
+                v = F._coeff_stream._approximate_order
+            else:
+                v = max(F._coeff_stream._approximate_order, min_degree)
+            initial_coefficients = [F._coeff_stream[i] for i in range(v, max_degree + 1)]
+            if not any(initial_coefficients):
+                coeff_stream = Stream_zero()
+            else:
+                coeff_stream = Stream_exact(initial_coefficients, order=v)
+
+        super().__init__(F.parent(), coeff_stream)
+
+    def isotypes(self, labels):
+        if (labels in ZZ
+            and (self._min is None or self._min <= labels)
+            and (self._max is None or labels <= self._max)):
+            yield from self._F.isotypes(labels)
+
+    def structures(self, *labels):
+        n = sum(map(len, labels))
+        if ((self._min is None or self._min <= n)
+            and (self._max is None or n <= self._max)):
+            yield from self._F.structures(*labels)
