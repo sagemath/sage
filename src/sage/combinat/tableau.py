@@ -1694,7 +1694,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
     evaluation = weight
 
-    def is_row_strict(self):
+    def is_row_strict(self) -> bool:
         """
         Return ``True`` if ``self`` is a row strict tableau and ``False``
         otherwise.
@@ -1715,7 +1715,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         return all(row[i] < row[i+1] for row in self for i in range(len(row)-1))
 
-    def is_row_increasing(self, weak=False):
+    def is_row_increasing(self, weak=False) -> bool:
         r"""
         Return ``True`` if the entries in each row are in increasing order,
         and ``False`` otherwise.
@@ -1741,7 +1741,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                 return a < b
         return all(test(a, b) for row in self for (a, b) in zip(row, row[1:]))
 
-    def is_column_increasing(self, weak=False):
+    def is_column_increasing(self, weak=False) -> bool:
         r"""
         Return ``True`` if the entries in each column are in increasing order,
         and ``False`` otherwise.
@@ -1770,7 +1770,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             return all(test(a[i], b_i) for i, b_i in enumerate(b))
         return all(tworow(self[r], self[r + 1]) for r in range(len(self) - 1))
 
-    def is_column_strict(self):
+    def is_column_strict(self) -> bool:
         """
         Return ``True`` if ``self`` is a column strict tableau and ``False``
         otherwise.
@@ -1801,7 +1801,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             return all(a[i] < b_i for i, b_i in enumerate(b))
         return all(tworow(self[r], self[r+1]) for r in range(len(self)-1))
 
-    def is_semistandard(self):
+    def is_semistandard(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a semistandard tableau, and ``False``
         otherwise.
@@ -1824,7 +1824,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         return self.is_row_increasing(weak=True) and self.is_column_increasing()
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         """
         Return ``True`` if ``self`` is a standard tableau and ``False``
         otherwise.
@@ -1843,7 +1843,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         entries = sorted(self.entries())
         return entries == list(range(1, self.size() + 1)) and self.is_row_strict() and self.is_column_strict()
 
-    def is_increasing(self):
+    def is_increasing(self) -> bool:
         """
         Return ``True`` if ``self`` is an increasing tableau and
         ``False`` otherwise.
@@ -1865,7 +1865,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         return self.is_row_strict() and self.is_column_strict()
 
-    def is_rectangular(self):
+    def is_rectangular(self) -> bool:
         """
         Return ``True`` if the tableau ``self`` is rectangular and
         ``False`` otherwise.
@@ -2067,7 +2067,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         return res
 
-    def is_k_tableau(self, k):
+    def is_k_tableau(self, k) -> bool:
         r"""
         Check whether ``self`` is a valid weak `k`-tableau.
 
@@ -2518,7 +2518,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not (self.is_semistandard()):
             raise ValueError("reverse bumping is only defined for semistandard tableaux")
         try:
-            (r, c) = loc
+            r, c = loc
             if (r, c) not in self.corners():
                 raise ValueError("invalid corner")
         except TypeError:
@@ -3177,7 +3177,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             IndexError: (2, 2) is not an addable cell of the tableau
         """
         tab = self.to_list()
-        (r, c) = cell
+        r, c = cell
         try:
             tab[r][c] = m   # will work if we are replacing an entry
         except IndexError:
@@ -3616,7 +3616,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         except Exception:
             return Tableau([[w[entry-1] for entry in row] for row in self])
 
-    def is_key_tableau(self):
+    def is_key_tableau(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a key tableau or ``False`` otherwise.
 
@@ -4788,7 +4788,7 @@ class StandardTableau(SemistandardTableau):
         return all(self.restrict(m).shape().dominates(t.restrict(m).shape())
                    for m in range(1, 1 + self.size()))
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         """
         Return ``True`` since ``self`` is a standard tableau.
 
