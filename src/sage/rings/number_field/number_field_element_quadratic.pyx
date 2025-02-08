@@ -419,7 +419,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         Used for pickling.
 
-        TESTS:
+        TESTS::
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 13)
@@ -438,7 +438,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     cdef int _randomize(self, num_bound, den_bound, distribution) except -1:
         """
-        TESTS ::
+        TESTS::
+
             sage: a = ZZ.random_element(-100, 100)
             sage: while a.is_square():
             ....:     a = ZZ.random_element(-100, 100)
@@ -448,7 +449,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: len(set(K.random_element() for _ in range(100))) >= 40
             True
 
-        Verify that :trac:`30017` is fixed ::
+        Verify that :trac:`30017` is fixed::
+
             sage: all(K.random_element().is_integral() for s in range(100))
             False
         """

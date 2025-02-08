@@ -906,7 +906,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: all(u.is_integral() for u in uu)
             True
 
-        Without this constraint, we don't always get them::
+        Without this constraint, we do not always get them::
 
             sage: K = QuadraticField(2)
             sage: uu = [K.random_element() for _ in range(100)]
@@ -915,6 +915,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         Random integral elements can also be picked using the random_element
         method of the number field's "ring of integers" or "maximal order" ::
+
             sage: K = QuadraticField(2)
             sage: O = K.maximal_order()
             sage: O.random_element()  # random
