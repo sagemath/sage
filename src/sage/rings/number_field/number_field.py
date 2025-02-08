@@ -75,9 +75,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
+from itertools import count
+from collections import Counter
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
-
 
 import sage.libs.ntl.all as ntl
 import sage.rings.abc
@@ -99,7 +101,6 @@ from sage.rings.infinity import Infinity
 from sage.rings.finite_rings.integer_mod import mod
 from sage.categories.number_fields import NumberFields
 
-from sage.rings.ring import Ring
 from sage.misc.latex import latex_variable_name
 
 from .unit_group import UnitGroup
@@ -118,8 +119,6 @@ from sage.structure.proof.proof import get_flag
 from . import maps
 from . import structure
 from . import number_field_morphisms
-from itertools import count
-from collections import Counter
 
 from sage.categories.homset import Hom
 from sage.categories.sets_cat import Sets
@@ -128,6 +127,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.real_mpfr import RR
 
 from sage.interfaces.abc import GapElement
+from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
 
 lazy_import('sage.libs.gap.element', 'GapElement', as_='LibGapElement')
 lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldElement')
@@ -136,13 +136,12 @@ lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldEl
 _NumberFields = NumberFields()
 
 
-from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
-
-
 def is_NumberFieldHomsetCodomain(codomain):
     """
     Return whether ``codomain`` is a valid codomain for a number
-    field homset. This is used by NumberField._Hom_ to determine
+    field homset.
+
+    This is used by NumberField._Hom_ to determine
     whether the created homsets should be a
     :class:`sage.rings.number_field.homset.NumberFieldHomset`.
 
@@ -414,8 +413,8 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         sage: RR(g)
         -1.25992104989487
 
-    If no embedding is specified or is complex, the comparison is not returning something
-    meaningful.::
+    If no embedding is specified or is complex, the comparison is not
+    returning something meaningful. ::
 
         sage: N.<g> = NumberField(x^3 + 2)
         sage: 1 < g
@@ -1762,8 +1761,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             return self._convert_from_str(s.replace('!', ''))
         elif isinstance(x, str):
             return self._convert_from_str(x)
-        elif (isinstance(x, (tuple, list)) or
-              isinstance(x, sage.modules.free_module_element.FreeModuleElement)):
+        elif isinstance(x, (tuple, list,
+                            sage.modules.free_module_element.FreeModuleElement)):
             if len(x) != self.relative_degree():
                 raise ValueError("Length must be equal to the degree of this number field")
             base = self.base_ring()
@@ -3142,26 +3141,20 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K.real_embeddings()
-            [
-            Ring morphism:
-              From: Number Field in a with defining polynomial x^3 + 2
-              To:   Real Field with 53 bits of precision
-              Defn: a |--> -1.25992104989487
-            ]
+            [Ring morphism:
+               From: Number Field in a with defining polynomial x^3 + 2
+               To:   Real Field with 53 bits of precision
+               Defn: a |--> -1.25992104989487]
             sage: K.real_embeddings(16)
-            [
-            Ring morphism:
-              From: Number Field in a with defining polynomial x^3 + 2
-              To:   Real Field with 16 bits of precision
-              Defn: a |--> -1.260
-            ]
+            [Ring morphism:
+               From: Number Field in a with defining polynomial x^3 + 2
+               To:   Real Field with 16 bits of precision
+               Defn: a |--> -1.260]
             sage: K.real_embeddings(100)
-            [
-            Ring morphism:
-              From: Number Field in a with defining polynomial x^3 + 2
-              To:   Real Field with 100 bits of precision
-              Defn: a |--> -1.2599210498948731647672106073
-            ]
+            [Ring morphism:
+               From: Number Field in a with defining polynomial x^3 + 2
+               To:   Real Field with 100 bits of precision
+               Defn: a |--> -1.2599210498948731647672106073]
 
         As this is a numerical function, the number of embeddings
         may be incorrect if the precision is too low::
@@ -3725,6 +3718,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         is specified and no such ideal exists, returns the empty list.
         The output is sorted by residue degree first, then by
         underlying prime (or equivalently, by norm).
+
+        If there is a tie, the exact ordering should be assumed to be random.
+        See the remark in :meth:`NumberFieldIdeal._richcmp_`.
 
         EXAMPLES::
 
@@ -6245,13 +6241,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: G = End(L); G
             Automorphism group of Number Field in b1 with defining polynomial x^6 + 108
             sage: G.list()
-            [
-            Ring endomorphism of Number Field in b1 with defining polynomial x^6 + 108
-              Defn: b1 |--> b1,
-            ...
-            Ring endomorphism of Number Field in b1 with defining polynomial x^6 + 108
-              Defn: b1 |--> -1/12*b1^4 - 1/2*b1
-            ]
+            [Ring endomorphism of Number Field in b1 with defining polynomial x^6 + 108
+               Defn: b1 |--> b1,
+             ...
+             Ring endomorphism of Number Field in b1 with defining polynomial x^6 + 108
+               Defn: b1 |--> -1/12*b1^4 - 1/2*b1]
             sage: G[2](b1)
             1/12*b1^4 + 1/2*b1
 
@@ -8662,40 +8656,52 @@ class NumberField_absolute(NumberField_generic):
         polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^4 + 6*x^2 + 1/2)
-            sage: K.optimized_subfields()
-            [
-            (Number Field in a0 with defining polynomial x, Ring morphism:
-              From: Number Field in a0 with defining polynomial x
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: 0 |--> 0, None),
-            (Number Field in a1 with defining polynomial x^2 - 2*x + 2, Ring morphism:
-              From: Number Field in a1 with defining polynomial x^2 - 2*x + 2
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: a1 |--> a^3 + 7/2*a + 1, None),
-            (Number Field in a2 with defining polynomial x^2 - 2*x + 2, Ring morphism:
-              From: Number Field in a2 with defining polynomial x^2 - 2*x + 2
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: a2 |--> -a^3 - 7/2*a + 1, None),
-            (Number Field in a3 with defining polynomial x^2 - 2, Ring morphism:
-              From: Number Field in a3 with defining polynomial x^2 - 2
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: a3 |--> a^2 + 3/2, None),
-            (Number Field in a4 with defining polynomial x^2 + 1, Ring morphism:
-              From: Number Field in a4 with defining polynomial x^2 + 1
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: a4 |--> a^3 + 7/2*a, None),
-            (Number Field in a5 with defining polynomial x^2 + 2, Ring morphism:
-              From: Number Field in a5 with defining polynomial x^2 + 2
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: a5 |--> 2*a^3 + 5*a, None),
-            (Number Field in a6 with defining polynomial x^4 + 1, Ring morphism:
-              From: Number Field in a6 with defining polynomial x^4 + 1
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: a6 |--> a^3 + 1/2*a^2 + 5/2*a + 3/4, Ring morphism:
-              From: Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              To:   Number Field in a6 with defining polynomial x^4 + 1
-              Defn: a |--> -1/2*a6^3 + a6^2 - 1/2*a6)
-            ]
+            sage: K.optimized_subfields()  # random
+            [(Number Field in a0 with defining polynomial x,
+              Ring morphism:
+                From: Number Field in a0 with defining polynomial x
+                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+                Defn: 0 |--> 0,
+              None),
+             (Number Field in a1 with defining polynomial x^2 - 2*x + 2,
+              Ring morphism:
+                From: Number Field in a1 with defining polynomial x^2 - 2*x + 2
+                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+                Defn: a1 |--> a^3 + 7/2*a + 1,
+              None),
+             (Number Field in a2 with defining polynomial x^2 - 2*x + 2,
+              Ring morphism:
+                From: Number Field in a2 with defining polynomial x^2 - 2*x + 2
+                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+                Defn: a2 |--> -a^3 - 7/2*a + 1,
+              None),
+             (Number Field in a3 with defining polynomial x^2 - 2,
+              Ring morphism:
+                From: Number Field in a3 with defining polynomial x^2 - 2
+                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+                Defn: a3 |--> a^2 + 3/2,
+              None),
+             (Number Field in a4 with defining polynomial x^2 + 1,
+              Ring morphism:
+                From: Number Field in a4 with defining polynomial x^2 + 1
+                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+                Defn: a4 |--> a^3 + 7/2*a,
+              None),
+             (Number Field in a5 with defining polynomial x^2 + 2,
+              Ring morphism:
+                From: Number Field in a5 with defining polynomial x^2 + 2
+                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+                Defn: a5 |--> 2*a^3 + 5*a,
+              None),
+             (Number Field in a6 with defining polynomial x^4 + 1,
+              Ring morphism:
+                From: Number Field in a6 with defining polynomial x^4 + 1
+                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+                Defn: a6 |--> a^3 + 1/2*a^2 + 5/2*a + 3/4,
+              Ring morphism:
+                From: Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+                To:   Number Field in a6 with defining polynomial x^4 + 1
+                Defn: a |--> -1/2*a6^3 + a6^2 - 1/2*a6)]
         """
         return self._subfields_helper(degree=degree, name=name,
                                       both_maps=both_maps, optimize=True)
@@ -8774,32 +8780,10 @@ class NumberField_absolute(NumberField_generic):
         polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^4 + 6*x^2 + 1/2)
-            sage: K.subfields()
-            [
-            (Number Field in a0 with defining polynomial x, Ring morphism:
-              From: Number Field in a0 with defining polynomial x
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: 0 |--> 0, None),
-            (Number Field in a1 with defining polynomial x^2 - 2, Ring morphism:
-              From: Number Field in a1 with defining polynomial x^2 - 2
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: a1 |--> a^2 + 3/2, None),
-            (Number Field in a2 with defining polynomial x^2 + 4, Ring morphism:
-              From: Number Field in a2 with defining polynomial x^2 + 4
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: a2 |--> 2*a^3 + 7*a, None),
-            (Number Field in a3 with defining polynomial x^2 + 2, Ring morphism:
-              From: Number Field in a3 with defining polynomial x^2 + 2
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: a3 |--> 2*a^3 + 5*a, None),
-            (Number Field in a4 with defining polynomial x^4 + 1, Ring morphism:
-              From: Number Field in a4 with defining polynomial x^4 + 1
-              To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              Defn: a4 |--> a^3 + 1/2*a^2 + 5/2*a + 3/4, Ring morphism:
-              From: Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-              To:   Number Field in a4 with defining polynomial x^4 + 1
-              Defn: a |--> -1/2*a4^3 + a4^2 - 1/2*a4)
-            ]
+            sage: K
+            Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+            sage: sorted([F.discriminant() for F, _, _ in K.subfields()])
+            [-8, -4, 1, 8, 256]
         """
         return self._subfields_helper(degree=degree, name=name,
                                       both_maps=True, optimize=False)
@@ -9236,12 +9220,10 @@ class NumberField_absolute(NumberField_generic):
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 10000)
             sage: K.automorphisms()
-            [
-            Ring endomorphism of Number Field in a with defining polynomial x^2 + 10000
-              Defn: a |--> a,
-            Ring endomorphism of Number Field in a with defining polynomial x^2 + 10000
-              Defn: a |--> -a
-            ]
+            [Ring endomorphism of Number Field in a with defining polynomial x^2 + 10000
+               Defn: a |--> a,
+             Ring endomorphism of Number Field in a with defining polynomial x^2 + 10000
+               Defn: a |--> -a]
 
         Here's a larger example, that would take some time if we found
         roots instead of using PARI's specialized machinery::
@@ -9266,14 +9248,12 @@ class NumberField_absolute(NumberField_generic):
             sage: f = 7/9*x^3 + 7/3*x^2 - 56*x + 123
             sage: K.<a> = NumberField(f)
             sage: A = K.automorphisms(); A
-            [
-            Ring endomorphism of Number Field in a with defining polynomial 7/9*x^3 + 7/3*x^2 - 56*x + 123
-              Defn: a |--> a,
-            Ring endomorphism of Number Field in a with defining polynomial 7/9*x^3 + 7/3*x^2 - 56*x + 123
-              Defn: a |--> -7/15*a^2 - 18/5*a + 96/5,
-            Ring endomorphism of Number Field in a with defining polynomial 7/9*x^3 + 7/3*x^2 - 56*x + 123
-              Defn: a |--> 7/15*a^2 + 13/5*a - 111/5
-            ]
+            [Ring endomorphism of Number Field in a with defining polynomial 7/9*x^3 + 7/3*x^2 - 56*x + 123
+               Defn: a |--> a,
+             Ring endomorphism of Number Field in a with defining polynomial 7/9*x^3 + 7/3*x^2 - 56*x + 123
+               Defn: a |--> -7/15*a^2 - 18/5*a + 96/5,
+             Ring endomorphism of Number Field in a with defining polynomial 7/9*x^3 + 7/3*x^2 - 56*x + 123
+               Defn: a |--> 7/15*a^2 + 13/5*a - 111/5]
             sage: prod(x - sigma(a) for sigma in A) == f.monic()
             True
         """
@@ -9313,73 +9293,63 @@ class NumberField_absolute(NumberField_generic):
             sage: L.<a> = QuadraticField(-7)
             sage: K = CyclotomicField(7)
             sage: L.embeddings(K)
-            [
-            Ring morphism:
-              From: Number Field in a with defining polynomial x^2 + 7
-                    with a = 2.645751311064591?*I
-              To:   Cyclotomic Field of order 7 and degree 6
-              Defn: a |--> 2*zeta7^4 + 2*zeta7^2 + 2*zeta7 + 1,
-            Ring morphism:
-              From: Number Field in a with defining polynomial x^2 + 7
-                    with a = 2.645751311064591?*I
-              To:   Cyclotomic Field of order 7 and degree 6
-              Defn: a |--> -2*zeta7^4 - 2*zeta7^2 - 2*zeta7 - 1
-            ]
+            [Ring morphism:
+               From: Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
+               To:   Cyclotomic Field of order 7 and degree 6
+               Defn: a |--> 2*zeta7^4 + 2*zeta7^2 + 2*zeta7 + 1,
+             Ring morphism:
+               From: Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
+               To:   Cyclotomic Field of order 7 and degree 6
+               Defn: a |--> -2*zeta7^4 - 2*zeta7^2 - 2*zeta7 - 1]
 
         We embed a cubic field in the complex numbers::
 
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
-            sage: K.embeddings(CC)
-            [
-            Ring morphism:
-              From: Number Field in a with defining polynomial x^3 - 2
-              To:   Complex Field with 53 bits of precision
-              Defn: a |--> -0.62996052494743... - 1.09112363597172*I,
-            Ring morphism:
-              From: Number Field in a with defining polynomial x^3 - 2
-              To:   Complex Field with 53 bits of precision
-              Defn: a |--> -0.62996052494743... + 1.09112363597172*I,
-            Ring morphism:
-              From: Number Field in a with defining polynomial x^3 - 2
-              To:   Complex Field with 53 bits of precision
-              Defn: a |--> 1.25992104989487
-            ]
+            sage: K.embeddings(CC)  # abs tol 1e-12
+            [Ring morphism:
+               From: Number Field in a with defining polynomial x^3 - 2
+               To:   Complex Field with 53 bits of precision
+               Defn: a |--> -0.629960524947437 - 1.09112363597172*I,
+             Ring morphism:
+               From: Number Field in a with defining polynomial x^3 - 2
+               To:   Complex Field with 53 bits of precision
+               Defn: a |--> -0.629960524947437 + 1.09112363597172*I,
+             Ring morphism:
+               From: Number Field in a with defining polynomial x^3 - 2
+               To:   Complex Field with 53 bits of precision
+               Defn: a |--> 1.25992104989487]
 
         Some more (possible and impossible) embeddings of cyclotomic fields::
 
             sage: CyclotomicField(5).embeddings(QQbar)
-            [
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Algebraic Field
-              Defn: zeta5 |--> 0.3090169943749474? + 0.9510565162951536?*I,
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Algebraic Field
-              Defn: zeta5 |--> -0.8090169943749474? + 0.5877852522924731?*I,
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Algebraic Field
-              Defn: zeta5 |--> -0.8090169943749474? - 0.5877852522924731?*I,
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Algebraic Field
-              Defn: zeta5 |--> 0.3090169943749474? - 0.9510565162951536?*I
-            ]
+            [Ring morphism:
+               From: Cyclotomic Field of order 5 and degree 4
+               To:   Algebraic Field
+               Defn: zeta5 |--> 0.3090169943749474? + 0.9510565162951536?*I,
+             Ring morphism:
+               From: Cyclotomic Field of order 5 and degree 4
+               To:   Algebraic Field
+               Defn: zeta5 |--> -0.8090169943749474? + 0.5877852522924731?*I,
+             Ring morphism:
+               From: Cyclotomic Field of order 5 and degree 4
+               To:   Algebraic Field
+               Defn: zeta5 |--> -0.8090169943749474? - 0.5877852522924731?*I,
+             Ring morphism:
+               From: Cyclotomic Field of order 5 and degree 4
+               To:   Algebraic Field
+               Defn: zeta5 |--> 0.3090169943749474? - 0.9510565162951536?*I]
             sage: CyclotomicField(3).embeddings(CyclotomicField(7))
-            [ ]
+            []
             sage: CyclotomicField(3).embeddings(CyclotomicField(6))
-            [
-            Ring morphism:
-              From: Cyclotomic Field of order 3 and degree 2
-              To:   Cyclotomic Field of order 6 and degree 2
-              Defn: zeta3 |--> zeta6 - 1,
-            Ring morphism:
-              From: Cyclotomic Field of order 3 and degree 2
-              To:   Cyclotomic Field of order 6 and degree 2
-              Defn: zeta3 |--> -zeta6
-            ]
+            [Ring morphism:
+               From: Cyclotomic Field of order 3 and degree 2
+               To:   Cyclotomic Field of order 6 and degree 2
+               Defn: zeta3 |--> zeta6 - 1,
+             Ring morphism:
+               From: Cyclotomic Field of order 3 and degree 2
+               To:   Cyclotomic Field of order 6 and degree 2
+               Defn: zeta3 |--> -zeta6]
 
         Test that :issue:`15053` is fixed::
 
@@ -11652,24 +11622,22 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         EXAMPLES::
 
             sage: CyclotomicField(5).complex_embeddings()
-            [
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Complex Field with 53 bits of precision
-              Defn: zeta5 |--> 0.309016994374947 + 0.951056516295154*I,
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Complex Field with 53 bits of precision
-              Defn: zeta5 |--> -0.809016994374947 + 0.587785252292473*I,
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Complex Field with 53 bits of precision
-              Defn: zeta5 |--> -0.809016994374947 - 0.587785252292473*I,
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Complex Field with 53 bits of precision
-              Defn: zeta5 |--> 0.309016994374947 - 0.951056516295154*I
-            ]
+            [Ring morphism:
+               From: Cyclotomic Field of order 5 and degree 4
+               To:   Complex Field with 53 bits of precision
+               Defn: zeta5 |--> 0.309016994374947 + 0.951056516295154*I,
+             Ring morphism:
+               From: Cyclotomic Field of order 5 and degree 4
+               To:   Complex Field with 53 bits of precision
+               Defn: zeta5 |--> -0.809016994374947 + 0.587785252292473*I,
+             Ring morphism:
+               From: Cyclotomic Field of order 5 and degree 4
+               To:   Complex Field with 53 bits of precision
+               Defn: zeta5 |--> -0.809016994374947 - 0.587785252292473*I,
+             Ring morphism:
+               From: Cyclotomic Field of order 5 and degree 4
+               To:   Complex Field with 53 bits of precision
+               Defn: zeta5 |--> 0.309016994374947 - 0.951056516295154*I]
         """
         CC = sage.rings.complex_mpfr.ComplexField(prec)
         return self.embeddings(CC)
@@ -11686,12 +11654,10 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: len(CyclotomicField(4).real_embeddings())
             0
             sage: CyclotomicField(2).real_embeddings()
-            [
-            Ring morphism:
-              From: Cyclotomic Field of order 2 and degree 1
-              To:   Real Field with 53 bits of precision
-              Defn: -1 |--> -1.00000000000000
-            ]
+            [Ring morphism:
+               From: Cyclotomic Field of order 2 and degree 1
+               To:   Real Field with 53 bits of precision
+               Defn: -1 |--> -1.00000000000000]
         """
         K = sage.rings.real_mpfr.RealField(prec)
         return self.embeddings(K)
@@ -12730,12 +12696,12 @@ def _splitting_classes_gens_(K, m, d):
         sage: L = K.subfields(20)[0][0]
         sage: L.conductor()                                                             # needs sage.groups
         101
-        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap  # optional - gap_package_polycyclic
+        sage: _splitting_classes_gens_(L,101,20)        # optional - gap_package_polycyclic, needs sage.libs.gap
         [95]
 
         sage: K = CyclotomicField(44)
         sage: L = K.subfields(4)[0][0]
-        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap  # optional - gap_package_polycyclic
+        sage: _splitting_classes_gens_(L,44,4)  # optional - gap_package_polycyclic, needs sage.libs.gap
         [37]
 
         sage: K = CyclotomicField(44)
@@ -12747,7 +12713,7 @@ def _splitting_classes_gens_(K, m, d):
          with zeta44_0 = 3.837971894457990?
         sage: L.conductor()                                                             # needs sage.groups
         11
-        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap  # optional - gap_package_polycyclic
+        sage: _splitting_classes_gens_(L,11,5)  # optional - gap_package_polycyclic, needs sage.libs.gap
         [10]
     """
     from sage.groups.abelian_gps.abelian_group import AbelianGroup

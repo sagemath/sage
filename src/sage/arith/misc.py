@@ -1457,11 +1457,11 @@ def random_prime(n, proof=None, lbound=2):
     lbound = max(2, lbound)
     if lbound > 2:
         if lbound == 3 or n <= 2*lbound - 2:
-        # check for Betrand's postulate (proved by Chebyshev)
+            # check for Betrand's postulate (proved by Chebyshev)
             if lbound < 25 or n <= 6*lbound/5:
-            # see J. Nagura, Proc. Japan Acad. 28, (1952). 177-181.
+                # see J. Nagura, Proc. Japan Acad. 28, (1952). 177-181
                 if lbound < 2010760 or n <= 16598*lbound/16597:
-                # see L. Schoenfeld, Math. Comp. 30 (1976), no. 134, 337-360.
+                    # see L. Schoenfeld, Math. Comp. 30 (1976), no 134, 337-360
                     if proof:
                         smallest_prime = ZZ(lbound-1).next_prime()
                     else:
@@ -2060,7 +2060,7 @@ def xgcd(a, b=None):
         sage: h = R.base_ring().gen()
         sage: S.<y> = R.fraction_field()[]
         sage: xgcd(y^2, a*h*y + b)
-        (1, 7*a^2/b^2, (((-h)*a)/b^2)*y + 1/b)
+        (1, 7*a^2/b^2, (((-7)*a)/(h*b^2))*y + 7/(7*b))
 
     Tests with randomly generated integers::
 
@@ -6375,6 +6375,7 @@ def dedekind_psi(N):
     N = Integer(N)
     return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
 
+
 def smooth_part(x, base):
     r"""
     Given an element ``x`` of a Euclidean domain and a factor base ``base``,
@@ -6422,6 +6423,7 @@ def smooth_part(x, base):
             fs.append((p,v))
     from sage.structure.factorization import Factorization
     return Factorization(fs)
+
 
 def coprime_part(x, base):
     r"""

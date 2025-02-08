@@ -763,20 +763,40 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = graphs.CycleGraph(3)
             sage: H = G * 3; H
-            Cycle graph disjoint_union Cycle graph disjoint_union Cycle graph: Graph on 9 vertices
+            Disjoint union of 3 copies of Cycle graph: Graph on 9 vertices
             sage: H.vertices(sort=True)
             [0, 1, 2, 3, 4, 5, 6, 7, 8]
             sage: H = G * 1; H
             Cycle graph: Graph on 3 vertices
+
+        TESTS::
+
+            sage: Graph(1) * -1
+            Traceback (most recent call last):
+            ...
+            TypeError: multiplication of a graph and a nonpositive integer is not defined
+            sage: Graph(1) * 2.5
+            Traceback (most recent call last):
+            ...
+            TypeError: multiplication of a graph and something other than an integer is not defined
         """
         if isinstance(n, (int, Integer)):
             if n < 1:
                 raise TypeError('multiplication of a graph and a nonpositive integer is not defined')
             if n == 1:
                 return copy(self)
-            return sum([self] * (n - 1), self)
-        else:
-            raise TypeError('multiplication of a graph and something other than an integer is not defined')
+            ns = self.order()
+            ntot = n * ns
+            vint = {u: i for i, u in enumerate(self)}
+            edges = ((i, j, l) for u, v, l in self.edge_iterator()
+                     for i, j in zip(range(vint[u], ntot, ns),
+                                     range(vint[v], ntot, ns)))
+            return self.__class__([range(ntot), edges], format='vertices_and_edges',
+                                  loops=self.allows_loops(),
+                                  multiedges=self.allows_multiple_edges(),
+                                  immutable=self.is_immutable(),
+                                  name=f"Disjoint union of {n} copies of {str(self)}")
+        raise TypeError('multiplication of a graph and something other than an integer is not defined')
 
     def __ne__(self, other):
         """
@@ -809,7 +829,7 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = graphs.CycleGraph(3)
             sage: H = int(3) * G; H
-            Cycle graph disjoint_union Cycle graph disjoint_union Cycle graph: Graph on 9 vertices
+            Disjoint union of 3 copies of Cycle graph: Graph on 9 vertices
             sage: H.vertices(sort=True)
             [0, 1, 2, 3, 4, 5, 6, 7, 8]
         """
@@ -5362,20 +5382,32 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = graphs.PetersenGraph()
             sage: g.cycle_basis()                                                       # needs networkx, random (changes in networkx 3.2)
-            [[1, 6, 8, 5, 0], [4, 9, 6, 8, 5, 0], [7, 9, 6, 8, 5],
-             [4, 3, 8, 5, 0], [1, 2, 3, 8, 5, 0], [7, 2, 3, 8, 5]]
+            [[6, 8, 5, 7, 9],
+             [2, 3, 8, 5, 7],
+             [4, 3, 8, 5, 7, 9],
+             [4, 0, 5, 7, 9],
+             [2, 1, 0, 5, 7],
+             [6, 1, 0, 5, 7, 9]]
 
         One can also get the result as a list of lists of edges::
 
             sage: g.cycle_basis(output='edge')                                          # needs networkx, random (changes in networkx 3.2)
-            [[(1, 6, None), (6, 8, None), (8, 5, None), (5, 0, None),
-             (0, 1, None)], [(4, 9, None), (9, 6, None), (6, 8, None),
-             (8, 5, None), (5, 0, None), (0, 4, None)], [(7, 9, None),
-             (9, 6, None), (6, 8, None), (8, 5, None), (5, 7, None)],
-             [(4, 3, None), (3, 8, None), (8, 5, None), (5, 0, None),
-             (0, 4, None)], [(1, 2, None), (2, 3, None), (3, 8, None),
-             (8, 5, None), (5, 0, None), (0, 1, None)], [(7, 2, None),
-             (2, 3, None), (3, 8, None), (8, 5, None), (5, 7, None)]]
+            [[(6, 8, None), (8, 5, None), (5, 7, None), (7, 9, None), (9, 6, None)],
+             [(2, 3, None), (3, 8, None), (8, 5, None), (5, 7, None), (7, 2, None)],
+             [(4, 3, None),
+              (3, 8, None),
+              (8, 5, None),
+              (5, 7, None),
+              (7, 9, None),
+              (9, 4, None)],
+             [(4, 0, None), (0, 5, None), (5, 7, None), (7, 9, None), (9, 4, None)],
+             [(2, 1, None), (1, 0, None), (0, 5, None), (5, 7, None), (7, 2, None)],
+             [(6, 1, None),
+              (1, 0, None),
+              (0, 5, None),
+              (5, 7, None),
+              (7, 9, None),
+              (9, 6, None)]]
 
         Checking the given cycles are algebraically free::
 
@@ -5551,9 +5583,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: sorted(g.minimum_cycle_basis(by_weight=False))
             [[1, 2, 3], [1, 3, 4], [5, 6, 7]]
             sage: sorted(g.minimum_cycle_basis(by_weight=True, algorithm='NetworkX'))   # needs networkx, random (changes in networkx 3.2)
-            [[1, 2, 3], [1, 2, 3, 4], [5, 6, 7]]
+            [[2, 3, 1], [2, 3, 4, 1], [6, 7, 5]]
             sage: g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX')          # needs networkx, random (changes in networkx 3.2)
-            [[1, 2, 3], [1, 3, 4], [5, 6, 7]]
+            [[3, 4, 1], [2, 3, 1], [6, 7, 5]]
 
         ::
 
@@ -5561,7 +5593,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: sorted(g.minimum_cycle_basis(by_weight=False))
             [[1, 2, 3, 5], [3, 4, 5]]
             sage: sorted(g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX'))  # needs networkx, random (changes in networkx 3.2)
-            [[1, 2, 3, 5], [3, 4, 5]]
+            [[3, 4, 5], [5, 3, 2, 1]]
 
         TESTS::
 
@@ -17338,7 +17370,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.shortest_path(4, 8, algorithm='Dijkstra_Bid_NetworkX')              # needs networkx
             [4, 3, 2, 1, 8]
             sage: D.shortest_path(4, 9, algorithm='Dijkstra_Bid')
-            [4, 3, 19, 0, 10, 9]
+            [4, 3, 2, 1, 8, 9]
             sage: D.shortest_path(5, 5)
             [5]
             sage: D.delete_edges(D.edges_incident(13))
@@ -18854,7 +18886,8 @@ class GenericGraph(GenericGraph_pyx):
 
     def breadth_first_search(self, start, ignore_direction=False,
                              distance=None, neighbors=None,
-                             report_distance=False, edges=False):
+                             report_distance=False, edges=False,
+                             forbidden_vertices=None):
         """
         Return an iterator over the vertices in a breadth-first ordering.
 
@@ -18888,6 +18921,9 @@ class GenericGraph(GenericGraph_pyx):
 
           Note that parameters ``edges`` and ``report_distance`` cannot be
           ``True`` simultaneously.
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
 
         .. SEEALSO::
 
@@ -18977,6 +19013,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: list(D.breadth_first_search(1, edges=True))
             [(1, 2), (1, 3), (2, 4)]
 
+        BFS in a graph with forbidden vertices::
+
+            sage: G = graphs.PetersenGraph()
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[1, 2]))
+            [0, 4, 5, 3, 9, 7, 8, 6]
+
         TESTS::
 
             sage: D = DiGraph({1: [0], 2: [0]})
@@ -18995,6 +19037,18 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: parameters edges and report_distance cannot be ``True`` simultaneously
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[0]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[0], distance=2))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.breadth_first_search([0, 1], forbidden_vertices=[1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: start vertex 1 is in the set of forbidden vertices
         """
         from sage.rings.semirings.non_negative_integer_semiring import NN
         if (distance is not None and distance not in NN):
@@ -19008,17 +19062,23 @@ class GenericGraph(GenericGraph_pyx):
                 and hasattr(self._backend, "breadth_first_search")):
             yield from self._backend.breadth_first_search(
                     start, ignore_direction=ignore_direction,
-                    report_distance=report_distance, edges=edges)
+                    report_distance=report_distance, edges=edges,
+                    forbidden_vertices=forbidden_vertices)
         else:
             if neighbors is None:
                 if not self._directed or ignore_direction:
                     neighbors = self.neighbor_iterator
                 else:
                     neighbors = self.neighbor_out_iterator
-            seen = set()
+            seen = set() if forbidden_vertices is None else set(forbidden_vertices)
             if isinstance(start, list):
+                for s in start:
+                    if s in seen:
+                        raise ValueError(f"start vertex {s} is in the set of forbidden vertices")
                 queue = [(v, 0) for v in start]
             else:
+                if start in seen:
+                    raise ValueError("the start vertex is in the set of forbidden vertices")
                 queue = [(start, 0)]
 
             # Non-existing start vertex is detected later if distance > 0.
@@ -19050,7 +19110,7 @@ class GenericGraph(GenericGraph_pyx):
                                 yield w
 
     def depth_first_search(self, start, ignore_direction=False,
-                           neighbors=None, edges=False):
+                           neighbors=None, edges=False, forbidden_vertices=None):
         """
         Return an iterator over the vertices in a depth-first ordering.
 
@@ -19072,6 +19132,9 @@ class GenericGraph(GenericGraph_pyx):
         - ``edges`` -- boolean (default: ``False``); whether to return the edges
           of the DFS tree in the order of visit or the vertices (default).
           Edges are directed in root to leaf orientation of the tree.
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
 
         .. SEEALSO::
 
@@ -19132,6 +19195,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: list(D.depth_first_search(2, edges=True, ignore_direction=True))
             [(2, 3), (3, 4), (2, 1), (1, 0)]
 
+        DFS in a graph with forbidden vertices::
+
+            sage: G = graphs.PetersenGraph()
+            sage: list(G.depth_first_search(0, forbidden_vertices=[1, 2]))
+            [0, 5, 8, 6, 9, 7, 4, 3]
+
         TESTS::
 
             sage: D = DiGraph({1: [0], 2: [0]})
@@ -19155,22 +19224,40 @@ class GenericGraph(GenericGraph_pyx):
             [1, 3, 6, 4, 5, 7, 2]
             sage: list(D.depth_first_search(1, ignore_direction=True, edges=True))
             [(1, 3), (3, 6), (6, 7), (7, 5), (5, 4), (1, 2)]
+            sage: list(G.depth_first_search(0, forbidden_vertices=[0]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.depth_first_search(0, forbidden_vertices=[0], edges=True))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.depth_first_search([0, 1], forbidden_vertices=[1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: start vertex 1 is in the set of forbidden vertices
         """
         # Preferably use the Cython implementation
         if (neighbors is None and not isinstance(start, list)
                 and hasattr(self._backend, "depth_first_search") and not edges):
-            yield from self._backend.depth_first_search(start, ignore_direction=ignore_direction)
+            yield from self._backend.depth_first_search(start, ignore_direction=ignore_direction,
+                                                        forbidden_vertices=forbidden_vertices)
         else:
             if neighbors is None:
                 if not self._directed or ignore_direction:
                     neighbors = self.neighbor_iterator
                 else:
                     neighbors = self.neighbor_out_iterator
-            seen = set()
+            seen = set(forbidden_vertices) if forbidden_vertices else set()
             if isinstance(start, list):
+                for s in start:
+                    if s in seen:
+                        raise ValueError(f"start vertex {s} is in the set of forbidden vertices")
                 # Reverse the list so that the initial vertices come out in the same order
                 queue = [(v, 0) for v in reversed(start)]
             else:
+                if start in seen:
+                    raise ValueError("the start vertex is in the set of forbidden vertices")
                 queue = [(start, 0)]
 
             if not edges:
@@ -23009,68 +23096,55 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: P = graphs.PetersenGraph()
             sage: P.eigenvectors()                                                      # needs sage.modules sage.rings.number_field
-            [(3, [
-            (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-            ], 1), (-2, [
-            (1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
-            (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
-            (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
-            (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)
-            ], 4), (1, [
-            (1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
-            (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
-            (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
-            (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
-            (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)
-            ], 5)]
+            [(3, [(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)], 1),
+             (-2,
+              [(1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
+               (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
+               (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
+               (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)],
+              4),
+             (1,
+              [(1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
+               (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
+               (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
+               (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
+               (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)],
+              5)]
 
         Eigenspaces for the Laplacian should be identical since the Petersen
         graph is regular.  However, since the output also contains the
         eigenvalues, the two outputs are slightly different::
 
             sage: P.eigenvectors(laplacian=True)                                        # needs sage.modules sage.rings.number_field
-            [(0, [
-            (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-            ], 1), (5, [
-            (1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
-            (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
-            (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
-            (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)
-            ], 4), (2, [
-            (1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
-            (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
-            (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
-            (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
-            (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)
-            ], 5)]
+            [(0, [(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)], 1),
+             (5,
+              [(1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
+               (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
+               (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
+               (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)],
+              4),
+             (2,
+              [(1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
+               (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
+               (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
+               (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
+               (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)],
+              5)]
 
         ::
 
             sage: C = graphs.CycleGraph(8)
             sage: C.eigenvectors()                                                      # needs sage.modules sage.rings.number_field
-            [(2,
-              [
-              (1, 1, 1, 1, 1, 1, 1, 1)
-              ],
-              1),
-             (-2,
-              [
-              (1, -1, 1, -1, 1, -1, 1, -1)
-              ],
-              1),
-             (0,
-              [
-              (1, 0, -1, 0, 1, 0, -1, 0),
-              (0, 1, 0, -1, 0, 1, 0, -1)
-              ],
+            [(2, [(1, 1, 1, 1, 1, 1, 1, 1)], 1),
+             (-2, [(1, -1, 1, -1, 1, -1, 1, -1)], 1),
+             (0, [(1, 0, -1, 0, 1, 0, -1, 0), (0, 1, 0, -1, 0, 1, 0, -1)], 2),
+             (-1.414213562373095?,
+              [(1, 0, -1, 1.414213562373095?, -1, 0, 1, -1.414213562373095?),
+               (0, 1, -1.414213562373095?, 1, 0, -1, 1.414213562373095?, -1)],
               2),
-             (-1.4142135623...,
-              [(1, 0, -1, 1.4142135623..., -1, 0, 1, -1.4142135623...),
-               (0, 1, -1.4142135623..., 1, 0, -1, 1.4142135623..., -1)],
-              2),
-             (1.4142135623...,
-              [(1, 0, -1, -1.4142135623..., -1, 0, 1, 1.4142135623...),
-               (0, 1, 1.4142135623..., 1, 0, -1, -1.4142135623..., -1)],
+             (1.414213562373095?,
+              [(1, 0, -1, -1.414213562373095?, -1, 0, 1, 1.414213562373095?),
+               (0, 1, 1.414213562373095?, 1, 0, -1, -1.414213562373095?, -1)],
               2)]
 
         A digraph may have complex eigenvalues. Previously, the complex parts of
@@ -23078,16 +23152,12 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: T = DiGraph({0:[1], 1:[2], 2:[0]})
             sage: T.eigenvectors()                                                      # needs sage.modules sage.rings.number_field
-            [(1,
-              [
-              (1, 1, 1)
-              ],
+            [(1, [(1, 1, 1)], 1),
+             (-0.50000000000000000? - 0.866025403784439?*I,
+              [(1, -0.50000000000000000? - 0.866025403784439?*I, -0.50000000000000000? + 0.866025403784439?*I)],
               1),
-             (-0.5000000000... - 0.8660254037...*I,
-              [(1, -0.5000000000... - 0.8660254037...*I, -0.5000000000... + 0.8660254037...*I)],
-              1),
-             (-0.5000000000... + 0.8660254037...*I,
-              [(1, -0.5000000000... + 0.8660254037...*I, -0.5000000000... - 0.8660254037...*I)],
+             (-0.50000000000000000? + 0.866025403784439?*I,
+              [(1, -0.50000000000000000? + 0.866025403784439?*I, -0.50000000000000000? - 0.866025403784439?*I)],
               1)]
         """
         if laplacian:
@@ -23119,48 +23189,50 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: P = graphs.PetersenGraph()
             sage: P.eigenspaces()                                                       # needs sage.modules sage.rings.number_field
-            [
-            (3,  Vector space of degree 10 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [1 1 1 1 1 1 1 1 1 1]),
-            (-2, Vector space of degree 10 and dimension 4 over Rational Field
-                 User basis matrix:
-                 [ 1  0  0  0 -1 -1 -1  0  1  1]
-                 [ 0  1  0  0 -1  0 -2 -1  1  2]
-                 [ 0  0  1  0 -1  1 -1 -2  0  2]
-                 [ 0  0  0  1 -1  1  0 -1 -1  1]),
-            (1,  Vector space of degree 10 and dimension 5 over Rational Field
-                 User basis matrix:
-                 [ 1  0  0  0  0  1 -1  0  0 -1]
-                 [ 0  1  0  0  0 -1  1 -1  0  0]
-                 [ 0  0  1  0  0  0 -1  1 -1  0]
-                 [ 0  0  0  1  0  0  0 -1  1 -1]
-                 [ 0  0  0  0  1 -1  0  0 -1  1])
-            ]
+            [(3,
+              Vector space of degree 10 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1 1 1 1 1 1 1 1]),
+             (-2,
+              Vector space of degree 10 and dimension 4 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0 -1 -1 -1  0  1  1]
+              [ 0  1  0  0 -1  0 -2 -1  1  2]
+              [ 0  0  1  0 -1  1 -1 -2  0  2]
+              [ 0  0  0  1 -1  1  0 -1 -1  1]),
+             (1,
+              Vector space of degree 10 and dimension 5 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0  0  1 -1  0  0 -1]
+              [ 0  1  0  0  0 -1  1 -1  0  0]
+              [ 0  0  1  0  0  0 -1  1 -1  0]
+              [ 0  0  0  1  0  0  0 -1  1 -1]
+              [ 0  0  0  0  1 -1  0  0 -1  1])]
 
         Eigenspaces for the Laplacian should be identical since the Petersen
         graph is regular.  However, since the output also contains the
         eigenvalues, the two outputs are slightly different::
 
             sage: P.eigenspaces(laplacian=True)                                         # needs sage.modules sage.rings.number_field
-            [
-            (0, Vector space of degree 10 and dimension 1 over Rational Field
-                User basis matrix:
-                [1 1 1 1 1 1 1 1 1 1]),
-            (5, Vector space of degree 10 and dimension 4 over Rational Field
-                User basis matrix:
-                [ 1  0  0  0 -1 -1 -1  0  1  1]
-                [ 0  1  0  0 -1  0 -2 -1  1  2]
-                [ 0  0  1  0 -1  1 -1 -2  0  2]
-                [ 0  0  0  1 -1  1  0 -1 -1  1]),
-            (2, Vector space of degree 10 and dimension 5 over Rational Field
-                User basis matrix:
-                [ 1  0  0  0  0  1 -1  0  0 -1]
-                [ 0  1  0  0  0 -1  1 -1  0  0]
-                [ 0  0  1  0  0  0 -1  1 -1  0]
-                [ 0  0  0  1  0  0  0 -1  1 -1]
-                [ 0  0  0  0  1 -1  0  0 -1  1])
-            ]
+            [(0,
+              Vector space of degree 10 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1 1 1 1 1 1 1 1]),
+             (5,
+              Vector space of degree 10 and dimension 4 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0 -1 -1 -1  0  1  1]
+              [ 0  1  0  0 -1  0 -2 -1  1  2]
+              [ 0  0  1  0 -1  1 -1 -2  0  2]
+              [ 0  0  0  1 -1  1  0 -1 -1  1]),
+             (2,
+              Vector space of degree 10 and dimension 5 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0  0  1 -1  0  0 -1]
+              [ 0  1  0  0  0 -1  1 -1  0  0]
+              [ 0  0  1  0  0  0 -1  1 -1  0]
+              [ 0  0  0  1  0  0  0 -1  1 -1]
+              [ 0  0  0  0  1 -1  0  0 -1  1])]
 
         Notice how one eigenspace below is described with a square root of 2.
         For the two possible values (positive and negative) there is a
@@ -23168,38 +23240,38 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: C = graphs.CycleGraph(8)
             sage: C.eigenspaces()                                                       # needs sage.modules sage.rings.number_field
-            [
-            (2,  Vector space of degree 8 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [1 1 1 1 1 1 1 1]),
-            (-2, Vector space of degree 8 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -1  1 -1  1 -1  1 -1]),
-            (0,  Vector space of degree 8 and dimension 2 over Rational Field
-                 User basis matrix:
-                 [ 1  0 -1  0  1  0 -1  0]
-                 [ 0  1  0 -1  0  1  0 -1]),
-            (a3, Vector space of degree 8 and dimension 2 over
-                  Number Field in a3 with defining polynomial x^2 - 2
-                 User basis matrix:
-                 [  1   0  -1 -a3  -1   0   1  a3]
-                 [  0   1  a3   1   0  -1 -a3  -1])
-            ]
+            [(2,
+              Vector space of degree 8 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1 1 1 1 1 1]),
+             (-2,
+              Vector space of degree 8 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -1  1 -1  1 -1  1 -1]),
+             (0,
+              Vector space of degree 8 and dimension 2 over Rational Field
+              User basis matrix:
+              [ 1  0 -1  0  1  0 -1  0]
+              [ 0  1  0 -1  0  1  0 -1]),
+             (a3,
+              Vector space of degree 8 and dimension 2 over Number Field in a3 with defining polynomial x^2 - 2
+              User basis matrix:
+              [  1   0  -1 -a3  -1   0   1  a3]
+              [  0   1  a3   1   0  -1 -a3  -1])]
 
         A digraph may have complex eigenvalues and eigenvectors. For a 3-cycle,
         we have::
 
             sage: T = DiGraph({0: [1], 1: [2], 2: [0]})
             sage: T.eigenspaces()                                                       # needs sage.modules sage.rings.number_field
-            [
-            (1,  Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [1 1 1]),
-            (a1, Vector space of degree 3 and dimension 1 over Number Field in a1
-                  with defining polynomial x^2 + x + 1
-                 User basis matrix:
-                 [      1      a1 -a1 - 1])
-            ]
+            [(1,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1]),
+             (a1,
+              Vector space of degree 3 and dimension 1 over Number Field in a1 with defining polynomial x^2 + x + 1
+              User basis matrix:
+              [      1      a1 -a1 - 1])]
         """
         if laplacian:
             M = self.kirchhoff_matrix(vertices=list(self))
