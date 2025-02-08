@@ -154,6 +154,8 @@ def O(*x, **kwds):
         Traceback (most recent call last):
         ...
         ArithmeticError: x must be prime power
+        sage: O(Rational(8))
+        O(2^3)
     """
     if len(x) > 1:
         if isinstance(x[0], multi_power_series_ring_element.MPowerSeries):
