@@ -70,7 +70,8 @@ class p_iter_fork:
       about what the iterator does (e.g., killing subprocesses)
     - ``reset_interfaces`` -- boolean (default: ``True``); whether to reset all
       pexpect interfaces
-    - ``reseed_rng`` -- boolean (default: ``False``); whether or not to reseed the rng in the subprocesses
+    - ``reseed_rng`` -- boolean (default: ``False``); whether or not to reseed
+      the rng in the subprocesses
 
     EXAMPLES::
 
