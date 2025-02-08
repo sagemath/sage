@@ -70,7 +70,7 @@ class p_iter_fork:
       about what the iterator does (e.g., killing subprocesses)
     - ``reset_interfaces`` -- boolean (default: ``True``); whether to reset all
       pexpect interfaces
-    - ``reseed_rng`` -- booolean (default: ``False``); whether or not to reseed the rng in the subprocesses
+    - ``reseed_rng`` -- boolean (default: ``False``); whether or not to reseed the rng in the subprocesses
 
     EXAMPLES::
 
@@ -164,7 +164,7 @@ class p_iter_fork:
         n = self.ncpus
         inputs = list(inputs)
         if self.reseed_rng:
-            seeds = [getrandbits(512) for _ in range(0, len(inputs))]
+            seeds = [getrandbits(512) for _ in range(len(inputs))]
             vs = list(zip(inputs, seeds))
         else:
             vs = list(zip(inputs, [None]*len(inputs)))
@@ -173,7 +173,7 @@ class p_iter_fork:
             while vs or workers:
                 # Spawn up to n subprocesses
                 while vs and len(workers) < n:
-                    (v0, seed0) = vs.pop(0)  # Input value and seed for the next subprocess
+                    v0, seed0 = vs.pop(0)  # Input value and seed for the next subprocess
                     with ContainChildren():
                         pid = os.fork()
                         # The way fork works is that pid returns the
@@ -181,7 +181,8 @@ class p_iter_fork:
                         # process and returns 0 for the subprocess.
                         if not pid:
                             # This is the subprocess.
-                            self.worker_seed = seed0 if self.reseed_rng else None
+                            if self.reseed_rng:
+                                self.worker_seed = seed0
                             self._subprocess(f, dir, *v0)
                     workers[pid] = WorkerData(v0)
 
