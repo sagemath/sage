@@ -462,7 +462,7 @@ Actions.
   test. Details are again available by clicking on the check.
 
   The automatic workflow runs on a container based on
-  ``ubuntu-focal-standard``.  To request a run of the workflow on a different
+  ``ubuntu-jammy-maximal``.  To request a run of the workflow on a different
   platform, you can issue a `workflow dispatch
   <https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow#running-a-workflow>`_.
   You can select any of the platforms for which a `prebuilt container image

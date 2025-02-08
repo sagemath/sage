@@ -18,7 +18,7 @@ concurrency:
 jobs:
   pyright:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-ubuntu-jammy-standard-with-targets:dev
+    container: ghcr.io/sagemath/sage/sage-ubuntu-jammy-maximal-with-targets:dev
     steps:
       - name: Checkout
         id: checkout

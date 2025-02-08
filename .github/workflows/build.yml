@@ -15,7 +15,7 @@ on:
       platform:
         description: 'Platform'
         required: true
-        default: 'ubuntu-jammy-standard'
+        default: 'ubuntu-jammy-maximal'
       docker_tag:
         description: 'Docker tag'
         required: true
@@ -68,8 +68,8 @@ concurrency:
 
 env:
   # Adapted from docker.yml
-  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-incremental"
-  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-with-targets:ci"
+  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-jammy-maximal' }}-incremental"
+  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-maximal' }}-with-targets:ci"
   FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
   FROM_DOCKER_TARGET:     "with-targets"
   FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
