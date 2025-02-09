@@ -3903,6 +3903,11 @@ REFERENCES:
             Algebra i Analiz, 1995, Volume 7, Issue 1, pp. 92--152.
             http://math.uoregon.edu/~arkadiy/bk1.pdf
 
+.. [KD2015] Donald Keedwell and József Dénes, Latin Squares and their
+            Applications (2nd ed.), Elsevier B.V., Amsterdam-Netherlands,
+            2015. ISBN 978-0-444-63555-6, :mathscinet:`MR3495977`,
+            :doi:`10.1016/C2014-0-03412-0`
+
 .. [Ke1991] \A. Kerber. Algebraic combinatorics via finite group
             actions, 2.2 p. 70. BI-Wissenschaftsverlag,
             Mannheim, 1991.
