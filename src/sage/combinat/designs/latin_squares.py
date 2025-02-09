@@ -368,6 +368,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
 
         matrices = construction()[:k]
 
+    # Implements the construction from Theorem 5.2.4 of [KD2015]_.
     elif is_prime_power(n):
         F = list(GF(n))
 
