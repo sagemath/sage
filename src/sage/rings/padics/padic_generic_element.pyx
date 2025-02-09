@@ -2959,6 +2959,14 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: x.exp(algorithm='generic')   # indirect doctest                       # needs sage.libs.ntl
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)
 
+        TESTS::
+
+        Verify that :trac:`38037` is fixed::
+
+            sage: R.<a> = Zq(9)
+            sage: exp(R.zero())
+            1 + O(3^20)
+
         AUTHORS:
 
         - Genya Zaytman (2007-02-15)
@@ -2973,6 +2981,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
         R=self.parent()
         p=self.parent().prime()
         e=self.parent().absolute_e()
+        if self._is_exact_zero():
+            return R.one()
         x_unit=self.unit_part()
         p_unit=R(p).unit_part().lift_to_precision()
         x_val=self.valuation()
