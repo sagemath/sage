@@ -359,7 +359,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
         ----
         survived 1 tests
         Number Field in a with defining polynomial x^2 - 61891 with a = 248.7790184079036?
-        -12
+        -6
         ----
 
         sage: # needs sage.rings.finite_rings sage.rings.number_field sage.rings.padics
@@ -409,8 +409,8 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
         49/95
         survived 1 tests
         Number Field in a with defining polynomial x^2 - 15083 with a = 122.81286577553673?
-        a -2*a - 1
-        2*a - 30164
+        a -a - 1/2
+        3/2*a - 30163/2
         sage: sage.rings.tests.test_random_arith(trials=10)
         survived 0 tests...
         sage: sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?)
