@@ -673,7 +673,9 @@ class MPowerSeries(PowerSeries):
 
     def __getitem__(self, n):
         """
-        Return summand of total degree ``n``.
+        If ``n`` is a tuple returns the coefficient for a term where each
+        element of the tuple corresponds to a degree of a varaible. If ``n``
+        is an integer returns summand of total degree ``n``.
 
         TESTS::
 
@@ -690,9 +692,29 @@ class MPowerSeries(PowerSeries):
             ...
             IndexError: Cannot return terms of total degree greater than or
             equal to precision of self.
+
+        Insure that the enhancment detailed in :trac:`39314` works as intended::
+
+            sage: R.<x,y> = QQ[[]]
+            sage: ((x+y)^3)[2,1]
+            3
+            sage: f = 1/(1 + x + y)
+            sage: f[2,5]
+            -21
+            sage: f[0,30]
+            Traceback (most recent call last):
+            ...
+            IndexError: Cannot return the coefficients of terms of total degree
+            greater than or equal to precision of self.
         """
+        if type(n) is tuple:
+            if sum(n) >= self.prec():
+                raise IndexError("Cannot return the coefficients of terms of " +
+                "total degree greater than or equal to precision of self.")
+            return self._bg_value[sum(n)][n]
         if n >= self.prec():
-            raise IndexError("Cannot return terms of total degree greater than or equal to precision of self.")
+            raise IndexError("Cannot return terms of total degree greater " +
+            " than or equal to precision of self.")
         return self.parent(self._bg_value[n])
 
     def __invert__(self):
