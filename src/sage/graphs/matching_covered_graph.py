@@ -2451,6 +2451,21 @@ class MatchingCoveredGraph(Graph):
             sage: G.is_removable_edge((0, 1), coNP_certificate=True)  # Note that this is the edge (0, 1, None)
             (True, None)
 
+        An expression, analogous to the syntax mentioned above may be used::
+
+            sage:
+            sage:
+
+        Note that the ``weight`` of the edge shall be input as the ``label``::
+
+            sage:
+            sage:
+
+        Vertex name cannot be ``None``, so::
+
+            sage:
+            sage:
+
         EXAMPLES:
 
         Each edge of the graph `K_{3, 3}` is removable::
@@ -2623,47 +2638,8 @@ class MatchingCoveredGraph(Graph):
         # Compute a perfect matching of the graph G - e using the maximal matching M
         M.delete_edge(e)
 
-        matched = {x: y for a, b, *_ in M.edge_iterator() for x, y in [(a, b), (b, a)]}
-
-        from queue import Queue
-        q, visited, parent = Queue(), {u}, {}
-        q.put(u)
-
-        while q:
-            x = q.get()
-
-            for y in G.neighbor_iterator(x):
-                if y in visited:
-                    continue
-
-                visited.add(y)
-                parent[y] = x
-
-                # if y is matched, put matched[y] to the queue q
-                if y in matched:
-                    z = matched[y]
-                    visited.add(z)
-                    parent[z] = y
-                    q.put(z)
-                    continue
-
-                # If y is not matched, y is v
-                # Obtain the M-alternating uv path
-                path, z = [], y
-                while z != u:
-                    path.append((parent[z], z))
-                    z = parent[z]
-
-                # Flip the matched edges along the path
-                for i, (a, b) in enumerate(path):
-                    if i % 2:
-                        M.delete_edge(a, b)
-                        continue
-
-                    label = G.edge_label(a, b)
-                    M.add_edge(a, b, next(iter(label)) if isinstance(label, list) else label)
-
-                return G.is_matching_covered(matching=M, coNP_certificate=coNP_certificate)
+        # TODO: Obtain an M alternating uv path in G - e
+        return G.is_matching_covered(coNP_certificate=coNP_certificate)
 
     @doc_index('Overwritten methods')
     def loop_edges(self, labels=True):
