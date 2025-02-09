@@ -3107,6 +3107,22 @@ def list_plot(data, plotjoined=False, **kwargs):
         100.0
         sage: d['ymin']
         100.0
+
+    Verify that :trac:`38037` is fixed::
+
+        sage: list_plot([(0,-1),(1,-2),(2,-3),(3,-4),(4,None)])
+        Traceback (most recent call last):
+        ...
+        TypeError: unable to coerce to a ComplexNumber:
+        <class 'sage.rings.integer.Integer'>
+
+        #Non enumerated list example
+        sage: list_plot([3+I, 4, I, 1+5*i, None, 1+i])
+        Graphics object consisting of 1 graphics primitive
+
+        #Enumerated list example
+        sage: list_plot([4, 3+I, I, 1+5*i, None, 1+i])
+        Graphics object consisting of 1 graphics primitive
     """
     from sage.plot.all import point
     try:
@@ -3124,10 +3140,12 @@ def list_plot(data, plotjoined=False, **kwargs):
         else:
             list_data = list(data.items())
         return list_plot(list_data, plotjoined=plotjoined, **kwargs)
+    listEnumerated = False
     try:
         from sage.rings.real_double import RDF
         RDF(data[0])
         data = list(enumerate(data))
+        listEnumerated = True
     except TypeError: # we can get this TypeError if the element is a list
                       # or tuple or numpy array, or an element of CC, CDF
         # We also want to avoid doing CC(data[0]) here since it will go
@@ -3138,6 +3156,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         # element of the Symbolic Ring.
         if isinstance(data[0], Expression):
             data = list(enumerate(data))
+            listEnumerated = True
 
     try:
         if plotjoined:
@@ -3150,9 +3169,11 @@ def list_plot(data, plotjoined=False, **kwargs):
         # point3d() throws an IndexError on the (0,1) before it ever
         # gets to (1, I).
         from sage.rings.cc import CC
-        # if we get here, we already did "list(enumerate(data))",
-        # so look at z[1] in inner list
-        data = [(z.real(), z.imag()) for z in [CC(z[1]) for z in data]]
+        # It is not guaranteed that we enumerated the data so we have two cases
+        if listEnumerated:
+            data = [(z.real(), z.imag()) for z in [CC(z[1]) for z in data]]
+        else:
+            data = [(z.real(), z.imag()) for z in [CC(z) for z in data]]
         if plotjoined:
             return line(data, **kwargs)
         else:
