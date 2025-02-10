@@ -653,6 +653,61 @@ class FractionField_generic(ring.Field):
             sage: x = FF(elt)
             sage: F(x)
             -1/2/(a^2 + a)
+
+        Conversion from power series to rational function field truncates, but is deprecated::
+
+            sage: F.<x> = Frac(QQ['x'])
+            sage: R.<x> = QQ[[]]
+            sage: f = 1/(x+1)
+            sage: f.parent()
+            Power Series Ring in x over Rational Field
+            sage: F(f)
+            -x^19 + x^18 - x^17 + x^16 - x^15 + x^14 - x^13 + x^12 - x^11 + x^10 - x^9 + x^8 - x^7 + x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
+
+        Conversion from Laurent series to rational function field gives an approximation::
+
+            sage: F.<x> = Frac(QQ['x'])
+            sage: R.<x> = QQ[[]]
+            sage: f = Frac(R)(1/(x+1))
+            sage: f.parent()
+            Laurent Series Ring in x over Rational Field
+            sage: F(f)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot convert 1 - x + x^2 - x^3 + x^4 - x^5 + x^6 - x^7 + x^8 - x^9 + x^10 - x^11 + x^12 - x^13 + x^14 - x^15 + x^16 - x^17 + x^18 - x^19 + O(x^20)/1 to an element of Fraction Field of Univariate Polynomial Ring in x over Rational Field
+            sage: f = f.truncate(20); f  # infinite precision
+            1 - x + x^2 - x^3 + x^4 - x^5 + x^6 - x^7 + x^8 - x^9 + x^10 - x^11 + x^12 - x^13 + x^14 - x^15 + x^16 - x^17 + x^18 - x^19
+            sage: f.parent()
+            Laurent Series Ring in x over Rational Field
+            sage: F(f)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot convert 1 - x + x^2 - x^3 + x^4 - x^5 + x^6 - x^7 + x^8 - x^9 + x^10 - x^11 + x^12 - x^13 + x^14 - x^15 + x^16 - x^17 + x^18 - x^19/1 to an element of Fraction Field of Univariate Polynomial Ring in x over Rational Field
+            sage: f = 1/(x*(x+1))
+            sage: f.parent()
+            Laurent Series Ring in x over Rational Field
+            sage: F(f)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot convert x^-1 - 1 + x - x^2 + x^3 - x^4 + x^5 - x^6 + x^7 - x^8 + x^9 - x^10 + x^11 - x^12 + x^13 - x^14 + x^15 - x^16 + x^17 - x^18 + O(x^19)/1 to an element of Fraction Field of Univariate Polynomial Ring in x over Rational Field
+
+        ::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<x> = QQ[[]]
+            sage: f = 1/(x+1)
+            sage: K(f)
+            -x^19 + x^18 - x^17 + x^16 - x^15 + x^14 - x^13 + x^12 - x^11 + x^10 - x^9 + x^8 - x^7 + x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
+            sage: f = Frac(R)(1/(x+1))
+            sage: K(f)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot convert 1 - x + x^2 - x^3 + x^4 - x^5 + x^6 - x^7 + x^8 - x^9 + x^10 - x^11 + x^12 - x^13 + x^14 - x^15 + x^16 - x^17 + x^18 - x^19 + O(x^20)/1 to an element of Fraction Field of Univariate Polynomial Ring in x over Rational Field
+            sage: f = 1/(x*(x+1))
+            sage: K(f)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot convert x^-1 - 1 + x - x^2 + x^3 - x^4 + x^5 - x^6 + x^7 - x^8 + x^9 - x^10 + x^11 - x^12 + x^13 - x^14 + x^15 - x^16 + x^17 - x^18 + O(x^19)/1 to an element of Fraction Field of Univariate Polynomial Ring in x over Rational Field
         """
         if isinstance(x, (list, tuple)) and len(x) == 1:
             x = x[0]
@@ -664,8 +719,7 @@ class FractionField_generic(ring.Field):
                 return self._element_class(self, x, ring_one, coerce=coerce)
             except (TypeError, ValueError):
                 pass
-            y = self._element_class(self, ring_one, ring_one,
-                                    coerce=False, reduce=False)
+            y = self.one()
         else:
             if parent(x) is self:
                 y = self(y)
