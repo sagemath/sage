@@ -39,8 +39,8 @@ factorization::
     sage: R1 = singular.ring(0, '(x,y)', 'dp')
     sage: R1
     polynomial ring, over a field, global ordering
-    //   coefficients: QQ
-    //   number of vars : 2
+    // coefficients: QQ...
+    // number of vars : 2
     //        block   1 : ordering dp
     //                  : names    x y
     //        block   2 : ordering C
@@ -220,12 +220,12 @@ Groebner basis for some ideal, using Singular through Sage.
 
     sage: singular.lib('polylib.lib')
     sage: singular.ring(32003, '(a,b,c,d,e,f)', 'lp')
-            polynomial ring, over a field, global ordering
-            //   coefficients: ZZ/32003
-            //   number of vars : 6
-            //        block   1 : ordering lp
-            //                        : names    a b c d e f
-            //        block   2 : ordering C
+    polynomial ring, over a field, global ordering
+    // coefficients: ZZ/32003...
+    // number of vars : 6
+    //        block   1 : ordering lp
+    //                        : names    a b c d e f
+    //        block   2 : ordering C
     sage: I = singular.ideal('cyclic(6)')
     sage: g = singular('groebner(I)')
     Traceback (most recent call last):
@@ -335,6 +335,7 @@ AUTHORS:
 # ****************************************************************************
 
 import os
+import platform
 import re
 import sys
 import pexpect
@@ -407,7 +408,7 @@ class Singular(ExtraTabCompletion, Expect):
                         restart_on_ctrlc=True,
                         verbose_start=False,
                         logfile=logfile,
-                        eval_using_file_cutoff=100 if os.uname()[0] == "SunOS" else 1000)
+                        eval_using_file_cutoff=100 if platform.system() == "SunOS" else 1000)
         self.__libs = []
         self._prompt_wait = prompt
         self.__to_clear = []   # list of variable names that need to be cleared.
@@ -1073,8 +1074,8 @@ class Singular(ExtraTabCompletion, Expect):
             sage: R = singular.ring(0, '(x,y,z)', 'dp')
             sage: R
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 3
+            // coefficients: QQ...
+            // number of vars : 3
             //        block   1 : ordering dp
             //                  : names    x y z
             //        block   2 : ordering C
@@ -1152,16 +1153,16 @@ class Singular(ExtraTabCompletion, Expect):
             sage: S = singular.ring('real', '(a,b)', 'lp')
             sage: singular.current_ring()
             polynomial ring, over a field, global ordering
-            //   coefficients: Float()
-            //   number of vars : 2
+            // coefficients: Float()...
+            // number of vars : 2
             //        block   1 : ordering lp
             //                  : names    a b
             //        block   2 : ordering C
             sage: singular.set_ring(R)
             sage: singular.current_ring()
             polynomial ring, over a field, local ordering
-            //   coefficients: ZZ/7
-            //   number of vars : 2
+            // coefficients: ZZ/7...
+            // number of vars : 2
             //        block   1 : ordering ds
             //                  : names    a b
             //        block   2 : ordering C
@@ -1202,15 +1203,15 @@ class Singular(ExtraTabCompletion, Expect):
             sage: r = PolynomialRing(GF(127),3,'xyz', order='invlex')
             sage: r._singular_()
             polynomial ring, over a field, global ordering
-            //   coefficients: ZZ/127
-            //   number of vars : 3
+            // coefficients: ZZ/127...
+            // number of vars : 3
             //        block   1 : ordering ip
             //                  : names    x y z
             //        block   2 : ordering C
             sage: singular.current_ring()
             polynomial ring, over a field, global ordering
-            //   coefficients: ZZ/127
-            //   number of vars : 3
+            // coefficients: ZZ/127...
+            // number of vars : 3
             //        block   1 : ordering ip
             //                  : names    x y z
             //        block   2 : ordering C
@@ -1400,7 +1401,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             # this is our cue that singular uses `rp` instead of `ip`
             if singular_name_mapping['invlex'] == 'rp' and 'doctest' in str(get_display_manager()):
                 s = re.sub('^(// .*block.* : ordering )rp$', '\\1ip',
-                           s, 0, re.MULTILINE)
+                           s, flags=re.MULTILINE)
         return s
 
     def __copy__(self):
@@ -1429,8 +1430,8 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: cpQ.set_ring()
             sage: cpQ
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 2
+            // coefficients: QQ...
+            // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
             //        block   2 : ordering C
@@ -1784,7 +1785,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         # TODO: Refactor imports to move this to the top
         from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict
         from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         from sage.rings.polynomial.polydict import ETuple
         from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
         from sage.rings.quotient_ring import QuotientRing_generic
@@ -1875,7 +1876,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
             return R(sage_repr)
 
-        elif isinstance(R, PolynomialRing_general) and (ring_is_fine or can_convert_to_singular(R)):
+        elif isinstance(R, PolynomialRing_generic) and (ring_is_fine or can_convert_to_singular(R)):
 
             sage_repr = [0] * int(self.deg() + 1)
 
@@ -1995,8 +1996,8 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
             sage: singular('basering')
             polynomial ring, over a domain, global ordering
-            //   coefficients: ZZ
-            //   number of vars : 3
+            // coefficients: ZZ...
+            // number of vars : 3
             //        block   1 : ordering lp
             //                  : names    x y z
             //        block   2 : ordering C
@@ -2086,16 +2087,16 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: S = singular.ring('real', '(a,b)', 'lp')
             sage: singular.current_ring()
             polynomial ring, over a field, global ordering
-            //   coefficients: Float()
-            //   number of vars : 2
+            // coefficients: Float()...
+            // number of vars : 2
             //        block   1 : ordering lp
             //                  : names    a b
             //        block   2 : ordering C
             sage: R.set_ring()
             sage: singular.current_ring()
             polynomial ring, over a field, local ordering
-            //   coefficients: ZZ/7
-            //   number of vars : 2
+            // coefficients: ZZ/7...
+            // number of vars : 2
             //        block   1 : ordering ds
             //                  : names    a b
             //        block   2 : ordering C
@@ -2269,11 +2270,9 @@ class SingularFunction(ExpectFunction):
         """
         EXAMPLES::
 
-            sage: 'groebner' in singular.groebner.__doc__
+            sage: 'groebner' in singular.groebner.__doc__  # needs info
             True
         """
-        if not nodes:
-            generate_docstring_dictionary()
 
         prefix = """
 This function is an automatically generated pexpect wrapper around the Singular
@@ -2288,15 +2287,9 @@ EXAMPLES::
     x+y,
     y^2-y
 """ % (self._name,)
-        prefix2 = """
-
-The Singular documentation for '%s' is given below.
-""" % (self._name,)
-
-        try:
-            return prefix + prefix2 + nodes[node_names[self._name]]
-        except KeyError:
-            return prefix
+        return prefix + get_docstring(self._name,
+                                      prefix=True,
+                                      code=True)
 
 
 @instancedoc
@@ -2307,15 +2300,10 @@ class SingularFunctionElement(FunctionElement):
 
             sage: R = singular.ring(0, '(x,y,z)', 'dp')
             sage: A = singular.matrix(2,2)
-            sage: 'matrix_expression' in A.nrows.__doc__
+            sage: 'matrix_expression' in A.nrows.__doc__  # needs info
             True
         """
-        if not nodes:
-            generate_docstring_dictionary()
-        try:
-            return nodes[node_names[self._name]]
-        except KeyError:
-            return ""
+        return get_docstring(self._name, code=True)
 
 
 def is_SingularElement(x):
@@ -2341,82 +2329,125 @@ def is_SingularElement(x):
     return isinstance(x, SingularElement)
 
 
-nodes = {}
-node_names = {}
-
-
-def generate_docstring_dictionary():
-    """
-    Generate global dictionaries which hold the docstrings for
-    Singular functions.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.singular import generate_docstring_dictionary
-        sage: generate_docstring_dictionary()
-    """
-
-    global nodes
-    global node_names
-
-    nodes.clear()
-    node_names.clear()
-
-    new_node = re.compile(r"File: singular\.[a-z]*,  Node: ([^,]*),.*")
-    new_lookup = re.compile(r"\* ([^:]*):*([^.]*)\..*")
-
-    L, in_node, curr_node = [], False, None
-
-    from sage.libs.singular.singular import get_resource
-    singular_info_file = get_resource('i')
-
-    # singular.hlp contains a few iso-8859-1 encoded special characters
-    with open(singular_info_file,
-              encoding='latin-1') as f:
-        for line in f:
-            m = re.match(new_node, line)
-            if m:
-                # a new node starts
-                in_node = True
-                nodes[curr_node] = "".join(L)
-                L = []
-                curr_node, = m.groups()
-            elif in_node:  # we are in a node
-                L.append(line)
-            else:
-                m = re.match(new_lookup, line)
-                if m:
-                    a, b = m.groups()
-                    node_names[a] = b.strip()
-
-            if line in ("6 Index\n", "F Index\n"):
-                in_node = False
-
-    nodes[curr_node] = "".join(L)  # last node
-
-
-def get_docstring(name):
+def get_docstring(name, prefix=False, code=False):
     """
     Return the docstring for the function ``name``.
 
     INPUT:
 
     - ``name`` -- a Singular function name
+    - ``prefix`` -- boolean (default: ``False``); whether or not to
+      include the prefix stating that what follows is from the
+      Singular documentation.
+    - ``code`` -- boolean (default: ``False``); whether or not to
+      format the result as a reStructuredText code block. This is
+      intended to support the feature requested in :issue:`11268`.
+
+    OUTPUT:
+
+    A string describing the Singular function ``name``. A
+    :class:`KeyError` is raised if the function was not found in the
+    Singular documentation. If the "info" is not on the user's
+    ``PATH``, an :class:`OSError` will be raised. If "info" was found
+    but failed to execute, a :class:`subprocess.CalledProcessError`
+    will be raised instead.
 
     EXAMPLES::
 
         sage: from sage.interfaces.singular import get_docstring
-        sage: 'groebner' in get_docstring('groebner')
+        sage: 'groebner' in get_docstring('groebner')  # needs_info
         True
-        sage: 'standard.lib' in get_docstring('groebner')
+        sage: 'standard.lib' in get_docstring('groebner')  # needs info
         True
+
+    The ``prefix=True`` form is used in Sage's generated docstrings::
+
+        sage: from sage.interfaces.singular import get_docstring
+        sage: print(get_docstring("factorize", prefix=True))  # needs info
+        The Singular documentation for "factorize" is given below.
+        ...
+
+    TESTS:
+
+    Non-existent functions raise a :class:`KeyError`::
+
+        sage: from sage.interfaces.singular import get_docstring
+        sage: get_docstring("mysql_real_escape_string")  # needs info
+        Traceback (most recent call last):
+        ...
+        KeyError: 'mysql_real_escape_string'
+
+    This is true also for nodes that exist in the documentation but
+    are not function nodes::
+
+        sage: from sage.interfaces.singular import get_docstring
+        sage: get_docstring("Preface")  # needs info
+        Traceback (most recent call last):
+        ...
+        KeyError: 'Preface'
+
+    If GNU Info is not installed, we politely decline to do anything::
+
+        sage: from sage.interfaces.singular import get_docstring
+        sage: from sage.features.info import Info
+        sage: Info().hide()
+        sage: get_docstring('groebner')
+        Traceback (most recent call last):
+        ...
+        OSError: GNU Info is not installed. Singular's documentation
+        will not be available.
+        sage: Info().unhide()
     """
-    if not nodes:
-        generate_docstring_dictionary()
+    from sage.features.info import Info
+
+    if not Info().is_present():
+        raise OSError("GNU Info is not installed. Singular's "
+                      "documentation will not be available.")
+    import subprocess
+    cmd_and_args = ["info", f"--node={name}", "singular"]
     try:
-        return nodes[node_names[name]]
-    except KeyError:
-        return ""
+        result = subprocess.run(cmd_and_args,
+                                capture_output=True,
+                                check=True,
+                                text=True)
+    except subprocess.CalledProcessError as e:
+        # Before Texinfo v7.0.0, the "info" program would exit
+        # successfully even if the desired node was not found.
+        if e.returncode == 1:
+            raise KeyError(name) from e
+        else:
+            # Something else bad happened
+            raise e
+
+    # The subprocess call can succeed if the given node exists but is
+    # not a function node (example: "Preface"). All function nodes
+    # should live in the "Functions" section, and we can determine the
+    # current section by the presence of "Up: <section>" on the first
+    # line of the output, in the navigation header.
+    #
+    # There is a small risk of ambiguity here if there are two
+    # sections with the same name, but it's a trade-off: specifying
+    # the full path down to the intended function would be much more
+    # fragile; it would break whenever a subsection name was tweaked
+    # upstream.
+    offset = result.stdout.find("\n")
+    line0 = result.stdout[:offset]
+    if "Up: Functions" not in line0:
+        raise KeyError(name)
+
+    # If the first line was the navigation header, the second line should
+    # be blank; by incrementing the offset by two, we're skipping over it.
+    offset += 2
+    result = result.stdout[offset:]
+
+    if code:
+        result = "::\n\n    " + "\n    ".join(result.split('\n'))
+
+    if prefix:
+        result = (f'The Singular documentation for "{name}" is given below.'
+                  + "\n\n" + result)
+
+    return result
 
 
 singular = Singular()
@@ -2614,8 +2645,7 @@ class SingularGBLogPrettyPrinter:
                     if verbosity >= 1:
                         print("Leading term degree: %2d." % int(token))
                     self.curr_deg = int(token)
-                    if self.max_deg < self.curr_deg:
-                        self.max_deg = self.curr_deg
+                    self.max_deg = max(self.max_deg, self.curr_deg)
 
                 elif re.match(SingularGBLogPrettyPrinter.red_para, token) and verbosity >= 3:
                     m, n = re.match(SingularGBLogPrettyPrinter.red_para, token).groups()

@@ -3319,12 +3319,13 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         else:
             # trac 7096
-            # this should take care of the case when the isogeny is not normalized.
+            # this should take care of the case when the isogeny is
+            # not normalized.
             u = self.scaling_factor()
             E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
 
             phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
-#            assert phi_hat.scaling_factor() == 1
+            # assert phi_hat.scaling_factor() == 1
 
             for pre_iso in self._codomain.isomorphisms(E1):
                 for post_iso in E2.isomorphisms(self._domain):
@@ -3335,7 +3336,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
                     continue
                 break
             else:
-                assert "bug in dual()"
+                raise RuntimeError("bug in dual()")
 
             phi_hat._set_pre_isomorphism(pre_iso)
             phi_hat._set_post_isomorphism(post_iso)
@@ -3433,8 +3434,7 @@ def compute_isogeny_bmss(E1, E2, l):
     sprec = 8
     while sprec < 4 * l:
         assert sprec % 2 == 0
-        if sprec > 2 * l:
-            sprec = 2 * l
+        sprec = min(sprec, 2 * l)
         # s1 => s1 + x^k s2
         # 2 s1' s2' - dG/dS(x, s1) s2 = G(x, s1) - s1'2
         s1 = S
@@ -3581,10 +3581,6 @@ def compute_isogeny_stark(E1, E2, ell):
     return qn
 
 
-from sage.misc.superseded import deprecated_function_alias
-compute_isogeny_starks = deprecated_function_alias(34871, compute_isogeny_stark)
-
-
 def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
     r"""
     Return the kernel polynomial of a cyclic, separable, normalized
@@ -3651,11 +3647,6 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         sage: poly.factor()
         (x + 10) * (x + 12) * (x + 16)
     """
-    if algorithm == 'starks':
-        from sage.misc.superseded import deprecation
-        deprecation(34871, 'The "starks" algorithm is being renamed to "stark".')
-        algorithm = 'stark'
-
     if algorithm is None:
         char = E1.base_ring().characteristic()
         if char != 0 and char < 4*ell + 4:

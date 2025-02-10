@@ -442,7 +442,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
     return vector(RDF, min)
 
 
-def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args):
+def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **args):
     r"""
     Minimize a function with constraints.
 
@@ -577,7 +577,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
                     min = optimize.fmin_tnc(f, x0, approx_grad=True, bounds=cons, messages=0, **args)[0]
         elif isinstance(cons[0], (function_type, Expression)):
             min = optimize.fmin_cobyla(f, x0, cons, **args)
-    elif isinstance(cons, function_type) or isinstance(cons, Expression):
+    elif isinstance(cons, (function_type, Expression)):
         min = optimize.fmin_cobyla(f, x0, cons, **args)
     return vector(RDF, min)
 
@@ -740,7 +740,7 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
         estimated_params = estimated_params.tolist()
 
     if solution_dict:
-        return {i0: i1 for i0, i1 in zip(parameters, estimated_params)}
+        return dict(zip(parameters, estimated_params))
 
     return [item[0] == item[1] for item in zip(parameters, estimated_params)]
 
@@ -859,7 +859,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
         TypeError: parameter items must be a list or a dictionary.
     """
     if isinstance(items, list):
-        weight = {i:w for i,w in enumerate(items)}
+        weight = dict(enumerate(items))
     elif isinstance(items, dict):
         weight = items
     else:

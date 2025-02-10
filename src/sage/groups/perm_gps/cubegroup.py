@@ -128,6 +128,7 @@ globals().update(named_colors)
 #########################################################
 # written by Tom Boothby, placed in the public domain
 
+
 def xproj(x, y, z, r):
     r"""
     Return the `x`-projection of `(x,y,z)` rotated by `r`.
@@ -346,6 +347,7 @@ singmaster_indices = {
     31: "rd",
     32: "rbd",
 }
+
 
 def index2singmaster(facet):
     """
@@ -1420,7 +1422,7 @@ class RubiksCube(SageObject):
             return NotImplemented
         return richcmp(self._state, other._state, op)
 
-    def solve(self, algorithm='hybrid', timeout=15):
+    def solve(self, algorithm='default', timeout=15):
         r"""
         Solve the Rubik's cube.
 
@@ -1428,17 +1430,14 @@ class RubiksCube(SageObject):
 
         - ``algorithm`` -- must be one of the following:
 
-          - ``hybrid`` -- try ``kociemba`` for timeout seconds, then ``dietz``
-          - ``kociemba`` -- use Dik T. Winter's program
-            (reasonable speed, few moves)
-          - ``dietz`` -- use Eric Dietz's cubex program
-            (fast but lots of moves)
-          - ``optimal`` -- use Michael Reid's optimal program
-            (may take a long time)
+          - ``hybrid`` -- (default) try ``kociemba`` for timeout seconds, then ``dietz``
+          - ``kociemba`` -- use Dik T. Winter's program (reasonable speed, few moves)
+          - ``dietz`` -- use Eric Dietz's cubex program (fast but lots of moves)
+          - ``optimal`` -- use Michael Reid's optimal program (may take a long time)
           - ``gap`` -- use GAP word solution (can be slow)
 
-        Any choice other than ``gap`` requires the optional package
-        ``rubiks``. Otherwise, the ``gap`` algorithm is used.
+        Any choice other than ``gap`` requires the optional package ``rubiks``.
+        If the package is not installed, the ``gap`` algorithm is used by default.
 
         EXAMPLES::
 
@@ -1450,7 +1449,10 @@ class RubiksCube(SageObject):
         solutions::
 
             sage: s = C.solve('dietz'); s   # optional - rubiks
-            "U' L' L' U L U' L U D L L D' L' D L' D' L D L' U' L D' L' U L' B' U' L' U B L D L D' U' L' U L B L B' L' U L U' L' F' L' F L' F L F' L' D' L' D D L D' B L B' L B' L B F' L F F B' L F' B D' D' L D B' B' L' D' B U' U' L' B' D' F' F' L D F'"
+            "U' L' L' U L U' L U D L L D' L' D L' D' L D L' U' L D' L' U L' B'
+             U' L' U B L D L D' U' L' U L B L B' L' U L U' L' F' L' F L' F L F'
+             L' D' L' D D L D' B L B' L B' L B F' L F F B' L F' B D' D' L D B'
+             B' L' D' B U' U' L' B' D' F' F' L D F'"
             sage: C2 = RubiksCube(s)  # optional - rubiks
             sage: C == C2             # optional - rubiks
             True
@@ -1458,11 +1460,11 @@ class RubiksCube(SageObject):
         from sage.features.rubiks import Rubiks
         if Rubiks().is_present():
             import sage.interfaces.rubik  # here to avoid circular referencing
+            if algorithm == 'default':
+                algorithm = "hybrid"
         else:
-            algorithm = 'gap'
-
-        if algorithm == "default":
-            algorithm = "hybrid"
+            if algorithm == 'default':
+                algorithm = 'gap'
 
         if algorithm == "hybrid":
             try:

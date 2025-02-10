@@ -521,7 +521,7 @@ def steiner_triple_system(n):
     return BIBD(n, sts, name=name,check=False)
 
 
-def BIBD_from_TD(v,k,existence=False):
+def BIBD_from_TD(v, k, existence=False):
     r"""
     Return a BIBD through TD-based constructions.
 
@@ -613,7 +613,7 @@ def BIBD_from_TD(v,k,existence=False):
 
         BIBD = TDkv._blocks
         for i in range(k):
-            BIBD.extend([[x+i*v for x in B] for B in BIBDvk])
+            BIBD.extend([x+i*v for x in B] for B in BIBDvk)
 
     # Second construction
     elif ((v-1) % k == 0 and
@@ -630,7 +630,7 @@ def BIBD_from_TD(v,k,existence=False):
         inf = v*k
         BIBD = TDkv
         for i in range(k):
-            BIBD.extend([[inf if x == v else x+i*v for x in B] for B in BIBDv1k])
+            BIBD.extend([inf if x == v else x+i*v for x in B] for B in BIBDv1k)
 
     # Third construction
     elif ((v-k) % k == 0 and
@@ -650,7 +650,8 @@ def BIBD_from_TD(v,k,existence=False):
         BIBDvpkk = [B for B in BIBDvpkk if min(B) < v]
 
         for i in range(k):
-            BIBD.extend([[(x-v)+inf if x >= v else x+i*v for x in B] for B in BIBDvpkk])
+            BIBD.extend([(x-v)+inf if x >= v else x+i*v for x in B]
+                        for B in BIBDvpkk)
 
         BIBD.append(list(range(k * v, v * k + k)))
 
@@ -894,7 +895,7 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
     return bibd
 
 
-def _relabel_bibd(B,n,p=None):
+def _relabel_bibd(B, n, p=None):
     r"""
     Relabel the BIBD on `n` points and blocks of size k such that
     `\{0,...,k-2,n-1\},\{k-1,...,2k-3,n-1\},...,\{n-k,...,n-2,n-1\}` are blocks
@@ -1223,7 +1224,7 @@ def _get_r_s_t_u(v):
     return r,s,t,u
 
 
-def PBD_from_TD(k,t,u):
+def PBD_from_TD(k, t, u):
     r"""
     Return a `(kt,\{k,t\})`-PBD if `u=0` and a `(kt+u,\{k,k+1,t,u\})`-PBD otherwise.
 
@@ -1277,14 +1278,14 @@ def BIBD_5q_5_for_q_prime_power(q):
 
     d = (q-1)//4
     B = []
-    F = FiniteField(q,'x')
+    F = FiniteField(q, 'x')
     a = F.primitive_element()
-    L = {b:i for i,b in enumerate(F)}
-    for b in L:
-        B.append([i*q + L[b] for i in range(5)])
+    L = {b: i for i, b in enumerate(F)}
+    for b, Lb in L.items():
+        B.append([i*q + Lb for i in range(5)])
         for i in range(5):
             for j in range(d):
-                B.append([        i*q + L[b          ],
+                B.append([        i*q + Lb,
                           ((i+1) % 5)*q + L[ a**j+b    ],
                           ((i+1) % 5)*q + L[-a**j+b    ],
                           ((i+4) % 5)*q + L[ a**(j+d)+b],
@@ -1294,7 +1295,7 @@ def BIBD_5q_5_for_q_prime_power(q):
     return B
 
 
-def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
+def BIBD_from_arc_in_desarguesian_projective_plane(n, k, existence=False):
     r"""
     Return a `(n,k,1)`-BIBD from a maximal arc in a projective plane.
 
@@ -1355,10 +1356,10 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
        :doi:`10.1016/S0021-9800(69)80095-5`
     """
     q = (n-1)//(k-1)-1
-    if (k % 2                 or
-        q % 2                 or
-        q <= k                or
-        n != (k-1)*(q+1)+1    or
+    if (k % 2 or
+        q % 2 or
+        q <= k or
+        n != (k-1)*(q+1)+1 or
         not is_prime_power(k) or
         not is_prime_power(q)):
         if existence:
@@ -1391,12 +1392,10 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
     # [Denniston69] is the set of all elements of K of degree < log_n
     # (seeing elements of K as polynomials in 'a')
 
-    K_iter = list(K) # faster iterations
-    log_n = is_prime_power(n,get_data=True)[1]
-    C = [(x,y,one)
-         for x in K_iter
-         for y in K_iter
-         if Q(x,y).polynomial().degree() < log_n]
+    K_iter = list(K)  # faster iterations
+    log_n = is_prime_power(n, get_data=True)[1]
+    C = [(x, y, one) for x in K_iter for y in K_iter
+         if Q(x, y).polynomial().degree() < log_n]
 
     from sage.combinat.designs.block_design import DesarguesianProjectivePlaneDesign
     return DesarguesianProjectivePlaneDesign(q).trace(C)._blocks
@@ -1432,7 +1431,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
       modified in place (each block is sorted, and the whole list is
       sorted). Your ``blocks`` object will become the instance's internal data.
     """
-    def __init__(self, points, blocks, K=None, lambd=1, check=True, copy=True,**kwds):
+    def __init__(self, points, blocks, K=None, lambd=1, check=True, copy=True, **kwds):
         r"""
         Constructor.
 
@@ -1500,7 +1499,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
         sage: b=designs.balanced_incomplete_block_design(9,3); b
         (9,3,1)-Balanced Incomplete Block Design
     """
-    def __init__(self, points, blocks, k=None, lambd=1, check=True, copy=True,**kwds):
+    def __init__(self, points, blocks, k=None, lambd=1, check=True, copy=True, **kwds):
         r"""
         Constructor.
 

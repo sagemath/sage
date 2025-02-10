@@ -1634,7 +1634,7 @@ cdef class Matroid(SageObject):
         S = frozenset(X)
         while cur != len(S):
             cur = len(S)
-            cl = frozenset([])
+            cl = frozenset()
             for T in combinations(S, min(k, cur)):
                 cl = cl.union(self._closure(frozenset(T)))
             S = cl
@@ -2306,7 +2306,7 @@ cdef class Matroid(SageObject):
 
     # verification
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -2320,7 +2320,11 @@ cdef class Matroid(SageObject):
 
         Certain subclasses may check other axioms instead.
 
-        OUTPUT: boolean
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: boolean, or (boolean, dictionary)
 
         EXAMPLES::
 
@@ -2341,8 +2345,10 @@ cdef class Matroid(SageObject):
             sage: def r(X):
             ....:     return -1
             sage: M = Matroid(groundset=[0,1,2], rank_function=r)
-            sage: M.is_valid()
-            False
+            sage: M.is_valid(certificate=True)
+            (False,
+             {'error': "the rank must be between 0 and the set's cardinality",
+              'set': frozenset()})
         """
         cdef int i, j, rX, rY
         cdef frozenset X, Y, E = self.groundset()
@@ -2351,17 +2357,17 @@ cdef class Matroid(SageObject):
                 X = frozenset(Xt)
                 rX = self._rank(X)
                 if rX > i or rX < 0:
-                    return False
+                    return False if not certificate else (False, {"error": "the rank must be between 0 and the set's cardinality", "set": X})
                 for j in range(i, len(E) + 1):
                     for Yt in combinations(E, j):
                         Y = frozenset(Yt)
                         rY = self._rank(Y)
                         if X.issubset(Y) and rX > rY:
-                            return False
+                            return False if not certificate else (False, {"error": "the rank function must be monotonic", "set 1": X, "set 2": Y})
                         if (self._rank(X.union(Y)) +
                            self._rank(X.intersection(Y)) > rX + rY):
-                            return False
-        return True
+                            return False if not certificate else (False, {"error": "the rank function must be submodular", "set 1": X, "set 2": Y})
+        return True if not certificate else (True, {})
 
     # enumeration
 
@@ -3409,7 +3415,7 @@ cdef class Matroid(SageObject):
                 if action in Semigroups:
                     G, action = action, G
             else:
-                G, action = G_action, None # the None action is g.__call__
+                G, action = G_action, None  # the None action is g.__call__
 
             from sage.algebras.orlik_solomon import OrlikSolomonInvariantAlgebra
 
@@ -3663,7 +3669,7 @@ cdef class Matroid(SageObject):
             False
         """
         if self is other:
-            return {e:e for e in self.groundset()}
+            return {e: e for e in self.groundset()}
         if self.full_rank() == other.full_rank():
             return SetSystem(self.groundset(), self.nonbases())._isomorphism(SetSystem(other.groundset(), other.nonbases()))
         else:
@@ -3938,9 +3944,9 @@ cdef class Matroid(SageObject):
 
         .. WARNING::
 
-            This method is linked to ``__richcmp__`` (in Cython) and
-            ``__cmp__`` or ``__eq__``/``__ne__`` (in Python). If you override
-            one, you should (and in Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -4333,7 +4339,7 @@ cdef class Matroid(SageObject):
             return None
         l = newlabel(self.groundset())
         return self._extension(l, [])._minor(contractions=frozenset([l]),
-                                             deletions=frozenset([]))
+                                             deletions=frozenset())
 
     cpdef has_minor(self, N, bint certificate=False):
         """
@@ -4678,7 +4684,7 @@ cdef class Matroid(SageObject):
         extension by a loop::
 
             sage: M = matroids.catalog.Vamos()
-            sage: frozenset([]) in M.modular_cut(['ab', 'cd'])
+            sage: frozenset() in M.modular_cut(['ab', 'cd'])
             True
 
         In any extension of the matroid `S_8 \setminus h`, a point on the
@@ -4937,14 +4943,14 @@ cdef class Matroid(SageObject):
             3
         """
         E = set(self.groundset())
-        E.difference_update(self._closure(frozenset([])))  # groundset minus loops
+        E.difference_update(self._closure(frozenset()))  # groundset minus loops
         res = set([])
 
         while E:
             e = E.pop()
             res.add(e)
             E.difference_update(self._closure(frozenset([e])))
-        return self._minor(contractions=frozenset([]),
+        return self._minor(contractions=frozenset(),
                            deletions=self.groundset().difference(res))
 
     cpdef cosimplify(self):
@@ -4973,7 +4979,7 @@ cdef class Matroid(SageObject):
             3
         """
         E = set(self.groundset())
-        E.difference_update(self._coclosure(frozenset([])))  # groundset minus coloops
+        E.difference_update(self._coclosure(frozenset()))  # groundset minus coloops
         res = set([])
 
         while E:
@@ -4981,7 +4987,7 @@ cdef class Matroid(SageObject):
             res.add(e)
             E.difference_update(self._coclosure(frozenset([e])))
         return self._minor(contractions=self.groundset().difference(res),
-                           deletions=frozenset([]))
+                           deletions=frozenset())
 
     cpdef is_simple(self):
         """
@@ -5198,7 +5204,7 @@ cdef class Matroid(SageObject):
             sage: M._connectivity(frozenset('ab'), frozenset('cd'))
             2
         """
-        return len(self._link(S,T)[0]) - self.full_rank() + self.rank(S) + self.rank(T)
+        return len(self._link(S, T)[0]) - self.full_rank() + self.rank(S) + self.rank(T)
 
     cpdef link(self, S, T):
         r"""
@@ -5394,7 +5400,7 @@ cdef class Matroid(SageObject):
         E = set(self.groundset())
         Q = set(list(E)[:m])
         E = E-Q
-        for r in range(len(Q)/2 + 1):
+        for r in range(len(Q) // 2 + 1):
             R = set(list(E)[:r])
             for Q1 in map(set, combinations(Q, r)):
                 Q2 = Q-Q1
@@ -5403,7 +5409,7 @@ cdef class Matroid(SageObject):
                     continue
                 # Given Q1, Q2 partition of Q, find all extensions
                 for r2 in range(r+1):
-                    for R1 in map(set,combinations(R, r2)):
+                    for R1 in map(set, combinations(R, r2)):
                         R2 = R - R1
                         # F is the set of elements cannot be in the extension of Q1
                         F = set([])
@@ -5411,7 +5417,7 @@ cdef class Matroid(SageObject):
                         # if Q1|R1 is full
                         if m-len(Q1)-len(R1) == 0:
                             T = frozenset(Q1 | R1)
-                            for B in map(set,combinations(U, m-len(Q2)-len(R2))):
+                            for B in map(set, combinations(U, m-len(Q2)-len(R2))):
                                 S = frozenset(Q2 | R2 | B)
                                 _, X = self._link(S, T)
                                 if self.connectivity(X) < m:
@@ -5428,7 +5434,7 @@ cdef class Matroid(SageObject):
                             # extension of Q2 is full
                             if len(F) == m-len(Q2)-len(R2):
                                 S = frozenset(Q2 | R2 | F)
-                                for A in map(set, combinations(U,m-len(Q1)-len(R1))):
+                                for A in map(set, combinations(U, m-len(Q1)-len(R1))):
                                     T = frozenset(Q1 | R1 | A)
                                     _, X = self._link(S, T)
                                     if self.connectivity(X) < m:
@@ -5663,7 +5669,7 @@ cdef class Matroid(SageObject):
                 T = frozenset([g, h])
                 I, X = self._link(S, T)
                 # check if connectivity between S,T is < 2
-                if len(I) + 2 < self.full_rank(): # note: rank(S) = rank(T) = 2
+                if len(I) + 2 < self.full_rank():  # note: rank(S) = rank(T) = 2
                     if certificate:
                         return False, X
                     else:
@@ -5679,7 +5685,7 @@ cdef class Matroid(SageObject):
             T = frozenset([f, h])
             I, X = self._link(S, T)
             # check if connectivity between S,T is < 2
-            if len(I) + 2 < self.full_rank(): # note: rank(S) = rank(T) = 2
+            if len(I) + 2 < self.full_rank():  # note: rank(S) = rank(T) = 2
                 if certificate:
                     return False, X
                 else:
@@ -5694,7 +5700,7 @@ cdef class Matroid(SageObject):
             T = frozenset([e, h])
             I, X = self._link(S, T)
             # check if connectivity between S,T is < 2
-            if len(I) + 2 < self.full_rank(): # note: rank(S) = rank(T) = 2
+            if len(I) + 2 < self.full_rank():  # note: rank(S) = rank(T) = 2
                 if certificate:
                     return False, X
                 else:
@@ -5768,12 +5774,12 @@ cdef class Matroid(SageObject):
             for x in (X & self.fundamental_circuit(X, y)):
                 M[rdX[x], rdY[y]]=1
 
-        for (x,y) in spanning_forest(M):
-            P_rows=set([dX[x]])
-            P_cols=set([dY[y]])
-            Q_rows=set([])
-            Q_cols=set([])
-            sol,cert = self._shifting_all(X, P_rows, P_cols, Q_rows, Q_cols, 2)
+        for x, y in spanning_forest(M):
+            P_rows = set([dX[x]])
+            P_cols = set([dY[y]])
+            Q_rows = set()
+            Q_cols = set()
+            sol, cert = self._shifting_all(X, P_rows, P_cols, Q_rows, Q_cols, 2)
             if sol:
                 if certificate:
                     return False, cert
@@ -5831,15 +5837,15 @@ cdef class Matroid(SageObject):
         # the partial matrix
         M = matrix(len(X), len(Y))
         for y in Y:
-            for x in (X & self.fundamental_circuit(X,y)):
-                M[rdX[x],rdY[y]]=1
+            for x in (X & self.fundamental_circuit(X, y)):
+                M[rdX[x], rdY[y]] = 1
         n = len(X)
         m = len(Y)
 
         # compute a connected set of stars
 
         T = spanning_stars(M)
-        for (x1,y1) in T:
+        for x1, y1 in T:
             # The whiting out
             B = M
             for (x, y) in product(range(n), range(m)):
@@ -5852,20 +5858,20 @@ cdef class Matroid(SageObject):
             Xp.remove(x1)
             Yp = list(range(m))
             Yp.remove(y1)
-            B = B.matrix_from_rows_and_columns(Xp,Yp)
+            B = B.matrix_from_rows_and_columns(Xp, Yp)
 
             # produce a spanning forest of B
-            for (x,y) in spanning_forest(B):
+            for x, y in spanning_forest(B):
                 if x >= x1:
                     x = x+1
                 if y >= y1:
                     y = y+1
                 # rank 2 matrix and rank 0 matrix
-                P_rows = set([dX[x],dX[x1]])
-                P_cols = set([dY[y],dY[y1]])
-                Q_rows = set([])
-                Q_cols = set([])
-                sol,cert = self._shifting_all(X, P_rows, P_cols, Q_rows, Q_cols, 3)
+                P_rows = set([dX[x], dX[x1]])
+                P_cols = set([dY[y], dY[y1]])
+                Q_rows = set()
+                Q_cols = set()
+                sol, cert = self._shifting_all(X, P_rows, P_cols, Q_rows, Q_cols, 3)
                 if sol:
                     if certificate:
                         return False, cert
@@ -5875,7 +5881,7 @@ cdef class Matroid(SageObject):
                 P_cols = set([dY[y1]])
                 Q_rows = set([dX[x]])
                 Q_cols = set([dY[y]])
-                sol,cert = self._shifting_all(X, P_rows, P_cols, Q_rows, Q_cols, 3)
+                sol, cert = self._shifting_all(X, P_rows, P_cols, Q_rows, Q_cols, 3)
                 if sol:
                     if certificate:
                         return False, cert
@@ -5931,16 +5937,16 @@ cdef class Matroid(SageObject):
         """
         Y = self.groundset()-X
         for z in (Y - P_cols) - Q_cols:
-            sol,cert = self._shifting(X,P_rows,P_cols|set([z]),Q_rows,Q_cols,m)
+            sol, cert = self._shifting(X, P_rows, P_cols|set([z]), Q_rows, Q_cols, m)
             if sol:
                 return True, cert
-            sol,cert = self._shifting(X,Q_rows,Q_cols,P_rows,P_cols|set([z]),m)
+            sol, cert = self._shifting(X, Q_rows, Q_cols, P_rows, P_cols|set([z]), m)
             if sol:
                 return True, cert
-            sol,cert = self._shifting(X,P_rows,P_cols,Q_rows,Q_cols|set([z]),m)
+            sol, cert = self._shifting(X, P_rows, P_cols, Q_rows, Q_cols|set([z]), m)
             if sol:
                 return True, cert
-            sol,cert = self._shifting(X,Q_rows,Q_cols|set([z]),P_rows,P_cols,m)
+            sol, cert = self._shifting(X, Q_rows, Q_cols|set([z]), P_rows, P_cols, m)
             if sol:
                 return True, cert
         return False, None
@@ -6002,26 +6008,26 @@ cdef class Matroid(SageObject):
         Y = self.groundset()-X
         # Returns true if there is a m-separator
         if (self._rank(Y_2|(X-X_1)) - len(X-X_1)
-            + self._rank(Y_1|(X-X_2)) - len(X-X_2) != m-1):
+                + self._rank(Y_1|(X-X_2)) - len(X-X_2) != m-1):
             return False, None
         if len(X_1|Y_1) < m:
             return False, None
         remainX = set(X-(X_1|X_2))
         remainY = set(Y-(Y_1|Y_2))
         while True:
-            #rowshifts
+            # rowshifts
             rowshift = False
             for x in set(remainX):
                 if (self._rank(Y_1|(X-(X_2|set([x])))) - len(X-(X_2|set([x])))
-                    > self._rank(Y_1|(X-X_2)) - len(X-X_2)):
+                        > self._rank(Y_1|(X-X_2)) - len(X-X_2)):
                     X_1 = X_1 | {x}
                     remainX.remove(x)
                     rowshift = True
-            #colshifts
+            # colshifts
             colshift = False
             for y in set(remainY):
                 if (self._rank(Y_2|set([y])|(X-X_1)) - len(X-X_1)
-                    > self._rank(Y_2|(X-X_1)) - len(X-X_1)):
+                        > self._rank(Y_2|(X-X_1)) - len(X-X_1)):
                     Y_1 = Y_1 | {y}
                     remainY.remove(y)
                     colshift = True
@@ -6307,7 +6313,7 @@ cdef class Matroid(SageObject):
         from sage.matroids.linear_matroid import BinaryMatroid
         return BinaryMatroid(groundset=E, matrix=A, basis=list(basis), keep_initial_representation=False)
 
-    cpdef binary_matroid(self, randomized_tests=1, verify = True):
+    cpdef binary_matroid(self, randomized_tests=1, verify=True):
         r"""
         Return a binary matroid representing ``self``, if such a
         representation exists.
@@ -6347,7 +6353,7 @@ cdef class Matroid(SageObject):
             True
         """
         M = self._local_binary_matroid()
-        m = {e:e for e in self.groundset()}
+        m = {e: e for e in self.groundset()}
         if randomized_tests > 0:
             E = list(self.groundset())
             for r in range(randomized_tests):
@@ -6452,20 +6458,20 @@ cdef class Matroid(SageObject):
         for C in G.connected_components_subgraphs():
             T.update(C.min_spanning_tree())
         for edge in T:
-            e,f = edge[2]
-            A.set(bdx[e],idx[f], 1)
+            e, f = edge[2]
+            A.set(bdx[e], idx[f], 1)
         W = list(set(G.edges(sort=False)) - set(T))
         H = G.subgraph(edges = T)
         while W:
             edge = W.pop(-1)
-            e,f = edge[2]
+            e, f = edge[2]
             path = H.shortest_path(e, f)
             for i in range(len(W)):
                 edge2 = W[i]
                 if edge2[0] in path and edge2[1] in path:
                     W[i] = edge
                     edge = edge2
-                    e,f = edge[2]
+                    e, f = edge[2]
                     while path[0]!= e and path[0] != f:
                         path.pop(0)
                     while path[-1]!= e and path[-1] != f:
@@ -6479,14 +6485,14 @@ cdef class Matroid(SageObject):
                 else:
                     x = x * A.get(bdx[path[i+1]], idx[path[i]])
             if (len(path) % 4 == 0) == self.is_dependent(set(basis).symmetric_difference(path)):
-                A.set(bdx[e],idx[f],x)
+                A.set(bdx[e], idx[f], x)
             else:
-                A.set(bdx[e],idx[f],-x)
+                A.set(bdx[e], idx[f], -x)
             H.add_edge(edge)
         from sage.matroids.linear_matroid import TernaryMatroid
         return TernaryMatroid(groundset=E, matrix=A, basis=basis, keep_initial_representation=False)
 
-    cpdef ternary_matroid(self, randomized_tests=1, verify = True):
+    cpdef ternary_matroid(self, randomized_tests=1, verify=True):
         r"""
         Return a ternary matroid representing ``self``, if such a
         representation exists.
@@ -6528,7 +6534,7 @@ cdef class Matroid(SageObject):
             NonFano: Ternary matroid of rank 3 on 7 elements, type 0-
         """
         M = self._local_ternary_matroid()
-        m = {e:e for e in self.groundset()}
+        m = {e: e for e in self.groundset()}
         if randomized_tests > 0:
             E = list(self.groundset())
             for r in range(randomized_tests):
@@ -6810,7 +6816,7 @@ cdef class Matroid(SageObject):
         """
         cdef frozenset C
         if k2 is None:
-            k2 = len(self.groundset()) + 1 # This is always larger than the rank
+            k2 = len(self.groundset()) + 1  # This is always larger than the rank
         for C in self.circuits_iterator():
             if len(C) < k1 or len(C) > k2:
                 continue
@@ -7472,7 +7478,7 @@ cdef class Matroid(SageObject):
         todo = set(X1)
         next_layer = set()
         while todo:
-            while todo: # todo is subset of X
+            while todo:  # todo is subset of X
                 u = todo.pop()
                 m = w[u]
                 if u not in out_neighbors:
@@ -7485,7 +7491,7 @@ cdef class Matroid(SageObject):
                         next_layer.add(y)
             todo = next_layer
             next_layer = set()
-            while todo: # todo is subset of Y
+            while todo:  # todo is subset of Y
                 u = todo.pop()
                 m = w[u]
                 if u not in out_neighbors:
@@ -7499,11 +7505,11 @@ cdef class Matroid(SageObject):
             todo = next_layer
             next_layer = set()
 
-        X3 = X2.intersection(w) # w is the set of elements reachable from X1
-        if not X3:              # if no path from X1 to X2, then no augmenting set exists
+        X3 = X2.intersection(w)  # w is the set of elements reachable from X1
+        if not X3:    # if no path from X1 to X2, then no augmenting set exists
             return False, frozenset(w)
         else:
-            s = min([w[x] for x in X3]) # find shortest length of an X1 - X2 path
+            s = min([w[x] for x in X3])  # find shortest length of an X1 - X2 path
             for u in X3:
                 if w[u] == s:
                     break
@@ -7633,7 +7639,7 @@ cdef class Matroid(SageObject):
             layers[dist] = set(todo)
             if X3:
                 break
-            while todo: # todo is subset of X
+            while todo:  # todo is subset of X
                 u = todo.pop()
                 m = w[u]
                 if u not in out_neighbors:
@@ -7652,7 +7658,7 @@ cdef class Matroid(SageObject):
                 break
             if not todo:
                 break
-            while todo: # todo is subset of Y
+            while todo:  # todo is subset of Y
                 u = todo.pop()
                 m = w[u]
                 if u not in out_neighbors:
@@ -7702,15 +7708,13 @@ cdef class Matroid(SageObject):
                     for v in layers[d[u]+1] - visited:
                         # check if edge (u,v) exists in the auxiliary digraph
                         exist = False
-                        if ((u in Y) and
-                            (v in E-Y) and
-                            (self.is_dependent(Y|set([v]))) and
-                            (self.is_independent((Y|set([v])) - set([u])))):
+                        if ((u in Y) and (v in E-Y) and
+                            self.is_dependent(Y|{v}) and
+                                self.is_independent((Y|{v}) - {u})):
                             exist = True
-                        if ((u in E-Y) and
-                            (v in Y) and
-                            (not other.is_independent(Y|set([u]))) and
-                            (other.is_independent((Y|set([u])) - set([v])))):
+                        if ((u in E-Y) and (v in Y) and
+                            (not other.is_independent(Y|{u})) and
+                                (other.is_independent((Y|{u}) - {v}))):
                             exist = True
                         if exist:
                             stack.append(v)
@@ -8028,111 +8032,84 @@ cdef class Matroid(SageObject):
 
         return [F for F in FF if fsol[F]]
 
-    def chow_ring(self, R=None):
+    def chow_ring(self, R, augmented=False, presentation=None):
         r"""
-        Return the Chow ring of ``self`` over ``R``.
+        Return the (augmented) Chow ring of ``self`` over ``R``.
 
-        Let `M` be a matroid and `R` be a commutative ring.
-        The *Chow ring* of `M` is the quotient ring
+        .. SEEALSO::
 
-        .. MATH::
-
-            A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (Q_M + L_M),
-
-        where
-
-        - `F_1, \ldots, F_k` are the non-empty proper flats of `M`,
-        - `Q_M` is the ideal generated by all `x_{F_i} x_{F_j}` where
-          `F_i` and `F_j` are incomparable elements in the lattice of
-          flats, and
-        - `L_M` is the ideal generated by all linear forms
-
-          .. MATH::
-
-              \sum_{i_1 \in F} x_F - \sum_{i_2 \in F} x_F
-
-          for all `i_1 \neq i_2 \in E`.
+            - :mod:`sage.matroids.chow_ring_ideal`
+            - :mod:`sage.matroids.chow_ring`
 
         INPUT:
 
-        - ``R`` -- (default: `\ZZ`) the base ring
+        - ``M`` -- matroid
+        - ``R`` -- commutative ring
+        - ``augmented`` -- boolean (default: ``False``); when ``True``, this
+          is the augmented Chow ring and if ``False``, this is the
+          non-augmented Chow ring
+        - ``presentation`` -- string; if ``augmented=True``, then this
+          must be one of the following (ignored if ``augmented=False``):
+
+          * ``"fy"`` - the Feitchner-Yuzvinsky presentation
+          * ``"atom-free"`` - the atom-free presentation
 
         EXAMPLES::
 
             sage: M = matroids.Wheel(2)
-            sage: A = M.chow_ring(); A
-            Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements
-             with 5 bases over Integer Ring
-            sage: A.gens()                                                              # needs sage.libs.singular
-            (A23, A23, A23)
-            sage: A23 = A.gen(0)                                                        # needs sage.libs.singular
-            sage: A23*A23                                                               # needs sage.libs.singular
+            sage: A = M.chow_ring(R=ZZ, augmented=False); A
+            Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements with
+            5 bases over Integer Ring
+            sage: A.defining_ideal()._gens_constructor(A.defining_ideal().ring())
+            [A0*A1, A0*A23, A1*A23, A0 + A0123, A1 + A0123, A23 + A0123]
+            sage: A23 = A.gen(0)
+            sage: A23*A23
             0
 
         We construct a more interesting example using the Fano matroid::
 
             sage: M = matroids.catalog.Fano()
             sage: A = M.chow_ring(QQ); A
-            Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
-             type (3, 0) over Rational Field
+            Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
+            over Rational Field
 
         Next we get the non-trivial generators and do some computations::
 
             sage: # needs sage.libs.singular sage.rings.finite_rings
-            sage: G = A.gens()[6:]
-            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G
-            sage: Ag * Ag
-            2*Adef^2
-            sage: Ag * Abeg
-            -Adef^2
+            sage: G = A.gens()[7:]; G
+            (Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef, Aabcdefg)
+            sage: Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef, Aabcdefg = G
+            sage: Aabf*Aabf
+            -Aabcdefg^2
+            sage: Aabf*Acfg
+            0
             sage: matrix([[x * y for x in G] for y in G])
-            [2*Adef^2        0        0  -Adef^2        0  -Adef^2  -Adef^2        0]
-            [       0   Adef^2        0        0        0        0        0        0]
-            [       0        0   Adef^2        0        0        0        0        0]
-            [ -Adef^2        0        0   Adef^2        0        0        0        0]
-            [       0        0        0        0   Adef^2        0        0        0]
-            [ -Adef^2        0        0        0        0   Adef^2        0        0]
-            [ -Adef^2        0        0        0        0        0   Adef^2        0]
-            [       0        0        0        0        0        0        0   Adef^2]
+            [-Aabcdefg^2           0           0           0           0           0           0           0]
+            [          0 -Aabcdefg^2           0           0           0           0           0           0]
+            [          0           0 -Aabcdefg^2           0           0           0           0           0]
+            [          0           0           0 -Aabcdefg^2           0           0           0           0]
+            [          0           0           0           0 -Aabcdefg^2           0           0           0]
+            [          0           0           0           0           0 -Aabcdefg^2           0           0]
+            [          0           0           0           0           0           0 -Aabcdefg^2           0]
+            [          0           0           0           0           0           0           0  Aabcdefg^2]
 
-        REFERENCES:
+        The augmented Chow ring can also be constructed with the
+        Feitchner-Yuzvinsky and atom-free presentation::
 
-        - [FY2004]_
-        - [AHK2015]_
+            sage: M = matroids.Wheel(3)
+            sage: ch = M.chow_ring(QQ, augmented=True, presentation='fy'); ch
+            Augmented Chow ring of Wheel(3): Regular matroid of rank 3 on
+            6 elements with 16 bases in Feitchner-Yuzvinsky presentation over
+            Rational Field
+            sage: M = matroids.Uniform(3, 6)
+            sage: ch = M.chow_ring(QQ, augmented=True, presentation='atom-free'); ch
+            Augmented Chow ring of U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
+            {3: {{0, 1, 2, 3, 4, 5}}} in atom-free presentation over Rational Field
         """
-        # Setup
-        if R is None:
-            R = ZZ
-        # We only want proper flats
-        flats = [X for i in range(1, self.rank())
-                 for X in self.flats(i)]
-        E = list(self.groundset())
-        flats_containing = {x: [] for x in E}
-        for i,F in enumerate(flats):
-            for x in F:
-                flats_containing[x].append(i)
+        from sage.matroids.chow_ring import ChowRing
+        return ChowRing(M=self, R=R, augmented=augmented, presentation=presentation)
 
-        # Create the ambient polynomial ring
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        try:
-            names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
-            P = PolynomialRing(R, names)
-        except ValueError: # variables are not proper names
-            P = PolynomialRing(R, 'A', len(flats))
-            names = P.variable_names()
-        gens = P.gens()
-        # Create the ideal of quadratic relations
-        Q = [gens[i] * gens[i+j+1] for i,F in enumerate(flats)
-             for j,G in enumerate(flats[i+1:]) if not (F < G or G < F)]
-        # Create the ideal of linear relations
-        L = [sum(gens[i] for i in flats_containing[x])
-             - sum(gens[i] for i in flats_containing[y])
-             for j,x in enumerate(E) for y in E[j+1:]]
-        ret = P.quotient(Q + L, names=names)
-        ret.rename("Chow ring of {} over {}".format(self, R))
-        return ret
-
-    cpdef plot(self, B=None, lineorders=None, pos_method=None,pos_dict=None,save_pos=False):
+    cpdef plot(self, B=None, lineorders=None, pos_method=None, pos_dict=None, save_pos=False):
         """
         Return geometric representation as a sage graphics object.
 
@@ -8193,8 +8170,8 @@ cdef class Matroid(SageObject):
             B = list(self.basis())
         elif B is not None and not self.is_basis(B):
             return
-        lineorders2=matroids_plot_helpers.lineorders_union(self._cached_info['lineorders'],lineorders)
-        return matroids_plot_helpers.geomrep(self,B,lineorders2,pd=pos_dict, sp=save_pos)
+        lineorders2 = matroids_plot_helpers.lineorders_union(self._cached_info['lineorders'], lineorders)
+        return matroids_plot_helpers.geomrep(self, B, lineorders2, pd=pos_dict, sp=save_pos)
 
     cpdef show(self, B=None, lineorders=None, pos_method=None, pos_dict=None, save_pos=False, lims=None):
         """
@@ -8237,12 +8214,12 @@ cdef class Matroid(SageObject):
             B = list(self.basis())
         elif B is not None and not self.is_basis(B):
             return
-        B1=B
-        lineorders1=lineorders
-        pm=pos_method
-        pd=pos_dict
-        sp=save_pos
-        G=self.plot(B1,lineorders1,pm,pd,sp)
+        B1 = B
+        lineorders1 = lineorders
+        pm = pos_method
+        pd = pos_dict
+        sp = save_pos
+        G = self.plot(B1, lineorders1, pm, pd, sp)
         if lims is None:
             G.show()
         else:
@@ -8286,7 +8263,7 @@ cdef class Matroid(SageObject):
         # check sanity of pos_dict and add it to cached info if sane
         if pos_dict is not None:
             from sage.matroids import matroids_plot_helpers
-            if matroids_plot_helpers.posdict_is_sane(self,pos_dict):
+            if matroids_plot_helpers.posdict_is_sane(self, pos_dict):
                 self._cached_info = {'plot_positions': pos_dict, 'lineorders': lineorders}
         return
 
@@ -8482,11 +8459,11 @@ cdef class Matroid(SageObject):
         # constructed yet.
         DM = IM.disjoint_union(SimplicialComplex())
 
-        ## simplices are \{y_i\}_{i\in I}\cup\{x_{F_1},\ldots,x_{F_\ell}\},
-        ## by [BMHPW20a]_ thm 4 it is pure of dimension r(M)-1
+        # simplices are \{y_i\}_{i\in I}\cup\{x_{F_1},\ldots,x_{F_\ell}\},
+        # by [BMHPW20a]_ thm 4 it is pure of dimension r(M)-1
 
         for c in LM.chains(exclude=LM.maximal_elements()):
-            if c: # the facets of IM are already present
+            if c:  # the facets of IM are already present
                 # get the cardinality of intersection of facet with IM
                 r = self._rank(self.groundset()) - len(c)
 

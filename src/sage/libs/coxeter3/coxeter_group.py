@@ -279,7 +279,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         """
         from sage.misc.superseded import deprecation
         deprecation(30237, "the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.")
-        return self.coxeter_matrix()[i,j]
+        return self.coxeter_matrix()[i, j]
 
     def kazhdan_lusztig_polynomial(self, u, v, constant_term_one=True):
         r"""
@@ -354,8 +354,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             return p
         ZZq = PolynomialRing(ZZ, 'q', sparse=True)
         # This is the same as q**len_diff * p(q**(-2))
-        len_diff = v.length()-u.length()
-        d = {-2*deg+len_diff: coeff for deg,coeff in enumerate(p) if coeff != 0}
+        len_diff = v.length() - u.length()
+        d = {-2 * deg + len_diff: coeff for deg, coeff in enumerate(p)
+             if coeff != 0}
         return ZZq(d)
 
     def parabolic_kazhdan_lusztig_polynomial(self, u, v, J, constant_term_one=True):
@@ -414,11 +415,11 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         WOI = self.weak_order_ideal(lambda x: J_set.issuperset(x.descents()))
         if constant_term_one:
             P = PolynomialRing(ZZ, 'q')
-            return P.sum((-1)**(z.length()) * self.kazhdan_lusztig_polynomial(u*z,v)
-                         for z in WOI if (u*z).bruhat_le(v))
+            return P.sum((-1)**(z.length()) * self.kazhdan_lusztig_polynomial(u * z, v)
+                         for z in WOI if (u * z).bruhat_le(v))
         P = PolynomialRing(ZZ, 'q', sparse=True)
-        return P.sum((-1)**(z.length()) * self.kazhdan_lusztig_polynomial(u*z,v, constant_term_one=False).shift(z.length())
-                     for z in WOI if (u*z).bruhat_le(v))
+        return P.sum((-1)**(z.length()) * self.kazhdan_lusztig_polynomial(u * z, v, constant_term_one=False).shift(z.length())
+                     for z in WOI if (u * z).bruhat_le(v))
 
     class Element(ElementWrapper):
         wrapped_class = CoxGroupElement
@@ -701,7 +702,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
                 for exponent in exponents:
                     # Construct something in the root lattice from the exponent vector
-                    exponent = sum(e*b for e, b in zip(exponent, basis_elements))
+                    exponent = sum(e * b for e, b in zip(exponent, basis_elements))
                     exponent = self.action(exponent)
 
                     monomial = 1

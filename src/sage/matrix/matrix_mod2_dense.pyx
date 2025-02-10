@@ -108,7 +108,7 @@ from cysignals.memory cimport check_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
 cimport sage.matrix.matrix_dense as matrix_dense
-from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init, MA_ENTRIES_NDARRAY
 from libc.stdio cimport *
 from sage.structure.element cimport (Matrix, Vector)
 from sage.modules.free_module_element cimport FreeModuleElement
@@ -257,8 +257,25 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             []
             sage: Matrix(GF(2),0,2)
             []
+
+        Make sure construction from numpy array is reasonably fast::
+
+            sage: # needs numpy
+            sage: import numpy as np
+            sage: n = 5000
+            sage: M = matrix(GF(2), np.random.randint(0, 2, (n, n)))  # around 700ms
+
+        Unsupported numpy data types (slower but still works)::
+
+            sage: # needs numpy
+            sage: n = 100
+            sage: M = matrix(GF(2), np.random.randint(0, 2, (n, n)).astype(np.float32))
         """
         ma = MatrixArgs_init(parent, entries)
+        if ma.get_type() == MA_ENTRIES_NDARRAY:
+            from ..modules.numpy_util import set_matrix_mod2_from_numpy
+            if set_matrix_mod2_from_numpy(self, ma.entries):
+                return
         for t in ma.iter(coerce, True):
             se = <SparseEntry>t
             mzd_write_bit(self._entries, se.i, se.j, se.entry)
@@ -1111,7 +1128,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             self.clear_cache()
 
             sig_on()
-            r =  mzd_echelonize(self._entries, full)
+            r = mzd_echelonize(self._entries, full)
             sig_off()
 
             self.cache('in_echelon_form',True)
@@ -1126,14 +1143,14 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             if 'k' in kwds:
                 k = int(kwds['k'])
 
-                if k<1 or k>16:
+                if k < 1 or k > 16:
                     raise RuntimeError("k must be between 1 and 16")
                 k = round(k)
             else:
                 k = 0
 
             sig_on()
-            r =  mzd_echelonize_m4ri(self._entries, full, k)
+            r = mzd_echelonize_m4ri(self._entries, full, k)
             sig_off()
 
             self.cache('in_echelon_form',True)
@@ -1146,7 +1163,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             self.clear_cache()
 
             sig_on()
-            r =  mzd_echelonize_pluq(self._entries, full)
+            r = mzd_echelonize_pluq(self._entries, full)
             sig_off()
 
             self.cache('in_echelon_form',True)
@@ -1782,6 +1799,12 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A.set_immutable()
             sage: loads(dumps(A)).is_immutable()
             True
+
+        Check that :issue:`39367` is achieved::
+
+            sage: l = len(dumps(random_matrix(GF(2), 2000, 2000))); l  # random   # previously ~ 785000
+            610207
+            sage: assert l < 650000
         """
         cdef int i,j, r,c, size
 
@@ -1800,11 +1823,17 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
                 if mzd_read_bit(self._entries, i, j):
                     gdImageSetPixel(im, j, i, black )
 
-        cdef signed char *buf = <signed char*>gdImagePngPtr(im, &size)
+        cdef char *buf
+        try:
+            buf = <char*>gdImagePngPtr(im, &size)
+        finally:
+            gdImageDestroy(im)
 
-        data = [buf[i] for i in range(size)]
-        gdFree(buf)
-        gdImageDestroy(im)
+        cdef bytes data
+        try:
+            data = buf[:size]
+        finally:  # recommended by https://cython.readthedocs.io/en/latest/src/tutorial/strings.html
+            gdFree(buf)
         return unpickle_matrix_mod2_dense_v2, (r,c, data, size, self._is_immutable)
 
     cpdef _export_as_string(self):
@@ -1918,6 +1947,103 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         mzd_free(A)
         self.cache('rank', r)
         return r
+
+    def _solve_right_general(self, B, check=True):
+        """
+        Solve the matrix equation AX = B for X using the M4RI library.
+
+        INPUT:
+
+        - ``B`` -- a matrix
+        - ``check`` -- boolean (default: ``True``); whether to check if the
+          matrix equation has a solution
+
+        EXAMPLES::
+
+            sage: A = matrix(GF(2), [[1, 0], [0, 1], [1, 1]])
+            sage: A.solve_right(vector([1, 1, 0]))
+            (1, 1)
+            sage: A.solve_right(vector([1, 1, 1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+
+        TESTS::
+
+            sage: n = 128
+            sage: m = 128
+            sage: A = random_matrix(GF(2), n, m)
+            sage: B = A * random_vector(GF(2), m)
+            sage: A * A.solve_right(B) == B
+            True
+            sage: m = 64
+            sage: A = random_matrix(GF(2), n, m)
+            sage: B = A * random_vector(GF(2), m)
+            sage: A * A.solve_right(B) == B
+            True
+            sage: m = 256
+            sage: A = random_matrix(GF(2), n, m)
+            sage: B = A * random_vector(GF(2), m)
+            sage: A * A.solve_right(B) == B
+            True
+            sage: matrix(GF(2), 2, 0).solve_right(matrix(GF(2), 2, 2)) == matrix(GF(2), 0, 2)
+            True
+            sage: matrix(GF(2), 2, 0).solve_right(matrix(GF(2), 2, 2) + 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(GF(2), 2, 0).solve_right(matrix(GF(2), 2, 2) + 1, check=False) == matrix(GF(2), 0, 2)
+            True
+            sage: matrix(GF(2), 2, 2).solve_right(matrix(GF(2), 2, 0)) == matrix(GF(2), 2, 0)
+            True
+
+        Check that it can be interrupted::
+
+            sage: set_random_seed(12345)
+            sage: n, m = 20000, 19968
+            sage: A = random_matrix(GF(2), n, m)
+            sage: x = random_vector(GF(2), m)
+            sage: B = A*x
+            sage: alarm(0.5); sol = A.solve_right(B)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+        """
+        cdef mzd_t *B_entries = (<Matrix_mod2_dense>B)._entries
+
+        cdef Matrix_mod2_dense X  # the solution
+        X = self.new_matrix(nrows=self._entries.ncols, ncols=B_entries.ncols)
+        if self._entries.ncols == 0 or B_entries.ncols == 0:
+            # special case: empty matrix
+            if check and B != 0:
+                raise ValueError("matrix equation has no solutions")
+            return X
+        cdef rci_t rows = self._entries.nrows
+        if self._entries.nrows < self._entries.ncols:
+            rows = self._entries.ncols  # mzd_solve_left requires ncols <= nrows
+
+        cdef mzd_t *lhs = mzd_init(rows, self._entries.ncols)
+        mzd_copy(lhs, self._entries)
+        cdef mzd_t *rhs = mzd_init(rows, B_entries.ncols)
+        mzd_copy(rhs, B_entries)
+
+        cdef int ret
+        try:
+            sig_on()
+            # although it is called mzd_solve_left, it does the same thing as solve_right
+            ret = mzd_solve_left(lhs, rhs, 0, check)
+            sig_off()
+
+            if ret == 0:
+                # solution is placed in rhs
+                rhs.nrows = self._entries.ncols
+                mzd_copy(X._entries, rhs)
+                return X
+            else:
+                raise ValueError("matrix equation has no solutions")
+        finally:
+            mzd_free(lhs)
+            mzd_free(rhs)
 
     def _right_kernel_matrix(self, **kwds):
         r"""
@@ -2081,6 +2207,28 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
         sage: loads(s)
         [1 0]
         [0 1]
+
+    Check that old pickles before :issue:`39367` still work::
+
+        sage: loads(bytes.fromhex(  # hexstring produced with dumps(matrix.zero(GF(2),10,10)).hex()
+        ....:     '789c6b604a2e4e4c4fd5cb4d2c29caac8052f1b9f92946f129a979c5a95ca5'
+        ....:     '790599c9d939a9f11852f165465c850c1ade5cde5cb1858c1a5e9dfffffff7'
+        ....:     '0ef0f6f376f7e6050a4a01310318f27a7b7a7b78bb780741f95c709ad19b19'
+        ....:     'c2f6da0ed4ecf5076442acd73f100551c20634d0c73bc4db15aaec3f481982'
+        ....:     '580a226e8288f920e22e4223a77701d0ce48ef62308fcfeb084c0aca64f49a'
+        ....:     '0aa2b4bdf9bca5a15af880ce74f17604dac6e135132499ecf50344d57b3580'
+        ....:     '75789b7b330195b103fd21e85deeb51064e362908c2f441d03147a025debe7'
+        ....:     'ede2b50e24e8e49de0d50464a47ae775961432051532eb0100093b9ba3'))
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
     """
     from sage.matrix.constructor import Matrix
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -2092,15 +2240,21 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
     if r == 0 or c == 0:
         return A
 
-    cdef signed char *buf = <signed char*>check_malloc(size)
-    for i from 0 <= i < size:
-        buf[i] = data[i]
+    cdef signed char *buf
+    cdef gdImagePtr im
+    if isinstance(data, bytes):
+        sig_on()
+        im = gdImageCreateFromPngPtr(size, <char *><bytes>data)
+        sig_off()
+    else:
+        buf = <signed char*>check_malloc(size)
+        for i from 0 <= i < size:
+            buf[i] = data[i]
 
-    sig_on()
-    cdef gdImagePtr im = gdImageCreateFromPngPtr(size, buf)
-    sig_off()
-
-    sig_free(buf)
+        sig_on()
+        im = gdImageCreateFromPngPtr(size, buf)
+        sig_off()
+        sig_free(buf)
 
     if gdImageSX(im) != c or gdImageSY(im) != r:
         raise TypeError("Pickled data dimension doesn't match.")

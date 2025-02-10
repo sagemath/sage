@@ -844,7 +844,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         """
         return FrozenBitset()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Check if ``self`` is a commutative algebra.
 
@@ -2914,7 +2914,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
             return contained and contains
         if op == op_NE:
             return not (contained and contains)
-         # remaining case <
+        # remaining case <
         return contained and not contains
 
     def __mul__(self, other):

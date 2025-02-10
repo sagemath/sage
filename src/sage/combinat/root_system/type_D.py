@@ -10,6 +10,7 @@ Root system data for type D
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from . import ambient_space
+from sage.misc.persist import register_unpickle_override
 
 
 class AmbientSpace(ambient_space.AmbientSpace):
@@ -71,7 +72,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         res = []
         for p in [0, 1]:
             for j in range(self.n):
-                res.extend([self.root(i, j, 0, p) for i in range(j)])
+                res.extend(self.root(i, j, 0, p) for i in range(j))
         return res
 
     def negative_roots(self):
@@ -95,7 +96,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         res = []
         for p in [0, 1]:
             for j in range(self.n):
-                res.extend([self.root(i, j, 1, p) for i in range(j)])
+                res.extend(self.root(i, j, 1, p) for i in range(j))
         return res
 
     def fundamental_weight(self, i):
@@ -115,9 +116,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
         else:
             return self.sum(self.monomial(j) for j in range(i))
 
-
-from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_A', 'ambient_space',  AmbientSpace)
 
 from sage.misc.cachefunc import cached_method
 from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, CartanType_simple
@@ -349,10 +347,10 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
         ret = (4*(n-3))*" "+"{} {}\n".format(node(label(n)), label(n))
         ret += ((4*(n-3))*" " + "|\n")*2
         ret += "---".join(node(label(i)) for i in range(1, n)) + "\n"
-        ret += "".join("{!s:4}".format(label(i)) for i in range(1,n))
+        ret += "".join("{!s:4}".format(label(i)) for i in range(1, n))
         return ret
 
 
 # For unpickling backward compatibility (Sage <= 4.1)
-from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_D', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_D',
+                           'ambient_space', AmbientSpace)

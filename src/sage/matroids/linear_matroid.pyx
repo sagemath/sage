@@ -259,7 +259,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -1285,9 +1285,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -2614,13 +2614,19 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         cochains = self.linear_coextension_cochains(F, cosimple=cosimple, fundamentals=fundamentals)
         return self._linear_coextensions(element, cochains)
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data represent an actual matroid.
 
         Since this matroid is linear, we test the representation matrix.
 
-        OUTPUT:
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: boolean, or (boolean, dictionary)
+
+        The boolean output value is:
 
         - ``True`` if the matrix is over a field.
         - ``True`` if the matrix is over a ring and all cross ratios are
@@ -2649,19 +2655,19 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: from sage.matroids.advanced import *  # LinearMatroid
             sage: M = LinearMatroid(ring=ZZ, reduced_matrix=Matrix(ZZ,
             ....:                          [[1, 0, 1], [1, 1, 0], [0, 1, 1]]))
-            sage: M.is_valid()
-            False
+            sage: M.is_valid(certificate=True)
+            (False, {'error': 'not all cross ratios are invertible'})
         """
         if self.base_ring().is_field():
-            return True
+            return True if not certificate else (True, {})
         try:
             CR = self.cross_ratios()
         except (ArithmeticError, TypeError, ValueError):
-            return False
+            return False if not certificate else (False, {"error": "can't compute cross ratios"})
         for x in CR:
             if not x ** (-1) in self.base_ring():
-                return False
-        return True
+                return False if not certificate else (False, {"error": "not all cross ratios are invertible"})
+        return True if not certificate else (True, {})
 
     # connectivity
 
@@ -2725,15 +2731,15 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         dX = dict(zip(range(len(X)), X))
         dY = dict(zip(range(len(Y)), Y))
 
-        for (x, y) in spanning_forest(M):
-            P_rows=[x]
-            P_cols=[y]
-            Q_rows=[]
-            Q_cols=[]
-            sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 2)
+        for x, y in spanning_forest(M):
+            P_rows = [x]
+            P_cols = [y]
+            Q_rows = []
+            Q_cols = []
+            sol, cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 2)
             if sol:
                 if certificate:
-                    cert = set([])
+                    cert = set()
                     for x in cert_pair[0]:
                         cert.add(dX[x])
                     for y in cert_pair[1]:
@@ -2789,8 +2795,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         M = M2._matrix_()
         X, Y = self._current_rows_cols()
 
-        dX = dict(zip(range(len(X)),X))
-        dY = dict(zip(range(len(Y)),Y))
+        dX = dict(zip(range(len(X)), X))
+        dY = dict(zip(range(len(Y)), Y))
         n = len(X)
         m = len(Y)
 
@@ -2811,22 +2817,22 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             Yp = list(range(m))
             Yp.remove(y1)
 
-            B = B.matrix_from_rows_and_columns(Xp,Yp)
+            B = B.matrix_from_rows_and_columns(Xp, Yp)
 
             # produce a spanning forest of B
-            for (x,y) in spanning_forest(B):
+            for x, y in spanning_forest(B):
                 if x >= x1:
                     x = x + 1
                 if y >= y1:
                     y = y + 1
                 # rank 2 matrix and rank 0 matrix
-                P_rows = [x,x1]
-                P_cols = [y,y1]
+                P_rows = [x, x1]
+                P_cols = [y, y1]
                 Q_rows = []
                 Q_cols = []
                 # make sure the matrix has rank 2
-                if M.matrix_from_rows_and_columns(P_rows,P_cols).rank() == 2:
-                    sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
+                if M.matrix_from_rows_and_columns(P_rows, P_cols).rank() == 2:
+                    sol, cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
                     if sol:
                         break
                 # rank 1 matrix and rank 1 matrix
@@ -2835,7 +2841,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 Q_rows = [x]
                 Q_cols = [y]
                 # both matrix have rank 1
-                sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
+                sol, cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
                 if sol:
                     break
             if sol:
@@ -2900,7 +2906,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 if action in Semigroups:
                     G, action = action, G
             else:
-                G, action = G_action, None # the None action is g.__call__
+                G, action = G_action, None  # the None action is g.__call__
 
             from sage.algebras.orlik_terao import OrlikTeraoInvariantAlgebra
 
@@ -3072,7 +3078,7 @@ cdef class BinaryMatroid(LinearMatroid):
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True, basis=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         .. NOTE::
 
@@ -3829,7 +3835,7 @@ cdef class BinaryMatroid(LinearMatroid):
         global GF2
         cdef int r, c
         B= self.basis()
-        C = [self._fundamental_cocircuit(B,e) for e in B]
+        C = [self._fundamental_cocircuit(B, e) for e in B]
 
         c = 1
         col = {}
@@ -3844,32 +3850,37 @@ cdef class BinaryMatroid(LinearMatroid):
             for f in range(e):
                 for g in range(f):
                     if not C[e].issuperset(C[f] & C[g]):
-                        M.append([col[e,f], col[e,g]])
+                        M.append([col[e, f], col[e, g]])
                         r += 1
                     if not C[f].issuperset(C[e] & C[g]):
-                        M.append([col[f,e], col[f,g]])
+                        M.append([col[f, e], col[f, g]])
                         r += 1
                     if not C[g].issuperset(C[e] & C[f]):
-                        M.append([col[g,e], col[g,f]])
+                        M.append([col[g, e], col[g, f]])
                         r += 1
                     if len(C[e] & C[f] & C[g]) > 0:
-                        M.append([0,col[e,f], col[e,g], col[f,e], col[f,g], col[g,e], col[g,f]])
+                        M.append([0, col[e, f], col[e, g], col[f, e],
+                                  col[f, g], col[g, e], col[g, f]])
                         r += 1
-        cdef BinaryMatrix m = BinaryMatrix(r,c)
+        cdef BinaryMatrix m = BinaryMatrix(r, c)
         for r in range(len(M)):
             for c in M[r]:
-                m.set(r,c)
+                m.set(r, c)
         # now self is graphic iff there is a binary vector x so that M*x = 0 and x_0 = 1, so:
         return BinaryMatroid(m).corank(frozenset([0])) > 0
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
         Since this is a linear matroid over the field `\GF{2}`, this is always
         the case.
 
-        OUTPUT: ``True``
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: ``True``, or ``(True, {})``
 
         EXAMPLES::
 
@@ -3877,11 +3888,11 @@ cdef class BinaryMatroid(LinearMatroid):
             sage: M.is_valid()
             True
         """
-        return True
+        return True if not certificate else (True, {})
 
     # representability
 
-    cpdef binary_matroid(self, randomized_tests=1, verify = True):
+    cpdef binary_matroid(self, randomized_tests=1, verify=True):
         r"""
         Return a binary matroid representing ``self``.
 
@@ -4100,7 +4111,7 @@ cdef class TernaryMatroid(LinearMatroid):
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True, basis=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         .. NOTE::
 
@@ -4720,18 +4731,22 @@ cdef class TernaryMatroid(LinearMatroid):
         C = [self._idx[f] for f in F]
         A, C2 = (<TernaryMatrix>self._A).matrix_from_rows_and_columns_reordered(R, C)
         return TernaryMatroid(matrix=A,
-                             groundset=[self._E[c] for c in C2],
-                             basis=bas,
-                             keep_initial_representation=False)
+                              groundset=[self._E[c] for c in C2],
+                              basis=bas,
+                              keep_initial_representation=False)
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
         Since this is a linear matroid over the field `\GF{3}`, this is always
         the case.
 
-        OUTPUT: ``True``
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: ``True``, or ``(True, {})``
 
         EXAMPLES::
 
@@ -4739,11 +4754,11 @@ cdef class TernaryMatroid(LinearMatroid):
             sage: M.is_valid()
             True
         """
-        return True
+        return True if not certificate else (True, {})
 
     # representability
 
-    cpdef ternary_matroid(self, randomized_tests=1, verify = True):
+    cpdef ternary_matroid(self, randomized_tests=1, verify=True):
         r"""
         Return a ternary matroid representing ``self``.
 
@@ -4974,7 +4989,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True, basis=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         .. NOTE::
 
@@ -5484,18 +5499,22 @@ cdef class QuaternaryMatroid(LinearMatroid):
         C = [self._idx[f] for f in F]
         A, C2 = (<QuaternaryMatrix>self._A).matrix_from_rows_and_columns_reordered(R, C)
         return QuaternaryMatroid(matrix=A,
-                             groundset=[self._E[c] for c in C2],
-                             basis=bas,
-                             keep_initial_representation=False)
+                                 groundset=[self._E[c] for c in C2],
+                                 basis=bas,
+                                 keep_initial_representation=False)
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
         Since this is a linear matroid over the field `\GF{4}`, this is always
         the case.
 
-        OUTPUT: ``True``
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: ``True``, or ``(True, {})``
 
         EXAMPLES::
 
@@ -5503,7 +5522,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
             sage: M.is_valid()                                                          # needs sage.rings.finite_rings
             True
         """
-        return True
+        return True if not certificate else (True, {})
 
     def __reduce__(self):
         """
@@ -5675,7 +5694,7 @@ cdef class RegularMatroid(LinearMatroid):
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         .. NOTE::
 
@@ -6148,8 +6167,9 @@ cdef class RegularMatroid(LinearMatroid):
             VO.extend(X)
         m = isomorphic(HS[2], HO[2], HS[0], VO, 1, 1)
         if m:
-            idx={str(f):f for f in other.groundset()}
-            return {e:idx[m[str(e)]] for e in self.groundset() if str(e) in m}
+            idx = {str(f): f for f in other.groundset()}
+            return {e: idx[m[str(e)]] for e in self.groundset()
+                    if str(e) in m}
 
     cpdef has_line_minor(self, k, hyperlines=None, certificate=False):
         r"""
@@ -6270,7 +6290,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return BinaryMatroid(reduced_matrix=self._reduced_representation()).is_graphic()
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -6278,7 +6298,11 @@ cdef class RegularMatroid(LinearMatroid):
         representation matrix is *totally unimodular*, i.e. if all square
         submatrices have determinant in `\{-1, 0, 1\}`.
 
-        OUTPUT: boolean
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: boolean, or (boolean, dictionary)
 
         EXAMPLES::
 
@@ -6287,15 +6311,17 @@ cdef class RegularMatroid(LinearMatroid):
             ....:                         [0, 1, 0, 1, 0, 1, 1],
             ....:                         [0, 0, 1, 0, 1, 1, 1]]),
             ....:             regular=True, check=False)
-            sage: M.is_valid()
-            False
+            sage: M.is_valid(certificate=True)
+            (False, {'error': 'the representation matrix is not totally unimodular'})
             sage: M = Matroid(graphs.PetersenGraph())
             sage: M.is_valid()
             True
         """
         M = LinearMatroid(ring=QQ, reduced_matrix=self.representation(self.basis(), True, False))
         CR = M.cross_ratios()
-        return CR.issubset(set([1]))
+        if CR.issubset(set([1])):
+            return True if not certificate else (True, {})
+        return False if not certificate else (False, {"error": "the representation matrix is not totally unimodular"})
 
     # representation
 
@@ -6313,7 +6339,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return True
 
-    cpdef binary_matroid(self, randomized_tests=1, verify = True):
+    cpdef binary_matroid(self, randomized_tests=1, verify=True):
         r"""
         Return a binary matroid representing ``self``.
 
@@ -6368,7 +6394,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return True
 
-    cpdef ternary_matroid(self, randomized_tests=1, verify = True):
+    cpdef ternary_matroid(self, randomized_tests=1, verify=True):
         r"""
         Return a ternary matroid representing ``self``.
 

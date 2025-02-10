@@ -8,8 +8,8 @@ Congruence subgroup `\Gamma_0(N)`
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import kronecker_symbol, divisors, euler_phi, gcd, moebius
 from sage.misc.cachefunc import cached_method
@@ -47,6 +47,8 @@ def is_Gamma0(x):
 
 
 _gamma0_cache = {}
+
+
 def Gamma0_constructor(N):
     """
     Return the congruence subgroup Gamma0(N).
@@ -143,7 +145,7 @@ class Gamma0_class(GammaH_class):
         # be done if needed by the _generators_for_H and _list_of_elements_in_H
         # methods.
         #
-        #GammaH_class.__init__(self, level, [int(x) for x in IntegerModRing(level).unit_gens()])
+        # GammaH_class.__init__(self, level, [int(x) for x in IntegerModRing(level).unit_gens()])
 
     def _repr_(self):
         """
@@ -412,7 +414,7 @@ class Gamma0_class(GammaH_class):
         R = IntegerModRing(N)
         return [GammaH(N, H) for H in R.multiplicative_subgroups()]
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         Test whether x is an element of this group.
 

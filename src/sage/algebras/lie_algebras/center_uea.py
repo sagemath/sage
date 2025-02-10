@@ -6,22 +6,22 @@ AUTHORS:
 - Travis Scrimshaw (2024-01-02): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-#from sage.structure.unique_representation import UniqueRepresentation
-#from sage.structure.parent import Parent
+# from sage.structure.unique_representation import UniqueRepresentation
+# from sage.structure.parent import Parent
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.matrix.constructor import matrix
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid #, IndexedFreeAbelianMonoidElement
+from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.monoids.indexed_free_monoid import IndexedMonoid
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.combinat.integer_vector_weighted import iterator_fast as intvecwt_iterator
@@ -419,7 +419,6 @@ class SimpleLieCenterIndices(CenterIndices):
         n = len(self._gen_degrees)
         wts = sorted(self._gen_degrees.values(), reverse=True)
         while True:
-            total = 0
             for exps in intvecwt_iterator(deg, wts):
                 yield self.element_class(self, {n-1-i: e for i, e in enumerate(exps) if e})
             deg += 1

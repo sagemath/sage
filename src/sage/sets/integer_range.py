@@ -384,7 +384,7 @@ class IntegerRangeFinite(IntegerRange):
             sage: IntegerRange(123,12,4).cardinality()
             0
         """
-        return (abs((self._end+self._step-self._begin))-1) // abs(self._step)
+        return (abs(self._end+self._step-self._begin)-1) // abs(self._step)
 
     def _repr_(self):
         """
@@ -748,8 +748,8 @@ class IntegerRangeFromMiddle(IntegerRange):
             except (TypeError, ValueError):
                 return False
         if abs(self._step).divides(Integer(elt)-self._middle_point):
-            return (self._begin <= elt and elt < self._end) or \
-                   (self._begin >= elt and elt > self._end)
+            return (self._begin <= elt < self._end) or \
+                   (self._begin >= elt > self._end)
         return False
 
     def next(self, elt):

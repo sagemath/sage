@@ -105,8 +105,6 @@ def register_ring_hom(ring_hom):
         except ValueError:
             verbose('\nthe map:\n%s\ncannot be registered as conversion\n' % ring_hom)
 
-    return
-
 
 # -----------------------------------------------------------------------------
 # class for the Galois Group action on the generic extension ring corresponding
@@ -148,7 +146,7 @@ class GaloisGroupAction(Action):
         if not self.is_left():
             perm, pol = pol, perm
         pol_dict = {}
-        for key, value in pol.dict().items():
+        for key, value in pol.monomial_coefficients().items():
             newkey = [0] * len(key)
             for pos, k in enumerate(key):
                 newkey[perm(pos + 1) - 1] = k
@@ -683,7 +681,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
 
         if len(cyclotomic_roots) > 0:
             E3 = cyclotomic_roots[0]
-            verbose('thrird root of unity %s found in %s' % (E3, E3.parent()), level=2)
+            verbose('third root of unity %s found in %s' % (E3, E3.parent()), level=2)
 
         if E3 is None:
             raise RuntimeError('cannot find a ring containing a third root of unity for the this choice of cubic roots!')
@@ -1005,11 +1003,10 @@ class CubicHeckeRingOfDefinition(Localization):
         # Init of data used on demand
         # ----------------------------------------------------------------------
         self._mirror = None
-        return
 
-    ############################################################################
+    # ########################################################################
     # overloaded inherited methods
-    ############################################################################
+    # ########################################################################
     def _defining_names(self):
         r"""
         Return the generators of ``self`` as the defining names.
@@ -1337,7 +1334,7 @@ class CubicHeckeRingOfDefinition(Localization):
                       From: Multivariate Polynomial Ring in u, v, w, s
                             over Integer Ring localized at (s, w, v, u)
                       To:   Multivariate Polynomial Ring in L, M
-                            over Integer Ring localized at (M, M - 1, L)
+                            over Integer Ring localized at (M - 1, M, L)
                       Defn: u |--> -M + 1
                             v |--> -M + 1
                             w |--> 1
@@ -1345,7 +1342,7 @@ class CubicHeckeRingOfDefinition(Localization):
                     then
                       Conversion map:
                       From: Multivariate Polynomial Ring in L, M
-                            over Integer Ring localized at (M, M - 1, L)
+                            over Integer Ring localized at (M - 1, M, L)
                       To:   Multivariate Laurent Polynomial Ring in L, M
                             over Integer Ring
             sage: sup = mt.support()

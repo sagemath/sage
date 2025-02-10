@@ -275,7 +275,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         Check conversion of Booleans (:issue:`28705`)::
 
-            sage: giac(True)
+            sage: giac(True)  # needs giac
             true
             sage: maxima(True)
             true
@@ -343,7 +343,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         Check that python type ``complex`` can be converted (:issue:`31775`)::
 
-            sage: giac(complex(I))**2  # should not return `j^2`
+            sage: giac(complex(I))**2  # should not return `j^2`  # needs giac
             -1
         """
         if isinstance(x, bool):
@@ -444,9 +444,12 @@ class Interface(WithEqualityById, ParentWithBase):
             sage: symbols[operator.eq]
             '=='
         """
-        return dict([(operator.eq, self._equality_symbol()), (operator.ne, self._inequality_symbol()),
-                     (operator.lt, self._lessthan_symbol()), (operator.le, "<="),
-                     (operator.gt, self._greaterthan_symbol()), (operator.ge, ">=")])
+        return {operator.eq: self._equality_symbol(),
+                operator.ne: self._inequality_symbol(),
+                operator.lt: self._lessthan_symbol(),
+                operator.le: "<=",
+                operator.gt: self._greaterthan_symbol(),
+                operator.ge: ">="}
 
     def _exponent_symbol(self):
         """
@@ -814,8 +817,8 @@ class InterfaceElement(Element):
             sage: S = singular.ring(0, ('x'))
             sage: loads(dumps(S))
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 1
+            // coefficients: QQ...
+            // number of vars : 1
             //        block   1 : ordering lp
             //                  : names    x
             //        block   2 : ordering C
@@ -877,7 +880,7 @@ class InterfaceElement(Element):
 
         Special care has to be taken with strings. Since for example `r("abc")` will be
         interpreted as the R-command abc (not a string in R), we have to reduce to
-        `"'abc'"` instead. That is dependant on the Elements `is_string` function to
+        `"'abc'"` instead. That is dependant on the Elements ``is_string`` function to
         be implemented correctly. This has gone wrong in the past and remained uncaught
         by the doctests because the original identifier was reused. This test makes sure
         that does not happen again::
@@ -1193,12 +1196,12 @@ class InterfaceElement(Element):
             sage: gap(2)
             2
             sage: x = var('x')
-            sage: giac(x)
+            sage: giac(x)  # needs giac
             sageVARx
-            sage: giac(5)
+            sage: giac(5)  # needs giac
             5
             sage: M = matrix(QQ,2,range(4))
-            sage: giac(M)
+            sage: giac(M)  # needs giac
             [[0,1],[2,3]]
             sage: x = var('x')                  # optional - maple
             sage: maple(x)                      # optional - maple
@@ -1338,7 +1341,7 @@ class InterfaceElement(Element):
         By default this returns ``True`` for elements that are considered to be
         not ``False`` by the interface (:issue:`28705`)::
 
-            sage: bool(giac('"a"'))
+            sage: bool(giac('"a"'))  # needs giac
             True
         """
         P = self._check_valid()

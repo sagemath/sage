@@ -69,7 +69,7 @@ from .orthogonal_arrays import wilson_construction
 cyclic_shift = lambda l,i : l[-i:]+l[:-i]
 
 
-def _MOLS_from_string(s,k):
+def _MOLS_from_string(s, k):
     r"""
     Return MOLS from a string.
 
@@ -1058,8 +1058,8 @@ def OA_11_185():
     assert all(len(B) in (11,13) or set(B) == set(special_set) for B in PBD)
 
     OA = OA_from_PBD(11,185,[B for B in PBD if len(B) < 17],check=False)[:-185]
-    OA.extend([[i]*11 for i in range(185) if i not in special_set])
-    OA.extend([[special_set[x] for x in B] for B in orthogonal_array(11,17)])
+    OA.extend([i]*11 for i in range(185) if i not in special_set)
+    OA.extend([special_set[x] for x in B] for B in orthogonal_array(11,17))
     return OA
 
 
@@ -1109,7 +1109,7 @@ def OA_10_205():
     baer_subplane_size = 4**2+4+1
 
     B = [0, 1, 22, 33, 83, 122, 135, 141, 145, 159, 175, 200, 226, 229, 231, 238, 246]
-    pplane = [[(xx+i) % pplane_size for xx in B]  for i in range(pplane_size)]
+    pplane = [[(xx+i) % pplane_size for xx in B] for i in range(pplane_size)]
     baer_subplane = set([i*pplane_size/baer_subplane_size for i in range(baer_subplane_size)])
 
     p = list(baer_subplane)[0]
@@ -1126,7 +1126,7 @@ def OA_10_205():
     GDD = [[relabel[xx] for xx in B if xx in relabel] for B in pplane if p not in B]
 
     # We turn the GDD into a PBD by extending the groups with a new point 204.
-    GDD.extend([[relabel[xx] for xx in G]+[204] for G in groups])
+    GDD.extend([relabel[xx] for xx in G]+[204] for G in groups)
 
     # We build the OA, knowing that the blocks of size 9 are disjoint
     blocks_of_size_9 = [B for B in GDD if len(B) == 9]
@@ -1134,13 +1134,13 @@ def OA_10_205():
 
     OA = OA_from_PBD(10,205,[B for B in GDD if len(B) != 9],check=False)[:-205]
 
-    OA.extend([[B[xx] for xx in R]
-               for R in orthogonal_array(10,9)
-               for B in blocks_of_size_9])
+    OA.extend([B[xx] for xx in R]
+              for R in orthogonal_array(10,9)
+              for B in blocks_of_size_9)
 
     # The missing [i,i,...] blocks
-    OA.extend([[i]*10
-               for i in set(range(205)).difference(blocks_of_size_9_union)])
+    OA.extend([i]*10
+              for i in set(range(205)).difference(blocks_of_size_9_union))
 
     return OA
 
@@ -1284,7 +1284,7 @@ def OA_11_254():
 
     # Base block of a PG(2,19)
     B = (0,1,19,28,96,118,151,153,176,202,240,254,290,296,300,307,337,361,366,369)
-    BIBD = [[(x+i) % 381 for x in B]  for i in range(381)]
+    BIBD = [[(x+i) % 381 for x in B] for i in range(381)]
 
     # We only keep points congruent to 0,1 mod 3 and relabel the PBD. The result is
     # a (254,{11,13,16})-PBD
@@ -1627,7 +1627,8 @@ def OA_10_796():
     OA = OA_relabel(OA,17,47,blocks=[OA[0]]) # making sure [46]*17 is a block
     PBD = [[i*47+x for i,x in enumerate(B) if (x < 46 or i < 13)] for B in OA]
     extra_point = 10000
-    PBD.extend([list(range(i*47,(i+1)*47-int(i >= 13)))+[extra_point] for i in range(17)]) # Adding the columns
+    PBD.extend(list(range(i*47,(i+1)*47-int(i >= 13)))+[extra_point]
+               for i in range(17))  # Adding the columns
 
     rel = {v:i for i,v in enumerate(set(range(17*47)).difference([(i+1)*47-1 for i in range(13,17)]))}
     rel[extra_point] = len(rel)
@@ -1645,7 +1646,7 @@ def OA_10_796():
     for B in PBD:
         if len(B) >= 47:
             B.sort(key=lambda x:int(x == extra_point))
-            OA.extend([[B[i] for i in BB] for BB in iOA[len(B)]])
+            OA.extend([B[i] for i in BB] for BB in iOA[len(B)])
             span.update(B[:-1])
         else:
             others.append(B)
@@ -1708,7 +1709,7 @@ def OA_10_469():
          731,824,837,848,932,1002,1051,1055,1089,1105,1145,1165,1196,1217,1226,
          1274,1281,1309,1405)
 
-    BIBD = [[(x+i) % 1407 for x in B]  for i in range(1407)]
+    BIBD = [[(x+i) % 1407 for x in B] for i in range(1407)]
 
     # Only keep points v congruent to 0 mod 3 and relabel
     PBD = [[x//3 for x in B if x % 3 == 0] for B in BIBD]
@@ -3143,15 +3144,58 @@ DF = {
            [0,2,13,18,28,30,44,48,50,51,57,61],
            [0,4,21,26,29,33,35,36,47,55,56,60]]},
 
-# a 133-cyclic set from Ken Smith database
-# see https://math.ccrwest.org/diffsets/diff_sets/DS_133_33_8_133.html
+# a (133,33,8)-cyclic difference set
+# see https://dmgordon.org/diffset
 (133,33, 8):
-  {(133,): [[0,4,7,8,15,17,19,22,24,25,29,30,38,
-             47,49,50,55,58,61,62,71,73,76,77,78,
-             82,95,111,113,114,121,123,127]]},
+  {(133,): [[1,5,14,22,25,27,29,32,34,38,
+             46,64,65,66,76,78,81,82,84,89,
+             92,93,99,103,104,106,107,112,113,122,
+             126,128,129]]},
 
-# a 901-cyclic
-# see https://math.ccrwest.org/diffsets/diff_sets/DS_901_225_56_901.html
+# a (144,66,30) non-cyclic difference set in AbelianGroup([2,8,3,3])
+# given in unpublished paper by Kroeger, Miller, Mooney, Shepard and Smith
+# see https://dmgordon.org/diffset
+(144,66,30):
+  {(2,8,3,3): [[(0,1,0,0),(0,7,0,2),(0,5,0,1),(0,3,0,0),(0,6,0,1),
+                (0,1,0,2),(0,4,0,0),(0,2,0,2),(0,6,0,0),(0,1,0,1),
+                (0,4,0,2),(0,2,0,1),(1,2,2,0),(1,3,2,0),(1,4,2,0),
+                (1,5,2,0),(1,6,2,0),(1,7,2,0),(0,6,1,2),(0,1,1,0),
+                (0,4,1,1),(0,3,1,0),(0,1,1,2),(0,4,1,0),(0,7,1,1),
+                (0,2,1,2),(0,6,1,0),(0,1,1,1),(0,2,1,1),(0,5,1,2),
+                (1,0,0,0),(1,6,0,2),(1,1,0,0),(1,4,0,1),(1,7,0,2),
+                (1,2,0,0),(1,5,0,1),(1,0,0,2),(1,3,0,0),(1,1,0,2),
+                (1,0,0,1),(1,1,0,1),(0,0,2,0),(0,6,2,2),(0,4,2,1),
+                (0,0,2,2),(0,3,2,0),(0,6,2,1),(0,2,2,2),(0,5,2,0),
+                (0,0,2,1),(0,4,2,2),(0,7,2,0),(0,2,2,1),(1,0,1,0),
+                (1,1,1,0),(1,2,1,0),(1,0,1,2),(1,3,1,0),(1,6,1,1),
+                (1,1,1,2),(1,7,1,1),(1,0,1,1),(1,1,1,1),(1,4,1,2),
+                (1,5,1,2)]]},
+
+# a (320,88,24) non-cyclic difference set in AbelianGroup([4,4,4,5]),
+# given in Arasu and Chen, Designs, Codes and Cryptography 2001
+# see https://dmgordon.org/diffset
+(320,88,24):
+    {(4,4,4,5): [[(3,3,3,0),(2,3,2,0),(3,1,3,0),(2,2,3,0),(1,3,3,0),
+                  (3,2,1,0),(2,2,2,0),(2,2,1,0),(2,1,2,0),(0,3,2,0),
+                  (2,0,3,0),(1,1,3,0),(0,2,3,0),(3,0,1,0),(1,2,1,0),
+                  (2,0,2,0),(0,2,2,0),(2,0,1,0),(0,2,1,0),(0,1,2,0),
+                  (0,0,3,0),(1,0,1,0),(0,0,2,0),(0,0,1,0),(3,3,3,1),
+                  (3,3,1,1),(3,0,3,1),(0,3,3,1),(3,0,1,1),(0,3,1,1),
+                  (1,1,2,1),(1,0,2,1),(0,1,2,1),(0,0,3,1),(1,1,0,1),
+                  (0,0,2,1),(1,0,0,1),(0,1,0,1),(0,0,1,1),(0,0,0,1),
+                  (1,1,3,2),(3,1,1,2),(2,3,3,2),(2,2,3,2),(0,3,2,2),
+                  (0,3,1,2),(0,2,1,2),(3,2,2,2),(3,1,2,2),(3,0,3,2),
+                  (2,3,0,2),(2,0,2,2),(1,2,0,2),(1,1,0,2),(1,0,1,2),
+                  (0,0,0,2),(1,1,1,3),(1,3,3,3),(3,2,1,3),(2,2,3,3),
+                  (3,0,0,3),(3,0,3,3),(1,3,0,3),(2,0,1,3),(3,2,2,3),
+                  (2,3,2,3),(0,3,3,3),(1,1,2,3),(0,2,2,3),(2,1,0,3),
+                  (0,1,1,3),(0,0,0,3),(2,0,3,4),(1,1,2,4),(0,2,1,4),
+                  (0,1,3,4),(3,2,3,4),(3,2,2,4),(2,3,2,4),(3,1,3,4),
+                  (3,3,0,4),(2,3,1,4),(1,0,1,4),(2,2,2,4),(1,3,1,4),
+                  (1,0,0,4),(0,1,0,4),(0,0,0,4)]]},
+
+# a (901,225,56)-cyclic difference set
+# see https://dmgordon.org/diffset
 (901,225,56):
   {(901,): [[  0,  1,  5,  9, 12, 13, 14, 16, 22, 25, 41, 43,
               45, 47, 53, 59, 60, 65, 69, 70, 71, 79, 80, 81,
@@ -3786,13 +3830,13 @@ def DM_52_6_1():
 
     from itertools import product
 
-    def t1(i,R):
+    def t1(i, R):
         if i > 1:
             return t1(1,t1(i-1,R))
         ((x1,y1),(x2,y2),(x3,y3),(x4,y4),(x5,y5),(x6,y6)) = R
         return [(z*x3, 3*y3), (z*x1, 3*y1), (z*x2, 3*y2), (z*x6, 3*y6), (z*x4, 3*y4), (z*x5, 3*y5)]
 
-    def t2(i,R):
+    def t2(i, R):
         if i > 1:
             return t2(1,t2(i-1,R))
         ((x1,y1),(x2,y2),(x3,y3),(x4,y4),(x5,y5),(x6,y6)) = R
@@ -4171,7 +4215,7 @@ def RBIBD_120_8_1():
 
     # A (precomputed) set that every block of the BIBD intersects on 0 or 2 points
     hyperoval = [128, 192, 194, 4, 262, 140, 175, 48, 81, 180, 245, 271, 119, 212, 249, 189, 62, 255]
-    #for B in BIBD:
+    # for B in BIBD:
     #    len_trace = sum(x in hyperoval for x in B)
     #    assert len_trace == 0 or len_trace == 2
 
@@ -4283,7 +4327,7 @@ def BIBD_66_6_1():
     Return a (66,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4307,7 +4351,7 @@ def BIBD_76_6_1():
     Return a (76,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4331,7 +4375,7 @@ def BIBD_96_6_1():
     Return a (96,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4577,13 +4621,9 @@ def HigmanSimsDesign():
     from sage.combinat.designs.block_design import WittDesign
     from .incidence_structures import IncidenceStructure
     W = WittDesign(24)
-    a,b = 0,1
-    Wa = [set(B) for B in W
-          if (a     in B and
-              b not in B)]
-    Wb = [set(B) for B in W
-          if (b     in B and
-              a not in B)]
+    a, b = 0, 1
+    Wa = [set(B) for B in W if a in B and b not in B]
+    Wb = [set(B) for B in W if b in B and a not in B]
 
     H = [[i for i, A in enumerate(Wa) if len(A & B) != 2]
          for B in Wb]

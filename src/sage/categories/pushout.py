@@ -2263,25 +2263,13 @@ class SubspaceFunctor(ConstructionFunctor):
 
             sage: # needs sage.modules
             sage: F1.basis
-            [
-            (1, 0, 4),
-            (0, 1, 2)
-            ]
+            [(1, 0, 4), (0, 1, 2)]
             sage: F2.basis
-            [
-            (1, 2, 3),
-            (0, 3, 6)
-            ]
+            [(1, 2, 3), (0, 3, 6)]
             sage: F3.basis
-            [
-            (1, 0, -1),
-            (0, 1, 2)
-            ]
+            [(1, 0, -1), (0, 1, 2)]
             sage: F4.basis
-            [
-            (1, 0, -1),
-            (0, 1, 2)
-            ]
+            [(1, 0, -1), (0, 1, 2)]
 
 
         The basis of ``F2`` is modulo 5 different from the other bases.
@@ -3055,13 +3043,11 @@ class QuotientFunctor(ConstructionFunctor):
             codomain = self.codomain().join([self.codomain(), other.codomain()])
         # Get the optional arguments:
         as_field = self.as_field or other.as_field
-        kwds = {}
-        for k,v in self.kwds.items():
-            kwds[k] = v
-        for k,v in other.kwds.items():
+        kwds = dict(self.kwds)
+        for k, v in other.kwds.items():
             if k == 'category':
                 if kwds[k] is not None:
-                    kwds[k] = v.join([v,kwds[k]])
+                    kwds[k] = v.join([v, kwds[k]])
                 else:
                     kwds[k] = v
                 continue
@@ -3939,8 +3925,8 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         sage: FS = BlackBoxConstructionFunctor(singular)
         sage: FS(QQ['t'])                                                               # needs sage.libs.singular
         polynomial ring, over a field, global ordering
-        //   coefficients: QQ
-        //   number of vars : 1
+        // coefficients: QQ...
+        // number of vars : 1
         //        block   1 : ordering lp
         //                  : names    t
         //        block   2 : ordering C

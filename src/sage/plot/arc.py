@@ -150,7 +150,7 @@ class Arc(GraphicPrimitive):
         if angle < 0:
             angle += twopi
 
-        epsilon = float(0.0000001)
+        epsilon = 0.0000001
 
         cos_angle = cos(angle)
         sin_angle = sin(angle)
@@ -221,9 +221,9 @@ class Arc(GraphicPrimitive):
 
         if s < twopi - epsilon:  # bb determined by the sector
             def is_cyclic_ordered(x1, x2, x3):
-                return ((x1 < x2 and x2 < x3) or
-                        (x2 < x3 and x3 < x1) or
-                        (x3 < x1 and x1 < x2))
+                return ((x1 < x2 < x3) or
+                        (x2 < x3 < x1) or
+                        (x3 < x1 < x2))
 
             x1 = cos_angle * r1 * cos(s1) - sin_angle * r2 * sin(s1)
             x2 = cos_angle * r1 * cos(s2) - sin_angle * r2 * sin(s2)

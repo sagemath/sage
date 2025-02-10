@@ -308,8 +308,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             # However, this might still drift from true value for larger lattices
             # So optimally one should fix the TODO above
             BOUND = max(1, (self._RR(10**(4 / self.n)).ceil() - 1) // 2)
-            if BOUND > 10:
-                BOUND = 10
+            BOUND = min(BOUND, 10)
             coords = itertools.product(range(-BOUND, BOUND + 1), repeat=self.n)
             return sum(self.f((vector(u) + base) * self.B) for u in coords)
 
@@ -560,7 +559,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         except TypeError:
             self._sigma = matrix(self._RR, sigma)
             # Will it be "annoying" if a matrix Sigma has different behaviour
-            # sometimes? There should be a parameter in the consrtuctor
+            # sometimes? There should be a parameter in the constructor
             if self._sigma == self._sigma[0, 0]:
                 self._sigma = self._RR(self._sigma[0, 0])
             else:

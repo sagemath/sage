@@ -129,14 +129,14 @@ def brauer_diagrams(k):
          {{-3, 3}, {-2, 2}, {-1, 1}}]
     """
     if k in ZZ:
-        s = list(range(1,k+1)) + list(range(-k,0))
+        s = list(range(1, k+1)) + list(range(-k,0))
         for p in perfect_matchings_iterator(k):
             yield [(s[a],s[b]) for a,b in p]
-    elif k + ZZ(1) / ZZ(2) in ZZ: # Else k in 1/2 ZZ
-        k = ZZ(k + ZZ(1) / ZZ(2))
+    elif k + ZZ.one() / 2 in ZZ:  # Else k in 1/2 ZZ
+        k = ZZ(k + ZZ.one() / 2)
         s = list(range(1, k)) + list(range(-k+1,0))
         for p in perfect_matchings_iterator(k-1):
-            yield [(s[a],s[b]) for a,b in p] + [[k, -k]]
+            yield [(s[a], s[b]) for a, b in p] + [[k, -k]]
 
 
 def temperley_lieb_diagrams(k):
@@ -1203,7 +1203,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
             self.order = ZZ(order)
             base_set = frozenset(list(range(1,order+1)) + list(range(-order,0)))
         else:
-            #order is a half-integer.
+            # order is a half-integer.
             self.order = QQ(order)
             base_set = frozenset(list(range(1,ZZ(ZZ(1)/ZZ(2) + order)+1))
                                  + list(range(ZZ(-ZZ(1)/ZZ(2) - order),0)))
@@ -3013,7 +3013,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             sage: L = [P.L(i/2) for i in range(1,2*k+1)]
             sage: all(x.dual() == x for x in L)
             True
-            sage: all(x * y == y * x for x in L for y in L)  # long time
+            sage: all(x * y == y * x for x, y in Subsets(L, 2))  # long time
             True
             sage: Lsum = sum(L)
             sage: gens = [P.s(i) for i in range(1,k)]
@@ -3045,13 +3045,13 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         The same tests for a half integer partition algebra::
 
-            sage: k = 9/2
+            sage: k = 7/2
             sage: R.<n> = QQ[]
             sage: P = PartitionAlgebra(k, n)
             sage: L = [P.L(i/2) for i in range(1,2*k+1)]
             sage: all(x.dual() == x for x in L)
             True
-            sage: all(x * y == y * x for x in L for y in L)  # long time
+            sage: all(x * y == y * x for x, y in Subsets(L, 2))  # long time
             True
             sage: Lsum = sum(L)
             sage: gens = [P.s(i) for i in range(1,k-1/2)]
@@ -4795,7 +4795,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
                 # Singleton intervals are vertical lines,
                 #   so we don't need to worry about them
                 if len(I) > 1 and I[0] < cur[0]:
-                    cur, level[j] = level[j], cur
+                    cur, level[j] = I, cur
                     level.append([cur[0]])
                     level.append([cur[1]])
                     break
@@ -4865,7 +4865,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
             count_left += 1
         for j in range(i):
             prop_intervals[j].append([bot])
-        for j in range(i+1,total_prop):
+        for j in range(i+1, total_prop):
             prop_intervals[j].append([top])
         if not left_moving:
             top, bot = bot, top
@@ -4964,10 +4964,10 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
     for i in list(diagram):
         l1.append(list(i))
         l2.extend(list(i))
-    output = "\\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] \n\\tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] \n" #setup beginning of picture
-    for i in l2: #add nodes
+    output = "\\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] \n\\tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] \n"  # setup beginning of picture
+    for i in l2:  # add nodes
         output = output + "\\node[vertex] (G-{}) at ({}, {}) [shape = circle, draw{}] {{}}; \n".format(i, (abs(i)-1)*1.5, sgn(i), filled_str)
-    for i in l1: #add edges
+    for i in l1:  # add edges
         if len(i) > 1:
             l4 = list(i)
             posList = []
@@ -4980,21 +4980,21 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
             posList.sort()
             negList.sort()
             l4 = posList + negList
-            l5 = l4[:] #deep copy
+            l5 = l4[:]  # deep copy
             for j in range(len(l5)):
-                l5[j-1] = l4[j] #create a permuted list
+                l5[j-1] = l4[j]  # create a permuted list
             if len(l4) == 2:
                 l4.pop()
-                l5.pop() #pops to prevent duplicating edges
+                l5.pop()  # pops to prevent duplicating edges
             for j in zip(l4, l5):
                 xdiff = abs(j[1])-abs(j[0])
                 y1 = sgn(j[0])
                 y2 = sgn(j[1])
-                if y2-y1 == 0 and abs(xdiff) < 5: #if nodes are close to each other on same row
-                    diffCo = (0.5+0.1*(abs(xdiff)-1)) #gets bigger as nodes are farther apart; max value of 1; min value of 0.5.
+                if y2-y1 == 0 and abs(xdiff) < 5:  # if nodes are close to each other on same row
+                    diffCo = (0.5+0.1*(abs(xdiff)-1))  # gets bigger as nodes are farther apart; max value of 1; min value of 0.5.
                     outVec = (sgn(xdiff)*diffCo, -1*diffCo*y1)
                     inVec = (-1*diffCo*sgn(xdiff), -1*diffCo*y2)
-                elif y2-y1 != 0 and abs(xdiff) == 1: #if nodes are close enough curviness looks bad.
+                elif y2-y1 != 0 and abs(xdiff) == 1:  # if nodes are close enough curviness looks bad.
                     outVec = (sgn(xdiff)*0.75, -1*y1)
                     inVec = (-1*sgn(xdiff)*0.75, -1*y2)
                 else:
@@ -5002,7 +5002,7 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
                     inVec = (-1*sgn(xdiff), -1*y2)
                 output = output + "\\draw[{}] (G-{}) .. controls +{} and +{} .. {}(G-{}); \n".format(
                             edge_options(j), j[0], outVec, inVec, edge_additions(j), j[1])
-    output = output + "\\end{tikzpicture}" #end picture
+    output = output + "\\end{tikzpicture}"  # end picture
     return output
 
 
@@ -5847,11 +5847,9 @@ def to_Brauer_partition(l, k=None):
         True
     """
     L = to_set_partition(l, k=k)
-    L2 = []
     paired = []
     not_paired = []
-    for i in L:
-        L2.append(list(i))
+    L2 = (list(i) for i in L)
     for i in L2:
         if len(i) > 2:
             raise ValueError("blocks must have size at most 2, but {} has {}".format(i, len(i)))

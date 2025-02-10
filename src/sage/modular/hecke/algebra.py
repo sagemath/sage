@@ -26,7 +26,7 @@ the full Hecke algebra, only with the anemic algebra.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.rings.infinity import infinity
 from sage.categories.algebras import Algebras
@@ -91,7 +91,6 @@ def _heckebasis(M):
     MM = MatrixSpace(QQ, d)
     S = []
     Denom = []
-    B = []
     B1 = []
     for i in range(1, M.hecke_bound() + 1):
         v = M.hecke_operator(i).matrix()
@@ -99,11 +98,9 @@ def _heckebasis(M):
         Denom.append(den)
         S.append(v)
     den = lcm(Denom)
-    for m in S:
-        B.append(WW((den * m).list()))
+    B = [WW((den * m).list()) for m in S]
     UU = WW.submodule(B)
-    B = UU.basis()
-    for u in B:
+    for u in UU.basis():
         u1 = u.list()
         m1 = M.hecke_algebra()(MM(u1), check=False)
         B1.append((1 / den) * m1)

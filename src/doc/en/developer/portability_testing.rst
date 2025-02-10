@@ -259,7 +259,7 @@ This information comes from Sage's database of equivalent system
 packages.  For example::
 
   $ ls build/pkgs/flint/distros/
-  alpine.txt  cygwin.txt  fedora.txt   gentoo.txt    macports.txt  opensuse.txt  void.txt
+  alpine.txt  fedora.txt  gentoo.txt   macports.txt  opensuse.txt  void.txt
   conda.txt   debian.txt  freebsd.txt  homebrew.txt  nix.txt       repology.txt
   $ cat build/pkgs/flint/distros/debian.txt
   libflint-dev

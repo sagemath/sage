@@ -9437,9 +9437,9 @@ class FiniteStateMachine(SageObject):
             transitions = state.transitions
             if not transitions:
                 isolated_vertices.append(state.label())
-            for t in transitions:
-                graph_data.append((t.from_state.label(), t.to_state.label(),
-                                   label_fct(t)))
+            graph_data.extend((t.from_state.label(), t.to_state.label(),
+                               label_fct(t))
+                              for t in transitions)
 
         G = DiGraph(graph_data, multiedges=True, loops=True)
         G.add_vertices(isolated_vertices)
@@ -14717,7 +14717,7 @@ class _FSMProcessIteratorEpsilon_(FSMProcessIterator):
         self.TapeCache = _FSMTapeCacheDetectEpsilon_
         self.visited_states = {}
         kwargs['check_epsilon_transitions'] = False
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _push_branch_(self, state, tape_cache, outputs):
         """
@@ -14842,7 +14842,7 @@ class _FSMProcessIteratorAll_(FSMProcessIterator):
         self.TapeCache = _FSMTapeCacheDetectAll_
         self.visited_states = {}
         kwargs['check_epsilon_transitions'] = False
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 # ****************************************************************************

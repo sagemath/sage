@@ -483,7 +483,7 @@ cdef class Cylinder(ParametricSurface):
    Base %s %s %s
    Apex %s %s %s
    Rad %s
-   %s     """%(base[0], base[1], base[2], top[0], top[1], top[2], rad, self.texture.id)
+   %s     """ % (base[0], base[1], base[2], top[0], top[1], top[2], rad, self.texture.id)
         if self.closed:
             normal = (0,0,1)
             if transform is not None:
@@ -866,7 +866,7 @@ cdef class Sphere(ParametricSurface):
             sage: Sphere(12).x3d_geometry()
             "<Sphere radius='12.0'/>"
         """
-        return "<Sphere radius='%s'/>"%(self.radius)
+        return "<Sphere radius='%s'/>" % (self.radius)
 
     def tachyon_repr(self, render_params):
         r"""
@@ -1111,7 +1111,7 @@ class Text(PrimitiveObject):
             sage: Text("Hi").x3d_geometry()
             "<Text string='Hi' solid='true'/>"
         """
-        return "<Text string='%s' solid='true'/>"%self.string
+        return "<Text string='%s' solid='true'/>" % self.string
 
     def obj_repr(self, render_params):
         """
@@ -1162,14 +1162,14 @@ class Text(PrimitiveObject):
             [[['select atomno = 1', 'color atom  [102,102,255]', 'label "Hi"']],
              [['select atomno = 2', 'color atom  [102,102,255]', 'label "Bye"']]]
         """
-        cen = (0,0,0)
+        cen = (0, 0, 0)
         if render_params.transform is not None:
             cen = render_params.transform.transform_point(cen)
         render_params.atom_list.append(cen)
         atom_no = len(render_params.atom_list)
         return ['select atomno = %s' % atom_no,
                 self.get_texture().jmol_str("atom"),
-                'label "%s"' % self.string] #.replace('\n', '|')]
+                'label "%s"' % self.string]  # .replace('\n', '|')]
 
     def threejs_repr(self, render_params):
         r"""
