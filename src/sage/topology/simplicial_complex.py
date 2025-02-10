@@ -802,7 +802,7 @@ class Simplex(SageObject):
         """
         return hash(self.__set)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -2003,21 +2003,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
                                  rename_vertices=True)
         return self.suspension(1, is_mutable).suspension(int(n-1), is_mutable)
 
-    def disjoint_union(self, right, rename_vertices=None, is_mutable=True):
+    def disjoint_union(self, right, is_mutable=True):
         """
         The disjoint union of this simplicial complex with another one.
 
         INPUT:
 
         - ``right`` -- the other simplicial complex (the right-hand factor)
-
-        - ``rename_vertices`` -- boolean (default: ``True``); if this is
-          ``True``, the vertices in the disjoint union will be renamed by the
-          formula: vertex "v" in the left-hand factor --> vertex "Lv" in the
-          disjoint union, vertex "w" in the right-hand factor --> vertex "Rw"
-          in the disjoint union.  If this is false, this tries to construct the
-          disjoint union without renaming the vertices; this will cause
-          problems if the two factors have any vertices with names in common.
 
         EXAMPLES::
 
@@ -2026,15 +2018,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S1.disjoint_union(S2).homology()                                      # needs sage.modules
             {0: Z, 1: Z, 2: Z}
         """
-        if rename_vertices is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(35907, 'the "rename_vertices" argument is deprecated')
-
-        facets = []
-        for f in self._facets:
-            facets.append(tuple(["L" + str(v) for v in f]))
-        for f in right._facets:
-            facets.append(tuple(["R" + str(v) for v in f]))
+        facets = [tuple(f"L{v}" for v in f) for f in self._facets]
+        facets.extend(tuple(f"R{v}" for v in f) for f in right._facets)
         return SimplicialComplex(facets, is_mutable=is_mutable)
 
     def wedge(self, right, rename_vertices=True, is_mutable=True):
@@ -4516,7 +4501,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     # this function overrides the standard one for GenericCellComplex,
     # because it lists the maximal faces, not the total number of faces.
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
