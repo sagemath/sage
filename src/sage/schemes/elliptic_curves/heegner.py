@@ -449,7 +449,7 @@ class RingClassField(SageObject):
         """
         c = self.__c
         if c == 1:
-            return ZZ(1)
+            return ZZ.one()
 
         # Let K_c be the ring class field.  We have by class field theory that
         #           Gal(K_c / H) = (O_K / c O_K)^* / ((Z/cZ)^* M),
@@ -1388,17 +1388,17 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
         """
         return "Complex conjugation automorphism of %s" % self.domain()
 
-##     def __mul__(self, right):
-##         """
-##         Return the composition of two automorphisms.
+#     def __mul__(self, right):
+#         """
+#         Return the composition of two automorphisms.
 
-##         EXAMPLES::
+#         EXAMPLES::
 
-##             sage: ?
-##         """
-##         if self.parent() != right.__parent():
-##             raise TypeError, "automorphisms must be of the same class field"
-##         raise NotImplementedError
+#             sage: ?
+#         """
+#         if self.parent() != right.__parent():
+#             raise TypeError("automorphisms must be of the same class field")
+#         raise NotImplementedError
 
     def __invert__(self):
         """
@@ -1679,7 +1679,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         f = self.quadratic_form()
         c = M.conductor()
         sqrtD = K.gen()
-        (A,B,C) = f
+        A, B, C = f
         if A % c == 0:
             A, C = C, A
         return K.fractional_ideal([A, (-B+c*sqrtD)/2])
@@ -1706,7 +1706,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
 ##         """
 ##         if isinstance(z, HeegnerPointOnX0N):
 ##             if z.ring_class_field() != self.domain():
-##                 raise NotImplementedError, "class fields must be the same"
+##                 raise NotImplementedError("class fields must be the same")
 ##             # TODO -- check more compatibilities?
 ##             # TODO -- this is surely backwards -- something must be inverted?
 ##             f = z.quadratic_form() * self.quadratic_form()
