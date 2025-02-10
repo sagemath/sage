@@ -1,6 +1,12 @@
 r"""
 Laurent Series
 
+Laurent series in Sage are represented internally as a power of the variable
+times the power series part. If a Laurent series `f` is represented as
+`f = t^n \cdot u` where `t` is the variable and `u` has nonzero constant term,
+`u` can be accessed through :meth:`valuation_zero_part` and `n` can be accessed
+through :meth:`valuation`.
+
 EXAMPLES::
 
     sage: R.<t> = LaurentSeriesRing(GF(7), 't'); R
@@ -34,15 +40,6 @@ Saving and loading.
     True
     sage: loads(K.dumps()) == K                                                         # needs sage.rings.real_mpfr
     True
-
-IMPLEMENTATION: Laurent series in Sage are represented internally
-as a power of the variable times the unit part (which need not be a
-unit - it's a polynomial with nonzero constant term). The zero
-Laurent series has unit part 0.
-
-For a Laurent series internally represented as `t^n \cdot f` where
-`t` is the variable, `f` can be accessed through :meth:`valuation_zero_part`
-and `n` can be accessed through :meth:`valuation`.
 
 AUTHORS:
 
@@ -93,8 +90,8 @@ cdef class LaurentSeries(AlgebraElement):
     r"""
     A Laurent Series.
 
-    We consider a Laurent series of the form `t^n \cdot f` where `f` is a
-    power series.
+    We consider a Laurent series of the form `f = t^n \cdot u` where `u` is a
+    power series with nonzero constant term.
 
     INPUT:
 
