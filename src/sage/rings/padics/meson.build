@@ -46,7 +46,6 @@ py.install_sources(
   'relative_ramified_FP.pxd',
   'tests.py',
   'tutorial.py',
-  'witt_vector_ring.py',
   'unramified_extension_generic.py',
   'witt_vector_ring_constructor.py',
   'witt_vector_ring.py',
