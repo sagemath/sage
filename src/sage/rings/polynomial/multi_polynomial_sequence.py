@@ -1271,7 +1271,9 @@ class PolynomialSequence_generic(Sequence_generic):
         forms a Groebner basis if and only if for every element `S` in
         `Syz(LM(I))`:
 
-            `S * G = \sum_{i=0}^{m} h_ig_i ---->_G 0.`
+        .. math::
+
+            S \star G = \sum_{i=0}^{m} h_i g_i \longrightarrow_G 0.
 
         EXAMPLES::
 
