@@ -424,13 +424,16 @@ class QuaternionAlgebra_abstract(Parent):
             True
             sage: QuaternionAlgebra(2,9).is_division_algebra()
             False
+            sage: K.<z> = QuadraticField(3)
+            sage: QuaternionAlgebra(K, 1+z, 3-z).is_division_algebra()
+            False
 
         By checking ramification, the method correctly recognizes division
         quaternion algebras over a number field even if they have trivial
         discriminant::
 
-            sage: K = QuadraticField(3)
-            sage: A = QuaternionAlgebra(K, -1, -1)
+            sage: L = QuadraticField(5)
+            sage: A = QuaternionAlgebra(L, -1, -1)
             sage: A.discriminant()
             Fractional ideal (1)
             sage: A.is_division_algebra()
@@ -462,13 +465,16 @@ class QuaternionAlgebra_abstract(Parent):
             False
             sage: QuaternionAlgebra(2,9).is_matrix_ring()
             True
+            sage: K.<z> = QuadraticField(3)
+            sage: QuaternionAlgebra(K, 1+z, 3-z).is_matrix_ring()
+            True
 
         By checking ramification, the method is able to recognize that
         quaternion algebras (defined over a number field) with trivial
         discriminant need not be matrix rings::
 
-            sage: K = QuadraticField(3)
-            sage: A = QuaternionAlgebra(K, -1, -1)
+            sage: L = QuadraticField(5)
+            sage: A = QuaternionAlgebra(L, -1, -1)
             sage: A.discriminant()
             Fractional ideal (1)
             sage: A.is_matrix_ring()
