@@ -2103,6 +2103,10 @@ REFERENCES:
              Adv. Math. ***177** no. 1 (2002) pp. 115-179.
              :arxiv:`math/0203127`.
 
+.. [Day1979] Alan Day, *Characterizations of Finite Lattices that are
+             Bounded-Homomorphic Images or Sublattices of Free Lattices*,
+             Canadian Journal of Mathematics 31 (1979), 69-78
+
 .. [DB1996] K. Duggal, A. Bejancu,
             *Lightlike Submanifolds of Semi-Riemannian Manifolds and Applications*,
             Mathematics and Its Applications, 1996.
