@@ -525,10 +525,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             se = <SparseEntry>t
             x = se.entry
             v = self._matrix[se.i]
-            if type(x) is int:
-                tmp = (<long>x) % p
-                v[se.j] = tmp + (tmp<0)*p
-            elif type(x) is IntegerMod_int and (<IntegerMod_int>x)._parent is R:
+            if type(x) is IntegerMod_int and (<IntegerMod_int>x)._parent is R:
                 v[se.j] = <celement>(<IntegerMod_int>x).ivalue
             elif type(x) is Integer:
                 if coerce:
