@@ -1713,6 +1713,10 @@ def _fullargspec_to_signature(fullargspec):
         sage: fullargspec = FullArgSpec(args=['x', 'z'], varargs=None, varkw=None, defaults=('a string', {(1, 2, 3): True}), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: _fullargspec_to_signature(fullargspec)
         <Signature (x='a string', z={(1, 2, 3): True})>
+        sage: _fullargspec_to_signature(FullArgSpec(args=['a'], varargs=None, varkw=None, defaults=None, kwonlyargs=['b', 'c'], kwonlydefaults={'b': 1}, annotations={}))
+        <Signature (a, *, b=1, c)>
+        sage: _fullargspec_to_signature(FullArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=(1,), kwonlyargs=['c'], kwonlydefaults=None, annotations={}))
+        <Signature (a, b=1, *, c)>
     """
     parameters = []
     defaults_start = len(fullargspec.args) - len(fullargspec.defaults) if fullargspec.defaults else None
@@ -1731,7 +1735,8 @@ def _fullargspec_to_signature(fullargspec):
         parameters.append(param)
 
     for arg in fullargspec.kwonlyargs:
-        param = Parameter(arg, Parameter.KEYWORD_ONLY, default=fullargspec.kwonlydefaults.get(arg, Parameter.empty))
+        param = Parameter(arg, Parameter.KEYWORD_ONLY, default=Parameter.empty if fullargspec.kwonlydefaults is None else
+                          fullargspec.kwonlydefaults.get(arg, Parameter.empty))
         parameters.append(param)
 
     return Signature(parameters)
