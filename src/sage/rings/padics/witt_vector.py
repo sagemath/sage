@@ -13,7 +13,7 @@ class WittVector_base(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W = WittRing(GF(3))
+            sage: W = WittVectorRing(GF(3))
             sage: e = W.one(); e
             (1)
             sage: e**2
@@ -21,7 +21,7 @@ class WittVector_base(CommutativeRingElement):
             sage: -e
             (2)
 
-            sage: W = WittRing(GF(3), prec=4)
+            sage: W = WittVectorRing(GF(3), prec=4)
             sage: t = W([1,2,0,1])
             sage: t**2
             (1, 1, 0, 2)
@@ -47,7 +47,7 @@ class WittVector_base(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W = WittRing(GF(3), prec=4)
+            sage: W = WittVectorRing(GF(3), prec=4)
             sage: t = W([1,2,0,1])
             sage: hash(t)  # random
             -2438844084280889141
@@ -60,7 +60,7 @@ class WittVector_base(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W = WittRing(GF(3), prec=4)
+            sage: W = WittVectorRing(GF(3), prec=4)
             sage: t = W([1,2,0,1])
             sage: u = 1/t
             sage: u == t
@@ -82,7 +82,7 @@ class WittVector_base(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W = WittRing(GF(3), prec=4)
+            sage: W = WittVectorRing(GF(3), prec=4)
             sage: t = W([1,2,0,1]); t
             (1, 2, 0, 1)
         """
@@ -94,7 +94,7 @@ class WittVector_base(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W = WittRing(GF(3), prec=4)
+            sage: W = WittVectorRing(GF(3), prec=4)
             sage: t = W([1,2,0,1])
             sage: u = 1/t
             sage: u + t
@@ -127,7 +127,7 @@ class WittVector_base(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W = WittRing(GF(3), prec=4)
+            sage: W = WittVectorRing(GF(3), prec=4)
             sage: t = W([1,2,0,1])
             sage: u = 1/t + 1
             sage: u * t
@@ -162,7 +162,7 @@ class WittVector_base(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W = WittRing(GF(3), prec=4)
+            sage: W = WittVectorRing(GF(3), prec=4)
             sage: t = W([1,2,0,1])
             sage: -t
             (2, 1, 0, 2)
@@ -183,7 +183,7 @@ class WittVector_base(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W = WittRing(GF(3), prec=4)
+            sage: W = WittVectorRing(GF(3), prec=4)
             sage: t = W([1,2,0,1])
             sage: u = 1/t + 1
             sage: u / t
@@ -206,7 +206,7 @@ class WittVector_base(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W = WittRing(GF(3), prec=4)
+            sage: W = WittVectorRing(GF(3), prec=4)
             sage: t = W([1,2,0,1])
             sage: ~t
             (1, 1, 1, 0)
@@ -229,8 +229,8 @@ class WittVector_base(CommutativeRingElement):
         # We'll fill this in one-by-one
 
         # TODO: Remove the algorithm argument once other algs are implemented
-        from sage.rings.padics.witt_ring_constructor import WittRing
-        W = WittRing(poly_ring, p=P.prime, prec=P.prec)
+        from sage.rings.padics.witt_vector_ring_constructor import WittVectorRing
+        W = WittVectorRing(poly_ring, p=P.prime, prec=P.prec)
         prod_vec = (W(self.vec) * W(inv_vec)).vec
         for i in range(1, self.prec):
             poly = prod_vec[i](inv_vec[1:])
@@ -282,7 +282,7 @@ class WittVector_p_typical(WittVector_base):
             return NotImplemented
 
     def _mul_(self, other):
-        from sage.rings.padics.witt_ring import _fast_char_p_power as _fcppow
+        from sage.rings.padics.witt_vector_ring import _fast_char_p_power as _fcppow
         P = self.parent()
         C = self.__class__
 
