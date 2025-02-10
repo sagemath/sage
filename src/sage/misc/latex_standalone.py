@@ -676,7 +676,7 @@ class Standalone(SageObject):
             Traceback (most recent call last):
             ...
             CalledProcessError: Command '['...latex', '-interaction=nonstopmode',
-            'tikz_...tex']' returned nonzero exit status 1.
+            'tikz_...tex']' returned non-zero exit status 1.
         """
         from sage.features.latex import lualatex, pdflatex
 
@@ -797,7 +797,7 @@ class Standalone(SageObject):
             Traceback (most recent call last):
             ...
             CalledProcessError: Command '['latex', '-interaction=nonstopmode',
-            'tikz_...tex']' returned nonzero exit status 1.
+            'tikz_...tex']' returned non-zero exit status 1.
 
         We test the behavior when a wrong value is provided::
 
