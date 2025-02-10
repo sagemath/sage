@@ -101,11 +101,8 @@ from sage.misc.misc_c import prod
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
-from sage.categories.fields import Fields
-from sage.categories.functor import Functor
-from sage.categories.integral_domains import IntegralDomains
+from sage.categories.action import Action
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
-from sage.categories.pushout import ConstructionFunctor
 from sage.categories.quotient_fields import QuotientFields
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
@@ -1348,38 +1345,55 @@ class VariablePool(UniqueRepresentation):
         return self._pool
 
 
-class CoefficientRingFunctor(ConstructionFunctor):
-    r"""
-    A construction functor for the :class:`CoefficientRing`.
-
-    The functor maps the integral domain of coefficients to the field
-    of unknown coefficients.
+class DominatingAction(Action):
     """
-    rank = 0
+    The action defined by ``G`` acting on ``S`` by any operation such that
+    the result is either in ``G`` if ``S`` is in the base ring of ``G`` or
+    ``G`` is the coefficient ring of ``S`` otherwise.
 
-    def __init__(self):
-        r"""
-        Initialize the functor.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import CoefficientRingFunctor
-            sage: CoefficientRingFunctor()
-            CoefficientRingFunctor
+    This is meant specifically for use by :class:`CoefficientRing` as part
+    of the function solver. This is not a mathematically defined action of
+    ``G`` on ``S`` since the result might not be in ``S``.
+    """
+    def _act_(self, g, x):
         """
-        Functor.__init__(self, IntegralDomains(), Fields())
-
-    def _apply_functor(self, R):
-        r"""
-        Apply the functor to an integral domain.
+        Return the action of ``g`` on ``x``.
 
         EXAMPLES::
 
-            sage: from sage.data_structures.stream import CoefficientRingFunctor
-            sage: CoefficientRingFunctor()(ZZ)  # indirect doctest
+            sage: from sage.data_structures.stream import CoefficientRing
+            sage: PF = CoefficientRing(ZZ)
+            sage: g = PF.gen(0)
+            sage: x = g - 2; x
+            FESDUMMY_0 - 2
+            sage: x.parent()
             CoefficientRing over Integer Ring
+            sage: x = 2 - g; x
+            -FESDUMMY_0 + 2
+            sage: x.parent()
+            CoefficientRing over Integer Ring
+            sage: R = QQ['a']
+            sage: a = R.gen()
+            sage: S = ZZ['t']['b']
+            sage: b = S.gen()
+            sage: x = a * g + b; x
+            FESDUMMY_0*a + b
+            sage: x.parent()
+            Univariate Polynomial Ring in a over
+             Fraction Field of Infinite polynomial ring in FESDUMMY over
+             Univariate Polynomial Ring in b over Univariate Polynomial Ring in t over Integer Ring
         """
-        return CoefficientRing(R)
+        G = g.parent()
+        if x in G.base_ring():
+            if self.is_left():
+                return self.operation()(g, G(x))
+            return self.operation()(G(x), g)
+        if x.base_ring() is not G:
+            x = x.change_ring(G)
+        g = x.parent()(g)
+        if self.is_left():
+            return self.operation()(g, x)
+        return self.operation()(x, g)
 
 
 class CoefficientRing(UniqueRepresentation, FractionField_generic):
@@ -1473,25 +1487,26 @@ class CoefficientRing(UniqueRepresentation, FractionField_generic):
         """
         return self._element_class(self, self._R.gen()[i])
 
-    def construction(self):
-        r"""
-        Return a pair ``(F, R)``, where ``F`` is a
-        :class:`CoefficientRingFunctor` and `R` is an integral
-        domain, such that ``F(R)`` returns ``self``.
+    def _get_action_(self, S, op, self_on_left):
+        """
+        Return the left/right action of ``S`` on ``self`` given by ``op``.
 
         EXAMPLES::
 
             sage: from sage.data_structures.stream import CoefficientRing
+            sage: R = ZZ['q']
+            sage: S = QQ['t']['a','q']
             sage: PF = CoefficientRing(ZZ["q"])
-            sage: F, R = PF.construction()
-            sage: F, R
-            (CoefficientRingFunctor,
-             Univariate Polynomial Ring in q over Integer Ring)
-
-            sage: F(R)
-            CoefficientRing over Univariate Polynomial Ring in q over Integer Ring
+            sage: PF._get_action_(PF, operator.mul, True) is None
+            True
+            sage: type(PF._get_action_(R, operator.add, False))
+            <class 'sage.data_structures.stream.DominatingAction'>
+            sage: type(PF._get_action_(S, operator.mul, True))
+            <class 'sage.data_structures.stream.DominatingAction'>
         """
-        return (CoefficientRingFunctor(), self.base_ring())
+        if S is not self:
+            return DominatingAction(self, S, op=op, is_left=self_on_left)
+        return super()._get_action_(S, op, self_on_left)
 
 
 class Stream_uninitialized(Stream):

@@ -1012,8 +1012,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             equation 0:
                 coefficient [x*y*t]: A[x*y] - A[t] == 0
             equation 1:
-                coefficient [x*y*t]: B[x*y] - B[t] == 0
                 coefficient [x*t^2]: B[x*t] + B[t] == 0
+                coefficient [x*y*t]: B[x*y] - B[t] == 0
 
         Check the error message in the case of symmetric functions::
 
