@@ -177,7 +177,7 @@ def is_optimal_id(id):
     return id[-1] == '1' and not id[-2].isdigit()
 
 
-def cremona_letter_code(n):
+def cremona_letter_code(n) -> str:
     """
     Return the Cremona letter code corresponding to an integer.
 
@@ -252,7 +252,7 @@ def cremona_letter_code(n):
     return s
 
 
-def old_cremona_letter_code(n):
+def old_cremona_letter_code(n) -> str:
     r"""
     Return the *old* Cremona letter code corresponding to an integer.
 
@@ -1651,9 +1651,11 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 _db = None
 
 
-def CremonaDatabase(name=None, mini=None, set_global=None):
+def CremonaDatabase(name=None, mini=None):
     """
-    Initialize the Cremona database with name ``name``. If ``name`` is
+    Initialize the Cremona database with name ``name``.
+
+    If ``name`` is
     ``None`` it instead initializes large Cremona database (named 'cremona'),
     if available or default mini Cremona database (named 'cremona mini').
 
@@ -1690,10 +1692,6 @@ def CremonaDatabase(name=None, mini=None, set_global=None):
         ...
         ValueError: the full Cremona database is not available; consider using the mini Cremona database by setting mini=True
     """
-    if set_global is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(25825, "the set_global argument for CremonaDatabase is deprecated and ignored")
-
     if name is None:
         if mini is None:
             if DatabaseCremona().is_present():
