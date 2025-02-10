@@ -2523,7 +2523,7 @@ def _atomic_set_like_species(n, names):
 
         sage: from sage.rings.species import _atomic_set_like_species
         sage: _atomic_set_like_species(6, "X")
-        [E_2(E_3), E_2(X*E_2), E_2(X^3), E_3(E_2), E_3(X^2), E_6]
+        (E_2(E_3), E_2(X*E_2), E_2(X^3), E_3(E_2), E_3(X^2), E_6)
 
         sage: l = [len(_atomic_set_like_species(n, "X")) for n in range(12)]
         sage: l
