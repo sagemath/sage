@@ -686,7 +686,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     raise ValueError("Pollard rho algorithm failed to find a logarithm")
 
 
-def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs'):
+def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs', check=True):
     r"""
     Totally generic discrete log function.
 
@@ -702,6 +702,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - ``op`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
     - ``algorithm`` -- string denoting what algorithm to use for prime-order
       logarithms: ``'bsgs'``, ``'rho'``, ``'lambda'``
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. 
 
     ``a`` and ``base`` must be elements of some group with identity
     given by ``identity``, inverse of ``x`` by ``inverse(x)``, and group
@@ -888,6 +890,15 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ....: else:
         ....:     assert res == sol
 
+    Verify that :issue:`38316` is fixed::
+        sage: F = GF(5)
+        sage: base = F(3)
+        sage: a = F(1)
+        sage: discrete_log(a, base, bounds=(1,2), operation="*")
+        Traceback (most recent call last):
+        ...
+        ValueError: no discrete log of 2 found to base 3
+
     AUTHORS:
 
     - William Stein and David Joyner (2005-01-05)
@@ -897,6 +908,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     from operator import mul, add, pow
     power = mul if operation in addition_names else pow
     mult = add if operation in addition_names else mul
+    originalA = a # Stores the original value of a so we can check the answer
     if op:
         mult = op
         power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
@@ -963,7 +975,10 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                 break  # we have log%running_mod. if we know that log<running_mod, then we have the value of log.
         l = l[:i + 1]
         from sage.arith.misc import CRT_list
-        return (CRT_list(l, mods) + offset) % ord
+        result = (CRT_list(l, mods) + offset) % ord
+        if (check and power(base, result) != originalA):
+            raise ValueError
+        return result
     except ValueError:
         raise ValueError("no discrete log of %s found to base %s" % (a, base))
 
