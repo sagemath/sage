@@ -1482,8 +1482,8 @@ class LazyModuleElement(Element):
             sage: f
             1 + t + t^2 + 2*t^3 + 6*t^4 + 23*t^5 + 104*t^6 + O(t^7)
             sage: oeis(f[1:20])                                                 # optional - internet
-            0: A030266: Shifts left under COMPOSE transform with itself.
-            1: A110447: Permutations containing 3241 patterns only as part of 35241 patterns.
+            0: A030266: ...
+            1: A110447: ...
 
         The following can only work for power series, where we have a
         minimal valuation of `0`::
