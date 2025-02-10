@@ -979,40 +979,6 @@ cdef class Field(CommutativeRing):
         """
         return self
 
-    def divides(self, x, y, coerce=True):
-        """
-        Return ``True`` if ``x`` divides ``y`` in this field (usually ``True``
-        in a field!).  If ``coerce`` is ``True`` (the default), first coerce
-        ``x`` and ``y`` into ``self``.
-
-        EXAMPLES::
-
-            sage: QQ.divides(2, 3/4)
-            True
-            sage: QQ.divides(0, 5)
-            False
-        """
-        if coerce:
-            x = self(x)
-            y = self(y)
-        if x.is_zero():
-            return y.is_zero()
-        return True
-
-    def integral_closure(self):
-        """
-        Return this field, since fields are integrally closed in their
-        fraction field.
-
-        EXAMPLES::
-
-            sage: QQ.integral_closure()
-            Rational Field
-            sage: Frac(ZZ['x,y']).integral_closure()
-            Fraction Field of Multivariate Polynomial Ring in x, y over Integer Ring
-        """
-        return self
-
     def is_field(self, proof=True):
         """
         Return ``True`` since this is a field.
@@ -1023,23 +989,6 @@ cdef class Field(CommutativeRing):
             True
         """
         return True
-
-    def prime_subfield(self):
-        """
-        Return the prime subfield of ``self``.
-
-        EXAMPLES::
-
-            sage: k = GF(9, 'a')                                                        # needs sage.rings.finite_rings
-            sage: k.prime_subfield()                                                    # needs sage.rings.finite_rings
-            Finite Field of size 3
-        """
-        if self.characteristic() == 0:
-            import sage.rings.rational_field
-            return sage.rings.rational_field.RationalField()
-        else:
-            from sage.rings.finite_rings.finite_field_constructor import GF
-            return GF(self.characteristic())
 
     def algebraic_closure(self):
         """
