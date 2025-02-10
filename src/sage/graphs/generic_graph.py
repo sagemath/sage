@@ -19859,7 +19859,7 @@ class GenericGraph(GenericGraph_pyx):
                   format='vertices_and_edges', weighted=weighted, loops=loops,
                   multiedges=multiedges, immutable=immutable)
 
-    def cartesian_product(self, other):
+    def cartesian_product(self, other, immutable=None):
         r"""
         Return the Cartesian product of ``self`` and ``other``.
 
@@ -19867,6 +19867,15 @@ class GenericGraph(GenericGraph_pyx):
         `V(L)` equal to the Cartesian product of the vertices `V(G)` and `V(H)`,
         and `((u,v), (w,x))` is an edge iff either - `(u, w)` is an edge of self
         and `v = x`, or - `(v, x)` is an edge of other and `u = w`.
+
+        INPUT:
+
+        - ``other`` -- a graph or a digraph
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable product. ``immutable=None`` (default) means that the
+          graphs and their product will behave the same way. If only one of them
+          is immutable, the product will be mutable.
 
         .. SEEALSO::
 
@@ -19920,27 +19929,48 @@ class GenericGraph(GenericGraph_pyx):
             sage: V = Q.strongly_connected_component_containing_vertex((0, 'aa'))       # needs sage.combinat
             sage: B.is_isomorphic(Q.subgraph(V))                                        # needs sage.combinat
             True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: A = Graph([(0, 1)])
+            sage: B = Graph([('a', 'b')], immutable=True)
+            sage: A.cartesian_product(A).is_immutable()
+            False
+            sage: A.cartesian_product(A, immutable=True).is_immutable()
+            True
+            sage: A.cartesian_product(B).is_immutable()
+            False
+            sage: A.cartesian_product(B, immutable=True).is_immutable()
+            True
+            sage: B.cartesian_product(B).is_immutable()
+            True
+            sage: B.cartesian_product(B, immutable=False).is_immutable()
+            False
         """
         self._scream_if_not_simple(allow_loops=True)
         if self._directed and other._directed:
-            from sage.graphs.digraph import DiGraph
-            G = DiGraph(loops=(self.has_loops() or other.has_loops()))
+            from sage.graphs.digraph import DiGraph as GT
         elif (not self._directed) and (not other._directed):
-            from sage.graphs.graph import Graph
-            G = Graph(loops=(self.has_loops() or other.has_loops()))
+            from sage.graphs.graph import Graph as GT
         else:
             raise TypeError('the graphs should be both directed or both undirected')
 
-        G.add_vertices((u, v) for u in self for v in other)
-        for u, w in self.edge_iterator(labels=None):
-            for v in other:
-                G.add_edge((u, v), (w, v))
-        for v, x in other.edge_iterator(labels=None):
-            for u in self:
-                G.add_edge((u, v), (u, x))
-        return G
+        if immutable is None:
+            immutable = self.is_immutable() and other.is_immutable()
+        loops = self.has_loops() or other.has_loops()
+        vertices = ((u, v) for u in self for v in other)
+        from itertools import chain
+        edges = chain((((u, v), (w, v))
+                       for u, w in self.edge_iterator(labels=False)
+                       for v in other),
+                      (((u, v), (u, x))
+                       for v, x in other.edge_iterator(labels=False)
+                       for u in self))
 
-    def tensor_product(self, other):
+        return GT([vertices, edges], format='vertices_and_edges',
+                  loops=loops, immutable=immutable)
+
+    def tensor_product(self, other, immutable=None):
         r"""
         Return the tensor product of ``self`` and ``other``.
 
@@ -19952,6 +19982,15 @@ class GenericGraph(GenericGraph_pyx):
         The tensor product is also known as the categorical product and the
         Kronecker product (referring to the Kronecker matrix product). See
         the :wikipedia:`Kronecker_product`.
+
+        INPUT:
+
+        - ``other`` -- a graph or a digraph
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable product. ``immutable=None`` (default) means that the
+          graphs and their product will behave the same way. If only one of them
+          is immutable, the product will be mutable.
 
         EXAMPLES::
 
@@ -20005,28 +20044,53 @@ class GenericGraph(GenericGraph_pyx):
             sage: T = B1.tensor_product(B2)
             sage: T.is_isomorphic(digraphs.DeBruijn(2 * 3, 3))
             True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: A = Graph([(0, 1)])
+            sage: B = Graph([('a', 'b')], immutable=True)
+            sage: A.tensor_product(A).is_immutable()
+            False
+            sage: A.tensor_product(A, immutable=True).is_immutable()
+            True
+            sage: A.tensor_product(B).is_immutable()
+            False
+            sage: A.tensor_product(B, immutable=True).is_immutable()
+            True
+            sage: B.tensor_product(B).is_immutable()
+            True
+            sage: B.tensor_product(B, immutable=False).is_immutable()
+            False
         """
         self._scream_if_not_simple(allow_loops=True)
         if self._directed and other._directed:
-            from sage.graphs.digraph import DiGraph
-            G = DiGraph(loops=(self.has_loops() or other.has_loops()))
+            from sage.graphs.digraph import DiGraph as GT
+            edges = (((u, v), (w, x))
+                     for u, w in self.edge_iterator(labels=False)
+                     for v, x in other.edge_iterator(labels=False))
         elif (not self._directed) and (not other._directed):
-            from sage.graphs.graph import Graph
-            G = Graph(loops=(self.has_loops() or other.has_loops()))
+            from sage.graphs.graph import Graph as GT
+            from itertools import chain
+            edges = chain((((u, v), (w, x))
+                           for u, w in self.edge_iterator(labels=False)
+                           for v, x in other.edge_iterator(labels=False)),
+                          (((u, x), (w, v))
+                           for u, w in self.edge_iterator(labels=False)
+                           for v, x in other.edge_iterator(labels=False)))
         else:
             raise TypeError('the graphs should be both directed or both undirected')
-        G.add_vertices((u, v) for u in self for v in other)
-        for u, w in self.edge_iterator(labels=None):
-            for v, x in other.edge_iterator(labels=None):
-                G.add_edge((u, v), (w, x))
-                if not G._directed:
-                    G.add_edge((u, x), (w, v))
-        return G
+
+        if immutable is None:
+            immutable = self.is_immutable() and other.is_immutable()
+        loops = self.has_loops() or other.has_loops()
+        vertices = ((u, v) for u in self for v in other)
+        return GT([vertices, edges], format='vertices_and_edges',
+                  loops=loops, immutable=immutable)
 
     categorical_product = tensor_product
     kronecker_product = tensor_product
 
-    def lexicographic_product(self, other):
+    def lexicographic_product(self, other, immutable=None):
         r"""
         Return the lexicographic product of ``self`` and ``other``.
 
@@ -20035,6 +20099,15 @@ class GenericGraph(GenericGraph_pyx):
 
         * `(u, w)` is an edge of `G`, or
         * `u = w` and `(v, x)` is an edge of `H`.
+
+        INPUT:
+
+        - ``other`` -- a graph or a digraph
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable product. ``immutable=None`` (default) means that the
+          graphs and their product will behave the same way. If only one of them
+          is immutable, the product will be mutable.
 
         EXAMPLES::
 
@@ -20081,27 +20154,48 @@ class GenericGraph(GenericGraph_pyx):
              ((1, 'b'), (2, 'b')), ((2, 'a'), (2, 'b'))]
             sage: T.is_isomorphic(J.lexicographic_product(I))
             False
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: A = Graph([(0, 1)])
+            sage: B = Graph([('a', 'b')], immutable=True)
+            sage: A.lexicographic_product(A).is_immutable()
+            False
+            sage: A.lexicographic_product(A, immutable=True).is_immutable()
+            True
+            sage: A.lexicographic_product(B).is_immutable()
+            False
+            sage: A.lexicographic_product(B, immutable=True).is_immutable()
+            True
+            sage: B.lexicographic_product(B).is_immutable()
+            True
+            sage: B.lexicographic_product(B, immutable=False).is_immutable()
+            False
         """
         self._scream_if_not_simple(allow_loops=True)
         if self._directed and other._directed:
-            from sage.graphs.digraph import DiGraph
-            G = DiGraph(loops=(self.has_loops() or other.has_loops()))
+            from sage.graphs.digraph import DiGraph as GT
         elif (not self._directed) and (not other._directed):
-            from sage.graphs.graph import Graph
-            G = Graph(loops=(self.has_loops() or other.has_loops()))
+            from sage.graphs.graph import Graph as GT
         else:
             raise TypeError('the graphs should be both directed or both undirected')
-        G.add_vertices((u, v) for u in self for v in other)
-        for u, w in self.edge_iterator(labels=None):
-            for v in other:
-                for x in other:
-                    G.add_edge((u, v), (w, x))
-        for u in self:
-            for v, x in other.edge_iterator(labels=None):
-                G.add_edge((u, v), (u, x))
-        return G
 
-    def strong_product(self, other):
+        if immutable is None:
+            immutable = self.is_immutable() and other.is_immutable()
+        loops = self.has_loops() or other.has_loops()
+        vertices = ((u, v) for u in self for v in other)
+        from itertools import chain
+        edges = chain((((u, v), (w, x))
+                       for u, w in self.edge_iterator(labels=False)
+                       for v in other
+                       for x in other),
+                      (((u, v), (u, x))
+                       for u in self
+                       for v, x in other.edge_iterator(labels=False)))
+        return GT([vertices, edges], format='vertices_and_edges',
+                  loops=loops, immutable=immutable)
+
+    def strong_product(self, other, immutable=None):
         r"""
         Return the strong product of ``self`` and ``other``.
 
@@ -20115,6 +20209,15 @@ class GenericGraph(GenericGraph_pyx):
 
         In other words, the edges of the strong product is the union of the
         edges of the tensor and Cartesian products.
+
+        INPUT:
+
+        - ``other`` -- a graph or a digraph
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable product. ``immutable=None`` (default) means that the
+          graphs and their product will behave the same way. If only one of them
+          is immutable, the product will be mutable.
 
         EXAMPLES::
 
@@ -20163,31 +20266,57 @@ class GenericGraph(GenericGraph_pyx):
             sage: expected = gm * hn + hm * gn + 2 * gm * hm
             sage: product_size == expected
             True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: A = Graph([(0, 1)])
+            sage: B = Graph([('a', 'b')], immutable=True)
+            sage: A.strong_product(A).is_immutable()
+            False
+            sage: A.strong_product(A, immutable=True).is_immutable()
+            True
+            sage: A.strong_product(B).is_immutable()
+            False
+            sage: A.strong_product(B, immutable=True).is_immutable()
+            True
+            sage: B.strong_product(B).is_immutable()
+            True
+            sage: B.strong_product(B, immutable=False).is_immutable()
+            False
         """
         self._scream_if_not_simple(allow_loops=True)
         if self._directed and other._directed:
-            from sage.graphs.digraph import DiGraph
-            G = DiGraph(loops=(self.has_loops() or other.has_loops()))
+            from sage.graphs.digraph import DiGraph as GT
         elif (not self._directed) and (not other._directed):
-            from sage.graphs.graph import Graph
-            G = Graph(loops=(self.has_loops() or other.has_loops()))
+            from sage.graphs.graph import Graph as GT
         else:
             raise TypeError('the graphs should be both directed or both undirected')
 
-        G.add_vertices((u, v) for u in self for v in other)
-        for u, w in self.edge_iterator(labels=None):
-            for v in other:
-                G.add_edge((u, v), (w, v))
-            for v, x in other.edge_iterator(labels=None):
-                G.add_edge((u, v), (w, x))
-                if not self._directed:
-                    G.add_edge((w, v), (u, x))
-        for v, x in other.edge_iterator(labels=None):
-            for u in self:
-                G.add_edge((u, v), (u, x))
-        return G
+        if immutable is None:
+            immutable = self.is_immutable() and other.is_immutable()
+        loops = self.has_loops() or other.has_loops()
+        vertices = ((u, v) for u in self for v in other)
 
-    def disjunctive_product(self, other):
+        edges_1 = (((u, v), (w, v))
+                   for u, w in self.edge_iterator(labels=False) for v in other)
+        edges_2 = (((u, v), (u, x))
+                   for v, x in other.edge_iterator(labels=False) for u in self)
+        edges_3 = (((u, v), (w, x))
+                   for u, w in self.edge_iterator(labels=False)
+                   for v, x in other.edge_iterator(labels=False))
+        if self._directed:
+            edges_4 = ()
+        else:
+            edges_4 = (((w, v), (u, x))
+                       for u, w in self.edge_iterator(labels=False)
+                       for v, x in other.edge_iterator(labels=False))
+
+        from itertools import chain
+        edges = chain(edges_1, edges_2, edges_3, edges_4)
+        return GT([vertices, edges], format='vertices_and_edges',
+                  loops=loops, immutable=immutable)
+
+    def disjunctive_product(self, other, immutable=None):
         r"""
         Return the disjunctive product of ``self`` and ``other``.
 
@@ -20196,6 +20325,15 @@ class GenericGraph(GenericGraph_pyx):
 
         * `(u, w)` is an edge of `G`, or
         * `(v, x)` is an edge of `H`.
+
+        INPUT:
+
+        - ``other`` -- a graph or a digraph
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable product. ``immutable=None`` (default) means that the
+          graphs and their product will behave the same way. If only one of them
+          is immutable, the product will be mutable.
 
         EXAMPLES::
 
@@ -20242,27 +20380,48 @@ class GenericGraph(GenericGraph_pyx):
              ((2, 'a'), (0, 'b')), ((2, 'a'), (1, 'b')), ((2, 'a'), (2, 'b'))]
             sage: T.is_isomorphic(J.disjunctive_product(I))
             True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: A = Graph([(0, 1)])
+            sage: B = Graph([('a', 'b')], immutable=True)
+            sage: A.disjunctive_product(A).is_immutable()
+            False
+            sage: A.disjunctive_product(A, immutable=True).is_immutable()
+            True
+            sage: A.disjunctive_product(B).is_immutable()
+            False
+            sage: A.disjunctive_product(B, immutable=True).is_immutable()
+            True
+            sage: B.disjunctive_product(B).is_immutable()
+            True
+            sage: B.disjunctive_product(B, immutable=False).is_immutable()
+            False
         """
         self._scream_if_not_simple(allow_loops=True)
         if self._directed and other._directed:
-            from sage.graphs.digraph import DiGraph
-            G = DiGraph(loops=(self.has_loops() or other.has_loops()))
+            from sage.graphs.digraph import DiGraph as GT
         elif (not self._directed) and (not other._directed):
-            from sage.graphs.graph import Graph
-            G = Graph(loops=(self.has_loops() or other.has_loops()))
+            from sage.graphs.graph import Graph as GT
         else:
             raise TypeError('the graphs should be both directed or both undirected')
 
-        G.add_vertices((u, v) for u in self for v in other)
-        for u, w in self.edge_iterator(labels=None):
-            for v in other:
-                for x in other:
-                    G.add_edge((u, v), (w, x))
-        for v, x in other.edge_iterator(labels=None):
-            for u in self:
-                for w in self:
-                    G.add_edge((u, v), (w, x))
-        return G
+        if immutable is None:
+            immutable = self.is_immutable() and other.is_immutable()
+        loops = self.has_loops() or other.has_loops()
+        vertices = ((u, v) for u in self for v in other)
+        edges_1 = (((u, v), (w, x))
+                   for u, w in self.edge_iterator(labels=False)
+                   for v in other
+                   for x in other)
+        edges_2 = (((u, v), (w, x))
+                   for v, x in other.edge_iterator(labels=False)
+                   for u in self
+                   for w in self)
+        from itertools import chain
+        edges = chain(edges_1, edges_2)
+        return GT([vertices, edges], format='vertices_and_edges',
+                  loops=loops, immutable=immutable)
 
     def transitive_closure(self, loops=True):
         r"""
