@@ -19358,7 +19358,16 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.add_clique(range(4), loops=True)
             sage: D.is_clique(directed_clique=True, loops=True)
             True
+
+        Immutable graph::
+
+            sage: Graph(immutable=True).add_clique([1, 2, 3])
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
         """
+        if self.is_immutable():
+            raise ValueError("graph is immutable; please change a copy instead (use function copy())")
         import itertools
         if loops:
             if self.is_directed():
@@ -19424,6 +19433,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.add_cycle(['a', 'b', 'c'])
             sage: G.order(), G.size()
             (3, 3)
+
+        Immutable graph::
+
+            sage: Graph(immutable=True).add_cycle([1, 2, 3])
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
         """
         if vertices:
             self.add_path(vertices)
@@ -19460,19 +19476,35 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.add_path(list(range(4)))
             sage: D.edges(sort=True)
             [(0, 1, None), (1, 2, None), (2, 3, None)]
+
+        TESTS:
+
+        Immutable graph::
+
+            sage: Graph(immutable=True).add_path([])
+            sage: Graph(immutable=True).add_path([1, 2, 3])
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
         """
         if not vertices:
             return
         self.add_vertices(vertices)
         self.add_edges(zip(vertices[:-1], vertices[1:]))
 
-    def complement(self):
+    def complement(self, immutable=None):
         """
         Return the complement of the (di)graph.
 
         The complement of a graph has the same vertices, but exactly those edges
         that are not in the original graph. This is not well defined for graphs
         with multiple edges.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to return a
+          mutable or an immutable version of ``self``. By default (``None``),
+          the graph and its complement behave the same.
 
         EXAMPLES::
 
@@ -19515,6 +19547,17 @@ class GenericGraph(GenericGraph_pyx):
             Graph on 10 vertices
             sage: g.complement()
             Graph on 10 vertices
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: type(Graph().complement()._backend)
+            <class 'sage.graphs.base.dense_graph.DenseGraphBackend'>
+            sage: type(Graph().complement(immutable=True)._backend)
+            <class 'sage.graphs.base.static_sparse_backend.StaticSparseBackend'>
+            sage: type(Graph(immutable=True).complement()._backend)
+            <class 'sage.graphs.base.static_sparse_backend.StaticSparseBackend'>
+            sage: type(Graph(immutable=True).complement(immutable=False)._backend)
+            <class 'sage.graphs.base.dense_graph.DenseGraphBackend'>
         """
         self._scream_if_not_simple()
 
@@ -19523,8 +19566,9 @@ class GenericGraph(GenericGraph_pyx):
 
         if self.name():
             G.name("complement({})".format(self.name()))
-
-        if self.is_immutable():
+        if immutable is None:
+            immutable = self.is_immutable()
+        if immutable:
             return G.copy(immutable=True)
         return G
 
@@ -19578,12 +19622,31 @@ class GenericGraph(GenericGraph_pyx):
             [(2, 3, 1), (3, 2, None)]
             sage: G.to_simple(to_undirected=False, keep_label='max').edges(sort=True)
             [(2, 3, 2), (3, 2, None)]
+
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = Graph([(0, 0), (0, 1)] * 2, loops=True, multiedges=True, immutable=True)
+            sage: H = G.to_simple()
+            sage: H.is_immutable()
+            True
+            sage: H.edges(labels=False)
+            [(0, 1)]
+            sage: H = G.to_simple(immutable=False)
+            sage: H.is_immutable()
+            False
+            sage: G = Graph([(0, 0), (0, 1)] * 2, loops=True, multiedges=True, immutable=False)
+            sage: G.to_simple().is_immutable()
+            False
+            sage: G.to_simple(immutable=True).is_immutable()
+            True
         """
         if to_undirected:
             from sage.graphs.graph import Graph
-            g = Graph(self)
+            g = Graph(self, immutable=False)
         else:
-            g = copy(self)
+            g = self.copy(immutable=False)
         g.allow_loops(False)
         g.allow_multiple_edges(False, keep_label=keep_label)
         if immutable is None:
@@ -19640,8 +19703,27 @@ class GenericGraph(GenericGraph_pyx):
             Custom path disjoint_union Cycle graph: Graph on 5 vertices
             sage: J.vertices(sort=True)
             [(0, 'a'), (0, 'b'), (1, 0), (1, 1), (1, 2)]
+
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = Graph([(0, 1)])
+            sage: G.disjoint_union(G).is_immutable()
+            False
+            sage: G.disjoint_union(G, immutable=True).is_immutable()
+            True
+            sage: H = G.copy(immutable=True)
+            sage: H.disjoint_union(H).is_immutable()
+            True
+            sage: G.disjoint_union(G, immutable=False).is_immutable()
+            False
+            sage: H.disjoint_union(G).is_immutable()
+            False
+            sage: G.disjoint_union(G, immutable=True).is_immutable()
+            True
         """
-        if (self._directed and not other._directed) or (not self._directed and other._directed):
+        if self._directed != other._directed:
             raise TypeError('both arguments must be of the same class')
 
         if labels not in ['pairs', 'integers']:
@@ -19653,7 +19735,11 @@ class GenericGraph(GenericGraph_pyx):
         else:
             r_self = {v: (0, v) for v in self}
             r_other = {v: (1, v) for v in other}
-        G = self.relabel(r_self, inplace=False).union(other.relabel(r_other, inplace=False), immutable=immutable)
+
+        from itertools import chain
+        vertices = chain(r_self.values(), r_other.values())
+        edges = chain(((r_self[u], r_self[v], w) for u, v, w in self.edge_iterator()),
+                      ((r_other[u], r_other[v], w) for u, v, w in other.edge_iterator()))
 
         a = self.name()
         if not a:
@@ -19661,8 +19747,22 @@ class GenericGraph(GenericGraph_pyx):
         b = other.name()
         if not b:
             b = other._repr_()
-        G._name = '{} disjoint_union {}'.format(a, b)
-        return G
+        name = f"{a} disjoint_union {b}"
+
+        multiedges = self.allows_multiple_edges() or other.allows_multiple_edges()
+        loops = self.allows_loops() or other.allows_loops()
+        weighted = self.weighted() and other.weighted()
+        if immutable is None:
+            immutable = self.is_immutable() and other.is_immutable()
+
+        if self._directed:
+            from sage.graphs.digraph import DiGraph as GT
+        else:
+            from sage.graphs.graph import Graph as GT
+
+        return GT([vertices, edges], format='vertices_and_edges',
+                  weighted=weighted, loops=loops, multiedges=multiedges,
+                  name=name, immutable=immutable)
 
     def union(self, other, immutable=None):
         """
@@ -19739,30 +19839,25 @@ class GenericGraph(GenericGraph_pyx):
             sage: D1.union(D2).weighted() or D2.union(D1).weighted()
             False
         """
-        if (self._directed and not other._directed) or (not self._directed and other._directed):
+        if self._directed != other._directed:
             raise TypeError('both arguments must be of the same class')
 
         multiedges = self.allows_multiple_edges() or other.allows_multiple_edges()
         loops = self.allows_loops() or other.allows_loops()
         weighted = self.weighted() and other.weighted()
-
-        if self._directed:
-            from sage.graphs.digraph import DiGraph
-            G = DiGraph(multiedges=multiedges, loops=loops, weighted=weighted)
-        else:
-            from sage.graphs.graph import Graph
-            G = Graph(multiedges=multiedges, loops=loops, weighted=weighted)
-        G.add_vertices(self)
-        G.add_vertices(other)
-        G.add_edges(self.edge_iterator())
-        G.add_edges(other.edge_iterator())
-
         if immutable is None:
             immutable = self.is_immutable() and other.is_immutable()
-        if immutable:
-            G = G.copy(immutable=True)
 
-        return G
+        if self._directed:
+            from sage.graphs.digraph import DiGraph as GT
+        else:
+            from sage.graphs.graph import Graph as GT
+
+        from itertools import chain
+        return GT([chain(self, other),
+                   chain(self.edge_iterator(), other.edge_iterator())],
+                  format='vertices_and_edges', weighted=weighted, loops=loops,
+                  multiedges=multiedges, immutable=immutable)
 
     def cartesian_product(self, other):
         r"""
