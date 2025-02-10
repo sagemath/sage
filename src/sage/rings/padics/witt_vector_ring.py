@@ -207,7 +207,8 @@ class WittVectorRing_base(CommutativeRing, UniqueRepresentation):
             # If p is invertible, W_n(R) is isomorphic to R^n.
             return self.base().characteristic()
 
-        # This is a conjecture. It's known for char(R) == p.
+        # This is Jacob Dennerlein's Corollary 3.3. in "Computational
+        # Aspects of Mixed Characteristic Witt Vectors" (preprint)
         return p**(self.prec-1) * self.base().characteristic()
 
     def precision(self):
