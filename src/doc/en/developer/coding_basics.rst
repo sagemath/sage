@@ -1302,9 +1302,7 @@ framework. Here is a comprehensive list:
     For lines that require an internet connection::
 
        sage: oeis(60843)                 # optional - internet
-       A060843: Busy Beaver problem: a(n) = maximal number of steps that an
-       n-state Turing machine can make on an initially blank tape before
-       eventually halting.
+       A060843: ...
 
   - **known bugs:** For lines that describe known bugs, you can use ``# optional - bug``,
     although ``# known bug`` is preferred.
