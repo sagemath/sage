@@ -1167,6 +1167,38 @@ class PeriodLattice_ell(PeriodLattice):
         """
         return self.E
 
+    @property
+    def is_approximate(self):
+        """
+        ``self.is_approximate`` is deprecated, use ``not self.curve().is_exact()`` instead.
+
+        TESTS::
+
+            sage: E = EllipticCurve(ComplexField(100), [I, 3*I+4])
+            sage: L = E.period_lattice()
+            sage: L.is_approximate
+            doctest:...: DeprecationWarning: The attribute is_approximate for period lattice is deprecated,
+            use self.curve().is_exact() instead.
+            See https://github.com/sagemath/sage/issues/39212 for details.
+            True
+            sage: L.curve() is E
+            True
+            sage: E.is_exact()
+            False
+            sage: E = EllipticCurve(QQ, [0, 2])
+            sage: L = E.period_lattice()
+            sage: L.is_approximate
+            False
+            sage: L.curve() is E
+            True
+            sage: E.is_exact()
+            True
+        """
+        from sage.misc.superseded import deprecation
+        deprecation(39212, "The attribute is_approximate for period lattice is "
+                           "deprecated, use self.curve().is_exact() instead.")
+        return not self._is_exact
+
     def ei(self):
         r"""
         Return the x-coordinates of the 2-division points of the elliptic curve associated
