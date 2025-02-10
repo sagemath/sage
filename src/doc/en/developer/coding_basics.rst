@@ -979,6 +979,14 @@ written.
   checked, as they are the most likely to be broken, now or in the future. This
   probably belongs to the TESTS block (see :ref:`section-docstring-function`).
 
+- **Interruption:** if the function might take a very long time, use
+  :func:`~sage.doctest.util.ensure_interruptible_after` to check that the user
+  can interrupt it. For example, the following tests ``sleep(3)`` can be
+  interrupted after 1 second::
+
+    sage: from sage.doctest.util import ensure_interruptible_after
+    sage: with ensure_interruptible_after(1) as data: sleep(3)
+
 - **Systematic tests** of all small-sized inputs, or tests of **random**
   instances if possible.
 

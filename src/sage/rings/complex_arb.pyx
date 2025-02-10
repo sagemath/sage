@@ -1184,13 +1184,10 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: ComplexBallField(100).integral(lambda x, _: sin(x), RBF(0), RBF(1))
             [0.4596976941318602825990633926 +/- ...e-29]
 
-            sage: from cysignals.alarm import alarm
-            sage: alarm(0.1r)
-            sage: C = ComplexBallField(1000000)
-            sage: C.integral(lambda x, _: x.cos() * x.sin(), 0, 1)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.1):
+            ....:     C = ComplexBallField(1000000)
+            ....:     C.integral(lambda x, _: x.cos() * x.sin(), 0, 1)
         """
         cdef IntegrationContext ctx = IntegrationContext()
         cdef acb_calc_integrate_opt_t arb_opts
