@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sagemath-bliss ~= 10.6b1
+sagemath-bliss ~= 10.6b5
