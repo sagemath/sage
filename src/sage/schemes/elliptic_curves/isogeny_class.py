@@ -1207,7 +1207,7 @@ def isogeny_degrees_cm(E, verbose=False):
     if verbose:
         print("CM case, discriminant = %s" % d)
 
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     from sage.sets.set import Set
     from sage.arith.misc import kronecker as kronecker_symbol
 

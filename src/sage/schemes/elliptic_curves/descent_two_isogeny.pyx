@@ -1316,7 +1316,7 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
                 p_list_len += 1
     else:
         # Factor more slowly using Pari via Python.
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         d = Integer(0)
         mpz_set(d.value, d_mpz)
         primes = list(pari(d).factor()[0])

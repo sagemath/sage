@@ -559,7 +559,7 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
         sage: for label in ['438.c2','306.b','462.f3']:
         ....:     assert(cremona_to_lmfdb(lmfdb_to_cremona(label)) == label)
     """
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     m = cremona_label_regex.match(cremona_label)
     if m is None:
         raise ValueError("Invalid Cremona label")
@@ -609,7 +609,7 @@ def lmfdb_to_cremona(lmfdb_label, CDB=None):
         sage: cremona_to_lmfdb('990j1')
         '990.h3'
     """
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     m = lmfdb_label_regex.match(lmfdb_label)
     if m is None:
         raise ValueError("Invalid LMFDB label")
