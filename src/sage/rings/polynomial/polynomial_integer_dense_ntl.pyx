@@ -619,7 +619,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         since they need not exist.  Instead, over the integers, we
         first multiply `g` by a divisor of the resultant of `a/g` and
         `b/g`, up to sign, and return ``g, u, v`` such that
-        ``g = s*self + s*right``.  But note that this `g` may be a
+        ``g = u*self + v*right``.  But note that this `g` may be a
         multiple of the gcd.
 
         If ``self`` and ``right`` are coprime as polynomials over the
