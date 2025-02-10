@@ -1393,14 +1393,15 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
     def _magma_init_(self, magma):
         """
-        Return a string of ``self`` in ``Magma`` form. Does not return
-        ``Magma`` object but string.
+        Return a string of ``self`` in ``Magma`` form.
+
+        This does not return a ``Magma`` object but a string.
 
         EXAMPLES::
 
             sage: A = random_matrix(GF(2),3,3)
             sage: A._magma_init_(magma)                             # optional - magma
-            'Matrix(GF(2),3,3,StringToIntegerSequence("0 1 0 0 1 1 0 0 0"))'
+            'Matrix(GF(2),3,3,StringToIntegerSequence("..."))'
             sage: A = random_matrix(GF(2),100,100)
             sage: B = random_matrix(GF(2),100,100)
             sage: magma(A*B) == magma(A) * magma(B)                 # optional - magma
