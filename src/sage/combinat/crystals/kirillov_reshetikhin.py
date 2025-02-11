@@ -519,7 +519,7 @@ class KirillovReshetikhinGenericCrystal(AffineCrystalFromClassical):
         r = self.r()
         s = self.s()
         weight = s*Lambda[r] - s*Lambda[0] * Lambda[r].level() / Lambda[0].level()
-        return [b for b in self.module_generators if b.weight() == weight][0]
+        return next(b for b in self.module_generators if b.weight() == weight)
 
     def r(self):
         """
@@ -993,8 +993,8 @@ class KR_type_vertical(KirillovReshetikhinCrystalFromPromotion):
             sage: K.from_pm_diagram_to_highest_weight_vector(pm)
             [[2], [-2]]
         """
-        u = [b for b in self.classical_decomposition().module_generators
-             if b.to_tableau().shape() == pm.outer_shape()][0]
+        u = next(b for b in self.classical_decomposition().module_generators
+                 if b.to_tableau().shape() == pm.outer_shape())
         ct = self.cartan_type()
         rank = ct.rank() - 1
         ct_type = ct.classical().type()
@@ -1031,7 +1031,7 @@ class KR_type_E6(KirillovReshetikhinCrystalFromPromotion):
         [(1,)]
         sage: b.e(0)
         [(-2, 1)]
-        sage: b = [t for t in K if t.epsilon(1) == 1 and t.phi(3) == 1 and t.phi(2) == 0 and t.epsilon(2) == 0][0]
+        sage: b = next(t for t in K if t.epsilon(1) == 1 and t.phi(3) == 1 and t.phi(2) == 0 and t.epsilon(2) == 0)
         sage: b
         [(-1, 3)]
         sage: b.e(0)
@@ -1622,7 +1622,7 @@ class KR_type_A2(KirillovReshetikhinGenericCrystal):
         weight = s*Lambda[r] - s*Lambda[0]
         if r == self.cartan_type().rank() - 1:
             weight += s*Lambda[r]  # Special case for r == n
-        return [b for b in self.module_generators if b.weight() == weight][0]
+        return next(b for b in self.module_generators if b.weight() == weight)
 
     def classical_decomposition(self):
         r"""
@@ -2489,7 +2489,8 @@ class KR_type_Cn(KirillovReshetikhinGenericCrystal):
             sage: K.from_pm_diagram_to_highest_weight_vector(pm)
             [[2, 2], [3, 3], [-3, -1]]
         """
-        u = [b for b in self.classical_decomposition().module_generators if b.to_tableau().shape() == pm.outer_shape()][0]
+        u = next(b for b in self.classical_decomposition().module_generators
+                 if b.to_tableau().shape() == pm.outer_shape())
         ct = self.cartan_type()
         rank = ct.rank()-1
         ct_type = ct.classical().type()
@@ -2537,7 +2538,7 @@ class KR_type_CnElement(KirillovReshetikhinGenericCrystalElement):
             [[3, -3], [-3, -2], [-1, -1]]
         """
         n = self.parent().cartan_type().n
-        b, l = self.lift().to_highest_weight(index_set=list(range(2, n + 1)))
+        b, l = self.lift().to_highest_weight(index_set=range(2, n + 1))
         pm = self.parent().from_highest_weight_vector_to_pm_diagram(b)
         l1, l2 = pm.pm_diagram[n-1]
         if l1 == 0:
@@ -2562,7 +2563,7 @@ class KR_type_CnElement(KirillovReshetikhinGenericCrystalElement):
             sage: b.f(0) # indirect doctest
         """
         n = self.parent().cartan_type().n
-        b, l = self.lift().to_highest_weight(index_set=list(range(2, n + 1)))
+        b, l = self.lift().to_highest_weight(index_set=range(2, n + 1))
         pm = self.parent().from_highest_weight_vector_to_pm_diagram(b)
         l1, l2 = pm.pm_diagram[n-1]
         if l2 == 0:
@@ -2585,7 +2586,7 @@ class KR_type_CnElement(KirillovReshetikhinGenericCrystalElement):
             1
         """
         n = self.parent().cartan_type().n
-        b = self.lift().to_highest_weight(index_set=list(range(2, n + 1)))[0]
+        b = self.lift().to_highest_weight(index_set=range(2, n + 1))[0]
         pm = self.parent().from_highest_weight_vector_to_pm_diagram(b)
         l1, l2 = pm.pm_diagram[n-1]
         return l1
@@ -2602,7 +2603,7 @@ class KR_type_CnElement(KirillovReshetikhinGenericCrystalElement):
             0
         """
         n = self.parent().cartan_type().n
-        b = self.lift().to_highest_weight(index_set=list(range(2, n + 1)))[0]
+        b = self.lift().to_highest_weight(index_set=range(2, n + 1))[0]
         pm = self.parent().from_highest_weight_vector_to_pm_diagram(b)
         l1, l2 = pm.pm_diagram[n-1]
         return l2
@@ -2825,7 +2826,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
         """
         n = self.parent().cartan_type().rank()-1
         s = self.parent().s()
-        b, l = self.lift().to_highest_weight(index_set=list(range(2, n + 1)))
+        b, l = self.lift().to_highest_weight(index_set=range(2, n + 1))
         pm = self.parent().from_highest_weight_vector_to_pm_diagram(b)
         l1, l2 = pm.pm_diagram[n-1]
         l3 = pm.pm_diagram[n-2][0]
@@ -2860,7 +2861,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
         """
         n = self.parent().cartan_type().rank()-1
         s = self.parent().s()
-        b, l = self.lift().to_highest_weight(index_set=list(range(2, n + 1)))
+        b, l = self.lift().to_highest_weight(index_set=range(2, n + 1))
         pm = self.parent().from_highest_weight_vector_to_pm_diagram(b)
         l1, l2 = pm.pm_diagram[n-1]
         l3 = pm.pm_diagram[n-2][0]
@@ -2907,7 +2908,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
             True
         """
         n = self.parent().cartan_type().rank() - 1
-        b, l = self.lift().to_highest_weight(index_set=list(range(2, n + 1)))
+        b, l = self.lift().to_highest_weight(index_set=range(2, n + 1))
         pm = self.parent().from_highest_weight_vector_to_pm_diagram(b)
         l1 = pm.pm_diagram[n-1][0]
         l4 = pm.pm_diagram[n][0]
@@ -2940,7 +2941,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
             True
         """
         n = self.parent().cartan_type().rank() - 1
-        b, l = self.lift().to_highest_weight(index_set=list(range(2, n + 1)))
+        b, l = self.lift().to_highest_weight(index_set=range(2, n + 1))
         pm = self.parent().from_highest_weight_vector_to_pm_diagram(b)
         l2 = pm.pm_diagram[n-1][1]
         l4 = pm.pm_diagram[n][0]
@@ -3075,9 +3076,9 @@ class KR_type_spin(KirillovReshetikhinCrystalFromPromotion):
         C = self.cartan_type().classical()
         s = QQ(self.s())
         if self.r() == C.n:
-            c = [s/QQ(2)]*C.n
+            c = [s / QQ(2)]*C.n
         else:
-            c = [s/QQ(2)]*(C.n-1)+[-s/QQ(2)]
+            c = [s / QQ(2)]*(C.n-1) + [-s / QQ(2)]
         return CrystalOfTableaux(C, shape=c)
 
     def dynkin_diagram_automorphism(self, i):
@@ -3155,6 +3156,7 @@ class KR_type_spin(KirillovReshetikhinCrystalFromPromotion):
             y = list(x)  # map a (shallow) copy
             y[0] = -y[0]
             return tuple(y)
+
         return {dic_weight[w]: dic_weight_dual[neg(w)] for w in dic_weight}
 
     @cached_method
@@ -3779,7 +3781,7 @@ class PMDiagram(CombinatorialObject):
         self._list = [i for a in reversed(pm_diagram) for i in a]
         self.width = sum(self._list)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Turning on pretty printing allows to display the `\pm` diagram as a
         tableau with the `+` and `-` displayed.
@@ -3791,7 +3793,7 @@ class PMDiagram(CombinatorialObject):
         """
         return repr(self.pm_diagram)
 
-    def _repr_diagram(self):
+    def _repr_diagram(self) -> str:
         """
         Return a string representation of ``self`` as a diagram.
 
@@ -3910,7 +3912,7 @@ class PMDiagram(CombinatorialObject):
         p = [p[i] + ll[2*i+1] for i in range(self.n)]
         return Partition(p)
 
-    def heights_of_minus(self):
+    def heights_of_minus(self) -> list:
         r"""
         Return a list with the heights of all minus in the `\pm` diagram.
 
@@ -3930,7 +3932,7 @@ class PMDiagram(CombinatorialObject):
             heights += [n-2*i]*((self.outer_shape()+[0]*n)[n-2*i-1]-(self.intermediate_shape()+[0]*n)[n-2*i-1])
         return heights
 
-    def heights_of_addable_plus(self):
+    def heights_of_addable_plus(self) -> list:
         r"""
         Return a list with the heights of all addable plus in the `\pm` diagram.
 
@@ -4176,7 +4178,7 @@ class CrystalDiagramAutomorphism(CrystalMorphism):
         self._cache[x] = y
         return y
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return a string describing ``self``.
 
@@ -4188,7 +4190,7 @@ class CrystalDiagramAutomorphism(CrystalMorphism):
         """
         return "Diagram automorphism"
 
-    def is_isomorphism(self):
+    def is_isomorphism(self) -> bool:
         """
         Return ``True`` as ``self`` is a crystal isomorphism.
 

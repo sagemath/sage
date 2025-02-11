@@ -360,12 +360,11 @@ def _fast_fixed_content(a, content, t, p, k, r, s, dll, equality=False):
             content[j] += 1
             j = dll.next(j)
         a[t - 1] = k - 1
-    return
 
 
-################################
-# List Fixed Content Algorithm #
-################################
+# ###############################
+# List Fixed Content Algorithm  #
+# ###############################
 def _lfc(content, equality=False):
     """
     EXAMPLES::

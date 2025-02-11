@@ -120,6 +120,26 @@ satisfying, but we have chosen the latter.
     sage: a == 2
     False
 
+Some default printing options can be set by modifying module globals::
+
+    sage: from sage.rings import real_mpfi
+    sage: x = RIF(sqrt(2), sqrt(2)+1e-10); x
+    1.4142135624?
+    sage: real_mpfi.printing_error_digits = 2
+    sage: x
+    1.414213562424?51
+    sage: real_mpfi.printing_style = 'brackets'
+    sage: x
+    [1.4142135623730949 .. 1.4142135624730952]
+    sage: real_mpfi.printing_style = 'question'; real_mpfi.printing_error_digits = 0  # revert to default
+
+The default value of using scientific notation can be configured at field construction instead::
+
+    sage: RealIntervalField(53, sci_not=False)(0.5)
+    0.50000000000000000?
+    sage: RealIntervalField(53, sci_not=True)(0.5)
+    5.0000000000000000?e-1
+
 COMPARISONS:
 
 Comparison operations (``==``, ``!=``, ``<``, ``<=``, ``>``, ``>=``)
@@ -232,7 +252,7 @@ TESTS::
 
     sage: import numpy                                                                  # needs numpy
     sage: if int(numpy.version.short_version[0]) > 1:                                   # needs numpy
-    ....:     numpy.set_printoptions(legacy="1.25")                                     # needs numpy
+    ....:     _ = numpy.set_printoptions(legacy="1.25")                                     # needs numpy
     sage: RIF(2) == numpy.int8('2')                                                     # needs numpy
     True
     sage: numpy.int8('2') == RIF(2)                                                     # needs numpy
@@ -816,9 +836,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         prec = self._prec
 
         # Direct and efficient conversions
-        if S is ZZ or S is QQ:
-            return True
-        if S is int or S is long:
+        if S is ZZ or S is QQ or S is int:
             return True
         if isinstance(S, RealIntervalField_class):
             return (<RealIntervalField_class>S)._prec >= prec

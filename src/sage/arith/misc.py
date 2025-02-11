@@ -265,7 +265,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
         raise NotImplementedError("proof and height bound only implemented for real and complex numbers")
 
     else:
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         y = pari(z)
         f = y.algdep(degree)
 
@@ -378,7 +378,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
         from sage.libs.flint.arith_sage import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
     elif algorithm == 'pari' or algorithm == 'gp':
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         x = pari(n).bernfrac()         # Use the PARI C library
         return Rational(x)
     elif algorithm == 'gap':
@@ -470,7 +470,7 @@ def factorial(n, algorithm='gmp'):
     if algorithm == 'gmp':
         return ZZ(n).factorial()
     elif algorithm == 'pari':
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return pari.factorial(n)
     else:
         raise ValueError('unknown algorithm')
@@ -1457,11 +1457,11 @@ def random_prime(n, proof=None, lbound=2):
     lbound = max(2, lbound)
     if lbound > 2:
         if lbound == 3 or n <= 2*lbound - 2:
-        # check for Betrand's postulate (proved by Chebyshev)
+            # check for Betrand's postulate (proved by Chebyshev)
             if lbound < 25 or n <= 6*lbound/5:
-            # see J. Nagura, Proc. Japan Acad. 28, (1952). 177-181.
+                # see J. Nagura, Proc. Japan Acad. 28, (1952). 177-181
                 if lbound < 2010760 or n <= 16598*lbound/16597:
-                # see L. Schoenfeld, Math. Comp. 30 (1976), no. 134, 337-360.
+                    # see L. Schoenfeld, Math. Comp. 30 (1976), no 134, 337-360
                     if proof:
                         smallest_prime = ZZ(lbound-1).next_prime()
                     else:
@@ -2060,7 +2060,7 @@ def xgcd(a, b=None):
         sage: h = R.base_ring().gen()
         sage: S.<y> = R.fraction_field()[]
         sage: xgcd(y^2, a*h*y + b)
-        (1, 7*a^2/b^2, (((-h)*a)/b^2)*y + 1/b)
+        (1, 7*a^2/b^2, (((-7)*a)/(h*b^2))*y + 7/(7*b))
 
     Tests with randomly generated integers::
 
@@ -3164,7 +3164,7 @@ class Euler_Phi:
             return ZZ.zero()
         if n <= 2:
             return ZZ.one()
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return ZZ(pari(n).eulerphi())
 
     def plot(self, xmin=1, xmax=50, pointsize=30, rgbcolor=(0, 0, 1),
@@ -4425,7 +4425,7 @@ def primitive_root(n, check=True):
         sage: primitive_root(mpz(-46))                                                  # needs sage.libs.pari
         5
     """
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     if not check:
         return ZZ(pari(n).znprimroot())
     n = ZZ(n).abs()
@@ -4482,7 +4482,7 @@ def nth_prime(n):
     """
     if n <= 0:
         raise ValueError("nth prime meaningless for nonpositive n (=%s)" % n)
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     return ZZ(pari.prime(n))
 
 
@@ -4600,7 +4600,7 @@ class Moebius:
         # Use fast PARI algorithm
         if n == 0:
             return ZZ.zero()
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return ZZ(pari(n).moebius())
 
     def __repr__(self):
@@ -4685,7 +4685,7 @@ class Moebius:
             return self.range(start, 0, step) + [ZZ.zero()] +\
                    self.range(step, stop, step)
 
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
 
         if step == 1:
             v = pari('vector(%s, i, moebius(i-1+%s))' % (stop - start, start))
@@ -4815,7 +4815,7 @@ def number_of_divisors(n):
     m = ZZ(n)
     if m.is_zero():
         raise ValueError("input must be nonzero")
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     return ZZ(pari(m).numdiv())
 
 
@@ -4888,7 +4888,7 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
     if algorithm == "pari":
         if p == -1:
             p = 0
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return ZZ(pari(a).hilbert(b, p))
 
     elif algorithm == 'direct':
@@ -6375,6 +6375,7 @@ def dedekind_psi(N):
     N = Integer(N)
     return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
 
+
 def smooth_part(x, base):
     r"""
     Given an element ``x`` of a Euclidean domain and a factor base ``base``,
@@ -6422,6 +6423,7 @@ def smooth_part(x, base):
             fs.append((p,v))
     from sage.structure.factorization import Factorization
     return Factorization(fs)
+
 
 def coprime_part(x, base):
     r"""

@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sagemath-meataxe ~= 10.5rc1
+sagemath-meataxe ~= 10.6b6
