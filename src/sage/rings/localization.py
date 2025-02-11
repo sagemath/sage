@@ -37,8 +37,8 @@ three elements::
     sage: add_units += [q*ui - uj for ui, uj in I if ui != uj]
     sage: L = R.localization(tuple(add_units)); L                                       # needs sage.libs.pari
     Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
-     (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1, u2*q - u1, u2*q - u0,
-      u1*q - u2, u1*q - u0, u0*q - u2, u0*q - u1)
+    (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0, u2*q - u1, u1*q - u0,
+     u1*q - u2, u0*q - u1, u0*q - u2)
 
 Define the representation matrices (of one of the three dimensional irreducible representations)::
 
@@ -82,8 +82,8 @@ Obtain specializations in positive characteristic::
     sage: f = L.hom((3,5,7,11), codomain=Fp); f
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
-            (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1, u2*q - u1, u2*q - u0,
-             u1*q - u2, u1*q - u0, u0*q - u2, u0*q - u1)
+            (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0, u2*q - u1,
+             u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
       To:   Finite Field of size 17
       Defn: u0 |--> 3
             u1 |--> 5
@@ -110,8 +110,8 @@ Obtain specializations in characteristic 0::
     sage: fQ = L.hom((3,5,7,11), codomain=QQ); fQ
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring
-            localized at (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1,
-            u2*q - u1, u2*q - u0, u1*q - u2, u1*q - u0, u0*q - u2, u0*q - u1)
+            localized at (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0,
+            u2*q - u1, u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
       To:   Rational Field
       Defn: u0 |--> 3
             u1 |--> 5
@@ -141,8 +141,8 @@ Obtain specializations in characteristic 0::
     sage: fF = L.hom((x, y, z, t), codomain=F); fF
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring
-            localized at (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1,
-            u2*q - u1, u2*q - u0, u1*q - u2, u1*q - u0, u0*q - u2, u0*q - u1)
+            localized at (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0,
+            u2*q - u1, u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
       To:   Fraction Field of Quotient of Multivariate Polynomial Ring in x, y, z, t
             over Rational Field by the ideal (x + y + z)
       Defn: u0 |--> -ybar - zbar
@@ -838,7 +838,7 @@ class Localization(Parent, UniqueRepresentation):
         """
         return self(self.base_ring().gen(i))
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple whose entries are the generators for this
         object, in order.

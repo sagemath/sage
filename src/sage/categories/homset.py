@@ -396,7 +396,7 @@ def Hom(X, Y, category=None, check=True):
     """
     # This should use cache_function instead
     # However some special handling is currently needed for
-    # domains/docomains that break the unique parent condition. Also,
+    # domains/codomains that break the unique parent condition. Also,
     # at some point, it somehow broke the coercion (see e.g. sage -t
     # sage.rings.real_mpfr). To be investigated.
     global _cache
@@ -663,10 +663,10 @@ class Homset(Set_generic):
         if check:
             if not isinstance(category, Category):
                 raise TypeError("category (=%s) must be a category" % category)
-            #if not X in category:
-            #    raise TypeError, "X (=%s) must be in category (=%s)"%(X, category)
-            #if not Y in category:
-            #    raise TypeError, "Y (=%s) must be in category (=%s)"%(Y, category)
+            # if not X in category:
+            #     raise TypeError("X (=%s) must be in category (=%s)" % (X, category))
+            # if not Y in category:
+            #     raise TypeError("Y (=%s) must be in category (=%s)" % (Y, category))
 
         if base is None and hasattr(category, "WithBasis"):
             # The above is a lame but fast check that category is a
