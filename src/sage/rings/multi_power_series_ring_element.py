@@ -1150,7 +1150,7 @@ class MPowerSeries(PowerSeries):
             Field
             sage: t = M.gens()
             sage: f = 1/2*t[0]^3*t[1]^3*t[2]^2 + 2/3*t[0]*t[2]^6*t[3] \
-            - t[0]^3*t[1]^3*t[3]^3 - 1/4*t[0]*t[1]*t[2]^7 + M.O(10)
+            ....: - t[0]^3*t[1]^3*t[3]^3 - 1/4*t[0]*t[1]*t[2]^7 + M.O(10)
             sage: f
             1/2*t0^3*t1^3*t2^2 + 2/3*t0*t2^6*t3 - t0^3*t1^3*t3^3
             - 1/4*t0*t1*t2^7 + O(t0, t1, t2, t3)^10
@@ -1299,7 +1299,7 @@ class MPowerSeries(PowerSeries):
             sage: H = QQ[['x,y,z']]
             sage: (x,y,z) = H.gens()
             sage: h = -x*y^4*z^7 - 1/4*y*z^12 + 1/2*x^7*y^5*z^2 \
-            + 2/3*y^6*z^8 + H.O(15)
+            ....: + 2/3*y^6*z^8 + H.O(15)
             sage: h.V(3)
             -x^3*y^12*z^21 - 1/4*y^3*z^36 + 1/2*x^21*y^15*z^6 + 2/3*y^18*z^24 + O(x, y, z)^45
         """
@@ -1360,7 +1360,7 @@ class MPowerSeries(PowerSeries):
             Multivariate Power Series Ring in t0, t1, t2, t3 over Rational Field
             sage: t = M.gens()
             sage: f = 1/2*t[0]^3*t[1]^3*t[2]^2 + 2/3*t[0]*t[2]^6*t[3] \
-            - t[0]^3*t[1]^3*t[3]^3 - 1/4*t[0]*t[1]*t[2]^7 + M.O(10)
+            ....: - t[0]^3*t[1]^3*t[3]^3 - 1/4*t[0]*t[1]*t[2]^7 + M.O(10)
             sage: f
             1/2*t0^3*t1^3*t2^2 + 2/3*t0*t2^6*t3 - t0^3*t1^3*t3^3
             - 1/4*t0*t1*t2^7 + O(t0, t1, t2, t3)^10
