@@ -2959,7 +2959,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: x.exp(algorithm='generic')   # indirect doctest                       # needs sage.libs.ntl
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)
 
-        TESTS::
+        TESTS:
 
         Verify that :trac:`38037` is fixed::
 
