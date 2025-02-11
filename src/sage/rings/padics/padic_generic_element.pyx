@@ -2961,7 +2961,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         TESTS:
 
-        Verify that :trac:`38037` is fixed::
+        Verify that :issue:`38037` is fixed::
 
             sage: R.<a> = Zq(9)
             sage: exp(R.zero())
