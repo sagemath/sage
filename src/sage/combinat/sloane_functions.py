@@ -6796,7 +6796,7 @@ class A001694(SloaneSequence):
 
         n = max(n, 4)
         # Use PARI directly -- much faster.
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         L = pari('v=listcreate(); for(i=%s,%s,if(vecmin(factor(i)[,2])>1,listput(v,i))); v' % (n, m))
         return [ZZ(x) for x in L]  # not very many, so not much overhead
 
