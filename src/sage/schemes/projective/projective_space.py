@@ -982,9 +982,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         TESTS::
 
             sage: TestSuite(X).run(skip=["_test_an_element", "_test_elements",\
-            "_test_elements_eq", "_test_some_elements", "_test_elements_eq_reflexive",\
-            "_test_elements_eq_symmetric", "_test_elements_eq_transitive",\
-            "_test_elements_neq"])
+            ....: "_test_elements_eq", "_test_some_elements", "_test_elements_eq_reflexive",\
+            ....: "_test_elements_eq_symmetric", "_test_elements_eq_transitive",\
+            ....: "_test_elements_neq"])
         """
         R = self.base_ring()
         if R.is_field() and R.is_exact():
