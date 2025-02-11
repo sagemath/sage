@@ -2400,9 +2400,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             sage: E = EllipticCurve([-127^2,0])
             sage: P = E.lift_x(611429153205013185025/9492121848205441)
-            sage: (set(E.gens(use_database=False, algorithm='pari', pari_effort=4))   # long time
-            ....:    <= set([P+T for T in E.torsion_points()]
-            ....:        + [-P+T for T in E.torsion_points()]))
+            sage: ge = set(E.gens(use_database=False, algorithm='pari',pari_effort=4))   # long time
+            sage: ge <= set([P+T for T in E.torsion_points()]  # long time
+            ....:        + [-P+T for T in E.torsion_points()])
             True
         """
         # If the optional extended database is installed and an
