@@ -3108,7 +3108,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         sage: d['ymin']
         100.0
 
-    Verify that :trac:`38037` is fixed::
+    Verify that :issue:`38037` is fixed::
 
         sage: list_plot([(0,-1),(1,-2),(2,-3),(3,-4),(4,None)])
         Traceback (most recent call last):
@@ -3116,11 +3116,13 @@ def list_plot(data, plotjoined=False, **kwargs):
         TypeError: unable to coerce to a ComplexNumber:
         <class 'sage.rings.integer.Integer'>
 
-        #Non enumerated list example
+    Test the codepath where ``list_enumerated`` is ``False``::
+
         sage: list_plot([3+I, 4, I, 1+5*i, None, 1+i])
         Graphics object consisting of 1 graphics primitive
 
-        #Enumerated list example
+    Test the codepath where ``list_enumerated`` is ``True``::
+
         sage: list_plot([4, 3+I, I, 1+5*i, None, 1+i])
         Graphics object consisting of 1 graphics primitive
     """
@@ -3140,12 +3142,12 @@ def list_plot(data, plotjoined=False, **kwargs):
         else:
             list_data = list(data.items())
         return list_plot(list_data, plotjoined=plotjoined, **kwargs)
-    listEnumerated = False
+    list_enumerated = False
     try:
         from sage.rings.real_double import RDF
         RDF(data[0])
         data = list(enumerate(data))
-        listEnumerated = True
+        list_enumerated = True
     except TypeError: # we can get this TypeError if the element is a list
                       # or tuple or numpy array, or an element of CC, CDF
         # We also want to avoid doing CC(data[0]) here since it will go
@@ -3156,7 +3158,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         # element of the Symbolic Ring.
         if isinstance(data[0], Expression):
             data = list(enumerate(data))
-            listEnumerated = True
+            list_enumerated = True
 
     try:
         if plotjoined:
@@ -3170,7 +3172,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         # gets to (1, I).
         from sage.rings.cc import CC
         # It is not guaranteed that we enumerated the data so we have two cases
-        if listEnumerated:
+        if list_enumerated:
             data = [(z.real(), z.imag()) for z in [CC(z[1]) for z in data]]
         else:
             data = [(z.real(), z.imag()) for z in [CC(z) for z in data]]
