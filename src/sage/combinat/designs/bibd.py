@@ -613,7 +613,7 @@ def BIBD_from_TD(v, k, existence=False):
 
         BIBD = TDkv._blocks
         for i in range(k):
-            BIBD.extend([[x+i*v for x in B] for B in BIBDvk])
+            BIBD.extend([x+i*v for x in B] for B in BIBDvk)
 
     # Second construction
     elif ((v-1) % k == 0 and
@@ -630,7 +630,7 @@ def BIBD_from_TD(v, k, existence=False):
         inf = v*k
         BIBD = TDkv
         for i in range(k):
-            BIBD.extend([[inf if x == v else x+i*v for x in B] for B in BIBDv1k])
+            BIBD.extend([inf if x == v else x+i*v for x in B] for B in BIBDv1k)
 
     # Third construction
     elif ((v-k) % k == 0 and
@@ -650,7 +650,8 @@ def BIBD_from_TD(v, k, existence=False):
         BIBDvpkk = [B for B in BIBDvpkk if min(B) < v]
 
         for i in range(k):
-            BIBD.extend([[(x-v)+inf if x >= v else x+i*v for x in B] for B in BIBDvpkk])
+            BIBD.extend([(x-v)+inf if x >= v else x+i*v for x in B]
+                        for B in BIBDvpkk)
 
         BIBD.append(list(range(k * v, v * k + k)))
 
@@ -1277,14 +1278,14 @@ def BIBD_5q_5_for_q_prime_power(q):
 
     d = (q-1)//4
     B = []
-    F = FiniteField(q,'x')
+    F = FiniteField(q, 'x')
     a = F.primitive_element()
-    L = {b:i for i,b in enumerate(F)}
-    for b in L:
-        B.append([i*q + L[b] for i in range(5)])
+    L = {b: i for i, b in enumerate(F)}
+    for b, Lb in L.items():
+        B.append([i*q + Lb for i in range(5)])
         for i in range(5):
             for j in range(d):
-                B.append([        i*q + L[b          ],
+                B.append([        i*q + Lb,
                           ((i+1) % 5)*q + L[ a**j+b    ],
                           ((i+1) % 5)*q + L[-a**j+b    ],
                           ((i+4) % 5)*q + L[ a**(j+d)+b],

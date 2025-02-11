@@ -256,7 +256,7 @@ def construction_3_5(k, n, m, r, s, t, explain_construction=False):
     group_k_3 = [B[-1] for B in master_design if B[-3] not in group_k_1 and B[-2] not in group_k_2]
     group_k_3 = list(set(group_k_3))
     assert len(group_k_3) <= t
-    group_k_3.extend([x for x in range(q) if x not in group_k_3])
+    group_k_3.extend(x for x in range(q) if x not in group_k_3)
     group_k_3 = group_k_3[:t]
 
     # Relabelling the OA
@@ -545,7 +545,7 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
     # delete points.
     #
     # TD.extend([range(i*q,(i+1)*q) for i in range(x)])
-    TD.extend([list(range(i*q,(i+1)*q))+[p2] for i in range(x,q)])
+    TD.extend(list(range(i*q,(i+1)*q))+[p2] for i in range(x,q))
 
     points_to_delete = set([i*q+j for i in range(x) for j in range(1,q)]+[i*q for i in range(x,q)])
     points_to_keep = set(range(q**2+2))-points_to_delete
@@ -837,14 +837,14 @@ def thwart_lemma_4_1(k, n, m, explain_construction=False):
     # - (1+t,t,1+t), (1,1,1), (1+t,t,t), (1,1,2), (0,0,1), (1,0,1), (0,1,1+t),
     #   (0,1,1), (1,0,-t)
     points = [(1+t,t,1+t), (1,1,1), (1+t,t,t), (1,1,2), (0,0,1), (1,0,1), (0,1,1+t), (0,1,1), (1,0,-t)]
-    points = [[K(_) for _ in t] for t in points] # triples of K^3
+    points = [[K(c) for c in t] for t in points] # triples of K^3
     AG_2_3 = []
     for x,y,z in points:
         if z != 0:
-            x,y,z = x/z,y/z,z/z
+            x, y, z = x / z, y / z, K.one()
             AG_2_3.append(relabel[x]+n*relabel[y])
         elif y != 0:
-            x,y,z = x/y,y/y,z
+            x, y = x / y, K.one()
             AG_2_3.append(q**2+relabel[x])
         else:
             AG_2_3.append(q**2+q)
@@ -1002,7 +1002,7 @@ def three_factor_product(k, n1, n2, n3, check=False, explain_construction=False)
       Rolf S. Rees,
       Journal of Combinatorial Designs 1.1 (1993): 15-26.
     """
-    assert n1 <= n2 and n2 <= n3
+    assert n1 <= n2 <= n3
 
     if explain_construction:
         return ("Three-factor product with n={}.{}.{} from:\n" +
@@ -1567,7 +1567,8 @@ def brouwer_separable_design(k, t, q, x, check=False, verbose=False, explain_con
         blocks_of_size_q_plus_t = _reorder_matrix(blocks_of_size_q_plus_t)
 
         for i,classs in enumerate(OA_tq1_classes):
-            OA.extend([R[xx] if xx < t+q else N-i-1 for xx in B] for R in blocks_of_size_q_plus_t for B in classs)
+            OA.extend([R[xx] if xx < t+q else N-i-1 for xx in B]
+                      for R in blocks_of_size_q_plus_t for B in classs)
 
         # The set of size x
         OA.extend([N-1-xx for xx in R] for R in orthogonal_array(k,x))

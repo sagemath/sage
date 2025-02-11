@@ -9,11 +9,12 @@ This is a short guide on how to build the Sage from source using Meson.
 Walkthrough
 ===========
 
-Assume we're starting from a clean repo and a fully set up conda environment:
+Assume we're starting from a clean repo and a fully set up conda environment
+(modify ``-linux`` according to your operating system):
         
 .. CODE-BLOCK:: shell-session
 
-    $ mamba env create --file src/environment-3.11.yml --name sage-dev
+    $ mamba env create --file environment-3.11-linux.yml --name sage-dev
     $ conda activate sage-dev
 
 Alternatively, install all build requirements as described in section
@@ -87,12 +88,11 @@ To configure the project, we need to run the following command:
     $ meson setup builddir --prefix=$PWD/build-install
 
 This will create a build directory ``builddir`` that will hold the build artifacts.
-The ``--prefix`` option specifies the directory where the Sage will be installed.
+The ``--prefix`` option specifies the directory where the Sage will be installed,
+and can be omitted when ``pip`` is used to install as explained below.
 
-If pip is used as above, ``builddir`` is set to be
+If pip is used as above with ``--editable``, ``builddir`` is set to be
 ``build/cp[Python major version][Python minor version]``, such as ``build/cp311``.
-``--prefix=`` can be left unspecified, when conda is used then meson will
-install to the conda environment e.g. ``$HOME/miniforge3/envs/sage-dev/``.
 
 To compile the project, run the following command:
 
@@ -116,7 +116,8 @@ Usually, this directory is not on your Python path, so you have to use:
 
 When editable install is used, it is not necessary to reinstall after each compilation.
 
-Alternatively, we can still use pip to install:
+Alternatively, we can still use pip to install (which does not require specifying
+``--prefix`` in advance and automatically works with conda environment):
 
 .. CODE-BLOCK:: shell-session
 
@@ -133,7 +134,11 @@ Alternatively, we can still use pip to install:
         $ meson setup builddir --prefix=/usr --libdir=... -Dcpp_args=...
         $ meson compile -C builddir
         $ DESTDIR=/path/to/staging/root meson install -C builddir
-    
+
+    With the `default <https://mesonbuild.com/Running-Meson.html#installing>`_ prefix
+    being ``/usr/local``, it may then install to
+    ``$DESTDIR/usr/local/lib/python3.12/site-packages/sage``.
+
     See `Meson's quick guide <https://mesonbuild.com/Quick-guide.html#using-meson-as-a-distro-packager>`_
     and `Meson's install guide <https://mesonbuild.com/Installing.html#destdir-support>`_
     for more information.
@@ -143,6 +148,7 @@ Miscellaneous tips
 
 The environment variable ``MESONPY_EDITABLE_VERBOSE=1`` can be set while running ``./sage``,
 so that when Cython files are recompiled a message is printed out.
+See `<https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#verbose-mode>`_.
 
 If a new ``.pyx`` file is added, it need to be added to ``meson.build`` file in the
 containing directory.
