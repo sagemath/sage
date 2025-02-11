@@ -85,7 +85,7 @@ def three_dimensional(R, a, b, c, d, names=['X', 'Y', 'Z']):
         sage: Q.<a,b,c,d> = PolynomialRing(QQ)
         sage: L = lie_algebras.three_dimensional(Q, a, b, c, d)
         sage: L.structure_coefficients()
-        Finite family {('X', 'Y'): d*Y + a*Z, ('X', 'Z'): (-c)*Y + (-d)*Z, ('Y', 'Z'): b*X}
+        Finite family {('X', 'Y'): d*Y + a*Z, ('X', 'Z'): -c*Y - d*Z, ('Y', 'Z'): b*X}
         sage: TestSuite(L).run()
     """
     if isinstance(names, str):
