@@ -2450,23 +2450,25 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         EXAMPLES:
 
-        This is the mother of all examples, which is not regular (see Section
-        7.1.1 in [DLRS2010]_)::
+        This is the mother of all examples (see Section 7.1.1 in
+        [DLRS2010]_)::
+
+            sage: def mother(epsilon=0):
+            ....:     rays = [(4-epsilon,epsilon,0),(0,4-epsilon,epsilon),(epsilon,0,4-epsilon),(2,1,1),(1,2,1),(1,1,2),(-1,-1,-1)]
+            ....:     L = [(0,1,4),(0,3,4),(1,2,5),(1,4,5),(0,2,3),(2,3,5),(3,4,5),(6,0,1),(6,1,2),(6,2,0)]
+            ....:     S1 = [Cone([rays[i] for i in indices]) for indices in L]
+            ....:     return Fan(S1)
+
+        When epsilon=0, it is not regular::
 
             sage: epsilon = 0
-            sage: rays = [(4-epsilon,epsilon,0),(0,4-epsilon,epsilon),(epsilon,0,4-epsilon),(2,1,1),(1,2,1),(1,1,2),(-1,-1,-1)]
-            sage: S1 = [Cone([rays[i] for i in indices]) for indices in [(0,1,4),(0,3,4),(1,2,5),(1,4,5),(0,2,3),(2,3,5),(3,4,5),(6,0,1),(6,1,2),(6,2,0)]]
-            sage: mother = Fan(S1)
-            sage: mother.is_regular()
+            sage: mother(epsilon).is_regular()
             False
 
         Doing a slight perturbation makes the same subdivision regular::
 
             sage: epsilon = 1/2
-            sage: rays = [(4-epsilon,epsilon,0),(0,4-epsilon,epsilon),(epsilon,0,4-epsilon),(2,1,1),(1,2,1),(1,1,2),(-1,-1,-1)]
-            sage: S1 = [Cone([rays[i] for i in indices]) for indices in [(0,1,4),(0,3,4),(1,2,5),(1,4,5),(0,2,3),(2,3,5),(3,4,5),(6,0,1),(6,1,2),(6,2,0)]]
-            sage: mother = Fan(S1)
-            sage: mother.is_regular()
+            sage: mother(epsilon).is_regular()
             True
 
         .. SEEALSO::
