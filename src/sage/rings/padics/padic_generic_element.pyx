@@ -115,7 +115,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         m = min(left.precision_absolute(), right.precision_absolute())
         x_ordp = left.valuation()
-        left_zero =  bool(x_ordp >= m)
+        left_zero = bool(x_ordp >= m)
         y_ordp = right.valuation()
         right_zero = bool(y_ordp >= m)
         # handle approximate zeros
@@ -1349,7 +1349,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: Zp(5)(0).gamma()
             1 + O(5^20)
 
-        Check the cached version of `dwork_expansion` from :issue:`24433`::
+        Check the cached version of ``dwork_expansion`` from :issue:`24433`::
 
             sage: p = next_prime(200)
             sage: F = Qp(p)
@@ -3514,7 +3514,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         ans = None
         if algorithm == "pari":
-            from sage.libs.pari.all import PariError
+            from cypari2.handle_error import PariError
             try:
                 # use pari
                 ans = parent(self.__pari__().sqrt())

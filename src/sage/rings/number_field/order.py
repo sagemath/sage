@@ -91,7 +91,7 @@ from .number_field_element_quadratic import OrderElement_quadratic
 
 from sage.rings.monomials import monomials
 
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 
 
 def quadratic_order_class_number(disc):
@@ -631,9 +631,11 @@ class Order(Parent, sage.rings.abc.Order):
         """
         return True
 
-    def is_integrally_closed(self):
+    def is_integrally_closed(self) -> bool:
         r"""
-        Return ``True`` if this ring is integrally closed, i.e., is equal
+        Return whether this ring is integrally closed.
+
+        This is true if and only if it is equal
         to the maximal order.
 
         EXAMPLES::

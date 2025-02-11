@@ -74,38 +74,37 @@ cdef int next_swap(int n, int *c, int *o) noexcept:
     Note, Knuth's descriptions of algorithms tend to encourage
     one to think of finite state machines.  For convenience,
     we have added comments to show what state the machine is
-    in at any given point in the algorithm. `plain_swap_reset`
+    in at any given point in the algorithm. ``plain_swap_reset``
     sets the state to 1, and this function begins and ends in
     state 2.
 
     Returns the index i such that the next permutation can be
     obtained by swapping P[i] <-> P[i+1]
     """
+    cdef int j, s, q, offset
 
-    cdef int j,s,q,offset
-
-    #state 3
+    # state 3
     j = n-1
     if j <= 0:
         return -1
     s = -1
 
     while True:
-        #state 4
+        # state 4
         q = c[j] + o[j]
         if q == j:
-            #state 6
+            # state 6
             if j == 1:
                 return -1
             s = s+1
         elif q >= -1:
             break
 
-        #state 7
+        # state 7
         o[j] = -o[j]
         j = j-1
 
-    #state 5
+    # state 5
     offset = c[j]
     if q > offset:
         offset = q
@@ -227,18 +226,18 @@ cpdef bint next_perm(array l) noexcept:
     if two == 0:
         return False
 
-    #starting from the end, find the first j such that
-    #l[j] > l[one]
+    # starting from the end, find the first j such that
+    # l[j] > l[one]
     while l.data.as_uints[j] <= l.data.as_uints[one]:
         j -= 1
 
-    #Swap positions one and j
+    # Swap positions one and j
     t = l.data.as_uints[one]
     l.data.as_uints[one] = l.data.as_uints[j]
     l.data.as_uints[j] = t
 
-    #Reverse the list between two and last
-    #mset_list = mset_list[:two] + [x for x in reversed(mset_list[two:])]
+    # Reverse the list between two and last
+    # mset_list = mset_list[:two] + [x for x in reversed(mset_list[two:])]
     n -= 1 # In the loop, we only need n-1, so just do it once here
     cdef Py_ssize_t i
     for i in range((n + 1 - two) // 2 - 1, -1, -1):

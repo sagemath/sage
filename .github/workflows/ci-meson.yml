@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu]
-        python: ['3.9', '3.10', '3.11']
+        python: ['3.11', '3.12']
 
     steps:
       - uses: actions/checkout@v4
@@ -47,14 +47,14 @@ jobs:
           key: ${{ runner.os }}-meson-${{ matrix.python }}
 
       - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python }}
           miniforge-version: latest
           use-mamba: true
           channels: conda-forge
           channel-priority: true
-          activate-environment: sage
+          activate-environment: sage-dev
           environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
 
       - name: Print Conda environment
@@ -69,7 +69,12 @@ jobs:
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           export CC="ccache $CC"
           export CXX="ccache $CXX"
-          pip install --no-build-isolation --config-settings=builddir=builddir . -v
+          # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
+          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir . -v
+
+      - name: Verify dependencies
+        shell: bash -l {0}
+        run: pip check
 
       - name: Test
         shell: bash -l {0}
@@ -77,3 +82,10 @@ jobs:
           # We don't install sage_setup, so don't try to test it
           rm -R ./src/sage_setup/
           ./sage -t --all -p4
+
+      - name: Upload log
+        uses: actions/upload-artifact@v4.5.0
+        if: failure()
+        with:
+          name: ${{ runner.os }}-meson-${{ matrix.python }}-log
+          path: builddir/meson-logs/

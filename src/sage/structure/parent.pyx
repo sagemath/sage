@@ -2599,17 +2599,19 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: # needs sage.schemes
             sage: E = EllipticCurve([1,0])
             sage: coercion_model.get_action(E, ZZ, operator.mul)
-            Right Integer Multiplication by Integer Ring
-             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Right action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
             sage: coercion_model.get_action(ZZ, E, operator.mul)
-            Left Integer Multiplication by Integer Ring
-             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
             sage: coercion_model.get_action(E, int, operator.mul)
-            Right Integer Multiplication by Set of Python objects of class 'int'
-             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Right action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            with precomposition on right by Native morphism:
+              From: Set of Python objects of class 'int'
+              To:   Integer Ring
             sage: coercion_model.get_action(int, E, operator.mul)
-            Left Integer Multiplication by Set of Python objects of class 'int'
-             on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x over Rational Field
+            with precomposition on left by Native morphism:
+              From: Set of Python objects of class 'int'
+              To:   Integer Ring
 
         ::
 
@@ -2861,17 +2863,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef bint is_exact(self) except -2:
         """
-        Test whether the ring is exact.
+        Test whether elements of this parent are represented exactly.
 
         .. NOTE::
 
             This defaults to true, so even if it does return ``True``
-            you have no guarantee (unless the ring has properly
+            you have no guarantee (unless the parent has properly
             overloaded this).
 
         OUTPUT:
 
-        Return ``True`` if elements of this ring are represented exactly, i.e.,
+        Return ``True`` if elements of this parent are represented exactly, i.e.,
         there is no precision loss when doing arithmetic.
 
         EXAMPLES::
@@ -3042,8 +3044,7 @@ cdef class EltPair:
             sage: K.<a> = Qq(9)                                                         # needs sage.rings.padics
             sage: E = EllipticCurve_from_j(0).base_extend(K)                            # needs sage.rings.padics
             sage: E.get_action(ZZ)                                                      # needs sage.rings.padics
-            Right Integer Multiplication
-             by Integer Ring
+            Right action by Integer Ring
              on Elliptic Curve defined by y^2 + (1+O(3^20))*y = x^3
               over 3-adic Unramified Extension Field in a
                defined by x^2 + 2*x + 2
