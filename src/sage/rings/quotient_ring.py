@@ -497,7 +497,6 @@ class QuotientRing_nc(Parent):
             raise TypeError("The second argument must be an ideal of the given ring, but %s is not" % I)
         self.__R = R
         self.__I = I
-        # sage.structure.parent_gens.ParentWithGens.__init__(self, R.base_ring(), names)
 
         # Unfortunately, computing the join of categories, which is done in
         # check_default_category, is very expensive.
@@ -591,7 +590,7 @@ class QuotientRing_nc(Parent):
         """
         return "%s/%s" % (latex.latex(self.cover_ring()), latex.latex(self.defining_ideal()))
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Tell whether this quotient ring is commutative.
 
@@ -1275,8 +1274,8 @@ class QuotientRing_nc(Parent):
             sage: S = R.quotient_ring(x^2 + y^2)
             sage: S._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 2
+            // coefficients: QQ...
+            // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
             //        block   2 : ordering C

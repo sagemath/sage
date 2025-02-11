@@ -145,20 +145,20 @@ class pAdicGeneric(LocalGeneric):
         """
         return 1
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return a list of generators.
+        Return a tuple of generators.
 
         EXAMPLES::
 
             sage: R = Zp(5); R.gens()
-            [5 + O(5^21)]
+            (5 + O(5^21),)
             sage: Zq(25,names='a').gens()                                               # needs sage.libs.ntl
-            [a + O(5^20)]
+            (a + O(5^20),)
             sage: S.<x> = ZZ[]; f = x^5 + 25*x -5; W.<w> = R.ext(f); W.gens()           # needs sage.libs.ntl
-            [w + O(w^101)]
+            (w + O(w^101),)
         """
-        return [self.gen()]
+        return (self.gen(),)
 
     def __richcmp__(self, other, op):
         r"""
@@ -195,15 +195,7 @@ class pAdicGeneric(LocalGeneric):
 
         return self._printer.richcmp_modes(other._printer, op)
 
-    # def ngens(self):
-    #     return 1
-
-    # def gen(self, n=0):
-    #     if n != 0:
-    #         raise IndexError, "only one generator"
-    #     return self(self.prime())
-
-    def print_mode(self):
+    def print_mode(self) -> str:
         r"""
         Return the current print mode as a string.
 

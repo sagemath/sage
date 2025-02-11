@@ -3514,7 +3514,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         ans = None
         if algorithm == "pari":
-            from sage.libs.pari.all import PariError
+            from cypari2.handle_error import PariError
             try:
                 # use pari
                 ans = parent(self.__pari__().sqrt())
