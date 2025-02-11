@@ -1,13 +1,12 @@
 """
 Baxter permutations
 """
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.combinat.permutation import Permutations
-
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class BaxterPermutations(UniqueRepresentation, Parent):
@@ -79,11 +78,11 @@ class BaxterPermutations_size(BaxterPermutations):
             Baxter permutations of size 5
         """
         self.element_class = Permutations(n).element_class
-        self._n = ZZ(n)
+        self._n = Integer(n)
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
         super().__init__(category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -93,9 +92,9 @@ class BaxterPermutations_size(BaxterPermutations):
             sage: BaxterPermutations_size(5)
             Baxter permutations of size 5
         """
-        return "Baxter permutations of size %s" % self._n
+        return f"Baxter permutations of size {self._n}"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if and only if ``x`` is a Baxter permutation of
         size ``self._n``.
@@ -228,12 +227,11 @@ class BaxterPermutations_size(BaxterPermutations):
             Integer Ring
         """
         if self._n == 0:
-            return 1
-        from sage.arith.misc import binomial
-        return sum((binomial(self._n + 1, k) *
-                    binomial(self._n + 1, k + 1) *
-                    binomial(self._n + 1, k + 2)) //
-                   ((self._n + 1) * binomial(self._n + 1, 2))
+            return ZZ.one()
+        n = self._n + 1
+        return sum((n.binomial(k) *
+                    n.binomial(k + 1) *
+                    n.binomial(k + 2)) // (n * n.binomial(2))
                    for k in range(self._n))
 
 

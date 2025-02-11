@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sagemath-categories ~= 10.5rc0
+sagemath-categories ~= 10.6b6

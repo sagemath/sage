@@ -297,7 +297,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             except ImportError:
                 pass
             else:
-                if isinstance(R, polynomial_ring.PolynomialRing_general) and R.base_ring() in _Fields:
+                if isinstance(R, polynomial_ring.PolynomialRing_generic) and R.base_ring() in _Fields:
                     try:
                         from . import matrix_polynomial_dense
                     except ImportError:
@@ -954,6 +954,24 @@ class MatrixSpace(UniqueRepresentation, Parent):
             3
         """
         return self.base_ring().characteristic()
+
+    def is_exact(self):
+        """
+        Test whether elements of this matrix space are represented exactly.
+
+        OUTPUT:
+
+        Return ``True`` if elements of this matrix space are represented exactly, i.e.,
+        there is no precision loss when doing arithmetic.
+
+        EXAMPLES::
+
+            sage: MatrixSpace(ZZ, 3).is_exact()
+            True
+            sage: MatrixSpace(RR, 3).is_exact()
+            False
+        """
+        return self._base.is_exact()
 
     def _has_default_implementation(self):
         r"""

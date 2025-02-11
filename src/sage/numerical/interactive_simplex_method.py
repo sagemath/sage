@@ -213,6 +213,7 @@ from sage.structure.all import SageObject
 # will have to be left.
 generate_real_LaTeX = False
 
+
 def _assemble_arrayl(lines, stretch=None):
     r"""
     Return ``lines`` assembled in a left-justified array.
@@ -442,6 +443,7 @@ available_styles = {
 
 current_style = 'UAlberta'
 
+
 def default_variable_name(variable):
     r"""
     Return default variable name for the current :func:`style`.
@@ -464,6 +466,7 @@ def default_variable_name(variable):
         'UAlberta'
     """
     return available_styles[current_style][variable]
+
 
 def style(new_style=None):
     r"""
@@ -1535,7 +1538,7 @@ class InteractiveLPProblem(SageObject):
                     result += line(level.vertices(), color='black',
                                    linestyle='--')
         result.set_axes_range(xmin, xmax, ymin, ymax)
-        result.axes_labels(FP.axes_labels())    #FIXME: should be preserved!
+        result.axes_labels(FP.axes_labels())  # FIXME: should be preserved!
         return result
 
     def plot_feasible_set(self, xmin=None, xmax=None, ymin=None, ymax=None,
@@ -3704,6 +3707,7 @@ class LPAbstractDictionary(SageObject):
             5000
         """
 
+
 class LPDictionary(LPAbstractDictionary):
     r"""
     Construct a dictionary for an LP problem.
@@ -3929,7 +3933,7 @@ class LPDictionary(LPAbstractDictionary):
         lines.append(r"\renewcommand{\arraystretch}{1.5} %notruncate")
         if generate_real_LaTeX:
             lines[-1] += r" \setlength{\arraycolsep}{0.125em}"
-        relations = [_latex_product(-Ai,N, head=[xi, "=", bi],
+        relations = [_latex_product(-Ai, N, head=[xi, "=", bi],
                                     drop_plus=False, allow_empty=True) + r"\\"
                      for xi, bi, Ai in zip(B, b, A.rows())]
         objective = _latex_product(c, N, head=[z, "=", v],
@@ -4264,6 +4268,7 @@ class LPDictionary(LPAbstractDictionary):
 
 
 random_dictionary = LPDictionary.random_element
+
 
 class LPRevisedDictionary(LPAbstractDictionary):
     r"""
@@ -4783,9 +4788,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
 
         The implementation of this method for revised dictionaries
         adds a new inequality constraint to the problem, in which the given
-        `basic_variable` becomes the slack variable.  The resulting dictionary
-        (with `basic_variable` added to the basis) will have the given
-        `nonbasic_coefficients` and `constant` as a new row.
+        ``basic_variable`` becomes the slack variable.  The resulting dictionary
+        (with ``basic_variable`` added to the basis) will have the given
+        ``nonbasic_coefficients`` and ``constant`` as a new row.
 
         INPUT:
 
