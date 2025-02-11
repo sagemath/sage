@@ -515,9 +515,9 @@ class Link(SageObject):
             F = FreeGroup(len(arcs))
             rels = []
             for crossing, orientation in zip(self.pd_code(), self.orientation()):
-                a = arcs.index([i for i in arcs if crossing[0] in i][0])
-                b = arcs.index([i for i in arcs if crossing[3] in i][0])
-                c = arcs.index([i for i in arcs if crossing[2] in i][0])
+                a = next(idx for idx, i in enumerate(arcs) if crossing[0] in i)
+                b = next(idx for idx, i in enumerate(arcs) if crossing[3] in i)
+                c = next(idx for idx, i in enumerate(arcs) if crossing[2] in i)
                 ela = F.gen(a)
                 elb = F.gen(b)
                 if orientation < 0:
@@ -526,7 +526,7 @@ class Link(SageObject):
                 rels.append(ela * elb / elc / elb)
             return F.quotient(rels)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation.
 
@@ -705,9 +705,8 @@ class Link(SageObject):
             """
             i = cross.index(edge)
             if cross.count(edge) > 1:
-                return cross.index(edge, i+1)
-            else:
-                return i
+                return cross.index(edge, i + 1)
+            return i
 
         seifert_circles = self.seifert_circles()
         newedge = max(flatten(pd_code)) + 1
@@ -740,8 +739,8 @@ class Link(SageObject):
                             C1[idx(C1, a)] = newedge + 1
                             C2 = newPD[newPD.index(tails[b])]
                             C2[idx(C2, b)] = newedge + 2
-                            newPD.append([newedge + 3, newedge, b, a]) # D
-                            newPD.append([newedge + 2, newedge, newedge + 3, newedge + 1]) # E
+                            newPD.append([newedge + 3, newedge, b, a])  # D
+                            newPD.append([newedge + 2, newedge, newedge + 3, newedge + 1])  # E
                             self._braid = Link(newPD).braid(remove_loops=remove_loops)
                             return self._braid
                         else:
@@ -761,21 +760,21 @@ class Link(SageObject):
                             C1[idx(C1, -a)] = newedge + 1
                             C2 = newPD[newPD.index(tails[-b])]
                             C2[idx(C2, -b)] = newedge + 2
-                            newPD.append([newedge + 2, newedge + 1, newedge + 3, newedge]) # D
-                            newPD.append([newedge + 3, -a, -b, newedge]) # E
+                            newPD.append([newedge + 2, newedge + 1, newedge + 3, newedge])  # D
+                            newPD.append([newedge + 3, -a, -b, newedge])  # E
                             self._braid = Link(newPD).braid(remove_loops=remove_loops)
                             return self._braid
 
         # We are in the case where no Vogel moves are necessary.
         G = DiGraph()
         G.add_vertices([tuple(c) for c in seifert_circles])
-        for i,c in enumerate(pd_code):
+        for i, c in enumerate(pd_code):
             if self.orientation()[i] == 1:
-                a = [x for x in seifert_circles if c[3] in x][0]
-                b = [x for x in seifert_circles if c[0] in x][0]
+                a = next(x for x in seifert_circles if c[3] in x)
+                b = next(x for x in seifert_circles if c[0] in x)
             else:
-                a = [x for x in seifert_circles if c[0] in x][0]
-                b = [x for x in seifert_circles if c[1] in x][0]
+                a = next(x for x in seifert_circles if c[0] in x)
+                b = next(x for x in seifert_circles if c[1] in x)
             G.add_edge(tuple(a), tuple(b))
 
         # Get a simple path from a source to a sink in the digraph
@@ -785,7 +784,7 @@ class Link(SageObject):
         B = BraidGroup(len(ordered_cycles))
         available_crossings = copy(pd_code)
         oc_set = set(ordered_cycles[0])
-        for i,x in enumerate(pd_code):
+        for i, x in enumerate(pd_code):
             if any(elt in oc_set for elt in x):
                 crossing = x
                 crossing_index = i
@@ -903,7 +902,7 @@ class Link(SageObject):
                     heads[a] = next_crossing[0]
                     tails[a] = D
                     D = next_crossing[0]
-                    a = D[(D.index(a)+2) % 4]
+                    a = D[(D.index(a) + 2) % 4]
 
         unassigned = set(flatten(pd_code)).difference(set(tails))
         while unassigned:
@@ -920,7 +919,7 @@ class Link(SageObject):
                         break
                 heads[a] = next_crossing
                 D = next_crossing
-                a = D[(D.index(a)+2) % 4]
+                a = D[(D.index(a) + 2) % 4]
                 if a in unassigned:
                     unassigned.remove(a)
         return tails, heads
@@ -1110,7 +1109,7 @@ class Link(SageObject):
         nmax = max(flatten(crossings)) + 1
         for i in range(2 ** ncross):
             v = Integer(i).bits()
-            v = v + (ncross - len(v))*[0]
+            v = v + (ncross - len(v)) * [0]
             G = Graph()
             for j, cr in enumerate(crossings):
                 n = nmax + j
@@ -1134,7 +1133,7 @@ class Link(SageObject):
             smoothings.append((tuple(v), sm, iindex, jmin, jmax))
         states = []  # we got all the smoothings, now find all the states
         for sm in smoothings:
-            for k in range(len(sm[1])+1):
+            for k in range(len(sm[1]) + 1):
                 for circpos in combinations(sorted(sm[1]), k):  # Add each state
                     circneg = sm[1].difference(circpos)
                     j = writhe + sm[2] + len(circpos) - len(circneg)
@@ -1197,13 +1196,13 @@ class Link(SageObject):
                         difs = [index for index, value in enumerate(V1[0])
                                 if value != V20[index]]
                         if len(difs) == 1 and not (V2[2].intersection(V1[1]) or V2[1].intersection(V1[2])):
-                            m[ii, jj] = (-1)**sum(V2[0][x] for x in range(difs[0]+1, ncross))
+                            m[ii, jj] = (-1)**sum(V2[0][x] for x in range(difs[0] + 1, ncross))
                             # Here we have the matrix constructed, now we have to put it in the dictionary of complexes
             else:
                 m = matrix(ring, len(bij), 0)
             complexes[i] = m.transpose()
-            if (i-1, j) not in bases:
-                complexes[i-1] = matrix(ring, len(bases[(i,j)]), 0)
+            if (i - 1, j) not in bases:
+                complexes[i - 1] = matrix(ring, len(bases[(i, j)]), 0)
         homologies = ChainComplex(complexes).homology()
         return tuple(sorted(homologies.items()))
 
@@ -1457,7 +1456,7 @@ class Link(SageObject):
                 for i, j in zip(last_component, first_component):
                     d_dic[i][1] = d_dic[j][0]
                 crossing_dic = {}
-                for i,x in enumerate(oriented_gauss_code[1]):
+                for i, x in enumerate(oriented_gauss_code[1]):
                     if x == -1:
                         crossing_dic[i + 1] = [d_dic[-(i + 1)][0], d_dic[i + 1][0],
                                                d_dic[-(i + 1)][1], d_dic[i + 1][1]]
@@ -1611,7 +1610,7 @@ class Link(SageObject):
 
         missing = sorted(missing1)
         x = [[] for i in range(len(missing) + 1)]
-        for i,a in enumerate(missing):
+        for i, a in enumerate(missing):
             for j, mlj in enumerate(ml):
                 if mlj != 0 and abs(mlj) < a:
                     x[i].append(mlj)
@@ -2108,7 +2107,7 @@ class Link(SageObject):
                 gens = [g for g in H.gens() if g.order() == infinity or ch.divides(g.order())]
                 l = len(gens)
                 if l:
-                    coeff[(h,d)] = l
+                    coeff[(h, d)] = l
         return L(coeff)
 
     def determinant(self):
@@ -2826,7 +2825,7 @@ class Link(SageObject):
                 if variab is None:
                     variab = 't'
                 # We force the result to be in the symbolic ring because of the expand
-                return jones(SR(variab)**(ZZ(1)/ZZ(4))).expand()
+                return jones(SR(variab)**(ZZ.one() / ZZ(4))).expand()
         elif algorithm == 'jonesrep':
             braid = self.braid()
             # Special case for the trivial knot with no crossings
@@ -3084,14 +3083,14 @@ class Link(SageObject):
         L = LaurentPolynomialRing(ZZ, [var1, var2])
         if len(self._isolated_components()) > 1:
             if normalization == 'lm':
-                fact = L({(1, -1):-1, (-1, -1):-1})
+                fact = L({(1, -1): -1, (-1, -1): -1})
             elif normalization == 'az':
-                fact = L({(1, -1):1, (-1, -1):-1})
+                fact = L({(1, -1): 1, (-1, -1): -1})
             elif normalization == 'vz':
-                fact = L({(1, -1):-1, (-1, -1):1})
+                fact = L({(1, -1): -1, (-1, -1): 1})
             else:
                 raise ValueError('normalization must be either `lm`, `az` or `vz`')
-            fact = fact ** (len(self._isolated_components())-1)
+            fact = fact ** (len(self._isolated_components()) - 1)
             for i in self._isolated_components():
                 fact = fact * Link(i).homfly_polynomial(var1, var2, normalization)
             return fact
@@ -3102,7 +3101,7 @@ class Link(SageObject):
         for comp in ogc[0]:
             s += ' {}'.format(len(comp))
             for cr in comp:
-                s += ' {} {}'.format(abs(cr)-1, sign(cr))
+                s += ' {} {}'.format(abs(cr) - 1, sign(cr))
         for i, cr in enumerate(ogc[1]):
             s += ' {} {}'.format(i, cr)
         from sage.libs.homfly import homfly_polynomial_dict
@@ -3124,7 +3123,7 @@ class Link(SageObject):
             h_az = self.homfly_polynomial(var1=var1, var2=var2, normalization='az')
             a, z = h_az.parent().gens()
             v = ~a
-            return h_az.subs({a:v})
+            return h_az.subs({a: v})
         else:
             raise ValueError('normalization must be either `lm`, `az` or `vz`')
 
@@ -3313,8 +3312,8 @@ class Link(SageObject):
         M = self._coloring_matrix(n=n)
         KM = M.right_kernel_matrix()
         F = FreeModule(M.base_ring(), KM.dimensions()[0])
-        K = [v*KM for v in F]
-        res = set([])
+        K = [v * KM for v in F]
+        res = set()
         arcs = self.arcs('pd')
         for coloring in K:
             colors = sorted(set(coloring))
@@ -3408,7 +3407,7 @@ class Link(SageObject):
         maps = []
         for c in cols:
             t = list(c.values())
-            ims = [b*a**i for i in t]
+            ims = [b * a**i for i in t]
             maps.append(gr.hom(ims))
         return maps
 
@@ -3627,7 +3626,7 @@ class Link(SageObject):
 
         # Special case for the unknot
         if not pd_code:
-            return circle((0,0), ZZ(1)/ZZ(2), color=color, **kwargs)
+            return circle((0, 0), ZZ.one() / ZZ(2), color=color, **kwargs)
 
         # The idea is the same followed in spherogram, but using MLP instead of
         # network flows.
@@ -3653,9 +3652,9 @@ class Link(SageObject):
             Return the flow variable from the source.
             """
             if e > 0:
-                return v[2*edges.index(e)]
+                return v[2 * edges.index(e)]
             else:
-                return v[2*edges.index(-e)+1]
+                return v[2 * edges.index(-e) + 1]
 
         def flow_to_sink(e):
             r"""
@@ -3680,9 +3679,10 @@ class Link(SageObject):
         MLP.solve()
         # we store the result in a vector s packing right bends as negative left ones
         values = MLP.get_values(v, convert=ZZ, tolerance=1e-3)
-        s = [values[2*i] - values[2*i + 1] for i in range(len(edges))]
+        s = [values[2 * i] - values[2 * i + 1] for i in range(len(edges))]
         # segments represents the different parts of the previous edges after bending
-        segments = {e: [(e,i) for i in range(abs(s[edges.index(e)])+1)] for e in edges}
+        segments = {e: [(e, i) for i in range(abs(s[edges.index(e)]) + 1)]
+                    for e in edges}
         pieces = {tuple(i): [i] for j in segments.values() for i in j}
         nregions = []
         for r in regions[:-1]:  # interior regions
@@ -3711,7 +3711,7 @@ class Link(SageObject):
             c = -1
             b = a
             while c != 2:
-                if b == len(badregion)-1:
+                if b == len(badregion) - 1:
                     b = 0
                 else:
                     b += 1
@@ -3739,15 +3739,15 @@ class Link(SageObject):
 
             if a < b:
                 r1 = badregion[:a] + [[badregion[a][0], 0], [N1, 1]] + badregion[b:]
-                r2 = badregion[a + 1:b] + [[N2, 1],[N1, 1]]
+                r2 = badregion[a + 1:b] + [[N2, 1], [N1, 1]]
             else:
                 r1 = badregion[b:a] + [[badregion[a][0], 0], [N1, 1]]
-                r2 = badregion[:b] + [[N2, 1],[N1, 1]] + badregion[a + 1:]
+                r2 = badregion[:b] + [[N2, 1], [N1, 1]] + badregion[a + 1:]
 
             if otherregion:
                 c = [x for x in otherregion if badregion[b][0] == x[0]]
                 c = otherregion.index(c[0])
-                otherregion.insert(c + 1, [N2,otherregion[c][1]])
+                otherregion.insert(c + 1, [N2, otherregion[c][1]])
                 otherregion[c][1] = 0
             nregions.remove(badregion)
             nregions.append(r1)
@@ -3805,7 +3805,7 @@ class Link(SageObject):
                 turn = -1
             else:
                 turn = 1
-            lengthse = [lengths[(e,k)] for k in range(abs(s[edges.index(e)])+1)]
+            lengthse = [lengths[(e, k)] for k in range(abs(s[edges.index(e)]) + 1)]
             if c.index(e) == 0 or (c.index(e) == 3 and orien == 1) or (c.index(e) == 1 and orien == -1):
                 turn = -turn
                 lengthse.reverse()

@@ -120,7 +120,7 @@ from sage.rings.real_mpfr import RealField, RealField_class, RealNumber
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.rings.number_field.number_field', 'refine_embedding')
 
 

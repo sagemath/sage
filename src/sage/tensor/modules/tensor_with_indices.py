@@ -692,7 +692,7 @@ class TensorWithIndices(SageObject):
             sage: b[:] = [[-1,2,-3], [-4,5,6], [7,-8,9]]
             sage: T = a*a*b*b
             sage: 1/4*(T["ijkl_abcd"] + T["jikl_abcd"] + T["ijkl_abdc"]\
-             + T["jikl_abdc"]) == T["(..).._..(..)"]["ijkl_abcd"]
+            ....: + T["jikl_abdc"]) == T["(..).._..(..)"]["ijkl_abcd"]
             True
         """
         # Check tensor types are compatible
@@ -770,7 +770,7 @@ class TensorWithIndices(SageObject):
             sage: b[:] = [[-1,2,-3], [-4,5,6], [7,-8,9]]
             sage: T = a*a*b*b
             sage: 1/4*(T["ijkl_abcd"]-T["jikl_abcd"] - T["ijkl_abdc"]\
-                + T["jikl_abdc"] ) == T["[..].._..[..]"]["ijkl_abcd"]
+            ....: + T["jikl_abdc"] ) == T["[..].._..[..]"]["ijkl_abcd"]
             True
         """
         return self + (-other)

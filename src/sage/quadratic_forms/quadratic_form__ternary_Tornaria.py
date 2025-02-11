@@ -536,7 +536,7 @@ def representation_number_list(self, B):
         sage: Q.representation_number_list(10)                                          # needs sage.libs.pari
         [1, 16, 112, 448, 1136, 2016, 3136, 5504, 9328, 12112]
     """
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
 
     ans = pari(1).concat(self.__pari__().qfrep(B - 1, 1) * 2)
     return ans.sage()

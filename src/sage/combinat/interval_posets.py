@@ -47,6 +47,7 @@ from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
@@ -3757,11 +3758,10 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             sage: [TamariIntervalPosets(i).cardinality() for i in range(6)]
             [1, 1, 3, 13, 68, 399]
         """
-        from sage.arith.misc import binomial
         n = self._size
         if n == 0:
-            return Integer(1)
-        return (2 * binomial(4 * n + 1, n - 1)) // (n * (n + 1))
+            return ZZ.one()
+        return (2 * Integer(4 * n + 1).binomial(n - 1)) // (n * (n + 1))
         # return Integer(2 * factorial(4*n+1)/(factorial(n+1)*factorial(3*n+2)))
 
     def __iter__(self) -> Iterator[TIP]:

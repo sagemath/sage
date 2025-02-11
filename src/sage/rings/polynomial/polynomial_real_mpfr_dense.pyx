@@ -41,7 +41,7 @@ from sage.structure.element import coerce_binop
 from sage.libs.mpfr cimport *
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 

@@ -22,7 +22,8 @@ from sage.arith.misc import factorial
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-from sage.libs.pari.all import pari, PariError
+from sage.libs.pari import pari
+from cypari2.handle_error import PariError
 
 
 class SplittingFieldAbort(Exception):

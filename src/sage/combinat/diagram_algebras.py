@@ -4802,8 +4802,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
             else:
                 level.append(cur)
                 return  # We have stopped
-        else:
-            intervals.append([cur])
+        intervals.append([cur])
     # Build a set of intervals that defines where to draw the diagram
     intervals = [[]]
     propogating = []

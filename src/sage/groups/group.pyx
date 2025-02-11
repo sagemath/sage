@@ -55,17 +55,17 @@ cdef class Group(Parent):
         sage: from sage.groups.group import Group
         sage: G = Group()
         sage: TestSuite(G).run(skip = ["_test_an_element",\
-                                       "_test_associativity",\
-                                       "_test_elements",\
-                                       "_test_elements_eq_reflexive",\
-                                       "_test_elements_eq_symmetric",\
-                                       "_test_elements_eq_transitive",\
-                                       "_test_elements_neq",\
-                                       "_test_inverse",\
-                                       "_test_one",\
-                                       "_test_pickling",\
-                                       "_test_prod",\
-                                       "_test_some_elements"])
+        ....:                          "_test_associativity",\
+        ....:                          "_test_elements",\
+        ....:                          "_test_elements_eq_reflexive",\
+        ....:                          "_test_elements_eq_symmetric",\
+        ....:                          "_test_elements_eq_transitive",\
+        ....:                          "_test_elements_neq",\
+        ....:                          "_test_inverse",\
+        ....:                          "_test_one",\
+        ....:                          "_test_pickling",\
+        ....:                          "_test_prod",\
+        ....:                          "_test_some_elements"])
 
     Generic groups have very little functionality::
 

@@ -1372,10 +1372,8 @@ def _biseq_stresstest():
     TESTS::
 
         sage: from sage.data_structures.bounded_integer_sequences import _biseq_stresstest
-        sage: alarm(1); _biseq_stresstest()  # long time
-        Traceback (most recent call last):
-        ...
-        AlarmInterrupt
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(1): _biseq_stresstest()  # long time
     """
     cdef int branch
     cdef Py_ssize_t x, y, z

@@ -801,10 +801,8 @@ cdef class IntegerMulAction(IntegerAction):
 
             sage: # needs sage.schemes
             sage: P = E([2,1,1])
-            sage: alarm(0.001); 2^(10^8) * P
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.001): 2^(10^8) * P
 
         Verify that cysignals correctly detects that the above
         exception has been handled::

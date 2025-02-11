@@ -69,7 +69,7 @@ from sage.rings.polynomial.term_order import TermOrder
 import sage.interfaces.abc
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 

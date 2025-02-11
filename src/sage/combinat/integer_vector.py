@@ -1043,8 +1043,19 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
              [2, 1],
              [1, 2],
              [0, 3]]
+
+        TESTS:
+
+        Check corner case::
+
+            sage: IV = IntegerVectors(k=0)
+            sage: list(IV)
+            [[]]
         """
         n = 0
+        if self.k == 0:  # special case
+            yield self.element_class(self, [], check=False)
+            return
         while True:
             for iv in integer_vectors_nk_fast_iter(n, self.k):
                 yield self.element_class(self, iv, check=False)

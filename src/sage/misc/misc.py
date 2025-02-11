@@ -50,11 +50,11 @@ from sage.misc.lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 
-lazy_import("sage.combinat.subset", ["powerset", "subsets", "uniq"],
-            deprecation=35564)
+lazy_import("sage.combinat.subset", ["powerset", "subsets", "uniq"], deprecation=35564)
 
-lazy_import("sage.misc.timing", ["cputime", "GlobalCputime", "walltime"],
-            deprecation=35816)
+lazy_import(
+    "sage.misc.timing", ["cputime", "GlobalCputime", "walltime"], deprecation=35816
+)
 
 LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 
@@ -168,9 +168,6 @@ def try_read(obj, splitlines=False):
 
     return data
 
-
-SAGE_DB = os.path.join(DOT_SAGE, 'db')
-os.makedirs(SAGE_DB, exist_ok=True)
 
 try:
     # Create the matplotlib config directory.
@@ -351,6 +348,7 @@ def nest(f, n, x):
         x
     """
     from sage.rings.integer import Integer
+
     n = Integer(n)
 
     if n < 0:
@@ -364,6 +362,7 @@ def nest(f, n, x):
 #################################################################
 # The A \ b operator
 #################################################################
+
 
 class BackslashOperator:
     r"""
@@ -389,6 +388,7 @@ class BackslashOperator:
         sage: preparse("A^3 \\ b")
         'A**Integer(3)  * BackslashOperator() * b'
     """
+
     def __rmul__(self, left):
         """
         EXAMPLES::
@@ -412,6 +412,7 @@ class BackslashOperator:
             True
         """
         from sage.misc.superseded import deprecation
+
         deprecation(36394, 'the backslash operator has been deprecated')
         self.left = left
         return self
@@ -443,6 +444,7 @@ class BackslashOperator:
             (0.0, 0.5, 1.0, 1.5, 2.0)
         """
         from sage.misc.superseded import deprecation
+
         deprecation(36394, 'the backslash operator has been deprecated')
         return self.left._backslash_(right)
 
@@ -531,6 +533,7 @@ def random_sublist(X, s):
         True
     """
     import sage.misc.prandom as random
+
     return [a for a in X if random.random() <= s]
 
 
@@ -603,6 +606,7 @@ def some_tuples(elements, repeat, bound, max_samples=None):
     """
     if max_samples is None:
         from itertools import islice, product
+
         P = elements if repeat is None else product(elements, repeat=repeat)
         return islice(P, int(bound))
     else:
@@ -612,6 +616,7 @@ def some_tuples(elements, repeat, bound, max_samples=None):
         N = n if repeat is None else n**repeat
         if N <= max_samples:
             from itertools import product
+
             return elements if repeat is None else product(elements, repeat=repeat)
         return _some_tuples_sampling(elements, repeat, max_samples, n)
 
@@ -638,6 +643,7 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
     """
     from sage.rings.integer import Integer
     import sage.misc.prandom as random
+
     N = n if repeat is None else n**repeat
     # We sample on range(N) and create tuples manually since we don't want to create the list of all possible tuples in memory
     for a in random.sample(range(N), max_samples):
@@ -650,6 +656,7 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
 #################################################################
 # Misc.
 #################################################################
+
 
 def exists(S, P):
     """
@@ -836,8 +843,8 @@ def is_in_string(line, pos):
         # which is the case if the previous character isn't
         # a backslash, or it is but both previous characters
         # are backslashes.
-        if line[i - 1: i] != '\\' or line[i - 2: i] == '\\\\':
-            if line[i: i + 3] in ['"""', "'''"]:
+        if line[i - 1 : i] != '\\' or line[i - 2 : i] == '\\\\':
+            if line[i : i + 3] in ['"""', "'''"]:
                 if not in_quote():
                     in_triple_quote = True
                 elif in_triple_quote:
@@ -899,6 +906,7 @@ def get_main_globals():
     module.
     """
     import sys
+
     depth = 0
     while True:
         G = sys._getframe(depth).f_globals
@@ -957,8 +965,9 @@ def inject_variable(name, value, warn=True):
     # also from functions in various modules.
     G = get_main_globals()
     if name in G and warn:
-        warnings.warn("redefining global value `%s`" % name,
-                      RuntimeWarning, stacklevel=2)
+        warnings.warn(
+            "redefining global value `%s`" % name, RuntimeWarning, stacklevel=2
+        )
     G[name] = value
 
 
@@ -1013,12 +1022,14 @@ def run_once(func):
         sage: foo(False)
         sage: foo(True)
     """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if not wrapper.has_run:
             result = func(*args, **kwargs)
             wrapper.has_run = True
             return result
+
     wrapper.has_run = False
     return wrapper
 

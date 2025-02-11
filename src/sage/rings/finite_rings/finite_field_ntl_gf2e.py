@@ -16,7 +16,7 @@ Finite fields of characteristic 2
 #*****************************************************************************
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.rings.integer import Integer
 
 

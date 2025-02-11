@@ -119,7 +119,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
             gens = gens[0]
-        from sage.libs.pari.all import pari_gen
+        from cypari2.gen import Gen as pari_gen
         if len(gens) == 1 and isinstance(gens[0], pari_gen):
             # Init from PARI
             gens = gens[0]
@@ -2646,7 +2646,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
             sage: bid.getattr('clgp')
             [2, [2]]
         """
-        from sage.libs.pari.all import PariError
+        from cypari2.handle_error import PariError
         try:
             bid = self._bid
             if flag == 2:

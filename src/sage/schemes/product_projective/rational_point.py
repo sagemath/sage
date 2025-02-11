@@ -16,7 +16,7 @@ Product Projective, over `\QQ`::
 
     sage: PP.<x,y,z> = ProductProjectiveSpaces([1,0], QQ)
     sage: from sage.schemes.product_projective.rational_point import \
-            enum_product_projective_rational_field
+    ....:   enum_product_projective_rational_field
     sage: enum_product_projective_rational_field(PP, 3)
     [(-3 : 1 , 1), (-2 : 1 , 1), (-3/2 : 1 , 1),
      (-1 : 1 , 1), (-2/3 : 1 , 1), (-1/2 : 1 , 1),
@@ -30,7 +30,7 @@ Product projective over finite field::
     sage: P1.<x,y,a,b> = ProductProjectiveSpaces([1, 1], GF(7))
     sage: X = P1.subscheme([2*x + 3*y])
     sage: from sage.schemes.product_projective.rational_point import \
-            enum_product_projective_finite_field
+    ....:   enum_product_projective_finite_field
     sage: enum_product_projective_finite_field(X)
     [(2 : 1 , 0 : 1), (2 : 1 , 1 : 0), (2 : 1 , 1 : 1),
      (2 : 1 , 2 : 1), (2 : 1 , 3 : 1), (2 : 1 , 4 : 1),
@@ -89,7 +89,7 @@ def enum_product_projective_rational_field(X, B):
 
         sage: PP.<x0,x1,x2,x3,x4> = ProductProjectiveSpaces([1, 2], QQ)
         sage: from sage.schemes.product_projective.rational_point import \
-                enum_product_projective_rational_field
+        ....:   enum_product_projective_rational_field
         sage: enum_product_projective_rational_field(PP, 1)
         [(-1 : 1 , -1 : -1 : 1), (-1 : 1 , -1 : 0 : 1), (-1 : 1 , -1 : 1 : 0),
          (-1 : 1 , -1 : 1 : 1), (-1 : 1 , 0 : -1 : 1), (-1 : 1 , 0 : 0 : 1),
@@ -115,7 +115,7 @@ def enum_product_projective_rational_field(X, B):
         sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], QQ)
         sage: X = PP.subscheme([x^2 + x*y + y*z, u*u - v*u])
         sage: from sage.schemes.product_projective.rational_point import \
-                enum_product_projective_rational_field
+        ....:   enum_product_projective_rational_field
         sage: enum_product_projective_rational_field(X, 4)
         [(-2 : 4 : 1 , 0 : 1), (-2 : 4 : 1 , 1 : 1), (-1 : 1 : 0 , 0 : 1),
          (-1 : 1 : 0 , 1 : 1), (-2/3 : -4/3 : 1 , 0 : 1), (-2/3 : -4/3 : 1 , 1 : 1),
@@ -215,7 +215,7 @@ def enum_product_projective_number_field(X, **kwds):
         sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)
         sage: X = PP.subscheme([x^2 + 2*y^2])
         sage: from sage.schemes.product_projective.rational_point import \
-                enum_product_projective_number_field
+        ....:   enum_product_projective_number_field
         sage: enum_product_projective_number_field(X, bound=1.5)
         [(-v : 1 , -1 : 1), (-v : 1 , -v : 1), (-v : 1 , -1/2*v : 1),
          (-v : 1 , 0 : 1), (-v : 1 , 1/2*v : 1), (-v : 1 , v : 1),
@@ -267,7 +267,7 @@ def enum_product_projective_finite_field(X):
 
         sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(3))
         sage: from sage.schemes.product_projective.rational_point import \
-                enum_product_projective_finite_field
+        ....:   enum_product_projective_finite_field
         sage: enum_product_projective_finite_field(PP)
         [(0 : 1 , 0 : 1), (0 : 1 , 1 : 0), (0 : 1 , 1 : 1),
          (0 : 1 , 2 : 1), (1 : 0 , 0 : 1), (1 : 0 , 1 : 0),
@@ -281,7 +281,7 @@ def enum_product_projective_finite_field(X):
         sage: PP.<x0,x1,x2,x3> = ProductProjectiveSpaces([1, 1], GF(17))
         sage: X = PP.subscheme([x0^2 + 2*x1^2])
         sage: from sage.schemes.product_projective.rational_point import \
-                enum_product_projective_finite_field
+        ....:   enum_product_projective_finite_field
         sage: len(enum_product_projective_finite_field(X))
         36
     """

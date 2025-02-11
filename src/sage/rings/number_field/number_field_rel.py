@@ -101,7 +101,7 @@ from sage.rings.number_field.number_field_base import NumberField as NumberField
 from sage.rings.number_field.order import (RelativeOrder,
                                            relative_order_from_ring_generators)
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
-from sage.libs.pari.all import pari_gen
+from cypari2.gen import Gen as pari_gen
 
 from sage.categories.homset import Hom
 from sage.categories.sets_cat import Sets
@@ -1654,7 +1654,7 @@ class NumberField_relative(NumberField_generic):
         elif f.poldegree() == 1:
             # PARI's rnfpolredbest() does not always return a
             # polynomial with integral coefficients in this case.
-            from sage.libs.pari.all import pari
+            from sage.libs.pari import pari
             g = f.variable()
             alpha = -f[0]/f[1]
             beta = pari(0).Mod(f)
