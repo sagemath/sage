@@ -1248,6 +1248,16 @@ class QuotientRing_nc(Parent):
         return self(self.__R.gen(i))
 
     def gens(self) -> tuple:
+        r"""
+        Return a tuple containing generators of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = PolynomialRing(QQ)
+            sage: S = R.quotient_ring(x^2 + y^2)
+            sage: S.gens()
+            (xbar, ybar)
+        """
         return tuple(self(self.__R.gen(i))
                      for i in range(self.cover_ring().ngens()))
 
