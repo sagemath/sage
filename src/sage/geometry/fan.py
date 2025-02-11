@@ -2444,7 +2444,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         Check if ``self`` is regular.
 
         A rational polyhedral fan is *regular* if it is the normal fan of a
-    polytope.
+        polytope.
 
         OUTPUT: ``True`` if ``self`` is complete and ``False`` otherwise
 
@@ -2478,14 +2478,15 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         from sage.geometry.triangulation.point_configuration import PointConfiguration
         from sage.geometry.polyhedron.constructor import Polyhedron
         pc = PointConfiguration(self.rays())
-        v_pc = [vector(pc.point(i)) for i in range(pc.n_points())]
-        v_r = [vector(list(r)) for r in self.rays()]
-        cone_indices = [_.ambient_ray_indices() for _ in self.generating_cones()]
-        translator = [v_pc.index(v_r[i]) for i in range(pc.n_points())]
+        v_pc = [tuple(p) for p in pc]
+        pc_to_indices = {tuple(p):i for (i,p) in enumerate(pc)}
+        indices_to_vr = [tuple(r) for r in self.rays()]
+        cone_indices = [cone.ambient_ray_indices() for cone in self.generating_cones()]
+        translator = [pc_to_indices[t] for t in indices_to_vr]
         translated_cone_indices = [[translator[i] for i in ci] for ci in cone_indices]
         dc_pc = pc.deformation_cone(translated_cone_indices)
         lift = dc_pc.an_element()
-        ieqs = [[lift[i]] + list(v_pc[i]) for i in range(self.nrays())]
+        ieqs = [(lift_i,) + v for (lift_i, v) in zip(lift, v_pc)]
         poly = Polyhedron(ieqs=ieqs)
         return self.is_equivalent(poly.normal_fan())
 
