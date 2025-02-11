@@ -568,6 +568,10 @@ REFERENCES:
              Springer Verlag 2006; pre-print available at
              http://eprint.iacr.org/2005/200
 
+.. [BQ2024] Asilata Bapat and Hoel Queffelec.
+            *Some remarks about the faithfulness of the Burau representation
+            of Artin-Tits groups*. Preprint, 2024. :arxiv:`2409.00144`.
+
 .. [BBS1982] \L. Blum, M. Blum, and M. Shub. Comparison of Two
              Pseudo-Random Number Generators. *Advances in Cryptology:
              Proceedings of Crypto '82*, pp.61--78, 1982.
@@ -2098,6 +2102,10 @@ REFERENCES:
              *Fundamental groups of blow-ups*. Selecta Math.,
              Adv. Math. ***177** no. 1 (2002) pp. 115-179.
              :arxiv:`math/0203127`.
+
+.. [Day1979] Alan Day, *Characterizations of Finite Lattices that are
+             Bounded-Homomorphic Images or Sublattices of Free Lattices*,
+             Canadian Journal of Mathematics 31 (1979), 69-78
 
 .. [DB1996] K. Duggal, A. Bejancu,
             *Lightlike Submanifolds of Semi-Riemannian Manifolds and Applications*,
@@ -3693,6 +3701,9 @@ REFERENCES:
 .. [Ja1971] \N. Jacobson. *Exceptional Lie Algebras*. Marcel Dekker,
             Inc. New York. 1971. IBSN No. 0-8247-1326-5.
 
+.. [Jer2006] Mark Jerrum. *Two remarks concerning balanced matroids*.
+             Combinatorica 26, no. 6 (2006): 733-742.
+
 .. [Jet2008] \D. Jetchev. Global divisibility of Heegner points and
              Tamagawa numbers. Compos. Math. 144 (2008), no. 4, 811--826.
 
@@ -4994,6 +5005,10 @@ REFERENCES:
 .. [MNO1994] Alexander Molev, Maxim Nazarov, and Grigori Olshanski.
              *Yangians and classical Lie algebras*. (1994)
              :arxiv:`hep-th/9409025`
+
+.. [MNWW2011] Dillon Mayhew, Mike Newman, Dominic Welsh, and Geoff Whittle.
+              *On the asymptotic proportion of connected matroids*.
+              European Journal of Combinatorics. 2011 Aug 1;32(6):882-90.
 
 .. [Mol2007] Alexander Ivanovich Molev.
              *Yangians and Classical Lie Algebras*.
