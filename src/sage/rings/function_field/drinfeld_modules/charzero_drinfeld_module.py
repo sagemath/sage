@@ -162,7 +162,8 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         - ``prec`` -- an integer or ``Infinity`` (default: ``Infinity``);
           the precision at which the series is returned; if ``Infinity``,
-          a lazy power series in returned
+          a lazy power series in returned, else, a classical power series
+          is returned.
 
         - ``name`` -- string (default: ``'z'``); the name of the
           generator of the lazy power series ring
