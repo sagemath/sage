@@ -477,9 +477,12 @@ def has_latex_attr(x) -> bool:
 def default_engine():
     """
     Return the default latex engine and the official name of the engine.
-
     This is determined by availability of the popular engines on the user's
     system. It is assumed that at least latex is available.
+
+    This function is deprecated as part of the public API. There is
+    instead an internal counterpart :func:`_default_engine`, but no
+    stability promises are made with regards to its interface.
 
     EXAMPLES::
 
@@ -487,6 +490,9 @@ def default_engine():
         sage: default_engine()  # random
         ('lualatex', 'LuaLaTeX')
     """
+    from sage.misc.superseded import deprecation
+    deprecation(39351, "default_engine is being removed from the public API and replaced with the internal function _default_engine")
+
     from sage.features.latex import pdflatex, xelatex, lualatex
     if lualatex().is_present():
         return 'lualatex', 'LuaLaTeX'
@@ -495,6 +501,48 @@ def default_engine():
     if pdflatex().is_present():
         return 'pdflatex', 'pdfLaTeX'
     return 'latex', 'LaTeX'
+
+
+@cached_function
+def _default_engine():
+    r"""
+    Return the name of the default latex engine.
+
+    This is determined by availability of the popular engines on the
+    user's system. It is assumed that at least "latex" is available.
+
+    EXAMPLES::
+
+        sage: from sage.misc.latex import _default_engine
+        sage: _default_engine()  # random
+        'lualatex'
+
+    TESTS:
+
+    Ensure that this (expensive) function is not necessary to obtain
+    the latex representation of a matrix (doing so probes the latex
+    options dict for the delimiters)::
+
+        sage: import sage.misc.latex
+        sage: real_de = sage.misc.latex._default_engine
+        sage: def crash():
+        ....:     raise ValueError
+        sage: sage.misc.latex._default_engine = crash
+        sage: latex(matrix.identity(QQ, 2))
+        \left(\begin{array}{rr}
+        1 & 0 \\
+        0 & 1
+        \end{array}\right)
+        sage: sage.misc.latex._default_engine = real_de
+    """
+    from sage.features.latex import pdflatex, xelatex, lualatex
+    if lualatex().is_present():
+        return 'lualatex'
+    if xelatex().is_present():
+        return 'xelatex'
+    if pdflatex().is_present():
+        return 'pdflatex'
+    return 'latex'
 
 
 class _Latex_prefs_object(SageObject):
@@ -520,6 +568,9 @@ class _Latex_prefs_object(SageObject):
         self.__option["macros"] = ""
         self.__option["preamble"] = ""
 
+        # If None, the _default_engine() will be used.
+        self.__option["engine"] = None
+
     @lazy_attribute
     def _option(self):
         """
@@ -528,18 +579,16 @@ class _Latex_prefs_object(SageObject):
         EXAMPLES::
 
             sage: from sage.misc.latex import _Latex_prefs_object
-            sage: _Latex_prefs_object()._option  # random
-            {'blackboard_bold': False,
-             'matrix_delimiters': ['(', ')'],
-             'vector_delimiters': ['(', ')'],
-             'matrix_column_alignment': 'r',
-             'macros': '',
-             'preamble': '',
-             'engine': 'lualatex',
-             'engine_name': 'LuaLaTeX'}
+            sage: sorted(_Latex_prefs_object()._option.items())
+            [('blackboard_bold', False),
+             ('engine', None),
+             ('macros', ''),
+             ('matrix_column_alignment', 'r'),
+             ('matrix_delimiters', ['(', ')']),
+             ('preamble', ''),
+             ('vector_delimiters', ['(', ')'])]
+
         """
-        self.__option["engine"] = default_engine()[0]
-        self.__option["engine_name"] = default_engine()[1]
         return self.__option
 
 
@@ -649,6 +698,8 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     """
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = _default_engine()
 
     if not engine or engine == "latex":
         from sage.features.latex import latex
@@ -1062,10 +1113,12 @@ class Latex(LatexCall):
 
             O.close()
             if engine is None:
-                if self.__engine is None:
+                engine = self.__engine
+                if engine is None:
                     engine = _Latex_prefs._option["engine"]
-                else:
-                    engine = self.__engine
+                    if engine is None:
+                        engine = _default_engine()
+
             e = _run_latex_(os.path.join(base, filename + ".tex"),
                             debug=debug,
                             density=density,
@@ -1531,22 +1584,16 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
             'pdflatex'
         """
         if e is None:
-            return _Latex_prefs._option["engine"]
+            e = _Latex_prefs._option["engine"]
+            if e is None:
+                return _default_engine()
+            else:
+                return e
 
-        if e == "latex":
-            _Latex_prefs._option["engine"] = "latex"
-            _Latex_prefs._option["engine_name"] = "LaTeX"
-        elif e == "pdflatex":
-            _Latex_prefs._option["engine"] = "pdflatex"
-            _Latex_prefs._option["engine_name"] = "PDFLaTeX"
-        elif e == "xelatex":
-            _Latex_prefs._option["engine"] = e
-            _Latex_prefs._option["engine_name"] = "XeLaTeX"
-        elif e == "lualatex":
-            _Latex_prefs._option["engine"] = e
-            _Latex_prefs._option["engine_name"] = "LuaLaTeX"
-        else:
+        if e not in ["latex", "pdflatex", "xelatex", "luatex"]:
             raise ValueError("%s is not a supported LaTeX engine. Use latex, pdflatex, xelatex, or lualatex" % e)
+
+        _Latex_prefs._option["engine"] = e
 
 
 # Note: latex used to be a separate function, which by default was
@@ -1846,6 +1893,9 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     s = _latex_file_(objects, title=title, sep=sep, tiny=tiny, debug=debug, **latex_options)
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = _default_engine()
+
     if viewer == "pdf" and engine == "latex":
         engine = "pdflatex"
     # command line or notebook with viewer
@@ -1947,6 +1997,9 @@ def pdf(x, filename, tiny=False, tightpage=True, margin=None, engine=None, debug
     s = _latex_file_([x], title='', tiny=tiny, debug=debug, **latex_options)
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = _default_engine()
+
     # path name for permanent pdf output
     abs_path_to_pdf = os.path.abspath(filename)
     # temporary directory to store stuff
@@ -2007,6 +2060,9 @@ def png(x, filename, density=150, debug=False,
                      extra_preamble='\\textheight=2\\textheight')
     if engine is None:
         engine = _Latex_prefs._option["engine"]
+        if engine is None:
+            engine = _default_engine()
+
     # path name for permanent png output
     abs_path_to_png = os.path.abspath(filename)
     # temporary directory to store stuff
