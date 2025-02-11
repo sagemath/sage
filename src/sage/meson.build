@@ -92,7 +92,6 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'all__sagemath_bliss.py',
-  'all__sagemath_categories.py',
   'all__sagemath_coxeter3.py',
   'all__sagemath_environment.py',
   'all__sagemath_mcqd.py',

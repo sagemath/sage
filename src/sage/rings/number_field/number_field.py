@@ -202,7 +202,8 @@ from sage.structure.factory import UniqueFactory
 from . import number_field_element
 from . import number_field_element_quadratic
 from .number_field_ideal import NumberFieldIdeal, NumberFieldFractionalIdeal
-from sage.libs.pari.all import pari, pari_gen
+from sage.libs.pari import pari
+from cypari2.gen import Gen as pari_gen
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
