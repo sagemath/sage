@@ -252,7 +252,7 @@ TESTS::
 
     sage: import numpy                                                                  # needs numpy
     sage: if int(numpy.version.short_version[0]) > 1:                                   # needs numpy
-    ....:     numpy.set_printoptions(legacy="1.25")                                     # needs numpy
+    ....:     _ = numpy.set_printoptions(legacy="1.25")                                     # needs numpy
     sage: RIF(2) == numpy.int8('2')                                                     # needs numpy
     True
     sage: numpy.int8('2') == RIF(2)                                                     # needs numpy
