@@ -673,9 +673,11 @@ class MPowerSeries(PowerSeries):
 
     def __getitem__(self, n):
         """
-        If ``n`` is a tuple returns the coefficient for a term where each
-        element of the tuple corresponds to a degree of a varaible. If ``n``
-        is an integer returns summand of total degree ``n``.
+        Return the coefficient of the monomial ``x1^e1 * x2^e2 * ... * xk^ek``
+        if ``n = (e_1, e2, ..., ek)`` is a tuple whose length is the number of
+        variables ``x1,x2,...,xk`` in the power series ring.
+
+        Return the sum of the monomials of degree ``n`` if ``n`` is an integer.
 
         TESTS::
 
