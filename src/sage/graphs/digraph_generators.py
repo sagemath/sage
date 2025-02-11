@@ -1022,7 +1022,7 @@ class DiGraphGenerators:
           (``vertices='string'``)
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         EXAMPLES:
 
@@ -1138,10 +1138,10 @@ class DiGraphGenerators:
         - ``d`` -- integer; degree of the digraph (must be at least one)
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         - ``name`` -- string (default: ``None``); when set, the specified name
-          is used instead of the default one.
+          is used instead of the default one
 
         .. SEEALSO::
 
@@ -1207,10 +1207,10 @@ class DiGraphGenerators:
           equal to one)
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         - ``name`` -- string (default: ``None``); when set, the specified name
-          is used instead of the default one.
+          is used instead of the default one
 
         EXAMPLES::
 
@@ -1292,7 +1292,7 @@ class DiGraphGenerators:
           (``vertices='strings'``)
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         EXAMPLES::
 
