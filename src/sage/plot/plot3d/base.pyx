@@ -1108,8 +1108,8 @@ resolution {resolution_x:d} {resolution_y:d}
     {render_parameters}
 
 end_scene""".format(
-    #render_params.antialiasing, this only provided the default value of 8
-    scene =  "\n".join(sorted([t.tachyon_str() for t in self.texture_set()])),
+    # render_params.antialiasing, this only provided the default value of 8
+    scene = "\n".join(sorted([t.tachyon_str() for t in self.texture_set()])),
     render_parameters =
              "\n".join(flatten_list(self.tachyon_repr(render_params))),
     viewdir1000=self._tostring(1000*vector(viewdir).normalized().n()),
