@@ -17,7 +17,7 @@ TESTS::
     sage: R = QpLF(2)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
 #
@@ -26,10 +26,11 @@ TESTS::
 #  the License, or (at your option) any later version.
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.misc.superseded import experimental
 
+from sage.categories.fields import Fields
 from sage.structure.factory import UniqueFactory
 from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
@@ -783,35 +784,45 @@ class Qp_class(UniqueFactory):
                 pass
             p, prec, type, print_mode, name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, label = key
 
+        _Fields = Fields()
+
         if type == 'capped-rel':
             if print_mode == 'terse':
                 return pAdicFieldCappedRelative(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                          'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                          'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                                category=_Fields)
             else:
                 return pAdicFieldCappedRelative(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                          'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                          'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                                category=_Fields)
         elif type == 'floating-point':
             if print_mode == 'terse':
                 return pAdicFieldFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                          'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                         'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                               category=_Fields)
             else:
                 return pAdicFieldFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                         'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                         'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                               category=_Fields)
         elif type == 'relaxed':
             if print_mode == 'terse':
                 return pAdicFieldRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                   'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                         category=_Fields)
             else:
                 return pAdicFieldRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
+                                                   'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                         category=_Fields)
         elif type[:8] == 'lattice-':
             subtype = type[8:]
             if print_mode == 'terse':
                 return pAdicFieldLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                            'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name, label)
+                                                            'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name, label,
+                                         category=_Fields)
             else:
                 return pAdicFieldLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                            'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name, label)
+                                                            'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name, label,
+                                         category=_Fields)
         else:
             raise ValueError("unexpected type")
 
@@ -2570,7 +2581,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
         True
     """
     if check:
-        if isinstance(q, Factorization) or isinstance(q, (list, tuple)):
+        if isinstance(q, (Factorization, list, tuple)):
             if not isinstance(q, Factorization) and len(q) == 2:
                 F = [(Integer(q[0]), Integer(q[1]))]
             else:
@@ -2592,11 +2603,12 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
         if isinstance(names, (list, tuple)):
             names = names[0]
         from sage.structure.element import Expression
-        if not (modulus is None or isinstance(modulus, Polynomial) or isinstance(modulus, Expression)):
+        if not (modulus is None or isinstance(modulus, (Polynomial,
+                                                        Expression))):
             raise TypeError("modulus must be a polynomial")
         if names is not None and not isinstance(names, str):
             names = str(names)
-            #raise TypeError, "names must be a string"
+            # raise TypeError("names must be a string")
         q = Integer(q)
         F = q.factor()
         if len(F) != 1:
@@ -3547,7 +3559,7 @@ def krasner_check(poly, prec):
         sage: krasner_check(1,2)  # this is a stupid example.
         True
     """
-    return True #This needs to be implemented
+    return True  # This needs to be implemented
 
 
 def is_eisenstein(poly):

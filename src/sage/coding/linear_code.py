@@ -66,8 +66,8 @@ distance) will use slow algorithms.
 A ``LinearCode`` is instantiated by providing a generator matrix::
 
     sage: M = matrix(GF(2), [[1, 0, 0, 1, 0],\
-                             [0, 1, 0, 1, 1],\
-                             [0, 0, 1, 1, 1]])
+    ....:                    [0, 1, 0, 1, 1],\
+    ....:                    [0, 0, 1, 1, 1]])
     sage: C = codes.LinearCode(M)
     sage: C
     [5, 3] linear code over GF(2)
@@ -80,12 +80,10 @@ A ``LinearCode`` is instantiated by providing a generator matrix::
     sage: G = MS([[1,1,1,0,0,0,0], [1,0,0,1,1,0,0], [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
     sage: C = LinearCode(G)
     sage: C.basis()
-    [
-    (1, 1, 1, 0, 0, 0, 0),
-    (1, 0, 0, 1, 1, 0, 0),
-    (0, 1, 0, 1, 0, 1, 0),
-    (1, 1, 0, 1, 0, 0, 1)
-    ]
+    [(1, 1, 1, 0, 0, 0, 0),
+     (1, 0, 0, 1, 1, 0, 0),
+     (0, 1, 0, 1, 0, 1, 0),
+     (1, 1, 0, 1, 0, 0, 1)]
     sage: c = C.basis()[1]
     sage: c in C
     True
@@ -789,10 +787,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         (see :issue:`21651`)::
 
             sage: C = LinearCode(random_matrix(GF(47), 25, 35))
-            sage: alarm(0.5); C.canonical_representative()                              # needs sage.libs.gap
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): C.canonical_representative()    # needs sage.libs.gap
         """
         aut_group_can_label = self._canonize(equivalence)
         return aut_group_can_label.get_canonical_form(), \
@@ -2301,11 +2297,9 @@ class LinearCode(AbstractLinearCode):
             ....:             [a, a + 1, 1, a + 1, 1, 0, 0]])
             sage: C = LinearCode(G)
             sage: C.basis()
-            [
-            (1, 0, 0, a + 1, 0, 1, 0),
-            (0, 1, 0, 0, a + 1, 0, 1),
-            (0, 0, 1, a, a + 1, a, a + 1)
-            ]
+            [(1, 0, 0, a + 1, 0, 1, 0),
+             (0, 1, 0, 0, a + 1, 0, 1),
+             (0, 0, 1, a, a + 1, a, a + 1)]
             sage: C.minimum_distance()                                                  # needs sage.libs.gap
             3
 

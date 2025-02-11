@@ -60,18 +60,16 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.ring import IntegralDomain
 import sage.rings.fraction_field_element as fraction_field_element
 
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base, is_MPolynomialRing
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polydict import PolyDict, ETuple
 from sage.rings.polynomial.term_order import TermOrder
-
 import sage.interfaces.abc
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -558,9 +556,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         c = self.base_ring()(x)
         return MPolynomial_polydict(self, {self._zero_tuple: c})
 
-# The following methods are handy for implementing Groebner
-# basis algorithms. They do only superficial type/sanity checks
-# and should be called carefully.
+    # The following methods are handy for implementing Groebner
+    # basis algorithms. They do only superficial type/sanity checks
+    # and should be called carefully.
 
     def monomial_quotient(self, f, g, coeff=False):
         r"""
@@ -930,20 +928,16 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         elt = PolyDict({}, check=False)
         for t in terms:
             elt += self(t).element()
-        # NOTE: here we should be using self.element_class but polynomial rings are not complient
-        # with categories...
+        # NOTE: here we should be using self.element_class but
+        # polynomial rings are not complient with categories...
         from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
         return MPolynomial_polydict(self, elt)
 
 
-class MPolynomialRing_polydict_domain(IntegralDomain,
-                                      MPolynomialRing_polydict):
+class MPolynomialRing_polydict_domain(MPolynomialRing_polydict):
     def __init__(self, base_ring, n, names, order):
         order = TermOrder(order, n)
         MPolynomialRing_polydict.__init__(self, base_ring, n, names, order)
-
-    def is_integral_domain(self, proof=True):
-        return True
 
     def is_field(self, proof=True):
         if self.ngens() == 0:

@@ -22,7 +22,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 
 
 def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
@@ -253,7 +253,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
         P = quotient.parent()
         # P should be a univariate polynomial ring over ZZ_q
-        if not isinstance(P, PolynomialRing_general):
+        if not isinstance(P, PolynomialRing_generic):
             raise TypeError("quotient should be a univariate polynomial")
         assert P.base_ring() is ZZ_q
 

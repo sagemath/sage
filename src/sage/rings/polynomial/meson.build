@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'binary_form_reduce.py',
   'commutative_polynomial.pxd',
@@ -52,6 +53,7 @@ py.install_sources(
   'polynomial_singular_interface.py',
   'polynomial_zmod_flint.pxd',
   'polynomial_zz_pex.pxd',
+  'q_integer_valued_polynomials.py',
   'real_roots.pxd',
   'skew_polynomial_element.pxd',
   'skew_polynomial_finite_field.pxd',
