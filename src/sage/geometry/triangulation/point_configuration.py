@@ -2121,7 +2121,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             except TypeError:
                 pass
         if homogenize:
-            m = matrix([ (1,) + p.affine() for p in points])
+            m = matrix([(1,) + p.affine() for p in points])
         else:
             m = matrix([p.affine() for p in points])
         return m.left_kernel().matrix()
@@ -2166,6 +2166,55 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
              A ray in the direction (0, -1, 2),
              A ray in the direction (0, 1, 0),
              A ray in the direction (1, 0, -1))
+
+        Let's verify the mother of all examples explained in Section 7.1.1 of
+        [DLRS2010]_::
+
+            sage: epsilon = 0
+            sage: mother = PointConfiguration([(4-epsilon,epsilon,0),(0,4-epsilon,epsilon),(epsilon,0,4-epsilon),(2,1,1),(1,2,1),(1,1,2)])
+            sage: mother.points()
+            (P(4, 0, 0), P(0, 4, 0), P(0, 0, 4), P(2, 1, 1), P(1, 2, 1), P(1, 1, 2))
+            sage: S1 = [(0,1,4),(0,3,4),(1,2,5),(1,4,5),(0,2,3),(2,3,5)]
+            sage: S2 = [(0,1,3),(1,3,4),(1,2,4),(2,4,5),(0,2,5),(0,3,5)]
+
+        Both subdivisions `S1` and `S2` are not regular::
+
+            sage: mother_dc1 = mother.deformation_cone(S1)
+            sage: mother_dc1
+            A 4-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex, 1 ray, 3 lines
+            sage: mother_dc2 = mother.deformation_cone(S2)
+            sage: mother_dc2
+            A 4-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex, 1 ray, 3 lines
+
+        Notice that they have a ray which provides a degenerate lifting which
+        only provides a coarsening of the subdivision from the lower hull (it
+        has 5 facets, and should have 8)::
+
+            sage: result = Polyhedron([vector(list(mother.points()[_])+[mother_dc1.rays()[0][_]]) for _ in range(len(mother.points()))])
+            sage: result.f_vector()
+            (1, 6, 9, 5, 1)
+
+        But if we use epsilon to perturb the configuration, suddenly
+        `S1` becomes regular::
+
+            sage: epsilon = 1/2
+            sage: mother = PointConfiguration([(4-epsilon,epsilon,0), 
+                                               (0,4-epsilon,epsilon),
+                                               (epsilon,0,4-epsilon),
+                                               (2,1,1),
+                                               (1,2,1),
+                                               (1,1,2)])
+            sage: mother.points()
+            (P(7/2, 1/2, 0),
+             P(0, 7/2, 1/2),
+             P(1/2, 0, 7/2),
+             P(2, 1, 1),
+             P(1, 2, 1),
+             P(1, 1, 2))
+            sage: mother_dc1 = mother.deformation_cone(S1);mother_dc1
+            A 6-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex, 3 rays, 3 lines
+            sage: mother_dc2 = mother.deformation_cone(S2);mother_dc2
+            A 3-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex and 3 lines
 
         .. SEEALSO::                                                                                                                                                                                        
                    

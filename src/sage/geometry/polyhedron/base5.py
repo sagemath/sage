@@ -669,7 +669,10 @@ class Polyhedron_base5(Polyhedron_base4):
         that the resulting polytope has a normal fan which is a coarsening of
         the normal fan of ``self``.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Let's examine the deformation cone of the square with one truncated
+        vertex::
 
             sage: tc = Polyhedron([(1, -1), (1/3, 1), (1, 1/3), (-1, 1), (-1, -1)])
             sage: dc = tc.deformation_cone()
@@ -685,6 +688,19 @@ class Polyhedron_base5(Polyhedron_base4):
              A ray in the direction (0, 1, 1),
              A ray in the direction (1, 0, 2))
 
+        Now, let's compute the deformation cone of the pyramid over a square
+        and verify that it is not full dimensional::
+
+            sage: py = Polyhedron([(0, -1, -1), (0, -1, 1), (0, 1, -1), (0, 1, 1), (1, 0, 0)])
+            sage: dc_py = py.deformation_cone(); dc_py
+            A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 1 vertex, 1 ray, 3 lines
+            sage: [_.b() for _ in py.Hrepresentation()]
+            [0, 1, 1, 1, 1]
+            sage: r = dc_py.rays()[0]
+            sage: l1,l2,l3 = dc_py.lines()
+            sage: r.vector()-l1.vector()/2-l2.vector()-l3.vector()/2
+            (0, 1, 1, 1, 1)
+
         .. SEEALSO::
 
             :meth:`~sage.schemes.toric.variety.Kaehler_cone`
@@ -699,7 +715,7 @@ class Polyhedron_base5(Polyhedron_base4):
         A = A.transpose()
         A_ker = A.right_kernel_matrix(basis='computed')
         gale = tuple(A_ker.columns())
-        collection = [_.ambient_H_indices() for _ in self.faces(0)]
+        collection = [f.ambient_H_indices() for f in self.faces(0)]
         n = len(gale)
         K = None
         for cone_indices in collection:

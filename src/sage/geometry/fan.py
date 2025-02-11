@@ -2439,6 +2439,58 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         m = m.augment(matrix(ZZ, m.nrows(), 1, [1] * m.nrows()))
         return matrix(ZZ, m.integer_kernel().matrix())
 
+    def is_regular(self):
+        r"""
+        Check if ``self`` is regular.
+
+        A rational polyhedral fan is *regular* if it is the normal fan of a
+    polytope.
+
+        OUTPUT: ``True`` if ``self`` is complete and ``False`` otherwise
+
+        EXAMPLES:
+
+        This is the mother of all examples, which is not regular (see Section
+        7.1.1 in [DLRS2010]_)::
+
+            sage: epsilon = 0
+            sage: rays = [(4-epsilon,epsilon,0),(0,4-epsilon,epsilon),(epsilon,0,4-epsilon),(2,1,1),(1,2,1),(1,1,2),(-1,-1,-1)]
+            sage: S1 = [Cone([rays[i] for i in indices]) for indices in [(0,1,4),(0,3,4),(1,2,5),(1,4,5),(0,2,3),(2,3,5),(3,4,5),(6,0,1),(6,1,2),(6,2,0)]]
+            sage: mother = Fan(S1)
+            sage: mother.is_regular()
+            False
+
+        Doing a slight perturbation makes the same subdivision regular::
+
+            sage: epsilon = 1/2
+            sage: rays = [(4-epsilon,epsilon,0),(0,4-epsilon,epsilon),(epsilon,0,4-epsilon),(2,1,1),(1,2,1),(1,1,2),(-1,-1,-1)]
+            sage: S1 = [Cone([rays[i] for i in indices]) for indices in [(0,1,4),(0,3,4),(1,2,5),(1,4,5),(0,2,3),(2,3,5),(3,4,5),(6,0,1),(6,1,2),(6,2,0)]]
+            sage: mother = Fan(S1)
+            sage: mother.is_regular()
+            True
+
+        .. SEEALSO::
+
+            :meth:`is_projective`.
+        """
+        if not self.is_complete():
+            raise ValueError('the fan is not complete')
+        from sage.geometry.triangulation.point_configuration import PointConfiguration
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        pc = PointConfiguration(self.rays())
+        v_pc = [vector(pc.point(i)) for i in range(pc.n_points())]
+        v_r = [vector(list(r)) for r in self.rays()]
+        cone_indices = [_.ambient_ray_indices() for _ in self.generating_cones()]
+        translator = [v_pc.index(v_r[i]) for i in range(pc.n_points())]
+        translated_cone_indices = [[translator[i] for i in ci] for ci in cone_indices]
+        dc_pc = pc.deformation_cone(translated_cone_indices)
+        lift = dc_pc.an_element()
+        ieqs = [[lift[i]] + list(v_pc[i]) for i in range(self.nrays())]
+        poly = Polyhedron(ieqs=ieqs)
+        return self.is_equivalent(poly.normal_fan())
+
+    is_projective = is_regular
+
     def generating_cone(self, n):
         r"""
         Return the ``n``-th generating cone of ``self``.
