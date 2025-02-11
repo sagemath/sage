@@ -695,7 +695,7 @@ class MPowerSeries(PowerSeries):
             IndexError: Cannot return terms of total degree greater than or
             equal to precision of self.
 
-        Insure that the enhancment detailed in :trac:`39314` works as intended::
+        Ensure that the enhancment detailed in :issue:`39314` works as intended::
 
             sage: R.<x,y> = QQ[[]]
             sage: ((x+y)^3)[2,1]
