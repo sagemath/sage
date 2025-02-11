@@ -397,7 +397,7 @@ def Hom(X, Y, category=None, check=True):
     """
     # This should use cache_function instead
     # However some special handling is currently needed for
-    # domains/docomains that break the unique parent condition. Also,
+    # domains/codomains that break the unique parent condition. Also,
     # at some point, it somehow broke the coercion (see e.g. sage -t
     # sage.rings.real_mpfr). To be investigated.
     global _cache
