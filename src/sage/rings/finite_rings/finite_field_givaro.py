@@ -22,7 +22,7 @@ used as minimal polynomial.
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.element_givaro import Cache_givaro
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 
 
 class FiniteField_givaro(FiniteField):

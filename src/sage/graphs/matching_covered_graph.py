@@ -69,6 +69,7 @@ AUTHORS:
         ``lexicographic_product()`` | Return the lexicographic product of ``self`` and ``other``.
         ``load_afile()`` | Load the matching covered graph specified in the given file into the current object.
         ``merge_vertices()`` | Merge vertices.
+        ``minor()`` | Return the vertices of a minor isomorphic to `H` in the current graph.
         ``random_subgraph()`` | Return a random matching covered subgraph containing each vertex with probability ``p``.
         ``save_afile()`` | Save the graph to file in alist format.
         ``strong_product()`` | Return the strong product of ``self`` and ``other``.
@@ -80,6 +81,7 @@ AUTHORS:
         ``subgraph_search_iterator()`` | Return an iterator over the labelled copies of (matching covered) ``G`` in ``self``.
         ``tensor_product()`` | Return the tensor product of ``self`` and ``other``.
         ``to_undirected()`` | Return an undirected Graph instance of the matching covered graph.
+        ``topological_minor()`` | Return a topological `H`-minor from ``self`` if one exists.
         ``transitive_closure()`` | Return the transitive closure of the matching covered graph.
         ``transitive_reduction()`` | Return a transitive reduction of the matching covered graph.
         ``union()`` | Return the union of ``self`` and ``other``.
@@ -92,12 +94,10 @@ AUTHORS:
         :delim: |
 
         ``bricks_and_braces()`` | Return the list of (underlying simple graph of) the bricks and braces of the (matching covered) graph.
-        ``is_brace()`` | Check if the (matching covered) graph is a brace.
-        ``is_brick()`` | Check if the (matching covered) graph is a brick.
         ``number_of_braces()`` | Return the number of braces.
         ``number_of_bricks()`` | Return the number of bricks.
         ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
-        ``tight_cut_decomposition()`` | Return a tight cut decomposition.
+        ``tight_cut_decomposition()`` | Return a maximal set of laminar nontrivial tight cuts and a corresponding vertex set partition.
 
     **Removability and ear decomposition**
 
@@ -1615,13 +1615,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         if new:
             raise ValueError('loops are not allowed in '
@@ -1656,13 +1656,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return False
 
@@ -2056,8 +2056,7 @@ class MatchingCoveredGraph(Graph):
 
             sage: J = G.copy()
             sage: J.delete_vertices(B)
-            sage: all(len(K)%2 != 0 for K in J.connected_components())
-            ...
+            sage: all(len(K)%2 != 0 for K in J.connected_components(sort=True))
             True
 
         Let `B` be a maximal barrier in a matching covered graph `G` and let
@@ -2066,7 +2065,7 @@ class MatchingCoveredGraph(Graph):
         `v` is the end of that edge in `V(K)`, then `M \cap E(K)` is a perfect
         matching of `K - v`::
 
-            sage: K = J.subgraph(vertices=(J.connected_components())[0])
+            sage: K = J.subgraph(vertices=(J.connected_components(sort=True))[0])
             sage: # Let F := \partial_G(K) and T := M \cap F
             sage: F = [edge for edge in G.edge_iterator()
             ....:      if (edge[0] in K and edge[1] not in K)
@@ -2090,7 +2089,7 @@ class MatchingCoveredGraph(Graph):
         `G - B` is factor critical::
 
             sage: all((K.subgraph(vertices=connected_component)).is_factor_critical()
-            ....:     for connected_component in K.connected_components()
+            ....:     for connected_component in K.connected_components(sort=True)
             ....: )
             True
 
@@ -2250,13 +2249,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return False
 
@@ -2345,6 +2344,820 @@ class MatchingCoveredGraph(Graph):
         raise ValueError('algorithm must be set to \'Edmonds\', '
                          '\'LP_matching\' or \'LP\'')
 
+    @doc_index('Bricks, braces and tight cut decomposition')
+    def is_brace(self, coNP_certificate=False):
+        r"""
+        Check if the (matching covered) graph is a brace.
+
+        A matching covered graph which is free of nontrivial tight cuts is
+        called a *brace* if it is bipartite. Let `G := (A \cup B, E)` be a
+        bipartite matching covered graph on six or more vertices. The
+        following statements are equivalent [LM2024]_:
+
+        1. `G` is a brace (aka free of nontrivial tight cuts).
+        2. `G - a_1 - a_2 - b_1 - b_2` has a perfect matching for any two
+           distinct vertices `a_1` and `a_2` in `A` and any two distinct
+           vertices `b_1` and `b_2` in `B`.
+        3. `G` is two extendable (any two nonadjacent distinct edges can be
+           extended to some perfect matching of `G`).
+        4. `|N(X)| \geq |X| + 2`, for all `X ⊂ A` such that `0 < |X| <
+           |A| - 1`, where `N(S) := \{b \mid (a, b) \in E ∧ a \in S\}` is called
+           the neighboring set of `S`.
+        5. `G - a - b` is matching covered, for some perfect matching `M` of
+           `G` and for each edge `ab` in `M`.
+
+        We shall be using the 5th characterization mentioned above in order
+        to determine whether the provided bipartite matching covered graph
+        is a brace or not using *M*-alternating tree search [LZ2001]_.
+
+        INPUT:
+
+        - ``coNP_certificate`` -- boolean (default: ``False``)
+
+        OUTPUT:
+
+        - If the input matching covered graph is not bipartite, a
+          :exc:`ValueError` is returned.
+
+        - If the input bipartite matching covered graph is a brace, a boolean
+          ``True`` is returned if ``coNP_certificate`` is set to ``False``
+          otherwise a 5-tuple ``(True, None, None, None, None)`` is returned.
+
+        - If the input bipartite matching covered graph is not a brace, a
+          boolean ``False`` is returned if ``coNP_certificate`` is set to
+          ``False`` otherwise a 5-tuple of
+
+          1. a boolean ``False``,
+
+          2. a list of edges constituting a nontrivial tight cut (which is a
+             nontrivial barrier cut)
+
+          3. a set of vertices of one of the shores of the nontrivial tight cut
+
+          4. a string 'nontrivial tight cut'
+
+          5. a set of vertices showing the respective barrier
+
+          is returned.
+
+        EXAMPLES:
+
+        The complete graph on two vertices `K_2` is the smallest brace::
+
+            sage: K = graphs.CompleteGraph(2)
+            sage: G = MatchingCoveredGraph(K)
+            sage: G.is_brace()
+            True
+
+        The cycle graph on four vertices `C_4` is a brace::
+
+            sage: C = graphs.CycleGraph(4)
+            sage: G = MatchingCoveredGraph(C)
+            sage: G.is_brace()
+            True
+
+        Each graph that is isomorphic to a biwheel is a brace::
+
+            sage: B = graphs.BiwheelGraph(15)
+            sage: G = MatchingCoveredGraph(B)
+            sage: G.is_brace()
+            True
+
+        A circular ladder graph of order eight or more on `2n` vertices for
+        an even `n` is a brace::
+
+            sage: n = 10
+            sage: CL = graphs.CircularLadderGraph(n)
+            sage: G = MatchingCoveredGraph(CL)
+            sage: G.is_brace()
+            True
+
+        A moebius ladder graph of order six or more on `2n` vertices for an odd
+        `n` is a brace::
+
+            sage: n = 11
+            sage: ML = graphs.MoebiusLadderGraph(n)
+            sage: G = MatchingCoveredGraph(ML)
+            sage: G.is_brace()
+            True
+
+        Note that the union of the above mentioned four families of braces,
+        that are:
+
+        1. the biwheel graph ``BiwheelGraph(n)``,
+        2. the circular ladder graph ``CircularLadderGraph(n)`` for even ``n``,
+        3. the moebius ladder graph ``MoebiusLadderGraph(n)`` for odd ``n``,
+
+        is referred to as the *McCuaig* *family* *of* *braces.*
+
+        The only simple brace of order six is the complete graph of the same
+        order, that is `K_{3, 3}`::
+
+            sage: L = list(graphs(6,
+            ....:          lambda G: G.size() <= 15 and
+            ....:                    G.is_bipartite())
+            ....: )
+            sage: L = list(G for G in L if G.is_connected() and
+            ....:                          G.is_matching_covered()
+            ....: )
+            sage: M = list(MatchingCoveredGraph(G) for G in L)
+            sage: B = list(G for G in M if G.is_brace())
+            sage: K = graphs.CompleteBipartiteGraph(3, 3)
+            sage: G = MatchingCoveredGraph(K)
+            sage: next(iter(B)).is_isomorphic(G)
+            True
+
+        The nonplanar `K_{3, 3}`-free brace Heawood graph is the unique cubic
+        graph of girth six with the fewest number of vertices (that is 14).
+        Note that by `K_{3, 3}`-free, it shows that the Heawood graph does not
+        contain a subgraph that is isomophic to a graph obtained by
+        bisubdivision of `K_{3, 3}`::
+
+            sage: K = graphs.CompleteBipartiteGraph(3, 3)
+            sage: J = graphs.HeawoodGraph()
+            sage: H = MatchingCoveredGraph(J)
+            sage: H.is_brace() and not H.is_planar() and \
+            ....: H.is_regular(k=3) and H.girth() == 6
+            True
+
+        Braces of order six or more are 3-connected::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace() and G.is_triconnected()
+            True
+
+        Braces of order four or more are 2-extendable::
+
+            sage: H = graphs.EllinghamHorton54Graph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace()
+            True
+            sage: e = next(G.edge_iterator(labels=False)); f = None
+            sage: for f in G.edge_iterator(labels=False):
+            ....:     if not (set(e) & set(f)):
+            ....:          break
+            sage: S = [u for x in [e, f] for u in set(x)]
+            sage: J = H.copy(); J.delete_vertices(S)
+            sage: M = Graph(J.matching())
+            sage: M.add_edges([e, f])
+            sage: if all(d == 1 for d in M.degree()) and \
+            ....:    G.order() == M.order() and \
+            ....:    G.order() == 2*M.size():
+            ....:      print(f'graph {G} is 2-extendable')
+            graph Ellingham-Horton 54-graph is 2-extendable
+
+        Every edge in a brace of order at least six is removable::
+
+            sage: H = graphs.CircularLadderGraph(8)
+            sage: G = MatchingCoveredGraph(H)
+            sage: # len(G.removble_edges()) == G.size()
+            # True
+
+        Every brace of order eight has the hexahedral graph as a spanning
+        subgraph::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: L = list(graphs(8,
+            ....:          lambda G: G.size() <= 28 and
+            ....:                    G.is_bipartite())
+            ....: )
+            sage: L = list(G for G in L if G.is_connected() and
+            ....:                          G.is_matching_covered()
+            ....: )
+            sage: M = list(MatchingCoveredGraph(G) for G in L)
+            sage: B = list(G for G in M if G.is_brace())
+            sage: C = list(G for G in M if Graph(G).subgraph_search(H) is not None)
+            sage: B == C
+            True
+
+        For every brace `G[A, B]` of order at least six, the graph
+        `G - a_1 - a_2 - b_1 - b_2` has a perfect matching for any two distinct
+        vertices `a_1` and `a_2` in `A` and any two distinct vertices `b_1` and
+        `b_2` in `B`::
+
+            sage: H =  graphs.CompleteBipartiteGraph(10, 10)
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace()
+            True
+            sage: S = [0, 1, 10, 12]
+            sage: G.delete_vertices(S)
+            sage: G.has_perfect_matching()
+            True
+
+        For a brace `G[A, B]` of order six or more, `|N(X)| \geq |X| + 2`, for
+        all `X \subset A` such that `0 < |X| <|A| - 1`, where
+        `N(S) := \{b | (a, b) \in E \^ a \in S\}` is called the neighboring set
+        of `S`::
+
+            sage: H = graphs.MoebiusLadderGraph(15)
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace()
+            True
+            sage: A, _ = G.bipartite_sets()
+            sage: # needs random
+            sage: X = random.sample(list(A), random.randint(1, len(A) - 1))
+            sage: N = {v for u in X for v in G.neighbor_iterator(u)}
+            sage: len(N) >= len(X) + 2
+            True
+
+        For a brace `G` of order four or more with a perfect matching `M`, the
+        graph `G - a - b` is matching covered for each edge `(a, b)` in `M`::
+
+            sage: H = graphs.HeawoodGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace()
+            True
+            sage: M = G.get_matching()
+            sage: L = []
+            sage: for a, b, *_ in M:
+            ....:     J = G.copy(); J.delete_vertices([a, b])
+            ....:     if J.is_matching_covered():
+            ....:          L.append(J)
+            sage: len(L) == len(M)
+            True
+
+        A cycle graph of order six or more is a bipartite matching covered
+        graph, but is not a brace::
+
+            sage: C = graphs.CycleGraph(10)
+            sage: G = MatchingCoveredGraph(C)
+            sage: G.is_brace()
+            False
+
+        A ladder graph of order six or more is a bipartite matching covered
+        graph, that is not a brace. The tight cut decomposition of a ladder
+        graph produces a list graphs the underlying graph of each of which
+        is isomorphic to a 4-cycle::
+
+            sage: L = graphs.LadderGraph(10)
+            sage: G = MatchingCoveredGraph(L)
+            sage: G.is_brace()
+            False
+
+        One may set the ``coNP_certificate`` to be ``True``::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace(coNP_certificate=True)
+            (True, None, None, None, None)
+            sage: C = graphs.CycleGraph(6)
+            sage: D = MatchingCoveredGraph(C)
+            sage: is_brace, nontrivial_tight_cut, nontrivial_odd_component, \
+            ....: nontrivial_tight_cut_variant, cut_identifier = \
+            ....: D.is_brace(coNP_certificate=True)
+            sage: is_brace is False
+            True
+            sage: J = C.subgraph(vertices=nontrivial_odd_component)
+            sage: J.is_isomorphic(graphs.PathGraph(3))
+            True
+            sage: len(nontrivial_tight_cut) == 2
+            True
+            sage: nontrivial_tight_cut_variant
+            'nontrivial barrier cut'
+            sage: # Corresponding barrier
+            sage: cut_identifier == {a for u, v, *_ in nontrivial_tight_cut for a in [u, v] \
+            ....: if a not in nontrivial_odd_component}
+            True
+            sage: for u, v, *_ in nontrivial_tight_cut:
+            ....:     assert (u in nontrivial_odd_component and v not in nontrivial_odd_component)
+            sage: L = graphs.LadderGraph(3) # A ladder graph with two constituent braces
+            sage: G = MatchingCoveredGraph(L)
+            sage: is_brace, nontrivial_tight_cut, nontrivial_odd_component, cut_variant, cut_identifier = \
+            ....: G.is_brace(coNP_certificate=True)
+            sage: is_brace is False
+            True
+            sage: G1 = L.copy()
+            sage: G1.merge_vertices(list(nontrivial_odd_component))
+            sage: G1.to_simple().is_isomorphic(graphs.CycleGraph(4))
+            True
+            sage: G2 = L.copy()
+            sage: G2.merge_vertices([v for v in G if v not in nontrivial_odd_component])
+            sage: G2.to_simple().is_isomorphic(graphs.CycleGraph(4))
+            True
+            sage: cut_variant
+            'nontrivial barrier cut'
+            sage: cut_identifier == {a for u, v, *_ in nontrivial_tight_cut for a in [u, v] \
+            ....: if a not in nontrivial_odd_component}
+            True
+            sage: H = graphs.CompleteBipartiteGraph(3, 3)
+            sage: H.delete_edge(0, 3)
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace(coNP_certificate=True)
+            (False,
+             [(4, 1, None), (5, 1, None), (4, 2, None), (5, 2, None)],
+             {0, 4, 5},
+             'nontrivial barrier cut',
+             {1, 2})
+
+        If the input matching covered graph is nonbipartite, a
+        :exc:`ValueError` is thrown::
+
+            sage: K4 = graphs.CompleteGraph(4)
+            sage: G = MatchingCoveredGraph(K4)
+            sage: G.is_brace()
+            Traceback (most recent call last):
+            ...
+            ValueError: the input graph is not bipartite
+            sage: P = graphs.PetersenGraph()
+            sage: H = MatchingCoveredGraph(P)
+            sage: H.is_brace(coNP_certificate=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input graph is not bipartite
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brick`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.bricks_and_braces`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_braces`
+        """
+        if not self.is_bipartite():
+            raise ValueError('the input graph is not bipartite')
+
+        if self.order() < 6:
+            return (True, None, None, None, None) if coNP_certificate else True
+
+        A, B = self.bipartite_sets()
+        matching = set(self.get_matching())
+        matching_neighbor = {x: y for u, v, *_ in matching for x, y in [(u, v), (v, u)]}
+
+        for e in matching:
+            u, v, *_ = e
+
+            # Let G denote the undirected graph self, and
+            # let the graph H(e) := G — u — v
+            H = Graph(self, multiedges=False)
+            H.delete_vertices([u, v])
+
+            if not H.is_connected() or not H.is_matching_covered(list(matching - set([e]))):
+                if not coNP_certificate:
+                    return False
+
+                # Construct the digraph D(e)(A ∪ B, F) defined as follows:
+                from sage.graphs.digraph import DiGraph
+                D = DiGraph()
+
+                # For each edge (a, b) in E(H(e)) ∩ M with a in A, b —> a in D(e).
+                # For each edge (a, b) in E(H(e)) with a in A, a —> b in D(e).
+                for a, b in H.edge_iterator(labels=False, sort_vertices=True):
+
+                    if a in B:
+                        a, b = b, a
+
+                    D.add_edge((a, b))
+                    if matching_neighbor[a] == b:
+                        D.add_edge((b, a))
+
+                # H(e) is matching covered iff D(e) is strongly connected.
+                # Check if D(e) is strongly connected using Kosaraju's algorithm
+                def dfs(x, visited, neighbor_iterator):
+                    stack = [x]  # a stack of xertices
+
+                    while stack:
+                        x = stack.pop()
+                        visited.add(x)
+
+                        for y in neighbor_iterator(x):
+                            if y not in visited:
+                                stack.append(y)
+
+                root = next(D.vertex_iterator())
+
+                visited_in = set()
+                dfs(root, visited_in, D.neighbor_in_iterator)
+
+                # Since D(e) is not strongly connected, it has a directed cut T(e).
+                # Note that by definition of D(e), it follows that T(e) ⊆ E(H(e)) — M.
+                # Thus, T(e) is a cut of H(e), which has a shore X such that every edge of T(e) is
+                # incident with a vertex in X ∩ B.
+
+                # Moreover, M — e is a perfect matching of H(e), and thus, |X ∩ A| = |X ∩ B|
+                # Consequently, Y := X + v is a shore of a nontrivial tight cut T of G
+
+                if len(visited_in) != D.order():
+                    X = visited_in
+                else:
+                    X = set()
+                    dfs(root, X, D.neighbor_out_iterator)
+
+                color_class = None
+
+                for a, b in H.edge_iterator(labels=False, sort_vertices=True):
+                    if (a in X) ^ (b in X):
+                        x = a if a in A else b
+                        color_class = x not in X
+                        break
+
+                # Obtain the color class Z ∈ {A, B} such that X ∩ Z is a vertex cover for T(e)
+                # Thus, obtain Y := X + v
+                X.add(u if (not color_class and u in A) or (color_class and u in B) or (color_class is None) else v)
+
+                # Compute the nontrivial tight cut C := ∂(Y)
+                C = [(x, y, w) if x in X else (y, x, w)
+                    for x, y, w in self.edge_iterator(sort_vertices=True)
+                    if (x in X) ^ (y in X)]
+
+                # Obtain the barrier Z
+                Z = None
+
+                if (u in X and u in A) or (v in X and v in A):
+                    Z = {b for b in B if b not in X}
+                else:
+                    Z = {a for a in A if a not in X}
+
+                return (False, C, set(X), 'nontrivial barrier cut', Z)
+
+        return (True, None, None, None, None) if coNP_certificate else True
+
+    @doc_index('Bricks, braces and tight cut decomposition')
+    def is_brick(self, coNP_certificate=False):
+        r"""
+        Check if the (matching covered) graph is a brick.
+
+        A matching covered graph which is free of nontrivial tight cuts is
+        called a *brick* if it is nonbipartite. A nonbipartite matching covered
+        graph is a brick if and only if it is 3-connected and bicritical
+        [LM2024]_.
+
+        INPUT:
+
+        - ``coNP_certificate`` -- boolean (default: ``False``)
+
+        OUTPUT:
+
+        - If the input matching covered graph is bipartite, a :exc:`ValueError`
+          is returned.
+
+        - If the input nonbipartite matching covered graph is a brick, a
+          boolean ``True`` is returned if ``coNP_certificate`` is set to
+          ``False``, otherwise a 5-tuple ``(True, None, None, None, None)`` is
+          returned.
+
+        - If the input nonbipartite matching covered graph is not a brick, a
+          boolean ``False`` is returned if ``coNP_certificate`` is set to
+          ``False``.
+
+        - If ``coNP_certificate`` is set to ``True`` and the input nonbipartite
+          graph is not a brick, a 5-tuple of
+
+          1. a boolean ``False``,
+
+          2. a list of lists of edges, each list constituting a nontrivial
+             tight cut collectively representing a laminar tight cut,
+
+          3. a list of set of vertices of one of the shores of those respective
+             nontrivial tight cuts:
+
+             #. In case of nontrivial barrier cuts, each of the shores is a
+                nontrivial odd component with respect to a nontrivial barrier,
+                thus the returned list forms mutually exclusive collection of
+                (odd) sets.
+
+             #. Otherwise each of the nontrivial tight cuts is a 2-separation
+                cut, each of the shores form a subset sequence, with the
+                `i` th shore being a proper subset of the `i + 1` th shore.
+
+          4. a string showing whether the nontrivial tight cuts are barrier
+             cuts (if the string is 'nontrivial barrier cut'), or 2-separation
+             cuts (if the string is 'nontrivial 2-separation cut')
+
+          5. a set of vertices showing the respective barrier if the
+             nontrivial tight cuts are barrier cuts, or otherwise
+             a set of two vertices constituting the corresponding
+             two vertex cut (in this case the nontrivial tight cuts are
+             2-separation cuts)
+
+          is returned.
+
+        EXAMPLES:
+
+        The complete graph on four vertices `K_4` is the smallest brick::
+
+            sage: K = graphs.CompleteGraph(4)
+            sage: G = MatchingCoveredGraph(K)
+            sage: G.is_brick()
+            True
+
+        The triangular cicular ladder (a graph on six vertices), aka
+        `\overline{C_6}` is a brick::
+
+            sage: C6Bar = graphs.CircularLadderGraph(3)
+            sage: G = MatchingCoveredGraph(C6Bar)
+            sage: G.is_brick()
+            True
+
+        Each of Petersen graph, Bicorn graph, Tricorn graph, Cubeplex graph,
+        Twinplex graph, Wagner graph is a brick::
+
+            sage: MatchingCoveredGraph(graphs.PetersenGraph()).is_brick() and \
+            ....: MatchingCoveredGraph(graphs.StaircaseGraph(4)).is_brick() and \
+            ....: MatchingCoveredGraph(graphs.TricornGraph()).is_brick() and \
+            ....: MatchingCoveredGraph(graphs.CubeplexGraph()).is_brick() and \
+            ....: MatchingCoveredGraph(graphs.TwinplexGraph()).is_brick() and \
+            ....: MatchingCoveredGraph(graphs.WagnerGraph()).is_brick()
+            True
+
+        The Murty graph is the smallest simple brick that is not odd-intercyclic::
+
+            sage: M = graphs.MurtyGraph()
+            sage: G = MatchingCoveredGraph(M)
+            sage: G.is_brick()
+            True
+
+        A circular ladder graph of order six or more on `2n` vertices for an
+        odd `n` is a brick::
+
+            sage: n = 11
+            sage: CL = graphs.CircularLadderGraph(n)
+            sage: G = MatchingCoveredGraph(CL)
+            sage: G.is_brick()
+            True
+
+        A moebius ladder graph of order eight or more on `2n` vertices for an
+        even `n` is a brick::
+
+            sage: n = 10
+            sage: ML = graphs.MoebiusLadderGraph(n)
+            sage: G = MatchingCoveredGraph(ML)
+            sage: G.is_brick()
+            True
+
+        A wheel graph of an even order is a brick::
+
+            sage: W = graphs.WheelGraph(10)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.is_brick()
+            True
+
+        A graph that is isomorphic to a truncated biwheel graph is a brick::
+
+            sage: TB = graphs.TruncatedBiwheelGraph(15)
+            sage: G = MatchingCoveredGraph(TB)
+            sage: G.is_brick()
+            True
+
+        Each of the graphs in the staircase graph family with order eight or
+        more is a brick::
+
+            sage: ST = graphs.StaircaseGraph(9)
+            sage: G = MatchingCoveredGraph(ST)
+            sage: G.is_brick()
+            True
+
+        Bricks are 3-connected::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.is_brick()
+            True
+            sage: G.is_triconnected()
+            True
+
+        Bricks are bicritical::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.is_brick()
+            True
+            sage: G.is_bicritical()
+            True
+
+        Examples of nonbipartite matching covered graphs that are not
+        bricks::
+
+            sage: H = Graph([
+            ....:     (0, 3), (0, 4), (0, 7),
+            ....:     (1, 3), (1, 5), (1, 7),
+            ....:     (2, 3), (2, 6), (2, 7),
+            ....:     (4, 5), (4, 6), (5, 6)
+            ....: ])
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_bipartite()
+            False
+            sage: G.is_bicritical()
+            False
+            sage: G.is_triconnected()
+            True
+            sage: G.is_brick()
+            False
+            sage: H = Graph([
+            ....:     (0, 1), (0, 2), (0, 3), (0, 4), (1, 2),
+            ....:     (1, 5), (2, 5), (3, 4), (3, 5), (4, 5)
+            ....: ])
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_bipartite()
+            False
+            sage: G.is_bicritical()
+            True
+            sage: G.is_triconnected()
+            False
+            sage: G.is_brick()
+            False
+
+        One may set the ``coNP_certificate`` to be ``True``::
+
+            sage: K4 = graphs.CompleteGraph(4)
+            sage: G = MatchingCoveredGraph(K4)
+            sage: G.is_brick(coNP_certificate=True)
+            (True, None, None, None, None)
+            sage: # K(4) ⊙ K(3, 3) is nonbipartite but not a brick
+            sage: H = graphs.MurtyGraph(); H.delete_edge(0, 1)
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brick(coNP_certificate=True)
+            (False, [[(5, 2, None), (6, 3, None), (7, 4, None)]], [{5, 6, 7}],
+             'nontrivial barrier cut', {2, 3, 4})
+            sage: H = Graph([
+            ....:     (0, 12), (0, 13), (0, 15), (1, 4), (1, 13), (1, 14),
+            ....:     (1, 19), (2, 4), (2, 13), (2, 14), (2, 17), (3, 9),
+            ....:     (3, 13), (3, 16), (3, 21), (4, 6), (4, 7), (5, 7),
+            ....:     (5, 8), (5, 12), (6, 8), (6, 11), (7, 10), (8, 9),
+            ....:     (9, 10), (10, 11), (11, 12), (14, 15), (14, 16), (15, 16),
+            ....:     (17, 18), (17, 21), (18, 19), (18, 20), (19, 20), (20, 21)
+            ....: ])
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brick(coNP_certificate=True)
+            (False,
+             [[(12, 0, None), (4, 1, None), (4, 2, None), (9, 3, None)],
+              [(19, 1, None), (17, 2, None), (21, 3, None)],
+              [(15, 0, None), (14, 1, None), (14, 2, None), (16, 3, None)]],
+             [{4, 5, 6, 7, 8, 9, 10, 11, 12}, {17, 18, 19, 20, 21}, {14, 15, 16}],
+             'nontrivial barrier cut', {0, 1, 2, 3})
+            sage: J = Graph([
+            ....:     (0, 1), (0, 2), (0, 3), (0, 4), (0, 5),
+            ....:     (0, 6), (0, 7), (0, 8), (0, 9), (0, 10),
+            ....:     (1, 2), (1, 11), (2, 11), (3, 4), (3, 11),
+            ....:     (4, 11), (5, 6), (5, 11), (6, 11), (7, 8),
+            ....:     (7, 11), (8, 11), (9, 10), (9, 11), (10, 11)
+            ....: ])
+            sage: G = MatchingCoveredGraph(J)
+            sage: G.is_brick(coNP_certificate=True)
+            (False,
+             [[(0, 3, None),
+               (0, 4, None),
+               (0, 5, None),
+               (0, 6, None),
+               (0, 7, None),
+               (0, 8, None),
+               (0, 9, None),
+               (0, 10, None),
+               (1, 11, None),
+               (2, 11, None)],
+              [(0, 5, None),
+               (0, 6, None),
+               (0, 7, None),
+               (0, 8, None),
+               (0, 9, None),
+               (0, 10, None),
+               (1, 11, None),
+               (2, 11, None),
+               (3, 11, None),
+               (4, 11, None)],
+              [(0, 7, None),
+               (0, 8, None),
+               (0, 9, None),
+               (0, 10, None),
+               (1, 11, None),
+               (2, 11, None),
+               (3, 11, None),
+               (4, 11, None),
+               (5, 11, None),
+               (6, 11, None)],
+              [(0, 9, None),
+               (0, 10, None),
+               (1, 11, None),
+               (2, 11, None),
+               (3, 11, None),
+               (4, 11, None),
+               (5, 11, None),
+               (6, 11, None),
+               (7, 11, None),
+               (8, 11, None)]],
+             [{0, 1, 2},
+              {0, 1, 2, 3, 4},
+              {0, 1, 2, 3, 4, 5, 6},
+              {0, 1, 2, 3, 4, 5, 6, 7, 8}],
+             'nontrivial 2-separation cut',
+             {0, 11})
+
+        If the input matching covered graph is bipartite, a
+        :exc:`ValueError` is thrown::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brick()
+            Traceback (most recent call last):
+            ...
+            ValueError: the input graph is bipartite
+            sage: J = graphs.HeawoodGraph()
+            sage: G = MatchingCoveredGraph(J)
+            sage: G.is_brick(coNP_certificate=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input graph is bipartite
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.graph.Graph.is_bicritical`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brace`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.bricks_and_braces`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_bricks`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_petersen_bricks`
+        """
+        if self.is_bipartite():
+            raise ValueError('the input graph is bipartite')
+
+        # Check if G is bicritical
+        bicritical, certificate = self.is_bicritical(coNP_certificate=True)
+
+        if not bicritical:
+            if not coNP_certificate:
+                return False
+
+            # G has a pair of vertices u, v such that G - u - v is not matching
+            # covered, thus has a nontrivial barrier B containing both u and v.
+            u, _ = certificate
+            B = self.maximal_barrier(u)
+
+            H = Graph(self)
+            H.delete_vertices(B)
+
+            # Let K be a nontrivial odd component of H := G - B. Note that
+            # there exists at least one such K since G is nonbipartite
+            nontrivial_odd_components = [
+                set(component) for component in H.connected_components(sort=True)
+                if len(component) % 2 and len(component) > 1
+            ]
+
+            # Find a laminar set of nontrivial barrier cuts
+            C = [[(u, v, w) if u in nontrivial_odd_component else (v, u, w)
+                  for u, v, w in self.edge_iterator()
+                  if (u in nontrivial_odd_component) ^ (v in nontrivial_odd_component)]
+                 for nontrivial_odd_component in nontrivial_odd_components]
+
+            return (False, C, nontrivial_odd_components, 'nontrivial barrier cut', B)
+
+        # Check if G is 3-connected
+        if self.is_triconnected():
+            return (True, None, None, None, None) if coNP_certificate else True
+
+        # G has a 2-vertex cut
+        # Compute the SPQR-tree decomposition
+        spqr_tree = self.spqr_tree()
+        two_vertex_cut = []
+
+        # Check for 2-vertex cuts in a P node
+        # Since the graph is matching covered, it is free of cut vertices
+        # It can be shown using counting arguments that the spqr tree
+        # decomposition for a bicritical graph, that is 2-connected but not
+        # 3-connected, is free of 'S' nodes
+        for u in spqr_tree:
+            if u[0] == 'P':
+                two_vertex_cut.extend(u[1])
+                break
+
+        # If no 2-vertex cut found, look for R nodes
+        if not two_vertex_cut:
+            from collections import Counter
+            R_frequency = Counter()
+
+            for t, g in spqr_tree:
+                if t == 'R':
+                    R_frequency.update(g)
+
+            # R frequency must be at least 2,
+            # since the graph is 2-connected but not 3-connected
+            two_vertex_cut = [u for u, f in R_frequency.items() if f >= 2][:2]
+
+        # We obtain a 2-vertex cut (u, v)
+        H = Graph(self)
+        H.delete_vertices(two_vertex_cut)
+
+        # Check if all components of H are odd
+        components = H.connected_components(sort=True)
+
+        # Find a nontrivial odd component
+        nontrivial_tight_cut_variation = 'nontrivial 2-separation cut'
+        nontrivial_odd_components = []
+
+        for index, component in enumerate(components):
+            if index == len(components) - 1:
+                continue
+            elif not index:
+                nontrivial_odd_components.append(set(components[0] + [two_vertex_cut[0]]))
+            else:
+                nontrivial_odd_component = nontrivial_odd_components[-1].copy()
+                nontrivial_odd_component.update(component)
+                nontrivial_odd_components.append(nontrivial_odd_component)
+
+        C = [[(u, v, w) if u in nontrivial_odd_component else (v, u, w)
+              for u, v, w in self.edge_iterator()
+              if (u in nontrivial_odd_component) ^ (v in nontrivial_odd_component)]
+             for nontrivial_odd_component in nontrivial_odd_components]
+
+        # Edge (u, v, w) in C are formatted so that u is in a nontrivial odd component
+        return (False, C, nontrivial_odd_components, nontrivial_tight_cut_variation, set(two_vertex_cut)) if coNP_certificate else False
+    
     @doc_index('Dependence Relation and Removable Classes')
     def is_removable_edge(self, u, v=None, label=None, coNP_certificate=False):
         r"""
@@ -2640,7 +3453,7 @@ class MatchingCoveredGraph(Graph):
 
         # TODO: Obtain an M alternating uv path in G - e
         return G.is_matching_covered(coNP_certificate=coNP_certificate)
-
+      
     @doc_index('Overwritten methods')
     def loop_edges(self, labels=True):
         r"""
@@ -2711,13 +3524,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return []
 
@@ -2778,13 +3591,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return []
 
@@ -2850,13 +3663,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return 0
 
@@ -2942,13 +3755,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
         """
         from collections.abc import Iterable
 
