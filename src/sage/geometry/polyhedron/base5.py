@@ -659,6 +659,56 @@ class Polyhedron_base5(Polyhedron_base4):
         parent = self.parent().change_ring(self.base_ring(), ambient_dim=self.ambient_dim() + n)
         return parent.element_class(parent, [lambda_V, [], []], None)
 
+    def deformation_cone(self):
+        r"""
+        Return the deformation cone of ``self``.
+
+        Let `P` be a `d`-polytope in `\RR^r` with `n` facets. The deformation
+        cone is a polyhedron in `\RR^n` who points are the right-hand side `b`
+        in `Ax\leq b` where `A` is the matrix of facet normals of ``self``, so
+        that the resulting polytope has a normal fan which is a coarsening of
+        the normal fan of ``self``.
+
+        EXAMPLES::
+
+            sage: tc = Polyhedron([(1, -1), (1/3, 1), (1, 1/3), (-1, 1), (-1, -1)])
+            sage: dc = tc.deformation_cone()
+            sage: dc.an_element()
+            (2, 1, 1, 0, 0)
+            sage: [_.A() for _ in tc.Hrepresentation()]
+            [(1, 0), (0, 1), (0, -1), (-3, -3), (-1, 0)]
+            sage: P = Polyhedron(rays=[(1, 0, 2), (0, 1, 1), (0, -1, 1), (-3, -3, 0), (-1, 0, 0)])
+            sage: P.rays()
+            (A ray in the direction (-1, -1, 0),
+             A ray in the direction (-1, 0, 0),
+             A ray in the direction (0, -1, 1),
+             A ray in the direction (0, 1, 1),
+             A ray in the direction (1, 0, 2))
+
+        .. SEEALSO::
+
+            :meth:`~sage.schemes.toric.variety.Kaehler_cone`
+
+        REFERENCES:
+
+            For more information, see Section 5.4 of [DLRS2010]_ and Section
+            2.2 of [ACEP2020].
+        """
+        from .constructor import Polyhedron
+        A = matrix([_.A() for _ in self.Hrepresentation()])
+        A = A.transpose()
+        A_ker = A.right_kernel_matrix(basis='computed')
+        gale = tuple(A_ker.columns())
+        collection = [_.ambient_H_indices() for _ in self.faces(0)]
+        n = len(gale)
+        K = None
+        for cone_indices in collection:
+            dual_cone = Polyhedron(rays=[gale[i] for i in range(n) if i not in
+                                         cone_indices])
+            K = K.intersection(dual_cone) if K is not None else dual_cone
+        preimages = [A_ker.solve_right(r.vector()) for r in K.rays()]
+        return Polyhedron(lines=A.rows(), rays=preimages)
+
     ###########################################################
     # Binary operations.
     ###########################################################

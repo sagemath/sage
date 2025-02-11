@@ -2039,7 +2039,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
     pushing_triangulation = placing_triangulation
 
     @cached_method
-    def Gale_transform(self, points=None):
+    def Gale_transform(self, points=None, homogenize=True):
         r"""
         Return the Gale transform of ``self``.
 
@@ -2048,6 +2048,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         - ``points`` -- tuple of points or point indices or ``None``
           (default). A subset of points for which to compute the Gale
           transform. By default, all points are used.
+
+        - ``homogenize`` -- boolean (default: ``True``); whether to add a row
+          of 1's before taking the transform.
 
         OUTPUT: a matrix over :meth:`base_ring`
 
@@ -2064,6 +2067,50 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: points = (pc.point(0), pc.point(1), pc.point(3), pc.point(4))
             sage: pc.Gale_transform(points)
             [ 1 -1  1 -1]
+
+        It is possible to take the inverse of the Gale transform, by specifying
+        whether to homogenize or not::
+
+            sage: pc2 = PointConfiguration([[0,0],[3,0],[0,3],[3,3],[1,1]])
+            sage: pc2.Gale_transform(homogenize=False)
+            [-1  0  0  0  0]
+            [ 0  1  1 -1  0]
+            [ 0  1  1  0 -3]
+            sage: pc2.Gale_transform(homogenize=True)
+            [ 1  1  1  0 -3]
+            [ 0  2  2 -1 -3]
+
+        It might not affect the dimension of the result:: 
+
+            sage: PC = PointConfiguration([[4,0,0],[0,4,0],[0,0,4],[2,1,1],[1,2,1],[1,1,2]])
+            sage: GT = PC.Gale_transform(homogenize=False);GT
+            [ 2  1  1 -4  0  0]
+            [ 1  2  1  0 -4  0]
+            [-2 -2 -1  3  3 -1]
+            sage: GT = PC.Gale_transform(homogenize=True);GT
+            [ 1  0  0 -3  1  1]
+            [ 0  1  0  1 -3  1]
+            [ 0  0  1  1  1 -3]
+
+        The following point configuration is totally cyclic (the cone spanned
+        by the vectors is equal to the vector space spanned by the points),
+        hence its Gale dual is acyclic (there is a linear functional that is
+        positive in all the points of the configuration) when not homogenized::
+
+            sage: pc3 = PointConfiguration([[-1, -1, -1], [-1, 0, 0], [0, -1, 0], [0, 0, -1], [1, 0, 0], [0, 0, 1], [0, 1, 0]])
+            sage: g_hom = pc3.Gale_transform(homogenize=True);g_hom
+            [ 1  0  0 -2  1 -1  1]
+            [ 0  1  0 -1  1 -1  0]
+            [ 0  0  1 -1  0 -1  1]
+            sage: g_inhom = pc3.Gale_transform(homogenize=False);g_inhom
+            [-1  1  1  1  0  0  0]
+            [ 0  1  0  0  1  0  0]
+            [ 1 -1 -1  0  0  1  0]
+            [ 0  0  1  0  0  0  1]
+            sage: Polyhedron(rays=g_hom.columns())
+            A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 1 vertex and 3 lines
+            sage: Polyhedron(rays=g_inhom.columns())
+            A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 1 vertex and 4 rays
         """
         self._assert_is_affine()
         if points is None:
@@ -2073,8 +2120,72 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 points = [ self.point(ZZ(i)) for i in points ]
             except TypeError:
                 pass
-        m = matrix([ (1,) + p.affine() for p in points])
+        if homogenize:
+            m = matrix([ (1,) + p.affine() for p in points])
+        else:
+            m = matrix([p.affine() for p in points])
         return m.left_kernel().matrix()
+
+    def deformation_cone(self, collection):
+        r"""
+        Return the deformation cone for the ``collection`` of subconfigurations
+        of ``self``.
+
+        INPUT:
+
+        - ``collection`` -- a collection of subconfigurations of ``self``.
+          Subconfigurations are given as indices
+
+        OUTPUT: a polyhedron. It contains the liftings of the point configuration 
+        making the collection a regular (or coherent, or projective)
+        subdivision.
+
+        EXAMPLES::
+
+            sage: PC = PointConfiguration([(-1, -1), (-1, 0), (0, -1), (1, 0), (0, 1)])
+            sage: coll = [(1, 4), (0, 2), (0, 1), (2, 3), (3, 4)]
+            sage: dc = PC.deformation_cone(coll);dc
+            A 5-dimensional polyhedron in QQ^5 defined as the convex hull of 1 vertex, 3 rays, 2 lines
+            sage: dc.rays()
+            (A ray in the direction (1, 0, 1, 0, 0),
+             A ray in the direction (1, 1, 0, 0, 0),
+             A ray in the direction (1, 1, 1, 0, 0))
+            sage: dc.lines()
+            (A line in the direction (1, 0, 1, 0, -1),
+             A line in the direction (1, 1, 0, -1, 0))
+            sage: dc.an_element()
+            (3, 2, 2, 0, 0)
+
+        We add to the interior element the first line and we verify that the
+        given rays are defining rays of the lower hull::
+
+            sage: P = Polyhedron(rays=[(-1, -1, 4), (-1, 0, 3), (0, -1, 2), (1, 0, -1), (0, 1, 0)])
+            sage: P.rays()
+            (A ray in the direction (-1, -1, 4),
+             A ray in the direction (-1, 0, 3),
+             A ray in the direction (0, -1, 2),
+             A ray in the direction (0, 1, 0),
+             A ray in the direction (1, 0, -1))
+
+        .. SEEALSO::                                                                                                                                                                                        
+                   
+            :meth:`~sage.schemes.toric.variety.Kaehler_cone`
+                   
+        REFERENCES:
+                   
+            For more information, see Section 5.4 of [DLRS2010]_ and Section
+            2.2 of [ACEP2020].
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        gale = self.Gale_transform(homogenize=False)
+        dual_rays = gale.columns()
+        n = self.n_points()
+        K = None
+        for cone_indices in collection:
+            dual_cone = Polyhedron(rays=[dual_rays[i] for i in range(n) if i not in cone_indices])
+            K = K.intersection(dual_cone) if K is not None else dual_cone
+        preimages = [gale.solve_right(r.vector()) for r in K.rays()]
+        return Polyhedron(lines=matrix(self.points()).transpose().rows(),rays=preimages)
 
     def plot(self, **kwds):
         r"""
