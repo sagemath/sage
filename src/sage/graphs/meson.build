@@ -81,6 +81,7 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, cliquer, flint, gmp, planarity]
   py.extension_module(
     name,
     sources: pyx,
@@ -92,8 +93,26 @@ foreach name, pyx : extension_data
       inc_flint,
       inc_rings,
     ],
-    dependencies: [py_dep, cysignals, cliquer, flint, gmp, planarity],
+    dependencies: deps,
   )
+
+  all_deps_found = true
+  foreach dep : deps
+    if not dep.found()
+      all_deps_found = false
+      break
+    endif
+  endforeach
+  if not all_deps_found
+    configure_file(
+      input: not_available,
+      output: name + '.py',
+      install_tag: 'python-runtime',
+      install_dir: sage_install_dir / 'graphs',
+      install: true,
+      copy: true,
+    )
+  endif
 endforeach
 
 extension_data_cpp = {
@@ -104,6 +123,7 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals, flint, gmp, planarity]
   py.extension_module(
     name,
     sources: pyx,
@@ -116,10 +136,29 @@ foreach name, pyx : extension_data_cpp
       inc_flint,
       inc_rings,
     ],
-    dependencies: [py_dep, cysignals, flint, gmp, planarity],
+    dependencies: deps,
   )
+
+  all_deps_found = true
+  foreach dep : deps
+    if not dep.found()
+      all_deps_found = false
+      break
+    endif
+  endforeach
+  if not all_deps_found
+    configure_file(
+      input: not_available,
+      output: name + '.py',
+      install_tag: 'python-runtime',
+      install_dir: sage_install_dir / 'graphs',
+      install: true,
+      copy: true,
+    )
+  endif
 endforeach
 
+deps = [py_dep, cysignals, bliss]
 py.extension_module(
   'bliss',
   sources: files('bliss.pyx'),
@@ -127,9 +166,27 @@ py.extension_module(
   install: true,
   override_options: ['cython_language=cpp'],
   include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-  dependencies: [py_dep, cysignals, bliss],
+  dependencies: deps,
 )
+all_deps_found = true
+foreach dep : deps
+  if not dep.found()
+    all_deps_found = false
+    break
+  endif
+endforeach
+if not all_deps_found
+  configure_file(
+    input: not_available,
+    output: 'bliss.py',
+    install_tag: 'python-runtime',
+    install_dir: sage_install_dir / 'graphs',
+    install: true,
+    copy: true,
+  )
+endif
 
+deps = [py_dep, cysignals, mcqd]
 py.extension_module(
   'mcqd',
   sources: files('mcqd.pyx'),
@@ -137,8 +194,25 @@ py.extension_module(
   install: true,
   override_options: ['cython_language=cpp'],
   include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-  dependencies: [py_dep, cysignals, mcqd],
+  dependencies: deps,
 )
+all_deps_found = true
+foreach dep : deps
+  if not dep.found()
+    all_deps_found = false
+    break
+  endif
+endforeach
+if not all_deps_found
+  configure_file(
+    input: not_available,
+    output: 'mcqd.py',
+    install_tag: 'python-runtime',
+    install_dir: sage_install_dir / 'graphs',
+    install: true,
+    copy: true,
+  )
+endif
 
 subdir('base')
 subdir('generators')

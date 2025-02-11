@@ -141,6 +141,7 @@ Check that :issue:`5562` has been fixed::
 
 import sys
 
+from sage.features.mock import MockInstance
 from sage.misc.superseded import deprecation
 from sage.structure.element import Element
 from sage.structure.category_object import check_default_category
@@ -2192,11 +2193,9 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
                 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse_field
                 return Polynomial_generic_sparse_field
             if isinstance(base_ring, rational_field.RationalField):
-                try:
-                    from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
+                from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
+                if not isinstance(Polynomial_rational_flint, MockInstance):
                     return Polynomial_rational_flint
-                except ImportError:
-                    pass
             elif isinstance(base_ring, NumberField):
                 if base_ring.is_absolute():
                     from sage.rings.polynomial.polynomial_number_field import Polynomial_absolute_number_field_dense
@@ -2205,17 +2204,13 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
                     from sage.rings.polynomial.polynomial_number_field import Polynomial_relative_number_field_dense
                     return Polynomial_relative_number_field_dense
             elif isinstance(base_ring, sage.rings.abc.RealField):
-                try:
-                    from .polynomial_real_mpfr_dense import PolynomialRealDense
+                from sage.rings.polynomial.polynomial_real_mpfr_dense import PolynomialRealDense
+                if not isinstance(PolynomialRealDense, MockInstance):
                     return PolynomialRealDense
-                except ImportError:
-                    pass
             elif isinstance(base_ring, sage.rings.abc.ComplexBallField):
-                try:
-                    from sage.rings.polynomial.polynomial_complex_arb import Polynomial_complex_arb
+                from sage.rings.polynomial.polynomial_complex_arb import Polynomial_complex_arb
+                if not isinstance(Polynomial_complex_arb, MockInstance):
                     return Polynomial_complex_arb
-                except ImportError:
-                    pass
             from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_dense_field
             return Polynomial_generic_dense_field
 

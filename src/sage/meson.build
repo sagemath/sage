@@ -63,6 +63,8 @@ config_file = configure_file(
   configuration: conf_data,
 )
 
+not_available = files('features/not_available.py.in')
+
 # Packages that need no processing and can be installed directly
 no_processing = [
   'databases',

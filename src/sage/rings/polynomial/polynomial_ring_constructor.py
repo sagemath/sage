@@ -21,6 +21,7 @@ rings but rather quotients of them (see module
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.features import FeatureNotPresentError
 from sage.structure.category_object import normalize_names
 
 try:
@@ -852,7 +853,7 @@ def _multi_variate(base_ring, names, sparse=None, order='degrevlex', implementat
         try:
             from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
             R = MPolynomialRing_libsingular(base_ring, n, names, order)
-        except (ImportError, TypeError, NotImplementedError):
+        except FeatureNotPresentError:
             if implementation is not None:
                 raise
         else:

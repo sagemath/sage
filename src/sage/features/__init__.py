@@ -435,7 +435,7 @@ class FeatureNotPresentError(RuntimeError):
         ...
         FeatureNotPresentError: missing is not available.
     """
-    def __init__(self, feature, reason=None, resolution=None):
+    def __init__(self, feature: Feature | None = None, reason: str | None=None, resolution: str | None =None):
         self.feature = feature
         self.reason = reason
         self._resolution = resolution
@@ -459,12 +459,13 @@ class FeatureNotPresentError(RuntimeError):
             FeatureNotPresentError: gap_package_gapZuHoh8Uu is not available.
             `LoadPackage("gapZuHoh8Uu")` evaluated to `fail` in GAP.
         """
-        lines = ["{feature} is not available.".format(feature=self.feature.name)]
+        lines = []
+        if self.feature:
+            lines.append(f"{self.feature.name} is not available.")
         if self.reason:
             lines.append(self.reason)
-        resolution = self.resolution
-        if resolution:
-            lines.append(str(resolution))
+        if self._resolution:
+            lines.append(str(self._resolution))
         return "\n".join(lines)
 
 
@@ -963,8 +964,8 @@ class PythonModule(Feature):
 
     def _is_present(self):
         r"""
-        Return whether the module can be imported. This is determined by
-        actually importing it.
+        Return whether the module can be found. It is not tested whether the
+        module can be imported or otherwise is functional.
 
         EXAMPLES::
 
@@ -974,9 +975,9 @@ class PythonModule(Feature):
             sage: PythonModule("_no_such_module_").is_present()
             FeatureTestResult('_no_such_module_', False)
         """
-        import importlib
+        import importlib.util
         try:
-            importlib.import_module(self.name)
+            importlib.util.find_spec(self.name)
         except ImportError as exception:
-            return FeatureTestResult(self, False, reason=f"Failed to import `{self.name}`: {exception}")
+            return FeatureTestResult(self, False, reason=f"Failed to find `{self.name}`: {exception}")
         return FeatureTestResult(self, True, reason=f"Successfully imported `{self.name}`.")

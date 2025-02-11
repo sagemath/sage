@@ -63,6 +63,24 @@ foreach name, pyx : extension_data
     ],
     dependencies: deps,
   )
+
+  all_deps_found = true
+  foreach dep : deps
+    if not dep.found()
+      all_deps_found = false
+      break
+    endif
+  endforeach
+  if not all_deps_found
+    configure_file(
+      input: not_available,
+      output: name + '.py',
+      install_tag: 'python-runtime',
+      install_dir: sage_install_dir / 'rings/finite_rings',
+      install: true,
+      copy: true,
+    )
+  endif
 endforeach
 
 extension_data_cpp = {
@@ -72,6 +90,7 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cypari2, cysignals, givaro, gmp, m, ntl, pari]
   py.extension_module(
     name,
     sources: pyx,
@@ -85,7 +104,25 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [py_dep, cypari2, cysignals, givaro, gmp, m, ntl, pari],
+    dependencies: deps,
   )
+
+  all_deps_found = true
+  foreach dep : deps
+    if not dep.found()
+      all_deps_found = false
+      break
+    endif
+  endforeach
+  if not all_deps_found
+    configure_file(
+      input: not_available,
+      output: name + '.py',
+      install_tag: 'python-runtime',
+      install_dir: sage_install_dir / 'rings/finite_rings',
+      install: true,
+      copy: true,
+    )
+  endif
 endforeach
 

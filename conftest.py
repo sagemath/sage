@@ -32,7 +32,6 @@ from sage.doctest.forker import (
 )
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 
-
 class SageDoctestModule(DoctestModule):
     """
     This is essentially a copy of `DoctestModule` from
@@ -125,15 +124,26 @@ class SageDoctestModule(DoctestModule):
             checker=SageOutputChecker(),
             continue_on_failure=_get_continue_on_failure(self.config),
         )
+        # Monkey patch exception reporting to ignore FeatureNotPresentError
+        old_report_unexpected_exception = runner.report_unexpected_exception
+        def _report_unexpected_exception(self, test, example, exc_info):
+            if isinstance(exc_info[1], FeatureNotPresentError):
+                # Ignore FeatureNotPresentError
+                # (it's not an error in the doctest)
+                return
+            return old_report_unexpected_exception(self, test, example, exc_info)
+        runner.report_unexpected_exception = _report_unexpected_exception
         try:
+            print(f"Collecting doctests from { self.path }: { module }")
             for test in finder.find(module, module.__name__):
+                print(test)
                 if test.examples:  # skip empty doctests
                     yield DoctestItem.from_parent(
                         self, name=test.name, runner=runner, dtest=test
                     )
         except FeatureNotPresentError as exception:
             pytest.skip(
-                f"unable to import module { self.path } due to missing feature { exception.feature.name }"
+                f"unable to import module { self.path } due to { exception }"
             )
         except ModuleNotFoundError as exception:
             # TODO: Remove this once all optional things are using Features
@@ -175,6 +185,7 @@ def pytest_collect_file(
         # We don't allow pytests to be defined in Cython files.
         # Normally, Cython files are filtered out already by pytest and we only
         # hit this here if someone explicitly runs `pytest some_file.pyx`.
+        #return SageDoctestModule.from_parent(parent, path=file_path)
         return IgnoreCollector.from_parent(parent)
     elif file_path.suffix == ".py":
         if parent.config.option.doctest:

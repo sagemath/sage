@@ -342,6 +342,8 @@ import pexpect
 import shlex
 import time
 
+from sage.features import FeatureNotPresentError
+
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 
 import sage.interfaces.abc
@@ -2450,7 +2452,10 @@ def get_docstring(name, prefix=False, code=False):
     return result
 
 
-singular = Singular()
+try:
+    singular = Singular()
+except FeatureNotPresentError:
+    singular = None
 
 
 def reduce_load_Singular():

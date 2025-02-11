@@ -1,4 +1,5 @@
 # from symmetrica import *
+from sage.features import FeatureNotPresentError
 
 from sage.libs.symmetrica.symmetrica import start
 
@@ -97,4 +98,8 @@ from sage.libs.symmetrica.symmetrica import divdiff_perm_schubert_symmetrica as 
 from sage.libs.symmetrica.symmetrica import scalarproduct_schubert_symmetrica as scalarproduct_schubert
 from sage.libs.symmetrica.symmetrica import divdiff_schubert_symmetrica as divdiff_schubert
 
-start()
+try:
+    start()
+except FeatureNotPresentError:
+    # Symmetrica is not available, so we do nothing
+    pass
