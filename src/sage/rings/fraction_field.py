@@ -781,7 +781,7 @@ class FractionField_generic(ring.Field):
         y = py_scalar_to_element(y)
 
         try:
-            from sage.libs.pari.all import pari_gen
+            from cypari2.gen import Gen as pari_gen
         except ImportError:
             pari_gen = ()
 
