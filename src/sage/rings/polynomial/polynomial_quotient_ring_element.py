@@ -405,23 +405,23 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         An element is not invertible if the base ring is not a field
         (see :issue:`13303`)::
 
-            sage: Z16x.<x> = Integers(16)[]
-            sage: S.<y> =  Z16x.quotient(x^2 + x + 1)
+            sage: Z6x.<x> = Integers(6)[]
+            sage: S.<y> = Z6x.quotient(x^2 + x + 1)
             sage: (2*y)^(-1)
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: (2*y+1)^(-1)  # this cannot raise ValueError because...
+            sage: (2*y+5)^(-1)  # this cannot raise ValueError because...
             Traceback (most recent call last):
             ...
             NotImplementedError
-            sage: (2*y+1) * (10*y+5)  # the element is in fact invertible
+            sage: (2*y+5) * (4*y+3)  # the element is in fact invertible
             1
 
         Check that :issue:`29469` is fixed::
 
-            sage: ~S(3)
-            11
+            sage: ~S(5)
+            5
         """
         P = self.parent()
         try:
