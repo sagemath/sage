@@ -145,7 +145,7 @@ import sage.interfaces.abc
 
 from sage.env import DOT_SAGE
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.misc.instancedoc import instancedoc
 from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
