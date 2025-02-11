@@ -211,6 +211,9 @@ cdef class LinearSubclassesIter:
 
         self._nodes = [first_cut]
 
+    def __iter__(self):
+        return self
+
     def __next__(self):
         """
         Return the next linear subclass.
@@ -298,7 +301,7 @@ cdef class LinearSubclasses:
     """
     def __init__(self, M, line_length=None, subsets=None, splice=None):
         """
-        See class docstring for full documentation.
+        See the class docstring for full documentation.
 
         EXAMPLES::
 
@@ -463,7 +466,7 @@ cdef class MatroidExtensions(LinearSubclasses):
     """
     def __init__(self, M, e, line_length=None, subsets=None, splice=None, orderly=False):
         """
-        See class docstring for full documentation.
+        See the class docstring for full documentation.
 
         EXAMPLES::
 

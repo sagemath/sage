@@ -1346,10 +1346,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         right_q = sorted(all_q - a)
                         sign = Permutation(convert_perm(left_q + right_q)).signature()
                         tens_q[(tuple(left_q), tuple(right_q))] = sign
-                    tens = {}
-                    for l, r in zip(left_p, right_p):
-                        for q in tens_q:
-                            tens[((q[0], l), (q[1], r))] = tens_q[q]
+                    tens = {((q[0], l), (q[1], r)): tq
+                            for l, r in zip(left_p, right_p)
+                            for q, tq in tens_q.items()}
                     return self.tensor_square()._from_dict(tens, coerce=True)
             elif basis == 'serre-cartan':
                 result = self.tensor_square().one()
@@ -2827,10 +2826,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             tot += 1
         return test
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Return ``True`` if ``self`` is graded commutative, as determined by the
-        profile function.  In particular, a sub-Hopf algebra of the
+        profile function.
+
+        In particular, a sub-Hopf algebra of the
         mod 2 Steenrod algebra is commutative if and only if there is
         an integer `n>0` so that its profile function `e` satisfies
 
