@@ -104,7 +104,7 @@ covered here.
    ::
 
        sage: d = {0: [1,4,5], 1: [2,6], 2: [3,7], 3: [4,8], 4: [9], \
-             5: [7, 8], 6: [8,9], 7: [9]}
+       ....: 5: [7, 8], 6: [8,9], 7: [9]}
        sage: G = Graph(d); G
        Graph on 10 vertices
        sage: G.plot().show()    # or G.show()                                           # needs sage.plot
@@ -308,7 +308,7 @@ However, if one wants to define a dictionary, with the same keys and arbitrary
 objects for entries, one can make that association::
 
     sage: d = {0 : graphs.DodecahedralGraph(), 1 : graphs.FlowerSnark(), \
-          2 : graphs.MoebiusKantorGraph(), 3 : graphs.PetersenGraph() }
+    ....: 2 : graphs.MoebiusKantorGraph(), 3 : graphs.PetersenGraph() }
     sage: d[2]
     Moebius-Kantor Graph: Graph on 16 vertices
     sage: T = graphs.TetrahedralGraph()
@@ -5271,42 +5271,12 @@ class Graph(GenericGraph):
             sage: D.get_vertices()
             {0: 'foo', 1: None, 2: None}
         """
-        if sparse is not None:
-            if data_structure is not None:
-                raise ValueError("The 'sparse' argument is an alias for "
-                                 "'data_structure'. Please do not define both.")
-            data_structure = "sparse" if sparse else "dense"
-
-        if data_structure is None:
-            from sage.graphs.base.dense_graph import DenseGraphBackend
-            from sage.graphs.base.sparse_graph import SparseGraphBackend
-            if isinstance(self._backend, DenseGraphBackend):
-                data_structure = "dense"
-            elif isinstance(self._backend, SparseGraphBackend):
-                data_structure = "sparse"
-            else:
-                data_structure = "static_sparse"
-        from sage.graphs.digraph import DiGraph
-        D = DiGraph(name=self.name(),
-                    pos=self.get_pos(),
-                    multiedges=self.allows_multiple_edges(),
-                    loops=self.allows_loops(),
-                    data_structure=(data_structure if data_structure != "static_sparse"
-                                    else "sparse"))  # we need a mutable copy
-
-        D.add_vertices(self.vertex_iterator())
-        D.set_vertices(self.get_vertices())
-        for u, v, l in self.edge_iterator():
-            D.add_edge(u, v, l)
-            D.add_edge(v, u, l)
-        if hasattr(self, '_embedding'):
-            D._embedding = copy(self._embedding)
-        D._weighted = self._weighted
-
-        if data_structure == "static_sparse":
-            D = D.copy(data_structure=data_structure)
-
-        return D
+        from sage.graphs.orientations import _initialize_digraph
+        from itertools import chain
+        edges = chain(self.edge_iterator(),
+                      ((v, u, l) for u, v, l in self.edge_iterator()))
+        return _initialize_digraph(self, edges, name=self.name(),
+                                   data_structure=data_structure, sparse=sparse)
 
     @doc_index("Basic methods")
     def to_undirected(self):
@@ -5530,7 +5500,7 @@ class Graph(GenericGraph):
         # Triangles
         K3 = Graph({1: [2, 3], 2: [3]}, format='dict_of_lists')
         for x, y, z in G.subgraph_search_iterator(K3, return_graphs=False):
-            if x < y and y < z:
+            if x < y < z:
                 T.append([x, y, z])
 
         # Triples with just one edge
@@ -5822,12 +5792,6 @@ class Graph(GenericGraph):
           own implementation, or to ``"NetworkX"`` to use NetworkX'
           implementation of the Bron and Kerbosch Algorithm [BK1973]_
 
-
-        .. NOTE::
-
-            This method sorts its output before returning it. If you prefer to
-            save the extra time, you can call
-            :class:`sage.graphs.independent_sets.IndependentSets` directly.
 
         .. NOTE::
 
@@ -9306,6 +9270,7 @@ class Graph(GenericGraph):
     from sage.graphs.orientations import eulerian_orientation
     from sage.graphs.connectivity import bridges, cleave, spqr_tree
     from sage.graphs.connectivity import is_triconnected
+    from sage.graphs.connectivity import minimal_separators
     from sage.graphs.comparability import is_comparability
     from sage.graphs.comparability import is_permutation
     geodetic_closure = LazyImport('sage.graphs.convexity_properties', 'geodetic_closure', at_startup=True)
@@ -9366,6 +9331,7 @@ _additional_categories = {
     "cleave"                    : "Connectivity, orientations, trees",
     "spqr_tree"                 : "Connectivity, orientations, trees",
     "is_triconnected"           : "Connectivity, orientations, trees",
+    "minimal_separators"        : "Connectivity, orientations, trees",
     "is_dominating"             : "Domination",
     "is_redundant"              : "Domination",
     "private_neighbors"         : "Domination",

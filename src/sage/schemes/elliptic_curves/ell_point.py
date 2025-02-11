@@ -140,10 +140,8 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
-from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.real_mpfr import RealField, RR
 from sage.rings.quotient_ring import QuotientRing_generic
-import sage.groups.generic as generic
 
 from sage.structure.element import AdditiveGroupElement
 from sage.structure.sequence import Sequence
@@ -160,7 +158,8 @@ lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 try:
-    from sage.libs.pari.all import pari, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
 except ImportError:
     PariError = ()
 
@@ -4604,8 +4603,8 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         if Q.is_zero():
             k = 0
         else:
-            for k in range(0,p):
-                Eqp = EllipticCurve(Qp(p, 2), [ ZZ(t) + k * p for t in E.a_invariants() ])
+            for k in range(p):
+                Eqp = EllipticCurve(Qp(p, 2), [ZZ(t) + k * p for t in E.a_invariants()])
 
                 P_Qps = Eqp.lift_x(ZZ(self.x()), all=True)
                 for P_Qp in P_Qps:
