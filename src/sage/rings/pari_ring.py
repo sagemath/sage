@@ -16,12 +16,12 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-import sage.libs.pari.all as pari
 from sage.categories.rings import Rings
-from sage.structure.parent import Parent
-from sage.structure.element import RingElement
-from sage.structure.richcmp import richcmp
+from sage.libs.pari import pari
 from sage.misc.fast_methods import Singleton
+from sage.structure.element import RingElement
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
 
 
 class Pari(RingElement):
@@ -44,7 +44,7 @@ class Pari(RingElement):
         if parent is None:
             parent = _inst
         RingElement.__init__(self, parent)
-        self.__x = pari.pari(x)
+        self.__x = pari(x)
 
     def __repr__(self) -> str:
         """
