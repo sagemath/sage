@@ -617,7 +617,7 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n) noexcept:
         i = k
         word = <codeword>1 << k
         k += 1
-    else: # NOTE THIS WILL NEVER HAPPEN AS CURRENTLY SET UP!
+    else:  # NOTE THIS WILL NEVER HAPPEN AS CURRENTLY SET UP!
         temp = (<codeword>1 << k) - 1
         i = k
         word = <codeword>1 << k
@@ -813,7 +813,7 @@ cdef class BinaryCode:
                     combination ^= (1 << j)
                     word ^= self_basis[j]
 
-        else: # isinstance(arg1, BinaryCode)
+        else:  # isinstance(arg1, BinaryCode)
             other_basis = other.basis
             for i from 0 <= i < nrows-1:
                 self_basis[i] = other_basis[i]
@@ -2140,7 +2140,7 @@ cdef class PartitionStack:
         # location now points to the beginning of the first, smallest,
         # nontrivial cell
         j = location
-        #zero out this level of W:
+        # zero out this level of W:
         ell = 1 + nwords/radix
         if nwords%radix:
             ell += 1
@@ -2423,9 +2423,12 @@ cdef class PartitionStack:
         cdef int *self_wd_lvls = self.wd_lvls
         cdef int *self_wd_ents = self.wd_ents
         while True:
-            if CG.is_one(self_wd_ents[wd_ptr], col): i += 1
-            if self_wd_lvls[wd_ptr] > k: wd_ptr += 1
-            else: break
+            if CG.is_one(self_wd_ents[wd_ptr], col):
+                i += 1
+            if self_wd_lvls[wd_ptr] > k:
+                wd_ptr += 1
+            else:
+                break
         return i
 
     def _wd_degree(self, C, wd, col_ptr, k):
@@ -3347,15 +3350,17 @@ cdef class BinaryCodeClassifier:
                 if qzb > 0: zb__Lambda_rho[k] = Lambda[k]
                 state = 3
 
-            elif state == 3: # attempt to rule out automorphisms while moving down the tree
+            elif state == 3:  # attempt to rule out automorphisms while moving down the tree
                 # if k > hzf, then we know that nu currently does not look like zeta, the first
                 # terminal node encountered, thus there is no automorphism to discover. If qzb < 0,
                 # i.e. Lambda[k] < zb[k], then the indicator is not maximal, and we can't reach a
                 # canonical leaf. If neither of these is the case, then proceed to state 4.
-                if hzf__h_zeta <= k or qzb >= 0: state = 4
-                else: state = 6
+                if hzf__h_zeta <= k or qzb >= 0:
+                    state = 4
+                else:
+                    state = 6
 
-            elif state == 4: # at this point we have -not- ruled out the presence of automorphisms
+            elif state == 4:  # at this point we have -not- ruled out the presence of automorphisms
                 if nu.is_discrete(k):
                     state = 7
                     continue  # we have a terminal node, so process it
@@ -3365,17 +3370,18 @@ cdef class BinaryCodeClassifier:
                 # equal to its minimum element
                 v[k] = nu.new_first_smallest_nontrivial(k, W, self.Phi_size * k)
                 if not nu.sat_225(k): hh = k + 1
-                e[k] = 0 # see state 12 and 17
-                state = 2 # continue down the tree
+                e[k] = 0  # see state 12 and 17
+                state = 2  # continue down the tree
 
-            elif state == 5: # same as state 3, but in the case where we haven't yet defined zeta
-                             # i.e. this is our first time down the tree. Once we get to the bottom,
-                             # we will have zeta = nu = rho, so we do:
+            elif state == 5:
+                # same as state 3, but in the case where we haven't yet defined zeta
+                # i.e. this is our first time down the tree. Once we get to the bottom,
+                # we will have zeta = nu = rho, so we do:
                 zf__Lambda_zeta[k] = Lambda[k]
                 zb__Lambda_rho[k] = Lambda[k]
                 state = 4
 
-            elif state == 6: # at this stage, there is no reason to continue downward, so backtrack
+            elif state == 6:  # at this stage, there is no reason to continue downward, so backtrack
                 j = k
 
                 # return to the longest ancestor nu[i] of nu that could have a
@@ -3396,9 +3402,10 @@ cdef class BinaryCodeClassifier:
                     else:
                         k = hh-1
                 # TODO: is the following line necessary?
-                if k == -1: k = 0
+                if k == -1:
+                    k = 0
 
-                if hb > k:# update hb since we are backtracking
+                if hb > k:  # update hb since we are backtracking
                     hb = k
                 # if j == hh, then all nodes lower than our current position are equivalent, so bail out
                 if j == hh:
@@ -3465,7 +3472,7 @@ cdef class BinaryCodeClassifier:
 
                 state = 10
 
-            elif state == 9: # nu is a better guess at the canonical label than rho
+            elif state == 9:  # nu is a better guess at the canonical label than rho
                 rho = PartitionStack(nu)
                 k_rho = k
                 qzb = 0
@@ -3475,7 +3482,7 @@ cdef class BinaryCodeClassifier:
                 zb__Lambda_rho[k+1] = -1
                 state = 6
 
-            elif state == 10: # we have an automorphism to process
+            elif state == 10:  # we have an automorphism to process
                 # increment l
                 if l < self.L-1: l += 1
                 # store information about the automorphism to Omega and Phi
@@ -3496,8 +3503,8 @@ cdef class BinaryCodeClassifier:
                         Omega[ii] ^= (1<<j)  # so cancel
                         j = col_gamma[j]     # cellmates
                     i += 1
-                    while i < ncols and not Omega[ii]&(1<<i): # find minimal element
-                        i += 1                                # of next cell
+                    while i < ncols and not Omega[ii]&(1<<i):  # find minimal element
+                        i += 1                                 # of next cell
                 i = 0
                 jj = self.radix
                 while i < nwords:
@@ -4035,7 +4042,7 @@ cdef class BinaryCodeClassifier:
                         bingo2 = 0
                         for coset_rep in rt_transversal:
                             hwp = create_word_perm(coset_rep)
-                            #dealloc_word_perm(gwp)
+                            # dealloc_word_perm(gwp)
                             bingo2 = 1
                             for j from 0 <= j < B.nrows:
                                 temp = permute_word_by_wp(hwp, temp_basis[j])

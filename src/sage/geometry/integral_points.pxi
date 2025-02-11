@@ -531,10 +531,8 @@ cpdef rectangular_box_points(list box_min, list box_max,
         ....:         (0, 0, 0, 0, 0, -1, 2, -1, 0),
         ....:         (0, 0, 0, 0, 0, 0, -1, 2, -1)]
         sage: P = Polyhedron(ieqs=ieqs)
-        sage: alarm(0.5); P.integral_points()
-        Traceback (most recent call last):
-        ...
-        AlarmInterrupt
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5): P.integral_points()
     """
     assert len(box_min) == len(box_max)
     assert not (count_only and return_saturated)

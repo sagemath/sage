@@ -55,7 +55,7 @@ class CurveArrow(GraphicPrimitive):
 
             sage: import numpy  # to ensure numpy 2.0 compatibility
             sage: if int(numpy.version.short_version[0]) > 1:
-            ....:     numpy.set_printoptions(legacy="1.25")
+            ....:     _ = numpy.set_printoptions(legacy="1.25")
             sage: from sage.plot.arrow import CurveArrow
             sage: b = CurveArrow(path=[[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]],
             ....:                options={})

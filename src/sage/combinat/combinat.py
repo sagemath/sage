@@ -184,7 +184,7 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import Element
 
 lazy_import('sage.interfaces.maxima_lib', 'maxima')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.misc.prandom', 'randint')
 
 
