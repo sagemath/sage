@@ -218,7 +218,7 @@ class SphericalHarmonic(BuiltinFunction):
         0.345494149471335
         sage: import numpy as np                                                        # needs scipy
         sage: if int(np.version.short_version[0]) > 1:                                  # needs scipy
-        ....:     np.set_printoptions(legacy="1.25")                                    # needs scipy
+        ....:     _ = np.set_printoptions(legacy="1.25")                                # needs scipy
         sage: import scipy.version
         sage: if scipy.version.version < '1.15.0':
         ....:     from scipy.special import sph_harm # NB: arguments x and y are swapped   # needs scipy
@@ -458,7 +458,7 @@ def elliptic_j(z, prec=53):
             z = CC(z)
         except ValueError:
             raise ValueError("elliptic_j only defined for complex arguments.")
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     return CC(pari(z).ellj())
 
 
