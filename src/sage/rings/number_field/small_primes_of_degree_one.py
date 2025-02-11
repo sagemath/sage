@@ -134,7 +134,7 @@ class Small_primes_of_degree_one_iter:
         self._lc = self._poly.leading_coefficient()
 
         # this uses that [ O_K : Z[a] ]^2 = | disc(f(x)) / disc(O_K) |
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         self._prod_of_small_primes = ZZ(pari('TEMPn = %s; TEMPps = primes(TEMPn); prod(X = 1, TEMPn, TEMPps[X])' % num_integer_primes))
         self._prod_of_small_primes //= self._prod_of_small_primes.gcd(self._poly.discriminant() * self._lc)
 
