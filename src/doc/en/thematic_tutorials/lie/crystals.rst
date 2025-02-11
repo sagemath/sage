@@ -741,7 +741,7 @@ irreducible crystal. We can make four such crystals::
     sage: C = crystals.Letters("A2")
     sage: T = crystals.TensorProduct(C,C,C)
     sage: [T1,T2,T3,T4] = \
-      [crystals.TensorProduct(C,C,C,generators=[v]) for v in T.highest_weight_vectors()]
+    ....: [crystals.TensorProduct(C,C,C,generators=[v]) for v in T.highest_weight_vectors()]
     sage: [B.cardinality() for B in [T1,T2,T3,T4]]
     [10, 8, 8, 1]
     sage: [B.character(A2) for B in [T1,T2,T3,T4]]
@@ -754,7 +754,7 @@ We see that two of these crystals are isomorphic, with character
     sage: C = crystals.Letters("A2")
     sage: T = crystals.TensorProduct(C,C,C)
     sage: [T1,T2,T3,T4] = \
-      [crystals.TensorProduct(C,C,C,generators=[v]) for v in T.highest_weight_vectors()]
+    ....: [crystals.TensorProduct(C,C,C,generators=[v]) for v in T.highest_weight_vectors()]
     sage: T1.plot()
     Graphics object consisting of 35 graphics primitives
     sage: T2.plot()

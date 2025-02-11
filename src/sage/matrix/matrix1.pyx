@@ -90,7 +90,7 @@ cdef class Matrix(Matrix0):
             [1.000000000, 2.000000000; 3.000000000, 1.000000000] # 32-bit
             [1.00000000000000, 2.00000000000000; 3.00000000000000, 1.00000000000000] # 64-bit
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return pari.matrix(self._nrows, self._ncols, self._list())
 
     def _gap_init_(self):
