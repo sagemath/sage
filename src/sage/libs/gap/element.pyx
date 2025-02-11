@@ -1135,10 +1135,8 @@ cdef class GapElement(RingElement):
         Check that this can be interrupted gracefully::
 
             sage: a, b = libgap.GL(1000, 3).GeneratorsOfGroup(); g = a * b
-            sage: alarm(0.5); g ^ (2 ^ 10000)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): g ^ (2 ^ 10000)
 
             sage: libgap.CyclicGroup(2) ^ 2
             Traceback (most recent call last):
