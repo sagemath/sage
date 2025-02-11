@@ -121,7 +121,7 @@ class pAdicLseries(SageObject):
         self._gamma = gamma
         self._quadratic_twist = quadratic_twist
         self._precision = precision
-        self._cinf = ZZ(1)  # is set when called for an elliptic curve
+        self._cinf = ZZ.one()  # is set when called for an elliptic curve
 
     def __getitem__(self, n):
         r"""
@@ -373,7 +373,7 @@ class pAdicLseries(SageObject):
         ap = ap * kronecker(D, p)
         K = pAdicField(p, M)
         symb_twisted = symb.evaluate_twisted(a, D)
-        return sum(binomial(j, r) *
+        return sum(ZZ(j).binomial(r) *
                    ((a - ZZ(K.teichmuller(a))) ** (j - r)) *
                    (p ** r) *
                    symb_twisted.moment(r) for r in range(j + 1)) / ap
