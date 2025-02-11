@@ -955,6 +955,24 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         return self.base_ring().characteristic()
 
+    def is_exact(self):
+        """
+        Test whether elements of this matrix space are represented exactly.
+
+        OUTPUT:
+
+        Return ``True`` if elements of this matrix space are represented exactly, i.e.,
+        there is no precision loss when doing arithmetic.
+
+        EXAMPLES::
+
+            sage: MatrixSpace(ZZ, 3).is_exact()
+            True
+            sage: MatrixSpace(RR, 3).is_exact()
+            False
+        """
+        return self._base.is_exact()
+
     def _has_default_implementation(self):
         r"""
         EXAMPLES::
