@@ -1481,6 +1481,7 @@ cdef class ETuple:
             return
         cdef size_t ind
         cdef int v
+        from sage.combinat.integer_vector import IntegerVector
         if isinstance(data, ETuple):
             self._length = (<ETuple>data)._length
             self._nonzero = (<ETuple>data)._nonzero
@@ -1496,7 +1497,7 @@ cdef class ETuple:
                 self._data[2*ind] = index
                 self._data[2*ind+1] = exp
                 ind += 1
-        elif isinstance(data, (list, tuple)):
+        elif isinstance(data, (list, tuple, IntegerVector)):
             self._length = len(data)
             self._nonzero = 0
             for v in data:
