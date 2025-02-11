@@ -275,7 +275,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 
 # -------------------------------------------------
 # Partition tuple - element class
