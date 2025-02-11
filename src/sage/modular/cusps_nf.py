@@ -488,8 +488,8 @@ class NFCusp(Element):
                         self.__b = R(r.denominator())
                         self.__a = R(r * self.__b)
                     except (ValueError, TypeError):
-                        raise TypeError("unable to convert %r to a cusp "
-                                        "of the number field" % a)
+                        raise TypeError(f"unable to convert {a} to a cusp "
+                                        "of the number field")
             else:
                 try:
                     r = number_field(a)

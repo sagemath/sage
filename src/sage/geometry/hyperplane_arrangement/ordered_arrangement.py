@@ -394,7 +394,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             < x0, x1, x2, x3, x4 | x4^-1*x3^-1*x2^-1*x3*x4*x0*x2*x0^-1,
                                    x4^-1*x2^-1*x4*x2, x4^-1*x1^-1*x0^-1*x1*x4*x0,
                                    x4^-1*x1^-1*x0^-1*x4*x0*x1,
-                                   x4^-1*x1^-1*x3*x0*x1*x3^-1*x2^-1*x4*x0^-1*x2,
                                    x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2,
                                    x3^-1*x1^-1*x3*x1 >
             sage: G3.abelian_invariants()
@@ -406,9 +405,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             < x0, x1, x2, x3, x4 | x4^-1*x3^-1*x2^-1*x3*x4*x0*x2*x0^-1,
                                    x4^-1*x2^-1*x4*x2, x4^-1*x1^-1*x0^-1*x1*x4*x0,
                                    x4^-1*x1^-1*x0^-1*x4*x0*x1,
-                                   x4^-1*x1^-1*x3*x0*x1*x3^-1*x2^-1*x4*x0^-1*x2,
-                                   x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2,
-                                   x3^-1*x1^-1*x3*x1 >
+                                   x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2, x3^-1*x1^-1*x3*x1 >
             sage: G4.abelian_invariants()
             (0, 0, 0, 0, 0)
 

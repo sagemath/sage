@@ -162,7 +162,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         sage: sing_print = singular_function('print')
         sage: print(sing_print(R))
         polynomial ring, over a field, global ordering
-        // coefficients: ZZ/7(a, b)
+        // coefficients: ZZ/7(a, b)...
         // number of vars : 3
         //        block   1 : ordering dp
         //                  : names    x y z
@@ -175,7 +175,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         sage: from sage.libs.singular.function import singular_function
         sage: print(sing_print(R))
         polynomial ring, over a field, global ordering
-        // coefficients: QQ(s, t)
+        // coefficients: QQ(s, t)...
         // number of vars : 3
         //        block   1 : ordering dp
         //                  : names    x y z
@@ -185,21 +185,21 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         sage: R = PolynomialRing(GF(2), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a field, global ordering
-        // coefficients: ZZ/2
+        // coefficients: ZZ/2...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
         sage: R = PolynomialRing(GF(3), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a field, global ordering
-        // coefficients: ZZ/3
+        // coefficients: ZZ/3...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
         sage: R = PolynomialRing(GF(1000000007), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a field, global ordering
-        // coefficients: ZZ/1000000007
+        // coefficients: ZZ/1000000007...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
@@ -210,14 +210,14 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         sage: R = PolynomialRing(Zmod(2), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/(2)
+        // coefficients: ZZ/(2)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
         sage: R = PolynomialRing(Zmod(3), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/(3)
+        // coefficients: ZZ/(3)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
@@ -227,7 +227,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         sage: R = PolynomialRing(GF(2^128+51), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/bigint(340282366920938463463374607431768211507)
+        // coefficients: ZZ/bigint(340282366920938463463374607431768211507)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
@@ -238,7 +238,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         sage: R = PolynomialRing(GF(2^160), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a field, global ordering
-        // coefficients: ZZ/2[z160]/(z160^160+z160^159+z160^155+z160^154+z160^153+z160^152+z160^151+z160^149+z160^148+z160^147+z160^146+z160^145+z160^144+z160^143+z160^141+z160^139+z160^137+z160^131+z160^129+z160^128+z160^127+z160^126+z160^123+z160^122+z160^121+z160^117+z160^116+z160^115+z160^113+z160^111+z160^110+z160^108+z160^106+z160^102+z160^100+z160^99+z160^97+z160^96+z160^95+z160^94+z160^93+z160^92+z160^91+z160^87+z160^86+z160^82+z160^80+z160^79+z160^78+z160^74+z160^73+z160^72+z160^71+z160^70+z160^67+z160^66+z160^65+z160^62+z160^59+z160^58+z160^57+z160^55+z160^54+z160^53+z160^52+z160^51+z160^49+z160^47+z160^44+z160^40+z160^35+z160^32+z160^30+z160^28+z160^27+z160^26+z160^24+z160^23+z160^21+z160^20+z160^18+z160^16+z160^11+z160^10+z160^8+z160^7+1)
+        // coefficients: ZZ/2[z160]/(z160^160+z160^159+z160^155+z160^154+z160^153+z160^152+z160^151+z160^149+z160^148+z160^147+z160^146+z160^145+z160^144+z160^143+z160^141+z160^139+z160^137+z160^131+z160^129+z160^128+z160^127+z160^126+z160^123+z160^122+z160^121+z160^117+z160^116+z160^115+z160^113+z160^111+z160^110+z160^108+z160^106+z160^102+z160^100+z160^99+z160^97+z160^96+z160^95+z160^94+z160^93+z160^92+z160^91+z160^87+z160^86+z160^82+z160^80+z160^79+z160^78+z160^74+z160^73+z160^72+z160^71+z160^70+z160^67+z160^66+z160^65+z160^62+z160^59+z160^58+z160^57+z160^55+z160^54+z160^53+z160^52+z160^51+z160^49+z160^47+z160^44+z160^40+z160^35+z160^32+z160^30+z160^28+z160^27+z160^26+z160^24+z160^23+z160^21+z160^20+z160^18+z160^16+z160^11+z160^10+z160^8+z160^7+1)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
@@ -248,7 +248,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         sage: R = PolynomialRing(Zmod(2^32), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/(2^32)
+        // coefficients: ZZ/(2^32)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
@@ -258,7 +258,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         sage: R = PolynomialRing(Zmod(2^1000), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/(bigint(2)^1000)
+        // coefficients: ZZ/(bigint(2)^1000)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
@@ -268,7 +268,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         sage: R = PolynomialRing(Zmod(3^300), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/(bigint(3)^300)
+        // coefficients: ZZ/(bigint(3)^300)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
@@ -278,7 +278,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         sage: R = PolynomialRing(Zmod(15^20), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/bigint(332525673007965087890625)
+        // coefficients: ZZ/bigint(332525673007965087890625)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
@@ -432,7 +432,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cfr = rDefault( 0, ngens, _ext_names )
         rComplete(_cfr, 1)
 
-        trextParam.r =  _cfr
+        trextParam.r = _cfr
 
         _cf = nInitChar(n_transExt, <void *>&trextParam)
 
@@ -458,7 +458,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cfr = rDefault( characteristic, ngens, _ext_names )
         rComplete(_cfr, 1)
 
-        trextParam.r =  _cfr
+        trextParam.r = _cfr
 
         _cf = nInitChar(n_transExt, <void *>&trextParam)
 
@@ -483,7 +483,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cfr.qideal = idInit(1,1)
         rComplete(_cfr, 1)
         _cfr.qideal.m[0] = prCopyR(minpoly._poly, k._ring, _cfr)
-        extParam.r =  _cfr
+        extParam.r = _cfr
 
         # _type = nRegister(n_algExt, <cfInitCharProc> naInitChar);
         _cf = nInitChar( n_algExt,  <void *>&extParam) #
@@ -552,7 +552,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cfr.qideal = idInit(1,1)
         rComplete(_cfr, 1)
         _cfr.qideal.m[0] = prCopyR(minpoly._poly, k._ring, _cfr)
-        extParam.r =  _cfr
+        extParam.r = _cfr
         _cf = nInitChar( n_algExt,  <void *>&extParam)
 
         if (_cf is NULL):
