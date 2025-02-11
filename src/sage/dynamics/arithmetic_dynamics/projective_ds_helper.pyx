@@ -70,10 +70,10 @@ cpdef _fast_possible_periods(self, return_points=False):
 
         - More space efficient hash/point-table.
     """
-    cdef int i, k, N
+    cdef int i, N
     cdef int hash_p, hash_q
     cdef int index, startindex
-    cdef list pointslist, points_periods
+    cdef list points_periods
     cdef list P, Q
     cdef set periods, lorders, rvalues
 
@@ -88,7 +88,7 @@ cpdef _fast_possible_periods(self, return_points=False):
     p = PS.base_ring().order()
     N = int(PS.dimension_relative())
 
-    point_table = [[0,0] for i in range(p**(N + 1))]
+    point_table = [[0, 0] for i in range(p**(N + 1))]
     index = 1
     periods = set()
     points_periods = []
