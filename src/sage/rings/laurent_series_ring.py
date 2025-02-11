@@ -46,7 +46,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -406,6 +406,33 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         if self.is_sparse():
             s = 'Sparse ' + s
         return s
+
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: R = LaurentSeriesRing(QQ, 'y')
+            sage: R._magma_init_(magma)
+            'SageCreateWithNames(LaurentSeriesRing(_sage_ref...),["y"])'
+            sage: S = magma(R)
+            sage: S
+            Laurent series field in y over Rational Field
+            sage: S.1
+            y
+            sage: S.sage() == R
+            True
+
+            sage: # optional - magma
+            sage: magma(LaurentSeriesRing(GF(7), 'x'))                                     # needs sage.rings.finite_rings
+            Laurent series field in x over GF(7)
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        s = 'LaurentSeriesRing(%s)' % (Bref)
+        return magma._with_names(s, self.variable_names())
 
     def _element_constructor_(self, x, n=0, prec=infinity):
         r"""
