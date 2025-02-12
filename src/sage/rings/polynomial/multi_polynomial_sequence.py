@@ -273,7 +273,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     TESTS:
 
-    A PolynomialSequence can exist with elements in an infinite field of
+    A ``PolynomialSequence`` can exist with elements in an infinite field of
     characteristic 2 (see :issue:`19452`)::
 
         sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
@@ -283,7 +283,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         sage: PolynomialSequence([0], R)
         [0]
 
-    A PolynomialSequence can be created from an iterator (see :issue:`25989`)::
+    A ``PolynomialSequence`` can be created from an iterator (see :issue:`25989`)::
 
         sage: R.<x,y,z> = QQ[]
         sage: PolynomialSequence(iter(R.gens()))
@@ -292,6 +292,20 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         [x, y, z]
         sage: PolynomialSequence(iter([(x,y), (z,)]), R)
         [x, y, z]
+
+    A ``PolynomialSequence`` can be created from elements of an
+    ``InfinitePolynomialRing``::
+
+        sage: R.<a> = InfinitePolynomialRing(QQ)
+        sage: s = PolynomialSequence([a[i]-a[i+1] for i in range(3)])
+        sage: s
+        [-a_1 + a_0, -a_2 + a_1, -a_3 + a_2]
+        sage: s.coefficients_monomials()
+        (
+        [ 0  0 -1  1]
+        [ 0 -1  1  0]
+        [-1  1  0  0], (a_3, a_2, a_1, a_0)
+        )
     """
     from sage.structure.element import Matrix
     try:

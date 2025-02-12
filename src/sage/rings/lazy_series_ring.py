@@ -667,14 +667,12 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         Return the list of terms occurring in a coefficient of degree
         ``n`` such that coefficients are in the ring ``R``.
 
-        If ``self`` is a univariate Laurent, power, or Dirichlet
-        series, this is the list containing the one of the base ring.
-
-        If ``self`` is a multivariate power series, this is the list
-        of monomials of total degree ``n``.
-
-        If ``self`` is a lazy symmetric function, this is the list
-        of basis elements of total degree ``n``.
+        For example, if ``self`` is a univariate Laurent, power, or
+        Dirichlet series, this is the list containing the one of the
+        base ring.  If ``self`` is a multivariate power series, this
+        is the list of monomials of total degree ``n``.  If ``self``
+        is a lazy symmetric function, this is the list of basis
+        elements of total degree ``n``.
 
         EXAMPLES::
 
@@ -3292,12 +3290,11 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         B = B.change_ring(R)
         if self._arity == 1:
             return list(B.homogeneous_component_basis(n))
-        l = []
-        for c in IntegerVectors(n, self._arity):
-            for m in cartesian_product_iterator([F.homogeneous_component_basis(p)
-                                                 for F, p in zip(B.tensor_factors(), c)]):
-                l.append(tensor(m))
-        return l
+
+        return [tensor(m)
+                for c in IntegerVectors(n, self._arity)
+                for m in cartesian_product_iterator([F.homogeneous_component_basis(p)
+                                                     for F, p in zip(B.tensor_factors(), c)])]
 
     def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, check=True):
         r"""

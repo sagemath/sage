@@ -1402,6 +1402,7 @@ class CoefficientRing(UniqueRepresentation, FractionField_generic):
     """
     def __init__(self, base_ring):
         """
+        Initialize ``self``.
 
         EXAMPLES::
 
@@ -1919,8 +1920,8 @@ class Stream_uninitialized(Stream):
 
         INPUT:
 
-        - ``var``, a variable in ``self._P``
-        - ``val``, the value that should replace the variable
+        - ``var`` -- a variable in ``self._P``
+        - ``val`` -- the value that should replace the variable
 
         EXAMPLES::
 
