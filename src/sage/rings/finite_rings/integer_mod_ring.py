@@ -1541,14 +1541,15 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: while not all(found):
             ....:     found[R.random_element()] = True
 
-        We test ``bound``-option::
+        We test the ``bound`` option::
 
-            sage: R.random_element(2) in [R(16), R(17), R(0), R(1), R(2)]
+            sage: R.random_element(2) in [R(-2), R(-1), R(0), R(1), R(2)]
             True
         """
         if bound is not None:
-            return CommutativeRing.random_element(self, bound)
-        a = random.randint(0, self.order() - 1)
+            a = random.randint(-bound, bound)
+        else:
+            a = random.randint(0, self.order() - 1)
         return self(a)
 
     @staticmethod
