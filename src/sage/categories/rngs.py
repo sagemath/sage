@@ -97,7 +97,11 @@ class Rngs(CategoryWithAxiom):
             The argument `n`, standing for the number of generators
             of the ideal, is ignored.
 
-            EXAMPLES:
+            EXAMPLES::
+
+                sage: MS = MatrixSpace(QQ, 2, 2)                                        # needs sage.modules
+                sage: MS._ideal_class_()                                                # needs sage.modules
+                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
 
             Since :issue:`7797`, non-commutative rings have ideals as well::
 
@@ -153,4 +157,4 @@ class Rngs(CategoryWithAxiom):
                 sage: L.ideal(a)
                 Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
             """
-            return self.principal_ideal(self.zero(), coerce=False)
+            return self._ideal_class_(1)(self, [self.zero()])
