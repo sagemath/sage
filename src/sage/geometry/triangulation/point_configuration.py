@@ -2073,20 +2073,20 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
             sage: pc2 = PointConfiguration([[0,0],[3,0],[0,3],[3,3],[1,1]])
             sage: pc2.Gale_transform(homogenize=False)
-            [-1  0  0  0  0]
-            [ 0  1  1 -1  0]
+            [ 1  0  0  0  0]
             [ 0  1  1  0 -3]
+            [ 0  0  0  1 -3]
             sage: pc2.Gale_transform(homogenize=True)
             [ 1  1  1  0 -3]
             [ 0  2  2 -1 -3]
 
-        It might not affect the dimension of the result::
+        It might not affect the result (when acyclic)::
 
             sage: PC = PointConfiguration([[4,0,0],[0,4,0],[0,0,4],[2,1,1],[1,2,1],[1,1,2]])
             sage: GT = PC.Gale_transform(homogenize=False);GT
-            [ 2  1  1 -4  0  0]
-            [ 1  2  1  0 -4  0]
-            [-2 -2 -1  3  3 -1]
+            [ 1  0  0 -3  1  1]
+            [ 0  1  0  1 -3  1]
+            [ 0  0  1  1  1 -3]
             sage: GT = PC.Gale_transform(homogenize=True);GT
             [ 1  0  0 -3  1  1]
             [ 0  1  0  1 -3  1]
@@ -2103,10 +2103,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             [ 0  1  0 -1  1 -1  0]
             [ 0  0  1 -1  0 -1  1]
             sage: g_inhom = pc3.Gale_transform(homogenize=False);g_inhom
-            [-1  1  1  1  0  0  0]
-            [ 0  1  0  0  1  0  0]
-            [ 1 -1 -1  0  0  1  0]
-            [ 0  0  1  0  0  0  1]
+            [1 0 0 0 1 1 1]
+            [0 1 0 0 1 0 0]
+            [0 0 1 0 0 0 1]
+            [0 0 0 1 0 1 0]
             sage: Polyhedron(rays=g_hom.columns())
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 1 vertex and 3 lines
             sage: Polyhedron(rays=g_inhom.columns())
@@ -2175,7 +2175,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
             sage: epsilon = 0
             sage: m = mother(0)
-            sage: mother.points()
+            sage: m.points()
             (P(4, 0, 0), P(0, 4, 0), P(0, 0, 4), P(2, 1, 1), P(1, 2, 1), P(1, 1, 2))
             sage: S1 = [(0,1,4),(0,3,4),(1,2,5),(1,4,5),(0,2,3),(2,3,5)]
             sage: S2 = [(0,1,3),(1,3,4),(1,2,4),(2,4,5),(0,2,5),(0,3,5)]
