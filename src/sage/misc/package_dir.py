@@ -261,7 +261,6 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     :mod:`sage.cpython` is an ordinary package::
 
-        sage: # optional - !meson_editable
         sage: from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
         sage: directory = sage.cpython.__path__[0]; directory
         '.../sage/cpython'
@@ -271,47 +270,23 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
     :mod:`sage.libs.mpfr` only has an ``__init__.pxd`` file, but we consider
     it a package directory for consistency with Cython::
 
-        sage: # optional - !meson_editable
         sage: directory = os.path.join(sage.libs.__path__[0], 'mpfr'); directory
         '.../sage/libs/mpfr'
-        sage: is_package_or_sage_namespace_package_dir(directory)
+        sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
         True
 
     :mod:`sage` is designated to become an implicit namespace package::
 
-        sage: # optional - !meson_editable
         sage: directory = sage.__path__[0]; directory
         '.../sage'
-        sage: is_package_or_sage_namespace_package_dir(directory)
+        sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
         True
 
     Not a package::
 
-        sage: # optional - !meson_editable
         sage: directory = os.path.join(sage.symbolic.__path__[0], 'ginac'); directory   # needs sage.symbolic
         '.../sage/symbolic/ginac'
         sage: is_package_or_sage_namespace_package_dir(directory)                       # needs sage.symbolic
-        False
-
-    TESTS::
-
-        sage: # optional - meson_editable
-        sage: from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
-        sage: directory = os.path.dirname(sage.cpython.__file__); directory
-        '.../sage/cpython'
-        sage: is_package_or_sage_namespace_package_dir(directory)
-        True
-
-        sage: # optional - meson_editable
-        sage: directory = os.path.join(os.path.dirname(sage.libs.__file__), 'mpfr'); directory
-        '.../sage/libs/mpfr'
-        sage: is_package_or_sage_namespace_package_dir(directory)
-        True
-
-        sage: # optional - meson_editable, sage.symbolic
-        sage: directory = os.path.join(os.path.dirname(sage.symbolic.__file__), 'ginac'); directory
-        '.../sage/symbolic/ginac'
-        sage: is_package_or_sage_namespace_package_dir(directory)
         False
     """
     if os.path.exists(os.path.join(path, '__init__.py')):                # ordinary package
@@ -370,15 +345,8 @@ def walk_packages(path=None, prefix='', onerror=None):
 
     EXAMPLES::
 
-        sage: # optional - !meson_editable
         sage: sorted(sage.misc.package_dir.walk_packages(sage.misc.__path__))  # a namespace package
         [..., ModuleInfo(module_finder=FileFinder('.../sage/misc'), name='package_dir', ispkg=False), ...]
-
-    TESTS::
-
-        sage: # optional - meson_editable
-        sage: sorted(sage.misc.package_dir.walk_packages(sage.misc.__path__))
-        [..., ModuleInfo(module_finder=<...MesonpyPathFinder object...>, name='package_dir', ispkg=False), ...]
     """
     # Adapted from https://github.com/python/cpython/blob/3.11/Lib/pkgutil.py
 

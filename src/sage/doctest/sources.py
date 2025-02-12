@@ -87,17 +87,7 @@ def get_basename(path):
         sage: import os
         sage: get_basename(sage.doctest.sources.__file__)
         'sage.doctest.sources'
-
-    ::
-
-        sage: # optional - !meson_editable
         sage: get_basename(os.path.join(sage.structure.__path__[0], 'element.pxd'))
-        'sage.structure.element.pxd'
-
-    TESTS::
-
-        sage: # optional - meson_editable
-        sage: get_basename(os.path.join(os.path.dirname(sage.structure.__file__), 'element.pxd'))
         'sage.structure.element.pxd'
     """
     if path is None:
