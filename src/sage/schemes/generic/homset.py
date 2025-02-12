@@ -584,10 +584,10 @@ class SchemeHomset_points(SchemeHomset_generic):
             except AttributeError:  # no .ambient_space
                 return False
         elif isinstance(other, SchemeHomset_points):
-        #we are converting between scheme points
+            # we are converting between scheme points
             source = other.codomain()
             if isinstance(target, AlgebraicScheme_subscheme):
-                #subscheme coerce when there is containment
+                # subscheme coerce when there is containment
                 if not isinstance(source, AlgebraicScheme_subscheme):
                     return False
                 if target.ambient_space() == source.ambient_space():
@@ -595,9 +595,9 @@ class SchemeHomset_points(SchemeHomset_generic):
                            for g in target.defining_polynomials()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
             else:
-                #if the target is an ambient space, we can coerce if the base rings coerce
-                #and they are the same type: affine, projective, etc and have the same
-                #variable names
+                # if the target is an ambient space, we can coerce if the base rings coerce
+                # and they are the same type: affine, projective, etc and have the same
+                # variable names
                 try:
                     ta = target.ambient_space()
                     sa = source.ambient_space()

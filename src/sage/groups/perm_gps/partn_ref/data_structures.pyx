@@ -612,7 +612,7 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True) noexcept:
         return SC
 
     # first level allocations
-    cdef int *int_array = <int *>  sig_malloc( (3*n*n + 6*n + 1) * sizeof(int) )
+    cdef int *int_array = <int *> sig_malloc( (3*n*n + 6*n + 1) * sizeof(int) )
     cdef int **int_ptrs = <int **> sig_calloc( 5*n, sizeof(int *) )
     SC.OP_scratch = OP_new(n)
     # bitset_init without the MemoryError:
@@ -637,21 +637,21 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True) noexcept:
     SC.gen_is_id.bits[limbs-1] = 0
 
     SC.orbit_sizes  = int_array
-    SC.num_gens     = int_array +   n
-    SC.array_size   = int_array + 2*n
-    SC.perm_scratch = int_array + 3*n # perm_scratch is length 3*n+1 for sorting
+    SC.num_gens     = int_array + n
+    SC.array_size   = int_array + 2 * n
+    SC.perm_scratch = int_array + 3 * n # perm_scratch is length 3*n+1 for sorting
     int_array += 6*n + 1
 
     SC.generators   = int_ptrs
-    SC.gen_inverses = int_ptrs +   n
-    SC.base_orbits  = int_ptrs + 2*n
-    SC.parents      = int_ptrs + 3*n
-    SC.labels       = int_ptrs + 4*n
+    SC.gen_inverses = int_ptrs + n
+    SC.base_orbits  = int_ptrs + 2 * n
+    SC.parents      = int_ptrs + 3 * n
+    SC.labels       = int_ptrs + 4 * n
     for i in range(n):
         SC.base_orbits[i] = int_array
-        SC.parents[i]     = int_array +   n
-        SC.labels[i]      = int_array + 2*n
-        int_array += 3*n
+        SC.parents[i]     = int_array + n
+        SC.labels[i]      = int_array + 2 * n
+        int_array += 3 * n
 
     # second level allocations
     if init_gens:
@@ -692,7 +692,7 @@ cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size) noexce
 cdef inline void SC_dealloc(StabilizerChain *SC) noexcept:
     cdef int i, n
     if SC is not NULL:
-        n =  SC.degree
+        n = SC.degree
         if SC.generators is not NULL:
             for i in range(n):
                 sig_free(SC.generators[i])
@@ -1448,8 +1448,8 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         sig_free(perm)
         SC_dealloc(SC)
         raise MemoryError
-    cdef int *perm2 = perm +   n
-    cdef int *perm3 = perm + 2*n
+    cdef int *perm2 = perm + n
+    cdef int *perm3 = perm + 2 * n
     for Lperm in L:
         for i from 0 <= i < n:
             perm[i] = Lperm[i]
