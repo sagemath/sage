@@ -52,7 +52,7 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
         Traceback (most recent call last):
         ...
         ValueError: algorithm must be one of None, 'standard',
-        'standard_otf', 'finotti', 'Zq_isomorphism'
+        'p_invertible', 'finotti', 'Zq_isomorphism'
     """
     if base_ring not in _CommutativeRings:
         raise TypeError(f'{base_ring} is not a commutative ring')
@@ -67,16 +67,16 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
     else:
         prime = p
 
-    if algorithm not in [None, 'standard', 'standard_otf', 'finotti',
+    if algorithm not in [None, 'standard', 'p_invertible', 'finotti',
                          'Zq_isomorphism']:
         raise ValueError(
             "algorithm must be one of None, 'standard', "
-            "'standard_otf', 'finotti', 'Zq_isomorphism'")
+            "'p_invertible', 'finotti', 'Zq_isomorphism'")
 
     if prime == char:
-        if algorithm == 'standard_otf':
+        if algorithm == 'p_invertible':
             raise ValueError (
-                "The 'standard_otf' algorithm only works when p is a unit "
+                "The 'p_invertible' algorithm only works when p is a unit "
                 "in the ring of coefficients.")
         elif base_ring in Fields().Finite():
             if not algorithm:
@@ -104,16 +104,16 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
                 "coefficient ring is a finite field of characteristic p.")
         if base_ring(prime).is_unit():
             if not algorithm:
-                algorithm = 'standard_otf'
+                algorithm = 'p_invertible'
             return WittVectorRing_base(
-                base_ring, prec, prime, algorithm='standard_otf',
+                base_ring, prec, prime, algorithm='p_invertible',
                 category=_CommutativeRings)
         else:
             if not algorithm:
                 algorithm = 'standard'
-            elif algorithm == 'standard_otf':
+            elif algorithm == 'p_invertible':
                 raise ValueError (
-                    "The 'standard_otf' algorithm only works when p is a "
+                    "The 'p_invertible' algorithm only works when p is a "
                     "unit in the ring of coefficients.")
             return WittVectorRing_base(base_ring, prec, prime,
                                           algorithm=algorithm,

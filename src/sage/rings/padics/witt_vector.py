@@ -134,7 +134,7 @@ class WittVector(CommutativeRingElement):
             y = P._vector_to_series(other.vec)
             sum_vec = P._series_to_vector(x + y)
             return C(P, vec=sum_vec)
-        elif alg == 'standard_otf':
+        elif alg == 'p_invertible':
             p = P.prime  # we know p is a unit in this case!
             x = self.vec
             y = other.vec
@@ -202,7 +202,7 @@ class WittVector(CommutativeRingElement):
             y = P._vector_to_series(other.vec)
             sum_vec = P._series_to_vector(x * y)
             return C(P, vec=sum_vec)
-        elif alg == 'standard_otf':
+        elif alg == 'p_invertible':
             p = P.prime  # we know p is a unit in this case!
             x = self.vec
             y = other.vec
