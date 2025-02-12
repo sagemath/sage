@@ -234,7 +234,14 @@ class WittVector_base(CommutativeRingElement):
         for i in range(1, self.prec):
             poly = prod_vec[i](inv_vec[1:])
             Y_i = poly.parent().gens()[i - 1]
-            inv_vec[i] = -poly.constant_coefficient() / poly.monomial_coefficient(Y_i)
+            try:
+                inv_vec[i] = -poly.constant_coefficient() / poly.monomial_coefficient(Y_i)
+            except ZeroDivisionError:
+                raise ZeroDivisionError(f"Inverse of {self} does not exist.")
+            try:
+                inv_vec[i] = P.base()(inv_vec[i])
+            except ValueError:
+                raise ZeroDivisionError(f"Inverse of {self} does not exist.")
 
         return C(P, vec=inv_vec)
 
