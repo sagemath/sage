@@ -1266,11 +1266,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def _round_sdp_solution_phi(self, sdp_result, sdp_data, 
                                 table_constructor, constraints_data, 
-                                phi_vectors_exact, denom=1024, ring=QQ):
+                                phi_vectors_exact, denom=1024, ring=QQ, eps=1e-9):
         r"""
         Round the SDP results output to get something exact.
         """
         import gc
+        import time
 
         #unpack variables
         block_sizes, target_list_exact, _, __ = sdp_data
@@ -1295,12 +1296,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # dim: |F_n|, c vector, primal slack for flags
         c_vector_approx = vector(sdp_result['X'][-2]) 
 
-        # The F (FF) flag indecies where the c vector is zero/nonzero
         c_zero_inds = [
-            FF for FF, xx in enumerate(c_vector_approx) if \
-                (abs(xx)<1e-6 or phi_vector_exact[FF]!=0)
-                ]
-
+            FF for FF, xx in enumerate(c_vector_approx) if 
+            (abs(xx)<=eps or phi_vector_exact[FF]!=0)
+            ]
 
         # same as m, number of positive constraints (-2 for the equality)
         positives_num = -block_sizes[-1] - 2 
@@ -1357,8 +1356,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # The relevant entries of M flattened to a matrix this will be indexed by 
         # c_zero_inds and the triples from the types
         
-        self.fprint("Rounding X matrices")
-        
+        self.fprint("Flattening X matrices")
+        start_time = time.time()
         M_flat_relevant_matrix_exact = matrix(
             ring, len(c_zero_inds), 0, 0, sparse=True
             )
@@ -1416,13 +1415,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             ring, 
             X_flat_list + e_nonzero_list_rounded
             )
-
+        self.fprint("This took {}s".format(time.time() - start_time))
+        start_time = time.time()
+        self.fprint("Correcting flat X matrices")
+        self.fprint("Dimensions: ", M_matrix_final.dimensions())
         # Correct the values of the x vector, based on the minimal L_2 norm
         residual = M_matrix_final * x_vector_final - corrected_target_relevant_exact
         x_vector_corr = x_vector_final - M_matrix_final.T * (
             (M_matrix_final * M_matrix_final.T).pseudoinverse() * residual
         )
+        self.fprint("This took {}s".format(time.time() - start_time))
+        start_time = time.time()
         
+        self.fprint("Unflattening X matrices")
+
         #
         # Recover the X matrices and e vector from the corrected x
         #
@@ -1435,7 +1441,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             e_nonzero_vector_corr = [max(xx, 0) for xx in e_nonzero_vector_corr]
         e_vector_dict = dict(zip(e_nonzero_inds, e_nonzero_vector_corr))
         e_vector_corr = vector(ring, positives_num, e_vector_dict)
-        
+        self.fprint("This took {}s".format(time.time() - start_time))
+        start_time = time.time()
         
         X_final = []
         slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
@@ -1485,7 +1492,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                         oveii!=0])
         # pad the slacks, so it is all positive where it counts
         slacks -= result*one_vector_exact
-        
+        self.fprint("This took {}s".format(time.time() - start_time))
+        start_time = time.time()
+
         return result, X_final, e_vector_corr, slacks, phi_vectors_exact
     
     def _fix_X_bases(self, table_constructor, X_original):
@@ -1715,7 +1724,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         return final_sol["primal"]*mult
 
-    def round_solution(self, sdp_output_file, denom=1024, ring=QQ, certificate_file=None):
+    def round_solution(self, sdp_output_file, denom=1024, ring=QQ, eps=1e-9, certificate_file=None):
         r"""
         TODO Docstring
         """
@@ -1743,7 +1752,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             table_constructor,
             constraints_data,
             phi_vectors_exact,
-            denom=denom, ring=ring
+            denom=denom, ring=ring, eps=eps
             )
         if rounding_output==None:
             print("Rounding was unsuccessful!")
