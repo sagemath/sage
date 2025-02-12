@@ -228,7 +228,6 @@ class WittVector_base(CommutativeRingElement):
         inv_vec = list((self.vec[0]**-1,) + poly_ring.gens())
         # We'll fill this in one-by-one
 
-        # TODO: Remove the algorithm argument once other algs are implemented
         from sage.rings.padics.witt_vector_ring_constructor import WittVectorRing
         W = WittVectorRing(poly_ring, p=P.prime, prec=P.prec)
         prod_vec = (W(self.vec) * W(inv_vec)).vec
