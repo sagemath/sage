@@ -533,6 +533,9 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         Return the class polynomial, that is the Fitting ideal
         of the class module, of this Drinfeld module.
 
+        We refer to [Tae2012]_ for the definition and basic
+        properties of the class module.
+
         EXAMPLES:
 
         We check that the class module of the Carlitz module
@@ -558,7 +561,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
 
         Here is an example with a nontrivial class module::
 
-            sage: phi = DrinfeldModule(A, [T, -T^(2*q-1) + 2*T^(q-1)])
+            sage: phi = DrinfeldModule(A, [T, 2*T^14 + 2*T^4])
             sage: phi.class_polynomial()
             T + 3
 
@@ -629,7 +632,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         for i in range(dim, s):
             while ip < dim and j == pivots[ip]:
                 j += 1
-                ip += 1
+            ip += 1
             V[i,j] = 1
         N = (V * M * ~V).submatrix(dim, dim)
 
