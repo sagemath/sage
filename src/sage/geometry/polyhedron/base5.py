@@ -694,7 +694,7 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: py = Polyhedron([(0, -1, -1), (0, -1, 1), (0, 1, -1), (0, 1, 1), (1, 0, 0)])
             sage: dc_py = py.deformation_cone(); dc_py
             A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 1 vertex, 1 ray, 3 lines
-            sage: [_.b() for _ in py.Hrepresentation()]
+            sage: [ineq.b() for ineq in py.Hrepresentation()]
             [0, 1, 1, 1, 1]
             sage: r = dc_py.rays()[0]
             sage: l1,l2,l3 = dc_py.lines()
@@ -711,7 +711,7 @@ class Polyhedron_base5(Polyhedron_base4):
             2.2 of [ACEP2020].
         """
         from .constructor import Polyhedron
-        m = matrix([_.A() for _ in self.Hrepresentation()])
+        m = matrix([ineq.A() for ineq in self.Hrepresentation()])
         m = m.transpose()
         m_ker = m.right_kernel_matrix(basis='computed')
         gale = tuple(m_ker.columns())
@@ -722,7 +722,7 @@ class Polyhedron_base5(Polyhedron_base4):
             dual_cone = Polyhedron(rays=[gale[i] for i in range(n) if i not in
                                          cone_indices])
             c = c.intersection(dual_cone) if c is not None else dual_cone
-        preimages = [A_ker.solve_right(r.vector()) for r in c.rays()]
+        preimages = [m_ker.solve_right(r.vector()) for r in c.rays()]
         return Polyhedron(lines=m.rows(), rays=preimages)
 
     ###########################################################

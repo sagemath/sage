@@ -2477,7 +2477,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             :meth:`is_projective`.
         """
         if not self.is_complete():
-            raise ValueError('To be polytopal, the fan should be complete.')
+            raise ValueError('to be polytopal, the fan should be complete')
         from sage.geometry.triangulation.point_configuration import PointConfiguration
         from sage.geometry.polyhedron.constructor import Polyhedron
         pc = PointConfiguration(self.rays())
