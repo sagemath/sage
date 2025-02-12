@@ -1292,12 +1292,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         r"""
         Round the SDP results output to get something exact.
         """
-        
+        import gc
+
         #unpack variables
-        block_sizes, target_list_exact, mat_inds, mat_vals = sdp_data
+        block_sizes, target_list_exact, _, __ = sdp_data
         target_vector_exact = vector(ring, target_list_exact)
-        flags_num, constraints_vals, positives_list_exact, one_vector = \
-            constraints_data
+        flags_num, _, positives_list_exact, __ = constraints_data
+        _ = None; __ = None; gc.collect()
         positives_matrix_exact = matrix(
             ring, len(positives_list_exact), flags_num, positives_list_exact
             )
@@ -1311,25 +1312,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # find the one_vector from the equality constraint
         one_vector_exact = positives_matrix_exact.rows()[-2] 
         # remove the equality constraints
-        positives_matrix_exact = positives_matrix_exact[:-2, :] 
-        # same as |F_n|
-        flags_num = -block_sizes[-2] 
+        positives_matrix_exact = positives_matrix_exact[:-2, :]
 
         # dim: |F_n|, c vector, primal slack for flags
         c_vector_approx = vector(sdp_result['X'][-2]) 
-        # as above but rounded, in case it is needed
-        # c_vector_rounded = vector(
-        #     QQ, 
-        #     _round_list(c_vector_approx, method=0, denom=denom)
-        #     ) 
 
         # The F (FF) flag indecies where the c vector is zero/nonzero
         c_zero_inds = [
             FF for FF, xx in enumerate(c_vector_approx) if \
                 (abs(xx)<1e-6 or phi_vector_exact[FF]!=0)
                 ]
-        # c_nonzero_inds = [FF for FF in range(flags_num) \ 
-        # if FF not in c_zero_inds]
 
 
         # same as m, number of positive constraints (-2 for the equality)
@@ -1392,8 +1384,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         M_flat_relevant_matrix_exact = matrix(
             ring, len(c_zero_inds), 0, 0, sparse=True
             )
-        # The rounded X values flattened to a list
-        X_flat_vector_rounded = [] 
+        # # The rounded X values flattened to a list
+        # X_flat_vector_rounded = [] 
+        X_flat_list = [] 
         block_index = 0
         block_info = []
         for params in table_constructor.keys():
@@ -1405,10 +1398,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             for plus_index, base in enumerate(table_constructor[params]):
                 block_info.append([ftype, base])
                 X_approx = sdp_result['X'][block_index + plus_index]
-                X_flat_vector_rounded += \
-                    _round_list(
-                        _flatten_matrix(X_approx), method=0, denom=denom
-                        )
+                X_rounded_flattened = _round_list(
+                    _flatten_matrix(X_approx), method=0, denom=denom
+                    )
+                X_flat_list.extend(X_rounded_flattened)
+                sdp_result['X'][block_index + plus_index] = None
 
                 M_extra = []
 
@@ -1424,8 +1418,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     M_flat_relevant_matrix_exact.augment(
                         matrix(ring, M_extra)
                         )
-            block_index += len(table_constructor[params])
+                
+                gc.collect()
 
+            block_index += len(table_constructor[params])
+        
 
         # 
         # Append the relevant M matrix and the X with the additional values from
@@ -1439,19 +1436,19 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             )
         x_vector_final = vector(
             ring, 
-            X_flat_vector_rounded+e_nonzero_list_rounded
+            X_flat_list + e_nonzero_list_rounded
             )
 
-
         # Correct the values of the x vector, based on the minimal L_2 norm
-        x_vector_corr = x_vector_final - M_matrix_final.T * \
-        (M_matrix_final * M_matrix_final.T).pseudoinverse() * \
-        (M_matrix_final*x_vector_final - corrected_target_relevant_exact) 
+        residual = M_matrix_final * x_vector_final - corrected_target_relevant_exact
+        x_vector_corr = x_vector_final - M_matrix_final.T * (
+            (M_matrix_final * M_matrix_final.T).pseudoinverse() * residual
+        )
         
         #
         # Recover the X matrices and e vector from the corrected x
         #
-
+        
         e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
         if len(e_nonzero_vector_corr)>0 and min(e_nonzero_vector_corr)<0:
             print("Linear coefficient is negative: {}".format(
