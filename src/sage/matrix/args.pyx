@@ -297,9 +297,12 @@ cdef class MatrixArgs:
     Test invalid input::
 
         sage: MatrixArgs(ZZ, 2, 2, entries='abcd').finalized()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+        over Integer Ring; typ=SCALAR; entries='abcd'>
+        sage: matrix(ZZ, 2, 2, entries='abcd')
         Traceback (most recent call last):
         ...
-        TypeError: unable to convert 'abcd' to a matrix
+        TypeError: unable to convert 'abcd' to an integer
         sage: MatrixArgs(ZZ, 2, 2, entries=MatrixArgs()).finalized()
         Traceback (most recent call last):
         ...
