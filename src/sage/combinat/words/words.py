@@ -332,16 +332,29 @@ class FiniteWords(AbstractLanguage):
         sage: W = FiniteWords('ab')
         sage: W
         Finite words over {'a', 'b'}
-
-    TESTS::
-
-        sage: FiniteWords('ab').is_finite()
-        False
-        sage: FiniteWords([]).is_finite()
-        True
     """
 
     def __init__(self, alphabet=None, category=None):
+        """
+        INPUT:
+
+        - ``alphabet`` -- the underlying alphabet
+        - ``category`` -- the suggested category of the set
+          (normally should be automatically determined)
+
+        TESTS::
+
+            sage: FiniteWords('ab').is_finite()
+            False
+            sage: FiniteWords('ab').category()
+            Category of infinite sets
+            sage: FiniteWords([]).is_finite()
+            True
+            sage: FiniteWords([]).category()
+            Category of finite sets
+            sage: FiniteWords([], Sets()).category()
+            Category of finite sets
+        """
         if category is None:
             category = Sets()
         if alphabet:
@@ -352,7 +365,7 @@ class FiniteWords(AbstractLanguage):
 
     def is_empty(self):
         """
-        Return False, because the empty word is in the set.
+        Return ``False``, because the empty word is in the set.
 
         TESTS::
 
