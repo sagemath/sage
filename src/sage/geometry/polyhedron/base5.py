@@ -711,19 +711,19 @@ class Polyhedron_base5(Polyhedron_base4):
             2.2 of [ACEP2020].
         """
         from .constructor import Polyhedron
-        A = matrix([_.A() for _ in self.Hrepresentation()])
-        A = A.transpose()
-        A_ker = A.right_kernel_matrix(basis='computed')
-        gale = tuple(A_ker.columns())
+        m = matrix([_.A() for _ in self.Hrepresentation()])
+        m = m.transpose()
+        m_ker = m.right_kernel_matrix(basis='computed')
+        gale = tuple(m_ker.columns())
         collection = [f.ambient_H_indices() for f in self.faces(0)]
         n = len(gale)
-        K = None
+        c = None
         for cone_indices in collection:
             dual_cone = Polyhedron(rays=[gale[i] for i in range(n) if i not in
                                          cone_indices])
-            K = K.intersection(dual_cone) if K is not None else dual_cone
-        preimages = [A_ker.solve_right(r.vector()) for r in K.rays()]
-        return Polyhedron(lines=A.rows(), rays=preimages)
+            c = c.intersection(dual_cone) if c is not None else dual_cone
+        preimages = [A_ker.solve_right(r.vector()) for r in c.rays()]
+        return Polyhedron(lines=m.rows(), rays=preimages)
 
     ###########################################################
     # Binary operations.

@@ -61,7 +61,7 @@ A triangulation of it::
     (2, 3, 4)
     sage: list(t)
     [(1, 3, 4), (2, 3, 4)]
-    sage: t.plot(axes=False)                                                            # needs sage.plot
+    sage: t.plot(axes=False)                                                       # needs sage.plot
     Graphics object consisting of 12 graphics primitives
 
 .. PLOT::
@@ -91,7 +91,7 @@ A 3-dimensional point configuration::
     sage: p = [[0,-1,-1], [0,0,1], [0,1,0], [1,-1,-1], [1,0,1], [1,1,0]]
     sage: points = PointConfiguration(p)
     sage: triang = points.triangulate()
-    sage: triang.plot(axes=False)                                                       # needs sage.plot
+    sage: triang.plot(axes=False)                                                 # needs sage.plot
     Graphics3d Object
 
 .. PLOT::
@@ -116,7 +116,7 @@ The standard example of a non-regular triangulation (requires TOPCOM)::
     16
     sage: len(nonregular)
     2
-    sage: nonregular[0].plot(aspect_ratio=1, axes=False)                                # needs sage.plot
+    sage: nonregular[0].plot(aspect_ratio=1, axes=False)                          # needs sage.plot
     Graphics object consisting of 25 graphics primitives
     sage: PointConfiguration.set_engine('internal')   # to make doctests independent of TOPCOM
 
@@ -1131,10 +1131,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
             sage: pyramid = PointConfiguration([[1,0,0], [0,1,1], [0,1,-1],
             ....:                               [0,-1,-1], [0,-1,1]])
-            sage: G = pyramid.restricted_automorphism_group()                           # needs sage.graphs sage.groups
-            sage: G == PermutationGroup([[(3,5)], [(2,3),(4,5)], [(2,4)]])              # needs sage.graphs sage.groups
+            sage: G = pyramid.restricted_automorphism_group()                      # needs sage.graphs sage.groups
+            sage: G == PermutationGroup([[(3,5)], [(2,3),(4,5)], [(2,4)]])         # needs sage.graphs sage.groups
             True
-            sage: DihedralGroup(4).is_isomorphic(G)                                     # needs sage.graphs sage.groups
+            sage: DihedralGroup(4).is_isomorphic(G)                                # needs sage.graphs sage.groups
             True
 
         The square with an off-center point in the middle. Note that
@@ -1142,9 +1142,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         `D_4` of the convex hull::
 
             sage: square = PointConfiguration([(3/4,3/4), (1,1), (1,-1), (-1,-1), (-1,1)])
-            sage: square.restricted_automorphism_group()                                # needs sage.graphs sage.groups
+            sage: square.restricted_automorphism_group()                           # needs sage.graphs sage.groups
             Permutation Group with generators [(3,5)]
-            sage: DihedralGroup(1).is_isomorphic(_)                                     # needs sage.graphs sage.groups
+            sage: DihedralGroup(1).is_isomorphic(_)                                # needs sage.graphs sage.groups
             True
         """
         v_list = [ vector(p.projective()) for p in self ]
@@ -1532,9 +1532,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)                                                 # needs sage.plot
+            sage: Tpos.plot(axes=False)                                            # needs sage.plot
             Graphics object consisting of 11 graphics primitives
-            sage: Tneg.plot(axes=False)                                                 # needs sage.plot
+            sage: Tneg.plot(axes=False)                                            # needs sage.plot
             Graphics object consisting of 11 graphics primitives
 
         The 3d analog::
@@ -1549,7 +1549,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)                                                 # needs sage.plot
+            sage: Tpos.plot(axes=False)                                            # needs sage.plot
             Graphics3d Object
         """
         flips = []
@@ -2080,7 +2080,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             [ 1  1  1  0 -3]
             [ 0  2  2 -1 -3]
 
-        It might not affect the dimension of the result:: 
+        It might not affect the dimension of the result::
 
             sage: PC = PointConfiguration([[4,0,0],[0,4,0],[0,0,4],[2,1,1],[1,2,1],[1,1,2]])
             sage: GT = PC.Gale_transform(homogenize=False);GT
@@ -2136,9 +2136,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         - ``collection`` -- a collection of subconfigurations of ``self``.
           Subconfigurations are given as indices
 
-        OUTPUT: a polyhedron. It contains the liftings of the point configuration 
-        making the collection a regular (or coherent, or projective)
-        subdivision.
+        OUTPUT: a polyhedron. It contains the liftings of the point configuration
+        making the collection a regular (or coherent, or projective, or
+        polytopal) subdivision.
 
         EXAMPLES::
 
@@ -2170,8 +2170,11 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         Let's verify the mother of all examples explained in Section 7.1.1 of
         [DLRS2010]_::
 
+            sage: def mother(epsilon=0):
+            ....:     return PointConfiguration([(4-epsilon,epsilon,0),(0,4-epsilon,epsilon),(epsilon,0,4-epsilon),(2,1,1),(1,2,1),(1,1,2)])
+
             sage: epsilon = 0
-            sage: mother = PointConfiguration([(4-epsilon,epsilon,0),(0,4-epsilon,epsilon),(epsilon,0,4-epsilon),(2,1,1),(1,2,1),(1,1,2)])
+            sage: m = mother(0)
             sage: mother.points()
             (P(4, 0, 0), P(0, 4, 0), P(0, 0, 4), P(2, 1, 1), P(1, 2, 1), P(1, 1, 2))
             sage: S1 = [(0,1,4),(0,3,4),(1,2,5),(1,4,5),(0,2,3),(2,3,5)]
@@ -2179,10 +2182,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         Both subdivisions `S1` and `S2` are not regular::
 
-            sage: mother_dc1 = mother.deformation_cone(S1)
+            sage: mother_dc1 = m.deformation_cone(S1)
             sage: mother_dc1
             A 4-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex, 1 ray, 3 lines
-            sage: mother_dc2 = mother.deformation_cone(S2)
+            sage: mother_dc2 = m.deformation_cone(S2)
             sage: mother_dc2
             A 4-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex, 1 ray, 3 lines
 
@@ -2190,7 +2193,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         only provides a coarsening of the subdivision from the lower hull (it
         has 5 facets, and should have 8)::
 
-            sage: result = Polyhedron([vector(list(mother.points()[_])+[mother_dc1.rays()[0][_]]) for _ in range(len(mother.points()))])
+            sage: result = Polyhedron([vector(list(m.points()[_])+[mother_dc1.rays()[0][_]]) for _ in range(len(m.points()))])
             sage: result.f_vector()
             (1, 6, 9, 5, 1)
 
@@ -2198,30 +2201,25 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         `S1` becomes regular::
 
             sage: epsilon = 1/2
-            sage: mother = PointConfiguration([(4-epsilon,epsilon,0), 
-                                               (0,4-epsilon,epsilon),
-                                               (epsilon,0,4-epsilon),
-                                               (2,1,1),
-                                               (1,2,1),
-                                               (1,1,2)])
-            sage: mother.points()
+            sage: mp = mother(epsilon)
+            sage: mp.points()
             (P(7/2, 1/2, 0),
              P(0, 7/2, 1/2),
              P(1/2, 0, 7/2),
              P(2, 1, 1),
              P(1, 2, 1),
              P(1, 1, 2))
-            sage: mother_dc1 = mother.deformation_cone(S1);mother_dc1
+            sage: mother_dc1 = mp.deformation_cone(S1);mother_dc1
             A 6-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex, 3 rays, 3 lines
-            sage: mother_dc2 = mother.deformation_cone(S2);mother_dc2
+            sage: mother_dc2 = mp.deformation_cone(S2);mother_dc2
             A 3-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex and 3 lines
 
-        .. SEEALSO::                                                                                                                                                                                        
-                   
+        .. SEEALSO::
+
             :meth:`~sage.schemes.toric.variety.Kaehler_cone`
-                   
+
         REFERENCES:
-                   
+
             For more information, see Section 5.4 of [DLRS2010]_ and Section
             2.2 of [ACEP2020].
         """
