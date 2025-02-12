@@ -370,9 +370,9 @@ def walk_packages(path=None, prefix='', onerror=None):
                     yielded[name] = 1
                     yield ModuleInfo(i, name, ispkg)
 
-    def iter_importer_modules(importer, prefix=''):
+    def _iter_importer_modules_helper(importer, prefix=''):
         r"""
-        Yield :class:`ModuleInfo` for all modules of ``importer``.
+        Helper function for :func:`iter_importer_modules`.
         """
         from importlib.machinery import FileFinder
 
@@ -391,11 +391,6 @@ def walk_packages(path=None, prefix='', onerror=None):
 
             for fn in filenames:
                 modname = inspect.getmodulename(fn)
-                if modname and (modname in ['__init__', 'all']
-                                or modname.startswith('all__')
-                                or modname in yielded):
-                    continue
-
                 path = os.path.join(importer.path, fn)
                 ispkg = False
 
@@ -413,6 +408,18 @@ def walk_packages(path=None, prefix='', onerror=None):
 
         else:
             yield from importer.iter_modules(prefix)
+
+    def iter_importer_modules(importer, prefix=''):
+        r"""
+        Yield :class:`ModuleInfo` for all modules of ``importer``.
+        """
+        for name, ispkg in sorted(list(_iter_importer_modules_helper(importer, prefix))):
+            # we sort again for consistency of output ordering if importer is not
+            # a FileFinder (needed in doctest of :func:`sage.misc.dev_tools/load_submodules`)
+            modname = name.rsplit('.', 1)[-1]
+            if modname in ['__init__', 'all'] or modname.startswith('all__'):
+                continue
+            yield name, ispkg
 
     def seen(p, m={}):
         if p in m:
