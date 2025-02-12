@@ -233,13 +233,7 @@ preparser di Sage) e la necessità di importare quello che ti serve.
 
       from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-  Puoi chiedere a Sage dove il comando per importare ``PolynomialRing`` usando::
-
-      sage: import_statements(PolynomialRing)
-      from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
-  Se questo fallisce, puoi chiedere a Sage dove si trove ``PolynomialRing``
-  usando::
+  Puoi chiedere a Sage dove si trove ``PolynomialRing`` usando::
 
       sage: PolynomialRing.__module__
       'sage.rings.polynomial.polynomial_ring_constructor'
