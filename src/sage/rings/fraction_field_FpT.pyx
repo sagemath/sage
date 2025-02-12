@@ -575,22 +575,21 @@ cdef class FpTElement(FieldElement):
     def _im_gens_(self, codomain, im_gens, base_map=None):
         r"""
         Return the image of this element in ``codomain`` under the
-        map that sends the images of the generators of the parent
-        to the tuple of elements of ``im_gens``.
+        map that sends the image of the generator of the parent to
+        the element in ``im_gens``.
 
         INPUT:
 
         - ``codomain`` -- a ring; where the image is computed
 
-        - ``im_gens`` -- a list; the images of the generators
-          of the parent
+        - ``im_gens`` -- a list containing the image of the
+          generator of the parent as unique element
 
         - ``base_map`` -- a morphism (default: ``None``);
           the action on the underlying base ring
 
         EXAMPLES::
 
-            sage: Fq = GF(5)
             sage: A.<T> = GF(5)[]
             sage: K.<T> = Frac(A)
             sage: f = K.hom([T^2])
