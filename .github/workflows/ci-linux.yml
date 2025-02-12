@@ -32,6 +32,23 @@ permissions:
   packages: write
 
 jobs:
+  minimal:
+    if: ${{ success() || failure() }}
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build from scratch
+      free_disk_space: true
+      docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
+      # FIXME: duplicated from env.TARGETS
+      targets_pre: all-sage-local
+      targets: build doc-html
+      targets_optional: ptest
+      tox_system_factors: >-
+          ["ubuntu-jammy"]
+      tox_packages_factors: >-
+          ["minimal"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+
   maximal:
     uses: ./.github/workflows/docker.yml
     with:
