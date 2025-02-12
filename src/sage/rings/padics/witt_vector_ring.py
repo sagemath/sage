@@ -364,10 +364,3 @@ class WittVectorRing_finite_field(WittVectorRing_char_p):
 
             series += p**i * R.teichmuller(elem)
         return series
-
-
-class WittVectorRing_p_invertible(WittVectorRing_base):
-    def __init__(self, base_ring, prec, prime, category=None):
-        WittVectorRing_base.__init__(self, base_ring, prec, prime,
-                                        algorithm='standard_otf',
-                                        category=category)

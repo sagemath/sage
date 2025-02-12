@@ -10,7 +10,6 @@ from sage.rings.padics.witt_vector_ring import (
     WittVectorRing_base,
     WittVectorRing_char_p,
     WittVectorRing_finite_field,
-    WittVectorRing_p_invertible,
 )
 from sage.sets.primes import Primes
 
@@ -91,8 +90,9 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm='auto'):
                              "coefficients rings of characteristic p.")
         if base_ring(prime).is_unit():
             # TODO: document that this ignores the choice of algorithm
-            return WittVectorRing_p_invertible(base_ring, prec, prime,
-                                         category=_CommutativeRings)
+            return WittVectorRing_base(
+                base_ring, prec, prime, algorithm='standard_otf',
+                category=_CommutativeRings)
         else:
             if algorithm == 'auto':
                 algorithm = 'standard'
