@@ -662,7 +662,14 @@ class TropicalMPolynomial(MPolynomial_polydict):
         """
         if not self.monomial_coefficients():
             return str(self.parent().base().zero())
-        s = super()._repr_()
+        try:
+            key = self.parent().term_order().sortkey
+        except AttributeError:
+            key = None
+        atomic = self.parent().base_ring()._repr_option('element_is_atomic')
+        s = self.element().poly_repr(self.parent().variable_names(),
+                                     atomic_coefficients=atomic,
+                                     sortkey=key)
         if self.monomials()[-1].is_constant():
             if self.monomial_coefficient(self.parent()(0)) < 0:
                 s = s.replace(" - ", " + -")
