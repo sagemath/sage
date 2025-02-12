@@ -1802,7 +1802,7 @@ class Newform(ModularForm_abstract):
 
     def is_cuspidal(self):
         """
-        Return True. For compatibility with elements of modular forms spaces.
+        Return ``True``. For compatibility with elements of modular forms spaces.
 
         EXAMPLES::
 
