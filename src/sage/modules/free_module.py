@@ -3163,6 +3163,8 @@ class FreeModule_generic(Module_free_ambient):
           pseudomorphism
 
         - ``twist`` -- the twisting morphism or the twisting derivation
+          (if a derivation is given, the corresponding morphism `\theta`
+          is automatically infered)
 
         - ``codomain`` -- (default: ``None``) the codomain of the pseudo
           morphisms; if ``None``, the codomain is the same than the domain

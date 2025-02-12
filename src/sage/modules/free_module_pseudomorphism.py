@@ -45,6 +45,15 @@ class FreeModulePseudoMorphism(Morphism):
     The map `\theta` (resp. `\delta`) is referred to as the
     twisting endomorphism (resp. the twisting derivation) of `f`.
 
+    .. NOTE::
+
+        The implementation currently requires that `M` and `M'`
+        are free modules.
+
+    This class is not supposed to be instantiated directly; the user should
+    use instead the method :meth:`sage.rings.module.free_module.FreeModule_generic.pseudohom`
+    to create a pseudomorphism.
+
     TESTS::
 
         sage: P.<x> = ZZ[]

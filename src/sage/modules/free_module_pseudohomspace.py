@@ -37,6 +37,10 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
     For free modules, the elements of a pseudomorphism correspond to matrices
     which define the mapping on elements of a basis.
 
+    This class is not supposed to be instantiated directly; the user should
+    use instead the method :meth:`sage.rings.module.free_module.FreeModule_generic.pseudoHom`
+    to create a space of pseudomorphisms.
+
     TESTS::
 
         sage: F = GF(125)
@@ -57,11 +61,12 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
 
         INPUT:
 
-        -  ``domain`` -- a free module,  the domain of this pseudomorphism
+        - ``domain`` -- a free module,  the domain of this pseudomorphism
 
-        -  ``codomain`` -- a free module, the codomain of this pseudomorphism
+        - ``codomain`` -- a free module, the codomain of this pseudomorphism
 
-        -  ``twist`` -- a twisting morphism/derivation or a Ore polynomial ring
+        - ``twist`` -- a twisting morphism/derivation or the corresponding
+          Ore polynomial ring
 
         TESTS::
 
@@ -94,11 +99,12 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
 
         INPUT:
 
-        -  ``domain`` -- a free module,  the domain of this pseudomorphism
+        - ``domain`` -- a free module,  the domain of this pseudomorphism
 
-        -  ``codomain`` -- a free module, the codomain of this pseudomorphism
+        - ``codomain`` -- a free module, the codomain of this pseudomorphism
 
-        -  ``ore`` -- the underlying Ore polynomial ring
+        - ``ore`` -- the underlying Ore polynomial ring (built from the
+          twisting morphism and derivation)
 
         TESTS::
 
