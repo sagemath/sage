@@ -274,7 +274,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
         sage: # optional - !meson_editable
         sage: directory = os.path.join(sage.libs.__path__[0], 'mpfr'); directory
         '.../sage/libs/mpfr'
-        sage: is_package_or_sage_namespace_package_dir(directory)
+        sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
         True
 
     :mod:`sage` is designated to become an implicit namespace package::
