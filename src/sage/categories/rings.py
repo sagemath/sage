@@ -5,7 +5,8 @@ Rings
 # ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
-#                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
+#                2008      Teresa Gomez-Diaz (CNRS)
+#                          <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -761,7 +762,7 @@ class Rings(CategoryWithAxiom):
                 sage: Zp(7).unit_ideal()                                                    # needs sage.rings.padics
                 Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
             """
-            return self.principal_ideal(self.one(), coerce=False)
+            return self._ideal_class_(1)(self, [self.one()])
 
         def _ideal_class_(self, n=0):
             r"""
@@ -814,18 +815,6 @@ class Rings(CategoryWithAxiom):
                 Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
             """
             return self._ideal_class_(1)(self, [self.zero()])
-
-        @cached_method
-        def unit_ideal(self):
-            """
-            Return the unit ideal of this ring.
-
-            EXAMPLES::
-
-                sage: Zp(7).unit_ideal()                                                    # needs sage.rings.padics
-                Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
-            """
-            return self._ideal_class_(1)(self, [self.one()])
 
         def principal_ideal(self, gen, coerce=True):
             """
