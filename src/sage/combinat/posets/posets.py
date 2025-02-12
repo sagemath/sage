@@ -293,7 +293,6 @@ from itertools import product
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
-from sage.arith.misc import binomial
 from sage.categories.category import Category
 from sage.categories.sets_cat import Sets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -700,15 +699,12 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
             if element_labels is not None:
                 P = P.relabel(element_labels)
             return P
-        else:
-            if element_labels is None:
-                return FinitePoset(data, elements=data._elements, category=category, facade=facade)
-            else:
-                return FinitePoset(data, elements=element_labels, category=category, facade=facade)
+        if element_labels is None:
+            return FinitePoset(data, elements=data._elements, category=category, facade=facade)
+        return FinitePoset(data, elements=element_labels, category=category, facade=facade)
 
     # Convert data to a DiGraph
     elements = None
-    D = {}
     if data is None:  # type 0
         D = DiGraph()
     elif isinstance(data, DiGraph):  # type 4
@@ -1530,10 +1526,11 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.sorted([], allow_incomparable=False, remove_duplicates=False)
             []
         """
-        v = [self._element_to_vertex(x) for x in l]
+        v = (self._element_to_vertex(x) for x in l)
         if remove_duplicates:
-            v = set(v)
-        o = sorted(v)
+            o = sorted(set(v))
+        else:
+            o = sorted(v)
 
         if not allow_incomparable:
             H = self._hasse_diagram
@@ -1818,7 +1815,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for r in range(1, n + 1):
             new_a_spec.append(0)
             for i in range(max(1, r - n + k), min(r, k) + 1):
-                k_val = binomial(r - 1, i - 1) * binomial(n - r, k - i)
+                k_val = Integer(r - 1).binomial(i - 1) * Integer(n - r).binomial(k - i)
                 new_a_spec[-1] += k_val * a_spec[i - 1] * n_lin_exts
         return new_a_spec
 
@@ -2059,10 +2056,10 @@ class FinitePoset(UniqueRepresentation, Parent):
                   'cover_colors': 'edge_colors',
                   'cover_style': 'edge_style',
                   'border': 'graph_border'}
-        for param in rename:
+        for param, value in rename.items():
             tmp = kwds.pop(param, None)
             if tmp is not None:
-                kwds[rename[param]] = tmp
+                kwds[value] = tmp
 
         heights = kwds.pop('heights', None)
         if heights is None:
@@ -2587,10 +2584,10 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         covers = []
         for a, b in ints:
-            covers.extend([[(a, b), (a, bb)] for bb in self.upper_covers(b)])
+            covers.extend([(a, b), (a, bb)] for bb in self.upper_covers(b))
             if a != b:
-                covers.extend([[(a, b), (aa, b)] for aa in self.upper_covers(a)
-                               if self.le(aa, b)])
+                covers.extend([(a, b), (aa, b)] for aa in self.upper_covers(a)
+                              if self.le(aa, b))
 
         dg = DiGraph([ints, covers], format='vertices_and_edges')
         return constructor(dg, cover_relations=True)
@@ -2717,10 +2714,9 @@ class FinitePoset(UniqueRepresentation, Parent):
                 for y in H.neighbor_out_iterator(xmax):
                     if exposant == 1:
                         next_stock.append((xmin, y, y))
-                    else:
-                        if (cov_xmin, y) in short_stock:
-                            if H.is_linear_interval(xmin, y):
-                                next_stock.append((xmin, cov_xmin, y))
+                    elif (cov_xmin, y) in short_stock:
+                        if H.is_linear_interval(xmin, y):
+                            next_stock.append((xmin, cov_xmin, y))
             if next_stock:
                 poly.append(len(next_stock))
                 stock = next_stock
@@ -2857,12 +2853,12 @@ class FinitePoset(UniqueRepresentation, Parent):
             closure = self._hasse_diagram.transitive_closure()
         for m, n in chain_pairs:
             try:
-                m, n = Integer(m), Integer(n)
+                ZZm, ZZn = Integer(m), Integer(n)
             except TypeError:
                 raise TypeError(f"{m} and {n} must be integers")
             if m < 1 or n < 1:
                 raise ValueError(f"{m} and {n} must be positive integers")
-            twochains = digraphs.TransitiveTournament(m) + digraphs.TransitiveTournament(n)
+            twochains = digraphs.TransitiveTournament(ZZm) + digraphs.TransitiveTournament(ZZn)
             if closure.subgraph_search(twochains, induced=True) is not None:
                 return False
         return True
@@ -5299,7 +5295,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         dg = self._hasse_diagram
         if not dg.is_connected():
             raise NotImplementedError('the poset is not connected')
-        if ZZ(dg.num_verts()).is_prime():
+        if Integer(dg.num_verts()).is_prime():
             return [self]
         G = dg.to_undirected()
         is_product, dic = G.is_cartesian_product(relabeling=True)
@@ -5310,7 +5306,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         prod_dg = dg.relabel(dic, inplace=False)
         v0 = next(iter(dic.values()))
         n = len(v0)
-        factors_range = list(range(n))
+        factors_range = range(n)
         fusion = Graph(n)
 
         def edge_color(va, vb):
@@ -5325,9 +5321,9 @@ class FinitePoset(UniqueRepresentation, Parent):
                 neigh1 = [z for z in prod_dg.neighbor_iterator(x)
                           if edge_color(x, z) == i1]
                 for x0, x1 in product(neigh0, neigh1):
-                    x2 = list(x0)
-                    x2[i1] = x1[i1]
-                    x2 = tuple(x2)
+                    _x2 = list(x0)
+                    _x2[i1] = x1[i1]
+                    x2 = tuple(_x2)
                     A0 = prod_dg.has_edge(x, x0)
                     B0 = prod_dg.has_edge(x1, x2)
                     if A0 != B0:
@@ -6496,7 +6492,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                 with seed(currseed):
                     for _ in range(count):
                         for element in range(n):
-                            if random() % 2 == 1:
+                            if random() % 2:  # should use one random bit
                                 s = [state[i] for i in lower_covers[element]]
                                 if 1 not in s:
                                     if 2 not in s:
@@ -7172,12 +7168,12 @@ class FinitePoset(UniqueRepresentation, Parent):
             True
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
-        ineqs = [[0] + [ZZ(j == v) - ZZ(j == u) for j in self]
+        ineqs = [[0] + [Integer(j == v) - Integer(j == u) for j in self]
                  for u, v in self.hasse_diagram().edges(sort=False, labels=False)]
         for i in self.maximal_elements():
-            ineqs += [[1] + [-ZZ(j == i) for j in self]]
+            ineqs += [[1] + [-Integer(j == i) for j in self]]
         for i in self.minimal_elements():
-            ineqs += [[0] + [ZZ(j == i) for j in self]]
+            ineqs += [[0] + [Integer(j == i) for j in self]]
         return Polyhedron(ieqs=ineqs, base_ring=ZZ)
 
     def chain_polytope(self):
@@ -7211,10 +7207,10 @@ class FinitePoset(UniqueRepresentation, Parent):
             A 5-dimensional polyhedron in ZZ^5 defined as the convex hull of 8 vertices
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
-        ineqs = [[1] + [-ZZ(j in chain) for j in self]
+        ineqs = [[1] + [-Integer(j in chain) for j in self]
                  for chain in self.maximal_chains_iterator()]
         for i in self:
-            ineqs += [[0] + [ZZ(j == i) for j in self]]
+            ineqs += [[0] + [Integer(j == i) for j in self]]
         return Polyhedron(ieqs=ineqs, base_ring=ZZ)
 
     def zeta_polynomial(self):
@@ -8194,7 +8190,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         n = self.cardinality()
         if n == 1:
             return True
-        if k is None and not certificate and n % 2 == 1:
+        if k is None and not certificate and n % 2:
             return False
 
         H = self._hasse_diagram

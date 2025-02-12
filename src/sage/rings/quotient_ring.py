@@ -383,7 +383,7 @@ from sage.structure.category_object import check_default_category
 
 
 @richcmp_method
-class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
+class QuotientRing_nc(ring.Ring):
     """
     The quotient ring of `R` by a twosided ideal `I`.
 
@@ -495,8 +495,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             raise TypeError("The second argument must be an ideal of the given ring, but %s is not" % I)
         self.__R = R
         self.__I = I
-        #sage.structure.parent_gens.ParentWithGens.__init__(self, R.base_ring(), names)
-        ##
+
         # Unfortunately, computing the join of categories, which is done in
         # check_default_category, is very expensive.
         # However, we don't just want to use the given category without mixing in
@@ -589,7 +588,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return "%s/%s" % (latex.latex(self.cover_ring()), latex.latex(self.defining_ideal()))
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Tell whether this quotient ring is commutative.
 
@@ -1269,8 +1268,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: S = R.quotient_ring(x^2 + y^2)
             sage: S._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 2
+            // coefficients: QQ...
+            // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
             //        block   2 : ordering C

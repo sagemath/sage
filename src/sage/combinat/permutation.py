@@ -2121,13 +2121,13 @@ class Permutation(CombinatorialElement):
         pos_ip1 = self.index(i + 1)
         pos_im1 = self.index(i - 1)
 
-        if pos_i < pos_im1 and pos_im1 < pos_ip1:
+        if pos_i < pos_im1 < pos_ip1:
             state = '213'
-        elif pos_im1 < pos_ip1 and pos_ip1 < pos_i:
+        elif pos_im1 < pos_ip1 < pos_i:
             state = '132'
-        elif pos_i < pos_ip1 and pos_ip1 < pos_im1:
+        elif pos_i < pos_ip1 < pos_im1:
             state = '231'
-        elif pos_ip1 < pos_im1 and pos_im1 < pos_i:
+        elif pos_ip1 < pos_im1 < pos_i:
             state = '312'
         else:
             state = None
