@@ -11,7 +11,7 @@ which both inherit
 AUTHORS:
 
 - David Ayotte (2023-09)
-- Xavier Caruso (2024-12) - computation of class polynomials and Taelman's units
+- Xavier Caruso (2024-12) - computation of class polynomials
 """
 
 # *****************************************************************************
