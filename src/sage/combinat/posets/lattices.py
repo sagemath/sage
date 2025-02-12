@@ -1292,7 +1292,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
             - Weaker properties: :meth:`is_join_semidistributive`,
               :meth:`is_meet_semidistributive`
-            - Stronger properties: :meth:`is_distributive`
+            - Stronger properties: :meth:`is_distributive`,
+              :meth:`is_congruence_uniform`
 
         TESTS::
 
@@ -3549,7 +3550,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             True
         """
         # Rationale for naming of elements: a lattice can have
-        # elements 1, (1, 1), (1, (1, 1)) and so on. We can't just
+        # elements 1, (1, 1), (1, (1, 1)) and so on. We cannot just
         # make a copy of S with elements (s, 1).
 
         # The construction could be defined for any convex
@@ -3954,7 +3955,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
             Add a certificate-option.
         """
-        # Todo: This can be made much faster, if we don't regenerate meet- and
+        # Todo: This can be made much faster, if we do not regenerate meet- and
         # join-matrices every time, but instead remove some rows and columns
         # from them.
 
@@ -4270,7 +4271,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         The congruence lattice of this lattice has maximal chains satisfying the needed
         property, but also maximal chains not satisfying that; this shows that the code
-        can't be optimized to test just some maximal chain::
+        cannot be optimized to test just some maximal chain::
 
             sage: L = LatticePoset(DiGraph('QSO?I?_?_GBG??_??a???@?K??A??B???C??s??G??I??@??A??@???'))
             sage: L.is_constructible_by_doublings('convex')
@@ -4342,6 +4343,29 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     reachable.append(e_up)
                     todo.append(e_up)
         return False
+
+    def is_congruence_uniform(self) -> bool:
+        """
+        Return whether ``self`` is congruence uniform.
+
+        This is equivalent to being constructible by doubling intervals.
+
+        .. SEEALSO:: :meth:`is_constructible_by_doublings`
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: P.is_congruence_uniform()
+            True
+            sage: P = posets.DiamondPoset(5)
+            sage: P.is_congruence_uniform()
+            False
+
+        REFERENCES:
+
+        - [Day1979]_
+        """
+        return self.is_constructible_by_doublings(type="interval")
 
     def is_isoform(self, certificate=False):
         """
