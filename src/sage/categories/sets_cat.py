@@ -2438,6 +2438,24 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     NotImplementedError...
                     sage: cartesian_product([unknown_infinite_set, Set([])]).is_finite()
                     True
+                    sage: cartesian_product([Set([1, 2, 3]), Set([4, 5])]).is_finite()
+                    True
+                    sage: cartesian_product([unknown_infinite_set, unknown_infinite_set]).is_finite()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError...
+
+                Coverage test when one factor has emptiness unknown but result is finite::
+
+                    sage: s = ConditionSet(RR, lambda x: x^2 == 2, category=Sets().Finite())
+                    sage: s.is_finite()
+                    True
+                    sage: s.is_empty()
+                    Traceback (most recent call last):
+                    ...
+                    AttributeError...
+                    sage: cartesian_product([s, Set([1, 2, 3])]).is_finite()
+                    True
                 """
                 try:
                     # Note: some parent might not implement "is_empty". So we
