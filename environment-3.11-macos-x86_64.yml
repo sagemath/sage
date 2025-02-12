@@ -121,6 +121,7 @@ dependencies:
   - libasprintf=0.22.5=hdfe23c8_3
   - libasprintf-devel=0.22.5=hdfe23c8_3
   - libblas=3.9.0=26_osx64_openblas
+  - libatomic_ops=7.8.2=h6e16a3a_0
   - libboost=1.85.0=hcca3243_4
   - libboost-devel=1.85.0=h2b186f8_4
   - libboost-headers=1.85.0=h694c41f_4

@@ -166,6 +166,9 @@ def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
     all_requirements.append("m4")
     # Needed to fix a bug on Macos with broken pkg-config
     all_requirements.append("expat")
+    # Needed as dependency of bdw-gc
+    # Workaround for https://github.com/conda-forge/bdw-gc-feedstock/issues/26
+    all_requirements.append("libatomic_ops")
     return all_requirements
 
 
