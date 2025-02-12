@@ -104,8 +104,6 @@ class WittVector(CommutativeRingElement):
         C = self.__class__
 
         # As a slight optimization, we'll check for zero ahead of time.
-        # This has the benefit of allowing us to create polynomials,
-        # even if ``P._algorithm`` is 'none'.
         if other == P.zero():
             return self
         elif self == P.zero():
@@ -151,8 +149,6 @@ class WittVector(CommutativeRingElement):
                 sum_vec.append(next_sum)
 
             return C(P, vec=sum_vec)
-        else:
-            return NotImplemented
 
     def _mul_(self, other):
         """
@@ -170,8 +166,6 @@ class WittVector(CommutativeRingElement):
         C = self.__class__
 
         # As a slight optimization, we'll check for zero or one ahead of time.
-        # This has the benefit of allowing us to create polynomials,
-        # even if ``P._algorithm`` is 'none'.
         if self == P.zero() or other == P.zero():
             return P.zero()
         if other == P.one():
@@ -223,8 +217,6 @@ class WittVector(CommutativeRingElement):
                 prod_vec.append(next_prod)
 
             return C(P, vec=prod_vec)
-        else:
-            return NotImplemented
 
     def _neg_(self):
         """
@@ -261,8 +253,6 @@ class WittVector(CommutativeRingElement):
         """
         P = self.parent()
         # As a slight optimization, we'll check for one ahead of time.
-        # This has the benefit of allowing us to create polynomials,
-        # even if ``P._algorithm`` is 'none'.
         if other == P.one():
             return self
         elif self == P.one():

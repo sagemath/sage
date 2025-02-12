@@ -17,7 +17,7 @@ _CommutativeRings = CommutativeRings()
 _Primes = Primes()
 
 
-def WittVectorRing(base_ring, prec=1, p=None, algorithm='auto'):
+def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
     """
     Return the appropriate Witt vector ring, depending on the input.
 
@@ -51,8 +51,8 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm='auto'):
         sage: WittVectorRing(QQ, p=5, algorithm='moon')
         Traceback (most recent call last):
         ...
-        ValueError: algorithm must be one of 'none', 'auto',
-        'standard', 'finotti'
+        ValueError: algorithm must be one of None, 'standard',
+        'standard_otf', 'finotti', 'Zq_isomorphism'
     """
     if base_ring not in _CommutativeRings:
         raise TypeError(f'{base_ring} is not a commutative ring')
@@ -67,20 +67,30 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm='auto'):
     else:
         prime = p
 
-    if algorithm is None:
-        algorithm = 'none'
-    elif algorithm not in ['none', 'auto', 'standard', 'finotti']:
-        raise ValueError("algorithm must be one of 'none', 'auto', "
-                         "'standard', 'finotti'")
+    if algorithm not in [None, 'standard', 'standard_otf', 'finotti',
+                         'Zq_isomorphism']:
+        raise ValueError(
+            "algorithm must be one of None, 'standard', "
+            "'standard_otf', 'finotti', 'Zq_isomorphism'")
 
     if prime == char:
-        if base_ring in Fields().Finite():
-            # TODO: document that this ignores the choice of algorithm
-            return WittVectorRing_finite_field(base_ring.field(), prec, prime,
-                                         category=_CommutativeRings)
+        if algorithm == 'standard_otf':
+            raise ValueError (
+                "The 'standard_otf' algorithm only works when p is a unit "
+                "in the ring of coefficients.")
+        elif base_ring in Fields().Finite():
+            if not algorithm:
+                algorithm = 'Zq_isomorphism'
+            return WittVectorRing_finite_field(
+                base_ring.field(), prec, prime, algorithm=algorithm,
+                category=_CommutativeRings)
         else:
-            if algorithm == 'auto':
+            if not algorithm:
                 algorithm = 'finotti'
+            elif algorithm == 'Zq_isomorphism':
+                raise ValueError(
+                    "The 'Zq_isomorphism' algorithm only works when the "
+                    "coefficient ring is a finite field of characteristic p.")
             return WittVectorRing_char_p(base_ring, prec, prime,
                                       algorithm=algorithm,
                                       category=_CommutativeRings)
@@ -88,14 +98,23 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm='auto'):
         if algorithm == 'finotti':
             raise ValueError("The 'finotti' algorithm only works for "
                              "coefficients rings of characteristic p.")
+        elif algorithm == 'Zq_isomorphism':
+            raise ValueError(
+                "The 'Zq_isomorphism' algorithm only works when the "
+                "coefficient ring is a finite field of characteristic p.")
         if base_ring(prime).is_unit():
-            # TODO: document that this ignores the choice of algorithm
+            if not algorithm:
+                algorithm = 'standard_otf'
             return WittVectorRing_base(
                 base_ring, prec, prime, algorithm='standard_otf',
                 category=_CommutativeRings)
         else:
-            if algorithm == 'auto':
+            if not algorithm:
                 algorithm = 'standard'
+            elif algorithm == 'standard_otf':
+                raise ValueError (
+                    "The 'standard_otf' algorithm only works when p is a "
+                    "unit in the ring of coefficients.")
             return WittVectorRing_base(base_ring, prec, prime,
                                           algorithm=algorithm,
                                           category=_CommutativeRings)

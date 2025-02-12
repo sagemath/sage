@@ -87,7 +87,9 @@ class WittVectorRing_base(CommutativeRing, UniqueRepresentation):
 
     Element = WittVector
 
-    def __init__(self, base_ring, prec, prime, algorithm='none', category=None):
+    def __init__(
+            self, base_ring, prec, prime, algorithm='standard',
+            category=None):
         self.prec = prec
         self.prime = prime
 
@@ -233,7 +235,9 @@ class WittVectorRing_base(CommutativeRing, UniqueRepresentation):
 
 class WittVectorRing_char_p(WittVectorRing_base):
 
-    def __init__(self, base_ring, prec, prime, algorithm=None, category=None):
+    def __init__(
+            self, base_ring, prec, prime, algorithm='standard',
+            category=None):
         WittVectorRing_base.__init__(self, base_ring, prec, prime,
                                algorithm=algorithm, category=category)
 
@@ -330,10 +334,12 @@ class WittVectorRing_char_p(WittVectorRing_base):
 
 
 class WittVectorRing_finite_field(WittVectorRing_char_p):
-    def __init__(self, base_ring, prec, prime, category=None):
-        WittVectorRing_char_p.__init__(self, base_ring, prec, prime,
-                                    algorithm='Zq_isomorphism',
-                                    category=category)
+    def __init__(
+            self, base_ring, prec, prime, algorithm='Zq_isomorphism',
+            category=None):
+        WittVectorRing_char_p.__init__(
+            self, base_ring, prec, prime, algorithm=algorithm,
+            category=category)
 
     def _series_to_vector(self, series):
         F = self.base()  # known to be finite
