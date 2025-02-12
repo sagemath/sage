@@ -1951,6 +1951,11 @@ class Stream_uninitialized(Stream):
 
         def fix_cache(j, s, ao):
             if s._cache[ao]:
+                # TODO: perhaps, if not
+                # self._coefficient_ring.has_coerce_map_from(s._cache[ao].parent())
+                # we can be certain that there is still an
+                # undetermined coefficient -- if so, we could replace
+                # the following line for a performance improvement
                 if s._cache[ao] in self._coefficient_ring:
                     s._true_order = True
                 return False
