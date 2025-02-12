@@ -14,7 +14,7 @@ from sage.rings.ring import CommutativeRing
 from sage.sets.primes import Primes
 from sage.structure.unique_representation import UniqueRepresentation
 
-from .witt_vector import WittVector_base, WittVector_non_p_typical, WittVector_p_typical
+from .witt_vector import WittVector
 
 _Primes = Primes()
 
@@ -85,7 +85,7 @@ _fcppow = _fast_char_p_power
 
 class WittVectorRing_base(CommutativeRing, UniqueRepresentation):
 
-    Element = WittVector_base
+    Element = WittVector
 
     def __init__(self, base_ring, prec, prime, algorithm='none', category=None):
         self.prec = prec
@@ -107,7 +107,8 @@ class WittVectorRing_base(CommutativeRing, UniqueRepresentation):
             yield self(t)
 
     def _repr_(self):
-        return f"Ring of Witt Vectors of length {self.prec} over {self.base()}"
+        return f"Ring of truncated {self.prime}-typical Witt vectors of "\
+               f"length {self.prec} over {self.base()}"
 
     def _coerce_map_from_(self, S):
         # Question: do we return True is S == self.base()?
@@ -230,9 +231,7 @@ class WittVectorRing_base(CommutativeRing, UniqueRepresentation):
         return self.base().cardinality()**(self.prec)
 
 
-class WittVectorRing_p_typical(WittVectorRing_base):
-
-    Element = WittVector_p_typical
+class WittVectorRing_char_p(WittVectorRing_base):
 
     def __init__(self, base_ring, prec, prime, algorithm=None, category=None):
         WittVectorRing_base.__init__(self, base_ring, prec, prime,
@@ -330,9 +329,9 @@ class WittVectorRing_p_typical(WittVectorRing_base):
             return sum(scriptM[k])
 
 
-class WittVectorRing_finite_field(WittVectorRing_p_typical):
+class WittVectorRing_finite_field(WittVectorRing_char_p):
     def __init__(self, base_ring, prec, prime, category=None):
-        WittVectorRing_p_typical.__init__(self, base_ring, prec, prime,
+        WittVectorRing_char_p.__init__(self, base_ring, prec, prime,
                                     algorithm='Zq_isomorphism',
                                     category=category)
 
@@ -367,20 +366,8 @@ class WittVectorRing_finite_field(WittVectorRing_p_typical):
         return series
 
 
-class WittVectorRing_non_p_typical(WittVectorRing_base):
-
-    Element = WittVector_non_p_typical
-
-    def __init__(self, base_ring, prec, prime, algorithm=None, category=None):
-        WittVectorRing_base.__init__(self, base_ring, prec, prime,
-                               algorithm=algorithm, category=category)
-
-    def _repr_(self):
-        return f"Ring of {self.prime}-Witt Vectors of length {self.prec} over {self.base()}"
-
-
-class WittVectorRing_p_invertible(WittVectorRing_non_p_typical):
+class WittVectorRing_p_invertible(WittVectorRing_base):
     def __init__(self, base_ring, prec, prime, category=None):
-        WittVectorRing_non_p_typical.__init__(self, base_ring, prec, prime,
+        WittVectorRing_base.__init__(self, base_ring, prec, prime,
                                         algorithm='standard_otf',
                                         category=category)

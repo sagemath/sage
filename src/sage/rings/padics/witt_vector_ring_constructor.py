@@ -7,10 +7,10 @@ rings of Witt vectors with coefficients in any commuatitve ring.
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
 from sage.rings.padics.witt_vector_ring import (
+    WittVectorRing_base,
+    WittVectorRing_char_p,
     WittVectorRing_finite_field,
-    WittVectorRing_non_p_typical,
     WittVectorRing_p_invertible,
-    WittVectorRing_p_typical,
 )
 from sage.sets.primes import Primes
 
@@ -25,14 +25,14 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm='auto'):
     EXAMPLES::
 
         sage: WittVectorRing(QQ,p=5)
-        Ring of 5-Witt Vectors of length 1 over Rational Field
+        Ring of truncated 5-typical Witt vectors of length 1 over Rational Field
         sage: WittVectorRing(GF(3))
-        Ring of Witt Vectors of length 1 over Finite Field of size 3
+        Ring of truncated 3-typical Witt vectors of length 1 over Finite Field of size 3
         sage: WittVectorRing(GF(3)['t'])
-        Ring of Witt Vectors of length 1 over Univariate Polynomial Ring in t
+        Ring of truncated 3-typical Witt vectors of length 1 over Univariate Polynomial Ring in t
         over Finite Field of size 3
         sage: WittVectorRing(Qp(7), prec=30, p=5)
-        Ring of 5-Witt Vectors of length 30 over 7-adic Field
+        Ring of truncated 5-typical Witt vectors of length 30 over 7-adic Field
         with capped relative precision 20
 
     TESTS::
@@ -74,7 +74,7 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm='auto'):
         raise ValueError("algorithm must be one of 'none', 'auto', "
                          "'standard', 'finotti'")
 
-    if prime == char:  # p-typical
+    if prime == char:
         if base_ring in Fields().Finite():
             # TODO: document that this ignores the choice of algorithm
             return WittVectorRing_finite_field(base_ring.field(), prec, prime,
@@ -82,13 +82,13 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm='auto'):
         else:
             if algorithm == 'auto':
                 algorithm = 'finotti'
-            return WittVectorRing_p_typical(base_ring, prec, prime,
+            return WittVectorRing_char_p(base_ring, prec, prime,
                                       algorithm=algorithm,
                                       category=_CommutativeRings)
-    else:  # non-p-typical
+    else:
         if algorithm == 'finotti':
-            raise ValueError("The 'finotti' algorithm only works "
-                             "for p-typical Witt vector rings.")
+            raise ValueError("The 'finotti' algorithm only works for "
+                             "coefficients rings of characteristic p.")
         if base_ring(prime).is_unit():
             # TODO: document that this ignores the choice of algorithm
             return WittVectorRing_p_invertible(base_ring, prec, prime,
@@ -96,6 +96,6 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm='auto'):
         else:
             if algorithm == 'auto':
                 algorithm = 'standard'
-            return WittVectorRing_non_p_typical(base_ring, prec, prime,
+            return WittVectorRing_base(base_ring, prec, prime,
                                           algorithm=algorithm,
                                           category=_CommutativeRings)

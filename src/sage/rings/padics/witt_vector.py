@@ -6,7 +6,7 @@ from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import op_EQ, op_NE
 
 
-class WittVector_base(CommutativeRingElement):
+class WittVector(CommutativeRingElement):
     def __init__(self, parent, vec=None):
         """
         Common class for all kinds of Witt vectors.
@@ -68,7 +68,7 @@ class WittVector_base(CommutativeRingElement):
             sage: t != t
             False
         """
-        if not isinstance(other, WittVector_base):
+        if not isinstance(other, WittVector):
             return NotImplemented
         if op == op_EQ:
             return self.vec == other.vec
@@ -118,6 +118,39 @@ class WittVector_base(CommutativeRingElement):
             sum_vec = tuple(s[i](*(self.vec + other.vec))
                             for i in range(self.prec))
             return C(P, vec=sum_vec)
+        elif alg == 'finotti':
+            x = self.vec
+            y = other.vec
+            prec = P.precision()
+
+            G = []
+            for n in range(prec):
+                G_n = [x[n], y[n]]
+                for i in range(n):
+                    G_n.append(P.eta_bar(G[i], n - i))
+                G.append(G_n)
+            sum_vec = tuple(sum(G[i]) for i in range(prec))
+            return C(P, vec=sum_vec)
+        elif alg == 'Zq_isomorphism':
+            x = P._vector_to_series(self.vec)
+            y = P._vector_to_series(other.vec)
+            sum_vec = P._series_to_vector(x + y)
+            return C(P, vec=sum_vec)
+        elif alg == 'standard_otf':
+            p = P.prime  # we know p is a unit in this case!
+            x = self.vec
+            y = other.vec
+
+            sum_vec = [x[0] + y[0]]
+            for n in range(1, self.prec):
+                next_sum = x[n] + y[n] + \
+                    sum((x[i]**(p**(n - i)) + y[i]**(p**(n - i))
+                         - sum_vec[i]**(p**(n - i)))
+                        / p**(n - i)
+                        for i in range(n))
+                sum_vec.append(next_sum)
+
+            return C(P, vec=sum_vec)
         else:
             return NotImplemented
 
@@ -147,11 +180,48 @@ class WittVector_base(CommutativeRingElement):
             return other
 
         alg = P._algorithm
+        from sage.rings.padics.witt_vector_ring import _fast_char_p_power as _fcppow
         if alg == 'standard':
             p = P.prod_polynomials
             # note here this is tuple addition, i.e. concatenation
             prod_vec = tuple(p[i](*(self.vec + other.vec))
                              for i in range(self.prec))
+            return C(P, vec=prod_vec)
+        elif alg == 'finotti':
+            x = self.vec
+            y = other.vec
+            prec = P.precision()
+            p = P.prime
+
+            G = [[x[0] * y[0]]]
+            for n in range(1, prec):
+                G_n = [_fcppow(x[0], p**n) * y[n], _fcppow(y[0], p**n) * x[n]]
+                G_n.extend(_fcppow(x[i], p**(n - i)) * _fcppow(y[n - i], p**i)
+                           for i in range(1, n))
+                for i in range(n):
+                    G_n.append(P.eta_bar(G[i], n - i))
+                G.append(G_n)
+            prod_vec = tuple(sum(G[i]) for i in range(prec))
+            return C(P, vec=prod_vec)
+        elif alg == 'Zq_isomorphism':
+            x = P._vector_to_series(self.vec)
+            y = P._vector_to_series(other.vec)
+            sum_vec = P._series_to_vector(x * y)
+            return C(P, vec=sum_vec)
+        elif alg == 'standard_otf':
+            p = P.prime  # we know p is a unit in this case!
+            x = self.vec
+            y = other.vec
+
+            prod_vec = [x[0] * y[0]]
+            for n in range(1, self.prec):
+                next_prod = (
+                    sum(p**i * x[i]**(p**(n - i)) for i in range(n + 1)) *
+                    sum(p**i * y[i]**(p**(n - i)) for i in range(n + 1)) -
+                    sum(p**i * prod_vec[i]**(p**(n - i)) for i in range(n))
+                ) / p**n
+                prod_vec.append(next_prod)
+
             return C(P, vec=prod_vec)
         else:
             return NotImplemented
@@ -244,169 +314,3 @@ class WittVector_base(CommutativeRingElement):
                 raise ZeroDivisionError(f"Inverse of {self} does not exist.")
 
         return C(P, vec=inv_vec)
-
-
-class WittVector_p_typical(WittVector_base):
-    def _add_(self, other):
-        P = self.parent()
-        C = self.__class__
-
-        # As a slight optimization, we'll check for zero ahead of time.
-        # This has the benefit of allowing us to create polynomials,
-        # even if ``P._algorithm`` is 'none'.
-        if other == P.zero():
-            return self
-        if self == P.zero():
-            return other
-
-        alg = P._algorithm
-        if alg == 'standard':
-            s = P.sum_polynomials
-            # note here this is tuple addition, i.e. concatenation
-            sum_vec = tuple(s[i](*(self.vec + other.vec))
-                            for i in range(self.prec))
-            return C(P, vec=sum_vec)
-        elif alg == 'finotti':
-            x = self.vec
-            y = other.vec
-            prec = P.precision()
-
-            G = []
-            for n in range(prec):
-                G_n = [x[n], y[n]]
-                for i in range(n):
-                    G_n.append(P.eta_bar(G[i], n - i))
-                G.append(G_n)
-            sum_vec = tuple(sum(G[i]) for i in range(prec))
-            return C(P, vec=sum_vec)
-        elif alg == 'Zq_isomorphism':
-            x = P._vector_to_series(self.vec)
-            y = P._vector_to_series(other.vec)
-            sum_vec = P._series_to_vector(x + y)
-            return C(P, vec=sum_vec)
-        else:
-            return NotImplemented
-
-    def _mul_(self, other):
-        from sage.rings.padics.witt_vector_ring import _fast_char_p_power as _fcppow
-        P = self.parent()
-        C = self.__class__
-
-        # As a slight optimization, we'll check for zero or one ahead of time.
-        # This has the benefit of allowing us to create polynomials,
-        # even if ``P._algorithm`` is 'none'.
-        if self == P.zero() or other == P.zero():
-            return P.zero()
-        if other == P.one():
-            return self
-        if self == P.one():
-            return other
-
-        alg = P._algorithm
-        if alg == 'standard':
-            p = P.prod_polynomials
-            # note here this is tuple addition, i.e. concatenation
-            prod_vec = tuple(p[i](*(self.vec + other.vec))
-                             for i in range(self.prec))
-            return C(P, vec=prod_vec)
-        elif alg == 'finotti':
-            x = self.vec
-            y = other.vec
-            prec = P.precision()
-            p = P.prime
-
-            G = [[x[0] * y[0]]]
-            for n in range(1, prec):
-                G_n = [_fcppow(x[0], p**n) * y[n], _fcppow(y[0], p**n) * x[n]]
-                G_n.extend(_fcppow(x[i], p**(n - i)) * _fcppow(y[n - i], p**i)
-                           for i in range(1, n))
-                for i in range(n):
-                    G_n.append(P.eta_bar(G[i], n - i))
-                G.append(G_n)
-            prod_vec = tuple(sum(G[i]) for i in range(prec))
-            return C(P, vec=prod_vec)
-        elif alg == 'Zq_isomorphism':
-            x = P._vector_to_series(self.vec)
-            y = P._vector_to_series(other.vec)
-            sum_vec = P._series_to_vector(x * y)
-            return C(P, vec=sum_vec)
-        else:
-            return NotImplemented
-
-
-class WittVector_non_p_typical(WittVector_base):
-    def _add_(self, other):
-        P = self.parent()
-        C = self.__class__
-
-        # As a slight optimization, we'll check for zero ahead of time.
-        # This has the benefit of allowing us to create polynomials,
-        # even if ``P._algorithm`` is 'none'.
-        if other == P.zero():
-            return self
-        elif self == P.zero():
-            return other
-
-        alg = P._algorithm
-        if alg == 'standard':
-            s = P.sum_polynomials
-            # note here this is tuple addition, i.e. concatenation
-            sum_vec = tuple(s[i](*(self.vec + other.vec))
-                            for i in range(self.prec))
-            return C(P, vec=sum_vec)
-        elif alg == 'standard_otf':
-            p = P.prime  # we know p is a unit in this case!
-            x = self.vec
-            y = other.vec
-
-            sum_vec = [x[0] + y[0]]
-            for n in range(1, self.prec):
-                next_sum = x[n] + y[n] + \
-                    sum((x[i]**(p**(n - i)) + y[i]**(p**(n - i))
-                         - sum_vec[i]**(p**(n - i)))
-                        / p**(n - i)
-                        for i in range(n))
-                sum_vec.append(next_sum)
-
-            return C(P, vec=sum_vec)
-        else:
-            return NotImplemented
-
-    def _mul_(self, other):
-        P = self.parent()
-        C = self.__class__
-
-        # As a slight optimization, we'll check for zero or one ahead of time.
-        # This has the benefit of allowing us to create polynomials,
-        # even if ``P._algorithm`` is 'none'.
-        if self == P.zero() or other == P.zero():
-            return P.zero()
-        elif other == P.one():
-            return self
-        elif self == P.one():
-            return other
-
-        alg = P._algorithm
-        if alg == 'standard':
-            p = P.prod_polynomials
-            # note here this is tuple addition, i.e. concatenation
-            prod_vec = tuple(p[i](*(self.vec + other.vec))
-                             for i in range(self.prec))
-            return C(P, vec=prod_vec)
-        elif alg == 'standard_otf':
-            p = P.prime  # we know p is a unit in this case!
-            x = self.vec
-            y = other.vec
-
-            prod_vec = [x[0] * y[0]]
-            for n in range(1, self.prec):
-                next_prod = (
-                    sum(p**i * x[i]**(p**(n - i)) for i in range(n + 1)) *
-                    sum(p**i * y[i]**(p**(n - i)) for i in range(n + 1)) -
-                    sum(p**i * prod_vec[i]**(p**(n - i)) for i in range(n))
-                ) / p**n
-                prod_vec.append(next_prod)
-
-            return C(P, vec=prod_vec)
-        else:
-            return NotImplemented
