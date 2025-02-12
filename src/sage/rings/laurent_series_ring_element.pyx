@@ -4,8 +4,8 @@ Laurent Series
 Laurent series in Sage are represented internally as a power of the variable
 times the power series part. If a Laurent series `f` is represented as
 `f = t^n \cdot u` where `t` is the variable and `u` has nonzero constant term,
-`u` can be accessed through :meth:`valuation_zero_part` and `n` can be accessed
-through :meth:`valuation`.
+`u` can be accessed through :meth:`~LaurentSeries.valuation_zero_part` and `n`
+can be accessed through :meth:`~LaurentSeries.valuation`.
 
 EXAMPLES::
 
