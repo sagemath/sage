@@ -133,9 +133,6 @@ class RationalField(Singleton, number_field_base.NumberField):
         sage: QQ(RealField(45)(t))
         1/5
     """
-    _zero_element = Rational(0)
-    _one_element = Rational(1)
-
     def __new__(cls):
         """
         This method actually is not needed for using :class:`RationalField`.

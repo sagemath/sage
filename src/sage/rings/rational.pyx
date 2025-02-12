@@ -181,6 +181,16 @@ cdef Rational_sub_(Rational self, Rational other):
 
     return x
 
+cdef Parent the_rational_ring = QQ
+
+# make sure zero/one elements are set
+cdef set_zero_one_elements():
+    global the_rational_ring
+    the_rational_ring._zero_element = Rational(0)
+    the_rational_ring._one_element = Rational(1)
+
+set_zero_one_elements()
+
 cpdef Integer integer_rational_power(Integer a, Rational b):
     """
     Compute `a^b` as an integer, if it is integral, or return ``None``.
@@ -496,8 +506,9 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: p.parent()
             Rational Field
         """
+        global the_rational_ring
         mpq_init(self.value)
-        self._parent = QQ
+        self._parent = the_rational_ring
 
     def __init__(self, x=None, unsigned int base=0):
         """
