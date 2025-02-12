@@ -801,7 +801,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
             sage: F = L.undefined()
             sage: L.define_implicitly([(F, [0, f1])], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
-            sage: F
+            sage: F  # random
             <repr(...) failed: ValueError: could not determine any coefficients:
                 coefficient [3]: 6*series[3] + (-2*x - 2*y)*series[2] + (x*y*f1) == 0>
 
