@@ -1877,9 +1877,6 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
     _print_style = 'lex'
 
-    def is_prime_field(self):
-        return False
-
     # Todo: share this with ncsf and over algebras with basis indexed by word-like elements
     def __getitem__(self, c):
         r"""
