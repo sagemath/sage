@@ -1647,16 +1647,17 @@ class Rings(CategoryWithAxiom):
                 if not x.is_zero():
                     return x
 
-        def random_element(self, bound=2):
+        def random_element(self, *args):
             """
             Return a random integer coerced into this ring.
 
-            The integer is chosen uniformly
-            from the interval ``[-bound,bound]``.
-
             INPUT:
 
-            - ``bound`` -- integer (default: 2)
+            - either no integer, one integer or two integers
+
+            The integer is chosen uniformly from the closed interval
+            ``[-2,2]``, ``[-a,a]`` or ``[a,b]`` according to the
+            length of the input.
 
             ALGORITHM:
 
@@ -1668,8 +1669,17 @@ class Rings(CategoryWithAxiom):
                 1
                 sage: QQ.random_element(8)   # random
                 2
+                sage: ZZ.random_element(4,12)   # random
+                7
             """
-            return randint(-bound, bound) * self.one()
+            if not args:
+                a, b = -2, 2
+            elif len(args) == 1:
+                bound = args[0]
+                a, b = -bound, bound
+            else:
+                a, b = args[0], args[1]
+            return randint(a, b) * self.one()
 
     class ElementMethods:
         def is_unit(self) -> bool:
