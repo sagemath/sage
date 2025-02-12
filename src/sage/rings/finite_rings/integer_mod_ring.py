@@ -67,7 +67,7 @@ import sage.misc.prandom as random
 from sage.arith.misc import factor
 from sage.arith.misc import primitive_root
 from sage.arith.misc import CRT_basis
-from sage.rings.ring import Field, CommutativeRing
+from sage.rings.ring import Field
 from sage.misc.mrange import cartesian_product_iterator
 import sage.rings.abc
 from sage.rings.finite_rings import integer_mod
