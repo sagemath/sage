@@ -153,9 +153,9 @@ intrinsic Sage(X::RngPad) -> MonStgElt, BoolElt
 {p-adic rings, either free precision model or exact model}
     prec := Precision(X);
     if Type(prec) eq Infty then
-      return Sprintf("Zp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(Precision(X))), false;
+      return Sprintf("Zp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(prec), false;
     else
-      return Sprintf("Zp(%o, %o, 'capped-rel')", Sage(Prime(X)), Sage(Precision(X))), false;
+      return Sprintf("Zp(%o, %o, 'capped-rel')", Sage(Prime(X)), Sage(prec)), false;
     end if;
 end intrinsic;
 
@@ -163,9 +163,9 @@ intrinsic Sage(X::FldPad) -> MonStgElt, BoolElt
 {p-adic fields, either free precision model or exact model}
     prec := Precision(X);
     if Type(prec) eq Infty then
-      return Sprintf("Qp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(Precision(X))), false;
+      return Sprintf("Qp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(prec)), false;
     else
-      return Sprintf("Qp(%o, %o, 'capped-rel')", Sage(Prime(X)), Sage(Precision(X))), false;
+      return Sprintf("Qp(%o, %o, 'capped-rel')", Sage(Prime(X)), Sage(prec)), false;
     end if;
 end intrinsic;
 
