@@ -18,9 +18,8 @@ Anaconda. If you don't have one yet, we recommend installing `Miniforge
     $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
     $ bash Miniforge3-$(uname)-$(uname -m).sh
 
-* Miniforge uses conda-forge as the default channel.
-
-* If you are using Miniconda or Anaconda, set it up to use conda-forge:
+* Miniforge uses conda-forge as the default channel. However, if you are using
+  Miniconda or Anaconda, set it up to use conda-forge:
 
   * Add the conda-forge channel: ``conda config --add channels conda-forge``
 
