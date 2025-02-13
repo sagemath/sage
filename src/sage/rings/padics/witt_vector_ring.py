@@ -6,16 +6,13 @@ from itertools import product
 from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.factory import Zp, Zq
+from sage.rings.padics.witt_vector import WittVector
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import CommutativeRing
 from sage.sets.primes import Primes
 from sage.structure.unique_representation import UniqueRepresentation
-
-from .witt_vector import WittVector
-
-_Primes = Primes()
 
 
 def _fast_char_p_power(x, n, p=None):
@@ -38,7 +35,7 @@ def _fast_char_p_power(x, n, p=None):
         raise ValueError(f'Exponent {n} is not an integer')
     if n == 0 or x == 1:
         return x.parent().one()
-    if x.parent().characteristic() not in _Primes:
+    if x.parent().characteristic() not in Primes():
         raise ValueError(f'{x} is not in a ring of prime characteristic')
 
     x_is_Polynomial = isinstance(x, Polynomial)

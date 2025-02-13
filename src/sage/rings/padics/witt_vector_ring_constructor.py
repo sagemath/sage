@@ -14,8 +14,6 @@ from sage.rings.padics.witt_vector_ring import (
 from sage.rings.ring import CommutativeRing
 from sage.sets.primes import Primes
 
-_Primes = Primes()
-
 
 def WittVectorRing(base_ring, prec=Integer(1), p=None, algorithm=None):
     """
@@ -64,7 +62,7 @@ def WittVectorRing(base_ring, prec=Integer(1), p=None, algorithm=None):
 
     char = base_ring.characteristic()
     if p is None:
-        if char not in _Primes:
+        if char not in Primes():
             raise ValueError(f'{base_ring} has non-prime characteristic '
                              'and no prime was supplied')
         else:
