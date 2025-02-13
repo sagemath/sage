@@ -3,7 +3,26 @@ Witt vector rings
 
 This module provides the class :class:`WittVectorRing` of rings of truncated
 Witt vectors.
+
+AUTHORS:
+
+- Jacob Dennerlein (2022-11-28): initial version
+- Rubén Muñoz--Bertrand (2025-02-13): major refactoring and clean-up
+
 """
+
+# ****************************************************************************
+#       Copyright (C) 2025 Rubén Muñoz--Bertrand
+#                          <ruben.munoz--bertrand@univ-fcomte.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+
 from itertools import product
 
 from sage.categories.fields import Fields
