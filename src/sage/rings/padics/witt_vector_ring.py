@@ -4,7 +4,6 @@ Witt vector rings: implementation
 from itertools import product
 
 from sage.categories.commutative_rings import CommutativeRings
-from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.factory import Zp, Zq
 from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -217,21 +216,6 @@ class WittVectorRing_char_p(WittVectorRing_base):
 
         if algorithm == 'finotti':
             self.generate_binomial_table()
-
-    def _int_to_vector(self, k):
-        p = self.prime
-        R = Zp(p, prec=self.prec+1, type='fixed-mod')
-        F = GF(p)
-        B = self.base()
-
-        series = R(k)
-        witt_vector = []
-        for _ in range(self.prec):
-            # Probably slightly faster to do "series % p," but this way, temp is in F_p
-            temp = F(series)
-            witt_vector.append(B(temp))  # make sure elements of vector are in base
-            series = (series - R.teichmuller(temp)) // p
-        return witt_vector
 
     def generate_binomial_table(self):
         import numpy as np

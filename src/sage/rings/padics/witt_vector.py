@@ -1,7 +1,9 @@
 """
 Witt vectors
 """
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer_ring import ZZ
+from sage.rings.padics.factory import Zp
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import op_EQ, op_NE
@@ -331,6 +333,10 @@ class WittVector(CommutativeRingElement):
         p = parent.prime
         R = parent.base()
 
+        if p == R.characteristic ():
+            self._int_to_vector_char_p(k, R)
+            return
+
         should_negate = False
         if k < 0:
             k = -k
@@ -355,3 +361,18 @@ class WittVector(CommutativeRingElement):
                 vec_k = (-x for x in vec_k)
 
         self.vec = tuple([R(x) for x in vec_k])
+
+    def _int_to_vector_char_p(self, k, R):
+        p = R.characteristic()
+        Z = Zp(p, prec=self.prec+1, type='fixed-mod')
+        F = GF(p)
+
+        series = Z(k)
+        vec_k = []
+        for _ in range(self.prec):
+            # Probably slightly faster to do "series % p," but this way, temp is in F_p
+            temp = F(series)
+            vec_k.append(R(temp))  # make sure elements of vector are in base
+            series = (series - Z.teichmuller(temp)) // p
+
+        self.vec = tuple(vec_k)
