@@ -8542,7 +8542,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         bounds of the set of upper bounds of `A` is exactly `A`.
 
         The cuts are computed as the smallest family of subsets of P containing its
-        principal order filters, the whose set P and which is closed by intersection.
+        principal order filters, the whole set P and which is closed by intersection.
 
         EXAMPLES::
 
@@ -8562,6 +8562,22 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P = Poset()
             sage: P.cuts()
             [frozenset()]
+            sage: P = Poset({3: [4, 5, 7], 1: [2, 4, 6], 4: [], 0: [2, 5], 2: [7], 7: [], 5: [6], 6: []})
+            sage: P.cuts()
+            [frozenset({3, 4, 5, 6, 7}),
+             frozenset({1, 2, 4, 6, 7}),
+             frozenset({4}),
+             frozenset({0, 2, 5, 6, 7}),
+             frozenset({2, 7}),
+             frozenset({7}),
+             frozenset({5, 6}),
+             frozenset({6}),
+             frozenset({4, 6, 7}),
+             frozenset({5, 6, 7}),
+             frozenset({2, 6, 7}),
+             frozenset(),
+             frozenset({6, 7}),
+             frozenset({0, 1, 2, 3, 4, 5, 6, 7})]
 
         .. SEEALSO::
 
