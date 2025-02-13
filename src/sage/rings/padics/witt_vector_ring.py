@@ -100,29 +100,28 @@ def _fast_char_p_power(x, n, p=None):
 
 class WittVectorRing(CommutativeRing, UniqueRepresentation):
     r"""
-    Return the appropriate p-typical truncated Witt vector ring, depending on
-    the input.
+    Return the appropriate `p`-typical truncated Witt vector ring.
 
     INPUT::
 
-    -- ``base_ring`` -- commutative ring of coefficients
+    - ``base_ring`` -- commutative ring of coefficients
 
-    -- ``prec`` -- integer (default: ``1``), length of the truncated Witt
-       vectors in the ring
+    - ``prec`` -- integer (default: ``1``), length of the truncated Witt
+      vectors in the ring
 
-    -- ``p`` -- prime (default: ``None``) number; when it is not set, it
-       defaults to the characteristic of ``base_ring`` when it is prime.
+    - ``p`` -- prime (default: ``None``) number; when it is not set, it
+      defaults to the characteristic of ``base_ring`` when it is prime.
 
-    -- ``algorithm`` -- the name of the algorithm to use for the ring laws
-       (default: ``None``); must be either ``None``, ``standard``,
-       ``p_invertible``, ``finotti`` or ``Zq_isomorphism``. When it is not
-       set, the most adequate algorithm is chosen. The ``standard`` algorithm
-       is the schoolbook algorithm, the ``p_invertible`` is the same one in
-       the case where ``p`` is invertible in ``base_ring`` and uses some
-       optimisations in that setting, ``finotti`` is Finotti's algorithm which
-       can be used when ``base_ring`` has characteristic ``p``, and
-       ``Zq_isomorphism`` computes the ring laws in `\mathbb Z_q` when
-       ``base_ring`` is `\mathbb F_q` for `q` a power of ``p``.
+    - ``algorithm`` -- the name of the algorithm to use for the ring laws
+      (default: ``None``); must be either ``None``, ``standard``,
+      ``p_invertible``, ``finotti`` or ``Zq_isomorphism``. When it is not set,
+      the most adequate algorithm is chosen. The ``standard`` algorithm is the
+      schoolbook algorithm, the ``p_invertible`` is the same one in the case
+      where ``p`` is invertible in ``base_ring`` and uses some optimisations
+      in that setting, ``finotti`` is Finotti's algorithm which can be used
+      when ``base_ring`` has characteristic ``p``, and ``Zq_isomorphism``
+      computes the ring laws in `\mathbb Z_q` when ``base_ring`` is
+      `\mathbb F_q` for `q` a power of ``p``.
 
     EXAMPLES::
 
@@ -503,7 +502,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         EXAMPLES::
 
-            WittVectorRing(GF(25), p=5, prec=3).characteristic()
+            sage: WittVectorRing(GF(25), p=5, prec=3).characteristic()
             125
             sage: WittVectorRing(ZZ, p=2, prec=4).characteristic()
             0
@@ -524,6 +523,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         Return the length of the truncated Witt vectors in ``length``.
 
         EXAMPLES::
+
             sage: WittVectorRing(GF(9), p=3, prec=3).precision()
             3
         """
@@ -534,6 +534,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         Return the length of the truncated Witt vectors in ``length``.
 
         EXAMPLES::
+
             sage: WittVectorRing(GF(27), prec=2).random_element()  # random
             (z3, 2*z3^2 + 1)
         """
@@ -547,6 +548,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         refering to a nazi mathematician.
 
         EXAMPLES::
+
             sage: WittVectorRing(GF(125), prec=2).teichmuller_lift(3)
             (3, 0)
         """
@@ -560,6 +562,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         Return whether ``self`` is a finite ring.
 
         EXAMPLES::
+
             sage: WittVectorRing(GF(23)).is_finite()
             True
             sage: WittVectorRing(ZZ, p=2).is_finite()
@@ -572,6 +575,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         Return the cardinality of ``self``.
 
         EXAMPLES::
+
             sage: WittVectorRing(GF(17), prec=2).cardinality()
             289
             sage: WittVectorRing(QQ, p=2).cardinality()

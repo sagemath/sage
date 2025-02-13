@@ -33,6 +33,15 @@ from sage.structure.richcmp import op_EQ, op_NE
 class WittVector(CommutativeRingElement):
     """
     Base class for truncated Witt vectors.
+
+    EXAMPLES::
+
+        sage: W=WittVectorRing(GF(25), p=5, prec=3)
+        sage: W(12)
+        (2, 1, 3)
+        sage: W=WittVectorRing(Integers(6), p=3, prec=4)
+        sage: W([1,2,3,4])*W([4,5,0,0])
+        (4, 1, 3, 4)
     """
     def __init__(self, parent, vec=None):
         """
