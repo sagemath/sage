@@ -624,6 +624,25 @@ class PolynomialRing_generic(Ring):
             self([2*one,0,2*one]), # an element with non-trivial content
         ]
 
+    def monomials_of_degree(self, degree):
+        r"""
+        Return the list of all monomials of the given total
+        degree in this univariate polynomial ring.
+
+        .. NOTE::
+
+            This method extends a method with the same name
+            used for multivariate polynomials rings.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: mons = R.monomials_of_degree(2)
+            sage: mons
+            [x^2]
+        """
+        return [self.gen()**degree]
+
     @cached_method
     def flattening_morphism(self):
         r"""
