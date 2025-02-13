@@ -193,9 +193,8 @@ jobs:
       - name: Update Sage packages from upstream artifact
         run: |
           export PATH=$(pwd)/build/bin:$PATH
-          cd upstream && bash -x update-pkgs.sh
-          # Remove any lines containing 'upstream' from .dockerignore
-          sed -i.bak '/upstream/d' .dockerignore
+          # The sed command removes any lines containing 'upstream' from .dockerignore
+          (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore
           # Handle both the old and new location of write-dockerfile.sh, because docker.yml is a reusable workflow
           for script_path in build/bin/write-dockerfile.sh .ci/write-dockerfile.sh; do
             if [ -r "$script_path" ]; then
