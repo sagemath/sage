@@ -2472,6 +2472,15 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: mother(epsilon).is_polytopal()
             True
 
+        TESTS::
+
+            sage: cone = Cone([(1,1), (2,1)])
+            sage: F = Fan([cone])
+            sage: F.is_polytopal()
+            Traceback (most recent call last):
+            ...
+            ValueError: to be polytopal, the fan should be complete
+
         .. SEEALSO::
 
             :meth:`is_projective`.

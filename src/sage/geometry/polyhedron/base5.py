@@ -664,7 +664,7 @@ class Polyhedron_base5(Polyhedron_base4):
         Return the deformation cone of ``self``.
 
         Let `P` be a `d`-polytope in `\RR^r` with `n` facets. The deformation
-        cone is a polyhedron in `\RR^n` who points are the right-hand side `b`
+        cone is a polyhedron in `\RR^n` whose points are the right-hand side `b`
         in `Ax\leq b` where `A` is the matrix of facet normals of ``self``, so
         that the resulting polytope has a normal fan which is a coarsening of
         the normal fan of ``self``.
@@ -707,15 +707,15 @@ class Polyhedron_base5(Polyhedron_base4):
 
         REFERENCES:
 
-            For more information, see Section 5.4 of [DLRS2010]_ and Section
-            2.2 of [ACEP2020].
+        For more information, see Section 5.4 of [DLRS2010]_ and Section
+        2.2 of [ACEP2020].
         """
         from .constructor import Polyhedron
         m = matrix([ineq.A() for ineq in self.Hrepresentation()])
         m = m.transpose()
         m_ker = m.right_kernel_matrix(basis='computed')
         gale = tuple(m_ker.columns())
-        collection = [f.ambient_H_indices() for f in self.faces(0)]
+        collection = (f.ambient_H_indices() for f in self.faces(0))
         n = len(gale)
         c = None
         for cone_indices in collection:
