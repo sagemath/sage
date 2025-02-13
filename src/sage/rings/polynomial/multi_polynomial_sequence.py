@@ -878,11 +878,11 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = PolynomialRing(GF(7),order='deglex')
+            sage: R.<x,y,z> = PolynomialRing(GF(7), order='deglex')
             sage: L = Sequence([2*x*z - y*z + 2*z^2 + 3*x - 1,
-                                2*x^2 - 3*y*z + z^2 - 3*y + 3,
-                                -x^2 - 2*x*z - 3*y*z + 3*x])
-            sage: macaulay_matrix(L, 0)
+            ....:               2*x^2 - 3*y*z + z^2 - 3*y + 3,
+            ....:               -x^2 - 2*x*z - 3*y*z + 3*x])
+            sage: L.macaulay_matrix(0)
             [0 0 2 0 6 2 3 0 0 6]
             [2 0 0 0 4 1 0 4 0 3]
             [6 0 5 0 4 0 3 0 0 0]
@@ -891,8 +891,8 @@ class PolynomialSequence_generic(Sequence_generic):
 
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: L = Sequence([x*y^2 + y^3 + x*y*z + y*z^2,
-                                x^2*y + x*y^2 + x*y*z + 3*x*z^2 + z^3,
-                                x^3 + 2*y^3 + x^2*z + 2*x*y*z + 2*z^3]
+            ....:               x^2*y + x*y^2 + x*y*z + 3*x*z^2 + z^3,
+            ....:               x^3 + 2*y^3 + x^2*z + 2*x*y*z + 2*z^3])
             sage: L.macaulay_matrix(1, homogeneous=True)
             [0 0 0 0 0 0 0 1 1 0 1 0 0 1 0]
             [0 0 0 1 1 0 0 1 0 0 0 1 0 0 0]
@@ -920,14 +920,17 @@ class PolynomialSequence_generic(Sequence_generic):
             [0 0 0 0 0 0 1 0 0]
             [0 0 0 0 1 0 0 0 0]
             [0 0 0 1 0 0 0 0 0],
-            [(z, x*y + 2*z^2), (y, x*y + 2*z^2), (x, x*y + 2*z^2), (z, y^2 + y*z), (y, y^2 + y*z), (x, y^2 + y*z), (z, x*z), (y, x*z), (x, x*z)],
+            [(z, x*y + 2*z^2), (y, x*y + 2*z^2), (x, x*y + 2*z^2), (z, y^2 + y*z),
+             (y, y^2 + y*z), (x, y^2 + y*z), (z, x*z), (y, x*z), (x, x*z)],
             [x^2*y, x*y^2, y^3, x^2*z, x*y*z, y^2*z, x*z^2, y*z^2, z^3]
             ]
 
         Example with the ``set_variables`` option::
 
             sage: R.<x,y,z> = PolynomialRing(QQ)
-            sage: L= [2*y*z - 2*z^2 - 3*x + z - 3, -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y, -2*y - z - 3]
+            sage: L = Sequence([2*y*z - 2*z^2 - 3*x + z - 3,
+            ....:               -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y,
+            ....:               -2*y - z - 3])
             sage: L.macaulay_matrix(1, set_variables=['x'], remove_zero=True, long_output=True)
             [
             [ 0  0  0  0  0  0  0  0  0  2 -2 -3  0  1 -3]
@@ -937,7 +940,9 @@ class PolynomialSequence_generic(Sequence_generic):
             [ 0  0  0  0  0  0  0  0  0  0  0  0 -2 -1 -3]
             [ 0  0  0  0  0  0 -2  0 -1  0  0 -3  0  0  0]
             [-2  0 -1  0  0 -3  0  0  0  0  0  0  0  0  0],
-            [(1, 2*y*z - 2*z^2 - 3*x + z - 3), (x, 2*y*z - 2*z^2 - 3*x + z - 3), (1, -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y), (x, -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y), (1, -2*y - z - 3), (x, -2*y - z - 3), (x^2, -2*y - z - 3)],
+            [(1, 2*y*z - 2*z^2 - 3*x + z - 3), (x, 2*y*z - 2*z^2 - 3*x + z - 3),
+             (1, -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y), (x, -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y),
+             (1, -2*y - z - 3), (x, -2*y - z - 3), (x^2, -2*y - z - 3)],
             [x^2*y, x*y^2, x^2*z, x*y*z, x*z^2, x^2, x*y, y^2, x*z, y*z, z^2, x, y, z, 1]
             ]
 
@@ -972,13 +977,14 @@ class PolynomialSequence_generic(Sequence_generic):
                     augmented_system += [(mon, poly) for mon in R.monomials_of_degree(deg)]
 
         if remove_zero:
-            monomials_sys = self.monomials()
+            monomials_sys = list(set(sum(((mon*poly).monomials() for mon, poly in augmented_system), [])))
         else:
             if homogeneous :
                 monomials_sys = S.monomials_of_degree(degree_system+degree)
             else:
                 monomials_sys = sum((S.monomials_of_degree(i) for i in range(degree_system + degree + 1)), [])
 
+        monomials_sys = list(monomials_sys)
         monomials_sys.sort(reverse=True)
         macaulay = matrix(F, [[(mon*poly).monomial_coefficient(m) for m in monomials_sys] for mon, poly in augmented_system])
 
