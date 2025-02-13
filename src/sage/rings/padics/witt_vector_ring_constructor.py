@@ -4,20 +4,20 @@ Constructor for Witt vector rings
 This module provides the function :func:`WittVectorRing`, which constructs
 rings of Witt vectors with coefficients in any commuatitve ring.
 """
-from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
+from sage.rings.integer import Integer
 from sage.rings.padics.witt_vector_ring import (
     WittVectorRing_base,
     WittVectorRing_char_p,
     WittVectorRing_finite_field,
 )
+from sage.rings.ring import CommutativeRing
 from sage.sets.primes import Primes
 
-_CommutativeRings = CommutativeRings()
 _Primes = Primes()
 
 
-def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
+def WittVectorRing(base_ring, prec=Integer(1), p=None, algorithm=None):
     """
     Return the appropriate Witt vector ring, depending on the input.
 
@@ -54,10 +54,10 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
         ValueError: algorithm must be one of None, 'standard',
         'p_invertible', 'finotti', 'Zq_isomorphism'
     """
-    if base_ring not in _CommutativeRings:
+    if not isinstance (base_ring, CommutativeRing):
         raise TypeError(f'{base_ring} is not a commutative ring')
 
-    if not is_Integer (prec):
+    if not isinstance (prec, Integer):
         raise TypeError(f'{prec} is not an integer')
     elif prec <= 0:
         raise ValueError(f'{prec} must be positive')
@@ -87,8 +87,7 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
             if not algorithm:
                 algorithm = 'Zq_isomorphism'
             return WittVectorRing_finite_field(
-                base_ring.field(), prec, prime, algorithm=algorithm,
-                category=_CommutativeRings)
+                base_ring.field(), prec, prime, algorithm=algorithm)
         else:
             if not algorithm:
                 algorithm = 'finotti'
@@ -96,9 +95,8 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
                 raise ValueError(
                     "The 'Zq_isomorphism' algorithm only works when the "
                     "coefficient ring is a finite field of characteristic p.")
-            return WittVectorRing_char_p(base_ring, prec, prime,
-                                      algorithm=algorithm,
-                                      category=_CommutativeRings)
+            return WittVectorRing_char_p(
+                base_ring, prec, prime, algorithm=algorithm)
     else:
         if algorithm == 'finotti':
             raise ValueError("The 'finotti' algorithm only works for "
@@ -111,8 +109,7 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
             if not algorithm:
                 algorithm = 'p_invertible'
             return WittVectorRing_base(
-                base_ring, prec, prime, algorithm='p_invertible',
-                category=_CommutativeRings)
+                base_ring, prec, prime, algorithm='p_invertible')
         else:
             if not algorithm:
                 algorithm = 'standard'
@@ -121,5 +118,4 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
                     "The 'p_invertible' algorithm only works when p is a "
                     "unit in the ring of coefficients.")
             return WittVectorRing_base(base_ring, prec, prime,
-                                          algorithm=algorithm,
-                                          category=_CommutativeRings)
+                                          algorithm=algorithm)
