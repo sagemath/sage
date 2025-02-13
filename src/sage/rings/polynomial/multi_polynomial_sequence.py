@@ -857,7 +857,7 @@ class PolynomialSequence_generic(Sequence_generic):
           when ``True``, the given system of equation this system
           must be homogeneous, and the rows of the Macaulay matrix
           are only the element L multipled by monomials, such that
-          the product is homogeneous of degree `degree`+maximum
+          the product is homogeneous of degree ``degree`` + maximum
           degree in this system.
 
         - ``set_variables`` -- boolean (default: ``None``);
