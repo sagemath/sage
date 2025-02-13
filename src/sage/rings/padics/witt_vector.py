@@ -52,19 +52,18 @@ class WittVector(CommutativeRingElement):
                 self._int_to_vector(vec, parent)
             elif isinstance(vec, WittVector):
                 if vec.parent().precision() < self.prec:
-                    raise ValueError(
-                        f'{vec} is not the correct length. Expected length to '
-                        f'at least {self.prec}.')
+                    raise ValueError(f'{vec} has not the correct length. '
+                                     'Expected length has to be at least '
+                                     f'{self.prec}.')
                 if not B.has_coerce_map_from(vec.parent().base()):
-                    raise ValueError(
-                        f'Cannot coerce an element of {vec.base()} to an '
-                        f'element of {B}.')
+                    raise ValueError('Cannot coerce an element of '
+                                     f'{vec.base()} to an element of {B}.')
                 self.vec = tuple(B(vec.vec[i]) for i in range(self.prec))
             elif isinstance(vec, tuple) or isinstance(vec, list):
                 if len(vec) < self.prec:
-                    raise ValueError(
-                        f'{vec} is not the correct length. Expected length to '
-                        f'at least {self.prec}.')
+                    raise ValueError(f'{vec} has not the correct length. '
+                                     'Expected length has to be at least '
+                                     f'{self.prec}.')
                 self.vec = tuple(B(vec[i]) for i in range(self.prec))
             else:
                 raise ValueError(f'{vec} cannot be interpreted as a Witt '
@@ -327,7 +326,8 @@ class WittVector(CommutativeRingElement):
             poly = prod_vec[i](inv_vec[1:])
             Y_i = poly.parent().gens()[i - 1]
             try:
-                inv_vec[i] = -poly.constant_coefficient() / poly.monomial_coefficient(Y_i)
+                inv_vec[i] = (-poly.constant_coefficient()
+                              / poly.monomial_coefficient(Y_i))
             except ZeroDivisionError:
                 raise ZeroDivisionError(f"Inverse of {self} does not exist.")
             try:
@@ -350,7 +350,7 @@ class WittVector(CommutativeRingElement):
         p = parent.prime
         R = parent.base()
 
-        if p == R.characteristic ():
+        if p == R.characteristic():
             self._int_to_vector_char_p(k, R)
             return
 
@@ -397,7 +397,8 @@ class WittVector(CommutativeRingElement):
         series = Z(k)
         vec_k = []
         for _ in range(self.prec):
-            # Probably slightly faster to do "series % p," but this way, temp is in F_p
+            # Probably slightly faster to do "series % p,"
+            # but this way, temp is in F_p
             temp = F(series)
             vec_k.append(R(temp))  # make sure elements of vector are in base
             series = (series - Z.teichmuller(temp)) // p

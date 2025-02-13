@@ -30,9 +30,8 @@ def _fast_char_p_power(x, n, p=None):
 
     EXAMPLES::
 
-        sage: from sage.rings.padics.witt_vector_ring import _fast_char_p_power as fpow
         sage: t = GF(1913)(33)
-        sage: fpow(t, 77)
+        sage: sage.rings.padics.witt_vector_ring._fast_char_p_power(t, 77)
         1371
     """
     if n not in ZZ:
@@ -109,15 +108,17 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
     EXAMPLES::
 
         sage: WittVectorRing(QQ,p=5)
-        Ring of truncated 5-typical Witt vectors of length 1 over Rational Field
+        Ring of truncated 5-typical Witt vectors of length 1 over Rational
+        Field
         sage: WittVectorRing(GF(3))
-        Ring of truncated 3-typical Witt vectors of length 1 over Finite Field of size 3
+        Ring of truncated 3-typical Witt vectors of length 1 over Finite Field
+        of size 3
         sage: WittVectorRing(GF(3)['t'])
-        Ring of truncated 3-typical Witt vectors of length 1 over Univariate Polynomial Ring in t
-        over Finite Field of size 3
+        Ring of truncated 3-typical Witt vectors of length 1 over Univariate
+        Polynomial Ring in t over Finite Field of size 3
         sage: WittVectorRing(Qp(7), prec=30, p=5)
-        Ring of truncated 5-typical Witt vectors of length 30 over 7-adic Field
-        with capped relative precision 20
+        Ring of truncated 5-typical Witt vectors of length 30 over 7-adic
+        Field with capped relative precision 20
 
     TESTS::
 
@@ -211,7 +212,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         EXAMPLES::
 
             sage: WittVectorRing(ZZ, p=5, prec=2)
-            Ring of truncated 5-typical Witt vectors of length 2 over Integer Ring
+            Ring of truncated 5-typical Witt vectors of length 2 over Integer
+            Ring
         """
         self.prec = prec
         self.prime = prime
@@ -236,7 +238,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
             sage: W = WittVectorRing(GF(3), p=3, prec=2)
             sage: [w for w in W]
-            [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
+            [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1),
+            (2, 2)]
         """
         for t in product(self.base(), repeat=self.prec):
             yield self(t)
@@ -248,7 +251,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         EXAMPLES::
 
             sage: WittVectorRing(QQ, p=2, prec=5)
-            Ring of truncated 2-typical Witt vectors of length 5 over Rational Field
+            Ring of truncated 2-typical Witt vectors of length 5 over Rational
+            Field
         """
         return f"Ring of truncated {self.prime}-typical Witt vectors of "\
                f"length {self.prec} over {self.base()}"
@@ -259,7 +263,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: WittVectorRing(GF(25), p=5, prec=2).has_coerce_map_from(WittVectorRing(GF(5), p=5, prec=3))
+            sage: W=WittVectorRing(GF(25), p=5,prec=2)
+            sage: W.has_coerce_map_from(WittVectorRing(GF(5), p=5, prec=3))
             True
         """
         if isinstance(S, WittVectorRing):
@@ -317,20 +322,23 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         for n in range(prec):
             s_n = x_vars[n] + y_vars[n]
             for i in range(n):
-                s_n += (x_vars[i]**(p**(n-i)) + y_vars[i]**(p**(n-i)) - self.sum_polynomials[i]**(p**(n-i))) / p**(n-i)
+                s_n += ((x_vars[i]**(p**(n-i)) + y_vars[i]**(p**(n-i))
+                        - self.sum_polynomials[i]**(p**(n-i))) / p**(n-i))
             self.sum_polynomials[n] = R(s_n)
 
         self.prod_polynomials = [x_vars[0] * y_vars[0]] + [0]*(self.prec)
         for n in range(1, prec):
             x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
             y_poly = sum([p**i * y_vars[i]**(p**(n-i)) for i in range(n+1)])
-            p_poly = sum([p**i * self.prod_polynomials[i]**(p**(n-i)) for i in range(n)])
+            p_poly = sum([p**i * self.prod_polynomials[i]**(p**(n-i))
+                         for i in range(n)])
             p_n = (x_poly*y_poly - p_poly) // p**n
             self.prod_polynomials[n] = p_n
 
         # We have to use generic here, because Singular doesn't support
         # Polynomial Rings over Polynomial Rings. For example,
-        # ``PolynomialRing(GF(5)['x'], ['X', 'Y'], implementation='singular')``
+        # ``PolynomialRing(GF(5)['x'], ['X', 'Y'],
+        #                  implementation='singular')``
         # will fail.
         S = PolynomialRing(base, x_y_vars, implementation='generic')
         for n in range(prec):
@@ -359,8 +367,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             prev_bin = 1
             for i in range(1, p**k // 2 + 1):
                 val = v_p(i)
-                # Instead of calling binomial each time, we compute the coefficients
-                # recursively. This is MUCH faster.
+                # Instead of calling binomial each time, we compute the
+                # coefficients recursively. This is MUCH faster.
                 next_bin = prev_bin * (p**k - (i-1)) // i
                 prev_bin = next_bin
                 series = R(-next_bin // p**(k-val))
@@ -391,16 +399,22 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         if len(vec) == 2:
             # Here we have to check if we've pre-computed already
             x, y = vec
-            scriptN = [[None] for _ in range(k+1)]  # each list starts with None, so that indexing matches paper
+            scriptN = [[None] for _ in range(k+1)]  # each list starts with
+            # None, so that indexing matches paper
+
             # calculate first N_t scriptN's
             for t in range(1, k+1):
                 for i in range(1, p**t):
-                    scriptN[t].append(self.binomial_table[t][i] * _fast_char_p_power(x, i) * _fast_char_p_power(y, p**t - i))
+                    scriptN[t].append(self.binomial_table[t][i]
+                                      * _fast_char_p_power(x, i)
+                                      * _fast_char_p_power(y, p**t - i))
             indexN = [p**i - 1 for i in range(k+1)]
             for t in range(2, k+1):
-                for l in range(1, t):
+                for i in range(1, t):
                     # append scriptN_{t, N_t+l}
-                    next_scriptN = self._eta_bar(scriptN[t-l][1:indexN[t-l]+t-l], l)
+                    next_scriptN = self._eta_bar(
+                        scriptN[t-i][1:indexN[t-i]+t-i], i
+                    )
                     scriptN[t].append(next_scriptN)
             return sum(scriptN[k][1:])
 
@@ -429,7 +443,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         `W(\mathbb F_q)`.
         """
         F = self.base()  # known to be finite
-        R = Zq(F.cardinality(), prec=self.prec, type='fixed-mod', modulus=F.polynomial(), names=['z'])
+        R = Zq(F.cardinality(), prec=self.prec, type='fixed-mod',
+               modulus=F.polynomial(), names=['z'])
         K = R.residue_field()
         p = self.prime
 
@@ -437,7 +452,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         witt_vector = []
         for i in range(self.prec):
             temp = K(series)
-            elem = temp.polynomial()(F.gen())  # hack to convert to F (K != F for some reason)
+            elem = temp.polynomial()(F.gen())  # hack to convert to F
+            # (K != F for some reason)
             witt_vector.append(elem**(p**i))
             series = (series - R.teichmuller(temp)) // p
         return witt_vector
@@ -448,7 +464,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         `\mathbb Z_q`.
         """
         F = self.base()
-        R = Zq(F.cardinality(), prec=self.prec, type='fixed-mod', modulus=F.polynomial(), names=['z'])
+        R = Zq(F.cardinality(), prec=self.prec, type='fixed-mod',
+               modulus=F.polynomial(), names=['z'])
         K = R.residue_field()
         p = self.prime
 
@@ -516,7 +533,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         """
         if x not in self.base():
             raise Exception(f'{x} not in {self.base()}')
-        return self.element_class(self, (x,) + tuple(0 for _ in range(self.prec-1)))
+        return self.element_class(self,
+                                  (x,) + tuple(0 for _ in range(self.prec-1)))
 
     def is_finite(self):
         """
