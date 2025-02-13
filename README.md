@@ -334,26 +334,18 @@ in the Installation Guide.
 11. Optional, but highly recommended: Set some environment variables to
     customize the build.
 
-    For example, the `MAKE` environment variable controls whether to
-    run several jobs in parallel.  On a machine with 4 processors, say,
-    typing `export MAKE="make -j4"` will configure the build script to
-    perform a parallel compilation of Sage using 4 jobs. On some
-    powerful machines, you might even consider `-j16`, as building with
-    more jobs than CPU cores can speed things up further.
+    The `MAKEFLAGS` variable controls whether to run several jobs in parallel.
+    To saturate all the execution threads of your CPU, we recommend to run
+    `export MAKEFLAGS="-j$(nproc) -l$(nproc).5"` if you are on Linux, and
+    `export MAKEFLAGS="-j$(sysctl -n hw.ncpu) -l$(sysctl -n hw.ncpu).5"` if you
+    are on macOS.
 
-    Alternatively, the `MAKEFLAGS` environment variable can be used.
-    In this case, only provide the flag itself, for example
-    `export MAKEFLAGS="-j4"`.
-
-    Note that the compilation may nonetheless uses a different number of
-    threads, because sometimes `ninja` is used.
-    Unfortunately, [there is no way to control number of jobs `ninja` uses
-    from environment variables](https://github.com/ninja-build/ninja/issues/1482).
-    See also https://github.com/sagemath/sage/issues/38950.
-
-    If the [Meson build system](https://doc-release--sagemath.netlify.app/html/en/installation/meson)
-    is used, the number of jobs running in parallel passed to `meson compile` will be respected,
-    because everything are managed by `ninja`.
+    Note that the compilation may nonetheless use a different number of
+    processes, e.g., for parts that are built with `ninja` which automatically
+    decides on the amount of parallelity to use. In practice, you might
+    therefore see twice as many processes during the build process than your
+    CPU has execution threads. Unless your system is low on RAM, this should
+    not affect the time the compilation takes substantially.
 
     To reduce the terminal output during the build, type `export V=0`.
     (`V` stands for "verbosity".)
