@@ -4417,14 +4417,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = random_matrix(ZZ, 2000, 2000)
             sage: B = random_matrix(ZZ, 2000, 2000)
-            sage: t0 = walltime()
-            sage: alarm(2); A._solve_iml(B)  # long time
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
-            sage: t = walltime(t0)
-            sage: t < 10 or t
-            True
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_iml(B)
 
         ALGORITHM: Uses IML.
 
@@ -4581,14 +4575,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = random_matrix(ZZ, 2000, 2000)
             sage: B = random_matrix(ZZ, 2000, 2000)
-            sage: t0 = walltime()
-            sage: alarm(2); A._solve_flint(B)  # long time
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
-            sage: t = walltime(t0)
-            sage: t < 10 or t
-            True
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_flint(B)
 
         AUTHORS:
 

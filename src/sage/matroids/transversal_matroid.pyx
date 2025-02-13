@@ -668,7 +668,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             labels.append(l)
         return TransversalMatroid(sets, groundset=self.groundset(), set_labels=labels)
 
-    cpdef transversal_extension(self, element=None, newset=False, sets=[]):
+    cpdef transversal_extension(self, element=None, newset=False, sets=None):
         r"""
         Return a :class:`TransversalMatroid` extended by an element.
 
@@ -751,6 +751,8 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             Transversal matroid of rank 3 on 5 elements, with 3 sets
             sage: Ne = N.transversal_extension(element='f', sets=['s2'])
         """
+        if sets is None:
+            sets = []
         cdef set parsed_sets = set(sets)
         if element is None:
             element = newlabel(self._groundset)
@@ -781,17 +783,17 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             else:
                 new_sets.append(s)
 
+        groundset = self._groundset.union([element])
         if newset:
             if newset is True:
-                newset = newlabel(self._groundset.union(labels))
+                newset = newlabel(groundset.union(labels))
             new_sets.append([element])
             labels = list(labels)  # Make a shallow copy since we mutate it
             labels.append(newset)
 
-        groundset = self._groundset.union([element])
         return TransversalMatroid(new_sets, groundset, labels)
 
-    def transversal_extensions(self, element=None, sets=[]):
+    def transversal_extensions(self, element=None, sets=None):
         r"""
         Return an iterator of extensions based on the transversal presentation.
 
@@ -829,7 +831,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             raise ValueError("cannot extend by element already in groundset")
 
         labels = self._set_labels_input
-        if not sets:
+        if sets is None:
             sets = labels
         elif not set(sets).issubset(labels):
             raise ValueError("sets do not match presentation")
