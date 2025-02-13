@@ -332,6 +332,12 @@ class FiniteWords(AbstractLanguage):
         sage: W = FiniteWords('ab')
         sage: W
         Finite words over {'a', 'b'}
+
+    TESTS::
+
+        sage: TestSuite(FiniteWords('ab')).run()
+        sage: TestSuite(FiniteWords([])).run()
+        sage: TestSuite(FiniteWords(['a'])).run()
     """
 
     def __init__(self, alphabet=None, category=None):
@@ -922,6 +928,8 @@ class FiniteWords(AbstractLanguage):
         except (TypeError, ValueError, AttributeError, NotImplementedError):
             return self([])
 
+        if len(some_letters) == 0:
+            return self([])
         if len(some_letters) == 1:
             return self([some_letters[0]] * 3)
 
