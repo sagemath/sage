@@ -68,12 +68,6 @@ environment for Sage development.
 
 Here we assume that you are using a git checkout.
 
-- Optionally, set the build parallelism for the Sage library. Use
-  whatever the meaningful value for your machine is - no more than
-  the number of cores::
-
-    $ export SAGE_NUM_THREADS=24
-
 - Create and activate a new conda environment with the dependencies of Sage
   and a few additional developer tools:
 
