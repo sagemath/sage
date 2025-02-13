@@ -470,54 +470,6 @@ cdef class Ring(ParentWithGens):
             return x
         return self._one_element
 
-    def is_field(self, proof=True):
-        """
-        Return ``True`` if this ring is a field.
-
-        INPUT:
-
-        - ``proof`` -- boolean (default: ``True``); determines what to do in
-          unknown cases
-
-        ALGORITHM:
-
-        If the parameter ``proof`` is set to ``True``, the returned value is
-        correct but the method might throw an error.  Otherwise, if it is set
-        to ``False``, the method returns ``True`` if it can establish that
-        ``self`` is a field and ``False`` otherwise.
-
-        EXAMPLES::
-
-            sage: QQ.is_field()
-            True
-            sage: GF(9, 'a').is_field()                                                 # needs sage.rings.finite_rings
-            True
-            sage: ZZ.is_field()
-            False
-            sage: QQ['x'].is_field()
-            False
-            sage: Frac(QQ['x']).is_field()
-            True
-
-        This illustrates the use of the ``proof`` parameter::
-
-            sage: R.<a,b> = QQ[]
-            sage: S.<x,y> = R.quo((b^3))                                                # needs sage.libs.singular
-            sage: S.is_field(proof=True)                                                # needs sage.libs.singular
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-            sage: S.is_field(proof=False)                                               # needs sage.libs.singular
-            False
-        """
-        if self.is_zero():
-            return False
-
-        if proof:
-            raise NotImplementedError("No way to prove that %s is an integral domain!" % self)
-        else:
-            return False
-
     def order(self):
         """
         The number of elements of ``self``.
@@ -978,17 +930,6 @@ cdef class Field(CommutativeRing):
             True
         """
         return self
-
-    def is_field(self, proof=True):
-        """
-        Return ``True`` since this is a field.
-
-        EXAMPLES::
-
-            sage: Frac(ZZ['x,y']).is_field()
-            True
-        """
-        return True
 
     def algebraic_closure(self):
         """
