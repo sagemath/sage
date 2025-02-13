@@ -58,8 +58,8 @@ environment for Sage development.
 Here we assume that you are using a git checkout.
 
 - Create and activate a new conda environment with the dependencies of Sage
-  and a few additional developer tools; if you are not on the most common types
-  of Linux, replace ``linux`` accordingly:
+  and a few additional developer tools; if you are not on a Linux that runs an x86_64 compatible CPU,
+  replace ``linux`` accordingly:
 
 .. code-block:: shell
 
