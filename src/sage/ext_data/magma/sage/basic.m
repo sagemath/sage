@@ -155,7 +155,7 @@ intrinsic Sage(X::RngPad) -> MonStgElt, BoolElt
     if Type(prec) eq Infty then
       return Sprintf("Zp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(prec), false;
     else
-      return Sprintf("Zp(%o, %o, 'capped-rel')", Sage(Prime(X)), Sage(prec)), false;
+      return Sprintf("Zp(%o, %o, 'capped-abs')", Sage(Prime(X)), Sage(prec)), false;
     end if;
 end intrinsic;
 
