@@ -4227,43 +4227,30 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # check modulus dimension
         if row_wise and mat.dimensions() != (n, n):
-            raise ValueError("order length should be the column dimension")
+            raise ValueError("modulus matrix dimensions must be the column dimension of self")
         elif (not row_wise) and mat.dimensions() != (m, m):
-            raise ValueError("order length should be the row dimension")
+            raise ValueError("modulus matrix dimensions must be the row dimension of self")
 
-        # compute approximant basis
-        # if required, normalize it into shifted Popov form
+        # compute extended shift for kernel basis computation
+        # -> for correctness, the constraint on the added part is that it
+        # must have maximum entry at most min(shifts)
+        min_shift = min(shifts)
         if row_wise:
-            P,rdeg = self._approximant_basis_iterative(order, shifts)
-            if normal_form:
-                # compute the list "- pivot degree"
-                # (since weak Popov, pivot degree is rdeg-shifts entrywise)
-                # Note: -deg(P[i,i]) = shifts[i] - rdeg[i]
-                degree_shifts = [shifts[i] - rdeg[i] for i in range(m)]
-                # compute approximant basis with that list as shifts
-                P,rdeg = self._approximant_basis_iterative(order,
-                        degree_shifts)
-                # left-multiply by inverse of leading matrix
-                lmat = P.leading_matrix(shifts=degree_shifts)
-                P = lmat.inverse() * P
-        else:
-            P,rdeg = self.transpose()._approximant_basis_iterative(order,
-                    shifts)
-            if normal_form:
-                # compute the list "- pivot degree"
-                # (since weak Popov, pivot degree is rdeg-shifts entrywise)
-                degree_shifts = [shifts[i] - rdeg[i] for i in range(n)]
-                # compute approximant basis with that list as shifts
-                P, rdeg = self.transpose()._approximant_basis_iterative(
-                    order, degree_shifts)
-                P = P.transpose()
-                # right-multiply by inverse of leading matrix
-                lmat = P.leading_matrix(shifts=degree_shifts, row_wise=False)
-                P = P * lmat.inverse()
-            else:
-                P = P.transpose()
+            extended_shifts = [s - min_shift for s in shifts] + [0]*n
+        else
+            extended_shifts = [s - min_shift for s in shifts] + [0]*m
 
-        return P
+        # build matrix for kernel computation
+        if row_wise:
+            F = matrix.block([[self],[mat]])
+        else:
+            F = matrix.block([[self, mat]])
+
+        # compute shifted weak Popov kernel basis
+        K = A.minimal_kernel_basis(shifts=extended_shifts, normal_form=normal_form, row_wise=row_wise)
+
+        # extract sought basis and return
+        return K[:m,:m]
 
 
     def _basis_completion_via_reversed_approx(self):
