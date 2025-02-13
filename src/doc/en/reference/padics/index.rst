@@ -42,7 +42,6 @@
    sage/rings/padics/common_conversion
    sage/rings/padics/morphism
 
-   sage/rings/padics/witt_vector_ring_constructor
    sage/rings/padics/witt_vector_ring
    sage/rings/padics/witt_vector
 

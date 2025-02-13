@@ -47,7 +47,6 @@ py.install_sources(
   'tests.py',
   'tutorial.py',
   'unramified_extension_generic.py',
-  'witt_vector_ring_constructor.py',
   'witt_vector_ring.py',
   'witt_vector.py',
   subdir: 'sage/rings/padics',

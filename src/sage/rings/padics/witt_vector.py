@@ -1,8 +1,10 @@
-"""
+r"""
 Witt vectors
+
+Implementation of the class :class:`WittVector` of truncated Witt vectors.
 """
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
 from sage.rings.padics.factory import Zp
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import CommutativeRingElement
@@ -10,6 +12,9 @@ from sage.structure.richcmp import op_EQ, op_NE
 
 
 class WittVector(CommutativeRingElement):
+    """
+    Base class for truncated Witt vectors.
+    """
     def __init__(self, parent, vec=None):
         """
         Common class for all kinds of Witt vectors.
@@ -43,7 +48,7 @@ class WittVector(CommutativeRingElement):
         self.prec = parent.precision()
         B = parent.base()
         if vec is not None:
-            if vec in ZZ:
+            if isinstance(vec, int) or isinstance(vec, Integer):
                 self._int_to_vector(vec, parent)
             elif isinstance(vec, WittVector):
                 if vec.parent().precision() < self.prec:
@@ -55,12 +60,15 @@ class WittVector(CommutativeRingElement):
                         f'Cannot coerce an element of {vec.base()} to an '
                         f'element of {B}.')
                 self.vec = tuple(B(vec.vec[i]) for i in range(self.prec))
-            else:
+            elif isinstance(vec, tuple) or isinstance(vec, list):
                 if len(vec) < self.prec:
                     raise ValueError(
                         f'{vec} is not the correct length. Expected length to '
                         f'at least {self.prec}.')
                 self.vec = tuple(B(vec[i]) for i in range(self.prec))
+            else:
+                raise ValueError(f'{vec} cannot be interpreted as a Witt '
+                                 'vector.')
         else:
             self.vec = (B(0) for i in range(self.prec))
         CommutativeRingElement.__init__(self, parent)
@@ -149,7 +157,7 @@ class WittVector(CommutativeRingElement):
             for n in range(prec):
                 G_n = [x[n], y[n]]
                 for i in range(n):
-                    G_n.append(P.eta_bar(G[i], n - i))
+                    G_n.append(P._eta_bar(G[i], n - i))
                 G.append(G_n)
             sum_vec = tuple(sum(G[i]) for i in range(prec))
             return C(P, vec=sum_vec)
@@ -217,7 +225,7 @@ class WittVector(CommutativeRingElement):
                 G_n.extend(_fcppow(x[i], p**(n - i)) * _fcppow(y[n - i], p**i)
                            for i in range(1, n))
                 for i in range(n):
-                    G_n.append(P.eta_bar(G[i], n - i))
+                    G_n.append(P._eta_bar(G[i], n - i))
                 G.append(G_n)
             prod_vec = tuple(sum(G[i]) for i in range(prec))
             return C(P, vec=prod_vec)
@@ -312,7 +320,7 @@ class WittVector(CommutativeRingElement):
         inv_vec = list((self.vec[0]**-1,) + poly_ring.gens())
         # We'll fill this in one-by-one
 
-        from sage.rings.padics.witt_vector_ring_constructor import WittVectorRing
+        from sage.rings.padics.witt_vector_ring import WittVectorRing
         W = WittVectorRing(poly_ring, p=P.prime, prec=P.prec)
         prod_vec = (W(self.vec) * W(inv_vec)).vec
         for i in range(1, self.prec):
@@ -330,6 +338,15 @@ class WittVector(CommutativeRingElement):
         return C(P, vec=inv_vec)
 
     def _int_to_vector(self, k, parent):
+        """
+        Return the image of ``k`` in ``self`` with coefficients in ``parent``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(ZZ, p=23, prec=2)
+            sage: W(-123)
+            (-123, 50826444131062300759362981690761165250849615528)
+        """
         p = parent.prime
         R = parent.base()
 
@@ -363,6 +380,16 @@ class WittVector(CommutativeRingElement):
         self.vec = tuple([R(x) for x in vec_k])
 
     def _int_to_vector_char_p(self, k, R):
+        """
+        Return the image of ``k`` in ``self`` with coefficients in ``parent``
+        which has characteristic `p`.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(13), p=13, prec=3)
+            sage: W(11)
+            (11, 7, 4)
+        """
         p = R.characteristic()
         Z = Zp(p, prec=self.prec+1, type='fixed-mod')
         F = GF(p)

@@ -1,9 +1,13 @@
-"""
-Witt vector rings: implementation
+r"""
+Witt vector rings
+
+This module provides the class :class:`WittVectorRing` of rings of truncated
+Witt vectors.
 """
 from itertools import product
 
-from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.fields import Fields
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.factory import Zp, Zq
 from sage.rings.padics.witt_vector import WittVector
@@ -76,16 +80,139 @@ def _fast_char_p_power(x, n, p=None):
     return x_to_the_n
 
 
-_fcppow = _fast_char_p_power
+class WittVectorRing(CommutativeRing, UniqueRepresentation):
+    r"""
+    Return the appropriate p-typical truncated Witt vector ring, depending on
+    the input.
 
+    INPUT::
 
-class WittVectorRing_base(CommutativeRing, UniqueRepresentation):
+    -- ``base_ring`` -- commutative ring of coefficients
 
+    -- ``prec`` -- integer (default: ``1``), length of the truncated Witt
+       vectors in the ring
+
+    -- ``p`` -- prime (default: ``None``) number; when it is not set, it
+       defaults to the characteristic of ``base_ring`` when it is prime.
+
+    -- ``algorithm`` -- the name of the algorithm to use for the ring laws
+       (default: ``None``); must be either ``None``, ``standard``,
+       ``p_invertible``, ``finotti`` or ``Zq_isomorphism``. When it is not
+       set, the most adequate algorithm is chosen. The ``standard`` algorithm
+       is the schoolbook algorithm, the ``p_invertible`` is the same one in
+       the case where ``p`` is invertible in ``base_ring`` and uses some
+       optimisations in that setting, ``finotti`` is Finotti's algorithm which
+       can be used when ``base_ring`` has characteristic ``p``, and
+       ``Zq_isomorphism`` computes the ring laws in `\mathbb Z_q` when
+       ``base_ring`` is `\mathbb F_q` for `q` a power of ``p``.
+
+    EXAMPLES::
+
+        sage: WittVectorRing(QQ,p=5)
+        Ring of truncated 5-typical Witt vectors of length 1 over Rational Field
+        sage: WittVectorRing(GF(3))
+        Ring of truncated 3-typical Witt vectors of length 1 over Finite Field of size 3
+        sage: WittVectorRing(GF(3)['t'])
+        Ring of truncated 3-typical Witt vectors of length 1 over Univariate Polynomial Ring in t
+        over Finite Field of size 3
+        sage: WittVectorRing(Qp(7), prec=30, p=5)
+        Ring of truncated 5-typical Witt vectors of length 30 over 7-adic Field
+        with capped relative precision 20
+
+    TESTS::
+
+        sage: A = SymmetricGroup(3).algebra(QQ)
+        sage: WittVectorRing(A)
+        Traceback (most recent call last):
+        ...
+        TypeError: Symmetric group algebra of order 3 over Rational Field
+        is not a commutative ring
+        sage: WittVectorRing(QQ)
+        Traceback (most recent call last):
+        ...
+        ValueError: Rational Field has non-prime characteristic
+        and no prime was supplied
+
+        sage: WittVectorRing(QQ, p=5, algorithm='moon')
+        Traceback (most recent call last):
+        ...
+        ValueError: algorithm must be one of None, 'standard',
+        'p_invertible', 'finotti', 'Zq_isomorphism'
+    """
     Element = WittVector
 
-    def __init__(
-            self, base_ring, prec, prime, algorithm='standard',
-            category=None):
+    def __classcall_private__(cls, base_ring, prec=1, p=None, algorithm=None):
+        r"""
+        Construct the ring of truncated Witt vectors from the parameters.
+        """
+        if not isinstance(base_ring, CommutativeRing):
+            raise TypeError(f'{base_ring} is not a commutative ring')
+
+        if not (isinstance(prec, int) or isinstance(prec, Integer)):
+            raise TypeError(f'{prec} is not an integer')
+        elif prec <= 0:
+            raise ValueError(f'{prec} must be positive')
+
+        char = base_ring.characteristic()
+        if p is None:
+            if char not in Primes():
+                raise ValueError(f'{base_ring} has non-prime characteristic '
+                                 'and no prime was supplied')
+            else:
+                prime = char
+        else:
+            prime = p
+
+        if algorithm not in [None, 'standard', 'p_invertible', 'finotti',
+                             'Zq_isomorphism']:
+            raise ValueError("algorithm must be one of None, 'standard', "
+                             "'p_invertible', 'finotti', 'Zq_isomorphism'")
+
+        if prime == char:
+            if algorithm == 'p_invertible':
+                raise ValueError("The 'p_invertible' algorithm only works "
+                                 "when p is a unit in the ring of "
+                                 "coefficients.")
+            elif base_ring in Fields().Finite():
+                if algorithm is None:
+                    algorithm = 'Zq_isomorphism'
+            else:
+                if algorithm is None:
+                    algorithm = 'finotti'
+                elif algorithm == 'Zq_isomorphism':
+                    raise ValueError("The 'Zq_isomorphism' algorithm only "
+                                     "works when the coefficient ring is a "
+                                     "finite field of characteristic p.")
+        else:
+            if algorithm == 'finotti':
+                raise ValueError("The 'finotti' algorithm only works for "
+                                 "coefficients rings of characteristic p.")
+            elif algorithm == 'Zq_isomorphism':
+                raise ValueError("The 'Zq_isomorphism' algorithm only works "
+                                 "when the coefficient ring is a finite "
+                                 "field of characteristic p.")
+            elif base_ring(prime).is_unit():
+                if algorithm is None:
+                    algorithm = 'p_invertible'
+            else:
+                if algorithm is None:
+                    algorithm = 'standard'
+                elif algorithm == 'p_invertible':
+                    raise ValueError("The 'p_invertible' algorithm only "
+                                     "works when p is a unit in the ring of "
+                                     "coefficients.")
+
+        return cls.__classcall__(cls, base_ring, prec, prime, algorithm)
+
+    def __init__(self, base_ring, prec, prime, algorithm):
+        r"""
+        Initialises ``self``.
+
+        EXAMPLES::
+
+            sage: WittVectorRing(ZZ, p=5, prec=2)
+            Ring of truncated 5-typical Witt vectors of length 2 over Integer Ring
+        """
         self.prec = prec
         self.prime = prime
 
@@ -96,29 +223,65 @@ class WittVectorRing_base(CommutativeRing, UniqueRepresentation):
         if algorithm == 'standard':
             self._generate_sum_and_product_polynomials(base_ring)
 
-        if category is None:
-            category = CommutativeRings()
-        CommutativeRing.__init__(self, base_ring, category=category)
+        elif algorithm == 'finotti':
+            self._generate_binomial_table()
+
+        CommutativeRing.__init__(self, base_ring)
 
     def __iter__(self):
+        """
+        Iterator for truncated Witt vector rings.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(3), p=3, prec=2)
+            sage: [w for w in W]
+            [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
+        """
         for t in product(self.base(), repeat=self.prec):
             yield self(t)
 
     def _repr_(self):
+        """
+        Return a string representation of the ring.
+
+        EXAMPLES::
+
+            sage: WittVectorRing(QQ, p=2, prec=5)
+            Ring of truncated 2-typical Witt vectors of length 5 over Rational Field
+        """
         return f"Ring of truncated {self.prime}-typical Witt vectors of "\
                f"length {self.prec} over {self.base()}"
 
     def _coerce_map_from_(self, S):
-        if isinstance(S, WittVectorRing_base):
+        """"
+        Check whether there is a coerce map from ``S``.
+
+        EXAMPLES::
+
+            sage: WittVectorRing(GF(25), p=5, prec=2).has_coerce_map_from(WittVectorRing(GF(5), p=5, prec=3))
+            True
+        """
+        if isinstance(S, WittVectorRing):
             return (
                 S.precision() >= self.precision()
                 and self.base().has_coerce_map_from(S.base()))
         return S is ZZ
 
-    def _element_constructor_(self, x):
-        return self.element_class(self, x)
-
     def _generate_sum_and_product_polynomials(self, base):
+        """
+        Generates the sum and product polynomials defining the ring laws of
+        truncated Witt vectors for the ``standard`` algorithm.
+
+        EXAMPLES::
+
+            sage: P.<X1,X2,Y1,Y2>=PolynomialRing(GF(3),'X1,X2,Y1,Y2')
+            sage: W=WittVectorRing(P, p=3, prec=2)
+            sage: W([X1,X2])+W([Y1,Y2])
+            (X1 + Y1, -X1^2*Y1 - X1*Y1^2 + X2 + Y2)
+            sage: W([X1,X2])*W([Y1,Y2])
+            (X1*Y1, X2*Y1^3 + X1^3*Y2)
+        """
         p = self.prime
         prec = self.prec
         x_var_names = [f'X{i}' for i in range(prec)]
@@ -174,47 +337,17 @@ class WittVectorRing_base(CommutativeRing, UniqueRepresentation):
             self.sum_polynomials[n] = S(self.sum_polynomials[n])
             self.prod_polynomials[n] = S(self.prod_polynomials[n])
 
-    def characteristic(self):
-        p = self.prime
-        if self.base()(p).is_unit():
-            # If p is invertible, W_n(R) is isomorphic to R^n.
-            return self.base().characteristic()
+    def _generate_binomial_table(self):
+        """
+        Generates a table of binomial coefficients.
 
-        # This is Jacob Dennerlein's Corollary 3.3. in "Computational
-        # Aspects of Mixed Characteristic Witt Vectors" (preprint)
-        return p**(self.prec-1) * self.base().characteristic()
+        TODO::
 
-    def precision(self):
-        return self.prec
-
-    def random_element(self):
-        return self.element_class(self, tuple(self.base().random_element()
-                                              for _ in range(self.prec)))
-
-    def teichmuller_lift(self, x):
-        if x not in self.base():
-            raise Exception(f'{x} not in {self.base()}')
-        return self.element_class(self, (x,) + tuple(0 for _ in range(self.prec-1)))
-
-    def is_finite(self):
-        return self.base().is_finite()
-
-    def cardinality(self):
-        return self.base().cardinality()**(self.prec)
-
-
-class WittVectorRing_char_p(WittVectorRing_base):
-
-    def __init__(
-            self, base_ring, prec, prime, algorithm='standard',
-            category=None):
-        WittVectorRing_base.__init__(self, base_ring, prec, prime,
-                               algorithm=algorithm, category=category)
-
-        if algorithm == 'finotti':
-            self.generate_binomial_table()
-
-    def generate_binomial_table(self):
+            Suprisingly, it seems that no function in SageMath does this;
+            ``arith.misc.binomial`` and ``combinat.sloane_functions.A000984``
+            only compute one value at a time, so it is not efficient. Ideally,
+            this should be implemented elsewhere and in a low-level language.
+        """
         import numpy as np
         p = self.prime
         R = Zp(p, prec=self.prec+1, type='fixed-mod')
@@ -239,7 +372,10 @@ class WittVectorRing_char_p(WittVectorRing_base):
             table.append(row)
         self.binomial_table = table
 
-    def eta_bar(self, vec, eta_index):
+    def _eta_bar(self, vec, eta_index):
+        r"""
+        Generate the `\eta_i` for ``finotti``'s algorithm.
+        """
         vec = tuple(x for x in vec if x != 0)  # strip zeroes
 
         # special cases
@@ -259,12 +395,12 @@ class WittVectorRing_char_p(WittVectorRing_base):
             # calculate first N_t scriptN's
             for t in range(1, k+1):
                 for i in range(1, p**t):
-                    scriptN[t].append(self.binomial_table[t][i] * _fcppow(x, i) * _fcppow(y, p**t - i))
+                    scriptN[t].append(self.binomial_table[t][i] * _fast_char_p_power(x, i) * _fast_char_p_power(y, p**t - i))
             indexN = [p**i - 1 for i in range(k+1)]
             for t in range(2, k+1):
                 for l in range(1, t):
                     # append scriptN_{t, N_t+l}
-                    next_scriptN = self.eta_bar(scriptN[t-l][1:indexN[t-l]+t-l], l)
+                    next_scriptN = self._eta_bar(scriptN[t-l][1:indexN[t-l]+t-l], l)
                     scriptN[t].append(next_scriptN)
             return sum(scriptN[k][1:])
 
@@ -278,25 +414,20 @@ class WittVectorRing_char_p(WittVectorRing_base):
             s_2 = sum(v_2)
             scriptM = [[] for _ in range(k+1)]
             for t in range(1, k+1):
-                scriptM[t].append(self.eta_bar(v_1, t))
-                scriptM[t].append(self.eta_bar(v_2, t))
-                scriptM[t].append(self.eta_bar((s_1, s_2), t))
+                scriptM[t].append(self._eta_bar(v_1, t))
+                scriptM[t].append(self._eta_bar(v_2, t))
+                scriptM[t].append(self._eta_bar((s_1, s_2), t))
             for t in range(2, k+1):
                 for s in range(1, t):
-                    result = self.eta_bar(scriptM[t-s], s)
+                    result = self._eta_bar(scriptM[t-s], s)
                     scriptM[t].append(result)
             return sum(scriptM[k])
 
-
-class WittVectorRing_finite_field(WittVectorRing_char_p):
-    def __init__(
-            self, base_ring, prec, prime, algorithm='Zq_isomorphism',
-            category=None):
-        WittVectorRing_char_p.__init__(
-            self, base_ring, prec, prime, algorithm=algorithm,
-            category=category)
-
     def _series_to_vector(self, series):
+        r"""
+        Computes the canonical bijection from `\mathbb Z_q` to
+        `W(\mathbb F_q)`.
+        """
         F = self.base()  # known to be finite
         R = Zq(F.cardinality(), prec=self.prec, type='fixed-mod', modulus=F.polynomial(), names=['z'])
         K = R.residue_field()
@@ -312,6 +443,10 @@ class WittVectorRing_finite_field(WittVectorRing_char_p):
         return witt_vector
 
     def _vector_to_series(self, vec):
+        r"""
+        Computes the canonical bijection from `W(\mathbb F_q)` to
+        `\mathbb Z_q`.
+        """
         F = self.base()
         R = Zq(F.cardinality(), prec=self.prec, type='fixed-mod', modulus=F.polynomial(), names=['z'])
         K = R.residue_field()
@@ -325,3 +460,84 @@ class WittVectorRing_finite_field(WittVectorRing_char_p):
 
             series += p**i * R.teichmuller(elem)
         return series
+
+    def characteristic(self):
+        """
+        Return the characteristic of ``self``.
+
+        EXAMPLES::
+
+            WittVectorRing(GF(25), p=5, prec=3).characteristic()
+            125
+            sage: WittVectorRing(ZZ, p=2, prec=4).characteristic()
+            0
+            sage: WittVectorRing(Integers(18), p=3, prec=3).characteristic()
+            162
+        """
+        p = self.prime
+        if self.base()(p).is_unit():
+            # If p is invertible, W_n(R) is isomorphic to R^n.
+            return self.base().characteristic()
+
+        # This is Jacob Dennerlein's Corollary 3.3. in "Computational
+        # Aspects of Mixed Characteristic Witt Vectors" (preprint)
+        return p**(self.prec-1) * self.base().characteristic()
+
+    def precision(self):
+        """
+        Return the length of the truncated Witt vectors in ``length``.
+
+        EXAMPLES::
+            sage: WittVectorRing(GF(9), p=3, prec=3).precision()
+            3
+        """
+        return self.prec
+
+    def random_element(self):
+        """
+        Return the length of the truncated Witt vectors in ``length``.
+
+        EXAMPLES::
+            sage: WittVectorRing(GF(27), prec=2).random_element()  # random
+            (z3, 2*z3^2 + 1)
+        """
+        return self.element_class(self, tuple(self.base().random_element()
+                                              for _ in range(self.prec)))
+
+    def teichmuller_lift(self, x):
+        """
+        Return the Teichmüller lift of ``x`` in ``self``. This lift is
+        sometimes known as the multiplicative lift of ``x``, in order to avoid
+        refering to a nazi mathematician.
+
+        EXAMPLES::
+            sage: WittVectorRing(GF(125), prec=2).teichmuller_lift(3)
+            (3, 0)
+        """
+        if x not in self.base():
+            raise Exception(f'{x} not in {self.base()}')
+        return self.element_class(self, (x,) + tuple(0 for _ in range(self.prec-1)))
+
+    def is_finite(self):
+        """
+        Return whether ``self`` is a finite ring.
+
+        EXAMPLES::
+            sage: WittVectorRing(GF(23)).is_finite()
+            True
+            sage: WittVectorRing(ZZ, p=2).is_finite()
+            False
+        """
+        return self.base().is_finite()
+
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
+
+        EXAMPLES::
+            sage: WittVectorRing(GF(17), prec=2).cardinality()
+            289
+            sage: WittVectorRing(QQ, p=2).cardinality()
+            +Infinity
+        """
+        return self.base().cardinality()**(self.prec)
