@@ -86,8 +86,13 @@ on:
         default: 20000
         type: number
       logs_artifact:
+        description: 'Switch for uploading logs artifact'
         default: true
         type: boolean
+      logs_artifact_postfix:
+        description: 'Postfix (default: none) for logs artifact name'
+        default: ""
+        type: string
       #
       # Publishing to GitHub Packages
       #
@@ -143,7 +148,7 @@ jobs:
         tox_packages_factor: ${{ fromJson(inputs.tox_packages_factors) }}
     env:
       TOX_ENV:            "docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}${{ inputs.incremental && '-incremental' || '' }}"
-      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}${{ inputs.logs_artifact_postfix }}
       DOCKER_TARGETS:     ${{ inputs.docker_targets }}
       TARGETS_PRE:        ${{ inputs.targets_pre }}
       TARGETS:            ${{ inputs.targets }}

@@ -87,6 +87,7 @@ jobs:
       targets_pre: all-sage-local python3-ensure tox-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements
       tox_packages_factors: >-
           ["standard"]
+      logs_artifact_postfix: "-constraints_pkgs"
       max_parallel: 15
 
   standard-sitepackages:
@@ -125,6 +126,7 @@ jobs:
          "opensuse-tumbleweed-python3.10",
          "opensuse-tumbleweed"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      logs_artifact_postfix: "-sitepackages"
       max_parallel: 8
 
   minimal:
@@ -173,6 +175,7 @@ jobs:
       docker_targets: "with-targets-optional"
       # We remove packages starting with _, in particular package _develop
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep -v ^_))'
+      logs_artifact_postfix: "-optional"
 
   experimental:
     if: ${{ success() || failure() }}
@@ -187,3 +190,4 @@ jobs:
           ["maximal"]
       docker_targets: "with-targets-optional"
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc))'
+      logs_artifact_postfix: "-experimental"
