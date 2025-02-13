@@ -252,6 +252,14 @@ class DocTestReporter(SageObject):
             Tests run before process (pid=1234) timed out:
             Output so far...
             **********************************************************************
+
+        TESTS:
+
+        Test GitHub output format (used for GitHub Actions annotations)::
+
+            sage: DTR.controller.options.format = 'github'
+            sage: DTR._log_failure(FDS, "Timed out", "process (pid=1234) timed out", "Output so far...")
+            ::error title=Timed out,file=.../sage/doctest/reporting.py::Output so far...
         """
         log = self.controller.log
         format = self.controller.options.format

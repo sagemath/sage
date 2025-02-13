@@ -1234,6 +1234,18 @@ class SageDocTestRunner(doctest.DocTestRunner):
             Hello there!
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
+
+        TESTS:
+
+        Test GitHub output format (used for GitHub Actions annotations)::
+
+            sage: DTR.options.format = 'github'
+            sage: print(DTR._failure_header(doctests[0], ex))
+            **********************************************************************
+            ::error title=Failed example:,file=.../sage/doctest/forker.py,line=12::Failed example:
+                doctest_var = 42; doctest_var^2
+            <BLANKLINE>
+            sage: DTR.options.format = 'sage'
         """
         out = [self.DIVIDER]
         with OriginalSource(example):
