@@ -8584,7 +8584,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                         D.append(I)
             C.extend(C2)
             C2 = D
-        S = set(P)
+        S = set(self)
         if S not in C:
             C.append(S)
         return [frozenset(x) for x in C]
