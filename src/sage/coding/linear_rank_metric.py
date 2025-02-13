@@ -600,16 +600,17 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-         - ``word`` -- a vector over the ``base_field`` of ``self``.
+        - ``word`` -- a vector over the ``base_field`` of ``self``.
 
-         - ``sub_field`` -- (default: ``None``) a sub field of the
-         ``base_field`` of ``self``; if not specified, it is the prime
-         subfield `\GF{p}` of the ``base_field`` of ``self``.
+        - ``sub_field`` -- (default: ``None``) a sub field of the
+        ``base_field`` of ``self``; if not specified, it is the prime
+        subfield `\GF{p}` of the ``base_field`` of ``self``.
 
-         - ``basis`` -- (default: ``None``) a basis of ``base_field`` of
-         ``self`` as a vector space over ``sub_field``. If not specified,
-         the default basis is `1,\beta,\ldots,\beta^{m-1}`, where `\beta` is
-         the generator of the multiplicative group of `\GF{q^m}` given by Sage.
+        - ``basis`` -- (default: ``None``) a basis of ``base_field`` of
+        ``self`` as a vector space over ``sub_field``. If not specified,
+        the default basis is `1,\beta,\ldots,\beta^{m-1}`, where `\beta` is
+        the generator of the multiplicative group of `\GF{q^m}` given by Sage.
+
 
         EXAMPLES::
 
