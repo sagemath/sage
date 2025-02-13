@@ -163,6 +163,11 @@ class HomsetsCategory(FunctorialConstructionCategory, CategoryWithParameters):
 
             - :meth:`CategoryWithParameters`
             - :meth:`CategoryWithParameters._make_named_class_key`
+
+        TESTS::
+
+            sage: ModulesWithBasis(ZZ).Homsets()._make_named_class_key('parent_class')
+            <class 'sage.categories.modules_with_basis.ModulesWithBasis.parent_class'>
         """
         return getattr(self.base_category(), name)
 
