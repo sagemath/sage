@@ -104,20 +104,27 @@ After editing any Cython files, rebuild the Sage library using::
 
 .. code-block:: shell
 
-  $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable src
+    $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable src
 
 In order to update the conda environment later, you can run::
 
 .. code-block:: shell
 
-  $ conda env update --file environment-3.12-linux.yml
+    $ conda env update --file environment-3.12-linux.yml
+
+If you want to use Jupyter notebooks, you need to install JupyterLab and the SageMath kernel::
+
+.. code-block:: shell
+
+    $ conda install jupyterlab
+    $ sage -c 'from sage.repl.ipython_kernel.install import SageKernelSpec; SageKernelSpec.update(prefix=sys.prefix)'
 
 To build the documentation, use::
 
 .. code-block:: shell
 
-  $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
-  $ sage --docbuild all html
+    $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
+    $ sage --docbuild all html
 
 .. NOTE::
 
