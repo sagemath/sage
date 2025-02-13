@@ -426,7 +426,6 @@ def line_graph(g, labels=True, origlabels=False):
         else:
             return G
 
-
     from sage.graphs.graph import Graph
     G = Graph()
 
