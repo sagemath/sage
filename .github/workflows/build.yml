@@ -108,7 +108,7 @@ jobs:
         with:
           # File extensions for doctests per sage.doctest.control.skipfile
           # Also src/sage/doctests/tests/ are excluded because of nodoctest file
-          # which would make sage.doctest.control.skipdir returns True
+          # which would make sage.doctest.control.skipdir return True
           files_yaml: |
             configures:
               - 'build/pkgs/*/spkg-configure.m4'
