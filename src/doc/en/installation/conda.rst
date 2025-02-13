@@ -9,17 +9,16 @@ SageMath can be installed on Linux and macOS via Conda from the
 Both the ``x86_64`` (Intel) architecture and the ``arm64``/``aarch64``
 architectures (including Apple Silicon, M1, M2, M3, M4) are supported.
 
-You will need a working Conda installation: either Miniforge (or Mambaforge),
-Miniconda or Anaconda. If you don't have one yet, we recommend installing
-`Miniforge <https://github.com/conda-forge/miniforge>`_ as
-follows. In a terminal,
+You will need a working Conda installation: either Miniforge, Miniconda or
+Anaconda. If you don't have one yet, we recommend installing `Miniforge
+<https://github.com/conda-forge/miniforge>`_ as follows. In a terminal,
 
 .. code-block:: shell
 
    $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
    $ bash Miniforge3-$(uname)-$(uname -m).sh
 
-* Miniforge (and Mambaforge) use conda-forge as the default channel.
+* Miniforge uses conda-forge as the default channel.
 
 * If you are using Miniconda or Anaconda, set it up to use conda-forge:
 
