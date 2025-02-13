@@ -26,10 +26,6 @@ Anaconda. If you don't have one yet, we recommend installing `Miniforge
 
   * Change channel priority to strict: ``conda config --set channel_priority strict``
 
-If you installed Miniforge (or Mambaforge), we recommend to use
-`mamba <https://mamba.readthedocs.io/en/latest/index.html>`_ in the following,
-which uses a faster dependency solver than ``conda``.
-
 .. _sec-installation-conda-binary:
 
 Installing all of SageMath from conda (not for development)
