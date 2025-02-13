@@ -81,7 +81,7 @@ jobs:
         run: |
           # We don't install sage_setup, so don't try to test it
           rm -R ./src/sage_setup/
-          ./sage -t --all -p4
+          ./sage -t --all -p4 --format github
 
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
