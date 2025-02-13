@@ -166,63 +166,80 @@ jobs:
           remove-docker-images: true
         continue-on-error: true
         if: inputs.free_disk_space
+
       - name: Check out SageMath
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.sage_repo }}
           ref: ${{ inputs.sage_ref }}
           fetch-depth: 10000
+
       - name: Download upstream artifact
         uses: actions/download-artifact@v4
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}
         if: inputs.upstream_artifact
+
       - name: Install test prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
           sudo apt-get clean
           df -h
+
       - name: Update Sage packages from upstream artifact
-        # Handle both the old and new location of write-dockerfile.sh,
-        # because docker.yml is a reusable workflow.
         run: |
-          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore; for a in build/bin/write-dockerfile.sh .ci/write-dockerfile.sh; do if [ -r $a ]; then echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - $a; fi; done; git diff)
+          export PATH=$(pwd)/build/bin:$PATH
+          cd upstream && bash -x update-pkgs.sh
+          # Remove any lines containing 'upstream' from .dockerignore
+          sed -i.bak '/upstream/d' .dockerignore
+          # Handle both the old and new location of write-dockerfile.sh, because docker.yml is a reusable workflow
+          for script_path in build/bin/write-dockerfile.sh .ci/write-dockerfile.sh; do
+            if [ -r "$script_path" ]; then
+              # Add 'ADD upstream upstream' before the line containing ':toolchain:' in the script
+              echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - "$script_path"
+            fi
+          done
+          # Show the changes made to the repository for review
+          git diff
         if: inputs.upstream_artifact
 
       - name: Try to login to ghcr.io
         if: inputs.docker_push_repository != ''
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
         run: |
-            TOKEN="${{ secrets.DOCKER_PKG_GITHUB_TOKEN }}"
-            if [ -z "$TOKEN" ]; then
-              TOKEN="${{ secrets.GITHUB_TOKEN }}"
-            fi
-            if echo "$TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin; then
-              echo "DOCKER_PUSH_REPOSITORY=$(echo ${{ inputs.docker_push_repository }} | tr "[:upper:]" "[:lower:]")" >> $GITHUB_ENV
-              echo "DOCKER_CONFIG_FILE=$HOME/.docker/config.json" >> $GITHUB_ENV
-            fi
+          TOKEN="${{ secrets.DOCKER_PKG_GITHUB_TOKEN }}"
+          if [ -z "$TOKEN" ]; then
+            TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          fi
+          if echo "$TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin; then
+            echo "DOCKER_PUSH_REPOSITORY=$(echo ${{ inputs.docker_push_repository }} | tr "[:upper:]" "[:lower:]")" >> $GITHUB_ENV
+            echo "DOCKER_CONFIG_FILE=$HOME/.docker/config.json" >> $GITHUB_ENV
+          fi
 
       - name: Determine Docker tags to use
         run: |
-            # This line needs to be run before the step "Merge CI fixes from sagemath/sage".
-            DOCKER_TAG="$(git describe --dirty --always)"
-            echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
-            # From the docker documentation via .ci/update-env.sh:
-            # "A tag name must be valid ASCII and may
-            # contain lowercase and uppercase letters, digits, underscores, periods and
-            # dashes. A tag name may not start with a period or a dash and may contain a
-            # maximum of 128 characters."
-            EXTRA_DOCKER_TAGS=`echo $GITHUB_REF_NAME | tr -d '[:space:]' | tr -c '[:alnum:]_.-' '-' | sed 's/^[-.]*//' | cut -c1-128`
-            shopt -s extglob
-            case "$GITHUB_REF_NAME" in
-              +([0-9]).+([0-9])?(.+([0-9])) )
-                EXTRA_DOCKER_TAGS="latest dev $EXTRA_DOCKER_TAGS";;
-              +([0-9]).+([0-9])?(.+([0-9]))?(.)@(a|alpha|b|beta|rc)+([0-9]) )
-                EXTRA_DOCKER_TAGS="dev $EXTRA_DOCKER_TAGS";;
-            esac
-            echo "EXTRA_DOCKER_TAGS=$EXTRA_DOCKER_TAGS" >> $GITHUB_ENV
+          # This line needs to be run before the step "Merge CI fixes from sagemath/sage".
+          #
+          DOCKER_TAG="$(git describe --dirty --always)"
+          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+          #
+          # From the docker documentation via .ci/update-env.sh:
+          # "A tag name must be valid ASCII and may
+          # contain lowercase and uppercase letters, digits, underscores, periods and
+          # dashes. A tag name may not start with a period or a dash and may contain a
+          # maximum of 128 characters."
+          #
+          EXTRA_DOCKER_TAGS=`echo $GITHUB_REF_NAME | tr -d '[:space:]' | tr -c '[:alnum:]_.-' '-' | sed 's/^[-.]*//' | cut -c1-128`
+          shopt -s extglob
+          case "$GITHUB_REF_NAME" in
+            +([0-9]).+([0-9])?(.+([0-9])) )
+              EXTRA_DOCKER_TAGS="latest dev $EXTRA_DOCKER_TAGS";;
+            +([0-9]).+([0-9])?(.+([0-9]))?(.)@(a|alpha|b|beta|rc)+([0-9]) )
+              EXTRA_DOCKER_TAGS="dev $EXTRA_DOCKER_TAGS";;
+          esac
+          echo "EXTRA_DOCKER_TAGS=$EXTRA_DOCKER_TAGS" >> $GITHUB_ENV
 
       - name: Merge CI fixes from sagemath/sage
         # This step needs to happen after the commit sha is put in DOCKER_TAG
@@ -237,43 +254,69 @@ jobs:
         run: |
           df -h
         if: inputs.free_disk_space
+
       - name: Configure and build Sage distribution within a Docker container
-        # The first command below is a self-destruct sequence,
-        # which preempts the GitHub Actions 6-hour job cancellation.
-        #
-        # Using "docker exec", we enter the temporary containers used by
-        # "docker build" and kill the "make" processes of the Sage distribution.
-        #
-        # The arcane "find" command is a replacement for "pkill make",
-        # which we use because pkill is not installed in the "minimal" package
-        # configuration on many platforms.
-        #
-        # The "sed" command strips away timestamps from "docker build" (buildkit)
-        # such as "#25 1211.0" at the beginning of each line. The timestamps are
-        # redundant because GH Actions provides timestamps for each line already.
-        # Stripping the timestamps from the beginnings of lines also allows
-        # GitHub Actions to recognize workflow commands such as ::error etc.
-        #
         run: |
-          (sleep ${{ inputs.timeout }}; for id in $(docker ps -q); do docker exec $id find /proc -maxdepth 2 -name cmdline -exec bash -c "grep -l [m][a][k][e] {} | cut -d/ -f3 | xargs --no-run-if-empty kill" \;; done) &
-          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=9 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=5\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed -E --unbuffered "s/^#[0-9]+ [0-9]+[.][0-9]+ //;/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+          # The first command below is a self-destruct sequence,
+          # which preempts the GitHub Actions 6-hour job cancellation.
+          #
+          # Using "docker exec", we enter the temporary containers used by
+          # "docker build" and kill the "make" processes of the Sage distribution.
+          (
+            sleep ${{ inputs.timeout }}
+            for container_id in $(docker ps -q); do
+              #
+              # The arcane "find" command is a replacement for "pkill make",
+              # which we use because pkill is not installed in the "minimal" package
+              # configuration on many platforms.
+              #
+              docker exec "$container_id" find /proc -maxdepth 2 -name cmdline \
+                -exec bash -c 'grep -l "[m][a][k][e]" {} | cut -d/ -f3 | xargs --no-run-if-empty kill' \;
+            done
+          ) &
+          # Set pipeline to fail if any command fails
+          set -o pipefail
+          #
+          EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=9 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=5\""
+          #
+          # The tox command starts to build and test Sage within a Docker container.
+          #
+          # Adter the build, the sed command strips away timestamps from
+          # "docker build" (buildkit) such as "#25 1211.0" at the beginning of
+          # each line. The timestamps are redundant because GH Actions provides
+          # timestamps for each line already. Stripping the timestamps from
+          # the beginnings of lines also allows GitHub Actions to recognize
+          # workflow commands such as ::error etc. The other sed commands
+          # annotate configuration notices/warnings/errors as GitHub
+          # ::warning/::warning/::error respectively.
+          #
+          tox -e $TOX_ENV -- $TARGETS 2>&1 | sed -E --unbuffered "
+            s/^#[0-9]+ [0-9]+[.][0-9]+ //
+            /^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|
+            /^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|
+            /^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|
+          "
+
       - name: Copy logs from the Docker image or build container
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"
           cp -r .tox/$TOX_ENV/* "artifacts/$LOGS_ARTIFACT_NAME"
           rm -rf "artifacts/$LOGS_ARTIFACT_NAME"/{bin,lib,pyvenv.cfg}
         if: always()
+
       - name: Upload logs artifact
         uses: actions/upload-artifact@v4
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}
         if: always() && inputs.logs_artifact
+
       - name: Print out logs for immediate inspection
         # and markup the output with GitHub Actions logging commands
         run: |
           .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
         if: always()
+
       - name: List Docker images
         run: |
           if [ -n "$DOCKER_PUSH_REPOSITORY" -a -f .tox/$TOX_ENV/Dockertags.pushed ]; then

@@ -111,12 +111,15 @@ GCC_DEP = @SAGE_GCC_DEP@
 OPTIONAL_INSTALLED_PACKAGES = @SAGE_OPTIONAL_INSTALLED_PACKAGES@
 INSTALLED_PACKAGES = $(OPTIONAL_INSTALLED_PACKAGES)
 INSTALLED_PACKAGE_INSTS = \
-    $(foreach pkgname,$(INSTALLED_PACKAGES),$(inst_$(pkgname)))
+    $(foreach pkgname,$(INSTALLED_PACKAGES),inst_$(pkgname))
 
 # All previously installed standard/optional/experimental packages that are to be uninstalled
 OPTIONAL_UNINSTALLED_PACKAGES = @SAGE_OPTIONAL_UNINSTALLED_PACKAGES@
 UNINSTALLED_PACKAGES = $(OPTIONAL_UNINSTALLED_PACKAGES)
-UNINSTALLED_PACKAGES_UNINSTALLS = $(UNINSTALLED_PACKAGES:%=%-uninstall)
+UNINSTALLED_PACKAGE_UNINSTALLS = \
+    $(foreach pkgname,$(UNINSTALLED_PACKAGES),$(pkgname)-uninstall)
+
+.PHONY: $(INSTALLED_PACKAGE_INSTS) $(UNINSTALLED_PACKAGE_UNINSTALLS)
 
 # All packages which should be downloaded
 SDIST_PACKAGES = @SAGE_SDIST_PACKAGES@
@@ -187,20 +190,29 @@ $(foreach pkgname,$(PIP_PACKAGES),\
 $(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/.dummy:
 	touch $@
 
-
-# Filtered by installation tree
+# Define variables
+#
+# SAGE_LOCAL_INSTALLED_PACKAGE_INSTS
+# SAGE_VENV_INSTALLED_PACKAGE_INSTS
+# SAGE_DOCS_INSTALLED_PACKAGE_INSTS
+#
+# SAGE_LOCAL_UNINSTALLED_PACKAGE_UNINSTALLS
+# SAGE_VENV_UNINSTALLED_PACKAGE_UNINSTALLS
+# SAGE_DOCS_UNINSTALLED_PACKAGE_UNINSTALLS
+#
+# that list targets for packages to be installed/uninstalled into installation
+# tree SAGE_LOCAL/SAGE_VENV/SAGE_DOCS
 $(foreach tree,SAGE_LOCAL SAGE_VENV SAGE_DOCS, \
     $(eval $(tree)_INSTALLED_PACKAGE_INSTS = \
                $(foreach pkgname,$(INSTALLED_PACKAGES), \
                          $(if $(findstring $(tree),$(trees_$(pkgname))), \
                               $(inst_$(pkgname))))) \
     $(eval $(tree)_UNINSTALLED_PACKAGE_UNINSTALLS = \
-               $(foreach pkgname,$(INSTALLED_PACKAGES), \
+               $(foreach pkgname,$(UNINSTALLED_PACKAGES), \
                          $(if $(findstring $(tree),$(trees_$(pkgname))), \
-                              $(inst_$(pkgname))))))
+                              $(pkgname)-uninstall))))
 
-
-###############################################################################
+# ==============================================================================
 
 # Silent rules
 # https://www.gnu.org/software/automake/manual/html_node/Automake-Silent-Rules.html
@@ -277,8 +289,8 @@ base-toolchain: _clean-broken-gcc base
 
 # All targets except for the base packages and except the documentation
 all-sage: \
-		$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_UNINSTALLS) \
-		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
+	$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGE_UNINSTALLS) \
+	$(SAGE_VENV_INSTALLED_PACKAGE_INSTS) $(SAGE_VENV_UNINSTALLED_PACKAGE_UNINSTALLS)
 
 # Same but filtered by installation trees:
 all-build-local: toolchain-deps
@@ -289,12 +301,12 @@ all-sage-local: $(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_P
 all-build-venv: toolchain-deps
 	+$(MAKE_REC) all-sage-venv
 
-all-sage-venv:  $(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
+all-sage-venv: $(SAGE_VENV_INSTALLED_PACKAGE_INSTS) $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
 
 all-build-docs: toolchain-deps
 	+$(MAKE_REC) all-sage-docs
 
-all-sage-docs:  $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_UNINSTALLS)
+all-sage-docs: $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_UNINSTALLS)
 
 # Download all packages which should be inside an sdist tarball (the -B
 # option to make forces all targets to be built unconditionally)
@@ -343,17 +355,15 @@ SAGERUNTIME = sagelib $(inst_ipython) $(inst_pexpect)
 all-sageruntime: toolchain-deps
 	+$(MAKE_REC) $(SAGERUNTIME)
 
-
-###############################################################################
+# ==============================================================================
 # Building the base system
 #
 # This consists of packages which are required for the Sage build system.
-###############################################################################
+# ==============================================================================
 base: $(inst_patch) $(inst_pkgconf)
 
-###############################################################################
+# ==============================================================================
 # Building the documentation
-###############################################################################
 
 # You can choose to have the built HTML version of the documentation link to
 # the PDF version. To do so, you need to build both the HTML and PDF versions.
@@ -365,7 +375,7 @@ base: $(inst_patch) $(inst_pkgconf)
 # For more information on the docbuild utility, do
 #
 # $ ./sage --docbuild -H
-
+# ==============================================================================
 doc: doc-html
 
 # All doc-building is delegated to the script packages
@@ -481,9 +491,9 @@ wheels:
 
 pypi-wheels-check: $(PYPI_WHEEL_PACKAGES:%=%-check)
 
-#==============================================================================
+# ==============================================================================
 # Setting SAGE_CHECK... variables
-#==============================================================================
+# ==============================================================================
 ifeq "$(origin SAGE_CHECK)" "undefined"
 SAGE_CHECK := no
 endif
@@ -525,10 +535,9 @@ $(foreach clause, $(SAGE_CHECK_PACKAGES_sep),					\
 debug-check:
 	@echo $(foreach pkgname, $(NORMAL_PACKAGES) $(SCRIPT_PACKAGES), SAGE_CHECK_$(pkgname) = $(SAGE_CHECK_$(pkgname)))
 
-
-#==============================================================================
+# ==============================================================================
 # Rules generated from pkgs/<package>/dependencies files
-#==============================================================================
+# ==============================================================================
 
 # Define a function for generating the list of a package's dependencies
 # as $(inst_<pkgname>) variables.  For example, takes:
@@ -595,7 +604,7 @@ pkg_deps = \
 # sage-spkg, and --keep-files to sage-spkg-uninstall since those packages can
 # have a recursive self-dependency, and should not be deleted while upgrading.
 # See Issue #25857
-
+#
 # Positional arguments:
 #     $(1): package name
 #     $(2): package version
@@ -657,7 +666,7 @@ $(foreach pkgname, $(NORMAL_PACKAGES),\
 	                                   $(call pkg_deps,$(pkgname)),$(tree)))))
 endif
 
-# ================================ pip packages ===============================
+# ================================ pip packages ====================================
 # Generate build rules for 'pip' packages; this template is used to generate
 # two rules in the form:
 #
@@ -666,10 +675,11 @@ endif
 #
 # <pkgname>-uninstall:
 #     -sage --pip uninstall -y ...
-
+#
 # Positional arguments:
 #     $(1): package name
 #     $(2): package dependencies
+
 define PIP_PACKAGE_templ
 $(1)-build-deps: $(2)
 
@@ -719,7 +729,7 @@ endif
 #         . '$SAGE_ROOT/build/bin/sage-build-env-config' && \\
 #         . '$SAGE_ROOT/build/bin/sage-build-env' && \\
 #         '$SAGE_ROOT/build/pkgs/$PKG_NAME/spkg-uninstall'
-
+#
 # Positional arguments:
 #     $(1): package name
 #     $(2): package version
