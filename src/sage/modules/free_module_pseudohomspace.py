@@ -227,7 +227,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
     def matrix_space(self):
         r"""
         Return the matrix space used for representing the
-        pseudomorphism in this space.
+        pseudomorphisms in this space.
 
         EXAMPLES::
 
