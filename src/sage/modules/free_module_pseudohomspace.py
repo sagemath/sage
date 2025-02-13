@@ -245,6 +245,9 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         r"""
         Return a basis for the underlying matrix space.
 
+        The result does not depend on the `side` of the homspace, i.e.
+        if matrices are acted upon on the left or on the right.
+
         EXAMPLES::
 
             sage: Fq = GF(7^3)
