@@ -832,6 +832,158 @@ class PolynomialSequence_generic(Sequence_generic):
         A, v = self.coefficients_monomials(sparse=sparse)
         return A, matrix(R,len(v),1,v)
 
+    def macaulay_matrix(self, degree, remove_zero=False, homogeneous=False, set_variables=None, long_output=False) :
+        r"""
+        Return the Macaulay matrix of degree ``degree`` of this sequence
+        of polynomials.
+
+        INPUT:
+
+        - ``remove_zero`` -- boolean (default: ``False``);
+          when ``False``, the columns of
+          the Macaulay matrix are all the monomials of the polynomial
+          ring up to degree ``degree``,
+          when ``True``, the columns of the Macaulay matrix are only
+          the monomials that appears effectively in the system of
+          polynomials equations
+
+        - ``homogeneous`` -- boolean (default: ``False``);
+          when ``False``, the system of equations is not supposed to be
+          homogeneous and the row of the Macaulay matrix of degree
+          ``degree`` contains all the equations of this system of
+          polynomials and all the products between the element of
+          this system and the monomials of the polynomial ring up
+          to degree ``degree``
+          when ``True``, the given system of equation this system
+          must be homogeneous, and the rows of the Macaulay matrix
+          are only the element L multipled by monomials, such that
+          the product is homogeneous of degree `degree`+maximum
+          degree in this system.
+
+        - ``set_variables`` -- boolean (default: ``None``);
+          when ``None`` the Macaulay matrix is constructed
+          using all the variables of the base ring of polynomials.
+          when ``set_variables`` is a list of  variables, it is
+          used instead of all the variables of the base ring of polynomials.
+
+        - ``long_output`` -- boolean (default: ``False``);
+          when ``False``, only return the Macaulay matrix
+          when ``True``, return the Macaulay matrix and two list,
+          the first one is the list of monomials corresponding
+          to the lines of the matrix,
+          the second one is a list of tuples, each tuple is the
+          data of a monomial and a polynomial of the system.
+          the product of the elements of a given tuple is the equation
+          describing each line of the matrix
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(GF(7),order='deglex')
+            sage: L = Sequence([2*x*z - y*z + 2*z^2 + 3*x - 1,
+                                2*x^2 - 3*y*z + z^2 - 3*y + 3,
+                                -x^2 - 2*x*z - 3*y*z + 3*x])
+            sage: macaulay_matrix(L, 0)
+            [0 0 2 0 6 2 3 0 0 6]
+            [2 0 0 0 4 1 0 4 0 3]
+            [6 0 5 0 4 0 3 0 0 0]
+
+        Example with the option homogeneous::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: L = Sequence([x*y^2 + y^3 + x*y*z + y*z^2,
+                                x^2*y + x*y^2 + x*y*z + 3*x*z^2 + z^3,
+                                x^3 + 2*y^3 + x^2*z + 2*x*y*z + 2*z^3]
+            sage: L.macaulay_matrix(1, homogeneous=True)
+            [0 0 0 0 0 0 0 1 1 0 1 0 0 1 0]
+            [0 0 0 1 1 0 0 1 0 0 0 1 0 0 0]
+            [0 0 1 1 0 0 1 0 0 0 1 0 0 0 0]
+            [0 0 0 0 0 0 1 1 0 0 1 0 3 0 1]
+            [0 0 1 1 0 0 0 1 0 0 3 0 0 1 0]
+            [0 1 1 0 0 0 1 0 0 3 0 0 1 0 0]
+            [0 0 0 0 0 1 0 0 2 1 2 0 0 0 2]
+            [0 1 0 0 2 0 1 2 0 0 0 0 0 2 0]
+            [1 0 0 2 0 1 2 0 0 0 0 0 2 0 0]
+
+        Same example as before but with all options
+        activated excepted the ``set_variables`` option::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: L = Sequence([x*y + 2*z^2, y^2 + y*z, x*z])
+            sage: L.macaulay_matrix(1, homogeneous=True, remove_zero=True, long_output=True)
+            [
+            [0 0 0 0 1 0 0 0 2]
+            [0 1 0 0 0 0 0 2 0]
+            [1 0 0 0 0 0 2 0 0]
+            [0 0 0 0 0 1 0 1 0]
+            [0 0 1 0 0 1 0 0 0]
+            [0 1 0 0 1 0 0 0 0]
+            [0 0 0 0 0 0 1 0 0]
+            [0 0 0 0 1 0 0 0 0]
+            [0 0 0 1 0 0 0 0 0],
+            [(z, x*y + 2*z^2), (y, x*y + 2*z^2), (x, x*y + 2*z^2), (z, y^2 + y*z), (y, y^2 + y*z), (x, y^2 + y*z), (z, x*z), (y, x*z), (x, x*z)],
+            [x^2*y, x*y^2, y^3, x^2*z, x*y*z, y^2*z, x*z^2, y*z^2, z^3]
+            ]
+
+        Example with the ``set_variables`` option::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: L= [2*y*z - 2*z^2 - 3*x + z - 3, -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y, -2*y - z - 3]
+            sage: L.macaulay_matrix(1, set_variables=['x'], remove_zero=True, long_output=True)
+            [
+            [ 0  0  0  0  0  0  0  0  0  2 -2 -3  0  1 -3]
+            [ 0  0  0  2 -2 -3  0  0  1  0  0 -3  0  0  0]
+            [ 0  0  0  0  0  0  0 -3  0  3  2 -2 -2  0  0]
+            [ 0 -3  0  3  2 -2 -2  0  0  0  0  0  0  0  0]
+            [ 0  0  0  0  0  0  0  0  0  0  0  0 -2 -1 -3]
+            [ 0  0  0  0  0  0 -2  0 -1  0  0 -3  0  0  0]
+            [-2  0 -1  0  0 -3  0  0  0  0  0  0  0  0  0],
+            [(1, 2*y*z - 2*z^2 - 3*x + z - 3), (x, 2*y*z - 2*z^2 - 3*x + z - 3), (1, -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y), (x, -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y), (1, -2*y - z - 3), (x, -2*y - z - 3), (x^2, -2*y - z - 3)],
+            [x^2*y, x*y^2, x^2*z, x*y*z, x*z^2, x^2, x*y, y^2, x*z, y*z, z^2, x, y, z, 1]
+            ]
+
+        REFERENCES:
+
+        F. S. Macaulay. On some formula in elimination. In London Mathematical Society, number 33 in 1, pages 3–27, May 1902
+        M. Bardet, J-C. Faugère, B. Salvy. On the complexity of the F5 Gröbner basis algorithm, Journal of Symbolic Computation, 2015, p5
+        """
+        from sage.matrix.constructor import matrix
+
+        if len(self) == 0:
+            raise TypeError('the list of polynomials must be non empty')
+        if degree < 0:
+            raise ValueError('the degree must be a non negative number')
+
+        S = self.ring()
+        F = S.base_ring()
+        if set_variables is None:
+            R = S
+        else:
+            R = PolynomialRing(F, set_variables)
+
+        degree_system = self.maximal_degree()
+
+        augmented_system = []
+        if homogeneous:
+            for poly in self:
+                augmented_system += [(mon, poly) for mon in R.monomials_of_degree(degree_system - poly.degree() + degree)]
+        else:
+            for poly in self:
+                for deg in range(degree_system - poly.degree() + degree + 1):
+                    augmented_system += [(mon, poly) for mon in R.monomials_of_degree(deg)]
+
+        if remove_zero:
+            monomials_sys = self.monomials()
+        else:
+            if homogeneous :
+                monomials_sys = S.monomials_of_degree(degree_system+degree)
+            else:
+                monomials_sys = sum((S.monomials_of_degree(i) for i in range(degree_system + degree + 1)), [])
+
+        monomials_sys.sort(reverse=True)
+        macaulay = matrix(F, [[(mon*poly).monomial_coefficient(m) for m in monomials_sys] for mon, poly in augmented_system])
+
+        return [macaulay, augmented_system, monomials_sys] if long_output else macaulay
+
     def subs(self, *args, **kwargs):
         """
         Substitute variables for every polynomial in this system and
