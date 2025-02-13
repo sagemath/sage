@@ -57,6 +57,11 @@ def WittVectorRing(base_ring, prec=1, p=None, algorithm=None):
     if base_ring not in _CommutativeRings:
         raise TypeError(f'{base_ring} is not a commutative ring')
 
+    if not is_Integer (prec):
+        raise TypeError(f'{prec} is not an integer')
+    elif prec <= 0:
+        raise ValueError(f'{prec} must be positive')
+
     char = base_ring.characteristic()
     if p is None:
         if char not in _Primes:
