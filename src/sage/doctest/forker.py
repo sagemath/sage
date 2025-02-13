@@ -45,42 +45,53 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
-
-import os
-import sys
-import time
-import signal
-import linecache
-import hashlib
-import multiprocessing
-import warnings
-import re
-import errno
 import doctest
-import traceback
+import errno
+import gc
+import hashlib
+import linecache
+import multiprocessing
+import os
+import platform
+import re
+import signal
+import sys
 import tempfile
+import time
+import traceback
+import typing
+import warnings
 from collections import defaultdict
 from dis import findlinestarts
 from queue import Empty
-import gc
+
 import IPython.lib.pretty
 
-import sage.misc.randstate as randstate
-from sage.misc.timing import walltime
-from .util import Timer, RecordingDict, count_noun
-from .sources import DictAsObject
-from .parsing import OriginalSource, reduce_hex
-from sage.structure.sage_object import SageObject
-from .parsing import SageOutputChecker, pre_hash, get_source, unparse_optional_tags
-from sage.repl.user_globals import set_globals
 from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
+from sage.doctest.parsing import (
+    OriginalSource,
+    SageOutputChecker,
+    get_source,
+    pre_hash,
+    reduce_hex,
+    unparse_optional_tags,
+)
+from sage.doctest.sources import DictAsObject
+from sage.doctest.util import RecordingDict, Timer, count_noun
+from sage.misc import randstate
+from sage.repl.user_globals import set_globals
+from sage.structure.sage_object import SageObject
+
+if typing.TYPE_CHECKING:
+    from sage.doctest.control import DocTestController
 
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
-if os.uname().sysname == 'Darwin':
+if platform.system() == 'Darwin':
     multiprocessing.set_start_method('fork', force=True)
 
 
@@ -112,7 +123,7 @@ def _sorted_dict_pprinter_factory(start, end):
     return inner
 
 
-def init_sage(controller=None):
+def init_sage(controller: DocTestController | None = None) -> None:
     """
     Import the Sage library.
 
@@ -552,6 +563,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.total_walltime_skips = 0
         self.total_performed_tests = 0
         self.total_walltime = 0
+        if sys.version_info < (3,13):
+            self._stats = self._name2ft
 
     def _run(self, test, compileflags, out):
         """
@@ -829,7 +842,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.optionflags = original_optionflags
 
         # Record and return the number of failures and tries.
-        self._DocTestRunner__record_outcome(test, failures, tries)
+        if sys.version_info < (3,13):
+            self._DocTestRunner__record_outcome(test, failures, tries)
+        else:
+            self._DocTestRunner__record_outcome(test, failures, tries, walltime_skips)
         self.total_walltime_skips += walltime_skips
         self.total_performed_tests += tries
         return TestResults(failures, tries)
@@ -930,7 +946,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: DTR._name2ft['sage.doctest.forker'] = (1,120)
+            sage: DTR._stats['sage.doctest.forker'] = (1,120)
             sage: results = DTR.summarize()
             **********************************************************************
             1 item had failures:
@@ -945,8 +961,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         passed = []
         failed = []
         totalt = totalf = 0
-        for x in self._name2ft.items():
-            name, (f, t) = x
+        for x in self._stats.items():
+            name, (f, t, *_) = x
             assert f <= t
             totalt += t
             totalf += f
@@ -971,10 +987,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
             print(self.DIVIDER, file=m)
             print(count_noun(len(failed), "item"), "had failures:", file=m)
             failed.sort()
-            for thing, (f, t) in failed:
+            for thing, (f, t, *_) in failed:
                 print(" %3d of %3d in %s" % (f, t, thing), file=m)
         if verbose:
-            print(count_noun(totalt, "test") + " in " + count_noun(len(self._name2ft), "item") + ".", file=m)
+            print(count_noun(totalt, "test") + " in " + count_noun(len(self._stats), "item") + ".", file=m)
             print("%s passed and %s failed." % (totalt - totalf, totalf), file=m)
             if totalf:
                 print("***Test Failed***", file=m)
@@ -1709,7 +1725,7 @@ class DocTestDispatcher(SageObject):
     Create parallel :class:`DocTestWorker` processes and dispatches
     doctesting tasks.
     """
-    def __init__(self, controller):
+    def __init__(self, controller: DocTestController):
         """
         INPUT:
 
@@ -1805,8 +1821,8 @@ class DocTestDispatcher(SageObject):
         canceled::
 
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with NTF(suffix='.py', mode='w+t') as f1, \
-            ....:      NTF(suffix='.py', mode='w+t') as f2:
+            sage: with (NTF(suffix='.py', mode='w+t') as f1,
+            ....:       NTF(suffix='.py', mode='w+t') as f2):
             ....:     _ = f1.write("'''\nsage: import time; time.sleep(60)\n'''")
             ....:     f1.flush()
             ....:     _ = f2.write("'''\nsage: True\nFalse\n'''")

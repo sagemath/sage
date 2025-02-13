@@ -291,7 +291,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         return all([self[i,j].is_constant()
             for j in range(self.ncols()) for i in range(self.nrows())])
 
-    def coefficient_matrix(self,d,row_wise=True):
+    def coefficient_matrix(self, d, row_wise=True):
         r"""
         Return the constant matrix which is obtained from this matrix by taking
         the coefficient of its entries with degree specified by `d`.
@@ -3106,7 +3106,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         If the option ``row_wise`` is set to ``False``, the same operation is
         performed, but with everything considered column-wise: column space of
         `B`, `i` th column of `R` and `A`, column-wise `s`-leading positions
-        and `s`-Popov form, and submatrices `R_{J,*}` and `P_{J,*}`.
+        and `s`-Popov form, and submatrices `R_{J, *}` and `P_{J, *}`.
 
         The operation above can be seen as a matrix generalization of division
         with remainder for univariate polynomials. If the option
@@ -4116,8 +4116,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         completed row-wise into a `3 \times 3` unimodular matrix::
 
             sage: mat = matrix(ring, 2, 3, \
-                    [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
-                     [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
+            ....:   [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
+            ....:    [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
             sage: rcomp = mat._basis_completion_via_reversed_approx(); rcomp
             [  2*x^2 + 1 4*x^2 + 3*x 2*x^2 + 3*x]
             sage: mat.stack(rcomp).determinant()
@@ -4128,9 +4128,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         completion has two columns; in both cases, the Smith form is preserved::
 
             sage: mat = matrix(ring, 3, 2, \
-                    [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
-                     [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
-                     [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
+            ....:   [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
+            ....:    [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
+            ....:    [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
             sage: mat.smith_form(transformation=False)
             [x + 3     0]
             [    0     0]
@@ -4327,8 +4327,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         there is nothing to complete)::
 
             sage: mat = matrix(ring, 2, 3, \
-                    [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
-                     [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
+            ....:   [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
+            ....:    [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
             sage: rcomp = mat.basis_completion(); rcomp
             [  2*x^2 + 1 4*x^2 + 3*x 2*x^2 + 3*x]
             sage: mat.stack(rcomp).determinant()
@@ -4341,9 +4341,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         completion has two columns; in both cases, the Smith form is preserved::
 
             sage: mat = matrix(ring, 3, 2, \
-                    [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
-                     [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
-                     [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
+            ....:   [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
+            ....:    [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
+            ....:    [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
             sage: mat.smith_form(transformation=False)
             [x + 3     0]
             [    0     0]
@@ -4378,8 +4378,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             1
 
             sage: mat = matrix([[x*(x-1), x*(x-2)], \
-                                [x*(x-2), x*(x-3)], \
-                                [(x-1)*(x-2), (x-1)*(x-3)]])
+            ....:               [x*(x-2), x*(x-3)], \
+            ....:               [(x-1)*(x-2), (x-1)*(x-3)]])
             sage: mat.smith_form(transformation=False)
             [1 0]
             [0 x]
@@ -4496,14 +4496,14 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: ring.<x> = GF(7)[]
             sage: mat1 = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
             sage: rcomp1 = matrix(ring, 2, 3, \
-                    [[5*x^2 + 4*x + 1, 5*x^2 + 2*x, 5*x^2], \
-                     [2*x^3 + 4*x^2, 2*x^3 + 6*x^2 + 2*x + 1, 2*x^3 + x^2 + 3*x]])
+            ....:   [[5*x^2 + 4*x + 1, 5*x^2 + 2*x, 5*x^2], \
+            ....:    [2*x^3 + 4*x^2, 2*x^3 + 6*x^2 + 2*x + 1, 2*x^3 + x^2 + 3*x]])
             sage: rcomp1._is_basis_completion(mat1)
             True
 
             sage: mat2 = matrix(ring, 2, 3, \
-                    [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
-                     [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
+            ....:   [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
+            ....:    [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
             sage: rcomp2 = matrix(ring, 1, 3, [[2*x^2 + 1, 4*x^2 + 3*x, 2*x^2 + 3*x]])
             sage: rcomp2._is_basis_completion(mat2)
             True
@@ -4512,16 +4512,16 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             True
 
             sage: mat3 = matrix(ring, 3, 2, \
-                    [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
-                     [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
-                     [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
+            ....:   [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
+            ....:    [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
+            ....:    [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
             sage: rcomp3 = matrix(ring, 1, 2, [[x + 1, 2*x]])
             sage: rcomp3._is_basis_completion(mat3)
             True
             sage: ccomp3 = matrix(ring, 3, 2, \
-                                    [[3*x + 1, 4*x + 4], \
-                                     [    2*x, 5*x + 1], \
-                                     [    6*x,       x]])
+            ....:                   [[3*x + 1, 4*x + 4], \
+            ....:                    [    2*x, 5*x + 1], \
+            ....:                    [    6*x,       x]])
             sage: ccomp3._is_basis_completion(mat3, row_wise=False)
             True
 

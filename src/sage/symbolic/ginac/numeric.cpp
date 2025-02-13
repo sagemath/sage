@@ -49,7 +49,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define register
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include "flint/fmpz.h"
@@ -3666,7 +3665,7 @@ const numeric numeric::log(const numeric &b, PyObject* parent) const {
 }
 
 // General log
-// Handle special cases here that return MPZ/MPQ
+// Handle special cases here that return MPZ/MPQ (or an infinity)
 const numeric numeric::ratlog(const numeric &b, bool& israt) const {
         israt = true;
         if (b.is_one()) {
@@ -3688,6 +3687,9 @@ const numeric numeric::ratlog(const numeric &b, bool& israt) const {
                 if (b.v._long <= 0) {
                         israt = false;
                         return *_num0_p;
+                }
+                if (v._long == 0) {
+                        return py_funcs.py_eval_neg_infinity();
                 }
                 int c = 0;
                 std::ldiv_t ld;

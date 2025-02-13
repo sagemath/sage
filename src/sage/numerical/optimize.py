@@ -381,7 +381,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
         sage: import numpy
         sage: if int(numpy.version.short_version[0]) > 1:
-        ....:     numpy.set_printoptions(legacy="1.25")
+        ....:     _ = numpy.set_printoptions(legacy="1.25")
         sage: from numpy import zeros
         sage: def rosen_der(x):
         ....:    xm = x[1r:-1r]
@@ -442,7 +442,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
     return vector(RDF, min)
 
 
-def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args):
+def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **args):
     r"""
     Minimize a function with constraints.
 

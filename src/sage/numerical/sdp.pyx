@@ -459,7 +459,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.base_ring()
 
-    def set_problem_name(self,name):
+    def set_problem_name(self, name):
         r"""
         Set the name of the ``SemidefiniteProgram``.
 
@@ -892,7 +892,8 @@ cdef class SemidefiniteProgram(SageObject):
         from sage.numerical.linear_tensor_constraints import LinearTensorConstraint
         from sage.numerical.linear_tensor import LinearTensor
 
-        if isinstance(linear_function, LinearTensorConstraint) or isinstance(linear_function, LinearConstraint):
+        if isinstance(linear_function, (LinearTensorConstraint,
+                                        LinearConstraint)):
             c = linear_function
             if c.is_equation():
                 self.add_constraint(c.lhs()-c.rhs(), name=name)
@@ -900,7 +901,7 @@ cdef class SemidefiniteProgram(SageObject):
             else:
                 self.add_constraint(c.lhs()-c.rhs(), name=name)
 
-        elif isinstance(linear_function, LinearFunction) or isinstance(linear_function, LinearTensor):
+        elif isinstance(linear_function, (LinearFunction, LinearTensor)):
             l = sorted(linear_function.dict().items())
             self._backend.add_linear_constraint(l, name)
 
@@ -1049,7 +1050,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.slack(i, sparse=sparse)
 
-    def solver_parameter(self, name, value = None):
+    def solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter.
 

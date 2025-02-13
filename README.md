@@ -281,7 +281,7 @@ patches, and build scripts are in the accompanying `build/pkgs/<packagename>`
 directory. These directories are part of the Sage git repository.
 
 <p align="center">
-   Copyright (C) 2005-2024 The Sage Development Team
+   Copyright (C) 2005-2025 The Sage Development Team
 </p>
 <p align="center">
    https://www.sagemath.org

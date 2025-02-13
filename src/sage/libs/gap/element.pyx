@@ -1135,10 +1135,8 @@ cdef class GapElement(RingElement):
         Check that this can be interrupted gracefully::
 
             sage: a, b = libgap.GL(1000, 3).GeneratorsOfGroup(); g = a * b
-            sage: alarm(0.5); g ^ (2 ^ 10000)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): g ^ (2 ^ 10000)
 
             sage: libgap.CyclicGroup(2) ^ 2
             Traceback (most recent call last):
@@ -3251,7 +3249,7 @@ cdef class GapElement_RecordIterator():
         # note the abs: negative values mean the rec keys are not sorted
         key_index = abs(GET_RNAM_PREC(self.rec.value, i))
         key = char_to_str(GAP_CSTR_STRING(NAME_RNAM(key_index)))
-        cdef Obj result = GET_ELM_PREC(self.rec.value,i)
+        cdef Obj result = GET_ELM_PREC(self.rec.value, i)
         val = make_any_gap_element(self.rec.parent(), result)
         self.i += 1
         return (key, val)

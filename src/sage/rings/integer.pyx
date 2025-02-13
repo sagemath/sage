@@ -215,7 +215,7 @@ cdef set_from_Integer(Integer self, Integer other):
     mpz_set(self.value, other.value)
 
 
-cdef _digits_naive(mpz_t v,l,int offset,Integer base,digits):
+cdef _digits_naive(mpz_t v, l, int offset, Integer base, digits):
     """
     This method fills in digit entries in the list, l, using the most
     basic digit algorithm -- repeat division by base.
@@ -262,7 +262,7 @@ cdef _digits_naive(mpz_t v,l,int offset,Integer base,digits):
 
     mpz_clear(mpz_value)
 
-cdef _digits_internal(mpz_t v,l,int offset,int power_index,power_list,digits):
+cdef _digits_internal(mpz_t v, l, int offset, int power_index, power_list, digits):
     """
     INPUT:
 
@@ -595,7 +595,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: # needs numpy
             sage: import numpy
             sage: if int(numpy.version.short_version[0]) > 1:
-            ....:     numpy.set_printoptions(legacy="1.25")
+            ....:     _ = numpy.set_printoptions(legacy="1.25")
             sage: numpy.int8('12') == 12
             True
             sage: 12 == numpy.int8('12')
@@ -645,7 +645,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 mpz_set_pylong(self.value, x)
 
             elif isinstance(x, float):
-                n = long(x)
+                n = int(x)
                 if n == x:
                     mpz_set_pylong(self.value, n)
                 else:
@@ -684,7 +684,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     mpz_set_str_python(self.value, str_to_bytes(x), base)
                     return
 
-                elif (isinstance(x, list) or isinstance(x, tuple)) and base > 1:
+                elif isinstance(x, (list, tuple)) and base > 1:
                     b = the_integer_ring(base)
                     if b == 2:  # we use a faster method
                         for j in range(len(x)):
@@ -1131,7 +1131,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: "{0:#x}; {0:#b}; {0:+05d}".format(ZZ(17))
             '0x11; 0b10001; +0017'
         """
-        return int(self).__format__(*args,**kwargs)
+        return int(self).__format__(*args, **kwargs)
 
     def ordinal_str(self):
         """
@@ -2439,7 +2439,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 raise ValueError("%s is not a %s power" % (self,
                                                            integer_ring.ZZ(n).ordinal_str()))
 
-    cpdef size_t _exact_log_log2_iter(self,Integer m) noexcept:
+    cpdef size_t _exact_log_log2_iter(self, Integer m) noexcept:
         r"""
         This is only for internal use only.  You should expect it to crash
         and burn for negative or other malformed input.  In particular, if
@@ -2517,7 +2517,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sig_off()
         return l_min
 
-    cpdef size_t _exact_log_mpfi_log(self,m) noexcept:
+    cpdef size_t _exact_log_mpfi_log(self, m) noexcept:
         """
         This is only for internal use only.  You should expect it to crash
         and burn for negative or other malformed input.
@@ -5993,7 +5993,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         if mpz_cmp_ui(self.value, 2) < 0:
             return smallInteger(2)
 
-        cdef mp_bitcnt_t bit_index = mpz_sizeinbase(self.value,2)
+        cdef mp_bitcnt_t bit_index = mpz_sizeinbase(self.value, 2)
         cdef Integer n = PY_NEW(Integer)
 
         mpz_add_ui(n.value, self.value, 1 if mpz_even_p(self.value) else 2)
@@ -6066,7 +6066,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         cdef Integer n = PY_NEW(Integer)
 
         mpz_sub_ui(n.value, self.value, 1)
-        cdef mp_bitcnt_t bit_index = mpz_sizeinbase(n.value,2)-1
+        cdef mp_bitcnt_t bit_index = mpz_sizeinbase(n.value, 2)-1
         if mpz_even_p(n.value):
             mpz_sub_ui(n.value, n.value, 1)
 
@@ -7108,21 +7108,16 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         Check that it can be interrupted (:issue:`17852`)::
 
-            sage: alarm(0.5); (2^100).binomial(2^22, algorithm='mpir')
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')
 
         For PARI, we try 10 interrupts with increasing intervals to
         check for reliable interrupting, see :issue:`18919`::
 
             sage: from cysignals import AlarmInterrupt
             sage: for i in [1..10]:             # long time (5s)                        # needs sage.libs.pari
-            ....:     try:
-            ....:         alarm(i/11)
+            ....:     with ensure_interruptible_after(i/11):
             ....:         (2^100).binomial(2^22, algorithm='pari')
-            ....:     except AlarmInterrupt:
-            ....:         pass
             doctest:...: RuntimeWarning: cypari2 leaked ... bytes on the PARI stack...
         """
         cdef Integer x
@@ -7434,7 +7429,7 @@ cdef class int_to_Z(Morphism):
     def __init__(self):
         import sage.categories.homset
         from sage.sets.pythonclass import Set_PythonType
-        Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(long), integer_ring.ZZ))
+        Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(int), integer_ring.ZZ))
 
     cpdef Element _call_(self, a):
         cdef Integer r
@@ -7755,9 +7750,9 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
     # Check for overflow
     if sx > 1024:
         if resultsign < 0:
-            return -1.0/0.0
+            return float('-inf')
         else:
-            return 1.0/0.0
+            return float('inf')
 
     # General case
 

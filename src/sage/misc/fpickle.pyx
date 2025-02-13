@@ -17,7 +17,7 @@ def code_ctor(*args):
 
     This indirectly tests this function. ::
 
-        sage: def foo(a,b,c=10): return a+b+c
+        sage: def foo(a, b, c=10): return a+b+c
         sage: sage.misc.fpickle.reduce_code(foo.__code__)
         (<cyfunction code_ctor at ...>, ...)
         sage: unpickle_function(pickle_function(foo))
@@ -96,7 +96,7 @@ def unpickle_function(pickled):
 
     EXAMPLES::
 
-        sage: def f(N,M): return N*M
+        sage: def f(N, M): return N*M
         ...
         sage: unpickle_function(pickle_function(f))(3,5)
         15
@@ -106,10 +106,7 @@ def unpickle_function(pickled):
 
 
 def call_pickled_function(fpargs):
-    try:
-        import sage.all as toplevel
-    except ImportError:
-        import sage.all__sagemath_categories as toplevel
+    import sage.all as toplevel
     (fp, (args, kwds)) = fpargs
     f = eval("unpickle_function(fp)", toplevel.__dict__, {'fp': fp})
     res = eval("f(*args, **kwds)", toplevel.__dict__,

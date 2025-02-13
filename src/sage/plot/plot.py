@@ -641,7 +641,7 @@ lazy_import('sage.plot.line', 'line2d', deprecation=28717)
 # Currently not used - see comment above about
 # figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
 # TODO - figure out how to use this, add documentation
-# def adjust_figure_to_contain_bbox(fig, bbox,pad=1.1):
+# def adjust_figure_to_contain_bbox(fig, bbox, pad=1.1):
 #    """
 #    For each amount we are over (in axes coordinates), we adjust by over*pad
 #    to give ourselves a bit of padding.
@@ -2051,13 +2051,15 @@ def plot(funcs, *args, **kwds):
         elif n == 1:
             G = _plot(funcs, *args, **kwds)
         elif n == 2:
-        # if there are two extra args, then pull them out and pass them as a tuple
+            # if there are two extra args, then pull them out
+            # and pass them as a tuple
             xmin = args[0]
             xmax = args[1]
             args = args[2:]
             G = _plot(funcs, (xmin, xmax), *args, **kwds)
         elif n == 3:
-        # if there are three extra args, then pull them out and pass them as a tuple
+            # if there are three extra args, then pull them out
+            # and pass them as a tuple
             var = args[0]
             xmin = args[1]
             xmax = args[2]
@@ -2194,7 +2196,7 @@ def _plot(funcs, xrange, parametric=False,
 
     # Check to see if funcs is a list of functions that will be all plotted together.
     if isinstance(funcs, (list, tuple)) and not parametric:
-        def golden_rainbow(i,lightness=0.4):
+        def golden_rainbow(i, lightness=0.4):
             # note: sage's "blue" has hue-saturation-lightness values (2/3, 1, 1/2).
             g = 0.61803398875
             return Color((0.66666666666666 + i*g) % 1, 1, lightness, space='hsl')

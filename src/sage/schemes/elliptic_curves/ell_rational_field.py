@@ -80,7 +80,7 @@ from sage.structure.coerce import py_scalar_to_element
 from sage.structure.element import Element, RingElement
 
 lazy_import("sage.functions.log", "log")
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import("sage.functions.gamma", "gamma_inc")
 lazy_import('sage.interfaces.gp', 'gp')
 
@@ -203,6 +203,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__regulator = (kwds.pop('regulator'), True)
         if 'torsion_order' in kwds:
             self._set_torsion_order(kwds.pop('torsion_order'))
+        if 'db_extra' in kwds:
+            # optional data provided by database_cremona_ellcurve
+            self.db_extra = kwds.pop('db_extra')
         if kwds:
             raise TypeError(f"unexpected keyword arguments: {kwds}")
 
@@ -805,16 +808,28 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``selmer_only`` -- boolean (default: ``False``); selmer_only switch
 
-        - ``first_limit`` -- (default: 20) firstlim is bound
-          on x+z second_limit- (default: 8) secondlim is bound on log max
-          x,z , i.e. logarithmic
+        - ``first_limit`` -- integer (default: 20); naive height bound on
+          first point search on quartic homogeneous spaces (before
+          testing local solubility; very simple search with no
+          overheads).
 
-        - ``n_aux`` -- (default: -1) n_aux only relevant for
-          general 2-descent when 2-torsion trivial; n_aux=-1 causes default
-          to be used (depends on method)
+        - ``second_limit`` -- integer (default: 8); logarithmic height bound on
+          second point search on quartic homogeneous spaces (after
+          testing local solubility; sieve-assisted search)
 
-        - ``second_descent`` -- (default: ``True``)
-          second_descent only relevant for descent via 2-isogeny
+        - ``n_aux`` -- integer (default: -1); if positive, the number of
+          auxiliary primes used in sieve-assisted search for quartics.
+          If -1 (the default) use a default value (set in the eclib
+          code in ``src/qrank/mrank1.cc`` in DEFAULT_NAUX: currently 8).
+          Only relevant for curves with no 2-torsion, where full
+          2-descent is carried out.  Worth increasing for curves
+          expected to be of rank > 6 to one or two more than the
+          expected rank.
+
+        - ``second_descent`` -- boolean (default: ``True``); flag specifying
+          whether or not a second descent will be carried out.  Only relevant
+          for curves with 2-torsion.  Recommended left as the default except for
+          experts interested in details of Selmer groups.
 
         OUTPUT:
 
@@ -2253,9 +2268,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``algorithm`` -- one of the following:
 
-          - ``'mwrank_shell'`` -- default; call mwrank shell command
+          - ``'mwrank_lib'`` -- default; call mwrank C library
 
-          - ``'mwrank_lib'`` -- call mwrank C library
+          - ``'mwrank_shell'`` -- call mwrank shell command
 
           - ``'pari'`` -- use ellrank in pari
 
@@ -2265,7 +2280,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         - ``use_database`` -- boolean (default: ``True``); if ``True``, attempts to
           find curve and gens in the (optional) database
 
-        - ``descent_second_limit`` -- (default: 12) used in 2-descent
+        - ``descent_second_limit`` -- (default: 12); logarithmic height bound on
+          second point search on quartic homogeneous spaces (after
+          testing local solubility; sieve-assisted search). Used in 2-descent.
+          See also ``second_limit``
+          in :meth:`~sage.libs.eclib.interface.mwrank_EllipticCurve.two_descent`
 
         - ``sat_bound`` -- (default: 1000) bound on primes used in
           saturation.  If the computed bound on the index of the
@@ -4116,7 +4135,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
     label = cremona_label
 
-    def reduction(self,p):
+    def reduction(self, p):
         r"""
         Return the reduction of the elliptic curve at a prime of good
         reduction.
@@ -5945,7 +5964,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         except TypeError:
             raise ValueError("approximated point not on the curve")
 
-    def integral_x_coords_in_interval(self,xmin,xmax):
+    def integral_x_coords_in_interval(self, xmin, xmax):
         r"""
         Return the set of integers `x` with `xmin\le x\le xmax` which are
         `x`-coordinates of rational points on this curve.
@@ -6136,7 +6155,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         # INTERNAL FUNCTIONS ################################################
 
         ############################## begin ################################
-        def point_preprocessing(free,tor):
+        def point_preprocessing(free, tor):
             r"""
             Transform the mw_basis ``free`` into a `\ZZ`-basis for
             `E(\QQ)\cap E^0(`\RR)`. If there is a torsion point on the

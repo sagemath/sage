@@ -6,7 +6,6 @@
 General Conventions
 ===================
 
-
 There are many ways to contribute to Sage, including sharing scripts
 and Jupyter notebooks that implement new functionality using Sage,
 improving to the Sage library, or to working on the many underlying
@@ -83,6 +82,19 @@ In particular,
        def SomeIdentityValue(x):
            return SomeValue(1)
 
+.. _section-python-version:
+
+Python Version
+=================
+
+In order to reduce the technical debt of maintaining the project, Sage follows
+the time window-based support policy
+`SPEC 0 — Minimum Supported Dependencies <https://scientific-python.org/specs/spec-0000/>`_
+for Python versions. Accordingly, support for Python versions will be dropped 
+3 years after their initial release.
+For the drop schedule of Python versions, see the 
+`SPEC 0 <https://scientific-python.org/specs/spec-0000/#drop-schedule>`_
+document.
 
 .. _chapter-directory-structure:
 
@@ -967,6 +979,14 @@ written.
   checked, as they are the most likely to be broken, now or in the future. This
   probably belongs to the TESTS block (see :ref:`section-docstring-function`).
 
+- **Interruption:** if the function might take a very long time, use
+  :func:`~sage.doctest.util.ensure_interruptible_after` to check that the user
+  can interrupt it. For example, the following tests ``sleep(3)`` can be
+  interrupted after 1 second::
+
+    sage: from sage.doctest.util import ensure_interruptible_after
+    sage: with ensure_interruptible_after(1) as data: sleep(3)
+
 - **Systematic tests** of all small-sized inputs, or tests of **random**
   instances if possible.
 
@@ -1094,12 +1114,10 @@ written.
     The :ref:`doctest fixer <section-fixdoctests-optional-needs>` uses
     tab stops at columns 48, 56, 64, ... for these tags.
 
-- **Split long lines:** You may want to split long lines of code with a
-  backslash. Note: this syntax is non-standard and may be removed in the
-  future::
+- **Split long lines:** Standard Python rules apply. For example::
 
-      sage: n = 123456789123456789123456789\
-      ....:     123456789123456789123456789
+      sage: n = (123456789123456789123456789 +
+      ....:      123456789123456789123456789)
       sage: n.is_prime()
       False
 
@@ -1256,17 +1274,38 @@ framework. Here is a comprehensive list:
      Neither of this applies to files or directories which are explicitly given
      as command line arguments: those are always tested.
 
-- **optional/needs:** A line tagged with ``optional - FEATURE``
-  or ``needs FEATURE`` is not tested unless the ``--optional=KEYWORD`` flag
-  is passed to ``sage -t`` (see
-  :ref:`section-optional-doctest-flag`). The main applications are:
+- **optional** or **needs:** A line tagged with ``optional - FEATURE`` or
+  ``needs FEATURE`` is tested if the feature is available in Sage. If
+  ``FEATURE`` starts with an exclamation point ``!``, then the condition is
+  negated, that is, the doctest runs only if the feature is not available.
+
+  If the feature is included in the ``--optional=KEYWORD`` flag passed to
+  ``sage -t`` (see :ref:`section-optional-doctest-flag`), then the line is
+  tested regardless of the feature availability.
+
+  The main applications are:
 
   - **optional packages:** When a line requires an optional package to be
-    installed (e.g. the ``sloane_database`` package)::
+    installed (e.g. the ``rubiks`` package)::
+
+      sage: C = RubiksCube("R*L")
+      sage: C.solve()                    # optional - rubiks (a hybrid algorithm is used)
+      'L R'
+      sage: C.solve()                    # optional - !rubiks (GAP is used)
+      'L*R'
+
+  - **features:** When a line requires a feature to be present::
 
       sage: SloaneEncyclopedia[60843]    # optional - sloane_database
+      [1, 6, 21, 107, 47176870]
 
-  - **internet:** For lines that require an internet connection::
+      sage: SloaneEncyclopedia[60843]    # optional - !sloane_database
+      Traceback (most recent call last):
+      ...
+      OSError: The Sloane Encyclopedia database must be installed. Use e.g.
+      'SloaneEncyclopedia.install()' to download and install it.
+
+    For lines that require an internet connection::
 
        sage: oeis(60843)                 # optional - internet
        A060843: Busy Beaver problem: a(n) = maximal number of steps that an

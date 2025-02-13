@@ -2,6 +2,7 @@ inc_ginac = include_directories('ginac')
 inc_pynac = include_directories('.')
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'assumptions.py',
   'benchmark.py',
@@ -47,17 +48,7 @@ foreach name, pyx : extension_data
       inc_pynac,
       inc_rings,
     ],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      flint,
-      gmp,
-      gsl,
-      mpfr,
-      pari,
-      singular,
-    ],
+    dependencies: [py_dep, cysignals, gmp],
   )
 endforeach
 
@@ -134,18 +125,7 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       include_directories('../libs/gmp'),
     ],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      gmp,
-      flint,
-      gsl,
-      m,
-      mpfr,
-      pari,
-      singular,
-    ],
+    dependencies: [py_dep, cysignals, gmp, gsl, singular],
   )
 endforeach
 

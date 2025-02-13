@@ -291,7 +291,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
     # Take cases on the existence of additional nonzero congruence conditions (mod 2)
     if NZvec is None:
         total = (4 ** len(Z_Is8)) * (8 ** len(Is8_minus_Z)) \
-            * count_all_local_good_types_normal_form(Q_Not8,2, 3, m, list(Z_Not8), None)
+            * count_all_local_good_types_normal_form(Q_Not8, 2, 3, m, list(Z_Not8), None)
     else:
         ZNZ = Z + Set(NZvec)
         ZNZ_Not8 = Not8.intersection(ZNZ)

@@ -221,10 +221,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
       - ``immutable`` -- if ``True`` the sequence is immutable (default: ``False``)
 
-      - ``cr`` -- print a line break after each element (default: ``False``)
-
-      - ``cr_str`` -- print a line break after each element if 'str' is
-        called (default: ``None``)
+      - ``cr``, ``cr_str`` -- see :func:`~sage.structure.sequence.Sequence`
 
     EXAMPLES::
 
@@ -301,7 +298,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     except ImportError:
         BooleanMonomialMonoid = ()
 
-    is_ring = lambda r: isinstance(r, MPolynomialRing_base) or isinstance(r, BooleanMonomialMonoid) or (isinstance(r, QuotientRing_nc) and isinstance(r.cover_ring(), MPolynomialRing_base))
+    is_ring = lambda r: isinstance(r, (MPolynomialRing_base, BooleanMonomialMonoid)) or (isinstance(r, QuotientRing_nc) and isinstance(r.cover_ring(), MPolynomialRing_base))
 
     if is_ring(arg1):
         ring, gens = arg1, arg2
@@ -391,10 +388,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         - ``immutable`` -- if ``True`` the sequence is immutable (default: ``False``)
 
-        - ``cr`` -- print a line break after each element (default: ``False``)
-
-        - ``cr_str`` -- print a line break after each element if 'str'
-          is called (default: ``None``)
+        - ``cr``, ``cr_str`` -- see :func:`~sage.structure.sequence.Sequence`
 
         EXAMPLES::
 
@@ -857,7 +851,7 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: F = F.subs(s); F                                                      # needs sage.rings.polynomial.pbori
             Polynomial Sequence with 40 Polynomials in 16 Variables
         """
-        return PolynomialSequence(self._ring, [tuple([f.subs(*args,**kwargs) for f in r]) for r in self._parts])
+        return PolynomialSequence(self._ring, [tuple([f.subs(*args, **kwargs) for f in r]) for r in self._parts])
 
     def _singular_(self):
         """
@@ -905,9 +899,43 @@ class PolynomialSequence_generic(Sequence_generic):
         v = [x._magma_init_(magma) for x in list(self)]
         return 'ideal<%s|%s>' % (P, ','.join(v))
 
+    def _is_short_for_repr(self):
+        """
+        Return whether this system is considered short for :meth:`_repr_`.
+        """
+        return len(self) < 20
+
     def _repr_(self):
         """
         Return a string representation of this system.
+        Typically, :meth:`_repr_pretty_` is used instead of this method.
+
+        EXAMPLES::
+
+            sage: # needs sage.libs.singular
+            sage: P.<a,b,c,d> = PolynomialRing(GF(127))
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: F = Sequence(I); print(F._repr_())
+            [a + 2*b + 2*c + 2*d - 1,
+             a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
+             2*a*b + 2*b*c + 2*c*d - b,
+             b^2 + 2*a*c + 2*b*d - c]
+
+        If the system contains 20 or more polynomials, a short summary
+        is printed::
+
+            sage: sr = mq.SR(allow_zero_inversions=True, gf2=True)                      # needs sage.rings.polynomial.pbori
+            sage: F,s = sr.polynomial_system(); F                                       # needs sage.rings.polynomial.pbori
+            Polynomial Sequence with 36 Polynomials in 20 Variables
+        """
+        if self._is_short_for_repr():
+            return super()._repr_()
+        else:
+            return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self),self.nvariables())
+
+    def _repr_pretty_(self, p, cycle):
+        """
+        For pretty printing in the Sage command prompt.
 
         EXAMPLES::
 
@@ -927,10 +955,10 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: F,s = sr.polynomial_system(); F                                       # needs sage.rings.polynomial.pbori
             Polynomial Sequence with 36 Polynomials in 20 Variables
         """
-        if len(self) < 20:
-            return Sequence_generic._repr_(self)
+        if self._is_short_for_repr():
+            super()._repr_pretty_(p, cycle)
         else:
-            return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self),self.nvariables())
+            p.text(repr(self))
 
     def __add__(self, right):
         """

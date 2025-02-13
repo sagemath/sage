@@ -38,7 +38,7 @@ from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
@@ -564,7 +564,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # duplicate. As a general comment, there are sanity checks both
         # here and in the category constructor, which is not ideal.
         # Check domain is Fq[T]
-        if not isinstance(function_ring, PolynomialRing_general):
+        if not isinstance(function_ring, PolynomialRing_generic):
             raise NotImplementedError('function ring must be a polynomial '
                                       'ring')
         function_ring_base = function_ring.base_ring()
@@ -1855,7 +1855,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def velu(self, isog):
         r"""
-        Return a new Drinfeld module such that input is an
+        Return a new Drinfeld module such that ``isog`` defines an
         isogeny to this module with domain ``self``; if no such isogeny
         exists, raise an exception.
 
@@ -2018,11 +2018,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             ValueError: Ore polynomial does not define a morphism
+
+        Check that x = 0 (without specified codomain) gives the zero endomorphism::
+
+            sage: phi.hom(K.zero())
+            Endomorphism of Drinfeld module defined by ...
+              Defn: 0
         """
         # When `x` is in the function ring (or something that coerces to it):
         if self.function_ring().has_coerce_map_from(x.parent()):
             return self.Hom(self)(x)
         if codomain is None:
+            if x.is_zero():
+                return self.Hom(self)(0)
             try:
                 codomain = self.velu(x)
             except TypeError:

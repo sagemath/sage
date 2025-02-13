@@ -222,7 +222,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
     tm = verbose("height_guess = %s" % height_guess, level=2, caller_name="multimod echelon")
 
     if proof:
-        M = self._ncols * height_guess * height  +  1
+        M = self._ncols * height_guess * height + 1
     else:
         M = height_guess + 1
 
@@ -281,10 +281,10 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             if cmp_pivots(best_pivots, X[i].pivots()) <= 0:
                 p = X[i].base_ring().order()
                 if p not in lifts:
-                    t0 = verbose("Lifting a good matrix", level=2, caller_name = "multimod echelon")
+                    t0 = verbose("Lifting a good matrix", level=2, caller_name="multimod echelon")
                     lift = X[i].lift()
                     lifts[p] = (lift, p)
-                    verbose("Finished lift", level=2, caller_name= "multimod echelon", t=t0)
+                    verbose("Finished lift", level=2, caller_name="multimod echelon", t=t0)
                 Y.append(lifts[p])
                 prod = prod * X[i].base_ring().order()
         verbose("finished comparing pivots", level=2, t=t, caller_name="multimod echelon")

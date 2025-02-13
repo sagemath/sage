@@ -1,4 +1,9 @@
-py.install_sources('all.py', 'codecan.pxd', subdir: 'sage/coding/codecan')
+py.install_sources(
+  '__init__.py',
+  'all.py',
+  'codecan.pxd',
+  subdir: 'sage/coding/codecan',
+)
 
 extension_data = {
   'autgroup_can_label' : files('autgroup_can_label.pyx'),
@@ -17,7 +22,7 @@ foreach name, pyx : extension_data
       inc_partn_ref2,
       inc_rings,
     ],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: [py_dep, cysignals, gap, gmp],
   )
 endforeach
 

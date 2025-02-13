@@ -22,8 +22,7 @@ used as minimal polynomial.
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.element_givaro import Cache_givaro
-from sage.libs.pari.all import pari
-from sage.misc.superseded import deprecated_function_alias
+from sage.libs.pari import pari
 
 
 class FiniteField_givaro(FiniteField):
@@ -487,8 +486,6 @@ class FiniteField_givaro(FiniteField):
             151
         """
         return self._cache.fetch_int(n)
-
-    fetch_int = deprecated_function_alias(33941, from_integer)
 
     def _pari_modulus(self):
         """

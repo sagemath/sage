@@ -188,7 +188,7 @@ Sage example in ./float.tex, line 1003::
 
 Sage example in ./float.tex, line 1072::
 
-  sage: def iter(y,delta,a,n):
+  sage: def iter(y, delta, a, n):
   ....:     for i in range(0,n):
   ....:         y += delta
   ....:         delta *= a
@@ -196,7 +196,7 @@ Sage example in ./float.tex, line 1072::
 
 Sage example in ./float.tex, line 1087::
 
-  sage: def exact(y,delta,a,n):
+  sage: def exact(y, delta, a, n):
   ....:     return y+delta*(1-a^n)/(1-a)
 
 Sage example in ./float.tex, line 1106::
@@ -209,7 +209,7 @@ Sage example in ./float.tex, line 1106::
 
 Sage example in ./float.tex, line 1128::
 
-  sage: def sumcomp(y,delta,e,n,a):
+  sage: def sumcomp(y, delta, e, n, a):
   ....:     for i in range(0,n):
   ....:         b = y
   ....:         e += delta
@@ -222,7 +222,7 @@ Sage example in ./float.tex, line 1194::
 
   sage: c = sumcomp(y0,delta0,RDF(0.0),n,a)
   sage: print("exact - compensated summation: %.5f" \
-              % RDF(s-RR(c).exact_rational()))
+  ....:       % RDF(s-RR(c).exact_rational()))
   exact - compensated summation: -0.00042
 
 Sage example in ./float.tex, line 1242::
@@ -357,7 +357,7 @@ Sage example in ./float.tex, line 1913::
 
 Sage example in ./float.tex, line 1975::
 
-  sage: def bisect(funct,x,tol,zeros):
+  sage: def bisect(funct, x, tol, zeros):
   ....:     if 0 in funct(x):
   ....:         if x.diameter()>tol:
   ....:             x1,x2 = x.bisection()
@@ -388,7 +388,7 @@ Sage example in ./float.tex, line 1975::
 
 Sage example in ./float.tex, line 2022::
 
-  sage: def NearlySingularMatrix(R,n):
+  sage: def NearlySingularMatrix(R, n):
   ....:     M=matrix(R,n,n)
   ....:     for i in range(0,n):
   ....:         for j in range(0,n):
@@ -408,7 +408,7 @@ Sage example in ./float.tex, line 2053::
 
 Sage example in ./float.tex, line 2064::
 
-  sage: def tryDet(R,n):
+  sage: def tryDet(R, n):
   ....:     p = 53
   ....:     z = True
   ....:     while z:

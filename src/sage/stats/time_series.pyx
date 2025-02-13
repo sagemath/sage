@@ -465,7 +465,7 @@ cdef class TimeSeries:
         """
         cdef Py_ssize_t i
         cdef TimeSeries t = new_time_series(self._length)
-        memcpy(t._values, self._values , sizeof(double)*self._length)
+        memcpy(t._values, self._values, sizeof(double)*self._length)
         return t
 
     def __add__(left, right):
@@ -557,7 +557,7 @@ cdef class TimeSeries:
             memcpy(v._values + i*T._length, T._values, sizeof(double)*T._length)
         return v
 
-    def autoregressive_fit(self,M):
+    def autoregressive_fit(self, M):
         r"""
         This method fits the time series to an autoregressive process
         of order ``M``. That is, we assume the process is given by
@@ -782,7 +782,7 @@ cdef class TimeSeries:
             t._values[i] = self._values[i] if self._values[i] >= 0 else -self._values[i]
         return t
 
-    def diffs(self, Py_ssize_t k = 1):
+    def diffs(self, Py_ssize_t k=1):
         r"""
         Return the new time series got by taking the differences of
         successive terms in the time series.  So if ``self`` is the time
@@ -1971,7 +1971,7 @@ cdef class TimeSeries:
             mid   = n + bin_size/2
             right = n + 2*bin_size/3
 
-            rgbcolor =  'blue' if open < close else 'red'
+            rgbcolor = 'blue' if open < close else 'red'
 
             p += line([(mid, low), (mid, high)], rgbcolor=rgbcolor)
             p += polygon([(left, open), (right, open), (right, close), (left, close)], rgbcolor=rgbcolor)

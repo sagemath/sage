@@ -35,7 +35,7 @@ form of an element `x` with respect to `I` (i.e., we have
     ....:         self._power = n
     ....:         self._power = n
     ....:         Ideal_nc.__init__(self, R, [R.prod(m) for m in product(R.gens(), repeat=n)])
-    ....:     def reduce(self,x):
+    ....:     def reduce(self, x):
     ....:         R = self.ring()
     ....:         return add([c*R(m) for m,c in x if len(m)<self._power],R(0))
     sage: F.<x,y,z> = FreeAlgebra(QQ, 3)                                                # needs sage.combinat sage.modules
@@ -383,7 +383,7 @@ from sage.structure.category_object import check_default_category
 
 
 @richcmp_method
-class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
+class QuotientRing_nc(ring.Ring):
     """
     The quotient ring of `R` by a twosided ideal `I`.
 
@@ -495,14 +495,13 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             raise TypeError("The second argument must be an ideal of the given ring, but %s is not" % I)
         self.__R = R
         self.__I = I
-        #sage.structure.parent_gens.ParentWithGens.__init__(self, R.base_ring(), names)
-        ##
+
         # Unfortunately, computing the join of categories, which is done in
         # check_default_category, is very expensive.
         # However, we don't just want to use the given category without mixing in
         # some quotient stuff - unless Parent.__init__ was called
         # previously, in which case the quotient ring stuff is just
-        # a vaste of time. This is the case for FiniteField_prime_modn.
+        # a waste of time. This is the case for FiniteField_prime_modn.
         if not self._is_category_initialized():
             if category is None:
                 try:
@@ -589,7 +588,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return "%s/%s" % (latex.latex(self.cover_ring()), latex.latex(self.defining_ideal()))
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Tell whether this quotient ring is commutative.
 
@@ -793,7 +792,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             return self.lifting_map()
         return self.lifting_map()(x)
 
-    def retract(self,x):
+    def retract(self, x):
         """
         The image of an element of the cover ring under the quotient map.
 
@@ -1269,8 +1268,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: S = R.quotient_ring(x^2 + y^2)
             sage: S._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 2
+            // coefficients: QQ...
+            // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
             //        block   2 : ordering C

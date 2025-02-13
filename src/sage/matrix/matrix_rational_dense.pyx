@@ -119,7 +119,7 @@ from sage.misc.verbose import verbose
 
 # ########################################################
 # PARI C library
-from sage.libs.pari.all import PariError
+from cypari2.handle_error import PariError
 from sage.libs.pari.convert_gmp cimport INTFRAC_to_mpq
 from sage.libs.pari.convert_flint cimport rational_matrix, _new_GEN_from_fmpq_mat_t
 from cypari2.stack cimport clear_stack
@@ -1900,15 +1900,15 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
             sage: a = matrix(QQ,3,[1..9])
             sage: a.decomposition()
-            [
-            (Vector space of degree 3 and dimension 1 over Rational Field
-            Basis matrix:
-            [ 1 -2  1], True),
-            (Vector space of degree 3 and dimension 2 over Rational Field
-            Basis matrix:
-            [ 1  0 -1]
-            [ 0  1  2], True)
-            ]
+            [(Vector space of degree 3 and dimension 1 over Rational Field
+              Basis matrix:
+              [ 1 -2  1],
+              True),
+             (Vector space of degree 3 and dimension 2 over Rational Field
+              Basis matrix:
+              [ 1  0 -1]
+              [ 0  1  2],
+              True)]
         """
         X = self._decomposition_rational(is_diagonalizable=is_diagonalizable,
                                          echelon_algorithm=algorithm,
@@ -2776,7 +2776,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         We verify that 0 rows or columns works::
 
-            sage: x = matrix(QQ,2,0); y= matrix(QQ,0,2); x*y
+            sage: x = matrix(QQ,2,0); y = matrix(QQ,0,2); x*y
             [0 0]
             [0 0]
             sage: matrix(ZZ, 0, 0) * matrix(QQ, 0, 5)

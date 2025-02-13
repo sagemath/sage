@@ -16,7 +16,7 @@ from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.misc.superseded import deprecation
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.rings.infinity import infinity
 from sage.rings.number_field.number_field import refine_embedding
 from sage.rings.number_field.morphism import NumberFieldHomomorphism_im_gens
@@ -994,7 +994,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
             sage: x = polygen(ZZ, 'x')
             sage: K.<b> = NumberField(x^4 - 2*x^2 + 2, 'a').galois_closure()
             sage: G = K.galois_group()
-            sage: [G.artin_symbol(P) for P in K.primes_above(7)]
+            sage: [G.artin_symbol(P) for P in K.primes_above(7)]  # random (see remark in primes_above)
             [(1,4)(2,3)(5,8)(6,7), (1,4)(2,3)(5,8)(6,7),
              (1,5)(2,6)(3,7)(4,8), (1,5)(2,6)(3,7)(4,8)]
             sage: G.artin_symbol(17)

@@ -16,6 +16,7 @@ from cysignals.signals cimport sig_check
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix0 as matrix0
 from sage.categories.rings import Rings
+from sage.calculus.functional import derivative
 from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 
@@ -810,13 +811,23 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
+
+        TESTS:
+
+        Verify that :issue:`15067` is fixed::
+
+            sage: m = matrix(3, 3, {(1, 1): 2, (0,2): 5})
+            sage: derivative(m, x)
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
         """
         # We would just use apply_map, except that Cython does not
         # allow lambda functions
 
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
-        v = [(ij, z.derivative(var)) for ij, z in self.dict().iteritems()]
+        v = [(ij, sage.calculus.functional.derivative(z, var)) for ij, z in self.dict().iteritems()]
         if R is None:
             w = [x for _, x in v]
             w = sage.structure.sequence.Sequence(w)
@@ -927,7 +938,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         ncols = PyList_GET_SIZE(columns)
         nrows = PyList_GET_SIZE(rows)
-        cdef Matrix_sparse A = self.new_matrix(nrows = nrows, ncols = ncols)
+        cdef Matrix_sparse A = self.new_matrix(nrows=nrows, ncols=ncols)
 
         tmp = [el for el in columns if 0 <= el < self._ncols]
         columns = tmp

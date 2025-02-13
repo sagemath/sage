@@ -1048,8 +1048,7 @@ class WordMorphism(SageObject):
             raise TypeError("other (=%s) is not a WordMorphism" % other)
 
         nv = dict(other._morph)
-        for k, v in self._morph.items():
-            nv[k] = v
+        nv.update(self._morph)
         return WordMorphism(nv)
 
     def restrict_domain(self, alphabet):
@@ -1551,8 +1550,7 @@ class WordMorphism(SageObject):
         for image in self.images():
             if not dom_alphabet <= set(image):
                 return False
-        else:
-            return True
+        return True
 
     def is_primitive(self):
         r"""
@@ -2467,9 +2465,9 @@ class WordMorphism(SageObject):
         if k == 1:
             from sage.combinat.e_one_star import E1Star
             return E1Star(self)
-        else:
-            raise NotImplementedError("the dual map E_k^*" +
-                 " is implemented only for k = 1 (not %s)" % k)
+
+        raise NotImplementedError("the dual map E_k^* is implemented only "
+                                  "for k = 1 (not %s)" % k)
 
     @cached_method
     def rauzy_fractal_projection(self, eig=None, prec=53):

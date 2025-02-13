@@ -1625,12 +1625,12 @@ class WeakTableau_bounded(WeakTableau_abstract):
             [[None, 2], [3]]
         """
         t = SkewTableau(list(t))
-        shapes = [ Core(p, k+1).to_bounded_partition() for p in intermediate_shapes(t) ]#.to_chain() ]
+        shapes = [ Core(p, k+1).to_bounded_partition() for p in intermediate_shapes(t) ]  # .to_chain() ]
         if t.inner_shape() == Partition([]):
             l = []
         else:
             l = [[None]*i for i in shapes[0]]
-        for i in range(1,len(shapes)):
+        for i in range(1, len(shapes)):
             p = shapes[i]
             if len(l) < len(p):
                 l += [[]]
@@ -2068,8 +2068,10 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
             [s0*s3, s2*s1]
         """
         t = SkewTableau(list(t))
-        shapes = [ Core(p, k+1).to_grassmannian() for p in intermediate_shapes(t) ] #t.to_chain() ]
-        perms = [ shapes[i]*(shapes[i-1].inverse()) for i in range(len(shapes)-1,0,-1)]
+        shapes = [Core(p, k + 1).to_grassmannian()
+                  for p in intermediate_shapes(t)]  # t.to_chain() ]
+        perms = [shapes[i] * (shapes[i - 1].inverse())
+                 for i in range(len(shapes) - 1, 0, -1)]
         return cls(perms, k, inner_shape=t.inner_shape())
 
     def k_charge(self, algorithm='I'):
@@ -4179,7 +4181,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
             sage: StrongTableaux.add_marking([], [], 2, [])
             []
         """
-        def msgn(c,v):
+        def msgn(c, v):
             if c in marking:
                 return -v
             else:
@@ -4222,16 +4224,16 @@ class StrongTableaux(UniqueRepresentation, Parent):
         """
         innershape = Core([len(r) for r in Tlist], k + 1)
         outershape = innershape.affine_symmetric_group_action(tij, transposition=True)
-        if outershape.length() == innershape.length()+1:
+        if outershape.length() == innershape.length() + 1:
             for c in SkewPartition([outershape.to_partition(),innershape.to_partition()]).cells():
                 while c[0] >= len(Tlist):
                     Tlist.append([])
-                Tlist[c[0]].append( v )
+                Tlist[c[0]].append(v)
                 if len(Tlist[c[0]])-c[0] == tij[1]:
-                    Tlist[c[0]][-1] = -Tlist[c[0]][-1]  #mark the cell that is on the j-1 diagonal
+                    Tlist[c[0]][-1] = -Tlist[c[0]][-1]  # mark the cell that is on the j-1 diagonal
             return Tlist
-        else:
-            raise ValueError("%s is not a single step up in the strong lattice" % tij)
+
+        raise ValueError("%s is not a single step up in the strong lattice" % tij)
 
     @classmethod
     def follows_tableau_unsigned_standard( cls, Tlist, k ):

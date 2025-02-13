@@ -163,6 +163,7 @@ Setting up Sage as a Jupyter kernel in an existing Jupyter installation
 
 You may already have a global installation of Jupyter.  For added
 convenience, it is possible to link your installation of Sage into
+
 your Jupyter installation, adding it to the list of available kernels
 that can be selected in the notebook or JupyterLab interface.
 
@@ -192,7 +193,7 @@ new kernel named ``sagemath-dev``.
 
 The ``jupyter kernelspec`` approach by default does lead to about 2Gb of
 Sage documentation being copied into your personal jupyter configuration
-directory. You can avoid that by instead putting a symlink in the relevant spot.
+directory. You can avoid that by instead putting a symlink in the relevant spot
 and
 
 .. CODE-BLOCK:: bash

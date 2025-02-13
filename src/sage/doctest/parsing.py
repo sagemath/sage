@@ -58,7 +58,7 @@ ansi_escape_sequence = re.compile(r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])"
 special_optional_regex = (
     "py2|long time|not implemented|not tested|optional|needs|known bug"
 )
-tag_with_explanation_regex = r"((?:\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
+tag_with_explanation_regex = r"((?:!?\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
 optional_regex = re.compile(
     rf"[^ a-z]\s*(?P<cmd>{special_optional_regex})(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)",
     re.IGNORECASE,
@@ -880,26 +880,6 @@ class SageDocTestParser(doctest.DocTestParser):
             sage: ex.source
             'for i in range(Integer(4)):\n    print(i)\n'
 
-        Sage currently accepts backslashes as indicating that the end
-        of the current line should be joined to the next line.  This
-        feature allows for breaking large integers over multiple lines
-        but is not standard for Python doctesting.  It's not
-        guaranteed to persist::
-
-            sage: n = 1234\
-            ....:     5678
-            sage: print(n)
-            12345678
-            sage: type(n)
-            <class 'sage.rings.integer.Integer'>
-
-        It also works without the line continuation::
-
-            sage: m = 8765\
-            4321
-            sage: print(m)
-            87654321
-
         Optional tags at the start of an example block persist to the end of
         the block (delimited by a blank line)::
 
@@ -993,15 +973,15 @@ class SageDocTestParser(doctest.DocTestParser):
 
             sage: parse("::\n\n    sage: # needs sage.combinat\n    sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \\\n    ....:         import incidence_matrix_to_bit_rep_of_Vrep\n    sage: P = polytopes.associahedron(['A',3])\n\n")
             ['::\n\n',
-            '',
-            (None,
-            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n',
-            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n'),
-            '',
-            (None,
-            "P = polytopes.associahedron(['A',3])\n",
-            "P = polytopes.associahedron(['A',Integer(3)])\n"),
-            '\n']
+             '',
+             (None,
+              'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \\\n        import incidence_matrix_to_bit_rep_of_Vrep\n',
+              'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions         import incidence_matrix_to_bit_rep_of_Vrep\n'),
+             '',
+             (None,
+              "P = polytopes.associahedron(['A',3])\n",
+              "P = polytopes.associahedron(['A',Integer(3)])\n"),
+             '\n']
 
             sage: example4 = '::\n\n        sage: C.minimum_distance(algorithm="guava")  # optional - guava\n        ...\n        24\n\n'
             sage: parsed4 = DTP.parse(example4)
@@ -1016,19 +996,9 @@ class SageDocTestParser(doctest.DocTestParser):
         find_sage_continuation = re.compile(r"^(\s*)\.\.\.\.:", re.M)
         find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
         python_prompt = re.compile(r"^(\s*)>>>", re.M)
-        backslash_replacer = re.compile(r"""(\s*)sage:(.*)\\\ *
-\ *((\.){4}:)?\ *""")
 
         # The following are used to allow ... at the beginning of output
         ellipsis_tag = "<TEMP_ELLIPSIS_TAG>"
-
-        # Hack for non-standard backslash line escapes accepted by the current
-        # doctest system.
-        m = backslash_replacer.search(string)
-        while m is not None:
-            g = m.groups()
-            string = string[:m.start()] + g[0] + "sage:" + g[1] + string[m.end():]
-            m = backslash_replacer.search(string, m.start())
 
         replace_ellipsis = not python_prompt.search(string)
         if replace_ellipsis:
@@ -1124,14 +1094,14 @@ class SageDocTestParser(doctest.DocTestParser):
                             continue
 
                     if self.optional_tags is not True:
-                        extra = {
-                            tag
-                            for tag in optional_tags
-                            if (
-                                tag not in self.optional_tags
-                                and tag not in available_software
-                            )
-                        }
+                        extra = set()
+                        for tag in optional_tags:
+                            if tag not in self.optional_tags:
+                                if tag.startswith('!'):
+                                    if tag[1:] in available_software:
+                                        extra.add(tag)
+                                elif tag not in available_software:
+                                    extra.add(tag)
                         if extra and any(tag in ["bug"] for tag in extra):
                             # Bug only occurs on a specific platform?
                             bug_platform = optional_tags_with_values.get("bug")
@@ -1516,6 +1486,21 @@ class SageOutputChecker(doctest.OutputChecker):
             pythran_numpy_warning_regex = re.compile(r'WARNING: Overriding pythran description with argspec information for: numpy\.random\.[a-z_]+')
             got = pythran_numpy_warning_regex.sub('', got)
             did_fixup = True
+
+        if "ld_classic is deprecated" in got:
+            # New warnings as of Oct '24, Xcode 16.
+            ld_warn_regex = re.compile("ld: warning: -ld_classic is deprecated and will be removed in a future release")
+            got = ld_warn_regex.sub('', got)
+            did_fixup = True
+
+        if "duplicate libraries" in got:
+            # New warnings as of Sept '23, OS X 13.6, new command-line
+            # tools. In particular, these seem to come from ld in
+            # Xcode 15.
+            dup_lib_regex = re.compile("ld: warning: ignoring duplicate libraries: .*")
+            got = dup_lib_regex.sub('', got)
+            did_fixup = True
+
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):
