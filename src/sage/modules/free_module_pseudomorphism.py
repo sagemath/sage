@@ -49,6 +49,48 @@ class FreeModulePseudoMorphism(Morphism):
 
         The implementation currently requires that `M` and `M'`
         are free modules.
+    .. WARNING::
+
+        At the moment, it is not possible to specify both a twisting
+        endomorphism and a twisting derivation. Only one of those can be
+        used, preferably using the `twist` argument in the method
+        :meth:`sage.rings.module.free_module.FreeModule_generic.pseudohom`.
+
+    We represent pseudo morphisms by matrices with coefficient in the
+    base ring `R`. The matrix `\mathcal M_f` representing a pseudo
+    morphism is such that its lines (resp. columns if ``side`` is
+    ``"right"``) are the coordinates of the images of the distinguished
+    basis of the domain (see also method :meth:`matrix`). More
+    concretely, let `n` (resp. `n'`) be the dimension of `M` (resp.
+    `M'`), let `(e_1, \dots, e_n)` be a basis of `M`. For any `x =
+    \sum_{i=1}^n x_i e_i \in M`, we have
+
+    .. MATH::
+
+        f(x) = \begin{pmatrix}
+                 \theta(x_1) & \cdots & \theta(x_n)
+               \end{pmatrix}
+               \mathcal M_f
+               +
+               \begin{pmatrix}
+                 \delta(x_1) & \cdots & \theta(x_n)
+               \end{pmatrix}
+               .
+
+    If ``side`` is ``"right"``, we have:
+
+    .. MATH::
+
+        f(x) = \mathcal M_f
+               \begin{pmatrix}
+                 \theta(x_1) \\ \vdots \\ \theta(x_n)
+               \end{pmatrix}
+               
+               +
+               \begin{pmatrix}
+                 \delta(x_1) \\ \vdots \\ \theta(x_n)
+               \end{pmatrix}
+               .
 
     This class is not supposed to be instantiated directly; the user should
     use instead the method :meth:`sage.rings.module.free_module.FreeModule_generic.pseudohom`
