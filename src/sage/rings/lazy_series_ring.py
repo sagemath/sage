@@ -621,6 +621,25 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         raise ValueError(f"unable to convert {x} into {self}")
 
+    def valuation(self):
+        r"""
+        Return the valuation on this power series ring.
+
+        EXAMPLES::
+
+            sage: R.<t> = LazyLaurentSeriesRing(QQ)
+            sage: v = R.valuation()
+            sage: v
+            t-adic valuation
+
+            sage: v(t)
+            1
+            sage: v(t + 1)
+            0
+        """
+        from sage.rings.series_valuation import SeriesValuation
+        return SeriesValuation(self)
+
     def undefined(self, valuation=None):
         r"""
         Return an uninitialized series.
