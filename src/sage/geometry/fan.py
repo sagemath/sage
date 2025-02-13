@@ -2444,7 +2444,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         Check if ``self`` is the normal fan of a polytope.
 
         A rational polyhedral fan is *polytopal* if it is the normal fan of a
-        polytope. This is also called *regular*, or provide a *coherent*
+        polytope. This is also called *regular*, or provides a *coherent*
         subdivision or leads to a *projective* toric variety.
 
         OUTPUT: ``True`` if ``self`` is polytopal and ``False`` otherwise
