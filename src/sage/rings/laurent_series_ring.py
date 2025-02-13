@@ -310,10 +310,8 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
             sage: v(1/t)
             -1
         """
-        from sage.rings.valuation.valuation_space import DiscretePseudoValuationSpace
         from sage.rings.series_valuation import SeriesValuation
-        valuation_space = DiscretePseudoValuationSpace(self)
-        return SeriesValuation(valuation_space)
+        return SeriesValuation(self)
 
     def base_extend(self, R):
         """

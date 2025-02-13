@@ -669,10 +669,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             sage: v(t + 1)
             0
         """
-        from sage.rings.valuation.valuation_space import DiscretePseudoValuationSpace
         from sage.rings.series_valuation import SeriesValuation
-        valuation_space = DiscretePseudoValuationSpace(self)
-        return SeriesValuation(valuation_space)
+        return SeriesValuation(self)
 
     def is_sparse(self):
         """
