@@ -653,6 +653,27 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             s = 'Sparse ' + s
         return s
 
+    def valuation(self):
+        r"""
+        Return the valuation on this power series ring.
+
+        EXAMPLES::
+
+            sage: R.<t> = QQ[[]]
+            sage: v = R.valuation()
+            sage: v
+            t-adic valuation
+
+            sage: v(t)
+            1
+            sage: v(t + 1)
+            0
+        """
+        from sage.rings.valuation.valuation_space import DiscretePseudoValuationSpace
+        from sage.rings.series_valuation import SeriesValuation
+        valuation_space = DiscretePseudoValuationSpace(self)
+        return SeriesValuation(valuation_space)
+
     def is_sparse(self):
         """
         EXAMPLES::

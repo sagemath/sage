@@ -294,6 +294,27 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
                         names=power_series.variable_names(),
                         category=category)
 
+    def valuation(self):
+        r"""
+        Return the valuation on this Laurent series ring.
+
+        EXAMPLES::
+
+            sage: K.<t> = LaurentSeriesRing(QQ)
+            sage: v = K.valuation()
+            sage: v
+            t-adic valuation
+
+            sage: v(t)
+            1
+            sage: v(1/t)
+            -1
+        """
+        from sage.rings.valuation.valuation_space import DiscretePseudoValuationSpace
+        from sage.rings.series_valuation import SeriesValuation
+        valuation_space = DiscretePseudoValuationSpace(self)
+        return SeriesValuation(valuation_space)
+
     def base_extend(self, R):
         """
         Return the Laurent series ring over R in the same variable as
