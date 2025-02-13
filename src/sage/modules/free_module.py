@@ -3156,16 +3156,13 @@ class FreeModule_generic(Module_free_ambient):
             f(\lambda x) = \theta(\lambda) f(x) + \delta(\lambda) x
 
         When `\delta` is nonzero, this requires that `M` coerces into `M'`.
-        .. WARNING::
 
-            At the moment, it is not possible to specify both a twisting
-            endomorphism and a twisting derivation. Only one of those can be
-            used, preferably using the `twist` argument.
+        .. NOTE::
 
-        We represent pseudo morphisms by matrices with coefficient in the base
-        ring `R`. See class
-        :class:`sage.modules.free_module_pseudomorphism.FreeModulePseudoMorphism`
-        for details.
+            Internally, pseudomorphisms are represented by matrices with
+            coefficient in the base ring `R`. See class
+            :class:`sage.modules.free_module_pseudomorphism.FreeModulePseudoMorphism`
+            for details.
 
         INPUT:
 

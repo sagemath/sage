@@ -202,7 +202,10 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
 
     def ore_ring(self, var='x'):
         r"""
-        Return the underlying Ore polynomial ring.
+        Return the underlying Ore polynomial ring, that is
+        the Ore polynomial ring over the base field twisted
+        by the twisting morphism and the twisting derivation
+        attached to this homspace.
 
         INPUT:
 
