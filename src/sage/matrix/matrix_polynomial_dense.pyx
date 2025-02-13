@@ -4217,6 +4217,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # compute extended shift for kernel basis computation
         # -> for correctness, the constraint on the added part is that it
         # must have maximum entry at most min(shifts)
+        # [see Lemma 4.2, Neiger-Vu, Computing Canonical Bases of Modules of
+        # Univariate Relations, Proc. ISSAC 2017]
         min_shift = min(shifts)
         if row_wise:
             extended_shifts = [s - min_shift for s in shifts] + [0]*n
