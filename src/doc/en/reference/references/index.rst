@@ -420,6 +420,10 @@ REFERENCES:
 .. [Baer2020] Christian Bär. *The Faddeev-LeVerrier algorithm and the Pfaffian*.
               :arxiv:`2008.04247`, 2020.
 
+.. [BFS2015]  M. Bardet, J-C. Faugère, B. Salvy.
+              *On the complexity of the F5 Gröbner basis algorithm*,
+              Journal of Symbolic Computation, 2015
+
 .. [BaKi2001] Bakalov and Kirillov, *Lectures on tensor categories and modular functors*,
             AMS (2001).
 
@@ -4740,7 +4744,10 @@ REFERENCES:
 
 **M**
 
-.. [Mac1916] \F.S. Macaulay. The algebraic theory of modular systems
+.. [Mac1902] \F.S. Macaulay. *On some formula in elimination.*
+             London Mathematical Society, 33, 1902, 3--27
+
+.. [Mac1916] \F.S. Macaulay. *The algebraic theory of modular systems*
              Cambridge university press, 1916.
 
 .. [Mac1995] \I. G. Macdonald, Symmetric functions and Hall

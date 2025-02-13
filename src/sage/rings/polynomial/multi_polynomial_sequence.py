@@ -948,8 +948,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         REFERENCES:
 
-        F. S. Macaulay. On some formula in elimination. In London Mathematical Society, number 33 in 1, pages 3–27, May 1902
-        M. Bardet, J-C. Faugère, B. Salvy. On the complexity of the F5 Gröbner basis algorithm, Journal of Symbolic Computation, 2015, p5
+        [Mac1902]_, [BFS2015]_
         """
         from sage.matrix.constructor import matrix
 
