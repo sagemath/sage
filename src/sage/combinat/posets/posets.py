@@ -8568,8 +8568,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             :meth:`completion_by_cuts`
         """
         C, C2 = [], []
-        for x in P:
-            C.append(set(P.order_filter([x])))
+        for x in self:
+            C.append(set(self.order_filter([x])))
         for i, c in enumerate(C):
             for j in range(i + 1, len(C)):
                 I = c.intersection(C[j])
