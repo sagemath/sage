@@ -3122,7 +3122,7 @@ class FreeModule_generic(Module_free_ambient):
         - ``twist`` -- the twisting morphism or the twisting derivation
 
         - ``codomain`` -- (default: ``None``) the codomain of the pseudo
-          morphisms; if ``None``, the codomain is the same than the domain
+          morphisms; if ``None``, the codomain is the same as the domain
 
         EXAMPLES::
 
