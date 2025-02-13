@@ -1,6 +1,7 @@
 """
 Witt vectors
 """
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import op_EQ, op_NE
@@ -29,14 +30,35 @@ class WittVector(CommutativeRingElement):
             (2, 1, 0, 2)
             sage: 1/t
             (1, 1, 1, 0)
+
+            sage: W=WittVectorRing(ZZ, p=5, prec=2)
+            sage: WW=WittVectorRing(ZZ, p=5, prec=2)
+            sage: W((4,10)) * WW((-5,12,1))
+            (-20, -18362)
+            sage: WW((1,2,3)) + W((1,2))
+            (2, -2)
         """
         self.prec = parent.precision()
         B = parent.base()
         if vec is not None:
-            if len(vec) != self.prec:
-                raise ValueError(f'{vec} is not the correct length. '
-                                 f'Expected length to be {self.prec}.')
-            self.vec = tuple(B(x) for x in vec)
+            if vec in ZZ:
+                self._int_to_vector(vec, parent)
+            elif isinstance(vec, WittVector):
+                if vec.parent().precision() < self.prec:
+                    raise ValueError(
+                        f'{vec} is not the correct length. Expected length to '
+                        f'at least {self.prec}.')
+                if not B.has_coerce_map_from(vec.parent().base()):
+                    raise ValueError(
+                        f'Cannot coerce an element of {vec.base()} to an '
+                        f'element of {B}.')
+                self.vec = tuple(B(vec.vec[i]) for i in range(self.prec))
+            else:
+                if len(vec) < self.prec:
+                    raise ValueError(
+                        f'{vec} is not the correct length. Expected length to '
+                        f'at least {self.prec}.')
+                self.vec = tuple(B(vec[i]) for i in range(self.prec))
         else:
             self.vec = (B(0) for i in range(self.prec))
         CommutativeRingElement.__init__(self, parent)
@@ -304,3 +326,32 @@ class WittVector(CommutativeRingElement):
                 raise ZeroDivisionError(f"Inverse of {self} does not exist.")
 
         return C(P, vec=inv_vec)
+
+    def _int_to_vector(self, k, parent):
+        p = parent.prime
+        R = parent.base()
+
+        should_negate = False
+        if k < 0:
+            k = -k
+            should_negate = True
+
+        vec_k = [k]
+        for n in range(1, self.prec):
+            total = (
+                k - k**(p**n)
+                - sum(p**(n-i) * vec_k[n-i]**(p**i) for i in range(1, n))
+            )
+            total //= p**n
+            vec_k.append(total)
+
+        if should_negate:
+            if p == 2:
+                vec_k = (
+                    parent(vec_k)
+                    * parent((tuple(-1 for _ in range(self.prec))))
+                ).vec
+            else:
+                vec_k = (-x for x in vec_k)
+
+        self.vec = tuple([R(x) for x in vec_k])

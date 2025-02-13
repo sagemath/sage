@@ -113,40 +113,14 @@ class WittVectorRing_base(CommutativeRing, UniqueRepresentation):
                f"length {self.prec} over {self.base()}"
 
     def _coerce_map_from_(self, S):
-        # Question: do we return True is S == self.base()?
-        # We have the teichmuller lift, but I don't think that's
-        # a "coercion" map, per se.
-        return (S is ZZ)
+        if isinstance(S, WittVectorRing_base):
+            return (
+                S.precision() >= self.precision()
+                and self.base().has_coerce_map_from(S.base()))
+        return S is ZZ
 
     def _element_constructor_(self, x):
-        if x in ZZ:
-            return self.element_class(self, self._int_to_vector(x))
-        elif isinstance(x, tuple) or isinstance(x, list):
-            return self.element_class(self, x)
-        else:
-            return NotImplemented
-
-    def _int_to_vector(self, k):
-        p = self.prime
-
-        should_negate = False
-        if k < 0:
-            k = -k
-            should_negate = True
-
-        vec_k = [k]
-        for n in range(1, self.prec):
-            total = k - k**(p**n) - sum(p**(n-i) * vec_k[n-i]**(p**i) for i in range(1, n))
-            total //= p**n
-            vec_k.append(total)
-
-        if should_negate:
-            if p == 2:
-                return NotImplemented
-            else:
-                vec_k = [-x for x in vec_k]
-
-        return vec_k
+        return self.element_class(self, x)
 
     def _generate_sum_and_product_polynomials(self, base):
         p = self.prime
