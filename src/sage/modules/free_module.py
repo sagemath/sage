@@ -3115,14 +3115,14 @@ class FreeModule_generic(Module_free_ambient):
 
     def pseudoHom(self, twist, codomain=None):
         r"""
-        Return the Pseudo Hom space corresponding to given data.
+        Return the pseudo-Hom space corresponding to given data.
 
         INPUT:
 
         - ``twist`` -- the twisting morphism or the twisting derivation
 
-        - ``codomain`` (default: ``None``) -- the codomain of the pseudo
-          morphisms; if ``None``, the codomain is the same than the domain
+        - ``codomain`` -- (default: ``None``) the codomain of the pseudo
+          morphisms; if ``None``, the codomain is the same as the domain
 
         EXAMPLES::
 
@@ -3147,15 +3147,22 @@ class FreeModule_generic(Module_free_ambient):
 
         We recall that, given two `R`-modules `M` and `M'` together with
         a ring homomorphism `\theta: R \to R` and a `\theta`-derivation,
-        `\delta: R \to R` (that is, a map such that:
+        `\delta: R \to R` (that is, a map such that
         `\delta(xy) = \theta(x)\delta(y) + \delta(x)y`), a
-        pseudomorphism `f : M \to M'` is a additive map such that
+        pseudomorphism `f : M \to M'` is an additive map such that
 
-        .. MATH:
+        .. MATH::
 
             f(\lambda x) = \theta(\lambda) f(x) + \delta(\lambda) x
 
         When `\delta` is nonzero, this requires that `M` coerces into `M'`.
+
+        .. NOTE::
+
+            Internally, pseudomorphisms are represented by matrices with
+            coefficient in the base ring `R`. See class
+            :class:`sage.modules.free_module_pseudomorphism.FreeModulePseudoMorphism`
+            for details.
 
         INPUT:
 
@@ -3163,11 +3170,14 @@ class FreeModule_generic(Module_free_ambient):
           pseudomorphism
 
         - ``twist`` -- the twisting morphism or the twisting derivation
+          (if a derivation is given, the corresponding morphism `\theta`
+          is automatically infered;
+          see also :class:`sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing`)
 
-        - ``codomain`` (default: ``None``) -- the codomain of the pseudo
+        - ``codomain`` -- (default: ``None``) the codomain of the pseudo
           morphisms; if ``None``, the codomain is the same than the domain
 
-        - ``side`` (default: ``left``) -- side of the vectors acted on by
+        - ``side`` -- (default: ``left``) side of the vectors acted on by
           the matrix
 
         EXAMPLES::
@@ -3213,7 +3223,7 @@ class FreeModule_generic(Module_free_ambient):
             True
 
         If the twisting derivation is not zero, the domain must
-        coerce into the codomain
+        coerce into the codomain::
 
             sage: N = R^3
             sage: M.pseudohom([[1, t, t^2], [1, t^2, t^4]], d, codomain=N)
@@ -3225,9 +3235,8 @@ class FreeModule_generic(Module_free_ambient):
 
             :meth:`pseudoHom`
         """
-        from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
-        parent = self.pseudoHom(twist, codomain)
-        return FreeModulePseudoMorphism(parent, f, side)
+        H = self.pseudoHom(twist, codomain)
+        return H(f, side)
 
     def inner_product_matrix(self):
         """

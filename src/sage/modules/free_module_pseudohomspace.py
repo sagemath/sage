@@ -1,10 +1,9 @@
 """
-Space of Pseudomorphisms of free modules
+Space of pseudomorphisms of free modules
 
 AUTHORS:
 
-    - Xavier Caruso, Yossef Musleh (2024-09): initial version
-
+- Xavier Caruso, Yossef Musleh (2024-09): initial version
 """
 # ****************************************************************************
 #  Copyright (C) 2024 Xavier Caruso <xavier.caruso@normalesup.org>
@@ -32,13 +31,15 @@ from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
 
 
 class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
-    Element = FreeModulePseudoMorphism
-
     r"""
-    This class implements the space of Pseudomorphisms with a fixed twist.
+    This class implements the space of pseudomorphisms with a fixed twist.
 
     For free modules, the elements of a pseudomorphism correspond to matrices
     which define the mapping on elements of a basis.
+
+    This class is not supposed to be instantiated directly; the user should
+    use instead the method :meth:`sage.rings.module.free_module.FreeModule_generic.pseudoHom`
+    to create a space of pseudomorphisms.
 
     TESTS::
 
@@ -50,8 +51,9 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         sage: e = M((4*F.gen()^2 + F.gen() + 2, 4*F.gen()^2 + 4*F.gen() + 4))
         sage: h(e)
         (z3, 2*z3^2 + 3*z3 + 3)
-
     """
+    Element = FreeModulePseudoMorphism
+
     @staticmethod
     def __classcall_private__(cls, domain, codomain, twist):
         r"""
@@ -59,11 +61,12 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
 
         INPUT:
 
-        -  ``domain`` -- a free module,  the domain of this pseudomorphism
+        - ``domain`` -- a free module,  the domain of this pseudomorphism
 
-        -  ``codomain`` -- a free module, the codomain of this pseudomorphism
+        - ``codomain`` -- a free module, the codomain of this pseudomorphism
 
-        -  ``twist`` -- a twisting morphism/derivation or a Ore polynomial ring
+        - ``twist`` -- a twisting morphism/derivation or the corresponding
+          Ore polynomial ring
 
         TESTS::
 
@@ -74,8 +77,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: type(H)
             <class 'sage.modules.free_module_pseudohomspace.FreeModulePseudoHomspace_with_category'>
 
-            sage: # Testsuite(H).run()
-
+            sage: TestSuite(H).run()
         """
         ring = domain.base_ring()
         if codomain.base_ring() is not ring:
@@ -97,11 +99,12 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
 
         INPUT:
 
-        -  ``domain`` -- a free module,  the domain of this pseudomorphism
+        - ``domain`` -- a free module,  the domain of this pseudomorphism
 
-        -  ``codomain`` -- a free module, the codomain of this pseudomorphism
+        - ``codomain`` -- a free module, the codomain of this pseudomorphism
 
-        -  ``ore`` -- the underlying Ore polynomial ring
+        - ``ore`` -- the underlying Ore polynomial ring (built from the
+          twisting morphism and derivation)
 
         TESTS::
 
@@ -109,8 +112,8 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: Frob = F.frobenius_endomorphism()
             sage: M = F^2
             sage: M.pseudoHom(Frob)
-            Set of Pseudoendomorphisms (twisted by z3 |--> z3^5) of Vector space of dimension 2 over Finite Field in z3 of size 5^3
-
+            Set of Pseudoendomorphisms (twisted by z3 |--> z3^5) of
+            Vector space of dimension 2 over Finite Field in z3 of size 5^3
         """
         self._domain = domain
         self._codomain = codomain
@@ -142,7 +145,6 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             [  z z^2]
             Domain: Vector space of dimension 2 over Finite Field in z of size 5^3
             Codomain: Vector space of dimension 2 over Finite Field in z of size 5^3
-
         """
         return self.element_class(self, f, side)
 
@@ -173,12 +175,15 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: Frob = Fq.frobenius_endomorphism()
             sage: V = Fq^2
             sage: V.pseudoHom(Frob)  # indirect doctest
-            Set of Pseudoendomorphisms (twisted by z3 |--> z3^7) of Vector space of dimension 2 over Finite Field in z3 of size 7^3
+            Set of Pseudoendomorphisms (twisted by z3 |--> z3^7) of
+            Vector space of dimension 2 over Finite Field in z3 of size 7^3
 
         ::
 
             sage: V.pseudoHom(Frob, codomain=Fq^3)  # indirect doctest
-            Set of Pseudomorphism (twisted by z3 |--> z3^7) from Vector space of dimension 2 over Finite Field in z3 of size 7^3 to Vector space of dimension 3 over Finite Field in z3 of size 7^3
+            Set of Pseudomorphism (twisted by z3 |--> z3^7)
+            from Vector space of dimension 2 over Finite Field in z3 of size 7^3
+            to Vector space of dimension 3 over Finite Field in z3 of size 7^3
 
         ::
 
@@ -186,8 +191,8 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: d = A.derivation()
             sage: M = A^3
             sage: M.pseudoHom(d)
-            Set of Pseudoendomorphisms (twisted by d/dt) of Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
-
+            Set of Pseudoendomorphisms (twisted by d/dt) of Ambient free module of rank 3 over
+            the principal ideal domain Univariate Polynomial Ring in t over Rational Field
         """
         twist = self._ore._repr_twist()
         if self.domain() is self.codomain():
@@ -197,12 +202,15 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
 
     def ore_ring(self, var='x'):
         r"""
-        Return the underlying Ore polynomial ring.
+        Return the underlying Ore polynomial ring, that is
+        the Ore polynomial ring over the base field twisted
+        by the twisting morphism and the twisting derivation
+        attached to this homspace.
 
         INPUT:
 
-        - ``var`` (default: ``x``) -- a string, the name of
-          tha variable
+        - ``var`` -- string (default: ``x``) the name of
+          the variable
 
         EXAMPLES::
 
@@ -216,14 +224,13 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
 
             sage: H.ore_ring('y')
             Ore Polynomial Ring in y over Finite Field in z of size 7^3 twisted by z |--> z^7
-
         """
         return self._ore.change_var(var)
 
     def matrix_space(self):
         r"""
         Return the matrix space used for representing the
-        pseudomorphism in this space.
+        pseudomorphisms in this space.
 
         EXAMPLES::
 
@@ -234,13 +241,15 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: H = V.pseudoHom(Frob, codomain=W)
             sage: H.matrix_space()
             Full MatrixSpace of 2 by 3 dense matrices over Finite Field in z of size 7^3
-
         """
         return self._matrix_space
 
     def basis(self, side="left"):
         r"""
         Return a basis for the underlying matrix space.
+
+        The result does not depend on the `side` of the homspace, i.e.
+        if matrices are acted upon on the left or on the right.
 
         EXAMPLES::
 
@@ -253,19 +262,89 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             [1 0]
             [0 0]
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
-            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3, Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3,
+            Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
             [0 1]
             [0 0]
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
-            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3, Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3,
+            Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
             [0 0]
             [1 0]
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
-            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3, Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3,
+            Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
             [0 0]
             [0 1]
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3]
-
         """
         return Sequence(self(mat) for mat in self._matrix_space.basis())
+
+    def _test_additive_associativity(self, tester):
+        r"""
+        Test associativity for (not necessarily all) elements in this parent.
+
+        This test is not relevant for pseudomorphisms because they are not
+        stable by addition.
+
+        TESTS::
+
+            sage: Fq = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: PHS = V.pseudoHom(Frob)
+            sage: TestSuite(PHS).run()  # indirect doctest
+        """
+        pass
+
+    def _test_distributivity(self, tester):
+        r"""
+        Test distributivity for (not necessarily all) elements in this parent.
+
+        This test is not relevant for pseudomorphisms because they are not
+        stable by addition.
+
+        TESTS::
+
+            sage: Fq = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: PHS = V.pseudoHom(Frob)
+            sage: TestSuite(PHS).run()  # indirect doctest
+        """
+        pass
+
+    def _test_one(self, tester):
+        r"""
+        Test properties the identity element.
+
+        This test is not relevant for pseudomorphisms because the identity
+        is not a pseudomorphism in general.
+
+        TESTS::
+
+            sage: Fq = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: PHS = V.pseudoHom(Frob)
+            sage: TestSuite(PHS).run()  # indirect doctest
+        """
+        pass
+
+    def _test_zero(self, tester):
+        r"""
+        Test properties of the zero element.
+
+        This test is not relevant for pseudomorphisms because the zero
+        map is not a pseudomorphism in general.
+
+        TESTS::
+
+            sage: Fq = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: PHS = V.pseudoHom(Frob)
+            sage: TestSuite(PHS).run()  # indirect doctest
+        """
+        pass
