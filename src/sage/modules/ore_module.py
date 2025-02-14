@@ -2041,7 +2041,7 @@ class OreQuotientModule(OreModule):
 
         At this point, there is no coercion map between ``M``
         and ``Me``. Therefore, adding elements in both parents
-        results in an error:
+        results in an error::
 
             sage: M.random_element() + Me.random_element()
             Traceback (most recent call last):
