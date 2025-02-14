@@ -1,5 +1,5 @@
 r"""
-Ore modules.
+Ore modules
 
 Let `R` be a commutative ring, `\theta : K \to K` by a ring
 endomorphism and `\partial : K \to K` be a `\theta`-derivation,
