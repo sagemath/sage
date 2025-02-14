@@ -66,8 +66,7 @@ compatible CPU, replace ``linux`` accordingly:
     $ conda env create --file environment-3.12-linux.yml
     $ conda activate sage-dev
 
-Bootstrap the source tree and install the build prerequisites and the Sage
-library:
+Bootstrap the source tree and build the Sage library:
 
 .. code-block:: shell
 
