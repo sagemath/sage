@@ -2439,7 +2439,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         m = m.augment(matrix(ZZ, m.nrows(), 1, [1] * m.nrows()))
         return matrix(ZZ, m.integer_kernel().matrix())
 
-    def is_polytopal(self):
+    def is_polytopal(self) -> bool:
         r"""
         Check if ``self`` is the normal fan of a polytope.
 
@@ -2491,9 +2491,9 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         from sage.geometry.polyhedron.constructor import Polyhedron
         pc = PointConfiguration(self.rays())
         v_pc = [tuple(p) for p in pc]
-        pc_to_indices = {tuple(p):i for (i,p) in enumerate(pc)}
-        indices_to_vr = [tuple(r) for r in self.rays()]
-        cone_indices = [cone.ambient_ray_indices() for cone in self.generating_cones()]
+        pc_to_indices = {tuple(p):i for i, p in enumerate(pc)}
+        indices_to_vr = (tuple(r) for r in self.rays())
+        cone_indices = (cone.ambient_ray_indices() for cone in self.generating_cones())
         translator = [pc_to_indices[t] for t in indices_to_vr]
         translated_cone_indices = [[translator[i] for i in ci] for ci in cone_indices]
         dc_pc = pc.deformation_cone(translated_cone_indices)
