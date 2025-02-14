@@ -4,13 +4,13 @@ on:
   workflow_call:
     inputs:
       targets_pre:
-        default: all-sage-local
+        default: build/make/Makefile
         type: string
       targets:
-        default: build doc-html
+        default: build/make/Makefile
         type: string
       targets_optional:
-        default: ptest
+        default: build/make/Makefile
         type: string
       tox_system_factors:
         description: 'Stringified JSON object listing tox system factors'
@@ -103,6 +103,7 @@ on:
         default: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
         type: string
       incremental:
+        description: 'Whether to build Sage from scratch or from prebuilt Sage'
         default: false
         type: boolean
       from_docker_repository:
@@ -282,7 +283,7 @@ jobs:
           #
           # The tox command starts to build and test Sage within a Docker container.
           #
-          # Adter the build, the sed command strips away timestamps from
+          # After the build, the sed command strips away timestamps from
           # "docker build" (buildkit) such as "#25 1211.0" at the beginning of
           # each line. The timestamps are redundant because GH Actions provides
           # timestamps for each line already. Stripping the timestamps from
