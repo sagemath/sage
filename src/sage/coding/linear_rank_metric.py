@@ -91,7 +91,7 @@ Read more about
 AUTHORS:
 
 - Marketa Slukova (2019-08-16): initial version
-- Camille Garnier and Rubén Muñoz--Bertrand (2024-02-13): added rank_support_of_vector, and corrected the documentation
+- Camille Garnier and Rubén Muñoz-\-Bertrand (2024-02-13): added rank_support_of_vector, and corrected the documentation
 
 TESTS::
 
@@ -148,8 +148,8 @@ def to_matrix_representation(v, sub_field=None, basis=None):
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, the default basis is
-      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator of the
-      multiplicative group of `\GF{q^m}` given by Sage.
+      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator of `\GF{q^m}`
+      given by SageMath.
 
     EXAMPLES::
 
@@ -200,9 +200,9 @@ def from_matrix_representation(w, base_field=None, basis=None):
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       `\GF{q}`. If not specified, the default basis is
-      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator of the
-      multiplicative group of `\GF{q^m}` given by Sage.
-
+      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator
+      of `\GF{q^m}` given by SageMath.
+      
     EXAMPLES::
 
         sage: from sage.coding.linear_rank_metric import from_matrix_representation
@@ -242,8 +242,8 @@ def rank_weight(c, sub_field=None, basis=None):
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, the default basis is
-      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator of the
-      multiplicative group of `\GF{q^m}` given by Sage.
+      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator
+      of `\GF{q^m}` given by SageMath.
 
     EXAMPLES::
 
@@ -280,8 +280,8 @@ def rank_distance(a, b, sub_field=None, basis=None):
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, the default basis is
-      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator of the
-      multiplicative group of `\GF{q^m}` given by Sage.
+      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator
+      of `\GF{q^m}` given by SageMath.
 
     EXAMPLES::
 
@@ -381,8 +381,8 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
 
         - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
           ``sub_field``. If not specified, the default basis is
-          `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator of the
-          multiplicative group of `\GF{q^m}` given by Sage.
+          `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator
+          of `\GF{q^m}` given by SageMath.
 
         EXAMPLES:
 
@@ -609,7 +609,7 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
         - ``basis`` -- (default: ``None``) a basis of ``base_field`` of
           ``self`` as a vector space over ``sub_field``. If not specified,
           the default basis is `1,\beta,\ldots,\beta^{m-1}`, where `\beta` is
-          the generator of the multiplicative group of `\GF{q^m}` given by Sage.
+          the generator of `\GF{q^m}` given by SageMath.
 
         EXAMPLES::
 
@@ -748,8 +748,8 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
 
         - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
           ``sub_field``. If not specified, the default basis is
-          `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator of the
-          multiplicative group of `\GF{q^m}` given by Sage.
+          `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator `\GF{q^m}`
+          given by SageMath.
 
         EXAMPLES::
 
