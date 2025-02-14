@@ -202,7 +202,7 @@ def from_matrix_representation(w, base_field=None, basis=None):
       `\GF{q}`. If not specified, the default basis is
       `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator
       of `\GF{q^m}` given by SageMath.
-      
+
     EXAMPLES::
 
         sage: from sage.coding.linear_rank_metric import from_matrix_representation
