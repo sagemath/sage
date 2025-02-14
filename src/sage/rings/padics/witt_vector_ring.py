@@ -7,7 +7,7 @@ Witt vectors.
 AUTHORS:
 
 - Jacob Dennerlein (2022-11-28): initial version
-- Rubén Muñoz--Bertrand (2025-02-13): major refactoring and clean-up
+- Rubén Muñoz-\-Bertrand (2025-02-13): major refactoring and clean-up
 
 """
 
@@ -102,11 +102,11 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
     r"""
     Return the appropriate `p`-typical truncated Witt vector ring.
 
-    INPUT::
+    INPUT:
 
     - ``base_ring`` -- commutative ring of coefficients
 
-    - ``prec`` -- integer (default: ``1``), length of the truncated Witt
+    - ``prec`` -- integer (default: `1`), length of the truncated Witt
       vectors in the ring
 
     - ``p`` -- prime (default: ``None``) number; when it is not set, it
