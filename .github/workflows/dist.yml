@@ -135,6 +135,8 @@ jobs:
               \"tag_name\": \"${{ github.ref_name }}\",
               \"previous_tag_name\": \"$latest_release_tag\"
             }" | jq -r '.body')
+          # escape special characters for json
+          release_notes=$(jq -R -s '.' <<< "$release_notes")
           curl -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
@@ -144,7 +146,7 @@ jobs:
             -d "{
               \"tag_name\": \"${{ github.ref_name }}\",
               \"prerelease\": ${{ contains(github.ref, 'beta') || contains(github.ref, 'rc') }},
-              \"body\": \"$release_notes\"
+              \"body\": $release_notes
             }"
       - name: Create release assets
         uses: softprops/action-gh-release@v2

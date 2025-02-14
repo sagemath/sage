@@ -62,7 +62,7 @@ import sage.modules.free_module_element as free_module_element
 import sage.rings.abc
 
 from sage.arith.functions import lcm
-from sage.arith.misc import bernoulli, binomial, factorial, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
+from sage.arith.misc import bernoulli, factorial, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
 from sage.categories.map import Map
 from sage.categories.objects import Objects
 from sage.categories.rings import Rings
@@ -724,7 +724,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             def S(n):
                 return sum(v[r] * r**n for r in range(1, N))
 
-            ber = sum(binomial(k, j) * bernoulli(j, **opts) *
+            ber = sum(ZZ(k).binomial(j) * bernoulli(j, **opts) *
                       N**(j - 1) * S(k - j) for j in range(k + 1))
         elif algorithm == "definition":
             # This is better since it computes the same thing, but requires
@@ -999,10 +999,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
                     v += s
                 m.append(v)
 
-            m = matrix(m)
-
             xx = S.gen()
-            return m.charpoly(xx)
+            return matrix(m).charpoly(xx)
 
         elif algorithm == "pari":
             # Use pari
