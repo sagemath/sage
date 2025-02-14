@@ -17,7 +17,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.structure.factory import UniqueFactory
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
 from sage.rings.integer_ring import ZZ
 from sage.groups.abelian_gps.dual_abelian_group_element import DualAbelianGroupElement
 from sage.groups.abelian_gps.dual_abelian_group import DualAbelianGroup_class
@@ -33,12 +33,12 @@ class HeckeCharacter(DualAbelianGroupElement):
 
         INPUT:
 
-        ``g`` -- either an element of the ray class group on which this
-        character is defined, or something that can be turned into an ideal.
+        - ``g`` -- either an element of the ray class group on which this
+          character is defined, or something that can be turned into an ideal
 
         OUTPUT:
 
-        The value of this character at ``g``.
+        The value of this character at ``g``
 
         EXAMPLES:
 
@@ -139,27 +139,14 @@ class HeckeCharacter(DualAbelianGroupElement):
         """
         return self.parent().modulus()
 
-    def level(self):
-        """
-        Return the modulus modulo which this character is defined.
-
-        An alias for :meth:`modulus`.
-
-        EXAMPLES::
-
-            sage: F = QuadraticField(5)
-            sage: H = HeckeCharacterGroup(F.ideal(F.gen()).modulus([0,1]))
-            sage: H.gens()[0].level()
-            (Fractional ideal (a)) * infinity_0 * infinity_1
-        """
-        return self.modulus()
+    level = modulus
 
     def conductor(self):
         """
         Return the conductor of this character.
 
-        Uses pari to compute the conductor of this character, i.e. the smallest
-        modulus for which this character is defined.
+        This uses ``pari`` to compute the conductor of this character,
+        i.e. the smallest modulus for which this character is defined.
 
         EXAMPLES::
 
@@ -263,7 +250,7 @@ class HeckeCharacter(DualAbelianGroupElement):
             raise ValueError("Hecke character can only be extended to a modulus that is a multiple of its own modulus.")
         if self.modulus() == m:
             return self
-        #if not isinstance(m, HeckeCharacterGroup_class):
+        # if not isinstance(m, HeckeCharacterGroup_class):
         m = HeckeCharacterGroup(m)
         return m.element_from_values_on_gens([self(I) for I in m.ray_class_gens()])
 
@@ -319,12 +306,12 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: (H.gen()^2).root_number()
             1
         """
-        #try-except only necessary because of http://pari.math.u-bordeaux.fr/cgi-bin/bugreport.cgi?bug=1848
-        #According to Belabas this bug seems to occur because of a problem dealing with
-        #imprimitive characters, thus the code in the except clause below. Once we incorporate a version
-        #a pari where this bug is fixed, the command in the try itself should be sufficient.
-        #The first example above (with Q(cubert(3))) fails without the except clause and so can
-        #be used to test if the pari bug has been fixed.
+        # try-except only necessary because of http://pari.math.u-bordeaux.fr/cgi-bin/bugreport.cgi?bug=1848
+        # According to Belabas this bug seems to occur because of a problem dealing with
+        # imprimitive characters, thus the code in the except clause below. Once we incorporate a version
+        # a pari where this bug is fixed, the command in the try itself should be sufficient.
+        # The first example above (with Q(cubert(3))) fails without the except clause and so can
+        # be used to test if the pari bug has been fixed.
         try:
             rn = self.parent().group().pari_bnr().bnrrootnumber(self._log_values_on_gens())
         except PariError:
@@ -418,7 +405,7 @@ class HeckeCharacterGroup_class(DualAbelianGroup_class):
             names = 'chi'
         DualAbelianGroup_class.__init__(self, ray_class_group, names, base_ring)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return f'Group of finite order Hecke characters modulo {self.modulus()}'
 
     def modulus(self):
@@ -441,9 +428,9 @@ class HeckeCharacterGroup_class(DualAbelianGroup_class):
                      for i in range(len(gens_orders))]
         return self.element_class(self, exponents)
 
-    #def _element_constructor_(self, *args, **kwds):
+    # def _element_constructor_(self, *args, **kwds):
     #    if isinstance(args[0], (str,  bytes)):
-    #        raise TypeError("Wrong type to coerce into HeckeCharacterGroup.")
+    #        raise TypeError("wrong type to coerce into HeckeCharacterGroup")
     #    try:
     #        n = len(args[0])
     #    except TypeError:
@@ -457,7 +444,6 @@ class HeckeCharacterGroup_class(DualAbelianGroup_class):
 
 class HeckeCharacterGroupFactory(UniqueFactory):
     def create_key(self, modulus, base_ring=None, names=None):
-        # (m, base_ring=None, names=None):
         # from sage.structure.category_object import normalize_names
         # names = normalize_names()
         if names is None:
