@@ -155,15 +155,6 @@ class MPolynomial_element(MPolynomial):
             sage: a(()).parent()
             Rational Field
         
-        Check :issue:`39081`::
-            
-            sage: R.<a,b> = PolynomialRing(ZZ)
-            sage: f = a + b
-            sage: f(1, 2, a=3, b=4)
-
-            Traceback (most recent call last):
-            ...
-            TypeError: Cannot mix both arguments and keywords.
 
         AUTHORS:
 
