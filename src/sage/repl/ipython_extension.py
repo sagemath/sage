@@ -61,7 +61,7 @@ In contrast, input to the ``%time`` magic command is preparsed::
     CPU times: user ...
     Wall time: ...
     2 * 3^3 * 11
-    sage: shell.quit()
+    sage: shell.run_cell("exit")
 """
 
 from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
@@ -102,7 +102,7 @@ class SageMagics(Magics):
             PROFILE: interrupts/evictions/bytes = ...
             Using local file ...
             Using local file ...
-            sage: shell.quit()
+            sage: shell.run_cell("exit")
         """
         import sage.misc.gperftools
         sage.misc.gperftools.crun(s, evaluator=self.shell.ex)
@@ -133,7 +133,7 @@ class SageMagics(Magics):
             sage: shell.run_cell('%runfile '+tmp)
             sage: shell.run_cell('a')
             2
-            sage: shell.quit()
+            sage: shell.run_cell("exit")
         """
         return self.shell.ex(load_wrap(s, attach=False))
 
@@ -177,7 +177,7 @@ class SageMagics(Magics):
             sage: shell.run_cell('attached_files()')
             []
             sage: os.remove(f.name)
-            sage: shell.quit()
+            sage: shell.run_cell("exit")
         """
         return self.shell.ex(load_wrap(s, attach=True))
 
@@ -299,7 +299,7 @@ class SageMagics(Magics):
 
             sage: shell.run_cell('%display invalid_mode')
             value must be unset (None) or one of ('plain', 'ascii_art', 'unicode_art', 'latex'), got invalid_mode
-            sage: shell.quit()
+            sage: shell.run_cell("exit")
         """
         from sage.repl.rich_output import get_display_manager
         dm = get_display_manager()
