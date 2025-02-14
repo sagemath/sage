@@ -47,7 +47,7 @@ Classical methods are available and we can work with elements in
     sage: z*v
     (z^2, 2*z + 2)
 
-The Ore action (or equivalently the structure of `mathcal A`-module)
+The Ore action (or equivalently the structure of `\mathcal A`-module)
 is also easily accessible)::
 
     sage: X*v
