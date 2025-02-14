@@ -649,8 +649,7 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
             ...
             TypeError: the input subfield Finite Field in z4 of size 2^4 is not a subfield of Finite Field in a of size 2^3
         """
-        if not isinstance(word, Vector):
-            raise TypeError("input must be a vector")
+        word = self.ambient_space()(word)
         if sub_field is not None:
             if self.base_field().degree() % sub_field.degree() != 0:
                 raise TypeError(f"the input subfield {sub_field} is not a subfield of {self.base_field()}")
