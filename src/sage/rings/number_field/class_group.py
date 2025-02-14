@@ -159,6 +159,7 @@ def _integer_n_tuple_L1_iterator(n):
                             yield ii
             N += 1
 
+
 class Modulus(SageObject):
     def __init__(self, finite, infinite=None, check=True):
         r"""
@@ -200,7 +201,7 @@ class Modulus(SageObject):
             return str(self._finite)
         str_inf = ''
         for i in self._infinite:
-            str_inf += ' * infinity_%s'%(i)
+            str_inf += ' * infinity_%s' % i
         return '(' + str(self._finite) + ')' + str_inf
 
     def __eq__(self, other):
@@ -466,6 +467,7 @@ class Modulus(SageObject):
 
     def __hash__(self):
         return hash((self._finite, self._infinite))
+
 
 class FractionalIdealClass(AbelianGroupWithValuesElement):
     r"""
@@ -1176,6 +1178,7 @@ class ClassGroup(AbelianGroupWithValues_class):
         """
         return self._number_field
 
+
 class RayClassGroup(AbelianGroup_class):
     Element = RayClassGroupElement
 
@@ -1209,7 +1212,7 @@ class RayClassGroup(AbelianGroup_class):
             old_exps = c.exponents()
             old_gens = c.parent().gens_values()
             L = len(old_exps)
-            if L ==0:
+            if L == 0:
                 return self.one()
             i = 0
             while old_exps[i] == 0:
@@ -1224,7 +1227,7 @@ class RayClassGroup(AbelianGroup_class):
                 i += 1
                 if e != 0:
                     I = nf.idealmul(I, nf.idealpow(g, e, flag=1), flag=1)
-            exps = tuple(ZZ(c) for c in bnr.bnrisprincipal(nf.idealmul(I[0], nf.nffactorback(I[1])), flag = 0))
+            exps = tuple(ZZ(c) for c in bnr.bnrisprincipal(nf.idealmul(I[0], nf.nffactorback(I[1])), flag=0))
             return self.element_class(self, exps)
         else:
             I = self._number_field.ideal(*args, **kwds)
@@ -1233,18 +1236,18 @@ class RayClassGroup(AbelianGroup_class):
             exps = self._ideal_log(I)
             return self.element_class(self, exps)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         if self._is_narrow:
             s0 = 'Narrow '
         else:
             s0 = 'Ray '
-        s = 'class group of order %s '%self.order()
+        s = 'class group of order %s ' % self.order()
         if self.order() > 1:
-            s += 'with structure %s '%self._group_notation(self.gens_orders())
-        s += 'of %s'%(self._number_field)
+            s += 'with structure %s ' % self._group_notation(self.gens_orders())
+        s += 'of %s' % (self._number_field)
         if self._is_narrow:
             return s0 + s
-        s += ' of modulus %s'%(self._modulus)
+        s += ' of modulus %s' % (self._modulus)
         return s0 + s
 
     def ray_class_field(self, subgroup=None, names=None, algorithm='stark'):

@@ -33,8 +33,8 @@ class HeckeCharacter(DualAbelianGroupElement):
 
         INPUT:
 
-        - ``g`` -- either an element of the ray class group on which this character
-        is defined, or something that can be turned into an ideal.
+        ``g`` -- either an element of the ray class group on which this
+        character is defined, or something that can be turned into an ideal.
 
         OUTPUT:
 
@@ -233,9 +233,12 @@ class HeckeCharacter(DualAbelianGroupElement):
 
         INPUT:
 
-        - ``m`` -- a modulus that is a multiple of this Hecke character's modulus.
-        - ``check`` -- (default: ``True``) if ``True``, ensure that this Hecke character's
-        modulus divides ``m``; if it does not, a ``ValueError`` is raised.
+        - ``m`` -- a modulus that is a multiple of this Hecke
+          character's modulus.
+
+        - ``check`` -- (default: ``True``) if ``True``, ensure that this
+          Hecke character's modulus divides ``m``; if it does not,
+          a :exc:`ValueError` is raised.
 
         OUTPUT:
 
@@ -376,7 +379,12 @@ class HeckeCharacter(DualAbelianGroupElement):
         it_worked = False
         number_of_allocs = 0
         while not it_worked:
-            #Sage automatically ups the memory allocation, but this messes with L.num_coeffs for some reason I have yet to figure out, so L needs to be remade completely every time memory is auto-allocated. If we can control the auto-allocation process/rewrite the Dokchitser code, then we can remove the extra stuff here.
+            # Sage automatically ups the memory allocation, but this
+            # messes with L.num_coeffs for some reason I have yet to
+            # figure out, so L needs to be remade completely every
+            # time memory is auto-allocated. If we can control the
+            # auto-allocation process/rewrite the Dokchitser code,
+            # then we can remove the extra stuff here.
             L = Dokchitser(ana_cond, gamma_factors, 1, rn, prec=prec)
             for n in range(number_of_allocs):
                 L.gp().eval('allocatemem()')
@@ -411,7 +419,7 @@ class HeckeCharacterGroup_class(DualAbelianGroup_class):
         DualAbelianGroup_class.__init__(self, ray_class_group, names, base_ring)
 
     def _repr_(self):
-        return 'Group of finite order Hecke characters modulo ' + str(self.modulus())
+        return f'Group of finite order Hecke characters modulo {self.modulus()}'
 
     def modulus(self):
         return self.group().modulus()
@@ -446,10 +454,12 @@ class HeckeCharacterGroup_class(DualAbelianGroup_class):
     #    exponents = [gens_orders[i].divide_knowing_divisible_by(args[0][i].multiplicative_order()) for i in range(n)]
     #    return self.element_class(self, exponents)
 
+
 class HeckeCharacterGroupFactory(UniqueFactory):
-    def create_key(self, modulus, base_ring=None, names=None):#(m, base_ring=None, names=None):
-        #from sage.structure.category_object import normalize_names
-        #names = normalize_names()
+    def create_key(self, modulus, base_ring=None, names=None):
+        # (m, base_ring=None, names=None):
+        # from sage.structure.category_object import normalize_names
+        # names = normalize_names()
         if names is None:
             names = 'chi'
         return (base_ring, modulus, names)
