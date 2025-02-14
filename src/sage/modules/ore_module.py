@@ -1360,7 +1360,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
 
         By default, the vectors in the quotient have the same names as their
-        representatives in `M`.
+        representatives in `M`::
 
             sage: modP.basis()
             [e4, e5]
