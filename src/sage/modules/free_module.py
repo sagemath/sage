@@ -998,6 +998,24 @@ class Module_free_ambient(Module):
         """
         return self.__is_sparse
 
+    def is_exact(self):
+        """
+        Test whether elements of this module are represented exactly.
+
+        OUTPUT:
+
+        Return ``True`` if elements of this module are represented exactly, i.e.,
+        there is no precision loss when doing arithmetic.
+
+        EXAMPLES::
+
+            sage: (ZZ^2).is_exact()
+            True
+            sage: (RR^2).is_exact()
+            False
+        """
+        return self._base.is_exact()
+
     def _an_element_(self):
         """
         Return an arbitrary element of a free module.
