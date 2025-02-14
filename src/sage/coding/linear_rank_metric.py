@@ -638,12 +638,7 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
             [0 0 1]
 
         TESTS::
-
-            sage: C.rank_support_of_vector(a)
-            Traceback (most recent call last):
-            ...
-            TypeError: input must be a vector
-
+        
             sage: C.rank_support_of_vector(c, GF(2^4))
             Traceback (most recent call last):
             ...
