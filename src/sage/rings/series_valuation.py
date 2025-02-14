@@ -47,7 +47,7 @@ class SeriesValuationFactory(UniqueFactory):
 
     def create_object(self, version, key, **extra_args):
         r"""
-        Create a unique key identifying the valuation of ``R``.
+        Create the valuation identified by the given key.
 
         EXAMPLES::
 
@@ -57,12 +57,12 @@ class SeriesValuationFactory(UniqueFactory):
         """
         from sage.rings.valuation.valuation_space import DiscretePseudoValuationSpace
         parent = DiscretePseudoValuationSpace(key)
-        return parent.__make_element_class__(SeriesValuation_base)(parent)
+        return parent.__make_element_class__(SeriesValuation_generic)(parent)
 
 SeriesValuation = SeriesValuationFactory("sage.rings.series_valuation.SeriesValuation")
 
 
-class SeriesValuation_base(DiscreteValuation):
+class SeriesValuation_generic(DiscreteValuation):
     r"""
     A class for valuation on power series and Laurent Series
 
