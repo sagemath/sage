@@ -73,13 +73,13 @@ Here we assume that you are using a git checkout.
     $ ./bootstrap
     $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
 
-  If you encounter any errors, try to install the ``sage-conf`` package first:
+If you encounter any errors, try to install the ``sage-conf`` package first:
 
 .. code-block:: shell
 
     $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf_conda
 
-  and then run the last command again.
+and then run the last command again.
 
 - Verify that Sage has been installed:
 
