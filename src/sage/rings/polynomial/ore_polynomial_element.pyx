@@ -3017,7 +3017,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
         .. SEEALSO:
 
-            :module:`sage.modules.ore_module`
+            :mod:`sage.modules.ore_module`
         """
         from sage.modules.ore_module import OreModule, OreAction
         S = self.parent()
