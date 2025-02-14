@@ -1320,7 +1320,16 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
 
 class pAdicFieldGeneric(pAdicGeneric, sage.rings.abc.pAdicField):
-    pass
+    def is_field(self, proof=True):
+        """
+        Return whether this ring is actually a field, ie ``True``.
+
+        EXAMPLES::
+
+            sage: Qp(5).is_field()
+            True
+        """
+        return True
 
     #def class_field(self, group=None, map=None, generators=None):
     #    raise NotImplementedError
