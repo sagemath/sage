@@ -880,26 +880,6 @@ class SageDocTestParser(doctest.DocTestParser):
             sage: ex.source
             'for i in range(Integer(4)):\n    print(i)\n'
 
-        Sage currently accepts backslashes as indicating that the end
-        of the current line should be joined to the next line.  This
-        feature allows for breaking large integers over multiple lines
-        but is not standard for Python doctesting.  It's not
-        guaranteed to persist::
-
-            sage: n = 1234\
-            ....:     5678
-            sage: print(n)
-            12345678
-            sage: type(n)
-            <class 'sage.rings.integer.Integer'>
-
-        It also works without the line continuation::
-
-            sage: m = 8765\
-            4321
-            sage: print(m)
-            87654321
-
         Optional tags at the start of an example block persist to the end of
         the block (delimited by a blank line)::
 
@@ -993,15 +973,15 @@ class SageDocTestParser(doctest.DocTestParser):
 
             sage: parse("::\n\n    sage: # needs sage.combinat\n    sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \\\n    ....:         import incidence_matrix_to_bit_rep_of_Vrep\n    sage: P = polytopes.associahedron(['A',3])\n\n")
             ['::\n\n',
-            '',
-            (None,
-            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n',
-            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n'),
-            '',
-            (None,
-            "P = polytopes.associahedron(['A',3])\n",
-            "P = polytopes.associahedron(['A',Integer(3)])\n"),
-            '\n']
+             '',
+             (None,
+              'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \\\n        import incidence_matrix_to_bit_rep_of_Vrep\n',
+              'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions         import incidence_matrix_to_bit_rep_of_Vrep\n'),
+             '',
+             (None,
+              "P = polytopes.associahedron(['A',3])\n",
+              "P = polytopes.associahedron(['A',Integer(3)])\n"),
+             '\n']
 
             sage: example4 = '::\n\n        sage: C.minimum_distance(algorithm="guava")  # optional - guava\n        ...\n        24\n\n'
             sage: parsed4 = DTP.parse(example4)
@@ -1016,19 +996,9 @@ class SageDocTestParser(doctest.DocTestParser):
         find_sage_continuation = re.compile(r"^(\s*)\.\.\.\.:", re.M)
         find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
         python_prompt = re.compile(r"^(\s*)>>>", re.M)
-        backslash_replacer = re.compile(r"""(\s*)sage:(.*)\\\ *
-\ *((\.){4}:)?\ *""")
 
         # The following are used to allow ... at the beginning of output
         ellipsis_tag = "<TEMP_ELLIPSIS_TAG>"
-
-        # Hack for non-standard backslash line escapes accepted by the current
-        # doctest system.
-        m = backslash_replacer.search(string)
-        while m is not None:
-            g = m.groups()
-            string = string[:m.start()] + g[0] + "sage:" + g[1] + string[m.end():]
-            m = backslash_replacer.search(string, m.start())
 
         replace_ellipsis = not python_prompt.search(string)
         if replace_ellipsis:

@@ -38,7 +38,7 @@ class build_py(setuptools_build_py):
                 print("Warning: A configuration has been written, but the configure script has exited with an error. "
                       "Carefully check any messages above before continuing.")
             else:
-                print(f"Error: The configure script has failed; this may be caused by missing build prerequisites.")
+                print("Error: The configure script has failed; this may be caused by missing build prerequisites.")
                 sys.stdout.flush()
                 PREREQ_SPKG = "_prereq bzip2 xz libffi"  # includes python3 SPKG_DEPCHECK packages
                 os.system(f'cd {SAGE_ROOT} && export PACKAGES="$(build/bin/sage-get-system-packages conda {PREREQ_SPKG})" && [ -n "$PACKAGES" ] && echo "You can install the required build prerequisites using the following shell command" && echo "" && build/bin/sage-print-system-package-command conda --verbose --sudo install $PACKAGES && echo ""')
@@ -73,7 +73,7 @@ class build_py(setuptools_build_py):
 
         def ignore(path, names):
             # exclude all embedded src trees
-            if fnmatch.fnmatch(path, f'*/build/pkgs/*'):
+            if fnmatch.fnmatch(path, '*/build/pkgs/*'):
                 return ['src']
             ### ignore more stuff --- .tox etc.
             return [name for name in names

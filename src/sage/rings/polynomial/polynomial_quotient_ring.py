@@ -749,8 +749,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: Q = P.quo([(x^2 + 1)])
             sage: singular(Q)        # indirect doctest                                 # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 1
+            // coefficients: QQ...
+            // number of vars : 1
             //        block   1 : ordering lp
             //                  : names    xbar
             //        block   2 : ordering C

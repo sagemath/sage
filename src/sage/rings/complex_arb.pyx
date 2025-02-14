@@ -168,6 +168,7 @@ from sage.libs.flint.acb_hypgeom cimport *
 from sage.libs.flint.acb_elliptic cimport *
 from sage.libs.flint.acb_modular cimport *
 from sage.libs.flint.acb_poly cimport *
+from sage.libs.flint.acb_dirichlet cimport *
 from sage.libs.flint.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_clear, arf_set, arf_is_nan
 from sage.libs.flint.mag cimport (mag_init, mag_clear, mag_set_d,
         MAG_BITS, mag_zero, mag_set_ui_2exp_si,
@@ -1184,13 +1185,10 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: ComplexBallField(100).integral(lambda x, _: sin(x), RBF(0), RBF(1))
             [0.4596976941318602825990633926 +/- ...e-29]
 
-            sage: from cysignals.alarm import alarm
-            sage: alarm(0.1r)
-            sage: C = ComplexBallField(1000000)
-            sage: C.integral(lambda x, _: x.cos() * x.sin(), 0, 1)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.1):
+            ....:     C = ComplexBallField(1000000)
+            ....:     C.integral(lambda x, _: x.cos() * x.sin(), 0, 1)
         """
         cdef IntegrationContext ctx = IntegrationContext()
         cdef acb_calc_integrate_opt_t arb_opts
@@ -1258,6 +1256,70 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         if ctx.exn_type is not None:
             raise ctx.exn_type, ctx.exn_obj, ctx.exn_tb
+
+        return res
+
+    def zeta_zeros(self, count, start=1):
+        r"""
+        Compute consecutive zeros of the Riemann zeta function.
+
+        INPUT:
+
+        - ``count`` -- positive integer; number of zeros to be computed, must fit in a machine integer
+
+        - ``start`` -- positive integer (default: 1); index of the first zero to be computed
+
+        OUTPUT:
+
+        A list of ``count`` consecutive zeros of the Riemann zeta function, starting from the ``start``-th zero.
+        Indexing starts at one, following usual mathematical notations.
+
+        EXAMPLES::
+
+            sage: CBF.zeta_zeros(10)
+            [0.5000000000000000 + [14.134725141734...]*I,
+            0.5000000000000000 + [21.0220396387715...]*I,
+            0.5000000000000000 + [25.010857580145...]*I,
+            0.5000000000000000 + [30.4248761258595...]*I,
+            0.5000000000000000 + [32.935061587739...]*I,
+            0.5000000000000000 + [37.586178158825...]*I,
+            0.5000000000000000 + [40.918719012147...]*I,
+            0.5000000000000000 + [43.32707328091...]*I,
+            0.5000000000000000 + [48.005150881167...]*I,
+            0.5000000000000000 + [49.773832477672...]*I]
+
+            sage: CBF.zeta_zeros(6, start=5)
+            [0.5000000000000000 + [32.935061587739...]*I,
+            0.5000000000000000 + [37.586178158825...]*I,
+            0.5000000000000000 + [40.918719012147...]*I,
+            0.5000000000000000 + [43.32707328091...]*I,
+            0.5000000000000000 + [48.005150881167...]*I,
+            0.5000000000000000 + [49.773832477672...]*I]
+        """
+        cdef fmpz_t _start
+        fmpz_init(_start)
+        fmpz_set_mpz(_start, (<Integer> Integer(start)).value)
+
+        cdef long _count = count
+        if _count < 1:
+            raise ValueError("count must be positive")
+
+        cdef acb_ptr ar = _acb_vec_init(_count)
+
+        sig_on()
+        acb_dirichlet_zeta_zeros(ar, _start, _count, self._prec)
+        sig_off()
+
+        res = []
+        cdef ComplexBall b
+        for i in range(_count):
+            b = ComplexBall.__new__(ComplexBall)
+            b._parent = self
+            acb_swap(b.value, &ar[i])
+            res.append(b)
+
+        _acb_vec_clear(ar, _count)
+        fmpz_clear(_start)
 
         return res
 

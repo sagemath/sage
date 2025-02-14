@@ -251,7 +251,7 @@ class HallLittlewood(UniqueRepresentation):
             sage: Pz(Qz[2,1])
             (z^2-2*z+1)*HLP[2, 1]
             sage: Qz(Py[2])
-            ((-y+z)/(z^3-z^2-z+1))*HLQ[1, 1] + (1/(-z+1))*HLQ[2]
+            -((y-z)/(z^3-z^2-z+1))*HLQ[1, 1] + (1/(-z+1))*HLQ[2]
             sage: Qy(Pz[2])
             ((y-z)/(y^3-y^2-y+1))*HLQ[1, 1] + (1/(-y+1))*HLQ[2]
             sage: Qy.hall_littlewood_family() == HLy

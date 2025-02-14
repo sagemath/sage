@@ -195,7 +195,7 @@ class pAdicGeneric(LocalGeneric):
 
         return self._printer.richcmp_modes(other._printer, op)
 
-    def print_mode(self):
+    def print_mode(self) -> str:
         r"""
         Return the current print mode as a string.
 
