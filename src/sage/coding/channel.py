@@ -44,6 +44,7 @@ AUTHORS:
 
  - David Lucas (2015): initial version
  - Maxime Bombar (2021): Rank metric channel
+ - Julien Lavauzelle (2025): Fix documentation and minors issues on rank metric channels
 """
 
 # ****************************************************************************
