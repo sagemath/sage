@@ -755,7 +755,7 @@ class NumberFieldIdeal(Ideal_generic):
             sage: F.ideal(a^2).modulus([])
             Fractional ideal (34)
             sage: F.ideal(a).modulus([1])
-            (Fractional ideal (a)) * infinity_1
+            (Fractional ideal (a)) * ∞_1
 
         .. TODO::
 

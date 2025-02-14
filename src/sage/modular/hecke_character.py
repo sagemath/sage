@@ -90,7 +90,7 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: chi = chi1 * chi2; chi
             1
             sage: chi.parent()
-            Group of finite order Hecke characters modulo (Fractional ideal (3)) * infinity_0 * infinity_1
+            Group of finite order Hecke characters modulo (Fractional ideal (3)) * ∞_0 * ∞_1
         """
         if self.parent() is right.parent():
             return DualAbelianGroupElement._mul_(self, right)
@@ -132,9 +132,9 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: H = HeckeCharacterGroup(F.modulus(F.ideal(8), [0,1]))
             sage: chi = H.gens()[0]
             sage: chi.modulus()
-            (Fractional ideal (8)) * infinity_0 * infinity_1
+            (Fractional ideal (8)) * ∞_0 * ∞_1
             sage: chi.conductor()
-            (Fractional ideal (2)) * infinity_0 * infinity_1
+            (Fractional ideal (2)) * ∞_0 * ∞_1
         """
         return self.parent().modulus()
 
@@ -152,9 +152,9 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: F.<a> = NumberField(x^3 - 3*x -1)
             sage: H = HeckeCharacterGroup(F.modulus(3, [0,1,2]))
             sage: H.gen().conductor()
-            (Fractional ideal (-a^2 + 1)) * infinity_0 * infinity_1 * infinity_2
+            (Fractional ideal (-a^2 + 1)) * ∞_0 * ∞_1 * ∞_2
             sage: H.gen().modulus()
-            (Fractional ideal (3)) * infinity_0 * infinity_1 * infinity_2
+            (Fractional ideal (3)) * ∞_0 * ∞_1 * ∞_2
         """
         R = self.parent().group()
         K = R.number_field()
@@ -198,12 +198,12 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: H = HeckeCharacterGroup(F.ideal(-1/2*a + 7/2).modulus([0, 1]))
             sage: chi = H.gen()
             sage: chi.conductor()
-            (Fractional ideal (-1/2*a + 1/2)) * infinity_0
+            (Fractional ideal (-1/2*a + 1/2)) * ∞_0
             sage: chi0 = chi.primitive_character()
             sage: chi0.conductor()
-            (Fractional ideal (-1/2*a + 1/2)) * infinity_0
+            (Fractional ideal (-1/2*a + 1/2)) * ∞_0
             sage: chi0.parent()
-            Group of finite order Hecke characters modulo (Fractional ideal (-1/2*a + 1/2)) * infinity_0
+            Group of finite order Hecke characters modulo (Fractional ideal (-1/2*a + 1/2)) * ∞_0
         """
         cond = self.conductor()
         if cond == self.modulus():
@@ -237,7 +237,7 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: m_big = F.ideal(-1/2*a + 7/2).modulus([0, 1])
             sage: chi = H.gen().extend(m_big)
             sage: chi.parent()
-            Group of finite order Hecke characters modulo (Fractional ideal (-1/2*a + 7/2)) * infinity_0 * infinity_1
+            Group of finite order Hecke characters modulo (Fractional ideal (-1/2*a + 7/2)) * ∞_0 * ∞_1
             sage: chi.exponents()
             (1,)
         """
@@ -390,7 +390,7 @@ class HeckeCharacterGroup_class(DualAbelianGroup_class):
         sage: F.<a> = NumberField(x^2 - 5)
         sage: mf = F.modulus(F.prime_above(5) * F.prime_above(29), [0,1])
         sage: H = HeckeCharacterGroup(mf); H
-        Group of finite order Hecke characters modulo (Fractional ideal (-11/2*a - 5/2)) * infinity_0 * infinity_1
+        Group of finite order Hecke characters modulo (Fractional ideal (-11/2*a - 5/2)) * ∞_0 * ∞_1
         sage: [[chi(F.ideal(31)), chi(F.ideal(-12672))] for chi in H.gens()]
         [[zeta4, 1], [1, -1]]
     """

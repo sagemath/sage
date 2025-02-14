@@ -3754,7 +3754,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F.modulus(F.ideal(a), [])
             Fractional ideal (a)
             sage: F.modulus(a, [0, 1])
-            (Fractional ideal (a)) * infinity_0 * infinity_1
+            (Fractional ideal (a)) * ∞_0 * ∞_1
         """
         if finite.parent() is not self.ideal_monoid():
             finite = self.ideal(finite)
@@ -4773,7 +4773,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F = NumberField(x^2 - 5, 'a')
             sage: m = F.modulus(F.prime_above(5) * F.prime_above(29), [0, 1])
             sage: G = F.ray_class_group(m); G
-            Ray class group of order 8 with structure C4 x C2 of Number Field in a with defining polynomial x^2 - 5 of modulus (Fractional ideal (-11/2*a - 5/2)) * infinity_0 * infinity_1
+            Ray class group of order 8 with structure C4 x C2 of Number Field in a with defining polynomial x^2 - 5 of modulus (Fractional ideal (-11/2*a - 5/2)) * ∞_0 * ∞_1
             sage: G.elementary_divisors()
             (2, 4)
             sage: G.gens_ideals()

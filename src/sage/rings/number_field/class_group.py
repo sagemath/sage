@@ -70,9 +70,9 @@ Computations with a ray class group of a quadratic field::
 
     sage: F = QuadraticField(40)
     sage: m = F.ideal(3).modulus([0, 1]); m
-    (Fractional ideal (3)) * infinity_0 * infinity_1
+    (Fractional ideal (3)) * ∞_0 * ∞_1
     sage: R = F.ray_class_group(m); R
-    Ray class group of order 8 with structure C4 x C2 of Number Field in a with defining polynomial x^2 - 40 of modulus (Fractional ideal (3)) * infinity_0 * infinity_1
+    Ray class group of order 8 with structure C4 x C2 of Number Field in a with defining polynomial x^2 - 40 of modulus (Fractional ideal (3)) * ∞_0 * ∞_1
 
 Unlike for class groups and `S`-class groups, ray class group elements
 do not carry around a representative ideal (for reasons of efficiency).
@@ -195,13 +195,13 @@ class Modulus(SageObject):
 
             sage: K.<a> = NumberField(x^2-5)
             sage: m = K.modulus(K.ideal(31), [0,1]); m
-            (Fractional ideal (31)) * infinity_0 * infinity_1
+            (Fractional ideal (31)) * ∞_0 * ∞_1
         """
         if len(self._infinite) == 0:
             return str(self._finite)
         str_inf = ''
         for i in self._infinite:
-            str_inf += ' * infinity_%s' % i
+            str_inf += ' * ∞_%s' % i
         return '(' + str(self._finite) + ')' + str_inf
 
     def __eq__(self, other):
@@ -227,7 +227,7 @@ class Modulus(SageObject):
             sage: m1 = K.modulus(K.ideal(5), [2, 3])
             sage: m2 = K.modulus(K.ideal(25), [0, 1, 3, 4])
             sage: m1 * m2
-            (Fractional ideal (125)) * infinity_0 * infinity_1 * infinity_2 * infinity_4
+            (Fractional ideal (125)) * ∞_0 * ∞_1 * ∞_2 * ∞_4
             sage: _ == m2 * m1
             True
         """
