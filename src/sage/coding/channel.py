@@ -6,8 +6,8 @@ Given an input space and an output space, a channel takes element from the
 input space (the message) and transforms it into an element of the output space
 (the transmitted message).
 
-In SageMath, a :class:`Channel` object simulates error-prone transmission over 
-communication channels. We borrow the nomenclature from communication theory, 
+In SageMath, a :class:`Channel` object simulates error-prone transmission over
+communication channels. We borrow the nomenclature from communication theory,
 such as "transmission" and "positions" as the elements of transmitted vectors.
 
 Transmission can be achieved with two methods:
@@ -857,7 +857,7 @@ class StaticRankErrorChannel(Channel):
 
     EXAMPLES:
 
-    We construct a :class:`StaticRankErrorChannel` which adds an error of 
+    We construct a :class:`StaticRankErrorChannel` which adds an error of
     rank 2 to any transmitted message::
 
         sage: n_err = 2
@@ -890,13 +890,12 @@ class StaticRankErrorChannel(Channel):
             sage: channels.StaticRankErrorChannel(GF(256)^6, n_err)
             Traceback (most recent call last):
             ...
-            ValueError: the rank of errors must be less than or equal to the 
+            ValueError: the rank of errors must be less than or equal to the
             dimension of the input space
-            
             sage: channels.StaticRankErrorChannel(GF(64)^8, n_err)
             Traceback (most recent call last):
             ...
-            ValueError: the rank of errors must be less than or equal to the 
+            ValueError: the rank of errors must be less than or equal to the
             field extension degree
 
         If ``relative_field`` is specified and is not a subfield of the base field,
