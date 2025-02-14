@@ -129,6 +129,13 @@ To build the documentation, use:
 
 .. NOTE::
 
+   The build is running in parallel automatically by detecting the number of
+   execution threads on your CPU. If you want to override this choice
+   explicitly, you can set ``SAGE_NUM_THREADS``, e.g., by running ``export
+   SAGE_NUM_THREADS=24`` before invoking ``pip``.
+
+.. NOTE::
+
    The switch ``--config-settings editable_mode=compat`` restores the
    `legacy setuptools implementation of editable installations
    <https://setuptools.pypa.io/en/latest/userguide/development_mode.html>`_.
