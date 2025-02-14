@@ -119,13 +119,13 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
     Available algorithm are:
 
-    - ``standard`` -- the schoolbook algorithm
+    - ``standard`` -- the schoolbook algorithm;
 
     - ``p_invertible`` -- uses some optimisations when `p` is invertible
-      in the base ring
+      in the base ring;
 
     - ``finotti`` -- Finotti's algorithm; it can be used when the base
-      ring has characteristic `p`
+      ring has characteristic `p`;
 
     - ``Zq_isomorphism`` -- computes the ring laws in `\mathbb Z_q`
       when the base ring is `\mathbb F_q` for a power `q` of `p`.
@@ -182,6 +182,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
             sage: W = WittVectorRing(QQ, p=5)
             sage: type(W)
+            <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_with_category'>
         """
         if not isinstance(base_ring, CommutativeRing):
             raise TypeError(f'{base_ring} is not a commutative ring')
@@ -576,7 +577,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         """
         if x not in self.base():
             raise Exception(f'{x} not in {self.base()}')
-        return self((x,) + tuple(0 for _ in range(self.prec-1))
+        return self((x,) + tuple(0 for _ in range(self.prec-1)))
 
     def is_finite(self):
         """

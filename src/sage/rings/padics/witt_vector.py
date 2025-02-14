@@ -258,7 +258,7 @@ class WittVector(CommutativeRingElement):
                     G_n.append(P._eta_bar(G[i], n - i))
                 G.append(G_n)
             prod_vec = tuple(sum(G[i]) for i in range(prec))
-            return C(P, vec=prod_vec)
+            return P(prod_vec)
         elif alg == 'Zq_isomorphism':
             x = P._vector_to_series(self.vec)
             y = P._vector_to_series(other.vec)
