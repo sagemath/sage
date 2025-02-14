@@ -77,31 +77,31 @@ class WittVector(CommutativeRingElement):
             sage: WW((1,2,3)) + W((1,2))
             (2, -2)
         """
-        self.prec = parent.precision()
+        self._prec = parent.precision()
         B = parent.base()
         if vec is not None:
             if isinstance(vec, int) or isinstance(vec, Integer):
                 self._int_to_vector(vec, parent)
             elif isinstance(vec, WittVector):
-                if vec.parent().precision() < self.prec:
+                if vec.parent().precision() < self._prec:
                     raise ValueError(f'{vec} has not the correct length. '
                                      'Expected length has to be at least '
-                                     f'{self.prec}.')
+                                     f'{self._prec}.')
                 if not B.has_coerce_map_from(vec.parent().base()):
                     raise ValueError('Cannot coerce an element of '
                                      f'{vec.base()} to an element of {B}.')
-                self.vec = tuple(B(vec.vec[i]) for i in range(self.prec))
+                self._vec = tuple(B(vec._vec[i]) for i in range(self._prec))
             elif isinstance(vec, tuple) or isinstance(vec, list):
-                if len(vec) < self.prec:
+                if len(vec) < self._prec:
                     raise ValueError(f'{vec} has not the correct length. '
                                      'Expected length has to be at least '
-                                     f'{self.prec}.')
-                self.vec = tuple(B(vec[i]) for i in range(self.prec))
+                                     f'{self._prec}.')
+                self._vec = tuple(B(vec[i]) for i in range(self._prec))
             else:
                 raise ValueError(f'{vec} cannot be interpreted as a Witt '
                                  'vector.')
         else:
-            self.vec = (B(0) for i in range(self.prec))
+            self._vec = (B(0) for i in range(self._prec))
         CommutativeRingElement.__init__(self, parent)
 
     def __hash__(self) -> int:
@@ -115,7 +115,7 @@ class WittVector(CommutativeRingElement):
             sage: hash(t)  # random
             -2438844084280889141
         """
-        return hash(self.vec)
+        return hash(self._vec)
 
     def _richcmp_(self, other, op) -> bool:
         """
@@ -134,9 +134,9 @@ class WittVector(CommutativeRingElement):
         if not isinstance(other, WittVector):
             return NotImplemented
         if op == op_EQ:
-            return self.vec == other.vec
+            return self._vec == other._vec
         if op == op_NE:
-            return self.vec != other.vec
+            return self._vec != other._vec
         return NotImplemented
 
     def _repr_(self) -> str:
@@ -149,7 +149,7 @@ class WittVector(CommutativeRingElement):
             sage: t = W([1,2,0,1]); t
             (1, 2, 0, 1)
         """
-        return '(' + ', '.join(map(str, self.vec)) + ')'
+        return '(' + ', '.join(map(str, self._vec)) + ')'
 
     def _add_(self, other):
         """
@@ -174,14 +174,14 @@ class WittVector(CommutativeRingElement):
 
         alg = P._algorithm
         if alg == 'standard':
-            s = P.sum_polynomials
+            s = P._sum_polynomials
             # note here this is tuple addition, i.e. concatenation
-            sum_vec = tuple(s[i](*(self.vec + other.vec))
-                            for i in range(self.prec))
+            sum_vec = tuple(s[i](*(self._vec + other._vec))
+                            for i in range(self._prec))
             return C(P, vec=sum_vec)
         elif alg == 'finotti':
-            x = self.vec
-            y = other.vec
+            x = self._vec
+            y = other._vec
             prec = P.precision()
 
             G = []
@@ -193,17 +193,17 @@ class WittVector(CommutativeRingElement):
             sum_vec = tuple(sum(G[i]) for i in range(prec))
             return C(P, vec=sum_vec)
         elif alg == 'Zq_isomorphism':
-            x = P._vector_to_series(self.vec)
-            y = P._vector_to_series(other.vec)
+            x = P._vector_to_series(self._vec)
+            y = P._vector_to_series(other._vec)
             sum_vec = P._series_to_vector(x + y)
             return C(P, vec=sum_vec)
         elif alg == 'p_invertible':
-            p = P.prime  # we know p is a unit in this case!
-            x = self.vec
-            y = other.vec
+            p = P._prime  # we know p is a unit in this case!
+            x = self._vec
+            y = other._vec
 
             sum_vec = [x[0] + y[0]]
-            for n in range(1, self.prec):
+            for n in range(1, self._prec):
                 next_sum = x[n] + y[n] + \
                     sum((x[i]**(p**(n - i)) + y[i]**(p**(n - i))
                          - sum_vec[i]**(p**(n - i)))
@@ -238,16 +238,16 @@ class WittVector(CommutativeRingElement):
         alg = P._algorithm
         from sage.rings.padics.witt_vector_ring import _fast_char_p_power as _fcppow
         if alg == 'standard':
-            p = P.prod_polynomials
+            p = P._prod_polynomials
             # note here this is tuple addition, i.e. concatenation
-            prod_vec = tuple(p[i](*(self.vec + other.vec))
-                             for i in range(self.prec))
+            prod_vec = tuple(p[i](*(self._vec + other._vec))
+                             for i in range(self._prec))
             return P(prod_vec)
         elif alg == 'finotti':
-            x = self.vec
-            y = other.vec
+            x = self._vec
+            y = other._vec
             prec = P.precision()
-            p = P.prime
+            p = P._prime
 
             G = [[x[0] * y[0]]]
             for n in range(1, prec):
@@ -260,17 +260,17 @@ class WittVector(CommutativeRingElement):
             prod_vec = tuple(sum(G[i]) for i in range(prec))
             return P(prod_vec)
         elif alg == 'Zq_isomorphism':
-            x = P._vector_to_series(self.vec)
-            y = P._vector_to_series(other.vec)
+            x = P._vector_to_series(self._vec)
+            y = P._vector_to_series(other._vec)
             sum_vec = P._series_to_vector(x * y)
             return P(sum_vec)
         elif alg == 'p_invertible':
-            p = P.prime  # we know p is a unit in this case!
-            x = self.vec
-            y = other.vec
+            p = P._prime  # we know p is a unit in this case!
+            x = self._vec
+            y = other._vec
 
             prod_vec = [x[0] * y[0]]
-            for n in range(1, self.prec):
+            for n in range(1, self._prec):
                 next_prod = (
                     sum(p**i * x[i]**(p**(n - i)) for i in range(n + 1)) *
                     sum(p**i * y[i]**(p**(n - i)) for i in range(n + 1)) -
@@ -294,10 +294,10 @@ class WittVector(CommutativeRingElement):
         P = self.parent()
         # If p == 2, -1 == (-1, -1, -1, ...)
         # Otherwise, -1 == (-1, 0, 0, ...)
-        if P.prime == 2:
-            all_ones = P(tuple(-1 for _ in range(self.prec)))
+        if P._prime == 2:
+            all_ones = P(tuple(-1 for _ in range(self._prec)))
             return all_ones * self
-        neg_vec = tuple(-self.vec[i] for i in range(self.prec))
+        neg_vec = tuple(-self._vec[i] for i in range(self._prec))
         return P(neg_vec)
 
     def _div_(self, other):
@@ -332,26 +332,26 @@ class WittVector(CommutativeRingElement):
             sage: ~t
             (1, 1, 1, 0)
         """
-        if not self.vec[0].is_unit():
+        if not self._vec[0].is_unit():
             raise ZeroDivisionError(f"Inverse of {self} does not exist.")
         P = self.parent()
 
         if self == P.one():
             return self
-        if self.prec == 1:
-            return P((self.vec[0]**-1, ))
+        if self._prec == 1:
+            return P((self._vec[0]**-1, ))
 
         # Strategy: Multiply ``self`` by ``(Y_0, Y_1, ...)``, set equal
         # to (1, 0, 0, ...), and solve.
-        var_names = [f'Y{i}' for i in range(1, self.prec)]
+        var_names = [f'Y{i}' for i in range(1, self._prec)]
         poly_ring = PolynomialRing(P.base(), var_names)
-        inv_vec = list((self.vec[0]**-1,) + poly_ring.gens())
+        inv_vec = list((self._vec[0]**-1,) + poly_ring.gens())
         # We'll fill this in one-by-one
 
         from sage.rings.padics.witt_vector_ring import WittVectorRing
-        W = WittVectorRing(poly_ring, p=P.prime, prec=P.prec)
-        prod_vec = (W(self.vec) * W(inv_vec)).vec
-        for i in range(1, self.prec):
+        W = WittVectorRing(poly_ring, p=P._prime, prec=P._prec)
+        prod_vec = (W(self._vec) * W(inv_vec))._vec
+        for i in range(1, self._prec):
             poly = prod_vec[i](inv_vec[1:])
             Y_i = poly.parent().gens()[i - 1]
             try:
@@ -376,7 +376,7 @@ class WittVector(CommutativeRingElement):
             sage: W(-123)
             (-123, 50826444131062300759362981690761165250849615528)
         """
-        p = parent.prime
+        p = parent._prime
         R = parent.base()
 
         if p == R.characteristic():
@@ -389,7 +389,7 @@ class WittVector(CommutativeRingElement):
             should_negate = True
 
         vec_k = [k]
-        for n in range(1, self.prec):
+        for n in range(1, self._prec):
             total = (
                 k - k**(p**n)
                 - sum(p**(n-i) * vec_k[n-i]**(p**i) for i in range(1, n))
@@ -401,12 +401,12 @@ class WittVector(CommutativeRingElement):
             if p == 2:
                 vec_k = (
                     parent(vec_k)
-                    * parent((tuple(-1 for _ in range(self.prec))))
-                ).vec
+                    * parent((tuple(-1 for _ in range(self._prec))))
+                )._vec
             else:
                 vec_k = (-x for x in vec_k)
 
-        self.vec = tuple([R(x) for x in vec_k])
+        self._vec = tuple([R(x) for x in vec_k])
 
     def _int_to_vector_char_p(self, k, R):
         """
@@ -420,16 +420,16 @@ class WittVector(CommutativeRingElement):
             (11, 7, 4)
         """
         p = R.characteristic()
-        Z = Zp(p, prec=self.prec+1, type='fixed-mod')
+        Z = Zp(p, prec=self._prec+1, type='fixed-mod')
         F = GF(p)
 
         series = Z(k)
         vec_k = []
-        for _ in range(self.prec):
+        for _ in range(self._prec):
             # Probably slightly faster to do "series % p,"
             # but this way, temp is in F_p
             temp = F(series)
             vec_k.append(R(temp))  # make sure elements of vector are in base
             series = (series - Z.teichmuller(temp)) // p
 
-        self.vec = tuple(vec_k)
+        self._vec = tuple(vec_k)
