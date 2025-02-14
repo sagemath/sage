@@ -6,9 +6,10 @@ Given an input space and an output space, a channel takes element from the
 input space (the message) and transforms it into an element of the output space
 (the transmitted message).
 
-In Sage, Channels simulate error-prone transmission over communication
-channels, and we borrow the nomenclature from communication theory, such as
-"transmission" and "positions" as the elements of transmitted vectors.
+In SageMath, a :class:`Channel` object simulates error-prone transmission over 
+communication channels. We borrow the nomenclature from communication theory, 
+such as "transmission" and "positions" as the elements of transmitted vectors.
+
 Transmission can be achieved with two methods:
 
 - :meth:`Channel.transmit`. Considering a channel ``Chan`` and a message
@@ -31,7 +32,7 @@ lighter-weight alternative to :meth:`Channel.transmit`.
 
 This file contains the following elements:
 
-    - :class:`Channel`, the abstract class for Channels
+    - :class:`Channel`, the abstract class for channels
     - :class:`StaticErrorRateChannel`, which creates a specific number of errors in each
       transmitted message
     - :class:`ErrorErasureChannel`, which creates a specific number of errors and a
@@ -110,7 +111,8 @@ def format_interval(t):
     r"""
     Return a formatted string representation of ``t``.
 
-    This method should be called by any representation function in Channel classes.
+    This method should be called by any representation function in :class:`Channel`
+    classes.
 
     .. NOTE::
 
@@ -138,9 +140,9 @@ def format_interval(t):
 
 class Channel(SageObject):
     r"""
-    Abstract top-class for Channel objects.
+    Abstract top-class for class:`Channel` objects.
 
-    All channel objects must inherit from this class. To implement a channel subclass, one should
+    All channels must inherit from this class. To implement a channel subclass, one should
     do the following:
 
     - inherit from this class,
@@ -161,11 +163,11 @@ class Channel(SageObject):
 
     def __init__(self, input_space, output_space):
         r"""
-        Initialize parameters for a Channel object.
+        Initialize parameters for a :class:`Channel` object.
 
         This is a private method, which should be called by the constructor
         of every encoder, as it automatically initializes the mandatory
-        parameters of a Channel object.
+        parameters of a :class:`Channel` object.
 
         INPUT:
 
@@ -175,7 +177,7 @@ class Channel(SageObject):
 
         EXAMPLES:
 
-        We first create a new Channel subclass::
+        We first create a new :class:`Channel` subclass::
 
             sage: from sage.coding.channel import Channel
             sage: class ChannelExample(Channel):
@@ -307,7 +309,7 @@ class StaticErrorRateChannel(Channel):
     - ``space`` -- the space of both input and output
 
     - ``number_errors`` -- the number of errors added to each transmitted message
-      It can be either an integer of a tuple. If a tuple is passed as
+      It can be either an integer or a tuple. If a tuple is passed as
       argument, the number of errors will be a random integer between the
       two bounds of the tuple.
 
@@ -333,6 +335,8 @@ class StaticErrorRateChannel(Channel):
 
     def __init__(self, space, number_errors):
         r"""
+        Initialize parameters for a :class:`StaticErrorRateChannel` object.
+
         TESTS:
 
         If the number of errors exceeds the dimension of the input space,
@@ -342,7 +346,7 @@ class StaticErrorRateChannel(Channel):
             sage: Chan = channels.StaticErrorRateChannel(GF(59)^40, n_err)
             Traceback (most recent call last):
             ...
-            ValueError: There might be more errors than the dimension of the input space
+            ValueError: there might be more errors than the dimension of the input space
         """
         if isinstance(number_errors, (Integer, int)):
             number_errors = (number_errors, number_errors)
@@ -350,7 +354,7 @@ class StaticErrorRateChannel(Channel):
             raise ValueError("number_errors must be a tuple, a list, an Integer or a Python int")
         super().__init__(space, space)
         if number_errors[1] > space.dimension():
-            raise ValueError("There might be more errors than the dimension of the input space")
+            raise ValueError("there might be more errors than the dimension of the input space")
         self._number_errors = number_errors
 
     def _repr_(self):
@@ -491,6 +495,8 @@ class ErrorErasureChannel(Channel):
 
     def __init__(self, space, number_errors, number_erasures):
         r"""
+        Initialize parameters for an :class:`ErrorErasureChannel` object.
+
         TESTS:
 
         If the sum of number of errors and number of erasures
@@ -683,6 +689,8 @@ class QarySymmetricChannel(Channel):
 
     def __init__(self, space, epsilon):
         r"""
+        Initialize parameters for a :class:`QarySymmetricChannel` object.
+
         TESTS:
 
         If ``space`` is not a vector space, an error is raised::
@@ -838,19 +846,19 @@ class StaticRankErrorChannel(Channel):
 
     - ``space`` -- the space of both input and output
 
-    - ``rank_errors`` -- the rank of the error added to each transmitted message
-      It can be either an integer of a tuple. If a tuple is passed as
+    - ``rank_errors`` -- the rank of the error added to each transmitted message.
+      It can be either ar integer of a tuple. If a tuple is passed as
       argument, the rank of the error will be a random integer between the
       two bounds of the tuple.
 
     - ``relative_field`` -- The field to which the extension is relative.
-      If not given, it will default to the prime_subfield of the ambient space
-      base_field.
+      If not given, it will default to the prime subfield of the base field
+      of the ambien space.
 
     EXAMPLES:
 
-    We construct a StaticRankErrorChannel which adds error of rank 2
-    to any transmitted message::
+    We construct a :class:`StaticRankErrorChannel` which adds an error of 
+    rank 2 to any transmitted message::
 
         sage: n_err = 2
         sage: Chan = channels.StaticRankErrorChannel(GF(256)^6, n_err)
@@ -871,6 +879,8 @@ class StaticRankErrorChannel(Channel):
 
     def __init__(self, space, rank_errors, relative_field=None):
         r"""
+        Initialize parameters for a :class:`StaticRankErrorChannel` object.
+
         TESTS:
 
         If the number of errors exceeds the dimension of the input space,
@@ -880,11 +890,14 @@ class StaticRankErrorChannel(Channel):
             sage: channels.StaticRankErrorChannel(GF(256)^6, n_err)
             Traceback (most recent call last):
             ...
-            ValueError: There might be errors of rank larger than the dimension of the input space.
+            ValueError: the rank of errors must be less than or equal to the 
+            dimension of the input space
+            
             sage: channels.StaticRankErrorChannel(GF(64)^8, n_err)
             Traceback (most recent call last):
             ...
-            ValueError: There might be errors of rank larger than the field extension degree.
+            ValueError: the rank of errors must be less than or equal to the 
+            field extension degree
 
         If ``relative_field`` is specified and is not a subfield of the base field,
         it will return an error::
@@ -903,24 +916,24 @@ class StaticRankErrorChannel(Channel):
             sage: Chan = channels.StaticRankErrorChannel(GF(16)^6, n_err, GF(4)^2)
             Traceback (most recent call last):
             ...
-            ValueError: relative_field must be a Field and
+            ValueError: relative_field must be a field and
             Vector space of dimension 2 over Finite Field in z2
-            of size 2^2 is not.
+            of size 2^2 is not
         """
         if isinstance(rank_errors, (Integer, int)):
             rank_errors = (rank_errors, rank_errors)
         if not isinstance(rank_errors, (tuple, list)):
-            raise ValueError("rank_errors must be a tuple, a list, an Integer or a Python int")
+            raise ValueError("rank_errors must be a tuple, a list or an integer")
         super(StaticRankErrorChannel, self).__init__(space, space)
         if rank_errors[1] > space.dimension():
-            raise ValueError("There might be errors of rank larger than the dimension of the input space.")
+            raise ValueError("the rank of errors must be less than or equal to the dimension of the input space")
         self._rank_errors = rank_errors
         self._base_field = space.base_field()
         if not relative_field:
             self._relative_field = self._base_field.prime_subfield()
         else:
             if relative_field not in Fields():
-                raise ValueError("relative_field must be a Field and %s is not." % relative_field)
+                raise ValueError("relative_field must be a field and %s is not" % relative_field)
             if not relative_field.is_subring(self._base_field):
                 raise ValueError("%s is not an extension of %s" % (self._base_field, relative_field))
             self._relative_field = relative_field
@@ -928,7 +941,7 @@ class StaticRankErrorChannel(Channel):
         self._column_space = V
         self._extension_degree = V.dimension()
         if rank_errors[1] > self._extension_degree:
-            raise ValueError("There might be errors of rank larger than the field extension degree.")
+            raise ValueError("the rank of errors must be less than or equal to the field extension degree")
         self._map_to_field = vec_to_field
 
     def _repr_(self):
@@ -945,7 +958,7 @@ class StaticRankErrorChannel(Channel):
             over Finite Field in z8 of size 2^8
         """
         no_err = self.rank_errors()
-        return "Channel creating error of rank %s over %s, of input and output space %s"\
+        return "Channel creating error of rank %s over %s, of input and output space %s" \
                     % (format_interval(no_err), self._relative_field, self.input_space())
 
     def _latex_(self):
@@ -962,7 +975,7 @@ class StaticRankErrorChannel(Channel):
             over Finite Field in z8 of size 2^8}
         """
         no_err = self.rank_errors()
-        return "\\textnormal{Channel creating error of rank %s over %s, of input and output space %s}"\
+        return "\\textnormal{Channel creating error of rank %s over %s, of input and output space %s}" \
                 % (format_interval(no_err), self._relative_field, self.input_space())
 
     def transmit_unsafe(self, message):
@@ -972,15 +985,13 @@ class StaticRankErrorChannel(Channel):
         If ``self._rank_errors`` was passed as a tuple for the number of errors, it will
         pick a random integer between the bounds of the tuple and use it as the number of errors.
 
-        This method does not check if ``message`` belongs to the input space of``self``.
+        This method does not check if ``message`` belongs to the input space of ``self``.
 
         INPUT:
 
         - ``message`` -- a vector
 
-        OUTPUT:
-
-        - a vector of the output space
+        OUTPUT: a vector of the output space
 
         EXAMPLES::
 
