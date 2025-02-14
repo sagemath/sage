@@ -4,13 +4,13 @@ on:
   workflow_call:
     inputs:
       targets_pre:
-        default: build/make/Makefile
+        default: all-sage-local
         type: string
       targets:
-        default: build/make/Makefile
+        default: build doc-html
         type: string
       targets_optional:
-        default: build/make/Makefile
+        default: ptest
         type: string
       tox_system_factors:
         description: 'Stringified JSON object listing tox system factors'

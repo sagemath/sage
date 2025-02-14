@@ -1,47 +1,50 @@
 name: CI Linux
 
-## This GitHub Actions workflow runs SAGE_ROOT/tox.ini with select environments,
-## whenever a GitHub pull request is opened or synchronized in a repository
-## where GitHub Actions are enabled.
-##
-## It builds and checks some sage spkgs as defined in TARGETS.
-##
-## A job succeeds if there is no error.
-##
-## The build is run with "make V=0", so the build logs of individual packages are suppressed.
-##
-## At the end, all package build logs that contain an error are printed out.
-##
-## After all jobs have finished (or are canceled) and a short delay,
-## tar files of all logs are made available as "build artifacts".
-
-#on: [push, pull_request]
+# This GitHub Actions workflow runs SAGE_ROOT/tox.ini with select environments,
+# whenever a GitHub pull request is opened or synchronized in a repository
+# where GitHub Actions are enabled.
+#
+# It builds and checks some sage spkgs as defined in TARGETS.
+#
+# A job succeeds if there is no error.
+#
+# The build is run with "make V=0", so the build logs of individual packages are suppressed.
+#
+# At the end, all package build logs that contain an error are printed out.
+#
+# After all jobs have finished (or are canceled) and a short delay,
+# tar files of all logs are made available as "build artifacts".
 
 on:
   push:
     tags:
       - '*'
-  workflow_dispatch:
-    # Allow to run manually
+  workflow_dispatch: # allow to run manually
 
-env:
-  TARGETS_PRE: all-sage-local
-  TARGETS: build doc-html
-  TARGETS_OPTIONAL: ptest
+# A job may specify inputs to docker.yml:
+#
+# targets_pre
+# targets
+# targets_optional
+# tox_system_factors
+# tox_packages_factors
+#
+# consult docker.yml for all possible inputs and their default values
 
 permissions:
   packages: write
 
 jobs:
 
-  # standard (without ptest) for the default platform (used by build.yml etc.)
+  # This duplicates the "standard" job (see below) for the default platform.
+  # The reason is to provide the default docker image as fast as possible
+  # for other workflows like build.yml.
   default:
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
       free_disk_space: true
       docker_targets: "with-system-packages configured with-targets-pre with-targets"
-      # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local
       targets: build doc-html
       targets_optional: ptest
@@ -52,8 +55,8 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
       logs_artifact: false
 
-  # All platforms. This duplicates the default platform, but why not,
-  # it makes it more robust regarding random timeouts.
+  # The following jobs run for all supported platforms. See the default list
+  # for tox_system_factors in docker.yml.
 
   standard:
     if: ${{ success() || failure() }}
@@ -62,7 +65,6 @@ jobs:
       # Build from scratch
       free_disk_space: true
       docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
-      # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local
       targets: build doc-html
       targets_optional: ptest
@@ -101,7 +103,6 @@ jobs:
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
       docker_targets: "with-targets with-targets-optional"
-      # FIXME: duplicated from env.TARGETS
       targets: build doc-html
       targets_optional: ptest
       tox_packages_factors: >-
@@ -136,7 +137,6 @@ jobs:
       # Build from scratch
       free_disk_space: true
       docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
-      # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local
       targets: build doc-html
       targets_optional: ptest
