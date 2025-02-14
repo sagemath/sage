@@ -116,7 +116,7 @@ kernel::
 We see on the output that it has dimension `0`; so it
 vanishes. Instead of reading the output, one can check
 programmatically the vanishing of a Ore module using the
-method :meth:`is_zero`.
+method :meth:`is_zero`::
 
     sage: f.kernel().is_zero()
     True
@@ -231,7 +231,7 @@ For endomorphisms, one can compute classical invariants as
 determinants and characteristic polynomials.
 To illustrate this, we check on an example that the characteristic
 polynomial of the multiplication by `X^3` on the quotient
-`\mathcal S / \mathcal S P` is the reduced norm of `P`.
+`\mathcal S / \mathcal S P` is the reduced norm of `P`::
 
     sage: P = X^5 + z*X^4 + z^2*X^2 + z + 1
     sage: M = S.quotient_module(P)

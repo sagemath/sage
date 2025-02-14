@@ -524,7 +524,7 @@ class FreeModulePseudoMorphism(Morphism):
             sage: M
             Ore module of rank 2 over Finite Field in z of size 7^3 twisted by z |--> z^7
 
-        Here `M` is a module over the Ore ring `\FF_q[X; \\text{Frob}]`
+        Here `M` is a module over the Ore ring `\mathbb F_q[X; \text{Frob}]`
         and the variable `X` acts on `M` through `f`::
 
             sage: S.<X> = M.ore_ring()
