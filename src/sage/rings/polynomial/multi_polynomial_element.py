@@ -154,11 +154,22 @@ class MPolynomial_element(MPolynomial):
             sage: a = P(1)
             sage: a(()).parent()
             Rational Field
+        
+        Check :issue:`39081`::
+            
+            sage: R.<a,b> = PolynomialRing(ZZ)
+            sage: f = a + b
+            sage: f(1, 2, a=3, b=4)
+            Traceback (most recent call last):
+            ...
+            TypeError: Cannot mix both arguments and keywords
 
         AUTHORS:
 
         - David Kohel (2005-09-27)
         """
+        if len(kwds) > 0 and len(x) > 0:
+            raise TypeError("Cannot mix both arguments and keywords")
         if len(kwds) > 0:
             f = self.subs(**kwds)
             if len(x) > 0:
