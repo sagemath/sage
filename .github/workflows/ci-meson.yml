@@ -72,6 +72,23 @@ jobs:
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
           pip install --no-build-isolation --no-deps --config-settings=builddir=builddir . -v
 
+      - name: Check update-meson
+        # this step must be after build, because meson.build creates a number of __init__.py files
+        # that is needed to make tools/update-meson.py run correctly
+        shell: bash -l {0}
+        id: check_update_meson
+        run: |
+          python3 tools/update-meson.py
+          make test-git-no-uncommitted-changes
+        continue-on-error: true
+
+      - name: Show files changed by update-meson
+        if: ${{ steps.check_update_meson.outcome == 'failure' }}
+        shell: bash -l {0}
+        run: |
+          git status
+          git diff
+
       - name: Verify dependencies
         shell: bash -l {0}
         run: pip check
@@ -82,6 +99,14 @@ jobs:
           # We don't install sage_setup, so don't try to test it
           rm -R ./src/sage_setup/
           ./sage -t --all -p4
+
+      - name: Report update-meson failure
+        if: ${{ steps.check_update_meson.outcome == 'failure' }}
+        shell: bash -l {0}
+        run: |
+          # Please see step 'Show files changed by update-meson' above and apply the changes,
+          # or run tools/update-meson.py locally
+          false
 
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
