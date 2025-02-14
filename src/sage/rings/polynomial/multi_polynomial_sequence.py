@@ -946,6 +946,20 @@ class PolynomialSequence_generic(Sequence_generic):
             [x^2*y, x*y^2, x^2*z, x*y*z, x*z^2, x^2, x*y, y^2, x*z, y*z, z^2, x, y, z, 1]
             ]
 
+        TESTS::
+
+            sage: R.<x,y,z> = PolynomialRing(GF(7),order='deglex')
+            sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
+            sage: PolynomialSequence_generic([], R).macaulay_matrix(1)
+            Traceback (most recent call last):
+            ...
+            TypeError: the list of polynomials must be non empty
+            
+            sage: Sequence([x*y, x**2]).macaulay_matrix(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be a non negative number
+
         REFERENCES:
 
         [Mac1902]_, [BFS2015]_
