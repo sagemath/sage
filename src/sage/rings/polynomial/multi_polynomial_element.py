@@ -169,13 +169,10 @@ class MPolynomial_element(MPolynomial):
         - David Kohel (2005-09-27)
         """
         if len(kwds) > 0 and len(x) > 0:
-            raise TypeError("Cannot mix both arguments and keywords")
+            raise TypeError("Cannot mix both arguments and keywords.")
         if len(kwds) > 0:
             f = self.subs(**kwds)
-            if len(x) > 0:
-                return f(*x)
-            else:
-                return f
+            return f
         if len(x) == 1 and isinstance(x[0], (list, tuple)):
             x = x[0]
         n = self.parent().ngens()
