@@ -164,7 +164,6 @@ class WittVector(CommutativeRingElement):
             (2, 1, 1, 1)
         """
         P = self.parent()
-        C = self.__class__
 
         # As a slight optimization, we'll check for zero ahead of time.
         if other == P.zero():
@@ -178,7 +177,6 @@ class WittVector(CommutativeRingElement):
             # note here this is tuple addition, i.e. concatenation
             sum_vec = tuple(s[i](*(self._vec + other._vec))
                             for i in range(self._prec))
-            return C(P, vec=sum_vec)
         elif alg == 'finotti':
             x = self._vec
             y = other._vec
@@ -191,12 +189,10 @@ class WittVector(CommutativeRingElement):
                     G_n.append(P._eta_bar(G[i], n - i))
                 G.append(G_n)
             sum_vec = tuple(sum(G[i]) for i in range(prec))
-            return C(P, vec=sum_vec)
         elif alg == 'Zq_isomorphism':
             x = P._vector_to_series(self._vec)
             y = P._vector_to_series(other._vec)
             sum_vec = P._series_to_vector(x + y)
-            return C(P, vec=sum_vec)
         elif alg == 'p_invertible':
             p = P._prime  # we know p is a unit in this case!
             x = self._vec
@@ -211,7 +207,7 @@ class WittVector(CommutativeRingElement):
                         for i in range(n))
                 sum_vec.append(next_sum)
 
-            return C(P, vec=sum_vec)
+        return P(sum_vec)
 
     def _mul_(self, other):
         """
@@ -242,7 +238,6 @@ class WittVector(CommutativeRingElement):
             # note here this is tuple addition, i.e. concatenation
             prod_vec = tuple(p[i](*(self._vec + other._vec))
                              for i in range(self._prec))
-            return P(prod_vec)
         elif alg == 'finotti':
             x = self._vec
             y = other._vec
@@ -258,12 +253,10 @@ class WittVector(CommutativeRingElement):
                     G_n.append(P._eta_bar(G[i], n - i))
                 G.append(G_n)
             prod_vec = tuple(sum(G[i]) for i in range(prec))
-            return P(prod_vec)
         elif alg == 'Zq_isomorphism':
             x = P._vector_to_series(self._vec)
             y = P._vector_to_series(other._vec)
             prod_vec = P._series_to_vector(x * y)
-            return P(prod_vec)
         elif alg == 'p_invertible':
             p = P._prime  # we know p is a unit in this case!
             x = self._vec
@@ -278,7 +271,7 @@ class WittVector(CommutativeRingElement):
                 ) / p**n
                 prod_vec.append(next_prod)
 
-            return P(prod_vec)
+        return P(prod_vec)
 
     def _neg_(self):
         """
