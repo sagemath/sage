@@ -552,16 +552,22 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         """
         return self._prec
 
-    def random_element(self):
+    def random_element(self, *args, **kwds):
         """
-        Return the length of the truncated Witt vectors in ``length``.
+        Return the length of the truncated Witt vectors in ``length``. Extra
+        arguments are passed to the random generator of the base ring.
 
         EXAMPLES::
 
             sage: WittVectorRing(GF(27), prec=2).random_element()  # random
             (z3, 2*z3^2 + 1)
+
+            sage: W=WittVectorRing(PolynomialRing(ZZ,'x'), p=3, prec=3)
+            sage: W.random_element(5)  # random
+            (x^5 - 2*x^4 - 4*x^3 - 2*x^2 + 1, -x^5 + 2*x^4 - x - 1,
+            -x^5 + 7*x^4 + 3*x^3 - 24*x^2 - 1)
         """
-        return self(tuple(self.base().random_element()
+        return self(tuple(self.base().random_element(*args, **kwds)
                           for _ in range(self._prec)))
 
     def teichmuller_lift(self, x):
