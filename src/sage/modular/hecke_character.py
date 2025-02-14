@@ -16,14 +16,13 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.structure.factory import UniqueFactory
-from sage.arith.functions import lcm
-from sage.rings.integer_ring import ZZ
-from sage.groups.abelian_gps.dual_abelian_group_element import DualAbelianGroupElement
-from sage.groups.abelian_gps.dual_abelian_group import DualAbelianGroup_class
-from sage.lfunctions.dokchitser import Dokchitser
-
 from cypari2.handle_error import PariError
+from sage.arith.functions import lcm
+from sage.groups.abelian_gps.dual_abelian_group import DualAbelianGroup_class
+from sage.groups.abelian_gps.dual_abelian_group_element import DualAbelianGroupElement
+from sage.lfunctions.dokchitser import Dokchitser
+from sage.rings.integer_ring import ZZ
+from sage.structure.factory import UniqueFactory
 
 
 class HeckeCharacter(DualAbelianGroupElement):
