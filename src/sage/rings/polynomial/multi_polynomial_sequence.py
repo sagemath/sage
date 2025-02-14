@@ -954,7 +954,7 @@ class PolynomialSequence_generic(Sequence_generic):
             Traceback (most recent call last):
             ...
             TypeError: the list of polynomials must be non empty
-            
+
             sage: Sequence([x*y, x**2]).macaulay_matrix(-1)
             Traceback (most recent call last):
             ...
