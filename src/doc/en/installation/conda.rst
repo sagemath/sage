@@ -57,16 +57,17 @@ environment for Sage development.
 
 Here we assume that you are using a git checkout.
 
-- Create and activate a new conda environment with the dependencies of Sage
-  and a few additional developer tools; if you are not on a Linux that runs an x86_64 compatible CPU,
-  replace ``linux`` accordingly:
+Create and activate a new conda environment with the dependencies of Sage and a
+few additional developer tools; if you are not on a Linux that runs an x86_64
+compatible CPU, replace ``linux`` accordingly:
 
 .. code-block:: shell
 
     $ conda env create --file environment-3.12-linux.yml
     $ conda activate sage-dev
 
-- Bootstrap the source tree and install the build prerequisites and the Sage library:
+Bootstrap the source tree and install the build prerequisites and the Sage
+library:
 
 .. code-block:: shell
 
@@ -81,7 +82,7 @@ If you encounter any errors, try to install the ``sage-conf`` package first:
 
 and then run the last command again.
 
-- Verify that Sage has been installed:
+Verify that Sage has been installed:
 
 .. code-block:: shell
 
