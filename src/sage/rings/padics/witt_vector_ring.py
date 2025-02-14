@@ -40,11 +40,12 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 def _fast_char_p_power(x, n, p=None):
     r"""
-    Raise x^n power in characteristic p.
+    Raise `x^n` in characteristic `p`.
 
-    If x is not an element of a ring of characteristic p, this throws an error.
+    If `x` is not an element of a ring of characteristic `p`,
+    this throws an error.
 
-    If x is an element of GF(p^k), this is already fast.
+    If `x` is an element of GF(p^k), this is already fast.
     However, is x is a polynomial, this seems to be slow?
 
     EXAMPLES::
@@ -109,34 +110,49 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
     - ``prec`` -- integer (default: `1`), length of the truncated Witt
       vectors in the ring
 
-    - ``p`` -- prime (default: ``None``) number; when it is not set, it
+    - ``p`` -- a prime number (default: ``None``); when it is not set, it
       defaults to the characteristic of ``base_ring`` when it is prime.
 
     - ``algorithm`` -- the name of the algorithm to use for the ring laws
-      (default: ``None``); must be either ``None``, ``standard``,
-      ``p_invertible``, ``finotti`` or ``Zq_isomorphism``. When it is not set,
-      the most adequate algorithm is chosen. The ``standard`` algorithm is the
-      schoolbook algorithm, the ``p_invertible`` is the same one in the case
-      where ``p`` is invertible in ``base_ring`` and uses some optimisations
-      in that setting, ``finotti`` is Finotti's algorithm which can be used
-      when ``base_ring`` has characteristic ``p``, and ``Zq_isomorphism``
-      computes the ring laws in `\mathbb Z_q` when ``base_ring`` is
-      `\mathbb F_q` for `q` a power of ``p``.
+      (default: ``None``); when it is not set, the most adequate algorithm
+      is chosen
+
+    Available algorithm are:
+
+    - ``standard`` -- the schoolbook algorithm
+
+    - ``p_invertible`` -- uses some optimisations when `p` is invertible
+      in the base ring
+
+    - ``finotti`` -- Finotti's algorithm; it can be used when the base
+      ring has characteristic `p`
+
+    - ``Zq_isomorphism`` -- computes the ring laws in `\mathbb Z_q`
+      when the base ring is `\mathbb F_q` for a power `q` of `p`.
 
     EXAMPLES::
 
-        sage: WittVectorRing(QQ,p=5)
-        Ring of truncated 5-typical Witt vectors of length 1 over Rational
-        Field
+        sage: WittVectorRing(QQ, p=5)
+        Ring of truncated 5-typical Witt vectors of length 1 over
+        Rational Field
+
+    ::
+
         sage: WittVectorRing(GF(3))
-        Ring of truncated 3-typical Witt vectors of length 1 over Finite Field
-        of size 3
+        Ring of truncated 3-typical Witt vectors of length 1 over
+        Finite Field of size 3
+
+    ::
+
         sage: WittVectorRing(GF(3)['t'])
-        Ring of truncated 3-typical Witt vectors of length 1 over Univariate
-        Polynomial Ring in t over Finite Field of size 3
+        Ring of truncated 3-typical Witt vectors of length 1 over
+        Univariate Polynomial Ring in t over Finite Field of size 3
+
+    ::
+
         sage: WittVectorRing(Qp(7), prec=30, p=5)
-        Ring of truncated 5-typical Witt vectors of length 30 over 7-adic
-        Field with capped relative precision 20
+        Ring of truncated 5-typical Witt vectors of length 30 over
+        7-adic Field with capped relative precision 20
 
     TESTS::
 
@@ -144,25 +160,28 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         sage: WittVectorRing(A)
         Traceback (most recent call last):
         ...
-        TypeError: Symmetric group algebra of order 3 over Rational Field
-        is not a commutative ring
+        TypeError: Symmetric group algebra of order 3 over Rational Field is not a commutative ring
+
         sage: WittVectorRing(QQ)
         Traceback (most recent call last):
         ...
-        ValueError: Rational Field has non-prime characteristic
-        and no prime was supplied
+        ValueError: Rational Field has non-prime characteristic and no prime was supplied
 
         sage: WittVectorRing(QQ, p=5, algorithm='moon')
         Traceback (most recent call last):
         ...
-        ValueError: algorithm must be one of None, 'standard',
-        'p_invertible', 'finotti', 'Zq_isomorphism'
+        ValueError: algorithm must be one of None, 'standard', 'p_invertible', 'finotti', 'Zq_isomorphism'
     """
     Element = WittVector
 
     def __classcall_private__(cls, base_ring, prec=1, p=None, algorithm=None):
         r"""
         Construct the ring of truncated Witt vectors from the parameters.
+
+        TESTS::
+
+            sage: W = WittVectorRing(QQ, p=5)
+            sage: type(W)
         """
         if not isinstance(base_ring, CommutativeRing):
             raise TypeError(f'{base_ring} is not a commutative ring')
@@ -171,22 +190,23 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             raise TypeError(f'{prec} is not an integer')
         elif prec <= 0:
             raise ValueError(f'{prec} must be positive')
+        prec = Integer(prec)
 
         char = base_ring.characteristic()
         if p is None:
             if char not in Primes():
                 raise ValueError(f'{base_ring} has non-prime characteristic '
                                  'and no prime was supplied')
-            else:
-                prime = char
+            prime = char
         else:
+            if p not in Primes():
+                raise ValueError('p must be a prime number')
             prime = p
 
         if algorithm not in [None, 'standard', 'p_invertible', 'finotti',
                              'Zq_isomorphism']:
             raise ValueError("algorithm must be one of None, 'standard', "
                              "'p_invertible', 'finotti', 'Zq_isomorphism'")
-
         if prime == char:
             if algorithm == 'p_invertible':
                 raise ValueError("The 'p_invertible' algorithm only works "
@@ -229,9 +249,11 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: WittVectorRing(ZZ, p=5, prec=2)
-            Ring of truncated 5-typical Witt vectors of length 2 over Integer
-            Ring
+            sage: W = WittVectorRing(ZZ, p=5, prec=2)
+            sage: W
+            Ring of truncated 5-typical Witt vectors of length 2 over Integer Ring
+
+            sage: TestSuite(W).run()
         """
         self.prec = prec
         self.prime = prime
@@ -269,8 +291,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         EXAMPLES::
 
             sage: WittVectorRing(QQ, p=2, prec=5)
-            Ring of truncated 2-typical Witt vectors of length 5 over Rational
-            Field
+            Ring of truncated 2-typical Witt vectors of length 5 over Rational Field
         """
         return f"Ring of truncated {self.prime}-typical Witt vectors of "\
                f"length {self.prec} over {self.base()}"
@@ -281,7 +302,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: W=WittVectorRing(GF(25), p=5,prec=2)
+            sage: W = WittVectorRing(GF(25), p=5,prec=2)
             sage: W.has_coerce_map_from(WittVectorRing(GF(5), p=5, prec=3))
             True
         """
@@ -289,7 +310,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             return (
                 S.precision() >= self.precision()
                 and self.base().has_coerce_map_from(S.base()))
-        return S is ZZ
+        if S is ZZ:
+            return True
 
     def _generate_sum_and_product_polynomials(self, base):
         """
@@ -298,11 +320,11 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: P.<X1,X2,Y1,Y2>=PolynomialRing(GF(3),'X1,X2,Y1,Y2')
-            sage: W=WittVectorRing(P, p=3, prec=2)
-            sage: W([X1,X2])+W([Y1,Y2])
+            sage: P.<X1,X2,Y1,Y2> = PolynomialRing(GF(3),'X1,X2,Y1,Y2')
+            sage: W = WittVectorRing(P, p=3, prec=2)
+            sage: W([X1,X2]) + W([Y1,Y2])  # indirect doctest
             (X1 + Y1, -X1^2*Y1 - X1*Y1^2 + X2 + Y2)
-            sage: W([X1,X2])*W([Y1,Y2])
+            sage: W([X1,X2]) * W([Y1,Y2])  # indirect doctest
             (X1*Y1, X2*Y1^3 + X1^3*Y2)
         """
         p = self.prime
@@ -538,8 +560,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: WittVectorRing(GF(27), prec=2).random_element()  # random
             (z3, 2*z3^2 + 1)
         """
-        return self.element_class(self, tuple(self.base().random_element()
-                                              for _ in range(self.prec)))
+        return self(tuple(self.base().random_element()
+                          for _ in range(self.prec)))
 
     def teichmuller_lift(self, x):
         """
@@ -554,8 +576,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         """
         if x not in self.base():
             raise Exception(f'{x} not in {self.base()}')
-        return self.element_class(self,
-                                  (x,) + tuple(0 for _ in range(self.prec-1)))
+        return self((x,) + tuple(0 for _ in range(self.prec-1))
 
     def is_finite(self):
         """

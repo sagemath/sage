@@ -36,12 +36,16 @@ class WittVector(CommutativeRingElement):
 
     EXAMPLES::
 
-        sage: W=WittVectorRing(GF(25), p=5, prec=3)
+        sage: W = WittVectorRing(GF(25), p=5, prec=3)
         sage: W(12)
         (2, 1, 3)
-        sage: W=WittVectorRing(Integers(6), p=3, prec=4)
-        sage: W([1,2,3,4])*W([4,5,0,0])
+
+        sage: W = WittVectorRing(Integers(6), p=3, prec=4)
+        sage: w = W([1,2,3,4]) * W([4,5,0,0])
+        sage: w
         (4, 1, 3, 4)
+
+        sage: TestSuite(w).run()
     """
     def __init__(self, parent, vec=None):
         """
@@ -52,14 +56,14 @@ class WittVector(CommutativeRingElement):
             sage: W = WittVectorRing(GF(3))
             sage: e = W.one(); e
             (1)
-            sage: e**2
+            sage: e^2
             (1)
             sage: -e
             (2)
 
             sage: W = WittVectorRing(GF(3), prec=4)
             sage: t = W([1,2,0,1])
-            sage: t**2
+            sage: t^2
             (1, 1, 0, 2)
             sage: -t
             (2, 1, 0, 2)
@@ -222,7 +226,6 @@ class WittVector(CommutativeRingElement):
             (2, 0, 0, 1)
         """
         P = self.parent()
-        C = self.__class__
 
         # As a slight optimization, we'll check for zero or one ahead of time.
         if self == P.zero() or other == P.zero():
@@ -239,7 +242,7 @@ class WittVector(CommutativeRingElement):
             # note here this is tuple addition, i.e. concatenation
             prod_vec = tuple(p[i](*(self.vec + other.vec))
                              for i in range(self.prec))
-            return C(P, vec=prod_vec)
+            return P(prod_vec)
         elif alg == 'finotti':
             x = self.vec
             y = other.vec
@@ -260,7 +263,7 @@ class WittVector(CommutativeRingElement):
             x = P._vector_to_series(self.vec)
             y = P._vector_to_series(other.vec)
             sum_vec = P._series_to_vector(x * y)
-            return C(P, vec=sum_vec)
+            return P(sum_vec)
         elif alg == 'p_invertible':
             p = P.prime  # we know p is a unit in this case!
             x = self.vec
@@ -275,7 +278,7 @@ class WittVector(CommutativeRingElement):
                 ) / p**n
                 prod_vec.append(next_prod)
 
-            return C(P, vec=prod_vec)
+            return P(prod_vec)
 
     def _neg_(self):
         """
@@ -289,14 +292,13 @@ class WittVector(CommutativeRingElement):
             (2, 1, 0, 2)
         """
         P = self.parent()
-        C = self.__class__
         # If p == 2, -1 == (-1, -1, -1, ...)
         # Otherwise, -1 == (-1, 0, 0, ...)
         if P.prime == 2:
             all_ones = P(tuple(-1 for _ in range(self.prec)))
             return all_ones * self
         neg_vec = tuple(-self.vec[i] for i in range(self.prec))
-        return C(P, vec=neg_vec)
+        return P(neg_vec)
 
     def _div_(self, other):
         """
@@ -333,7 +335,6 @@ class WittVector(CommutativeRingElement):
         if not self.vec[0].is_unit():
             raise ZeroDivisionError(f"Inverse of {self} does not exist.")
         P = self.parent()
-        C = self.__class__
 
         if self == P.one():
             return self
@@ -363,7 +364,7 @@ class WittVector(CommutativeRingElement):
             except ValueError:
                 raise ZeroDivisionError(f"Inverse of {self} does not exist.")
 
-        return C(P, vec=inv_vec)
+        return P(inv_vec)
 
     def _int_to_vector(self, k, parent):
         """
