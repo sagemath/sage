@@ -684,11 +684,12 @@ class AbstractTree:
             sage: l = []
             sage: t = OrderedTree([[],[[],[],]]).canonical_labelling()
             sage: t
-            1[2[3[]], 4[5[6[], 7[]], 8[]]]
+            1[2[], 3[4[], 5[]]]
             sage: t.contour_traversal(lambda node: (l.append(node.label()),l.append('a')), 
-                    lambda node: (l.append(node.label()),l.append('b')), 
-                    lambda node: (l.append(node.label()),l.append('c')),
-                    lambda node: (l.append(node.label())))
+            ....:   lambda node: (l.append(node.label()),l.append('b')), 
+            ....:   lambda node: (l.append(node.label()),l.append('c')),
+            ....:   lambda node: (l.append(node.label())))
+            sage: l
             sage: [1, 'a', 1, 'b', 2, 1, 'b', 3, 'a', 3, 'b', 4, 3, 'b', 5, 3, 'c', 1, 'c']
 
             sage: l = []
@@ -696,9 +697,9 @@ class AbstractTree:
             sage: b
             3[1[., 2[., .]], 7[5[4[., .], 6[., .]], 8[., .]]]
             sage: b.contour_traversal(lambda node: l.append(node.label()), 
-                    lambda node: l.append(node.label()), 
-                    lambda node: l.append(node.label()),
-                    None)
+            ....:   lambda node: l.append(node.label()), 
+            ....:   lambda node: l.append(node.label()),
+            ....:   None)
             sage: l
             [3, 3, 1, 1, 1, 2, 2, 2, 2, 1, 3, 7, 7, 5, 5, 4, 4, 4, 4, 5, 6, 6, 6, 6, 5, 7, 8, 8, 8, 8, 7, 3]
 
@@ -942,6 +943,8 @@ class AbstractTree:
             sage: T.node_number_at_depth(2000)
             1
         """
+        if self.is_empty():
+            return 0
         def fr_action(node, depths, m, depth):
             if depths[-1] == depth:
                 m[0] += 1
@@ -1226,14 +1229,18 @@ class AbstractTree:
             sage: T.depth()
             10000
         """
+        if self.is_empty():
+            return 0
         def action(node,m):
-            if not(bool(node)):
+            if node.is_empty():
+                m.append(-1)
+            elif not(bool(node)):
                 m.append(0)
             else:
                 mx = max(m.pop() for _ in node)
                 m.append(mx+1)
         m = []
-        self.iterative_post_order_traversal(lambda node: action(node,m))
+        self.contour_traversal(final_action = lambda node: action(node,m))
         return m[0]+1
 
     def _ascii_art_(self):
