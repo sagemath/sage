@@ -262,8 +262,8 @@ class WittVector(CommutativeRingElement):
         elif alg == 'Zq_isomorphism':
             x = P._vector_to_series(self._vec)
             y = P._vector_to_series(other._vec)
-            sum_vec = P._series_to_vector(x * y)
-            return P(sum_vec)
+            prod_vec = P._series_to_vector(x * y)
+            return P(prod_vec)
         elif alg == 'p_invertible':
             p = P._prime  # we know p is a unit in this case!
             x = self._vec
