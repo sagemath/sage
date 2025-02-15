@@ -28,7 +28,7 @@ from itertools import product
 from sage.categories.fields import Fields
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Zp, Zq
+from sage.rings.padics.factory import Zp
 from sage.rings.padics.witt_vector import WittVector
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -367,7 +367,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
                         - self._sum_polynomials[i]**(p**(n-i))) / p**(n-i))
             self._sum_polynomials[n] = R(s_n)
 
-        self._prod_polynomials = [x_vars[0] * y_vars[0]] + [0]*(self._prec)
+        self._prod_polynomials = [x_vars[0] * y_vars[0]] + [0]*(self._prec-1)
         for n in range(1, prec):
             x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
             y_poly = sum([p**i * y_vars[i]**(p**(n-i)) for i in range(n+1)])
@@ -476,46 +476,38 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
                     scriptM[t].append(result)
             return sum(scriptM[k])
 
-    def _series_to_vector(self, series):
-        r"""
-        Computes the canonical bijection from `\mathbb Z_q` to
-        `W(\mathbb F_q)`.
+    def algorithm(self):
         """
-        F = self.base()  # known to be finite
-        R = Zq(F.cardinality(), prec=self._prec, type='fixed-mod',
-               modulus=F.polynomial(), names=['z'])
-        K = R.residue_field()
-        p = self._prime
+        Return the algorithm computing the ring laws.
 
-        series = R(series)
-        witt_vector = []
-        for i in range(self._prec):
-            temp = K(series)
-            elem = temp.polynomial()(F.gen())  # hack to convert to F
-            # (K != F for some reason)
-            witt_vector.append(elem**(p**i))
-            series = (series - R.teichmuller(temp)) // p
-        return witt_vector
+        EXAMPLES::
 
-    def _vector_to_series(self, vec):
-        r"""
-        Computes the canonical bijection from `W(\mathbb F_q)` to
-        `\mathbb Z_q`.
+            sage: W = WittVectorRing(GF(625), p=5, prec=2)
+            sage: W.algorithm()
+            'Zq_isomorphism'
+
+            sage: W = WittVectorRing(ZZ, p=3, prec=3)
+            sage: W.algorithm()
+            'standard'
+
+            sage: W = WittVectorRing(QQ, p=23, prec=5)
+            sage: W.algorithm()
+            'p_invertible'
         """
-        F = self.base()
-        R = Zq(F.cardinality(), prec=self._prec, type='fixed-mod',
-               modulus=F.polynomial(), names=['z'])
-        K = R.residue_field()
-        p = self._prime
+        return self._algorithm
 
-        series = R.zero()
-        for i in range(self._prec):
-            temp = vec[i].nth_root(p**i)
-            elem = temp.polynomial()(K.gen())
-            # hack to convert to K (F != K for some reason)
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
 
-            series += p**i * R.teichmuller(elem)
-        return series
+        EXAMPLES::
+
+            sage: WittVectorRing(GF(17), prec=2).cardinality()
+            289
+            sage: WittVectorRing(QQ, p=2).cardinality()
+            +Infinity
+        """
+        return self.base().cardinality()**(self._prec)
 
     def characteristic(self):
         """
@@ -539,6 +531,19 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         # Aspects of Mixed Characteristic Witt Vectors" (preprint)
         return p**(self._prec-1) * self.base().characteristic()
 
+    def is_finite(self):
+        """
+        Return whether ``self`` is a finite ring.
+
+        EXAMPLES::
+
+            sage: WittVectorRing(GF(23)).is_finite()
+            True
+            sage: WittVectorRing(ZZ, p=2).is_finite()
+            False
+        """
+        return self.base().is_finite()
+
     def precision(self):
         """
         Return the length of the truncated Witt vectors in ``length``.
@@ -550,6 +555,43 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         """
         return self._prec
 
+    def prime(self):
+        """
+        Return the prime from which the truncated Witt vector ring has been
+        constructed.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(81), prec=3)
+            sage: W.prime()
+            3
+
+            sage: W = WittVectorRing(ZZ, p=7, prec=2)
+            sage: W.prime()
+            7
+        """
+        return self._prime
+
+    def prod_polynomials(self):
+        """
+        Return the Witt product polynomials.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(5), prec=3)
+            sage: W.prod_polynomials()
+            [X0*Y0,
+            X1*Y0^5 + X0^5*Y1,
+            -X0^5*X1^4*Y0^20*Y1 + 3*X0^10*X1^3*Y0^15*Y1^2 + 3*X0^15*X1^2*Y0^10*Y1^3 - X0^20*X1*Y0^5*Y1^4 + X2*Y0^25 + X0^25*Y2 + X1^5*Y1^5]
+
+            sage: W = WittVectorRing(ZZ, p=2, prec=2)
+            sage: W.prod_polynomials()
+            [X0*Y0, X1*Y0^2 + X0^2*Y1 + 2*X1*Y1]
+        """
+        if self._prod_polynomials is None:
+            self._generate_sum_and_product_polynomials(self.base())
+        return self._prod_polynomials
+
     def random_element(self, *args, **kwds):
         """
         Return the length of the truncated Witt vectors in ``length``. Extra
@@ -560,13 +602,33 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: WittVectorRing(GF(27), prec=2).random_element()  # random
             (z3, 2*z3^2 + 1)
 
-            sage: W=WittVectorRing(PolynomialRing(ZZ,'x'), p=3, prec=3)
+            sage: W = WittVectorRing(PolynomialRing(ZZ,'x'), p=3, prec=3)
             sage: W.random_element(5)  # random
             (x^5 - 2*x^4 - 4*x^3 - 2*x^2 + 1, -x^5 + 2*x^4 - x - 1,
             -x^5 + 7*x^4 + 3*x^3 - 24*x^2 - 1)
         """
         return self(tuple(self.base().random_element(*args, **kwds)
                           for _ in range(self._prec)))
+
+    def sum_polynomials(self):
+        """
+        Return the Witt sum polynomials.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(5), prec=2)
+            sage: W.sum_polynomials()
+            [X0 + Y0, -X0^4*Y0 + 3*X0^3*Y0^2 + 3*X0^2*Y0^3 - X0*Y0^4 + X1 + Y1]
+
+            sage: W = WittVectorRing(ZZ, p=2, prec=3)
+            sage: W.sum_polynomials()
+            [X0 + Y0,
+            -X0*Y0 + X1 + Y1,
+            -X0^3*Y0 - 2*X0^2*Y0^2 - X0*Y0^3 + X0*X1*Y0 + X0*Y0*Y1 - X1*Y1 + X2 + Y2]
+        """
+        if self._sum_polynomials is None:
+            self._generate_sum_and_product_polynomials(self.base())
+        return self._sum_polynomials
 
     def teichmuller_lift(self, x):
         """
@@ -582,29 +644,3 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         if x not in self.base():
             raise Exception(f'{x} not in {self.base()}')
         return self((x,) + tuple(0 for _ in range(self._prec-1)))
-
-    def is_finite(self):
-        """
-        Return whether ``self`` is a finite ring.
-
-        EXAMPLES::
-
-            sage: WittVectorRing(GF(23)).is_finite()
-            True
-            sage: WittVectorRing(ZZ, p=2).is_finite()
-            False
-        """
-        return self.base().is_finite()
-
-    def cardinality(self):
-        """
-        Return the cardinality of ``self``.
-
-        EXAMPLES::
-
-            sage: WittVectorRing(GF(17), prec=2).cardinality()
-            289
-            sage: WittVectorRing(QQ, p=2).cardinality()
-            +Infinity
-        """
-        return self.base().cardinality()**(self._prec)
