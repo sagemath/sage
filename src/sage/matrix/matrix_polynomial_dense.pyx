@@ -4162,42 +4162,78 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         When M is a diagonal of powers of the variable, a relation basis is the
         same as an approximant basis::
 
-            sage: mod = matrix.diagonal([x**4, x**3], sparse=False)
+            sage: M = matrix.diagonal([x**4, x**3], sparse=False)
             sage: shifts = [-1, 2, 0]
             sage: F = matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5*x^2 + 4*x + 1],
             ....:                 [        2*x^2 + 2*x + 3, 6*x^2 + 6*x + 3],
             ....:                 [4*x^3         +   x + 1, 4*x^2 + 2*x + 3]])
             sage: P_app = F.minimal_approximant_basis([4, 3], shifts, normal_form=True)
-            sage: P_rel = F.minimal_relation_basis(mod, shifts, normal_form=True)
+            sage: P_rel = F.minimal_relation_basis(M, shifts, normal_form=True)
             sage: P_app == P_rel
             True
 
         If ``self`` is the identity matrix, then relation bases are simply
-        matrices that are left-unimodularly equivalent to ``mod``::
+        matrices that are left-unimodularly equivalent to `M`::
 
-            sage: # mod is both row and column reduced
-            sage: mod = x**4 * 1 + matrix.random(pR, 3, 3, degree=3)
-            sage: F = matrix.identity(pR, 3)  # cdeg(F) < cdeg(mod)
-            sage: P = F.minimal_relation_basis(mod, shifts=[0,1,2], normal_form=True)
-            sage: P == mod.popov_form(shifts=[0,1,2])
+            sage: # M is both row and column reduced
+            sage: M = x**4 + matrix.random(pR, 3, 3, degree=3)
+            sage: F1 = matrix.identity(pR, 3)  # cdeg(F1) < cdeg(M)
+            sage: P1 = F1.minimal_relation_basis(M, shifts=[0,1,2], normal_form=True)
+            sage: P1 == M.popov_form(shifts=[0,1,2])
             True
 
         One can consider column-wise relations; unspecified shift means taking
         the uniform `[0,\ldots, 0]` shift::
 
-            sage: F = matrix.random(pR, 3, 5, degree=3)
-            sage: P = F.minimal_relation_basis(mod, row_wise=False)
-            sage: P.is_weak_popov(shifts=[0]*5, row_wise=False)
+            sage: F2 = matrix.random(pR, 3, 5, degree=3)
+            sage: P2 = F2.minimal_relation_basis(M, row_wise=False)
+            sage: P2.is_weak_popov(shifts=[0]*5, row_wise=False)
             True
-            sage: Q,R = (F*P).left_quo_rem(mod)  # F*P = mod*Q + 0
+            sage: Q,R = (F2*P2).left_quo_rem(M)  # F2*P2 = M*Q + 0
             sage: R == 0
             True
 
         Unless requiring a normal form, the output basis will most often not be
         the canonical one::
 
-            sage: P.is_popov(shifts=[0]*5, row_wise=False)
+            sage: P2.is_popov(shifts=[0]*5, row_wise=False)
             False
+
+        By default, this supports input ``self`` that are not reduced modulo
+        ``M``, unless ``reduced_input`` is specified as ``True``:
+
+            sage: G1 = F1 + M  # G1 == F1 mod M; G1 not reduced mod M
+            sage: P1bis = G1.minimal_relation_basis(M, shifts=[0,1,2], normal_form=True)
+            sage: P1bis == P1
+            True
+            sage: P = G1.minimal_relation_basis(M, shifts=[0,1,2], reduced_input=True)
+            sage: P.is_weak_popov(shifts=[0,1,2])
+            False
+            sage: G2 = F2 + M * matrix.random(pR, 3, 5)
+            sage: P2bis = G2.minimal_relation_basis(M, row_wise=False)
+            sage: P2bis == P2
+            True
+            sage: P = G2.minimal_relation_basis(M, row_wise=False, reduced_input=True)
+            sage: P.is_weak_popov(row_wise=False)
+            False
+
+        By default, this supports any nonsingular matrix ``M``, and nonsingularity
+        is checked (unless ``reduced_input`` is specified as ``True``):
+
+            sage: M1 = matrix([[1,x**10,x**10],[0,1,0],[0,0,1]]) * M  # unimodular transformation
+            sage: M1.is_reduced(row_wise=False)  # M1 not column reduced
+            False  
+            sage: P1bis = F1.minimal_relation_basis(M1, shifts=[0,1,2], normal_form=True)
+            sage: P1bis == P1  # True since M and M1 have same row space
+            True
+            sage: P = F1.minimal_relation_basis(M1, shifts=[0,1,2], reduced_input=True)
+            sage: P.is_weak_popov(shifts=[0,1,2])
+            False
+            sage: M2 = M.with_row_set_to_multiple_of_row(0, 1, x)  # M2 is singular
+            sage: F1.minimal_relation_basis(M2)
+            Traceback (most recent call last):
+            ...
+            ValueError: modulus matrix must be nonsingular
         """
         from sage.matrix.constructor import matrix  # for matrix.block
 
@@ -4230,8 +4266,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             #    before calling this method, with their own choice of shift.
             #    -> check, in case, to avoid unnecessary computations
             if not mod.is_reduced(row_wise=(not row_wise), include_zero_vectors=False):
-                mod = mod.popov_form(row_wise=row_wise)
-                if mod.nrows() < n:
+                mod = mod.popov_form(row_wise=row_wise, include_zero_vectors=False)
+                if not mod.is_square():
                     raise ValueError("modulus matrix must be nonsingular")
 
             # Ensure self is reduced modulo mod
