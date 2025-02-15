@@ -20637,9 +20637,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = graphs.CompleteGraph(5)
             sage: h = g.transitive_reduction(); h.size()
             4
+            sage: (2*g).transitive_reduction().size()
+            8
             sage: g = DiGraph({0: [1, 2], 1: [2, 3, 4, 5], 2: [4, 5]})
             sage: g.transitive_reduction().size()
             5
+            sage: (2*g).transitive_reduction().size()
+            10
 
         TESTS:
 
@@ -20690,7 +20694,7 @@ class GenericGraph(GenericGraph_pyx):
             CC = [self]
         else:
             CC = (self.subgraph(c)
-                  for c in self.connected_components() if len(c) > 1)
+                  for c in self.connected_components(sort=False) if len(c) > 1)
 
         def edges():
             for g in CC:
