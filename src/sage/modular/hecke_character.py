@@ -17,12 +17,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from cypari2.handle_error import PariError
+
 from sage.arith.functions import lcm
 from sage.groups.abelian_gps.dual_abelian_group import DualAbelianGroup_class
 from sage.groups.abelian_gps.dual_abelian_group_element import DualAbelianGroupElement
 from sage.lfunctions.dokchitser import Dokchitser
 from sage.rings.integer_ring import ZZ
-from sage.structure.factory import UniqueFactory
+from sage.rings.number_field.number_field import CyclotomicField
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class HeckeCharacter(DualAbelianGroupElement):
@@ -144,15 +146,16 @@ class HeckeCharacter(DualAbelianGroupElement):
         """
         Return the conductor of this character.
 
-        This uses ``pari`` to compute the conductor of this character,
-        i.e. the smallest modulus for which this character is defined.
+        This uses :pari:`bnrconductor` to compute the conductor of
+        this character, i.e. the smallest modulus for which this
+        character is defined.
 
         EXAMPLES::
 
             sage: F.<a> = NumberField(x^3 - 3*x -1)
             sage: H = HeckeCharacterGroup(F.modulus(3, [0,1,2]))
             sage: H.gen().conductor()
-            (Fractional ideal (-a^2 + 1)) * ∞_0 * ∞_1 * ∞_2
+            (Fractional ideal (a^2 - 1)) * ∞_0 * ∞_1 * ∞_2
             sage: H.gen().modulus()
             (Fractional ideal (3)) * ∞_0 * ∞_1 * ∞_2
         """
@@ -161,12 +164,10 @@ class HeckeCharacter(DualAbelianGroupElement):
         bnr = R.pari_bnr()
         modulus = bnr.bnrconductor(self._log_values_on_gens())
         # in a newer version of pari, this is replaced with bnrconductor
-        infinite = []
+
         m1 = modulus[1]
         conversion = self.parent().number_field()._pari_real_places_to_sage()
-        for i in range(len(m1)):
-            if m1[i] != 0:
-                infinite.append(conversion[i])
+        infinite = [conversion[i] for i, m1i in enumerate(m1) if m1i != 0]
         infinite.sort()
         return K.modulus(K.ideal(modulus[0]), infinite)
 
@@ -241,7 +242,7 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: chi.exponents()
             (1,)
         """
-        if isinstance(m, HeckeCharacterGroup_class):
+        if isinstance(m, HeckeCharacterGroup):
             if check and not self.modulus().divides(m.modulus()):
                 raise ValueError("Hecke character can only be extended to "
                                  "a modulus that is a multiple of its own modulus")
@@ -251,7 +252,7 @@ class HeckeCharacter(DualAbelianGroupElement):
                              "a modulus that is a multiple of its own modulus")
         if self.modulus() == m:
             return self
-        # if not isinstance(m, HeckeCharacterGroup_class):
+        # if not isinstance(m, HeckeCharacterGroup):
         m = HeckeCharacterGroup(m)
         return m.element_from_values_on_gens([self(I)
                                               for I in m.ray_class_gens()])
@@ -386,7 +387,7 @@ class HeckeCharacter(DualAbelianGroupElement):
         return L
 
 
-class HeckeCharacterGroup_class(DualAbelianGroup_class):
+class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
     r"""
     EXAMPLES::
 
@@ -399,29 +400,75 @@ class HeckeCharacterGroup_class(DualAbelianGroup_class):
     """
     Element = HeckeCharacter
 
-    def __init__(self, ray_class_group, base_ring=None, names=None):
+    @staticmethod
+    def __classcall_private__(cls, modulus, base_ring=None, names=None):
+        ray_class_group = modulus.number_field().ray_class_group(modulus)
         if base_ring is None:
-            from sage.rings.number_field.number_field import CyclotomicField
             base_ring = CyclotomicField(lcm(ray_class_group.gens_orders()))
         if names is None:
             names = 'chi'
+        return super().__classcall__(cls, ray_class_group, base_ring, names)
+
+    def __init__(self, ray_class_group, base_ring, names) -> None:
         DualAbelianGroup_class.__init__(self, ray_class_group, names, base_ring)
 
     def _repr_(self) -> str:
+        """
+        Return the string representation.
+
+        EXAMPLES::
+
+            sage: F.<a> = NumberField(x^2 - 5)
+            sage: mf = F.modulus(F.prime_above(5) * F.prime_above(29), [0,1])
+            sage: H = HeckeCharacterGroup(mf); H
+            Group of finite order Hecke characters modulo (Fractional ideal (-11/2*a - 5/2)) * ∞_0 * ∞_1
+        """
         return f'Group of finite order Hecke characters modulo {self.modulus()}'
 
     def modulus(self):
+        """
+        Return the modulus.
+
+        EXAMPLES::
+
+            sage: F.<a> = NumberField(x^2 - 5)
+            sage: mf = F.modulus(F.prime_above(5) * F.prime_above(29), [0,1])
+            sage: H = HeckeCharacterGroup(mf); H.modulus()
+            (Fractional ideal (-11/2*a - 5/2)) * ∞_0 * ∞_1
+        """
         return self.group().modulus()
 
     level = modulus
 
     def number_field(self):
+        """
+        Return the number field.
+
+        EXAMPLES::
+
+            sage: F.<a> = NumberField(x^2 - 5)
+            sage: mf = F.modulus(F.prime_above(5) * F.prime_above(29), [0,1])
+            sage: H = HeckeCharacterGroup(mf); H.number_field()
+            Number Field in a with defining polynomial x^2 - 5
+        """
         return self.group().number_field()
 
     def ray_class_gens(self):
+        """
+        Return the ray class generators.
+
+        EXAMPLES::
+
+            sage: F.<a> = NumberField(x^2 - 5)
+            sage: mf = F.modulus(F.prime_above(5) * F.prime_above(29), [0,1])
+            sage: H = HeckeCharacterGroup(mf); H.ray_class_gens()
+            (Fractional ideal (31), Fractional ideal (88))
+        """
         return self.group().gens_ideals()
 
     def element_from_values_on_gens(self, vals):
+        """
+        """
         gens_orders = self.gens_orders()
         if len(vals) != len(gens_orders):
             raise ValueError("Incorrect number of values specified. %s specified, but needed %s" % (len(vals), len(gens_orders)))
@@ -441,22 +488,3 @@ class HeckeCharacterGroup_class(DualAbelianGroup_class):
     #        return DualAbelianGroup_class._element_constructor_(self, *args, **kwds)
     #    exponents = [gens_orders[i].divide_knowing_divisible_by(args[0][i].multiplicative_order()) for i in range(n)]
     #    return self.element_class(self, exponents)
-
-
-class HeckeCharacterGroupFactory(UniqueFactory):
-
-    # TODO: replace by clsscall private + UniqueRepresentation
-
-    def create_key(self, modulus, base_ring=None, names=None):
-        # from sage.structure.category_object import normalize_names
-        # names = normalize_names()
-        if names is None:
-            names = 'chi'
-        return (base_ring, modulus, names)
-
-    def create_object(self, version, key, **extra_args):
-        base_ring, modulus, names = key
-        return HeckeCharacterGroup_class(modulus.number_field().ray_class_group(modulus), base_ring, names)
-
-
-HeckeCharacterGroup = HeckeCharacterGroupFactory("HeckeCharacterGroup")
