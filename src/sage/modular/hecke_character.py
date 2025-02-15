@@ -309,22 +309,22 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: (H.gen()^2).root_number()
             1
         """
-        # try-except only necessary because of http://pari.math.u-bordeaux.fr/cgi-bin/bugreport.cgi?bug=1848
-        # According to Belabas this bug seems to occur because of a problem dealing with
-        # imprimitive characters, thus the code in the except clause below. Once we incorporate a version
-        # a pari where this bug is fixed, the command in the try itself should be sufficient.
-        # The first example above (with Q(cubert(3))) fails without the except clause and so can
-        # be used to test if the pari bug has been fixed.
-        try:
-            rn = self.parent().group().pari_bnr().bnrrootnumber(self._log_values_on_gens())
-        except PariError:
-            chi = self.primitive_character()
-            rn = chi.parent().group().pari_bnr().bnrrootnumber(chi._log_values_on_gens())
+        rn = self.parent().group().pari_bnr().bnrrootnumber(self._log_values_on_gens())
         return rn.sage()
 
     def dirichlet_series_coefficients(self, max_n):
         """
-        documentation missing here TODO
+        Return some coefficients of the associated Dirichlet series.
+
+        EXAMPLES::
+
+            sage: F.<a> = NumberField(x^3-3)
+            sage: H = HeckeCharacterGroup(F.ideal(5*a).modulus([0]))
+            sage: chi = next(chi for chi in H if chi.order() == 2)
+            sage: chi.dirichlet_series_coefficients(50)
+            [1, 1, 0, 2, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0, 3, 1, 0, 0, 0, 0,
+             -1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 0, -1,
+             0, 0, -2, 0, 1, 1, 0, 0, 0]
         """
         Idict = self.parent().number_field().ideals_of_bdd_norm(max_n)
         ans = [ZZ.one()] + [ZZ.zero()] * (max_n - 1)
