@@ -52,7 +52,7 @@ Computations with an `S`-class group of a quadratic field::
 
     sage: K.<a> = QuadraticField(40)
     sage: CS = K.S_class_group(K.primes_above(31)); CS
-    S-class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 - 40
+    S-class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 - 40 with a = 6.324555320336759?
     sage: CS.gens()   # random gens (platform dependent)
     (Fractional S-ideal class (3, 1/2*a + 2),)
     sage: CS(2)
@@ -72,7 +72,7 @@ Computations with a ray class group of a quadratic field::
     sage: m = F.ideal(3).modulus([0, 1]); m
     (Fractional ideal (3)) * ∞_0 * ∞_1
     sage: R = F.ray_class_group(m); R
-    Ray class group of order 8 with structure C4 x C2 of Number Field in a with defining polynomial x^2 - 40 of modulus (Fractional ideal (3)) * ∞_0 * ∞_1
+    Ray class group of order 8 with structure C4 x C2 of Number Field in a with defining polynomial x^2 - 40 with a = 6.324555320336759? of modulus (Fractional ideal (3)) * ∞_0 * ∞_1
 
 Unlike for class groups and `S`-class groups, ray class group elements
 do not carry around a representative ideal (for reasons of efficiency).
@@ -102,7 +102,7 @@ Narrow class groups are implemented via ray class groups::
     sage: F.class_group()
     Class group of order 1 of Number Field in a with defining polynomial x^2 - 3
     sage: Hn = F.narrow_class_group(); Hn
-    Narrow class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 - 3
+    Narrow class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
     sage: Hn.gens()
     (c,)
     sage: Hn.gens_ideals()
@@ -1253,7 +1253,7 @@ class RayClassGroup(AbelianGroup_class):
     def ray_class_field(self, subgroup=None, names=None, algorithm='stark'):
         r"""
         Two different algorithms are possible: pari's :pari:`bnrstark` and
-        :pari:`rnfkummer`. The first one uses the Stark conjecture and only
+        :pari:`bnrclassfield`. The first one uses the Stark conjecture and only
         deals with totally real extensions of a totally real base
         field. The second one uses Kummer theory and only deals with
         extensions of prime degree.
@@ -1262,8 +1262,8 @@ class RayClassGroup(AbelianGroup_class):
 
         - algorithm -- (default: ``stark``) if the value is ``stark``,
           then pari's :pari:`bnrstark` function is tried first, and if that
-          fails, :pari:`rnfkummer` will be attempted. If the value is
-          ``kummer``, then pari's :pari:`rnfkummer` is tried first, with
+          fails, :pari:`bnrclassfield` will be attempted. If the value is
+          ``kummer``, then pari's :pari:`bnrclassfield` is tried first, with
           :pari:`bnrstark` as a backup. Using ``stark_only`` or ``kummer_only``
           will just raise an exception if the first attempt fails.
 
@@ -1291,14 +1291,14 @@ class RayClassGroup(AbelianGroup_class):
             sage: R.ray_class_field(S, names='b')
             Number Field in b with defining polynomial x^2 + (a - 1)*x + 2*a - 4 over its base field
 
-        An example where :pari:`bnrstark` fails, but :pari:`rnfkummer` saves the day::
+        An example where :pari:`bnrstark` fails, but :pari:`bnrclassfield` saves the day::
 
             sage: F.<a> = NumberField(x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9)
             sage: m = F.ideal(2).modulus()
             sage: R = F.ray_class_group(m)
             sage: set_verbose(1)
             sage: K = R.ray_class_field(names='b'); K
-            verbose 1 (...: class_group.py, ray_class_field) bnrstark failed; trying rnfkummer.
+            verbose 1 (...: class_group.py, ray_class_field) bnrstark failed; trying bnrclassfield.
             Number Field in b with defining polynomial x^2 + (1/3*a^6 - 10/3*a^4 + 5*a^2)*x + 1/3*a^6 - 1/3*a^5 - 11/3*a^4 + 3*a^3 + 8*a^2 - 4*a - 5 over its base field
             sage: set_verbose(0)
         """
@@ -1331,24 +1331,24 @@ class RayClassGroup(AbelianGroup_class):
         elif algorithm == 'kummer_only':
             if (subgroup is None and not self.order().is_prime()) or (subgroup is not None and not self.order().divide_knowing_divisible_by(subgroup.order()).is_prime()):
                 raise NotImplementedError("Kummer theory algorithm only implemented extensions of prime degree.")
-            f = bnr.rnfkummer(subgp=subgroup_mat)
+            f = bnr.bnrclassfield(subgp=subgroup_mat)
         elif algorithm == 'stark':
             if len(self._modulus.infinite_part()) > 0 or not self._number_field.is_totally_real():
                 if (subgroup is None and not self.order().is_prime()) or (subgroup is not None and not self.order().divide_knowing_divisible_by(subgroup.order()).is_prime()):
                     raise NotImplementedError("Ray class fields only implemented for totally real extensions of totally real base fields, or for extensions of prime degree.")
-                f = bnr.rnfkummer(subgp=subgroup_mat)
+                f = bnr.bnrclassfield(subgp=subgroup_mat)
             else:
                 try:
                     f = bnr.bnrstark(subgroup=subgroup_mat)
                 except PariError:
                     if (subgroup is None and self.order().is_prime()) or (subgroup is not None and self.order().divide_knowing_divisible_by(subgroup.order()).is_prime()):
-                        verbose("bnrstark failed; trying rnfkummer.")
-                        f = bnr.rnfkummer(subgp=subgroup_mat)
+                        verbose("bnrstark failed; trying bnrclassfield.")
+                        f = bnr.bnrclassfield(subgp=subgroup_mat)
                     else:
                         raise
         elif algorithm == 'kummer':
             if (subgroup is None and self.order().is_prime()) or (subgroup is not None and self.order().divide_knowing_divisible_by(subgroup.order()).is_prime()):
-                f = bnr.rnfkummer(subgp=subgroup_mat)
+                f = bnr.bnrclassfield(subgp=subgroup_mat)
             else:
                 f = bnr.bnrstark(subgroup=subgroup_mat)
         else:

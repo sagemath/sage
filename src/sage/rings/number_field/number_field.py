@@ -4671,7 +4671,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<a> = NumberField(x^2 + 23)
             sage: G = K.class_group(); G
             Class group of order 3 with structure C3 of
-             Number Field in a with defining polynomial x^2 + 23
+            Number Field in a with defining polynomial x^2 + 23
+            with a = 4.795831523312720?*I
             sage: G.0
             Fractional ideal class (2, 1/2*a - 1/2)
             sage: G.gens()
@@ -4681,6 +4682,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: G.number_field()
             Number Field in a with defining polynomial x^2 + 23
+            with a = 4.795831523312720?*I
             sage: G is K.class_group()
             True
             sage: G is K.class_group(proof=False)
@@ -4787,7 +4789,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: F.<a> = QuadraticField(-23)
             sage: R = F.ray_class_group(F.ideal(3/2 + a/2)); R
-            Ray class group of order 6 with structure C6 of Number Field in a with defining polynomial x^2 + 23 of modulus Fractional ideal (1/2*a + 3/2)
+            Ray class group of order 6 with structure C6 of Number Field in a with defining polynomial x^2 + 23 with a = 4.795831523312720?*I of modulus Fractional ideal (1/2*a + 3/2)
             sage: R.gens_ideals()
             (Fractional ideal (3, 1/2*a + 1/2),)
             sage: R.modulus().finite_part().norm()
@@ -6879,12 +6881,15 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: x = polygen(QQ, 'x')
             sage: NumberField(x^3 + x + 9, 'a').narrow_class_group()
-            Multiplicative Abelian group isomorphic to C2
+            Narrow class group of order 2 with structure C2 of
+            Number Field in a with defining polynomial x^3 + x + 9
 
         TESTS::
 
             sage: QuadraticField(3, 'a').narrow_class_group()
-            Multiplicative Abelian group isomorphic to C2
+            Narrow class group of order 2 with structure C2 of
+            Number Field in a with defining polynomial x^2 - 3
+            with a = 1.732050807568878?
         """
         proof = proof_flag(proof)
         try:

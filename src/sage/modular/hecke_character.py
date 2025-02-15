@@ -170,7 +170,7 @@ class HeckeCharacter(DualAbelianGroupElement):
         infinite.sort()
         return K.modulus(K.ideal(modulus[0]), infinite)
 
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         """
         Determine whether this character is primitive.
 
@@ -243,15 +243,18 @@ class HeckeCharacter(DualAbelianGroupElement):
         """
         if isinstance(m, HeckeCharacterGroup_class):
             if check and not self.modulus().divides(m.modulus()):
-                raise ValueError("Hecke character can only be extended to a modulus that is a multiple of its own modulus.")
+                raise ValueError("Hecke character can only be extended to "
+                                 "a modulus that is a multiple of its own modulus")
             return m.element_from_values_on_gens([self(I) for I in m.ray_class_gens()])
         if check and not self.modulus().divides(m):
-            raise ValueError("Hecke character can only be extended to a modulus that is a multiple of its own modulus.")
+            raise ValueError("Hecke character can only be extended to "
+                             "a modulus that is a multiple of its own modulus")
         if self.modulus() == m:
             return self
         # if not isinstance(m, HeckeCharacterGroup_class):
         m = HeckeCharacterGroup(m)
-        return m.element_from_values_on_gens([self(I) for I in m.ray_class_gens()])
+        return m.element_from_values_on_gens([self(I)
+                                              for I in m.ray_class_gens()])
 
     def analytic_conductor(self):
         r"""
@@ -320,10 +323,10 @@ class HeckeCharacter(DualAbelianGroupElement):
 
     def dirichlet_series_coefficients(self, max_n):
         """
-        documentation missing here
+        documentation missing here TODO
         """
         Idict = self.parent().number_field().ideals_of_bdd_norm(max_n)
-        ans = [ZZ(1)] + [ZZ(0)] * (max_n - 1)
+        ans = [ZZ.one()] + [ZZ.zero()] * (max_n - 1)
         for n in range(2, max_n + 1):
             Is = Idict[n]
             if len(Is) == 0:
@@ -410,8 +413,7 @@ class HeckeCharacterGroup_class(DualAbelianGroup_class):
     def modulus(self):
         return self.group().modulus()
 
-    def level(self):
-        return self.modulus()
+    level = modulus
 
     def number_field(self):
         return self.group().number_field()
@@ -442,6 +444,9 @@ class HeckeCharacterGroup_class(DualAbelianGroup_class):
 
 
 class HeckeCharacterGroupFactory(UniqueFactory):
+
+    # TODO: replace by clsscall private + UniqueRepresentation
+
     def create_key(self, modulus, base_ring=None, names=None):
         # from sage.structure.category_object import normalize_names
         # names = normalize_names()
