@@ -653,12 +653,17 @@ class TropicalMPolynomial(MPolynomial_polydict):
         r"""
         Return a string representation of ``self``.
 
+        Note that ``x`` equals ``0*x``, which is different from
+        ``1*x``.  Therefore, we represent monomials always together
+        with their coefficients, to avoid confusion.
+
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: x + R(-1)*y + R(-3)
             0*x + (-1)*y + (-3)
+
         """
         if not self.monomial_coefficients():
             return str(self.parent().base().zero())
