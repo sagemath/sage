@@ -239,7 +239,7 @@ class DiGraphGenerators:
           (``vertices='vectors'``)
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         EXAMPLES::
 
@@ -353,7 +353,7 @@ class DiGraphGenerators:
         - ``n`` -- integer; number of vertices in the path
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         EXAMPLES::
 
@@ -383,7 +383,7 @@ class DiGraphGenerators:
         - ``n`` -- integer; the number of vertices of the digraph
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         .. SEEALSO::
 
@@ -435,7 +435,7 @@ class DiGraphGenerators:
         - ``q`` -- integer; the number of vertices of the digraph
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         .. SEEALSO::
 
@@ -497,7 +497,7 @@ class DiGraphGenerators:
         - ``n`` -- integer; number of vertices in the tournament
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         EXAMPLES::
 
@@ -546,7 +546,7 @@ class DiGraphGenerators:
         - ``n`` -- integer; number of vertices
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         EXAMPLES::
 
@@ -611,7 +611,7 @@ class DiGraphGenerators:
           `<https://pallini.di.uniroma1.it>`_.
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          immutable or mutable digraphs.
+          immutable or mutable digraphs
 
         EXAMPLES::
 
@@ -710,7 +710,7 @@ class DiGraphGenerators:
           standard error and standard output are displayed
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          immutable or mutable digraphs.
+          immutable or mutable digraphs
 
         EXAMPLES::
 
@@ -826,7 +826,7 @@ class DiGraphGenerators:
           beginning with ">E" indicates an error with the input.
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          immutable or mutable posets.
+          immutable or mutable posets
 
         The possible options, obtained as output of ``genposetg --help``::
 
@@ -875,7 +875,7 @@ class DiGraphGenerators:
           not, i.e., edges from `u` to itself
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         .. SEEALSO::
 
@@ -923,7 +923,7 @@ class DiGraphGenerators:
         - ``n`` -- integer; number of vertices
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         EXAMPLES:
 
@@ -962,7 +962,7 @@ class DiGraphGenerators:
           is an integer
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
+          an immutable or mutable digraph
 
         EXAMPLES:
 
@@ -1415,7 +1415,7 @@ class DiGraphGenerators:
           are assigned a random integer weight between ``1`` and ``weight_max``.
 
         - ``immutable`` -- boolean (default: ``False``); whether to return an
-          immutable or mutable digraph.
+          immutable or mutable digraph
 
         EXAMPLES::
 
@@ -1503,7 +1503,7 @@ class DiGraphGenerators:
           random number generator (default: ``None``)
 
         - ``immutable`` -- boolean (default: ``False``); whether to return an
-          immutable or mutable digraph.
+          immutable or mutable digraph
 
         EXAMPLES::
 
@@ -1546,7 +1546,7 @@ class DiGraphGenerators:
           random number generator (default: ``None``)
 
         - ``immutable`` -- boolean (default: ``False``); whether to return an
-          immutable or mutable digraph.
+          immutable or mutable digraph
 
         EXAMPLES::
 
@@ -1583,7 +1583,7 @@ class DiGraphGenerators:
           generator
 
         - ``immutable`` -- boolean (default: ``False``); whether to return an
-          immutable or mutable digraph.
+          immutable or mutable digraph
 
         PLOTTING: When plotting, this graph will use the default spring-layout
         algorithm, unless a position dictionary is specified.
@@ -1619,7 +1619,7 @@ class DiGraphGenerators:
         - ``loops`` -- boolean (default: ``False``); whether to allow loops
 
         - ``immutable`` -- boolean (default: ``False``); whether to return an
-          immutable or mutable digraph.
+          immutable or mutable digraph
 
         PLOTTING: When plotting, this graph will use the default spring-layout
         algorithm, unless a position dictionary is specified.
@@ -1755,7 +1755,7 @@ class DiGraphGenerators:
           random number generator (default: ``None``)
 
         - ``immutable`` -- boolean (default: ``False``); whether to return an
-          immutable or mutable digraph.
+          immutable or mutable digraph
 
         EXAMPLES::
 
@@ -1793,7 +1793,7 @@ class DiGraphGenerators:
         - ``n`` -- integer; the number of nodes
 
         - ``immutable`` -- boolean (default: ``False``); whether to return an
-          immutable or mutable digraph.
+          immutable or mutable digraph
 
         .. SEEALSO::
 
