@@ -25129,6 +25129,8 @@ class GenericGraph(GenericGraph_pyx):
             (Graph on 2 vertices, {'a': 0, 'b': 1})
             sage: G.canonical_label(algorithm='bliss', certificate=True)        # optional - bliss
             (Graph on 2 vertices, {'a': 1, 'b': 0})
+            sage: G.canonical_label(algorithm='bliss', return_graph=False)      # optional - bliss
+            [(1, 0, None)]
 
         Check for immutable graphs (:issue:`16602`)::
 
