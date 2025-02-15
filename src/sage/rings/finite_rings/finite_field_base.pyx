@@ -746,19 +746,6 @@ cdef class FiniteField(Field):
         """
         return 1
 
-    def is_field(self, proof=True):
-        """
-        Return whether or not the finite field is a field, i.e.,
-        always returns ``True``.
-
-        EXAMPLES::
-
-            sage: k.<a> = FiniteField(3^4)
-            sage: k.is_field()
-            True
-        """
-        return True
-
     def order(self):
         """
         Return the order of this finite field.
