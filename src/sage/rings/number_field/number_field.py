@@ -4672,7 +4672,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: G = K.class_group(); G
             Class group of order 3 with structure C3 of
             Number Field in a with defining polynomial x^2 + 23
-            with a = 4.795831523312720?*I
             sage: G.0
             Fractional ideal class (2, 1/2*a - 1/2)
             sage: G.gens()
@@ -4682,7 +4681,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: G.number_field()
             Number Field in a with defining polynomial x^2 + 23
-            with a = 4.795831523312720?*I
             sage: G is K.class_group()
             True
             sage: G is K.class_group(proof=False)
