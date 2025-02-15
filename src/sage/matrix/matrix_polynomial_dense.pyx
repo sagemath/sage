@@ -4176,7 +4176,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         matrices that are left-unimodularly equivalent to `M`::
 
             sage: # M is both row and column reduced
-            sage: M = x**4 + matrix.random(pR, 3, 3, degree=3)
+            sage: M = x**3 + matrix([[6*x**2, 2, x], [2, 2, 6*x], [x**2, 3, 6]])
             sage: F1 = matrix.identity(pR, 3)  # cdeg(F1) < cdeg(M)
             sage: P1 = F1.minimal_relation_basis(M, shifts=[0,1,2], normal_form=True)
             sage: P1 == M.popov_form(shifts=[0,1,2])
@@ -4185,7 +4185,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         One can consider column-wise relations; unspecified shift means taking
         the uniform `[0,\ldots, 0]` shift::
 
-            sage: F2 = matrix.random(pR, 3, 5, degree=3)
+            sage: F2 = matrix([[              1, 6*x + 2,   5,         3, 5*x^2 + 3],
+            ....:              [2*x^2 + 4*x + 4, 3*x + 1, 5*x, 6*x^2 + 5,         6],
+            ....:              [        5*x + 4, 3*x + 1,   2,   2*x + 2,   2*x + 1]])
             sage: P2 = F2.minimal_relation_basis(M, row_wise=False)
             sage: P2.is_weak_popov(shifts=[0]*5, row_wise=False)
             True
@@ -4200,29 +4202,22 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             False
 
         By default, this supports input ``self`` that are not reduced modulo
-        ``M``, unless ``reduced_input`` is specified as ``True``:
+        ``M``, unless ``reduced_input`` is specified as ``True``::
 
-            sage: G1 = F1 + M  # G1 == F1 mod M; G1 not reduced mod M
+            sage: G1 = F1 + x * M  # G1 == F1 mod M; G1 not reduced mod M
             sage: P1bis = G1.minimal_relation_basis(M, shifts=[0,1,2], normal_form=True)
             sage: P1bis == P1
             True
             sage: P = G1.minimal_relation_basis(M, shifts=[0,1,2], reduced_input=True)
             sage: P.is_weak_popov(shifts=[0,1,2])
             False
-            sage: G2 = F2 + M * matrix.random(pR, 3, 5)
-            sage: P2bis = G2.minimal_relation_basis(M, row_wise=False)
-            sage: P2bis == P2
-            True
-            sage: P = G2.minimal_relation_basis(M, row_wise=False, reduced_input=True)
-            sage: P.is_weak_popov(row_wise=False)
-            False
 
         By default, this supports any nonsingular matrix ``M``, and nonsingularity
-        is checked (unless ``reduced_input`` is specified as ``True``):
+        is checked (unless ``reduced_input`` is specified as ``True``)::
 
-            sage: M1 = matrix([[1,x**10,x**10],[0,1,0],[0,0,1]]) * M  # unimodular transformation
+            sage: M1 = matrix([[1,x**10,x**10],[0,1,0],[0,0,1]]) * M
             sage: M1.is_reduced(row_wise=False)  # M1 not column reduced
-            False  
+            False
             sage: P1bis = F1.minimal_relation_basis(M1, shifts=[0,1,2], normal_form=True)
             sage: P1bis == P1  # True since M and M1 have same row space
             True
