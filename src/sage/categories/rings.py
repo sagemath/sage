@@ -653,15 +653,15 @@ class Rings(CategoryWithAxiom):
 
             TESTS::
 
-                sage: from sage.rings.ring import Ring
-                sage: Ring.zeta(QQ, 1)
+                sage: R.<x> = QQ[]
+                sage: R.zeta(1)
                 1
-                sage: Ring.zeta(QQ, 2)
+                sage: R.zeta(2)
                 -1
-                sage: Ring.zeta(QQ, 3)                                                      # needs sage.libs.pari
+                sage: R.zeta(3)                                                             # needs sage.libs.pari
                 Traceback (most recent call last):
                 ...
-                ValueError: no 3rd root of unity in Rational Field
+                ValueError: no 3rd root of unity in Univariate Polynomial Ring in x over Rational Field
                 sage: IntegerModRing(8).zeta(2, all = True)
                 Traceback (most recent call last):
                 ...
