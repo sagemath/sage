@@ -26,8 +26,9 @@ Ore polynomial ring `\mathcal S = R[X; \theta, \partial]`.
 SageMath provides support for creating and manipulating Ore
 modules that are finite free over the base ring `R`.
 
-To start with, the method :meth:`quotient_module` creates the
-quotient `\mathcal S/ \mathcal S P`, endowed with its structure
+To start with, the method
+:meth:`sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing.quotient_module`
+creates the quotient `\mathcal S/ \mathcal S P`, endowed with its structure
 of `\mathcal S`-module, that is its structure of Ore module::
 
     sage: K.<z> = GF(5^3)
@@ -47,14 +48,14 @@ Classical methods are available and we can work with elements in
     sage: z*v
     (z^2, 2*z + 2)
 
-The Ore action (or equivalently the structure of `\mathcal A`-module)
+The Ore action (or equivalently the structure of `\mathcal S`-module)
 is also easily accessible)::
 
     sage: X*v
     (3*z^2 + 2*z, 2*z^2 + 4*z + 4)
 
-The method :meth:`pseudohom` returns the map `f` defining the action
-of `X`::
+The method :meth:`sage.rings.modules.ore_module.OreModule.pseudohom`
+returns the map `f` defining the action of `X`::
 
     sage: M.pseudohom()
     Free module pseudomorphism (twisted by z |--> z^5) defined by the matrix
@@ -107,7 +108,7 @@ First of all, we define the Ore module `\mathcal S/\mathcal S P^2`
     Defining u0, u1, u2, u3
 
 We now build the submodule `\mathcal S P / \mathcal S P^2` using
-the method :meth:`span`::
+the method :meth:`sage.modules.ore_module.OreModule.span`::
 
     sage: V = U.span(P*u0)
     sage: V
@@ -1671,7 +1672,6 @@ class OreSubmodule(OreModule):
             sage: Me = M.rename_basis('e', coerce=True)
             sage: M.an_element() + Me.an_element()
             2*e0
-
         """
         rank = self.rank()
         names = normalize_names(names, rank)
@@ -2024,7 +2024,7 @@ class OreQuotientModule(OreModule):
 
         - ``coerce`` (default: ``False``) -- a boolean; if
           ``True``, a coercion map from this Ore module to
-          renamed version is set
+          the renamed version is set
 
         EXAMPLES::
 

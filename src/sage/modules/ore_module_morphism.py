@@ -1,9 +1,9 @@
 r"""
 Morphisms between Ore modules
 
-Let `R` be a commutative ring, `\theta : K \to K` by a ring
-endomorphism and `\partial : K \to K` be a `\theta`-derivation.
-Let also `\mathcal S = K[X; \theta, \partial]` denote the
+Let `R` be a commutative ring, `\theta : R \to R` by a ring
+endomorphism and `\partial : R \to R` be a `\theta`-derivation.
+Let also `\mathcal S = R[X; \theta, \partial]` denote the
 associated Ore polynomial ring.
 
 By definition, a Ore module is a module over `\mathcal S`. In
@@ -17,8 +17,9 @@ with the Ore action, or equivalenty a `\mathcal S`-linear.
 .. RUBRIC:: Construction of morphisms
 
 There are several ways for creating Ore modules morphisms in SageMath.
-First of all, one can use the method :meth:`hom`, passing to it the
-matrix (in the canonical bases) of the morphism we want to build::
+First of all, one can use the method :meth:`sage.modules.ore_module.OreModule.hom`,
+passing to it the matrix (in the canonical bases) of the morphism
+we want to build::
 
     sage: K.<z> = GF(5^3)
     sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
@@ -43,13 +44,15 @@ We can then redefine it simply as follows::
     sage: g
     Ore module endomorphism of Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5
 
-One can then recover the matrix by using the method :meth:`matrix`::
+One can then recover the matrix by using the method
+:meth:`sage.modules.ore_module_morphism.OreModuleMorphism.matrix`::
 
     sage: g.matrix()
     [            z 3*z^2 + z + 2]
     [        z + 1       4*z + 4]
 
-Alternatively, one can use the method :meth:`multiplication_map`::
+Alternatively, one can use the method
+:meth:`sage.modules.ore_module.OreModule.multiplication_map`::
 
     sage: h = M.multiplication_map(X^3)
     sage: h
@@ -57,8 +60,7 @@ Alternatively, one can use the method :meth:`multiplication_map`::
     sage: g == h
     True
 
-Of course, the method :meth:`multiplication_map` also accepts
-values in the base ring::
+Of course, this method also accepts values in the base ring::
 
     sage: h = M.multiplication_map(2)
     sage: h
@@ -116,13 +118,13 @@ kernel::
 We see on the output that it has dimension `0`; so it
 vanishes. Instead of reading the output, one can check
 programmatically the vanishing of a Ore module using the
-method :meth:`is_zero`::
+method :meth:`sage.modules.ore_module.OreModule.is_zero`::
 
     sage: f.kernel().is_zero()
     True
 
-Actually, in our use case, one can, more simply, use the
-method :meth:`is_injective`::
+Actually, in our use case, one can, more simply, use the method
+:meth:`sage.modules.ore_modules_morphism.OreModuleMorphism.is_injective`::
 
     sage: f.is_injective()
     True
@@ -191,7 +193,8 @@ Now we compute the image and the coimage::
 We can already check that the image and the coimage have the
 same rank. We now want to construct the isomorphism between
 them. For this, we first need to corestrict `f` to its image.
-This is achieved via the method :meth:`morphism_corestriction`
+This is achieved via the method
+:meth:`sage.modules.ore_module.OreSubmodule.morphism_corestriction`
 of the Ore module::
 
     sage: g = I.morphism_corestriction(f)
