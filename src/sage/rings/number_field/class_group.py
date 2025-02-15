@@ -101,6 +101,7 @@ Narrow class groups are implemented via ray class groups::
     sage: F.<a> = QuadraticField(3)
     sage: F.class_group()
     Class group of order 1 of Number Field in a with defining polynomial x^2 - 3
+    with a = 1.732050807568878?
     sage: Hn = F.narrow_class_group(); Hn
     Narrow class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
     sage: Hn.gens()
@@ -487,7 +488,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
         sage: K.<w> = QuadraticField(-23)
         sage: OK = K.ring_of_integers()
         sage: C = OK.class_group()
-        sage: P2a, P2b = [P for P,e in (2*OK).factor()]
+        sage: P2a, P2b = [P for P,e in (2*K).factor()]
         sage: c = C(P2a); c
         Fractional ideal class (2, 1/2*w - 1/2)
         sage: c.gens()
@@ -671,7 +672,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
             sage: K.<w> = QuadraticField(-23)
             sage: OK = K.ring_of_integers()
             sage: C = OK.class_group()
-            sage: P2a, P2b = [P for P,e in (2*OK).factor()]
+            sage: P2a, P2b = [P for P,e in (2*K).factor()]
             sage: c = C(P2a); c
             Fractional ideal class (2, 1/2*w - 1/2)
             sage: c.ideal()
@@ -737,7 +738,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
             sage: K.<w> = QuadraticField(-23)
             sage: OK = K.ring_of_integers()
             sage: C = OK.class_group()
-            sage: P2a, P2b = [P for P,e in (2*OK).factor()]
+            sage: P2a, P2b = [P for P,e in (2*K).factor()]
             sage: c = C(P2a); c
             Fractional ideal class (2, 1/2*w - 1/2)
             sage: c.gens()
