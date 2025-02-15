@@ -799,11 +799,21 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             <repr(...) failed: ValueError: could not determine any coefficients:
                 coefficient [3]: 6*series[3] + (-2*x - 2*y)*series[2] + (x*y)*series[1] == 0>
 
+        Let us now try to only specify the degree 0 and degree 1
+        components.  We will see that this is still not enough to
+        remove the ambiguity, so an error is raised.  However, we
+        will see that the dependence on ``series[1]`` disappears.
+        The equation which has no unique solution is now
+        ``6*series[3] + (-2*x - 2*y)*series[2] + (x*y*f1) == 0``.::
+
             sage: F = L.undefined()
             sage: L.define_implicitly([(F, [0, f1])], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
-            sage: F  # random
+            sage: F
             <repr(...) failed: ValueError: could not determine any coefficients:
-                coefficient [3]: 6*series[3] + (-2*x - 2*y)*series[2] + (x*y*f1) == 0>
+                coefficient [3]: ... == 0>
+
+        (Note that the order of summands of the equation in the error
+        message is not deterministic.)
 
         Laurent series examples::
 
