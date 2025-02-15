@@ -387,15 +387,12 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             self._prod_polynomials[n] = S(self._prod_polynomials[n])
 
     def _generate_binomial_table(self):
-        """
-        Generates a table of binomial coefficients.
-
-        TODO::
-
-            Suprisingly, it seems that no function in SageMath does this;
-            ``arith.misc.binomial`` and ``combinat.sloane_functions.A000984``
-            only compute one value at a time, so it is not efficient. Ideally,
-            this should be implemented elsewhere and in a low-level language.
+        r"""
+        This method first computes the binomial coefficients `\binom{p^k}{i}`
+        for `k` varying between `0` and ``prec`` and `i` varying between `0`
+        and `p^k`. It then stores its `v_p(i)`-th multiplicative
+        representative in a table, where `v_p` denotes the `p`-adic valuation,
+        and multiplicative representative is in the sense of strict `p`-rings.
         """
         import numpy as np
         p = self._prime
@@ -403,23 +400,24 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         v_p = ZZ.valuation(p)
         table = [[0]]
         for k in range(1, self._prec+1):
-            row = np.empty(p**k, dtype=int)
+            pk = p**k
+            row = np.empty(pk, dtype=int)
             row[0] = 0
             prev_bin = 1
-            for i in range(1, p**k // 2 + 1):
+            for i in range(1, pk // 2 + 1):
                 val = v_p(i)
                 # Instead of calling binomial each time, we compute the
                 # coefficients recursively. This is MUCH faster.
-                next_bin = prev_bin * (p**k - (i-1)) // i
+                next_bin = prev_bin * (pk - (i-1)) // i
                 prev_bin = next_bin
                 series = R(-next_bin // p**(k-val))
                 for _ in range(val):
                     temp = series % p
                     series = (series - R.teichmuller(temp)) // p
                 row[i] = ZZ(series % p)
-                row[p**k - i] = row[i]  # binomial coefficients are symmetric
+                row[pk - i] = row[i]  # binomial coefficients are symmetric
             table.append(row)
-        self.binomial_table = table
+        self._binomial_table = table
 
     def _eta_bar(self, vec, eta_index):
         r"""
@@ -446,7 +444,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             # calculate first N_t scriptN's
             for t in range(1, k+1):
                 for i in range(1, p**t):
-                    scriptN[t].append(self.binomial_table[t][i]
+                    scriptN[t].append(self._binomial_table[t][i]
                                       * _fast_char_p_power(x, i)
                                       * _fast_char_p_power(y, p**t - i))
             indexN = [p**i - 1 for i in range(k+1)]
