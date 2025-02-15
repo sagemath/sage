@@ -16,111 +16,31 @@ Licence GPLv2+, and includes packages that have [compatible software licenses](.
 [People all around the globe](https://www.sagemath.org/development-map.html) have contributed to the
 development of Sage. [Full documentation](https://doc.sagemath.org/html/en/index.html) is available online.
 
+Flag algebras
+-----------------
+
+This repository is a copy of the official SageMath project with additional functionality to handle 
+flag algebraic calculations. 
+
 Table of Contents
 -----------------
 
-* [Getting Started](#getting-started)
-* [Supported Platforms](#supported-platforms)
-* [\[Windows\] Preparing the Platform](#windows-preparing-the-platform)
-* [\[macOS\] Preparing the Platform](#macos-preparing-the-platform)
 * [Instructions to Build from Source](#instructions-to-build-from-source)
-* [SageMath Docker Images](#sagemath-docker-images)
 * [Troubleshooting](#troubleshooting)
-* [Contributing to Sage](#contributing-to-sage)
 * [Directory Layout](#directory-layout)
 * [Build System](#build-system)
 * [Relocation](#relocation)
 * [Redistribution](#redistribution)
-* [Build System](#build-system)
 * [Changes to Included Software](#changes-to-included-software)
 
-Getting Started
----------------
-
-Those who are impatient may use prebuilt Sage available online from any of
-
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sagemath/sage-binder-env/master
-) &nbsp; [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/sagemath/sage/tree/master
-) &nbsp; [![Open in GitHub Codespaces](https://img.shields.io/badge/Open_in_GitHub_Codespaces-black?logo=github)](https://codespaces.new/sagemath/sage/tree/master)
-
-without local installation. Otherwise read on.
-
-The [Sage Installation Guide](https://doc.sagemath.org/html/en/installation/index.html)
-provides a decision tree that guides you to the type of installation
-that will work best for you. This includes building from source,
-obtaining Sage from a package manager, using a container image, or using
-Sage in the cloud.
-
-**This README contains self-contained instructions for building Sage from source.**
-This requires you to clone the git repository (as described in this README) or download the
-[sources](https://www.sagemath.org/download-source.html) in the form
-of a tarball.
-
-If you have questions or encounter problems, please do not hesitate
-to email the [sage-support mailing list](https://groups.google.com/group/sage-support)
-or ask on the [Ask Sage questions and answers site](https://ask.sagemath.org).
-
-Supported Platforms
--------------------
-
-Sage attempts to support all major Linux distributions, recent versions of
-macOS, and Windows (using Windows Subsystem for Linux or
-virtualization).
-
-Detailed information on supported platforms for a specific version of Sage
-can be found in the section _Availability and installation help_ of the
-[release tour for this version](https://github.com/sagemath/sage/releases).
-
-We highly appreciate contributions to Sage that fix portability bugs
-and help port Sage to new platforms; let us know at the [sage-devel
-mailing list](https://groups.google.com/group/sage-devel).
-
-[Windows] Preparing the Platform
---------------------------------
-
-The preferred way to run Sage on Windows is using Windows Subsystem for
-Linux (WSL). Follow the
-[official WSL setup guide](https://docs.microsoft.com/en-us/windows/wsl/faq)
-to install Ubuntu (or another Linux distribution).
-Make sure you allocate WSL sufficient RAM; 5GB is known to work, while
-2GB might be not enough for building Sage from source.
-Then all instructions for installation in Linux apply.
-
-As an alternative, you can also run Linux on Windows using Docker ([see
-below](#sagemath-docker-images)) or other virtualization solutions.
-
-[macOS] Preparing the Platform
-------------------------------
-
-- If your Mac uses the Apple Silicon (M1, M2, M3, M4; arm64) architecture and
-  you set up your Mac by transferring files from an older Mac, make sure
-  that the directory ``/usr/local`` does not contain an old copy of Homebrew
-  (or other software) for the x86_64 architecture that you may have copied
-  over.  Note that Homebrew for the M1 is installed in ``/opt/homebrew``, not
-  ``/usr/local``.
-
-- If you wish to use conda, please see the [section on
-  conda](https://doc.sagemath.org/html/en/installation/conda.html) in the Sage
-  Installation Manual for guidance.
-
-- Otherwise, we strongly recommend to use Homebrew ("the missing package
-  manager for macOS") from https://brew.sh/, which provides the ``gfortran``
-  compiler and many libraries.
-
-- Otherwise, if you do not wish to install Homebrew, you will need to install
-  the latest version of Xcode Command Line Tools.  Open a terminal window and
-  run `xcode-select --install`; then click "Install" in the pop-up window.  If
-  the Xcode Command Line Tools are already installed, you may want to check if
-  they need to be updated by typing `softwareupdate -l`.
 
 Instructions to Build from Source
 ---------------------------------
 
-Like many other software packages, Sage is built from source using
-`./configure`, followed by `make`.  However, we strongly recommend to
-read the following step-by-step instructions for building Sage.
-
-The instructions cover all of Linux, macOS, and WSL.
+Sage attempts to support all major Linux distributions, recent versions of
+macOS, and Windows (using Windows Subsystem for Linux or
+virtualization). The additional software and packages needed for flag algebraic calculations
+are only tested on Linux. This guide only describes the installation process for Linux.
 
 More details, providing a background for these instructions, can be found
 in the section [Install from Source Code](https://doc.sagemath.org/html/en/installation/source.html)
@@ -473,18 +393,6 @@ various purposes, and others are entirely unrelated to SageMath. Do not use the 
 [Packages and Features](https://doc.sagemath.org/html/en/reference/spkg/index.html) of the
 Sage Reference Manual.
 
-SageMath Docker images
-----------------------
-
-[![Docker Status](http://dockeri.co/image/sagemath/sagemath)](https://hub.docker.com/r/sagemath/sagemath)
-
-SageMath is available on Docker Hub and can be downloaded by:
-``` bash
-docker pull sagemath/sagemath
-```
-
-Currently, only stable versions are kept up to date.
-
 Troubleshooting
 ---------------
 
@@ -500,15 +408,6 @@ list](https://groups.google.com/forum/#!forum/sage-support).  The
 ](https://doc.sagemath.org/html/en/installation/troubles.html)
 provides instructions on what information to provide so that we can provide
 help more effectively.
-
-Contributing to Sage
---------------------
-
-If you'd like to contribute to Sage, we strongly recommend that you read the
-[Developer's Guide](https://doc.sagemath.org/html/en/developer/index.html).
-
-Sage has significant components written in the following languages:
-C/C++, Python, Cython, Common Lisp, Fortran, and a bit of Perl.
 
 Directory Layout
 ----------------
@@ -585,7 +484,6 @@ SAGE_ROOT                 Root directory (create by git clone)
 ├── venv -> SAGE_VENV     Convenience symlink to the virtual environment
 └── VERSION.txt
 ```
-For more details see [our Developer's Guide](https://doc.sagemath.org/html/en/developer/coding_basics.html#files-and-directory-structure).
 
 Build System
 ------------
