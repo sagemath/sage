@@ -22,6 +22,7 @@ from sage.misc.timing import walltime
 from sage.misc.randstate import set_random_seed
 from sage.misc.prandom import getrandbits
 
+
 class WorkerData:
     """
     Simple class which stores data about a running ``p_iter_fork``
