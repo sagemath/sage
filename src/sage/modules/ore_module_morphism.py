@@ -265,6 +265,7 @@ from sage.categories.map import Map
 from sage.categories.morphism import Morphism
 from sage.modules.ore_module import OreModule, OreSubmodule, OreQuotientModule
 
+
 class OreModuleMorphism(Morphism):
     r"""
     Generic class for morphism between Ore modules.
@@ -898,6 +899,7 @@ class OreModuleMorphism(Morphism):
 
     charpoly = characteristic_polynomial
 
+
 class OreModuleRetraction(Map):
     r"""
     Conversion (partially defined) map from an ambient module
@@ -928,6 +930,7 @@ class OreModuleRetraction(Map):
         except ValueError:
             raise ValueError("not in the submodule")
         return X(xs)
+
 
 class OreModuleSection(Map):
     r"""

@@ -148,8 +148,8 @@ We can create the quotient `U/V` using a similar syntax::
     [u2, u3]
 
 We see that SageMath reuses by default the names of the representatives
-to denote the vectors in the quotient `U/V`. This behaviour can be overrided
-by providing explicit names using the attributes ``names``.
+to denote the vectors in the quotient `U/V`. This behaviour can be
+overridden by providing explicit names using the attributes ``names``.
 
 Shortcuts for creating quotients are also available::
 
@@ -200,6 +200,7 @@ from sage.modules.ore_module_element import OreModuleElement
 # Action by left multiplication on Ore modules
 ##############################################
 
+
 class ScalarAction(Action):
     r"""
     Action by scalar multiplication on Ore modules.
@@ -223,6 +224,7 @@ class ScalarAction(Action):
             z*e0
         """
         return x._rmul_(a)
+
 
 class OreAction(Action):
     r"""
@@ -257,6 +259,7 @@ class OreAction(Action):
 
 # Generic class for Ore modules
 ###############################
+
 
 def normalize_names(names, rank):
     r"""
@@ -308,6 +311,7 @@ def normalize_names(names, rank):
         raise ValueError("names must be a string or a list/tuple of strings")
     return names
 
+
 class OreModule(UniqueRepresentation, FreeModule_ambient):
     r"""
     Generic class for Ore modules.
@@ -317,7 +321,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
     def __classcall_private__(cls, mat, twist, names=None, category=None):
         r"""
         Normalize the input before passing it to the init function
-        (useful to ensure the uniqueness assuption).
+        (useful to ensure the uniqueness assumption).
 
         INPUT:
 
@@ -325,7 +329,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         - ``twist`` -- the twisting morphism/derivation
 
-        - ``names`` (default: ``None``) -- a string of a list of stings,
+        - ``names`` (default: ``None``) -- a string of a list of strings,
           the names of the vector of the canonical basis; if ``None``,
           elements are represented as vectors in `K^d`
 
@@ -366,7 +370,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         - ``ore`` -- the underlying Ore polynomial ring
 
-        - ``names`` -- a string of a list of stings,
+        - ``names`` -- a string of a list of strings,
           the names of the vector of the canonical basis; if ``None``,
           elements are represented as vectors in `K^d`
 
@@ -980,7 +984,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             Defining v0, v1, v2, v3, v4
 
         The first method for creating a morphism from `U` to `V` is
-        to explicitely write down its matrix in the canonical bases::
+        to explicitly write down its matrix in the canonical bases::
 
             sage: mat = matrix(3, 5, [1, 4, t, 0, 0,
             ....:                     0, 1, 0, t, 0,
@@ -1438,6 +1442,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         return id(self)
 
+
 # Submodules
 ############
 
@@ -1448,7 +1453,7 @@ class OreSubmodule(OreModule):
     def __classcall_private__(cls, ambient, gens, names):
         r"""
         Normalize the input before passing it to the init function
-        (useful to ensure the uniqueness assuption).
+        (useful to ensure the uniqueness assupmtion).
 
         INPUT:
 
@@ -1785,6 +1790,7 @@ class OreSubmodule(OreModule):
     _hom_change_domain = morphism_restriction
     _hom_change_codomain = morphism_corestriction
 
+
 # Quotients
 ###########
 
@@ -1795,7 +1801,7 @@ class OreQuotientModule(OreModule):
     def __classcall_private__(cls, cover, gens, names):
         r"""
         Normalize the input before passing it to the init function
-        (useful to ensure the uniqueness assuption).
+        (useful to ensure the uniqueness assumption).
 
         INPUT:
 

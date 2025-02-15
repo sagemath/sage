@@ -19,6 +19,7 @@ AUTHOR:
 from sage.misc.latex import latex
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
 
+
 class OreModuleElement(FreeModuleElement_generic_dense):
     r"""
     A generic element of a Ore module.

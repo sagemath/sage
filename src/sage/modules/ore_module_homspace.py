@@ -23,6 +23,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.modules.ore_module import OreModule
 from sage.modules.ore_module_morphism import OreModuleMorphism
 
+
 class OreModule_homspace(UniqueRepresentation, HomsetWithBase):
     r"""
     Class for hom spaces between Ore modules.
