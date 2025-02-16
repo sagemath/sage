@@ -18,36 +18,29 @@ machines, it is crucial to test changes to Sage, in particular
 when external packages are added or upgraded, on a wide
 spectrum of platforms.
 
+- Individual PR, upon creation and update, automatically goes through "checks"
+  implemented by `GitHub Actions <https://github.com/sagemath/sage/actions>`_
+  to identify errors early and ensure code quality. In particular, Build & Test
+  workflows perform an incremental build of Sage on the PR branch and run
+  doctests on a selection of major platforms including Ubuntu, macOS, and
+  Conda.
 
-Testing PRs with GitHub Actions
-===============================
+- Before a new release, the release manager runs a fleet of `buildbots
+  <http://build.sagemath.org>`_ to make it sure that Sage builds correctly on
+  all of our supported platforms.
 
-`GitHub Actions <https://github.com/sagemath/sage/actions>`_ are automatically
-and constantly testing GitHub PRs to identify errors early and ensure code
-quality. In particular, Build & Test workflows perform an incremental build of
-Sage and run doctests on a selection of major platforms including Ubuntu,
-macOS, and Conda.
+- Sage developers and users are encouraged to test releases that are announced
+  on `Sage Release <https://groups.google.com/forum/#!forum/sage-release>`_ on
+  their machines and to report the results (successes and failures) by
+  responding to the announcements.
 
-
-Sage buildbots
-==============
-
-Before a new release, the release manager runs a fleet of `buildbots
-<http://build.sagemath.org>`_ to make it sure that Sage builds correctly on all
-of our supported platforms.
-
-
-Test reports on sage-release
-============================
-
-Sage developers and users are encouraged to test releases that are announced on
-`Sage Release <https://groups.google.com/forum/#!forum/sage-release>`_ on their
-machines and to report the results (successes and failures) by responding to the
-announcements.
+In the rest, we focus on our Docker-based testing framework that developers can
+use to test Sage and fix portability issues for platforms different from their
+own machines.
 
 
-Testing on multiple platforms using Docker
-==========================================
+Docker-based Testing
+====================
 
 `Docker <https://www.docker.com>`_ is a popular virtualization
 software, running Linux operating system images ("Docker images") in
@@ -992,21 +985,19 @@ options::
 Automatic testing on multiple platforms on GitHub Actions
 =========================================================
 
-The Sage source tree includes a default configuration for GitHub
-Actions that runs our portability tests on a multitude of platforms on
-every push of a tag (but not of a branch) to a repository for which
-GitHub Actions are enabled.
-
-In particular, it automatically runs on our main repository sagemath/sage
-on every release tag.
+The Sage source tree includes a configuration (a suite of scripts) for GitHub
+Actions that runs portability tests on a multitude of platforms
+using the Docker-based testing framework described above, on every push of a
+tag (but not of a branch) to a repository for which GitHub Actions are enabled.
+In particular, it runs on our main repository sagemath/sage on every release
+tag.
 
 This is defined in the files
 
-- :sage_root:`.github/workflows/ci-linux.yml`
-  (which calls :sage_root:`.github/workflows/docker.yml`) and
-
-- :sage_root:`.github/workflows/ci-macos.yml`
-  (which calls :sage_root:`.github/workflows/macos.yml`).
+- :sage_root:`.github/workflows/ci-linux.yml` CI Linux workflow
+- :sage_root:`.github/workflows/docker.yml` called by CI Linux workflow
+- :sage_root:`.github/workflows/ci-macos.yml` CI macOS workflow
+- :sage_root:`.github/workflows/macos.yml` called by CI macOS workflow
 
 GitHub Actions runs these build jobs on 2-core machines with 7 GB of
 RAM memory and 14 GB of SSD disk space, cf.
@@ -1015,12 +1006,26 @@ and has a time limit of 6h per job. This could be just barely enough for a
 typical ``minimal`` build followed by ``make ptest`` to succeed; for
 added robustness, we split it into two jobs. Our workflow stores
 Docker images corresponding to various build phases within these two
-jobs on `GitHub Packages <https://github.com/features/packages>`_ (ghcr.io).
+jobs on `GitHub Packages <https://github.com/orgs/sagemath/packages?repo_name=sage>`_ (ghcr.io).
 
 Build logs can be inspected during the run and become available as
 "artifacts" when all jobs of the workflow have finished.  Each job
 generates one tarball.  "Annotations" highlight certain top-level
 errors or warnings issued during the build.
+
+.. NOTE::
+
+    The list of the default platforms tested by the CI Linux workflow is in the
+    item ``tox_system_factors`` of the file
+    :sage_root:`.github/workflows/docker.yml`.  However, do not modify the list
+    directly. Instead use the command ::
+
+    $ tox -e update_docker_platforms
+
+    to update the list (and this documentation accordingly) from the "Master list
+    of platforms tested in CI Linux" (search for ``DEFAULT_SYSTEM_FACTORS``) in
+    :sage_root:`tox.ini`, which dictates how to create testing environments for
+    all platforms and build modes.
 
 In addition to these automatic runs in our main repository, all Sage
 developers can run the same tests on GitHub Actions in their personal
@@ -1136,7 +1141,7 @@ Our portability CI on GitHub Actions builds `Docker images
 <https://github.com/orgs/sagemath/packages?tab=packages&q=with-targets-optional>`_
 for all tested Linux platforms (and system package configurations) and
 makes them available on `GitHub Packages
-<https://github.com/features/packages>`_ (ghcr.io).
+<https://github.com/orgs/sagemath/packages?repo_name=sage>`_ (ghcr.io).
 
 This makes it easy for developers to debug problems that showed up in
 the build logs for a given platform.
