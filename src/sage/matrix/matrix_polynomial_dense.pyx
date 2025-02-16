@@ -4194,7 +4194,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # -> if d>0, then degree_bounds > 0 entry-wise and this tuple
             # `orders` has all entries strictly positive
             # -> if d==0, then `orders[i]` is zero exactly when the column i of
-            # self is zero; such columns which do not influence the left kernel
+            # self is zero; such columns do not influence the left kernel
 
             # compute approximant basis and retrieve kernel rows
             P = self.minimal_approximant_basis(orders,shifts,True,normal_form)
@@ -4227,13 +4227,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # note: minimal_approximant_basis requires orders[i] > 0
             # -> if d>0, then degree_bounds > 0 entry-wise and this tuple
             # `orders` already has all entries strictly positive
-            # -> if d==0, then `orders[i]` is zero exactly when the row i
-            # of self is zero; we may as well take orders[i] == 1 for such
-            # rows which do not influence the right kernel
-            if d == 0:
-                for i in range(m):
-                    if orders[i] == 0:
-                        orders[i] = 1
+            # -> if d==0, then `orders[i]` is zero exactly when the row i of
+            # self is zero; such rows do not influence the right kernel
 
             # compute approximant basis and retrieve kernel columns
             P = self.minimal_approximant_basis(orders,shifts,False,normal_form)
