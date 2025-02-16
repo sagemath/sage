@@ -3802,7 +3802,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         `m` such that the column `j` of `p F` vanishes modulo `\mu_j = \prod_{0
         \le i < d_j} (x - a_{i,j})` (that is, it vanishes at all points
         `a_{i,j}`'s, with multiplicity in case of repeated points), for all `0
-        \le j \le n-1`. For `j` such that `d_j \le 0`, i.e. the `j`th list of
+        \le j \le n-1`. For `j` such that `d_j \le 0`, i.e. the `j` th list of
         points is empty, this constraint on the column `j` is void.
 
         If ``normal_form`` is ``True``, then the output basis `P` is
@@ -3818,7 +3818,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         ``shifts`` must be the number of rows (resp. columns) of ``self``.
 
         If a single list is provided for ``points``, then it is converted into
-        a list containing this list repeated the suitable number of times.
+        a list containing the provided list repeated the suitable number of
+        times.
 
         INPUT:
 
