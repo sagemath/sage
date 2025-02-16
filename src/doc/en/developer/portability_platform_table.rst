@@ -16,7 +16,7 @@
 .. |codespace-ubuntu-xenial-toolchain-gcc_9-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-xenial-toolchain-gcc_9-minimal%2Fdevcontainer.json
 
-.. |image-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages
 
 .. |image-ubuntu-xenial-toolchain-gcc_9-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-xenial-toolchain-gcc_9-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -70,7 +70,7 @@
 .. |codespace-ubuntu-bionic-gcc_8-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-minimal%2Fdevcontainer.json
 
-.. |image-ubuntu-bionic-gcc_8-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-ubuntu-bionic-gcc_8-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-standard-with-system-packages
 
 .. |image-ubuntu-bionic-gcc_8-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -124,7 +124,7 @@
 .. |codespace-ubuntu-focal-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-focal-minimal%2Fdevcontainer.json
 
-.. |image-ubuntu-focal-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-focal-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-ubuntu-focal-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-focal-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-system-packages
 
 .. |image-ubuntu-focal-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-focal-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -178,7 +178,7 @@
 .. |codespace-ubuntu-jammy-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-jammy-minimal%2Fdevcontainer.json
 
-.. |image-ubuntu-jammy-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-jammy-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-ubuntu-jammy-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-jammy-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-jammy-standard-with-system-packages
 
 .. |image-ubuntu-jammy-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-jammy-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -214,114 +214,6 @@
 .. |codespace-ubuntu-jammy-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-jammy-maximal%2Fdevcontainer.json
 
-.. |image-ubuntu-lunar-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-minimal-with-system-packages
-
-.. |image-ubuntu-lunar-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-minimal-configured
-
-.. |image-ubuntu-lunar-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-minimal-with-targets-pre
-
-.. |image-ubuntu-lunar-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-minimal-with-targets
-
-.. |image-ubuntu-lunar-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-minimal-with-targets-optional
-
-.. |codespace-ubuntu-lunar-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-lunar-minimal%2Fdevcontainer.json
-
-.. |image-ubuntu-lunar-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-standard-with-system-packages
-
-.. |image-ubuntu-lunar-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-standard-configured
-
-.. |image-ubuntu-lunar-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-standard-with-targets-pre
-
-.. |image-ubuntu-lunar-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-standard-with-targets
-
-.. |image-ubuntu-lunar-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-standard-with-targets-optional
-
-.. |codespace-ubuntu-lunar-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-lunar-standard%2Fdevcontainer.json
-
-.. |image-ubuntu-lunar-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-maximal-with-system-packages
-
-.. |image-ubuntu-lunar-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-maximal-configured
-
-.. |image-ubuntu-lunar-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-maximal-with-targets-pre
-
-.. |image-ubuntu-lunar-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-maximal-with-targets
-
-.. |image-ubuntu-lunar-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-maximal-with-targets-optional
-
-.. |codespace-ubuntu-lunar-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-lunar-maximal%2Fdevcontainer.json
-
-.. |image-ubuntu-mantic-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-minimal-with-system-packages
-
-.. |image-ubuntu-mantic-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-minimal-configured
-
-.. |image-ubuntu-mantic-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-minimal-with-targets-pre
-
-.. |image-ubuntu-mantic-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-minimal-with-targets
-
-.. |image-ubuntu-mantic-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-minimal-with-targets-optional
-
-.. |codespace-ubuntu-mantic-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-mantic-minimal%2Fdevcontainer.json
-
-.. |image-ubuntu-mantic-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-standard-with-system-packages
-
-.. |image-ubuntu-mantic-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-standard-configured
-
-.. |image-ubuntu-mantic-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-standard-with-targets-pre
-
-.. |image-ubuntu-mantic-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-standard-with-targets
-
-.. |image-ubuntu-mantic-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-standard-with-targets-optional
-
-.. |codespace-ubuntu-mantic-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-mantic-standard%2Fdevcontainer.json
-
-.. |image-ubuntu-mantic-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-maximal-with-system-packages
-
-.. |image-ubuntu-mantic-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-maximal-configured
-
-.. |image-ubuntu-mantic-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-maximal-with-targets-pre
-
-.. |image-ubuntu-mantic-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-maximal-with-targets
-
-.. |image-ubuntu-mantic-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-maximal-with-targets-optional
-
-.. |codespace-ubuntu-mantic-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-mantic-maximal%2Fdevcontainer.json
-
 .. |image-ubuntu-noble-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-noble-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-noble-minimal-with-system-packages
 
@@ -340,7 +232,7 @@
 .. |codespace-ubuntu-noble-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-noble-minimal%2Fdevcontainer.json
 
-.. |image-ubuntu-noble-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-noble-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-ubuntu-noble-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-noble-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-noble-standard-with-system-packages
 
 .. |image-ubuntu-noble-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-noble-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -394,7 +286,7 @@
 .. |codespace-debian-bullseye-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-minimal%2Fdevcontainer.json
 
-.. |image-debian-bullseye-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-debian-bullseye-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-standard-with-system-packages
 
 .. |image-debian-bullseye-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -448,7 +340,7 @@
 .. |codespace-debian-bookworm-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bookworm-minimal%2Fdevcontainer.json
 
-.. |image-debian-bookworm-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bookworm-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-debian-bookworm-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bookworm-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-debian-bookworm-standard-with-system-packages
 
 .. |image-debian-bookworm-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bookworm-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -502,7 +394,7 @@
 .. |codespace-debian-trixie-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-trixie-minimal%2Fdevcontainer.json
 
-.. |image-debian-trixie-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-debian-trixie-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-standard-with-system-packages
 
 .. |image-debian-trixie-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -556,7 +448,7 @@
 .. |codespace-debian-sid-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-sid-minimal%2Fdevcontainer.json
 
-.. |image-debian-sid-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-debian-sid-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-debian-sid-standard-with-system-packages
 
 .. |image-debian-sid-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -610,7 +502,7 @@
 .. |codespace-linuxmint-20.1-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.1-minimal%2Fdevcontainer.json
 
-.. |image-linuxmint-20.1-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.1-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-linuxmint-20.1-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.1-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.1-standard-with-system-packages
 
 .. |image-linuxmint-20.1-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.1-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -664,7 +556,7 @@
 .. |codespace-linuxmint-20.2-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.2-minimal%2Fdevcontainer.json
 
-.. |image-linuxmint-20.2-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.2-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-linuxmint-20.2-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.2-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.2-standard-with-system-packages
 
 .. |image-linuxmint-20.2-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.2-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -718,7 +610,7 @@
 .. |codespace-linuxmint-20.3-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.3-minimal%2Fdevcontainer.json
 
-.. |image-linuxmint-20.3-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.3-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-linuxmint-20.3-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.3-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.3-standard-with-system-packages
 
 .. |image-linuxmint-20.3-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.3-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -772,7 +664,7 @@
 .. |codespace-linuxmint-21-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-21-minimal%2Fdevcontainer.json
 
-.. |image-linuxmint-21-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-linuxmint-21-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21-standard-with-system-packages
 
 .. |image-linuxmint-21-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -826,7 +718,7 @@
 .. |codespace-linuxmint-21.1-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.1-minimal%2Fdevcontainer.json
 
-.. |image-linuxmint-21.1-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.1-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-linuxmint-21.1-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.1-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.1-standard-with-system-packages
 
 .. |image-linuxmint-21.1-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.1-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -880,7 +772,7 @@
 .. |codespace-linuxmint-21.2-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.2-minimal%2Fdevcontainer.json
 
-.. |image-linuxmint-21.2-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.2-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-linuxmint-21.2-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.2-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.2-standard-with-system-packages
 
 .. |image-linuxmint-21.2-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.2-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -934,7 +826,7 @@
 .. |codespace-linuxmint-21.3-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.3-minimal%2Fdevcontainer.json
 
-.. |image-linuxmint-21.3-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.3-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-linuxmint-21.3-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.3-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.3-standard-with-system-packages
 
 .. |image-linuxmint-21.3-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.3-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -988,7 +880,7 @@
 .. |codespace-fedora-30-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-30-minimal%2Fdevcontainer.json
 
-.. |image-fedora-30-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-30-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-30-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-30-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-30-standard-with-system-packages
 
 .. |image-fedora-30-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-30-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1042,7 +934,7 @@
 .. |codespace-fedora-31-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-31-minimal%2Fdevcontainer.json
 
-.. |image-fedora-31-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-31-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-31-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-31-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-31-standard-with-system-packages
 
 .. |image-fedora-31-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-31-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1096,7 +988,7 @@
 .. |codespace-fedora-32-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-32-minimal%2Fdevcontainer.json
 
-.. |image-fedora-32-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-32-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-32-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-32-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-32-standard-with-system-packages
 
 .. |image-fedora-32-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-32-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1150,7 +1042,7 @@
 .. |codespace-fedora-33-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-33-minimal%2Fdevcontainer.json
 
-.. |image-fedora-33-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-33-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-33-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-33-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-33-standard-with-system-packages
 
 .. |image-fedora-33-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-33-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1204,7 +1096,7 @@
 .. |codespace-fedora-34-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-34-minimal%2Fdevcontainer.json
 
-.. |image-fedora-34-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-34-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-34-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-34-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-34-standard-with-system-packages
 
 .. |image-fedora-34-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-34-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1258,7 +1150,7 @@
 .. |codespace-fedora-35-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-35-minimal%2Fdevcontainer.json
 
-.. |image-fedora-35-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-35-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-35-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-35-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-35-standard-with-system-packages
 
 .. |image-fedora-35-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-35-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1312,7 +1204,7 @@
 .. |codespace-fedora-36-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-36-minimal%2Fdevcontainer.json
 
-.. |image-fedora-36-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-36-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-36-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-36-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-36-standard-with-system-packages
 
 .. |image-fedora-36-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-36-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1366,7 +1258,7 @@
 .. |codespace-fedora-37-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-37-minimal%2Fdevcontainer.json
 
-.. |image-fedora-37-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-37-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-37-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-37-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-37-standard-with-system-packages
 
 .. |image-fedora-37-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-37-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1420,7 +1312,7 @@
 .. |codespace-fedora-38-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-38-minimal%2Fdevcontainer.json
 
-.. |image-fedora-38-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-38-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-38-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-38-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-38-standard-with-system-packages
 
 .. |image-fedora-38-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-38-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1474,7 +1366,7 @@
 .. |codespace-fedora-39-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-39-minimal%2Fdevcontainer.json
 
-.. |image-fedora-39-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-39-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-39-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-39-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-39-standard-with-system-packages
 
 .. |image-fedora-39-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-39-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1528,7 +1420,7 @@
 .. |codespace-fedora-40-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-40-minimal%2Fdevcontainer.json
 
-.. |image-fedora-40-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-40-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-40-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-40-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-40-standard-with-system-packages
 
 .. |image-fedora-40-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-40-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1582,7 +1474,7 @@
 .. |codespace-fedora-41-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-41-minimal%2Fdevcontainer.json
 
-.. |image-fedora-41-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-fedora-41-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-fedora-41-standard-with-system-packages
 
 .. |image-fedora-41-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-41-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1636,7 +1528,7 @@
 .. |codespace-centos-stream-9-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-minimal%2Fdevcontainer.json
 
-.. |image-centos-stream-9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-centos-stream-9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-standard-with-system-packages
 
 .. |image-centos-stream-9-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1690,7 +1582,7 @@
 .. |codespace-centos-stream-9-python3.12-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.12-minimal%2Fdevcontainer.json
 
-.. |image-centos-stream-9-python3.12-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-centos-stream-9-python3.12-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.12-standard-with-system-packages
 
 .. |image-centos-stream-9-python3.12-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.12-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1744,7 +1636,7 @@
 .. |codespace-almalinux-8-python3.9-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-8-python3.9-minimal%2Fdevcontainer.json
 
-.. |image-almalinux-8-python3.9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-almalinux-8-python3.9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-standard-with-system-packages
 
 .. |image-almalinux-8-python3.9-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1798,7 +1690,7 @@
 .. |codespace-almalinux-9-python3.11-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-9-python3.11-minimal%2Fdevcontainer.json
 
-.. |image-almalinux-9-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-almalinux-9-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-standard-with-system-packages
 
 .. |image-almalinux-9-python3.11-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1834,6 +1726,168 @@
 .. |codespace-almalinux-9-python3.11-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-9-python3.11-maximal%2Fdevcontainer.json
 
+.. |image-gentoo-python3.10-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-system-packages
+
+.. |image-gentoo-python3.10-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-configured
+
+.. |image-gentoo-python3.10-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets-pre
+
+.. |image-gentoo-python3.10-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets
+
+.. |image-gentoo-python3.10-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets-optional
+
+.. |codespace-gentoo-python3.10-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.10-minimal%2Fdevcontainer.json
+
+.. |image-gentoo-python3.10-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-with-system-packages
+
+.. |image-gentoo-python3.10-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-configured
+
+.. |image-gentoo-python3.10-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-with-targets-pre
+
+.. |image-gentoo-python3.10-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-with-targets
+
+.. |image-gentoo-python3.10-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-with-targets-optional
+
+.. |codespace-gentoo-python3.10-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.10-standard%2Fdevcontainer.json
+
+.. |image-gentoo-python3.10-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-maximal-with-system-packages
+
+.. |image-gentoo-python3.10-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-maximal-configured
+
+.. |image-gentoo-python3.10-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets-pre
+
+.. |image-gentoo-python3.10-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets
+
+.. |image-gentoo-python3.10-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets-optional
+
+.. |codespace-gentoo-python3.10-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.10-maximal%2Fdevcontainer.json
+
+.. |image-gentoo-python3.11-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-minimal-with-system-packages
+
+.. |image-gentoo-python3.11-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-minimal-configured
+
+.. |image-gentoo-python3.11-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-minimal-with-targets-pre
+
+.. |image-gentoo-python3.11-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-minimal-with-targets
+
+.. |image-gentoo-python3.11-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-minimal-with-targets-optional
+
+.. |codespace-gentoo-python3.11-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.11-minimal%2Fdevcontainer.json
+
+.. |image-gentoo-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-standard-with-system-packages
+
+.. |image-gentoo-python3.11-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-standard-configured
+
+.. |image-gentoo-python3.11-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-standard-with-targets-pre
+
+.. |image-gentoo-python3.11-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-standard-with-targets
+
+.. |image-gentoo-python3.11-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-standard-with-targets-optional
+
+.. |codespace-gentoo-python3.11-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.11-standard%2Fdevcontainer.json
+
+.. |image-gentoo-python3.11-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-maximal-with-system-packages
+
+.. |image-gentoo-python3.11-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-maximal-configured
+
+.. |image-gentoo-python3.11-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-maximal-with-targets-pre
+
+.. |image-gentoo-python3.11-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-maximal-with-targets
+
+.. |image-gentoo-python3.11-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-maximal-with-targets-optional
+
+.. |codespace-gentoo-python3.11-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.11-maximal%2Fdevcontainer.json
+
+.. |image-gentoo-python3.12-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-minimal-with-system-packages
+
+.. |image-gentoo-python3.12-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-minimal-configured
+
+.. |image-gentoo-python3.12-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-minimal-with-targets-pre
+
+.. |image-gentoo-python3.12-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-minimal-with-targets
+
+.. |image-gentoo-python3.12-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-minimal-with-targets-optional
+
+.. |codespace-gentoo-python3.12-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.12-minimal%2Fdevcontainer.json
+
+.. |image-gentoo-python3.12-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-standard-with-system-packages
+
+.. |image-gentoo-python3.12-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-standard-configured
+
+.. |image-gentoo-python3.12-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-standard-with-targets-pre
+
+.. |image-gentoo-python3.12-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-standard-with-targets
+
+.. |image-gentoo-python3.12-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-standard-with-targets-optional
+
+.. |codespace-gentoo-python3.12-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.12-standard%2Fdevcontainer.json
+
+.. |image-gentoo-python3.12-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-maximal-with-system-packages
+
+.. |image-gentoo-python3.12-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-maximal-configured
+
+.. |image-gentoo-python3.12-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-maximal-with-targets-pre
+
+.. |image-gentoo-python3.12-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-maximal-with-targets
+
+.. |image-gentoo-python3.12-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.12-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.12-maximal-with-targets-optional
+
+.. |codespace-gentoo-python3.12-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.12-maximal%2Fdevcontainer.json
+
 .. |image-archlinux-latest-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-archlinux-latest-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
    :target: https://ghcr.io/sagemath/sage/sage-archlinux-latest-minimal-with-system-packages
 
@@ -1852,7 +1906,7 @@
 .. |codespace-archlinux-latest-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-archlinux-latest-minimal%2Fdevcontainer.json
 
-.. |image-archlinux-latest-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-archlinux-latest-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-archlinux-latest-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-archlinux-latest-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-archlinux-latest-standard-with-system-packages
 
 .. |image-archlinux-latest-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-archlinux-latest-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1906,7 +1960,7 @@
 .. |codespace-opensuse-15.5-gcc_11-python3.11-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-15.5-gcc_11-python3.11-minimal%2Fdevcontainer.json
 
-.. |image-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages
 
 .. |image-opensuse-15.5-gcc_11-python3.11-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-15.5-gcc_11-python3.11-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -1960,7 +2014,7 @@
 .. |codespace-opensuse-tumbleweed-python3.10-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-python3.10-minimal%2Fdevcontainer.json
 
-.. |image-opensuse-tumbleweed-python3.10-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-opensuse-tumbleweed-python3.10-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-system-packages
 
 .. |image-opensuse-tumbleweed-python3.10-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -2014,7 +2068,7 @@
 .. |codespace-opensuse-tumbleweed-minimal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-minimal%2Fdevcontainer.json
 
-.. |image-opensuse-tumbleweed-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+.. |image-opensuse-tumbleweed-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-standard-with-system-packages
 
 .. |image-opensuse-tumbleweed-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
@@ -2050,167 +2104,167 @@
 .. |codespace-opensuse-tumbleweed-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-maximal%2Fdevcontainer.json
 
-.. |image-conda-forge-python3.11-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-minimal-with-system-packages
+.. |image-COLOR_with_system_packages-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-minimal-with-system-packages
 
-.. |image-conda-forge-python3.11-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-minimal-configured
+.. |image-COLOR_with_system_packages-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-minimal-configured
 
-.. |image-conda-forge-python3.11-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-minimal-with-targets-pre
+.. |image-COLOR_with_system_packages-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-minimal-with-targets-pre
 
-.. |image-conda-forge-python3.11-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-minimal-with-targets
+.. |image-COLOR_with_system_packages-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-minimal-with-targets
 
-.. |image-conda-forge-python3.11-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-minimal-with-targets-optional
+.. |image-COLOR_with_system_packages-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-minimal-with-targets-optional
 
-.. |codespace-conda-forge-python3.11-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-conda-forge-python3.11-minimal%2Fdevcontainer.json
+.. |codespace-COLOR_with_system_packages-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-COLOR_with_system_packages-minimal%2Fdevcontainer.json
 
-.. |image-conda-forge-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-standard-with-system-packages
+.. |image-COLOR_with_system_packages-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-standard-with-system-packages
 
-.. |image-conda-forge-python3.11-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-standard-configured
+.. |image-COLOR_with_system_packages-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-standard-configured
 
-.. |image-conda-forge-python3.11-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-standard-with-targets-pre
+.. |image-COLOR_with_system_packages-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-standard-with-targets-pre
 
-.. |image-conda-forge-python3.11-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-standard-with-targets
+.. |image-COLOR_with_system_packages-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-standard-with-targets
 
-.. |image-conda-forge-python3.11-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-standard-with-targets-optional
+.. |image-COLOR_with_system_packages-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-standard-with-targets-optional
 
-.. |codespace-conda-forge-python3.11-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-conda-forge-python3.11-standard%2Fdevcontainer.json
+.. |codespace-COLOR_with_system_packages-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-COLOR_with_system_packages-standard%2Fdevcontainer.json
 
-.. |image-conda-forge-python3.11-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-maximal-with-system-packages
+.. |image-COLOR_with_system_packages-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-maximal-with-system-packages
 
-.. |image-conda-forge-python3.11-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-maximal-configured
+.. |image-COLOR_with_system_packages-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-maximal-configured
 
-.. |image-conda-forge-python3.11-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-maximal-with-targets-pre
+.. |image-COLOR_with_system_packages-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-maximal-with-targets-pre
 
-.. |image-conda-forge-python3.11-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-maximal-with-targets
+.. |image-COLOR_with_system_packages-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-maximal-with-targets
 
-.. |image-conda-forge-python3.11-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-maximal-with-targets-optional
+.. |image-COLOR_with_system_packages-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-COLOR_with_system_packages-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-COLOR_with_system_packages-maximal-with-targets-optional
 
-.. |codespace-conda-forge-python3.11-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-conda-forge-python3.11-maximal%2Fdevcontainer.json
+.. |codespace-COLOR_with_system_packages-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-COLOR_with_system_packages-maximal%2Fdevcontainer.json
 
-.. |image-ubuntu-bionic-gcc_8-i386-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-system-packages
+.. |image-=-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-=-minimal-with-system-packages
 
-.. |image-ubuntu-bionic-gcc_8-i386-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-configured
+.. |image-=-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-=-minimal-configured
 
-.. |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-targets-pre
+.. |image-=-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-=-minimal-with-targets-pre
 
-.. |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-targets
+.. |image-=-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-=-minimal-with-targets
 
-.. |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-targets-optional
+.. |image-=-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-=-minimal-with-targets-optional
 
-.. |codespace-ubuntu-bionic-gcc_8-i386-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-i386-minimal%2Fdevcontainer.json
+.. |codespace-=-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-=-minimal%2Fdevcontainer.json
 
-.. |image-ubuntu-bionic-gcc_8-i386-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-system-packages
+.. |image-=-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
+   :target: https://ghcr.io/sagemath/sage/sage-=-standard-with-system-packages
 
-.. |image-ubuntu-bionic-gcc_8-i386-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-configured
+.. |image-=-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-=-standard-configured
 
-.. |image-ubuntu-bionic-gcc_8-i386-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-targets-pre
+.. |image-=-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-=-standard-with-targets-pre
 
-.. |image-ubuntu-bionic-gcc_8-i386-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-targets
+.. |image-=-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-=-standard-with-targets
 
-.. |image-ubuntu-bionic-gcc_8-i386-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-targets-optional
+.. |image-=-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-=-standard-with-targets-optional
 
-.. |codespace-ubuntu-bionic-gcc_8-i386-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-i386-standard%2Fdevcontainer.json
+.. |codespace-=-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-=-standard%2Fdevcontainer.json
 
-.. |image-ubuntu-bionic-gcc_8-i386-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-maximal-with-system-packages
+.. |image-=-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-=-maximal-with-system-packages
 
-.. |image-ubuntu-bionic-gcc_8-i386-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-maximal-configured
+.. |image-=-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-=-maximal-configured
 
-.. |image-ubuntu-bionic-gcc_8-i386-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-maximal-with-targets-pre
+.. |image-=-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-=-maximal-with-targets-pre
 
-.. |image-ubuntu-bionic-gcc_8-i386-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-maximal-with-targets
+.. |image-=-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-=-maximal-with-targets
 
-.. |image-ubuntu-bionic-gcc_8-i386-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-maximal-with-targets-optional
+.. |image-=-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-=-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-=-maximal-with-targets-optional
 
-.. |codespace-ubuntu-bionic-gcc_8-i386-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-i386-maximal%2Fdevcontainer.json
+.. |codespace-=-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-=-maximal%2Fdevcontainer.json
 
-.. |image-debian-bullseye-i386-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-minimal-with-system-packages
+.. |image-%23696969-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-minimal-with-system-packages
 
-.. |image-debian-bullseye-i386-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-minimal-configured
+.. |image-%23696969-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-minimal-configured
 
-.. |image-debian-bullseye-i386-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-minimal-with-targets-pre
+.. |image-%23696969-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-minimal-with-targets-pre
 
-.. |image-debian-bullseye-i386-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-minimal-with-targets
+.. |image-%23696969-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-minimal-with-targets
 
-.. |image-debian-bullseye-i386-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-minimal-with-targets-optional
+.. |image-%23696969-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-minimal-with-targets-optional
 
-.. |codespace-debian-bullseye-i386-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-i386-minimal%2Fdevcontainer.json
+.. |codespace-%23696969-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-%23696969-minimal%2Fdevcontainer.json
 
-.. |image-debian-bullseye-i386-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-standard-with-system-packages
+.. |image-%23696969-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-standard-with-system-packages
 
-.. |image-debian-bullseye-i386-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-standard-configured
+.. |image-%23696969-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-standard-configured
 
-.. |image-debian-bullseye-i386-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-standard-with-targets-pre
+.. |image-%23696969-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-standard-with-targets-pre
 
-.. |image-debian-bullseye-i386-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-standard-with-targets
+.. |image-%23696969-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-standard-with-targets
 
-.. |image-debian-bullseye-i386-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-standard-with-targets-optional
+.. |image-%23696969-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-standard-with-targets-optional
 
-.. |codespace-debian-bullseye-i386-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-i386-standard%2Fdevcontainer.json
+.. |codespace-%23696969-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-%23696969-standard%2Fdevcontainer.json
 
-.. |image-debian-bullseye-i386-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-maximal-with-system-packages
+.. |image-%23696969-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-maximal-with-system-packages
 
-.. |image-debian-bullseye-i386-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-maximal-configured
+.. |image-%23696969-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-maximal-configured
 
-.. |image-debian-bullseye-i386-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-maximal-with-targets-pre
+.. |image-%23696969-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-maximal-with-targets-pre
 
-.. |image-debian-bullseye-i386-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-maximal-with-targets
+.. |image-%23696969-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-maximal-with-targets
 
-.. |image-debian-bullseye-i386-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-maximal-with-targets-optional
+.. |image-%23696969-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-%23696969-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-%23696969-maximal-with-targets-optional
 
-.. |codespace-debian-bullseye-i386-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-i386-maximal%2Fdevcontainer.json
+.. |codespace-%23696969-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-%23696969-maximal%2Fdevcontainer.json
 
 .. list-table::
    :widths: 50 50 40
@@ -2263,28 +2317,6 @@
      - |codespace-ubuntu-jammy-standard|
    * -    ‑*maximal*
      - |image-ubuntu-jammy-maximal-with-system-packages| |image-ubuntu-jammy-maximal-with-targets-pre|
-     -
-   * - **ubuntu**-lunar 
-       
-          ‑*minimal*
-     - |image-ubuntu-lunar-minimal-with-system-packages| |image-ubuntu-lunar-minimal-with-targets-pre| |image-ubuntu-lunar-minimal-with-targets| |image-ubuntu-lunar-minimal-with-targets-optional|
-     - |codespace-ubuntu-lunar-minimal|
-   * -    ‑*standard*
-     - |image-ubuntu-lunar-standard-with-system-packages| |image-ubuntu-lunar-standard-with-targets-pre| |image-ubuntu-lunar-standard-with-targets| |image-ubuntu-lunar-standard-with-targets-optional|
-     - |codespace-ubuntu-lunar-standard|
-   * -    ‑*maximal*
-     - |image-ubuntu-lunar-maximal-with-system-packages| |image-ubuntu-lunar-maximal-with-targets-pre|
-     -
-   * - **ubuntu**-mantic 
-       
-          ‑*minimal*
-     - |image-ubuntu-mantic-minimal-with-system-packages| |image-ubuntu-mantic-minimal-with-targets-pre| |image-ubuntu-mantic-minimal-with-targets| |image-ubuntu-mantic-minimal-with-targets-optional|
-     - |codespace-ubuntu-mantic-minimal|
-   * -    ‑*standard*
-     - |image-ubuntu-mantic-standard-with-system-packages| |image-ubuntu-mantic-standard-with-targets-pre| |image-ubuntu-mantic-standard-with-targets| |image-ubuntu-mantic-standard-with-targets-optional|
-     - |codespace-ubuntu-mantic-standard|
-   * -    ‑*maximal*
-     - |image-ubuntu-mantic-maximal-with-system-packages| |image-ubuntu-mantic-maximal-with-targets-pre|
      -
    * - **ubuntu**-noble 
        
@@ -2594,6 +2626,39 @@
    * -    ‑*maximal*
      - |image-almalinux-9-python3.11-maximal-with-system-packages| |image-almalinux-9-python3.11-maximal-with-targets-pre|
      -
+   * - **gentoo**-python3.10 
+       
+          ‑*minimal*
+     - |image-gentoo-python3.10-minimal-with-system-packages| |image-gentoo-python3.10-minimal-with-targets-pre| |image-gentoo-python3.10-minimal-with-targets| |image-gentoo-python3.10-minimal-with-targets-optional|
+     - |codespace-gentoo-python3.10-minimal|
+   * -    ‑*standard*
+     - |image-gentoo-python3.10-standard-with-system-packages| |image-gentoo-python3.10-standard-with-targets-pre| |image-gentoo-python3.10-standard-with-targets| |image-gentoo-python3.10-standard-with-targets-optional|
+     - |codespace-gentoo-python3.10-standard|
+   * -    ‑*maximal*
+     - |image-gentoo-python3.10-maximal-with-system-packages| |image-gentoo-python3.10-maximal-with-targets-pre|
+     -
+   * - **gentoo**-python3.11 
+       
+          ‑*minimal*
+     - |image-gentoo-python3.11-minimal-with-system-packages| |image-gentoo-python3.11-minimal-with-targets-pre| |image-gentoo-python3.11-minimal-with-targets| |image-gentoo-python3.11-minimal-with-targets-optional|
+     - |codespace-gentoo-python3.11-minimal|
+   * -    ‑*standard*
+     - |image-gentoo-python3.11-standard-with-system-packages| |image-gentoo-python3.11-standard-with-targets-pre| |image-gentoo-python3.11-standard-with-targets| |image-gentoo-python3.11-standard-with-targets-optional|
+     - |codespace-gentoo-python3.11-standard|
+   * -    ‑*maximal*
+     - |image-gentoo-python3.11-maximal-with-system-packages| |image-gentoo-python3.11-maximal-with-targets-pre|
+     -
+   * - **gentoo**-python3.12 
+       
+          ‑*minimal*
+     - |image-gentoo-python3.12-minimal-with-system-packages| |image-gentoo-python3.12-minimal-with-targets-pre| |image-gentoo-python3.12-minimal-with-targets| |image-gentoo-python3.12-minimal-with-targets-optional|
+     - |codespace-gentoo-python3.12-minimal|
+   * -    ‑*standard*
+     - |image-gentoo-python3.12-standard-with-system-packages| |image-gentoo-python3.12-standard-with-targets-pre| |image-gentoo-python3.12-standard-with-targets| |image-gentoo-python3.12-standard-with-targets-optional|
+     - |codespace-gentoo-python3.12-standard|
+   * -    ‑*maximal*
+     - |image-gentoo-python3.12-maximal-with-system-packages| |image-gentoo-python3.12-maximal-with-targets-pre|
+     -
    * - **archlinux**-latest 
        
           ‑*minimal*
@@ -2638,33 +2703,36 @@
    * -    ‑*maximal*
      - |image-opensuse-tumbleweed-maximal-with-system-packages| |image-opensuse-tumbleweed-maximal-with-targets-pre|
      -
-   * - **conda**-forge-python3.11 
-       
-          ‑*standard*
-     - |image-conda-forge-python3.11-standard-with-system-packages| |image-conda-forge-python3.11-standard-with-targets-pre| |image-conda-forge-python3.11-standard-with-targets| |image-conda-forge-python3.11-standard-with-targets-optional|
-     - |codespace-conda-forge-python3.11-standard|
-   * -    ‑*maximal*
-     - |image-conda-forge-python3.11-maximal-with-system-packages| |image-conda-forge-python3.11-maximal-with-targets-pre|
-     -
-   * - **ubuntu**-bionic-gcc_8-i386 
+   * - **COLOR_with_system_packages 
        
           ‑*minimal*
-     - |image-ubuntu-bionic-gcc_8-i386-minimal-with-system-packages| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets-pre| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets-optional|
-     - |codespace-ubuntu-bionic-gcc_8-i386-minimal|
+     - |image-COLOR_with_system_packages-minimal-with-system-packages| |image-COLOR_with_system_packages-minimal-with-targets-pre| |image-COLOR_with_system_packages-minimal-with-targets| |image-COLOR_with_system_packages-minimal-with-targets-optional|
+     - |codespace-COLOR_with_system_packages-minimal|
    * -    ‑*standard*
-     - |image-ubuntu-bionic-gcc_8-i386-standard-with-system-packages| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets-pre| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets-optional|
-     - |codespace-ubuntu-bionic-gcc_8-i386-standard|
+     - |image-COLOR_with_system_packages-standard-with-system-packages| |image-COLOR_with_system_packages-standard-with-targets-pre| |image-COLOR_with_system_packages-standard-with-targets| |image-COLOR_with_system_packages-standard-with-targets-optional|
+     - |codespace-COLOR_with_system_packages-standard|
    * -    ‑*maximal*
-     - |image-ubuntu-bionic-gcc_8-i386-maximal-with-system-packages| |image-ubuntu-bionic-gcc_8-i386-maximal-with-targets-pre|
+     - |image-COLOR_with_system_packages-maximal-with-system-packages| |image-COLOR_with_system_packages-maximal-with-targets-pre|
      -
-   * - **debian**-bullseye-i386 
+   * - **= 
        
           ‑*minimal*
-     - |image-debian-bullseye-i386-minimal-with-system-packages| |image-debian-bullseye-i386-minimal-with-targets-pre| |image-debian-bullseye-i386-minimal-with-targets| |image-debian-bullseye-i386-minimal-with-targets-optional|
-     - |codespace-debian-bullseye-i386-minimal|
+     - |image-=-minimal-with-system-packages| |image-=-minimal-with-targets-pre| |image-=-minimal-with-targets| |image-=-minimal-with-targets-optional|
+     - |codespace-=-minimal|
    * -    ‑*standard*
-     - |image-debian-bullseye-i386-standard-with-system-packages| |image-debian-bullseye-i386-standard-with-targets-pre| |image-debian-bullseye-i386-standard-with-targets| |image-debian-bullseye-i386-standard-with-targets-optional|
-     - |codespace-debian-bullseye-i386-standard|
+     - |image-=-standard-with-system-packages| |image-=-standard-with-targets-pre| |image-=-standard-with-targets| |image-=-standard-with-targets-optional|
+     - |codespace-=-standard|
    * -    ‑*maximal*
-     - |image-debian-bullseye-i386-maximal-with-system-packages| |image-debian-bullseye-i386-maximal-with-targets-pre|
+     - |image-=-maximal-with-system-packages| |image-=-maximal-with-targets-pre|
+     -
+   * - **%23696969 
+       
+          ‑*minimal*
+     - |image-%23696969-minimal-with-system-packages| |image-%23696969-minimal-with-targets-pre| |image-%23696969-minimal-with-targets| |image-%23696969-minimal-with-targets-optional|
+     - |codespace-%23696969-minimal|
+   * -    ‑*standard*
+     - |image-%23696969-standard-with-system-packages| |image-%23696969-standard-with-targets-pre| |image-%23696969-standard-with-targets| |image-%23696969-standard-with-targets-optional|
+     - |codespace-%23696969-standard|
+   * -    ‑*maximal*
+     - |image-%23696969-maximal-with-system-packages| |image-%23696969-maximal-with-targets-pre|
      -

@@ -22,8 +22,6 @@ on:
            "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
            "ubuntu-jammy",
-           "ubuntu-lunar",
-           "ubuntu-mantic",
            "ubuntu-noble",
            "debian-bullseye",
            "debian-bookworm",
@@ -52,13 +50,16 @@ on:
            "centos-stream-9-python3.12",
            "almalinux-8-python3.9",
            "almalinux-9-python3.11",
+           "gentoo-python3.10",
+           "gentoo-python3.11",
+           "gentoo-python3.12",
            "archlinux-latest",
            "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
            "opensuse-tumbleweed",
-           "conda-forge-python3.11",
-           "ubuntu-bionic-gcc_8-i386",
-           "debian-bullseye-i386",
+           "COLOR_with_system_packages",
+           "=",
+           "%23696969",
           ]
         # 'tox -e update_docker_platforms' updates above
       tox_packages_factors:
