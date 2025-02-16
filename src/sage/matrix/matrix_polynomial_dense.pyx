@@ -3708,10 +3708,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         appbas = matrix.identity(self.base_ring(), m)
         residuals = self.__copy__()
 
-        # throughout the algorithm, 'rdeg' will be the shifts-row degrees of
-        # 'appbas'
+        # throughout the algorithm, 'rdeg' is the shifts-row degrees of 'appbas'
         # --> initially, 'rdeg' is the shift-row degree of the identity matrix
-        rdeg = list(shifts)
+        rdeg = [s for s in shifts]
 
         while rem_order:
             # invariant:
@@ -3724,8 +3723,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             #   for all j such that rem_order[j] > 0
 
             # choice for the next coefficient to be dealt with: first of the
-            # largest entries in order (--> process 'self' degree-wise, and
-            # left to right)
+            # largest entries in order
             # Note: one may also consider the first one in order (--> process
             # 'self' columnwise, from left column to right column, set j=0
             # instead of the below), but it seems to often be (a bit) slower
@@ -3743,8 +3741,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             coefficient = [residuals[i, j][d] for i in range(m)]
 
             # Lambda: collect rows [i] with nonzero coefficient[i]
-            # pi: index of the first row with smallest shift, among those in
-            # Lambda
+            # pi: index of the first row with smallest shift, among those in Lambda
             Lambda = []
             pi = -1
             for i in range(m):
@@ -3780,9 +3777,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
     def _interpolant_basis_iterative(self, points, shifts):
         r"""
         Return a ``shifts``-ordered weak Popov interpolant basis for this
-        polynomial matrix with respect to points ``points`` (see
+        polynomial matrix with respect to points specified in ``points`` (see
         :meth:`minimal_interpolant_basis` for definitions).
-        TODO HERE
 
         The output basis is considered row-wise, that is, its rows are
         left-interpolants for the columns of ``self``.
@@ -3811,88 +3807,107 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: pR.<x> = GF(7)[]
+            sage: ff = GF(7)
+            sage: xring.<x> = ff[]
 
         This method supports any number of columns or rows, as well as
-        arbitrary shifts and orders::
+        arbitrary shifts and lists of points. The returned list is the shifted
+        row degrees of the interpolation basis::
 
-            sage: order = [4, 1, 2]; shifts = [-3, 4]
-            sage: pmat = Matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5, 4],
-            ....:                    [2*x^3 + 2*x^2 + 2*x + 3, 6, 6*x + 3]])
-            sage: appbas, rdeg = pmat._approximant_basis_iterative(order,
-            ....:                                                  shifts)
-            sage: appbas.is_minimal_approximant_basis(pmat, order, shifts)
+            sage: F = Matrix([[5*x^3 + 4*x^2 + 4*x + 6, 5*x^3 + 5*x^2 +   5],
+            ....:             [2*x^3 + 2*x^2 + 2*x + 3, 3*x^3 +   6*x +   4],
+            ....:             [          x^2 + 6*x + 3, 5*x^3 + 2*x^2 + 3*x]])
+            sage: points = [[ff(3), ff(0), ff(6), ff(3)], [ff(1), ff(1), ff(1)]]
+            sage: mod1 = (x - 3) * x * (x - 6) * (x - 3)
+            sage: mod2 = (x - 1)**3
+
+            sage: P, rdeg = F._interpolant_basis_iterative(points, [0,0,0])
+            sage: rdeg == P.row_degrees()
+            True
+            sage: P.is_weak_popov(ordered=True)
+            True
+            sage: G = P*F
+            sage: G[:,0] % mod1 == 0 and G[:,1] % mod2 == 0
             True
 
-        The returned list is the shifted row degrees of ``appbas``::
-
-            sage: rdeg == appbas.row_degrees(shifts)
+        For "sufficiently generic" input, the fact that the returned matrix
+        generates the module of interpolants is equivalent to the fact that its
+        determinant is the product of linear factors defined by the
+        interpolation points::
+            
+            sage: P.det() == mod1 * mod2
             True
 
-        Approximant bases for the zero matrix are all constant unimodular
+            sage: points[1] = []
+            sage: shifts = [-1, 2, 0]
+            sage: P, rdeg = F._interpolant_basis_iterative(points, shifts)
+            sage: rdeg == P.row_degrees(shifts=shifts)
+            True
+            sage: P.is_weak_popov(shifts=shifts, ordered=True)
+            True
+            sage: G = P*F
+            sage: G[:,0] % mod1 == 0 and P.det() == mod1
+            True
+
+        Interpolant bases for the zero matrix are all constant unimodular
         matrices; in fact, this algorithm returns the identity::
 
-            sage: pmat = Matrix(pR, 3, 2)
-            sage: appbas,rdeg = pmat._approximant_basis_iterative([2,5],
-            ....:                                                 [5,0,-4])
-            sage: rdeg == [5,0,-4] and appbas == Matrix.identity(pR, 3)
+            sage: F = matrix(xring, 4, 2)
+            sage: P,rdeg = F._interpolant_basis_iterative(points, shifts)
+            sage: rdeg == shifts and P == 1
             True
         """
         from sage.matrix.constructor import matrix  # for identity
-        from copy import deepcopy
+        from copy import copy
         m, n = self.dimensions()
 
-        # 'rem_order': the orders that remains to be dealt with
-        # 'rem_index': indices of orders that remains to be dealt with
-        rem_order = deepcopy(points)
-        rem_index = list(range(n))
+        # 'rem_points': the points that remain to be dealt with
+        # 'rem_index': indices of lists of points that remain to be dealt with
+        rem_points = [copy(pts) for pts in points if len(pts) > 0]
+        rem_index = [j for j in range(n) if len(points[j]) > 0]
 
-        # initialization of the residuals (= input self)
-        # and of the approximant basis (= identity matrix)
-        appbas = matrix.identity(self.base_ring(), m)
-        residuals = self.__copy__()
+        # initialization of the residuals (= input self, without columns associated to no point)
+        # and of the interpolant basis (= identity matrix)
+        intbas = matrix.identity(self.base_ring(), m)
+        residuals = self.matrix_from_columns(rem_index)
 
-        # throughout the algorithm, 'rdeg' will be the shifts-row degrees of
-        # 'appbas'
+        # throughout the algorithm, 'rdeg' is the shifts-row degrees of 'intbas'
         # --> initially, 'rdeg' is the shift-row degree of the identity matrix
-        rdeg = list(shifts)
+        rdeg = [s for s in shifts]
 
-        while rem_order:
+        while rem_points:
             # invariant:
-            #   * appbas is a shifts-ordered weak Popov approximant basis for
-            #   (self,doneorder)
-            #   where doneorder = the already processed order, that is, the
-            #   tuple order-rem_order (entrywise subtraction)
-            #   * rdeg is the shifts-row degree of appbas
-            #   * residuals is the submatrix of columns (appbas * self)[:,j]
-            #   for all j such that rem_order[j] > 0
+            #   * intbas is a shifts-ordered weak Popov interpolant basis for
+            #   self and the already processed points
+            #   * rdeg is the shifts-row degree of intbas
+            #   * residuals is the submatrix of columns
+            #        (intbas * self)[:,j] / prod_i(x - points[j][i])
+            #   for all j in rem_index and where i goes through the already
+            #   processed points from points[j]
 
-            # choice for the next coefficient to be dealt with: first of the
-            # largest entries in order (--> process 'self' degree-wise, and
-            # left to right)
-            # Note: one may also consider the first one in order (--> process
-            # 'self' columnwise, from left column to right column, set j=0
-            # instead of the below), but it seems to often be (barely) slower
-            max_rem_order = max(rem_order)
-            for ind, value in enumerate(rem_order):
-                if value == max_rem_order:
+            # choice for the next point to be dealt with: last point of the
+            # list points[j] that has largest length
+            # Note: one may also consider a point of points[j] for the smallest
+            # possible j (--> roughly, set j=0 instead of the below), but it
+            # seems to often be (a bit) slower
+            max_rem_points = max(len(pts) for pts in rem_points)
+            for ind, pts in enumerate(rem_points):
+                if len(pts) == max_rem_points:
                     j = ind
                     break
-            d = points[rem_index[j]] - rem_order[j]
+            pt = rem_points[j].pop()
 
-            # coefficient = the coefficient of degree d of the column j of the
-            # residual matrix
+            # evals = the evaluations at pt of the column j of the residual matrix
             # --> this is very likely nonzero and we want to make it zero, so
-            # that this column becomes zero mod x^{d+1}
-            coefficient = [residuals[i, j][d] for i in range(m)]
+            # that this column becomes zero mod (x - pt)
+            evals = [residuals[i, j](pt) for i in range(m)]
 
-            # Lambda: collect rows [i] with nonzero coefficient[i]
-            # pi: index of the first row with smallest shift, among those in
-            # Lambda
+            # Lambda: collect rows [i] with nonzero evals[i]
+            # pi: index of the first row with smallest shift, among those in Lambda
             Lambda = []
             pi = -1
             for i in range(m):
-                if coefficient[i] != 0:
+                if evals[i] != 0:
                     Lambda.append(i)
                     if pi < 0 or rdeg[i] < rdeg[pi]:
                         pi = i
@@ -3900,26 +3915,26 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 # update all rows in Lambda--{pi}
                 Lambda.remove(pi)
                 for row in Lambda:
-                    scalar = -coefficient[row]/coefficient[pi]
-                    appbas.add_multiple_of_row(row, pi, scalar)
+                    scalar = -evals[row]/evals[pi]
+                    intbas.add_multiple_of_row(row, pi, scalar)
                     residuals.add_multiple_of_row(row, pi, scalar)
-                # update row pi: multiply by x
+                # update row pi: multiply by x - pt
                 rdeg[pi] += 1
-                for jj in range(m):
-                    appbas[pi, jj] = appbas[pi, jj].shift(1)
-                for jj in range(residuals.ncols()):
-                    residuals[pi, jj] = residuals[pi, jj].shift(1)
+                x = self.base_ring().gen()
+                intbas.rescale_row(pi, x - pt)
+                residuals.rescale_row(pi, x - pt)
+                # divide residual column by x - pt
+                for i in range(m):
+                    residuals[i, j] = residuals[i, j] // (x - pt)
 
-            # Decrement rem_order[j], unless there is no more work to do in
-            # this column (i.e. if rem_order[j] was 1) in which case
-            # remove the column j of residual,rem_order,rem_index
-            if rem_order[j] == 1:
+            # If rem_points[j] is now empty, there is no more work to do in
+            # this column: remove column j of residual,rem_points,rem_index
+            if len(rem_points[j]) == 0:
                 residuals = residuals.delete_columns([j])
-                rem_order.pop(j)
+                rem_points.pop(j)
                 rem_index.pop(j)
-            else:
-                rem_order[j] -= 1
-        return appbas, rdeg
+
+        return intbas, rdeg
 
 
     def is_minimal_kernel_basis(self,
