@@ -78,23 +78,6 @@ jobs:
       # so that runners are available by the time that "default" starts.
       max_parallel: 50
 
-  standard-constraints_pkgs-norequirements:
-    # Turned off since it fails for all systems
-    if: false
-    needs: [standard]
-    uses: ./.github/workflows/docker.yml
-    with:
-      tox_packages_factors: >-
-          ["standard"]
-      free_disk_space: true
-      incremental: true
-      from_docker_repository: ghcr.io/${{ github.repository }}/
-      from_docker_target: "with-targets-pre"
-      docker_targets: "with-targets-pre"
-      targets_pre: all-sage-local python3-ensure tox-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements
-      logs_artifact_postfix: "-constraints_pkgs"
-      max_parallel: 15
-
   standard-sitepackages:
     if: ${{ success() || failure() }}
     needs: [standard]
@@ -130,6 +113,23 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
       logs_artifact_postfix: "-sitepackages"
       max_parallel: 8
+
+  standard-constraints_pkgs-norequirements:
+    # Turned off since it fails for all systems
+    if: false
+    needs: [standard-sitepackages]
+    uses: ./.github/workflows/docker.yml
+    with:
+      tox_packages_factors: >-
+          ["standard"]
+      free_disk_space: true
+      incremental: true
+      from_docker_repository: ghcr.io/${{ github.repository }}/
+      from_docker_target: "with-targets-pre"
+      docker_targets: "with-targets-pre"
+      targets_pre: all-sage-local python3-ensure tox-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements
+      logs_artifact_postfix: "-constraints_pkgs"
+      max_parallel: 15
 
   minimal:
     if: ${{ success() || failure() }}
