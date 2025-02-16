@@ -3696,12 +3696,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             True
         """
         from sage.matrix.constructor import matrix  # for identity
-        from copy import copy
         m, n = self.dimensions()
 
         # 'rem_order': the orders that remains to be dealt with
         # 'rem_index': indices of orders that remains to be dealt with
-        rem_order = copy(order)
+        rem_order = [o for o in order]
         rem_index = list(range(n))
 
         # initialization of the residuals (= input self)
