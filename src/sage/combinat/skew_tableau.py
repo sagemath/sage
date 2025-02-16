@@ -1042,10 +1042,10 @@ class SkewTableau(ClonableList,
             # -1, which doesn't trigger the conditional
             if P_left > P_up:
                 new_st[i][j] = P_left
-                i, j = (i, j - 1)
+                j = j - 1
             else:  # if they are equal, we slide up
                 new_st[i][j] = P_up
-                i, j = (i - 1, j)
+                i = i - 1
         # We don't need to reset the intermediate cells inside the loop
         # because the conditional above will continue to overwrite it until
         # the while loop terminates. We do need to reset it at the end.

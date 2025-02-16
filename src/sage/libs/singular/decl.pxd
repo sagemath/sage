@@ -152,6 +152,7 @@ cdef extern from "singular/Singular/libsingular.h":
         void (*cfNormalize)(number* a,  const n_Procs_s* r)
 
         bint (*cfDivBy)(number* a, number* b, const n_Procs_s* r)
+        bint (*cfGreater)(number* a, number* b, const n_Procs_s* )
         bint (*cfEqual)(number* a,number* b, const n_Procs_s* )
         bint (*cfIsZero)(number* a, const n_Procs_s* ) # algebraic number comparison with zero
         bint (*cfIsOne)(number* a, const n_Procs_s* )  # algebraic number comparison with one

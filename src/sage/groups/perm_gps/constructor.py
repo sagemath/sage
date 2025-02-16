@@ -28,7 +28,7 @@ from sage.libs.gap.element import GapElement_Permutation
 lazy_import('sage.combinat.permutation', ['Permutation', 'from_cycles'])
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 

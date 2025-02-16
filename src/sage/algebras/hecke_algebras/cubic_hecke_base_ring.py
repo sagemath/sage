@@ -1334,7 +1334,7 @@ class CubicHeckeRingOfDefinition(Localization):
                       From: Multivariate Polynomial Ring in u, v, w, s
                             over Integer Ring localized at (s, w, v, u)
                       To:   Multivariate Polynomial Ring in L, M
-                            over Integer Ring localized at (M, M - 1, L)
+                            over Integer Ring localized at (M - 1, M, L)
                       Defn: u |--> -M + 1
                             v |--> -M + 1
                             w |--> 1
@@ -1342,7 +1342,7 @@ class CubicHeckeRingOfDefinition(Localization):
                     then
                       Conversion map:
                       From: Multivariate Polynomial Ring in L, M
-                            over Integer Ring localized at (M, M - 1, L)
+                            over Integer Ring localized at (M - 1, M, L)
                       To:   Multivariate Laurent Polynomial Ring in L, M
                             over Integer Ring
             sage: sup = mt.support()

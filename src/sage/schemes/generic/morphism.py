@@ -248,12 +248,14 @@ class SchemeMorphism(Element):
             try:
                 return self.pushforward(x, *args, **kwds)
             except (AttributeError, TypeError, NotImplementedError):
-                pass # raise TypeError, "%s must be coercible into %s"%(x, self.domain())
+                # raise TypeError("%s must be coercible into %s" % (x, self.domain()))
+                pass
+
             # Here, we would like to do
             ##try:
             ##    x = D(x).
             ##except (TypeError, NotImplementedError):
-            ##    raise TypeError, "%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(x, self.domain())
+            ##    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (x, self.domain()))
             # However, this would involve a test whether x.codomain() ==
             # self. This would trigger a Groebner basis computation, that
             # (1) could be slow and (2) could involve an even slower toy

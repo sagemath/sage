@@ -1227,8 +1227,8 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                             to_test.extend((hp, j) for j in Ip)
                         cosets[Ip].append(frozenset(H))
                 verts = {}
-                for Ip in cosets:
-                    for C in cosets[Ip]:
+                for Ip, cosetsIp in cosets.items():
+                    for C in cosetsIp:
                         verts[C, Ip] = len(verts)
                 facets = [[verts[k] for k in verts if g in k[0]] for g in self]
                 from sage.topology.simplicial_complex import SimplicialComplex

@@ -317,7 +317,7 @@ from sage.combinat.combinatorial_map import combinatorial_map
 lazy_import('sage.combinat.skew_partition', 'SkewPartition')
 lazy_import('sage.combinat.partition_tuple', 'PartitionTuple')
 lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
 lazy_import("sage.symbolic.ring", "var")
 
@@ -2720,7 +2720,7 @@ class Partition(CombinatorialElement):
                     exp += 1
                     continue
                 res = [n - leng - 1]
-                res.extend([i - 1 for i in ret._list if i > 1])
+                res.extend(i - 1 for i in ret._list if i > 1)
                 ret = Partition(res)
                 exp += 1
         return ret
@@ -3066,7 +3066,7 @@ class Partition(CombinatorialElement):
         gens = []
         m = 0
         for row in self:
-            gens.extend([(c, c+1) for c in range(m+1, m+row)])
+            gens.extend((c, c + 1) for c in range(m + 1, m + row))
             m += row
         gens.append(list(range(1, self.size() + 1)))  # to ensure we get a subgroup of Sym_n
         return PermutationGroup(gens)

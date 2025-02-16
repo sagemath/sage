@@ -712,8 +712,8 @@ def add_page_context(app, pagename, templatename, context, doctree):
             # source files are generated.
             suffix = '.py' if importlib.import_module(pagename.replace('/','.')).__file__.endswith('.py') else '.pyx'
             context['page_source_suffix'] = suffix
-            context['theme_source_view_link'] = os.path.join(source_repository, f'blob/develop/src', '{filename}')
-            context['theme_source_edit_link'] = os.path.join(source_repository, f'edit/develop/src', '{filename}')
+            context['theme_source_view_link'] = os.path.join(source_repository, 'blob/develop/src', '{filename}')
+            context['theme_source_edit_link'] = os.path.join(source_repository, 'edit/develop/src', '{filename}')
 
 
 dangling_debug = False

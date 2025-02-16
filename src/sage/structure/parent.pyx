@@ -2863,17 +2863,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef bint is_exact(self) except -2:
         """
-        Test whether the ring is exact.
+        Test whether elements of this parent are represented exactly.
 
         .. NOTE::
 
             This defaults to true, so even if it does return ``True``
-            you have no guarantee (unless the ring has properly
+            you have no guarantee (unless the parent has properly
             overloaded this).
 
         OUTPUT:
 
-        Return ``True`` if elements of this ring are represented exactly, i.e.,
+        Return ``True`` if elements of this parent are represented exactly, i.e.,
         there is no precision loss when doing arithmetic.
 
         EXAMPLES::

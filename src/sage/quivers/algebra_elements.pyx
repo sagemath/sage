@@ -266,9 +266,10 @@ cdef class PathAlgebraElement(RingElement):
             sage: X         # indirect doctest
             5*e_0 + a + 2*b + 3*c + 3*e_2
         """
+        parent = self._parent
         return repr_lincomb(self._sorted_items_for_printing(), strip_one=True,
-            scalar_mult=self.parent()._print_options['scalar_mult'],
-            repr_monomial=self._parent._repr_monomial)
+                            scalar_mult=parent._print_options['scalar_mult'],
+                            repr_monomial=parent._repr_monomial)
 
     def _latex_(self):
         r"""
@@ -283,11 +284,12 @@ cdef class PathAlgebraElement(RingElement):
             sage: latex(X*X)
             10 e_0 + 3 a\cdot c + 5 a + b + 3 c\cdot a + 6 c\cdot b + 9 e_2
         """
+        parent = self._parent
         return repr_lincomb(self._sorted_items_for_printing(),
-            scalar_mult=self.parent()._print_options['scalar_mult'],
-            latex_scalar_mult=self.parent()._print_options['latex_scalar_mult'],
-            repr_monomial=self._parent._latex_monomial,
-            is_latex=True, strip_one=True)
+                            scalar_mult=parent._print_options['scalar_mult'],
+                            latex_scalar_mult=parent._print_options['latex_scalar_mult'],
+                            repr_monomial=parent._latex_monomial,
+                            is_latex=True, strip_one=True)
 
     # Basic properties
 
