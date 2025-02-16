@@ -3704,13 +3704,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # 'rem_order': the orders that remains to be dealt with
         # 'rem_index': indices of orders that remains to be dealt with
-        rem_order = [o for o in order]
-        rem_index = list(range(n))
+        rem_order = [d for d in order if d > 0]
+        rem_index = [j for j in range(n) if order[j] > 0]
 
-        # initialization of the residuals (= input self)
+        # initialization of the residuals (= input self, without columns with zero order)
         # and of the approximant basis (= identity matrix)
         appbas = matrix.identity(self.base_ring(), m)
-        residuals = self.__copy__()
+        residuals = self.matrix_from_columns(rem_index)
 
         # throughout the algorithm, 'rdeg' is the shifts-row degrees of 'appbas'
         # --> initially, 'rdeg' is the shift-row degree of the identity matrix
