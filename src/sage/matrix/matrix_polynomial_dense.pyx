@@ -48,7 +48,6 @@ from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 from sage.rings.integer_ring import ZZ
 
-
 cdef class Matrix_polynomial_dense(Matrix_generic_dense):
     r"""
     Dense matrix over a univariate polynomial ring over a field.
@@ -846,7 +845,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         the fact that no such solution exists.
 
         EXAMPLES::
-
 
             sage: pR.<x> = GF(7)[]
             sage: A = Matrix(pR, 3, 3,
@@ -4296,7 +4294,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             return kbas[:m,:m]
         else:
             return kbas[:n,:n]
-
 
     def _basis_completion_via_reversed_approx(self):
         r"""
