@@ -4154,7 +4154,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         We check that the issue in PR #37208 is fixed::
 
-            sage: Matrix(pR, 2, 0).minimal_kernel_basis().is_sparse()
+            sage: matrix(pR, 2, 0).minimal_kernel_basis().is_sparse()
             False
         """
         from sage.matrix.constructor import matrix
@@ -4190,17 +4190,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # orders for approximation
             orders = self.column_degrees(degree_bounds)
             for i in range(n): orders[i] = orders[i]+1
-
-            # note: minimal_approximant_basis requires orders[i] > 0
+            # note:
             # -> if d>0, then degree_bounds > 0 entry-wise and this tuple
-            # `orders` already has all entries strictly positive
-            # -> if d==0, then `orders[i]` is zero exactly when the column i
-            # of self is zero; we may as well take orders[i] == 1 for such
-            # columns which do not influence the left kernel
-            if d == 0:
-                for i in range(n):
-                    if orders[i] == 0:
-                        orders[i] = 1
+            # `orders` has all entries strictly positive
+            # -> if d==0, then `orders[i]` is zero exactly when the column i of
+            # self is zero; such columns which do not influence the left kernel
 
             # compute approximant basis and retrieve kernel rows
             P = self.minimal_approximant_basis(orders,shifts,True,normal_form)
