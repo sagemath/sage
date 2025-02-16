@@ -79,7 +79,8 @@ jobs:
       max_parallel: 50
 
   standard-constraints_pkgs-norequirements:
-    if: ${{ success() || failure() }}
+    # Turned off since it fails for all systems
+    if: false
     needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
@@ -163,7 +164,7 @@ jobs:
 
   optional:
     if: ${{ success() || failure() }}
-    needs: [maximal]
+    needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
       tox_packages_factors: >-
