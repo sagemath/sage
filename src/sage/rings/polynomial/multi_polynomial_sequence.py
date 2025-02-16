@@ -962,7 +962,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         REFERENCES:
 
-        [Mac1902]_, [BFS2015]_
+        [Mac1902]_, Chapter 1 of [Mac1916]_
         """
         from sage.matrix.constructor import matrix
 
