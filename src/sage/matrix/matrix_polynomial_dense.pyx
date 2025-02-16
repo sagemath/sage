@@ -3467,12 +3467,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         this polynomial matrix at order ``order``.
 
         Assuming we work row-wise, if `F` is an `m \times n` polynomial matrix
-        and `(d_0,\ldots,d_{n-1})` are positive integers, then an approximant
-        basis for `F` at order `(d_0,\ldots,d_{n-1})` is a polynomial matrix
-        whose rows form a basis of the module of approximants for `F` at order
+        and `(d_0,\ldots,d_{n-1})` are integers, then an approximant basis for
+        `F` at order `(d_0,\ldots,d_{n-1})` is a polynomial matrix whose rows
+        form a basis of the module of approximants for `F` at order
         `(d_0,\ldots,d_{n-1})`. The latter approximants are the polynomial
         vectors `p` of size `m` such that the column `j` of `p F` has valuation
-        at least `d_j`, for all `0 \le j \le n-1`.
+        at least `d_j`, for all `0 \le j \le n-1` (for `j` such that `d_j \le
+        0`, this constraint is void.)
 
         If ``normal_form`` is ``True``, then the output basis `P` is
         furthermore in ``shifts``-Popov form. By default, `P` is considered
@@ -3492,7 +3493,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``order`` -- list of positive integers, or a positive integer
+        - ``order`` -- list of integers, or an integer
 
         - ``shifts`` -- (default: ``None``) list of integers;
           ``None`` is interpreted as ``shifts=[0,...,0]``
@@ -3568,13 +3569,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             Traceback (most recent call last):
             ...
             ValueError: shifts length should be the row dimension
-
-        An error is raised if order does not contain only positive integers::
-
-            sage: P = F.minimal_approximant_basis([1,0], shifts)
-            Traceback (most recent call last):
-            ...
-            ValueError: order should consist of positive integers
         """
         m = self.nrows()
         n = self.ncols()
@@ -3596,10 +3590,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         elif (not row_wise) and len(order) != m:
             raise ValueError("order length should be the row dimension")
 
-        for o in order:
-            if o < 1:
-                raise ValueError("order should consist of positive integers")
-
         # compute approximant basis
         # if required, normalize it into shifted Popov form
         if row_wise:
@@ -3610,21 +3600,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 # Note: -deg(P[i,i]) = shifts[i] - rdeg[i]
                 degree_shifts = [shifts[i] - rdeg[i] for i in range(m)]
                 # compute approximant basis with that list as shifts
-                P,rdeg = self._approximant_basis_iterative(order,
-                        degree_shifts)
+                P,rdeg = self._approximant_basis_iterative(order, degree_shifts)
                 # left-multiply by inverse of leading matrix
                 lmat = P.leading_matrix(shifts=degree_shifts)
                 P = lmat.inverse() * P
         else:
-            P,rdeg = self.transpose()._approximant_basis_iterative(order,
-                    shifts)
+            P,rdeg = self.transpose()._approximant_basis_iterative(order, shifts)
             if normal_form:
                 # compute the list "- pivot degree"
                 # (since weak Popov, pivot degree is rdeg-shifts entrywise)
                 degree_shifts = [shifts[i] - rdeg[i] for i in range(n)]
                 # compute approximant basis with that list as shifts
-                P, rdeg = self.transpose()._approximant_basis_iterative(
-                    order, degree_shifts)
+                P, rdeg = self.T._approximant_basis_iterative(order, degree_shifts)
                 P = P.transpose()
                 # right-multiply by inverse of leading matrix
                 lmat = P.leading_matrix(shifts=degree_shifts, row_wise=False)
@@ -3637,8 +3624,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
     def _approximant_basis_iterative(self, order, shifts):
         r"""
         Return a ``shifts``-ordered weak Popov approximant basis for this
-        polynomial matrix at order ``order``
-        (see :meth:`minimal_approximant_basis` for definitions).
+        polynomial matrix at order ``order`` (see
+        :meth:`minimal_approximant_basis` for definitions).
 
         The output basis is considered row-wise, that is, its rows are
         left-approximants for the columns of ``self``. It is guaranteed that
@@ -3651,7 +3638,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``order`` -- list of positive integers
+        - ``order`` -- list of integers
 
         - ``shifts`` -- list of integers
 
@@ -3683,12 +3670,17 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: rdeg == P.row_degrees(shifts)
             True
 
-        Zero orders are supported:
+        Zero or negative orders are supported::
+
             sage: order = [4, 0, 2]; shifts = [3, -1]
             sage: P, rdeg = pmat._approximant_basis_iterative(order, shifts)
             sage: P.is_minimal_approximant_basis(pmat, order, shifts)
             True
             sage: rdeg == P.row_degrees(shifts)
+            True
+            sage: order = [4, -3, 2]; shifts = [3, -1]
+            sage: P2, rdeg = pmat._approximant_basis_iterative(order, shifts)
+            sage: P == P2
             True
 
         Approximant bases for the zero matrix are all constant unimodular
@@ -3838,7 +3830,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         generates the module of interpolants is equivalent to the fact that its
         determinant is the product of linear factors defined by the
         interpolation points::
-            
+
             sage: P.det() == mod1 * mod2
             True
 
