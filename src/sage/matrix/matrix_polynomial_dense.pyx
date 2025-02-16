@@ -4137,7 +4137,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         return intbas, rdeg
 
-
     def is_minimal_kernel_basis(self,
             pmat,
             shifts=None,
