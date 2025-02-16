@@ -2175,8 +2175,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         one = R.one()
 
         if transformation:
-            from sage.matrix.constructor import identity_matrix
-            U = identity_matrix(R, m)
+            from sage.matrix.constructor import matrix
+            U = matrix.identity(R, m)
 
         # initialise to_row and conflicts list
         to_row = [[] for i in range(n)]
@@ -3695,11 +3695,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: rdeg == [5,0,-4] and appbas == Matrix.identity(pR, 3)
             True
         """
-        # Define parameters and perform some sanity checks
-        m = self.nrows()
-        n = self.ncols()
-        polynomial_ring = self.base_ring()
-        X = polynomial_ring.gen()
+        from sage.matrix.constructor import matrix
+        m, n = self.dimensions()
 
         # 'rest_order': the orders that remains to be dealt with
         # 'rest_index': indices of orders that remains to be dealt with
@@ -3708,8 +3705,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         # initialization of the residuals (= input self)
         # and of the approximant basis (= identity matrix)
-        from sage.matrix.constructor import identity_matrix
-        appbas = identity_matrix(polynomial_ring, m)
+        appbas = matrix.identity(self.base_ring(), m)
         residuals = self.__copy__()
 
         # throughout the algorithm, 'rdeg' will be the shifts-row degrees of
@@ -3743,7 +3739,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # coefficient = the coefficient of degree d of the column j of the
             # residual matrix
             # --> this is very likely nonzero and we want to make it zero, so
-            # that this column becomes zero mod X^{d+1}
+            # that this column becomes zero mod x^{d+1}
             coefficient = [residuals[i, j][d] for i in range(m)]
 
             # Lambda: collect rows [i] with nonzero coefficient[i]
@@ -3763,15 +3759,16 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                     scalar = -coefficient[row]/coefficient[pi]
                     appbas.add_multiple_of_row(row, pi, scalar)
                     residuals.add_multiple_of_row(row, pi, scalar)
-                # update row pi
+                # update row pi: multiply by x
                 rdeg[pi] += 1
-                appbas.rescale_row(pi, X)
-                residuals.rescale_row(pi, X)
+                for jj in range(m):
+                    appbas[pi, jj] = appbas[pi, jj].shift(1)
+                for jj in range(residuals.ncols()):
+                    residuals[pi, jj] = residuals[pi, jj].shift(1)
 
             # Decrement rest_order[j], unless there is no more work to do in
-            # this column, i.e. if rest_order[j] was 1:
-            # in this case remove the column j of
-            # residual,rest_order,rest_index
+            # this column (i.e. if rest_order[j] was 1) in which case
+            # remove the column j of residual,rest_order,rest_index
             if rest_order[j] == 1:
                 residuals = residuals.delete_columns([j])
                 rest_order.pop(j)
