@@ -3558,6 +3558,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:      3, row_wise=False).transpose())
             True
 
+        Zero or negative order entries are supported, and amount to forgetting
+        the corresponding column of ``self`` (or row, if column-wise)::
+
+            sage: P = F.minimal_approximant_basis([4, 0, 3], row_wise=False)
+            sage: P == F.minimal_approximant_basis([4, -2, 3], row_wise=False)
+            True
+            sage: P == F[[0,2],:].minimal_approximant_basis([4,3], row_wise=False)
+            True
+
         Errors are raised if the input dimensions are not sound::
 
             sage: P = F.minimal_approximant_basis([4], shifts)
