@@ -3698,10 +3698,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         from sage.matrix.constructor import matrix
         m, n = self.dimensions()
 
-        # 'rest_order': the orders that remains to be dealt with
-        # 'rest_index': indices of orders that remains to be dealt with
-        rest_order = list(order)
-        rest_index = list(range(n))
+        # 'rem_order': the orders that remains to be dealt with
+        # 'rem_index': indices of orders that remains to be dealt with
+        rem_order = list(order)
+        rem_index = list(range(n))
 
         # initialization of the residuals (= input self)
         # and of the approximant basis (= identity matrix)
@@ -3713,15 +3713,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # --> initially, 'rdeg' is the shift-row degree of the identity matrix
         rdeg = list(shifts)
 
-        while rest_order:
+        while rem_order:
             # invariant:
             #   * appbas is a shifts-ordered weak Popov approximant basis for
             #   (self,doneorder)
             #   where doneorder = the already processed order, that is, the
-            #   tuple order-rest_order (entrywise subtraction)
+            #   tuple order-rem_order (entrywise subtraction)
             #   * rdeg is the shifts-row degree of appbas
             #   * residuals is the submatrix of columns (appbas * self)[:,j]
-            #   for all j such that rest_order[j] > 0
+            #   for all j such that rem_order[j] > 0
 
             # choice for the next coefficient to be dealt with: first of the
             # largest entries in order (--> process 'self' degree-wise, and
@@ -3729,12 +3729,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # Note: one may also consider the first one in order (--> process
             # 'self' columnwise, from left column to right column, set j=0
             # instead of the below), but it seems to often be (barely) slower
-            max_rest_order = max(rest_order)
-            for ind, value in enumerate(rest_order):
-                if value == max_rest_order:
+            max_rem_order = max(rem_order)
+            for ind, value in enumerate(rem_order):
+                if value == max_rem_order:
                     j = ind
                     break
-            d = order[rest_index[j]] - rest_order[j]
+            d = order[rem_index[j]] - rem_order[j]
 
             # coefficient = the coefficient of degree d of the column j of the
             # residual matrix
@@ -3766,15 +3766,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 for jj in range(residuals.ncols()):
                     residuals[pi, jj] = residuals[pi, jj].shift(1)
 
-            # Decrement rest_order[j], unless there is no more work to do in
-            # this column (i.e. if rest_order[j] was 1) in which case
-            # remove the column j of residual,rest_order,rest_index
-            if rest_order[j] == 1:
+            # Decrement rem_order[j], unless there is no more work to do in
+            # this column (i.e. if rem_order[j] was 1) in which case
+            # remove the column j of residual,rem_order,rem_index
+            if rem_order[j] == 1:
                 residuals = residuals.delete_columns([j])
-                rest_order.pop(j)
-                rest_index.pop(j)
+                rem_order.pop(j)
+                rem_index.pop(j)
             else:
-                rest_order[j] -= 1
+                rem_order[j] -= 1
         return appbas, rdeg
 
     def _interpolant_basis_iterative(self, points, shifts):
@@ -3806,8 +3806,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         ALGORITHM:
 
-        This is inspired from the iterative algorithms described in [VBB1992]_
-        and [Bec1992]_ .
+        This is inspired from the iterative algorithms described in [Bec1992]_
+        and [VBB1992]_ .
 
         EXAMPLES::
 
@@ -3841,10 +3841,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         from sage.matrix.constructor import matrix
         m, n = self.dimensions()
 
-        # 'rest_order': the orders that remains to be dealt with
-        # 'rest_index': indices of orders that remains to be dealt with
-        rest_order = list(order)
-        rest_index = list(range(n))
+        # 'rem_order': the orders that remains to be dealt with
+        # 'rem_index': indices of orders that remains to be dealt with
+        rem_order = list(order)
+        rem_index = list(range(n))
 
         # initialization of the residuals (= input self)
         # and of the approximant basis (= identity matrix)
@@ -3856,15 +3856,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # --> initially, 'rdeg' is the shift-row degree of the identity matrix
         rdeg = list(shifts)
 
-        while rest_order:
+        while rem_order:
             # invariant:
             #   * appbas is a shifts-ordered weak Popov approximant basis for
             #   (self,doneorder)
             #   where doneorder = the already processed order, that is, the
-            #   tuple order-rest_order (entrywise subtraction)
+            #   tuple order-rem_order (entrywise subtraction)
             #   * rdeg is the shifts-row degree of appbas
             #   * residuals is the submatrix of columns (appbas * self)[:,j]
-            #   for all j such that rest_order[j] > 0
+            #   for all j such that rem_order[j] > 0
 
             # choice for the next coefficient to be dealt with: first of the
             # largest entries in order (--> process 'self' degree-wise, and
@@ -3872,12 +3872,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # Note: one may also consider the first one in order (--> process
             # 'self' columnwise, from left column to right column, set j=0
             # instead of the below), but it seems to often be (barely) slower
-            max_rest_order = max(rest_order)
-            for ind, value in enumerate(rest_order):
-                if value == max_rest_order:
+            max_rem_order = max(rem_order)
+            for ind, value in enumerate(rem_order):
+                if value == max_rem_order:
                     j = ind
                     break
-            d = order[rest_index[j]] - rest_order[j]
+            d = order[rem_index[j]] - rem_order[j]
 
             # coefficient = the coefficient of degree d of the column j of the
             # residual matrix
@@ -3909,15 +3909,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 for jj in range(residuals.ncols()):
                     residuals[pi, jj] = residuals[pi, jj].shift(1)
 
-            # Decrement rest_order[j], unless there is no more work to do in
-            # this column (i.e. if rest_order[j] was 1) in which case
-            # remove the column j of residual,rest_order,rest_index
-            if rest_order[j] == 1:
+            # Decrement rem_order[j], unless there is no more work to do in
+            # this column (i.e. if rem_order[j] was 1) in which case
+            # remove the column j of residual,rem_order,rem_index
+            if rem_order[j] == 1:
                 residuals = residuals.delete_columns([j])
-                rest_order.pop(j)
-                rest_index.pop(j)
+                rem_order.pop(j)
+                rem_index.pop(j)
             else:
-                rest_order[j] -= 1
+                rem_order[j] -= 1
         return appbas, rdeg
 
 
