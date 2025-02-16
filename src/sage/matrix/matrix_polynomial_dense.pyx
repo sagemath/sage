@@ -3676,23 +3676,21 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: order = [4, 1, 2]; shifts = [-3, 4]
             sage: pmat = Matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5, 4],
             ....:                    [2*x^3 + 2*x^2 + 2*x + 3, 6, 6*x + 3]])
-            sage: appbas, rdeg = pmat._approximant_basis_iterative(order,
-            ....:                                                  shifts)
-            sage: appbas.is_minimal_approximant_basis(pmat, order, shifts)
+            sage: P, rdeg = pmat._approximant_basis_iterative(order, shifts)
+            sage: P.is_minimal_approximant_basis(pmat, order, shifts)
             True
 
-        The returned list is the shifted row degrees of ``appbas``::
+        The returned list is the shifted row degrees of the output basis::
 
-            sage: rdeg == appbas.row_degrees(shifts)
+            sage: rdeg == P.row_degrees(shifts)
             True
 
         Approximant bases for the zero matrix are all constant unimodular
         matrices; in fact, this algorithm returns the identity::
 
             sage: pmat = Matrix(pR, 3, 2)
-            sage: appbas,rdeg = pmat._approximant_basis_iterative([2,5],
-            ....:                                                 [5,0,-4])
-            sage: rdeg == [5,0,-4] and appbas == Matrix.identity(pR, 3)
+            sage: P,rdeg = pmat._approximant_basis_iterative([2,5], [5,0,-4])
+            sage: rdeg == [5,0,-4] and P == matrix.identity(pR, 3)
             True
         """
         from sage.matrix.constructor import matrix  # for identity
