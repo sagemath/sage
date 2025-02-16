@@ -3695,12 +3695,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: rdeg == [5,0,-4] and appbas == Matrix.identity(pR, 3)
             True
         """
-        from sage.matrix.constructor import matrix
+        from sage.matrix.constructor import matrix  # for identity
+        from copy import copy
         m, n = self.dimensions()
 
         # 'rem_order': the orders that remains to be dealt with
         # 'rem_index': indices of orders that remains to be dealt with
-        rem_order = list(order)
+        rem_order = copy(order)
         rem_index = list(range(n))
 
         # initialization of the residuals (= input self)
@@ -3728,7 +3729,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # left to right)
             # Note: one may also consider the first one in order (--> process
             # 'self' columnwise, from left column to right column, set j=0
-            # instead of the below), but it seems to often be (barely) slower
+            # instead of the below), but it seems to often be (a bit) slower
             max_rem_order = max(rem_order)
             for ind, value in enumerate(rem_order):
                 if value == max_rem_order:
@@ -3838,12 +3839,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: rdeg == [5,0,-4] and appbas == Matrix.identity(pR, 3)
             True
         """
-        from sage.matrix.constructor import matrix
+        from sage.matrix.constructor import matrix  # for identity
+        from copy import deepcopy
         m, n = self.dimensions()
 
         # 'rem_order': the orders that remains to be dealt with
         # 'rem_index': indices of orders that remains to be dealt with
-        rem_order = list(order)
+        rem_order = deepcopy(points)
         rem_index = list(range(n))
 
         # initialization of the residuals (= input self)
@@ -3877,7 +3879,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 if value == max_rem_order:
                     j = ind
                     break
-            d = order[rem_index[j]] - rem_order[j]
+            d = points[rem_index[j]] - rem_order[j]
 
             # coefficient = the coefficient of degree d of the column j of the
             # residual matrix
