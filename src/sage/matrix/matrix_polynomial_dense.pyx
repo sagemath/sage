@@ -31,7 +31,8 @@ AUTHORS:
 - Vincent Neiger (2024-02-13): added basis_completion(), _is_basis_completion(),
   _basis_completion_via_reversed_approx().
 
-- Vincent Neiger (2025-02-13): added minimal_relation_basis().
+- Vincent Neiger (2025-02-16): added minimal_relation_basis(),
+  minimal_interpolation_basis().
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
@@ -3464,7 +3465,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             normal_form=False):
         r"""
         Return an approximant basis in ``shifts``-ordered weak Popov form for
-        this polynomial matrix at order ``order``.
+        this polynomial matrix at order ``order``. This is a direct extension
+        of the so-called Hermite-Padé approximation, which corresponds to the
+        case where ``self`` is a single vector.
 
         Assuming we work row-wise, if `F` is an `m \times n` polynomial matrix
         and `(d_0,\ldots,d_{n-1})` are integers, then an approximant basis for
@@ -3473,7 +3476,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         `(d_0,\ldots,d_{n-1})`. The latter approximants are the polynomial
         vectors `p` of size `m` such that the column `j` of `p F` has valuation
         at least `d_j`, for all `0 \le j \le n-1` (for `j` such that `d_j \le
-        0`, this constraint is void.)
+        0`, this constraint is void).
 
         If ``normal_form`` is ``True``, then the output basis `P` is
         furthermore in ``shifts``-Popov form. By default, `P` is considered
@@ -3543,7 +3546,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         give a single integer::
 
             sage: (F.minimal_approximant_basis(3) ==
-            ....:  F.minimal_approximant_basis([3,3], shifts=None))
+            ....:  F.minimal_approximant_basis([3,3], shifts=[0,0,0]))
             True
 
         One can work column-wise by specifying ``row_wise=False``::
@@ -3558,7 +3561,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:      3, row_wise=False).transpose())
             True
 
-        Zero or negative order entries are supported, and amount to forgetting
+        Zero or negative order entries are supported, and amount to ignoring
         the corresponding column of ``self`` (or corresponding row, if column-wise)::
 
             sage: P = F.minimal_approximant_basis([4, 0, 3], row_wise=False)
@@ -3779,6 +3782,198 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 rem_order[j] -= 1
         return appbas, rdeg
 
+    def minimal_interpolant_basis(self,
+            points,
+            shifts=None,
+            row_wise=True,
+            normal_form=False):
+        r"""
+        Return an interpolant basis in ``shifts``-ordered weak Popov form for
+        this polynomial matrix with respect to the points in ``points``. This
+        is a general form of interpolation problems usually called M-Padé
+        approximation or vector rational interpolation.
+
+        Assuming we work row-wise, if `F` is an `m \times n` polynomial matrix
+        and `a_{i,j}, 0 \le i < d_j` are elements (called points) of the base
+        field for some integers `d_0,\ldots,d_{n-1}`, then an interpolant basis
+        for `F` with respect to these points is a polynomial matrix whose rows
+        form a basis of the module of interpolants for `F` with respect to the
+        points. The latter interpolants are the polynomial vectors `p` of size
+        `m` such that the column `j` of `p F` vanishes modulo `\mu_j = \prod_{0
+        \le i < d_j} (x - a_{i,j})` (that is, it vanishes at all points
+        `a_{i,j}`'s, with multiplicity in case of repeated points), for all `0
+        \le j \le n-1`. For `j` such that `d_j \le 0`, i.e. the `j`th list of
+        points is empty, this constraint on the column `j` is void.
+
+        If ``normal_form`` is ``True``, then the output basis `P` is
+        furthermore in ``shifts``-Popov form. By default, `P` is considered
+        row-wise, that is, its rows are left-interpolants for ``self``; if
+        ``row_wise`` is ``False`` then its columns are right-interpolants for
+        ``self``. It is guaranteed that the degree of the output basis is at
+        most `\deg(\lcm(\mu_j, 0 \le j < n))`, independently of ``shifts``.
+
+        An error is raised if the input dimensions are not sound: if working
+        row-wise (resp. column-wise), the length of ``points`` must be the
+        number of columns (resp. rows) of ``self``, while the length of
+        ``shifts`` must be the number of rows (resp. columns) of ``self``.
+
+        If a single list is provided for ``points``, then it is converted into
+        a list containing this list repeated the suitable number of times.
+
+        INPUT:
+
+        - ``points`` -- list of elements from the base field (or coercible into
+          it), of list of such lists
+
+        - ``shifts`` -- (default: ``None``) list of integers;
+          ``None`` is interpreted as ``shifts=[0,...,0]``
+
+        - ``row_wise`` -- boolean (default: ``True``); if ``True`` then the
+          output basis is considered row-wise and operates on the left of
+          ``self``. Otherwise it is column-wise and operates on the right of
+          ``self``.
+
+        - ``normal_form`` -- boolean (default: ``False``); if ``True`` then the
+          output basis is in ``shifts``-Popov form
+
+        OUTPUT: a polynomial matrix
+
+        ALGORITHM:
+
+        The implementation is inspired from the iterative algorithms described
+        in [Bec1992]_ and [VBB1992]_ ; for obtaining the normal form, it relies
+        directly on Lemmas 3.3 and 4.1 in [JNSV2016]_ .
+
+        EXAMPLES::
+
+            sage: ff = GF(7)
+            sage: xring.<x> = ff[]
+
+        This method supports any number of columns or rows, as well as
+        arbitrary shifts and lists of points::
+
+            sage: F = matrix([[5*x^3 + 4*x^2 + 4*x + 6, 5*x^3 + 5*x^2 +   5],
+            ....:             [2*x^3 + 2*x^2 + 2*x + 3, 3*x^3 +   6*x +   4],
+            ....:             [          x^2 + 6*x + 3, 5*x^3 + 2*x^2 + 3*x]])
+            sage: points = [[ff(3), ff(0), ff(6), ff(3)], [ff(1), ff(1), ff(1)]]
+            sage: mod1 = (x - 3) * x * (x - 6) * (x - 3)
+            sage: mod2 = (x - 1)**3
+
+            sage: P = F.minimal_interpolant_basis(points, shifts=[0,0,0])
+            sage: P.is_weak_popov(ordered=True)
+            True
+            sage: G = P*F
+            sage: G[:,0] % mod1 == 0 and G[:,1] % mod2 == 0
+            True
+            sage: P.det() == mod1 * mod2
+            True
+
+        The last test highlights that for "sufficiently generic" input, the
+        fact that the returned matrix generates the module of interpolants is
+        equivalent to the fact that its determinant is the product of the
+        linear factors defined by the interpolation points.
+
+        If shifts are not specified, they are chosen as uniform `[0,\ldots,0]`
+        by default. Besides, if the lists of points are all identical, one can
+        rather give a single list::
+
+            sage: P = F.minimal_interpolant_basis([points[0], points[0]])
+            sage: P == F.minimal_interpolant_basis(points[0], shifts=[0,0,0])
+            True
+
+        One can work column-wise by specifying ``row_wise=False``. Empty lists
+        of points are supported, and amount to ignoring the corresponding
+        column of ``self`` (or corresponding row, if column-wise)::
+
+            sage: points[1] = []
+            sage: shifts = [-1, 2, 0]
+            sage: Ft = F.transpose()
+            sage: P = Ft.minimal_interpolant_basis(points, shifts=shifts, row_wise=False)
+            sage: P == Ft[0,:].minimal_interpolant_basis([points[0]], shifts=shifts, row_wise=False)
+            True
+            sage: P.is_weak_popov(shifts=shifts, ordered=True, row_wise=False)
+            True
+            sage: G = Ft * P
+            sage: G[0,:] % mod1 == 0 and P.det() == mod1
+            True
+
+        Errors are raised if the input dimensions are not sound::
+
+            sage: P = F.minimal_interpolant_basis([points[0]])
+            Traceback (most recent call last):
+            ...
+            ValueError: points length should be the column dimension
+
+            sage: P = F.minimal_interpolant_basis(points, shifts=[0,0,0,0])
+            Traceback (most recent call last):
+            ...
+            ValueError: shifts length should be the row dimension
+        """
+        from sage.matrix.constructor import matrix  # for identity
+        from copy import copy
+
+        m = self.nrows()
+        n = self.ncols()
+
+        # set default shifts / check shifts dimension
+        if shifts is None:
+            shifts = [0] * m if row_wise else [0] * n
+        elif row_wise and len(shifts) != m:
+            raise ValueError('shifts length should be the row dimension')
+        elif (not row_wise) and len(shifts) != n:
+            raise ValueError('shifts length should be the column dimension')
+
+        # deal with corner case where there is no equation to solve
+        if row_wise and (n == 0 or len(points) == 0):
+            return matrix.identity(self.base_ring(), m)
+        elif (not row_wise) and (m == 0 or len(points) == 0):
+            return matrix.identity(self.base_ring(), n)
+
+        # thanks to the above corner case, from here on, points is a nonempty list
+        # if its entries are field elements, build full list of lists of points
+        if not isinstance(points[0], list):
+            if row_wise:
+                points = [copy(points) for j in range(n)]
+            else:
+                points = [copy(points) for i in range(m)]
+
+        # check length of points
+        if row_wise and len(points) != n:
+            raise ValueError("points length should be the column dimension")
+        elif (not row_wise) and len(points) != m:
+            raise ValueError("points length should be the row dimension")
+
+        # compute interpolant basis
+        # if required, normalize it into shifted Popov form
+        if row_wise:
+            P, rdeg = self._interpolant_basis_iterative(points, shifts)
+            if normal_form:
+                # compute the list "- pivot degree"
+                # (since weak Popov, pivot degree is rdeg-shifts entrywise)
+                # Note: -deg(P[i,i]) = shifts[i] - rdeg[i]
+                degree_shifts = [shifts[i] - rdeg[i] for i in range(m)]
+                # compute interpolant basis with that list as shifts
+                P, rdeg = self._interpolant_basis_iterative(points, degree_shifts)
+                # left-multiply by inverse of leading matrix
+                lmat = P.leading_matrix(shifts=degree_shifts)
+                P = lmat.inverse() * P
+        else:
+            P, rdeg = self.transpose()._interpolant_basis_iterative(points, shifts)
+            if normal_form:
+                # compute the list "- pivot degree"
+                # (since weak Popov, pivot degree is rdeg-shifts entrywise)
+                degree_shifts = [shifts[i] - rdeg[i] for i in range(n)]
+                # compute interpolant basis with that list as shifts
+                P, rdeg = self.T._interpolant_basis_iterative(points, degree_shifts)
+                P = P.transpose()
+                # right-multiply by inverse of leading matrix
+                lmat = P.leading_matrix(shifts=degree_shifts, row_wise=False)
+                P = P * lmat.inverse()
+            else:
+                P = P.transpose()
+
+        return P
+
     def _interpolant_basis_iterative(self, points, shifts):
         r"""
         Return a ``shifts``-ordered weak Popov interpolant basis for this
@@ -3794,7 +3989,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``points`` -- list of lists of elements from the base ring (or
+        - ``points`` -- list of lists of elements from the base field (or
           coercible into it)
 
         - ``shifts`` -- list of integers
@@ -3819,7 +4014,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         arbitrary shifts and lists of points. The returned list is the shifted
         row degrees of the interpolation basis::
 
-            sage: F = Matrix([[5*x^3 + 4*x^2 + 4*x + 6, 5*x^3 + 5*x^2 +   5],
+            sage: F = matrix([[5*x^3 + 4*x^2 + 4*x + 6, 5*x^3 + 5*x^2 +   5],
             ....:             [2*x^3 + 2*x^2 + 2*x + 3, 3*x^3 +   6*x +   4],
             ....:             [          x^2 + 6*x + 3, 5*x^3 + 2*x^2 + 3*x]])
             sage: points = [[ff(3), ff(0), ff(6), ff(3)], [ff(1), ff(1), ff(1)]]
@@ -3837,7 +4032,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         For "sufficiently generic" input, the fact that the returned matrix
         generates the module of interpolants is equivalent to the fact that its
-        determinant is the product of linear factors defined by the
+        determinant is the product of the linear factors defined by the
         interpolation points::
 
             sage: P.det() == mod1 * mod2
