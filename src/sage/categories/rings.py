@@ -1665,12 +1665,12 @@ class Rings(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: ZZ.random_element(8)   # random
-                1
-                sage: QQ.random_element(8)   # random
-                2
-                sage: ZZ.random_element(4,12)   # random
-                7
+                sage: -8 <= ZZ.random_element(8) <= 8
+                True
+                sage: -8 <= QQ.random_element(8) <= 8
+                True
+                sage: 4 <= ZZ.random_element(4,12) <= 12
+                True
             """
             if not args:
                 a, b = -2, 2
