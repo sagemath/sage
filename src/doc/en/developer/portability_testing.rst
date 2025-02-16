@@ -475,7 +475,7 @@ directory into it.  This copying is subject to the exclusions in the
 ``.gitignore`` file (via a symbolic link from ``.dockerignore``).
 Therefore, only the sources are copied, but not your configuration
 (such as the file ``config.status``), nor the ``$SAGE_LOCAL`` tree,
-nor any other build artefacts.
+nor any other build artifacts.
 
 Because of this, you can build a Docker image using the generated
 ``Dockerfile`` from your main Sage development tree.  It does not have
@@ -829,7 +829,7 @@ keep the source tree clean to the extent possible. In particular:
 
 This makes it possible for advanced users to test several ``local``
 tox environments (such as ``local-direct``) out of one worktree.  However, because a
-build still writes configuration scripts and build artefacts (such as
+build still writes configuration scripts and build artifacts (such as
 ``config.status``) into the worktree, only one ``local`` build can run
 at a time in a given worktree.
 
