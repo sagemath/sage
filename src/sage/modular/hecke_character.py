@@ -22,6 +22,7 @@ from sage.arith.functions import lcm
 from sage.groups.abelian_gps.dual_abelian_group import DualAbelianGroup_class
 from sage.groups.abelian_gps.dual_abelian_group_element import DualAbelianGroupElement
 from sage.lfunctions.dokchitser import Dokchitser
+from sage.lfunctions.pari import lfun_generic, LFunction
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.structure.unique_representation import UniqueRepresentation
@@ -337,7 +338,9 @@ class HeckeCharacter(DualAbelianGroupElement):
 
     def Lfunction(self, prec=53):
         r"""
-        Return this character's L-function as a :class:`sage.lfunctions.dokchitser.Dokchitser` object.
+        Return this character's L-function.
+
+        This was a :class:`sage.lfunctions.dokchitser.Dokchitser` object.
 
         INPUT:
 
@@ -345,7 +348,8 @@ class HeckeCharacter(DualAbelianGroupElement):
 
         OUTPUT:
 
-        A Dokchitser L-function object used to compute values of the L-function of this Hecke character.
+        A L-function object used to compute values of the L-function
+        of this Hecke character.
 
         EXAMPLES:
 
@@ -366,6 +370,10 @@ class HeckeCharacter(DualAbelianGroupElement):
             gamma_factors[i] = 1
         ana_cond = self.analytic_conductor()
         rn = self.root_number()
+
+        # OLD Dokchitser version, to be removed
+        # Dokchitser(conductor, gammaV, weight, eps, poles, residues, init,
+        # prec)
         it_worked = False
         number_of_allocs = 0
         while not it_worked:
@@ -383,7 +391,15 @@ class HeckeCharacter(DualAbelianGroupElement):
                 it_worked = True
             except RuntimeError:
                 number_of_allocs += 1
-        L.rename('Hecke L-function of %s' % self)
+
+        # NEW version, TODO: make correct lines below
+        lf = lfun_generic(conductor=ana_cond, gammaV=gamma_factor,
+                          weight=1, eps=rn)
+        # how to pick the correct number of coefficients ?
+        lf.init_coeffs(self.dirichlet_series_coefficients(L.num_coeffs()))
+
+        L = LFunction(lf, prec=prec)
+        L.rename(f'Hecke L-function of {self}')
         return L
 
 
