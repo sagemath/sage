@@ -56,10 +56,6 @@ on:
            "archlinux-latest",
            "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
-           "opensuse-tumbleweed",
-           "COLOR_with_system_packages",
-           "=",
-           "%23696969",
           ]
         # 'tox -e update_docker_platforms' updates above
       tox_packages_factors:
