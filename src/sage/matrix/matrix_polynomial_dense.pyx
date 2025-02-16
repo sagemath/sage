@@ -3777,6 +3777,150 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 rest_order[j] -= 1
         return appbas, rdeg
 
+    def _interpolant_basis_iterative(self, points, shifts):
+        r"""
+        Return a ``shifts``-ordered weak Popov interpolant basis for this
+        polynomial matrix with respect to points ``points`` (see
+        :meth:`minimal_interpolant_basis` for definitions).
+        TODO HERE
+
+        The output basis is considered row-wise, that is, its rows are
+        left-interpolants for the columns of ``self``.
+
+        The input dimensions are supposed to be sound: the length of ``points``
+        must be the number of columns of ``self``, while the length of
+        ``shifts`` must be the number of rows of ``self``.
+
+        INPUT:
+
+        - ``points`` -- list of lists of elements from the base ring (or
+          coercible into it)
+
+        - ``shifts`` -- list of integers
+
+        OUTPUT:
+
+        - a polynomial matrix (the interpolant basis ``P``).
+
+        - a list of integers (the shifts-row degrees of ``P``).
+
+        ALGORITHM:
+
+        This is inspired from the iterative algorithms described in [VBB1992]_
+        and [Bec1992]_ .
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+
+        This method supports any number of columns or rows, as well as
+        arbitrary shifts and orders::
+
+            sage: order = [4, 1, 2]; shifts = [-3, 4]
+            sage: pmat = Matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5, 4],
+            ....:                    [2*x^3 + 2*x^2 + 2*x + 3, 6, 6*x + 3]])
+            sage: appbas, rdeg = pmat._approximant_basis_iterative(order,
+            ....:                                                  shifts)
+            sage: appbas.is_minimal_approximant_basis(pmat, order, shifts)
+            True
+
+        The returned list is the shifted row degrees of ``appbas``::
+
+            sage: rdeg == appbas.row_degrees(shifts)
+            True
+
+        Approximant bases for the zero matrix are all constant unimodular
+        matrices; in fact, this algorithm returns the identity::
+
+            sage: pmat = Matrix(pR, 3, 2)
+            sage: appbas,rdeg = pmat._approximant_basis_iterative([2,5],
+            ....:                                                 [5,0,-4])
+            sage: rdeg == [5,0,-4] and appbas == Matrix.identity(pR, 3)
+            True
+        """
+        from sage.matrix.constructor import matrix
+        m, n = self.dimensions()
+
+        # 'rest_order': the orders that remains to be dealt with
+        # 'rest_index': indices of orders that remains to be dealt with
+        rest_order = list(order)
+        rest_index = list(range(n))
+
+        # initialization of the residuals (= input self)
+        # and of the approximant basis (= identity matrix)
+        appbas = matrix.identity(self.base_ring(), m)
+        residuals = self.__copy__()
+
+        # throughout the algorithm, 'rdeg' will be the shifts-row degrees of
+        # 'appbas'
+        # --> initially, 'rdeg' is the shift-row degree of the identity matrix
+        rdeg = list(shifts)
+
+        while rest_order:
+            # invariant:
+            #   * appbas is a shifts-ordered weak Popov approximant basis for
+            #   (self,doneorder)
+            #   where doneorder = the already processed order, that is, the
+            #   tuple order-rest_order (entrywise subtraction)
+            #   * rdeg is the shifts-row degree of appbas
+            #   * residuals is the submatrix of columns (appbas * self)[:,j]
+            #   for all j such that rest_order[j] > 0
+
+            # choice for the next coefficient to be dealt with: first of the
+            # largest entries in order (--> process 'self' degree-wise, and
+            # left to right)
+            # Note: one may also consider the first one in order (--> process
+            # 'self' columnwise, from left column to right column, set j=0
+            # instead of the below), but it seems to often be (barely) slower
+            max_rest_order = max(rest_order)
+            for ind, value in enumerate(rest_order):
+                if value == max_rest_order:
+                    j = ind
+                    break
+            d = order[rest_index[j]] - rest_order[j]
+
+            # coefficient = the coefficient of degree d of the column j of the
+            # residual matrix
+            # --> this is very likely nonzero and we want to make it zero, so
+            # that this column becomes zero mod x^{d+1}
+            coefficient = [residuals[i, j][d] for i in range(m)]
+
+            # Lambda: collect rows [i] with nonzero coefficient[i]
+            # pi: index of the first row with smallest shift, among those in
+            # Lambda
+            Lambda = []
+            pi = -1
+            for i in range(m):
+                if coefficient[i] != 0:
+                    Lambda.append(i)
+                    if pi < 0 or rdeg[i] < rdeg[pi]:
+                        pi = i
+            if Lambda: # otherwise, nothing to do
+                # update all rows in Lambda--{pi}
+                Lambda.remove(pi)
+                for row in Lambda:
+                    scalar = -coefficient[row]/coefficient[pi]
+                    appbas.add_multiple_of_row(row, pi, scalar)
+                    residuals.add_multiple_of_row(row, pi, scalar)
+                # update row pi: multiply by x
+                rdeg[pi] += 1
+                for jj in range(m):
+                    appbas[pi, jj] = appbas[pi, jj].shift(1)
+                for jj in range(residuals.ncols()):
+                    residuals[pi, jj] = residuals[pi, jj].shift(1)
+
+            # Decrement rest_order[j], unless there is no more work to do in
+            # this column (i.e. if rest_order[j] was 1) in which case
+            # remove the column j of residual,rest_order,rest_index
+            if rest_order[j] == 1:
+                residuals = residuals.delete_columns([j])
+                rest_order.pop(j)
+                rest_index.pop(j)
+            else:
+                rest_order[j] -= 1
+        return appbas, rdeg
+
+
     def is_minimal_kernel_basis(self,
             pmat,
             shifts=None,
