@@ -3559,7 +3559,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             True
 
         Zero or negative order entries are supported, and amount to forgetting
-        the corresponding column of ``self`` (or row, if column-wise)::
+        the corresponding column of ``self`` (or corresponding row, if column-wise)::
 
             sage: P = F.minimal_approximant_basis([4, 0, 3], row_wise=False)
             sage: P == F.minimal_approximant_basis([4, -2, 3], row_wise=False)
@@ -4152,7 +4152,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         TESTS:
 
-        We check that PR #37208 is fixed::
+        We check that the issue in PR #37208 is fixed::
 
             sage: Matrix(pR, 2, 0).minimal_kernel_basis().is_sparse()
             False
