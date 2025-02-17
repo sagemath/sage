@@ -114,7 +114,7 @@ jobs:
       logs_artifact_postfix: "-sitepackages"
       max_parallel: 8
 
-  standard-constraints_pkgs-norequirements:
+  standard-constraints_pkgs:
     # Turned off since it fails for all systems
     if: false
     needs: [standard-sitepackages]

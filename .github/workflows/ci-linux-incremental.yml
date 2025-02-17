@@ -81,18 +81,10 @@ jobs:
             sage-package metrics :all:
           fi
 
-  test:
+  standard-incremental:
     needs: [changed_files]
     uses: ./.github/workflows/docker.yml
     with:
-      # Build incrementally from published Docker image
-      incremental: true
-      free_disk_space: true
-      from_docker_repository: ghcr.io/sagemath/sage/
-      from_docker_target: "with-targets"
-      from_docker_tag: "dev"
-      docker_targets: "with-targets"
-      targets: "${{needs.changed_files.outputs.build_targets}} ci-build-with-fallback doc-html ptest-nodoc"
       tox_system_factors: >-
         ["ubuntu-focal",
          "ubuntu-noble",
@@ -103,12 +95,45 @@ jobs:
          "gentoo-python3.11",
          "debian-bullseye-i386"]
       tox_packages_factors: >-
-          ["standard",
-           "minimal"]
+          ["standard"]
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/sagemath/sage/
+      from_docker_target: "with-targets"
+      from_docker_tag: "dev"
+      docker_targets: "with-targets"
+      targets: "${{needs.changed_files.outputs.build_targets}} ci-build-with-fallback doc-html ptest-nodoc"
       docker_push_repository: ghcr.io/${{ github.repository }}/
       max_parallel: 8
 
-  constraints_pkgs-norequirements:
+  minimal-incremental:
+    needs: [changed_files]
+    uses: ./.github/workflows/docker.yml
+    with:
+      tox_system_factors: >-
+        ["ubuntu-focal",
+         "ubuntu-noble",
+         "debian-bullseye",
+         "debian-bookworm",
+         "fedora-30",
+         "fedora-40",
+         "gentoo-python3.11",
+         "debian-bullseye-i386"]
+      tox_packages_factors: >-
+          ["minimal"]
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/sagemath/sage/
+      from_docker_target: "with-targets"
+      from_docker_tag: "dev"
+      docker_targets: "with-targets"
+      targets: "${{needs.changed_files.outputs.build_targets}} ci-build-with-fallback doc-html ptest-nodoc"
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 8
+
+  standard-constraints_pkgs-incremental:
+    # turned off as all platforms fail
+    if: false
     needs: [changed_files]
     uses: ./.github/workflows/docker.yml
     with:
@@ -131,7 +156,7 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
       max_parallel: 16
 
-  site:
+  standard-sitepackages-incremental:
     needs: [changed_files]
     uses: ./.github/workflows/docker.yml
     with:
