@@ -182,7 +182,7 @@ jobs:
       # .ci/write-dockerfile.sh
       TOX_ENV:            "docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}${{ inputs.incremental && '-incremental' || '' }}"
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}${{ inputs.logs_artifact_postfix }}
-      DOCKER_TARGETS:     ${{ inputs.docker_targets }}
+      DOCKER_TARGETS:     ${{ inputs.docker_targets || github.event.inputs.docker_targets }}
       TARGETS_PRE:        ${{ inputs.targets_pre }}
       TARGETS:            ${{ inputs.targets }}
       TARGETS_OPTIONAL:   ${{ inputs.targets_optional }}
@@ -243,7 +243,7 @@ jobs:
         if: inputs.upstream_artifact
 
       - name: Try to login to ghcr.io
-        if: inputs.docker_push_repository != ''
+        if: (inputs.docker_push_repository == null || inputs.docker_push_repository != '')
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
         run: |
           TOKEN="${{ secrets.DOCKER_PKG_GITHUB_TOKEN }}"
@@ -251,7 +251,11 @@ jobs:
             TOKEN="${{ secrets.GITHUB_TOKEN }}"
           fi
           if echo "$TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin; then
-            echo "DOCKER_PUSH_REPOSITORY=$(echo ${{ inputs.docker_push_repository }} | tr "[:upper:]" "[:lower:]")" >> $GITHUB_ENV
+            if [ -z "${{ inputs.docker_push_repository }}" ]; then
+              echo "DOCKER_PUSH_REPOSITORY=ghcr.io/${{ github.repository }}/" >> $GITHUB_ENV
+            else
+              echo "DOCKER_PUSH_REPOSITORY=$(echo ${{ inputs.docker_push_repository }} | tr "[:upper:]" "[:lower:]")" >> $GITHUB_ENV
+            fi
             echo "DOCKER_CONFIG_FILE=$HOME/.docker/config.json" >> $GITHUB_ENV
           fi
 
@@ -346,7 +350,7 @@ jobs:
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}
-        if: always() && inputs.logs_artifact
+        if: always() && (inputs.logs_artifact == true || inputs.logs_artifact == null)
 
       - name: Print out logs for immediate inspection
         # and markup the output with GitHub Actions logging commands

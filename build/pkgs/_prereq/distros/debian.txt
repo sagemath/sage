@@ -19,10 +19,11 @@ python3
 tar
 bc
 gcc
-# On debian buster, need C++ even to survive 'configure'. Otherwise:
-# checking how to run the C++ preprocessor... /lib/cpp
-# configure: error: in `/sage':
-# configure: error: C++ preprocessor "/lib/cpp" fails sanity check
+# On debian bullseye, need C++ even to survive 'configure'. Otherwise:
+#
+#  checking how to run the C++ preprocessor... /lib/cpp
+#  Error: configure: error: in `/sage':
+#  Error: configure: error: C++ preprocessor "/lib/cpp" fails sanity check
 g++
-# Needed if we download some packages from a https upstream URL
+# needed if we download some packages from a https upstream URL
 ca-certificates

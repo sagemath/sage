@@ -21,8 +21,7 @@ git config --global user.email "$GIT_AUTHOR_EMAIL"
 set -x
 
 # If actions/checkout downloaded our source tree using the GitHub REST API
-# instead of with git (because do not have git installed in our image),
-# we first make the source tree a repo.
+# instead of with git, we first make the source tree a repo.
 if [ ! -d .git ]; then git init; fi
 
 # Commit and tag this state of the source tree "new". This is what we want to build and test.
@@ -42,5 +41,6 @@ git worktree prune --verbose
 git worktree add --detach $WORKTREE_NAME
 rm -rf $WORKTREE_DIRECTORY/.git && mv $WORKTREE_NAME/.git $WORKTREE_DIRECTORY/
 rm -rf $WORKTREE_NAME && ln -s $WORKTREE_DIRECTORY $WORKTREE_NAME
-if [ ! -f $WORKTREE_NAME/.gitignore ]; then cp .gitignore $WORKTREE_NAME/; fi
-(cd $WORKTREE_NAME && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git checkout -f new && git clean -fd && git status)
+if [ ! -f $WORKTREE_NAME/.gitignore ]; then cp .gitignore $WORKTREE_NAME/; cat $WORKTREE_NAME/.gitignore; fi
+(cd $WORKTREE_NAME && git status && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git checkout -f new && git clean -fd && git status)
+(echo "CIDEBUG6:"; ls -l /sage/build/make/Makefile || cat $WORKTREE_NAME/.gitignore)
