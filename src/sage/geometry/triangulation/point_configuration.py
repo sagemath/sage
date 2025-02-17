@@ -2126,7 +2126,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             m = matrix([p.affine() for p in points])
         return m.left_kernel().matrix()
 
-    def deformation_cone(self, collection):
+    def deformation_cone(self, collection, backend=None):
         r"""
         Return the deformation cone for the ``collection`` of subconfigurations
         of ``self``.
@@ -2135,6 +2135,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         - ``collection`` -- a collection of subconfigurations of ``self``.
           Subconfigurations are given as indices
+
+        - ``backend`` -- (optional) the backend to be used for polyhedral
+          computations;
 
         OUTPUT: a polyhedron. It contains the liftings of the point configuration
         making the collection a regular (or coherent, or projective, or
@@ -2229,10 +2232,12 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         n = self.n_points()
         K = None
         for cone_indices in collection:
-            dual_cone = Polyhedron(rays=[dual_rays[i] for i in range(n) if i not in cone_indices])
+            dual_cone = Polyhedron(rays=[dual_rays[i] for i in range(n) if i
+                                         not in cone_indices], backend=backend)
             K = K.intersection(dual_cone) if K is not None else dual_cone
         preimages = [gale.solve_right(r.vector()) for r in K.rays()]
-        return Polyhedron(lines=matrix(self.points()).transpose().rows(),rays=preimages)
+        return Polyhedron(lines=matrix(self.points()).transpose().rows(),
+                          rays=preimages, backend=backend)
 
     def plot(self, **kwds):
         r"""

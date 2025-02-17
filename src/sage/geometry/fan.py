@@ -2439,13 +2439,18 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         m = m.augment(matrix(ZZ, m.nrows(), 1, [1] * m.nrows()))
         return matrix(ZZ, m.integer_kernel().matrix())
 
-    def is_polytopal(self):
+    def is_polytopal(self, backend=None):
         r"""
         Check if ``self`` is the normal fan of a polytope.
 
         A rational polyhedral fan is *polytopal* if it is the normal fan of a
         polytope. This is also called *regular*, or provides a *coherent*
         subdivision or leads to a *projective* toric variety.
+
+        INPUT:
+
+        - ``backend`` -- (optional) the backend to be used for polyhedral
+          computations;
 
         OUTPUT: ``True`` if ``self`` is polytopal and ``False`` otherwise
 
@@ -2496,10 +2501,10 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         cone_indices = [cone.ambient_ray_indices() for cone in self.generating_cones()]
         translator = [pc_to_indices[t] for t in indices_to_vr]
         translated_cone_indices = [[translator[i] for i in ci] for ci in cone_indices]
-        dc_pc = pc.deformation_cone(translated_cone_indices)
+        dc_pc = pc.deformation_cone(translated_cone_indices, backend)
         lift = dc_pc.an_element()
         ieqs = [(lift_i,) + v for (lift_i, v) in zip(lift, v_pc)]
-        poly = Polyhedron(ieqs=ieqs)
+        poly = Polyhedron(ieqs=ieqs, backend)
         return self.is_equivalent(poly.normal_fan())
 
     def generating_cone(self, n):
