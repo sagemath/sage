@@ -82,14 +82,6 @@ jobs:
           ./tools/test-git-no-uncommitted-changes
         continue-on-error: true
 
-      - name: Show files changed by update-meson
-        if: ${{ steps.check_update_meson.outcome == 'failure' }}
-        shell: bash -l {0}
-        run: |
-          git add --intent-to-add .  # also show newly created files in git diff
-          git status
-          git diff
-
       - name: Verify dependencies
         shell: bash -l {0}
         run: pip check
@@ -101,12 +93,14 @@ jobs:
           rm -R ./src/sage_setup/
           ./sage -t --all -p4
 
-      - name: Report update-meson failure
+      - name: Show files changed by update-meson
         if: ${{ steps.check_update_meson.outcome == 'failure' }}
         shell: bash -l {0}
+        # must be after "Test" since we still want to run test when check_update_meson fails
         run: |
-          # Please see step 'Show files changed by update-meson' above and apply the changes,
-          # or run tools/update-meson.py locally
+          git add --intent-to-add .  # also show newly created files in git diff
+          git status
+          git diff
           false
 
       - name: Upload log
