@@ -1,4 +1,4 @@
-name: Reusable workflow for Docker-based portability CI
+name: Workflow for Linux portability CI
 
 on:
   workflow_call:

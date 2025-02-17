@@ -285,21 +285,26 @@ $ADD pkgs /new/pkgs
 $ADD build /new/build
 $ADD .upstream.d /new/.upstream.d
 ADD .ci /.ci
-RUN if [ -d /sage ]; then \\
-        echo "### Incremental build from \$(cat /sage/VERSION.txt)" && \\
-        printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \\
-        printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore && \\
-        if ! (cd /new && /.ci/retrofit-worktree.sh worktree-image /sage); then \\
-            echo "retrofit-worktree.sh failed, falling back to replacing /sage"; \\
-            for a in local logs; do \\
-                if [ -d /sage/\$a ]; then mv /sage/\$a /new/; fi; \\
-            done; \\
-            rm -rf /sage; \\
-            mv /new /sage; \\
-        fi; \\
-    else \\
-        mv /new /sage; \\
-    fi
+RUN <<EOT
+if [ -d /sage ]; then
+  echo "### Incremental build from \$(cat /sage/VERSION.txt)"
+  printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore
+  printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore
+  if ! cd /new && /.ci/retrofit-worktree.sh worktree-image /sage; then
+    echo "retrofit-worktree.sh failed, falling back to replacing /sage"
+    for a in local logs; do
+      if [ -d /sage/\$a ]; then
+        mv /sage/\$a /new/
+      fi
+    done
+    rm -rf /sage
+    mv /new /sage
+  fi
+else
+  mv /new /sage
+fi
+EOT
+
 WORKDIR /sage
 ARG BOOTSTRAP="${BOOTSTRAP-./bootstrap}"
 $RUN sh -x -c "\${BOOTSTRAP}"$ENDRUN$THEN_SAVE_STATUS
@@ -348,19 +353,21 @@ ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!sage_sws2rst"
 $ADD .gitignore /new/.gitignore
 $ADD src /new/src
-RUN cd /new && rm -rf .git && \\
-    (echo "CIDEBUG1: "; ls -l /sage/build/make/Makefile ); \\
-    if /.ci/retrofit-worktree.sh worktree-pre /sage; then \\
-        (echo "CIDEBUG2: "; ls -l /sage/build/make/Makefile ); \\
-        cd /sage && touch configure build/make/Makefile; \\
-    else \\
-        echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"; \\
-        (echo "CIDEBUG3: "; ls -l /sage/build/make/Makefile ); \\
-        rm -rf /sage/src; \\
-        mv src /sage/src; \\
-        cd /sage && ./bootstrap && ./config.status; \\
-    fi; \\
-    cd /sage && rm -rf .git; rm -rf /new || echo "(error ignored)"
+RUN <<EOT
+cd /new && rm -rf .git
+echo "CIDEBUG1: "; ls -l /sage/build/make/Makefile
+if /.ci/retrofit-worktree.sh worktree-pre /sage; then
+  echo "CIDEBUG2: "; ls -l /sage/build/make/Makefile
+  cd /sage && touch configure build/make/Makefile
+else
+  echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"
+  echo "CIDEBUG3: "; ls -l /sage/build/make/Makefile
+  rm -rf /sage/src
+  mv src /sage/src
+  cd /sage && ./bootstrap && ./config.status
+fi
+cd /sage && rm -rf .git; rm -rf /new || echo "(error ignored)"
+EOT
 ARG TARGETS="build"
 $RUN$CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS}$ENDRUN$THEN_SAVE_STATUS
 

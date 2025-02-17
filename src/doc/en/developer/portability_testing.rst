@@ -26,15 +26,15 @@ spectrum of platforms.
   Conda.
 
   For PRs making changes to external packages, the Docker-based testing workflow
-  `CI Linux incremental <https://github.com/sagemath/sage/actions/workflows/ci-linux-incremental.yml>`
+  `CI Linux incremental <https://github.com/sagemath/sage/actions/workflows/ci-linux-incremental.yml>`_
   checks the PR branch on an array of Linux platforms.
 
 - Before a new release, the release manager runs a fleet of `buildbots
   <http://build.sagemath.org>`_ to make it sure that Sage builds correctly on
   all of our supported platforms.
 
-- After a new release, our Docker-based testing workflows `CI Linux <https://github.com/sagemath/sage/actions/workflows/ci-linux.yml>`
-  and `CI macOS <https://github.com/sagemath/sage/actions/workflows/ci-macos.yml>`
+- After a new release, our Docker-based testing workflows `CI Linux <https://github.com/sagemath/sage/actions/workflows/ci-linux.yml>`_
+  and `CI macOS <https://github.com/sagemath/sage/actions/workflows/ci-macos.yml>`_
   perform extensive testing on a multitude of platforms.
 
 - Sage developers and users are encouraged to test releases that are announced

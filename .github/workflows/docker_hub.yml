@@ -1,4 +1,4 @@
-name: Reusable workflow for Docker Hub images
+name: Workflow for Docker Hub images
 
 on:
   workflow_call:
