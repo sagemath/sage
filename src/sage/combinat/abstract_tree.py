@@ -651,14 +651,15 @@ class AbstractTree:
         Run the counterclockwise countour traversal algorithm (iterative
         implementation) and subject every node encountered
         to some procedure ``first_action``, ``middle_action`` or ``final_action`` each time it reaches it. 
-        The algorithm is::
 
-            manipulate the root with function `first_action`;
-            iteratively manipulate the root with function `middle_action` 
-                and explore each subtree (by the algorithm) from the
-                leftmost one to the rightmost one;
-            then manipulate the root with function `final_action`;
-            if the root is a leaf it only manipulate with function `leaf_action`.
+        ALGORITHM:
+        
+        - if the root is a leaf, apply `leaf_action`
+        - else
+            -  apply `first_action` to the root
+            - iteratively apply `middle_action` to the root and traverse each subtree 
+              from the leftmost one to the rightmost one
+            - apply `final_action` to the root
 
         INPUT:
 
@@ -690,7 +691,7 @@ class AbstractTree:
             ....:   lambda node: (l.append(node.label()),l.append('c')),
             ....:   lambda node: (l.append(node.label())))
             sage: l
-            sage: [1, 'a', 1, 'b', 2, 1, 'b', 3, 'a', 3, 'b', 4, 3, 'b', 5, 3, 'c', 1, 'c']
+           ....: [1, 'a', 1, 'b', 2, 1, 'b', 3, 'a', 3, 'b', 4, 3, 'b', 5, 3, 'c', 1, 'c']
 
             sage: l = []
             sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
@@ -716,34 +717,33 @@ class AbstractTree:
             sage: t.contour_traversal(first_action = lambda node: l.append(0),leaf_action = None)
             sage: len(l)
             7
-        
         """
         if first_action is None:
             def first_action(x):
-                return None
+                return
         if middle_action is None:
             def middle_action(x):
-                return None
+                return
         if final_action is None:
             def final_action(x):
-                return None
+                return
         if leaf_action is None:
             def leaf_action(x):
-                None
+                return
         elif leaf_action == []:
             def leaf_action(x):
                 first_action(x)
                 final_action(x)
         stack = []
         stack.append(self)
-        corners = [0,0]
+        corners = [0, 0]
         while stack:
             node = stack.pop()
-            if not(bool(node)):
+            if not node:
                 leaf_action(node)
                 corners.pop()
                 corners[-1] += 1
-            elif corners[-1] == 0:
+            elif not corners[-1]:
                 first_action(node)
                 middle_action(node)
                 stack.append(node)
@@ -945,17 +945,20 @@ class AbstractTree:
         """
         if self.is_empty():
             return 0
-        def fr_action(node, depths, m, depth):
+        m = 0
+        def fr_action(node):
+            nonlocal m, depths, depth
             if depths[-1] == depth:
-                m[0] += 1
-        def m_action(node,depths):
-            depths.append(depths[-1]+1)
-        def fn_action(node,depths):
+                m += 1
+        def m_action(node):
+            nonlocal depths
+            depths.append(depths[-1] + 1)
+        def fn_action(node):
+            nonlocal depths
             depths.pop()
         depths = [0]
-        m = [0]
-        self.contour_traversal(lambda node: fr_action(node, depths,m, depth),lambda node: m_action(node, depths),lambda node: fn_action(node, depths))
-        return m[0]
+        self.contour_traversal(fr_action, m_action, fn_action)
+        return m
 
     def paths_to_the_right(self, path):
         r"""
@@ -1231,17 +1234,18 @@ class AbstractTree:
         """
         if self.is_empty():
             return 0
-        def action(node,m):
+        m = []
+        def action(node):
+            nonlocal m
             if node.is_empty():
                 m.append(-1)
             elif not(bool(node)):
                 m.append(0)
             else:
                 mx = max(m.pop() for _ in node)
-                m.append(mx+1)
-        m = []
-        self.contour_traversal(final_action = lambda node: action(node,m))
-        return m[0]+1
+                m.append(mx + 1)
+        self.contour_traversal(final_action=action)
+        return m[0] + 1
 
     def _ascii_art_(self):
         r"""
