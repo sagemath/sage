@@ -1724,6 +1724,21 @@ class DocTestDispatcher(SageObject):
     """
     Create parallel :class:`DocTestWorker` processes and dispatches
     doctesting tasks.
+
+    .. NOTE::
+
+        If this is run directly in the normal Sage command-line,
+        it calls :func:`init_sage` which in turn calls
+        :meth:`.switch_backend` to the doctest backend, which is
+        incompatible with the IPython-based command-line.
+        As such, if an error such as
+        ``TypeError: cannot unpack non-iterable NoneType object`` is seen,
+        a workaround is to run the following::
+
+            sage: # not tested
+            sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
+            sage: backend = BackendIPythonCommandline()
+            sage: get_ipython().display_formatter.dm.switch_backend(backend, shell=get_ipython())
     """
     def __init__(self, controller: DocTestController):
         """
@@ -1851,6 +1866,67 @@ class DocTestDispatcher(SageObject):
                1 of   1 in ...
                 [1 test, 1 failure, ...s wall]
             Killing test ...
+
+        TESTS:
+
+        Test flaky files. This test should fail the first time and success the second time::
+
+            sage: with NTF(suffix='.py', mode='w+t') as f1:
+            ....:     t = walltime()
+            ....:     _ = f1.write(f"# sage.doctest: flaky\n'''\nsage: sleep(10 if walltime() < {t+1} else 0)\n'''")
+            ....:     f1.flush()
+            ....:     DC = DocTestController(DocTestDefaults(timeout=2, die_timeout=1),
+            ....:                            [f1.name])
+            ....:     DC.expand_files_into_sources()
+            ....:     DD = DocTestDispatcher(DC)
+            ....:     DR = DocTestReporter(DC)
+            ....:     DC.reporter = DR
+            ....:     DC.dispatcher = DD
+            ....:     DC.timer = Timer().start()
+            ....:     DD.parallel_dispatch()
+                sage -t ...
+                sage -t ...
+                    [1 test, ...s wall]
+
+        This test always fail, so even flaky can't help it::
+
+            sage: with NTF(suffix='.py', mode='w+t') as f1:
+            ....:     _ = f1.write(f"# sage.doctest: flaky\n'''\nsage: sleep(10)\n'''")
+            ....:     f1.flush()
+            ....:     DC = DocTestController(DocTestDefaults(timeout=2, die_timeout=1),
+            ....:                            [f1.name])
+            ....:     DC.expand_files_into_sources()
+            ....:     DD = DocTestDispatcher(DC)
+            ....:     DR = DocTestReporter(DC)
+            ....:     DC.reporter = DR
+            ....:     DC.dispatcher = DD
+            ....:     DC.timer = Timer().start()
+            ....:     DD.parallel_dispatch()
+            sage -t ...
+            sage -t ...
+                Timed out
+            **********************************************************************
+            ...
+
+        Of course without flaky, the test should fail (since it timeouts the first time)::
+
+            sage: with NTF(suffix='.py', mode='w+t') as f1:
+            ....:     t = walltime()
+            ....:     _ = f1.write(f"'''\nsage: sleep(10 if walltime() < {t+1} else 0)\n'''")
+            ....:     f1.flush()
+            ....:     DC = DocTestController(DocTestDefaults(timeout=2, die_timeout=1),
+            ....:                            [f1.name])
+            ....:     DC.expand_files_into_sources()
+            ....:     DD = DocTestDispatcher(DC)
+            ....:     DR = DocTestReporter(DC)
+            ....:     DC.reporter = DR
+            ....:     DC.dispatcher = DD
+            ....:     DC.timer = Timer().start()
+            ....:     DD.parallel_dispatch()
+            sage -t ...
+                Timed out
+            **********************************************************************
+            ...
         """
         opt = self.controller.options
 
@@ -1937,6 +2013,28 @@ class DocTestDispatcher(SageObject):
                     # precision.
                     now = time.time()
 
+                    def start_new_worker(source: DocTestSource, num_retries_left: typing.Optional[int] = None) -> DocTestWorker:
+                        nonlocal opt, target_endtime, now, pending_tests, sel_exit
+                        import copy
+                        worker_options = copy.copy(opt)
+                        baseline = self.controller.source_baseline(source)
+                        if target_endtime is not None:
+                            worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
+                        w = DocTestWorker(source, options=worker_options, funclist=[sel_exit], baseline=baseline)
+                        if num_retries_left is not None:
+                            w.num_retries_left = num_retries_left
+                        elif 'flaky' in source.file_optional_tags:
+                            w.num_retries_left = 1
+                        heading = self.controller.reporter.report_head(w.source)
+                        if not self.controller.options.only_errors:
+                            w.messages = heading + "\n"
+                        # Store length of heading to detect if the
+                        # worker has something interesting to report.
+                        w.heading_len = len(w.messages)
+                        w.start()  # This might take some time
+                        w.deadline = time.time() + opt.timeout
+                        return w
+
                     # If there were any substantial changes in the state
                     # (new worker started or finished worker reported),
                     # restart this while loop instead of calling pselect().
@@ -1994,6 +2092,14 @@ class DocTestDispatcher(SageObject):
                     # Similarly, process finished workers.
                     new_finished = []
                     for w in finished:
+                        if w.killed and w.num_retries_left > 0:
+                            # in this case, the messages from w should be suppressed
+                            # (better handling could be implemented later)
+                            if follow is w:
+                                follow = None
+                            workers.append(start_new_worker(w.source, w.num_retries_left - 1))
+                            continue
+
                         if opt.exitfirst and w.result[1].failures:
                             abort_now = True
                         elif follow is not None and follow is not w:
@@ -2026,28 +2132,13 @@ class DocTestDispatcher(SageObject):
                     while (source_iter is not None and len(workers) < opt.nthreads
                            and (not job_client or job_client.acquire())):
                         try:
-                            source = next(source_iter)
+                            source: DocTestSource = next(source_iter)
                         except StopIteration:
                             source_iter = None
                             if job_client:
                                 job_client.release()
                         else:
-                            # Start a new worker.
-                            import copy
-                            worker_options = copy.copy(opt)
-                            baseline = self.controller.source_baseline(source)
-                            if target_endtime is not None:
-                                worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
-                            w = DocTestWorker(source, options=worker_options, funclist=[sel_exit], baseline=baseline)
-                            heading = self.controller.reporter.report_head(w.source)
-                            if not self.controller.options.only_errors:
-                                w.messages = heading + "\n"
-                            # Store length of heading to detect if the
-                            # worker has something interesting to report.
-                            w.heading_len = len(w.messages)
-                            w.start()  # This might take some time
-                            w.deadline = time.time() + opt.timeout
-                            workers.append(w)
+                            workers.append(start_new_worker(source))
                             restart = True
 
                     # Recompute state if needed
@@ -2181,6 +2272,7 @@ class DocTestWorker(multiprocessing.Process):
 
     EXAMPLES::
 
+        sage: # long time
         sage: from sage.doctest.forker import DocTestWorker, DocTestTask
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.reporting import DocTestReporter
@@ -2222,6 +2314,10 @@ class DocTestWorker(multiprocessing.Process):
         self.options = options
         self.funclist = funclist
         self.baseline = baseline
+
+        # This is not used by this class in any way, but DocTestDispatcher
+        # uses this to keep track of reruns for flaky tests.
+        self.num_retries_left = 0
 
         # Open pipe for messages. These are raw file descriptors,
         # not Python file objects!
@@ -2305,6 +2401,7 @@ class DocTestWorker(multiprocessing.Process):
 
         TESTS::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
@@ -2344,6 +2441,7 @@ class DocTestWorker(multiprocessing.Process):
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
@@ -2378,6 +2476,7 @@ class DocTestWorker(multiprocessing.Process):
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
@@ -2508,6 +2607,7 @@ class DocTestTask:
 
     EXAMPLES::
 
+        sage: # long time
         sage: from sage.doctest.forker import DocTestTask
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.control import DocTestDefaults, DocTestController
