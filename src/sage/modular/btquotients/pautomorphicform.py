@@ -2497,7 +2497,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
             sage: H = X.harmonic_cocycles(2,prec = 5)
             sage: A = X.padic_automorphic_forms(2,prec = 5)
             sage: h = H.basis()[0]
-            sage: A.lift(h) # indirect doctest long time
+            sage: A.lift(h) # indirect doctest, long time
             p-adic automorphic form of cohomological weight 0
         """
         S = self._source.get_stabilizers()
