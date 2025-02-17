@@ -90,7 +90,7 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: F.<a> = QuadraticField(11)
             sage: H = HeckeCharacterGroup(F.modulus(5, [0, 1]))
             sage: prod(H.gens())
-            chi0*chi1
+            χ0*χ1
 
         Multiplying two characters with different moduli. ::
 
@@ -367,7 +367,7 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: H = HeckeCharacterGroup(mf)
             sage: chi = H.gens()[1]
             sage: L = chi.Lfunction(); L
-            Hecke L-function of chi1
+            Hecke L-function of χ1
             sage: [L(-n) for n in range(3)]
             [1.00000000000000, 0.000000000000000, 15.0000000000000]
         """
@@ -420,6 +420,13 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
         Group of finite order Hecke characters modulo (Fractional ideal (-11/2*a - 5/2)) * ∞_0 * ∞_1
         sage: [[chi(F.ideal(31)), chi(F.ideal(-12672))] for chi in H.gens()]
         [[zeta4, 1], [1, -1]]
+
+    TESTS::
+
+        sage: F.<a> = QuadraticField(5)
+        sage: H = HeckeCharacterGroup(F.modulus(F.ideal(16), [0,1]))
+        sage: H.gens()
+        (χ0, χ1, χ2)
     """
     Element = HeckeCharacter
 
@@ -429,7 +436,7 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
         if base_ring is None:
             base_ring = CyclotomicField(lcm(ray_class_group.gens_orders()))
         if names is None:
-            names = 'chi'
+            names = 'χ'
         return super().__classcall__(cls, ray_class_group, base_ring, names)
 
     def __init__(self, ray_class_group, base_ring, names) -> None:
