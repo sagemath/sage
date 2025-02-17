@@ -263,7 +263,7 @@ def is_line_graph(g, certificate=False):
     return True
 
 
-def line_graph(g, labels=True, origlabels=False):
+def line_graph(g, labels=True, return_labels=False):
     """
     Return the line graph of the (di)graph ``g`` (multiedges and loops allowed).
 
@@ -275,12 +275,12 @@ def line_graph(g, labels=True, origlabels=False):
       of multiple edges, the vertices of the line graph will be triples
       ``(u,v,an integer)``.
 
-    - ``origlabels`` -- boolean (default: ``False``); wether edge labels should
-      be stored or not. If g has multiple edges, if ``origlabels=True``, the
+    - ``return_labels`` -- boolean (default: ``False``); whether edge labels should
+      be stored or not. If g has multiple edges and if ``return_labels=True``, the
       method returns a list the first element of which is the line-graph of g
-      and the second element is a dictionary {vertex of the line-graph: label of
-      the corresponding original edge}. If ``origlabels=False``, the method
-      returns only the line-graph.
+      and the second element is a dictionary {vertex of the line-graph: former
+      corresponding edge with its original label}. If ``return_labels=False``,
+      the method returns only the line-graph.
 
     The line graph of an undirected graph G is an undirected simple graph H such
     that the vertices of H are the edges of G and two vertices e and f of H are
@@ -322,7 +322,7 @@ def line_graph(g, labels=True, origlabels=False):
          (1, 2, None),
          (1, 3, None),
          (2, 3, None)]
-        sage: h.am()        # needs sage.modules
+        sage: h.am()                                                                # needs sage.modules
         [0 1 1 1 1 0]
         [1 0 1 1 0 1]
         [1 1 0 0 1 1]
@@ -332,7 +332,7 @@ def line_graph(g, labels=True, origlabels=False):
         sage: h2 = g.line_graph(labels=False)
         sage: h2.vertices(sort=True)
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-        sage: h2.am() == h.am()     # needs sage.modules
+        sage: h2.am() == h.am()                                                     # needs sage.modules
         True
         sage: g = DiGraph([[1..4], lambda i,j: i < j])
         sage: h = g.line_graph()
@@ -350,14 +350,14 @@ def line_graph(g, labels=True, origlabels=False):
          ((2, 3, None), (3, 4, None), None)]
 
     Examples with multiple edges::
-
-        sage: L = Graph([(0,1),(0,1),(1,2)],multiedges=True).line_graph()
+         
+        sage: L=line_graph(Graph([(0,1),(0,1),(1,2)],multiedges=True))
         sage: L.edges()
         [((0, 1, 0), (0, 1, 1), None), ((0, 1, 1), (1, 2, 2), None),
         ((0, 1, 0), (1, 2, 2), None)]
         sage: G = Graph([(0,1),(0,1,'a'),(0,1,'b'),(0,2),(1,2,'c')],
         ....: multiedges=True)
-        sage: L = G.line_graph(False,True)
+        sage: L=line_graph(G,False,True)
         sage: L[0].edges()
         [((0, 1, 1), (0, 1, 2), None), ((0, 1, 0), (0, 1, 2), None),
         ((0, 1, 2), (0, 2, 3), None), ((0, 1, 2), (1, 2, 4), None), ((0, 1, 0),
@@ -371,18 +371,18 @@ def line_graph(g, labels=True, origlabels=False):
         (0, 2, 3): None,
         (1, 2, 4): 'c'}
         sage: g = DiGraph([(0,1),(0,1),(1,2)],multiedges=True)
-        sage: g.line_graph().edges()
+        sage: line_graph(g).edges()
         [((0, 1, 1), (1, 2, 2), None), ((0, 1, 0), (1, 2, 2), None)]
 
     An example with a loop::
-
+        
         sage: g = Graph([(0,0),(0,1),(0,2),(1,2)],multiedges=True,loops=True)
-        sage: L = g.line_graph()
+        sage: L = line_graph(g)
         sage: L.edges()
         [((0, 0, None), (0, 1, None), None), ((0, 0, None), (0, 2, None), None),
         ((0, 1, None), (0, 2, None), None), ((0, 1, None), (1, 2, None), None),
         ((0, 2, None), (1, 2, None), None)]
-
+         
     TESTS:
 
     :issue:`13787`::
@@ -399,29 +399,25 @@ def line_graph(g, labels=True, origlabels=False):
     cdef dict origlabels_dic = {}  # stores original labels of edges in case of multiple edges
 
     multiple = g.has_multiple_edges()
+
     if multiple:
+        # As the edges of g are the vertices of its line graph, we need to distinguish between the mutliple edges of g.
+        # To this aim, we assign to each edge of g an integer label (between 0 and g.size() - 1) and set labels to True
+        # in order to keep these labels during the construction of the line graph.
         labels = True
-
-    h = g.copy()
-
-    # replace labels of edges of g with integers in range(len(g.edges())) in order to distinguish multiple edges.
-    if multiple:
-        for i, e in enumerate(h.edges()):
-            f = (e[0], e[1], i)
-            h.delete_edge(e)
-            h.add_edge(f)
-            if origlabels:
-                origlabels_dic[f] = e[2]
-
-    if h._directed:
+        origlabels_dic = {(u, v, id): (u, v, label)
+                          for id, (u, v, label) in enumerate(g.edge_iterator())}
+        g = parent(g)([g, origlabels_dic.keys()], format='vertices_and_edges', multiedges=True)
+                
+    if g._directed:
         from sage.graphs.digraph import DiGraph
         G = DiGraph()
-        G.add_vertices(h.edge_iterator(labels=labels))
-        for v in h:
+        G.add_vertices(g.edge_iterator(labels=labels))
+        for v in g:
             # Connect appropriate incident edges of the vertex v
-            G.add_edges((e, f) for e in h.incoming_edge_iterator(v, labels=labels)
-                            for f in h.outgoing_edge_iterator(v, labels=labels))
-        if origlabels and multiple:
+            G.add_edges((e, f) for e in g.incoming_edge_iterator(v, labels=labels)
+                            for f in g.outgoing_edge_iterator(v, labels=labels))
+        if return_labels and multiple:
             return [G, origlabels_dic]
         else:
             return G
@@ -438,7 +434,7 @@ def line_graph(g, labels=True, origlabels=False):
     # pair in the dictionary of conflicts
 
     # 1) List of vertices in the line graph
-    for e in h.edge_iterator(labels=labels):
+    for e in g.edge_iterator(labels=labels):
         if hash(e[0]) < hash(e[1]):
             elist.append(e)
         elif hash(e[0]) > hash(e[1]):
@@ -450,13 +446,13 @@ def line_graph(g, labels=True, origlabels=False):
             elist.append(e)
 
     G.add_vertices(elist)
-
+        
     # 2) adjacencies in the line graph
-    for v in h:
+    for v in g:
         elist = []
 
         # Add the edge to the list, according to hashes, as previously
-        for e in h.edge_iterator(v, labels=labels):  # iterates over the edges incident to v
+        for e in g.edge_iterator(v, labels=labels): # iterates over the edges incident to v
             if hash(e[0]) < hash(e[1]):
                 elist.append(e)
             elif hash(e[0]) > hash(e[1]):
@@ -472,7 +468,7 @@ def line_graph(g, labels=True, origlabels=False):
             for y in elist:
                 G.add_edge(x, y)
 
-    if origlabels and multiple:
+    if return_labels and multiple:
         return [G, origlabels_dic]
     else:
         return G
