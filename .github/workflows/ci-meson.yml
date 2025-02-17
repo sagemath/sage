@@ -79,7 +79,7 @@ jobs:
         id: check_update_meson
         run: |
           python3 tools/update-meson.py
-          make test-git-no-uncommitted-changes
+          ./tools/test-git-no-uncommitted-changes
         continue-on-error: true
 
       - name: Show files changed by update-meson
