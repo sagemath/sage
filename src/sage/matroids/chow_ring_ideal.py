@@ -479,22 +479,20 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
             I.append(flats_gen[subset[0]] * flats_gen[subset[1]])  # Stanley-Reisner Ideal
         J = []
         for F in flats:
-            for i in [el for el in E if el not in F]:
+            for G in lattice_flats.upper_covers_iterator(F):
                 term = poly_ring.zero()
-                H = F.union(frozenset({i}))
-                for G in lattice_flats.order_filter([F]):  # use covers of F. And take order filter of each cover
-                    if G >= H:
-                        term += flats_gen[G]
+                for H in lattice_flats.order_filter([G]):
+                    term += flats_gen[G]
                 J.append(flats_gen[F] * term)
         K = []
         for i, j in combinations(E, 2):
             term1 = poly_ring.zero()
             term2 = poly_ring.zero()
             for F in flats:
-                H = frozenset({i}).union(frozenset({j}))  # take minimal element containing both elements
+                H = frozenset({i}).union(frozenset({j}))
                 if F >= H:
                     term1 += flats_gen[F] ** 2
-                    for G in lattice_flats.order_filter([F]):  # use order_filter_generator
+                    for G in lattice_flats.order_filter([F]):
                         if G != F:
                             term2 += flats_gen[F]*flats_gen[G]
             K.append(term1 + (2 * term2))
