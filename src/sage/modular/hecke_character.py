@@ -2,6 +2,12 @@
 r"""
 Hecke characters
 
+A Hecke character is a character of the idele class group of a number field.
+
+REFERENCE:
+
+- :wikipedia:`Hecke_character`
+
 AUTHORS:
 
 - Robert Harron (2016-08-15): initial version
