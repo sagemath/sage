@@ -1875,7 +1875,7 @@ class DocTestDispatcher(SageObject):
             ....:     t = walltime()
             ....:     _ = f1.write(f"# sage.doctest: flaky\n'''\nsage: sleep(10 if walltime() < {t+1} else 0)\n'''")
             ....:     f1.flush()
-            ....:     DC = DocTestController(DocTestDefaults(timeout=2, die_timeout=1),
+            ....:     DC = DocTestController(DocTestDefaults(timeout=2),
             ....:                            [f1.name])
             ....:     DC.expand_files_into_sources()
             ....:     DD = DocTestDispatcher(DC)
@@ -1893,7 +1893,7 @@ class DocTestDispatcher(SageObject):
             sage: with NTF(suffix='.py', mode='w+t') as f1:
             ....:     _ = f1.write(f"# sage.doctest: flaky\n'''\nsage: sleep(10)\n'''")
             ....:     f1.flush()
-            ....:     DC = DocTestController(DocTestDefaults(timeout=2, die_timeout=1),
+            ....:     DC = DocTestController(DocTestDefaults(timeout=2),
             ....:                            [f1.name])
             ....:     DC.expand_files_into_sources()
             ....:     DD = DocTestDispatcher(DC)
@@ -1914,7 +1914,7 @@ class DocTestDispatcher(SageObject):
             ....:     t = walltime()
             ....:     _ = f1.write(f"'''\nsage: sleep(10 if walltime() < {t+1} else 0)\n'''")
             ....:     f1.flush()
-            ....:     DC = DocTestController(DocTestDefaults(timeout=2, die_timeout=1),
+            ....:     DC = DocTestController(DocTestDefaults(timeout=2),
             ....:                            [f1.name])
             ....:     DC.expand_files_into_sources()
             ....:     DD = DocTestDispatcher(DC)
