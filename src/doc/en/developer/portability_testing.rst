@@ -1052,8 +1052,8 @@ of system configurations.
 
 - Push your branch to ``origin`` (your fork).
 
-- Go to the Actions tab of your fork and select the workflow you would like to run,
-  for example "CI Linux".
+- Go to the Actions tab of your fork and select the workflow "CI Linux"
+  or "CI macOS".
 
 - Click on "Run workflow" above the list of workflow runs and select
   your branch as the branch on which the workflow will run.
@@ -1061,8 +1061,8 @@ of system configurations.
 For more information, see the `GitHub documentation
 <https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/manually-running-a-workflow>`_.
 
-Alternatively, you can trigger a run of tests by creating and pushing
-a custom tag as follows.
+Alternatively, you can trigger CI workflows at the same time by creating and
+pushing a custom tag as follows.
 
 - Create a ("lightweight", not "annotated") tag with an arbitrary
   name, say ``ci`` (for "Continuous Integration")::
@@ -1073,10 +1073,17 @@ a custom tag as follows.
 
     git push -f origin ci
 
-(In both commands, the "force" option (``-f``) allows overwriting a
-previous tag of that name.)
+In both commands, the "force" option (``-f``) allows overwriting a
+previous tag of that name.
 
-Either way, when the workflow has been triggered, you can inspect it
+The `Workflow for Linux portability CI
+<https://github.com/sagemath/sage/actions/workflows/docker.yml>`_ is convenient
+when you are fixing issues for specific Linux platforms. The "Run workflow"
+button allows you to precisely select the platforms and the build targets
+tailored for the issue you are tackling. This is for advanced developers, who
+read the workflow script :sage_root:`.github/workflows/docker.yml` in detail.
+
+When any CI workflow has been triggered, you can inspect it
 by using the workflow status page in the "Actions" tab of your
 repository.
 

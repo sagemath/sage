@@ -355,13 +355,10 @@ $ADD .gitignore /new/.gitignore
 $ADD src /new/src
 RUN <<EOT
 cd /new && rm -rf .git
-echo "CIDEBUG1: "; ls -l /sage/build/make/Makefile
 if /.ci/retrofit-worktree.sh worktree-pre /sage; then
-  echo "CIDEBUG2: "; ls -l /sage/build/make/Makefile
   cd /sage && touch configure build/make/Makefile
 else
   echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"
-  echo "CIDEBUG3: "; ls -l /sage/build/make/Makefile
   rm -rf /sage/src
   mv src /sage/src
   cd /sage && ./bootstrap && ./config.status
