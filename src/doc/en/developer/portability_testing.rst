@@ -25,9 +25,17 @@ spectrum of platforms.
   doctests on a selection of major platforms including Ubuntu, macOS, and
   Conda.
 
+  For PRs making changes to external packages, the Docker-based testing workflow
+  `CI Linux incremental <https://github.com/sagemath/sage/actions/workflows/ci-linux-incremental.yml>`
+  checks the PR branch on an array of Linux platforms.
+
 - Before a new release, the release manager runs a fleet of `buildbots
   <http://build.sagemath.org>`_ to make it sure that Sage builds correctly on
   all of our supported platforms.
+
+- After a new release, our Docker-based testing workflows `CI Linux <https://github.com/sagemath/sage/actions/workflows/ci-linux.yml>`
+  and `CI macOS <https://github.com/sagemath/sage/actions/workflows/ci-macos.yml>`
+  perform extensive testing on a multitude of platforms.
 
 - Sage developers and users are encouraged to test releases that are announced
   on `Sage Release <https://groups.google.com/forum/#!forum/sage-release>`_ on
@@ -35,8 +43,8 @@ spectrum of platforms.
   responding to the announcements.
 
 In the rest, we focus on our Docker-based testing framework that developers can
-use to test Sage and fix portability issues for platforms different from their
-own machines.
+use to test Sage and fix portability issues for platforms other than their own
+machines.
 
 
 Docker-based Testing
