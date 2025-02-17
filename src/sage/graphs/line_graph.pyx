@@ -351,13 +351,13 @@ def line_graph(g, labels=True, return_labels=False):
 
     Examples with multiple edges::
          
-        sage: L=line_graph(Graph([(0,1),(0,1),(1,2)],multiedges=True))
+        sage: L = Graph([(0,1),(0,1),(1,2)],multiedges=True).line_graph()
         sage: L.edges()
         [((0, 1, 0), (0, 1, 1), None), ((0, 1, 1), (1, 2, 2), None),
         ((0, 1, 0), (1, 2, 2), None)]
         sage: G = Graph([(0,1),(0,1,'a'),(0,1,'b'),(0,2),(1,2,'c')],
         ....: multiedges=True)
-        sage: L=line_graph(G,False,True)
+        sage: L = G.line_graph(False,True)
         sage: L[0].edges()
         [((0, 1, 1), (0, 1, 2), None), ((0, 1, 0), (0, 1, 2), None),
         ((0, 1, 2), (0, 2, 3), None), ((0, 1, 2), (1, 2, 4), None), ((0, 1, 0),
@@ -371,13 +371,13 @@ def line_graph(g, labels=True, return_labels=False):
         (0, 2, 3): None,
         (1, 2, 4): 'c'}
         sage: g = DiGraph([(0,1),(0,1),(1,2)],multiedges=True)
-        sage: line_graph(g).edges()
+        sage: g.line_graph().edges()
         [((0, 1, 1), (1, 2, 2), None), ((0, 1, 0), (1, 2, 2), None)]
 
     An example with a loop::
         
         sage: g = Graph([(0,0),(0,1),(0,2),(1,2)],multiedges=True,loops=True)
-        sage: L = line_graph(g)
+        sage: L = g.line_graph()
         sage: L.edges()
         [((0, 0, None), (0, 1, None), None), ((0, 0, None), (0, 2, None), None),
         ((0, 1, None), (0, 2, None), None), ((0, 1, None), (1, 2, None), None),
@@ -408,7 +408,7 @@ def line_graph(g, labels=True, return_labels=False):
         origlabels_dic = {(u, v, id): (u, v, label)
                           for id, (u, v, label) in enumerate(g.edge_iterator())}
         g = parent(g)([g, origlabels_dic.keys()], format='vertices_and_edges', multiedges=True)
-                
+
     if g._directed:
         from sage.graphs.digraph import DiGraph
         G = DiGraph()
@@ -446,13 +446,13 @@ def line_graph(g, labels=True, return_labels=False):
             elist.append(e)
 
     G.add_vertices(elist)
-        
+
     # 2) adjacencies in the line graph
     for v in g:
         elist = []
 
         # Add the edge to the list, according to hashes, as previously
-        for e in g.edge_iterator(v, labels=labels): # iterates over the edges incident to v
+        for e in g.edge_iterator(v, labels=labels):  # iterates over the edges incident to v
             if hash(e[0]) < hash(e[1]):
                 elist.append(e)
             elif hash(e[0]) > hash(e[1]):
