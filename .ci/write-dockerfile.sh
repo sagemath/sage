@@ -346,13 +346,10 @@ ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!sage_sws2rst"
-RUN echo "CIDEBUG: "; ls -l build/make/Makefile
 $ADD .gitignore /new/.gitignore
 $ADD src /new/src
-RUN echo "CIDEBUG: "; ls -l build/make/Makefile
 RUN cd /new && rm -rf .git && \\
     if /.ci/retrofit-worktree.sh worktree-pre /sage; then \\
-        (RUN echo "CIDEBUG: "; ls -l build/make/Makefile ) \\
         cd /sage && touch configure build/make/Makefile; \\
     else \\
         echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"; \\

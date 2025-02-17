@@ -27,13 +27,12 @@ on:
            "debian-bookworm",
            "debian-trixie",
            "debian-sid",
-           "linuxmint-20.1",
-           "linuxmint-20.2",
-           "linuxmint-20.3",
            "linuxmint-21",
            "linuxmint-21.1",
            "linuxmint-21.2",
            "linuxmint-21.3",
+           "linuxmint-22",
+           "linuxmint-22.1",
            "fedora-30",
            "fedora-31",
            "fedora-32",
@@ -134,15 +133,6 @@ on:
 
   workflow_dispatch:
     inputs:
-      targets_pre:
-        default: all-sage-local
-        type: string
-      targets:
-        default: build
-        type: string
-      targets_optional:
-        default: ptest
-        type: string
       tox_system_factors:
         default: >-
           [ "ubuntu-jammy"]
@@ -151,12 +141,30 @@ on:
         type: string
         default: >-
           ["standard"]
+      targets_pre:
+        default: "all-sage-local"
+        type: string
+      targets:
+        default: "build"
+        type: string
+      targets_optional:
+        default: "ptest"
+        type: string
       docker_targets:
         default: "with-targets"
         type: string
       incremental:
-        default: false
+        default: true
         type: boolean
+      from_docker_repository:
+        default: "ghcr.io/sagemath/sage/"
+        type: string
+      from_docker_target:
+        default: "with-targets-pre"
+        type: string
+      from_docker_tag:
+        default: "dev"
+        type: string
 
 
 jobs:
@@ -169,6 +177,9 @@ jobs:
         tox_system_factor:   ${{ fromJson(inputs.tox_system_factors) }}
         tox_packages_factor: ${{ fromJson(inputs.tox_packages_factors) }}
     env:
+      # See tox.ini to see how these environment variables define the
+      # Dockerfile used to build the docker image, written by the
+      # .ci/write-dockerfile.sh
       TOX_ENV:            "docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}${{ inputs.incremental && '-incremental' || '' }}"
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}${{ inputs.logs_artifact_postfix }}
       DOCKER_TARGETS:     ${{ inputs.docker_targets }}
@@ -289,7 +300,7 @@ jobs:
           # Using "docker exec", we enter the temporary containers used by
           # "docker build" and kill the "make" processes of the Sage distribution.
           (
-            sleep ${{ inputs.timeout }}
+            sleep ${{ inputs.timeout || 20000 }}
             for container_id in $(docker ps -q); do
               #
               # The arcane "find" command is a replacement for "pkill make",
