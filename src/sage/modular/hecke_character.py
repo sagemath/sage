@@ -29,6 +29,7 @@ from sage.groups.abelian_gps.dual_abelian_group import DualAbelianGroup_class
 from sage.groups.abelian_gps.dual_abelian_group_element import DualAbelianGroupElement
 from sage.lfunctions.dokchitser import Dokchitser
 from sage.lfunctions.pari import lfun_generic, LFunction
+from sage.libs.pari import pari
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.structure.unique_representation import UniqueRepresentation
@@ -53,8 +54,10 @@ class HeckeCharacter(DualAbelianGroupElement):
         Evaluating on an element of the ray class group. ::
 
             sage: F.<a> = QuadraticField(5)
-            sage: H = HeckeCharacterGroup(F.modulus(F.ideal(16), [0,1]))
-            sage: chi = H.gens()[0]; chi(H.group().gens()[0])
+            sage: mf = F.modulus(F.ideal(16), [0,1])
+            sage: H = HeckeCharacterGroup(mf)
+            sage: chi = H.gen(0)
+            sage: chi(H.group().gen(0))
             zeta4
 
         Evaluating at an element of the base field. ::
@@ -112,7 +115,7 @@ class HeckeCharacter(DualAbelianGroupElement):
         m = self.modulus().lcm(right.modulus())
         return self.extend(m) * right.extend(m)
 
-    def _log_values_on_gens(self):
+    def _log_values_on_gens(self) -> tuple:
         r"""
         Return a tuple of integers `(a_j)` such that the value of this
         character on the j-th generator of the ray class group is
@@ -320,6 +323,23 @@ class HeckeCharacter(DualAbelianGroupElement):
         rn = self.parent().group().pari_bnr().bnrrootnumber(self._log_values_on_gens())
         return rn.sage()
 
+    def _pari_init_(self):
+        """
+        Return this Hecke character as a Pari object.
+
+        cf https://pari.math.u-bordeaux.fr/Events/PARI2024/talks/gchar.pdf
+
+        and https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html
+
+        EXAMPLES::
+
+            sage: F.<a> = NumberField(x^3 - 3*x -1)
+            sage: H = HeckeCharacterGroup(F.modulus(3, [0,1,2]))
+            sage: chi = H.gen(0)
+            sage: p_chi = pari(chi)
+        """
+        return pari([self.parent(), []])  # TODO
+
     def dirichlet_series_coefficients(self, max_n):
         """
         Return some coefficients of the associated Dirichlet series.
@@ -412,6 +432,8 @@ class HeckeCharacter(DualAbelianGroupElement):
 
 class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
     r"""
+    Hecke character group of a given modulus.
+
     EXAMPLES::
 
         sage: F.<a> = NumberField(x^2 - 5)
@@ -440,6 +462,9 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
         return super().__classcall__(cls, ray_class_group, base_ring, names)
 
     def __init__(self, ray_class_group, base_ring, names) -> None:
+        """
+        Create the Hecke character group.
+        """
         DualAbelianGroup_class.__init__(self, ray_class_group, names, base_ring)
 
     def _repr_(self) -> str:
@@ -483,7 +508,23 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
         """
         return self.group().number_field()
 
-    def ray_class_gens(self):
+    def _pari_init_(self):
+        """
+        Return this Hecke character group as a Pari object.
+
+        cf https://pari.math.u-bordeaux.fr/Events/PARI2024/talks/gchar.pdf
+
+        and https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html
+
+        EXAMPLES::
+
+            sage: F.<a> = NumberField(x^3 - 3*x -1)
+            sage: H = HeckeCharacterGroup(F.modulus(3, [0,1,2]))
+            sage: pH = pari(H)
+        """
+        return pari.gcharinit(self.number_field(), self.modulus())
+
+    def ray_class_gens(self) -> tuple:
         """
         Return the ray class generators.
 
@@ -498,11 +539,13 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
 
     def element_from_values_on_gens(self, vals):
         """
+        missing documentation
         """
         gens_orders = self.gens_orders()
         if len(vals) != len(gens_orders):
             raise ValueError("Incorrect number of values specified. %s specified, but needed %s" % (len(vals), len(gens_orders)))
-        exponents = [gens_orders[i].divide_knowing_divisible_by(vals[i].multiplicative_order()) if vals[i] != 1 else ZZ.zero()
+        exponents = [gens_orders[i].divide_knowing_divisible_by(vals[i].multiplicative_order())
+                     if vals[i] != 1 else ZZ.zero()
                      for i in range(len(gens_orders))]
         return self.element_class(self, exponents)
 
