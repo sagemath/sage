@@ -337,8 +337,17 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: H = HeckeCharacterGroup(F.modulus(3, [0,1,2]))
             sage: chi = H.gen(0)
             sage: p_chi = pari(chi)
+
+        TESTS::
+
+            sage: K.<z> = CyclotomicField(5)
+            sage: p = K.prime_above(5)
+            sage: H = HeckeCharacterGroup(K.modulus(p**2))
+            sage: chi = [1,1,-1,0]
+
+        see https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html#se:gcharinit
         """
-        return pari([self.parent(), []])  # TODO
+        return pari([self.parent(), list(self.exponents())])  # TODO
 
     def dirichlet_series_coefficients(self, max_n):
         """
