@@ -393,7 +393,7 @@ class HeckeCharacter(DualAbelianGroupElement):
                 number_of_allocs += 1
 
         # NEW version, TODO: make correct lines below
-        lf = lfun_generic(conductor=ana_cond, gammaV=gamma_factor,
+        lf = lfun_generic(conductor=ana_cond, gammaV=gamma_factors,
                           weight=1, eps=rn)
         # how to pick the correct number of coefficients ?
         lf.init_coeffs(self.dirichlet_series_coefficients(L.num_coeffs()))
