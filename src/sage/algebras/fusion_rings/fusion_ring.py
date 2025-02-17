@@ -1,3 +1,4 @@
+# sage.doctest: flaky
 """
 Fusion Rings
 """

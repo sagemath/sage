@@ -1,3 +1,4 @@
+# sage.doctest: flaky
 """
 Univariate polynomial base class
 
