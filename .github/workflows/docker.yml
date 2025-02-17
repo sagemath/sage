@@ -132,12 +132,39 @@ on:
         required: false
         type: string
 
+  workflow_dispatch:
+    inputs:
+      targets_pre:
+        default: all-sage-local
+        type: string
+      targets:
+        default: build
+        type: string
+      targets_optional:
+        default: ptest
+        type: string
+      tox_system_factors:
+        default: >-
+          [ "ubuntu-jammy"]
+        type: string
+      tox_packages_factors:
+        type: string
+        default: >-
+          ["standard"]
+      docker_targets:
+        default: "with-targets"
+        type: string
+      incremental:
+        default: false
+        type: boolean
+
+
 jobs:
   linux:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: ${{ inputs.max_parallel }}
+      max-parallel: ${{ inputs.max_parallel || 10 }}
       matrix:
         tox_system_factor:   ${{ fromJson(inputs.tox_system_factors) }}
         tox_packages_factor: ${{ fromJson(inputs.tox_packages_factors) }}
