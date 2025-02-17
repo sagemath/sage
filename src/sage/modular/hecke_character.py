@@ -107,7 +107,7 @@ class HeckeCharacter(DualAbelianGroupElement):
         Rmod = right.modulus()
         if Rmod.divides(Lmod):
             return self * right.extend(self.parent())
-        elif Lmod.divides(Rmod):
+        if Lmod.divides(Rmod):
             return self.extend(right.parent()) * right
         m = self.modulus().lcm(right.modulus())
         return self.extend(m) * right.extend(m)
@@ -115,8 +115,8 @@ class HeckeCharacter(DualAbelianGroupElement):
     def _log_values_on_gens(self):
         r"""
         Return a tuple of integers `(a_j)` such that the value of this
-        character on the jth generator of the ray class group is
-        `\exp(2\pi ia_j/d_j)`, where `d_j` is the order of the jth
+        character on the j-th generator of the ray class group is
+        `\exp(2\pi i a_j/d_j)`, where `d_j` is the order of the jth
         generator.
 
         This tuple is simply the exponents of the character
@@ -170,8 +170,6 @@ class HeckeCharacter(DualAbelianGroupElement):
         K = R.number_field()
         bnr = R.pari_bnr()
         modulus = bnr.bnrconductor(self._log_values_on_gens())
-        # in a newer version of pari, this is replaced with bnrconductor
-
         m1 = modulus[1]
         conversion = self.parent().number_field()._pari_real_places_to_sage()
         infinite = [conversion[i] for i, m1i in enumerate(m1) if m1i != 0]
@@ -182,7 +180,7 @@ class HeckeCharacter(DualAbelianGroupElement):
         """
         Determine whether this character is primitive.
 
-        This means it checks whether its conductor is its modulus.
+        A character is primitive if its conductor is its modulus.
 
         EXAMPLES::
 
@@ -194,6 +192,9 @@ class HeckeCharacter(DualAbelianGroupElement):
         """
         # When a newer version of pari is part of Sage, call
         # bnrisconductor instead.
+        # R = self.parent().group()
+        # bnr = R.pari_bnr()
+        # return bnr.bnrisconductor(self.modulus())  # not correct
         return self.conductor() == self.modulus()
 
     def primitive_character(self):

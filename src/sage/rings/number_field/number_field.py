@@ -4821,11 +4821,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         except AttributeError:
             self.__ray_class_group = {}
         Kbnf = self.pari_bnf()
-        Kbnr = Kbnf.bnrinit(pari(modulus), 1)
+        Kbnr = Kbnf.bnrinit(modulus, 1)
         cycle_structure = tuple(ZZ(c) for c in Kbnr[4][1])
-        #@@gens = tuple(self.ideal(hnf) for hnf in Kbnr[4][2])
+        # @@gens = tuple(self.ideal(hnf) for hnf in Kbnr[4][2])
         from sage.matrix.constructor import Matrix
-        gens = tuple([Kbnf.idealred([hnf, pari(Matrix(0))]) for hnf in Kbnr[4][2]])#@@
+        gens = tuple([Kbnf.idealred([hnf, pari(Matrix(0))]) for hnf in Kbnr[4][2]])  # @@
         G = RayClassGroup(cycle_structure, names, modulus, gens, proof=proof, bnr=Kbnr)
         self.__ray_class_group[modulus, proof, names] = G
         return G

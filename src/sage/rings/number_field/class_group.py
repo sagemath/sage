@@ -109,19 +109,24 @@ Narrow class groups are implemented via ray class groups::
     sage: Hn.gens_ideals()
     (Fractional ideal (a + 1),)
 """
+from cypari2.handle_error import PariError
 
-from sage.structure.sage_object import SageObject
-from sage.misc.cachefunc import cached_method
-from sage.groups.abelian_gps.values import AbelianGroupWithValues_class, AbelianGroupWithValuesElement
 from sage.groups.abelian_gps.abelian_group import AbelianGroup_class
 from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
-from sage.structure.element import MonoidElement
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.groups.abelian_gps.values import AbelianGroupWithValues_class, AbelianGroupWithValuesElement
 from sage.libs.pari.all import pari
+from sage.misc.cachefunc import cached_method
+from sage.misc.verbose import verbose
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import MonoidElement
+from sage.structure.sage_object import SageObject
 
 
 def _integer_n_tuple_L1_iterator(n):
+    """
+    missing documentation
+    """
     if n == 1:
         i = 1
         while True:
@@ -171,7 +176,8 @@ class Modulus(SageObject):
         - ``finite`` -- a non-zero fractional ideal in a number field.
         - ``infinite`` -- a list of indices corresponding to real places
           of the number field, sorted.
-        - ``check`` (default: True) -- If ``True``, run a few checks on the input.
+        - ``check`` (default: True) -- If ``True``, run a few checks
+          on the input.
         """
         self._finite = finite
         if infinite is None:
@@ -181,16 +187,16 @@ class Modulus(SageObject):
         K = self._finite.number_field()
         self._number_field = K
         if check:
-            #insert various checks here
+            # insert various checks here
             if self._finite == 0:
-                raise ValueError("Finite component of a modulus must be non-zero.")
+                raise ValueError("Finite component of a modulus must be non-zero")
             sgn = K.signature()[0]
             for i in self._infinite:
                 if i < 0 or i >= sgn:
                     raise ValueError("Infinite component of a modulus must be a list non-negative integers less than the number of real places of K")
         return
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -198,21 +204,20 @@ class Modulus(SageObject):
             sage: m = K.modulus(K.ideal(31), [0,1]); m
             (Fractional ideal (31)) * ∞_0 * ∞_1
         """
-        if len(self._infinite) == 0:
+        if not self._infinite:
             return str(self._finite)
-        str_inf = ''
-        for i in self._infinite:
-            str_inf += ' * ∞_%s' % i
+        str_inf = ''.join(f' * ∞_{i}' for i in self._infinite)
         return '(' + str(self._finite) + ')' + str_inf
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         return self._number_field == other._number_field and self._finite == other._finite and self._infinite == other._infinite
 
     def __mul__(self, other):
         r"""
         Multiply two moduli.
 
-        This multiplies the two finite parts and performs an exclusive or on the real places.
+        This multiplies the two finite parts and performs an exclusive or
+        on the real places.
 
         EXAMPLES::
 
@@ -233,26 +238,27 @@ class Modulus(SageObject):
             True
         """
         inf = tuple(set(self.infinite_part()).symmetric_difference(other.infinite_part()))
-        return Modulus(self.finite_part() * other.finite_part(), inf, check=False)
+        return Modulus(self.finite_part() * other.finite_part(), inf,
+                       check=False)
 
     def lcm(self, other):
         inf = tuple(set(self.infinite_part()).union(other.infinite_part()))
-        #Pe_out = []
+        # Pe_out = []
         self_fact_P, self_fact_e = zip(*self.finite_part().factor())
         self_fact_P = list(self_fact_P)
         self_fact_e = list(self_fact_e)
-        #self_facts = self.finite_part().factor()
-        #of = other.finite_part()
+        # self_facts = self.finite_part().factor()
+        # of = other.finite_part()
         other_facts = other.finite_part().factor()
         mf = self._number_field.ideal_monoid().one()
         for P, e in other_facts:
             try:
                 i = self_fact_P.index(P)
             except ValueError:
-                #Pe_out.append([P, e])
+                # Pe_out.append([P, e])
                 mf *= P**e
                 continue
-            #Pe_out.append([P, max(e, self_fact_e[i])])
+            # Pe_out.append([P, max(e, self_fact_e[i])])
             mf *= P**max(e, self_fact_e[i])
             del self_fact_P[i]
             del self_fact_e[i]
@@ -260,28 +266,40 @@ class Modulus(SageObject):
             mf *= self_fact_P[i]**self_fact_e[i]
         return Modulus(mf, inf, check=False)
 
-    def divides(self, other):
+    def divides(self, other) -> bool:
         if not set(self.infinite_part()).issubset(other.infinite_part()):
             return False
         return self.finite_part().divides(other.finite_part())
 
     def number_field(self):
+        """
+        missing documentation
+        """
         return self._number_field
 
     def finite_part(self):
+        """
+        missing documentation
+        """
         return self._finite
 
     def infinite_part(self):
+        """
+        missing documentation
+        """
         return self._infinite
 
     def finite_factors(self):
+        """
+        missing documentation
+        """
         try:
             return self._finite_factors
         except AttributeError:
             self._finite_factors = self.finite_part().factor()
             return self._finite_factors
 
-    #def _pari_finite_factors(self):
+    # def _pari_finite_factors(self):
     #    """
     #    Return
     #    """
@@ -306,12 +324,17 @@ class Modulus(SageObject):
             109/54
         """
         F = self._number_field
-        other_Ps = [P for P, _ in other.finite_factors() if self._finite.valuation(P) == 0]
-        if len(other_Ps) == 0: #If prime factors of other is a subset of prime factors of this modulus
+        other_Ps = [P for P, _ in other.finite_factors()
+                    if self._finite.valuation(P) == 0]
+        if not other_Ps:
+            # If prime factors of other is a subset of prime factors
+            # of this modulus
             return F.one()
+
         alpha = I.idealcoprime(other._finite)
         if self.number_is_one_mod_star(alpha):
             return alpha
+
         nf = F.pari_nf()
         other_Ps_facts = [nf.idealfactor(P) for P in other_Ps]
         other_Ps_fact_mat = pari(other_Ps_facts).Col().matconcat()
@@ -323,7 +346,7 @@ class Modulus(SageObject):
         if self.number_is_one_mod_star(beta):
             return beta
         from sage.misc.misc_c import prod
-        beta_fixed = F.modulus(self._finite * prod(other_Ps), self._infinite).fix_signs(beta) #should be able to do this more efficiently
+        beta_fixed = F.modulus(self._finite * prod(other_Ps), self._infinite).fix_signs(beta)  # should be able to do this more efficiently
         return beta_fixed
 
     def equivalent_ideal_coprime_to_other(self, I, other):
@@ -331,7 +354,8 @@ class Modulus(SageObject):
         Given ``I`` coprime to this modulus `m`, return an ideal `J` such that `J` is coprime
         to the modulus ``other`` and equivalent to ``I`` `\mathrm{mod}^\ast m`.
 
-        This is useful for lowering the level of a non-primitive Hecke character.
+        This is useful for lowering the level of a non-primitive
+        Hecke character.
 
         INPUT:
 
@@ -346,6 +370,9 @@ class Modulus(SageObject):
         return self.equivalent_coprime_ideal_multiplier(I, other) * I
 
     def number_is_one_mod_star(self, a):
+        """
+        missing documentation
+        """
         K = self.number_field()
         am1 = K(a - 1)
         for P, e in self.finite_factors():
@@ -748,37 +775,37 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
 
 
 class RayClassGroupElement(AbelianGroupElement):
-    #@@def __init__(self, parent, element, ideal=None):
-        #@@if element is None:
-        #@@    if not parent.modulus().finite_part().is_coprime(ideal):
-        #@@       raise ValueError("Ideal is not coprime to the modulus.")
-        #@@    element = parent._ideal_log(ideal)
-        #Should treat the else case for coprime-ness as well since the code can coerce from different moduli
-        #@@FractionalIdealClass.__init__(self, parent, element, ideal)
+    # @@def __init__(self, parent, element, ideal=None):
+    # @@if element is None:
+    # @@    if not parent.modulus().finite_part().is_coprime(ideal):
+    # @@       raise ValueError("Ideal is not coprime to the modulus.")
+    # @@    element = parent._ideal_log(ideal)
+    # Should treat the else case for coprime-ness as well since the code can coerce from different moduli
+    # @@FractionalIdealClass.__init__(self, parent, element, ideal)
 
-    #def _repr_(self):
+    # def _repr_(self):
     #    return AbelianGroupWithValuesElement._repr_(self)
 
-    #Should be able to get rid of the operations if make the reduce function a method of the parent
-    #def _mul_(self, other):
+    # Should be able to get rid of the operations if make the reduce function a method of the parent
+    # def _mul_(self, other):
     #    m = AbelianGroupElement._mul_(self, other)
     #    nf = self.parent()._number_field.pari_nf()
     #    m._value = nf.idealred(nf.idealmul(self.value(), other.value()))
     #    return m
 
-    #def _div_(self, other):
+    # def _div_(self, other):
     #    m = AbelianGroupElement._div_(self, other)
     #    nf = self.parent()._number_field.pari_nf()
     #    m._value = nf.idealred(nf.idealdiv(self.value(), other.value()))
     #    return m
 
-    #def inverse(self):
+    # def inverse(self):
     #    m = AbelianGroupElement.inverse(self)
     #    nf = self.parent()._number_field.pari_nf()
     #    m._value = nf.idealred(nf.idealinv(self.value()))
     #    return m
 
-    #__invert__ = inverse
+    # __invert__ = inverse
 
     def ideal(self, reduce=True):
         """
@@ -822,39 +849,39 @@ class RayClassGroupElement(AbelianGroupElement):
             ....:     if R(c.ideal()) != c:
             ....:         print("Bug!")
         """
-        #R = self.parent()
-        #exps = self.exponents()
-        #gens = R.gens_values()
-        #i = 0
-        #while exps[i] == 0:
+        # R = self.parent()
+        # exps = self.exponents()
+        # gens = R.gens_values()
+        # i = 0
+        # while exps[i] == 0:
         #    i += 1
         #    if i == L:
         #        return R.one()
-        #nf = R.number_field().pari_nf()
-        #I = nf.idealpow(gens[i], exps[i], flag=1)
-        #i += 1
-        #while i < L:
+        # nf = R.number_field().pari_nf()
+        # I = nf.idealpow(gens[i], exps[i], flag=1)
+        # i += 1
+        # while i < L:
         #    e = exps[i]
         #    g = gens[i]
         #    i += 1
         #    if e != 0:
         #        I = nf.idealmul(I, nf.idealpow(g, e, flag=1), flag=1)
-        #bnr = R.pari_bnr()
-        #return R.number_field().ideal(nf.idealmul(I[0], nf.nffactorback(I[1])))
+        # bnr = R.pari_bnr()
+        # return R.number_field().ideal(nf.idealmul(I[0], nf.nffactorback(I[1])))
         R = self.parent()
-        #m = R.modulus()
+        # m = R.modulus()
         exps = self.exponents()
         gens = R.gens_ideals()
         L = len(exps)
-        #Speed this up later using binary powering
+        # Speed this up later using binary powering
         i = 0
         while exps[i] == 0:
             i += 1
             if i == L:
                 return R.one()
-        I = (gens[i]**exps[i])
+        I = gens[i]**exps[i]
         if reduce:
-            #I = I.reduce_equiv(m)
+            # I = I.reduce_equiv(m)
             I = R.ideal_reduce(I)
         i += 1
         while i < L:
@@ -862,13 +889,13 @@ class RayClassGroupElement(AbelianGroupElement):
             g = gens[i]
             i += 1
             if e != 0:
-                I = (I * (g**e))
+                I = I * (g**e)
                 if reduce:
-                    #I = I.reduce_equiv(m)
+                    # I = I.reduce_equiv(m)
                     I = R.ideal_reduce(I)
         return I
 
-    #def reduce(self):
+    # def reduce(self):
     #    nf = self.parent()._number_field.pari_nf()
     #    return RayClassGroupElement(self.parent(), self.exponents(), nf.idealred(self.value()))
 
@@ -1187,11 +1214,11 @@ class RayClassGroup(AbelianGroup_class):
         r"""
         ``gens`` -- a tuple of pari extended ideals
         """
-        #AbelianGroupWithValues_class.__init__(self, gens_orders, names, gens,
-        #                                      values_group=modulus.number_field().ideal_monoid())
+        # AbelianGroupWithValues_class.__init__(self, gens_orders, names, gens,
+        #                                       values_group=modulus.number_field().ideal_monoid())
         AbelianGroup_class.__init__(self, gens_orders, names)
         self._gens = gens
-        self._proof_flag = proof #TODO: use this, in _ideal_log?
+        self._proof_flag = proof  # TODO: use this, in _ideal_log?
         self._modulus = modulus
         self._number_field = modulus.number_field()
         self._bnr = bnr
@@ -1253,6 +1280,8 @@ class RayClassGroup(AbelianGroup_class):
 
     def ray_class_field(self, subgroup=None, names=None, algorithm='stark'):
         r"""
+        Return the ray class field.
+
         Two different algorithms are possible: pari's :pari:`bnrstark` and
         :pari:`bnrclassfield`. The first one uses the Stark conjecture and only
         deals with totally real extensions of a totally real base
@@ -1312,7 +1341,7 @@ class RayClassGroup(AbelianGroup_class):
             if not test_subgrp:
                 raise ValueError("subgroup does not define a subgroup of this ray class group.")
             gens_coords = [h.exponents() for h in subgroup.gens()]
-            if len(gens_coords) == 0:
+            if not gens_coords:
                 subgroup = None
                 subgroup_mat = None
             else:
@@ -1321,22 +1350,19 @@ class RayClassGroup(AbelianGroup_class):
         else:
             subgroup_mat = None
 
-        from cypari2.handle_error import PariError
-        from sage.misc.verbose import verbose
-
         bnr = self._bnr
         if algorithm == 'stark_only':
             if len(self._modulus.infinite_part()) > 0 or not self._number_field.is_totally_real():
-                raise NotImplementedError("Stark's conjecture algorithm only implemented for totally real extensions of a totally real base field.")
+                raise NotImplementedError("Stark's conjecture algorithm only implemented for totally real extensions of a totally real base field")
             f = bnr.bnrstark(subgroup=subgroup_mat)
         elif algorithm == 'kummer_only':
             if (subgroup is None and not self.order().is_prime()) or (subgroup is not None and not self.order().divide_knowing_divisible_by(subgroup.order()).is_prime()):
-                raise NotImplementedError("Kummer theory algorithm only implemented extensions of prime degree.")
+                raise NotImplementedError("Kummer theory algorithm only implemented extensions of prime degree")
             f = bnr.bnrclassfield(subgp=subgroup_mat)
         elif algorithm == 'stark':
             if len(self._modulus.infinite_part()) > 0 or not self._number_field.is_totally_real():
                 if (subgroup is None and not self.order().is_prime()) or (subgroup is not None and not self.order().divide_knowing_divisible_by(subgroup.order()).is_prime()):
-                    raise NotImplementedError("Ray class fields only implemented for totally real extensions of totally real base fields, or for extensions of prime degree.")
+                    raise NotImplementedError("Ray class fields only implemented for totally real extensions of totally real base fields, or for extensions of prime degree")
                 f = bnr.bnrclassfield(subgp=subgroup_mat)
             else:
                 try:
@@ -1353,9 +1379,9 @@ class RayClassGroup(AbelianGroup_class):
             else:
                 f = bnr.bnrstark(subgroup=subgroup_mat)
         else:
-            raise ValueError("Value of algorithm must be one of \'stark\', \'stark_only\', \'kummer\', or \'kummer_only\'.")
+            raise ValueError("Value of algorithm must be one of \'stark\', \'stark_only\', \'kummer\', or \'kummer_only\'")
         if f.type() == 't_VEC':
-            raise NotImplementedError("bnrstark returned a list of polynomials. Dealing with this has not been implemented.")
+            raise NotImplementedError("bnrstark returned a list of polynomials. Dealing with this has not been implemented")
         F = self._number_field
         nf = F.pari_nf()
         f = nf.rnfpolredbest(f)
@@ -1372,10 +1398,15 @@ class RayClassGroup(AbelianGroup_class):
         pass
 
     def _ideal_log(self, ideal):
+        """
+        missing documentation
+        """
         return tuple(ZZ(c) for c in self._bnr.bnrisprincipal(ideal, flag=0))
 
     def ideal_reduce(self, ideal):
-        from cypari2.handle_error import PariError
+        """
+        """
+
         ideal = pari(ideal)
         try:
             pari_ideal = self._bnr.idealmoddivisor(ideal)
