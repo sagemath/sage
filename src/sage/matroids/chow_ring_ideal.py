@@ -219,7 +219,10 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
              Ab*Ae, Aa*Ae, Ac*Ad, Ab*Ad, Aa*Ad, Ab*Ac, Aa*Ac, Aa*Ab]
         """
         flats = list(self._flats_generator)
-        lattice_flats = Poset((flats, lambda x, y: x <= y))
+        F = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        H.delete_vertex(self._matroid.flats(0)[0])  # remove the empty flat
+        lattice_flats = Poset(H)
         I = []
         subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
         for subset in subsets:
@@ -297,7 +300,10 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
         gb = []
         R = self.ring()
         flats_gen = self._flats_generator
-        lattice_flats = Poset((flats, lambda x, y: x <= y))
+        F = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        H.delete_vertex(self._matroid.flats(0)[0])  # remove the empty flat
+        lattice_flats = Poset(H)
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for subset in antichains:  # Taking antichains of size 2
             term = R.one()
@@ -460,7 +466,12 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
         """
         E = list(self._matroid.groundset())
         flats = list(self._flats_generator)
-        lattice_flats = Poset((flats, lambda x, y: x <= y))  # use lattice of flats of matroid, use Hasse diagram!!!!!
+        F = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        for i in range(2):
+            for j in self._matroid.flats(i):
+                H.delete_vertex(j)  # remove all flats of rank < 2
+        lattice_flats = Poset(H)
         I = []
         flats_gen = self._flats_generator
         subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
@@ -535,7 +546,12 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
         if algorithm != 'constructed':
             return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
         flats = list(self._flats_generator)
-        lattice_flats = Poset((flats, lambda x, y: x <= y))
+        F = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        for i in range(2):
+            for j in self._matroid.flats(i):
+                H.delete_vertex(j)  # remove all flats of rank < 2
+        lattice_flats = Poset(H)
         gb = []
         poly_ring = self.ring()
         flats_gen = self._flats_generator
@@ -681,7 +697,10 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
              A0*A1 - A0*A01234 - A1*A01234 + A01234^2]
         """
         flats = list(self._flats_generator)
-        lattice_flats = Poset((flats, lambda x, y: x <= y))
+        F = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        H.delete_vertex(self._matroid.flats(0)[0])  # remove empty flat
+        lattice_flats = Poset(H)
         flats_gen = self._flats_generator
         ranks, chains = self._lattice_flats()
         atoms = [F for F in flats if ranks[F] == 1]
@@ -746,7 +765,10 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
         if algorithm != 'constructed':
             return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
         flats = list(self._flats_generator)
-        lattice_flats = Poset((flats, lambda x, y: x <= y))
+        lF = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        H.delete_vertex(self._matroid.flats(0)[0])  # remove empty flat
+        lattice_flats = Poset(H)
         gb = []
         poly_ring = self.ring()
         flats_gen = self._flats_generator
@@ -963,7 +985,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         E = list(self._matroid.groundset())
         Q = []
         L = []
-        lattice_flats = Poset((self._flats, lambda x, y: x <= y))
+        lattice_flats = self._matroid.lattice_of_flats()
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for F, G in antichains:
             Q.append(self._flats_generator[F] * self._flats_generator[G])  # Quadratic generators
@@ -1027,8 +1049,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         gb = []  # reduced groebner basis with two eliminated cases
         E = list(self._matroid.groundset())
         poly_ring = self.ring()
-        reln = lambda x,y: x <= y
-        lattice_flats = Poset((self._flats, reln))
+        lattice_flats = self._matroid.lattice_of_flats()
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for F, G in antichains:
             gb.append(self._flats_generator[F] * self._flats_generator[G]) # non-nested flats
@@ -1184,8 +1205,10 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         for F in self._flats:
             for x in F:
                 flats_containing[x].append(F)
-        reln = lambda x,y: x <= y
-        lattice_flats = Poset((self._flats, reln))
+        F = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        H.delete_vertex(self._matroid.flats(0)[0])  # remove empty flat
+        lattice_flats = Poset(H)
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for F, G in antichains:
             Q.append(self._flats_generator[F] * self._flats_generator[G])
@@ -1247,7 +1270,10 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
         gb = []
         poly_ring = self.ring()
-        lattice_flats = Poset((self._flats, lambda x, y: x <= y))
+        F = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        H.delete_vertex(self._matroid.flats(0)[0])  # remove empty flat
+        lattice_flats = Poset(H)
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for F, G in antichains:
             gb.append(self._flats_generator[F]*self._flats_generator[G])
