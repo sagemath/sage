@@ -508,7 +508,7 @@ class Monoids(CategoryWithAxiom):
                 r"""
                 Return ``True`` if ``self`` is a field.
 
-                For a magma algebra `RS` this is always false unless
+                For a monoid algebra `RS` this is always false unless
                 `S` is trivial and the base ring `R` is a field.
 
                 EXAMPLES::
