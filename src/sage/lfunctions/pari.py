@@ -270,11 +270,19 @@ def lfun_hecke(chi):
         sage: L = LFunction(lfun_hecke(chi))
         sage: L(3)
         ?
+
+        sage: F.<a> = NumberField(x^2 - 5)
+        sage: mf = F.modulus(F.ideal(4), [0, 1])
+        sage: H = HeckeCharacterGroup(mf)
+        sage: chi = H.gens()[1]
+        sage: L = LFunction(lfun_hecke(chi))
+        sage: [L(-n) for n in range(3)]
+        [1.00000000000000, 0.000000000000000, 15.0000000000000]
     """
     if not chi.is_primitive():
         chi = chi.primitive_character()
-    G, v = chi._pari_init_()
-    return pari.lfuncreate([G, v])
+    Gv = chi._pari_init_()
+    return pari.lfuncreate(Gv)
 
 
 def lfun_hgm(motif, t):
