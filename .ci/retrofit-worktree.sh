@@ -46,7 +46,4 @@ if [ ! -f $WORKTREE_NAME/.gitignore ]; then cp .gitignore $WORKTREE_NAME/; fi
 (cd $WORKTREE_NAME && git add -A && git commit --quiet --allow-empty -m "old" && git tag -f old)
 # Then we update the worktree and index with "git checkout new". (This keeps modification times of "old" files
 # and makes modification times of "new" files newer, which triggers incremental build.)
-(cd $WORKTREE_NAME && git checkout -f new && \
- # For unknown reason, "build/" directory is untracked by git. Hence we force
- # it tracked, to avoid removal of "build/make/Makefile" by "git clean -fd"
- git add build/ && git clean -fd)
+(cd $WORKTREE_NAME && git checkout -f new)
