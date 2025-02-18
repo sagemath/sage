@@ -650,21 +650,21 @@ class AbstractTree:
         r"""
         Run the counterclockwise countour traversal algorithm (iterative
         implementation) and subject every node encountered
-        to some procedure ``first_action``, ``middle_action`` or ``final_action`` each time it reaches it. 
+        to some procedure ``first_action``, ``middle_action`` or ``final_action`` each time it reaches it.
 
         ALGORITHM:
-        
+
         - if the root is a leaf, apply `leaf_action`
         - else
             -  apply `first_action` to the root
-            - iteratively apply `middle_action` to the root and traverse each subtree 
+            - iteratively apply `middle_action` to the root and traverse each subtree
               from the leftmost one to the rightmost one
             - apply `final_action` to the root
 
         INPUT:
 
         - ``first_action`` -- (optional) a function which takes a node as
-          input, and does something the first time it is reached during exploration        
+          input, and does something the first time it is reached during exploration
 
         - ``middle_action`` -- (optional) a function which takes a node as
           input, and does something each time it explore one of its children
@@ -686,8 +686,8 @@ class AbstractTree:
             sage: t = OrderedTree([[],[[],[],]]).canonical_labelling()
             sage: t
             1[2[], 3[4[], 5[]]]
-            sage: t.contour_traversal(lambda node: (l.append(node.label()),l.append('a')), 
-            ....:   lambda node: (l.append(node.label()),l.append('b')), 
+            sage: t.contour_traversal(lambda node: (l.append(node.label()),l.append('a')),
+            ....:   lambda node: (l.append(node.label()),l.append('b')),
             ....:   lambda node: (l.append(node.label()),l.append('c')),
             ....:   lambda node: (l.append(node.label())))
             sage: l
@@ -697,8 +697,8 @@ class AbstractTree:
             sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
             sage: b
             3[1[., 2[., .]], 7[5[4[., .], 6[., .]], 8[., .]]]
-            sage: b.contour_traversal(lambda node: l.append(node.label()), 
-            ....:   lambda node: l.append(node.label()), 
+            sage: b.contour_traversal(lambda node: l.append(node.label()),
+            ....:   lambda node: l.append(node.label()),
             ....:   lambda node: l.append(node.label()),
             ....:   None)
             sage: l
@@ -946,16 +946,20 @@ class AbstractTree:
         if self.is_empty():
             return 0
         m = 0
+
         def fr_action(node):
             nonlocal m, depths, depth
             if depths[-1] == depth:
                 m += 1
+
         def m_action(node):
             nonlocal depths
             depths.append(depths[-1] + 1)
+
         def fn_action(node):
             nonlocal depths
             depths.pop()
+
         depths = [0]
         self.contour_traversal(fr_action, m_action, fn_action)
         return m
@@ -1194,9 +1198,11 @@ class AbstractTree:
             10000
         """
         count = 0
+
         def incr(node):
             nonlocal count
             count += 1
+
         self.iterative_pre_order_traversal(incr)
         return Integer(count)
 
@@ -1235,15 +1241,17 @@ class AbstractTree:
         if self.is_empty():
             return 0
         m = []
+
         def action(node):
             nonlocal m
             if node.is_empty():
                 m.append(-1)
-            elif not(bool(node)):
+            elif not bool(node):
                 m.append(0)
             else:
                 mx = max(m.pop() for _ in node)
                 m.append(mx + 1)
+
         self.contour_traversal(final_action=action)
         return m[0] + 1
 
