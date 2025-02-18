@@ -126,6 +126,20 @@ from sage.structure.sage_object import SageObject
 def _integer_n_tuple_L1_iterator(n):
     """
     missing documentation
+
+    This is iterating over non-zero n-tuples of elements of ZZ
+    in order of increasing sum of absolute values ?
+
+    EXAMPLES::
+
+        sage: from sage.rings.number_field.class_group import _integer_n_tuple_L1_iterator
+        sage: it = _integer_n_tuple_L1_iterator(3)
+        sage: next(it)
+        [1, 0, 0]
+
+    .. WARNING::
+
+        This is an infinite iterator.
     """
     if n == 1:
         i = 1
@@ -141,8 +155,7 @@ def _integer_n_tuple_L1_iterator(n):
         Subsets_of_n = []
         while True:
             for k in range(1, n + 1):
-                Ps = OrderedPartitions(N, k)
-                for P in Ps:
+                for P in OrderedPartitions(N, k):
                     try:
                         Ss = Subsets_of_n[k - 1]
                     except IndexError:
@@ -167,7 +180,7 @@ def _integer_n_tuple_L1_iterator(n):
 
 
 class Modulus(SageObject):
-    def __init__(self, finite, infinite=None, check=True):
+    def __init__(self, finite, infinite=None, check=True) -> None:
         r"""
         Create a modulus of a number field.
 
@@ -198,6 +211,8 @@ class Modulus(SageObject):
 
     def _repr_(self) -> str:
         r"""
+        Return a string representation.
+
         EXAMPLES::
 
             sage: K.<a> = NumberField(x^2-5)
@@ -210,7 +225,16 @@ class Modulus(SageObject):
         return '(' + str(self._finite) + ')' + str_inf
 
     def __eq__(self, other) -> bool:
+        """
+        Test for equality between moduli.
+        """
         return self._number_field == other._number_field and self._finite == other._finite and self._infinite == other._infinite
+
+    def __ne__(self, other) -> bool:
+        """
+        Test for unequality between moduli.
+        """
+        return not self.__eq__(other)
 
     def __mul__(self, other):
         r"""
@@ -237,11 +261,12 @@ class Modulus(SageObject):
             sage: _ == m2 * m1
             True
         """
-        inf = tuple(set(self.infinite_part()).symmetric_difference(other.infinite_part()))
-        return Modulus(self.finite_part() * other.finite_part(), inf,
+        inf = set(self.infinite_part()).symmetric_difference(other.infinite_part())
+        return Modulus(self.finite_part() * other.finite_part(),
+                       tuple(inf),
                        check=False)
 
-    def lcm(self, other):
+    def lcm(self, other) -> "Modulus":
         inf = tuple(set(self.infinite_part()).union(other.infinite_part()))
         # Pe_out = []
         self_fact_P, self_fact_e = zip(*self.finite_part().factor())
