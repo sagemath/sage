@@ -350,7 +350,7 @@ def line_graph(g, labels=True, return_labels=False):
          ((2, 3, None), (3, 4, None), None)]
 
     Examples with multiple edges::
-         
+
         sage: L = Graph([(0,1),(0,1),(1,2)],multiedges=True).line_graph()
         sage: L.edges()
         [((0, 1, 0), (0, 1, 1), None), ((0, 1, 1), (1, 2, 2), None),
@@ -375,14 +375,14 @@ def line_graph(g, labels=True, return_labels=False):
         [((0, 1, 1), (1, 2, 2), None), ((0, 1, 0), (1, 2, 2), None)]
 
     An example with a loop::
-        
+
         sage: g = Graph([(0,0),(0,1),(0,2),(1,2)],multiedges=True,loops=True)
         sage: L = g.line_graph()
         sage: L.edges()
         [((0, 0, None), (0, 1, None), None), ((0, 0, None), (0, 2, None), None),
         ((0, 1, None), (0, 2, None), None), ((0, 1, None), (1, 2, None), None),
         ((0, 2, None), (1, 2, None), None)]
-         
+
     TESTS:
 
     :issue:`13787`::
@@ -407,6 +407,7 @@ def line_graph(g, labels=True, return_labels=False):
         labels = True
         origlabels_dic = {(u, v, id): (u, v, label)
                           for id, (u, v, label) in enumerate(g.edge_iterator())}
+        from sage.structure.element cimport parent
         g = parent(g)([g, origlabels_dic.keys()], format='vertices_and_edges', multiedges=True)
 
     if g._directed:
