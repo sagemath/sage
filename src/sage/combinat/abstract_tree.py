@@ -1231,7 +1231,7 @@ class AbstractTree:
         TESTS:
 
         Check that we do not hit a recursion limit::
-        
+
             sage: T = OrderedTree([])
             sage: for _ in range(9999):
             ....:     T = OrderedTree([T])
