@@ -7319,6 +7319,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: parent(_)
             Univariate Polynomial Ring in q over Rational Field
         """
+        from sage.functions.other import binomial
         R = PolynomialRing(QQ, 'q')
         q = R.gen()
 
