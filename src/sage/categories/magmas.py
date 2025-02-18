@@ -379,21 +379,18 @@ class Magmas(Category_singleton):
                 r"""
                 Return ``True`` if ``self`` is a field.
 
-                For a magma algebra `RS` this is always false unless
-                `S` is trivial and the base ring `R` is a field.
+                For a magma algebra `R S` this is always false unless
+                `S` is trivial and the base ring `R` is a field and
+                the square of the unique element of `S` is non-zero.
 
                 EXAMPLES::
 
-                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
-                    True
-                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.combinat sage.groups
-                    False
-                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
-                    False
+                    sage: Magmas().example().algebra(QQ).is_field()
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError
                 """
-                if not self.base_ring().is_field(proof):
-                    return False
-                return (self.basis().keys().cardinality() == 1)
+                raise NotImplementedError
 
     class Commutative(CategoryWithAxiom):
 
