@@ -347,7 +347,7 @@ class HeckeCharacter(DualAbelianGroupElement):
 
         see https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html#se:gcharinit
         """
-        return pari([self.parent(), list(self.exponents())])  # TODO
+        return pari([self.parent(), pari.Col(self.exponents())])
 
     def dirichlet_series_coefficients(self, max_n):
         """

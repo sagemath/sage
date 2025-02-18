@@ -3678,10 +3678,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         a = self(nf.nfbasistoalg(nf.nffactorback(Ix[1])))
         return a * I
 
+    @cached_method
     def _pari_real_places_to_sage(self):
         """
-        Return a list converting from the ordering of real places in pari to that
-        of Sage's :func:`places`.
+        Return a tuple converting from the ordering of real places
+        in pari to that of Sage's :func:`places`.
 
         EXAMPLES:
 
@@ -3697,7 +3698,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F.pari_polynomial()
             x^4 - 6*x^2 - 5*x - 1
             sage: F._pari_real_places_to_sage()
-            (0, 3, 2, 1)
+            (2, 1, 0, 3)
 
         A quintic field with three real places.
 
@@ -3709,22 +3710,14 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F._pari_real_places_to_sage()
             (2, 1, 0)
         """
-        try:
-            return self._pari_real_places
-        except AttributeError:
-            pass
-        pari_conv = self._pari_absolute_structure()[1].lift()
-        pari_conv = [pari_conv.polcoef(i).sage()
-                     for i in range(pari_conv.poldegree() + 1)]
         R = self.defining_polynomial().parent()
-        pari_conv = R(pari_conv)
-        pari_roots = [pari_conv(r.sage())
-                      for r in self.pari_nf()[5][:self.signature()[0]]]
-        pari_roots_sorted = list(pari_roots)
-        pari_roots_sorted.sort()
-        self._pari_real_places = tuple(pari_roots_sorted.index(r)
-                                       for r in pari_roots)
-        return self._pari_real_places
+        pari_conv = self._pari_absolute_structure()[1].lift()
+        pari_conv = R([pari_conv.polcoef(i).sage()
+                       for i in range(pari_conv.poldegree() + 1)])
+        roots = [pari_conv(r.sage())
+                 for r in self.pari_nf()[5][:self.signature()[0]]]
+        sorted_roots = sorted(roots)
+        return tuple(sorted_roots.index(r) for r in roots)
 
     def modulus(self, finite, infinite=None):
         """
