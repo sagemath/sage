@@ -97,6 +97,7 @@ def parse_optional_tags(
     - ``'not tested'``
     - ``'known bug'`` (possible values are ``None``, ``linux`` and ``macos``)
     - ``'py2'``
+    - ``'flaky'``
     - ``'optional -- FEATURE...'`` or ``'needs FEATURE...'`` --
       the dictionary will just have the key ``'FEATURE'``
 
@@ -166,6 +167,17 @@ def parse_optional_tags(
         sage: parse_optional_tags("sage: #this is not #needs scipy\n....: import scipy",
         ....:                     return_string_sans_tags=True)
         ({'scipy': None}, 'sage: #this is not \n....: import scipy', False)
+
+    TESTS::
+
+        sage: parse_optional_tags("# flaky")
+        {'flaky': None}
+
+    Remember to update the documentation above whenever the following changes::
+
+        sage: from sage.doctest.parsing import special_optional_regex
+        sage: special_optional_regex.pattern
+        'py2|long time|not implemented|not tested|optional|needs|known bug|flaky'
     """
     safe, literals, state = strip_string_literals(string)
     split = safe.split('\n', 1)

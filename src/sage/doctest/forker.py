@@ -1729,9 +1729,9 @@ class DocTestDispatcher(SageObject):
 
         If this is run directly in the normal Sage command-line,
         it calls :func:`init_sage` which in turn calls
-        :meth:`.switch_backend` to the doctest backend, which is
-        incompatible with the IPython-based command-line.
-        As such, if an error such as
+        :meth:`~sage.repl.rich_output.display_manager.DisplayManager.switch_backend`
+        to the doctest backend, which is incompatible with the IPython-based
+        command-line.  As such, if an error such as
         ``TypeError: cannot unpack non-iterable NoneType object`` is seen,
         a workaround is to run the following::
 
