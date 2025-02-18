@@ -691,7 +691,7 @@ class AbstractTree:
             ....:   lambda node: (l.append(node.label()),l.append('c')),
             ....:   lambda node: (l.append(node.label())))
             sage: l
-           ....: [1, 'a', 1, 'b', 2, 1, 'b', 3, 'a', 3, 'b', 4, 3, 'b', 5, 3, 'c', 1, 'c']
+            [1, 'a', 1, 'b', 2, 1, 'b', 3, 'a', 3, 'b', 4, 3, 'b', 5, 3, 'c', 1, 'c']
 
             sage: l = []
             sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
@@ -1183,7 +1183,7 @@ class AbstractTree:
             sage: BinaryTree([[None, [[], []]], None]).node_number()
             5
 
-        TESTS::
+        TESTS:
 
         Check that we do not hit a recursion limit::
 
@@ -1222,7 +1222,7 @@ class AbstractTree:
             sage: BinaryTree([[],[[],[]]]).depth()
             3
 
-        TESTS::
+        TESTS:
 
         Check that we do not hit a recursion limit::
         
