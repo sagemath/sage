@@ -148,7 +148,7 @@ import itertools
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.all import QQ, NN, Integer, infinity
+from sage.all import QQ, NN, Integer, ZZ, infinity
 from sage.algebras.flag import Flag, Pattern, inductive_generator, overlap_generator
 from sage.algebras.flag_algebras import FlagAlgebra, FlagAlgebraElement
 
@@ -810,7 +810,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     #Optimizing and rounding
 
     def blowup_construction(self, target_size, pattern_size, 
-                            symbolic_parts=False, 
+                            symbolic_parts=False, symbolic=False,
                             **kwargs):
         r"""
         Returns a blowup construction, based on a given pattern
@@ -834,6 +834,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             sage: GraphTheory.blowup_construction(3, 2, edges=[[0, 1]])
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        if symbolic:
+            symbolic_parts = True
+            import warnings
+            warnings.warn("The parameter symbolic will be replaced with symbolic_parts.", DeprecationWarning)
         RX = PolynomialRing(QQ, pattern_size, "X")
         Xs = RX.gens()
 
@@ -1361,11 +1365,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         M_flat_relevant_matrix_exact = matrix(
             ring, len(c_zero_inds), 0, 0, sparse=True
             )
-        # # The rounded X values flattened to a list
-        # X_flat_vector_rounded = [] 
-        X_flat_list = [] 
+        X_flat_list = []
         block_index = 0
-        block_info = []
+        X_recover_bases = []
+        X_sizes_corrected = []
+
         for params in table_constructor.keys():
             ns, ftype, target_size = params
             table = self.mul_project_table(
@@ -1373,21 +1377,26 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 )
 
             for plus_index, base in enumerate(table_constructor[params]):
-                block_info.append([ftype, base])
-                X_approx = sdp_result['X'][block_index + plus_index]
+                
+                X_approx = matrix(sdp_result['X'][block_index + plus_index])
+                X_kernel_removed, recover_base = _remove_kernel(X_approx)
+                X_recover_bases.append(recover_base)
+                X_sizes_corrected.append(X_kernel_removed.nrows())
                 X_rounded_flattened = _round_list(
-                    _flatten_matrix(X_approx), method=0, denom=denom
+                    _flatten_matrix(X_kernel_removed.rows()), method=0, denom=denom
                     )
                 X_flat_list.extend(X_rounded_flattened)
+                
                 sdp_result['X'][block_index + plus_index] = None
-
+                
                 M_extra = []
 
+                X_adjusted_base = recover_base.T * base
                 for FF in c_zero_inds:
                     M_FF = table[FF]
                     M_extra.append(
                         _flatten_matrix(
-                            (base * M_FF * base.T).rows(), doubled=True
+                            (X_adjusted_base * M_FF * X_adjusted_base.T).rows(), doubled=True
                             )
                         )
 
@@ -1399,13 +1408,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 gc.collect()
 
             block_index += len(table_constructor[params])
-        
 
         # 
         # Append the relevant M matrix and the X with the additional values from
-        # the positivity constraints. 
-        #
-        # Then correct the x vector values
+        # the positivity constraints. Then correct the x vector values
         # 
 
         M_matrix_final = M_flat_relevant_matrix_exact.augment(
@@ -1426,13 +1432,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         )
         self.fprint("This took {}s".format(time.time() - start_time))
         start_time = time.time()
-        
+
         self.fprint("Unflattening X matrices")
 
         #
         # Recover the X matrices and e vector from the corrected x
         #
-        
+
         e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
         if len(e_nonzero_vector_corr)>0 and min(e_nonzero_vector_corr)<0:
             self.fprint("Linear coefficient is negative: {}".format(
@@ -1443,7 +1449,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         e_vector_corr = vector(ring, positives_num, e_vector_dict)
         self.fprint("This took {}s".format(time.time() - start_time))
         start_time = time.time()
-        
+
         X_final = []
         slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
         block_index = 0
@@ -1458,20 +1464,21 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 ns, ns, ftype, ftype_inj=[], target_size=target_size
                 )
             for plus_index, base in enumerate(table_constructor[params]):
-                block_dim = block_sizes[block_index + plus_index]
-                X_ii_small, x_vector_corr = _unflatten_matrix(
+                block_dim = X_sizes_corrected[block_index + plus_index]
+                X_ii_raw, x_vector_corr = _unflatten_matrix(
                     x_vector_corr, block_dim
                     )
-                X_ii_small = matrix(ring, X_ii_small)
+                X_ii_raw = matrix(ring, X_ii_raw)
+                recover_base = X_recover_bases[block_index + plus_index]
+                X_ii_small = recover_base * X_ii_raw * recover_base.T
                 
                 # verify semidefiniteness
                 if not X_ii_small.is_positive_semidefinite():
                     self.fprint("Rounded X matrix "+ 
-                          "{} is not semidefinite: {}".format(
-                              block_index+plus_index, 
-                              min(X_ii_small.eigenvalues())
-                              ))
-                    return None
+                        "{} is not semidefinite: {}".format(
+                            block_index+plus_index, 
+                            min(X_ii_small.eigenvalues())
+                            ))
                 
                 # update slacks
                 for gg, morig in enumerate(table):
@@ -1485,10 +1492,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 
                 X_final.append(X_ii_small)
             block_index += len(table_constructor[params])
-        
+
         # scale back slacks with the one vector, the minimum is the final result
         result = min([slacks[ii]/oveii \
-                      for ii, oveii in enumerate(one_vector_exact) if \
+                    for ii, oveii in enumerate(one_vector_exact) if \
                         oveii!=0])
         # pad the slacks, so it is all positive where it counts
         slacks -= result*one_vector_exact
@@ -1513,6 +1520,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             ns, ftype, target_size = params
             X_ii = None
             for plus_index, base in enumerate(table_constructor[params]):
+                base_scale = base * base.T
                 if X_ii == None:
                     X_ii = base.T * X_original[block_index + plus_index] * base
                 else:
@@ -2762,7 +2770,6 @@ def _round_list(ls, force_pos=False, method=1, quotient_bound=7,
         return [_round(xx, method, quotient_bound, 
                        denom_bound, denom) for xx in ls]
 
-
 def _round_matrix(mat, method=1, quotient_bound=7, denom_bound=9, 
                   denom=1024):
     r"""
@@ -2807,3 +2814,20 @@ def _round_adaptive(ls, onevec, denom=1024):
         rvec = vector(QQ, _round_list(ls, True, method=0, denom=denom))
         best_vec = rvec/(rvec*onevec)
     return best_vec, ((best_vec-orig)/(len(orig)**0.5)).norm()
+
+def _remove_kernel(mat, factor=1024, threshold=1e-4):
+    d = mat.nrows()
+    M_scaled = matrix(ZZ, [[round(xx*factor) for xx in vv] for vv in mat])
+    M_augmented = matrix.identity(ZZ, d).augment(M_scaled)
+    LLL_reduced = M_augmented.LLL()
+    LLL_coeffs = LLL_reduced[:, :d]
+    norm_test = LLL_coeffs * mat
+    kernel_base = [LLL_coeffs[ii] for ii,rr in enumerate(norm_test) if rr.norm(1)/d < threshold]
+    if len(kernel_base)==0:
+        return mat, matrix.identity(d, sparse=True)
+    K = matrix(ZZ, kernel_base).stack(matrix.identity(d))
+    image_space = matrix(K.gram_schmidt()[0][len(kernel_base):, :], sparse=True)
+    kernel_removed_mat = image_space * mat * image_space.T
+    norm_factor = image_space * image_space.T
+    mat_recover = image_space.T * norm_factor.inverse()
+    return kernel_removed_mat, mat_recover
