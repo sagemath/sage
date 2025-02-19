@@ -97,7 +97,7 @@ jobs:
 
       - name: Create source distribution
         run: |
-          conda install --yes build
+          conda install --yes python-build
           python -m build --sdist --no-isolation --outdir dist .
           ls -l dist
 
