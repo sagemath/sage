@@ -173,7 +173,7 @@ distclean: build-clean
 bootstrap-clean:
 	rm -rf config/install-sh config/compile config/config.guess config/config.sub config/missing configure build/make/Makefile-auto.in
 	rm -f src/doc/en/installation/*.txt
-	find src/doc/en/reference/spkg -name index.rst -prune -o -maxdepth 1 -name "*.rst" -exec rm -f {} \+
+	find src/doc/en/reference/spkg -maxdepth 1 -name index.rst -prune -o -name "*.rst" -exec rm -f {} \+
 	for a in environment environment-optional src/environment src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
 	rm -f src/requirements.txt
 	rm -f src/setup.cfg
@@ -253,9 +253,19 @@ TEST_TARGET = $@
 
 TEST = ./sage -t --logfile=$(TEST_LOG) $(TEST_FLAGS) --optional=$(TEST_OPTIONAL) $(TEST_FILES)
 
+test-git-no-uncommitted-changes:
+	@UNCOMMITTED=$$(git status --porcelain); \
+	if [ -n "$$UNCOMMITTED" ]; then \
+	    echo "Error: the git repo has uncommitted changes:"; \
+	    echo "$$UNCOMMITTED"; \
+	    echo; \
+	    exit 1; \
+	fi
+
 test: all
 	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)
-	$(TEST)
+	$(TEST); \
+	$(MAKE) test-git-no-uncommitted-changes
 
 check:
 	@$(MAKE) test
@@ -302,7 +312,8 @@ ptestoptionallong:
 test-nodoc: TEST_OPTIONAL := $(TEST_OPTIONAL),!sagemath_doc_html,!sagemath_doc_pdf
 test-nodoc: build
 	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)
-	$(TEST)
+	$(TEST); \
+	$(MAKE) test-git-no-uncommitted-changes
 
 check-nodoc:
 	@$(MAKE) test-nodoc
@@ -387,5 +398,6 @@ list:
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \
 	test check testoptional testall testlong testoptionallong testallong \
 	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong \
+	test-git-no-uncommitted-changes \
 	list \
 	doc-clean clean sagelib-clean build-clean

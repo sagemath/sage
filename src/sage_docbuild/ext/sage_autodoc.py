@@ -81,8 +81,12 @@ from sage.misc.sageinspect import (sage_getdoc_original,
                                    is_function_or_cython_function)
 
 _getdoc = getdoc
+
+
 def getdoc(obj, *args, **kwargs):
     return sage_getdoc_original(obj)
+
+
 # ------------------------------------------------------------------
 
 if TYPE_CHECKING:
@@ -1616,7 +1620,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         try:
             result_bool = isinstance(member, type) or (
                 isattr and isinstance(member, NewType | TypeVar))
-        except:
+        except Exception:
             result_bool = isinstance(member, type) or (
                 isattr and (inspect.isNewType(member) or isinstance(member, TypeVar)))
         return result_bool
@@ -1695,7 +1699,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             # support both sphinx 8 and py3.9/older sphinx
             try:
                 test_bool = isinstance(self.object, NewType | TypeVar)
-            except:
+            except Exception:
                 test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
             if test_bool:
                 modname = getattr(self.object, '__module__', self.modname)
@@ -1709,7 +1713,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         # support both sphinx 8 and py3.9/older sphinx
         try:
             test_bool = isinstance(self.object, NewType | TypeVar)
-        except:
+        except Exception:
             test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
         if test_bool:
             # Suppress signature
@@ -1899,7 +1903,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         # support both sphinx 8 and py3.9/older sphinx
         try:
             test_bool = isinstance(self.object, NewType | TypeVar)
-        except:
+        except Exception:
             test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
         if test_bool:
             return
@@ -1911,7 +1915,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         # support both sphinx 8 and py3.9/older sphinx
         try:
             newtype_test = isinstance(self.object, NewType)
-        except:
+        except Exception:
             newtype_test = inspect.isNewType(self.object)
         if (not self.doc_as_attr and not newtype_test
                 and canonical_fullname and self.fullname != canonical_fullname):
@@ -2053,7 +2057,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         # support both sphinx 8 and py3.9/older sphinx
         try:
             newtype_test = isinstance(self.object, NewType)
-        except:
+        except Exception:
             newtype_test = inspect.isNewType(self.object)
         if newtype_test:
             if self.config.autodoc_typehints_format == "short":

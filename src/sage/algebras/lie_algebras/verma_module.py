@@ -701,21 +701,23 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         """
         if not d:
             return frozenset([self.highest_weight_vector()])
-        f = {i: self._pbw(g) for i,g in enumerate(self._g.f())}
-        basis = d.parent().basis() # Standard basis vectors
+        f = {i: self._pbw(g) for i, g in enumerate(self._g.f())}
+        basis = d.parent().basis()  # Standard basis vectors
         ret = set()
 
         def degree(m):
             m = m.dict()
             if not m:
                 return d.parent().zero()
-            return sum(e * self._g.degree_on_basis(k) for k,e in m.items()).to_vector()
-        for i in f:
+            return sum(e * self._g.degree_on_basis(k)
+                       for k, e in m.items()).to_vector()
+        for i, fi in f.items():
             if d[i] == 0:
                 continue
             for b in self._homogeneous_component_f(d + basis[i]):
-                temp = f[i] * b
-                ret.update([self.monomial(m) for m in temp.support() if degree(m) == d])
+                temp = fi * b
+                ret.update([self.monomial(m) for m in temp.support()
+                            if degree(m) == d])
         return frozenset(ret)
 
     def _Hom_(self, Y, category=None, **options):

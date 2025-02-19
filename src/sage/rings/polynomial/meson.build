@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'binary_form_reduce.py',
   'commutative_polynomial.pxd',

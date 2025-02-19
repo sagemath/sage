@@ -23,13 +23,13 @@ dependencies:
   - binutils=2.43=hf1166c9_2
   - binutils_impl_linux-aarch64=2.43=h4c662bb_2
   - binutils_linux-aarch64=2.43=hf1166c9_2
-  - blas=2.125=openblas
-  - blas-devel=3.9.0=25_linuxaarch64_openblas
+  - blas=2.126=openblas
+  - blas-devel=3.9.0=26_linuxaarch64_openblas
   - boost-cpp=1.85.0=hdad291f_4
   - brial=1.2.12=pyh694c41f_3
   - brotli=1.1.0=h86ecc28_2
   - brotli-bin=1.1.0=h86ecc28_2
-  - brotli-python=1.1.0=py310he30c3ed_2
+  - brotli-python=1.1.0=py312h6f74592_2
   - bzip2=1.0.8=h68df207_7
   - c-ares=1.34.4=h86ecc28_0
   - c-compiler=1.8.0=h6561dab_1
@@ -90,7 +90,7 @@ dependencies:
   - fonttools=4.55.3=py310heeae437_0
   - fortran-compiler=1.8.0=h25a59a9_1
   - fplll=5.4.5=hb3a790e_0
-  - fpylll=0.6.1=py310hfdbf2a6_0
+  - fpylll=0.6.1=py312h8b93be1_0
   - freetype=2.12.1=hf0a5ef3_2
   - furo=2024.8.6=pyhd8ed1ab_1
   - gap-core=4.14.0=h1754e88_1
@@ -141,13 +141,13 @@ dependencies:
   - kernel-headers_linux-aarch64=4.18.0=h05a177a_18
   - keyring=25.5.0=pyha804496_1
   - keyutils=1.6.1=h4e544f5_0
-  - kiwisolver=1.4.7=py310h5d7f10c_0
+  - kiwisolver=1.4.7=py312h88dc405_0
   - krb5=1.21.3=h50a48e9_0
   - lcalc=2.0.5=he588f68_2
   - lcms2=2.16=h922389a_0
   - ld_impl_linux-aarch64=2.43=h80caac9_2
   - lerc=4.0.0=h4de3ea5_0
-  - libblas=3.9.0=25_linuxaarch64_openblas
+  - libblas=3.9.0=26_linuxaarch64_openblas
   - libboost=1.85.0=h9fa81b4_4
   - libboost-devel=1.85.0=h37bb5a9_4
   - libboost-headers=1.85.0=h8af1aa0_4
@@ -243,7 +243,7 @@ dependencies:
   - networkx=3.4.2=pyh267e887_2
   - ninja=1.12.1=h70be974_0
   - ntl=11.4.3=h0d7519b_1
-  - numpy=1.26.4=py310hcbab775_0
+  - numpy=1.26.4=py312h470d778_0
   - openblas=0.3.28=pthreads_h3a8cbd8_1
   - openjpeg=2.5.3=h3f56577_0
   - openldap=2.6.9=h30c48ee_0
@@ -271,9 +271,9 @@ dependencies:
   - platformdirs=4.3.6=pyhd8ed1ab_1
   - pluggy=1.5.0=pyhd8ed1ab_1
   - ppl=1.2=h984aac9_1006
-  - pplpy=0.8.9=py310h6665419_1
+  - pplpy=0.8.9=py312hbd99ab9_1
   - primecount=7.9=hd600fc2_0
-  - primecountpy=0.1.0=py310h586407a_4
+  - primecountpy=0.1.0=py312h8f0b210_4
   - primesieve=11.1=h2f0025b_0
   - progressbar2=4.5.0=pyhd8ed1ab_1
   - prompt-toolkit=3.0.48=pyha770c72_1

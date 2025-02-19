@@ -101,6 +101,7 @@ class MemoryChunkCCRetval(MemoryChunk):
         """
         return "result"
 
+
 class CCInterpreter(StackInterpreter):
     r"""
     A subclass of StackInterpreter, specifying an interpreter over

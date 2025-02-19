@@ -32,7 +32,7 @@ jobs:
           eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
 
       - name: Install GH CLI
-        uses: dev-hanz-ops/install-gh-cli-action@v0.2.0
+        uses: dev-hanz-ops/install-gh-cli-action@v0.2.1
         with:
           gh-cli-version: 2.32.0
 

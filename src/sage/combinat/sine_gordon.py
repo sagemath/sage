@@ -598,11 +598,11 @@ class SineGordonYsystem(SageObject):
                              **triangulation_opts)
             P += point((0, 0), zorder=len(P), **points_opts)
         # Vertices
-        v_points = {x: (radius * cos(vertex_to_angle(x)),
-                        radius * sin(vertex_to_angle(x)))
-                    for x in self.vertices()}
-        for v in v_points:
-            P += point(v_points[v], zorder=len(P), **points_opts)
+        v_points = [(radius * cos(vertex_to_angle(x)),
+                     radius * sin(vertex_to_angle(x)))
+                    for x in self.vertices()]
+        for coords in v_points:
+            P += point(coords, zorder=len(P), **points_opts)
         # Reflection axes
         P += line([(0, 1.1 * radius), (0, -1.1 * radius)],
                   zorder=len(P), **reflections_opts)

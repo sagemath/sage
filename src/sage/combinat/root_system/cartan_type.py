@@ -841,7 +841,9 @@ class CartanTypeFactory(SageObject):
             [CartanType(t) for t in [["I", 5], ["H", 3], ["H", 4]]] + \
             [t.affine() for t in finite_crystallographic if t.is_irreducible()] + \
             [CartanType(t) for t in [["BC", 1, 2], ["BC", 5, 2]]] + \
-            [CartanType(t).dual() for t in [["B", 5, 1], ["C", 4, 1], ["F", 4, 1], ["G", 2, 1],["BC", 1, 2], ["BC", 5, 2]]] #+ \
+            [CartanType(t).dual() for t in [["B", 5, 1], ["C", 4, 1],
+                                            ["F", 4, 1], ["G", 2, 1],
+                                            ["BC", 1, 2], ["BC", 5, 2]]]  # + \
             # [ g ]
 
     _colors = {1: 'blue', -1: 'blue',

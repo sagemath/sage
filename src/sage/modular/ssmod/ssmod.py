@@ -11,17 +11,18 @@ EXAMPLES::
     sage: a = m.change_ring(GF(97))
     sage: D = a.decomposition()
     sage: D[:3]
-    [
-    (Vector space of degree 33 and dimension 1 over Finite Field of size 97
-    Basis matrix:
-    [ 0  0  0  1 96 96  1  0 95  1  1  1  1 95  2 96  0  0 96  0 96  0 96  2 96 96  0  1  0  2  1 95  0], True),
-    (Vector space of degree 33 and dimension 1 over Finite Field of size 97
-    Basis matrix:
-    [ 0  1 96 16 75 22 81  0  0 17 17 80 80  0  0 74 40  1 16 57 23 96 81  0 74 23  0 24  0  0 73  0  0], True),
-    (Vector space of degree 33 and dimension 1 over Finite Field of size 97
-    Basis matrix:
-    [ 0  1 96 90 90  7  7  0  0 91  6  6 91  0  0 91  0 13  7  0  6 84 90  0  6 91  0 90  0  0  7  0  0], True)
-    ]
+    [(Vector space of degree 33 and dimension 1 over Finite Field of size 97
+      Basis matrix:
+      [ 0  0  0  1 96 96  1  0 95  1  1  1  1 95  2 96  0  0 96  0 96  0 96  2 96 96  0  1  0  2  1 95  0],
+      True),
+     (Vector space of degree 33 and dimension 1 over Finite Field of size 97
+      Basis matrix:
+      [ 0  1 96 16 75 22 81  0  0 17 17 80 80  0  0 74 40  1 16 57 23 96 81  0 74 23  0 24  0  0 73  0  0],
+      True),
+     (Vector space of degree 33 and dimension 1 over Finite Field of size 97
+      Basis matrix:
+      [ 0  1 96 90 90  7  7  0  0 91  6  6 91  0  0 91  0 13  7  0  6 84 90  0  6 91  0 90  0  0  7  0  0],
+      True)]
     sage: len(D)
     9
 
@@ -79,7 +80,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.richcmp import richcmp_method, richcmp
 
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 
 
 ZZy = PolynomialRing(ZZ, 'y')

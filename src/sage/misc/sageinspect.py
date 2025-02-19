@@ -276,8 +276,10 @@ def _extract_embedded_position(docstring):
         from sage.misc.temporary_file import spyx_tmp
         if raw_filename.startswith('sage/'):
             import sage
-            try_filenames = [os.path.join(directory, raw_filename[5:])
+            from sage.env import SAGE_SRC
+            try_filenames = [os.path.join(directory, raw_filename.removeprefix('sage/'))
                              for directory in sage.__path__]
+            try_filenames.append(os.path.join(SAGE_SRC, raw_filename))  # meson editable install
         else:
             try_filenames = []
         try_filenames.append(
@@ -1286,6 +1288,15 @@ def sage_getfile(obj):
         sage: sage_getfile(P)                                                           # needs sage.libs.singular
         '...sage/rings/polynomial/multi_polynomial_libsingular...'
 
+    Another bug with editable meson install::
+
+        sage: P.<x,y> = QQ[]
+        sage: I = P * [x,y]
+        sage: path = sage_getfile(I.groebner_basis); path
+        '.../sage/rings/qqbar_decorators.py'
+        sage: path == sage_getfile(sage.rings.qqbar_decorators)
+        True
+
     A problem fixed in :issue:`16309`::
 
         sage: cython(                                                                   # needs sage.misc.cython
@@ -1325,7 +1336,7 @@ def sage_getfile(obj):
         return ''
     for suffix in import_machinery.EXTENSION_SUFFIXES:
         if sourcefile.endswith(suffix):
-            return sourcefile[:-len(suffix)]+os.path.extsep+'pyx'
+            return sourcefile.removesuffix(suffix)+os.path.extsep+'pyx'
     return sourcefile
 
 
@@ -1986,7 +1997,7 @@ def sage_getdoc(obj, obj_name='', embedded=False):
 
         sage: from sage.misc.sageinspect import sage_getdoc
         sage: sage_getdoc(identity_matrix)[87:124]                                      # needs sage.modules
-        'Return the n x n identity matrix over'
+        '...the n x n identity matrix...'
         sage: def f(a, b, c, d=1): return a+b+c+d
         ...
         sage: import functools

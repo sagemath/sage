@@ -25,7 +25,7 @@ dependencies:
   - brial=1.2.12=pyh694c41f_3
   - brotli=1.1.0=h00291cd_2
   - brotli-bin=1.1.0=h00291cd_2
-  - brotli-python=1.1.0=py310h53e7c6a_2
+  - brotli-python=1.1.0=py312h5861a67_2
   - bzip2=1.0.8=hfdf4475_7
   - c-ares=1.34.4=hf13058a_0
   - c-compiler=1.8.0=hfc4bf79_1
@@ -91,7 +91,7 @@ dependencies:
   - fonttools=4.55.3=py310h8e2f543_0
   - fortran-compiler=1.8.0=h33d1f46_1
   - fplll=5.4.5=hb7981ad_0
-  - fpylll=0.6.1=py310h65a3d7e_0
+  - fpylll=0.6.1=py312ha9f3631_0
   - freetype=2.12.1=h60636b9_2
   - furo=2024.8.6=pyhd8ed1ab_1
   - gap-core=4.14.0=hb9686a1_1
@@ -143,7 +143,7 @@ dependencies:
   - lerc=4.0.0=hb486fe8_0
   - libasprintf=0.22.5=hdfe23c8_3
   - libasprintf-devel=0.22.5=hdfe23c8_3
-  - libblas=3.9.0=25_osx64_openblas
+  - libblas=3.9.0=26_osx64_openblas
   - libboost=1.85.0=hcca3243_4
   - libboost-devel=1.85.0=h2b186f8_4
   - libboost-headers=1.85.0=h694c41f_4
@@ -152,12 +152,12 @@ dependencies:
   - libbrotlicommon=1.1.0=h00291cd_2
   - libbrotlidec=1.1.0=h00291cd_2
   - libbrotlienc=1.1.0=h00291cd_2
-  - libcblas=3.9.0=25_osx64_openblas
+  - libcblas=3.9.0=26_osx64_openblas
   - libclang-cpp17=17.0.6=default_hb173f14_7
   - libcurl=8.11.1=h5dec5d8_0
   - libcxx=19.1.5=hf95d169_0
   - libcxx-devel=17.0.6=h8f8a49f_6
-  - libdeflate=1.22=h00291cd_0
+  - libdeflate=1.23=he65b83e_0
   - libedit=3.1.20191231=h0678c8f_2
   - libev=4.33=h10d778d_2
   - libexpat=2.6.4=h240833e_0
@@ -174,8 +174,8 @@ dependencies:
   - libintl=0.22.5=hdfe23c8_3
   - libintl-devel=0.22.5=hdfe23c8_3
   - libjpeg-turbo=3.0.0=h0dc2134_1
-  - liblapack=3.9.0=25_osx64_openblas
-  - liblapacke=3.9.0=25_osx64_openblas
+  - liblapack=3.9.0=26_osx64_openblas
+  - liblapacke=3.9.0=26_osx64_openblas
   - libllvm17=17.0.6=hbedff68_1
   - liblzma=5.6.3=hd471939_1
   - liblzma-devel=5.6.3=hd471939_1
@@ -219,7 +219,7 @@ dependencies:
   - networkx=3.4.2=pyh267e887_2
   - ninja=1.12.1=h3c5361c_0
   - ntl=11.4.3=h0ab3c2f_1
-  - numpy=1.26.4=py310h4bfa8fc_0
+  - numpy=1.26.4=py312he3a82b2_0
   - openblas=0.3.28=openmp_h30af337_1
   - openjpeg=2.5.3=h7fd6d84_0
   - openssl=3.4.0=hd471939_0
@@ -244,9 +244,9 @@ dependencies:
   - platformdirs=4.3.6=pyhd8ed1ab_1
   - pluggy=1.5.0=pyhd8ed1ab_1
   - ppl=1.2=ha60d53e_1006
-  - pplpy=0.8.9=py310hbe8aec3_1
+  - pplpy=0.8.9=py312hb4417ad_1
   - primecount=7.6=ha894c9a_0
-  - primecountpy=0.1.0=py310h88cfcbd_4
+  - primecountpy=0.1.0=py312h49ebfd2_4
   - primesieve=11.0=hf0c8a7f_0
   - progressbar2=4.5.0=pyhd8ed1ab_1
   - prompt-toolkit=3.0.48=pyha770c72_1

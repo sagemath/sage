@@ -1991,7 +1991,7 @@ class FMatrix(SageObject):
 
     def find_orthogonal_solution(self, checkpoint=False, save_results='', warm_start='', use_mp=True, verbose=True):
         r"""
-        Solve the the hexagon and pentagon relations, along with
+        Solve the hexagon and pentagon relations, along with
         orthogonality constraints, to evaluate an orthogonal F-matrix.
 
         INPUT:

@@ -379,10 +379,10 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     orbits_of_subgroup                 = work_space.orbits_of_subgroup
 
     indicators                         = work_space.int_array
-    permutation                        = work_space.int_array +   n
-    id_perm                            = work_space.int_array + 2*n
-    cells_to_refine_by                 = work_space.int_array + 3*n
-    vertices_determining_current_stack = work_space.int_array + 4*n
+    permutation                        = work_space.int_array + n
+    id_perm                            = work_space.int_array + 2 * n
+    cells_to_refine_by                 = work_space.int_array + 3 * n
+    vertices_determining_current_stack = work_space.int_array + 4 * n
 
     fixed_points_of_generators         = work_space.bitset_array
     minimal_cell_reps_of_generators    = work_space.bitset_array + len_of_fp_and_mcr

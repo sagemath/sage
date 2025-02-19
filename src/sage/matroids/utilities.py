@@ -792,7 +792,6 @@ def split_vertex(G, u, v=None, edges=None):
         G.delete_edge(e)
 
     # This modifies the graph without needing to return anything
-    return
 
 
 def cmp_elements_key(x):

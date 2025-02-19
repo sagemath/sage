@@ -1754,7 +1754,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             if not f.is_irreducible():
                 raise NotImplementedError('currently, kernel_polynomial_from_divisor() only supports irreducible polynomials')
             if f.parent().base_ring() != self.base_ring():
-                raise TypeError(f'given polynomial is not defined over the base ring of the curve')
+                raise TypeError('given polynomial is not defined over the base ring of the curve')
             if self.division_polynomial(l, x=f.parent().quotient_ring(f).gen()):
                 raise ValueError(f'given polynomial does not divide the {l}-division polynomial')
 
@@ -2579,9 +2579,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         A = []  # adjacency matrix
         labels = []  # list of vertex labels
         for (i, E) in enumerate(Es):
-            if 0 < curve_max and curve_max < len(Es):
+            if 0 < curve_max < len(Es):
                 warn('Isogeny graph contains more than '
-                        + str(curve_max) + ' curves.')
+                     + str(curve_max) + ' curves.')
                 curve_max = 0
 
             r = [0] * len(Es)  # adjacency matrix row

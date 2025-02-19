@@ -1,8 +1,8 @@
 py.install_sources(
+  '__init__.py',
   'abc.pxd',
   'algebraic_closure_finite_field.py',
   'all.py',
-  'all__sagemath_categories.py',
   'all__sagemath_objects.py',
   'big_oh.py',
   'cc.py',

@@ -24,8 +24,8 @@ dependencies:
   - binutils=2.43=h4852527_2
   - binutils_impl_linux-64=2.43=h4bf12b8_2
   - binutils_linux-64=2.43=h4852527_2
-  - blas=2.125=openblas
-  - blas-devel=3.9.0=25_linux64_openblas
+  - blas=2.126=openblas
+  - blas-devel=3.9.0=26_linux64_openblas
   - boost-cpp=1.85.0=h3c6214e_4
   - brial=1.2.12=pyh694c41f_3
   - brotli=1.1.0=hb9d3cd8_2
@@ -40,7 +40,7 @@ dependencies:
   - cachy=0.3.0=pyhd8ed1ab_1
   - cairo=1.18.2=h3394656_1
   - cddlib=1!0.94m=h9202a9a_0
-  - certifi=2024.8.30=pyhd8ed1ab_0
+  - certifi=2024.12.14=pyhd8ed1ab_0
   - cffi=1.17.1=py311hf29c0ef_0
   - charset-normalizer=3.4.0=pyhd8ed1ab_1
   - click=8.1.7=unix_pyh707e725_1
@@ -148,7 +148,7 @@ dependencies:
   - lcms2=2.16=hb7c19ff_0
   - ld_impl_linux-64=2.43=h712a8e2_2
   - lerc=4.0.0=h27087fc_0
-  - libblas=3.9.0=25_linux64_openblas
+  - libblas=3.9.0=26_linux64_openblas
   - libboost=1.85.0=h0ccab89_4
   - libboost-devel=1.85.0=h00ab1b0_4
   - libboost-headers=1.85.0=ha770c72_4

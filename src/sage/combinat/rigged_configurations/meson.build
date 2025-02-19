@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'bij_abstract_class.py',
   'bij_infinity.py',

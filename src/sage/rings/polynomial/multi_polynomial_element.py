@@ -636,12 +636,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: GF(3037000453)['x','y'].gen(0).degree(x0)                             # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            TypeError: x must canonically coerce to parent
+            TypeError: argument is not coercible to the parent
 
             sage: GF(3037000453)['x','y'].gen(0).degree(x^2)                            # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            TypeError: x must be one of the generators of the parent
+            TypeError: argument is not a generator
 
         TESTS::
 
@@ -817,7 +817,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ``dict`` is an alias::
 
-            sage: f.dict()  # needs sage.rings.number_field
+            sage: f.dict()                                                              # needs sage.rings.number_field
             {(1, 5, 2): 1, (2, 0, 1): 1, (4, 1, 3): 1}
         """
         return self.element().dict()

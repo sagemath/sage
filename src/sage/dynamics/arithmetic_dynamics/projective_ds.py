@@ -95,7 +95,7 @@ from sage.rings.polynomial.flatten import FlatteningMorphism, UnflatteningMorphi
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
@@ -116,7 +116,7 @@ lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractional
 lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
-from sage.libs.pari.all import PariError
+from cypari2.handle_error import PariError
 
 
 class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
@@ -385,7 +385,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             polys = list(morphism_or_polys)
             if len(polys) == 1:
                 raise ValueError("list/tuple must have at least 2 polynomials")
-            test = lambda x: isinstance(x, (PolynomialRing_general, MPolynomialRing_base))
+            test = lambda x: isinstance(x, (PolynomialRing_generic, MPolynomialRing_base))
             if not all(test(poly.parent()) for poly in polys):
                 try:
                     polys = [poly.lift() for poly in polys]
@@ -395,7 +395,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # homogenize!
             f = morphism_or_polys
             aff_CR = f.parent()
-            if (not isinstance(aff_CR, PolynomialRing_general) and not isinstance(aff_CR, FractionField_generic)
+            if (not isinstance(aff_CR, (PolynomialRing_generic, FractionField_generic))
                 and not (isinstance(aff_CR, MPolynomialRing_base) and aff_CR.ngens() == 1)):
                 msg = '{} is not a single variable polynomial or rational function'
                 raise ValueError(msg.format(f))
@@ -2259,10 +2259,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: RSA768 = 123018668453011775513049495838496272077285356959533479219732245215\
-            ....: 1726400507263657518745202199786469389956474942774063845925192557326303453731548\
-            ....: 2685079170261221429134616704292143116022212404792747377940806653514195974598569\
-            ....: 02143413
+            sage: RSA768 = Integer('123018668453011775513049495838496272077285356959533479219732245215'
+            ....: '1726400507263657518745202199786469389956474942774063845925192557326303453731548'
+            ....: '2685079170261221429134616704292143116022212404792747377940806653514195974598569'
+            ....: '02143413')
             sage: P.<x,y> = ProjectiveSpace(QQ,1)
             sage: f = DynamicalSystem_projective([RSA768*x^2 + y^2, x*y])
             sage: Q = P(RSA768,1)
@@ -3533,7 +3533,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         if hyperplane_found:
                             break
                 else:
-                    if isinstance(R, (PolynomialRing_general,
+                    if isinstance(R, (PolynomialRing_generic,
                                       MPolynomialRing_base,
                                       FractionField_generic)):
                         # for polynomial rings, we can get an infinite family of hyperplanes
@@ -4597,7 +4597,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     for k in ZZ(n).divisors():
                         if ZZ(n/k).is_prime():
                             Sn.append(k)
-                    if isinstance(R, (PolynomialRing_general,
+                    if isinstance(R, (PolynomialRing_generic,
                                       MPolynomialRing_base)):
                         phi = FlatteningMorphism(CR)
                         flatCR = phi.codomain()
@@ -4954,7 +4954,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         for k in ZZ(n).divisors():
                             if ZZ(n//k).is_prime():
                                 Sn.append(k)
-                        if isinstance(R, (PolynomialRing_general,
+                        if isinstance(R, (PolynomialRing_generic,
                                           MPolynomialRing_base)):
                             phi = FlatteningMorphism(CR)
                             flatCR = phi.codomain()
@@ -5789,7 +5789,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     F = base_ring
                     if isinstance(base_ring, FractionField_generic):
                         if isinstance(base_ring.ring(), (MPolynomialRing_base,
-                                                         PolynomialRing_general)):
+                                                         PolynomialRing_generic)):
                             f.normalize_coordinates()
                             f_ring = f.change_ring(base_ring.ring())
                             X = f_ring.periodic_points(n, minimal=False, formal=formal, return_scheme=True)
@@ -5892,7 +5892,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         base_ring = dom.base_ring()
         if isinstance(base_ring, FractionField_generic):
             base_ring = base_ring.ring()
-        if isinstance(base_ring, (PolynomialRing_general,
+        if isinstance(base_ring, (PolynomialRing_generic,
                                   MPolynomialRing_base)):
             base_ring = base_ring.base_ring()
         elif base_ring in FunctionFields():

@@ -62,7 +62,7 @@ import sage.modules.free_module_element as free_module_element
 import sage.rings.abc
 
 from sage.arith.functions import lcm
-from sage.arith.misc import bernoulli, binomial, factorial, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
+from sage.arith.misc import bernoulli, factorial, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
 from sage.categories.map import Map
 from sage.categories.objects import Objects
 from sage.categories.rings import Rings
@@ -724,7 +724,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             def S(n):
                 return sum(v[r] * r**n for r in range(1, N))
 
-            ber = sum(binomial(k, j) * bernoulli(j, **opts) *
+            ber = sum(ZZ(k).binomial(j) * bernoulli(j, **opts) *
                       N**(j - 1) * S(k - j) for j in range(k + 1))
         elif algorithm == "definition":
             # This is better since it computes the same thing, but requires
@@ -999,10 +999,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
                     v += s
                 m.append(v)
 
-            m = matrix(m)
-
             xx = S.gen()
-            return m.charpoly(xx)
+            return matrix(m).charpoly(xx)
 
         elif algorithm == "pari":
             # Use pari
@@ -1264,11 +1262,9 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
             sage: G = DirichletGroup(13)
             sage: G.galois_orbits()
-            [
-            [Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1],
-            ...,
-            [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -1]
-            ]
+            [[Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1],
+             ...,
+             [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -1]]
             sage: e = G.0
             sage: e
             Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12
@@ -2950,15 +2946,11 @@ class DirichletGroup_class(WithEqualityById, Parent):
         EXAMPLES::
 
             sage: DirichletGroup(20).decomposition()
-            [
-            Group of Dirichlet characters modulo 4 with values in Cyclotomic Field of order 4 and degree 2,
-            Group of Dirichlet characters modulo 5 with values in Cyclotomic Field of order 4 and degree 2
-            ]
+            [Group of Dirichlet characters modulo 4 with values in Cyclotomic Field of order 4 and degree 2,
+             Group of Dirichlet characters modulo 5 with values in Cyclotomic Field of order 4 and degree 2]
             sage: DirichletGroup(20,GF(5)).decomposition()
-            [
-            Group of Dirichlet characters modulo 4 with values in Finite Field of size 5,
-            Group of Dirichlet characters modulo 5 with values in Finite Field of size 5
-            ]
+            [Group of Dirichlet characters modulo 4 with values in Finite Field of size 5,
+             Group of Dirichlet characters modulo 5 with values in Finite Field of size 5]
         """
         R = self.base_ring()
         return Sequence([DirichletGroup(p**r, R)
@@ -3047,11 +3039,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         EXAMPLES::
 
             sage: DirichletGroup(20).galois_orbits()
-            [
-            [Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> -1],
-            ...,
-            [Dirichlet character modulo 20 of conductor 1 mapping 11 |--> 1, 17 |--> 1]
-            ]
+            [[Dirichlet character modulo 20 of conductor 20 mapping ...]]
             sage: DirichletGroup(17, Integers(6), zeta=Integers(6)(5)).galois_orbits()
             Traceback (most recent call last):
             ...

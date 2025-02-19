@@ -143,7 +143,7 @@ dependencies:
   - lerc=4.0.0=hb486fe8_0
   - libasprintf=0.22.5=hdfe23c8_3
   - libasprintf-devel=0.22.5=hdfe23c8_3
-  - libblas=3.9.0=25_osx64_openblas
+  - libblas=3.9.0=26_osx64_openblas
   - libboost=1.85.0=hcca3243_4
   - libboost-devel=1.85.0=h2b186f8_4
   - libboost-headers=1.85.0=h694c41f_4
@@ -152,12 +152,12 @@ dependencies:
   - libbrotlicommon=1.1.0=h00291cd_2
   - libbrotlidec=1.1.0=h00291cd_2
   - libbrotlienc=1.1.0=h00291cd_2
-  - libcblas=3.9.0=25_osx64_openblas
+  - libcblas=3.9.0=26_osx64_openblas
   - libclang-cpp17=17.0.6=default_hb173f14_7
   - libcurl=8.11.1=h5dec5d8_0
   - libcxx=19.1.5=hf95d169_0
   - libcxx-devel=17.0.6=h8f8a49f_6
-  - libdeflate=1.22=h00291cd_0
+  - libdeflate=1.23=he65b83e_0
   - libedit=3.1.20191231=h0678c8f_2
   - libev=4.33=h10d778d_2
   - libexpat=2.6.4=h240833e_0
@@ -174,8 +174,8 @@ dependencies:
   - libintl=0.22.5=hdfe23c8_3
   - libintl-devel=0.22.5=hdfe23c8_3
   - libjpeg-turbo=3.0.0=h0dc2134_1
-  - liblapack=3.9.0=25_osx64_openblas
-  - liblapacke=3.9.0=25_osx64_openblas
+  - liblapack=3.9.0=26_osx64_openblas
+  - liblapacke=3.9.0=26_osx64_openblas
   - libllvm17=17.0.6=hbedff68_1
   - liblzma=5.6.3=hd471939_1
   - liblzma-devel=5.6.3=hd471939_1
@@ -236,7 +236,7 @@ dependencies:
   - pexpect=4.9.0=pyhd8ed1ab_1
   - pickleshare=0.7.5=pyhd8ed1ab_1004
   - pillow=11.0.0=py311h1f68098_0
-  - pip=24.3.1=pyh8b19718_0
+  - pip=24.3.1=pyh8b19718_2
   - pkg-config=0.29.2=hf7e621a_1009
   - pkgconfig=1.5.5=pyhd8ed1ab_5
   - pkginfo=1.12.0=pyhd8ed1ab_1
