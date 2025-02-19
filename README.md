@@ -222,7 +222,7 @@ in the Installation Guide.
       more details.
 
     - Python 3.4 or later, or Python 2.7, a full installation including
-      `urllib`; but ideally version 3.9.x, 3.10.x, 3.11.x, 3.12.x, which
+      `urllib`; but ideally version 3.11.x or later, which
       will avoid having to build Sage's own copy of Python 3.
       See [build/pkgs/python3/SPKG.rst](build/pkgs/python3/SPKG.rst)
       for more details.
@@ -551,11 +551,11 @@ SAGE_ROOT                 Root directory (create by git clone)
 │       │   ├── installed/
 │       │   │             Records of installed non-Python packages
 │       │   ├── scripts/  Scripts for uninstalling installed packages
-│       │   └── venv-python3.9  (SAGE_VENV)
+│       │   └── venv-python  (SAGE_VENV)
 │       │       │         Installation hierarchy (virtual environment)
 │       │       │         for Python packages
 │       │       ├── bin/  Executables and installed scripts
-│       │       ├── lib/python3.9/site-packages/
+│       │       ├── lib/python/site-packages/
 │       │       │         Python modules/packages are installed here
 │       │       └── var/lib/sage/
 │       │           └── wheels/
