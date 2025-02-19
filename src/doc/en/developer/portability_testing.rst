@@ -1214,20 +1214,17 @@ Also `smaller images corresponding to earlier build stages
 <https://github.com/orgs/sagemath/packages?tab=packages&q=sage-debian-bullseye-standard>`_
 are available:
 
-* ``-with-system-packages`` provides a system installation with
-  system packages installed, no source tree,
+* ``-with-system-packages`` provides a system installation with system packages
+  installed, no source tree,
 
-* ``-configured`` contains a partial source tree
-  (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
-  the run of the ``configure`` script,
+* ``-configured`` contains the source tree (:envvar:`SAGE_ROOT`) and has
+  completed the bootstrapping phase and the run of the ``configure`` script,
 
-* ``-with-targets-pre`` contains a partial source tree
-  (:envvar:`SAGE_ROOT`) and a full installation
-  of all non-Python packages (:envvar:`SAGE_LOCAL`),
+* ``-with-targets-pre`` contains the source tree (:envvar:`SAGE_ROOT`) and a
+  full installation of all non-Python packages (:envvar:`SAGE_LOCAL`),
 
-* ``-with-targets`` contains the full source tree and a full
-  installation of Sage, including the HTML documentation, but ``make
-  ptest`` has not been run yet.
+* ``-with-targets`` contains the source tree and a full installation of Sage,
+  including the HTML documentation, but ``make ptest`` has not been run yet.
 
 .. only:: html
 
