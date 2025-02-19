@@ -285,24 +285,23 @@ cat <<EOF
 
 FROM with-system-packages AS bootstrapped
 #:bootstrapping:
-RUN rm -rf /source-tree /sage/.git
+RUN rm -rf /source-tree
 $ADD . /source-tree
 RUN <<EOT
 rm -rf /source-tree/.git
 if [ -d /sage ]; then
-  echo "### Incremental build from \$(cat /sage/VERSION.txt)"
+  BASE_VERSION=\$(cat /sage/VERSION.txt)
   if ! cd /source-tree && .ci/retrofit-worktree.sh worktree-image /sage; then
-    echo "retrofit-worktree.sh failed, falling back to replacing /sage"
-    for a in local logs; do
-      if [ -d /sage/\$a ]; then
-        mv /sage/\$a /source-tree/
-      fi
-    done
+    echo "retrofit-worktree.sh failed, falling back to build from scratch"
     rm -rf /sage
     mv /source-tree /sage
+    (cd /sage && git init && git add -A && git commit --quiet --allow-empty -m "new")
+  else
+    echo "Starting incremental build from \$BASE_VERSION"
   fi
 else
   mv /source-tree /sage
+  (cd /sage && git init && git add -A && git commit --quiet --allow-empty -m "new")
 fi
 EOT
 WORKDIR /sage
