@@ -449,7 +449,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: len(set(K.random_element() for _ in range(100))) >= 40
             True
 
-        Verify that :trac:`30017` is fixed::
+        Verify that :issue:`30017` is fixed::
 
             sage: all(K.random_element().is_integral() for s in range(100))
             False
