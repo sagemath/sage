@@ -925,7 +925,7 @@ def bisection_method(title, f, interval, d, maxn):
           maxn: IntSlider(value=10, description='max iterations', max=15)
     """
     def _bisection_method(f, a, b, maxn, eps):
-        intervals = [(a,b)]
+        intervals = [(a, b)]
         round = 1
         two = float(2)
         while True:
@@ -938,12 +938,12 @@ def bisection_method(title, f, interval, d, maxn):
             if abs(fc) < eps:
                 return c, intervals
             if fa*fc < 0:
-                a, b = a, c
+                b = c
             elif fc*fb < 0:
-                a, b = c, b
+                a = c
             else:
                 raise ValueError("f must have a sign change in the interval (%s,%s)" % (a,b))
-            intervals.append((a,b))
+            intervals.append((a, b))
             round += 1
         return c, intervals
 
