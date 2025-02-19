@@ -1220,8 +1220,8 @@ are available:
 * ``-configured`` contains the source tree (:envvar:`SAGE_ROOT`) and has
   completed the bootstrapping phase and the run of the ``configure`` script,
 
-* ``-with-targets-pre`` contains the source tree (:envvar:`SAGE_ROOT`) and a
-  full installation of all non-Python packages (:envvar:`SAGE_LOCAL`),
+* ``-with-targets-pre`` contains the source tree and a full installation of all
+  non-Python packages (:envvar:`SAGE_LOCAL`),
 
 * ``-with-targets`` contains the source tree and a full installation of Sage,
   including the HTML documentation, but ``make ptest`` has not been run yet.
