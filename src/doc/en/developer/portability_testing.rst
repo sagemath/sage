@@ -1144,20 +1144,20 @@ deployment.
 
 The image version corresponding to the latest development release
 receives the additional Docker tag ``dev``, see for example the Docker
-image for the platform `ubuntu-focal-maximal
-<https://github.com/sagemath/sage/pkgs/container/sage%2Fsage-ubuntu-focal-maximal-with-targets-optional>`_. Thus,
+image for the platform `ubuntu-focal-standard
+<https://github.com/sagemath/sage/pkgs/container/sage%2Fsage-ubuntu-focal-standard-with-targets-optional>`_. Thus,
 for example, the following command will work::
 
-  $ docker run -it ghcr.io/sagemath/sage/sage-ubuntu-focal-maximal-with-targets-optional:dev bash
-  Unable to find image 'ghcr.io/sagemath/sage/sage-ubuntu-focal-maximal-with-targets-optional:dev' locally
-  dev: Pulling from sagemath/sage/sage-ubuntu-focal-maximal-with-targets-optional
+  $ docker run -it ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets-optional:dev bash
+  Unable to find image 'ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets-optional:dev' locally
+  dev: Pulling from sagemath/sage/sage-ubuntu-focal-standard-with-targets-optional
   d5fd17ec1767: Already exists
   67586203f0c7: Pull complete
   b63c529f4777: Pull complete
   ...
   159775d1a3d2: Pull complete
   Digest: sha256:e6ba5e12f59c6c4668692ef4cfe4ae5f242556482664fb347bf260f32bf8e698
-  Status: Downloaded newer image for ghcr.io/sagemath/sage/sage-ubuntu-focal-maximal-with-targets-optional:dev
+  Status: Downloaded newer image for ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets-optional:dev
   root@8055a7ba0607:/sage# ./sage
   ┌────────────────────────────────────────────────────────────────────┐
   │ SageMath version 9.6, Release Date: 2022-05-15                     │
