@@ -42,7 +42,6 @@ global-exclude *.c
 global-exclude *.cpp
 
 global-exclude all__sagemath_*.*
-global-include all__sagemath_categories.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

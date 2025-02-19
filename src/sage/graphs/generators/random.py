@@ -2320,21 +2320,16 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
 
     pattern = ['in', 'in', 'in', 'lf', 'in']  # 'partial closures'
 
-    def rotate_word_to_next_occurrence(word):
-        """
-        Rotate ``word`` so that the given pattern occurs at the beginning.
-
-        If the given pattern is not found, return the empty list.
-        """
+    # We greedily perform the replacements 'in1,in2,in3,lf,in3'->'in1,in3'.
+    while True:
+        # first we rotate the word to it starts with pattern
+        word2 = []
         N = len(word)
         for i in range(N):
             if all(word[(i + j) % N][0] == pattern[j] for j in range(5)):
-                return word[i:] + word[:i]
-        return []
+                word2 = word[i:] + word[:i]
+                break
 
-    # We greedily perform the replacements 'in1,in2,in3,lf,in3'->'in1,in3'.
-    while True:
-        word2 = rotate_word_to_next_occurrence(word)
         if len(word2) >= 5:
             word = [word2[0]] + word2[4:]
             in1, in2, in3 = (u[1] for u in word2[:3])

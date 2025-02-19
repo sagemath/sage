@@ -246,8 +246,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     Implicit namespace packages (PEP 420) are only recognized if they
     follow the conventions of the Sage library, i.e., the directory contains
-    a file ``all.py`` or a file matching the pattern ``all__*.py``
-    such as ``all__sagemath_categories.py``.
+    a file ``all.py`` or a file matching the pattern ``all__*.py``.
 
     INPUT:
 
