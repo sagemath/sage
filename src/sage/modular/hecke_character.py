@@ -533,7 +533,8 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
             sage: H = HeckeCharacterGroup(F.modulus(3, [0,1,2]))
             sage: pH = pari(H)
         """
-        return pari.gcharinit(self.number_field(), self.modulus())
+        # not working !
+        return pari.bnrinit(self.number_field(), pari.Col(self.modulus()))
 
     def ray_class_gens(self) -> tuple:
         """
