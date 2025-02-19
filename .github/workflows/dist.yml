@@ -96,6 +96,7 @@ jobs:
           environment-file: environment-3.12-linux.yml
 
       - name: Create source distribution
+        shell: bash -l {0}
         run: |
           conda install --yes python-build
           python -m build --sdist --no-isolation --outdir dist .
