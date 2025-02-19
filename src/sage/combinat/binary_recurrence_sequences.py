@@ -348,7 +348,7 @@ class BinaryRecurrenceSequence(SageObject):
         """
         return self(1) - self(0) == self(2) - self(1) == self(3) - self(2)
 
-    def period(self, m):
+    def period(self, m, *, eventual=False):
         """
         Return the period of the binary recurrence sequence modulo
         an integer ``m``.
@@ -359,6 +359,8 @@ class BinaryRecurrenceSequence(SageObject):
         INPUT:
 
         - ``m`` -- integer; modulo which the period of the recurrence relation is calculated
+
+        - ``eventual`` -- boolean; if set to true gets the period when the index of the term is large
 
         OUTPUT: integer (the period of the sequence modulo m)
 
@@ -392,6 +394,20 @@ class BinaryRecurrenceSequence(SageObject):
             sage: S.period(17)
             8
 
+        If the eventual keyword is set to true then we ignore then we calculate
+        the eventual period by ignoring the first ``m^2`` terms and calculating
+        the period as normal::
+
+            sage: BinaryRecurrenceSequence(5,12,u0=0,u1=1).period(10)
+            Traceback (most recent call last):
+            ...
+            ValueError: Binary recurrence sequence modulo m is not a purely
+            periodic sequence.
+            sage: BinaryRecurrenceSequence(5,12,u0=0,u1=1).period(10,eventual=True)
+            8
+            sage: BinaryRecurrenceSequence(3,2,u0=0,u1=1).period(4,eventual=True)
+            1
+
         TESTS:
 
         Verify that :issue:`38112` is fixed::
@@ -416,6 +432,11 @@ class BinaryRecurrenceSequence(SageObject):
             w = vector(R, [self.u0, self.u1])
             Fac = list(m.factor())
             Periods = {}
+
+            if eventual is True:
+                an = (A**(m**2)) * w
+                return BinaryRecurrenceSequence(self.b, self.c,
+                    an[0], an[1]).period(m)
 
             # To compute the period mod m, we compute the least integer n such that A^n*w == w.  This necessarily
             # divides the order of A as a matrix in GL_2(Z/mZ).
