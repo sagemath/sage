@@ -392,6 +392,16 @@ class BinaryRecurrenceSequence(SageObject):
             sage: S.period(17)
             8
 
+        TESTS:
+
+        Verify that :issue:`38112` is fixed::
+
+            sage: BinaryRecurrenceSequence(3,2,u0=0,u1=1).period(4)
+            Traceback (most recent call last):
+            ...
+            ValueError: Binary recurrence sequence modulo m is not a purely
+            periodic sequence.
+
         .. NOTE:: The answer is cached.
         """
 
@@ -489,6 +499,9 @@ class BinaryRecurrenceSequence(SageObject):
                         if FF*v == v:
                             perpe = perp*p**tries
                             break
+                        if tries > e:
+                            raise ValueError("Binary recurrence sequence modulo"
+                                + " m is not a purely periodic sequence.")
                 Periods[p] = perpe
 
             # take the lcm of the periods mod all distinct primes dividing m
