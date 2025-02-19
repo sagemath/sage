@@ -129,6 +129,7 @@ Functions
 
 from sage.structure.element cimport parent
 
+
 def is_line_graph(g, certificate=False):
     r"""
     Check whether the graph `g` is a line graph.
