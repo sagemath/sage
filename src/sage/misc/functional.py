@@ -1148,9 +1148,15 @@ def log(*args, **kwds):
         -Infinity
         sage: log(int(0), 1/2)
         +Infinity
+
+    Check if sub-issue detailed in :issue:`38971` is fixed::
+        sage: log(6, base=0)
+        0
+        sage: log(e, base=0)
+        0
     """
     base = kwds.pop('base', None)
-    if base:
+    if base is not None:
         args = args + (base,)
     if not args:
         raise TypeError("log takes at least 1 arguments (0 given)")
