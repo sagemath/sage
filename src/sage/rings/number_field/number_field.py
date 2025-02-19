@@ -3681,7 +3681,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     @cached_method
     def _pari_real_places_to_sage(self):
         """
-        Return a tuple converting from the ordering of real places
+        Return a tuple for conversion from the ordering of real places
         in pari to that of Sage's :func:`places`.
 
         EXAMPLES:

@@ -519,6 +519,9 @@ class Modulus(SageObject):
         return pari([self._finite, inf_mod])
 
     def __hash__(self):
+        """
+        Return the hash of ``self``.
+        """
         return hash((self._finite, self._infinite))
 
 
@@ -1431,7 +1434,6 @@ class RayClassGroup(AbelianGroup_class):
     def ideal_reduce(self, ideal):
         """
         """
-
         ideal = pari(ideal)
         try:
             pari_ideal = self._bnr.idealmoddivisor(ideal)

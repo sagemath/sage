@@ -347,7 +347,7 @@ class HeckeCharacter(DualAbelianGroupElement):
 
         see https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html#se:bnrinit
         """
-        return pari([self.parent(), pari.Col(self.exponents())])
+        return pari([self.parent(), self.exponents()])
 
     def dirichlet_series_coefficients(self, max_n):
         """
@@ -533,8 +533,8 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
             sage: H = HeckeCharacterGroup(F.modulus(3, [0,1,2]))
             sage: pH = pari(H)
         """
-        # not working !
-        return pari.bnrinit(self.number_field(), pari.Col(self.modulus()))
+        field = self.number_field().pari_nf().bnfinit()
+        return pari.bnrinit(field, self.modulus())
 
     def ray_class_gens(self) -> tuple:
         """

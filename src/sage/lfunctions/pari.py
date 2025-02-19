@@ -269,7 +269,7 @@ def lfun_hecke(chi):
         sage: chi = H.gen(0).primitive_character()
         sage: L = LFunction(lfun_hecke(chi))
         sage: L(3)
-        ?
+        0.997913119676857
 
         sage: F.<a> = NumberField(x^2 - 5)
         sage: mf = F.modulus(F.ideal(4), [0, 1])
