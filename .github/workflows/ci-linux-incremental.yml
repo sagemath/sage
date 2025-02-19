@@ -81,7 +81,7 @@ jobs:
             sage-package metrics :all:
           fi
 
-  standard-incremental:
+  standard:
     needs: [changed_files]
     uses: ./.github/workflows/docker.yml
     with:
@@ -106,7 +106,7 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
       max_parallel: 8
 
-  minimal-incremental:
+  minimal:
     needs: [changed_files]
     uses: ./.github/workflows/docker.yml
     with:
@@ -131,7 +131,9 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
       max_parallel: 8
 
-  standard-constraints_pkgs-incremental:
+  standard-constraints_pkgs:
+    # Turned off until fixed
+    if: false
     needs: [changed_files]
     uses: ./.github/workflows/docker.yml
     with:
@@ -154,7 +156,7 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
       max_parallel: 16
 
-  standard-sitepackages-incremental:
+  standard-sitepackages:
     needs: [changed_files]
     uses: ./.github/workflows/docker.yml
     with:
