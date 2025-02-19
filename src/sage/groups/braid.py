@@ -226,7 +226,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: B = BraidGroup(4)
             sage: B.inject_variables()
             Defining s0, s1, s2
-            sage: b = s0*s1/s2/s1
+            sage: b = s0 * s1 / s2 / s1
             sage: b.burau_matrix()
             [       1 - t            0      t - t^2          t^2]
             [           1            0            0            0]
@@ -264,6 +264,40 @@ class Braid(FiniteTypeArtinGroupElement):
             [       0       -1 t^-1 + t]
             sage: M * H * Madj == H
             True
+
+        The adjoined matrix (``Madj`` in the above example) matches the
+        output of :meth:`sage.groups.artin.ArtinGroupElement.burau_matrix`::
+
+            sage: from sage.groups.artin import ArtinGroupElement
+            sage: Madj == ArtinGroupElement.burau_matrix(b)
+            True
+
+            sage: a = s0^2 * s1 * s0 * s2 *s1 * ~s0 * s1^3 * s0 * s2 * s1^-2 * s0
+            sage: a.burau_matrix(reduced='unitary')[1] == ArtinGroupElement.burau_matrix(a)
+            True
+
+        We verify Bigelow's example that in `B_5` the Burau representation
+        is not faithful::
+
+            sage: B.<s1,s2,s3,s4> = BraidGroup(5)
+            sage: psi1 = ~s3 * s2 * s1^2 * s2 * s4^3 * s3 * s2
+            sage: psi2 = ~s4 * s3 * s2 * s1^-2 * s2 * s1^2 * s2^2 * s1 * s4^5
+            sage: alpha = ~psi1 * s4 * psi1
+            sage: beta = ~psi2 * s4 * s3 * s2 * s1^2 * s2 * s3 * s4 * psi2
+            sage: elm = alpha * beta * ~alpha * ~beta
+            sage: elm.burau_matrix()
+            [1 0 0 0 0]
+            [0 1 0 0 0]
+            [0 0 1 0 0]
+            [0 0 0 1 0]
+            [0 0 0 0 1]
+            sage: elm.burau_matrix(reduced=True)
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 1 0]
+            [0 0 0 1]
+            sage: elm.is_one()
+            False
 
         REFERENCES:
 
