@@ -345,7 +345,7 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: H = HeckeCharacterGroup(K.modulus(p**2))
             sage: chi = [1,1,-1,0]
 
-        see https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html#se:gcharinit
+        see https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html#se:bnrinit
         """
         return pari([self.parent(), pari.Col(self.exponents())])
 
