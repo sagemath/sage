@@ -712,11 +712,12 @@ class MPowerSeries(PowerSeries):
         if type(n) is tuple:
             if sum(n) >= self.prec():
                 raise IndexError("Cannot return the coefficients of terms of " +
-                "total degree greater than or equal to precision of self.")
+                                 "total degree greater than or equal to " +
+                                 "precision of self.")
             return self._bg_value[sum(n)][n]
         if n >= self.prec():
             raise IndexError("Cannot return terms of total degree greater " +
-            " than or equal to precision of self.")
+                             "than or equal to precision of self.")
         return self.parent(self._bg_value[n])
 
     def __invert__(self):
