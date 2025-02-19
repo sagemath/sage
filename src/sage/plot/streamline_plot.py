@@ -72,7 +72,7 @@ class StreamlinePlot(GraphicPrimitive):
             sage: x, y = var('x y')
             sage: import numpy  # to ensure numpy 2.0 compatibility
             sage: if int(numpy.version.short_version[0]) > 1:
-            ....:     numpy.set_printoptions(legacy="1.25")
+            ....:     _ = numpy.set_printoptions(legacy="1.25")
             sage: d = streamline_plot((.01*x, x+y), (x,10,20), (y,10,20))[0].get_minmax_data()
             sage: d['xmin']
             10.0
