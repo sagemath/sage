@@ -1,4 +1,6 @@
 # cython: binding=True
+
+from sage.structure.element cimport parent
 r"""
 Line graphs
 
@@ -407,7 +409,6 @@ def line_graph(g, labels=True, return_labels=False):
         labels = True
         origlabels_dic = {(u, v, id): (u, v, label)
                           for id, (u, v, label) in enumerate(g.edge_iterator())}
-        from sage.structure.element cimport parent
         g = parent(g)([g, origlabels_dic.keys()], format='vertices_and_edges', multiedges=True)
 
     if g._directed:
