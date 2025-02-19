@@ -1,6 +1,4 @@
 # cython: binding=True
-
-from sage.structure.element cimport parent
 r"""
 Line graphs
 
@@ -129,6 +127,7 @@ Functions
 ---------
 """
 
+from sage.structure.element cimport parent
 
 def is_line_graph(g, certificate=False):
     r"""
@@ -367,11 +366,11 @@ def line_graph(g, labels=True, return_labels=False):
         (1, 2, 4), None), ((0, 1, 0), (0, 2, 3), None), ((0, 1, 0),
         (1, 2, 4), None), ((0, 2, 3), (1, 2, 4), None)]
         sage: L[1]
-        {(0, 1, 0): None,
-        (0, 1, 1): 'a',
-        (0, 1, 2): 'b',
-        (0, 2, 3): None,
-        (1, 2, 4): 'c'}
+        {(0, 1, 0): (0, 1, None),
+        (0, 1, 1): (0, 1, 'b'),
+        (0, 1, 2): (0, 1, 'a'),
+        (0, 2, 3): (0, 2, None),
+        (1, 2, 4): (1, 2, 'c')}
         sage: g = DiGraph([(0,1),(0,1),(1,2)],multiedges=True)
         sage: g.line_graph().edges()
         [((0, 1, 1), (1, 2, 2), None), ((0, 1, 0), (1, 2, 2), None)]
