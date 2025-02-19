@@ -60,7 +60,8 @@ from sage.misc.cachefunc import cached_method
 
 
 try:
-    from sage.libs.pari.all import pari_gen, pari
+    from sage.libs.pari import pari
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 

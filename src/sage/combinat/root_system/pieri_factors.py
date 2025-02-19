@@ -11,22 +11,21 @@ Pieri Factors
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.constant_function import ConstantFunction
-from sage.misc.call import attrcall
-from sage.misc.lazy_import import lazy_import
-from sage.misc.misc_c import prod
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.integer import Integer
-from sage.rings.rational_field import QQ
-from sage.rings.infinity import infinity
-from sage.arith.misc import binomial
 import sage.combinat.ranker
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 from sage.combinat.root_system.root_system import RootSystem
 from sage.combinat.root_system.weyl_group import WeylGroup
+from sage.misc.cachefunc import cached_method
+from sage.misc.call import attrcall
+from sage.misc.constant_function import ConstantFunction
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
+from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.graphs.digraph', 'DiGraph')
 lazy_import('sage.combinat.root_system.dynkin_diagram', 'DynkinDiagram')
@@ -755,8 +754,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         """
         if self._min_length == len(self._min_support) and self._max_length == len(self._max_support) - 1:
             return Integer(2**(len(self._extra_support)) - 1)
-        else:
-            return self.generating_series(weight=ConstantFunction(1))
+        return self.generating_series(weight=ConstantFunction(1))
 
     def generating_series(self, weight=None):
         r"""
@@ -774,7 +772,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             weight = self.default_weight()
         l_min = len(self._min_support)
         l_max = len(self._max_support)
-        return sum(binomial(l_max - l_min, l - l_min) * weight(l)
+        return sum(Integer(l_max - l_min).binomial(l - l_min) * weight(l)
                    for l in range(self._min_length, self._max_length + 1))
 
     def __iter__(self):

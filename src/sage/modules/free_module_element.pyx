@@ -1055,7 +1055,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: pari(L)                                                               # needs sage.libs.pari
             [[0, 1, 2, 3], [0, 1, 8, 27], [0, 1, 32, 243]]
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return pari(self.list())
 
     def _pari_init_(self):

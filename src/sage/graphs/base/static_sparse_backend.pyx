@@ -674,7 +674,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         raise ValueError("graph is immutable; please change a copy instead (use function copy())")
 
-    def del_edge(self, object u, object v, object l, bint directed):
+    cpdef del_edge(self, object u, object v, object l, bint directed):
         r"""
         Delete an edge of the graph. No way.
 
