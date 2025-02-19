@@ -14,7 +14,7 @@ requires = [
     'jinja2'
 ]
 [project]
-name = "sagemath"
+name = "sagemath-standard"
 description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dependencies = [
     'six >=1.15.0',
