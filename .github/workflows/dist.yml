@@ -83,21 +83,28 @@ jobs:
       CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install bootstrap prerequisites
+    
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: 3.12
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-3.12-linux.yml
+
+      - name: Create source distribution
         run: |
-          sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
-      - name: make pypi-sdists
-        run: |
-          ./bootstrap
-          ./configure
-          make pypi-sdists V=0
-          (mkdir dist && mv upstream/sage*.tar.gz dist/)
+          python -m build --sdist --no-isolation --outdir dist .
           ls -l dist
+
       - uses: actions/upload-artifact@v4
         with:
           path: "dist/*.tar.gz"
           name: dist
+
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
