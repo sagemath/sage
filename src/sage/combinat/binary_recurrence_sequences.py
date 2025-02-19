@@ -521,8 +521,9 @@ class BinaryRecurrenceSequence(SageObject):
                             perpe = perp*p**tries
                             break
                         if tries > e:
-                            raise ValueError("Binary recurrence sequence modulo"
-                                + " m is not a purely periodic sequence.")
+                            raise ValueError("Binary recurrence sequence " +
+                                             "modulo m is not a purely " +
+                                             "periodic sequence.")
                 Periods[p] = perpe
 
             # take the lcm of the periods mod all distinct primes dividing m
