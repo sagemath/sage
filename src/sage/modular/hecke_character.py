@@ -376,7 +376,7 @@ class HeckeCharacter(DualAbelianGroupElement):
         r"""
         Return this character's L-function.
 
-        This was a :class:`sage.lfunctions.dokchitser.Dokchitser` object.
+        This is handled by PARI.
 
         INPUT:
 
@@ -400,41 +400,6 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: [L(-n) for n in range(3)]
             [1.00000000000000, 0.000000000000000, 15.0000000000000]
         """
-        # Figure out Gamma factors for more general characters
-        # gamma_factors = [0] * self.parent().number_field().degree()
-        # for i in self.conductor().infinite_part():
-        #     gamma_factors[i] = 1
-        # ana_cond = self.analytic_conductor()
-        # rn = self.root_number()
-
-        # OLD Dokchitser version, to be removed
-        # Dokchitser(conductor, gammaV, weight, eps, poles, residues, init,
-        # prec)
-        # it_worked = False
-        # number_of_allocs = 0
-        # while not it_worked:
-        #     # Sage automatically ups the memory allocation, but this
-        #     # messes with L.num_coeffs for some reason I have yet to
-        #     # figure out, so L needs to be remade completely every
-        #     # time memory is auto-allocated. If we can control the
-        #     # auto-allocation process/rewrite the Dokchitser code,
-        #     # then we can remove the extra stuff here.
-        #     L = Dokchitser(ana_cond, gamma_factors, 1, rn, prec=prec)
-        #     for n in range(number_of_allocs):
-        #         L.gp().eval('allocatemem()')
-        #     try:
-        #         L.init_coeffs(self.dirichlet_series_coefficients(L.num_coeffs()))
-        #         it_worked = True
-        #     except RuntimeError:
-        #         number_of_allocs += 1
-
-        # # NEW version, TODO: make correct lines below
-        # lf = lfun_generic(conductor=ana_cond, gammaV=gamma_factors,
-        #                   weight=1, eps=rn)
-        # # how to pick the correct number of coefficients ?
-        # lf.init_coeffs(self.dirichlet_series_coefficients(L.num_coeffs()))
-
-        # instead use Pari directly:
         from sage.lfunctions.pari import lfun_hecke
         L = LFunction(lfun_hecke(self), prec=prec)
         L.rename(f'Hecke L-function of {self}')
