@@ -231,13 +231,10 @@ jobs:
           export PATH=$(pwd)/build/bin:$PATH
           # The sed command removes any lines containing 'upstream' from .dockerignore
           (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore
-          # Handle both the old and new location of write-dockerfile.sh, because docker.yml is a reusable workflow
-          for script_path in build/bin/write-dockerfile.sh .ci/write-dockerfile.sh; do
-            if [ -r "$script_path" ]; then
-              # Add 'ADD upstream upstream' before the line containing ':toolchain:' in the script
-              echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - "$script_path"
-            fi
-          done
+          if [ -r .ci/write-dockerfile.sh ]; then
+            # Add 'ADD upstream upstream' before the line containing ':toolchain:' in the script
+            echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - .ci/write-dockerfile.sh
+          fi
           # Show the changes made to the repository for review
           git diff
         if: inputs.upstream_artifact

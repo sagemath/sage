@@ -1,12 +1,23 @@
 #! /usr/bin/env bash
-set -e
-shopt -s extglob
 ##
 ## Write a Dockerfile for portability testing to stdout.
 ##
 ## This script needs to be run from SAGE_ROOT (root of the Sage repository).
 ## It is called by $SAGE_ROOT/tox.ini for all environments 'tox -e docker-...'
 ##
+## The generated Dockerfile needs Sage source tree directory as context,
+## and builds Sage docker images based on the source tree.
+##
+## Hence this is how to use it:
+##
+##   git worktree add source-tree
+##   docker build source-tree -f Dockerfile ...
+##   git worktree remove source-tree
+##
+## where we assume the current directory is SAGE_ROOT.
+##
+set -e
+shopt -s extglob
 ## Positional arguments:
 ##
 SYSTEM="${1:-debian}"
@@ -274,37 +285,26 @@ cat <<EOF
 
 FROM with-system-packages AS bootstrapped
 #:bootstrapping:
-RUN rm -rf /new /sage/.git
-$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap configure.ac sage .homebrew-build-env tox.ini .gitignore /new/
-$ADD config/config.rpath /new/config/config.rpath
-$ADD src/doc/bootstrap /new/src/doc/bootstrap
-$ADD src/bin /new/src/bin
-$ADD src/pyproject.toml src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt /new/src/
-$ADD m4 /new/m4
-$ADD pkgs /new/pkgs
-$ADD build /new/build
-$ADD .upstream.d /new/.upstream.d
-ADD .ci /.ci
+RUN rm -rf /source-tree /sage/.git
+$ADD . /source-tree
 RUN <<EOT
+rm -rf /source-tree/.git
 if [ -d /sage ]; then
   echo "### Incremental build from \$(cat /sage/VERSION.txt)"
-  printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore
-  printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore
-  if ! cd /new && /.ci/retrofit-worktree.sh worktree-image /sage; then
+  if ! cd /source-tree && .ci/retrofit-worktree.sh worktree-image /sage; then
     echo "retrofit-worktree.sh failed, falling back to replacing /sage"
     for a in local logs; do
       if [ -d /sage/\$a ]; then
-        mv /sage/\$a /new/
+        mv /sage/\$a /source-tree/
       fi
     done
     rm -rf /sage
-    mv /new /sage
+    mv /source-tree /sage
   fi
 else
-  mv /new /sage
+  mv /source-tree /sage
 fi
 EOT
-
 WORKDIR /sage
 ARG BOOTSTRAP="${BOOTSTRAP-./bootstrap}"
 $RUN sh -x -c "\${BOOTSTRAP}"$ENDRUN$THEN_SAVE_STATUS
@@ -351,20 +351,7 @@ ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!sage_sws2rst"
-$ADD .gitignore /new/.gitignore
-$ADD src /new/src
-RUN <<EOT
-cd /new && rm -rf .git
-if /.ci/retrofit-worktree.sh worktree-pre /sage; then
-  cd /sage && touch configure build/make/Makefile
-else
-  echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"
-  rm -rf /sage/src
-  mv src /sage/src
-  cd /sage && ./bootstrap && ./config.status
-fi
-cd /sage && rm -rf .git; rm -rf /new || echo "(error ignored)"
-EOT
+RUN cd /sage && touch configure build/make/Makefile
 ARG TARGETS="build"
 $RUN$CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS}$ENDRUN$THEN_SAVE_STATUS
 
