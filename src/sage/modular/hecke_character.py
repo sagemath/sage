@@ -395,10 +395,12 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: mf = F.modulus(F.ideal(4), [0, 1])
             sage: H = HeckeCharacterGroup(mf)
             sage: chi = H.gens()[1]
-            sage: L = chi.lfunction(); L
+            sage: L = chi.lfunction(prec=100); L
             Hecke L-function of χ1
             sage: [L(-n) for n in range(3)]
-            [1.00000000000000, 0.000000000000000, 15.0000000000000]
+            [0.99999999999999999999999999999,
+             0.00000000000000000000000000000,
+             15.000000000000000000000000000]
         """
         from sage.lfunctions.pari import lfun_hecke
         L = LFunction(lfun_hecke(self), prec=prec)
@@ -430,6 +432,16 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
 
     @staticmethod
     def __classcall_private__(cls, modulus, base_ring=None, names=None):
+        """
+        Prepare input for unique representation.
+
+        EXAMPLES::
+
+            sage: F.<a> = NumberField(x^2 - 7)
+            sage: mf = F.modulus(F.prime_above(7), [0,1])
+            sage: H = HeckeCharacterGroup(mf); H  # indirect doctest
+            Group of finite order Hecke characters modulo (Fractional ideal (a)) * ∞_0 * ∞_1
+        """
         ray_class_group = modulus.number_field().ray_class_group(modulus)
         if base_ring is None:
             base_ring = CyclotomicField(lcm(ray_class_group.gens_orders()))
@@ -440,6 +452,13 @@ class HeckeCharacterGroup(DualAbelianGroup_class, UniqueRepresentation):
     def __init__(self, ray_class_group, base_ring, names) -> None:
         """
         Create the Hecke character group.
+
+        EXAMPLES::
+
+            sage: F.<a> = NumberField(x^2 - 61)
+            sage: mf = F.modulus(F.prime_above(5), [0,1])
+            sage: H = HeckeCharacterGroup(mf); H  # indirect doctest
+            Group of finite order Hecke characters modulo (Fractional ideal (1/2*a + 9/2)) * ∞_0 * ∞_1
         """
         DualAbelianGroup_class.__init__(self, ray_class_group, names, base_ring)
 
