@@ -84,7 +84,7 @@ class HyperellipticCurveSmoothModel_g2(
             Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x + 1)*y = 2*x^5 + 4*x^4 + x^3 - x
 
         The points `P = (0, 0)` and `Q = (-1, -1)` are on `H`. We construct the
-        element `D_1 = [P - Q] = [P + (-Q) - D_\infty]` on the Jacobian.
+        element `D_1 = [P - Q] = [P + (-Q) - D_\infty]` on the Jacobian::
 
             sage: P = H.point([0, 0])
             sage: Q = H.point([-1, -1])
@@ -92,14 +92,14 @@ class HyperellipticCurveSmoothModel_g2(
             (x^2 + x, -2*x : 0)
 
         Elements of the Jacobian can also be constructed by directly providing
-        the Mumford representation.
+        the Mumford representation::
 
             sage: D1 == J(x^2 + x, -2*x, 0)
             True
 
         We can also embed single points into the Jacobian. Below we construct
         `D_2 = [P - P_0]`, where `P_0` is the distinguished point of `H`
-        (by default one of the points at infinity).
+        (by default one of the points at infinity)::
 
             sage: D2 = J(P); D2
             (x, 0 : 0)
@@ -108,7 +108,7 @@ class HyperellipticCurveSmoothModel_g2(
             sage: D2 == J(P, P0)
             True
 
-        We may add elements, or multiply by integers.
+        We may add elements, or multiply by integers::
 
             sage: 2*D1
             (x, -1 : 1)
@@ -118,13 +118,13 @@ class HyperellipticCurveSmoothModel_g2(
             (x, -1 : 1)
 
         Note that the neutral element is given by `[D_\infty - D_\infty]`,
-        in particular `n = 1`.
+        in particular `n = 1`::
 
             sage: J.zero()
             (1, 0 : 1)
 
         There are two more elements of the Jacobian that are only supported
-        at infinity: `[\infty_+ - \infty_-]` and `[\infty_- - \infty_+]`.
+        at infinity: `[\infty_+ - \infty_-]` and `[\infty_- - \infty_+]`::
 
             sage: [P_plus, P_minus] = H.points_at_infinity()
             sage: P_plus == P0
