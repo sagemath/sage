@@ -110,8 +110,8 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
         sage: M1 = matroids.catalog.P8pp()
         sage: ch = M1.chow_ring(QQ, False, 'fy')
         sage: ch
-        Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning circuits
-        over Rational Field in Feitchner-Yuzvinsky presentation
+        Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning
+        circuits in Feitchner-Yuzvinsky presentation over Rational Field
     """
     def __init__(self, R, M, augmented, presentation=None):
         r"""
@@ -151,8 +151,8 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
             sage: M1 = matroids.catalog.Fano()
             sage: ch = M1.chow_ring(QQ, False, 'fy')
             sage: ch
-            Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
-            over Rational Field in Feitchner-Yuzvinsky presentation
+            Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
+            type (3, 0) in Feitchner-Yuzvinsky presentation over Rational Field
         """
         output = "Chow ring of {}".format(self._matroid)
         if self._augmented:

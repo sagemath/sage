@@ -165,12 +165,12 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
         sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False, 'fy')
         sage: ch.defining_ideal()
         Chow ring ideal of U(3, 6): Matroid of rank 3 on 6 elements with
-        circuit-closures {3: {{0, 1, 2, 3, 4, 5}}} - non augmented in Feitchner
-        -Yuzvinsky presentation
+        circuit-closures {3: {{0, 1, 2, 3, 4, 5}}} - non augmented in
+        Feitchner-Yuzvinksy presentation
         sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'fy')
         sage: ch.defining_ideal()
         Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
-        type (3, 0) - non augmented in Feitchner-Yuzvinsky presentation
+        type (3, 0) - non augmented in Feitchner-Yuzvinksy presentation
     """
     def __init__(self, M, R):
         r"""
@@ -250,7 +250,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'fy')
             sage: ch.defining_ideal()
             Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
-            type (3, 0) - non augmented in Feitchner-Yuzvinsky presentation
+            type (3, 0) - non augmented in Feitchner-Yuzvinksy presentation
         """
         return "Chow ring ideal of {} - non augmented in Feitchner-Yuzvinksy presentation".format(self._matroid)
 
