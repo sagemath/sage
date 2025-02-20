@@ -686,7 +686,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     raise ValueError("Pollard rho algorithm failed to find a logarithm")
 
 
-def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs', check=True):
+def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs', *, verify=True):
     r"""
     Totally generic discrete log function.
 
@@ -702,8 +702,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - ``op`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
     - ``algorithm`` -- string denoting what algorithm to use for prime-order
       logarithms: ``'bsgs'``, ``'rho'``, ``'lambda'``
-    - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. 
+    - ``verify`` -- boolean (default: ``True``); whether to verify that output is
+      correct before returning it.
 
     ``a`` and ``base`` must be elements of some group with identity
     given by ``identity``, inverse of ``x`` by ``inverse(x)``, and group
@@ -908,7 +908,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     from operator import mul, add, pow
     power = mul if operation in addition_names else pow
     mult = add if operation in addition_names else mul
-    originalA = a # Stores the original value of a so we can check the answer
+    original_a = a # Store the original value of a so we can verify the answer
     if op:
         mult = op
         power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
@@ -976,7 +976,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         l = l[:i + 1]
         from sage.arith.misc import CRT_list
         result = (CRT_list(l, mods) + offset) % ord
-        if (check and power(base, result) != originalA):
+        if (verify and power(base, result) != original_a):
             raise ValueError
         return result
     except ValueError:
