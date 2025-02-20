@@ -274,7 +274,7 @@ def algebraic_dependency(z, degree, known_bits=None,
     return min(factors, key=lambda f: abs(f(z)))
 
 
-alg_dep = algebraic_dependency
+algdep = algebraic_dependency
 
 
 def bernoulli(n, algorithm='default', num_threads=1):
