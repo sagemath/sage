@@ -174,7 +174,7 @@ class WittVector(CommutativeRingElement):
 
         alg = P._algorithm
         if alg == 'standard':
-            s = P.sum_polynomials
+            s = P._sum_polynomials
             # note here this is tuple addition, i.e. concatenation
             sum_vec = tuple(s[i](*(self._vec + other._vec))
                             for i in range(self._prec))
@@ -237,7 +237,7 @@ class WittVector(CommutativeRingElement):
 
         alg = P._algorithm
         if alg == 'standard':
-            p = P.prod_polynomials
+            p = P._prod_polynomials
             # note here this is tuple addition, i.e. concatenation
             prod_vec = tuple(p[i](*(self._vec + other._vec))
                              for i in range(self._prec))

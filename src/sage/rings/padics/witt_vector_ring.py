@@ -272,8 +272,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         self._prime = prime
 
         self._algorithm = algorithm
-        self.sum_polynomials = None
-        self.prod_polynomials = None
+        self._sum_polynomials = None
+        self._prod_polynomials = None
 
         if algorithm == 'standard':
             self._generate_sum_and_product_polynomials(base_ring)
@@ -371,22 +371,22 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         x_vars = x_y_vars[:prec]
         y_vars = x_y_vars[prec:]
 
-        self.sum_polynomials = [0]*(self._prec)
+        self._sum_polynomials = [0]*(self._prec)
         for n in range(prec):
             s_n = x_vars[n] + y_vars[n]
             for i in range(n):
                 s_n += ((x_vars[i]**(p**(n-i)) + y_vars[i]**(p**(n-i))
-                        - self.sum_polynomials[i]**(p**(n-i))) / p**(n-i))
-            self.sum_polynomials[n] = R(s_n)
+                        - self._sum_polynomials[i]**(p**(n-i))) / p**(n-i))
+            self._sum_polynomials[n] = R(s_n)
 
-        self.prod_polynomials = [x_vars[0] * y_vars[0]] + [0]*(self._prec)
+        self._prod_polynomials = [x_vars[0] * y_vars[0]] + [0]*(self._prec)
         for n in range(1, prec):
             x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
             y_poly = sum([p**i * y_vars[i]**(p**(n-i)) for i in range(n+1)])
-            p_poly = sum([p**i * self.prod_polynomials[i]**(p**(n-i))
+            p_poly = sum([p**i * self._prod_polynomials[i]**(p**(n-i))
                          for i in range(n)])
             p_n = (x_poly*y_poly - p_poly) // p**n
-            self.prod_polynomials[n] = p_n
+            self._prod_polynomials[n] = p_n
 
         # We have to use generic here, because Singular doesn't support
         # Polynomial Rings over Polynomial Rings. For example,
@@ -395,8 +395,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         # will fail.
         S = PolynomialRing(base, x_y_vars, implementation='generic')
         for n in range(prec):
-            self.sum_polynomials[n] = S(self.sum_polynomials[n])
-            self.prod_polynomials[n] = S(self.prod_polynomials[n])
+            self._sum_polynomials[n] = S(self._sum_polynomials[n])
+            self._prod_polynomials[n] = S(self._prod_polynomials[n])
 
     def _generate_binomial_table(self):
         """
