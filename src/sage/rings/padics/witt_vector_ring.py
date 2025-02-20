@@ -277,9 +277,11 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         if algorithm == 'standard':
             self._generate_sum_and_product_polynomials(base_ring)
-
         elif algorithm == 'finotti':
             self._generate_binomial_table()
+        elif algorithm == 'Zq_isomorphism':
+            self._padic_ring = Zq(base_ring.cardinality(), prec, type='fixed-mod',
+                                  modulus=base_ring.modulus(), names=['z'])
 
         CommutativeRing.__init__(self, base_ring)
 
@@ -489,47 +491,6 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
                     result = self._eta_bar(scriptM[t-s], s)
                     scriptM[t].append(result)
             return sum(scriptM[k])
-
-    def _series_to_vector(self, series):
-        r"""
-        Computes the canonical bijection from `\mathbb Z_q` to
-        `W(\mathbb F_q)`.
-        """
-        F = self.base()  # known to be finite
-        R = Zq(F.cardinality(), prec=self._prec, type='fixed-mod',
-               modulus=F.polynomial(), names=['z'])
-        K = R.residue_field()
-        p = self._prime
-
-        series = R(series)
-        witt_vector = []
-        for i in range(self._prec):
-            temp = K(series)
-            elem = temp.polynomial()(F.gen())  # hack to convert to F
-            # (K != F for some reason)
-            witt_vector.append(elem**(p**i))
-            series = (series - R.teichmuller(temp)) // p
-        return witt_vector
-
-    def _vector_to_series(self, vec):
-        r"""
-        Computes the canonical bijection from `W(\mathbb F_q)` to
-        `\mathbb Z_q`.
-        """
-        F = self.base()
-        R = Zq(F.cardinality(), prec=self._prec, type='fixed-mod',
-               modulus=F.polynomial(), names=['z'])
-        K = R.residue_field()
-        p = self._prime
-
-        series = R.zero()
-        for i in range(self._prec):
-            temp = vec[i].nth_root(p**i)
-            elem = temp.polynomial()(K.gen())
-            # hack to convert to K (F != K for some reason)
-
-            series += p**i * R.teichmuller(elem)
-        return series
 
     def characteristic(self):
         """

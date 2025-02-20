@@ -29,6 +29,59 @@ from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import op_EQ, op_NE
 
 
+def padic_to_vector(x, F):
+    r"""
+    Return the coordinates in `W(F)` of `x \in \mathbb Z_q`.
+
+    INPUT:
+
+    - ``x`` -- an element in an unramified `p`-adic ring
+
+    - ``F`` -- (a field isomorphic to) the residue field
+
+    EXAMPLES::
+
+        sage: from sage.rings.padics.witt_vector import padic_to_vector
+        sage: R.<a> = ZqFM(5^2, prec=5)
+        sage: F.<b> = GF(5^2)
+        sage: x = (3*a + 4)*5 + (2*a + 1)*5^2 + 5^4
+        sage: padic_to_vector(x, F)
+        [0, 2*b + 2, 2*b + 3, 4*b, 2*b + 2]
+    """
+    prec = x.precision_absolute()
+    val = x.valuation()
+    if x == 0:
+        return prec * [F.zero()]
+    p = x.parent().prime()
+    E = list(x.teichmuller_expansion())
+    return [F(E[i].residue().polynomial()) ** (p**i) for i in range(prec)]
+
+def vector_to_padic(v, R):
+    r"""
+    Return the element `x \in R` corresponding to the element
+    of `W(\mathbb F_q)` whose coordinates are `v`.
+
+    INPUT:
+
+    - ``v`` -- a tuple of elements in a finite field
+
+    - ``R`` -- (a ring isomorphic to) the corresponding `p`-adic ring
+
+    EXAMPLES::
+
+        sage: from sage.rings.padics.witt_vector import vector_to_padic
+        sage: R.<a> = ZqFM(5^2, prec=5)
+        sage: F.<b> = GF(5^2)
+        sage: v = [F(0), 2*b + 2, 2*b + 3, 4*b, 2*b + 2]
+        sage: vector_to_padic(v, R)
+        (3*a + 4)*5 + (2*a + 1)*5^2 + 5^4
+    """
+    p = R.prime()
+    F = R.residue_field()
+    v = [F(c.polynomial()) for c in v]
+    return sum(R.teichmuller(v[i].nth_root(p**i)) << i for i in range(len(v)))
+
+
 class WittVector(CommutativeRingElement):
     """
     Base class for truncated Witt vectors.
@@ -190,9 +243,9 @@ class WittVector(CommutativeRingElement):
             sum_vec = tuple(sum(G[i]) for i in range(prec))
 
         elif alg == 'Zq_isomorphism':
-            x = P._vector_to_series(self._vec)
-            y = P._vector_to_series(other._vec)
-            sum_vec = P._series_to_vector(x + y)
+            x = vector_to_padic(self._vec, P._padic_ring)
+            y = vector_to_padic(other._vec, P._padic_ring)
+            sum_vec = padic_to_vector(x + y, P.base_ring())
 
         elif alg == 'p_invertible':
             p = P._prime  # we know p is a unit in this case!
@@ -257,9 +310,9 @@ class WittVector(CommutativeRingElement):
             prod_vec = tuple(sum(G[i]) for i in range(prec))
 
         elif alg == 'Zq_isomorphism':
-            x = P._vector_to_series(self._vec)
-            y = P._vector_to_series(other._vec)
-            prod_vec = P._series_to_vector(x * y)
+            x = vector_to_padic(self._vec, P._padic_ring)
+            y = vector_to_padic(other._vec, P._padic_ring)
+            prod_vec = padic_to_vector(x * y, P.base_ring())
 
         elif alg == 'p_invertible':
             p = P._prime  # we know p is a unit in this case!
@@ -377,8 +430,8 @@ class WittVector(CommutativeRingElement):
         R = parent.base()
 
         if p == R.characteristic():
-            self._int_to_vector_char_p(k, R)
-            return
+            Z = Zp(p, prec=self._prec + 1, type='fixed-mod')
+            self._vec = padic_to_vector(Z(k), R)
 
         should_negate = False
         if k < 0:
@@ -404,29 +457,3 @@ class WittVector(CommutativeRingElement):
                 vec_k = (-x for x in vec_k)
 
         self._vec = tuple([R(x) for x in vec_k])
-
-    def _int_to_vector_char_p(self, k, R):
-        """
-        Return the image of ``k`` in ``self`` with coefficients in ``parent``
-        which has characteristic `p`.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(13), p=13, prec=3)
-            sage: W(11)
-            (11, 7, 4)
-        """
-        p = R.characteristic()
-        Z = Zp(p, prec=self._prec + 1, type='fixed-mod')
-        F = GF(p)
-
-        series = Z(k)
-        vec_k = []
-        for _ in range(self._prec):
-            # Probably slightly faster to do "series % p,"
-            # but this way, temp is in F_p
-            temp = F(series)
-            vec_k.append(R(temp))  # make sure elements of vector are in base
-            series = (series - Z.teichmuller(temp)) // p
-
-        self._vec = tuple(vec_k)
