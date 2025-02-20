@@ -6123,6 +6123,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             True
             sage: (a^2).in_subalgebra(J, algorithm='groebner')
             True
+            sage: (a^2).in_subalgebra(J, algorithm='groebner', certificate='x')
+            x0^2*x1^2
             sage: (a + a^2).in_subalgebra(J)
             True
         """
