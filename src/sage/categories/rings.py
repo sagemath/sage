@@ -854,6 +854,21 @@ class Rings(CategoryWithAxiom):
             """
             return self._ideal_class_(1)(self, [self.zero()])
 
+        def nilradical(self):
+            """
+            Return the nilradical of this ring.
+
+            EXAMPLES::
+
+                sage: QQ['x,y'].nilradical()
+                Ideal (0) of Multivariate Polynomial Ring in x, y over Rational Field
+
+            .. SEEALSO::
+
+                :meth:`~sage.categories.finite_dimensional_lie_algebras_with_basis.ParentMethods.nilradical`
+            """
+            return self.zero_ideal().radical()
+
         @cached_method
         def unit_ideal(self):
             """
