@@ -291,7 +291,8 @@ RUN <<EOT
 rm -rf /source-tree/.git
 if [ -d /sage ]; then
   BASE_VERSION=\$(cat /sage/VERSION.txt)
-  if cd /source-tree && .ci/retrofit-worktree.sh worktree-image /sage; then
+  if (cd /source-tree && .ci/retrofit-worktree.sh worktree-image /sage); then
+    rm -rf /source-tree
     echo "### Starting incremental build from \$BASE_VERSION"
   else
     echo "retrofit-worktree.sh failed..."
@@ -302,7 +303,7 @@ if [ -d /sage ]; then
 else
   git config --global user.name "ci-sage workflow"
   git config --global user.email "ci-sage@example.com"
-  cd /source-tree && git init && git add -A && git commit --quiet --allow-empty -m "new"
+  (cd /source-tree && git init && git add -A && git commit --quiet --allow-empty -m "new")
   mv /source-tree /sage
   echo "### Starting build from scratch"
 fi
