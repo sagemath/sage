@@ -890,7 +890,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return res
 
     def _adjust_table_phi(self, table_constructor, phi_vectors_exact, 
-                          test=False, ring=QQ):
+                          test=False):
         r"""
         Helper to modify a table constructor, incorporating extra data from
         constructions (phi_vectors_exact)
@@ -933,8 +933,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 Zkern = Zk.basis_matrix()
                 if Zkern.nrows()>0:
                     new_bases.append(
-                        matrix(ring, 
-                               Zkern * table_constructor[param][ii], 
+                        matrix(Zkern * table_constructor[param][ii], 
                                sparse=True)
                                )
             if len(new_bases)!=0:
@@ -1179,10 +1178,15 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def _round_sdp_solution_no_phi(self, sdp_result, sdp_data, 
                                    table_constructor, constraints_data, 
-                                   denom=1024):
+                                   round_params=None):
         import numpy as np
         from numpy import linalg as LA
         from sage.functions.other import ceil
+
+        # set up parameters
+        if round_params==None:
+            round_params={}
+        denom = round_params.get("denom", 1024)
 
         #unpack variables
 
@@ -1270,14 +1274,25 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def _round_sdp_solution_phi(self, sdp_result, sdp_data, 
                                 table_constructor, constraints_data, 
-                                phi_vectors_exact, denom=1024, ring=QQ, eps=1e-9):
+                                phi_vectors_exact, round_params=None):
         r"""
         Round the SDP results output to get something exact.
         """
         import gc
         import time
 
-        #unpack variables
+        # set up parameters
+        if round_params==None:
+            round_params={}
+        denom = round_params.get("denom", 1024)
+        ring = round_params.get("ring", QQ)
+        slack_threshold = round_params.get("slack_threshold", 1e-9)
+        linear_threshold = round_params.get("linear_threshold", 1e-6)
+        kernel_threshold = round_params.get("kernel_threshold", 1e-4)
+        kernel_denom = round_params.get("kernel_denom", 1024)
+        
+
+        # unpack variables
         block_sizes, target_list_exact, _, __ = sdp_data
         target_vector_exact = vector(ring, target_list_exact)
         flags_num, _, positives_list_exact, __ = constraints_data
@@ -1302,7 +1317,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         c_zero_inds = [
             FF for FF, xx in enumerate(c_vector_approx) if 
-            (abs(xx)<=eps or phi_vector_exact[FF]!=0)
+            (abs(xx)<=slack_threshold or phi_vector_exact[FF]!=0)
             ]
 
         # same as m, number of positive constraints (-2 for the equality)
@@ -1321,7 +1336,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # The f (ff) positivity constraints where the e vector is zero/nonzero
         e_zero_inds = [
             ff for ff, xx in enumerate(e_vector_approx) if \
-                (abs(xx)<1e-6 or phi_pos_vector_exact[ff]!=0)
+                (abs(xx)<linear_threshold or phi_pos_vector_exact[ff]!=0)
                 ]
         e_nonzero_inds = [
             ff for ff in range(positives_num) if ff not in e_zero_inds
@@ -1379,15 +1394,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             for plus_index, base in enumerate(table_constructor[params]):
                 
                 X_approx = matrix(sdp_result['X'][block_index + plus_index])
-                X_kernel_removed, recover_base = _remove_kernel(X_approx)
+                X_kernel_removed, recover_base = _remove_kernel(X_approx, kernel_denom, kernel_threshold)
                 X_recover_bases.append(recover_base)
                 X_sizes_corrected.append(X_kernel_removed.nrows())
                 X_rounded_flattened = _round_list(
                     _flatten_matrix(X_kernel_removed.rows()), method=0, denom=denom
                     )
                 X_flat_list.extend(X_rounded_flattened)
-                
-                sdp_result['X'][block_index + plus_index] = None
                 
                 M_extra = []
 
@@ -1479,6 +1492,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                             block_index+plus_index, 
                             min(X_ii_small.eigenvalues())
                             ))
+                    return None
                 
                 # update slacks
                 for gg, morig in enumerate(table):
@@ -1620,7 +1634,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def solve_sdp(self, target_element, target_size, construction, 
                   maximize=True, positives=None, file=None, 
-                  specific_ftype=None, ring=QQ, params=None):
+                  specific_ftype=None, sdp_params=None):
         r"""
         TODO Docstring
         """
@@ -1632,17 +1646,17 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
 
         if self._printlevel != 1:
-            if params==None:
-                params = {"printlevel": self._printlevel}
+            if sdp_params==None:
+                sdp_params = {"printlevel": self._printlevel}
             else:
-                if "printlevel" not in params:
-                    params["printlevel"] = self._printlevel
-        if params!=None:
+                if "printlevel" not in sdp_params:
+                    sdp_params["printlevel"] = self._printlevel
+        if sdp_params!=None:
             with open("param.csdp", "w") as paramsfile:
-                for key, value in params.items():
+                for key, value in sdp_params.items():
                     paramsfile.write(f"{key}={value}\n")
-            if "printlevel" in params:
-                self._printlevel = params["printlevel"]
+            if "printlevel" in sdp_params:
+                self._printlevel = sdp_params["printlevel"]
             else:
                 self._printlevel = 1
         
@@ -1689,7 +1703,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             phi_vectors_exact = [xx.values() for xx in construction]
         self.fprint("Adjusting table with kernels from construction")
         table_constructor = self._adjust_table_phi(
-            table_constructor, phi_vectors_exact, ring=ring
+            table_constructor, phi_vectors_exact
             )
         sdp_data = self._tables_to_sdp_data(
             table_constructor, prev_data=sdp_data
@@ -1732,7 +1746,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         return final_sol["primal"]*mult
 
-    def round_solution(self, sdp_output_file, denom=1024, ring=QQ, eps=1e-9, certificate_file=None):
+    def round_solution(self, sdp_output_file, certificate_file=None, round_params=None):
         r"""
         TODO Docstring
         """
@@ -1760,7 +1774,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             table_constructor,
             constraints_data,
             phi_vectors_exact,
-            denom=denom, ring=ring, eps=eps
+            round_params=round_params
             )
         if rounding_output==None:
             print("Rounding was unsuccessful!")
@@ -1779,8 +1793,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
     def optimize_problem(self, target_element, target_size, maximize=True, 
                          positives=None, construction=None, file=None, 
-                         exact=False, denom=1024, ring=QQ, specific_ftype=None, 
-                         params=None):
+                         exact=False, specific_ftype=None, 
+                         sdp_params=None, round_params=None):
         r"""
         Try to maximize or minimize the value of `target_element`
         
@@ -1820,19 +1834,25 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
 
         if self._printlevel != 1:
-            if params==None:
-                params = {"printlevel": self._printlevel}
+            if sdp_params==None:
+                sdp_params = {"printlevel": self._printlevel}
             else:
-                if "printlevel" not in params:
-                    params["printlevel"] = self._printlevel
-        if params!=None:
+                if "printlevel" not in sdp_params:
+                    sdp_params["printlevel"] = self._printlevel
+        if sdp_params!=None:
             with open("param.csdp", "w") as paramsfile:
-                for key, value in params.items():
+                for key, value in sdp_params.items():
                     paramsfile.write(f"{key}={value}\n")
-            if "printlevel" in params:
-                self._printlevel = params["printlevel"]
+            if "printlevel" in sdp_params:
+                self._printlevel = sdp_params["printlevel"]
             else:
                 self._printlevel = 1
+        
+        if round_params==None:
+            round_params={}
+        denom = round_params.get("denom", 1024)
+        constr_print_limit = round_params.get("constr_print_limit", 1000)
+        constr_error_threshold = round_params.get("constr_error_threshold", 1e-6)
         
         #
         # Initial setup
@@ -1925,7 +1945,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if (not exact):
                 return help_return(initial_sol['primal'] * mult, 
                                    sdpo=initial_sol)
-            
+
             # Guess the construction in this case
             if construction==None:
                 one_vector = constraints_data[-1]
@@ -1933,13 +1953,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 phi_vector_rounded, error_coeff = _round_adaptive(
                     initial_sol['y'], one_vector
                     )
-                if error_coeff<1e-6:
+                if error_coeff<constr_error_threshold:
                     alg = FlagAlgebra(self, QQ)
                     construction = alg(target_size, phi_vector_rounded)
                     phipr = str(construction)
                     self.fprint("The initial run gave an accurate "+
                           "looking construction")
-                    if len(phipr)<1000:
+                    if len(phipr)<constr_print_limit:
                         self.fprint("Rounded construction vector "+
                               "is: \n{}".format(phipr))
                 else:
@@ -1952,7 +1972,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if construction==[]:
                 rounding_output = self._round_sdp_solution_no_phi(
                     initial_sol, sdp_data, table_constructor, 
-                    constraints_data, denom=denom)
+                    constraints_data, round_params=round_params)
                 return help_return(rounding_output[0] * mult, roundo=rounding_output)
         
         
@@ -1972,7 +1992,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         self.fprint("Adjusting table with kernels from construction")
         table_constructor = self._adjust_table_phi(
-            table_constructor, phi_vectors_exact, ring=ring
+            table_constructor, phi_vectors_exact
             )
         sdp_data = self._target_to_sdp_data(target_vector_exact)
         sdp_data = self._tables_to_sdp_data(
@@ -1996,18 +2016,17 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if (not exact):
             return help_return(final_sol['primal'] * mult, sdpo=final_sol)
         
-        
         self.fprint("Starting the rounding of the result")
         rounding_output = self._round_sdp_solution_phi(
             final_sol, sdp_data, table_constructor, 
             constraints_data, phi_vectors_exact, 
-            denom=denom, ring=ring
+            round_params=round_params
             )
         if rounding_output==None:
             self.fprint("Rounding based on construction was unsuccessful")
             rounding_output = self._round_sdp_solution_no_phi(
                 final_sol, sdp_data, table_constructor, 
-                constraints_data, denom=denom
+                constraints_data, round_params=round_params
                 )
         
         self.fprint("Final rounded bound is {}".format(rounding_output[0]*mult))
@@ -2116,8 +2135,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 ))
 
     def verify_certificate(self, file_or_cert, target_element, target_size, 
-                           maximize=True, positives=None, construction=None, 
-                           specific_ftype=None):
+                           maximize=True, positives=None):
         r"""
         Verifies the certificate provided by the optimizer 
         written to `file`
