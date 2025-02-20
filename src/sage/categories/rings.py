@@ -865,7 +865,7 @@ class Rings(CategoryWithAxiom):
 
             .. SEEALSO::
 
-                :meth:`~sage.categories.finite_dimensional_lie_algebras_with_basis.ParentMethods.nilradical`
+                :meth:`~sage.categories.finite_dimensional_lie_algebras_with_basis.FiniteDimensionalLieAlgebrasWithBasis.ParentMethods.nilradical`
             """
             return self.zero_ideal().radical()
 
@@ -1027,7 +1027,7 @@ class Rings(CategoryWithAxiom):
 
             from sage.rings.ideal import Ideal_generic
             if not args:
-                gens = [self(0)]
+                return self.zero_ideal()
             else:
                 gens = args
                 while isinstance(gens, (list, tuple, GeneratorType)) and len(gens) == 1:
@@ -1051,7 +1051,7 @@ class Rings(CategoryWithAxiom):
                         break
 
             if not gens:
-                gens = [self.zero()]
+                return self.zero_ideal()
             elif coerce:
                 gens = [self(g) for g in gens]
 
