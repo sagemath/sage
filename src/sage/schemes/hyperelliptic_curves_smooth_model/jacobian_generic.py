@@ -1,6 +1,5 @@
 r"""
-    This module implements the arithemtic for Jacobians of
-    hyperelliptic curves. 
+    Jacobian of a general hyperelliptic curve
 
     AUTHORS:
 
@@ -36,14 +35,14 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     This tuple represents the equivalence class
 
-    ..MATH::
+    .. MATH::
 
         [P_1 + ... + P_r + n \cdot \infty_+ + m\cdot \infty_- - D_\infty],
         
     where  `m = g - \deg(u) - n`, and `\infty_+`, \infty_-` are the 
     points at infinity of the hyperelliptic curve,
 
-    ..MATH::
+    .. MATH::
         D_\infty =
         \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
         
@@ -60,7 +59,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         """
         Return the dimension of this Jacobian.
 
-        EXAMPLES: 
+        EXAMPLES::
             
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^2, x^4+1); H

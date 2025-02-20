@@ -1,3 +1,6 @@
+"""
+Rational point sets on a Jacobian of a hyperelliptic curve (inert case)
+"""
 from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic import (
     HyperellipticJacobianHomset,
 )

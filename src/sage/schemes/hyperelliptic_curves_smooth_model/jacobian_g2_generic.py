@@ -1,3 +1,7 @@
+"""
+Jacobians of genus-2 curves
+"""
+
 from sage.schemes.hyperelliptic_curves_smooth_model import (
     jacobian_g2_homset_inert,
     jacobian_g2_homset_ramified,

@@ -1,6 +1,6 @@
 r"""
 Constructor for hyperelliptic curves using the smooth model
-in weighted projective space `\PP(1 : g + 1 : 1)`.
+in weighted projective space `\mathbb{P}(1 : g + 1 : 1)`.
 
 Adapted from /hyperelliptic/constructor.py
 
@@ -64,7 +64,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         y^2 + h(x) y = f(x),
 
     for some polynomials `h` and `f`. This defines a smooth
-    model in weighted projective space `\PP(1 : g + 1 : 1)`
+    model in weighted projective space `\mathbb{P}(1 : g + 1 : 1)`
 
     .. MATH::
         Y^2 + H(X,Z) Y = F(X,Z),
@@ -90,12 +90,14 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         Hyperelliptic Curve over Rational Field defined by y^2 + (x^4 + 1)*y = x^8 + 1
 
     This hyperelliptic curve has no points at infinity, i.e. `H` is inert::
+
         sage: H.points_at_infinity()
         []
         sage: H.is_inert()
         True
 
     We can extend the base field to obtain a hyperelliptic curve with two points at infinity::
+
         sage: K.<alpha> = QQ.extension(x^2+x-1)
         sage: HK = H.change_ring(K)
         sage: HK.points_at_infinity()
@@ -104,6 +106,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         True
 
     The construction of hyperelliptic curves is supported over different fields. The correct class is chosen automatically::
+
         sage: F = FiniteField(13)
         sage: S.<x> = PolynomialRing(F)
         sage: HF = HyperellipticCurveSmoothModel(x^5 + x^4 + x^3 + x^2 + x + 1, x^3 + x); HF
@@ -118,6 +121,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         <class 'sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_padic_field.HyperellipticCurveSmoothModel_padic_field_with_category'>
 
     The input polynomials need not be monic::
+    
         sage: R.<x> = QQ[]
         sage: HyperellipticCurveSmoothModel(3*x^5+1)
         Hyperelliptic Curve over Rational Field defined by y^2 = 3*x^5 + 1

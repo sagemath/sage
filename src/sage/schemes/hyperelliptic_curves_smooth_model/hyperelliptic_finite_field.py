@@ -1,3 +1,8 @@
+"""
+Hyperelliptic curves (smooth model) over a finite field
+
+"""
+
 from sage.arith.misc import binomial
 from sage.libs.pari.all import pari
 from sage.matrix.constructor import identity_matrix, matrix

@@ -1,3 +1,6 @@
+"""
+Hyperelliptic curves (smooth model) over the rationals
+"""
 import sage.rings.abc
 from sage.rings.padics.factory import Qp as pAdicField
 from sage.schemes.hyperelliptic_curves_smooth_model import hyperelliptic_generic

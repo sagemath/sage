@@ -1,3 +1,7 @@
+r"""
+Hyperelliptic curves (smooth model) over a general ring
+"""
+
 from sage.functions.all import log
 from sage.misc.cachefunc import cached_method
 from sage.rings.big_oh import O
@@ -58,7 +62,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Return the genus of the hyperelliptic curve.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^7 + 3*x + 2)
             sage: H.genus()
@@ -159,7 +164,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         Return the polynomials (f, h) such that
         C : y^2 + h*y = f
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: H = HyperellipticCurveSmoothModel(R([0, 1, 2, 0, 0, 1]), R([1, 1, 0, 1]))
@@ -200,7 +205,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         Return True if the curve is split, i.e. there are two rational
         points at infinity.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: H = HyperellipticCurveSmoothModel(x^6+1, x^3+1)
@@ -218,7 +223,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         Return True if the curve is ramified, i.e. there is one rational
         point at infinity.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: H = HyperellipticCurveSmoothModel(x^5+1)
@@ -236,7 +241,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         Return True if the curve is inert, i.e. there are no rational
         points at infinity.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: H = HyperellipticCurveSmoothModel(x^6+1,-x^3+1)
@@ -587,6 +592,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         That is for P = [X,Y,Z], the output is X/Z¸ Y/Z^(g+1).
 
         EXAMPLES::
+
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^6 - 1)
             sage: P = H.point([2,0,2])
@@ -611,22 +617,18 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         EXAMPLES::
 
-            We consider the hyperelliptic curve `y^2 = x^6 -1` over the rational numbers.
-            For instance, the point P = (1,0) is a Weierstrass point,
-            while the points at infinity are not::
-
-                sage: R.<x> = QQ[]
-                sage: H = HyperellipticCurveSmoothModel(x^6 - 1)
-                sage: P = H.point([1,0])
-                sage: H.is_weierstrass_point(P)
-                True
-                sage: Q = H.point([1,1,0])
-                sage: H.is_weierstrass_point(Q)
-                False
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 - 1)
+            sage: P = H.point([1,0])
+            sage: H.is_weierstrass_point(P)
+            True
+            sage: Q = H.point([1,1,0])
+            sage: H.is_weierstrass_point(Q)
+            False
 
         This also works for hyperelliptic curves with `h(x)` nonzero.
         Note that in this case the `y`-coordinate of a Weierstrass point
-        is not necessarily zero::
+        is not necessarily zero.
 
             sage: R.<x> = FiniteField(17)[]
             sage: H = HyperellipticCurveSmoothModel(x^6 + 2, x^2 + 1)
@@ -639,7 +641,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         TESTS:
 
-        Check that the examples from the p-adic file work::
+        Check that the examples from the p-adic file work.
 
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurveSmoothModel(x^3-10*x+9)
@@ -744,6 +746,18 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Return the distinguished point of the hyperelliptic curve.
         By default, this is one of the points at infinity if possible.
+
+        EXAMPLE::
+
+            sage: R.<x> = GF(11)[]
+            sage: H1 = HyperellipticCurveSmoothModel(x^2 + x, x^5 - 3*x + 4)
+            sage: H1.distinguished_point()
+            (1 : 0 : 0)
+            sage: H2 = HyperellipticCurveSmoothModel(x^6 + x^5 + 1,2*x^3)
+            sage: H2.points_at_infinity()
+            []
+            sage: H2.distinguished_point()
+            (0 : 1 : 1)
         """
         if hasattr(self, "_distinguished_point"):
             return self._distinguished_point
@@ -770,6 +784,18 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     def set_distinguished_point(self, P0):
         """
         Change the distinguished point of the hyperelliptic curve to P0.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: f = x^6 - 6*x^4 + x^2 + 28
+            sage: H = HyperellipticCurveSmoothModel(f)
+            sage: H.distinguished_point()
+            (1 : 1 : 0)
+            sage: P = H(2,0)
+            sage: H.set_distinguished_point(P)
+            sage: H.distinguished_point()
+            (2 : 0 : 1)
         """
         try:
             P0 = self.point(P0)
@@ -779,26 +805,26 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     @cached_method
     def jacobian(self):
-        """
+        r"""
         Returns the Jacobian of the hyperelliptic curve.
 
         Elements of the Jacobian are represented by tuples 
         of the form `(u, v : n)`, where
-        - (u,v) is the Mumford representative of a divisor `P_1 + ... + P_r`,
-        - n is a non-negative integer
+        - `(u,v)` is the Mumford representative of a divisor `P_1 + ... + P_r`,
+        - `n` is a non-negative integer
 
         This tuple represents the equivalence class
 
-        ..MATH::
+        .. MATH::
 
             [P_1 + ... + P_r + n \cdot \infty_+ + m\cdot \infty_- - D_\infty],
         
-        where  `m = g - \deg(u) - n`, and `\infty_+`, \infty_-` are the 
+        where  `m = g - \deg(u) - n`, and `\infty_+`, `\infty_-` are the 
         points at infinity of the hyperelliptic curve,
 
-        ..MATH::
-            D_\infty =
-            \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
+        .. MATH::
+
+            D_\infty = \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
         
         Here, `\infty_- = \infty_+`, if the hyperelliptic curve is ramified.
         
@@ -810,11 +836,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         `n` is omitted in the description.
 
 
-        EXAMPLES:
-
-        We construct the Jacobian of a hyperelliptic curve with affine equation
-        `y^2 + (x^3 + x + 1) y  = 2*x^5 + 4*x^4 + x^3 - x` over the rationals.
-        This curve has two points at infinity::
+        EXAMPLES::
 
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(2*x^5 + 4*x^4 + x^3 - x, x^3 + x + 1)
@@ -822,7 +844,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x + 1)*y = 2*x^5 + 4*x^4 + x^3 - x
 
         The points `P = (0, 0)` and `Q = (-1, -1)` are on `H`. We construct the
-        element `D_1 = [P - Q] = [P + (-Q) - D_\infty`] on the Jacobian::
+        element `D_1 = [P - Q] = [P + (-Q) - D_\infty`] on the Jacobian.
 
             sage: P = H.point([0, 0])
             sage: Q = H.point([-1, -1])
@@ -830,14 +852,14 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             (x^2 + x, -2*x : 0)
 
         Elements of the Jacobian can also be constructed by directly providing
-        the Mumford representation::
+        the Mumford representation.
 
             sage: D1 == J(x^2 + x, -2*x, 0)
             True
 
         We can also embed single points into the Jacobian. Below we construct
         `D_2 = [P - P_0]`, where `P_0` is the distinguished point of `H`
-        (by default one of the points at infinity)::
+        (by default one of the points at infinity).
 
             sage: D2 = J(P); D2
             (x, 0 : 0)
@@ -846,7 +868,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: D2 == J(P, P0)
             True
 
-        We may add elements, or multiply by integers::
+        We may add elements, or multiply by integers.
 
             sage: 2*D1
             (x, -1 : 1)
@@ -856,13 +878,13 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             (x, -1 : 1)
 
         Note that the neutral element is given by `[D_\infty - D_\infty]`,
-        in particular `n = 1`::
+        in particular `n = 1`.
 
             sage: J.zero()
             (1, 0 : 1)
 
         There are two more elements of the Jacobian that are only supported
-        at infinity: `[\infty_+ - \infty_-]` and `[\infty_- - \infty_+]`::
+        at infinity: `[\infty_+ - \infty_-]` and `[\infty_- - \infty_+]`.
 
             sage: [P_plus, P_minus] = H.points_at_infinity()
             sage: P_plus == P0
@@ -873,7 +895,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             (1, 0 : 0)
 
         Now, we consider the Jacobian of a hyperelliptic curve with only one
-        point at infinity, defined over a finite field::
+        point at infinity, defined over a finite field.
 
             sage: K = FiniteField(7)
             sage: R.<x> = K[]
@@ -882,7 +904,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             Jacobian of Hyperelliptic Curve over Finite Field of size 7 defined by y^2 = x^7 + 3*x + 2
 
         Elements on the Jacobian can be constructed as before. But the value
-        `n` is not used here, since there is exactly one point at infinity::
+        `n` is not used here, since there is exactly one point at infinity.
 
             sage: P = H.point([3, 0])
             sage: Q = H.point([5, 1])
@@ -893,7 +915,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             (x^3 + 2, 4)
 
         Over finite fields, we may also construct random elements and
-        compute the order of the Jacobian::
+        compute the order of the Jacobian.
 
             sage: J.random_element() #random
             (x^3 + x^2 + 4*x + 5, 3*x^2 + 3*x)
@@ -902,7 +924,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         Note that arithmetic on the Jacobian is not implemented if the
         underlying hyperelliptic curve is inert (i.e. has no points at
-        infinity) and the genus is odd::
+        infinity) and the genus is odd.
 
             sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurveSmoothModel(x^8+1,x^4+1)

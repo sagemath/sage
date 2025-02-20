@@ -1,3 +1,6 @@
+"""
+Rational point sets on a Jacobian of a general hyperelliptic curve
+"""
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import symbolic_prod as product
 from sage.misc.prandom import choice
@@ -32,6 +35,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         The base field of H is not extended to L.
         
         EXAMPLES::
+
             sage: R.<x> = QQ[]
             sage: K.<omega> = QQ.extension(x^2+x+1)
             sage: H = HyperellipticCurveSmoothModel(x^6-1)
@@ -97,7 +101,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def cardinality(self, extension_degree=1):
         r"""
-        Return `|Jac(C) / \F_{q^n}|`.
+        Return `|Jac(C) / \mathbb{F}_{q^n}|`.
 
         EXAMPLES::
 
@@ -314,7 +318,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         """
         Return the zero element of this jacobian homset.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^5 + 1)
@@ -434,6 +438,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         Return the Cantor composition of ``(u1, v1)`` and ``(u2, v2)``.
 
         EXAMPLES::
+
             sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurveSmoothModel(x^7 + x^5 + x + 1)
             sage: JF = Jacobian(H).point_homset()
@@ -453,6 +458,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         representation of a reduced divisor.
 
         EXAMPLES::
+        
             sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurveSmoothModel(x^7 + x^5 + x + 1)
             sage: g = H.genus()

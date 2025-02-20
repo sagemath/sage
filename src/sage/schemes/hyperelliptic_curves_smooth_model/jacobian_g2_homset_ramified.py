@@ -1,3 +1,6 @@
+"""
+Rational point sets of Jacobians of genus-2 curves (ramified case)
+"""
 from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_ramified import (
     HyperellipticJacobianHomsetRamified,
 )

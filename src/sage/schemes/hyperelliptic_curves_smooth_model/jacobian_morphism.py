@@ -1,3 +1,11 @@
+"""
+Arithmetic on the Jacobian
+
+This module implements the group operation in the Picard group of a
+hyperelliptic curve, represented as divisors in Mumford
+representation, using Cantor's algorithm.
+"""
+
 from sage.groups.generic import order_from_multiple
 from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
@@ -169,7 +177,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         Returns the order of self.
         This is only implemented over finite fields.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: K = FiniteField(7)
             sage: R.<x> = K[]

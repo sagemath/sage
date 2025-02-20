@@ -1,3 +1,6 @@
+"""
+Rational point sets of Jacobians of genus-2 curves (split case)
+"""
 from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_split import (
     HyperellipticJacobianHomsetSplit,
 )

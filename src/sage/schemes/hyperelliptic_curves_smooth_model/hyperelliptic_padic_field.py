@@ -1,3 +1,7 @@
+"""
+Hyperelliptic curves (smooth model) over a p-adic field
+"""
+
 from sage.functions.log import log
 from sage.matrix.constructor import matrix
 from sage.modules.free_module import VectorSpace
@@ -287,6 +291,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             (1 : 4 : 1)
 
         We note that `P` is in a Weierstrass disc and its reduction is indeed a Weierstrass point.
+        
             sage: HK.is_in_weierstrass_disc(P)
             True
             sage: HF = HK.change_ring(FiniteField(5))
