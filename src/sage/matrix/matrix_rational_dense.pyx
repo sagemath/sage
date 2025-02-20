@@ -119,7 +119,7 @@ from sage.misc.verbose import verbose
 
 # ########################################################
 # PARI C library
-from sage.libs.pari.all import PariError
+from cypari2.handle_error import PariError
 from sage.libs.pari.convert_gmp cimport INTFRAC_to_mpq
 from sage.libs.pari.convert_flint cimport rational_matrix, _new_GEN_from_fmpq_mat_t
 from cypari2.stack cimport clear_stack

@@ -81,7 +81,9 @@ from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
 
 try:
-    from sage.libs.pari.all import pari, pari_gen, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
     pari = None
@@ -1175,8 +1177,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef Py_ssize_t d = self.degree()
         if 0 <= i <= d:
             return self.get_unsafe(i)
-        else:
-            return self._parent._base.zero()
+        return self._parent._base.zero()
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
@@ -1608,6 +1609,43 @@ cdef class Polynomial(CommutativePolynomial):
         AUTHORS:
 
         - Robert Bradshaw (2007-05-31)
+
+        TESTS:
+
+        At the time of writing :meth:`inverse_mod` is not implemented in general for the following ring,
+        but it should fallback to :meth:`inverse_of_unit` when possible::
+
+            sage: R.<u,v> = ZZ[]
+            sage: S = R.localization(u)
+            sage: T.<x> = S[]
+            sage: T
+            Univariate Polynomial Ring in x over Multivariate Polynomial Ring in u, v over Integer Ring localized at (u,)
+            sage: T(u).is_unit()
+            True
+            sage: T(u).inverse_of_unit()
+            1/u
+            sage: T(u).inverse_mod(T(v))
+            1/u
+            sage: T(v).inverse_mod(T(v^2-1))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Multivariate Polynomial Ring in u, v over Integer Ring localized at (u,) does not provide...
+
+        The behavior of ``xgcd`` over rings like ``ZZ`` are nonstandard, we check the behavior::
+
+            sage: R.<x> = ZZ[]
+            sage: a = 2*x^2+1
+            sage: b = -2*x^2+1
+            sage: a.inverse_mod(b)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: The base ring (=Integer Ring) is not a field
+            sage: a.xgcd(b)
+            (16, 8, 8)
+            sage: a*x^2+b*(x^2+1)
+            1
+            sage: a*x^2%b  # shows the result exists, thus we cannot raise ValueError, only NotImplementedError
+            1
         """
         from sage.rings.ideal import Ideal_generic
         if isinstance(m, Ideal_generic):
@@ -1625,13 +1663,25 @@ cdef class Polynomial(CommutativePolynomial):
                 return a.parent()(~u)
         if a.parent().is_exact():
             # use xgcd
-            g, s, _ = a.xgcd(m)
-            if g == 1:
-                return s
-            elif g.is_unit():
-                return g.inverse_of_unit() * s
-            else:
-                raise ValueError("Impossible inverse modulo")
+            try:
+                g, s, _ = a.xgcd(m)
+                if g == 1:
+                    return s
+                elif g.is_unit():
+                    return g.inverse_of_unit() * s
+                else:
+                    R = m.base_ring()
+                    if R.is_field():
+                        raise ValueError("Impossible inverse modulo")
+                    else:
+                        raise NotImplementedError(f"The base ring (={R}) is not a field")
+            except NotImplementedError:
+                # attempt fallback, return inverse_of_unit() if this is already an unit
+                try:
+                    return a.inverse_of_unit()
+                except (ArithmeticError, ValueError, NotImplementedError):
+                    pass
+                raise
         else:
             # xgcd may not converge for inexact rings.
             # Instead solve for the coefficients of
@@ -1822,13 +1872,14 @@ cdef class Polynomial(CommutativePolynomial):
         cdef Polynomial _right = right
         if self.is_term():
             return _right._mul_term(self, term_on_right=False)
-        elif _right.is_term():
+
+        if _right.is_term():
             return self._mul_term(_right, term_on_right=True)
 
-        elif self._parent.is_exact():
+        if self._parent.is_exact():
             return self._mul_karatsuba(right)
-        else:
-            return self._mul_generic(right)
+
+        return self._mul_generic(right)
 
     cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         r"""
@@ -2533,10 +2584,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: K.<a> = GF(2^8)
             sage: x = polygen(K)
             sage: pol = x^1000000 + x + a
-            sage: alarm(0.5); pol.any_root()
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): pol.any_root()
 
         Check root computation over large finite fields::
 
@@ -6809,13 +6858,17 @@ cdef class Polynomial(CommutativePolynomial):
 
         e = self.exponents()
         c = self.coefficients()
-        if len(e) == 0: return []
+        if len(e) == 0:
+            return []
         if len(e) == 1:
-            if e[0] == 0: return []
-            else:         return [(infinity.infinity, e[0])]
+            if e[0] == 0:
+                return []
+            return [(infinity.infinity, e[0])]
 
-        if e[0] == 0: slopes = []
-        else:         slopes = [(infinity.infinity, e[0])]
+        if e[0] == 0:
+            slopes = []
+        else:
+            slopes = [(infinity.infinity, e[0])]
 
         points = [(e[0], c[0].valuation(p)), (e[1], c[1].valuation(p))]
         slopes.append((-(c[1].valuation(p)-c[0].valuation(p))/(e[1] - e[0]), e[1]-e[0]))
@@ -6826,8 +6879,8 @@ cdef class Polynomial(CommutativePolynomial):
                 slopes = slopes[:-1]
                 points = points[:-1]
                 s = -(v-points[-1][1])/(e[i]-points[-1][0])
-            slopes.append((s,e[i]-points[-1][0]))
-            points.append((e[i],v))
+            slopes.append((s, e[i]-points[-1][0]))
+            points.append((e[i], v))
 
         return slopes
 

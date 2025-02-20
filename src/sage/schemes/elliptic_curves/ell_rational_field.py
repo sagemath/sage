@@ -80,7 +80,7 @@ from sage.structure.coerce import py_scalar_to_element
 from sage.structure.element import Element, RingElement
 
 lazy_import("sage.functions.log", "log")
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import("sage.functions.gamma", "gamma_inc")
 lazy_import('sage.interfaces.gp', 'gp')
 

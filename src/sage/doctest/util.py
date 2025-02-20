@@ -25,6 +25,8 @@ AUTHORS:
 
 from time import time as walltime
 from os import sysconf, times
+from contextlib import contextmanager
+from cysignals.alarm import alarm, cancel_alarm, AlarmInterrupt
 
 
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
@@ -749,3 +751,152 @@ class NestedName:
             True
         """
         return not (self == other)
+
+
+@contextmanager
+def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float = 0.2, inaccuracy_tolerance: float = 0.1):
+    """
+    Helper function for doctesting to ensure that the code is interruptible after a certain amount of time.
+    This should only be used for internal doctesting purposes.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(1) as data: sleep(3)
+
+    ``as data`` is optional, but if it is used, it will contain a few useful values::
+
+        sage: data  # abs tol 1
+        {'alarm_raised': True, 'elapsed': 1.0}
+
+    ``max_wait_after_interrupt`` can be passed if the function may take longer than usual to be interrupted::
+
+        sage: # needs sage.misc.cython
+        sage: cython(r'''
+        ....: from posix.time cimport clock_gettime, CLOCK_REALTIME, timespec, time_t
+        ....: from cysignals.signals cimport sig_check
+        ....:
+        ....: cpdef void uninterruptible_sleep(double seconds):
+        ....:     cdef timespec start_time, target_time
+        ....:     clock_gettime(CLOCK_REALTIME, &start_time)
+        ....:
+        ....:     cdef time_t floor_seconds = <time_t>seconds
+        ....:     target_time.tv_sec = start_time.tv_sec + floor_seconds
+        ....:     target_time.tv_nsec = start_time.tv_nsec + <long>((seconds - floor_seconds) * 1e9)
+        ....:     if target_time.tv_nsec >= 1000000000:
+        ....:         target_time.tv_nsec -= 1000000000
+        ....:         target_time.tv_sec += 1
+        ....:
+        ....:     while True:
+        ....:         clock_gettime(CLOCK_REALTIME, &start_time)
+        ....:         if start_time.tv_sec > target_time.tv_sec or (start_time.tv_sec == target_time.tv_sec and start_time.tv_nsec >= target_time.tv_nsec):
+        ....:             break
+        ....:
+        ....: cpdef void check_interrupt_only_occasionally():
+        ....:     for i in range(10):
+        ....:         uninterruptible_sleep(0.8)
+        ....:         sig_check()
+        ....: ''')
+        sage: with ensure_interruptible_after(1):  # not passing max_wait_after_interrupt will raise an error
+        ....:     check_interrupt_only_occasionally()
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 1.60... seconds
+        sage: with ensure_interruptible_after(1, max_wait_after_interrupt=0.9):
+        ....:     check_interrupt_only_occasionally()
+
+    TESTS::
+
+        sage: with ensure_interruptible_after(2) as data: sleep(1)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Function terminates early after 1... < 2.0000 seconds
+        sage: data  # abs tol 1
+        {'alarm_raised': False, 'elapsed': 1.0}
+
+    The test above requires a large tolerance, because both ``time.sleep`` and
+    ``from posix.unistd cimport usleep`` may have slowdown on the order of 0.1s on Mac,
+    likely because the system is idle and GitHub CI switches the program out,
+    and context switch back takes time. Besides, there is an issue with ``Integer``
+    destructor, see `<https://github.com/sagemath/cysignals/issues/215>`_
+    So we use busy wait and Python integers::
+
+        sage: # needs sage.misc.cython
+        sage: cython(r'''
+        ....: from posix.time cimport clock_gettime, CLOCK_REALTIME, timespec, time_t
+        ....: from cysignals.signals cimport sig_check
+        ....:
+        ....: cpdef void interruptible_sleep(double seconds):
+        ....:     cdef timespec start_time, target_time
+        ....:     clock_gettime(CLOCK_REALTIME, &start_time)
+        ....:
+        ....:     cdef time_t floor_seconds = <time_t>seconds
+        ....:     target_time.tv_sec = start_time.tv_sec + floor_seconds
+        ....:     target_time.tv_nsec = start_time.tv_nsec + <long>((seconds - floor_seconds) * 1e9)
+        ....:     if target_time.tv_nsec >= 1000000000:
+        ....:         target_time.tv_nsec -= 1000000000
+        ....:         target_time.tv_sec += 1
+        ....:
+        ....:     while True:
+        ....:         sig_check()
+        ....:         clock_gettime(CLOCK_REALTIME, &start_time)
+        ....:         if start_time.tv_sec > target_time.tv_sec or (start_time.tv_sec == target_time.tv_sec and start_time.tv_nsec >= target_time.tv_nsec):
+        ....:             break
+        ....: ''')
+        sage: with ensure_interruptible_after(2) as data: interruptible_sleep(1r)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Function terminates early after 1.00... < 2.0000 seconds
+        sage: with ensure_interruptible_after(1) as data: uninterruptible_sleep(2r)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2.00... seconds
+        sage: data  # abs tol 0.01
+        {'alarm_raised': True, 'elapsed': 2.0}
+        sage: with ensure_interruptible_after(1): uninterruptible_sleep(2r); raise RuntimeError
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2.00... seconds
+        sage: data  # abs tol 0.01
+        {'alarm_raised': True, 'elapsed': 2.0}
+
+    ::
+
+        sage: with ensure_interruptible_after(1) as data: raise ValueError
+        Traceback (most recent call last):
+        ...
+        ValueError
+        sage: data  # abs tol 0.01
+        {'alarm_raised': False, 'elapsed': 0.0}
+    """
+    seconds = float(seconds)
+    max_wait_after_interrupt = float(max_wait_after_interrupt)
+    inaccuracy_tolerance = float(inaccuracy_tolerance)
+    # use Python float to avoid slowdown with Sage Integer (see https://github.com/sagemath/cysignals/issues/215)
+    data = {}
+    start_time = walltime()
+    alarm(seconds)
+    alarm_raised = False
+
+    try:
+        yield data
+    except AlarmInterrupt as e:
+        e.__traceback__ = None  # workaround for https://github.com/python/cpython/pull/129276
+        alarm_raised = True
+    finally:
+        before_cancel_alarm_elapsed = walltime() - start_time
+        cancel_alarm()
+        elapsed = walltime() - start_time
+        data["elapsed"] = elapsed
+        data["alarm_raised"] = alarm_raised
+
+    if elapsed > seconds + max_wait_after_interrupt:
+        raise RuntimeError(
+                f"Function is not interruptible within {seconds:.4f} seconds, only after {elapsed:.4f} seconds"
+                + ("" if alarm_raised else " (__exit__ called before interrupt check)"))
+
+    if alarm_raised:
+        if elapsed < seconds - inaccuracy_tolerance:
+            raise RuntimeError(f"Interrupted too early: {elapsed:.4f} < {seconds:.4f}, this should not happen")
+    else:
+        raise RuntimeError(f"Function terminates early after {elapsed:.4f} < {seconds:.4f} seconds")
