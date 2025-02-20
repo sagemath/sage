@@ -505,7 +505,7 @@ class Posets(metaclass=ClasscallMetaclass):
         Div_n = divisors(n)
         hasse = DiGraph([Div_n, lambda a, b: b % a == 0 and is_prime(b // a)])
         return FiniteLatticePoset(hasse, elements=Div_n, facade=facade,
-                                  category=FiniteLatticePosets())
+                                  category=FiniteLatticePosets().Stone())
 
     @staticmethod
     def HessenbergPoset(H):

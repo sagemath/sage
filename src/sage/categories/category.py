@@ -120,7 +120,8 @@ from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _f
 _join_cache = WeakValueDictionary()
 
 
-HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie', 'Hecke', 'Dedekind']
+HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie',
+                'Hecke', 'Dedekind', 'Stone']
 
 
 class Category(UniqueRepresentation, SageObject):

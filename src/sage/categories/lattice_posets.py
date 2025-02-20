@@ -2,18 +2,18 @@
 r"""
 Lattice posets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.abstract_method import abstract_method
-from sage.misc.lazy_import import LazyImport
 from sage.categories.category import Category
 from sage.categories.posets import Posets
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
 
 
 class LatticePosets(Category):
@@ -52,7 +52,8 @@ class LatticePosets(Category):
         """
         return [Posets()]
 
-    Finite = LazyImport('sage.categories.finite_lattice_posets', 'FiniteLatticePosets')
+    Finite = LazyImport('sage.categories.finite_lattice_posets',
+                        'FiniteLatticePosets')
 
     class ParentMethods:
 

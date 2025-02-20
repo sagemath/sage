@@ -2,14 +2,15 @@
 r"""
 Finite lattice posets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.misc.cachefunc import cached_method
 
 
 class FiniteLatticePosets(CategoryWithAxiom):
@@ -28,7 +29,8 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
     .. SEEALSO::
 
-        :class:`FinitePosets`, :class:`LatticePosets`, :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
+        :class:`FinitePosets`, :class:`LatticePosets`,
+        :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
 
     TESTS::
 
@@ -107,7 +109,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
         def meet_irreducibles_poset(self):
             r"""
-            Return the poset of join-irreducible elements of this finite lattice.
+            Return the poset of join-irreducible elements of the lattice.
 
             A *meet-irreducible element* of ``self`` is an element `x`
             that is not maximal and can not be written as the meet of two
@@ -166,10 +168,10 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 return Poset({self[0]: []})
             return self.subposet(self.join_irreducibles()+self.meet_irreducibles())
 
-        ##########################################################################
+        ######################################################################
         # Lattice morphisms
 
-        def is_lattice_morphism(self, f, codomain):
+        def is_lattice_morphism(self, f, codomain) -> bool:
             r"""
             Return whether ``f`` is a morphism of posets from ``self``
             to ``codomain``.
@@ -234,9 +236,272 @@ class FiniteLatticePosets(CategoryWithAxiom):
             # ensure that this is a poset morphism. It actually may
             # be sufficient to check just joins (or just meets).
             from sage.combinat.subset import Subsets
-            for x,y in Subsets(self,2):
-                if f(self.join(x,y)) != codomain.join(f(x), f(y)):
+            for x, y in Subsets(self, 2):
+                if f(self.join(x, y)) != codomain.join(f(x), f(y)):
                     return False
-                if f(self.meet(x,y)) != codomain.meet(f(x), f(y)):
+                if f(self.meet(x, y)) != codomain.meet(f(x), f(y)):
                     return False
             return True
+
+    class SubcategoryMethods:
+        def Stone(self):
+            r"""
+            A Stone lattice `(L, \vee, \wedge)` is a pseudo-complemented
+            distributive lattice such that `a^* \vee a^{**} = 1`.
+
+            See :wikipedia:`Stone algebra`.
+
+            EXAMPLES::
+
+                sage: P = posets.DivisorLattice(24)
+                sage: P in FiniteLatticePosets().Stone()
+                True
+            """
+            return self._with_axiom("Stone")
+
+        def Distributive(self):
+            r"""
+            A lattice `(L, \vee, \wedge)` is distributive if meet
+            distributes over join: `x \wedge (y \vee z) = (x \wedge y)
+            \vee (x \wedge z)` for every `x,y,z \in L`.
+
+            From duality in lattices, it follows that then also join
+            distributes over meet.
+
+            See :wikipedia:`Distributive lattice`.
+
+            EXAMPLES::
+
+                sage: P = posets.ChainPoset(2).order_ideals_lattice()
+                sage: P in FiniteLatticePosets().Distributive()
+                True
+            """
+            return self._with_axiom("Distributive")
+
+        def CongruenceUniform(self):
+            r"""
+            A lattice `(L, \vee, \wedge)` is congruence uniform if it
+            can be constructed by a sequence of interval doublings
+            starting with the lattice with one element.
+
+            EXAMPLES::
+
+                sage: P = posets.TamariLattice(2)
+                sage: P in FiniteLatticePosets().CongruenceUniform()
+                True
+            """
+            return self._with_axiom("CongruenceUniform")
+
+        def Semidistributive(self):
+            r"""
+            A lattice `(L, \vee, \wedge)` is semidistributive if
+            it is both join-semidistributive and meet-semidistributive.
+
+            A lattice is join-semidistributive if
+            for all elements `e, x, y` in the lattice we have
+
+            .. MATH::
+
+                e \vee x = e \vee y \implies e \vee x = e \vee (x \wedge y)
+
+            Meet-semidistributivity is the dual property.
+
+            EXAMPLES::
+
+                sage: P = posets.TamariLattice(2)
+                sage: P in FiniteLatticePosets().Semidistributive()
+                True
+            """
+            return self._with_axiom("Semidistributive")
+
+        def Trim(self):
+            r"""
+            A lattice `(L, \vee, \wedge)` is trim if it is extremal
+            and left modular.
+
+            This notion is defined in [Thom2006]_.
+
+            EXAMPLES::
+
+                sage: P = posets.TamariLattice(2)
+                sage: P in FiniteLatticePosets().Trim()
+                True
+            """
+            return self._with_axiom("Trim")
+
+        def Extremal(self):
+            r"""
+            A lattice `(L, \vee, \wedge)` is extremal if
+            if it has a chain of length `n` (containing `n+1` elements)
+            and exactly `n` join-irreducibles and `n` meet-irreducibles.
+
+            EXAMPLES::
+
+                sage: P = posets.TamariLattice(2)
+                sage: P in FiniteLatticePosets().Extremal()
+                True
+            """
+            return self._with_axiom("Extremal")
+
+    class Stone(CategoryWithAxiom):
+        """
+        The category of Stone lattices.
+
+        EXAMPLES::
+
+            sage: FiniteLatticePosets().Stone()
+            Category of finite distributive stone congruence uniform
+            semidistributive trim extremal lattice posets
+        """
+        @cached_method
+        def super_categories(self):
+            r"""
+            Return a list of the super categories of ``self``.
+
+            This encode implications between properties.
+
+            EXAMPLES::
+
+                sage: FiniteLatticePosets().Stone().super_categories()
+                [Category of finite distributive congruence uniform
+                 semidistributive trim extremal lattice posets]
+            """
+            return [FiniteLatticePosets().Distributive()]
+
+        class ParentMethods:
+            def is_stone(self):
+                """
+                Return whether ``self`` is a Stone lattice.
+                """
+                return True
+
+    class Distributive(CategoryWithAxiom):
+        """
+        The category of distributive lattices.
+
+        EXAMPLES::
+
+            sage: FiniteLatticePosets().Distributive()
+            Category of finite distributive congruence uniform
+            semidistributive trim extremal lattice posets
+        """
+        @cached_method
+        def super_categories(self):
+            r"""
+            Return a list of the super categories of ``self``.
+
+            This encode implications between properties.
+
+            EXAMPLES::
+
+                sage: FiniteLatticePosets().Distributive().super_categories()
+                [Category of finite congruence uniform
+                 semidistributive lattice posets,
+                 Category of finite trim extremal lattice posets]
+            """
+            return [FiniteLatticePosets().CongruenceUniform(),
+                    FiniteLatticePosets().Trim()]
+
+        class ParentMethods:
+            def is_distributive(self):
+                """
+                Return whether ``self`` is a distributive lattice.
+                """
+                return True
+
+    class CongruenceUniform(CategoryWithAxiom):
+        """
+        The category of congruence uniform lattices.
+
+        EXAMPLES::
+
+            sage: FiniteLatticePosets().CongruenceUniform()
+            Category of finite congruence uniform semidistributive lattice posets
+        """
+        @cached_method
+        def super_categories(self):
+            r"""
+            Return a list of the super categories of ``self``.
+
+            This encode implications between properties.
+
+            EXAMPLES::
+
+                sage: cat = FiniteLatticePosets().CongruenceUniform()
+                sage: cat.super_categories()
+                [Category of finite semidistributive lattice posets]
+            """
+            return [FiniteLatticePosets().Semidistributive()]
+
+        class ParentMethods:
+            def is_congruence_uniform(self):
+                """
+                Return whether ``self`` is a congruence uniform lattice.
+                """
+                return True
+
+    class Semidistributive(CategoryWithAxiom):
+        """
+        The category of semidistributive lattices.
+
+        EXAMPLES::
+
+            sage: FiniteLatticePosets().Semidistributive()
+            Category of finite semidistributive lattice posets
+
+
+            sage: FiniteLatticePosets().Semidistributive().super_categories()
+            [Category of finite lattice posets]
+        """
+        class ParentMethods:
+            def is_semidistributive(self):
+                """
+                Return whether ``self`` is a semidistributive lattice.
+                """
+                return True
+
+    class Trim(CategoryWithAxiom):
+        """
+        The category of trim uniform lattices.
+
+        EXAMPLES::
+
+            sage: FiniteLatticePosets().Trim()
+            Category of finite trim extremal lattice posets
+        """
+        @cached_method
+        def super_categories(self):
+            r"""
+            Return a list of the super categories of ``self``.
+
+            This encode implications between properties.
+
+            EXAMPLES::
+
+                sage: FiniteLatticePosets().Trim().super_categories()
+                [Category of finite extremal lattice posets]
+            """
+            return [FiniteLatticePosets().Extremal()]
+
+        class ParentMethods:
+            def is_trim(self):
+                """
+                Return whether ``self`` is a trim lattice.
+                """
+                return True
+
+    class Extremal(CategoryWithAxiom):
+        """
+        The category of extremal uniform lattices.
+
+        EXAMPLES::
+
+            sage: FiniteLatticePosets().Extremal()
+            Category of finite extremal lattice posets
+        """
+        class ParentMethods:
+            def is_extremal(self):
+                """
+                Return whether ``self`` is an extremal lattice.
+                """
+                return True
