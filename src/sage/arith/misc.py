@@ -40,8 +40,9 @@ from sage.arith.functions import LCM_list
 ##################################################################
 
 
-def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
-           use_digits=None, height_bound=None, proof=False):
+def algebraic_dependency(z, degree, known_bits=None,
+                         use_bits=None, known_digits=None,
+                         use_digits=None, height_bound=None, proof=False):
     """
     Return an irreducible polynomial of degree at most `degree` which
     is approximately satisfied by the number `z`.
@@ -62,9 +63,9 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     indicating that higher precision is required.
 
     ALGORITHM: Uses LLL for real/complex inputs, PARI C-library
-    ``algdep`` command otherwise.
+    :pari:`algdep` command otherwise.
 
-    Note that ``algebraic_dependency`` is a synonym for ``algdep``.
+    Note that ``algdep`` is a synonym for ``algebraic_dependency``.
 
     INPUT:
 
@@ -79,7 +80,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
 
     EXAMPLES::
 
-        sage: algdep(1.888888888888888, 1)                                              # needs sage.libs.pari
+        sage: algebraic_dependency(1.888888888888888, 1)                                # needs sage.libs.pari
         9*x - 17
         sage: algdep(0.12121212121212, 1)                                               # needs sage.libs.pari
         33*x - 4
@@ -266,15 +267,14 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
 
     else:
         from sage.libs.pari import pari
-        y = pari(z)
-        f = y.algdep(degree)
+        f = pari(z).algdep(degree)
 
     # f might be reducible. Find the best fitting irreducible factor
-    factors = [p for p, e in R(f).factor()]
+    factors = (p for p, _ in R(f).factor())
     return min(factors, key=lambda f: abs(f(z)))
 
 
-algebraic_dependency = algdep
+alg_dep = algebraic_dependency
 
 
 def bernoulli(n, algorithm='default', num_threads=1):
