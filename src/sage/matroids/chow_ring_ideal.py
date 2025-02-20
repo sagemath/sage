@@ -98,9 +98,11 @@ class ChowRingIdeal(MPolynomialIdeal):
         """
         return dict(self._flats_generator)
 
-    def _poly_define(self, R, names, flats_groundset_el):
+    @staticmethod
+    def _construct_ambient_poly_ring(R, names, flats_groundset_el):
         r"""
-        Return the polynomial ring corresponding to the given Chow ring ideal.
+        Return the ambient polynomial ring that will be used to
+        construct a Chow ring ideal.
 
         EXAMPLES::
 
@@ -109,7 +111,7 @@ class ChowRingIdeal(MPolynomialIdeal):
             ....:                  for X in ch.matroid().flats(i)]
             sage: from sage.matroids.utilities import cmp_elements_key
             sage: names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
-            sage: ch.defining_ideal()._poly_define(ch.defining_ideal().ring(), names, flats)
+            sage: ch.defining_ideal()._construct_ambient_poly_ring(ch.defining_ideal().ring(), names, flats)
             Multivariate Polynomial Ring in Aa, Ab, Ac, Ad, Ae, Af, Ag, Aabf,
             Aace, Aadg, Abcd, Abeg, Acfg, Ade, Adf, Aef, Aabcdefg over
             Multivariate Polynomial Ring in Aabf, Aace, Aadg, Abcd, Abeg,
@@ -183,7 +185,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
         flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
-        poly_ring = self._poly_define(R, names, flats)
+        poly_ring = ChowRingIdeal._construct_ambient_poly_ring(R, names, flats)
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
@@ -432,7 +434,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
         flats = [X for i in range(2, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
-        poly_ring = self._poly_define(R, names, flats)
+        poly_ring = ChowRingIdeal._construct_ambient_poly_ring(R, names, flats)
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
@@ -670,7 +672,7 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
         flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
-        poly_ring = self._poly_define(R, names, flats)
+        poly_ring = ChowRingIdeal._construct_ambient_poly_ring(R, names, flats)
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
@@ -932,7 +934,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         self._flats_generator = dict()
         names_groundset = ['A{}'.format(''.join(str(x))) for x in E]
         names_flats = ['B{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
-        poly_ring = self._poly_define(R, names_flats + names_groundset, E + self._flats)
+        poly_ring = ChowRingIdeal._construct_ambient_poly_ring(R, names_flats + names_groundset, E + self._flats)
         for i, x in enumerate(E):
             self._flats_generator[x] = poly_ring.gens()[i]
         for i, F in enumerate(self._flats):
@@ -1179,7 +1181,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         self._flats = [X for i in range(1, self._matroid.rank() + 1)
                        for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
-        poly_ring = self._poly_define(R, names, self._flats)
+        poly_ring = ChowRingIdeal._construct_ambient_poly_ring(R, names, self._flats)
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(self._flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))

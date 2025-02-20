@@ -356,7 +356,8 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
 
     def graded_character(self, G=None):
         r"""
-        Return the graded character of ``self``.
+        Return the graded character of ``self`` as a representation of the
+        automorphism group of the defining matroid.
 
         EXAMPLES::
 
