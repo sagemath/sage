@@ -211,7 +211,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         return self._morphism_element(self, u, v, n=n, check=check)
 
     def cantor_composition(self, u1, v1, n1, u2, v2, n2):
-        """
+        r"""
         Return the Cantor composition of the divisors represented by
         ``(u1, v1, n1)`` and ``(u2, v2, n2)``. 
         Here ``n1`` and ``n2`` denote the multiplicity of the point 
