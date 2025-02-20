@@ -384,6 +384,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         matrices = construction()[:k]
 
     # Implements the construction from Theorem 5.2.4 of [KD2015]_.
+    # This was implemented to fix :issue:`26107`
     elif is_prime_power(n):
         F = list(GF(n))
 
@@ -392,7 +393,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
 
         # This dictionary is used to convert from field elements to integers
         conv = {F[i] : i for i in range(n)}
-        
+
         # Make the matrices
         matrices = [Matrix([[conv[F[i] + F[r]*F[j]] for i in range(n)]
                  for j in range(n)]) for r in range(1, k+1)]
