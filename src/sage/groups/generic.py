@@ -786,7 +786,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(eta,eps,bounds=(0,100))                                      # needs sage.rings.number_field
         Traceback (most recent call last):
         ...
-        ValueError: no discrete log of -11515*a - 55224 found to base 5*a - 24
+        ValueError: no discrete log of -11515*a - 55224 found to base 5*a - 24 with bounds (0, 100)
 
     But we can invert the base (and negate the result) instead::
 
@@ -897,7 +897,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(a, base, bounds=(1,2), operation="*")
         Traceback (most recent call last):
         ...
-        ValueError: no discrete log of 2 found to base 3
+        ValueError: no discrete log of 1 found to base 3 with bounds (1, 2)
 
     AUTHORS:
 
@@ -980,7 +980,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
             raise ValueError
         return result
     except ValueError:
-        raise ValueError("no discrete log of %s found to base %s" % (a, base))
+        with_bounds = f" with bounds {bounds}" if bounds else ""
+        raise ValueError(f"no discrete log of {original_a} found to base {base}{with_bounds}")
 
 
 def discrete_log_generic(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs'):
