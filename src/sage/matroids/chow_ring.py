@@ -462,41 +462,41 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
                 ....:     print(b, b.homogeneous_degree())
                 1 0
                 Babf 1
-                Babf*Ac 2
+                Babf*Ae 2
                 Bace 1
-                Bace*Ac 2
+                Bace*Ae 2
                 Badg 1
-                Badg*Ac 2
+                Badg*Ae 2
                 Bbcd 1
-                Bbcd*Ac 2
-                Ag 1
-                Ag^2 2
-                Bbeg 1
-                Bbeg*Ac 2
-                Af 1
-                Af^2 2
-                Bcfg 1
-                Bcfg*Ac 2
-                Babcdefg 1
-                Babcdefg^2 2
-                Ab 1
-                Ab^2 2
-                Bdef 1
-                Bdef*Ac 2
-                Ad 1
-                Ad^2 2
+                Bbcd*Ae 2
                 Aa 1
                 Aa^2 2
-                Ae 1
-                Ae^2 2
+                Bbeg 1
+                Bbeg*Ae 2
                 Ac 1
                 Ac^2 2
-                Ac^3 3
+                Bcfg 1
+                Bcfg*Ae 2
+                Babcdefg 1
+                Babcdefg^2 2
+                Af 1
+                Af^2 2
+                Bdef 1
+                Bdef*Ae 2
+                Ad 1
+                Ad^2 2
+                Ag 1
+                Ag^2 2
+                Ab 1
+                Ab^2 2
+                Ae 1
+                Ae^2 2
+                Ae^3 3
                 sage: v = sum(ch.basis()); v
-                Ac^3 + Babcdefg^2 + Af^2 + Ad^2 + Ag^2 + Aa^2 + Ae^2 + Ab^2 +
-                Babf*Ac + Bace*Ac + Badg*Ac + Bbcd*Ac + Bbeg*Ac + Bcfg*Ac +
-                Bdef*Ac + Ac^2 + Babf + Bace + Badg + Bbcd + Bbeg + Bcfg +
-                Bdef + Babcdefg + Af + Ad + Ag + Aa + Ae + Ab + Ac + 1
+                Ae^3 + Babcdefg^2 + Ac^2 + Ad^2 + Aa^2 + Ag^2 + Ab^2 + Af^2 +
+                Babf*Ae + Bace*Ae + Badg*Ae + Bbcd*Ae + Bbeg*Ae + Bcfg*Ae +
+                Bdef*Ae + Ae^2 + Babf + Bace + Badg + Bbcd + Bbeg + Bcfg +
+                Bdef + Babcdefg + Ac + Ad + Aa + Ag + Ab + Af + Ae + 1
                 sage: v.homogeneous_degree()
                 Traceback (most recent call last):
                 ...
@@ -528,7 +528,7 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
                 Aab
                 sage: semigroup = ch.semigroup()
                 sage: x = semigroup.an_element(); x
-                ('e','b','f','c','g','d','h','a')
+                ('c','h','d','e','a','f','b','g')
                 sage: x * y  # indirect doctest
                 Aab
             """
