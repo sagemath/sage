@@ -575,8 +575,18 @@ class FractionField_generic(ring.Field):
             Uses the algorithm described in `<https://mathoverflow.net/a/14874>`_.
             This may be changed to use Berlekamp--Massey algorithm or something else
             to compute Padé approximant in the future.
+
+        TESTS::
+
+            sage: F = QQ['x'].fraction_field()
+            sage: R = LaurentSeriesRing(QQ, 'x')
+            sage: f = ~R(x^2 + x + 3); f
+            1/3 - 1/9*x - 2/27*x^2 + 5/81*x^3 + ... + O(x^20)
+            sage: F._convert_from_finite_precision_laurent_series(f)
+            1/(x^2 + x + 3)
         """
-        integral_part, fractional_part = self(x.truncate(1)), x.truncate_neg(1)
+        integral_part = self(x.truncate(1))
+        fractional_part = x.truncate_neg(1)
         if fractional_part.is_zero():
             return integral_part
         return integral_part + ~self._convert_from_finite_precision_laurent_series(~fractional_part)
@@ -678,7 +688,7 @@ class FractionField_generic(ring.Field):
             sage: F(x)
             -1/2/(a^2 + a)
 
-        Conversion from power series to rational function field truncates, but is deprecated::
+        Conversion from power series to rational function field gives an approximation::
 
             sage: F.<x> = Frac(QQ['x'])
             sage: R.<x> = QQ[[]]
@@ -687,8 +697,15 @@ class FractionField_generic(ring.Field):
             Power Series Ring in x over Rational Field
             sage: F(f)
             doctest:warning...
-            DeprecationWarning: Conversion from power series to rational function field is deprecated, use .truncate() instead
+            DeprecationWarning: Previously conversion from power series to rational function field truncates
+             instead of gives an approximation. Use .truncate() to recover the old behavior
             See https://github.com/sagemath/sage/issues/39485 for details.
+            1/(x + 1)
+
+        Previously, the power series was truncated. To recover the old behavior, use
+        :meth:`~sage.rings.power_series_ring_element.PowerSeries.truncate`::
+
+            sage: F(f.truncate())
             -x^19 + x^18 - x^17 + x^16 - x^15 + x^14 - x^13 + x^12 - x^11 + x^10 - x^9 + x^8 - x^7 + x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
 
         Conversion from Laurent series to rational function field gives an approximation::
@@ -716,12 +733,14 @@ class FractionField_generic(ring.Field):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<x> = QQ[[]]
-            sage: f = 1/(x+1)
+            sage: f = 1/(x+1); f.parent()
+            Power Series Ring in x over Rational Field
             sage: K(f)
             doctest:warning...
-            DeprecationWarning: Conversion from power series to rational function field is deprecated, use .truncate() instead
+            DeprecationWarning: Previously conversion from power series to rational function field truncates
+             instead of gives an approximation. Use .truncate() to recover the old behavior
             See https://github.com/sagemath/sage/issues/39485 for details.
-            -x^19 + x^18 - x^17 + x^16 - x^15 + x^14 - x^13 + x^12 - x^11 + x^10 - x^9 + x^8 - x^7 + x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
+            1/(x + 1)
             sage: f = Frac(R)(1/(x+1))
             sage: K(f)
             1/(x + 1)
@@ -742,8 +761,9 @@ class FractionField_generic(ring.Field):
                     from sage.misc.superseded import deprecation
                     deprecation(
                         39485,
-                        "Conversion from power series to rational function field is deprecated, use .truncate() instead",
-                    )
+                        "Previously conversion from power series to rational function field truncates "
+                        "instead of gives an approximation. Use .truncate() to recover the old behavior")
+                    x = x.laurent_series()
                 if isinstance(x, LaurentSeries):
                     from sage.rings.infinity import infinity
                     if x.prec() == infinity:
