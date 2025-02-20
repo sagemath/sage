@@ -7,7 +7,6 @@ AUTHORS:
 
 - Jacob Dennerlein (2022-11-28): initial version
 - Rubén Muñoz-\-Bertrand (2025-02-13): major refactoring and clean-up
-
 """
 
 # ****************************************************************************
@@ -164,7 +163,7 @@ class WittVector(CommutativeRingElement):
             (2, 1, 1, 1)
         """
         P = self.parent()
-        C = self.__class__
+        prec = self._prec
 
         # As a slight optimization, we'll check for zero ahead of time.
         if other == P.zero():
@@ -177,13 +176,11 @@ class WittVector(CommutativeRingElement):
             s = P._sum_polynomials
             # note here this is tuple addition, i.e. concatenation
             sum_vec = tuple(s[i](*(self._vec + other._vec))
-                            for i in range(self._prec))
-            return C(P, vec=sum_vec)
+                            for i in range(prec))
+
         elif alg == 'finotti':
             x = self._vec
             y = other._vec
-            prec = P.precision()
-
             G = []
             for n in range(prec):
                 G_n = [x[n], y[n]]
@@ -191,19 +188,18 @@ class WittVector(CommutativeRingElement):
                     G_n.append(P._eta_bar(G[i], n - i))
                 G.append(G_n)
             sum_vec = tuple(sum(G[i]) for i in range(prec))
-            return C(P, vec=sum_vec)
+
         elif alg == 'Zq_isomorphism':
             x = P._vector_to_series(self._vec)
             y = P._vector_to_series(other._vec)
             sum_vec = P._series_to_vector(x + y)
-            return C(P, vec=sum_vec)
+
         elif alg == 'p_invertible':
             p = P._prime  # we know p is a unit in this case!
             x = self._vec
             y = other._vec
-
             sum_vec = [x[0] + y[0]]
-            for n in range(1, self._prec):
+            for n in range(1, prec):
                 next_sum = x[n] + y[n] + \
                     sum((x[i]**(p**(n - i)) + y[i]**(p**(n - i))
                          - sum_vec[i]**(p**(n - i)))
@@ -211,7 +207,7 @@ class WittVector(CommutativeRingElement):
                         for i in range(n))
                 sum_vec.append(next_sum)
 
-            return C(P, vec=sum_vec)
+        return P(sum_vec)
 
     def _mul_(self, other):
         """
@@ -226,6 +222,7 @@ class WittVector(CommutativeRingElement):
             (2, 0, 0, 1)
         """
         P = self.parent()
+        prec = self._prec
 
         # As a slight optimization, we'll check for zero or one ahead of time.
         if self == P.zero() or other == P.zero():
@@ -240,7 +237,7 @@ class WittVector(CommutativeRingElement):
             p = P._prod_polynomials
             # note here this is tuple addition, i.e. concatenation
             prod_vec = tuple(p[i](*(self._vec + other._vec))
-                             for i in range(self._prec))
+                             for i in range(prec))
 
         elif alg == 'finotti':
             from sage.rings.padics.witt_vector_ring import fast_char_p_power
@@ -269,7 +266,7 @@ class WittVector(CommutativeRingElement):
             x = self._vec
             y = other._vec
             prod_vec = [x[0] * y[0]]
-            for n in range(1, self._prec):
+            for n in range(1, prec):
                 next_prod = (
                     sum(p**i * x[i]**(p**(n - i)) for i in range(n + 1)) *
                     sum(p**i * y[i]**(p**(n - i)) for i in range(n + 1)) -
@@ -296,8 +293,9 @@ class WittVector(CommutativeRingElement):
         if P._prime == 2:
             all_ones = P(tuple(-1 for _ in range(self._prec)))
             return all_ones * self
-        neg_vec = tuple(-self._vec[i] for i in range(self._prec))
-        return P(neg_vec)
+        else:
+            neg_vec = tuple(-self._vec[i] for i in range(self._prec))
+            return P(neg_vec)
 
     def _div_(self, other):
         """
