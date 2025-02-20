@@ -383,8 +383,9 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
 
         matrices = construction()[:k]
 
-    # Implements the construction from Theorem 5.2.4 of [KD2015]_.
-    # This was implemented to fix :issue:`26107`
+    # Implements the construction from Theorem 5.2.4 of [KD2015]_ for primw powers.
+    # This was implemented to fix :issue:`26107`, which pointed out that this
+    # function was unacceptably slow when n was a large prime power
     elif is_prime_power(n):
         F = list(GF(n))
 
