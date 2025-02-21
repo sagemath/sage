@@ -51,7 +51,7 @@ def integral_matrix_and_denom_from_rational_quaternions(v, reverse=False):
 
     INPUT:
 
-    - ``v`` -- a list of quaternions in a rational quaternion algebra
+    - ``v`` -- list of quaternions in a rational quaternion algebra
     - ``reverse`` -- whether order of the coordinates as well as the
       order of the list ``v`` should be reversed
 
@@ -131,13 +131,11 @@ def rational_matrix_from_rational_quaternions(v, reverse=False):
 
     INPUT:
 
-    - ``v`` -- a list of quaternions in a rational quaternion algebra
+    - ``v`` -- list of quaternions in a rational quaternion algebra
     - ``reverse`` -- whether order of the coordinates as well as the
       order of the list ``v`` should be reversed
 
-    OUTPUT:
-
-    - a matrix over `\QQ`
+    OUTPUT: a matrix over `\QQ`
 
     EXAMPLES::
 

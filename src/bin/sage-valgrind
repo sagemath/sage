@@ -20,6 +20,7 @@ fi
 SUPP+=" --suppressions=$SAGE_EXTCODE/valgrind/pyalloc.supp"
 SUPP+=" --suppressions=$SAGE_EXTCODE/valgrind/sage.supp"
 SUPP+=" --suppressions=$SAGE_EXTCODE/valgrind/sage-additional.supp"
+SUPP+=" --suppressions=$SAGE_EXTCODE/valgrind/valgrind-python.supp"
 
 MEMCHECK_FLAGS="--leak-resolution=high --leak-check=full --num-callers=25 $SUPP"
 

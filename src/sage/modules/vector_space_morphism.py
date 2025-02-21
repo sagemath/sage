@@ -345,7 +345,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     the same field that are the domain and codomain
     (respectively) of the linear transformation.
 
-    ``side`` is a keyword that is either 'left' or 'right'.
+    ``side`` is a keyword that is either ``'left'`` or ``'right'``.
     When a matrix is used to specify a linear transformation,
     as in the first two call formats below, you may specify
     if the function is given by matrix multiplication with
@@ -781,7 +781,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
 
 def is_VectorSpaceMorphism(x) -> bool:
     r"""
-    Returns ``True`` if ``x`` is a vector space morphism (a linear transformation).
+    Return ``True`` if ``x`` is a vector space morphism (a linear transformation).
 
     This function is deprecated.
 
@@ -815,17 +815,17 @@ def is_VectorSpaceMorphism(x) -> bool:
 
 class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
 
-    def __init__(self, homspace, A, side="left"):
+    def __init__(self, homspace, A, side='left'):
         r"""
         Create a linear transformation, a morphism between vector spaces.
 
         INPUT:
 
-        -  ``homspace`` -- a homspace (of vector spaces) to serve
-           as a parent for the linear transformation and a home for
-           the domain and codomain of the morphism
-        -  ``A`` -- a matrix representing the linear transformation,
-           which will act on vectors placed to the left of the matrix
+        - ``homspace`` -- a homspace (of vector spaces) to serve
+          as a parent for the linear transformation and a home for
+          the domain and codomain of the morphism
+        - ``A`` -- a matrix representing the linear transformation,
+          which will act on vectors placed to the left of the matrix
 
         EXAMPLES:
 

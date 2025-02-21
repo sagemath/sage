@@ -19,20 +19,19 @@ from sage.modular.arithgroup.all import CongruenceSubgroupBase, Gamma0
 from sage.modular.modsym.space import ModularSymbolsSpace
 from .abvar_newform import ModularAbelianVariety_newform
 import sage.modular.modform.element
-from . import abvar
+from sage.modular.abvar import abvar
 
 _cache = {}
 
+
 def _get(key):
     """
-    Returns the cached abelian variety with given key. This is used
+    Return the cached abelian variety with given key. This is used
     internally by the abelian varieties constructor.
 
     INPUT:
 
-
-    -  ``key`` -- hashable
-
+    - ``key`` -- hashable
 
     EXAMPLES::
 
@@ -51,25 +50,20 @@ def _get(key):
             return z
     raise ValueError("element not in cache")
 
+
 def _saved(key, J):
     """
-    Returns the cached abelian variety with given key. This is used
+    Return the cached abelian variety with given key. This is used
     internally by the abelian varieties constructor.
 
     INPUT:
 
+    - ``key`` -- hashable
 
-    -  ``key`` -- hashable
+    - ``J`` -- modular abelian variety
 
-    -  ``J`` -- modular abelian variety
-
-
-    OUTPUT:
-
-
-    -  ``J`` -- returns the modabvar, to make code that uses
-       this simpler
-
+    OUTPUT: ``J`` -- returns the modabvar, to make code that uses
+    this simpler
 
     EXAMPLES::
 
@@ -103,6 +97,7 @@ def J0(N):
         J = Gamma0(N).modular_abelian_variety()
         return _saved(key, J)
 
+
 def J1(N):
     """
     Return the Jacobian `J_1(N)` of the modular curve
@@ -119,6 +114,7 @@ def J1(N):
     except ValueError:
         from sage.modular.arithgroup.all import Gamma1
         return _saved(key, Gamma1(N).modular_abelian_variety())
+
 
 def JH(N, H):
     """
@@ -137,6 +133,7 @@ def JH(N, H):
         from sage.modular.arithgroup.all import GammaH
         return _saved(key, GammaH(N, H).modular_abelian_variety())
 
+
 def AbelianVariety(X):
     """
     Create the abelian variety corresponding to the given defining
@@ -144,10 +141,8 @@ def AbelianVariety(X):
 
     INPUT:
 
-
-    -  ``X`` -- an integer, string, newform, modsym space,
-       congruence subgroup or tuple of congruence subgroups
-
+    - ``X`` -- integer, string, newform, modsym space,
+      congruence subgroup or tuple of congruence subgroups
 
     OUTPUT: a modular abelian variety
 

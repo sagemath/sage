@@ -76,7 +76,7 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
     @staticmethod
     def __classcall_private__(self, t, max_value=None, parent=None):
         """
-        Assign the correct parent for ``t`` and call ``t`` as an element of that parent
+        Assign the correct parent for ``t`` and call ``t`` as an element of that parent.
 
         EXAMPLES::
 
@@ -209,7 +209,7 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
 
     def __eq__(self, other):
         """
-        Return True if ``self`` equals ``other`` and False otherwise.
+        Return ``True`` if ``self`` equals ``other`` and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -222,9 +222,10 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
         """
         return isinstance(self, type(other)) and self.value == other.value
 
-    def __lt__(self,other):
+    def __lt__(self, other):
         """
-        Return True if ``self`` comes before ``other`` and False otherwise.
+        Return ``True`` if ``self`` comes before ``other`` and ``False``
+        otherwise.
 
         We say that `h_1` comes before `h_2` if either weight of `h_1 <` weight of `h_2`
         lexicographically, or if both weights of `h_1` and `h_2` are equal,
@@ -446,9 +447,11 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
 
     - ``factors`` -- the number of factors in the factorization
 
-    - ``excess`` -- the total number of letters in the factorization minus the length of a reduced word for ``w``
+    - ``excess`` -- the total number of letters in the factorization minus the
+      length of a reduced word for ``w``
 
-    - ``shape`` -- (default: ``False``) indicator for input ``w``, True if ``w`` is entered as a (skew) shape and False otherwise.
+    - ``shape`` -- boolean (default: ``False``); indicator for input ``w``,
+      ``True`` if ``w`` is entered as a (skew) shape and ``False`` otherwise
 
     EXAMPLES::
 
@@ -847,9 +850,9 @@ def _generate_decreasing_hecke_factorizations(w, factors, ex, weight=None, paren
 
     - ``ex`` -- number of extra letters in each decreasing factorizations
 
-    - ``weight`` -- (default: None) if None, returns all possible decreasing
-                    factorizations, otherwise return all those with the
-                    specified weight
+    - ``weight`` -- (default: ``None``) if ``None``, returns all possible
+      decreasing factorizations, otherwise return all those with the specified
+      weight
 
     EXAMPLES::
 
@@ -962,7 +965,8 @@ def _lowest_weights(w, factors, ex, parent=None):
 
     - ``ex`` -- number of extra letters in each decreasing factorizations
 
-    - ``parent`` -- (default: None) parent of the decreasing factorizations, automatically assigned if it is None
+    - ``parent`` -- (default: ``None``) parent of the decreasing
+      factorizations, automatically assigned if it is None
 
     EXAMPLES::
 
@@ -1143,27 +1147,27 @@ def _apply_relations(word, position, move):
 
         sage: from sage.combinat.crystals.fully_commutative_stable_grothendieck import _apply_relations
         sage: w = [2, 1, 3, 4]
-        sage: _apply_relations(w, position=1, move="pq=qp")
+        sage: _apply_relations(w, position=1, move='pq=qp')
         [2, 3, 1, 4]
 
         sage: w = [1, 3, 2, 1, 2, 4]
-        sage: _apply_relations(w, position=2, move="pqp=qpq")
+        sage: _apply_relations(w, position=2, move='pqp=qpq')
         [1, 3, 1, 2, 1, 4]
 
         sage: w = [2, 3, 1, 2, 2, 3]
-        sage: _apply_relations(w, position=3, move="pp=p")
+        sage: _apply_relations(w, position=3, move='pp=p')
         [2, 3, 1, 2, 3]
 
         sage: w = [2, 3, 1, 2, 3]
-        sage: _apply_relations(w, position=3, move="p=pp")
+        sage: _apply_relations(w, position=3, move='p=pp')
         [2, 3, 1, 2, 2, 3]
 
         sage: w = [2, 3, 1, 2, 2, 3]
-        sage: _apply_relations(w, position=2, move="pqq=ppq")
+        sage: _apply_relations(w, position=2, move='pqq=ppq')
         [2, 3, 1, 1, 2, 3]
 
         sage: w = [2, 3, 1, 1, 2, 3]
-        sage: _apply_relations(w, position=2, move="ppq=pqq")
+        sage: _apply_relations(w, position=2, move='ppq=pqq')
         [2, 3, 1, 2, 2, 3]
     """
     w = list(word)

@@ -6,7 +6,6 @@ functionality of abelian groups. One can create an ``AdditiveAbelianGroupWrapper
 object from any given set of elements in some given parent, as long as an
 ``_add_`` method has been defined.
 
-
 EXAMPLES:
 
 We create a toy example based on the Mordell-Weil group of an elliptic curve over `\QQ`::
@@ -709,8 +708,7 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
         q = rel[i].p_primary_part(p)
         alphas[i] *= rel[i] // q
         rel[i] = q
-        if q < min_r:
-            min_r = q
+        min_r = min(q, min_r)
     if min_r == float('inf'):
         raise ValueError('rel must have at least one nonzero entry')
     val_rlast = rel[-1].valuation(p)

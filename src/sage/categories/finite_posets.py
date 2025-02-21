@@ -44,7 +44,6 @@ class FinitePosets(CategoryWithAxiom):
         sage: C is Posets().Finite()
         True
         sage: TestSuite(C).run()
-
     """
 
     class ParentMethods:
@@ -181,7 +180,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: B.is_poset_isomorphism(f, D)
                 False
 
-            .. note:: since ``D`` and ``B`` are not facade posets, ``f`` is
+            .. NOTE:: since ``D`` and ``B`` are not facade posets, ``f`` is
                responsible for the conversions between integers and subsets to
                elements of ``D`` and ``B`` and back.
 
@@ -229,7 +228,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: B.is_poset_morphism(f, D)
                 True
 
-            .. note:: since ``D`` and ``B`` are not facade posets, ``f`` is responsible
+            .. NOTE:: since ``D`` and ``B`` are not facade posets, ``f`` is responsible
                for the conversions between integers and subsets to elements of
                ``D`` and ``B`` and back.
 
@@ -265,7 +264,6 @@ class FinitePosets(CategoryWithAxiom):
                 Finite poset containing 0 elements
                 sage: P.is_poset_morphism(f, P)
                 True
-
             """
             for x in self:
                 for y in self.upper_covers(x):
@@ -287,9 +285,9 @@ class FinitePosets(CategoryWithAxiom):
               of ``self``, as a list (or iterable); this should be
               an order ideal if ``direction`` is set to ``'down'``,
               and an order filter if ``direction`` is set to
-              ``'up'``.
+              ``'up'``
             - ``direction`` -- ``'up'`` or ``'down'`` (default:
-              ``'down'``).
+              ``'down'``)
 
             The antichain of (minimal) generators of an order ideal
             `I` in a poset `P` is the set of all minimal elements of
@@ -312,7 +310,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: sorted(sorted(p) for p in gen)
                 [[1, 2], [2, 3]]
 
-            If ``direction`` is 'up', then this instead computes
+            If ``direction`` is ``'up'``, then this instead computes
             the minimal generators for an order filter::
 
                 sage: I = P.order_filter([Set([1,2]), Set([2,3]), Set([1])])
@@ -336,7 +334,7 @@ class FinitePosets(CategoryWithAxiom):
 
         def order_filter_generators(self, filter):
             r"""
-            Generators for an order filter
+            Generators for an order filter.
 
             INPUT:
 
@@ -386,7 +384,7 @@ class FinitePosets(CategoryWithAxiom):
             - ``antichain`` -- an antichain of ``self``, as a list (or
               iterable), or, more generally, generators of an order ideal
               (resp. order filter)
-            - ``direction`` -- 'up' or 'down' (default: 'up')
+            - ``direction`` -- ``'up'`` or ``'down'`` (default: ``'up'``)
 
             OUTPUT:
 
@@ -406,13 +404,13 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P.order_ideal_complement_generators([1,2,3])
                 set()
 
-                sage: P.order_ideal_complement_generators([1], direction="down")
+                sage: P.order_ideal_complement_generators([1], direction='down')
                 {2}
-                sage: P.order_ideal_complement_generators([3], direction="down")
+                sage: P.order_ideal_complement_generators([3], direction='down')
                 {1, 2}
-                sage: P.order_ideal_complement_generators([1,2], direction="down")
+                sage: P.order_ideal_complement_generators([1,2], direction='down')
                 set()
-                sage: P.order_ideal_complement_generators([1,2,3], direction="down")
+                sage: P.order_ideal_complement_generators([1,2,3], direction='down')
                 set()
 
             .. WARNING::
@@ -452,9 +450,7 @@ class FinitePosets(CategoryWithAxiom):
 
             - ``order_ideal`` -- an order ideal of ``self``, as a set
 
-            OUTPUT:
-
-            - the image of ``order_ideal`` under rowmotion, as a set again
+            OUTPUT: the image of ``order_ideal`` under rowmotion, as a set again
 
             EXAMPLES::
 
@@ -597,7 +593,7 @@ class FinitePosets(CategoryWithAxiom):
               field of the labelling, because the latter will have
               indeterminates adjoined!
 
-            - ``reduced`` -- (default: ``False``) if set to
+            - ``reduced`` -- boolean (default: ``False``); if set to
               ``True``, the result will be the *reduced* birational
               free labelling, which differs from the regular one by
               having `0` and `1` both sent to `1` instead of `a` and
@@ -608,7 +604,7 @@ class FinitePosets(CategoryWithAxiom):
               names of extra variables to be adjoined to the ground
               field (these don't have an effect on the labels)
 
-            - ``labels`` -- (default: ``'x'``) Either a function
+            - ``labels`` -- (default: ``'x'``) either a function
               that takes an element of the poset and returns a name
               for the indeterminate corresponding to that element,
               or a string containing a comma-separated list of
@@ -666,7 +662,7 @@ class FinitePosets(CategoryWithAxiom):
                 [(1, x1), (2, x3), (3, x2)]
 
                 sage: l = P.birational_free_labelling(linear_extension=[1, 3, 2],
-                ....:                                 prefix="wut", reduced=True,
+                ....:                                 prefix='wut', reduced=True,
                 ....:                                 addvars="spam, eggs"); l
                 (Fraction Field of Multivariate Polynomial Ring
                   in wut1, wut2, wut3, spam, eggs over Rational Field,
@@ -703,7 +699,7 @@ class FinitePosets(CategoryWithAxiom):
 
                 sage: P = posets.ChainPoset(2).product(posets.ChainPoset(2))            # needs sage.modules
                 sage: l = P.birational_free_labelling(labels=x_label,
-                ....:                                 min_label="lambda", max_label="mu")
+                ....:                                 min_label='lambda', max_label='mu')
                 sage: sorted(l[1].items())
                 [((0, 0), x_00), ((0, 1), x_01), ((1, 0), x_10), ((1, 1), x_11)]
                 sage: l[2]
@@ -747,7 +743,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P = posets.SSTPoset([2,1])
                 sage: lext = sorted(P)
                 sage: l = P.birational_free_labelling(linear_extension=lext,
-                ....:                                 addvars="ohai"); l
+                ....:                                 addvars='ohai'); l
                 (Fraction Field of Multivariate Polynomial Ring
                   in a, x1, x2, x3, x4, x5, x6, x7, x8, b, ohai over Rational Field,
                  {...},
@@ -773,7 +769,7 @@ class FinitePosets(CategoryWithAxiom):
                 Finite lattice containing 6 elements
                 sage: lex = [(1,0),(0,0),(1,1),(0,1),(1,2),(0,2)]
                 sage: l = P.birational_free_labelling(linear_extension=lex,
-                ....:                                 prefix="u", reduced=True)
+                ....:                                 prefix='u', reduced=True)
                 sage: l
                 (Fraction Field of Multivariate Polynomial Ring in u1, u2, u3, u4, u5, u6 over Rational Field,
                  {...},
@@ -790,7 +786,7 @@ class FinitePosets(CategoryWithAxiom):
             For comparison, the standard linear extension::
 
                 sage: # needs sage.modules
-                sage: l = P.birational_free_labelling(prefix="u", reduced=True); l
+                sage: l = P.birational_free_labelling(prefix='u', reduced=True); l
                 (Fraction Field of Multivariate Polynomial Ring in u1, u2, u3, u4, u5, u6 over Rational Field,
                  {...},
                  1,
@@ -810,7 +806,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: # needs sage.modules
                 sage: lex = [(0,0),(0,1),(1,0),(1,1),(0,2),(1,2)]
                 sage: l = P.birational_free_labelling(linear_extension=P.linear_extension(lex),
-                ....:                                 prefix="u", reduced=True)
+                ....:                                 prefix='u', reduced=True)
                 sage: l
                 (Fraction Field of Multivariate Polynomial Ring in u1, u2, u3, u4, u5, u6 over Rational Field,
                  {...},
@@ -829,7 +825,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P = Poset({1: [3], 2: [3,4]})
                 sage: lex = [1, 2, 4, 3]
                 sage: l = P.birational_free_labelling(linear_extension=lex,
-                ....:                                 prefix="aaa",
+                ....:                                 prefix='aaa',
                 ....:                                 base_field=Zmod(13))
                 sage: l
                 (Fraction Field of Multivariate Polynomial Ring in a, aaa1, aaa2, aaa3, aaa4, b over Ring of integers modulo 13,
@@ -857,12 +853,12 @@ class FinitePosets(CategoryWithAxiom):
                  {},
                  1,
                  1)
-                sage: P.birational_free_labelling(prefix="zzz")
+                sage: P.birational_free_labelling(prefix='zzz')
                 (Fraction Field of Multivariate Polynomial Ring in a, b over Rational Field,
                  {},
                  a,
                  b)
-                sage: P.birational_free_labelling(labels="x,y,z", min_label="spam", max_label="eggs")
+                sage: P.birational_free_labelling(labels='x,y,z', min_label='spam', max_label='eggs')
                 (Fraction Field of Multivariate Polynomial Ring in spam, eggs over Rational Field,
                  {},
                  spam,
@@ -933,7 +929,7 @@ class FinitePosets(CategoryWithAxiom):
             encoded to be understood by Sage. This implementation allows
             `\mathbf{K}` to be a semifield, not just a field. The birational
             `v`-toggle is only a rational map, so an exception (most
-            likely, :class:`ZeroDivisionError`) will be thrown if the
+            likely, :exc:`ZeroDivisionError`) will be thrown if the
             denominator is zero.
 
             INPUT:
@@ -1154,7 +1150,7 @@ class FinitePosets(CategoryWithAxiom):
             encoded to be understood by Sage. This implementation allows
             `\mathbf{K}` to be a semifield, not just a field. The birational
             `v`-toggle is only a rational map, so an exception (most
-            likely, :class:`ZeroDivisionError`) will be thrown if the
+            likely, :exc:`ZeroDivisionError`) will be thrown if the
             denominator is zero.
 
             INPUT:
@@ -1233,7 +1229,7 @@ class FinitePosets(CategoryWithAxiom):
             by Sage. This implementation allows `\mathbf{K}` to be a
             semifield, not just a field. Birational rowmotion is only
             a rational map, so an exception (most likely,
-            :class:`ZeroDivisionError`) will be thrown if the
+            :exc:`ZeroDivisionError`) will be thrown if the
             denominator is zero.
 
             INPUT:
@@ -1364,10 +1360,10 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``element_constructor`` (defaults to ``set``) -- a type
+            - ``element_constructor`` -- (default: ``set``) a type
               constructor (``set``, ``tuple``, ``list``, ``frozenset``,
               ``iter``, etc.) which is to be applied to the antichains
-              before they are returned.
+              before they are returned
 
             OUTPUT:
 
@@ -1426,10 +1422,10 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``element_constructor`` (defaults to ``set``) -- a type
+            - ``element_constructor`` -- (default: ``set``) a type
               constructor (``set``, ``tuple``, ``list``, ``frozenset``,
               ``iter``, etc.) which is to be applied to the antichains
-              before they are returned.
+              before they are returned
 
             OUTPUT:
 
@@ -1477,15 +1473,13 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P = Poset({})
                 sage: P.rowmotion_orbits_plots()
                 Graphics Array of size 1 x 1
-
             """
             from sage.plot.plot import graphics_array
             plot_of_orb_plots = []
             max_orbit_size = 0
             for orb in self.rowmotion_orbits():
                 orb_plots = []
-                if len(orb) > max_orbit_size:
-                    max_orbit_size = len(orb)
+                max_orbit_size = max(len(orb), max_orbit_size)
                 for oi in orb:
                     oiplot = self.order_ideal_plot(oi)
                     orb_plots.append(oiplot)
@@ -1512,15 +1506,15 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``vs``: a list (or other iterable) of elements of ``self``
+            - ``vs`` -- a list (or other iterable) of elements of ``self``
               (but since the output depends on the order, sets should
               not be used as ``vs``).
 
             OUTPUT:
 
-            - a partition of the order ideals of ``self``, as a list of
-              sets ``L`` such that for each ``L`` and ``i``, cyclically:
-              ``self.order_ideal_toggles(L[i], vs) == L[i+1]``.
+            A partition of the order ideals of ``self``, as a list of
+            sets ``L`` such that for each ``L`` and ``i``, cyclically:
+            ``self.order_ideal_toggles(L[i], vs) == L[i+1]``.
 
             EXAMPLES::
 
@@ -1564,15 +1558,13 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P = Poset({})
                 sage: P.toggling_orbits_plots([])
                 Graphics Array of size 1 x 1
-
             """
             from sage.plot.plot import graphics_array
             plot_of_orb_plots = []
             max_orbit_size = 0
             for orb in self.toggling_orbits(vs):
                 orb_plots = []
-                if len(orb) > max_orbit_size:
-                    max_orbit_size = len(orb)
+                max_orbit_size = max(len(orb), max_orbit_size)
                 for oi in orb:
                     oiplot = self.order_ideal_plot(oi)
                     orb_plots.append(oiplot)
@@ -1592,21 +1584,19 @@ class FinitePosets(CategoryWithAxiom):
             INPUT:
 
             - ``antichain`` -- an antichain of ``self``, given as an
-              iterable.
+              iterable
 
-            - ``element_constructor`` (defaults to ``set``) -- a type
-              constructor (``set``, ``tuple``, ``list``, ``frozenset``,
-              ``iter``, etc.) which is to be applied to the antichains
-              before they are yielded.
+            - ``element_constructor`` -- a type constructor (default: ``set``).
+              Can be ``set``, ``tuple``, ``list``, ``frozenset``, ``iter``,
+              etc. To be applied to the antichains before they are yielded.
 
-            - ``stop`` -- a Boolean (default: ``True``) determining
-              whether the iterator should stop once it completes its
-              cycle (this happens when it is set to ``True``) or go on
-              forever (this happens when it is set to ``False``).
+            - ``stop`` -- boolean (default: ``True``); whether the iterator
+              should stop once it completes its cycle (this happens when it is
+              set to ``True``) or go on forever (this happens when it is set to
+              ``False``).
 
-            - ``check`` -- a Boolean (default: ``True``) determining
-              whether ``antichain`` should be checked for being an
-              antichain.
+            - ``check`` -- boolean (default: ``True``); whether to check
+              ``antichain`` for being an antichain
 
             OUTPUT:
 
@@ -1682,21 +1672,21 @@ class FinitePosets(CategoryWithAxiom):
             INPUT:
 
             - ``oideal`` -- an order ideal of ``self``, given as an
-              iterable.
+              iterable
 
-            - ``element_constructor`` (defaults to ``set``) -- a type
+            - ``element_constructor`` -- (defaults to ``set``) a type
               constructor (``set``, ``tuple``, ``list``, ``frozenset``,
               ``iter``, etc.) which is to be applied to the order
-              ideals before they are yielded.
+              ideals before they are yielded
 
-            - ``stop`` -- a Boolean (default: ``True``) determining
+            - ``stop`` -- boolean (default: ``True``);
               whether the iterator should stop once it completes its
               cycle (this happens when it is set to ``True``) or go on
-              forever (this happens when it is set to ``False``).
+              forever (this happens when it is set to ``False``)
 
-            - ``check`` -- a Boolean (default: ``True``) determining
+            - ``check`` -- boolean (default: ``True``);
               whether ``oideal`` should be checked for being an
-              order ideal.
+              order ideal
 
             OUTPUT:
 
@@ -1786,24 +1776,24 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``vs``: a list (or other iterable) of elements of ``self``
+            - ``vs`` -- list (or other iterable) of elements of ``self``
               (but since the output depends on the order, sets should
               not be used as ``vs``).
 
             - ``oideal`` -- an order ideal of ``self``, given as an
-              iterable.
+              iterable
 
-            - ``element_constructor`` (defaults to ``set``) -- a type
+            - ``element_constructor`` -- (default: ``set``) a type
               constructor (``set``, ``tuple``, ``list``, ``frozenset``,
               ``iter``, etc.) which is to be applied to the order
               ideals before they are yielded.
 
-            - ``stop`` -- a Boolean (default: ``True``) determining
+            - ``stop`` -- boolean (default: ``True``);
               whether the iterator should stop once it completes its
               cycle (this happens when it is set to ``True``) or go on
               forever (this happens when it is set to ``False``).
 
-            - ``check`` -- a Boolean (default: ``True``) determining
+            - ``check`` -- boolean (default: ``True``);
               whether ``oideal`` should be checked for being an
               order ideal.
 
@@ -1898,10 +1888,10 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``as_ideals`` -- Boolean, if ``True`` (default) returns
+            - ``as_ideals`` -- boolean (default: ``True``); if ``True`` returns
               a poset on the set of order ideals, otherwise on the set
               of antichains
-            - ``facade`` -- Boolean or ``None`` (default). Whether to
+            - ``facade`` -- boolean or ``None`` (default); whether to
               return a facade lattice or not. By default return facade
               lattice if the poset is a facade poset.
 
@@ -1978,13 +1968,13 @@ class FinitePosets(CategoryWithAxiom):
             r"""
             Return the order filters (resp. order ideals) of ``self``, as lists.
 
-            If ``direction`` is 'up', returns the order filters (upper sets).
+            If ``direction`` is ``'up'``, returns the order filters (upper sets).
 
-            If ``direction`` is 'down', returns the order ideals (lower sets).
+            If ``direction`` is ``'down'``, returns the order ideals (lower sets).
 
             INPUT:
 
-            - ``direction`` -- 'up' or 'down'
+            - ``direction`` -- ``'up'`` or ``'down'``
 
             EXAMPLES::
 

@@ -215,7 +215,7 @@ def lrcoef_unsafe(outer, inner1, inner2):
 
     INPUT:
 
-    - ``outer`` -- a partition (weakly decreasing list of non-negative integers)
+    - ``outer`` -- a partition (weakly decreasing list of nonnegative integers)
     - ``inner1`` -- a partition
     - ``inner2`` -- a partition
 
@@ -246,7 +246,7 @@ def lrcoef(outer, inner1, inner2):
 
     INPUT:
 
-    - ``outer`` -- a partition (weakly decreasing list of non-negative integers)
+    - ``outer`` -- a partition (weakly decreasing list of nonnegative integers)
     - ``inner1`` -- a partition
     - ``inner2`` -- a partition
 
@@ -280,9 +280,9 @@ def mult(part1, part2, maxrows=None, level=None, quantum=None) -> dict:
 
     - ``part1`` -- a partition
     - ``part2`` -- a partition
-    - ``maxrows`` -- (optional) an integer
-    - ``level`` -- (optional) an integer
-    - ``quantum`` -- (optional) an element of a ring
+    - ``maxrows`` -- integer (optional)
+    - ``level`` -- integer (optional)
+    - ``quantum`` -- an element of a ring (optional)
 
     If ``maxrows`` is specified, then only partitions with at most
     this number of rows are included in the result.
@@ -364,7 +364,7 @@ def skew(outer, inner, maxrows=-1) -> dict:
 
     - ``outer`` -- a partition
     - ``inner`` -- a partition
-    - ``maxrows`` -- an integer or ``None``
+    - ``maxrows`` -- integer or ``None``
 
     If ``maxrows`` is specified, then only partitions with at most
     this number of rows are included in the result.
@@ -389,9 +389,9 @@ def coprod(part, all=0) -> dict:
     INPUT:
 
     - ``part`` -- a partition
-    - ``all`` -- an integer
+    - ``all`` -- integer
 
-    If ``all`` is non-zero then all terms are included in the result.
+    If ``all`` is nonzero then all terms are included in the result.
     If ``all`` is zero, then only pairs of partitions ``(part1,
     part2)`` for which the weight of ``part1`` is greater than or
     equal to the weight of ``part2`` are included; the rest of the
@@ -423,9 +423,9 @@ def mult_schubert(w1, w2, rank=0) -> dict:
 
     - ``w1`` -- a permutation
     - ``w2`` -- a permutation
-    - ``rank`` -- an integer
+    - ``rank`` -- integer
 
-    If ``rank`` is non-zero, then only permutations from the symmetric
+    If ``rank`` is nonzero, then only permutations from the symmetric
     group `S(\mathrm{rank})` are included in the result.
 
     EXAMPLES::
@@ -451,7 +451,7 @@ def lrskew(outer, inner, weight=None, maxrows=-1):
     - ``outer`` -- a partition
     - ``inner`` -- a partition
     - ``weight`` -- a partition (optional)
-    - ``maxrows`` -- a positive integer (optional)
+    - ``maxrows`` -- positive integer (optional)
 
     OUTPUT: an iterator of :class:`SkewTableau`
 

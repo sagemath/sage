@@ -1,1 +1,1 @@
-python-sphinxcontrib-serializinghtml
+python3-sphinxcontrib-serializinghtml

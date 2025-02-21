@@ -59,7 +59,7 @@ def unpickle_le(parent, value, prec):
 
     - ``value`` -- a rational number
 
-    - ``prec`` -- an integer
+    - ``prec`` -- integer
 
     EXAMPLES::
 
@@ -75,7 +75,7 @@ def unpickle_le(parent, value, prec):
 
 class pAdicLatticeElement(pAdicGenericElement):
     r"""
-    Constructs new element with given parent and value.
+    Construct new element with given parent and value.
 
     INPUT:
 
@@ -83,21 +83,21 @@ class pAdicLatticeElement(pAdicGenericElement):
 
     - ``x`` -- the newly created element
 
-    - ``prec`` -- an integer; the absolute precision at which this
+    - ``prec`` -- integer; the absolute precision at which this
       element has to be capped
 
-    - ``dx`` -- a dictionary representing the differential of ``x``
+    - ``dx`` -- dictionary representing the differential of ``x``
 
-    - ``dx_mode`` -- a string, either ``linear_combination`` (the default)
-      or ``values``
+    - ``dx_mode`` -- string; either ``'linear_combination'`` (the default)
+      or ``'values'``
 
-    - ``valuation`` -- an integer or ``None`` (default: ``None``),
+    - ``valuation`` -- integer or ``None`` (default: ``None``);
       the valuation of this element
 
-    - ``check`` -- a boolean (default: ``True``), whether the function
+    - ``check`` -- boolean (default: ``True``); whether the function
       should check that the given values are well formed and coherent
 
-    - ``reduce`` -- a boolean (default: ``True``), whether the given
+    - ``reduce`` -- boolean (default: ``True``); whether the given
       values need to be reduced
 
     TESTS::
@@ -204,7 +204,7 @@ class pAdicLatticeElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``p`` -- a prime, which is compared with the parent of this element.
+        - ``p`` -- a prime, which is compared with the parent of this element
 
         EXAMPLES::
 
@@ -264,12 +264,14 @@ class pAdicLatticeElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- a non-negative integer (default: ``1``)
+        - ``absprec`` -- nonnegative integer (default: 1)
 
-        - ``field`` -- boolean (default ``None``).  Whether to return an element of GF(p) or Zmod(p).
+        - ``field`` -- boolean (default: ``None``); whether to return an
+          element of GF(p) or Zmod(p)
 
-        - ``check_prec`` -- boolean (default ``True``).  Whether to raise an error if this
-          element has insufficient precision to determine the reduction.
+        - ``check_prec`` -- boolean (default: ``True``); whether to raise an
+          error if this element has insufficient precision to determine the
+          reduction
 
         OUTPUT:
 
@@ -310,7 +312,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         elif absprec < 0:
             raise ValueError("cannot reduce modulo a negative power of p")
         if self.valuation() < 0:
-            raise ValueError("element must have non-negative valuation in order to compute residue")
+            raise ValueError("element must have nonnegative valuation in order to compute residue")
         if field is None:
             field = (absprec == 1)
         elif field and absprec != 1:
@@ -409,11 +411,11 @@ class pAdicLatticeElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``secure`` -- a boolean (default: ``False``); when ``True``,
+        - ``secure`` -- boolean (default: ``False``); when ``True``,
           an error is raised if the precision on the element is not
-          enough to determine for sure its valuation; otherwise the
+          enough to determine for sure its valuation. Otherwise the
           absolute precision (which is the smallest possible valuation)
-          is returned
+          is returned.
 
         EXAMPLES::
 
@@ -449,7 +451,7 @@ class pAdicLatticeElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``secure`` -- a boolean (default: ``False``); when ``True``,
+        - ``secure`` -- boolean (default: ``False``); when ``True``,
           an error is raised if the precision on the element is not
           enough to determine for sure its valuation
 
@@ -727,7 +729,7 @@ class pAdicLatticeElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``prec`` -- an integer or infinity
+        - ``prec`` -- integer or infinity
 
         EXAMPLES::
 
@@ -768,16 +770,16 @@ class pAdicLatticeElement(pAdicGenericElement):
     def lift_to_precision(self, prec=None, infer_precision=False):
         r"""
         Return another element of the same parent with absolute precision
-        at least ``prec``, congruent to this p-adic element modulo the
+        at least ``prec``, congruent to this `p`-adic element modulo the
         precision of this element.
 
         INPUT:
 
-        - ``prec`` -- an integer or ``None`` (default: ``None``), the
+        - ``prec`` -- integer or ``None`` (default: ``None``); the
           absolute precision of the result. If ``None``, lifts to the
-          maximum precision allowed
+          maximum precision allowed.
 
-        - ``infer_precision`` -- a boolean (default: ``False``)
+        - ``infer_precision`` -- boolean (default: ``False``)
 
         NOTE:
 
@@ -878,7 +880,7 @@ class pAdicLatticeElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``prec`` -- an integer or ``None`` (default: ``None``)
+        - ``prec`` -- integer or ``None`` (default: ``None``)
 
         EXAMPLES::
 
@@ -1162,13 +1164,13 @@ class pAdicLatticeElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``n`` -- an integer or ``None`` (default ``None``); if given,
-          return the corresponding entry in the expansion.
+        - ``n`` -- integer or ``None`` (default: ``None``); if given,
+          return the corresponding entry in the expansion
 
-        - ``lift_mode`` -- a string (default: ``simple``); currently
-          only ``simple`` is implemented.
+        - ``lift_mode`` -- string (default: ``'simple'``); currently
+          only ``'simple'`` is implemented
 
-        - ``start_val`` -- an integer or ``None`` (default: ``None``);
+        - ``start_val`` -- integer or ``None`` (default: ``None``);
           start at this valuation rather than the default (`0` or the
           valuation of this element).
 

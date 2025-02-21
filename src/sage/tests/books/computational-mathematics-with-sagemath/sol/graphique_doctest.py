@@ -61,7 +61,7 @@ Sage example in ./sol/graphique.tex, line 124::
 Sage example in ./sol/graphique.tex, line 154::
 
   sage: n = 10;  L = srange(6, 18, 12 / n); R = srange(3, 9, 6 / n)
-  sage: def g(x,y): v = vector(f(x, y)); return v / v.norm()
+  sage: def g(x, y): v = vector(f(x, y)); return v / v.norm()
   sage: q = plot_vector_field(g(x, y), (x, 0, 60), (y, 0, 36))
   sage: for j in range(n):
   ....:     P = desolve_system_rk4(f(x,y), [x,y],
@@ -76,7 +76,7 @@ Sage example in ./sol/graphique.tex, line 185::
   sage: def dX_dt(X, t=0): return [X[1], 0.5*X[1] - X[0] - X[1]^3]
   sage: t = srange(0, 40, 0.01);  x0 = srange(-2, 2, 0.1); y0 = 2.5
   sage: CI = [[i, y0] for i in x0] + [[i, -y0] for i in x0]
-  sage: def g(x,y): v = vector(dX_dt([x, y])); return v / v.norm()
+  sage: def g(x, y): v = vector(dX_dt([x, y])); return v / v.norm()
   sage: x, y = var('x, y'); n = len(CI)
   sage: q = plot_vector_field(g(x, y), (x, -3, 3), (y, -y0, y0))
   sage: for j in range(n):  # long time

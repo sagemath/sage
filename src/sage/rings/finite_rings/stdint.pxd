@@ -16,4 +16,3 @@ from libc.stdint cimport int_fast32_t, int_fast64_t
 cdef extern from "integer_mod_limits.h":
     int_fast32_t INTEGER_MOD_INT32_LIMIT
     int_fast64_t INTEGER_MOD_INT64_LIMIT
-

@@ -10,13 +10,13 @@ Homset categories
 # *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category, JoinCategory
+from sage.categories.category import Category, JoinCategory, CategoryWithParameters
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.covariant_functorial_construction import FunctorialConstructionCategory
 
 
-class HomsetsCategory(FunctorialConstructionCategory):
+class HomsetsCategory(FunctorialConstructionCategory, CategoryWithParameters):
 
     _functor_category = "Homsets"
 
@@ -27,8 +27,8 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
         INPUT:
 
-         - ``cls`` -- the category class for the functor `F`
-         - ``category`` -- a category `Cat`
+        - ``cls`` -- the category class for the functor `F`
+        - ``category`` -- a category `Cat`
 
         OUTPUT: a category
 
@@ -122,7 +122,7 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
     def _test_homsets_category(self, **options):
         r"""
-        Run generic tests on this homsets category
+        Run generic tests on this homsets category.
 
         .. SEEALSO:: :class:`TestSuite`.
 
@@ -148,13 +148,23 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
             sage: ModulesWithBasis(ZZ).Homsets().base()
             Integer Ring
-
         """
         from sage.categories.category_types import Category_over_base
         for C in self._all_super_categories_proper:
             if isinstance(C,Category_over_base):
                 return C.base()
         raise AttributeError("This hom category has no base")
+
+    def _make_named_class_key(self, name):
+        r"""
+        Return what the element/parent/... classes depend on.
+
+        .. SEEALSO::
+
+            - :meth:`CategoryWithParameters`
+            - :meth:`CategoryWithParameters._make_named_class_key`
+        """
+        return getattr(self.base_category(), name)
 
 
 class HomsetsOf(HomsetsCategory):

@@ -16,7 +16,7 @@ Image Sets
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.categories.map import Map
 from sage.categories.poor_man_map import PoorManMap
@@ -25,7 +25,6 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
-from sage.modules.free_module import FreeModule
 from sage.structure.element import Expression
 from sage.structure.parent import Parent
 
@@ -52,7 +51,7 @@ class ImageSubobject(Parent):
       - ``None`` (default): infer from ``map`` or default to ``False``
       - ``False``: do not assume that ``map`` is injective
       - ``True``: ``map`` is known to be injective
-      - ``"check"``: raise an error when ``map`` is not injective
+      - ``'check'``: raise an error when ``map`` is not injective
 
     - ``inverse`` -- a function (optional); a map from `f(X)` to `X`
 
@@ -91,6 +90,7 @@ class ImageSubobject(Parent):
             if isinstance(map, Expression) and map.is_callable():
                 domain = map.parent().base()
                 if len(map.arguments()) != 1:
+                    from sage.modules.free_module import FreeModule
                     domain = FreeModule(domain, len(map.arguments()))
                 function = map
 

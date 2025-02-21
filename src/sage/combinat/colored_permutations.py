@@ -815,8 +815,8 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        Either a list of pairs ``(color, element)``
-        or a pair of lists ``(colors, elements)``.
+        - ``x`` -- either a list of pairs ``(color, element)`` or a pair of
+          lists ``(colors, elements)``
 
         TESTS::
 
@@ -1460,13 +1460,13 @@ class SignedPermutation(ColoredPermutation,
 
         INPUT:
 
-        - ``singletons`` -- (default: ``True``) whether to include singleton
-          cycles or not
-        - ``use_min`` -- (default: ``True``) if ``False``, the cycles are
-          returned in the order of increasing *largest* (not smallest)
+        - ``singletons`` -- boolean (default: ``True``); whether to include
+          singleton cycles or not
+        - ``use_min`` -- boolean (default: ``True``); if ``False``, the cycles
+          are returned in the order of increasing *largest* (not smallest)
           elements, and each cycle starts with its largest element
-        - ``negative_cycles`` -- (default: ``True``) if ``False``, for any
-          two cycles `C^{\pm} = \{\pm c_1, \ldots, \pm c_k\}` such that
+        - ``negative_cycles`` -- boolean (default: ``True``); if ``False``, for
+          any two cycles `C^{\pm} = \{\pm c_1, \ldots, \pm c_k\}` such that
           `C^+ \neq C^-`, this does not include the cycle `C^-`
 
         .. WARNING::

@@ -29,7 +29,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 
 lazy_import('sage.rings.polynomial.ore_polynomial_ring', 'OrePolynomialRing')
-lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
 lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 
 
@@ -205,14 +205,14 @@ class DrinfeldModules(Category_over_base_ring):
 
     def __init__(self, base_field, name='t'):
         r"""
-        Initialize `self`.
+        Initialize ``self``.
 
         INPUT:
 
         - ``base_field`` -- the base field, which is a ring extension
           over a base
 
-        - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
+        - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
           variable
 
         TESTS::
@@ -251,7 +251,7 @@ class DrinfeldModules(Category_over_base_ring):
         self._function_ring = base_morphism.domain()
         # Check domain of base morphism is Fq[T]
         function_ring = self._function_ring
-        if not isinstance(function_ring, PolynomialRing_general):
+        if not isinstance(function_ring, PolynomialRing_generic):
             raise NotImplementedError('function ring must be a polynomial '
                                       'ring')
         function_ring_base = function_ring.base_ring()
@@ -290,7 +290,7 @@ class DrinfeldModules(Category_over_base_ring):
         r"""
         Return a latex representation of the category.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -310,7 +310,7 @@ class DrinfeldModules(Category_over_base_ring):
         r"""
         Return a string representation of the category.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -506,7 +506,7 @@ class DrinfeldModules(Category_over_base_ring):
 
     def ore_polring(self):
         r"""
-        Return the Ore polynomial ring of the category
+        Return the Ore polynomial ring of the category.
 
         EXAMPLES::
 
@@ -527,7 +527,7 @@ class DrinfeldModules(Category_over_base_ring):
 
         INPUT:
 
-        - ``rank`` -- an integer, the rank of the Drinfeld module
+        - ``rank`` -- integer; the rank of the Drinfeld module
 
         EXAMPLES::
 
@@ -785,6 +785,5 @@ class DrinfeldModules(Category_over_base_ring):
                 Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 over its base twisted by Frob^2
                 sage: phi.ore_variable()
                 t
-
             """
             return self.category().ore_polring().gen()

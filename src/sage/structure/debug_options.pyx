@@ -26,7 +26,7 @@ EXAMPLES::
 cdef class DebugOptions_class:
     def __cinit__(self):
         """
-        Initializer for the debug options
+        Initializer for the debug options.
 
         TESTS::
 

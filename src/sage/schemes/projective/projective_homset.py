@@ -10,7 +10,7 @@ can be identified with the set of morphisms `Spec(K) \to X`. In Sage
 the rational points are implemented by such scheme morphisms. This is
 done by :class:`SchemeHomset_points` and its subclasses.
 
-.. note::
+.. NOTE::
 
     You should not create the Hom-sets manually. Instead, use the
     :meth:`~sage.structure.parent.Hom` method that is inherited by all
@@ -37,20 +37,21 @@ AUTHORS:
 #                   http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
-from sage.rings.cc import CC
-from sage.schemes.generic.homset import SchemeHomset_points, SchemeHomset_generic
+from copy import copy
 
-from sage.misc.verbose import verbose
-
-from sage.rings.rational_field import RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
+from sage.misc.lazy_import import lazy_import
+from sage.misc.verbose import verbose
 from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
-from copy import copy
+from sage.schemes.generic.homset import SchemeHomset_points, SchemeHomset_generic
+
+lazy_import('sage.rings.cc', 'CC')
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 # *******************************************************************
@@ -79,30 +80,26 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         basis calculation. For schemes or subschemes with dimension greater than 1
         points are determined through enumeration up to the specified bound.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        kwds:
+        - ``bound`` -- real number (default: 0); the bound for the coordinates
+          for subschemes with dimension at least 1
 
-        - ``bound`` -- real number (default: 0). The bound for the coordinates for
-          subschemes with dimension at least 1.
+        - ``precision`` -- integer (default: 53); the precision to use to
+          compute the elements of bounded height for number fields
 
-        - ``precision`` -- integer (default: 53). The precision to use to
-          compute the elements of bounded height for number fields.
+        - ``point_tolerance`` -- positive real number (default: `10^{-10}`);
+          for numerically inexact fields, two points are considered the same
+          if their coordinates are within tolerance
 
-        - ``point_tolerance`` -- positive real number (default: `10^{-10}`).
-          For numerically inexact fields, two points are considered the same
-          if their coordinates are within tolerance.
+        - ``zero_tolerance`` -- positive real number (default: `10^{-10}`);
+          for numerically inexact fields, points are on the subscheme if they
+          satisfy the equations to within tolerance
 
-        - ``zero_tolerance`` -- positive real number (default: `10^{-10}`).
-          For numerically inexact fields, points are on the subscheme if they
-          satisfy the equations to within tolerance.
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+          algorithm-4 for enumeration over number fields
 
-        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
-          for enumeration over number fields.
-
-        OUTPUT:
-
-        - a list of rational points of a projective scheme
+        OUTPUT: list of rational points of a projective scheme
 
         .. WARNING::
 
@@ -317,7 +314,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        OUTPUT: A list of points in the ambient space.
+        OUTPUT: list of points in the ambient space
 
         .. WARNING::
 
@@ -486,8 +483,7 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
 
         INPUT:
 
-        - ``B`` -- integer (default: 0). The bound for the
-          coordinates.
+        - ``B`` -- integer (default: 0); the bound for the coordinates
 
         EXAMPLES::
 
@@ -623,12 +619,9 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         INPUT:
 
-        - ``v`` -- anything that determines a scheme morphism in the
-          Hom-set.
+        - ``v`` -- anything that determines a scheme morphism in the Hom-set
 
-        OUTPUT:
-
-        The scheme morphism determined by ``v``.
+        OUTPUT: the scheme morphism determined by ``v``
 
         EXAMPLES::
 
@@ -647,15 +640,15 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
         """
         if len(v) == 1:
             v = v[0]
+        if v == 0:
+            return self.zero()
         return self.codomain()._point(self.extended_codomain(), v, **kwds)
 
     def _repr_(self):
         """
         Return a string representation of this homset.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -676,7 +669,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         INPUT:
 
-        - ``R`` -- a ring.
+        - ``R`` -- a ring
 
         EXAMPLES::
 
@@ -697,6 +690,23 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
             raise NotImplementedError('Abelian variety point sets are not '
                             'implemented as modules over rings other than ZZ')
         return self
+
+    def zero(self):
+        r"""
+        Return the neutral element in this group of points.
+
+        EXAMPLES::
+
+            sage: S = EllipticCurve(GF(5), [1,1]).point_homset()
+            sage: S.zero()
+            (0 : 1 : 0)
+            sage: S = EllipticCurve(Zmod(15), [1,1]).point_homset()
+            sage: S.zero()
+            (0 : 1 : 0)
+        """
+        return self.codomain()(0)
+
+    _an_element_ = zero
 
 
 from sage.misc.persist import register_unpickle_override

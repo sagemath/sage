@@ -436,7 +436,7 @@ cdef void late_import() noexcept:
     prod = sage.misc.all.prod
 
     import sage.rings.polynomial.polynomial_ring_constructor
-    PolynomialRing =  sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
+    PolynomialRing = sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
 
     import sage.rings.all
     QQ = sage.rings.all.QQ
@@ -522,9 +522,10 @@ cdef int _op(object a, OP result) except -1:
     else:
         raise TypeError("cannot convert a (= %s) to OP" % a)
 
+
 def test_integer(object x):
     """
-    Tests functionality for converting between Sage's integers
+    Test functionality for converting between Sage's integers
     and symmetrica's integers.
 
     EXAMPLES::
@@ -792,13 +793,12 @@ cdef object _py_polynom(OP a):
 
 cdef object _py_polynom_alphabet(OP a, object alphabet, object length):
     """
-    Converts a symmetrica multivariate polynomial a to a Sage multivariate
+    Convert a symmetrica multivariate polynomial a to a Sage multivariate
     polynomials.  Alphabet specifies the names of the variables which are
     fed into PolynomialRing.  length specifies the number of variables; if
     it is set to 0, then the number of variables is autodetected based on
     the number of variables in alphabet or the result obtained from
     symmetrica.
-
     """
     late_import()
     cdef OP pointer = a
@@ -941,7 +941,7 @@ cdef void* _op_elmsym(object d, OP res) noexcept: #Elementary symmetric function
         pointer = s_s_n(pointer)
 
 
-cdef object _py_homsym(OP a): #Homogenous symmetric functions
+cdef object _py_homsym(OP a):  # Homogeneous symmetric functions
     late_import()
     z_elt = _py_schur_general(a)
     if len(z_elt) == 0:
@@ -954,7 +954,7 @@ cdef object _py_homsym(OP a): #Homogenous symmetric functions
     z._monomial_coefficients = z_elt
     return z
 
-cdef void* _op_homsym(object d, OP res) noexcept: #Homogenous symmetric functions
+cdef void* _op_homsym(object d, OP res) noexcept:  # Homogeneous symmetric functions
     cdef OP pointer = res
     _op_schur_general(d, res)
     while pointer != NULL:

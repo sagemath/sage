@@ -3,7 +3,7 @@ Generic Backend for LP solvers
 
 This class only lists the methods that should be defined by any
 interface with a LP Solver. All these methods immediately raise
-:class:`NotImplementedError` exceptions when called, and are obviously
+:exc:`NotImplementedError` exceptions when called, and are obviously
 meant to be replaced by the solver-specific method. This file can also
 be used as a template to create a new interface : one would only need
 to replace the occurrences of ``"Nonexistent_LP_solver"`` by the
@@ -54,17 +54,17 @@ cdef class GenericBackend:
 
         - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``)
 
-        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``)
 
         - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` -- an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``)
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
@@ -109,17 +109,17 @@ cdef class GenericBackend:
 
         - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``)
 
-        - ``integer`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` -- optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
-        OUTPUT: The index of the variable created last.
+        OUTPUT: the index of the variable created last
 
         EXAMPLES::
 
@@ -168,7 +168,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_variables(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_linear_constraints`.
+        Run tests on the method :meth:`add_linear_constraints`.
 
         TESTS::
 
@@ -211,13 +211,13 @@ cdef class GenericBackend:
 
     cpdef  set_variable_type(self, int variable, int vtype):
         """
-        Set the type of a variable
+        Set the type of a variable.
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``vtype`` (integer):
+        - ``vtype`` -- integer:
 
           *  `1`  Integer
           *  `0`  Binary
@@ -244,7 +244,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``sense`` (integer) :
+        - ``sense`` -- integer:
 
             * +1 => Maximization
             * -1 => Minimization
@@ -265,7 +265,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_sense(cls, tester=None, **options):
         """
-        Run tests on `set_sense` and `is_maximization`.
+        Run tests on ``set_sense`` and ``is_maximization``.
 
         TESTS::
 
@@ -273,7 +273,6 @@ cdef class GenericBackend:
             sage: p = GenericBackend()
             sage: p._test_sense()                              # optional - Nonexistent_LP_solver
             Exception NotImplementedError ...
-
         """
         p = cls()                         # fresh instance of the backend
         if tester is None:
@@ -291,9 +290,9 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``coeff`` (double) -- its coefficient
+        - ``coeff`` -- double; its coefficient
 
         EXAMPLES::
 
@@ -312,11 +311,12 @@ cdef class GenericBackend:
 
     cpdef objective_constant_term(self, d=None):
         """
-        Set or get the constant term in the objective function
+        Set or get the constant term in the objective function.
 
         INPUT:
 
-        - ``d`` (double) -- its coefficient.  If `None` (default), return the current value.
+        - ``d`` -- double; its coefficient.  If ``None`` (default), return the
+          current value.
 
         EXAMPLES::
 
@@ -340,10 +340,11 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``coeff`` -- a list of real values, whose i-th element is the
-          coefficient of the i-th variable in the objective function.
+        - ``coeff`` -- list of real values, whose i-th element is the
+          coefficient of the i-th variable in the objective function
 
-        - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
+        - ``d`` -- double; the constant term in the linear function (set to `0`
+          by default)
 
         EXAMPLES::
 
@@ -372,11 +373,11 @@ cdef class GenericBackend:
 
     cpdef set_verbosity(self, int level):
         """
-        Set the log (verbosity) level
+        Set the log (verbosity) level.
 
         INPUT:
 
-        - ``level`` (integer) -- From 0 (no verbosity) to 3.
+        - ``level`` -- integer; from 0 (no verbosity) to 3
 
         EXAMPLES::
 
@@ -392,7 +393,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``i`` -- index of the constraint to remove.
+        - ``i`` -- index of the constraint to remove
 
         EXAMPLES::
 
@@ -420,7 +421,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``constraints`` -- an iterable containing the indices of the rows to remove.
+        - ``constraints`` -- an iterable containing the indices of the rows to remove
 
         EXAMPLES::
 
@@ -455,12 +456,12 @@ cdef class GenericBackend:
           value (element of :meth:`base_ring`).
 
         - ``lower_bound`` -- element of :meth:`base_ring` or
-          ``None``. The lower bound.
+          ``None``; the lower bound
 
         - ``upper_bound`` -- element of :meth:`base_ring` or
-          ``None``. The upper bound.
+          ``None``; the upper bound
 
-        - ``name`` -- string or ``None``. Optional name for this row.
+        - ``name`` -- string or ``None``; optional name for this row
 
         EXAMPLES::
 
@@ -493,21 +494,21 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``degree`` -- integer. The vector degree, that is, the
-          number of new scalar constraints.
+        - ``degree`` -- integer; the vector degree, that is, the
+          number of new scalar constraints
 
         - ``coefficients`` -- an iterable of pairs ``(i, v)``. In each
           pair, ``i`` is a variable index (integer) and ``v`` is a
           vector (real and of length ``degree``).
 
-        - ``lower_bound`` -- either a vector or ``None``. The
-          component-wise lower bound.
+        - ``lower_bound`` -- either a vector or ``None``; the
+          component-wise lower bound
 
-        - ``upper_bound`` -- either a vector or ``None``. The
-          component-wise upper bound.
+        - ``upper_bound`` -- either a vector or ``None``; the
+          component-wise upper bound
 
-        - ``name`` -- string or ``None``. An optional name for all new
-          rows.
+        - ``name`` -- string or ``None``; an optional name for all new
+          rows
 
         EXAMPLES::
 
@@ -532,7 +533,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_linear_constraint_vector(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_linear_constraint_vector`.
+        Run tests on the method :meth:`add_linear_constraint_vector`.
 
         TESTS::
 
@@ -566,11 +567,11 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``indices`` (list of integers) -- this list contains the
+        - ``indices`` -- list of integers; this list contains the
           indices of the constraints in which the variable's
           coefficient is nonzero
 
-        - ``coeffs`` (list of real values) -- associates a coefficient
+        - ``coeffs`` -- list of real values; associates a coefficient
           to the variable in each of the constraints in which it
           appears. Namely, the i-th entry of ``coeffs`` corresponds to
           the coefficient of the variable in the constraint
@@ -600,7 +601,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_col(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_col`
+        Run tests on the method :meth:`add_col`.
 
         TESTS::
 
@@ -610,7 +611,6 @@ cdef class GenericBackend:
             Traceback (most recent call last):
             ...
             NotImplementedError: ...
-
         """
         p = cls()                         # fresh instance of the backend
         if tester is None:
@@ -627,7 +627,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``number`` (integer) -- the number of constraints to add.
+        - ``number`` -- integer; the number of constraints to add
 
         - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
@@ -655,7 +655,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_linear_constraints(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_linear_constraints`.
+        Run tests on the method :meth:`add_linear_constraints`.
 
         TESTS::
 
@@ -936,11 +936,11 @@ cdef class GenericBackend:
 
     cpdef problem_name(self, name=None):
         """
-        Return or define the problem's name
+        Return or define the problem's name.
 
         INPUT:
 
-        - ``name`` (``str``) -- the problem's name. When set to
+        - ``name`` -- string; the problem's name. When set to
           ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
@@ -956,11 +956,11 @@ cdef class GenericBackend:
 
     cpdef write_lp(self, name):
         """
-        Write the problem to a ``.lp`` file
+        Write the problem to a ``.lp`` file.
 
         INPUT:
 
-        - ``filename`` (string)
+        - ``filename`` -- string
 
         EXAMPLES::
 
@@ -972,18 +972,18 @@ cdef class GenericBackend:
             sage: p.add_linear_constraint([(0, 1], (1, 2)], None, 3)
             sage: p.set_objective([2, 5])
             sage: from tempfile import NamedTemporaryFile
-            sage: with NamedTemporaryFile(suffix=".lp") as f:
+            sage: with NamedTemporaryFile(suffix='.lp') as f:
             ....:     p.write_lp(f.name)
         """
         raise NotImplementedError()
 
     cpdef write_mps(self, name, int modern):
         """
-        Write the problem to a ``.mps`` file
+        Write the problem to a ``.mps`` file.
 
         INPUT:
 
-        - ``filename`` (string)
+        - ``filename`` -- string
 
         EXAMPLES::
 
@@ -995,15 +995,14 @@ cdef class GenericBackend:
             sage: p.add_linear_constraint([(0, 1), (1, 2)], None, 3)
             sage: p.set_objective([2, 5])
             sage: from tempfile import NamedTemporaryFile
-            sage: with NamedTemporaryFile(suffix=".lp") as f:
+            sage: with NamedTemporaryFile(suffix='.lp') as f:
             ....:     p.write_lp(f.name)
-
         """
         raise NotImplementedError()
 
     cpdef copy(self):
         """
-        Returns a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -1021,7 +1020,7 @@ cdef class GenericBackend:
     # Override this method in backends.
     cpdef __copy__(self):
         """
-        Returns a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -1061,11 +1060,11 @@ cdef class GenericBackend:
 
     cpdef row(self, int i):
         """
-        Return a row
+        Return a row.
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -1095,7 +1094,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -1124,7 +1123,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id.
+        - ``index`` -- integer; the variable's id
 
         OUTPUT:
 
@@ -1153,7 +1152,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -1167,7 +1166,6 @@ cdef class GenericBackend:
             sage: p.set_variable_type(0,0)
             sage: p.is_variable_binary(0)
             True
-
         """
         raise NotImplementedError()
 
@@ -1177,7 +1175,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -1200,7 +1198,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -1216,17 +1214,16 @@ cdef class GenericBackend:
             sage: p.set_variable_type(0,1)
             sage: p.is_variable_continuous(0)
             False
-
         """
         raise NotImplementedError()
 
     cpdef row_name(self, int index):
         """
-        Return the ``index`` th row name
+        Return the ``index``-th row name.
 
         INPUT:
 
-        - ``index`` (integer) -- the row's id
+        - ``index`` -- integer; the row's id
 
         EXAMPLES::
 
@@ -1236,20 +1233,19 @@ cdef class GenericBackend:
             sage: p.add_linear_constraints(1, 2, None, names=['Empty constraint 1'])
             sage: p.row_name(0)
             'Empty constraint 1'
-
         """
         raise NotImplementedError()
 
     cpdef col_name(self, int index):
         """
-        Return the ``index``-th column name
+        Return the ``index``-th column name.
 
         INPUT:
 
-        - ``index`` (integer) -- the column id
+        - ``index`` -- integer; the column id
 
-        - ``name`` (``char *``) -- its name. When set to ``NULL``
-          (default), the method returns the current name.
+        - ``name`` -- (``char *``) its name; when set to ``NULL``
+          (default), the method returns the current name
 
         EXAMPLES::
 
@@ -1345,11 +1341,11 @@ cdef class GenericBackend:
 
     cpdef variable_upper_bound(self, int index, value=False):
         """
-        Return or define the upper bound on a variable
+        Return or define the upper bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not upper bound. When set to ``False``
@@ -1372,11 +1368,11 @@ cdef class GenericBackend:
 
     cpdef variable_lower_bound(self, int index, value=False):
         """
-        Return or define the lower bound on a variable
+        Return or define the lower bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not lower bound. When set to ``False``
@@ -1399,14 +1395,14 @@ cdef class GenericBackend:
 
     cpdef solver_parameter(self, name, value=None):
         """
-        Return or define a solver parameter
+        Return or define a solver parameter.
 
         INPUT:
 
-        - ``name`` (string) -- the parameter
+        - ``name`` -- string; the parameter
 
         - ``value`` -- the parameter's value if it is to be defined,
-          or ``None`` (default) to obtain its current value.
+          or ``None`` (default) to obtain its current value
 
         .. NOTE::
 
@@ -1433,7 +1429,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -1464,7 +1460,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -1495,7 +1491,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -1526,7 +1522,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -1561,7 +1557,6 @@ cdef class GenericBackend:
             Traceback (most recent call last):
             ...
             NotImplementedError
-
         """
         p = cls()                         # fresh instance of the backend
         if tester is None:
@@ -1589,7 +1584,7 @@ default_solver = None
 
 def default_mip_solver(solver=None):
     """
-    Returns/sets the default MILP solver used by Sage
+    Return/set the default MILP solver used by Sage.
 
     INPUT:
 
@@ -1601,14 +1596,14 @@ def default_mip_solver(solver=None):
       - a callable (typically a subclass of
         :class:`sage.numerical.backends.generic_backend.GenericBackend`);
 
-      - ``None`` (default), in which case the current default solver
-        is returned; this is either a string or a callable.
+      - ``None`` -- (default) in which case the current default solver
+        is returned; this is either a string or a callable
 
     OUTPUT:
 
     This function returns the current default solver's name if ``solver = None``
     (default). Otherwise, it sets the default solver to the one given. If this
-    solver does not exist, or is not available, a :class:`ValueError` exception is
+    solver does not exist, or is not available, a :exc:`ValueError` exception is
     raised.
 
     EXAMPLES::
@@ -1723,7 +1718,7 @@ def default_mip_solver(solver=None):
 
 cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_ring=None):
     """
-    Return a solver according to the given preferences
+    Return a solver according to the given preferences.
 
     INPUT:
 
@@ -1732,13 +1727,13 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
       - a string indicating one of the available solvers
         (see :class:`MixedIntegerLinearProgram`);
 
-      - ``None`` (default), in which case the default solver is used
+      - ``None`` -- (default) in which case the default solver is used
         (see :func:`default_mip_solver`);
 
       - or a callable (such as a class), in which case it is called,
         and its result is returned.
 
-    - ``base_ring`` -- If not ``None``, request a solver that works over this
+    - ``base_ring`` -- if not ``None``, request a solver that works over this
       (ordered) field.  If ``base_ring`` is not a field, its fraction field
       is used.
 
@@ -1746,7 +1741,7 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
       the rational numbers.  This is unrelated to whether variables are
       constrained to be integers or not.
 
-    - ``constraint_generation`` -- Only used when ``solver=None``.
+    - ``constraint_generation`` -- only used when ``solver=None``:
 
       - When set to ``True``, after solving the ``MixedIntegerLinearProgram``,
         it is possible to add a constraint, and then solve it again.
@@ -1757,7 +1752,7 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
 
     .. SEEALSO::
 
-        - :func:`default_mip_solver` -- Returns/Sets the default MIP solver.
+        - :func:`default_mip_solver` -- returns/sets the default MIP solver
 
     EXAMPLES::
 
@@ -1798,8 +1793,8 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
 
         sage: def glpk_exact_solver():
         ....:     from sage.numerical.backends.generic_backend import get_solver
-        ....:     b = get_solver(solver="GLPK")
-        ....:     b.solver_parameter("simplex_or_intopt", "exact_simplex_only")
+        ....:     b = get_solver(solver='GLPK')
+        ....:     b.solver_parameter('simplex_or_intopt', 'exact_simplex_only')
         ....:     return b
         sage: codes.bounds.delsarte_bound_additive_hamming_space(11,3,4,solver=glpk_exact_solver) # long time
         8
@@ -1815,7 +1810,6 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
         sage: M.get_backend()
         <...GLPKBackend...>
         sage: default_mip_solver(old_default)
-
     """
     if solver is None:
 

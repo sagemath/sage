@@ -16,12 +16,12 @@ import functools
 
 class RootSpace(CombinatorialFreeModule):
     r"""
-    The root space of a root system over a given base ring
+    The root space of a root system over a given base ring.
 
     INPUT:
 
     - ``root_system`` -- a root system
-    - ``base_ring``: a ring `R`
+    - ``base_ring`` -- a ring `R`
 
     The *root space* (or lattice if ``base_ring`` is `\ZZ`) of a root
     system is the formal free module `\bigoplus_i R \alpha_i`
@@ -47,7 +47,6 @@ class RootSpace(CombinatorialFreeModule):
         alpha[1]
         sage: latex(r.simple_root(1))
         \alpha_{1}
-
     """
 
     def __init__(self, root_system, base_ring):
@@ -56,7 +55,6 @@ class RootSpace(CombinatorialFreeModule):
 
             sage: P = RootSystem(['A',4]).root_space()
             sage: s = P.simple_reflections()
-
         """
         from sage.categories.morphism import SetMorphism
         from sage.categories.homset import Hom
@@ -87,7 +85,6 @@ class RootSpace(CombinatorialFreeModule):
             Coroot lattice of the Root system of type ['A', 4]
             sage: RootSystem(['B',4]).coroot_space()
             Coroot space over the Rational Field of the Root system of type ['B', 4]
-
         """
         return self._name_string()
 
@@ -105,7 +102,8 @@ class RootSpace(CombinatorialFreeModule):
     @cached_method
     def to_coroot_space_morphism(self):
         """
-        Returns the ``nu`` map to the coroot space over the same base ring, using the symmetrizer of the Cartan matrix
+        Return the ``nu`` map to the coroot space over the same base ring,
+        using the symmetrizer of the Cartan matrix.
 
         It does not map the root lattice to the coroot lattice, but
         has the property that any root is mapped to some scalar
@@ -168,7 +166,7 @@ class RootSpace(CombinatorialFreeModule):
             ...
             ValueError: alpha[1] + alpha[2] + 3/2*alpha[3] does not have integral coefficients
 
-        .. note::
+        .. NOTE::
 
             For internal use only; instead use a conversion::
 
@@ -217,7 +215,6 @@ class RootSpace(CombinatorialFreeModule):
             Generic morphism:
             From: Root lattice of the Root system of type ['A', 2]
             To:   Ambient space of the Root system of type ['A', 2]
-
         """
         if self.root_system.dual_side:
             L = self.cartan_type().dual().root_system().ambient_space()
@@ -263,17 +260,38 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             [-1  2 -1  0]
             [ 0 -1  2 -1]
             [ 0  0 -2  2]
+
+        TESTS:
+
+        Verify that :issue:`15325` (A) is fixed::
+
+            sage: rt = RootSystem(['E', 8])
+            sage: lat = rt.root_lattice()
+            sage: spc = rt.ambient_space()
+            sage: lat.simple_root(1).scalar(spc.simple_coroot(2))
+            0
+
+        Verify that directionality is correct for roots of different lengths::
+
+            sage: lat = RootSystem(['B', 3]).root_lattice()
+            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))
+            -2
         """
-        # Find some better test
-        if not (lambdacheck in self.parent().coroot_lattice() or lambdacheck in self.parent().coroot_space()):
-            raise TypeError("%s is not in a coroot lattice/space" % (lambdacheck))
-        zero = self.parent().base_ring().zero()
-        cartan_matrix = self.parent().dynkin_diagram()
-        return sum( (sum( (lambdacheck[i]*s for i,s in cartan_matrix.column(j)), zero) * c for j,c in self), zero)
+        if lambdacheck in self.parent().coroot_lattice() or lambdacheck in self.parent().coroot_space():
+            # This is the mathematically canonical case, where we use the Cartan matrix to find the scalar product
+            zero = self.parent().base_ring().zero()
+            cartan_matrix = self.parent().dynkin_diagram()
+            return sum( (sum( (lambdacheck[i]*s for i,s in cartan_matrix.column(j)), zero) * c for j,c in self), zero)
+
+        if lambdacheck in self.parent().root_system.ambient_space():
+            # lambdacheck lives in the ambient space of the root space, so we take the usual dot product in the ambient space
+            return self.to_ambient().dot_product(lambdacheck)
+
+        raise TypeError(f"{lambdacheck} is not in a coroot lattice/space")
 
     def is_positive_root(self):
         """
-        Checks whether an element in the root space lies in the
+        Check whether an element in the root space lies in the
         nonnegative cone spanned by the simple roots.
 
         EXAMPLES::
@@ -292,7 +310,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
     @cached_in_parent_method
     def associated_coroot(self):
         r"""
-        Returns the coroot associated to this root
+        Return the coroot associated to this root.
 
         OUTPUT:
 
@@ -331,7 +349,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``self`` -- an element of the nonnegative integer span of simple roots.
+        - ``self`` -- an element of the nonnegative integer span of simple roots
 
         A root `\alpha` is a quantum root if `\ell(s_\alpha) = \langle 2 \rho, \alpha^\vee \rangle - 1`
         where `\ell` is the length function, `s_\alpha` is the reflection across the hyperplane
@@ -362,7 +380,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``self`` -- an element of the nonnegative integer span of simple roots.
+        - ``self`` -- an element of the nonnegative integer span of simple roots
 
         Returns None for the zero element.
 
@@ -419,7 +437,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``self`` -- an element of the nonnegative integer span of simple roots.
+        - ``self`` -- an element of the nonnegative integer span of simple roots
 
         Really ``self`` is an element of a coroot lattice.
 
@@ -437,7 +455,6 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             [1, 2, 1]
             sage: Qvee.from_vector(vector([0,2])).max_quantum_element()
             [2]
-
         """
         Qvee = self.parent()
         word = []
@@ -462,7 +479,6 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             2*alphacheck[1] + 2*alphacheck[2]
             sage: alphavee.to_ambient()
             (2, 2)
-
         """
         return self.parent().to_ambient_space_morphism()(self)
 

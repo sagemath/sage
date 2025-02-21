@@ -20,22 +20,23 @@ AUTHORS:
 - Jared Weinstein
 """
 
-from sage.structure.sage_object     import SageObject
-from sage.rings.integer_ring        import ZZ
+from sage.structure.sage_object import SageObject
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.abstract_method      import abstract_method
-from sage.misc.cachefunc            import cached_method
-from sage.misc.lazy_import          import lazy_import
-from sage.misc.verbose              import verbose
-from sage.misc.flatten              import flatten
-from sage.modular.modform.element   import Newform
-from sage.structure.sequence        import Sequence
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.misc.verbose import verbose
+from sage.misc.flatten import flatten
+from sage.modular.modform.element import Newform
+from sage.structure.sequence import Sequence
 
 lazy_import('sage.rings.qqbar', 'QQbar')
 
-from .type_space                    import TypeSpace
-from .smoothchar                    import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
+from .type_space import TypeSpace
+from .smoothchar import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
+
 
 def LocalComponent(f, p, twist_factor=None):
     r"""
@@ -44,11 +45,11 @@ def LocalComponent(f, p, twist_factor=None):
 
     INPUT:
 
-    - ``f`` (:class:`~sage.modular.modform.element.Newform`) a newform of weight `k \ge 2`
-    - ``p`` (integer) a prime
-    - ``twist_factor`` (integer) an integer congruent to `k` modulo 2 (default: `k - 2`)
+    - ``f`` -- (:class:`~sage.modular.modform.element.Newform`) a newform of weight `k \ge 2`
+    - ``p`` -- integer; prime
+    - ``twist_factor`` -- integer congruent to `k` modulo 2 (default: `k - 2`)
 
-    .. note::
+    .. NOTE::
 
         The argument ``twist_factor`` determines the choice of normalisation: if it is
         set to `j \in \ZZ`, then the central character of `\pi_{f, \ell}` maps `\ell`
@@ -81,12 +82,8 @@ def LocalComponent(f, p, twist_factor=None):
         sage: Pi.species()
         'Supercuspidal'
         sage: Pi.characters()
-        [
-        Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0),
-          of level 1, mapping s |--> -d, 7 |--> 1,
-        Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0),
-          of level 1, mapping s |--> d, 7 |--> 1
-        ]
+        [Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0), of level 1, mapping s |--> -d, 7 |--> 1,
+         Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0), of level 1, mapping s |--> d, 7 |--> 1]
     """
     p = ZZ(p)
     if not p.is_prime():
@@ -114,6 +111,7 @@ def LocalComponent(f, p, twist_factor=None):
 
     mintwist = LocalComponent(g, p, twist_factor)
     return ImprimitiveLocalComponent(f, p, twist_factor, mintwist, chi)
+
 
 class LocalComponentBase(SageObject):
     r"""
@@ -169,7 +167,7 @@ class LocalComponentBase(SageObject):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -298,7 +296,7 @@ class LocalComponentBase(SageObject):
 
     def __ne__(self, other):
         """
-        Return True if ``self != other``.
+        Return ``True`` if ``self != other``.
 
         EXAMPLES::
 
@@ -316,6 +314,7 @@ class LocalComponentBase(SageObject):
         """
         return not (self == other)
 
+
 class PrimitiveLocalComponent(LocalComponentBase):
     r"""
     Base class for primitive (twist-minimal) local components.
@@ -323,7 +322,7 @@ class PrimitiveLocalComponent(LocalComponentBase):
 
     def is_primitive(self):
         r"""
-        Return True if this local component is primitive (has minimal level
+        Return ``True`` if this local component is primitive (has minimal level
         among its character twists).
 
         EXAMPLES::
@@ -345,6 +344,7 @@ class PrimitiveLocalComponent(LocalComponentBase):
             True
         """
         return self
+
 
 class PrincipalSeries(PrimitiveLocalComponent):
     r"""
@@ -399,6 +399,7 @@ class PrincipalSeries(PrimitiveLocalComponent):
         """
         pass
 
+
 class UnramifiedPrincipalSeries(PrincipalSeries):
     r"""
     An unramified principal series representation of `{\rm GL}_2(\QQ_p)`
@@ -445,20 +446,16 @@ class UnramifiedPrincipalSeries(PrincipalSeries):
         `\pi_{f, p}` is equal to the principal series `\pi(\chi_1, \chi_2)`.
         These are the unramified characters mapping `p` to the roots of the Satake polynomial,
         so in most cases (but not always) they will be defined over an
-        extension of the coefficient field of self.
+        extension of the coefficient field of ``self``.
 
         EXAMPLES::
 
             sage: LocalComponent(Newform('11a'), 17).characters()
-            [
-            Character of Q_17*, of level 0, mapping 17 |--> d,
-            Character of Q_17*, of level 0, mapping 17 |--> -d - 2
-            ]
+            [Character of Q_17*, of level 0, mapping 17 |--> d,
+             Character of Q_17*, of level 0, mapping 17 |--> -d - 2]
             sage: LocalComponent(Newforms(Gamma1(5), 6, names='a')[1], 3).characters()
-            [
-            Character of Q_3*, of level 0, mapping 3 |--> -3/2*a1 + 12,
-            Character of Q_3*, of level 0, mapping 3 |--> -3/2*a1 - 12
-            ]
+            [Character of Q_3*, of level 0, mapping 3 |--> -3/2*a1 + 12,
+             Character of Q_3*, of level 0, mapping 3 |--> -3/2*a1 - 12]
         """
         f = self.satake_polynomial()
         if not f.is_irreducible():
@@ -468,6 +465,7 @@ class UnramifiedPrincipalSeries(PrincipalSeries):
             d = self.coefficient_field().extension(f, 'd').gen()
         G = SmoothCharacterGroupQp(self.prime(), d.parent())
         return Sequence([G.character(0, [d]), G.character(0, [self.newform()[self.prime()] - d])], cr=True, universe=G)
+
 
 class PrimitivePrincipalSeries(PrincipalSeries):
     r"""
@@ -489,16 +487,15 @@ class PrimitivePrincipalSeries(PrincipalSeries):
         EXAMPLES::
 
             sage: LocalComponent(Newforms(Gamma1(13), 2, names='a')[0], 13).characters()
-            [
-            Character of Q_13*, of level 0, mapping 13 |--> 3*a0 + 2,
-            Character of Q_13*, of level 1, mapping 2 |--> a0 + 2, 13 |--> -3*a0 - 7
-            ]
+            [Character of Q_13*, of level 0, mapping 13 |--> 3*a0 + 2,
+             Character of Q_13*, of level 1, mapping 2 |--> a0 + 2, 13 |--> -3*a0 - 7]
         """
         G = SmoothCharacterGroupQp(self.prime(), self.coefficient_field())
         t = ZZ((self.newform().weight() - 2 - self.twist_factor()) / 2)
         chi1 = G.character(0, [self.newform()[self.prime()]]) * G.norm_character()**t
         chi2 = G.character(0, [self.prime()]) * self.central_character() / chi1
         return Sequence([chi1, chi2], cr=True, universe=G)
+
 
 class PrimitiveSpecial(PrimitiveLocalComponent):
     r"""
@@ -586,6 +583,7 @@ class PrimitiveSpecial(PrimitiveLocalComponent):
         for sigma in K.embeddings(QQbar):
             assert sigma(c1(p)).abs() == w
 
+
 class PrimitiveSupercuspidal(PrimitiveLocalComponent):
     r"""
     A primitive supercuspidal representation.
@@ -645,12 +643,8 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             sage: f = Newform('50a')
             sage: Pi = LocalComponent(f, 5)
             sage: chars = Pi.characters(); chars
-            [
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0),
-              of level 1, mapping s |--> -d - 1, 5 |--> 1,
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0),
-              of level 1, mapping s |--> d, 5 |--> 1
-            ]
+            [Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -d - 1, 5 |--> 1,
+             Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> d, 5 |--> 1]
             sage: chars[0].base_ring()
             Number Field in d with defining polynomial x^2 + x + 1
 
@@ -665,12 +659,8 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             q + j0*q^2 + 1/3*j0^3*q^3 - 1/3*j0^2*q^4 + O(q^6)
             sage: Pi = LocalComponent(f, 5)
             sage: Pi.characters()
-            [
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0),
-              of level 1, mapping s |--> 1/3*j0^2*d - 1/3*j0^3, 5 |--> 5,
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0),
-              of level 1, mapping s |--> -1/3*j0^2*d, 5 |--> 5
-            ]
+            [Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> 1/3*j0^2*d - 1/3*j0^3, 5 |--> 5,
+             Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -1/3*j0^2*d, 5 |--> 5]
             sage: Pi.characters()[0].base_ring()
             Number Field in d with defining polynomial x^2 - j0*x + 1/3*j0^2 over its base field
 
@@ -686,29 +676,17 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             sage: f = Newform('81a', names='j'); f
             q + j0*q^2 + q^4 - j0*q^5 + O(q^6)
             sage: LocalComponent(f, 3).characters()  # long time (12s on sage.math, 2012)
-            [
-            Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0),
-              of level 2, mapping -2*s |--> -2*d + j0, 4 |--> 1, 3*s + 1 |--> -j0*d + 1, 3 |--> 1,
-            Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0),
-              of level 2, mapping -2*s |--> 2*d - j0, 4 |--> 1, 3*s + 1 |--> j0*d - 2, 3 |--> 1
-            ]
+            [Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 2, mapping -2*s |--> -2*d + j0, 4 |--> 1, 3*s + 1 |--> -j0*d + 1, 3 |--> 1,
+             Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 2, mapping -2*s |--> 2*d - j0, 4 |--> 1, 3*s + 1 |--> j0*d - 2, 3 |--> 1]
 
         Some ramified examples::
 
             sage: Newform('27a').local_component(3).characters()
-            [
-            Character of ramified extension Q_3(s)* (s^2 - 6 = 0),
-              of level 2, mapping 2 |--> 1, s + 1 |--> -d, s |--> -1,
-            Character of ramified extension Q_3(s)* (s^2 - 6 = 0),
-              of level 2, mapping 2 |--> 1, s + 1 |--> d - 1, s |--> -1
-            ]
+            [Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 2, mapping 2 |--> 1, s + 1 |--> -d, s |--> -1,
+             Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 2, mapping 2 |--> 1, s + 1 |--> d - 1, s |--> -1]
             sage: LocalComponent(Newform('54a'), 3, twist_factor=4).characters()
-            [
-            Character of ramified extension Q_3(s)* (s^2 - 3 = 0),
-              of level 2, mapping 2 |--> 1, s + 1 |--> -1/9*d, s |--> -9,
-            Character of ramified extension Q_3(s)* (s^2 - 3 = 0),
-              of level 2, mapping 2 |--> 1, s + 1 |--> 1/9*d - 1, s |--> -9
-            ]
+            [Character of ramified extension Q_3(s)* (s^2 - 3 = 0), of level 2, mapping 2 |--> 1, s + 1 |--> -1/9*d, s |--> -9,
+             Character of ramified extension Q_3(s)* (s^2 - 3 = 0), of level 2, mapping 2 |--> 1, s + 1 |--> 1/9*d - 1, s |--> -9]
 
         A 2-adic non-example::
 
@@ -728,12 +706,8 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
               mapping s |--> 1, 2*s + 1 |--> 1/2*a0, 4*s + 1 |--> -1, -1 |--> 1, 2 |--> 1
             ]
             sage: Newform('243a',names='a').local_component(3).characters() # long time
-            [
-            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4,
-              mapping -2*s - 1 |--> -d - 1, 4 |--> 1, 3*s + 1 |--> -d - 1, s |--> 1,
-            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4,
-              mapping -2*s - 1 |--> d, 4 |--> 1, 3*s + 1 |--> d, s |--> 1
-            ]
+            [Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4, mapping -2*s - 1 |--> -d - 1, 4 |--> 1, 3*s + 1 |--> -d - 1, s |--> 1,
+             Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4, mapping -2*s - 1 |--> d, 4 |--> 1, 3*s + 1 |--> d, s |--> 1]
         """
         T = self.type_space()
         p = self.prime()
@@ -971,6 +945,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
         for sigma in K.embeddings(QQbar):
             assert sigma(c1(p)).abs() == sigma(c2(p)).abs() == w
 
+
 class ImprimitiveLocalComponent(LocalComponentBase):
     r"""
     A smooth representation which is not of minimal level among its character
@@ -978,7 +953,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
     component and a character to twist by.
     """
 
-    def __init__(self,newform, prime, twist_factor, min_twist, chi):
+    def __init__(self, newform, prime, twist_factor, min_twist, chi):
         r"""
         EXAMPLES::
 
@@ -991,7 +966,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
 
     def is_primitive(self):
         r"""
-        Return True if this local component is primitive (has minimal level
+        Return ``True`` if this local component is primitive (has minimal level
         among its character twists).
 
         EXAMPLES::
@@ -1058,10 +1033,8 @@ class ImprimitiveLocalComponent(LocalComponentBase):
 
             sage: f = [f for f in Newforms(63, 4, names='a') if f[2] == 1][0]
             sage: f.local_component(3).characters()
-            [
-            Character of Q_3*, of level 1, mapping 2 |--> -1, 3 |--> d,
-            Character of Q_3*, of level 1, mapping 2 |--> -1, 3 |--> -d - 2
-            ]
+            [Character of Q_3*, of level 1, mapping 2 |--> -1, 3 |--> d,
+             Character of Q_3*, of level 1, mapping 2 |--> -1, 3 |--> -d - 2]
         """
         minchars = self._min_twist.characters()
         G = minchars[0].parent()

@@ -61,7 +61,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
 
         A(\mathcal{P}) = \pi(s-2) - s \cdot \alpha > 0,
 
-    where `s` is ``sides`` and `\alpha` is ``i_angle`. This raises an error if
+    where `s` is ``sides`` and `\alpha` is ``i_angle``. This raises an error if
     the ``i_angle`` is less than the minimum to generate a compact polygon::
 
         sage: from sage.plot.hyperbolic_regular_polygon import HyperbolicRegularPolygon
@@ -141,9 +141,9 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
         # real part of the given center.
         h_disp = self.center.real()
 
-        d_z_k = [z_0[0]*scale + h_disp]  #d_k has the points for the polygon in the given center
-        z_k = z_0                      #z_k has the Re(z)>0 vertices for the I centered polygon
-        r_z_k = []                     #r_z_k has the Re(z)<0 vertices
+        d_z_k = [z_0[0]*scale + h_disp]  # d_k has the points for the polygon in the given center
+        z_k = z_0                      # z_k has the Re(z)>0 vertices for the I centered polygon
+        r_z_k = []                     # r_z_k has the Re(z)<0 vertices
         if is_odd(self.sides):
             vert = (self.sides - 1) // 2
         else:
@@ -184,9 +184,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
 
         - ``alpha`` -- angle of rotation (radians, counterclockwise)
 
-        OUTPUT:
-
-        - rotated point in the upper complex halfplane
+        OUTPUT: rotated point in the upper complex halfplane
 
         TESTS::
 
@@ -203,7 +201,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
 
 
 @rename_keyword(color='rgbcolor')
-@options(alpha=1, fill=False, thickness=1, rgbcolor="blue", zorder=2,
+@options(alpha=1, fill=False, thickness=1, rgbcolor='blue', zorder=2,
          linestyle='solid')
 def hyperbolic_regular_polygon(sides, i_angle, center=CC(0,1), **options):
     r"""
@@ -219,18 +217,18 @@ def hyperbolic_regular_polygon(sides, i_angle, center=CC(0,1), **options):
 
     - ``i_angle`` -- interior angle of the polygon
 
-    - ``center``  -- (default: `i`) hyperbolic center point
+    - ``center`` -- (default: `i`) hyperbolic center point
       (complex number) of the polygon
 
     OPTIONS:
 
-    - ``alpha`` -- default: 1
+    - ``alpha`` -- (default: 1)
 
-    - ``fill`` -- default: ``False``
+    - ``fill`` -- (default: ``False``)
 
-    - ``thickness`` -- default: 1
+    - ``thickness`` -- (default: 1)
 
-    - ``rgbcolor`` -- default: ``'blue'``
+    - ``rgbcolor`` -- (default: ``'blue'``)
 
     - ``linestyle`` -- (default: ``'solid'``) the style of the line,
       which can be one of the following:
@@ -271,7 +269,7 @@ def hyperbolic_regular_polygon(sides, i_angle, center=CC(0,1), **options):
 
         A(\mathcal{P}) = \pi(s-2) - s \cdot \alpha > 0,
 
-    where `s` is ``sides`` and `\alpha` is ``i_angle`. This raises an error if
+    where `s` is ``sides`` and `\alpha` is ``i_angle``. This raises an error if
     the ``i_angle`` is less than the minimum to generate a compact polygon::
 
         sage: hyperbolic_regular_polygon(4, pi/2)

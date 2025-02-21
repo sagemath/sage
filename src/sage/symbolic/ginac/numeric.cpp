@@ -49,7 +49,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define register
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include "flint/fmpz.h"
@@ -73,15 +72,6 @@
 #pragma clang diagnostic ignored "-Wdeprecated-register"
 #include "factory/factory.h"
 #pragma clang diagnostic pop
-
-#ifdef PYNAC_HAVE_LIBGIAC
-#undef _POSIX_C_SOURCE
-#undef _XOPEN_SOURCE
-
-#include <giac/global.h>
-#include <giac/gausspol.h>
-#include <giac/fraction.h>
-#endif
 
 //#define Logging_refctr
 #if defined(Logging_refctr)
@@ -3258,33 +3248,6 @@ void numeric::canonicalize()
         }
 }
 
-#ifdef PYNAC_HAVE_LIBGIAC
-giac::gen* numeric::to_giacgen(giac::context* cptr) const
-{
-        if (t == LONG)
-                return new giac::gen(v._long);
-        if (t == MPZ) {
-                mpz_t bigint;
-                mpz_init_set(bigint, v._bigint);
-                auto ret = new giac::gen(bigint);
-                mpz_clear(bigint);
-                return ret;
-        }
-        if (t == MPQ) {
-                mpz_t bigint;
-                mpz_init_set(bigint, mpq_numref(v._bigrat));
-                giac::gen gn(bigint);
-                mpz_set(bigint, mpq_denref(v._bigrat));
-                giac::gen gd(bigint);
-                giac::Tfraction<giac::gen> frac(gn, gd);
-                mpz_clear(bigint);
-                return new giac::gen(frac);
-        }
-        else
-                return nullptr;
-}
-#endif
-
 CanonicalForm numeric::to_canonical() const
 {
         if (t == LONG)
@@ -3702,7 +3665,7 @@ const numeric numeric::log(const numeric &b, PyObject* parent) const {
 }
 
 // General log
-// Handle special cases here that return MPZ/MPQ
+// Handle special cases here that return MPZ/MPQ (or an infinity)
 const numeric numeric::ratlog(const numeric &b, bool& israt) const {
         israt = true;
         if (b.is_one()) {
@@ -3724,6 +3687,9 @@ const numeric numeric::ratlog(const numeric &b, bool& israt) const {
                 if (b.v._long <= 0) {
                         israt = false;
                         return *_num0_p;
+                }
+                if (v._long == 0) {
+                        return py_funcs.py_eval_neg_infinity();
                 }
                 int c = 0;
                 std::ldiv_t ld;

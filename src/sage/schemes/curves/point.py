@@ -296,8 +296,8 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
         r"""
         Return the tangents at this point of the affine plane curve this point is on.
 
-        OUTPUT: a list of polynomials in the coordinate ring of the ambient
-        space of the curve this point is on.
+        OUTPUT: list of polynomials in the coordinate ring of the ambient
+        space of the curve this point is on
 
         EXAMPLES::
 
@@ -307,7 +307,7 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
             ....: 5*x - y + 1])
             sage: Q = C([-1,0])
             sage: Q.tangents()
-            [y, x + 1, x - y + 1, x + y + 1]
+            [y, x - y + 1, x + 1, x + y + 1]
         """
         return self.codomain().tangents(self)
 
@@ -343,7 +343,7 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
 
         INPUT:
 
-        - ``D`` -- a curve in the same ambient space as the curve this point is on.
+        - ``D`` -- a curve in the same ambient space as the curve this point is on
 
         EXAMPLES::
 

@@ -42,10 +42,10 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
 
     INPUT:
 
-    - ``R``: a commutative ring.
-    - ``ngens``: a positive Integer (default ``1``); the number of
-      non-central generators of this Lie conformal algebra.
-    - ``gram_matrix``: a symmetric square matrix with coefficients
+    - ``R`` -- a commutative ring
+    - ``ngens`` -- a positive Integer (default: ``1``); the number of
+      non-central generators of this Lie conformal algebra
+    - ``gram_matrix`` -- a symmetric square matrix with coefficients
       in ``R`` (default: ``identity_matrix(ngens)``); the Gram
       matrix of the inner product
 
@@ -85,7 +85,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
                  index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -94,17 +94,17 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
         """
         from sage.matrix.matrix_space import MatrixSpace
         from sage.matrix.special import identity_matrix
-        if (gram_matrix is not None):
+        if gram_matrix is not None:
             if ngens is None:
                 ngens = gram_matrix.dimensions()[0]
             try:
-                assert (gram_matrix in MatrixSpace(R,ngens,ngens))
+                assert (gram_matrix in MatrixSpace(R, ngens, ngens))
             except AssertionError:
                 raise ValueError("The gram_matrix should be a symmetric " +
-                    "{0} x {0} matrix, got {1}".format(ngens,gram_matrix))
+                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
             if not gram_matrix.is_symmetric():
                 raise ValueError("The gram_matrix should be a symmetric " +
-                    "{0} x {0} matrix, got {1}".format(ngens,gram_matrix))
+                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
         else:
             if ngens is None:
                 ngens = 1
@@ -112,34 +112,33 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
 
         latex_names = None
 
-        if (names is None) and (index_set is None):
-            if ngens == 1:
-                names = 'psi'
-            else:
-                names = 'psi_'
+        if names is None and index_set is None:
+            names = 'psi' if ngens == 1 else 'psi_'
             latex_names = tuple(r"\psi_{%d}" % i
                                 for i in range(ngens)) + ('K',)
 
         from sage.structure.indexed_generators import \
-                                                standardize_names_index_set
-        names,index_set = standardize_names_index_set(names=names,
-                                                      index_set=index_set,
-                                                      ngens=ngens)
-        fermiondict = { (i,j): {0: {('K',0): gram_matrix[index_set.rank(i),
-                    index_set.rank(j)]}} for i in index_set for j in index_set}
+            standardize_names_index_set
+        names, index_set = standardize_names_index_set(names=names,
+                                                       index_set=index_set,
+                                                       ngens=ngens)
+        fermiondict = {(i, j): {0: {('K', 0): gram_matrix[index_set.rank(i),
+                                                          index_set.rank(j)]}}
+                       for i in index_set for j in index_set}
 
         from sage.rings.rational_field import QQ
-        weights = (QQ(1/2),)*ngens
-        parity = (1,)*ngens
-        GradedLieConformalAlgebra.__init__(self,R,fermiondict,names=names,
+        weights = (QQ((1, 2)),) * ngens
+        parity = (1,) * ngens
+        GradedLieConformalAlgebra.__init__(self, R, fermiondict, names=names,
                                            latex_names=latex_names,
-                                           index_set=index_set,weights=weights,
+                                           index_set=index_set,
+                                           weights=weights,
                                            parity=parity,
                                            central_elements=('K',))
 
         self._gram_matrix = gram_matrix
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -149,8 +148,8 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
             The free Fermions super Lie conformal algebra with generators (psi, K) over Rational Field
         """
         return "The free Fermions super Lie conformal algebra "\
-                    "with generators {} over {}".format(self.gens(),
-                                                         self.base_ring())
+            "with generators {} over {}".format(self.gens(),
+                                                self.base_ring())
 
     def gram_matrix(self):
         r"""

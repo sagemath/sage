@@ -26,7 +26,7 @@ the full Hecke algebra, only with the anemic algebra.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.rings.infinity import infinity
 from sage.categories.algebras import Algebras
@@ -35,12 +35,12 @@ from sage.arith.functions import lcm
 from sage.arith.misc import gcd
 from sage.misc.latex import latex
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.ring import CommutativeRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.element import Element
 from sage.structure.unique_representation import CachedRepresentation
 from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method, richcmp
 
 
@@ -73,9 +73,7 @@ def _heckebasis(M):
 
     - ``M`` -- a Hecke module
 
-    OUTPUT:
-
-    a list of Hecke algebra elements represented as matrices
+    OUTPUT: list of Hecke algebra elements represented as matrices
 
     EXAMPLES::
 
@@ -93,7 +91,6 @@ def _heckebasis(M):
     MM = MatrixSpace(QQ, d)
     S = []
     Denom = []
-    B = []
     B1 = []
     for i in range(1, M.hecke_bound() + 1):
         v = M.hecke_operator(i).matrix()
@@ -101,11 +98,9 @@ def _heckebasis(M):
         Denom.append(den)
         S.append(v)
     den = lcm(Denom)
-    for m in S:
-        B.append(WW((den * m).list()))
+    B = [WW((den * m).list()) for m in S]
     UU = WW.submodule(B)
-    B = UU.basis()
-    for u in B:
+    for u in UU.basis():
         u1 = u.list()
         m1 = M.hecke_algebra()(MM(u1), check=False)
         B1.append((1 / den) * m1)
@@ -113,19 +108,18 @@ def _heckebasis(M):
 
 
 @richcmp_method
-class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
+class HeckeAlgebra_base(CachedRepresentation, Parent):
     """
     Base class for algebras of Hecke operators on a fixed Hecke module.
 
     INPUT:
 
-    -  ``M`` -- a Hecke module
+    - ``M`` -- a Hecke module
 
     EXAMPLES::
 
         sage: CuspForms(1, 12).hecke_algebra() # indirect doctest
         Full Hecke algebra acting on Cuspidal subspace of dimension 1 of Modular Forms space of dimension 2 for Modular Group SL(2,Z) of weight 12 over Rational Field
-
     """
     @staticmethod
     def __classcall__(cls, M):
@@ -189,8 +183,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
             raise TypeError(msg)
         self.__M = M
         cat = Algebras(M.base_ring()).Commutative()
-        CommutativeRing.__init__(self, base_ring=M.base_ring(),
-                                 category=cat)
+        Parent.__init__(self, base=M.base_ring(), category=cat)
 
     def _an_element_(self):
         r"""
@@ -224,7 +217,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
         In the last case, the parameter ``check`` controls whether or
         not to check that this element really does lie in the
         appropriate algebra. At present, setting ``check=True`` raises
-        a :class:`NotImplementedError` unless x is a scalar (or a diagonal
+        a :exc:`NotImplementedError` unless x is a scalar (or a diagonal
         matrix).
 
         EXAMPLES::
@@ -250,7 +243,6 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
             Traceback (most recent call last):
             ...
             TypeError: Don't know how to construct an element of Anemic Hecke algebra acting on Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field from Hecke operator T_11 on Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field
-
         """
         from .hecke_operator import HeckeAlgebraElement_matrix, HeckeOperator, HeckeAlgebraElement
 
@@ -383,7 +375,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
 
     def _latex_(self) -> str:
         r"""
-        LaTeX representation of self.
+        LaTeX representation of ``self``.
 
         EXAMPLES::
 
@@ -560,7 +552,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
 
     def hecke_matrix(self, n, *args, **kwds):
         """
-        Return the matrix of the n-th Hecke operator `T_n`.
+        Return the matrix of the `n`-th Hecke operator `T_n`.
 
         EXAMPLES::
 
@@ -607,7 +599,7 @@ class HeckeAlgebra_full(HeckeAlgebra_base):
     """
     def _repr_(self) -> str:
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -618,7 +610,7 @@ class HeckeAlgebra_full(HeckeAlgebra_base):
 
     def __richcmp__(self, other, op) -> bool:
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -648,7 +640,7 @@ class HeckeAlgebra_full(HeckeAlgebra_base):
 
     def anemic_subalgebra(self):
         r"""
-        The subalgebra of self generated by the Hecke operators of
+        The subalgebra of ``self`` generated by the Hecke operators of
         index coprime to the level.
 
         EXAMPLES::
@@ -677,7 +669,7 @@ class HeckeAlgebra_anemic(HeckeAlgebra_base):
 
     def __richcmp__(self, other, op) -> bool:
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 

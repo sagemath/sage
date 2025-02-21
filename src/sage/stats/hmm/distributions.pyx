@@ -78,9 +78,7 @@ cdef class Distribution:
 
         - ``n`` -- ``None`` or a positive integer
 
-        OUTPUT:
-
-        - a single sample if `n` is 1; otherwise many samples
+        OUTPUT: a single sample if `n` is 1; otherwise many samples
 
         EXAMPLES:
 
@@ -102,9 +100,7 @@ cdef class Distribution:
 
         - ``x`` -- object
 
-        OUTPUT:
-
-        - float
+        OUTPUT: float
 
         EXAMPLES:
 
@@ -126,9 +122,7 @@ cdef class Distribution:
 
         - ``args`` and ``kwds``, passed to the Sage :func:`plot` function
 
-        OUTPUT:
-
-        - a :class:`Graphics` object
+        OUTPUT: a :class:`Graphics` object
 
         EXAMPLES::
 
@@ -165,12 +159,12 @@ cdef class GaussianMixtureDistribution(Distribution):
         r"""
         INPUT:
 
-        - ``B`` -- a list of triples ``(c_i, mean_i, std_i)``, where
+        - ``B`` -- list of triples ``(c_i, mean_i, std_i)``, where
           the ``c_i`` and ``std_i`` are positive and the sum of the
-          ``c_i`` is `1`.
+          ``c_i`` is `1`
 
         - ``eps`` -- positive real number; any standard deviation in B
-          less than eps is replaced by eps.
+          less than eps is replaced by eps
 
         - ``normalize`` -- if ``True``, ensure that the ``c_i`` are nonnegative
 
@@ -209,9 +203,7 @@ cdef class GaussianMixtureDistribution(Distribution):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        - triple of floats
+        OUTPUT: triple of floats
 
         EXAMPLES::
 
@@ -361,7 +353,6 @@ cdef class GaussianMixtureDistribution(Distribution):
             True
             sage: P.unfix(); P.is_fixed()
             False
-
         """
         cdef int j
         if i is None:
@@ -469,9 +460,7 @@ cdef class GaussianMixtureDistribution(Distribution):
 
         - ``x`` -- float
 
-        OUTPUT:
-
-        - float
+        OUTPUT: float
 
         EXAMPLES::
 
@@ -503,9 +492,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         - ``x`` -- float
         - ``m`` -- integer
 
-        OUTPUT:
-
-        - float
+        OUTPUT: float
 
         EXAMPLES::
 

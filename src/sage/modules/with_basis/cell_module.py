@@ -234,7 +234,7 @@ class CellModule(CombinatorialFreeModule):
     @cached_method
     def nonzero_bilinear_form(self):
         """
-        Return ``True`` if the bilinear form of ``self`` is non-zero.
+        Return ``True`` if the bilinear form of ``self`` is nonzero.
 
         EXAMPLES::
 
@@ -348,7 +348,7 @@ class CellModule(CombinatorialFreeModule):
                 sage: 1/2 * elt
                 W[[1, 2], [3]] + W[[1, 3], [2]]
             """
-            # Check for elements coercable to the base ring first
+            # Check for elements coercible to the base ring first
             ret = CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
             if ret is not None:
                 return ret

@@ -168,7 +168,7 @@ layout_options = {
         'Which graphviz layout program to use -- one of '
         '"circo", "dot", "fdp", "neato", or "twopi".',
     'by_component':
-        'Whether to do the spring layout by connected component -- a boolean.'}
+        'Whether to do the spring layout by connected component -- boolean.'}
 
 graphplot_options = layout_options.copy()
 
@@ -181,6 +181,9 @@ graphplot_options.update({
         'a dictionary keyed by vertices and associating to each vertex '
         'a label string, or a function taking as input a vertex and returning '
         'a label string.',
+    'vertex_label_shift':
+        'If layout is circular and we have vertex labels, will shift vertices '
+        'away from center of circle in coordinate fashion `(x, y)`.',
     'vertex_color':
         'Default color for vertices not listed '
         'in vertex_colors dictionary.',
@@ -197,10 +200,19 @@ graphplot_options.update({
         'Whether or not to draw edge labels.',
     'edge_style':
         'The linestyle of the edges. It should be '
-        'one of "solid", "dashed", "dotted", dashdot", '
+        'one of "solid", "dashed", "dotted", "dashdot", '
         'or "-", "--", ":", "-.", respectively. ',
+    'edge_styles':
+        'A dictionary specifying edge styles: '
+        'each key is an edge or a label (all same) and value is the linestyle '
+        'of the edge. It should be one of "solid", "dashed", "dotted", '
+        '"dashdot", or "-", "--", ":", "-.", respectively.',
     'edge_thickness':
         'The thickness of the edges.',
+    'edge_thicknesses':
+        'A dictionary specifying edge thicknesses: '
+        'each key is an edge or a label (all same) and thickness of the '
+        'corresponding edge.',
     'edge_color':
         'The default color for edges not listed in edge_colors.',
     'edge_colors':
@@ -215,12 +227,16 @@ graphplot_options.update({
         'cell in a different color; vertex_colors takes precedence.',
     'loop_size':
         'The radius of the smallest loop.',
+    'arrowsize':
+        'Size of arrows.',
     'dist':
         'The distance between multiedges.',
     'max_dist':
         'The max distance range to allow multiedges.',
     'talk':
         'Whether to display the vertices in talk mode (larger and white).',
+    'label_fontsize':
+       'font size of all labels',
     'graph_border':
         'Whether or not to draw a frame around the graph.',
     'edge_labels_background':
@@ -238,9 +254,12 @@ DEFAULT_SHOW_OPTIONS = {'figsize': (4, 4)}
 DEFAULT_PLOT_OPTIONS = {
     'vertex_size'               : 200,
     'vertex_labels'             : True,
+    'vertex_label_shift'        : None,
     'layout'                    : None,
     'edge_style'                : 'solid',
+    'edge_styles'               : None,
     'edge_thickness'            : 1,
+    'edge_thicknesses'          : None,
     'edge_color'                : 'black',
     'edge_colors'               : None,
     'edge_labels'               : False,
@@ -253,6 +272,7 @@ DEFAULT_PLOT_OPTIONS = {
     'partition'                 : None,
     'dist'                      : .075,
     'max_dist'                  : 1.5,
+    'label_fontsize'            : 10,
     'loop_size'                 : .075,
     'edge_labels_background'    : 'white'}
 
@@ -568,9 +588,26 @@ class GraphPlot(SageObject):
                     return vlabels.get(x, "")
             else:
                 vfun = vlabels
+
             # TODO: allow text options
-            self._plot_components['vertex_labels'] = [text(vfun(v), self._pos[v], color='black', zorder=8)
-                                                      for v in self._nodelist]
+            if self._options['layout'] == 'circular' and self._options['vertex_label_shift'] is not None:
+                def pos_shift(v, shift):
+                    return (v[0] + (v[0] * shift[0])/100, v[1] + (v[1] * shift[1])/100)
+                self._plot_components['vertex_labels'] = [
+                    text(
+                        vfun(v),
+                        pos_shift(self._pos[v], self._options['vertex_label_shift']),
+                        fontsize=self._options['label_fontsize'],
+                        color='black',
+                        zorder=8
+                    )
+                    for v in self._nodelist
+                    ]
+            else:
+                self._plot_components['vertex_labels'] = [
+                    text(vfun(v), self._pos[v], color='black', zorder=8, fontsize=self._options['label_fontsize'])
+                    for v in self._nodelist
+                    ]
 
     def set_edges(self, **edge_options):
         """
@@ -709,15 +746,20 @@ class GraphPlot(SageObject):
         if self._options['edge_labels_background'] == "transparent":
             self._options['edge_labels_background'] = "None"
 
-        # Handle base edge options: thickness, linestyle
+        # Whether a key is an edge or not:
+        #   None => edge_x is not set
+        #   True => keys are edges
+        #   False => keys are labels
+        style_key_edges = None
+        thickness_key_edges = None
+        if isinstance(self._options['edge_styles'], dict):
+            style_key_edges = next(iter(self._options['edge_styles'])) in self._graph.edges()
+        if isinstance(self._options['edge_thicknesses'], dict):
+            thickness_key_edges = next(iter(self._options['edge_thicknesses'])) in self._graph.edges()
+
         eoptions = {}
-        if 'edge_style' in self._options:
-            from sage.plot.misc import get_matplotlib_linestyle
-            eoptions['linestyle'] = get_matplotlib_linestyle(
-                self._options['edge_style'],
-                return_type='long')
-        if 'edge_thickness' in self._options:
-            eoptions['thickness'] = self._options['edge_thickness']
+        if 'arrowsize' in self._options:
+            eoptions['arrowsize'] = self._options['arrowsize']
 
         # Set labels param to add labels on the fly
         labels = False
@@ -812,12 +854,24 @@ class GraphPlot(SageObject):
                     # Now add all the loops at this vertex, varying their size
                     for lab, col, _ in local_labels:
                         x, y = self._pos[a][0], self._pos[a][1] - loop_size
-                        c = circle((x, y), loop_size, rgbcolor=col, **eoptions)
+
+                        estyle = self._options['edge_style']
+                        ethickness = self._options['edge_thickness']
+                        if (style_key_edges is not None
+                            and ((style_key_edges and (x, y) in self._options['edge_styles'])
+                                 or (not style_key_edges and lab in self._options['edge_styles']))):
+                            estyle = style_key_edges and self._options['edge_styles'][(x, y)] or self._options['edge_styles'][lab]
+                        if (thickness_key_edges is not None
+                            and ((thickness_key_edges and (x, y) in self._options['edge_thicknesses'])
+                                 or (not thickness_key_edges and lab in self._options['edge_thicknesses']))):
+                            ethickness = thickness_key_edges and self._options['edge_thicknesses'][(x, y)] or self._options['edge_thicknesses'][lab]
+
+                        c = circle((x, y), loop_size, rgbcolor=col, linestyle=estyle, thickness=ethickness)
                         self._plot_components['edges'].append(c)
                         if labels:
                             bg = self._options['edge_labels_background']
                             y -= loop_size  # place label at bottom of loop
-                            t = text(lab, (x, y), background_color=bg)
+                            t = text(lab, (x, y), background_color=bg, fontsize=self._options['label_fontsize'])
                             self._plot_components['edge_labels'].append(t)
                         loop_size += loop_size_increment
                 elif len(edges_to_draw[a, b]) > 1:
@@ -883,6 +937,9 @@ class GraphPlot(SageObject):
                         distance = float(max_dist) / len_local_labels
                     for i in range(len_local_labels // 2):
                         k = (i + 1.0) * distance
+                        estyle = self._options['edge_style']
+                        ethickness = self._options['edge_thickness']
+
                         if self._arcdigraph:
                             vr = self._vertex_radius
                             ph = self._polar_hack_for_multidigraph
@@ -890,73 +947,112 @@ class GraphPlot(SageObject):
                             odd_end = ph(odd_xy(k), p2, vr)[1]
                             even_start = ph(p1, even_xy(k), vr)[0]
                             even_end = ph(even_xy(k), p2, vr)[1]
+
                             self._plot_components['edges'].append(
                                 arrow(path=[[odd_start, odd_xy(k), odd_end]],
                                       head=local_labels[2 * i][2], zorder=1,
                                       rgbcolor=local_labels[2 * i][1],
-                                      **eoptions))
+                                      linestyle=estyle,
+                                      width=ethickness,
+                                      **eoptions
+                                      ))
                             self._plot_components['edges'].append(
                                 arrow(path=[[even_start, even_xy(k), even_end]],
                                       head=local_labels[2 * i + 1][2], zorder=1,
                                       rgbcolor=local_labels[2 * i + 1][1],
-                                      **eoptions))
+                                      linestyle=estyle,
+                                      width=ethickness,
+                                      **eoptions
+                                      ))
                         else:
                             self._plot_components['edges'].append(
                                 bezier_path([[p1, odd_xy(k), p2]], zorder=1,
                                             rgbcolor=local_labels[2 * i][1],
-                                            **eoptions))
+                                            linestyle=estyle,
+                                            thickness=ethickness
+                                            ))
                             self._plot_components['edges'].append(
                                 bezier_path([[p1, even_xy(k), p2]], zorder=1,
                                             rgbcolor=local_labels[2 * i + 1][1],
-                                            **eoptions))
+                                            linestyle=estyle,
+                                            thickness=ethickness
+                                            ))
                         if labels:
                             j = k / 2.0
                             bg = self._options['edge_labels_background']
                             self._plot_components['edge_labels'].append(
                                 text(local_labels[2 * i][0], odd_xy(j),
-                                     background_color=bg))
+                                     background_color=bg, fontsize=self._options['label_fontsize']))
                             self._plot_components['edge_labels'].append(
                                 text(local_labels[2 * i + 1][0], even_xy(j),
-                                     background_color=bg))
+                                     background_color=bg, fontsize=self._options['label_fontsize']))
                     if len_local_labels % 2:
                         # draw line for last odd
                         edges_to_draw[a, b] = [local_labels[-1]]
 
         is_directed = self._graph.is_directed()
         for a, b in edges_to_draw:
+            elabel = edges_to_draw[a, b][0][0]
+            ecolor = edges_to_draw[a, b][0][1]
+            ehead = edges_to_draw[a, b][0][2]
+            e = (a, b, elabel)
+
+            estyle = self._options['edge_style']
+            ethickness = self._options['edge_thickness']
+            if (style_key_edges is not None
+                and ((style_key_edges and e in self._options['edge_styles'])
+                    or (not style_key_edges and elabel in self._options['edge_styles']))):
+                estyle = style_key_edges and self._options['edge_styles'][e] or self._options['edge_styles'][elabel]
+            if (thickness_key_edges is not None
+                and ((thickness_key_edges and e in self._options['edge_thicknesses'])
+                    or (not thickness_key_edges and elabel in self._options['edge_thicknesses']))):
+                ethickness = thickness_key_edges and self._options['edge_thicknesses'][e] or self._options['edge_thicknesses'][elabel]
+
             if self._arcdigraph:
                 ph = self._polar_hack_for_multidigraph
                 C, D = ph(self._pos[a], self._pos[b], self._vertex_radius)
                 self._plot_components['edges'].append(
                     arrow(C, D,
-                          rgbcolor=edges_to_draw[a, b][0][1],
-                          head=edges_to_draw[a, b][0][2],
-                          **eoptions))
+                          rgbcolor=ecolor,
+                          head=ehead,
+                          linestyle=estyle,
+                          width=ethickness,
+                          **eoptions
+                          ))
                 if labels:
                     bg = self._options['edge_labels_background']
                     self._plot_components['edge_labels'].append(
-                        text(str(edges_to_draw[a, b][0][0]),
+                        text(str(elabel),
                              [(C[0] + D[0]) / 2., (C[1] + D[1]) / 2.],
-                             background_color=bg))
+                             background_color=bg,
+                             fontsize=self._options['label_fontsize']
+                             ))
             elif is_directed:
                 self._plot_components['edges'].append(
                     arrow(self._pos[a], self._pos[b],
-                          rgbcolor=edges_to_draw[a, b][0][1],
+                          rgbcolor=ecolor,
                           arrowshorten=self._arrowshorten,
-                          head=edges_to_draw[a, b][0][2],
-                          **eoptions))
+                          head=ehead,
+                          linestyle=estyle,
+                          width=ethickness,
+                          **eoptions
+                          ))
             else:
                 self._plot_components['edges'].append(
                     line([self._pos[a], self._pos[b]],
-                         rgbcolor=edges_to_draw[a, b][0][1],
-                         **eoptions))
+                         rgbcolor=ecolor,
+                         linestyle=estyle,
+                         thickness=ethickness
+                         ))
             if labels and not self._arcdigraph:
                 bg = self._options['edge_labels_background']
                 self._plot_components['edge_labels'].append(
                     text(str(edges_to_draw[a, b][0][0]),
                          [(self._pos[a][0] + self._pos[b][0]) / 2.,
                          (self._pos[a][1] + self._pos[b][1]) / 2.],
-                         background_color=bg))
+                         background_color=bg,
+                         fontsize=self._options['label_fontsize']
+                         ))
 
     def _polar_hack_for_multidigraph(self, A, B, VR):
         """
@@ -1033,7 +1129,6 @@ class GraphPlot(SageObject):
             P = C.graphplot(vertex_labels=False, vertex_size=0,
                             graph_border=True)
             sphinx_plot(P)
-
         """
         # Setting the default values if needed
         for k, value in DEFAULT_SHOW_OPTIONS.items():
@@ -1149,6 +1244,31 @@ class GraphPlot(SageObject):
                 D.set_edge_label(u, v, f'({u},{v})')
             sphinx_plot(D.graphplot(edge_labels=True, layout='circular'))
 
+        For graphs with ``circular`` layouts, one may shift the vertex labels by
+        specifying coordinates to shift by::
+
+            sage: D = DiGraph({
+            ....:     0: [1, 10, 19], 1: [8, 2], 2: [3, 6], 3: [19, 4],
+            ....:     4: [17, 5], 5: [6, 15], 6: [7], 7: [8, 14], 8: [9],
+            ....:     9: [10, 13], 10: [11], 11: [12, 18], 12: [16, 13],
+            ....:     13: [14], 14: [15], 15: [16], 16: [17], 17: [18],
+            ....:     18: [19], 19: []})
+            sage: for u, v, l in D.edges(sort=True):
+            ....:     D.set_edge_label(u, v, f'({u},{v})')
+            sage: D.graphplot(edge_labels=True, layout='circular', vertex_label_shift=(15,10)).show()
+
+        .. PLOT::
+
+            D = DiGraph({
+                0: [1, 10, 19], 1: [8, 2], 2: [3, 6], 3: [19, 4],
+                4: [17, 5], 5: [6, 15], 6: [7], 7: [8, 14], 8: [9],
+                9: [10, 13], 10: [11], 11: [12, 18], 12: [16, 13],
+                13: [14], 14: [15], 15: [16], 16: [17], 17: [18],
+                18: [19], 19: []})
+            for u, v, l in D.edges(sort=True):
+                D.set_edge_label(u, v, f'({u},{v})')
+            sphinx_plot(D.graphplot(edge_labels=True, layout='circular', vertex_label_shift=(15,10)))
+
         This example shows off the coloring of edges::
 
             sage: from sage.plot.colors import rainbow
@@ -1237,6 +1357,17 @@ class GraphPlot(SageObject):
             g = Graph({0: [1], 1: [2], 2: [3], 3: [4], 4: [0]})
             P = g.graphplot(pos=pos, layout='spring', iterations=0).plot()
             sphinx_plot(P)
+
+        ::
+
+            sage: D = graphs.CubeGraph(3)
+            sage: D.graphplot(layout='planar').plot()
+            Graphics object consisting of 21 graphics primitives
+
+        .. PLOT::
+
+            D = graphs.CubeGraph(3)
+            sphinx_plot(D.graphplot(layout='planar'))
 
         ::
 
@@ -1334,7 +1465,7 @@ class GraphPlot(SageObject):
 
             t = DiGraph('JCC???@A??GO??CO??GO??')
             sphinx_plot(t.graphplot(layout='tree', tree_root=0,
-                                    tree_orientation="up"))
+                                    tree_orientation='up'))
 
         More examples::
 
@@ -1345,6 +1476,17 @@ class GraphPlot(SageObject):
 
             D = DiGraph({0:[1,2,3], 2:[1,4], 3:[0]})
             sphinx_plot(D.graphplot())
+
+        ::
+
+            sage: D = DiGraph({0:[1,2,3], 2:[1,4], 3:[0]})
+            sage: D.graphplot(label_fontsize=20, arrowsize=10).show()
+
+        .. PLOT::
+
+            D = DiGraph({0:[1,2,3], 2:[1,4], 3:[0]})
+            sphinx_plot(D.graphplot(label_fontsize=20, arrowsize=10))
+
 
         ::
 
@@ -1390,11 +1532,63 @@ class GraphPlot(SageObject):
 
         The ``edge_style`` option may be provided in the short format too::
 
+
             sage: g.graphplot(edge_labels=True,
             ....:             color_by_label=True,
             ....:             edge_style='--'
             ....:            ).plot()
             Graphics object consisting of 22 graphics primitives
+
+        The ``edge_styles`` option may be provided if you need only certain edges
+        to have certain styles::
+
+            sage: g = Graph(loops=True, multiedges=True, sparse=True)
+            sage: g.add_edges([(0, 0, 'a'), (0, 0, 'b'), (0, 1, 'c'),
+            ....:              (0, 1, 'd'), (0, 1, 'e'), (0, 1, 'f'),
+            ....:              (0, 1, 'f'), (2, 1, 'g'), (2, 2, 'h')])
+            sage: GP = g.graphplot(vertex_size=100, edge_labels=True,
+            ....:                  color_by_label=True, edge_style='dashed')
+            sage: GP.set_edges(edge_styles={'a':'dashed', 'g':'dotted'})
+            sage: GP.plot()
+            Graphics object consisting of 22 graphics primitives
+
+        .. PLOT::
+
+            g = Graph(loops=True, multiedges=True, sparse=True)
+            g.add_edges([(0, 0, 'a'), (0, 0, 'b'), (0, 1, 'c'),
+                         (0, 1, 'd'), (0, 1, 'e'), (0, 1, 'f'),
+                         (0, 1, 'f'), (2, 1, 'g'), (2, 2, 'h')])
+            GP = g.graphplot(vertex_size=100, edge_labels=True,
+                             color_by_label=True, edge_style='dashed')
+            GP.set_edges(edge_style='solid')
+            GP.set_edges(edge_color='black')
+            GP.set_edges(edge_styles={'a':'dashed', 'g':'dotted'})
+            sphinx_plot(GP)
+
+        ::
+
+            sage: g = Graph(loops=True, multiedges=True, sparse=True)
+            sage: g.add_edges([(0, 0, 'a'), (0, 0, 'b'), (0, 1, 'c'),
+            ....:              (0, 1, 'd'), (0, 1, 'e'), (0, 1, 'f'),
+            ....:              (0, 1, 'f'), (2, 1, 'g'), (2, 2, 'h')])
+            sage: GP = g.graphplot(vertex_size=100, edge_labels=True,
+            ....:                  color_by_label=True, edge_thickness=3)
+            sage: GP.set_edges(edge_thicknesses={'a':1, 'g':5})
+            sage: GP.plot()
+            Graphics object consisting of 22 graphics primitives
+
+        .. PLOT::
+
+            g = Graph(loops=True, multiedges=True, sparse=True)
+            g.add_edges([(0, 0, 'a'), (0, 0, 'b'), (0, 1, 'c'),
+                         (0, 1, 'd'), (0, 1, 'e'), (0, 1, 'f'),
+                         (0, 1, 'f'), (2, 1, 'g'), (2, 2, 'h')])
+            GP = g.graphplot(vertex_size=100, edge_labels=True,
+                             color_by_label=True, edge_thickness=3)
+            GP.set_edges(edge_style='solid')
+            GP.set_edges(edge_color='black')
+            GP.set_edges(edge_thicknesses={'a':1, 'g':5})
+            sphinx_plot(GP)
 
         TESTS:
 
@@ -1467,7 +1661,7 @@ class GraphPlot(SageObject):
 
         INPUT:
 
-        - ``root`` -- the root vertex.
+        - ``root`` -- the root vertex
 
         - ``orientation`` -- whether to place the root at the top or at the
           bottom:
@@ -1492,7 +1686,7 @@ class GraphPlot(SageObject):
         children = {root: T.neighbors(root)}
 
         # Always make a copy of the children because they get eaten
-        stack = [[u for u in children[root]]]
+        stack = [list(children[root])]
         stick = [root]
         parent = {u: root for u in children[root]}
         pos = {}

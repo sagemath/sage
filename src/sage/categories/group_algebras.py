@@ -189,9 +189,7 @@ class GroupAlgebras(AlgebrasCategory):
             classes of the group, and `f_\sigma` is the sum of the
             elements in the conjugacy class of `\sigma`.
 
-            OUTPUT:
-
-            - ``tuple`` of elements of ``self``
+            OUTPUT: tuple of elements of ``self``
 
             .. WARNING::
 
@@ -209,7 +207,7 @@ class GroupAlgebras(AlgebrasCategory):
                 - :meth:`Groups.Algebras.ElementMethods.central_form`
                 - :meth:`Monoids.Algebras.ElementMethods.is_central`
             """
-            return tuple([self.sum_of_monomials(conj) for conj  in
+            return tuple([self.sum_of_monomials(conj) for conj in
                           self.basis().keys().conjugacy_classes()])
 
         # Hopf algebra structure
@@ -240,7 +238,7 @@ class GroupAlgebras(AlgebrasCategory):
             g = self.term(g)
             return tensor([g, g])
 
-        def antipode_on_basis(self,g):
+        def antipode_on_basis(self, g):
             r"""
             Return the antipode of the element ``g`` of the basis.
 
@@ -265,7 +263,7 @@ class GroupAlgebras(AlgebrasCategory):
             """
             return self.term(~g)
 
-        def counit_on_basis(self,g):
+        def counit_on_basis(self, g):
             r"""
             Return the counit of the element ``g`` of the basis.
 
@@ -285,7 +283,7 @@ class GroupAlgebras(AlgebrasCategory):
             """
             return self.base_ring().one()
 
-        def counit(self,x):
+        def counit(self, x):
             r"""
             Return the counit of the element ``x`` of the group
             algebra.

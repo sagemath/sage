@@ -31,7 +31,7 @@ class GfanExecutable(Executable):
             name = "gfan"
         else:
             name = f"gfan_{cmd}"
-        Executable.__init__(self, name, executable=name, spkg="gfan", type='standard')
+        Executable.__init__(self, name, executable=name, spkg='gfan', type='standard')
 
 
 def all_features():

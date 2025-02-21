@@ -27,11 +27,12 @@ import sphinx
 import sphinx.ext.intersphinx as intersphinx
 from sphinx import highlighting
 from sphinx.transforms import SphinxTransform
+from sphinx.util.docutils import SphinxDirective
 from IPython.lib.lexers import IPythonConsoleLexer, IPyLexer
 from sage.misc.sagedoc import extlinks
 from sage.env import SAGE_DOC_SRC, SAGE_DOC, PPLPY_DOCS, MATHJAX_DIR
 from sage.misc.latex_macros import sage_mathjax_macros
-from sage.features import PythonModule
+from sage.features.sphinx import JupyterSphinx
 from sage.features.all import all_features
 import sage.version
 
@@ -56,12 +57,15 @@ extensions = [
     'sphinx_inline_tabs',
     'IPython.sphinxext.ipython_directive',
     'matplotlib.sphinxext.plot_directive',
-    'jupyter_sphinx',
 ]
+
+if JupyterSphinx().is_present():
+    extensions.append('jupyter_sphinx')
 
 jupyter_execute_default_kernel = 'sagemath'
 
 if SAGE_LIVE_DOC == 'yes':
+    JupyterSphinx().require()
     SAGE_JUPYTER_SERVER = os.environ.get('SAGE_JUPYTER_SERVER', 'binder')
     if SAGE_JUPYTER_SERVER.startswith('binder'):
         # format: "binder" or
@@ -182,9 +186,6 @@ plot_formats = ['svg', 'pdf', 'png']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = [os.path.join(SAGE_DOC_SRC, 'common', 'templates'), 'templates']
-
-# The suffix of source filenames.
-source_suffix = '.rst'
 
 # The master toctree document.
 master_doc = 'index'
@@ -441,26 +442,28 @@ html_theme_options = {
     # "source_directory" is defined in conf.py customized for the doc
 }
 
-if not version.split('.')[-1].isnumeric():  # develop version
+# Check the condition for announcement banner
+github_ref = os.environ.get('GITHUB_REF', '')
+if github_ref:
+    match = re.search(r'refs/pull/(\d+)/merge', github_ref)
+    if match:
+        pr_number = match.group(1)
+is_for_develop = github_ref.startswith('refs/heads/develop')
+is_for_github_pr = github_ref and match and pr_number
+is_stable_release = version.split('.')[-1].isnumeric()
+
+if is_for_develop or is_for_github_pr or not is_stable_release:  # condition for announcement banner
     # This URL is hardcoded in the file .github/workflows/doc-publish.yml.
     # See NETLIFY_ALIAS of the "Deploy to Netlify" step.
     ver = f'<a href="https://doc-develop--sagemath.netlify.app/html/en/index.html">{version}</a>'
-    github_ref = os.environ.get('GITHUB_REF', '')
-    if github_ref:
-        match = re.search(r'refs/pull/(\d+)/merge', github_ref)
-        if match:
-            # As this doc is built for a GitHub PR, we plant links
-            # to the PR in the announcement banner.
-            pr_number = match.group(1)
-            pr_url = f'https://github.com/sagemath/sage/pull/{pr_number}'
-            pr_sha = os.environ.get('PR_SHA', '')
-            pr_commit = pr_url + f'/commits/{pr_sha}'
-            ver += f' built with GitHub PR <a href="{pr_url}">#{pr_number}</a>' \
-                   f' on <a href="{pr_commit}">{pr_sha[:7]}</a>' \
-                   f' [<a href="/changes.html">changes</a>]'
-    banner = f'This is documentation for Sage development version {ver}. ' \
-              'Documentation for the latest stable version is ' \
-              '<a href="https://doc.sagemath.org/html/en/index.html">here</a>.'
+    if is_for_github_pr:
+        pr_url = f'https://github.com/sagemath/sage/pull/{pr_number}'
+        pr_sha = os.environ.get('PR_SHA', '')
+        pr_commit = pr_url + f'/commits/{pr_sha}'
+        ver += f' built with GitHub PR <a href="{pr_url}">#{pr_number}</a>' \
+               f' on <a href="{pr_commit}">{pr_sha[:7]}</a>' \
+               f' [<a href="/changes.html">changes</a>]'
+    banner = f'This is documentation for Sage version {ver} for development purpose.'
     html_theme_options.update({ "announcement": banner })
 
 # The name of the Pygments (syntax highlighting) style to use. This
@@ -473,6 +476,7 @@ html_sidebars = {
     "**": [
         "sidebar/scroll-start.html",
         "sidebar/brand.html",
+        "sidebar/version-selector.html",
         "sidebar/search.html",
         "sidebar/home.html",
         "sidebar/navigation.html",
@@ -488,6 +492,7 @@ html_css_files = [
     'custom-furo.css',
     'custom-jupyter-sphinx.css',
     'custom-codemirror-monokai.css',
+    'custom-tabs.css',
 ]
 
 html_js_files = [
@@ -642,6 +647,11 @@ latex_elements['preamble'] = r"""
 \makeatother
 """
 
+# Enable "hard wrapping" long code lines (only applies if breaking
+# long codelines at spaces or other suitable places failed, typically
+# this is for long decimal expansions or possibly long string identifiers)
+latex_elements['sphinxsetup'] = "verbatimforcewraps=true"
+
 # Documents to append as an appendix to all manuals.
 # latex_appendices = []
 
@@ -665,6 +675,7 @@ for macro in sage_latex_macros():
     # used when building html version
     pngmath_latex_preamble += macro + '\n'
 
+
 # ------------------------------------------
 # add custom context variables for templates
 # ------------------------------------------
@@ -679,7 +690,7 @@ def add_page_context(app, pagename, templatename, context, doctree):
     path2 = os.path.join(SAGE_DOC, 'html', 'en')
     relpath = os.path.relpath(path2, path1)
     context['release'] = release
-    context['documentation_title'] = 'Sage {}'.format(release) + ' Documentation'
+    context['documentation_title'] = f'Version {release} Documentation'
     context['documentation_root'] = os.path.join(relpath, 'index.html')
     if 'website' in path1:
         context['title'] = 'Documentation'
@@ -688,12 +699,12 @@ def add_page_context(app, pagename, templatename, context, doctree):
     if 'reference' in path1 and not path1.endswith('reference'):
         path2 = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
         relpath = os.path.relpath(path2, path1)
-        context['reference_title'] = 'Sage {}'.format(release) + ' Reference Manual'
+        context['reference_title'] = f'Version {release} Reference Manual'
         context['reference_root'] = os.path.join(relpath, 'index.html')
         context['refsub'] = True
         if pagename.startswith('sage/'):
-            # This is for adding small edit button using Furo's feature:
-            # https://pradyunsg.me/furo/customisation/edit-button/#adding-an-edit-button
+            # This is for adding small view/edit buttons using Furo's feature:
+            # https://pradyunsg.me/furo/customisation/top-of-page-buttons/
             # This works well if the source file is '.rst' file. But the '.rst'
             # files in the directory 'sage/' are generated by the Sphinx
             # autodoc from the Python or Cython source files. Hence we tweak
@@ -701,14 +712,17 @@ def add_page_context(app, pagename, templatename, context, doctree):
             # source files are generated.
             suffix = '.py' if importlib.import_module(pagename.replace('/','.')).__file__.endswith('.py') else '.pyx'
             context['page_source_suffix'] = suffix
-            context['theme_source_edit_link'] = os.path.join(source_repository, f'blob/develop/src', '{filename}')
+            context['theme_source_view_link'] = os.path.join(source_repository, 'blob/develop/src', '{filename}')
+            context['theme_source_edit_link'] = os.path.join(source_repository, 'edit/develop/src', '{filename}')
 
 
 dangling_debug = False
 
+
 def debug_inf(app, message):
     if dangling_debug:
         app.info(message)
+
 
 def call_intersphinx(app, env, node, contnode):
     r"""
@@ -742,6 +756,7 @@ def call_intersphinx(app, env, node, contnode):
     else:
         debug_inf(app, "---- Intersphinx: %s not Found" % node['reftarget'])
     return res
+
 
 def find_sage_dangling_links(app, env, node, contnode):
     r"""
@@ -853,6 +868,7 @@ skip_picklability_check_modules = [
     '__builtin__',
 ]
 
+
 def check_nested_class_picklability(app, what, name, obj, skip, options):
     """
     Print a warning if pickling is broken for nested classes.
@@ -872,6 +888,7 @@ def check_nested_class_picklability(app, what, name, obj, skip, options):
                          'Please set the metaclass of the parent class to '
                          'sage.misc.nested_class.NestedClassMetaclass.' % (
                         v.__module__ + '.' + name + '.' + nm))
+
 
 def skip_member(app, what, name, obj, skip, options):
     """
@@ -948,15 +965,17 @@ class SagecodeTransform(SphinxTransform):
 
     def apply(self):
         if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
-            for node in self.document.traverse(nodes.literal_block):
+            for node in list(self.document.findall(nodes.literal_block)):
                 if node.get('language') is None and node.astext().startswith('sage:'):
                     from docutils.nodes import container as Container, label as Label, literal_block as LiteralBlock, Text
                     from sphinx_inline_tabs._impl import TabContainer
                     parent = node.parent
                     index = parent.index(node)
-                    if isinstance(node.previous_sibling(), TabContainer):
+                    prev_node = node.previous_sibling()
+                    if isinstance(prev_node, TabContainer):
                         # Make sure not to merge inline tabs for adjacent literal blocks
-                        parent.insert(index, Text(''))
+                        parent.insert(index, nodes.paragraph())
+                        prev_node = parent[index]
                         index += 1
                     parent.remove(node)
                     # Tab for Sage code
@@ -968,6 +987,10 @@ class SagecodeTransform(SphinxTransform):
                     content += node
                     container += content
                     parent.insert(index, container)
+                    index += 1
+                    if isinstance(prev_node, nodes.paragraph):
+                        prev_node['classes'].append('with-sage-tab')
+
                     if SAGE_PREPARSED_DOC == 'yes':
                         # Tab for preparsed version
                         from sage.repl.preparse import preparse
@@ -998,7 +1021,10 @@ class SagecodeTransform(SphinxTransform):
                         preparsed_node = LiteralBlock(preparsed, preparsed, language='ipycon')
                         content += preparsed_node
                         container += content
-                        parent.insert(index + 1, container)
+                        parent.insert(index, container)
+                        index += 1
+                        if isinstance(prev_node, nodes.paragraph):
+                            prev_node['classes'].append('with-python-tab')
                     if SAGE_LIVE_DOC == 'yes':
                         # Tab for Jupyter-sphinx cell
                         from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
@@ -1030,7 +1056,18 @@ class SagecodeTransform(SphinxTransform):
                         content = Container("", is_div=True, classes=["tab-content"])
                         content += cell_node
                         container += content
-                        parent.insert(index + 1, container)
+                        parent.insert(index, container)
+                        index += 1
+                        if isinstance(prev_node, nodes.paragraph):
+                            prev_node['classes'].append('with-sage-live-tab')
+
+
+class Ignore(SphinxDirective):
+
+    has_content = True
+
+    def run(self):
+        return []
 
 
 # This replaces the setup() in sage.misc.sagedoc_conf
@@ -1046,6 +1083,12 @@ def setup(app):
     app.add_transform(SagemathTransform)
     if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
         app.add_transform(SagecodeTransform)
+    if not JupyterSphinx().is_present():
+        app.add_directive("jupyter-execute", Ignore)
+        app.add_directive("jupyter-kernel", Ignore)
+        app.add_directive("jupyter-input", Ignore)
+        app.add_directive("jupyter-output", Ignore)
+        app.add_directive("thebe-button", Ignore)
 
     # When building the standard docs, app.srcdir is set to SAGE_DOC_SRC +
     # 'LANGUAGE/DOCNAME'.
@@ -1067,12 +1110,7 @@ def setup(app):
 # https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#conf-tags
 # https://github.com/readthedocs/readthedocs.org/issues/4603#issuecomment-1411594800
-# Workaround to allow importing this file from other confs
-if 'tags' not in locals():
-    class Tags(set):
-        has = set.__contains__
-    tags = Tags()
-
-
-for feature in all_features():
-    tags.add('feature_' + feature.name.replace('.', '_'))
+def feature_tags():
+    for feature in all_features():
+        if feature.is_present():
+            yield 'feature_' + feature.name.replace('.', '_')

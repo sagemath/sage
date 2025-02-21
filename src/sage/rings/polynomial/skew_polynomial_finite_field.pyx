@@ -100,7 +100,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         N = self._parent._working_center(self.reduced_norm(var=False))
         return N.is_irreducible()
 
-
     def type(self, N):
         r"""
         Return the `N`-type of this skew polynomial (see definition below).
@@ -209,7 +208,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         self._types[N] = type
         return type
 
-
     # Finding divisors
     # ----------------
 
@@ -288,7 +286,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                 continue
             return D
 
-
     def _reduced_norm_factor_uniform(self):
         r"""
         Return a factor of the reduced norm of this skew
@@ -357,7 +354,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             if random < count[i]:
                 return F[i][0]
 
-
     def _irreducible_divisors(self, bint right):
         r"""
         Return an iterator over all irreducible monic
@@ -369,7 +365,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         INPUT:
 
-        - ``right`` -- a boolean; if ``True``, return right divisors,
+        - ``right`` -- boolean; if ``True``, return right divisors,
           otherwise, return left divisors
 
         TESTS::
@@ -469,14 +465,13 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                     d, _ = quo_rem2(P, d)
                     yield d
 
-
     def right_irreducible_divisor(self, uniform=False):
         r"""
         Return a right irreducible divisor of this skew polynomial.
 
         INPUT:
 
-        - ``uniform`` -- a boolean (default: ``False``); whether the
+        - ``uniform`` -- boolean (default: ``False``); whether the
           output irreducible divisor should be uniformly distributed
           among all possibilities
 
@@ -551,7 +546,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
 
         INPUT:
 
-        - ``uniform`` -- a boolean (default: ``False``); whether the
+        - ``uniform`` -- boolean (default: ``False``); whether the
           output irreducible divisor should be uniformly distributed
           among all possibilities
 
@@ -616,7 +611,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             LD = P1 // P1.right_gcd(NS // D)
             if LD.degree() == degN:
                 return LD
-
 
     def right_irreducible_divisors(self):
         r"""
@@ -686,7 +680,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         """
         return self._irreducible_divisors(False)
 
-
     def count_irreducible_divisors(self):
         r"""
         Return the number of irreducible monic divisors of
@@ -743,7 +736,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             cardL = cardcenter**degN
             count += (cardL**m - 1) // (cardL - 1)
         return count
-
 
     # Finding factorizations
     # ----------------------
@@ -850,7 +842,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         cdef list indices = <list>sample(range(1, m+1), m)
 
         cdef unit = self.leading_coefficient()
-        cdef SkewPolynomial_finite_field_dense left = self._new_c(self._coeffs[:],skew_ring)
+        cdef SkewPolynomial_finite_field_dense left = self._new_c(self._coeffs[:], skew_ring)
         left = left.right_monic()
         cdef SkewPolynomial_finite_field_dense right = <SkewPolynomial_finite_field_dense>skew_ring.one()
         cdef SkewPolynomial_finite_field_dense L, R
@@ -926,14 +918,13 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         factors.reverse()
         return Factorization(factors, sort=False, unit=unit)
 
-
     def factor(self, uniform=False):
         r"""
         Return a factorization of this skew polynomial.
 
         INPUT:
 
-        - ``uniform`` -- a boolean (default: ``False``); whether the
+        - ``uniform`` -- boolean (default: ``False``); whether the
           output irreducible divisor should be uniformly distributed
           among all possibilities
 
@@ -993,7 +984,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                 self._factorization = self._factor_c()
             F = self._factorization
         return F
-
 
     def count_factorizations(self):
         r"""

@@ -27,7 +27,7 @@ from sage.structure.element import coerce_binop
 class Fields(CategoryWithAxiom):
     """
     The category of (commutative) fields, i.e. commutative rings where
-    all non-zero elements have multiplicative inverses
+    all nonzero elements have multiplicative inverses
 
     EXAMPLES::
 
@@ -125,7 +125,6 @@ class Fields(CategoryWithAxiom):
             sage: len([X for X in gc.get_objects()
             ....:      if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]) - n
             0
-
         """
         from sage.rings.ring import _is_Field
         try:
@@ -160,13 +159,12 @@ class Fields(CategoryWithAxiom):
             True
             sage: F._contains_helper(Q)
             True
-
         """
         return Category_contains_method_by_parent_class(cls())
 
     def _call_(self, x):
         """
-        Construct a field from the data in ``x``
+        Construct a field from the data in ``x``.
 
         EXAMPLES::
 
@@ -194,10 +192,22 @@ class Fields(CategoryWithAxiom):
     Finite = LazyImport('sage.categories.finite_fields', 'FiniteFields', at_startup=True)
 
     class ParentMethods:
+        def krull_dimension(self):
+            """
+            Return the Krull dimension of this field, which is 0.
 
-        def is_field( self, proof=True ):
+            EXAMPLES::
+
+                sage: QQ.krull_dimension()
+                0
+                sage: Frac(QQ['x,y']).krull_dimension()
+                0
+            """
+            return 0
+
+        def is_field(self, proof=True):
             r"""
-            Returns True as ``self`` is a field.
+            Return ``True`` as ``self`` is a field.
 
             EXAMPLES::
 
@@ -208,11 +218,12 @@ class Fields(CategoryWithAxiom):
             """
             return True
 
-        def is_integrally_closed(self):
+        def is_integrally_closed(self) -> bool:
             r"""
-            Return ``True``, as per :meth:`IntegralDomain.is_integrally_closed`:
-            for every field `F`, `F` is its own field of fractions,
-            hence every element of `F` is integral over `F`.
+            Return whether ``self`` is integrally closed.
+
+            For every field `F`, `F` is its own field of fractions.
+            Therefore every element of `F` is integral over `F`.
 
             EXAMPLES::
 
@@ -224,7 +235,64 @@ class Fields(CategoryWithAxiom):
                 Finite Field of size 5
                 sage: Z5.is_integrally_closed()
                 True
+                sage: Frac(ZZ['x,y']).is_integrally_closed()
+                True
             """
+            return True
+
+        def integral_closure(self):
+            """
+            Return this field, since fields are integrally closed in their
+            fraction field.
+
+            EXAMPLES::
+
+                sage: QQ.integral_closure()
+                Rational Field
+                sage: Frac(ZZ['x,y']).integral_closure()
+                Fraction Field of Multivariate Polynomial Ring in x, y
+                over Integer Ring
+            """
+            return self
+
+        def prime_subfield(self):
+            """
+            Return the prime subfield of ``self``.
+
+            EXAMPLES::
+
+                sage: k = GF(9, 'a')                                                        # needs sage.rings.finite_rings
+                sage: k.prime_subfield()                                                    # needs sage.rings.finite_rings
+                Finite Field of size 3
+            """
+            if self.characteristic() == 0:
+                import sage.rings.rational_field
+                return sage.rings.rational_field.RationalField()
+
+            from sage.rings.finite_rings.finite_field_constructor import GF
+            return GF(self.characteristic())
+
+        def divides(self, x, y, coerce=True):
+            """
+            Return ``True`` if ``x`` divides ``y`` in this field.
+
+            This is usually ``True`` in a field!.
+
+            If ``coerce`` is ``True`` (the default), first coerce
+            ``x`` and ``y`` into ``self``.
+
+            EXAMPLES::
+
+                sage: QQ.divides(2, 3/4)
+                True
+                sage: QQ.divides(0, 5)
+                False
+            """
+            if coerce:
+                x = self(x)
+                y = self(y)
+            if x.is_zero():
+                return y.is_zero()
             return True
 
         def _gcd_univariate_polynomial(self, a, b):
@@ -413,7 +481,6 @@ class Fields(CategoryWithAxiom):
                 True
                 sage: FunctionField(GF(2), 'x').is_perfect()
                 False
-
             """
             if self.characteristic() == 0:
                 return True
@@ -452,7 +519,7 @@ class Fields(CategoryWithAxiom):
 
         def fraction_field(self):
             r"""
-            Returns the *fraction field* of ``self``, which is ``self``.
+            Return the *fraction field* of ``self``, which is ``self``.
 
             EXAMPLES::
 
@@ -460,6 +527,38 @@ class Fields(CategoryWithAxiom):
                 True
             """
             return self
+
+        def ideal(self, *gens, **kwds):
+            """
+            Return the ideal generated by ``gens``.
+
+            INPUT:
+
+            - an element or a list/tuple/sequence of elements, the generators
+
+            Any named arguments are ignored.
+
+            EXAMPLES::
+
+                sage: QQ.ideal(2)
+                Principal ideal (1) of Rational Field
+                sage: QQ.ideal(0)
+                Principal ideal (0) of Rational Field
+
+            TESTS::
+
+                sage: QQ.ideal(2, 4)
+                Principal ideal (1) of Rational Field
+
+                sage: QQ.ideal([2, 4])
+                Principal ideal (1) of Rational Field
+            """
+            if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
+                gens = gens[0]
+            for x in gens:
+                if not self(x).is_zero():
+                    return self.unit_ideal()
+            return self.zero_ideal()
 
         def _squarefree_decomposition_univariate_polynomial(self, f):
             r"""
@@ -470,7 +569,7 @@ class Fields(CategoryWithAxiom):
 
             INPUT:
 
-            - ``f`` -- a univariate non-zero polynomial over this field
+            - ``f`` -- a univariate nonzero polynomial over this field
 
             ALGORITHM: For rings of characteristic zero, we use the algorithm
             described in [Yun1976]_. Other fields may provide their own
@@ -520,7 +619,7 @@ class Fields(CategoryWithAxiom):
 
         def vector_space(self, *args, **kwds):
             r"""
-            Gives an isomorphism of this field with a vector space over a subfield.
+            Give an isomorphism of this field with a vector space over a subfield.
 
             This method is an alias for ``free_module``, which may have more documentation.
 
@@ -553,7 +652,7 @@ class Fields(CategoryWithAxiom):
     class ElementMethods:
         def euclidean_degree(self):
             r"""
-            Return the degree of this element as an element of an Euclidean
+            Return the degree of this element as an element of a Euclidean
             domain.
 
             In a field, this returns 0 for all but the zero element (for
@@ -588,9 +687,9 @@ class Fields(CategoryWithAxiom):
                 raise ZeroDivisionError
             return (self/other, self.parent().zero())
 
-        def is_unit( self ):
+        def is_unit(self):
             r"""
-            Returns True if ``self`` has a multiplicative inverse.
+            Return ``True`` if ``self`` has a multiplicative inverse.
 
             EXAMPLES::
 
@@ -605,7 +704,7 @@ class Fields(CategoryWithAxiom):
         # Of course, in general gcd and lcm in a field are not very interesting.
         # However, they should be implemented!
         @coerce_binop
-        def gcd(self,other):
+        def gcd(self, other):
             """
             Greatest common divisor.
 
@@ -641,6 +740,11 @@ class Fields(CategoryWithAxiom):
                 sage: gcd(0.0, 0.0)                                                     # needs sage.rings.real_mpfr
                 0.000000000000000
 
+            TESTS::
+
+                sage: QQbar(0).gcd(QQbar.zeta(3))
+                1
+
             AUTHOR:
 
             - Simon King (2011-02) -- :issue:`10771`
@@ -655,7 +759,7 @@ class Fields(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 try:
                     return P(ZZ(self).gcd(ZZ(other)))
-                except TypeError:
+                except (TypeError, ValueError):
                     pass
 
             if self == P.zero() and other == P.zero():
@@ -749,7 +853,7 @@ class Fields(CategoryWithAxiom):
                 sage: GF(5)(0).xgcd(GF(5)(0))
                 (0, 0, 0)
 
-            The xgcd of non-zero floating point numbers will be a triple of
+            The xgcd of nonzero floating point numbers will be a triple of
             floating points. But if the input are two integral floating points
             the result is a floating point version of the standard gcd on
             `\ZZ`::
@@ -814,7 +918,7 @@ class Fields(CategoryWithAxiom):
                 1/2
 
             Trying to invert the zero element typically raises a
-            :class:`ZeroDivisionError`::
+            :exc:`ZeroDivisionError`::
 
                 sage: QQ(0).inverse_of_unit()
                 Traceback (most recent call last):

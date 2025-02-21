@@ -59,7 +59,7 @@ equations. It describes the metric inside a star of radius `R = 2m`,
 being `m` the inertial mass of the star. It can be seen as an open
 ball in a Lorentzian manifold structure on `\RR^4`::
 
-    sage: M = Manifold(4, 'M', structure="Lorentzian")
+    sage: M = Manifold(4, 'M', structure='Lorentzian')
     sage: X_M.<t, r, th, ph> = \
     ....: M.chart(r"t r:(0,oo) th:(0,pi):\theta ph:(0,2*pi):\phi")
     sage: var('m'); assume(m>0)
@@ -77,7 +77,7 @@ Let us define the horizon as a degenerate hypersurface::
 
 A `2`-dimensional degenerate submanifold of a Lorentzian manifold::
 
-    sage: M = Manifold(4, 'M', structure="Lorentzian")
+    sage: M = Manifold(4, 'M', structure='Lorentzian')
     sage: X.<t,x,y,z> = M.chart()
     sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
     sage: S
@@ -156,25 +156,26 @@ REFERENCES:
 # *****************************************************************************
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from sage.manifolds.differentiable.pseudo_riemannian import \
-    PseudoRiemannianManifold
-from sage.manifolds.differentiable.degenerate import (DegenerateManifold,
-                                                      TangentTensor)
-from sage.manifolds.differentiable.differentiable_submanifold import \
-    DifferentiableSubmanifold
+from sage.manifolds.differentiable.degenerate import DegenerateManifold, TangentTensor
+from sage.manifolds.differentiable.differentiable_submanifold import (
+    DifferentiableSubmanifold,
+)
+from sage.manifolds.differentiable.pseudo_riemannian import PseudoRiemannianManifold
 from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
-from sage.rings.infinity import infinity
 from sage.matrix.constructor import matrix
+from sage.rings.infinity import infinity
 from sage.symbolic.expression import Expression
 
 if TYPE_CHECKING:
     from sage.manifolds.differentiable.metric import DegenerateMetric
 
+
 class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
     r"""
-    Degenerate submanifolds
+    Degenerate submanifolds.
 
     An *embedded (resp. immersed) degenerate submanifold of a proper
     pseudo-Riemannian manifold* `(M,g)` is an embedded (resp. immersed)
@@ -223,7 +224,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         :mod:`~sage.manifolds.manifold` and
         :mod:`~sage.manifolds.differentiable.differentiable_submanifold`
-
     """
     def __init__(self, n, name, ambient=None, metric_name=None, signature=None,
                  base_manifold=None, diff_degree=infinity, latex_name=None,
@@ -236,12 +236,11 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A `2`-dimensional degenerate submanifold of a Lorentzian manifold::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
             sage: S
             2-dimensional degenerate submanifold S embedded in 4-dimensional
             differentiable manifold M
-
         """
         DegenerateManifold.__init__(self, n, name=name,
                                           metric_name=metric_name,
@@ -295,12 +294,11 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A `2`-dimensional degenerate submanifold of a Lorentzian manifold::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
             sage: S.__repr__()
             '2-dimensional degenerate submanifold S embedded in 4-dimensional
             differentiable manifold M'
-
         """
         if self._ambient is None:
             return super(DegenerateManifold, self).__repr__()
@@ -319,15 +317,13 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         Return the metric of the ambient manifold. The submanifold has to be
         embedded
 
-        OUTPUT:
-
-        - the metric of the ambient manifold
+        OUTPUT: the metric of the ambient manifold
 
         EXAMPLES:
 
         The lightcone of the 3D Minkowski space::
 
-            sage: M = Manifold(3, 'M', structure="Lorentzian")
+            sage: M = Manifold(3, 'M', structure='Lorentzian')
             sage: X.<t,x,y> = M.chart()
             sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v> = S.chart()
@@ -338,7 +334,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: S.set_immersion(Phi, inverse=Phi_inv); S.declare_embedding()
             sage: S.ambient_metric()
             Lorentzian metric g on the 3-dimensional Lorentzian manifold M
-
         """
         if self._ambient_metric is None:
             if not self._embedded or not isinstance(self._ambient,
@@ -350,7 +345,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
     def default_screen(self):
         r"""
-        Return the default screen distribution
+        Return the default screen distribution.
 
         OUTPUT:
 
@@ -361,7 +356,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -380,7 +375,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             screen distribution Sc along the degenerate hypersurface S embedded
             in 4-dimensional differentiable manifold M mapped into the 4-dimensional
             Lorentzian manifold M
-
         """
         return self._default_screen
 
@@ -397,7 +391,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -416,7 +410,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             {'Sc': screen distribution Sc along the degenerate hypersurface S
             embedded in 4-dimensional differentiable manifold M mapped into the
             4-dimensional Lorentzian manifold M}
-
         """
         return self._screens
 
@@ -446,7 +439,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         The lightcone of the 3-dimensional Minkowski space `\RR^3_1`::
 
-            sage: M = Manifold(3, 'M', structure="Lorentzian")
+            sage: M = Manifold(3, 'M', structure='Lorentzian')
             sage: X.<t,x,y> = M.chart()
             sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v> = S.chart()
@@ -458,15 +451,14 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: g = M.metric()
             sage: g[0,0], g[1,1], g[2,2] = -1,1,1
             sage: S.set_transverse(rigging=t)
-
         """
         if isinstance(rigging, (list, tuple)):
-            rigging = [elt for elt in rigging]
+            rigging = list(rigging)
         else:
             if rigging is not None:
                 rigging = [rigging]
         if isinstance(normal, (list, tuple)):
-            normal = [elt for elt in normal]
+            normal = list(normal)
         else:
             if normal is not None:
                 normal = [normal]
@@ -529,7 +521,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -549,11 +541,11 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             Lorentzian manifold M
         """
         if isinstance(screen, (list, tuple)):
-            screen = [elt for elt in screen]
+            screen = list(screen)
         else:
             screen = [screen]
         if isinstance(rad, (list, tuple)):
-            rad = [elt for elt in rad]
+            rad = list(rad)
         else:
             rad = [rad]
         if name in self._screens:
@@ -608,7 +600,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         Section of the lightcone of the Minkowski space with a hyperplane
         passing through the origin::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v> = S.chart()
@@ -622,7 +614,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: h = S.induced_metric(); h  # long time
             degenerate metric gamma on the 2-dimensional degenerate
             submanifold S embedded in 4-dimensional differentiable manifold M
-
         """
         if self._induced_metric is None or self._induced_metric._components == {}:
             self._induced_metric = self.metric()
@@ -647,7 +638,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -663,7 +654,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: U = M.vector_field(); U[2] = 1; V = M.vector_field(); V[3] = 1
             sage: Sc = S.screen('Sc', (U,V), xi);  # long time
             sage: h = S.first_fundamental_form()   # long time
-
         """
         if self._first_fundamental_form is None:
             g = self.ambient_metric()
@@ -705,7 +695,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -726,7 +716,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
              [Vector field on the 4-dimensional Lorentzian manifold M],
              (),
              [Vector field N on the 4-dimensional Lorentzian manifold M]]
-
         """
         try:
             normal = self._transverse['normal']
@@ -768,15 +757,13 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
           :class:`~sage.manifolds.differentiable.degenerate_submanifold.Screen`;
           if ``None`` default screen is used.
 
-        OUTPUT:
-
-        - a frame on the ambient manifold
+        OUTPUT: a frame on the ambient manifold
 
         EXAMPLES:
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -792,7 +779,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: U = M.vector_field(); U[2] = 1; V = M.vector_field(); V[3] = 1
             sage: Sc = S.screen('Sc', (U,V), xi);  # long time
             sage: T = S._adapted_frame_();         # long time
-
         """
 
         if screen is None:
@@ -862,15 +848,13 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
           :class:`~sage.manifolds.differentiable.degenerate_submanifold.Screen`.
           if ``None`` default screen is used.
 
-        OUTPUT:
-
-        - a frame on the ambient manifold along the submanifold
+        OUTPUT: a frame on the ambient manifold along the submanifold
 
         EXAMPLES:
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -888,7 +872,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: T = S.adapted_frame(); T         # long time
             Vector frame (S, (vv_0,vv_1,vv_2,vv_3)) with values on the 4-dimensional
             Lorentzian manifold M
-
         """
         e = self._adapted_frame_(screen).along(self.immersion())
         b = e.dual_basis()
@@ -937,7 +920,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -955,7 +938,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: B = S.second_fundamental_form();  # long time
             sage: B.display()                       # long time
             B = 0
-
         """
         if self._ambient._dim-self._dim != 1:
             raise ValueError("'second_fundamental_form' is defined" +
@@ -999,7 +981,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -1015,7 +997,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: U = M.vector_field(); U[2] = 1; V = M.vector_field(); V[3] = 1
             sage: Sc = S.screen('Sc', (U,V), xi);  # long time
             sage: U1 = S.projection(U)             # long time
-
         """
         if tensor.tensor_type()[0] != 1:
             raise NotImplementedError("``projection`` is implemented only for "
@@ -1042,7 +1023,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -1058,7 +1039,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: U = M.vector_field(); U[2] = 1; V = M.vector_field(); V[3] = 1
             sage: Sc = S.screen('Sc', (U,V), xi);  # long time
             sage: U1 = S.screen_projection(U);     # long time
-
         """
         if tensor.tensor_type()[0] != 1:
             raise NotImplementedError("``projection`` is implemented only for " +
@@ -1108,7 +1088,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -1127,7 +1107,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: W = S.weingarten_map();          # long time
             sage: W.display()                      # long time
             nabla_g(xi)|X(S) = 0
-
         """
 
         im = self.immersion()
@@ -1165,7 +1144,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -1184,7 +1163,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: SO = S.shape_operator();         # long time
             sage: SO.display()                     # long time
             A^* = 0
-
         """
         if screen is None:
             screen = self.default_screen()
@@ -1214,15 +1192,13 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
           :class:`~sage.manifolds.differentiable.degenerate_submanifold.Screen`.
           If ``None`` the default screen is used.
 
-        OUTPUT:
-
-        - a scalar function on ``self``
+        OUTPUT: a scalar function on ``self``
 
         EXAMPLES:
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -1241,7 +1217,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: K.display()                      # long time
             S → ℝ
             (u, v, w) ↦ 0
-
         """
         if self._ambient._dim-self._dim != 1:
             raise ValueError("'gauss_curvature' is defined"
@@ -1277,7 +1252,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -1295,7 +1270,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: PD = S.principal_directions()                          # long time
             sage: PD[2][0].display(T)                                    # long time
             e_2 = xi
-
         """
         if self._codim != 1:
             raise ValueError("'principal directions' is defined" +
@@ -1315,7 +1289,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             for eigen_vector in eigen_space[1]:
                 v = self._ambient.vector_field(name="e_{}".format(next(counter))
                                                             ).along(self.immersion())
-                v[frame, :] = [elt for elt in eigen_vector] + [0]
+                v[frame, :] = list(eigen_vector) + [0]
                 res.append((TangentTensor(v, self.immersion()), self.scalar_field(
                   {chart: eigen_space[0] for chart in self.top_charts()})))
                 #res[-1][0].set_name("e_{}".format(next(counter)))
@@ -1334,15 +1308,13 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
           :class:`~sage.manifolds.differentiable.degenerate_submanifold.Screen`.
           If ``None`` the default screen is used.
 
-        OUTPUT:
-
-        - the mean curvature, as a scalar field on the submanifold
+        OUTPUT: the mean curvature, as a scalar field on the submanifold
 
         EXAMPLES:
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -1363,7 +1335,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: m.display()                      # long time
             S → ℝ
             (u, v, w) ↦ 0
-
         """
         if self._codim != 1:
             raise ValueError("'mean_curvature' is defined" +
@@ -1395,7 +1366,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -1415,7 +1386,6 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             True
             sage: S.is_tangent(v.along(Phi))       # long time
             False
-
         """
         g = self.ambient_metric()
         im = self.immersion()
@@ -1459,7 +1429,7 @@ class Screen(VectorFieldModule):
 
     The horizon of the Schwarzschild black hole::
 
-        sage: M = Manifold(4, 'M', structure="Lorentzian")
+        sage: M = Manifold(4, 'M', structure='Lorentzian')
         sage: X_M.<t, r, th, ph> = \
         ....: M.chart(r"t r:(0,oo) th:(0,pi):\theta ph:(0,2*pi):\phi")
         sage: var('m'); assume(m>0)
@@ -1509,7 +1479,7 @@ class Screen(VectorFieldModule):
 
         TESTS::
 
-            sage: M = Manifold(3, 'M', structure="Lorentzian")
+            sage: M = Manifold(3, 'M', structure='Lorentzian')
             sage: X.<t,x,y> = M.chart()
             sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v> = S.chart()
@@ -1524,7 +1494,6 @@ class Screen(VectorFieldModule):
             sage: xi = M.vector_field(); xi[0] = sqrt(x^2+y^2); xi[1] = x; xi[2] = y
             sage: U = M.vector_field(); U[1] = -y; U[2] = x
             sage: Sc = S.screen('Sc', U, xi);
-
         """
         if not isinstance(submanifold, DegenerateSubmanifold):
             raise TypeError("the first argument must be a null submanifold")
@@ -1546,7 +1515,7 @@ class Screen(VectorFieldModule):
 
         TESTS::
 
-            sage: M = Manifold(3, 'M', structure="Lorentzian")
+            sage: M = Manifold(3, 'M', structure='Lorentzian')
             sage: X.<t,x,y> = M.chart()
             sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v> = S.chart()
@@ -1564,7 +1533,6 @@ class Screen(VectorFieldModule):
             'screen distribution Sc along the degenerate hypersurface S embedded in
             3-dimensional differentiable manifold M mapped into the 3-dimensional
             Lorentzian manifold M'
-
         """
         description = "screen distribution "+self._name
         if self._dest_map is self._domain.identity_map():
@@ -1590,7 +1558,7 @@ class Screen(VectorFieldModule):
 
         TESTS::
 
-            sage: M = Manifold(3, 'M', structure="Lorentzian")
+            sage: M = Manifold(3, 'M', structure='Lorentzian')
             sage: X.<t,x,y> = M.chart()
             sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v> = S.chart()
@@ -1628,7 +1596,7 @@ class Screen(VectorFieldModule):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -1646,7 +1614,6 @@ class Screen(VectorFieldModule):
             sage: Sc = S.screen('Sc', (U,V), xi);                  # long time
             sage: Rad = Sc.normal_tangent_vector(); Rad.display()  # long time
             xi = ∂/∂t + ∂/∂x
-
         """
         rad = [elt.along(self._domain.immersion()) for elt in self._rad]
         if self._domain._codim == 1:
@@ -1672,7 +1639,7 @@ class Screen(VectorFieldModule):
 
         A degenerate hyperplane the 4-dimensional Minkowski space `\RR^4_1`::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -1690,7 +1657,6 @@ class Screen(VectorFieldModule):
             sage: Sc = S.screen('Sc', (U,V), xi);    # long time
             sage: rig = Sc.rigging(); rig.display()  # long time
             N = -1/2 ∂/∂t + 1/2 ∂/∂x
-
         """
         im = self._domain.immersion()
         rig = [elt.along(im) for elt in self._domain._transverse['rigging']]

@@ -39,7 +39,7 @@ class RegularSuperCrystals(Category_singleton):
 
     - either an attribute ``_cartan_type`` or a method ``cartan_type``
 
-    - ``module_generators``: a list (or container) of distinct elements
+    - ``module_generators`` -- a list (or container) of distinct elements
       that generate the crystal using `f_i` and `e_i`
 
     Furthermore, their elements ``x`` should implement the following

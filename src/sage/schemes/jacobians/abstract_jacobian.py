@@ -28,7 +28,7 @@ _Fields = Fields()
 
 def is_Jacobian(J):
     """
-    Return True if `J` is of type Jacobian_generic.
+    Return ``True`` if `J` is of type ``Jacobian_generic``.
 
     EXAMPLES::
 
@@ -101,14 +101,14 @@ class Jacobian_generic(Scheme):
         Note: this is an abstract parent, so we skip element tests::
 
             sage: TestSuite(J).run(skip =["_test_an_element", \
-                                          "_test_zero", \
-                                          "_test_elements", \
-                                          "_test_elements_eq_reflexive", \
-                                          "_test_elements_eq_symmetric", \
-                                          "_test_elements_eq_transitive", \
-                                          "_test_additive_associativity", \
-                                          "_test_elements_neq", \
-                                          "_test_some_elements"])
+            ....:                         "_test_zero", \
+            ....:                         "_test_elements", \
+            ....:                         "_test_elements_eq_reflexive", \
+            ....:                         "_test_elements_eq_symmetric", \
+            ....:                         "_test_elements_eq_transitive", \
+            ....:                         "_test_additive_associativity", \
+            ....:                         "_test_elements_neq", \
+            ....:                         "_test_some_elements"])
 
         ::
 
@@ -188,7 +188,7 @@ class Jacobian_generic(Scheme):
 
         OUTPUT:
 
-        This method always raises a :class:`NotImplementedError`; it is
+        This method always raises a :exc:`NotImplementedError`; it is
         only abstract.
 
         EXAMPLES::
@@ -225,9 +225,9 @@ class Jacobian_generic(Scheme):
 
         INPUT:
 
-        - ``R`` -- a field. The new base ring.
+        - ``R`` -- a field; the new base ring
 
-        OUTPUT: The Jacobian over the ring `R`.
+        OUTPUT: the Jacobian over the ring `R`
 
         EXAMPLES::
 
@@ -248,9 +248,9 @@ class Jacobian_generic(Scheme):
 
         INPUT:
 
-        - ``R`` -- a field. The new base field.
+        - ``R`` -- a field; the new base field
 
-        OUTPUT: The Jacobian over the ring `R`.
+        OUTPUT: the Jacobian over the ring `R`
 
         EXAMPLES::
 

@@ -124,16 +124,17 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
 
 def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, proof=None):
     """
-    Returns reduced row-echelon form using a multi-modular
-    algorithm.  Does not change self.
+    Return reduced row-echelon form using a multi-modular
+    algorithm.  Does not change ``self``.
 
     REFERENCE: Chapter 7 of Stein's "Explicitly Computing Modular Forms".
 
     INPUT:
 
-    - height_guess -- integer or None
-    - proof -- boolean or None (default: None, see proof.linear_algebra or
-      sage.structure.proof). Note that the global Sage default is proof=True
+    - ``height_guess`` -- integer or ``None``
+    - ``proof`` -- boolean or ``None`` (default: ``None``, see
+      ``proof.linear_algebra`` or ``sage.structure.proof``). Note that the
+      global Sage default is proof=True
 
     OUTPUT: a pair consisting of a matrix in echelon form and a tuple of pivot
     positions.
@@ -208,7 +209,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         from sage.structure.proof.proof import get_flag
         proof = get_flag(proof, "linear_algebra")
 
-    verbose("Multimodular echelon algorithm on %s x %s matrix"%(self._nrows, self._ncols), caller_name="multimod echelon")
+    verbose("Multimodular echelon algorithm on %s x %s matrix" % (self._nrows, self._ncols), caller_name="multimod echelon")
     cdef Matrix E
     if self._nrows == 0 or self._ncols == 0:
         return self, ()
@@ -218,10 +219,10 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
     height = self.height()
     if height_guess is None:
         height_guess = 10000000*(height+100)
-    tm = verbose("height_guess = %s"%height_guess, level=2, caller_name="multimod echelon")
+    tm = verbose("height_guess = %s" % height_guess, level=2, caller_name="multimod echelon")
 
     if proof:
-        M = self._ncols * height_guess * height  +  1
+        M = self._ncols * height_guess * height + 1
     else:
         M = height_guess + 1
 
@@ -243,7 +244,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             problem = problem + 1
             if problem > 50:
                 verbose("echelon multi-modular possibly not converging?", caller_name="multimod echelon")
-            t = verbose("echelon modulo p=%s (%.2f%% done)"%(
+            t = verbose("echelon modulo p=%s (%.2f%% done)" % (
                        p, 100*float(len(str(prod))) / len(str(M))), level=2, caller_name="multimod echelon")
 
             # We use denoms=False, since we made self integral by calling clear_denom above.
@@ -280,10 +281,10 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             if cmp_pivots(best_pivots, X[i].pivots()) <= 0:
                 p = X[i].base_ring().order()
                 if p not in lifts:
-                    t0 = verbose("Lifting a good matrix", level=2, caller_name = "multimod echelon")
+                    t0 = verbose("Lifting a good matrix", level=2, caller_name="multimod echelon")
                     lift = X[i].lift()
                     lifts[p] = (lift, p)
-                    verbose("Finished lift", level=2, caller_name= "multimod echelon", t=t0)
+                    verbose("Finished lift", level=2, caller_name="multimod echelon", t=t0)
                 Y.append(lifts[p])
                 prod = prod * X[i].base_ring().order()
         verbose("finished comparing pivots", level=2, t=t, caller_name="multimod echelon")

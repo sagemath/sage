@@ -70,7 +70,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     - ``base_ring`` -- must be a field
     - ``cell_complex`` -- the cell complex whose homology we are
       computing
-    - ``cohomology`` -- (default: ``False``) if ``True``, return
+    - ``cohomology`` -- boolean (default: ``False``); if ``True``, return
       the cohomology as a module
     - ``category`` -- (optional) a subcategory of modules with basis
 
@@ -340,7 +340,6 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
             sage: co = simplicial_complexes.KleinBottle().cohomology_ring(GF(2))
             sage: co.basis()[1,0] # indirect doctest
             h^{1,0}
-
         """
         sym = '^' if self._cohomology else '_'
         return 'h{}{{{},{}}}'.format(sym, i[0], i[1])
@@ -445,7 +444,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         tester = self._tester(**options)
         dual = self.dual()
         dims = [a[0] for a in self._indices]
-        for dim in range(max(max(dims),  tester._max_runs) + 1):
+        for dim in range(max(max(dims), tester._max_runs) + 1):
             n = len(self.basis(dim))
             m = matrix(n, n, [a.eval(b) for a in self.basis(dim) for b in dual.basis(dim)])
             tester.assertEqual(m, 1, f"error in dimension {dim}")
@@ -634,7 +633,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
                 = \langle f, \phi_L (a \otimes x) \rangle,
 
             for `f \in H_m`, `a \in A^n`, and `x \in
-            H^{m-n}`. Somewhat more succintly, we define the action `f
+            H^{m-n}`. Somewhat more succinctly, we define the action `f
             \cdot a` by
 
             .. MATH::
@@ -691,10 +690,9 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
             if m <= n:
                 return self.parent().zero()
 
-            if not self_on_left: # i.e., module element on left
+            if not self_on_left:  # i.e., module element on left
                 a = a.antipode()
             P = self.parent()
-            B = list(P.basis(m-n))
             return P._from_dict({x.support()[0]: self.eval(a * x)
                                  for x in sorted(self.parent().dual().basis(m-n))})
 
@@ -934,7 +932,6 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 sage: a,b = K.cohomology_ring(QQ).basis(2)
                 sage: a**0
                 h^{0,0} + h^{0,1}
-
             """
             return self * other
 
@@ -1256,7 +1253,7 @@ class CohomologyRing_mod2(CohomologyRing):
             ret = CombinatorialFreeModule.Element._acted_upon_(self, a, self_on_left)
             if ret is not None:  # did the scalar action
                 return ret
-            if self_on_left: # i.e., module element on left
+            if self_on_left:  # i.e., module element on left
                 a = a.antipode()
             b = a.change_basis('adem')
             ans = self.parent().zero()
@@ -1282,11 +1279,11 @@ class CohomologyRing_mod2(CohomologyRing):
         - ``deg_codomain`` -- the degree of the codomain in the
           cohomology ring
 
-        - ``side`` -- (default ``'left'``) whether we are computing
+        - ``side`` -- (default: ``'left'``) whether we are computing
           the action as a left module action or a right module
 
         We will write this with respect to the left action;
-        for the right action, just switch all of the the tensors.
+        for the right action, just switch all of the tensors.
         Writing `m` for ``deg_domain`` and `n` for ``deg_codomain``, this
         returns `A^{n-m} \otimes H^{m} \to H^{n}`, one single
         component of the map making `H` into an `A`-module.
@@ -1419,7 +1416,7 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
 
     INPUT:
 
-    - ``k`` -- non-negative integer
+    - ``k`` -- nonnegative integer
     - ``i_k_plus_one`` -- the positive integer `i_{k+1}`
     - ``S_k_plus_one`` -- the integer `S(k+1)`
 
@@ -1436,6 +1433,7 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
         return [[S_k]]
     return [[i_k] + l for i_k in range(S_k, i_k_plus_one)
             for l in sum_indices(k-1, i_k, S_k)]
+
 
 def is_GF2(R):
     r"""

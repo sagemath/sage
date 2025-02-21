@@ -19,7 +19,7 @@ from sage.structure.element_wrapper import ElementWrapper
 
 class LeftRegularBand(UniqueRepresentation, Parent):
     r"""
-    An example of a finite semigroup
+    An example of a finite semigroup.
 
     This class provides a minimal implementation of a finite semigroup.
 
@@ -71,7 +71,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
     Now, let us look at the structure of the semigroup::
 
         sage: S = FiniteSemigroups().example(alphabet = ('a','b','c'))
-        sage: S.cayley_graph(side="left", simple=True).plot()                           # needs sage.graphs sage.plot
+        sage: S.cayley_graph(side='left', simple=True).plot()                           # needs sage.graphs sage.plot
         Graphics object consisting of 60 graphics primitives
         sage: S.j_transversal_of_idempotents()  # random (arbitrary choice)             # needs sage.graphs
         ['acb', 'ac', 'ab', 'bc', 'a', 'c', 'b']
@@ -134,7 +134,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
 
     def product(self, x, y):
         r"""
-        Returns the product of two elements of the semigroup.
+        Return the product of two elements of the semigroup.
 
         EXAMPLES::
 
@@ -145,7 +145,6 @@ class LeftRegularBand(UniqueRepresentation, Parent):
             'ab'
             sage: S('a') * S('a')
             'a'
-
         """
         assert x in self
         assert y in self
@@ -156,20 +155,19 @@ class LeftRegularBand(UniqueRepresentation, Parent):
     @cached_method
     def semigroup_generators(self):
         r"""
-        Returns the generators of the semigroup.
+        Return the generators of the semigroup.
 
         EXAMPLES::
 
             sage: S = FiniteSemigroups().example(alphabet=('x','y'))
             sage: S.semigroup_generators()
             Family ('x', 'y')
-
         """
         return Family([self(i) for i in self.alphabet])
 
     def an_element(self):
         r"""
-        Returns an element of the semigroup.
+        Return an element of the semigroup.
 
         EXAMPLES::
 

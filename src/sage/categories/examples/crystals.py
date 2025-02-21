@@ -127,7 +127,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
 
         def e(self, i):
             r"""
-            Returns the action of `e_i` on ``self``.
+            Return the action of `e_i` on ``self``.
 
             EXAMPLES::
 
@@ -143,7 +143,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
 
         def f(self, i):
             r"""
-            Returns the action of `f_i` on ``self``.
+            Return the action of `f_i` on ``self``.
 
             EXAMPLES::
 
@@ -189,7 +189,8 @@ class NaiveCrystal(UniqueRepresentation, Parent):
         self.n = 2
         self._cartan_type = CartanType(['A', 2])
         self.G = DiGraph(5)
-        self.G.add_edges([ [0,1,1], [1,2,1], [2,3,1], [3,5,1],  [0,4,2], [4,5,2] ])
+        self.G.add_edges([[0, 1, 1], [1, 2, 1], [2, 3, 1],
+                          [3, 5, 1], [0, 4, 2], [4, 5, 2]])
         self.module_generators = [self(0)]
 
     def __repr__(self):
@@ -204,7 +205,7 @@ class NaiveCrystal(UniqueRepresentation, Parent):
     class Element(ElementWrapper):
         def e(self, i):
             r"""
-            Returns the action of `e_i` on ``self``.
+            Return the action of `e_i` on ``self``.
 
             EXAMPLES::
 
@@ -220,7 +221,7 @@ class NaiveCrystal(UniqueRepresentation, Parent):
 
         def f(self, i):
             r"""
-            Returns the action of `f_i` on ``self``.
+            Return the action of `f_i` on ``self``.
 
             EXAMPLES::
 

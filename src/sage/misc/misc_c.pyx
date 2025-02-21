@@ -37,7 +37,8 @@ cdef extern from *:
 
 def running_total(L, start=None):
     """
-    Return a list where the i-th entry is the sum of all entries up to (and including) i.
+    Return a list where the `i`-th entry is the sum of all entries up to (and
+    including) `i`.
 
     INPUT:
 
@@ -440,7 +441,8 @@ cpdef list normalize_index(object key, int size):
 
     INPUT:
 
-    - ``key`` -- the index key, which can be either an integer, a tuple/list of integers, or a slice.
+    - ``key`` -- the index key, which can be either an integer, a tuple/list of
+      integers, or a slice
     - ``size`` -- the size of the collection
 
     OUTPUT:
@@ -622,10 +624,10 @@ cdef class sized_iter:
 
     - ``iterable`` -- object to be iterated over
 
-    - ``length`` -- (optional) the required length. If this is not
-      given, then ``len(iterable)`` will be used.
+    - ``length`` -- (optional) the required length; if this is not
+      given, then ``len(iterable)`` will be used
 
-    If the iterable does not have the given length, a ``ValueError`` is
+    If the iterable does not have the given length, a :exc:`ValueError` is
     raised during iteration.
 
     EXAMPLES::

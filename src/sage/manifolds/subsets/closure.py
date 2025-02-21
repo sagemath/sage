@@ -17,6 +17,7 @@ of a manifold subset in the topology of the manifold.
 
 from sage.manifolds.subset import ManifoldSubset
 
+
 class ManifoldSubsetClosure(ManifoldSubset):
 
     r"""
@@ -27,8 +28,8 @@ class ManifoldSubsetClosure(ManifoldSubset):
     - ``subset`` -- a :class:`~sage.manifolds.subset.ManifoldSubset`
     - ``name`` -- (default: computed from the name of the subset)
       string; name (symbol) given to the closure
-    - ``latex_name`` --  (default: ``None``) string; LaTeX symbol to
-      denote the subset; if none is provided, it is set to ``name``
+    - ``latex_name`` -- string (default: ``None``); LaTeX symbol to
+      denote the subset. If none is provided, it is set to ``name``.
 
     EXAMPLES::
 
@@ -54,7 +55,6 @@ class ManifoldSubsetClosure(ManifoldSubset):
         sage: S.declare_closed()
         sage: cl_D.is_subset(S)
         True
-
     """
 
     def __init__(self, subset, name=None, latex_name=None):
@@ -78,7 +78,6 @@ class ManifoldSubsetClosure(ManifoldSubset):
             False
             sage: cl_D == also_cl_D
             False
-
         """
         self._subset = subset
         base_manifold = subset.manifold()
@@ -127,6 +126,5 @@ class ManifoldSubsetClosure(ManifoldSubset):
             Topological closure cl_D of the Open subset D of the 2-dimensional topological manifold R^2
             sage: cl_D.is_closed()
             True
-
         """
         return True

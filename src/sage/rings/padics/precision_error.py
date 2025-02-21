@@ -2,7 +2,7 @@
 Precision Error
 
 The errors in this file indicate various styles of precision problems
-that can go wrong for p-adics and power series.
+that can go wrong for `p`-adics and power series.
 
 AUTHORS:
 
@@ -17,6 +17,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 
 class PrecisionError(ArithmeticError):
     pass

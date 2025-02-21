@@ -54,8 +54,8 @@ cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_
     INPUT:
 
     - ``PyDictObject *mp`` -- pointer to a dict
-    - ``PyObject *value``  -- pointer to a value of the dictionary
-    - ``Py_hash_t hash``        -- hash of the key by which the value is stored in the dict
+    - ``PyObject *value`` -- pointer to a value of the dictionary
+    - ``Py_hash_t hash`` -- hash of the key by which the value is stored in the dict
 
     The hash bucket determined by the given hash is searched for the item
     containing the given value. If this item cannot be found, the function is
@@ -143,9 +143,9 @@ def test_del_dictitem_by_exact_value(D, value, h):
 
     INPUT:
 
-    - ``D`` -- a Python ``<dict>``.
-    - ``value`` -- an object that is value ``D``.
-    - ``h`` -- the hash of the key under which to find ``value`` in ``D``.
+    - ``D`` -- a Python ``<dict>``
+    - ``value`` -- an object that is value ``D``
+    - ``h`` -- the hash of the key under which to find ``value`` in ``D``
 
     The underlying cdef function deletes an item from ``D`` that is in the
     hash bucket determined by ``h`` and whose value is identic with

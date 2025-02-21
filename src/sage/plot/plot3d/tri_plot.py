@@ -30,7 +30,7 @@ class Triangle:
     """
     A graphical triangle class.
     """
-    def __init__(self,a,b,c,color=0):
+    def __init__(self, a, b, c, color=0):
         """
         a, b, c : triples (x,y,z) representing corners on a triangle in 3-space.
 
@@ -51,7 +51,7 @@ class Triangle:
 
     def str(self):
         """
-        Returns a string representation of an instance of the Triangle
+        Return a string representation of an instance of the Triangle
         class of the form
 
             a b c color
@@ -85,7 +85,7 @@ class Triangle:
 
     def get_vertices(self):
         """
-        Returns a tuple of vertex coordinates of the triangle.
+        Return a tuple of vertex coordinates of the triangle.
 
         TESTS::
 
@@ -101,7 +101,7 @@ class SmoothTriangle(Triangle):
     """
     A class for smoothed triangles.
     """
-    def __init__(self,a,b,c,da,db,dc,color=0):
+    def __init__(self, a, b, c, da, db, dc, color=0):
         """
         a, b, c : triples (x,y,z) representing corners on a triangle in 3-space
         da, db, dc : triples (dx,dy,dz) representing the normal vector at each point a,b,c
@@ -123,7 +123,7 @@ class SmoothTriangle(Triangle):
 
     def str(self):
         """
-        Returns a string representation of the SmoothTriangle of the form
+        Return a string representation of the SmoothTriangle of the form.
 
             a b c color da db dc
 
@@ -141,7 +141,7 @@ class SmoothTriangle(Triangle):
 
     def get_normals(self):
         """
-        Returns the normals to vertices a, b, and c.
+        Return the normals to vertices a, b, and c.
 
         TESTS::
 
@@ -221,7 +221,7 @@ class TriangleFactory:
 
 class TrianglePlot:
     """
-    Recursively plots a function of two variables by building squares of 4 triangles, checking at
+    Recursively plot a function of two variables by building squares of 4 triangles, checking at
     every stage whether or not each square should be split into four more squares.  This way,
     more planar areas get fewer triangles, and areas with higher curvature get more triangles.
     """
@@ -241,7 +241,7 @@ class TrianglePlot:
         return "".join(o.str() for o in self._objects)
 
     def __init__(self, triangle_factory, f, min_x__max_x, min_y__max_y, g=None,
-                       min_depth=4, max_depth=8, num_colors=None, max_bend=.3):
+                 min_depth=4, max_depth=8, num_colors=None, max_bend=.3):
         """
 
         TESTS::
@@ -265,10 +265,10 @@ class TrianglePlot:
             raise ValueError('plot rectangle is really a line; make sure min_x != max_x and min_y != max_y')
         self._num_colors = num_colors
         if g is None:
-            def fcn(x,y):
+            def fcn(x, y):
                 return [self._f(x,y)]
         else:
-            def fcn(x,y):
+            def fcn(x, y):
                 return [self._f(x,y), self._g(x,y)]
 
         self._fcn = fcn
@@ -345,28 +345,28 @@ class TrianglePlot:
                 se_depth = next_depth
                 ne_depth = next_depth
             else:
-                #compute the midpoint-to-corner vectors
+                # compute the midpoint-to-corner vectors
                 sw_v = (min_x - mid_x, min_y - mid_y, sw_z[0] - mid_z[0])
                 nw_v = (min_x - mid_x, max_y - mid_y, nw_z[0] - mid_z[0])
                 se_v = (max_x - mid_x, min_y - mid_y, se_z[0] - mid_z[0])
                 ne_v = (max_x - mid_x, max_y - mid_y, ne_z[0] - mid_z[0])
 
-                #compute triangle normal unit vectors by taking the cross-products
-                #of the midpoint-to-corner vectors.  always go around clockwise
-                #so we're guaranteed to have a positive value near 1 when neighboring
-                #triangles are parallel
-                #However -- crossunit doesn't really return a unit vector.  It returns
-                #the length of the vector to avoid numerical instability when the
-                #length is nearly zero -- rather than divide by nearly zero, we multiply
-                #the other side of the inequality by nearly zero -- in general, this
-                #should work a bit better because of the density of floating-point
-                #numbers near zero.
+                # compute triangle normal unit vectors by taking the cross-products
+                # of the midpoint-to-corner vectors.  always go around clockwise
+                # so we're guaranteed to have a positive value near 1 when neighboring
+                # triangles are parallel
+                # However -- crossunit doesn't really return a unit vector.  It returns
+                # the length of the vector to avoid numerical instability when the
+                # length is nearly zero -- rather than divide by nearly zero, we multiply
+                # the other side of the inequality by nearly zero -- in general, this
+                # should work a bit better because of the density of floating-point
+                # numbers near zero.
                 norm_w = crossunit(sw_v, nw_v)
                 norm_n = crossunit(nw_v, ne_v)
                 norm_e = crossunit(ne_v, se_v)
                 norm_s = crossunit(se_v, sw_v)
 
-                #compute the dot products of the triangle unit norms
+                # compute the dot products of the triangle unit norms
                 e_sw = norm_w[0]*norm_s[0] + norm_w[1]*norm_s[1] + norm_w[2]*norm_s[2]
                 e_nw = norm_w[0]*norm_n[0] + norm_w[1]*norm_n[1] + norm_w[2]*norm_n[2]
                 e_se = norm_e[0]*norm_s[0] + norm_e[1]*norm_s[1] + norm_e[2]*norm_s[2]
@@ -452,7 +452,7 @@ class TrianglePlot:
 
     def interface(self, n, p, p_c, q, q_c):
         """
-        Takes a pair of lists of points, and compares the (n)th coordinate, and
+        Take a pair of lists of points, and compares the (n)th coordinate, and
         "zips" the lists together into one.  The "centers", supplied in p_c and
         q_c are matched up such that the lists describe triangles whose sides
         are "perfectly" aligned.  This algorithm assumes that p and q start and
@@ -541,7 +541,7 @@ class TrianglePlot:
             self._max = max(list+[self._max])
 
 
-def crossunit(u,v):
+def crossunit(u, v):
     """
     This function computes triangle normal unit vectors by taking the
     cross-products of the midpoint-to-corner vectors.  It always goes

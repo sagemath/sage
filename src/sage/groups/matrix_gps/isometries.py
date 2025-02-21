@@ -52,15 +52,15 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
 
     INPUT:
 
-    - ``degree`` -- integer, the degree (matrix size) of the matrix
+    - ``degree`` -- integer; the degree (matrix size) of the matrix
     - ``base_ring`` -- ring, the base ring of the matrices
-    - ``gens`` -- a list of matrices over the base ring
+    - ``gens`` -- list of matrices over the base ring
     - ``invariant_bilinear_form`` -- a symmetric matrix
     - ``category`` -- (default: ``None``) a category of groups
-    - ``check`` -- bool (default: ``True``) check if the generators
+    - ``check`` -- boolean (default: ``True``); check if the generators
       preserve the bilinear form
     - ``invariant_submodule`` -- a submodule preserved by the group action
-      (default: ``None``) registers an action on this submodule
+      (default: ``None``); registers an action on this submodule
     - ``invariant_quotient_module`` -- a quotient module preserved by
       the group action (default: ``None``)
       registers an action on this quotient module
@@ -267,9 +267,9 @@ class GroupActionOnSubmodule(Action):
 
     INPUT:
 
-    - ``MatrixGroup`` --  an instance of :class:`GroupOfIsometries`
+    - ``MatrixGroup`` -- an instance of :class:`GroupOfIsometries`
     - ``submodule`` -- an invariant submodule
-    - ``is_left`` -- bool (default: ``False``)
+    - ``is_left`` -- boolean (default: ``False``)
 
     EXAMPLES::
 
@@ -288,9 +288,9 @@ class GroupActionOnSubmodule(Action):
         Echelon basis matrix:
         [0 1]
     """
-    def __init__(self, MatrixGroup,submodule, is_left=False):
+    def __init__(self, MatrixGroup, submodule, is_left=False):
         r"""
-        Initialize the action
+        Initialize the action.
 
         TESTS::
 
@@ -356,7 +356,7 @@ class GroupActionOnQuotientModule(Action):
 
     INPUT:
 
-    - ``MatrixGroup`` --  the group acting
+    - ``MatrixGroup`` -- the group acting
       :class:`GroupOfIsometries`
     - ``submodule`` -- an invariant quotient module
     - ``is_left`` -- boolean (default: ``False``)

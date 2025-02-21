@@ -42,7 +42,7 @@ doc-inventory-reference: doc-src
 	$(eval BIBLIO = $(firstword $(DOCS)))
 	$(eval OTHER_DOCS = $(wordlist 2, 100, $(DOCS)))
 	$(MAKE) doc-inventory--$(subst /,-,$(BIBLIO))
-	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" $(foreach doc, $(OTHER_DOCS), doc-inventory--$(subst /,-,$(doc)))
+	$(MAKE) $(foreach doc, $(OTHER_DOCS), doc-inventory--$(subst /,-,$(doc)))
 	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" doc-inventory--reference_top
 endif
 
@@ -63,9 +63,11 @@ doc-html-reference: doc-html-reference-sub
 doc-html-other: doc-html-reference
 	$(eval DOCS = $(shell sage --docbuild --all-documents all))
 	@if [ -z "$(DOCS)" ]; then echo "Error: 'sage --docbuild --all-documents' failed"; exit 1; fi
-	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" $(foreach doc, $(wordlist 2, 100, $(DOCS)), doc-html--$(subst /,-,$(doc)))
+	$(MAKE) $(foreach doc, $(wordlist 2, 100, $(DOCS)), doc-html--$(subst /,-,$(doc)))
 
 doc-html: doc-html-reference doc-html-other
+	SAGE_DOC=$$(sage --python -c "from sage.env import SAGE_DOC; print(SAGE_DOC)")
+	find $${SAGE_DOC}/html -type d -path "*/jupyter_execute" -exec rm -rf {} +
 
 # Matches doc-pdf--developer, doc-pdf--reference-manifolds etc.
 doc-pdf--%:
@@ -88,7 +90,8 @@ doc-pdf-other: doc-pdf-reference
 	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" $(foreach doc, $(wordlist 2, 100, $(DOCS)), doc-pdf--$(subst /,-,$(doc)))
 
 doc-pdf: doc-pdf-reference doc-pdf-other
-
+	SAGE_DOC=$$(sage --python -c "from sage.env import SAGE_DOC; print(SAGE_DOC)")
+	find $${SAGE_DOC}/latex -type d -path "*/jupyter_execute" -exec rm -rf {} +
 
 .PHONY: all clean \
 	doc-src \

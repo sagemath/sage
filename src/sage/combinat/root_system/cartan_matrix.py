@@ -353,7 +353,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
         - ``ncols`` -- number of columns
 
-        - ``sparse`` -- (boolean) sparseness
+        - ``sparse`` -- boolean
 
         EXAMPLES::
 
@@ -455,7 +455,7 @@ class CartanMatrix(Base, CartanType_abstract,
         """
         return self.root_system().root_space()
 
-    def reflection_group(self, type="matrix"):
+    def reflection_group(self, type='matrix'):
         """
         Return the reflection group corresponding to ``self``.
 
@@ -717,7 +717,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def is_simply_laced(self):
         """
-        Implements :meth:`CartanType_abstract.is_simply_laced()`.
+        Implement :meth:`CartanType_abstract.is_simply_laced()`.
 
         A Cartan matrix is simply-laced if all non diagonal entries are `0`
         or `-1`.
@@ -737,7 +737,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def is_crystallographic(self):
         """
-        Implements :meth:`CartanType_abstract.is_crystallographic`.
+        Implement :meth:`CartanType_abstract.is_crystallographic`.
 
         A Cartan matrix is crystallographic if it is symmetrizable.
 
@@ -750,7 +750,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def column_with_indices(self, j):
         """
-        Return the `j^{th}` column `(a_{i,j})_i` of ``self`` as a container
+        Return the `j`-th column `(a_{i,j})_i` of ``self`` as a container
         (or iterator) of tuples `(i, a_{i,j})`
 
         EXAMPLES::
@@ -763,7 +763,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def row_with_indices(self, i):
         """
-        Return the `i^{th}` row `(a_{i,j})_j` of ``self`` as a container
+        Return the `i`-th row `(a_{i,j})_j` of ``self`` as a container
         (or iterator) of tuples `(j, a_{i,j})`
 
         EXAMPLES::
@@ -963,7 +963,7 @@ class CartanMatrix(Base, CartanType_abstract,
             sage: ct.cartan_matrix().coxeter_matrix() == ct.coxeter_matrix()
             True
         """
-        scalarproducts_to_order = {0: 2,  1: 3,  2: 4,  3: 6}
+        scalarproducts_to_order = {0: 2, 1: 3, 2: 4, 3: 6}
         from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
         I = self.index_set()
         n = len(I)
@@ -1017,7 +1017,6 @@ class CartanMatrix(Base, CartanType_abstract,
             ]
             sage: M.principal_submatrices(proper=True)                                  # needs sage.graphs
             [[], [2], [2]]
-
         """
         iset = list(range(self.ncols()))
         ret = []

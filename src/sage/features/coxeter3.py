@@ -38,7 +38,7 @@ class Coxeter3(JoinFeature):
         """
         JoinFeature.__init__(self, "coxeter3",
                              [PythonModule("sage.libs.coxeter3.coxeter",
-                                           spkg="sagemath_coxeter3")])
+                                           spkg='sagemath_coxeter3')])
 
 
 def all_features():

@@ -35,6 +35,7 @@ from sage.categories.groups import Groups
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 
+
 class FreeModuleLinearGroup(UniqueRepresentation, Parent):
     r"""
     General linear group of a free module of finite rank over a commutative
@@ -258,7 +259,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
         ...
         TypeError: the Type-(1,1) tensor t_0 on the Rank-3 free module M over
          the Integer Ring is not invertible
-
     """
 
     Element = FreeModuleAutomorphism
@@ -277,7 +277,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             sage: GL.category()
             Category of groups
             sage: TestSuite(GL).run()
-
         """
         if not isinstance(fmodule, FiniteRankFreeModule):
             raise TypeError("{} is not a free module of finite rank".format(
@@ -357,7 +356,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             Automorphism t of the Rank-2 free module M over the Integer Ring
             sage: a.matrix(e) == t[e,:]
             True
-
         """
         from sage.tensor.modules.free_module_tensor import FreeModuleTensor
         from sage.tensor.modules.free_module_morphism import \
@@ -425,7 +423,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             sage: a.matrix(e)
             [ 1  0]
             [ 0 -1]
-
         """
         resu = self.element_class(self._fmodule)
         # Make sure that the base module has a default basis
@@ -503,7 +500,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             sage: GL.one().matrix(f)
             [1 0]
             [0 1]
-
         """
         resu = self._element_constructor_(name='Id', latex_name=r'\mathrm{Id}')
         # Initialization of the components (Kronecker delta) in some basis:
@@ -529,7 +525,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             sage: GL = M.general_linear_group()
             sage: GL._repr_()
             'General linear group of the Rank-2 free module M over the Integer Ring'
-
         """
         return "General linear group of the {}".format(self._fmodule)
 
@@ -543,7 +538,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             sage: GL = M.general_linear_group()
             sage: GL._latex_()
             \mathrm{GL}\left( M \right)
-
         """
         from sage.misc.latex import latex
         return r"\mathrm{GL}\left(" + latex(self._fmodule) + r"\right)"
@@ -565,6 +559,5 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             Rank-2 free module M over the Integer Ring
             sage: GL.base_module() is M
             True
-
         """
         return self._fmodule

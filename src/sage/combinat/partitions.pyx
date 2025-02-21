@@ -100,7 +100,7 @@ cdef inline ZS1_step(list P, int n, int *m, int *h):
 
     INPUT:
 
-    - ``P`` -- a list of size `n` storing a partition of `n`
+    - ``P`` -- list of size `n` storing a partition of `n`
 
     - ``n`` -- integer; the sum of the elements of the partition stored in ``P``
 
@@ -207,7 +207,7 @@ def ZS1_next(list P):
 
     INPUT:
 
-    - ``P`` -- a list encoding a partition of an integer `n` in descending order
+    - ``P`` -- list encoding a partition of an integer `n` in descending order
       (i.e., `P_i \geq P_{i+1}`)
 
     EXAMPLES::
@@ -245,7 +245,7 @@ def ZS1_next(list P):
 
 def ZS1_iterator_nk(int n, int k):
     r"""
-    An iterator for the partitions of ``n`` of length at most ``k`` (in the
+    An iterator for the partitions of `n` of length at most `k` (in the
     decreasing lexicographic order) which returns lists and not objects of type
     :class:`~sage.combinat.partition.Partition`.
 
@@ -345,7 +345,7 @@ cdef inline ZS2_step(list P, int n, int *m, int *h):
 
     INPUT:
 
-    - ``P`` -- a list of size `n` storing a partition of `n`
+    - ``P`` -- list of size `n` storing a partition of `n`
 
     - ``n`` -- integer; the sum of the elements of the partition stored in ``P``
 
@@ -447,7 +447,7 @@ def ZS2_next(list P):
 
     INPUT:
 
-    - ``P`` -- a list encoding a partition of an integer `n` in descending order
+    - ``P`` -- list encoding a partition of an integer `n` in descending order
       (i.e., `P_i \geq P_{i+1}`)
 
     EXAMPLES::
@@ -488,7 +488,7 @@ cdef inline AccelDesc_step(list P, int n, int* m, int* h):
 
     INPUT:
 
-    - ``P`` -- a list of size `n` storing a partition of `n`
+    - ``P`` -- list of size `n` storing a partition of `n`
 
     - ``n`` -- integer; the sum of the elements of the partition stored in ``P``
 
@@ -602,7 +602,7 @@ def AccelDesc_next(list P):
 
     INPUT:
 
-    - ``P`` -- a list encoding a partition of an integer `n` in descending order
+    - ``P`` -- list encoding a partition of an integer `n` in descending order
       (i.e., `P_i \geq P_{i+1}`)
 
     EXAMPLES::
@@ -702,7 +702,7 @@ def AccelAsc_next(list P):
 
     INPUT:
 
-    - ``P`` -- a list encoding a partition of an integer `n` in ascending order
+    - ``P`` -- list encoding a partition of an integer `n` in ascending order
       (i.e., `P_i \leq P_{i+1}`)
 
     EXAMPLES::

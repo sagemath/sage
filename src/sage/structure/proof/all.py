@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-objects
+from sage.structure.proof.proof import WithProof
 
 
 def arithmetic(t=None):
@@ -8,7 +9,7 @@ def arithmetic(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -46,7 +47,7 @@ def elliptic_curve(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -84,7 +85,7 @@ def linear_algebra(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -122,7 +123,7 @@ def number_field(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -159,7 +160,7 @@ def polynomial(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -196,7 +197,7 @@ def all(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -240,6 +241,3 @@ def all(t=None):
         return _proof_prefs._require_proof.copy()
     for s in _proof_prefs._require_proof:
         _proof_prefs._require_proof[s] = bool(t)
-
-
-from sage.structure.proof.proof import WithProof

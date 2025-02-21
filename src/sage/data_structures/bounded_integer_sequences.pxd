@@ -1,7 +1,7 @@
 from sage.libs.gmp.types cimport *
 from sage.data_structures.bitset cimport *
 
-# A biseq (bounded integer sequence) is a sequence of non-negative
+# A biseq (bounded integer sequence) is a sequence of nonnegative
 # integers, each fitting in "itembitsize" bits. We store the sequence
 # in a bitset of length at least length*itembitsize.
 ctypedef struct biseq_s:
@@ -21,7 +21,7 @@ ctypedef struct biseq_s:
     mp_size_t length
 
     # Bitsize (ranging from 1 to GMP_LIMB_BITS) of one item of this
-    # sequence. Note: Each item is a non-negative integer, and all
+    # sequence. Note: Each item is a nonnegative integer, and all
     # items of this sequence satisfy an upper bound. We do not store
     # the exact bound for the items of this sequence, but store the
     # bitsize that is sufficient to store one item.

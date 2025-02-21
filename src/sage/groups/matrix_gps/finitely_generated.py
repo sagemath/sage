@@ -83,7 +83,7 @@ def normalize_square_matrices(matrices):
     """
     Find a common space for all matrices.
 
-    OUTPUT: a list of matrices, all elements of the same matrix space
+    OUTPUT: list of matrices, all elements of the same matrix space
 
     EXAMPLES::
 

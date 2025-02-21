@@ -62,7 +62,7 @@ class LocalOptions:
 
     INPUT:
 
-    - ``name`` -- The name of the LocalOptions
+    - ``name`` -- the name of the LocalOptions
 
     - ``<options>=dict(...)`` -- dictionary specifying an option
 
@@ -73,7 +73,7 @@ class LocalOptions:
     - ``checker`` -- a function for checking whether a particular value for
       the option is valid
     - ``default`` -- the default value of the option
-    - ``values`` -- a dictionary of the legal values for this option (this
+    - ``values`` -- dictionary of the legal values for this option (this
       automatically defines the corresponding ``checker``); this dictionary
       gives the possible options, as keys, together with a brief description
       of them
@@ -111,7 +111,7 @@ class LocalOptions:
 
         INPUT:
 
-        - ``name`` -- The name of the LocalOptions
+        - ``name`` -- the name of the LocalOptions
 
         - ``<options>=dict(...)`` -- dictionary specifying an option
 
@@ -122,7 +122,7 @@ class LocalOptions:
         - ``checker`` -- a function for checking whether a particular value for
           the option is valid
         - ``default`` -- the default value of the option
-        - ``values`` -- a dictionary of the legal values for this option (this
+        - ``values`` -- dictionary of the legal values for this option (this
           automatically defines the corresponding ``checker``); this dictionary
           gives the possible options, as keys, together with a brief
           description of them.
@@ -135,14 +135,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -168,14 +168,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -205,9 +205,9 @@ class LocalOptions:
 
         INPUT:
 
-        - ``key`` -- An option.
+        - ``key`` -- an option
 
-        - ``value`` -- The value.
+        - ``value`` -- the value
 
         EXAMPLES::
 
@@ -217,14 +217,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -251,7 +251,6 @@ class LocalOptions:
             sage: o("size")
             3
             sage: o["size"]=-6
-
         """
         assert (key in self._available_options)
         if value == "?":
@@ -274,10 +273,10 @@ class LocalOptions:
 
         INPUT:
 
-        - ``get_values`` -- The options to be printed.
+        - ``get_values`` -- the options to be printed
 
         - ``<options>=dict(...)`` -- dictionary specifying an option see
-          :class:`LocalOptions` for more details.
+          :class:`LocalOptions` for more details
 
         EXAMPLES::
 
@@ -287,14 +286,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -303,18 +302,16 @@ class LocalOptions:
             ....: )
             sage: o("display")
             'list'
-            sage: o(display="diagram")
+            sage: o(display='diagram')
             sage: o("display")
             'diagram'
-            sage: o(display="?")
+            sage: o(display='?')
             Current value : diagram
             {'default': 'list', 'values':
             {'diagram': 'diagram representation',
             'list': 'list representation'}}
-
         """
-        for key in options:
-            value = options[key]
+        for key, value in options.items():
             self.__setitem__(key, value)
         for key in get_values:
             return self.__getitem__(key)
@@ -325,7 +322,7 @@ class LocalOptions:
 
         INPUT:
 
-        - ``key`` -- An option.
+        - ``key`` -- an option
 
         EXAMPLES::
 
@@ -335,14 +332,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -366,14 +363,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -397,14 +394,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -497,14 +494,14 @@ ParallelogramPolyominoesOptions = LocalOptions(
         )
     ),
     display=dict(
-        default="list",
+        default='list',
         values=dict(
             list='displayed as list',
             drawing='as a drawing',
         )
     ),
     latex=dict(
-        default="drawing",
+        default='drawing',
         values=dict(
             list='displayed as list',
             drawing='as a drawing',
@@ -595,7 +592,6 @@ class _drawing_tool:
         sage: dt.draw_line([1, 1], [-1, -1])
         '\n  \\draw[color=black, line width=1] (-1.000000, 1.000000) --
         (1.000000, -1.000000);'
-
     """
 
     def __init__(self, options, XY=lambda v: v):
@@ -606,8 +602,8 @@ class _drawing_tool:
 
         - ``options`` -- drawing options
 
-        - ``XY`` -- A user function to convert vector in other vector.
-                  (default : identity function)
+        - ``XY`` -- a user function to convert vector in other vector
+          (default: identity function)
 
         EXAMPLES::
 
@@ -643,11 +639,9 @@ class _drawing_tool:
 
         INPUT:
 
-        - ``v`` -- The vector to transform.
+        - ``v`` -- the vector to transform
 
-        OUTPUT:
-
-        A list of 2 floats encoding a vector.
+        OUTPUT: list of 2 floats encoding a vector
 
         EXAMPLES::
 
@@ -677,9 +671,9 @@ class _drawing_tool:
 
             INPUT:
 
-            - ``pos`` -- The position to translate.
+            - ``pos`` -- the position to translate
 
-            - ``v`` -- The translation vector.
+            - ``v`` -- the translation vector
 
             OUTPUT:
 
@@ -693,9 +687,9 @@ class _drawing_tool:
 
             INPUT:
 
-            - ``pos`` -- The position to rotate.
+            - ``pos`` -- the position to rotate
 
-            - ``angle`` -- The angle of rotation.
+            - ``angle`` -- the angle of rotation
 
             OUTPUT:
 
@@ -710,9 +704,9 @@ class _drawing_tool:
 
             INPUT:
 
-            - ``pos`` -- The position to mirror.
+            - ``pos`` -- the position to mirror
 
-            - ``axe`` -- The axe vector.
+            - ``axe`` -- the axe vector
 
             OUTPUT:
 
@@ -747,21 +741,19 @@ class _drawing_tool:
 
         INPUT:
 
-        - ``v1`` -- point, The first point of the line.
+        - ``v1`` -- point, The first point of the line
 
-        - ``v2`` -- point, The second point of the line.
+        - ``v2`` -- point, The second point of the line
 
-        - ``color`` -- string (default:``None``), The color of the line.
+        - ``color`` -- string (default: ``None``); the color of the line.
           If set to ``None``, the color is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        - ``size`` -- integer (default:``None``), The size of the line.
+        - ``size`` -- integer (default: ``None``); the size of the line.
           If set to ``None``, the size is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        OUTPUT:
-
-        The code of a line in TIKZ.
+        OUTPUT: the code of a line in TIKZ
 
         EXAMPLES::
 
@@ -790,19 +782,17 @@ class _drawing_tool:
 
         INPUT:
 
-        - ``list_of_vertices`` -- A list of points
+        - ``list_of_vertices`` -- list of points
 
-        - ``color`` -- string (default:``None``), The color of the line.
+        - ``color`` -- string (default: ``None``); the color of the line.
           If set to ``None``, the color is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        - ``size`` -- integer (default:``None``), The size of the line.
+        - ``size`` -- integer (default: ``None``); the size of the line.
           If set to ``None``, the size is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        OUTPUT:
-
-        The code of a polyline in TIKZ.
+        OUTPUT: the code of a polyline in TIKZ
 
         EXAMPLES::
 
@@ -826,22 +816,19 @@ class _drawing_tool:
         r"""
         Return the TIKZ code for a point.
 
-
         INPUT:
 
-        - ``p1`` -- A point
+        - ``p1`` -- a point
 
-        - ``color`` -- string (default:``None``), The color of the line.
+        - ``color`` -- string (default: ``None``); the color of the line.
           If set to ``None``, the color is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        - ``size`` -- integer (default:``None``), The size of the line.
+        - ``size`` -- integer (default: ``None``); the size of the line.
           If set to ``None``, the size is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        OUTPUT:
-
-        The code of a point in TIKZ.
+        OUTPUT: the code of a point in TIKZ
 
         EXAMPLES::
 
@@ -1124,7 +1111,7 @@ class ParallelogramPolyomino(ClonableList,
 
     def __copy__(self):
         r"""
-        Copy a parallelogram Polyomino
+        Copy a parallelogram Polyomino.
 
         EXAMPLES::
 
@@ -1250,7 +1237,6 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino([[1], [1]])
             sage: pp._to_dyck_delest_viennot()
             []
-
         """
         from sage.combinat.dyck_word import DyckWord
         dyck = []
@@ -1306,14 +1292,12 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``bijection`` -- string or ``None`` (default:``None``) The name of
+        - ``bijection`` -- string or ``None`` (default: ``None``); the name of
           the bijection. If it is set to ``None`` then the ``'Delest-Viennot'``
           bijection is used.
           Expected values are ``None``, ``'Delest-Viennot'``, or ``'Delest-Viennot-beta'``.
 
-        OUTPUT:
-
-        a Dyck word
+        OUTPUT: a Dyck word
 
         EXAMPLES::
 
@@ -1346,9 +1330,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``dyck`` -- a Dyck word
 
-        OUTPUT:
-
-        A parallelogram polyomino.
+        OUTPUT: a parallelogram polyomino
 
         EXAMPLES::
 
@@ -1384,9 +1366,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``dyck`` -- a Dyck word
 
-        OUTPUT:
-
-        A parallelogram polyomino.
+        OUTPUT: a parallelogram polyomino
 
         EXAMPLES::
 
@@ -1436,12 +1416,10 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``dyck`` -- a Dyck word
 
-        - ``bijection`` -- string or ``None`` (default:``None``) the bijection
-          to use. See :meth:`to_dyck_word` for more details.
+        - ``bijection`` -- string or ``None`` (default: ``None``); the
+          bijection to use. See :meth:`to_dyck_word` for more details.
 
-        OUTPUT:
-
-        A parallelogram polyomino.
+        OUTPUT: a parallelogram polyomino
 
         EXAMPLES::
 
@@ -1472,8 +1450,8 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``position`` -- the cell position. This is a recursive parameter.
-          It should not be used directly.
+        - ``position`` -- the cell position; this is a recursive parameter
+          It should not be used directly
 
         EXAMPLES::
 
@@ -1529,7 +1507,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``bijection`` -- string or ``None`` (default:``None``) The name of
+        - ``bijection`` -- string or ``None`` (default: ``None``); the name of
           bijection to use for the conversion. The possible values are ``None``
           or ``'Aval-Boussicault'``. The ``None`` value is equivalent to
           ``'Aval-Boussicault'``.
@@ -1722,7 +1700,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``bijection`` -- string or ``None`` (default:``None``) The name of
+        - ``bijection`` -- string or ``None`` (default: ``None``); the name of
           bijection to use for the conversion. The possible value are ``None``,
           ``'Boussicault-Socci'`` or ``'via dyck and Delest-Viennot'``.
           The ``None`` value is equivalent to the ``'Boussicault-Socci'``
@@ -1871,13 +1849,11 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``word`` -- a word of 0 and 1.
+        - ``word`` -- a word of 0 and 1
 
         - ``up`` -- 0 or 1 (a letter of the word)
 
-        OUTPUT:
-
-        A list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1904,9 +1880,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of heights associated to each vertical step of the
         parallelogram polyomino's upper path.
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1924,9 +1898,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of heights associated to each vertical step of the
         parallelogram polyomino's lower path.
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1944,9 +1916,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of widths associated to each horizontal step of the
         parallelogram polyomino's upper path.
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1964,9 +1934,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of widths associated to each horizontal step of the
         parallelogram polyomino's lower path.
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -2005,12 +1973,9 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp.widths()
             []
         """
-        widths = []
         uw = self.upper_widths()
         lw = self.lower_widths()
-        for i in range(len(lw)):
-            widths.append(uw[i] - lw[i])
-        return widths
+        return [up - lo for up, lo in zip(uw, lw)]
 
     def degree_convexity(self) -> int:
         r"""
@@ -2088,7 +2053,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``k`` -- A non negative integer.
+        - ``k`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -2216,9 +2181,9 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``w`` -- The x coordinate of the box position.
+        - ``w`` -- the x coordinate of the box position
 
-        - ``h`` -- The y coordinate of the box position.
+        - ``h`` -- the y coordinate of the box position
 
         OUTPUT:
 
@@ -2314,7 +2279,7 @@ class ParallelogramPolyomino(ClonableList,
 
         def __init__(self, polyomino, row):
             r"""
-            The constructor of the class
+            The constructor of the class.
 
             EXAMPLES::
 
@@ -2502,7 +2467,7 @@ class ParallelogramPolyomino(ClonableList,
         INPUT:
 
         - ``direction`` -- the initial direction of the bounce path (see above
-          for the definition).
+          for the definition)
 
         EXAMPLES::
 
@@ -2589,7 +2554,7 @@ class ParallelogramPolyomino(ClonableList,
         INPUT:
 
         - ``direction`` -- the initial direction of the bounce path
-          (see :meth:`bounce_path` for the definition).
+          (see :meth:`bounce_path` for the definition)
 
         EXAMPLES::
 
@@ -2763,7 +2728,6 @@ class ParallelogramPolyomino(ClonableList,
             (3.000000, 2.000000);
               \draw[color=black, line width=1] (1.000000, 1.000000) --
             (3.000000, 1.000000);
-
         """
         tikz_options = self.get_tikz_options()
         grid_width = self.width() + 1
@@ -2984,9 +2948,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``row`` -- the index of the row
 
-        OUTPUT:
-
-        A [row,column] position of the cell.
+        OUTPUT: a [row,column] position of the cell
 
         EXAMPLES::
 
@@ -3031,9 +2993,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``column`` -- the index of the column
 
-        OUTPUT:
-
-        A [row,column] position of the cell.
+        OUTPUT: a [row,column] position of the cell
 
         EXAMPLES::
 
@@ -3082,16 +3042,14 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``box_position`` -- the position of the statring cell.
+        - ``box_position`` -- the position of the starting cell
 
-        - ``direction`` -- the direction (0 or 1).
+        - ``direction`` -- the direction (0 or 1)
 
         - ``nb_crossed_nodes`` -- ``[0]`` (default) a list containing just one
-          integer.
+          integer
 
-        OUTPUT:
-
-        A [row,column] position of the cell.
+        OUTPUT: a [row,column] position of the cell
 
         EXAMPLES::
 
@@ -3149,7 +3107,7 @@ class ParallelogramPolyomino(ClonableList,
 
     def box_is_node(self, pos) -> bool:
         r"""
-        Return True if the box contains a node in the context of the
+        Return ``True`` if the box contains a node in the context of the
         Aval-Boussicault bijection between parallelogram polyomino and binary
         tree.
 
@@ -3158,11 +3116,9 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``pos`` -- the [x,y] coordinate of the box.
+        - ``pos`` -- the [x,y] coordinate of the box
 
-        OUTPUT:
-
-        A boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3198,7 +3154,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``box`` -- the x,y coordinate of the cell.
+        - ``box`` -- the x,y coordinate of the cell
 
         EXAMPLES::
 
@@ -3232,9 +3188,9 @@ class ParallelogramPolyomino(ClonableList,
         INPUT:
 
         - ``box`` -- the x,y coordinate of the starting point of the bounding
-                     path.
+          path
         - ``direction`` -- the initial direction of the bounding path (1 or 0,
-                           1 for left and 0 for top).
+          1 for left and 0 for top)
 
         EXAMPLES::
 
@@ -3314,11 +3270,9 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``line`` -- the x coordinate of the line.
+        - ``line`` -- the x coordinate of the line
 
-        OUTPUT:
-
-        A list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -3349,7 +3303,6 @@ class ParallelogramPolyomino(ClonableList,
             [0]
             sage: pp._get_path_in_pair_of_tree_from_row(0)
             []
-
         """
         pos = self._get_node_position_at_row(line)
         return self._get_number_of_nodes_in_the_bounding_path(pos, 0)
@@ -3375,11 +3328,9 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``column`` -- the y coordinate of the column.
+        - ``column`` -- the y coordinate of the column
 
-        OUTPUT:
-
-        A list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -3432,11 +3383,10 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp.set_options(drawing_components=dict(tree=True))
             sage: view(pp) # not tested
         """
-        result = []
-        for h in range(1, self.height()):
-            result.append(self._get_node_position_at_row(h))
-        for w in range(1, self.width()):
-            result.append(self._get_node_position_at_column(w))
+        result = [self._get_node_position_at_row(h)
+                  for h in range(1, self.height())]
+        result.extend(self._get_node_position_at_column(w)
+                      for w in range(1, self.width()))
         return result
 
     def get_right_BS_nodes(self):
@@ -3496,9 +3446,7 @@ class ParallelogramPolyomino(ClonableList,
         the Boussicault-Socci bijection between parallelogram polyominoes
         and pair of ordered trees.
 
-        OUTPUT:
-
-        A list of [row,column] position of cells.
+        OUTPUT: list of [row,column] position of cells
 
         EXAMPLES::
 
@@ -3696,7 +3644,7 @@ class ParallelogramPolyomino(ClonableList,
 
     def _plot_diagram(self):
         r"""
-        Return a plot of the diagram representing ``self``
+        Return a plot of the diagram representing ``self``.
 
         TESTS::
 
@@ -3748,7 +3696,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``directions`` -- direction(s) `0` and/or `1` of the bounce paths.
+        - ``directions`` -- direction(s) `0` and/or `1` of the bounce paths
 
         TESTS::
 
@@ -3764,7 +3712,6 @@ class ParallelogramPolyomino(ClonableList,
             ....: ])
             sage: pp._plot_bounce(directions=[0,1])                                     # needs sage.plot
             Graphics object consisting of 9 graphics primitives
-
         """
         if directions is None:
             directions = [0, 1]
@@ -4009,7 +3956,7 @@ class ParallelogramPolyominoesFactory(SetFactory):
 
         INPUT:
 
-        - ``size`` -- integer (default: ``None``), the size of the parallelogram
+        - ``size`` -- integer (default: ``None``); the size of the parallelogram
                       polyominoes contained in the family.
                       If set to ``None``, the family returned contains all
                       the parallelogram polyominoes.

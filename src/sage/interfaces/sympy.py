@@ -418,8 +418,8 @@ def _sympysage_Subs(self):
         sage: from sympy.core.singleton import S
     """
     args = self.args
-    substi = dict([(args[1][i]._sage_(), args[2][i]._sage_())
-                   for i in range(len(args[1]))])
+    substi = {args[1][i]._sage_(): args[2][i]._sage_()
+              for i in range(len(args[1]))}
     return args[0]._sage_().subs(substi)
 
 
@@ -765,7 +765,7 @@ def _sympysage_piecewise(self):
         sage: assert ex == sp._sage_()
 
         sage: _ = var('y, z')
-        sage: (x^y - z).integrate(y, algorithm="sympy")
+        sage: (x^y - z).integrate(y, algorithm='sympy')
         -y*z + cases(((log(x) != 0, x^y/log(x)), (1, y)))
     """
     from sage.functions.other import cases
@@ -1197,7 +1197,7 @@ def sympy_init():
 
 def check_expression(expr, var_symbols, only_from_sympy=False):
     """
-    Does ``eval(expr)`` both in Sage and SymPy and does other checks.
+    Do ``eval(expr)`` both in Sage and SymPy and other checks.
 
     EXAMPLES::
 

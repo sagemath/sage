@@ -583,7 +583,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         #                          for w in Word(range(p)).shuffle(range(p, k)) )
 
 #####################################################################
-## TensorAlgebra functor
+# TensorAlgebra functor
 
 
 class TensorAlgebraFunctor(ConstructionFunctor):
@@ -684,7 +684,7 @@ class TensorAlgebraFunctor(ConstructionFunctor):
         return D.module_morphism(phi, codomain=C)
 
 #####################################################################
-## Lift map from the base ring
+# Lift map from the base ring
 
 
 class BaseRingLift(Morphism):

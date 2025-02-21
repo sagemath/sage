@@ -26,7 +26,7 @@ Sage example in ./sol/numbertheory.tex, line 26::
 
 Sage example in ./sol/numbertheory.tex, line 52::
 
-  sage: def enum_carmichael_pq(n,a,m,p,q,verbose):
+  sage: def enum_carmichael_pq(n, a, m, p, q, verbose):
   ....:    if (a-q) % gcd(m,q*(q-1)) != 0: return 0
   ....:    s = 0
   ....:    a = crt (a, q, m, q*(q-1)); m = lcm(m,q*(q-1))

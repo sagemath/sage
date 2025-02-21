@@ -45,10 +45,10 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     INPUT:
 
     - ``start`` -- an object; the returned list is built upon data
-      provided by certain attributes of ``start``.
-    - ``bases`` -- a string; the name of an attribute of ``start``
-      providing a list of objects.
-    - ``attribute`` -- a string; the name of an attribute of the
+      provided by certain attributes of ``start``
+    - ``bases`` -- string; the name of an attribute of ``start``
+      providing a list of objects
+    - ``attribute`` -- string; the name of an attribute of the
       objects provided in ``getattr(start,bases)``. That attribute is
       supposed to provide a list.
 
@@ -177,7 +177,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         out = []
     else:
         out = [start]
-    cdef list args = getattr(start,bases)
+    cdef list args = getattr(start, bases)
     if not args:
         return out
     # Data structure / invariants:
@@ -192,9 +192,10 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     cdef object O, X
     cdef list tails = [getattr(obj, attribute) for obj in args]
     tails.append(args)
-    tails              = [list(reversed(tail))                   for tail in tails]
-    cdef list heads    = [tail.pop()                             for tail in tails]
-    cdef list tailsets = [set([<size_t><void *>O for O in tail]) for tail in tails]
+    tails = [list(reversed(tail)) for tail in tails]
+    cdef list heads = [tail.pop() for tail in tails]
+    cdef list tailsets = [set([<size_t><void *>O for O in tail])
+                          for tail in tails]
 
     cdef int i, j, nbheads
     nbheads = len(heads)

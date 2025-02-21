@@ -72,7 +72,7 @@ from sage.combinat.rigged_configurations.all import *
 
 from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover
 
-# block designs, etc
+# block designs, etc.
 from sage.combinat.designs.all import *
 
 # Free modules and friends

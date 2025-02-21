@@ -3,58 +3,57 @@
 Numerical computation of newforms
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.rings.fast_arith       import prime_range
-from sage.matrix.constructor     import matrix
-from sage.misc.verbose           import verbose
-from sage.misc.cachefunc         import cached_method
-from sage.misc.prandom           import randint
+from sage.rings.fast_arith import prime_range
+from sage.matrix.constructor import matrix
+from sage.misc.verbose import verbose
+from sage.misc.cachefunc import cached_method
+from sage.misc.prandom import randint
 from sage.modular.arithgroup.all import Gamma0
-from sage.modular.modsym.all     import ModularSymbols
+from sage.modular.modsym.all import ModularSymbols
 from sage.modules.free_module_element import free_module_element as vector
-from sage.rings.complex_double   import CDF
-from sage.rings.integer          import Integer
-from sage.rings.rational_field   import QQ
-from sage.structure.richcmp      import richcmp_method, richcmp
-from sage.structure.sage_object  import SageObject
-from sage.structure.sequence     import Sequence
+from sage.rings.complex_double import CDF
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
+from sage.structure.richcmp import richcmp_method, richcmp
+from sage.structure.sage_object import SageObject
+from sage.structure.sequence import Sequence
 
 # This variable controls importing the SciPy library sparingly
 scipy = None
 
+
 @richcmp_method
 class NumericalEigenforms(SageObject):
     """
-    numerical_eigenforms(group, weight=2, eps=1e-20, delta=1e-2, tp=[2,3,5])
+    numerical_eigenforms(group, weight=2, eps=1e-20, delta=1e-2, tp=[2,3,5]).
 
     INPUT:
 
     - ``group`` -- a congruence subgroup of a Dirichlet character of
       order 1 or 2
 
-    - ``weight`` -- an integer >= 2
+    - ``weight`` -- integer >= 2
 
     - ``eps`` -- a small float; abs( ) < eps is what "equal to zero" is
-      interpreted as for floating point numbers.
+      interpreted as for floating point numbers
 
     - ``delta`` -- a small-ish float; eigenvalues are considered distinct
       if their difference has absolute value at least delta
 
     - ``tp`` -- use the Hecke operators T_p for p in tp when searching
-      for a random Hecke operator with distinct Hecke eigenvalues.
+      for a random Hecke operator with distinct Hecke eigenvalues
 
-    OUTPUT:
-
-    A numerical eigenforms object, with the following useful methods:
+    OUTPUT: a numerical eigenforms object, with the following useful methods:
 
     - :meth:`ap` -- return all eigenvalues of `T_p`
 
@@ -65,7 +64,7 @@ class NumericalEigenforms(SageObject):
            [eigenvalues of T_3],
            [eigenvalues of T_5], ...]
 
-    - :meth:`systems_of_eigenvalues` -- a list of the systems of
+    - :meth:`systems_of_eigenvalues` -- list of the systems of
       eigenvalues of eigenforms such that the chosen random linear
       combination of Hecke operators has multiplicity 1 eigenvalues.
 
@@ -77,17 +76,13 @@ class NumericalEigenforms(SageObject):
         sage: n.ap(2)  # abs tol 1e-12
         [3.0, -1.6180339887498947, 0.6180339887498968]
         sage: n.systems_of_eigenvalues(7)  # abs tol 2e-12
-        [
-        [-1.6180339887498947, 2.2360679774997894, -3.2360679774997894],
-        [0.6180339887498968, -2.236067977499788, 1.2360679774997936],
-        [3.0, 4.0, 6.0]
-        ]
+        [[-1.6180339887498947, 2.23606797749979, -3.2360679774997894],
+         [0.618033988749895, -2.236067977499788, 1.23606797749979],
+         [3.0, 4.0, 6.0]]
         sage: n.systems_of_abs(7)  # abs tol 2e-12
-        [
-        [0.6180339887498943, 2.2360679774997894, 1.2360679774997887],
-        [1.6180339887498947, 2.23606797749979, 3.2360679774997894],
-        [3.0, 4.0, 6.0]
-        ]
+        [[0.618033988749895, 2.236067977499788, 1.23606797749979],
+         [1.6180339887498947, 2.23606797749979, 3.2360679774997894],
+         [3.0, 4.0, 6.0]]
         sage: n.eigenvalues([2,3,5])  # rel tol 2e-12
         [[3.0, -1.6180339887498947, 0.6180339887498968],
          [4.0, 2.2360679774997894, -2.236067977499788],
@@ -154,7 +149,7 @@ class NumericalEigenforms(SageObject):
 
     def _repr_(self):
         """
-        Print string representation of self.
+        Print string representation of ``self``.
 
         EXAMPLES::
 
@@ -367,11 +362,9 @@ class NumericalEigenforms(SageObject):
 
         INPUT:
 
-        - ``p`` -- integer, a prime number
+        - ``p`` -- integer; a prime number
 
-        OUTPUT:
-
-        - ``list`` -- a list of double precision complex numbers
+        OUTPUT: list of double precision complex numbers
 
         EXAMPLES::
 
@@ -400,11 +393,9 @@ class NumericalEigenforms(SageObject):
 
         INPUT:
 
-        - ``primes`` -- a list of primes
+        - ``primes`` -- list of primes
 
-        OUTPUT:
-
-        list of lists of eigenvalues.
+        OUTPUT: list of lists of eigenvalues
 
         EXAMPLES::
 
@@ -442,19 +433,26 @@ class NumericalEigenforms(SageObject):
 
     def systems_of_eigenvalues(self, bound):
         """
-        Return all systems of eigenvalues for self for primes
+        Return all systems of eigenvalues for ``self`` for primes
         up to bound.
 
         EXAMPLES::
 
             sage: numerical_eigenforms(61).systems_of_eigenvalues(10)  # rel tol 1e-9
-            [
-            [-1.4811943040920152, 0.8060634335253695, 3.1563251746586642, 0.6751308705666477],
-            [-1.0, -2.0000000000000027, -3.000000000000003, 1.0000000000000044],
-            [0.3111078174659775, 2.903211925911551, -2.525427560843529, -3.214319743377552],
-            [2.170086486626034, -1.7092753594369208, -1.63089761381512, -0.46081112718908984],
-            [3.0, 4.0, 6.0, 8.0]
-            ]
+            [[-1.481194304092014,
+              0.8060634335253706,
+              3.156325174658664,
+              0.6751308705666462],
+             [-1.0, -2.0, -3.0, 1.0],
+             [0.311107817465981,
+              2.903211925911551,
+              -2.5254275608435184,
+              -3.214319743377534],
+             [2.1700864866260323,
+              -1.7092753594369237,
+              -1.6308976138151459,
+              -0.460811127189112],
+             [3.0, 4.0, 6.0, 8.0]]
         """
         P = prime_range(bound)
         e = self.eigenvalues(P)
@@ -470,18 +468,22 @@ class NumericalEigenforms(SageObject):
     def systems_of_abs(self, bound):
         """
         Return the absolute values of all systems of eigenvalues for
-        self for primes up to bound.
+        ``self`` for primes up to bound.
 
         EXAMPLES::
 
             sage: numerical_eigenforms(61).systems_of_abs(10)  # rel tol 1e-9
-            [
-            [0.3111078174659775, 2.903211925911551, 2.525427560843529, 3.214319743377552],
-            [1.0, 2.0000000000000027, 3.000000000000003, 1.0000000000000044],
-            [1.4811943040920152, 0.8060634335253695, 3.1563251746586642, 0.6751308705666477],
-            [2.170086486626034, 1.7092753594369208, 1.63089761381512, 0.46081112718908984],
-            [3.0, 4.0, 6.0, 8.0]
-            ]
+            [[0.311107817465981, 2.903211925911551, 2.5254275608435184, 3.214319743377534],
+             [1.0, 2.0, 3.0, 1.0],
+             [1.481194304092014,
+              0.8060634335253706,
+              3.156325174658664,
+              0.6751308705666462],
+             [2.1700864866260323,
+              1.7092753594369237,
+              1.6308976138151459,
+              0.460811127189112],
+             [3.0, 4.0, 6.0, 8.0]]
         """
         P = prime_range(bound)
         e = self.eigenvalues(P)
@@ -493,6 +495,7 @@ class NumericalEigenforms(SageObject):
         v.sort()
         v.set_immutable()
         return v
+
 
 def support(v, eps):
     """
@@ -506,6 +509,5 @@ def support(v, eps):
 
         sage: sage.modular.modform.numerical.support( numerical_eigenforms(61)._easy_vector(), 0.5 )
         [0, 4]
-
     """
     return [i for i in range(v.degree()) if abs(v[i]) > eps]

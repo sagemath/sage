@@ -37,12 +37,12 @@ class Nonexact:
 
     INPUT:
 
-    - ``prec`` -- a non-negative integer representing the default precision of
-      ``self`` (default: ``20``)
+    - ``prec`` -- nonnegative integer representing the default precision of
+      ``self`` (default: 20)
     """
     def __init__(self, prec=20):
         if prec < 0:
-            raise ValueError(f"prec (= {prec}) must be non-negative")
+            raise ValueError(f"prec (= {prec}) must be nonnegative")
         self._default_prec = Integer(prec)
 
     def default_prec(self):

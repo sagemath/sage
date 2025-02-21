@@ -54,11 +54,9 @@ def get_basis_name(basis, p, generic=None):
 
     - ``p`` -- positive prime number
 
-    - ``generic`` -- boolean, optional, default to 'None'
+    - ``generic`` -- boolean (default: 'None')
 
-    OUTPUT:
-
-    - ``basis_name`` -- string
+    OUTPUT: ``basis_name`` -- string
 
     Specify the names of the implemented bases.  The input is
     converted to lower-case, then processed to return the canonical
@@ -187,7 +185,7 @@ def get_basis_name(basis, p, generic=None):
 
 def is_valid_profile(profile, truncation_type, p=2, generic=None):
     r"""
-    True if ``profile``, together with ``truncation_type``, is a valid
+    Return ``True`` if ``profile``, together with ``truncation_type``, is a valid
     profile at the prime `p`.
 
     INPUT:
@@ -197,11 +195,11 @@ def is_valid_profile(profile, truncation_type, p=2, generic=None):
 
     - ``truncation_type`` -- either 0 or `\infty`
 
-    - `p` -- prime number, optional, default 2
+    - ``p`` -- prime number (default: 2)
 
-    - `generic` -- boolean, optional, default None
+    - ``generic`` -- boolean (default: ``None``)
 
-    OUTPUT: True if the profile function is valid, False otherwise.
+    OUTPUT: ``True`` if the profile function is valid, ``False`` otherwise
 
     See the documentation for :mod:`sage.algebras.steenrod.steenrod_algebra`
     for descriptions of profile functions and how they correspond to
@@ -306,10 +304,10 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     INPUT:
 
     - ``profile`` -- a profile function in form specified below
-    - ``precision`` -- integer or ``None``, optional, default ``None``
-    - ``truncation_type`` -- 0 or `\infty` or 'auto', optional, default 'auto'
-    - `p` -- prime, optional, default 2
-    - `generic` -- boolean, optional, default ``None``
+    - ``precision`` -- integer or ``None`` (default: ``None``)
+    - ``truncation_type`` -- 0 or `\infty` or 'auto' (default: 'auto')
+    - ``p`` -- prime (default: 2)
+    - ``generic`` -- boolean (default: ``None``)
 
     OUTPUT:
 
@@ -329,7 +327,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     function, and it may be entered in any of the following forms:
 
     - a list or tuple, e.g., ``[3,2,1,1]``
-    - a function from positive integers to non-negative integers (and
+    - a function from positive integers to nonnegative integers (and
       `\infty`), e.g., ``lambda n: n+2``.  This corresponds to the
       list ``[3, 4, 5, ...]``.
     - ``None`` or ``Infinity`` -- use this for the profile function for
@@ -340,7 +338,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     case it is clear how to do this; also in this case, ``precision``
     is set to be one more than the length of this tuple.  In the
     second case, construct a tuple of length one less than
-    ``precision`` (default value 100).  In the last case, the empty
+    ``precision`` (default: 100).  In the last case, the empty
     tuple is returned and ``precision`` is set to 1.
 
     Once a sub-Hopf algebra of the Steenrod algebra has been defined
@@ -359,8 +357,8 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
       the set `\{1,2\}`, e.g., ``([3,2,1,1], [1,1,2,2,1])``.
 
     - a pair of functions, one (called `e`) from positive integers to
-      non-negative integers (and `\infty`), one (called `k`) from
-      non-negative integers to the set `\{1,2\}`, e.g.,
+      nonnegative integers (and `\infty`), one (called `k`) from
+      nonnegative integers to the set `\{1,2\}`, e.g.,
       ``(lambda n: n+2, lambda n: 1)``.  This corresponds to the
       pair ``([3, 4, 5, ...], [1, 1, 1, ...])``.
 
@@ -569,18 +567,18 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
 
 
 def milnor_mono_to_string(mono, latex=False, generic=False):
-    """
+    r"""
     String representation of element of the Milnor basis.
 
     This is used by the _repr_ and _latex_ methods.
 
     INPUT:
 
-    - ``mono`` -- if `generic=False`, tuple of non-negative integers (a,b,c,...);
-      if `generic=True`, pair of tuples of non-negative integers ((e0, e1, e2,
+    - ``mono`` -- if `generic=False`, tuple of nonnegative integers (a,b,c,...);
+      if `generic=True`, pair of tuples of nonnegative integers ((e0, e1, e2,
       ...), (r1, r2, ...))
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -654,7 +652,7 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
       or tuple (e0, n1, e1, n2, ...) when `generic=True`, where each ei is 0 or
       1, and each ni is positive
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -665,7 +663,6 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
     `generic=False`, or a string like
     ``\beta^{e0} P^{n1} \beta^{e1} P^{n2} ...`` when `generic=True`.
     is odd.
-
 
     EXAMPLES::
 
@@ -723,16 +720,16 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
 
 
 def wood_mono_to_string(mono, latex=False):
-    """
+    r"""
     String representation of element of Wood's Y and Z bases.
 
     This is used by the _repr_ and _latex_ methods.
 
     INPUT:
 
-    - ``mono`` -- tuple of pairs of non-negative integers (s,t)
+    - ``mono`` -- tuple of pairs of nonnegative integers (s,t)
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
     OUTPUT:
@@ -775,10 +772,10 @@ def wall_mono_to_string(mono, latex=False):
 
     INPUT:
 
-    - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
+    - ``mono`` -- tuple of pairs of nonnegative integers (m,k) with `m
       >= k`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
     OUTPUT:
@@ -809,17 +806,17 @@ def wall_mono_to_string(mono, latex=False):
 
 
 def wall_long_mono_to_string(mono, latex=False):
-    """
+    r"""
     Alternate string representation of element of Wall's basis.
 
     This is used by the _repr_ and _latex_ methods.
 
     INPUT:
 
-    - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
+    - ``mono`` -- tuple of pairs of nonnegative integers (m,k) with `m
       >= k`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
     OUTPUT:
@@ -861,16 +858,14 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
 
     INPUT:
 
-    -  ``mono`` -- tuple of pairs of non-negative integers
+    - ``mono`` -- tuple of pairs of nonnegative integers
        (m,k) with `m >= k`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
-    OUTPUT:
-
-    ``string`` -- concatenation of strings of the form ``X^{m}_{k}``
-    for each pair (m,k)
+    OUTPUT: concatenation of strings of the form ``X^{m}_{k}`` for each pair
+    (m,k)
 
     EXAMPLES::
 
@@ -896,17 +891,17 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
 
 
 def arnonA_long_mono_to_string(mono, latex=False, p=2):
-    """
+    r"""
     Alternate string representation of element of Arnon's A basis.
 
     This is used by the _repr_ and _latex_ methods.
 
     INPUT:
 
-    - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
+    - ``mono`` -- tuple of pairs of nonnegative integers (m,k) with `m
       >= k`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
     OUTPUT:
@@ -951,7 +946,7 @@ def pst_mono_to_string(mono, latex=False, generic=False):
     - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -1014,7 +1009,7 @@ def comm_mono_to_string(mono, latex=False, generic=False):
     - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -1077,7 +1072,7 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
     - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -1140,12 +1135,12 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
 
 def convert_perm(m):
     """
-    Convert tuple m of non-negative integers to a permutation in
+    Convert tuple m of nonnegative integers to a permutation in
     one-line form.
 
     INPUT:
 
-    - ``m`` -- tuple of non-negative integers with no repetitions
+    - ``m`` -- tuple of nonnegative integers with no repetitions
 
     OUTPUT:
 

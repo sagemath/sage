@@ -49,7 +49,7 @@ cdef class Matrix:
             [-1  1  1 -1  0]
             [ 0 -1  0  0  0]
         """
-        return "%s x %s Cremona matrix over Rational Field"%(self.nrows(), self.ncols())
+        return "%s x %s Cremona matrix over Rational Field" % (self.nrows(), self.ncols())
 
     def str(self):
         r"""
@@ -151,7 +151,7 @@ cdef class Matrix:
 
     def add_scalar(self, scalar s):
         """
-        Return new matrix obtained by adding s to each diagonal entry of self.
+        Return new matrix obtained by adding `s` to each diagonal entry of ``self``.
 
         EXAMPLES::
 
@@ -193,7 +193,7 @@ cdef class Matrix:
 
         INPUT:
 
-        - ``sparse`` -- (default: ``True``) whether the return matrix has
+        - ``sparse`` -- boolean (default: ``True``); whether the return matrix has
           a sparse representation
 
         EXAMPLES::

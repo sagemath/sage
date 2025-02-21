@@ -10,4 +10,3 @@ cdef class ElementWrapper(Element):
 
 cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
     pass
-

@@ -15,15 +15,14 @@ the IPython simple prompt is being used::
     sage: 'sage: [False, True]' in output                                               # needs pexpect
     True
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 import sys
@@ -37,11 +36,11 @@ from sage.repl.prompts import SagePrompts
 SAGE_EXTENSION = 'sage'
 
 
-class SageIpythonConfiguration():
+class SageIpythonConfiguration:
 
     def _doctest_mode(self):
         """
-        Whether we are in doctest mode
+        Whether we are in doctest mode.
 
         This returns ``True`` during doctests.
 
@@ -56,7 +55,7 @@ class SageIpythonConfiguration():
 
     def _allow_ansi(self):
         """
-        Whether to allow ANSI escape sequences
+        Whether to allow ANSI escape sequences.
 
         This returns ``False`` during doctests to avoid ANSI escape
         sequences.
@@ -71,7 +70,7 @@ class SageIpythonConfiguration():
 
     def colors(self):
         """
-        Return the IPython color palette
+        Return the IPython color palette.
 
         This returns ``'NoColor'`` during doctests to avoid ANSI escape
         sequences.
@@ -89,7 +88,7 @@ class SageIpythonConfiguration():
 
     def simple_prompt(self):
         """
-        Return whether to use the simple prompt
+        Return whether to use the simple prompt.
 
         This returns ``True`` during doctests to avoid ANSI escape sequences.
 
@@ -103,7 +102,7 @@ class SageIpythonConfiguration():
 
     def term_title(self):
         """
-        Return whether to set the terminal title
+        Return whether to set the terminal title.
 
         This returns false during doctests to avoid ANSI escape sequences.
 
@@ -117,7 +116,7 @@ class SageIpythonConfiguration():
 
     def default(self):
         """
-        Return a new default configuration object
+        Return a new default configuration object.
 
         EXAMPLES::
 
@@ -166,7 +165,7 @@ class SageIpythonConfiguration():
 
     def copy(self):
         """
-        Return a copy of the current configuration
+        Return a copy of the current configuration.
 
         EXAMPLES::
 

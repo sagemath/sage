@@ -1,10 +1,10 @@
 # sage_setup: distribution = sagemath-objects
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Florent Hivert <Florent.Hivert at lri.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.nested_class cimport NestedClassMetaclass
 

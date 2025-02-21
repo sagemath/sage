@@ -20,7 +20,7 @@ REFERENCES:
 - [KS2010]_
 """
 
-#******************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2013
 #
 #  Lucas David-Roesler (roesler at lvc dot edu)
@@ -28,8 +28,8 @@ REFERENCES:
 #  Travis Scrimshaw (tscrim at ucdavis dot edu)
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 import re
 from copy import deepcopy
@@ -69,7 +69,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: mg = Y.module_generators[0]
             sage: TestSuite(mg).run()
         """
-        i = len(data)-1
+        i = len(data) - 1
         while i >= 0 and not data[i]:
             data.pop()
             i -= 1
@@ -118,7 +118,7 @@ class GeneralizedYoungWall(CombinatorialElement):
                 wall += '|'
             if row == []:
                 wall += '|'
-            ret += wall.rjust(2*self.cols+1) + "\n"
+            ret += wall.rjust(2 * self.cols + 1) + "\n"
         return ret
 
     def _ascii_art_(self):
@@ -175,9 +175,9 @@ class GeneralizedYoungWall(CombinatorialElement):
         import unicodedata
         v = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
         vl = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND LEFT')
-        table = [[None]*(self.cols-len(row)) + row for row in reversed(self)]
+        table = [[None] * (self.cols - len(row)) + row for row in reversed(self)]
         ret = []
-        for i,row in enumerate(ascii_art_table(table, use_unicode=True).splitlines()):
+        for i, row in enumerate(ascii_art_table(table, use_unicode=True).splitlines()):
             if row[-1] == " ":
                 if i % 2 == 0:
                     ret.append(row[:-1] + vl)
@@ -228,27 +228,27 @@ class GeneralizedYoungWall(CombinatorialElement):
             [['-', 3, 6], ['-', 1, 4], ['-', 6, 1]]
         """
         sig = []
-        rank = self.parent().cartan_type().rank() # n+1
+        rank = self.parent().cartan_type().rank()  # n+1
         for row in range(self.rows):
-            if self.data[row] == [] and i == ( row % rank ):
+            if self.data[row] == [] and i == (row % rank):
                 sig.append(['+', row, 0])
             elif self.data[row] == []:
                 continue
-            elif self.data[row][-1] == ( (i+1) % rank ):
-                sig.append(['+', row, len(self.data[row])+1])
+            elif self.data[row][-1] == ((i + 1) % rank):
+                sig.append(['+', row, len(self.data[row]) + 1])
             elif self.data[row][-1] == i:
                 sig.append(['-', row, len(self.data[row])])
         return sorted(sig, key=self._sig_sort)
 
-    def _sig_sort(self,a):
+    def _sig_sort(self, a):
         r"""
         Internal command used to appropriately sort the output
         from :meth:`raw_signature()`.
 
         INPUT:
 
-        - `a` -- list of the form ``['s',j,k]`` where `s` is a string, `j` is an integer
-          and `k` is an integer
+        - ``a`` -- list of the form ``['s',j,k]`` where `s` is a string, `j` is
+          an integer and `k` is an integer
 
         EXAMPLES::
 
@@ -256,7 +256,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: hw._sig_sort(['+',1,0])
             (0, 1)
         """
-        return (-a[2],a[1])
+        return (-a[2], a[1])
 
     def generate_signature(self, i):
         r"""
@@ -273,20 +273,20 @@ class GeneralizedYoungWall(CombinatorialElement):
         sig = []
         rank = self.parent().cartan_type().classical().rank()
         for row in range(self.rows):
-            if self.data[row] == [] and i == ( row % (rank+1) ):
+            if self.data[row] == [] and i == (row % (rank + 1)):
                 sig.append(['+', row, 0])
             elif self.data[row] == []:
                 continue
-            elif self.data[row][-1] == ( (i+1) % (rank+1) ):
-                sig.append(['+', row, len(self.data[row])+1])
+            elif self.data[row][-1] == ((i + 1) % (rank + 1)):
+                sig.append(['+', row, len(self.data[row]) + 1])
             elif self.data[row][-1] == i:
                 sig.append(['-', row, len(self.data[row])])
         sig = sorted(sig, key=self._sig_sort)
-        strsig = ''.join( x[0] for x in sig)
+        strsig = ''.join(x[0] for x in sig)
         reducedsig = strsig
-        while re.search(r"\+\s*-",reducedsig):
-            reducedsig = re.sub(r"\+\s*-", lambda match : ''.ljust(len(match.group(0))) , reducedsig)
-        return (sig,reducedsig)
+        while re.search(r"\+\s*-", reducedsig):
+            reducedsig = re.sub(r"\+\s*-", lambda match: ''.ljust(len(match.group(0))), reducedsig)
+        return (sig, reducedsig)
 
     def signature(self, i):
         r"""
@@ -385,18 +385,19 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: y.number_of_parts()
             8
         """
-        n = self.parent().cartan_type().rank()-1
+        n = self.parent().cartan_type().rank() - 1
         new = self.data[:]
         i = 0
         while i < len(new):
             r = new[i]
-            if r == [] or r in new[i+1:]:
+            if not r or r in new[i + 1:]:
                 new.pop(i)
-            elif r[0] == n and len(r) % (n+1) == 0:
-                for j in range(n+1):
-                    temp = [k % (n+1) for k in range(j+len(r)/(n+1)-1,j-1,-1)]
+            elif r[0] == n and not len(r) % (n + 1):
+                for j in range(n + 1):
+                    temp = [k % (n + 1)
+                            for k in range(j + len(r) // (n + 1) - 1, j - 1, -1)]
                     if temp not in new:
-                        new.insert(i+1, temp)
+                        new.insert(i + 1, temp)
                 new.pop(i)
             else:
                 i += 1
@@ -425,7 +426,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             15
         """
         n = self.parent().cartan_type().rank() - 1
-        m = lambda i: len([1 for r in self.data if r and r[0] == (i-1) % (n+1)])
+        m = lambda i: len([1 for r in self.data if r and r[0] == (i - 1) % (n + 1)])
         for r in self.data:
             if r and r[0] == n:
                 raise ValueError('Statistic only valid for generalized Young walls in Y_0')
@@ -461,11 +462,11 @@ class GeneralizedYoungWall(CombinatorialElement):
                     newdata.append(list(self.data[r][:-1]))
                 else:
                     newdata.append(list(self.data[r]))
-            return self.__class__(self.parent(),newdata)
+            return self.__class__(self.parent(), newdata)
         else:
             return None
 
-    def f(self,i):
+    def f(self, i):
         r"""
         Return the application of the Kashiwara lowering operator
         `f_i` on ``self``.
@@ -510,11 +511,12 @@ class GeneralizedYoungWall(CombinatorialElement):
             '\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n'
         """
         s = ""
-        if self.data == []:
+        if not self.data:
             s += "\\emptyset"
         else:
             s += "\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n"
-            s += "{" + ','.join("{" + ','.join( str(i) for i in r ) + "}" for r in self.data ) + "} \n"
+            s += "{" + ','.join("{" + ','.join(str(i) for i in r) + "}"
+                                for r in self.data) + "} \n"
             s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
@@ -529,11 +531,12 @@ class GeneralizedYoungWall(CombinatorialElement):
             '\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n'
         """
         s = ""
-        if self.data == []:
-                s += "\\emptyset"
+        if not self.data:
+            s += "\\emptyset"
         else:
             s += "\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n"
-            s += "{" + ','.join("{" + ','.join( str(i) for i in r ) + "}" for r in self.data ) + "} \n"
+            s += "{" + ','.join("{" + ','.join(str(i) for i in r) + "}"
+                                for r in self.data) + "} \n"
             s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
@@ -544,7 +547,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         INPUT:
 
         - ``root_lattice`` -- boolean determining whether weight should appear
-          in root lattice or not in extended affine weight lattice.
+          in root lattice or not in extended affine weight lattice
 
         EXAMPLES::
 
@@ -554,16 +557,13 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: x.weight(root_lattice=True)
             -2*alpha[0] - 3*alpha[1] - 5*alpha[2] - 3*alpha[3]
         """
-        W = []
-        E = self.cartan_type().root_system().weight_lattice(extended=True)
         L = self.cartan_type().root_system().root_lattice()
         alpha = L.simple_roots()
-        for r in self.data:
-            for i in r:
-                W.append(-1*alpha[i])
+        W = sum(-1 * alpha[i] for r in self.data for i in r)
         if not root_lattice:
-            return E(sum(W))
-        return L(sum(W))
+            E = self.cartan_type().root_system().weight_lattice(extended=True)
+            return E(W)
+        return L(W)
 
     def epsilon(self, i):
         r"""
@@ -587,7 +587,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             self = self.e(i)
             if self is None:
                 break
-            eps = eps+1
+            eps += 1
         return eps
 
     def Epsilon(self):
@@ -601,7 +601,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             Lambda[0] + 3*Lambda[2]
         """
         La = self.cartan_type().root_system().weight_lattice().fundamental_weights()
-        return sum(self.epsilon(i)*La[i] for i in self.index_set())
+        return sum(self.epsilon(i) * La[i] for i in self.index_set())
 
     def phi(self, i):
         r"""
@@ -635,7 +635,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             2*Lambda[0] + Lambda[1] - Lambda[2] + Lambda[3]
         """
         La = self.cartan_type().root_system().weight_lattice(extended=True).fundamental_weights()
-        return sum(self.phi(i)*La[i] for i in self.index_set())
+        return sum(self.phi(i) * La[i] for i in self.index_set())
 
     def column(self, k):
         r"""
@@ -651,15 +651,10 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: hw.column(1)
             []
         """
-        C = []
-        for row in self.data:
-            if k-1 < len(row):
-                C.append(row[k-1])
-            else:
-                C.append(None)
-        return C
+        return [row[k - 1] if k - 1 < len(row) else None
+                for row in self.data]
 
-    def a(self,i,k):
+    def a(self, i, k):
         r"""
         Return the number `a_i(k)` of `i`-colored boxes in the ``k``-th
         column of ``self``.
@@ -674,13 +669,11 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: y.a(3,2)
             0
         """
-        A = []
-        for c in range(len(self.column(k))):
-            if self.column(k)[c] == i:
-                A.append(self.column(k)[c])
+        A = [1 for c in range(len(self.column(k)))
+             if self.column(k)[c] == i]
         return len(A)
 
-    def in_highest_weight_crystal(self,La):
+    def in_highest_weight_crystal(self, La):
         r"""
         Return a boolean indicating if the generalized Young wall element
         is in the highest weight crystal cut out by the given highest weight
@@ -718,14 +711,14 @@ class GeneralizedYoungWall(CombinatorialElement):
         ac = self.parent().weight_lattice_realization().simple_coroots()
         n = self.cartan_type().classical().rank()
         index_set = self.index_set()
-        for k in range(1,self.cols+1):
+        for k in range(1, self.cols + 1):
             for j in index_set:
-                if self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= 0:
+                if self.a(j, k) - self.a((j - 1) % (n + 1), k) <= 0:
                     continue
                 else:
                     p_not_found = True
                     for p in index_set:
-                        if (j+k) % (n+1) == (p+1) % (n+1) and self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= La.scalar(ac[p]):
+                        if (j + k - p - 1) % (n + 1) == 0 and self.a(j, k) - self.a((j - 1) % (n + 1), k) <= La.scalar(ac[p]):
                             p_not_found = False
                             continue
                         else:
@@ -836,7 +829,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
             sage: Yinf is Yinf2
             True
         """
-        return super().__classcall__(cls,n,category)
+        return super().__classcall__(cls, n, category)
 
     def __init__(self, n, category):
         r"""
@@ -845,15 +838,15 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
             sage: Yinf = crystals.infinity.GeneralizedYoungWalls(3)
             sage: TestSuite(Yinf).run()
         """
-        self._cartan_type = CartanType(['A',n,1])
+        self._cartan_type = CartanType(['A', n, 1])
         if category is None:
             category = (HighestWeightCrystals(), InfiniteEnumeratedSets())
         Parent.__init__(self, category=category)
-        self.module_generators = (self.element_class(self,[]),)
+        self.module_generators = (self.element_class(self, []),)
 
     Element = GeneralizedYoungWall
 
-    def _element_constructor_(self,data):
+    def _element_constructor_(self, data):
         r"""
         Construct an element of ``self`` from ``data``.
 
@@ -868,7 +861,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
             sage: y
             [[], [1, 0], [2, 1]]
         """
-        return self.element_class(self,data)
+        return self.element_class(self, data)
 
     def _repr_(self):
         r"""
@@ -882,7 +875,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
 
 
 ########################
-## Highest weight GYW ##
+#  Highest weight GYW  #
 ########################
 
 class CrystalOfGeneralizedYoungWallsElement(GeneralizedYoungWall):
@@ -890,7 +883,7 @@ class CrystalOfGeneralizedYoungWallsElement(GeneralizedYoungWall):
     Element of the highest weight crystal of generalized Young walls.
     """
 
-    def e(self,i):
+    def e(self, i):
         r"""
         Compute the action of `e_i` restricted to the highest weight crystal.
 
@@ -907,10 +900,10 @@ class CrystalOfGeneralizedYoungWallsElement(GeneralizedYoungWall):
         if ret is None:
             return None
         if ret.in_highest_weight_crystal(self.parent().hw):
-            return self.__class__(self.parent(),ret.data)
+            return self.__class__(self.parent(), ret.data)
         return None
 
-    def f(self,i):
+    def f(self, i):
         r"""
         Compute the action of `f_i` restricted to the highest weight crystal.
 
@@ -926,7 +919,7 @@ class CrystalOfGeneralizedYoungWallsElement(GeneralizedYoungWall):
         """
         ret = GeneralizedYoungWall.f(self, i)
         if ret.in_highest_weight_crystal(self.parent().hw):
-            return self.__class__(self.parent(),ret.data)
+            return self.__class__(self.parent(), ret.data)
         return None
 
     def weight(self):
@@ -943,7 +936,7 @@ class CrystalOfGeneralizedYoungWallsElement(GeneralizedYoungWall):
         """
         return self.parent().weight_lattice_realization()(self.parent().hw + GeneralizedYoungWall.weight(self))
 
-    def phi(self,i):
+    def phi(self, i):
         r"""
         Return the value `\varepsilon_i(Y) + \langle h_i,
         \mathrm{wt}(Y)\rangle`, where `h_i` is the `i`-th simple
@@ -1029,7 +1022,7 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
             sage: Y is Y1
             True
         """
-        La = RootSystem(['A',n,1]).weight_lattice(extended=True)(La)
+        La = RootSystem(['A', n, 1]).weight_lattice(extended=True)(La)
         return super().__classcall__(cls, n, La)
 
     def __init__(self, n, La):
@@ -1043,8 +1036,8 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
 
             sage: TestSuite(YLa).run(skip=["_test_enumerated_set_contains","_test_stembridge_local_axioms"]) # long time
         """
-        InfinityCrystalOfGeneralizedYoungWalls.__init__( self, n,
-                category=(RegularCrystals(), HighestWeightCrystals(), InfiniteEnumeratedSets()) )
+        InfinityCrystalOfGeneralizedYoungWalls.__init__(self, n,
+                category=(RegularCrystals(), HighestWeightCrystals(), InfiniteEnumeratedSets()))
         self.hw = La
 
     Element = CrystalOfGeneralizedYoungWallsElement

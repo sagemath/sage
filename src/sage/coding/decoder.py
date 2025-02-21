@@ -23,6 +23,7 @@ AUTHORS:
 from sage.misc.abstract_method import abstract_method
 from sage.structure.sage_object import SageObject
 
+
 class Decoder(SageObject):
     r"""
     Abstract top-class for :class:`Decoder` objects.
@@ -52,7 +53,7 @@ class Decoder(SageObject):
     @classmethod
     def decoder_type(cls):
         r"""
-        Returns the set of types of ``self``.
+        Return the set of types of ``self``.
 
         This method can be called on both an uninstantiated decoder class,
         or on an instance of a decoder class.
@@ -98,7 +99,6 @@ class Decoder(SageObject):
                                 works for specific channels.
         ======================  ================================================
 
-
         EXAMPLES:
 
         We call it on a class::
@@ -134,7 +134,7 @@ class Decoder(SageObject):
 
     def __init__(self, code, input_space, connected_encoder_name):
         r"""
-        Initializes mandatory parameters for :class:`Decoder` objects.
+        Initialize mandatory parameters for :class:`Decoder` objects.
 
         This method only exists for inheritance purposes as it initializes
         parameters that need to be known by every decoder. An abstract
@@ -183,7 +183,7 @@ class Decoder(SageObject):
 
     def __hash__(self):
         r"""
-        Returns the hash value of ``self``.
+        Return the hash value of ``self``.
 
         This is a generic implementation which should be overwritten on decoders
         with extra arguments.
@@ -202,9 +202,10 @@ class Decoder(SageObject):
 
     def __ne__(self, other):
         r"""
-        Tests inequality of ``self`` and ``other``.
+        Test inequality of ``self`` and ``other``.
 
-        This is a generic implementation, which returns the inverse of ``__eq__`` for self.
+        This is a generic implementation, which returns the inverse of
+        ``__eq__`` for ``self``.
 
         EXAMPLES::
 
@@ -229,11 +230,9 @@ class Decoder(SageObject):
 
         INPUT:
 
-        - ``r`` -- a element of the input space of ``self``.
+        - ``r`` -- a element of the input space of ``self``
 
-        OUTPUT:
-
-        - a vector of :meth:`code`.
+        OUTPUT: a vector of :meth:`code`
 
         EXAMPLES::
 
@@ -281,11 +280,9 @@ class Decoder(SageObject):
 
         INPUT:
 
-        - ``r`` -- a element of the input space of ``self``.
+        - ``r`` -- a element of the input space of ``self``
 
-        OUTPUT:
-
-        - a vector of :meth:`message_space`.
+        OUTPUT: a vector of :meth:`message_space`
 
         EXAMPLES::
 

@@ -129,6 +129,16 @@ jobs:
         run: unzip livedoc.zip -d livedoc
         if: steps.download-doc.outcome == 'success'
 
+      - name: Create _headers file for permissive CORS
+        run: |
+          cat <<EOF > livedoc/livedoc/_headers
+          /*
+            Access-Control-Allow-Origin: *
+            Access-Control-Allow-Methods: GET
+            Access-Control-Allow-Headers: Content-Type
+          EOF
+        if: steps.download-doc.outcome == 'success'
+
       - name: Deploy to netlify with doc-TAG alias
         id: deploy-netlify
         uses: netlify/actions/cli@master

@@ -104,7 +104,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         xi
         sage: (singular(xi)*singular(xi)).NF('std(0)')                                  # needs sage.libs.singular
         -1
-
     """
     def __init__(self, parent, polynomial, check=True):
         """
@@ -112,14 +111,13 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         INPUT:
 
+        - ``parent`` -- a quotient of a polynomial ring
 
-        -  ``parent`` -- a quotient of a polynomial ring
+        - ``polynomial`` -- a polynomial
 
-        -  ``polynomial`` -- a polynomial
-
-        -  ``check`` -- bool (optional): whether or not to
-           verify that x is a valid element of the polynomial ring and reduced
-           (mod the modulus).
+        - ``check`` -- boolean (default: ``True``); whether or not to
+          verify that x is a valid element of the polynomial ring and reduced
+          (mod the modulus).
         """
         from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
         from sage.rings.polynomial.polynomial_element import Polynomial
@@ -147,7 +145,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
                 Q = P(0)
                 X = P.gen()
                 while R.degree() >= B.degree():
-                    S = P((R.leading_coefficient()/B.leading_coefficient())) * X**(R.degree()-B.degree())
+                    S = P(R.leading_coefficient()/B.leading_coefficient()) * X**(R.degree()-B.degree())
                     Q = Q + S
                     R = R - S*B
                 polynomial = R
@@ -388,10 +386,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         """
         Return the inverse of this element.
 
-        .. WARNING::
-
-            Only implemented when the base ring is a field.
-
         EXAMPLES::
 
             sage: R.<x> = QQ[]
@@ -399,7 +393,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: (2*y)^(-1)
             -1/2*y - 1
 
-        Raises a ``ZeroDivisionError`` if this element is not a unit::
+        Raises a :exc:`ZeroDivisionError` if this element is not a unit::
 
             sage: (y+1)^(-1)
             Traceback (most recent call last):
@@ -416,35 +410,27 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: (2*y)^(-1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+            NotImplementedError
+            sage: (2*y+1)^(-1)  # this cannot raise ValueError because...
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+            sage: (2*y+1) * (10*y+5)  # the element is in fact invertible
+            1
 
         Check that :issue:`29469` is fixed::
 
             sage: ~S(3)
             11
         """
-        if self._polynomial.is_zero():
-            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible" % self)
-        if self._polynomial.is_one():
-            return self
-
-        parent = self.parent()
-
+        P = self.parent()
         try:
-            if self._polynomial.is_unit():
-                inv_pol = self._polynomial.inverse_of_unit()
-                return parent(inv_pol)
-        except (TypeError, NotImplementedError):
-            pass
-
-        base = parent.base_ring()
-        if not base.is_field():
-            raise NotImplementedError("The base ring (=%s) is not a field" % base)
-        g, _, a = parent.modulus().xgcd(self._polynomial)
-        if g.degree() != 0:
-            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible" % self)
-        c = g[0]
-        return self.__class__(self.parent(), (~c)*a, check=False)
+            return type(self)(P, self._polynomial.inverse_mod(P.modulus()), check=False)
+        except ValueError as e:
+            if e.args[0] == "Impossible inverse modulo":
+                raise ZeroDivisionError(f"element {self} of quotient polynomial ring not invertible")
+            else:
+                raise NotImplementedError
 
     def field_extension(self, names):
         r"""
@@ -457,7 +443,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         - ``names`` -- name of generator of output field
 
-
         OUTPUT:
 
         -  field
@@ -465,7 +450,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         -  homomorphism from ``self`` to field
 
         -  homomorphism from field to ``self``
-
 
         EXAMPLES::
 
@@ -584,9 +568,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         INPUT:
 
-
-        -  ``var`` -- string; the variable name
-
+        - ``var`` -- string; the variable name
 
         EXAMPLES::
 
@@ -721,7 +703,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         We make sure that the previous example works on random examples::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # long time, needs sage.rings.finite_rings
             sage: p = random_prime(50)
             sage: K.<u> = GF((p, randrange(1,20)))
             sage: L.<v> = K.extension(randrange(2,20))

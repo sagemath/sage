@@ -741,7 +741,7 @@ $(1)-$(4)-no-deps:
 	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
 	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
 	    exit 1; \
-	elif [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' -o -r '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install.in' ]; then \
+	else \
 	    rm -rf '$$($(4))/var/lib/sage/scripts/$(1)'; \
 	    cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
@@ -749,29 +749,10 @@ $(1)-$(4)-no-deps:
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
-		PKG_BASE="$(1)" \
-		PKG_VER="$(2)" \
-		PKG_NAME="$(1)-$(2)" \
-		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
-		SAGE_SPKG_SCRIPTS=$$($(4))/var/lib/sage/scripts \
-		SAGE_INST_LOCAL=$$($(4)) \
 		SAGE_CHECK=$$(SAGE_CHECK_$(1)) \
 		sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
 		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
 		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
-	else ( \
-	    echo; \
-	    echo "Note: $(1) is a dummy package that the Sage distribution uses"; \
-	    echo "to provide information about equivalent system packages."; \
-	    echo "It cannot be installed using the Sage distribution."; \
-	    echo "Please install it manually, for example using the system packages"; \
-	    echo "recommended at the end of a run of './configure'"; \
-	    echo "See below for package-specific information."; \
-	    echo; \
-	    $$(SAGE_ROOT)/build/bin/sage-spkg-info $(1); \
-	    echo; \
-	    echo "Error: $(1) is a dummy package and "; \
-	    echo "cannot be installed using the Sage distribution." ) | sage-logger -p 'cat; exit 1' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
 	fi
 
 $(1)-no-deps: $(1)-$(4)-no-deps
@@ -798,12 +779,14 @@ $(1)-sdist: FORCE python_build sage_setup cython
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
 		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-src'
 
-# Recursive tox invocation (note - we do not set the environment here).
+# Recursive tox invocation
 # Setting SAGE_SPKG_WHEELS is for the benefit of sagelib's tox.ini
 $(1)-tox-%: FORCE
 	$(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)/src' && \
-		export PATH="$$(SAGE_ORIG_PATH)" && \
-		SAGE_SPKG_WHEELS=$$(SAGE_LOCAL)/var/lib/sage/wheels \
+		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
+		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
+		SAGE_SPKG_WHEELS=$$(SAGE_VENV)/var/lib/sage/wheels \
 		tox -v -v -v -e $$*
 
 .PHONY: $(1) $(1)-uninstall $(1)-clean $(1)-build-deps $(1)-no-deps $(1)-clean

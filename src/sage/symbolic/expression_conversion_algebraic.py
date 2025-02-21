@@ -146,9 +146,9 @@ class AlgebraicConverter(Converter):
             sage: a.composition(complex_root_of(x^5 - 1, 3), complex_root_of)
             0.3090169943749474? - 0.9510565162951536?*I
             sage: a.composition(complex_root_of(x^2 + 1, 0), complex_root_of)
-            1.?e-884 - 0.9999999999999999?*I
+            1.?e-683 - 0.9999999999999999?*I
             sage: a.composition(complex_root_of(x^2 + 1, 1), complex_root_of)
-            1.?e-884 + 0.9999999999999999?*I
+            1.?e-683 + 0.9999999999999999?*I
 
         TESTS::
 
@@ -264,8 +264,8 @@ class AlgebraicConverter(Converter):
 
 def algebraic(ex, field):
     """
-    Returns the symbolic expression *ex* as a element of the algebraic
-    field *field*.
+    Return the symbolic expression ``ex`` as a element of the algebraic
+    field ``field``.
 
     EXAMPLES::
 

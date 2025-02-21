@@ -68,7 +68,7 @@ user_globals = None
 
 def _check():
     """
-    Raise ``RuntimeError`` if ``user_globals`` has not been initialized.
+    Raise :exc:`RuntimeError` if ``user_globals`` has not been initialized.
 
     EXAMPLES::
 
@@ -102,14 +102,14 @@ def get_globals():
     return user_globals
 
 
-def set_globals(g):
+def set_globals(g: dict) -> None:
     """
     Set the dictionary of all user globals to ``g``.
 
     INPUT:
 
-    - ``g`` -- a dictionary. Typically, this will be some dictionary
-      given by the user interface or just ``globals()``.
+    - ``g`` -- dictionary; typically, this will be some dictionary
+      given by the user interface or just ``globals()``
 
     EXAMPLES::
 
@@ -132,7 +132,7 @@ def initialize_globals(all, g=None):
 
     - ``all`` -- a module whose globals will be injected
 
-    - ``g`` -- a dictionary, see :func:`set_globals`. If this is
+    - ``g`` -- dictionary; see :func:`set_globals`. If this is
       ``None``, keep the current globals dictionary.
 
     EXAMPLES::
@@ -166,11 +166,11 @@ def get_global(name):
     """
     Return the value of global variable ``name``.
 
-    Raise :class:`NameError` if there is no such global variable.
+    Raise :exc:`NameError` if there is no such global variable.
 
     INPUT:
 
-    - ``name`` -- a string representing a variable name
+    - ``name`` -- string representing a variable name
 
     OUTPUT: the value of variable ``name``
 
@@ -199,7 +199,7 @@ def set_global(name, value):
 
     INPUT:
 
-    - ``name`` -- a string representing a variable name
+    - ``name`` -- string representing a variable name
 
     - ``value`` -- a value to assign to the variable
 

@@ -39,7 +39,8 @@ packages = [
     "sage_setup",
     "sage_setup.autogen",
     "sage_setup.autogen.interpreters",
-    "sage_setup.autogen.interpreters.specs",
+    "sage_setup.autogen.interpreters.internal",
+    "sage_setup.autogen.interpreters.internal.specs",
     "sage_setup.command",
 ]
 include-package-data = false

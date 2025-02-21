@@ -35,6 +35,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 
+
 class MiniAES(SageObject):
     r"""
     This class implements the Mini Advanced Encryption Standard (Mini-AES)
@@ -91,9 +92,9 @@ class MiniAES(SageObject):
         0100101101000101
         sage: P = bin.encoding("Encrypt this secret message!"); P
         01000101011011100110001101110010011110010111000001110100001000000111010001101000011010010111001100100000011100110110010101100011011100100110010101110100001000000110110101100101011100110111001101100001011001110110010100100001
-        sage: C = maes(P, key, algorithm="encrypt"); C
+        sage: C = maes(P, key, algorithm='encrypt'); C
         11100000101000010110001101101001110110010010111011010001100111100000101000101111100110010010100001110101011100111001000010101000001111000101010011010001100111100111001100000001101100110110101001001000011100000101010110110101
-        sage: plaintxt = maes(C, key, algorithm="decrypt")
+        sage: plaintxt = maes(C, key, algorithm='decrypt')
         sage: plaintxt == P
         True
 
@@ -109,9 +110,9 @@ class MiniAES(SageObject):
         0000000100100011010001010110011110001001101010111100110111101111
         sage: key = maes.integer_to_binary(key); key
         0010001110110000
-        sage: C = maes(P, key, algorithm="encrypt"); C
+        sage: C = maes(P, key, algorithm='encrypt'); C
         0011101000101110010011000101010100011101010000111000100100011010
-        sage: plaintxt = maes(C, key, algorithm="decrypt")
+        sage: plaintxt = maes(C, key, algorithm='decrypt')
         sage: plaintxt == P
         True
 
@@ -258,7 +259,7 @@ class MiniAES(SageObject):
                             Integer(14): K("x^3 + x^2 + x"),
                             Integer(15): K("x^3 + x^2 + x+ 1") }
 
-    def __call__(self, B, key, algorithm="encrypt"):
+    def __call__(self, B, key, algorithm='encrypt'):
         r"""
         Apply Mini-AES encryption or decryption on the binary string ``B``
         using the key ``key``.  The flag ``algorithm`` controls what action is
@@ -273,10 +274,10 @@ class MiniAES(SageObject):
 
         - ``key`` -- a secret key; this must be a 16-bit binary string
 
-        - ``algorithm`` -- (default: ``"encrypt"``) a string; a flag to signify
+        - ``algorithm`` -- (default: ``'encrypt'``) a string; a flag to signify
           whether encryption or decryption is to be applied to the binary
-          string ``B``. The encryption flag is ``"encrypt"`` and the decryption
-          flag is ``"decrypt"``.
+          string ``B``. The encryption flag is ``'encrypt'`` and the decryption
+          flag is ``'decrypt'``.
 
         OUTPUT:
 
@@ -292,9 +293,9 @@ class MiniAES(SageObject):
             0100101101000101
             sage: P = bin.encoding("Encrypt this secret message!"); P
             01000101011011100110001101110010011110010111000001110100001000000111010001101000011010010111001100100000011100110110010101100011011100100110010101110100001000000110110101100101011100110111001101100001011001110110010100100001
-            sage: C = maes(P, key, algorithm="encrypt"); C
+            sage: C = maes(P, key, algorithm='encrypt'); C
             11100000101000010110001101101001110110010010111011010001100111100000101000101111100110010010100001110101011100111001000010101000001111000101010011010001100111100111001100000001101100110110101001001000011100000101010110110101
-            sage: plaintxt = maes(C, key, algorithm="decrypt")
+            sage: plaintxt = maes(C, key, algorithm='decrypt')
             sage: plaintxt == P
             True
 
@@ -329,20 +330,20 @@ class MiniAES(SageObject):
             ...
             ValueError: secret key must be a 16-bit binary string
 
-        The value for ``algorithm`` must be either ``"encrypt"`` or
-        ``"decrypt"``::
+        The value for ``algorithm`` must be either ``'encrypt'`` or
+        ``'decrypt'``::
 
             sage: B = bin.encoding("ABCD")
             sage: key = bin.encoding("KE")
-            sage: maes(B, key, algorithm="ABC")
+            sage: maes(B, key, algorithm='ABC')
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be either 'encrypt' or 'decrypt'
-            sage: maes(B, key, algorithm="e")
+            sage: maes(B, key, algorithm='e')
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be either 'encrypt' or 'decrypt'
-            sage: maes(B, key, algorithm="d")
+            sage: maes(B, key, algorithm='d')
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be either 'encrypt' or 'decrypt'
@@ -406,7 +407,7 @@ class MiniAES(SageObject):
 
     def __repr__(self):
         r"""
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -431,9 +432,7 @@ class MiniAES(SageObject):
         - ``rkey`` -- a round key; a `2 \times 2` matrix with entries over
           `\GF{2^4}`
 
-        OUTPUT:
-
-        - The matrix addition of ``block`` and ``rkey``.
+        OUTPUT: the matrix addition of ``block`` and ``rkey``
 
         EXAMPLES:
 
@@ -590,9 +589,7 @@ class MiniAES(SageObject):
         - ``key`` -- a secret key for this Mini-AES block cipher; must be a
           `2 \times 2` matrix over the finite field `\GF{2^4}`
 
-        OUTPUT:
-
-        - The plaintext corresponding to ``C``.
+        OUTPUT: the plaintext corresponding to ``C``
 
         EXAMPLES:
 
@@ -723,13 +720,13 @@ class MiniAES(SageObject):
         # undo the result of round 2
         plaintext = self.add_key(C, rkey2)
         plaintext = self.shift_row(plaintext)
-        plaintext = self.nibble_sub(plaintext, algorithm="decrypt")
+        plaintext = self.nibble_sub(plaintext, algorithm='decrypt')
 
         # undo the result of round 1
         plaintext = self.add_key(plaintext, rkey1)
         plaintext = self.mix_column(plaintext)
         plaintext = self.shift_row(plaintext)
-        plaintext = self.nibble_sub(plaintext, algorithm="decrypt")
+        plaintext = self.nibble_sub(plaintext, algorithm='decrypt')
 
         # undo the result of round 0
         plaintext = self.add_key(plaintext, rkey0)
@@ -762,9 +759,7 @@ class MiniAES(SageObject):
         - ``key`` -- a secret key for this Mini-AES block cipher; must be a
           `2 \times 2` matrix over the finite field `\GF{2^4}`
 
-        OUTPUT:
-
-        - The ciphertext corresponding to ``P``.
+        OUTPUT: the ciphertext corresponding to ``P``
 
         EXAMPLES:
 
@@ -884,13 +879,13 @@ class MiniAES(SageObject):
         ciphertext = self.add_key(P, rkey0)
 
         # round 1
-        ciphertext = self.nibble_sub(ciphertext, algorithm="encrypt")
+        ciphertext = self.nibble_sub(ciphertext, algorithm='encrypt')
         ciphertext = self.shift_row(ciphertext)
         ciphertext = self.mix_column(ciphertext)
         ciphertext = self.add_key(ciphertext, rkey1)
 
         # round 2
-        ciphertext = self.nibble_sub(ciphertext, algorithm="encrypt")
+        ciphertext = self.nibble_sub(ciphertext, algorithm='encrypt')
         ciphertext = self.shift_row(ciphertext)
         ciphertext = self.add_key(ciphertext, rkey2)
 
@@ -1028,7 +1023,7 @@ class MiniAES(SageObject):
                   [K("x"), K("x + 1")] ] )
         return M * block
 
-    def nibble_sub(self, block, algorithm="encrypt"):
+    def nibble_sub(self, block, algorithm='encrypt'):
         r"""
         Substitute a nibble (or a block of 4 bits) using the following S-box:
 
@@ -1108,15 +1103,13 @@ class MiniAES(SageObject):
         - ``block`` -- a `2 \times 2` matrix with entries over
           `\GF{2^4}`
 
-        - ``algorithm`` -- (default: ``"encrypt"``) a string; a flag to signify
+        - ``algorithm`` -- (default: ``'encrypt'``) a string; a flag to signify
           whether this nibble-sub operation is used for encryption or
-          decryption. The encryption flag is ``"encrypt"`` and the decryption
-          flag is ``"decrypt"``.
+          decryption. The encryption flag is ``'encrypt'`` and the decryption
+          flag is ``'decrypt'``.
 
-        OUTPUT:
-
-        - A `2 \times 2` matrix resulting from applying an S-box on
-          entries of the `2 \times 2` matrix ``block``.
+        OUTPUT: a `2 \times 2` matrix resulting from applying an S-box on
+        entries of the `2 \times 2` matrix ``block``.
 
         EXAMPLES:
 
@@ -1127,7 +1120,7 @@ class MiniAES(SageObject):
             sage: K = FiniteField(16, "x")
             sage: MS = MatrixSpace(K, 2, 2)
             sage: mat = MS([[K("x^3 + x^2 + x + 1"), K("0")], [K("x^2 + x + 1"), K("x^3 + x")]])
-            sage: maes.nibble_sub(mat, algorithm="encrypt")
+            sage: maes.nibble_sub(mat, algorithm='encrypt')
             <BLANKLINE>
             [  x^2 + x + 1 x^3 + x^2 + x]
             [          x^3       x^2 + x]
@@ -1141,11 +1134,11 @@ class MiniAES(SageObject):
             <BLANKLINE>
             [x^2 + x       x]
             [x^2 + x x^3 + 1]
-            sage: maes.nibble_sub(B, algorithm="encrypt")
+            sage: maes.nibble_sub(B, algorithm='encrypt')
             <BLANKLINE>
             [  x^3 + x + 1 x^3 + x^2 + 1]
             [  x^3 + x + 1       x^3 + x]
-            sage: maes.nibble_sub(B, algorithm="decrypt")
+            sage: maes.nibble_sub(B, algorithm='decrypt')
             <BLANKLINE>
             [      x^3 + x           x^2]
             [      x^3 + x x^3 + x^2 + 1]
@@ -1158,11 +1151,11 @@ class MiniAES(SageObject):
             <BLANKLINE>
             [            x       x^2 + x]
             [          x^3 x^3 + x^2 + x]
-            sage: maes.nibble_sub(P, algorithm="encrypt")
+            sage: maes.nibble_sub(P, algorithm='encrypt')
             <BLANKLINE>
             [x^3 + x^2 + 1   x^3 + x + 1]
             [        x + 1             0]
-            sage: maes.nibble_sub(P, algorithm="decrypt")
+            sage: maes.nibble_sub(P, algorithm='decrypt')
             <BLANKLINE>
             [        x^2     x^3 + x]
             [x^2 + x + 1           0]
@@ -1189,20 +1182,20 @@ class MiniAES(SageObject):
             TypeError: input block must be a 2 x 2 matrix over GF(16)
 
         The value for the option ``algorithm`` must be either the string
-        ``"encrypt"`` or ``"decrypt"``::
+        ``'encrypt'`` or ``'decrypt'``::
 
             sage: K = FiniteField(16, "x")
             sage: MS = MatrixSpace(K, 2, 2)
             sage: mat = MS([[K("x^3 + x^2 + x + 1"), K("0")], [K("x^2 + x + 1"), K("x^3 + x")]])
-            sage: maes.nibble_sub(mat, algorithm="abc")
+            sage: maes.nibble_sub(mat, algorithm='abc')
             Traceback (most recent call last):
             ...
             ValueError: the algorithm for nibble-sub must be either 'encrypt' or 'decrypt'
-            sage: maes.nibble_sub(mat, algorithm="e")
+            sage: maes.nibble_sub(mat, algorithm='e')
             Traceback (most recent call last):
             ...
             ValueError: the algorithm for nibble-sub must be either 'encrypt' or 'decrypt'
-            sage: maes.nibble_sub(mat, algorithm="d")
+            sage: maes.nibble_sub(mat, algorithm='d')
             Traceback (most recent call last):
             ...
             ValueError: the algorithm for nibble-sub must be either 'encrypt' or 'decrypt'
@@ -1284,11 +1277,9 @@ class MiniAES(SageObject):
 
         - ``key`` -- the secret key
 
-        - ``n`` -- non-negative integer; the round number
+        - ``n`` -- nonnegative integer; the round number
 
-        OUTPUT:
-
-        - The `n`-th round key.
+        OUTPUT: the `n`-th round key
 
         EXAMPLES:
 
@@ -1430,9 +1421,7 @@ class MiniAES(SageObject):
         - ``block`` -- a `2 \times 2` matrix with entries over
           `\GF{2^4}`
 
-        OUTPUT:
-
-        - A `2 \times 2` matrix resulting from applying shift-row on ``block``.
+        OUTPUT: a `2 \times 2` matrix resulting from applying shift-row on ``block``
 
         EXAMPLES:
 
@@ -1547,9 +1536,7 @@ class MiniAES(SageObject):
         - ``G`` -- an element of `\GF{2^4}`, a list of elements of
           `\GF{2^4}`, or a matrix over `\GF{2^4}`
 
-        OUTPUT:
-
-        - A binary string representation of ``G``.
+        OUTPUT: a binary string representation of ``G``
 
         EXAMPLES:
 
@@ -1655,7 +1642,7 @@ class MiniAES(SageObject):
             return B(S)
         # G is a matrix over GF(16)
         elif isinstance(G, Matrix_dense):
-            if not (G.base_ring() is K):
+            if G.base_ring() is not K:
                 raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
             S = "".join(str(self._GF_to_bin[G[i][j]])
                         for i in range(G.nrows()) for j in range(G.ncols()))
@@ -1697,9 +1684,7 @@ class MiniAES(SageObject):
         - ``G`` -- an element of `\GF{2^4}`, a list of elements belonging to
           `\GF{2^4}`, or a matrix over `\GF{2^4}`
 
-        OUTPUT:
-
-        - The integer representation of ``G``.
+        OUTPUT: the integer representation of ``G``
 
         EXAMPLES:
 
@@ -1787,7 +1772,7 @@ class MiniAES(SageObject):
             return [self._GF_to_int[g] for g in G]
         # G is a matrix over GF(16)
         elif isinstance(G, Matrix_dense):
-            if not (G.base_ring() is K):
+            if G.base_ring() is not K:
                 raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
             return [self._GF_to_int[G[i][j]] for i in range(G.nrows()) for j in range(G.ncols())]
         # the type of G doesn't match the supported types
@@ -1908,9 +1893,7 @@ class MiniAES(SageObject):
         - ``B`` -- a binary string, where the number of bits is positive and
           a multiple of 4
 
-        OUTPUT:
-
-        - A list of integers that represent the binary string ``B``.
+        OUTPUT: list of integers that represent the binary string ``B``
 
         EXAMPLES:
 
@@ -1979,12 +1962,10 @@ class MiniAES(SageObject):
 
         INPUT:
 
-        - ``N`` -- a non-negative integer less than or equal to 15, or a list
+        - ``N`` -- nonnegative integer less than or equal to 15, or a list
           of such integers
 
-        OUTPUT:
-
-        - A binary string representing ``N``.
+        OUTPUT: a binary string representing ``N``
 
         EXAMPLES:
 
@@ -2090,12 +2071,10 @@ class MiniAES(SageObject):
 
         INPUT:
 
-        - ``N`` -- a non-negative integer less than or equal to 15, or a list
+        - ``N`` -- nonnegative integer less than or equal to 15, or a list
           of such integers
 
-        OUTPUT:
-
-        - Elements of the finite field `\GF{2^4}`.
+        OUTPUT: elements of the finite field `\GF{2^4}`
 
         EXAMPLES:
 
@@ -2111,7 +2090,7 @@ class MiniAES(SageObject):
             sage: maes.integer_to_GF(7)
             x^2 + x + 1
 
-        Obtain the finite field elements corresponding to all non-negative
+        Obtain the finite field elements corresponding to all nonnegative
         integers less than or equal to 15::
 
             sage: from sage.crypto.block_cipher.miniaes import MiniAES

@@ -90,7 +90,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
     def complementary_isogeny(self):
         """
-        Returns the complementary isogeny of self.
+        Return the complementary isogeny of ``self``.
 
         EXAMPLES::
 
@@ -119,7 +119,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
     def is_isogeny(self):
         """
-        Return True if this morphism is an isogeny of abelian varieties.
+        Return ``True`` if this morphism is an isogeny of abelian varieties.
 
         EXAMPLES::
 
@@ -135,16 +135,14 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
     def cokernel(self):
         """
-        Return the cokernel of self.
+        Return the cokernel of ``self``.
 
         OUTPUT:
 
+        - ``A`` -- an abelian variety (the cokernel)
 
-        -  ``A`` -- an abelian variety (the cokernel)
-
-        -  ``phi`` -- a quotient map from self.codomain() to the
-           cokernel of self
-
+        - ``phi`` -- a quotient map from ``self.codomain()`` to the
+          cokernel of self
 
         EXAMPLES::
 
@@ -192,12 +190,9 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
         OUTPUT:
 
+        - ``G`` -- a finite group
 
-        -  ``G`` -- a finite group
-
-        -  ``A`` -- an abelian variety (identity component of
-           the kernel)
-
+        - ``A`` -- an abelian variety (identity component of the kernel)
 
         EXAMPLES: We compute the kernel of a projection map. Notice that
         the kernel has a nontrivial abelian variety part.
@@ -249,7 +244,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
     def factor_out_component_group(self):
         r"""
-        View self as a morphism `f:A \to B`. Then `\ker(f)`
+        View ``self`` as a morphism `f:A \to B`. Then `\ker(f)`
         is an extension of an abelian variety `C` by a finite
         component group `G`. This function constructs a morphism
         `g` with domain `A` and codomain Q isogenous to
@@ -368,10 +363,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         """
         INPUT:
 
-
-        -  ``X`` -- abelian variety, finite group, or torsion
-           element
-
+        - ``X`` -- abelian variety, finite group, or torsion element
 
         OUTPUT: abelian variety, finite group, torsion element
 
@@ -413,9 +405,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             sage: t3(E11a0)
             Abelian subvariety of dimension 1 of J0(33)
             sage: t3(E11a0).decomposition()
-            [
-            Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33)
-            ]
+            [Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33)]
             sage: t3(E11a0) == E11a1
             True
             sage: t2(E11a0) == E11a0
@@ -467,9 +457,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
         INPUT:
 
-
-        -  ``x`` -- a torsion point on an abelian variety
-
+        - ``x`` -- a torsion point on an abelian variety
 
         OUTPUT: a torsion point
 
@@ -518,9 +506,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
         - ``G`` -- a finite subgroup of the domain of ``self``
 
-        OUTPUT:
-
-        A finite subgroup of the codomain.
+        OUTPUT: a finite subgroup of the codomain
 
         EXAMPLES::
 
@@ -555,9 +541,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
         INPUT:
 
-
-        -  ``A`` -- an abelian variety
-
+        - ``A`` -- an abelian variety
 
         OUTPUT an abelian variety
 
@@ -615,7 +599,7 @@ class Morphism(Morphism_abstract, sage.modules.matrix_morphism.MatrixMorphism):
 
     def restrict_domain(self, sub):
         """
-        Restrict self to the subvariety sub of self.domain().
+        Restrict ``self`` to the subvariety sub of ``self.domain()``.
 
         EXAMPLES::
 
@@ -661,22 +645,18 @@ class Morphism(Morphism_abstract, sage.modules.matrix_morphism.MatrixMorphism):
 
 
 class DegeneracyMap(Morphism):
-    def __init__(self, parent, A, t, side="left"):
+    def __init__(self, parent, A, t, side='left'):
         """
         Create the degeneracy map of index t in parent defined by the
         matrix A.
 
         INPUT:
 
+        - ``parent`` -- a space of homomorphisms of abelian varieties
 
-        -  ``parent`` -- a space of homomorphisms of abelian
-           varieties
+        - ``A`` -- a matrix defining self
 
-        -  ``A`` -- a matrix defining self
-
-        -  ``t`` -- a list of indices defining the degeneracy
-           map
-
+        - ``t`` -- list of indices defining the degeneracy map
 
         EXAMPLES::
 
@@ -692,7 +672,7 @@ class DegeneracyMap(Morphism):
 
     def t(self):
         """
-        Return the list of indices defining self.
+        Return the list of indices defining ``self``.
 
         EXAMPLES::
 
@@ -708,7 +688,7 @@ class DegeneracyMap(Morphism):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -722,18 +702,16 @@ class HeckeOperator(Morphism):
     """
     A Hecke operator acting on a modular abelian variety.
     """
-    def __init__(self, abvar, n, side="left"):
+    def __init__(self, abvar, n, side='left'):
         """
         Create the Hecke operator of index `n` acting on the
         abelian variety abvar.
 
         INPUT:
 
+        - ``abvar`` -- a modular abelian variety
 
-        -  ``abvar`` -- a modular abelian variety
-
-        -  ``n`` -- a positive integer
-
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -768,14 +746,11 @@ class HeckeOperator(Morphism):
     def index(self):
         """
         Return the index of this Hecke operator. (For example, if this is
-        the operator `T_n`, then the index is the integer
-        `n`.)
+        the operator `T_n`, then the index is the integer `n`.)
 
         OUTPUT:
 
-
-        -  ``n`` -- a (Sage) Integer
-
+        - ``n`` -- a (Sage) Integer
 
         EXAMPLES::
 
@@ -822,11 +797,9 @@ class HeckeOperator(Morphism):
 
         INPUT:
 
+        - ``var`` -- string (default: ``'x'``)
 
-        -  ``var`` -- a string (default: 'x')
-
-
-        OUTPUT: a polynomial in var over the rational numbers.
+        OUTPUT: a polynomial in var over the rational numbers
 
         EXAMPLES::
 
@@ -851,9 +824,7 @@ class HeckeOperator(Morphism):
 
         INPUT:
 
-
-        -  ``var`` -- string (default: 'x')
-
+        - ``var`` -- string (default: ``'x'``)
 
         EXAMPLES::
 
@@ -917,9 +888,8 @@ class HeckeOperator(Morphism):
 
     def matrix(self):
         r"""
-        Return the matrix of self acting on the homology
-        `H_1(A, ZZ)` of this abelian variety with coefficients in
-        `\ZZ`.
+        Return the matrix of ``self`` acting on the homology
+        `H_1(A, ZZ)` of this abelian variety with coefficients in `\ZZ`.
 
         EXAMPLES::
 

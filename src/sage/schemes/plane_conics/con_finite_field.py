@@ -60,7 +60,7 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
 
     def count_points(self, n):
         r"""
-        If the base field `B` of `self` is finite of order `q`,
+        If the base field `B` of ``self`` is finite of order `q`,
         then returns the number of points over `\GF{q}, ..., \GF{q^n}`.
 
         EXAMPLES::
@@ -78,7 +78,7 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
     def has_rational_point(self, point=False, read_cache=True,
                            algorithm='default'):
         r"""
-        Always returns ``True`` because self has a point defined over
+        Always returns ``True`` because ``self`` has a point defined over
         its finite base field `B`.
 
         If ``point`` is True, then returns a second output `S`, which is a

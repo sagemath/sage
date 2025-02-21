@@ -93,7 +93,7 @@ cdef inline list interred(list L):
 
     INPUT:
 
-    - ``L`` -- a list of :class:`~sage.rings.polynomial.polydict.ETuple`
+    - ``L`` -- list of :class:`~sage.rings.polynomial.polydict.ETuple`
 
     OUTPUT:
 
@@ -421,6 +421,7 @@ cdef make_children(Node D, tuple w):
      #    It may be a good idea to form the product of some of the most
      #    frequent variables. But this isn't implemented yet. TODO?
 
+
 def first_hilbert_series(I, grading=None, return_grading=False):
     """
     Return the first Hilbert series of the given monomial ideal.
@@ -430,7 +431,8 @@ def first_hilbert_series(I, grading=None, return_grading=False):
     - ``I`` -- a monomial ideal (possibly defined in singular)
     - ``grading`` -- (optional) a list or tuple of integers used as
       degree weights
-    - ``return_grading`` -- (default: ``False``) whether to return the grading
+    - ``return_grading`` -- boolean (default: ``False``); whether to return the
+      grading
 
     OUTPUT:
 
@@ -549,6 +551,7 @@ def first_hilbert_series(I, grading=None, return_grading=False):
                 fmpz_poly_mul(AN.RMult, AN.RMult, fhs._poly)
                 fmpz_poly_add(fhs._poly, AN.LMult, AN.RMult)
                 got_result = True
+
 
 def hilbert_poincare_series(I, grading=None):
     r"""

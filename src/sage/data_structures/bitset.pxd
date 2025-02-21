@@ -12,7 +12,7 @@ from sage.data_structures.bitset_base cimport bitset_t
 # Python layer over bitset_t
 cdef class FrozenBitset:
     cdef bitset_t _bitset
-    cdef FrozenBitset _new(self,long int capacity)
+    cdef FrozenBitset _new(self, long int capacity)
     cpdef FrozenBitset _larger_capacity_(self, long size)
     cpdef long capacity(self) noexcept
     cpdef bint isempty(self) noexcept
@@ -37,4 +37,3 @@ cdef class Bitset(FrozenBitset):
     cpdef discard(self, unsigned long n)
     cpdef pop(self)
     cpdef clear(self)
-

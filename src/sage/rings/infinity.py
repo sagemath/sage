@@ -334,7 +334,8 @@ class AnInfinity:
             sage: pari(oo)                                                              # needs sage.libs.pari
             +oo
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
+
         if self._sign >= 0:
             return pari('oo')
         else:
@@ -666,7 +667,7 @@ class UnsignedInfinityRing_class(Singleton, Parent):
 
     def _element_constructor_(self, x):
         """
-        The element constructor
+        The element constructor.
 
         TESTS::
 
@@ -935,7 +936,7 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
 
     def _sympy_(self):
         """
-        Converts ``unsigned_infinity`` to sympy ``zoo``.
+        Convert ``unsigned_infinity`` to sympy ``zoo``.
 
         EXAMPLES::
 
@@ -976,6 +977,10 @@ def is_Infinite(x) -> bool:
     EXAMPLES::
 
         sage: sage.rings.infinity.is_Infinite(oo)
+        doctest:warning...
+        DeprecationWarning: The function is_Infinite is deprecated;
+        use 'isinstance(..., InfinityElement)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: sage.rings.infinity.is_Infinite(-oo)
         True
@@ -988,6 +993,9 @@ def is_Infinite(x) -> bool:
         sage: sage.rings.infinity.is_Infinite(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_Infinite is deprecated; use 'isinstance(..., InfinityElement)' instead.")
+
     return isinstance(x, InfinityElement)
 
 
@@ -1119,7 +1127,7 @@ class InfinityRing_class(Singleton, CommutativeRing):
 
     def _element_constructor_(self, x):
         """
-        The element constructor
+        The element constructor.
 
         TESTS::
 
@@ -1622,7 +1630,7 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
 
     def _sympy_(self):
         """
-        Converts ``-oo`` to sympy ``-oo``.
+        Convert ``-oo`` to sympy ``-oo``.
 
         Then you don't have to worry which ``oo`` you use, like in these
         examples:
@@ -1637,7 +1645,6 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
             True
             sage: bool((-oo)._sympy_() == -sympy.oo)
             True
-
         """
         import sympy
         return -sympy.oo
@@ -1724,7 +1731,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
 
     def _sympy_(self):
         """
-        Converts ``oo`` to sympy ``oo``.
+        Convert ``oo`` to sympy ``oo``.
 
         Then you don't have to worry which ``oo`` you use, like in these
         examples:
@@ -1762,7 +1769,7 @@ minus_infinity = InfinityRing.gen(1)
 
 def test_comparison(ring):
     """
-    Check comparison with infinity
+    Check comparison with infinity.
 
     INPUT:
 
@@ -1841,7 +1848,7 @@ def test_signed_infinity(pos_inf):
 
     INPUT:
 
-    - ``pos_inf`` -- a representation of positive infinity.
+    - ``pos_inf`` -- a representation of positive infinity
 
     OUTPUT:
 

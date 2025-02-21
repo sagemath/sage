@@ -445,7 +445,6 @@ class FunctionFieldIdeal(Element):
             sage: I = O.ideal(y)
             sage: I == I.factor().prod()
             True
-
         """
         return Factorization(self._factor(), cr=True)
 
@@ -700,9 +699,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         The formation of the module is compatible with the vector
         space corresponding to the function field.
 
-        OUTPUT:
-
-        - a module over the maximal order of the base field of the ideal
+        OUTPUT: a module over the maximal order of the base field of the ideal
 
         EXAMPLES::
 
@@ -726,7 +723,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         """
         return self._module
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a set of generators of this ideal.
 
@@ -967,7 +964,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
 
     def __hash__(self):
         """
-        Return the hash of this ideal
+        Return the hash of this ideal.
 
         EXAMPLES::
 

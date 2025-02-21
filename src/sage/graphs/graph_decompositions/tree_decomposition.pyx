@@ -75,7 +75,7 @@ The treewidth of a clique is `n-1` and its treelength is 1::
 
     :meth:`treewidth` | Compute the treewidth of `G` (and provide a decomposition).
     :meth:`treelength` | Compute the treelength of `G` (and provide a decomposition).
-    :meth:`make_nice_tree_decomposition` | Return a *nice* tree decomposition (TD) of the TD `tree_decomp`.
+    :meth:`make_nice_tree_decomposition` | Return a *nice* tree decomposition (TD) of the TD ``tree_decomp``.
     :meth:`label_nice_tree_decomposition` | Return a nice tree decomposition with nodes labelled accordingly.
     :meth:`is_valid_tree_decomposition` | Check whether `T` is a valid tree-decomposition for `G`.
     :meth:`reduced_tree_decomposition` | Return a reduced tree-decomposition of `T`.
@@ -450,14 +450,14 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
       when ``k`` is not ``None`` or when ``algorithm == 'tdlib'``.
 
     - ``certificate`` -- boolean (default: ``False``); whether to return the
-      tree-decomposition itself.
+      tree-decomposition itself
 
-    - ``algorithm`` -- whether to use ``"sage"`` or ``"tdlib"`` (requires the
+    - ``algorithm`` -- whether to use ``'sage'`` or ``'tdlib'`` (requires the
       installation of the :ref:`spkg_sagemath_tdlib` package). The default behaviour is to use
       'tdlib' if it is available, and Sage's own algorithm when it is not.
 
     - ``nice`` -- boolean (default: ``False``); whether or not to return the
-      nice tree decomposition, provided ``certificate`` is ``True``.
+      nice tree decomposition, provided ``certificate`` is ``True``
 
     OUTPUT:
 
@@ -826,13 +826,11 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
     - ``tree_decomp`` -- a tree decomposition
 
-    OUTPUT:
-
-    A nice tree decomposition.
+    OUTPUT: a nice tree decomposition
 
     .. WARNING::
 
-        This method assumes that the vertices of the input tree `tree_decomp`
+        This method assumes that the vertices of the input tree ``tree_decomp``
         are hashable and have attribute ``issuperset``, e.g., ``frozenset`` or
         :class:`~sage.sets.set.Set_object_enumerated_with_category`.
 
@@ -1081,9 +1079,7 @@ def label_nice_tree_decomposition(nice_TD, root, directed=False):
       tree decomposition as a directed graph rooted at vertex ``root`` or as an
       undirected graph
 
-    OUTPUT:
-
-    A nice tree decomposition with nodes labelled.
+    OUTPUT: a nice tree decomposition with nodes labelled
 
     EXAMPLES::
 
@@ -1361,7 +1357,7 @@ cdef class TreelengthConnected:
         ...
         ValueError: the graph is not connected
 
-    The parameter `k` must be non-negative::
+    The parameter `k` must be nonnegative::
 
         sage: TreelengthConnected(Graph(1), k=-1)
         Traceback (most recent call last):
@@ -1439,11 +1435,11 @@ cdef class TreelengthConnected:
         if self.n <= 1 or (self.k_is_defined and self.n <= k):
             if certificate:
                 if self.n:
-                    self.tree = Graph({Set(G): []}, format="dict_of_lists", name=self.name)
+                    self.tree = Graph({Set(G): []}, format='dict_of_lists', name=self.name)
                 else:
                     self.tree = Graph(name=self.name)
             self.length = 0 if self.n <= 1 else G.diameter(algorithm='DHV')
-            self.leq_k = True  # We know that k is non negative
+            self.leq_k = True  # We know that k is nonnegative
             return
 
         if self.k_is_defined and not k:
@@ -1453,7 +1449,7 @@ cdef class TreelengthConnected:
 
         if G.is_clique():
             if certificate:
-                self.tree = Graph({Set(G): []}, format="dict_of_lists", name=self.name)
+                self.tree = Graph({Set(G): []}, format='dict_of_lists', name=self.name)
             self.length = 1
             self.leq_k = True
             return
@@ -1485,7 +1481,7 @@ cdef class TreelengthConnected:
         if self.k_is_defined and k >= self.diameter:
             # All vertices fit in one bag
             if certificate:
-                self.tree = Graph({Set(G): []}, format="dict_of_lists", name=self.name)
+                self.tree = Graph({Set(G): []}, format='dict_of_lists', name=self.name)
             self.length = self.diameter
             self.leq_k = True
             return
@@ -1508,7 +1504,7 @@ cdef class TreelengthConnected:
 
     def __dealloc__(self):
         r"""
-        Destroy the object
+        Destroy the object.
 
         TESTS::
 
@@ -1650,7 +1646,7 @@ cdef class TreelengthConnected:
 
         from sage.graphs.graph import Graph
         T = Graph([(good_label(x), good_label(y)) for x, y in TD if x != y],
-                  format="list_of_edges")
+                  format='list_of_edges')
         self.tree = reduced_tree_decomposition(T)
         self.tree.name(self.name)
         return True
@@ -1900,7 +1896,7 @@ def treelength(G, k=None, certificate=False):
         answer = 0 if k is None else True
         if certificate:
             if G:
-                answer = answer, Graph({Set(G): []}, format="dict_of_lists", name=name)
+                answer = answer, Graph({Set(G): []}, format='dict_of_lists', name=name)
             else:
                 answer = answer, Graph(name=name)
         return answer
@@ -1947,7 +1943,7 @@ def treelength(G, k=None, certificate=False):
         ga = G.subgraph(atom)
         if ga.is_clique():
             if certificate:
-                result.append(Graph({Set(atom): []}, format="dict_of_lists"))
+                result.append(Graph({Set(atom): []}, format='dict_of_lists'))
             continue
 
         gc, certif = ga.canonical_label(certificate=True)

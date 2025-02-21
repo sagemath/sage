@@ -53,7 +53,6 @@ cdef class PowComputer_relative(PowComputer_class):
         sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative
         sage: isinstance(PC, PowComputer_relative)                                      # needs sage.libs.flint
         True
-
     """
     def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed):
         r"""
@@ -67,7 +66,6 @@ cdef class PowComputer_relative(PowComputer_class):
             sage: RFP = R.change(field=False, show_prec=False, type='floating-point')
             sage: shift_seed = (-f[:3] // 5).change_ring(RFP)
             sage: PC = PowComputer_relative_maker(3, 20, 20, 60, False, f, shift_seed, 'fixed-mod')
-
         """
         self._allocated = 4
 
@@ -83,7 +81,6 @@ cdef class PowComputer_relative(PowComputer_class):
             sage: shift_seed = (-f[:3] // 5).change_ring(RFP)
             sage: PC = PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod')  # indirect doctest
             sage: TestSuite(PC).run()
-
         """
         PowComputer_class.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed)
         self.e = poly.degree() * poly.base_ring().absolute_e()
@@ -115,7 +112,6 @@ cdef class PowComputer_relative(PowComputer_class):
             sage: shift_seed = (-f[:3] // 5).change_ring(RFP)
             sage: PC = PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod')
             sage: del PC
-
         """
 
     def __reduce__(self):
@@ -152,7 +148,6 @@ cdef class PowComputer_relative(PowComputer_class):
             sage: shift_seed = (-f[:3] // 5).change_ring(RFP)
             sage: PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod')  # indirect doctest
             Relative PowComputer for modulus x^3 + 5*x + a*5
-
         """
         return "Relative PowComputer for modulus %s" % (self.modulus,)
 
@@ -182,14 +177,13 @@ cdef class PowComputer_relative(PowComputer_class):
             sage: PC = PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod')  # indirect doctest
             sage: PC.polynomial() is f
             True
-
         """
         return self.modulus
 
 
 cdef class PowComputer_relative_eis(PowComputer_relative):
     r"""
-    A ``PowComputer`` for a relative extension defined by an Eisenstein polynomial
+    A ``PowComputer`` for a relative extension defined by an Eisenstein polynomial.
 
     For a description of inputs see :func:`PowComputer_relative_maker`.
 
@@ -207,7 +201,6 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         sage: isinstance(PC, PowComputer_relative_eis)                                  # needs sage.libs.flint
         True
-
     """
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed):
         r"""
@@ -221,7 +214,6 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
             sage: shift_seed = (-f[:3] // 5).change_ring(RFP)
             sage: PC = PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod')
             sage: TestSuite(PC).run()
-
         """
         PowComputer_relative.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed)
         self._inv_shift_seed = self.invert(shift_seed, self.ram_prec_cap)
@@ -235,11 +227,9 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
         - ``a`` -- a `p`-adic element, represented as a reduced
           Polynomial in ``poly_ring``
 
-        - ```prec`` -- a ``long``, the required precision
+        - ``prec`` -- a ``long``, the required precision
 
-        OUTPUT:
-
-        A polynomial ``b`` such that ``a*b`` is one modulo `π^\mathrm{prec}`
+        OUTPUT: a polynomial ``b`` such that ``a*b`` is one modulo `π^\mathrm{prec}`
 
         EXAMPLES::
 
@@ -283,11 +273,9 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         INPUT:
 
-        - ``r`` -- an integer with 0 <= r < e
+        - ``r`` -- integer with 0 <= r < e
 
-        OUTPUT:
-
-        A reduced polynomial in π
+        OUTPUT: a reduced polynomial in π
 
         EXAMPLES::
 
@@ -297,10 +285,9 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
             sage: W.<w> = R.ext(f)
             sage: elt = W.prime_pow.px_pow(2); elt
             ((4*a + 4) + (4*a + 1)*5 + (4*a + 2)*5^2)*x^2 + ((2*a + 3) + (2*a + 4)*5 + (2*a + 4)*5^2)*x + (a + 1)*5 + 3*5^2 + 2*5^3
-
         """
         if r < 0:
-            raise ValueError("r must be non-negative")
+            raise ValueError("r must be nonnegative")
         elif r == 0:
             return self.poly_ring(self.base_ring.uniformizer())
         elif r >= self.e:
@@ -316,11 +303,9 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         INPUT:
 
-        - ``r`` -- a non-negative integer
+        - ``r`` -- nonnegative integer
 
-        OUTPUT:
-
-        A reduced polynomial in π
+        OUTPUT: a reduced polynomial in π
 
         EXAMPLES::
 
@@ -330,10 +315,9 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
             sage: W.<w> = R.ext(f)
             sage: elt = W.prime_pow.pxe_pow(2); elt
             ((4*a + 2) + (a + 4)*5 + 2*a*5^2)*x^2 + ((a + 2) + (a + 2)*5 + (2*a + 4)*5^2)*x + (a + 1) + (3*a + 2)*5 + (2*a + 2)*5^2
-
         """
         if r < 0:
-            raise ValueError("r must be non-negative")
+            raise ValueError("r must be nonnegative")
         elif r == 0:
             return self.poly_ring.one()
         elif r == 1:
@@ -350,11 +334,9 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         INPUT:
 
-        - ``r`` -- a non-negative integer
+        - ``r`` -- nonnegative integer
 
-        OUTPUT:
-
-        A reduced polynomial in π
+        OUTPUT: a reduced polynomial in π
 
         EXAMPLES::
 
@@ -364,10 +346,9 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
             sage: W.<w> = R.ext(f)
             sage: W.prime_pow.uniformizer_pow(2)
             x^2
-
         """
         if r < 0:
-            raise ValueError("r must be non-negative")
+            raise ValueError("r must be nonnegative")
         elif r == 0:
             return self.poly_ring.one()
         elif r < self.e:
@@ -386,8 +367,8 @@ def PowComputer_relative_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_fi
 
     - ``prime`` -- a uniformizer in the base ring
 
-    - ``cache_limit`` -- a non-negative integer, controlling the caching. The
-      ``PowComputer`` caches frequently used things like powers of ``prime``.
+    - ``cache_limit`` -- nonnegative integer, controlling the caching. The
+      ``PowComputer`` caches frequently used things like powers of ``prime``
       This parameter, e.g., controls up to which power these are cached.
 
     - ``prec_cap`` -- the power of ``prime`` modulo which elements of largest
@@ -400,13 +381,13 @@ def PowComputer_relative_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_fi
       `e`, in which case the actual relationship between ``ram_prec_cap`` and
       ``prec_cap`` is that ``prec_cap = ceil(n/e)``
 
-    - ``in_field`` -- a boolean; whether the associated ring is actually a
+    - ``in_field`` -- boolean; whether the associated ring is actually a
       field
 
     - ``poly`` -- the polynomial defining the extension
 
-    - `prec_type`` -- one of ``"capped-rel"``, ``"capped-abs"`` or
-      ``"fixed-mod"``, ``"floating-point"``, the precision type of the ring
+    - ``prec_type`` -- one of ``'capped-rel'``, ``'capped-abs'`` or
+      ``'fixed-mod'``, ``'floating-point'``; the precision type of the ring
 
     .. NOTE::
 
@@ -426,7 +407,6 @@ def PowComputer_relative_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_fi
         sage: PC = W.prime_pow  # indirect doctest
         sage: PC
         Relative PowComputer for modulus x^3 + (4*5 + 4*5^2)*x + 4*a*5 + 4*a*5^2
-
     """
     PC = PowComputer_relative_eis(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed)
     # We have to set this here because the signature of __cinit__ in PowComputer_base doesn't allow for prec_type to be passed.

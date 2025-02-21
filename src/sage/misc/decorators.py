@@ -51,6 +51,18 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     the special attribute ``_sage_argspec_`` of the wrapping function (for an
     example, see e.g. ``@options`` decorator in this module).
 
+    Note that in ``.pyx`` files which is compiled by Cython, because Sage uses
+    ``binding=False`` compiler directive by default, you need to explicitly
+    specify ``binding=True`` for all functions decorated with ``sage_wraps``::
+
+        sage: import cython
+        sage: def square(f):
+        ....:     @sage_wraps(f)
+        ....:     @cython.binding(True)
+        ....:     def new_f(x):
+        ....:         return f(x)*f(x)
+        ....:     return new_f
+
     EXAMPLES:
 
     Demonstrate that documentation string and source are retained from the
@@ -153,7 +165,6 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         sage: g = square(f)
         sage: g(3)  # this line used to fail for some people if these command were manually entered on the sage prompt
         81
-
     """
     # TRAC 9919: Workaround for bug in @update_wrapper when used with
     # non-function callables.
@@ -230,7 +241,7 @@ class infix_operator:
         INPUT:
 
         - ``precedence`` -- one of ``'add'``, ``'multiply'``, or ``'or'``
-          indicating the new operator's precedence in the order of operations.
+          indicating the new operator's precedence in the order of operations
         """
         self.precedence = precedence
 
@@ -320,19 +331,19 @@ def decorator_defaults(func):
 
         sage: from sage.misc.decorators import decorator_defaults
         sage: @decorator_defaults
-        ....: def my_decorator(f,*args,**kwds):
+        ....: def my_decorator(f, *args, **kwds):
         ....:   print(kwds)
         ....:   print(args)
         ....:   print(f.__name__)
 
         sage: @my_decorator
-        ....: def my_fun(a,b):
+        ....: def my_fun(a, b):
         ....:   return a,b
         {}
         ()
         my_fun
         sage: @my_decorator(3,4,c=1,d=2)
-        ....: def my_fun(a,b):
+        ....: def my_fun(a, b):
         ....:   return a,b
         {'c': 1, 'd': 2}
         (3, 4)
@@ -373,7 +384,7 @@ class suboptions:
 
     def __call__(self, func):
         """
-        Returns a wrapper around func
+        Return a wrapper around ``func``.
 
         EXAMPLES::
 
@@ -486,7 +497,6 @@ class options:
             sage: f2 = o(f)
             sage: f2(alpha=1)
             () [('__original_opts', {'alpha': 1}), ('alpha', 1), ('rgbcolor', (0, 0, 1))]
-
         """
         @sage_wraps(func)
         def wrapper(*args, **kwds):
@@ -581,8 +591,8 @@ class rename_keyword:
 
         INPUT:
 
-        - ``deprecation`` -- integer. The github issue number where the
-          deprecation was introduced.
+        - ``deprecation`` -- integer; the github issue number where the
+          deprecation was introduced
 
         - the rest of the arguments is a list of keyword arguments in the
           form ``renamed_option='existing_option'``.  This will have the
@@ -669,12 +679,10 @@ class specialize:
 
     INPUT:
 
-    - ``*args``, ``**kwargs`` -- arguments to specialize the function for.
+    - ``*args``, ``**kwargs`` -- arguments to specialize the function for
 
-    OUTPUT:
-
-    - a decorator that accepts a function ``f`` and specializes it
-      with ``*args`` and ``**kwargs``
+    OUTPUT: a decorator that accepts a function ``f`` and specializes it
+    with ``*args`` and ``**kwargs``
 
     EXAMPLES::
 

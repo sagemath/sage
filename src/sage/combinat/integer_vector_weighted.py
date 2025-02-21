@@ -39,9 +39,9 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
 
     INPUT:
 
-     - ``n`` -- a non negative integer (optional)
+    - ``n`` -- nonnegative integer (optional)
 
-     - ``weight`` -- a tuple (or list or iterable) of positive integers
+    - ``weight`` -- tuple (or list or iterable) of positive integers
 
     EXAMPLES::
 
@@ -134,7 +134,6 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
             ...
             ValueError: cannot convert [1, 2, 0] into Integer vectors of 3
              weighted by [2, 1, 1]
-
         """
         if isinstance(lst, IntegerVector):
             if lst.parent() is self:
@@ -350,7 +349,7 @@ def iterator_fast(n, l):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
     - ``l`` -- the weights in weakly decreasing order
 
     EXAMPLES::

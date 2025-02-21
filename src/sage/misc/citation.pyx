@@ -57,7 +57,7 @@ def get_systems(cmd):
 
     INPUT:
 
-    - ``cmd`` -- a string to run
+    - ``cmd`` -- string to run
 
     .. WARNING::
 
@@ -97,12 +97,12 @@ def get_systems(cmd):
     from sage.repl.preparse import preparse
     cmd = preparse(cmd)
 
-    #Run the command and get the stats
+    # Run the command and get the stats
     filename = tmp_filename()
     cProfile.runctx(cmd, globals(), {}, filename)
     stats = pstats.Stats(filename)
 
-    #Strings is a list of method names and modules which get run
+    # Strings is a list of method names and modules which get run
     def string_from_stat(a):
         s = a[0]
         if SAGE_LOCAL:
@@ -114,7 +114,7 @@ def get_systems(cmd):
     strings = [string_from_stat(a)
                for a in stats.stats]
 
-    #Remove trivial functions
+    # Remove trivial functions
     bad_res = [re.compile(r'is_.*Element'), re.compile("is_[a-z_]*_type")]
     for bad_re in bad_res:
         i = 0

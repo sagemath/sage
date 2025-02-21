@@ -1,1 +1,1 @@
-python-furo
+python3-furo

@@ -32,18 +32,26 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from __future__ import annotations
 
 import warnings
+from typing import Any
 
-from sage.structure.sage_object import SageObject
+try:
+    from typing import Self  # type: ignore (Python >= 3.11)
+except ImportError:
+    from typing_extensions import Self  # type: ignore (Python 3.9, 3.10)
+
 from sage.repl.rich_output.output_basic import (
-    OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
+    OutputAsciiArt,
+    OutputPlainText,
+    OutputUnicodeArt,
 )
 from sage.repl.rich_output.output_browser import (
     OutputHtml,
 )
 from sage.repl.rich_output.preferences import DisplayPreferences
+from sage.structure.sage_object import SageObject
 
 
 class DisplayException(Exception):
@@ -92,7 +100,6 @@ class RichReprWarning(UserWarning):
     generated. But it may not raise an exception as it is very
     confusing for the user if the displayhook fails.
 
-
     EXAMPLES::
 
         sage: from sage.repl.rich_output.display_manager import RichReprWarning
@@ -104,11 +111,11 @@ class RichReprWarning(UserWarning):
     pass
 
 
-class restricted_output():
+class restricted_output:
 
     def __init__(self, display_manager, output_classes):
         """
-        Context manager to temporarily restrict the accepted output types
+        Context manager to temporarily restrict the accepted output types.
 
         In the context, the output is restricted to the output
         container types listed in ``output_classes``. Additionally,
@@ -116,9 +123,9 @@ class restricted_output():
 
         INPUT:
 
-        - ``display_manager`` -- the display manager.
+        - ``display_manager`` -- the display manager
 
-        - ``output_classes`` -- iterable of output container types.
+        - ``output_classes`` -- iterable of output container types
 
         EXAMPLES::
 
@@ -133,7 +140,7 @@ class restricted_output():
 
     def __enter__(self):
         """
-        Enter the restricted output context
+        Enter the restricted output context.
 
         EXAMPLES::
 
@@ -167,7 +174,7 @@ class restricted_output():
 
     def __exit__(self, exception_type, value, traceback):
         """
-        Exit the restricted output context
+        Exit the restricted output context.
 
         EXAMPLES::
 
@@ -186,11 +193,11 @@ class restricted_output():
 
 class DisplayManager(SageObject):
 
-    _instance = None
+    _instance: Self | None = None
 
     def __init__(self):
         """
-        The Display Manager
+        The Display Manager.
 
         Used to decide what kind of rich output is best.
 
@@ -206,16 +213,14 @@ class DisplayManager(SageObject):
         self.switch_backend(BackendSimple())
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> Self:
         """
         Get the singleton instance.
 
         This class method is equivalent to
         :func:`get_display_manager`.
 
-        OUTPUT:
-
-        The display manager singleton.
+        OUTPUT: the display manager singleton
 
         EXAMPLES::
 
@@ -232,9 +237,7 @@ class DisplayManager(SageObject):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -270,21 +273,18 @@ class DisplayManager(SageObject):
 
     def switch_backend(self, backend, **kwds):
         """
-        Switch to a new backend
+        Switch to a new backend.
 
         INPUT:
 
         - ``backend`` -- instance of
-          :class:`~sage.repl.rich_output.backend_base.BackendBase`.
+          :class:`~sage.repl.rich_output.backend_base.BackendBase`
 
         - ``kwds`` -- optional keyword arguments that are passed on to
-          the
-          :meth:`~sage.repl.rich_output.backend_base.BackendBase.install`
-          method.
+          the :meth:`~sage.repl.rich_output.backend_base.BackendBase.install`
+          method
 
-        OUTPUT:
-
-        The previous backend.
+        OUTPUT: the previous backend
 
         EXAMPLES::
 
@@ -352,7 +352,7 @@ class DisplayManager(SageObject):
 
     def is_in_terminal(self):
         """
-        Test whether the UI is meant to run in a terminal
+        Test whether the UI is meant to run in a terminal.
 
         When this method returns ``True``, you can assume that it is
         possible to use ``raw_input`` or launch external programs that
@@ -380,11 +380,11 @@ class DisplayManager(SageObject):
 
         INPUT:
 
-        - ``backend_class`` -- type of a backend class.
+        - ``backend_class`` -- type of a backend class
 
         OUTPUT:
 
-        This method returns nothing. A ``RuntimeError`` is raised if
+        This method returns nothing. A :exc:`RuntimeError` is raised if
         ``backend_class`` is not the type of the current backend.
 
         EXAMPLES::
@@ -407,11 +407,9 @@ class DisplayManager(SageObject):
         INPUT:
 
         - ``output_class`` -- a possibly derived class from one of the
-          output container classes in :meth:`types`.
+          output container classes in :meth:`types`
 
-        OUTPUT:
-
-        The underlying container class that it was derived from.
+        OUTPUT: the underlying container class that it was derived from
 
         EXAMPLES::
 
@@ -448,7 +446,7 @@ class DisplayManager(SageObject):
 
     def _promote_output(self, output):
         """
-        Promote output container to a backend-specific subclass
+        Promote output container to a backend-specific subclass.
 
         INPUT:
 
@@ -479,11 +477,11 @@ class DisplayManager(SageObject):
 
     def _preferred_text_formatter(self, obj, plain_text=None, **kwds):
         r"""
-        Return the preferred textual representation
+        Return the preferred textual representation.
 
         INPUT:
 
-        - ``obj`` -- anything. The objects to format.
+        - ``obj`` -- anything; the objects to format
 
         - ``plain_text`` -- ``None`` (default) or string. The plain
           text representation. If specified, this will be used for
@@ -555,17 +553,17 @@ class DisplayManager(SageObject):
 
     def _call_rich_repr(self, obj, rich_repr_kwds):
         """
-        Call the ``_rich_repr_`` method
+        Call the ``_rich_repr_`` method.
 
         This method calls ``obj._rich_repr_``. If this raises an
         exception, it is caught and a suitable warning is displayed.
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
-        - ``rich_repr_kwds`` -- dictionary. Optional keyword arguments
-          that are passed through to ``obj._rich_repr_``.
+        - ``rich_repr_kwds`` -- dictionary; optional keyword arguments
+          that are passed through to ``obj._rich_repr_``
 
         OUTPUT:
 
@@ -604,10 +602,10 @@ class DisplayManager(SageObject):
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
-        - ``rich_repr_kwds`` -- dictionary. Optional keyword arguments
-          that are passed through to ``obj._rich_repr_``.
+        - ``rich_repr_kwds`` -- dictionary; optional keyword arguments
+          that are passed through to ``obj._rich_repr_``
 
         OUTPUT:
 
@@ -644,10 +642,10 @@ class DisplayManager(SageObject):
         rich_output = self._promote_output(rich_output)
         # check that the output container types are valid for the backend
         supported = self._backend.supported_output()
-        if not (type(plain_text) in supported):
+        if type(plain_text) not in supported:
             raise OutputTypeException(
                 'text output container not supported: {0}'.format(type(plain_text)))
-        if not (type(rich_output) in supported):
+        if type(rich_output) not in supported:
             raise OutputTypeException(
                 'output container not supported: {0}'.format(type(rich_output)))
         return plain_text, rich_output
@@ -665,14 +663,13 @@ class DisplayManager(SageObject):
         INPUT:
 
         - ``save_function`` -- callable that can save graphics to a file
-          and accepts options like
-          :meth:`sage.plot.graphics.Graphics.save`.
+          and accepts options like :meth:`sage.plot.graphics.Graphics.save`
 
-        - ``save_kwds`` -- dictionary. Keyword arguments that are
-          passed to the save function.
+        - ``save_kwds`` -- dictionary; keyword arguments that are
+          passed to the save function
 
-        - ``file_extension`` -- string starting with ``'.'``. The file
-          extension of the graphics file.
+        - ``file_extension`` -- string starting with ``'.'``; the file
+          extension of the graphics file
 
         - ``output_container`` -- subclass of
           :class:`sage.repl.rich_output.output_basic.OutputBase`. The
@@ -686,9 +683,7 @@ class DisplayManager(SageObject):
         - ``dpi`` -- integer (optional). The desired resolution in dots
           per inch. Suggested, but need not be respected by the output.
 
-        OUTPUT:
-
-        Return an instance of ``output_container``.
+        OUTPUT: an instance of ``output_container``
 
         EXAMPLES::
 
@@ -729,11 +724,9 @@ class DisplayManager(SageObject):
 
         INPUT:
 
-        - ``online`` -- Boolean determining script usage context
+        - ``online`` -- boolean determining script usage context
 
-        OUTPUT:
-
-        String containing script tag
+        OUTPUT: string containing script tag
 
         .. NOTE::
 
@@ -786,9 +779,9 @@ class DisplayManager(SageObject):
         """
         return self._supported_output
 
-    def displayhook(self, obj):
+    def displayhook(self, obj: Any) -> None | Any:
         """
-        Implementation of the displayhook
+        Implementation of the displayhook.
 
         Every backend must pass the value of the last statement of a
         line / cell to this method. See also
@@ -797,11 +790,9 @@ class DisplayManager(SageObject):
 
         INPUT:
 
-        - ``obj`` -- anything. The object to be shown.
+        - ``obj`` -- anything; the object to be shown
 
-        OUTPUT:
-
-        Returns whatever the backend's displayhook method returned.
+        OUTPUT: whatever the backend's displayhook method returned
 
         EXAMPLES::
 
@@ -827,10 +818,10 @@ class DisplayManager(SageObject):
 
         INPUT:
 
-        - ``obj`` -- anything. The object to be shown.
+        - ``obj`` -- anything; the object to be shown
 
         - ``rich_repr_kwds`` -- optional keyword arguments that are
-          passed through to ``obj._rich_repr_``.
+          passed through to ``obj._rich_repr_``
 
         EXAMPLES::
 

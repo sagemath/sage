@@ -2,11 +2,11 @@ r"""
 Watkins symmetric power `L`-function calculator
 
 SYMPOW is a package to compute special values of symmetric power
-elliptic curve L-functions. It can compute up to about 64 digits of
+elliptic curve `L`-functions. It can compute up to about 64 digits of
 precision. This interface provides complete access to sympow, which
 is a standard part of Sage (and includes the extra data files).
 
-.. note::
+.. NOTE::
 
     Each call to ``sympow`` runs a complete
     ``sympow`` process. This incurs about 0.2 seconds
@@ -56,7 +56,7 @@ from sage.rings.integer import Integer
 
 class Sympow(SageObject):
     r"""
-    Watkins Symmetric Power `L`-function Calculator
+    Watkins Symmetric Power `L`-function Calculator.
 
     Type ``sympow.[tab]`` for a list of useful commands
     that are implemented using the command line interface, but return
@@ -100,22 +100,15 @@ class Sympow(SageObject):
 
         INPUT:
 
+        - ``E`` -- elliptic curve
 
-        -  ``E`` -- elliptic curve
+        - ``n`` -- even integer
 
-        -  ``n`` -- even integer
+        - ``prec`` -- integer
 
-        -  ``prec`` -- integer
+        OUTPUT: real number to prec digits of precision as a string
 
-
-        OUTPUT:
-
-
-        -  ``string`` -- real number to prec digits of precision
-           as a string.
-
-
-        .. note::
+        .. NOTE::
 
            Before using this function for the first time for a given
            `n`, you may have to type ``sympow('-new_data n')``,
@@ -156,26 +149,24 @@ class Sympow(SageObject):
 
     def Lderivs(self, E, n, prec, d):
         r"""
-        Return `0^{th}` to `d^{th}` derivatives of
+        Return `0`-th to `d`-th derivatives of
         `L(\mathrm{Sym}^{(n)}(E,s)` to prec digits of precision, where
         `s` is the right edge if `n` is even and the center
         if `n` is odd.
 
         INPUT:
 
+        - ``E`` -- elliptic curve
 
-        -  ``E`` -- elliptic curve
+        - ``n`` -- integer (even or odd)
 
-        -  ``n`` -- integer (even or odd)
+        - ``prec`` -- integer
 
-        -  ``prec`` -- integer
+        - ``d`` -- integer
 
-        -  ``d`` -- integer
+        OUTPUT: string, exactly as output by sympow
 
-
-        OUTPUT: a string, exactly as output by sympow
-
-        .. note::
+        .. NOTE::
 
            To use this function you may have to run a few commands
            like ``sympow('-new_data 1d2')``, each which takes a
@@ -207,15 +198,11 @@ class Sympow(SageObject):
 
         INPUT:
 
-
-        -  ``E`` -- elliptic curve over Q
-
+        - ``E`` -- elliptic curve over Q
 
         OUTPUT:
 
-
-        -  ``integer`` -- modular degree
-
+        - ``integer`` -- modular degree
 
         EXAMPLES: We compute the modular degrees of the lowest known
         conductor curves of the first few ranks::
@@ -246,24 +233,20 @@ class Sympow(SageObject):
 
         INPUT:
 
-
-        -  ``E`` -- elliptic curve over Q
-
+        - ``E`` -- elliptic curve over Q
 
         OUTPUT:
 
+        - ``integer`` -- analytic rank
 
-        -  ``integer`` -- analytic rank
-
-        -  ``string`` -- leading coefficient (as string)
+        - ``string`` -- leading coefficient (as string)
 
 
-        .. note::
+        .. NOTE::
 
-           The analytic rank is *not* computed provably correctly in
-           general.
+           The analytic rank is *not* computed provably correctly in general.
 
-        .. note::
+        .. NOTE::
 
            In computing the analytic rank we consider
            `L^{(r)}(E,1)` to be `0` if
@@ -303,7 +286,7 @@ class Sympow(SageObject):
 
     def new_data(self, n):
         """
-        Pre-compute data files needed for computation of n-th symmetric
+        Pre-compute data files needed for computation of `n`-th symmetric
         powers.
         """
         print(self('-new_data %s' % n))
@@ -376,11 +359,11 @@ will add the data for the 2nd derivative and 3rd symmetric power,
 
      sympow('-new_data 6d0h')
 
-will add the data for the 0th derivative of the 6th Hecke power, and
+will add the data for the `0`-th derivative of the `6`-th Hecke power, and
 
      sympow('-new_data 4c')
 
-will add data for the 4th symmetric power for curves with CM
+will add data for the `4`-th symmetric power for curves with CM
 (these need to be done separately for powers divisible by 4).
 
 The mesh files are stored in binary form, and thus endian-ness is a

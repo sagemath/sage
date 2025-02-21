@@ -24,10 +24,10 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
-from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
-from .scalarfield import DiffScalarField
+from sage.manifolds.differentiable.scalarfield import DiffScalarField
 from sage.misc.decorators import options
+from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
+from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
 
 class TangentVector(FiniteRankFreeModuleElement):
@@ -120,7 +120,6 @@ class TangentVector(FiniteRankFreeModuleElement):
 
         :class:`~sage.tensor.modules.free_module_element.FiniteRankFreeModuleElement`
         for more documentation.
-
     """
     def __init__(self, parent, name=None, latex_name=None):
         r"""
@@ -137,7 +136,6 @@ class TangentVector(FiniteRankFreeModuleElement):
              manifold M
             sage: v[:] = 5, -3/2
             sage: TestSuite(v).run()
-
         """
         FiniteRankFreeModuleElement.__init__(self, parent, name=name,
                                              latex_name=latex_name)
@@ -159,7 +157,6 @@ class TangentVector(FiniteRankFreeModuleElement):
             'Tangent vector v at Point p on the 2-dimensional differentiable manifold M'
             sage: repr(v)  # indirect doctest
             'Tangent vector v at Point p on the 2-dimensional differentiable manifold M'
-
         """
         from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
         if isinstance(self._point.parent(), EuclideanSpace):
@@ -210,10 +207,10 @@ class TangentVector(FiniteRankFreeModuleElement):
         - ``scale`` -- (default: 1) value by which the length of the arrow
           representing the vector is multiplied
 
-        - ``color`` -- (default: 'blue') color of the arrow representing the
+        - ``color`` -- (default: ``'blue'``) color of the arrow representing the
           vector
 
-        - ``print_label`` -- (boolean; default: ``True``) determines whether a
+        - ``print_label`` -- boolean (default: ``True``); determines whether a
           label is printed next to the arrow representing the vector
 
         - ``label`` -- (string; default: ``None``) label printed next to the
@@ -450,15 +447,14 @@ class TangentVector(FiniteRankFreeModuleElement):
             graph_v = v.plot(mapping=F)
             graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)
             sphinx_plot(graph_v + graph_S2)
-
         """
+        from sage.manifolds.differentiable.chart import DiffChart
+        from sage.misc.functional import numerical_approx
         from sage.plot.arrow import arrow2d
-        from sage.plot.text import text
         from sage.plot.graphics import Graphics
         from sage.plot.plot3d.shapes import arrow3d
         from sage.plot.plot3d.shapes2 import text3d
-        from sage.misc.functional import numerical_approx
-        from sage.manifolds.differentiable.chart import DiffChart
+        from sage.plot.text import text
 
         scale = extra_options.pop("scale")
 
@@ -605,7 +601,6 @@ class TangentVector(FiniteRankFreeModuleElement):
 
             sage: bool( v(omega) == omega(v) )
             True
-
         """
         if isinstance(f, FreeModuleAltForm):
             # Case of self acting on a linear form

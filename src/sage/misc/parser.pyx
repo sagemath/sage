@@ -204,7 +204,7 @@ cdef class Tokenizer:
             token = self.next()
         return all
 
-    cpdef reset(self, int pos = 0):
+    cpdef reset(self, int pos=0):
         """
         Reset the tokenizer to a given position.
 
@@ -330,7 +330,7 @@ cdef class Tokenizer:
 
     cpdef int next(self) noexcept:
         """
-        Returns the next token in the string.
+        Return the next token in the string.
 
         EXAMPLES::
 
@@ -353,7 +353,7 @@ cdef class Tokenizer:
 
     cpdef int last(self) noexcept:
         """
-        Returns the last token seen.
+        Return the last token seen.
 
         EXAMPLES::
 
@@ -372,8 +372,8 @@ cdef class Tokenizer:
 
     cpdef int peek(self) noexcept:
         """
-        Returns the next token that will be encountered, without changing
-        the state of self.
+        Return the next token that will be encountered, without changing
+        the state of ``self``.
 
         EXAMPLES::
 
@@ -397,8 +397,8 @@ cdef class Tokenizer:
 
     cpdef bint backtrack(self) except -2:
         """
-        Put self in such a state that the subsequent call to next() will
-        return the same as if next() had not been called.
+        Put ``self`` in such a state that the subsequent call to ``next()``
+        will return the same as if ``next()`` had not been called.
 
         Currently, one can only backtrack once.
 
@@ -457,18 +457,18 @@ cdef class Parser:
 
         INPUT:
 
-        - make_int      -- callable object to construct integers from strings (default int)
-        - make_float    -- callable object to construct real numbers from strings (default float)
-        - make_var      -- callable object to construct variables from strings (default str)
+        - ``make_int`` -- callable object to construct integers from strings (default: int)
+        - ``make_float`` -- callable object to construct real numbers from strings (default: float)
+        - ``make_var`` -- callable object to construct variables from strings (default: str)
           this may also be a dictionary of variable names
-        - make_function -- callable object to construct callable functions from strings
+        - ``make_function`` -- callable object to construct callable functions from strings
           this may also be a dictionary
-        - implicit_multiplication -- whether or not to accept implicit multiplication
+        - ``implicit_multiplication`` -- whether or not to accept implicit multiplication
 
         OUTPUT:
 
-            The evaluated expression tree given by the string, where the above
-            functions are used to create the leaves of this tree.
+        The evaluated expression tree given by the string, where the above
+        functions are used to create the leaves of this tree.
 
         EXAMPLES::
 
@@ -596,7 +596,7 @@ cdef class Parser:
 
     cpdef p_matrix(self, Tokenizer tokens):
         """
-        Parse a matrix
+        Parse a matrix.
 
         EXAMPLES::
 
@@ -897,7 +897,6 @@ cdef class Parser:
             factorial(x^2)
             sage: p.p_factor(Tokenizer('x!^2'))
             factorial(x)^2
-
         """
         operand1 = self.p_atom(tokens)
         cdef int token = tokens.next()
@@ -976,7 +975,7 @@ cdef class Parser:
 # args = arg (',' arg)* | EMPTY
     cpdef p_args(self, Tokenizer tokens):
         """
-        Returns a list, dict pair.
+        Return a ``list, dict`` pair.
 
         EXAMPLES::
 
@@ -1006,8 +1005,8 @@ cdef class Parser:
 # arg = expr | name '=' expr
     cpdef p_arg(self, Tokenizer tokens):
         """
-        Returns an expr, or a (name, expr) tuple corresponding to a single
-        function call argument.
+        Return an ``expr``, or a ``(name, expr)`` tuple corresponding to a
+        single function call argument.
 
         EXAMPLES:
 
@@ -1031,7 +1030,6 @@ cdef class Parser:
             sage: p = Parser(make_var=var)                                              # needs sage.symbolic
             sage: p.p_arg(Tokenizer("[x]"))                                             # needs sage.symbolic
             [x]
-
         """
         cdef int token = tokens.next()
         if token == NAME and tokens.peek() == c'=':

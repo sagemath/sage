@@ -9,4 +9,4 @@ class TestGLPKBackend(GenericBackendTests):
 
     @pytest.fixture
     def backend(self) -> GenericBackend:
-        return MixedIntegerLinearProgram(solver="GLPK").get_backend()
+        return MixedIntegerLinearProgram(solver='GLPK').get_backend()

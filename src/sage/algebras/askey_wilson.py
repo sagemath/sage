@@ -800,15 +800,13 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
         INPUT:
 
         - ``domain`` -- an Askey-Wilson algebra
-        - ``on_generators`` -- a list of length 6 corresponding to
+        - ``on_generators`` -- list of length 6 corresponding to
           the images of the generators
         - ``codomain`` -- (optional) the codomain
-        - ``position`` -- (default: 0) integer
+        - ``position`` -- integer (default: 0)
         - ``category`` -- (optional) category
 
-        OUTPUT:
-
-        - module morphism
+        OUTPUT: module morphism
 
         EXAMPLES::
 
@@ -847,16 +845,14 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
 
     def _on_basis(self, c):
         r"""
-        Computes the image of this morphism on the basis element
+        Compute the image of this morphism on the basis element
         indexed by ``c``.
 
         INPUT:
 
-        - ``c`` -- a tuple of length 6
+        - ``c`` -- tuple of length 6
 
-        OUTPUT:
-
-        - element of the codomain
+        OUTPUT: element of the codomain
 
         EXAMPLES::
 

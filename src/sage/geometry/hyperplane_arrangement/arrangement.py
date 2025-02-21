@@ -382,7 +382,7 @@ class HyperplaneArrangementElement(Element):
 
         - ``parent`` -- the parent :class:`HyperplaneArrangements`
 
-        - ``hyperplanes`` -- a tuple of hyperplanes
+        - ``hyperplanes`` -- tuple of hyperplanes
 
         - ``check`` -- boolean (default: ``True``); whether to check input
 
@@ -423,9 +423,7 @@ class HyperplaneArrangementElement(Element):
         """
         Workaround to support the construction with names.
 
-        INPUT/OUTPUT:
-
-        See :meth:`HyperplaneArrangements._first_ngens`.
+        INPUT/OUTPUT: see :meth:`HyperplaneArrangements._first_ngens`
 
         EXAMPLES::
 
@@ -443,9 +441,7 @@ class HyperplaneArrangementElement(Element):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        The `i`-th hyperplane.
+        OUTPUT: the `i`-th hyperplane
 
         EXAMPLES::
 
@@ -474,9 +470,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Return the number of hyperplanes in the arrangement.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -495,9 +489,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Return the hyperplanes in the arrangement as a tuple.
 
-        OUTPUT:
-
-        A tuple
+        OUTPUT: a tuple
 
         EXAMPLES::
 
@@ -517,9 +509,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         String representation for a hyperplane arrangement.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -543,9 +533,7 @@ class HyperplaneArrangementElement(Element):
         """
         Return the ambient space dimension of the arrangement.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -597,11 +585,9 @@ class HyperplaneArrangementElement(Element):
 
     def backend(self):
         """
-        Return the backend used for polyhedral objects
+        Return the backend used for polyhedral objects.
 
-        OUTPUT:
-
-        A string giving the backend or ``None`` if none is specified.
+        OUTPUT: string giving the backend or ``None`` if none is specified
 
         EXAMPLES:
 
@@ -648,9 +634,7 @@ class HyperplaneArrangementElement(Element):
         - ``other`` -- a hyperplane arrangement or something that can
           be converted into a hyperplane arrangement
 
-        OUTPUT:
-
-        A new hyperplane arrangement.
+        OUTPUT: a new hyperplane arrangement
 
         EXAMPLES::
 
@@ -689,9 +673,7 @@ class HyperplaneArrangementElement(Element):
         """
         Plot the hyperplane arrangement.
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 
@@ -763,18 +745,18 @@ class HyperplaneArrangementElement(Element):
         return H(*hyperplanes, backend=self._backend)
 
     @cached_method
-    def intersection_poset(self, element_label="int"):
+    def intersection_poset(self, element_label='int'):
         r"""
         Return the intersection poset of the hyperplane arrangement.
 
         INPUT:
 
-        - ``element_label`` -- (default: ``"int"``) specify how an
+        - ``element_label`` -- (default: ``'int'``) specify how an
           intersection should be represented; must be one of the following:
 
-          * ``"subspace"`` -- as a subspace
-          * ``"subset"`` -- as a subset of the defining hyperplanes
-          * ``"int"`` -- as an integer
+          * ``'subspace'`` -- as a subspace
+          * ``'subset'`` -- as a subset of the defining hyperplanes
+          * ``'int'`` -- as an integer
 
         OUTPUT:
 
@@ -810,7 +792,7 @@ class HyperplaneArrangementElement(Element):
             [[0], [1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]
 
         By passing the argument ``element_label="subset"``, each element of the
-        intesection poset is labelled by the set of indices of the hyperplanes
+        intersection poset is labelled by the set of indices of the hyperplanes
         whose intersection is said element. The index of a hyperplane is its
         index in ``self.hyperplanes()``. ::
 
@@ -930,9 +912,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Return the characteristic polynomial of the hyperplane arrangement.
 
-        OUTPUT:
-
-        The characteristic polynomial in `\QQ[x]`.
+        OUTPUT: the characteristic polynomial in `\QQ[x]`
 
         EXAMPLES::
 
@@ -978,9 +958,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Return the Poincaré polynomial of the hyperplane arrangement.
 
-        OUTPUT:
-
-        The Poincaré polynomial in `\QQ[x]`.
+        OUTPUT: the Poincaré polynomial in `\QQ[x]`
 
         EXAMPLES::
 
@@ -1010,9 +988,7 @@ class HyperplaneArrangementElement(Element):
         element of `L` (here, the `0` dimensional subspace), and
         `\mu` is the Möbius function of `L`.
 
-        OUTPUT:
-
-        The cocharacteristic polynomial in `\ZZ[z]`.
+        OUTPUT: the cocharacteristic polynomial in `\ZZ[z]`
 
         EXAMPLES::
 
@@ -1039,7 +1015,7 @@ class HyperplaneArrangementElement(Element):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(ZZ, 'z')
         z = R.gen()
-        L = self.intersection_poset(element_label="subspace").dual()
+        L = self.intersection_poset(element_label='subspace').dual()
         B = L.minimal_elements()[0]
         return R.sum(abs(L.moebius_function(B, X)) * z**X.dimension()
                      for X in L)
@@ -1060,9 +1036,7 @@ class HyperplaneArrangementElement(Element):
         element of `L` (here, the `0` dimensional subspace), and
         `\mu` is the Möbius function of `L`.
 
-        OUTPUT:
-
-        The primitive Eulerian polynomial in `\ZZ[z]`.
+        OUTPUT: the primitive Eulerian polynomial in `\ZZ[z]`
 
         EXAMPLES::
 
@@ -1106,7 +1080,7 @@ class HyperplaneArrangementElement(Element):
         We compute types `H_3` and `F_4` in Table 1 of [BHS2023]_::
 
             sage: # needs sage.libs.gap
-            sage: W = CoxeterGroup(['H',3], implementation="matrix")
+            sage: W = CoxeterGroup(['H',3], implementation='matrix')
             sage: A = HyperplaneArrangements(W.base_ring(), tuple(f'x{s}' for s in range(W.rank())))
             sage: H = A([[0] + list(r) for r in W.positive_roots()])
             sage: H.is_simplicial()                                                     # needs sage.graphs
@@ -1114,7 +1088,7 @@ class HyperplaneArrangementElement(Element):
             sage: H.primitive_eulerian_polynomial()
             z^3 + 28*z^2 + 16*z
 
-            sage: W = CoxeterGroup(['F',4], implementation="permutation")
+            sage: W = CoxeterGroup(['F',4], implementation='permutation')
             sage: A = HyperplaneArrangements(QQ, tuple(f'x{s}' for s in range(W.rank())))
             sage: H = A([[0] + list(r) for r in W.positive_roots()])
             sage: H.primitive_eulerian_polynomial()     # long time                     # needs sage.graphs
@@ -1163,7 +1137,7 @@ class HyperplaneArrangementElement(Element):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(ZZ, 'z')
         z = R.gen()
-        L = self.intersection_poset(element_label="subspace").dual()
+        L = self.intersection_poset(element_label='subspace').dual()
         B = L.minimal_elements()[0]
         n = self.dimension()
         return R.sum(abs(L.moebius_function(B, X)) * (z - 1)**(n-X.dimension())
@@ -1365,9 +1339,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         The number of regions of the hyperplane arrangement.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1399,7 +1371,7 @@ class HyperplaneArrangementElement(Element):
             ....:               vector(AA, [-1/2, AA(-1/2*v2^3 + v2), 0]))
             sage: H = HyperplaneArrangements(AA, names='xyz')
             sage: x,y,z = H.gens()
-            sage: A = H(backend="normaliz")                                     # optional - pynormaliz
+            sage: A = H(backend='normaliz')                                     # optional - pynormaliz
             sage: for v in my_vectors:                                          # optional - pynormaliz
             ....:     a, b, c = v
             ....:     A = A.add_hyperplane(a*x + b*y + c*z)
@@ -1456,9 +1428,7 @@ class HyperplaneArrangementElement(Element):
 
         - ``p`` -- prime number
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1488,9 +1458,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Test whether all hyperplanes pass through the origin.
 
-        OUTPUT:
-
-        A boolean. Whether all the hyperplanes pass through the origin.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1521,9 +1489,7 @@ class HyperplaneArrangementElement(Element):
 
             :meth:`essentialization`
 
-        OUTPUT:
-
-        A boolean indicating whether the hyperplane arrangement is essential.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1549,9 +1515,7 @@ class HyperplaneArrangementElement(Element):
           to return the center as a polyhedron (possibly empty) as part
           of the output
 
-        OUTPUT:
-
-        If ``certificate`` is ``True``, returns a tuple containing:
+        OUTPUT: if ``certificate`` is ``True``, returns a tuple containing:
 
         1. A boolean
         2. The polyhedron defined to be the intersection of all the hyperplanes
@@ -1620,9 +1584,7 @@ class HyperplaneArrangementElement(Element):
         ambient space of the arrangement that lie on all of the
         hyperplanes.
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES:
 
@@ -1658,9 +1620,7 @@ class HyperplaneArrangementElement(Element):
         are linearly independent. A hyperplane arrangement is said to be
         simplicial if every region is simplicial.
 
-        OUTPUT:
-
-        A boolean whether the hyperplane arrangement is simplicial.
+        OUTPUT: boolean; whether the hyperplane arrangement is simplicial
 
         EXAMPLES::
 
@@ -1763,7 +1723,7 @@ class HyperplaneArrangementElement(Element):
                 v[pivot] = 1
                 complement_basis.append(vector(R, v))
         # reduce the hyperplane equations
-        echelon_pivots = []   # the column indices where N has 1's from the echelonization
+        echelon_pivots = []   # the column indices where N has 1s from the echelonization
         for pivot, row in echelon_col_iter(complement_basis):
             assert row[pivot] == 1
             echelon_pivots.append(pivot)
@@ -1828,9 +1788,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Return the face vector.
 
-        OUTPUT:
-
-        A vector of integers.
+        OUTPUT: a vector of integers
 
         The `d`-th entry is the number of faces of dimension `d`.  A
         *face* is the intersection of a region with a hyperplane of
@@ -1850,7 +1808,7 @@ class HyperplaneArrangementElement(Element):
         return v
 
     @cached_method
-    def _parallel_hyperplanes(self):
+    def _parallel_hyperplanes(self) -> tuple:
         """
         Return the hyperplanes grouped into parallel sets.
 
@@ -1887,7 +1845,7 @@ class HyperplaneArrangementElement(Element):
              (Hyperplane t0 + 0*t1 - t2 + 0, (1, 0, -1), 0)))
         """
         V = self.parent().ambient_space()
-        parallels = dict()
+        parallels = {}
         for hyperplane in self:
             through_origin = V([list(hyperplane.A()), 0]).primitive(signed=False)
             parallel_planes = parallels.get(through_origin, [])
@@ -1895,10 +1853,9 @@ class HyperplaneArrangementElement(Element):
             b = hyperplane.b() * (A / hyperplane.A())
             parallel_planes.append([b, (hyperplane, A, b)])
             parallels[through_origin] = parallel_planes
-        parallels = [tuple(tuple(hyperplane[1]
-                           for hyperplane in sorted(parallels[key])))
-                     for key in parallels.keys()]
-        return tuple(sorted(parallels))
+        parallels = sorted(tuple(hyperplane[1] for hyperplane in sorted(value))
+                           for key, value in parallels.items())
+        return tuple(parallels)
 
     def vertices(self, exclude_sandwiched=False):
         """
@@ -1981,7 +1938,7 @@ class HyperplaneArrangementElement(Element):
 
         INPUT:
 
-        - ``hyperplanes`` -- a list/tuple/iterable of hyperplanes
+        - ``hyperplanes`` -- list/tuple/iterable of hyperplanes
 
         OUTPUT:
 
@@ -2016,9 +1973,7 @@ class HyperplaneArrangementElement(Element):
 
         The base field must have characteristic zero.
 
-        OUTPUT:
-
-        A tuple containing the regions as polyhedra.
+        OUTPUT: a tuple containing the regions as polyhedra
 
         The regions are the connected components of the complement of
         the union of the hyperplanes as a subset of `\RR^n`.
@@ -2191,15 +2146,13 @@ class HyperplaneArrangementElement(Element):
         INPUT:
 
         - ``B`` -- a region (optional); if ``None``, then
-          an arbitrary region is chosen as the base region.
+          an arbitrary region is chosen as the base region
 
-        - ``numbered_labels`` -- bool (default: ``True``); if ``True``,
+        - ``numbered_labels`` -- boolean (default: ``True``); if ``True``,
           then the elements of the poset are numbered. Else they are labelled
           with the regions themselves.
 
-        OUTPUT:
-
-        A Poset object containing the poset of regions.
+        OUTPUT: a Poset object containing the poset of regions
 
         EXAMPLES::
 
@@ -2552,7 +2505,7 @@ class HyperplaneArrangementElement(Element):
 
         - ``F``, ``G`` -- two faces of ``self`` (as polyhedra)
 
-        - ``normalize`` -- Boolean (default: ``True``); if ``True``, then
+        - ``normalize`` -- boolean (default: ``True``); if ``True``, then
           this method returns the precise instance of `FG` in the list
           returned by ``self.closed_faces()``, rather than creating a new
           instance
@@ -2755,7 +2708,7 @@ class HyperplaneArrangementElement(Element):
 
         OUTPUT:
 
-        A polyhedron. A :class:`ValueError` is raised if the point is not
+        A polyhedron. A :exc:`ValueError` is raised if the point is not
         interior to a region, that is, sits on a hyperplane.
 
         EXAMPLES::
@@ -3075,10 +3028,8 @@ class HyperplaneArrangementElement(Element):
 
         - ``hyperplane`` -- a hyperplane
 
-        OUTPUT:
-
-        A boolean. Whether the hyperplane ``hyperplane`` separate the given
-        regions.
+        OUTPUT: boolean; whether the hyperplane ``hyperplane`` separate the
+        given regions
 
         EXAMPLES::
 
@@ -3119,9 +3070,7 @@ class HyperplaneArrangementElement(Element):
         - ``region1``, ``region2`` -- regions of the arrangement or
           representative points of regions
 
-        OUTPUT:
-
-        An integer. The number of hyperplanes separating the two regions.
+        OUTPUT: integer; the number of hyperplanes separating the two regions
 
         EXAMPLES::
 
@@ -3180,11 +3129,9 @@ class HyperplaneArrangementElement(Element):
         INPUT:
 
         - ``names`` -- string or list/tuple/iterable of strings. The
-          variable names for the polynomial ring `S`.
+          variable names for the polynomial ring `S`
 
-        OUTPUT:
-
-        The Varchenko matrix.
+        OUTPUT: the Varchenko matrix
 
         EXAMPLES::
 
@@ -3463,7 +3410,7 @@ class HyperplaneArrangementElement(Element):
         return construct_free_chain(self)
 
     @cached_method(key=lambda self, a: None)
-    def is_free(self, algorithm="singular"):
+    def is_free(self, algorithm='singular'):
         r"""
         Return if ``self`` is free.
 
@@ -3473,11 +3420,11 @@ class HyperplaneArrangementElement(Element):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``"singular"``) can be one of
+        - ``algorithm`` -- (default: ``'singular'``) can be one of
           the following:
 
-          * ``"singular"`` -- use Singular's minimal free resolution
-          * ``"BC"`` -- use the algorithm given by Barakat and Cuntz
+          * ``'singular'`` -- use Singular's minimal free resolution
+          * ``'BC'`` -- use the algorithm given by Barakat and Cuntz
             in [BC2012]_ (much slower than using Singular)
 
         ALGORITHM:
@@ -3517,8 +3464,8 @@ class HyperplaneArrangementElement(Element):
             sage: W = WeylGroup(['B', 3], prefix='s')                                   # needs sage.combinat sage.groups
             sage: for x in W:                   # long time                             # needs sage.combinat sage.groups
             ....:    A = x.inversion_arrangement()
-            ....:    assert (A.is_free(algorithm="BC")
-            ....:            == A.is_free(algorithm="singular"))
+            ....:    assert (A.is_free(algorithm='BC')
+            ....:            == A.is_free(algorithm='singular'))
         """
         if not self.is_central():
             raise NotImplementedError("only implemented for central arrangements")
@@ -3531,7 +3478,7 @@ class HyperplaneArrangementElement(Element):
         else:
             raise ValueError("invalid algorithm")
 
-    def derivation_module_basis(self, algorithm="singular"):
+    def derivation_module_basis(self, algorithm='singular'):
         """
         Return a basis for the derivation module of ``self`` if
         one exists, otherwise return ``None``.
@@ -3542,11 +3489,11 @@ class HyperplaneArrangementElement(Element):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``"singular"``) can be one of
+        - ``algorithm`` -- (default: ``'singular'``) can be one of
           the following:
 
-          * ``"singular"`` -- use Singular's minimal free resolution
-          * ``"BC"`` -- use the algorithm given by Barakat and Cuntz
+          * ``'singular'`` -- use Singular's minimal free resolution
+          * ``'BC'`` -- use the algorithm given by Barakat and Cuntz
             in [BC2012]_ (much slower than using Singular)
 
         OUTPUT:
@@ -3589,8 +3536,8 @@ class HyperplaneArrangementElement(Element):
             ....:     return sorted([max(x.degree() for x in b) for b in B])
             sage: for x in W:                   # long time                             # needs sage.combinat sage.groups
             ....:     A = x.inversion_arrangement()
-            ....:     B = A.derivation_module_basis(algorithm="singular")
-            ....:     Bp = A.derivation_module_basis(algorithm="BC")
+            ....:     B = A.derivation_module_basis(algorithm='singular')
+            ....:     Bp = A.derivation_module_basis(algorithm='BC')
             ....:     if B is None:
             ....:         assert Bp is None
             ....:     else:
@@ -3691,9 +3638,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         """
         Return the base ring.
 
-        OUTPUT:
-
-        The base ring of the hyperplane arrangement.
+        OUTPUT: the base ring of the hyperplane arrangement
 
         EXAMPLES::
 
@@ -3709,7 +3654,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``base_ring`` -- a ring; the new base ring.
+        - ``base_ring`` -- a ring; the new base ring
 
         OUTPUT:
 
@@ -3754,9 +3699,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3784,7 +3727,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
           whether or not there is a warning shown
 
         - ``check`` -- boolean (default: ``True``); whether to
-          perform argument checking.
+          perform argument checking
 
         EXAMPLES::
 
@@ -3872,9 +3815,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         """
         Return the number of linear variables.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3891,9 +3832,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         """
         Return the coordinate hyperplanes.
 
-        OUTPUT:
-
-        A tuple of linear expressions, one for each linear variable.
+        OUTPUT: a tuple of linear expressions, one for each linear variable
 
         EXAMPLES::
 
@@ -3913,9 +3852,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        A linear expression.
+        OUTPUT: a linear expression
 
         EXAMPLES::
 

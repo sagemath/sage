@@ -30,7 +30,7 @@ lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
     r"""
     Return the `q`-expansion of the normalized weight `k` Eisenstein series on
-    `\SL_2(\ZZ)` to precision prec in the ring `K`. Three normalizations
+    `\SL_2(\ZZ)` to precision ``prec`` in the ring `K`. Three normalizations
     are available, depending on the parameter ``normalization``; the default
     normalization is the one for which the linear coefficient is 1.
 
@@ -42,7 +42,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
 
     - ``K`` -- (default: `\QQ`) a ring
 
-    - ``var`` -- (default: ``'q'``) variable name to use for q-expansion
+    - ``var`` -- (default: ``'q'``) variable name to use for `q`-expansion
 
     - ``normalization`` -- (default: ``'linear'``) normalization to use. If this
       is ``'linear'``, then the series will be normalized so that the linear
@@ -78,7 +78,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
         1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + O(q^5)
         sage: eisenstein_series_qexp(12, 5, normalization='linear')
         691/65520 + q + 2049*q^2 + 177148*q^3 + 4196353*q^4 + O(q^5)
-        sage: eisenstein_series_qexp(12, 50, K=GF(13), normalization="constant")
+        sage: eisenstein_series_qexp(12, 50, K=GF(13), normalization='constant')
         1 + O(q^50)
 
     TESTS:
@@ -95,20 +95,20 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
 
     We check that the function behaves properly over finite-characteristic base rings::
 
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization="integral")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization='integral')
         566*q + 236*q^2 + 286*q^3 + 194*q^4 + O(q^5)
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization="constant")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization='constant')
         Traceback (most recent call last):
         ...
         ValueError: The numerator of -B_k/(2*k) (=691) must be invertible in the ring Ring of integers modulo 691
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization="linear")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization='linear')
         q + 667*q^2 + 252*q^3 + 601*q^4 + O(q^5)
 
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization="integral")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization='integral')
         1 + O(q^5)
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization="constant")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization='constant')
         1 + O(q^5)
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization="linear")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization='linear')
         Traceback (most recent call last):
         ...
         ValueError: The denominator of -B_k/(2*k) (=65520) must be invertible in the ring Ring of integers modulo 2
@@ -159,7 +159,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
             E._unsafe_mutate(0, a0)
         return R(E, prec)
         # The following is an older slower alternative to the above three lines:
-        #return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=False)
+        # return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=False)
     else:
         # This used to work with check=False, but that can only be regarded as
         # an improbable lucky miracle. Enabling checking is a noticeable speed
@@ -169,6 +169,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
             return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
         else:
             return R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
+
 
 def __common_minimal_basering(chi, psi):
     """
@@ -279,7 +280,7 @@ def __find_eisen_chars(character, k):
         if L not in C:
             continue
         GL = C[L]
-        for R in divisors(N/L):
+        for R in divisors(N // L):
             if R not in C:
                 continue
             GR = C[R]
@@ -288,8 +289,8 @@ def __find_eisen_chars(character, k):
                     if chi*psi == eps:
                         chi0, psi0 = __common_minimal_basering(chi, psi)
                         for t in divisors(N//(R*L)):
-                            if k != 1 or ((psi0, chi0, t) not in params):
-                                params.append( (chi0,psi0,t) )
+                            if k != 1 or (psi0, chi0, t) not in params:
+                                params.append((chi0, psi0, t))
     return params
 
 
@@ -365,8 +366,6 @@ def __find_eisen_chars_gamma1(N, k):
                         pairs.append((psi, chi))
                     else:
                         pairs.append((chi, psi))
-        #end fors
-    #end if
 
     triples = []
     for chi, psi in pairs:
@@ -376,20 +375,21 @@ def __find_eisen_chars_gamma1(N, k):
         if k == 2 and chi.is_trivial() and psi.is_trivial():
             D.remove(1)
         chi, psi = __common_minimal_basering(chi, psi)
-        for t in D:
-            triples.append((chi, psi, t))
+        triples.extend((chi, psi, t) for t in D)
+
     return triples
 
 
 def eisenstein_series_lseries(weight, prec=53,
-               max_imaginary_part=0,
-               max_asymp_coeffs=40):
+                              max_imaginary_part=0,
+                              max_asymp_coeffs=40):
     r"""
-    Return the L-series of the weight `2k` Eisenstein series
+    Return the `L`-series of the weight `2k` Eisenstein series `E_{2k}`
     on `\SL_2(\ZZ)`.
 
     This actually returns an interface to Tim Dokchitser's program
-    for computing with the L-series of the Eisenstein series
+    for computing with the `L`-series of the Eisenstein series.
+    See :class:`~sage.lfunctions.dokchitser.Dokchitser`.
 
     INPUT:
 
@@ -401,20 +401,22 @@ def eisenstein_series_lseries(weight, prec=53,
 
     - ``max_asymp_coeffs`` -- integer
 
-    OUTPUT:
-
-    The L-series of the Eisenstein series.
+    OUTPUT: the `L`-series of the Eisenstein series. This can be
+    evaluated at argument `s`, or have
+    :meth:`~sage.lfunctions.dokchitser.Dokchitser.derivative` called, etc.
 
     EXAMPLES:
 
-    We compute with the L-series of `E_{16}` and then `E_{20}`::
+    We compute with the `L`-series of `E_{16}` and then `E_{20}`::
 
-       sage: L = eisenstein_series_lseries(16)
-       sage: L(1)
-       -0.291657724743874
-       sage: L = eisenstein_series_lseries(20)
-       sage: L(2)
-       -5.02355351645998
+        sage: L = eisenstein_series_lseries(16)
+        sage: L(1)
+        -0.291657724743874
+        sage: L.derivative(1)
+        0.0756072194360656
+        sage: L = eisenstein_series_lseries(20)
+        sage: L(2)
+        -5.02355351645998
 
     Now with higher precision::
 

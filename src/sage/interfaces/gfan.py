@@ -47,20 +47,20 @@ from sage.features.gfan import GfanExecutable
 from sage.misc.decorators import rename_keyword
 
 
-class Gfan():
+class Gfan:
     """
     Interface to Anders Jensen's Groebner Fan program.
     """
     @rename_keyword(deprecation=33468, I='input')
     def __call__(self, input, cmd='', verbose=False, format=None):
         r"""
-        Call Groebner Fan program with given input
+        Call Groebner Fan program with given input.
 
         INPUT:
 
-        - ``input`` -- string, input
-        - ``cmd`` -- string (default:``''``), GFan command
-        - ``verbose`` -- bool (default:``False``)
+        - ``input`` -- string; input
+        - ``cmd`` -- string (default: ``''``); GFan command
+        - ``verbose`` -- boolean (default: ``False``)
 
         EXAMPLES::
 
@@ -90,7 +90,6 @@ class Gfan():
             doctest:...:
             DeprecationWarning: use the option 'input' instead of 'I'
             See https://github.com/sagemath/sage/issues/33468 for details.
-
         """
         if format is not None:
             from sage.misc.superseded import deprecation

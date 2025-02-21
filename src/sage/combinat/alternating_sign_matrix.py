@@ -84,7 +84,7 @@ class AlternatingSignMatrix(Element,
     An alternating sign matrix.
 
     An alternating sign matrix is a square matrix of `0`'s, `1`'s and `-1`'s
-    such that the sum of each row and column is `1` and the non-zero
+    such that the sum of each row and column is `1` and the nonzero
     entries in each row and column alternate in sign.
 
     These were introduced in [MRR1983]_.
@@ -262,13 +262,12 @@ class AlternatingSignMatrix(Element,
             True
         """
         n = self._matrix.nrows()
-        triangle = [None] * n
-        prev = zero_vector(ZZ, n)
+        triangle = [0] * n
+        add_row = zero_vector(ZZ, n)
         for j, row in enumerate(self._matrix):
-            add_row = row + prev
+            add_row = row + add_row
             triangle[n - 1 - j] = [i + 1 for i in range(n - 1, -1, -1)
                                    if add_row[i] == 1]
-            prev = add_row
         return MonotoneTriangles(n)(triangle)
 
     @combinatorial_map(name='rotate counterclockwise')
@@ -519,18 +518,17 @@ class AlternatingSignMatrix(Element,
             sage: asm = AlternatingSignMatrix([[1,0,0],[0,1,0],[0,0,1]])
             sage: fpl = asm.to_fully_packed_loop()
             sage: fpl
-                |         |
-                |         |
-                +    + -- +
-                |    |
-                |    |
-             -- +    +    + --
-                     |    |
-                     |    |
-                + -- +    +
-                |         |
-                |         |
-
+                │         │
+                │         │
+                +    + ── +
+                │    │
+                │    │
+             ── +    +    + ──
+                     │    │
+                     │    │
+                + ── +    +
+                │         │
+                │         │
         """
         from sage.combinat.fully_packed_loop import FullyPackedLoop
         return FullyPackedLoop(self)
@@ -695,7 +693,7 @@ class AlternatingSignMatrix(Element,
 
         Given an `n \times n` alternating sign matrix `A`, there are as many
         ASM's of size `n+1` compatible with `A` as 2 raised to the power of
-        the number of 1's in `A` [EKLP1992]_.
+        the number of 1s in `A` [EKLP1992]_.
 
         EXAMPLES::
 
@@ -777,7 +775,6 @@ class AlternatingSignMatrix(Element,
             [1 0]
             [0 1]
             ]
-
         """
         n = self.parent()._n
         M = AlternatingSignMatrices(n-1)
@@ -1020,14 +1017,14 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
 
     An alternating sign matrix of size `n` is an `n \times n` matrix of `0`'s,
     `1`'s and `-1`'s such that the sum of each row and column is `1` and the
-    non-zero entries in each row and column alternate in sign.
+    nonzero entries in each row and column alternate in sign.
 
     Alternating sign matrices of size `n` are in bijection with
     :class:`monotone triangles <MonotoneTriangles>` with `n` rows.
 
     INPUT:
 
-    - `n` -- an integer, the size of the matrices.
+    - ``n`` -- integer; the size of the matrices
 
     EXAMPLES:
 
@@ -1547,7 +1544,6 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             [0 0 1]  [0 1 0]
             [1 0 0], [1 0 0]
             )
-
         """
         return iter(self._lattice_initializer()[1])
 
@@ -1562,7 +1558,6 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             sage: L = A.lattice()
             sage: L
             Finite lattice containing 7 elements
-
         """
         return LatticePoset(self._lattice_initializer(), cover_relations=True,
                             check=False)
@@ -1635,7 +1630,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
 
     INPUT:
 
-    - ``n`` -- The number of rows in the monotone triangles
+    - ``n`` -- the number of rows in the monotone triangles
 
     EXAMPLES:
 

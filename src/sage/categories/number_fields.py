@@ -96,7 +96,7 @@ class NumberFields(Category_singleton):
     def _call_(self, x):
         r"""
         Construct an object in this category from the data in ``x``,
-        or raise a :class:`TypeError`.
+        or raise a :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -134,21 +134,22 @@ class NumberFields(Category_singleton):
 
             INPUT:
 
-            - ``prec`` -- optional integer (default 53) bits precision
+            - ``prec`` -- integer (default: 53); bits of precision
 
-            - ``max_imaginary_part`` -- optional real number (default 0)
+            - ``max_imaginary_part`` -- real (default: 0)
 
-            - ``max_asymp_coeffs`` -- optional integer (default 40)
+            - ``max_asymp_coeffs`` -- integer (default: 40)
 
-            - ``algorithm`` -- optional (default "pari") either "gp" or "pari"
+            - ``algorithm`` -- (default: ``'pari'``) either ``'gp'`` or
+              ``'pari'``
 
-            OUTPUT: The zeta function of this number field.
+            OUTPUT: the zeta function of this number field
 
-            If algorithm is "gp", this returns an interface to Tim
-            Dokchitser's gp script for computing with L-functions.
+            If algorithm is ``'gp'``, this returns an interface to Tim
+            Dokchitser's gp script for computing with `L`-functions.
 
-            If algorithm is "pari", this returns instead an interface to Pari's
-            own general implementation of L-functions.
+            If algorithm is ``'pari'``, this returns instead an interface to Pari's
+            own general implementation of `L`-functions.
 
             EXAMPLES::
 
@@ -168,13 +169,13 @@ class NumberFields(Category_singleton):
             Using the algorithm "pari"::
 
                 sage: K.<a> = NumberField(ZZ['x'].0^2 + ZZ['x'].0 - 1)                  # needs sage.rings.number_field
-                sage: Z = K.zeta_function(algorithm="pari")                             # needs sage.rings.number_field sage.symbolic
+                sage: Z = K.zeta_function(algorithm='pari')                             # needs sage.rings.number_field sage.symbolic
                 sage: Z(-1)                                                             # needs sage.rings.number_field sage.symbolic
                 0.0333333333333333
 
                 sage: x = polygen(QQ, 'x')
                 sage: L.<a, b, c> = NumberField([x^2 - 5, x^2 + 3, x^2 + 1])            # needs sage.rings.number_field
-                sage: Z = L.zeta_function(algorithm="pari")                             # needs sage.rings.number_field sage.symbolic
+                sage: Z = L.zeta_function(algorithm='pari')                             # needs sage.rings.number_field sage.symbolic
                 sage: Z(5)                                                              # needs sage.rings.number_field sage.symbolic
                 1.00199015670185
 
