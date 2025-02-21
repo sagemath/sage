@@ -55,7 +55,7 @@ class HyperellipticCurveSmoothModel_g2(
     @cached_method
     def jacobian(self):
         r"""
-        Returns the Jacobian of the hyperelliptic curve.
+        Return the Jacobian of the hyperelliptic curve.
 
         Elements of the Jacobian are represented by tuples 
         of the form `(u, v : n)`, where
