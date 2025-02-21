@@ -17,6 +17,7 @@ from types import GeneratorType
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+from sage.misc.prandom import randint
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
 from sage.structure.element import Element
@@ -1528,6 +1529,40 @@ class Rings(CategoryWithAxiom):
                 x = self.random_element(*args, **kwds)
                 if not x.is_zero():
                     return x
+
+        def random_element(self, *args):
+            """
+            Return a random integer coerced into this ring.
+
+            INPUT:
+
+            - either no integer, one integer or two integers
+
+            The integer is chosen uniformly from the closed interval
+            ``[-2,2]``, ``[-a,a]`` or ``[a,b]`` according to the
+            length of the input.
+
+            ALGORITHM:
+
+            This uses Python's ``randint``.
+
+            EXAMPLES::
+
+                sage: -8 <= ZZ.random_element(8) <= 8
+                True
+                sage: -8 <= QQ.random_element(8) <= 8
+                True
+                sage: 4 <= ZZ.random_element(4,12) <= 12
+                True
+            """
+            if not args:
+                a, b = -2, 2
+            elif len(args) == 1:
+                bound = args[0]
+                a, b = -bound, bound
+            else:
+                a, b = args[0], args[1]
+            return randint(a, b) * self.one()
 
     class ElementMethods:
         def is_unit(self) -> bool:
