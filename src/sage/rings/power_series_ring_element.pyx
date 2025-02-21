@@ -1392,9 +1392,9 @@ cdef class PowerSeries(AlgebraElement):
 
         .. MATH::
 
-            \cfrac{v_0 x^{k_0}}{U_1(x) -
-            \cfrac{v_1 x^{k_0 + k_1 + \delta}{U_2(x) -
-            \cfrac{v_2 x^{k_0 + k_1 + k_2 + \delta}{U_3(x) - \cdots}}}}}
+            \cfrac{v_0 x^{k_0}} {U_1(x) -
+            \cfrac{v_1 x^{k_0 + k_1 + \delta}} {U_2(x) -
+            \cfrac{v_2 x^{k_0 + k_1 + k_2 + \delta}} {U_3(x) - \cdots} } }
 
         where each `U_j(x) = 1 + u_j(x) x`.
 
