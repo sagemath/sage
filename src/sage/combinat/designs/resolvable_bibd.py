@@ -113,7 +113,7 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
         # (15,5,2)
         (k == 6 and v == 36) or
         # Fisher's inequality
-        (v*(v-1))/(k*(k-1)) < v):
+            (v*(v-1))/(k*(k-1)) < v):
         if existence:
             return False
         raise EmptySetError("There exists no ({},{},{})-RBIBD".format(v, k, 1))
@@ -140,7 +140,7 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
 
     if existence:
         return Unknown
-    raise NotImplementedError(f"I don't know how to build a ({v},{3},1)-RBIBD!")
+    raise NotImplementedError(f"I don't know how to build a ({v},3,1)-RBIBD!")
 
 
 def kirkman_triple_system(v, existence=False):
@@ -417,7 +417,7 @@ def v_4_1_rbibd(v, existence=False):
     if v % 3 != 1 or not is_prime_power((v-1)//3):
         if existence:
             return Unknown
-        raise NotImplementedError(f"I don't know how to build a ({v},{4},1)-RBIBD!")
+        raise NotImplementedError(f"I don't know how to build a ({v},4,1)-RBIBD!")
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
     q = (v-1)//3
     nn = (q-1)//4
@@ -489,7 +489,7 @@ def PBD_4_7(v, check=True, existence=False):
         # Beth/Jungnickel/Lenz: take KTS(15) and extend each of the 7 classes
         # with a new point. Make those new points a 7-set.
         KTS15 = kirkman_triple_system(15)
-        blocks = [S+[i+15] for i, classs in enumerate(KTS15._classes) for S in classs]+[list(range(15, 22))]
+        blocks = [S+[i+15] for i, classs in enumerate(KTS15._classes) for S in classs] + [list(range(15, 22))]
 
     elif v == 34:
         # [BJL99] (p527,vol1), but originally Brouwer
@@ -500,11 +500,11 @@ def PBD_4_7(v, check=True, existence=False):
 
         A = [[(x+i, y+j) for x, y in A]
              for i in range(9) for j in range(3)]
-        B = [[(x+i, y+i+j) for x, y in B]+[27+j]
+        B = [[(x+i, y+i+j) for x, y in B] + [27+j]
              for i in range(9) for j in range(3)]
-        C = [[(x+i+j, y+2*i+j) for x, y in C]+[30+j]
+        C = [[(x+i+j, y+2*i+j) for x, y in C] + [30+j]
              for i in range(9) for j in range(3)]
-        D = [[(x+i, y+i) for x, y in D]+[33]
+        D = [[(x+i, y+i) for x, y in D] + [33]
              for i in range(9)]
 
         blocks = [[int(x) if not isinstance(x, tuple) else (x[1] % 3)*9+(x[0] % 9)
@@ -522,11 +522,11 @@ def PBD_4_7(v, check=True, existence=False):
              for i in range(13) for j in range(3)]
         B = [[(x+i, y+j) for x, y in B]
              for i in range(13) for j in range(3)]
-        C = [[(x+i, y+j) for x, y in C]+[39+j]
+        C = [[(x+i, y+j) for x, y in C] + [39+j]
              for i in range(13) for j in range(3)]
-        D = [[(x+i, y+j) for x, y in D]+[42+j]
+        D = [[(x+i, y+j) for x, y in D] + [42+j]
              for i in range(13) for j in range(3)]
-        E = [[(x+i, y+i) for x, y in E]+[45]
+        E = [[(x+i, y+i) for x, y in E] + [45]
              for i in range(13)]
 
         blocks = [[int(x) if not isinstance(x, tuple) else (x[1] % 3)*13+(x[0] % 13)
@@ -548,11 +548,11 @@ def PBD_4_7(v, check=True, existence=False):
              for i in range(17) for j in range(3)]
         C = [[(x+i, y+j) for x, y in C]
              for i in range(17) for j in range(3)]
-        D = [[(x+i, y+j) for x, y in D]+[51+j]
+        D = [[(x+i, y+j) for x, y in D] + [51+j]
              for i in range(17) for j in range(3)]
-        E = [[(x+i, y+j) for x, y in E]+[54+j]
+        E = [[(x+i, y+j) for x, y in E] + [54+j]
              for i in range(17) for j in range(3)]
-        F = [[(x+i, y+i) for x, y in F]+[57]
+        F = [[(x+i, y+i) for x, y in F] + [57]
              for i in range(17)]
 
         blocks = [[int(x) if not isinstance(x, tuple) else (x[1] % 3)*17+(x[0] % 17)
@@ -577,11 +577,11 @@ def PBD_4_7(v, check=True, existence=False):
              for i in range(21) for j in range(3)]
         D = [[(x+i, y+j) for x, y in D]
              for i in range(21) for j in range(3)]
-        E = [[(x+i, y+j) for x, y in E]+[63+j]
+        E = [[(x+i, y+j) for x, y in E] + [63+j]
              for i in range(21) for j in range(3)]
-        F = [[(x+3*i+j, y+ii+j) for x, y in F]+[66+j]
+        F = [[(x+3*i+j, y+ii+j) for x, y in F] + [66+j]
              for i in range(7) for j in range(3) for ii in range(3)]
-        H = [[(x+i, y+i) for x, y in H]+[69]
+        H = [[(x+i, y+i) for x, y in H] + [69]
              for i in range(21)]
 
         blocks = [[int(x) if not isinstance(x, tuple) else (x[1] % 3)*21+(x[0] % 21)
@@ -701,7 +701,7 @@ def PBD_4_7(v, check=True, existence=False):
             u = vv-4*g
             if (orthogonal_array(5, g, existence=True) is True and
                 PBD_4_7(3*g+1, existence=True) is True and
-                PBD_4_7(3*u+1, existence=True) is True):
+                    PBD_4_7(3*u+1, existence=True) is True):
                 from .orthogonal_arrays import transversal_design
                 domain = set(range(vv))
                 GDD = transversal_design(5, g)
@@ -788,7 +788,7 @@ def PBD_4_7_from_Y(gdd, check=True):
         GDD[7] = PBD_4_7(22)
         x = set(range(22)).difference(*[S for S in GDD[7] if len(S) != 4]).pop()
         relabel = sum((S for S in GDD[7] if x in S), [])  # the groups must be 012,345,...
-        relabel = [xx for xx in relabel if xx != x]+[x]
+        relabel = [xx for xx in relabel if xx != x] + [x]
         GDD[7].relabel({v: i for i, v in enumerate(relabel)})
         GDD[7] = [S for S in GDD[7] if 21 not in S]
 
