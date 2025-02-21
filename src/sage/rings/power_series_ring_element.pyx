@@ -1388,15 +1388,13 @@ cdef class PowerSeries(AlgebraElement):
         r"""
         Return the super delta continued fraction of ``self``.
 
-        This is a continued fraction of the following shape::
+        This is a continued fraction of the following shape:
 
-                                    v0 x^k0
-             --------------------------------------------------------
-                                        v1 x^(k0 + k1 + delta)
-              U1(x)   -   -------------------------------------------
-                                               v2 x^(k1 +k2 + delta)
-                                U2(x)    -  -------------------------
-                                                     U3(x) - ...
+        .. MATH::
+
+            \cfrac{v_0 x^{k_0}}{U_1(x) -
+            \cfrac{v_1 x^{k_0 + k_1 + \delta}{U_2(x) -
+            \cfrac{v_2 x^{k_0 + k_1 + k_2 + \delta}{U_3(x) - \cdots}}}}}
 
         where each `U_j(x) = 1 + u_j(x) x`.
 
@@ -1428,6 +1426,8 @@ cdef class PowerSeries(AlgebraElement):
              (-1, 0, -q + 1),
              (1, 1, 3*q^2 + 2*q + 1),
              (-4, 0, -q + 1)]
+
+        A Jacobi continued fraction::
 
             sage: t = PowerSeriesRing(QQ, 't').gen()
             sage: s = sum(factorial(k) * t**k for k in range(12)).O(12)
