@@ -1150,6 +1150,7 @@ def log(*args, **kwds):
         +Infinity
 
     Check if sub-issue detailed in :issue:`38971` is fixed::
+
         sage: log(6, base=0)
         0
         sage: log(e, base=0)
