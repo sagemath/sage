@@ -646,7 +646,7 @@ class AbstractTree:
                 node = stack.pop()
                 action(node)
 
-    def contour_traversal(self,first_action=None, middle_action=None, final_action=None, leaf_action=[]):
+    def contour_traversal(self, first_action=None, middle_action=None, final_action=None, leaf_action=None):
         r"""
         Run the counterclockwise countour traversal algorithm (iterative
         implementation) and subject every node encountered
@@ -674,7 +674,6 @@ class AbstractTree:
 
         - ``leaf_action`` -- (optional) a function which takes a leaf as
           input, and does something when it is reached during exploration.
-          By default, `leaf_action` is the same as `first_action` and `last_action`
 
         OUTPUT:
 
@@ -714,7 +713,7 @@ class AbstractTree:
             sage: t.node_number()
             7
             sage: l = []
-            sage: t.contour_traversal(first_action = lambda node: l.append(0),leaf_action = None)
+            sage: t.contour_traversal(first_action = lambda node: l.append(0))
             sage: len(l)
             7
         """
@@ -730,10 +729,6 @@ class AbstractTree:
         if leaf_action is None:
             def leaf_action(x):
                 return
-        elif leaf_action == []:
-            def leaf_action(x):
-                first_action(x)
-                final_action(x)
         stack = []
         stack.append(self)
         corners = [0, 0]
@@ -1252,7 +1247,7 @@ class AbstractTree:
                 mx = max(m.pop() for _ in node)
                 m.append(mx + 1)
 
-        self.contour_traversal(final_action=action)
+        self.contour_traversal(final_action=action, leaf_action=action)
         return m[0] + 1
 
     def _ascii_art_(self):
