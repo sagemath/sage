@@ -1312,7 +1312,7 @@ order to encode mathematical facts like Wedderburn's theorem::
 
 .. NOTE::
 
-    Up to :trac:`22965`, axioms were represented as plain strings. For
+    Up to :issue:`22965`, axioms were represented as plain strings. For
     backward compatibility, users can safely use axiom names instead
     of the axioms themselves::
 
