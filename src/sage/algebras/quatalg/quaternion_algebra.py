@@ -14,6 +14,9 @@ AUTHORS:
 - Lorenz Panny (2022): :meth:`QuaternionOrder.isomorphism_to`,
   :meth:`QuaternionFractionalIdeal_rational.minimal_element`
 
+- Sebastian A. Spindler (2024): extend ramification functionality to number fields,
+  adapt :meth:`QuaternionAlgebra_ab.maximal_order` to allow for extension of an order
+
 - Eloi Torrents (2024): construct quaternion algebras over number fields from ramification
 
 This code is partly based on Sage code by David Kohel from 2005.
@@ -222,6 +225,38 @@ class QuaternionAlgebraFactory(UniqueFactory):
         ...
         ValueError: quaternion algebra over a number field must have an even number of ramified places
 
+    The construction via ramification fails if the base field is not
+    a number field::
+
+        sage: QuaternionAlgebra(RR, [], [])
+        Traceback (most recent call last):
+        ...
+        ValueError: quaternion algebra construction via ramification only works over a number field
+
+    The list of local invariants must specify the ramification data
+    at all real places of the number field `K`::
+
+        sage: QuaternionAlgebra(QuadraticField(5), [], [0])
+        Traceback (most recent call last):
+        ...
+        ValueError: must specify ramification at all real places of the number field
+
+    The list of local invariants specifying the ramification at the
+    real places may only contain `0` and `\frac{1}{2}`::
+
+        sage: QuaternionAlgebra(QuadraticField(5), [], [0,1])
+        Traceback (most recent call last):
+        ...
+        ValueError: list of local invariants specifying ramification should contain only 0 and 1/2
+
+    Similarly, the list of finite ramified places must consist
+    of primes or prime ideals of the number field `K`::
+
+        sage: QuaternionAlgebra(QuadraticField(5), ['water',2], [])
+        Traceback (most recent call last):
+        ...
+        ValueError: quaternion algebra constructor requires a list of primes specifying the ramification
+
     If the coefficients `a` and `b` in the definition of the quaternion
     algebra are not integral, then a slower generic type is used for
     arithmetic::
@@ -264,27 +299,29 @@ class QuaternionAlgebraFactory(UniqueFactory):
         sage: parent(Q._b)
         Rational Field
 
-    Check that construction via ramification yields the correct algebra, i.e.
-    that the differences between Sage and PARI are incorporated correctly::
+    Check that construction via ramification yields the correct algebra,
+    i.e. that the differences between Sage and PARI are accounted for::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<v> = NumberField(-3*x^5 - 11*x^4 - 4*x^3 + 1)
-        sage: QuaternionAlgebra(K, [], [1/2, 0, 1/2])       # not tested
-        Quaternion Algebra (-87*v^4 - 412*v^3 - 472*v^2 - 173*v - 7, 6*v^4 + 16*v^3 - 26*v^2 - 40*v - 1)
-        with base ring Number Field in v with defining polynomial -3*x^5 - 11*x^4 - 4*x^3 + 1
+        sage: inv_arch = [1/2, 0, 1/2]
+        sage: emb_arch = K.embeddings(AA)[0:3:2]
+        sage: ram = QuaternionAlgebra(K, [], inv_arch).ramified_places()
+        sage: ram[0] == [] and ram[1] == emb_arch
+        True
 
-    Also check that the Sage-PARI permutation is the correct way around, i.e.
-    it does not need to be replaced by its inverse (computation is not deterministic,
-    this will be checked properly once the required code has been merged)::
+    Also check that the required Sage-PARI permutation is the correct way
+    around, i.e. that it does not need to be replaced by its inverse::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<j> = NumberField(5*x^4 - 50*x^2 + 5)
         sage: P = K.prime_above(2)
         sage: Q = K.prime_above(5)
         sage: inv_arch = [1/2, 1/2, 0, 0]
-        sage: QuaternionAlgebra(K, [P,Q], inv_arch)         # not tested
-        Quaternion Algebra (-51/4*j^3 - 11/4*j^2 + 523/4*j + 47/4, 149/2*j^3 + 85*j^2 - 1073/2*j - 900)
-        with base ring Number Field in j with defining polynomial 5*x^4 - 50*x^2 + 5
+        sage: emb_arch = K.embeddings(AA)[0:2]
+        sage: ram = QuaternionAlgebra(K, [P,Q], inv_arch).ramified_places()
+        sage: set(ram[0]) == set([P,Q]) and ram[1] == emb_arch
+        True
 
     """
     def create_key(self, arg0, arg1=None, arg2=None, names='i,j,k'):
@@ -328,22 +365,33 @@ class QuaternionAlgebraFactory(UniqueFactory):
             # QuaternionAlgebra(K, primes, inv_archimedean)
             K = arg0
             if K not in NumberFields():
-                raise ValueError("quaternion algebra must be defined over a number field")
-            if not set(arg2).issubset(set([0, QQ(1/2)])):
+                raise ValueError("quaternion algebra construction via ramification only works over a number field")
+            if not set(arg2).issubset(set([0, QQ((1,2))])):
                 raise ValueError("list of local invariants specifying ramification should contain only 0 and 1/2")
-            primes = set(arg1)
-            if not all(p.is_prime() for p in primes):
+
+            # Check that the finite ramification is given by prime ideals
+            try:
+                if isinstance(K, RationalField):
+                    primes = set(ZZ.ideal(p) for p in arg1)
+                else:
+                    primes = set(K.ideal(p) for p in arg1)
+                assert all(p.is_prime() for p in primes)
+            except (AssertionError, TypeError, NameError):
                 raise ValueError("quaternion algebra constructor requires a list of primes specifying the ramification")
+
             if isinstance(K, RationalField):
+                # Construct the quaternion algebra via ramification over the rationals
                 if len(arg2) > 1 or (len(arg2) == 1 and is_odd(len(primes) + 2*arg2[0])):
                     raise ValueError("quaternion algebra over the rationals must have an even number of ramified places")
-                D = ZZ.ideal_monoid().prod(primes).gen()
+                D = prod(primes).gen()
                 a, b = hilbert_conductor_inverse(D)
                 a = QQ(a)
                 b = QQ(b)
+
             else:
+                # Construct the quaternion algebra via ramification over a number field
                 if len(arg2) != len(K.real_places()):
-                    raise ValueError("must specify ramification at the real places of %s" % K)
+                    raise ValueError("must specify ramification at all real places of the number field")
                 if is_odd(len(primes) + 2 * sum(arg2)):
                     raise ValueError("quaternion algebra over a number field must have an even number of ramified places")
 
