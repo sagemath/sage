@@ -1018,6 +1018,22 @@ class Rings(CategoryWithAxiom):
                 Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
                 sage: R.ideal()
                 Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
+
+            Check ``ideal_class=`` keyword argument when input is empty::
+
+                sage: from sage.rings.ideal import Ideal_pid
+                sage: class CustomIdealClass(Ideal_pid):
+                ....:     pass
+                sage: type(ZZ.ideal(6))
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: type(ZZ.ideal(6, ideal_class=CustomIdealClass))
+                <class '...CustomIdealClass'>
+                sage: type(ZZ.ideal())
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: type(ZZ.ideal(ideal_class=CustomIdealClass))
+                <class '...CustomIdealClass'>
+                sage: type(ZZ.ideal((), ideal_class=CustomIdealClass))
+                <class '...CustomIdealClass'>
             """
             if 'coerce' in kwds:
                 coerce = kwds['coerce']
@@ -1027,7 +1043,7 @@ class Rings(CategoryWithAxiom):
 
             from sage.rings.ideal import Ideal_generic
             if not args:
-                return self.zero_ideal()
+                gens = [self(0)]
             else:
                 gens = args
                 while isinstance(gens, (list, tuple, GeneratorType)) and len(gens) == 1:
@@ -1051,7 +1067,7 @@ class Rings(CategoryWithAxiom):
                         break
 
             if not gens:
-                return self.zero_ideal()
+                gens = [self.zero()]
             elif coerce:
                 gens = [self(g) for g in gens]
 
