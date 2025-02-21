@@ -113,7 +113,6 @@ host-requires = [
   "pkg:generic/eclib",
   "pkg:generic/ecm",
   "pkg:generic/fflas-ffpack",
-  "pkg:generic/fplll",
   "pkg:generic/flint",
   "pkg:generic/libgd",
   "pkg:generic/gap",
@@ -143,7 +142,6 @@ host-requires = [
   "pkg:generic/pari-galdata",
   "pkg:generic/pari-seadata",
   "pkg:generic/planarity",
-  "pkg:generic/ppl",
   "pkg:generic/primesieve",
   "pkg:generic/primecount",
   "pkg:generic/qhull",
@@ -154,10 +152,11 @@ host-requires = [
 ]
 
 dependencies = [
-  "pkg:generic/tachyon",
+  "pkg:generic/ppl",
   "pkg:generic/sagemath-polytopes-db",
   "pkg:generic/sagemath-elliptic-curves",
   "pkg:generic/sagemath-graphs",
+  "pkg:generic/tachyon",
 ]
 
 [dependency-groups]
