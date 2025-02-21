@@ -53,6 +53,7 @@ py.install_sources(
   'growth.py',
   'hall_polynomial.py',
   'hillman_grassl.py',
+  'independence_posets.py',
   'integer_matrices.py',
   'integer_vector.py',
   'integer_vector_weighted.py',
