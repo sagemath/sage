@@ -1934,7 +1934,7 @@ def axiom_of_nested_class(cls, nested_cls):
             from sage.misc.superseded import deprecation
             deprecation(22965,
                 "specifying an axiom by its name in `_base_category_class_and_axiom` is deprecated.\n"
-                "Please use `axioms.%s` instead."%axiom)
+                "Please use `axioms.%s` instead." % axiom)
             axiom_name = axiom
         else:
             axiom_name = str(axiom)

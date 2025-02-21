@@ -161,7 +161,6 @@ class Monoids(CategoryWithAxiom):
                 sage: S.prod([S('a'), S('b')])
                 'ab'
             """
-            from sage.misc.misc_c import prod
             return prod(args, self.one())
 
         def _test_prod(self, **options):

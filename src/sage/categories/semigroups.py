@@ -40,10 +40,11 @@ class XTrivialAxiom(Axiom):
             sage: Monoids().Finite().LTrivial() # we would want not to have the aperiodic part
             Category of finite L-trivial monoids
         """
-        return str(self)[0]+"-trivial " + base_category._repr_object_names()
+        return str(self)[0] + "-trivial " + base_category._repr_object_names()
+
 
 XTrivialAxiom("HTrivial")
-Axiom        ("Aperiodic")
+Axiom("Aperiodic")
 XTrivialAxiom("LTrivial")
 XTrivialAxiom("RTrivial")
 XTrivialAxiom("JTrivial")
