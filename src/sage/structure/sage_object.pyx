@@ -972,7 +972,7 @@ cdef class SageObject:
                 return self.__pari
             except AttributeError:
                 pass
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         x = pari(self._pari_init_())
         if self._interface_is_cached_():
             try:

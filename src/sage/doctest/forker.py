@@ -1097,7 +1097,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             False
             sage: doctests, extras = FDS.create_doctests(globs)
             sage: ex0 = doctests[0].examples[0]
-            sage: flags = 32768 if sys.version_info.minor < 8 else 524288
+            sage: flags = 524288
             sage: def compiler(ex):
             ....:     return compile(ex.source, '<doctest sage.doctest.forker[0]>',
             ....:                    'single', flags, 1)
@@ -1821,8 +1821,8 @@ class DocTestDispatcher(SageObject):
         canceled::
 
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with NTF(suffix='.py', mode='w+t') as f1, \
-            ....:      NTF(suffix='.py', mode='w+t') as f2:
+            sage: with (NTF(suffix='.py', mode='w+t') as f1,
+            ....:       NTF(suffix='.py', mode='w+t') as f2):
             ....:     _ = f1.write("'''\nsage: import time; time.sleep(60)\n'''")
             ....:     f1.flush()
             ....:     _ = f2.write("'''\nsage: True\nFalse\n'''")
