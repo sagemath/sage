@@ -349,7 +349,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         True
         sage: Q.category()
         Category of commutative division quotients of algebras
-         over Rational Field
+         over (number fields and quotient fields and metric spaces)
         sage: first_class == Q.__class__
         False
         sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]
