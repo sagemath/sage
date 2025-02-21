@@ -40,7 +40,7 @@ from sage.structure.element cimport Vector
 
 from sage.rings.finite_rings.finite_field_base cimport FiniteField
 
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
