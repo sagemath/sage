@@ -1,8 +1,9 @@
+# sage_setup: distribution = sagemath-objects
 """
 Pure python code for abstract base class for objects with generators
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,8 +15,8 @@ Pure python code for abstract base class for objects with generators
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 def multiplicative_iterator(M):

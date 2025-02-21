@@ -1,15 +1,15 @@
-From 5bffbe38302c695123779f87300d84090b4bd118 Mon Sep 17 00:00:00 2001
+From 7951c3183b422bc7afe115952ef7ae15b79e45d3 Mon Sep 17 00:00:00 2001
 From: Kwankyu Lee <ekwankyu@gmail.com>
 Date: Mon, 28 Aug 2023 00:18:59 +0900
 Subject: [PATCH] Patch for sage live doc
 
 ---
  jupyter_sphinx/__init__.py |  4 ++--
- jupyter_sphinx/execute.py  | 11 +++++++++++
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ jupyter_sphinx/execute.py  | 17 +++++++++++++++++
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
 diff --git a/jupyter_sphinx/__init__.py b/jupyter_sphinx/__init__.py
-index 34af884..b7ca8ee 100644
+index 34af884..920131c 100644
 --- a/jupyter_sphinx/__init__.py
 +++ b/jupyter_sphinx/__init__.py
 @@ -31,7 +31,7 @@ from .thebelab import ThebeButton, ThebeButtonNode, ThebeOutputNode, ThebeSource
@@ -17,41 +17,47 @@ index 34af884..b7ca8ee 100644
      "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"
  )
 -THEBELAB_URL_DEFAULT = "https://unpkg.com/thebelab@^0.4.0"
-+THEBELAB_URL_DEFAULT = "https://unpkg.com/thebe@latest/lib/index.js"
- 
++THEBELAB_URL_DEFAULT = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+
  logger = logging.getLogger(__name__)
- 
+
 @@ -186,7 +186,7 @@ def setup(app):
      app.add_config_value("jupyter_sphinx_embed_url", None, "html")
- 
+
      # thebelab config, can be either a filename or a dict
 -    app.add_config_value("jupyter_sphinx_thebelab_config", None, "html")
 +    app.add_config_value("jupyter_sphinx_thebelab_config", None, "env")
      app.add_config_value("jupyter_sphinx_thebelab_url", THEBELAB_URL_DEFAULT, "html")
- 
+
      # linenos config
 diff --git a/jupyter_sphinx/execute.py b/jupyter_sphinx/execute.py
-index 558a26b..de44455 100644
+index cb473cf..898d86b 100644
 --- a/jupyter_sphinx/execute.py
 +++ b/jupyter_sphinx/execute.py
-@@ -152,6 +152,17 @@ class ExecuteJupyterCells(SphinxTransform):
+@@ -152,6 +152,23 @@ class ExecuteJupyterCells(SphinxTransform):
                  kernel_name = default_kernel
                  file_name = next(default_names)
- 
+
 +            # Save time when jupyter notebook execution is not necessary
-+            if not any(not "execute" in node or node["execute"] for node in nodes):
-+                # mimics empty cell output for each node
++            if all("execute" in node and not node["execute"] for node in nodes):
++                notebook = blank_nb(kernel_name)
++                try:
++                    cm_language = notebook.metadata.language_info.codemirror_mode.name
++                except AttributeError:
++                    cm_language = notebook.metadata.kernelspec.language
++                # Mimic empty cell output for each node
 +                for node in nodes:
 +                    source = node.children[0]
 +                    source.attributes["classes"].append("code_cell")
-+                    node.attributes["cm_language"] = kernel_name
-+                    node += CellOutputNode(classes=["cell_output"])
++                    node.attributes["cm_language"] = cm_language
++                    if len(node.children) < 2:
++                        node += CellOutputNode(classes=["cell_output"])
 +                    apply_styling(node, thebe_config)
 +                continue
 +
              # Add empty placeholder cells for non-executed nodes so nodes
              # and cells can be zipped and the provided input/output
              # can be inserted later
--- 
-2.42.0
+--
+2.44.0
 

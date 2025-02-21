@@ -1,8 +1,8 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Counting, generating, and manipulating non-negative integer matrices
+Counting, generating, and manipulating nonnegative integer matrices
 
-Counting, generating, and manipulating non-negative integer matrices with
+Counting, generating, and manipulating nonnegative integer matrices with
 prescribed row sums and column sums.
 
 AUTHORS:
@@ -26,7 +26,7 @@ from sage.rings.integer_ring import ZZ
 
 class IntegerMatrices(UniqueRepresentation, Parent):
     r"""
-    The class of non-negative integer matrices with
+    The class of nonnegative integer matrices with
     prescribed row sums and column sums.
 
     An *integer matrix* `m` with column sums `c := (c_1,...,c_k)` and row
@@ -51,7 +51,6 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         ]
         sage: IM.cardinality()
         6
-
     """
     @staticmethod
     def __classcall__(cls, row_sums, column_sums):
@@ -72,7 +71,6 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             Non-negative integer matrices with row sums [4, 4, 5] and column sums [3, 7, 1, 2]
             sage: IM = IntegerMatrices(Composition([4,4,5]), Composition([3,7,1,2])); IM
             Non-negative integer matrices with row sums [4, 4, 5] and column sums [3, 7, 1, 2]
-
         """
         from sage.combinat.composition import Composition
         row_sums = Composition(row_sums)
@@ -134,14 +132,13 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             [1 0]  [0 1]
             [0 1], [1 0]
             ]
-
         """
         for x in integer_matrices_generator(self._row_sums, self._col_sums):
             yield matrix(ZZ, x)
 
     def __contains__(self, x):
         r"""
-        Tests if ``x`` is an element of ``self``.
+        Test if ``x`` is an element of ``self``.
 
         INPUT:
 
@@ -167,8 +164,8 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             sage: matrix([[-1, 3, 1]]) in IM
             False
         """
-        from sage.structure.element import is_Matrix
-        if not is_Matrix(x):
+        from sage.structure.element import Matrix
+        if not isinstance(x, Matrix):
             return False
         row_sums = [ZZ.zero()] * x.nrows()
         col_sums = [ZZ.zero()] * x.ncols()
@@ -218,7 +215,6 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             0
             sage: len(IntegerMatrices([0], [0]).list())
             1
-
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.combinat.partition import Partition
@@ -231,9 +227,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         r"""
         The row sums of the integer matrices in ``self``.
 
-        OUTPUT:
-
-        - Composition
+        OUTPUT: Composition
 
         EXAMPLES::
 
@@ -248,9 +242,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         r"""
         The column sums of the integer matrices in ``self``.
 
-        OUTPUT:
-
-        - Composition
+        OUTPUT: Composition
 
         EXAMPLES::
 
@@ -306,9 +298,7 @@ def integer_matrices_generator(row_sums, column_sums):
     - ``row_sums`` -- list or tuple
     - ``column_sums`` -- list or tuple
 
-    OUTPUT:
-
-    - an iterator producing a list of lists
+    OUTPUT: an iterator producing a list of lists
 
     EXAMPLES::
 

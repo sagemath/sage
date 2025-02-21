@@ -29,9 +29,9 @@ dessen primärer Fokus Zahlentheorie ist. Es gibt zwei sehr verschiedene
 Schnittstellen, die Sie in Sage nutzen können:
 
 
--  ``gp`` - Der "**G** o **P** ARI" Interpreter und
+-  ``gp`` -- Der "**G** o **P** ARI" Interpreter und
 
--  ``pari`` - Die PARI-C-Bibliothek.
+-  ``pari`` -- Die PARI-C-Bibliothek.
 
 
 Die folgenden Zeilen zum Beispiel sind zwei Wege, genau das gleiche zu
@@ -198,8 +198,8 @@ Sages Singular-Schnittstelle (ohne die ``....:``):
     sage: R1 = singular.ring(0, '(x,y)', 'dp')
     sage: R1
     polynomial ring, over a field, global ordering
-    //   coefficients: QQ
-    //   number of vars : 2
+    // coefficients: QQ...
+    // number of vars : 2
     //        block   1 : ordering dp
     //                  : names    x y
     //        block   2 : ordering C

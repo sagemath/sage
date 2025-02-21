@@ -33,7 +33,7 @@ When you do arithmetic with::
 
 TESTS:
 
-The arguments in the definition must be symbolic variables (:trac:`10747`)::
+The arguments in the definition must be symbolic variables (:issue:`10747`)::
 
     sage: f(1)=2
     Traceback (most recent call last):
@@ -146,10 +146,9 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
 
     def unify_arguments(self, x):
         r"""
-        Takes the variable list from another
-        ``CallableSymbolicExpression`` object and compares it with the
-        current ``CallableSymbolicExpression`` object's variable list,
-        combining them according to the following rules:
+        Take the variable list from another ``CallableSymbolicExpression``
+        object and compare it with the current ``CallableSymbolicExpression``
+        object's variable list, combining them according to the following rules:
 
         Let ``a`` be ``self``'s variable list, let ``b`` be ``y``'s
         variable list.
@@ -176,9 +175,9 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
 
         INPUT:
 
-        -  ``x`` - A CallableSymbolicExpression
+        - ``x`` -- a ``CallableSymbolicExpression``
 
-        OUTPUT: A tuple of variables.
+        OUTPUT: a tuple of variables
 
         EXAMPLES::
 
@@ -214,11 +213,11 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
         temp = set()
         # Sorting remaining variables.
         for j in range(i, len(a)):
-            if not a[j] in temp:
+            if a[j] not in temp:
                 temp.add(a[j])
 
         for j in range(i, len(b)):
-            if not b[j] in temp:
+            if b[j] not in temp:
                 temp.add(b[j])
 
         new_list.extend(sorted(temp, key=repr))
@@ -303,7 +302,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             sage: R._repr_()
             'Callable function ring with arguments (x, y, theta)'
 
-        We verify that :trac:`12298` has been fixed::
+        We verify that :issue:`12298` has been fixed::
 
             sage: S = CallableSymbolicExpressionRing([var('z')])
             sage: S._repr_()
@@ -348,7 +347,6 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             (y, x) |--> x + y
             sage: f.parent()
             Callable function ring with arguments (y, x)
-
         """
         args = self.arguments()
         repr_x = SymbolicRing._repr_element_(self, x)

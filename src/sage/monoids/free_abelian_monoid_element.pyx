@@ -47,13 +47,17 @@ def is_FreeAbelianMonoidElement(x):
 
     INPUT:
 
-    - ``x`` -- an object.
+    - ``x`` -- an object
 
     OUTPUT:
 
     - ``True`` if ``x`` is an object of type ``FreeAbelianMonoidElement``;
       ``False`` otherwise.
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_FreeAbelianMonoidElement is deprecated; "
+                       "use 'isinstance(..., FreeAbelianMonoidElement)' instead.")
     return isinstance(x, FreeAbelianMonoidElement)
 
 
@@ -263,7 +267,7 @@ cdef class FreeAbelianMonoidElement(MonoidElement):
             s = "1"
         return s
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Rich comparison.
 
@@ -321,7 +325,7 @@ cdef class FreeAbelianMonoidElement(MonoidElement):
 
     def __pow__(self, n, modulus):
         """
-        Raises self to the power of ``n``.
+        Raise ``self`` to the power of ``n``.
 
         AUTHORS:
 

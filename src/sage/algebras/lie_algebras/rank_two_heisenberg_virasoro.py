@@ -26,6 +26,7 @@ from sage.structure.indexed_generators import IndexedGenerators
 from sage.algebras.lie_algebras.lie_algebra_element import LieAlgebraElement
 from sage.algebras.lie_algebras.lie_algebra import (InfinitelyGeneratedLieAlgebra)
 
+
 class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
     r"""
     The rank 2 Heisenberg-Virasoro algebra.
@@ -210,7 +211,7 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
         """
         if i is None:
             return Family(self._KI, self.K)
-        return self.monomial( ('K', i) )
+        return self.monomial(('K', i))
 
     def t(self, a, b):
         r"""
@@ -224,7 +225,7 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
         """
         if a == b == 0:
             raise ValueError("no t(0, 0) element")
-        return self.monomial( ('t', self._v(a,b)) )
+        return self.monomial(('t', self._v(a,b)))
 
     def E(self, a, b):
         r"""
@@ -238,7 +239,7 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
         """
         if a == b == 0:
             raise ValueError("no E(0, 0) element")
-        return self.monomial( ('E', self._v(a,b)) )
+        return self.monomial(('E', self._v(a,b)))
 
     def _v(self, a, b):
         r"""
@@ -323,10 +324,10 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
         d = self.monomial
         v = self._v
         return (
-                 d( ('E',v(1,-3)) )
-                 - self.base_ring().an_element() * d( ('t',v(-1,3)) )
-                 + d( ('E',v(2,2)) )
-                 + d( ('K',3) )
+                 d(('E',v(1,-3)))
+                 - self.base_ring().an_element() * d(('t',v(-1,3)))
+                 + d(('E',v(2,2)))
+                 + d(('K',3))
                 )
 
     def some_elements(self):
@@ -344,9 +345,9 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
         """
         d = self.monomial
         v = self._v
-        return [d( ('E',v(1,1)) ), d( ('E',v(-2,-2)) ), d( ('E',v(0,1)) ),
-                d( ('t',v(1,1)) ), d( ('t',v(4,-1)) ), d( ('t',v(2,3)) ),
-                d( ('K',2) ), d( ('K',4) ), self.an_element()]
+        return [d(('E',v(1,1))), d(('E',v(-2,-2))), d(('E',v(0,1))),
+                d(('t',v(1,1))), d(('t',v(4,-1))), d(('t',v(2,3))),
+                d(('K',2)), d(('K',4)), self.an_element()]
 
     class Element(LieAlgebraElement):
         pass

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Drinfeld modules
 
@@ -38,13 +38,14 @@ from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
+
 
 class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
@@ -125,7 +126,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     - ``gen`` -- the generator of the Drinfeld module; as a list of
       coefficients or an Ore polynomial
 
-    - ``name`` (default: ``'t'``) -- the name of the Ore polynomial ring
+    - ``name`` -- (default: ``'t'``) the name of the Ore polynomial ring
       generator
 
     .. RUBRIC:: Construction
@@ -533,12 +534,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         - ``gen`` -- the generator of the Drinfeld module; as a list of
           coefficients or an Ore polynomial
 
-        - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
+        - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
           ring gen
 
-        OUTPUT:
-
-        A DrinfeldModule or DrinfeldModule_finite.
+        OUTPUT: a DrinfeldModule or DrinfeldModule_finite
 
         TESTS::
 
@@ -565,7 +564,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # duplicate. As a general comment, there are sanity checks both
         # here and in the category constructor, which is not ideal.
         # Check domain is Fq[T]
-        if not isinstance(function_ring, PolynomialRing_general):
+        if not isinstance(function_ring, PolynomialRing_generic):
             raise NotImplementedError('function ring must be a polynomial '
                                       'ring')
         function_ring_base = function_ring.base_ring()
@@ -645,7 +644,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         - ``gen`` -- the generator of the Drinfeld module; as a list of
           coefficients or an Ore polynomial
 
-        - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
+        - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
           ring gen
 
         TESTS::
@@ -758,27 +757,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         return DrinfeldModuleHomset(self, other, category)
-
-    def _check_rank_two(self):
-        r"""
-        Raise ``NotImplementedError`` if the rank is not two.
-
-        TESTS::
-
-            sage: Fq = GF(25)
-            sage: A.<T> = Fq[]
-            sage: K.<z12> = Fq.extension(6)
-            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-            sage: phi._check_rank_two()
-            sage: phi = DrinfeldModule(A, [p_root, 1])
-            sage: phi._check_rank_two()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: rank must be 2
-        """
-        if self.rank() != 2:
-            raise NotImplementedError('rank must be 2')
 
     def _latex_(self):
         r"""
@@ -914,15 +892,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``coeff_indices`` (list or tuple, or NoneType; default:
-          ``None``) -- indices of the Drinfeld module generator
+        - ``coeff_indices`` -- list or tuple, or NoneType (default:
+          ``None``); indices of the Drinfeld module generator
           coefficients to be considered in the computation. If the
           parameter is ``None`` (default), all the coefficients are
           involved.
 
-        - ``nonzero`` (boolean, default: ``False``) -- if this flag
+        - ``nonzero``-- boolean (default: ``False``); if this flag
           is set to ``True``, then only the parameters for which the
-          corresponding basic `j`-invariant is nonzero are returned.
+          corresponding basic `j`-invariant is nonzero are returned
 
         .. WARNING::
 
@@ -1091,9 +1069,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``nonzero`` (boolean, default: ``False``) -- if this flag
+        - ``nonzero``-- boolean (default: ``False``); if this flag
           is set to ``True``, then only the parameters for which the
-          corresponding basic `j`-invariant is nonzero are returned.
+          corresponding basic `j`-invariant is nonzero are returned
 
         .. WARNING::
 
@@ -1145,7 +1123,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT: an element in the base codomain
 
@@ -1184,7 +1162,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``sparse`` -- a boolean
+        - ``sparse`` -- boolean
 
         EXAMPLES::
 
@@ -1236,7 +1214,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     def height(self):
         r"""
         Return the height of the Drinfeld module if the function field
-        characteristic is a prime ideal; raise ValueError otherwise.
+        characteristic is a prime ideal; raise :exc:`ValueError` otherwise.
 
         The height of a Drinfeld module is defined when the function
         field characteristic is a prime ideal. In our case, this ideal
@@ -1294,7 +1272,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             NotImplementedError: height not implemented in this case
-
         """
         try:
             if self.characteristic().is_zero():
@@ -1313,9 +1290,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``absolutely`` -- a boolean (default: ``False``); if ``True``,
+        - ``absolutely`` -- a boolean (default: ``False``); if ``False``,
           check the existence of an isomorphism defined on the base
-          field; if ``False``, check over an algebraic closure.
+          field. If ``True``, check over an algebraic closure.
 
         EXAMPLES::
 
@@ -1344,6 +1321,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: phi = DrinfeldModule(A, [z, 1])
             sage: psi = DrinfeldModule(A, [z, z])
+            sage: phi.is_isomorphic(psi)
+            False
+            sage: phi.is_isomorphic(psi, absolutely=True)
+            True
+
+        In particular, two Drinfeld modules may have the same
+        `j`-invariant, while not being isomorphic on the base field::
+
+            sage: phi = DrinfeldModule(A, [z, 0, 1])
+            sage: psi = DrinfeldModule(A, [z, 0, z])
+            sage: phi.j_invariant() == psi.j_invariant()
+            True
             sage: phi.is_isomorphic(psi)
             False
             sage: phi.is_isomorphic(psi, absolutely=True)
@@ -1489,7 +1478,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         .. MATH::
 
             j_{k_1, \ldots, k_n}^{d_1, \ldots, d_n, d_r}(\phi)
-            := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
+            := \frac{1}{g_r^{d_r}}\prod_{i = 1}^n g_{k_i}^{d_i}
 
         where `1\leqslant k_1 < k_2 < \ldots < k_n \leqslant r - 1` and
         the integers `d_i` satisfy the *weight-0 condition*:
@@ -1510,10 +1499,30 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         :meth:`basic_j_invariant_parameters` for computing the list of
         all basic `j`-invariant parameters.
 
+        .. NOTE::
+
+            In [Pap2023]_, Papikian follows a slightly different
+            convention:
+
+            - His `j`-invariants (see Definition 3.8.7) correspond to
+              our basic `j`-invariants, as defined above.
+            - His *basic* `j`-invariant (see Example 3.8.10) correspond
+              to our `j_k`-invariants, as implemented in
+              :meth:`jk_invariants`.
+
+            We chose to follow Potemine's convention, as he introduced
+            those objects in [Pot1998]_. Theorem 2.2 of [Pot1998]_ or
+            Theorem 3.8.11 of [Pap2023]_ assert that two Drinfeld
+            `\mathbb F_q[T]`-modules over `K` are isomorphic over the
+            separable closure of `K` if and only if their basic
+            `j`-invariants (as implemented here) coincide for any
+            well-defined couple of tuples `((k_1, k_2, \ldots, k_n),
+            (d_1, d_2, \ldots, d_n, d_r))`, .
+
         INPUT:
 
-        - ``parameter`` (tuple or list, integer or NoneType; default:
-          ``None``) -- the `j`-invariant parameter:
+        - ``parameter`` -- tuple or list, integer or NoneType (default:
+          ``None``); the `j`-invariant parameter:
 
           - If ``parameter`` is a list or a tuple, then it must be of
             the form:
@@ -1530,16 +1539,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             `j`-invariant, that is the `j`-invariant for the parameter
             `((1,), (q+1, 1))`.
 
-        - ``check`` (bool, default: ``True``) -- if this flag is set to
+        - ``check`` -- boolean (default: ``True``); if this flag is set to
           ``False`` then the code will not check if the given parameter
           is valid and satisfy the weight-0 condition.
 
-        OUTPUT: the `j`-invariant of ``self`` for the given parameter.
-
-        REFERENCE:
-
-        The notion of basic `j`-invariant was introduced by Potemine in
-        [Pot1998]_.
+        OUTPUT: the `j`-invariant of ``self`` for the given parameter
 
         EXAMPLES::
 
@@ -1728,13 +1732,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         `1 \leqslant k \leqslant r-1` and the values are the
         corresponding `j_k`-invariants
 
-        Recall that the `j_k`-invariant of self is defined by:
+        Recall that the `j_k`-invariant of ``self`` is defined by:
 
         .. MATH::
 
             j_k := \frac{g_k^{(q^r - 1)/(\mathrm{gcd}(k, r) - 1)}}{g_r^{(q^k - 1)/(\mathrm{gcd}(k, r) - 1)}}
 
-        where `g_i` is the `i`-th coefficient of the generator of self.
+        where `g_i` is the `i`-th coefficient of the generator of ``self``.
 
         EXAMPLES::
 
@@ -1817,7 +1821,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         In our case, the rank is the degree of the generator.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1851,7 +1855,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def velu(self, isog):
         r"""
-        Return a new Drinfeld module such that input is an
+        Return a new Drinfeld module such that ``isog`` defines an
         isogeny to this module with domain ``self``; if no such isogeny
         exists, raise an exception.
 
@@ -2015,11 +2019,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ...
             ValueError: Ore polynomial does not define a morphism
 
+        Check that x = 0 (without specified codomain) gives the zero endomorphism::
+
+            sage: phi.hom(K.zero())
+            Endomorphism of Drinfeld module defined by ...
+              Defn: 0
         """
         # When `x` is in the function ring (or something that coerces to it):
         if self.function_ring().has_coerce_map_from(x.parent()):
             return self.Hom(self)(x)
         if codomain is None:
+            if x.is_zero():
+                return self.Hom(self)(0)
             try:
                 codomain = self.velu(x)
             except TypeError:
@@ -2051,7 +2062,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
             sage: phi
             Drinfeld module defined by T |--> z*t^3 + t^2 + z
-            sage: phi.hom(T)
+            sage: phi.hom(T)  # indirect doctest
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: z*t^3 + t^2 + z
 
@@ -2060,7 +2071,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.hom(T^2 + 1)
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: z^2*t^6 + (3*z^2 + z + 1)*t^5 + t^4 + 2*z^2*t^3 + (3*z^2 + z + 1)*t^2 + z^2 + 1
-
         """
         if not self.function_ring().has_coerce_map_from(x.parent()):
             raise ValueError("%s is not element of the function ring" % x)

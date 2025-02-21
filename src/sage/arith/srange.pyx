@@ -39,11 +39,11 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
 
     INPUT:
 
-    - ``start`` - number (default: 0)
+    - ``start`` -- number (default: 0)
 
-    - ``end`` - number
+    - ``end`` -- number
 
-    - ``step`` - number (default: 1)
+    - ``step`` -- number (default: 1)
 
     - ``universe`` -- parent or type where all the elements should live
       (default: deduce from inputs)
@@ -53,7 +53,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
       automatically detected universe)
 
     - ``include_endpoint`` -- whether or not to include the endpoint
-      (default: False). This is only relevant if ``end`` is actually of
+      (default: ``False``). This is only relevant if ``end`` is actually of
       the form ``start + k*step`` for some integer `k`.
 
     ` ``endpoint_tolerance`` -- used to determine whether or not the
@@ -96,7 +96,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
 
     TESTS:
 
-    Ranges can be very large, see :trac:`20094`::
+    Ranges can be very large, see :issue:`20094`::
 
         sage: it = xsrange(10^30, 10^100)
         sage: for i in range(5):
@@ -184,11 +184,11 @@ def srange(*args, **kwds):
 
     INPUT:
 
-    - ``start`` - number (default: 0)
+    - ``start`` -- number (default: 0)
 
-    - ``end`` - number
+    - ``end`` -- number
 
-    - ``step`` - number (default: 1)
+    - ``step`` -- number (default: 1)
 
     - ``universe -- parent or type where all the elements should live
       (default: deduce from inputs). This is only used if ``coerce`` is
@@ -199,13 +199,13 @@ def srange(*args, **kwds):
       automatically detected universe)
 
     - ``include_endpoint`` -- whether or not to include the endpoint
-      (default: False). This is only relevant if ``end`` is actually of
+      (default: ``False``). This is only relevant if ``end`` is actually of
       the form ``start + k*step`` for some integer `k`.
 
     ` ``endpoint_tolerance`` -- used to determine whether or not the
-      endpoint is hit for inexact rings (default 1e-5)
+      endpoint is hit for inexact rings (default: ``1e-5``)
 
-    OUTPUT: a list
+    OUTPUT: list
 
     .. NOTE::
 
@@ -234,16 +234,21 @@ def srange(*args, **kwds):
 
         sage: srange(1, 10, 1/2)
         [1, 3/2, 2, 5/2, 3, 7/2, 4, 9/2, 5, 11/2, 6, 13/2, 7, 15/2, 8, 17/2, 9, 19/2]
+
+        sage: # needs sage.rings.real_mpfr
         sage: srange(1, 5, 0.5)
-        [1.00000000000000, 1.50000000000000, 2.00000000000000, 2.50000000000000, 3.00000000000000, 3.50000000000000, 4.00000000000000, 4.50000000000000]
+        [1.00000000000000, 1.50000000000000, 2.00000000000000, 2.50000000000000,
+         3.00000000000000, 3.50000000000000, 4.00000000000000, 4.50000000000000]
         sage: srange(0, 1, 0.4)
         [0.000000000000000, 0.400000000000000, 0.800000000000000]
         sage: srange(1.0, 5.0, include_endpoint=True)
-        [1.00000000000000, 2.00000000000000, 3.00000000000000, 4.00000000000000, 5.00000000000000]
+        [1.00000000000000, 2.00000000000000, 3.00000000000000, 4.00000000000000,
+         5.00000000000000]
         sage: srange(1.0, 1.1)
         [1.00000000000000]
         sage: srange(1.0, 1.0)
         []
+
         sage: V = VectorSpace(QQ, 2)                                                    # needs sage.modules
         sage: srange(V([0,0]), V([5,5]), step=V([2,2]))                                 # needs sage.modules
         [(0, 0), (2, 2), (4, 4)]
@@ -264,7 +269,8 @@ def srange(*args, **kwds):
         sage: srange(0.5, 0.9, 0.1, universe=RDF, include_endpoint=False)
         [0.5, 0.6, 0.7, 0.7999999999999999]
         sage: srange(0, 1.1, 0.1, universe=RDF, include_endpoint=True)
-        [0.0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7, 0.7999999999999999, 0.8999999999999999, 0.9999999999999999, 1.1]
+        [0.0, 0.1, 0.2, 0.30000000000000004, 0.4, 0.5, 0.6, 0.7,
+         0.7999999999999999, 0.8999999999999999, 0.9999999999999999, 1.1]
         sage: srange(0, 0.2, 0.1, universe=RDF, include_endpoint=True)
         [0.0, 0.1, 0.2]
         sage: srange(0, 0.3, 0.1, universe=RDF, include_endpoint=True)
@@ -275,9 +281,10 @@ def srange(*args, **kwds):
         sage: Q = RationalField()
         sage: srange(1, 10, Q('1/2'))
         [1, 3/2, 2, 5/2, 3, 7/2, 4, 9/2, 5, 11/2, 6, 13/2, 7, 15/2, 8, 17/2, 9, 19/2]
-        sage: srange(1, 5, 0.5)
-        [1.00000000000000, 1.50000000000000, 2.00000000000000, 2.50000000000000, 3.00000000000000, 3.50000000000000, 4.00000000000000, 4.50000000000000]
-        sage: srange(0, 1, 0.4)
+        sage: srange(1, 5, 0.5)                                                         # needs sage.rings.real_mpfr
+        [1.00000000000000, 1.50000000000000, 2.00000000000000, 2.50000000000000,
+         3.00000000000000, 3.50000000000000, 4.00000000000000, 4.50000000000000]
+        sage: srange(0, 1, 0.4)                                                         # needs sage.rings.real_mpfr
         [0.000000000000000, 0.400000000000000, 0.800000000000000]
 
     Negative steps are also allowed::
@@ -289,14 +296,14 @@ def srange(*args, **kwds):
 
     TESTS:
 
-    These are doctests from :trac:`6409`::
+    These are doctests from :issue:`6409`::
 
         sage: srange(1,QQ(0),include_endpoint=True)
         []
         sage: srange(1,QQ(0),-1,include_endpoint=True)
         [1, 0]
 
-    Test :trac:`11753`::
+    Test :issue:`11753`::
 
         sage: srange(1,1,0)
         Traceback (most recent call last):
@@ -512,7 +519,7 @@ def ellipsis_range(*args, step=None):
 
     Examples in which the step determines the parent of the elements::
 
-        sage: [1..3, step=0.5]
+        sage: [1..3, step=0.5]                                                          # needs sage.rings.real_mpfr
         [1.00000000000000, 1.50000000000000, 2.00000000000000, 2.50000000000000, 3.00000000000000]
         sage: v = [1..5, step=1/1]; v
         [1, 2, 3, 4, 5]

@@ -3,7 +3,7 @@ r"""
 TESTS:
 
 Checking that sympy handles correctly Sage real numbers as
-coefficients of polynomials (see :trac:`24380`)::
+coefficients of polynomials (see :issue:`24380`)::
 
     sage: import sympy, sympy.polys
     sage: x = sympy.Symbol('x')

@@ -12,23 +12,23 @@ Affine Permutations
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from itertools import repeat
-from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
-from sage.misc.constant_function import ConstantFunction
-from sage.misc.prandom import randint
 
 from sage.categories.affine_weyl_groups import AffineWeylGroups
-from sage.structure.list_clone import ClonableArray
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.rings.integer_ring import ZZ
-
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.arith.misc import binomial
-from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.composition import Composition
 from sage.combinat.partition import Partition
+from sage.combinat.root_system.cartan_type import CartanType
+from sage.misc.cachefunc import cached_method
+from sage.misc.constant_function import ConstantFunction
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.misc.prandom import randint
+from sage.rings.integer import Integer
+from sage.structure.list_clone import ClonableArray
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
 
 class AffinePermutation(ClonableArray):
@@ -46,7 +46,7 @@ class AffinePermutation(ClonableArray):
 
     def __init__(self, parent, lst, check=True):
         r"""
-        Initialize ``self``
+        Initialize ``self``.
 
         INPUT:
 
@@ -54,7 +54,7 @@ class AffinePermutation(ClonableArray):
 
         - ``lst`` -- list giving the base window of the affine permutation
 
-        - ``check``-- whether to test if the affine permutation is valid
+        - ``check`` -- whether to test if the affine permutation is valid
 
         EXAMPLES::
 
@@ -66,7 +66,7 @@ class AffinePermutation(ClonableArray):
 
         TESTS:
 
-        Check that :trac:`26436` is fixed::
+        Check that :issue:`26436` is fixed::
 
             sage: A = AffinePermutationGroup(['A',3,1])
             sage: p = A([-3/1,2/1,3/1,8/1])
@@ -75,14 +75,14 @@ class AffinePermutation(ClonableArray):
             Type A affine permutation with window [1, 2, 3, 4]
         """
         if check:
-            lst = [ZZ(val) for val in lst]
+            lst = [Integer(val) for val in lst]
         self.k = parent.k
         self.n = self.k + 1
-        #This N doesn't matter for type A, but comes up in all other types.
+        # This N doesn't matter for type A, but comes up in all other types.
         if parent.cartan_type()[0] == 'A':
             self.N = self.n
         elif parent.cartan_type()[0] in ['B', 'C', 'D']:
-            self.N = 2*self.k + 1
+            self.N = 2 * self.k + 1
         elif parent.cartan_type()[0] == 'G':
             self.N = 6
         else:
@@ -148,7 +148,7 @@ class AffinePermutation(ClonableArray):
 
         INPUT:
 
-        - ``q`` -- An element of ``self.parent()``
+        - ``q`` -- an element of ``self.parent()``
 
         EXAMPLES::
 
@@ -158,7 +158,6 @@ class AffinePermutation(ClonableArray):
             Type A affine permutation with window [-1, 3, 0, 6, 5, 4, 10, 9]
             sage: p.apply_simple_reflection(1, 'right')
             Type A affine permutation with window [-1, 3, 0, 6, 5, 4, 10, 9]
-
         """
         return self.__rmul__(q)
 
@@ -182,7 +181,7 @@ class AffinePermutation(ClonableArray):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
         - ``side`` -- (default: ``'right'``) determines whether to apply the
           reflection on the ``'right'`` or ``'left'``
 
@@ -218,7 +217,7 @@ class AffinePermutation(ClonableArray):
         """
         return self.value(i)
 
-    def is_i_grassmannian(self, i=0, side="right") -> bool:
+    def is_i_grassmannian(self, i=0, side='right') -> bool:
         r"""
         Test whether ``self`` is `i`-grassmannian, i.e., either is the
         identity or has ``i`` as the sole descent.
@@ -245,7 +244,7 @@ class AffinePermutation(ClonableArray):
         """
         return self == self.parent().one() or self.descents(side) == [i]
 
-    def index_set(self):
+    def index_set(self) -> tuple:
         r"""
         Index set of the affine permutation group.
 
@@ -255,9 +254,9 @@ class AffinePermutation(ClonableArray):
             sage: A.index_set()
             (0, 1, 2, 3, 4, 5, 6, 7)
         """
-        return tuple(range(self.k+1))
+        return tuple(range(self.k + 1))
 
-    def lower_covers(self,side="right"):
+    def lower_covers(self, side='right'):
         r"""
         Return lower covers of ``self``.
 
@@ -280,7 +279,7 @@ class AffinePermutation(ClonableArray):
 
     def is_one(self) -> bool:
         r"""
-        Tests whether the affine permutation is the identity.
+        Test whether the affine permutation is the identity.
 
         EXAMPLES::
 
@@ -296,7 +295,7 @@ class AffinePermutation(ClonableArray):
 
     def reduced_word(self):
         r"""
-        Returns a reduced word for the affine permutation.
+        Return a reduced word for the affine permutation.
 
         EXAMPLES::
 
@@ -305,7 +304,7 @@ class AffinePermutation(ClonableArray):
             sage: p.reduced_word()
             [0, 7, 4, 1, 0, 7, 5, 4, 2, 1]
         """
-        #This is about 25% faster than the default algorithm.
+        # This is about 25% faster than the default algorithm.
         x = self
         i = 0
         word = []
@@ -410,10 +409,10 @@ class AffinePermutation(ClonableArray):
 
 
 class AffinePermutationTypeA(AffinePermutation):
-    #----------------------
-    #Type-specific methods.
-    #(Methods existing in all types, but with type-specific definition.)
-    #----------------------
+    # ----------------------
+    # Type-specific methods.
+    # (Methods existing in all types, but with type-specific definition.)
+    # ----------------------
     def check(self):
         r"""
         Check that ``self`` is an affine permutation.
@@ -440,13 +439,14 @@ class AffinePermutationTypeA(AffinePermutation):
         if not self:
             return
         k = self.parent().k
-        #Type A.
+        # Type A
         if len(self) != k + 1:
-            raise ValueError("length of list must be k+1="+str(k+1))
-        if binomial(k+2,2) != sum(self):
-            raise ValueError("window does not sum to " + str(binomial((k+2),2)))
-        l = sorted([i % (k+1) for i in self])
-        if l != list(range(k+1)):
+            raise ValueError(f"length of list must be k+1={k + 1}")
+        sigma = (k + 2).binomial(2)
+        if sigma != sum(self):
+            raise ValueError(f"window does not sum to {sigma}")
+        l = sorted(i % (k + 1) for i in self)
+        if any(i != j for i, j in enumerate(l)):
             raise ValueError("entries must have distinct residues")
 
     def value(self, i, base_window=False):
@@ -499,7 +499,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -510,11 +510,11 @@ class AffinePermutationTypeA(AffinePermutation):
             Type A affine permutation with window [3, -1, 6, 0, 5, 4, 10, 9]
         """
         j = i % (self.k+1)
-        #Cloning is currently kinda broken, in that caches don't clear which
-        #leads to strangeness with the cloned object.
-        #The clone approach is quite a bit (2x) faster, though, so this should
-        #switch once the caching situation is fixed.
-        #with self.clone(check=False) as l:
+        # Cloning is currently kinda broken, in that caches don't clear which
+        # leads to strangeness with the cloned object.
+        # The clone approach is quite a bit (2x) faster, though, so this should
+        # switch once the caching situation is fixed.
+        # with self.clone(check=False) as l:
         l = self[:]
         if j == 0:
             a = l[0]
@@ -524,7 +524,6 @@ class AffinePermutationTypeA(AffinePermutation):
             a = l[j-1]
             l[j-1] = l[j]
             l[j] = a
-        #return l
         return type(self)(self.parent(), l, check=False)
 
     def apply_simple_reflection_left(self, i):
@@ -539,18 +538,18 @@ class AffinePermutationTypeA(AffinePermutation):
             sage: p.apply_simple_reflection_left(11)
             Type A affine permutation with window [4, -1, 0, 6, 5, 3, 10, 9]
         """
-        #Here are a couple other methods we tried out, but turned out
-        #to be slower than the current implementation.
-        #1) This one was very bad:
-        #   return self.inverse().apply_simple_reflection_right(i).inverse()
-        #2) Also bad, though not quite so bad:
-        #   return (self.parent().simple_reflection(i))*self
-        i = i % (self.k+1)
-        #Cloning is currently kinda broken, in that caches don't clear which
-        #leads to strangeness with the cloned object.
-        #The clone approach is quite a bit faster, though, so this should switch
-        #once the caching situation is fixed.
-        #with self.clone(check=False) as l:
+        # Here are a couple other methods we tried out, but turned out
+        # to be slower than the current implementation.
+        # 1) This one was very bad:
+        #    return self.inverse().apply_simple_reflection_right(i).inverse()
+        # 2) Also bad, though not quite so bad:
+        #    return (self.parent().simple_reflection(i))*self
+        i = i % (self.k + 1)
+        # Cloning is currently kinda broken, in that caches don't clear which
+        # leads to strangeness with the cloned object.
+        # The clone approach is quite a bit faster, though,
+        # so this should switch once the caching situation is fixed.
+        # with self.clone(check=False) as l:
         l = []
         if i != self.k:
             for m in range(self.k + 1):
@@ -578,7 +577,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -598,7 +597,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -627,10 +626,10 @@ class AffinePermutationTypeA(AffinePermutation):
         """
         return self
 
-    #----------------------
-    #Type-A-specific methods.
-    #Only available in Type A.
-    #----------------------
+    # ----------------------
+    # Type-A-specific methods.
+    # Only available in Type A.
+    # ----------------------
 
     def flip_automorphism(self):
         r"""
@@ -655,14 +654,12 @@ class AffinePermutationTypeA(AffinePermutation):
         EXAMPLES::
 
             sage: A = AffinePermutationGroup(['A',7,1])
-            sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: p = A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.promotion()
             Type A affine permutation with window [2, 4, 0, 1, 7, 6, 5, 11]
         """
-        l = []
-        l.append(self[-1]-self.k)
-        for i in range(1,self.k+1):
-            l.append(self[i-1]+1)
+        l = [self[-1] - self.k]
+        l.extend(self[i] + 1 for i in range(self.k))
         return type(self)(self.parent(), l)
 
     def maximal_cyclic_factor(self, typ='decreasing', side='right', verbose=False):
@@ -676,11 +673,11 @@ class AffinePermutationTypeA(AffinePermutation):
           (default: ``'decreasing'``); chooses whether to find increasing
           or decreasing sets
 
-        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) chooses
+        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``); chooses
           whether to find maximal sets starting from the left or the right
 
-        - ``verbose`` -- True or False.  If True, outputs information about how
-          the cyclically increasing element was found.
+        - ``verbose`` -- boolean;  if ``True``, outputs information about how
+          the cyclically increasing element was found
 
         EXAMPLES::
 
@@ -701,7 +698,7 @@ class AffinePermutationTypeA(AffinePermutation):
         else:
             descents = self.descents(side='left')
             side = 'left'
-        #for now, assume side is 'right')
+        # for now, assume side is 'right')
         best_T = []
         for i in descents:
             y = self.clone().apply_simple_reflection(i,side)
@@ -744,8 +741,8 @@ class AffinePermutationTypeA(AffinePermutation):
         - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) chooses
           whether to find maximal sets starting from the left or the right
 
-        - ``verbose`` -- (default: ``False``) print extra information while
-          finding the decomposition
+        - ``verbose`` -- boolean (default: ``False``); print extra information
+          while finding the decomposition
 
         EXAMPLES::
 
@@ -836,8 +833,8 @@ class AffinePermutationTypeA(AffinePermutation):
         """
         code = [0 for i in range(self.k+1)]
         if typ[0] == 'i' and side[0] == 'r':
-            #Find number of positions to the right of position i with smaller
-            #value than the number in position i.
+            # Find number of positions to the right of position i with smaller
+            # value than the number in position i.
             for i in range(self.k+1):
                 a = self(i)
                 for j in range(i+1, i+self.k+1):
@@ -845,9 +842,9 @@ class AffinePermutationTypeA(AffinePermutation):
                     if b < a:
                         code[i] += (a-b) // (self.k+1) + 1
         elif typ[0] == 'd' and side[0] == 'r':
-            #Find number of positions to the left of position i with larger
-            #value than the number in position i.  Then cyclically shift
-            #the resulting vector.
+            # Find number of positions to the left of position i with larger
+            # value than the number in position i.  Then cyclically shift
+            # the resulting vector.
             for i in range(self.k+1):
                 a = self(i)
                 for j in range(i-self.k, i):
@@ -857,18 +854,18 @@ class AffinePermutationTypeA(AffinePermutation):
                     if a < b:
                         code[i-1] += ((b-a)//(self.k+1)+1)
         elif typ[0] == 'i' and side[0] == 'l':
-            #Find number of positions to the right of i smaller than i, then
-            #cyclically shift the resulting vector.
+            # Find number of positions to the right of i smaller than i, then
+            # cyclically shift the resulting vector.
             for i in range(self.k+1):
                 pos = self.position(i)
                 for j in range(pos+1, pos+self.k+1):
                     b = self(j)
-                    #A small rotation is necessary for the reduced word from
-                    #the lehmer code to match the element.
+                    # A small rotation is necessary for the reduced word from
+                    # the lehmer code to match the element.
                     if b < i:
                         code[i-1] += (i-b) // (self.k+1) + 1
         elif typ[0] == 'd' and side[0] == 'l':
-            #Find number of positions to the left of i larger than i.
+            # Find number of positions to the left of i larger than i.
             for i in range(self.k+1):
                 pos = self.position(i)
                 for j in range(pos-self.k, pos):
@@ -907,7 +904,7 @@ class AffinePermutationTypeA(AffinePermutation):
                 if m != -1 and c[i] - (i - m) >= c[m]:
                     return False
                 m = i
-        # now check m (the last non-zero) against first non-zero.
+        # now check m (the last nonzero) against first nonzero.
         d = self.n - (m - firstnonzero)
         return not c[firstnonzero] - d >= c[m]
 
@@ -918,11 +915,11 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``typ`` -- ``'increasing'`` or ``'decreasing'`` (default: ``'decreasing'``.)
-          Chooses whether to find increasing or decreasing sets.
+        - ``typ`` -- ``'increasing'`` or ``'decreasing'`` (default: ``'decreasing'``);
+          chooses whether to find increasing or decreasing sets
 
-        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``.)  Chooses whether to
-          find maximal sets starting from the left or the right.
+        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``); chooses
+          whether to find maximal sets starting from the left or the right
 
         EXAMPLES::
 
@@ -937,7 +934,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
     def to_core(self, typ='decreasing', side='right'):
         r"""
-        Returns the core associated to the dominant element obtained by sorting
+        Return the core associated to the dominant element obtained by sorting
         the Lehmer code.
 
         INPUT:
@@ -945,7 +942,7 @@ class AffinePermutationTypeA(AffinePermutation):
         - ``typ`` -- ``'increasing'`` or ``'decreasing'`` (default: ``'decreasing'``.)
 
         - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``.)  Chooses whether to
-          find maximal sets starting from the left or the right.
+          find maximal sets starting from the left or the right
 
         EXAMPLES::
 
@@ -1105,7 +1102,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
             sage: C = AffinePermutationGroup(['C',4,1])
             sage: x = C.one()
-            sage: [x.value(i) for i in range(-10,10)] == list(range(-10,10))
+            sage: all(x.value(i) == i for i in range(-10,10))
             True
         """
         N = 2*self.k + 1
@@ -1120,13 +1117,13 @@ class AffinePermutationTypeC(AffinePermutation):
 
     def position(self, i):
         r"""
-        Find the position `j` such the ``self.value(j)=i``
+        Find the position `j` such the ``self.value(j)=i``.
 
         EXAMPLES::
 
             sage: C = AffinePermutationGroup(['C',4,1])
             sage: x = C.one()
-            sage: [x.position(i) for i in range(-10,10)] == list(range(-10,10))
+            sage: all(x.position(i) == i for i in range(-10,10))
             True
         """
         N = 2*self.k + 1
@@ -1232,7 +1229,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1253,7 +1250,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1415,7 +1412,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1434,7 +1431,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1590,7 +1587,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1611,7 +1608,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1792,7 +1789,7 @@ class AffinePermutationTypeG(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1813,7 +1810,7 @@ class AffinePermutationTypeG(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -2003,9 +2000,9 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
     methods for the specific affine permutation groups.
     """
 
-    #----------------------
-    #Type-free methods.
-    #----------------------
+    # ----------------------
+    # Type-free methods.
+    # ----------------------
 
     def __init__(self, cartan_type):
         r"""
@@ -2016,13 +2013,13 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=AffineWeylGroups())
         ct = CartanType(cartan_type)
-        self.k = ct.n
+        self.k = Integer(ct.n)
         self.n = ct.rank()
-        #This N doesn't matter for type A, but comes up in all other types.
+        # This N doesn't matter for type A, but comes up in all other types.
         if ct.letter == 'A':
             self.N = self.k + 1
         elif ct.letter == 'B' or ct.letter == 'C' or ct.letter == 'D':
-            self.N = 2*self.k + 1
+            self.N = 2 * self.k + 1
         elif ct.letter == 'G':
             self.N = 6
         self._cartan_type = ct
@@ -2036,14 +2033,14 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         """
         return self.element_class(self, *args, **keywords)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
             sage: AffinePermutationGroup(['A',7,1])
             The group of affine permutations of type ['A', 7, 1]
         """
-        return "The group of affine permutations of type "+str(self.cartan_type())
+        return "The group of affine permutations of type " + str(self.cartan_type())
 
     def _test_enumeration(self, n=4, **options):
         r"""
@@ -2068,7 +2065,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def weyl_group(self):
         r"""
-        Returns the Weyl Group of the same type as ``self``.
+        Return the Weyl Group of the same type as ``self``.
 
         EXAMPLES::
 
@@ -2080,7 +2077,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def classical(self):
         r"""
-        Returns the finite permutation group.
+        Return the finite permutation group.
 
         EXAMPLES::
 
@@ -2094,7 +2091,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def cartan_type(self):
         r"""
-        Returns the Cartan type of ``self``.
+        Return the Cartan type of ``self``.
 
         EXAMPLES::
 
@@ -2105,7 +2102,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def cartan_matrix(self):
         r"""
-        Returns the Cartan matrix of ``self``.
+        Return the Cartan matrix of ``self``.
 
         EXAMPLES::
 
@@ -2168,7 +2165,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         Return a random affine permutation of length ``n``.
 
         If ``n`` is not specified, then ``n`` is chosen as a random
-        non-negative integer in `[0, 1000]`.
+        nonnegative integer in `[0, 1000]`.
 
         Starts at the identity, then chooses an upper cover at random.
         Not very uniform: actually constructs a uniformly random reduced word
@@ -2193,7 +2190,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def from_word(self, w):
         r"""
-        Builds an affine permutation from a given word.
+        Build an affine permutation from a given word.
         Note: Already in category as ``from_reduced_word``, but this is less
         typing!
 
@@ -2209,7 +2206,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
     @cached_method
     def _an_element_(self):
         r"""
-        Returns a Coxeter element.
+        Return a Coxeter element.
 
         EXAMPLES::
 
@@ -2244,12 +2241,12 @@ class AffinePermutationGroupTypeA(AffinePermutationGroupGeneric):
             True
             sage: TestSuite(A).run()
         """
-        return self([i for i in range(1,self.k+2)])
+        return self(range(1, self.k + 2))
 
-    #------------------------
-    #Type-unique methods.
-    #(Methods which do not exist in all types.)
-    #------------------------
+    # ------------------------
+    # Type-unique methods.
+    # (Methods which do not exist in all types.)
+    # ------------------------
     def from_lehmer_code(self, C, typ='decreasing', side='right'):
         r"""
         Return the affine permutation with the supplied Lehmer code (a weak
@@ -2355,7 +2352,7 @@ class AffinePermutationGroupTypeC(AffinePermutationGroupGeneric):
             True
             sage: TestSuite(C).run()
         """
-        return self(list(range(1, self.k + 1)))
+        return self(range(1, self.k + 1))
 
     Element = AffinePermutationTypeC
 

@@ -1,2 +1,2 @@
-# Trac #33642: For unknown reasons, without the version constraint, conda installs only 3.3.2
+# Issue #33642: For unknown reasons, without the version constraint, conda installs only 3.3.2
 matplotlib>=3.5.1

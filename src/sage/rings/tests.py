@@ -102,7 +102,7 @@ def integer_mod_ring():
 
 def padic_field():
     """
-    Return a random p-adic field modulo n with p at most 10000
+    Return a random `p`-adic field modulo n with p at most 10000
     and precision between 10 and 100.
 
     EXAMPLES::
@@ -184,7 +184,7 @@ def relative_number_field(n=2, maxdeg=2):
 
     TESTS:
 
-    Check that :trac:`32117` is fixed::
+    Check that :issue:`32117` is fixed::
 
         sage: set_random_seed(3030)
         sage: from sage.rings.tests import relative_number_field
@@ -239,17 +239,28 @@ def rings0():
     """
     from sage.rings.integer_ring import IntegerRing
     from sage.rings.rational_field import RationalField
+
     v = [(IntegerRing, 'ring of integers'),
          (RationalField, 'field of rational numbers'),
-         (integer_mod_ring, 'integers modulo n for n at most 50000'),
-         (prime_finite_field, 'a prime finite field with cardinality at most 10^20'),
-         (finite_field, 'finite field with degree at most 20 and prime at most 10^6'),
-         (small_finite_field, 'finite field with cardinality at most 2^16'),
-         (padic_field, 'a p-adic field'),
-         (quadratic_number_field, 'a quadratic number field'),
-         (absolute_number_field, 'an absolute number field of degree at most 10'),
-         (relative_number_field, 'a tower of at most 2 extensions each of degree at most 2')
-         ]
+         (integer_mod_ring, 'integers modulo n for n at most 50000')]
+    try:
+        v += [(prime_finite_field, 'a prime finite field with cardinality at most 10^20'),
+              (finite_field, 'finite field with degree at most 20 and prime at most 10^6'),
+              (small_finite_field, 'finite field with cardinality at most 2^16')]
+    except ImportError:
+        pass
+
+    try:
+        v += [(padic_field, 'a p-adic field')]
+    except ImportError:
+        pass
+
+    try:
+        v += [(quadratic_number_field, 'a quadratic number field'),
+              (absolute_number_field, 'an absolute number field of degree at most 10'),
+              (relative_number_field, 'a tower of at most 2 extensions each of degree at most 2')]
+    except ImportError:
+        pass
 
     return v
 
@@ -279,17 +290,25 @@ def rings1():
     X = random_rings(level=0)
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     from sage.rings.power_series_ring import PowerSeriesRing
-    from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
     from sage.rings.integer_ring import ZZ
+
     v = [(lambda: PolynomialRing(next(X), names='x'),
           'univariate polynomial ring over level 0 ring'),
          (lambda: PowerSeriesRing(next(X), names='x'),
-          'univariate power series ring over level 0 ring'),
-         (lambda: LaurentPolynomialRing(next(X), names='x'),
-          'univariate Laurent polynomial ring over level 0 ring'),
-         (lambda: PolynomialRing(next(X), abs(ZZ.random_element(x=2, y=10)),
-                                 names='x'),
-          'multivariate polynomial ring in between 2 and 10 variables over a level 0 ring')]
+          'univariate power series ring over level 0 ring')]
+
+    try:
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+    except ImportError:
+        pass
+    else:
+        v += [(lambda: LaurentPolynomialRing(next(X), names='x'),
+               'univariate Laurent polynomial ring over level 0 ring')]
+
+    v += [(lambda: PolynomialRing(next(X), abs(ZZ.random_element(x=2, y=10)),
+                                  names='x'),
+           'multivariate polynomial ring in between 2 and 10 variables over a level 0 ring')]
+
     return v
 
 
@@ -325,12 +344,10 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
 
     INPUT:
 
-    - level -- (default: MAX_LEVEL); controls the types of rings to use
-    - trials -- A positive integer (default 1); the number of trials
-      to run.
-    - seed -- the random seed to use; if not specified, uses a truly
-      random seed.
-    - print_seed -- If True (default False), prints the random seed chosen.
+    - ``level`` -- (default: ``MAX_LEVEL``) controls the types of rings to use
+    - ``trials`` -- a positive integer (default: 1); the number of trials to run
+    - ``seed`` -- the random seed to use; if not specified, uses a truly random seed
+    - ``print_seed`` -- if ``True`` (default: ``False``), prints the random seed chosen
 
     EXAMPLES::
 
@@ -376,12 +393,10 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
     INPUT:
 
-    - ``level`` -- (default: ``MAX_LEVEL``); controls the types of rings to use
-    - ``trials`` -- A positive integer (default: 1); the number of trials
-      to run.
-    - ``seed`` -- the random seed to use; if not specified, uses a truly
-      random seed.
-    - ``print_seed`` -- If ``True`` (default: ``False``), prints the random seed chosen.
+    - ``level`` -- (default: ``MAX_LEVEL``) controls the types of rings to use
+    - ``trials`` -- positive integer (default: 1); the number of trials to run
+    - ``seed`` -- the random seed to use; if not specified, uses a truly random seed
+    - ``print_seed`` -- if ``True`` (default: ``False``), prints the random seed chosen
 
     EXAMPLES::
 
@@ -416,8 +431,9 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
 @random_testing
 def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
-        ref_mul=lambda f, g: f._mul_generic(g), base_ring_random_elt_args=[],
-        numtests=10, verbose=False):
+                                  ref_mul=lambda f, g: f._mul_generic(g),
+                                  base_ring_random_elt_args=[],
+                                  numtests=10, verbose=False):
     """
     Test univariate Karatsuba multiplication against other multiplication algorithms.
 
@@ -428,16 +444,16 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         sage: from sage.rings.tests import test_karatsuba_multiplication
         sage: test_karatsuba_multiplication(ZZ, 6, 5, verbose=True, seed=42)
         test_karatsuba_multiplication: ring=Univariate Polynomial Ring in x over Integer Ring, threshold=2
-        (2*x^6 - x^5 - x^4 - 3*x^3 + 4*x^2 + 4*x + 1)*(4*x^4 + x^3 - 2*x^2 - 20*x + 3)
-          (16*x^2)*(-41*x + 1)
-          (x^6 + 2*x^5 + 8*x^4 - x^3 + x^2 + x)*(-x^2 - 4*x + 3)
-          (-x^3 - x - 8)*(-1)
-          (x - 1)*(-x^5 + 3*x^4 - x^3 + 2*x + 1)
-          (x^3 + x^2 + x + 1)*(4*x^3 + 76*x^2 - x - 1)
-          (x^6 - 5*x^4 - x^3 + 6*x^2 + 1)*(5*x^2 - x + 4)
-          (3*x - 2)*(x - 1)
-          (21)*(14*x^5 - x^2 + 4*x + 1)
-          (12*x^5 - 12*x^2 + 2*x + 1)*(26*x^4 + x^3 + 1)
+          (x^6 + 4*x^5 + 4*x^4 - 3*x^3 - x^2 - x)*(2*x^4 + 3*x^3 - 20*x^2 - 2*x + 1)
+          (4*x^5 + 16*x^2 + x - 41)*(x^2 + x - 1)
+          (8*x^2 + 2*x + 1)*(3)
+          (-4*x - 1)*(-8*x^2 - x)
+          (-x^6 - x^3 - x^2 + x + 1)*(2*x^3 - x + 3)
+          (-x^2 + x + 1)*(x^4 + x^3 - x^2 - x + 76)
+          (4*x^3 + x^2 + 6)*(-x^2 - 5*x)
+          (x + 4)*(-x + 5)
+          (-2*x)*(3*x^2 - x)
+          (x^6 + 21*x^5 + x^4 + 4*x^3 - x^2)*(14*x^4 + x^3 + 2*x^2 - 12*x)
 
     Test Karatsuba multiplication of polynomials of small degree over some common rings::
 
@@ -466,19 +482,22 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         sage: test_karatsuba_multiplication(ZZ, 10000, 10000,           # long time
         ....:                               ref_mul=lambda f,g: f*g,
         ....:                               base_ring_random_elt_args=[100000])
-
     """
     from sage.misc.prandom import randint
+    from sage.misc.sage_input import sage_input
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     threshold = randint(0, min(maxdeg1, maxdeg2))
     R = PolynomialRing(base_ring, 'x')
     if verbose:
-        print("test_karatsuba_multiplication: ring={}, threshold={}".format(R, threshold))
-    for i in range(numtests):
-        f = R.random_element(randint(0, maxdeg1), *base_ring_random_elt_args)
-        g = R.random_element(randint(0, maxdeg2), *base_ring_random_elt_args)
+        print(f"test_karatsuba_multiplication: ring={R}, threshold={threshold}")
+    for _ in range(numtests):
+        f = R.random_element(randint(0, maxdeg1), False, *base_ring_random_elt_args)
+        g = R.random_element(randint(0, maxdeg2), False, *base_ring_random_elt_args)
         if verbose:
             print("  ({})*({})".format(f, g))
         if ref_mul(f, g) - f._mul_karatsuba(g, threshold) != 0:
-            raise ValueError("Multiplication failed")
-    return
+            msg = "Multiplication failed for elements defined by\n"
+            msg += f"{sage_input(f)}\n"
+            msg += "and\n"
+            msg += f"{sage_input(g)}"
+            raise ValueError(msg)

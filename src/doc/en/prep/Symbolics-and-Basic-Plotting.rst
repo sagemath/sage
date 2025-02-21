@@ -384,11 +384,6 @@ Below, you can experiment with several of the plotting options.
 Basic 3D Plotting
 -----------------
 
-There are several mechanisms for viewing three\-dimensional plots in
-Sage, but we will stick to the default option in the notebook interface,
-which is via javascript applets from the program `Jmol/JSmol
-<http://jmol.sourceforge.net/>`_ .
-
 Plotting a 3D plot is similar to plotting a 2D plot, but we need to
 specify ranges for two variables instead of one.
 

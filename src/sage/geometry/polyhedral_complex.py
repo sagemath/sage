@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs
+# sage.doctest: needs sage.graphs
 r"""
 Finite polyhedral complexes
 
@@ -110,9 +110,11 @@ Classes and functions
 # ****************************************************************************
 
 from copy import copy
+
+import sage.geometry.abc
+
 from sage.topology.cell_complex import GenericCellComplex
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.polyhedron.base import is_Polyhedron
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.graphs.graph import Graph
@@ -148,7 +150,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     INPUT:
 
-    - ``maximal_cells`` -- a list, a tuple, or a dictionary (indexed by
+    - ``maximal_cells`` -- list, tuple, or dictionary (indexed by
       dimension) of cells of the Complex. Each cell is of class
       :class:`Polyhedron` of the same ambient dimension. To set up a
       :class:PolyhedralComplex, it is sufficient to provide the maximal
@@ -163,7 +165,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     - ``face_to_face_check`` -- boolean (default: ``False``);
       if ``True``, then the constructor checks whether the cells
-      are face-to-face, and it raises a :class:`ValueError` if they are not
+      are face-to-face, and it raises a :exc:`ValueError` if they are not
 
     - ``is_mutable`` and ``is_immutable`` -- boolean (default: ``True`` and
       ``False`` respectively); set ``is_mutable=False`` or ``is_immutable=True``
@@ -173,15 +175,15 @@ class PolyhedralComplex(GenericCellComplex):
       computations on Sage polyhedra; if it is not given, then each cell has
       its own backend; otherwise it must be one of the following:
 
-      * ``'ppl'`` - the Parma Polyhedra Library
+      * ``'ppl'`` -- the Parma Polyhedra Library
 
-      * ``'cdd'`` - CDD
+      * ``'cdd'`` -- CDD
 
-      * ``'normaliz'`` - normaliz
+      * ``'normaliz'`` -- normaliz
 
-      * ``'polymake'`` - polymake
+      * ``'polymake'`` -- polymake
 
-      * ``'field'`` - a generic Sage implementation
+      * ``'field'`` -- a generic Sage implementation
 
     - ``ambient_dim`` -- integer (optional); used to set up an empty
       complex in the intended ambient space
@@ -267,7 +269,7 @@ class PolyhedralComplex(GenericCellComplex):
     """
     def __init__(self, maximal_cells=None, backend=None, maximality_check=True,
                  face_to_face_check=False, is_mutable=True, is_immutable=False,
-                 ambient_dim=None):
+                 ambient_dim=None) -> None:
         r"""
         Define a PolyhedralComplex.
 
@@ -308,7 +310,7 @@ class PolyhedralComplex(GenericCellComplex):
                 ambient_dim = next(iter(cells_dict[self._dim])).ambient_dim()
         self._ambient_dim = ambient_dim
         self._maximal_cells = cells_dict
-        if not all((is_Polyhedron(cell) and
+        if not all((isinstance(cell, sage.geometry.abc.Polyhedron) and
                    cell.ambient_dim() == self._ambient_dim)
                    for cell in self.maximal_cell_iterator()):
             raise ValueError("the given cells are not polyhedra " +
@@ -339,7 +341,7 @@ class PolyhedralComplex(GenericCellComplex):
         if not is_mutable or is_immutable:
             self.set_immutable()
 
-    def cells(self, subcomplex=None):
+    def cells(self, subcomplex=None) -> dict:
         """
         The cells of this polyhedral complex, in the form of a dictionary:
         the keys are integers, representing dimension, and the value
@@ -392,7 +394,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (default ``True``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``True``); if ``True``, return
           cells in increasing order of dimension, thus starting with the
           zero-dimensional cells; otherwise it returns cells in decreasing
           order of dimension
@@ -410,20 +412,20 @@ class PolyhedralComplex(GenericCellComplex):
             11
         """
         cells = self.cells()
-        dim_index = range(0, self.dimension() + 1)
+        dim_index = range(self.dimension() + 1)
         if not increasing:
             dim_index = reversed(dim_index)
         for d in dim_index:
             if d in cells:
                 yield from cells[d]
 
-    def _n_cells_sorted(self, n, subcomplex=None):
+    def _n_cells_sorted(self, n, subcomplex=None) -> list:
         """
         Sorted list of cells of dimension ``n`` of this polyhedral complex.
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
         - ``subcomplex`` -- (optional) if a subcomplex is given then
           return the cells which are **not** in this subcomplex
 
@@ -445,7 +447,7 @@ class PolyhedralComplex(GenericCellComplex):
         return sorted(n_cells,
                       key=lambda p: (p.vertices(), p.rays(), p.lines()))
 
-    def cells_sorted(self, subcomplex=None):
+    def cells_sorted(self, subcomplex=None) -> list:
         """
         The sorted list of the cells of this polyhedral complex
         in non-increasing dimensions.
@@ -467,10 +469,10 @@ class PolyhedralComplex(GenericCellComplex):
         """
         cells = []
         for n in range(self._dim, -1, -1):
-            cells += self._n_cells_sorted(n, subcomplex)
+            cells.extend(self._n_cells_sorted(n, subcomplex))
         return cells
 
-    def maximal_cells(self):
+    def maximal_cells(self) -> dict:
         """
         The maximal cells of this polyhedral complex, in the form of a
         dictionary: the keys are integers, representing dimension, and the
@@ -507,7 +509,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (optional, default ``False``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``False``); if ``True``, return
           maximal cells in increasing order of dimension.
           Otherwise it returns cells in decreasing order of dimension.
 
@@ -544,13 +546,13 @@ class PolyhedralComplex(GenericCellComplex):
             if d in maximal_cells:
                 yield from maximal_cells[d]
 
-    def n_maximal_cells(self, n):
+    def n_maximal_cells(self, n) -> list:
         r"""
         List of maximal cells of dimension ``n`` of this polyhedral complex.
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. NOTE::
 
@@ -582,17 +584,16 @@ class PolyhedralComplex(GenericCellComplex):
         """
         if n in self.maximal_cells():
             return list(self.maximal_cells()[n])
-        else:
-            return []
+        return []
 
-    def _n_maximal_cells_sorted(self, n):
+    def _n_maximal_cells_sorted(self, n) -> list:
         """
         Sorted list of maximal cells of dimension ``n`` of this polyhedral
         complex.
 
         INPUT:
 
-        - ``n`` -- (non-negative integer) the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. WARNING::
 
@@ -611,7 +612,7 @@ class PolyhedralComplex(GenericCellComplex):
         return sorted(n_maximal_cells,
                       key=lambda p: (p.vertices(), p.rays(), p.lines()))
 
-    def maximal_cells_sorted(self):
+    def maximal_cells_sorted(self) -> list:
         """
         Return the sorted list of the maximal cells of this polyhedral complex
         by non-increasing dimensions.
@@ -627,11 +628,11 @@ class PolyhedralComplex(GenericCellComplex):
         if self._maximal_cells_sorted is None:
             maximal_cells = []
             for n in range(self._dim, -1, -1):
-                maximal_cells += self._n_maximal_cells_sorted(n)
+                maximal_cells.extend(self._n_maximal_cells_sorted(n))
             self._maximal_cells_sorted = maximal_cells
         return self._maximal_cells_sorted
 
-    def is_maximal_cell(self, c):
+    def is_maximal_cell(self, c) -> bool:
         """
         Return whether the given cell ``c`` is a maximal cell of ``self``.
 
@@ -662,7 +663,7 @@ class PolyhedralComplex(GenericCellComplex):
         # return (c in self.n_maximal_cells(d)) # use set instead of list
         return (d in self.maximal_cells()) and (c in self.maximal_cells()[d])
 
-    def is_cell(self, c):
+    def is_cell(self, c) -> bool:
         """
         Return whether the given cell ``c`` is a cell of ``self``.
 
@@ -728,15 +729,15 @@ class PolyhedralComplex(GenericCellComplex):
           can be passed to :func:`exploded_plot`:
 
           - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
-          - ``sticky_vertices`` -- (default: ``False``) boolean or dict.
-            Whether to draw line segments between shared vertices of the given polyhedra.
+          - ``sticky_vertices`` -- (default: ``False``) boolean or dict;
+            whether to draw line segments between shared vertices of the given polyhedra.
             A dict gives options for :func:`sage.plot.line`.
           - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is
             a vertex of some of the polyhedra, whether to draw line segments connecting the
             ``center`` to the shifted copies of these vertices.
             A dict gives options for :func:`sage.plot.line`.
 
-        - ``color`` -- (default: ``None``) if ``"rainbow"``, assign a different color
+        - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different color
           to every maximal cell; otherwise, passed on to
           :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
 
@@ -773,7 +774,6 @@ class PolyhedralComplex(GenericCellComplex):
             ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,1]])])
             sage: g5 = pc5.plot(explosion_factor=0.3, color='rainbow', alpha=0.8,       # needs sage.plot
             ....:               point={'size': 20}, axes=False, online=True)
-
         """
         if self.dimension() > 3:
             raise ValueError("cannot plot in high dimension")
@@ -797,7 +797,7 @@ class PolyhedralComplex(GenericCellComplex):
             g += cell.plot(**options)
         return g
 
-    def is_pure(self):
+    def is_pure(self) -> bool:
         """
         Test if this polyhedral complex is pure.
 
@@ -827,10 +827,11 @@ class PolyhedralComplex(GenericCellComplex):
         """
         return len(self._maximal_cells) == 1
 
-    def is_full_dimensional(self):
+    def is_full_dimensional(self) -> bool:
         """
-        Return whether this polyhedral complex is full-dimensional:
-        its dimension is equal to its ambient dimension.
+        Return whether this polyhedral complex is full-dimensional.
+
+        This means that its dimension is equal to its ambient dimension.
 
         EXAMPLES::
 
@@ -845,7 +846,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         return self._dim == self._ambient_dim
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Compute the hash value of ``self`` using its ``maximal_cells_sorted``.
 
@@ -870,7 +871,7 @@ class PolyhedralComplex(GenericCellComplex):
                              "call set_immutable()")
         return hash(tuple(self.maximal_cells_sorted()))
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         """
         Two polyhedral complexes are equal iff their maximal cells are equal.
 
@@ -888,7 +889,7 @@ class PolyhedralComplex(GenericCellComplex):
         return isinstance(right, PolyhedralComplex) and (
                self.maximal_cells_sorted() == right.maximal_cells_sorted())
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Return ``True`` if ``self`` and ``right`` are not equal.
 
@@ -930,8 +931,11 @@ class PolyhedralComplex(GenericCellComplex):
             sage: pc = PolyhedralComplex([
             ....:         Polyhedron(vertices=[(1/3, 1/3), (0, 0), (1, 2)]),
             ....:         Polyhedron(vertices=[(1, 2), (0, 0), (0, 1/2)])])
-            sage: pc._an_element_().vertices_list()
+            sage: element = pc._an_element_().vertices_list()
+            sage: element   # random output (one of the two maximal cells)
             [[0, 0], [0, 1/2], [1, 2]]
+            sage: element in ([[0, 0], [0, 1/2], [1, 2]], [[0, 0], [1/3, 1/3], [1, 2]])
+            True
         """
         try:
             return next(self.maximal_cell_iterator(increasing=False))
@@ -939,9 +943,9 @@ class PolyhedralComplex(GenericCellComplex):
             from sage.categories.sets_cat import EmptySetError
             raise EmptySetError("the complex is empty")
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
-        True if ``x`` is a polyhedron which is contained in this complex.
+        Return ``True`` if ``x`` is a polyhedron which is contained in this complex.
 
         EXAMPLES::
 
@@ -959,7 +963,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: (0, 0) in pc  # not a polyhedron
             False
         """
-        if not is_Polyhedron(x):
+        if not isinstance(x, sage.geometry.abc.Polyhedron):
             return False
         dim = x.dimension()
         return dim in self.cells() and x in self.cells()[dim]
@@ -967,7 +971,7 @@ class PolyhedralComplex(GenericCellComplex):
     def __call__(self, x):
         """
         If ``x`` is a polyhedron in this complex, return it.
-        Otherwise, raise a :class:`ValueError`.
+        Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -1027,7 +1031,7 @@ class PolyhedralComplex(GenericCellComplex):
             self.cells()    # poset is obtained and cached in cells()
         return self._face_poset
 
-    def is_subcomplex(self, other):
+    def is_subcomplex(self, other) -> bool:
         r"""
         Return whether ``self`` is a subcomplex of ``other``.
 
@@ -1055,9 +1059,9 @@ class PolyhedralComplex(GenericCellComplex):
                 return False
         return True
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         """
-        Test for boundedness of the polyhedral complex
+        Test for boundedness of the polyhedral complex.
 
         EXAMPLES::
 
@@ -1075,7 +1079,7 @@ class PolyhedralComplex(GenericCellComplex):
         Return the 1-skeleton of this polyhedral complex, as a graph.
 
         The vertices of the graph are of type ``vector``. This raises
-        a :class:`NotImplementedError` if the polyhedral complex is unbounded.
+        a :exc:`NotImplementedError` if the polyhedral complex is unbounded.
 
         .. WARNING::
 
@@ -1124,7 +1128,7 @@ class PolyhedralComplex(GenericCellComplex):
             d[v] = []
         return Graph(d)
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         """
         Return whether ``self`` is connected.
 
@@ -1248,7 +1252,7 @@ class PolyhedralComplex(GenericCellComplex):
                                  is_immutable=self._is_immutable,
                                  backend=self._backend)
 
-    def connected_components(self):
+    def connected_components(self) -> list:
         """
         Return the connected components of this polyhedral complex,
         as list of (sub-)PolyhedralComplexes.
@@ -1299,11 +1303,10 @@ class PolyhedralComplex(GenericCellComplex):
             lists_of_facets = [
                 [f for f in self.maximal_cell_iterator() if f in faces]
                 for faces in lists_of_faces]
-        results = [PolyhedralComplex(facets, maximality_check=False,
-                                     is_immutable=self._is_immutable,
-                                     backend=self._backend)
-                   for facets in lists_of_facets]
-        return results
+        return [PolyhedralComplex(facets, maximality_check=False,
+                                  is_immutable=self._is_immutable,
+                                  backend=self._backend)
+                for facets in lists_of_facets]
 
     def n_skeleton(self, n):
         r"""
@@ -1314,7 +1317,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. SEEALSO::
 
@@ -1441,7 +1444,7 @@ class PolyhedralComplex(GenericCellComplex):
                 ans.set_immutable()
             return ans
 
-    def relative_boundary_cells(self):
+    def relative_boundary_cells(self) -> list:
         r"""
         Return the maximal cells of the relative-boundary sub-complex.
 
@@ -1497,10 +1500,10 @@ class PolyhedralComplex(GenericCellComplex):
         faces = self.n_cells(d - 1)
         ans = [face for face in faces if len(poset.upper_covers(face)) == 1]
         if not self.is_pure():
-            ans += [p for p in poset.maximal_elements() if p.dimension() < d]
+            ans.extend(p for p in poset.maximal_elements() if p.dimension() < d)
         return ans
 
-    def is_convex(self):
+    def is_convex(self) -> bool:
         r"""
         Return whether the set of points in ``self`` is a convex set.
 
@@ -1671,9 +1674,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         - ``right`` -- the other polyhedral complex (the right-hand factor)
 
-        OUTPUT:
-
-        - the product ``self x right``
+        OUTPUT: the product ``self x right``
 
         EXAMPLES::
 
@@ -1861,7 +1862,7 @@ class PolyhedralComplex(GenericCellComplex):
     # this function overrides the standard one for GenericCellComplex,
     # this one counts the number of maximal cells, not all cells, to
     # avoid calling and computing self.cells()
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -1889,7 +1890,7 @@ class PolyhedralComplex(GenericCellComplex):
         else:
             return "Polyhedral complex with %s maximal cells" % num
 
-    def set_immutable(self):
+    def set_immutable(self) -> None:
         """
         Make this polyhedral complex immutable.
 
@@ -1904,7 +1905,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         self._is_immutable = True
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         """
         Return whether ``self`` is mutable.
 
@@ -1928,7 +1929,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         return not self._is_immutable
 
-    def is_immutable(self):
+    def is_immutable(self) -> bool:
         """
         Return whether ``self`` is immutable.
 
@@ -2028,7 +2029,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         if self._is_immutable:
             raise ValueError("this polyhedral complex is not mutable")
-        if not is_Polyhedron(cell) or cell.ambient_dim() != self._ambient_dim:
+        if not isinstance(cell, sage.geometry.abc.Polyhedron) or cell.ambient_dim() != self._ambient_dim:
             raise ValueError("the given cell is not a polyhedron " +
                              "in the same ambient space")
         # if cell is already in self, do nothing.
@@ -2072,8 +2073,7 @@ class PolyhedralComplex(GenericCellComplex):
                 raise ValueError("the cell is not face-to-face with complex")
         # update dim and maximal cells
         d = cell.dimension()
-        if d > self._dim:
-            self._dim = d
+        self._dim = max(d, self._dim)
         maximal_cells = poset.maximal_elements()    # a list
         self._maximal_cells = cells_list_to_cells_dict(maximal_cells)
         # update convexity if self was known to be convex, reset otherwise.
@@ -2134,7 +2134,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         TESTS:
 
-        Check that ValueError and empty complex are treated properly::
+        Check that :exc:`ValueError` and empty complex are treated properly::
 
             sage: p = Polyhedron(vertices=[[1]])
             sage: pc = PolyhedralComplex([p])
@@ -2191,7 +2191,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         if self._is_immutable:
             raise ValueError("this polyhedral complex is not mutable")
-        if not is_Polyhedron(cell) or cell.ambient_dim() != self._ambient_dim:
+        if not isinstance(cell, sage.geometry.abc.Polyhedron) or cell.ambient_dim() != self._ambient_dim:
             raise ValueError("the given cell is not a polyhedron " +
                              "in the same ambient space")
         # if cell is not in self, delete nothing.
@@ -2223,7 +2223,7 @@ class PolyhedralComplex(GenericCellComplex):
         self._is_convex = None
         self._polyhedron = None
 
-    def is_simplicial_complex(self):
+    def is_simplicial_complex(self) -> bool:
         """
         Test if this polyhedral complex is a simplicial complex.
 
@@ -2242,7 +2242,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         return all(p.is_simplex() for p in self.maximal_cell_iterator())
 
-    def is_polyhedral_fan(self):
+    def is_polyhedral_fan(self) -> bool:
         """
         Test if this polyhedral complex is a polyhedral fan.
 
@@ -2265,12 +2265,12 @@ class PolyhedralComplex(GenericCellComplex):
                    vector(p.vertices_list()[0]) == p.ambient_space().zero())
                    for p in self.maximal_cell_iterator())
 
-    def is_simplicial_fan(self):
+    def is_simplicial_fan(self) -> bool:
         """
         Test if this polyhedral complex is a simplicial fan.
 
         A polyhedral complex is a **simplicial fan** if all of its (maximal)
-        cells are simplical cones, i.e., every cell is a pointed cone (with
+        cells are simplicial cones, i.e., every cell is a pointed cone (with
         vertex being the origin) generated by `d` linearly independent rays,
         where `d` is the dimension of the cone.
 
@@ -2457,7 +2457,7 @@ class PolyhedralComplex(GenericCellComplex):
             return PolyhedralComplex(cones, maximality_check=False,
                                      backend=self._backend)
         else:
-            # TODO: `self`` is unbounded, make it projectively simplicial.
+            # TODO: ``self`` is unbounded, make it projectively simplicial.
             # (1) homogenize self of dim d to fan in space of dim d+1;
             # (2) call fan.subdivide(make_simplicial=True);
             # (3) take section back to the space of dim d.
@@ -2469,7 +2469,7 @@ class PolyhedralComplex(GenericCellComplex):
 ############################################################
 
 
-def cells_list_to_cells_dict(cells_list):
+def cells_list_to_cells_dict(cells_list) -> dict:
     r"""
     Helper function that returns the dictionary whose keys are the dimensions,
     and the value associated to an integer `d` is the set of `d`-dimensional
@@ -2501,28 +2501,35 @@ def exploded_plot(polyhedra, *,
                   center=None, explosion_factor=1, sticky_vertices=False,
                   sticky_center=True, point=None, **kwds):
     r"""
-    Return a plot of several ``polyhedra`` in one figure with extra space between them.
+    Return a plot of several ``polyhedra`` in one figure with extra space
+    between them.
 
     INPUT:
 
-    - ``polyhedra`` -- an iterable of :class:`~sage.geometry.polyhedron.base.Polyhedron_base` objects
+    - ``polyhedra`` -- an iterable of
+      :class:`~sage.geometry.polyhedron.base.Polyhedron_base` objects
 
-    - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
+    - ``center`` -- (default: ``None``, denoting the origin) the center of
+      explosion
 
-    - ``explosion_factor`` -- (default: 1) a nonnegative number; translate polyhedra by this
-      factor of the distance from ``center`` to their center
+    - ``explosion_factor`` -- (default: 1) a nonnegative number; translate
+      polyhedra by this factor of the distance from ``center`` to their center
 
-    - ``sticky_vertices`` -- (default: ``False``) boolean or dict. Whether to draw line segments between shared
-      vertices of the given polyhedra. A dict gives options for :func:`sage.plot.line`.
+    - ``sticky_vertices`` -- (default: ``False``) boolean or dict; whether to
+      draw line segments between shared vertices of the given polyhedra. A dict
+      gives options for :func:`sage.plot.line`.
 
-    - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is a vertex of some
-      of the polyhedra, whether to draw line segments connecting the ``center`` to the shifted copies
-      of these vertices. A dict gives options for :func:`sage.plot.line`.
+    - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center``
+      is a vertex of some of the polyhedra, whether to draw line segments
+      connecting the ``center`` to the shifted copies of these vertices. A dict
+      gives options for :func:`sage.plot.line`.
 
-    - ``color`` -- (default: ``None``) if ``"rainbow"``, assign a different color to every maximal cell and
-      every vertex; otherwise, passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+    - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different
+      color to every maximal cell and every vertex; otherwise, passed on to
+      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
 
-    - other keyword arguments are passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+    - other keyword arguments are passed on to
+      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
 
     EXAMPLES::
 

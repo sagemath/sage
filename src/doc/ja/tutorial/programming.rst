@@ -89,7 +89,6 @@ Sageはspyxファイルに対しては前処理をしない．
         return sage.all.factorial(n)
 
 
-
 他ファイル中のC関数を使う
 -------------------------
 
@@ -140,10 +139,9 @@ Cythonソースファイルから生成されたC言語コードをコンパイ�
 
 ::
 
-    #!/usr/bin/env sage -python
+    #!/usr/bin/env sage
 
     import sys
-    from sage.all import *
 
     if len(sys.argv) != 2:
         print("Usage: %s <n>" % sys.argv[0])
@@ -224,15 +222,9 @@ Sageでは，さらに多様な型が加わる．
     sqrt(2)
     sage: V = VectorSpace(QQ,2)
     sage: V.basis()
-        [
-        (1, 0),
-        (0, 1)
-        ]
+        [(1, 0), (0, 1)]
     sage: basis(V)
-        [
-        (1, 0),
-        (0, 1)
-        ]
+        [(1, 0), (0, 1)]
     sage: M = MatrixSpace(GF(7), 2); M
     Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 7
     sage: A = M([1,2,3,4]); A
@@ -389,11 +381,7 @@ Sageで使われる第三のリスト類似データ型が，シーケンスで�
 ::
 
     sage: V = QQ^3; B = V.basis(); B
-    [
-    (1, 0, 0),
-    (0, 1, 0),
-    (0, 0, 1)
-    ]
+    [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     sage: type(B)
     <class 'sage.structure.sequence.Sequence_generic'>
     sage: B[0] = B[1]
@@ -449,7 +437,6 @@ Sageで使われる第三のリスト類似データ型が，シーケンスで�
 最後の出力を見ると判るように，ディクショナリ内は整列されていない．
 
 
-
 集合
 =====
 
@@ -491,7 +478,6 @@ Pythonには集合(set)型が組込まれている．
     \left\{1, \frac{2}{3}\right\}
     sage: Set(ZZ)
     Set of elements of Integer Ring
-
 
 
 イテレータ
@@ -539,7 +525,6 @@ Pythonには集合(set)型が組込まれている．
     (0, 1)
     sage: next(W)
     (0, -1)
-
 
 
 ループ，関数，制御文，比較

@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -447,5 +446,4 @@ r"""
     e| e f g a b c d
     f| f g a b c d e
     g| g a b c d e f
-
 """

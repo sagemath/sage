@@ -24,6 +24,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cassert>
+#include <functional>
 
 #include <gmpxx.h>
 #include <Python.h>
@@ -737,7 +738,7 @@ size_t FareySymbol::nu3() const {
 size_t FareySymbol::rank_pi() const {
   if( index() == 2 ) return 1;
   return count_if(pairing.begin(), pairing.end(),
-                  bind2nd(greater<int>(), 0))/2;
+                  bind(greater<int>(), placeholders::_1, 0))/2;
 }
 
 size_t FareySymbol::number_of_cusps() const {

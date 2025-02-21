@@ -29,6 +29,7 @@ from sage.misc.lazy_list import lazy_list
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
 
+
 class DownUpAlgebra(CombinatorialFreeModule):
     r"""
     The down-up algebra.
@@ -99,7 +100,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         b*u^2*d + a*u*(d*u) + g*u
 
     We verify some examples of Proposition 3.5 in [BR1998]_, which states
-    that the 0-th degree part is commutative::
+    that the `0`-th degree part is commutative::
 
         sage: DU0 = [u^i * (d*u)^j * d^i for i,j in
         ....:        cartesian_product([range(3), range(3)])]
@@ -805,7 +806,6 @@ class VermaModule(CombinatorialFreeModule):
 
             P = self.parent()
             R = P.base_ring()
-            weights = P._weights
 
             def get_wt(n):
                 if not n:
@@ -852,9 +852,8 @@ class VermaModule(CombinatorialFreeModule):
             P = self.parent()
             R = P.base_ring()
             V = FreeModule(R, 2)
-            weights = P._weights
             it = iter(self._monomial_coefficients)
             n = next(it)
             if not n:
                 return V([P._weights[0], R.zero()])
-            return V([P._weights[n], P._weights[n-1]])
+            return V([P._weights[n], P._weights[n - 1]])

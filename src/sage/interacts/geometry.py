@@ -4,7 +4,6 @@ Interacts for Geometry
 AUTHORS:
 
 - Harald Schilly (2011-01-16): initial version (#9623) partially based on work by Lauri Ruotsalainen
-
 """
 
 #*****************************************************************************

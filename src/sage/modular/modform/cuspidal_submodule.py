@@ -8,27 +8,19 @@ EXAMPLES::
     Cuspidal subspace of dimension 1 of Modular Forms space of dimension 2 for
     Modular Group SL(2,Z) of weight 12 over Rational Field
     sage: S.basis()
-    [
-    q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-    ]
+    [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)]
 
     sage: S = CuspForms(Gamma0(33),2); S
     Cuspidal subspace of dimension 3 of Modular Forms space of dimension 6 for
     Congruence Subgroup Gamma0(33) of weight 2 over Rational Field
     sage: S.basis()
-    [
-    q - q^5 + O(q^6),
-    q^2 - q^4 - q^5 + O(q^6),
-    q^3 + O(q^6)
-    ]
+    [q - q^5 + O(q^6), q^2 - q^4 - q^5 + O(q^6), q^3 + O(q^6)]
 
     sage: S = CuspForms(Gamma1(3),6); S
     Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3 for
     Congruence Subgroup Gamma1(3) of weight 6 over Rational Field
     sage: S.basis()
-    [
-    q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)
-    ]
+    [q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)]
 """
 
 #########################################################################
@@ -43,7 +35,7 @@ from sage.matrix.constructor import Matrix
 from sage.matrix.special import identity_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-from sage.misc.verbose  import verbose
+from sage.misc.verbose import verbose
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 
@@ -51,6 +43,7 @@ lazy_import('sage.modular.modform.vm_basis', 'victor_miller_basis')
 
 from .submodule import ModularFormsSubmodule
 from . import weight1
+
 
 class CuspidalSubmodule(ModularFormsSubmodule):
     """
@@ -66,27 +59,19 @@ class CuspidalSubmodule(ModularFormsSubmodule):
             Cuspidal subspace of dimension 1 of Modular Forms space of dimension 2 for
             Modular Group SL(2,Z) of weight 12 over Rational Field
             sage: S.basis()
-            [
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-            ]
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)]
 
             sage: S = CuspForms(Gamma0(33),2); S
             Cuspidal subspace of dimension 3 of Modular Forms space of dimension 6 for
             Congruence Subgroup Gamma0(33) of weight 2 over Rational Field
             sage: S.basis()
-            [
-            q - q^5 + O(q^6),
-            q^2 - q^4 - q^5 + O(q^6),
-            q^3 + O(q^6)
-            ]
+            [q - q^5 + O(q^6), q^2 - q^4 - q^5 + O(q^6), q^3 + O(q^6)]
 
             sage: S = CuspForms(Gamma1(3),6); S
             Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3 for
             Congruence Subgroup Gamma1(3) of weight 6 over Rational Field
             sage: S.basis()
-            [
-            q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)
-            ]
+            [q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)]
             sage: S == loads(dumps(S))
             True
         """
@@ -100,7 +85,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
 
     def _compute_q_expansion_basis(self, prec):
         r"""
-        Compute a basis of q-expansions of self to the given precision. Not
+        Compute a basis of `q`-expansions of ``self`` to the given precision. Not
         implemented in this abstract base class.
 
         EXAMPLES::
@@ -115,7 +100,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -126,7 +111,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
 
     def is_cuspidal(self):
         """
-        Return True since spaces of cusp forms are cuspidal.
+        Return ``True`` since spaces of cusp forms are cuspidal.
 
         EXAMPLES::
 
@@ -211,6 +196,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         """
         return self.ambient_module().change_ring(R).cuspidal_submodule()
 
+
 class CuspidalSubmodule_R(CuspidalSubmodule):
     """
     Cuspidal submodule over a non-minimal base ring.
@@ -221,28 +207,23 @@ class CuspidalSubmodule_R(CuspidalSubmodule):
 
             sage: # needs sage.rings.number_field
             sage: CuspForms(Gamma1(13), 2, base_ring=QuadraticField(-7, 'a')).q_expansion_basis() # indirect doctest
-            [
-            q - 4*q^3 - q^4 + 3*q^5 + O(q^6),
-            q^2 - 2*q^3 - q^4 + 2*q^5 + O(q^6)
-            ]
+            [q - 4*q^3 - q^4 + 3*q^5 + O(q^6), q^2 - 2*q^3 - q^4 + 2*q^5 + O(q^6)]
         """
         return ModularFormsSubmodule._compute_q_expansion_basis(self, prec)
 
 
 class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
     """
-    Cuspidal submodule with q-expansions calculated via modular symbols.
+    Cuspidal submodule with `q`-expansions calculated via modular symbols.
     """
     def _compute_q_expansion_basis(self, prec=None):
         """
-        Compute q-expansions of a basis for self (via modular symbols).
+        Compute `q`-expansions of a basis for ``self`` (via modular symbols).
 
         EXAMPLES::
 
             sage: sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_modsym_qexp(ModularForms(11,2))._compute_q_expansion_basis()
-            [
-            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
-            ]
+            [q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)]
         """
         if prec is None:
             prec = self.prec()
@@ -272,7 +253,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
 
     def hecke_polynomial(self, n, var='x'):
         r"""
-        Return the characteristic polynomial of the Hecke operator T_n on this
+        Return the characteristic polynomial of the Hecke operator `T_n` on this
         space. This is computed via modular symbols, and in particular is
         faster to compute than the matrix itself.
 
@@ -288,7 +269,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
             y^13 + 5*y^12 - 4*y^11 - 52*y^10 - 34*y^9 + 174*y^8 + 212*y^7
              - 196*y^6 - 375*y^5 - 11*y^4 + 200*y^3 + 80*y^2
 
-        Check that :trac:`21546` is fixed (this example used to take about 5 hours)::
+        Check that :issue:`21546` is fixed (this example used to take about 5 hours)::
 
             sage: CuspForms(1728, 2).hecke_polynomial(2) # long time (20 sec)
             x^253 + x^251 - 2*x^249
@@ -320,14 +301,12 @@ class CuspidalSubmodule_level1_Q(CuspidalSubmodule):
     """
     def _compute_q_expansion_basis(self, prec=None):
         """
-        Compute q-expansions of a basis for self.
+        Compute `q`-expansions of a basis for ``self``.
 
         EXAMPLES::
 
             sage: sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_level1_Q(ModularForms(1,12))._compute_q_expansion_basis()
-            [
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-            ]
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)]
         """
         if prec is None:
             prec = self.prec()
@@ -358,14 +337,12 @@ class CuspidalSubmodule_wt1_eps(CuspidalSubmodule):
 
     def _compute_q_expansion_basis(self, prec=None):
         r"""
-        Compute q-expansion basis using Schaeffer's algorithm.
+        Compute `q`-expansion basis using Schaeffer's algorithm.
 
         EXAMPLES::
 
             sage: CuspForms(DirichletGroup(23, QQ).0, 1).q_echelon_basis()  # indirect doctest
-            [
-            q - q^2 - q^3 + O(q^6)
-            ]
+            [q - q^2 - q^3 + O(q^6)]
         """
         if prec is None:
             prec = self.prec()
@@ -375,6 +352,21 @@ class CuspidalSubmodule_wt1_eps(CuspidalSubmodule):
         return [weight1.modular_ratio_to_prec(chi, f, prec) for f in
             weight1.hecke_stable_subspace(chi)]
 
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: A = CuspForms(DirichletGroup(23, QQ).0, 1)
+            sage: pari.mfparams(A)
+            [23, 1, -23, 1, t + 1]
+            sage: pari.mfdim(A)
+            1
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight(), self.character()], 1)
+
 
 class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
     r"""
@@ -383,25 +375,18 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
 
     def _compute_q_expansion_basis(self, prec=None):
         r"""
-        Compute q-expansion basis using Schaeffer's algorithm.
+        Compute `q`-expansion basis using Schaeffer's algorithm.
 
         EXAMPLES::
 
             sage: CuspForms(GammaH(31, [7]), 1).q_expansion_basis()  # indirect doctest
-            [
-            q - q^2 - q^5 + O(q^6)
-            ]
+            [q - q^2 - q^5 + O(q^6)]
 
         A more elaborate example (two Galois-conjugate characters each giving a
         2-dimensional space)::
 
             sage: CuspForms(GammaH(124, [85]), 1).q_expansion_basis()  # long time
-            [
-            q - q^4 - q^6 + O(q^7),
-            q^2 + O(q^7),
-            q^3 + O(q^7),
-            q^5 - q^6 + O(q^7)
-            ]
+            [q - q^4 - q^6 + O(q^7), q^2 + O(q^7), q^3 + O(q^7), q^5 - q^6 + O(q^7)]
         """
         if prec is None:
             prec = self.prec()
@@ -540,7 +525,6 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
             [ 0  1  0  0  1  0  0]
             sage: C.hecke_matrix(23) == 0
             True
-
         """
         chars = self.group().characters_mod_H(sign=-1, galois_orbits=True)
         A = Matrix(QQ, 0, 0)
@@ -590,9 +574,9 @@ class CuspidalSubmodule_gH_Q(CuspidalSubmodule_modsym_qexp):
 
     def _compute_hecke_matrix(self, n):
         r"""
-        Compute the matrix of the Hecke operator T_n acting on this space.
+        Compute the matrix of the Hecke operator `T_n` acting on this space.
         This is done directly using modular symbols, rather than using
-        q-expansions as for spaces with fixed character.
+        `q`-expansions as for spaces with fixed character.
 
         EXAMPLES::
 
@@ -627,10 +611,12 @@ class CuspidalSubmodule_gH_Q(CuspidalSubmodule_modsym_qexp):
         symbs = self.modular_symbols(sign=1)
         return _convert_matrix_from_modsyms(symbs, symbs.diamond_bracket_matrix(d))[0]
 
+
 class CuspidalSubmodule_g1_Q(CuspidalSubmodule_gH_Q):
     r"""
     Space of cusp forms for `\Gamma_1(N)` over `\QQ`.
     """
+
 
 class CuspidalSubmodule_eps(CuspidalSubmodule_modsym_qexp):
     """
@@ -643,9 +629,7 @@ class CuspidalSubmodule_eps(CuspidalSubmodule_modsym_qexp):
         character [zeta4] and weight 5 over Cyclotomic Field of order 4 and degree 2
 
         sage: S.basis()
-        [
-        q + (-zeta4 - 1)*q^2 + (6*zeta4 - 6)*q^3 - 14*zeta4*q^4 + (15*zeta4 + 20)*q^5 + O(q^6)
-        ]
+        [q + (-zeta4 - 1)*q^2 + (6*zeta4 - 6)*q^3 - 14*zeta4*q^4 + (15*zeta4 + 20)*q^5 + O(q^6)]
         sage: f = S.0
         sage: f.qexp()
         q + (-zeta4 - 1)*q^2 + (6*zeta4 - 6)*q^3 - 14*zeta4*q^4 + (15*zeta4 + 20)*q^5 + O(q^6)
@@ -660,6 +644,7 @@ class CuspidalSubmodule_eps(CuspidalSubmodule_modsym_qexp):
     """
     pass
 
+
 def _convert_matrix_from_modsyms(symbs, T):
     r"""
     Given a space of modular symbols and a matrix T acting on it, calculate the
@@ -671,8 +656,9 @@ def _convert_matrix_from_modsyms(symbs, T):
     the Atkin-Lehner operators, for instance, when there are oldforms present.
 
     OUTPUT:
-        A pair `(T_e, ps)` with `T_e` the converted matrix and `ps` a list
-        of pivot elements of the echelon basis.
+
+    A pair `(T_e, ps)` with `T_e` the converted matrix and `ps` a list
+    of pivot elements of the echelon basis.
 
     EXAMPLES::
 
@@ -694,17 +680,19 @@ def _convert_matrix_from_modsyms(symbs, T):
 
     # we repeatedly use these matrices below, so we store them
     # once as lists to save time.
-    hecke_matrix_ls = [ symbs.hecke_matrix(m).list() for m in range(1,r+1) ]
-    hecke_image_ls = [ (T*symbs.hecke_matrix(m)).list() for m in range(1,r+1) ]
+    hecke_matrix_ls = [symbs.hecke_matrix(m).list()
+                       for m in range(1, r + 1)]
+    hecke_image_ls = [(T * symbs.hecke_matrix(m)).list()
+                      for m in range(1, r + 1)]
 
     # compute the q-expansions of some cusp forms and their
     # images under T_n
     for i in range(d**2):
-        v = X([ hecke_matrix_ls[m][i] for m in range(r) ])
+        v = X([hecke_matrix_ls[m][i] for m in range(r)])
         Ynew = Y.span(Y.basis() + [v])
         if Ynew.rank() > Y.rank():
             basis.append(v)
-            basis_images.append(X([ hecke_image_ls[m][i] for m in range(r) ]))
+            basis_images.append(X([hecke_image_ls[m][i] for m in range(r)]))
             Y = Ynew
             if len(basis) == d:
                 break

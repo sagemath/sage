@@ -215,7 +215,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _cis(self, series_ring, base_ring):
         r"""
-        The cycle index series for the species of subsets satisfies
+        The cycle index series for the species of subsets satisfies.
 
         .. MATH::
 

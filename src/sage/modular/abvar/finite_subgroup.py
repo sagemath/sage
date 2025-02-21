@@ -88,22 +88,22 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.rings.abc
 
 from sage.misc.lazy_import import lazy_import
 from sage.modular.abvar.torsion_point import TorsionPoint
 from sage.modules.module import Module
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.structure.gens_py import abelian_iterator
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp_method, richcmp
@@ -157,10 +157,10 @@ class FiniteSubgroup(Module):
         from sage.categories.fields import Fields
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
         from sage.categories.modules import Modules
-        from .abvar import is_ModularAbelianVariety
+        from .abvar import ModularAbelianVariety_abstract
         if field_of_definition not in Fields():
             raise TypeError("field_of_definition must be a field")
-        if not is_ModularAbelianVariety(abvar):
+        if not isinstance(abvar, ModularAbelianVariety_abstract):
             raise TypeError("abvar must be a modular abelian variety")
         category = Category.join((Modules(ZZ), FiniteEnumeratedSets()))
         Module.__init__(self, ZZ, category=category)
@@ -328,7 +328,7 @@ class FiniteSubgroup(Module):
         """
         Return the exponent of this finite abelian group.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -352,9 +352,7 @@ class FiniteSubgroup(Module):
 
         INPUT:
 
-
-        -  ``other`` - a finite group
-
+        - ``other`` -- a finite group
 
         OUTPUT: a finite group
 
@@ -410,9 +408,9 @@ class FiniteSubgroup(Module):
             Finite subgroup with invariants [3, 3] over QQ of
              Abelian subvariety of dimension 2 of J0(33)
         """
-        from .abvar import is_ModularAbelianVariety
+        from .abvar import ModularAbelianVariety_abstract
         A = self.abelian_variety()
-        if is_ModularAbelianVariety(other):
+        if isinstance(other, ModularAbelianVariety_abstract):
             amb = other
             B = other
             M = B.lattice().scale(Integer(1)/self.exponent())
@@ -440,17 +438,15 @@ class FiniteSubgroup(Module):
 
     def __mul__(self, right):
         """
-        Multiply this subgroup by the rational number right.
+        Multiply this subgroup by the rational number ``right``.
 
-        If right is an integer the result is a subgroup of self. If right
-        is a rational number `n/m`, then this group is first
+        If ``right`` is an integer the result is a subgroup of ``self``. If
+        ``right`` is a rational number `n/m`, then this group is first
         divided by `m` then multiplied by `n`.
 
         INPUT:
 
-
-        -  ``right`` - a rational number
-
+        - ``right`` -- a rational number
 
         OUTPUT: a subgroup
 
@@ -611,7 +607,7 @@ class FiniteSubgroup(Module):
 
     def gen(self, n):
         r"""
-        Return `n^{th}` generator of self.
+        Return `n`-th generator of ``self``.
 
         EXAMPLES::
 
@@ -687,7 +683,6 @@ class FiniteSubgroup(Module):
             Traceback (most recent call last):
             ...
             ValueError: ambient abelian varieties are different
-
         """
         if isinstance(x, TorsionPoint):
             if x.parent().abelian_variety() != self.abelian_variety():
@@ -847,18 +842,15 @@ class FiniteSubgroup_lattice(FiniteSubgroup):
 
         INPUT:
 
+        - ``abvar`` -- a modular abelian variety
 
-        -  ``abvar`` - a modular abelian variety
+        - ``lattice`` -- a lattice that contains the lattice of abvar
 
-        -  ``lattice`` - a lattice that contains the lattice of
-           abvar
+        - ``field_of_definition`` -- the field of definition
+          of this finite group scheme
 
-        -  ``field_of_definition`` - the field of definition
-           of this finite group scheme
-
-        -  ``check`` - bool (default: True) whether or not to
-           check that lattice contains the abvar lattice.
-
+        - ``check`` -- boolean (default: ``True``); whether or not to
+          check that lattice contains the abvar lattice
 
         EXAMPLES::
 
@@ -870,10 +862,10 @@ class FiniteSubgroup_lattice(FiniteSubgroup):
         if field_of_definition is None:
             from sage.rings.qqbar import QQbar as field_of_definition
         if check:
-            from .abvar import is_ModularAbelianVariety
-            if not is_FreeModule(lattice) or lattice.base_ring() != ZZ:
+            from .abvar import ModularAbelianVariety_abstract
+            if not isinstance(lattice, FreeModule_generic) or lattice.base_ring() != ZZ:
                 raise TypeError("lattice must be a free module over ZZ")
-            if not is_ModularAbelianVariety(abvar):
+            if not isinstance(abvar, ModularAbelianVariety_abstract):
                 raise TypeError("abvar must be a modular abelian variety")
             if not abvar.lattice().is_submodule(lattice):
                 lattice += abvar.lattice()

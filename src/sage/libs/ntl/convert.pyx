@@ -5,7 +5,6 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 Conversion between NTL's ``ZZ`` and various other types
 """

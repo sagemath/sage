@@ -86,8 +86,7 @@ def index_face_set(face_list, point_list, enclosed, **kwds):
     - ``point_list`` -- list of points, given explicitly from the
       solid invocation
 
-    - ``enclosed`` -- boolean (default passed is always ``True``
-      for these solids)
+    - ``enclosed`` -- boolean (default: ``True`` for these solids)
 
     TESTS:
 
@@ -127,19 +126,19 @@ def prep(G, center, size, kwds):
 
     INPUT:
 
-    - ``center`` -- 3-tuple indicating the center (default passed
-      from :func:`index_face_set` is the origin `(0,0,0)`)
+    - ``center`` -- 3-tuple indicating the center (default: the origin
+      `(0,0,0)`, passed from :func:`index_face_set`)
 
-    - ``size`` -- number indicating amount to scale by (default
-      passed from :func:`index_face_set` is 1)
+    - ``size`` -- number indicating amount to scale by (default: 1,
+      passed from :func:`index_face_set`)
 
-    - ``kwds`` -- a dictionary of keywords, passed from solid
+    - ``kwds`` -- dictionary of keywords, passed from solid
       invocation by :func:`index_face_set`
 
     TESTS:
 
     Verify that scaling and moving the center work together properly,
-    and that keywords are passed (see :trac:`10796`)::
+    and that keywords are passed (see :issue:`10796`)::
 
         sage: octahedron(center=(2,0,0),size=2,color='red')
         Graphics3d Object
@@ -164,7 +163,7 @@ def tetrahedron(center=(0, 0, 0), size=1, **kwds):
 
     - ``size`` -- (default: 1)
 
-    - ``color`` -- a string (``"red"``, ``"green"``, etc)
+    - ``color`` -- string (``'red'``, ``'green'``, etc)
       or a tuple (r, g, b) with r, g, b numbers between 0 and 1
 
     - ``opacity`` -- (default: 1) if less than 1 then is
@@ -276,21 +275,19 @@ def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
 
     - ``center`` -- (default: (0,0,0))
 
-    - ``size`` -- (default: 1) the side lengths of the
-      cube
+    - ``size`` -- (default: 1) the side lengths of the cube
 
-    - ``color`` -- a string that describes a color; this
+    - ``color`` -- string that describes a color; this
       can also be a list of 3-tuples or strings length 6 or 3, in which
-      case the faces (and oppositive faces) are colored.
+      case the faces (and oppositive faces) are colored
 
     - ``frame_thickness`` -- (default: 0) if positive,
       then thickness of the frame
 
-    - ``frame_color`` -- (default: None) if given, gives
+    - ``frame_color`` -- (default: ``None``) if given, gives
       the color of the frame
 
-    - ``opacity`` -- (default: 1) if less than 1 then it's
-      transparent
+    - ``opacity`` -- (default: 1) if less than 1 then it's transparent
 
     EXAMPLES:
 
@@ -305,12 +302,12 @@ def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
 
     A red cube::
 
-        sage: cube(color="red")
+        sage: cube(color='red')
         Graphics3d Object
 
     .. PLOT::
 
-        sphinx_plot(cube(color="red"))
+        sphinx_plot(cube(color='red'))
 
     A transparent grey cube that contains a red cube::
 
@@ -385,7 +382,7 @@ def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
 
         sage: c.show(viewer='tachyon')
 
-    This shows :trac:`11272` has been fixed::
+    This shows :issue:`11272` has been fixed::
 
         sage: cube(center=(10, 10, 10), size=0.5).bounding_box()
         ((9.75, 9.75, 9.75), (10.25, 10.25, 10.25))
@@ -419,12 +416,11 @@ def octahedron(center=(0, 0, 0), size=1, **kwds):
 
     - ``size`` -- (default: 1)
 
-    - ``color`` -- a string that describes a color; this
+    - ``color`` -- string that describes a color; this
       can also be a list of 3-tuples or strings length 6 or 3, in which
-      case the faces (and oppositive faces) are colored.
+      case the faces (and oppositive faces) are colored
 
-    - ``opacity`` -- (default: 1) if less than 1 then is
-      transparent
+    - ``opacity`` -- (default: 1) if less than 1 then is transparent
 
     EXAMPLES::
 
@@ -438,7 +434,6 @@ def octahedron(center=(0, 0, 0), size=1, **kwds):
         G = octahedron((1,4,3), color='orange')
         G += octahedron((0,2,1), size=2, opacity=0.6)
         sphinx_plot(G)
-
     """
     kwds['enclosed'] = True
     if 'aspect_ratio' not in kwds:
@@ -457,9 +452,9 @@ def dodecahedron(center=(0, 0, 0), size=1, **kwds):
 
     - ``size`` -- (default: 1)
 
-    - ``color`` -- a string that describes a color; this
+    - ``color`` -- string that describes a color; this
       can also be a list of 3-tuples or strings length 6 or 3, in which
-      case the faces (and oppositive faces) are colored.
+      case the faces (and oppositive faces) are colored
 
     - ``opacity`` -- (default: 1) if less than 1 then is transparent
 
@@ -571,9 +566,9 @@ def icosahedron(center=(0, 0, 0), size=1, **kwds):
 
     - ``size`` -- (default: 1)
 
-    - ``color`` -- a string that describes a color; this
+    - ``color`` -- string that describes a color; this
       can also be a list of 3-tuples or strings length 6 or 3, in which
-      case the faces (and oppositive faces) are colored.
+      case the faces (and oppositive faces) are colored
 
     - ``opacity`` -- (default: 1) if less than 1 then is transparent
 
@@ -598,7 +593,6 @@ def icosahedron(center=(0, 0, 0), size=1, **kwds):
         p = icosahedron((-1/2,0,1), color='orange')
         p += icosahedron((2,0,1), size = 0.5, color='red', aspect_ratio=[1,1,1])
         sphinx_plot(p)
-
     """
     kwds['enclosed'] = True
     if 'aspect_ratio' not in kwds:

@@ -7,9 +7,6 @@ die () {
 cd src
 
 chmod -R a+rX .
-if [ $UNAME = "SunOS" ]; then
-    sage-apply-patches -d solaris || die "Error patching LiE."
-fi
 
 # Building LiE in parallel is broken
 export MAKE="$MAKE -j1"

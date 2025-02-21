@@ -56,9 +56,9 @@ class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
 
         INPUT:
 
-        - ``tp_krt`` -- A tensor product of KR tableaux
+        - ``tp_krt`` -- a tensor product of KR tableaux
 
-        - ``verbose`` -- (Default: ``False``) Display each step in the
+        - ``verbose`` -- (default: ``False``) display each step in the
           bijection
 
         EXAMPLES::
@@ -238,8 +238,7 @@ class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
         if tableau_height <= n - 2:
             max_width2 = self.ret_rig_con[n - 2].insert_cell(max_width)
             max_width = self.ret_rig_con[n - 1].insert_cell(max_width)
-            if max_width2 < max_width:
-                max_width = max_width2
+            max_width = min(max_width2, max_width)
         elif pos_val <= self.cur_dims[0][0]:
             # Special case when the height will become n
             max_width = self.ret_rig_con[self.cur_dims[0][0] - 1].insert_cell(max_width)
@@ -425,9 +424,9 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) display each step in the
+        - ``verbose`` -- boolean (default: ``False``); display each step in the
           bijection
-        - ``build_graph`` -- (default: ``False``) build the graph of each
+        - ``build_graph`` -- boolean (default: ``False``); build the graph of each
           step of the bijection
 
         EXAMPLES::
@@ -546,9 +545,9 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
             self._graph.pop(0) # Remove the dummy at the start
             from sage.graphs.digraph import DiGraph
             from sage.graphs.dot2tex_utils import have_dot2tex
-            self._graph = DiGraph(self._graph, format="list_of_edges")
+            self._graph = DiGraph(self._graph, format='list_of_edges')
             if have_dot2tex():
-                self._graph.set_latex_options(format="dot2tex", edge_labels=True)
+                self._graph.set_latex_options(format='dot2tex', edge_labels=True)
 
         return self.KRT(pathlist=ret_crystal_path)
 
@@ -603,8 +602,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
                 temp_size = self.cur_partitions[n - 2][ell[n - 2]]
                 if ell[n - 1] is not None:
                     last_size = self.cur_partitions[n - 1][ell[n - 1]]
-                    if temp_size > last_size:
-                        last_size = temp_size
+                    last_size = max(temp_size, last_size)
                 else:
                     b = n
             else:

@@ -49,8 +49,7 @@ test.spyx
 
 AUTHORS:
 
-- Jeroen Demeyer (2010-11-20): initial version (:trac:`10300`)
-
+- Jeroen Demeyer (2010-11-20): initial version (:issue:`10300`)
 """
 from subprocess import Popen, PIPE
 import os
@@ -58,21 +57,21 @@ import sys
 import select
 
 
-def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False, **kwds):
+def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False, **kwds):
     r"""
     Run the program defined by ``args`` using the string ``input`` on
     the standard input.
 
     INPUT:
 
-    - ``args`` -- a list of program arguments, the first being the
-      executable.
+    - ``args`` -- list of program arguments, the first being the
+      executable
 
-    - ``input`` -- a string serving as standard input.  Usually, this
-      should end with a newline.
+    - ``input`` -- string serving as standard input; usually, this
+      should end with a newline
 
     - ``timeout`` -- if the program produces no output for ``timeout``
-      seconds, a :class:`RuntimeError` is raised.
+      seconds, a :exc:`RuntimeError` is raised
 
     - ``pydebug_ignore_warnings`` -- boolean. Set the PYTHONWARNINGS environment variable to ignore
       Python warnings when on a Python debug build (`--with-pydebug`, e.g. from building with
@@ -81,12 +80,11 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
       so the filter will catch a bit more than the default filters. Hence we only enable it on debug
       builds.
 
-    - ``**kwds`` -- Additional keyword arguments passed to the
-      :class:`Popen` constructor.
+    - ``**kwds`` -- additional keyword arguments passed to the
+      :class:`Popen` constructor
 
     OUTPUT: a tuple ``(out, err, ret)`` with the standard output,
     standard error and exitcode of the program run.
-
 
     EXAMPLES::
 
@@ -390,10 +388,10 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         1
 
     Now run a test for the fixdoctests script and, in particular, check that the
-    issues raised in :trac:`10589` are fixed. We have to go to slightly silly
+    issues raised in :issue:`10589` are fixed. We have to go to slightly silly
     lengths to doctest the output.::
 
-        sage: test='r\"\"\"Add a doc-test for the fixdoctest command line option and, in particular, check that\n:trac:`10589` is fixed.\n\nEXAMPLES::\n\n    sage: 1+1              # incorrect output\n    3\n    sage: m=matrix(ZZ,3)   # output when none is expected\n    [0 0 0]\n    [0 0 0]\n    [1 0 0]\n    sage: (2/3)*m          # no output when it is expected\n    sage: mu=PartitionTuple([[4,4],[3,3,2,1],[1,1]])   # output when none is expected\n    [4, 4, 3, 3, 2, 1, 1]\n    sage: mu.pp()          # uneven indentation\n    ****\n    ****\n    sage: PartitionTuples.options(convention="French")\n    sage: mu.pp()         # fix doctest with uneven indentation\n    sage: PartitionTuples.options._reset()\n\"\"\"\n'
+        sage: test='r\"\"\"Add a doc-test for the fixdoctest command line option and, in particular, check that\n:issue:`10589` is fixed.\n\nEXAMPLES::\n\n    sage: 1+1              # incorrect output\n    3\n    sage: m=matrix(ZZ,3)   # output when none is expected\n    [0 0 0]\n    [0 0 0]\n    [1 0 0]\n    sage: (2/3)*m          # no output when it is expected\n    sage: mu=PartitionTuple([[4,4],[3,3,2,1],[1,1]])   # output when none is expected\n    [4, 4, 3, 3, 2, 1, 1]\n    sage: mu.pp()          # uneven indentation\n    ****\n    ****\n    sage: PartitionTuples.options(convention="French")\n    sage: mu.pp()         # fix doctest with uneven indentation\n    sage: PartitionTuples.options._reset()\n\"\"\"\n'
         sage: test_file = os.path.join(tmp_dir(), 'test_file.py')
         sage: F = open(test_file, 'w')
         sage: _ = F.write(test)
@@ -778,4 +776,13 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
                 p.stderr.close()
             err.append(s)
 
-    return (''.join(out), ''.join(err), p.wait())
+    # In case out or err contains a quoted string, force the use of
+    # double quotes so that the output is enclosed in single
+    # quotes. This avoids some doctest failures with some versions of
+    # OS X and Xcode.
+    out = ''.join(out)
+    out = out.replace("'", '"')
+    err = ''.join(err)
+    err = err.replace("'", '"')
+
+    return (out, err, p.wait())

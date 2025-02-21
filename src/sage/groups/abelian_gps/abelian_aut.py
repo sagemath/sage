@@ -94,7 +94,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
 
     - ``x`` -- a libgap element
     - ``parent`` -- the parent :class:`~AbelianGroupAutomorphismGroup_gap`
-    - ``check`` -- bool (default:True) checks if ``x`` is an element
+    - ``check`` -- boolean (default: ``True``); checks if ``x`` is an element
       of the group
 
     EXAMPLES::
@@ -176,9 +176,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
         The `i`-th row is the exponent vector of
         the image of the `i`-th generator.
 
-        OUTPUT:
-
-        - a square matrix over the integers
+        OUTPUT: a square matrix over the integers
 
         EXAMPLES::
 
@@ -206,6 +204,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
         m = R(coeffs)
         m.set_immutable()
         return m
+
 
 class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
                                         GroupMixinLibGAP,
@@ -315,9 +314,7 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
 
         - ``S`` -- anything
 
-        OUTPUT:
-
-        Boolean or nothing
+        OUTPUT: boolean or nothing
 
         EXAMPLES::
 
@@ -407,9 +404,10 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
         """
         if not isinstance(G, AbelianGroupAutomorphismGroup_gap):
             raise ValueError("input must be an instance of AbelianGroup_gap")
-        if not self.ambient() is G.ambient():
+        if self.ambient() is not G.ambient():
             return False
         return G.gap().IsSubsemigroup(self).sage()
+
 
 class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
     r"""
@@ -471,6 +469,7 @@ class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
         """
         return "Full group of automorphisms of %s" % self.domain()
 
+
 class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
     r"""
     Groups of automorphisms of abelian groups.
@@ -485,7 +484,7 @@ class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
     INPUT:
 
     - ``ambient`` -- the ambient group
-    - ``generators`` -- a tuple of gap elements of the ambient group
+    - ``generators`` -- tuple of gap elements of the ambient group
 
     EXAMPLES::
 

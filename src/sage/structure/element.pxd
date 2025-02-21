@@ -1,9 +1,10 @@
+# sage_setup: distribution = sagemath-objects
 from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent
 from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
 
 
-cpdef inline parent(x) noexcept:
+cpdef inline parent(x):
     """
     Return the parent of the element ``x``.
 
@@ -143,36 +144,36 @@ cpdef inline bint have_same_parent(left, right) noexcept:
     return HAVE_SAME_PARENT(classify_elements(left, right))
 
 
-cdef unary_op_exception(op, x) noexcept
-cdef bin_op_exception(op, x, y) noexcept
+cdef unary_op_exception(op, x)
+cdef bin_op_exception(op, x, y)
 
 
 cdef class Element(SageObject):
     cdef Parent _parent
-    cpdef _richcmp_(left, right, int op) noexcept
+    cpdef _richcmp_(left, right, int op)
     cpdef int _cmp_(left, right) except -2
-    cpdef base_extend(self, R) noexcept
+    cpdef base_extend(self, R)
 
-    cdef getattr_from_category(self, name) noexcept
+    cdef getattr_from_category(self, name)
 
-    cpdef _act_on_(self, x, bint self_on_left) noexcept
-    cpdef _acted_upon_(self, x, bint self_on_left) noexcept
+    cpdef _act_on_(self, x, bint self_on_left)
+    cpdef _acted_upon_(self, x, bint self_on_left)
 
-    cdef _add_(self, other) noexcept
-    cdef _sub_(self, other) noexcept
-    cdef _neg_(self) noexcept
-    cdef _add_long(self, long n) noexcept
+    cdef _add_(self, other)
+    cdef _sub_(self, other)
+    cdef _neg_(self)
+    cdef _add_long(self, long n)
 
-    cdef _mul_(self, other) noexcept
-    cdef _mul_long(self, long n) noexcept
-    cdef _matmul_(self, other) noexcept
-    cdef _div_(self, other) noexcept
-    cdef _floordiv_(self, other) noexcept
-    cdef _mod_(self, other) noexcept
+    cdef _mul_(self, other)
+    cdef _mul_long(self, long n)
+    cdef _matmul_(self, other)
+    cdef _div_(self, other)
+    cdef _floordiv_(self, other)
+    cdef _mod_(self, other)
 
-    cdef _pow_(self, other) noexcept
-    cdef _pow_int(self, n) noexcept
-    cdef _pow_long(self, long n) noexcept
+    cdef _pow_(self, other)
+    cdef _pow_int(self, n)
+    cdef _pow_long(self, long n)
 
 
 cdef class ElementWithCachedMethod(Element):
@@ -183,14 +184,14 @@ cdef class ModuleElement(Element)       # forward declaration
 cdef class RingElement(ModuleElement)   # forward declaration
 
 cdef class ModuleElement(Element):
-    cpdef _add_(self, other) noexcept
-    cpdef _sub_(self, other) noexcept
-    cpdef _neg_(self) noexcept
+    cpdef _add_(self, other)
+    cpdef _sub_(self, other)
+    cpdef _neg_(self)
 
     # self._rmul_(x) is x * self
-    cpdef _lmul_(self, Element right) noexcept
+    cpdef _lmul_(self, Element right)
     # self._lmul_(x) is self * x
-    cpdef _rmul_(self, Element left) noexcept
+    cpdef _rmul_(self, Element left)
 
 cdef class ModuleElementWithMutability(ModuleElement):
     cdef bint _is_immutable
@@ -198,18 +199,18 @@ cdef class ModuleElementWithMutability(ModuleElement):
     cpdef bint is_mutable(self) noexcept
 
 cdef class MonoidElement(Element):
-    cpdef _pow_int(self, n) noexcept
+    cpdef _pow_int(self, n)
 
 cdef class MultiplicativeGroupElement(MonoidElement):
-    cpdef _div_(self, other) noexcept
+    cpdef _div_(self, other)
 
 cdef class AdditiveGroupElement(ModuleElement):
     pass
 
 cdef class RingElement(ModuleElement):
-    cpdef _mul_(self, other) noexcept
-    cpdef _div_(self, other) noexcept
-    cpdef _pow_int(self, n) noexcept
+    cpdef _mul_(self, other)
+    cpdef _div_(self, other)
+    cpdef _pow_int(self, n)
 
 cdef class CommutativeRingElement(RingElement):
     pass
@@ -224,11 +225,11 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
     pass
 
 cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
-    cpdef _floordiv_(self, other) noexcept
-    cpdef _mod_(self, other) noexcept
+    cpdef _floordiv_(self, other)
+    cpdef _mod_(self, other)
 
 cdef class FieldElement(CommutativeRingElement):
-    cpdef _floordiv_(self, other) noexcept
+    cpdef _floordiv_(self, other)
 
 cdef class AlgebraElement(RingElement):
     pass
@@ -248,10 +249,10 @@ cdef class Vector(ModuleElementWithMutability):
     # Return the dot product using the simple metric
     # $e_i \cdot e_j = \delta_{ij}$. The first assumes that the parents
     # are equal, both assume that the degrees are equal.
-    cpdef _dot_product_(Vector left, Vector right) noexcept
-    cpdef _dot_product_coerce_(Vector left, Vector right) noexcept
+    cpdef _dot_product_(Vector left, Vector right)
+    cpdef _dot_product_coerce_(Vector left, Vector right)
 
-    cpdef _pairwise_product_(Vector left, Vector right) noexcept # override, call if parents the same
+    cpdef _pairwise_product_(Vector left, Vector right) # override, call if parents the same
 
     cdef bint is_sparse_c(self) noexcept
     cdef bint is_dense_c(self) noexcept
@@ -262,9 +263,9 @@ cdef class Matrix(ModuleElement):
     cdef Py_ssize_t _nrows
     cdef Py_ssize_t _ncols
 
-    cdef _vector_times_matrix_(matrix_right, Vector vector_left) noexcept    # OK to override, AND call directly
-    cdef _matrix_times_vector_(matrix_left, Vector vector_right) noexcept    # OK to override, AND call directly
-    cdef _matrix_times_matrix_(left, Matrix right) noexcept                  # OK to override, AND call directly
+    cdef _vector_times_matrix_(matrix_right, Vector vector_left)    # OK to override, AND call directly
+    cdef _matrix_times_vector_(matrix_left, Vector vector_right)    # OK to override, AND call directly
+    cdef _matrix_times_matrix_(left, Matrix right)                  # OK to override, AND call directly
 
     cdef bint is_sparse_c(self) noexcept
     cdef bint is_dense_c(self) noexcept

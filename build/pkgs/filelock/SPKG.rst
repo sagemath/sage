@@ -1,10 +1,10 @@
-filelock: A platform independent file lock
-==========================================
+filelock: Platform independent file lock
+========================================
 
 Description
 -----------
 
-A platform independent file lock.
+Platform independent file lock
 
 License
 -------

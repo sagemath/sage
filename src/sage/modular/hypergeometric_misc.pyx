@@ -4,10 +4,11 @@ significantly from Cythonization.
 """
 from cpython cimport array
 from cysignals.signals cimport sig_check
+from sage.rings.integer cimport Integer
 
-
-cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
-                 gtable, int gtable_prec, bint use_longs) noexcept:
+cpdef hgm_coeffs(long long p, unsigned int f,
+                 int prec, gamma, m, int D,
+                 gtable, int gtable_prec, bint use_longs):
     r"""
     Compute coefficients for the hypergeometric trace formula.
 
@@ -26,7 +27,7 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
         sage: hgm_coeffs(7, 1, 2, gamma, [0]*6, D, gtable, prec, False)
         [7, 2*7, 6*7, 7, 6, 4*7]
 
-    Check issue from :trac:`28404`::
+    Check issue from :issue:`28404`::
 
         sage: H = Hyp(cyclotomic=[[10,2],[1,1,1,1,1]])
         sage: u = H.euler_factor(2,79) # indirect doctest
@@ -35,9 +36,9 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
     """
     from sage.rings.padics.factory import Zp
 
-    cdef int gl, j, k, l, v, gv
-    cdef long long i, q1, w, w1, w2, q2, r, r1
-    cdef bint flip
+    cdef int gl, j, k, v, gv
+    cdef long long i, l, q1, w, w1, w2, q2, r, r1
+    cdef bint flip, use_longlongs
 
     q1 = p ** f - 1
     gl = len(gamma)
@@ -55,6 +56,7 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
     # for efficiency.
     flip = (f == 1 and prec == 1 and gtable_prec == 1)
     ans = []
+    Rz = R.zero()
     if use_longs:
         q2 = p ** prec
         try:
@@ -64,13 +66,15 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
             for r in range(q1):
                 gtab2[r] = gtable[r].lift() % q2
     else:
-        gtab2 = array.array('q', [0]) * q1
-        try:
-            for r in range(q1):
-                gtab2[r] = gtable[r]
-        except TypeError:
-            for r in range(q1):
-                gtab2[r] = gtable[r].lift()
+        use_longlongs = (Integer(p) ** prec < 2 ** 63)
+        if use_longlongs:
+            gtab2 = array.array('q', [0]) * q1
+            try:
+                for r in range(q1):
+                    gtab2[r] = gtable[r]
+            except TypeError:
+                for r in range(q1):
+                    gtab2[r] = gtable[r].lift()
     if f == 1:
         for r in range(q1):
             digit_count[r] = r
@@ -82,7 +86,6 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
                 w += r1 % p
                 r1 //= p
             digit_count[r] = w
-    Rz = R.zero()
     ans = [None] * q1
     for r in range(q1):
         sig_check()
@@ -123,7 +126,7 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
                     else:
                         for j in range(-gv):
                             w1 = w1 * w2 % q2
-                else:
+                elif use_longlongs:
                     w2 = gtab2[r1]
                     if gv > 0:
                         for j in range(gv):
@@ -131,6 +134,13 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
                     else:
                         for j in range(-gv):
                             u1 *= w2
+                else:
+                    if gv > 0:
+                        for j in range(gv):
+                            u *= gtable[r1]
+                    else:
+                        for j in range(-gv):
+                            u1 *= gtable[r1]
             if use_longs:
                 u = R(w)
                 u1 = R(w1)

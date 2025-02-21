@@ -6,12 +6,12 @@ cdef class CutNode:
     cdef bitset_t _p_free, _p_in, _l0, _l1
     cdef long _ml
 
-    cdef CutNode copy(self) noexcept
+    cdef CutNode copy(self)
     cdef bint insert_plane(self, long p0) noexcept
     cdef bint remove_plane(self, long p0) noexcept
-    cdef select_plane(self) noexcept
+    cdef select_plane(self)
 
-    cdef list planes(self) noexcept
+    cdef list planes(self)
 
 cdef class LinearSubclassesIter:
     cdef LinearSubclasses _MC

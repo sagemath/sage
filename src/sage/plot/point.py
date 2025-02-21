@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Points
 
@@ -46,7 +45,7 @@ class Point(GraphicPrimitive_xydata):
 
     - ``ydata`` -- list of y values for points in Point object
 
-    - ``options`` -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -70,7 +69,7 @@ class Point(GraphicPrimitive_xydata):
     """
     def __init__(self, xdata, ydata, options):
         """
-        Initializes base class Point.
+        Initialize base class Point.
 
         EXAMPLES::
 
@@ -142,9 +141,8 @@ class Point(GraphicPrimitive_xydata):
 
         INPUT:
 
-
-        -  ``z`` - optional 3D height above `xy`-plane.  May be a list
-           if self is a list of points.
+        - ``z`` -- (optional) 3D height above `xy`-plane; may be a list
+          if ``self`` is a list of points
 
         EXAMPLES:
 
@@ -267,7 +265,7 @@ class Point(GraphicPrimitive_xydata):
 
     def __getitem__(self, i):
         """
-        Returns tuple of coordinates of point.
+        Return tuple of coordinates of point.
 
         EXAMPLES::
 
@@ -283,7 +281,7 @@ class Point(GraphicPrimitive_xydata):
         r"""
         TESTS:
 
-        We check to make sure that :trac:`2076` is fixed by verifying all
+        We check to make sure that :issue:`2076` is fixed by verifying all
         the points are red::
 
             sage: point(((1, 1), (2, 2), (3, 3)), rgbcolor=hue(1), size=30)
@@ -323,8 +321,8 @@ def point(points, **kwds):
 
     INPUT:
 
-    -  ``points`` - either a single point (as a tuple), a list of
-       points, a single complex number, or a list of complex numbers.
+    - ``points`` -- either a single point (as a tuple), a list of
+      points, a single complex number, or a list of complex numbers
 
     For information regarding additional arguments, see either point2d?
     or point3d?.
@@ -379,7 +377,7 @@ def point(points, **kwds):
 
     TESTS:
 
-    One can now use iterators (:trac:`13890`)::
+    One can now use iterators (:issue:`13890`)::
 
         sage: point(iter([(1, 1, 1)]))
         Graphics3d Object
@@ -406,8 +404,8 @@ def point2d(points, **options):
 
     INPUT:
 
-    -  ``points`` -- either a single point (as a tuple), a list of
-       points, a single complex number, or a list of complex numbers
+    - ``points`` -- either a single point (as a tuple), a list of
+      points, a single complex number, or a list of complex numbers
 
     - ``alpha`` -- how transparent the point is
 
@@ -539,7 +537,7 @@ def point2d(points, **options):
 
         sphinx_plot(point([(1, 2),(2, 4),(3, 4),(4, 8),(4.5, 32)], scale='semilogy', base=2))
 
-    Since Sage Version 4.4 (:trac:`8599`), the size of a 2d point can be
+    Since Sage Version 4.4 (:issue:`8599`), the size of a 2d point can be
     given by the argument ``size`` instead of ``pointsize``. The argument
     ``pointsize`` is still supported::
 
@@ -582,7 +580,7 @@ def point2d(points, **options):
 
     Verify that :issue:`36153` does not arise::
 
-        sage: P = point((0.5, 0.5), legend_label="test")
+        sage: P = point((0.5, 0.5), legend_label='test')
     """
     from sage.plot.plot import xydata_from_point_list
     from sage.plot.all import Graphics

@@ -25,7 +25,7 @@ extra comparison. Also, the function names make more sense.
 import bisect
 
 
-cpdef search(object v, object x) noexcept:
+cpdef search(object v, object x):
     """
     Return (True,i) where i is such that v[i] == x if there is such an i,
     or (False,j) otherwise, where j is the position where x should be inserted
@@ -33,13 +33,11 @@ cpdef search(object v, object x) noexcept:
 
     INPUT:
 
-    - v -- a list, which is assumed sorted
+    - ``v`` -- list; which is assumed sorted
 
-    - x -- Python object
+    - ``x`` -- Python object
 
-    OUTPUT:
-
-    bool, int
+    OUTPUT: boolean, integer
 
     This is implemented using the built-in ``bisect`` module.
 

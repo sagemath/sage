@@ -12,10 +12,8 @@ nontrivially in J0(37).
 
     sage: J = J0(37)
     sage: D = J.decomposition() ; D
-    [
-    Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
-    Simple abelian subvariety 37b(1,37) of dimension 1 of J0(37)
-    ]
+    [Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
+     Simple abelian subvariety 37b(1,37) of dimension 1 of J0(37)]
     sage: D[0].intersection(D[1])
     (Finite subgroup with invariants [2, 2] over QQ of
       Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
@@ -101,11 +99,9 @@ The images of the two degeneracy maps are, of course, isogenous.
     sage: J = J0(33)
     sage: D = J.decomposition()
     sage: D
-    [
-    Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33),
-    Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33),
-    Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)
-    ]
+    [Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33),
+     Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33),
+     Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)]
     sage: Hom(D[0],D[1]).gens()
     (Abelian variety morphism:
       From: Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33)
@@ -122,10 +118,8 @@ one endomorphism ring for the newform 33a (since it is again
 ::
 
     sage: DD = J.decomposition(simple=False) ; DD
-    [
-    Abelian subvariety of dimension 2 of J0(33),
-    Abelian subvariety of dimension 1 of J0(33)
-    ]
+    [Abelian subvariety of dimension 2 of J0(33),
+     Abelian subvariety of dimension 1 of J0(33)]
     sage: A, B = DD
     sage: A == D[0] + D[1]
     True
@@ -187,13 +181,13 @@ from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 
 
-from . import morphism
+from sage.modular.abvar import morphism
 
 from sage.rings.infinity import Infinity
 
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.constructor import Matrix, identity_matrix
-from sage.structure.element import is_Matrix
+from sage.matrix.constructor import matrix, identity_matrix
+from sage.structure.element import Matrix
 
 from sage.rings.integer_ring import ZZ
 
@@ -210,11 +204,9 @@ class Homspace(HomsetWithBase):
 
         INPUT:
 
+        - ``domain, codomain`` -- modular abelian varieties
 
-        -  ``domain, codomain`` - modular abelian varieties
-
-        -  ``cat`` - category
-
+        - ``cat`` -- category
 
         EXAMPLES::
 
@@ -228,10 +220,10 @@ class Homspace(HomsetWithBase):
             sage: H.homset_category()
             Category of modular abelian varieties over Rational Field
         """
-        from .abvar import is_ModularAbelianVariety
-        if not is_ModularAbelianVariety(domain):
+        from .abvar import ModularAbelianVariety_abstract
+        if not isinstance(domain, ModularAbelianVariety_abstract):
             raise TypeError("domain must be a modular abelian variety")
-        if not is_ModularAbelianVariety(codomain):
+        if not isinstance(codomain, ModularAbelianVariety_abstract):
             raise TypeError("codomain must be a modular abelian variety")
         self._gens = None
         HomsetWithBase.__init__(self, domain, codomain, category=cat)
@@ -268,7 +260,7 @@ class Homspace(HomsetWithBase):
 
             During unpickling, the domain and codomain may be unable to
             provide the necessary information. This is why this is a lazy
-            attribute. See :trac:`14793`.
+            attribute. See :issue:`14793`.
 
         EXAMPLES::
 
@@ -356,7 +348,7 @@ class Homspace(HomsetWithBase):
                 M = M.matrix()
             else:
                 raise ValueError("cannot convert %s into %s" % (M, self))
-        elif is_Matrix(M):
+        elif isinstance(M, Matrix):
             if M.base_ring() != ZZ:
                 M = M.change_ring(ZZ)
             if side == "left":
@@ -409,10 +401,7 @@ class Homspace(HomsetWithBase):
 
         INPUT:
 
-
-        -  ``g`` - a matrix or morphism or object with a list
-           method
-
+        - ``g`` -- a matrix or morphism or object with a list method
 
         OUTPUT: a matrix
 
@@ -482,11 +471,11 @@ class Homspace(HomsetWithBase):
 
     def gen(self, i=0):
         """
-        Return i-th generator of ``self``.
+        Return `i`-th generator of ``self``.
 
         INPUT:
 
-        -  ``i`` -- an integer
+        - ``i`` -- integer
 
         OUTPUT: a morphism
 
@@ -588,8 +577,8 @@ class Homspace(HomsetWithBase):
         """
         For internal use.
 
-        Calculate generators for self, assuming that self is a product of
-        simple factors.
+        Calculate generators for ``self``, assuming that ``self`` is a product
+        of simple factors.
 
         EXAMPLES::
 
@@ -675,12 +664,10 @@ class Homspace(HomsetWithBase):
             [1 1]
             ]
             sage: J = J0(11) * J0(33) ; J.decomposition()
-            [
-            Simple abelian subvariety 11a(1,11) of dimension 1 of J0(11) x J0(33),
-            Simple abelian subvariety 11a(1,33) of dimension 1 of J0(11) x J0(33),
-            Simple abelian subvariety 11a(3,33) of dimension 1 of J0(11) x J0(33),
-            Simple abelian subvariety 33a(1,33) of dimension 1 of J0(11) x J0(33)
-            ]
+            [Simple abelian subvariety 11a(1,11) of dimension 1 of J0(11) x J0(33),
+             Simple abelian subvariety 11a(1,33) of dimension 1 of J0(11) x J0(33),
+             Simple abelian subvariety 11a(3,33) of dimension 1 of J0(11) x J0(33),
+             Simple abelian subvariety 33a(1,33) of dimension 1 of J0(11) x J0(33)]
             sage: J[0].Hom(J[1])._calculate_simple_gens()
             [
             [ 0 -1]
@@ -705,9 +692,7 @@ class Homspace(HomsetWithBase):
         ::
 
             sage: J = J0(23) ; J.decomposition()
-            [
-            Simple abelian variety J0(23) of dimension 2
-            ]
+            [Simple abelian variety J0(23) of dimension 2]
             sage: J[0].Hom(J[0])._calculate_simple_gens()
             [
             [1 0 0 0]  [ 0  1 -1  0]
@@ -759,10 +744,10 @@ class EndomorphismSubring(Homspace):
 
         INPUT:
 
-        -  ``A`` -- an abelian variety
+        - ``A`` -- an abelian variety
 
-        -  ``gens`` -- (default: ``None``); optional; if given
-           should be a tuple of the generators as matrices
+        - ``gens`` -- (default: ``None``) if given
+          should be a tuple of the generators as matrices
 
         EXAMPLES::
 
@@ -784,12 +769,12 @@ class EndomorphismSubring(Homspace):
         TESTS:
 
         The following tests against a problem on 32 bit machines that
-        occurred while working on :trac:`9944`::
+        occurred while working on :issue:`9944`::
 
             sage: sage.modular.abvar.homspace.EndomorphismSubring(J1(12345))
             Endomorphism ring of Abelian variety J1(12345) of dimension 5405473
 
-        :trac:`16275` removed the custom ``__reduce__`` method, since
+        :issue:`16275` removed the custom ``__reduce__`` method, since
         :meth:`Homset.__reduce__` already implements appropriate
         unpickling by construction::
 
@@ -854,11 +839,11 @@ class EndomorphismSubring(Homspace):
 
         INPUT:
 
-        -  ``other`` -- another endomorphism subring of the
-           same abelian variety
+        - ``other`` -- another endomorphism subring of the
+          same abelian variety
 
-        -  ``check`` -- bool (default: ``True``); whether to do some
-           type and other consistency checks
+        - ``check`` -- boolean (default: ``True``); whether to do some
+          type and other consistency checks
 
         EXAMPLES::
 
@@ -907,7 +892,7 @@ class EndomorphismSubring(Homspace):
         Return the discriminant of this ring, which is the discriminant of
         the trace pairing.
 
-        .. note::
+        .. NOTE::
 
            One knows that for modular abelian varieties, the
            endomorphism ring should be isomorphic to an order in a
@@ -929,7 +914,7 @@ class EndomorphismSubring(Homspace):
             2
         """
         g = self.gens()
-        M = Matrix(ZZ, len(g), [(g[i]*g[j]).trace()
+        M = matrix(ZZ, len(g), [(g[i]*g[j]).trace()
                                 for i in range(len(g)) for j in range(len(g))])
         return M.determinant()
 
@@ -947,14 +932,12 @@ class EndomorphismSubring(Homspace):
 
         INPUT:
 
-        - ``check_every`` -- integer (default: 1) If this integer is positive,
+        - ``check_every`` -- integer (default: 1); if this integer is positive,
           this integer determines how many Hecke operators we add in before
           checking to see if the submodule spanned so far is maximal and
-          saturated.
+          saturated
 
-        OUTPUT:
-
-        - The image of the Hecke algebra as a subring of ``self``.
+        OUTPUT: the image of the Hecke algebra as a subring of ``self``
 
         EXAMPLES::
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fast functions for the category framework
 
@@ -5,23 +6,22 @@ Fast functions for the category framework
 AUTHOR:
 
 - Simon King (initial version)
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Simon King <simon.king@uni-jena.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 #######################################
 #  Sorting
 
-cpdef inline tuple category_sort_key(object category) noexcept:
+cpdef inline tuple category_sort_key(object category):
     """
     Return ``category._cmp_key``.
 
@@ -38,7 +38,7 @@ cpdef inline tuple category_sort_key(object category) noexcept:
     """
     return category._cmp_key
 
-cpdef tuple _sort_uniq(categories) noexcept:
+cpdef tuple _sort_uniq(categories):
     """
     Return the categories after sorting them and removing redundant categories.
 
@@ -47,7 +47,7 @@ cpdef tuple _sort_uniq(categories) noexcept:
 
     INPUT:
 
-    - ``categories`` -- a list (or iterable) of categories
+    - ``categories`` -- list (or iterable) of categories
 
     OUTPUT: a sorted tuple of mutually incomparable categories
 
@@ -72,16 +72,16 @@ cpdef tuple _sort_uniq(categories) noexcept:
             result.append(category)
     return tuple(result)
 
-cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory) noexcept:
+cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
     """
     Return the tuple of categories in ``categories``, while
     flattening join categories.
 
     INPUT:
 
-    - ``categories`` -- a list (or iterable) of categories
+    - ``categories`` -- list (or iterable) of categories
 
-    - ``JoinCategory`` -- A type such that instances of that type will be
+    - ``JoinCategory`` -- a type such that instances of that type will be
       replaced by its super categories. Usually, this type is
       :class:`JoinCategory`.
 
@@ -116,18 +116,18 @@ cdef bint is_supercategory_of_done(new_cat, dict done) noexcept:
             return True
     return False
 
-cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms) noexcept:
+cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
     """
     Helper for :meth:`~sage.categories.category.Category.join`.
 
     INPUT:
 
-    - ``categories`` -- tuple of categories to be joined,
+    - ``categories`` -- tuple of categories to be joined
     - ``axioms`` -- tuple of strings; the names of some
-      supplementary axioms.
+      supplementary axioms
     - ``ignore_axioms`` -- tuple of pairs ``(cat, axiom)``, such
       that ``axiom`` will not be applied to ``cat``, should ``cat``
-      occur in the algorithm.
+      occur in the algorithm
 
     EXAMPLES::
 
@@ -267,7 +267,7 @@ cdef class AxiomContainer(dict):
         return self
 
 
-cpdef inline get_axiom_index(AxiomContainer all_axioms, str axiom) noexcept:
+cpdef inline get_axiom_index(AxiomContainer all_axioms, str axiom):
     """
     Helper function: Return the rank of an axiom.
 
@@ -286,7 +286,7 @@ cpdef inline get_axiom_index(AxiomContainer all_axioms, str axiom) noexcept:
     return (<dict>all_axioms)[axiom]
 
 
-cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms) noexcept:
+cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms):
     r"""
     Canonicalize a set of axioms.
 
@@ -294,7 +294,7 @@ cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms) noexcept:
 
     - ``all_axioms`` -- all available axioms
 
-    - ``axioms`` -- a set (or iterable) of axioms
+    - ``axioms`` -- set (or iterable) of axioms
 
     .. NOTE::
 

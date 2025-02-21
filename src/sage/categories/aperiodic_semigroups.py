@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Aperiodic semigroups
 """
@@ -13,6 +14,7 @@ Aperiodic semigroups
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.semigroups import Semigroups
+
 
 class AperiodicSemigroups(CategoryWithAxiom):
     def extra_super_categories(self):

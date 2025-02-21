@@ -31,7 +31,6 @@ the licenses of the components of Sage are included below as well.
 
 SOFTWARE                    LICENSE
 -----------------------------------------------------------------------
-arb                         GPLv2+
 boehm_gc                    MIT-like license (see below)
 backports_ssl_match_hostname  Python License
 boost_cropped               Boost Software License (see below)

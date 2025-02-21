@@ -1,1 +1,1 @@
-python-sphinx-basic-ng
+python3-sphinx-basic-ng

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Abstract methods
 """
@@ -13,12 +14,12 @@ import types
 
 def abstract_method(f=None, optional=False):
     r"""
-    Abstract methods
+    Abstract methods.
 
     INPUT:
 
-     - ``f`` -- a function
-     - ``optional`` -- a boolean; defaults to ``False``
+    - ``f`` -- a function
+    - ``optional`` -- boolean (default: ``False``)
 
     The decorator :obj:`abstract_method` can be used to declare
     methods that should be implemented by all concrete derived
@@ -48,7 +49,7 @@ def abstract_method(f=None, optional=False):
         sage: A.my_method
         <abstract method my_method at ...>
 
-    The current policy is that a :class:`NotImplementedError` is raised
+    The current policy is that a :exc:`NotImplementedError` is raised
     when accessing the method through an instance, even before the
     method is called::
 
@@ -138,10 +139,10 @@ def abstract_method(f=None, optional=False):
         return AbstractMethod(f, optional)
 
 
-class AbstractMethod():
+class AbstractMethod:
     def __init__(self, f, optional=False):
         """
-        Constructor for abstract methods
+        Constructor for abstract methods.
 
         EXAMPLES::
 
@@ -183,7 +184,7 @@ class AbstractMethod():
 
     def _sage_src_lines_(self):
         r"""
-        Returns the source code location for the wrapped function.
+        Return the source code location for the wrapped function.
 
         EXAMPLES::
 
@@ -193,14 +194,14 @@ class AbstractMethod():
             sage: src[0]
             'def version():\n'
             sage: lines
-            18
+            19
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self._f)
 
     def __get__(self, instance, cls):
         """
-        Implements the attribute access protocol.
+        Implement the attribute access protocol.
 
         EXAMPLES::
 
@@ -221,7 +222,7 @@ class AbstractMethod():
 
     def is_optional(self):
         """
-        Returns whether an abstract method is optional or not.
+        Return whether an abstract method is optional or not.
 
         EXAMPLES::
 
@@ -241,7 +242,7 @@ class AbstractMethod():
 
 def abstract_methods_of_class(cls):
     """
-    Returns the required and optional abstract methods of the class
+    Return the required and optional abstract methods of the class.
 
     EXAMPLES::
 

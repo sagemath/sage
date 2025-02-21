@@ -1,1 +1,1 @@
-python-texttable
+python3-texttable

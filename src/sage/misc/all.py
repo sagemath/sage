@@ -9,11 +9,8 @@ from sage.misc.misc import (BackslashOperator,
                   exists, forall, is_iterator,
                   random_sublist,
                   pad_zeros,
-                  SAGE_DB,
-                   newton_method_sizes, compose,
+                  newton_method_sizes, compose,
                   nest)
-lazy_import('sage.misc.misc', 'union',
-            deprecation=32096)
 
 from sage.misc.banner import version
 
@@ -85,10 +82,7 @@ from sage.misc.functional import (additive_order,
                         integral_closure,
                         interval,
                         xinterval,
-                        is_commutative,
                         is_even,
-                        is_integrally_closed,
-                        is_field,
                         is_odd,
                         kernel,
                         krull_dimension,
@@ -134,11 +128,9 @@ lazy_import('sage.misc.banner', 'banner', deprecation=34259)
 lazy_import('sage.misc.dev_tools', 'runsnake', deprecation=34259)
 lazy_import('sage.misc.edit_module', 'set_edit_template', deprecation=34259)
 lazy_import('sage.misc.profiler', 'Profiler', deprecation=34259)
-lazy_import('sage.misc.dist', 'install_scripts', deprecation=34259)
 lazy_import('sage.misc.trace', 'trace', deprecation=34259)
 lazy_import('sage.misc.package', ('installed_packages', 'is_package_installed',
-                                  'standard_packages', 'optional_packages',
-                                  'experimental_packages', 'package_versions'),
+                                  'package_versions'),
             deprecation=34259)
 lazy_import('sage.misc.benchmark', 'benchmark', deprecation=34259)
 lazy_import('sage.repl.interpreter', 'logstr', deprecation=34259)

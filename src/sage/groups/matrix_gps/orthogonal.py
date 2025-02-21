@@ -21,7 +21,7 @@ must be specified to disambiguate these two possibilities. The index
 of `SO(e,d,q)` in `GO(e,d,q)` is `2` if `q` is odd, but `SO(e,d,q) =
 GO(e,d,q)` if `q` is even.)
 
-.. warning::
+.. WARNING::
 
    GAP and Sage use different notations:
 
@@ -73,7 +73,7 @@ AUTHORS:
 - Sebastian Oehms (2018-8) add
   :meth:`~sage.groups.matrix_gps.orthogonal.OrthogonalMatrixGroup_generic.invariant_form`
   (as alias), ``_OG``, option for user defined invariant bilinear form,
-  and bug-fix in cmd-string for calling GAP (see :trac:`26028`)
+  and bug-fix in cmd-string for calling GAP (see :issue:`26028`)
 """
 
 # ****************************************************************************
@@ -107,18 +107,16 @@ def normalize_args_e(degree, ring, e):
 
     INPUT:
 
-    - ``degree`` -- integer. The degree of the affine group, that is,
-      the dimension of the affine space the group is acting on.
+    - ``degree`` -- integer; the degree of the affine group, that is,
+      the dimension of the affine space the group is acting on
 
-    - ``ring`` -- a ring. The base ring of the affine space.
+    - ``ring`` -- a ring; the base ring of the affine space
 
-    - ``e`` -- integer, one of `+1`, `0`, `-1`.  Only relevant for
+    - ``e`` -- integer; one of `+1`, `0`, `-1`.  Only relevant for
       finite fields and if the degree is even. A parameter that
       distinguishes inequivalent invariant forms.
 
-    OUTPUT:
-
-    The integer ``e`` with values required by GAP.
+    OUTPUT: the integer ``e`` with values required by GAP
 
     TESTS::
 
@@ -154,12 +152,12 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
 
     TESTS:
 
-    Check that :trac:`26028` is fixed::
+    Check that :issue:`26028` is fixed::
 
         sage: GO(3,25).order()  # indirect doctest                                      # needs sage.libs.gap sage.rings.finite_rings
         31200
 
-    Check that :trac:`28054` is fixed::
+    Check that :issue:`28054` is fixed::
 
         sage: G = SO(2, GF(3), -1)
         sage: m = G.invariant_form()
@@ -196,18 +194,18 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
                 inserted_text = "with respect to symmetric form"
 
             name = '{0} Orthogonal Group of degree {1} over {2} {3}\n{4}'.format(
-                            prefix, degree, ring, inserted_text,invariant_form)
+                prefix, degree, ring, inserted_text, invariant_form)
             ltx = r'\text{{{0}O}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(
-                            ltx_prefix, degree, latex(ring), inserted_text,
-                            latex(invariant_form))
+                ltx_prefix, degree, latex(ring), inserted_text,
+                latex(invariant_form))
         else:
             name = '{0} Orthogonal Group of degree {1} over {2}'.format(prefix, degree, ring)
             ltx = r'\text{{{0}O}}_{{{1}}}({2})'.format(ltx_prefix, degree, latex(ring))
     else:
         name = '{0} Orthogonal Group of degree {1} and form parameter {2} over {3}'.format(prefix, degree, e, ring)
         ltx = r'\text{{{0}O}}_{{{1}}}({2}, {3})'.format(ltx_prefix, degree,
-                                                         latex(ring),
-                                                         '+' if e == 1 else '-')
+                                                        latex(ring),
+                                                        '+' if e == 1 else '-')
 
     if isinstance(ring, FiniteField):
         try:
@@ -254,7 +252,7 @@ def GO(n, R, e=0, var='a', invariant_form=None):
       for finite fields and if the degree is even: a parameter that
       distinguishes inequivalent invariant forms
 
-    - ``var`` -- (optional, default: ``'a'``) variable used to
+    - ``var`` -- (default: ``'a'``) variable used to
       represent generator of the finite field, if needed
 
     - ``invariant_form`` -- (optional) instances being accepted by
@@ -263,10 +261,8 @@ def GO(n, R, e=0, var='a', invariant_form=None):
       by the orthogonal group; the form is checked to be
       non-degenerate and symmetric but not to be positive definite
 
-    OUTPUT:
-
-    The general orthogonal group of given degree, base ring, and
-    choice of invariant form.
+    OUTPUT: the general orthogonal group of given degree, base ring, and
+    choice of invariant form
 
     EXAMPLES::
 
@@ -364,7 +360,7 @@ def SO(n, R, e=None, var='a', invariant_form=None):
       for finite fields and if the degree is even: a parameter that
       distinguishes inequivalent invariant forms
 
-    - ``var`` -- (optional, default: ``'a'``) variable used to
+    - ``var`` -- (default: ``'a'``) variable used to
       represent generator of the finite field, if needed
 
     - ``invariant_form`` -- (optional) instances being accepted by
@@ -373,10 +369,8 @@ def SO(n, R, e=None, var='a', invariant_form=None):
       by the orthogonal group; the form is checked to be
       non-degenerate and symmetric but not to be positive definite
 
-    OUTPUT:
-
-    The special orthogonal group of given degree, base ring, and choice of
-    invariant form.
+    OUTPUT: the special orthogonal group of given degree, base ring, and choice
+    of invariant form
 
     EXAMPLES::
 
@@ -482,9 +476,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         """
         Return the symmetric bilinear form preserved by ``self``.
 
-        OUTPUT:
-
-        A matrix.
+        OUTPUT: a matrix
 
         EXAMPLES::
 
@@ -522,11 +514,14 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         m.set_immutable()
         return m
 
-    invariant_quadratic_form = invariant_bilinear_form # this is identical in the generic case
-    invariant_form = invariant_bilinear_form # alias (analogues to symplectic and unitary cases)
+    invariant_quadratic_form = invariant_bilinear_form
+    # this is identical in the generic case
+
+    invariant_form = invariant_bilinear_form
+    # alias (analogues to symplectic and unitary cases)
 
     def _check_matrix(self, x, *args):
-        """a
+        """
         Check whether the matrix ``x`` is orthogonal.
 
         See :meth:`~sage.groups.matrix_gps.matrix_group._check_matrix`

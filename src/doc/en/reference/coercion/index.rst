@@ -271,7 +271,7 @@ discovered between steps 1 and 2 above.
     sage: f(3).parent()
     Rational Field
 
-Note that by :trac:`14711` Sage's coercion system uses maps with weak
+Note that by :issue:`14711` Sage's coercion system uses maps with weak
 references to the domain. Such maps should only be used internally, and so a
 copy should be used instead (unless one knows what one is doing)::
 

@@ -8,7 +8,6 @@ AUTHOR:
 Based in code of Gonzalo Tornaria
 
 The form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot yz + s\cdot xz + t\cdot xy` is stored as a tuple ``(a, b, c, r, s, t)`` of integers.
-
 """
 
 # ****************************************************************************
@@ -27,6 +26,7 @@ The form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot yz + s\cdot xz + t\cdot 
 # ****************************************************************************
 
 from sage.arith.misc import gcd, kronecker as kronecker_symbol
+from sage.categories.rings import Rings
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.misc.prandom import randint
 from sage.quadratic_forms.quadratic_form import QuadraticForm
@@ -42,8 +42,7 @@ from sage.quadratic_forms.ternary import (_basic_lemma,
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygens
-from sage.rings.ring import is_Ring
-from sage.structure.element import is_Vector, is_Matrix
+from sage.structure.element import Vector, Matrix
 from sage.structure.sage_object import SageObject
 
 
@@ -53,11 +52,9 @@ class TernaryQF(SageObject):
 
     INPUT:
 
-    - ``v`` -- a list or tuple of 6 entries:  ``[a,b,c,r,s,t]``
+    - ``v`` -- list or tuple of 6 entries:  ``[a,b,c,r,s,t]``
 
-    OUTPUT:
-
-    - the ternary quadratic form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot y\cdot z + s\cdot x\cdot z + t\cdot x\cdot y`.
+    OUTPUT: the ternary quadratic form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot y\cdot z + s\cdot x\cdot z + t\cdot x\cdot y`
 
     EXAMPLES::
 
@@ -118,7 +115,7 @@ class TernaryQF(SageObject):
 
     def __hash__(self):
         """
-        Returns a hash for self.
+        Return a hash for ``self``.
 
         EXAMPLES::
 
@@ -136,7 +133,7 @@ class TernaryQF(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer with `0 \leq n \leq 5`.
+        - ``n`` -- integer with `0 \leq n \leq 5`
 
         EXAMPLES::
 
@@ -166,7 +163,7 @@ class TernaryQF(SageObject):
             sage: p.parent()
             Multivariate Polynomial Ring in x, y, z over Integer Ring
         """
-        (x,y,z) = polygens(ZZ,names)
+        x, y, z = polygens(ZZ, names)
         return self._a * x**2 + self._b * y**2 + self._c * z**2 + self._t * x*y + self._s * x*z + self._r * y*z
 
     def _repr_(self):
@@ -226,19 +223,20 @@ class TernaryQF(SageObject):
             [5 0 7]
             [12 -13 -16]
         """
-        if is_Matrix(v):
+        if isinstance(v, Matrix):
             # Check that v has 3 rows
             if v.nrows() != 3:
                 raise TypeError("the matrix must have 3 rows")
             # Check if v has 3 cols
             if v.ncols() == 3:
                 M = v.transpose() * self.matrix() * v
-                return TernaryQF([M[0,0]//2, M[1,1]//2, M[2,2]//2, M[1,2], M[0,2], M[0,1]])
+                return TernaryQF([M[0, 0]//2, M[1, 1]//2, M[2, 2]//2,
+                                  M[1, 2], M[0, 2], M[0, 1]])
             else:
                 return QuadraticForm(ZZ, v.transpose() * self.matrix() * v)
-        elif (is_Vector(v) or isinstance(v, (list, tuple))):
+        elif isinstance(v, (Vector, list, tuple)):
             # Check that v has length 3
-            if not (len(v) == 3):
+            if len(v) != 3:
                 raise TypeError("your vector needs to have length 3")
             v0, v1, v2 = v
             a, b, c, r, s, t = self.coefficients()
@@ -426,7 +424,7 @@ class TernaryQF(SageObject):
 
     def __neg__(self):
         """
-        Return the ternary quadratic form with coefficients negatives of self.
+        Return the ternary quadratic form with coefficients negatives of ``self``.
 
         EXAMPLES::
 
@@ -521,19 +519,16 @@ class TernaryQF(SageObject):
             [ * 2/3 0 ]
             [ * * 4/3 ]
         """
-        if k*self.content() in ZZ:
+        if k * self.content() in ZZ:
+            return TernaryQF([ZZ(k*self._a), ZZ(k*self._b), ZZ(k*self._c),
+                              ZZ(k*self._r), ZZ(k*self._s), ZZ(k*self._t)])
 
-            return TernaryQF([ZZ(k*self._a), ZZ(k*self._b), ZZ(k*self._c), ZZ(k*self._r), ZZ(k*self._s), ZZ(k*self._t)])
+        R = k.parent()
+        if R not in Rings():
+            raise TypeError(f"{k} does not belong to a ring")
 
-        else:
-            # arreglar con un try?
-            R = k.parent()
-            if is_Ring(R):
-
-                return QuadraticForm(R, 3, [k*self._a, k*self._t, k*self._s, k*self._b, k*self._r, k*self._c])
-
-            else:
-                raise TypeError(f"{k} does not belong to a Ring")
+        return QuadraticForm(R, 3, [k * self._a, k * self._t, k * self._s,
+                                    k * self._b, k * self._r, k * self._c])
 
     def reciprocal(self):
         """
@@ -735,7 +730,8 @@ class TernaryQF(SageObject):
             sage: Q.is_eisenstein_reduced()
             False
         """
-        [a,b,c,r,s,t] = [self._a,self._b,self._c,self._r,self._s,self._t]
+        a, b, c, r, s, t = [self._a, self._b, self._c,
+                            self._r, self._s, self._t]
 
         # cond 2
         if not (r > 0 and t > 0 and s > 0):
@@ -809,11 +805,11 @@ class TernaryQF(SageObject):
             [3 2 1]
         """
         if matrix:
-            [v,M] = _reduced_ternary_form_eisenstein_with_matrix(self._a,self._b,self._c,self._r,self._s,self._t)
+            v, M = _reduced_ternary_form_eisenstein_with_matrix(self._a, self._b, self._c, self._r, self._s, self._t)
             return TernaryQF(v), M
-        else:
-            v = _reduced_ternary_form_eisenstein_without_matrix(self._a,self._b,self._c,self._r,self._s,self._t)
-            return TernaryQF(v)
+
+        v = _reduced_ternary_form_eisenstein_without_matrix(self._a, self._b, self._c, self._r, self._s, self._t)
+        return TernaryQF(v)
 
     def pseudorandom_primitive_zero_mod_p(self, p):
         """
@@ -835,11 +831,11 @@ class TernaryQF(SageObject):
              sage: v[2]                                                                 # needs sage.libs.pari
              1
         """
-        [a,b,c,r,s,t] = self.coefficients()
+        a, b, c, r, s, t = self.coefficients()
         while True:
 
-            r1 = randint(0,p-1)
-            r2 = randint(0,p-1)
+            r1 = randint(0, p-1)
+            r2 = randint(0, p-1)
             alpha = (b*r1**2+t*r1+a) % p
             if alpha != 0:
 
@@ -848,7 +844,7 @@ class TernaryQF(SageObject):
                 disc = beta**2-4*alpha*gamma
                 if mod(disc, p).is_square():
 
-                    z = (-beta+mod(disc,p).sqrt().lift())*(2*alpha).inverse_mod(p)
+                    z = (-beta+mod(disc, p).sqrt().lift())*(2*alpha).inverse_mod(p)
                     # return vector((z,r1*z+r2,1))%p
                     return z % p, (r1*z+r2) % p, 1
 
@@ -871,16 +867,13 @@ class TernaryQF(SageObject):
             sage: [Q(v)%17 for v in zeros_17]                                           # needs sage.libs.pari
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         """
-
         if p == 2:
+            return _find_zeros_mod_p_2(self._a, self._b, self._c,
+                                       self._r, self._s, self._t)
 
-            return _find_zeros_mod_p_2(self._a, self._b, self._c, self._r, self._s, self._t)
-
-        else:
-
-            v = self.pseudorandom_primitive_zero_mod_p(p)
-            [a, b, c, r, s, t] = self.coefficients()
-            return _find_zeros_mod_p_odd(a, b, c, r, s, t, p, v)
+        v = self.pseudorandom_primitive_zero_mod_p(p)
+        a, b, c, r, s, t = self.coefficients()
+        return _find_zeros_mod_p_odd(a, b, c, r, s, t, p, v)
 
     def find_p_neighbor_from_vec(self, p, v, mat=False):
         r"""
@@ -956,7 +949,6 @@ class TernaryQF(SageObject):
             1
             sage: neig.count(Q2)
             3
-
         """
 
         z = self.find_zeros_mod_p(p)
@@ -1314,8 +1306,6 @@ class TernaryQF(SageObject):
             sage: Q = TernaryQF([3, 4, 5, 3, 3, 2])
             sage: Q._automorphisms_reduced_fast()
             [(1, 0, 0, 0, 1, 0, 0, 0, 1)]
-
-
         """
 
         if self._border(1):
@@ -1775,7 +1765,7 @@ class TernaryQF(SageObject):
                     auts = self._automorphisms_reduced_fast()
                     self._automorphisms = [matrix(ZZ, 3, A) for A in auts]
             else:
-                [Qr, M] = self.reduced_form_eisenstein()
+                Qr, M = self.reduced_form_eisenstein()
                 auts = Qr.automorphisms(slow)
                 M_inv = M.inverse()
                 self._automorphisms = [M*m*M_inv for m in auts]

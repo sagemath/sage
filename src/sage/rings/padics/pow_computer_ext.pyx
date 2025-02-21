@@ -8,7 +8,7 @@
 """
 PowComputer_ext
 
-The classes in this file are designed to be attached to p-adic parents
+The classes in this file are designed to be attached to `p`-adic parents
 and elements for Cython access to properties of the parent.
 
 In addition to storing the defining polynomial (as an NTL polynomial)
@@ -86,7 +86,7 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
     INPUT:
 
     - ``prime_pow`` -- the PowComputer to be initialized
-    - ``shift_seed`` -- x^e/p as a polynomial of degree at most e-1 in x.
+    - ``shift_seed`` -- x^e/p as a polynomial of degree at most e-1 in x
 
     EXAMPLES::
 
@@ -201,7 +201,7 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
     #ZZ_div(a, ZZ_p_rep(ZZ_pX_ConstTerm(modup)), prime_pow.small_powers[1])
     #ZZ_InvMod(a, a, prime_pow.pow_ZZ_tmp(prime_pow.prec_cap + low_length)[0])
     #ZZ_negate(a, a)
-    ##cdef ntl_ZZ_pX printer = ntl_ZZ_pX([],prime_pow.get_context(prime_pow.prec_cap))
+    ##cdef ntl_ZZ_pX printer = ntl_ZZ_pX([], prime_pow.get_context(prime_pow.prec_cap))
     ##printer.x = modup
     # Note that we're losing one digit of precision here.
     # This is correct because right shifting does not preserve precision.
@@ -269,7 +269,8 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
 
 def ZZ_pX_eis_shift_test(_shifter, _a, _n, _finalprec):
     """
-    Shifts _a right _n x-adic digits, where x is considered modulo the polynomial in _shifter.
+    Shift ``_a`` right ``_n`` x-adic digits, where x is considered modulo the
+    polynomial in ``_shifter``.
 
     EXAMPLES::
 
@@ -297,6 +298,7 @@ def ZZ_pX_eis_shift_test(_shifter, _a, _n, _finalprec):
     cdef long finalprec = _finalprec
     ZZ_pX_eis_shift_p(shifter, &x.x, &a.x, n, finalprec)
     return x
+
 
 cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long n, long finalprec) except -1:
     """
@@ -462,7 +464,7 @@ cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long 
 cdef class PowComputer_ext(PowComputer_class):
     def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
-        Constructs the storage for powers of prime as ZZ_c's.
+        Construct the storage for powers of prime as ZZ_c's.
 
         EXAMPLES::
 
@@ -508,7 +510,7 @@ cdef class PowComputer_ext(PowComputer_class):
 
     def __repr__(self):
         """
-        Returns a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -575,7 +577,7 @@ cdef class PowComputer_ext(PowComputer_class):
             625
         """
         if n < 0:
-            raise ValueError("n must be non-negative")
+            raise ValueError("n must be nonnegative")
         if n <= self.cache_limit:
             ZZ_to_mpz(self.temp_m, &(self.small_powers[n]))
         elif n == self.prec_cap:
@@ -612,7 +614,7 @@ cdef class PowComputer_ext(PowComputer_class):
             625
         """
         if n < 0:
-            raise ValueError("n must be non-negative")
+            raise ValueError("n must be nonnegative")
         if n <= self.cache_limit:
             return &(self.small_powers[n])
         if n == self.prec_cap:
@@ -622,7 +624,7 @@ cdef class PowComputer_ext(PowComputer_class):
 
     def _pow_ZZ_tmp_test(self, n):
         """
-        Tests the pow_ZZ_tmp function
+        Test the ``pow_ZZ_tmp`` function.
 
         EXAMPLES::
 
@@ -669,15 +671,14 @@ cdef class PowComputer_ext(PowComputer_class):
         m = Integer(m)
         n = Integer(n)
         if m < 0 or n < 0:
-            raise ValueError("m, n must be non-negative")
+            raise ValueError("m, n must be nonnegative")
         cdef ntl_ZZ ans = ntl_ZZ.__new__(ntl_ZZ)
         ZZ_mul(ans.x, self.pow_ZZ_tmp(mpz_get_ui((<Integer>m).value))[0], self.pow_ZZ_tmp(mpz_get_ui((<Integer>n).value))[0])
         return ans
 
-
     cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
-        Returns self.prime^self.prec_cap as an ``mpz_srcptr``.
+        Return ``self.prime^self.prec_cap`` as an ``mpz_srcptr``.
 
         EXAMPLES::
 
@@ -690,7 +691,7 @@ cdef class PowComputer_ext(PowComputer_class):
 
     cdef ZZ_c* pow_ZZ_top(self) noexcept:
         """
-        Returns self.prime^self.prec_cap as a ZZ_c.
+        Return ``self.prime^self.prec_cap`` as a ZZ_c.
 
         EXAMPLES::
 
@@ -702,7 +703,7 @@ cdef class PowComputer_ext(PowComputer_class):
 
     def _pow_ZZ_top_test(self):
         """
-        Tests the pow_ZZ_top function.
+        Test the ``pow_ZZ_top`` function.
 
         EXAMPLES::
 
@@ -716,7 +717,7 @@ cdef class PowComputer_ext(PowComputer_class):
 
     def _ram_prec_cap(self):
         """
-        Returns the precision cap of self, considered as a power of the uniformizer.
+        Return the precision cap of self, considered as a power of the uniformizer.
 
         EXAMPLES::
 
@@ -727,7 +728,7 @@ cdef class PowComputer_ext(PowComputer_class):
         return self.ram_prec_cap
 
 cdef class PowComputer_ZZ_pX(PowComputer_ext):
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Initialization.
 
@@ -744,7 +745,8 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def polynomial(self):
         """
-        Returns the polynomial (with coefficient precision prec_cap) associated to this PowComputer.
+        Return the polynomial (with coefficient precision prec_cap) associated
+        to this ``PowComputer``.
 
         The polynomial is output as an ntl_ZZ_pX.
 
@@ -760,9 +762,9 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         r.x = (self.get_top_modulus()[0]).val()
         return r
 
-    cdef ntl_ZZ_pContext_class get_context(self, long n) noexcept:
+    cdef ntl_ZZ_pContext_class get_context(self, long n):
         """
-        Returns a ZZ_pContext for self.prime^(abs(n)).
+        Return a ``ZZ_pContext`` for ``self.prime^(abs(n))``.
 
         EXAMPLES::
 
@@ -782,7 +784,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def _get_context_test(self, n):
         """
-        Returns a ZZ_pContext for self.prime^n.
+        Return a ``ZZ_pContext`` for ``self.prime^n``.
 
         EXAMPLES::
 
@@ -793,9 +795,9 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         cdef Integer _n = Integer(n)
         return self.get_context(mpz_get_si(_n.value))
 
-    cdef ntl_ZZ_pContext_class get_context_capdiv(self, long n) noexcept:
+    cdef ntl_ZZ_pContext_class get_context_capdiv(self, long n):
         """
-        Returns a ZZ_pContext for self.prime^((n-1) // self.e + 1)
+        Return a ``ZZ_pContext`` for ``self.prime^((n-1) // self.e + 1)``.
 
         For Eisenstein extensions this gives the context used for an
         element of relative precision n.
@@ -810,7 +812,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def _get_context_capdiv_test(self, n):
         """
-        Returns a ZZ_pContext for self.prime^((n-1) // self.e + 1)
+        Return a ``ZZ_pContext`` for ``self.prime^((n-1) // self.e + 1)``.
 
         For Eisenstein extensions this gives the context used for an
         element of relative precision n.
@@ -826,12 +828,13 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def speed_test(self, n, runs):
         """
-        Runs a speed test.
+        Run a speed test.
 
         INPUT:
 
-        - ``n`` -- input to a function to be tested (the function needs to be set in the source code).
-        - ``runs`` -- The number of runs of that function
+        - ``n`` -- input to a function to be tested (the function needs to be
+          set in the source code)
+        - ``runs`` -- the number of runs of that function
 
         OUTPUT:
 
@@ -853,9 +856,9 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
             self.get_modulus(_n)
         return cputime(t)
 
-    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
+    cdef ntl_ZZ_pContext_class get_top_context(self):
         """
-        Returns a ZZ_pContext for self.prime^self.prec_cap
+        Return a ``ZZ_pContext`` for ``self.prime^self.prec_cap``.
 
         TESTS::
 
@@ -867,7 +870,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def _get_top_context_test(self):
         """
-        Returns a ZZ_pContext for self.prime^self.prec_cap
+        Return a ``ZZ_pContext`` for ``self.prime^self.prec_cap``.
 
         TESTS::
 
@@ -877,9 +880,9 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         """
         return self.get_top_context()
 
-    cdef restore_context(self, long n) noexcept:
+    cdef restore_context(self, long n):
         """
-        Restores the contest corresponding to self.prime^n
+        Restore the contest corresponding to ``self.prime^n``.
 
         EXAMPLES::
 
@@ -890,7 +893,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def _restore_context_test(self, n):
         """
-        Restores the contest corresponding to self.prime^n
+        Restore the contest corresponding to ``self.prime^n``.
 
         EXAMPLES::
 
@@ -900,9 +903,9 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         cdef Integer _n = Integer(n)
         self.restore_context(mpz_get_si(_n.value))
 
-    cdef restore_context_capdiv(self, long n) noexcept:
+    cdef restore_context_capdiv(self, long n):
         """
-        Restores the context for self.prime^((n-1) // self.e + 1)
+        Restore the context for ``self.prime^((n-1) // self.e + 1)``.
 
         EXAMPLES::
 
@@ -913,7 +916,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def _restore_context_capdiv_test(self, n):
         """
-        Restores the context for self.prime^((n-1) // self.e + 1)
+        Restore the context for ``self.prime^((n-1) // self.e + 1)``.
 
         EXAMPLES::
 
@@ -925,7 +928,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     cdef void restore_top_context(self) noexcept:
         """
-        Restores the context corresponding to self.prime^self.prec_cap
+        Restore the context corresponding to ``self.prime^self.prec_cap``.
 
         EXAMPLES::
 
@@ -936,7 +939,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def _restore_top_context_test(self):
         """
-        Restores the context corresponding to self.prime^self.prec_cap
+        Restore the context corresponding to ``self.prime^self.prec_cap``.
 
         EXAMPLES::
 
@@ -947,7 +950,8 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     cdef ZZ_pX_Modulus_c* get_modulus(self, long n) noexcept:
         """
-        Returns the modulus corresponding to self.polynomial() (mod self.prime^n)
+        Return the modulus corresponding to ``self.polynomial()`` (mod
+        ``self.prime^n``).
 
         EXAMPLES::
 
@@ -962,7 +966,8 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def _get_modulus_test(self, ntl_ZZ_pX a, ntl_ZZ_pX b, Integer n):
         """
-        Multiplies a and b modulo the modulus corresponding to self.polynomial() (mod self.prime^n).
+        Multiply ``a`` and ``b`` modulo the modulus corresponding to
+        ``self.polynomial()`` (mod ``self.prime^n``).
 
         EXAMPLES::
 
@@ -990,15 +995,15 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     cdef ZZ_pX_Modulus_c* get_modulus_capdiv(self, long n) noexcept:
         """
-        Returns the modulus corresponding to self.polynomial() (mod
-        self.prime^((n-1) // self.e + 1)
+        Return the modulus corresponding to ``self.polynomial()`` (mod
+        ``self.prime^((n-1) // self.e + 1``).
         """
         return self.get_modulus(self.capdiv(n))
 
     cdef ZZ_pX_Modulus_c* get_top_modulus(self) noexcept:
         """
-        Returns the modulus corresponding to self.polynomial() (mod
-        self.prime^self.prec_cap)
+        Return the modulus corresponding to ``self.polynomial()`` (mod
+        ``self.prime^self.prec_cap``).
 
         EXAMPLES::
 
@@ -1013,8 +1018,8 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def _get_top_modulus_test(self, ntl_ZZ_pX a, ntl_ZZ_pX b):
         """
-        Multiplies a and b modulo the modulus corresponding to
-        self.polynomial() (mod self.prime^self.prec_cap)
+        Multiply ``a`` and ``b`` modulo the modulus corresponding to
+        ``self.polynomial()`` (mod ``self.prime^self.prec_cap``).
 
         EXAMPLES::
 
@@ -1057,9 +1062,9 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     def _capdiv_test(self, n):
         """
-        If n >= 0 returns ceil(n / self.e)
+        If n >= 0, return ceil(n / self.e).
 
-        If n < 0 returns ceil(-n / self.e)
+        If n < 0, return ceil(-n / self.e).
 
         EXAMPLES::
 
@@ -1082,30 +1087,30 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
     cdef int teichmuller_set_c (self, ZZ_pX_c* x, ZZ_pX_c* a, long absprec) except -1:
         r"""
-        Sets x to the Teichmuller lift congruent to a modulo the
+        Set `x` to the Teichmuller lift congruent to a modulo the
         uniformizer, ie such that `x = a \mod \pi` and
         `x^q = x \mod \pi^{\mbox{absprec}}`.
 
         If `a = 0 \mod \pi` this function does nothing and returns 1.
         Otherwise returns 0.
 
-        x should be created with context p^absprec.
+        `x` should be created with context p^absprec.
 
-        Does not affect self.
+        Does not affect ``self``.
 
         INPUT:
 
-        - ``x`` -- The ``ZZ_pX_c`` to be set
+        - ``x`` -- the ``ZZ_pX_c`` to be set
 
-        - ``a`` -- A ``ZZ_pX_c`` ``currently holding an approximation to the
+        - ``a`` -- a ``ZZ_pX_c`` ``currently holding an approximation to the
           Teichmuller representative (this approximation can be any
-          integer).  It will be set to the actual Teichmuller lift
+          integer).  It will be set to the actual Teichmuller lift.
 
         - ``absprec`` -- the desired precision of the Teichmuller lift
 
         OUTPUT:
 
-        - 1 -- x should be set to zero
+        - 1 -- `x` should be set to zero
         - 0 -- normal
 
         EXAMPLES::
@@ -1212,13 +1217,13 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
     r"""
     This class only caches a context and modulus for p^prec_cap.
 
-    Designed for use with fixed modulus p-adic rings, in Eisenstein
+    Designed for use with fixed modulus `p`-adic rings, in Eisenstein
     and unramified extensions of `\ZZ_p`.
     """
 
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
-        Caches a context and modulus for prime^prec_cap
+        Caches a context and modulus for ``prime^prec_cap``.
 
         EXAMPLES::
 
@@ -1248,9 +1253,9 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
         else:
             raise NotImplementedError("NOT IMPLEMENTED IN PowComputer_ZZ_pX_FM")
 
-    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
+    cdef ntl_ZZ_pContext_class get_top_context(self):
         """
-        Returns a ZZ_pContext for self.prime^self.prec_cap
+        Return a ``ZZ_pContext`` for ``self.prime^self.prec_cap``.
 
         EXAMPLES::
 
@@ -1262,7 +1267,7 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
 
     cdef void restore_top_context(self) noexcept:
         """
-        Restores the context corresponding to self.prime^self.prec_cap
+        Restore the context corresponding to ``self.prime^self.prec_cap``.
 
         EXAMPLES::
 
@@ -1273,7 +1278,8 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
 
     cdef ZZ_pX_Modulus_c* get_top_modulus(self) noexcept:
         """
-        Returns the modulus corresponding to self.polynomial() (mod self.prime^self.prec_cap)
+        Return the modulus corresponding to ``self.polynomial()``
+        (mod ``self.prime^self.prec_cap``).
 
         EXAMPLES::
 
@@ -1307,12 +1313,13 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
 
 cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
     """
-    This class computes and stores low_shifter and high_shifter, which aid in right shifting elements.
+    This class computes and stores ``low_shifter`` and ``high_shifter``, which aid in right shifting elements.
     """
 
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
-        Calls Eis_init, which initializes high_shifter and low_shifter.
+        Call ``Eis_init``, which initializes ``high_shifter`` and
+        ``low_shifter``.
 
         TESTS::
 
@@ -1411,7 +1418,7 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
 
     def __dealloc__(self):
         """
-        Deallocates low_shifter and high_shifter.
+        Deallocate ``low_shifter`` and ``high_shifter``.
 
         TESTS::
 
@@ -1423,8 +1430,8 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
 
     cdef void cleanup_ZZ_pX_FM_Eis(self) noexcept:
         """
-        Does the actual work of deallocating low_shifter and
-        high_shifter.
+        Do the actual work of deallocating ``low_shifter`` and
+        ``high_shifter``.
 
         TESTS::
 
@@ -1436,9 +1443,10 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
 
     cdef int eis_shift(self, ZZ_pX_c* x, ZZ_pX_c* a, long n, long finalprec) except -1:
         """
-        Shifts a right n pi-adic digits, where pi is considered modulo the polynomial in self.
+        Shift ``a`` right ``n`` pi-adic digits, where pi is considered modulo
+        the polynomial in ``self``.
 
-        Puts the result in x.
+        Puts the result in ``x``.
 
         EXAMPLES::
 
@@ -1534,10 +1542,10 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
     This class caches contexts and moduli densely between 1 and cache_limit.  It requires cache_limit == prec_cap.
 
     It is intended for use with capped relative and capped absolute rings and fields, in Eisenstein and unramified
-    extensions of the base p-adic fields.
+    extensions of the base `p`-adic fields.
     """
 
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Caches contexts and moduli densely between 1 and cache_limit.
 
@@ -1599,7 +1607,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
 
     def __dealloc__(self):
         """
-        Deallocates cache of contexts, moduli.
+        Deallocate cache of contexts, moduli.
 
         EXAMPLES::
 
@@ -1611,7 +1619,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
 
     cdef void cleanup_ZZ_pX_small(self) noexcept:
         """
-        Deallocates cache of contexts, moduli.
+        Deallocate cache of contexts, moduli.
 
         EXAMPLES::
 
@@ -1620,18 +1628,16 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         """
         Delete_ZZ_pX_Modulus_array(self.mod)
 
-    cdef ntl_ZZ_pContext_class get_context(self, long n) noexcept:
+    cdef ntl_ZZ_pContext_class get_context(self, long n):
         """
         Return the context for p^n.  This will use the cache if
         ``abs(n) <= self.cache_limit``.
 
         INPUT:
 
-        - ``n`` -- A nonzero long
+        - ``n`` -- nonzero long
 
-        OUTPUT:
-
-        - A context for p^n
+        OUTPUT: a context for p^n
 
         EXAMPLES::
 
@@ -1646,14 +1652,14 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         except IndexError:
             return PowComputer_ZZ_pX.get_context(self, n)
 
-    cdef restore_context(self, long n) noexcept:
+    cdef restore_context(self, long n):
         """
         Restore the context for p^n.  This will use the cache if
         ``abs(n) <= self.cache_limit``.
 
         INPUT:
 
-        - ``n`` -- A nonzero long
+        - ``n`` -- nonzero long
 
         EXAMPLES::
 
@@ -1667,9 +1673,9 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         except IndexError:
             (<ntl_ZZ_pContext_class>PowComputer_ZZ_pX.get_context(self, n)).restore_c()
 
-    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
+    cdef ntl_ZZ_pContext_class get_top_context(self):
         """
-        Returns a ZZ_pContext for self.prime^self.prec_cap
+        Return a ``ZZ_pContext`` for ``self.prime^self.prec_cap``.
 
         EXAMPLES::
 
@@ -1681,7 +1687,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
 
     cdef void restore_top_context(self) noexcept:
         """
-        Restores the context corresponding to self.prime^self.prec_cap
+        Restore the context corresponding to ``self.prime^self.prec_cap``.
 
         EXAMPLES::
 
@@ -1692,11 +1698,12 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
 
     cdef ZZ_pX_Modulus_c* get_modulus(self, long n) noexcept:
         """
-        Returns the modulus corresponding to self.polynomial() (mod self.prime^n).
+        Return the modulus corresponding to ``self.polynomial()`` (mod
+        ``self.prime^n``).
 
         INPUT:
 
-        - ``n`` -- A long between 1 and ``self.cache_limit``, inclusive.
+        - ``n`` -- a long between 1 and ``self.cache_limit``, inclusive.
           If `n` is larger, this function will return ``self.mod[prec_cap]``
           lifted to that precision.
 
@@ -1720,7 +1727,8 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
 
     cdef ZZ_pX_Modulus_c* get_top_modulus(self) noexcept:
         """
-        Returns the modulus corresponding to self.polynomial() (mod self.prime^self.prec_cap)
+        Return the modulus corresponding to ``self.polynomial()``
+        (mod ``self.prime^self.prec_cap``).
 
         EXAMPLES::
 
@@ -1734,10 +1742,10 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
 
 cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
     """
-    This class computes and stores low_shifter and high_shifter, which aid in right shifting elements.
+    This class computes and stores ``low_shifter`` and ``high_shifter``, which aid in right shifting elements.
     These are only stored at maximal precision: in order to get lower precision versions just reduce mod p^n.
     """
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Initialization.
 
@@ -1840,10 +1848,9 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
         else:
             raise IndexError
 
-
     def __dealloc__(self):
         """
-        Deallocates low_shifter and high_shifter.
+        Deallocate ``low_shifter`` and ``high_shifter``.
 
         TESTS::
 
@@ -1855,8 +1862,8 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
 
     cdef void cleanup_ZZ_pX_small_Eis(self) noexcept:
         """
-        Does the actual work of deallocating low_shifter and
-        high_shifter.
+        Do the actual work of deallocating ``low_shifter`` and
+        ``high_shifter``.
 
         TESTS::
 
@@ -1868,9 +1875,10 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
 
     cdef int eis_shift(self, ZZ_pX_c* x, ZZ_pX_c* a, long n, long finalprec) except -1:
         """
-        Shifts a right n pi-adic digits, where pi is considered modulo the polynomial in self.
+        Shift ``a`` right ``n`` pi-adic digits, where pi is considered modulo
+        the polynomial in ``self``.
 
-        Puts the result in x.
+        Puts the result in ``x``.
 
         EXAMPLES::
 
@@ -1899,7 +1907,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
     a dictionary of contexts and moduli of
     """
 
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Caches contexts and moduli densely between 1 and cache_limit.  Caches a context and modulus for prec_cap.
         Also creates the dictionaries.
@@ -1966,7 +1974,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
 
     def __dealloc__(self):
         """
-        Deallocates the stored moduli and contexts.
+        Deallocate the stored moduli and contexts.
 
         EXAMPLES::
 
@@ -1978,7 +1986,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
 
     cdef void cleanup_ZZ_pX_big(self) noexcept:
         """
-        Deallocates the stored moduli and contexts.
+        Deallocate the stored moduli and contexts.
 
         EXAMPLES::
 
@@ -1989,7 +1997,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
 
     def reset_dictionaries(self):
         """
-        Resets the dictionaries.  Note that if there are elements
+        Reset the dictionaries.  Note that if there are elements
         lying around that need access to these dictionaries, calling
         this function and then doing arithmetic with those elements
         could cause trouble (if the context object gets garbage
@@ -2013,7 +2021,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
 
     def _context_dict(self):
         """
-        Returns the context dictionary.
+        Return the context dictionary.
 
         EXAMPLES::
 
@@ -2026,7 +2034,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
 
     def _modulus_dict(self):
         """
-        Returns the context dictionary.
+        Return the context dictionary.
 
         EXAMPLES::
 
@@ -2043,17 +2051,15 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
         """
         return self.modulus_dict
 
-    cdef ntl_ZZ_pContext_class get_context(self, long n) noexcept:
+    cdef ntl_ZZ_pContext_class get_context(self, long n):
         """
-        Returns the context for p^n.
+        Return the context for p^n.
 
         INPUT:
 
-        - ``n`` -- A nonzero long
+        - ``n`` -- nonzero long
 
-        OUTPUT:
-
-        - A context for p^n
+        OUTPUT: a context for p^n
 
         EXAMPLES::
 
@@ -2079,9 +2085,9 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
                 self.context_dict[n] = PowComputer_ZZ_pX.get_context(self, n)
                 return self.context_dict[n]
 
-    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
+    cdef ntl_ZZ_pContext_class get_top_context(self):
         """
-        Returns a ZZ_pContext for self.prime^self.prec_cap
+        Return a ``ZZ_pContext`` for ``self.prime^self.prec_cap``.
 
         EXAMPLES::
 
@@ -2093,7 +2099,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
 
     cdef void restore_top_context(self) noexcept:
         """
-        Restores the context corresponding to self.prime^self.prec_cap
+        Restore the context corresponding to ``self.prime^self.prec_cap``.
 
         EXAMPLES::
 
@@ -2104,11 +2110,12 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
 
     cdef ZZ_pX_Modulus_c* get_modulus(self, long n) noexcept:
         """
-        Returns the modulus corresponding to self.polynomial() (mod self.prime^n).
+        Return the modulus corresponding to ``self.polynomial()`` (mod
+        ``self.prime^n``).
 
         INPUT:
 
-        - ``n`` -- A nonzero long
+        - ``n`` -- nonzero long
 
         EXAMPLES::
 
@@ -2151,7 +2158,8 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
 
     cdef ZZ_pX_Modulus_c* get_top_modulus(self) noexcept:
         """
-        Returns the modulus corresponding to self.polynomial() (mod self.prime^self.prec_cap)
+        Return the modulus corresponding to ``self.polynomial()``
+        (mod ``self.prime^self.prec_cap``).
 
         EXAMPLES::
 
@@ -2165,10 +2173,12 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
 
 cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
     """
-    This class computes and stores low_shifter and high_shifter, which aid in right shifting elements.
-    These are only stored at maximal precision: in order to get lower precision versions just reduce mod p^n.
+    This class computes and stores ``low_shifter`` and ``high_shifter``, which
+    aid in right shifting elements.
+    These are only stored at maximal precision: in order to get lower precision
+    versions just reduce mod p^n.
     """
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Initialization.
 
@@ -2271,10 +2281,9 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
         else:
             raise IndexError
 
-
     def __dealloc__(self):
         """
-        Deallocates low_shifter and high_shifter.
+        Deallocate ``low_shifter`` and ``high_shifter``.
 
         TESTS::
 
@@ -2286,8 +2295,8 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
 
     cdef void cleanup_ZZ_pX_big_Eis(self) noexcept:
         """
-        Does the actual work of deallocating low_shifter and
-        high_shifter.
+        Do the actual work of deallocating ``low_shifter`` and
+        ``high_shifter``.
 
         TESTS::
 
@@ -2299,9 +2308,10 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
 
     cdef int eis_shift(self, ZZ_pX_c* x, ZZ_pX_c* a, long n, long finalprec) except -1:
         """
-        Shifts a right n pi-adic digits, where pi is considered modulo the polynomial in self.
+        Shift ``a`` right ``n`` pi-adic digits, where pi is considered modulo
+        the polynomial in ``self``.
 
-        Puts the result in x.
+        Puts the result in ``x``.
 
         EXAMPLES::
 
@@ -2324,39 +2334,40 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
         """
         return ZZ_pX_eis_shift_p(self, x, a, n, finalprec)
 
-def PowComputer_ext_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, prec_type = "small", ext_type = "u", shift_seed = None):
+
+def PowComputer_ext_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, prec_type="small", ext_type="u", shift_seed=None):
     r"""
-    Returns a PowComputer that caches the values `1, p, p^2, \ldots, p^C`,
+    Return a ``PowComputer`` that caches the values `1, p, p^2, \ldots, p^C`,
     where `C` is ``cache_limit``.
 
-    Once you create a PowComputer, merely call it to get values out.
+    Once you create a ``PowComputer``, merely call it to get values out.
     You can input any integer, even if it's outside of the precomputed range.
 
     INPUT:
 
-    - ``prime`` -- An integer, the base that you want to exponentiate.
+    - ``prime`` -- integer; the base that you want to exponentiate
 
-    - ``cache_limit`` -- A positive integer that you want to cache
-      powers up to.
+    - ``cache_limit`` -- positive integer that you want to cache
+      powers up to
 
-    - ``prec_cap`` -- The cap on precisions of elements.  For ramified
+    - ``prec_cap`` -- the cap on precisions of elements.  For ramified
       extensions, p^((prec_cap - 1) // e) will be the largest
-      power of p distinguishable from zero
+      power of p distinguishable from zero.
 
-    - ``in_field`` -- Boolean indicating whether this PowComputer is
-      attached to a field or not.
+    - ``in_field`` -- boolean indicating whether this PowComputer is
+      attached to a field or not
 
-    - ``poly`` -- An ``ntl_ZZ_pX`` or ``ntl_ZZ_pEX`` defining the extension.
-      It should be defined modulo p^((prec_cap - 1) // e + 1)
+    - ``poly`` -- an ``ntl_ZZ_pX`` or ``ntl_ZZ_pEX`` defining the extension.
+      It should be defined modulo ``p^((prec_cap - 1) // e + 1)``.
 
-    - ``prec_type`` -- 'FM', 'small', or 'big', defining how caching
-      is done.
+    - ``prec_type`` -- ``'FM'``, ``'small'``, or ``'big'``, defining how
+      caching is done
 
-    - ``ext_type`` -- 'u' = unramified, 'e' = Eisenstein, 't' =
+    - ``ext_type`` -- ``'u'`` = unramified, ``'e'`` = Eisenstein, ``'t'`` =
       two-step
 
     - ``shift_seed`` -- (required only for Eisenstein and two-step)
-      For Eisenstein and two-step extensions, if f = a_n x^n - p
+      for Eisenstein and two-step extensions, if f = a_n x^n - p
       a_{n-1} x^{n-1} - ... - p a_0 with a_n a unit, then
       shift_seed should be 1/a_n (a_{n-1} x^{n-1} + ... + a_0)
 

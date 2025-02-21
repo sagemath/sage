@@ -1,10 +1,10 @@
-json5: A Python implementation of the JSON5 data format.
-========================================================
+json5: Python implementation of the JSON5 data format
+=====================================================
 
 Description
 -----------
 
-A Python implementation of the JSON5 data format.
+Python implementation of the JSON5 data format
 
 License
 -------

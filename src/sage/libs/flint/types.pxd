@@ -1,5 +1,8 @@
 # distutils: depends = flint/acb.h flint/acb_calc.h flint/acb_dft.h flint/acb_dirichlet.h flint/acb_elliptic.h flint/acb_hypgeom.h flint/acb_mat.h flint/acb_modular.h flint/acb_poly.h flint/acf.h flint/aprcl.h flint/arb.h flint/arb_calc.h flint/arb_fmpz_poly.h flint/arb_fpwrap.h flint/arb_hypgeom.h flint/arb_mat.h flint/arb_poly.h flint/arf.h flint/arith.h flint/bernoulli.h flint/bool_mat.h flint/ca.h flint/ca_ext.h flint/ca_field.h flint/ca_mat.h flint/ca_poly.h flint/ca_vec.h flint/calcium.h flint/d_mat.h flint/d_vec.h flint/dirichlet.h flint/dlog.h flint/double_extras.h flint/double_interval.h flint/fexpr.h flint/fexpr_builtin.h flint/fft.h flint/flint.h flint/fmpq.h flint/fmpq_mat.h flint/fmpq_mpoly.h flint/fmpq_mpoly_factor.h flint/fmpq_poly.h flint/fmpq_vec.h flint/fmpz.h flint/fmpz_extras.h flint/fmpz_factor.h flint/fmpz_lll.h flint/fmpz_mat.h flint/fmpz_mod.h flint/fmpz_mod_mat.h flint/fmpz_mod_mpoly.h flint/fmpz_mod_mpoly_factor.h flint/fmpz_mod_poly.h flint/fmpz_mod_poly_factor.h flint/fmpz_mod_vec.h flint/fmpz_mpoly.h flint/fmpz_mpoly_factor.h flint/fmpz_mpoly_q.h flint/fmpz_poly.h flint/fmpz_poly_factor.h flint/fmpz_poly_mat.h flint/fmpz_poly_q.h flint/fmpz_vec.h flint/fmpzi.h flint/fq.h flint/fq_default.h flint/fq_default_mat.h flint/fq_default_poly.h flint/fq_default_poly_factor.h flint/fq_embed.h flint/fq_mat.h flint/fq_nmod.h flint/fq_nmod_embed.h flint/fq_nmod_mat.h flint/fq_nmod_mpoly.h flint/fq_nmod_mpoly_factor.h flint/fq_nmod_poly.h flint/fq_nmod_poly_factor.h flint/fq_nmod_vec.h flint/fq_poly.h flint/fq_poly_factor.h flint/fq_vec.h flint/fq_zech.h flint/fq_zech_embed.h flint/fq_zech_mat.h flint/fq_zech_poly.h flint/fq_zech_poly_factor.h flint/fq_zech_vec.h flint/gr.h flint/gr_generic.h flint/gr_mat.h flint/gr_mpoly.h flint/gr_poly.h flint/gr_special.h flint/gr_vec.h flint/hypgeom.h flint/long_extras.h flint/mag.h flint/mpf_mat.h flint/mpf_vec.h flint/mpfr_mat.h flint/mpfr_vec.h flint/mpn_extras.h flint/mpoly.h flint/nf.h flint/nf_elem.h flint/nmod.h flint/nmod_mat.h flint/nmod_mpoly.h flint/nmod_mpoly_factor.h flint/nmod_poly.h flint/nmod_poly_factor.h flint/nmod_poly_mat.h flint/nmod_types.h flint/nmod_vec.h flint/padic.h flint/padic_mat.h flint/padic_poly.h flint/partitions.h flint/perm.h flint/profiler.h flint/qadic.h flint/qfb.h flint/qqbar.h flint/qsieve.h flint/thread_pool.h flint/ulong_extras.h
 
+# WARNING: src/sage/libs/flint/types.pxd is generated from
+# src/sage_setup/autogen/flint/templates/types.pxd.template
+# please make sure that you are modifying the correct file!
 """
 Declarations for FLINT types
 """
@@ -129,10 +132,10 @@ cdef extern from "flint_wrap.h":
     ctypedef arb_mat_struct arb_mat_t[1]
 
     ctypedef struct arb_poly_struct:
-        pass
+        arb_ptr coeffs
+        long alloc
+        long length
     ctypedef arb_poly_struct[1] arb_poly_t
-    ctypedef arb_poly_struct * arb_poly_ptr
-    ctypedef const arb_poly_struct * arb_poly_srcptr
 
 
     # flint/arb_calc.h
@@ -165,10 +168,10 @@ cdef extern from "flint_wrap.h":
 
     # flint/acb_poly.h
     ctypedef struct acb_poly_struct:
-        pass
+        acb_ptr coeffs
+        long alloc
+        long length
     ctypedef acb_poly_struct[1] acb_poly_t
-    ctypedef acb_poly_struct * acb_poly_ptr
-    ctypedef const acb_poly_struct * acb_poly_srcptr
 
     # flint/acb_calc.h
     ctypedef struct acb_calc_integrate_opt_struct:

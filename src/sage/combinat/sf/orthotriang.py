@@ -50,7 +50,25 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         pass
 
-    def __init__(self, Sym, base, scalar, prefix, basis_name, leading_coeff=None):
+    @staticmethod
+    def __classcall__(cls, Sym, base, scalar, prefix, basis_name, leading_coeff=None):
+        """
+        Normalize the arguments.
+
+        TESTS::
+
+            sage: from sage.combinat.sf.sfa import zee
+            sage: from sage.combinat.sf.orthotriang import SymmetricFunctionAlgebra_orthotriang
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: m = Sym.m()
+            sage: B1 = SymmetricFunctionAlgebra_orthotriang(Sym, m, zee, 's', 'Schur')
+            sage: B2 = SymmetricFunctionAlgebra_orthotriang(Sym, m, zee, 's', 'Schur', None)
+            sage: B1 is B2
+            True
+        """
+        return super().__classcall__(cls, Sym, base, scalar, prefix, basis_name, leading_coeff)
+
+    def __init__(self, Sym, base, scalar, prefix, basis_name, leading_coeff):
         r"""
         Initialization of the symmetric function algebra defined via orthotriangular rules.
 
@@ -84,8 +102,8 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
 
         TESTS::
 
-            sage: TestSuite(s).run(elements = [s[1,1]+2*s[2], s[1]+3*s[1,1]])
-            sage: TestSuite(s).run(skip = ["_test_associativity", "_test_prod"])  # long time (7s on sage.math, 2011)
+            sage: TestSuite(s).run(elements=[s[1,1]+2*s[2], s[1]+3*s[1,1]])
+            sage: TestSuite(s).run(skip=["_test_associativity", "_test_prod", '_test_construction'])  # long time (7s on sage.math, 2011)
 
         Note: ``s.an_element()`` is of degree 4; so we skip
         ``_test_associativity`` and ``_test_prod`` which involve
@@ -102,6 +120,24 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         self.register_coercion(SetMorphism(Hom(base, self), self._base_to_self))
         base.register_coercion(SetMorphism(Hom(self, base), self._self_to_base))
 
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.sfa import zee
+            sage: from sage.combinat.sf.orthotriang import SymmetricFunctionAlgebra_orthotriang
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: m = Sym.m()
+            sage: s = SymmetricFunctionAlgebra_orthotriang(Sym, m, zee, 's', 'Schur')
+            sage: s.construction()
+            (SymmetricFunctionsFunctor[Schur], Rational Field)
+        """
+        return OrthotriangBasisFunctor(self), self.base_ring()
+
     def _base_to_self(self, x):
         """
         Coerce a symmetric function in base ``x`` into ``self``.
@@ -111,9 +147,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         - ``self`` -- a basis determined by an orthotriangular definition
         - ``x`` -- an element of the basis `base` to which ``self`` is triangularly related
 
-        OUTPUT:
-
-        - an element of ``self`` equivalent to ``x``
+        OUTPUT: an element of ``self`` equivalent to ``x``
 
         EXAMPLES::
 
@@ -134,11 +168,9 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         INPUT:
 
         - ``self`` -- a basis determined by an orthotriangular definition
-        - ``x`` -- an element of ``self`` as a basis of the ring of symmetric functions.
+        - ``x`` -- an element of ``self`` as a basis of the ring of symmetric functions
 
-        OUTPUT:
-
-        - the element ``x`` expressed in the basis to which ``self`` is triangularly related
+        OUTPUT: the element ``x`` expressed in the basis to which ``self`` is triangularly related
 
         EXAMPLES::
 
@@ -154,13 +186,13 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
 
     def _base_cache(self, n):
         """
-        Computes the change of basis between ``self`` and base for the
+        Compute the change of basis between ``self`` and base for the
         homogeneous component of size ``n``
 
         INPUT:
 
         - ``self`` -- a basis determined by an orthotriangular definition
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -199,7 +231,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         - ``self`` -- a basis determined by an orthotriangular definition
         - ``part`` -- a partition
 
-        .. note::
+        .. NOTE::
 
            We assume that self._gram_schmidt has been called before
            self._to_base is called.
@@ -235,9 +267,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         - ``self`` -- a basis determined by an orthotriangular definition
         - ``left``, ``right`` -- elements in ``self``
 
-        OUTPUT:
-
-        - the expansion of the product of ``left`` and ``right`` in the basis ``self``.
+        OUTPUT: the expansion of the product of ``left`` and ``right`` in the basis ``self``
 
         EXAMPLES::
 
@@ -252,6 +282,70 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         return self(self._sf_base(left) * self._sf_base(right))
 
 
+from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+
+
+class OrthotriangBasisFunctor(SymmetricFunctionsFunctor):
+    """
+    A constructor for algebras of symmetric functions constructed by
+    orthogonality and triangularity.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.sfa import zee
+        sage: from sage.combinat.sf.orthotriang import SymmetricFunctionAlgebra_orthotriang
+        sage: Sym = SymmetricFunctions(QQ)
+        sage: m = Sym.m()
+        sage: s = SymmetricFunctionAlgebra_orthotriang(Sym, m, zee, 's', 'Schur')
+        sage: s.construction()
+        (SymmetricFunctionsFunctor[Schur], Rational Field)
+    """
+    def __init__(self, basis):
+        r"""
+        Initialize the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the symmetric function algebra
+
+        TESTS::
+
+            sage: from sage.combinat.sf.sfa import zee
+            sage: from sage.combinat.sf.orthotriang import SymmetricFunctionAlgebra_orthotriang
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: m = Sym.m()
+            sage: s = SymmetricFunctionAlgebra_orthotriang(Sym, m, zee, 's', 'Schur')
+            sage: F, R = s.construction()
+            sage: TestSuite(F).run()
+        """
+        self._basis_name = basis.basis_name()
+        self._sf_base = basis._sf_base
+        self._scalar = basis._scalar
+        self._leading_coeff = basis._leading_coeff
+        self._prefix = basis._prefix
+        super().__init__(basis, self._basis_name)
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.sfa import zee
+            sage: from sage.combinat.sf.orthotriang import SymmetricFunctionAlgebra_orthotriang
+            sage: Sym = SymmetricFunctions(ZZ)
+            sage: m = Sym.m()
+            sage: s = SymmetricFunctionAlgebra_orthotriang(Sym, m, zee, 's', 'Schur functions')
+            sage: F, R = s.construction()  # indirect doctest
+            sage: F(QQbar)
+            Symmetric Functions over Algebraic Field in the Schur functions basis
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        return self._basis(SymmetricFunctions(R), self._sf_base.change_ring(R),
+                           self._scalar, self._prefix, self._basis_name,
+                           self._leading_coeff)
+
+
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang',  SymmetricFunctionAlgebra_orthotriang.Element)
+register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang', SymmetricFunctionAlgebra_orthotriang.Element)

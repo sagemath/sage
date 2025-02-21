@@ -33,15 +33,8 @@ SAGE_SPKG_CONFIGURE([sqlite], [
   m4_popdef([SAGE_SQLITE3_MIN_VERSION_MICRO])
   m4_popdef([SAGE_SQLITE3_MIN_VERSION])
 ], [dnl REQUIRED-CHECK
-  AS_CASE([$host],
-          [*-*-cygwin*], [
-            dnl sqlite SetDllDirectory in sage_ostools.pyx
-            sage_require_sqlite=yes
-          ], [
-            AC_REQUIRE([SAGE_SPKG_CONFIGURE_PYTHON3])
-            AS_IF([test x$sage_spkg_install_python3 = xno], [
-                sage_require_sqlite=no
-            ])
-          ])
-]
-)
+  AC_REQUIRE([SAGE_SPKG_CONFIGURE_PYTHON3])
+  AS_IF([test x$sage_spkg_install_python3 = xno], [
+    sage_require_sqlite=no
+  ])
+])

@@ -38,16 +38,14 @@ def LyndonWords(e=None, k=None):
 
     or
 
-    - ``e`` -- integer, size of alphabet
-    - ``k`` -- integer, length of the words
+    - ``e`` -- integer; size of alphabet
+    - ``k`` -- integer; length of the words
 
     or
 
     - ``e`` -- a composition
 
-    OUTPUT:
-
-    A combinatorial class of Lyndon words.
+    OUTPUT: a combinatorial class of Lyndon words
 
     EXAMPLES::
 
@@ -83,9 +81,9 @@ def LyndonWords(e=None, k=None):
     elif isinstance(e, (int, Integer)):
         if e > 0:
             if not isinstance(k, (int, Integer)):
-                raise TypeError("k must be a non-negative integer")
+                raise TypeError("k must be a nonnegative integer")
             if k < 0:
-                raise TypeError("k must be a non-negative integer")
+                raise TypeError("k must be a nonnegative integer")
             return LyndonWords_nk(Integer(e), Integer(k))
     elif e in Compositions():
         return LyndonWords_evaluation(Composition(e))
@@ -100,12 +98,10 @@ def LyndonWord(data, check=True):
     INPUT:
 
     - ``data`` -- list
-    - ``check`` -- bool (optional, default: ``True``) if ``True``,
-      check that the input data represents a Lyndon word.
+    - ``check`` -- boolean (default: ``True``); if ``True``,
+      check that the input data represents a Lyndon word
 
-    OUTPUT:
-
-    A Lyndon word.
+    OUTPUT: a Lyndon word
 
     EXAMPLES::
 
@@ -322,7 +318,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`12997` is fixed::
+        Check that :issue:`12997` is fixed::
 
             sage: LyndonWords([0,1]).list()
             [word: 2]
@@ -413,7 +409,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             ...
             ValueError: length is not k=3
 
-        Make sure that the correct length is checked (:trac:`30186`)::
+        Make sure that the correct length is checked (:issue:`30186`)::
 
             sage: L = LyndonWords(2, 4)
             sage: _ = L(L.random_element())                                             # needs sage.libs.pari

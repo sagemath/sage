@@ -1,5 +1,8 @@
 #!/bin/sh
-# Apply open PRs labeled "blocker" from sagemath/sage as patches.
+# Apply open PRs labeled "p: CI Fix" from sagemath/sage as patches.
+# (policy set by vote in 2024-03,
+#  https://groups.google.com/g/sage-devel/c/OKwwUGyKveo/m/vpyCXYBqAAAJ)
+#
 # This script is invoked by various workflows in .github/workflows
 #
 # The repository variable SAGE_CI_FIXES_FROM_REPOS can be set
@@ -20,15 +23,15 @@ for REPO in ${SAGE_CI_FIXES_FROM_REPOSITORIES:-sagemath/sage}; do
             echo "Nothing to do for 'none' in SAGE_CI_FIXES_FROM_REPOSITORIES"
             ;;
         */*)
-            echo "Getting open PRs with 'blocker' status from https://github.com/$REPO/pulls?q=is%3Aopen+label%3A%22p%3A+blocker+%2F+1%22"
+            echo "Getting open PRs with 'p: CI Fix' label from https://github.com/$REPO/pulls?q=is%3Aopen+label%3A%22p%3A+CI+Fix%22"
             GH="gh -R $REPO"
             REPO_FILE="upstream/ci-fixes-${REPO%%/*}-${REPO##*/}"
-            PRs="$($GH pr list --label "p: blocker / 1" --json number --jq '.[].number' | tee $REPO_FILE)"
+            PRs="$($GH pr list --label "p: CI Fix" --json number --jq '.[].number' | tee $REPO_FILE)"
             date -u +"%Y-%m-%dT%H:%M:%SZ" > $REPO_FILE.date  # Record the date, for future reference
             if [ -z "$PRs" ]; then
-                echo "Nothing to do: Found no open PRs with 'blocker' status in $REPO."
+                echo "Nothing to do: Found no open PRs with 'p: CI Fix' label in $REPO."
             else
-                echo "Found open PRs with 'blocker' status in $REPO: $(echo $PRs)"
+                echo "Found open PRs with 'p: CI Fix' label in $REPO: $(echo $PRs)"
                 git tag -f test_base
                 git commit -q -m "Uncommitted changes" --no-allow-empty -a
                 for a in $PRs; do
@@ -42,6 +45,7 @@ for REPO in ${SAGE_CI_FIXES_FROM_REPOSITORIES:-sagemath/sage}; do
                     # Considered alternative: Use https://github.com/$REPO/pull/$a.diff,
                     # which squashes everything into one diff without commit metadata.
                     PULL_URL="https://github.com/$REPO/pull/$a"
+                    PULL_SHORT="$REPO#$a"
                     PULL_FILE="$REPO_FILE-$a"
                     PATH=build/bin:$PATH build/bin/sage-download-file --quiet "$PULL_URL.patch" $PULL_FILE.patch
                     date -u +"%Y-%m-%dT%H:%M:%SZ" > $PULL_FILE.date  # Record the date, for future reference
@@ -67,7 +71,7 @@ for REPO in ${SAGE_CI_FIXES_FROM_REPOSITORIES:-sagemath/sage}; do
                         git am --signoff --show-current-patch=diff
                         echo "--------------------------------------------------------------------8<-----------------------------"
                         echo "::endgroup::"
-                        echo "Failure applying $PULL_URL as a patch, resetting"
+                        echo "Failure applying $PULL_SHORT as a patch, resetting"
                         git am --signoff --abort
                     fi
                 done

@@ -31,6 +31,7 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
+
 class DrinfeldModule_charzero(DrinfeldModule):
     r"""
     This class implements Drinfeld `\mathbb{F}_q[T]`-modules defined
@@ -121,7 +122,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         INPUT:
 
-        - ``k`` (integer) -- the index of the coefficient
+        - ``k`` -- integer; the index of the coefficient
 
         TESTS::
 
@@ -157,12 +158,10 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         INPUT:
 
-        - ``name`` (string, default: ``'z'``) -- the name of the
-          generator of the lazy power series ring.
+        - ``name`` -- string (default: ``'z'``); the name of the
+          generator of the lazy power series ring
 
-        OUTPUT:
-
-        A lazy power series over the base field.
+        OUTPUT: a lazy power series over the base field
 
         EXAMPLES::
 
@@ -276,12 +275,10 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         INPUT:
 
-        - ``name`` (string, default: ``'z'``) -- the name of the
-          generator of the lazy power series ring.
+        - ``name`` -- string (default: ``'z'``); the name of the
+          generator of the lazy power series ring
 
-        OUTPUT:
-
-        A lazy power series over the base field.
+        OUTPUT: a lazy power series over the base field
 
         EXAMPLES::
 
@@ -319,10 +316,8 @@ class DrinfeldModule_charzero(DrinfeldModule):
             True
             sage: log[2**3] == -1/((T**q - T)*(T**(q**2) - T)*(T**(q**3) - T))  # expected value
             True
-
         """
         L = LazyPowerSeriesRing(self._base, name)
-        zero = self._base.zero()
         q = self._Fq.cardinality()
 
         def coeff_log(k):
@@ -358,7 +353,6 @@ class DrinfeldModule_charzero(DrinfeldModule):
             X^12
             sage: phi._compute_goss_polynomial(9, 2^2, poly_ring, X)
             X^9 + (1/(T^3 + T^2 + T))*X^6 + (1/(T^6 + T^4 + T^2))*X^3
-
         """
         # Trivial cases
         if n.is_zero():
@@ -386,14 +380,12 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         INPUT:
 
-        - ``n`` (integer) -- the index of the Goss polynomial
+        - ``n`` -- integer; the index of the Goss polynomial
 
-        - ``var`` (str, default: ``'X'``) -- the name of polynomial
-          variable.
+        - ``var``-- string (default: ``'X'``); the name of polynomial
+          variable
 
-        OUTPUT:
-
-        - a univariate polynomial in ``var`` over the base `A`-field.
+        OUTPUT: a univariate polynomial in ``var`` over the base `A`-field
 
         EXAMPLES::
 

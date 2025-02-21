@@ -87,7 +87,7 @@ def view_list(L):
     EXAMPLES::
 
         sage: from sage.games.hexad import *
-        sage: M = Minimog(type="shuffle")
+        sage: M = Minimog(type='shuffle')
         sage: view_list(M.line[1])
         <BLANKLINE>
         [0 0 0]
@@ -114,7 +114,7 @@ def picture_set(A, L) -> set:
     EXAMPLES::
 
         sage: from sage.games.hexad import *
-        sage: M = Minimog(type="shuffle")
+        sage: M = Minimog(type='shuffle')
         sage: picture_set(M.picture00, M.cross[2])
         {5, 7, 8, 9, 10}
         sage: picture_set(M.picture02, M.square[7])
@@ -131,7 +131,7 @@ class Minimog:
     EXAMPLES::
 
         sage: from sage.games.hexad import *
-        sage: Minimog(type="shuffle")
+        sage: Minimog(type='shuffle')
         Minimog of type shuffle
         sage: M = Minimog(type = "modulo11")
         sage: M.minimog
@@ -139,7 +139,7 @@ class Minimog:
         [        5         9         8        10]
         [        4         1         6         7]
     """
-    def __init__(self, type="shuffle"):
+    def __init__(self, type='shuffle'):
         self.type = type
         MS34 = MatrixSpace(SR, 3, 4)
         minimog_modulo11 = MS34([[0, 3, infinity, 2], [5, 9, 8, 10], [4, 1, 6, 7]])
@@ -225,7 +225,7 @@ class Minimog:
 
         EXAMPLES::
 
-            sage: M = Minimog(type="modulo11")
+            sage: M = Minimog(type='modulo11')
             sage: M
             Minimog of type modulo11
         """
@@ -235,23 +235,22 @@ class Minimog:
         """
         EXAMPLES::
 
-            sage: M = Minimog(type="modulo11")
+            sage: M = Minimog(type='modulo11')
             sage: print(M)
             Minimog of type modulo11 associated to
             [        0         3 +Infinity         2]
             [        5         9         8        10]
             [        4         1         6         7]
-
         """
         return f"Minimog of type {self.type} associated to\n {self.minimog}"
 
     def _latex_(self):
         r"""
-        Prints latex code.
+        Print latex code.
 
         EXAMPLES::
 
-            sage: M = Minimog(type="modulo11")
+            sage: M = Minimog(type='modulo11')
             sage: latex(M)
             Minimog of type modulo11 associated to
              $\left(\begin{array}{rrrr}
@@ -293,7 +292,6 @@ class Minimog:
                2  10  8  2  10
             <BLANKLINE>
             0                   1
-
         """
         MINIMOG = self.minimog
         kitten = f'         {MINIMOG[0][2]}'
@@ -313,7 +311,7 @@ class Minimog:
 
         INPUT:
 
-        - ``pts`` -- a set of 2 distinct elements of MINIMOG, but not
+        - ``pts`` -- set of 2 distinct elements of MINIMOG, but not
           including the "points at infinity"
 
         OUTPUT:
@@ -329,10 +327,9 @@ class Minimog:
         EXAMPLES::
 
             sage: from sage.games.hexad import *
-            sage: M = Minimog(type="shuffle")
+            sage: M = Minimog(type='shuffle')
             sage: M.find_hexad0(set([2, 4]))
             ([0, 1, 2, 4, 6, 8], ['line 1', 'picture 1'])
-
         """
         MINIMOG = self.minimog
         L = set(pts)
@@ -358,7 +355,7 @@ class Minimog:
 
         INPUT:
 
-        - ``pts`` -- a set of 5 distinct elements of MINIMOG
+        - ``pts`` -- set of 5 distinct elements of MINIMOG
 
         OUTPUT:
 
@@ -373,7 +370,7 @@ class Minimog:
         EXAMPLES::
 
             sage: from sage.games.hexad import *
-            sage: M = Minimog(type="shuffle")
+            sage: M = Minimog(type='shuffle')
             sage: M.find_hexad1(set([2, 3, 4, 5, 8]))
             ([2, 3, 4, 5, 8, 11], ['lines (1, 2)', 'picture 1'])
         """
@@ -404,18 +401,16 @@ class Minimog:
 
         INPUT:
 
-        - ``pts`` -- a list S of 4 elements of MINIMOG, not including
+        - ``pts`` -- list S of 4 elements of MINIMOG, not including
           any "points at infinity"
         - ``x0`` -- in ``{MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}``
 
-        OUTPUT:
-
-        hexad containing `S \cup \{x0\}` of type 2
+        OUTPUT: hexad containing `S \cup \{x0\}` of type 2
 
         EXAMPLES::
 
             sage: from sage.games.hexad import *
-            sage: M = Minimog(type="shuffle")
+            sage: M = Minimog(type='shuffle')
             sage: M.find_hexad2([2, 3, 4, 5], 1)
             ([], [])
 
@@ -450,9 +445,9 @@ class Minimog:
 
         INPUT:
 
-        - ``pts`` -- a list of 3 elements of MINIMOG, not including any
+        - ``pts`` -- list of 3 elements of MINIMOG, not including any
           "points at infinity"
-        - ``x0``, ``x1``  -- in ``{MINIMOG[0][2], MINIMOG[2][1],
+        - ``x0``, ``x1`` -- in ``{MINIMOG[0][2], MINIMOG[2][1],
           MINIMOG[0][0]}``
 
         OUTPUT:
@@ -463,24 +458,23 @@ class Minimog:
         EXAMPLES::
 
             sage: from sage.games.hexad import *
-            sage: M = Minimog(type="shuffle")
+            sage: M = Minimog(type='shuffle')
             sage: M.find_hexad3([2, 3, 4], 0, 1)
             ([0, 1, 2, 3, 4, 11], ['square 2', 'picture 6'])
-
         """
         MINIMOG = self.minimog
         L = set(pts)
         H = {x0, x1}
         for i in range(18):
-            if (not (MINIMOG[0][2] in H) and L <= picture_set(self.picture21, self.square[i])):
+            if (MINIMOG[0][2] not in H and L <= picture_set(self.picture21, self.square[i])):
                 WHAT = ["square " + str(i), "picture " + str(MINIMOG[0][2])]
                 H = H | picture_set(self.picture21, self.square[i])
                 return list(H), WHAT
-            if (not (MINIMOG[2][1] in H) and L <= picture_set(self.picture02, self.square[i])):
+            if (MINIMOG[2][1] not in H and L <= picture_set(self.picture02, self.square[i])):
                 WHAT = ["square " + str(i), "picture " + str(MINIMOG[2][1])]
                 H = H | picture_set(self.picture02, self.square[i])
                 return list(H), WHAT
-            if (not (MINIMOG[0][0] in H) and L <= picture_set(self.picture00, self.square[i])):
+            if (MINIMOG[0][0] not in H and L <= picture_set(self.picture00, self.square[i])):
                 WHAT = ["square " + str(i), "picture " + str(MINIMOG[0][0])]
                 H = H | picture_set(self.picture00, self.square[i])
                 return list(H), WHAT
@@ -492,11 +486,9 @@ class Minimog:
 
         INPUT:
 
-        - ``pts`` -- a list S of 5 elements of MINIMOG
+        - ``pts`` -- list S of 5 elements of MINIMOG
 
-        OUTPUT:
-
-        hexad containing `S \cup \{x0\}` of some type
+        OUTPUT: hexad containing `S \cup \{x0\}` of some type
 
         .. NOTE::
 
@@ -521,7 +513,7 @@ class Minimog:
         EXAMPLES::
 
             sage: from sage.games.hexad import *
-            sage: M = Minimog(type="shuffle")
+            sage: M = Minimog(type='shuffle')
             sage: M.find_hexad([0, 1, 2, 3, 4])
             ([0, 1, 2, 3, 4, 11], ['square 2', 'picture 6'])
             sage: M.find_hexad([1, 2, 3, 4, 5])
@@ -530,7 +522,7 @@ class Minimog:
             ([2, 3, 4, 5, 8, 11], ['lines (1, 2)', 'picture 1'])
             sage: M.find_hexad([0, 1, 2, 4, 6])
             ([0, 1, 2, 4, 6, 8], ['line 1', 'picture 1'])
-            sage: M = Minimog(type="modulo11")
+            sage: M = Minimog(type='modulo11')
             sage: M.find_hexad([1, 2, 3, 4, SR(infinity)]) # random (machine dependent?) order
             ([+Infinity, 2, 3, 4, 1, 10], ['square 8', 'picture 0'])
 
@@ -624,7 +616,7 @@ class Minimog:
 
         INPUT:
 
-        - ``L0`` -- a list of cards of length 6, taken
+        - ``L0`` -- list of cards of length 6, taken
           from `\{0, 1, ..., 11\}`
 
         .. RUBRIC:: MATHEMATICAL BLACKJACK
@@ -659,10 +651,10 @@ class Minimog:
 
         EXAMPLES::
 
-            sage: M = Minimog(type="modulo11")
+            sage: M = Minimog(type='modulo11')
             sage: M.blackjack_move([0, 2, 3, 6, 1, 10])
             '6 --> 5. The total went from 22 to 21.'
-            sage: M = Minimog(type="shuffle")
+            sage: M = Minimog(type='shuffle')
             sage: M.blackjack_move([0, 2, 4, 6, 7, 11])
             '4 --> 3. The total went from 30 to 29.'
 

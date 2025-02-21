@@ -74,7 +74,7 @@ List representatives for Gamma_0(N) - equivalence classes of cusps::
 # ****************************************************************************
 
 from sage.structure.parent import Parent
-from sage.structure.element import Element, is_InfinityElement
+from sage.structure.element import Element, InfinityElement
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -94,7 +94,7 @@ def list_of_representatives(N):
 
     INPUT:
 
-    - ``N`` -- an ideal of a number field.
+    - ``N`` -- an ideal of a number field
 
     OUTPUT:
 
@@ -124,9 +124,7 @@ def NFCusps(number_field):
 
     - ``number_field`` -- a number field
 
-    OUTPUT:
-
-    The set of cusps over the given number field.
+    OUTPUT: the set of cusps over the given number field
 
     EXAMPLES::
 
@@ -238,13 +236,12 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
             Number Field Cusps
             sage: kCusps.rename(); kCusps
             Set of all cusps of Number Field in a with defining polynomial x^2 + 2
-
         """
         return "Set of all cusps of %s" % self.number_field()
 
     def _latex_(self):
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -332,13 +329,13 @@ class NFCusp(Element):
 
     INPUT:
 
-    - ``number_field`` -- the number field over which the cusp is defined.
+    - ``number_field`` -- the number field over which the cusp is defined
 
     - ``a`` -- it can be a number field element (integral or not), or
-      a number field cusp.
+      a number field cusp
 
     - ``b`` -- (optional) when present, it must be either Infinity or
-      coercible to an element of the number field.
+      coercible to an element of the number field
 
     - ``lreps`` -- (optional) a list of chosen representatives for all the
       ideal classes of the field. When given, the representative of the cusp
@@ -461,7 +458,7 @@ class NFCusp(Element):
             elif a in number_field:
                 self.__b = R(a.denominator())
                 self.__a = R(a * self.__b)
-            elif is_InfinityElement(a):
+            elif isinstance(a, InfinityElement):
                 self.__a = R.one()
                 self.__b = R.zero()
             elif isinstance(a, int):
@@ -491,8 +488,8 @@ class NFCusp(Element):
                         self.__b = R(r.denominator())
                         self.__a = R(r * self.__b)
                     except (ValueError, TypeError):
-                        raise TypeError("unable to convert %r to a cusp "
-                                        "of the number field" % a)
+                        raise TypeError(f"unable to convert {a} to a cusp "
+                                        "of the number field")
             else:
                 try:
                     r = number_field(a)
@@ -502,8 +499,8 @@ class NFCusp(Element):
                     raise TypeError("unable to convert %r to a cusp "
                                     "of the number field" % a)
         else:  # 'b' is given
-            if is_InfinityElement(b):
-                if is_InfinityElement(a) or (isinstance(a, NFCusp) and a.is_infinity()):
+            if isinstance(b, InfinityElement):
+                if isinstance(a, InfinityElement) or (isinstance(a, NFCusp) and a.is_infinity()):
                     raise TypeError("unable to convert (%r, %r) "
                                     "to a cusp of the number field" % (a, b))
                 self.__a = R.zero()
@@ -526,7 +523,7 @@ class NFCusp(Element):
             else:
                 if a in R or a in number_field:
                     r = a / b
-                elif is_InfinityElement(a):
+                elif isinstance(a, InfinityElement):
                     self.__a = R.one()
                     self.__b = R.zero()
                     return
@@ -786,8 +783,8 @@ class NFCusp(Element):
 
         INPUT:
 
-        - ``g`` -- a list of integral elements [a, b, c, d] that are the
-          entries of a 2x2 matrix.
+        - ``g`` -- list of integral elements [a, b, c, d] that are the
+          entries of a 2x2 matrix
 
         OUTPUT:
 
@@ -911,13 +908,11 @@ class NFCusp(Element):
         INPUT:
 
         - ``other`` -- a number field cusp or a list of two number field
-          elements which define a cusp.
+          elements which define a cusp
 
         - ``N`` -- an ideal of the number field (level)
 
-        OUTPUT:
-
-        - bool -- ``True`` if the cusps are equivalent.
+        OUTPUT: boolean; ``True`` if the cusps are equivalent
 
         - a transformation matrix -- (if ``Transformation=True``) a list of
           integral elements [a, b, c, d] which are the entries of a 2x2 matrix
@@ -944,7 +939,7 @@ class NFCusp(Element):
 
         ::
 
-            sage: k.<a> = NumberField(x^2+23)
+            sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3)
             sage: alpha1 = NFCusp(k, a+1, 4)
             sage: alpha2 = NFCusp(k, a-8, 29)
@@ -1029,11 +1024,9 @@ def Gamma0_NFCusps(N):
 
     INPUT:
 
-    - ``N`` -- an integral ideal of the number field k (the level).
+    - ``N`` -- an integral ideal of the number field k (the level)
 
-    OUTPUT:
-
-    A list of inequivalent number field cusps.
+    OUTPUT: list of inequivalent number field cusps
 
     EXAMPLES::
 
@@ -1122,11 +1115,9 @@ def number_of_Gamma0_NFCusps(N):
 
     INPUT:
 
-    - ``N`` -- a number field ideal.
+    - ``N`` -- a number field ideal
 
-    OUTPUT:
-
-    integer -- the number of orbits of cusps under Gamma0(N)-action.
+    OUTPUT: integer; the number of orbits of cusps under Gamma0(N)-action
 
     EXAMPLES::
 
@@ -1164,10 +1155,10 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
 
     INPUT:
 
-    - ``N`` -- number field ideal.
+    - ``N`` -- number field ideal
 
-    - ``nlists`` -- optional (default 1). The number of lists of prime ideals
-      we want.
+    - ``nlists`` -- (default: 1) the number of lists of prime ideals
+      we want
 
     OUTPUT:
 
@@ -1188,7 +1179,7 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
 
     ::
 
-        sage: k.<a> = NumberField(x^4 - x^3 -21*x^2 + 17*x + 133)
+        sage: k.<a> = NumberField(x^4 - x^3 - 21*x^2 + 17*x + 133)
         sage: N = k.ideal(6)
         sage: from sage.modular.cusps_nf import NFCusps_ideal_reps_for_levelN
         sage: NFCusps_ideal_reps_for_levelN(N)
@@ -1202,14 +1193,12 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
     """
     k = N.number_field()
     G = k.class_group()
-    L = []
-    for i in range(nlists):
-        L.append([k.ideal(1)])
+    L = [[k.ideal(1)] for _ in range(nlists)]
     it = k.primes_of_degree_one_iter()
     for I in G.list():
         check = 0
         if not I.is_principal():
-            Iinv = (I.ideal())**(-1)
+            Iinv = I.ideal()**(-1)
             while check < nlists:
                 J = next(it)
                 if (J * Iinv).is_principal() and J.is_coprime(N):
@@ -1225,7 +1214,7 @@ def units_mod_ideal(I):
 
     INPUT:
 
-    - ``I`` -- number field ideal.
+    - ``I`` -- number field ideal
 
     OUTPUT:
 

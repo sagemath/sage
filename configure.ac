@@ -1,7 +1,14 @@
 #*****************************************************************************
 #       Copyright (C) 2005-2007 William Stein
-#       Copyright (C) 2009-2011 David Kirkby
-#       Copyright (C) 2012-2016 Jeroen Demeyer
+#                     2009-2011 David Kirkby
+#                     2012-2015 Volker Braun
+#                     2012-2019 Jeroen Demeyer
+#                     2014-2017 François Bissey
+#                     2016-2022 Matthias Koeppe
+#                     2017-2018 Erik M. Bray
+#                     2018      Dima Pasechnik
+#                     2020      Jonathan Kliem
+#                     2021-2023 Michael Orlitzky
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,13 +63,6 @@ dnl AM_ICONV macro from the same source (which ultimately calls AC_LIB_RPATH), a
 dnl avoid involving libtool by using it to get the shared library extension.
 AC_LIB_RPATH
 AC_SUBST(SHLIBEXT, "${acl_shlibext}")
-
-#---------------------------------------------------------
-#
-# This is essentially the configure part of the old "install" file.
-# Over time, this should be changed to proper autoconf style with
-# configure options.
-#
 
 ########################################################################
 # Set various environment variables (needed at configure time)
@@ -135,89 +135,58 @@ AC_ARG_ENABLE([editable],
 AC_ARG_ENABLE([wheels],
               [AS_HELP_STRING([--enable-wheels],
                               [build wheels for the Sage library and update them on "sage -b"; if disabled, use "make wheels" to build wheels])],
-              [AC_SUBST([SAGE_WHEELS], [$enableval])],
-              [])
+              [dnl
+                 AS_VAR_IF([SAGE_EDITABLE], [yes], [dnl
+                 ], [dnl
+                   AC_MSG_NOTICE([direct installation of the Sage library (--disable-editable --disable-wheels) is no longer supported; ignoring --disable-wheels])
+                 ])
+                 AC_SUBST([SAGE_WHEELS], [$enableval])
+              ], [dnl
+                 AS_VAR_IF([SAGE_EDITABLE], [yes], [dnl
+                   AC_SUBST([SAGE_WHEELS], [no])
+                 ], [dnl
+                   AC_SUBST([SAGE_WHEELS], [yes])
+                 ])
+              ])
 
 # Check whether we are on a supported platform
 AC_CANONICAL_BUILD()
 AC_CANONICAL_HOST()
 
 case $host in
-*-*-sunos*|*-*-solaris2.[1-9])
-AC_MSG_ERROR([[
-Sage is not supported on any version of Solaris earlier than 10.
-Sage has been tested on the first release of Solaris 10
-(03/2005) and works on that. Sage may or may not work with
-your version of Solaris.
-
-More information can be found about Sage on Solaris
-on the Wiki at http://wiki.sagemath.org/solaris]]);;
-
-*-*-darwin[1-7].*)
-AC_MSG_ERROR([[
-Sage has never been built on OS X 10.3 (Panther)
-or earlier. The oldest version of OS X successfully used
-is OS X version 10.4 (Tiger). You might consider updating
-your version of OS X if your hardware permits this, but
-Apple charges for upgrades of OS X]]);;
-
-*-*-hpux*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on HP's HP-UX operating system,
-which is not a supported platform for Sage yet though
-some work has been done on HP-UX. A port does not look to
-be particularly difficult. Some information can be
-found on the Sage Wiki at http://wiki.sagemath.org/HP-UX
-
-If you would like to help port Sage to HP-UX,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-*-*-aix*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on IBM's AIX operating system,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to AIX,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-*-*-irix*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on SGI's IRIX operating system,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to IRIX,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-*-*-osf*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on HP's Tru64 operating system,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to Tru64,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-# The following are all supported platforms.
+dnl The following are all supported platforms.
 *-*-freebsd*);;
 *-*-linux*);;
 *-*-darwin*);;
-*-*-solaris*);;
 
-# Wildcard for other unsupported platforms
+dnl Wildcard for unsupported platforms
 *)
 AC_MSG_ERROR([[
 You are attempting to build Sage on $host,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to $host,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
+which is not a supported platform for Sage]]);;
 esac
 
+dnl Issue #38039: Alert users on WSL early about a source tree
+dnl that has not been cloned correctly.
+dnl This will save users from running into build errors later.
+AC_MSG_CHECKING([the symbolic links in the source tree])
+AS_IF([test -L build/pkgs/liblzma/package-version.txt], [dnl OK
+    AC_MSG_RESULT([intact])
+], [dnl Either replaced by a copy (OK, as done in the sage-conf_pypi sdist)
+    dnl  or replaced by the name of the link target (BAD, misconfigured git clone in WSL)
+    AS_IF([test ! -e build/pkgs/sagelib/src], [dnl
+        AC_MSG_RESULT([intact (with links to embedded source trees pruned)])
+    ], [dnl
+        AS_IF([test -d build/pkgs/sagelib/src], [dnl
+            AC_MSG_RESULT([broken (links to directories have been replaced by copies)])
+        ], [dnl
+            AC_MSG_RESULT([broken])
+        ])
+        AC_MSG_NOTICE([Sorry, the symbolic links in this source tree are broken.])
+        AC_MSG_NOTICE([See README.md for installation instructions.])
+        AC_MSG_ERROR([Exiting, as Sage cannot be built from this source tree.])
+    ])
+])
 
 ###############################################################################
 # Check general programs
@@ -253,7 +222,7 @@ dnl Exit autoconf with exit code 16 in this case. This will be
 dnl caught by the bootstrap script.
 m4_exit(16)])
 
-PKG_PROG_PKG_CONFIG([0.29])
+PKG_PROG_PKG_CONFIG([0.29], [PKG_CONFIG=])
 
 AC_CHECK_PROG(found_ranlib, ranlib, yes, no)
 if test x$found_ranlib != xyes
@@ -328,17 +297,6 @@ else
     AC_MSG_ERROR([You do not have a suitable version of Python installed])
 fi
 
-# Check for Latex, the use of which is less important in Sage than
-# it used to be, as it was at one time required to build any documentation
-# but this is no longer so.
-AC_CHECK_PROG(found_latex, latex, yes, no)
-if test x$found_latex != xyes
-then
-    AC_MSG_NOTICE([You do not have 'latex', which is recommended, but not])
-    AC_MSG_NOTICE([required. Latex is only really used for building pdf])
-    AC_MSG_NOTICE([documents and for %latex mode in the AC_PACKAGE_NAME notebook.])
-fi
-
 # Check that perl is available, with version 5.8.0 or later.
 # Some packages need perl, however it is not clear whether Sage really
 # requires version >= 5.8.0.  The R package *used* to require it, but
@@ -403,27 +361,13 @@ AC_CHECK_HEADER([complex.h],[],[
 # First check for something that should be in any maths library (sqrt).
 AC_LANG(C++)
 AC_CHECK_LIB(m,sqrt,[],[
-                       AC_MSG_NOTICE([This system has no maths library installed.])
-                       # On AIX this is not installed by default - strange as that might seem.
-                       # but is in a fileset bos.adt.libm. However, the fileset bos.adt
-                       # includes other things that are probably useful.
-                       if test "x`uname`" = 'xAIX'
-                       then
-                          AC_MSG_NOTICE([On AIX, libm is contained in the bos.adt.libm fileset.])
-                          AC_MSG_NOTICE([Actually, we recommend to install the complete bos.adt fileset.])
-                          AC_MSG_NOTICE([This needs to be performed by a system administrator.])
-                       fi
                        AC_MSG_ERROR([Exiting, since a maths library was not found.])
                        ])
-
-# Check for system services
 
 # Check that we are not building in a directory containing spaces
 AS_IF([echo "$ac_pwd" |grep " " >/dev/null],
       AC_MSG_ERROR([the path to the Sage root directory ($ac_pwd) contains a space. Sage will not build correctly in this case])
 )
-
-SAGE_CHECK_OSX_SUPPORTED()
 
 ###############################################################################
 # Collect substitutions for build/make/Makefile.in
@@ -487,7 +431,7 @@ AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
 ])
 AC_SUBST([SAGE_SPKG_OPTIONS])
 
-AC_ARG_ENABLE([sagelib],
+AC_ARG_ENABLE([sage_conf],
   AS_HELP_STRING([--disable-sage_conf],
                  [disable build of the sage_conf package]), [
     for pkg in sage_conf; do
@@ -506,7 +450,7 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_mathjax2 notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client; do
+    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client httpx httpcore h11; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -514,9 +458,15 @@ AC_ARG_ENABLE([notebook],
 AC_ARG_ENABLE([r],
   AS_HELP_STRING([--disable-r],
                  [disable build of the R package and related packages]), [
-    for pkg in r rpy2 r_jupyter tzlocal pytz_deprecation_shim; do
+    for pkg in r rpy2 r_jupyter tzlocal pytz_deprecation_shim tzdata; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
+  ])
+
+AC_ARG_ENABLE([sagetex],
+  AS_HELP_STRING([--disable-sagetex],
+                 [don't build SageTeX]), [
+    AS_VAR_SET([SAGE_ENABLE_sagetex], [$enableval])
   ])
 
 AC_ARG_ENABLE([doc],
@@ -567,7 +517,6 @@ AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
 
-dnl AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
 
@@ -587,13 +536,26 @@ AC_CONFIG_COMMANDS(mkdirs,
 
         if test -d "$SAGE_LOCAL/lib64"; then
             if test ! -L "$SAGE_LOCAL/lib64"; then
-                AC_MSG_NOTICE([[$SAGE_LOCAL/lib64 is not a symlink, see Trac #19782]])
+                AC_MSG_NOTICE([[$SAGE_LOCAL/lib64 is not a symlink, see Issue #19782]])
                 AC_MSG_ERROR([[Cannot perform incremental update, run "make distclean && make"]])
             fi
         else
             AC_MSG_NOTICE([[creating symbolic link lib64 -> lib]])
             ln -s lib "$SAGE_LOCAL/lib64"
         fi
+        dnl Check that the file system is sufficiently functional
+        if test -z "$SAGE_BUILD_DIR"; then
+            SAGE_BUILD_DIR="$SAGE_LOCAL/var/tmp/sage/build"
+        fi
+        AC_MSG_NOTICE([creating directory $SAGE_BUILD_DIR])
+        mkdir -p "$SAGE_BUILD_DIR" || AC_MSG_ERROR([error creating directory $SAGE_BUILD_DIR (SAGE_BUILD_DIR)])
+        rm -f "$SAGE_BUILD_DIR"/conftest
+        touch "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error creating a file in $SAGE_BUILD_DIR])
+        chmod +x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions +x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([file permissions +x did not persist in $SAGE_BUILD_DIR])
+        chmod -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions -x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest && AC_MSG_ERROR([file permissions -x did not persist in $SAGE_BUILD_DIR])
+        rm -f "$SAGE_BUILD_DIR"/conftest
     ],
     [
         SAGE_LOGS="$SAGE_ROOT/logs/pkgs"

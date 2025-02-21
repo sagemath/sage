@@ -41,7 +41,7 @@ from sage.features.four_ti_2 import FourTi2Executable
 import os
 
 
-class FourTi2():
+class FourTi2:
     r"""
     An interface to the program 4ti2.
 
@@ -104,7 +104,7 @@ class FourTi2():
         n = 0
         while True:
             project = "project_%s" % n
-            touch_file = os.path.join(self.directory(),project) + '.touch'
+            touch_file = os.path.join(self.directory(), project) + '.touch'
             if not os.path.exists(touch_file):
                 break
             n += 1
@@ -119,9 +119,9 @@ class FourTi2():
 
         INPUT:
 
-        - ``mat`` -- A matrix of integers or something that can be
-          converted to that.
-        - ``filename`` -- A file name not including a path.
+        - ``mat`` -- a matrix of integers or something that can be
+          converted to that
+        - ``filename`` -- a file name not including a path
 
         EXAMPLES::
 
@@ -129,8 +129,8 @@ class FourTi2():
             sage: four_ti_2.write_matrix([[1,2],[3,4]], "test_file")
         """
         from sage.matrix.constructor import matrix
-        from sage.structure.element import is_Matrix
-        if not is_Matrix(mat):
+        from sage.structure.element import Matrix
+        if not isinstance(mat, Matrix):
             mat = matrix(ZZ, mat)
         if mat.base_ring() != ZZ:
             mat = mat.change_ring(ZZ)
@@ -144,8 +144,8 @@ class FourTi2():
 
         INPUT:
 
-        - ``row`` -- A list of integers.
-        - ``filename`` -- A file name not including a path.
+        - ``row`` -- list of integers
+        - ``filename`` -- a file name not including a path
 
         EXAMPLES::
 
@@ -164,11 +164,11 @@ class FourTi2():
 
         INPUT:
 
-        - ``array`` -- A matrix of integers. Can be represented as a list
-          of lists.
-        - ``nrows`` -- The number of rows in ``array``.
-        - ``ncols`` -- The number of columns in ``array``.
-        - ``file`` -- A file name not including a path.
+        - ``array`` -- a matrix of integers. Can be represented as a list
+          of lists
+        - ``nrows`` -- the number of rows in ``array``
+        - ``ncols`` -- the number of columns in ``array``
+        - ``file`` -- a file name not including a path
 
         EXAMPLES::
 
@@ -189,11 +189,9 @@ class FourTi2():
 
         INPUT:
 
-        - ``filename`` -- The name of the file to read from.
+        - ``filename`` -- the name of the file to read from
 
-        OUTPUT:
-
-        The data from the file as a matrix over `\ZZ`.
+        OUTPUT: the data from the file as a matrix over `\ZZ`
 
         EXAMPLES::
 
@@ -236,11 +234,9 @@ class FourTi2():
 
         INPUT:
 
-        - ``kwds`` -- A dict controlling what data is written to what files.
+        - ``kwds`` -- dictionary controlling what data is written to what files
 
-        OUTPUT:
-
-        The value of the key ``project``.
+        OUTPUT: the value of the key ``project``
 
         EXAMPLES::
 
@@ -283,10 +279,10 @@ class FourTi2():
 
         INPUT:
 
-        - ``command`` -- The 4ti2 program to run.
-        - ``project`` -- The file name of the project to run on.
-        - ``verbose`` -- Display the output of 4ti2 if ``True``.
-        - ``options`` -- A list of strings to pass to the program.
+        - ``command`` -- the 4ti2 program to run
+        - ``project`` -- the file name of the project to run on
+        - ``verbose`` -- display the output of 4ti2 if ``True``
+        - ``options`` -- list of strings to pass to the program
 
         EXAMPLES::
 
@@ -333,7 +329,6 @@ class FourTi2():
                          [1 2 3]
             [0 0 0], [], [1 1 1]
             ]
-
         """
         project = self._process_input(locals())
         self.call('zsolve', project, options=['-q'])
@@ -441,7 +436,6 @@ class FourTi2():
             [-1 -1  1]
             [-3  0  1]
             [ 1 -2  1]
-
         """
         self.call('ppi', f'{n} 2> /dev/null')
         return self.read_matrix('ppi%s.gra' % n)
@@ -522,13 +516,13 @@ class FourTi2():
         """
         from sage.matrix.constructor import matrix
         return matrix(ZZ, 7, 9,
-             [[1, 1, 1, -1, -1, -1,  0,  0,  0],
-              [1, 1, 1,  0,  0,  0, -1, -1, -1],
-              [0, 1, 1, -1,  0,  0, -1,  0,  0],
-              [1, 0, 1,  0, -1,  0,  0, -1,  0],
-              [1, 1, 0,  0,  0, -1,  0,  0, -1],
-              [0, 1, 1,  0, -1,  0,  0,  0, -1],
-              [1, 1, 0,  0, -1,  0, -1,  0,  0]])
+                      [[1, 1, 1, -1, -1, -1, 0, 0, 0],
+                       [1, 1, 1, 0, 0, 0, -1, -1, -1],
+                       [0, 1, 1, -1, 0, 0, -1, 0, 0],
+                       [1, 0, 1, 0, -1, 0, 0, -1, 0],
+                       [1, 1, 0, 0, 0, -1, 0, 0, -1],
+                       [0, 1, 1, 0, -1, 0, 0, 0, -1],
+                       [1, 1, 0, 0, -1, 0, -1, 0, 0]])
 
 
 # The instance that should be used outside this file.

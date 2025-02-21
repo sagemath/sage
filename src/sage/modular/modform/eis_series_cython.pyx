@@ -14,7 +14,7 @@ from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.gmp.mpz cimport *
 from sage.libs.flint.fmpz_poly_sage cimport Fmpz_poly, fmpz_poly_set_coeff_mpz, fmpz_poly_scalar_mul_mpz
 
-cpdef Ek_ZZ(int k, int prec=10) noexcept:
+cpdef Ek_ZZ(int k, int prec=10):
     """
     Return list of prec integer coefficients of the weight k
     Eisenstein series of level 1, normalized so the coefficient of q
@@ -23,12 +23,10 @@ cpdef Ek_ZZ(int k, int prec=10) noexcept:
 
     INPUT:
 
-    - `k` -- int
-    - ``prec`` -- int
+    - ``k`` -- integer
+    - ``prec`` -- integer
 
-    OUTPUT:
-
-    - list of Sage Integers.
+    OUTPUT: list of integers
 
     EXAMPLES::
 
@@ -109,12 +107,12 @@ cpdef Ek_ZZ(int k, int prec=10) noexcept:
 
             # compute the valuation of n at p
             additional_p_powers = 0
-            temp_index = ind / p
+            temp_index = ind // p
             remainder = 0
             while not remainder:
                 additional_p_powers += 1
                 prev_index = temp_index
-                temp_index = temp_index / p
+                temp_index = temp_index // p
                 remainder = prev_index - p*temp_index
 
             # if we need a new sum, it has to be the next uncomputed one.
@@ -140,9 +138,9 @@ cpdef Ek_ZZ(int k, int prec=10) noexcept:
     return val
 
 
-cpdef eisenstein_series_poly(int k, int prec = 10)  noexcept:
+cpdef eisenstein_series_poly(int k, int prec=10):
     r"""
-    Return the q-expansion up to precision ``prec`` of the weight `k`
+    Return the `q`-expansion up to precision ``prec`` of the weight `k`
     Eisenstein series, as a FLINT :class:`~sage.libs.flint.fmpz_poly.Fmpz_poly`
     object, normalised so the coefficients are integers with no common factor.
 
@@ -186,7 +184,7 @@ cpdef eisenstein_series_poly(int k, int prec = 10)  noexcept:
     a0 = -bernoulli(k) / (2*k)
 
     cdef long p, ppow
-    for p in primes(1, prec) :
+    for p in primes(1, prec):
         ppow = p
 
         mpz_set_si(mult, p)

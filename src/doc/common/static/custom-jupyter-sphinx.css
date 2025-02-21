@@ -1,5 +1,5 @@
 div.jupyter_container {
-  margin: .5rem 0;
+  border: 0;
 }
 
 div.jupyter_container + div.jupyter_container {
@@ -96,45 +96,41 @@ body[data-theme="dark"] {
 }
 
 @media (prefers-color-scheme: dark) {
- body[data-theme="auto"] { /* the same styles with body[data-theme="dark"] */
-  .jupyter_container {
-    color: white;
-    background-color: black;
-  }
+  body[data-theme="auto"] { /* the same styles with body[data-theme="dark"] */
+    .jupyter_container {
+      color: white;
+      background-color: black;
+    }
 
-  .jupyter_container .highlight {
-    background-color: black;
-  }
+    .jupyter_container .highlight {
+      background-color: black;
+    }
 
-  .thebelab-button {
-    color: #d0d0d0;
-    background-color: #383838;
-  }
+    .thebelab-button {
+      color: #d0d0d0;
+      background-color: #383838;
+    }
 
-  .thebelab-button:active {
-    color: #368ce2;
-  }
+    .thebelab-button:active {
+      color: #368ce2;
+    }
 
-  #thebelab-activate-button {
-    background-color: #383838;
-  }
+    #thebelab-activate-button {
+      background-color: #383838;
+    }
 
-  #thebelab-activate-button:active {
-    color: #368ce2;
-  }
+    #thebelab-activate-button:active {
+      color: #368ce2;
+    }
 
-  .thebelab-cell .jp-OutputArea-output {
-    color: white;
-    background-color: black;
-  }
+    .thebelab-cell .jp-OutputArea-output {
+      color: white;
+      background-color: black;
+    }
 
-  .thebelab-cell .jp-OutputArea-output pre {
-    color: white;
-    background-color: black;
+    .thebelab-cell .jp-OutputArea-output pre {
+      color: white;
+      background-color: black;
+    }
   }
- }
 }
-
-
-
-

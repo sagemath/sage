@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Metaclasses for Cython extension types
 

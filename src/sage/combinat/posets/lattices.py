@@ -214,7 +214,7 @@ def MeetSemilattice(data=None, *args, **options):
 
 class FiniteMeetSemilattice(FinitePoset):
     """
-    .. note::
+    .. NOTE::
         We assume that the argument passed to MeetSemilattice is the poset
         of a meet-semilattice (i.e. a poset with greatest lower bound for
         each pair of elements).
@@ -266,8 +266,8 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        -  ``x, y`` -- two elements of the (semi)lattice OR
-        -  ``x`` -- a list or tuple of elements
+        - ``x``, ``y`` -- two elements of the (semi)lattice OR
+        - ``x`` -- list or tuple of elements
 
         EXAMPLES::
 
@@ -342,7 +342,7 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        - ``elms`` -- a list of elements of the lattice.
+        - ``elms`` -- list of elements of the lattice
 
         EXAMPLES::
 
@@ -384,7 +384,7 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        - ``elms`` -- a list of elements of the lattice.
+        - ``elms`` -- list of elements of the lattice
 
         EXAMPLES::
 
@@ -435,7 +435,7 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        - ``element`` -- an element of the lattice.
+        - ``element`` -- an element of the lattice
 
         OUTPUT:
 
@@ -554,7 +554,6 @@ class FiniteJoinSemilattice(FinitePoset):
         sage: P = Poset([[1,2],[3],[3]])
         sage: J = JoinSemilattice(P)
         sage: TestSuite(J).run()
-
     """
     Element = JoinSemilatticeElement
     _desc = 'Finite join-semilattice'
@@ -592,8 +591,8 @@ class FiniteJoinSemilattice(FinitePoset):
 
         INPUT:
 
-        -  ``x, y`` -- two elements of the (semi)lattice OR
-        -  ``x`` -- a list or tuple of elements
+        - ``x``, ``y`` -- two elements of the (semi)lattice OR
+        - ``x`` -- list or tuple of elements
 
         EXAMPLES::
 
@@ -675,9 +674,7 @@ def LatticePoset(data=None, *args, **options):
       be passed down to :func:`Poset` to construct a poset that is
       also a lattice.
 
-    OUTPUT:
-
-    An instance of :class:`FiniteLatticePoset`.
+    OUTPUT: an instance of :class:`FiniteLatticePoset`
 
     .. SEEALSO::
 
@@ -756,7 +753,6 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         sage: P = Poset([[1,2],[3],[3]])
         sage: L = LatticePoset(P)
         sage: TestSuite(L).run()
-
     """
     Element = LatticePosetElement
 
@@ -935,7 +931,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1023,7 +1019,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1116,7 +1112,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1204,7 +1200,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         in lattices it follows that then also join distributes over
         meet.
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1296,7 +1292,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
             - Weaker properties: :meth:`is_join_semidistributive`,
               :meth:`is_meet_semidistributive`
-            - Stronger properties: :meth:`is_distributive`
+            - Stronger properties: :meth:`is_distributive`,
+              :meth:`is_congruence_uniform`
 
         TESTS::
 
@@ -1326,7 +1323,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1368,7 +1365,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_meet_semidistributive()
             False
 
-        Confirm that :trac:`21340` is fixed::
+        Confirm that :issue:`21340` is fixed::
 
             sage: posets.BooleanLattice(4).is_meet_semidistributive()
             True
@@ -1418,7 +1415,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1460,7 +1457,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_join_semidistributive()
             False
 
-        Confirm that :trac:`21340` is fixed::
+        Confirm that :issue:`21340` is fixed::
 
             sage: posets.BooleanLattice(3).is_join_semidistributive()
             True
@@ -1539,7 +1536,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - certificate -- boolean (default ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           instead a maximum chain of left modular elements
 
         EXAMPLES::
@@ -1588,7 +1585,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1640,8 +1637,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not cosectionally complemented.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not cosectionally complemented
 
         OUTPUT:
 
@@ -1715,8 +1712,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not relatively complemented.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not relatively complemented
 
         OUTPUT:
 
@@ -1782,7 +1779,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_relatively_complemented()
             False
 
-        Confirm that :trac:`22292` is fixed::
+        Confirm that :issue:`22292` is fixed::
 
             sage: L = LatticePoset(DiGraph('IYOS`G?CE?@?C?_@??'))
             sage: L.is_relatively_complemented(certificate=True)
@@ -1829,8 +1826,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not sectionally complemented.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not sectionally complemented
 
         OUTPUT:
 
@@ -1909,7 +1906,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2102,7 +2099,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2167,7 +2164,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2281,7 +2278,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``unique``, a Boolean -- If ``True``, return ``True`` only
+        - ``unique`` -- boolean; if ``True``, return ``True`` only
           if the lattice has exactly one orthocomplementation. If
           ``False`` (the default), return ``True`` when the lattice
           has at least one orthocomplementation.
@@ -2334,7 +2331,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2393,7 +2390,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2574,7 +2571,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - ``L`` -- (default: ``None``) a list of elements to check being
           modular, if ``L`` is ``None``, then this checks the entire lattice
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2732,8 +2729,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not upper semimodular.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not upper semimodular
 
         OUTPUT:
 
@@ -2792,8 +2789,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not lower semimodular.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not lower semimodular
 
         OUTPUT:
 
@@ -2849,7 +2846,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2955,13 +2952,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``other`` -- a lattice
 
-        - ``labels`` -- a string (default ``'pairs'``); can be one of
+        - ``labels`` -- string (default: ``'pairs'``); can be one of
           the following:
 
-          * ``'pairs'`` - each element ``v`` in this poset will be
+          * ``'pairs'`` -- each element ``v`` in this poset will be
             named ``(0, v)`` and each element ``u`` in ``other`` will
             be named ``(1, u)`` in the result
-          * ``'integers'`` - the elements of the result will be
+          * ``'integers'`` -- the elements of the result will be
             relabeled with consecutive integers
 
         EXAMPLES::
@@ -3049,7 +3046,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``elements_only`` - if ``True``, return the list of decomposing
+        - ``elements_only`` -- if ``True``, return the list of decomposing
           elements as defined above; if ``False`` (the default),
           return the list of sublattices so that the lattice is a
           vertical composition of them.
@@ -3109,7 +3106,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -3158,7 +3155,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``elms`` -- a list of elements of the lattice.
+        - ``elms`` -- list of elements of the lattice
 
         EXAMPLES::
 
@@ -3310,10 +3307,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
           * ``'lattice'`` (default) elements of the lattice will be
             lattices that correspond to sublattices of the original lattice
 
-          * ``'tuple'`` - elements are tuples of elements of the sublattices
+          * ``'tuple'`` -- elements are tuples of elements of the sublattices
             of the original lattice
 
-          * ``'integer'`` - elements are plain integers
+          * ``'integer'`` -- elements are plain integers
 
         EXAMPLES::
 
@@ -3355,7 +3352,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - other --  a finite lattice
+        - ``other`` -- a finite lattice
 
         EXAMPLES:
 
@@ -3467,9 +3464,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         Return the Möbius algebra of ``self`` over ``R``.
 
-        OUTPUT:
-
-        An instance of :class:`sage.combinat.posets.moebius_algebra.MoebiusAlgebra`.
+        OUTPUT: an instance of :class:`sage.combinat.posets.moebius_algebra.MoebiusAlgebra`
 
         EXAMPLES::
 
@@ -3488,9 +3483,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``q`` -- (optional) the deformation parameter `q`
 
-        OUTPUT:
-
-        An instance of :class:`sage.combinat.posets.moebius_algebra.QuantumMoebiusAlgebra`.
+        OUTPUT: an instance of :class:`sage.combinat.posets.moebius_algebra.QuantumMoebiusAlgebra`
 
         EXAMPLES::
 
@@ -3557,7 +3550,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             True
         """
         # Rationale for naming of elements: a lattice can have
-        # elements 1, (1, 1), (1, (1, 1)) and so on. We can't just
+        # elements 1, (1, 1), (1, (1, 1)) and so on. We cannot just
         # make a copy of S with elements (s, 1).
 
         # The construction could be defined for any convex
@@ -3615,7 +3608,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: PP.atoms()
             [(0, 1), (0, 2), (1, 'a')]
             sage: PP.coatoms()
-            [(0, 3), (0, 1)]
+            [(0, 1), (0, 3)]
 
         TESTS::
 
@@ -3704,7 +3697,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` (boolean) -- Whether to return a certificate.
+        - ``certificate`` -- boolean; whether to return a certificate
 
           * If ``certificate = False`` (default), returns ``True`` or
             ``False`` accordingly.
@@ -3821,7 +3814,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -3962,7 +3955,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
             Add a certificate-option.
         """
-        # Todo: This can be made much faster, if we don't regenerate meet- and
+        # Todo: This can be made much faster, if we do not regenerate meet- and
         # join-matrices every time, but instead remove some rows and columns
         # from them.
 
@@ -4002,7 +3995,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -4092,9 +4085,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``e`` -- an element of the lattice
 
-        OUTPUT:
-
-        - canonical meetands as a list, if it exists; if not, ``None``
+        OUTPUT: canonical meetands as a list, if it exists; if not, ``None``
 
         EXAMPLES::
 
@@ -4158,9 +4149,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``e`` -- an element of the lattice
 
-        OUTPUT:
-
-        - canonical joinands as a list, if it exists; if not, ``None``
+        OUTPUT: canonical joinands as a list, if it exists; if not, ``None``
 
         EXAMPLES::
 
@@ -4222,15 +4211,15 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``type`` -- a string; can be one of the following:
+        - ``type`` -- string; can be one of the following:
 
-          * ``'interval'`` - allow only doublings of an interval
-          * ``'lower'`` - allow doublings of lower pseudo-interval; that is, a
+          * ``'interval'`` -- allow only doublings of an interval
+          * ``'lower'`` -- allow doublings of lower pseudo-interval; that is, a
             subset of the lattice with a unique minimal element
-          * ``'upper'`` - allow doublings of upper pseudo-interval; that is, a
+          * ``'upper'`` -- allow doublings of upper pseudo-interval; that is, a
             subset of the lattice with a unique maximal element
-          * ``'convex'`` - allow doubling of any convex set
-          * ``'any'`` - allow doubling of any set
+          * ``'convex'`` -- allow doubling of any convex set
+          * ``'any'`` -- allow doubling of any set
 
         EXAMPLES:
 
@@ -4282,7 +4271,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         The congruence lattice of this lattice has maximal chains satisfying the needed
         property, but also maximal chains not satisfying that; this shows that the code
-        can't be optimized to test just some maximal chain::
+        cannot be optimized to test just some maximal chain::
 
             sage: L = LatticePoset(DiGraph('QSO?I?_?_GBG??_??a???@?K??A??B???C??s??G??I??@??A??@???'))
             sage: L.is_constructible_by_doublings('convex')
@@ -4355,6 +4344,29 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     todo.append(e_up)
         return False
 
+    def is_congruence_uniform(self) -> bool:
+        """
+        Return whether ``self`` is congruence uniform.
+
+        This is equivalent to being constructible by doubling intervals.
+
+        .. SEEALSO:: :meth:`is_constructible_by_doublings`
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: P.is_congruence_uniform()
+            True
+            sage: P = posets.DiamondPoset(5)
+            sage: P.is_congruence_uniform()
+            False
+
+        REFERENCES:
+
+        - [Day1979]_
+        """
+        return self.is_constructible_by_doublings(type="interval")
+
     def is_isoform(self, certificate=False):
         """
         Return ``True`` if the lattice is isoform and ``False`` otherwise.
@@ -4365,7 +4377,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not isoform
 
         OUTPUT:
@@ -4440,7 +4452,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not uniform
 
         OUTPUT:
@@ -4520,7 +4532,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not regular
 
         OUTPUT:
@@ -4589,7 +4601,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not simple
 
         OUTPUT:
@@ -4733,7 +4745,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``S`` -- a list of lists; list of element blocks that the congruence
+        - ``S`` -- list of lists; list of element blocks that the congruence
           will contain
 
         OUTPUT:
@@ -4817,10 +4829,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - ``labels`` -- string; the elements of the resulting
           lattice and can be one of the following:
 
-          * ``'tuple'`` - elements are tuples of elements of the original
+          * ``'tuple'`` -- elements are tuples of elements of the original
             lattice
-          * ``'lattice'`` - elements are sublattices of the original lattice
-          * ``'integer'`` - elements are labeled by integers
+          * ``'lattice'`` -- elements are sublattices of the original lattice
+          * ``'integer'`` -- elements are labeled by integers
 
         .. WARNING::
 
@@ -4890,11 +4902,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``labels`` -- a string; the type of elements in the resulting lattice
+        - ``labels`` -- string; the type of elements in the resulting lattice
 
-        OUTPUT:
-
-        A distributive lattice.
+        OUTPUT: a distributive lattice
 
         - If ``labels='congruence'``, then elements of the
           result will be congruences given as
@@ -4992,7 +5002,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         INPUT:
 
         - ``G`` -- a subset of elements of ``self``
-        - ``use_defining`` -- (default: ``False``) whether or not to use
+        - ``use_defining`` -- boolean (default: ``False``); whether or not to use
           the defining presentation in `x_g`
         - ``base_ring`` -- (default: `\QQ`) the base ring
 

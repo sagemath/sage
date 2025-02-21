@@ -7,8 +7,8 @@ is a chain complex of free `R`-modules
 
 .. MATH::
 
-    R^{n_0} \xleftarrow{d_1}  R^{n_1} \xleftarrow{d_2}
-    \cdots \xleftarrow{d_k} R^{n_k} \xleftarrow{d_{k+1}} 0
+    0 \rightarrow R^{n_k} \xrightarrow{d_k}
+    \cdots \xrightarrow{d_2} R^{n_1} \xrightarrow{d_1} R^{n_0}
 
 terminating with a zero module at the end that is exact (all homology groups
 are zero) such that the image of `d_1` is `M`.
@@ -87,8 +87,8 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
 
     .. MATH::
 
-        R^{n_1} \xleftarrow{d_1}  R^{n_1} \xleftarrow{d_2}
-        \cdots \xleftarrow{d_k} R^{n_k} \xleftarrow{d_{k+1}} \cdots
+        \cdots \rightarrow R^{n_k} \xrightarrow{d_k}
+        \cdots \xrightarrow{d_2} R^{n_1} \xrightarrow{d_1} R^{n_0}
 
     that is exact (all homology groups are zero) such that the image
     of `d_1` is `M`.
@@ -230,7 +230,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         EXAMPLES::
 
@@ -271,11 +271,11 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
     @abstract_method
     def differential(self, i):
         r"""
-        Return the ``i``-th differential map.
+        Return the `i`-th differential map.
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         TESTS::
 
@@ -375,7 +375,7 @@ class FiniteFreeResolution(FreeResolution):
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         EXAMPLES::
 
@@ -409,11 +409,11 @@ class FiniteFreeResolution(FreeResolution):
 
     def __getitem__(self, i):
         r"""
-        Return the ``i``-th free module of this resolution.
+        Return the `i`-th free module of this resolution.
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         EXAMPLES::
 
@@ -443,11 +443,11 @@ class FiniteFreeResolution(FreeResolution):
 
     def differential(self, i):
         r"""
-        Return the ``i``-th differential map.
+        Return the `i`-th differential map.
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         EXAMPLES::
 
@@ -542,11 +542,11 @@ class FiniteFreeResolution(FreeResolution):
 
     def matrix(self, i):
         r"""
-        Return the matrix representing the ``i``-th differential map.
+        Return the matrix representing the `i`-th differential map.
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         EXAMPLES::
 
@@ -792,14 +792,14 @@ class FiniteFreeResolution_singular(FiniteFreeResolution):
     The available algorithms and the corresponding Singular commands
     are shown below:
 
-        ============= ============================
-        algorithm     Singular commands
-        ============= ============================
-        ``minimal``   ``mres(ideal)``
-        ``shreyer``   ``minres(sres(std(ideal)))``
-        ``standard``  ``minres(nres(std(ideal)))``
-        ``heuristic`` ``minres(res(std(ideal)))``
-        ============= ============================
+    ============= ============================
+    algorithm     Singular commands
+    ============= ============================
+    ``minimal``   ``mres(ideal)``
+    ``shreyer``   ``minres(sres(std(ideal)))``
+    ``standard``  ``minres(nres(std(ideal)))``
+    ``heuristic`` ``minres(res(std(ideal)))``
+    ============= ============================
 
     EXAMPLES::
 

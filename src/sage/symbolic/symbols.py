@@ -22,14 +22,14 @@ def register_symbol(obj, conversions, nargs=None):
 
     INPUT:
 
-    - ``obj`` -- a symbolic object or function.
+    - ``obj`` -- a symbolic object or function
 
-    - ``conversions`` -- a dictionary of conversions, where the keys
+    - ``conversions`` -- dictionary of conversions, where the keys
       are the names of interfaces (e.g., ``'maxima'``), and the values
-      are the string representation of ``obj`` in that system.
+      are the string representation of ``obj`` in that system
 
-    - ``nargs`` -- optional number of arguments. For most functions,
-      this can be deduced automatically.
+    - ``nargs`` -- (optional) number of arguments; for most functions,
+      this can be deduced automatically
 
     EXAMPLES::
 

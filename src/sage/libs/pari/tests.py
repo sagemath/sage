@@ -1,7 +1,7 @@
 r"""
 Tests for the Sage <-> PARI interface
 
-The default precision is 64 bits, see :trac:`21425`::
+The default precision is 64 bits, see :issue:`21425`::
 
     sage: pari("bitprecision(Pi)")
     64
@@ -16,14 +16,14 @@ Creating PARI objects::
     x^2 - 3
 
 The following example caused Sage to crash before
-:trac:`20630`::
+:issue:`20630`::
 
     sage: R.<theta> = QQ[]
     sage: K.<a> = NumberField(theta^2 + 1)                                              # needs sage.rings.number_field
     sage: K.absolute_polynomial().galois_group(pari_group=True)                         # needs sage.groups sage.rings.number_field
     PARI group [2, -1, 1, "S2"] of degree 2
 
-Before :trac:`15654`, this used to take a very long time.
+Before :issue:`15654`, this used to take a very long time.
 Now it takes much less than a second::
 
     sage: pari.allocatemem(200000)
@@ -33,7 +33,7 @@ Now it takes much less than a second::
     sage: pari(pol).poldisc()                                                           # needs sage.rings.padics
     2*3 + 3^4 + 2*3^6 + 3^7 + 2*3^8 + 2*3^9 + O(3^10)
 
-This used to give the wrong answer before :trac:`23259`::
+This used to give the wrong answer before :issue:`23259`::
 
     sage: R.<x> = QQ[]
     sage: f = pari(x^12 + x^7 - 1/5*x^6 - 3*x^5 + 13/5*x^4 + 11/5*x^3 + 2/5*x^2 + 2/5*x + 1/5)
@@ -188,7 +188,7 @@ which is now automatically generated:
 Reading a gp file::
 
     sage: import tempfile
-    sage: gpfile = tempfile.NamedTemporaryFile(mode="w")
+    sage: gpfile = tempfile.NamedTemporaryFile(mode='w')
     sage: __ = gpfile.file.write("mysquare(n) = {\n")
     sage: __ = gpfile.file.write("    n^2;\n")
     sage: __ = gpfile.file.write("}\n")
@@ -1195,7 +1195,7 @@ Finite fields::
     sage: k(2).__pari__().fforder(o=4)
     4
 
-p-adic functions::
+`p`-adic functions::
 
     sage: # needs sage.rings.padics
     sage: K = Qp(11,5)

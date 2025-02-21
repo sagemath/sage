@@ -28,12 +28,12 @@ is needed for them::
 
 TESTS:
 
-Check that :trac:`24212` is fixed::
+Check that :issue:`24212` is fixed::
 
     sage: integrate(sin(x^2), x, algorithm='sympy')
     3/8*sqrt(2)*sqrt(pi)*fresnel_sin(sqrt(2)*x/sqrt(pi))*gamma(3/4)/gamma(7/4)
 
-Test that conversion of symbolic functions with latex names works (:trac:`31047`)::
+Test that conversion of symbolic functions with latex names works (:issue:`31047`)::
 
     sage: var('phi')
     phi
@@ -418,8 +418,8 @@ def _sympysage_Subs(self):
         sage: from sympy.core.singleton import S
     """
     args = self.args
-    substi = dict([(args[1][i]._sage_(), args[2][i]._sage_())
-                   for i in range(len(args[1]))])
+    substi = {args[1][i]._sage_(): args[2][i]._sage_()
+              for i in range(len(args[1]))}
     return args[0]._sage_().subs(substi)
 
 
@@ -550,7 +550,7 @@ def _sympysage_derivative(self):
 
     TESTS:
 
-    Check that :trac:`28964` is fixed::
+    Check that :issue:`28964` is fixed::
 
         sage: f = function('f')
         sage: _ = var('x,t')
@@ -765,7 +765,7 @@ def _sympysage_piecewise(self):
         sage: assert ex == sp._sage_()
 
         sage: _ = var('y, z')
-        sage: (x^y - z).integrate(y, algorithm="sympy")
+        sage: (x^y - z).integrate(y, algorithm='sympy')
         -y*z + cases(((log(x) != 0, x^y/log(x)), (1, y)))
     """
     from sage.functions.other import cases
@@ -1197,7 +1197,7 @@ def sympy_init():
 
 def check_expression(expr, var_symbols, only_from_sympy=False):
     """
-    Does ``eval(expr)`` both in Sage and SymPy and does other checks.
+    Do ``eval(expr)`` both in Sage and SymPy and other checks.
 
     EXAMPLES::
 

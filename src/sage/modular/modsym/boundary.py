@@ -49,7 +49,7 @@ also combine with the above to kill a cusp class - for instance, take (u,v) =
 which means this class must vanish. Notice that this cannot be used to show
 that `[(1,0)]` or `[(0,1)]` is 0.
 
-.. note::
+.. NOTE::
 
    Special care must be taken when working with the images of the cusps 0 and
    `\infty` in `B_k(G)`. For all cusps *except* 0 and `\infty`, multiplying the
@@ -64,7 +64,7 @@ that `[(1,0)]` or `[(0,1)]` is 0.
    - `[(1,0)] = \sigma \cdot [(-1,0)]` and `[(1,0)] = (-1)^k [(-1,0)]`, so
      `[(1,0)] = 0` whenever `\sigma \ne (-1)^k`.
 
-.. note::
+.. NOTE::
 
    For all the spaces of boundary symbols below, no work is done to determine
    the cusps for G at creation time. Instead, cusps are added as they are
@@ -89,20 +89,16 @@ REFERENCES:
 # ****************************************************************************
 
 
-from sage.misc.repr import repr_lincomb
-from sage.structure.richcmp import richcmp_method, richcmp
-
-import sage.modules.free_module as free_module
-from sage.modules.free_module_element import is_FreeModuleElement
-
 import sage.modular.arithgroup.all as arithgroup
-import sage.modular.cusps as cusps
-import sage.modular.dirichlet as dirichlet
 import sage.modular.hecke.all as hecke
-from sage.modular.modsym.manin_symbol import ManinSymbol
-
-from sage.rings.rational_field import Q as QQ
 from sage.categories.rings import Rings
+from sage.misc.repr import repr_lincomb
+from sage.modular import cusps, dirichlet
+from sage.modular.modsym.manin_symbol import ManinSymbol
+from sage.modules import free_module
+from sage.modules.free_module_element import FreeModuleElement
+from sage.rings.rational_field import Q as QQ
+from sage.structure.richcmp import richcmp, richcmp_method
 
 from . import element
 
@@ -114,13 +110,11 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
 
         INPUT:
 
+        - ``parent`` -- BoundarySpace; a space of boundary
+          modular symbols
 
-        -  ``parent`` - BoundarySpace; a space of boundary
-           modular symbols
-
-        -  ``x`` - a dict with integer keys and values in the
-           base field of parent.
-
+        - ``x`` -- dictionary with integer keys and values in the
+          base field of parent
 
         EXAMPLES::
 
@@ -138,8 +132,8 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
 
     def coordinate_vector(self):
         r"""
-        Return self as a vector on the QQ-vector space with basis
-        self.parent()._known_cusps().
+        Return ``self`` as a vector on the `\QQ`-vector space with basis
+        ``self.parent()._known_cusps()``.
 
         EXAMPLES::
 
@@ -180,7 +174,7 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
 
     def _add_(self, other):
         """
-        Return self + other. Assumes that other is a BoundarySpaceElement.
+        Return ``self + other``. Assumes that other is a BoundarySpaceElement.
 
         EXAMPLES::
 
@@ -201,7 +195,7 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
 
     def _sub_(self, other):
         """
-        Return self - other. Assumes that other is a BoundarySpaceElement.
+        Return ``self - other``. Assumes that other is a BoundarySpaceElement.
 
         EXAMPLES::
 
@@ -222,10 +216,10 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
 
     def _rmul_(self, other):
         r"""
-        Return self \* other.
+        Return ``self * other``.
 
         Assumes that other can be coerced into
-        self.parent().base_ring().
+        ``self.parent().base_ring()``.
 
         EXAMPLES::
 
@@ -243,10 +237,10 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
 
     def _lmul_(self, other):
         r"""
-        Return other \* self.
+        Return ``other * self``.
 
         Assumes that other can be coerced into
-        self.parent().base_ring().
+        ``self.parent().base_ring()``.
 
         EXAMPLES::
 
@@ -294,17 +288,14 @@ class BoundarySpace(hecke.HeckeModule_generic):
 
         INPUT:
 
+        - ``weight`` -- integer; the weight
 
-        -  ``weight`` - int, the weight
+        - ``group`` -- arithgroup.congroup_generic.CongruenceSubgroup, a
+          congruence subgroup
 
-        -  ``group`` - arithgroup.congroup_generic.CongruenceSubgroup, a congruence
-           subgroup.
+        - ``sign`` -- integer; either -1, 0, or 1
 
-        -  ``sign`` - int, either -1, 0, or 1
-
-        -  ``base_ring`` - rings.Ring (defaults to the
-           rational numbers)
-
+        - ``base_ring`` -- commutative ring (defaults to the rational numbers)
 
         EXAMPLES::
 
@@ -317,12 +308,12 @@ class BoundarySpace(hecke.HeckeModule_generic):
         weight = int(weight)
         if weight <= 1:
             raise ArithmeticError("weight must be at least 2")
-        if not arithgroup.is_CongruenceSubgroup(group):
+        if not isinstance(group, arithgroup.CongruenceSubgroupBase):
             raise TypeError("group must be a congruence subgroup")
         sign = int(sign)
         if base_ring not in Rings().Commutative():
             raise TypeError("base_ring must be a commutative ring")
-        if character is None and arithgroup.is_Gamma0(group):
+        if character is None and isinstance(group, arithgroup.Gamma0_class):
             character = dirichlet.TrivialCharacter(group.level(), base_ring)
         (self.__group, self.__weight, self.__character,
          self.__sign, self.__base_ring) = (group, weight,
@@ -436,7 +427,9 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B.gen(0)
             Traceback (most recent call last):
             ...
-            ValueError: only 0 generators known for Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(24) of weight 4 over Rational Field
+            ValueError: only 0 generators known for
+            Space of Boundary Modular Symbols for
+            Congruence Subgroup Gamma0(24) of weight 4 over Rational Field
             sage: B(Cusp(1/3))
             [1/3]
             sage: B.gen(0)
@@ -480,7 +473,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B.rank()
             16
 
-        Test that :trac:`7837` is fixed::
+        Test that :issue:`7837` is fixed::
 
             sage: ModularSymbols(Gamma1(4),7).boundary_map().codomain().dimension()
             2
@@ -554,7 +547,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
         elif isinstance(x, ManinSymbol):
             return self._coerce_in_manin_symbol(x)
 
-        elif element.is_ModularSymbolsElement(x):
+        elif isinstance(x, element.ModularSymbolsElement):
             M = x.parent()
             if not isinstance(M, ModularSymbolsAmbient):
                 raise TypeError("x (=%s) must be an element of a space of modular symbols of type ModularSymbolsAmbient" % x)
@@ -566,7 +559,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
                 return self(0)
             return sum([c * self._coerce_in_manin_symbol(v) for c, v in S])
 
-        elif is_FreeModuleElement(x):
+        elif isinstance(x, FreeModuleElement):
             y = dict(enumerate(x))
             return BoundarySpaceElement(self, y)
 
@@ -596,7 +589,6 @@ class BoundarySpace(hecke.HeckeModule_generic):
         - ``-2`` if ``cusp`` is equivalent to a cusp that's known to vanish
           from the relations in this space.
 
-
         EXAMPLES::
 
             sage: B = ModularSymbols(Gamma0(21), 4).boundary_space()
@@ -624,15 +616,13 @@ class BoundarySpace_wtk_g0(BoundarySpace):
 
         INPUT:
 
+        - ``level`` -- integer; the level
 
-        -  ``level`` - int, the level
+        - ``weight`` -- integer; weight = 2
 
-        -  ``weight`` - integer weight = 2.
+        - ``sign`` -- integer; either -1, 0, or 1
 
-        -  ``sign`` - int, either -1, 0, or 1
-
-        -  ``F`` - field
-
+        - ``F`` -- field
 
         EXAMPLES::
 
@@ -768,14 +758,13 @@ class BoundarySpace_wtk_g1(BoundarySpace):
 
         INPUT:
 
+        - ``level`` -- integer; the level
 
-        -  ``level`` - int, the level
+        - ``weight`` -- integer; the weight = 2
 
-        -  ``weight`` - int, the weight = 2
+        - ``sign`` -- integer; either -1, 0, or 1
 
-        -  ``sign`` - int, either -1, 0, or 1
-
-        -  ``F`` - base ring
+        - ``F`` -- base ring
 
         EXAMPLES::
 
@@ -969,15 +958,13 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
 
         INPUT:
 
+        - ``group`` -- congruence subgroup Gamma_H(N)
 
-        -  ``group`` - congruence subgroup Gamma_H(N).
+        - ``weight`` -- integer; the weight = 2
 
-        -  ``weight`` - int, the weight = 2
+        - ``sign`` -- integer; either -1, 0, or 1
 
-        -  ``sign`` - int, either -1, 0, or 1
-
-        -  ``F`` - base ring
-
+        - ``F`` -- base ring
 
         EXAMPLES::
 
@@ -987,7 +974,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             sage: B == loads(dumps(B))
             True
 
-        A test case from :trac:`6072`::
+        A test case from :issue:`6072`::
 
             sage: ModularSymbols(GammaH(8,[5]), 3).boundary_map()
             Hecke module morphism boundary map defined by the matrix
@@ -1022,8 +1009,8 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
 
     def _is_equiv(self, c1, c2):
         """
-        Return a pair of the form (b, t), where b is True if c1 and c2 are
-        equivalent cusps for self, and False otherwise, and t gives extra
+        Return a pair of the form (b, t), where b is ``True`` if c1 and c2 are
+        equivalent cusps for ``self``, and ``False`` otherwise, and t gives extra
         information about the equivalence between c1 and c2.
 
         EXAMPLES::
@@ -1120,7 +1107,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             [1/11],
             -[1/11]]
 
-        Test that :trac:`6072` is fixed. ::
+        Test that :issue:`6072` is fixed. ::
 
             sage: G = GammaH(8,[3])
 
@@ -1139,7 +1126,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             sage: B3.rank()
             0
 
-        Test that :trac:`25268` is fixed::
+        Test that :issue:`25268` is fixed::
 
             sage: G = GammaH(20, [13])
             sage: A = ModularSymbols(G, 3)
@@ -1223,14 +1210,12 @@ class BoundarySpace_wtk_eps(BoundarySpace):
 
         INPUT:
 
+        - ``eps`` -- dirichlet.DirichletCharacter, the
+           "Nebentypus" character
 
-        -  ``eps`` - dirichlet.DirichletCharacter, the
-           "Nebentypus" character.
+        - ``weight`` -- integer; the weight = 2
 
-        -  ``weight`` - int, the weight = 2
-
-        -  ``sign`` - int, either -1, 0, or 1
-
+        - ``sign`` -- integer; either -1, 0, or 1
 
         EXAMPLES::
 
@@ -1272,9 +1257,9 @@ class BoundarySpace_wtk_eps(BoundarySpace):
 
     def _is_equiv(self, c1, c2):
         """
-        Return a pair (b, t), where b is True if c1 and c2 are equivalent
-        cusps for self, and False otherwise, and t gives extra information
-        about the equivalence of c1 and c2.
+        Return a pair (b, t), where b is ``True`` if c1 and c2 are equivalent
+        cusps for ``self``, and ``False`` otherwise, and t gives extra
+        information about the equivalence of c1 and c2.
 
         EXAMPLES::
 

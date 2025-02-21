@@ -23,7 +23,7 @@ We test coercions::
     Singular
 
 Test that write errors to stderr are handled gracefully by GAP
-(see :trac:`13211`) and other interfaces::
+(see :issue:`13211`) and other interfaces::
 
     sage: import subprocess
     sage: try:
@@ -41,24 +41,25 @@ Test that write errors to stderr are handled gracefully by GAP
     0
     sage: f.close()
 """
+import sys
 
 from .all import *
 from sage.misc.timing import cputime, walltime
-import sys
+
 
 def manyvars(s, num=70000, inlen=1, step=2000):
     """
     Test that > 65,000 variable names works in each system.
     """
-    print("Testing -- %s" % s)
-    t = '"%s"' % ('9'*int(inlen))
+    print(f"Testing -- {s}")
+    t = '"%s"' % ('9' * int(inlen))
     try:
         t = cputime()
         w = walltime()
         v = []
         for i in range(num):
-            if i % step == 0:
-                sys.stdout.write('%s ' % i)
+            if not i % step:
+                sys.stdout.write(f'{i} ')
                 sys.stdout.flush()
             v.append(s(t))
         print('\nsuccess -- time = cpu: %s, wall: %s' % (cputime(t),
@@ -66,12 +67,14 @@ def manyvars(s, num=70000, inlen=1, step=2000):
     except Exception:
         print("%s -- failed!" % s)
 
+
 def manyvars_all(num=70000):
-    #for s in [gap, gp, singular, kash, magma, octave, maxima, mathematica]:
+    # for s in [gap, gp, singular, kash, magma, octave, maxima, mathematica]:
     for s in [kash, magma, octave, maxima, mathematica]:
         manyvars(s, num)
 
 # bad: maple -- infinite loop -- exception pexpect.EOF: <pexpect.EOF instance at 0xb091250c> in  ignored
+
 
 def manyvars_all2(num=70000):
     for s in [singular, maxima, mathematica, octave]:

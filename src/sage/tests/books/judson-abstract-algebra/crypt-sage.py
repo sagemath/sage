@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -148,5 +147,4 @@ r"""
 
     sage: ''.join(letters)
     'Sage'
-
 """

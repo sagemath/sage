@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 J-trivial semigroups
 """
@@ -13,6 +14,7 @@ J-trivial semigroups
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.semigroups import Semigroups
+
 
 class JTrivialSemigroups(CategoryWithAxiom):
     def extra_super_categories(self):

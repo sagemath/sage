@@ -44,6 +44,7 @@ from sage.misc.randstate cimport current_randstate
 
 ZZ_sage = IntegerRing()
 
+
 def ntl_ZZ_p_random_element(v):
     """
     Return a random number modulo p.
@@ -65,7 +66,6 @@ def ntl_ZZ_p_random_element(v):
     ZZ_p_random(y.x)
     sig_off()
     return y
-
 
 
 ##############################################################################
@@ -92,7 +92,7 @@ cdef class ntl_ZZ_p():
 
     def __init__(self, v=None, modulus=None):
         r"""
-        Initializes an NTL integer mod p.
+        Initialize an NTL integer mod p.
 
         EXAMPLES::
 
@@ -127,7 +127,7 @@ cdef class ntl_ZZ_p():
                 mpz_to_ZZ(&den, (<Integer>v.denominator()).value)
                 ZZ_p_div(self.x, ZZ_to_ZZ_p(num), ZZ_to_ZZ_p(den))
             else:
-                str_v = str(v)  # can cause modulus to change  trac #25790
+                str_v = str(v)  # can cause modulus to change; Issue #25790
                 self.c.restore_c()
                 ccreadstr(self.x, str_v)
 
@@ -154,7 +154,7 @@ cdef class ntl_ZZ_p():
             self.c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_ZZ_p _new(self) noexcept:
+    cdef ntl_ZZ_p _new(self):
         cdef ntl_ZZ_p r
         self.c.restore_c()
         r = ntl_ZZ_p.__new__(ntl_ZZ_p)
@@ -173,7 +173,7 @@ cdef class ntl_ZZ_p():
 
     def modulus_context(self):
         """
-        Return the modulus for self.
+        Return the modulus for ``self``.
 
         EXAMPLES::
 
@@ -191,7 +191,7 @@ cdef class ntl_ZZ_p():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -203,7 +203,7 @@ cdef class ntl_ZZ_p():
 
     def __richcmp__(ntl_ZZ_p self, other, int op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -336,7 +336,7 @@ cdef class ntl_ZZ_p():
 
     def __int__(self):
         """
-        Return self as an int.
+        Return ``self`` as an int.
 
         EXAMPLES::
 
@@ -350,7 +350,7 @@ cdef class ntl_ZZ_p():
 
     cdef int get_as_int(ntl_ZZ_p self) noexcept:
         r"""
-        Returns value as C int.
+        Return value as C int.
         Return value is only valid if the result fits into an int.
 
         AUTHOR: David Harvey (2006-08-05)
@@ -377,7 +377,7 @@ cdef class ntl_ZZ_p():
 
     cdef void set_from_int(ntl_ZZ_p self, int value) noexcept:
         r"""
-        Sets the value from a C int.
+        Set the value from a C int.
 
         AUTHOR: David Harvey (2006-08-05)
         """
@@ -405,7 +405,7 @@ cdef class ntl_ZZ_p():
 
     def lift(self):
         """
-        Return a lift of self as an ntl.ZZ object.
+        Return a lift of ``self`` as an ntl.ZZ object.
 
         EXAMPLES::
 
@@ -422,7 +422,7 @@ cdef class ntl_ZZ_p():
 
     def modulus(self):
         r"""
-        Returns the modulus as an NTL ZZ.
+        Return the modulus as an NTL ZZ.
 
         EXAMPLES::
 
@@ -466,7 +466,7 @@ cdef class ntl_ZZ_p():
 
     def _integer_(self, ZZ=None):
         """
-        Return a lift of self as a Sage integer.
+        Return a lift of ``self`` as a Sage integer.
 
         EXAMPLES::
 
@@ -485,7 +485,7 @@ cdef class ntl_ZZ_p():
 
     def _sage_(self):
         r"""
-        Returns the value as a sage IntegerModRing.
+        Return the value as a sage IntegerModRing.
 
         EXAMPLES::
 

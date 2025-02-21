@@ -9,13 +9,6 @@ This module implements (integral) ideals of orders in number fields.
     ideals of non-maximal orders (compared to the maximal case).
     This should hopefully change in the future.
 
-TESTS:
-
-This module is currently experimental::
-
-    sage: import sage.rings.number_field.order_ideal
-    doctest:warning ...
-
 EXAMPLES::
 
     sage: O = QuadraticField(-1).order(5*i)
@@ -75,12 +68,10 @@ from sage.modules.free_module_element import vector
 from sage.rings.polynomial.polynomial_ring import polygens
 from sage.rings.ideal import Ideal_generic
 
-from sage.misc.superseded import experimental_warning
-experimental_warning(34198, 'Ideals of non-maximal orders are an experimental feature. Be wary of bugs.')
-
 import sage.rings.number_field.order
 
 #TODO I*u works when u lies in I.ring().number_field(), but u*I doesn't
+
 
 def NumberFieldOrderIdeal(O, *args, **kwds):
     r"""
@@ -116,6 +107,7 @@ def NumberFieldOrderIdeal(O, *args, **kwds):
     else:
         cls = NumberFieldOrderIdeal_generic
     return cls(O, *args, **kwds)
+
 
 class NumberFieldOrderIdeal_generic(Ideal_generic):
     r"""
@@ -269,6 +261,7 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         """
         return self.free_module().index_in(self.ring().free_module())
 
+
 def _positive_sqrt(R, D):
     r"""
     Return the "positive" square root of `D` in `R`, which must be
@@ -291,6 +284,7 @@ def _positive_sqrt(R, D):
         return R.zero()
     sqrtD, = (s for s in R(D).sqrt(all=True) if s.real() > 0 or s.imag() > 0)
     return sqrtD
+
 
 def _gens_from_bqf(O, Q):
     r"""
@@ -354,6 +348,7 @@ def _gens_from_bqf(O, Q):
     t = sqrtD if a < 0 else 1
     return a*t, g*t
 
+
 class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
     r"""
     An ideal of a not necessarily maximal order in a *quadratic* number field.
@@ -404,7 +399,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         conj_gens = [g.conjugate() for g in self.gens()]
         return NumberFieldOrderIdeal(self.ring(), conj_gens)
 
-    def gens_two(self):
+    def gens_two(self) -> tuple:
         r"""
         Express this ideal using exactly two generators, the first of
         which is a generator for the intersection of the ideal with `\ZZ`.
@@ -511,7 +506,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             sol = f.solve_integer(-1)
         return sol is not None
 
-    def gens_reduced(self):
+    def gens_reduced(self) -> tuple:
         r"""
         Express this ideal in terms of at most two generators,
         and one if possible (i.e., if the ideal is principal).
@@ -555,7 +550,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             sol = f.solve_integer(-1)
         if sol is None:
             return self.gens_two()
-        gen = sum(c*g for c,g in zip(sol, bas))
+        gen = sum(c * g for c, g in zip(sol, bas))
         assert NumberFieldOrderIdeal(self.ring(), gen) == self
         return (gen,)
 
@@ -567,7 +562,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         If ``narrow`` is ``True``, test narrow equivalence instead.
 
         (Two ideals are equivalent if they differ by multiplication
-        by a non-zero element. They are narrowly equivalent if they
+        by a nonzero element. They are narrowly equivalent if they
         differ by multiplication by an element of positive norm.)
 
         EXAMPLES::

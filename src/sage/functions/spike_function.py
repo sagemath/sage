@@ -32,13 +32,11 @@ class SpikeFunction:
 
     INPUT:
 
-    -  ``v`` -- list of pairs (x, height)
+    - ``v`` -- list of pairs (x, height)
 
-    -  ``eps`` -- parameter that determines approximation to a true spike
+    - ``eps`` -- parameter that determines approximation to a true spike
 
-    OUTPUT:
-
-    a function with spikes at each point ``x`` in ``v`` with the given height.
+    OUTPUT: a function with spikes at each point ``x`` in ``v`` with the given height
 
     EXAMPLES::
 
@@ -71,7 +69,7 @@ class SpikeFunction:
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: S.height
             [4.0, 1.0, 3.0]
-            sage: S.eps
+            sage: S.eps                                                                 # needs sage.rings.real_mpfr
             0.00100000000000000
         """
         if not v:
@@ -127,7 +125,7 @@ class SpikeFunction:
         x = float(x)
         for i in range(len(self.support)):
             z = self.support[i]
-            if z - eps <= x and x <= z + eps:
+            if z - eps <= x <= z + eps:
                 return self.height[i], i
         return float(0), -1
 
@@ -149,7 +147,7 @@ class SpikeFunction:
         """
         return self._eval(x)[0]
 
-    def plot_fft_abs(self, samples=2**12, xmin=None, xmax=None,  **kwds):
+    def plot_fft_abs(self, samples=2**12, xmin=None, xmax=None, **kwds):
         """
         Plot of (absolute values of) Fast Fourier Transform of
         the spike function with given number of samples.
@@ -168,7 +166,7 @@ class SpikeFunction:
         k = vector(RDF, [abs(z[i]) for i in range(len(z)//2)])
         return k.plot(xmin=0, xmax=1, **kwds)
 
-    def plot_fft_arg(self, samples=2**12, xmin=None, xmax=None,  **kwds):
+    def plot_fft_arg(self, samples=2**12, xmin=None, xmax=None, **kwds):
         """
         Plot of (absolute values of) Fast Fourier Transform of
         the spike function with given number of samples.

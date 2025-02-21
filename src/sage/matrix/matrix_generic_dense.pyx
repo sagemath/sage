@@ -61,12 +61,12 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         TESTS:
 
-        We check that the problem related to :trac:`9049` is not an issue any
+        We check that the problem related to :issue:`9049` is not an issue any
         more::
 
             sage: # needs sage.rings.number_field
@@ -81,7 +81,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         ma = MatrixArgs_init(parent, entries)
         self._entries = ma.list(coerce)
 
-    cdef Matrix_generic_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols) noexcept:
+    cdef Matrix_generic_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols):
         r"""
         Return a new dense matrix with no entries set.
         """
@@ -93,12 +93,11 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         cdef type t = <type>type(self)
         return <Matrix_generic_dense>t.__new__(t, MS)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         self._entries[i*self._ncols + j] = value
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries[i*self._ncols + j]
-
 
     def _reverse_unsafe(self):
         r"""
@@ -152,8 +151,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def __copy__(self):
         """
-        Creates a copy of self, which may be changed without altering
-        self.
+        Create a copy of self, which may be changed without altering
+        ``self``.
 
         EXAMPLES::
 
@@ -209,7 +208,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add two generic dense matrices with the same parent.
 
@@ -233,7 +232,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract two generic dense matrices with the same parent.
 
@@ -331,7 +330,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def _list(self):
         """
-        Return reference to list of entries of self.  For internal use
+        Return reference to list of entries of ``self``.  For internal use
         only, since this circumvents immutability.
 
         EXAMPLES::

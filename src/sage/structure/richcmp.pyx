@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Cython-like rich comparisons in Python
 
@@ -68,7 +69,7 @@ richcmp_slotdef[Py_LE] = get_slotdef(bytes.__le__)
 richcmp_slotdef[Py_GE] = get_slotdef(bytes.__ge__)
 
 
-cpdef richcmp_item(x, y, int op) noexcept:
+cpdef richcmp_item(x, y, int op):
     """
     This function is meant to implement lexicographic rich comparison
     of sequences (lists, vectors, polynomials, ...).
@@ -77,15 +78,13 @@ cpdef richcmp_item(x, y, int op) noexcept:
 
     INPUT:
 
-    - ``x``, ``y`` -- arbitrary Python objects. Typically, these are
-      ``X[i]`` and ``Y[i]`` for sequences ``X`` and ``Y``.
+    - ``x``, ``y`` -- arbitrary Python objects; typically, these are
+      ``X[i]`` and ``Y[i]`` for sequences ``X`` and ``Y``
 
-    - ``op`` -- comparison operator (one of ``op_LT`, ``op_LE``,
+    - ``op`` -- comparison operator (one of ``op_LT``, ``op_LE``,
       ``op_EQ``, ``op_NE``, ``op_GT``, ``op_GE``)
 
-    OUTPUT:
-
-    Assuming that ``x = X[i]`` and ``y = Y[i]``:
+    OUTPUT: assuming that ``x = X[i]`` and ``y = Y[i]``:
 
     - if the comparison ``X {op} Y`` (where ``op`` is the given
       operation) could not be decided yet (i.e. we should compare the
@@ -266,7 +265,7 @@ cpdef richcmp_item(x, y, int op) noexcept:
     return NotImplemented
 
 
-cdef slot_tp_richcompare(self, other, int op) noexcept:
+cdef slot_tp_richcompare(self, other, int op):
     """
     Function to put in the ``tp_richcompare`` slot.
     """

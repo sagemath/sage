@@ -83,23 +83,40 @@ class LLT_class(UniqueRepresentation):
         sage: s(HS3t[2,1])
         s[2, 1] + t*s[3]
         sage: HS3x(HS3t[2,1])
-        HSp3[2, 1] + (-x+t)*HSp3[3]
+        HSp3[2, 1] - (x-t)*HSp3[3]
         sage: s(HS3x(HS3t[2,1]))
         s[2, 1] + t*s[3]
         sage: LLT3t2 = Symxt.llt(3,t=2)
         sage: HC3t2 = LLT3t2.hcospin()
         sage: HS3x(HC3t2[3,1])
-        2*HSp3[3, 1] + (-2*x+1)*HSp3[4]
+        2*HSp3[3, 1] - (2*x-1)*HSp3[4]
     """
+    @staticmethod
+    def __classcall__(cls, Sym, k, t='t'):
+        """
+        Normalize the arguments.
 
-    def __init__(self, Sym, k, t='t'):
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).llt(3).hspin()
+            sage: B2 = SymmetricFunctions(R).llt(3, t).hspin()
+            sage: B3 = SymmetricFunctions(R).llt(3, q).hspin()
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
+        """
+        return super().__classcall__(cls, Sym, k, Sym.base_ring()(t))
+
+    def __init__(self, Sym, k, t):
         r"""
-        Class of LLT symmetric function bases
+        Class of LLT symmetric function bases.
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric function bases
-        - ``k`` -- a positive integer (the level)
+        - ``k`` -- positive integer (the level)
         - ``t`` -- a parameter (default: `t`)
 
         EXAMPLES::
@@ -129,7 +146,7 @@ class LLT_class(UniqueRepresentation):
         self._k = k
         self._sym = Sym
         self._name = "level %s LLT polynomials" % self._k
-        self.t = Sym.base_ring()(t)
+        self.t = t
         self._name_suffix = ""
         if str(t) != 't':
             self._name_suffix += " with t=%s" % self.t
@@ -138,15 +155,13 @@ class LLT_class(UniqueRepresentation):
 
     def __repr__(self):
         r"""
-        Representation of the LLT symmetric functions
+        Representation of the LLT symmetric functions.
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric function bases
 
-        OUTPUT:
-
-        - returns a string representing the LLT symmetric functions
+        OUTPUT: a string representing the LLT symmetric functions
 
         EXAMPLES::
 
@@ -166,9 +181,7 @@ class LLT_class(UniqueRepresentation):
 
         - ``self`` -- a family of LLT symmetric functions bases
 
-        OUTPUT:
-
-        - returns the symmetric function ring associated to ``self``.
+        OUTPUT: the symmetric function ring associated to ``self``
 
         EXAMPLES::
 
@@ -180,15 +193,13 @@ class LLT_class(UniqueRepresentation):
 
     def base_ring(self):
         r"""
-        Returns the base ring of ``self``.
+        Return the base ring of ``self``.
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric functions bases
 
-        OUTPUT:
-
-        - returns the base ring of the symmetric function ring associated to ``self``
+        OUTPUT: the base ring of the symmetric function ring associated to ``self``
 
         EXAMPLES::
 
@@ -199,15 +210,13 @@ class LLT_class(UniqueRepresentation):
 
     def level(self):
         r"""
-        Returns the level of ``self``.
+        Return the level of ``self``.
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric functions bases
 
-        OUTPUT:
-
-        - the level is the parameter of `k` in the basis
+        OUTPUT: the level is the parameter of `k` in the basis
 
         EXAMPLES::
 
@@ -218,9 +227,9 @@ class LLT_class(UniqueRepresentation):
 
     def _llt_generic(self, skp, stat):
         r"""
-        Takes in partition, list of partitions, or a list of skew
+        Take in partition, list of partitions, or a list of skew
         partitions as well as a function which takes in two partitions and
-        a level and returns a coefficient.
+        a level and return a coefficient.
 
         INPUT:
 
@@ -347,16 +356,14 @@ class LLT_class(UniqueRepresentation):
 
     def hcospin(self):
         r"""
-        Returns the HCospin basis.
+        Return the HCospin basis.
         This basis is defined [LLT1997]_ equation (27).
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric functions bases
 
-        OUTPUT:
-
-        - returns the h-cospin basis of the LLT symmetric functions
+        OUTPUT: the h-cospin basis of the LLT symmetric functions
 
         EXAMPLES::
 
@@ -378,16 +385,15 @@ class LLT_class(UniqueRepresentation):
 
     def hspin(self):
         r"""
-        Returns the HSpin basis.
+        Return the HSpin basis.
+
         This basis is defined [LLT1997]_ equation (28).
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric functions bases
 
-        OUTPUT:
-
-        - returns the h-spin basis of the LLT symmetric functions
+        OUTPUT: the h-spin basis of the LLT symmetric functions
 
         EXAMPLES::
 
@@ -441,7 +447,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         self._llt = llt
         self._k = llt._k
 
-        sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym)
+        sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym, self._basis_name)
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
         category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
@@ -449,18 +455,36 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         self   .register_coercion(SetMorphism(Hom(self._m, self, category), self._m_to_self))
         self._m.register_coercion(SetMorphism(Hom(self, self._m, category), self._self_to_m))
 
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
+            sage: HSp3 = Sym.llt(3).hspin()
+            sage: HSp3.construction()
+            (SymmetricFunctionsFunctor[level 3 LLT spin],
+             Fraction Field of Univariate Polynomial Ring in t over Rational Field)
+        """
+        from sage.combinat.sf.sfa import SymmetricFunctionsFamilyFunctor
+        return (SymmetricFunctionsFamilyFunctor(self, LLT_class,
+                                                self.basis_name(),
+                                                self._k, self.t),
+                self.base_ring())
+
     def _m_to_self(self, x):
         r"""
-        Isomorphism from the monomial basis into ``self``
+        Isomorphism from the monomial basis into ``self``.
 
         INPUT:
 
-        - ``self`` - an instance of the LLT hspin or hcospin basis
-        - ``x`` - an element of the monomial basis
+        - ``self`` -- an instance of the LLT hspin or hcospin basis
+        - ``x`` -- an element of the monomial basis
 
-        OUTPUT:
-
-        - returns ``x`` expanded in the basis ``self``
+        OUTPUT: ``x`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -480,16 +504,14 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _self_to_m(self, x):
         r"""
-        Isomorphism from self to the monomial basis
+        Isomorphism from ``self`` to the monomial basis.
 
         INPUT:
 
         - ``self`` -- an instance of the LLT hspin or hcospin basis
         - ``x`` -- an element of ``self``
 
-        OUTPUT:
-
-        - returns ``x`` expanded in the monomial basis.
+        OUTPUT: ``x`` expanded in the monomial basis
 
         EXAMPLES::
 
@@ -509,15 +531,13 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def level(self):
         r"""
-        Returns the level of ``self``.
+        Return the level of ``self``.
 
         INPUT:
 
         - ``self`` -- an instance of the LLT hspin or hcospin basis
 
-        OUTPUT:
-
-        - returns the level associated to the basis ``self``.
+        OUTPUT: the level associated to the basis ``self``
 
         EXAMPLES::
 
@@ -535,9 +555,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         - ``self`` -- an instance of the LLT hspin or hcospin basis
 
-        OUTPUT:
-
-        - returns an instance of the family of LLT bases associated to ``self``.
+        OUTPUT: an instance of the family of LLT bases associated to ``self``
 
         EXAMPLES::
 
@@ -557,9 +575,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         - ``self`` -- an instance of the LLT hspin or hcospin basis
         - ``left``, ``right`` -- elements of the symmetric functions
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -580,7 +596,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         INPUT:
 
         - ``self`` -- an instance of the LLT hspin or hcospin basis
-        - ``n`` -- a positive integer representing the degree
+        - ``n`` -- positive integer representing the degree
 
         EXAMPLES::
 
@@ -648,7 +664,7 @@ class LLT_spin(LLT_generic):
 
     def _to_m(self, part):
         r"""
-        Returns a function which gives the coefficient of a partition
+        Return a function which gives the coefficient of a partition
         in the monomial expansion of self(part).
 
         INPUT:
@@ -716,7 +732,7 @@ class LLT_cospin(LLT_generic):
 
     def _to_m(self, part):
         r"""
-        Returns a function which gives the coefficient of part2 in the
+        Return a function which gives the coefficient of part2 in the
         monomial expansion of self(part).
 
         INPUT:
@@ -748,5 +764,5 @@ class LLT_cospin(LLT_generic):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_spin',  LLT_spin.Element)
-register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_cospin',  LLT_cospin.Element)
+register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_spin', LLT_spin.Element)
+register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_cospin', LLT_cospin.Element)

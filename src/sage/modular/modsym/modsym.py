@@ -24,12 +24,8 @@ over a bigger field. In each case we also decompose the space using
     sage: M.T(2).charpoly('x').factor()
     (x - 3) * (x^2 + x - 1)^2
     sage: M.decomposition(2)
-    [
-    Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 5
-      for Gamma_0(23) of weight 2 with sign 0 over Rational Field,
-    Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 5
-      for Gamma_0(23) of weight 2 with sign 0 over Rational Field
-    ]
+    [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 5 for Gamma_0(23) of weight 2 with sign 0 over Rational Field,
+     Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 5 for Gamma_0(23) of weight 2 with sign 0 over Rational Field]
 
 ::
 
@@ -38,17 +34,9 @@ over a bigger field. In each case we also decompose the space using
     sage: M.T(2).charpoly('x').factor()
     (x - 3) * (x - 1/2*sqrt5 + 1/2)^2 * (x + 1/2*sqrt5 + 1/2)^2
     sage: M.decomposition(2)
-    [
-    Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 5
-      for Gamma_0(23) of weight 2 with sign 0 over Number Field in sqrt5
-      with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?,
-    Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 5
-      for Gamma_0(23) of weight 2 with sign 0 over Number Field in sqrt5
-      with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?,
-    Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 5
-      for Gamma_0(23) of weight 2 with sign 0 over Number Field in sqrt5
-      with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-    ]
+    [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 5 for Gamma_0(23) of weight 2 with sign 0 over Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?,
+     Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 5 for Gamma_0(23) of weight 2 with sign 0 over Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?,
+     Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 5 for Gamma_0(23) of weight 2 with sign 0 over Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?]
 
 We compute some Hecke operators and do a consistency check::
 
@@ -57,7 +45,7 @@ We compute some Hecke operators and do a consistency check::
     sage: t2*t5 - t5*t2 == 0
     True
 
-This tests the bug reported in :trac:`1220`::
+This tests the bug reported in :issue:`1220`::
 
     sage: G = GammaH(36, [13, 19])
     sage: G.modular_symbols()
@@ -75,7 +63,7 @@ This test catches a tricky corner case for spaces with character::
      and level 20, weight 3, character [1, -zeta4], sign 1,
      over Cyclotomic Field of order 4 and degree 2
 
-This tests the bugs reported in :trac:`20932`::
+This tests the bugs reported in :issue:`20932`::
 
     sage: chi = kronecker_character(3*34603)
     sage: ModularSymbols(chi, 2, sign=1, base_ring=GF(3))  # not tested  # long time (600 seconds)
@@ -106,10 +94,11 @@ This tests the bugs reported in :trac:`20932`::
 
 import weakref
 
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.fields import Fields
 import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
 from sage.rings.integer import Integer
-from sage.rings.ring import CommutativeRing
 from sage.rings.rational_field import RationalField
 
 
@@ -153,10 +142,10 @@ def canonical_parameters(group, weight, sign, base_ring):
     if base_ring is None:
         base_ring = RationalField()
 
-    if not isinstance(base_ring, CommutativeRing):
+    elif base_ring not in CommutativeRings():
         raise TypeError(f"base_ring (={base_ring}) must be a commutative ring")
 
-    if not base_ring.is_field():
+    elif base_ring not in Fields():
         raise TypeError(f"(currently) base_ring (={base_ring}) must be a field")
 
     return group, weight, sign, base_ring
@@ -183,7 +172,7 @@ def ModularSymbols_clear_cache():
 
     TESTS:
 
-    Make sure :trac:`10548` is fixed::
+    Make sure :issue:`10548` is fixed::
 
         sage: import gc
         sage: m = ModularSymbols(Gamma1(29))
@@ -211,17 +200,17 @@ def ModularSymbols(group=1,
 
     INPUT:
 
-    - ``group`` - A congruence subgroup or a Dirichlet character eps.
-    - ``weight`` - int, the weight, which must be >= 2.
-    - ``sign`` - int, The sign of the involution on modular symbols
+    - ``group`` -- a congruence subgroup or a Dirichlet character eps
+    - ``weight`` -- integer; the weight, which must be >= 2
+    - ``sign`` -- integer; the sign of the involution on modular symbols
       induced by complex conjugation. The default is 0, which means
       "no sign", i.e., take the whole space.
-    - ``base_ring`` - the base ring. Defaults to `\QQ` if no character
+    - ``base_ring`` -- the base ring. Defaults to `\QQ` if no character
       is given, or to the minimal extension of `\QQ` containing the
       values of the character.
-    - ``custom_init`` - a function that is called with self as input
+    - ``custom_init`` -- a function that is called with ``self`` as input
       before any computations are done using self; this could be used
-      to set a custom modular symbols presentation.  If self is
+      to set a custom modular symbols presentation.  If ``self`` is
       already in the cache and use_cache=True, then this function is
       not called.
 
@@ -262,14 +251,8 @@ def ModularSymbols(group=1,
         sage: G = GammaH(15,[4,13])
         sage: M = ModularSymbols(G,2)
         sage: M.decomposition()
-        [
-        Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 5
-          for Congruence Subgroup Gamma_H(15) with H generated by [4, 7]
-          of weight 2 with sign 0 over Rational Field,
-        Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 5
-          for Congruence Subgroup Gamma_H(15) with H generated by [4, 7]
-          of weight 2 with sign 0 over Rational Field
-        ]
+        [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 5 for Congruence Subgroup Gamma_H(15) with H generated by [4, 7] of weight 2 with sign 0 over Rational Field,
+         Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 5 for Congruence Subgroup Gamma_H(15) with H generated by [4, 7] of weight 2 with sign 0 over Rational Field]
 
     We create a space with character::
 
@@ -368,7 +351,7 @@ def ModularSymbols(group=1,
         {}
         sage: M = ModularSymbols(11,use_cache=True)
         sage: sage.modular.modsym.modsym._cache
-        {(Congruence Subgroup Gamma0(11), 2, 0, Rational Field): <weakref at ...; to 'ModularSymbolsAmbient_wt2_g0_with_category' at ...>}
+        {(Congruence Subgroup Gamma0(11), 2, 0, Rational Field): <weakref at ...; to '...ModularSymbolsAmbient_wt2_g0_with_category' at ...>}
         sage: M is ModularSymbols(11,use_cache=True)
         True
         sage: M is ModularSymbols(11,use_cache=False)
@@ -385,7 +368,7 @@ def ModularSymbols(group=1,
     group, weight, sign, base_ring = key
 
     M = None
-    if arithgroup.is_Gamma0(group):
+    if isinstance(group, arithgroup.Gamma0_class):
         if weight == 2:
             M = ambient.ModularSymbolsAmbient_wt2_g0(
                 group.level(), sign, base_ring, custom_init=custom_init)
@@ -393,12 +376,12 @@ def ModularSymbols(group=1,
             M = ambient.ModularSymbolsAmbient_wtk_g0(
                 group.level(), weight, sign, base_ring, custom_init=custom_init)
 
-    elif arithgroup.is_Gamma1(group):
+    elif isinstance(group, arithgroup.Gamma1_class):
 
         M = ambient.ModularSymbolsAmbient_wtk_g1(group.level(),
                             weight, sign, base_ring, custom_init=custom_init)
 
-    elif arithgroup.is_GammaH(group):
+    elif isinstance(group, arithgroup.GammaH_class):
 
         M = ambient.ModularSymbolsAmbient_wtk_gamma_h(group,
                             weight, sign, base_ring, custom_init=custom_init)

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.groups sage.modules
 r"""
 Examples of Hopf algebras with basis
@@ -15,9 +16,10 @@ from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.tensor import tensor
 
+
 class MyGroupAlgebra(CombinatorialFreeModule):
     r"""
-    An example of a Hopf algebra with basis: the group algebra of a group
+    An example of a Hopf algebra with basis: the group algebra of a group.
 
     This class illustrates a minimal implementation of a Hopf algebra with basis.
     """
@@ -48,7 +50,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
     @cached_method
     def one_basis(self):
         """
-        Returns the one of the group, which index the one of this algebra,
+        Return the one of the group, which index the one of this algebra,
         as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::

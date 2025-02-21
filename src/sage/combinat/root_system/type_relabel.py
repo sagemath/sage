@@ -117,7 +117,7 @@ class CartanType(cartan_type.CartanType_decorator):
         TESTS:
 
         Test that the produced Cartan type is in the appropriate
-        abstract classes (see :trac:`13724`)::
+        abstract classes (see :issue:`13724`)::
 
             sage: ct = CartanType(['B',4]).relabel(cycle)
             sage: TestSuite(ct).run()
@@ -146,7 +146,7 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: isinstance(ct, cartan_type.CartanType_simply_laced)
             True
 
-        Check for the original issues of :trac:`13724`::
+        Check for the original issues of :issue:`13724`::
 
             sage: A3 = CartanType("A3")
             sage: A3.cartan_matrix()                                                    # needs sage.graphs
@@ -164,7 +164,7 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: ct.symmetrizer()                                                      # needs sage.graphs
             Finite family {1: 1, 2: 3}
 
-        Check the underlying issue of :trac:`24892`, that the root system
+        Check the underlying issue of :issue:`24892`, that the root system
         of a relabelled non-crystallographic Cartan type has an
         ``ambient_space()`` that does not result in an error (note that
         this should actually return a valid ambient space, which requires
@@ -317,7 +317,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     def dynkin_diagram(self):
         """
-        Returns the Dynkin diagram for this Cartan type.
+        Return the Dynkin diagram for this Cartan type.
 
         EXAMPLES::
 
@@ -358,7 +358,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     def dual(self):
         """
-        Implements :meth:`sage.combinat.root_system.cartan_type.CartanType_abstract.dual`,
+        Implement :meth:`sage.combinat.root_system.cartan_type.CartanType_abstract.dual`,
         using that taking the dual and relabelling are commuting operations.
 
         EXAMPLES::
@@ -599,7 +599,7 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
             0   1   2   3
             B4~ relabelled by {0: 4, 1: 0, 2: 1, 3: 2, 4: 3}
 
-        This failed before :trac:`13724`::
+        This failed before :issue:`13724`::
 
             sage: ct = CartanType(["G",2]).dual(); ct
             ['G', 2] relabelled by {1: 2, 2: 1}
@@ -677,7 +677,6 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
             O---O---O---O
             2   3   4   0
             A4 relabelled by {1: 2, 2: 3, 3: 4, 4: 0}
-
         """
         return self._type.classical().relabel(self._relabelling)
 
@@ -700,7 +699,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def special_node(self):
         r"""
-        Returns a special node of the Dynkin diagram
+        Return a special node of the Dynkin diagram.
 
         .. SEEALSO:: :meth:`~sage.combinat.root_system.CartanType_affine.special_node`
 
@@ -718,7 +717,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def is_untwisted_affine(self):
         """
-        Implement :meth:`CartanType_affine.is_untwisted_affine`
+        Implement :meth:`CartanType_affine.is_untwisted_affine`.
 
         A relabelled Cartan type is untwisted affine if the original is.
 
@@ -726,6 +725,5 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
             sage: CartanType(['B', 3, 1]).relabel({1:2, 2:3, 3:0, 0:1}).is_untwisted_affine()
             True
-
         """
         return self._type.is_untwisted_affine()

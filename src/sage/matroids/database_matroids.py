@@ -38,7 +38,6 @@ collection, see the associated publications, [Bre2023]_ and [BP2023]_.
 
 from sage.matrix.constructor import Matrix
 from sage.matroids.constructor import Matroid
-from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
 from sage.matroids.linear_matroid import (
     RegularMatroid,
     BinaryMatroid,
@@ -59,7 +58,7 @@ from sage.schemes.projective.projective_space import ProjectiveSpace
 # The order is the same as in Oxley.
 
 
-def U24():
+def U24(groundset='abcd'):
     r"""
     The uniform matroid of rank `2` on `4` elements.
 
@@ -70,7 +69,7 @@ def U24():
 
         sage: M = matroids.catalog.U24(); M
         U(2, 4): Matroid of rank 2 on 4 elements with circuit-closures
-        {2: {{0, 1, 2, 3}}}
+        {2: {{'a', 'b', 'c', 'd'}}}
         sage: N = matroids.Uniform(2, 4)
         sage: M.is_isomorphic(N)
         True
@@ -96,12 +95,21 @@ def U24():
     REFERENCES:
 
     [Oxl2011]_, p. 639.
+
+    TESTS::
+
+        sage: M = matroids.catalog.U24(range(4))
+        sage: sorted(M.groundset())
+        [0, 1, 2, 3]
+        sage: M.is_isomorphic(matroids.catalog.U24())
+        True
     """
     M = Uniform(2, 4)
+    M = _rename_and_relabel(M, "U(2, 4)", groundset)
     return M
 
 
-def U25():
+def U25(groundset='abcde'):
     """
     The uniform matroid of rank `2` on `5` elements.
 
@@ -111,7 +119,9 @@ def U25():
 
         sage: U25 = matroids.catalog.U25(); U25
         U(2, 5): Matroid of rank 2 on 5 elements with circuit-closures
-        {2: {{0, 1, 2, 3, 4}}}
+        {2: {{'a', 'b', 'c', 'd', 'e'}}}
+        sage: U25.is_graphic() or U25.is_regular()
+        False
         sage: U35 = matroids.catalog.U35()
         sage: U25.is_isomorphic(U35.dual())
         True
@@ -119,12 +129,19 @@ def U25():
     REFERENCES:
 
     [Oxl2011]_, p. 640.
+
+    TESTS::
+
+        sage: M = matroids.catalog.U25(range(5))
+        sage: sorted(M.groundset())
+        [0, 1, 2, 3, 4]
     """
     M = Uniform(2, 5)
+    M = _rename_and_relabel(M, "U(2, 5)", groundset)
     return M
 
 
-def U35():
+def U35(groundset='abcde'):
     """
     The uniform matroid of rank `3` on `5` elements.
 
@@ -134,7 +151,9 @@ def U35():
 
         sage: U35 = matroids.catalog.U35(); U35
         U(3, 5): Matroid of rank 3 on 5 elements with circuit-closures
-        {3: {{0, 1, 2, 3, 4}}}
+        {3: {{'a', 'b', 'c', 'd', 'e'}}}
+        sage: U35.is_graphic() or U35.is_regular()
+        False
         sage: U25 = matroids.catalog.U25()
         sage: U35.is_isomorphic(U25.dual())
         True
@@ -142,12 +161,19 @@ def U35():
     REFERENCES:
 
     [Oxl2011]_, p. 640.
+
+    TESTS::
+
+        sage: M = matroids.catalog.U35(range(5))
+        sage: sorted(M.groundset())
+        [0, 1, 2, 3, 4]
     """
     M = Uniform(3, 5)
+    M = _rename_and_relabel(M, "U(3, 5)", groundset)
     return M
 
 
-def K4():
+def K4(groundset='abcdef'):
     r"""
     The graphic matroid of the complete graph `K_4`.
 
@@ -155,6 +181,8 @@ def K4():
 
         sage: M = matroids.catalog.K4(); M
         M(K4): Graphic matroid of rank 3 on 6 elements
+        sage: M.is_graphic()
+        True
 
     `M(K_4)` is isomorphic to `M(\mathcal{W}_3)`, the rank-`3` wheel::
 
@@ -176,12 +204,19 @@ def K4():
     REFERENCES:
 
     [Oxl2011]_, p. 640.
+
+    TESTS::
+
+        sage: M = matroids.catalog.K4(range(6))
+        sage: sorted(M.groundset())
+        [0, 1, 2, 3, 4, 5]
     """
     M = CompleteGraphic(4)
+    M = _rename_and_relabel(M, "M(K4)", groundset)
     return M
 
 
-def Whirl3():
+def Whirl3(groundset='abcdef'):
     r"""
     The rank-`3` whirl.
 
@@ -198,8 +233,8 @@ def Whirl3():
         sage: W.automorphism_group().is_transitive()
         False
 
-    For all elements `e`, neither `\mathcal{W}_3 \setminus \{e\}` nor
-    `\mathcal{W}_3 / \{e\}` is `3`-connected::
+    For all elements `e`, neither `\mathcal{W}_3 \setminus \{e\}` nor `\mathcal{W}_3 / \{e\}`
+    is `3`-connected::
 
         sage: import random
         sage: e = random.choice(list(W.groundset()))
@@ -211,12 +246,19 @@ def Whirl3():
     REFERENCES:
 
     [Oxl2011]_, p. 641.
+
+    TESTS::
+
+        sage: W = matroids.catalog.Whirl3(range(6))
+        sage: sorted(W.groundset())
+        [0, 1, 2, 3, 4, 5]
     """
     M = Whirl(3)
+    M = _rename_and_relabel(M, "Whirl(3)", groundset)
     return M
 
 
-def Q6():
+def Q6(groundset='abcdef'):
     """
     Return the matroid `Q_6`, represented over `GF(4)`.
 
@@ -245,12 +287,12 @@ def Q6():
     F = GF(4, 'x')
     x = F.gens()[0]
     A = Matrix(F, [[1, 0, 0, 1, 0, 1], [0, 1, 0, 1, 1, x], [0, 0, 1, 0, 1, 1]])
-    M = QuaternaryMatroid(A, 'abcdef')
-    M.rename("Q6: " + repr(M))
+    M = QuaternaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "Q6")
     return M
 
 
-def P6():
+def P6(groundset=None):
     """
     Return the matroid `P_6`, represented as circuit closures.
 
@@ -266,8 +308,7 @@ def P6():
         {2: {{'a', 'b', 'c'}}, 3: {{'a', 'b', 'c', 'd', 'e', 'f'}}}
         sage: len(set(M.nonspanning_circuits()).difference(M.nonbases())) == 0
         True
-        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5,
-        ....:                                          nrows=5)).has_minor(M)
+        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5, nrows=5)).has_minor(M)
         False
         sage: M.is_valid()
         True
@@ -278,14 +319,13 @@ def P6():
 
     [Oxl2011]_, p. 641-2.
     """
-    E = 'abcdef'
-    CC = {2: ['abc'], 3: [E]}
-    M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename("P6: " + repr(M))
+    CC = {2: ['abc'], 3: ['abcdef']}
+    M = Matroid(circuit_closures=CC)
+    M = _rename_and_relabel(M, "P6", groundset)
     return M
 
 
-def U36():
+def U36(groundset='abcdef'):
     """
     The uniform matroid of rank `3` on `6` elements.
 
@@ -296,7 +336,7 @@ def U36():
 
         sage: U36 = matroids.catalog.U36(); U36
         U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
-        {3: {{0, 1, 2, 3, 4, 5}}}
+        {3: {{'a', 'b', 'c', 'd', 'e', 'f'}}}
         sage: Z = matroids.Spike(3, False)
         sage: U36.is_isomorphic(Z)
         True
@@ -308,12 +348,21 @@ def U36():
     REFERENCES:
 
     [Oxl2011]_, p. 642.
+
+    TESTS::
+
+        sage: M = matroids.catalog.U36(range(6))
+        sage: sorted(M.groundset())
+        [0, 1, 2, 3, 4, 5]
+        sage: M.is_isomorphic(matroids.catalog.U36())
+        True
     """
     M = Uniform(3, 6)
+    M = _rename_and_relabel(M, "U(3, 6)", groundset)
     return M
 
 
-def R6():
+def R6(groundset='abcdef'):
     """
     Return the matroid `R_6`, represented over `GF(3)`.
 
@@ -341,12 +390,12 @@ def R6():
     A = Matrix(
         GF(3), [[1, 0, 0, 1, 1, 1], [0, 1, 0, 1, 2, 1], [0, 0, 1, 1, 0, 2]]
     )
-    M = TernaryMatroid(A, 'abcdef')
-    M.rename("R6: " + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "R6")
     return M
 
 
-def Fano():
+def Fano(groundset='abcdefg'):
     r"""
     Return the Fano matroid, represented over `GF(2)`.
 
@@ -391,12 +440,12 @@ def Fano():
         GF(2),
         [[1, 0, 0, 0, 1, 1, 1], [0, 1, 0, 1, 0, 1, 1], [0, 0, 1, 1, 1, 0, 1]]
     )
-    M = BinaryMatroid(A, 'abcdefg')
-    M.rename("Fano: " + repr(M))
+    M = BinaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "Fano")
     return M
 
 
-def FanoDual():
+def FanoDual(groundset='abcdefg'):
     """
     Return the dual of the Fano matroid.
 
@@ -425,13 +474,19 @@ def FanoDual():
     REFERENCES:
 
     [Oxl2011]_, p. 643.
+
+    TESTS::
+
+        sage: F7D = matroids.catalog.FanoDual(range(7))
+        sage: sorted(F7D.groundset())
+        [0, 1, 2, 3, 4, 5, 6]
     """
     M = Fano().dual()
-    M.rename("F7*: " + repr(M))
+    M = _rename_and_relabel(M, "F7*", groundset)
     return M
 
 
-def NonFano():
+def NonFano(groundset='abcdefg'):
     """
     Return the non-Fano matroid, represented over `GF(3)`.
 
@@ -445,8 +500,8 @@ def NonFano():
         sage: M = matroids.catalog.NonFano(); M
         NonFano: Ternary matroid of rank 3 on 7 elements, type 0-
         sage: setprint(M.nonbases())
-        [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'}, {'b', 'c', 'd'},
-         {'b', 'e', 'g'}, {'c', 'f', 'g'}]
+        [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'},
+         {'b', 'c', 'd'}, {'b', 'e', 'g'}, {'c', 'f', 'g'}]
         sage: M.delete('f').is_isomorphic(matroids.CompleteGraphic(4))
         True
         sage: M.delete('g').is_isomorphic(matroids.CompleteGraphic(4))
@@ -460,12 +515,12 @@ def NonFano():
         GF(3),
         [[1, 0, 0, 0, 1, 1, 1], [0, 1, 0, 1, 0, 1, 1], [0, 0, 1, 1, 1, 0, 1]]
     )
-    M = TernaryMatroid(A, 'abcdefg')
-    M.rename("NonFano: " + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "NonFano")
     return M
 
 
-def NonFanoDual():
+def NonFanoDual(groundset='abcdefg'):
     r"""
     Return the dual of the non-Fano matroid.
 
@@ -479,8 +534,8 @@ def NonFanoDual():
         sage: sorted(M.groundset())
         ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 
-    Every single-element contraction of `(F_7^-)^*` is isomorphic to `M(K_4)`
-    or `\mathcal{W}^3`::
+    Every single-element contraction of `(F_7^-)^*` is isomorphic to `M(K_4)` or
+    `\mathcal{W}^3`::
 
         sage: import random
         sage: e = random.choice(list(M.groundset()))
@@ -493,13 +548,21 @@ def NonFanoDual():
     REFERENCES:
 
     [Oxl2011]_, p. 643-4.
+
+    TESTS::
+
+        sage: M = matroids.catalog.NonFanoDual(range(7))
+        sage: sorted(M.groundset())
+        [0, 1, 2, 3, 4, 5, 6]
+        sage: M.is_isomorphic(matroids.catalog.NonFanoDual())
+        True
     """
     M = NonFano().dual()
-    M.rename("NonFano*: " + repr(M))
+    M = _rename_and_relabel(M, "NonFano*", groundset)
     return M
 
 
-def O7():
+def O7(groundset='abcdefg'):
     """
     Return the matroid `O_7`, represented over `GF(3)`.
 
@@ -524,12 +587,12 @@ def O7():
         GF(3),
         [[1, 0, 0, 1, 1, 1, 1], [0, 1, 0, 0, 1, 2, 2], [0, 0, 1, 1, 0, 1, 0]]
     )
-    M = TernaryMatroid(A, 'abcdefg')
-    M.rename("O7: " + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "O7")
     return M
 
 
-def P7():
+def P7(groundset='abcdefg'):
     """
     Return the matroid `P_7`, represented over `GF(3)`.
 
@@ -542,7 +605,7 @@ def P7():
 
         sage: M = matroids.catalog.P7(); M
         P7: Ternary matroid of rank 3 on 7 elements, type 1+
-        sage: M.f_vector()
+        sage: M.whitney_numbers2()
         [1, 7, 11, 1]
         sage: M.has_minor(matroids.CompleteGraphic(4))
         False
@@ -557,12 +620,12 @@ def P7():
         GF(3),
         [[1, 0, 0, 2, 1, 1, 0], [0, 1, 0, 1, 1, 0, 1], [0, 0, 1, 1, 0, 1, 1]]
     )
-    M = TernaryMatroid(A, 'abcdefg')
-    M.rename("P7: " + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "P7")
     return M
 
 
-def AG32():
+def AG32(groundset='abcdefgh'):
     """
     Return the matroid `AG(3, 2)`.
 
@@ -585,8 +648,8 @@ def AG32():
         sage: M.equals(M.dual())
         True
 
-    Every single-element deletion is isomorphic to `F_7^*` and every
-    single-element contraction is isomorphic to `F_7`::
+    Every single-element deletion is isomorphic to `F_7^*` and every single-element
+    contraction is isomorphic to `F_7`::
 
         sage: F7 = matroids.catalog.Fano()
         sage: F7D = matroids.catalog.FanoDual()
@@ -602,10 +665,11 @@ def AG32():
     [Oxl2011]_, p. 645.
     """
     M = AG(3, 2)
+    M = _rename_and_relabel(M, "AG(3, 2)", groundset)
     return M
 
 
-def AG32prime():
+def AG32prime(groundset=None):
     """
     Return the matroid `AG(3, 2)'`, represented as circuit closures.
 
@@ -630,7 +694,7 @@ def AG32prime():
          {'b', 'c', 'd', 'g'}, {'b', 'c', 'e', 'f'}, {'b', 'd', 'f', 'h'},
          {'b', 'e', 'g', 'h'}, {'c', 'd', 'e', 'h'}, {'c', 'f', 'g', 'h'},
          {'d', 'e', 'f', 'g'}]
-        sage: M.is_valid()  # long time
+        sage: M.is_valid()
         True
         sage: M.automorphism_group().is_transitive()
         False
@@ -640,8 +704,8 @@ def AG32prime():
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
         True
 
-    Every single-element deletion is isomorphic to `F_7^*` or `(F_7^-)^*` and
-    every single-element contraction is isomorphic to `F_7` or `F_7^-`::
+    Every single-element deletion is isomorphic to `F_7^*` or `(F_7^-)^*` and every
+    single-element contraction is isomorphic to `F_7` or `F_7^-`::
 
         sage: F7 = matroids.catalog.Fano()
         sage: F7D = matroids.catalog.FanoDual()
@@ -666,12 +730,12 @@ def AG32prime():
         ],
         4: ['abcdefgh'],
     }
-    M = CircuitClosuresMatroid(groundset='abcdefgh', circuit_closures=CC)
-    M.rename("AG(3, 2)': " + repr(M))
+    M = Matroid(circuit_closures=CC)
+    M = _rename_and_relabel(M, "AG(3, 2)'", groundset)
     return M
 
 
-def R8():
+def R8(groundset='abcdefgh'):
     """
     Return the matroid `R_8`, represented over `GF(3)`.
 
@@ -718,12 +782,12 @@ def R8():
             [0, 0, 0, 1, 1, 1, 1, 2],
         ],
     )
-    M = TernaryMatroid(A, 'abcdefgh')
-    M.rename("R8: " + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "R8")
     return M
 
 
-def F8():
+def F8(groundset=None):
     """
     Return the matroid `F_8`, represented as circuit closures.
 
@@ -740,8 +804,7 @@ def F8():
              {'a', 'e', 'f', 'h'}, {'b', 'c', 'd', 'g'}, {'b', 'c', 'e', 'f'},
              {'c', 'd', 'e', 'h'}, {'c', 'f', 'g', 'h'}, {'d', 'e', 'f', 'g'}},
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
-        sage: D = get_nonisomorphic_matroids([M.contract(i)
-        ....:                                         for i in M.groundset()])
+        sage: D = get_nonisomorphic_matroids([M.contract(i) for i in M.groundset()])
         sage: len(D)
         3
         sage: [N.is_isomorphic(matroids.catalog.Fano()) for N in D]
@@ -767,12 +830,12 @@ def F8():
         ],
         4: ['abcdefgh'],
     }
-    M = CircuitClosuresMatroid(groundset='abcdefgh', circuit_closures=CC)
-    M.rename("F8: " + repr(M))
+    M = Matroid(circuit_closures=CC)
+    M = _rename_and_relabel(M, "F8", groundset)
     return M
 
 
-def Q8():
+def Q8(groundset=None):
     """
     Return the matroid `Q_8`, represented as circuit closures.
 
@@ -816,12 +879,12 @@ def Q8():
         ],
         4: ['abcdefgh'],
     }
-    M = CircuitClosuresMatroid(groundset='abcdefgh', circuit_closures=CC)
-    M.rename("Q8: " + repr(M))
+    M = Matroid(circuit_closures=CC)
+    M = _rename_and_relabel(M, "Q8", groundset)
     return M
 
 
-def L8():
+def L8(groundset=None):
     """
     Return the matroid `L_8`, represented as circuit closures.
 
@@ -848,9 +911,9 @@ def L8():
     Every single-element contraction is isomorphic to the free extension of
     `M(K_4)`::
 
-        sage: K4 = matroids.catalog.K4()
+        sage: K4 = matroids.catalog.K4(range(6))
         sage: Bext = [list(b) for b in K4.bases()] + [list(I)+[6] for I in
-        ....:                                         K4.independent_r_sets(2)]
+        ....:                                         K4.independent_sets(2)]
         sage: K4ext = Matroid(bases=Bext)
         sage: import random
         sage: e = random.choice(list(M.groundset()))
@@ -863,12 +926,12 @@ def L8():
     """
     CC = {3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'aceg', 'bdfh'],
           4: ['abcdefgh']}
-    M = CircuitClosuresMatroid(groundset='abcdefgh', circuit_closures=CC)
-    M.rename("L8: " + repr(M))
+    M = Matroid(circuit_closures=CC)
+    M = _rename_and_relabel(M, "L8", groundset)
     return M
 
 
-def S8():
+def S8(groundset='abcdefgh'):
     """
     Return the matroid `S_8`, represented over `GF(2)`.
 
@@ -891,8 +954,7 @@ def S8():
         sage: M.is_graphic()
         False
         sage: D = get_nonisomorphic_matroids(
-        ....:       list(matroids.catalog.Fano().linear_coextensions(
-        ....:                                                 cosimple=True)))
+        ....:       list(matroids.catalog.Fano().linear_coextensions(cosimple=True)))
         sage: len(D)
         2
         sage: [N.is_isomorphic(M) for N in D]
@@ -915,12 +977,12 @@ def S8():
             [0, 0, 0, 1, 1, 1, 1, 1],
         ],
     )
-    M = BinaryMatroid(A, 'abcdefgh')
-    M.rename("S8: " + repr(M))
+    M = BinaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "S8")
     return M
 
 
-def Vamos():
+def Vamos(groundset=None):
     r"""
     Return the `V\acute{a}mos` matroid, represented as circuit closures.
 
@@ -941,7 +1003,7 @@ def Vamos():
          {'c', 'd', 'e', 'f'}, {'e', 'f', 'g', 'h'}]
         sage: M.is_dependent(['c', 'd', 'g', 'h'])
         False
-        sage: M.is_valid()  # long time
+        sage: M.is_valid() and M.is_paving()  # long time
         True
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
         True
@@ -953,12 +1015,12 @@ def Vamos():
     [Oxl2011]_, p. 649.
     """
     CC = {3: ['abcd', 'abef', 'cdef', 'abgh', 'efgh'], 4: ['abcdefgh']}
-    M = CircuitClosuresMatroid(groundset='abcdefgh', circuit_closures=CC)
-    M.rename("Vamos: " + repr(M))
+    M = Matroid(circuit_closures=CC)
+    M = _rename_and_relabel(M, "Vamos", groundset)
     return M
 
 
-def T8():
+def T8(groundset='abcdefgh'):
     """
     Return the matroid `T_8`, represented over `GF(3)`.
 
@@ -994,12 +1056,12 @@ def T8():
             [0, 0, 0, 1, 1, 1, 1, 0],
         ],
     )
-    M = TernaryMatroid(A, 'abcdefgh')
-    M.rename("T8: " + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "T8")
     return M
 
 
-def J():
+def J(groundset='abcdefgh'):
     """
     Return the matroid `J`, represented over `GF(3)`.
 
@@ -1035,12 +1097,12 @@ def J():
             [0, 0, 0, 1, 1, 0, 0, 1],
         ],
     )
-    M = TernaryMatroid(A, 'abcdefgh')
-    M.rename("J: " + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "J")
     return M
 
 
-def P8():
+def P8(groundset='abcdefgh'):
     """
     Return the matroid `P_8`, represented over `GF(3)`.
 
@@ -1055,8 +1117,7 @@ def P8():
         P8: Ternary matroid of rank 4 on 8 elements, type 2+
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
         True
-        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5,
-        ....:                              nrows=5)).has_minor(M)
+        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5, nrows=5)).has_minor(M)
         False
         sage: M.bicycle_dimension()
         2
@@ -1074,12 +1135,12 @@ def P8():
             [0, 0, 0, 1, 0, 1, 1, 2],
         ],
     )
-    M = TernaryMatroid(A, 'abcdefgh')
-    M.rename("P8: " + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "P8")
     return M
 
 
-def P8pp():
+def P8pp(groundset=None):
     """
     Return the matroid `P_8^=`, represented as circuit closures.
 
@@ -1092,31 +1153,25 @@ def P8pp():
 
         sage: from sage.matroids.advanced import *
         sage: M = matroids.catalog.P8pp(); M
-        P8'': Matroid of rank 4 on 8 elements with circuit-closures
-        {3: {{'a', 'b', 'f', 'h'}, {'a', 'c', 'e', 'f'}, {'a', 'c', 'g', 'h'},
-             {'a', 'd', 'e', 'g'}, {'b', 'c', 'e', 'g'}, {'b', 'd', 'e', 'h'},
-             {'b', 'd', 'f', 'g'}, {'c', 'd', 'f', 'h'}},
-         4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
+        P8'': Matroid of rank 4 on 8 elements with 8 nonspanning circuits
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
         True
-        sage: len(get_nonisomorphic_matroids([M.contract(i)
-        ....:                                        for i in M.groundset()]))
+        sage: len(get_nonisomorphic_matroids([M.contract(i) for i in M.groundset()]))
         1
-        sage: M.is_valid()  # long time
+        sage: M.is_valid() and M.is_paving()
         True
 
     REFERENCES:
 
     [Oxl2011]_, p. 651.
     """
-    CC = {3: ['abfh', 'bceg', 'cdfh', 'adeg', 'acef', 'bdfg', 'acgh', 'bdeh'],
-          4: ['abcdefgh']}
-    M = CircuitClosuresMatroid(groundset='abcdefgh', circuit_closures=CC)
-    M.rename("P8'': " + repr(M))
+    NSC = ['abfh', 'bceg', 'cdfh', 'adeg', 'acef', 'bdfg', 'acgh', 'bdeh']
+    M = Matroid(rank=4, nonspanning_circuits=NSC)
+    M = _rename_and_relabel(M, "P8''", groundset)
     return M
 
 
-def Wheel4():
+def Wheel4(groundset='abcdefgh'):
     """
     Return the rank-`4` wheel.
 
@@ -1139,10 +1194,11 @@ def Wheel4():
     [Oxl2011]_, p. 651-2.
     """
     M = Wheel(4)
+    M = _rename_and_relabel(M, "Wheel(4)", groundset)
     return M
 
 
-def Whirl4():
+def Whirl4(groundset='abcdefgh'):
     """
     Return the rank-`4` whirl.
 
@@ -1165,10 +1221,11 @@ def Whirl4():
     [Oxl2011]_, p. 652.
     """
     M = Whirl(4)
+    M = _rename_and_relabel(M, "Whirl(4)", groundset)
     return M
 
 
-def K33dual():
+def K33dual(groundset='abcdefghi'):
     """
     Return the matroid `M*(K_{3, 3})`, represented over the regular partial
     field.
@@ -1179,10 +1236,10 @@ def K33dual():
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: M = matroids.catalog.K33dual(); M
         M*(K3, 3): Regular matroid of rank 4 on 9 elements with 81 bases
-        sage: any(N.is_3connected()
-        ....:     for N in M.linear_extensions(simple=True))
+        sage: any(N.is_3connected() for N in M.linear_extensions(simple=True))
         False
         sage: M.is_valid()
         True
@@ -1196,13 +1253,13 @@ def K33dual():
     from sage.graphs.graph_generators import graphs
 
     G = graphs.CompleteBipartiteGraph(3, 3)
-    M = Matroid(groundset='abcdefghi', graph=G, regular=True)
+    M = Matroid(groundset=groundset, graph=G, regular=True)
     M = M.dual()
-    M.rename("M*(K3, 3): " + repr(M))
+    M = _rename_and_relabel(M, "M*(K3, 3)")
     return M
 
 
-def K33():
+def K33(groundset='abcdefghi'):
     r"""
     Return the graphic matroid `M(K_{3,3})`.
 
@@ -1210,6 +1267,7 @@ def K33():
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: M = matroids.catalog.K33(); M
         M(K3, 3): Regular matroid of rank 5 on 9 elements with 81 bases
         sage: M.is_valid()
@@ -1226,12 +1284,12 @@ def K33():
     from sage.graphs.graph_generators import graphs
 
     G = graphs.CompleteBipartiteGraph(3, 3)
-    M = Matroid(groundset='abcdefghi', graph=G, regular=True)
-    M.rename("M(K3, 3): " + repr(M))
+    M = Matroid(groundset=groundset, graph=G, regular=True)
+    M = _rename_and_relabel(M, "M(K3, 3)")
     return M
 
 
-def AG23():
+def AG23(groundset='abcdefghi'):
     """
     Return the matroid `AG(2, 3)`.
 
@@ -1258,10 +1316,11 @@ def AG23():
     [Oxl2011]_, p. 653.
     """
     M = AG(2, 3)
+    M = _rename_and_relabel(M, "AG(2, 3)", groundset)
     return M
 
 
-def TernaryDowling3():
+def TernaryDowling3(groundset='abcdefghi'):
     r"""
     Return the matroid `Q_3(GF(3)^\times)`, represented over `GF(3)`.
 
@@ -1292,13 +1351,13 @@ def TernaryDowling3():
             [0, 0, 1, 0, 0, 2, 1, 2, 1],
         ],
     )
-    M = TernaryMatroid(A, 'abcdefghi')
-    M.rename("Q3(GF(3)x): " + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "Q3(GF(3)x)")
     return M
 
 
-def R9():
-    r"""
+def R9(groundset=None):
+    """
     Return the matroid `R_9`.
 
     The ternary Reid geometry. The only `9`-element rank-`3` simple ternary
@@ -1308,7 +1367,7 @@ def R9():
     EXAMPLES::
 
         sage: M = matroids.catalog.R9(); M
-        R9: Matroid of rank 3 on 9 elements with 69 bases
+        R9: Matroid of rank 3 on 9 elements with 15 nonspanning circuits
         sage: M.is_valid()
         True
         sage: len(M.nonspanning_circuits())
@@ -1325,7 +1384,7 @@ def R9():
     NSC = ['abc', 'abd', 'acd', 'aef', 'agh', 'bcd', 'bfh', 'bgi',
            'ceg', 'cfi', 'deh', 'dei', 'dfg', 'dhi', 'ehi']
     M = Matroid(rank=3, nonspanning_circuits=NSC)
-    M.rename("R9: " + repr(M))
+    M = _rename_and_relabel(M, "R9", groundset)
     return M
 
 
@@ -1342,18 +1401,14 @@ def Pappus(groundset=None):
 
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.catalog.Pappus(); M
-        Pappus: Matroid of rank 3 on 9 elements with circuit-closures
-        {2: {{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'},
-             {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
-             {'c', 'e', 'g'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}},
-         3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}
+        Pappus: Matroid of rank 3 on 9 elements with 9 nonspanning circuits
         sage: setprint(M.nonspanning_circuits())
         [{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'}, {'b', 'd', 'i'},
          {'b', 'f', 'g'}, {'c', 'd', 'h'}, {'c', 'e', 'g'}, {'d', 'e', 'f'},
          {'g', 'h', 'i'}]
         sage: M.is_dependent(['d', 'e', 'f'])
         True
-        sage: M.is_valid()  # long time
+        sage: M.is_valid()
         True
         sage: M.automorphism_group().is_transitive()
         True
@@ -1362,14 +1417,13 @@ def Pappus(groundset=None):
 
     [Oxl2011]_, p. 655.
     """
-    CC = {2: ['abc', 'def', 'ceg', 'bfg', 'cdh', 'afh', 'bdi', 'aei', 'ghi'],
-          3: ['abcdefghi']}
-    M = CircuitClosuresMatroid(groundset='abcdefghi', circuit_closures=CC)
-    M.rename("Pappus: " + repr(M))
+    NSC = ['abc', 'def', 'ceg', 'bfg', 'cdh', 'afh', 'bdi', 'aei', 'ghi']
+    M = Matroid(rank=3, nonspanning_circuits=NSC)
+    M = _rename_and_relabel(M, "Pappus", groundset)
     return M
 
 
-def NonPappus():
+def NonPappus(groundset=None):
     """
     Return the non-Pappus matroid.
 
@@ -1379,19 +1433,16 @@ def NonPappus():
 
     EXAMPLES::
 
-        sage: from sage.matroids.advanced import setprint
         sage: M = matroids.catalog.NonPappus(); M
-        NonPappus: Matroid of rank 3 on 9 elements with circuit-closures
-        {2: {{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'},
-             {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
-             {'c', 'e', 'g'}, {'g', 'h', 'i'}},
-         3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}
-        sage: setprint(M.nonspanning_circuits())
-        [{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'}, {'b', 'd', 'i'},
-         {'b', 'f', 'g'}, {'c', 'd', 'h'}, {'c', 'e', 'g'}, {'g', 'h', 'i'}]
+        NonPappus: Matroid of rank 3 on 9 elements with 8 nonspanning circuits
+        sage: NSC = set([('a', 'b', 'c'), ('a', 'e', 'i'), ('a', 'f', 'h'),
+        ....:            ('b', 'd', 'i'), ('b', 'f', 'g'), ('c', 'd', 'h'),
+        ....:            ('c', 'e', 'g'), ('g', 'h', 'i')])
+        sage: NSC == set(tuple(sorted(C)) for C in M.nonspanning_circuits())
+        True
         sage: M.is_dependent(['d', 'e', 'f'])
         False
-        sage: M.is_valid()  # long time
+        sage: M.is_valid() and M.is_paving()
         True
         sage: M.automorphism_group().is_transitive()
         False
@@ -1400,19 +1451,18 @@ def NonPappus():
 
     [Oxl2011]_, p. 655.
     """
-    CC = {2: ['abc', 'ceg', 'bfg', 'cdh', 'afh', 'bdi', 'aei', 'ghi'],
-          3: ['abcdefghi']}
-    M = CircuitClosuresMatroid(groundset='abcdefghi', circuit_closures=CC)
-    M.rename("NonPappus: " + repr(M))
+    NSC = ['abc', 'ceg', 'bfg', 'cdh', 'afh', 'bdi', 'aei', 'ghi']
+    M = Matroid(rank=3, nonspanning_circuits=NSC)
+    M = _rename_and_relabel(M, "NonPappus", groundset)
     return M
 
 
-def K5():
+def K5(groundset='abcdefghij'):
     """
     Return the graphic matroid `M(K_5)`.
 
     `M(K_5)` is an excluded minor for the class of cographic matroids. It is
-    the `3`-dimensional Desargues conﬁguration.
+    the `3`-dimensional Desargues configuration.
 
     EXAMPLES::
 
@@ -1428,10 +1478,11 @@ def K5():
     [Oxl2011]_, p. 656.
     """
     M = CompleteGraphic(5)
+    M = _rename_and_relabel(M, "M(K5)", groundset)
     return M
 
 
-def K5dual():
+def K5dual(groundset='abcdefghij'):
     """
     Return the matroid `M^*(K_5)`.
 
@@ -1440,7 +1491,7 @@ def K5dual():
     EXAMPLES::
 
         sage: M = matroids.catalog.K5dual(); M
-        M*(K5): Dual of 'M(K5): Graphic matroid of rank 4 on 10 elements'
+        M*(K5): Dual of 'Graphic matroid of rank 4 on 10 elements'
         sage: M.is_3connected()
         True
         sage: G1 = M.automorphism_group()
@@ -1453,15 +1504,15 @@ def K5dual():
     [Oxl2011]_, p. 656.
     """
     M = CompleteGraphic(5).dual()
-    M.rename("M*(K5): " + repr(M))
+    M = _rename_and_relabel(M, "M*(K5)", groundset)
     return M
 
 
-def R10():
+def R10(groundset='abcdefghij'):
     """
     Return the matroid `R_{10}`, represented over the regular partial field.
 
-    The matroid `R_{10}` is a 10-element regular matroid of rank-5. It is the
+    The NonDesargues matroid is a `10`-element matroid of rank-5. It is the
     unique splitter for the class of regular matroids. It is the graft matroid
     of `K_{3, 3}` in which every vertex is coloured.
 
@@ -1471,7 +1522,7 @@ def R10():
         R10: Regular matroid of rank 5 on 10 elements with 162 bases
         sage: cct = []
         sage: for i in M.circuits():
-        ....:      cct.append(len(i))
+        ....:     cct.append(len(i))
         sage: Set(cct)
         {4, 6}
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
@@ -1512,8 +1563,8 @@ def R10():
             [0, 0, 0, 0, 1, 1, 0, 0, 1, -1],
         ],
     )
-    M = RegularMatroid(A, 'abcdefghij')
-    M.rename("R10: " + repr(M))
+    M = RegularMatroid(A, groundset)
+    M = _rename_and_relabel(M, "R10")
     return M
 
 
@@ -1527,7 +1578,8 @@ def NonDesargues(groundset=None):
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.NonDesargues()
+        sage: M = matroids.catalog.NonDesargues(); M
+        NonDesargues: Matroid of rank 3 on 10 elements with 9 nonspanning circuits
         sage: M.is_valid()
         True
         sage: M.automorphism_group().is_transitive()
@@ -1539,7 +1591,7 @@ def NonDesargues(groundset=None):
     """
     NSC = ['acj', 'aef', 'bce', 'bfj', 'bgi', 'chi', 'dfg', 'dij', 'egh']
     M = Matroid(rank=3, nonspanning_circuits=NSC)
-    M.rename("NonDesargues: " + repr(M))
+    M = _rename_and_relabel(M, "NonDesargues", groundset)
     return M
 
 
@@ -1558,7 +1610,7 @@ def R12(groundset='abcdefghijkl'):
         R12: Regular matroid of rank 6 on 12 elements with 441 bases
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
         True
-        sage: M.is_valid()  # long time
+        sage: M.is_valid()
         True
         sage: M.automorphism_group().is_transitive()
         False
@@ -1578,12 +1630,12 @@ def R12(groundset='abcdefghijkl'):
             [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1],
         ],
     )
-    M = RegularMatroid(A, 'abcdefghijkl')
-    M.rename("R12: " + repr(M))
+    M = RegularMatroid(A, groundset)
+    M = _rename_and_relabel(M, "R12")
     return M
 
 
-def ExtendedTernaryGolayCode():
+def ExtendedTernaryGolayCode(groundset='abcdefghijkl'):
     """
     Return the matroid of the extended ternary Golay code.
 
@@ -1595,13 +1647,14 @@ def ExtendedTernaryGolayCode():
         Extended Ternary Golay Code: Ternary matroid of rank 6 on 12 elements,
         type 6+
         sage: C = LinearCode(M.representation())
-        sage: C.is_permutation_equivalent(codes.GolayCode(GF(3)))  # long time
+        sage: C.is_permutation_equivalent(codes.GolayCode(GF(3)))
         True
         sage: M.is_valid()
         True
 
     The automorphism group is the `5`-transitive Mathieu group `M12`:
 
+        sage: # long time
         sage: G = M.automorphism_group()
         sage: G.is_transitive()
         True
@@ -1646,12 +1699,12 @@ def ExtendedTernaryGolayCode():
         [0, 0, 0, 0, 1, 0, 1, 0, 2, 2, 1, 1],
         [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1]
     ])
-    M = TernaryMatroid(A, 'abcdefghijkl')
-    M.rename('Extended Ternary Golay Code: ' + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "Extended Ternary Golay Code")
     return M
 
 
-def T12():
+def T12(groundset='abcdefghijkl'):
     """
     Return the matroid `T_{12}`.
 
@@ -1687,12 +1740,12 @@ def T12():
             [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1],
         ],
     )
-    M = BinaryMatroid(A, 'abcdefghijkl')
-    M.rename("T12: " + repr(M))
+    M = BinaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "T12")
     return M
 
 
-def PG23():
+def PG23(groundset=None):
     """
     Return the matroid `PG23`.
 
@@ -1713,24 +1766,24 @@ def PG23():
     [Oxl2011]_, p. 659.
     """
     M = PG(2, 3)
+    M = _rename_and_relabel(M, groundset=groundset)
     return M
 
 
-def Wheel(r, field=None, ring=None):
+def Wheel(r, field=None, ring=None, groundset=None):
     r"""
     Return the rank-`r` wheel.
 
     INPUT:
 
-    - ``r`` -- a positive integer; the rank of the desired matroid
+    - ``r`` -- positive integer; the rank of the matroid
     - ``ring`` -- any ring; if provided, output will be a linear matroid
       over the ring or field ``ring``. If the ring is `\ZZ`, then output
       will be a regular matroid.
     - ``field`` -- any field; same as ``ring``, but only fields are allowed
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT:
-
-    the rank-`r` wheel matroid, represented as a regular matroid
+    OUTPUT: the rank-`r` wheel matroid, represented as a regular matroid
 
     EXAMPLES::
 
@@ -1788,11 +1841,11 @@ def Wheel(r, field=None, ring=None):
         M = RegularMatroid(A)
     else:
         M = Matroid(A)
-    M.rename("Wheel(" + str(r) + "): " + repr(M))
+    M = _rename_and_relabel(M, f'Wheel({r})', groundset)
     return M
 
 
-def Whirl(r):
+def Whirl(r, groundset=None):
     r"""
     Return the rank-`r` whirl.
 
@@ -1800,11 +1853,10 @@ def Whirl(r):
 
     INPUT:
 
-    - ``r`` -- a positive integer; the rank of the desired matroid.
+    - ``r`` -- positive integer; the rank of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT:
-
-    the rank-`r` whirl matroid, represented as a ternary matroid
+    OUTPUT: the rank-`r` whirl matroid, represented as a ternary matroid
 
     EXAMPLES::
 
@@ -1813,8 +1865,8 @@ def Whirl(r):
         sage: M.is_valid()
         True
         sage: M.tutte_polynomial()
-        x^5 + y^5 + 5*x^4 + 5*x^3*y + 5*x^2*y^2 + 5*x*y^3 + 5*y^4 + 10*x^3 +
-        15*x^2*y + 15*x*y^2 + 10*y^3 + 10*x^2 + 15*x*y + 10*y^2 + 5*x + 5*y
+        x^5 + y^5 + 5*x^4 + 5*x^3*y + 5*x^2*y^2 + 5*x*y^3 + 5*y^4 + 10*x^3 + 15*x^2*y +
+         15*x*y^2 + 10*y^3 + 10*x^2 + 15*x*y + 10*y^2 + 5*x + 5*y
         sage: M.is_isomorphic(matroids.Wheel(5))
         False
         sage: M = matroids.Whirl(3)
@@ -1858,11 +1910,11 @@ def Whirl(r):
         else:
             A[i, 2 * r - 1] = 1
     M = TernaryMatroid(A)
-    M.rename("Whirl(" + str(r) + "): " + repr(M))
+    M = _rename_and_relabel(M, f'Whirl({r})', groundset)
     return M
 
 
-def Uniform(r, n):
+def Uniform(r, n, groundset=None):
     """
     Return the uniform matroid of rank `r` on `n` elements.
 
@@ -1872,13 +1924,12 @@ def Uniform(r, n):
 
     INPUT:
 
-    - ``r`` -- a nonnegative integer; the rank of the uniform matroid
-    - ``n`` -- a nonnegative integer; the number of elements of the uniform
+    - ``r`` -- nonnegative integer; the rank of the uniform matroid
+    - ``n`` -- nonnegative integer; the number of elements of the uniform
       matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT:
-
-    the uniform matroid `U_{r,n}`
+    OUTPUT: the uniform matroid `U_{r,n}`
 
     EXAMPLES::
 
@@ -1895,7 +1946,7 @@ def Uniform(r, n):
         sage: M.is_valid()
         True
 
-    Check that bug :trac:`15292` was fixed::
+    Check that bug :issue:`15292` was fixed::
 
         sage: M = matroids.Uniform(4,4)
         sage: len(M.circuit_closures())
@@ -1910,29 +1961,28 @@ def Uniform(r, n):
         CC = {r: [E]}
     else:
         CC = {}
-    M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename("U(" + str(r) + ", " + str(n) + "): " + repr(M))
+    M = Matroid(groundset=E, circuit_closures=CC)
+    M = _rename_and_relabel(M, f'U({r}, {n})', groundset)
     return M
 
 
-def PG(n, q, x=None):
+def PG(n, q, x=None, groundset=None):
     """
-    Return the projective geometry of dimension ``n`` over the finite field
-    of order ``q``.
+    Return the projective geometry of dimension `n` over the finite field
+    of order `q`.
 
     INPUT:
 
-    - ``n`` -- a positive integer; the dimension of the projective space. This
+    - ``n`` -- positive integer; the dimension of the projective space. This
       is one less than the rank of the resulting matroid.
-    - ``q`` -- a positive integer that is a prime power; the order of the
+    - ``q`` -- positive integer that is a prime power; the order of the
       finite field
-    - ``x`` -- a string (default: ``None``); the name of the generator of a
+    - ``x`` -- string (default: ``None``); the name of the generator of a
       non-prime field, used for non-prime fields. If not supplied, ``'x'`` is
       used.
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT:
-
-    a linear matroid whose elements are the points of `PG(n, q)`
+    OUTPUT: a linear matroid whose elements are the points of `PG(n, q)`
 
     EXAMPLES::
 
@@ -1942,8 +1992,8 @@ def PG(n, q, x=None):
         sage: matroids.PG(5, 4, 'z').size() == (4^6 - 1) / (4 - 1)
         True
         sage: M = matroids.PG(4, 7); M
-        PG(4, 7): Linear matroid of rank 5 on 2801 elements represented over
-        the Finite Field of size 7
+        PG(4, 7): Linear matroid of rank 5 on 2801 elements represented over the Finite Field
+         of size 7
 
     REFERENCES:
 
@@ -1955,11 +2005,11 @@ def PG(n, q, x=None):
     P = ProjectiveSpace(n, F)
     A = Matrix(F, [list(p) for p in list(P)]).transpose()
     M = Matroid(A)
-    M.rename("PG(" + str(n) + ", " + str(q) + "): " + repr(M))
+    M = _rename_and_relabel(M, f'PG({n}, {q})', groundset)
     return M
 
 
-def AG(n, q, x=None):
+def AG(n, q, x=None, groundset=None):
     r"""
     Return the affine geometry of dimension ``n`` over the finite field of
     order ``q``.
@@ -1969,25 +2019,23 @@ def AG(n, q, x=None):
 
     INPUT:
 
-    - ``n`` -- a positive integer; the dimension of the projective space. This
+    - ``n`` -- positive integer; the dimension of the projective space. This
       is one less than the rank of the resulting matroid.
-    - ``q`` -- a positive integer that is a prime power; the order of the
+    - ``q`` -- positive integer that is a prime power; the order of the
       finite field
-    - ``x`` -- a string (default: ``None``); the name of the generator of a
+    - ``x`` -- string (default: ``None``); the name of the generator of a
       non-prime field, used for non-prime fields. If not supplied, ``'x'`` is
       used.
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT:
-
-    a linear matroid whose elements are the points of `AG(n, q)`
+    OUTPUT: a linear matroid whose elements are the points of `AG(n, q)`
 
     EXAMPLES::
 
         sage: M = matroids.AG(2, 3).delete(8)
         sage: M.is_isomorphic(matroids.catalog.AG23minus())
         True
-        sage: matroids.AG(5, 4, 'z').size() == ((4 ^ 6 - 1) / (4 - 1) -
-        ....:                                             (4 ^ 5 - 1)/(4 - 1))
+        sage: matroids.AG(5, 4, 'z').size() == ((4 ^ 6 - 1) / (4 - 1) - (4 ^ 5 - 1)/(4 - 1))
         True
         sage: M = matroids.AG(4, 2); M
         AG(4, 2): Binary matroid of rank 5 on 16 elements, type (5, 0)
@@ -2004,11 +2052,11 @@ def AG(n, q, x=None):
         F, [list(p) for p in list(P) if not list(p)[0] == 0]
     ).transpose()
     M = Matroid(A)
-    M.rename("AG(" + str(n) + ", " + str(q) + "): " + repr(M))
+    M = _rename_and_relabel(M, f'AG({n}, {q})', groundset)
     return M
 
 
-def Z(r, t=True):
+def Z(r, t=True, groundset=None):
     r"""
     Return the unique rank-`r` binary spike.
 
@@ -2016,12 +2064,11 @@ def Z(r, t=True):
 
     INPUT:
 
-    - ``r`` -- an integer (`r \ge 3`); the rank of the spike
-    - ``t`` -- a Boolean (default: ``True``); whether the spike is tipped
+    - ``r`` -- integer (`r \ge 3`); the rank of the spike
+    - ``t`` -- boolean (default: ``True``); whether the spike is tipped
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT:
-
-    a matroid; the unique rank-`r` binary spike (tipped or tipless)
+    OUTPUT: matroid; the unique rank-`r` binary spike (tipped or tipless)
 
     EXAMPLES::
 
@@ -2036,7 +2083,9 @@ def Z(r, t=True):
 
         sage: import random
         sage: Z3 = matroids.Z(3)
-        sage: e = random.choice(list(Z3.groundset()))
+        sage: E = sorted(Z3.groundset()); E
+        ['t', 'x1', 'x2', 'x3', 'y1', 'y2', 'y3']
+        sage: e = random.choice(E)
         sage: Z3.delete(e).is_isomorphic(matroids.catalog.K4())
         True
 
@@ -2052,6 +2101,18 @@ def Z(r, t=True):
         sage: Z4.is_isomorphic(matroids.catalog.AG32())
         True
 
+    and `Z_4 \setminus e \cong S_8`, for all `e \neq t`::
+
+        sage: Z4 = matroids.Z(4)
+        sage: E = sorted(Z4.groundset())
+        sage: E.remove('t')
+        sage: e = random.choice(E)
+        sage: S8 = matroids.catalog.S8()
+        sage: Z4.delete(e).is_isomorphic(S8)
+        True
+        sage: Z4.delete('t').is_isomorphic(S8)
+        False
+
     The tipless binary spike is self-dual; it is identically self-dual if and
     only if r is even. It also has a transitive automorphism group::
 
@@ -2061,7 +2122,7 @@ def Z(r, t=True):
         True
         sage: Z.equals(Z.dual()) != (r % 2 == 1)  # XOR
         True
-        sage: Z.automorphism_group().is_transitive()
+        sage: Z.automorphism_group().is_transitive()  # long time
         True
 
     REFERENCES:
@@ -2075,17 +2136,20 @@ def Z(r, t=True):
     A = Id.augment(J-Id).augment(tip)
 
     M = Matroid(A)
+    X = [f'x{i}' for i in range(1, r + 1)]
+    Y = [f'y{i}' for i in range(1, r + 1)]
     if t:
-        # M = M.relabel(X+Y+['t'])
-        M.rename("Z_" + str(r) + ": " + repr(M))
+        M = M.relabel(X + Y + ['t'])
+        M.rename(f'Z_{r}: ' + repr(M))
     else:
-        M = M.delete(2*r)
-        # M = M.relabel(X+Y)
-        M.rename("Z_" + str(r) + "\\t: " + repr(M))
+        M = M.delete(2 * r)
+        M = M.relabel(X + Y)
+        M.rename(f'Z_{r}\\t: ' + repr(M))
+    M = _rename_and_relabel(M, groundset=groundset)
     return M
 
 
-def Spike(r, t=True, C3=[]):
+def Spike(r, t=True, C3=[], groundset=None):
     r"""
     Return a rank-`r` spike.
 
@@ -2096,7 +2160,7 @@ def Spike(r, t=True, C3=[]):
     The groundset is `E = \{t, x_1, x_2, \ldots, x_r, y_1, y_2, \ldots,
     y_r\}` with `r(E) = r`.
 
-    The non-spanning circuits are `\{L_1, L_2, \ldots, L_r\}`, all sets of the
+    The nonspanning circuits are `\{L_1, L_2, \ldots, L_r\}`, all sets of the
     form `(L_i \cup L_j) \setminus t` for `1 \le i < j \le r`, and some
     (possibly empty) collection `C_3` of sets of the form `\{z_1, z_2, \ldots,
     z_r\}` where `z_i \in \{x_i, y_i\}` for all `i`, and no two members of
@@ -2104,25 +2168,25 @@ def Spike(r, t=True, C3=[]):
 
     INPUT:
 
-    - ``r`` -- an integer (`r \ge 3`); the rank of the spike
-    - ``t`` -- a boolean (default: ``True``); whether the spike is tipped
-    - ``C3`` -- a list (default: ``[]``); a list of extra nonspanning circuits.
-      The default (i.e. the empty list) results in a free `r`-spike
+    - ``r`` -- integer (`r \ge 3`); the rank of the spike
+    - ``t`` -- boolean (default: ``True``); whether the spike is tipped
+    - ``C3`` -- list (default: ``[]``); a list of extra nonspanning circuits.
+      The default (i.e. the empty list) results in a free `r`-spike.
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT:
-
-    a matroid; a rank-`r` spike (tipped or tipless)
+    OUTPUT: matroid; a rank-`r` spike (tipped or tipless)
 
     EXAMPLES::
 
         sage: M = matroids.Spike(3, False); M
-        Free 3-spike\t: Matroid of rank 3 on 6 elements with 20 bases
+        Free 3-spike\t: M \ {'t'}, where M is Matroid of rank 3 on 7 elements with 3
+         nonspanning circuits
         sage: M.is_isomorphic(matroids.Uniform(3, 6))
         True
         sage: len(matroids.Spike(8).bases())
         4864
         sage: import random
-        sage: r = random.choice(range(3, 8))
+        sage: r = random.choice(range(3, 20))
         sage: M = matroids.Spike(r)
         sage: M.is_3connected()
         True
@@ -2171,18 +2235,18 @@ def Spike(r, t=True, C3=[]):
     E = ['t']
     X, Y = [], []
     for i in range(1, r + 1):
-        X.append('x' + str(i))
-        Y.append('y' + str(i))
+        X.append(f'x{i}')
+        Y.append(f'y{i}')
     E += X
     E += Y
 
     if C3 == [] and r > 3:
         # free spike (can be defined fast through circuit closures)
-        lines = [['t', 'x'+str(i), 'y'+str(i)] for i in range(1, r+1)]
-        planes = [['t', 'x'+str(i), 'y'+str(i), 'x'+str(j), 'y'+str(j)]
-                  for i in range(1, r+1) for j in range(i+1, r+1)]
+        lines = [['t', f'x{i}', f'y{i}'] for i in range(1, r + 1)]
+        planes = [['t', f'x{i}', f'y{i}', f'x{j}', f'y{j}']
+                  for i in range(1, r + 1) for j in range(i + 1, r + 1)]
         CC = {2: lines, 3: planes, r: [E]}
-        M = Matroid(groundset=E, circuit_closures=CC)
+        M = Matroid(circuit_closures=CC)
     else:
         for S in C3:
             for xy in S:
@@ -2199,24 +2263,24 @@ def Spike(r, t=True, C3=[]):
 
         NSC = []  # nonspanning_circuits
         NSC += C3
-        for i in range(1, r+1):
-            NSC += [['t', 'x'+str(i), 'y'+str(i)]]
-            for j in range(i+1, r+1):
-                NSC += [['t', 'x'+str(i), 'y'+str(i), 'x'+str(j), 'y'+str(j)]]
+        for i in range(1, r + 1):
+            NSC += [['t', f'x{i}', f'y{i}']]
+            for j in range(i + 1, r + 1):
+                NSC += [[f'x{i}', f'y{i}', f'x{j}', f'y{j}']]
 
-        M = Matroid(groundset=E, rank=r, nonspanning_circuits=NSC)
+        M = Matroid(rank=r, nonspanning_circuits=NSC)
 
     free = "Free " if C3 == [] else ""
     tip = "" if t else "\\t"
     M = M if t else M.delete('t')
-    M.rename(free + str(r) + "-spike" + tip + ": " + repr(M))
+    M = _rename_and_relabel(M, f'{free}{r}-spike{tip}', groundset)
     return M
 
 
 # Q_r(A)
 
 
-def Theta(n):
+def Theta(n, groundset=None):
     r"""
     Return the matroid `\Theta_n`.
 
@@ -2225,14 +2289,15 @@ def Theta(n):
 
     INPUT:
 
-    - ``n`` -- an integer (`n \ge 2`); the rank of the matroid
+    - ``n`` -- integer (`n \ge 2`); the rank of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT:
-
-    a matroid (`\Theta_n`)
+    OUTPUT: matroid (`\Theta_n`)
 
     EXAMPLES::
 
+        sage: matroids.Theta(30)
+        Theta_30: Matroid of rank 30 on 60 elements with 16270 circuits
         sage: M = matroids.Theta(2)
         sage: U12 = matroids.Uniform(1, 2)
         sage: U = U12.direct_sum(U12)
@@ -2253,8 +2318,7 @@ def Theta(n):
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
         True
 
-    For `n \le 3`, its automorphism group is transitive, while for `n \ge 4`
-    it is not::
+    For `n \le 3`, its automorphism group is transitive, while for `n \ge 4` it is not::
 
         sage: n = random.choice(range(4, 8))
         sage: M = matroids.Theta(2 + n % 2)
@@ -2268,30 +2332,29 @@ def Theta(n):
 
     [Oxl2011]_, p. 663-4.
     """
-    X = ['x'+str(i) for i in range(n)]
-    Y = ['y'+str(i) for i in range(n)]
-    E = X + Y
+    X = [f'x{i}' for i in range(n)]
+    Y = [f'y{i}' for i in range(n)]
 
     import itertools
     C = []
     C += list(itertools.combinations(X, 3))
     for i in range(n):
         Yi = [Y[j] for j in range(len(Y)) if j != i]
-        C += [Yi + ['x'+str(i)]]
+        C += [Yi + [f'x{i}']]
 
     for u in range(n):
         for s in range(n):
-            for t in range(s+1, n):
+            for t in range(s + 1, n):
                 if u != s and u != t and s != t:
                     Yu = [Y[i] for i in range(len(Y)) if i != u]
-                    C += [Yu + ['x'+str(s)] + ['x'+str(t)]]
+                    C += [Yu + [f'x{s}'] + [f'x{t}']]
 
-    M = Matroid(groundset=E, circuits=C)
-    M.rename("Theta_" + str(n) + ": " + repr(M))
+    M = Matroid(circuits=C)
+    M = _rename_and_relabel(M, f'Theta_{n}', groundset)
     return M
 
 
-def Psi(r):
+def Psi(r, groundset=None):
     r"""
     Return the matroid `\Psi_r`.
 
@@ -2299,19 +2362,17 @@ def Psi(r):
 
     INPUT:
 
-    - ``r`` -- an integer (`r \ge 3`); the rank of the matroid
+    - ``r`` -- integer (`r \ge 3`); the rank of the matroid
+    - ``groundset`` -- string (optional); the groundset of the matroid
 
-    OUTPUT:
-
-    a matroid (`\Psi_r`)
+    OUTPUT: matroid (`\Psi_r`)
 
     EXAMPLES::
 
         sage: matroids.Psi(7)
-        Psi_7: Matroid of rank 7 on 14 elements with 2060 bases
+        Psi_7: Matroid of rank 7 on 14 elements with 105 nonspanning circuits
 
-    The matroid `\Psi_r` is `3`-connected but, for all `r \ge 4`, not
-    `4`-connected::
+    The matroid `\Psi_r` is `3`-connected but, for all `r \ge 4`, not `4`-connected::
 
         sage: M = matroids.Psi(3)
         sage: M.is_4connected()
@@ -2333,15 +2394,15 @@ def Psi(r):
         sage: M = matroids.Psi(r)
         sage: M.equals(M.dual())
         True
-        sage: M.automorphism_group().is_transitive()
+        sage: M.automorphism_group().is_transitive()  # long time
         True
 
     REFERENCES:
 
     [Oxl2011]_, p. 664.
     """
-    A = ['a'+str(i) for i in range(0, r)]
-    B = ['b'+str(i) for i in range(0, r)]
+    A = [f'a{i}' for i in range(0, r)]
+    B = [f'b{i}' for i in range(0, r)]
     E = A + B
 
     def generate_binary_strings(bit_count):
@@ -2359,31 +2420,20 @@ def Psi(r):
 
     NSC = []  # nonspanning circuits
     for i in range(0, r):
-        for k in range(1, r-2):
-            I0 = ['a'+str(i), 'b'+str(i)]
-            IK = ['a'+str((i+k) % r), 'b'+str((i+k) % r)]
-            for AB in generate_binary_strings(k-1):
+        for k in range(1, r - 2):
+            I0 = [f'a{i}', f'b{i}']
+            IK = [f'a{(i+k) % r}', f'b{(i+k) % r}']
+            for AB in generate_binary_strings(k - 1):
                 C = []
                 C += I0 + IK
                 j = 1
                 for z in AB:
-                    C += [z+str((i+j) % r)]
+                    C += [f'{z}{(i+j) % r}']
                     j += 1
                 NSC += [C]
 
-    import itertools
-    B = []  # bases
-    for b in itertools.combinations(E, r):
-        flag = True
-        for C in NSC:
-            if set(b) >= set(C):
-                flag = False
-                break
-        if flag:
-            B += [list(b)]
-
-    M = Matroid(groundset=E, bases=B)
-    M.rename("Psi_" + str(r) + ": " + repr(M))
+    M = Matroid(groundset=E, rank=r, nonspanning_circuits=NSC)
+    M = _rename_and_relabel(M, f'Psi_{r}', groundset)
     return M
 
 
@@ -2396,7 +2446,7 @@ def Psi(r):
 # 7 elements:
 
 
-def RelaxedNonFano():
+def RelaxedNonFano(groundset=None):
     """
     Return the relaxed NonFano matroid.
 
@@ -2413,11 +2463,11 @@ def RelaxedNonFano():
     w = GF4('w')
     A = Matrix(GF4, [[1, 1, 0, 1], [1, 0, 1, 1], [0, 1, w, 1]])
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("F7=: " + repr(M))
+    M = _rename_and_relabel(M, "F7=", groundset)
     return M
 
 
-def TippedFree3spike():
+def TippedFree3spike(groundset=None):
     """
     Return the tipped free `3`-spike.
 
@@ -2437,14 +2487,14 @@ def TippedFree3spike():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[0, 3, 5, 1, 4, 6, 2]
     )
-    M.rename("Tipped rank-3 free spike: " + repr(M))
+    M = _rename_and_relabel(M, "Tipped rank-3 free spike", groundset)
     return M
 
 
 # 8 elements:
 
 
-def AG23minusDY():
+def AG23minusDY(groundset=None):
     r"""
     Return the matroid `AG23minusDY`.
 
@@ -2461,11 +2511,11 @@ def AG23minusDY():
     """
     A = Matrix(GF(3), [[1, 1, 1, 1], [1, 0, 1, 2], [2, 0, 1, 2], [2, 1, 1, 0]])
     M = TernaryMatroid(reduced_matrix=A)
-    M.rename("Delta-Y of AG(2,3)\\e: " + repr(M))
+    M = _rename_and_relabel(M, "Delta-Y of AG(2,3)\\e", groundset)
     return M
 
 
-def TQ8():
+def TQ8(groundset=None):
     """
     Return the matroid `TQ8`.
 
@@ -2486,11 +2536,11 @@ def TQ8():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[1, 7, 5, 3, 8, 6, 4, 2]
     )
-    M.rename("TQ8: " + repr(M))
+    M = _rename_and_relabel(M, "TQ8", groundset)
     return M
 
 
-def P8p():
+def P8p(groundset=None):
     """
     Return the matroid `P8^-`.
 
@@ -2513,11 +2563,11 @@ def P8p():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=['a', 'c', 'b', 'f', 'd', 'e', 'g', 'h']
     )
-    M.rename("P8-: " + repr(M))
+    M = _rename_and_relabel(M, "P8-", groundset)
     return M
 
 
-def KP8():
+def KP8(groundset=None):
     """
     Return the matroid `KP8`.
 
@@ -2540,11 +2590,11 @@ def KP8():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[1, 4, 3, 5, 6, 7, 0, 2]
     )
-    M.rename("KP8: " + repr(M))
+    M = _rename_and_relabel(M, "KP8", groundset)
     return M
 
 
-def Sp8():
+def Sp8(groundset=None):
     """
     Return the matroid `Sp8`.
 
@@ -2567,11 +2617,11 @@ def Sp8():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[1, 2, 3, 5, 4, 6, 7, 8]
     )
-    M.rename("Sp8: " + repr(M))
+    M = _rename_and_relabel(M, "Sp8", groundset)
     return M
 
 
-def Sp8pp():
+def Sp8pp(groundset=None):
     """
     Return the matroid `Sp8=`.
 
@@ -2592,11 +2642,11 @@ def Sp8pp():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[1, 5, 6, 7, 2, 3, 4, 8]
     )
-    M.rename("Sp8=: " + repr(M))
+    M = _rename_and_relabel(M, "Sp8=", groundset)
     return M
 
 
-def LP8():
+def LP8(groundset=None):
     """
     Return the matroid `LP8`.
 
@@ -2619,11 +2669,11 @@ def LP8():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=['a', 'b', 'd', 'e', 'c', 'f', 'g', 'h']
     )
-    M.rename("LP8: " + repr(M))
+    M = _rename_and_relabel(M, "LP8", groundset)
     return M
 
 
-def WQ8():
+def WQ8(groundset=None):
     r"""
     Return the matroid `WQ8`.
 
@@ -2646,14 +2696,14 @@ def WQ8():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[0, 1, 3, 4, 2, 5, 6, 7]
     )
-    M.rename("WQ8: " + repr(M))
+    M = _rename_and_relabel(M, "WQ8", groundset)
     return M
 
 
 # 9 elements:
 
 
-def BB9():
+def BB9(groundset=None):
     """
     Return the matroid `BB9`.
 
@@ -2688,11 +2738,11 @@ def BB9():
         reduced_matrix=A,
         groundset=['i', 'b', 'd', 'j', 'h', 'f', 'c', 'a', 'k']
     )
-    M.rename("BB9: " + repr(M))
+    M = _rename_and_relabel(M, "BB9", groundset)
     return M
 
 
-def TQ9():
+def TQ9(groundset=None):
     """
     Return the matroid `TQ9`.
 
@@ -2723,11 +2773,11 @@ def TQ9():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[1, 4, 6, 0, 2, 5, 3, 7, 8]
     )
-    M.rename("TQ9: " + repr(M))
+    M = _rename_and_relabel(M, "TQ9", groundset)
     return M
 
 
-def TQ9p():
+def TQ9p(groundset=None):
     """
     Return the matroid `TQ9^-`.
 
@@ -2762,11 +2812,11 @@ def TQ9p():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[1, 4, 7, 8, 0, 6, 5, 2, 3]
     )
-    M.rename("TQ9': " + repr(M))
+    M = _rename_and_relabel(M, "TQ9'", groundset)
     return M
 
 
-def M8591():
+def M8591(groundset=None):
     r"""
     Return the matroid `M8591`.
 
@@ -2790,11 +2840,11 @@ def M8591():
               [0, 0, 1, 1, 0]]
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("M8591: " + repr(M))
+    M = _rename_and_relabel(M, "M8591", groundset)
     return M
 
 
-def PP9():
+def PP9(groundset=None):
     """
     Return the matroid `PP9`.
 
@@ -2830,11 +2880,11 @@ def PP9():
         reduced_matrix=A,
         groundset=['a', 'c', 'b', 'f', 'd', 'e', 'g', 'h', 'z']
     )
-    M.rename("PP9: " + repr(M))
+    M = _rename_and_relabel(M, "PP9", groundset)
     return M
 
 
-def BB9gDY():
+def BB9gDY(groundset=None):
     r"""
     Return the matroid `BB9gDY`.
 
@@ -2847,8 +2897,7 @@ def BB9gDY():
     EXAMPLES::
 
         sage: M = matroids.catalog.BB9gDY(); M
-        Segment cosegment exchange on BB9: Quaternary matroid of rank 5 on 9
-        elements
+        Segment cosegment exchange on BB9: Quaternary matroid of rank 5 on 9 elements
         sage: M.is_valid()
         True
     """
@@ -2869,11 +2918,11 @@ def BB9gDY():
         reduced_matrix=A,
         groundset=['c', 'd', 'i', 'f', 'h', 'a', 'j', 'k', 'b']
     )
-    M.rename("Segment cosegment exchange on BB9: " + repr(M))
+    M = _rename_and_relabel(M, "Segment cosegment exchange on BB9", groundset)
     return M
 
 
-def A9():
+def A9(groundset=None):
     """
     Return the matroid `A9`.
 
@@ -2898,11 +2947,11 @@ def A9():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[6, 5, 4, 1, 2, 3, 7, 8, 0]
     )
-    M.rename("A9: " + repr(M))
+    M = _rename_and_relabel(M, "A9", groundset)
     return M
 
 
-def FN9():
+def FN9(groundset=None):
     """
     Return the matroid `FN9`.
 
@@ -2932,11 +2981,11 @@ def FN9():
         reduced_matrix=A,
         groundset=['b0', 'a', 'y', 'z', 'x', "c0", 'b', 'c', 'a0']
     )
-    M.rename("FN9: " + repr(M))
+    M = _rename_and_relabel(M, "FN9", groundset)
     return M
 
 
-def FX9():
+def FX9(groundset=None):
     """
     Return the matroid `FX9`.
 
@@ -2964,16 +3013,16 @@ def FX9():
     )
     # M48806
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FX9: " + repr(M))
+    M = _rename_and_relabel(M, "FX9", groundset)
     return M
 
 
-def KR9():
+def KR9(groundset=None):
     """
     Return the matroid `KR9`.
 
     An excluded minor for `G`-representable matroids (and
-    `GF(5)`-representable matroids.) In a `DY`-equivalence class of `4`
+    `GF(5)`-representable matroids). In a `DY`-equivalence class of `4`
     matroids. Has a :func:`KP8 <sage.matroids.database_matroids.KP8>`-minor
     (delete `8`). UPF is `GF(4)`.
 
@@ -2999,16 +3048,16 @@ def KR9():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[2, 4, 0, 6, 1, 5, 3, 7, 8]
     )
-    M.rename("KR9: " + repr(M))
+    M = _rename_and_relabel(M, "KR9", groundset)
     return M
 
 
-def KQ9():
+def KQ9(groundset=None):
     """
     Return the matroid `KQ9`.
 
     An excluded minor for `G`-representable matroids (and
-    `GF(5)`-representable matroids.) Has a
+    `GF(5)`-representable matroids). Has a
     :func:`TQ8 <sage.matroids.database_matroids.TQ8>`-minor` (delete `6`) and a
     :func:`KP8 <sage.matroids.database_matroids.KP8>`-minor (delete `8`). UPF
     is `GF(4)`.
@@ -3038,14 +3087,14 @@ def KQ9():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[5, 0, 4, 3, 2, 6, 8, 7, 1]
     )
-    M.rename("KQ9: " + repr(M))
+    M = _rename_and_relabel(M, "KQ9", groundset)
     return M
 
 
 # 10 elements:
 
 
-def UG10():
+def UG10(groundset=None):
     """
     Return the matroid `UG10`.
 
@@ -3075,11 +3124,11 @@ def UG10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("UG10: " + repr(M))
+    M = _rename_and_relabel(M, "UG10", groundset)
     return M
 
 
-def FF10():
+def FF10(groundset=None):
     """
     Return the matroid `FF10`.
 
@@ -3108,11 +3157,11 @@ def FF10():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     )
-    M.rename("FF10: " + repr(M))
+    M = _rename_and_relabel(M, "FF10", groundset)
     return M
 
 
-def GP10():
+def GP10(groundset=None):
     """
     Return the matroid `GP10`.
 
@@ -3138,11 +3187,11 @@ def GP10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("GP10: " + repr(M))
+    M = _rename_and_relabel(M, "GP10", groundset)
     return M
 
 
-def FZ10():
+def FZ10(groundset=None):
     """
     Return the matroid `FZ10`.
 
@@ -3169,11 +3218,11 @@ def FZ10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FZ10: " + repr(M))
+    M = _rename_and_relabel(M, "FZ10", groundset)
     return M
 
 
-def UQ10():
+def UQ10(groundset=None):
     """
     Return the matroid `UQ10`.
 
@@ -3201,11 +3250,11 @@ def UQ10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("UQ10: " + repr(M))
+    M = _rename_and_relabel(M, "UQ10", groundset)
     return M
 
 
-def FP10():
+def FP10(groundset=None):
     """
     Return the matroid `FP10`.
 
@@ -3232,11 +3281,11 @@ def FP10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FP10: " + repr(M))
+    M = _rename_and_relabel(M, "FP10", groundset)
     return M
 
 
-def TQ10():
+def TQ10(groundset=None):
     """
     Return the matroid `TQ10`.
 
@@ -3269,11 +3318,11 @@ def TQ10():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[1, 6, 8, 'c', 3, 7, 'd', 2, 5, 4]
     )
-    M.rename("TQ10: " + repr(M))
+    M = _rename_and_relabel(M, "TQ10", groundset)
     return M
 
 
-def FY10():
+def FY10(groundset=None):
     """
     Return the matroid `FY10`.
 
@@ -3300,11 +3349,11 @@ def FY10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FY10: " + repr(M))
+    M = _rename_and_relabel(M, "FY10", groundset)
     return M
 
 
-def PP10():
+def PP10(groundset=None):
     """
     Return the matroid `PP10`.
 
@@ -3341,11 +3390,11 @@ def PP10():
         reduced_matrix=A,
         groundset=['z', 'f', 'c', 'g', 'e', 'b', 'a', 'h', 'd', 'x']
     )
-    M.rename("PP10: " + repr(M))
+    M = _rename_and_relabel(M, "PP10", groundset)
     return M
 
 
-def FU10():
+def FU10(groundset=None):
     """
     Return the matroid `FU10`.
 
@@ -3371,11 +3420,11 @@ def FU10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FU10: " + repr(M))
+    M = _rename_and_relabel(M, "FU10", groundset)
     return M
 
 
-def D10():
+def D10(groundset=None):
     """
     Return the matroid `D10`.
 
@@ -3402,11 +3451,11 @@ def D10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("D10: " + repr(M))
+    M = _rename_and_relabel(M, "D10", groundset)
     return M
 
 
-def UK10():
+def UK10(groundset=None):
     """
     Return the matroid `UK10`.
 
@@ -3433,11 +3482,11 @@ def UK10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("UK10: " + repr(M))
+    M = _rename_and_relabel(M, "UK10", groundset)
     return M
 
 
-def PK10():
+def PK10(groundset=None):
     """
     Return the matroid `PK10`.
 
@@ -3464,11 +3513,11 @@ def PK10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("PK10: " + repr(M))
+    M = _rename_and_relabel(M, "PK10", groundset)
     return M
 
 
-def GK10():
+def GK10(groundset=None):
     """
     Return the matroid `GK10`.
 
@@ -3495,11 +3544,11 @@ def GK10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("GK10: " + repr(M))
+    M = _rename_and_relabel(M, "GK10", groundset)
     return M
 
 
-def FT10():
+def FT10(groundset=None):
     """
     Return the matroid `FT10`.
 
@@ -3526,11 +3575,11 @@ def FT10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FT10: " + repr(M))
+    M = _rename_and_relabel(M, "FT10", groundset)
     return M
 
 
-def TK10():
+def TK10(groundset=None):
     """
     Return the matroid `TK10`.
 
@@ -3557,11 +3606,11 @@ def TK10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("TK10: " + repr(M))
+    M = _rename_and_relabel(M, "TK10", groundset)
     return M
 
 
-def KT10():
+def KT10(groundset=None):
     """
     Return the matroid `KT10`.
 
@@ -3588,11 +3637,11 @@ def KT10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("KT10: " + repr(M))
+    M = _rename_and_relabel(M, "KT10", groundset)
     return M
 
 
-def TU10():
+def TU10(groundset=None):
     """
     Return the matroid `TU10`.
 
@@ -3619,11 +3668,11 @@ def TU10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("TU10: " + repr(M))
+    M = _rename_and_relabel(M, "TU10", groundset)
     return M
 
 
-def UT10():
+def UT10(groundset=None):
     """
     Return the matroid `UT10`.
 
@@ -3650,11 +3699,11 @@ def UT10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("UT10: " + repr(M))
+    M = _rename_and_relabel(M, "UT10", groundset)
     return M
 
 
-def FK10():
+def FK10(groundset=None):
     """
     Return the matroid `FK10`.
 
@@ -3681,11 +3730,11 @@ def FK10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FK10: " + repr(M))
+    M = _rename_and_relabel(M, "FK10", groundset)
     return M
 
 
-def KF10():
+def KF10(groundset=None):
     """
     Return the matroid `KF10`.
 
@@ -3712,14 +3761,14 @@ def KF10():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("KF10: " + repr(M))
+    M = _rename_and_relabel(M, "KF10", groundset)
     return M
 
 
 # 11 elements:
 
 
-def FA11():
+def FA11(groundset=None):
     """
     Return the matroid `FA11`.
 
@@ -3750,14 +3799,14 @@ def FA11():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[1, 3, 4, 2, 8, 7, 9, 0, 5, 10, 6]
     )
-    M.rename("FA11: " + repr(M))
+    M = _rename_and_relabel(M, "FA11", groundset)
     return M
 
 
 # 12 elements:
 
 
-def FR12():
+def FR12(groundset=None):
     """
     Return the matroid `FR12`.
 
@@ -3785,11 +3834,11 @@ def FR12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FR12: " + repr(M))
+    M = _rename_and_relabel(M, "FR12", groundset)
     return M
 
 
-def GP12():
+def GP12(groundset=None):
     """
     Return the matroid `GP12`.
 
@@ -3817,11 +3866,11 @@ def GP12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("GP12: " + repr(M))
+    M = _rename_and_relabel(M, "GP12", groundset)
     return M
 
 
-def FQ12():
+def FQ12(groundset=None):
     """
     Return the matroid `FQ12`.
 
@@ -3858,11 +3907,11 @@ def FQ12():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[7, 4, 5, 9, 2, 1, 0, 6, 'd', 'c', 8, 3]
     )
-    M.rename("FQ12: " + repr(M))
+    M = _rename_and_relabel(M, "FQ12", groundset)
     return M
 
 
-def FF12():
+def FF12(groundset=None):
     """
     Return the matroid `FF12`.
 
@@ -3897,11 +3946,11 @@ def FF12():
     M = QuaternaryMatroid(
         reduced_matrix=A, groundset=[0, 4, 'c', 3, 5, 'd', 8, 9, 2, 7, 1, 6]
     )
-    M.rename("FF12: " + repr(M))
+    M = _rename_and_relabel(M, "FF12", groundset)
     return M
 
 
-def FZ12():
+def FZ12(groundset=None):
     """
     Return the matroid `FZ12`.
 
@@ -3929,11 +3978,11 @@ def FZ12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FZ12: " + repr(M))
+    M = _rename_and_relabel(M, "FZ12", groundset)
     return M
 
 
-def UQ12():
+def UQ12(groundset=None):
     """
     Return the matroid `UQ12`.
 
@@ -3961,11 +4010,11 @@ def UQ12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("UQ12: " + repr(M))
+    M = _rename_and_relabel(M, "UQ12", groundset)
     return M
 
 
-def FP12():
+def FP12(groundset=None):
     """
     Return the matroid `FP12`.
 
@@ -3993,11 +4042,11 @@ def FP12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FP12: " + repr(M))
+    M = _rename_and_relabel(M, "FP12", groundset)
     return M
 
 
-def FS12():
+def FS12(groundset=None):
     """
     Return the matroid `FS12`.
 
@@ -4024,11 +4073,11 @@ def FS12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FS12: " + repr(M))
+    M = _rename_and_relabel(M, "FS12", groundset)
     return M
 
 
-def UK12():
+def UK12(groundset=None):
     """
     Return the matroid `UK12`.
 
@@ -4056,11 +4105,11 @@ def UK12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("UK12: " + repr(M))
+    M = _rename_and_relabel(M, "UK12", groundset)
     return M
 
 
-def UA12():
+def UA12(groundset=None):
     """
     Return the matroid `UA12`.
 
@@ -4088,11 +4137,11 @@ def UA12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("UA12: " + repr(M))
+    M = _rename_and_relabel(M, "UA12", groundset)
     return M
 
 
-def AK12():
+def AK12(groundset=None):
     """
     Return the matroid `AK12`.
 
@@ -4120,11 +4169,11 @@ def AK12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("AK12: " + repr(M))
+    M = _rename_and_relabel(M, "AK12", groundset)
     return M
 
 
-def FK12():
+def FK12(groundset=None):
     """
     Return the matroid `FK12`.
 
@@ -4152,11 +4201,11 @@ def FK12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FK12: " + repr(M))
+    M = _rename_and_relabel(M, "FK12", groundset)
     return M
 
 
-def KB12():
+def KB12(groundset=None):
     """
     Return the matroid `KB12`.
 
@@ -4184,11 +4233,11 @@ def KB12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("KB12: " + repr(M))
+    M = _rename_and_relabel(M, "KB12", groundset)
     return M
 
 
-def AF12():
+def AF12(groundset=None):
     """
     Return the matroid `AF12`.
 
@@ -4216,11 +4265,11 @@ def AF12():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("AF12: " + repr(M))
+    M = _rename_and_relabel(M, "AF12", groundset)
     return M
 
 
-def NestOfTwistedCubes():
+def NestOfTwistedCubes(groundset=None):
     r"""
     Return the NestOfTwistedCubes matroid.
 
@@ -4229,7 +4278,8 @@ def NestOfTwistedCubes():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.NestOfTwistedCubes()
+        sage: M = matroids.catalog.NestOfTwistedCubes(); M
+        NestOfTwistedCubes: Matroid of rank 6 on 12 elements with 57 circuits
         sage: M.is_3connected()
         True
     """
@@ -4239,7 +4289,7 @@ def NestOfTwistedCubes():
 
     gs = ["e1", "e2", "e3", "e4", "e5", "e6",
           "f1", "f2", "f3", "f4", "f5", "f6"]
-    M = CircuitClosuresMatroid(
+    M = Matroid(
         groundset=gs,
         circuit_closures={
             3: [
@@ -4279,14 +4329,15 @@ def NestOfTwistedCubes():
             6: [gs],
         },
     )
-    M.rename("NestOfTwistedCubes: " + repr(M))
+    M = Matroid(circuits=list(M.circuits()))
+    M = _rename_and_relabel(M, "NestOfTwistedCubes", groundset)
     return M
 
 
 # 13 elements:
 
 
-def XY13():
+def XY13(groundset=None):
     """
     Return the matroid `XY13`.
 
@@ -4314,14 +4365,14 @@ def XY13():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("XY13: " + repr(M))
+    M = _rename_and_relabel(M, "XY13", groundset)
     return M
 
 
 # 14 elements:
 
 
-def N3():
+def N3(groundset=None):
     """
     Return the matroid `N3`.
 
@@ -4352,11 +4403,11 @@ def N3():
         ],
     )
     M = TernaryMatroid(reduced_matrix=A)
-    M.rename("N3: " + repr(M))
+    M = _rename_and_relabel(M, "N3", groundset)
     return M
 
 
-def N3pp():
+def N3pp(groundset=None):
     """
     Return the matroid `N3pp`.
 
@@ -4388,11 +4439,11 @@ def N3pp():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("N3=: " + repr(M))
+    M = _rename_and_relabel(M, "N3=", groundset)
     return M
 
 
-def UP14():
+def UP14(groundset=None):
     """
     Return the matroid `UP14`.
 
@@ -4421,11 +4472,11 @@ def UP14():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("UP14: " + repr(M))
+    M = _rename_and_relabel(M, "UP14", groundset)
     return M
 
 
-def VP14():
+def VP14(groundset=None):
     """
     Return the matroid `VP14`.
 
@@ -4454,13 +4505,13 @@ def VP14():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("VP14: " + repr(M))
+    M = _rename_and_relabel(M, "VP14", groundset)
     return M
 
 
-def FV14():
+def FV14(groundset=None):
     """
-    Return the matroid `FV14`
+    Return the matroid `FV14`.
 
     An excluded minor for `P_4`-representable matroids. Not self-dual. UPF is
     `PT`.
@@ -4487,11 +4538,11 @@ def FV14():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FV14: " + repr(M))
+    M = _rename_and_relabel(M, "FV14", groundset)
     return M
 
 
-def OW14():
+def OW14(groundset=None):
     """
     Return the matroid `OW14`.
 
@@ -4520,11 +4571,11 @@ def OW14():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("OW14: " + repr(M))
+    M = _rename_and_relabel(M, "OW14", groundset)
     return M
 
 
-def FM14():
+def FM14(groundset=None):
     """
     Return the matroid `FM14`.
 
@@ -4552,14 +4603,14 @@ def FM14():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FM14: " + repr(M))
+    M = _rename_and_relabel(M, "FM14", groundset)
     return M
 
 
 # 15 elements:
 
 
-def FA15():
+def FA15(groundset=None):
     """
     Return the matroid `FA15`.
 
@@ -4589,14 +4640,14 @@ def FA15():
         ],
     )
     M = QuaternaryMatroid(reduced_matrix=A)
-    M.rename("FA15: " + repr(M))
+    M = _rename_and_relabel(M, "FA15", groundset)
     return M
 
 
 # 16 elements:
 
 
-def N4():
+def N4(groundset=None):
     """
     Return the matroid `N4`.
 
@@ -4628,7 +4679,7 @@ def N4():
         ],
     )
     M = TernaryMatroid(reduced_matrix=A)
-    M.rename("N4: " + repr(M))
+    M = _rename_and_relabel(M, "N4", groundset)
     return M
 
 
@@ -4638,7 +4689,7 @@ def N4():
 # ******************************** #
 
 
-def NonVamos():
+def NonVamos(groundset=None):
     r"""
     Return the non-`V\acute{a}mos` matroid.
 
@@ -4666,17 +4717,16 @@ def NonVamos():
 
     [Oxl2011]_, p. 72, 84.
     """
-    E = 'abcdefgh'
     CC = {
         3: ['abcd', 'abef', 'cdef', 'abgh', 'cdgh', 'efgh'],
-        4: [E]
+        4: ['abcdefgh']
     }
-    M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('NonVamos: ' + repr(M))
+    M = Matroid(circuit_closures=CC)
+    M = _rename_and_relabel(M, "NonVamos", groundset)
     return M
 
 
-def NotP8():
+def NotP8(groundset='abcdefgh'):
     """
     Return the matroid ``NotP8``.
 
@@ -4700,12 +4750,12 @@ def NotP8():
         [0, 0, 1, 0, 1, 1, 0, 1],
         [0, 0, 0, 1, -1, 1, 1, 1]
     ])
-    M = TernaryMatroid(A, "abcdefgh")
-    M.rename('NotP8: ' + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "NotP8")
     return M
 
 
-def AG23minus():
+def AG23minus(groundset=None):
     """
     Return the ternary affine plane minus a point.
 
@@ -4727,15 +4777,14 @@ def AG23minus():
 
     [Oxl2011]_, p. 653.
     """
-    E = 'abcdefgh'
     CC = {2: ['abc', 'ceh', 'fgh', 'adf', 'aeg', 'cdg', 'bdh', 'bef'],
-          3: [E]}
-    M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('AG23minus: ' + repr(M))
+          3: ['abcdefgh']}
+    M = Matroid(circuit_closures=CC)
+    M = _rename_and_relabel(M, "AG23minus", groundset)
     return M
 
 
-def P9():
+def P9(groundset='abcdefghi'):
     """
     Return the matroid `P_9`.
 
@@ -4757,12 +4806,12 @@ def P9():
         [0, 0, 1, 0, 0, 1, 1, 0, 1],
         [0, 0, 0, 1, 0, 0, 1, 1, 0]
     ])
-    M = BinaryMatroid(A, "abcdefghi")
-    M.rename('P9: ' + repr(M))
+    M = BinaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "P9")
     return M
 
 
-def R9A():
+def R9A(groundset=None):
     """
     Return the matroid `R_9^A`.
 
@@ -4773,20 +4822,19 @@ def R9A():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.R9A()
-        sage: M.is_valid()  # long time
+        sage: M = matroids.catalog.R9A(); M
+        R9A: Matroid of rank 4 on 9 elements with 13 nonspanning circuits
+        sage: M.is_valid()
         True
     """
-    E = 'abcdefghi'
-    CC = {3: ['abde', 'bcdf', 'aceg', 'abch', 'aefh', 'adgh', 'acdi', 'abfi',
-              'defi', 'begi', 'bdhi', 'cehi', 'fghi'],
-          4: [E]}
-    M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('R9A: ' + repr(M))
+    NSC = ['abch', 'abde', 'abfi', 'acdi', 'aceg', 'adgh', 'aefh', 'bcdf',
+           'bdhi', 'begi', 'cehi', 'defi', 'fghi']
+    M = Matroid(rank=4, nonspanning_circuits=NSC)
+    M = _rename_and_relabel(M, "R9A", groundset)
     return M
 
 
-def R9B():
+def R9B(groundset=None):
     """
     Return the matroid `R_9^B`.
 
@@ -4797,46 +4845,43 @@ def R9B():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.R9B()
-        sage: M.is_valid()  # long time
+        sage: M = matroids.catalog.R9B(); M
+        R9B: Matroid of rank 4 on 9 elements with 13 nonspanning circuits
+        sage: M.is_valid() and M.is_paving()
         True
     """
-    E = 'abcdefghi'
-    CC = {3: ['abde', 'bcdf', 'aceg', 'abch', 'befh', 'cdgh', 'bcei', 'adfi',
-              'abgi', 'degi', 'bdhi', 'aehi', 'fghi'],
-          4: [E]}
-    M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('R9B: ' + repr(M))
+    NSC = ['abde', 'bcdf', 'aceg', 'abch', 'befh', 'cdgh', 'bcei', 'adfi',
+           'abgi', 'degi', 'bdhi', 'aehi', 'fghi']
+    M = Matroid(rank=4, nonspanning_circuits=NSC)
+    M = _rename_and_relabel(M, "R9B", groundset)
     return M
 
 
-def Block_9_4():
+def Block_9_4(groundset=None):
     """
-    Return the paving matroid whose non-spanning circuits form the blocks of a
+    Return the paving matroid whose nonspanning circuits form the blocks of a
     `2-(9, 4, 3)` design.
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.Block_9_4()
-        sage: M.is_valid()  # long time
+        sage: M = matroids.catalog.Block_9_4(); M
+        Block(9, 4): Matroid of rank 4 on 9 elements with 18 nonspanning
+        circuits
+        sage: M.is_valid() and M.is_paving()
         True
-        sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())
+        sage: BD = BlockDesign(M.groundset(), list(M.nonspanning_circuits()))
         sage: BD.is_t_design(return_parameters=True)
         (True, (2, 9, 4, 3))
     """
-    E = 'abcdefghi'
-    CC = {
-        3: ['abcd', 'acef', 'bdef', 'cdeg', 'abfg', 'adeh', 'bcfh', 'acgh',
-            'begh', 'dfgh', 'abei', 'cdfi', 'bcgi', 'adgi', 'efgi', 'bdhi',
-            'cehi', 'afhi'],
-        4: [E]
-    }
-    M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('Block(9, 4): ' + repr(M))
+    NSC = ['abcd', 'acef', 'bdef', 'cdeg', 'abfg', 'adeh', 'bcfh', 'acgh',
+           'begh', 'dfgh', 'abei', 'cdfi', 'bcgi', 'adgi', 'efgi', 'bdhi',
+           'cehi', 'afhi']
+    M = Matroid(rank=4, nonspanning_circuits=NSC)
+    M = _rename_and_relabel(M, "Block(9, 4)", groundset)
     return M
 
 
-def TicTacToe():
+def TicTacToe(groundset=None):
     """
     Return the TicTacToe matroid.
 
@@ -4845,26 +4890,23 @@ def TicTacToe():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.TicTacToe()
-        sage: M.is_valid()  # long time
+        sage: M = matroids.catalog.TicTacToe(); M
+        TicTacToe: Matroid of rank 5 on 9 elements with 8 nonspanning circuits
+        sage: M.is_valid() and M.is_paving()
         True
 
     REFERENCES:
 
     [Hoc]_
     """
-    E = 'abcdefghi'
-    CC = {
-        4: ['abcdg', 'adefg', 'abceh', 'abcfi', 'cdefi', 'adghi',
-            'beghi', 'cfghi'],
-        5: [E]
-    }
-    M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('TicTacToe: ' + repr(M))
+    NSC = ['abcdg', 'adefg', 'abceh', 'abcfi', 'cdefi', 'adghi', 'beghi',
+           'cfghi']
+    M = Matroid(rank=5, nonspanning_circuits=NSC)
+    M = _rename_and_relabel(M, "TicTacToe", groundset)
     return M
 
 
-def N1():
+def N1(groundset='abcdefghij'):
     r"""
     Return the matroid `N_1`, represented over `\GF{3}`.
 
@@ -4890,41 +4932,39 @@ def N1():
         [0, 0, 0, 1, 0, 0, 0, 1, 2, 2],
         [0, 0, 0, 0, 1, 1, 1, 1, 2, 0]
     ])
-    M = TernaryMatroid(A, 'abcdefghij')
-    M.rename('N1: ' + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "N1")
     return M
 
 
-def Block_10_5():
+def Block_10_5(groundset=None):
     """
-    Return the paving matroid whose non-spanning circuits form the blocks of a
+    Return the paving matroid whose nonspanning circuits form the blocks of a
     `3-(10, 5, 3)` design.
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.Block_10_5()
-        sage: M.is_valid()  # long time
+        sage: M = matroids.catalog.Block_10_5(); M
+        Block(10, 5): Matroid of rank 5 on 10 elements with 36 nonspanning
+        circuits
+        sage: M.is_valid() and M.is_paving()
         True
-        sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())
+        sage: BD = BlockDesign(M.groundset(), list(M.nonspanning_circuits()))
         sage: BD.is_t_design(return_parameters=True)
         (True, (3, 10, 5, 3))
     """
-    E = 'abcdefghij'
-    CC = {
-        4: ['abcde', 'acdfg', 'bdefg', 'bcdfh', 'abefh', 'abcgh', 'adegh',
-            'cefgh', 'bcefi', 'adefi', 'bcdgi', 'acegi', 'abfgi', 'abdhi',
-            'cdehi', 'acfhi', 'beghi', 'dfghi', 'abdfj', 'acefj', 'abegj',
-            'cdegj', 'bcfgj', 'acdhj', 'bcehj', 'defhj', 'bdghj', 'afghj',
-            'abcij', 'bdeij', 'cdfij', 'adgij', 'efgij', 'aehij', 'bfhij',
-            'cghij'],
-        5: [E]
-    }
-    M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('Block(10, 5): ' + repr(M))
+    NSC = ['abcde', 'acdfg', 'bdefg', 'bcdfh', 'abefh', 'abcgh', 'adegh',
+           'cefgh', 'bcefi', 'adefi', 'bcdgi', 'acegi', 'abfgi', 'abdhi',
+           'cdehi', 'acfhi', 'beghi', 'dfghi', 'abdfj', 'acefj', 'abegj',
+           'cdegj', 'bcfgj', 'acdhj', 'bcehj', 'defhj', 'bdghj', 'afghj',
+           'abcij', 'bdeij', 'cdfij', 'adgij', 'efgij', 'aehij', 'bfhij',
+           'cghij']
+    M = Matroid(rank=5, nonspanning_circuits=NSC)
+    M = _rename_and_relabel(M, "Block(10, 5)", groundset)
     return M
 
 
-def Q10():
+def Q10(groundset='abcdefghij'):
     r"""
     Return the matroid `Q_{10}`, represented over `\GF{4}`.
 
@@ -4935,7 +4975,8 @@ def Q10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.Q10()
+        sage: M = matroids.catalog.Q10(); M
+        Q10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
         sage: M.is_valid()
@@ -4960,12 +5001,12 @@ def Q10():
         [0, 0, 0, 1, 0, 0, 0, x + 1, 1, x],
         [0, 0, 0, 0, 1, x, 0, 0, x + 1, 1]
     ])
-    M = QuaternaryMatroid(A, "abcdefghij")
-    M.rename('Q10: ' + repr(M))
+    M = QuaternaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "Q10")
     return M
 
 
-def BetsyRoss():
+def BetsyRoss(groundset=None):
     """
     Return the Betsy Ross matroid, represented by circuit closures.
 
@@ -4975,24 +5016,23 @@ def BetsyRoss():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.BetsyRoss()
+        sage: M = matroids.catalog.BetsyRoss(); M
+        BetsyRoss: Matroid of rank 3 on 11 elements with 25 nonspanning
+        circuits
         sage: len(M.circuit_closures()[2])
         10
-        sage: M.is_valid()  # long time
+        sage: M.is_valid()
         True
     """
-    E = 'abcdefghijk'
-    CC = {
-        2: ['acfg', 'bdgh', 'cehi', 'befj', 'adij', 'dfk',
-            'egk', 'ahk', 'bik', 'cjk'],
-        3: [E]
-    }
-    M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('BetsyRoss: ' + repr(M))
+    NSC = ['acf', 'acg', 'adi', 'adj', 'afg', 'ahk', 'aij', 'bdg', 'bdh',
+           'bef', 'bej', 'bfj', 'bgh', 'bik', 'ceh', 'cei', 'cfg', 'chi',
+           'cjk', 'dfk', 'dgh', 'dij', 'efj', 'egk', 'ehi']
+    M = Matroid(rank=3, nonspanning_circuits=NSC)
+    M = _rename_and_relabel(M, "BetsyRoss", groundset)
     return M
 
 
-def N2():
+def N2(groundset='abcdefghijkl'):
     r"""
     Return the matroid `N_2`, represented over `\GF{3}`.
 
@@ -5019,8 +5059,8 @@ def N2():
         [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1],
         [0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 0, 1]
     ])
-    M = TernaryMatroid(A, "abcdefghijkl")
-    M.rename('N2: ' + repr(M))
+    M = TernaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "N2")
     return M
 
 
@@ -5054,12 +5094,12 @@ def D16(groundset='abcdefghijklmnop'):  # A.K.A. the Carolyn Chun Matroid
         [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0]
     ])
-    M = BinaryMatroid(A, "abcdefghijklmnop")
-    M.rename('D16: ' + repr(M))
+    M = BinaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "D16")
     return M
 
 
-def Terrahawk():  # A.K.A. the Dillon Mayhew Matroid
+def Terrahawk(groundset='abcdefghijklmnop'):  # aka the Dillon Mayhew Matroid
     """
     Return the Terrahawk matroid.
 
@@ -5087,20 +5127,19 @@ def Terrahawk():  # A.K.A. the Dillon Mayhew Matroid
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0]
     ])
-    M = BinaryMatroid(A, "abcdefghijklmnop")
-    M.rename('Terrahawk: ' + repr(M))
+    M = BinaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "Terrahawk")
     return M
 
 
-def ExtendedBinaryGolayCode():
+def ExtendedBinaryGolayCode(groundset='abcdefghijklmnopqrstuvwx'):
     """
     Return the matroid of the extended binary Golay code.
 
     EXAMPLES::
 
         sage: M = matroids.catalog.ExtendedBinaryGolayCode(); M
-        Extended Binary Golay Code: Binary matroid of rank 12 on 24 elements,
-        type (12, 0)
+        Extended Binary Golay Code: Binary matroid of rank 12 on 24 elements, type (12, 0)
         sage: C = LinearCode(M.representation())
         sage: C.is_permutation_equivalent(codes.GolayCode(GF(2)))
         True
@@ -5137,23 +5176,21 @@ def ExtendedBinaryGolayCode():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
          1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ])
-    M = BinaryMatroid(A, "abcdefghijklmnopqrstuvwx")
-    M.rename('Extended Binary Golay Code: ' + repr(M))
+    M = BinaryMatroid(A, groundset)
+    M = _rename_and_relabel(M, "Extended Binary Golay Code")
     return M
 
 
-def CompleteGraphic(n):
+def CompleteGraphic(n, groundset=None):
     """
     Return the cycle matroid of the complete graph on `n` vertices.
 
     INPUT:
 
-    - ``n`` -- an integer, the number of vertices of the underlying complete
-      graph.
+    - ``n`` -- integer; the number of vertices of the underlying complete
+      graph
 
-    OUTPUT:
-
-    The graphic matroid associated with the `n`-vertex complete graph.
+    OUTPUT: the graphic matroid associated with the `n`-vertex complete graph.
     This matroid has rank `n - 1`.
 
     EXAMPLES::
@@ -5178,5 +5215,37 @@ def CompleteGraphic(n):
         groundset=list(range((n * (n - 1)) // 2)),
         graph=graphs.CompleteGraph(n)
     )
-    M.rename("M(K" + str(n) + "): " + repr(M))
+    M = _rename_and_relabel(M, f'M(K{n})', groundset)
+    return M
+
+
+# helper function
+
+
+def _rename_and_relabel(M, name=None, groundset=None):
+    """
+    Return a renamed and relabeled matroid.
+
+    This is a helper function for easily renaming and relabeling matroids upon
+    definition in the context of the database of matroids.
+
+    INPUT:
+
+    - ``M`` -- matroid
+    - ``name`` -- string (optional)
+    - ``groundset`` -- string (optional)
+
+    OUTPUT: matroid
+    """
+    if groundset is not None:
+        if len(groundset) != len(M.groundset()):
+            raise ValueError(
+                "the groundset should be of size %s (%s given)" %
+                (len(M.groundset()), len(groundset))
+            )
+        M = M.relabel(dict(zip(M.groundset(), groundset)))
+
+    if name is not None:
+        M.rename(name+": " + repr(M))
+
     return M

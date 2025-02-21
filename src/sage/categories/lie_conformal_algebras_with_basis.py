@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Lie Conformal Algebras With Basis
 
@@ -20,6 +21,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.graded_lie_conformal_algebras import GradedLieConformalAlgebrasCategory
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.super_modules import SuperModulesCategory
+
 
 class LieConformalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """

@@ -60,12 +60,15 @@ Test comparison by equality::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.algebras.free_algebra import is_FreeAlgebra
+from sage.algebras.free_algebra import FreeAlgebra_generic
 from sage.algebras.free_algebra_quotient_element import FreeAlgebraQuotientElement
 from sage.categories.algebras import Algebras
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module import FreeModule
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
+
+lazy_import('sage.algebras.letterplace.free_algebra_letterplace', 'FreeAlgebra_letterplace')
 
 
 class FreeAlgebraQuotient(UniqueRepresentation, Parent):
@@ -153,7 +156,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Parent):
 
             sage: TestSuite(H2).run()
         """
-        if not is_FreeAlgebra(A):
+        if not isinstance(A, (FreeAlgebra_generic, FreeAlgebra_letterplace)):
             raise TypeError("argument A must be a free algebra")
         R = A.base_ring()
         n = A.ngens()
@@ -223,7 +226,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Parent):
             sage: H.gen(2)
             k
 
-        An :class:`IndexError` is raised if an invalid generator is requested::
+        An :exc:`IndexError` is raised if an invalid generator is requested::
 
             sage: H.gen(3)
             Traceback (most recent call last):
