@@ -3824,7 +3824,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``points`` -- list of elements from the base field (or coercible into
-          it), of list of such lists
+          it), or list of such lists
 
         - ``shifts`` -- (default: ``None``) list of integers;
           ``None`` is interpreted as ``shifts=[0,...,0]``
