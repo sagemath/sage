@@ -16,6 +16,7 @@ from sage.categories.fields import Fields
 from sage.structure.factory import UniqueFactory
 from sage.rings.valuation.valuation import DiscreteValuation
 
+
 class SeriesValuationFactory(UniqueFactory):
     r"""
     Create a valuation over a power series ring or a Laurent series ring.
@@ -58,6 +59,7 @@ class SeriesValuationFactory(UniqueFactory):
         from sage.rings.valuation.valuation_space import DiscretePseudoValuationSpace
         parent = DiscretePseudoValuationSpace(key)
         return parent.__make_element_class__(SeriesValuation_generic)(parent)
+
 
 SeriesValuation = SeriesValuationFactory("sage.rings.series_valuation.SeriesValuation")
 
