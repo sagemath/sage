@@ -2,14 +2,16 @@
 r"""
 Drinfeld modules over rings of characteristic zero
 
-This module provides the class
-:class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_charzero`,
-which inherits
+This module provides the classes
+:class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_charzero` and
+:class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_rational`,
+which both inherit
 :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
 
 AUTHORS:
 
 - David Ayotte (2023-09)
+- Xavier Caruso (2024-12) - computation of class polynomials
 """
 
 # *****************************************************************************
@@ -26,6 +28,9 @@ from .drinfeld_module import DrinfeldModule
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import Infinity
+
+from sage.matrix.constructor import matrix
+from sage.modules.free_module_element import vector
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
@@ -443,3 +448,225 @@ class DrinfeldModule_charzero(DrinfeldModule):
         X = poly_ring.gen()
         q = self._Fq.cardinality()
         return self._compute_goss_polynomial(n, q, poly_ring, X)
+
+
+class DrinfeldModule_rational(DrinfeldModule_charzero):
+    """
+    A class for Drinfeld modules defined over the fraction
+    field of the underlying function field.
+
+    TESTS::
+
+        sage: q = 9
+        sage: Fq = GF(q)
+        sage: A = Fq['T']
+        sage: K.<T> = Frac(A)
+        sage: C = DrinfeldModule(A, [T, 1]); C
+        Drinfeld module defined by T |--> t + T
+        sage: type(C)
+        <class 'sage.rings.function_field.drinfeld_modules.charzero_drinfeld_module.DrinfeldModule_rational_with_category'>
+    """
+    def coefficient_in_function_ring(self, n):
+        r"""
+        Return the `n`-th coefficient of this Drinfeld module as
+        an element of the underlying function ring.
+
+        INPUT:
+
+        - ``n`` -- an integer
+
+        EXAMPLES::
+
+            sage: q = 5
+            sage: Fq = GF(q)
+            sage: A = Fq['T']
+            sage: R = Fq['U']
+            sage: K.<U> = Frac(R)
+            sage: phi = DrinfeldModule(A, [U, 0, U^2, U^3])
+            sage: phi.coefficient_in_function_ring(2)
+            T^2
+
+        Compare with the method meth:`coefficient`::
+
+            sage: phi.coefficient(2)
+            U^2
+
+        If the required coefficient is not a polynomials,
+        an error is raised::
+
+            sage: psi = DrinfeldModule(A, [U, 1/U])
+            sage: psi.coefficient_in_function_ring(0)
+            T
+            sage: psi.coefficient_in_function_ring(1)
+            Traceback (most recent call last):
+            ...
+            ValueError: coefficient is not polynomial
+        """
+        A = self.function_ring()
+        g = self.coefficient(n)
+        g = g.backend(force=True)
+        if g.denominator().is_one():
+            return A(g.numerator().list())
+        else:
+            raise ValueError("coefficient is not polynomial")
+
+    def coefficients_in_function_ring(self, sparse=True):
+        r"""
+        Return the coefficients of this Drinfeld module as elements
+        of the underlying function ring.
+
+        INPUT:
+
+        - ``sparse`` -- a boolean (default: ``True``); if ``True``,
+          only return the nonzero coefficients; otherwise, return
+          all of them.
+
+        EXAMPLES::
+
+            sage: q = 5
+            sage: Fq = GF(q)
+            sage: A = Fq['T']
+            sage: R = Fq['U']
+            sage: K.<U> = Frac(R)
+            sage: phi = DrinfeldModule(A, [U, 0, U^2, U^3])
+            sage: phi.coefficients_in_function_ring()
+            [T, T^2, T^3]
+            sage: phi.coefficients_in_function_ring(sparse=False)
+            [T, 0, T^2, T^3]
+
+        Compare with the method meth:`coefficients`::
+
+            sage: phi.coefficients()
+            [U, U^2, U^3]
+
+        If the coefficients are not polynomials, an error is raised::
+
+            sage: psi = DrinfeldModule(A, [U, 1/U])
+            sage: psi.coefficients_in_function_ring()
+            Traceback (most recent call last):
+            ...
+            ValueError: coefficients are not polynomials
+        """
+        A = self.function_ring()
+        gs = []
+        for g in self.coefficients(sparse):
+            g = g.backend(force=True)
+            if g.denominator().is_one():
+                gs.append(A(g.numerator().list()))
+            else:
+                raise ValueError("coefficients are not polynomials")
+        return gs
+
+    def class_polynomial(self):
+        r"""
+        Return the class polynomial, that is the Fitting ideal
+        of the class module, of this Drinfeld module.
+
+        We refer to [Tae2012]_ for the definition and basic
+        properties of the class module.
+
+        EXAMPLES:
+
+        We check that the class module of the Carlitz module
+        is trivial::
+
+            sage: q = 5
+            sage: Fq = GF(q)
+            sage: A = Fq['T']
+            sage: K.<T> = Frac(A)
+            sage: C = DrinfeldModule(A, [T, 1]); C
+            Drinfeld module defined by T |--> t + T
+            sage: C.class_polynomial()
+            1
+
+        When the coefficients of the Drinfeld module have small
+        enough degrees, the class module is always trivial::
+
+            sage: gs = [T] + [A.random_element(degree = q^i)
+            ....:             for i in range(1, 5)]
+            sage: phi = DrinfeldModule(A, gs)
+            sage: phi.class_polynomial()
+            1
+
+        Here is an example with a nontrivial class module::
+
+            sage: phi = DrinfeldModule(A, [T, 2*T^14 + 2*T^4])
+            sage: phi.class_polynomial()
+            T + 3
+
+        TESTS:
+
+        The Drinfeld module must have polynomial coefficients::
+
+            sage: phi = DrinfeldModule(A, [T, 1/T])
+            sage: phi.class_polynomial()
+            Traceback (most recent call last):
+            ...
+            ValueError: coefficients are not polynomials
+        """
+        # The algorithm is based on the following remark:
+        # writing phi_T = g_0 + g_1*tau + ... + g_r*tau^r,
+        # if s > deg(g_i/(q^i - 1)) - 1 for all i, then the
+        # class module is equal to
+        #   H := E(Kinfty/A) / < T^(-s), T^(-s-1), ... >
+        # where E(Kinfty/A) is Kinfty/A equipped with the
+        # A-module structure coming from phi.
+
+        A = self.function_ring()
+        Fq = A.base_ring()
+        q = Fq.cardinality()
+        r = self.rank()
+
+        # We compute the bound s
+        gs = self.coefficients_in_function_ring(sparse=False)
+        s = max(gs[i].degree() // (q**i - 1) for i in range(1, r+1))
+        if s == 0:
+            return A.one()
+
+        # We compute the matrix of phi_T acting on the quotient
+        #   M := (Kinfty/A) / < T^(-s), T^(-s-1), ... >
+        # (for the standard structure of A-module!)
+        M = matrix(Fq, s)
+        qk = 1
+        for k in range(r+1):
+            for i in range(s):
+                e = (i+1)*qk
+                for j in range(s):
+                    e -= 1
+                    if e < 0:
+                        break
+                    M[i, j] += gs[k][e]
+            qk *= q
+
+        # We compute the subspace of E(Kinfty/A) (for the twisted
+        # structure of A-module!)
+        #   V = < T^(-s), T^(-s+1), ... >
+        # It is also the phi_T-saturation of T^(-s+1) in M, i.e.
+        # the Fq-vector space generated by the phi_T^i(T^(-s+1))
+        # for i varying in NN.
+        v = vector(Fq, s)
+        v[s-1] = 1
+        vs = [v]
+        for i in range(s-1):
+            v = v*M
+            vs.append(v)
+        V = matrix(vs)
+        V.echelonize()
+
+        # We compute the action of phi_T on H = M/V
+        # as an Fq-linear map (encoded in the matrix N)
+        dim = V.rank()
+        pivots = V.pivots()
+        j = ip = 0
+        for i in range(dim, s):
+            while ip < dim and j == pivots[ip]:
+                j += 1
+            ip += 1
+            V[i,j] = 1
+        N = (V * M * ~V).submatrix(dim, dim)
+
+        # The class module is now H where the action of T
+        # is given by the matrix N
+        # The class polynomial is then the characteristic
+        # polynomial of N
+        return A(N.charpoly())
