@@ -909,14 +909,14 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
     def gens(self):
         """
-        Return a list of generators.
+        Return a tuple of generators.
 
         EXAMPLES::
 
             sage: RR.gens()
-            [1.00000000000000]
+            (1.00000000000000,)
         """
-        return [self.gen()]
+        return (self.gen(),)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
