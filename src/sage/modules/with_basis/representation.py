@@ -1156,7 +1156,7 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
 
         indices = module.basis().keys()
 
-        if 'FiniteDimensional' in module.category().axioms():
+        if module in Modules.FiniteDimensional:
             category = category.FiniteDimensional()
 
         CombinatorialFreeModule.__init__(self, module.base_ring(), indices, category=category,

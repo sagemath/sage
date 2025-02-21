@@ -16,7 +16,8 @@ Semigroups
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from sage.categories.category_with_axiom import CategoryWithAxiom, all_axioms
+from sage.categories.category_with_axiom import Axiom, CategoryWithAxiom
+from sage.categories.axiom import all_axioms
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.subquotients import SubquotientsCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
@@ -25,7 +26,27 @@ from sage.categories.magmas import Magmas
 from sage.arith.power import generic_power
 
 
-all_axioms += ("HTrivial", "Aperiodic", "LTrivial", "RTrivial", "JTrivial")
+class XTrivialAxiom(Axiom):
+    def _repr_object_names(self, base_category):
+        """
+        Return the name of the objects in `base_category` satisfying this axiom.
+
+        EXAMPLES::
+
+            sage: Monoids().JTrivial()
+            Category of J-trivial monoids
+            sage: Monoids().RTrivial()
+            Category of R-trivial monoids
+            sage: Monoids().Finite().LTrivial() # we would want not to have the aperiodic part
+            Category of finite L-trivial monoids
+        """
+        return str(self)[0]+"-trivial " + base_category._repr_object_names()
+
+XTrivialAxiom("HTrivial")
+Axiom        ("Aperiodic")
+XTrivialAxiom("LTrivial")
+XTrivialAxiom("RTrivial")
+XTrivialAxiom("JTrivial")
 
 
 class Semigroups(CategoryWithAxiom):
@@ -50,7 +71,7 @@ class Semigroups(CategoryWithAxiom):
         [Category of semigroups, Category of magmas,
          Category of sets, Category of sets with partial maps, Category of objects]
         sage: C.axioms()
-        frozenset({'Associative'})
+        frozenset({Associative})
         sage: C.example()
         An example of a semigroup: the left zero semigroup
 
@@ -58,7 +79,7 @@ class Semigroups(CategoryWithAxiom):
 
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (Magmas, "Associative")
+    _base_category_class_and_axiom = (Magmas, all_axioms.Associative)
 
     def example(self, choice='leftzero', **kwds):
         r"""
@@ -578,12 +599,12 @@ class Semigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: C = Semigroups().LTrivial(); C
-                Category of l trivial semigroups
+                Category of L-trivial semigroups
 
             A `L`-trivial semigroup is `H`-trivial::
 
-                sage: sorted(C.axioms())
-                ['Associative', 'HTrivial', 'LTrivial']
+                sage: sorted(C.axioms(), key=str)
+                [Associative, HTrivial, LTrivial]
 
             .. SEEALSO::
 
@@ -623,12 +644,12 @@ class Semigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: C = Semigroups().RTrivial(); C
-                Category of r trivial semigroups
+                Category of R-trivial semigroups
 
             An `R`-trivial semigroup is `H`-trivial::
 
-                sage: sorted(C.axioms())
-                ['Associative', 'HTrivial', 'RTrivial']
+                sage: sorted(C.axioms(), key=str)
+                [Associative, HTrivial, RTrivial]
 
             .. SEEALSO::
 
@@ -668,23 +689,23 @@ class Semigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: C = Semigroups().JTrivial(); C
-                Category of j trivial semigroups
+                Category of J-trivial semigroups
 
             A semigroup is `J`-trivial if and only if it is
             `L`-trivial and `R`-trivial::
 
-                sage: sorted(C.axioms())
-                ['Associative', 'HTrivial', 'JTrivial', 'LTrivial', 'RTrivial']
+                sage: sorted(C.axioms(), key=str)
+                [Associative, HTrivial, JTrivial, LTrivial, RTrivial]
                 sage: Semigroups().LTrivial().RTrivial()
-                Category of j trivial semigroups
+                Category of J-trivial semigroups
 
             For a commutative semigroup, all three axioms are
             equivalent::
 
                 sage: Semigroups().Commutative().LTrivial()
-                Category of commutative j trivial semigroups
+                Category of commutative J-trivial semigroups
                 sage: Semigroups().Commutative().RTrivial()
-                Category of commutative j trivial semigroups
+                Category of commutative J-trivial semigroups
 
             .. SEEALSO::
 
@@ -718,7 +739,7 @@ class Semigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: C = Semigroups().HTrivial(); C
-                Category of h trivial semigroups
+                Category of H-trivial semigroups
                 sage: Semigroups().HTrivial().Finite().example()
                 NotImplemented
 
@@ -759,8 +780,8 @@ class Semigroups(CategoryWithAxiom):
 
             An aperiodic semigroup is `H`-trivial::
 
-                sage: Semigroups().Aperiodic().axioms()
-                frozenset({'Aperiodic', 'Associative', 'HTrivial'})
+                sage: sorted(Semigroups().Aperiodic().axioms(), key=str)
+                [Aperiodic, Associative, HTrivial]
 
             In the finite case, the two notions coincide::
 

@@ -157,7 +157,7 @@ class IntegerModFactory(UniqueFactory):
         sage: R in Fields()
         True
         sage: R.category()
-        Join of Category of finite enumerated fields
+        Join of Category of finite fields
             and Category of subquotients of monoids
             and Category of quotients of semigroups
         sage: S = IntegerModRing(5, is_field=True)
@@ -712,7 +712,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: R.is_field()
             True
             sage: R.category()
-            Join of Category of finite enumerated fields
+            Join of Category of finite fields
                 and Category of subquotients of monoids
                 and Category of quotients of semigroups
 

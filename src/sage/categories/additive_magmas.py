@@ -44,11 +44,11 @@ class AdditiveMagmas(Category_singleton):
         sage: AdditiveMagmas().AdditiveAssociative()
         Category of additive semigroups
         sage: AdditiveMagmas().AdditiveUnital()
-        Category of additive unital additive magmas
+        Category of additive-unital additive magmas
         sage: AdditiveMagmas().AdditiveCommutative()
-        Category of additive commutative additive magmas
+        Category of additive-commutative additive magmas
         sage: AdditiveMagmas().AdditiveUnital().AdditiveInverse()
-        Category of additive inverse additive unital additive magmas
+        Category of additive-inverse additive-unital additive magmas
         sage: C = AdditiveMagmas().AdditiveAssociative().AdditiveCommutative(); C
         Category of commutative additive semigroups
         sage: C.AdditiveUnital()
@@ -114,7 +114,7 @@ class AdditiveMagmas(Category_singleton):
             EXAMPLES::
 
                 sage: AdditiveMagmas().AdditiveCommutative()
-                Category of additive commutative additive magmas
+                Category of additive-commutative additive magmas
                 sage: C = AdditiveMagmas().AdditiveAssociative().AdditiveUnital()
                 sage: C.AdditiveCommutative()
                 Category of commutative additive monoids
@@ -148,7 +148,7 @@ class AdditiveMagmas(Category_singleton):
             EXAMPLES::
 
                 sage: AdditiveMagmas().AdditiveUnital()
-                Category of additive unital additive magmas
+                Category of additive-unital additive magmas
                 sage: from sage.categories.additive_semigroups import AdditiveSemigroups
                 sage: AdditiveSemigroups().AdditiveUnital()
                 Category of additive monoids
@@ -569,9 +569,9 @@ class AdditiveMagmas(Category_singleton):
 
                     sage: C = AdditiveMagmas().AdditiveCommutative().CartesianProducts()
                     sage: C.extra_super_categories()
-                    [Category of additive commutative additive magmas]
+                    [Category of additive-commutative additive magmas]
                     sage: C.axioms()
-                    frozenset({'AdditiveCommutative'})
+                    frozenset({AdditiveCommutative})
                 """
                 return [AdditiveMagmas().AdditiveCommutative()]
 
@@ -609,7 +609,7 @@ class AdditiveMagmas(Category_singleton):
             EXAMPLES::
 
                 sage: AdditiveMagmas().AdditiveUnital().additional_structure()
-                Category of additive unital additive magmas
+                Category of additive-unital additive magmas
             """
             return self
 
@@ -634,7 +634,7 @@ class AdditiveMagmas(Category_singleton):
                 EXAMPLES::
 
                     sage: AdditiveMagmas().AdditiveUnital().AdditiveInverse()
-                    Category of additive inverse additive unital additive magmas
+                    Category of additive-inverse additive-unital additive magmas
                     sage: from sage.categories.additive_monoids import AdditiveMonoids
                     sage: AdditiveMonoids().AdditiveInverse()
                     Category of additive groups
@@ -861,9 +861,9 @@ class AdditiveMagmas(Category_singleton):
                 EXAMPLES::
 
                     sage: AdditiveMagmas().AdditiveUnital().Homsets().extra_super_categories()
-                    [Category of additive unital additive magmas]
+                    [Category of additive-unital additive magmas]
                     sage: AdditiveMagmas().AdditiveUnital().Homsets().super_categories()
-                    [Category of additive unital additive magmas, Category of homsets]
+                    [Category of additive-unital additive magmas, Category of homsets]
                 """
                 return [AdditiveMagmas().AdditiveUnital()]
 
@@ -904,9 +904,9 @@ class AdditiveMagmas(Category_singleton):
 
                         sage: C = AdditiveMagmas().AdditiveUnital().AdditiveInverse().CartesianProducts()
                         sage: C.extra_super_categories()
-                        [Category of additive inverse additive unital additive magmas]
-                        sage: sorted(C.axioms())
-                        ['AdditiveInverse', 'AdditiveUnital']
+                        [Category of additive-inverse additive-unital additive magmas]
+                        sage: sorted(C.axioms(), key=str)
+                        [AdditiveInverse, AdditiveUnital]
                     """
                     return [AdditiveMagmas().AdditiveUnital().AdditiveInverse()]
 
@@ -941,9 +941,9 @@ class AdditiveMagmas(Category_singleton):
 
                     sage: C = AdditiveMagmas().AdditiveUnital().CartesianProducts()
                     sage: C.extra_super_categories()
-                    [Category of additive unital additive magmas]
+                    [Category of additive-unital additive magmas]
                     sage: C.axioms()
-                    frozenset({'AdditiveUnital'})
+                    frozenset({AdditiveUnital})
                 """
                 return [AdditiveMagmas().AdditiveUnital()]
 

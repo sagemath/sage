@@ -123,7 +123,7 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
 
             sage: C = LieAlgebras(QQ).WithBasis().Graded().Stratified().FiniteDimensional()
             sage: C
-            Category of finite dimensional stratified Lie algebras with basis over Rational Field
+            Category of finite dimensional stratified graded Lie algebras with basis over Rational Field
 
         A finite-dimensional stratified Lie algebra is nilpotent::
 

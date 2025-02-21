@@ -140,7 +140,7 @@ class TopologicalSpaces(TopologicalSpacesCategory):
                     [Category of Cartesian products of topological spaces,
                      Category of connected topological spaces]
                     sage: C.axioms()
-                    frozenset({'Connected'})
+                    frozenset({Connected})
                 """
                 return [TopologicalSpaces().Connected()]
 
@@ -165,6 +165,6 @@ class TopologicalSpaces(TopologicalSpacesCategory):
                     [Category of Cartesian products of topological spaces,
                      Category of compact topological spaces]
                     sage: C.axioms()
-                    frozenset({'Compact'})
+                    frozenset({Compact})
                 """
                 return [TopologicalSpaces().Compact()]

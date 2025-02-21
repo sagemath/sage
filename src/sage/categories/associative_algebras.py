@@ -10,6 +10,7 @@ Associative algebras
 # *****************************************************************************
 
 from sage.misc.lazy_import import LazyImport
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 
@@ -42,6 +43,6 @@ class AssociativeAlgebras(CategoryWithAxiom_over_base_ring):
         True
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (MagmaticAlgebras, "Associative")
+    _base_category_class_and_axiom = (MagmaticAlgebras, all_axioms.Associative)
 
     Unital = LazyImport('sage.categories.algebras', 'Algebras', at_startup=True)

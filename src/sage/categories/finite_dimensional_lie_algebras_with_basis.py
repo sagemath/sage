@@ -17,6 +17,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.subobjects import SubobjectsCategory
@@ -62,7 +63,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         Many of these tests should use non-abelian Lie algebras and need to
         be added after :issue:`16820`.
     """
-    _base_category_class_and_axiom = (LieAlgebras.FiniteDimensional, "WithBasis")
+    _base_category_class_and_axiom = [LieAlgebras.FiniteDimensional, all_axioms.WithBasis]
 
     def example(self, n=3):
         """

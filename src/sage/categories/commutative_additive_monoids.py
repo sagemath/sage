@@ -10,6 +10,7 @@ Commutative additive monoids
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.additive_monoids import AdditiveMonoids
 
@@ -25,8 +26,8 @@ class CommutativeAdditiveMonoids(CategoryWithAxiom):
         Category of commutative additive monoids
         sage: C.super_categories()
         [Category of additive monoids, Category of commutative additive semigroups]
-        sage: sorted(C.axioms())
-        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveUnital']
+        sage: sorted(C.axioms(), key=str)
+        [AdditiveAssociative, AdditiveCommutative, AdditiveUnital]
         sage: C is AdditiveMagmas().AdditiveAssociative().AdditiveCommutative().AdditiveUnital()
         True
 
@@ -39,4 +40,4 @@ class CommutativeAdditiveMonoids(CategoryWithAxiom):
 
         sage: TestSuite(CommutativeAdditiveMonoids()).run()
     """
-    _base_category_class_and_axiom = (AdditiveMonoids, "AdditiveCommutative")
+    _base_category_class_and_axiom = (AdditiveMonoids, all_axioms.AdditiveCommutative)

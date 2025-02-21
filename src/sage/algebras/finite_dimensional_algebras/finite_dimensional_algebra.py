@@ -17,6 +17,7 @@ from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
 
 from sage.rings.integer_ring import ZZ
 
+from sage.categories.semigroups import Semigroups
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.matrix.constructor import matrix
 from sage.structure.element import Matrix

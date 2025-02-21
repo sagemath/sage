@@ -14,6 +14,8 @@ Monoids
 # *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.semigroups import Semigroups
 from sage.misc.lazy_import import LazyImport
@@ -48,7 +50,7 @@ class Monoids(CategoryWithAxiom):
          Category of objects]
 
         sage: Monoids().axioms()
-        frozenset({'Associative', 'Unital'})
+        frozenset({Associative, Unital})
         sage: Semigroups().Unital()
         Category of monoids
 
@@ -73,7 +75,7 @@ class Monoids(CategoryWithAxiom):
         sage: R.submonoid([R.one()]).list()                                             # needs sage.combinat
         [1]
     """
-    _base_category_class_and_axiom = (Semigroups, "Unital")
+    _base_category_class_and_axiom = (Semigroups, all_axioms.Unital)
 
     Finite = LazyImport('sage.categories.finite_monoids', 'FiniteMonoids', at_startup=True)
     Inverse = LazyImport('sage.categories.groups', 'Groups', at_startup=True)

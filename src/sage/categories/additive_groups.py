@@ -10,8 +10,9 @@ Additive groups
 #******************************************************************************
 
 from sage.misc.lazy_import import LazyImport
-from sage.categories.category_with_axiom import CategoryWithAxiom_singleton, CategoryWithAxiom
 from sage.categories.algebra_functor import AlgebrasCategory
+from sage.categories.axiom import all_axioms
+from sage.categories.category_with_axiom import CategoryWithAxiom_singleton, CategoryWithAxiom
 from sage.categories.additive_monoids import AdditiveMonoids
 from sage.cpython.getattr import raw_getattr
 Groups = LazyImport('sage.categories.groups', 'Groups', at_startup=True)
@@ -31,21 +32,21 @@ class AdditiveGroups(CategoryWithAxiom_singleton):
         sage: AdditiveGroups()
         Category of additive groups
         sage: AdditiveGroups().super_categories()
-        [Category of additive inverse additive unital additive magmas,
+        [Category of additive-inverse additive-unital additive magmas,
          Category of additive monoids]
         sage: AdditiveGroups().all_super_categories()
         [Category of additive groups,
-         Category of additive inverse additive unital additive magmas,
+         Category of additive-inverse additive-unital additive magmas,
          Category of additive monoids,
-         Category of additive unital additive magmas,
+         Category of additive-unital additive magmas,
          Category of additive semigroups,
          Category of additive magmas,
          Category of sets,
          Category of sets with partial maps,
          Category of objects]
 
-        sage: AdditiveGroups().axioms()
-        frozenset({'AdditiveAssociative', 'AdditiveInverse', 'AdditiveUnital'})
+        sage: sorted(AdditiveGroups().axioms(), key=str)
+        [AdditiveAssociative, AdditiveInverse, AdditiveUnital]
         sage: AdditiveGroups() is AdditiveMonoids().AdditiveInverse()
         True
 
@@ -54,7 +55,7 @@ class AdditiveGroups(CategoryWithAxiom_singleton):
         sage: C = AdditiveGroups()
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (AdditiveMonoids, "AdditiveInverse")
+    _base_category_class_and_axiom = (AdditiveMonoids, all_axioms.AdditiveInverse)
 
     class Algebras(AlgebrasCategory):
         class ParentMethods:

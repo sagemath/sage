@@ -9,6 +9,7 @@ Commutative additive groups
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.axiom import all_axioms
 from sage.categories.category_types import AbelianCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.algebra_functor import AlgebrasCategory
@@ -27,8 +28,8 @@ class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
         Category of commutative additive groups
         sage: C.super_categories()
         [Category of additive groups, Category of commutative additive monoids]
-        sage: sorted(C.axioms())
-        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse', 'AdditiveUnital']
+        sage: sorted(C.axioms(), key=str)
+        [AdditiveAssociative, AdditiveCommutative, AdditiveInverse, AdditiveUnital]
         sage: C is CommutativeAdditiveMonoids().AdditiveInverse()
         True
         sage: from sage.categories.additive_groups import AdditiveGroups
@@ -43,8 +44,8 @@ class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
     TESTS::
 
         sage: TestSuite(CommutativeAdditiveGroups()).run()
-        sage: sorted(CommutativeAdditiveGroups().CartesianProducts().axioms())
-        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse', 'AdditiveUnital']
+        sage: sorted(CommutativeAdditiveGroups().CartesianProducts().axioms(), key=str)
+        [AdditiveAssociative, AdditiveCommutative, AdditiveInverse, AdditiveUnital]
 
     The empty covariant functorial construction category classes
     ``CartesianProducts`` and ``Algebras`` are left here for the sake
@@ -57,7 +58,7 @@ class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
 
     Also, it's likely that some code will end up there at some point.
     """
-    _base_category_class_and_axiom = (AdditiveGroups, "AdditiveCommutative")
+    _base_category_class_and_axiom = (AdditiveGroups, all_axioms.AdditiveCommutative)
 
     class CartesianProducts(CartesianProductsCategory):
         class ElementMethods:

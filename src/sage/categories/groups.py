@@ -14,6 +14,7 @@ Groups
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.monoids import Monoids
 from sage.categories.cartesian_product import CartesianProductsCategory, cartesian_product
@@ -37,7 +38,7 @@ class Groups(CategoryWithAxiom):
 
         sage: TestSuite(Groups()).run()
     """
-    _base_category_class_and_axiom = (Monoids, "Inverse")
+    _base_category_class_and_axiom = (Monoids, all_axioms.Inverse)
 
     def example(self):
         """

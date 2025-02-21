@@ -11,6 +11,7 @@ Finite dimensional semisimple algebras with basis
 #******************************************************************************
 
 from sage.categories.algebras import Algebras
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.semisimple_algebras import SemisimpleAlgebras
 from sage.misc.cachefunc import cached_method
@@ -37,7 +38,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
 
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (SemisimpleAlgebras.FiniteDimensional, "WithBasis")
+    _base_category_class_and_axiom = (SemisimpleAlgebras.FiniteDimensional, all_axioms.WithBasis)
 
     class ParentMethods:
         # This is needed to override the one in finite_dimensional_algebras_with_basis
