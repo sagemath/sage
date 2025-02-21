@@ -955,8 +955,14 @@ class AbstractTree:
             nonlocal depths
             depths.pop()
 
+        def lf_action(node):
+            nonlocal m, depths, depth
+            if depths[-1] == depth:
+                m += 1
+            depths.pop()
+
         depths = [0]
-        self.contour_traversal(fr_action, m_action, fn_action)
+        self.contour_traversal(fr_action, m_action, fn_action, lf_action)
         return m
 
     def paths_to_the_right(self, path):
