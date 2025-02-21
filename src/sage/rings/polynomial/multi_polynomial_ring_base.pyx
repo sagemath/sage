@@ -574,15 +574,21 @@ cdef class MPolynomialRing_base(CommutativeRing):
     cpdef _coerce_map_from_(self, other):
         """
         Return whether there is canonical coercion map
-        from the ring ``other`` to this multivariate polynomial ring.
+        from the ring ``other`` to this multivariate polynomial ring `R`.
 
-        The rings that canonically coerce to this polynomial ring are:
+        The rings that canonically coerce to the polynomial ring `R` are:
 
-        - this ring itself
-        - polynomial rings in a subset of the variables over any base ring that
-          canonically coerces to the base ring of this ring
-        - any ring that canonically coerces to the base ring of this polynomial
-          ring.
+        - the ring `R` itself,
+
+        - the base ring of `R`,
+
+        - any ring that canonically coerces to the base ring of `R`.
+
+        - polynomial rings in an initial subset of the variables of `R`
+          over any base ring that canonically coerces to the base ring of `R`,
+
+        - polynomial rings in one of the variables of `R`
+          over any base ring that canonically coerces to the base ring of `R`,
 
         TESTS:
 
@@ -606,11 +612,12 @@ cdef class MPolynomialRing_base(CommutativeRing):
             # registers the coercion map from the base ring, is called only
             # when inheriting from this class in Python (cf. Issue #26958).
             return self._coerce_map_from_base_ring()
+
         f = self._coerce_map_via([base_ring], other)
         if f is not None:
             return f
 
-        # polynomial rings in a subset of variables
+        # polynomial rings in an initial subset of variables
         # over the any base that coerces in
         if isinstance(other, MPolynomialRing_base):
             if self is other:
