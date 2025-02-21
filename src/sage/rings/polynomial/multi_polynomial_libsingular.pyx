@@ -6154,12 +6154,11 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             new_gens = S.gens()[-ngens:]
             I = S.ideal([g - S(j) for (g,j) in zip(new_gens, J)])
             z = S(self).reduce(I)
-            if (certificate):
-                if (set(z.variables()).issubset(new_gens)):
+            if certificate:
+                if set(z.variables()).issubset(new_gens):
                     T = PolynomialRing(R.base_ring(), tuple(new_gens))
                     return T(z)
-                else:
-                    return None
+                return None
             return set(z.variables()).issubset(new_gens)
         else:
             raise ValueError("unknown algorithm")
