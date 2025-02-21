@@ -3190,7 +3190,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         sage: G
         Complex reflection group G(3, 1, 5) as a permutation group
         sage: G.category()
-        Join of Category of finite enumerated permutation groups
+        Join of Category of finite permutation groups
             and Category of finite complex reflection groups
 
         sage: G = groups.permutation.ComplexReflection(3, 3, 4)
