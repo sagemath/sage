@@ -1400,11 +1400,9 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-        - ``delta`` -- positive integer, most usually 2
+        - ``delta`` -- positive integer, usually 2
 
-        OUTPUT:
-
-        list of `(v_j, k_j, U_{j+1}(x))_{j \geq 0}`
+        OUTPUT: list of `(v_j, k_j, U_{j+1}(x))_{j \geq 0}`
 
         REFERENCES:
 
