@@ -252,7 +252,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         return Family(sorted(d), lambda i: d[i])
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 

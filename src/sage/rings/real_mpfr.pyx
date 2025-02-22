@@ -907,7 +907,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
         """
         return 1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple of generators.
 

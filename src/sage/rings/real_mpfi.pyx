@@ -950,7 +950,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         """
         return 1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple of generators.
 
