@@ -28,7 +28,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     r"""
     This is the base class for Jacobians of hyperelliptic curves.
 
-    We represent elements of the Jacobian by tuples of the form 
+    We represent elements of the Jacobian by tuples of the form
     `(u, v : n)`, where
     - (u,v) is the Mumford representative of a divisor `P_1 + ... + P_r`,
     - n is a non-negative integer
@@ -38,20 +38,20 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     .. MATH::
 
         [P_1 + ... + P_r + n \cdot \infty_+ + m\cdot \infty_- - D_\infty],
-        
-    where  `m = g - \deg(u) - n`, and `\infty_+`, \infty_-` are the 
+
+    where  `m = g - \deg(u) - n`, and `\infty_+`, \infty_-` are the
     points at infinity of the hyperelliptic curve,
 
     .. MATH::
         D_\infty =
         \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
-        
+
     Here, `\infty_- = \infty_+`, if the hyperelliptic curve is ramified.
-        
-    Such a representation exists and is unique, unless the genus `g` is odd 
-    and the curve is inert. 
-        
-    If the hyperelliptic curve is ramified or inert, then `n` can be deduced 
+
+    Such a representation exists and is unique, unless the genus `g` is odd
+    and the curve is inert.
+
+    If the hyperelliptic curve is ramified or inert, then `n` can be deduced
     from `\deg(u)` and `g`. In these cases, `n` is omitted in the description.
     """
 
@@ -60,7 +60,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         Return the dimension of this Jacobian.
 
         EXAMPLES::
-            
+
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^2, x^4+1); H
             Hyperelliptic Curve over Rational Field defined by y^2 + (x^4 + 1)*y = x^2
@@ -86,10 +86,10 @@ class HyperellipticJacobian_generic(Jacobian_generic):
            return `[P - Q]`;
 
         5. Polynomials `(u, v)` such that `v^2 + hv - f \equiv 0 \pmod u`;
-           return `[(u(x), y - v(x))]`.    
-        
-        .. SEEALSO:: 
-        
+           return `[(u(x), y - v(x))]`.
+
+        .. SEEALSO::
+
             :mod:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic`.
         """
         try:
@@ -130,7 +130,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     def count_points(self, *args, **kwds):
         """
         .. SEEALSO::
-        
+
             :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.count_points`.
         """
         return self.point_homset().count_points(*args, **kwds)
@@ -140,7 +140,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         Return one or all points with given `u`-coordinate.
 
         .. SEEALSO::
-        
+
             :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.lift_u`.
         """
         return self.point_homset().lift_u(*args, **kwds)
@@ -150,7 +150,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         Return a random element of the Jacobian.
 
         .. SEEALSO::
-        
+
             :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.random_element`.
         """
         return self.point_homset().random_element(*args, **kwds)
@@ -160,7 +160,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         Return all points on the Jacobian.
 
         .. SEEALSO::
-        
+
             :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.points`.
         """
 
@@ -171,7 +171,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         Return all points on the Jacobian.
 
         .. SEEALSO::
-        
+
             :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.points`.
         """
 

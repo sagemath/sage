@@ -808,7 +808,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         r"""
         Returns the Jacobian of the hyperelliptic curve.
 
-        Elements of the Jacobian are represented by tuples 
+        Elements of the Jacobian are represented by tuples
         of the form `(u, v : n)`, where
         - `(u,v)` is the Mumford representative of a divisor `P_1 + ... + P_r`,
         - `n` is a non-negative integer
@@ -818,19 +818,19 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         .. MATH::
 
             [P_1 + ... + P_r + n \cdot \infty_+ + m\cdot \infty_- - D_\infty],
-        
-        where  `m = g - \deg(u) - n`, and `\infty_+`, `\infty_-` are the 
+
+        where  `m = g - \deg(u) - n`, and `\infty_+`, `\infty_-` are the
         points at infinity of the hyperelliptic curve,
 
         .. MATH::
 
             D_\infty = \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
-        
+
         Here, `\infty_- = \infty_+`, if the hyperelliptic curve is ramified.
-        
-        Such a representation exists and is unique, unless the genus `g` is odd 
-        and the curve is inert. 
-        
+
+        Such a representation exists and is unique, unless the genus `g` is odd
+        and the curve is inert.
+
         If the hyperelliptic curve is ramified or inert,
         then `n` can be deduced from `\deg(u)` and `g`. In these cases,
         `n` is omitted in the description.

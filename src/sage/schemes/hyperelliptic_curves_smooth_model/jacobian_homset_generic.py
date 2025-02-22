@@ -33,7 +33,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         NOTE:
         The base field of H is not extended to L.
-        
+
         EXAMPLES::
 
             sage: R.<x> = QQ[]
@@ -151,7 +151,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         of (the affine part of) the divisor [P].
 
         EXAMPLES::
-            
+
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^5 - 2*x^4 + 2*x^3 - x^2, 1)
             sage: P = H([2,3]); P
@@ -453,27 +453,27 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
     def cantor_reduction(self, u0, v0):
         """
         Apply one reduction step of Cantor's algorithm to  ``(u0, v0)``.
-        
+
         Note that, in general, several steps are necessary the
         representation of a reduced divisor.
 
         EXAMPLES::
-        
+
             sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurveSmoothModel(x^7 + x^5 + x + 1)
             sage: g = H.genus()
             sage: JF = Jacobian(H).point_homset()
             sage: (u0, v0) = (x^6 + 12*x^5 + 4*x^4 + 7*x^3 + 8*x^2, 5*x^5 + 2*x^4 + 12*x^2 + 7*x + 1)
             sage: (u1, v1) = JF.cantor_reduction(u0, v0)
-            sage: u1.degree() <= g 
+            sage: u1.degree() <= g
             False
             sage: (u2, v2) = JF.cantor_reduction(u1, v1)
             sage: u2.degree() <= g
             True
 
-        Applying the reduction step to a reduced divisor might have unintended output, 
-        as is illustrated below.            
-        
+        Applying the reduction step to a reduced divisor might have unintended output,
+        as is illustrated below.
+
             sage: (u3, v3) = JF.cantor_reduction(u2, v2)
             sage: u3.degree() >= g
             True

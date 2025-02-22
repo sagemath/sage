@@ -1062,7 +1062,7 @@ class HyperellipticCurveSmoothModel_finite_field(
         M = self.frobenius_matrix(N=N, algorithm=algorithm).change_ring(ZZ)
 
         # get a_g, ..., a_0 in ZZ (i.e. with correct signs)
-        f = M.charpoly().list()[g : 2 * g + 1]
+        f = M.charpoly().list()[g: 2 * g + 1]
         ppow = p**N
         f = [x % ppow for x in f]
         f = [x if 2 * x < ppow else x - ppow for x in f]

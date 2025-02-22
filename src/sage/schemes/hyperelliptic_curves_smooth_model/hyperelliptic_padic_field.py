@@ -291,7 +291,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             (1 : 4 : 1)
 
         We note that `P` is in a Weierstrass disc and its reduction is indeed a Weierstrass point.
-        
+
             sage: HK.is_in_weierstrass_disc(P)
             True
             sage: HF = HK.change_ring(FiniteField(5))
@@ -699,7 +699,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         try:
             prof("eval f %s" % R)
             if PP is None:
-                L = [-ff(R(QQ[0]), R(QQ[1])) for ff in forms]  ##changed
+                L = [-ff(R(QQ[0]), R(QQ[1])) for ff in forms]  # changed
             elif QQ is None:
                 L = [ff(R(PP[0]), R(PP[1])) for ff in forms]
             else:
@@ -709,7 +709,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             forms = [ff.change_ring(self.base_ring()) for ff in forms]
             prof("eval f %s" % self.base_ring())
             if PP is None:
-                L = [-ff(QQ[0], QQ[1]) for ff in forms]  ##changed
+                L = [-ff(QQ[0], QQ[1]) for ff in forms]  # changed
             elif QQ is None:
                 L = [ff(PP[0], PP[1]) for ff in forms]
             else:
