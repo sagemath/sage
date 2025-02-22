@@ -5,7 +5,8 @@ Rings
 # ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
-#                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
+#                2008      Teresa Gomez-Diaz (CNRS)
+#                          <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -16,6 +17,7 @@ from types import GeneratorType
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+from sage.misc.prandom import randint
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
 from sage.structure.element import Element
@@ -752,109 +754,6 @@ class Rings(CategoryWithAxiom):
                 return FreeModule(self, n)
 
         @cached_method
-        def ideal_monoid(self):
-            """
-            The monoid of the ideals of this ring.
-
-            EXAMPLES::
-
-                sage: # needs sage.modules
-                sage: MS = MatrixSpace(QQ, 2, 2)
-                sage: isinstance(MS, Ring)
-                False
-                sage: MS in Rings()
-                True
-                sage: MS.ideal_monoid()
-                Monoid of ideals of Full MatrixSpace of 2 by 2 dense matrices
-                over Rational Field
-
-            Note that the monoid is cached::
-
-                sage: MS.ideal_monoid() is MS.ideal_monoid()                            # needs sage.modules
-                True
-
-            More examples::
-
-                sage: # needs sage.combinat sage.modules
-                sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)
-                sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
-                sage: Q = F.quotient(I)
-                sage: Q.ideal_monoid()
-                Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z)
-                 over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
-                sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')
-                sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
-                sage: Q = F.quo(I)
-                sage: Q.ideal_monoid()
-                Monoid of ideals of Quotient of Free Associative Unital Algebra
-                 on 3 generators (x, y, z) over Integer Ring
-                 by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
-
-                sage: ZZ.ideal_monoid()
-                Monoid of ideals of Integer Ring
-                sage: R.<x> = QQ[]; R.ideal_monoid()
-                Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
-            """
-            try:
-                from sage.rings.ideal_monoid import IdealMonoid
-                return IdealMonoid(self)
-            except TypeError:
-                from sage.rings.noncommutative_ideals import IdealMonoid_nc
-                return IdealMonoid_nc(self)
-
-        def _ideal_class_(self, n=0):
-            r"""
-            Return a callable object that can be used to create ideals in this
-            ring.
-
-            EXAMPLES::
-
-                sage: MS = MatrixSpace(QQ, 2, 2)                                        # needs sage.modules
-                sage: MS._ideal_class_()                                                # needs sage.modules
-                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
-
-            Since :issue:`7797`, non-commutative rings have ideals as well::
-
-                sage: A = SteenrodAlgebra(2)                                                # needs sage.combinat sage.modules
-                sage: A._ideal_class_()                                                     # needs sage.combinat sage.modules
-                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
-            """
-            from sage.rings.noncommutative_ideals import Ideal_nc
-            return Ideal_nc
-
-        @cached_method
-        def zero_ideal(self):
-            """
-            Return the zero ideal of this ring (cached).
-
-            EXAMPLES::
-
-                sage: ZZ.zero_ideal()
-                Principal ideal (0) of Integer Ring
-                sage: QQ.zero_ideal()
-                Principal ideal (0) of Rational Field
-                sage: QQ['x'].zero_ideal()
-                Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
-
-            The result is cached::
-
-                sage: ZZ.zero_ideal() is ZZ.zero_ideal()
-                True
-
-            TESTS:
-
-            Make sure that :issue:`13644` is fixed::
-
-                sage: # needs sage.rings.padics
-                sage: K = Qp(3)
-                sage: R.<a> = K[]
-                sage: L.<a> = K.extension(a^2-3)
-                sage: L.ideal(a)
-                Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
-            """
-            return self._ideal_class_(1)(self, [self.zero()])
-
-        @cached_method
         def unit_ideal(self):
             """
             Return the unit ideal of this ring.
@@ -865,21 +764,6 @@ class Rings(CategoryWithAxiom):
                 Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
             """
             return self._ideal_class_(1)(self, [self.one()])
-
-        def principal_ideal(self, gen, coerce=True):
-            """
-            Return the principal ideal generated by gen.
-
-            EXAMPLES::
-
-                sage: R.<x,y> = ZZ[]
-                sage: R.principal_ideal(x+2*y)
-                Ideal (x + 2*y) of Multivariate Polynomial Ring in x, y over Integer Ring
-            """
-            C = self._ideal_class_(1)
-            if coerce:
-                gen = self(gen)
-            return C(self, [gen])
 
         def characteristic(self):
             """
@@ -1645,6 +1529,40 @@ class Rings(CategoryWithAxiom):
                 x = self.random_element(*args, **kwds)
                 if not x.is_zero():
                     return x
+
+        def random_element(self, *args):
+            """
+            Return a random integer coerced into this ring.
+
+            INPUT:
+
+            - either no integer, one integer or two integers
+
+            The integer is chosen uniformly from the closed interval
+            ``[-2,2]``, ``[-a,a]`` or ``[a,b]`` according to the
+            length of the input.
+
+            ALGORITHM:
+
+            This uses Python's ``randint``.
+
+            EXAMPLES::
+
+                sage: -8 <= ZZ.random_element(8) <= 8
+                True
+                sage: -8 <= QQ.random_element(8) <= 8
+                True
+                sage: 4 <= ZZ.random_element(4,12) <= 12
+                True
+            """
+            if not args:
+                a, b = -2, 2
+            elif len(args) == 1:
+                bound = args[0]
+                a, b = -bound, bound
+            else:
+                a, b = args[0], args[1]
+            return randint(a, b) * self.one()
 
     class ElementMethods:
         def is_unit(self) -> bool:
