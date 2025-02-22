@@ -2548,11 +2548,11 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: c2 = C.random_element(4,7)
                     sage: c2                   # random
                     (6, 5, 6, 4, 5, 6, 6, 4, 5, 5)
-                    sage: all(4 <= i < 7 for i in c2)
+                    sage: all(4 <= i <= 7 for i in c2)
                     True
                 """
                 return self._cartesian_product_of_elements(
-                        c.random_element(*args) for c in self.cartesian_factors())
+                    c.random_element(*args) for c in self.cartesian_factors())
 
             @abstract_method
             def _sets_keys(self):
