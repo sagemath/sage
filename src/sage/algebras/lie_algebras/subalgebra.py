@@ -646,7 +646,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
         return self.element_class(self, X)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generating set of ``self``.
 
