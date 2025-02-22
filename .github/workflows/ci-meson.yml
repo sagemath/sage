@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu]
-        python: ['3.9', '3.10', '3.11']
+        python: ['3.11', '3.12']
 
     steps:
       - uses: actions/checkout@v4
@@ -72,6 +72,19 @@ jobs:
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
           pip install --no-build-isolation --no-deps --config-settings=builddir=builddir . -v
 
+      - name: Check update-meson
+        # this step must be after build, because meson.build creates a number of __init__.py files
+        # that is needed to make tools/update-meson.py run correctly
+        shell: bash -l {0}
+        run: |
+          python3 tools/update-meson.py
+          if ! ./tools/test-git-no-uncommitted-changes; then
+            git add --intent-to-add .  # also show newly created files in git diff
+            git status
+            git diff
+            false
+          fi
+
       - name: Verify dependencies
         shell: bash -l {0}
         run: pip check
@@ -81,7 +94,7 @@ jobs:
         run: |
           # We don't install sage_setup, so don't try to test it
           rm -R ./src/sage_setup/
-          ./sage -t --all -p4
+          ./sage -t --all -p4 --format github
 
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0

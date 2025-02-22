@@ -2101,14 +2101,16 @@ class HasseDiagram(DiGraph):
             for e in orbit:
                 orbit_number[e] = ind
 
-        comps = [None] * n
         mt = self.meet_matrix()
         jn = self.join_matrix()
-        for e in range(n):
-            # Fix following after issue #20727
-            comps[e] = [x for x in range(n) if
-                        mt[e, x] == 0 and jn[e, x] == n - 1 and
-                        x in orbits[orbit_number[dual_isomorphism[e]]]]
+
+        items = ((e, dual_isomorphism[e]) for e in range(n))
+
+        # Fix following after issue #20727
+        comps = [[x for x in range(n)
+                  if mt[e, x] == 0 and jn[e, x] == n - 1 and
+                  x in orbits[orbit_number[dual_e]]]
+                 for e, dual_e in items]
 
         # Fitting is done by this recursive function:
         def recursive_fit(orthocomplements, unbinded):

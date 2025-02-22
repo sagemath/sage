@@ -348,9 +348,9 @@ cdef class FractionFieldElement(FieldElement):
         This function hashes in a special way to ensure that generators of
         a ring `R` and generators of a fraction field of `R` have the same
         hash. This enables them to be used as keys interchangeably in a
-        dictionary (since ``==`` will claim them equal). This is particularly
-        useful for methods like ``subs`` on ``ParentWithGens`` if you are
-        passing a dictionary of substitutions.
+        dictionary (since ``==`` will claim them equal).
+
+        This is useful for substitution using dicts.
 
         EXAMPLES::
 

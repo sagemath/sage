@@ -23,7 +23,7 @@ import sage.rings.abc
 from sage.misc.lazy_import import lazy_import
 from sage.symbolic.ring import SR
 from sage.structure.element import Expression
-from sage.functions.all import exp
+from sage.functions.log import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
@@ -1651,7 +1651,6 @@ class Exponentialize(ExpressionTreeWalker):
     # the same canned results dictionary at each call.
     from sage.calculus.var import function
     from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
-    from sage.functions.log import exp
     from sage.functions.trig import sin, cos, sec, csc, tan, cot
     from sage.rings.integer import Integer
     from sage.symbolic.constants import e, I
@@ -1749,7 +1748,6 @@ class DeMoivre(ExpressionTreeWalker):
             sage: s.composition(q, q.operator())
             (cos(b) + I*sin(b))*e^a
         """
-        from sage.functions.log import exp
         if op is not exp:
             # return super().composition(ex, op)
             return op(*[self(oper) for oper in ex.operands()])

@@ -277,6 +277,33 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
     Element = PuiseuxSeries
 
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: R = PuiseuxSeriesRing(QQ, 'y')
+            sage: R._magma_init_(magma)
+            'SageCreateWithNames(PuiseuxSeriesRing(_sage_ref...),["y"])'
+            sage: S = magma(R)
+            sage: S
+            Puiseux series field in y over Rational Field
+            sage: S.1
+            y
+            sage: S.sage() == R
+            True
+
+            sage: # optional - magma
+            sage: magma(PuiseuxSeriesRing(GF(7), 'x'))                                     # needs sage.rings.finite_rings
+            Puiseux series field in x over GF(7)
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        s = 'PuiseuxSeriesRing(%s)' % (Bref)
+        return magma._with_names(s, self.variable_names())
+
     def _element_constructor_(self, x, e=1, prec=infinity):
         r"""
         Construct a Puiseux series from ``x``.
