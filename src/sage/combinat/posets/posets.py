@@ -184,6 +184,7 @@ List of Poset methods
     :meth:`~FinitePoset.flag_h_polynomial` | Return the flag h-polynomial of the poset.
     :meth:`~FinitePoset.order_polynomial` | Return the order polynomial of the poset.
     :meth:`~FinitePoset.zeta_polynomial` | Return the zeta polynomial of the poset.
+    :meth:`~FinitePoset.apozeta_polynomial` | Return the apozeta polynomial of the poset.
     :meth:`~FinitePoset.M_triangle` | Return the M-triangle of the poset.
     :meth:`~FinitePoset.kazhdan_lusztig_polynomial` | Return the Kazhdan-Lusztig polynomial of the poset.
     :meth:`~FinitePoset.coxeter_polynomial` | Return the characteristic polynomial of the Coxeter transformation.
@@ -7236,6 +7237,8 @@ class FinitePoset(UniqueRepresentation, Parent):
         In particular, `Z(2)` is the number of vertices and `Z(3)` is
         the number of intervals.
 
+        .. SEEALSO:: :meth:`apozeta_polynomial`
+
         EXAMPLES::
 
             sage: posets.ChainPoset(2).zeta_polynomial()
@@ -7275,6 +7278,54 @@ class FinitePoset(UniqueRepresentation, Parent):
             n -= 1
             f = g[n] + f / n
         return f
+
+    def apozeta_polynomial(self):
+        r"""
+        Return the apozeta polynomial of the poset ``self``.
+
+        The poset is assumed to be graded.
+
+        The apozeta polynomial of a poset is the unique polynomial
+        `Z^{a}(q)` such that for every integer `m > 1`, `Z^{a}(m)` is
+        the number of weakly increasing sequences `x_1 \leq x_2 \leq
+        \dots \leq x_{m-1}` of elements of the poset whose largest
+        element belongs to the top level of the poset.
+
+        When the poset `P` has a unique maximal element, this is
+        equal to `Z(q-1)` where `Z` is the zeta polynomial of `P`.
+
+        The name comes from the greek radical ``apo``.
+
+        .. SEEALSO:: :meth:`zeta_polynomial`
+
+        EXAMPLES::
+
+            sage: P = posets.NoncrossingPartitions(SymmetricGroup(4))
+            sage: P.apozeta_polynomial()
+            8/3*q^3 - 10*q^2 + 37/3*q - 5
+
+            sage: P = Poset({"a": "bc", "b": "d", "c": "de"})
+            sage: P.apozeta_polynomial()
+            3/2*q^2 - 5/2*q + 1
+            sage: P.zeta_polynomial()
+            3/2*q^2 - 1/2*q
+
+        TESTS:
+
+        Checking the simplest case::
+
+            sage: Poset({1: []}).apozeta_polynomial()
+            1
+            sage: parent(_)
+            Univariate Polynomial Ring in q over Rational Field
+        """
+        from sage.functions.other import binomial
+        R = PolynomialRing(QQ, 'q')
+        q = R.gen()
+
+        top_level = self.level_sets()[-1]
+        return sum(binomial(q - 2, len(c) - 1)
+                   for c in self.chains() if c and c[-1] in top_level)
 
     def M_triangle(self):
         r"""
@@ -8541,35 +8592,69 @@ class FinitePoset(UniqueRepresentation, Parent):
         A cut is a subset `A` of ``self`` such that the set of lower
         bounds of the set of upper bounds of `A` is exactly `A`.
 
-        The cuts are computed here using the maximal independent sets in the
-        auxiliary graph defined as `P \times [0,1]` with an edge
-        from `(x, 0)` to `(y, 1)` if
-        and only if `x \not\geq_P y`. See the end of section 4 in [JRJ94]_.
+        The cuts are computed as the smallest family of subsets of P containing its
+        principal order filters, the whole set P and which is closed by intersection.
 
         EXAMPLES::
 
             sage: P = posets.AntichainPoset(3)
             sage: Pc = P.cuts()
             sage: Pc # random
-            [frozenset({0}),
+            [frozenset({2}),
+             frozenset({1}),
+             frozenset({0}),
              frozenset(),
-             frozenset({0, 1, 2}),
-             frozenset({2}),
-             frozenset({1})]
+             frozenset({0, 1, 2})]
             sage: sorted(list(c) for c in Pc)
             [[], [0], [0, 1, 2], [1], [2]]
+
+        TESTS::
+
+            sage: P = Poset()
+            sage: P.cuts()
+            [frozenset()]
+            sage: P = Poset({3: [4, 5, 7], 1: [2, 4, 6], 4: [], 0: [2, 5], 2: [7], 7: [], 5: [6], 6: []})
+            sage: P.cuts()
+            [frozenset({3, 4, 5, 6, 7}),
+             frozenset({1, 2, 4, 6, 7}),
+             frozenset({4}),
+             frozenset({0, 2, 5, 6, 7}),
+             frozenset({2, 7}),
+             frozenset({7}),
+             frozenset({5, 6}),
+             frozenset({6}),
+             frozenset({4, 6, 7}),
+             frozenset({5, 6, 7}),
+             frozenset({2, 6, 7}),
+             frozenset(),
+             frozenset({6, 7}),
+             frozenset({0, 1, 2, 3, 4, 5, 6, 7})]
 
         .. SEEALSO::
 
             :meth:`completion_by_cuts`
         """
-        from sage.graphs.graph import Graph
-        from sage.graphs.independent_sets import IndependentSets
-        auxg = Graph({(u, 0): [(v, 1) for v in self if not self.ge(u, v)]
-                      for u in self}, format='dict_of_lists')
-        auxg.add_vertices([(v, 1) for v in self])
-        return [frozenset([xa for xa, xb in c if xb == 0])
-                for c in IndependentSets(auxg, maximal=True)]
+        C, C2 = [], []
+        for x in self:
+            C.append(set(self.order_filter([x])))
+        for i, c in enumerate(C):
+            for j in range(i + 1, len(C)):
+                I = c.intersection(C[j])
+                if I not in C + C2:
+                    C2.append(I)
+        while C2:
+            D = []
+            for x in C:
+                for y in C2:
+                    I = x.intersection(y)
+                    if all(I not in X for X in [C, C2, D]):
+                        D.append(I)
+            C.extend(C2)
+            C2 = D
+        S = set(self)
+        if S not in C:
+            C.append(S)
+        return [frozenset(x) for x in C]
 
     def completion_by_cuts(self):
         """

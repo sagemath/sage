@@ -649,9 +649,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         # algebra O mod pO.
         matrices_reduced = [M.mod(p) for M in matrices]
         cat = CommutativeAlgebras(k).FiniteDimensional().WithBasis()
-        A = FiniteDimensionalAlgebra(k, matrices_reduced,
-                                     assume_associative=True,
-                                     category=cat)
+        A = FiniteDimensionalAlgebra(k, matrices_reduced, category=cat)
 
         # Each prime ideal of the algebra A corresponds to a prime ideal of O,
         # and since the algebra is an Artinian ring, all of its prime ideals
