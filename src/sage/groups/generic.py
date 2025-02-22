@@ -891,6 +891,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ....:     assert res == sol
 
     Verify that :issue:`38316` is fixed::
+
         sage: F = GF(5)
         sage: base = F(3)
         sage: a = F(1)
