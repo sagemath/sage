@@ -1143,7 +1143,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         # Initialize some lists
 
-        C = [QQ(-1), "?", QQ(0)]
+        C = [QQ(-1), "?", QQ.zero()]
 
         # Initialize the list of cusps at the bottom of the fund. domain.
         # The ? denotes that it has not yet been checked if more cusps need
@@ -1151,7 +1151,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         full_domain = False     # Says that we are not done yet!
 
-        v = [False for _ in range(sP)]
+        v = [False] * sP
         # This initializes a list indexed by P^1(Z/NZ) which keeps track of
         # which right coset representatives we've found for Gamma_0(N)/SL_2(Z)
         # thru the construction of a fundamental domain
