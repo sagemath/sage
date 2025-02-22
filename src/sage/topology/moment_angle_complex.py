@@ -894,7 +894,6 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: a.get_simplicial_complex()
             Simplicial complex with vertex set (1, 3) and facets {(1,), (3,)}
         """
-
         return CohomologyRing(base_ring=base_ring, moment_angle_complex=self)
 
 
@@ -994,10 +993,10 @@ class CohomologyRing(CombinatorialFreeModule):
                 for x in combinations(vertices, i):
                     S = moment_angle_complex._simplicial_complex.generated_subcomplex(x, is_mutable=False)
                     # Because of the empty combination
-                    if len(S.vertices()) > 0 and isinstance(S.cohomology(deg-i-1, base_ring, generators=True), list):
+                    if S.vertices() and isinstance(S.cohomology(deg-i-1, base_ring, generators=True), list):
                         chmlgy = S.cohomology(deg-i-1, base_ring, generators=True)
                         for y in chmlgy:
-                            self._gens[deg].append((set(x), deg-i-1, y))
+                            self._gens[deg].append((frozenset(x), deg-i-1, y))
                         num_of_gens += len(chmlgy)
                     elif len(S.vertices()) == 0 and deg == 0:
                         num_of_gens = 1
@@ -1035,9 +1034,8 @@ class CohomologyRing(CombinatorialFreeModule):
         """
         if d is None:
             return Family(self._indices, self.monomial)
-        else:
-            indices = [(d, i) for i in self._graded_indices.get(d, [])]
-            return Family(indices, self.monomial)
+        indices = [(d, i) for i in self._graded_indices.get(d, [])]
+        return Family(indices, self.monomial)
 
     def degree_on_basis(self, i):
         """
@@ -1098,7 +1096,7 @@ class CohomologyRing(CombinatorialFreeModule):
         d = {(0, i): one for i in self._graded_indices[0]}
         return self._from_dict(d, remove_zeros=False)
 
-    def complex(self):
+    def moment_angle_complex(self):
         """
         Return the moment-angle complex associated with ``self``.
 
@@ -1113,7 +1111,7 @@ class CohomologyRing(CombinatorialFreeModule):
         return self._complex
 
     @cached_method
-    def _to_cycle_on_basis(self, i):
+    def _to_cocycle_on_basis(self, i):
         r"""
         Return the cocycle representative of the basis element
         indexed by ``i``.
@@ -1282,7 +1280,7 @@ class CohomologyRing(CombinatorialFreeModule):
         for base_element in elements:
             memo[base_element] = set()
             for x in elements:
-                if base_element * x == self.zero():
+                if not base_element * x:
                     memo[base_element].add(x)
 
         max_length = 1
@@ -1307,7 +1305,7 @@ class CohomologyRing(CombinatorialFreeModule):
         return max_length
 
     class Element(CombinatorialFreeModule.Element):
-        def to_cycle(self):
+        def to_cocycle(self):
             r"""
             Return the cocycle representative of ``self``.
 
