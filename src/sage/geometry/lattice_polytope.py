@@ -3947,11 +3947,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         """
         if k >= self.dim():
             return list(range(self.npoints()))
-        skeleton = set([])
+        skeleton = set()
         for face in self.faces(dim=k):
             skeleton.update(face.ambient_point_indices())
-        skeleton = sorted(skeleton)
-        return skeleton
+        return sorted(skeleton)
 
     def skeleton_show(self, normal=None):
         r"""Show the graph of one-skeleton of this polytope.

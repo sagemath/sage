@@ -636,7 +636,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
                         (len(cones), len(generating_cones)))
         elif discard_faces:
             cones = _discard_faces(cones)
-        ray_set = set([])
+        ray_set = set()
         for cone in cones:
             ray_set.update(cone.rays())
         if rays:    # Preserve the initial order of rays, if they were given
