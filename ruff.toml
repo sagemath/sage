@@ -1,7 +1,7 @@
 # https://docs.astral.sh/ruff/configuration/#config-file-discovery
 
-# Assume Python 3.9
-target-version = "py39"
+# Python 3.11 is the minimum supported version
+target-version = "py311"
 
 lint.select = [
     "E", # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
