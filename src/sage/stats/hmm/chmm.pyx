@@ -14,7 +14,7 @@ AUTHOR:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cpython.object cimport PyObject_RichCompare
@@ -22,7 +22,7 @@ from libc.math cimport log, sqrt, exp, isnormal, isfinite, M_PI
 cdef double sqrt2pi = sqrt(2*M_PI)
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.misc.flatten  import flatten
+from sage.misc.flatten import flatten
 from sage.structure.element import Matrix
 
 from sage.stats.time_series cimport TimeSeries
