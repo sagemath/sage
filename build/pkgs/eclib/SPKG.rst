@@ -30,5 +30,5 @@ Upstream Contact
 -  Author: John Cremona
 -  Email: john.cremona@gmail.com
 -  Website:
-   http://homepages.warwick.ac.uk/staff/J.E.Cremona/mwrank/index.html
+   https://johncremona.github.io/mwrank/index.html
 -  Repository: https://github.com/JohnCremona/eclib
