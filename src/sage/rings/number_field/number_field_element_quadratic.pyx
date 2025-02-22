@@ -2382,8 +2382,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         TESTS::
 
-            sage: import warnings
-            sage: warnings.filterwarnings("ignore", category=DeprecationWarning)
             sage: K2.<sqrt2> = QuadraticField(2)
             sage: K3.<sqrt3> = QuadraticField(3)
             sage: K5.<sqrt5> = QuadraticField(5)
@@ -2398,15 +2396,15 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             ....:    assert round(a+b*sqrt(5.)) == round(a+b*sqrt5), (a, b)
         """
         n = self.floor()
-        test = 2 * (self - n).abs()
+        test = 2 * (self - n)
         if test < 1:
             return n
         elif test > 1:
             return n + 1
-        elif self > 0:
-            return n + 1
-        else:
+        elif n % 2 == 0:
             return n
+        else:
+            return n + 1
 
 
 cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
