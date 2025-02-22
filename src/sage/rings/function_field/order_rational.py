@@ -76,7 +76,8 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: O._element_constructor_(1/y)
             Traceback (most recent call last):
             ...
-            TypeError: 1/y is not an element of Maximal order of Rational function field in y over Rational Field
+            TypeError: 1/y is not an element of Maximal order of
+            Rational function field in y over Rational Field
         """
         F = self.function_field()
         try:
@@ -112,8 +113,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         """
         Return a field isomorphic to the residue field at the prime ideal.
 
-        The residue field is by definition `k[x]/q` where `q` is the irreducible
-        polynomial generating the prime ideal and `k` is the constant base field.
+        The residue field is by definition `k[x]/q` where `q` is the
+        irreducible polynomial generating the prime ideal and `k` is
+        the constant base field.
 
         INPUT:
 
@@ -437,8 +439,6 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfinite):
     """
     Maximal infinite orders of rational function fields.
-
-    These are not finitely-generated rings in general.
 
     INPUT:
 
