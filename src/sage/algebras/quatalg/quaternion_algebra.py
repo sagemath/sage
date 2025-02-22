@@ -383,7 +383,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
                 # Construct the quaternion algebra via ramification over the rationals
                 if len(arg2) > 1 or (len(arg2) == 1 and is_odd(len(primes) + 2*arg2[0])):
                     raise ValueError("quaternion algebra over the rationals must have an even number of ramified places")
-                D = prod(primes).gen()
+                D = ZZ.ideal_monoid().prod(primes).gen()
                 a, b = hilbert_conductor_inverse(D)
                 a = QQ(a)
                 b = QQ(b)
