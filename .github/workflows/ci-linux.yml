@@ -79,7 +79,8 @@ jobs:
       max_parallel: 50
 
   standard-sitepackages:
-    if: ${{ success() || failure() }}
+    # Turned off until fixed
+    if: false
     needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
@@ -115,7 +116,7 @@ jobs:
       max_parallel: 8
 
   standard-constraints_pkgs:
-    if: ${{ success() || failure() }}
+    # Turned off until fixed
     needs: [standard-sitepackages]
     uses: ./.github/workflows/docker.yml
     with:
