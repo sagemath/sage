@@ -7758,7 +7758,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         return self.element_class(self, data, check=False)
 
     class Element(Permutation):
-        def has_left_descent(self, i, mult=None):
+        def has_left_descent(self, i):
             r"""
             Check if ``i`` is a left descent of ``self``.
 
@@ -7789,23 +7789,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 [1, 2]
                 sage: [i for i in P.index_set() if x.has_left_descent(i)]
                 [1, 2]
-
-            TESTS::
-
-                sage: P = Permutations(4)
-                sage: x = P([3, 2, 4, 1])
-                sage: x.has_left_descent(2, mult='l2r')
-                doctest:warning
-                ...
-                DeprecationWarning: The mult option is deprecated and ignored.
-                See https://github.com/sagemath/sage/issues/27467 for details.
-                True
-                sage: x.has_left_descent(2, mult='r2l')
-                True
             """
-            if mult is not None:
-                from sage.misc.superseded import deprecation
-                deprecation(27467, "The mult option is deprecated and ignored.")
             for val in self._list:
                 if val == i:
                     return False
@@ -7843,24 +7827,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 [1, 3]
                 sage: [i for i in P.index_set() if x.has_right_descent(i)]
                 [1, 3]
-
-            TESTS::
-
-                sage: P = Permutations(4)
-                sage: x = P([3, 2, 4, 1])
-                sage: x.has_right_descent(3, mult='l2r')
-                doctest:warning
-                ...
-                DeprecationWarning: The mult option is deprecated and ignored.
-                See https://github.com/sagemath/sage/issues/27467 for details.
-                True
-                sage: x.has_right_descent(3, mult='r2l')
-                True
             """
-            if mult is not None:
-                from sage.misc.superseded import deprecation
-                deprecation(27467, "The mult option is deprecated and ignored.")
-            return self[i-1] > self[i]
+            return self[i - 1] > self[i]
 
         def __mul__(self, other):
             r"""
@@ -9601,24 +9569,6 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
         """
         StandardPermutations_n_abstract.__init__(self, n)
         self._a = a
-
-    @property
-    def a(self):
-        r"""
-        ``self.a`` is deprecated; use :meth:`patterns` instead.
-
-        TESTS::
-
-            sage: P = Permutations(3, avoiding=[[2,1,3],[1,2,3]])
-            sage: P.a
-            doctest:...: DeprecationWarning: The attribute a for the list of patterns to avoid is deprecated, use the method patterns instead.
-            See https://github.com/sagemath/sage/issues/26810 for details.
-            ([2, 1, 3], [1, 2, 3])
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(26810, "The attribute a for the list of patterns to avoid is "
-                           "deprecated, use the method patterns instead.")
-        return self.patterns()
 
     def patterns(self):
         """
