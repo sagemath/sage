@@ -1151,7 +1151,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         full_domain = False     # Says that we are not done yet!
 
-        v = [False for r in range(sP)]
+        v = [False for _ in range(sP)]
         # This initializes a list indexed by P^1(Z/NZ) which keeps track of
         # which right coset representatives we've found for Gamma_0(N)/SL_2(Z)
         # thru the construction of a fundamental domain
@@ -1171,8 +1171,8 @@ class ManinRelations(PollackStevensModularDomain):
             # This loop runs through the current set of cusps
             # and checks to see if more cusps should be added
             # -----------------------------------------------
-            for s in range(1, len(C), 2):  # range over odd indices in the
-                                           # final list C
+            for s in range(1, len(C), 2):
+                # range over odd indices in the final list C
                 if C[s] == "?":
 
                     # Single out our two cusps (path from cusp2 to cusp1)
@@ -1188,9 +1188,9 @@ class ManinRelations(PollackStevensModularDomain):
                     # This is the point where it is determined whether
                     # or not the adjacent triangle should be added
                     # ------------------------------------------------
-                    pos = P.index(b2, b1)   # The Sage index of the bottom
-                                                 # row of our unimodular
-                                           # transformation gam
+                    pos = P.index(b2, b1)
+                    # The Sage index of the bottom row of our
+                    # unimodular transformation gam
 
                     # Check if we need to flip (since this P1 element has not
                     # yet been accounted for!)
@@ -1214,16 +1214,18 @@ class ManinRelations(PollackStevensModularDomain):
                             # where gam is the matrix corresponding to the
                             # unimodular path connecting cusp1 to cusp2
 
-                            C[s] = "i"  # The '?' is changed to an 'i'
-                             # indicating that a new cusp needs to
-                                        #  be inserted here
+                            C[s] = "i"
+                            # The '?' is changed to an 'i' indicating
+                            # that a new cusp needs to be inserted here
                             full_domain = False
                         else:
-                            C[s] = "x"  # The '?' is changed to an 'x' and no
-                                        # more checking below is needed! =)
+                            C[s] = "x"
+                            # The '?' is changed to an 'x' and no
+                            # more checking below is needed! =)
                     else:
-                        C[s] = "x"  # The '?' is changed to an 'x' and no more
-                                           # checking below is needed! =)
+                        C[s] = "x"
+                        # The '?' is changed to an 'x' and no more
+                        # checking below is needed! =)
 
             # Now insert the missing cusps (where there is an 'i' in
             # the final list)
