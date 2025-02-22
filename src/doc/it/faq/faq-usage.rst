@@ -70,7 +70,7 @@ questi prerequisiti come segue::
 Se hai un sistema multiprocessore puoi scegliere una
 compilazione parallela di Sage. Il comando ::
 
-    export MAKE='make -j8'
+    export MAKEFLAGS='-j8'
 
 abiliterà 8 threads per quelle parti della compilazione che supportano
 il parallelismo. Al posto del numero 8 metti il numero di

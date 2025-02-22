@@ -1076,7 +1076,6 @@ class Latex(LatexCall):
             ''
             sage: latex.eval(r"\ThisIsAnInvalidCommand", {}) # optional -- latex ImageMagick
             An error occurred...
-            No pages of output...
         """
         MACROS = latex_extra_preamble()
 

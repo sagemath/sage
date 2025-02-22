@@ -4,8 +4,7 @@ Combinatorics quickref
 Integer Sequences::
 
     sage: s = oeis([1,3,19,211]); s                         # optional - internet
-    0: A000275: Coefficients of a Bessel function (reciprocal of J_0(z));
-                also pairs of permutations with rise/rise forbidden.
+    0: A000275: ...
     sage: s[0].programs()                                   # optional - internet
     [('maple', ...),
      ('mathematica', ...),

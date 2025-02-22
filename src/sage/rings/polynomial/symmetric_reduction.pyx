@@ -254,7 +254,7 @@ cdef class SymmetricReductionStrategy:
         return richcmp((left._parent, left._lm, left._tail),
                        (right._parent, right._lm, right._tail), op)
 
-    def gens(self):
+    def gens(self) -> list:
         """
         Return the list of Infinite Polynomials modulo which ``self`` reduces.
 

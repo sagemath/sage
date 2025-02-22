@@ -148,8 +148,6 @@ from cpython.ref cimport PyObject
 # Implement "_atexit_callbacks()" for each supported python version
 cdef extern from *:
     """
-    #if PY_VERSION_HEX >= 0x030a0000
-    /********** Python 3.10 **********/
     #define Py_BUILD_CORE
     #undef _PyGC_FINALIZED
     #include "internal/pycore_interp.h"
@@ -163,29 +161,6 @@ cdef extern from *:
         struct atexit_state state = interp->atexit;
         return state.callbacks;
     }
-    #else
-    /********** Python < 3.10 **********/
-    /* Internal structures defined in the CPython source in
-     * Modules/atexitmodule.c and subject to (but unlikely to) change.  Watch
-     * https://bugs.python.org/issue32082 for a request to (eventually)
-     * re-expose more of the atexit module's internals to Python
-     * typedef struct
-     */
-    typedef struct {
-        PyObject *func;
-        PyObject *args;
-        PyObject *kwargs;
-    } atexit_callback;
-    typedef struct {
-        atexit_callback **atexit_callbacks;
-        int ncallbacks;
-        int callback_len;
-    } atexitmodule_state;
-    static atexit_callback ** _atexit_callbacks(PyObject *self) {
-        atexitmodule_state *state = PyModule_GetState(self);
-        return state->atexit_callbacks;
-    }
-    #endif
     """
     ctypedef struct atexit_callback:
         PyObject* func

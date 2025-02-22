@@ -577,7 +577,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
 
         return super()._repr_option(key)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         EXAMPLES::
 

@@ -56,7 +56,7 @@ def SimpleGraphSpecies():
 
         sage: seq = S.isotype_generating_series().counts(6)[1:]                         # needs sage.modules
         sage: oeis(seq)[0]                              # optional - internet           # needs sage.modules
-        A000088: Number of graphs on n unlabeled nodes.
+        A000088: ...
 
     ::
 

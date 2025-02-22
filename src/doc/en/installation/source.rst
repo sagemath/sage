@@ -669,8 +669,8 @@ Environment variables
 Sage uses several environment variables to control its build process.
 Most users won't need to set any of these: the build process just works on many
 platforms.
-(Note though that setting :envvar:`MAKE`, as described below, can significantly
-speed up the process.)
+(Note though that setting :envvar:`MAKEFLAGS`, as described below, can
+significantly speed up the process.)
 Building Sage involves building many packages, each of which has its own
 compilation instructions.
 
@@ -680,19 +680,26 @@ Standard environment controlling the build process
 
 Here are some of the more commonly used variables affecting the build process:
 
-.. envvar:: MAKE
+.. envvar:: MAKEFLAGS
 
-  One useful setting for this variable when building Sage is
-  ``MAKE='make -jNUM'`` to tell the ``make`` program to run ``NUM`` jobs in
-  parallel when building.
-  Note that some Sage packages may not support this variable.
+  This variable can be set to tell the ``make`` program to build things in
+  parallel. Set it to ``-jNUM`` to run ``NUM`` jobs in parallel when building.
+  Add ``-lNUM`` to tell make not to spawn more processes when the load exceeds
+  ``NUM``.
 
-  Some people advise using more jobs than there are CPU cores, at least if the
-  system is not heavily loaded and has plenty of RAM; for example, a good
-  setting for ``NUM`` might be between 1 and 1.5 times the number of cores.
-  In addition, the ``-l`` option sets a load limit: ``MAKE='make -j4 -l5.5``,
-  for example, tells ``make`` to try to use four jobs, but to not start more
-  than one job if the system load average is above 5.5.
+  A good value for this variable is ``MAKEFLAGS="-j$(nproc) -l$(nproc).5"`` on
+  Linux and ``MAKEFLAGS="-j$(sysctl -n hw.ncpu) -l$(sysctl -n hw.ncpu).5"`` on
+  macOS. This instructs make to use all the execution threads of your CPU while
+  bounding the load if there are other processes generating load. If your
+  system does not have a lot of RAM, you might want to choose lower limits, if
+  you have lots of RAM, it can sometimes be beneficial to set these limits
+  slightly higher.
+
+  Note that some parts of the SageMath build system do not respect this
+  variable, e.g., when ninja gets invoked, it figures out the number of
+  processes to use on its own so the number of processes and the system load
+  you see might exceed the number configured here.
+
   See the manual page for GNU ``make``: `Command-line options
   <https://www.gnu.org/software/make/manual/make.html#Options-Summary>`_
   and `Parallel building

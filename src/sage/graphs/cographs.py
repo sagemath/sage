@@ -395,7 +395,7 @@ def change_label(tree, status, counter):
 
     - ``tree`` -- the tree to relabel
 
-    - ``status`` -- boolean; used to to detect series (``True``) and parallel
+    - ``status`` -- boolean; used to detect series (``True``) and parallel
       (``False``) internal nodes
 
     - ``counter`` -- list; the first integer of the list is used to assign a

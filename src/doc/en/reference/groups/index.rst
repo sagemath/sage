@@ -78,8 +78,6 @@ Matrix and Affine Groups
    sage/groups/matrix_gps/group_element_gap
    sage/groups/matrix_gps/finitely_generated
    sage/groups/matrix_gps/finitely_generated_gap
-   sage/groups/matrix_gps/morphism
-   sage/groups/matrix_gps/homset
    sage/groups/matrix_gps/binary_dihedral
    sage/groups/matrix_gps/coxeter_group
    sage/groups/matrix_gps/linear

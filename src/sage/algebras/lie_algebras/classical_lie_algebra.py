@@ -2170,7 +2170,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         return Family(I, d.__getitem__)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` in the order of `e_i`, `f_i`,
         and `h_i`.

@@ -70,7 +70,7 @@ Sage. The command
 
 .. CODE-BLOCK:: shell-session
 
-    $ export MAKE='make -j8'
+    $ export MAKEFLAGS='-j8'
 
 will enable 8 threads for parts of the build that support
 parallelism. Change the number 8 as appropriate to suit the number of

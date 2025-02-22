@@ -192,7 +192,7 @@ def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
         FM = f  # for Julia's invariant
     else:
         # solve the minimization problem for 'true' covariant
-        CF = ComplexIntervalField(prec=prec)  # keeps trac of our precision error
+        CF = ComplexIntervalField(prec=prec)  # keeps track of our precision error
         z = CF(z)
         FM = F(list(mat * vector(R.gens()))).subs({R.gen(1): 1}).univariate_polynomial()
         from sage.rings.polynomial.complex_roots import complex_roots

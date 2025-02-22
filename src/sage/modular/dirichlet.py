@@ -3104,7 +3104,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         return g[n]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return generators of ``self``.
 
@@ -3117,7 +3117,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         g = []
         ord = self.zeta_order()
         M = self._module
-        zero = M(0)
+        zero = M.zero()
         orders = self.integers_mod().unit_group().gens_orders()
         for i in range(len(self.unit_gens())):
             z = zero.__copy__()

@@ -362,7 +362,7 @@ class ParentLibGAP(SageObject):
                 for gap_subgroup in self._libgap.MaximalNormalSubgroups()]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the group.
 

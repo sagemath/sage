@@ -2094,7 +2094,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         return self(x)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the list of initial cluster variables and coefficients of ``self``.
 

@@ -114,7 +114,6 @@ from sage.misc.superseded import deprecation
 from sage.structure.coerce cimport coercion_model
 from sage.structure.parent cimport Parent
 from sage.structure.category_object cimport check_default_category
-from sage.misc.prandom import randint
 from sage.categories.rings import Rings
 from sage.categories.algebras import Algebras
 from sage.categories.commutative_algebras import CommutativeAlgebras
@@ -636,36 +635,6 @@ cdef class Ring(ParentWithGens):
             6
         """
         return self.zeta().multiplicative_order()
-
-    def random_element(self, bound=2):
-        """
-        Return a random integer coerced into this ring, where the
-        integer is chosen uniformly from the interval ``[-bound,bound]``.
-
-        INPUT:
-
-        - ``bound`` -- integer (default: 2)
-
-        ALGORITHM:
-
-        Uses Python's randint.
-
-        TESTS:
-
-        The following example returns a :exc:`NotImplementedError` since the
-        generic ring class ``__call__`` function returns a
-        :exc:`NotImplementedError`. Note that
-        ``sage.rings.ring.Ring.random_element`` performs a call in the generic
-        ring class by a random integer::
-
-            sage: R = sage.rings.ring.Ring(ZZ); R
-            <sage.rings.ring.Ring object at ...>
-            sage: R.random_element()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: cannot construct elements of <sage.rings.ring.Ring object at ...>
-        """
-        return self(randint(-bound,bound))
 
     @cached_method
     def epsilon(self):

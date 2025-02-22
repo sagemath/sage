@@ -1,7 +1,7 @@
 SAGE_SPKG_CONFIGURE([eclib], [
   SAGE_SPKG_DEPCHECK([ntl pari flint], [
     dnl use existing eclib only if the version reported by pkg-config is recent enough
-    m4_pushdef([SAGE_ECLIB_VER],["20231212"])
+    m4_pushdef([SAGE_ECLIB_VER],["20241112"])
     PKG_CHECK_MODULES([ECLIB], [eclib >= SAGE_ECLIB_VER], [
       AC_CACHE_CHECK([for mwrank version == SAGE_ECLIB_VER], [ac_cv_path_MWRANK], [
         AC_PATH_PROGS_FEATURE_CHECK([MWRANK], [mwrank], [

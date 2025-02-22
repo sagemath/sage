@@ -1548,10 +1548,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x + 6 over Rational Field
             sage: EllipticCurve(RR, [1, 6]).period_lattice()
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.00000000000000*x + 6.00000000000000 over Real Field with 53 bits of precision
+            sage: EllipticCurve(RDF, [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.0*x + 6.0 over Real Double Field
             sage: EllipticCurve(RealField(100), [1, 6]).period_lattice()
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.0000000000000000000000000000*x + 6.0000000000000000000000000000 over Real Field with 100 bits of precision
             sage: EllipticCurve(CC, [1, 6]).period_lattice()
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.00000000000000*x + 6.00000000000000 over Complex Field with 53 bits of precision
+            sage: EllipticCurve(CDF, [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.0*x + 6.0 over Complex Double Field
             sage: EllipticCurve(ComplexField(100), [1, 6]).period_lattice()
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.0000000000000000000000000000*x + 6.0000000000000000000000000000 over Complex Field with 100 bits of precision
             sage: EllipticCurve(AA, [1, 6]).period_lattice()

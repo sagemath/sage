@@ -42,9 +42,7 @@ foreach name, pyx : extension_data
   )
 endforeach
 
-extension_data_cpp = {
-  'pairing_heap' : files('pairing_heap.pyx'),
-}
+extension_data_cpp = {'pairing_heap' : files('pairing_heap.pyx')}
 
 foreach name, pyx : extension_data_cpp
   py.extension_module(

@@ -452,12 +452,13 @@ examples.
 #  Distributed under the terms of the GNU General Public License (GPL)
 # ****************************************************************************
 
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
+from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.tensor import tensor
-from sage.categories.homset import Hom
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.sets.family import Family
 
 ######################################################
 # the main class
@@ -2619,7 +2620,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             return sum(self._profile)
         return sum(self._profile[0]) + len([a for a in self._profile[1] if a == 2])
 
-    def gens(self):
+    def gens(self) -> Family:
         r"""
         Family of generators for this algebra.
 
@@ -2676,7 +2677,6 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(p=5, profile=[[2,1], [2,2,2]]).algebra_generators()
             Family (Q_0, P(1), P(5))
         """
-        from sage.sets.family import Family
         from sage.sets.non_negative_integers import NonNegativeIntegers
         from sage.rings.infinity import Infinity
         n = self.ngens()
