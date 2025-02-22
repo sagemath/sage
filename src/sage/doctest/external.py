@@ -366,6 +366,10 @@ def external_features():
     r"""
     Generate the features that are only to be tested if ``--optional=external`` is used.
 
+    .. SEEALSO::
+
+        :func:`sage.features.all.all_features`
+
     EXAMPLES::
 
         sage: from sage.doctest.external import external_features
