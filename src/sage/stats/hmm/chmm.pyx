@@ -7,7 +7,7 @@ AUTHOR:
 - William Stein, 2010-03
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@ AUTHOR:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from cpython.object cimport PyObject_RichCompare
 from libc.math cimport log, sqrt, exp, isnormal, isfinite, M_PI
