@@ -407,12 +407,8 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
         # instead.
         neighbors_iter = g.neighbor_in_iterator if g.is_directed() else g.neighbor_iterator
     else:
-        # When k > 1, we use BFS to determine the vertices that can reach v
-        # through a path of length at most k
-        gg = g.reverse() if g.is_directed() else g
-
         def neighbors_iter(x):
-            it = gg.breadth_first_search(x, distance=k)
+            it = g.breadth_first_search(x, distance=k)
             _ = next(it)
             yield from it
 
