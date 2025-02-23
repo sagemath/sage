@@ -7608,7 +7608,7 @@ class Partitions_parts_in(Partitions):
             sage: list(Partitions(4,parts_in=vector(ZZ,[2,4])))
             [[4], [2, 2]]
         """
-        parts = tuple(sorted(map(ZZ,parts)))
+        parts = tuple(sorted(set(map(ZZ,parts))))
         return super().__classcall__(cls, Integer(n), parts)
 
     def __init__(self, n, parts):
