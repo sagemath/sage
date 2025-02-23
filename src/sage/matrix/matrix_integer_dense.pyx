@@ -5448,10 +5448,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             for i from 0 <= i < index:
                 fmpz_init_set(fmpz_mat_entry(res._matrix,i,j), fmpz_mat_entry(self._matrix,i,j))
 
-            try:
-                z = row[j]
-            except TypeError:
-                z = ZZ(row[j])
+            z = ZZ(row[j])
 
             fmpz_set_mpz(zflint,z.value)
             fmpz_init_set(fmpz_mat_entry(res._matrix,index,j), zflint)
