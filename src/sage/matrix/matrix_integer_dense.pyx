@@ -5429,9 +5429,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         Ensure that :issue:`11328` is fixed::
 
             sage: m = matrix([[int(1),int(1)],[int(1),int(1)]])
-            sage: m.insert_row(1,[int(1),int(1)])
+            sage: m.insert_row(1,[int(2),int(3)])
             [1 1]
-            [1 1]
+            [2 3]
             [1 1]
         """
         cdef Matrix_integer_dense res = self._new(self._nrows + 1, self._ncols)
