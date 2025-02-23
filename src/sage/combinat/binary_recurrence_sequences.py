@@ -449,7 +449,7 @@ class BinaryRecurrenceSequence(SageObject):
                 # be purely periodic.
                 an = (A**(m**2)) * w
                 return BinaryRecurrenceSequence(self.b, self.c,
-                    an[0], an[1]).period(m, eventual = False)
+                    an[0], an[1]).period(m, eventual=False)
 
             # To compute the period mod m, we compute the least integer n such that A^n*w == w.  This necessarily
             # divides the order of A as a matrix in GL_2(Z/mZ).
