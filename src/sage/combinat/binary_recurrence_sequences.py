@@ -361,9 +361,9 @@ class BinaryRecurrenceSequence(SageObject):
         - ``m`` -- integer; modulo which the period of the recurrence relation is calculated
 
         - ``eventual`` -- boolean (default: `False`); if `True`, allow the
-        sequence to be eventually periodic, rather than requiring it to be
-        purely periodic. So `n_1` might not be congruent to `n_2` modulo
-        `period(m)` unless `n_1` and `n_2` are large.
+          sequence to be eventually periodic, rather than requiring it to be
+          purely periodic. So `n_1` might not be congruent to `n_2` modulo
+          `period(m)` unless `n_1` and `n_2` are large.
 
         OUTPUT: integer (the period of the sequence modulo m)
 
@@ -449,8 +449,7 @@ class BinaryRecurrenceSequence(SageObject):
                 # be purely periodic.
                 an = (A**(m**2)) * w
                 return BinaryRecurrenceSequence(self.b, self.c,
-                    an[0], an[1]).period(m)
-            eventual = False
+                    an[0], an[1]).period(m, eventual = False)
 
             # To compute the period mod m, we compute the least integer n such that A^n*w == w.  This necessarily
             # divides the order of A as a matrix in GL_2(Z/mZ).
