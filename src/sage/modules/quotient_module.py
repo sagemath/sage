@@ -534,11 +534,21 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
             sage: Q((ZZ^3)([1,2,3]))
             (2, 3)
+
+        TESTS:
+
+        Ensure that :issue:`39507` is fixed::
+            sage: V = VectorSpace(GF(2),2)
+            sage: A = V.subspace([(1,0)])
+            sage: B = A.subspace([])
+            sage: for x in A/B: print(x)
+            (0)
+            (1)
         """
         if isinstance(x, self.element_class) and x.parent() is self:
             return x
         if isinstance(x, (list, tuple)) and len(x) == self._domain.rank():
-            return self.__quo_map(self._domain(x))
+            return self.__quo_map(self._domain.linear_combination_of_basis(x))
         return FreeModule_ambient_field._element_constructor_(self, x)
 
     def _coerce_map_from_(self, M):
