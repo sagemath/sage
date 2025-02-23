@@ -360,7 +360,10 @@ class BinaryRecurrenceSequence(SageObject):
 
         - ``m`` -- integer; modulo which the period of the recurrence relation is calculated
 
-        - ``eventual`` -- boolean; if set to true gets the period when the index of the term is large
+        - ``eventual`` -- boolean (default: `False`); if `True`, allow the
+        sequence to be eventually periodic, rather than requiring it to be
+        purely periodic. So `n_1` might not be congruent to `n_2` modulo
+        `period(m)` unless `n_1` and `n_2` are large.
 
         OUTPUT: integer (the period of the sequence modulo m)
 
@@ -394,31 +397,36 @@ class BinaryRecurrenceSequence(SageObject):
             sage: S.period(17)
             8
 
-        If the eventual keyword is set to true then we ignore then we calculate
-        the eventual period by ignoring the first ``m^2`` terms and calculating
-        the period as normal::
+        Letting `eventual` be `True` allows us to find the period of a sequence
+        that is not purely periodic.::
 
-            sage: BinaryRecurrenceSequence(5,12,u0=0,u1=1).period(10)
+            sage: T = BinaryRecurrenceSequence(5,12,u0=0,u1=1)
+            sage: [T(n) % 10 for n in range(20)]
+            [0, 1, 5, 7, 5, 9, 5, 3, 5, 1, 5, 7, 5, 9, 5, 3, 5, 1, 5, 7]
+            sage: T.period(10)
             Traceback (most recent call last):
             ...
-            ValueError: Binary recurrence sequence modulo m is not a purely
+            ValueError: Binary recurrence sequence modulo 10 is not a purely
             periodic sequence.
-            sage: BinaryRecurrenceSequence(5,12,u0=0,u1=1).period(10,eventual=True)
+            sage: T.period(10,eventual=True)
             8
-            sage: BinaryRecurrenceSequence(3,2,u0=0,u1=1).period(4,eventual=True)
-            1
+
+        .. NOTE:: The answer is cached.
 
         TESTS:
 
         Verify that :issue:`38112` is fixed::
 
-            sage: BinaryRecurrenceSequence(3,2,u0=0,u1=1).period(4)
+            sage: T = BinaryRecurrenceSequence(3,2,u0=0,u1=1)
+            sage: [T(n) % 4 for n in range(5)]
+            [0, 1, 3, 3, 3]
+            sage: T.period(4)
             Traceback (most recent call last):
             ...
-            ValueError: Binary recurrence sequence modulo m is not a purely
+            ValueError: Binary recurrence sequence modulo 4 is not a purely
             periodic sequence.
-
-        .. NOTE:: The answer is cached.
+            sage: T.period(4,eventual=True)
+            1
         """
 
         # If we have already computed the period mod m, then we return the stored value.
@@ -434,9 +442,15 @@ class BinaryRecurrenceSequence(SageObject):
             Periods = {}
 
             if eventual is True:
+                # There are only m^2 possible pairs modulo m. Since the numbering
+                # of the sequence starts at 0, this implies that the term numbered
+                # m^2 must be in periodic part of the sequence. Hence, the
+                # sequence starting with the terms numbered m^2 and m^2 + 1 must
+                # be purely periodic.
                 an = (A**(m**2)) * w
                 return BinaryRecurrenceSequence(self.b, self.c,
                     an[0], an[1]).period(m)
+            eventual = False
 
             # To compute the period mod m, we compute the least integer n such that A^n*w == w.  This necessarily
             # divides the order of A as a matrix in GL_2(Z/mZ).
@@ -522,7 +536,7 @@ class BinaryRecurrenceSequence(SageObject):
                             break
                         if tries > e:
                             raise ValueError("Binary recurrence sequence " +
-                                             "modulo m is not a purely " +
+                                             f"modulo {m} is not a purely " +
                                              "periodic sequence.")
                 Periods[p] = perpe
 
