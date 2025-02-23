@@ -356,7 +356,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         return self._from_dict({self._indices.one(): one},
                                remove_zeros=False, coerce=False)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` as a `U(\mathfrak{g})`-module.
 
