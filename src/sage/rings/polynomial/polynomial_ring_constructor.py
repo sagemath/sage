@@ -622,7 +622,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R.<x,y> = PolynomialRing(RIF,2)
         sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
 
-    We verify that multivariate polynomial rings over InfinityRing from
+    We verify that multivariate polynomial rings over ``InfinityRing`` from
     :issue:`34675` are fixed::
 
         sage: PolynomialRing(InfinityRing, 2, 'x')
