@@ -402,6 +402,7 @@ def make_positive(matrices):
         ValueError: There is a matrix which is neither non-negative nor non-positive.
     """
     from sage.arith.srange import srange
+
     def do(mat):
         if is_non_negative(mat):
             return mat
