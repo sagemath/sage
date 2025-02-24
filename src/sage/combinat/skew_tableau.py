@@ -8,22 +8,18 @@ AUTHORS:
   Factored out ``CombinatorialClass``
 - Trevor K. Karn (2022-08-03): added ``backward_slide``
 - Álvaro Gutiérrez (2025-02-24): added ``to_KTpuzzle``
+
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
-#       Copyright (C) 2013 Travis Scrimshaw <tcscrims at gmail.com>
-#       Copyright (C) 2013 Arthur Lubovsky
-#       Copyright (C) 2025 Álvaro Gutiérrez <gutierrez.caceres@outlook.com>
+#                     2013 Travis Scrimshaw <tcscrims at gmail.com>
+#                     2013 Arthur Lubovsky
+#                     2025 Álvaro Gutiérrez <gutierrez.caceres@outlook.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 

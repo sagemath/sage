@@ -6,14 +6,12 @@ instance of this class will be callable: the arguments are the labels of
 north-east and north-west sides of the puzzle boundary; the output is the list
 of the fillings of the puzzle with the specified pieces.
 
-Acknowledgements
-----------------
 
-The initial version of this code was written during Sage Days 45 at ICERM.
+AUTHORS:
 
-- Franco Saliola, Allen Knutson, Avinash Dalal, Anne Schilling (Initial version, 2013)
-- Elizabeth Beazley, Ed Richmond (Testing, 2013)
-- Álvaro Gutiérrez (added .to_LRtableaux(), 2025)
+- Franco Saliola, Allen Knutson, Avinash Dalal, Anne Schilling (2013): initial version at Sage Days 45, ICERM
+- Elizabeth Beazley, Ed Richmond (2013): testing
+- Álvaro Gutiérrez (2025-02-24): added ``.to_LRtableaux()``
 
 .. TODO::
 
@@ -34,9 +32,13 @@ The initial version of this code was written during Sage Days 45 at ICERM.
 #                     2013 Ed Richmond,
 #                     2025 Álvaro Gutiérrez <gutierrez.caceres@outlook.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
 from __future__ import annotations
 
 from sage.misc.lazy_import import lazy_import
