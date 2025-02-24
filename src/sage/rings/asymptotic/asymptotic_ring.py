@@ -3981,13 +3981,13 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
                 raise TypeError('Not all list entries of %s '
                                 'are asymptotic terms, so cannot create an '
                                 'asymptotic expansion in %s.' % (data, self))
-            summands = AsymptoticRing._create_empty_summands_()
+            summands = self._create_empty_summands_()
             summands.union_update(data)
             return self.element_class(self, summands,
                                       simplify=simplify, convert=convert)
 
         if not data:
-            summands = AsymptoticRing._create_empty_summands_()
+            summands = self._create_empty_summands_()
             return self.element_class(self, summands,
                                       simplify=simplify, convert=False)
 
