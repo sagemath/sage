@@ -1440,8 +1440,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         self.fprint("Dimensions: ", M_matrix_final.dimensions())
         # Correct the values of the x vector, based on the minimal L_2 norm
         residual = M_matrix_final * x_vector_final - corrected_target_relevant_exact
+        M_self_prod = matrix(M_matrix_final * M_matrix_final.T, sparse=False)
         x_vector_corr = x_vector_final - M_matrix_final.T * (
-            (M_matrix_final * M_matrix_final.T).pseudoinverse() * residual
+            M_self_prod.pseudoinverse() * residual
         )
         self.fprint("This took {}s".format(time.time() - start_time))
         start_time = time.time()
@@ -1451,7 +1452,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
         # Recover the X matrices and e vector from the corrected x
         #
-
+        
         e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
         if len(e_nonzero_vector_corr)>0 and min(e_nonzero_vector_corr)<0:
             self.fprint("Linear coefficient is negative: {}".format(
