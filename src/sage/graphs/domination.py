@@ -403,10 +403,12 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
 
     if k == 1:
         # For any vertex v, one of its neighbors or v itself is in the minimum
-        # dominating set. If g is directed, we use the in-neighbors of v
+        # dominating set. If g is directed, we use the out-neighbors of v
         # instead.
-        neighbors_iter = g.neighbor_in_iterator if g.is_directed() else g.neighbor_iterator
+        neighbors_iter = g.neighbor_out_iterator if g.is_directed() else g.neighbor_iterator
     else:
+        # When k > 1, we use BFS to determine the vertices that v can reach
+        # through a path of length at most k.
         def neighbors_iter(x):
             it = g.breadth_first_search(x, distance=k)
             _ = next(it)
