@@ -1434,6 +1434,25 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             x + y
             sage: O(x).exact_part()
             0
+        
+        Check that the exact part of an expansion can also be determined for
+        rings with custom element keys::
+
+            sage: from sage.data_structures.mutable_poset import MutablePoset
+            sage: from sage.rings.asymptotic.term_monoid import can_absorb, absorption
+            sage: from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
+            sage: class CustomAsymptoticRing(AsymptoticRing):
+            ....:     @staticmethod
+            ....:     def _create_empty_summands_():
+            ....:         return MutablePoset(key=lambda element: element.growth**2,
+            ....:             can_merge=can_absorb, merge=absorption)
+            sage: AR = CustomAsymptoticRing(growth_group='n^QQ', coefficient_ring=QQ)
+            sage: n = AR.gen()
+            sage: expr = n^5 + n^3 + O(n^(-2))
+            sage: expr.exact_part()
+            n^5 + n^3
+            sage: list(expr.summands.keys())
+            [n^10, n^6, n^(-4)]
         """
         exact_terms = self.summands.copy()
         for term in self.summands.elements_topological():
