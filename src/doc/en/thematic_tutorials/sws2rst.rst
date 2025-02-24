@@ -17,7 +17,7 @@ this with the path to your Sage installation, such as
 ``/Applications/Sage-9.2.app/Contents/Resources/sage/sage`` if you are
 using the Mac app and have placed it in your Applications directory.
 
-* Next, you will need an optional package to covert your worksheet.  Use the
+* Next, you will need an optional package to convert your worksheet.  Use the
   command:
 
   .. CODE-BLOCK:: shell-session

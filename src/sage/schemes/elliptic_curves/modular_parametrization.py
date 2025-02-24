@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Modular parametrization of elliptic curves over `\QQ`
 
@@ -28,7 +27,6 @@ EXAMPLES::
 AUTHORS:
 
 - Chris Wuthrich (02/10): moved from ell_rational_field.py.
-
 """
 ######################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
@@ -114,7 +112,7 @@ class ModularParameterization:
 
     def __eq__(self, other):
         r"""
-        Compares two modular parametrizations by simply comparing the elliptic curves.
+        Compare two modular parametrizations by simply comparing the elliptic curves.
 
         EXAMPLES::
 
@@ -153,7 +151,7 @@ class ModularParameterization:
 
             sage: E = EllipticCurve('37a')
             sage: phi = E.modular_parametrization()
-            sage: phi((sqrt(7)*I - 17)/74, 53)
+            sage: phi((sqrt(7)*I - 17)/74, 53)                                          # needs sage.symbolic
             (...e-16 - ...e-16*I : ...e-16 + ...e-16*I : 1.00000000000000)
 
         Verify that the mapping is invariant under the action of `\Gamma_0(N)`
@@ -212,10 +210,11 @@ class ModularParameterization:
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: E = EllipticCurve('37a'); phi = E.modular_parametrization()
             sage: x = polygen(ZZ, 'x')
-            sage: tau = (sqrt(7)*I - 17)/74                                             # optional - sage.symbolic
-            sage: z = phi.map_to_complex_numbers(tau); z                                # optional - sage.symbolic
+            sage: tau = (sqrt(7)*I - 17)/74
+            sage: z = phi.map_to_complex_numbers(tau); z
             0.929592715285395 - 1.22569469099340*I
             sage: E.elliptic_exponential(z)
             (...e-16 - ...e-16*I : ...e-16 + ...e-16*I : 1.00000000000000)
@@ -254,7 +253,9 @@ class ModularParameterization:
         the number of significant terms.  This means that X will be given up
         to O(q^(prec-2)) and Y will be given up to O(q^(prec-3)).
 
-        OUTPUT: A list of two Laurent series ``[X(x),Y(x)]`` of degrees -2, -3
+        OUTPUT:
+
+        A list of two Laurent series [`X(x)`,`Y(x)`] of degrees `-2`, `-3`,
         respectively, which satisfy the equation of the elliptic curve.
         There are modular functions on `\Gamma_0(N)` where `N` is the
         conductor.

@@ -12,10 +12,8 @@ isomorphism testing.
 AUTHORS:
 
 - Rudi Pendavingh, Stefan van Zwam (2013-04-01): initial version
-
-Methods
-=======
 """
+
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
@@ -34,13 +32,13 @@ from sage.data_structures.bitset_base cimport *
 cdef class SetSystem:
     """
     A ``SetSystem`` is an enumerator of a collection of subsets of a given
-    fixed and finite ground set. It offers the possibility to enumerate its
+    fixed and finite groundset. It offers the possibility to enumerate its
     contents. One is most likely to encounter these as output from some
     Matroid methods::
 
-        sage: M = matroids.named_matroids.Fano()
+        sage: M = matroids.catalog.Fano()
         sage: M.circuits()
-        Iterator over a system of subsets
+        SetSystem of 14 sets over 7 elements
 
     To access the sets in this structure, simply iterate over them. The
     simplest way must be::
@@ -75,7 +73,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
         """
         cdef long i
         if not isinstance(groundset, tuple):
@@ -83,8 +81,8 @@ cdef class SetSystem:
         else:
             self._groundset = groundset
         self._idx = {}
-        for i in range(len(groundset)):
-            self._idx[groundset[i]] = i
+        for i in range(len(self._groundset)):
+            self._idx[self._groundset[i]] = i
 
         self._groundset_size = len(groundset)
         self._bitset_size = max(self._groundset_size, 1)
@@ -99,25 +97,24 @@ cdef class SetSystem:
 
         INPUT:
 
-        - ``groundset`` -- a list or tuple of finitely many elements.
-        - ``subsets`` -- (default: ``None``) an enumerator for a set of
-          subsets of ``groundset``.
-        - ``capacity`` -- (default: ``1``) Initial maximal capacity of the set
-          system.
+        - ``groundset`` -- list or tuple of finitely many elements
+        - ``subsets`` -- (default: ``None``) enumerator for a set of subsets of
+          ``groundset``
+        - ``capacity`` -- (default: ``1``) initial maximal capacity of the set
+          system
 
         EXAMPLES::
 
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
             sage: sorted(S[1])
             [3, 4]
             sage: for s in S: print(sorted(s))
             [1, 2]
             [3, 4]
             [1, 2, 4]
-
         """
         if subsets is not None:
             for e in subsets:
@@ -139,7 +136,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
             sage: len(S)
             3
         """
@@ -166,11 +163,9 @@ cdef class SetSystem:
 
         INPUT:
 
-        - ``k`` -- an integer. The index of the subset in the system.
+        - ``k`` -- integer; the index of the subset in the system
 
-        OUTPUT:
-
-        The subset at index `k`.
+        OUTPUT: the subset at index `k`
 
         EXAMPLES::
 
@@ -197,10 +192,9 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: repr(S)  # indirect doctest
-            'Iterator over a system of subsets'
-
+            'SetSystem of 3 sets over 4 elements'
         """
-        return "Iterator over a system of subsets"
+        return f'SetSystem of {self._len} sets over {self._groundset_size} elements'
 
     cdef copy(self):
         cdef SetSystem S
@@ -209,25 +203,23 @@ cdef class SetSystem:
             S._append(self._subsets[i])
         return S
 
-    cdef _relabel(self, l):
+    cdef _relabel(self, mapping):
         """
-        Relabel each element `e` of the ground set as `l(e)`, where `l` is a
-        given injective map.
+        Relabel each element `e` of the ground set as ``mapping[e]``, where
+        ``mapping`` is a given injective map.
 
         INPUT:
 
-        - ``l`` -- a python object such that `l[e]` is the new label of e.
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
 
-        OUTPUT:
-
-        ``None``.
-
+        OUTPUT: none
         """
         cdef long i
         E = []
         for i in range(self._groundset_size):
-            if self._groundset[i] in l:
-                E.append(l[self._E[i]])
+            if self._groundset[i] in mapping:
+                E.append(mapping[self._E[i]])
             else:
                 E.append(self._E[i])
         self._groundset = E
@@ -249,7 +241,6 @@ cdef class SetSystem:
             [3, 4]
             [1, 2]
             [3]
-
         """
         cdef SetSystem S
         if self._groundset_size == 0:
@@ -275,7 +266,7 @@ cdef class SetSystem:
 
     cdef inline _append(self, bitset_t X):
         """
-        Append subset in internal, bitset format
+        Append subset in internal, bitset format.
         """
         if self._capacity == self._len:
             self.resize(self._capacity * 2)
@@ -297,13 +288,13 @@ cdef class SetSystem:
 
     cdef inline _subset(self, long k):
         """
-        Return the k-th subset, in index format.
+        Return the `k`-th subset, in index format.
         """
         return bitset_list(self._subsets[k])
 
     cdef subset(self, k):
         """
-        Return the k-th subset.
+        Return the `k`-th subset.
         """
         cdef long i
         F = set()
@@ -315,7 +306,7 @@ cdef class SetSystem:
 
     cpdef _get_groundset(self):
         """
-        Return the ground set of this SetSystem.
+        Return the groundset of this SetSystem.
 
         EXAMPLES::
 
@@ -331,7 +322,7 @@ cdef class SetSystem:
         Test if the :class:`SetSystem` is connected.
 
         A :class:`SetSystem` is connected if there is no nonempty proper subset
-        ``X`` of the ground set so the each subset is either contained in ``X``
+        ``X`` of the groundset so the each subset is either contained in ``X``
         or disjoint from ``X``.
 
         EXAMPLES::
@@ -346,7 +337,6 @@ cdef class SetSystem:
             sage: S = SetSystem([1], [])
             sage: S.is_connected()
             True
-
         """
         if self._groundset_size <= 1:
             return True
@@ -437,7 +427,7 @@ cdef class SetSystem:
                         bitset_discard(P._subsets[i], v)
                     P._append(self._temp)
 
-    cdef long subset_characteristic(self, SetSystem P, long e):
+    cdef long subset_characteristic(self, SetSystem P, long e) noexcept:
         """
         Helper method for partition methods below.
         """
@@ -510,34 +500,34 @@ cdef class SetSystem:
 
     cpdef _equitable_partition(self, SetSystem P=None, EP=None):
         r"""
-        Return an equitable ordered partition of the ground set of the
+        Return an equitable ordered partition of the groundset of the
         hypergraph whose edges are the subsets in this SetSystem.
 
-        Given any ordered partition `P = (p_1, ..., p_k)` of the ground set of
+        Given any ordered partition `P = (p_1, ..., p_k)` of the groundset of
         a hypergraph, any edge `e` of the hypergraph has a characteristic
         intersection number sequence `i(e)=(|p_1\cap e|, ... , |p_k\cap e|))`.
         There is an ordered partition `EP` of the edges that groups the edges
         according to this intersection number sequence. Given this an ordered
         partition of the edges, we may similarly refine `P` to a new ordered
-        partition `P'`, by considering the incidence numbers of ground set
+        partition `P'`, by considering the incidence numbers of groundset
         elements with each partition element of `EP`.
 
         The ordered partition `P` is equitable when `P' = P`.
 
         INPUT:
 
-        - ``P``, an equitable ordered partition of the ground set, stored as
-          a SetSystem.
-        - ``EP``, the corresponding equitable partition of the edges, stored
-          as a list of lists of indices of subsets of this SetSystem.
+        - ``P`` -- an equitable ordered partition of the groundset, stored as
+          a SetSystem
+        - ``EP`` -- the corresponding equitable partition of the edges, stored
+          as a list of lists of indices of subsets of this SetSystem
 
         OUTPUT:
 
-        - ``P``, an equitable ordered partition of the ground set, stored as a
-          SetSystem.
-        - ``EP``, the corresponding equitable partition of the edges, stored
-          as a list of lists of indices of subsets of this SetSystem.
-        - ``h``, an integer invariant of the SetSystem.
+        - ``P`` -- an equitable ordered partition of the groundset, stored as a
+          SetSystem
+        - ``EP`` -- the corresponding equitable partition of the edges, stored
+          as a list of lists of indices of subsets of this SetSystem
+        - ``h`` -- integer invariant of the SetSystem
 
         EXAMPLES::
 
@@ -591,7 +581,7 @@ cdef class SetSystem:
 
     cpdef _heuristic_partition(self, SetSystem P=None, EP=None):
         """
-        Return an heuristic ordered partition into singletons of the ground
+        Return a heuristic ordered partition into singletons of the ground
         set of the hypergraph whose edges are the subsets in this SetSystem.
 
         This partition obtained as follows: make an equitable
@@ -602,18 +592,18 @@ cdef class SetSystem:
 
         INPUT:
 
-        - ``P`` -- (default: ``None``) an ordered partition of the ground set.
+        - ``P`` -- (default: ``None``) an ordered partition of the groundset
         - ``EP`` -- (default: ``None``) the corresponding partition of the
           edges, stored as a list of lists of indices of subsets of this
-          SetSystem.
+          SetSystem
 
         OUTPUT:
 
-        - ``P`` -- an ordered partition of the ground set into singletons,
-          stored as a SetSystem.
+        - ``P`` -- an ordered partition of the groundset into singletons,
+          stored as a SetSystem
         - ``EP`` -- the corresponding partition of the edges, stored as a list
-          of lists of indices of subsets of this SetSystem.
-        - ``h`` -- an integer invariant of the SetSystem.
+          of lists of indices of subsets of this SetSystem
+        - ``h`` -- integer invariant of the SetSystem
 
         EXAMPLES::
 
@@ -643,15 +633,15 @@ cdef class SetSystem:
 
         INPUT:
 
-        - ``other`` -- a SetSystem
-        - ``SP`` (optional) -- a SetSystem storing an ordered partition of the
-          ground set of ``self``
-        - ``OP`` (optional) -- a SetSystem storing an ordered partition of the
-          ground set of ``other``
+        - ``other`` -- SetSystem
+        - ``SP`` -- (optional) SetSystem storing an ordered partition of the
+          groundset of ``self``
+        - ``OP`` -- (optional) SetSystem storing an ordered partition of the
+          groundset of ``other``
 
         OUTPUT:
 
-        ``morphism`` -- a dictionary containing an isomorphism respecting the
+        ``morphism`` -- dictionary containing an isomorphism respecting the
         given ordered partitions, or ``None`` if no such isomorphism exists.
 
         EXAMPLES::
@@ -706,10 +696,10 @@ cdef class SetSystem:
 
         - ``is_equiv`` -- a function that determines if a given groundset
           isomorphism is a valid equivalence
-        - ``other`` -- a SetSystem
-        - ``SP`` (optional) -- a SetSystem storing an ordered partition of the
+        - ``other`` -- SetSystem
+        - ``SP`` -- (optional) SetSystem storing an ordered partition of the
           groundset of ``self``
-        - ``OP`` (optional) -- a SetSystem storing an ordered partition of the
+        - ``OP`` -- (optional) SetSystem storing an ordered partition of the
           groundset of ``other``
 
         OUTPUT:
@@ -727,7 +717,7 @@ cdef class SetSystem:
             sage: S._equivalence(lambda self, other, morph:True, T)
             {1: 'c', 2: 'd', 3: 'b', 4: 'a'}
 
-        Check that :trac:`15189` is fixed::
+        Check that :issue:`15189` is fixed::
 
             sage: M = Matroid(ring=GF(5), reduced_matrix=[[1,0,3],[0,1,1],[1,1,0]])
             sage: N = Matroid(ring=GF(5), reduced_matrix=[[1,0,1],[0,1,1],[1,1,0]])

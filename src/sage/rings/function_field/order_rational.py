@@ -83,8 +83,8 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         except TypeError:
             raise TypeError("unable to convert to an element of {}".format(F))
 
-        if not f.denominator() in self.function_field().constant_base_field():
-            raise TypeError("%r is not an element of %r"%(f,self))
+        if f.denominator() not in self.function_field().constant_base_field():
+            raise TypeError("%r is not an element of %r" % (f,self))
 
         return f
 
@@ -129,7 +129,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: I = O.ideal(x^2 + x + 1)
@@ -150,7 +150,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: to_R(e2).parent() is R
             True
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: I = O.ideal(x + 1)
@@ -171,20 +171,21 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: to_R(e2).parent() is R
             True
 
+            sage: # needs sage.modules sage.rings.number_field
             sage: F.<x> = FunctionField(QQ)
             sage: O = F.maximal_order()
             sage: I = O.ideal(x^2 + x + 1)
-            sage: R, fr_R, to_R = O._residue_field(I)                                               # needs sage.rings.number_field
-            sage: R                                                                                 # needs sage.rings.number_field
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
             Number Field in a with defining polynomial x^2 + x + 1
-            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())                       # needs sage.rings.number_field
-            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)                                              # needs sage.rings.number_field
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
             True
-            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)                                              # needs sage.rings.number_field
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
             True
-            sage: to_R(e1).parent() is R                                                            # needs sage.rings.number_field
+            sage: to_R(e1).parent() is R
             True
-            sage: to_R(e2).parent() is R                                                            # needs sage.rings.number_field
+            sage: to_R(e2).parent() is R
             True
 
             sage: F.<x> = FunctionField(QQ)
@@ -286,7 +287,6 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # needs sage.modules
             sage: all(to_K(fr_K(e)) == e for e in K)                                                # needs sage.modules
             True
-
         """
         # polynomial ring over the base field
         R = self._ring
@@ -493,7 +493,8 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
     def gen(self, n=0):
         """
-        Return the ``n``-th generator of self. Since there is only one generator ``n`` must be 0.
+        Return the `n`-th generator of ``self``. Since there is only one
+        generator `n` must be `0`.
 
         EXAMPLES::
 

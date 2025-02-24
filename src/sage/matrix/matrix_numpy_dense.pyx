@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Dense matrices using a NumPy backend
 
@@ -39,7 +40,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 cimport sage.structure.element
 
 cimport numpy as cnumpy
@@ -133,7 +134,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             [0.0 1.0 2.0]
             [3.0 4.0 5.0]
             [6.0 7.0 8.0]
-            sage: matrix(CDF,2,2,[CDF(1+I)*j for j in range(4)])
+            sage: matrix(CDF,2,2,[CDF(1+I)*j for j in range(4)])                        # needs sage.symbolic
             [        0.0 1.0 + 1.0*I]
             [2.0 + 2.0*I 3.0 + 3.0*I]
         """
@@ -182,9 +183,8 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         INPUT:
 
-        - nrows -- (default self._nrows) number of rows in returned matrix
-        - ncols -- (default self._ncols) number of columns in returned matrix
-
+        - ``nrows`` -- (default: ``self._nrows``) number of rows in returned matrix
+        - ``ncols`` -- (default: ``self._ncols``) number of columns in returned matrix
         """
         cdef Matrix_numpy_dense m
         if nrows == -1 and ncols == -1:
@@ -239,7 +239,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
     def transpose(self):
         """
-        Return the transpose of this matrix, without changing self.
+        Return the transpose of this matrix, without changing ``self``.
 
         EXAMPLES::
 
@@ -266,7 +266,6 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             []
             sage: m.transpose().parent()
             Full MatrixSpace of 3 by 0 dense matrices over Real Double Field
-
         """
         if self._nrows == 0 or self._ncols == 0:
             return self.new_matrix(self._ncols, self._nrows)
@@ -305,10 +304,10 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         TESTS:
 
-        Complex entries are supported (:trac:`27831`).  ::
+        Complex entries are supported (:issue:`27831`).  ::
 
-            sage: a = matrix(CDF, [(21, 0.6 + 18.5*i), (0.6 - 18.5*i, 21)])
-            sage: a.is_symmetric()
+            sage: a = matrix(CDF, [(21, 0.6 + 18.5*i), (0.6 - 18.5*i, 21)])             # needs sage.symbolic
+            sage: a.is_symmetric()                                                      # needs sage.symbolic
             False
         """
         cdef Py_ssize_t i, j
@@ -335,7 +334,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         INPUT:
 
-        - ``tol`` -  the largest value of the absolute value of the
+        - ``tol`` -- the largest value of the absolute value of the
           difference between two matrix entries for which they will
           still be considered equal.
 
@@ -373,7 +372,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         INPUT:
 
-        - ``dtype`` - The desired data-type for the array. If not given,
+        - ``dtype`` -- the desired data-type for the array. If not given,
           then the type will be determined as the minimum type required
           to hold the objects in the sequence.
 

@@ -28,15 +28,16 @@ by
 
 ::
 
-    sage: import numpy                           # optional - cvxopt
-    sage: from cvxopt.base import spmatrix       # optional - cvxopt
-    sage: from cvxopt.base import matrix as m    # optional - cvxopt
-    sage: from cvxopt import umfpack             # optional - cvxopt
-    sage: Integer = int                          # optional - cvxopt
-    sage: V = [2,3, 3,-1,4, 4,-3,1,2, 2, 6,1]    # optional - cvxopt
-    sage: I = [0,1, 0, 2,4, 1, 2,3,4, 2, 1,4]    # optional - cvxopt
-    sage: J = [0,0, 1, 1,1, 2, 2,2,2, 3, 4,4]    # optional - cvxopt
-    sage: A = spmatrix(V,I,J)                    # optional - cvxopt
+    sage: # needs cvxopt
+    sage: import numpy
+    sage: from cvxopt.base import spmatrix
+    sage: from cvxopt.base import matrix as m
+    sage: from cvxopt import umfpack
+    sage: Integer = int
+    sage: V = [2,3, 3,-1,4, 4,-3,1,2, 2, 6,1]
+    sage: I = [0,1, 0, 2,4, 1, 2,3,4, 2, 1,4]
+    sage: J = [0,0, 1, 1,1, 2, 2,2,2, 3, 4,4]
+    sage: A = spmatrix(V,I,J)
 
 To solve an equation :math:`AX=B`, with :math:`B=[1,1,1,1,1]`,
 we could do the following.
@@ -45,9 +46,9 @@ we could do the following.
 
 ::
 
-    sage: B = numpy.array([1.0]*5)               # optional - cvxopt
-    sage: B.shape=(5,1)                          # optional - cvxopt
-    sage: print(B)                               # optional - cvxopt
+    sage: B = numpy.array([1.0]*5)                                                      # needs cvxopt
+    sage: B.shape=(5,1)                                                                 # needs cvxopt
+    sage: print(B)                                                                      # needs cvxopt
     [[1.]
      [1.]
      [1.]
@@ -55,15 +56,16 @@ we could do the following.
      [1.]]
 
 
-    sage: print(A)                               # optional - cvxopt
+    sage: # needs cvxopt
+    sage: print(A)
     [ 2.00e+00  3.00e+00     0         0         0    ]
     [ 3.00e+00     0      4.00e+00     0      6.00e+00]
     [    0     -1.00e+00 -3.00e+00  2.00e+00     0    ]
     [    0         0      1.00e+00     0         0    ]
     [    0      4.00e+00  2.00e+00     0      1.00e+00]
-    sage: C = m(B)                               # optional - cvxopt
-    sage: umfpack.linsolve(A,C)                  # optional - cvxopt
-    sage: print(C)                               # optional - cvxopt
+    sage: C = m(B)
+    sage: umfpack.linsolve(A,C)
+    sage: print(C)
     [ 5.79e-01]
     [-5.26e-02]
     [ 1.00e+00]
@@ -81,13 +83,14 @@ We could compute the approximate minimum degree ordering by doing
 
 ::
 
-    sage: RealNumber = float                     # optional - cvxopt
-    sage: Integer = int                          # optional - cvxopt
-    sage: from cvxopt.base import spmatrix       # optional - cvxopt
-    sage: from cvxopt import amd                 # optional - cvxopt
-    sage: A = spmatrix([10,3,5,-2,5,2],[0,2,1,2,2,3],[0,0,1,1,2,3])  # optional - cvxopt
-    sage: P = amd.order(A)                       # optional - cvxopt
-    sage: print(P)                               # optional - cvxopt
+    sage: # needs cvxopt
+    sage: RealNumber = float
+    sage: Integer = int
+    sage: from cvxopt.base import spmatrix
+    sage: from cvxopt import amd
+    sage: A = spmatrix([10,3,5,-2,5,2],[0,2,1,2,2,3],[0,0,1,1,2,3])
+    sage: P = amd.order(A)
+    sage: print(P)
     [ 1]
     [ 0]
     [ 2]
@@ -98,7 +101,7 @@ For a simple linear programming example, if we want to solve
 .. math::
 
    \begin{array}{cc}
-   \text{minimze} & -4x_1-5x_2\\
+   \text{minimize} & -4x_1-5x_2\\
    \text{subject to} & 2x_1 +x_2\le 3\\
                      & x_1+2x_2\le 3\\
                      & x_1 \ge 0 \\
@@ -108,14 +111,15 @@ For a simple linear programming example, if we want to solve
 
 ::
 
-    sage: RealNumber = float                     # optional - cvxopt
-    sage: Integer = int                          # optional - cvxopt
-    sage: from cvxopt.base import matrix as m    # optional - cvxopt
-    sage: from cvxopt import solvers             # optional - cvxopt
-    sage: c = m([-4., -5.])                      # optional - cvxopt
-    sage: G = m([[2., 1., -1., 0.], [1., 2., 0., -1.]])  # optional - cvxopt
-    sage: h = m([3., 3., 0., 0.])                # optional - cvxopt
-    sage: sol = solvers.lp(c,G,h)       # random # optional - cvxopt
+    sage: # needs cvxopt
+    sage: RealNumber = float
+    sage: Integer = int
+    sage: from cvxopt.base import matrix as m
+    sage: from cvxopt import solvers
+    sage: c = m([-4., -5.])
+    sage: G = m([[2., 1., -1., 0.], [1., 2., 0., -1.]])
+    sage: h = m([3., 3., 0., 0.])
+    sage: sol = solvers.lp(c,G,h)       # random
          pcost       dcost       gap    pres   dres   k/t
      0: -8.1000e+00 -1.8300e+01  4e+00  0e+00  8e-01  1e+00
      1: -8.8055e+00 -9.4357e+00  2e-01  1e-16  4e-02  3e-02
@@ -127,6 +131,6 @@ For a simple linear programming example, if we want to solve
 
 ::
 
-    sage: print(sol['x'])    # optional - cvxopt  # ... below since can get -00 or +00 depending on architecture
+    sage: print(sol['x'])  # ... below since can get -00 or +00 depending on architecture  # needs cvxopt
     [ 1.00e...00]
     [ 1.00e+00]

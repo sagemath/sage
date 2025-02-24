@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Test the doctesting framework
 
@@ -13,7 +14,7 @@ EXAMPLES::
     sage: tests_dir = os.path.join(SAGE_SRC, 'sage', 'doctest', 'tests')
     sage: tests_env = dict(os.environ)
 
-Unset :envvar:`TERM` when running doctests, see :trac:`14370`::
+Unset :envvar:`TERM` when running doctests, see :issue:`14370`::
 
     sage: try:
     ....:     del tests_env['TERM']
@@ -21,14 +22,14 @@ Unset :envvar:`TERM` when running doctests, see :trac:`14370`::
     ....:     pass
     sage: kwds = {'cwd': tests_dir, 'env':tests_env}
 
-Check that :trac:`2235` has been fixed::
+Check that :issue:`2235` has been fixed::
 
     sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
     ....:       "--random-seed=0", "--optional=sage", "longtime.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 longtime.rst
-    [0 tests, ...s]
+    [0 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -39,7 +40,7 @@ Check that :trac:`2235` has been fixed::
     Running doctests...
     Doctesting 1 file.
     sage -t --long --warn-long 0.0 --random-seed=0 longtime.rst
-    [1 test, ...s]
+    [1 test, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -172,7 +173,7 @@ Test the ``--exitfirst`` option::
 
 Test a timeout using the ``SAGE_TIMEOUT`` environment variable.  Also set
 ``CYSIGNALS_CRASH_NDEBUG`` to help ensure the test times out in a timely
-manner (:trac:`26912`)::
+manner (:issue:`26912`)::
 
     sage: from copy import deepcopy
     sage: kwds2 = deepcopy(kwds)
@@ -265,7 +266,7 @@ after the ``die_timeout`` given above (10 seconds)::
 
 If the child process is dead and removed, the last output should be as above.
 However, the child process interrupted its parent process (see
-``"interrupt_diehard.rst"``), and became an orphan process. Depending on the
+``'interrupt_diehard.rst'``), and became an orphan process. Depending on the
 system, an orphan process may eventually become a zombie process instead of
 being removed, and then the last output would just be a blank. Hence the ``#
 random`` tag.
@@ -344,7 +345,7 @@ Test that ``sig_on_count`` is checked correctly::
     ...
     1
 
-Test logfiles in serial and parallel mode (see :trac:`19271`)::
+Test logfiles in serial and parallel mode (see :issue:`19271`)::
 
     sage: t = tmp_filename()
     sage: subprocess.call(["sage", "-t", "--serial", "--warn-long", "0",    # long time
@@ -441,7 +442,7 @@ Test running under gdb, without and with a timeout::
     Running doctests...
     Doctesting 1 file...
     sage -t... 1second.rst...
-        [2 tests, ... s]
+        [2 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -470,7 +471,7 @@ Test the ``--show-skipped`` option::
         1 long test not run
         1 not tested test not run
         0 tests not run because we ran out of time
-        [2 tests, ... s]
+        [2 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -487,7 +488,7 @@ Optional tests are run correctly::
         2 tests not run due to known bugs
         1 not tested test not run
         0 tests not run because we ran out of time
-        [4 tests, ... s]
+        [4 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -503,7 +504,7 @@ Optional tests are run correctly::
         1 not tested test not run
         2 sage tests not run
         0 tests not run because we ran out of time
-        [2 tests, ... s]
+        [2 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -532,7 +533,7 @@ Test ``atexit`` support in the doctesting framework::
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 atexit.rst
-        [3 tests, ... s]
+        [3 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -563,7 +564,7 @@ Test that random tests are reproducible::
     **********************************************************************
     1 item had failures:
        1 of   2 in sage.doctest.tests.random_seed
-        [1 test, 1 failure, ...s]
+        [1 test, 1 failure, ...s wall]
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 random_seed.rst  # 1 doctest failed
     ----------------------------------------------------------------------
@@ -574,7 +575,7 @@ Test that random tests are reproducible::
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=1 random_seed.rst
-        [1 test, ...s]
+        [1 test, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------

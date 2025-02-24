@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The Hillman-Grassl correspondence
 
@@ -463,7 +462,7 @@ class WeakReversePlanePartitions(Tableaux):
 
     def an_element(self):
         r"""
-        Returns a particular element of the class.
+        Return a particular element of the class.
 
         TESTS::
 
@@ -772,9 +771,8 @@ def pak_correspondence(M, copy=True):
 
     INPUT:
 
-    - ``copy`` (default: ``True``) -- boolean;
-      if set to ``False``, the algorithm will mutate the
-      input (but be more efficient)
+    - ``copy`` -- boolean (default: ``True``); if set to ``False``, the
+      algorithm will mutate the input (but be more efficient)
 
     EXAMPLES::
 

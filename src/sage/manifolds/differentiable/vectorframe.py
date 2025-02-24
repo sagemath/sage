@@ -26,7 +26,7 @@ AUTHORS:
 - Eric Gourgoulhon, Michal Bejger (2013-2015): initial version
 - Travis Scrimshaw (2016): review tweaks
 - Eric Gourgoulhon (2018): some refactoring and more functionalities in the
-  choice of symbols for vector frame elements (:trac:`24792`)
+  choice of symbols for vector frame elements (:issue:`24792`)
 
 REFERENCES:
 
@@ -203,7 +203,6 @@ The change-of-frame automorphisms and their matrices::
     sage: M.change_of_frame(e, c_spher.frame())[:]
     [      1       0]
     [      0 sin(th)]
-
 """
 
 # *****************************************************************************
@@ -297,7 +296,6 @@ class CoFrame(FreeModuleCoBasis):
         (0, 1, 0)
         sage: e[3](v[1]).expr(), e[3](v[2]).expr(), e[3](v[3]).expr()
         (0, 0, 1)
-
     """
     def __init__(self, frame, symbol, latex_symbol=None, indices=None,
                  latex_indices=None):
@@ -312,7 +310,6 @@ class CoFrame(FreeModuleCoBasis):
             sage: f = CoFrame(e, 'f'); f
             Coframe (M, (f^0,f^1))
             sage: TestSuite(f).run()
-
         """
         self._domain = frame._domain
         self._manifold = self._domain.manifold()
@@ -347,7 +344,6 @@ class CoFrame(FreeModuleCoBasis):
             sage: h = M.vector_frame('h', dest_map=phi)
             sage: h.coframe()._repr_()
             'Coframe (M, (h^1,h^2,h^3)) with values on the 3-dimensional differentiable manifold N'
-
         """
         description = "Coframe " + self._name
         dest_map = self._basis.destination_map()
@@ -395,7 +391,6 @@ class CoFrame(FreeModuleCoBasis):
              differentiable manifold M
             sage: fp is X.frame().at(p).dual_basis()
             True
-
         """
         return self._basis.at(point).dual_basis()
 
@@ -425,7 +420,7 @@ class CoFrame(FreeModuleCoBasis):
         - ``index_position`` -- (default: ``'up'``) determines the position
           of the indices labelling the 1-forms of the coframe; can be
           either ``'down'`` or ``'up'``
-        - ``include_domain`` -- (default: ``True``) boolean determining whether
+        - ``include_domain`` -- boolean (default: ``True``); determining whether
           the name of the domain is included in the beginning of the coframe
           name
 
@@ -450,7 +445,6 @@ class CoFrame(FreeModuleCoBasis):
             Coframe (M, (e^x,e^y))
             sage: latex(e)
             \left(M, \left(e^{\xi},e^{\zeta}\right)\right)
-
         """
         super().set_name(symbol, latex_symbol=latex_symbol,
                          indices=indices,
@@ -632,7 +626,6 @@ class VectorFrame(FreeModuleBasis):
         True
         sage: f in U.vector_field_module(dest_map=Phi).bases()
         True
-
     """
 
     # The following class attribute must be redefined by any derived class:
@@ -658,7 +651,6 @@ class VectorFrame(FreeModuleBasis):
             Coframe (M, (A,B))
             sage: e is VectorFrame(XM, ('a', 'b'), symbol_dual=('A', 'B'))
             True
-
         """
         if isinstance(symbol, list):
             symbol = tuple(symbol)
@@ -693,7 +685,6 @@ class VectorFrame(FreeModuleBasis):
             sage: e = VectorFrame(XM, 'e', latex_symbol=r'\epsilon'); e
             Vector frame (M, (e_0,e_1))
             sage: TestSuite(e).run()
-
         """
         from sage.manifolds.differentiable.manifold import DifferentiableManifold
         # Some sanity check:
@@ -745,11 +736,11 @@ class VectorFrame(FreeModuleBasis):
         if dest_map is self._domain.identity_map():
             # The frame is added to the list of the domain's covering frames:
             self._domain._set_covering_frame(self)
-        #
+
         # Dual coframe
         self._coframe = self.dual_basis()  # self._coframe = a shortcut for
                                            # self._dual_basis
-        #
+
         # Derived quantities:
         # Initialization of the set of frames that are restrictions of the
         # current frame to subdomains of the frame domain:
@@ -757,7 +748,7 @@ class VectorFrame(FreeModuleBasis):
         # Initialization of the set of frames which the current frame is a
         # restriction of:
         self._superframes = set([self])
-        #
+
         self._restrictions = {} # dict. of the restrictions of self to
                                # subdomains of self._domain, with the
                                # subdomains as keys
@@ -789,7 +780,6 @@ class VectorFrame(FreeModuleBasis):
             sage: h = M.vector_frame('h', dest_map=phi)
             sage: h._repr_()
             'Vector frame (M, (h_1,h_2,h_3)) with values on the 3-dimensional differentiable manifold N'
-
         """
         description = "Vector frame " + self._name
         if self._dest_map is not self._domain.identity_map():
@@ -832,9 +822,7 @@ class VectorFrame(FreeModuleBasis):
         - ``latex_symbol_dual`` -- (default: ``None``) same as ``latex_symbol``
           but for the dual coframe
 
-        OUTPUT:
-
-        - instance of :class:`VectorFrame`
+        OUTPUT: instance of :class:`VectorFrame`
 
         TESTS::
 
@@ -842,7 +830,6 @@ class VectorFrame(FreeModuleBasis):
             sage: e = M.vector_frame('e')
             sage: e._new_instance('f')
             Vector frame (M, (f_0,f_1))
-
         """
         return VectorFrame(self._fmodule, symbol, latex_symbol=latex_symbol,
                            indices=indices, latex_indices=latex_indices,
@@ -870,7 +857,6 @@ class VectorFrame(FreeModuleBasis):
             sage: f = e.restrict(U)
             sage: f.domain()
             Open subset U of the 2-dimensional differentiable manifold M
-
         """
         return self._domain
 
@@ -914,7 +900,6 @@ class VectorFrame(FreeModuleBasis):
             2-dimensional differentiable manifold M
             sage: f.domain()
             1-dimensional differentiable manifold U
-
         """
         return self._ambient_domain
 
@@ -953,7 +938,6 @@ class VectorFrame(FreeModuleBasis):
             sage: f.destination_map()
             Differentiable map Phi from the 1-dimensional differentiable
              manifold U to the 2-dimensional differentiable manifold M
-
         """
         return self._dest_map
 
@@ -970,7 +954,6 @@ class VectorFrame(FreeModuleBasis):
             sage: X.<x,y> = M.chart()
             sage: X.frame().coframe()
             Coordinate coframe (M, (dx,dy))
-
         """
         return self._coframe
 
@@ -1061,7 +1044,6 @@ class VectorFrame(FreeModuleBasis):
             [1/2*sqrt(3), -1/2]
             sage: e[1].comp(n)[:]
             [1/2, 1/2*sqrt(3)]
-
         """
         the_new_frame = self.new_basis(change_of_frame, symbol,
                                        latex_symbol=latex_symbol,
@@ -1086,9 +1068,7 @@ class VectorFrame(FreeModuleBasis):
 
         - ``subdomain`` -- open subset `V` of the current frame domain `U`
 
-        OUTPUT:
-
-        - the restriction of the current frame to `V` as a :class:`VectorFrame`
+        OUTPUT: the restriction of the current frame to `V` as a :class:`VectorFrame`
 
         EXAMPLES:
 
@@ -1118,7 +1098,6 @@ class VectorFrame(FreeModuleBasis):
             True
             sage: e_U[2] is e[2].restrict(U)
             True
-
         """
         if subdomain == self._domain:
             return self
@@ -1240,7 +1219,6 @@ class VectorFrame(FreeModuleBasis):
             -1/r
             sage: c[3,2,3]  # C^3_{23}
             -cos(th)/(r*sin(th))
-
         """
         from sage.tensor.modules.comp import CompWithSym
 
@@ -1279,9 +1257,7 @@ class VectorFrame(FreeModuleBasis):
 
         - ``mapping`` -- differentiable map `\Phi: U \rightarrow V`
 
-        OUTPUT:
-
-        - vector frame `\tilde e` along `U` defined above.
+        OUTPUT: vector frame `\tilde e` along `U` defined above
 
         EXAMPLES:
 
@@ -1314,7 +1290,6 @@ class VectorFrame(FreeModuleBasis):
 
             sage: te is e.along(Phi)
             True
-
         """
         dom = self._domain
         if mapping.codomain().is_subset(dom):
@@ -1427,7 +1402,6 @@ class VectorFrame(FreeModuleBasis):
              2-dimensional differentiable manifold M
             sage: fp.dual_basis() is f.coframe().at(p)
             True
-
         """
         # Case of a non-trivial destination map
         if self._from_frame is not None:
@@ -1540,7 +1514,7 @@ class VectorFrame(FreeModuleBasis):
         - ``index_position`` -- (default: ``'down'``) determines the position
           of the indices labelling the vector fields of the frame; can be
           either ``'down'`` or ``'up'``
-        - ``include_domain`` -- (default: ``True``) boolean determining whether
+        - ``include_domain`` -- boolean (default: ``True``); determining whether
           the name of the domain is included in the beginning of the vector
           frame name
 
@@ -1567,7 +1541,6 @@ class VectorFrame(FreeModuleBasis):
             ....:            latex_indices=[r'\alpha', r'\beta'])
             sage: latex(e)
             \left(M, \left(E_{\alpha},E_{\beta}\right)\right)
-
         """
         super().set_name(symbol, latex_symbol=latex_symbol,
                          indices=indices,
@@ -1580,6 +1553,7 @@ class VectorFrame(FreeModuleBasis):
                                     self._domain._latex_name, self._latex_name)
 
 #******************************************************************************
+
 
 class CoordCoFrame(CoFrame):
     r"""
@@ -1653,7 +1627,6 @@ class CoordCoFrame(CoFrame):
         2-form ddx on the 3-dimensional differentiable manifold M
         sage: dX[1].exterior_derivative() == 0
         True
-
     """
     def __init__(self, coord_frame, symbol, latex_symbol=None, indices=None,
                  latex_indices=None):
@@ -1668,7 +1641,6 @@ class CoordCoFrame(CoFrame):
             sage: f = CoordCoFrame(X.frame(), 'omega'); f
             Coordinate coframe (M, (omega^0,omega^1))
             sage: TestSuite(f).run()
-
         """
         if not isinstance(coord_frame, CoordFrame):
             raise TypeError("the first argument must be a coordinate frame")
@@ -1691,11 +1663,11 @@ class CoordCoFrame(CoFrame):
             'Coordinate coframe (M, (dx,dy))'
             sage: f  # indirect doctest
             Coordinate coframe (M, (dx,dy))
-
         """
         return "Coordinate coframe " + self._name
 
 #******************************************************************************
+
 
 class CoordFrame(VectorFrame):
     r"""
@@ -1725,7 +1697,6 @@ class CoordFrame(VectorFrame):
         Vector field ∂/∂ph on the 2-dimensional differentiable manifold S^2
         sage: latex(b)
         \left(S^2, \left(\frac{\partial}{\partial {\theta} },\frac{\partial}{\partial {\phi} }\right)\right)
-
     """
 
     # The following class attribute must be redefined by any derived class:
@@ -1743,7 +1714,6 @@ class CoordFrame(VectorFrame):
             sage: e = CoordFrame(X); e
             Coordinate frame (M, (∂/∂x,∂/∂y))
             sage: TestSuite(e).run()
-
         """
         from sage.misc.latex import latex
         from sage.typeset.unicode_characters import unicode_partial
@@ -1794,7 +1764,6 @@ class CoordFrame(VectorFrame):
             'Coordinate frame (M, (∂/∂x,∂/∂y))'
             sage: e  # indirect doctest
             Coordinate frame (M, (∂/∂x,∂/∂y))
-
         """
         return "Coordinate frame " + self._name
 
@@ -1814,7 +1783,6 @@ class CoordFrame(VectorFrame):
             sage: U = M.open_subset('U', coord_def={X: x>0})
             sage: e.restrict(U).chart()
             Chart (U, (x, y))
-
         """
         return self._chart
 
@@ -1855,7 +1823,6 @@ class CoordFrame(VectorFrame):
              positions (1, 2)
             sage: c == 0
             True
-
         """
         from sage.tensor.modules.comp import CompWithSym
         # A zero CompWithSym

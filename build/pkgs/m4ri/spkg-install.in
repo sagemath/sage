@@ -1,14 +1,5 @@
 CFLAGS="$CFLAGS -I$SAGE_LOCAL/include -g"
-
-COMPILER=`testcc.sh $CC`
-
-if [ "$COMPILER"  = "GCC" ] ; then
-   CFLAGS="$CFLAGS -fPIC -Wall -pedantic"
-elif [ "$COMPILER" = "Sun_Studio" ] ; then
-   CFLAGS="$CFLAGS -Kpic"
-elif [ "$COMPILER" = "HP_on_HP-UX" ] ; then
-   CFLAGS="$CFLAGS + z"
-fi
+CFLAGS="$CFLAGS -fPIC -Wall -pedantic"
 
 if [ "x$SAGE_DEBUG" = "xyes" ]; then
    ENABLE_DEBUG="--enable-debug"
@@ -24,10 +15,9 @@ else
     DISABLE_SSE2=""
 fi
 
-# otherwise we might run into problems with old headers
-rm -rf "$SAGE_LOCAL/include/m4ri"
-
 cd src
+
+cp "$SAGE_ROOT"/config/config.* .
 
 # Configure and build M4RI
 sdh_configure --enable-shared --disable-static $ENABLE_DEBUG $DISABLE_SSE2

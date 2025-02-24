@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Affine Lie Conformal Algebra
 
@@ -34,6 +35,7 @@ from sage.rings.integer import Integer
 from sage.algebras.lie_algebras.lie_algebra import LieAlgebra
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 
+
 class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""
     The current or affine Kac-Moody Lie conformal algebra.
@@ -41,19 +43,19 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
     INPUT:
 
     - ``R`` -- a commutative Ring; the base ring for this Lie
-      conformal algebra.
+      conformal algebra
     - ``ct`` -- a ``str`` or a :mod:`CartanType<sage.combinat.\
       root_system.cartan_type>`; the Cartan Type for
       the corresponding finite dimensional Lie algebra. It must
       correspond to a simple finite dimensional Lie algebra.
-    - ``names`` -- a list of ``str`` or ``None`` (default: ``None``)
-      ; alternative names for the generators. If ``None`` the
+    - ``names`` -- list of ``str`` or ``None`` (default: ``None``);
+      alternative names for the generators. If ``None`` the
       generators are labeled by the corresponding root and coroot
       vectors.
     - ``prefix`` -- a ``str``; parameter passed to
       :class:`IndexedGenerators<sage.structure.indexed_generators.IndexedGenerators>`
     - ``bracket`` -- a ``str``; parameter passed to
-      :class:`IndexedGenerators<sage.structure.indexed_generators.IndexedGenerators>`.
+      :class:`IndexedGenerators<sage.structure.indexed_generators.IndexedGenerators>`
 
     EXAMPLES::
 
@@ -81,7 +83,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     def __init__(self, R, ct, names=None, prefix=None, bracket=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -94,7 +96,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
                 ct = CartanType(ct)
             except IndexError:
                 raise ValueError("ct must be a valid Cartan Type")
-        if not (ct.is_finite() and ct.is_irreducible ):
+        if not (ct.is_finite() and ct.is_irreducible):
             raise ValueError("only affine algebras of simple finite dimensional"
                 "Lie algebras are implemented")
         hv = Integer(ct.dual_coxeter_number())

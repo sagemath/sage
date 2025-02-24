@@ -306,11 +306,11 @@ Finally, you can use Sage's GAP interface as well to compute
 
 ::
 
-    sage: print(gap.eval("A := [[1,2,3],[4,5,6],[7,8,9]]"))
+    sage: A = libgap([[1,2,3],[4,5,6],[7,8,9]]); A
     [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]
-    sage: print(gap.eval("v := Eigenvectors( Rationals,A)"))
+    sage: libgap(QQ).Eigenvectors(A)
     [ [ 1, -2, 1 ] ]
-    sage: print(gap.eval("lambda := Eigenvalues( Rationals,A)"))
+    sage: libgap(QQ).Eigenvalues(A)
     [ 0 ]
 
 .. _section-rref:

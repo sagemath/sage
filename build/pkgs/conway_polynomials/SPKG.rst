@@ -1,12 +1,26 @@
-conway_polynomials: Tables of Conway polynomials over finite fields
-===================================================================
+conway_polynomials: Python interface to Frank Lübeck's Conway polynomial database
+=================================================================================
 
 Description
 -----------
 
-Frank Lübeck's tables of Conway polynomials over finite fields.
+This python module evolved from the old SageMath *conway_polynomials*
+package once hosted at,
 
-Upstream contact
+  http://files.sagemath.org/spkg/upstream/conway_polynomials/
+
+It's still maintained by Sage developers, but having a pip-installable
+interface to the data will make it easier to install SageMath via pip
+or another package manager.
+
+
+License
+-------
+
+GPL version 3 or later
+
+
+Upstream Contact
 ----------------
 
-http://www.math.rwth-aachen.de/~Frank.Luebeck/data/ConwayPol/
+https://github.com/sagemath/conway-polynomials

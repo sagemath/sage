@@ -1,6 +1,0 @@
-#! /usr/bin/env bash
-rm -f "$SAGE_LOCAL"/bin/ecl
-rm -rf "$SAGE_LOCAL"/include/ecl
-rm -rf "$SAGE_LOCAL"/lib/ecl
-rm -rf "$SAGE_LOCAL"/lib/ecl-*
-rm -rf "$SAGE_LOCAL"/lib/libecl.*

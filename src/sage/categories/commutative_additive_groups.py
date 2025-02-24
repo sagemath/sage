@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Commutative additive groups
 """
@@ -13,6 +14,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.additive_groups import AdditiveGroups
+
 
 class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
     """
@@ -79,11 +81,12 @@ class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
                     sage: G((0,1)).additive_order()
                     +Infinity
 
-                    sage: K = GF(9)                                                     # optional - sage.rings.finite_rings
-                    sage: H = cartesian_product([                                       # optional - sage.rings.finite_rings
+                    sage: # needs sage.rings.finite_rings
+                    sage: K = GF(9)
+                    sage: H = cartesian_product([
                     ....:     cartesian_product([Zmod(2), Zmod(9)]), K])
-                    sage: z = H(((1,2), K.gen()))                                       # optional - sage.rings.finite_rings
-                    sage: z.additive_order()                                            # optional - sage.rings.finite_rings
+                    sage: z = H(((1,2), K.gen()))
+                    sage: z.additive_order()
                     18
                 """
                 from sage.rings.infinity import Infinity

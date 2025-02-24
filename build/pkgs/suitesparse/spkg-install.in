@@ -1,14 +1,21 @@
-# -*- shell-script -*-
 cd src
 
-export CC="${CC-gcc} -std=c99"
+echo "Configuring suitesparse"
+# * NSTATIC suitesparse defines some negative options like this one "NSTATIC=ON" means no static libraries.
+# Hopefully these sill be normalised in the future.
+# * SUITESPARSE_INCLUDEDIR_POSTFIX sets the subfolder in which to install headers.
+# It default to "suitesparse" if not defined, which currently breaks dependencies.
+# * SUITESPARSE_USE_FORTRAN make sure the fortran interface is off. There is trouble when 
+# gcc and gfortran version are not matching.
+# * SUITESPARSE_ENABLE_PROJECTS semi column separated list of the desired packages. Default is
+# all the packages in the suitesparse tarball.
+# On macOS ARM cvxopt does not start if suitesparse uses @rpath, set explicit install name dir instead
+sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DCMAKE_INSTALL_NAME_DIR="$SAGE_LOCAL/lib" \
+          -DCMAKE_MACOSX_RPATH=OFF \
+          -DNSTATIC=ON \
+          -DSUITESPARSE_USE_FORTRAN=OFF \
+          -DSUITESPARSE_INCLUDEDIR_POSTFIX="" \
+          -DSUITESPARSE_ENABLE_PROJECTS="suitesparse_config;amd;camd;ccolamd;colamd;cholmod;umfpack"
 
-echo "print configuration"
-$MAKE MY_METIS_LIB=none CHOLMOD_CONFIG=-DNPARTITION \
-      BLAS="$(pkg-config --libs blas)" LAPACK="$(pkg-config --libs lapack)" \
-      INSTALL="$SAGE_LOCAL" DESTDIR="$SAGE_DESTDIR" config
-# build and install
-$MAKE MY_METIS_LIB=none CHOLMOD_CONFIG=-DNPARTITION \
-      BLAS="$(pkg-config --libs blas)" LAPACK="$(pkg-config --libs lapack)" \
-      INSTALL="$SAGE_LOCAL" DESTDIR="$SAGE_DESTDIR" install
-
+sdh_make_install

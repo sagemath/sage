@@ -66,7 +66,6 @@ Probability and Statistics
 
 * :doc:`Probability <probability/index>`
 * :doc:`Statistics <stats/index>`
-* :doc:`Quantitative Finance <finance/index>`
 
 Mathematical Structures
 -----------------------

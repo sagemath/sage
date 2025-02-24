@@ -98,7 +98,7 @@ when cast into the ring.::
     sage: type((a * b) / 5^3)
     <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
 
-The fixed modulus type is the leanest of the p-adic rings: it is
+The fixed modulus type is the leanest of the `p`-adic rings: it is
 basically just a wrapper around `\ZZ / p^n \ZZ`
 providing a unified interface with the rest of the `p`-adics.  This is
 the type you should use if your primary interest is in speed (though
@@ -163,18 +163,17 @@ TESTS::
     sage: R = Qp(5, 15, print_mode='bars', print_sep='&')
     sage: repr(R(2777))[3:]
     '0&0&0&0&0&0&0&0&0&0&4&2&1&0&2'
-    sage: TestSuite(R).run()
+    sage: TestSuite(R).run()                                                            # needs sage.geometry.polyhedron
 
     sage: R = Zp(5, 15, print_mode='bars', print_sep='&')
     sage: repr(R(2777))[3:]
     '0&0&0&0&0&0&0&0&0&0&4&2&1&0&2'
-    sage: TestSuite(R).run()
+    sage: TestSuite(R).run()                                                            # needs sage.geometry.polyhedron
 
     sage: R = ZpCA(5, 15, print_mode='bars', print_sep='&')
     sage: repr(R(2777))[3:]
     '0&0&0&0&0&0&0&0&0&0&4&2&1&0&2'
-    sage: TestSuite(R).run()
-
+    sage: TestSuite(R).run()                                                            # needs sage.geometry.polyhedron
 """
 
 #*****************************************************************************
@@ -220,32 +219,33 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
-            sage: R = ZpCR(next_prime(10^60)) #indirect doctest
+            sage: R = ZpCR(next_prime(10^60))  # indirect doctest
             sage: type(R)
             <class 'sage.rings.padics.padic_base_leaves.pAdicRingCappedRelative_with_category'>
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: R = ZpCR(2)
             sage: TestSuite(R).run()
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^10)], max_runs = 2^12, skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],              # long time
+            ....:                  max_runs=2^12, skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])        # long time
             sage: R = ZpCR(3, 1)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^3)])
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)])
             sage: R = ZpCR(3, 2)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^6)], skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^6)],               # long time
+            ....:                  skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])        # long time
             sage: R = ZpCR(next_prime(10^60))
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^3)], max_runs = 2^5, skip='_test_log') # long time
-            sage: R._test_log(max_runs=2, elements=[R.random_element() for i in range(4)]) # long time
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^3)],               # long time
+            ....:                  max_runs=2^5, skip='_test_log')
+            sage: R._test_log(max_runs=2, elements=[R.random_element() for i in range(4)])          # long time
         """
         pAdicRingBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicCappedRelativeElement)
 
@@ -256,7 +256,7 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
         EXAMPLES::
 
             sage: K = Zp(17)
-            sage: K(1) + 1 #indirect doctest
+            sage: K(1) + 1  # indirect doctest
             2 + O(17^20)
             sage: K.has_coerce_map_from(ZZ)
             True
@@ -304,6 +304,7 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
+
 class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGeneric):
     r"""
     An implementation of the `p`-adic integers with capped absolute precision.
@@ -316,31 +317,32 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
-            sage: R = ZpCA(next_prime(10^60)) #indirect doctest
+            sage: R = ZpCA(next_prime(10^60))  # indirect doctest
             sage: type(R)
             <class 'sage.rings.padics.padic_base_leaves.pAdicRingCappedAbsolute_with_category'>
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: R = ZpCA(2)
             sage: TestSuite(R).run()
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^10)], max_runs = 2^12, skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],              # long time
+            ....:                  max_runs=2^12, skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])        # long time
             sage: R = ZpCA(3, 1)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^3)])
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)])
             sage: R = ZpCA(3, 2)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^6)], skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^6)],               # long time
+            ....:                  skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])        # long time
             sage: R = ZpCA(next_prime(10^60))
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^3)], max_runs = 2^5, skip='_test_log') # long time
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^3)],               # long time
+            ....:                  max_runs=2^5, skip='_test_log')
             sage: R._test_log(max_runs=2, elements=[R.random_element() for i in range(4)])
         """
         pAdicRingBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicCappedAbsoluteElement)
@@ -352,7 +354,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
         EXAMPLES::
 
             sage: K = ZpCA(17)
-            sage: K(1) + 1 #indirect doctest
+            sage: K(1) + 1  # indirect doctest
             2 + O(17^20)
             sage: K.has_coerce_map_from(ZZ)
             True
@@ -402,6 +404,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
+
 class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric):
     r"""
     An implementation of the `p`-adic integers with floating point
@@ -415,31 +418,32 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
-            sage: R = ZpFP(next_prime(10^60)) #indirect doctest
+            sage: R = ZpFP(next_prime(10^60))  # indirect doctest
             sage: type(R)
             <class 'sage.rings.padics.padic_base_leaves.pAdicRingFloatingPoint_with_category'>
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: R = ZpFP(2)
             sage: TestSuite(R).run()
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^10)], max_runs = 2^12, skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],              # long time
+            ....:                  max_runs=2^12, skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])        # long time
             sage: R = ZpFP(3, 1)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^3)])
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)])
             sage: R = ZpFP(3, 2)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^6)], skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^6)],               # long time
+            ....:                  skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])        # long time
             sage: R = ZpFP(next_prime(10^60))
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^3)], max_runs = 2^5, skip='_test_log') # long time
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^3)],               # long time
+            ....:                  max_runs=2^5, skip='_test_log')
             sage: R._test_log(max_runs=2, elements=[R.random_element() for i in range(4)])
         """
         pAdicRingBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicFloatingPointElement)
@@ -451,7 +455,7 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
         EXAMPLES::
 
             sage: K = ZpFP(17)
-            sage: K(1) + 1 #indirect doctest
+            sage: K(1) + 1  # indirect doctest
             2
             sage: K.has_coerce_map_from(ZZ)
             True
@@ -496,47 +500,49 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
+
 class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
     r"""
     An implementation of the `p`-adic integers using fixed modulus.
     """
     def __init__(self, p, prec, print_mode, names):
         """
-        Initialization
+        Initialization.
 
         INPUT:
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
-            sage: R = ZpFM(next_prime(10^60)) #indirect doctest
+            sage: R = ZpFM(next_prime(10^60))  # indirect doctest
             sage: type(R)
             <class 'sage.rings.padics.padic_base_leaves.pAdicRingFixedMod_with_category'>
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: R = ZpFM(2)
             sage: TestSuite(R).run()
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^10)], max_runs = 2^12, skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],  # long time
+            ....:                  max_runs=2^12, skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])        # long time
             sage: R = ZpFM(3, 1)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^3)])
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)])
             sage: R = ZpFM(3, 2)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^6)], skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^6)],  # long time
+            ....:                  skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)]) # long time
             sage: R = ZpFM(next_prime(10^60))
             sage: TestSuite(R).run(skip='_test_log')
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^4)], max_runs = 2^6, skip='_test_log') # long time
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^4)],  # long time
+            ....:                  max_runs=2^6, skip='_test_log')
             sage: R._test_log(max_runs=2, elements=[R.random_element() for i in range(4)])
 
-        Fraction fields work after :trac:`23510`::
+        Fraction fields work after :issue:`23510`::
 
             sage: R = ZpFM(5)
             sage: K = R.fraction_field(); K
@@ -553,7 +559,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
         EXAMPLES::
 
             sage: K = ZpFM(17)
-            sage: K(1) + 1 #indirect doctest
+            sage: K(1) + 1  # indirect doctest
             2
             sage: K.has_coerce_map_from(ZZ)
             True
@@ -601,15 +607,15 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
+
 class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGeneric):
     r"""
     An implementation of `p`-adic fields with capped relative precision.
 
     EXAMPLES::
 
-        sage: K = Qp(17, 1000000) #indirect doctest
-        sage: K = Qp(101) #indirect doctest
-
+        sage: K = Qp(17, 1000000)  # indirect doctest
+        sage: K = Qp(101)  # indirect doctest
     """
 
     def __init__(self, p, prec, print_mode, names):
@@ -620,33 +626,38 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
-            sage: K = Qp(next_prime(10^60)) # indirect doctest
+            sage: K = Qp(next_prime(10^60))  # indirect doctest
             sage: type(K)
             <class 'sage.rings.padics.padic_base_leaves.pAdicFieldCappedRelative_with_category'>
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: R = Qp(2)
             sage: TestSuite(R).run()
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^10)], max_runs = 2^12, skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],  # long time
+            ....:                  max_runs=2^12, skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])        # long time
 
             sage: R = Qp(3, 1)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^6)], skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^6)],  # long time, needs sage.geometry.polyhedron
+            ....:                  skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])  # long time
 
             sage: R = Qp(3, 2)
-            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^9)], skip="_test_metric_function") # long time
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^9)],  # long time, needs sage.geometry.polyhedron
+            ....:                  skip='_test_metric_function')
             sage: R._test_metric_function(elements=[R.random_element() for i in range(3^3)])
 
             sage: R = Qp(next_prime(10^60))
-            sage: TestSuite(R).run(skip='_test_log')
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^3)], max_runs = 2^5, skip='_test_log') # long time
+            sage: TestSuite(R).run(skip='_test_log')                                    # needs sage.geometry.polyhedron
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^3)],  # long time, needs sage.geometry.polyhedron
+            ....:                  max_runs=2^5, skip='_test_log')
             sage: R._test_log(max_runs=2, elements=[R.random_element() for i in range(4)])
         """
         pAdicFieldBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicCappedRelativeElement)
@@ -658,7 +669,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
         EXAMPLES::
 
             sage: K = Qp(17)
-            sage: K(1) + 1 #indirect doctest
+            sage: K(1) + 1  # indirect doctest
             2 + O(17^20)
             sage: K.has_coerce_map_from(ZZ)
             True
@@ -676,7 +687,6 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
             True
             sage: K.has_coerce_map_from(Zp(17,40))
             True
-
         """
         #if isinstance(R, pAdicRingRelaxed) or isinstance(R, pAdicFieldRelaxed) and R.prime() == self.prime():
         #    return True
@@ -731,7 +741,8 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
             a = ZZ.random_element(self.prime()**self.precision_cap())
             return self(self.prime()**k * a, absprec=k + self.precision_cap())
         else:
-            raise NotImplementedError("Don't know %s algorithm"%algorithm)
+            raise NotImplementedError("Don't know %s algorithm" % algorithm)
+
 
 class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGeneric):
     r"""
@@ -746,32 +757,33 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
-            sage: R = QpFP(next_prime(10^60)) #indirect doctest
+            sage: R = QpFP(next_prime(10^60))  # indirect doctest
             sage: type(R)
             <class 'sage.rings.padics.padic_base_leaves.pAdicFieldFloatingPoint_with_category'>
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: R = QpFP(2)
             sage: TestSuite(R).run()
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^10)], max_runs = 2^12, skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],  # long time
+            ....:                  max_runs=2^12, skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])        # long time
             sage: R = QpFP(3, 1)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^3)])
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^3)])
             sage: R = QpFP(3, 2)
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(3^6)], skip='_test_metric_function') # long time
-            sage: R._test_metric_function(elements = [R.random_element() for i in range(2^3)]) # long time
-
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^6)],  # long time
+            ....:                  skip='_test_metric_function')
+            sage: R._test_metric_function(elements=[R.random_element() for i in range(2^3)])        # long time
             sage: R = QpFP(next_prime(10^60))
             sage: TestSuite(R).run(skip='_test_log')
-            sage: TestSuite(R).run(elements = [R.random_element() for i in range(2^3)], max_runs = 2^5, skip='_test_log') # long time
+            sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^3)],  # long time
+            ....:                  max_runs=2^5, skip='_test_log')
             sage: R._test_log(max_runs=2, elements=[R.random_element() for i in range(4)])
         """
         pAdicFieldBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicFloatingPointElement)
@@ -783,7 +795,7 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
         EXAMPLES::
 
             sage: K = QpFP(17)
-            sage: K(1) + 1 #indirect doctest
+            sage: K(1) + 1  # indirect doctest
             2
             sage: K.has_coerce_map_from(ZZ)
             True
@@ -833,6 +845,7 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
 # Lattice precision
 ###################
 
+
 class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
     """
     An implementation of the `p`-adic integers with lattice precision.
@@ -857,14 +870,14 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
 
     EXAMPLES::
 
-        sage: R = ZpLC(next_prime(10^60)) # indirect doctest
+        sage: R = ZpLC(next_prime(10^60))  # indirect doctest
         doctest:...: FutureWarning: This class/method/function is marked as experimental.
         It, its functionality or its interface might change without a formal deprecation.
         See https://github.com/sagemath/sage/issues/23505 for details.
         sage: type(R)
         <class 'sage.rings.padics.padic_base_leaves.pAdicRingLattice_with_category'>
 
-        sage: R = ZpLC(2, label='init') # indirect doctest
+        sage: R = ZpLC(2, label='init')  # indirect doctest
         sage: R
         2-adic Ring with lattice-cap precision (label: init)
     """
@@ -875,7 +888,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
         TESTS:
 
             sage: R = ZpLC(7, label='init')
-            sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+            sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith'])  # long time
         """
         # We need to set the subtype first, so that
         # pAdicRingBaseGeneric.__init__ can work
@@ -931,7 +944,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
 
         INPUT:
 
-        - ``prec`` -- an integer or ``None`` (the default): the
+        - ``prec`` -- integer or ``None`` (default); the
           absolute precision of the generated random element
 
         EXAMPLES::
@@ -950,8 +963,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
                 prec = self._prec_cap_absolute
             x = ZZ.random_element(p**prec)
             relcap = x.valuation(p) + self._prec_cap_relative
-            if relcap < prec:
-                prec = relcap
+            prec = min(relcap, prec)
             return self._element_class(self, x, prec=prec)
         else:
             if prec is None:
@@ -963,6 +975,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
             if prec is None and v > 0:
                 x += p**cap * ZZ.random_element(p**v)
             return self._element_class(self, x, prec=prec)
+
 
 class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
     """
@@ -988,14 +1001,14 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
 
     EXAMPLES::
 
-        sage: R = QpLC(next_prime(10^60)) # indirect doctest
+        sage: R = QpLC(next_prime(10^60))  # indirect doctest
         doctest:...: FutureWarning: This class/method/function is marked as experimental.
         It, its functionality or its interface might change without a formal deprecation.
         See https://github.com/sagemath/sage/issues/23505 for details.
         sage: type(R)
         <class 'sage.rings.padics.padic_base_leaves.pAdicFieldLattice_with_category'>
 
-        sage: R = QpLC(2,label='init') # indirect doctest
+        sage: R = QpLC(2,label='init')  # indirect doctest
         sage: R
         2-adic Field with lattice-cap precision (label: init)
     """
@@ -1006,7 +1019,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
         TESTS::
 
             sage: R = QpLC(7, label='init')
-            sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+            sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith'])  # long time
         """
         # We need to set the subtype first, so that
         # pAdicFieldBaseGeneric.__init__ can work
@@ -1062,16 +1075,16 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
 
         INPUT:
 
-        - ``prec`` -- an integer or ``None`` (the default): the
+        - ``prec`` -- integer or ``None`` (default); the
           absolute precision of the generated random element
 
-        - ``integral`` -- a boolean (default: ``False``); if ``True``,
+        - ``integral`` -- boolean (default: ``False``); if ``True``,
           return an element in the ring of integers
 
         EXAMPLES::
 
             sage: K = QpLC(2)
-            sage: K.random_element()   # not tested, known bug (see :trac:`32126`)
+            sage: K.random_element()   # not tested, known bug (see :issue:`32126`)
             2^-8 + 2^-7 + 2^-6 + 2^-5 + 2^-3 + 1 + 2^2 + 2^3 + 2^5 + O(2^12)
             sage: K.random_element(integral=True)    # random
             2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^10 + 2^11 + 2^14 + 2^15 + 2^16
@@ -1097,12 +1110,12 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
         p = self.prime()
         x = ZZ.random_element(p**prec)
         relcap = x.valuation(p) + self._prec_cap_relative
-        if relcap < prec:
-            prec = relcap
+        prec = min(relcap, prec)
         return self._element_class(self, x*(p**val), prec=prec)
 
 # Relaxed
 #########
+
 
 class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
     r"""
@@ -1120,8 +1133,8 @@ class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
 
     EXAMPLES::
 
-        sage: R = ZpER(5)  # indirect doctest
-        sage: type(R)
+        sage: R = ZpER(5)  # indirect doctest                                           # needs sage.libs.flint
+        sage: type(R)                                                                   # needs sage.libs.flint
         <class 'sage.rings.padics.padic_base_leaves.pAdicRingRelaxed_with_category'>
     """
     def __init__(self, p, prec, print_mode, names):
@@ -1130,6 +1143,7 @@ class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: R = ZpER(7)
             sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
             sage: R = ZpER(7, secure=True)
@@ -1140,6 +1154,7 @@ class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
         pAdicRingBaseGeneric.__init__(self, p, self._default_prec, print_mode, names, padic_relaxed_element.pAdicRelaxedElement)
         self._element_class_module = padic_relaxed_element
         self._element_class_prefix = "pAdicRelaxedElement_"
+
 
 class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
     r"""
@@ -1157,8 +1172,8 @@ class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
 
     EXAMPLES::
 
-        sage: R = QpER(5)  # indirect doctest
-        sage: type(R)
+        sage: R = QpER(5)  # indirect doctest                                           # needs sage.libs.flint
+        sage: type(R)                                                                   # needs sage.libs.flint
         <class 'sage.rings.padics.padic_base_leaves.pAdicFieldRelaxed_with_category'>
     """
     def __init__(self, p, prec, print_mode, names):
@@ -1167,6 +1182,7 @@ class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: K = QpER(7)
             sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])
             sage: K = QpER(7, secure=True)

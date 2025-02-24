@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-*
 r"""
 Integer factorization functions
 
 AUTHORS:
 
 - Andre Apitzsch (2011-01-13): initial version
-
 """
 
 # ****************************************************************************
@@ -43,13 +41,13 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     - ``F`` -- integer (default: ``None``)
     - ``check`` -- boolean (default: ``True``)
 
-    OUTPUT:
-
-    A list of factors.
+    OUTPUT: list of factors
 
     EXAMPLES::
 
         sage: from sage.rings.factorint import aurifeuillian
+
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: aurifeuillian(2, 2)
         [5, 13]
         sage: aurifeuillian(2, 2^5)
@@ -58,6 +56,8 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
         [1471, 2851]
         sage: aurifeuillian(15, 1)
         [19231, 142111]
+
+        sage: # needs sage.libs.pari
         sage: aurifeuillian(12, 3)
         Traceback (most recent call last):
         ...
@@ -76,8 +76,6 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
         There is no need to set `F`. It's only for increasing speed
         of :meth:`factor_aurifeuillian()`.
     """
-    from sage.arith.misc import euler_phi
-    from sage.rings.real_mpfi import RealIntervalField
     if check:
         if not n.is_squarefree():
             raise ValueError("n has to be square-free")
@@ -85,6 +83,10 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
             raise ValueError("n has to be greater than 1")
         if m < 1:
             raise ValueError("m has to be positive")
+
+    from sage.arith.misc import euler_phi
+    from sage.rings.real_mpfi import RealIntervalField
+
     x = m**2*n
     cdef Py_ssize_t y = euler_phi(2*n)//2
     if F is None:
@@ -123,31 +125,31 @@ cpdef factor_aurifeuillian(n, check=True):
 
     - ``n`` -- integer
 
-    OUTPUT:
-
-    List of factors of `n` found by Aurifeuillian factorization.
+    OUTPUT: list of factors of `n` found by Aurifeuillian factorization
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: from sage.rings.factorint import factor_aurifeuillian as fa
-        sage: fa(2^6 + 1)                                                               # optional - sage.libs.pari
+        sage: fa(2^6 + 1)
         [5, 13]
-        sage: fa(2^58 + 1)                                                              # optional - sage.libs.pari
+        sage: fa(2^58 + 1)
         [536838145, 536903681]
-        sage: fa(3^3 + 1)                                                               # optional - sage.libs.pari
+        sage: fa(3^3 + 1)
         [4, 1, 7]
-        sage: fa(5^5 - 1)                                                               # optional - sage.libs.pari
+        sage: fa(5^5 - 1)
         [4, 11, 71]
-        sage: prod(_) == 5^5 - 1                                                        # optional - sage.libs.pari
+        sage: prod(_) == 5^5 - 1
         True
-        sage: fa(2^4 + 1)                                                               # optional - sage.libs.pari
+        sage: fa(2^4 + 1)
         [17]
-        sage: fa((6^2*3)^3 + 1)                                                         # optional - sage.libs.pari
+        sage: fa((6^2*3)^3 + 1)
         [109, 91, 127]
 
     TESTS::
 
-        sage: for n in [2,3,5,6,30,31,33]:                                              # optional - sage.libs.pari
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
+        sage: for n in [2,3,5,6,30,31,33]:
         ....:     for m in [8,96,109201283]:
         ....:         s = -1 if n % 4 == 1 else 1
         ....:         y = (m^2*n)^n + s
@@ -201,6 +203,7 @@ cpdef factor_aurifeuillian(n, check=True):
             return F
     return [n]
 
+
 def factor_cunningham(m, proof=None):
     r"""
     Return factorization of ``self`` obtained using trial division
@@ -214,7 +217,7 @@ def factor_cunningham(m, proof=None):
 
     INPUT:
 
-    - ``proof`` -- bool (default: ``None``); whether or not to
+    - ``proof`` -- boolean (default: ``None``); whether or not to
       prove primality of each factor, this is only for factors
       not in the Cunningham table
 
@@ -225,7 +228,6 @@ def factor_cunningham(m, proof=None):
         535006138814359 * 1155685395246619182673033 * 374550598501810936581776630096313181393
         sage: factor_cunningham((3^101+1)*(2^60).next_prime(), proof=False) # optional - cunningham_tables
         2^2 * 379963 * 1152921504606847009 * 1017291527198723292208309354658785077827527
-
     """
     from sage.databases import cunningham_tables
     cunningham_prime_factors = cunningham_tables.cunningham_prime_factors()
@@ -244,6 +246,7 @@ def factor_cunningham(m, proof=None):
     else:
         return IntegerFactorization(L)*n.factor(proof=proof)
 
+
 cpdef factor_trial_division(m, long limit=LONG_MAX):
     r"""
     Return partial factorization of ``self`` obtained using trial division
@@ -251,7 +254,7 @@ cpdef factor_trial_division(m, long limit=LONG_MAX):
 
     INPUT:
 
-    - ``limit`` -- integer (default: ``LONG_MAX``) that fits in a C ``signed long``
+    - ``limit`` -- integer (default: ``LONG_MAX``); that fits in a C ``signed long``
 
     EXAMPLES::
 
@@ -264,12 +267,11 @@ cpdef factor_trial_division(m, long limit=LONG_MAX):
 
     TESTS:
 
-    Test that :trac:`13692` is solved::
+    Test that :issue:`13692` is solved::
 
         sage: from sage.rings.factorint import factor_trial_division
         sage: list(factor_trial_division(8))
         [(2, 3)]
-
     """
     cdef Integer n = PY_NEW(Integer), unit = PY_NEW(Integer), p = Integer(2)
     cdef long e

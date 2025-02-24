@@ -11,7 +11,7 @@ cdef class LazyFieldElement(FieldElement):
     cdef LazyFieldElement _new_binop(self, LazyFieldElement left, LazyFieldElement right, op)
     cdef LazyFieldElement _new_unop(self, LazyFieldElement arg, op)
     cpdef eval(self, R)
-    cpdef int depth(self)
+    cpdef int depth(self) noexcept
 
 cdef class LazyWrapper(LazyFieldElement):
     cdef readonly _value

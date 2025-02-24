@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Various functions to debug Python internals
 """
@@ -18,10 +19,10 @@ cdef extern from "Python.h":
     # Helper to get a pointer to an object's __dict__ slot, if any
     PyObject** _PyObject_GetDictPtr(obj)
 
-cdef extern from "sage/cpython/debugimpl.c":
+cdef extern from "debugimpl.c":
     void _type_debug(PyTypeObject*)
 
-from .getattr cimport AttributeErrorMessage
+from sage.cpython.getattr cimport AttributeErrorMessage
 
 
 # Determine subtype_traverse, subtype_clear, subtype_dealloc functions
@@ -72,13 +73,13 @@ def getattr_debug(obj, name, default=_no_default):
 
     - ``obj`` -- the object whose attribute is requested
 
-    - ``name`` -- (string) the name of the attribute
+    - ``name`` -- string; the name of the attribute
 
     - ``default`` -- default value to return if attribute was not found
 
     EXAMPLES::
 
-        sage: _ = getattr_debug(list, "reverse")
+        sage: _ = getattr_debug(list, "reverse")  # not tested - broken in python 3.12
         getattr_debug(obj=<class 'list'>, name='reverse'):
           type(obj) = <class 'type'>
           object has __dict__ slot (<class 'dict'>)
@@ -101,7 +102,7 @@ def getattr_debug(obj, name, default=_no_default):
           found '__doc__' in dict of <class 'list'>
           got ... 'str'>)
           returning ... 'str'>)
-        sage: _ = getattr_debug(gp(1), "log")
+        sage: _ = getattr_debug(gp(1), "log")                                           # needs sage.libs.pari
         getattr_debug(obj=1, name='log'):
           type(obj) = <class 'sage.interfaces.gp.GpElement'>
           object has __dict__ slot (<class 'dict'>)
@@ -123,7 +124,7 @@ def getattr_debug(obj, name, default=_no_default):
         sage: _ = getattr_debug(1, "foo")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'foo'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'foo'...
         sage: _ = getattr_debug(1, "foo", "xyz")
         getattr_debug(obj=1, name='foo'):
           type(obj) = <class 'sage.rings.integer.Integer'>
@@ -219,7 +220,7 @@ def getattr_debug(obj, name, default=_no_default):
 
 def type_debug(cls):
     """
-    Print all internals of the type ``cls``
+    Print all internals of the type ``cls``.
 
     EXAMPLES::
 

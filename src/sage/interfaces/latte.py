@@ -1,15 +1,15 @@
 r"""
 Interface to LattE integrale programs
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Vincent Delecroix <vincent.delecroix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.cpython.string import str_to_bytes, bytes_to_str
@@ -21,13 +21,13 @@ from sage.features.latte import Latte_count, Latte_integrate
 
 def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False, raw_output=False, verbose=False, **kwds):
     r"""
-    Call to the program count from LattE integrale
+    Call to the program count from LattE integrale.
 
     INPUT:
 
     - ``arg`` -- a cdd or LattE description string
 
-    - ``ehrhart_polynomial``, ``multivariate_generating_function``  -- to
+    - ``ehrhart_polynomial``, ``multivariate_generating_function`` -- to
       compute Ehrhart polynomial or multivariate generating function instead of
       just counting points
 
@@ -134,15 +134,15 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
     if 'redundancy_check' not in kwds:
         args.append('--redundancy-check=none')
 
-    for key,value in kwds.items():
+    for key, value in kwds.items():
         if value is None or value is False:
             continue
 
-        key = key.replace('_','-')
+        key = key.replace('_', '-')
         if value is True:
-            args.append('--{}'.format(key))
+            args.append(f'--{key}')
         else:
-            args.append('--{}={}'.format(key, value))
+            args.append(f'--{key}={value}')
 
     if multivariate_generating_function:
         from sage.misc.temporary_file import tmp_filename
@@ -200,12 +200,12 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         else:
             raise NotImplementedError("there is no Sage object to handle multivariate series from LattE, use raw_output=True")
     else:
-        if ans: # Sometimes (when LattE's preproc does the work), no output appears on stdout.
+        if ans:  # Sometimes (when LattE's preproc does the work), no output appears on stdout.
             ans = ans.splitlines()[-1]
         if not ans:
             # opening a file is slow (30e-6s), so we read the file
             # numOfLatticePoints only in case of a IndexError above
-            with open(tempd.name+'/numOfLatticePoints', 'r') as f:
+            with open(tempd.name + '/numOfLatticePoints') as f:
                 ans = f.read()
 
         if raw_output:
@@ -222,23 +222,21 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     INPUT:
 
-    - ``arg`` -- a cdd or LattE description string.
+    - ``arg`` -- a cdd or LattE description string
 
-    - ``polynomial`` -- multivariate polynomial or valid LattE polynomial description string.
-      If given, the valuation parameter of LattE is set to integrate, and is set to volume otherwise.
+    - ``polynomial`` -- multivariate polynomial or valid LattE polynomial description string
+      If given, the valuation parameter of LattE is set to integrate, and is set to volume otherwise
 
-    - ``algorithm`` -- (default: 'triangulate') the integration method. Use 'triangulate' for
-      polytope triangulation or 'cone-decompose' for tangent cone decomposition method.
+    - ``algorithm`` -- (default: ``'triangulate'``) the integration method; use 'triangulate' for
+      polytope triangulation or 'cone-decompose' for tangent cone decomposition method
 
-    - ``raw_output`` -- if ``True`` then return directly the output string from LattE.
+    - ``raw_output`` -- if ``True`` then return directly the output string from LattE
 
-    - ``verbose`` -- if ``True`` then return directly verbose output from LattE.
+    - ``verbose`` -- if ``True`` then return directly verbose output from LattE
 
-    - For all other options of the integrate program, consult the LattE manual.
+    - For all other options of the integrate program, consult the LattE manual
 
-    OUTPUT:
-
-    Either a string (if ``raw_output`` if set to ``True``) or a rational.
+    OUTPUT: either a string (if ``raw_output`` if set to ``True``) or a rational
 
     EXAMPLES::
 
@@ -363,11 +361,11 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
         if value is None or value is False:
             continue
 
-        key = key.replace('_','-')
+        key = key.replace('_', '-')
         if value is True:
-            args.append('--{}'.format(key))
+            args.append(f'--{key}')
         else:
-            args.append('--{}={}'.format(key, value))
+            args.append(f'--{key}={value}')
 
     if got_polynomial:
         if not isinstance(polynomial, str):
@@ -425,11 +423,9 @@ def to_latte_polynomial(polynomial):
 
     INPUT:
 
-    - ``polynomial`` -- a multivariate polynomial.
+    - ``polynomial`` -- a multivariate polynomial
 
-    OUTPUT:
-
-    A string that describes the monomials list and exponent vectors.
+    OUTPUT: string that describes the monomials list and exponent vectors
 
     TESTS:
 

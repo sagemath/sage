@@ -23,6 +23,8 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import is_prime, primitive_root
+
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith
 cdef sage.rings.fast_arith.arith_int arith_int
@@ -51,9 +53,9 @@ def verify_bernoulli_mod_p(data):
 
     INPUT:
 
-    - ``data`` -- list, same format as output of :func:`bernoulli_mod_p` function
+    - ``data`` -- list; same format as output of :func:`bernoulli_mod_p` function
 
-    OUTPUT: bool -- True if checksum passed
+    OUTPUT: boolean; ``True`` if checksum passed
 
     EXAMPLES::
 
@@ -98,7 +100,7 @@ def bernoulli_mod_p(int p):
 
     INPUT:
 
-    - ``p`` -- integer, a prime
+    - ``p`` -- integer; a prime
 
     OUTPUT:
 
@@ -135,12 +137,12 @@ def bernoulli_mod_p(int p):
     if p <= 2:
         raise ValueError("p (=%s) must be a prime >= 3" % p)
 
-    if not sage.arith.all.is_prime(p):
+    if not is_prime(p):
         raise ValueError("p (=%s) must be a prime" % p)
 
     cdef int g, gSqr, gInv, gInvSqr, isOdd
 
-    g = sage.arith.all.primitive_root(p)
+    g = primitive_root(p)
     gInv = arith_int.c_inverse_mod_int(g, p)
     gSqr = ((<llong> g) * g) % p
     gInvSqr = ((<llong> gInv) * gInv) % p
@@ -222,21 +224,18 @@ def bernoulli_mod_p(int p):
     return output
 
 
-
 def bernoulli_mod_p_single(long p, long k):
     r"""
     Return the Bernoulli number `B_k` mod `p`.
 
-    If `B_k` is not `p`-integral, an :class:`ArithmeticError` is raised.
+    If `B_k` is not `p`-integral, an :exc:`ArithmeticError` is raised.
 
     INPUT:
 
-    - ``p`` -- integer, a prime
-    - ``k`` -- non-negative integer
+    - ``p`` -- integer; a prime
+    - ``k`` -- nonnegative integer
 
-    OUTPUT:
-
-    The `k`-th Bernoulli number mod `p`.
+    OUTPUT: the `k`-th Bernoulli number mod `p`
 
     EXAMPLES::
 
@@ -266,7 +265,7 @@ def bernoulli_mod_p_single(long p, long k):
         sage: bernoulli_mod_p_single(19, -4)
         Traceback (most recent call last):
         ...
-        ValueError: k must be non-negative
+        ValueError: k must be nonnegative
 
     Check results against :class:`bernoulli_mod_p`::
 
@@ -303,7 +302,7 @@ def bernoulli_mod_p_single(long p, long k):
     if p <= 2:
         raise ValueError("p (=%s) must be a prime >= 3" % p)
 
-    if not sage.arith.all.is_prime(p):
+    if not is_prime(p):
         raise ValueError("p (=%s) must be a prime" % p)
 
     cdef long x = bernmm_bern_modp(p, k)

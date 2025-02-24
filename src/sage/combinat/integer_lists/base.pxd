@@ -12,4 +12,4 @@ cdef class IntegerListsBackend():
     cdef readonly min_part, max_part
     cdef readonly min_slope, max_slope
     cdef readonly Envelope floor, ceiling
-    cdef public dict __cached_methods  # Support cached_method
+    cdef public dict _cached_methods  # Support cached_method

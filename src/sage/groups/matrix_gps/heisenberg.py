@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap sage.modules
 """
 Heisenberg Group
 
@@ -24,6 +25,7 @@ from sage.categories.groups import Groups
 from sage.categories.rings import Rings
 from sage.rings.integer_ring import ZZ
 from copy import copy
+
 
 class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
     r"""
@@ -121,7 +123,7 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
             sage: H = groups.matrix.Heisenberg(n=2, R=4)
             sage: TestSuite(H).run()  # long time
             sage: H = groups.matrix.Heisenberg(n=3)
-            sage: TestSuite(H).run(max_runs=30, skip="_test_elements")  # long time
+            sage: TestSuite(H).run(max_runs=30, skip='_test_elements')  # long time
             sage: H = groups.matrix.Heisenberg(n=2, R=GF(4))
             sage: TestSuite(H).run()  # long time
 

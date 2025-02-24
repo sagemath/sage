@@ -379,13 +379,13 @@ when doing some of our plotting and limits. What do you think will
 happen if you put dollar signs around the labels in the header? ::
 
     sage: table( [('i', 'det(A^i)')] + [ (i,det(A^i)) for i in [0..4] ], header_row=True)
-      i   det(A^i)
-    +---+----------+
-      0   1
-      1   -2
-      2   4
-      3   -8
-      4   16
+        i   det(A^i)
+      ├───┼──────────┤
+        0   1
+        1   -2
+        2   4
+        3   -8
+        4   16
 
 
 .. _Defs:

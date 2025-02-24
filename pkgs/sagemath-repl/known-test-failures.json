@@ -1,0 +1,165 @@
+{
+    "sage.doctest.control": {
+        "failed": true,
+        "ntests": 0
+    },
+    "sage.doctest.external": {
+        "ntests": 41
+    },
+    "sage.doctest.fixtures": {
+        "failed": true,
+        "ntests": 59
+    },
+    "sage.doctest.forker": {
+        "failed": true,
+        "ntests": 432
+    },
+    "sage.doctest.parsing": {
+        "failed": true,
+        "ntests": 316
+    },
+    "sage.doctest.reporting": {
+        "failed": true,
+        "ntests": 124
+    },
+    "sage.doctest.sources": {
+        "failed": true,
+        "ntests": 376
+    },
+    "sage.doctest.test": {
+        "ntests": 23
+    },
+    "sage.doctest.util": {
+        "failed": true,
+        "ntests": 141
+    },
+    "sage.misc.sage_eval": {
+        "failed": true,
+        "ntests": 28
+    },
+    "sage.misc.sage_input": {
+        "failed": true,
+        "ntests": 721
+    },
+    "sage.repl.attach": {
+        "ntests": 128
+    },
+    "sage.repl.configuration": {
+        "ntests": 22
+    },
+    "sage.repl.display.fancy_repr": {
+        "failed": true,
+        "ntests": 24
+    },
+    "sage.repl.display.formatter": {
+        "failed": true,
+        "ntests": 47
+    },
+    "sage.repl.display.jsmol_iframe": {
+        "ntests": 24
+    },
+    "sage.repl.display.pretty_print": {
+        "failed": true,
+        "ntests": 21
+    },
+    "sage.repl.display.util": {
+        "ntests": 6
+    },
+    "sage.repl.image": {
+        "failed": true,
+        "ntests": 42
+    },
+    "sage.repl.inputhook": {
+        "ntests": 7
+    },
+    "sage.repl.interface_magic": {
+        "failed": true,
+        "ntests": 11
+    },
+    "sage.repl.interpreter": {
+        "failed": true,
+        "ntests": 109
+    },
+    "sage.repl.ipython_extension": {
+        "failed": true,
+        "ntests": 72
+    },
+    "sage.repl.ipython_kernel.install": {
+        "failed": true,
+        "ntests": 40
+    },
+    "sage.repl.ipython_kernel.interact": {
+        "failed": true,
+        "ntests": 35
+    },
+    "sage.repl.ipython_kernel.kernel": {
+        "ntests": 12
+    },
+    "sage.repl.ipython_kernel.widgets": {
+        "failed": true,
+        "ntests": 91
+    },
+    "sage.repl.ipython_kernel.widgets_sagenb": {
+        "failed": true,
+        "ntests": 77
+    },
+    "sage.repl.ipython_tests": {
+        "failed": true,
+        "ntests": 20
+    },
+    "sage.repl.load": {
+        "failed": true,
+        "ntests": 41
+    },
+    "sage.repl.preparse": {
+        "failed": true,
+        "ntests": 343
+    },
+    "sage.repl.rich_output.backend_base": {
+        "failed": true,
+        "ntests": 96
+    },
+    "sage.repl.rich_output.backend_doctest": {
+        "ntests": 50
+    },
+    "sage.repl.rich_output.backend_emacs": {
+        "ntests": 15
+    },
+    "sage.repl.rich_output.backend_ipython": {
+        "failed": true,
+        "ntests": 75
+    },
+    "sage.repl.rich_output.buffer": {
+        "ntests": 49
+    },
+    "sage.repl.rich_output.display_manager": {
+        "failed": true,
+        "ntests": 85
+    },
+    "sage.repl.rich_output.output_basic": {
+        "ntests": 46
+    },
+    "sage.repl.rich_output.output_browser": {
+        "ntests": 12
+    },
+    "sage.repl.rich_output.output_graphics": {
+        "ntests": 38
+    },
+    "sage.repl.rich_output.output_graphics3d": {
+        "ntests": 46
+    },
+    "sage.repl.rich_output.output_video": {
+        "ntests": 25
+    },
+    "sage.repl.rich_output.preferences": {
+        "ntests": 68
+    },
+    "sage.repl.rich_output.pretty_print": {
+        "failed": true,
+        "ntests": 22
+    },
+    "sage.repl.rich_output.test_backend": {
+        "failed": true,
+        "ntests": 37
+    }
+}

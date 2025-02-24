@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.combinat
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat
 r"""
 Bialgebras
 """
@@ -19,7 +20,7 @@ from sage.misc.lazy_import import LazyImport
 
 class Bialgebras(Category_over_base_ring):
     """
-    The category of bialgebras
+    The category of bialgebras.
 
     EXAMPLES::
 
@@ -69,8 +70,9 @@ class Bialgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: s = SymmetricFunctions(QQ).schur()
-                sage: s([5]).is_primitive()
+                sage: s([5]).is_primitive()                                             # needs lrcalc_python
                 False
                 sage: p = SymmetricFunctions(QQ).powersum()
                 sage: p([5]).is_primitive()
@@ -85,10 +87,10 @@ class Bialgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: s = SymmetricFunctions(QQ).schur()
-                sage: s([5]).is_grouplike()
+                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.modules
+                sage: s([5]).is_grouplike()                                             # needs lrcalc_python sage.modules
                 False
-                sage: s([]).is_grouplike()
+                sage: s([]).is_grouplike()                                              # needs lrcalc_python sage.modules
                 True
             """
             return self.coproduct() == self.tensor(self)

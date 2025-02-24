@@ -1,6 +1,6 @@
 # distutils: depends = NTL/ZZ.h
 
-from .types cimport zz_p_c
+from sage.libs.ntl.types cimport zz_p_c
 
 cdef extern from "ntlwrap.h":
     long zz_p_rep "rep"(zz_p_c x)

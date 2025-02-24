@@ -18,7 +18,7 @@ packages.
 Before we start let us point out
 http://www.scipy.org/NumPy_for_Matlab_Users, which has a
 comparison between matlab and numpy and gives numpy equivalents of
-matlab commands. If you're not familiar with matlab, thats fine, even
+matlab commands. If you are not familiar with matlab, that's fine, even
 better, it means you won't have any pre-conceived notions of how
 things should work.  Also this
 http://www.scipy.org/Wiki/Documentation?action=AttachFile&do=get&target=scipy_tutorial.pdf

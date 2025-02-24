@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Word Quasi-symmetric functions
 
@@ -75,7 +75,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
                                          OrderedSetPartitions(),
                                          category=WQSymBases(alg, graded),
                                          sorting_key=sorting_key,
-                                         bracket="", prefix=self._prefix)
+                                         bracket='', prefix=self._prefix)
 
     def _repr_term(self, osp):
         r"""
@@ -549,12 +549,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         NAME = 'WordQuasiSymmetricFunctions element'
         module = 'sage.combinat.chas.wqsym'
         option_class = 'WordQuasiSymmetricFunctions'
-        objects = dict(default="compositions",
+        objects = dict(default='compositions',
                        description='Specifies how basis elements of WordQuasiSymmetricFunctions should be indexed',
                        values=dict(compositions="Indexing the basis by ordered set partitions",
                                    words="Indexing the basis by packed words"),
                        case_sensitive=False)
-        display = dict(default="normal",
+        display = dict(default='normal',
                        description='Specifies how basis elements of WordQuasiSymmetricFunctions should be printed',
                        values=dict(normal="Using the normal representation",
                                    tight="Dropping spaces after commas",
@@ -918,7 +918,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             WQSymBasis_abstract.__init__(self, alg)
 
             X = self.realization_of().X()
-            phi = self.module_morphism(self._C_to_X, codomain=X, unitriangular="upper")
+            phi = self.module_morphism(self._C_to_X, codomain=X, unitriangular='upper')
             phi.register_as_coercion()
             inv_phi = ~phi
             inv_phi.register_as_coercion()
@@ -1067,9 +1067,9 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             WQSymBasis_abstract.__init__(self, alg)
 
             M = self.realization_of().M()
-            phi = self.module_morphism(self._Q_to_M, codomain=M, unitriangular="lower")
+            phi = self.module_morphism(self._Q_to_M, codomain=M, unitriangular='lower')
             phi.register_as_coercion()
-            phi_inv = M.module_morphism(self._M_to_Q, codomain=self, unitriangular="lower")
+            phi_inv = M.module_morphism(self._M_to_Q, codomain=self, unitriangular='lower')
             phi_inv.register_as_coercion()
 
         def some_elements(self):
@@ -1449,9 +1449,9 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             WQSymBasis_abstract.__init__(self, alg)
 
             M = self.realization_of().M()
-            phi = self.module_morphism(self._Phi_to_M, codomain=M, unitriangular="lower")
+            phi = self.module_morphism(self._Phi_to_M, codomain=M, unitriangular='lower')
             phi.register_as_coercion()
-            phi_inv = M.module_morphism(self._M_to_Phi, codomain=self, unitriangular="lower")
+            phi_inv = M.module_morphism(self._M_to_Phi, codomain=self, unitriangular='lower')
             phi_inv.register_as_coercion()
 
         def some_elements(self):
@@ -1945,18 +1945,18 @@ class WQSymBases(Category_realization_of_parent):
             sage: bases = WQSymBases(WQSym, True)
             sage: bases.super_categories()
             [Category of realizations of Word Quasi-symmetric functions over Integer Ring,
-             Join of Category of realizations of hopf algebras over Integer Ring
+             Join of Category of realizations of Hopf algebras over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring,
-             Category of graded connected hopf algebras with basis over Integer Ring]
+             Category of graded connected Hopf algebras with basis over Integer Ring]
 
             sage: bases = WQSymBases(WQSym, False)
             sage: bases.super_categories()
             [Category of realizations of Word Quasi-symmetric functions over Integer Ring,
-             Join of Category of realizations of hopf algebras over Integer Ring
+             Join of Category of realizations of Hopf algebras over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring,
-             Join of Category of filtered connected hopf algebras with basis over Integer Ring
+             Join of Category of filtered connected Hopf algebras with basis over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring]
         """
@@ -2572,9 +2572,7 @@ class WQSymBases(Category_realization_of_parent):
             sizes of the blocks of `P`.
             This `\pi` is a ring homomorphism.
 
-            OUTPUT:
-
-            - an element of the quasisymmetric functions in the monomial basis
+            OUTPUT: an element of the quasisymmetric functions in the monomial basis
 
             EXAMPLES::
 

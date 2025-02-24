@@ -1,1 +1,2 @@
-flint flint-devel
+flint
+flint-devel

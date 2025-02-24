@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Accurate timing information for Sage commands
 
@@ -18,7 +17,7 @@ AUTHOR:
 """
 
 
-class SageTimeitResult():
+class SageTimeitResult:
     r"""
     Represent the statistics of a timeit() command.
 
@@ -37,7 +36,7 @@ class SageTimeitResult():
     EXAMPLES::
 
         sage: from sage.misc.sage_timeit import SageTimeitResult
-        sage: SageTimeitResult( (3, 5, int(8), pi, 'ms') )
+        sage: SageTimeitResult( (3, 5, int(8), pi, 'ms') )                              # needs sage.symbolic
         3 loops, best of 5: 3.1415927 ms per loop
 
     ::
@@ -47,17 +46,16 @@ class SageTimeitResult():
         sage: number = 7
         sage: repeat = 13
         sage: precision = int(5)
-        sage: best = pi / 10 ^ 9
+        sage: best = pi / 10 ^ 9                                                        # needs sage.symbolic
         sage: order = 3
-        sage: stats = (number, repeat, precision, best * scaling[order], units[order])
-        sage: SageTimeitResult(stats)
+        sage: stats = (number, repeat, precision, best * scaling[order], units[order])  # needs sage.symbolic
+        sage: SageTimeitResult(stats)                                                   # needs sage.symbolic
         7 loops, best of 13: 3.1416 ns per loop
 
-    If the third argument is not a Python integer, a ``TypeError`` is raised::
+    If the third argument is not a Python integer, a :exc:`TypeError` is raised::
 
         sage: SageTimeitResult( (1, 2, 3, 4, 's') )
         <repr(<sage.misc.sage_timeit.SageTimeitResult at 0x...>) failed: TypeError: * wants int>
-
     """
     def __init__(self, stats, series=None):
         r"""
@@ -69,10 +67,10 @@ class SageTimeitResult():
         EXAMPLES::
 
             sage: from sage.misc.sage_timeit import SageTimeitResult
-            sage: SageTimeitResult( (3, 5, int(8), pi, 'ms') )
+            sage: SageTimeitResult( (3, 5, int(8), pi, 'ms') )                          # needs sage.symbolic
             3 loops, best of 5: 3.1415927 ms per loop
-            sage: s = SageTimeitResult( (3, 5, int(8), pi, 'ms'), [1.0,1.1,0.5])
-            sage: s.series
+            sage: s = SageTimeitResult( (3, 5, int(8), pi, 'ms'), [1.0,1.1,0.5])        # needs sage.symbolic
+            sage: s.series                                                              # needs sage.symbolic
             [1.00000000000000, 1.10000000000000, 0.500000000000000]
         """
         self.stats = stats
@@ -85,14 +83,14 @@ class SageTimeitResult():
         EXAMPLES::
 
             sage: from sage.misc.sage_timeit import SageTimeitResult
-            sage: stats = (1, 2, int(3), pi, 'ns')
-            sage: SageTimeitResult(stats)           #indirect doctest
+            sage: stats = (1, 2, int(3), pi, 'ns')                                      # needs sage.symbolic
+            sage: SageTimeitResult(stats)           #indirect doctest                   # needs sage.symbolic
             1 loop, best of 2: 3.14 ns per loop
         """
         if self.stats[0] > 1:
-            s = u"%d loops, best of %d: %.*g %s per loop" % self.stats
+            s = "%d loops, best of %d: %.*g %s per loop" % self.stats
         else:
-            s = u"%d loop, best of %d: %.*g %s per loop" % self.stats
+            s = "%d loop, best of %d: %.*g %s per loop" % self.stats
 
         if isinstance(s, str):
             return s
@@ -105,25 +103,23 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
 
     INPUT:
 
-    - ``stmt`` -- a text string.
+    - ``stmt`` -- a text string
 
-    - ``globals_dict`` -- a dictionary or ``None`` (default). Evaluate
+    - ``globals_dict`` -- dictionary or ``None`` (default). Evaluate
       ``stmt`` in the context of the globals dictionary. If not set,
       the current ``globals()`` dictionary is used.
 
     - ``preparse`` -- (default: use globals preparser default) if
-      ``True`` preparse ``stmt`` using the Sage preparser.
+      ``True`` preparse ``stmt`` using the Sage preparser
 
-    - ``number`` -- integer, (optional, default: 0), number of loops.
+    - ``number`` -- integer; (default: 0); number of loops
 
-    - ``repeat`` -- integer, (optional, default: 3), number of
-      repetition.
+    - ``repeat`` -- integer; (default: 3); number of repetition
 
-    - ``precision`` -- integer, (optional, default: 3), precision of
-      output time.
+    - ``precision`` -- integer; (default: 3); precision of output time
 
-    - ``seconds`` -- boolean (default: ``False``). Whether to just
-      return time in seconds.
+    - ``seconds`` -- boolean (default: ``False``); whether to just
+      return time in seconds
 
     OUTPUT:
 
@@ -153,12 +149,12 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
         sage: s = sage_timeit('10^2', globals(), repeat=1000)
         sage: len(s.series)
         1000
-        sage: mean(s.series)   # random output
+        sage: mean(s.series)   # random output                                          # needs sage.modules
         3.1298141479492283e-07
         sage: min(s.series)    # random output
         2.9258728027343752e-07
-        sage: t = stats.TimeSeries(s.series)
-        sage: t.scale(10^6).plot_histogram(bins=20,figsize=[12,6], ymax=2)
+        sage: t = stats.TimeSeries(s.series)                                            # needs numpy sage.modules
+        sage: t.scale(10^6).plot_histogram(bins=20,figsize=[12,6], ymax=2)              # needs numpy sage.modules sage.plot
         Graphics object consisting of 20 graphics primitives
 
 
@@ -168,7 +164,7 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
         sage: from sage.misc.sage_timeit import sage_timeit
         sage: from os import linesep as CR
         sage: # sage_timeit(r'a = 2\\nb=131\\nfactor(a^b-1)')
-        sage: sage_timeit('a = 2' + CR + 'b=131' + CR + 'factor(a^b-1)',
+        sage: sage_timeit('a = 2' + CR + 'b=131' + CR + 'factor(a^b-1)',                # needs sage.libs.pari
         ....:             globals(), number=10)
         10 loops, best of 3: ... per loop
 
@@ -217,7 +213,7 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     if stmt == "":
         return ''
 
-    units = [u"s", u"ms", u"μs", u"ns"]
+    units = ["s", "ms", "μs", "ns"]
     scaling = [1, 1e3, 1e6, 1e9]
 
     timer = timeit_.Timer()
@@ -227,8 +223,8 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     # to the shell namespace?
 
     src = timeit_.template.format(stmt=timeit_.reindent(stmt, 8),
-                                  setup="pass", init='')
-    code = compile(src, "<magic-timeit>", "exec")
+                                  setup='pass', init='')
+    code = compile(src, '<magic-timeit>', 'exec')
     ns = {}
     if not globals_dict:
         globals_dict = globals()

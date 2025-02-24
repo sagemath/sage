@@ -8,6 +8,8 @@ cd src
 # that an error will be signalled if FLINT or E-ANTIC cannot be found, rather
 # than building normaliz without it.
 
+export ac_cv_lib_flint_fmpz_poly_set_coeff_mpz=yes
+
 sdh_configure --with-flint --with-e-antic --with-nauty
 sdh_make
 sdh_make_install

@@ -9,9 +9,9 @@ Notebook from the command line.
 
 If you did install the Windows version or the macOS application you
 should have icons available on your desktops or launching menus. Otherwise
-you are strongly advised to create shortcuts for Sage as indicated at the end
-of the "Linux" Section in :ref:`sec-installation-from-binaries`. Assuming
-that you have this shortcut, running
+you are strongly advised to create shortcuts for Sage as indicated in the part
+6 of the "Installation steps" Section in :ref:`build-from-source-step-by-step`.
+Assuming that you have this shortcut, running
 
 .. CODE-BLOCK:: bash
 
@@ -165,7 +165,28 @@ SageMath documentation at http://doc.sagemath.org/.
 Setting up SageMath as a Jupyter kernel in an existing Jupyter notebook or JupyterLab installation
 --------------------------------------------------------------------------------------------------
 
-You may already have a global installation of Jupyter.  For added
+By default, SageMath installs itself as a Jupyter kernel in the same
+environment as the SageMath installation. This is the most convenient way to
+use SageMath in a Jupyter notebook. To check if the Sage kernel is
+available, start a Jupyter notebook and look for the kernel named
+``sagemath`` in the list of available kernels.
+Alternatively, you can use the following command to check which kernels are
+available:
+
+.. code-block:: shell-session
+
+    $ jupyter kernelspec list
+    Available kernels:
+      python3     <path to env>/share/jupyter/kernels/python3
+      sagemath    <path to env>/share/jupyter/kernels/sagemath
+
+.. note::
+
+    The kernel is not automatically available if you have installed SageMath 
+    in editable mode (``pip install -e``). In that case, it is recommended
+    to reinstall SageMath in a non-editable way.
+
+You may already have a global installation of Jupyter. For added
 convenience, it is possible to link your installation of SageMath into
 your Jupyter installation, adding it to the list of available kernels
 that can be selected in the notebook or JupyterLab interface.
@@ -177,6 +198,8 @@ Assuming that SageMath can be invoked by typing ``sage``, you can use
     sage -sh -c 'ls -d $SAGE_VENV/share/jupyter/kernels/sagemath'
 
 to find the location of the SageMath kernel description.
+Alternatively, use ``jupyter kernelspec list`` from the same environment
+where SageMath is installed to find the location of the SageMath kernel.
 
 Now pick a name for the kernel that identifies it clearly and uniquely.
 
@@ -196,7 +219,7 @@ new kernel named ``sagemath-dev``.
 
 The ``jupyter kernelspec`` approach by default does lead to about 2Gb of
 SageMath documentation being copied into your personal jupyter configuration
-directory. You can avoid that by instead putting a symlink in the relevant spot.
+directory. You can avoid that by instead putting a symlink in the relevant spot
 and
 
 .. CODE-BLOCK:: bash

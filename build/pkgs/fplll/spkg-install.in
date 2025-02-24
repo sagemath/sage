@@ -2,26 +2,16 @@ cd src || exit
 
 INCLUDES="-I$SAGE_LOCAL/include/"
 
-if [ "$UNAME" = "CYGWIN" ]; then
-    CXXFLAGS="$CXXFLAGS -std=gnu++11"
-fi
 CXXFLAGS="$CXXFLAGS -fPIC $INCLUDES -L$SAGE_LOCAL/lib"
 CPPFLAGS="$INCLUDES"
 CONFIGUREFLAGS="--prefix=$SAGE_LOCAL --libdir=$SAGE_LOCAL/lib"
-
-if [ "$UNAME" = "CYGWIN" ]; then
-    echo "Disable parallel building on Cygwin"
-    MAKE="$MAKE -j1"
-    export MAKE
-    CONFIGUREFLAGS="$CONFIGUREFLAGS --disable-recursive-enum"
-fi
 
 if [ "x$SAGE_DEBUG" = "xyes" ]; then
    CONFIGUREFLAGS="$CONFIGUREFLAGS --enable-debug"
 fi
 
 if [ -x "$SAGE_LOCAL"/bin/gcc ]; then
-    # Trac #31624: Avoid C++ ABI issues
+    # Issue #31624: Avoid C++ ABI issues
     CONFIGUREFLAGS="$CONFIGUREFLAGS --without-qd"
 fi
 
@@ -32,7 +22,3 @@ export CXX="$CXX"
 sdh_configure $CONFIGUREFLAGS
 sdh_make
 sdh_make_install
-
-# Pretend that the "libfplll" package is not installed. This is needed to
-# support renaming libfplll -> fplll done on Trac #24042
-rm -f "$SAGE_SPKG_INST/"libfplll-*

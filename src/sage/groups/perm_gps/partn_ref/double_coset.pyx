@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Double cosets
 
@@ -80,7 +81,6 @@ REFERENCE:
 - [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
   Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
   533-583.
-
 """
 
 #*****************************************************************************
@@ -95,18 +95,18 @@ REFERENCE:
 
 from cysignals.memory cimport sig_calloc
 
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 from sage.data_structures.bitset_base cimport *
 
 # Functions
 
-cdef bint all_children_are_equivalent_trivial(PartitionStack *PS, void *S):
+cdef bint all_children_are_equivalent_trivial(PartitionStack *PS, void *S) noexcept:
     return 0
 
-cdef int refine_and_return_invariant_trivial(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_and_return_invariant_trivial(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     return 0
 
-cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     cdef list MS1 = <list> S1
     cdef list MS2 = <list> S2
     cdef int i, j
@@ -115,6 +115,7 @@ cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
         if j != 0:
             return j
     return 0
+
 
 def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2,3,4,5,0]]):
     """
@@ -167,7 +168,6 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
         ....:       reps.append(p)
         sage: len(reps)
         8
-
     """
     cdef int i, n = len(perm1)
     assert all(len(g) == n for g in gens+[perm2])
@@ -198,9 +198,10 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
     sig_free(isomorphism)
     return x
 
-cdef dc_work_space *allocate_dc_work_space(int n):
+
+cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
     r"""
-    Allocates work space for the double_coset function. It can be
+    Allocate work space for the double_coset function. It can be
     input to the function in which case it must be deallocated after the
     function is called.
     """
@@ -248,9 +249,9 @@ cdef dc_work_space *allocate_dc_work_space(int n):
         return NULL
     return work_space
 
-cdef void deallocate_dc_work_space(dc_work_space *work_space):
+cdef void deallocate_dc_work_space(dc_work_space *work_space) noexcept:
     r"""
-    Deallocates work space for the double_coset function.
+    Deallocate work space for the double_coset function.
     """
     if work_space is NULL:
         return
@@ -268,58 +269,57 @@ cdef void deallocate_dc_work_space(dc_work_space *work_space):
     sig_free(work_space)
 
 cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *ordering2,
-    int n, bint (*all_children_are_equivalent)(PartitionStack *PS, void *S),
+    int n, bint (*all_children_are_equivalent)(PartitionStack *PS, void *S) noexcept,
     int (*refine_and_return_invariant)(PartitionStack *PS, void *S,
-                                       int *cells_to_refine_by, int ctrb_len),
+                                       int *cells_to_refine_by, int ctrb_len) noexcept,
     int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2,
-                              int degree),
+                              int degree) noexcept,
     StabilizerChain *input_group,
     dc_work_space *work_space_prealloc, int *isom) except -1:
     """
     Traverse the search space for double coset calculation.
 
     INPUT:
-    S1, S2 -- pointers to the structures
-    partition1 -- PartitionStack of depth 0 and degree n,
-        whose first partition is of the points of S1
-    ordering2 -- an ordering of the points of S2 representing a second partition
-    n -- the number of points (points are assumed to be 0,1,...,n-1)
-    all_children_are_equivalent -- pointer to a function
+    - ``S1``, ``S2`` -- pointers to the structures
+    - ``partition1`` -- PartitionStack of depth 0 and degree n,
+      whose first partition is of the points of S1
+    - ``ordering2`` -- an ordering of the points of S2 representing a second partition
+    - ``n`` -- the number of points (points are assumed to be 0,1,...,n-1)
+    - ``all_children_are_equivalent`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
+        - ``PS`` -- pointer to a partition stack
+        - ``S`` -- pointer to the structure
         OUTPUT:
-        bint -- returns True if it can be determined that all refinements below
-            the current one will result in an equivalent discrete partition
-    refine_and_return_invariant -- pointer to a function
+        bint; returns True if it can be determined that all refinements below
+        the current one will result in an equivalent discrete partition
+    - ``refine_and_return_invariant`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
-        alpha -- an array consisting of numbers, which indicate the starting
-            positions of the cells to refine against (will likely be modified)
+        - ``PS`` -- pointer to a partition stack
+        -n``S`` -- pointer to the structure
+        - ``alpha`` -- an array consisting of numbers, which indicate the starting
+          positions of the cells to refine against (will likely be modified)
         OUTPUT:
-        int -- returns an invariant under application of arbitrary permutations
+        integer; returns an invariant under application of arbitrary permutations
     compare_structures -- pointer to a function
         INPUT:
-        gamma_1, gamma_2 -- (list) permutations of the points of S1 and S2
-        S1, S2 -- pointers to the structures
-        degree -- degree of gamma_1 and 2
+        - ``gamma_1``, ``gamma_2`` -- (list) permutations of the points of S1 and S2
+        - ``S1``, ``S2`` -- pointers to the structures
+        - ``degree`` -- degree of gamma_1 and 2
         OUTPUT:
-        int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
-            such that the set of all structures is well-ordered
-    input_group -- either a specified group to limit the search to,
-        or NULL for the full symmetric group
-    isom -- space to store the isomorphism to,
-        or NULL if isomorphism is not needed
+        integer; 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
+        such that the set of all structures is well-ordered
+    - ``input_group`` -- either a specified group to limit the search to,
+      or NULL for the full symmetric group
+    - ``isom`` -- space to store the isomorphism to,
+      or NULL if isomorphism is not needed
 
-    NOTE:
-    The partition ``partition1`` and the resulting partition from ``ordering2``
-    *must* satisfy the property that in each cell, the smallest element occurs
-    first!
+    .. NOTE::
 
-    OUTPUT:
-    1 if S1 and S2 are isomorphic, otherwise 0.
+        The partition ``partition1`` and the resulting partition from
+        ``ordering2`` *must* satisfy the property that in each cell, the
+        smallest element occurs first!
 
+    OUTPUT: ``1`` if ``S1`` and ``S2`` are isomorphic, otherwise ``0``
     """
     cdef PartitionStack *current_ps
     cdef PartitionStack *first_ps
@@ -399,14 +399,14 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     cdef bint unknown = 1
 
     # set up the identity permutation
-    for i from 0 <= i < n:
+    for i in range(n):
         id_perm[i] = i
     if ordering2 is NULL:
         ordering2 = id_perm
 
     # Copy reordering of left_ps coming from ordering2 to current_ps.
-    memcpy(current_ps.entries, ordering2,      n*sizeof(int))
-    memcpy(current_ps.levels,  left_ps.levels, n*sizeof(int))
+    memcpy(current_ps.entries, ordering2, n * sizeof(int))
+    memcpy(current_ps.levels, left_ps.levels, n * sizeof(int))
     current_ps.depth = left_ps.depth
 
     # default values of "infinity"

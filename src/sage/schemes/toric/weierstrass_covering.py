@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Map to the Weierstrass form of a toric elliptic curve
 
@@ -133,7 +134,7 @@ def WeierstrassMap(polynomial, variables=None):
       hypersurface in `\mathbb{P}^2[1,1,2]`. The equation need not be
       in any standard form, only its Newton polyhedron is used.
 
-    - ``variables`` -- a list of variables of the parent polynomial
+    - ``variables`` -- list of variables of the parent polynomial
       ring or ``None`` (default). In the latter case, all variables
       are taken to be polynomial ring variables. If a subset of
       polynomial ring variables are given, the Weierstrass form is
@@ -254,10 +255,10 @@ def WeierstrassMap(polynomial, variables=None):
         result = vector(ZZ, result)
         result.set_immutable()
         return result
-    X_dict = dict((homogenize(e, 2), v) for e, v in X.dict().items())
-    Y_dict = dict((homogenize(e, 3), v) for e, v in Y.dict().items())
-    Z_dict = dict((homogenize(e, 1), v) for e, v in Z.dict().items())
-    # shift to non-negative exponents if necessary
+    X_dict = {homogenize(e, 2): v for e, v in X.monomial_coefficients().items()}
+    Y_dict = {homogenize(e, 3): v for e, v in Y.monomial_coefficients().items()}
+    Z_dict = {homogenize(e, 1): v for e, v in Z.monomial_coefficients().items()}
+    # shift to nonnegative exponents if necessary
     min_deg = [0] * R.ngens()
     for var in variables:
         i = R.gens().index(var)
@@ -266,9 +267,9 @@ def WeierstrassMap(polynomial, variables=None):
         min_Z = min([e[i] for e in Z_dict]) if Z_dict else 0
         min_deg[i] = min(min_X / 2, min_Y / 3, min_Z)
     min_deg = vector(min_deg)
-    X_dict = dict((tuple(e - 2 * min_deg), v) for e, v in X_dict.items())
-    Y_dict = dict((tuple(e - 3 * min_deg), v) for e, v in Y_dict.items())
-    Z_dict = dict((tuple(e - 1 * min_deg), v) for e, v in Z_dict.items())
+    X_dict = {tuple(e - 2 * min_deg): v for e, v in X_dict.items()}
+    Y_dict = {tuple(e - 3 * min_deg): v for e, v in Y_dict.items()}
+    Z_dict = {tuple(e - 1 * min_deg): v for e, v in Z_dict.items()}
     return (R(X_dict), R(Y_dict), R(Z_dict))
 
 
@@ -350,7 +351,7 @@ def WeierstrassMap_P1xP1(polynomial, variables=None):
         sage: f, g = WeierstrassForm_P1xP1(biquadric, [x0, x1, y0, y1]);  (f,g)
         (-625/48*a^4 + 25/3*a^2 - 16/3, 15625/864*a^6 - 625/36*a^4 - 100/9*a^2 + 128/27)
         sage: X, Y, Z = WeierstrassMap_P1xP1(biquadric, [x0, x1, y0, y1])
-        sage: (-Y^2 + X^3 + f*X*Z^4 + g*Z^6).reduce(R.ideal(biquadric))
+        sage: (-Y^2 + X^3 + f*X*Z^4 + g*Z^6).reduce(R.ideal(biquadric))                 # needs sage.libs.singular
         0
 
         sage: R = PolynomialRing(QQ, 'x,y,s,t', order='lex')
@@ -360,7 +361,7 @@ def WeierstrassMap_P1xP1(polynomial, variables=None):
         ....:             + t^2*(7*x^2+8*x*y+9*y^2))
         sage: X, Y, Z = WeierstrassMap_P1xP1(equation, [x,y,s,t])
         sage: f, g = WeierstrassForm_P1xP1(equation, variables=[x,y,s,t])
-        sage: (-Y^2 + X^3 + f*X*Z^4 + g*Z^6).reduce(R.ideal(equation))
+        sage: (-Y^2 + X^3 + f*X*Z^4 + g*Z^6).reduce(R.ideal(equation))                  # needs sage.libs.singular
         0
 
         sage: R = PolynomialRing(QQ, 'x,s', order='lex')
@@ -369,7 +370,7 @@ def WeierstrassMap_P1xP1(polynomial, variables=None):
         sage: equation = s^2*(x^2+2*x+3) + s*(4*x^2+5*x+6) + (7*x^2+8*x+9)
         sage: X, Y, Z = WeierstrassMap_P1xP1(equation)
         sage: f, g = WeierstrassForm_P1xP1(equation)
-        sage: (-Y^2 + X^3 + f*X*Z^4 + g*Z^6).reduce(R.ideal(equation))
+        sage: (-Y^2 + X^3 + f*X*Z^4 + g*Z^6).reduce(R.ideal(equation))                  # needs sage.libs.singular
         0
     """
     x, y, s, t = _check_polynomial_P1xP1(polynomial, variables)
@@ -424,7 +425,7 @@ def WeierstrassMap_P2_112(polynomial, variables=None):
         sage: equation = y^2 + a0*x^4 + 4*a1*x^3 + 6*a2*x^2 + 4*a3*x + a4
         sage: X, Y, Z = WeierstrassMap_P2_112(equation, [x,y])
         sage: f, g = WeierstrassForm_P2_112(equation, variables=[x,y])
-        sage: (-Y^2 + X^3 + f*X*Z^4 + g*Z^6).reduce(R.ideal(equation))
+        sage: (-Y^2 + X^3 + f*X*Z^4 + g*Z^6).reduce(R.ideal(equation))                  # needs sage.libs.singular
         0
 
     Another example, this time in homogeneous coordinates::
@@ -440,7 +441,7 @@ def WeierstrassMap_P2_112(polynomial, variables=None):
         sage: WeierstrassForm_P2_112(C_eqn, [x,y,z,t])
         (-97/48, 17/864)
         sage: X, Y, Z = WeierstrassMap_P2_112(C_eqn, [x,y,z,t])
-        sage: (-Y^2 + X^3 - 97/48*X*Z^4 + 17/864*Z^6).reduce(C.defining_ideal())
+        sage: (-Y^2 + X^3 - 97/48*X*Z^4 + 17/864*Z^6).reduce(C.defining_ideal())        # needs sage.libs.singular
         0
     """
     x, y, z, t = _check_polynomial_P2_112(polynomial, variables)

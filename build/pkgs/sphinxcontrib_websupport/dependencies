@@ -1,4 +1,4 @@
-$(PYTHON) sphinxcontrib_serializinghtml | $(PYTHON_TOOLCHAIN)
+ sphinxcontrib_serializinghtml | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

@@ -16,9 +16,9 @@ from sage.rings.integer import Integer
 
 class NonNegativeIntegers(UniqueRepresentation, Parent):
     r"""
-    The enumerated set of non negative integers.
+    The enumerated set of nonnegative integers.
 
-    This class implements the set of non negative integers, as an
+    This class implements the set of nonnegative integers, as an
     enumerated set (see :class:`InfiniteEnumeratedSets
     <sage.categories.infinite_enumerated_sets.InfiniteEnumeratedSets>`).
 
@@ -102,17 +102,17 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             True
             sage: -1 in NN
             False
-            sage: x in NN
+            sage: x in NN                                                               # needs sage.symbolic
             False
             sage: None in NN
             False
-            sage: QQbar(sqrt(2)) in NN
+            sage: QQbar(sqrt(2)) in NN                                                  # needs sage.rings.number_field sage.symbolic
             False
-            sage: RIF(1,2) in NN
+            sage: RIF(1,2) in NN                                                        # needs sage.rings.real_interval_field
             False
-            sage: QQbar(2) in NN
+            sage: QQbar(2) in NN                                                        # needs sage.rings.number_field
             True
-            sage: RIF(2) in NN
+            sage: RIF(2) in NN                                                          # needs sage.rings.real_interval_field
             True
         """
         try:
@@ -123,8 +123,8 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, i):
         """
-        Constructs an element of self from an integer, testing that
-        this integer is indeed non negative.
+        Construct an element of ``self`` from an integer, testing that
+        this integer is indeed nonnegative.
 
         EXAMPLES::
 
@@ -135,7 +135,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             ValueError: Value -5 in not in Non negative integers.
-            sage: NN._element_constructor_(x)
+            sage: NN._element_constructor_(x)                                           # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: Value x in not in Non negative integers.
@@ -231,7 +231,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: NN = NonNegativeIntegers()
-            sage: NN._sympy_()
+            sage: NN._sympy_()                                                          # needs sympy
             Naturals0
         """
         from sympy import Naturals0

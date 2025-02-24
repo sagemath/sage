@@ -359,7 +359,7 @@ Now we start by making an identical branch to the first branch::
     [alice@localhost sage]$ git rebase -i HEAD~3
 
 This will open an editor with the last 3 (corresponding to ``HEAD~3``)
-commits and instuctions for how to modify them:
+commits and instructions for how to modify them:
 
 .. CODE-BLOCK:: text
 

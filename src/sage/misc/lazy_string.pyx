@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 """
 Lazy strings
 
@@ -61,9 +61,10 @@ from cpython.object cimport PyObject_Call, PyObject_RichCompare
 
 import types
 
+
 def is_lazy_string(obj):
     """
-    Checks if the given object is a lazy string.
+    Check if the given object is a lazy string.
 
     EXAMPLES::
 
@@ -75,17 +76,17 @@ def is_lazy_string(obj):
     """
     return isinstance(obj, _LazyString)
 
+
 def lazy_string(f, *args, **kwargs):
     """
-    Creates a lazy string.
+    Create a lazy string.
 
     INPUT:
 
-    - ``f``, either a callable or a (format) string
+    - ``f`` -- either a callable or a (format) string
     - positional arguments that are given to ``f``, either by calling or by
       applying it as a format string
-    - named arguments, that are forwarded to ``f`` if it is not a string
-
+    - named arguments that are forwarded to ``f`` if it is not a string
 
     EXAMPLES::
 
@@ -131,17 +132,18 @@ def _make_lazy_string(ftype, fpickle, args, kwargs):
         f = fpickle
     return _LazyString(f, args, kwargs)
 
+
 cdef class _LazyString():
     """
     Lazy class for strings created by a function call or a format string.
 
     INPUT:
 
-    - ``f``, either a callable or a (format) string
-    - ``args``, a tuple of arguments that are given to ``f``, either by calling
+    - ``f`` -- either a callable or a (format) string
+    - ``args`` -- tuple of arguments that are given to ``f``, either by calling
       or by applying it as a format string
-    - ``kwargs``, a dictionary of optional arguments, that are forwarded to ``f``
-      if it is a callable.
+    - ``kwargs`` -- dictionary of optional arguments, that are forwarded to ``f``
+      if it is a callable
 
     .. NOTE::
 
@@ -184,11 +186,11 @@ cdef class _LazyString():
         """
         INPUT:
 
-        - ``f``, either a callable or a (format) string
-        - ``args``, a tuple of arguments that are given to ``f``, either by calling
+        - ``f`` -- either a callable or a (format) string
+        - ``args`` -- tuple of arguments that are given to ``f``, either by calling
           or by applying it as a format string
-        - ``kwargs``, a dictionary of optional arguments, that are forwarded to ``f``
-          if it is a callable.
+        - ``kwargs`` -- dictionary of optional arguments, that are forwarded to ``f``
+          if it is a callable
 
         EXAMPLES::
 
@@ -313,7 +315,7 @@ cdef class _LazyString():
         Return the file system representation of ``self``, assuming that
         ``self`` is a path.
 
-        This is for Python 3 compatibility: see :trac:`24046`, and also
+        This is for Python 3 compatibility: see :issue:`24046`, and also
         :pep:`519` and
         https://docs.python.org/3/library/os.html#os.fspath
 
@@ -324,7 +326,6 @@ cdef class _LazyString():
             sage: s = lazy_string(f)
             sage: os.fspath(s)
             '/dev/null'
-
         """
         return str(self)
 
@@ -509,8 +510,8 @@ cdef class _LazyString():
 
         INPUT:
 
-        - ``args``, a tuple
-        - ``kwds``, a dict
+        - ``args`` -- tuple
+        - ``kwds`` -- dictionary
 
         .. NOTE::
 
@@ -519,23 +520,24 @@ cdef class _LazyString():
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.misc.lazy_string import lazy_string
-            sage: f = lambda op,A,B:"unsupported operand parent(s) for %s: '%s' and '%s'"%(op,A,B)
+            sage: def f(op, A, B):
+            ....:     return "unsupported operand parent(s) for %s: '%s' and '%s'" % (op, A, B)
             sage: R = GF(5)
             sage: S = GF(3)
-            sage: D = lazy_string(f, '+', R, S)
-            sage: D
+            sage: D = lazy_string(f, '+', R, S); D
             l"unsupported operand parent(s) for +: 'Finite Field of size 5' and 'Finite Field of size 3'"
             sage: D.update_lazy_string(('+', S, R), {})
 
         Apparently, the lazy string got changed in-place::
 
-            sage: D
+            sage: D                                                                     # needs sage.rings.finite_rings
             l"unsupported operand parent(s) for +: 'Finite Field of size 3' and 'Finite Field of size 5'"
 
         TESTS::
 
-            sage: D.update_lazy_string(None, None)
+            sage: D.update_lazy_string(None, None)                                      # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: Expected tuple, got NoneType

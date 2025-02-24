@@ -1,5 +1,0 @@
-#! /usr/bin/env bash
-echo "Cleaning out old PolyBoRi and BRiAl installations"
-rm -f "$SAGE_LOCAL"/lib/lib{polybori,brial}*
-rm -rf "$SAGE_LOCAL"/include/polybori*
-rm -rf "$SAGE_LOCAL"/share/polybori

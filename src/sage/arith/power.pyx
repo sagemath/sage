@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Generic implementation of powering
 
@@ -17,7 +18,7 @@ square-and-multiply algorithm.
 
 from cysignals.signals cimport sig_check
 
-from .long cimport integer_check_long
+from sage.arith.long cimport integer_check_long
 
 
 cpdef generic_power(a, n):

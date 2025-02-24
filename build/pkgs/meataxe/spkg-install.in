@@ -1,16 +1,3 @@
-# Delete old (Shared)MeatAxe libraries. This ensures a sane state if
-# installation of this package fails: the mtx library should exist if
-# and only if meataxe is installed. In detail: the build-time check in
-# src/setup.py checks whether or not the "meataxe" package is
-# marked as installed but the run-time check for the matrix_gfpn_dense
-# module checks whether it can be imported. We need to ensure that these
-# two conditions are equivalent, otherwise strange things can happen.
-# See also https://github.com/sagemath/sage/issues/24359#comment:154
-#
-# This also deletes the static library left behind from the installation
-# of MeatAxe (as opposed to SharedMeatAxe).
-rm -f "$SAGE_LOCAL"/lib/libmtx.*
-
 # Directory where executables are installed.
 export MTXBIN="$SAGE_LOCAL"/bin
 
@@ -34,4 +21,3 @@ sdh_make_install
 if [ "$SAGE_SPKG_INSTALL_DOCS" = yes ] ; then
     $MAKE doc || sdh_die "Error documenting SharedMeatAxe"
 fi
-

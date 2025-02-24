@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([requests], [SAGE_PYTHON_PACKAGE_CHECK([requests])])

@@ -68,7 +68,7 @@ cdef class ntl_GF2EContext_class():
 
     def __repr__(self):
         """
-        Returns a print representation of self.
+        Return a print representation of ``self``.
 
         EXAMPLES::
 
@@ -91,7 +91,6 @@ cdef class ntl_GF2EContext_class():
         """
         return self.m
 
-
     def restore(self):
         """
         EXAMPLES::
@@ -105,8 +104,9 @@ cdef class ntl_GF2EContext_class():
         """
         self.restore_c()
 
-    cdef void restore_c(self):
+    cdef void restore_c(self) noexcept:
         self.x.restore()
+
 
 def ntl_GF2EContext( v ):
     """

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 De Bruijn sequences
 
@@ -54,17 +53,17 @@ AUTHOR:
 
 - Nathann Cohen (2011): Some work on the documentation and defined the
   ``__contain__`` method
-
 """
 
-#*******************************************************************************
+# ******************************************************************************
 #         Copyright (C) 2011 Eviatar Bach <eviatarbach@gmail.com>
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
-#*******************************************************************************
+#                         https://www.gnu.org/licenses/
+# ******************************************************************************
 
 from sage.data_structures.bitset_base cimport *
+
 
 def debruijn_sequence(int k, int n):
     """
@@ -75,9 +74,9 @@ def debruijn_sequence(int k, int n):
 
     INPUT:
 
-    - ``k`` -- Arity. Must be an integer.
+    - ``k`` -- arity; must be an integer
 
-    - ``n`` -- Substring length. Must be an integer.
+    - ``n`` -- substring length; must be an integer
 
     EXAMPLES::
 
@@ -92,6 +91,7 @@ def debruijn_sequence(int k, int n):
     sequence = []
     gen(1, 1, k, n)
     return sequence
+
 
 cdef gen(int t, int p, k, n):
     """
@@ -113,14 +113,14 @@ cdef gen(int t, int p, k, n):
 
 def is_debruijn_sequence(seq, k, n):
     r"""
-    Given a sequence of integer elements in `0..k-1`, tests whether it
+    Given a sequence of integer elements in `0, \ldots, k-1`, tests whether it
     corresponds to a De Bruijn sequence of parameters `k` and `n`.
 
     INPUT:
 
-    - ``seq`` -- Sequence of elements in `0..k-1`.
+    - ``seq`` -- sequence of elements in `0, \ldots, k-1`
 
-    - ``n,k`` -- Integers.
+    - ``n``, ``k`` -- integers
 
     EXAMPLES::
 
@@ -183,6 +183,7 @@ def is_debruijn_sequence(seq, k, n):
 
     return answer
 
+
 from sage.categories.finite_sets import FiniteSets
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -190,9 +191,10 @@ from sage.structure.parent import Parent
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 
+
 class DeBruijnSequences(UniqueRepresentation, Parent):
-    """
-    Represents the De Bruijn sequences of given parameters `k` and `n`.
+    r"""
+    Represent the De Bruijn sequences of given parameters `k` and `n`.
 
     A De Bruijn sequence of parameters `k` and `n` is defined as the shortest
     cyclic sequence that incorporates all substrings of length `n` a `k`-ary
@@ -204,10 +206,10 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``k`` -- A natural number to define arity. The letters used are the
-      integers `0..k-1`.
+    - ``k`` -- a natural number to define arity; the letters used are the
+      integers `0, \ldots, k-1`
 
-    - ``n`` -- A natural number that defines the length of the substring.
+    - ``n`` -- a natural number that defines the length of the substring
 
     EXAMPLES:
 
@@ -256,35 +258,32 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         """
         Constructor.
 
-        Checks the consistency of the given arguments.
+        This checks the consistency of the given arguments.
 
         TESTS:
 
-        Setting ``n`` orr ``k`` to anything under 1 will return a ValueError:
-
-        ::
+        Setting ``n`` or ``k`` to anything under 1 will return
+        a :exc:`ValueError`::
 
             sage: DeBruijnSequences(3, 0).an_element()
             Traceback (most recent call last):
             ...
-            ValueError: k and n cannot be under 1.
+            ValueError: k and n cannot be under 1
 
         Setting ``n`` or ``k`` to any type except an integer will return a
-        TypeError:
-
-        ::
+        :exc:`TypeError`::
 
             sage: DeBruijnSequences(2.5, 3).an_element()
             Traceback (most recent call last):
             ...
-            TypeError: k and n must be integers.
+            TypeError: k and n must be integers
         """
         Parent.__init__(self, category=FiniteSets())
         if n < 1 or k < 1:
-            raise ValueError('k and n cannot be under 1.')
+            raise ValueError('k and n cannot be under 1')
         if (not isinstance(n, (Integer, int)) or
-            not isinstance(k, (Integer,int))):
-            raise TypeError('k and n must be integers.')
+                not isinstance(k, (Integer, int))):
+            raise TypeError('k and n must be integers')
 
         self.k = k
         self.n = n
@@ -303,7 +302,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
     def an_element(self):
         """
-        Returns the lexicographically smallest De Bruijn sequence with the given
+        Return the lexicographically smallest De Bruijn sequence with the given
         parameters.
 
         ALGORITHM:
@@ -321,12 +320,12 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
     def __contains__(self, seq):
         r"""
-        Tests whether the given sequence is a De Bruijn sequence with
+        Test whether the given sequence is a De Bruijn sequence with
         the current object's parameters.
 
         INPUT:
 
-        - ``seq`` -- A sequence of integers.
+        - ``seq`` -- a sequence of integers
 
         EXAMPLES::
 
@@ -338,7 +337,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
     def cardinality(self):
         """
-        Returns the number of distinct De Bruijn sequences for the object's
+        Return the number of distinct De Bruijn sequences for the object's
         parameters.
 
         EXAMPLES::

@@ -92,7 +92,7 @@ AUTHOR:
 
 from sage.matrix.matrix_dense  cimport Matrix_dense
 
-from .face_list_data_structure cimport *
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
@@ -180,7 +180,7 @@ cdef class ListOfFaces:
 
     cpdef ListOfFaces __copy__(self):
         r"""
-        Return a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -294,7 +294,7 @@ cdef class ListOfFaces:
 
         # Calculating ``newfaces``
         # such that ``newfaces`` points to all facets of ``faces[n_faces -1]``.
-        cdef size_t new_n_faces = get_next_level(self.data, new_faces.data, empty_forbidden)
+        get_next_level(self.data, new_faces.data, empty_forbidden)
 
         # Undo what ``get_next_level`` does.
         self.data.n_faces += 1
@@ -421,9 +421,9 @@ cdef class ListOfFaces:
 
         return output
 
-    cdef void delete_faces_unsafe(self, bint *delete, face_t face):
+    cdef void delete_faces_unsafe(self, bint *delete, face_t face) noexcept:
         r"""
-        Deletes face ``i`` if and only if ``delete[i]``.
+        Delete face ``i`` if and only if ``delete[i]``.
 
         Alternatively, deletes all faces such that the ``i``-th bit in ``face`` is not set.
 
@@ -439,7 +439,7 @@ cdef class ListOfFaces:
         else:
             face_list_delete_faces_by_face(self.data, face)
 
-    cdef void get_not_inclusion_maximal_unsafe(self, bint *not_inclusion_maximal):
+    cdef void get_not_inclusion_maximal_unsafe(self, bint *not_inclusion_maximal) noexcept:
         r"""
         Get all faces that are not inclusion maximal.
 
@@ -458,7 +458,7 @@ cdef class ListOfFaces:
         for i in range(self.n_faces()):
             not_inclusion_maximal[i] = is_not_maximal_fused(self.data, i, <standard> 0, not_inclusion_maximal)
 
-    cdef void get_faces_all_set_unsafe(self, bint *all_set):
+    cdef void get_faces_all_set_unsafe(self, bint *all_set) noexcept:
         r"""
         Get the faces that have all ``bits`` set.
 
@@ -478,7 +478,7 @@ cdef class ListOfFaces:
 
     def matrix(self):
         r"""
-        Obtain the matrix of self.
+        Obtain the matrix of ``self``.
 
         Each row represents a face and each column an atom.
 
@@ -529,7 +529,7 @@ cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep
     - ``face`` -- face in Vrepresentation or ``NULL``
     - ``dual`` -- boolean
 
-    OUTPUT: A tuple of new facets and new Vrepresentation as :class:`ListOfFaces`.
+    OUTPUT: a tuple of new facets and new Vrepresentation as :class:`ListOfFaces`.
     """
     cdef ListOfFaces new_facets, new_Vrep
     cdef bint* delete
@@ -547,7 +547,7 @@ cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep
     else:
         delete = <bint*> mem.allocarray(max(facets.n_faces(), facets.n_atoms()), sizeof(bint))
 
-        # Set ``delete[i]`` to one if ``i`` is not an vertex of ``face``.
+        # Set ``delete[i]`` to one if ``i`` is not a vertex of ``face``.
         for i in range(Vrep.n_faces()):
             if face_issubset(face, Vrep.data.faces[i]):
                 delete[i] = 0

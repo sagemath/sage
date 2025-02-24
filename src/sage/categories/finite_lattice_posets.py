@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite lattice posets
 """
@@ -9,6 +10,7 @@ Finite lattice posets
 #******************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
+
 
 class FiniteLatticePosets(CategoryWithAxiom):
     r"""
@@ -34,7 +36,6 @@ class FiniteLatticePosets(CategoryWithAxiom):
         sage: C is FiniteLatticePosets().Finite()
         True
         sage: TestSuite(C).run()
-
     """
 
     class ParentMethods:
@@ -49,8 +50,8 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: L = LatticePoset({0:[1,2],1:[3],2:[3,4],3:[5],4:[5]})             # optional - sage.combinat sage.graphs
-                sage: L.join_irreducibles()                                             # optional - sage.combinat sage.graphs
+                sage: L = LatticePoset({0:[1,2],1:[3],2:[3,4],3:[5],4:[5]})             # needs sage.graphs sage.modules
+                sage: L.join_irreducibles()                                             # needs sage.graphs sage.modules
                 [1, 2, 4]
 
             .. SEEALSO::
@@ -71,8 +72,8 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                   # optional - sage.combinat sage.graphs
-                sage: L.join_irreducibles_poset()                                       # optional - sage.combinat sage.graphs
+                sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                   # needs sage.graphs sage.modules
+                sage: L.join_irreducibles_poset()                                       # needs sage.graphs sage.modules
                 Finite poset containing 3 elements
 
             .. SEEALSO::
@@ -92,8 +93,8 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: L = LatticePoset({0:[1,2],1:[3],2:[3,4],3:[5],4:[5]})             # optional - sage.combinat sage.graphs
-                sage: L.meet_irreducibles()                                             # optional - sage.combinat sage.graphs
+                sage: L = LatticePoset({0:[1,2],1:[3],2:[3,4],3:[5],4:[5]})             # needs sage.graphs sage.modules
+                sage: L.meet_irreducibles()                                             # needs sage.graphs sage.modules
                 [1, 3, 4]
 
             .. SEEALSO::
@@ -114,8 +115,8 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                   # optional - sage.combinat sage.graphs
-                sage: L.join_irreducibles_poset()                                       # optional - sage.combinat sage.graphs
+                sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                   # needs sage.graphs sage.modules
+                sage: L.join_irreducibles_poset()                                       # needs sage.graphs sage.modules
                 Finite poset containing 3 elements
 
             .. SEEALSO::
@@ -143,20 +144,21 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: L = LatticePoset({1: [2, 3, 4], 2: [5, 6], 3: [5],                # optional - sage.combinat sage.graphs
+                sage: # needs sage.combinat sage.graphs sage.modules
+                sage: L = LatticePoset({1: [2, 3, 4], 2: [5, 6], 3: [5],
                 ....:                   4: [6], 5: [9, 7], 6: [9, 8], 7: [10],
                 ....:                   8: [10], 9: [10], 10: [11]})
-                sage: L_ = L.irreducibles_poset()                                       # optional - sage.combinat sage.graphs
-                sage: sorted(L_)                                                        # optional - sage.combinat sage.graphs
+                sage: L_ = L.irreducibles_poset()
+                sage: sorted(L_)
                 [2, 3, 4, 7, 8, 9, 10, 11]
-                sage: L_.completion_by_cuts().is_isomorphic(L)                          # optional - sage.combinat sage.graphs
+                sage: L_.completion_by_cuts().is_isomorphic(L)
                 True
 
             TESTS::
 
-                sage: LatticePoset().irreducibles_poset()                               # optional - sage.combinat sage.graphs
+                sage: LatticePoset().irreducibles_poset()                               # needs sage.graphs
                 Finite poset containing 0 elements
-                sage: posets.ChainPoset(1).irreducibles_poset()                         # optional - sage.combinat sage.graphs
+                sage: posets.ChainPoset(1).irreducibles_poset()                         # needs sage.graphs
                 Finite poset containing 1 elements
             """
             if self.cardinality() == 1:
@@ -191,36 +193,36 @@ class FiniteLatticePosets(CategoryWithAxiom):
             lattice of divisors of `60`, and check that the map
             `b \mapsto 5 \prod_{x\in b} x` is a morphism of lattices::
 
-                sage: D = LatticePoset((divisors(60), attrcall("divides")))             # optional - sage.combinat sage.graphs
-                sage: B = LatticePoset((Subsets([2,2,3]), attrcall("issubset")))        # optional - sage.combinat sage.graphs
-                sage: def f(b): return D(5*prod(b))                                     # optional - sage.combinat sage.graphs
-                sage: B.is_lattice_morphism(f, D)                                       # optional - sage.combinat sage.graphs
+                sage: D = LatticePoset((divisors(60), attrcall("divides")))             # needs sage.graphs sage.modules
+                sage: B = LatticePoset((Subsets([2,2,3]), attrcall("issubset")))        # needs sage.graphs sage.modules
+                sage: def f(b): return D(5*prod(b))
+                sage: B.is_lattice_morphism(f, D)                                       # needs sage.graphs sage.modules
                 True
 
             We construct the boolean lattice `B_2`::
 
-                sage: B = posets.BooleanLattice(2)                                      # optional - sage.combinat sage.graphs
-                sage: B.cover_relations()                                               # optional - sage.combinat sage.graphs
+                sage: B = posets.BooleanLattice(2)                                      # needs sage.graphs
+                sage: B.cover_relations()                                               # needs sage.graphs
                 [[0, 1], [0, 2], [1, 3], [2, 3]]
 
             And the same lattice with new top and bottom elements
             numbered respectively `-1` and `3`::
 
-                sage: G = DiGraph({-1:[0], 0:[1,2], 1:[3], 2:[3], 3:[4]})               # optional - sage.graphs
-                sage: L = LatticePoset(G)                                               # optional - sage.combinat sage.graphs
-                sage: L.cover_relations()                                               # optional - sage.combinat sage.graphs
+                sage: G = DiGraph({-1:[0], 0:[1,2], 1:[3], 2:[3], 3:[4]})               # needs sage.graphs
+                sage: L = LatticePoset(G)                                               # needs sage.graphs sage.modules
+                sage: L.cover_relations()                                               # needs sage.graphs sage.modules
                 [[-1, 0], [0, 1], [0, 2], [1, 3], [2, 3], [3, 4]]
 
-                sage: f = {B(0): L(0), B(1): L(1), B(2): L(2), B(3): L(3)}.__getitem__  # optional - sage.combinat sage.graphs
-                sage: B.is_lattice_morphism(f, L)                                       # optional - sage.combinat sage.graphs
+                sage: f = {B(0): L(0), B(1): L(1), B(2): L(2), B(3): L(3)}.__getitem__  # needs sage.graphs sage.modules
+                sage: B.is_lattice_morphism(f, L)                                       # needs sage.graphs sage.modules
                 True
 
-                sage: f = {B(0): L(-1),B(1): L(1), B(2): L(2), B(3): L(3)}.__getitem__  # optional - sage.combinat sage.graphs
-                sage: B.is_lattice_morphism(f, L)                                       # optional - sage.combinat sage.graphs
+                sage: f = {B(0): L(-1),B(1): L(1), B(2): L(2), B(3): L(3)}.__getitem__  # needs sage.graphs sage.modules
+                sage: B.is_lattice_morphism(f, L)                                       # needs sage.graphs sage.modules
                 False
 
-                sage: f = {B(0): L(0), B(1): L(1), B(2): L(2), B(3): L(4)}.__getitem__  # optional - sage.combinat sage.graphs
-                sage: B.is_lattice_morphism(f, L)                                       # optional - sage.combinat sage.graphs
+                sage: f = {B(0): L(0), B(1): L(1), B(2): L(2), B(3): L(4)}.__getitem__  # needs sage.graphs sage.modules
+                sage: B.is_lattice_morphism(f, L)                                       # needs sage.graphs sage.modules
                 False
 
             .. SEEALSO::

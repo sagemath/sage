@@ -76,6 +76,13 @@ The following should generally be checked while reading and testing the code:
   optional doctests related to the functionality. See :ref:`chapter-doctesting`
   for more information.
 
+For changes that affect the **user interface**, in particular, upgrades to
+IPython and Jupyter component packages, manual testing is crucial because
+our automatic tests do not cover the user interface. We recommend to use
+a `Jupyter notebook with comprehensive tests of graphics and typesetting
+<https://github.com/egourgoulhon/SageMathTest/blob/master/Notebooks/test_display.ipynb>`_,
+some of which is Sage-specific.
+
 You are now ready to change the PR's status (see
 :ref:`section-github-pr-status`):
 
@@ -134,7 +141,7 @@ the patches have been applied to a given release, the issue would
 remain in limbo.
 
 **No Patch Bombs**: Code that goes into Sage is peer-reviewed. If
-you show up with an 80,000 lines of code bundle that completely
+you show up with 80,000 lines of code bundle that completely
 rips out a subsystem and replaces it with something else, you can
 imagine that the review process will be a little tedious. These
 huge patch bombs are problematic for several reasons and we prefer
@@ -175,19 +182,19 @@ The release process
 ===================
 
 It is good for developers and reviewers to be aware of the procedure that the
-Sage Release Manager uses to make releases. Here it is as of 2023:
+Sage Release Manager uses to make releases. Here it is as of 2024:
 
 **Beta Release Stage**: For preparing a new beta release or the first release
 candidate, all positively reviewed PRs with the forthcoming release
-milestone are considered. PRs that have dependencies not merged yet are ignored.
-The Release Manager merges PRs in batches of 10 to 20 PRs, taking the
-PR priority into account. If a merge conflict of a PR to the Release
-Manager's branch occurs, the PR is set back to "needs work" status by the
-Release Manager, and the list of the PRs already merged to the Release
-Manager's branch is posted. The author of the PR needs to identify
-conflicting PRs in the list, make merge commits and declare them as
-dependencies, before setting back to "positive review" status. Each batch of
-merged PRs then undergoes integration testing. If problems are detected, a
+milestone are considered. The Release Manager merges PRs in batches of
+10 to 20 PRs. If a merge conflict of a PR to the Release Manager's
+branch occurs, the PR is set back to "needs work" status by the
+Release Manager. (The author of the PR can try to guess which other
+PRs may be causing the conflict, make merge commits and declare them as
+dependencies, before setting back to "positive review" status.
+Alternatively, the PR author can wait until the next beta release and
+resolve the conflict then.) Each batch of
+merged PRs undergoes integration testing. If problems are detected, a
 PR will be set back to "needs work" status and unmerged. When a batch of
 PRs is ready, the Release Manager closes these PRs and proceeds to the
 next batch. After a few batches, a new beta release is tagged, pushed to the
@@ -206,7 +213,8 @@ release of high quality. Be aware that there is a risk/benefit trade-off in
 merging a PR. The benefit of merging a PR is the improvement that the
 PR brings, such as fixing a bug. However, any code change has a risk of
 introducing unforeseen new problems and thus delaying the release: If a new
-issue triggers another release candidate, it delays the release by 1-2 weeks.
+issue triggers another release candidate, it can delay the release by up to
+2 weeks.
 Hence developers should use "blocker" priority sparingly and should indicate
 the rationale on the PR. Though there is no one fixed rule or authority
 that determines what is appropriate for "blocker" status,
@@ -222,3 +230,5 @@ that determines what is appropriate for "blocker" status,
 the Release Manager turns it to the final release. It is tagged with the
 release milestone, and announced on ``sage-release``.
 
+Release management scripts are maintained in the repository
+`sagemath/sage-release-management <https://github.com/sagemath/sage-release-management>`_.

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Debug options for the :mod:`sage.structure` modules
 
@@ -25,7 +26,7 @@ EXAMPLES::
 cdef class DebugOptions_class:
     def __cinit__(self):
         """
-        Initializer for the debug options
+        Initializer for the debug options.
 
         TESTS::
 

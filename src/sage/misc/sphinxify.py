@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*
 # sage.doctest: optional - sphinx
 r"""
 Process docstrings with Sphinx
@@ -33,19 +32,18 @@ from sphinx.application import Sphinx
 
 def sphinxify(docstring, format='html'):
     r"""
-    Runs Sphinx on a ``docstring``, and outputs the processed
-    documentation.
+    Run Sphinx on a ``docstring``, and output the processed documentation.
 
     INPUT:
 
-    - ``docstring`` -- string -- a ReST-formatted docstring
+    - ``docstring`` -- string; a ReST-formatted docstring
 
-    - ``format`` -- string (optional, default 'html') -- either 'html' or
-      'text'
+    - ``format`` -- string (default: ``'html'``); either ``'html'`` or
+      ``'text'``
 
     OUTPUT:
 
-    - string -- Sphinx-processed documentation, in either HTML or
+    - ``string`` -- Sphinx-processed documentation, in either HTML or
       plain text format, depending on the value of ``format``
 
     EXAMPLES::
@@ -83,7 +81,7 @@ def sphinxify(docstring, format='html'):
     with open(rst_name, 'w') as filed:
         filed.write(docstring)
 
-    confdir = os.path.join(srcdir, 'en' , 'introspect')
+    confdir = os.path.join(srcdir, 'en', 'introspect')
     os.makedirs(confdir)
     with open(os.path.join(confdir, 'conf.py'), 'w') as filed:
         filed.write(r"""
@@ -128,7 +126,7 @@ smart_quotes = no""")
     builtins.__dict__.pop('_', None)
 
     if os.path.exists(output_name):
-        with open(output_name, 'r') as f:
+        with open(output_name) as f:
             output = f.read()
         output = output.replace('<pre>', '<pre class="literal-block">')
 

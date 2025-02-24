@@ -66,7 +66,6 @@ def conjugatingbraid(braid1, braid2):
         sage: c = B([1,2])
         sage: conjugatingbraid(b,c)
         [[0], [2]]
-
     """
     nstrands = max(braid1.parent().strands(), braid2.parent().strands())
     l1 = braid1.Tietze()
@@ -75,6 +74,7 @@ def conjugatingbraid(braid1, braid2):
     cdef list[list[int]] rop = ConjugatingBraid(nstrands, l1, l2)
     sig_off()
     return rop
+
 
 def leftnormalform(braid):
     r"""
@@ -97,7 +97,6 @@ def leftnormalform(braid):
         sage: b = B([1,2,1,-2])
         sage: leftnormalform(b)
         [[0], [2, 1]]
-
     """
     nstrands = braid.parent().strands()
     l1 = braid.Tietze()
@@ -105,6 +104,7 @@ def leftnormalform(braid):
     cdef list[list[int]] rop = LeftNormalForm(nstrands, l1)
     sig_off()
     return rop
+
 
 def rightnormalform(braid):
     r"""
@@ -127,7 +127,6 @@ def rightnormalform(braid):
         sage: b = B([1,2,1,-2])
         sage: rightnormalform(b)
         [[2, 1], [0]]
-
     """
     nstrands = braid.parent().strands()
     l1 = braid.Tietze()
@@ -135,6 +134,7 @@ def rightnormalform(braid):
     cdef list[list[int]] rop = RightNormalForm(nstrands, l1)
     sig_off()
     return rop
+
 
 def greatestcommondivisor(braid1, braid2):
     r"""
@@ -145,9 +145,7 @@ def greatestcommondivisor(braid1, braid2):
     - ``braid1`` -- a braid
     - ``braid2`` -- a braid
 
-    OUTPUT:
-
-    A list of lists representing the gcd of ``braid1`` and ``braid2``.
+    OUTPUT: list of lists representing the gcd of ``braid1`` and ``braid2``
 
     EXAMPLES::
 
@@ -157,7 +155,6 @@ def greatestcommondivisor(braid1, braid2):
         sage: b2 = B([2, 2, 2])
         sage: greatestcommondivisor(b1, b2)
         [[-1], [2, 1]]
-
     """
     nstrands = max(braid1.parent().strands(), braid2.parent().strands())
     l1 = braid1.Tietze()
@@ -166,6 +163,7 @@ def greatestcommondivisor(braid1, braid2):
     cdef list[list[int]] rop = GreatestCommonDivisor(nstrands, l1, l2)
     sig_off()
     return rop
+
 
 def leastcommonmultiple(braid1, braid2):
     r"""
@@ -176,9 +174,7 @@ def leastcommonmultiple(braid1, braid2):
     - ``braid1`` -- a braid
     - ``braid2`` -- a braid
 
-    OUTPUT:
-
-    A list of lists representing the lcm of ``braid1`` and ``braid2``.
+    OUTPUT: list of lists representing the lcm of ``braid1`` and ``braid2``
 
     EXAMPLES::
 
@@ -188,7 +184,6 @@ def leastcommonmultiple(braid1, braid2):
         sage: b2 = B([2, 2, 2])
         sage: leastcommonmultiple(b1, b2)
         [[1], [1], [1]]
-
     """
     nstrands = max(braid1.parent().strands(), braid2.parent().strands())
     l1 = braid1.Tietze()
@@ -197,6 +192,7 @@ def leastcommonmultiple(braid1, braid2):
     cdef list[list[int]] rop = LeastCommonMultiple(nstrands, l1, l2)
     sig_off()
     return rop
+
 
 def centralizer(braid):
     r"""
@@ -218,7 +214,6 @@ def centralizer(braid):
         sage: b = B([1,2,-1])
         sage: centralizer(b)
         [[[-1], [2, 1], [1, 2]], [[0], [1], [1, 2], [2]]]
-
     """
     nstrands = braid.parent().strands()
     lnf = leftnormalform(braid)
@@ -235,6 +230,7 @@ def centralizer(braid):
     sig_off()
     return rop
 
+
 def supersummitset(braid):
     r"""
     Return a list with the super-summit-set of a braid.
@@ -243,9 +239,7 @@ def supersummitset(braid):
 
     - ``braid`` -- a braid
 
-    OUTPUT:
-
-    A list of lists representing the super summit set of ``braid``.
+    OUTPUT: list of lists representing the super summit set of ``braid``
 
     EXAMPLES::
 
@@ -254,7 +248,6 @@ def supersummitset(braid):
         sage: b = B([1,2,-1])
         sage: supersummitset(b)
         [[[0], [2]], [[0], [1]]]
-
     """
     nstrands = braid.parent().strands()
     l = braid.Tietze()
@@ -262,6 +255,7 @@ def supersummitset(braid):
     cdef list[list[list[int]]] rop = SuperSummitSet(nstrands, l)
     sig_off()
     return rop
+
 
 def ultrasummitset(braid):
     r"""
@@ -283,7 +277,6 @@ def ultrasummitset(braid):
         sage: b = B([1,2,-1])
         sage: ultrasummitset(b)
         [[[[0], [2]]], [[[0], [1]]]]
-
     """
     nstrands = braid.parent().strands()
     l = braid.Tietze()
@@ -326,10 +319,11 @@ def thurston_type(braid):
     sig_off()
     if i == 1:
         return 'periodic'
-    elif i==2:
+    if i == 2:
         return 'reducible'
-    elif i==3:
+    if i == 3:
         return 'pseudo-anosov'
+
 
 def rigidity(braid):
     r"""
@@ -339,9 +333,7 @@ def rigidity(braid):
 
     - ``braid`` -- a braid
 
-    OUTPUT:
-
-    The rigidity of the braid.
+    OUTPUT: the rigidity of the braid
 
     EXAMPLES::
 
@@ -350,7 +342,6 @@ def rigidity(braid):
         sage: c = B([1,1,1,2,2])
         sage: rigidity(c)
         3
-
     """
     nstrands = braid.parent().strands()
     l = braid.Tietze()
@@ -358,6 +349,7 @@ def rigidity(braid):
     cdef int i = Rigidity_ext(nstrands, l)
     sig_off()
     return i
+
 
 def sliding_circuits(braid):
     r"""

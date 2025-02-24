@@ -1,15 +1,15 @@
 r"""
 Fast word datatype using an array of unsigned char
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -68,7 +68,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __cinit__(self):
         r"""
-        Initialization of C attributes
+        Initialization of C attributes.
 
         TESTS::
 
@@ -81,7 +81,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __init__(self, parent, data):
         r"""
-        Constructor
+        Constructor.
 
         TESTS::
 
@@ -98,11 +98,11 @@ cdef class WordDatatype_char(WordDatatype):
         if data:
             self._set_data(data)
 
-    @cython.boundscheck(False) # assume that indexing will not cause any IndexErrors
+    @cython.boundscheck(False)  # assume that indexing will not cause any IndexErrors
     @cython.wraparound(False)  # not check not correctly handle negative indices
     cdef _set_data(self, data):
         r"""
-        set the attribute ._data and ._length from the sequence data
+        Set the attribute ._data and ._length from the sequence data
         (usually data is a word, a tuple or a list)
         """
         cdef size_t i
@@ -114,9 +114,9 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __dealloc__(self):
         r"""
-        Deallocate memory only if self uses it own memory.
+        Deallocate memory only if ``self`` uses it own memory.
 
-        Note that ``sig_free`` will not deallocate memory if self is the
+        Note that ``sig_free`` will not deallocate memory if ``self`` is the
         master of another word.
         """
         # it is strictly forbidden here to access _master here! (it will be set
@@ -196,7 +196,7 @@ cdef class WordDatatype_char(WordDatatype):
             [1, 3, 2]
         """
         cdef bitset_t seen
-        bitset_init(seen, 256) # allocation + initialization to 0
+        bitset_init(seen, 256)  # allocation + initialization to 0
 
         cdef size_t i
         cdef list res = []
@@ -217,7 +217,7 @@ cdef class WordDatatype_char(WordDatatype):
         cdef type t = type(self)
         cdef WordDatatype_char other = t.__new__(t)
         other._data = data
-        other._master = master # can be None
+        other._master = master  # can be None
         other._is_slice = 0 if master is None else 1
         other._length = length
         other._parent = self._parent
@@ -250,7 +250,7 @@ cdef class WordDatatype_char(WordDatatype):
 
         - ``other`` -- a word (WordDatatype_char)
 
-        - ``op`` -- int, from 0 to 5
+        - ``op`` -- integer from 0 to 5
 
         TESTS::
 
@@ -267,7 +267,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: w > w[1:] or w[1:] < w
             False
 
-        Testing that :trac:`21609` is fixed::
+        Testing that :issue:`21609` is fixed::
 
             sage: w = Word([1,2], alphabet=[1,2])
             sage: z = Word([1,1], alphabet=[1,2])
@@ -284,7 +284,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: (w>=w, z>=z, w>=z, z>=w)
             (True, True, True, False)
 
-        Testing that :trac:`22717` is fixed::
+        Testing that :issue:`22717` is fixed::
 
             sage: w = Word([1,2], alphabet=[1,2,3])
             sage: z = Word([1,2,3], alphabet=[1,2,3])
@@ -301,7 +301,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: (w>=w, z>=z, w>=z, z>=w)
             (True, True, False, True)
 
-        Check that :trac:`23317` is fixed::
+        Check that :issue:`23317` is fixed::
 
             sage: L = [Word([2,2], (1,2)), Word([], (1,2))]
             sage: sorted(L)
@@ -356,7 +356,7 @@ cdef class WordDatatype_char(WordDatatype):
             ...
             TypeError: slice indices must be integers or None or have an __index__ method
 
-        Check a weird behavior of PySlice_GetIndicesEx (:trac:`17056`)::
+        Check a weird behavior of PySlice_GetIndicesEx (:issue:`17056`)::
 
             sage: w[1:0]
             word:
@@ -367,9 +367,9 @@ cdef class WordDatatype_char(WordDatatype):
         if isinstance(key, slice):
             # here the key is a slice
             PySlice_GetIndicesEx(key,
-                    self._length,
-                    &start, &stop, &step,
-                    &slicelength)
+                                 self._length,
+                                 &start, &stop, &step,
+                                 &slicelength)
             if slicelength == 0:
                 return self._new_c(NULL, 0, None)
             if step == 1:
@@ -501,11 +501,11 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __pow__(self, exp, mod):
         r"""
-        Power
+        Power.
 
         INPUT:
 
-        -  ``exp``  - an integer, a rational, a float number or plus infinity.
+        - ``exp`` -- integer, rational, float, or plus infinity
 
         TESTS::
 
@@ -607,7 +607,7 @@ cdef class WordDatatype_char(WordDatatype):
 
         TESTS:
 
-        :trac:`19322`::
+        :issue:`19322`::
 
             sage: W = Words([0,1,2])
             sage: w = W([0,1,0,2])
@@ -646,7 +646,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def is_square(self):
         r"""
-        Return True if self is a square, and False otherwise.
+        Return ``True`` if ``self`` is a square, and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -716,9 +716,9 @@ cdef class WordDatatype_char(WordDatatype):
             sage: W = Words([0,1])
             sage: w = words.FibonacciWord()
             sage: w = W(list(w[:5000]))
-            sage: L = [[len(w[n:].longest_common_prefix(w[n+fibonacci(i):]))
+            sage: L = [[len(w[n:].longest_common_prefix(w[n+fibonacci(i):]))            # needs sage.libs.pari
             ....:      for i in range(5,15)] for n in range(1,1000)]
-            sage: for n,l in enumerate(L):
+            sage: for n,l in enumerate(L):                                              # needs sage.libs.pari
             ....:     if l.count(0) > 4:
             ....:         print("{} {}".format(n+1,l))
             375 [0, 13, 0, 34, 0, 89, 0, 233, 0, 233]

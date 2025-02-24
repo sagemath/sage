@@ -16,7 +16,7 @@ where `\eta(q)` is Dirichlet's eta function
 
 These are useful for obtaining explicit models of modular curves.
 
-See :trac:`3934` for background.
+See :issue:`3934` for background.
 
 AUTHOR:
 
@@ -183,7 +183,7 @@ class EtaGroupElement(Element):
         P = self.parent()
         return P.element_class(P, newdict)
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Return whether ``self`` is the one of the monoid.
 
@@ -276,13 +276,12 @@ class EtaGroupElement(Element):
 
         INPUT:
 
-        - ``n`` (integer): number of terms to calculate
+        - ``n`` -- integer; number of terms to calculate
 
         OUTPUT:
 
-        -  a power series over `\ZZ` in
-           the variable `q`, with a *relative* precision of
-           `1 + O(q^n)`.
+        A power series over `\ZZ` in the variable `q`, with a *relative*
+        precision of `1 + O(q^n)`.
 
         ALGORITHM: Calculates eta to (n/m) terms, where m is the smallest
         integer dividing self.level() such that self.r(m) != 0. Then
@@ -323,17 +322,15 @@ class EtaGroupElement(Element):
         """
         return self.q_expansion(n)
 
-    def order_at_cusp(self, cusp: 'CuspFamily') -> Integer:
+    def order_at_cusp(self, cusp: CuspFamily) -> Integer:
         r"""
         Return the order of vanishing of ``self`` at the given cusp.
 
         INPUT:
 
-        -  ``cusp`` --  a :class:`CuspFamily` object
+        - ``cusp`` -- a :class:`CuspFamily` object
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -470,7 +467,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``dic`` -- a dictionary
+        - ``dic`` -- dictionary
 
         See the docstring of :func:`EtaProduct` for how ``dic`` is used.
 
@@ -492,7 +489,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
         """
         return self._N
 
-    def basis(self, reduce=True):
+    def basis(self, reduce=True) -> list:
         r"""
         Produce a basis for the free abelian group of eta-products of level
         N (under multiplication), attempting to find basis vectors of the
@@ -500,8 +497,8 @@ class EtaGroup_class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``reduce`` - a boolean (default True) indicating
-           whether or not to apply LLL-reduction to the calculated basis
+        - ``reduce`` -- boolean (default: ``True``); whether or not to apply
+          LLL-reduction to the calculated basis
 
         EXAMPLES::
 
@@ -558,7 +555,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
             nf = (i < S.ncols() and S[i, i]) or 0  # ?
             good_vects.append((vect * 24 / gcd(nf, 24)).list())
         for v in good_vects:
-            v.append(-sum([r for r in v]))
+            v.append(-sum(list(v)))
         dicts = []
         for v in good_vects:
             dicts.append({})
@@ -570,13 +567,13 @@ class EtaGroup_class(UniqueRepresentation, Parent):
         else:
             return [self(d) for d in dicts]
 
-    def reduce_basis(self, long_etas):
+    def reduce_basis(self, long_etas) -> list:
         r"""
         Produce a more manageable basis via LLL-reduction.
 
         INPUT:
 
-        - ``long_etas`` -  a list of EtaGroupElement objects (which
+        - ``long_etas`` -- a list of EtaGroupElement objects (which
           should all be of the same level)
 
         OUTPUT:
@@ -627,19 +624,18 @@ def EtaProduct(level, dic) -> EtaGroupElement:
 
     INPUT:
 
-    -  ``level`` -- (integer): the N such that this eta
-       product is a function on X_0(N).
+    - ``level`` -- integer; the N such that this eta
+      product is a function on `X_0(N)`
 
-    -  ``dic`` -- (dictionary): a dictionary indexed by
-       divisors of N such that the coefficient of `\eta(q^d)` is
-       r[d]. Only nonzero coefficients need be specified. If Ligozat's
-       criteria are not satisfied, a ``ValueError`` will be raised.
+    - ``dic`` -- a dictionary indexed by divisors of N such that the
+      coefficient of `\eta(q^d)` is r[d]. Only nonzero coefficients need be
+      specified. If Ligozat's criteria are not satisfied, a :exc:`ValueError`
+      will be raised.
 
     OUTPUT:
 
-    -  an EtaGroupElement object, whose parent is
-       the EtaGroup of level N and whose coefficients are the given
-       dictionary.
+    An EtaGroupElement object, whose parent is the EtaGroup of level N and
+    whose coefficients are the given dictionary.
 
     .. NOTE::
 
@@ -671,9 +667,9 @@ def num_cusps_of_width(N, d) -> Integer:
 
     INPUT:
 
-    -  ``N`` -- (integer): the level
+    - ``N`` -- integer; the level
 
-    -  ``d`` -- (integer): an integer dividing N, the cusp width
+    - ``d`` -- integer; an integer dividing `N`, the cusp width
 
     EXAMPLES::
 
@@ -693,14 +689,14 @@ def num_cusps_of_width(N, d) -> Integer:
     return euler_phi(d.gcd(N // d))
 
 
-def AllCusps(N):
+def AllCusps(N) -> list:
     r"""
     Return a list of CuspFamily objects corresponding to the cusps of
     `X_0(N)`.
 
     INPUT:
 
-    -  ``N`` -- (integer): the level
+    - ``N`` -- integer; the level
 
     EXAMPLES::
 
@@ -859,7 +855,7 @@ class CuspFamily(SageObject):
 
 def qexp_eta(ps_ring, prec):
     r"""
-    Return the q-expansion of `\eta(q) / q^{1/24}`.
+    Return the `q`-expansion of `\eta(q) / q^{1/24}`.
 
     Here `\eta(q)` is Dedekind's function
 
@@ -871,11 +867,11 @@ def qexp_eta(ps_ring, prec):
 
     INPUT:
 
-    -  ``ps_ring`` -- (PowerSeriesRing): a power series ring
+    - ``ps_ring`` -- PowerSeriesRing; a power series ring
 
-    -  ``prec`` -- (integer): the number of terms to compute
+    - ``prec`` -- integer; the number of terms to compute
 
-    OUTPUT: An element of ps_ring which is the q-expansion of
+    OUTPUT: an element of ``ps_ring`` which is the `q`-expansion of
     `\eta(q)/q^{1/24}` truncated to prec terms.
 
     ALGORITHM: We use the Euler identity
@@ -917,17 +913,17 @@ def eta_poly_relations(eta_elements, degree, labels=['x1', 'x2'],
 
     INPUT:
 
-    - ``eta_elements`` - (list): a list of EtaGroupElement objects.
+    - ``eta_elements`` -- list; a list of EtaGroupElement objects.
       Not implemented unless this list has precisely two elements. degree
 
-    - ``degree`` - (integer): the maximal degree of polynomial to look for.
+    - ``degree`` -- integer; the maximal degree of polynomial to look for
 
-    - ``labels`` - (list of strings): labels to use for the polynomial returned.
+    - ``labels`` -- list of strings; labels to use for the polynomial returned
 
-    - ``verbose`` - (boolean, default ``False``): if ``True``, prints information as
-      it goes.
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, prints information as
+      it goes
 
-    OUTPUT: a list of polynomials which is a Groebner basis for the
+    OUTPUT: list of polynomials which is a Groebner basis for the
     part of the ideal of relations between eta_elements which is
     generated by elements up to the given degree; or None, if no
     relations were found.

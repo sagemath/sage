@@ -41,12 +41,10 @@ def _triangulate(g, comb_emb):
 
     INPUT:
 
-    - g -- the graph to triangulate
+    - ``g`` -- the graph to triangulate
     - ``comb_emb`` -- a planar combinatorial embedding of g
 
-    OUTPUT:
-
-    A list of edges that are added to the graph (in place)
+    OUTPUT: a list of edges that are added to the graph (in place)
 
     EXAMPLES::
 
@@ -66,7 +64,7 @@ def _triangulate(g, comb_emb):
 
     TESTS:
 
-    :trac:`29522` is fixed::
+    :issue:`29522` is fixed::
 
         sage: g = Graph(2)
         sage: _triangulate(g, {})
@@ -153,13 +151,11 @@ def _normal_label(g, comb_emb, external_face):
 
     INPUT:
 
-    - g -- the graph to find the normal labeling of (g must be triangulated)
+    - ``g`` -- the graph to find the normal labeling of (g must be triangulated)
     - ``comb_emb`` -- a planar combinatorial embedding of g
     - ``external_face`` -- the list of three edges in the external face of g
 
-    OUTPUT:
-
-    x -- tuple with entries
+    OUTPUT: x; tuple with entries
 
         x[0] = dict of dicts of normal labeling for each vertex of g and each
         adjacent neighbors u,v (u < v) of vertex:
@@ -368,8 +364,8 @@ def _realizer(g, x, example=False):
 
     INPUT:
 
-    - g -- the graph to compute the realizer of
-    - x -- tuple with entries
+    - ``g`` -- the graph to compute the realizer of
+    - ``x`` -- tuple with entries
 
         x[0] = dict of dicts representing a normal labeling of g.  For
         each vertex of g and each adjacent neighbors u,v (u < v) of
@@ -378,9 +374,7 @@ def _realizer(g, x, example=False):
         x[1] = (v1, v2, v3) tuple of the three external vertices (also
         the roots of each tree)
 
-    OUTPUT:
-
-    - x -- tuple with entries
+    OUTPUT: x; tuple with entries
 
         x[0] = dict of lists of TreeNodes:
 
@@ -402,7 +396,6 @@ def _realizer(g, x, example=False):
         sage: _realizer(g, tn)
         ({0: [<sage.graphs.schnyder.TreeNode object at ...>]},
          (1, 0, 2))
-
     """
     normal_labeling, (v1, v2, v3) = x
     realizer = DiGraph()
@@ -465,8 +458,8 @@ def _compute_coordinates(g, x):
 
     INPUT:
 
-    - g -- the graph to compute the coordinates of
-    - x -- tuple with entries
+    - ``g`` -- the graph to compute the coordinates of
+    - ``x`` -- tuple with entries
 
         x[0] = dict of tree nodes for the three trees with each external
         vertex as root:
@@ -516,7 +509,7 @@ def _compute_coordinates(g, x):
     for v in g.vertices(sort=False):
         if v not in [t1.label, t2.label, t3.label]:
             # Computing coordinates for v
-            r = list((0, 0, 0))
+            r = [0, 0, 0]
 
             for i in [0, 1, 2]:
                 # Computing size of region i:
@@ -555,7 +548,7 @@ def _compute_coordinates(g, x):
     g.set_pos(coordinates)  # Setting _pos attribute to store coordinates
 
 
-class TreeNode():
+class TreeNode:
     """
     A class to represent each node in the trees used by ``_realizer`` and
     ``_compute_coordinates`` when finding a planar geometric embedding in
@@ -566,7 +559,7 @@ class TreeNode():
     INPUT:
 
     - ``parent`` -- the parent TreeNode of ``self``
-    - ``children`` -- a list of TreeNode children of ``self``
+    - ``children`` -- list of TreeNode children of ``self``
     - ``label`` -- the associated realizer vertex label
 
     EXAMPLES::
@@ -591,7 +584,7 @@ class TreeNode():
         INPUT:
 
         - ``parent`` -- the parent TreeNode of ``self``
-        - ``children`` -- a list of TreeNode children of ``self``
+        - ``children`` -- list of TreeNode children of ``self``
         - ``label`` -- the associated realizer vertex label
 
         EXAMPLES::
@@ -620,9 +613,9 @@ class TreeNode():
 
     def compute_number_of_descendants(self):
         """
-        Computes the number of descendants of self and all descendants.
+        Compute the number of descendants of ``self`` and all descendants.
 
-        For each TreeNode, sets result as attribute self.number_of_descendants
+        For each TreeNode, sets result as attribute ``self.number_of_descendants``.
 
         EXAMPLES::
 
@@ -640,7 +633,6 @@ class TreeNode():
             sage: tn.compute_depth_of_self_and_children()
             sage: tn3.depth
             2
-
         """
         n = 1
         for child in self.children:
@@ -650,9 +642,9 @@ class TreeNode():
 
     def compute_depth_of_self_and_children(self):
         """
-        Computes the depth of self and all descendants.
+        Compute the depth of ``self`` and all descendants.
 
-        For each TreeNode, sets result as attribute self.depth
+        For each TreeNode, sets result as ``attribute self.depth``.
 
         EXAMPLES::
 
@@ -711,16 +703,16 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
 
     INPUT:
 
-    - graph -- a planar triangulation, given by a graph with an embedding.
+    - ``graph`` -- a planar triangulation, given by a graph with an embedding
 
-    - root_edge -- a pair of vertices (default is from ``-1`` to ``-2``)
-      The third boundary vertex is then determined using the orientation and
-      will be labelled ``-3``.
+    - ``root_edge`` -- a pair of vertices (default: from ``-1`` to ``-2``);
+      the third boundary vertex is then determined using the orientation and
+      will be labelled ``-3``
 
-    - minimal -- boolean (default ``True``), whether to return a
-      minimal or a maximal Schnyder wood.
+    - ``minimal`` -- boolean (default: ``True``); whether to return a
+      minimal or a maximal Schnyder wood
 
-    - check -- boolean (default ``True``), whether to check if the input
+    - ``check`` -- boolean (default: ``True``); whether to check if the input
       is a planar triangulation
 
     OUTPUT:
@@ -804,7 +796,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
             raise ValueError('not a planar graph')
         if not all(len(u) == 3 for u in graph.faces()):
             raise ValueError('not a triangulation')
-        if not(a in graph.neighbors(b)):
+        if a not in graph.neighbors(b):
             raise ValueError('not a valid root edge')
 
     new_g = DiGraph()

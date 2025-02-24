@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Output Buffer
 
@@ -39,7 +39,7 @@ class OutputBuffer(SageObject):
 
     def __init__(self, data):
         """
-        Data stored either in memory or as a file
+        Data stored either in memory or as a file.
 
         This class is an abstraction for "files", in that they can
         either be defined by a bytes array (Python 3) or string
@@ -47,7 +47,7 @@ class OutputBuffer(SageObject):
 
         INPUT:
 
-        - ``data`` -- bytes. The data that is stored in the buffer.
+        - ``data`` -- bytes; the data that is stored in the buffer
 
         EXAMPLES::
 
@@ -87,12 +87,10 @@ class OutputBuffer(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string. The filename under which the data is
-          stored.
+        - ``filename`` -- string; the filename under which the data is
+          stored
 
-        OUTPUT:
-
-        String containing the buffer data.
+        OUTPUT: string containing the buffer data
 
         EXAMPLES::
 
@@ -117,11 +115,11 @@ class OutputBuffer(SageObject):
     @classmethod
     def _chmod_readonly(cls, filename):
         """
-        Make file readonly
+        Make file readonly.
 
         INPUT:
 
-        - ``filename`` -- string. Name of an already-existing file.
+        - ``filename`` -- string; name of an already-existing file
 
         EXAMPLES::
 
@@ -151,11 +149,9 @@ class OutputBuffer(SageObject):
 
     def _repr_(self):
         """
-        Return a string representation
+        Return a string representation.
 
-        OUTPUT:
-
-        String
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -167,11 +163,9 @@ class OutputBuffer(SageObject):
 
     def get(self):
         """
-        Return the buffer content
+        Return the buffer content.
 
-        OUTPUT:
-
-        Bytes. A string in Python 2.x.
+        OUTPUT: bytes; string in Python 2.x
 
         EXAMPLES::
 
@@ -191,11 +185,11 @@ class OutputBuffer(SageObject):
 
     def get_unicode(self):
         """
-        Return the buffer content as string
+        Return the buffer content as string.
 
         OUTPUT:
 
-        String. Unicode in Python 2.x. Raises a ``UnicodeEncodeError``
+        String. Unicode in Python 2.x. Raises a :exc:`UnicodeEncodeError`
         if the data is not valid utf-8.
 
         EXAMPLES::
@@ -219,9 +213,7 @@ class OutputBuffer(SageObject):
         ``OutputBuffer.get`` on Python 2 and ``OutputBuffer.get_unicode`` on
         Python 3.  This is useful in some cases for cross-compatible code.
 
-        OUTPUT:
-
-        A ``str`` object.
+        OUTPUT: a ``str`` object
 
         EXAMPLES::
 
@@ -242,7 +234,7 @@ class OutputBuffer(SageObject):
 
         INPUT:
 
-        - ``ext`` -- string. The file extension.
+        - ``ext`` -- string; the file extension
 
         OUTPUT:
 
@@ -301,7 +293,7 @@ class OutputBuffer(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string. The file name to save under.
+        - ``filename`` -- string; the file name to save under
 
         EXAMPLES::
 

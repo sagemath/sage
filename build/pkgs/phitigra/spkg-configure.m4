@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([phitigra], [SAGE_PYTHON_PACKAGE_CHECK([phitigra])])

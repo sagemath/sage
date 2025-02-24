@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.singular
 """
 Rational points of curves
 
@@ -12,17 +13,16 @@ We can create points on projective curves::
 
 or on affine curves::
 
-    sage: A.<x,y> = AffineSpace(GF(23), 2)                                              # optional - sage.rings.finite_rings
-    sage: C = Curve([y - y^4 + 17*x^2 - 2*x + 22], A)                                   # optional - sage.rings.finite_rings
-    sage: Q = C([22,21])                                                                # optional - sage.rings.finite_rings
-    sage: Q.parent()                                                                    # optional - sage.rings.finite_rings
+    sage: A.<x,y> = AffineSpace(GF(23), 2)
+    sage: C = Curve([y - y^4 + 17*x^2 - 2*x + 22], A)
+    sage: Q = C([22,21])
+    sage: Q.parent()
     Set of rational points of Affine Plane Curve over Finite Field of size 23
      defined by -y^4 - 6*x^2 - 2*x + y - 1
 
 AUTHORS:
 
 - Grayson Jorgenson (2016-6): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -71,10 +71,10 @@ class ProjectivePlaneCurvePoint_field(ProjectiveCurvePoint_field):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)                                # optional - sage.rings.finite_rings
-            sage: C = Curve([y^3*z - 16*x^4], P)                                        # optional - sage.rings.finite_rings
-            sage: Q = C([0,0,1])                                                        # optional - sage.rings.finite_rings
-            sage: Q.multiplicity()                                                      # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)
+            sage: C = Curve([y^3*z - 16*x^4], P)
+            sage: Q = C([0,0,1])
+            sage: Q.multiplicity()
             3
         """
         return self.codomain().multiplicity(self)
@@ -113,15 +113,16 @@ class ProjectivePlaneCurvePoint_field(ProjectiveCurvePoint_field):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^2 - 3)                                          # optional - sage.rings.number_field
-            sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                     # optional - sage.rings.number_field
-            sage: C = P.curve([x^2*y^3*z^4 - y^6*z^3 - 4*x^2*y^4*z^3 -                  # optional - sage.rings.number_field
+            sage: K.<b> = NumberField(a^2 - 3)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: C = P.curve([x^2*y^3*z^4 - y^6*z^3 - 4*x^2*y^4*z^3 -
             ....: 4*x^4*y^2*z^3 + 3*y^7*z^2 + 10*x^2*y^5*z^2 + 9*x^4*y^3*z^2 +
             ....: 5*x^6*y*z^2 - 3*y^8*z - 9*x^2*y^6*z - 11*x^4*y^4*z - 7*x^6*y^2*z -
             ....: 2*x^8*z + y^9 + 2*x^2*y^7 + 3*x^4*y^5 + 4*x^6*y^3 + 2*x^8*y])
-            sage: Q = C([-1/2, 1/2, 1])                                                 # optional - sage.rings.number_field
-            sage: Q.is_ordinary_singularity()                                           # optional - sage.rings.number_field
+            sage: Q = C([-1/2, 1/2, 1])
+            sage: Q.is_ordinary_singularity()
             True
         """
         return self.codomain().is_ordinary_singularity(self)
@@ -146,11 +147,11 @@ class ProjectivePlaneCurvePoint_field(ProjectiveCurvePoint_field):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)                                # optional - sage.rings.finite_rings
-            sage: C = Curve([x^4 - 16*y^3*z], P)                                        # optional - sage.rings.finite_rings
-            sage: D = Curve([y^2 - z*x], P)                                             # optional - sage.rings.finite_rings
-            sage: Q = C([0,0,1])                                                        # optional - sage.rings.finite_rings
-            sage: Q.is_transverse(D)                                                    # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)
+            sage: C = Curve([x^4 - 16*y^3*z], P)
+            sage: D = Curve([y^2 - z*x], P)
+            sage: Q = C([0,0,1])
+            sage: Q.is_transverse(D)
             False
         """
         return self.codomain().is_transverse(D, self)
@@ -171,12 +172,12 @@ class IntegralProjectiveCurvePoint(ProjectiveCurvePoint_field):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)                                # optional - sage.rings.finite_rings
-            sage: C = Curve([x^4 - 16*y^3*z], P)                                        # optional - sage.rings.finite_rings
-            sage: C.singular_points()                                                   # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)
+            sage: C = Curve([x^4 - 16*y^3*z], P)
+            sage: C.singular_points()
             [(0 : 0 : 1)]
-            sage: p = _[0]                                                              # optional - sage.rings.finite_rings
-            sage: p.closed_point()                                                      # optional - sage.rings.finite_rings
+            sage: p = _[0]
+            sage: p.closed_point()
             Point (x, y)
         """
         curve = self.codomain()
@@ -199,12 +200,12 @@ class IntegralProjectiveCurvePoint(ProjectiveCurvePoint_field):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)                                # optional - sage.rings.finite_rings
-            sage: C = Curve([x^4 - 16*y^3*z], P)                                        # optional - sage.rings.finite_rings
-            sage: C.singular_points()                                                   # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)
+            sage: C = Curve([x^4 - 16*y^3*z], P)
+            sage: C.singular_points()
             [(0 : 0 : 1)]
-            sage: p = _[0]                                                              # optional - sage.rings.finite_rings
-            sage: p.places()                                                            # optional - sage.rings.finite_rings
+            sage: p = _[0]
+            sage: p.places()
             [Place (y)]
         """
         return self.closed_point().places()
@@ -215,12 +216,12 @@ class IntegralProjectiveCurvePoint(ProjectiveCurvePoint_field):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)                                # optional - sage.rings.finite_rings
-            sage: C = Curve([x^4 - 16*y^3*z], P)                                        # optional - sage.rings.finite_rings
-            sage: C.singular_points()                                                   # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(17), 2)
+            sage: C = Curve([x^4 - 16*y^3*z], P)
+            sage: C.singular_points()
             [(0 : 0 : 1)]
-            sage: p = _[0]                                                              # optional - sage.rings.finite_rings
-            sage: p.place()                                                             # optional - sage.rings.finite_rings
+            sage: p = _[0]
+            sage: p.place()
             Place (y)
         """
         return self.closed_point().place()
@@ -255,14 +256,15 @@ class AffineCurvePoint_field(SchemeMorphism_point_affine_field):
 
         EXAMPLES::
 
-            sage: K = QuadraticField(-1)                                                # optional - sage.rings.number_field
-            sage: A.<x,y,z> = AffineSpace(K, 3)                                         # optional - sage.rings.number_field
-            sage: C = Curve([(x^4 + 2*z + 2)*y, z - y + 1])                             # optional - sage.rings.number_field
-            sage: Q1 = C([0,0,-1])                                                      # optional - sage.rings.number_field
-            sage: Q1.is_singular()                                                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K = QuadraticField(-1)
+            sage: A.<x,y,z> = AffineSpace(K, 3)
+            sage: C = Curve([(x^4 + 2*z + 2)*y, z - y + 1])
+            sage: Q1 = C([0,0,-1])
+            sage: Q1.is_singular()
             True
-            sage: Q2 = C([-K.gen(),0,-1])                                               # optional - sage.rings.number_field
-            sage: Q2.is_singular()                                                      # optional - sage.rings.number_field
+            sage: Q2 = C([-K.gen(),0,-1])
+            sage: Q2.is_singular()
             False
         """
         return self.codomain().is_singular(self)
@@ -294,8 +296,8 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
         r"""
         Return the tangents at this point of the affine plane curve this point is on.
 
-        OUTPUT: a list of polynomials in the coordinate ring of the ambient
-        space of the curve this point is on.
+        OUTPUT: list of polynomials in the coordinate ring of the ambient
+        space of the curve this point is on
 
         EXAMPLES::
 
@@ -326,10 +328,10 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
 
         ::
 
-            sage: A.<x,y> = AffineSpace(GF(7), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = A.curve([y^2 - x^7 - 6*x^3])                                      # optional - sage.rings.finite_rings
-            sage: Q = C([0,0])                                                          # optional - sage.rings.finite_rings
-            sage: Q.is_ordinary_singularity()                                           # optional - sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(7), 2)
+            sage: C = A.curve([y^2 - x^7 - 6*x^3])
+            sage: Q = C([0,0])
+            sage: Q.is_ordinary_singularity()
             False
         """
         return self.codomain().is_ordinary_singularity(self)
@@ -341,7 +343,7 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
 
         INPUT:
 
-        - ``D`` -- a curve in the same ambient space as the curve this point is on.
+        - ``D`` -- a curve in the same ambient space as the curve this point is on
 
         EXAMPLES::
 
@@ -354,13 +356,14 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
-            sage: K.<b> = NumberField(a^2 - 2)                                          # optional - sage.rings.number_field
-            sage: A.<x,y> = AffineSpace(K, 2)                                           # optional - sage.rings.number_field
-            sage: C = Curve([y^2 + x^2 - 1], A)                                         # optional - sage.rings.number_field
-            sage: D = Curve([y - x], A)                                                 # optional - sage.rings.number_field
-            sage: Q = C([-1/2*b, -1/2*b])                                               # optional - sage.rings.number_field
-            sage: Q.is_transverse(D)                                                    # optional - sage.rings.number_field
+            sage: K.<b> = NumberField(a^2 - 2)
+            sage: A.<x,y> = AffineSpace(K, 2)
+            sage: C = Curve([y^2 + x^2 - 1], A)
+            sage: D = Curve([y - x], A)
+            sage: Q = C([-1/2*b, -1/2*b])
+            sage: Q.is_transverse(D)
             True
         """
         return self.codomain().is_transverse(D, self)
@@ -383,10 +386,11 @@ class IntegralAffineCurvePoint(AffineCurvePoint_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(8), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # optional - sage.rings.finite_rings
-            sage: p = C([1,1])                                                          # optional - sage.rings.finite_rings
-            sage: p.closed_point()                                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(8), 2)
+            sage: C = Curve(x^5 + y^5 + x*y + 1)
+            sage: p = C([1,1])
+            sage: p.closed_point()
             Point (x + 1, y + 1)
         """
         curve = self.codomain()
@@ -402,14 +406,14 @@ class IntegralAffineCurvePoint(AffineCurvePoint_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(2), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # optional - sage.rings.finite_rings
-            sage: p = C(-1,-1)                                                          # optional - sage.rings.finite_rings
-            sage: p                                                                     # optional - sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(2), 2)
+            sage: C = Curve(x^5 + y^5 + x*y + 1)
+            sage: p = C(-1,-1)
+            sage: p
             (1, 1)
-            sage: p.closed_point()                                                      # optional - sage.rings.finite_rings
+            sage: p.closed_point()
             Point (x + 1, y + 1)
-            sage: _.places()                                                            # optional - sage.rings.finite_rings
+            sage: _.places()
             [Place (x + 1, (1/(x^5 + 1))*y^4 + ((x^5 + x^4 + 1)/(x^5 + 1))*y^3
                            + ((x^5 + x^3 + 1)/(x^5 + 1))*y^2 + (x^2/(x^5 + 1))*y),
              Place (x + 1, (1/(x^5 + 1))*y^4 + ((x^5 + x^4 + 1)/(x^5 + 1))*y^3
@@ -423,14 +427,14 @@ class IntegralAffineCurvePoint(AffineCurvePoint_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(2), 2)                                       # optional - sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # optional - sage.rings.finite_rings
-            sage: p = C(-1,-1)                                                          # optional - sage.rings.finite_rings
-            sage: p                                                                     # optional - sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(2), 2)
+            sage: C = Curve(x^5 + y^5 + x*y + 1)
+            sage: p = C(-1,-1)
+            sage: p
             (1, 1)
-            sage: p.closed_point()                                                      # optional - sage.rings.finite_rings
+            sage: p.closed_point()
             Point (x + 1, y + 1)
-            sage: _.place()                                                             # optional - sage.rings.finite_rings
+            sage: _.place()
             Place (x + 1, (1/(x^5 + 1))*y^4 + ((x^5 + x^4 + 1)/(x^5 + 1))*y^3
                           + ((x^5 + x^3 + 1)/(x^5 + 1))*y^2 + (x^2/(x^5 + 1))*y)
         """
@@ -446,7 +450,7 @@ class IntegralAffineCurvePoint_finite_field(IntegralAffineCurvePoint):
 
 class IntegralAffinePlaneCurvePoint(IntegralAffineCurvePoint, AffinePlaneCurvePoint_field):
     """
-    Point of an integral affine plane curve over a finite field.
+    Point of an integral affine plane curve.
     """
     pass
 

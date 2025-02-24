@@ -2,8 +2,11 @@ name: Build & Test
 
 on:
   pull_request:
+  merge_group:
   push:
-    branches: ['**']
+    branches:
+      - master
+      - develop
     # Ignore pushes on tags to prevent two uploads of codecov reports
     tags-ignore: ['**']
   workflow_dispatch:
@@ -12,7 +15,7 @@ on:
       platform:
         description: 'Platform'
         required: true
-        default: 'ubuntu-focal-standard'
+        default: 'ubuntu-jammy-standard'
       docker_tag:
         description: 'Docker tag'
         required: true
@@ -23,136 +26,569 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+#
+# The three workflows:
+#
+#  - build.yml (with jobs test-new, test-mod, test-long),
+#  - doc-build.yml,
+#  - doc-build-pdf.yml
+#
+# each build Sage:
+#
+#  - incrementally starting from a Docker image that ci-linux.yml
+#    publishes on each development release to ghcr.io,
+#  - orchestrated using a tox-generated Dockerfile,
+#  - using https://github.com/marketplace/actions/build-and-push-docker-images,
+#  - pushing the image to a local registry,
+#  - then executing a container loaded from that registry,
+#
+# and then run various tests or build the documentation.
+#
+# Without the use of a cache, this runs the same incremental rebuild of Sage
+# multiple times; there is no interaction between these workflow and jobs.
+#
+# This baseline is transparently improved by our use of the GH Actions cache,
+# see https://docs.docker.com/build/ci/github-actions/cache/#cache-backend-api.
+#
+# Jobs test-mod and test-long are only started after test-new completed;
+# but the workflows doc-build.yml and doc-build-pdf.yml are started independently.
+#
+#  - When nothing is cached and the 3 workflows are launched in parallel,
+#    they may each run the same incremental rebuild.
+#
+#  - When there's congestion that leads to the workflows to be run serially,
+#    the 2nd and 3rd workflow will be able to use the cache from the 1st workflow.
+#
+# This elasticity may be helpful in reducing congestion.
+#
+# There is a rather small per-project limit of 10 GB for this cache.
+# Use https://github.com/sagemath/sage/actions/caches to monitor the utilization
+# of the cache.
+#
+
+env:
+  # Adapted from docker.yml
+  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-incremental"
+  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-with-targets:ci"
+  FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
+  FROM_DOCKER_TARGET:     "with-targets"
+  FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
+  EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
+
 jobs:
-  build:
+  test-new:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
+    outputs:
+      build_targets:     ${{ steps.build-targets.outputs.build_targets }}
+    services:
+      # https://docs.docker.com/build/ci/github-actions/local-registry/
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
     steps:
+      - name: Maximize build disk space
+        uses: easimon/maximize-build-space@v10
+        with:
+          # need space in /var for Docker images
+          root-reserve-mb:      30000
+          remove-dotnet:        true
+          remove-android:       true
+          remove-haskell:       true
+          remove-codeql:        true
+          remove-docker-images: true
+
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Update system packages
-        id: prepare
-        run: |
-          export PATH="build/bin:$PATH"
-          eval $(sage-print-system-package-command auto update)
-          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
-
-      - name: Add prebuilt tree as a worktree
-        id: worktree
-        run: |
-          set -ex
-          git config --global user.email "ci-sage@example.com"
-          git config --global user.name "Build & Test workflow"
-          git config --global --add safe.directory $(pwd)
-          # If actions/checkout downloaded our source tree using the GitHub REST API
-          # instead of with git (because do not have git installed in our image),
-          # we first make the source tree a repo.
-          if [ ! -d .git ]; then git init && git add -A && git commit --quiet -m "new"; fi
-          # Tag this state of the source tree "new". This is what we want to build and test.
-          git tag -f new
-          # Our container image contains a source tree in /sage with a full build of Sage.
-          # But /sage is not a git repository.
-          # We make /sage a worktree whose index is at tag "new".
-          # We then commit the current sources and set the tag "old". (This keeps all mtimes unchanged.)
-          # Then we update worktree and index with "git reset --hard new".
-          # (This keeps mtimes of unchanged files unchanged and mtimes of changed files newer than unchanged files.)
-          # Finally we reset the index to "old". (This keeps all mtimes unchanged.)
-          # The changed files now show up as uncommitted changes.
-          # The final "git add -N" makes sure that files that were added in "new" do not show
-          # as untracked files, which would be removed by "git clean -fx".
-          git worktree add --detach worktree-image
-          rm -rf /sage/.git && mv worktree-image/.git /sage/
-          rm -rf worktree-image && ln -s /sage worktree-image
-          if [ ! -f worktree-image/.gitignore ]; then cp .gitignore worktree-image/; fi
-          (cd worktree-image && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git reset --quiet old && git add -N . && git status)
-
-      - name: Incremental build, test changed files (sage -t --new)
-        id: incremental
-        run: |
-          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-          ./bootstrap && make build && ./sage -t --new -p2
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2
-          SAGE_NUM_THREADS: 2
-
-      - name: Build and test modularized distributions
-        if: always() && steps.worktree.outcome == 'success'
-        run: make V=0 tox && make pypi-wheels
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2
-          SAGE_NUM_THREADS: 2
-
-      - name: Set up node to install pyright
-        if: always() && steps.worktree.outcome == 'success'
-        uses: actions/setup-node@v3
+      - name: Get changed files and packages
+        id: changed-files
+        uses: tj-actions/changed-files@v45
         with:
-          node-version: '12'
+          # File extensions for doctests per sage.doctest.control.skipfile
+          files_yaml: |
+            configures:
+              - 'build/pkgs/*/spkg-configure.m4'
+            pkgs:
+              - 'build/pkgs/**'
+              - '!build/pkgs/_**'
+              - '!build/pkgs/configure/**'
+              - 'pkgs/**'
+            doctests:
+              - 'src/**/*.{py,pyx,pxd,pxi,sage,spyx,rst,tex}'
+              - '!src/{setup,conftest*}.py'
 
-      - name: Install pyright
-        if: always() && steps.worktree.outcome == 'success'
-        # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
-        run: npm install -g pyright@1.1.232
-
-      - name: Static code check with pyright
-        if: always() && steps.worktree.outcome == 'success'
-        run: pyright
-        working-directory: ./worktree-image
-
-      - name: Clean (fallback to non-incremental)
-        id: clean
-        if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
+      - name: Determine targets to build
+        id: build-targets
         run: |
-          set -ex
-          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2
-          SAGE_NUM_THREADS: 2
+          uninstall_targets=$(echo $(
+            for a in '' ${{ steps.changed-files.outputs.configures_all_changed_files }}; do
+              # Extract package name from the file path and append '-uninstall'
+              echo $a | sed -E 's,build/pkgs/([a-z0-9][_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'
+            done | sort -u  # Sort and ensure uniqueness
+          ))
+          build_targets=$(echo $(
+            for a in '' ${{ steps.changed-files.outputs.pkgs_all_changed_files }}; do
+              # Extract package name, replace '-' with '_', and strip extra parts from the path
+              SPKG=$(echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([a-z0-9][-_.a-z0-9]*)/[^ ]* *,\2,;')
+              # Check if key files exist in the package directory
+              if [ -f "build/pkgs/$SPKG/checksums.ini" ] || \
+                 [ -f "build/pkgs/$SPKG/requirements.txt" ] || \
+                 [ -f "build/pkgs/$SPKG/spkg-install" ]; then
+                echo "$SPKG-ensure"  # add the "$SPKG-ensure" target
+              fi
+            done | sort -u  # Sort and ensure uniqueness
+          ))
+          if [ -n "$uninstall_targets" ]; then
+            echo "build_targets=$uninstall_targets reconfigure $build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
+          else
+            echo "build_targets=$build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
+          fi
+          cat $GITHUB_OUTPUT
 
-      - name: Build
-        # This step is needed because building the modularized distributions installs some optional packages,
-        # so the editable install of sagelib needs to build the corresponding optional extension modules.
-        id: build
-        if: always() && (steps.incremental.outcome == 'success' || steps.clean.outcome == 'success')
-        run: |
-          make build
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2
-          SAGE_NUM_THREADS: 2
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: worktree-base
+        if: github.base_ref && steps.changed-files.outputs.pkgs_all_changed_files
 
-      - name: Pytest
-        if: contains(github.ref, 'pytest')
+      - name: Compute metrics
         run: |
-          ../sage -python -m pip install coverage pytest-xdist
-          ../sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
-        working-directory: ./worktree-image/src
+          export PATH=build/bin:$PATH
+          if [ -d worktree-base ]; then
+            (echo "# $GITHUB_BASE_REF"; SAGE_ROOT=worktree-base sage-package metrics :all:) > base-metrics.txt
+            (echo "# $GITHUB_REF"; sage-package metrics :all:) > metrics.txt
+            diff --color=always --width=100 --side-by-side --left-column base-metrics.txt metrics.txt || true
+          else
+            sage-package metrics :all:
+          fi
+
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
+
+      - name: Merge CI fixes from sagemath/sage
+        # From docker.yml
+        # This step needs to happen after the commit sha is put in DOCKER_TAG
+        # so that multi-stage builds can work correctly.
+        run: |
+          mkdir -p upstream
+          .ci/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
         env:
+          GH_TOKEN: ${{ github.token }}
+          SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
+
+      # Building
+
+      - name: Generate Dockerfile
+        # From docker.yml
+        run: |
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Build Docker image
+        id: image
+        uses: docker/build-push-action@v6
+        with:
+          # push and load may not be set together at the moment
+          #
+          # We are using "push" (to the local registry) because it was
+          # more reliable than "load", for which we observed random failure
+          # conditions in which the built image could not be found.
+          #
+          push:       ${{ steps.changed-files.outputs.doctests_all_changed_files && true || false }}
+          load:       false
+          context:    .
+          tags:       ${{ env.BUILD_IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=${{ steps.build-targets.outputs.build_targets }}
+
+      - name: Start container
+        id: container
+        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+        if: (success() || failure()) && steps.changed-files.outputs.doctests_all_changed_files
+        run: |
+          docker run --name BUILD -dit \
+                     --mount type=bind,src=$(pwd),dst=$(pwd) \
+                     --workdir $(pwd) \
+                     ${{ env.BUILD_IMAGE }} /bin/sh
+
+      # Testing
+
+      - name: Check that all modules can be imported
+        if: (success() || failure()) && steps.container.outcome == 'success' && steps.changed-files.outputs.doctests_all_changed_files
+        run: |
           # Increase the length of the lines in the "short summary"
-          COLUMNS: 120
+          export COLUMNS=120
+          # The following command checks that all modules can be imported.
+          # The output also includes a long list of modules together with the number of tests in each module.
+          # This can be ignored.
+          ./sage -python -m pip install pytest-xdist
+          ./sage -python -m pytest -c tox.ini -qq --doctest --collect-only || true
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Test all files (sage -t --all --long)
-        if: always() && steps.build.outcome == 'success'
+      - name: Test changed files (sage -t --new)
+        if: (success() || failure()) && steps.container.outcome == 'success' && steps.changed-files.outputs.doctests_all_changed_files
         run: |
-          ../sage -python -m pip install coverage
-          ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
-        working-directory: ./worktree-image/src
+          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
+          # https://github.com/tj-actions/changed-files?tab=readme-ov-file#outputs-
+          ./sage -t --long --format github -p4 ${{ steps.changed-files.outputs.doctests_all_changed_files }}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Prepare coverage results
-        if: always() && steps.build.outcome == 'success'
+  test-mod:
+    runs-on: ubuntu-latest
+    needs: [test-new]
+    services:
+      # https://docs.docker.com/build/ci/github-actions/local-registry/
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+    strategy:
+      fail-fast: false
+      matrix:
+        targets:
+          - sagemath_categories-check
+    steps:
+      - name: Maximize build disk space
+        uses: easimon/maximize-build-space@v10
+        with:
+          # need space in /var for Docker images
+          root-reserve-mb:      30000
+          remove-dotnet:        true
+          remove-android:       true
+          remove-haskell:       true
+          remove-codeql:        true
+          remove-docker-images: true
+
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Install test prerequisites
+        # From docker.yml
         run: |
-          ./venv/bin/python3 -m coverage combine src/.coverage/
-          ./venv/bin/python3 -m coverage xml
-          find . -name *coverage*
-        working-directory: ./worktree-image
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
+
+      - name: Merge CI fixes from sagemath/sage
+        # From docker.yml
+        # This step needs to happen after the commit sha is put in DOCKER_TAG
+        # so that multi-stage builds can work correctly.
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Building
+
+      - name: Generate Dockerfile
+        # From docker.yml
+        run: |
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Build Docker image
+        id: image
+        uses: docker/build-push-action@v6
+        with:
+          push:       true
+          load:       false
+          context:    .
+          tags:       ${{ env.BUILD_IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=${{ needs.test-new.outputs.build_targets }}
+
+      - name: Start container
+        id: container
+        if: (success() || failure())
+        run: |
+          docker run --name BUILD -dit \
+                     --mount type=bind,src=$(pwd),dst=$(pwd) \
+                     --workdir $(pwd) \
+                     ${{ env.BUILD_IMAGE }} /bin/sh
+
+      # Testing
+
+      - name: Test modularized distributions
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        run: |
+          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
+          make V=0 tox-ensure && make ${{ matrix.targets }}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+
+  test-long:
+    runs-on: ubuntu-latest
+    needs: [test-new]
+    services:
+      # https://docs.docker.com/build/ci/github-actions/local-registry/
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+    strategy:
+      fail-fast: false
+      matrix:
+        tests:
+          - "src/sage/[a-f]*"
+          - "src/sage/[g-o]*"
+          - "src/sage/[p-z]*"
+          - "src/doc src/sage_docbuild src/sage_setup"
+    steps:
+      - name: Maximize build disk space
+        uses: easimon/maximize-build-space@v10
+        with:
+          # need space in /var for Docker images
+          root-reserve-mb:      30000
+          remove-dotnet:        true
+          remove-android:       true
+          remove-haskell:       true
+          remove-codeql:        true
+          remove-docker-images: true
+
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
+
+      - name: Merge CI fixes from sagemath/sage
+        # From docker.yml
+        # This step needs to happen after the commit sha is put in DOCKER_TAG
+        # so that multi-stage builds can work correctly.
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Building
+
+      - name: Generate Dockerfile
+        # From docker.yml
+        run: |
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Build Docker image
+        id: image
+        uses: docker/build-push-action@v6
+        with:
+          push:       true
+          load:       false
+          context:    .
+          tags:       ${{ env.BUILD_IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=${{ needs.test-new.outputs.build_targets }}
+
+      - name: Start container
+        id: container
+        if: (success() || failure())
+        run: |
+          docker run --name BUILD -dit \
+                     --mount type=bind,src=$(pwd),dst=$(pwd) \
+                     --workdir $(pwd) \
+                     ${{ env.BUILD_IMAGE }} /bin/sh
+
+      # Testing
+
+      - name: Test all files (sage -t --long ${{ matrix.tests }})
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        run: |
+          mkdir .coverage
+          rm -rf /sage/.coverage
+          ln -s $(pwd)/.coverage /sage/
+          cd /sage
+          ./sage -python -m pip install coverage
+          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --force-lib --long -p4 --format github --random-seed=286735480429121101562228604801325644303 ${{ matrix.tests }}
+        shell: sh .ci/docker-exec-script.sh BUILD . {0}
+
+      - name: Combine coverage results
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        run: |
+          ./sage -python -m coverage combine --rcfile=src/tox.ini
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+
+      - name: Prepare upload
+        id: copy-coverage
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        run: |
+          echo tests_id=$(echo "${{ matrix.tests }}" | sed -E 's, +,--,g;s,/,_,g;s/[^-_A-Za-z]//g;') >> "$GITHUB_OUTPUT"
+
+      - name: Upload coverage results
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          # The path .coverage is a directory that contains the combined coverage
+          # data file .coverage, which is a hidden file because of the leading dot
+          name: coverage-${{ steps.copy-coverage.outputs.tests_id }}
+          path: .coverage
+          include-hidden-files: true
+
+  coverage-report:
+    runs-on: ubuntu-latest
+    needs: [test-long]
+    if: (success() || failure())
+    services:
+      # https://docs.docker.com/build/ci/github-actions/local-registry/
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+    steps:
+      - name: Maximize build disk space
+        uses: easimon/maximize-build-space@v10
+        with:
+          # need space in /var for Docker images
+          root-reserve-mb:      30000
+          remove-dotnet:        true
+          remove-android:       true
+          remove-haskell:       true
+          remove-codeql:        true
+          remove-docker-images: true
+
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
+
+      - name: Merge CI fixes from sagemath/sage
+        # From docker.yml
+        # This step needs to happen after the commit sha is put in DOCKER_TAG
+        # so that multi-stage builds can work correctly.
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Building
+
+      - name: Generate Dockerfile
+        # From docker.yml
+        run: |
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Build Docker image
+        id: image
+        uses: docker/build-push-action@v6
+        with:
+          push:       true
+          load:       false
+          context:    .
+          tags:       ${{ env.BUILD_IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=${{ needs.test-new.outputs.build_targets }}
+
+      - name: Start container
+        id: container
+        if: (success() || failure())
+        run: |
+          docker run --name BUILD -dit \
+                     --mount type=bind,src=$(pwd),dst=$(pwd) \
+                     --workdir $(pwd) \
+                     ${{ env.BUILD_IMAGE }} /bin/sh
+
+      # Combining
+
+      - name: Download coverage artifacts
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          path: .coverage
+          pattern: coverage-*
+
+      - name: Coverage report
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        # Using --omit to avoid "CoverageWarning: Couldn't parse '/tmp/tmp06qizzie/tmp_ldpu46ob.py': No source for code"
+        run: |
+          rm -rf /sage/.coverage
+          ln -s $(pwd)/.coverage /sage/
+          cd /sage
+          ./sage -python -m pip install coverage
+          ./sage -python -m coverage combine --rcfile=src/tox.ini .coverage/coverage-*/.coverage
+          ./sage -python -m coverage xml --rcfile=src/tox.ini --omit="/tmp/*"
+          mkdir -p .coverage/coverage-report
+          mv coverage.xml .coverage/coverage-report/
+        shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Upload coverage to codecov
-        if: always() && steps.build.outcome == 'success'
-        uses: codecov/codecov-action@v3
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        uses: codecov/codecov-action@v4
         with:
-          files: ./worktree-image/coverage.xml
+          directory: .coverage/coverage-report

@@ -55,7 +55,7 @@ cdef class MatrixWindow:
     cpdef MatrixWindow matrix_window(MatrixWindow self, Py_ssize_t row, Py_ssize_t col,
                                     Py_ssize_t n_rows, Py_ssize_t n_cols):
         """
-        Returns a matrix window relative to this window of the
+        Return a matrix window relative to this window of the
         underlying matrix.
         """
         if row == 0 and col == 0 and n_rows == self._nrows and n_cols == self._ncols:
@@ -104,7 +104,6 @@ cdef class MatrixWindow:
 
     def __getitem__(self, ij):
         cdef Py_ssize_t i, j
-        cdef object x
 
         if isinstance(ij, tuple):
             # ij is a tuple, so we get i and j efficiently, construct corresponding integer entry.
@@ -112,7 +111,7 @@ cdef class MatrixWindow:
                 raise IndexError("index must be an integer or pair of integers")
             i = <object> PyTuple_GET_ITEM(ij, 0)
             j = <object> PyTuple_GET_ITEM(ij, 1)
-            if i<0 or i >= self._nrows or j<0 or j >= self._ncols:
+            if i < 0 or i >= self._nrows or j < 0 or j >= self._ncols:
                 raise IndexError("matrix index out of range")
             return self.get_unsafe(i, j)
         else:
@@ -122,14 +121,13 @@ cdef class MatrixWindow:
 
     cpdef matrix(MatrixWindow self):
         """
-        Returns the underlying matrix that this window is a view of.
+        Return the underlying matrix that this window is a view of.
         """
         return self._matrix
 
-
     cpdef to_matrix(MatrixWindow self):
         """
-        Returns an actual matrix object representing this view.
+        Return an actual matrix object representing this view.
         """
         cdef MatrixWindow w
         a = self._matrix.new_matrix(self._nrows, self._ncols)  # zero matrix
@@ -239,5 +237,5 @@ cdef class MatrixWindow:
         self.set_to(echelon.matrix_window())
         return echelon.pivots()
 
-    cpdef bint element_is_zero(MatrixWindow self, Py_ssize_t i, Py_ssize_t j):
+    cpdef bint element_is_zero(MatrixWindow self, Py_ssize_t i, Py_ssize_t j) noexcept:
         return self._matrix.get_unsafe(i+self._row, j+self._col) == self._zero()

@@ -1,16 +1,28 @@
+# This file, build/pkgs/_prereq/distros/slackware.txt, contains names of
+# Slackware packages needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/distros/slackware.txt contain
+# the names of packages that provide the equivalent of SPKG.
+#
+# One package per line. No need to escape special characters.
+# Everything on a line after a # character is ignored.
+#
 binutils
 make
-guile gc libffi  # dependencies of make
-"gcc-[0-9]"      # So that slackpkg pattern matching does not pull in all gcc-* packages
-gcc-11           # on slackware-current
-gcc-g++
-gcc-g++-11       # on slackware-current
-libmpc glibc kernel-headers # dependencies of gcc
+# dependencies of make
+guile
+gc
+libffi
+gcc-13
+gcc-g++-13
+# dependencies of gcc
+libmpc
+glibc
+kernel-headers
 perl
 m4
 bc
-python-2.7       # on slackware-14.2
-python3          # on slackware-current
+python3
 flex
 # for https upstream_url downloads
 ca-certificates

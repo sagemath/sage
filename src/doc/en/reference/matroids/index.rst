@@ -10,14 +10,15 @@ Basics
    sage/matroids/constructor
    sage/matroids/matroid
 
-Built-in families and individual matroids
------------------------------------------
+Database of matroids
+--------------------
 
 .. toctree::
    :maxdepth: 1
 
    sage/matroids/matroids_catalog
-   sage/matroids/catalog
+   sage/matroids/database_collections
+   sage/matroids/database_matroids
 
 Concrete implementations
 ------------------------
@@ -26,10 +27,21 @@ Concrete implementations
    :maxdepth: 1
 
    sage/matroids/basis_matroid
+   sage/matroids/circuits_matroid
    sage/matroids/circuit_closures_matroid
+   sage/matroids/flats_matroid
    sage/matroids/linear_matroid
    sage/matroids/rank_matroid
    sage/matroids/graphic_matroid
+
+Chow rings of matroids
+----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/matroids/chow_ring_ideal
+   sage/matroids/chow_ring
 
 Abstract matroid classes
 ------------------------

@@ -2,7 +2,7 @@
 The constant `e`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008      William Stein <wstein@gmail.com>
 #       Copyright (C) 2008-2009 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2009-2012 Mike Hansen <mhansen@gmail.com>
@@ -13,11 +13,8 @@ The constant `e`
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from sage.symbolic.expression cimport Expression
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # keep exp(1) for fast access
 # this is initialized in the constructor of the class E below to prevent
@@ -105,8 +102,8 @@ cdef class E(Expression):
             2.7182818284590452353602874714
             sage: e._real_double_(RDF)   # abs tol 5e-16
             2.718281828459045
-            sage: import sympy
-            sage: sympy.E == e # indirect doctest
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.E == e  # indirect doctest                                      # needs sympy
             True
 
         TESTS::
@@ -118,7 +115,7 @@ cdef class E(Expression):
             sage: SR(1).exp()
             e
 
-        Testing that it works with matrices (see :trac:`4735`)::
+        Testing that it works with matrices (see :issue:`4735`)::
 
             sage: m = matrix(QQ, 2, 2, [1,0,0,1])
             sage: e^m
@@ -155,14 +152,14 @@ cdef class E(Expression):
             sage: u.operands()
             [a]
 
-        It also works with matrices (see :trac:`4735`)::
+        It also works with matrices (see :issue:`4735`)::
 
             sage: m = matrix(QQ, 2, 2, [1,0,0,1])
             sage: e^m
             [e 0]
             [0 e]
             sage: A = matrix(RDF, [[1,2],[3,4]])
-            sage: e^A  # rel tol 1e-14
+            sage: e^A  # rel tol 5e-14
             [51.968956198705044  74.73656456700327]
             [112.10484685050491 164.07380304920997]
         """

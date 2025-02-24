@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Simplicial Complexes
 """
@@ -14,6 +15,7 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 #from sage.categories.cw_complexes import CWComplexes
 from sage.categories.sets_cat import Sets
+
 
 class SimplicialComplexes(Category_singleton):
     r"""
@@ -67,8 +69,8 @@ class SimplicialComplexes(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: S = SimplicialComplex([[1,3,4], [1,2],[2,5],[4,5]])           # optional - sage.graphs
-                    sage: S.dimension()                                                 # optional - sage.graphs
+                    sage: S = SimplicialComplex([[1,3,4], [1,2],[2,5],[4,5]])           # needs sage.graphs
+                    sage: S.dimension()                                                 # needs sage.graphs
                     2
                 """
                 return max(c.dimension() for c in self.facets())
@@ -81,8 +83,8 @@ class SimplicialComplexes(Category_singleton):
 
             EXAMPLES::
 
-                sage: S = SimplicialComplex([[1,3,4], [1,2],[2,5],[4,5]])               # optional - sage.graphs
-                sage: sorted(S.facets())                                                # optional - sage.graphs
+                sage: S = SimplicialComplex([[1,3,4], [1,2],[2,5],[4,5]])               # needs sage.graphs
+                sage: sorted(S.facets())                                                # needs sage.graphs
                 [(1, 2), (1, 3, 4), (2, 5), (4, 5)]
             """
 
@@ -93,8 +95,8 @@ class SimplicialComplexes(Category_singleton):
 
             EXAMPLES::
 
-                sage: S = SimplicialComplex([[1,3,4], [1,2],[2,5],[4,5]])               # optional - sage.graphs
-                sage: S.faces()                                                         # optional - sage.graphs
+                sage: S = SimplicialComplex([[1,3,4], [1,2],[2,5],[4,5]])               # needs sage.graphs
+                sage: S.faces()                                                         # needs sage.graphs
                 {-1: {()},
                  0: {(1,), (2,), (3,), (4,), (5,)},
                  1: {(1, 2), (1, 3), (1, 4), (2, 5), (3, 4), (4, 5)},

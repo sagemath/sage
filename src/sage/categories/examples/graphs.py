@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Examples of graphs
 """
@@ -116,5 +117,6 @@ class Cycle(UniqueRepresentation, Parent):
             if isinstance(self.value, tuple):
                 return 2
             return 1
+
 
 Example = Cycle

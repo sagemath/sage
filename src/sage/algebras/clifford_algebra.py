@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Clifford Algebras
 
@@ -50,7 +51,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
     A facade parent for the indices of Clifford algebra.
     Users should not create instances of this class directly.
     """
-    def __init__(self, Qdim):
+    def __init__(self, Qdim, degree=None):
         r"""
         Initialize ``self``.
 
@@ -66,9 +67,30 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             1111
             sage: type(i)
             <class 'sage.data_structures.bitset.FrozenBitset'>
+
+            sage: idx = CliffordAlgebraIndices(7, 3)
+            sage: idx._nbits
+            7
+            sage: idx._degree
+            3
+            sage: idx._cardinality
+            35
+
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: idx._nbits
+            7
+            sage: idx._degree
+            0
+            sage: idx._cardinality
+            1
         """
         self._nbits = Qdim
-        self._cardinality = 2 ** Qdim
+        if degree is None:
+            self._cardinality = 2 ** Qdim
+        else:
+            from sage.arith.misc import binomial
+            self._cardinality = binomial(Qdim, degree)
+        self._degree = degree
         # the if statement here is in case Qdim is 0.
         category = FiniteEnumeratedSets().Facade()
         Parent.__init__(self, category=category, facade=True)
@@ -91,10 +113,16 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             00001
             000001
             0000001
+
+            sage: idx = CliffordAlgebraIndices(0)
+            sage: idx([])
+            0
         """
         if isinstance(x, (list, tuple, set, frozenset)):
             if len(x) > self._nbits:
                 raise ValueError(f"{x=} is too long")
+            if not x:
+                return FrozenBitset()
             return FrozenBitset(x)
 
         if isinstance(x, int):
@@ -128,6 +156,12 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             True
             sage: len(idx) == 2^7
             True
+
+            sage: idx = CliffordAlgebraIndices(7, 3)
+            sage: idx.cardinality() == binomial(7, 3)
+            True
+            sage: len(idx) == binomial(7, 3)
+            True
         """
         return self._cardinality
 
@@ -148,14 +182,20 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             Subsets of {0}
             sage: CliffordAlgebraIndices(2)
             Subsets of {0,1}
+            sage: CliffordAlgebraIndices(5, 3)
+            Subsets of {0,1,...,4} of size 3
         """
+        if self._degree is not None:
+            extra = f" of size {self._degree}"
+        else:
+            extra = ""
         if self._nbits == 0:
-            return "Subsets of {}"
+            return "Subsets of {}" + extra
         if self._nbits == 1:
-            return "Subsets of {0}"
+            return "Subsets of {0}" + extra
         if self._nbits == 2:
-            return "Subsets of {0,1}"
-        return f"Subsets of {{0,1,...,{self._nbits-1}}}"
+            return "Subsets of {0,1}" + extra
+        return f"Subsets of {{0,1,...,{self._nbits-1}}}" + extra
 
     def _latex_(self):
         r"""
@@ -165,21 +205,27 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
 
             sage: from sage.algebras.clifford_algebra import CliffordAlgebraIndices
             sage: latex(CliffordAlgebraIndices(7))
-            \mathcal{P}({0,1,\ldots,6})
+            \mathcal{P}(\{0,1,\ldots,6\})
             sage: latex(CliffordAlgebraIndices(0))
             \mathcal{P}(\emptyset)
             sage: latex(CliffordAlgebraIndices(1))
-            \mathcal{P}({0})
+            \mathcal{P}(\{0\})
             sage: latex(CliffordAlgebraIndices(2))
-            \mathcal{P}({0,1})
+            \mathcal{P}(\{0,1\})
+            sage: latex(CliffordAlgebraIndices(2, 1))
+            \mathcal{P}(\{0,1\}, 1)
         """
+        if self._degree is not None:
+            extra = f", {self._degree}"
+        else:
+            extra = ""
         if self._nbits == 0:
-            return "\\mathcal{P}(\\emptyset)"
+            return f"\\mathcal{{P}}(\\emptyset{extra})"
         if self._nbits == 1:
-            return "\\mathcal{P}({0})"
+            return f"\\mathcal{{P}}(\\{{0\\}}{extra})"
         if self._nbits == 2:
-            return "\\mathcal{P}({0,1})"
-        return f"\\mathcal{{P}}({{0,1,\\ldots,{self._nbits-1}}})"
+            return f"\\mathcal{{P}}(\\{{0,1\\}}{extra})"
+        return f"\\mathcal{{P}}(\\{{0,1,\\ldots,{self._nbits-1}\\}}{extra})"
 
     def __iter__(self):
         r"""
@@ -199,9 +245,25 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             101
             011
             111
+
+            sage: idx = CliffordAlgebraIndices(5, 3)
+            sage: list(idx)
+            [111, 1101, 11001, 1011, 10101, 10011, 0111, 01101, 01011, 00111]
+
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: list(idx)
+            [0]
         """
         import itertools
         n = self._nbits
+        if self._degree is not None:
+            if self._degree == 0:  # special corner case
+                yield FrozenBitset()
+                return
+            for C in itertools.combinations(range(n), self._degree):
+                yield FrozenBitset(C)
+            return
+
         yield FrozenBitset()
         k = 1
         while k <= n:
@@ -225,10 +287,34 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             True
             sage: FrozenBitset('000001') in idx
             False
+
+            sage: idx = CliffordAlgebraIndices(6, 3)
+            sage: FrozenBitset('01011') in idx
+            True
+            sage: FrozenBitset('00011') in idx
+            False
+            sage: int(7) in idx
+            True
+            sage: int(8) in idx
+            False
+
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: FrozenBitset() in idx
+            True
+            sage: FrozenBitset('01') in idx
+            False
+            sage: int(0) in idx
+            True
+            sage: int(5) in idx
+            False
         """
         if isinstance(elt, int):
+            if self._degree is not None and sum(ZZ(elt).bits()) != self._degree:
+                return False
             return elt < self._cardinality and elt >= 0
         if not isinstance(elt, FrozenBitset):
+            return False
+        if self._degree is not None and len(elt) != self._degree:
             return False
         return elt.capacity() <= self._nbits
 
@@ -251,13 +337,25 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             sage: idx = CliffordAlgebraIndices(3)
             sage: idx._an_element_()
             11
+            sage: idx = CliffordAlgebraIndices(5, 3)
+            sage: idx._an_element_()
+            111
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: idx._an_element_()
+            0
         """
         if not self._nbits:
             return FrozenBitset()
 
+        if self._degree is not None:
+            if self._degree == 0:  # special corner case
+                return FrozenBitset()
+            return FrozenBitset(range(self._degree))
+
         from sage.combinat.subset import SubsetsSorted
         X = SubsetsSorted(range(self._nbits))
         return FrozenBitset(X.an_element())
+
 
 class CliffordAlgebra(CombinatorialFreeModule):
     r"""
@@ -415,7 +513,9 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: Cl = CliffordAlgebra(Q)
             sage: Cl.category()
             Category of finite dimensional super algebras with basis over
-             (euclidean domains and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and noetherian rings
+              and infinite enumerated sets and metric spaces)
             sage: TestSuite(Cl).run()
 
         TESTS:
@@ -891,9 +991,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         - ``names`` -- (default: ``'e'``) the names of the generators of the
           Clifford algebra of the domain of (the map represented by) ``m``
 
-        OUTPUT:
-
-        The algebra morphism `Cl(m)` from `Cl(W, m(Q))` to ``self``.
+        OUTPUT: the algebra morphism `Cl(m)` from `Cl(W, m(Q))` to ``self``
 
         EXAMPLES::
 
@@ -985,7 +1083,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         TESTS:
 
         Check that the resulting morphism knows it is for
-        finite-dimensional algebras (:trac:`25339`)::
+        finite-dimensional algebras (:issue:`25339`)::
 
             sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
             sage: Cl.<x,y,z> = CliffordAlgebra(Q)
@@ -993,7 +1091,9 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: phi = Cl.lift_module_morphism(m, 'abc')
             sage: phi.category_for()
             Category of finite dimensional super algebras with basis over
-             (euclidean domains and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and noetherian rings
+              and infinite enumerated sets and metric spaces)
             sage: phi.matrix()
             [  1   0   0   0   7  -3  -7   0]
             [  0   1  -1  -1   0   0   0 -17]
@@ -1040,9 +1140,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
           the Clifford algebra of the codomain of (the map represented by)
           ``m``
 
-        OUTPUT:
-
-        The algebra morphism `Cl(m)` from ``self`` to `Cl(W, m^{-1}(Q))`.
+        OUTPUT: the algebra morphism `Cl(m)` from ``self`` to `Cl(W, m^{-1}(Q))`
 
         EXAMPLES::
 
@@ -1068,7 +1166,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         TESTS:
 
         Check that the resulting morphism knows it is for
-        finite-dimensional algebras (:trac:`25339`)::
+        finite-dimensional algebras (:issue:`25339`)::
 
             sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
             sage: Cl.<x,y,z> = CliffordAlgebra(Q)
@@ -1076,7 +1174,9 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: phi = Cl.lift_isometry(m, 'abc')
             sage: phi.category_for()
             Category of finite dimensional super algebras with basis over
-             (euclidean domains and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and noetherian rings
+              and infinite enumerated sets and metric spaces)
             sage: phi.matrix()
             [ 1  0  0  0  1  2  5  0]
             [ 0  1  1  2  0  0  0  5]
@@ -1312,7 +1412,7 @@ class ExteriorAlgebra(CliffordAlgebra):
     - ``R`` -- the base ring, *or* the free module whose exterior algebra
       is to be computed
 
-    - ``names`` -- a list of strings to name the generators of the
+    - ``names`` -- list of strings to name the generators of the
       exterior algebra; this list can either have one entry only (in which
       case the generators will be called ``e + '0'``, ``e + '1'``, ...,
       ``e + 'n-1'``, with ``e`` being said entry), or have ``n`` entries
@@ -1369,7 +1469,7 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
             sage: E.category()
             Category of finite dimensional supercommutative supercocommutative
-             super hopf algebras with basis over Rational Field
+             super Hopf algebras with basis over Rational Field
             sage: TestSuite(E).run()
 
             sage: TestSuite(ExteriorAlgebra(GF(3), ['a', 'b'])).run()
@@ -1495,9 +1595,8 @@ class ExteriorAlgebra(CliffordAlgebra):
           the Clifford algebra of the domain of (the map represented by)
           ``phi``
 
-        OUTPUT:
-
-        The algebra morphism `\Lambda(\phi)` from ``self`` to `\Lambda(W)`.
+        OUTPUT: the algebra morphism `\Lambda(\phi)` from ``self`` to
+        `\Lambda(W)`
 
         EXAMPLES::
 
@@ -1549,7 +1648,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         TESTS:
 
         Check that the resulting morphism knows it is for
-        finite-dimensional algebras (:trac:`25339`)::
+        finite-dimensional algebras (:issue:`25339`)::
 
             sage: E = ExteriorAlgebra(ZZ, 'e', 3)
             sage: T = jordan_block(0, 2).block_sum(jordan_block(0, 1))
@@ -1603,7 +1702,7 @@ class ExteriorAlgebra(CliffordAlgebra):
 
         INPUT:
 
-        - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+        - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
           `I` is the index set of the underlying vector space `V`, and whose
           values can be coerced into 1-forms (degree 1 elements) in ``E``
           (usually, these values will just be elements of `V`)
@@ -1626,7 +1725,7 @@ class ExteriorAlgebra(CliffordAlgebra):
 
         INPUT:
 
-        - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+        - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
           `I` is the index set of the underlying vector space `V`, and whose
           values can be coerced into 1-forms (degree 1 elements) in ``E``
           (usually, these values will just be elements of `V`)
@@ -1691,7 +1790,6 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: E.coproduct_on_basis((0,1,2))
             1 # x*y*z + x # y*z - y # x*z + x*y # z
              + z # x*y - x*z # y + y*z # x + x*y*z # 1
-
         """
         from sage.combinat.combinat import unshuffle_iterator
         one = self.base_ring().one()
@@ -1768,8 +1866,9 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: E.interior_product_on_basis(k[7], k[5])
             -y
 
-        Check :trac:`34694`::
+        Check :issue:`34694`::
 
+            sage: # needs sage.symbolic
             sage: E = ExteriorAlgebra(SR,'e',3)
             sage: E.inject_variables()
             Defining e0, e1, e2
@@ -2034,10 +2133,10 @@ class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
         We skip the pickling test as there is an infinite recursion when
         doing equality checks::
 
-            sage: TestSuite(par).run(skip="_test_pickling")
+            sage: TestSuite(par).run(skip='_test_pickling')
 
         Check that it knows it is a finite-dimensional algebra
-        morphism (:trac:`25339`):;
+        morphism (:issue:`25339`):;
 
             sage: par.category_for()
             Category of finite dimensional algebras with basis over Rational Field
@@ -2102,7 +2201,7 @@ class ExteriorAlgebraBoundary(ExteriorAlgebraDifferential):
     INPUT:
 
     - ``E`` -- an exterior algebra of a vector space `L`
-    - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+    - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
       `I` is the index set of the basis of the vector space `L`, and whose
       values can be coerced into 1-forms (degree 1 elements) in ``E``;
       this dictionary will be used to define the Lie algebra structure
@@ -2347,7 +2446,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
     INPUT:
 
     - ``E`` -- an exterior algebra of a vector space `L`
-    - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+    - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
       `I` is the index set of the basis of the vector space `L`, and whose
       values can be coerced into 1-forms (degree 1 elements) in ``E``;
       this dictionary will be used to define the Lie algebra structure
@@ -2610,6 +2709,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
 
         return ChainComplex(data, degree=1)
 
+
 @richcmp_method
 class ExteriorAlgebraIdeal(Ideal_nc):
     """
@@ -2630,7 +2730,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         sage: xbar * ybar
         0
     """
-    def __init__(self, ring, gens, coerce=True, side="twosided"):
+    def __init__(self, ring, gens, coerce=True, side='twosided'):
         """
         Initialize ``self``.
 
@@ -2641,13 +2741,13 @@ class ExteriorAlgebraIdeal(Ideal_nc):
 
             sage: E.<y, x> = ExteriorAlgebra(QQ)
             sage: I = E.ideal([x*y - x, x*y - 1])
-            sage: TestSuite(I).run(skip="_test_category")
+            sage: TestSuite(I).run(skip='_test_category')
 
             sage: I = E.ideal([x*y - 3, 0, 2*3])
-            sage: TestSuite(I).run(skip="_test_category")
+            sage: TestSuite(I).run(skip='_test_category')
 
             sage: I = E.ideal([])
-            sage: TestSuite(I).run(skip="_test_category")
+            sage: TestSuite(I).run(skip='_test_category')
         """
         self._groebner_strategy = None
         self._reduced = False
@@ -2689,7 +2789,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         EXAMPLES::
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
-            sage: I = E.ideal([x, x*y*z + 2*x*z + 3*y*z], side="left")
+            sage: I = E.ideal([x, x*y*z + 2*x*z + 3*y*z], side='left')
             sage: I.groebner_basis()
             (x, y*z)
             sage: x in I
@@ -2742,9 +2842,9 @@ class ExteriorAlgebraIdeal(Ideal_nc):
 
             sage: E.<a,b,c,d> = ExteriorAlgebra(QQ)
             sage: p = a + b*c
-            sage: IT = E.ideal([p], side="twosided")
-            sage: IR = E.ideal([p], side="right")
-            sage: IL = E.ideal([p], side="left")
+            sage: IT = E.ideal([p], side='twosided')
+            sage: IR = E.ideal([p], side='right')
+            sage: IL = E.ideal([p], side='left')
             sage: IR == IL
             False
             sage: IR <= IL
@@ -2781,15 +2881,15 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         elif op == op_GT:
             return other.__richcmp__(self, op_LT)
 
-        s_gens = set(g for g in self.gens() if g)
-        o_gens = set(g for g in other.gens() if g)
+        s_gens = {g for g in self.gens() if g}
+        o_gens = {g for g in other.gens() if g}
 
         if self.side() != other.side():
             if other.side() == "right":
-                X = set(t * f for t in self.ring().basis() for f in s_gens)
+                X = {t * f for t in self.ring().basis() for f in s_gens}
                 s_gens.update(X)
             elif other.side() == "left":
-                X = set(f * t for t in self.ring().basis() for f in s_gens)
+                X = {f * t for t in self.ring().basis() for f in s_gens}
                 s_gens.update(X)
 
         if set(s_gens) == set(o_gens):
@@ -2803,10 +2903,10 @@ class ExteriorAlgebraIdeal(Ideal_nc):
 
         if self.side() != other.side():
             if self.side() == "right":
-                X = set(t * f for t in self.ring().basis() for f in o_gens)
+                X = {t * f for t in self.ring().basis() for f in o_gens}
                 s_gens.update(X)
             elif self.side() == "left":
-                X = set(f * t for t in self.ring().basis() for f in o_gens)
+                X = {f * t for t in self.ring().basis() for f in o_gens}
                 s_gens.update(X)
 
         contains = all(f in self for f in o_gens)
@@ -2814,7 +2914,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
             return contained and contains
         if op == op_NE:
             return not (contained and contains)
-         # remaining case <
+        # remaining case <
         return contained and not contains
 
     def __mul__(self, other):
@@ -2830,7 +2930,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
 
             sage: E.<a,b,c,d> = ExteriorAlgebra(QQ)
 
-            sage: I = E.ideal([a + 1], side="left")
+            sage: I = E.ideal([a + 1], side='left')
             sage: J = I * I; J
             Left Ideal (2*a + 1, a, b, c, d, a*b, a*c, a*d, 2*a*b*c + b*c, 2*a*b*d + b*d,
                         2*a*c*d + c*d, a*b*c, a*b*d, a*c*d, b*c*d, a*b*c*d)
@@ -2849,10 +2949,10 @@ class ExteriorAlgebraIdeal(Ideal_nc):
             sage: K = J * I
             sage: K
             Left Ideal (-a*b - a*c + b + c) of The exterior algebra of rank 4 over Rational Field
-            sage: E.ideal([J.gen(0) * d * I.gen(0)], side="left") <= K
+            sage: E.ideal([J.gen(0) * d * I.gen(0)], side='left') <= K
             True
 
-            sage: J = E.ideal([b + c*d], side="right")
+            sage: J = E.ideal([b + c*d], side='right')
             sage: I * J
             Twosided Ideal (a*c*d + a*b + c*d + b) of The exterior algebra of rank 4 over Rational Field
             sage: X = J * I; X
@@ -2865,7 +2965,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
             sage: a * p  # not a left ideal
             a*c*d + a*b
 
-            sage: I = E.ideal([a + 1], side="right")
+            sage: I = E.ideal([a + 1], side='right')
             sage: E.ideal([1]) * I
             Twosided Ideal (a + 1) of The exterior algebra of rank 4 over Rational Field
             sage: I * E.ideal([1])
@@ -2885,9 +2985,9 @@ class ExteriorAlgebraIdeal(Ideal_nc):
 
         if self.side() == "left" or self.side() == "twosided":
             if other.side() == "right" or other.side() == "twosided":
-                return self.ring().ideal(gens, side="twosided")
-            return self.ring().ideal(gens, side="left")
-        return self.ring().ideal(gens, side="right")
+                return self.ring().ideal(gens, side='twosided')
+            return self.ring().ideal(gens, side='left')
+        return self.ring().ideal(gens, side='right')
 
     def groebner_basis(self, term_order=None, reduced=True):
         r"""
@@ -2898,12 +2998,12 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         - ``term_order`` -- the term order used to compute the Gröbner basis;
           must be one of the following:
 
-          * ``"neglex"`` -- (default) negative (read right-to-left) lex order
-          * ``"degrevlex"`` -- degree reverse lex order
-          * ``"deglex"`` -- degree lex order
+          * ``'neglex'`` -- (default) negative (read right-to-left) lex order
+          * ``'degrevlex'`` -- degree reverse lex order
+          * ``'deglex'`` -- degree lex order
 
-        - ``reduced`` -- (default: ``True``) whether or not to return the
-          reduced Gröbner basis
+        - ``reduced`` -- boolean (default: ``True``); whether or not to return
+          the reduced Gröbner basis
 
         EXAMPLES:
 
@@ -2937,7 +3037,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
              -a*c*d + a*c*e - a*d*e + c*d*e)
 
         The example above was computed first using M2, which agrees with
-        the ``"degrevlex"`` ordering::
+        the ``'degrevlex'`` ordering::
 
             E = QQ[a..e, SkewCommutative => true]
             I = ideal( c*d*e - b*d*e + b*c*e - b*c*d,

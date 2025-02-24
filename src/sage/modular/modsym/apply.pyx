@@ -1,5 +1,4 @@
 # distutils: extra_compile_args = -D_XPG6
-
 """
 Monomial expansion of `(aX + bY)^i (cX + dY)^{j-i}`
 """
@@ -10,13 +9,14 @@ Monomial expansion of `(aX + bY)^i (cX + dY)^{j-i}`
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ##########################################################################
 
 from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
 from sage.rings.integer cimport Integer
 
 cdef class Apply:
@@ -103,7 +103,7 @@ def apply_to_monomial(int i, int j, int a, int b, int c, int d):
 
     cdef Integer res
     v = []
-    for k from 0 <= k <= j:
+    for k in range(j + 1):
         res = <Integer>PY_NEW(Integer)
         fmpz_poly_get_coeff_mpz(res.value, pr, k)
         v.append(int(res))

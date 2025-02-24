@@ -1,1 +1,1 @@
-python3-pyzmq
+python3${PYTHON_MINOR}-pyzmq

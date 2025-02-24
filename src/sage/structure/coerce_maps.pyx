@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Coerce maps
 """
@@ -30,21 +31,21 @@ cdef class DefaultConvertMap(Map):
         TESTS:
 
         Maps of this type are morphisms in the category of sets with
-        partial maps (see :trac:`15618`)::
+        partial maps (see :issue:`15618`)::
 
-            sage: f = GF(11).convert_map_from(GF(7)); f                                 # optional - sage.rings.finite_rings
+            sage: f = GF(11).convert_map_from(GF(7)); f                                 # needs sage.rings.finite_rings
             Conversion map:
               From: Finite Field of size 7
               To:   Finite Field of size 11
-            sage: f.parent()                                                            # optional - sage.rings.finite_rings
+            sage: f.parent()                                                            # needs sage.rings.finite_rings
             Set of Morphisms
              from Finite Field of size 7
              to Finite Field of size 11
              in Category of sets with partial maps
 
-        Test that :trac:`23211` is resolved::
+        Test that :issue:`23211` is resolved::
 
-            sage: f._is_coercion                                                        # optional - sage.rings.finite_rings
+            sage: f._is_coercion                                                        # needs sage.rings.finite_rings
             False
             sage: QQ[['x']].coerce_map_from(QQ)._is_coercion
             True
@@ -85,8 +86,8 @@ cdef class DefaultConvertMap(Map):
 
         EXAMPLES::
 
-            sage: f = GF(11).convert_map_from(GF(7))                                    # optional - sage.rings.finite_rings
-            sage: f._repr_type()                                                        # optional - sage.rings.finite_rings
+            sage: f = GF(11).convert_map_from(GF(7))                                    # needs sage.rings.finite_rings
+            sage: f._repr_type()                                                        # needs sage.rings.finite_rings
             'Conversion'
         """
         return self._repr_type_str or ("Coercion" if self._is_coercion else "Conversion")
@@ -194,14 +195,15 @@ cdef class NamedConvertMap(Map):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: var('t')                                                              # optional - sage.symbolic
+            sage: var('t')
             t
-            sage: mor = NamedConvertMap(SR, QQ['t'], '_polynomial_')                    # optional - sage.symbolic
-            sage: mor(t^2/4 + 1)                                                        # optional - sage.symbolic
+            sage: mor = NamedConvertMap(SR, QQ['t'], '_polynomial_')
+            sage: mor(t^2/4 + 1)
             1/4*t^2 + 1
-            sage: mor = NamedConvertMap(SR, GF(7)[['t']], '_polynomial_')               # optional - sage.symbolic
-            sage: mor(t^2/4 + 1)                                                        # optional - sage.symbolic
+            sage: mor = NamedConvertMap(SR, GF(7)[['t']], '_polynomial_')
+            sage: mor(t^2/4 + 1)
             1 + 2*t^2
         """
         if isinstance(domain, type):
@@ -217,20 +219,21 @@ cdef class NamedConvertMap(Map):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: var('t')                                                              # optional - sage.symbolic
+            sage: var('t')
             t
-            sage: phi = NamedConvertMap(SR, QQ['t'], '_polynomial_')                    # optional - sage.symbolic
-            sage: psi = copy(phi)    # indirect doctest                                 # optional - sage.symbolic
-            sage: psi                                                                   # optional - sage.symbolic
+            sage: phi = NamedConvertMap(SR, QQ['t'], '_polynomial_')
+            sage: psi = copy(phi)    # indirect doctest
+            sage: psi
             Conversion via _polynomial_ method map:
               From: Symbolic Ring
               To:   Univariate Polynomial Ring in t over Rational Field
-            sage: phi == psi         # todo: comparison not implemented                 # optional - sage.symbolic
+            sage: phi == psi                    # not implemented
             True
-            sage: psi(t^2/4 + 1)                                                        # optional - sage.symbolic
+            sage: psi(t^2/4 + 1)
             1/4*t^2 + 1
-            sage: psi(t^2/4 + 1) == phi(t^2/4 + 1)                                      # optional - sage.symbolic
+            sage: psi(t^2/4 + 1) == phi(t^2/4 + 1)
             True
         """
         slots = Map._extra_slots(self)
@@ -243,20 +246,21 @@ cdef class NamedConvertMap(Map):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: var('t')                                                              # optional - sage.symbolic
+            sage: var('t')
             t
-            sage: phi = NamedConvertMap(SR, QQ['t'], '_polynomial_')                    # optional - sage.symbolic
-            sage: psi = copy(phi)    # indirect doctest                                 # optional - sage.symbolic
-            sage: psi                                                                   # optional - sage.symbolic
+            sage: phi = NamedConvertMap(SR, QQ['t'], '_polynomial_')
+            sage: psi = copy(phi)    # indirect doctest
+            sage: psi
             Conversion via _polynomial_ method map:
               From: Symbolic Ring
               To:   Univariate Polynomial Ring in t over Rational Field
-            sage: phi == psi         # todo: comparison not implemented                 # optional - sage.symbolic
+            sage: phi == psi                    # not implemented
             True
-            sage: psi(t^2/4 + 1)                                                        # optional - sage.symbolic
+            sage: psi(t^2/4 + 1)
             1/4*t^2 + 1
-            sage: psi(t^2/4 + 1) == phi(t^2/4 + 1)                                      # optional - sage.symbolic
+            sage: psi(t^2/4 + 1) == phi(t^2/4 + 1)
             True
         """
         self.method_name = _slots['method_name']
@@ -267,13 +271,13 @@ cdef class NamedConvertMap(Map):
         EXAMPLES::
 
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: f = NamedConvertMap(GF(5), QQ, '_integer_'); f                        # optional - sage.rings.finite_rings
+            sage: f = NamedConvertMap(GF(5), QQ, '_integer_'); f
             Conversion via _integer_ method map:
               From: Finite Field of size 5
               To:   Rational Field
-            sage: f(19)                                                                 # optional - sage.rings.finite_rings
+            sage: f(19)
             4
-            sage: f(19).parent()                                                        # optional - sage.rings.finite_rings
+            sage: f(19).parent()
             Rational Field
         """
         cdef Parent C = self._codomain
@@ -301,8 +305,8 @@ cdef class NamedConvertMap(Map):
         EXAMPLES::
 
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: f = NamedConvertMap(SR, ZZ['x'], '_polynomial_')                      # optional - sage.symbolic
-            sage: f(x^2 + 1, check=True)                                                # optional - sage.symbolic
+            sage: f = NamedConvertMap(SR, ZZ['x'], '_polynomial_')                      # needs sage.symbolic
+            sage: f(x^2 + 1, check=True)                                                # needs sage.symbolic
             x^2 + 1
         """
         cdef Parent C = self._codomain
@@ -335,12 +339,13 @@ cdef class CallableConvertMap(Map):
 
         ::
 
-            sage: f = CallableConvertMap(RR, RR, exp, parent_as_first_arg=False)        # optional - sage.symbolic
-            sage: f(0)                                                                  # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: f = CallableConvertMap(RR, RR, exp, parent_as_first_arg=False)
+            sage: f(0)
             1.00000000000000
-            sage: f(1)                                                                  # optional - sage.symbolic
+            sage: f(1)
             2.71828182845905
-            sage: f(-3)                                                                 # optional - sage.symbolic
+            sage: f(-3)
             0.0497870683678639
         """
         if isinstance(domain, type):
@@ -372,7 +377,7 @@ cdef class CallableConvertMap(Map):
             sage: def foo(P, x): return x^2
             sage: f = CallableConvertMap(ZZ, ZZ, foo)
             sage: g = copy(f)     # indirect doctest
-            sage: f == g          # todo: comparison not implemented
+            sage: f == g          # not implemented (todo: implement comparison)
             True
             sage: f(3) == g(3)
             True
@@ -392,7 +397,7 @@ cdef class CallableConvertMap(Map):
             sage: def foo(P, x): return x^2
             sage: f = CallableConvertMap(ZZ, ZZ, foo)
             sage: g = copy(f)     # indirect doctest
-            sage: f == g          # todo: comparison not implemented
+            sage: f == g          # not implemented (todo: implement comparison)
             True
             sage: f(3) == g(3)
             True
@@ -552,6 +557,7 @@ cpdef Element _ccall_test_function(codomain, x):
     """
     return codomain(x*x*x-x)
 
+
 def test_CCallableConvertMap(domain, name=None):
     """
     For testing CCallableConvertMap_class.
@@ -638,7 +644,7 @@ cdef class TryMap(Map):
             sage: map2 = QQ.coerce_map_from(ZZ)
             sage: map = sage.structure.coerce_maps.TryMap(map1, map2, error_types=(ZeroDivisionError,))
             sage: cmap = copy(map)     # indirect doctest
-            sage: cmap == map          # todo: comparison not implemented
+            sage: cmap == map          # not implemented (todo: implement comparison)
             True
             sage: map(3) == cmap(3)
             True
@@ -661,7 +667,7 @@ cdef class TryMap(Map):
             sage: map2 = QQ.coerce_map_from(ZZ)
             sage: map = sage.structure.coerce_maps.TryMap(map1, map2, error_types=(ZeroDivisionError,))
             sage: cmap = copy(map)     # indirect doctest
-            sage: cmap == map          # todo: comparison not implemented
+            sage: cmap == map          # not implemented (todo: implement comparison)
             True
             sage: map(3) == cmap(3)
             True

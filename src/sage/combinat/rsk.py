@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Robinson-Schensted-Knuth correspondence
 
@@ -166,12 +167,14 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from bisect import bisect_left, bisect_right
+
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import Matrix
 from sage.structure.unique_representation import UniqueRepresentation
 
-from bisect import bisect_left, bisect_right
-from sage.structure.element import is_Matrix
-from sage.matrix.constructor import matrix
-from sage.rings.integer_ring import ZZ
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 class Rule(UniqueRepresentation):
@@ -217,13 +220,12 @@ class Rule(UniqueRepresentation):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a biword
+        - ``obj1``, ``obj2`` -- anything representing a biword
           (see the doc of :meth:`forward_rule` for the
-          encodings accepted).
+          encodings accepted)
 
-        - ``check`` -- (default: ``True``) whether to check
-          that ``obj1`` and ``obj2`` actually define a valid
-          biword.
+        - ``check`` -- boolean (default: ``True``); whether to check that
+          ``obj1`` and ``obj2`` actually define a valid biword
 
         EXAMPLES::
 
@@ -278,7 +280,7 @@ class Rule(UniqueRepresentation):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to
+        - ``obj1``, ``obj2`` -- can be one of the following ways to
           represent a generalized permutation (or, equivalently,
           biword):
 
@@ -301,11 +303,11 @@ class Rule(UniqueRepresentation):
             entries and bottom entries in the biword (in this case,
             ``obj2`` is ``None``)
 
-        - ``check_standard`` -- (default: ``False``) check if either of the
-          resulting tableaux is a standard tableau, and if so, typecast it
-          as such
+        - ``check_standard`` -- boolean (default: ``False``); check if either
+          of the resulting tableaux is a standard tableau, and if so, typecast
+          it as such
 
-        - ``check`` -- (default: ``True``) whether to check
+        - ``check`` -- boolean (default: ``True``); whether to check
           that ``obj1`` and ``obj2`` actually define a valid
           biword
 
@@ -345,7 +347,7 @@ class Rule(UniqueRepresentation):
 
         INPUT:
 
-        - ``p``, ``q`` -- two tableaux of the same shape.
+        - ``p``, ``q`` -- two tableaux of the same shape
 
         - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
 
@@ -877,7 +879,7 @@ class RuleHecke(Rule):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to
+        - ``obj1``, ``obj2`` -- can be one of the following ways to
           represent a generalized permutation (or, equivalently,
           biword):
 
@@ -890,9 +892,9 @@ class RuleHecke(Rule):
             case, ``obj2`` is ``None``; the top row of the biword
             is understood to be `(1, 2, \ldots, n)` by default)
 
-        - ``check_standard`` -- (default: ``False``) check if either of the
-          resulting tableaux is a standard tableau, and if so, typecast it
-          as such
+        - ``check_standard`` -- boolean (default: ``False``); check if either
+          of the resulting tableaux is a standard tableau, and if so, typecast
+          it as such
 
         EXAMPLES::
 
@@ -951,7 +953,7 @@ class RuleHecke(Rule):
 
         - ``p``, ``q`` -- two tableaux of the same shape
 
-        -  ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+        - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
 
           - ``'array'`` -- as a two-line array (i.e. generalized permutation
             or biword)
@@ -1323,11 +1325,11 @@ class RuleDualRSK(Rule):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a strict biword
+        - ``obj1``, ``obj2`` -- anything representing a strict biword
           (see the doc of :meth:`forward_rule` for the
           encodings accepted)
 
-        - ``check`` -- (default: ``True``) whether to check
+        - ``check`` -- boolean (default: ``True``); whether to check
           that ``obj1`` and ``obj2`` actually define a valid
           strict biword
 
@@ -1706,11 +1708,11 @@ class RuleCoRSK(RuleRSK):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a strict
+        - ``obj1``, ``obj2`` -- anything representing a strict
           cobiword (see the doc of :meth:`forward_rule` for
           the encodings accepted)
 
-        - ``check`` -- (default: ``True``) whether to check
+        - ``check`` -- boolean (default: ``True``); whether to check
           that ``obj1`` and ``obj2`` actually define a valid
           strict cobiword
 
@@ -2026,11 +2028,11 @@ class RuleSuperRSK(RuleRSK):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a restricted super biword
+        - ``obj1``, ``obj2`` -- anything representing a restricted super biword
           (see the doc of :meth:`forward_rule` for the
           encodings accepted)
 
-        - ``check`` -- (default: ``True``) whether to check
+        - ``check`` -- boolean (default: ``True``); whether to check
           that ``obj1`` and ``obj2`` actually define a valid
           restricted super biword
 
@@ -2156,7 +2158,7 @@ class RuleSuperRSK(RuleRSK):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to
+        - ``obj1``, ``obj2`` -- can be one of the following ways to
           represent a generalized permutation (or, equivalently,
           biword):
 
@@ -2175,11 +2177,11 @@ class RuleSuperRSK(RuleRSK):
             entries and bottom entries in the biword (in this case,
             ``obj2`` is ``None``)
 
-        - ``check_standard`` -- (default: ``False``) check if either of
-          the resulting tableaux is a standard super tableau, and if so,
+        - ``check_standard`` -- boolean (default: ``False``); check if either
+          of the resulting tableaux is a standard super tableau, and if so,
           typecast it as such
 
-        - ``check`` -- (default: ``True``) whether to check
+        - ``check`` -- boolean (default: ``True``); whether to check
           that ``obj1`` and ``obj2`` actually define a valid
           restricted super biword
 
@@ -2659,7 +2661,7 @@ class RuleStar(Rule):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to represent a
+        - ``obj1``, ``obj2`` -- can be one of the following ways to represent a
           biword (or, equivalently, an increasing 0-Hecke factorization) that
           is fully commutative:
 
@@ -2676,10 +2678,10 @@ class RuleStar(Rule):
             understood to be the indices of the factors for each letter in
             this biword.
 
-        - ``check_braid`` -- (default: ``True``) indicator to validate that
-          input is associated to a fully commutative word in the 0-Hecke monoid,
-          validation is performed if set to ``True``; otherwise, this validation
-          is ignored.
+        - ``check_braid`` -- boolean (default: ``True``); indicator to validate
+          that input is associated to a fully commutative word in the 0-Hecke
+          monoid, validation is performed if set to ``True``. Οtherwise, this
+          validation is ignored.
 
         EXAMPLES::
 
@@ -2955,19 +2957,17 @@ class RuleStar(Rule):
                 if j == 0:
                     df.append([])
                 if j > 0 and obj1[j] < obj1[j-1]:
-                    for a in range(obj1[j-1]-obj1[j]):
-                        df.append([])
+                    df.extend([] for _ in range(obj1[j-1]-obj1[j]))
                 df[-1].append(obj2[j])
             if obj1:
-                for a in range(obj1[-1]-1):
-                    df.append([])
+                df.extend([] for a in range(obj1[-1]-1))
             # If biword is empty, return a decreasing factorization with 1 factor
             else:
                 df.append([])
             return DecreasingHeckeFactorization(df)
 
 
-class InsertionRules():
+class InsertionRules:
     r"""
     Catalog of rules for RSK-like insertion algorithms.
     """
@@ -3045,7 +3045,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
 
     INPUT:
 
-    - ``obj1, obj2`` -- can be one of the following:
+    - ``obj1``, ``obj2`` -- can be one of the following:
 
       - a word in an ordered alphabet (in this case, ``obj1`` is said
         word, and ``obj2`` is ``None``)
@@ -3068,7 +3068,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
       - ``RSK.rules.EG`` (or ``'EG'``) -- Edelman-Greene insertion
         (only for reduced words of permutations/elements of a type `A`
         Coxeter group) (:class:`~sage.combinat.rsk.RuleEG`)
-      - ``RSK.rules.Hecke`` (or ``'hecke'``) -- Hecke insertion (only
+      - ``RSK.rules.Hecke`` -- (or ``'hecke'``) Hecke insertion (only
         guaranteed for generalized permutations whose top row is strictly
         increasing) (:class:`~sage.combinat.rsk.RuleHecke`)
       - ``RSK.rules.dualRSK`` (or ``'dualRSK'``) -- Dual RSK insertion
@@ -3081,8 +3081,8 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
         fully commutative words in the 0-Hecke monoid)
         (:class:`~sage.combinat.rsk.RuleStar`)
 
-    - ``check_standard`` -- (default: ``False``) check if either of the
-      resulting tableaux is a standard tableau, and if so, typecast it
+    - ``check_standard`` -- boolean (default: ``False``); check if either of
+      the resulting tableaux is a standard tableau, and if so, typecast it
       as such
 
     For precise information about constraints on the input and output,
@@ -3150,7 +3150,6 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
         [[], []]
         sage: RSK(Word([]), insertion=RSK.rules.Hecke)
         [[], []]
-
     """
     if isinstance(insertion, str):
         if insertion == 'RSK':
@@ -3180,7 +3179,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
         else:
             raise ValueError("invalid input")
 
-    if is_Matrix(obj1):
+    if isinstance(obj1, Matrix):
         obj1 = obj1.rows()
 
     output = rule.forward_rule(obj1, obj2, check_standard)
@@ -3345,7 +3344,7 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
         ...
         ValueError: p(=[[1, 2, 3]]) and q(=[[1, 2]]) must have the same shape
 
-    Check that :trac:`20430` is fixed::
+    Check that :issue:`20430` is fixed::
 
         sage: RSK([1,1,1,1,1,1,1,2,2,2,3], [1,1,1,1,1,1,3,2,2,2,1])
         [[[1, 1, 1, 1, 1, 1, 1, 2, 2], [2], [3]],

@@ -61,7 +61,7 @@ class AbstractArgument(MultiplicativeGroupElement):
 
     - ``element`` -- an element of parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -108,15 +108,13 @@ class AbstractArgument(MultiplicativeGroupElement):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         INPUT:
 
         - ``element`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -151,9 +149,7 @@ class AbstractArgument(MultiplicativeGroupElement):
           The output will be an element of ``R``. If ``None``,
           then the symbolic ring is used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -191,13 +187,13 @@ class AbstractArgument(MultiplicativeGroupElement):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(I) == C(I)
+            sage: C(I) == C(I)                                                          # needs sage.symbolic
             True
 
         As we do not have normalization in :class:`ArgumentByElement`,
         then following, although equal, is not equal::
 
-            sage: C(I) == C(2*I)
+            sage: C(I) == C(2*I)                                                        # needs sage.symbolic
             False
         """
         return self._element_ == other._element_
@@ -256,12 +252,12 @@ class AbstractArgument(MultiplicativeGroupElement):
         ::
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
-            sage: C = ArgumentByElementGroup(SR)
-            sage: C(-1) * 4
+            sage: C = ArgumentByElementGroup(SR)                                        # needs sage.symbolic
+            sage: C(-1) * 4                                                             # needs sage.symbolic
             -4
             sage: _.parent()
             Symbolic Ring
-            sage: 4 * C(-1)
+            sage: 4 * C(-1)                                                             # needs sage.symbolic
             -4
             sage: _.parent()
             Symbolic Ring
@@ -285,7 +281,7 @@ class AbstractArgument(MultiplicativeGroupElement):
 
     def __abs__(self):
         r"""
-        Return the absolute value of this argument which equals `1`
+        Return the absolute value of this argument which equals `1`.
 
         TESTS::
 
@@ -337,9 +333,7 @@ class AbstractArgumentGroup(UniqueRepresentation, Parent):
         - ``category`` -- a category or ``None`` (in which case the output
           equals ``category``)
 
-        OUTPUT:
-
-        A category.
+        OUTPUT: a category
 
         EXAMPLES::
 
@@ -402,21 +396,19 @@ class UnitCirclePoint(AbstractArgument):
 
     - ``exponent`` -- a number (of a subset of the reals)
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     @staticmethod
     def _normalize_(exponent):
         r"""
-        Normalizes the given exponent so that it is in `[0,1)`.
+        Normalize the given exponent so that it is in `[0,1)`.
 
         INPUT:
 
         - ``exponent`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -463,9 +455,7 @@ class UnitCirclePoint(AbstractArgument):
           The output will be an element of ``R``. If ``None``,
           then the symbolic ring is used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -681,9 +671,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         - ``kwds`` -- are passed on to element
 
-        OUTPUT:
-
-        A :class:`UnitCirclePoint`.
+        OUTPUT: a :class:`UnitCirclePoint`
 
         TESTS::
 
@@ -704,10 +692,10 @@ class UnitCircleGroup(AbstractArgumentGroup):
             sage: U(exponent=1/3)
             zeta3
 
-            sage: C.<z> = CyclotomicField(6)
-            sage: z, U(z)
+            sage: C.<z> = CyclotomicField(6)                                            # needs sage.rings.number_field
+            sage: z, U(z)                                                               # needs sage.rings.number_field
             (z, zeta6)
-            sage: z^2, U(z^2)
+            sage: z^2, U(z^2)                                                           # needs sage.rings.number_field
             (z - 1, zeta3)
 
             sage: U(ZZ(-1))
@@ -794,23 +782,21 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``exponent`` -- the element data.
+        - ``exponent`` -- the element data
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
             sage: from sage.groups.misc_gps.argument_groups import UnitCircleGroup, RootsOfUnityGroup
 
             sage: C = UnitCircleGroup(QQ)
-            sage: C._create_element_in_extension_(2.12).parent()
+            sage: C._create_element_in_extension_(2.12).parent()                        # needs sage.rings.number_field
             Unit Circle Group with Exponents in
             Real Field with 53 bits of precision modulo ZZ
 
             sage: U = RootsOfUnityGroup()
-            sage: U._create_element_in_extension_(2.12).parent()
+            sage: U._create_element_in_extension_(2.12).parent()                        # needs sage.rings.number_field
             Unit Circle Group with Exponents in
             Real Field with 53 bits of precision modulo ZZ
         """
@@ -826,11 +812,9 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``R`` -- a parent.
+        - ``R`` -- a parent
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -1059,7 +1043,7 @@ class ArgumentByElement(AbstractArgument):
 
     - ``element`` -- a nonzero element of the parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -1070,7 +1054,7 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(1+2*I)  # indirect doctest
+            sage: C(1+2*I)  # indirect doctest                                          # needs sage.symbolic
             e^(I*arg(1.00000000000000 + 2.00000000000000*I))
         """
         super().__init__(parent, element, normalize=normalize)
@@ -1080,7 +1064,7 @@ class ArgumentByElement(AbstractArgument):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         This is the identity for :class:`ArgumentByElement`.
 
@@ -1088,9 +1072,7 @@ class ArgumentByElement(AbstractArgument):
 
         - ``element`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -1108,7 +1090,7 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(2+3*I)  # indirect doctest
+            sage: C(2+3*I)  # indirect doctest                                          # needs sage.symbolic
             e^(I*arg(2.00000000000000 + 3.00000000000000*I))
         """
         return 'e^(I*arg({}))'.format(self._element_)
@@ -1123,15 +1105,13 @@ class ArgumentByElement(AbstractArgument):
           The output will be an element of ``R``. If ``None``,
           then the symbolic ring is used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(ZZ)
-            sage: C(-2)._symbolic_()
+            sage: C(-2)._symbolic_()                                                    # needs sage.symbolic
             -1
             sage: _.parent()
             Symbolic Ring
@@ -1153,7 +1133,7 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(I) * C(1 + I)  # indirect doctest
+            sage: C(I) * C(1 + I)  # indirect doctest                                   # needs sage.symbolic
             e^(I*arg(-1.00000000000000 + 1.00000000000000*I))
         """
         P = self.parent()
@@ -1168,12 +1148,12 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(I)^5  # indirect doctest
+            sage: C(I)^5  # indirect doctest                                            # needs sage.symbolic
             e^(I*arg(1.00000000000000*I))
             sage: _.parent()
             Unit Circle Group with Argument of Elements in
             Complex Field with 53 bits of precision
-            sage: C(1+I)^3  # indirect doctest
+            sage: C(1+I)^3  # indirect doctest                                          # needs sage.symbolic
             e^(I*arg(-2.00000000000000 + 2.00000000000000*I))
             sage: _.parent()
             Unit Circle Group with Argument of Elements in
@@ -1208,7 +1188,7 @@ class ArgumentByElement(AbstractArgument):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: ~C(I)  # indirect doctest
+            sage: ~C(I)  # indirect doctest                                             # needs sage.symbolic
             e^(I*arg(-1.00000000000000*I))
         """
         P = self.parent()
@@ -1233,7 +1213,7 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
         sage: C = ArgumentByElementGroup(CC); C
         Unit Circle Group with Argument of Elements in
         Complex Field with 53 bits of precision
-        sage: C(1 + 2*I)
+        sage: C(1 + 2*I)                                                                # needs sage.symbolic
         e^(I*arg(1.00000000000000 + 2.00000000000000*I))
     """
 
@@ -1275,15 +1255,13 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         - ``kwds`` -- are passed on to element
 
-        OUTPUT:
-
-        A :class:`ArgumentByElement`.
+        OUTPUT: a :class:`ArgumentByElement`
 
         TESTS::
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentByElementGroup
             sage: C = ArgumentByElementGroup(CC)
-            sage: C(1 + 2*I)  # indirect doctest
+            sage: C(1 + 2*I)  # indirect doctest                                        # needs sage.symbolic
             e^(I*arg(1.00000000000000 + 2.00000000000000*I))
             sage: C(1)
             e^(I*arg(1.00000000000000))
@@ -1343,11 +1321,9 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``element`` -- the element data.
+        - ``element`` -- the element data
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -1377,11 +1353,9 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``R`` -- a parent.
+        - ``R`` -- a parent
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -1406,7 +1380,7 @@ class Sign(AbstractArgument):
 
     - ``element`` -- a nonzero element of the parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -1428,7 +1402,7 @@ class Sign(AbstractArgument):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         This is the identity for :class:`Sign`.
 
@@ -1436,9 +1410,7 @@ class Sign(AbstractArgument):
 
         - ``element`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -1545,7 +1517,7 @@ class Sign(AbstractArgument):
             -4.00000000000000
             sage: _.parent()
             Complex Field with 53 bits of precision
-            sage: S(-1) * SR.var('x')
+            sage: S(-1) * SR.var('x')                                                   # needs sage.symbolic
             -x
             sage: _.parent()
             Symbolic Ring
@@ -1689,9 +1661,7 @@ class SignGroup(AbstractArgumentGroup):
 
         - ``data`` -- an object
 
-        OUTPUT:
-
-        A :class:`Sign`.
+        OUTPUT: a :class:`Sign`
 
         TESTS::
 
@@ -1727,7 +1697,7 @@ class ArgumentGroupFactory(UniqueFactory):
       The factory will analyze ``data`` and interpret it as
       ``specification`` or ``domain``.
 
-    - ``specification`` -- a string
+    - ``specification`` -- string
 
       The following is possible:
 
@@ -1743,12 +1713,12 @@ class ArgumentGroupFactory(UniqueFactory):
         a string representing a SageMath parent which is interpreted as
         ``domain``
 
-    - ``domain`` -- a SageMath parent representing a subset of the complex plane.
-      An instance of :class:`ArgumentByElementGroup` will be created with the given
-      ``domain``.
+    - ``domain`` -- a SageMath parent representing a subset of the complex plane;
+      an instance of :class:`ArgumentByElementGroup` will be created with the given
+      ``domain``
 
-    - ``exponents`` -- a SageMath parent representing a subset of the reals.
-      An instance of :class`UnitCircleGroup` will be created with the given
+    - ``exponents`` -- a SageMath parent representing a subset of the reals;
+      an instance of :class`UnitCircleGroup` will be created with the given
       ``exponents``
 
     Exactly one of ``data``, ``specification``, ``exponents`` has to be provided.
@@ -1760,9 +1730,10 @@ class ArgumentGroupFactory(UniqueFactory):
 
         sage: from sage.groups.misc_gps.argument_groups import ArgumentGroup
 
-        sage: ArgumentGroup('UU')
+        sage: ArgumentGroup('UU')                                                       # needs sage.rings.number_field
         Group of Roots of Unity
 
+        sage: # needs sage.rings.number_field
         sage: ArgumentGroup(ZZ)
         Sign Group
         sage: ArgumentGroup(QQ)
@@ -1772,19 +1743,19 @@ class ArgumentGroupFactory(UniqueFactory):
         sage: ArgumentGroup(AA)
         Sign Group
 
-        sage: ArgumentGroup(RR)
+        sage: ArgumentGroup(RR)                                                         # needs sage.rings.number_field
         Sign Group
-        sage: ArgumentGroup('Arg_RR')
+        sage: ArgumentGroup('Arg_RR')                                                   # needs sage.rings.number_field
         Sign Group
-        sage: ArgumentGroup(RIF)
+        sage: ArgumentGroup(RIF)                                                        # needs sage.rings.real_interval_field
         Sign Group
         sage: ArgumentGroup(RBF)
         Sign Group
 
-        sage: ArgumentGroup(CC)
+        sage: ArgumentGroup(CC)                                                         # needs sage.rings.number_field
         Unit Circle Group with Exponents in
         Real Field with 53 bits of precision modulo ZZ
-        sage: ArgumentGroup('Arg_CC')
+        sage: ArgumentGroup('Arg_CC')                                                   # needs sage.rings.number_field
         Unit Circle Group with Exponents in
         Real Field with 53 bits of precision modulo ZZ
         sage: ArgumentGroup(CIF)
@@ -1794,7 +1765,7 @@ class ArgumentGroupFactory(UniqueFactory):
         Unit Circle Group with Exponents in
         Real ball field with 53 bits of precision modulo ZZ
 
-        sage: ArgumentGroup(CyclotomicField(3))
+        sage: ArgumentGroup(CyclotomicField(3))                                         # needs sage.rings.number_field
         Unit Circle Group with Argument of Elements in
         Cyclotomic Field of order 3 and degree 2
     """
@@ -1813,6 +1784,7 @@ class ArgumentGroupFactory(UniqueFactory):
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentGroup
 
+            sage: # needs sage.rings.number_field
             sage: ArgumentGroup(specification='UU')
             Group of Roots of Unity
             sage: ArgumentGroup('UU') is ArgumentGroup(exponents=QQ)  # indirect doctest
@@ -1887,7 +1859,7 @@ class ArgumentGroupFactory(UniqueFactory):
         TESTS::
 
             sage: from sage.groups.misc_gps.argument_groups import ArgumentGroup
-            sage: ArgumentGroup('UU')  # indirect doctest
+            sage: ArgumentGroup('UU')  # indirect doctest                               # needs sage.rings.number_field
             Group of Roots of Unity
         """
         cls, args = key

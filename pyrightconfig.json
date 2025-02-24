@@ -7,7 +7,7 @@
         "root": "src"
       }
     ],  
-    "pythonVersion": "3.8",
+    "pythonVersion": "3.9",
     "exclude": ["venv"],
     "venvPath": "./venv/",
     "venv": "./",

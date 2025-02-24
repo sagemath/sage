@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.numerical.mip
 r"""
 A bijectionist's toolkit
 
@@ -67,54 +68,54 @@ check this for permutations of size at most `3`::
     sage: bij.set_statistics((len, len), (alpha1, beta1), (alpha2, beta2))
     sage: a, b = bij.statistics_table()
     sage: table(a, header_row=True, frame=True)
-    +-----------+--------+--------+--------+
-    | a         | α_1(a) | α_2(a) | α_3(a) |
-    +===========+========+========+========+
-    | []        | 0      | 0      | 0      |
-    +-----------+--------+--------+--------+
-    | [1]       | 1      | 1      | 1      |
-    +-----------+--------+--------+--------+
-    | [1, 2]    | 2      | 2      | 2      |
-    +-----------+--------+--------+--------+
-    | [2, 1]    | 2      | 1      | 0      |
-    +-----------+--------+--------+--------+
-    | [1, 2, 3] | 3      | 3      | 3      |
-    +-----------+--------+--------+--------+
-    | [1, 3, 2] | 3      | 2      | 1      |
-    +-----------+--------+--------+--------+
-    | [2, 1, 3] | 3      | 2      | 1      |
-    +-----------+--------+--------+--------+
-    | [2, 3, 1] | 3      | 2      | 0      |
-    +-----------+--------+--------+--------+
-    | [3, 1, 2] | 3      | 1      | 0      |
-    +-----------+--------+--------+--------+
-    | [3, 2, 1] | 3      | 2      | 1      |
-    +-----------+--------+--------+--------+
+    ┌───────────┬────────┬────────┬────────┐
+    │ a         | α_1(a) | α_2(a) | α_3(a) |
+    ╞═══════════╪════════╪════════╪════════╡
+    │ []        | 0      | 0      | 0      |
+    ├───────────┼────────┼────────┼────────┤
+    │ [1]       | 1      | 1      | 1      |
+    ├───────────┼────────┼────────┼────────┤
+    │ [1, 2]    | 2      | 2      | 2      |
+    ├───────────┼────────┼────────┼────────┤
+    │ [2, 1]    | 2      | 1      | 0      |
+    ├───────────┼────────┼────────┼────────┤
+    │ [1, 2, 3] | 3      | 3      | 3      |
+    ├───────────┼────────┼────────┼────────┤
+    │ [1, 3, 2] | 3      | 2      | 1      |
+    ├───────────┼────────┼────────┼────────┤
+    │ [2, 1, 3] | 3      | 2      | 1      |
+    ├───────────┼────────┼────────┼────────┤
+    │ [2, 3, 1] | 3      | 2      | 0      |
+    ├───────────┼────────┼────────┼────────┤
+    │ [3, 1, 2] | 3      | 1      | 0      |
+    ├───────────┼────────┼────────┼────────┤
+    │ [3, 2, 1] | 3      | 2      | 1      |
+    └───────────┴────────┴────────┴────────┘
 
     sage: table(b, header_row=True, frame=True)
-    +-----------+---+--------+--------+--------+
-    | b         | τ | β_1(b) | β_2(b) | β_3(b) |
-    +===========+===+========+========+========+
-    | []        | 0 | 0      | 0      | 0      |
-    +-----------+---+--------+--------+--------+
-    | [1]       | 1 | 1      | 1      | 1      |
-    +-----------+---+--------+--------+--------+
-    | [1, 2]    | 2 | 2      | 1      | 0      |
-    +-----------+---+--------+--------+--------+
-    | [2, 1]    | 1 | 2      | 2      | 2      |
-    +-----------+---+--------+--------+--------+
-    | [1, 2, 3] | 3 | 3      | 1      | 0      |
-    +-----------+---+--------+--------+--------+
-    | [1, 3, 2] | 2 | 3      | 2      | 1      |
-    +-----------+---+--------+--------+--------+
-    | [2, 1, 3] | 2 | 3      | 2      | 1      |
-    +-----------+---+--------+--------+--------+
-    | [2, 3, 1] | 2 | 3      | 2      | 1      |
-    +-----------+---+--------+--------+--------+
-    | [3, 1, 2] | 2 | 3      | 2      | 0      |
-    +-----------+---+--------+--------+--------+
-    | [3, 2, 1] | 1 | 3      | 3      | 3      |
-    +-----------+---+--------+--------+--------+
+    ┌───────────┬───┬────────┬────────┬────────┐
+    │ b         | τ | β_1(b) | β_2(b) | β_3(b) |
+    ╞═══════════╪═══╪════════╪════════╪════════╡
+    │ []        | 0 | 0      | 0      | 0      |
+    ├───────────┼───┼────────┼────────┼────────┤
+    │ [1]       | 1 | 1      | 1      | 1      |
+    ├───────────┼───┼────────┼────────┼────────┤
+    │ [1, 2]    | 2 | 2      | 1      | 0      |
+    ├───────────┼───┼────────┼────────┼────────┤
+    │ [2, 1]    | 1 | 2      | 2      | 2      |
+    ├───────────┼───┼────────┼────────┼────────┤
+    │ [1, 2, 3] | 3 | 3      | 1      | 0      |
+    ├───────────┼───┼────────┼────────┼────────┤
+    │ [1, 3, 2] | 2 | 3      | 2      | 1      |
+    ├───────────┼───┼────────┼────────┼────────┤
+    │ [2, 1, 3] | 2 | 3      | 2      | 1      |
+    ├───────────┼───┼────────┼────────┼────────┤
+    │ [2, 3, 1] | 2 | 3      | 2      | 1      |
+    ├───────────┼───┼────────┼────────┼────────┤
+    │ [3, 1, 2] | 2 | 3      | 2      | 0      |
+    ├───────────┼───┼────────┼────────┼────────┤
+    │ [3, 2, 1] | 1 | 3      | 3      | 3      |
+    └───────────┴───┴────────┴────────┴────────┘
 
     sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
     sage: bij.set_constant_blocks(orbit_decomposition(A, rotate_permutation))
@@ -359,7 +360,6 @@ Value restrictions::
     Traceback (most recent call last):
     ...
     ValueError: no possible values found for singleton block [[1, 2]]
-
 """
 # ****************************************************************************
 #       Copyright (C) 2020 Martin Rubey <martin.rubey at tuwien.ac.at>
@@ -481,7 +481,6 @@ class Bijectionist(SageObject):
         :meth:`set_statistics`, :meth:`set_intertwining_relations`,
         :meth:`set_constant_blocks`, etc., is irrelevant.  Calling any of these
         methods a second time overrides the previous specification.
-
     """
     def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=None,
                  pi_rho=tuple(), phi_psi=tuple(), Q=None,
@@ -565,7 +564,7 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``P`` -- a set partition of `A`, singletons may be omitted
+        - ``P`` -- set partition of `A`, singletons may be omitted
 
         EXAMPLES:
 
@@ -605,7 +604,6 @@ class Bijectionist(SageObject):
             Traceback (most recent call last):
             ...
             StopIteration
-
         """
         self._bmilp = None
         self._P = DisjointSet(self._A)
@@ -623,10 +621,10 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``singletons`` -- (optional, default: ``False``) whether or not to
+        - ``singletons`` -- boolean (default: ``False``); whether or not to
           include singleton blocks in the output
 
-        - ``optimal`` -- (optional, default: ``False``) whether or not to
+        - ``optimal`` -- boolean (default: ``False``); whether or not to
           compute the coarsest possible partition
 
         .. NOTE::
@@ -645,7 +643,6 @@ class Bijectionist(SageObject):
 
             sage: bij.constant_blocks(singletons=True)
             {{'a', 'b'}, {'c'}}
-
         """
         if optimal:
             self._forced_constant_blocks()
@@ -748,7 +745,6 @@ class Bijectionist(SageObject):
             {[]: 2, [1]: 0, [1, 2]: 0, [2, 1]: 1}
             {[]: 2, [1]: 0, [1, 2]: 1, [2, 1]: 0}
             {[]: 2, [1]: 1, [1, 2]: 0, [2, 1]: 0}
-
         """
         self._bmilp = None
         self._n_statistics = len(alpha_beta)
@@ -815,7 +811,6 @@ class Bijectionist(SageObject):
               (3, 2, 1)   [[1, 3, 2], [2, 1, 3], [3, 2, 1]]   [[1, 3, 2], [2, 1, 3], [2, 3, 1]]
               (3, 2, 0)   [[2, 3, 1]]                         [[3, 1, 2]]
               (3, 1, 0)   [[3, 1, 2]]                         [[1, 2, 3]]
-
         """
         return self._statistics_fibers
 
@@ -827,7 +822,7 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``header`` -- (default: ``True``) whether to include a
+        - ``header`` -- boolean (default: ``True``); whether to include a
           header with the standard Greek letters
 
         OUTPUT:
@@ -853,53 +848,53 @@ class Bijectionist(SageObject):
             sage: bij.set_statistics((wex, des), (fix, adj))
             sage: a, b = bij.statistics_table()
             sage: table(a, header_row=True, frame=True)
-            +-----------+--------+--------+
-            | a         | α_1(a) | α_2(a) |
-            +===========+========+========+
-            | []        | 0      | 0      |
-            +-----------+--------+--------+
-            | [1]       | 1      | 1      |
-            +-----------+--------+--------+
-            | [1, 2]    | 2      | 2      |
-            +-----------+--------+--------+
-            | [2, 1]    | 1      | 0      |
-            +-----------+--------+--------+
-            | [1, 2, 3] | 3      | 3      |
-            +-----------+--------+--------+
-            | [1, 3, 2] | 2      | 1      |
-            +-----------+--------+--------+
-            | [2, 1, 3] | 2      | 1      |
-            +-----------+--------+--------+
-            | [2, 3, 1] | 2      | 0      |
-            +-----------+--------+--------+
-            | [3, 1, 2] | 1      | 0      |
-            +-----------+--------+--------+
-            | [3, 2, 1] | 2      | 1      |
-            +-----------+--------+--------+
+            ┌───────────┬────────┬────────┐
+            │ a         | α_1(a) | α_2(a) |
+            ╞═══════════╪════════╪════════╡
+            │ []        | 0      | 0      |
+            ├───────────┼────────┼────────┤
+            │ [1]       | 1      | 1      |
+            ├───────────┼────────┼────────┤
+            │ [1, 2]    | 2      | 2      |
+            ├───────────┼────────┼────────┤
+            │ [2, 1]    | 1      | 0      |
+            ├───────────┼────────┼────────┤
+            │ [1, 2, 3] | 3      | 3      |
+            ├───────────┼────────┼────────┤
+            │ [1, 3, 2] | 2      | 1      |
+            ├───────────┼────────┼────────┤
+            │ [2, 1, 3] | 2      | 1      |
+            ├───────────┼────────┼────────┤
+            │ [2, 3, 1] | 2      | 0      |
+            ├───────────┼────────┼────────┤
+            │ [3, 1, 2] | 1      | 0      |
+            ├───────────┼────────┼────────┤
+            │ [3, 2, 1] | 2      | 1      |
+            └───────────┴────────┴────────┘
             sage: table(b, header_row=True, frame=True)
-            +-----------+---+--------+--------+
-            | b         | τ | β_1(b) | β_2(b) |
-            +===========+===+========+========+
-            | []        | 0 | 0      | 0      |
-            +-----------+---+--------+--------+
-            | [1]       | 1 | 1      | 1      |
-            +-----------+---+--------+--------+
-            | [1, 2]    | 2 | 1      | 0      |
-            +-----------+---+--------+--------+
-            | [2, 1]    | 1 | 2      | 2      |
-            +-----------+---+--------+--------+
-            | [1, 2, 3] | 3 | 1      | 0      |
-            +-----------+---+--------+--------+
-            | [1, 3, 2] | 2 | 2      | 1      |
-            +-----------+---+--------+--------+
-            | [2, 1, 3] | 2 | 2      | 1      |
-            +-----------+---+--------+--------+
-            | [2, 3, 1] | 2 | 2      | 1      |
-            +-----------+---+--------+--------+
-            | [3, 1, 2] | 2 | 2      | 0      |
-            +-----------+---+--------+--------+
-            | [3, 2, 1] | 1 | 3      | 3      |
-            +-----------+---+--------+--------+
+            ┌───────────┬───┬────────┬────────┐
+            │ b         | τ | β_1(b) | β_2(b) |
+            ╞═══════════╪═══╪════════╪════════╡
+            │ []        | 0 | 0      | 0      |
+            ├───────────┼───┼────────┼────────┤
+            │ [1]       | 1 | 1      | 1      |
+            ├───────────┼───┼────────┼────────┤
+            │ [1, 2]    | 2 | 1      | 0      |
+            ├───────────┼───┼────────┼────────┤
+            │ [2, 1]    | 1 | 2      | 2      |
+            ├───────────┼───┼────────┼────────┤
+            │ [1, 2, 3] | 3 | 1      | 0      |
+            ├───────────┼───┼────────┼────────┤
+            │ [1, 3, 2] | 2 | 2      | 1      |
+            ├───────────┼───┼────────┼────────┤
+            │ [2, 1, 3] | 2 | 2      | 1      |
+            ├───────────┼───┼────────┼────────┤
+            │ [2, 3, 1] | 2 | 2      | 1      |
+            ├───────────┼───┼────────┼────────┤
+            │ [3, 1, 2] | 2 | 2      | 0      |
+            ├───────────┼───┼────────┼────────┤
+            │ [3, 2, 1] | 1 | 3      | 3      |
+            └───────────┴───┴────────┴────────┘
 
         TESTS:
 
@@ -910,29 +905,29 @@ class Bijectionist(SageObject):
             sage: bij = Bijectionist(A, B, tau)
             sage: a, b = bij.statistics_table()
             sage: table(a, header_row=True, frame=True)
-            +--------+
-            | a      |
-            +========+
-            | []     |
-            +--------+
-            | [1]    |
-            +--------+
-            | [1, 2] |
-            +--------+
-            | [2, 1] |
-            +--------+
+            ┌────────┐
+            │ a      |
+            ╞════════╡
+            │ []     |
+            ├────────┤
+            │ [1]    |
+            ├────────┤
+            │ [1, 2] |
+            ├────────┤
+            │ [2, 1] |
+            └────────┘
             sage: table(b, header_row=True, frame=True)
-            +--------+---+
-            | b      | τ |
-            +========+===+
-            | []     | 0 |
-            +--------+---+
-            | [1]    | 1 |
-            +--------+---+
-            | [1, 2] | 2 |
-            +--------+---+
-            | [2, 1] | 1 |
-            +--------+---+
+            ┌────────┬───┐
+            │ b      | τ |
+            ╞════════╪═══╡
+            │ []     | 0 |
+            ├────────┼───┤
+            │ [1]    | 1 |
+            ├────────┼───┤
+            │ [1, 2] | 2 |
+            ├────────┼───┤
+            │ [2, 1] | 1 |
+            └────────┴───┘
 
         We can omit the header::
 
@@ -940,7 +935,6 @@ class Bijectionist(SageObject):
             [['b', 'τ'], [[], 0], [[1], 1], [[1, 2], 2], [[2, 1], 1]]
             sage: bij.statistics_table(header=False)[1]
             [[[], 0], [[1], 1], [[1, 2], 2], [[2, 1], 1]]
-
         """
         # table for alpha
         n_statistics = self._n_statistics
@@ -1059,7 +1053,6 @@ class Bijectionist(SageObject):
             Traceback (most recent call last):
             ...
             AssertionError: element (1, 2) was not found in A
-
         """
         # it might be much cheaper to construct the sets as subsets
         # of _statistics_possible_values - however, we do not want to
@@ -1078,7 +1071,7 @@ class Bijectionist(SageObject):
 
         This has to be called whenever ``self._P`` was modified.
 
-        It raises a :class:`ValueError`, if the restrictions on a
+        It raises a :exc:`ValueError`, if the restrictions on a
         block are contradictory.
 
         TESTS::
@@ -1091,7 +1084,6 @@ class Bijectionist(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: no possible values found for singleton block [[1, 2]]
-
         """
         self._possible_block_values = {}  # P -> Power(Z)
         for p, block in self._P.root_to_elements_dict().items():
@@ -1254,7 +1246,6 @@ class Bijectionist(SageObject):
 
         Note that the same error occurs when an element that is not the first element of the list is
         not in `A`.
-
         """
         self._bmilp = None
         for tA, tZ in elements_distributions:
@@ -1382,7 +1373,6 @@ class Bijectionist(SageObject):
             sage: bij.set_intertwining_relations((2, concat, lambda x, y: x + y), (2, skew_concat, lambda x, y: x + y))
             sage: list(bij.solutions_iterator())
             []
-
         """
         self._bmilp = None
         Pi_Rho = namedtuple("Pi_Rho", "numargs pi rho domain")
@@ -1420,7 +1410,6 @@ class Bijectionist(SageObject):
         and `\psi:Z\to A`.  Note that, in particular, `\phi` must be
         constant on blocks.
 
-
         EXAMPLES::
 
             sage: A = B = DyckWords(3)
@@ -1447,7 +1436,6 @@ class Bijectionist(SageObject):
              ( [   /\   ]             ) ]
              ( [  /  \  ]             ) ]
              ( [ /    \ ], [ /\/\/\ ] ) ]
-
         """
         self._bmilp = None
         self._phi_psi = phi_psi
@@ -1459,7 +1447,7 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``Q`` -- a set partition of ``A``
+        - ``Q`` -- set partition of ``A``
 
         EXAMPLES::
 
@@ -1468,7 +1456,6 @@ class Bijectionist(SageObject):
             sage: bij.set_homomesic([[1,2], [3]])
             sage: list(bij.solutions_iterator())
             [{1: 2, 2: 0, 3: 1}, {1: 0, 2: 2, 3: 1}]
-
         """
         self._bmilp = None
         if Q is None:
@@ -1640,7 +1627,6 @@ class Bijectionist(SageObject):
             {{'a', 'b'}}
             sage: bij.constant_blocks(optimal=True)
             {{'a', 'b'}, {'c', 'd'}}
-
         """
         if self._bmilp is None:
             self._bmilp = _BijectionistMILP(self)
@@ -1671,7 +1657,7 @@ class Bijectionist(SageObject):
         def merge_until_split():
             for tZ in list(multiple_preimages):
                 tP = multiple_preimages[tZ]
-                for i2 in range(len(tP)-1, -1, -1):
+                for i2 in range(len(tP) - 1, -1, -1):
                     for i1 in range(i2):
                         try:
                             solution = different_values(tP[i1], tP[i2])
@@ -1709,7 +1695,7 @@ class Bijectionist(SageObject):
         - ``p`` -- (optional) a block of `P`, or an element of a
           block of `P`, or a list of these
 
-        - ``optimal`` -- (default: ``False``) whether or not to
+        - ``optimal`` -- boolean (default: ``False``); whether or not to
           compute the minimal possible set of statistic values
 
         .. NOTE::
@@ -1748,7 +1734,7 @@ class Bijectionist(SageObject):
 
         Test if all formats are really possible::
 
-            sage: bij.possible_values(p="a")
+            sage: bij.possible_values(p='a')
             {'a': {1, 2}, 'b': {1, 2}}
             sage: bij.possible_values(p=["a", "b"])
             {'a': {1, 2}, 'b': {1, 2}}
@@ -1762,21 +1748,20 @@ class Bijectionist(SageObject):
             sage: A = B = 'ab'
             sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
             sage: bij.set_constant_blocks([['a', 'b']])
-            sage: bij.possible_values(p="a")
+            sage: bij.possible_values(p='a')
             {'a': {0, 1}, 'b': {0, 1}}
-            sage: bij.possible_values(p="a", optimal=True)
+            sage: bij.possible_values(p='a', optimal=True)
             {'a': set(), 'b': set()}
-
         """
         # convert input to set of block representatives
         blocks = set()
         if p in self._A:
             blocks.add(self._P.find(p))
-        elif type(p) is list:  # TODO: this looks very brittle
+        elif isinstance(p, list):  # TODO: this looks very brittle
             for p1 in p:
                 if p1 in self._A:
                     blocks.add(self._P.find(p1))
-                elif type(p1) is list:
+                elif isinstance(p1, list):
                     for p2 in p1:
                         blocks.add(self._P.find(p2))
 
@@ -1894,7 +1879,7 @@ class Bijectionist(SageObject):
                 # add constraint that not all of these can be 1, thus vetoing
                 # the current solution
                 minimal_subdistribution.add_constraint(sum(active_vars) <= len(active_vars) - 1,
-                                                       name="veto")
+                                                       name='veto')
             else:
                 s = new_s
 
@@ -1930,7 +1915,6 @@ class Bijectionist(SageObject):
             sage: d = {'a': 1, 'b': 0, 'c': 0, 'd': 0, 'e': 0}
             sage: bij._find_counterexample(bij._A, s0, d, False)
             {'a': 2, 'b': 2, 'c': 1, 'd': 3, 'e': 1}
-
         """
         bmilp = self._bmilp
         for z in self._Z:
@@ -2066,7 +2050,6 @@ class Bijectionist(SageObject):
 
             sage: sorted(D) in [d for d, _ in bij.minimal_subdistributions_iterator()]
             True
-
         """
         # see
         # https://mathoverflow.net/questions/406751/find-a-subdistribution/406975
@@ -2083,7 +2066,7 @@ class Bijectionist(SageObject):
         minimal_subdistribution.add_constraint(sum(D[p] for p in P) >= 1)
         for p in P:
             minimal_subdistribution.add_constraint(D[p] <= len(self._P.root_to_elements_dict()[p]))
-            minimal_subdistribution.add_constraint(X[p]*len(self._P.root_to_elements_dict()[p]) >= D[p] >= X[p])
+            minimal_subdistribution.add_constraint(X[p] * len(self._P.root_to_elements_dict()[p]) >= D[p] >= X[p])
 
         def add_counter_example_constraint(s):
             for v in self._Z:
@@ -2111,7 +2094,7 @@ class Bijectionist(SageObject):
                 support = [X[p] for p in P if d[p]]
                 # add constraint that the support is different
                 minimal_subdistribution.add_constraint(sum(support) <= len(support) - 1,
-                                                       name="veto")
+                                                       name='veto')
             else:
                 s = new_s
                 add_counter_example_constraint(s)
@@ -2169,13 +2152,12 @@ class Bijectionist(SageObject):
             sage: bij._preprocess_intertwining_relations()
             sage: bij._P
             {{[1, 2, 3]}, {[1, 3, 2]}, {[2, 1, 3]}, {[2, 3, 1]}, {[3, 1, 2]}, {[3, 2, 1]}}
-
         """
         A = self._A
         P = self._P
         images = defaultdict(set)  # A^k -> A, a_1,...,a_k +-> {pi(a_1,...,a_k) for all pi}
-        for composition_index, pi_rho in enumerate(self._pi_rho):
-            for a_tuple in itertools.product(*([A]*pi_rho.numargs)):
+        for pi_rho in self._pi_rho:
+            for a_tuple in itertools.product(*([A] * pi_rho.numargs)):
                 if pi_rho.domain is not None and not pi_rho.domain(*a_tuple):
                     continue
                 a = pi_rho.pi(*a_tuple)
@@ -2208,7 +2190,7 @@ class Bijectionist(SageObject):
         r"""
         An iterator over all solutions of the problem.
 
-        OUTPUT: An iterator over all possible mappings `s: A\to Z`
+        OUTPUT: an iterator over all possible mappings `s: A\to Z`
 
         ALGORITHM:
 
@@ -2275,7 +2257,7 @@ class Bijectionist(SageObject):
         EXAMPLES::
 
             sage: A = B = 'abc'
-            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver="GLPK")
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver='GLPK')
             sage: next(bij.solutions_iterator())
             {'a': 0, 'b': 1, 'c': 0}
 
@@ -2304,7 +2286,7 @@ class Bijectionist(SageObject):
 
             sage: P = [list(a) for n in range(N) for a in Permutations(n).conjugacy_classes()]
 
-            sage: bij = Bijectionist(A, B, tau, solver="GLPK")
+            sage: bij = Bijectionist(A, B, tau, solver='GLPK')
             sage: bij.set_statistics((len, len))
             sage: bij.set_constant_blocks(P)
             sage: for solution in bij.solutions_iterator():
@@ -2448,14 +2430,13 @@ class Bijectionist(SageObject):
             sage: s1_3 = next(iterator1)
             sage: len(set([tuple(sorted(s.items())) for s in [s1_1, s1_2, s1_3]]))
             3
-
         """
         if self._bmilp is None:
             self._bmilp = _BijectionistMILP(self)
         yield from self._bmilp.solutions_iterator(False, [])
 
 
-class _BijectionistMILP():
+class _BijectionistMILP:
     r"""
     Wrapper class for the MixedIntegerLinearProgram (MILP).
 
@@ -2468,7 +2449,7 @@ class _BijectionistMILP():
 
         INPUT:
 
-        - ``bijectionist`` -- an instance of :class:`Bijectionist`.
+        - ``bijectionist`` -- an instance of :class:`Bijectionist`
 
         - ``solutions`` -- (optional) a list of solutions of the
           problem, each provided as a dictionary mapping `(a, z)` to
@@ -2487,7 +2468,6 @@ class _BijectionistMILP():
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: _BijectionistMILP(bij)
             <sage.combinat.bijectionist._BijectionistMILP object at ...>
-
         """
         # the attributes of the bijectionist class we actually use:
         # _possible_block_values
@@ -2535,7 +2515,7 @@ class _BijectionistMILP():
         EXAMPLES::
 
             sage: A = B = ["a", "b", "c"]
-            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2, solver="GLPK")
+            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2, solver='GLPK')
             sage: bij.set_constant_blocks([["a", "b"]])
             sage: next(bij.solutions_iterator())
             {'a': 0, 'b': 0, 'c': 1}
@@ -2551,7 +2531,6 @@ class _BijectionistMILP():
                 x_1: s(a) = s(b) = 1
                 x_2: s(c) = 0
                 x_3: s(c) = 1
-
         """
         print("Constraints are:")
         b = self.milp.get_backend()
@@ -2565,9 +2544,9 @@ class _BijectionistMILP():
                 varid_name[i] = default_name
         for i, (lb, (indices, values), ub) in enumerate(self.milp.constraints()):
             if b.row_name(i):
-                print("    "+b.row_name(i)+":", end=" ")
+                print("    " + b.row_name(i) + ":", end=" ")
             if lb is not None:
-                print(str(ZZ(lb))+" <=", end=" ")
+                print(str(ZZ(lb)) + " <=", end=" ")
             first = True
             for j, c in sorted(zip(indices, values)):
                 c = ZZ(c)
@@ -2581,7 +2560,7 @@ class _BijectionistMILP():
                        + varid_name[j]), end=" ")
                 first = False
             # Upper bound
-            print("<= "+str(ZZ(ub)) if ub is not None else "")
+            print("<= " + str(ZZ(ub)) if ub is not None else "")
 
         if variables:
             print("Variables are:")
@@ -2610,7 +2589,6 @@ class _BijectionistMILP():
             sage: bmilp = bij._bmilp
             sage: bmilp._prepare_solution(True, bmilp._solution_cache[0])
             {'a': 0, 'c': 0}
-
         """
         P = self._bijectionist._P
         tZ = self._bijectionist._possible_block_values
@@ -2632,16 +2610,16 @@ class _BijectionistMILP():
 
         INPUT:
 
-        - ``additional_constraints`` -- a list of constraints for the
+        - ``additional_constraints`` -- list of constraints for the
           underlying MILP
 
-        - ``on_blocks``, whether to return the solution on blocks or
+        - ``on_blocks`` -- whether to return the solution on blocks or
           on all elements
 
         TESTS::
 
             sage: A = B = 'abc'
-            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver="GLPK")
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver='GLPK')
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: bmilp = _BijectionistMILP(bij)
             sage: it = bmilp.solutions_iterator(False, [])
@@ -2654,7 +2632,6 @@ class _BijectionistMILP():
             {'a': 0, 'b': 0, 'c': 1}
             sage: next(it)
             {'a': 1, 'b': 0, 'c': 0}
-
         """
         i = 0  # the first unconsidered element of _solution_cache
         while True:
@@ -2701,7 +2678,7 @@ class _BijectionistMILP():
 
         INPUT:
 
-        - ``solution`` -- a dictionary from the indices of the MILP to
+        - ``solution`` -- dictionary from the indices of the MILP to
           a boolean
 
         EXAMPLES::
@@ -2723,14 +2700,13 @@ class _BijectionistMILP():
                 x_1: s(a) = a
                 x_2: s(b) = b
                 x_3: s(b) = a
-
         """
         active_vars = [self._x[p, z]
                        for p in _disjoint_set_roots(self._bijectionist._P)
                        for z in self._bijectionist._possible_block_values[p]
                        if solution[(p, z)]]
         self.milp.add_constraint(sum(active_vars) <= len(active_vars) - 1,
-                                 name="veto")
+                                 name='veto')
         self._solution_cache.append(solution)
 
     def _is_solution(self, constraint, values):
@@ -2740,7 +2716,7 @@ class _BijectionistMILP():
         INPUT:
 
         - ``constraint`` -- a
-          :class:`sage.numerical.linear_functions.LinearConstraint`.
+          :class:`sage.numerical.linear_functions.LinearConstraint`
 
         - ``values`` -- a candidate for a solution of the MILP as a
           dictionary from pairs `(a, z)\in A\times Z` to `0` or `1`,
@@ -2826,7 +2802,7 @@ class _BijectionistMILP():
         for w in range(len(W)):
             for z in range(len(Z)):
                 self.milp.add_constraint(AZ_matrix[z][w] == B_matrix[z][w],
-                                         name="statistics")
+                                         name='statistics')
 
     def add_distribution_constraints(self):
         r"""
@@ -2857,14 +2833,13 @@ class _BijectionistMILP():
              [2, 3, 1]: 2,
              [3, 1, 2]: 2,
              [3, 2, 1]: 2}
-
         """
         Z = self._bijectionist._Z
         Z_dict = {z: i for i, z in enumerate(Z)}
         zero = self.milp.linear_functions_parent().zero()
         for tA, tZ in self._bijectionist._elements_distributions:
-            tA_sum = [zero]*len(Z_dict)
-            tZ_sum = [zero]*len(Z_dict)
+            tA_sum = [zero] * len(Z_dict)
+            tZ_sum = [zero] * len(Z_dict)
             for a in tA:
                 p = self._bijectionist._P.find(a)
                 for z in self._bijectionist._possible_block_values[p]:
@@ -2999,7 +2974,6 @@ class _BijectionistMILP():
              ( [   /\   ]             ) ]
              ( [  /  \  ]             ) ]
              ( [ /    \ ], [ /\/\/\ ] ) ]
-
         """
         P = self._bijectionist._P
         for phi, psi in self._bijectionist._phi_psi:
@@ -3045,12 +3019,13 @@ class _BijectionistMILP():
         tZ = self._bijectionist._possible_block_values
 
         def sum_q(q):
-            return sum(sum(z*self._x[P.find(a), z] for z in tZ[P.find(a)])
+            return sum(sum(z * self._x[P.find(a), z] for z in tZ[P.find(a)])
                        for a in q)
         q0 = Q[0]
         v0 = sum_q(q0)
         for q in Q[1:]:
-            self.milp.add_constraint(len(q0)*sum_q(q) == len(q)*v0, name=f"h: ({q})~({q0})")
+            self.milp.add_constraint(len(q0) * sum_q(q) == len(q) * v0,
+                                     name=f"h: ({q})~({q0})")
 
 
 def _invert_dict(d):
@@ -3060,7 +3035,7 @@ def _invert_dict(d):
 
     INPUT:
 
-    - ``d`` -- a dict
+    - ``d`` -- dictionary
 
     EXAMPLES::
 
@@ -3115,7 +3090,6 @@ def _non_copying_intersection(sets):
         sage: A = set([1,2]); B = set([2,3])
         sage: _non_copying_intersection([A, B])
         {2}
-
     """
     sets = sorted(sets, key=len)
     result = set.intersection(*sets)

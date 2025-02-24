@@ -2,6 +2,9 @@
 # Sage support utilities to read into the GAP session.
 #
 
+# Disable color in the prompt, it interferes with parsing.
+ColorPrompt(false);
+
 # Prevent loading the xgap package; we use the -p flag to GAP in order to
 # communicate with it via the pexpect interface; this is normally used by
 # for an xgap window to communicate with GAP, so unfortunately setting this
@@ -134,3 +137,17 @@ end;
 #
 # LogTo("/tmp/gapsage.log");
 #
+
+
+# Load the GAP packages that GAP itself tries to autoload in the
+# default configuration (see "PackagesToLoad" in lib/package.gi). The
+# combination of passing -A to gap and these LoadPackage statements
+# allows us to load the usual set of packages, but only if they are
+# installed. So most people will get exactly the default behavior,
+# but minimal installations won't throw warnings and fail tests.
+_autoloads := [ "autpgrp", "alnuth", "crisp", "ctbllib", "factint", "fga",
+                "irredsol", "laguna", "polenta", "polycyclic", "resclasses",
+                "sophus", "tomlib" ];
+for p in _autoloads do
+  LoadPackage(p);
+od;

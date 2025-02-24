@@ -85,7 +85,8 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
             sage: P = K.ideal(61).factor()[0][0]                                        # needs sage.rings.number_field
             sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
 
-            sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field(); type(k)
+            sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field()
+            sage: type(k)                                                               # needs sage.libs.linbox
             <class 'sage.rings.finite_rings.residue_field_givaro.ResidueFiniteField_givaro_with_category'>
             sage: a^5
             a^3 + 2*a^2 + a + 2
@@ -109,7 +110,7 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
         """
         INPUT:
 
-        - ``x`` -- Something to cast into ``self``.
+        - ``x`` -- something to cast into ``self``
 
         EXAMPLES::
 

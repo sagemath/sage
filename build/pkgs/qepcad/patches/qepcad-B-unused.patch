@@ -1,5 +1,10 @@
---- a/cad2d/src/CAD2D.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/cad2d/src/CAD2D.c	2018-08-29 20:10:06.394075819 -0600
+Description: Remove unused variables and static functions.
+Origin: https://src.fedoraproject.org/rpms/qepcad-B/blob/60ceecd/f/qepcad-B-unused.patch
+Forwarded: https://github.com/chriswestbrown/qepcad/pull/2
+Last-Update: 2021-06-23
+
+--- a/cad2d/src/CAD2D.c
++++ b/cad2d/src/CAD2D.c
 @@ -20,8 +20,8 @@
  
  void QepcadCls2D::CAD2D(Word Fs, Word *t_, Word *F_e_, Word *F_n_, Word *F_s_)
@@ -9,9 +14,9 @@
 +       Word A,D,F,F_e,F_n,F_s,Fh,J,P,Q,f,i,r,t;
 +
  Step1: /* Normalize. */
-        FIRST4(Fs,&r,&f,&Q,&Fh);
-        F = NORMQFF(Fh);
-@@ -70,9 +70,7 @@ Word AllAdjs(QepcadCls2D &Q, Word D,Word
+        t = -1;
+        F_e = F_n = F_s = NIL;
+@@ -72,9 +72,7 @@
  
  Word printgraph(Word D, Word L)
  {
@@ -22,9 +27,9 @@
    
    SWRITE("graph: {\n");
  
---- a/cad2d/src/CONSTRUCT.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/cad2d/src/CONSTRUCT.c	2018-08-29 20:10:06.395075818 -0600
-@@ -19,31 +19,10 @@ Construct a stack.
+--- a/cad2d/src/CONSTRUCT.c
++++ b/cad2d/src/CONSTRUCT.c
+@@ -19,31 +19,10 @@
  ======================================================================*/
  #include "cad2d.h"
  
@@ -57,9 +62,9 @@
  
  Step1: /* Extract the projection factors from their attribute lists. */
  	Word Ps = Ps_;
---- a/cad2d/src/PROJECT.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/cad2d/src/PROJECT.c	2018-08-29 20:10:06.395075818 -0600
-@@ -17,7 +17,7 @@ Projection Phase.
+--- a/cad2d/src/PROJECT.c
++++ b/cad2d/src/PROJECT.c
+@@ -17,7 +17,7 @@
  
  void QepcadCls2D::PROJECT(Word r, Word A,Word *P_, Word *J_)
  {
@@ -68,9 +73,9 @@
  
  Step1: /* Initialize. */
         P = LLCOPY(A); 
---- a/cad2d/src/TICAD.c.orig	2018-08-29 20:05:52.862359504 -0600
-+++ b/cad2d/src/TICAD.c	2018-08-29 20:10:06.394075819 -0600
-@@ -24,7 +24,7 @@ Output
+--- a/cad2d/src/TICAD.c
++++ b/cad2d/src/TICAD.c
+@@ -24,7 +24,7 @@
  
  Word QepcadCls2D::TICAD(Word Q,Word F,Word f,Word P,Word A)
  {
@@ -79,9 +84,9 @@
         Word L,d;
         
  Step1: /* Initialize. */
---- a/extensions/adj2d/ADJ_2D1.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/ADJ_2D1.c	2018-08-29 20:10:06.400075810 -0600
-@@ -16,6 +16,7 @@ Outputs
+--- a/extensions/adj2d/ADJ_2D1.c
++++ b/extensions/adj2d/ADJ_2D1.c
+@@ -16,6 +16,7 @@
  #include "adj2D.h"
  #include "adj2D.h"
  /**************************************/
@@ -89,7 +94,7 @@
  static FILE *OUTPUT;
  
  static void init()
-@@ -30,6 +31,7 @@ static void uninit()
+@@ -30,6 +31,7 @@
  {
    fclose(OUTPUT);
  }
@@ -97,9 +102,9 @@
  /**************************************/
  
  
---- a/extensions/adj2d/ADJ_2D1P2.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/ADJ_2D1P2.c	2018-08-29 20:10:06.401075809 -0600
-@@ -9,7 +9,7 @@ void sa_send(const char* S);
+--- a/extensions/adj2d/ADJ_2D1P2.c
++++ b/extensions/adj2d/ADJ_2D1P2.c
+@@ -9,7 +9,7 @@
  
  Word ADJ_2D1P2(Word U, Word V, Word w_l, Word B)
  {
@@ -108,9 +113,9 @@
  
    /*sa_send("[");*/
  
---- a/extensions/adj2d/ADJ_2D.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/ADJ_2D.c	2018-08-29 20:10:06.400075810 -0600
-@@ -17,12 +17,6 @@ Outputs
+--- a/extensions/adj2d/ADJ_2D.c
++++ b/extensions/adj2d/ADJ_2D.c
+@@ -17,12 +17,6 @@
  ======================================================================*/
  #include "adj2D.h"
  #include "adj2D.h"
@@ -123,7 +128,7 @@
  
  Word ADJ_2D(Word c, Word c_l, Word c_r, Word P, Word J)
  {
-@@ -37,18 +31,3 @@ Word ADJ_2D(Word c, Word c_l, Word c_r,
+@@ -37,18 +31,3 @@
  
    return Sol;
  }
@@ -142,9 +147,9 @@
 -  IWRITE(ADJ_D_Time);
 -  SWRITE(" millseconds.\n");
 -}
---- a/extensions/adj2d/ADJ_2D_PART.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/ADJ_2D_PART.c	2018-08-29 20:10:06.401075809 -0600
-@@ -80,8 +80,3 @@ Step5: /* Clean up evidence of "shadow s
+--- a/extensions/adj2d/ADJ_2D_PART.c
++++ b/extensions/adj2d/ADJ_2D_PART.c
+@@ -80,8 +80,3 @@
  Return: /* Prepare to return. */
         return Sol;
  }
@@ -153,9 +158,9 @@
 -{
 -
 -}
---- a/extensions/adj2d/oldadj/ACMADJ2D.c.orig	2018-08-29 20:05:52.864359502 -0600
-+++ b/extensions/adj2d/oldadj/ACMADJ2D.c	2018-08-29 20:10:06.400075810 -0600
-@@ -239,7 +239,7 @@ Step3: /* Make assignments. */
+--- a/extensions/adj2d/oldadj/ACMADJ2D.c
++++ b/extensions/adj2d/oldadj/ACMADJ2D.c
+@@ -239,7 +239,7 @@
  
  Word ASYS2(Word M, Word H, Word I, Word P2)
  {
@@ -164,9 +169,9 @@
  
    tH = -LBRNSIGN(IUPLBREVAL(M,FIRST(H)));
    tI = LBRNSIGN(IUPLBREVAL(M,SECOND(I)));
---- a/extensions/adj2d/P1.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/P1.c	2018-08-29 20:10:06.401075809 -0600
-@@ -25,7 +25,7 @@ Notes: P1 has three main cases to deal w
+--- a/extensions/adj2d/P1.c
++++ b/extensions/adj2d/P1.c
+@@ -25,7 +25,7 @@
  
  Word P1(Word U, Word V, Word W, Word v_l, Word B)
  {
@@ -175,9 +180,9 @@
  
    Sol = NIL; As = NIL;
  
---- a/extensions/adj2d/P3.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/P3.c	2018-08-29 20:10:06.401075809 -0600
-@@ -29,7 +29,7 @@ Note:  Program 3 is the first called, an
+--- a/extensions/adj2d/P3.c
++++ b/extensions/adj2d/P3.c
+@@ -29,7 +29,7 @@
  
  Word P3(Word U, Word V, Word W, Word v_l, Word B)
  {
@@ -186,9 +191,9 @@
  
  Step1: /* Special Case: No adjacencies to determine. */
    if (U == NIL && W == NIL)
---- a/extensions/adj2d/P4.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/P4.c	2018-08-29 20:10:06.400075810 -0600
-@@ -25,7 +25,7 @@ Notes: Program 4 tries to find solutions
+--- a/extensions/adj2d/P4.c
++++ b/extensions/adj2d/P4.c
+@@ -25,7 +25,7 @@
  
  Word P4(Word U, Word V, Word W, Word v_l, Word B)
  {
@@ -197,9 +202,9 @@
  
  Step1: /* Loop. */
    J = LIST2(B,AD2D_N_In); Sol = NIL; As = NIL;
---- a/extensions/adj2d/sac_ext/IUPTSII.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/sac_ext/IUPTSII.c	2018-08-29 20:10:06.401075809 -0600
-@@ -14,7 +14,7 @@ Outputs
+--- a/extensions/adj2d/sac_ext/IUPTSII.c
++++ b/extensions/adj2d/sac_ext/IUPTSII.c
+@@ -14,7 +14,7 @@
  
  Word IUPTSII(Word A, Word I)
  {
@@ -208,9 +213,9 @@
    
  Step1: /* One-point interval. */
         FIRST2(I,&i1,&i2);
---- a/extensions/adj2d/truthbytop/ADJ2DITOEL.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/truthbytop/ADJ2DITOEL.c	2018-08-29 20:10:06.400075810 -0600
-@@ -27,7 +27,7 @@ int bc(int a, int b)
+--- a/extensions/adj2d/truthbytop/ADJ2DITOEL.c
++++ b/extensions/adj2d/truthbytop/ADJ2DITOEL.c
+@@ -27,7 +27,7 @@
  
  Word ADJ2DITOEL(Word L, Word c1, Word c0)
  {
@@ -219,9 +224,9 @@
  
  Step1: /* Initialize & Special Case. */
    E = NIL;
---- a/extensions/adj2d/truthbytop/GRAPHMODULE.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/truthbytop/GRAPHMODULE.c	2018-08-29 20:10:06.400075810 -0600
-@@ -61,9 +61,9 @@ Return: /* Prepare to return. */
+--- a/extensions/adj2d/truthbytop/GRAPHMODULE.c
++++ b/extensions/adj2d/truthbytop/GRAPHMODULE.c
+@@ -61,9 +61,9 @@
  
  Word GSTACKHANDLE(Word i, Word G_)
  {  
@@ -234,7 +239,7 @@
    if (G == NIL || FIRST(FIRST(G)) != i)
      h = NIL;
    else
-@@ -74,7 +74,7 @@ Word GSTACKHANDLE(Word i, Word G_)
+@@ -74,7 +74,7 @@
  
  Word GVERTEXHANDLE(Word v, Word G_)
  {
@@ -243,9 +248,9 @@
  
    FIRST2(v,&i,&j);
    h = GSTACKHANDLE(i,G_);
---- a/extensions/lift2D/IBPRRIOAPSF.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/lift2D/IBPRRIOAPSF.c	2018-08-29 20:10:06.399075811 -0600
-@@ -30,8 +30,8 @@ Outputs
+--- a/extensions/lift2D/IBPRRIOAPSF.c
++++ b/extensions/lift2D/IBPRRIOAPSF.c
+@@ -30,8 +30,8 @@
  
  void IBPRRIOAPSF(Word M, Word I, Word B, BDigit p,BDigit k, Word *J_, Word *L_)
  {
@@ -256,8 +261,8 @@
  
  Step1: /* Convert the minimal polynomial to a software interval
            polynomial. */
---- a/extensions/lift2D/LIFTSRD2D.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/lift2D/LIFTSRD2D.c	2018-08-29 20:10:06.399075811 -0600
+--- a/extensions/lift2D/LIFTSRD2D.c
++++ b/extensions/lift2D/LIFTSRD2D.c
 @@ -14,7 +14,7 @@
  
  Word LIFTSRD2D(Word c, Word D, Word P, Word L)
@@ -267,7 +272,7 @@
    Word M,I,P2,Rp,t,R,Rs,Rt,SP,r,k,c1,c2,prev,Sp,sor,next,s2,nextc,X;
    Word DL,Rps,pf,a,b,e,temp,count,J;
    Word R_L;
-@@ -113,7 +113,6 @@ if (PCVERBOSE) { SWRITE("Tried up to pre
+@@ -113,7 +113,6 @@
    /* Go through the neighboring stacks! */
    /**************************************/
    i = 0;
@@ -275,7 +280,7 @@
  
    /* LIMITATION OF CURRENT IMPLEMENTATION 
       make sure the larger stack is to the right */
-@@ -127,7 +126,6 @@ if (PCVERBOSE) { SWRITE("Tried up to pre
+@@ -127,7 +126,6 @@
  
    for(S = NIL; S_R != NIL; ) { /******* BIG LOOP!!!! **********/
  
@@ -283,7 +288,7 @@
      c_R = FIRST(S_R);
  
      if (LELTI(c_R,MULSUB) != NIL && FIRST(FIRST(LELTI(c_R,MULSUB))) == J)
-@@ -153,7 +151,6 @@ if (PCVERBOSE) { SWRITE("Tried up to pre
+@@ -153,7 +151,6 @@
  		  NOTDET,
  		  LELTI(c_R,DEGSUB),LELTI(c_R,MULSUB));
        S = COMP(cp,S);
@@ -291,9 +296,9 @@
        if (RED(S_L) == NIL && RED(S_R) != NIL)
  	S_R = RED(S_R);
        else {
---- a/extensions/lift2D/LIFTSRR2D.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/lift2D/LIFTSRR2D.c	2018-08-29 20:10:06.400075810 -0600
-@@ -38,7 +38,7 @@ void debWRITEINTERVAL(Word I) {
+--- a/extensions/lift2D/LIFTSRR2D.c
++++ b/extensions/lift2D/LIFTSRR2D.c
+@@ -38,7 +38,7 @@
  
  Word LIFTSRR2D(Word c, Word D, Word P)
  {
@@ -302,7 +307,7 @@
    Word M,I,P2,Rp,t,R,Rs,Rt,SP,r,k,c1,c2,prev,Sp,sor,next,s2,nextc,X;
    Word OC, OT,count;
  
-@@ -108,7 +108,6 @@ Word LIFTSRR2D(Word c, Word D, Word P)
+@@ -108,7 +108,6 @@
    /* Go through the neighboring stacks! */
    /**************************************/
    i = 0;
@@ -310,7 +315,7 @@
    for(S = NIL; S_L != NIL; S_L = RED(S_L), S_R = RED(S_R)) {
  
      c_L = FIRST(S_L);
-@@ -133,8 +132,7 @@ Word LIFTSRR2D(Word c, Word D, Word P)
+@@ -133,8 +132,7 @@
  		  CCONC(LELTI(c,INDX),LIST1(i)),COMP(FIRST(LELTI(c_L,SIGNPF)),LELTI(c,SIGNPF)),
  		  NOTDET,
  		  LELTI(c_L,DEGSUB),LELTI(c_L,MULSUB));
@@ -320,9 +325,9 @@
  
      else {
        /************************************************************
---- a/extensions/lift2D/modHIPRRID.c.orig	2018-08-29 20:05:52.864359502 -0600
-+++ b/extensions/lift2D/modHIPRRID.c	2018-08-29 20:10:06.400075810 -0600
-@@ -22,7 +22,7 @@ void modHIPRRID(BDigit n, interval *A, W
+--- a/extensions/lift2D/modHIPRRID.c
++++ b/extensions/lift2D/modHIPRRID.c
+@@ -22,7 +22,7 @@
  {
  	BDigit k,s,t;
  	interval *B,*C;
@@ -331,9 +336,9 @@
  
  Step1: /* Compute a bound for the positive roots. */
  	k = HIPPRB(n,A);
---- a/extensions/lift2D/modHIPRRISD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/lift2D/modHIPRRISD.c	2018-08-29 20:10:06.399075811 -0600
-@@ -23,7 +23,7 @@ Outputs
+--- a/extensions/lift2D/modHIPRRISD.c
++++ b/extensions/lift2D/modHIPRRISD.c
+@@ -23,7 +23,7 @@
  
  Word modHIPRRISD(BDigit n, interval *A, Word a, Word b)
  {
@@ -342,9 +347,9 @@
  	Word c,L,L1,L2;
  	interval *B,*C,J;
  
---- a/extensions/lift2D/modIBPRRIOAPSF.c.orig	2018-08-29 20:05:52.863359503 -0600
-+++ b/extensions/lift2D/modIBPRRIOAPSF.c	2018-08-29 20:10:06.399075811 -0600
-@@ -31,8 +31,8 @@ Outputs
+--- a/extensions/lift2D/modIBPRRIOAPSF.c
++++ b/extensions/lift2D/modIBPRRIOAPSF.c
+@@ -31,8 +31,8 @@
  
  void modIBPRRIOAPSF(Word M, Word I, Word B, Word p, Word k, BDigit *J_, BDigit *L_)
  {
@@ -355,9 +360,9 @@
  
  Step1: /* Convert the minimal polynomial to a software interval
            polynomial. */
---- a/extensions/newadj/HAP2.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/newadj/HAP2.c	2018-08-29 20:10:06.406075801 -0600
-@@ -18,7 +18,7 @@ Outputs
+--- a/extensions/newadj/HAP2.c
++++ b/extensions/newadj/HAP2.c
+@@ -18,7 +18,7 @@
  
  Word HAP2(Word U, Word V, Word w_l, Word B)
  {
@@ -366,9 +371,9 @@
  
    Sol = NIL;
    S = NIL; 
---- a/extensions/newadj/HATEST.c.orig	2018-08-29 20:03:25.111519356 -0600
-+++ b/extensions/newadj/HATEST.c	2018-08-29 20:10:06.406075801 -0600
-@@ -111,13 +111,11 @@ Sample point coordinate write.
+--- a/extensions/newadj/HATEST.c
++++ b/extensions/newadj/HATEST.c
+@@ -111,13 +111,11 @@
  
  void SAMPLECWR(Word c)
  {
@@ -383,7 +388,7 @@
  
  Step2: /* Extended representation. */
         if (ISPRIMIT(s)) goto Step3;
-@@ -160,7 +158,7 @@ Algebraic number field elements list wri
+@@ -160,7 +158,7 @@
  
  void strippedAFLWR(Word M,Word I,Word N,Word a,Word A)
  {
@@ -392,7 +397,7 @@
         /* hide i; */
  
  Step1: /* Write. */
-@@ -196,7 +194,7 @@ Side effects
+@@ -196,7 +194,7 @@
  
  void ANDWRITExx(Word M, Word I, Word n)
  {
@@ -401,8 +406,8 @@
         Word a,a1,a2,b,b1,b2,d,d1,d2,e,f,m;
         Word N;
  
---- a/extensions/rend/CH_VIEW_WIN.cc.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/rend/CH_VIEW_WIN.cc	2018-08-29 20:10:06.397075815 -0600
+--- a/extensions/rend/CH_VIEW_WIN.cc
++++ b/extensions/rend/CH_VIEW_WIN.cc
 @@ -4,7 +4,7 @@
  Word CH_VIEW_WIN(Rend_Cell &M, Rend_Win &W, Word Xs, Word Xt,
  	      Word Ys,Word Yt, Word e, Word P)
@@ -412,9 +417,9 @@
  
    mx = LBRNP2PROD( LBRNSUM(W.x.W,W.X.W) , -1 );
    my = LBRNP2PROD( LBRNSUM(W.y.W,W.Y.W) , -1 );
---- a/extensions/rend/PLOT_2D_CAD.cc.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/rend/PLOT_2D_CAD.cc	2018-08-29 20:10:06.397075815 -0600
-@@ -42,9 +42,8 @@ void PLOT_2D_CAD(Word D, Word P, Word J,
+--- a/extensions/rend/PLOT_2D_CAD.cc
++++ b/extensions/rend/PLOT_2D_CAD.cc
+@@ -42,9 +42,8 @@
  {
        char c;
        Word N;
@@ -426,9 +431,9 @@
        longtostring(getpid(),FIFO_NAME+11);
        int t = 1, first = 1;
        int wcount = 0;
---- a/extensions/rend/Rend_Cell.cc.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/rend/Rend_Cell.cc	2018-08-29 20:10:06.398075813 -0600
-@@ -183,7 +183,7 @@ Word Rend_Cell::description(Rend_Win &W)
+--- a/extensions/rend/Rend_Cell.cc
++++ b/extensions/rend/Rend_Cell.cc
+@@ -183,7 +183,7 @@
   *************************************************************/
  void Rend_Cell::out_descrip(Rend_Win &W,ostream &out,Mapper &M)
  {
@@ -437,7 +442,7 @@
  
    int px = 8;
    int py = 8;
-@@ -310,7 +310,7 @@ void Rend_Cell::out_descrip(Rend_Win &W,
+@@ -310,7 +310,7 @@
   *************************************************************/
  void Rend_Cell::out_descrip_ps(Rend_Win &W,ostream &out, Mapper &M)
  {
@@ -446,7 +451,7 @@
    p = 12;
    switch (level) {
    case 0 :
-@@ -382,7 +382,7 @@ void Rend_Cell::out_descrip_ps(Rend_Win
+@@ -382,7 +382,7 @@
   *************************************************************/
  void Rend_Cell::out_descrip_ps_color(Rend_Win &W,ostream &out, Mapper &M)
  {
@@ -455,7 +460,7 @@
    p = 12;
    switch (level) {
    case 0 :
-@@ -475,7 +475,7 @@ void Rend_Cell::out_descrip_ps_color(Ren
+@@ -475,7 +475,7 @@
   *************************************************************/
  void Rend_Cell::out_descrip_ps_raji(Rend_Win &W,ostream &out, Mapper &M)
  {
@@ -464,7 +469,7 @@
    p = 12;
    switch (level) {
    case 0 :
-@@ -511,7 +511,7 @@ void Rend_Cell::out_descrip_ps_raji(Rend
+@@ -511,7 +511,7 @@
   *************************************************************/
  void Rend_Cell::out_descrip_ps_standard(Rend_Win &W,ostream &out, Mapper &M)
  {
@@ -473,9 +478,9 @@
    p = 12;
    switch (level) {
    case 0 :
---- a/extensions/rend/Rend_Sample.cc.orig	2018-08-29 20:07:27.087257552 -0600
-+++ b/extensions/rend/Rend_Sample.cc	2018-08-29 20:10:06.396075816 -0600
-@@ -46,7 +46,7 @@ Rend_Sample_1DS::Rend_Sample_1DS(Word C,
+--- a/extensions/rend/Rend_Sample.cc
++++ b/extensions/rend/Rend_Sample.cc
+@@ -46,7 +46,7 @@
   *************************************************************/
  Word Rend_Sample_1DS::coordinate(int k)
  {
@@ -484,7 +489,7 @@
  
    P = A.W; J = I.W;
  
-@@ -64,7 +64,7 @@ Step2: /* Save interval refinement and r
+@@ -64,7 +64,7 @@
  
  Word Rend_Sample_1DS::round(int k, int roundup)
  {
@@ -493,7 +498,7 @@
  
    P = A.W; J = I.W;
  
-@@ -109,7 +109,7 @@ Rend_Sample_1DO::Rend_Sample_1DO(Rend_Ce
+@@ -109,7 +109,7 @@
  
  Word Rend_Sample_1DO::coordinate(int k)
  {
@@ -502,7 +507,7 @@
    do {
      j1 = l -> sample -> round(kp,1);
      j2 = r -> sample -> round(kp,0);
-@@ -132,8 +132,8 @@ Word Rend_Sample_1DO::coordinate(int k)
+@@ -132,8 +132,8 @@
   *************************************************************/
  Rend_Sample_2DS::Rend_Sample_2DS(Word C)
  {
@@ -513,7 +518,7 @@
  
    //-- Set A to the minpol of sample point, and I to isolating int --/
    T = LELTI( C , SAMPLE );
-@@ -172,7 +172,7 @@ Rend_Sample_2DS::Rend_Sample_2DS(Word C)
+@@ -172,7 +172,7 @@
   *************************************************************/
  Word Rend_Sample_2DS::coordinate(int k)
  {
@@ -522,9 +527,9 @@
  
    
  Step1: /* Initialize and decide if refinement is even necessary. */
---- a/extensions/rend/WRITE_PS_INTERACTIVE.cc.orig	2018-08-29 20:05:52.863359503 -0600
-+++ b/extensions/rend/WRITE_PS_INTERACTIVE.cc	2018-08-29 20:10:06.399075811 -0600
-@@ -190,8 +190,8 @@ void WRITE_PS_INTERACTIVE(Rend_Cell &M,
+--- a/extensions/rend/WRITE_PS_INTERACTIVE.cc
++++ b/extensions/rend/WRITE_PS_INTERACTIVE.cc
+@@ -190,8 +190,8 @@
         **********************************************************/
      case 'a':
        {
@@ -535,9 +540,9 @@
  	SWRITE("Provide an origin: ");
  	qein() >> Ox >> Oy;
  	OX = IEEELBRN(Ox);
---- a/extensions/sfext/addpol/BPOLSETS.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/addpol/BPOLSETS.c	2018-08-29 20:10:06.405075803 -0600
-@@ -24,7 +24,7 @@ Outputs
+--- a/extensions/sfext/addpol/BPOLSETS.c
++++ b/extensions/sfext/addpol/BPOLSETS.c
+@@ -24,7 +24,7 @@
  
  void BPOLSETS(Word L_, Word D, Word P, Word *T_, Word *N_)
  {
@@ -546,9 +551,9 @@
  	   S_T,S_L,s_c,c,i,Tb,Tp;
  
  Step1: /* Initialization. */
---- a/extensions/sfext/addpol/CFLCELLLIST.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/addpol/CFLCELLLIST.c	2018-08-29 20:10:06.405075803 -0600
-@@ -21,8 +21,7 @@ static Word comp(Word A, Word B);
+--- a/extensions/sfext/addpol/CFLCELLLIST.c
++++ b/extensions/sfext/addpol/CFLCELLLIST.c
+@@ -21,8 +21,7 @@
  
  Word CFLCELLLIST(Word L_D)
  {
@@ -558,9 +563,9 @@
  
  Step1: /* Initialize. */
        C = NIL;
---- a/extensions/sfext/addpol/CLEAN_BIGLOOP.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/addpol/CLEAN_BIGLOOP.c	2018-08-29 20:10:06.405075803 -0600
-@@ -15,8 +15,8 @@ Inputs
+--- a/extensions/sfext/addpol/CLEAN_BIGLOOP.c
++++ b/extensions/sfext/addpol/CLEAN_BIGLOOP.c
+@@ -15,8 +15,8 @@
  
  void QepcadCls::CLEAN_BIGLOOP(Word Jb, Word Pb, Word P0, Word D0, Word N, Word *P_, Word *D_)
  {
@@ -571,9 +576,9 @@
        Word inum,tm,temp;
  
  Step1: /* Initialize. */
---- a/extensions/sfext/addpol/KCONST.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/addpol/KCONST.c	2018-08-29 20:10:06.405075803 -0600
-@@ -53,8 +53,7 @@ static Word S1_EMPTY(Word S1)
+--- a/extensions/sfext/addpol/KCONST.c
++++ b/extensions/sfext/addpol/KCONST.c
+@@ -53,8 +53,7 @@
  
  static Word S2_IN(Word o, Word S2)
  {
@@ -583,7 +588,7 @@
  	if ( EQUAL(FIRST(FIRST(S2)),o) )
  	  return (1); }
        return (0);
-@@ -79,30 +78,6 @@ static Word S2_EMPTY(Word S2)
+@@ -79,30 +78,6 @@
        return ( (S2 == NIL) );
  }
  
@@ -614,7 +619,7 @@
  /*--------- List of derivative factor  indices. --------*/
  
  static Word LIST_OF_DI(Word o, Word J, Word P)
-@@ -132,7 +107,7 @@ return (L);
+@@ -132,7 +107,7 @@
  
  void KCONST(Word J, Word P, Word G, Word *K_, Word *KT_)
  {
@@ -623,9 +628,9 @@
  
  /* Initialization. */
        S1 = NIL; S2 = NIL;
---- a/extensions/sfext/addpol/MINPFSETNSC.c.orig	2018-08-29 20:05:52.865359501 -0600
-+++ b/extensions/sfext/addpol/MINPFSETNSC.c	2018-08-29 20:10:06.405075803 -0600
-@@ -38,8 +38,8 @@ static Word comp1(Word a,Word b) {
+--- a/extensions/sfext/addpol/MINPFSETNSC.c
++++ b/extensions/sfext/addpol/MINPFSETNSC.c
+@@ -38,8 +38,8 @@
  
  Word MINPFSETNSC(Word P,Word S,Word D,Word K)
  {
@@ -636,9 +641,9 @@
  
  Step1: /* Initialization. */
        C = NIL; Sltr = NIL; S_r = NIL; Pltr = NIL; N = LENGTH(K);
---- a/extensions/sfext/addpol/STRIPPED_BIGLOOP.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/addpol/STRIPPED_BIGLOOP.c	2018-08-29 20:10:06.405075803 -0600
-@@ -15,8 +15,8 @@ Inputs
+--- a/extensions/sfext/addpol/STRIPPED_BIGLOOP.c
++++ b/extensions/sfext/addpol/STRIPPED_BIGLOOP.c
+@@ -15,8 +15,8 @@
  
  void QepcadCls::STRIPPED_BIGLOOP(Word Jb, Word Pb, Word P0, Word D0, Word N, Word *P_, Word *D_)
  {
@@ -649,9 +654,9 @@
        Word inum,tm,tt;
  
  Step1: /* Initialize. */
---- a/extensions/sfext/crcads/CSORCELL.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/crcads/CSORCELL.c	2018-08-29 20:10:06.405075803 -0600
-@@ -19,7 +19,7 @@ Side Effects
+--- a/extensions/sfext/crcads/CSORCELL.c
++++ b/extensions/sfext/crcads/CSORCELL.c
+@@ -19,7 +19,7 @@
  
  void QepcadCls::CSORCELLTR(Word c, Word Pp, Word PpO, Word PpN)
  {
@@ -660,9 +665,9 @@
  
        k = LELTI(c,LEVEL);
  
---- a/extensions/sfext/crcads/CSORCELL_MOD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/crcads/CSORCELL_MOD.c	2018-08-29 20:10:06.406075801 -0600
-@@ -25,8 +25,8 @@ static Word LLPFZC(Word c,Word P);
+--- a/extensions/sfext/crcads/CSORCELL_MOD.c
++++ b/extensions/sfext/crcads/CSORCELL_MOD.c
+@@ -25,8 +25,8 @@
  
  void QepcadCls::CSORCELLTR_MOD(Word c, Word Pp, Word PpO, Word PpN, Word P)
  {
@@ -673,9 +678,9 @@
  
  Step0:
        k = LELTI(c,LEVEL);
---- a/extensions/sfext/crcads/LISTOFCWTV.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/crcads/LISTOFCWTV.c	2018-08-29 20:10:06.406075801 -0600
-@@ -14,7 +14,7 @@ Outputs
+--- a/extensions/sfext/crcads/LISTOFCWTV.c
++++ b/extensions/sfext/crcads/LISTOFCWTV.c
+@@ -14,7 +14,7 @@
  
  void LISTOFCWTV(Word C, Word *Lt_, Word *Lf_)
  {
@@ -684,9 +689,9 @@
  
  Step1: /* If C is undetermined recurse on the children. */
        t = LELTI(C,TRUTH); 
---- a/extensions/sfext/espcad/ESPCADLSNC.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/espcad/ESPCADLSNC.c	2018-08-29 20:10:06.406075801 -0600
-@@ -97,7 +97,7 @@ Output
+--- a/extensions/sfext/espcad/ESPCADLSNC.c
++++ b/extensions/sfext/espcad/ESPCADLSNC.c
+@@ -97,7 +97,7 @@
  
  Word ESPCADCTLSNC(Word c1,Word c2,Word c3,Word i,Word P)
  {
@@ -695,7 +700,7 @@
  
  Step1: /* Initialize. */
        if (LELTI(c1,SC_TMPM) == LELTI(c2,SC_TMPM) && 
-@@ -106,7 +106,6 @@ Step1: /* Initialize. */
+@@ -106,7 +106,6 @@
  	goto Return; }
        S1 = LELTI(c1,SC_SIGN);
        S2 = LELTI(c2,SC_SIGN);
@@ -703,9 +708,9 @@
  
  Step2: /* Figure out which polynomials are zero in c2. */
        for(n = 0, Sp1 = S1, Sp2 = S2, T = NIL; n < LENGTH(S1); n++) {
---- a/extensions/sfext/formula/FMAATOMREAD.c.orig	2018-08-29 20:05:52.865359501 -0600
-+++ b/extensions/sfext/formula/FMAATOMREAD.c	2018-08-29 20:10:06.403075806 -0600
-@@ -13,9 +13,9 @@ Word POLYINDEX(Word P, Word p, Word r, W
+--- a/extensions/sfext/formula/FMAATOMREAD.c
++++ b/extensions/sfext/formula/FMAATOMREAD.c
+@@ -13,9 +13,9 @@
  
  void FMAATOMREAD(Word Q, Word V, Word *F_, Word *t_)
  {
@@ -717,9 +722,9 @@
  
  Step1: /* Read the left polynomial. */
          t = 1; r = LENGTH(V); F = NIL;
---- a/extensions/sfext/formula/FMACELLEVAL.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FMACELLEVAL.c	2018-08-29 20:10:06.404075804 -0600
-@@ -15,7 +15,7 @@ Outputs
+--- a/extensions/sfext/formula/FMACELLEVAL.c
++++ b/extensions/sfext/formula/FMACELLEVAL.c
+@@ -15,7 +15,7 @@
  
  Word FMACELLEVAL(Word F, Word C, Word P)
  {
@@ -728,9 +733,9 @@
  
    switch(FIRST(F)) {
      
---- a/extensions/sfext/formula/FMAPOLLIST.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FMAPOLLIST.c	2018-08-29 20:10:06.404075804 -0600
-@@ -19,7 +19,7 @@ static Word subprog(Word F);
+--- a/extensions/sfext/formula/FMAPOLLIST.c
++++ b/extensions/sfext/formula/FMAPOLLIST.c
+@@ -19,7 +19,7 @@
  
  Word FMAPOLLIST(Word F, Word P)
  {
@@ -739,9 +744,9 @@
  
    Q = NIL;
    L = subprog(F);
---- a/extensions/sfext/formula/FMATRYDISTRIBUTE.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FMATRYDISTRIBUTE.c	2018-08-29 20:10:06.404075804 -0600
-@@ -45,7 +45,7 @@ Fp: the conjunction of C and F.  The fun
+--- a/extensions/sfext/formula/FMATRYDISTRIBUTE.c
++++ b/extensions/sfext/formula/FMATRYDISTRIBUTE.c
+@@ -45,7 +45,7 @@
  Word FMADISTRIBUTE(Word F, Word C)
  {
  
@@ -750,7 +755,7 @@
    f = FIRST(F);
  
    switch(f)
-@@ -59,7 +59,6 @@ Word FMADISTRIBUTE(Word F, Word C)
+@@ -59,7 +59,6 @@
      L = NIL;
      for(Fp = CINV(RED(F)); Fp != NIL; Fp = RED(Fp))
      {      
@@ -758,9 +763,9 @@
        gp = FMADISTRIBUTE(FIRST(Fp),C);
        L = COMP(gp,L);
      }
---- a/extensions/sfext/formula/FMAWRITE.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FMAWRITE.c	2018-08-29 20:10:06.404075804 -0600
-@@ -8,7 +8,7 @@ ForMulA write.
+--- a/extensions/sfext/formula/FMAWRITE.c
++++ b/extensions/sfext/formula/FMAWRITE.c
+@@ -8,7 +8,7 @@
  
  void FMAWRITE(Word F, Word P, Word V)
  {
@@ -769,9 +774,9 @@
  
    switch(FTYPEINFO(F)) {
  
---- a/extensions/sfext/formula/FMAWRITELATEX.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FMAWRITELATEX.c	2018-08-29 20:10:06.404075804 -0600
-@@ -8,7 +8,7 @@ ForMulA write.
+--- a/extensions/sfext/formula/FMAWRITELATEX.c
++++ b/extensions/sfext/formula/FMAWRITELATEX.c
+@@ -8,7 +8,7 @@
  
  void FMAWRITELATEX(Word F, Word P, Word V)
  {
@@ -780,7 +785,7 @@
  
    switch(FTYPEINFO(F)) {
  
-@@ -62,7 +62,7 @@ void FMAWRITELATEX(Word F, Word P, Word
+@@ -62,7 +62,7 @@
  
  void FMAWRITELATEXp(Word F, Word P, Word V, Word flag)
  {
@@ -789,9 +794,9 @@
  
    switch(FTYPEINFO(F)) {
  
---- a/extensions/sfext/formula/FMAWRITENEWLINE.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FMAWRITENEWLINE.c	2018-08-29 20:10:06.404075804 -0600
-@@ -10,7 +10,7 @@ ForMulA write.
+--- a/extensions/sfext/formula/FMAWRITENEWLINE.c
++++ b/extensions/sfext/formula/FMAWRITENEWLINE.c
+@@ -10,7 +10,7 @@
  
  void FMAWRITENEWLINE(Word F, Word P, Word V, Word n)
  {
@@ -800,7 +805,7 @@
  
    switch(FTYPEINFO(F)) {
  
-@@ -65,7 +65,7 @@ void FMAWRITENEWLINE(Word F, Word P, Wor
+@@ -65,7 +65,7 @@
  
  void FMAWRITENEWLINEp(Word F, Word P, Word V, Word flag)
  {
@@ -809,9 +814,9 @@
  
    switch(FTYPEINFO(F)) {
  
---- a/extensions/sfext/formula/FMAWRITEp.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FMAWRITEp.c	2018-08-29 20:10:06.404075804 -0600
-@@ -9,7 +9,7 @@ ForMulA write.
+--- a/extensions/sfext/formula/FMAWRITEp.c
++++ b/extensions/sfext/formula/FMAWRITEp.c
+@@ -9,7 +9,7 @@
  
  void FMAWRITEp(Word F, Word P, Word V, Word flag)
  {
@@ -820,9 +825,9 @@
  
    switch(FTYPEINFO(F)) {
  
---- a/extensions/sfext/formula/FMAWRITEQEIN.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FMAWRITEQEIN.c	2018-08-29 20:10:06.404075804 -0600
-@@ -7,7 +7,7 @@ ForMulA write.
+--- a/extensions/sfext/formula/FMAWRITEQEIN.c
++++ b/extensions/sfext/formula/FMAWRITEQEIN.c
+@@ -7,7 +7,7 @@
  
  void FMAWRITEQEIN(Word F, Word P, Word V)
  {
@@ -831,9 +836,9 @@
  
  Step1: /* Get list of polynomials. */
    Q = FMAPOLLIST(F,P);
---- a/extensions/sfext/minhit/MINHITSETSRDR.c.orig	2018-08-29 20:03:25.109519358 -0600
-+++ b/extensions/sfext/minhit/MINHITSETSRDR.c	2018-08-29 20:10:06.402075807 -0600
-@@ -27,7 +27,7 @@ Note:  The point is that not only sortin
+--- a/extensions/sfext/minhit/MINHITSETSRDR.c
++++ b/extensions/sfext/minhit/MINHITSETSRDR.c
+@@ -27,7 +27,7 @@
  static Word comp(Word a, Word b) __pure;
  
  static Word comp(Word a, Word b) {
@@ -842,9 +847,9 @@
        ap = a; bp = b;
        t =  BDCOMP(LENGTH(ap),LENGTH(bp));
        while ((t == 0) && (bp != NIL) && (ap != NIL)) { 
---- a/extensions/sfext/pcadst/CADFPCAD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/pcadst/CADFPCAD.c	2018-08-29 20:10:06.402075807 -0600
-@@ -21,7 +21,7 @@ Outputs
+--- a/extensions/sfext/pcadst/CADFPCAD.c
++++ b/extensions/sfext/pcadst/CADFPCAD.c
+@@ -21,7 +21,7 @@
  
  Word CADFPCAD(Word D, Word P, Word S, Word I, Word Pb)
  {
@@ -853,9 +858,9 @@
        Word Mb,mb;
  
  Step1: /* Is D the root cell? */
---- a/extensions/sfext/pcadst/CADFPCADWI.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/pcadst/CADFPCADWI.c	2018-08-29 20:10:06.401075809 -0600
-@@ -22,7 +22,7 @@ Outputs
+--- a/extensions/sfext/pcadst/CADFPCADWI.c
++++ b/extensions/sfext/pcadst/CADFPCADWI.c
+@@ -22,7 +22,7 @@
  
  Word CADFPCADWI(Word D, Word P, Word S, Word I, Word Pb)
  {
@@ -864,9 +869,9 @@
        Word Mb,mb;
  
  Step1: /* Is D the root cell? */
---- a/extensions/sfext/pcadst/CCADCONEXT.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/pcadst/CCADCONEXT.c	2018-08-29 20:10:06.402075807 -0600
-@@ -21,7 +21,7 @@ Outputs
+--- a/extensions/sfext/pcadst/CCADCONEXT.c
++++ b/extensions/sfext/pcadst/CCADCONEXT.c
+@@ -21,7 +21,7 @@
  
  void CCADCONEXT(Word n, Word P, Word C, Word *Ps_, Word *Cs_, Word *N_)
  {
@@ -875,9 +880,9 @@
  
  Word t;
  
---- a/extensions/sfext/pcadst/CCADCONmod.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/pcadst/CCADCONmod.c	2018-08-29 20:10:06.402075807 -0600
-@@ -22,7 +22,7 @@ Outputs
+--- a/extensions/sfext/pcadst/CCADCONmod.c
++++ b/extensions/sfext/pcadst/CCADCONmod.c
+@@ -22,7 +22,7 @@
  
  void CCADCONmod(Word n, Word P, Word C, Word *Ps_, Word *Cs_)
  {
@@ -886,9 +891,9 @@
  
  Step1: /* Set Ps to the empty projection list, and Cs to the full 
  original CAD C. */
---- a/extensions/sfext/pcadst/LTFOCALWTV.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/pcadst/LTFOCALWTV.c	2018-08-29 20:10:06.402075807 -0600
-@@ -16,7 +16,7 @@ Outputs
+--- a/extensions/sfext/pcadst/LTFOCALWTV.c
++++ b/extensions/sfext/pcadst/LTFOCALWTV.c
+@@ -16,7 +16,7 @@
  
  void LTFOCALWTV(Word C, Word n, Word *Lt_, Word *Lf_)
  {
@@ -897,9 +902,9 @@
  
  Step1: /* If C is undetermined recurse on the children. */
        t = LELTI(C,SC_CDTV); 
---- a/extensions/sfext/pcadst/LTFOCWTV.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/pcadst/LTFOCWTV.c	2018-08-29 20:10:06.402075807 -0600
-@@ -15,7 +15,7 @@ Outputs
+--- a/extensions/sfext/pcadst/LTFOCWTV.c
++++ b/extensions/sfext/pcadst/LTFOCWTV.c
+@@ -15,7 +15,7 @@
  
  void LTFOCWTV(Word C, Word *Lt_, Word *Lf_)
  {
@@ -908,9 +913,9 @@
  
  Step1: /* If C is undetermined recurse on the children. */
        t = LELTI(C,SC_CDTV); 
---- a/extensions/sfext/pcadst/PCADSCANL.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/pcadst/PCADSCANL.c	2018-08-29 20:10:06.402075807 -0600
-@@ -18,7 +18,7 @@ Outputs
+--- a/extensions/sfext/pcadst/PCADSCANL.c
++++ b/extensions/sfext/pcadst/PCADSCANL.c
+@@ -18,7 +18,7 @@
  
  Word PCADSCANL(Word Cs, Word i)
  {
@@ -919,8 +924,8 @@
  
  Step1: /* Get list of children. */
        CC = LELTI(Cs,SC_CDTV);
---- a/extensions/sfext/pcadst/PCADWRITE.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/pcadst/PCADWRITE.c	2018-08-29 20:10:06.402075807 -0600
+--- a/extensions/sfext/pcadst/PCADWRITE.c
++++ b/extensions/sfext/pcadst/PCADWRITE.c
 @@ -7,7 +7,7 @@
  
  void PCADWRITE(Word Cs, Word Ps)
@@ -930,9 +935,9 @@
  
  Step1: /* */
        I = PCADCINDEX(Cs);
---- a/extensions/sfext/pcadst/SCADDSCON.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/pcadst/SCADDSCON.c	2018-08-29 20:10:06.401075809 -0600
-@@ -30,7 +30,7 @@ example, would be bad.
+--- a/extensions/sfext/pcadst/SCADDSCON.c
++++ b/extensions/sfext/pcadst/SCADDSCON.c
+@@ -30,7 +30,7 @@
  
  Word SCADDSCON(Word C, Word A, Word n)
  {
@@ -941,9 +946,9 @@
  
  Step1: /* Construct a preliminary version of Cs, with all but the child
  	  list filled in. */
---- a/extensions/sfext/pcadst/SIMPLE_CAD_INFO.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/pcadst/SIMPLE_CAD_INFO.c	2018-08-29 20:10:06.401075809 -0600
-@@ -6,7 +6,7 @@ n : the level
+--- a/extensions/sfext/pcadst/SIMPLE_CAD_INFO.c
++++ b/extensions/sfext/pcadst/SIMPLE_CAD_INFO.c
+@@ -6,7 +6,7 @@
  
  void SIMPLE_CAD_INFO(Word D, Word P, Word n, Word flag)
  {
@@ -952,9 +957,9 @@
  
  Step1: /* Check for the trivial cases. */
        switch( DOPFSUFF(P,LIST1(D)) ) {
---- a/extensions/sfext/projpf/PPFLPROJ.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/projpf/PPFLPROJ.c	2018-08-29 20:10:06.403075806 -0600
-@@ -17,11 +17,10 @@ Side Effects
+--- a/extensions/sfext/projpf/PPFLPROJ.c
++++ b/extensions/sfext/projpf/PPFLPROJ.c
+@@ -17,11 +17,10 @@
  
  void PPFLPROJ(Word L, Word i, Word P)
  {
@@ -967,9 +972,9 @@
        while(A != NIL) {
  	ADV(A,&p,&A);
  
---- a/extensions/sfext/sfcons/CYLIMPFORM.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/sfcons/CYLIMPFORM.c	2018-08-29 20:10:06.403075806 -0600
-@@ -9,7 +9,7 @@ A : a list of atoms from which to constr
+--- a/extensions/sfext/sfcons/CYLIMPFORM.c
++++ b/extensions/sfext/sfcons/CYLIMPFORM.c
+@@ -9,7 +9,7 @@
  
  Word CYLIMPFORM(Word C, Word P, Word k, Word A)
  {
@@ -978,9 +983,9 @@
  
  Step1: /* Set L to a list of all (k-1)-level cells over which there are
  k-level cells with SC_TMPM of TRUE. */
---- a/extensions/sfext/sfcons/GEOTEST.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/sfcons/GEOTEST.c	2018-08-29 20:10:06.403075806 -0600
-@@ -101,7 +101,7 @@ Word GEOMERGE(Word c,Word G,Word P)
+--- a/extensions/sfext/sfcons/GEOTEST.c
++++ b/extensions/sfext/sfcons/GEOTEST.c
+@@ -101,7 +101,7 @@
  
  Word GEOFIT(Word c,Word G,Word P)
  {
@@ -989,7 +994,7 @@
    FIRST5(G,&Q,&C_Q,&Ap,&R,&T);
    FIRST5(c,&Qp,&C_Qp,&App,&Rp,&Tp);
    Tp = SINTER(Tp,T);
-@@ -128,8 +128,8 @@ Word GEOFIT(Word c,Word G,Word P)
+@@ -128,8 +128,8 @@
  
  Word GEOTEST(Word C,Word P,Word k,Word A)
  {
@@ -1000,9 +1005,9 @@
  
  Step1: /* Set L to a list of all (k-1)-level cells over which there are
  k-level cells with SC_TMPM of TRUE. */
---- a/extensions/sfext/sfcons/SFC2.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/sfcons/SFC2.c	2018-08-29 20:10:06.402075807 -0600
-@@ -5,7 +5,7 @@ Solution formula construction version 2
+--- a/extensions/sfext/sfcons/SFC2.c
++++ b/extensions/sfext/sfcons/SFC2.c
+@@ -5,7 +5,7 @@
  
  void QepcadCls::SFC2(Word D, Word P, Word J, Word n, Word sfm)
  {
@@ -1011,9 +1016,9 @@
  
  Step1: /* Space is either empty or R^n. */
        t = DOPFSUFF(P,LIST1(D));
---- a/extensions/sfext/sfcons/SFC4.c.orig	2018-08-29 20:05:52.865359501 -0600
-+++ b/extensions/sfext/sfcons/SFC4.c	2018-08-29 20:10:06.403075806 -0600
-@@ -29,7 +29,7 @@ static Word F1; /* Flag indicating that
+--- a/extensions/sfext/sfcons/SFC4.c
++++ b/extensions/sfext/sfcons/SFC4.c
+@@ -29,7 +29,7 @@
  
  void QepcadCls::SFC4(Word D, Word P, Word J, Word n, Word L)
  {
@@ -1022,9 +1027,9 @@
        char e,s,m,c;
        e = s = m = c = '\0';
        T1 = T2 = T3 = T4 = 0;
---- a/extensions/sfext/sfcons/SFCFULLD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/sfcons/SFCFULLD.c	2018-08-29 20:10:06.403075806 -0600
-@@ -19,8 +19,7 @@ static Word PLISTOETAmod(Word p,Word B,W
+--- a/extensions/sfext/sfcons/SFCFULLD.c
++++ b/extensions/sfext/sfcons/SFCFULLD.c
+@@ -19,8 +19,7 @@
  
  void QepcadCls::SFCFULLD(Word D, Word P, Word J, Word n)
  {
@@ -1034,9 +1039,9 @@
  
  Step1: /* Space is either empty or R^n. */
        t = DOPFSUFF_FULLD(P,LIST1(D));
---- a/extensions/sfext/sfcons/SFCFULLDf.c.orig	2018-08-29 20:05:52.865359501 -0600
-+++ b/extensions/sfext/sfcons/SFCFULLDf.c	2018-08-29 20:10:06.403075806 -0600
-@@ -19,8 +19,7 @@ static Word PLISTOETAmod(Word p,Word B,W
+--- a/extensions/sfext/sfcons/SFCFULLDf.c
++++ b/extensions/sfext/sfcons/SFCFULLDf.c
+@@ -19,8 +19,7 @@
  
  Word QepcadCls::SFCFULLDf(Word D, Word P, Word J, Word n)
  {
@@ -1046,9 +1051,9 @@
  
  Step1: /* Space is either empty or R^n. */
        t = DOPFSUFF_FULLD(P,LIST1(D));
---- a/extensions/sfext/sfcons/SOLEXTINT.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/sfcons/SOLEXTINT.c	2018-08-29 20:10:06.403075806 -0600
-@@ -10,7 +10,7 @@ method to call and, of course, calls it.
+--- a/extensions/sfext/sfcons/SOLEXTINT.c
++++ b/extensions/sfext/sfcons/SOLEXTINT.c
+@@ -10,7 +10,7 @@
  
  void QepcadCls::SOLEXTINT()
  {
@@ -1057,9 +1062,9 @@
  
  Step1: /* Initialization */
    T = ACLOCK();
---- a/extensions/sfext/sort/GMSDS.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/sort/GMSDS.c	2018-08-29 20:10:06.404075804 -0600
-@@ -19,7 +19,7 @@ static Word G23VSDS(Word *v,Word m,Word
+--- a/extensions/sfext/sort/GMSDS.c
++++ b/extensions/sfext/sort/GMSDS.c
+@@ -19,7 +19,7 @@
  
  Word GMSDS(Word *A, Word m, Word (*C)(Word,Word))       
  {
@@ -1068,9 +1073,9 @@
  
  Step1: /* Split. */
         m1 = m >> 1;
---- a/plot2d/plot.cc.orig	2018-08-29 20:08:10.014211101 -0600
-+++ b/plot2d/plot.cc	2018-08-29 20:10:06.396075816 -0600
-@@ -112,7 +112,6 @@ void* readdata(void *x)
+--- a/plot2d/plot.cc
++++ b/plot2d/plot.cc
+@@ -112,7 +112,6 @@
  {
    vector<CADELT*> E;
    istream &in = *inp;
@@ -1078,9 +1083,9 @@
    char c;
    do {
      while( in >> c )
---- a/source/db/SINGULAR.c.orig	2018-08-29 20:08:10.015211100 -0600
-+++ b/source/db/SINGULAR.c	2018-08-29 20:10:06.406075801 -0600
-@@ -162,8 +162,6 @@ Return: /* Prepare for return. */
+--- a/source/db/SINGULAR.c
++++ b/source/db/SINGULAR.c
+@@ -162,8 +162,6 @@
  
  void SingularServer::IPFAC(Word r, Word P, Word *s_, Word *c_, Word *L_)
  {
@@ -1089,7 +1094,7 @@
    Word V = CreateVariableList(r);
    string out =  WritePolyForSingular(r,P,V);
  
-@@ -212,9 +210,6 @@ void SingularServer::IPFAC(Word r, Word
+@@ -212,9 +210,6 @@
    Word ct = IABSF(lcf);
    sn *= ISIGNF(lcf);
  
@@ -1099,9 +1104,9 @@
    // RETURN
    *s_ = sn;
    *c_ = ct;
---- a/source/db/unnamedpipe.h.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/db/unnamedpipe.h	2018-08-29 20:10:06.406075801 -0600
-@@ -118,7 +118,7 @@ public:
+--- a/source/db/unnamedpipe.h
++++ b/source/db/unnamedpipe.h
+@@ -118,7 +118,7 @@
      if (openmask[0]) { close(fd[0]); openmask[0] = false; } 
    }
    void closeOut() { 
@@ -1110,9 +1115,9 @@
      if (_out) { delete _out; _out = 0; }
      if (openmask[1]) { 
        //      write(fd[1],ts,2); 
---- a/source/io/DNFLWR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/DNFLWR.c	2018-08-29 20:10:06.407075800 -0600
-@@ -13,7 +13,7 @@ Disjuctive Normal Form Label Write.
+--- a/source/io/DNFLWR.c
++++ b/source/io/DNFLWR.c
+@@ -13,7 +13,7 @@
  
  void DNFLWR(Word N, Word V, Word F)
  {
@@ -1121,9 +1126,9 @@
  
  Step1: /* Classify the formula F. */
         T = FIRST(F);
---- a/source/io/DNFWR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/DNFWR.c	2018-08-29 20:10:06.408075798 -0600
-@@ -12,7 +12,7 @@ Disjunctive Normal Form Write.
+--- a/source/io/DNFWR.c
++++ b/source/io/DNFWR.c
+@@ -12,7 +12,7 @@
  
  void DNFWR(Word V, Word F)
  {
@@ -1132,9 +1137,9 @@
  
  Step1: /* Classify the formula F. */
         T = FIRST(F);
---- a/source/io/IPLLDWR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/IPLLDWR.c	2018-08-29 20:10:06.407075800 -0600
-@@ -12,7 +12,7 @@ Integral Polynomial, List of Lists, Dist
+--- a/source/io/IPLLDWR.c
++++ b/source/io/IPLLDWR.c
+@@ -12,7 +12,7 @@
  
  void IPLLDWR(Word V, Word A)
  {
@@ -1143,9 +1148,9 @@
         /* hide i,j,n,r; */
  
  Step1: /* Write. */
---- a/source/io/IPLLDWRMOD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/IPLLDWRMOD.c	2018-08-29 20:10:06.407075800 -0600
-@@ -12,7 +12,7 @@ Integral Polynomial, List of Lists, Dist
+--- a/source/io/IPLLDWRMOD.c
++++ b/source/io/IPLLDWRMOD.c
+@@ -12,7 +12,7 @@
  
  void IPLLDWRMOD(Word V, Word A)
  {
@@ -1154,9 +1159,9 @@
         /* hide i,j,n,r; */
  
  Step1: /* Write. */
---- a/source/io/PCADSWR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/PCADSWR.c	2018-08-29 20:10:06.407075800 -0600
-@@ -11,7 +11,7 @@ Partial CAD signature write.
+--- a/source/io/PCADSWR.c
++++ b/source/io/PCADSWR.c
+@@ -11,7 +11,7 @@
  
  void PCADSWR(Word c)
  {
@@ -1165,9 +1170,9 @@
         /* hide p; */
  
  Step1: /* common. */
---- a/source/io/PCADWR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/PCADWR.c	2018-08-29 20:10:06.407075800 -0600
-@@ -11,7 +11,7 @@ Partial CAD write.
+--- a/source/io/PCADWR.c
++++ b/source/io/PCADWR.c
+@@ -11,7 +11,7 @@
  
  void PCADWR(Word c)
  {
@@ -1176,9 +1181,9 @@
         /* hide p; */
  
  Step1: /* common. */
---- a/source/io/PRODWR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/PRODWR.c	2018-08-29 20:10:06.407075800 -0600
-@@ -10,7 +10,8 @@ Product Write.
+--- a/source/io/PRODWR.c
++++ b/source/io/PRODWR.c
+@@ -10,7 +10,8 @@
  
  void PRODWR(Word v)
  {
@@ -1188,9 +1193,9 @@
         /* hide i,j,n1; */
  
         SWRITE("In \"PRODWR\"! This is dead code!\n"); exit(1);
---- a/source/io/SAMPLEWR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/io/SAMPLEWR.c	2018-08-29 20:10:06.408075798 -0600
-@@ -55,8 +55,7 @@ Return: /* Prepare for return. */
+--- a/source/io/SAMPLEWR.c
++++ b/source/io/SAMPLEWR.c
+@@ -55,8 +55,7 @@
  
  void QepcadCls::SAMPLEWR(Word c)
  {
@@ -1200,9 +1205,9 @@
  
         s = LELTI(c,SAMPLE);
         k = LELTI(c,LEVEL);
---- a/source/main/CADautoConst.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/main/CADautoConst.c	2018-08-29 20:10:06.409075797 -0600
-@@ -16,11 +16,7 @@ been set to something other than NIL, th
+--- a/source/main/CADautoConst.c
++++ b/source/main/CADautoConst.c
+@@ -16,11 +16,7 @@
  
  void QepcadCls::CADautoConst()
  {
@@ -1215,9 +1220,9 @@
  
  Step1: /* Normalize. */
         FIRST4(GVF,&r,&f,&Q,&Fh);
---- a/source/main/INITCTRL.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/main/INITCTRL.c	2018-08-29 20:10:06.409075797 -0600
-@@ -7,12 +7,9 @@ Initialize Program/Trace Control.
+--- a/source/main/INITCTRL.c
++++ b/source/main/INITCTRL.c
+@@ -7,12 +7,9 @@
  
  void INITCTRL()
  {
@@ -1232,9 +1237,9 @@
  
  Step2: /* Initialize Algorithm Trace Control Variables. */
         TCPROJ = NIL;
---- a/source/main/INITIO.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/main/INITIO.c	2018-08-29 20:10:06.409075797 -0600
-@@ -14,8 +14,6 @@ void OutputContextInit(ostream&);
+--- a/source/main/INITIO.c
++++ b/source/main/INITIO.c
+@@ -14,8 +14,6 @@
  
  void INITIO()
  {
@@ -1243,9 +1248,9 @@
  Step1: /* Initialize Input. */	  
         if (isatty(0)) 
  	 InputContextInit(*(new readlineIstream()));
---- a/source/main/INITSTAT.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/main/INITSTAT.c	2018-08-29 20:10:06.409075797 -0600
-@@ -7,10 +7,6 @@ Initialize Statistics.
+--- a/source/main/INITSTAT.c
++++ b/source/main/INITSTAT.c
+@@ -7,10 +7,6 @@
  
  void INITSTAT()
  {
@@ -1256,9 +1261,20 @@
  Step5: /* Statistics on Databases. */
         TMDBMNG = 0;
         TMDBSAV = 0;
---- a/source/main/QEPCADauto.c.orig	2018-08-29 20:05:52.867359499 -0600
-+++ b/source/main/QEPCADauto.c	2018-08-29 20:10:06.409075797 -0600
-@@ -20,11 +20,8 @@ Quantifier Elimination by Partial Cylind
+--- a/source/main/PRINTBANNER.c
++++ b/source/main/PRINTBANNER.c
+@@ -12,7 +12,7 @@
+ static const char* versdate = "Thu Feb 25 14:48:53 EST 2021";
+ 
+ void setversline() {
+-  int j;
++  /* int j; */
+   SWRITE("   Version B ");
+   SWRITE(version);
+   SWRITE(", ");
+--- a/source/main/QEPCADauto.c
++++ b/source/main/QEPCADauto.c
+@@ -20,11 +20,8 @@
  
  void QepcadCls::QEPCADauto(Word Fs, Word *t_, Word *F_e_, Word *F_n_, Word *F_s_)
  {
@@ -1271,10 +1287,10 @@
 +       /* hide t; */
  
  Step1: /* Normalize. */
-        t = 0;
---- a/source/main/QEPCAD.c.orig	2018-08-29 20:05:52.867359499 -0600
-+++ b/source/main/QEPCAD.c	2018-08-29 20:10:06.409075797 -0600
-@@ -22,9 +22,6 @@ void QepcadCls::QEPCAD(Word Fs, Word *t_
+        t = -1;
+--- a/source/main/QEPCAD.c
++++ b/source/main/QEPCAD.c
+@@ -22,9 +22,6 @@
  {
         Word A,D,F,F_e,F_n,F_s,Fh,J,P,Q,Ths,f,i,r,t, T;
         /* hide Ths,i,t; */
@@ -1282,11 +1298,37 @@
 -       Word Cs,Ps,Qs,Pps,Cps,Qps,SF; /* Chris variables. */
 -       char c1,c2; /* Chris variables. */
  Step1: /* Normalize. */
-        t = 0;
+        t = -1;
         F_e = F_n = F_s = NIL;
---- a/source/proj/ECLEVEL.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/proj/ECLEVEL.c	2018-08-29 20:10:06.408075798 -0600
-@@ -14,10 +14,9 @@ Output
+--- a/source/main/qepcadcls.c
++++ b/source/main/qepcadcls.c
+@@ -87,7 +87,6 @@
+     OrigAtom &A = conjuncts[k];
+     Word r = A.r;
+     Word P = A.P;
+-    Word sigma = A.relop;
+     Word s, c, L;
+     IPFACDB(r,P,&s,&c,&L); // FACTOR
+     if (ISIGNF(c)<= 0) { FAIL("QepcadCls::UnsatCore::prepareForLift","Unexpected non-positive sign!"); }
+@@ -154,6 +153,7 @@
+   /*GEOP*/{NOOP,LEOP,EQOP,LEOP,GEOP,ALOP,GEOP,ALOP},
+   /*ALOP*/{NOOP,ALOP,EQOP,ALOP,ALOP,ALOP,ALOP,ALOP}
+ };
++#if 0
+ static
+ short T_sum[8][8] = {
+   //______|NOOP_LTOP_EQOP_LEOP_GTOP_NEOP_GEOP_ALOP
+@@ -166,6 +166,7 @@
+   /*GEOP*/{NOOP,ALOP,GEOP,ALOP,GTOP,ALOP,GEOP,ALOP},
+   /*ALOP*/{NOOP,ALOP,ALOP,ALOP,ALOP,ALOP,ALOP,ALOP}
+ };
++#endif
+ 
+ inline int signToSigma(int s) { return s < 0 ? LTOP : (s == 0 ? EQOP : GTOP); }
+ 
+--- a/source/proj/ECLEVEL.c
++++ b/source/proj/ECLEVEL.c
+@@ -14,10 +14,9 @@
  
  Word ECLEVEL(Word L)
  {
@@ -1298,9 +1340,9 @@
         k = 0;
  
  Step2: /* Loop. */
---- a/source/proj/PROJCO.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/proj/PROJCO.c	2018-08-29 20:10:06.408075798 -0600
-@@ -15,7 +15,7 @@ Collins' projection.
+--- a/source/proj/PROJCO.c
++++ b/source/proj/PROJCO.c
+@@ -15,7 +15,7 @@
  
  Word QepcadCls::PROJCO(Word r, Word A)
  {
@@ -1309,9 +1351,9 @@
              Rpp,Rs2,S1,Sp1,T,W,ap1,b,d,i,i1,i2,k,t;
  
  Step1: /* $r = 2$. */
---- a/source/proj/PROJECTauto.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/proj/PROJECTauto.c	2018-08-29 20:10:06.408075798 -0600
-@@ -17,7 +17,7 @@ Projection Phase.
+--- a/source/proj/PROJECTauto.c
++++ b/source/proj/PROJECTauto.c
+@@ -17,7 +17,7 @@
  
  void QepcadCls::PROJECTauto(Word r, Word A, Word *P_, Word *J_)
  {
@@ -1320,9 +1362,9 @@
  
  Step1: /* Initialize. */
         P = LLCOPY(A); 
---- a/source/proj/PROJECT.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/proj/PROJECT.c	2018-08-29 20:10:06.408075798 -0600
-@@ -19,7 +19,7 @@ Projection Phase.
+--- a/source/proj/PROJECT.c
++++ b/source/proj/PROJECT.c
+@@ -19,7 +19,7 @@
  
  void QepcadCls::PROJECT(Word r, Word A, Word *P_, Word *J_)
  {
@@ -1331,9 +1373,9 @@
  
  Step1: /* Initialize. */
         P = LLCOPY(A); 
---- a/source/proj/PROJMCECmod.c.orig	2018-08-29 20:07:50.511232206 -0600
-+++ b/source/proj/PROJMCECmod.c	2018-08-29 20:10:06.408075798 -0600
-@@ -18,8 +18,8 @@ not propogate!
+--- a/source/proj/PROJMCECmod.c
++++ b/source/proj/PROJMCECmod.c
+@@ -18,8 +18,8 @@
  
  Word QepcadCls::PROJMCECmod(Word r, Word A)
  {
@@ -1344,9 +1386,9 @@
  
  Step0: /* Obtain pivot constraint: If pivot is not all of level k, we can't use it! */
         C = LELTI(GVPIVOT,r);
---- a/source/proj/PROJMCmod.c.orig	2018-08-29 20:07:50.511232206 -0600
-+++ b/source/proj/PROJMCmod.c	2018-08-29 20:10:06.409075797 -0600
-@@ -20,8 +20,8 @@ using namespace std;
+--- a/source/proj/PROJMCmod.c
++++ b/source/proj/PROJMCmod.c
+@@ -20,8 +20,8 @@
  
  Word QepcadCls::PROJMCmod(Word r, Word A)
  {
@@ -1357,9 +1399,9 @@
  
  Step1: /* Obtain coefficients. */
         P = NIL;
---- a/source/proj/PROJMCx.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/proj/PROJMCx.c	2018-08-29 20:10:06.408075798 -0600
-@@ -15,7 +15,7 @@ McCallum's projection excluding leading
+--- a/source/proj/PROJMCx.c
++++ b/source/proj/PROJMCx.c
+@@ -15,7 +15,7 @@
  
  Word QepcadCls::PROJMCx(Word r, Word A)
  {
@@ -1368,9 +1410,9 @@
  
  Step1: /* Obtain coefficients. */
         P = NIL;
---- a/source/saclib/GCSI.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/saclib/GCSI.c	2018-08-29 20:10:06.408075798 -0600
-@@ -23,10 +23,9 @@ extern void gcw_MARK();
+--- a/source/saclib/GCSI.c
++++ b/source/saclib/GCSI.c
+@@ -23,10 +23,9 @@
  
  void GCSI(Word s, char *EACSTACK)
  {
@@ -1383,9 +1425,9 @@
  
  Step1: /* Setup. */
  	  if (GCM == 1) {
---- a/source/sysolve/EVALSYS.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/sysolve/EVALSYS.c	2018-08-29 20:10:06.407075800 -0600
-@@ -20,7 +20,7 @@ Outputs:
+--- a/source/sysolve/EVALSYS.c
++++ b/source/sysolve/EVALSYS.c
+@@ -20,7 +20,7 @@
  
  Word EVALSYS(Word S, BDigit t, Word R)
  {
@@ -1394,9 +1436,9 @@
    
  Step1: /* Construct the skelaton of L, the answer. */
    r = LENGTH(S);
---- a/source/sysolve/SYSSOLVE.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/sysolve/SYSSOLVE.c	2018-08-29 20:10:06.407075800 -0600
-@@ -21,7 +21,7 @@ Output
+--- a/source/sysolve/SYSSOLVE.c
++++ b/source/sysolve/SYSSOLVE.c
+@@ -21,7 +21,7 @@
  
  Word SYSSOLVECAD(BDigit r, Word L, Word A, Word Vp, QepcadCls &Q)
  {
@@ -1405,9 +1447,9 @@
  
    /* Set variable list */
    if (LENGTH(Vp) < r) {
---- a/source/sysolve/VERIFYCONSTSIGN.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/sysolve/VERIFYCONSTSIGN.c	2018-08-29 20:10:06.406075801 -0600
-@@ -78,7 +78,7 @@ BDigit VERIFYPOSITIVITY(Word A, BDigit r
+--- a/source/sysolve/VERIFYCONSTSIGN.c
++++ b/source/sysolve/VERIFYCONSTSIGN.c
+@@ -78,7 +78,7 @@
    else if (FIRST(A) != IROOT)
    {
      /* atomic formula is "P_A T_A 0", where P_A is of level k_A. */
@@ -1416,9 +1458,9 @@
      FIRST3(A,&T_A,&P_A,&k_A);
      if (r != k_A) { goto Return; }
      
---- a/source/ticad/ACCCVBC.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/ACCCVBC.c	2018-08-29 20:10:06.411075794 -0600
-@@ -28,7 +28,7 @@ static Word SECTIONPOLS(Word k, Word c,
+--- a/source/ticad/ACCCVBC.c
++++ b/source/ticad/ACCCVBC.c
+@@ -28,7 +28,7 @@
  
  Word QepcadCls::ACCCVBC(Word k, Word c, Word M, Word B1, Word b, Word* B1h)
  {
@@ -1427,7 +1469,7 @@
  
  Step1: /* Initialization **********************************************/
    a = NIL; /* this is the pseudo-sample point we're building up *******/
-@@ -44,7 +44,6 @@ Step1: /* Initialization ***************
+@@ -44,7 +44,6 @@
  Step2: /* Loop over each level from 1 to k ****************************/
    for(i = 1; i <= k; i++) {
      I_i = LELTI(IV,i);
@@ -1435,7 +1477,7 @@
      c_i = LELTI(LELTI(c_i,CHILD),I_i);
      
  Step3: /* c_i is a section over a 0-dimensional cell ******************/
-@@ -108,11 +107,10 @@ L : the list of all k-level polynomials
+@@ -108,11 +107,10 @@
  ======================================================================*/
  static Word SECTIONPOLS(Word k, Word c, Word P)
  {
@@ -1449,9 +1491,9 @@
      i = FIRST(FIRST(M));
      L = COMP(LELTI(P_k,i),L); }
    return L;
---- a/source/ticad/ACCCVBCR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/ACCCVBCR.c	2018-08-29 20:10:06.409075797 -0600
-@@ -25,7 +25,7 @@ static Word SECTIONPOLS(Word k, Word c,
+--- a/source/ticad/ACCCVBCR.c
++++ b/source/ticad/ACCCVBCR.c
+@@ -25,7 +25,7 @@
  
  Word QepcadCls::ACCCVBCR(Word k, Word c, Word B1, Word b, Word* B1h)
  {
@@ -1460,7 +1502,7 @@
  
  Step1: /* Initialization **********************************************/
    a = NIL; /* this is the pseudo-sample point we're building up *******/
-@@ -41,7 +41,6 @@ Step2: /* Loop over each level from 1 to
+@@ -41,7 +41,6 @@
    c_i = GVPC;
    for(i = 1; i <= k; i++) {
      I_i = LELTI(IV,i);
@@ -1468,7 +1510,7 @@
      c_i = LELTI(LELTI(c_i,CHILD),I_i);
      
  Step3: /* c_i is a section over a 0-dimensional cell ******************/
-@@ -99,11 +98,10 @@ L : the list of all k-level polynomials
+@@ -99,11 +98,10 @@
  ======================================================================*/
  static Word SECTIONPOLS(Word k, Word c, Word P)
  {
@@ -1482,9 +1524,9 @@
      i = FIRST(FIRST(M));
      L = COMP(LELTI(P_k,i),L); }
    return L;
---- a/source/ticad/APEQC.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/APEQC.c	2018-08-29 20:10:06.410075795 -0600
-@@ -21,7 +21,7 @@ Effect
+--- a/source/ticad/APEQC.c
++++ b/source/ticad/APEQC.c
+@@ -21,7 +21,7 @@
  
  void QepcadCls::APEQC(Word c, Word k, Word P)
  {
@@ -1493,9 +1535,9 @@
  
  Step1: /* Get (k+1)-level equational constraints, if none, return. */
  	E = LELTI(GVEQNCONST,k+1);
---- a/source/ticad/CONSTRUCT.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/CONSTRUCT.c	2018-08-29 20:10:06.411075794 -0600
-@@ -24,8 +24,7 @@ Word IUPSBRRI(Word B, BDigit k);
+--- a/source/ticad/CONSTRUCT.c
++++ b/source/ticad/CONSTRUCT.c
+@@ -24,8 +24,7 @@
  void QepcadCls::CONSTRUCT(Word c, Word k, Word f, Word Ps_, Word As)
  {
          BDigit p,t,Ths;
@@ -1505,7 +1547,7 @@
  
  Step0: /* Root cell. */
  	if (k == 0) { CONSTRUCT1(c,k,f,Ps_,As); goto Return; }
-@@ -36,9 +35,7 @@ Step1: /* Extract the projection factors
+@@ -36,9 +35,7 @@
         for(Word Pt = CINV(Ps_); Pt != NIL; Pt = RED(Pt))
         {
           Word Pt1 = FIRST(Pt);
@@ -1516,7 +1558,7 @@
  	   Ps = COMP(LELTI(Pt1,PO_POLY),Ps);
         }
  
-@@ -242,9 +239,8 @@ BDigit C1COMP(Word A, Word B)
+@@ -242,9 +239,8 @@
  /* Root cell. */
  void QepcadCls::CONSTRUCT1(Word c, Word k, Word f, Word Ps_, Word As)
  {
@@ -1528,7 +1570,7 @@
  
  Step1: /* Extract the projection factors from their attribute lists. */
  	Ps = NIL; /* Basis for real-root isolation - i.e. the polynomials */
-@@ -390,7 +386,7 @@ Word IUPSBRRIIR(Word t_B, BDigit p, BDig
+@@ -390,7 +386,7 @@
      if (Li == 0) { fail = true; goto Return; }
  
      for(BDigit t = (n%2==1 ? 1 : -1); Li != NIL; t *= -1, Li = RED(Li)) {
@@ -1537,9 +1579,9 @@
        Word J = SIPIR(C[i],I,t,k);
        L = COMP(LIST3(i,J,t),L);
      }
---- a/source/ticad/EC1.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/EC1.c	2018-08-29 20:10:06.411075794 -0600
-@@ -15,7 +15,7 @@ Establish Children of the root.
+--- a/source/ticad/EC1.c
++++ b/source/ticad/EC1.c
+@@ -15,7 +15,7 @@
  
  void EC1(Word c, Word L, Word Bs)
  {
@@ -1548,7 +1590,7 @@
         /* hide kp,xp; */
         Word T;
  
-@@ -58,7 +58,6 @@ Step4: /* First section. */
+@@ -58,7 +58,6 @@
  
  Step5: /* Check if there are more roots. */
          if (Lp == NIL) goto Step9;
@@ -1556,9 +1598,9 @@
  
  Step6: /* Next sector. */
  	ADV(Lp,&Lp1,&Lp);
---- a/source/ticad/EC.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/EC.c	2018-08-29 20:10:06.410075795 -0600
-@@ -16,7 +16,7 @@ Establish Children.
+--- a/source/ticad/EC.c
++++ b/source/ticad/EC.c
+@@ -16,7 +16,7 @@
  
  void EC(Word c, Word L, Word E, Word Bs)
  {
@@ -1567,7 +1609,7 @@
         /* hide kp,xp; */
         Word T;
  
-@@ -52,7 +52,6 @@ Step4: /* First section. */
+@@ -52,7 +52,6 @@
  
  Step5: /* Check if there are more roots. */
          if (Lp == NIL) goto Step9;
@@ -1575,9 +1617,9 @@
  
  Step6: /* Next sector. */
          ADV2(Lp,&I,&B,&Lp); FIRST2(I,&l,&r);
---- a/source/ticad/ECR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/ECR.c	2018-08-29 20:10:06.410075795 -0600
-@@ -16,7 +16,7 @@ Establish Children on a rational sample
+--- a/source/ticad/ECR.c
++++ b/source/ticad/ECR.c
+@@ -16,7 +16,7 @@
  
  void ECR(Word c, Word L, Word E, Word Bs)
  {
@@ -1586,7 +1628,7 @@
         /* hide kp,xp; */
         Word T;
  
-@@ -55,7 +55,6 @@ Step4: /* First section. */
+@@ -55,7 +55,6 @@
  
  Step5: /* Check if there are more roots. */
          if (Lp == NIL) goto Step9;
@@ -1594,9 +1636,9 @@
  
  Step6: /* Next sector. */
          ADV2(Lp,&I,&B,&Lp); FIRST2(I,&l,&r); 
---- a/source/ticad/MAFUPGCD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/MAFUPGCD.c	2018-08-29 20:10:06.409075797 -0600
-@@ -17,7 +17,7 @@ Output
+--- a/source/ticad/MAFUPGCD.c
++++ b/source/ticad/MAFUPGCD.c
+@@ -17,7 +17,7 @@
  
  Word MAFUPGCD(Word p, Word M, Word A, Word B)
  {
@@ -1605,9 +1647,9 @@
    
  Step1: /* A = 0 \/ B = 0 */
         if (A == 0) {
---- a/source/ticad/MAFUPMON.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/MAFUPMON.c	2018-08-29 20:10:06.410075795 -0600
-@@ -17,7 +17,7 @@ Output
+--- a/source/ticad/MAFUPMON.c
++++ b/source/ticad/MAFUPMON.c
+@@ -17,7 +17,7 @@
  
  Word MAFUPMON(Word p, Word M, Word A)
  {
@@ -1616,9 +1658,9 @@
    
  Step1: /* A = 0 */
         if (A == 0) {
---- a/source/ticad/QFFTEV.c.orig	2018-08-29 20:03:25.112519355 -0600
-+++ b/source/ticad/QFFTEV.c	2018-08-29 20:10:06.411075794 -0600
-@@ -17,8 +17,8 @@ static Word ATOMETFEVAL(Word Q, Word D,
+--- a/source/ticad/QFFTEV.c
++++ b/source/ticad/QFFTEV.c
+@@ -17,8 +17,8 @@
  
  Word QepcadCls::QFFTEV(Word F, Word c, Word k)
  {
@@ -1629,9 +1671,9 @@
  
  Step1: /* Classify the formula $F$. */
         T = FIRST(F);
---- a/source/ticad/SIGNP1.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/SIGNP1.c	2018-08-29 20:10:06.410075795 -0600
-@@ -19,7 +19,7 @@ using namespace std;
+--- a/source/ticad/SIGNP1.c
++++ b/source/ticad/SIGNP1.c
+@@ -19,7 +19,7 @@
  
  void SIGNP1(Word c, Word P1, Word I)
  {
@@ -1640,9 +1682,9 @@
  
  Step1: /* Compute the signatures of $P_1$. */
         vector<BDigit> S;
---- a/source/ticad/SUBST.c.orig	2018-08-29 20:05:52.867359499 -0600
-+++ b/source/ticad/SUBST.c	2018-08-29 20:10:06.410075795 -0600
-@@ -20,7 +20,6 @@ Substitute the sample point into the pro
+--- a/source/ticad/SUBST.c
++++ b/source/ticad/SUBST.c
+@@ -20,7 +20,6 @@
  Word QepcadCls::SUBST(Word c, Word k, Word M, Word b, Word B)
  {
         Word B1,Bp,S,S1;
@@ -1650,9 +1692,9 @@
         Word P,L,Sp,T1,T2,G,Q,f,i;
  
  Step1: /* Substitute. */
---- a/source/ticad/SUBSTR.c.orig	2018-08-29 20:05:52.868359497 -0600
-+++ b/source/ticad/SUBSTR.c	2018-08-29 20:10:06.411075794 -0600
-@@ -20,7 +20,6 @@ Substitute the rational sample point int
+--- a/source/ticad/SUBSTR.c
++++ b/source/ticad/SUBSTR.c
+@@ -20,7 +20,6 @@
  Word QepcadCls::SUBSTR(Word c, Word k, Word b, Word B)
  {
         Word B1,Bp,S,S1;
@@ -1660,9 +1702,9 @@
         Word P,L,Q,T1,T2,Sp,G,f,i;
  
  Step1: /* Do it. */
---- a/source/ticad/TICADauto.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/TICADauto.c	2018-08-29 20:10:06.410075795 -0600
-@@ -24,7 +24,7 @@ Output
+--- a/source/ticad/TICADauto.c
++++ b/source/ticad/TICADauto.c
+@@ -24,7 +24,7 @@
  
  Word QepcadCls::TICADauto(Word Q, Word F, Word f, Word P, Word A)
  {
@@ -1671,9 +1713,9 @@
  
  Step1: /* Initialize. */
         D = INITPCAD();
---- a/source/ticad/TICAD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/TICAD.c	2018-08-29 20:10:06.410075795 -0600
-@@ -24,7 +24,7 @@ Output
+--- a/source/ticad/TICAD.c
++++ b/source/ticad/TICAD.c
+@@ -24,7 +24,7 @@
  
  Word QepcadCls::TICAD(Word Q, Word F, Word f, Word P, Word A)
  {
@@ -1682,9 +1724,9 @@
  
  Step1: /* Initialize. */
         D = INITPCAD();
---- a/source/userint/PRDLFI.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/userint/PRDLFI.c	2018-08-29 20:10:06.411075794 -0600
-@@ -7,7 +7,7 @@ Process "display-level-factors i" comman
+--- a/source/userint/PRDLFI.c
++++ b/source/userint/PRDLFI.c
+@@ -7,7 +7,7 @@
  
  void QepcadCls::PRDLFI()
  {
@@ -1693,9 +1735,9 @@
  
  Step1: /* Get level. */
        i = IREAD();
---- a/source/userint/PREQNCONSTL.c.orig	2018-08-29 20:05:52.868359497 -0600
-+++ b/source/userint/PREQNCONSTL.c	2018-08-29 20:10:06.412075792 -0600
-@@ -90,7 +90,7 @@ Word POLYLABEL(Word P, Word p, Word r, W
+--- a/source/userint/PREQNCONSTL.c
++++ b/source/userint/PREQNCONSTL.c
+@@ -90,7 +90,7 @@
  
  void QepcadCls::PREQNCONSTPOLY()
  {
@@ -1704,9 +1746,9 @@
  
    // Check if propagation of equational constraints was specified. 
    if (PCPROPEC == FALSE) {
---- a/source/userint/PRMCC.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/userint/PRMCC.c	2018-08-29 20:10:06.411075794 -0600
-@@ -10,7 +10,7 @@ Process "manually choose a cell" command
+--- a/source/userint/PRMCC.c
++++ b/source/userint/PRMCC.c
+@@ -10,7 +10,7 @@
  
  void QepcadCls::PRMCC(Word *t_)
  {
@@ -1715,9 +1757,9 @@
         /* hide t; */
  
  Step1: /* Read in an argument. */
---- a/source/userint/PRPROPEC.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/userint/PRPROPEC.c	2018-08-29 20:10:06.412075792 -0600
-@@ -7,7 +7,7 @@ Process prop-eqn-const command.
+--- a/source/userint/PRPROPEC.c
++++ b/source/userint/PRPROPEC.c
+@@ -7,7 +7,7 @@
  
  void QepcadCls::PRPROPEC()
  {
@@ -1726,9 +1768,9 @@
  
  Step1: /* Toggle the PCPROPEC global variable and initialize globals. */
         GVEQNCONST = GVPIVOT = NIL;
---- a/source/userint/PRRMPF.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/userint/PRRMPF.c	2018-08-29 20:10:06.411075794 -0600
-@@ -7,7 +7,7 @@ Process "Remove Projection Factor" comma
+--- a/source/userint/PRRMPF.c
++++ b/source/userint/PRRMPF.c
+@@ -7,7 +7,7 @@
  
  void QepcadCls::PRRMPF()
  {

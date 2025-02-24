@@ -51,7 +51,7 @@ class G1list(SageObject):
 
     def __richcmp__(self, other, op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -120,7 +120,7 @@ class G1list(SageObject):
         `\Gamma_0` (where the problem is rather harder).
 
         This will only make sense if `{\rm gcd}(u, v, N) = 1`; otherwise the
-        output will not be an element of self.
+        output will not be an element of ``self``.
 
         EXAMPLES::
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat
 r"""
 F-algebra for motivic multiple zeta values.
 
@@ -18,7 +18,6 @@ general, allowing any positive odd integer as start index.
 AUTHORS:
 
 - Frédéric Chapoton (2022-09): Initial version
-
 """
 # ****************************************************************************
 #  Copyright (C) 2022 Frédéric Chapoton <chapoton-unistra-fr>
@@ -27,7 +26,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.arith.misc import bernoulli
 from sage.categories.rings import Rings
@@ -70,10 +69,10 @@ def str_to_index(x: str) -> tuple:
     r"""
     Convert a string to an index.
 
-    Every letter ``"2"`` contributes to the power of `f_2`. Other letters
+    Every letter ``'2'`` contributes to the power of `f_2`. Other letters
     are odd and define a word in `f_1, f_3, f_5, \ldots`
 
-    Usually the letters ``"2"`` form a prefix of the input.
+    Usually the letters ``'2'`` form a prefix of the input.
 
     EXAMPLES::
 
@@ -91,7 +90,7 @@ def str_to_index(x: str) -> tuple:
 
 def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
     r"""
-    Return an iterator over compositions of ``n`` with odd parts.
+    Return an iterator over compositions of `n` with odd parts.
 
     Let `s` be the chosen odd start index. The allowed parts are the
     odd integers at least equal to `s`, in the set `s,s+2,s+4,s+6,\ldots`.
@@ -100,9 +99,9 @@ def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    - ``start`` -- (default: ``3``) odd integer, start index for odd generators
+    - ``start`` -- odd integer (default: `3`); start index for odd generators
 
     EXAMPLES::
 
@@ -121,7 +120,7 @@ def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
          (3, 11)]
     """
     if n == 0:
-        yield tuple()
+        yield ()
         return
     if n % 2 and n >= start:
         yield (n,)
@@ -132,7 +131,7 @@ def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
 
 def basis_f_iterator(n, start=3) -> Iterator[tuple]:
     r"""
-    Return an iterator for decompositions of ``n`` using ``2`` and odd integers.
+    Return an iterator for decompositions of `n` using `2` and odd integers.
 
     Let `s` be the chosen odd start index. The allowed odd parts are the
     odd integers at least equal to `s`, in the set `s,s+2,s+4,s+6,\ldots`.
@@ -144,9 +143,9 @@ def basis_f_iterator(n, start=3) -> Iterator[tuple]:
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    - ``start`` -- (default: ``3``) odd start index for odd generators
+    - ``start`` -- (default: `3`) odd start index for odd generators
 
     Each term is returned as a pair (integer, word) where
     the integer is the exponent of 2.
@@ -194,14 +193,12 @@ def morphism_constructor(data: dict, start=3):
 
     INPUT:
 
-    - ``data`` -- a dictionary with integer keys containing the images of
+    - ``data`` -- dictionary with integer keys containing the images of
       `f_2, f_s, f_{s+2}, f_{s+4}, \ldots`
 
     - ``start`` -- (default: 3) start index for odd generators
 
-    OUTPUT:
-
-    the unique morphism defined by the dictionary ``data``
+    OUTPUT: the unique morphism defined by the dictionary ``data``
 
     The codomain must be a zinbiel algebra, namely have both a
     commutative associative product ``*`` and a zinbiel product
@@ -300,7 +297,7 @@ class F_algebra(CombinatorialFreeModule):
         Indices = NonNegativeIntegers().cartesian_product(W_Odds(start))
         cat = BialgebrasWithBasis(R).Commutative().Graded()
         CombinatorialFreeModule.__init__(self, R, Indices,
-                                         latex_prefix="", prefix='f',
+                                         latex_prefix='', prefix='f',
                                          category=cat)
 
     def _repr_term(self, pw) -> str:
@@ -389,7 +386,7 @@ class F_algebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``pw1``, ``pw2`` -- Basis elements
+        - ``pw1``, ``pw2`` -- basis elements
 
         EXAMPLES::
 
@@ -437,7 +434,7 @@ class F_algebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- a nonnegative integer (at least 2)
+        - ``i`` -- nonnegative integer (at least 2)
 
         If ``i`` is odd, this returns a single generator `f_i` of the free
         shuffle algebra.
@@ -559,11 +556,9 @@ class F_algebra(CombinatorialFreeModule):
 
         - ``vec`` -- a vector with coefficients in some base ring
 
-        - ``N`` -- integer, the homogeneous weight
+        - ``N`` -- integer; the homogeneous weight
 
-        OUTPUT:
-
-        an homogeneous element of :func:`F_ring` over this base ring
+        OUTPUT: a homogeneous element of :func:`F_ring` over this base ring
 
         .. SEEALSO:: :meth:`F_algebra.homogeneous_to_vector`
 
@@ -724,9 +719,7 @@ class F_algebra(CombinatorialFreeModule):
 
             This is using a fixed enumeration of the basis.
 
-            OUTPUT:
-
-            a vector with coefficients in the base ring
+            OUTPUT: a vector with coefficients in the base ring
 
             .. SEEALSO:: :meth:`F_algebra.homogeneous_from_vector`
 

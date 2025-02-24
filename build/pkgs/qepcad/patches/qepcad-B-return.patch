@@ -1,6 +1,11 @@
---- a/extensions/sfext/formula/FTYPEINFO.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/sfext/formula/FTYPEINFO.c	2018-08-29 20:06:48.870298902 -0600
-@@ -23,6 +23,6 @@ Word FTYPEINFO(Word A)
+Description: Fix a non-void function where control can fall off the end.
+Origin: https://src.fedoraproject.org/rpms/qepcad-B/blob/91dd25b/f/qepcad-B-return.patch
+Forwarded: https://github.com/chriswestbrown/qepcad/pull/2
+Last-Update: 2021-06-23
+
+--- a/extensions/sfext/formula/FTYPEINFO.c
++++ b/extensions/sfext/formula/FTYPEINFO.c
+@@ -23,6 +23,6 @@
      return TRUE;
    if (FIRST(A) == FALSE)
      return FALSE;
@@ -8,20 +13,9 @@
 +  FAIL("FTYPEINFO","Unknown formula type!"); 
  }
        
---- a/source/db/AFUPSFNDB.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/db/AFUPSFNDB.c	2018-08-29 20:06:48.871298901 -0600
-@@ -5,7 +5,7 @@ AFUPSFN with Database.
- ======================================================================*/
- #include "qepcad.h"
- 
--Word AFUPSFNDB(Word M, Word B, Word *t_, Word *Bt_, Word *F_)
-+void AFUPSFNDB(Word M, Word B, Word *t_, Word *Bt_, Word *F_)
- {
-        Word t,Bt,F;
- 
---- a/source/db/SingSacPolicy.h.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/db/SingSacPolicy.h	2018-08-29 20:06:48.872298900 -0600
-@@ -28,17 +28,17 @@ public:
+--- a/source/db/SingSacPolicy.h
++++ b/source/db/SingSacPolicy.h
+@@ -28,17 +28,17 @@
    Word IPRES(Word r, Word A, Word B)
    {
      if (r > 2)
@@ -43,14 +37,3 @@
    }
  
    Word IPFACTGB(Word r, Word I, Word N)  
---- a/source/qepcad.h.orig	2018-08-29 20:04:27.596451754 -0600
-+++ b/source/qepcad.h	2018-08-29 20:06:48.871298901 -0600
-@@ -34,7 +34,7 @@ Word AFPNIPDB(Word Mb, Word B);
- void AFUPGCDB(Word M, Word A, Word B, Word *C_, Word *Ab_, Word *Bb_);
- void AFUPLM(Word M, Word A, Word *L_, Word *P_);
- void AFUPRWR(Word a, Word v, Word A, Word I);
--Word AFUPSFNDB(Word M, Word B, Word *t_, Word *Bt_, Word *F_);
-+void AFUPSFNDB(Word M, Word B, Word *t_, Word *Bt_, Word *F_);
- Word APPEND(Word P, Word k, Word R);
- void APPENDEC(Word P, Word k, Word R, Word *Ps_, Word *F_);
- void ATOMFLWR(Word N, Word V, Word A);

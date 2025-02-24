@@ -36,6 +36,7 @@ from sage.structure.richcmp cimport (richcmp,
                                      richcmp_not_equal, rich_to_bool)
 
 from sage.structure.parent cimport Parent
+from sage.structure.element cimport Vector
 
 from sage.rings.finite_rings.finite_field_base cimport FiniteField
 
@@ -43,22 +44,17 @@ from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
-from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
-from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
+from sage.rings.finite_rings.element_pari_ffelt import FiniteFieldElement_pari_ffelt
+from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 
 from sage.interfaces.abc import GapElement
 
 
-cdef object is_IntegerMod
-cdef object IntegerModRing_generic
+cdef object IntegerMod_abstract
 cdef object Integer
 cdef object Rational
-cdef object is_Polynomial
-cdef object ConwayPolynomials
-cdef object conway_polynomial
 cdef object MPolynomial
 cdef object Polynomial
-cdef object FreeModuleElement
 cdef object GF
 cdef object GF2, GF2_0, GF2_1
 
@@ -68,48 +64,28 @@ cdef int late_import() except -1:
     i.e. after the module was loaded. This is needed to avoid circular
     imports.
     """
-    global is_IntegerMod, \
-           IntegerModRing_generic, \
+    global IntegerMod_abstract, \
            Integer, \
            Rational, \
-           is_Polynomial, \
-           ConwayPolynomials, \
-           conway_polynomial, \
            MPolynomial, \
            Polynomial, \
-           FreeModuleElement, \
            GF, \
            GF2, GF2_0, GF2_1
 
-    if is_IntegerMod is not None:
+    if IntegerMod_abstract is not None:
         return 0
 
     import sage.rings.finite_rings.integer_mod
-    is_IntegerMod = sage.rings.finite_rings.integer_mod.is_IntegerMod
-
-    import sage.rings.finite_rings.integer_mod_ring
-    IntegerModRing_generic = sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic
+    IntegerMod_abstract = sage.rings.finite_rings.integer_mod.IntegerMod_abstract
 
     import sage.rings.rational
     Rational = sage.rings.rational.Rational
-
-    import sage.rings.polynomial.polynomial_element
-    is_Polynomial = sage.rings.polynomial.polynomial_element.is_Polynomial
-
-    import sage.databases.conway
-    ConwayPolynomials = sage.databases.conway.ConwayPolynomials
-
-    import sage.rings.finite_rings.conway_polynomials
-    conway_polynomial = sage.rings.finite_rings.conway_polynomials.conway_polynomial
 
     import sage.rings.polynomial.multi_polynomial_element
     MPolynomial = sage.rings.polynomial.multi_polynomial_element.MPolynomial
 
     import sage.rings.polynomial.polynomial_element
     Polynomial = sage.rings.polynomial.polynomial_element.Polynomial
-
-    import sage.modules.free_module_element
-    FreeModuleElement = sage.modules.free_module_element.FreeModuleElement
 
     import sage.rings.finite_rings.finite_field_constructor
     GF = sage.rings.finite_rings.finite_field_constructor.FiniteField
@@ -123,7 +99,7 @@ cdef extern from "arpa/inet.h":
 cdef little_endian():
     return htonl(1) != 1
 
-cdef unsigned int switch_endianess(unsigned int i):
+cdef unsigned int switch_endianess(unsigned int i) noexcept:
     cdef size_t j
     cdef unsigned int ret = 0
     for j in range(sizeof(int)):
@@ -138,7 +114,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
     It's modeled on
     :class:`~sage.rings.finite_rings.integer_mod.NativeIntStruct`,
     but includes many functions that were previously included in
-    the parent (see :trac:`12062`).
+    the parent (see :issue:`12062`).
     """
     def __cinit__(self, parent, Py_ssize_t k, modulus):
         """
@@ -168,7 +144,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS::
 
-            sage: k.<a> = GF(2^8, impl="ntl")
+            sage: k.<a> = GF(2^8, impl='ntl')
         """
         self._parent = <FiniteField?>parent
         self._zero_element = self._new()
@@ -187,11 +163,11 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
     def _doctest_for_5340(self):
         r"""
-        Every bug fix should have a doctest.  But :trac:`5340` only happens
+        Every bug fix should have a doctest.  But :issue:`5340` only happens
         when a garbage collection happens between restoring the modulus and
         using it, so it can't be reliably doctested using any of the
         existing Cython functions in this module.  The sole purpose of
-        this method is to doctest the fix for :trac:`5340`.
+        this method is to doctest the fix for :issue:`5340`.
 
         EXAMPLES::
 
@@ -279,17 +255,17 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS:
 
-        We check that :trac:`12584` is fixed::
+        We check that :issue:`12584` is fixed::
 
             sage: k(2^63)
             0
 
         We can coerce from PARI finite field implementations::
 
-            sage: K.<a> = GF(2^19, impl="ntl")
+            sage: K.<a> = GF(2^19, impl='ntl')
             sage: a^20
             a^6 + a^3 + a^2 + a
-            sage: M.<c> = GF(2^19, impl="pari_ffelt")
+            sage: M.<c> = GF(2^19, impl='pari_ffelt')
             sage: K(c^20)
             a^6 + a^3 + a^2 + a
         """
@@ -298,9 +274,8 @@ cdef class Cache_ntl_gf2e(Cache_base):
         cdef FiniteField_ntl_gf2eElement x
         cdef FiniteField_ntl_gf2eElement g
         cdef Py_ssize_t i
-        from sage.libs.gap.element import GapElement_FiniteField
 
-        if is_IntegerMod(e):
+        if isinstance(e, IntegerMod_abstract):
             e = e.lift()
         if isinstance(e, (int, Integer)):
             GF2E_conv_long(res.x,int(e&1))
@@ -313,7 +288,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
         elif isinstance(e, str):
             return self._parent(eval(e.replace("^","**"),self._parent.gens_dict()))
 
-        elif isinstance(e, FreeModuleElement):
+        elif isinstance(e, Vector):
             if self._parent.vector_space(map=False) != e.parent():
                 raise TypeError("e.parent must match self.vector_space")
             ztmp = Integer(e.list(),2)
@@ -358,14 +333,18 @@ cdef class Cache_ntl_gf2e(Cache_base):
             # Reduce to pari
             e = e.__pari__()
 
-        elif isinstance(e, GapElement_FiniteField):
-            return e.sage(ring=self._parent)
-
         elif isinstance(e, GapElement):
             from sage.libs.gap.libgap import libgap
             return libgap(e).sage(ring=self._parent)
 
         else:
+            try:
+                from sage.libs.gap.element import GapElement_FiniteField
+            except ImportError:
+                pass
+            else:
+                if isinstance(e, GapElement_FiniteField):
+                    return e.sage(ring=self._parent)
             raise TypeError("unable to coerce %r" % type(e))
 
         cdef GEN t
@@ -407,7 +386,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         INPUT:
 
-        - ``number`` -- an integer, of size less than the cardinality
+        - ``number`` -- integer; of size less than the cardinality
 
         EXAMPLES::
 
@@ -417,7 +396,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS:
 
-        We test that :trac:`17027` is fixed::
+        We test that :issue:`17027` is fixed::
 
             sage: K.<a> = GF(2^16)
             sage: K._cache.fetch_int(0r)
@@ -457,12 +436,12 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
     def polynomial(self):
         """
-        Returns the list of 0's and 1's giving the defining polynomial of the
+        Return the list of 0s and 1s giving the defining polynomial of the
         field.
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^20,modulus="minimal_weight")
+            sage: k.<a> = GF(2^20,modulus='minimal_weight')
             sage: k._cache.polynomial()
             [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         """
@@ -492,7 +471,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
     def __init__(FiniteField_ntl_gf2eElement self, parent=None ):
         """
-        Initializes an element in parent. It's much better to use
+        Initialize an element in parent. It's much better to use
         parent(<value>) or any specialized method of parent
         (one,zero,gen) instead. Do not call this constructor directly,
         it doesn't make much sense.
@@ -501,9 +480,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         - ``parent`` -- base field
 
-        OUTPUT:
-
-        A finite field element.
+        OUTPUT: a finite field element
 
         EXAMPLES::
 
@@ -520,11 +497,11 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
     def __cinit__(FiniteField_ntl_gf2eElement self, parent=None ):
         """
-        Restores the cache and constructs the underlying NTL element.
+        Restore the cache and construct the underlying NTL element.
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^8, impl="ntl") # indirect doctest
+            sage: k.<a> = GF(2^8, impl='ntl') # indirect doctest
         """
         if parent is None:
             return
@@ -609,7 +586,6 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             False
             sage: k(1).is_one()
             True
-
         """
         (<Cache_ntl_gf2e>self._parent._cache).F.restore()
         return self.x == self._cache._one_element.x
@@ -664,11 +640,10 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: a.sqrt()^2 == a
             True
 
-        This failed before :trac:`4899`::
+        This failed before :issue:`4899`::
 
             sage: GF(2^16,'a')(1).sqrt()
             1
-
         """
         # this really should be handled special, its gf2 linear after
         # all
@@ -919,7 +894,6 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             Traceback (most recent call last):
             ...
             TypeError: Cannot coerce element to an integer.
-
         """
         if self == 0:
             return int(0)
@@ -1020,13 +994,11 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         - ``var`` -- string (default: ``'x'``)
 
-        OUTPUT:
-
-        polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^8, impl="ntl")
+            sage: k.<a> = GF(2^8, impl='ntl')
             sage: b = a^3 + a
             sage: b.minpoly()
             x^4 + x^3 + x^2 + x + 1
@@ -1042,7 +1014,6 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         cdef int pow = n/d
         return f if pow == 1 else f**pow
 
-
     def minpoly(self, var='x'):
         r"""
         Return the minimal polynomial of ``self``, which is the smallest
@@ -1052,9 +1023,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         - ``var`` -- string (default: ``'x'``)
 
-        OUTPUT:
-
-        polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 
@@ -1102,7 +1071,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
     def weight(self):
         """
-        Returns the number of non-zero coefficients in the polynomial
+        Return the number of nonzero coefficients in the polynomial
         representation of ``self``.
 
         EXAMPLES::
@@ -1167,7 +1136,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         Return a string that evaluates to the GAP representation of
         this element.
 
-        A ``NotImplementedError`` is raised if
+        A :exc:`NotImplementedError` is raised if
         ``self.parent().modulus()`` is not a Conway polynomial, as
         the isomorphism of finite fields is not implemented yet.
 
@@ -1176,9 +1145,9 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: k.<b> = GF(2^16)
             sage: b._gap_init_()
             'Z(65536)^1'
-            sage: k(gap('Z(2^16)^3+Z(2^16)^5'))
+            sage: k(gap('Z(2^16)^3+Z(2^16)^5'))                                         # needs sage.libs.gap
             b^5 + b^3
-            sage: k(libgap.Z(2^16)^3+libgap.Z(2^16)^5)
+            sage: k(libgap.Z(2^16)^3+libgap.Z(2^16)^5)                                  # needs sage.libs.gap
             b^5 + b^3
         """
         F = self._parent
@@ -1215,7 +1184,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         INPUT:
 
         - ``reverse`` -- reverse the order of the bits from little endian to
-          big endian.
+          big endian
 
         EXAMPLES::
 
@@ -1255,7 +1224,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         """
         return unpickleFiniteField_ntl_gf2eElement, (self._parent, str(self))
 
-    def log(self, base):
+    def log(self, base, order=None, *, check=False):
         """
         Compute an integer `x` such that `b^x = a`, where `a` is ``self``
         and `b` is ``base``.
@@ -1263,11 +1232,14 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         INPUT:
 
         - ``base`` -- finite field element
+        - ``order`` -- integer (optional), the order of the base
+        - ``check`` -- boolean (default: ``False``): If set,
+          test whether the given ``order`` is correct.
 
         OUTPUT:
 
         Integer `x` such that `a^x = b`, if it exists.
-        Raises a ``ValueError`` exception if no such `x` exists.
+        Raises a :exc:`ValueError` exception if no such `x` exists.
 
         ALGORITHM: :pari:`fflog`
 
@@ -1282,7 +1254,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             a^8 + a^7 + a^4 + a + 1
             a^8 + a^7 + a^4 + a + 1
 
-        Big instances used to take a very long time before :trac:`32842`::
+        Big instances used to take a very long time before :issue:`32842`::
 
             sage: g = GF(2^61).gen()
             sage: g.log(g^7)
@@ -1300,16 +1272,34 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             ...
             ValueError: no logarithm of z50 exists to base z50^49 + z50^46 + z50^45 + z50^44 + z50^41 + z50^34 + z50^33 + z50^32 + z50^27 + z50^25 + z50^24 + z50^21 + z50^18 + z50^17 + z50^16 + z50^15 + z50^12 + z50^11 + z50^10 + z50^8 + z50^7 + z50^3 + z50^2
 
+        An example for ``check=True``::
+
+            sage: F.<t> = GF(2^5, impl='ntl')
+            sage: t.log(t, 3^4, check=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: base does not have the provided order
+
         AUTHORS:
 
         - David Joyner and William Stein (2005-11)
         - Lorenz Panny (2021-11): use PARI's :pari:`fflog` instead of :func:`sage.groups.generic.discrete_log`
         """
+        cdef Integer base_order
+
         base = self.parent()(base)
 
         # The result is undefined if the input to fflog() is invalid.
         # Since the unit group is cyclic, it suffices to check orders.
-        cdef Integer base_order = base.multiplicative_order()
+        if order is None:
+            base_order = base.multiplicative_order()
+        else:
+            if check:
+                from sage.groups.generic import has_order
+                if not has_order(base, order, '*'):
+                    raise ValueError('base does not have the provided order')
+            base_order = order
+
         cdef Integer self_order = self.multiplicative_order()
         if not self_order.divides(base_order):
             raise ValueError(f'no logarithm of {self} exists to base {base}')
@@ -1323,6 +1313,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         x = pari.fflog(self, base, (base_order, fac))
         return Integer(x)
 
+
 def unpickleFiniteField_ntl_gf2eElement(parent, elem):
     """
     EXAMPLES::
@@ -1334,6 +1325,7 @@ def unpickleFiniteField_ntl_gf2eElement(parent, elem):
         True
     """
     return parent(elem)
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_ntl_gf2e', 'unpickleFiniteField_ntl_gf2eElement', unpickleFiniteField_ntl_gf2eElement)

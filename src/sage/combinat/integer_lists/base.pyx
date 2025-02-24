@@ -61,7 +61,7 @@ cdef class IntegerListsBackend():
 
             sage: from sage.combinat.integer_lists.base import IntegerListsBackend
             sage: C = IntegerListsBackend(2, length=3)
-            sage: C = IntegerListsBackend(min_sum=1.4)
+            sage: C = IntegerListsBackend(min_sum=1.4)                                  # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: Attempt to coerce non-integral RealNumber to Integer
@@ -163,7 +163,7 @@ cdef class IntegerListsBackend():
             left.floor == right.floor and
             left.ceiling == right.ceiling)
         if equal:
-            return (op == Py_EQ or op == Py_LE or op == Py_GE)
+            return op == Py_EQ or op == Py_LE or op == Py_GE
         if op == Py_EQ:
             return False
         if op == Py_NE:
@@ -394,7 +394,7 @@ cdef class Envelope():
             inf
             sage: f.min_slope
             1
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
             sage: Envelope(3, sign=1/3, max_slope=-1, min_length=4)
             Traceback (most recent call last):
             ...
@@ -481,7 +481,7 @@ cdef class Envelope():
             left.min_slope == right.min_slope and
             left.max_slope == right.max_slope)
         if equal:
-            return (op == Py_EQ or op == Py_LE or op == Py_GE)
+            return op == Py_EQ or op == Py_LE or op == Py_GE
         if op == Py_EQ:
             return False
         if op == Py_NE:
@@ -518,7 +518,6 @@ cdef class Envelope():
 
             sage: Envelope(lambda x: 3, sign=-1, min_part=2).limit_start() == Infinity
             True
-
         """
         return self.f_limit_start
 
@@ -526,7 +525,7 @@ cdef class Envelope():
         r"""
         Return a bound on the limit of ``self``.
 
-        OUTPUT: a nonnegative integer or `\infty`
+        OUTPUT: nonnegative integer or `\infty`
 
         This returns some upper bound for the accumulation points of
         this upper envelope. For a lower envelope, a lower bound is
@@ -605,9 +604,9 @@ cdef class Envelope():
 
         INPUT:
 
-        - ``m`` -- a nonnegative integer (starting value)
+        - ``m`` -- nonnegative integer (starting value)
 
-        - ``j`` -- a nonnegative integer (position)
+        - ``j`` -- nonnegative integer (position)
 
         This method adapts this envelope to the additional local
         constraint imposed by having a part `m` at position `j`.

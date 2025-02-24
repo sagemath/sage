@@ -26,7 +26,7 @@ this syntax:
 
 .. CODE-BLOCK:: text
 
-    /path/to/sage-x.y.z/sage -t [--long] /path/to/sage-x.y.z/path/to/module.py[x]
+    /path/to/sage_root/sage -t [--long] /path/to/sage_root/path/to/module.py[x]
 
 where ``--long`` is an optional argument (see :ref:`section-options`
 for more options). The version of ``sage`` used must match the version
@@ -499,7 +499,7 @@ Parallel testing the whole Sage library
 =======================================
 
 The main Sage library resides in the directory
-``SAGE_ROOT/src/``. We can use the syntax described above
+:sage_root:`src/`. We can use the syntax described above
 to doctest the main library using multiple threads. When doing release
 management or patching the main Sage library, a release manager would
 parallel test the library using 10 threads with the following command::
@@ -512,7 +512,10 @@ doctests.  This determines the number of threads by reading the
 environment variable :envvar:`MAKE`: if it is set to ``make -j12``, then
 use 12 threads.  If :envvar:`MAKE` is not set, then by default it uses
 the number of CPU cores (as determined by the Python function
-``multiprocessing.cpu_count()``) with a minimum of 2 and a maximum of 8.
+:func:`multiprocessing.cpu_count`) with a minimum of 2 and a maximum of 8.
+(When this runs under the control of the `GNU make jobserver
+<https://www.gnu.org/software/make/manual/make.html#Parallel>`_, then Sage
+will request as most this number of job slots.)
 
 In any case, this will test the Sage library with multiple threads::
 
@@ -535,22 +538,22 @@ The differences are:
   set of tests. First the Sage standard documentation is tested,
   i.e. the documentation that resides in
 
-  * ``SAGE_ROOT/src/doc/common``
-  * ``SAGE_ROOT/src/doc/en``
-  * ``SAGE_ROOT/src/doc/fr``
+  * :sage_root:`src/doc/common`
+  * :sage_root:`src/doc/en`
+  * :sage_root:`src/doc/fr`
 
   Finally, the commands doctest the Sage library. For more details on
-  these command, see the file ``SAGE_ROOT/Makefile``.
+  these command, see the file :sage_root:`Makefile`.
 
 * ``make testlong`` --- This command doctests the standard
   documentation:
 
-  * ``SAGE_ROOT/src/doc/common``
-  * ``SAGE_ROOT/src/doc/en``
-  * ``SAGE_ROOT/src/doc/fr``
+  * :sage_root:`src/doc/common`
+  * :sage_root:`src/doc/en`
+  * :sage_root:`src/doc/fr`
 
   and then the Sage library. Doctesting is run with the optional
-  argument ``--long``. See the file ``SAGE_ROOT/Makefile`` for further
+  argument ``--long``. See the file :sage_root:`Makefile` for further
   details.
 
 * ``make ptest`` --- Similar to the commands ``make test`` and ``make
@@ -742,10 +745,10 @@ In order to run the long tests as well, do the following::
         cpu time: 25.2 seconds
         cumulative wall time: 34.7 seconds
 
-To find tests that take longer than the allowed time use the
-``--warn-long`` flag.  Without any options it will cause tests to
-print a warning if they take longer than 1.0 second. Note that this is
-a warning, not an error::
+To find tests that take longer than a specified amount of CPU time,
+use the ``--warn-long`` flag.  Without any options, it will cause a
+warning to be printed if any tests take longer than one
+cpu-second. Note that this is a warning, not an error::
 
     [roed@localhost sage]$ ./sage -t --warn-long src/sage/rings/factorint.pyx
     Running doctests with ID 2012-07-14-03-27-03-2c952ac1.
@@ -755,22 +758,22 @@ a warning, not an error::
     File "src/sage/rings/factorint.pyx", line 125, in sage.rings.factorint.base_exponent
     Failed example:
         base_exponent(-4)
-    Test ran for 4.09 s
+    Test ran for 4.09 cpu seconds
     **********************************************************************
     File "src/sage/rings/factorint.pyx", line 153, in sage.rings.factorint.factor_aurifeuillian
     Failed example:
         fa(2^6+1)
-    Test ran for 2.22 s
+    Test ran for 2.22 cpu seconds
     **********************************************************************
     File "src/sage/rings/factorint.pyx", line 155, in sage.rings.factorint.factor_aurifeuillian
     Failed example:
         fa(2^58+1)
-    Test ran for 2.22 s
+    Test ran for 2.22 cpu seconds
     **********************************************************************
     File "src/sage/rings/factorint.pyx", line 163, in sage.rings.factorint.factor_aurifeuillian
     Failed example:
         fa(2^4+1)
-    Test ran for 2.25 s
+    Test ran for 2.25 cpu seconds
     **********************************************************************
     ----------------------------------------------------------------------
     All tests passed!
@@ -789,12 +792,12 @@ You can also pass in an explicit amount of time::
     File "tests.py", line 240, in sage.rings.tests.test_random_elements
     Failed example:
         sage.rings.tests.test_random_elements(trials=1000)  # long time (5 seconds)
-    Test ran for 13.36 s
+    Test ran for 13.36 cpu seconds
     **********************************************************************
     File "tests.py", line 283, in sage.rings.tests.test_random_arith
     Failed example:
         sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?)
-    Test ran for 12.42 s
+    Test ran for 12.42 cpu seconds
     **********************************************************************
     ----------------------------------------------------------------------
     All tests passed!
@@ -1080,7 +1083,7 @@ under the control of gdb, use the ``--gdb`` flag::
 
     [roed@localhost sage]$ ./sage -t --gdb \
                                   src/sage/schemes/elliptic_curves/constructor.py
-    exec gdb --eval-commands="run" --args /home/roed/sage/local/var/lib/sage/venv-python3.9/bin/python3 sage-runtests --serial --timeout=0 --stats_path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
+    exec gdb --eval-commands="run" --args /home/roed/sage/local/var/lib/sage/venv-python3.9/bin/python3 sage-runtests --serial --timeout=0 --stats-path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
     GNU gdb 6.8-debian
     Copyright (C) 2008 Free Software Foundation, Inc.
     License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -1308,6 +1311,8 @@ code loads the globals from that file into the namespace before
 running tests.  To disable this behaviour (and require imports to be
 explicitly specified), use the ``--force-lib`` option.
 
+.. _section-doctest-auxiliary-files:
+
 Auxiliary files
 ^^^^^^^^^^^^^^^
 
@@ -1338,10 +1343,11 @@ To specify a logfile (rather than use the default which is created for
         cumulative wall time: 4.3 seconds
 
 
-To give a json file storing the timings for each file, use the
-``--stats_path`` flag.  These statistics are used in sorting files so
-that slower tests are run first (and thus multiple processes are
-utilized most efficiently)::
+To give a json file storing the timings and pass/fail status for each file, use the
+``--stats-path`` flag; the default location of this file is ``~/.sage/timings2.json``.
+The doctester reads it if it exists, for the purpose of sorting the files
+so that slower tests are run first (and thus multiple processes are utilized most
+efficiently)::
 
     [roed@localhost sage]$ ./sage -tp 2 --stats-path ~/.sage/timings2.json --all
     Running doctests with ID 2012-07-07-01-28-34-2df4251d.
@@ -1349,6 +1355,22 @@ utilized most efficiently)::
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 2067 files using 2 threads.
     ...
+
+At the end of the doctest run, Sage updates the json file if it exists or creates
+a new one.
+
+The recorded pass/fail status of the files can be used for running only those files
+that failed their most recent test by using the ``--failed`` flag (``-f`` for short).
+
+Using the option ``--baseline-stats-path known-test-failures.json``,
+it is possible to distinguish files with known doctest failures
+from new failures. The file ``known-test-failures.json`` should be
+prepared in the same format as ``timings2.json``.
+
+Source files marked as failed there will be marked as "[failed in baseline]"
+failures in the doctest report; and if there are only baseline failures, no
+new failures, then ``sage -t`` will exit with status code 0 (success).
+
 
 .. _section-doctesting-venv:
 
@@ -1614,6 +1636,9 @@ To have the doctest fixer take care of the ``# optional/needs`` tags,
 but not change the expected results of examples, use the option ``--only-tags``.
 This mode is suitable for mostly unattended runs on many files.
 
+With the option ``--verbose``, the doctest fixer shows the doctester's messages
+one by one and reports the changes made.
+
 .. warning::
 
    While the doctest fixer guarantees to preserve any comments that
@@ -1655,3 +1680,26 @@ to the doctest.
 
 Likewise, when the doctester runs into a :class:`ModuleNotFoundError`,
 the doctest fixer will automatically add a ``# needs ...`` tag.
+
+The switch ``--distribution`` can be repeated; the given distributions
+will be tested in sequence.  Using ``--distribution all`` is equivalent
+to a preset list of ``--distribution`` switches.  With the switch
+``--fixed-point``, the doctest fixer runs the given distributions until
+no more changes are made.
+
+
+Updating baseline files
+-----------------------
+
+The modularized distribution packages ``pkgs/sagemath-categories`` and
+``pkgs/sagemath-repl`` contain files ``known-test-failures*.json`` for use
+with the option ``--baseline-stats-path``, see section
+:ref:`section-doctest-auxiliary-files`.
+
+After running the doctesters of the distributions, for example, via
+``sage --fixdoctests``, you can use the test results stored in
+``timings2.json`` files to update the ``known-test-failures*.json`` files.
+This update can be done using the command::
+
+    [mkoeppe@localhost sage]$ ./sage --fixdoctests --no-test                        \
+                                --update-known-test-failures --distribution all

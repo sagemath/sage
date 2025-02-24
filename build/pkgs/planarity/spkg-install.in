@@ -1,6 +1,6 @@
 cd src
 
-# Use newer version of config.guess and config.sub (see Trac #19723)
+# Use newer version of config.guess and config.sub (see Issue #19723)
 cp "$SAGE_ROOT"/config/config.* .
 
 sdh_configure

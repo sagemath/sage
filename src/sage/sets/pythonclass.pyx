@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Set of all objects of a given Python class
 """
@@ -105,7 +106,7 @@ cdef class Set_PythonType_class(Set_generic):
 
     def __reduce__(self):
         r"""
-        Pickling support
+        Pickling support.
 
         TESTS::
 

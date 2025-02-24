@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fock Space
 
@@ -37,11 +37,11 @@ from sage.algebras.quantum_groups.q_numbers import q_factorial
 
 
 #############################
-## Fock space options
+#  Fock space options
 
 class FockSpaceOptions(GlobalOptions):
     r"""
-    Sets and displays the global options for elements of the Fock
+    Set and display the global options for elements of the Fock
     space classes.  If no parameters are set, then the function
     returns a copy of the options dictionary.
 
@@ -84,15 +84,15 @@ class FockSpaceOptions(GlobalOptions):
     NAME = 'FockSpace'
     module = 'sage.algebras.quantum_groups.fock_space'
 
-    display = dict(default="ket",
-                   description='Specifies how terms of the natural basis of Fock space should be printed',
-                   values=dict(ket='displayed as a ket in bra-ket notation',
-                               list='displayed as a list'),
-                   case_sensitive=False)
+    display = {'default': "ket",
+               'description': 'Specifies how terms of the natural basis of Fock space should be printed',
+               'values': {'ket': 'displayed as a ket in bra-ket notation',
+                          'list': 'displayed as a list'},
+               'case_sensitive': False}
 
 
 ###############################################################################
-## Fock space
+#  Fock space
 
 class FockSpace(Parent, UniqueRepresentation):
     r"""
@@ -166,7 +166,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
     To go between the canonical basis and the natural basis, for level 1
     Fock space, we follow the LLT algorithm [LLT1996]_. Indeed, we first
-    construct an basis `\{ A(\nu) \}` that is an approximation to the
+    construct a basis `\{ A(\nu) \}` that is an approximation to the
     lower global crystal basis, in the sense that it is bar-invariant,
     and then use Gaussian elimination to construct the lower global
     crystal basis. For higher level Fock space, we follow [Fayers2010]_,
@@ -371,7 +371,7 @@ class FockSpace(Parent, UniqueRepresentation):
              of Univariate Polynomial Ring in q over Integer Ring
         """
         return "Fock space of rank {} of multicharge {} over {}".format(
-                        self._n, self._multicharge, self.base_ring())
+            self._n, self._multicharge, self.base_ring())
 
     def _latex_(self):
         r"""
@@ -444,7 +444,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default ``True``) if ``True``, prints
+        - ``verbose`` -- boolean (default: ``True``); if ``True``, prints
           the defined shorthands
 
         EXAMPLES::
@@ -568,9 +568,9 @@ class FockSpace(Parent, UniqueRepresentation):
             """
             self._basis_name = "natural"
             # If the cell x is above the cell y
-            if len(F._multicharge) == 1: # For partitions
-                self._above = lambda x,y: x[0] < y[0]
-            else: # For partition tuples
+            if len(F._multicharge) == 1:  # For partitions
+                self._above = lambda x, y: x[0] < y[0]
+            else:  # For partition tuples
                 self._above = lambda x,y: x[0] < y[0] or (x[0] == y[0] and x[1] < y[1])
             self._addable = lambda la,i: [x for x in la.outside_corners()
                                           if la.content(*x, multicharge=F._multicharge) == i]
@@ -666,11 +666,11 @@ class FockSpace(Parent, UniqueRepresentation):
             from sage.typeset.unicode_art import UnicodeArt, unicode_art
             a = unicode_art(m)
             h = a.height()
-            l = UnicodeArt([u'│']*h, baseline=0)
-            r = UnicodeArt([u" "*i + u'╲' for i in range(h//2)], baseline=0)
+            l = UnicodeArt(['│']*h, baseline=0)
+            r = UnicodeArt([" "*i + '╲' for i in range(h//2)], baseline=0)
             if h % 2:
-                r *= UnicodeArt([u" "*(h//2) + u'〉'], baseline=0)
-            r *= UnicodeArt([u" "*i + u'╱' for i in reversed(range(h//2))], baseline=0)
+                r *= UnicodeArt([" "*(h//2) + '〉'], baseline=0)
+            r *= UnicodeArt([" "*i + '╱' for i in reversed(range(h//2))], baseline=0)
             ret = l + a + r
             ret._baseline = h - 1
             return ret
@@ -749,17 +749,17 @@ class FockSpace(Parent, UniqueRepresentation):
                     return (sum(1 for y in P._addable(la, i) if P._above(x, y))
                             - sum(1 for y in P._removable(la, i) if P._above(x, y)))
                 q = P.realization_of()._q
-                return P.sum_of_terms(( la.remove_cell(*x), c * q**(-N_left(la, x, i)) )
+                return P.sum_of_terms((la.remove_cell(*x), c * q**(-N_left(la, x, i)))
                                       for la,c in self for x in P._removable(la, i))
 
             def e(self, *data):
                 r"""
-                Apply the action of the divided difference operator
-                `e_i^{(p)}` on ``self``.
+                Apply the action of the divided power operator
+                `e_i^{(p)} = e_i^{p} / [p]_q` on ``self``.
 
                 INPUT:
 
-                - ``*data`` -- a list of indices or pairs `(i, p)`
+                - ``*data`` -- list of indices or pairs `(i, p)`
 
                 EXAMPLES::
 
@@ -845,17 +845,17 @@ class FockSpace(Parent, UniqueRepresentation):
                     return (sum(1 for y in P._addable(la, i) if P._above(y, x))
                             - sum(1 for y in P._removable(la, i) if P._above(y, x)))
                 q = P.realization_of()._q
-                return P.sum_of_terms( (la.add_cell(*x), c * q**N_right(la, x, i))
-                                       for la,c in self for x in P._addable(la, i) )
+                return P.sum_of_terms((la.add_cell(*x), c * q**N_right(la, x, i))
+                                       for la,c in self for x in P._addable(la, i))
 
             def f(self, *data):
                 r"""
-                Apply the action of the divided difference operator
-                `f_i^{(p)}` on ``self``.
+                Apply the action of the divided power operator
+                `f_i^{(p)} = f_i^{p} / [p]_q` on ``self``.
 
                 INPUT:
 
-                - ``*data`` -- a list of indices or pairs `(i, p)`
+                - ``*data`` -- list of indices or pairs `(i, p)`
 
                 EXAMPLES::
 
@@ -1384,7 +1384,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
 
 ###############################################################################
-## Bases Category
+# Bases Category
 
 class FockSpaceBases(Category_realization_of_parent):
     r"""
@@ -1605,7 +1605,8 @@ class FockSpaceBases(Category_realization_of_parent):
             return self.monomial(i)
 
 ###############################################################################
-## Truncated Fock space
+# Truncated Fock space
+
 
 class FockSpaceTruncated(FockSpace):
     r"""
@@ -1818,7 +1819,7 @@ class FockSpaceTruncated(FockSpace):
 
         INPUT:
 
-        - ``algorithm`` -- (default ``'GW'``) the algorithm to use when
+        - ``algorithm`` -- (default: ``'GW'``) the algorithm to use when
           computing this basis in the Fock space; the possible values are:
 
           * ``'GW'`` -- use the algorithm given by Goodman and Wenzl
@@ -2019,7 +2020,7 @@ class FockSpaceTruncated(FockSpace):
 
             # For non-interior partitions
             # Construct the d's and the partition ``a``
-            a = list(la) + [0]*(k - 1 - len(la)) # Add 0's to get the correct length
+            a = list(la) + [0]*(k - 1 - len(la)) # Add 0s to get the correct length
             a = [a[i] + (k - 1 - i) for i in range(k-1)] # Shift the diagram
             #shifted = list(a) # Make a copy of the shifted partition in case we need it later
             d = [(a[i] - a[i+1]) % n for i in range(k-2)]
@@ -2177,7 +2178,7 @@ class FockSpaceTruncated(FockSpace):
                     mu = _Partitions([p - x for p in la])
 
                     def add_cols(nu):
-                        return _Partitions([ v + x for v in list(nu) + [0]*(k - len(nu)) ])
+                        return _Partitions([v + x for v in list(nu) + [0]*(k - len(nu))])
                     return fock.sum_of_terms((add_cols(nu), c) for nu,c in self._G_to_fock_basis(mu))
 
                 # For critical partitions

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
 Latin Squares
 
@@ -40,8 +41,8 @@ This file contains
 #. some named latin squares (back circulant, forward circulant, abelian
    `2`-group);
 
-#. functions is\_partial\_latin\_square and is\_latin\_square to test
-   if a LatinSquare object satisfies the definition of a latin square
+#. methods :meth:`is_partial_latin_square` and :meth:`is_latin_square` to test
+   if a :class:`LatinSquare` object satisfies the definition of a latin square
    or partial latin square, respectively;
 
 #. tests for completion and unique completion (these use the C++
@@ -56,7 +57,7 @@ This file contains
 
 #. a few examples of `\tau_i` representations of bitrades constructed
    from the action of a group on itself by right multiplication,
-   functions for converting to a pair of LatinSquare objects.
+   functions for converting to a pair of :class:`LatinSquare` objects.
 
 EXAMPLES::
 
@@ -112,7 +113,6 @@ TESTS::
     sage: L = elementary_abelian_2group(3)
     sage: L == loads(dumps(L))
     True
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>,
@@ -135,9 +135,9 @@ from sage.rings.integer import Integer
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor
-from sage.interfaces.gap import GapElement
+from sage.libs.gap.libgap import libgap
+from sage.libs.gap.element import GapElement
 from sage.combinat.permutation import Permutation
-from sage.interfaces.gap import gap
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.arith.misc import is_prime
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -331,7 +331,7 @@ class LatinSquare:
 
     def clear_cells(self):
         """
-        Mark every cell in self as being empty.
+        Mark every cell in ``self`` as being empty.
 
         EXAMPLES::
 
@@ -406,7 +406,7 @@ class LatinSquare:
     def nr_filled_cells(self):
         """
         Return the number of filled cells (i.e. cells with a positive
-        value) in the partial latin square self.
+        value) in the partial latin square ``self``.
 
         EXAMPLES::
 
@@ -459,7 +459,7 @@ class LatinSquare:
 
     def is_empty_column(self, c):
         """
-        Check if column c of the partial latin square self is empty.
+        Check if column c of the partial latin square ``self`` is empty.
 
         EXAMPLES::
 
@@ -475,7 +475,7 @@ class LatinSquare:
 
     def is_empty_row(self, r):
         """
-        Check if row r of the partial latin square self is empty.
+        Check if row r of the partial latin square ``self`` is empty.
 
         EXAMPLES::
 
@@ -492,7 +492,7 @@ class LatinSquare:
     def nr_distinct_symbols(self):
         """
         Return the number of distinct symbols in the partial latin square
-        self.
+        ``self``.
 
         EXAMPLES::
 
@@ -513,7 +513,7 @@ class LatinSquare:
     def apply_isotopism(self, row_perm, col_perm, sym_perm):
         """
         An isotopism is a permutation of the rows, columns, and symbols of
-        a partial latin square self. Use isotopism() to convert a tuple
+        a partial latin square ``self``. Use isotopism() to convert a tuple
         (indexed from 0) to a Permutation object.
 
         EXAMPLES::
@@ -554,11 +554,11 @@ class LatinSquare:
 
     def filled_cells_map(self):
         """
-        Number the filled cells of self with integers from {1, 2, 3, ...}.
+        Number the filled cells of ``self`` with integers from {1, 2, 3, ...}.
 
         INPUT:
 
-        - ``self`` -- partial latin square self (empty cells
+        - ``self`` -- partial latin square ``self`` (empty cells
           have negative values)
 
         OUTPUT:
@@ -619,12 +619,12 @@ class LatinSquare:
 
     def top_left_empty_cell(self):
         """
-        Return the least [r, c] such that self[r, c] is an empty cell. If
-        all cells are filled then we return None.
+        Return the least ``[r, c]`` such that ``self[r, c]`` is an empty cell.
+        If all cells are filled then we return ``None``.
 
         INPUT:
 
-        -  ``self`` - LatinSquare
+        - ``self`` -- LatinSquare
 
         EXAMPLES::
 
@@ -643,7 +643,7 @@ class LatinSquare:
 
     def is_partial_latin_square(self):
         """
-        self is a partial latin square if it is an n by n matrix, and each
+        ``self`` is a partial latin square if it is an n by n matrix, and each
         symbol in [0, 1, ..., n-1] appears at most once in each row, and at
         most once in each column.
 
@@ -704,7 +704,7 @@ class LatinSquare:
 
     def is_latin_square(self):
         """
-        self is a latin square if it is an n by n matrix, and each symbol
+        ``self`` is a latin square if it is an n by n matrix, and each symbol
         in [0, 1, ..., n-1] appears exactly once in each row, and exactly
         once in each column.
 
@@ -736,16 +736,16 @@ class LatinSquare:
     def permissable_values(self, r, c):
         """
         Find all values that do not appear in row r and column c of the
-        latin square self. If self[r, c] is filled then we return the empty
-        list.
+        latin square ``self``. If ``self[r, c]`` is filled then we return the
+        empty list.
 
         INPUT:
 
-        -  ``self`` - LatinSquare
+        - ``self`` -- LatinSquare
 
-        -  ``r`` - int; row of the latin square
+        - ``r`` -- integer; row of the latin square
 
-        -  ``c`` - int; column of the latin square
+        - ``c`` -- integer; column of the latin square
 
         EXAMPLES::
 
@@ -788,12 +788,12 @@ class LatinSquare:
 
         INPUT:
 
-        -  ``self`` - LatinSquare
+        - ``self`` -- LatinSquare
 
         OUTPUT:
 
-        - ``[r, c]`` - cell such that self[r, c] is empty, or returns
-          None if self is a (full) latin square.
+        - ``[r, c]`` -- cell such that ``self[r, c]`` is empty, or returns
+          ``None`` if ``self`` is a (full) latin square
 
         EXAMPLES::
 
@@ -822,7 +822,7 @@ class LatinSquare:
 
     def is_uniquely_completable(self):
         """
-        Return True if the partial latin square self has exactly one
+        Return ``True`` if the partial latin square ``self`` has exactly one
         completion to a latin square. This is just a wrapper for the
         current best-known algorithm, Dancing Links by Knuth. See
         dancing_links.spyx
@@ -850,7 +850,7 @@ class LatinSquare:
 
     def is_completable(self):
         """
-        Return True if the partial latin square can be completed to a
+        Return ``True`` if the partial latin square can be completed to a
         latin square.
 
         EXAMPLES:
@@ -888,7 +888,7 @@ class LatinSquare:
 
     def gcs(self):
         """
-        A greedy critical set of a latin square self is found by
+        A greedy critical set of a latin square ``self`` is found by
         successively removing elements in a row-wise (bottom-up) manner,
         checking for unique completion at each step.
 
@@ -934,7 +934,7 @@ class LatinSquare:
 
     def dlxcpp_has_unique_completion(self):
         """
-        Check if the partial latin square self of order n can be embedded
+        Check if the partial latin square ``self`` of order n can be embedded
         in precisely one latin square of order n.
 
         EXAMPLES::
@@ -953,7 +953,7 @@ class LatinSquare:
 
     def vals_in_row(self, r):
         """
-        Return a dictionary with key e if and only if row r of self has
+        Return a dictionary with key e if and only if row r of ``self`` has
         the symbol e.
 
         EXAMPLES::
@@ -977,7 +977,7 @@ class LatinSquare:
 
     def vals_in_col(self, c):
         """
-        Return a dictionary with key e if and only if column c of self has
+        Return a dictionary with key e if and only if column c of ``self`` has
         the symbol e.
 
         EXAMPLES::
@@ -1212,8 +1212,7 @@ class LatinSquare:
 
                     dlx_rows.append([c_OFFSET, r_OFFSET, xy_OFFSET])
 
-                    if max_column_nr < max(c_OFFSET, r_OFFSET, xy_OFFSET):
-                        max_column_nr = max(c_OFFSET, r_OFFSET, xy_OFFSET)
+                    max_column_nr = max(max_column_nr, max(c_OFFSET, r_OFFSET, xy_OFFSET))
 
         # We will have missed some columns. We
         # have to add 'dummy' rows so that the C++ DLX solver will find
@@ -1278,7 +1277,7 @@ class LatinSquare:
 
     def contained_in(self, Q):
         r"""
-        Return True if self is a subset of Q?
+        Return ``True`` if ``self`` is a subset of `Q`.
 
         EXAMPLES::
 
@@ -1467,20 +1466,20 @@ def isotopism(p):
 
     According to the type of input (see examples below):
 
-    - an integer `n` -- the function returns the identity on `1,...,n`.
+    - an integer `n` -- the function returns the identity on `1,...,n`
 
     - a string representing a permutation in disjoint cycles notation,
       e.g. `(0,1,2)(3,4,5)` -- the corresponding permutation is returned,
-      shifted by 1 to act on `1,...,n`.
+      shifted by 1 to act on `1,...,n`
 
     - list/tuple of tuples -- assumes disjoint cycle notation, see previous
-      entry.
+      entry
 
     - a list of integers -- the function adds `1` to each member of the
-      list, and returns the corresponding permutation.
+      list, and returns the corresponding permutation
 
     - a :class:`PermutationGroupElement` ``p`` -- returns a permutation
-      describing ``p`` **without** any shift.
+      describing ``p`` **without** any shift
 
     EXAMPLES::
 
@@ -1530,7 +1529,7 @@ def isotopism(p):
     if isinstance(p, tuple):
         # We have a single cycle:
         if isinstance(p[0], Integer):
-            return Permutation(tuple((x+1 for x in p)))
+            return Permutation(tuple(x+1 for x in p))
 
         # We have a tuple of cycles:
         if isinstance(p[0], tuple):
@@ -1550,7 +1549,7 @@ def cells_map_as_square(cells_map, n):
     Return a LatinSquare with cells numbered from 1, 2, ... to given
     the dictionary cells_map.
 
-    .. note::
+    .. NOTE::
 
        The value n should be the maximum of the number of rows and
        columns of the original partial latin square
@@ -1596,13 +1595,11 @@ def beta1(rce, T1, T2):
 
     INPUT:
 
+    - ``rce`` -- tuple (or list) (r, c, e) in T1
 
-    -  ``rce`` - tuple (or list) (r, c, e) in T1
+    - ``T1``, ``T2`` -- latin bitrade
 
-    -  ``T1, T2`` - latin bitrade
-
-
-    OUTPUT: (x, c, e) in T2.
+    OUTPUT: (x, c, e) in T2
 
     EXAMPLES::
 
@@ -1637,14 +1634,11 @@ def beta2(rce, T1, T2):
 
     INPUT:
 
-    -  ``rce`` - tuple (or list) (r, c, e) in T1
+    - ``rce`` -- tuple (or list) (r, c, e) in T1
 
-    -  ``T1, T2`` - latin bitrade
+    - ``T1``, ``T2`` -- latin bitrade
 
-
-    OUTPUT:
-
-    - (r, x, e) in T2.
+    OUTPUT: (r, x, e) in T2
 
     EXAMPLES::
 
@@ -1679,15 +1673,11 @@ def beta3(rce, T1, T2):
 
     INPUT:
 
+    - ``rce`` -- tuple (or list) (r, c, e) in T1
 
-    -  ``rce`` - tuple (or list) (r, c, e) in T1
+    - ``T1, T2`` -- latin bitrade
 
-    -  ``T1, T2`` - latin bitrade
-
-
-    OUTPUT:
-
-    - (r, c, x) in T2.
+    OUTPUT: (r, c, x) in T2.
 
     EXAMPLES::
 
@@ -1728,7 +1718,7 @@ def tau1(T1, T2, cells_map):
        \tau_1 = \beta_2^{-1} \beta_3
 
     where the composition is left to right and `\beta_i : T2 \rightarrow T1`
-    changes just the `i^{th}` coordinate of a triple.
+    changes just the `i`-th coordinate of a triple.
 
     EXAMPLES::
 
@@ -1782,7 +1772,7 @@ def tau2(T1, T2, cells_map):
        \tau_2 = \beta_3^{-1} \beta_1
 
     where the composition is left to right and `\beta_i : T2 \rightarrow T1`
-    changes just the `i^{th}` coordinate of a triple.
+    changes just the `i`-th coordinate of a triple.
 
     EXAMPLES::
 
@@ -1836,7 +1826,7 @@ def tau3(T1, T2, cells_map):
        \tau_3 = \beta_1^{-1} \beta_2
 
     where the composition is left to right and `\beta_i : T2 \rightarrow T1`
-    changes just the `i^{th}` coordinate of a triple.
+    changes just the `i`-th coordinate of a triple.
 
     EXAMPLES::
 
@@ -1887,7 +1877,7 @@ def back_circulant(n):
 
     INPUT:
 
-    -  ``n`` -- int; order of the latin square.
+    - ``n`` -- integer; order of the latin square
 
     EXAMPLES::
 
@@ -1917,7 +1907,7 @@ def forward_circulant(n):
 
     INPUT:
 
-    -  ``n`` -- int; order of the latin square.
+    - ``n`` -- integer; order of the latin square
 
     EXAMPLES::
 
@@ -1993,7 +1983,7 @@ def elementary_abelian_2group(s):
 
     INPUT:
 
-    -  ``s`` -- int; order of the latin square will be 2s.
+    - ``s`` -- integer; order of the latin square will be 2s
 
     EXAMPLES::
 
@@ -2035,7 +2025,7 @@ def elementary_abelian_2group(s):
 
 def coin():
     """
-    Simulate a fair coin (returns True or False) using
+    Simulate a fair coin (returns ``True`` or ``False``) using
     ZZ.random_element(2).
 
     EXAMPLES::
@@ -2327,14 +2317,14 @@ def group_to_LatinSquare(G):
 
     ::
 
-        sage: G = gap.Group(PermutationGroupElement((1,2,3)))
+        sage: G = libgap.Group(PermutationGroupElement((1,2,3)))
         sage: group_to_LatinSquare(G)
         [0 1 2]
         [1 2 0]
         [2 0 1]
     """
     if isinstance(G, GapElement):
-        rows = (list(x) for x in list(gap.MultiplicationTable(G)))
+        rows = (list(x) for x in list(libgap.MultiplicationTable(G)))
         new_rows = []
 
         for x in rows:
@@ -2453,16 +2443,16 @@ def p3_group_bitrade_generators(p):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.latin import *
-        sage: p3_group_bitrade_generators(3)
-        ((2,6,7)(3,8,9), (1,2,3)(4,7,8)(5,6,9), (1,9,2)(3,7,4)(5,8,6), Permutation Group with generators [(2,6,7)(3,8,9), (1,2,3)(4,7,8)(5,6,9)])
+        sage: p3_group_bitrade_generators(3)  # random output
+        ((2,6,7)(3,8,9),
+         (1,2,3)(4,7,8)(5,6,9),
+         (1,9,2)(3,7,4)(5,8,6),
+         Permutation Group with generators [(2,6,7)(3,8,9), (1,2,3)(4,7,8)(5,6,9)])
     """
     assert is_prime(p)
 
-    F = gap.new("FreeGroup(3)")
-
-    a = F.gen(1)
-    b = F.gen(2)
-    c = F.gen(3)
+    F = libgap.FreeGroup(3)
+    a, b, c = F.GeneratorsOfGroup()
 
     rels = []
     rels.append(a**p)
@@ -2473,11 +2463,12 @@ def p3_group_bitrade_generators(p):
     rels.append(c*b*((b*c)**(-1)))
 
     G = F.FactorGroupFpGroupByRels(rels)
+    u, v, _ = G.GeneratorsOfGroup()
 
-    iso = gap.IsomorphismPermGroup(G)
+    iso = libgap.IsomorphismPermGroup(G)
 
-    x = PermutationConstructor(gap.Image(iso, G.gen(1)))
-    y = PermutationConstructor(gap.Image(iso, G.gen(2)))
+    x = PermutationConstructor(libgap.Image(iso, u))
+    y = PermutationConstructor(libgap.Image(iso, v))
 
     return (x, y, (x*y)**(-1), PermutationGroup([x, y]))
 
@@ -2494,7 +2485,7 @@ def check_bitrade_generators(a, b, c):
         sage: a, b, c, G = p3_group_bitrade_generators(3)
         sage: check_bitrade_generators(a, b, c)
         True
-        sage: check_bitrade_generators(a, b, gap('()'))
+        sage: check_bitrade_generators(a, b, libgap(gap('()')))
         False
     """
     A = PermutationGroup([a])
@@ -2504,7 +2495,7 @@ def check_bitrade_generators(a, b, c):
     if a*b != c**(-1):
         return False
 
-    X = gap.Intersection(gap.Intersection(A, B), C)
+    X = libgap.Intersection(libgap.Intersection(A, B), C)
     return X.Size() == 1
 
 
@@ -2648,11 +2639,11 @@ def bitrade_from_group(a, b, c, G):
         [ 2  1  3 -1]
         [ 0  3 -1  2]
     """
-    hom = gap.ActionHomomorphism(G, gap.RightCosets(G, gap.TrivialSubgroup(G)), gap.OnRight)
+    hom = libgap.ActionHomomorphism(G, libgap.RightCosets(G, libgap.TrivialSubgroup(G)), libgap.OnRight)
 
-    t1 = gap.Image(hom, a)
-    t2 = gap.Image(hom, b)
-    t3 = gap.Image(hom, c)
+    t1 = libgap.Image(hom, a)
+    t2 = libgap.Image(hom, b)
+    t3 = libgap.Image(hom, c)
 
     t1 = Permutation(str(t1).replace('\n', ''))
     t2 = Permutation(str(t2).replace('\n', ''))

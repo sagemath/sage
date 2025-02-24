@@ -4,6 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
+# sage.doctest: needs sage.rings.padics
 r"""
 `p`-adic Extension Element
 
@@ -33,7 +34,7 @@ from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 cdef class pAdicExtElement(pAdicGenericElement):
     cdef int _set_from_list(self, L) except -1:
         """
-        Sets self from a list.
+        Set ``self`` from a list.
 
         The list should either be uniform in type, or all of the entries
         should be coercible to integers. If any of the entries in ``L``
@@ -41,7 +42,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``L`` -- a list
+        - ``L`` -- list
         """
         raise NotImplementedError
 
@@ -56,8 +57,8 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
     cdef int _set_from_ZZX(self, ZZX_c poly) except -1:
         """
-        Sets from a ZZX_c, choosing how to handle based on the
-        precision type of self.parent().
+        Set from a ZZX_c, choosing how to handle based on the
+        precision type of ``self.parent()``.
 
         Fixed modulus elements should override this function.
 
@@ -108,7 +109,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
     cdef int _set_from_ZZ_pX(self, ZZ_pX_c* poly, ntl_ZZ_pContext_class ctx) except -1:
         """
-        Sets self from a ZZ_pX defined with context ctx.
+        Set ``self`` from a ZZ_pX defined with context ctx.
 
         This function should be overridden for fixed modulus elements.
 
@@ -193,7 +194,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
     cdef int _set_from_ZZ_pE_both(self, ZZ_pE_c* poly, ntl_ZZ_pEContext_class ctx, long absprec, long relprec) except -1:
         """
-        Sets from a ZZ_pE_c with both absolute and relative precision bounded.
+        Set from a ZZ_pE_c with both absolute and relative precision bounded.
 
         Capped absolute and capped relative elements should override
         this function.
@@ -207,7 +208,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
     cdef int _set_from_ZZ_pEX(self, ZZ_pEX_c* poly, ntl_ZZ_pEContext_class ctx) except -1:
         """
-        Sets self from a ZZ_pEX_c.
+        Set ``self`` from a ZZ_pEX_c.
 
         Fixed modulus elements should override this function.
 
@@ -244,7 +245,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
     cdef int _set_from_ZZ_pEX_both(self, ZZ_pEX_c* poly, ntl_ZZ_pEContext_class ctx, long absprec, long relprec) except -1:
         """
-        Sets from a ZZ_pEX_c with both absolute and relative precision bounded.
+        Set from a ZZ_pEX_c with both absolute and relative precision bounded.
 
         Capped absolute and capped relative elements should override
         this function.
@@ -273,14 +274,14 @@ cdef class pAdicExtElement(pAdicGenericElement):
         Return the constant term of a polynomial representing ``self``.
 
         This function is mainly for troubleshooting, and the meaning
-        of the return value will depend on whether self is capped
+        of the return value will depend on whether ``self`` is capped
         relative or otherwise.
 
         EXAMPLES::
 
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = W(566)
             sage: a._const_term_test()
@@ -290,7 +291,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         ans.x = self._const_term()
         return ans
 
-    cdef ZZ_p_c _const_term(self):
+    cdef ZZ_p_c _const_term(self) noexcept:
         raise NotImplementedError
 
     def _ext_p_list(self, pos):
@@ -320,7 +321,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: y = W(775, 19); y
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + O(w^19)
@@ -364,7 +365,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
             sage: c.frobenius().frobenius()
             (a + 1)*7^-1 + O(7^3)
 
-        An error will be raised if the parent of self is a ramified extension::
+        An error will be raised if the parent of ``self`` is a ramified extension::
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = Qp(5).extension(x^2 - 5)
@@ -396,14 +397,13 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``p`` -- a prime, which is compared with the parent of this element.
+        - ``p`` -- a prime, which is compared with the parent of this element
 
         EXAMPLES::
 
             sage: K.<a> = Qq(7^3,4)
             sage: a._is_base_elt(5)
             False
-
         """
         return False
 
@@ -413,18 +413,16 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- a non-negative integer (default: ``1``)
+        - ``absprec`` -- nonnegative integer (default: 1)
 
-        - ``field`` -- boolean (default ``None``).  For precision 1, whether to return
+        - ``field`` -- boolean (default: ``None``); for precision 1, whether to return
           an element of the residue field or a residue ring.  Currently unused.
 
-        - ``check_prec`` -- boolean (default ``True``).  Whether to raise an error if this
+        - ``check_prec`` -- boolean (default: ``True``); whether to raise an error if this
           element has insufficient precision to determine the reduction.  Errors are never
           raised for fixed-mod or floating-point types.
 
-        OUTPUT:
-
-        This element reduced modulo `\pi^\mathrm{absprec}`.
+        OUTPUT: this element reduced modulo `\pi^\mathrm{absprec}`
 
         If ``absprec`` is zero, then as an element of `\ZZ/(1)`.
 
@@ -442,6 +440,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         Unramified case::
 
+            sage: # needs sage.libs.flint
             sage: R = ZpCA(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 9*a + 1)
@@ -466,14 +465,16 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: K = Qp(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 9*a + 1)
             sage: (a/3).residue(0)
             Traceback (most recent call last):
             ...
-            ValueError: element must have non-negative valuation in order to compute residue
+            ValueError: element must have nonnegative valuation in order to compute residue
 
+            sage: # needs sage.libs.flint
             sage: R = ZpFM(3,5)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 3)
@@ -491,7 +492,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         if absprec < 0:
             raise ValueError("cannot reduce modulo a negative power of the uniformizer")
         if self.valuation() < 0:
-            raise ValueError("element must have non-negative valuation in order to compute residue")
+            raise ValueError("element must have nonnegative valuation in order to compute residue")
         R = self.parent()
         if check_prec and (R.is_fixed_mod() or R.is_floating_point()):
             check_prec = False

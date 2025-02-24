@@ -1,6 +1,6 @@
 # distutils: depends = NTL/ZZ.h
 
-from .types cimport (ZZ_c, ZZX_c, ZZ_p_c, vec_ZZ_p_c, ZZ_pContext_c,
+from sage.libs.ntl.types cimport (ZZ_c, ZZX_c, ZZ_p_c, vec_ZZ_p_c, ZZ_pContext_c,
         ZZ_pX_c, ZZ_pX_Modulus_c, ZZ_pX_Multiplier_c)
 
 

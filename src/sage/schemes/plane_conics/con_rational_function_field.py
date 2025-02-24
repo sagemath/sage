@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Projective plane conics over a rational function field
 
@@ -25,7 +24,7 @@ Points can be found using :meth:`has_rational_point`::
 
     sage: K.<t> = FractionField(QQ['t'])
     sage: C = Conic([1, -t, t])
-    sage: C.has_rational_point(point=True)
+    sage: C.has_rational_point(point=True)                                              # needs sage.libs.singular
     (True, (0 : 1 : 1))
 """
 
@@ -45,7 +44,7 @@ from sage.schemes.plane_conics.con_field import ProjectiveConic_field
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD as gcd
 from sage.modules.free_module_element import vector
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 
 
 class ProjectiveConic_rational_function_field(ProjectiveConic_field):
@@ -89,7 +88,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
     def has_rational_point(self, point=False, algorithm='default',
                            read_cache=True):
         r"""
-        Returns True if and only if the conic ``self``
+        Return ``True`` if and only if the conic ``self``
         has a point over its base field `F(t)`, which is a field of rational
         functions.
 
@@ -128,34 +127,37 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
 
             sage: K.<t> = FractionField(PolynomialRing(QQ, 't'))
             sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (True, (-3 : (t + 1)/t : 1))
-            sage: R.<t> = FiniteField(23)[]                                             # optional - sage.rings.finite_rings
-            sage: C = Conic([2, t^2 + 1, t^2 + 5])                                      # optional - sage.rings.finite_rings
-            sage: C.has_rational_point()                                                # optional - sage.rings.finite_rings
+
+            sage: R.<t> = FiniteField(23)[]
+            sage: C = Conic([2, t^2 + 1, t^2 + 5])
+            sage: C.has_rational_point()                                                # needs sage.libs.singular
             True
-            sage: C.has_rational_point(point=True)                                      # optional - sage.rings.finite_rings
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (True, (5*t : 8 : 1))
-            sage: F.<i> = QuadraticField(-1)                                            # optional - sage.rings.number_field
-            sage: R.<t> = F[]                                                           # optional - sage.rings.number_field
-            sage: C = Conic([1, i*t, -t^2 + 4])                                         # optional - sage.rings.number_field
-            sage: C.has_rational_point(point=True)                                      # optional - sage.rings.number_field
+
+            sage: # needs sage.rings.number_field
+            sage: F.<i> = QuadraticField(-1)
+            sage: R.<t> = F[]
+            sage: C = Conic([1, i*t, -t^2 + 4])
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (True, (-t - 2*i : -2*i : 1))
 
         It works on non-diagonal conics as well::
 
             sage: K.<t> = QQ[]
             sage: C = Conic([4, -4, 8, 1, -4, t + 4])
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (True, (1/2 : 1 : 0))
 
         If no point exists output still depends on the argument ``point``::
 
             sage: K.<t> = QQ[]
             sage: C = Conic(K, [t^2, (t-1), -2*(t-1)])
-            sage: C.has_rational_point()
+            sage: C.has_rational_point()                                                # needs sage.libs.singular
             False
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (False, None)
 
         Due to limitations in Sage of algorithms we depend on, it is not
@@ -168,7 +170,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: b = 2*t2^2 + 2*t1*t2 - t1^2
             sage: c = -3*t2^4 - 4*t1*t2^3 + 8*t1^2*t2^2 + 16*t1^3 - t2 - 48*t1^4
             sage: C = Conic([a,b,c])
-            sage: C.has_rational_point()
+            sage: C.has_rational_point()                                                # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError: is_square() not implemented for elements of
@@ -183,49 +185,17 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: P.<u> = QQ[]
             sage: E = P.fraction_field()
             sage: Q.<Y> = E[]
-            sage: F.<v> = E.extension(Y^2 - u^3 - 1)                                    # optional - sage.rings.function_field
-            sage: R.<t> = F[]                                                           # optional - sage.rings.function_field
-            sage: K = R.fraction_field()                                                # optional - sage.rings.function_field
-            sage: C = Conic(K, [u, v, 1])                                               # optional - sage.rings.function_field
-            sage: C.has_rational_point()                                                # optional - sage.rings.function_field
+            sage: F.<v> = E.extension(Y^2 - u^3 - 1)
+            sage: R.<t> = F[]
+            sage: K = R.fraction_field()                                                # needs sage.rings.function_field
+            sage: C = Conic(K, [u, v, 1])                                               # needs sage.rings.function_field
+            sage: C.has_rational_point()                                                # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             NotImplementedError: has_rational_point not implemented for conics
             over base field Univariate Quotient Polynomial Ring in v over
             Fraction Field of Univariate Polynomial Ring in u over Rational
             Field with modulus v^2 - u^3 - 1
-
-        ``has_rational_point`` fails for some conics over function fields
-        over finite fields, due to :trac:`20003`::
-
-            sage: K.<t> = PolynomialRing(GF(7))                                         # optional - sage.rings.finite_rings
-            sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,                 # optional - sage.rings.finite_rings
-            ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
-            sage: C.has_rational_point()                                                # optional - sage.rings.finite_rings
-            Traceback (most recent call last):
-            ...
-            TypeError: self (=Scheme morphism:
-              From: Projective Conic Curve over Fraction Field of Univariate
-                    Polynomial Ring in t over Finite Field of size 7 defined by
-                    (-2*t^2 - 3)*x^2 + (-t^3 + 3*t^2 - 2*t - 2)/(t + 3)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z^2
-              To:   Projective Conic Curve over Fraction Field of Univariate
-                    Polynomial Ring in t over Finite Field of size 7 defined by
-                    (-2*t^2 - 3)*x^2 + (t^2 + 3*t + 3)*x*y + (-2*t^2 - 2)*y^2 + (-t^2 + 3*t + 2)*x*z + (-3*t + 3)*y*z + (-3*t^2 + t - 2)*z^2
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    (x + (2*t - 2)/(t + 3)*y + (3*t^4 + 2*t^3 - 2*t^2 - 2*t + 3)/(t^4 + t^3 - 3*t^2 + 3*t + 1)*z
-                     : y + (-t^3 - t^2 + 3*t - 1)/(t^3 - 3*t^2 + 2*t + 2)*z : z))
-            domain must equal right (=Scheme morphism:
-              From: Projective Conic Curve over Fraction Field of Univariate
-                    Polynomial Ring in t over Finite Field of size 7 defined by
-                    (-2*t^3 - t^2 + 3*t + 3)*x^2 + (t - 3)*y^2 + (-t^7 + 2*t^5 + t^4 + 2*t^3 + 3*t^2 - t - 1)*z^2
-              To:   Projective Conic Curve over Fraction Field of Univariate
-                    Polynomial Ring in t over Finite Field of size 7 defined by
-                    -2/(t^3 - 3*t^2 + 2*t + 2)*x^2 + 1/(t^3 + 3*t^2 - 2*t + 1)*y^2 + (-t^6 + 3*t^5 + t^3 - t^2 - t + 2)/(t^9 - 2*t^8 + t^7 - t^6 + 3*t^5 - 3*t^3 + t^2 - 2*t + 3)*z^2
-              Defn: Defined on coordinates by sending (x : y : z) to
-                    ((t^3 - 3*t^2 + 2*t + 2)*x : (t^2 - 2)*y : (t^5 - 3*t^4 + t^2 + 3*t + 3)*z))
-            codomain
-
-
 
         TESTS::
 
@@ -234,7 +204,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: b = (1/2*t^2 + 1/3)/(-73*t^2 - 2*t + 11/4)
             sage: c = (6934/3*t^6 + 8798/3*t^5 - 947/18*t^4 + 3949/9*t^3 + 20983/18*t^2 + 28/3*t - 131/3)/(-2701/3*t^4 - 293/3*t^3 + 301/6*t^2 + 13/4*t - 11/16)
             sage: C = Conic([a,b,c])
-            sage: C.has_rational_point(point=True)
+            sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
             (True, (4*t + 4 : 2*t + 2 : 1))
 
         A long time test::
@@ -244,9 +214,18 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: b = (-3*t^3 + 8*t + 1/2)/(-1/3*t^3 + 3/2*t^2 + 1/12*t + 1/2)
             sage: c = (1232009/225*t^25 - 1015925057/8100*t^24 + 1035477411553/1458000*t^23 + 7901338091/30375*t^22 - 1421379260447/729000*t^21 + 266121260843/972000*t^20 + 80808723191/486000*t^19 - 516656082523/972000*t^18 + 21521589529/40500*t^17 + 4654758997/21600*t^16 - 20064038625227/9720000*t^15 - 173054270347/324000*t^14 + 536200870559/540000*t^13 - 12710739349/50625*t^12 - 197968226971/135000*t^11 - 134122025657/810000*t^10 + 22685316301/120000*t^9 - 2230847689/21600*t^8 - 70624099679/270000*t^7 - 4298763061/270000*t^6 - 41239/216000*t^5 - 13523/36000*t^4 + 493/36000*t^3 + 83/2400*t^2 + 1/300*t + 1/200)/(-27378/125*t^17 + 504387/500*t^16 - 97911/2000*t^15 + 1023531/4000*t^14 + 1874841/8000*t^13 + 865381/12000*t^12 + 15287/375*t^11 + 6039821/6000*t^10 + 599437/1500*t^9 + 18659/250*t^8 + 1218059/6000*t^7 + 2025127/3000*t^6 + 1222759/6000*t^5 + 38573/200*t^4 + 8323/125*t^3 + 15453/125*t^2 + 17031/500*t + 441/10)
             sage: C = Conic([a,b,c])
-            sage: C.has_rational_point(point = True) # long time (4 seconds)
+            sage: C.has_rational_point(point=True)  # long time (4 seconds)             # needs sage.libs.singular
             (True,
              ((-2/117*t^8 + 304/1053*t^7 + 40/117*t^6 - 1/27*t^5 - 110/351*t^4 - 2/195*t^3 + 11/351*t^2 + 1/117)/(t^4 + 2/39*t^3 + 4/117*t^2 + 2/39*t + 14/39) : -5/3*t^4 + 19*t^3 : 1))
+
+        ``has_rational_point`` used to fail for some conics over function fields
+        over finite fields, due to :issue:`20003`::
+
+            sage: K.<t> = PolynomialRing(GF(7))
+            sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,
+            ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
+            sage: C.has_rational_point()
+            True
         """
         from .constructor import Conic
 
@@ -358,14 +337,14 @@ for function field of characteristic 2.")
         `K=F(t)` and coefficients `a,b,c` such that `a,b,c \in F[t]`,
         `\gcd(a,b)=\gcd(b,c)=\gcd(c,a)=1` and `abc` is square-free.
 
-        Assumes `self` is in diagonal form.
+        Assumes ``self`` is in diagonal form.
 
         OUTPUT:
 
         A tuple (coefficients, multipliers), the coefficients of the conic
         in reduced form and multipliers `\lambda, \mu, \nu \in F(t)^*` such
         that `(x,y,z) \in F(t)` is a solution of the reduced conic if and only
-        if `(\lambda x, \mu y, \nu z)` is a solution of `self`.
+        if `(\lambda x, \mu y, \nu z)` is a solution of ``self``.
 
         ALGORITHM:
 
@@ -412,7 +391,7 @@ for function field of characteristic 2.")
 
         # remove squares
         for i, x in enumerate(coeff):
-            if is_FractionField(x.parent()):
+            if isinstance(x.parent(), FractionField_generic):
                 # go to base ring of fraction field
                 x = self.base().base()(x)
 
@@ -449,14 +428,14 @@ for function field of characteristic 2.")
 
         INPUT:
 
-        - ``self`` -- conic in reduced form.
+        - ``self`` -- conic in reduced form
         - ``supports`` -- 3-tuple where ``supports[i]`` is a list of all monic
-          irreducible `p \in F[t]` that divide the `i`'th of the 3 coefficients.
+          irreducible `p \in F[t]` that divide the `i`-th of the 3 coefficients
         - ``roots`` -- 3-tuple containing lists of roots of all elements of
-          ``supports[i]``, in the same order.
-        - ``case`` -- 1 or 0, as in [HC2006]_.
+          ``supports[i]``, in the same order
+        - ``case`` -- 1 or 0, as in [HC2006]_
         - ``solution`` -- (default: 0) a solution of (5) in [HC2006]_, if
-          case = 0, 0 otherwise.
+          ``case`` = 0, 0 otherwise
 
         OUTPUT:
 
@@ -472,11 +451,12 @@ for function field of characteristic 2.")
 
             sage: K.<t> = FractionField(QQ['t'])
             sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
-            sage: C.has_rational_point(point=True) # indirect test
+            sage: C.has_rational_point(point=True)  # indirect test                     # needs sage.libs.singular
             (True, (-3 : (t + 1)/t : 1))
 
         Different solubility certificates give different points::
 
+            sage: # needs sage.rings.number_field
             sage: K.<t> = PolynomialRing(QQ, 't')
             sage: C = Conic(K, [t^2 - 2, 2*t, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: supp = [[t^2 - 2], [t], [t^3 + 13/2*t^2 + t - 9]]
@@ -523,12 +503,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(B):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + 2 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + 2 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[A + B + 2] = vector(F, d, lastpoly.dict())
+            phi_p[A + B + 2] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(C):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         for (i, p) in enumerate(supports[1]):
@@ -545,12 +525,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(C):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[0] = vector(F, d, lastpoly.dict())
+            phi_p[0] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(A):
                 lastpoly = (lastpoly * t) % p
-                phi_p[1 + n] = vector(F, d, lastpoly.dict())
+                phi_p[1 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         for (i, p) in enumerate(supports[2]):
@@ -567,12 +547,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(A):
                 lastpoly = (lastpoly * t) % p
-                phi_p[1 + n] = vector(F, d, lastpoly.dict())
+                phi_p[1 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[A + 1] = vector(F, d, lastpoly.dict())
+            phi_p[A + 1] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(B):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + 2 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + 2 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         if case == 0:

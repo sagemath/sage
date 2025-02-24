@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 "Flatten nested lists"
 
 import sys
@@ -9,13 +10,11 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
 
     INPUT:
 
-    - ``in_list`` -- a list or tuple
-    - ``ltypes`` -- optional list of particular types to flatten
+    - ``in_list`` -- list or tuple
+    - ``ltypes`` -- (optional) list of particular types to flatten
     - ``max_level`` -- the maximum level to flatten
 
-    OUTPUT:
-
-    a flat list of the entries of ``in_list``
+    OUTPUT: a flat list of the entries of ``in_list``
 
     EXAMPLES::
 
@@ -23,7 +22,7 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
        [1, 1, 1, 2]
        sage: flatten([[1,2,3], (4,5), [[[1],[2]]]])
        [1, 2, 3, 4, 5, 1, 2]
-       sage: flatten([[1,2,3], (4,5), [[[1],[2]]]],max_level=1)
+       sage: flatten([[1,2,3], (4,5), [[[1],[2]]]], max_level=1)
        [1, 2, 3, 4, 5, [[1], [2]]]
        sage: flatten([[[3],[]]],max_level=0)
        [[[3], []]]
@@ -35,13 +34,13 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
     In the following example, the vector is not flattened because
     it is not given in the ``ltypes`` input. ::
 
-       sage: flatten((['Hi',2,vector(QQ,[1,2,3])],(4,5,6)))
+       sage: flatten((['Hi', 2, vector(QQ, [1,2,3])], (4,5,6)))                         # needs sage.modules
        ['Hi', 2, (1, 2, 3), 4, 5, 6]
 
     We give the vector type and then even the vector gets flattened::
 
-       sage: tV = sage.modules.vector_rational_dense.Vector_rational_dense
-       sage: flatten((['Hi',2,vector(QQ,[1,2,3])], (4,5,6)),
+       sage: tV = sage.modules.vector_rational_dense.Vector_rational_dense              # needs sage.modules
+       sage: flatten((['Hi', 2, vector(QQ, [1,2,3])], (4,5,6)),                         # needs sage.modules
        ....:         ltypes=(list, tuple, tV))
        ['Hi', 2, 1, 2, 3, 4, 5, 6]
 
@@ -52,7 +51,7 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
        sage: flatten([GF(5)])
        [Finite Field of size 5]
        sage: tGF = type(GF(5))
-       sage: flatten([GF(5)], ltypes = (list, tuple, tGF))
+       sage: flatten([GF(5)], ltypes=(list, tuple, tGF))
        [0, 1, 2, 3, 4]
 
     Degenerate cases::
@@ -64,7 +63,7 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
     """
     index = 0
     current_level = 0
-    new_list = [x for x in in_list]
+    new_list = list(in_list)
     level_list = [0] * len(in_list)
 
     while index < len(new_list):
@@ -72,9 +71,9 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
         while isinstance(new_list[index], ltypes) and current_level < max_level:
             v = list(new_list[index])
             len_v = len(v)
-            new_list[index : index + 1] = v
+            new_list[index: index + 1] = v
             old_level = level_list[index]
-            level_list[index : index + 1] = [0] * len_v
+            level_list[index: index + 1] = [0] * len_v
             if len_v:
                 current_level += 1
                 level_list[index + len_v - 1] = old_level + 1

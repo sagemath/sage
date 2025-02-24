@@ -73,9 +73,9 @@ cdef inline _Rational_from_mpq(mpq_t e):
     return z
 
 cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 1
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 0
 
     def __copy__(self):
@@ -101,7 +101,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
 
         TESTS:
 
-        Check implicitly that :trac:`10257` works::
+        Check implicitly that :issue:`10257` works::
 
             sage: from sage.modules.vector_rational_dense import Vector_rational_dense
             sage: Vector_rational_dense(QQ^(sys.maxsize))
@@ -234,7 +234,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy``, ignored optional argument.
+        - ``copy`` -- ignored optional argument
 
         EXAMPLES::
 

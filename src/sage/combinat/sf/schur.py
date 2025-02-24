@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Schur symmetric functions
 """
@@ -18,19 +19,21 @@ Schur symmetric functions
 # ****************************************************************************
 
 from . import classical
-import sage.libs.lrcalc.lrcalc as lrcalc
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.data_structures.blas_dict import convert_remove_zeroes
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.misc import factorial
 from sage.combinat.tableau import StandardTableaux
 
+lazy_import('sage.libs.lrcalc', 'lrcalc')
+
 
 class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, Sym):
         """
-        A class for methods related to the Schur symmetric function basis
+        A class for methods related to the Schur symmetric function basis.
 
         INPUT:
 
@@ -49,7 +52,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
     def _dual_basis_default(self):
         """
-        Returns the default value for ``self.dual_basis()``
+        Return the default value for ``self.dual_basis()``.
 
         This method returns the dual basis to the Schur basis with respect to the standard
         scalar product. Since the Schur basis is self-dual, it returns itself.
@@ -83,9 +86,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
         - ``self`` -- a Schur symmetric function basis
         - ``left``, ``right`` -- partitions
 
-        OUTPUT:
-
-        - an element of the Schur basis, the product of ``left`` and ``right``
+        OUTPUT: an element of the Schur basis, the product of ``left`` and ``right``
 
         TESTS::
 
@@ -135,7 +136,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
     def coproduct_on_basis(self, mu):
         r"""
-        Returns the coproduct of ``self(mu)``.
+        Return the coproduct of ``self(mu)``.
 
         Here ``self`` is the basis of Schur functions in the ring of symmetric functions.
 
@@ -226,16 +227,14 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def __pow__(self, n):
             """
-            Returns the naive powering of an instance of ``self``.
+            Return the naive powering of an instance of ``self``.
 
             INPUT:
 
             - ``self`` -- an element of the Schur symmetric function basis
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
-            OUTPUT:
-
-            - the ``n`-th power of an instance of ``self`` in the Schur basis
+            OUTPUT: the `n`-th power of an instance of ``self`` in the Schur basis
 
             See ``Monoids.Element.__pow__`` and ``Monoids.Element._pow_naive``.
 
@@ -272,7 +271,6 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             #    10 loops, best of 3: 1.73 s per loop
 
             Todo: do the same for the other non multiplicative bases?
-
             """
             return self._pow_naive(n)
 
@@ -312,9 +310,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             :meth:`omega_involution()` is a synonym for the :meth:`omega()`
             method.
 
-            OUTPUT:
-
-            - the image of ``self`` under the omega automorphism
+            OUTPUT: the image of ``self`` under the omega automorphism
 
             EXAMPLES::
 
@@ -348,9 +344,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
               (the default value is the standard
               :meth:`~sage.combinat.sf.sfa.zee` function)
 
-            OUTPUT:
-
-            - the scalar product between ``self`` and ``x``
+            OUTPUT: the scalar product between ``self`` and ``x``
 
             EXAMPLES::
 
@@ -463,7 +457,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 
@@ -560,7 +554,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -621,12 +615,12 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             INPUT:
 
-            - ``n`` (default: ``infinity``) -- a nonnegative integer or
+            - ``n`` -- (default: ``infinity``) a nonnegative integer or
               ``infinity``, specifying whether to compute the principal
               specialization of order ``n`` or the stable principal
               specialization.
 
-            - ``q`` (default: ``None``) -- the value to use for `q`; the
+            - ``q`` -- (default: ``None``) the value to use for `q`; the
               default is to create a ring of polynomials in ``q``
               (or a field of rational functions in ``q``) over the
               given coefficient ring.
@@ -661,17 +655,16 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 q^4 + q^3 + 2*q^2 + q + 1
 
                 sage: x = 3*s[2,2] + 2*s[1] + 1
-                sage: x.principal_specialization(3, q=var("q"))                         # optional - sage.symbolic
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 3*(q^4 - 1)*(q^3 - 1)*q^2/((q^2 - 1)*(q - 1)) + 2*(q^3 - 1)/(q - 1) + 1
 
-                sage: x.principal_specialization(q=var("q"))                            # optional - sage.symbolic
+                sage: x.principal_specialization(q=var("q"))                            # needs sage.symbolic
                 -2/(q - 1) + 3*q^2/((q^3 - 1)*(q^2 - 1)^2*(q - 1)) + 1
 
             TESTS::
 
                 sage: s.zero().principal_specialization(3)
                 0
-
             """
             def get_variable(ring, name):
                 try:
@@ -715,7 +708,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                         quotient = ZZq((prod(1-q_lim**(n+j-i)
                                              for (i, j) in partition.cells()))
                                     / prod(1-q_lim**h for h in partition.hooks()))
-                        return (power * quotient.subs({q_lim: q}))
+                        return power * quotient.subs({q_lim: q})
 
             return self.parent()._apply_module_morphism(self, f, q.parent())
 
@@ -766,10 +759,10 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             INPUT:
 
-            - ``t`` (default: ``None``) -- the value to use for `t`;
-              the default is to create a ring of polynomials in ``t``.
+            - ``t`` -- (default: ``None``) the value to use for `t`;
+              the default is to create a ring of polynomials in ``t``
 
-            - ``q`` (default: `1`) -- the value to use for `q`.  If
+            - ``q`` -- (default: `1`) the value to use for `q`.  If
               ``q`` is ``None``, then a ring (or fraction field) of
               polynomials in ``q`` is created.
 
@@ -805,14 +798,13 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(s[3].exponential_specialization(q=var("q"), t=var("t")))   # optional - sage.symbolic
+                sage: factor(s[3].exponential_specialization(q=var("q"), t=var("t")))   # needs sage.symbolic
                 t^3/((q^2 + q + 1)*(q + 1))
 
             TESTS::
 
                 sage: s.zero().exponential_specialization()
                 0
-
             """
             def get_variable(ring, name):
                 try:
@@ -851,4 +843,6 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.schur', 'SymmetricFunctionAlgebraElement_schur',  SymmetricFunctionAlgebra_schur.Element)
+register_unpickle_override('sage.combinat.sf.schur',
+                           'SymmetricFunctionAlgebraElement_schur',
+                           SymmetricFunctionAlgebra_schur.Element)

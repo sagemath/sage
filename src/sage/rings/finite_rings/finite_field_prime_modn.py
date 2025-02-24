@@ -56,9 +56,9 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
         INPUT:
 
-        - ``p`` -- an integer at least 2
+        - ``p`` -- integer at least 2
 
-        - ``check`` -- bool (default: ``True``); if ``False``, do not
+        - ``check`` -- boolean (default: ``True``); if ``False``, do not
           check ``p`` for primality
 
         EXAMPLES::
@@ -105,7 +105,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             sage: 12 % 7
             5
 
-            sage: ZZ.residue_field(7).hom(GF(7))(1)  # See trac 11319                   # needs sage.rings.finite_rings
+            sage: ZZ.residue_field(7).hom(GF(7))(1)  # See trac 11319
             1
 
             sage: # needs sage.rings.finite_rings sage.rings.number_field
@@ -118,14 +118,14 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
              To:   Finite Field of size 13
              Defn: 1 |--> 1
 
-        Check that :trac:`19573` is resolved::
+        Check that :issue:`19573` is resolved::
 
-            sage: Integers(9).hom(GF(3))                                                # needs sage.rings.finite_rings
+            sage: Integers(9).hom(GF(3))
             Natural morphism:
               From: Ring of integers modulo 9
               To:   Finite Field of size 3
 
-            sage: Integers(9).hom(GF(5))                                                # needs sage.rings.finite_rings
+            sage: Integers(9).hom(GF(5))
             Traceback (most recent call last):
             ...
             TypeError: natural coercion morphism from Ring of integers modulo 9 to Finite Field of size 5 not defined
@@ -154,7 +154,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
     def _convert_map_from_(self, R):
         """
-        Conversion from p-adic fields.
+        Conversion from `p`-adic fields.
 
         EXAMPLES::
 
@@ -174,7 +174,8 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
     def construction(self):
         """
-        Returns the construction of this finite field (for use by sage.categories.pushout)
+        Return the construction of this finite field (for use by
+        ``sage.categories.pushout``).
 
         EXAMPLES::
 
@@ -214,7 +215,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
     def polynomial(self, name=None):
         """
-        Returns the polynomial ``name``.
+        Return the polynomial ``name``.
 
         EXAMPLES::
 
@@ -278,7 +279,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             1
 
             sage: # needs sage.rings.finite_rings
-            sage: k = GF(1009, modulus="primitive")
+            sage: k = GF(1009, modulus='primitive')
             sage: k.gen()  # this gives a primitive element
             11
             sage: k.gen(1)
@@ -339,6 +340,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             1
         """
         return Integer(1)
+
 
 register_unpickle_override(
     'sage.rings.finite_field_prime_modn', 'FiniteField_prime_modn',

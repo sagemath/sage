@@ -87,11 +87,9 @@ def _class_for_LatticePolytope(dim):
 
     INPUT:
 
-    - ``dim`` -- integer. The ambient space dimension.
+    - ``dim`` -- integer; the ambient space dimension
 
-    OUTPUT:
-
-    The appropriate class for the lattice polytope.
+    OUTPUT: the appropriate class for the lattice polytope
 
     EXAMPLES::
 
@@ -129,7 +127,7 @@ def LatticePolytope_PPL(*args):
         sage: LatticePolytope_PPL(P)                                                    # needs pplpy
         A 0-dimensional lattice polytope in ZZ^2 with 1 vertex
 
-    A ``TypeError`` is raised if the arguments do not specify a lattice polytope::
+    A :exc:`TypeError` is raised if the arguments do not specify a lattice polytope::
 
         sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
         sage: LatticePolytope_PPL((0,0), (1/2,1))                                       # needs pplpy
@@ -153,13 +151,13 @@ def LatticePolytope_PPL(*args):
         TypeError: polyhedron has non-integral generators
     """
     polytope_class = LatticePolytope_PPL_class
-    if len(args)==1 and isinstance(args[0], C_Polyhedron):
+    if len(args) == 1 and isinstance(args[0], C_Polyhedron):
         polyhedron = args[0]
         polytope_class = _class_for_LatticePolytope(polyhedron.space_dimension())
         if not all(p.is_point() and p.divisor() == 1 for p in polyhedron.generators()):
             raise TypeError('polyhedron has non-integral generators')
         return polytope_class(polyhedron)
-    if len(args)==1 \
+    if len(args) == 1 \
             and isinstance(args[0], (list, tuple)) \
             and isinstance(args[0][0], (list,tuple)):
         vertices = args[0]
@@ -195,11 +193,9 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
     def __repr__(self):
         """
-        Return the string representation
+        Return the string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -233,9 +229,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         Return whether the lattice polytope is compact.
 
-        OUTPUT:
-
-        Always ``True``, since polytopes are by definition compact.
+        OUTPUT: always ``True``, since polytopes are by definition compact
 
         EXAMPLES::
 
@@ -250,9 +244,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         Return the number of vertices.
 
-        OUTPUT:
-
-        An integer, the number of vertices.
+        OUTPUT: integer; the number of vertices
 
         EXAMPLES::
 
@@ -278,7 +270,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: LatticePolytope_PPL((0,0,0), (1,0,0), (0,1,0)).is_simplex()
             True
         """
-        return self.affine_dimension()+1==self.n_vertices()
+        return self.affine_dimension()+1 == self.n_vertices()
 
     @cached_method
     def bounding_box(self):
@@ -344,7 +336,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a ``ValueError`` is raised.
+        polyhedron is not compact, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -467,7 +459,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             ((-1, -1), (-1, 1), (0, 0), (1, -1), (1, 1))
         """
         n = 1 + self.space_dimension() - self.affine_dimension()
-        return tuple(p[0] for p in self._integral_points_saturating() if len(p[1])!=n)
+        return tuple(p[0] for p in self._integral_points_saturating() if len(p[1]) != n)
 
     @cached_method
     def vertices(self):
@@ -508,7 +500,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         INPUT:
 
         - ``constraint`` -- a constraint (inequality or equation) of
-          the polytope.
+          the polytope
 
         OUTPUT:
 
@@ -537,10 +529,8 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         Return whether the lattice polytope is full dimensional.
 
-        OUTPUT:
-
-        Boolean. Whether the :meth:`affine_dimension` equals the
-        ambient space dimension.
+        OUTPUT: boolean; whether the :meth:`affine_dimension` equals the
+        ambient space dimension
 
         EXAMPLES::
 
@@ -566,8 +556,8 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the lattice polytope
-          fiber.
+        - ``dim`` -- integer; the dimension of the lattice polytope
+          fiber
 
         OUTPUT:
 
@@ -586,7 +576,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         # "points" are the potential vertices of the fiber. They are
         # in the $codim$-skeleton of the polytope, which is contained
         # in the points that saturate at least $dim$ equations.
-        points = [ p for p in self._integral_points_saturating() if len(p[1])>=dim ]
+        points = [ p for p in self._integral_points_saturating() if len(p[1]) >= dim ]
         points = sorted(points, key=lambda x:len(x[1]))
 
         # iterate over point combinations subject to all points being on one facet.
@@ -597,7 +587,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
                     saturated_ieqs = ieqs
                 else:
                     saturated_ieqs = saturated.intersection(ieqs)
-                if len(saturated_ieqs)==0:
+                if len(saturated_ieqs) == 0:
                     continue
                 if n == 1:
                     yield [i]
@@ -635,8 +625,8 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``polytopes`` -- a tuple/list/iterable of subsets of the
-          integral points of ``self``.
+        - ``polytopes`` -- tuple/list/iterable of subsets of the
+          integral points of ``self``
 
         OUTPUT:
 
@@ -713,10 +703,10 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``point_coordinates`` -- a list/tuple/iterable of rational
-          numbers. The coordinates of the point.
+        - ``point_coordinates`` -- list/tuple/iterable of rational
+          numbers; the coordinates of the point
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -737,9 +727,9 @@ class LatticePolytope_PPL_class(C_Polyhedron):
     @cached_method
     def contains_origin(self):
         """
-        Test whether the polytope contains the origin
+        Test whether the polytope contains the origin.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -877,13 +867,11 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         INPUT:
 
         - ``fiber`` -- a sub-lattice polytope defining the
-          :meth:`base_projection`.
+          :meth:`base_projection`
 
-        - ``points`` -- the points to project to the base.
+        - ``points`` -- the points to project to the base
 
-        OUTPUT:
-
-        A tuple of primitive `\ZZ`-vectors.
+        OUTPUT: a tuple of primitive `\ZZ`-vectors
 
         EXAMPLES::
 
@@ -922,7 +910,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         That is, the polytope is full-dimensional and the origin is a
         interior point not on the boundary.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -957,7 +945,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``vertex_labels`` -- a tuple or ``None`` (default). The
+        - ``vertex_labels`` -- tuple or ``None`` (default). The
           labels of the vertices that will be used in the output
           permutation group. By default, the vertices are used
           themselves.
@@ -1029,12 +1017,12 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``points`` -- A tuple of coordinate vectors or ``None``
+        - ``points`` -- tuple of coordinate vectors or ``None``
           (default). If specified, the points must form complete
           orbits under the lattice automorphism group. If ``None`` all
           vertices are used.
 
-        - ``point_labels`` -- A tuple of labels for the ``points`` or
+        - ``point_labels`` -- tuple of labels for the ``points`` or
           ``None`` (default). These will be used as labels for the do
           permutation group. If ``None``, the ``points`` will be used
           themselves.
@@ -1072,7 +1060,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             Permutation Group with generators [(), (3,4), (1,6)(2,5), (1,6)(2,5)(3,4)]
 
         Point labels also work for lattice polytopes that are not
-        full-dimensional, see :trac:`16669`::
+        full-dimensional, see :issue:`16669`::
 
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: lp = LatticePolytope_PPL((1,0,0), (0,1,0), (-1,-1,0))

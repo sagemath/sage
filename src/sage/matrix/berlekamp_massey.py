@@ -37,7 +37,7 @@ def berlekamp_massey(a):
 
     INPUT:
 
-    -  ``a`` -- a list of even length of elements of a field (or domain)
+    - ``a`` -- list of even length of elements of a field (or domain)
 
     OUTPUT:
 
@@ -55,11 +55,11 @@ def berlekamp_massey(a):
         sage: from sage.matrix.berlekamp_massey import berlekamp_massey
         sage: berlekamp_massey([1,2,1,2,1,2])
         x^2 - 1
-        sage: berlekamp_massey([GF(7)(1),19,1,19])
+        sage: berlekamp_massey([GF(7)(1), 19, 1, 19])
         x^2 + 6
         sage: berlekamp_massey([2,2,1,2,1,191,393,132])
         x^4 - 36727/11711*x^3 + 34213/5019*x^2 + 7024942/35133*x - 335813/1673
-        sage: berlekamp_massey(prime_range(2,38))
+        sage: berlekamp_massey(prime_range(2, 38))                                      # needs sage.libs.pari
         x^6 - 14/9*x^5 - 7/9*x^4 + 157/54*x^3 - 25/27*x^2 - 73/18*x + 37/9
 
     TESTS::
@@ -84,15 +84,11 @@ def berlekamp_massey(a):
         K = a[0].parent().fraction_field()
     except AttributeError:
         K = sage.rings.rational_field.RationalField()
-    R = K['x']
-    x = R.gen()
 
-    f = {-1: R(a), 0: x**(2 * M)}
-    s = {-1: 1, 0: 0}
-    j = 0
-    while f[j].degree() >= M:
-        j += 1
-        qj, f[j] = f[j - 2].quo_rem(f[j - 1])
-        s[j] = s[j - 2] - qj * s[j - 1]
-    t = s[j].reverse()
-    return ~(t[t.degree()]) * t  # make monic  (~ is inverse in python)
+    R, x = K['x'].objgen()
+    f0, f1 = R(a), x**(2 * M)
+    s0, s1 = 1, 0
+    while f1.degree() >= M:
+        f0, (q, f1) = f1, f0.quo_rem(f1)
+        s0, s1 = s1, s0 - q * s1
+    return s1.reverse().monic()

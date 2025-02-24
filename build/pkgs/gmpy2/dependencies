@@ -1,4 +1,4 @@
-$(PYTHON) $(MP_LIBRARY) mpfr mpc | $(PYTHON_TOOLCHAIN)
+ $(MP_LIBRARY) mpfr mpc | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

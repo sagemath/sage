@@ -1,3 +1,4 @@
+# sage.doctest: needs sphinx
 """
 Documentation builders
 
@@ -29,7 +30,7 @@ times saved in ``local/share/doctree/reference.pickle`` from the previous
 build. Then new rst files are generated for new and updated modules. See
 :meth:`get_new_and_updated_modules()`.
 
-After :trac:`31948`, when Sage is built, :class:`ReferenceBuilder` is not used
+After :issue:`31948`, when Sage is built, :class:`ReferenceBuilder` is not used
 and its responsibility is now taken by the ``Makefile`` in ``$SAGE_ROOT/src/doc``.
 """
 
@@ -108,7 +109,7 @@ def builder_helper(type):
 
     TESTS:
 
-    Check that :trac:`25161` has been resolved::
+    Check that :issue:`25161` has been resolved::
 
         sage: from sage_docbuild.builders import DocBuilder
         sage: from sage_docbuild.__main__ import setup_parser
@@ -170,12 +171,10 @@ def builder_helper(type):
             if build_options.ABORT_ON_ERROR:
                 raise Exception("Non-exception during docbuild: %s" % (e,), e)
 
-        if "/latex" in output_dir:
-            logger.warning("LaTeX file written to {}".format(output_dir))
-        else:
-            logger.warning(
-                "Build finished. The built documents can be found in {}".
-                format(output_dir))
+        if type == 'latex':
+            logger.warning(f"LaTeX files can be found in {output_dir}.")
+        elif type != 'inventory':
+            logger.warning(f"Build finished. The built documents can be found in {output_dir}.")
 
     f.is_output_format = True
     return f
@@ -186,10 +185,10 @@ class DocBuilder():
         """
         INPUT:
 
-        - ``name`` - the name of a subdirectory in SAGE_DOC_SRC, such as
+        - ``name`` -- the name of a subdirectory in SAGE_DOC_SRC, such as
           'tutorial' or 'bordeaux_2008'
 
-        - ``lang`` - (default "en") the language of the document.
+        - ``lang`` -- (default "en") the language of the document.
         """
         doc = name.split(os.path.sep)
 
@@ -297,7 +296,7 @@ class DocBuilder():
 
         if subprocess.call(make_target % (tex_dir, command, pdf_dir), close_fds=False, shell=True):
             raise RuntimeError(error_message % (command, tex_dir))
-        logger.warning("Build finished.  The built documents can be found in %s", pdf_dir)
+        logger.warning(f"Build finished. The built documents can be found in {pdf_dir}.")
 
     def clean(self, *args):
         shutil.rmtree(self._doctrees_dir())
@@ -431,12 +430,23 @@ class WebsiteBuilder(DocBuilder):
     def html(self):
         """
         After we have finished building the website index page, we copy
-        everything one directory up.
+        everything one directory up, that is, to the base diectory ``html/en``.
 
         In addition, an index file is installed into the root doc directory.
+
+        Thus we have three index.html files:
+
+            html/en/website/index.html  (not used)
+            html/en/index.html  (base directory)
+            index.html  (root doc directory)
         """
-        DocBuilder.html(self)
+        super().html()
         html_output_dir = self._output_dir('html')
+
+        # This file is used by src/doc/common/static/jupyter-sphinx-furo.js
+        # for doc version selector
+        shutil.copy2(os.path.join(self.dir, 'versions.txt'), html_output_dir)
+
         for f in os.listdir(html_output_dir):
             src = os.path.join(html_output_dir, f)
             dst = os.path.join(html_output_dir, '..', f)
@@ -446,9 +456,25 @@ class WebsiteBuilder(DocBuilder):
             else:
                 shutil.copy2(src, dst)
 
-        root_index_file = os.path.join(html_output_dir, '../../../index.html')
-        shutil.copy2(os.path.join(SAGE_DOC_SRC, self.lang, 'website', 'root_index.html'),
-                     root_index_file)
+        shutil.copy2(os.path.join(self.dir, 'root_index.html'),
+                     os.path.join(html_output_dir, '../../../index.html'))
+
+    def pdf(self):
+        """
+        Build the website hosting pdf docs.
+        """
+        super().pdf()
+
+        # If the website exists, update it.
+
+        from sage.env import SAGE_DOC
+        website_dir = os.path.join(SAGE_DOC, 'html', 'en', 'website')
+
+        if os.path.exists(os.path.join(website_dir, 'index.html')):
+            # Rebuild WITHOUT --no-pdf-links, which is translated to
+            # "-A hide_pdf_links=1" Sphinx argument. Thus effectively
+            # the index page SHOWS links to pdf docs.
+            self.html()
 
     def clean(self):
         """
@@ -631,22 +657,22 @@ class ReferenceTopBuilder(DocBuilder):
         os.makedirs(d, exist_ok=True)
         return d
 
-    def pdf(self):
+    def html(self):
         """
-        Build top-level document.
+        Build the top-level document.
         """
-        super().pdf()
+        super().html()
 
-        # we need to build master index file which lists all
-        # of the PDF file.  So we create an html file, based on
-        # the file index.html from the "reference_top" target.
-
-        # First build the top reference page. This only takes a few seconds.
-        getattr(get_builder('reference_top'), 'html')()
+        # We want to build master index file which lists all of the PDF file.
+        # We modify the file index.html from the "reference_top" target, if it
+        # exists. Otherwise, we are done.
 
         from sage.env import SAGE_DOC
         reference_dir = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
-        output_dir = self._output_dir('pdf')
+        output_dir = self._output_dir('html')
+
+        with open(os.path.join(reference_dir, 'index.html')) as f:
+            html = f.read()
 
         # Install in output_dir a symlink to the directory containing static files.
         # Prefer relative path for symlinks.
@@ -657,16 +683,11 @@ class ReferenceTopBuilder(DocBuilder):
             pass
 
         # Now modify top reference index.html page and write it to output_dir.
-        with open(os.path.join(reference_dir, 'index.html')) as f:
-            html = f.read()
         html_output_dir = os.path.dirname(reference_dir)
 
         # Fix links in navigation bar
         html = re.sub(r'<a href="(.*)">Sage(.*)Documentation</a>',
                       r'<a href="../../../html/en/index.html">Sage\2Documentation</a>',
-                      html)
-        html = re.sub(r'<a href="">Reference Manual</a>',
-                      r'<a href="">Reference Manual (PDF version)</a>',
                       html)
         html = re.sub(r'<li class="right"(.*)>', r'<li class="right" style="display: none" \1>',
                       html)
@@ -698,14 +719,14 @@ class ReferenceTopBuilder(DocBuilder):
         #
         # Change the third form to
         #
-        #   <a href="module/module.pdf">blah <img src="_static/pdf.png" /></a>
+        #   <a href="module/module.pdf"><img src="_static/pdf.png">blah</a>
         #
         rst = re.sub(r'`([^`\n]*)`__.*\n\n__ (.*)',
                      r'<a href="\2">\1</a>.', rst)
         rst = re.sub(r'`([^<\n]*)\s+<(.*)>`_',
                      r'<a href="\2">\1</a>', rst)
         rst = re.sub(r':doc:`([^<]*?)\s+<(.*)/index>`',
-                     r'<a href="\2/\2.pdf">\1 <img src="_static/pdf.png"/></a>', rst)
+                     r'<a title="PDF" class="pdf" href="../../../pdf/en/reference/\2/\2.pdf"><img src="_static/pdf.png"></a><a href="\2/index.html">\1</a> ', rst)
         # Body: add paragraph <p> markup.
         start = rst.rfind('*\n') + 1
         end = rst.find('\nUser Interfaces')
@@ -723,26 +744,14 @@ class ReferenceTopBuilder(DocBuilder):
         rst_toc = re.sub(r'\n([A-Z][a-zA-Z, ]*)\n[-]*\n',
                          r'</ul>\n\n\n<h3>\1</h3>\n\n<ul>\n', rst_toc)
         # now write the file.
-        with open(os.path.join(output_dir, 'index.html'), 'w') as new_index:
+        with open(os.path.join(output_dir, 'index-pdf.html'), 'w') as new_index:
             new_index.write(html[:html_end_preamble])
-            new_index.write('<h1>Sage Reference Manual (PDF version)</h1>')
+            new_index.write('<h1>Sage Reference Manual</h1>')
             new_index.write(rst_body)
             new_index.write('<ul>')
             new_index.write(rst_toc)
             new_index.write('</ul>\n\n')
             new_index.write(html[html_bottom:])
-        logger.warning('''
-PDF documents have been created in subdirectories of
-
-  %s
-
-Alternatively, you can open
-
-  %s
-
-for a webpage listing all of the documents.''' % (output_dir,
-                                                  os.path.join(output_dir,
-                                                               'index.html')))
 
 
 class ReferenceSubBuilder(DocBuilder):
@@ -862,23 +871,13 @@ class ReferenceSubBuilder(DocBuilder):
         """
         Return the Sphinx environment for this project.
         """
-        class FakeConfig():
-            values = tuple()
-
-        class FakeApp():
-            def __init__(self, dir):
-                self.srcdir = dir
-                self.config = FakeConfig()
-
         env_pickle = os.path.join(self._doctrees_dir(), 'environment.pickle')
         try:
             with open(env_pickle, 'rb') as f:
                 env = pickle.load(f)
-                env.app = FakeApp(self.dir)
-                env.config.values = env.app.config.values
                 logger.debug("Opened Sphinx environment: %s", env_pickle)
                 return env
-        except (IOError, EOFError) as err:
+        except (OSError, EOFError) as err:
             logger.debug(
                 f"Failed to open Sphinx environment '{env_pickle}'", exc_info=True)
 
@@ -892,29 +891,14 @@ class ReferenceSubBuilder(DocBuilder):
             for doc in env.all_docs:
                 env.all_docs[doc] = time.time()
             logger.info("Updated %d reST file mtimes", len(env.all_docs))
+
             # This is the only place we need to save (as opposed to
             # load) Sphinx's pickle, so we do it right here.
-            env_pickle = os.path.join(self._doctrees_dir(),
-                                      'environment.pickle')
-
-            # When cloning a new branch (see
-            # SAGE_LOCAL/bin/sage-clone), we hard link the doc output.
-            # To avoid making unlinked, potentially inconsistent
-            # copies of the environment, we *don't* use
-            # env.topickle(env_pickle), which first writes a temporary
-            # file.  We adapt sphinx.environment's
-            # BuildEnvironment.topickle:
+            env_pickle = os.path.join(self._doctrees_dir(), 'environment.pickle')
 
             # remove unpicklable attributes
             env.set_warnfunc(None)
-            del env.config.values
             with open(env_pickle, 'wb') as picklefile:
-                # remove potentially pickling-problematic values from config
-                for key, val in vars(env.config).items():
-                    if key.startswith('_') or isinstance(val, (types.ModuleType,
-                                                               types.FunctionType,
-                                                               type)):
-                        del env.config[key]
                 pickle.dump(env, picklefile, pickle.HIGHEST_PROTOCOL)
 
             logger.debug("Saved Sphinx environment: %s", env_pickle)
@@ -1051,13 +1035,33 @@ class ReferenceSubBuilder(DocBuilder):
         Given a filename for a reST file, return an iterator for
         all of the autogenerated reST files that it includes.
         """
+        from sage.features.all import all_features
+
         # Create the regular expression used to detect an autogenerated file
         auto_re = re.compile(r'^\s*(..\/)*(sage(_docbuild)?\/[\w\/]*)\s*$')
 
         # Read the lines
         with open(filename) as f:
             lines = f.readlines()
+
+        skip = False
         for line in lines:
+            if skip:
+                if not line.strip() or line.count(' ', 0) >= indent:
+                    continue
+                skip = False
+            elif line.lstrip().lower().startswith('.. only::'):
+                try:
+                    tag_name = line[line.index('feature_') + 8:].strip()
+                    for feature in all_features():
+                        if tag_name == feature.name.replace('.', '_') and feature.is_present():
+                            break
+                    else:
+                        skip = True
+                        indent = line.index('.. ') + 3
+                        continue
+                except ValueError:
+                    pass
             match = auto_re.match(line)
             if match:
                 yield match.group(2).replace(os.path.sep, '.')
@@ -1205,7 +1209,7 @@ class SingleFileBuilder(DocBuilder):
         """
         INPUT:
 
-        - ``path`` - the path to the file for which documentation
+        - ``path`` -- the path to the file for which documentation
           should be built
         """
         self.lang = 'en'
@@ -1280,7 +1284,6 @@ def setup(app):
    :members:
    :undoc-members:
    :show-inheritance:
-
 """.format(heading, __file__, module_name)
         with open(os.path.join(self.dir, 'index.rst'), 'w') as indexfile:
             indexfile.write(index)

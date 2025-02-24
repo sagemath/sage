@@ -10,9 +10,9 @@ AUTHORS:
 
 - Nathann Cohen (2009-08-14): Initial version
 
-- Jeroen Demeyer (2011-05-06): Make cliquer interruptible (:trac:`11252`)
+- Jeroen Demeyer (2011-05-06): Make cliquer interruptible (:issue:`11252`)
 
-- Nico Van Cleemput (2013-05-27): Handle the empty graph (:trac:`14525`)
+- Nico Van Cleemput (2013-05-27): Handle the empty graph (:issue:`14525`)
 
 REFERENCE:
 
@@ -35,7 +35,7 @@ from cysignals.memory cimport sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 
-cdef extern from "sage/graphs/cliquer/cl.c":
+cdef extern from "cliquer/cl.c":
     cdef int sage_clique_max(graph_t *g, int ** list_of_vertices)
     cdef int sage_all_clique_max(graph_t *g, int ** list_of_vertices)
     cdef int sage_clique_number(graph_t *g)

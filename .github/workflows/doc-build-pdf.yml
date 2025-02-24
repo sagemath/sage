@@ -5,47 +5,146 @@ on:
   push:
   workflow_dispatch:
     # Allow to run manually
+    inputs:
+      platform:
+        description: 'Platform'
+        required: true
+        default: 'ubuntu-jammy-standard'
+      docker_tag:
+        description: 'Docker tag'
+        required: true
+        default: 'dev'
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Same as in build.yml
+  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-incremental"
+  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-with-targets:ci"
+  FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
+  FROM_DOCKER_TARGET:     "with-targets"
+  FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
+  EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
+
 jobs:
-  build-docs:
+  build-doc-pdf:
     runs-on: ubuntu-latest
-    # Use "maximal" so that texlive is installed
-    # Use "fedora-31" for build diversity
-    container: ghcr.io/sagemath/sage/sage-docker-fedora-31-maximal-with-targets:dev
+    services:
+      # https://docs.docker.com/build/ci/github-actions/local-registry/
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Prepare
-        run: |
-          apt-get update && apt-get install -y zip
-          # Reuse built SAGE_LOCAL contained in the Docker image
-          ./bootstrap
-          ./configure --enable-build-as-root --prefix=/sage/local --with-sage-venv --enable-download-from-upstream-url
-
-      - name: Build
-        run: make build V=0 && make doc-pdf
-        env:
-          MAKE: make -j2
-          SAGE_NUM_THREADS: 2
-          TEXMFHOME: /sage/texmf
-
-      - name: Copy docs
-        run: |
-          # For some reason the deploy step below cannot find /sage/...
-          # So copy everything from there to local folder
-          mkdir -p ./docs
-          cp -r -L /sage/local/share/doc/sage/pdf/en/* ./docs
-          # Zip everything for increased performance
-          zip -r docs-pdf.zip docs
-
-      - name: Upload docs
-        uses: actions/upload-artifact@v3
+      - name: Maximize build disk space
+        uses: easimon/maximize-build-space@v10
         with:
-          name: docs-pdf
-          path: docs-pdf.zip
+          # need space in /var for Docker images
+          root-reserve-mb:      30000
+          remove-dotnet:        true
+          remove-android:       true
+          remove-haskell:       true
+          remove-codeql:        true
+          remove-docker-images: true
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          mkdir -p upstream
+          .ci/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
+
+      # Building
+
+      - name: Generate Dockerfile
+        # From docker.yml
+        run: |
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Build Docker image
+        id: image
+        uses: docker/build-push-action@v6
+        with:
+          # push and load may not be set together at the moment
+          push:       true
+          load:       false
+          context:    .
+          tags:       ${{ env.BUILD_IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=ci-build-with-fallback
+
+      - name: Start container
+        id: container
+        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+        if: (success() || failure())
+        run: |
+          docker run --name BUILD -dit \
+                     --mount type=bind,src=$(pwd),dst=$(pwd) \
+                     --workdir $(pwd) \
+                     ${{ env.BUILD_IMAGE }} /bin/sh
+
+      #
+      # On PRs and pushes to branches
+      #
+
+      - name: Update system packages
+        id: packages
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        run: |
+          export PATH="build/bin:$PATH"
+          eval $(sage-print-system-package-command auto update)
+          eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
+          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive texlive_luatex free_fonts xindy)
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+
+      - name: Build doc (PDF)
+        id: docbuild
+        if: (success() || failure()) && steps.packages.outcome == 'success'
+        run: |
+          export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
+          make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+
+      - name: Copy doc
+        id: copy
+        if: (success() || failure()) && steps.docbuild.outcome == 'success'
+        run: |
+          mkdir -p ./doc
+          # We copy everything to a local folder
+          docker cp BUILD:/sage/local/share/doc/sage/pdf doc
+          # Zip everything for increased performance
+          zip -r doc-pdf.zip doc
+
+      - name: Upload doc
+        if: (success() || failure()) && steps.copy.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: doc-pdf
+          path: doc-pdf.zip

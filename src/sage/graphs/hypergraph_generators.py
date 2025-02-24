@@ -32,7 +32,7 @@ Functions and methods
 """
 
 
-class HypergraphGenerators():
+class HypergraphGenerators:
     r"""
     A class consisting of constructors for common hypergraphs.
     """
@@ -44,40 +44,40 @@ class HypergraphGenerators():
               regular=False, uniform=False,
               max_intersection=None,
               connected=False,
-              debug=False, options=""):
+              debug=False, options=''):
         r"""
         Enumerate hypergraphs up to isomorphism using Nauty.
 
         INPUT:
 
-        - ``number_of_sets`` -- integer, at most 64 minus ``number_of_vertices``
+        - ``number_of_sets`` -- integer; at most 64 minus ``number_of_vertices``
 
-        - ``number_of_vertices`` -- integer, at most 30
+        - ``number_of_vertices`` -- integer; at most 30
 
         - ``multiple_sets`` -- boolean (default: ``False``); whether to allow
-          several sets of the hypergraph to be equal.
+          several sets of the hypergraph to be equal
 
         - ``vertex_min_degree``, ``vertex_max_degree`` -- integers (default:
           ``None``); define the maximum and minimum degree of an element from
-          the ground set (i.e. the number of sets which contain it).
+          the ground set (i.e. the number of sets which contain it)
 
         - ``set_min_size``, ``set_max_size`` -- integers (default: ``None``);
-          define the maximum and minimum size of a set.
+          define the maximum and minimum size of a set
 
-        - ``regular`` -- integers (default: ``False``); if set to an integer
+        - ``regular`` -- integer (default: ``False``); if set to an integer
           value `k`, requires the hypergraphs to be `k`-regular. It is actually
           a shortcut for the corresponding min/max values.
 
-        - ``uniform`` -- integers (default: ``False``); if set to an integer
+        - ``uniform`` -- integer (default: ``False``); if set to an integer
           value `k`, requires the hypergraphs to be `k`-uniform. It is actually
           a shortcut for the corresponding min/max values.
 
-        - ``max_intersection`` -- integers (default: ``None``); constraints the
+        - ``max_intersection`` -- integer (default: ``None``); constraints the
           maximum cardinality of the intersection of two sets from the
-          hypergraphs.
+          hypergraphs
 
         - ``connected`` -- boolean (default: ``False``); whether to require the
-          hypergraphs to be connected.
+          hypergraphs to be connected
 
         - ``debug`` -- boolean (default: ``False``); if ``True`` the first line
           of genbgL's output to standard error is captured and the first call to
@@ -86,7 +86,7 @@ class HypergraphGenerators():
           program with some information on the arguments, while a line beginning
           with ">E" indicates an error with the input.
 
-        - ``options`` -- string (default: ``""``) -- anything else that should
+        - ``options`` -- string (default: ``''``); anything else that should
           be forwarded as input to Nauty's genbgL. See its documentation for more
           information : `<http://cs.anu.edu.au/~bdm/nauty/>`_.
 
@@ -95,9 +95,7 @@ class HypergraphGenerators():
               For genbgL the *first class* elements are vertices, and *second
               class* elements are the hypergraph's sets.
 
-        OUTPUT:
-
-        A tuple of tuples.
+        OUTPUT: a tuple of tuples
 
         EXAMPLES:
 
@@ -211,7 +209,7 @@ class HypergraphGenerators():
 
         INPUT:
 
-        - ``k,n`` -- nonnegative integers with `k\leq n`
+        - ``k``, ``n`` -- nonnegative integers with `k\leq n`
 
         EXAMPLES::
 
@@ -248,7 +246,7 @@ class HypergraphGenerators():
             sage: hypergraphs.UniformRandomUniform(-52, 3, 17)
             Traceback (most recent call last):
             ...
-            ValueError: number of vertices should be non-negative
+            ValueError: number of vertices should be nonnegative
             sage: hypergraphs.UniformRandomUniform(52.9, 3, 17)
             Traceback (most recent call last):
             ...
@@ -256,8 +254,8 @@ class HypergraphGenerators():
             sage: hypergraphs.UniformRandomUniform(52, -3, 17)
             Traceback (most recent call last):
             ...
-            ValueError: the uniformity should be non-negative
-            sage: hypergraphs.UniformRandomUniform(52, I, 17)
+            ValueError: the uniformity should be nonnegative
+            sage: hypergraphs.UniformRandomUniform(52, I, 17)                           # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: the uniformity should be an integer
@@ -268,7 +266,7 @@ class HypergraphGenerators():
 
         # Construct the vertex set
         if n < 0:
-            raise ValueError("number of vertices should be non-negative")
+            raise ValueError("number of vertices should be nonnegative")
         try:
             nverts = Integer(n)
         except TypeError:
@@ -277,7 +275,7 @@ class HypergraphGenerators():
 
         # Construct the edge set
         if k < 0:
-            raise ValueError("the uniformity should be non-negative")
+            raise ValueError("the uniformity should be nonnegative")
         try:
             uniformity = Integer(k)
         except TypeError:
@@ -325,7 +323,7 @@ class HypergraphGenerators():
             sage: hypergraphs.BinomialRandomUniform(-50, 3, 0.17)
             Traceback (most recent call last):
             ...
-            ValueError: number of vertices should be non-negative
+            ValueError: number of vertices should be nonnegative
             sage: hypergraphs.BinomialRandomUniform(50.9, 3, 0.17)
             Traceback (most recent call last):
             ...
@@ -333,7 +331,7 @@ class HypergraphGenerators():
             sage: hypergraphs.BinomialRandomUniform(50, -3, 0.17)
             Traceback (most recent call last):
             ...
-            ValueError: the uniformity should be non-negative
+            ValueError: the uniformity should be nonnegative
             sage: hypergraphs.BinomialRandomUniform(50, I, 0.17)
             Traceback (most recent call last):
             ...
@@ -341,13 +339,13 @@ class HypergraphGenerators():
         """
         from sage.rings.integer import Integer
         if n < 0:
-            raise ValueError("number of vertices should be non-negative")
+            raise ValueError("number of vertices should be nonnegative")
         try:
             nverts = Integer(n)
         except TypeError:
             raise ValueError("number of vertices should be an integer")
         if k < 0:
-            raise ValueError("the uniformity should be non-negative")
+            raise ValueError("the uniformity should be nonnegative")
         try:
             uniformity = Integer(k)
         except TypeError:

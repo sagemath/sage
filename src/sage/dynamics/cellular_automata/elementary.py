@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
 Elementary Cellular Automata
 
@@ -26,6 +25,7 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.matrix_plot", "matrix_plot")
 from sage.misc.constant_function import ConstantFunction
 
+
 class ElementaryCellularAutomata(SageObject):
     r"""
     Elementary cellular automata.
@@ -52,7 +52,7 @@ class ElementaryCellularAutomata(SageObject):
 
     INPUT:
 
-    - ``rule`` -- an integer between 0 and 255
+    - ``rule`` -- integer between 0 and 255
     - ``width`` -- (optional) the width of the ECA
     - ``initial_state`` -- (optional) the initial state given
       as a list of ``0`` and ``1``
@@ -225,7 +225,7 @@ class ElementaryCellularAutomata(SageObject):
 
         sage: ECA = cellular_automata.Elementary(60, width=200)
         sage: ECA.evolve(200)
-        sage: ECA.plot()
+        sage: ECA.plot()                                                                # needs sage.plot
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -239,7 +239,7 @@ class ElementaryCellularAutomata(SageObject):
 
         sage: ECA = cellular_automata.Elementary(90, initial_state=[1]+[0]*254+[1], boundary=None)
         sage: ECA.evolve(256)
-        sage: ECA.plot()
+        sage: ECA.plot()                                                                # needs sage.plot
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -598,7 +598,7 @@ class ElementaryCellularAutomata(SageObject):
 
             sage: ECA = cellular_automata.Elementary(110, width=256)
             sage: ECA.evolve(256)
-            sage: ECA.plot()
+            sage: ECA.plot()                                                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         if number is None:

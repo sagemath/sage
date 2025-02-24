@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.groups sage.modules
+# sage.doctest: needs sage.groups sage.modules
 r"""
 Enumerating binary self-dual codes
 
@@ -6,18 +6,18 @@ This module implements functions useful for studying binary self-dual codes.
 The main function is ``self_dual_binary_codes``, which is a case-by-case list
 of entries, each represented by a Python dictionary.
 
-Format of each entry: a Python dictionary with keys ``"order autgp"``, ``"spectrum"``,
-``"code"``, ``"Comment"``, ``"Type"``, where
+Format of each entry: a Python dictionary with keys ``'order autgp'``, ``'spectrum'``,
+``'code'``, ``'Comment'``, ``'Type'``, where
 
-- ``"code"`` -- a sd code `C` of length `n`, dim `n/2`, over `\GF{2}`
+- ``'code'`` -- a sd code `C` of length `n`, dim `n/2`, over `\GF{2}`
 
-- ``"order autgp"`` -- order of the permutation automorphism group of `C`
+- ``'order autgp'`` -- order of the permutation automorphism group of `C`
 
-- ``"Type"`` -- the type of `C` (which can be ``"I"`` or ``"II"``, in the binary case)
+- ``'Type'`` -- the type of `C` (which can be ``'I'`` or ``'II'``, in the binary case)
 
-- ``"spectrum"`` -- the spectrum `[A_0,A_1,...,A_n]`
+- ``'spectrum'`` -- the spectrum `[A_0,A_1,...,A_n]`
 
-- ``"Comment"`` -- possibly an empty string.
+- ``'Comment'`` -- possibly an empty string
 
 Python dictionaries were used since they seemed to be both
 human-readable and allow others to update the database easiest.
@@ -54,10 +54,10 @@ Here's a rather naive construction of self-dual codes in the binary
 case:
 
 For even `m`, let `A_m` denote the `m\times m` matrix over `\GF{2}`
-given by adding the all 1's matrix to the identity matrix (in
+given by adding the all 1s matrix to the identity matrix (in
 ``MatrixSpace(GF(2),m,m)`` of course). If `M_1, ..., M_r` are square
 matrices, let `diag(M_1,M_2,...,M_r)` denote the "block diagonal"
-matrix with the matrices `M_i` on the diagonal and 0's elsewhere. Let
+matrix with the matrices `M_i` on the diagonal and 0s elsewhere. Let
 `C(m_1,...,m_r,s)` denote the linear code with generator matrix
 having block form `G = (I, A)`, where
 `A = diag(A_{m_1},A_{m_2},...,A_{m_r},I_s)`, for some
@@ -141,6 +141,7 @@ def _matA(n):
         A.append(I+O)
     return A
 
+
 def _matId(n):
     r"""
     For internal use; returns a list of identity matrices over GF(2)
@@ -177,9 +178,10 @@ def _MS2(n):
     n2 = n.quo_rem(2)[0]
     return MatrixSpace(_F, n2, n2)
 
+
 def _I2(n):
     r"""
-    Internal function
+    Internal function.
 
     EXAMPLES::
 
@@ -195,6 +197,7 @@ def _I2(n):
         [0 0 1]
     """
     return _MS2(n).identity_matrix()
+
 
 @cached_function
 def _And7():
@@ -252,6 +255,7 @@ def _H8():
 # Remark: The above matrix constructions aid in computing some "small" self-dual codes.
 
 ############## main functions ##############
+
 
 def self_dual_binary_codes(n):
     r"""
@@ -526,7 +530,7 @@ def self_dual_binary_codes(n):
         #      "(1,5)(2,6)(3,7)(4,8)(10,14)(11,15)(12,16)(13,17)" ] )
         spectrum = [1, 0, 1, 0, 28, 0, 28, 0, 198, 0, 198, 0, 28, 0, 28, 0, 1, 0, 1]
         self_dual_codes_18_3 = {"order autgp":7225344,"code":LinearCode(genmat),"spectrum":spectrum,
-                 "Type":"I","Comment": "Large aut gp. Unique codeword of smallest non-zero wt.\
+                 "Type":"I","Comment": "Large aut gp. Unique codeword of smallest nonzero wt.\
                  Same spectrum as '[18,4]' sd code."}
         # [18,4]:
         genmat = _I2(n).augment(block_diagonal_matrix([_matA(n)[8],_matId(n)[8]]))
@@ -534,10 +538,10 @@ def self_dual_binary_codes(n):
         #     "(5,6)(14,15)", "(4,5)(13,14)", "(3,4)(12,13)", "(2,3)(11,12)", "(1,2)(10,11)" ] )
         spectrum = [1, 0, 1, 0, 28, 0, 28, 0, 198, 0, 198, 0, 28, 0, 28, 0, 1, 0, 1]
         self_dual_codes_18_4 = {"order autgp":10321920,"code":LinearCode(genmat),"spectrum":spectrum,
-                 "Type":"I","Comment": "Huge aut gp. Unique codeword of smallest non-zero wt.\
+                 "Type":"I","Comment": "Huge aut gp. Unique codeword of smallest nonzero wt.\
                  Same spectrum as '[18,3]' sd code."}
         # [18,5]:
-        C = self_dual_binary_codes(n-2)["%s"%(n-2)]["5"]["code"]
+        C = self_dual_binary_codes(n-2)["%s" % (n-2)]["5"]["code"]
         A0 = C.redundancy_matrix()
         genmat = _I2(n).augment(block_diagonal_matrix([A0,_matId(n)[8]]))
         # G = PermutationGroup( [ "(5,10)(6,11)", "(5,11)(6,10)", "(5,11,12)(6,7,10)",\
@@ -550,7 +554,7 @@ def self_dual_binary_codes(n):
         self_dual_codes_18_5 = {"order autgp":451584,"code":LinearCode(genmat),"spectrum":spectrum,
                  "Type":"I","Comment": "'Exceptional' construction."}
         # [18,6]:
-        C = self_dual_binary_codes(n-2)["%s"%(n-2)]["6"]["code"]
+        C = self_dual_binary_codes(n-2)["%s" % (n-2)]["6"]["code"]
         A0 = C.redundancy_matrix()
         genmat = _I2(n).augment(block_diagonal_matrix([A0,_matId(n)[8]]))
         G = PermutationGroup( [ "(9,18)", "(7,10)(11,17)", "(7,11)(10,17)", "(6,7)(11,12)",
@@ -558,7 +562,7 @@ def self_dual_binary_codes(n):
               "(1,4)(2,6)(3,7)(5,17)(8,14)(10,13)(11,15)(12,16)" ] )
         spectrum = [1, 0, 1, 0, 12, 0, 76, 0, 166, 0, 166, 0, 76, 0, 12, 0, 1, 0, 1]
         self_dual_codes_18_6 = {"order autgp":147456,"code":LinearCode(genmat),"spectrum":spectrum,
-                 "Type":"I","Comment": "'Exceptional'. Unique codeword of smallest non-zero wt."}
+                 "Type":"I","Comment": "'Exceptional'. Unique codeword of smallest nonzero wt."}
         # [18,7] (equiv to H18 in [P])
         genmat = _MS(n)([[1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0],
                          [0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1],
@@ -649,7 +653,7 @@ def self_dual_binary_codes(n):
         # G = PermutationGroup( [ "(5,6)(15,16)", "(5,15)(6,16)", "(4,5)(14,15)", "(3,4)(13,14)",\
         #             "(2,3)(12,13)", "(1,2)(11,12)", "(8,17)(9,10)", "(8,10)(9,17)", "(8,10,20)(9,19,17)",\
         #             "(8,19,20,9,17,10,18)", "(7,8,19,20,9,18)(10,17)"] )
-        spectrum =[1, 0, 0, 0, 29, 0, 32, 0, 226, 0, 448, 0, 226, 0, 32, 0, 29, 0, 0, 0, 1]
+        spectrum = [1, 0, 0, 0, 29, 0, 32, 0, 226, 0, 448, 0, 226, 0, 32, 0, 29, 0, 0, 0, 1]
         self_dual_codes_20_3 = {"order autgp":30965760,"code":LinearCode(genmat),"spectrum":spectrum,
                  "Type":"I","Comment":"Min dist 4."}
         # [20,4]:
@@ -660,7 +664,7 @@ def self_dual_binary_codes(n):
         #              "(1,2,3,11,14,4,12)(5,17,18)(6,15,8)", "(1,5,13,17,14,8,2,7,3,16,12,6,11,18)(4,15)",\
         #               "(2,3,12)(4,11,14)(5,17,18)(6,15,8)(10,20)",\
         #               "(2,3,12)(4,11,14)(5,17,18)(6,15,8)(9,10,19,20)"] )
-        spectrum =[1, 0, 2, 0, 29, 0, 56, 0, 226, 0, 396, 0, 226, 0, 56, 0, 29, 0, 2, 0, 1]
+        spectrum = [1, 0, 2, 0, 29, 0, 56, 0, 226, 0, 396, 0, 226, 0, 56, 0, 29, 0, 2, 0, 1]
         self_dual_codes_20_4 = {"order autgp":28901376,"code":LinearCode(genmat),"spectrum":spectrum,
                  "Type":"I","Comment":""}
         # [20,5]:
@@ -715,7 +719,7 @@ def self_dual_binary_codes(n):
         #  G = PermutationGroup( [ "(9,10)(19,20)", "(9,19)(10,20)", "(8,9)(18,19)", "(7,8)(17,18)",\
         #        "(6,7)(16,17)", "(5,6)(15,16)", "(4,5)(14,15)", "(3,4)(13,14)",\
         #        "(2,3)(12,13)", "(1,2)(11,12)"] )
-        spectrum =[1, 0, 0, 0, 45, 0, 0, 0, 210, 0, 512, 0, 210, 0, 0, 0, 45, 0, 0, 0, 1]
+        spectrum = [1, 0, 0, 0, 45, 0, 0, 0, 210, 0, 512, 0, 210, 0, 0, 0, 45, 0, 0, 0, 1]
         self_dual_codes_20_8 = {"order autgp":1857945600,"code":LinearCode(genmat),"spectrum":spectrum,
                  "Type":"I","Comment":"Huge aut gp. Min dist 4."}
         # [20,9]: (genmat, K20 are equiv)

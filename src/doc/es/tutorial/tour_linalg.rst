@@ -49,16 +49,6 @@ Resolver ecuaciones matriciales es sencillo, usando el método
     sage: A * X   # comprobando la solución...
     (0, -4, -1)
 
-Se puede usar una barra invertida ``\``  en lugar de ``solve_right``; 
-usamos ``A \ Y`` en lugar de ``A.solve_right(Y)``.
-
-.. link
-
-::
-
-    sage: A \ Y
-    (-2, 1, 0)
-
 Si no hay solución, Sage lanza un error:
 
 .. skip

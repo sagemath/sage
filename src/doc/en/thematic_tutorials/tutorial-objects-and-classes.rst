@@ -298,7 +298,7 @@ http://docs.python.org/library/ for a complete list. ::
         sage: el
         bla
         sage: el.__dict__
-        {'__custom_name': 'bla', 'value': 42}
+        {'_SageObject__custom_name': 'bla', 'value': 42}
 
     Lots of Sage objects are not Python objects but compiled Cython
     objects. Python sees them as builtin objects and you do not have
@@ -318,7 +318,7 @@ http://docs.python.org/library/ for a complete list. ::
         sage: e.__dict__
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__dict__'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__dict__'...
 
         sage: id4 = SymmetricGroup(4).one()
         sage: type(id4)
@@ -326,7 +326,7 @@ http://docs.python.org/library/ for a complete list. ::
         sage: id4.__dict__
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.groups.perm_gps.permgroup_element.SymmetricGroupElement' object has no attribute '__dict__'
+        AttributeError: 'sage.groups.perm_gps.permgroup_element.SymmetricGroupElement' object has no attribute '__dict__'...
 
 .. note::
 
@@ -366,7 +366,6 @@ define the methods and the attributes of the object.
 
 **attribute**
    variable where information about the object is stored.
-
 
 
 An example: glass of beverage in a restaurant

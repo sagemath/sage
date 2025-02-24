@@ -46,7 +46,6 @@ from sage.rings.rational_field import QQ
 from sage.modules.free_module_element import vector
 from sage.misc.cachefunc import cached_method
 from sage.sets.set import Set
-from sage.graphs.graph import Graph
 
 
 ########################################################################
@@ -56,13 +55,11 @@ def triangulation_render_2d(triangulation, **kwds):
 
     INPUT:
 
-    - ``triangulation`` -- a :class:`Triangulation`.
+    - ``triangulation`` -- a :class:`Triangulation`
 
-    - ``**kwds`` -- keywords that are passed on to the graphics primitives.
+    - ``**kwds`` -- keywords that are passed on to the graphics primitives
 
-    OUTPUT:
-
-    A 2-d graphics object.
+    OUTPUT: a 2-d graphics object
 
     EXAMPLES::
 
@@ -80,9 +77,9 @@ def triangulation_render_2d(triangulation, **kwds):
 
     tmp_lines = []
     for t in triangulation:
-        if len(t)>=2:
+        if len(t) >= 2:
             tmp_lines.append([t[0], t[1]])
-        if len(t)>=3:
+        if len(t) >= 3:
             tmp_lines.append([t[0], t[2]])
             tmp_lines.append([t[1], t[2]])
     all_lines = []
@@ -103,7 +100,7 @@ def triangulation_render_2d(triangulation, **kwds):
 
     plot_triangs = sum([ polygon2d([coord[t[0]], coord[t[1]], coord[t[2]]],
                                    zorder=0, rgbcolor=(0.8, 1, 0.8), **kwds)
-                         for t in triangulation if len(t)>=3 ])
+                         for t in triangulation if len(t) >= 3 ])
 
     return \
         plot_points + \
@@ -117,13 +114,11 @@ def triangulation_render_3d(triangulation, **kwds):
 
     INPUT:
 
-    - ``triangulation`` -- a :class:`Triangulation`.
+    - ``triangulation`` -- a :class:`Triangulation`
 
-    - ``**kwds`` -- keywords that are  passed on to the graphics primitives.
+    - ``**kwds`` -- keywords that are  passed on to the graphics primitives
 
-    OUTPUT:
-
-    A 3-d graphics object.
+    OUTPUT: a 3-d graphics object
 
     EXAMPLES::
 
@@ -142,12 +137,12 @@ def triangulation_render_3d(triangulation, **kwds):
 
     tmp_lines = []
     for t in triangulation:
-        if len(t)>=2:
+        if len(t) >= 2:
             tmp_lines.append([t[0], t[1]])
-        if len(t)>=3:
+        if len(t) >= 3:
             tmp_lines.append([t[0], t[2]])
             tmp_lines.append([t[1], t[2]])
-        if len(t)>=4:
+        if len(t) >= 4:
             tmp_lines.append([t[0], t[3]])
             tmp_lines.append([t[1], t[3]])
             tmp_lines.append([t[2], t[3]])
@@ -175,9 +170,9 @@ def triangulation_render_3d(triangulation, **kwds):
 
     tmp_triangs = []
     for t in triangulation:
-        if len(t)>=3:
+        if len(t) >= 3:
             tmp_triangs.append([t[0], t[1], t[2]])
-        if len(t)>=4:
+        if len(t) >= 4:
             tmp_triangs.append([t[0], t[1], t[3]])
             tmp_triangs.append([t[0], t[2], t[3]])
             tmp_triangs.append([t[1], t[2], t[3]])
@@ -237,9 +232,9 @@ class Triangulation(Element):
           by the correspondence :meth:`PointConfiguration.simplex_to_int`. In the second
           case, a simplex is specified by listing the indices of the included points.
 
-        - ``check`` -- boolean. Whether to perform checks that the
+        - ``check`` -- boolean; whether to perform checks that the
           triangulation is, indeed, a triangulation of the point
-          configuration.
+          configuration
 
         NOTE:
 
@@ -265,13 +260,13 @@ class Triangulation(Element):
         except TypeError:
             triangulation = tuple( self.point_configuration().int_to_simplex(i)
                                    for i in triangulation )
-        assert not check or all( len(t)==self.point_configuration().dim()+1
+        assert not check or all( len(t) == self.point_configuration().dim()+1
                                  for t in triangulation)
         self._triangulation = triangulation
 
     def point_configuration(self):
         """
-        Returns the point configuration underlying the triangulation.
+        Return the point configuration underlying the triangulation.
 
         EXAMPLES::
 
@@ -336,20 +331,19 @@ class Triangulation(Element):
             ...
             StopIteration
         """
-        for p in self._triangulation:
-            yield p
+        yield from self._triangulation
 
     def __getitem__(self, i):
         """
-        Access the point indices of the i-th simplex of the triangulation.
+        Access the point indices of the `i`-th simplex of the triangulation.
 
         INPUT:
 
-        - ``i`` -- integer. The index of a simplex.
+        - ``i`` -- integer; the index of a simplex
 
         OUTPUT:
 
-        A tuple of integers. The vertex indices of the i-th simplex.
+        A tuple of integers. The vertex indices of the `i`-th simplex.
 
         EXAMPLES::
 
@@ -435,9 +429,7 @@ class Triangulation(Element):
         that is, the total volume of all simplices containing `p_i`.
         See also [GKZ1994]_ page 220 equation 1.4.
 
-        OUTPUT:
-
-        The phi vector of self.
+        OUTPUT: the phi vector of self
 
         EXAMPLES::
 
@@ -458,9 +450,7 @@ class Triangulation(Element):
         r"""
         Return the enumerated simplices.
 
-        OUTPUT:
-
-        A tuple of integers that uniquely specifies the triangulation.
+        OUTPUT: a tuple of integers that uniquely specifies the triangulation
 
         EXAMPLES::
 
@@ -515,7 +505,7 @@ class Triangulation(Element):
         coordinates of the points are shifted so that the apex of the
         fan is the origin of the coordinate system.
 
-        .. note:: If the set of cones over the simplices is not a fan, a
+        .. NOTE:: If the set of cones over the simplices is not a fan, a
             suitable exception is raised.
 
         EXAMPLES::
@@ -560,9 +550,7 @@ class Triangulation(Element):
         r"""
         Return ``self`` as an (abstract) simplicial complex.
 
-        OUTPUT:
-
-        A :class:`~sage.topology.simplicial_complex.SimplicialComplex`.
+        OUTPUT: a :class:`~sage.topology.simplicial_complex.SimplicialComplex`
 
         EXAMPLES::
 
@@ -662,9 +650,7 @@ class Triangulation(Element):
         r"""
         Return the boundary of ``self`` as an (abstract) simplicial complex.
 
-        OUTPUT:
-
-        A :class:`~sage.topology.simplicial_complex.SimplicialComplex`.
+        OUTPUT: a :class:`~sage.topology.simplicial_complex.SimplicialComplex`
 
         EXAMPLES::
 
@@ -920,8 +906,8 @@ class Triangulation(Element):
             sage: t = p.triangulate()
             sage: t.adjacency_graph()                                                   # needs sage.graphs
             Graph on 8 vertices
-
         """
         vertices = [Set(_) for _ in list(self)]
+        from sage.graphs.graph import Graph
         return Graph([vertices,
-                  lambda x,y: len(x-y)==1])
+                  lambda x,y: len(x-y) == 1])

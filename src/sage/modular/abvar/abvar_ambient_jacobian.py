@@ -19,8 +19,8 @@ from sage.rings.rational_field import QQ
 
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modform.constructor import Newforms
-from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
-from . import morphism
+from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class
+from sage.modular.abvar import morphism
 
 
 _cache = {}
@@ -36,9 +36,7 @@ def ModAbVar_ambient_jacobian(group):
 
     INPUT:
 
-
-    -  ``group`` - a congruence subgroup.
-
+    - ``group`` -- a congruence subgroup
 
     OUTPUT: a modular abelian variety attached
 
@@ -123,7 +121,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
             Abelian variety J0(11) of dimension 1
             sage: A._repr_()
             'Abelian variety J0(11) of dimension 1'
-            sage: A.rename("J_0(11)")
+            sage: A.rename('J_0(11)')
             sage: A
             J_0(11)
 
@@ -156,9 +154,9 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
 
     def ambient_variety(self):
         """
-        Return the ambient modular abelian variety that contains self.
-        Since self is a Jacobian modular abelian variety, this is just
-        self.
+        Return the ambient modular abelian variety that contains ``self``.
+        Since ``self`` is a Jacobian modular abelian variety, this is just
+        ``self``.
 
         OUTPUT: abelian variety
 
@@ -206,7 +204,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
 
     def _calculate_endomorphism_generators(self):
         """
-        Calculate generators for the endomorphism ring of self.
+        Calculate generators for the endomorphism ring of ``self``.
 
         EXAMPLES::
 
@@ -250,21 +248,20 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
 
     def degeneracy_map(self, level, t=1, check=True):
         """
-        Return the t-th degeneracy map from self to J(level). Here t must
-        be a divisor of either level/self.level() or self.level()/level.
+        Return the `t`-th degeneracy map from ``self`` to ``J(level)``. Here
+        `t` must be a divisor of either ``level/self.level()`` or
+        ``self.level()/level``.
 
         INPUT:
 
+        - ``level`` -- integer (multiple or divisor of level of
+          ``self``)
 
-        -  ``level`` - integer (multiple or divisor of level of
-           self)
+        - ``t`` -- divisor of quotient of level of ``self`` and
+          level
 
-        -  ``t`` - divisor of quotient of level of self and
-           level
-
-        -  ``check`` - bool (default: True); if True do some
-           checks on the input
-
+        - ``check`` -- boolean (default: ``True``); if ``True`` do some
+          checks on the input
 
         OUTPUT: a morphism
 
@@ -396,11 +393,9 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
     def newform_decomposition(self, names=None):
         """
         Return the newforms of the simple subvarieties in the decomposition of
-        self as a product of simple subvarieties, up to isogeny.
+        ``self`` as a product of simple subvarieties, up to isogeny.
 
-        OUTPUT:
-
-        - an array of newforms
+        OUTPUT: an array of newforms
 
         EXAMPLES::
 
@@ -414,7 +409,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         if self.dimension() == 0:
             return []
         G = self.group()
-        if not (is_Gamma0(G) or is_Gamma1(G)):
+        if not isinstance(G, (Gamma0_class, Gamma1_class)):
             return [S.newform(names=names) for S in self.decomposition()]
         Gtype = G.parent()
         N = G.level()

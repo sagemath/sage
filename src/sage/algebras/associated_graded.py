@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Associated Graded Algebras To Filtered Algebras
 
@@ -19,6 +20,7 @@ from copy import copy
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule
+
 
 class AssociatedGradedAlgebra(CombinatorialFreeModule):
     r"""
@@ -284,7 +286,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
             Finite family {'x': bar(U['x']), 'y': bar(U['y']), 'z': bar(U['z'])}
         """
         G = self._A.algebra_generators()
-        return Family(G.keys(), lambda x: self(G[x]), name="generator")
+        return Family(G.keys(), lambda x: self(G[x]), name='generator')
 
     def degree_on_basis(self, x):
         """

@@ -41,7 +41,8 @@ with relations, the coefficients for each relation is given::
     sage: r1 = [Sq(8), Sq(7), 0]   # First relation
     sage: r2 = [Sq(7), 0, 1]       # Second relation
     sage: M = SteenrodFPModule(A, [0, 1, 7], relations=[r1, r2]); M
-    Finitely presented left module on 3 generators and 2 relations over mod 2 Steenrod algebra, milnor basis
+    Finitely presented left module on 3 generators and 2 relations
+     over mod 2 Steenrod algebra, milnor basis
 
 The resulting module will have three generators in the degrees we gave them::
 
@@ -156,8 +157,8 @@ A vector space presentation can be produced::
     Vector space quotient V/W of dimension 4 over Finite Field of size 2 where
     V: Vector space of dimension 4 over Finite Field of size 2
     W: Vector space of degree 4 and dimension 0 over Finite Field of size 2
-    Basis matrix:
-    []
+       Basis matrix:
+       []
 
 Given any element, its coordinates with respect to this basis can be computed::
 
@@ -188,11 +189,13 @@ such homomorphisms using the function ``Hom``::
 
     sage: Hko = SteenrodFPModule(A, [0], [[Sq(2)], [Sq(1)]])
     sage: homspace = Hom(Hko, Hko); homspace
-    Set of Morphisms from Finitely presented left module on 1 generator and 2 relations
-      over mod 2 Steenrod algebra, milnor basis
-     to Finitely presented left module on 1 generator and 2 relations
-      over mod 2 Steenrod algebra, milnor basis
-     in Category of finitely presented graded modules over mod 2 Steenrod algebra, milnor basis
+    Set of Morphisms
+     from Finitely presented left module on 1 generator and 2 relations
+          over mod 2 Steenrod algebra, milnor basis
+       to Finitely presented left module on 1 generator and 2 relations
+          over mod 2 Steenrod algebra, milnor basis
+       in Category of finitely presented graded modules
+          over mod 2 Steenrod algebra, milnor basis
 
 Just as with module elements, homomorphisms are created using the homspace.
 The only argument is a list of elements in the codomain, giving the
@@ -207,7 +210,8 @@ The resulting homomorphism is the one sending the `i`-th generator of the
 domain to the `i`-th codomain value given::
 
     sage: f
-    Module endomorphism of Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
+    Module endomorphism of Finitely presented left module on 1 generator
+     and 2 relations over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> Sq(0,0,1)*g[0]
 
 Homomorphisms can be evaluated on elements of the domain module::
@@ -232,7 +236,8 @@ Convenience methods exist for creating the trivial morphism::
     sage: x == 0
     False
     sage: zero_map = homspace.zero(); zero_map
-    Module endomorphism of Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
+    Module endomorphism of Finitely presented left module on 1 generator
+     and 2 relations over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> 0
     sage: zero_map(x)
     0
@@ -242,7 +247,8 @@ Convenience methods exist for creating the trivial morphism::
 as well as the identity endomorphism::
 
     sage: one = Hom(Hko, Hko).identity(); one
-    Module endomorphism of Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
+    Module endomorphism of Finitely presented left module on 1 generator
+     and 2 relations over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> g[0]
     sage: one.is_endomorphism()
     True
@@ -271,7 +277,8 @@ Any two homomorphisms can be added as long as they are of the same degree::
     sage: (f1 + f2).is_zero()
     False
     sage: f1 + f2
-    Module endomorphism of Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
+    Module endomorphism of Finitely presented left module on 1 generator
+     and 2 relations over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> (Sq(0,0,3)+Sq(0,2,0,1)+Sq(8,2,1))*g[0]
 
 or when at least one of them is zero::
@@ -302,32 +309,32 @@ elements is a linear transformation::
     [1 0 0 0 0 0]
     [0 0 0 0 0 0]
     [1 0 0 0 0 0]
-    Domain: Vector space quotient V/W of dimension 3 over Finite Field of size 2 where
-    V: Vector space of dimension 20 over Finite Field of size 2
-    W: Vector space of degree 20 and dimension 17 over Finite Field of size 2
-    Basis matrix:
-    [1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
-    [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-    [0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
-    [0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 1]
-    [0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1]
-    [0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 1 0 0 0 1]
-    [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 1]
-    [0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 1 0 0 0 1]
-    [0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0]
-    [0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1]
-    [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0]
-    [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1]
-    [0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 1]
-    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1]
-    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1]
-    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0]
-    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1]
+    Domain:   Vector space quotient V/W of dimension 3 over Finite Field of size 2 where
+              V: Vector space of dimension 20 over Finite Field of size 2
+              W: Vector space of degree 20 and dimension 17 over Finite Field of size 2
+                 Basis matrix:
+                 [1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
+                 [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+                 [0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
+                 [0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 1]
+                 [0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1]
+                 [0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 1 0 0 0 1]
+                 [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 1]
+                 [0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 1 0 0 0 1]
+                 [0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0]
+                 [0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1]
+                 [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0]
+                 [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1]
+                 [0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 1]
+                 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1]
+                 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1]
+                 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0]
+                 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1]
     Codomain: Vector space quotient V/W of dimension 6 over Finite Field of size 2 where
-    V: Vector space of dimension 35 over Finite Field of size 2
-    W: Vector space of degree 35 and dimension 29 over Finite Field of size 2
-    Basis matrix:
-    29 x 35 dense matrix over Finite Field of size 2
+              V: Vector space of dimension 35 over Finite Field of size 2
+              W: Vector space of degree 35 and dimension 29 over Finite Field of size 2
+                 Basis matrix:
+                 29 x 35 dense matrix over Finite Field of size 2
 
 This is compatible with the vector presentations of its domain and codomain
 modules::
@@ -352,13 +359,13 @@ Elements in the preimage of a homomorphism can be found::
 Homomorphisms can be composed as expected::
 
     sage: g = homspace([Sq(0, 0, 0, 1)*gen]); g
-    Module endomorphism of Finitely presented left module on 1 generator and 2 relations
-     over mod 2 Steenrod algebra, milnor basis
+    Module endomorphism of Finitely presented left module on 1 generator
+     and 2 relations over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> Sq(0,0,0,1)*g[0]
 
     sage: g*f
-    Module endomorphism of Finitely presented left module on 1 generator and 2 relations
-     over mod 2 Steenrod algebra, milnor basis
+    Module endomorphism of Finitely presented left module on 1 generator
+     and 2 relations over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> Sq(0,0,1,1)*g[0]
 
     sage: one = homspace.identity()
@@ -412,13 +419,15 @@ homomorphism of free modules.  We then construct a candidate for an isomorphism
 and check that it is both injective and surjective::
 
     sage: HZ = SteenrodFPModule(A, [0], [[Sq(1)]]); HZ
-    Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
+    Finitely presented left module on 1 generator and 1 relation
+     over mod 2 Steenrod algebra, milnor basis
 
     sage: F = SteenrodFPModule(A, [0])
     sage: j = Hom(F, F)([Sq(1)*F.generator(0)])
-    sage: coker = j.cokernel_projection() # the natural quotient homomorphism onto the cokernel.
+    sage: coker = j.cokernel_projection()  # the natural quotient homomorphism onto the cokernel.
     sage: hz = coker.codomain(); hz
-    Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
+    Finitely presented left module on 1 generator and 1 relation
+     over mod 2 Steenrod algebra, milnor basis
 
     sage: a = Hom(HZ, hz)([hz.generator(0)])
     sage: a.is_injective()
@@ -435,8 +444,10 @@ injective homomorphism into the domain of `f`::
 
     sage: k = f.kernel_inclusion(); k
     Module morphism:
-      From: Finitely presented left module on 1 generator and 3 relations over mod 2 Steenrod algebra, milnor basis
-      To:   Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
+      From: Finitely presented left module on 1 generator and 3 relations
+            over mod 2 Steenrod algebra, milnor basis
+      To:   Finitely presented left module on 1 generator and 2 relations
+            over mod 2 Steenrod algebra, milnor basis
       Defn: g[7] |--> Sq(0,0,1)*g[0]
     sage: k.codomain() == f.domain()
     True
@@ -445,7 +456,8 @@ injective homomorphism into the domain of `f`::
 
     sage: ker = k.domain()
     sage: ker
-    Finitely presented left module on 1 generator and 3 relations over mod 2 Steenrod algebra, milnor basis
+    Finitely presented left module on 1 generator and 3 relations
+     over mod 2 Steenrod algebra, milnor basis
 
 We can check that the injective image of `k` is the kernel of `f` by
 showing that `f` factors as `h\circ c`, where `c` is the quotient map
@@ -470,8 +482,10 @@ equal to the submodule `\operatorname{im}(f)`::
 
     sage: i = f.image(); i
     Module morphism:
-      From: Finitely presented left module on 1 generator and 3 relations over mod 2 Steenrod algebra, milnor basis
-      To:   Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
+      From: Finitely presented left module on 1 generator and 3 relations
+            over mod 2 Steenrod algebra, milnor basis
+      To:   Finitely presented left module on 1 generator and 2 relations
+            over mod 2 Steenrod algebra, milnor basis
       Defn: g[7] |--> Sq(0,0,1)*g[0]
     sage: i.codomain() == f.codomain()
     True
@@ -483,8 +497,10 @@ lifting `f` over `i`, and showing that the lift is surjective::
 
     sage: f_ = f.lift(i); f_
     Module morphism:
-      From: Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
-      To:   Finitely presented left module on 1 generator and 3 relations over mod 2 Steenrod algebra, milnor basis
+      From: Finitely presented left module on 1 generator and 2 relations
+            over mod 2 Steenrod algebra, milnor basis
+      To:   Finitely presented left module on 1 generator and 3 relations
+            over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> g[7]
     sage: i*f_ == f             # Is im(i) contained in im(f) ?
     True
@@ -501,7 +517,8 @@ domain `\ker(g)`::
     sage: K = f.kernel_inclusion()    # k: ker(f) -> Hko
     sage: h = f.homology(f) # h: ker(f) -> ker(f) / im(f)
     sage: h.codomain()      # This is the homology module.
-    Finitely presented left module on 1 generator and 4 relations over mod 2 Steenrod algebra, milnor basis
+    Finitely presented left module on 1 generator and 4 relations
+     over mod 2 Steenrod algebra, milnor basis
 
 
 Free resolutions
@@ -632,8 +649,10 @@ The projection::
     sage: q = Hom(HZ, Hko)([Hko.generator(0)])
     sage: q
     Module morphism:
-      From: Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
-      To:   Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
+      From: Finitely presented left module on 1 generator and 1 relation
+            over mod 2 Steenrod algebra, milnor basis
+      To:   Finitely presented left module on 1 generator and 2 relations
+            over mod 2 Steenrod algebra, milnor basis
       Defn: g[0] |--> g[0]
 
 The map to lift over `q`::
@@ -641,8 +660,10 @@ The map to lift over `q`::
     sage: f = Hom(L, Hko)([Sq(0,2,1,1)*Hko.generator(0)])
     sage: f
     Module morphism:
-      From: Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
-      To:   Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
+      From: Finitely presented left module on 1 generator and 2 relations
+            over mod 2 Steenrod algebra, milnor basis
+      To:   Finitely presented left module on 1 generator and 2 relations
+            over mod 2 Steenrod algebra, milnor basis
       Defn: g[28] |--> Sq(0,2,1,1)*g[0]
 
     sage: f.is_zero()   # f is non-trivial.
@@ -703,8 +724,10 @@ Start by finding a single lift of `f` over the projection `q`::
 
     sage: fl = f.lift(q); fl
     Module morphism:
-      From: Finitely presented left module on 1 generator and 2 relations over mod 2 Steenrod algebra, milnor basis
-      To:   Finitely presented left module on 1 generator and 1 relation over mod 2 Steenrod algebra, milnor basis
+      From: Finitely presented left module on 1 generator and 2 relations
+            over mod 2 Steenrod algebra, milnor basis
+      To:   Finitely presented left module on 1 generator and 1 relation
+            over mod 2 Steenrod algebra, milnor basis
       Defn: g[28] |--> (Sq(4,3,0,1)+Sq(6,0,1,1)+Sq(7,2,0,1)+Sq(10,1,0,1))*g[0]
 
 We verify that ``fl`` is indeed a lift::

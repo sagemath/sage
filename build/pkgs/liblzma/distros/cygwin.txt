@@ -1,2 +1,0 @@
-xz
-liblzma-devel

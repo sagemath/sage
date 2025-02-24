@@ -1,4 +1,4 @@
-$(PYTHON) backports_zoneinfo pytz_deprecation_shim | $(PYTHON_TOOLCHAIN)
+ pytz_deprecation_shim | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

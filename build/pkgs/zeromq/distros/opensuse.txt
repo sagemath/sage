@@ -1,1 +1,1 @@
-"pkgconfig(libzmq)"
+pkgconfig(libzmq)

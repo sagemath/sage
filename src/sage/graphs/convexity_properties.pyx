@@ -13,13 +13,10 @@ the following methods:
     :meth:`ConvexityProperties.hull` | Return the convex hull of a set of vertices
     :meth:`ConvexityProperties.hull_number` | Compute the hull number of a graph and a corresponding generating set
     :meth:`geodetic_closure`| Return the geodetic closure of a set of vertices
+    :meth:`is_geodetic` | Check whether the input (di)graph is geodetic
 
-These methods can be used through the :class:`ConvexityProperties` object
-returned by :meth:`Graph.convexity_properties`.
-
-AUTHORS:
-
-    -  Nathann Cohen
+Some of these methods can be used through the :class:`ConvexityProperties`
+object returned by :meth:`Graph.convexity_properties`.
 
 Methods
 -------
@@ -120,7 +117,7 @@ cdef class ConvexityProperties:
       elements `z` with `d_{G}(u,w) + d_{G}(w,v) = d_{G}(u,v)`. This is not in
       general equal to `h(\{u,v\})` !
 
-    Nothing says these recommandations will actually lead to any actual
+    Nothing says these recommendations will actually lead to any actual
     improvements. There are just some ideas remembered while writing this
     code. Trying to optimize may well lead to lost in efficiency on many
     instances.
@@ -132,7 +129,7 @@ cdef class ConvexityProperties:
         sage: CP = ConvexityProperties(g)
         sage: CP.hull([1, 3])
         [1, 2, 3]
-        sage: CP.hull_number()
+        sage: CP.hull_number()                                                          # needs sage.numerical.mip
         3
 
     TESTS::
@@ -145,7 +142,7 @@ cdef class ConvexityProperties:
 
     def __init__(self, G):
         r"""
-        Constructor
+        Constructor.
 
         EXAMPLES::
 
@@ -218,7 +215,7 @@ cdef class ConvexityProperties:
 
     def __dealloc__(self):
         r"""
-        Destructor
+        Destructor.
 
         EXAMPLES::
 
@@ -226,13 +223,12 @@ cdef class ConvexityProperties:
             sage: g = graphs.PetersenGraph()
             sage: ConvexityProperties(g)
             <sage.graphs.convexity_properties.ConvexityProperties object at ...>
-
         """
         binary_matrix_free(self._cache_hull_pairs)
 
     cdef list _vertices_to_integers(self, vertices):
         r"""
-        Converts a list of vertices to a list of integers with the cached data.
+        Convert a list of vertices to a list of integers with the cached data.
         """
         return [self._dict_vertices_to_integers[v] for v in vertices]
 
@@ -299,7 +295,7 @@ cdef class ConvexityProperties:
 
         INPUT:
 
-        * ``vertices`` -- A list of vertices.
+        - ``vertices`` -- list of vertices
 
         EXAMPLES::
 
@@ -355,11 +351,11 @@ cdef class ConvexityProperties:
 
         INPUT:
 
-        * ``value_only`` -- boolean (default: ``True``); whether to return only
+        - ``value_only`` -- boolean (default: ``True``); whether to return only
           the hull number (default) or a minimum set whose convex hull is the
           whole graph
 
-        * ``verbose`` -- boolean (default: ``False``); whether to display
+        - ``verbose`` -- boolean (default: ``False``); whether to display
           information on the LP
 
         **COMPLEXITY:**
@@ -410,10 +406,10 @@ cdef class ConvexityProperties:
             sage: from sage.graphs.convexity_properties import ConvexityProperties
             sage: g = graphs.PetersenGraph()
             sage: CP = ConvexityProperties(g)
-            sage: CP.hull_number()
+            sage: CP.hull_number()                                                      # needs sage.numerical.mip
             3
-            sage: generating_set = CP.hull_number(value_only=False)
-            sage: CP.hull(generating_set)
+            sage: generating_set = CP.hull_number(value_only=False)                     # needs sage.numerical.mip
+            sage: CP.hull(generating_set)                                               # needs sage.numerical.mip
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         """
         cdef int i
@@ -510,7 +506,8 @@ def geodetic_closure(G, S):
     each vertex `u \in S`, the algorithm first performs a breadth first search
     from `u` to get distances, and then identifies the vertices of `G` lying on
     a shortest path from `u` to any `v\in S` using a reversal traversal from
-    vertices in `S`.  This algorithm has time complexity in `O(|S|(n + m))` and
+    vertices in `S`.  This algorithm has time complexity in `O(|S|(n + m))` for
+    ``SparseGraph``, `O(|S|(n + m) + n^2)` for ``DenseGraph`` and
     space complexity in `O(n + m)`.
 
     INPUT:
@@ -674,3 +671,156 @@ def geodetic_closure(G, S):
     free_short_digraph(sd)
 
     return ret
+
+
+def is_geodetic(G):
+    r"""
+    Check whether the input (di)graph is geodetic.
+
+    A graph `G` is *geodetic* if there exists only one shortest path between
+    every pair of its vertices. This can be checked in time `O(nm)` for
+    ``SparseGraph`` and `O(nm+n^2)` for ``DenseGraph`` in unweighted (di)graphs
+    with `n` nodes and `m` edges. Examples of geodetic graphs are trees, cliques
+    and odd cycles. See the :wikipedia:`Geodetic_graph` for more details.
+
+    (Di)graphs with multiple edges are not considered geodetic.
+
+    INPUT:
+
+    - ``G`` -- a graph or a digraph
+
+    EXAMPLES:
+
+    Trees, cliques and odd cycles are geodetic::
+
+        sage: T = graphs.RandomTree(20)
+        sage: T.is_geodetic()
+        True
+        sage: all(graphs.CompleteGraph(n).is_geodetic() for n in range(8))
+        True
+        sage: all(graphs.CycleGraph(n).is_geodetic() for n in range(3, 16, 2))
+        True
+
+    Even cycles of order at least 4 are not geodetic::
+
+        sage: all(graphs.CycleGraph(n).is_geodetic() for n in range(4, 17, 2))
+        False
+
+    The Petersen graph is geodetic::
+
+        sage: P = graphs.PetersenGraph()
+        sage: P.is_geodetic()
+        True
+
+    Grid graphs are not geodetic::
+
+        sage: G = graphs.Grid2dGraph(2, 3)
+        sage: G.is_geodetic()
+        False
+
+    This method is also valid for digraphs::
+
+        sage: G = DiGraph(graphs.PetersenGraph())
+        sage: G.is_geodetic()
+        True
+        sage: G = digraphs.Path(5)
+        sage: G.add_path([0, 'a', 'b', 'c', 4])
+        sage: G.is_geodetic()
+        False
+
+    TESTS::
+
+        sage: all(g.is_geodetic() for g in graphs(3))
+        True
+        sage: all((2*g).is_geodetic() for g in graphs(3))
+        True
+        sage: G = graphs.CycleGraph(5)
+        sage: G.allow_loops(True)
+        sage: G.add_edges([(u, u) for u in G])
+        sage: G.is_geodetic()
+        True
+        sage: G.allow_multiple_edges(True)
+        sage: G.is_geodetic()
+        True
+        sage: G.add_edge(G.random_edge())
+        sage: G.is_geodetic()
+        False
+    """
+    if G.has_multiple_edges():
+        return False
+
+    if G.order() < 4:
+        return True
+
+    # Copy the graph as a short digraph
+    cdef int n = G.order()
+    cdef short_digraph sd
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
+
+    # Allocate some data structures
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef uint32_t * distances = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
+    cdef uint32_t * waiting_list = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
+    if not distances or not waiting_list:
+        free_short_digraph(sd)
+        raise MemoryError()
+    cdef bitset_t seen
+    bitset_init(seen, n)
+
+    # We now explore geodesics between vertices in S, and we avoid visiting
+    # twice the geodesics between u and v
+
+    cdef uint32_t source, u, v
+    cdef uint32_t waiting_beginning
+    cdef uint32_t waiting_end
+    cdef uint32_t * p_tmp
+    cdef uint32_t * end
+    cdef uint32_t ** p_vertices = sd.neighbors
+
+    for source in range(n):
+
+        # Compute distances from source using BFS
+        bitset_clear(seen)
+        bitset_add(seen, source)
+        distances[source] = 0
+        waiting_beginning = 0
+        waiting_end = 0
+        waiting_list[waiting_beginning] = source
+
+        # For as long as there are vertices left to explore
+        while waiting_beginning <= waiting_end:
+
+            # We pick the first one
+            v = waiting_list[waiting_beginning]
+            p_tmp = p_vertices[v]
+            end = p_vertices[v + 1]
+
+            # and we iterate over all the outneighbors u of v
+            while p_tmp < end:
+                u = p_tmp[0]
+
+                # If we notice one of these neighbors is not seen yet, we set
+                # its parameters and add it to the queue to be explored later.
+                # Otherwise, we check whether we have detected a second shortest
+                # path between source and v.
+                if not bitset_in(seen, u):
+                    distances[u] = distances[v] + 1
+                    bitset_add(seen, u)
+                    waiting_end += 1
+                    waiting_list[waiting_end] = u
+                elif distances[u] == distances[v] + 1:
+                    # G is not geodetic
+                    bitset_free(seen)
+                    free_short_digraph(sd)
+                    return False
+
+                p_tmp += 1
+
+            # We go to the next vertex in the queue
+            waiting_beginning += 1
+
+    bitset_free(seen)
+    free_short_digraph(sd)
+
+    # The graph is geodetic
+    return True

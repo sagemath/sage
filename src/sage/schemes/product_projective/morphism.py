@@ -19,12 +19,15 @@ EXAMPLES::
 # the License, or (at your option) any later version.
 # https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+
+import sage.rings.abc
+
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
-from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.rings.fraction_field import FractionField
-from sage.rings.qqbar import QQbar
+from sage.rings.integer_ring import ZZ
+from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+
 _Fields = Fields()
 
 
@@ -49,12 +52,12 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``parent`` -- Hom-set.
+        - ``parent`` -- Hom-set
 
-        - ``polys`` -- anything that defines a point in the class.
+        - ``polys`` -- anything that defines a point in the class
 
-        - ``check`` -- Boolean. Whether or not to perform input checks.
-          (Default: ``True``)
+        - ``check`` -- boolean; whether or not to perform input checks
+          (default: ``True``)
 
         EXAMPLES::
 
@@ -109,13 +112,13 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
             target = parent.codomain().ambient_space()
             dom = parent.domain().ambient_space()
-            from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-            if is_ProductProjectiveSpaces(target):
+            from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+            if isinstance(target, ProductProjectiveSpaces_ring):
                 splitpolys = target._factors(polys)
                 for m in range(len(splitpolys)):
                     d = dom._degree(splitpolys[m][0])
                     if not all(d == dom._degree(f) for f in splitpolys[m]):
-                        raise TypeError("polys (=%s) must be multi-homogeneous of the same degrees (by component)"%polys)
+                        raise TypeError("polys (=%s) must be multi-homogeneous of the same degrees (by component)" % polys)
             else:
                 #we are mapping into some other kind of space
                 target._validate(polys)
@@ -128,7 +131,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
         OUTPUT:
 
@@ -148,7 +151,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         r"""
         Return a string representation of this morphism.
 
-        OUTPUT: String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -171,12 +174,12 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``P`` -- a point in the domain.
+        - ``P`` -- a point in the domain
 
-        - ``check`` -- Boolean - whether or not to perform the input checks
-          on the image point (Default: ``True``).
+        - ``check`` -- boolean (default: ``True``); whether or not to perform
+          the input checks on the image point
 
-        OUTPUT: The image point in the codomain.
+        OUTPUT: the image point in the codomain
 
         EXAMPLES::
 
@@ -225,9 +228,9 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
                 try:
                     P = self.domain()(P)
                 except (TypeError, NotImplementedError):
-                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(P, self.domain()))
-            elif self.domain()!= P.codomain():
-                raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(P, self.domain()))
+                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (P, self.domain()))
+            elif self.domain() != P.codomain():
+                raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (P, self.domain()))
 
         A = self.codomain()
         Q = list(P)
@@ -236,25 +239,26 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
     def __eq__(self, right):
         """
-        Tests the equality of two product projective morphisms.
+        Test the equality of two product projective morphisms.
 
         INPUT:
 
-        - ``right`` - a map on product of projective space.
+        - ``right`` -- a map on product of projective space
 
         OUTPUT:
 
-        - Boolean - True if ``self`` and ``right`` define the same product projective
-          map. False otherwise.
+        boolean; ``True`` if ``self`` and ``right`` define the same product
+        projective map. ``False`` otherwise.
 
         EXAMPLES::
 
             sage: P1.<x1,x2,x3,x4> = ProductProjectiveSpaces([1, 1], QQ)
-            sage: P2.<y1,y2,y3,y4> = ProductProjectiveSpaces([1, 1], CC)
-            sage: H1 = End(P1); H2 = End(P2)
+            sage: P2.<y1,y2,y3,y4> = ProductProjectiveSpaces([1, 1], CC)                # needs sage.rings.real_mpfr
+            sage: H1 = End(P1)
+            sage: H2 = End(P2)                                                          # needs sage.rings.real_mpfr
             sage: f = H1([x1*x2, x2^2, x3*x4, x4^2])
-            sage: g = H2([y1*y2, y2^2, y3*y4, y4^2])
-            sage: f == g
+            sage: g = H2([y1*y2, y2^2, y3*y4, y4^2])                                    # needs sage.rings.real_mpfr
+            sage: f == g                                                                # needs sage.rings.real_mpfr
             False
 
         ::
@@ -300,16 +304,16 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
     def __ne__(self, right):
         """
-        Tests the inequality of two prduct projective morphisms.
+        Test the inequality of two prduct projective morphisms.
 
         INPUT:
 
-        - ``right`` -- a map on product of projective space.
+        - ``right`` -- a map on product of projective space
 
         OUTPUT:
 
-        - Boolean -- True if ``self`` and ``right`` define different product
-          projective maps. False otherwise.
+        boolean; ``True`` if ``self`` and ``right`` define different product
+        projective maps. ``False`` otherwise.
 
         EXAMPLES::
 
@@ -352,14 +356,14 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         the domain of this map generated by the corresponding coordinates of the map.
         This map is a morphism if and only if each of these subschemes has no points.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
             sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], ZZ)
             sage: H = End(Z)
             sage: f = H([a^2, b^2, x*z - y*z, x^2 - y^2, z^2])
-            sage: f.is_morphism()
+            sage: f.is_morphism()                                                       # needs sage.libs.singular
             False
 
         ::
@@ -367,7 +371,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             sage: P.<x,y,z,u,v,w> = ProductProjectiveSpaces([2, 2], QQ)
             sage: H = End(P)
             sage: f = H([u, v, w, u^2, v^2, w^2])
-            sage: f.is_morphism()
+            sage: f.is_morphism()                                                       # needs sage.libs.singular
             True
 
         ::
@@ -376,7 +380,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             sage: Q.<a,b,c,d,e> = ProductProjectiveSpaces([1, 2], QQ)
             sage: H = Hom(P, Q)
             sage: f = H([x^2, y^2, u^3, w^3, u^3])
-            sage: f.is_morphism()
+            sage: f.is_morphism()                                                       # needs sage.libs.singular
             False
         """
         m = 0
@@ -402,16 +406,14 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         """
         Return this endomorphism as a :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`.
 
-        OUTPUT:
-
-        - :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`
+        OUTPUT: :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`
 
         EXAMPLES::
 
             sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], ZZ)
             sage: H = End(Z)
             sage: f = H([a^3, b^3, x^2, y^2, z^2])
-            sage: type(f.as_dynamical_system())
+            sage: type(f.as_dynamical_system())                                         # needs sage.schemes
             <class 'sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective'>
         """
         if not self.is_endomorphism():
@@ -427,11 +429,9 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         .. TODO::
 
@@ -443,29 +443,30 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             sage: P1xP1.<x,y,u,v> = ProductProjectiveSpaces([1, 1], ZZ)
             sage: H = End(P1xP1)
             sage: f = H([x^2*u, 3*y^2*v, 5*x*v^2, y*u^2])
-            sage: f.global_height()
+            sage: f.global_height()                                                     # needs sage.rings.real_mpfr
             1.60943791243410
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: u = QQ['u'].0
-            sage: R = NumberField(u^2 - 2, 'v')                                         # optional - sage.rings.number_field
-            sage: PP.<x,y,a,b> = ProductProjectiveSpaces([1, 1], R)                     # optional - sage.rings.number_field
-            sage: H = End(PP)                                                           # optional - sage.rings.number_field
-            sage: O = R.maximal_order()                                                 # optional - sage.rings.number_field
-            sage: g = H([3*O(u)*x^2, 13*x*y, 7*a*y, 5*b*x + O(u)*a*y])                  # optional - sage.rings.number_field
-            sage: g.global_height()                                                     # optional - sage.rings.number_field
+            sage: R = NumberField(u^2 - 2, 'v')
+            sage: PP.<x,y,a,b> = ProductProjectiveSpaces([1, 1], R)
+            sage: H = End(PP)
+            sage: O = R.maximal_order()
+            sage: g = H([3*O(u)*x^2, 13*x*y, 7*a*y, 5*b*x + O(u)*a*y])
+            sage: g.global_height()                                                     # needs sage.rings.real_mpfr
             2.56494935746154
         """
         K = self.domain().base_ring()
-        if K in NumberFields() or is_NumberFieldOrder(K):
+        if K in NumberFields() or K == ZZ or isinstance(K, sage.rings.abc.Order):
             H = 0
             for i in range(self.domain().ambient_space().ngens()):
                 C = self[i].coefficients()
                 h = max(c.global_height(prec=prec) for c in C)
                 H = max(H, h)
             return H
-        elif K == QQbar:
+        elif isinstance(K, sage.rings.abc.AlgebraicField):
             raise NotImplementedError("not implemented for QQbar")
         else:
             raise TypeError("Must be over a Numberfield or a Numberfield Order or QQbar")
@@ -477,29 +478,30 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
             sage: T.<x,y,z,w,u> = ProductProjectiveSpaces([2, 1], QQ)
             sage: H = T.Hom(T)
             sage: f = H([4*x^2 + 3/100*y^2, 8/210*x*y, 1/10000*z^2, 20*w^2, 1/384*u*w])
-            sage: f.local_height(2)
+            sage: f.local_height(2)                                                     # needs sage.rings.real_mpfr
             4.85203026391962
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<z> = PolynomialRing(QQ)
-            sage: K.<w> = NumberField(z^2 - 5)                                          # optional - sage.rings.number_field
-            sage: P.<x,y,a,b> = ProductProjectiveSpaces([1, 1], K)                      # optional - sage.rings.number_field
-            sage: H = Hom(P, P)                                                         # optional - sage.rings.number_field
-            sage: f = H([2*x^2 + w/3*y^2, 1/w*y^2, a^2, 6*b^2 + 1/9*a*b])               # optional - sage.rings.number_field
-            sage: f.local_height(K.ideal(3))                                            # optional - sage.rings.number_field
+            sage: K.<w> = NumberField(z^2 - 5)
+            sage: P.<x,y,a,b> = ProductProjectiveSpaces([1, 1], K)
+            sage: H = Hom(P, P)
+            sage: f = H([2*x^2 + w/3*y^2, 1/w*y^2, a^2, 6*b^2 + 1/9*a*b])
+            sage: f.local_height(K.ideal(3))                                            # needs sage.rings.real_mpfr
             2.19722457733622
         """
         K = FractionField(self.domain().base_ring())

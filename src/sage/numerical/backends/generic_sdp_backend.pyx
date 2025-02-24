@@ -3,7 +3,7 @@ Generic Backend for SDP solvers
 
 This class only lists the methods that should be defined by any
 interface with a SDP Solver. All these methods immediately raise
-``NotImplementedError`` exceptions when called, and are obviously
+:exc:`NotImplementedError` exceptions when called, and are obviously
 meant to be replaced by the solver-specific method. This file can also
 be used as a template to create a new interface : one would only need
 to replace the occurrences of ``"Nonexistent_SDP_solver"`` by the
@@ -14,7 +14,6 @@ class.
 AUTHORS:
 
 - Ingolfur Edvardsson (2014-07): initial implementation
-
 """
 
 #*****************************************************************************
@@ -31,7 +30,7 @@ cdef class GenericSDPBackend:
 
     cpdef base_ring(self):
         """
-        The base ring
+        The base ring.
 
         TESTS::
 
@@ -44,7 +43,7 @@ cdef class GenericSDPBackend:
 
     cpdef zero(self):
         """
-        Zero of the base ring
+        Zero of the base ring.
 
         TESTS::
 
@@ -63,27 +62,30 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective
+          function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default:
+          ``None``)
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")    # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                           # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                    # optional - Nonexistent_LP_solver
+            sage: p.add_variable()
             0
-            sage: p.ncols()                                           # optional - Nonexistent_LP_solver
+            sage: p.ncols()
             1
-            sage: p.add_variable(name='x',obj=1.0)                    # optional - Nonexistent_LP_solver
+            sage: p.add_variable(name='x', obj=1.0)
             3
-            sage: p.col_name(3)                                       # optional - Nonexistent_LP_solver
+            sage: p.col_name(3)
             'x'
-            sage: p.objective_coefficient(3)                          # optional - Nonexistent_LP_solver
+            sage: p.objective_coefficient(3)
             1.0
         """
         raise NotImplementedError()
@@ -97,25 +99,26 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``n`` - the number of new variables (must be > 0)
+        - ``n`` -- the number of new variables (must be > 0)
 
-        - ``obj`` - (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` - optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
-        OUTPUT: The index of the variable created last.
+        OUTPUT: the index of the variable created last
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")    # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                           # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.add_variables(5)                                  # optional - Nonexistent_LP_solver
+            sage: p.add_variables(5)
             4
-            sage: p.ncols()                                           # optional - Nonexistent_LP_solver
+            sage: p.ncols()
             5
-            sage: p.add_variables(2, lower_bound=-2.0, integer=True, names=['a','b']) # optional - Nonexistent_LP_solver
+            sage: p.add_variables(2, lower_bound=-2.0, integer=True, names=['a','b'])
             6
         """
         raise NotImplementedError()
@@ -126,19 +129,20 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``sense`` (integer) :
+        - ``sense`` -- integer:
 
-            * +1 => Maximization
-            * -1 => Minimization
+          * `+1` => Maximization
+          * `-1` => Minimization
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.is_maximization()                              # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.is_maximization()
             True
-            sage: p.set_sense(-1)                              # optional - Nonexistent_LP_solver
-            sage: p.is_maximization()                              # optional - Nonexistent_LP_solver
+            sage: p.set_sense(-1)
+            sage: p.is_maximization()
             False
         """
         raise NotImplementedError()
@@ -150,20 +154,21 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``coeff`` (double) -- its coefficient
+        - ``coeff`` -- double; its coefficient
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variable()                                 # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variable()
             1
-            sage: p.objective_coefficient(0)                         # optional - Nonexistent_LP_solver
+            sage: p.objective_coefficient(0)
             0.0
-            sage: p.objective_coefficient(0,2)                       # optional - Nonexistent_LP_solver
-            sage: p.objective_coefficient(0)                         # optional - Nonexistent_LP_solver
+            sage: p.objective_coefficient(0,2)
+            sage: p.objective_coefficient(0)
             2.0
         """
         raise NotImplementedError()
@@ -174,25 +179,26 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``coeff`` -- a list of real values, whose ith element is the
-          coefficient of the ith variable in the objective function.
+        - ``coeff`` -- list of real values, whose i-th element is the
+          coefficient of the i-th variable in the objective function
 
-        - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
+        - ``d`` -- double; the constant term in the linear function (set to `0`
+          by default)
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")    # optional - Nonexistent_LP_solver
-            sage: p.add_variables(5)                                 # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(5)
             5
-            sage: p.set_objective([1, 1, 2, 1, 3])                   # optional - Nonexistent_LP_solver
-            sage: [p.objective_coefficient(x) for x in range(5)]  # optional - Nonexistent_LP_solver
+            sage: p.set_objective([1, 1, 2, 1, 3])
+            sage: [p.objective_coefficient(x) for x in range(5)]
             [1.0, 1.0, 2.0, 1.0, 3.0]
 
         Constants in the objective function are respected.
         """
         raise NotImplementedError()
-
 
     cpdef add_linear_constraint(self, coefficients, name=None):
         """
@@ -204,29 +210,29 @@ cdef class GenericSDPBackend:
           is a variable index (integer) and ``v`` is a value (real
           value).
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``name`` - an optional name for this row (default: ``None``)
+        - ``name`` -- an optional name for this row (default: ``None``)
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.add_variables(5)                               # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2.0, 2.0) # optional - Nonexistent_LP_solver
-            sage: p.row(0)                                         # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint(zip(range(5), range(5)), 2.0, 2.0)
+            sage: p.row(0)
             ([4, 3, 2, 1], [4.0, 3.0, 2.0, 1.0])                   # optional - Nonexistent_LP_solver
-            sage: p.row_bounds(0)                                  # optional - Nonexistent_LP_solver
+            sage: p.row_bounds(0)
             (2.0, 2.0)
-            sage: p.add_linear_constraint( zip(range(5), range(5)), 1.0, 1.0, name='foo') # optional - Nonexistent_LP_solver
-            sage: p.row_name(-1)                                                          # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint( zip(range(5), range(5)), 1.0, 1.0, name='foo')
+            sage: p.row_name(-1)
             "foo"
         """
         raise NotImplementedError()
-
 
     cpdef add_linear_constraints(self, int number, names=None):
         """
@@ -234,24 +240,25 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``number`` (integer) -- the number of constraints to add.
+        - ``number`` -- integer; the number of constraints to add
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``names`` - an optional list of names (default: ``None``)
+        - ``names`` -- an optional list of names (default: ``None``)
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")   # optional - Nonexistent_LP_solver
-            sage: p.add_variables(5)                                # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(5)
             5
-            sage: p.add_linear_constraints(5, None, 2)          # optional - Nonexistent_LP_solver
-            sage: p.row(4)                                      # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraints(5, None, 2)
+            sage: p.row(4)
             ([], [])
-            sage: p.row_bounds(4)                               # optional - Nonexistent_LP_solver
+            sage: p.row_bounds(4)
             (None, 2.0)
         """
         raise NotImplementedError()
@@ -262,20 +269,21 @@ cdef class GenericSDPBackend:
 
         .. NOTE::
 
-            This method raises ``SDPSolverException`` exceptions when
+            This method raises :class:`SDPSolverException` exceptions when
             the solution cannot be computed for any reason (none
             exists, or the LP solver was not able to find it, etc...)
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.add_linear_constraints(5, 0, None)             # optional - Nonexistent_LP_solver
-            sage: p.add_col(range(5), range(5))                    # optional - Nonexistent_LP_solver
-            sage: p.solve()                                        # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_linear_constraints(5, 0, None)
+            sage: p.add_col(range(5), range(5))
+            sage: p.solve()
             0
-            sage: p.objective_coefficient(0,1)                 # optional - Nonexistent_LP_solver
-            sage: p.solve()                                        # optional - Nonexistent_LP_solver
+            sage: p.objective_coefficient(0,1)
+            sage: p.solve()
             Traceback (most recent call last):
             ...
             SDPSolverException: ...
@@ -292,22 +300,22 @@ cdef class GenericSDPBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.add_variables(2)                               # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(2)
             2
-            sage: p.add_linear_constraint([(0,1), (1,2)], None, 3) # optional - Nonexistent_LP_solver
-            sage: p.set_objective([2, 5])                          # optional - Nonexistent_LP_solver
-            sage: p.solve()                                        # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint([(0,1), (1,2)], None, 3)
+            sage: p.set_objective([2, 5])
+            sage: p.solve()
             0
-            sage: p.get_objective_value()                          # optional - Nonexistent_LP_solver
+            sage: p.get_objective_value()
             7.5
-            sage: p.get_variable_value(0)                          # optional - Nonexistent_LP_solver
+            sage: p.get_variable_value(0)
             0.0
-            sage: p.get_variable_value(1)                          # optional - Nonexistent_LP_solver
+            sage: p.get_variable_value(1)
             1.5
         """
-
         raise NotImplementedError()
 
     cpdef get_variable_value(self, int variable):
@@ -320,90 +328,94 @@ cdef class GenericSDPBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.add_variables(2)                              # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(2)
             2
-            sage: p.add_linear_constraint([(0,1), (1, 2)], None, 3) # optional - Nonexistent_LP_solver
-            sage: p.set_objective([2, 5])                         # optional - Nonexistent_LP_solver
-            sage: p.solve()                                       # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint([(0,1), (1, 2)], None, 3)
+            sage: p.set_objective([2, 5])
+            sage: p.solve()
             0
-            sage: p.get_objective_value()                         # optional - Nonexistent_LP_solver
+            sage: p.get_objective_value()
             7.5
-            sage: p.get_variable_value(0)                         # optional - Nonexistent_LP_solver
+            sage: p.get_variable_value(0)
             0.0
-            sage: p.get_variable_value(1)                         # optional - Nonexistent_LP_solver
+            sage: p.get_variable_value(1)
             1.5
         """
 
         raise NotImplementedError()
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                       # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.add_variables(2)                               # optional - Nonexistent_LP_solver
+            sage: p.add_variables(2)
             2
-            sage: p.ncols()                                       # optional - Nonexistent_LP_solver
+            sage: p.ncols()
             2
         """
 
         raise NotImplementedError()
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.nrows()                                        # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.nrows()
             0
-            sage: p.add_linear_constraints(2, 2.0, None)         # optional - Nonexistent_LP_solver
-            sage: p.nrows()                                      # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraints(2, 2.0, None)
+            sage: p.nrows()
             2
         """
-
         raise NotImplementedError()
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.is_maximization()                             # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.is_maximization()
             True
-            sage: p.set_sense(-1)                             # optional - Nonexistent_LP_solver
-            sage: p.is_maximization()                             # optional - Nonexistent_LP_solver
+            sage: p.set_sense(-1)
+            sage: p.is_maximization()
             False
         """
         raise NotImplementedError()
 
     cpdef problem_name(self, name=None):
         """
-        Return or define the problem's name
+        Return or define the problem's name.
 
         INPUT:
 
-        - ``name`` (``str``) -- the problem's name. When set to
+        - ``name`` -- string; the problem's name. When set to
           ``NULL`` (default), the method returns the problem's name.
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")   # optional - Nonexistent_LP_solver
-            sage: p.problem_name("There once was a french fry") # optional - Nonexistent_LP_solver
-            sage: print(p.problem_name())                     # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.problem_name("There once was a french fry")
+            sage: print(p.problem_name())
             There once was a french fry
         """
 
@@ -411,11 +423,11 @@ cdef class GenericSDPBackend:
 
     cpdef row(self, int i):
         """
-        Return a row
+        Return a row.
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -426,93 +438,92 @@ cdef class GenericSDPBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variables(5)                               # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(5)
             5
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2) # optional - Nonexistent_LP_solver
-            sage: p.row(0)                                     # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)
+            sage: p.row(0)
             ([4, 3, 2, 1], [4.0, 3.0, 2.0, 1.0])
-            sage: p.row_bounds(0)                              # optional - Nonexistent_LP_solver
+            sage: p.row_bounds(0)
             (2.0, 2.0)
         """
         raise NotImplementedError()
 
-
-
     cpdef row_name(self, int index):
         """
-        Return the ``index`` th row name
+        Return the ``index``-th row name.
 
         INPUT:
 
-        - ``index`` (integer) -- the row's id
+        - ``index`` -- integer; the row's id
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_linear_constraints(1, 2, None, name="Empty constraint 1")  # optional - Nonexistent_LP_solver
-            sage: p.row_name(0)                                     # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_linear_constraints(1, 2, None, name="Empty constraint 1")
+            sage: p.row_name(0)
             'Empty constraint 1'
-
         """
         raise NotImplementedError()
 
     cpdef col_name(self, int index):
         """
-        Return the ``index`` th col name
+        Return the ``index``-th col name.
 
         INPUT:
 
-        - ``index`` (integer) -- the col's id
+        - ``index`` -- integer; the col's id
 
-        - ``name`` (``char *``) -- its name. When set to ``NULL``
-          (default), the method returns the current name.
+        - ``name`` -- (``char *``) its name; when set to ``NULL``
+          (default), the method returns the current name
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variable(name="I am a variable")            # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variable(name="I am a variable")
             1
-            sage: p.col_name(0)                                     # optional - Nonexistent_LP_solver
+            sage: p.col_name(0)
             'I am a variable'
         """
         raise NotImplementedError()
 
     cpdef dual_variable(self, int i, sparse=False):
         """
-        The `i`-th dual variable
+        The `i`-th dual variable.
 
-        Available after self.solve() is called, otherwise the result is undefined
+        Available after ``self.solve()`` is called, otherwise the result is undefined
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
-        OUTPUT:
-
-        The matrix of the `i`-th dual variable
+        OUTPUT: the matrix of the `i`-th dual variable
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(maximization = False,solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: x = p.new_variable()              # optional - Nonexistent_LP_solver
-            sage: p.set_objective(x[0] - x[1])      # optional - Nonexistent_LP_solver
-            sage: a1 = matrix([[1, 2.], [2., 3.]])  # optional - Nonexistent_LP_solver
-            sage: a2 = matrix([[3, 4.], [4., 5.]])  # optional - Nonexistent_LP_solver
-            sage: a3 = matrix([[5, 6.], [6., 7.]])  # optional - Nonexistent_LP_solver
-            sage: b1 = matrix([[1, 1.], [1., 1.]])  # optional - Nonexistent_LP_solver
-            sage: b2 = matrix([[2, 2.], [2., 2.]])  # optional - Nonexistent_LP_solver
-            sage: b3 = matrix([[3, 3.], [3., 3.]])  # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)  # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)  # optional - Nonexistent_LP_solver
-            sage: p.solve()  # optional - Nonexistent_LP_solver # tol ???
+            sage: # optional - nonexistent_lp_solver
+            sage: p = SemidefiniteProgram(maximization=False, solver="Nonexistent_LP_solver")
+            sage: x = p.new_variable()
+            sage: p.set_objective(x[0] - x[1])
+            sage: a1 = matrix([[1, 2.], [2., 3.]])
+            sage: a2 = matrix([[3, 4.], [4., 5.]])
+            sage: a3 = matrix([[5, 6.], [6., 7.]])
+            sage: b1 = matrix([[1, 1.], [1., 1.]])
+            sage: b2 = matrix([[2, 2.], [2., 2.]])
+            sage: b3 = matrix([[3, 3.], [3., 3.]])
+            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)
+            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
+            sage: p.solve()
             -3.0
-            sage: B=p.get_backend()  # optional - Nonexistent_LP_solver
-            sage: x=p.get_values(x).values()  # optional - Nonexistent_LP_solver
-            sage: -(a3*B.dual_variable(0)).trace()-(b3*B.dual_variable(1)).trace()  # optional - Nonexistent_LP_solver # tol ???
+            sage: B = p.get_backend()
+            sage: x = p.get_values(x).values()
+            sage: -(a3*B.dual_variable(0)).trace()-(b3*B.dual_variable(1)).trace()
             -3.0
-            sage: g = sum((B.slack(j)*B.dual_variable(j)).trace() for j in range(2)); g  # optional - Nonexistent_LP_solver # tol ???
+            sage: g = sum((B.slack(j)*B.dual_variable(j)).trace() for j in range(2)); g
             0.0
 
         TESTS::
@@ -529,39 +540,39 @@ cdef class GenericSDPBackend:
 
     cpdef slack(self, int i, sparse=False):
         """
-        Slack of the `i`-th constraint
+        Slack of the `i`-th constraint.
 
-        Available after self.solve() is called, otherwise the result is undefined
+        Available after ``self.solve()`` is called, otherwise the result is
+        undefined.
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
-        OUTPUT:
-
-        The matrix of the slack of the `i`-th constraint
+        OUTPUT: the matrix of the slack of the `i`-th constraint
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(maximization = False,solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: x = p.new_variable()              # optional - Nonexistent_LP_solver
-            sage: p.set_objective(x[0] - x[1])      # optional - Nonexistent_LP_solver
-            sage: a1 = matrix([[1, 2.], [2., 3.]])  # optional - Nonexistent_LP_solver
-            sage: a2 = matrix([[3, 4.], [4., 5.]])  # optional - Nonexistent_LP_solver
-            sage: a3 = matrix([[5, 6.], [6., 7.]])  # optional - Nonexistent_LP_solver
-            sage: b1 = matrix([[1, 1.], [1., 1.]])  # optional - Nonexistent_LP_solver
-            sage: b2 = matrix([[2, 2.], [2., 2.]])  # optional - Nonexistent_LP_solver
-            sage: b3 = matrix([[3, 3.], [3., 3.]])  # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)  # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)  # optional - Nonexistent_LP_solver
-            sage: p.solve()  # optional - Nonexistent_LP_solver # tol ???
+            sage: # optional - nonexistent_lp_solver
+            sage: p = SemidefiniteProgram(maximization=False, solver="Nonexistent_LP_solver")
+            sage: x = p.new_variable()
+            sage: p.set_objective(x[0] - x[1])
+            sage: a1 = matrix([[1, 2.], [2., 3.]])
+            sage: a2 = matrix([[3, 4.], [4., 5.]])
+            sage: a3 = matrix([[5, 6.], [6., 7.]])
+            sage: b1 = matrix([[1, 1.], [1., 1.]])
+            sage: b2 = matrix([[2, 2.], [2., 2.]])
+            sage: b3 = matrix([[3, 3.], [3., 3.]])
+            sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)
+            sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
+            sage: p.solve()
             -3.0
-            sage: B=p.get_backend()             # optional - Nonexistent_LP_solver
-            sage: B1 = B.slack(1); B1           # optional - Nonexistent_LP_solver # tol ???
+            sage: B = p.get_backend()
+            sage: B1 = B.slack(1); B1
             [0.0 0.0]
             [0.0 0.0]
-            sage: B1.is_positive_definite()     # optional - Nonexistent_LP_solver
+            sage: B1.is_positive_definite()
             True
-            sage: x = p.get_values(x).values()  # optional - Nonexistent_LP_solver
-            sage: x[0]*b1 + x[1]*b2 - b3 + B1   # optional - Nonexistent_LP_solver # tol ???
+            sage: x = p.get_values(x).values()
+            sage: x[0]*b1 + x[1]*b2 - b3 + B1
             [0.0 0.0]
             [0.0 0.0]
 
@@ -575,16 +586,16 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value=None):
         """
-        Return or define a solver parameter
+        Return or define a solver parameter.
 
         INPUT:
 
-        - ``name`` (string) -- the parameter
+        - ``name`` -- string; the parameter
 
         - ``value`` -- the parameter's value if it is to be defined,
-          or ``None`` (default) to obtain its current value.
+          or ``None`` (default) to obtain its current value
 
         .. NOTE::
 
@@ -593,42 +604,43 @@ cdef class GenericSDPBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.solver_parameter("timelimit")                   # optional - Nonexistent_LP_solver
-            sage: p.solver_parameter("timelimit", 60)               # optional - Nonexistent_LP_solver
-            sage: p.solver_parameter("timelimit")                   # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.solver_parameter("timelimit")
+            sage: p.solver_parameter("timelimit", 60)
+            sage: p.solver_parameter("timelimit")
         """
         raise NotImplementedError()
 
 
-
 default_solver = None
+
 
 def default_sdp_solver(solver=None):
     """
-    Return/set the default SDP solver used by Sage
+    Return/set the default SDP solver used by Sage.
 
     INPUT:
 
     - ``solver`` -- one of the following:
 
-        - the string ``"CVXOPT"``, to make the use of the CVXOPT solver
-          (see the `CVXOPT <http://cvxopt.org/>`_ web site) the default;
+      - the string ``'CVXOPT'``, to make the use of the CVXOPT solver
+        (see the `CVXOPT <http://cvxopt.org/>`_ web site) the default;
 
-        - a subclass of
-          :class:`sage.numerical.backends.generic_sdp_backend.GenericSDPBackend`,
-          to make it the default; or
+      - a subclass of
+        :class:`sage.numerical.backends.generic_sdp_backend.GenericSDPBackend`,
+        to make it the default; or
 
-        - ``None`` (default), in which case the current default solver
-          (a string or a class) is returned.
+      - ``None`` -- (default) in which case the current default solver
+        (a string or a class) is returned
 
     OUTPUT:
 
     This function returns the current default solver (a string or a
     class) if ``solver = None`` (default). Otherwise, it sets the
     default solver to the one given. If this solver does not exist, or
-    is not available, a ``ValueError`` exception is raised.
+    is not available, a :exc:`ValueError` exception is raised.
 
     EXAMPLES::
 
@@ -646,7 +658,6 @@ def default_sdp_solver(solver=None):
         sage: default_sdp_solver(my_sdp_solver)
         sage: default_sdp_solver() is my_sdp_solver
         True
-
     """
     global default_solver
 
@@ -694,18 +705,18 @@ cpdef GenericSDPBackend get_solver(solver=None, base_ring=None):
 
     - ``solver`` -- one of the following:
 
-        - the string ``"CVXOPT"``, designating the use of the CVXOPT solver
-          (see the `CVXOPT <http://cvxopt.org/>`_ web site);
+      - the string ``'CVXOPT'``, designating the use of the CVXOPT solver
+        (see the `CVXOPT <http://cvxopt.org/>`_ web site);
 
-        - a subclass of
-          :class:`sage.numerical.backends.generic_sdp_backend.GenericSDPBackend`;
+      - a subclass of
+        :class:`sage.numerical.backends.generic_sdp_backend.GenericSDPBackend`
 
-        - ``None`` (default), in which case the default solver is used (see
-          :func:`default_sdp_solver`);
+      - ``None`` -- (default) in which case the default solver is used (see
+        :func:`default_sdp_solver`)
 
     .. SEEALSO::
 
-        - :func:`default_sdp_solver` -- Returns/Sets the default SDP solver.
+        - :func:`default_sdp_solver` -- returns/sets the default SDP solver
 
     EXAMPLES::
 

@@ -71,7 +71,7 @@ l'argomento è il numero di bit di precisione.)
 Differenziazione, Integrazione, etc.
 ------------------------------------
 
-Sage è in grado di differenziae ed integrare molte funzioni. Per
+Sage è in grado di differenziare ed integrare molte funzioni. Per
 esempio, per differenziare :math:`\sin(u)` rispetto a :math:`u`,
 si procede come nelle righe seguenti:
 
@@ -379,7 +379,7 @@ e "Funzioni speciali", rispettivamente) del manuale di Sage.
     0.167089499251049
 
 A questo punto, Sage ha soltanto incorporato queste funzioni per l'uso numerico.
-Per l'uso simbolico, si usi direttamente l'intefaccia di Maxima, come
+Per l'uso simbolico, si usi direttamente l'interfaccia di Maxima, come
 nell'esempio seguente::
 
     sage: maxima.eval("f:bessel_y(v, w)")

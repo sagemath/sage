@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Compute invariants of quintics and sextics via 'Ueberschiebung'
 
@@ -11,7 +10,6 @@ Compute invariants of quintics and sextics via 'Ueberschiebung'
 AUTHOR:
 
 - Nick Alexander
-
 """
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -20,7 +18,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 def diffxy(f, x, xtimes, y, ytimes):
     r"""
     Differentiate a polynomial ``f``, ``xtimes`` with respect to ``x``, and
-    ```ytimes`` with respect to ``y``.
+    ``ytimes`` with respect to ``y``.
 
     EXAMPLES::
 
@@ -175,8 +173,8 @@ def ubs(f):
          'y2': 0,
          'y3': 0}
 
-        sage: R.<t> = GF(31)[]                                                          # optional - sage.rings.finite_rings
-        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)                                          # optional - sage.rings.finite_rings
+        sage: R.<t> = GF(31)[]
+        sage: ubs(t^6 + 2*t^5 + t^2 + 3*t + 1)
         {'A': 0,
          'B': -12,
          'C': -15,
@@ -219,11 +217,11 @@ def clebsch_to_igusa(A, B, C, D):
         sage: igusa_to_clebsch(*clebsch_to_igusa(2, 3, 4, 5))
         (2, 3, 4, 5)
 
-        sage: Cs = tuple(map(GF(31), (2, 3, 4, 5))); Cs                                 # optional - sage.rings.finite_rings
+        sage: Cs = tuple(map(GF(31), (2, 3, 4, 5))); Cs
         (2, 3, 4, 5)
-        sage: clebsch_to_igusa(*Cs)                                                     # optional - sage.rings.finite_rings
+        sage: clebsch_to_igusa(*Cs)
         (8, 10, 15, 26)
-        sage: igusa_to_clebsch(*clebsch_to_igusa(*Cs))                                  # optional - sage.rings.finite_rings
+        sage: igusa_to_clebsch(*clebsch_to_igusa(*Cs))
         (2, 3, 4, 5)
     """
     I2 = -120*A
@@ -245,11 +243,11 @@ def igusa_to_clebsch(I2, I4, I6, I10):
         sage: clebsch_to_igusa(*igusa_to_clebsch(-2400, 173700, 23112000, -10309890600))
         (-2400, 173700, 23112000, -10309890600)
 
-        sage: Is = tuple(map(GF(31), (-2400, 173700, 23112000, -10309890600))); Is      # optional - sage.rings.finite_rings
+        sage: Is = tuple(map(GF(31), (-2400, 173700, 23112000, -10309890600))); Is
         (18, 7, 12, 27)
-        sage: igusa_to_clebsch(*Is)                                                     # optional - sage.rings.finite_rings
+        sage: igusa_to_clebsch(*Is)
         (20, 25, 25, 12)
-        sage: clebsch_to_igusa(*igusa_to_clebsch(*Is))                                  # optional - sage.rings.finite_rings
+        sage: clebsch_to_igusa(*igusa_to_clebsch(*Is))
         (18, 7, 12, 27)
     """
     A = -(+ I2) / 120
@@ -323,7 +321,8 @@ def igusa_clebsch_invariants(f):
         sage: igusa_clebsch_invariants(x^5 + a*x^4 + b*x^3 + c*x^2 + d*x + e)[0]
         6*b^2 - 16*a*c + 40*d
 
-        sage: absolute_igusa_invariants_wamelen(GF(5)['x'](x^6 - 2*x))                  # optional - sage.rings.finite_rings
+        sage: from sage.schemes.hyperelliptic_curves.invariants import absolute_igusa_invariants_wamelen
+        sage: absolute_igusa_invariants_wamelen(GF(5)['x'](x^6 - 2*x))
         Traceback (most recent call last):
         ...
         NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves
@@ -358,7 +357,7 @@ def absolute_igusa_invariants_wamelen(f):
 
     TESTS::
 
-        sage: absolute_igusa_invariants_wamelen(GF(3)['x'](x^5 - 2*x))                  # optional - sage.rings.finite_rings
+        sage: absolute_igusa_invariants_wamelen(GF(3)['x'](x^5 - 2*x))
         Traceback (most recent call last):
         ...
         NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves
@@ -397,7 +396,7 @@ def absolute_igusa_invariants_kohel(f):
 
     TESTS::
 
-        sage: absolute_igusa_invariants_kohel(GF(2)['x'](x^5 - x))                      # optional - sage.rings.finite_rings
+        sage: absolute_igusa_invariants_kohel(GF(2)['x'](x^5 - x))
         Traceback (most recent call last):
         ...
         NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves

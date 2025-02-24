@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Commutative algebra ideals
 """
@@ -10,10 +11,10 @@ Commutative algebra ideals
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .algebra_ideals import AlgebraIdeals
-from .category_types import Category_ideal, Category_in_ambient
-from .commutative_algebras import CommutativeAlgebras
-from .commutative_rings import CommutativeRings
+from sage.categories.algebra_ideals import AlgebraIdeals
+from sage.categories.category_types import Category_ideal, Category_in_ambient
+from sage.categories.commutative_algebras import CommutativeAlgebras
+from sage.categories.commutative_rings import CommutativeRings
 
 
 class CommutativeAlgebraIdeals(Category_ideal):
@@ -45,7 +46,7 @@ class CommutativeAlgebraIdeals(Category_ideal):
             ...
             TypeError: A (=Ring of integers modulo 4) must be a commutative algebra
 
-            sage: CommutativeAlgebraIdeals(Partitions(4))                               # optional - sage.combinat sage.modules
+            sage: CommutativeAlgebraIdeals(Partitions(4))                               # needs sage.combinat
             Traceback (most recent call last):
             ...
             TypeError: A (=Partitions of the integer 4) must be a commutative algebra

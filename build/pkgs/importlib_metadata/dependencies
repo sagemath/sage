@@ -1,4 +1,4 @@
-$(PYTHON) zipp typing_extensions | $(PYTHON_TOOLCHAIN) tomli
+ zipp typing_extensions | pip tomli $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

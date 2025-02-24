@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Exterior algebras Gröbner bases
 
@@ -29,7 +30,7 @@ from sage.structure.richcmp cimport richcmp, rich_to_bool
 from sage.data_structures.blas_dict cimport iaxpy
 from copy import copy
 
-cdef inline long degree(FrozenBitset X):
+cdef inline long degree(FrozenBitset X) noexcept:
     """
     Compute the degree of ``X``.
     """
@@ -56,7 +57,7 @@ cdef class GBElement:
             sage: from sage.algebras.exterior_algebra_groebner import GBElement
             sage: E.<a,b,c,d> = ExteriorAlgebra(QQ)
             sage: X = GBElement(a, a.leading_support(), 1)
-            sage: TestSuite(X).run(skip="_test_pickling")
+            sage: TestSuite(X).run(skip='_test_pickling')
         """
         self.elt = x
         self.ls = ls
@@ -113,9 +114,9 @@ cdef class GroebnerStrategy:
 
             sage: from sage.algebras.exterior_algebra_groebner import GroebnerStrategy
             sage: E.<a,b,c,d> = ExteriorAlgebra(QQ)
-            sage: I = E.ideal([a + 1], side="left")
+            sage: I = E.ideal([a + 1], side='left')
             sage: G = GroebnerStrategy(I)
-            sage: TestSuite(G).run(skip="_test_pickling")
+            sage: TestSuite(G).run(skip='_test_pickling')
         """
         self.ideal = I
         self.groebner_basis = (None,)
@@ -204,7 +205,7 @@ cdef class GroebnerStrategy:
         cdef FrozenBitset ls = <FrozenBitset> f.ls._union(t)
         return GBElement(<CliffordAlgebraElement> ret, ls, self.bitset_to_int(ls))
 
-    cdef inline bint build_S_poly(self, GBElement f, GBElement g):
+    cdef inline bint build_S_poly(self, GBElement f, GBElement g) noexcept:
         r"""
         Check to see if we should build the `S`-polynomial.
 
@@ -292,18 +293,18 @@ cdef class GroebnerStrategy:
         EXAMPLES::
 
             sage: E.<y, x> = ExteriorAlgebra(QQ)
-            sage: I = E.ideal([x*y - x, x*y - 1], side="left")
+            sage: I = E.ideal([x*y - x, x*y - 1], side='left')
             sage: I.groebner_basis()  # indirect doctest
             (1,)
-            sage: J = E.ideal([x*y - x, 2*x*y - 2], side="left")
+            sage: J = E.ideal([x*y - x, 2*x*y - 2], side='left')
             sage: J.groebner_basis()  # indirect doctest
             (1,)
 
             sage: E.<a,b,c,d> = ExteriorAlgebra(QQ)
-            sage: I = E.ideal([a+b*c], side="left")
+            sage: I = E.ideal([a+b*c], side='left')
             sage: I.groebner_basis()  # indirect doctest
             (b*c + a,)
-            sage: I = E.ideal([a+b*c], side="twosided")
+            sage: I = E.ideal([a+b*c], side='twosided')
             sage: I.groebner_basis()  # indirect doctest
             (a*b, a*c, b*c + a, a*d)
         """
@@ -372,7 +373,7 @@ cdef class GroebnerStrategy:
                 else:
                     constructed[f0.lsi] = set([f0])
                 G.append(f0)
-            # Find the degress of the new pairs
+            # Find the degrees of the new pairs
             for j in range(n, len(G)):
                 f1 = G[j]
                 p1 = f1.ls
@@ -476,13 +477,30 @@ cdef class GroebnerStrategy:
             0
             sage: I._groebner_strategy.reduce(E.zero())
             0
+
+        Check :issue:`37108` is fixed::
+
+            sage: E = ExteriorAlgebra(QQ, 6)
+            sage: E.inject_variables(verbose=False)
+            sage: gens = [-e0*e1*e2 + e0*e1*e5 - e0*e2*e3 - e0*e3*e5 + e1*e2*e3 + e1*e3*e5,
+            ....:         e1*e2 - e1*e5 + e2*e5, e0*e2 - e0*e4 + e2*e4,
+            ....:         e3*e4 - e3*e5 + e4*e5, e0*e1 - e0*e3 + e1*e3]
+            sage: I = E.ideal(gens)
+            sage: S = E.quo(I)
+            sage: I.reduce(e1*e3*e4*e5)
+            0
         """
         if not f:
             return f
         # Make a copy to mutate
         f = type(f)(f._parent, copy(f._monomial_coefficients))
-        for g in self.groebner_basis:
-            self.reduce_single(f, g)
+        was_reduced = True
+        while was_reduced:
+            was_reduced = False
+            for g in self.groebner_basis:
+                was_reduced = self.reduce_single(f, g)
+                if was_reduced:
+                    break
         return f
 
     cdef bint reduce_single(self, CliffordAlgebraElement f, CliffordAlgebraElement g) except -1:

@@ -1,1 +1,2 @@
-libatomic_ops libatomic_ops-devel
+libatomic_ops
+libatomic_ops-devel

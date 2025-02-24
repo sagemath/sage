@@ -1,1 +1,2 @@
-sci-mathematics/pari sci-mathematics/pari-data
+sci-mathematics/pari
+sci-mathematics/pari-data

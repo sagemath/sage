@@ -21,7 +21,7 @@ def product(m):
 
     INPUT:
 
-    - ``m`` -- a list or tuple of positive integers that correspond to the size
+    - ``m`` -- list or tuple of positive integers that correspond to the size
       of the sets in the product
 
     EXAMPLES::
@@ -103,7 +103,7 @@ def product(m):
         j = f[0]
 
 
-def combinations(n,t):
+def combinations(n, t):
     r"""
     Iterator through the switches of the revolving door algorithm.
 
@@ -119,9 +119,9 @@ def combinations(n,t):
 
     INPUT:
 
-    - ``n`` -- (integer or ``Infinity``) -- size of the ground set
+    - ``n`` -- integer or ``Infinity``; size of the ground set
 
-    - ``t`` -- (integer) -- size of the subsets
+    - ``t`` -- integer; size of the subsets
 
     EXAMPLES::
 
@@ -177,7 +177,7 @@ def combinations(n,t):
 
     TESTS::
 
-        sage: def check_sets_from_iter(n,k):
+        sage: def check_sets_from_iter(n, k):
         ....:     l = []
         ....:     s = set(range(k))
         ....:     l.append(frozenset(s))
@@ -193,7 +193,6 @@ def combinations(n,t):
         Traceback (most recent call last):
         ...
         AssertionError: t(=6) must be >=0 and <=n(=5)
-
     """
     from sage.rings.infinity import Infinity
     t = int(t)
@@ -210,7 +209,7 @@ def combinations(n,t):
         return _revolving_door_even(n,t)
 
 
-def _revolving_door_odd(n,t):
+def _revolving_door_odd(n, t):
     r"""
     Revolving door switch for odd `t`.
 
@@ -256,7 +255,7 @@ def _revolving_door_odd(n,t):
             break
 
 
-def _revolving_door_even(n,t):
+def _revolving_door_even(n, t):
     r"""
     Revolving door algorithm for even `t`.
 

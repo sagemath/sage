@@ -18,7 +18,7 @@ cdef class FpTElement(FieldElement):
     cpdef denominator(self)
     cpdef FpTElement next(self)
     cpdef _sqrt_or_None(self)
-    cpdef bint is_square(self)
+    cpdef bint is_square(self) noexcept
 
 cdef class FpT_iter:
     cdef parent

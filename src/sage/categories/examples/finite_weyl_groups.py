@@ -1,18 +1,20 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Examples of finite Weyl groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.finite_weyl_groups import FiniteWeylGroups
 from sage.structure.unique_representation import UniqueRepresentation
+
 
 class SymmetricGroup(UniqueRepresentation, Parent):
     r"""
@@ -30,7 +32,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         sage: S
         The symmetric group on {0, ..., 3}
         sage: S.category()
-        Category of finite irreducible weyl groups
+        Category of finite irreducible Weyl groups
 
     The elements of this group are permutations of the set `\{0,\ldots,3\}`::
 
@@ -59,7 +61,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         24
         sage: S.long_element()
         (3, 2, 1, 0)
-        sage: S.cayley_graph(side="left").plot()                                        # optional - sage.graphs sage.plot
+        sage: S.cayley_graph(side='left').plot()                                        # needs sage.graphs sage.plot
         Graphics object consisting of 120 graphics primitives
 
     Alternatively, one could have implemented
@@ -69,7 +71,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     TESTS::
 
-        sage: TestSuite(S).run()                                                        # optional - sage.combinat
+        sage: TestSuite(S).run()
     """
 
     def __init__(self, n=4):
@@ -89,14 +91,13 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
             sage: FiniteWeylGroups().example()
             The symmetric group on {0, ..., 3}
-
         """
-        return "The symmetric group on {0, ..., %s}"%(self.n-1)
+        return "The symmetric group on {0, ..., %s}" % (self.n-1)
 
     @cached_method
     def one(self):
         """
-        Implements :meth:`Monoids.ParentMethods.one`.
+        Implement :meth:`Monoids.ParentMethods.one`.
 
         EXAMPLES::
 
@@ -107,7 +108,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     def index_set(self):
         """
-        Implements :meth:`CoxeterGroups.ParentMethods.index_set`.
+        Implement :meth:`CoxeterGroups.ParentMethods.index_set`.
 
         EXAMPLES::
 
@@ -135,7 +136,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: FiniteWeylGroups().example().cartan_type()                            # optional - sage.combinat
+            sage: FiniteWeylGroups().example().cartan_type()                            # needs sage.modules
             ['A', 3] relabelled by {1: 0, 2: 1, 3: 2}
         """
         from sage.combinat.root_system.cartan_type import CartanType
@@ -145,14 +146,14 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     def product(self, x, y):
         """
-        Implements :meth:`Semigroups.ParentMethods.product`.
+        Implement :meth:`Semigroups.ParentMethods.product`.
 
         EXAMPLES::
 
             sage: s = FiniteWeylGroups().example().simple_reflections()
             sage: s[1] * s[2]
             (0, 2, 3, 1)
-            """
+        """
         assert x in self
         assert y in self
         return self(tuple(x.value[i] for i in y.value))
@@ -174,7 +175,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
         def has_right_descent(self, i):
             """
-            Implements :meth:`CoxeterGroups.ElementMethods.has_right_descent`.
+            Implement :meth:`CoxeterGroups.ElementMethods.has_right_descent`.
 
             EXAMPLES::
 

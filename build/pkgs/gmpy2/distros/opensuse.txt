@@ -1,0 +1,1 @@
+python3${PYTHON_MINOR}-gmpy2

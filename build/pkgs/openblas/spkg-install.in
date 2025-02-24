@@ -34,10 +34,18 @@ fi
 
 echo "Building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
 
+if $MAKE --version | grep -q -F '3.81'; then
+    # Work around https://savannah.gnu.org/bugs/?15919
+    OPENBLAS_CONFIGURE+=" MAKE_NB_JOBS=1"
+else
+    # Do not emit "-j" options; use jobserver
+    OPENBLAS_CONFIGURE+=" MAKE_NB_JOBS=0"
+fi
+
 # Ensure USE_TLS=1 ; see https://github.com/sagemath/sage/issues/27256
 OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_TLS=1"
 
-if ! (sdh_make libs netlib shared $OPENBLAS_CONFIGURE); then
+if ! (sdh_make libs $OPENBLAS_CONFIGURE && sdh_make netlib $OPENBLAS_CONFIGURE && sdh_make shared $OPENBLAS_CONFIGURE); then
     if [[ $OPENBLAS_CONFIGURE == *"TARGET"* ]]; then
         sdh_die "Error building OpenBLAS"
     else
@@ -47,12 +55,9 @@ if ! (sdh_make libs netlib shared $OPENBLAS_CONFIGURE); then
         echo "Error building OpenBLAS"
         echo "Retrying building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
         sdh_make clean
-        sdh_make libs netlib shared $OPENBLAS_CONFIGURE
+        sdh_make libs $OPENBLAS_CONFIGURE && sdh_make netlib $OPENBLAS_CONFIGURE && sdh_make shared $OPENBLAS_CONFIGURE
     fi
 fi
-
-# See https://github.com/sagemath/sage/issues/30335
-rm -f "$SAGE_LOCAL/lib/pkgconfig/cblas.pc" "$SAGE_LOCAL/lib/pkgconfig/blas.pc" "$SAGE_LOCAL/lib/pkgconfig/lapack.pc"
 
 sdh_make_install PREFIX="$SAGE_LOCAL" NO_STATIC=1 $OPENBLAS_CONFIGURE
 cd ..

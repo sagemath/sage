@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from sage.rings.padics.pow_computer cimport PowComputer_class
 from sage.rings.polynomial.polynomial_element cimport Polynomial_generic_dense
 
@@ -18,9 +17,9 @@ cdef class PowComputer_relative(PowComputer_class):
     cdef Polynomial_generic_dense shift_rem
     cdef Polynomial_generic_dense aliasing
     # allow cached methods
-    cdef public dict __cached_methods
+    cdef public dict _cached_methods
 
-    cdef unsigned long capdiv(self, unsigned long n)
+    cdef unsigned long capdiv(self, unsigned long n) noexcept
 
 cdef class PowComputer_relative_eis(PowComputer_relative):
     # (x^e - modulus)/p

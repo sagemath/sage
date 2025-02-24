@@ -2,6 +2,7 @@ r"""
 Abstract base classes for interface elements
 """
 
+
 class AxiomElement:
     r"""
     Abstract base class for :class:`~sage.interfaces.axiom.AxiomElement`.

@@ -30,7 +30,6 @@ REFERENCES:
 AUTHORS:
 
 - Ivo Maffei (2020-07-26): initial version
-
 """
 
 # ****************************************************************************
@@ -51,7 +50,7 @@ def generalised_quadrangle_with_spread(const int s, const int t,
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised quadrangle
+    - ``s``, ``t`` -- integers; order of the generalised quadrangle
 
     - ``existence`` -- boolean;
 
@@ -92,7 +91,6 @@ def generalised_quadrangle_with_spread(const int s, const int t,
         RuntimeError: Sage can't build a GQ of order (3, 4) with a spread
         sage: designs.generalised_quadrangle_with_spread(3, 4, existence=True)
         Unknown
-
     """
     from sage.combinat.designs.incidence_structures import IncidenceStructure
     from sage.misc.unknown import Unknown
@@ -123,6 +121,7 @@ def generalised_quadrangle_with_spread(const int s, const int t,
     raise RuntimeError(
         f"Sage can't build a GQ of order ({s}, {t}) with a spread")
 
+
 def is_GQ_with_spread(GQ, S, s=None, t=None):
     r"""
     Check if GQ is a generalised quadrangle of order `(s,t)` and
@@ -136,7 +135,7 @@ def is_GQ_with_spread(GQ, S, s=None, t=None):
     - ``S`` -- iterable; the spread of ``GQ`` as an
       iterable of the blocks of ``GQ``
 
-    - ``s, t`` -- integers (optional); if `(s,t)` are given, then we check that
+    - ``s``, ``t`` -- integers (optional); if `(s,t)` are given, then we check that
       ``GQ`` has order `(s,t)`
 
     EXAMPLES::
@@ -187,9 +186,7 @@ def dual_GQ_ovoid(GQ, O):
 
     - ``O`` -- iterable; the iterable of blocks we want to compute the dual
 
-    OUTPUT:
-
-    A pair ``(D, S)`` where ``D`` is the dual of ``GQ`` and
+    OUTPUT: a pair ``(D, S)`` where ``D`` is the dual of ``GQ`` and
     ``S`` is the dual of ``O``
 
     EXAMPLES::
@@ -215,7 +212,6 @@ def dual_GQ_ovoid(GQ, O):
         (2, 4)
         sage: is_GQ_with_spread(*t)
         True
-
     """
     from sage.combinat.designs.incidence_structures import IncidenceStructure
 
@@ -233,6 +229,7 @@ def dual_GQ_ovoid(GQ, O):
     D = IncidenceStructure(newBlocks)
     return (D, S)
 
+
 def generalised_quadrangle_hermitian_with_ovoid(const int q):
     r"""
     Construct the generalised quadrangle `H(3,q^2)` with an ovoid.
@@ -247,7 +244,7 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
 
     A pair ``(D, O)`` where ``D`` is an IncidenceStructure representing the
     generalised quadrangle and ``O`` is a list of points of ``D`` which
-    constitute an ovoid of ``D``
+    constitute an ovoid of ``D``.
 
     EXAMPLES::
 

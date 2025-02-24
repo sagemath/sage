@@ -1,7 +1,8 @@
 SAGE_SPKG_CONFIGURE([pari], [
   dnl See gp_version below on how the version is computed from MAJV.MINV.PATCHV
-  m4_pushdef([SAGE_PARI_MINVER],["134912"])dnl this version and higher allowed
-  m4_pushdef([SAGE_PARI_MAXVER],["999999"])dnl this version and higher not allowed
+  m4_pushdef([SAGE_PARI_MINVER],["134916"])dnl this version and higher allowed
+  dnl Do not allow Pari 2.17 or later, see #38769:
+  m4_pushdef([SAGE_PARI_MAXVER],["135424"])dnl this version and higher not allowed
   SAGE_SPKG_DEPCHECK([gmp readline], [
     AC_PATH_PROG([GP], [gp])
     if test x$GP = x; then dnl GP test
@@ -67,6 +68,7 @@ SAGE_SPKG_CONFIGURE([pari], [
             AC_MSG_NOTICE([Otherwise Sage will build its own pari/GP.])
             sage_spkg_install_pari=yes
         fi
+
     fi dnl end GP test
 
       if test x$sage_spkg_install_pari = xno; then dnl main PARI test

@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([defusedxml], [SAGE_PYTHON_PACKAGE_CHECK([defusedxml])])

@@ -9,7 +9,7 @@ class GrossZagierLseries(SageObject):
 
     def __init__(self, E, A, prec=53):
         r"""
-        Class for the Gross-Zagier L-series.
+        Class for the Gross-Zagier `L`-series.
 
         This is attached to a pair `(E,A)` where `E` is an elliptic curve over
         `\QQ` and `A` is an ideal class in an imaginary quadratic number field.
@@ -23,7 +23,7 @@ class GrossZagierLseries(SageObject):
 
         - ``A`` -- an ideal class in an imaginary quadratic number field
 
-        - ``prec`` -- an integer (default 53) giving the required precision
+        - ``prec`` -- integer (default: 53); giving the required precision
 
         EXAMPLES::
 
@@ -71,9 +71,9 @@ class GrossZagierLseries(SageObject):
 
         INPUT:
 
-        - `s` -- complex number
+        - ``s`` -- complex number
 
-        - ``der`` -- ? (default 0)
+        - ``der`` -- order of derivative (default: 0)
 
         EXAMPLES::
 
@@ -84,8 +84,10 @@ class GrossZagierLseries(SageObject):
             sage: G = GrossZagierLseries(e, A)
             sage: G(3)
             -0.272946890617590
+            sage: G(3, 1)
+            0.212442670030741
         """
-        return self._dokchister(s, der)
+        return self._dokchister.derivative(s, der)
 
     def taylor_series(self, s=1, series_prec=6, var='z'):
         r"""
@@ -93,9 +95,9 @@ class GrossZagierLseries(SageObject):
 
         INPUT:
 
-        - `s` -- complex number (default 1)
-        - ``series_prec`` -- number of terms (default 6) in the Taylor series
-        - ``var`` -- variable (default 'z')
+        - ``s`` -- complex number (default: 1)
+        - ``series_prec`` -- number of terms (default: 6) in the Taylor series
+        - ``var`` -- variable (default: ``'z'``)
 
         EXAMPLES::
 

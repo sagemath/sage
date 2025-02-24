@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 PRESENT
 
@@ -63,8 +64,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.structure.element import Vector
 from sage.crypto.sboxes import PRESENT as PRESENTSBOX
-from sage.modules.vector_mod2_dense import Vector_mod2_dense
 
 
 def _smallscale_present_linearlayer(nsboxes=16):
@@ -72,7 +73,7 @@ def _smallscale_present_linearlayer(nsboxes=16):
     .. TODO::
 
         switch to sage.crypto.linearlayer
-        (:trac:`25735`) as soon as it is included in sage
+        (:issue:`25735`) as soon as it is included in sage
 
     EXAMPLES::
 
@@ -178,11 +179,11 @@ class PRESENT(SageObject):
 
         INPUT:
 
-        - ``keySchedule`` -- (default: ``80``); the key schedule that will be
+        - ``keySchedule`` -- (default: ``80``) the key schedule that will be
           used for encryption and decryption. Use ``80`` or ``128`` as a
           shortcut for the original key schedules from [BKLPPRSV2007]_.
 
-        - ``rounds``  -- integer (default: ``None``); the number of rounds. If
+        - ``rounds`` -- integer (default: ``None``); the number of rounds. If
           ``None`` the number of rounds of the key schedule is used.
 
         - ``doFinalRound`` -- boolean (default: ``False``); flag to
@@ -354,7 +355,7 @@ class PRESENT(SageObject):
         INPUT:
 
         - ``plaintext`` -- integer or bit list-like; the plaintext that will be
-          encrypted.
+          encrypted
 
         - ``key`` -- integer or bit list-like; the key
 
@@ -417,7 +418,7 @@ class PRESENT(SageObject):
         \leq 32` and current STATE `b_{63} \dots b_0`, addRoundkey consists of
         the operation for `0 \leq j \leq 63`, `b_j = b_j \oplus \kappa^i_j`.
         """
-        if isinstance(plaintext, (list, tuple, Vector_mod2_dense)):
+        if isinstance(plaintext, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(plaintext, (Integer, int)):
             inputType = 'integer'
@@ -472,8 +473,8 @@ class PRESENT(SageObject):
             sage: c4 = 0x3333DCD3213210D2
             sage: present.decrypt(c4, k4) == p4
             True
-       """
-        if isinstance(ciphertext, (list, tuple, Vector_mod2_dense)):
+        """
+        if isinstance(ciphertext, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(ciphertext, (Integer, int)):
             inputType = 'integer'
@@ -715,10 +716,10 @@ class PRESENT_KS(SageObject):
 
         INPUT:
 
-        - ``keysize`` -- integer (default: ``80``); the size of the keys that
+        - ``keysize`` -- integer (default: 80); the size of the keys that
           will be used in bits. It must be either 80 or 128.
 
-        - ``rounds`` -- integer (default: ``31``); the number of rounds
+        - ``rounds`` -- integer (default: 31); the number of rounds
           ``self`` can create keys for
 
         - ``master_key`` -- integer or bit list-like (default: ``None``); the
@@ -773,7 +774,7 @@ class PRESENT_KS(SageObject):
             pass a ``master_key`` value on initialisation. Otherwise you can
             omit ``master_key`` and pass a key when you call the object.
         """
-        if isinstance(K, (list, tuple, Vector_mod2_dense)):
+        if isinstance(K, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(K, (Integer, int)):
             inputType = 'integer'
@@ -835,14 +836,14 @@ class PRESENT_KS(SageObject):
 
     def __getitem__(self, r):
         r"""
-        Computes the sub key for round ``r`` derived from initial master key.
+        Compute the sub key for round ``r`` derived from initial master key.
 
         The key schedule object has to have been initialised with the
         ``master_key`` argument.
 
         INPUT:
 
-        - ``r`` integer; the round for which the sub key is computed
+        - ``r`` -- integer; the round for which the sub key is computed
 
         EXAMPLES::
 
@@ -886,9 +887,7 @@ def convert_to_vector(I, L):
 
     - ``L`` -- integer; the desired bit length of the ouput
 
-    OUTPUT:
-
-    - the ``L``-bit vector representation of ``I``
+    OUTPUT: the ``L``-bit vector representation of ``I``
 
     EXAMPLES::
 

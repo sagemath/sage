@@ -46,7 +46,6 @@ REFERENCES:
 - \K. Conrad: *Tensor products* [Con2015]_
 - Chap. 21 (Exer. 4) of R. Godement: *Algebra* [God1968]_
 - Chap. 16 of S. Lang: *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -70,6 +69,7 @@ from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 from sage.tensor.modules.reflexive_module import ReflexiveModule_tensor
 
 from .tensor_free_submodule_basis import TensorFreeSubmoduleBasis_sym
+
 
 class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
     r"""
@@ -160,7 +160,7 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
         sage: T(0) is T.zero()
         True
 
-    while non-zero elements are constructed by providing their components in
+    while nonzero elements are constructed by providing their components in
     a given basis::
 
         sage: e
@@ -334,7 +334,6 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
 
         sage: GL.has_coerce_map_from(T11)
         False
-
     """
 
     Element = FreeModuleTensor
@@ -346,7 +345,6 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: T = M.tensor_module(2, 3)
             sage: TestSuite(T).run()
-
         """
         self._fmodule = fmodule
         self._tensor_type = tuple(tensor_type)
@@ -394,7 +392,6 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
              space M over the Rational Field
             sage: t.parent() is T
             True
-
         """
         from sage.rings.integer import Integer
         if isinstance(comp, (int, Integer)) and comp == 0:
@@ -502,7 +499,6 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
 
             sage: T11.zero() is T11(0)
             True
-
         """
         resu = self._element_constructor_(name='zero', latex_name='0')
         for basis in self._fmodule._known_bases:
@@ -601,7 +597,6 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             sage: Sym01M = M.tensor_module(2, 0, sym=((0, 1)))
             sage: M.tensor_module(2,0)._coerce_map_from_(Sym01M)
             True
-
         """
         from .free_module_homset import FreeModuleHomset
         from .ext_pow_free_module import (ExtPowerFreeModule,
@@ -646,7 +641,6 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             sage: M.tensor_module(1,1)
             Free module of type-(1,1) tensors on the 2-dimensional vector space
              M over the Rational Field
-
         """
         description = "Free module of type-({},{}) tensors on the {}".format(
                      self._tensor_type[0], self._tensor_type[1], self._fmodule)
@@ -671,7 +665,6 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             Rank-3 free module M over the Integer Ring
             sage: T.base_module() is M
             True
-
         """
         return self._fmodule
 
@@ -690,7 +683,6 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             sage: T = M.tensor_module(1,2)
             sage: T.tensor_type()
             (1, 2)
-
         """
         return self._tensor_type
 
@@ -760,7 +752,6 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             f_0⊗f_0
             f_0⊗f_1 + f_1⊗f_0
             f_1⊗f_1
-
         """
         return TensorFreeSubmoduleBasis_sym(self, symbol=symbol, latex_symbol=latex_symbol,
                                              indices=indices, latex_indices=latex_indices,
@@ -782,7 +773,6 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             sage: T = M.tensor_module(1,1)
             sage: c = T._basis_sym(); c
             2-indices components w.r.t. (0, 1, 2)
-
         """
         frame = tuple(self.base_module().irange())
         tensor = self.ambient()()

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Invariant modules
 """
@@ -21,6 +22,7 @@ from sage.categories.finitely_generated_semigroups import FinitelyGeneratedSemig
 from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 from sage.sets.family import Family
 from sage.matrix.constructor import Matrix
+from sage.libs.gap.libgap import libgap
 
 
 class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
@@ -168,7 +170,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
         sage: C = IntegerVectors(4, length=3, min_part=0)  # representing degree-4 monomials
         sage: M = CombinatorialFreeModule(QQ, C)  # isomorphic to deg-4 homog. polynomials
         sage: G = SymmetricGroup(3)
-        sage: def perm_action(g,x): return M.monomial(C(g(list(x))))
+        sage: def perm_action(g, x): return M.monomial(C(g(list(x))))
         sage: perm_action(G((1,2,3)), C([4,3,2]))
         B[[3, 2, 4]]
         sage: R = Representation(G, M, perm_action)
@@ -225,7 +227,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
             sage: G = GroupExp()(QQ) # a group that is not finitely generated
             sage: M = CombinatorialFreeModule(QQ, [1,2,3])
-            sage: def on_basis(g,m): return M.monomial(m)  # trivial rep'n
+            sage: def on_basis(g, m): return M.monomial(m)  # trivial rep'n
             sage: from sage.modules.with_basis.representation import Representation
             sage: R = Representation(G, M, on_basis)
             sage: R.invariant_module()
@@ -255,7 +257,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
         # Give the intersection of kernels of the map `s*x-x` to determine when
         # `s*x = x` for all generators `s` of `S`
-        basis = M.annihilator_basis(S.gens(), action=_invariant_map, side="left")
+        basis = M.annihilator_basis(S.gens(), action=_invariant_map, side='left')
 
         super().__init__(Family(basis),
                          support_order=M._compute_support_order(basis),
@@ -308,9 +310,9 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
             M = M._module
         return f"({self._semigroup})-invariant submodule of {M}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
-        Return a latex representaion of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -370,7 +372,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
             sage: G = SymmetricGroup(3)
             sage: M = CombinatorialFreeModule(QQ, [1,2,3], prefix='M')
-            sage: def action(g,x): return M.monomial(g(x))
+            sage: def action(g, x): return M.monomial(g(x))
             sage: I = M.invariant_module(G, action_on_basis=action)
             sage: I.semigroup()
             Symmetric group of order 3! as a permutation group
@@ -420,7 +422,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
                 sage: G = CyclicPermutationGroup(3); G.rename('G')
                 sage: M = algebras.Exterior(QQ, 'x', 3)
-                sage: def on_basis(g,m): return M.prod([M.monomial(FrozenBitset([g(j+1)-1])) for j in m])  # cyclically permute generators
+                sage: def on_basis(g, m): return M.prod([M.monomial(FrozenBitset([g(j+1)-1])) for j in m])  # cyclically permute generators
                 sage: R = Representation(G, M, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional(), side='right')
                 sage: I = R.invariant_module(); I.rename('I')
                 sage: B = I.basis()
@@ -502,7 +504,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
 
                 sage: E = algebras.Exterior(QQ, 'x', 3)
-                sage: def on_basis(g,m): return E.prod([E.monomial(FrozenBitset([g(j+1)-1])) for j in m])  # cyclically permute generators
+                sage: def on_basis(g, m): return E.prod([E.monomial(FrozenBitset([g(j+1)-1])) for j in m])  # cyclically permute generators
                 sage: R = Representation(G, E, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional())
                 sage: I = R.invariant_module()
                 sage: B = I.basis()
@@ -550,7 +552,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
                 sage: [b._acted_upon_(G((1,3,2)), self_on_left=True) for b in I.basis()]
                 [B[0]]
 
-                sage: def on_basis(g,m): return E.prod([E.monomial(FrozenBitset([g(j+1)-1])) for j in m])  # cyclically permute generators
+                sage: def on_basis(g, m): return E.prod([E.monomial(FrozenBitset([g(j+1)-1])) for j in m])  # cyclically permute generators
                 sage: R = Representation(G, E, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional(), side='right')
                 sage: I = R.invariant_module()
                 sage: B = I.basis()
@@ -709,7 +711,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
 
         sage: G = SymmetricGroup(3); G.rename('S3')
         sage: E = algebras.Exterior(QQ, 'x', 3); E.rename('E')
-        sage: def action(g,m): return E.prod([E.monomial(FrozenBitset([g(j+1)-1])) for j in m])
+        sage: def action(g, m): return E.prod([E.monomial(FrozenBitset([g(j+1)-1])) for j in m])
         sage: from sage.modules.with_basis.representation import Representation
         sage: EA = Representation(G, E, action, category=Algebras(QQ).WithBasis().FiniteDimensional())
         sage: T = EA.twisted_invariant_module([2,0,-1])
@@ -756,7 +758,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
 
             sage: M = CombinatorialFreeModule(QQ, [1,2,3])
             sage: G = SymmetricGroup(3)
-            sage: def action(g,x): return M.term(g(x))
+            sage: def action(g, x): return M.term(g(x))
             sage: T = M.twisted_invariant_module(G, [2,0,-1], action_on_basis=action)
 
         Check that it works for tuples::
@@ -798,27 +800,24 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: type(T)
             <class 'sage.modules.with_basis.invariant.FiniteDimensionalInvariantModule_with_category'>
 
-        Check the ``ValueError``::
+        Check the :exc:`ValueError`::
 
-            sage: from sage.groups.class_function import ClassFunction_libgap
-            sage: chi = ClassFunction_libgap(G, chi)
-            sage: T = M.twisted_invariant_module(G, chi, action_on_basis=action)
+            sage: T = M.twisted_invariant_module(G, "ichigo", action_on_basis=action)
             Traceback (most recent call last):
             ...
             ValueError: chi must be a list/tuple or a class function of the group G
         """
+        from sage.groups.class_function import ClassFunction, ClassFunction_libgap
 
-        from sage.groups.class_function import ClassFunction, ClassFunction_gap
-
-        if isinstance(chi,(list,tuple)):
-            chi = ClassFunction(G, chi)
-        elif not isinstance(chi, ClassFunction_gap):
+        if isinstance(chi, (list, tuple)):
+            chi = ClassFunction(G, libgap(chi))
+        elif not isinstance(chi, ClassFunction_libgap):
             raise ValueError("chi must be a list/tuple or a class function of the group G")
 
         try:
-            is_trivial = all(chi(conj.an_element()) == 1 for conj in G.conjugacy_classes())
-        except AttributeError: # to handle ReflectionGroups
-            is_trivial = all(chi(G(list(conj)[0])) == 1 for conj in G.conjugacy_classes().values())
+            is_trivial = all(chi(next(iter(conj))) == 1 for conj in G.conjugacy_classes())
+        except AttributeError:  # to handle ReflectionGroups
+            is_trivial = all(chi(G(next(iter(conj)))) == 1 for conj in G.conjugacy_classes())
 
         if is_trivial:
             action_on_basis = kwargs.pop('action_on_basis', None)
@@ -845,7 +844,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
              Conjugacy class of cycle type [3] in Symmetric group of order 3! as a permutation group]
             sage: from sage.groups.class_function import ClassFunction
             sage: chi = ClassFunction(G, [2,0,-1]) # the standard representation character values
-            sage: def action(g,x): return M.term(g(x))
+            sage: def action(g, x): return M.term(g(x))
             sage: import __main__
             sage: __main__.action = action
             sage: T = M.twisted_invariant_module(G, chi, action_on_basis=action)
@@ -884,11 +883,11 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         else:
             raise ValueError("side must either be 'left' or 'right'")
 
-        proj_matrix = Matrix(M.dimension()) #initialize the zero-matrix
+        proj_matrix = Matrix(M.dimension())  # initialize the zero-matrix
         for g in self._group:
-            proj_matrix += self._chi(g)*Matrix((self.__sided_action__(g,b)).to_vector() for b in M.basis())
+            proj_matrix += self._chi(g)*Matrix((self.__sided_action__(g, b)).to_vector() for b in M.basis())
 
-        n = self._chi(self._group.identity()) # chi(1) is the dimension
+        n = self._chi(self._group.identity())  # chi(1) is the dimension
         g = self._group.order()
 
         self._projection_matrix = (n/g)*proj_matrix
@@ -906,7 +905,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
 
         basis = M.annihilator_basis(M.basis(),
                                     action=proj_difference,
-                                    side="left")
+                                    side='left')
 
         super().__init__(Family(basis),
                          support_order=M._compute_support_order(basis),
@@ -947,7 +946,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: M = CombinatorialFreeModule(QQ, [1,2,3]); M.rename('M')
             sage: B = M.basis()
             sage: G = SymmetricGroup(3); G.rename('S3')
-            sage: def action(g,x): return M.term(g(x))
+            sage: def action(g, x): return M.term(g(x))
             sage: T = M.twisted_invariant_module(G, [2,0,-1], action_on_basis=action)
             sage: m = B[1] + B[2] + B[3]
             sage: parent(m)
@@ -961,7 +960,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         """
         return self.retract(self.project_ambient(x))
 
-    def project_ambient(self,x):
+    def project_ambient(self, x):
         r"""
         Project ``x`` in the ambient representation onto the submodule of the
         ambient representation to which ``self`` is isomorphic as a module.
@@ -976,7 +975,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: M = CombinatorialFreeModule(QQ, [1,2,3]); M.rename('M')
             sage: B = M.basis()
             sage: G = SymmetricGroup(3); G.rename('S3')
-            sage: def action(g,x): return M.term(g(x))
+            sage: def action(g, x): return M.term(g(x))
             sage: T = M.twisted_invariant_module(G, [2,0,-1], action_on_basis=action)
 
         To compare with ``self.project``, we can inspect the parents.
@@ -1006,7 +1005,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: G.rename(); M.rename()  # reset names
         """
         if (isinstance(self._ambient, Representation)
-            and x.parent() is self._ambient._module):
+                and x.parent() is self._ambient._module):
             x = self._ambient._element_constructor_(x)
         return self._project_ambient(x)
 
@@ -1018,7 +1017,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         EXAMPLES::
 
             sage: M = CombinatorialFreeModule(QQ, [1,2,3])
-            sage: def action(g,x): return(M.term(g(x)))
+            sage: def action(g, x): return(M.term(g(x)))
             sage: G = SymmetricGroup(3)
 
         If the matrix `A` has columns form a basis for

@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 The ``pretty_print`` command
 
@@ -12,7 +12,7 @@ EXAMPLES::
     sage: pretty_print(1, 2, 3)
     1 2 3
 
-    sage: pretty_print(x^2 / (x + 1))                                                   # optional - sage.symbolic
+    sage: pretty_print(x^2 / (x + 1))                                                   # needs sage.symbolic
     x^2/(x + 1)
 
 TESTS::
@@ -23,7 +23,7 @@ TESTS::
 EXAMPLES::
 
     sage: %display ascii_art  # not tested
-    sage: pretty_print(x^2 / (x + 1))                                                   # optional - sage.symbolic
+    sage: pretty_print(x^2 / (x + 1))                                                   # needs sage.symbolic
        2
       x
     -----
@@ -41,9 +41,9 @@ Printing a graphics object just prints a string, whereas
 :func:`pretty_print` does not print anything and just shows the
 graphics instead::
 
-    sage: print(plot(sin))                                                              # optional - sage.symbolic  # optional - sage.plot
+    sage: print(plot(sin))                                                              # needs sage.plot sage.symbolic
     Graphics object consisting of 1 graphics primitive
-    sage: pretty_print(plot(sin))                                                       # optional - sage.symbolic  # optional - sage.plot
+    sage: pretty_print(plot(sin))                                                       # needs sage.plot sage.symbolic
 """
 
 # ****************************************************************************
@@ -84,15 +84,15 @@ class SequencePrettyPrinter(SageObject):
 
     def is_homogeneous(self, common_type):
         """
-        Return whether the pretty print items are homogeneous
+        Return whether the pretty print items are homogeneous.
 
         INPUT:
 
-        - ``common_type`` -- a type.
+        - ``common_type`` -- a type
 
         OUTPUT:
 
-        Boolean. Whether all items to be pretty printed are of said
+        boolean; whether all items to be pretty printed are of said
         type.
 
         EXAMPLES::
@@ -108,19 +108,17 @@ class SequencePrettyPrinter(SageObject):
 
     def _concatenate_graphs(self):
         """
-        Plot multiple graphs into a single plot
+        Plot multiple graphs into a single plot.
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
-            sage: plt = SequencePrettyPrinter(*list(graphs(3)))._concatenate_graphs()   # optional - sage.graphs    # optional - sage.plot
-            sage: type(plt)                                                             # optional - sage.graphs    # optional - sage.plot
+            sage: plt = SequencePrettyPrinter(*list(graphs(3)))._concatenate_graphs()   # needs sage.graphs sage.plot
+            sage: type(plt)                                                             # needs sage.graphs sage.plot
             <class 'sage.plot.multigraphics.GraphicsArray'>
-            sage: plt                                                                   # optional - sage.graphs    # optional - sage.plot
+            sage: plt                                                                   # needs sage.graphs sage.plot
             Graphics Array of size 1 x 4
         """
         import sage.graphs.graph_list as graphs_list
@@ -128,19 +126,17 @@ class SequencePrettyPrinter(SageObject):
 
     def _concatenate_graphics(self):
         """
-        Combine multiple graphics objects into one graphics array
+        Combine multiple graphics objects into one graphics array.
 
-        OUTPUT:
-
-        A graphics array.
+        OUTPUT: a graphics array
 
         EXAMPLES::
 
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
-            sage: ga = SequencePrettyPrinter(*[Graphics()]*5)._concatenate_graphics()                               # optional - sage.plot
-            sage: type(ga)                                                                                          # optional - sage.plot
+            sage: ga = SequencePrettyPrinter(*[Graphics()]*5)._concatenate_graphics()   # needs sage.plot
+            sage: type(ga)                                                              # needs sage.plot
             <class 'sage.plot.multigraphics.GraphicsArray'>
-            sage: ga.nrows(), ga.ncols()                                                                            # optional - sage.plot
+            sage: ga.nrows(), ga.ncols()                                                # needs sage.plot
             (2, 4)
         """
         from sage.plot.plot import graphics_array
@@ -159,9 +155,9 @@ class SequencePrettyPrinter(SageObject):
         The keyword arguments are only used the first time graphics
         output is generated::
 
-            sage: seq = SequencePrettyPrinter(Graph(), Graph(), edge_labels=True)                                   # optional - sage.plot
-            sage: seq.pretty_print()   # does not pass edge_labels to graphics object                               # optional - sage.plot
-            sage: seq._concatenate_graphs().show(edge_labels=True)                                                  # optional - sage.plot
+            sage: seq = SequencePrettyPrinter(Graph(), Graph(), edge_labels=True)       # needs sage.graphs sage.plot
+            sage: seq.pretty_print()   # does not pass edge_labels to graphics object   # needs sage.graphs sage.plot
+            sage: seq._concatenate_graphs().show(edge_labels=True)                      # needs sage.graphs sage.plot
             Traceback (most recent call last):
             ...
             TypeError: ...matplotlib() got an unexpected keyword argument 'edge_labels'
@@ -210,21 +206,21 @@ def pretty_print(*args, **kwds):
 
     INPUT:
 
-    - ``*args`` -- any number of positional arguments. The objects to
-      pretty print.
+    - ``*args`` -- any number of positional arguments; the objects to
+      pretty print
 
     - ``**kwds`` -- optional keyword arguments that are passed to the
       rich representation. Examples include:
 
-        - ``dpi`` - dots per inch
+        - ``dpi`` -- dots per inch
 
         - ``figsize``- [width, height] (same for square aspect)
 
-        - ``axes`` - (default: True)
+        - ``axes`` -- (default: ``True``)
 
-        - ``fontsize`` - positive integer
+        - ``fontsize`` -- positive integer
 
-        - ``frame`` - (default: False) draw a MATLAB-like frame around
+        - ``frame`` -- boolean (default: ``False``); draw a MATLAB-like frame around
           the image
 
     EXAMPLES::
@@ -243,13 +239,13 @@ def pretty_print(*args, **kwds):
     For text-based backends, the default text display preference is to output
     plain text which is usually the same as using ``print()``::
 
-        sage: pretty_print(x^2 / (x + 1))                                               # optional - sage.symbolic
+        sage: pretty_print(x^2 / (x + 1))                                               # needs sage.symbolic
         x^2/(x + 1)
 
-        sage: t = BinaryTrees(3).first()                                                # optional - sage.graphs
-        sage: pretty_print(t)                                                           # optional - sage.graphs
+        sage: t = BinaryTrees(3).first()                                                # needs sage.graphs
+        sage: pretty_print(t)                                                           # needs sage.graphs
         [., [., [., .]]]
-        sage: print(t)                                                                  # optional - sage.graphs
+        sage: print(t)                                                                  # needs sage.graphs
         [., [., [., .]]]
 
     TESTS::
@@ -263,7 +259,7 @@ def pretty_print(*args, **kwds):
     The following illustrates a possible use-case::
 
         sage: %display ascii_art  # not tested
-        sage: for t in BinaryTrees(3)[:3]:                                              # optional - sage.graphs
+        sage: for t in BinaryTrees(3)[:3]:                                              # needs sage.graphs
         ....:     pretty_print(t)
         o
          \
@@ -279,7 +275,7 @@ def pretty_print(*args, **kwds):
          / \
         o   o
 
-        sage: pretty_print(x^2 / (x + 1))                                               # optional - sage.symbolic
+        sage: pretty_print(x^2 / (x + 1))                                               # needs sage.symbolic
            2
           x
         -----
@@ -293,10 +289,11 @@ def pretty_print(*args, **kwds):
 
     ::
 
-        sage: plt = plot(sin)                                                           # optional - sage.symbolic  # optional - sage.plot
-        sage: pretty_print(plt)             # graphics output                           # optional - sage.symbolic  # optional - sage.plot
-        sage: pretty_print(plt, plt)        # graphics output                           # optional - sage.symbolic  # optional - sage.plot
-        sage: pretty_print(ZZ, 123, plt)                                                # optional - sage.symbolic  # optional - sage.plot
+        sage: # needs sage.plot sage.symbolic
+        sage: plt = plot(sin)
+        sage: pretty_print(plt)             # graphics output
+        sage: pretty_print(plt, plt)        # graphics output
+        sage: pretty_print(ZZ, 123, plt)
         Integer Ring 123 Graphics object consisting of 1 graphics primitive
     """
     dm = get_display_manager()

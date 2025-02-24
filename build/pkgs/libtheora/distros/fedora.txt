@@ -1,0 +1,2 @@
+libtheora
+libtheora-devel

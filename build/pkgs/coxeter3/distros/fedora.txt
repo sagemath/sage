@@ -1,1 +1,3 @@
-coxeter coxeter-devel coxeter-tools
+coxeter
+coxeter-devel
+coxeter-tools

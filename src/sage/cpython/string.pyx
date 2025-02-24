@@ -1,12 +1,12 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 """
 String <-> bytes encoding/decoding
 
 TESTS:
 
-Check that this can be used outside of Sage (see :trac:`25549`)::
+Check that this can be used outside of Sage (see :issue:`25549`)::
 
-    sage: cython(                                               # optional - sage.misc.cython
+    sage: cython(                                                                       # needs sage.misc.cython
     ....: '''
     ....: from sage.cpython.string cimport char_to_str
     ....: print(char_to_str("hello world!"))

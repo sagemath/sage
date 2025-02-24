@@ -21,15 +21,14 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2013, 2014): initial version
 - Joris Vankerschaver (2010): developed a previous class,
-  ``DifferentialForm`` (cf. :trac:`24444`), which inspired the storage of the
-  non-zero components as a dictionary whose keys are the indices.
+  ``DifferentialForm`` (cf. :issue:`24444`), which inspired the storage of the
+  nonzero components as a dictionary whose keys are the indices.
 - Travis Scrimshaw (2016): review tweaks
 
 REFERENCES:
 
 - [KN1963]_
 - [Lee2013]_
-
 """
 
 # *****************************************************************************
@@ -279,7 +278,6 @@ class DiffForm(TensorField):
         f*a = y*(-x**2 - 2*x*y - y**2) dx + x*(x**2 + 2*x*y + y**2) dy
         sage: s.display(eV)
         f*a = u**2*v/2 du - u**3/2 dv
-
     """
     def __init__(self, vector_field_module, degree, name=None, latex_name=None):
         r"""
@@ -320,7 +318,6 @@ class DiffForm(TensorField):
         .. TODO::
 
             Fix ``_test_pickling`` (in the superclass :class:`TensorField`).
-
         """
         TensorField.__init__(self, vector_field_module, (0, degree), name=name,
                              latex_name=latex_name, antisym=range(degree),
@@ -344,7 +341,6 @@ class DiffForm(TensorField):
             sage: b = M.diff_form(2)
             sage: b._repr_()
             '2-form on the 3-dimensional differentiable manifold M'
-
         """
         description = "{}-form ".format(self._tensor_rank)
         if self._name is not None:
@@ -366,7 +362,6 @@ class DiffForm(TensorField):
             True
             sage: a1.parent() is a.parent()
             True
-
         """
         return type(self)(self._vmodule, self._tensor_rank)
 
@@ -379,7 +374,6 @@ class DiffForm(TensorField):
             sage: M = Manifold(3, 'M')
             sage: a = M.diff_form(2, name='a')
             sage: a._del_derived()
-
         """
         TensorField._del_derived(self)
         self.exterior_derivative.clear_cache()
@@ -446,7 +440,6 @@ class DiffForm(TensorField):
             sage: v.add_comp_by_continuation(e_uv, U.intersection(V), c_uv)
             sage: a.lie_der(v) == v.contract(diff(a)) + diff(a(v))  # long time
             True
-
         """
         from sage.tensor.modules.format_utilities import (
             format_unop_txt,
@@ -529,7 +522,6 @@ class DiffForm(TensorField):
             sage: t = a.wedge(f)
             sage: t.display()
             f*a = x*y dx + x^2 dy
-
         """
         if other._tensor_rank == 0:
             return self * other
@@ -595,9 +587,7 @@ class DiffForm(TensorField):
         r"""
         Return the degree of ``self``.
 
-        OUTPUT:
-
-        - integer `p` such that the differential form is a `p`-form
+        OUTPUT: integer `p` such that the differential form is a `p`-form
 
         EXAMPLES::
 
@@ -610,7 +600,6 @@ class DiffForm(TensorField):
             1-form on the 3-dimensional differentiable manifold M
             sage: b.degree()
             1
-
         """
         return self._tensor_rank
 
@@ -646,7 +635,7 @@ class DiffForm(TensorField):
 
         INPUT:
 
-        - ``nondegenerate_tensor``: a non-degenerate bilinear form defined on the same manifold
+        - ``nondegenerate_tensor`` -- a non-degenerate bilinear form defined on the same manifold
           as the current differential form; must be an instance of
           :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric` or
           :class:`~sage.manifolds.differentiable.symplectic_form.SymplecticForm`.
@@ -781,7 +770,7 @@ class DiffForm(TensorField):
             nondegenerate_tensor = self._vmodule._ambient_domain.metric()
 
         p = self.tensor_type()[1]
-        # For performance reasons, we raise the indicies of the volume form
+        # For performance reasons, we raise the indices of the volume form
         # and not of the differential form; in the symplectic case this is wrong by
         # a factor of (-1)^p, which will be corrected below
         eps = nondegenerate_tensor.volume_form(p)
@@ -798,7 +787,7 @@ class DiffForm(TensorField):
                     result = result * nondegenerate_tensor._indic_signat
             from sage.manifolds.differentiable.symplectic_form import SymplecticForm
             if isinstance(nondegenerate_tensor, SymplecticForm):
-                # correction because we lifted the indicies of the volume (see above)
+                # correction because we lifted the indices of the volume (see above)
                 result = result * (-1)**p
 
         result.set_name(
@@ -899,7 +888,6 @@ class DiffForm(TensorField):
             True
             sage: s.restrict(V) == 2 * a[[e_uv,1,2]] * b[[e_uv,1,2]]
             True
-
         """
         from sage.tensor.modules.format_utilities import is_atomic
         if self._domain.is_subset(qvect._domain):
@@ -1034,7 +1022,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
         sage: type(a.comp())
         <class 'sage.tensor.modules.comp.CompFullyAntiSym'>
 
-    Setting a component with repeated indices to a non-zero value
+    Setting a component with repeated indices to a nonzero value
     results in an error::
 
         sage: a[1,1] = 3
@@ -1250,7 +1238,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
         [18 15 12]
         sage: c.symmetries()    # c has no symmetries:
         no symmetry;  no antisymmetry
-
     """
     def __init__(self, vector_field_module: VectorFieldModule, degree: int, name: Optional[str] = None,
                  latex_name: Optional[str] = None):
@@ -1285,7 +1272,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             sage: a = M.diff_form(2, [[0, x*y], [-x*y, 0]], name='a')
             sage: a.display()
             a = x*y dx∧dy
-
         """
         FreeModuleAltForm.__init__(self, vector_field_module, degree,
                                    name=name, latex_name=latex_name)
@@ -1314,7 +1300,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             sage: b = M.diff_form(2)
             sage: b._repr_()
             '2-form on the 3-dimensional differentiable manifold M'
-
         """
         description = "{}-form ".format(self._tensor_rank)
         if self._name is not None:
@@ -1337,7 +1322,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             True
             sage: a1.parent() is a.parent()
             True
-
         """
         return type(self)(self._fmodule, self._tensor_rank)
 
@@ -1352,7 +1336,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             sage: X.<x,y,z> = M.chart()  # makes M parallelizable
             sage: a = M.diff_form(2, name='a')
             sage: a._init_derived()
-
         """
         TensorFieldParal._init_derived(self)
 
@@ -1362,7 +1345,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: ``True``) determines whether the
+        - ``del_restrictions`` -- boolean (default: ``True``); determines whether the
           restrictions of ``self`` to subdomains are deleted
 
         TESTS::
@@ -1371,7 +1354,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             sage: X.<x,y,z> = M.chart()  # makes M parallelizable
             sage: a = M.diff_form(2, name='a')
             sage: a._del_derived()
-
         """
         TensorFieldParal._del_derived(self, del_restrictions=del_restrictions)
         self.exterior_derivative.clear_cache()
@@ -1401,7 +1383,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             True
             sage: s == a(u,v)  # indirect doctest
             True
-
         """
         return TensorFieldParal.__call__(self, *args)
 
@@ -1456,7 +1437,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             sage: v = M.vector_field(-y, x, t, z, name='v')
             sage: a.lie_der(v) == v.contract(diff(a)) + diff(a(v)) # long time
             True
-
         """
         from sage.tensor.modules.format_utilities import (format_unop_txt,
                                                           format_unop_latex)
@@ -1560,7 +1540,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             sage: t = a.wedge(f)
             sage: t.display()
             f*a = 2*x dx + (x^2 + x) dy + x*y*z dz
-
         """
         if other._tensor_rank == 0:
             return self * other
@@ -1653,13 +1632,12 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
 
         TESTS:
 
-        Check that :trac:`33780` is fixed::
+        Check that :issue:`33780` is fixed::
 
             sage: v = X.frame()[1]  # vector field d/dx
             sage: f = X.coframe()[2]  # 1-form dy
             sage: f.interior_product(v)
             Scalar field zero on the 3-dimensional differentiable manifold M
-
         """
         if self._domain.is_subset(qvect._domain):
             if not self._ambient_domain.is_subset(qvect._ambient_domain):

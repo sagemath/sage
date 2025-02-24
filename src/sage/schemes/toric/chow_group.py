@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 The Chow group of a toric variety
 
@@ -131,8 +131,8 @@ from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 
 import sage.geometry.abc
-from sage.schemes.toric.variety import is_ToricVariety
-from sage.schemes.toric.divisor import is_ToricDivisor
+from sage.schemes.toric.variety import ToricVariety_field
+from sage.schemes.toric.divisor import ToricDivisor_generic
 
 
 class ChowCycle(FGP_Element):
@@ -163,12 +163,12 @@ class ChowCycle(FGP_Element):
 
         INPUT:
 
-        - ``parent`` -- a :class:`ChowGroup_class`.
+        - ``parent`` -- a :class:`ChowGroup_class`
 
         - ``v`` -- a vector in the covering module, that is, with one
-          entry for each cone of the toric variety.
+          entry for each cone of the toric variety
 
-        - ``check`` -- boolean (default: ``True``). Verify that ``v``
+        - ``check`` -- boolean (default: ``True``); verify that ``v``
           is in the covering module. Set to ``False`` if you want to
           initialize from a coordinate vector.
 
@@ -186,9 +186,7 @@ class ChowCycle(FGP_Element):
         r"""
         Return a string representation of the Chow cycle.
 
-        OUTPUT:
-
-        See the module-level documentation for details.
+        OUTPUT: see the module-level documentation for details
 
         EXAMPLES::
 
@@ -230,12 +228,14 @@ class ChowCycle(FGP_Element):
 
     def degree(self) -> int:
         r"""
-        The degree of the Chow cycle.
+        Return the degree of the Chow cycle.
 
         OUTPUT:
 
         Integer. The complex dimension of the subvariety representing
-        the Chow cycle. Raises a ``ValueError`` if the Chow cycle is a
+        the Chow cycle.
+
+        This raises a :exc:`ValueError` if the Chow cycle is a
         sum of mixed degree cycles.
 
         EXAMPLES::
@@ -264,7 +264,7 @@ class ChowCycle(FGP_Element):
 
         INPUT:
 
-        - ``degree`` -- integer. The degree to project to.
+        - ``degree`` -- integer; the degree to project to
 
         OUTPUT:
 
@@ -316,7 +316,7 @@ class ChowCycle(FGP_Element):
             sage: aD = a.intersection_with_divisor(D)
             sage: aD.count_points()
             1
-            sage: P2.integrate( aD.cohomology_class() )
+            sage: P2.integrate(aD.cohomology_class())                                   # needs sage.libs.singular
             1
 
         For toric varieties with at most orbifold singularities, the
@@ -332,7 +332,7 @@ class ChowCycle(FGP_Element):
             V(y)
             sage: Dt.Chow_cycle(QQ).intersection_with_divisor(Dy).count_points()
             1/2
-            sage: P1xP1_Z2.integrate( Dt.cohomology_class() * Dy.cohomology_class() )
+            sage: P1xP1_Z2.integrate(Dt.cohomology_class() * Dy.cohomology_class())     # needs sage.libs.singular
             1/2
         """
         return sum(self.project_to_degree(0).lift())
@@ -354,7 +354,7 @@ class ChowCycle(FGP_Element):
         OUTPUT:
 
         A new :class:`ChowCycle`. If the divisor is not Cartier then
-        this method potentially raises a ``ValueError``, indicating
+        this method potentially raises a :exc:`ValueError`, indicating
         that the divisor cannot be made transversal to the Chow cycle.
 
         EXAMPLES::
@@ -406,7 +406,7 @@ class ChowCycle(FGP_Element):
              (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
              (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)]
         """
-        assert is_ToricDivisor(divisor), f'{divisor} is not a toric divisor'
+        assert isinstance(divisor, ToricDivisor_generic), f'{divisor} is not a toric divisor'
 
         A = self.parent()  # the Chow group
         X = A._variety  # the toric variety
@@ -471,10 +471,11 @@ class ChowCycle(FGP_Element):
         If the toric variety is not simplicial, that is, has worse
         than orbifold singularities, there is no way to associate a
         cohomology class of the correct degree. In this case,
-        :meth:`cohomology_class` raises a ``ValueError``.
+        :meth:`cohomology_class` raises a :exc:`ValueError`.
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: dP6 = toric_varieties.dP6()
             sage: cone = dP6.fan().cone_containing(2,3)
             sage: HH = dP6.cohomology_ring()
@@ -490,6 +491,7 @@ class ChowCycle(FGP_Element):
         singularities, where we can also use the isomorphism with the
         rational cohomology ring::
 
+            sage: # needs sage.libs.singular
             sage: WP4 = toric_varieties.P4_11169()
             sage: A = WP4.Chow_group()
             sage: HH = WP4.cohomology_ring()
@@ -498,13 +500,11 @@ class ChowCycle(FGP_Element):
             ( 0 | -1 | 0 | 0 | 0 )
             sage: HH(cone3d)
             [3*z4^3]
-
             sage: D = -WP4.K()  # the anticanonical divisor
             sage: A(D)
             ( 0 | 0 | 0 | -18 | 0 )
             sage: HH(D)
             [18*z4]
-
             sage: WP4.integrate( A(cone3d).cohomology_class() * D.cohomology_class() )
             1
             sage: WP4.integrate( HH(cone3d) * D.cohomology_class() )
@@ -532,12 +532,12 @@ class ChowGroupFactory(UniqueFactory):
 
         INPUT:
 
-        - ``toric_variety`` -- a toric variety.
+        - ``toric_variety`` -- a toric variety
 
-        - ``base_ring`` -- either `\ZZ` (default) or `\QQ`. The
-          coefficient ring of the Chow group.
+        - ``base_ring`` -- either `\ZZ` (default) or `\QQ`; the
+          coefficient ring of the Chow group
 
-        - ``check`` -- boolean (default: ``True``).
+        - ``check`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -546,13 +546,13 @@ class ChowGroupFactory(UniqueFactory):
             sage: ChowGroup(P2, ZZ, check=True) == ChowGroup(P2, ZZ, check=False)   # indirect doctest
             True
         """
-        if not is_ToricVariety(toric_variety):
+        if not isinstance(toric_variety, ToricVariety_field):
             raise ValueError('first argument must be a toric variety')
 
         if base_ring not in [ZZ, QQ]:
             raise ValueError('base ring must be either ZZ or QQ')
 
-        key = tuple([toric_variety, base_ring])
+        key = (toric_variety, base_ring)
         extra = {'check': check}
         return key, extra
 
@@ -562,11 +562,11 @@ class ChowGroupFactory(UniqueFactory):
 
         INPUT:
 
-        - ``version`` -- object version. Currently not used.
+        - ``version`` -- object version; currently not used
 
-        - ``key`` -- a key created by :meth:`create_key_and_extra_args`.
+        - ``key`` -- a key created by :meth:`create_key_and_extra_args`
 
-        - ``**extra_args`` -- Currently not used.
+        - ``**extra_args`` -- currently not used
 
         EXAMPLES::
 
@@ -606,9 +606,9 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
             sage: P2 = toric_varieties.P2()
             sage: A = ChowGroup_class(P2,ZZ,True); A
             Chow group of 2-d CPR-Fano toric variety covered by 3 affine patches
-            sage: is_ChowGroup(A)
+            sage: isinstance(A, ChowGroup_class)
             True
-            sage: is_ChowCycle(A.an_element())
+            sage: isinstance(A.an_element(), ChowCycle)
             True
 
         TESTS::
@@ -656,7 +656,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         r"""
         Return the underlying toric variety.
 
-        OUTPUT: A :class:`ToricVariety
+        OUTPUT: a :class:`ToricVariety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -678,10 +678,10 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
         - ``x`` -- a cone of the fan, a toric divisor, or a valid
           input for
-          :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`.
+          :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`
 
-        - ``check`` -- bool (default: ``True``). See
-          :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`.
+        - ``check`` -- boolean (default: ``True``); see
+          :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`
 
         EXAMPLES::
 
@@ -699,7 +699,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         if isinstance(x, sage.geometry.abc.ConvexRationalPolyhedralCone):
             cone = fan.embed(x)
             return self.element_class(self, self._cone_to_V(cone), False)
-        if is_ToricDivisor(x):
+        if isinstance(x, ToricDivisor_generic):
             v = sum(x.coefficient(i) * self._cone_to_V(onecone)
                     for i, onecone in enumerate(fan(1)))
             return self.element_class(self, v, False)
@@ -761,9 +761,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         r"""
         Return the quotient of the Chow group by a subgroup.
 
-        OUTPUT:
-
-        Currently not implemented.
+        OUTPUT: currently not implemented
 
         EXAMPLES::
 
@@ -798,15 +796,13 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
     def _cone_to_V(self, cone):
         r"""
-        Convert a cone into the corresponding vector in ``self._V``
+        Convert a cone into the corresponding vector in ``self._V``.
 
         INPUT:
 
-        - ``cone`` -- a :class:`sage.geometry.cone.ConvexRationalPolyhedralCone`.
+        - ``cone`` -- a :class:`sage.geometry.cone.ConvexRationalPolyhedralCone`
 
-        OUTPUT:
-
-        The corresponding element of ``self.V()``.
+        OUTPUT: the corresponding element of ``self.V()``
 
         EXAMPLES::
 
@@ -827,8 +823,8 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
         INPUT:
 
-        - ``k`` -- an integer or ``None`` (default). The degree of the
-          Chow group.
+        - ``k`` -- integer or ``None`` (default); the degree of the
+          Chow group
 
         OUTPUT:
 
@@ -862,7 +858,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
             sage: points = [[1,0,0], [0,1,0], [0,0,1], [1,-1,1], [-1,0,-1]]
             sage: l = LatticePolytope(points)
-            sage: l.show3d()
+            sage: l.show3d()                                                            # needs sage.plot
             sage: X = ToricVariety(FaceFan(l))
             sage: A = X.Chow_group()
             sage: A.degree(2)
@@ -931,12 +927,12 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
         INPUT:
 
-        - ``chow_cycle`` -- a :class:`ChowCycle`.
+        - ``chow_cycle`` -- a :class:`ChowCycle`
 
-        - ``degree`` -- None (default) or an integer.
+        - ``degree`` -- ``None`` (default) or integer
 
-        - ``reduce`` -- boolean (default: ``True``). Whether to reduce
-          modulo the invariants.
+        - ``reduce`` -- boolean (default: ``True``); whether to reduce
+          modulo the invariants
 
         OUTPUT:
 
@@ -968,8 +964,8 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
         INPUT:
 
-        - ``degree`` -- integer (optional). The degree of the Chow
-          group.
+        - ``degree`` -- integer (optional); the degree of the Chow
+          group
 
         OUTPUT:
 
@@ -1065,9 +1061,9 @@ class ChowGroup_degree_class(SageObject):
 
         INPUT:
 
-        - ``A`` -- A :class:`ChowGroup_class`.
+        - ``A`` -- a :class:`ChowGroup_class`
 
-        - ``d`` -- integer. The degree of the Chow group.
+        - ``d`` -- integer; the degree of the Chow group
 
         EXAMPLES::
 
@@ -1099,7 +1095,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return a string representation.
 
-        OUTPUT: A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1136,7 +1132,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return the submodule of the toric Chow group generated.
 
-        OUTPUT: A :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`.
+        OUTPUT: a :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`
 
         EXAMPLES::
 
@@ -1151,7 +1147,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return the number of generators.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1168,9 +1164,9 @@ class ChowGroup_degree_class(SageObject):
 
         INPUT:
 
-        - ``i`` -- integer. The index of the generator to be returned.
+        - ``i`` -- integer; the index of the generator to be returned
 
-        OUTPUT: A Chow cycle.
+        OUTPUT: a Chow cycle
 
         EXAMPLES::
 
@@ -1185,7 +1181,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return the generators of the Chow group of fixed degree.
 
-        OUTPUT: A tuple of Chow cycles of fixed degree generating
+        OUTPUT: a tuple of Chow cycles of fixed degree generating
         :meth:`module`.
 
         EXAMPLES::
@@ -1204,9 +1200,9 @@ def is_ChowGroup(x) -> bool:
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT: ``True`` or ``False``.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -1214,10 +1210,15 @@ def is_ChowGroup(x) -> bool:
         sage: A = P2.Chow_group()
         sage: from sage.schemes.toric.chow_group import is_ChowGroup
         sage: is_ChowGroup(A)
+        doctest:warning...
+        DeprecationWarning: The function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_ChowGroup('Victoria')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead.")
     return isinstance(x, ChowGroup_class)
 
 
@@ -1227,9 +1228,9 @@ def is_ChowCycle(x) -> bool:
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT: ``True`` or ``False``.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -1237,10 +1238,18 @@ def is_ChowCycle(x) -> bool:
         sage: A = P2.Chow_group()
         sage: from sage.schemes.toric.chow_group import *
         sage: is_ChowCycle(A)
+        doctest:warning...
+        DeprecationWarning: The function is_ChowCycle is deprecated;
+        use 'isinstance(..., ChowCycle)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         False
         sage: is_ChowCycle(A.an_element())
         True
         sage: is_ChowCycle('Victoria')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_ChowCycle is deprecated; "
+                "use 'isinstance(..., ChowCycle)' instead.")
     return isinstance(x, ChowCycle)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Fast calculation of cyclotomic polynomials
 
@@ -41,6 +40,7 @@ try:
 except ImportError:
     pass
 
+
 def cyclotomic_coeffs(nn, sparse=None):
     """
     Return the coefficients of the `n`-th cyclotomic polynomial
@@ -58,7 +58,7 @@ def cyclotomic_coeffs(nn, sparse=None):
     form `1-x^n` can be done very quickly in a single pass.
 
     If ``sparse`` is ``True``, the result is returned as a dictionary of
-    the non-zero entries, otherwise the result is returned as a list
+    the nonzero entries, otherwise the result is returned as a list
     of python ints.
 
     EXAMPLES::
@@ -209,9 +209,7 @@ def cyclotomic_value(n, x):
 
     - ``x`` -- an element of a ring
 
-    OUTPUT:
-
-    - the value of the cyclotomic polynomial `\Phi_n` at `x`
+    OUTPUT: the value of the cyclotomic polynomial `\Phi_n` at `x`
 
     ALGORITHM:
 
@@ -286,7 +284,7 @@ def cyclotomic_value(n, x):
         sage: cyclotomic_value(10, mod(3,4))
         1
 
-    Check that the issue with symbolic element in :trac:`14982` is fixed::
+    Check that the issue with symbolic element in :issue:`14982` is fixed::
 
         sage: a = cyclotomic_value(3, I)                                                # needs sage.rings.number_fields
         sage: parent(a)                                                                 # needs sage.rings.number_fields

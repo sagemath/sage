@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Graphs from the World Map
 
@@ -31,7 +30,7 @@ def AfricaMap(continental=False, year=2018):
     - ``continental`` -- boolean (default: ``False``); whether to only return
       states in the continental Africa or all African states
 
-    - ``year`` -- integer (default: ``2018``); reserved for future use
+    - ``year`` -- integer (default: 2018); reserved for future use
 
     EXAMPLES::
 
@@ -48,7 +47,7 @@ def AfricaMap(continental=False, year=2018):
 
     TESTS::
 
-        sage: Africa.plot()  # long time
+        sage: Africa.plot()                     # long time                             # needs sage.plot
         Graphics object consisting of 159 graphics primitives
     """
     if year != 2018:
@@ -117,7 +116,7 @@ def EuropeMap(continental=False, year=2018):
     - ``continental`` -- boolean (default: ``False``); whether to only return
       states in the continental Europe or all European states
 
-    - ``year`` -- integer (default: ``2018``); reserved for future use
+    - ``year`` -- integer (default: 2018); reserved for future use
 
     EXAMPLES::
 
@@ -313,7 +312,7 @@ def WorldMap():
 
     TESTS:
 
-    :trac:`24488`::
+    :issue:`24488`::
 
         sage: 'Iceland' in graphs.WorldMap()
         True

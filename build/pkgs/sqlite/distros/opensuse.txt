@@ -1,1 +1,1 @@
-"pkgconfig(sqlite3)"
+pkgconfig(sqlite3)

@@ -29,7 +29,7 @@ from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.padics.pow_computer cimport PowComputer_class
 
-cdef extern from "sage/rings/padics/transcendantal.c":
+cdef extern from "transcendantal.c":
     cdef void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp_Newton(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, unsigned long precinit, const mpz_t modulo)
@@ -37,7 +37,7 @@ cdef extern from "sage/rings/padics/transcendantal.c":
 
 cdef class PowComputer_(PowComputer_base):
     """
-    A PowComputer for a capped-relative padic ring or field.
+    A PowComputer for a capped-relative `p`-adic ring or field.
     """
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field):
         """
@@ -56,7 +56,7 @@ cdef class PowComputer_(PowComputer_base):
 
 cdef class pAdicCappedRelativeElement(CRElement):
     """
-    Constructs new element with given parent and value.
+    Construct new element with given parent and value.
 
     INPUT:
 
@@ -126,22 +126,21 @@ cdef class pAdicCappedRelativeElement(CRElement):
     Construct from Pari objects::
 
         sage: R = Zp(5)
-        sage: x = pari(123123) ; R(x)
+        sage: x = pari(123123) ; R(x)                                                   # needs sage.libs.pari
         3 + 4*5 + 4*5^2 + 4*5^3 + 5^4 + 4*5^5 + 2*5^6 + 5^7 + O(5^20)
         sage: R(pari(R(5252)))
         2 + 2*5^3 + 3*5^4 + 5^5 + O(5^20)
         sage: R = Zp(5,prec=5)
         sage: R(pari(-1))
         4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5)
-        sage: pari(R(-1))
+        sage: pari(R(-1))                                                               # needs sage.libs.pari
         4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5)
-        sage: pari(R(0))
+        sage: pari(R(0))                                                                # needs sage.libs.pari
         0
         sage: R(pari(R(0,5)))
         O(5^5)
 
-    .. TODO:: doctests for converting from other types of p-adic rings
-
+    .. TODO:: doctests for converting from other types of `p`-adic rings
     """
     def lift(self):
         r"""
@@ -201,11 +200,11 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
-            sage: R = Zp(17, 10); a = ~R(14); pari(a) #indirect doctest
+            sage: R = Zp(17, 10); a = ~R(14); pari(a)  # indirect doctest
             11 + 3*17 + 17^2 + 6*17^3 + 13*17^4 + 15*17^5 + 10*17^6 + 3*17^7 + 17^8 + 6*17^9 + O(17^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             0
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(17^5)
         """
         return self._to_gen()
@@ -216,13 +215,13 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
-            sage: R = Zp(5, 10); a = R(17); pari(a) #indirect doctest
+            sage: R = Zp(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             0
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(5^5)
-            sage: pari(R(0,5)).debug()
+            sage: pari(R(0,5)).debug()                                                  # needs sage.libs.pari
             [&=...] PADIC(lg=5):... (precp=0,valp=5):... ... ... ...
                 p : [&=...] INT(lg=3):... (+,lgefint=3):... ...
               p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
@@ -235,6 +234,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
                                       self.prime_pow.prime.value,
                                       self.prime_pow.pow_mpz_t_tmp(self.relprec),
                                       self.unit)
+
     def _integer_(self, Z=None):
         r"""
         Return an integer congruent to this element modulo
@@ -255,12 +255,12 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         INPUT:
 
-        - ``absprec`` -- a non-negative integer (default: ``1``)
+        - ``absprec`` -- nonnegative integer (default: 1)
 
-        - ``field`` -- boolean (default ``None``); whether to return an element
+        - ``field`` -- boolean (default: ``None``); whether to return an element
           of `\GF{p}` or `\ZZ / p\ZZ`
 
-        - ``check_prec`` -- boolean (default ``True``); whether to raise
+        - ``check_prec`` -- boolean (default: ``True``); whether to raise
           an error if this element has insufficient precision to determine
           the reduction
 
@@ -302,7 +302,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
             sage: b.residue()
             Traceback (most recent call last):
             ...
-            ValueError: element must have non-negative valuation in order to compute residue
+            ValueError: element must have nonnegative valuation in order to compute residue
 
         TESTS::
 
@@ -327,7 +327,6 @@ cdef class pAdicCappedRelativeElement(CRElement):
         .. SEEALSO::
 
             :meth:`_mod_`
-
         """
         cdef Integer selfvalue, modulus
         cdef long aprec
@@ -338,7 +337,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
         elif absprec < 0:
             raise ValueError("cannot reduce modulo a negative power of p")
         if self.ordp < 0:
-            raise ValueError("element must have non-negative valuation in order to compute residue")
+            raise ValueError("element must have nonnegative valuation in order to compute residue")
         if field is None:
             field = (absprec == 1)
         elif field and absprec != 1:
@@ -367,10 +366,10 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precision to which the result is
+        - ``aprec`` -- integer; the precision to which the result is
           correct; ``aprec`` must not exceed the precision cap of the ring over
           which this element is defined
-        - ``mina`` -- an integer (default: 0), the series will check `n` up to
+        - ``mina`` -- integer (default: 0); the series will check `n` up to
           this valuation (and beyond) to see if they can contribute to the
           series
 
@@ -439,13 +438,13 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
     def _exp_binary_splitting(self, aprec):
         r"""
-        Compute the exponential power series of this element
+        Compute the exponential power series of this element.
 
         This is a helper method for :meth:`exp`.
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precision to which to compute the
+        - ``aprec`` -- integer; the precision to which to compute the
           exponential
 
         .. NOTE::
@@ -477,9 +476,8 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
             sage: R = Zp(7,5)
             sage: x = R(7)
-            sage: x.exp(algorithm="binary_splitting")   # indirect doctest
+            sage: x.exp(algorithm='binary_splitting')   # indirect doctest
             1 + 7 + 4*7^2 + 2*7^3 + O(7^5)
-
         """
         cdef unsigned long p
         cdef unsigned long prec = aprec
@@ -507,13 +505,13 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         INPUT:
 
-        - ``aprec`` -- an integer; the precision to which to compute the
+        - ``aprec`` -- integer; the precision to which to compute the
           exponential
 
         - ``log_algorithm`` -- (default: ``None``) the algorithm used for
           computing the logarithm; this attribute is passed to the :meth:`log`
-          method; see :meth:`log` for more details about the possible
-          algorithms
+          method. See :meth:`log` for more details about the possible
+          algorithms.
 
         .. NOTE::
 
@@ -534,9 +532,10 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
-            sage: x.exp(algorithm="newton")   # indirect doctest
+            sage: x.exp(algorithm='newton')   # indirect doctest
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)
         """
         cdef unsigned long p
@@ -575,6 +574,7 @@ def unpickle_pcre_v1(R, unit, ordp, relprec):
     """
     return unpickle_cre_v2(pAdicCappedRelativeElement, R, unit, ordp, relprec)
 
+
 def base_p_list(Integer n, bint pos, PowComputer_class prime_pow):
     r"""
     Return a base-`p` list of digits of ``n``.
@@ -583,8 +583,8 @@ def base_p_list(Integer n, bint pos, PowComputer_class prime_pow):
 
     - ``n`` -- a positive :class:`Integer`
 
-    - ``pos`` -- a boolean; if ``True``, then returns the standard base `p`
-      expansion, otherwise the digits lie in the range `-p/2` to `p/2`.
+    - ``pos`` -- boolean; if ``True``, then returns the standard base `p`
+      expansion, otherwise the digits lie in the range `-p/2` to `p/2`
 
     - ``prime_pow`` -- a :class:`PowComputer` giving the prime
 

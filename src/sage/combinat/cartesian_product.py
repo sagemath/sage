@@ -29,7 +29,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
     r"""
     Cartesian product of finite sets.
 
-    This class will soon be deprecated (see :trac:`18411` and :trac:`19195`).
+    This class will soon be deprecated (see :issue:`18411` and :issue:`19195`).
     One should instead use the functorial construction
     :class:`cartesian_product <sage.categories.cartesian_product.CartesianProductFunctor>`.
     The main differences in behavior are:
@@ -51,27 +51,27 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
         sage: F1 = ['a', 'b']
         sage: F2 = [1, 2, 3, 4]
-        sage: F3 = Permutations(3)                                                      # optional - sage.combinat
+        sage: F3 = Permutations(3)
         sage: from sage.combinat.cartesian_product import CartesianProduct_iters
-        sage: C = CartesianProduct_iters(F1, F2, F3)                                    # optional - sage.combinat
-        sage: c = cartesian_product([F1, F2, F3])                                       # optional - sage.combinat
+        sage: C = CartesianProduct_iters(F1, F2, F3)
+        sage: c = cartesian_product([F1, F2, F3])
 
-        sage: type(C.an_element())                                                      # optional - sage.combinat
+        sage: type(C.an_element())
         <class 'list'>
-        sage: type(c.an_element())                                                      # optional - sage.combinat
+        sage: type(c.an_element())
         <class 'sage.sets.cartesian_product.CartesianProduct_with_category.element_class'>
 
-        sage: l = ['a', 1, Permutation([3,2,1])]                                        # optional - sage.combinat
-        sage: l in C                                                                    # optional - sage.combinat
+        sage: l = ['a', 1, Permutation([3,2,1])]
+        sage: l in C
         True
-        sage: l in c                                                                    # optional - sage.combinat
+        sage: l in c
         False
-        sage: elt = c(l)                                                                # optional - sage.combinat
-        sage: elt                                                                       # optional - sage.combinat
+        sage: elt = c(l)
+        sage: elt
         ('a', 1, [3, 2, 1])
-        sage: elt in c                                                                  # optional - sage.combinat
+        sage: elt in c
         True
-        sage: elt.parent() is c                                                         # optional - sage.combinat
+        sage: elt.parent() is c
         True
     """
 
@@ -86,7 +86,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             True
             sage: TestSuite(cp).run(skip='_test_an_element')
 
-        Check that :trac:`24558` is fixed::
+        Check that :issue:`24558` is fixed::
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
@@ -111,6 +111,16 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
                                            name=name,
                                            category=category,
                                            cache=False)
+
+    def __hash__(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.combinat.cartesian_product import CartesianProduct_iters
+            sage: cp = CartesianProduct_iters((1,2), (3,4))
+            sage: hash(cp) == CartesianProduct_iters((1,2), (3,4))
+        """
+        return hash(tuple(self.iters))
 
     def __contains__(self, x):
         """
@@ -160,7 +170,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
     def cardinality(self):
         r"""
-        Returns the number of elements in the Cartesian product of
+        Return the number of elements in the Cartesian product of
         everything in \*iters.
 
         EXAMPLES::
@@ -190,7 +200,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
         An ``int``, the number of elements in the Cartesian product. If the
         number of elements is infinite or does not fit into a python ``int``, a
-        ``TypeError`` is raised.
+        :exc:`TypeError` is raised.
 
         .. SEEALSO::
 
@@ -215,7 +225,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
     def list(self):
         """
-        Returns
+        Return.
 
         EXAMPLES::
 
@@ -298,7 +308,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: C[238792368]
             [238, 792, 368]
 
-        Check for :trac:`15919`::
+        Check for :issue:`15919`::
 
             sage: FF = IntegerModRing(29)
             sage: C = CartesianProduct_iters(FF, FF, FF)

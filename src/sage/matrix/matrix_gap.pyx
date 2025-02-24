@@ -10,10 +10,10 @@ Wrappers on GAP matrices
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from sage.categories.fields import Fields
 from sage.libs.gap.libgap import libgap
 from sage.structure.element cimport Matrix
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
 
 cdef class Matrix_gap(Matrix_dense):
@@ -48,6 +48,7 @@ cdef class Matrix_gap(Matrix_dense):
         sage: m.transpose().parent() is M
         True
 
+        sage: # needs sage.rings.number_field
         sage: UCF = UniversalCyclotomicField()
         sage: M = MatrixSpace(UCF, 3, implementation='gap')
         sage: m = M([UCF.zeta(i) for i in range(1,10)])
@@ -60,7 +61,9 @@ cdef class Matrix_gap(Matrix_dense):
 
     TESTS::
 
-        sage: for ring in [ZZ, QQ, UniversalCyclotomicField(), GF(2), GF(3)]:
+        sage: rings = [ZZ, QQ, UniversalCyclotomicField(), GF(2), GF(3)]
+        sage: rings += [UniversalCyclotomicField()]                                     # needs sage.rings.number_field
+        sage: for ring in rings:
         ....:     M = MatrixSpace(ring, 2, implementation='gap')
         ....:     TestSuite(M).run(skip=['_test_construction'])
         ....:     M = MatrixSpace(ring, 2, 3, implementation='gap')
@@ -233,6 +236,7 @@ cdef class Matrix_gap(Matrix_dense):
             sage: m1 != m3
             True
 
+            sage: # needs sage.rings.number_field
             sage: UCF = UniversalCyclotomicField()
             sage: M = MatrixSpace(UCF, 2, implementation='gap')
             sage: m1 = M([E(2), E(3), 0, E(4)])
@@ -273,12 +277,11 @@ cdef class Matrix_gap(Matrix_dense):
             [-1/2    1]
         """
         cdef Matrix_gap M
-        if self._base_ring.is_field():
+        if self._base_ring in Fields():
             M = self._new(self._nrows, self._ncols)
             M._libgap = self._libgap.Inverse()
             return M
-        else:
-            return Matrix_dense.__invert__(self)
+        return Matrix_dense.__invert__(self)
 
     cpdef _add_(left, right):
         r"""
@@ -367,6 +370,7 @@ cdef class Matrix_gap(Matrix_dense):
             sage: parent(M(1).determinant())
             Rational Field
 
+            sage: # needs sage.rings.number_field
             sage: M = MatrixSpace(UniversalCyclotomicField(), 1, implementation='gap')
             sage: parent(M(1).determinant())
             Universal Cyclotomic Field
@@ -395,6 +399,7 @@ cdef class Matrix_gap(Matrix_dense):
             sage: parent(M(1).trace())
             Rational Field
 
+            sage: # needs sage.rings.number_field
             sage: M = MatrixSpace(UniversalCyclotomicField(), 1, implementation='gap')
             sage: parent(M(1).trace())
             Universal Cyclotomic Field

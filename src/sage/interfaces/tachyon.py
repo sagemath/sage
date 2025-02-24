@@ -673,14 +673,14 @@ parameters so that you can position the image map on the object
 properly.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 John E. Stone
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import re
@@ -695,48 +695,46 @@ from sage.misc.cachefunc import cached_method
 
 class TachyonRT(SageObject):
     r"""
-    The Tachyon Ray Tracer
+    The Tachyon Ray Tracer.
 
     Usage:
     ``tachyon_rt(model, outfile='sage.png', verbose=1, block=True, extra_opts='')``
 
     INPUT:
 
-    -  ``model`` - a string that describes a 3d model in
-       the Tachyon modeling format. Type ``sage.interfaces.tachyon?`` for a
-       description of this format.
+    - ``model`` -- string that describes a 3d model in
+      the Tachyon modeling format. Type ``sage.interfaces.tachyon?`` for a
+      description of this format.
 
-    -  ``outfile`` - (default: 'sage.png') output filename;
-       the extension of the filename determines the type. Supported types
-       include:
+    - ``outfile`` -- (default: ``'sage.png'``) output filename;
+      the extension of the filename determines the type. Supported types
+      include:
 
-       -  ``tga`` - 24-bit (uncompressed)
+      - ``tga`` -- 24-bit (uncompressed)
 
-       -  ``bmp`` - 24-bit Windows BMP (uncompressed)
+      - ``bmp`` -- 24-bit Windows BMP (uncompressed)
 
-       -  ``ppm`` - 24-bit PPM (uncompressed)
+      - ``ppm`` -- 24-bit PPM (uncompressed)
 
-       -  ``rgb`` - 24-bit SGI RGB (uncompressed)
+      - ``rgb`` -- 24-bit SGI RGB (uncompressed)
 
-       -  ``png`` - 24-bit PNG (compressed, lossless)
+      - ``png`` -- 24-bit PNG (compressed, lossless)
 
-    -  ``verbose`` - integer; (default: 1)
+    - ``verbose`` -- integer; (default: 1)
 
-       -  ``0`` - silent
+      - ``0`` -- silent
 
-       -  ``1`` - some output
+      - ``1`` -- some output
 
-       -  ``2`` - very verbose output
+      - ``2`` -- very verbose output
 
-    -  ``block`` - bool (default: True); if False, run the
-       rendering command in the background.
+    - ``block`` -- boolean (default: ``True``); if ``False``, run the
+      rendering command in the background
 
-    -  ``extra_opts`` - passed directly to tachyon command
-       line. Use tachyon_rt.usage() to see some of the possibilities.
+    - ``extra_opts`` -- passed directly to tachyon command
+      line. Use ``tachyon_rt.usage()`` to see some of the possibilities
 
-    OUTPUT:
-
-    - Some text may be displayed onscreen.
+    OUTPUT: some text may be displayed onscreen
 
     - The file outfile is created.
 
@@ -746,7 +744,8 @@ class TachyonRT(SageObject):
     """
     def _repr_(self):
         """
-        Returns a brief description of this interface object (the Tachyon raytracer written by John Stone).
+        Return a brief description of this interface object (the Tachyon
+        raytracer written by John Stone).
 
         TESTS::
 
@@ -763,15 +762,15 @@ class TachyonRT(SageObject):
 
         INPUT:
 
-        - ``model`` -- string. The tachyon model.
+        - ``model`` -- string; the tachyon model
 
-        - ``outfile`` -- string, default ``'sage.png'``. The filename
-          to save the model to.
+        - ``outfile`` -- string (default: ``'sage.png'``); the filename
+          to save the model to
 
-        - ``verbose`` -- 0, 1, (default) or 2. The verbosity level.
+        - ``verbose`` -- 0, 1, (default) or 2; the verbosity level
 
-        - ``extra_opts`` -- string (default: empty string). Extra
-          options that will be appended to the tachyon commandline.
+        - ``extra_opts`` -- string (default: empty string); extra
+          options that will be appended to the tachyon commandline
 
         EXAMPLES::
 
@@ -804,8 +803,8 @@ class TachyonRT(SageObject):
         if self.version() >= '0.99.2':
             # this keyword was changed in 0.99.2
             model = model.replace(
-                    "              focallength ",
-                    "              focaldist ")
+                "              focallength ",
+                "              focaldist ")
         modelfile = tmp_filename(ext='.dat')
         with open(modelfile, 'w') as file:
             file.write(model)
@@ -838,7 +837,9 @@ class TachyonRT(SageObject):
 
     def usage(self, use_pager=True):
         """
-        Returns the basic description of using the Tachyon raytracer (simply what is returned by running tachyon with no input).  The output is paged unless use_pager=False.
+        Return the basic description of using the Tachyon raytracer (simply
+        what is returned by running tachyon with no input).  The output is
+        paged unless ``use_pager=False``.
 
         TESTS::
 
@@ -861,7 +862,7 @@ class TachyonRT(SageObject):
     @cached_method
     def version(self):
         """
-        Returns the version of the Tachyon raytracer being used.
+        Return the version of the Tachyon raytracer being used.
 
         TESTS::
 
@@ -879,7 +880,7 @@ class TachyonRT(SageObject):
 
     def help(self, use_pager=True):
         """
-        Deprecated: type 'sage.interfaces.tachyon?' for help
+        Deprecated: type 'sage.interfaces.tachyon?' for help.
 
         TESTS::
 
@@ -890,5 +891,6 @@ class TachyonRT(SageObject):
             See https://github.com/sagemath/sage/issues/34066 for details.
         """
         deprecation(34066, "type 'sage.interfaces.tachyon?' for help")
+
 
 tachyon_rt = TachyonRT()

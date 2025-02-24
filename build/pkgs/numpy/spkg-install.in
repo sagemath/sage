@@ -3,37 +3,9 @@ cd src
 
 set -e
 
-if [ `uname` = "Darwin" ]; then
-    unset ATLAS
-    unset BLAS
-    unset LAPACK
-    # https://github.com/sagemath/sage/issues/34110#comment:35
-    # The fix for "reciprocal" (affected by a clang compiler bug) in
-    # https://github.com/numpy/numpy/pull/19926 relies on -ftrapping-math
-    # being used when Apple clang v12+ is used.
-    # But numpy.distutils.ccompiler only sets this flag when
-    # $CC contains the string "clang" -- missing the case CC=/usr/bin/gcc.
-    # So we set it here explicitly if the compiler supports the flag.
-    export CFLAGS="$(testcflags.sh $CFLAGS -ftrapping-math)"
-else
-    export {ATLAS,PTATLAS,OPENBLAS,MKL,MKLROOT}=None
-    export LDFLAGS="${LDFLAGS} -shared"
-fi
-
-if [ "$UNAME" = "CYGWIN" ]; then
-    # Trac #30643
-    export CPPFLAGS="${CPPFLAGS} -D_GNU_SOURCE"
-fi
-
-# Trac #32746: pkg-config omits -I and -L flags that refer to directories
-# that are already on CPATH, LIBRARY_PATH.
-# But our script tries to obtain the list of include_dirs and library_dirs
-# from pkg-config!
-(unset CPATH LIBRARY_PATH; python3 ../lapack_conf.py)
-
-# Make sure that the fortran objects are compiled with -fPIC
-export FFLAGS="$FFLAGS -fPIC"
-export FCFLAGS="$FCFLAGS -fPIC"
+# https://github.com/scipy/scipy/issues/16536 - meson breaks when CXX="g++ -std=gnu++11"
+# -- this also affects numpy
+export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
 
 if [ "$SAGE_FAT_BINARY" = "yes" ]; then
     export NUMPY_FCONFIG="--cpu-baseline=NONE"
@@ -41,19 +13,18 @@ else
     export NUMPY_FCONFIG=""
 fi
 
-# Trac #32423: Fix 32-bit builds on x86_64
-ARCH=$($CC -dumpmachine 2>/dev/null || echo unknown)
-case "$ARCH" in
-    *x86_64*)
-        ;;
-    *)
-        export NPY_DISABLE_SVML=1
-        ;;
-esac
+### Per https://github.com/numpy/numpy/releases/tag/v1.26.0b1
+### "NumPy-specific build customization":
+###
+### The NPY_* environment variables which control BLAS/LAPACK, SIMD,
+### threading, and other such options are no longer supported, nor is
+### a site.cfg file to select BLAS and LAPACK. Instead, there are
+### command-line flags that can be passed to the build via pip/build's
+### config-settings interface.  These flags are all listed in
+### https://github.com/numpy/numpy/blob/main/meson_options.txt
+###
+### 1.26.0b1 temporarily vendors Meson and meson-python
+### http://scipy.github.io/devdocs/building/index.html
 
-################################################
 
-# Trac #33138: numpy is a PEP 517 package, so the crucial "--build-option"s would be ignored.
-eval sdh_pip_install --no-use-pep517 \
-     $(eval sdh_prefix_args "--build-option" build ${NUMPY_CONFIG} ${NUMPY_FCONFIG}) \
-     .
+sdh_pip_install .

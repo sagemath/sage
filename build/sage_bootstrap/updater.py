@@ -45,8 +45,7 @@ class ChecksumUpdater(object):
         result = [
             'tarball=' + self.package.tarball_pattern,
             'sha1=' + tarball._compute_sha1(),
-            'md5=' + tarball._compute_md5(),
-            'cksum=' + tarball._compute_cksum()
+            'sha256=' + tarball._compute_sha256()
         ]
         if self.package.tarball_upstream_url_pattern:
             result.append('upstream_url=' + self.package.tarball_upstream_url_pattern)
@@ -69,8 +68,11 @@ class PackageUpdater(ChecksumUpdater):
     def download_upstream(self, download_url=None):
         tarball = self.package.tarball
         if download_url is None:
+            pattern = self.package.tarball_upstream_url_pattern
+            if pattern and 'VERSION' not in pattern:
+                print('Warning: upstream_url pattern does not use the VERSION variable')
             download_url = self.package.tarball_upstream_url
         if download_url is None:
             raise ValueError("package has no default upstream_url pattern, download_url needed")
-        print('Downloading tarball to {0}'.format(tarball.upstream_fqn))
+        print('Downloading tarball from {0} to {1}'.format(download_url, tarball.upstream_fqn))
         Download(download_url, tarball.upstream_fqn).run()

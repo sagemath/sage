@@ -8,9 +8,9 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 
-from .automorphism_group_canonical_label cimport (
+from sage.groups.perm_gps.partn_ref.automorphism_group_canonical_label cimport (
     get_aut_gp_and_can_lab, aut_gp_and_can_lab, agcl_work_space,
     allocate_agcl_output, deallocate_agcl_output,
     allocate_agcl_work_space, deallocate_agcl_work_space)
@@ -25,7 +25,7 @@ cdef class MatrixStruct:
     cdef PartitionStack *temp_col_ps
     cdef aut_gp_and_can_lab *output
 
-cdef int refine_matrix(PartitionStack *, void *, int *, int)
-cdef int compare_matrices(int *, int *, void *, void *, int)
-cdef bint all_matrix_children_are_equivalent(PartitionStack *, void *)
+cdef int refine_matrix(PartitionStack *, void *, int *, int) noexcept
+cdef int compare_matrices(int *, int *, void *, void *, int) noexcept
+cdef bint all_matrix_children_are_equivalent(PartitionStack *, void *) noexcept
 

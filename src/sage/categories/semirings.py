@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Semirngs
 """
@@ -9,16 +10,17 @@ Semirngs
 #******************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from .magmas_and_additive_magmas import MagmasAndAdditiveMagmas
+from sage.categories.magmas_and_additive_magmas import MagmasAndAdditiveMagmas
+
 
 class Semirings(CategoryWithAxiom):
     """
     The category of semirings.
 
-    A semiring `(S,+,*)` is similar to a ring, but without the
+    A semiring `(S, +, *)` is similar to a ring, but without the
     requirement that each element must have an additive inverse. In
     other words, it is a combination of a commutative additive monoid
-    `(S,+)` and a multiplicative monoid `(S,*)`, where `*` distributes
+    `(S, +)` and a multiplicative monoid `(S, *)`, where `*` distributes
     over `+`.
 
     .. SEEALSO::

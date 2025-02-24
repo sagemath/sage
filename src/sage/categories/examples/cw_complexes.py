@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Examples of CW complexes
 """
@@ -157,5 +158,6 @@ class Surface(UniqueRepresentation, Parent):
                 2
             """
             return self._dim
+
 
 Example = Surface

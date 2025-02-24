@@ -1,6 +1,6 @@
 # distutils: depends = NTL/ZZ.h
 
-from .types cimport ZZ_c, zz_p_c, zz_pX_c, zz_pX_Modulus_c
+from sage.libs.ntl.types cimport ZZ_c, zz_p_c, zz_pX_c, zz_pX_Modulus_c
 
 
 cdef extern from "ntlwrap.h":

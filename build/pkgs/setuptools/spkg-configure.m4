@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([setuptools], [SAGE_PYTHON_PACKAGE_CHECK([setuptools])])

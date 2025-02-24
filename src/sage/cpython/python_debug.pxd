@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # Python can be built with extensive debugging support. This file lets
 # Sage know about which debugging options are enabled.
 #
@@ -9,7 +10,7 @@
 
 from cpython.ref cimport PyObject, PyTypeObject
 
-cdef extern from "sage/cpython/python_debug.h":
+cdef extern from "python_debug.h":
 
     # This is what is generally meant by "a debug build" of Python.
     # Implies Py_REF_DEBUG, Py_TRACE_REFS, and PYMALLOC_DEBUG (if

@@ -21,7 +21,6 @@ REFERENCES:
 
 - Chap. 1 of [KN1963]_
 - Chap. 3 of [Lee2013]_
-
 """
 
 #*****************************************************************************
@@ -37,6 +36,7 @@ from sage.misc.latex import latex
 from sage.misc.decorators import options
 from sage.manifolds.point import ManifoldPoint
 from sage.manifolds.differentiable.diff_map import DiffMap
+
 
 class DifferentiableCurve(DiffMap):
     r"""
@@ -64,10 +64,10 @@ class DifferentiableCurve(DiffMap):
     - ``name`` -- (default: ``None``) string; symbol given to the curve
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
       the curve; if none is provided, ``name`` will be used
-    - ``is_isomorphism`` -- (default: ``False``) determines whether the
+    - ``is_isomorphism`` -- boolean (default: ``False``); determines whether the
       constructed object is a diffeomorphism; if set to ``True``,
       then `M` must have dimension one
-    - ``is_identity`` -- (default: ``False``) determines whether the
+    - ``is_identity`` -- boolean (default: ``False``); determines whether the
       constructed object is the identity map; if set to ``True``,
       then `M` must be the interval `I`
 
@@ -94,7 +94,7 @@ class DifferentiableCurve(DiffMap):
 
     A graphical view of the curve is provided by the method :meth:`plot`::
 
-        sage: c.plot(aspect_ratio=1)
+        sage: c.plot(aspect_ratio=1)                                                    # needs sage.plot
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -345,7 +345,6 @@ class DifferentiableCurve(DiffMap):
         sage: tau = Np[FS, 3]
         sage: tau
         1/9*sqrt(5)
-
     """
     def __init__(self, parent, coord_expression=None, name=None,
                  latex_name=None, is_isomorphism=False, is_identity=False):
@@ -367,7 +366,6 @@ class DifferentiableCurve(DiffMap):
             sage: c = Hom(I,I)({}, is_identity=True) ; c
             Identity map Id_(0, 2*pi) of the Real interval (0, 2*pi)
             sage: TestSuite(c).run()
-
         """
         if coord_expression is None:
             coord_functions = None
@@ -401,7 +399,6 @@ class DifferentiableCurve(DiffMap):
             Curve in the 2-dimensional differentiable manifold M
             sage: M.curve([cos(t), sin(2*t)], (t, 0, 2*pi), name='c')
             Curve c in the 2-dimensional differentiable manifold M
-
         """
         if self._codomain._dim == 1:
             return DiffMap._repr_(self)
@@ -436,7 +433,6 @@ class DifferentiableCurve(DiffMap):
 
             sage: loads(dumps(c))
             Curve in the 2-dimensional differentiable manifold M
-
         """
         return (type(self), (self.parent(), None, self._name, self._latex_name,
                              self._is_isomorphism, self._is_identity))
@@ -450,9 +446,7 @@ class DifferentiableCurve(DiffMap):
         - ``chart`` -- (default: ``None``) chart on the curve's codomain; if
           ``None``, the codomain's default chart is assumed
 
-        OUTPUT:
-
-        - symbolic expression representing the curve in the above chart
+        OUTPUT: symbolic expression representing the curve in the above chart
 
         EXAMPLES:
 
@@ -491,7 +485,6 @@ class DifferentiableCurve(DiffMap):
             sage: c = U.curve({c_spher: (2*(1+cos(t)), t)}, (t, 0, 2*pi), name='c')
             sage: c.coord_expr(c_cart)
             (2*cos(t)^2 + 2*cos(t), 2*(cos(t) + 1)*sin(t))
-
         """
         return self.expr(chart1=self._domain.canonical_chart(), chart2=chart)
 
@@ -524,7 +517,6 @@ class DifferentiableCurve(DiffMap):
             Point c(t) on the 2-dimensional differentiable manifold M
             sage: c(t).coord(X)
             (cos(t), sin(t))
-
         """
         # Case of a point in the domain:
         if isinstance(t, ManifoldPoint):
@@ -644,13 +636,12 @@ class DifferentiableCurve(DiffMap):
              mapped into the 2-dimensional differentiable manifold M
             sage: vc.display(c_spher.frame().along(c.restrict(R,A)))
             c' = -1/5*e^(1/10*t)/(e^(1/5*t) + 1) ∂/∂th + ∂/∂ph
-
         """
         vmodule = self._domain.vector_field_module(dest_map=self)
         if latex_name is None:
             if name is None:
                 if self._latex_name is not None:
-                    latex_name = r"{%s'}"%(self._latex_name)
+                    latex_name = r"{%s'}" % (self._latex_name)
             else:
                 latex_name = name
         if name is None and self._name is not None:
@@ -731,16 +722,16 @@ class DifferentiableCurve(DiffMap):
           values of the parameters that may appear in the coordinate expression
           of the curve
 
-        - ``color`` -- (default: 'red') color of the drawn curve
+        - ``color`` -- (default: ``'red'``) color of the drawn curve
 
-        - ``style`` -- (default: '-') color of the drawn curve; NB: ``style``
+        - ``style`` -- (default: ``'-'``) color of the drawn curve; NB: ``style``
           is effective only for 2D plots
 
         - ``thickness`` -- (default: 1) thickness of the drawn curve
 
         - ``plot_points`` -- (default: 75) number of points to plot the curve
 
-        - ``label_axes`` -- (default: ``True``) boolean determining whether the
+        - ``label_axes`` -- boolean (default: ``True``); determining whether the
           labels of the coordinate axes of ``chart`` shall be added to the
           graph; can be set to ``False`` if the graph is 3D and must be
           superposed with another graph.
@@ -879,7 +870,6 @@ class DifferentiableCurve(DiffMap):
             c = R2.curve([a*cos(t) + b, a*sin(t)], (t, 0, 2*pi), name='c')
             g = c.plot(parameters={a: 2, b: -3}, aspect_ratio=1)
             sphinx_plot(g)
-
         """
         from sage.rings.infinity import Infinity
         from sage.misc.functional import numerical_approx
@@ -912,7 +902,7 @@ class DifferentiableCurve(DiffMap):
         if ambient_coords is None:
             ambient_coords = chart[:]  # all chart coordinates are used
         n_pc = len(ambient_coords)
-        if n_pc != 2 and n_pc !=3:
+        if n_pc != 2 and n_pc != 3:
             raise ValueError("the number of coordinates involved in the " +
                              "plot must be either 2 or 3, not {}".format(n_pc))
         # indices of plot coordinates
@@ -1004,7 +994,6 @@ class DifferentiableCurve(DiffMap):
             sage: l = [r'$'+latex(x)+r'$', r'$'+latex(y)+r'$']
             sage: graph._extra_kwds['axes_labels'] == l
             True
-
         """
         from sage.plot.graphics import Graphics
         from sage.plot.line import line

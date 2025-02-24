@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Classical Cryptosystems
 
@@ -45,19 +46,22 @@ AUTHORS:
 # - methods to cryptanalyze the Hill, substitution, transposition, and
 #   Vigenere ciphers
 
+from random import randint
+
+from sage.arith.misc import inverse_mod, xgcd
+from sage.misc.lazy_import import lazy_import
 from sage.monoids.string_monoid import (
     StringMonoid_class,
     AlphabeticStringMonoid)
 from sage.monoids.string_monoid_element import StringMonoidElement
 from sage.monoids.string_ops import strip_encoding
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.arith.misc import inverse_mod, xgcd
-from random import randint
-from sage.matrix.matrix_space import MatrixSpace
+
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
+lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
+lazy_import('sage.matrix.matrix_space', 'MatrixSpace')
 
 from .cryptosystem import SymmetricKeyCryptosystem
 from .classical_cipher import (
@@ -254,13 +258,11 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` -- a string monoid over some alphabet; this is the non-empty
+        - ``A`` -- string monoid over some alphabet; this is the non-empty
           alphabet over which the plaintext and ciphertext spaces
-          are defined.
+          are defined
 
-        OUTPUT:
-
-        - An affine cryptosystem over the alphabet ``A``.
+        OUTPUT: an affine cryptosystem over the alphabet ``A``
 
         EXAMPLES:
 
@@ -289,7 +291,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``(a,b)`` -- a secret key; this key is used for both encryption and
+        - ``(a, b)`` -- a secret key; this key is used for both encryption and
           decryption. For the affine cryptosystem whose plaintext and
           ciphertext spaces are `A`, a key is an ordered pair
           `(a,b) \in \ZZ / n\ZZ \times \ZZ / n\ZZ` where `n` is the size or
@@ -424,11 +426,11 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``C`` -- The ciphertext, a non-empty string. The ciphertext
+        - ``C`` -- the ciphertext, a non-empty string. The ciphertext
           must be encoded using the upper-case letters of the English
           alphabet.
 
-        - ``pdict`` -- A dictionary of key, possible plaintext
+        - ``pdict`` -- dictionary of key, possible plaintext
           pairs. This should be the output of :func:`brute_force` with
           ``ranking="none"``.
 
@@ -490,7 +492,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
             sage: A.rank_by_chi_square("", Plist)
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute 'parent'
+            AttributeError: 'str' object has no attribute 'parent'...
             sage: A.rank_by_chi_square(A.encoding(""), Plist)
             Traceback (most recent call last):
             ...
@@ -633,11 +635,11 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``C`` -- The ciphertext, a non-empty string. The ciphertext
+        - ``C`` -- the ciphertext, a non-empty string. The ciphertext
           must be encoded using the upper-case letters of the English
           alphabet.
 
-        - ``pdict`` -- A dictionary of key, possible plaintext
+        - ``pdict`` -- dictionary of key, possible plaintext
           pairs. This should be the output of :func:`brute_force` with
           ``ranking="none"``.
 
@@ -699,7 +701,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
             sage: A.rank_by_squared_differences("", Plist)
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute 'parent'
+            AttributeError: 'str' object has no attribute 'parent'...
             sage: A.rank_by_squared_differences(A.encoding(""), Plist)
             Traceback (most recent call last):
             ...
@@ -782,25 +784,25 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
              for val, key in Rank]
         return RankedList
 
-    def brute_force(self, C, ranking="none"):
+    def brute_force(self, C, ranking='none'):
         r"""
         Attempt a brute force cryptanalysis of the ciphertext ``C``.
 
         INPUT:
 
-        - ``C`` -- A ciphertext over one of the supported alphabets of this
+        - ``C`` -- a ciphertext over one of the supported alphabets of this
           affine cryptosystem. See the class :class:`AffineCryptosystem` for
           documentation on the supported alphabets.
 
-        - ``ranking`` -- (default ``"none"``) the method to use for
+        - ``ranking`` -- (default: ``'none'``) the method to use for
           ranking all possible keys. If ``ranking="none"``, then do not
           use any ranking function. The following ranking functions are
           supported:
 
-          - ``"chi_square"`` -- the chi-square ranking function
-            as implemented in the method :func:`rank_by_chi_square`.
+          - ``'chi_square'`` -- the chi-square ranking function
+            as implemented in the method :func:`rank_by_chi_square`
 
-          - ``"squared_differences"`` -- the squared differences ranking
+          - ``'squared_differences'`` -- the squared differences ranking
             function as implemented in the method
             :func:`rank_by_squared_differences`.
 
@@ -859,7 +861,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
             sage: P = A.encoding("Linear functions for encrypting and decrypting."); P
             LINEARFUNCTIONSFORENCRYPTINGANDDECRYPTING
             sage: C = A.enciphering(a, b, P)
-            sage: Rank = A.brute_force(C, ranking="chisquare")
+            sage: Rank = A.brute_force(C, ranking='chisquare')
             sage: Rank[:10]  # display only the top 10 candidate keys
             <BLANKLINE>
             [((3, 7), LINEARFUNCTIONSFORENCRYPTINGANDDECRYPTING),
@@ -876,7 +878,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
         Use the squared differences ranking function, i.e.
         ``ranking="squared_differences"``::
 
-            sage: Rank = A.brute_force(C, ranking="squared_differences")
+            sage: Rank = A.brute_force(C, ranking='squared_differences')
             sage: Rank[:10]  # display only the top 10 candidate keys
             <BLANKLINE>
             [((3, 7), LINEARFUNCTIONSFORENCRYPTINGANDDECRYPTING),
@@ -927,14 +929,14 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         Only the chi-square and squared-differences ranking functions are
         currently supported. The keyword ``ranking`` must take on either
-        of the values ``"none"``, ``"chisquare"`` or
-        ``"squared_differences"``::
+        of the values ``'none'``, ``'chisquare'`` or
+        ``'squared_differences'``::
 
             sage: A = AffineCryptosystem(AlphabeticStrings())
             sage: a, b = (3, 7)
             sage: P = A.encoding("Linear")
             sage: C = A.enciphering(a, b, P)
-            sage: A.brute_force(C, ranking="chi")
+            sage: A.brute_force(C, ranking='chi')
             Traceback (most recent call last):
             ...
             ValueError: Keyword 'ranking' must be either 'none', 'chisquare', or 'squared_differences'.
@@ -978,19 +980,17 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``a, b`` -- a secret key belonging to the key space of this affine
+        - ``a``, ``b`` -- a secret key belonging to the key space of this affine
           cipher. This key must be an element of
           `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that `\gcd(a,n) = 1` with `n`
           being the size of the ciphertext and plaintext spaces.
 
-        - ``C`` -- a string of ciphertext; possibly an empty string.
+        - ``C`` -- string of ciphertext; possibly an empty string.
           Characters in this string must be encoded using one of the
           supported alphabets. See the method :func:`encoding()` for more
           information.
 
-        OUTPUT:
-
-        - The plaintext corresponding to the ciphertext ``C``.
+        OUTPUT: the plaintext corresponding to the ciphertext ``C``
 
         EXAMPLES:
 
@@ -1052,19 +1052,17 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``a, b`` -- a secret key belonging to the key space of this affine
+        - ``a``, ``b`` -- a secret key belonging to the key space of this affine
           cipher. This key must be an element of
           `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that `\gcd(a,n) = 1` with `n`
           being the size of the ciphertext and plaintext spaces.
 
-        - ``P`` -- a string of plaintext; possibly an empty string.
+        - ``P`` -- string of plaintext; possibly an empty string.
           Characters in this string must be encoded using one of the
           supported alphabets. See the method :func:`encoding()` for more
           information.
 
-        OUTPUT:
-
-        - The ciphertext corresponding to the plaintext ``P``.
+        OUTPUT: the ciphertext corresponding to the plaintext ``P``
 
         EXAMPLES:
 
@@ -1125,12 +1123,10 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``S`` -- a string, possibly empty.
+        - ``S`` -- string, possibly empty
 
-        OUTPUT:
-
-        - The encoding of ``S`` over the string monoid of this cryptosystem.
-          If ``S`` is an empty string, return an empty string.
+        OUTPUT: the encoding of ``S`` over the string monoid of this
+        cryptosystem; if ``S`` is an empty string, return an empty string
 
         EXAMPLES:
 
@@ -1177,7 +1173,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``a, b`` -- a secret key for this affine cipher. The ordered pair
+        - ``a``, ``b`` -- a secret key for this affine cipher. The ordered pair
           `(a,b)` must be an element of `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that
           `\gcd(a,n) = 1`.
 
@@ -1201,7 +1197,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
         capital letters of the English alphabet, there are 12 such integers
         relatively prime to `n`::
 
-            sage: euler_phi(A.alphabet_size())
+            sage: euler_phi(A.alphabet_size())                                          # needs sage.libs.pari
             12
 
         And here is a list of those integers::
@@ -1285,36 +1281,32 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
 class HillCryptosystem(SymmetricKeyCryptosystem):
     r"""
-    Create a Hill cryptosystem defined by the `m` x `m` matrix space
+    Create a Hill cryptosystem defined by the `m \times m` matrix space
     over `\ZZ / N \ZZ`, where `N` is the alphabet size of
     the string monoid ``S``.
 
     INPUT:
 
-    - ``S`` - a string monoid over some alphabet
+    - ``S`` -- string monoid over some alphabet
 
-    - ``m`` - integer `> 0`; the block length of matrices that specify
+    - ``m`` -- integer `> 0`; the block length of matrices that specify
       block permutations
 
-    OUTPUT:
-
-    - A Hill cryptosystem of block length ``m`` over the alphabet ``S``.
+    OUTPUT: a Hill cryptosystem of block length ``m`` over the alphabet ``S``
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: S = AlphabeticStrings()
-        sage: E = HillCryptosystem(S,3)
-        sage: E
+        sage: E = HillCryptosystem(S, 3); E
         Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
         sage: R = IntegerModRing(26)
         sage: M = MatrixSpace(R,3,3)
-        sage: A = M([[1,0,1],[0,1,1],[2,2,3]])
-        sage: A
+        sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A
         [1 0 1]
         [0 1 1]
         [2 2 3]
-        sage: e = E(A)
-        sage: e
+        sage: e = E(A); e
         Hill cipher on Free alphabetic string monoid on A-Z of block length 3
         sage: e(S("LAMAISONBLANCHE"))
         JYVKSKQPELAYKPV
@@ -1322,8 +1314,8 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
     TESTS::
 
         sage: S = AlphabeticStrings()
-        sage: E = HillCryptosystem(S,3)
-        sage: E == loads(dumps(E))
+        sage: E = HillCryptosystem(S, 3)                                                # needs sage.modules
+        sage: E == loads(dumps(E))                                                      # needs sage.modules
         True
     """
 
@@ -1331,26 +1323,23 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         r"""
         See ``HillCryptosystem`` for full documentation.
 
-        Create a Hill cryptosystem defined by the `m` x `m` matrix space
+        Create a Hill cryptosystem defined by the `m \times m` matrix space
         over `\ZZ / N \ZZ`, where `N` is the alphabet size of
         the string monoid ``S``.
 
         INPUT:
 
-        - ``S`` - a string monoid over some alphabet
+        - ``S`` -- string monoid over some alphabet
 
-        - ``m`` - integer `> 0`; the block length of matrices that specify
+        - ``m`` -- integer `> 0`; the block length of matrices that specify
           block permutations
 
-        OUTPUT:
-
-        - A Hill cryptosystem of block length ``m`` over the alphabet ``S``.
+        OUTPUT: a Hill cryptosystem of block length ``m`` over the alphabet ``S``
 
         EXAMPLES::
 
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S,3)
-            sage: E
+            sage: E = HillCryptosystem(S, 3); E                                         # needs sage.modules
             Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
         """
         if not isinstance(S, StringMonoid_class):
@@ -1365,22 +1354,20 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` - a matrix which specifies a block permutation
+        - ``A`` -- a matrix which specifies a block permutation
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S,3)
-            sage: E
+            sage: E = HillCryptosystem(S,3); E
             Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
             sage: M = E.key_space()
-            sage: A = M([[1,0,1],[0,1,1],[2,2,3]])
-            sage: A
+            sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A
             [1 0 1]
             [0 1 1]
             [2 2 3]
-            sage: e = E(A)
-            sage: e
+            sage: e = E(A); e
             Hill cipher on Free alphabetic string monoid on A-Z of block length 3
             sage: m = S("LAMAISONBLANCHE")
             sage: e(m)
@@ -1400,15 +1387,14 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
     def _repr_(self):
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
             sage: A = AlphabeticStrings()
-            sage: H = HillCryptosystem(A, 3)
-            sage: H
+            sage: H = HillCryptosystem(A, 3); H                                         # needs sage.modules
             Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
-            sage: H._repr_()
+            sage: H._repr_()                                                            # needs sage.modules
             'Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3'
         """
         return "Hill cryptosystem on %s of block length %s" % (
@@ -1422,36 +1408,33 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         or decryption key are the same. This row/column dimension is referred
         to as the *block length*.
 
-        OUTPUT:
-
-        - The block length of an encryption/decryption key.
+        OUTPUT: the block length of an encryption/decryption key
 
         EXAMPLES::
 
             sage: A = AlphabeticStrings()
             sage: n = randint(1, A.ngens() - 1)
-            sage: H = HillCryptosystem(A, n)
-            sage: H.block_length() == n
+            sage: H = HillCryptosystem(A, n)                                            # needs sage.modules
+            sage: H.block_length() == n                                                 # needs sage.modules
             True
         """
         return self.key_space().nrows()
 
     def random_key(self):
-        """
+        r"""
         A random key within the key space of this Hill cipher. That is,
-        generate a random `m` x `m` matrix to be used as a block
+        generate a random `m \times m` matrix to be used as a block
         permutation, where `m` is the block length of this Hill cipher. If
         `n` is the size of the cryptosystem alphabet, then there are
         `n^{m^2}` possible keys. However the number of valid keys,
-        i.e. invertible `m` x `m` square matrices, is smaller than
+        i.e. invertible `m \times m` square matrices, is smaller than
         `n^{m^2}`.
 
-        OUTPUT:
-
-        - A random key within the key space of this Hill cipher.
+        OUTPUT: a random key within the key space of this Hill cipher
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: A = AlphabeticStrings()
             sage: n = 3
             sage: H = HillCryptosystem(A, n)
@@ -1478,16 +1461,15 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` - an invertible matrix of the key space of this Hill cipher
+        - ``A`` -- an invertible matrix of the key space of this Hill cipher
 
-        OUTPUT:
-
-        - The inverse matrix of ``A``.
+        OUTPUT: the inverse matrix of ``A``
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S,3)
+            sage: E = HillCryptosystem(S, 3)
             sage: A = E.random_key()
             sage: B = E.inverse_key(A)
             sage: M = S("LAMAISONBLANCHE")
@@ -1519,18 +1501,17 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``M`` - a string, possibly empty
+        - ``M`` -- string, possibly empty
 
-        OUTPUT:
-
-        - The encoding of ``M`` over the string monoid of this Hill cipher.
+        OUTPUT: the encoding of ``M`` over the string monoid of this Hill
+        cipher
 
         EXAMPLES::
 
             sage: M = "The matrix cipher by Lester S. Hill."
             sage: A = AlphabeticStrings()
-            sage: H = HillCryptosystem(A, 7)
-            sage: H.encoding(M) == A.encoding(M)
+            sage: H = HillCryptosystem(A, 7)                                            # needs sage.modules
+            sage: H.encoding(M) == A.encoding(M)                                        # needs sage.modules
             True
         """
         S = self.cipher_domain()
@@ -1547,17 +1528,16 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` - a key within the key space of this Hill cipher
+        - ``A`` -- a key within the key space of this Hill cipher
 
-        - ``C`` - a string (possibly empty) over the string monoid of this
+        - ``C`` -- string (possibly empty) over the string monoid of this
           Hill cipher
 
-        OUTPUT:
-
-        - The plaintext corresponding to the ciphertext ``C``.
+        OUTPUT: the plaintext corresponding to the ciphertext ``C``
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: H = HillCryptosystem(AlphabeticStrings(), 3)
             sage: K = H.random_key()
             sage: M = H.encoding("Good day, mate! How ya going?")
@@ -1574,17 +1554,16 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` - a key within the key space of this Hill cipher
+        - ``A`` -- a key within the key space of this Hill cipher
 
-        - ``M`` - a string (possibly empty) over the string monoid of this
-          Hill cipher.
+        - ``M`` -- string (possibly empty) over the string monoid of this
+          Hill cipher
 
-        OUTPUT:
-
-        - The ciphertext corresponding to the plaintext ``M``.
+        OUTPUT: the ciphertext corresponding to the plaintext ``M``
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: H = HillCryptosystem(AlphabeticStrings(), 3)
             sage: K = H.random_key()
             sage: M = H.encoding("Good day, mate! How ya going?")
@@ -1594,6 +1573,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         # TODO: some type checking that A is invertible hence a valid key
         e = self(A)
         return e(M)
+
 
 class ShiftCryptosystem(SymmetricKeyCryptosystem):
     r"""
@@ -1811,13 +1791,11 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` -- a string monoid over some alphabet; this is the non-empty
+        - ``A`` -- string monoid over some alphabet; this is the non-empty
           alphabet over which the plaintext and ciphertext spaces
-          are defined.
+          are defined
 
-        OUTPUT:
-
-        - A shift cryptosystem over the alphabet ``A``.
+        OUTPUT: a shift cryptosystem over the alphabet ``A``
 
         EXAMPLES::
 
@@ -1864,9 +1842,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
           `0 \leq k < n` where `n` is the size or cardinality of the set
           `A`.
 
-        OUTPUT:
-
-        - A shift cipher with secret key ``K``.
+        OUTPUT: a shift cipher with secret key ``K``
 
         EXAMPLES::
 
@@ -2015,11 +1991,11 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``C`` -- The ciphertext, a non-empty string. The ciphertext
+        - ``C`` -- the ciphertext, a non-empty string. The ciphertext
           must be encoded using the upper-case letters of the English
           alphabet.
 
-        - ``pdict`` -- A dictionary of key, possible plaintext pairs.
+        - ``pdict`` -- dictionary of key, possible plaintext pairs.
           This should be the output of :func:`brute_force` with
           ``ranking="none"``.
 
@@ -2111,7 +2087,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
             sage: S.rank_by_chi_square("", Pdict)
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute 'parent'
+            AttributeError: 'str' object has no attribute 'parent'...
             sage: S.rank_by_chi_square(S.encoding(""), Pdict)
             Traceback (most recent call last):
             ...
@@ -2252,18 +2228,16 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``C`` -- The ciphertext, a non-empty string. The ciphertext
+        - ``C`` -- the ciphertext, a non-empty string. The ciphertext
           must be encoded using the upper-case letters of the English
           alphabet.
 
-        - ``pdict`` -- A dictionary of key, possible plaintext pairs.
+        - ``pdict`` -- dictionary of key, possible plaintext pairs.
           This should be the output of :func:`brute_force` with
           ``ranking="none"``.
 
-        OUTPUT:
-
-        - A list ranking the most likely keys first. Each element of the
-          list is a tuple of key, possible plaintext pairs.
+        OUTPUT: a list ranking the most likely keys first; each element of the
+        list is a tuple of key, possible plaintext pairs
 
         EXAMPLES:
 
@@ -2348,7 +2322,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
             sage: S.rank_by_squared_differences("", Pdict)
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute 'parent'
+            AttributeError: 'str' object has no attribute 'parent'...
             sage: S.rank_by_squared_differences(S.encoding(""), Pdict)
             Traceback (most recent call last):
             ...
@@ -2429,25 +2403,25 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         [RankedList.append((key, pdict[key])) for val, key in Rank]
         return RankedList
 
-    def brute_force(self, C, ranking="none"):
+    def brute_force(self, C, ranking='none'):
         r"""
         Attempt a brute force cryptanalysis of the ciphertext ``C``.
 
         INPUT:
 
-        - ``C`` -- A ciphertext over one of the supported alphabets of this
+        - ``C`` -- a ciphertext over one of the supported alphabets of this
           shift cryptosystem. See the class :class:`ShiftCryptosystem` for
           documentation on the supported alphabets.
 
-        - ``ranking`` -- (default ``"none"``) the method to use for
+        - ``ranking`` -- (default: ``'none'``) the method to use for
           ranking all possible keys. If ``ranking="none"``, then do not
           use any ranking function. The following ranking functions are
           supported:
 
-          - ``"chisquare"`` -- the chi-square ranking function as
-            implemented in the method :func:`rank_by_chi_square`.
+          - ``'chisquare'`` -- the chi-square ranking function as
+            implemented in the method :func:`rank_by_chi_square`
 
-          - ``"squared_differences"`` -- the squared differences ranking
+          - ``'squared_differences'`` -- the squared differences ranking
             function as implemented in the method
             :func:`rank_by_squared_differences`.
 
@@ -2536,7 +2510,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         Use the chi-square ranking function, i.e. ``ranking="chisquare"``::
 
-            sage: S.brute_force(C, ranking="chisquare")
+            sage: S.brute_force(C, ranking='chisquare')
             <BLANKLINE>
             [(8, SHIFTINGUSINGMODULARARITHMETIC),
             (14, MBCZNCHAOMCHAGIXOFULULCNBGYNCW),
@@ -2568,7 +2542,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         Use the squared differences ranking function, i.e.
         ``ranking="squared_differences"``::
 
-            sage: S.brute_force(C, ranking="squared_differences")
+            sage: S.brute_force(C, ranking='squared_differences')
             <BLANKLINE>
             [(8, SHIFTINGUSINGMODULARARITHMETIC),
             (23, DSTQETYRFDTYRXZOFWLCLCTESXPETN),
@@ -2666,14 +2640,12 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
           shift cipher. This key is an integer `k` satisfying the inequality
           `0 \leq k < n`, where `n` is the size of the cipher domain.
 
-        - ``C`` -- a string of ciphertext; possibly an empty string.
+        - ``C`` -- string of ciphertext; possibly an empty string
           Characters in this string must be encoded using one of the
           supported alphabets. See the method :func:`encoding()`
           for more information.
 
-        OUTPUT:
-
-        - The plaintext corresponding to the ciphertext ``C``.
+        OUTPUT: the plaintext corresponding to the ciphertext ``C``
 
         EXAMPLES:
 
@@ -2725,14 +2697,12 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
           This key is an integer `k` satisfying the inequality
           `0 \leq k < n`, where `n` is the size of the cipher domain.
 
-        - ``P`` -- a string of plaintext; possibly an empty string.
+        - ``P`` -- string of plaintext; possibly an empty string.
           Characters in this string must be encoded using one of the
           supported alphabets. See the method :func:`encoding()` for more
           information.
 
-        OUTPUT:
-
-        - The ciphertext corresponding to the plaintext ``P``.
+        OUTPUT: the ciphertext corresponding to the plaintext ``P``
 
         EXAMPLES:
 
@@ -2789,12 +2759,10 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``S`` -- a string, possibly empty.
+        - ``S`` -- string, possibly empty
 
-        OUTPUT:
-
-        - The encoding of ``S`` over the string monoid of this cryptosystem.
-          If ``S`` is an empty string, return an empty string.
+        OUTPUT: the encoding of ``S`` over the string monoid of this
+        cryptosystem; if ``S`` is an empty string, return an empty string
 
         EXAMPLES:
 
@@ -2846,11 +2814,9 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         INPUT:
 
         - ``K`` -- a key for this shift cipher. This must be an integer `k`
-          such that `0 \leq k < n`, where `n` is the size of the cipher domain.
+          such that `0 \leq k < n`, where `n` is the size of the cipher domain
 
-        OUTPUT:
-
-        - The inverse key corresponding to ``K``.
+        OUTPUT: the inverse key corresponding to ``K``
 
         EXAMPLES:
 
@@ -2878,7 +2844,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         Regardless of the value of a key, the addition of the key and its
         inverse must be equal to the alphabet size. This relationship holds
-        exactly when the value of the key is non-zero::
+        exactly when the value of the key is nonzero::
 
             sage: S = ShiftCryptosystem(AlphabeticStrings())
             sage: K = S.random_key()
@@ -2961,9 +2927,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         key space, which is the set `\ZZ / n\ZZ`. The key `k = 0` has no
         effect on either the plaintext or the ciphertext.
 
-        OUTPUT:
-
-        - A random key within the key space of this shift cryptosystem.
+        OUTPUT: a random key within the key space of this shift cryptosystem
 
         EXAMPLES::
 
@@ -2979,7 +2943,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         Regardless of the value of a key, the addition of the key and its
         inverse must be equal to the alphabet size. This relationship holds
-        exactly when the value of the key is non-zero::
+        exactly when the value of the key is nonzero::
 
             sage: S = ShiftCryptosystem(AlphabeticStrings())
             sage: K = S.random_key()
@@ -3005,17 +2969,16 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         from sage.misc.prandom import randint
         return Integer(randint(0, self.alphabet_size() - 1))
 
+
 class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
     """
     Create a substitution cryptosystem.
 
     INPUT:
 
-    - ``S`` - a string monoid over some alphabet
+    - ``S`` -- string monoid over some alphabet
 
-    OUTPUT:
-
-    - A substitution cryptosystem over the alphabet ``S``.
+    OUTPUT: a substitution cryptosystem over the alphabet ``S``
 
     EXAMPLES::
 
@@ -3060,7 +3023,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key which is a permutation of the cryptosystem alphabet
+        - ``K`` -- a key which is a permutation of the cryptosystem alphabet
 
         EXAMPLES::
 
@@ -3084,7 +3047,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
     def _repr_(self):
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -3104,9 +3067,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
         alphabet. Let `n` be the length of the alphabet. Then there are
         `n!` possible keys in the key space.
 
-        OUTPUT:
-
-        - A random key within the key space of this cryptosystem.
+        OUTPUT: a random key within the key space of this cryptosystem
 
         EXAMPLES::
 
@@ -3133,11 +3094,9 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this cryptosystem
+        - ``K`` -- a key belonging to the key space of this cryptosystem
 
-        OUTPUT:
-
-        - The inverse key of ``K``.
+        OUTPUT: the inverse key of ``K``
 
         EXAMPLES::
 
@@ -3166,11 +3125,10 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``M`` - a string, possibly empty
+        - ``M`` -- string, possibly empty
 
-        OUTPUT:
-
-        - The encoding of ``M`` over the string monoid of this cryptosystem.
+        OUTPUT: the encoding of ``M`` over the string monoid of this
+        cryptosystem
 
         EXAMPLES::
 
@@ -3194,14 +3152,12 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this substitution cipher
+        - ``K`` -- a key belonging to the key space of this substitution cipher
 
-        - ``C`` - a string (possibly empty) over the string monoid of this
-          cryptosystem.
+        - ``C`` -- string (possibly empty) over the string monoid of this
+          cryptosystem
 
-        OUTPUT:
-
-        - The plaintext corresponding to the ciphertext ``C``.
+        OUTPUT: the plaintext corresponding to the ciphertext ``C``
 
         EXAMPLES::
 
@@ -3220,14 +3176,12 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this substitution cipher
+        - ``K`` -- a key belonging to the key space of this substitution cipher
 
-        - ``M`` - a string (possibly empty) over the string monoid of this
-          cryptosystem.
+        - ``M`` -- string (possibly empty) over the string monoid of this
+          cryptosystem
 
-        OUTPUT:
-
-        - The ciphertext corresponding to the plaintext ``M``.
+        OUTPUT: the ciphertext corresponding to the plaintext ``M``
 
         EXAMPLES::
 
@@ -3240,15 +3194,16 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
         e = self(K)
         return e(M)
 
+
 class TranspositionCryptosystem(SymmetricKeyCryptosystem):
     """
     Create a transposition cryptosystem of block length ``n``.
 
     INPUT:
 
-    - ``S`` - a string monoid over some alphabet
+    - ``S`` -- string monoid over some alphabet
 
-    - ``n`` - integer `> 0`; a block length of a block permutation
+    - ``n`` -- integer `> 0`; a block length of a block permutation
 
     OUTPUT:
 
@@ -3258,21 +3213,20 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
     EXAMPLES::
 
         sage: S = AlphabeticStrings()
-        sage: E = TranspositionCryptosystem(S,14)
-        sage: E
-        Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14
-        sage: K = [ 14-i for i in range(14) ]
-        sage: K
+        sage: E = TranspositionCryptosystem(S,14); E                                    # needs sage.groups
+        Transposition cryptosystem on
+         Free alphabetic string monoid on A-Z of block length 14
+        sage: K = [14 - i for i in range(14)]; K
         [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-        sage: e = E(K)
-        sage: e(S("THECATINTHEHAT"))
+        sage: e = E(K)                                                                  # needs sage.groups
+        sage: e(S("THECATINTHEHAT"))                                                    # needs sage.groups
         TAHEHTNITACEHT
 
     TESTS::
 
         sage: S = AlphabeticStrings()
-        sage: E = TranspositionCryptosystem(S,14)
-        sage: E == loads(dumps(E))
+        sage: E = TranspositionCryptosystem(S,14)                                       # needs sage.groups
+        sage: E == loads(dumps(E))                                                      # needs sage.groups
         True
     """
 
@@ -3283,8 +3237,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         EXAMPLES::
 
             sage: S = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(S,14)
-            sage: E
+            sage: E = TranspositionCryptosystem(S,14); E                                # needs sage.groups
             Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14
         """
         if not isinstance(S, StringMonoid_class):
@@ -3298,20 +3251,18 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key which specifies a block permutation
+        - ``K`` -- a key which specifies a block permutation
 
         EXAMPLES::
 
             sage: M = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(M,14)
-            sage: E
+            sage: E = TranspositionCryptosystem(M,14); E                                # needs sage.groups
             Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14
-            sage: K = [ 14-i for i in range(14) ]
-            sage: K
+            sage: K = [14 - i for i in range(14)]; K
             [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-            sage: e = E(K)
+            sage: e = E(K)                                                              # needs sage.groups
             sage: m = M("THECATINTHEHAT")
-            sage: e(m)
+            sage: e(m)                                                                  # needs sage.groups
             TAHEHTNITACEHT
         """
         G = self.key_space()
@@ -3326,15 +3277,14 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
     def _repr_(self):
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
             sage: A = AlphabeticStrings()
-            sage: T = TranspositionCryptosystem(A, 14)
-            sage: T
+            sage: T = TranspositionCryptosystem(A, 14); T                               # needs sage.groups
             Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14
-            sage: T._repr_()
+            sage: T._repr_()                                                            # needs sage.groups
             'Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14'
         """
         return "Transposition cryptosystem on %s of block length %s" % (
@@ -3346,12 +3296,11 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         cryptosystem. Let `n > 0` be the block length of this cryptosystem.
         Then there are `n!` possible keys.
 
-        OUTPUT:
-
-        - A random key within the key space of this cryptosystem.
+        OUTPUT: a random key within the key space of this cryptosystem
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: S = AlphabeticStrings()
             sage: E = TranspositionCryptosystem(S, 14)
             sage: K = E.random_key()
@@ -3372,18 +3321,17 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this transposition
+        - ``K`` -- a key belonging to the key space of this transposition
           cipher
 
-        - ``check`` - bool (default: ``True``); check that ``K`` belongs to
-          the key space of this cryptosystem.
+        - ``check`` -- boolean (default: ``True``); check that ``K`` belongs to
+          the key space of this cryptosystem
 
-        OUTPUT:
-
-        - The inverse key corresponding to ``K``.
+        OUTPUT: the inverse key corresponding to ``K``
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: S = AlphabeticStrings()
             sage: E = TranspositionCryptosystem(S, 14)
             sage: K = E.random_key()
@@ -3410,18 +3358,17 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``M`` - a string, possibly empty
+        - ``M`` -- string, possibly empty
 
-        OUTPUT:
-
-        - The encoding of ``M`` over the string monoid of this cryptosystem.
+        OUTPUT: the encoding of ``M`` over the string monoid of this
+        cryptosystem
 
         EXAMPLES::
 
             sage: M = "Transposition cipher is not about matrix transpose."
             sage: A = AlphabeticStrings()
-            sage: T = TranspositionCryptosystem(A, 11)
-            sage: T.encoding(M) == A.encoding(M)
+            sage: T = TranspositionCryptosystem(A, 11)                                  # needs sage.groups
+            sage: T.encoding(M) == A.encoding(M)                                        # needs sage.groups
             True
         """
         S = self.cipher_domain()
@@ -3438,18 +3385,17 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this transposition
+        - ``K`` -- a key belonging to the key space of this transposition
           cipher
 
-        - ``C`` - a string (possibly empty) over the string monoid of this
-          cryptosystem.
+        - ``C`` -- string (possibly empty) over the string monoid of this
+          cryptosystem
 
-        OUTPUT:
-
-        - The plaintext corresponding to the ciphertext ``C``.
+        OUTPUT: the plaintext corresponding to the ciphertext ``C``
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: T = TranspositionCryptosystem(AlphabeticStrings(), 14)
             sage: K = T.random_key()
             sage: M = T.encoding("The cat in the hat.")
@@ -3465,18 +3411,17 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this transposition
+        - ``K`` -- a key belonging to the key space of this transposition
           cipher
 
-        - ``M`` - a string (possibly empty) over the string monoid of this
+        - ``M`` -- string (possibly empty) over the string monoid of this
           cryptosystem
 
-        OUTPUT:
-
-        - The ciphertext corresponding to the plaintext ``M``.
+        OUTPUT: the ciphertext corresponding to the plaintext ``M``
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: T = TranspositionCryptosystem(AlphabeticStrings(), 14)
             sage: K = T.random_key()
             sage: M = T.encoding("The cat in the hat.")
@@ -3486,15 +3431,16 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         e = self(K)
         return e(M)
 
+
 class VigenereCryptosystem(SymmetricKeyCryptosystem):
     """
     Create a Vigenere cryptosystem of block length ``n``.
 
     INPUT:
 
-    - ``S``-- a string monoid over some alphabet
+    - ``S`` -- string monoid over some alphabet
 
-    - ``n`` - integer `> 0`; block length of an encryption/decryption key
+    - ``n`` -- integer `> 0`; block length of an encryption/decryption key
 
     OUTPUT:
 
@@ -3543,7 +3489,9 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
         """
         Create a Vigenere cipher.
 
-        INPUT: A key which specifies a block permutation.
+        INPUT:
+
+        - ``K`` -- a key which specifies a block permutation
 
         EXAMPLES::
 
@@ -3573,7 +3521,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
     def _repr_(self):
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -3594,9 +3542,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
         and let `m > 0` be the block length of this cryptosystem. Then there
         are `n^m` possible keys.
 
-        OUTPUT:
-
-        - A random key within the key space of this cryptosystem.
+        OUTPUT: a random key within the key space of this cryptosystem
 
         EXAMPLES::
 
@@ -3621,11 +3567,9 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key within the key space of this Vigenere cryptosystem
+        - ``K`` -- a key within the key space of this Vigenere cryptosystem
 
-        OUTPUT:
-
-        - The inverse key corresponding to ``K``.
+        OUTPUT: the inverse key corresponding to ``K``
 
         EXAMPLES::
 
@@ -3641,7 +3585,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
         """
         S = self.key_space()
         n = S.ngens()
-        return S([ (-i)%(n) for i in K._element_list ])
+        return S([ (-i) % (n) for i in K._element_list ])
 
     def encoding(self, M):
         """
@@ -3653,11 +3597,10 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``M`` - a string, possibly empty
+        - ``M`` -- string, possibly empty
 
-        OUTPUT:
-
-        - The encoding of ``M`` over the string monoid of this cryptosystem.
+        OUTPUT: the encoding of ``M`` over the string monoid of this
+        cryptosystem
 
         EXAMPLES::
 
@@ -3681,14 +3624,12 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this Vigenere cipher
+        - ``K`` -- a key belonging to the key space of this Vigenere cipher
 
-        - ``C`` - a string (possibly empty) over the string monoid of this
+        - ``C`` -- string (possibly empty) over the string monoid of this
           cryptosystem
 
-        OUTPUT:
-
-        - The plaintext corresponding to the ciphertext ``C``.
+        OUTPUT: the plaintext corresponding to the ciphertext ``C``
 
         EXAMPLES::
 
@@ -3707,14 +3648,12 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this Vigenere cipher
+        - ``K`` -- a key belonging to the key space of this Vigenere cipher
 
-        - ``M`` - a string (possibly empty) over the string monoid of this
+        - ``M`` -- string (possibly empty) over the string monoid of this
           cryptosystem
 
-        OUTPUT:
-
-        - The ciphertext corresponding to the plaintext ``M``.
+        OUTPUT: the ciphertext corresponding to the plaintext ``M``
 
         EXAMPLES::
 

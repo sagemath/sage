@@ -1,15 +1,15 @@
 """
 Declarations for pynac, a Python frontend for ginac
 
-Check that we can externally cimport this (:trac:`18825`)::
+Check that we can externally cimport this (:issue:`18825`)::
 
-    sage: cython(  # optional - sage.misc.cython
+    sage: cython(                                                                       # needs sage.misc.cython
     ....: '''
     ....: cimport sage.symbolic.expression
     ....: ''')
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #       Copyright (C) 2008 Burcin Erocal
 #       Copyright (C) 2017 Jeroen Demeyer <jdemeyer@cage.ugent.be>
@@ -18,8 +18,8 @@ Check that we can externally cimport this (:trac:`18825`)::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport PyObject
 from libcpp.vector cimport vector
@@ -323,7 +323,6 @@ cdef extern from "pynac_wrap.h":
         GEx unarchive_ex(GExList sym_lst, unsigned ind) except +
         void printraw "printraw(std::cout); " (int t)
 
-
     GEx g_abs "GiNaC::abs" (GEx x)                      except + # absolute value
     GEx g_step "GiNaC::unit_step" (GEx x)               except + # step function
     GEx g_csgn "GiNaC::csgn" (GEx x)                    except + # complex sign
@@ -415,10 +414,9 @@ cdef extern from "pynac_wrap.h":
 
     void g_foptions_assign "ASSIGN_WRAP" (GFunctionOpt, GFunctionOpt)
 
-    GFunctionOpt g_function_options "GiNaC::function_options" \
-            (char *m)
+    GFunctionOpt g_function_options "GiNaC::function_options" (char *m)
     GFunctionOpt g_function_options_args "GiNaC::function_options" \
-            (char *m, unsigned nargs)
+        (char *m, unsigned nargs)
     unsigned g_register_new "GiNaC::function::register_new" (GFunctionOpt opt)
 
     unsigned find_function "GiNaC::function::find_function" (char* name,
@@ -428,7 +426,7 @@ cdef extern from "pynac_wrap.h":
     bint has_symbol_or_function "GiNaC::has_symbol_or_function" (GEx ex)
 
     GFunctionOptVector g_registered_functions \
-            "GiNaC::function::registered_functions" ()
+        "GiNaC::function::registered_functions" ()
 
     # these serials allow us to map pynac function objects to
     # Sage special functions for the .operator() method of expressions
@@ -456,7 +454,7 @@ cdef extern from "pynac_wrap.h":
     unsigned Li2_serial "GiNaC::Li2_SERIAL::serial" # dilogarithm
     unsigned Li_serial "GiNaC::Li_SERIAL::serial" # classical polylogarithm as well as multiple polylogarithm
     unsigned G_serial "GiNaC::G_SERIAL::serial" # multiple polylogarithm
-    #unsigned G2_serial "GiNaC::G_SERIAL::serial" # multiple polylogarithm with explicit signs for the imaginary parts
+    # unsigned G2_serial "GiNaC::G_SERIAL::serial" # multiple polylogarithm with explicit signs for the imaginary parts
     unsigned S_serial "GiNaC::S_SERIAL::serial" # Nielsen's generalized polylogarithm
     unsigned H_serial "GiNaC::H_SERIAL::serial" # harmonic polylogarithm
     unsigned zeta1_serial "GiNaC::zeta1_SERIAL::serial" # Riemann's zeta function as well as multiple zeta value
@@ -467,7 +465,7 @@ cdef extern from "pynac_wrap.h":
     unsigned lgamma_serial "GiNaC::lgamma_SERIAL::serial" # logarithm of gamma function
     unsigned beta_serial "GiNaC::beta_SERIAL::serial" # beta function (tgamma(x)*tgamma(y)/tgamma(x+y))
     unsigned psi_serial "GiNaC::psi_SERIAL::serial" # psi (digamma) function
-    #unsigned psi2_serial "GiNaC::psi_SERIAL::serial" # derivatives of psi function (polygamma functions)
+    # unsigned psi2_serial "GiNaC::psi_SERIAL::serial" # derivatives of psi function (polygamma functions)
     unsigned factorial_serial "GiNaC::factorial_SERIAL::serial" # factorial function n!
     unsigned binomial_serial "GiNaC::binomial_SERIAL::serial" # binomial coefficients
     unsigned Order_serial "GiNaC::Order_SERIAL::serial" # order term function in truncated power series
@@ -567,6 +565,6 @@ cdef extern from "pynac_wrap.h":
 
 cdef extern from "ginac/order.h":
     bint print_order_compare "GiNaC::print_order().compare" \
-            (GEx left, GEx right) except +
+        (GEx left, GEx right) except +
     bint print_order_compare_mul "GiNaC::print_order_mul().compare" \
-            (GEx left, GEx right) except +
+        (GEx left, GEx right) except +

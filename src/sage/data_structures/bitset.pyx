@@ -31,7 +31,7 @@ linear in ``capacity``.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .bitset_base cimport *
+from sage.data_structures.bitset_base cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 
@@ -62,28 +62,26 @@ cdef class FrozenBitset:
 
     INPUT:
 
-    - ``iter`` -- initialization parameter (default: ``None``). Valid input
+    - ``iter`` -- initialization parameter (default: ``None``); valid inputs
       are:
 
       - :class:`Bitset` and :class:`FrozenBitset` -- If this is a
-        :class:`Bitset` or :class:`FrozenBitset`, then it is copied.
+        :class:`Bitset` or :class:`FrozenBitset`, then it is copied
 
-      - ``None`` -- If ``None``, then the bitset is set to the empty set.
+      - ``None`` -- if ``None``, then the bitset is set to the empty set
 
-      - string -- If a nonempty string, then the bitset is initialized by
+      - ``string`` -- if a nonempty string, then the bitset is initialized by
         including an element if the index of the string is ``1``. If the
-        string is empty, then raise a ``ValueError``.
+        string is empty, then raise a :exc:`ValueError`.
 
-      - iterable -- If an iterable, then it is assumed to contain a list of
-        nonnegative integers and those integers are placed in the set.
+      - ``iterable`` -- if an iterable, then it is assumed to contain a list of
+        nonnegative integers and those integers are placed in the set
 
-    - ``capacity`` -- (default: ``None``) The maximum capacity of the bitset.
+    - ``capacity`` -- (default: ``None``) the maximum capacity of the bitset.
       If this is not specified, then it is automatically calculated from the
       passed iterable.  It must be at least one.
 
-    OUTPUT:
-
-    - None.
+    OUTPUT: none
 
     The string representation of a :class:`FrozenBitset` ``FB`` can be
     understood as follows. Let `B = b_0 b_1 b_2 \cdots b_k` be the string
@@ -204,27 +202,28 @@ cdef class FrozenBitset:
     the number of elements currently in the bitset, while the capacity
     is the number of elements that the bitset can hold. ::
 
-        sage: p = primes_first_n(10); p
+        sage: p = primes_first_n(10); p                                                 # needs sage.libs.pari
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-        sage: tuple(p)
+        sage: tuple(p)                                                                  # needs sage.libs.pari
         (2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
-        sage: F = FrozenBitset(p); F; FrozenBitset(tuple(p))
+        sage: F = FrozenBitset(p); F; FrozenBitset(tuple(p))                            # needs sage.libs.pari
         001101010001010001010001000001
         001101010001010001010001000001
 
     Recover the primes from the bitset::
 
-        sage: for b in F:
+        sage: for b in F:                                                               # needs sage.libs.pari
         ....:     print(b)
         2
         3
         ...
         29
-        sage: list(F)
+        sage: list(F)                                                                   # needs sage.libs.pari
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 
     Query the bitset::
 
+        sage: # needs sage.libs.pari
         sage: len(F)
         10
         sage: len(list(F))
@@ -517,7 +516,7 @@ cdef class FrozenBitset:
             bitset_realloc(temp._bitset, capacity)
             return temp
 
-    cpdef long capacity(self):
+    cpdef long capacity(self) noexcept:
         """
         Return the size of the underlying bitset.
 
@@ -555,17 +554,11 @@ cdef class FrozenBitset:
         else:
             return hash
 
-    cpdef bint isempty(self):
+    cpdef bint isempty(self) noexcept:
         """
         Test if the bitset is empty.
 
-        INPUT:
-
-        - None.
-
-        OUTPUT:
-
-        - ``True`` if the bitset is empty; ``False`` otherwise.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -856,7 +849,6 @@ cdef class FrozenBitset:
         """
         return bitset_bytes(self._bitset)
 
-
     def __repr__(self):
         """
         Return a string representing the bitset as a binary vector.
@@ -966,7 +958,7 @@ cdef class FrozenBitset:
             sage: None | FrozenBitset('10101')
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute '_union'
+            AttributeError: 'NoneType' object has no attribute '_union'...
         """
         return self._union(other)
 
@@ -1036,7 +1028,7 @@ cdef class FrozenBitset:
             sage: None & FrozenBitset("101011")
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute 'intersection'
+            AttributeError: 'NoneType' object has no attribute 'intersection'...
         """
         return self.intersection(other)
 
@@ -1105,7 +1097,7 @@ cdef class FrozenBitset:
             sage: None - FrozenBitset('10101')
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute 'difference'
+            AttributeError: 'NoneType' object has no attribute 'difference'...
         """
         return self.difference(other)
 
@@ -1178,13 +1170,13 @@ cdef class FrozenBitset:
             sage: None ^^ FrozenBitset('11111' * 10)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute 'symmetric_difference'
+            AttributeError: 'NoneType' object has no attribute 'symmetric_difference'...
         """
         return self.symmetric_difference(other)
 
     cpdef complement(self):
         """
-        Return the complement of self.
+        Return the complement of ``self``.
 
         EXAMPLES::
 
@@ -1208,7 +1200,7 @@ cdef class FrozenBitset:
 
     def __invert__(self):
         """
-        Return the complement of self.
+        Return the complement of ``self``.
 
         EXAMPLES::
 
@@ -1797,8 +1789,10 @@ cdef class Bitset(FrozenBitset):
 
     cpdef remove(self, unsigned long n):
         """
-        Update the bitset by removing ``n``.  Raises ``KeyError`` if ``n`` is
-        not contained in the bitset.
+        Update the bitset by removing ``n``.
+
+        This raises a :exc:`KeyError` if ``n`` is not contained
+        in the bitset.
 
         EXAMPLES::
 
@@ -1870,8 +1864,9 @@ cdef class Bitset(FrozenBitset):
 
     cpdef pop(self):
         """
-        Remove and return an arbitrary element from the set. Raises
-        ``KeyError`` if the set is empty.
+        Remove and return an arbitrary element from the set.
+
+        This raises a :exc:`KeyError` if the set is empty.
 
         EXAMPLES::
 
@@ -1898,7 +1893,7 @@ cdef class Bitset(FrozenBitset):
 
     cpdef clear(self):
         """
-        Removes all elements from the bitset.
+        Remove all elements from the bitset.
 
         EXAMPLES::
 
@@ -2067,7 +2062,7 @@ def test_bitset(py_a, py_b, long n):
 
     Large enough to span multiple limbs.  We don't explicitly check the number of limbs below because it will be different in the 32 bit versus 64 bit cases::
 
-        sage: test_bitset('111001'*25, RealField(151)(pi).str(2)[2:], 69)
+        sage: test_bitset('111001'*25, RealField(151)(pi).str(2)[2:], 69)               # needs sage.symbolic
         a 111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001111001
         list a [0, 1, 2, 5, 6, 7, 8, 11, 12, 13, 14, 17, 18, 19, 20, 23, 24, 25, 26, 29, 30, 31, 32, 35, 36, 37, 38, 41, 42, 43, 44, 47, 48, 49, 50, 53, 54, 55, 56, 59, 60, 61, 62, 65, 66, 67, 68, 71, 72, 73, 74, 77, 78, 79, 80, 83, 84, 85, 86, 89, 90, 91, 92, 95, 96, 97, 98, 101, 102, 103, 104, 107, 108, 109, 110, 113, 114, 115, 116, 119, 120, 121, 122, 125, 126, 127, 128, 131, 132, 133, 134, 137, 138, 139, 140, 143, 144, 145, 146, 149]
         a.size 150
@@ -2118,7 +2113,6 @@ def test_bitset(py_a, py_b, long n):
         to size 69          111001111001111001111001111001111001111001111001111001111001111001111
         to size 138          111001111001111001111001111001111001111001111001111001111001111001111000000000000000000000000000000000000000000000000000000000000000000000
         to original size    111001111001111001111001111001111001111001111001111001111001111001111000000000000000000000000000000000000000000000000000000000000000000000000000000000
-
     """
     cdef bint bit = True
     cdef bitset_t a, b, r
@@ -2276,7 +2270,6 @@ def test_bitset_set_first_n(py_a, long n):
         sage: from sage.data_structures.bitset import test_bitset_set_first_n
         sage: test_bitset_set_first_n('00'*64, 128)
         a.set_first_n(n)    11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
-
     """
     cdef bint bit = True
     cdef bitset_t a
@@ -2321,7 +2314,7 @@ def test_bitset_remove(py_a, long n):
 
 def test_bitset_pop(py_a):
     """
-    Tests for the bitset_pop function.
+    Test for the bitset_pop function.
 
     TESTS::
 
@@ -2348,11 +2341,10 @@ def test_bitset_unpickle(data):
 
     INPUT:
 
-    - ``data`` -- A tuple of data as would be produced by the internal, Cython-only, method ``bitset_pickle``.
+    - ``data`` -- tuple of data as would be produced by the internal,
+      Cython-only, method ``bitset_pickle``
 
-    OUTPUT:
-
-    A list form of the bitset corresponding to the pickled data.
+    OUTPUT: list form of the bitset corresponding to the pickled data
 
     EXAMPLES:
 
@@ -2376,7 +2368,7 @@ def test_bitset_copy_flex(py_a):
     """
     TESTS:
 
-    Check that :trac:`33012` is fixed::
+    Check that :issue:`33012` is fixed::
 
         sage: from sage.data_structures.bitset import test_bitset_copy_flex
         sage: test_bitset_copy_flex('0101'*100)

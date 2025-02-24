@@ -1,10 +1,10 @@
 r"""
 Routines for computing special values of `L`-functions
 
-- :func:`gamma__exact` -- Exact values of the `\Gamma` function at integers and half-integers
-- :func:`zeta__exact` -- Exact values of the Riemann `\zeta` function at critical values
-- :func:`quadratic_L_function__exact` -- Exact values of the Dirichlet L-functions of quadratic characters at critical values
-- :func:`quadratic_L_function__numerical` -- Numerical values of the Dirichlet L-functions of quadratic characters in the domain of convergence
+- :func:`gamma__exact` -- exact values of the `\Gamma` function at integers and half-integers
+- :func:`zeta__exact` -- exact values of the Riemann `\zeta` function at critical values
+- :func:`quadratic_L_function__exact` -- exact values of the Dirichlet `L`-functions of quadratic characters at critical values
+- :func:`quadratic_L_function__numerical` -- numerical values of the Dirichlet `L`-functions of quadratic characters in the domain of convergence
 """
 
 import sage.rings.abc
@@ -38,22 +38,24 @@ def gamma__exact(n):
         sage: gamma__exact(1)
         1
 
-        sage: gamma__exact(1/2)                                                         # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: gamma__exact(1/2)
         sqrt(pi)
-        sage: gamma__exact(3/2)                                                         # optional - sage.symbolic
+        sage: gamma__exact(3/2)
         1/2*sqrt(pi)
-        sage: gamma__exact(5/2)                                                         # optional - sage.symbolic
+        sage: gamma__exact(5/2)
         3/4*sqrt(pi)
-        sage: gamma__exact(7/2)                                                         # optional - sage.symbolic
+        sage: gamma__exact(7/2)
         15/8*sqrt(pi)
 
-        sage: gamma__exact(-1/2)                                                        # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: gamma__exact(-1/2)
         -2*sqrt(pi)
-        sage: gamma__exact(-3/2)                                                        # optional - sage.symbolic
+        sage: gamma__exact(-3/2)
         4/3*sqrt(pi)
-        sage: gamma__exact(-5/2)                                                        # optional - sage.symbolic
+        sage: gamma__exact(-5/2)
         -8/15*sqrt(pi)
-        sage: gamma__exact(-7/2)                                                        # optional - sage.symbolic
+        sage: gamma__exact(-7/2)
         16/105*sqrt(pi)
 
     TESTS::
@@ -89,11 +91,12 @@ def gamma__exact(n):
 
     raise TypeError("you must give an integer or half-integer argument")
 
+
 # ------------- The Riemann Zeta Function  --------------
 
 def zeta__exact(n):
     r"""
-    Return the exact value of the Riemann Zeta function
+    Return the exact value of the Riemann Zeta function.
 
     The argument must be a critical value, namely either positive even
     or negative odd.
@@ -105,8 +108,9 @@ def zeta__exact(n):
     Let us test the accuracy for negative special values::
 
         sage: RR = RealField(100)
-        sage: for i in range(1,10):
-        ....:     print("zeta({}): {}".format(1-2*i, RR(zeta__exact(1-2*i)) - zeta(RR(1-2*i))))
+        sage: for i in range(1,10):                                                     # needs sage.symbolic
+        ....:     print("zeta({}): {}".format(1 - 2*i,
+        ....:                                 RR(zeta__exact(1-2*i)) - zeta(RR(1-2*i))))
         zeta(-1): 0.00000000000000000000000000000
         zeta(-3): 0.00000000000000000000000000000
         zeta(-5): 0.00000000000000000000000000000
@@ -119,12 +123,13 @@ def zeta__exact(n):
 
     Let us test the accuracy for positive special values::
 
-        sage: all(abs(RR(zeta__exact(2*i)) - zeta(RR(2*i))) < 10**(-28) for i in range(1,10))
+        sage: all(abs(RR(zeta__exact(2*i)) - zeta(RR(2*i))) < 10**(-28)                 # needs sage.symbolic
+        ....:     for i in range(1,10))
         True
 
     TESTS::
 
-        sage: zeta__exact(4)                                                            # optional - sage.symbolic
+        sage: zeta__exact(4)                                                            # needs sage.symbolic
         1/90*pi^4
         sage: zeta__exact(-3)
         1/120
@@ -155,6 +160,7 @@ def zeta__exact(n):
     elif n == 0:
         return QQ((-1, 2))
 
+
 # ---------- Dirichlet L-functions with quadratic characters ----------
 
 def QuadraticBernoulliNumber(k, d):
@@ -166,13 +172,13 @@ def QuadraticBernoulliNumber(k, d):
 
     Let us create a list of some odd negative fundamental discriminants::
 
-        sage: test_set = [d for d in srange(-163, -3, 4)                                # optional - sage.libs.pari
+        sage: test_set = [d for d in srange(-163, -3, 4)                                # needs sage.libs.pari
         ....:             if d.is_fundamental_discriminant()]
 
     In general, we have `B_{1, \chi_d} = -2 h/w` for odd negative fundamental
     discriminants::
 
-        sage: all(QuadraticBernoulliNumber(1, d)                                        # optional - sage.libs.pari
+        sage: all(QuadraticBernoulliNumber(1, d)                                        # needs sage.libs.pari
         ....:       == -len(BinaryQF_reduced_representatives(d))
         ....:     for d in test_set)
         True
@@ -207,16 +213,16 @@ def quadratic_L_function__exact(n, d):
 
     EXAMPLES::
 
-        sage: quadratic_L_function__exact(1, -4)                                        # optional - sage.libs.pari sage.symbolic
+        sage: quadratic_L_function__exact(1, -4)                                        # needs sage.libs.pari sage.symbolic
         1/4*pi
-        sage: quadratic_L_function__exact(-4, -4)                                       # optional - sage.libs.pari
+        sage: quadratic_L_function__exact(-4, -4)                                       # needs sage.libs.pari
         5/2
-        sage: quadratic_L_function__exact(2, 1)                                         # optional - sage.libs.pari sage.symbolic
+        sage: quadratic_L_function__exact(2, 1)                                         # needs sage.libs.pari sage.symbolic
         1/6*pi^2
 
     TESTS::
 
-        sage: quadratic_L_function__exact(2, -4)                                        # optional - sage.libs.pari
+        sage: quadratic_L_function__exact(2, -4)                                        # needs sage.libs.pari
         Traceback (most recent call last):
         ...
         TypeError: n must be a critical value (i.e. odd > 0 or even <= 0)
@@ -228,7 +234,7 @@ def quadratic_L_function__exact(n, d):
     - [Was1997]_
     """
     if n <= 0:
-        return QuadraticBernoulliNumber(1-n,d)/(n-1)
+        return QuadraticBernoulliNumber(1-n, d)/(n-1)
     elif n >= 1:
         # Compute the kind of critical values (p10)
         if kronecker_symbol(fundamental_discriminant(d), -1) == 1:
@@ -251,7 +257,7 @@ def quadratic_L_function__exact(n, d):
             ans *= (2*pi/f)**n
             ans *= GS     # Evaluate the Gauss sum here! =0
             ans *= QQ.one()/(2 * I**delta)
-            ans *= QuadraticBernoulliNumber(n,d)/factorial(n)
+            ans *= QuadraticBernoulliNumber(n, d)/factorial(n)
             return ans
         else:
             if delta == 0:
@@ -262,7 +268,7 @@ def quadratic_L_function__exact(n, d):
 
 def quadratic_L_function__numerical(n, d, num_terms=1000):
     """
-    Evaluate the Dirichlet L-function (for quadratic character) numerically
+    Evaluate the Dirichlet `L`-function (for quadratic character) numerically
     (in a very naive way).
 
     EXAMPLES:
@@ -270,7 +276,7 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
     First, let us test several values for a given character::
 
         sage: RR = RealField(100)
-        sage: for i in range(5):
+        sage: for i in range(5):                                                        # needs sage.symbolic
         ....:     print("L({}, (-4/.)): {}".format(1+2*i,
         ....:             RR(quadratic_L_function__exact(1+2*i, -4))
         ....:                - quadratic_L_function__numerical(RR(1+2*i), -4, 10000)))
@@ -291,7 +297,7 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
     Test for several characters that the result agrees with the exact
     value, to a given accuracy ::
 
-        sage: for d in range(-20,0):  # long time (2s on sage.math 2014)
+        sage: for d in range(-20,0):            # long time (2s on sage.math 2014), needs sage.symbolic
         ....:     if abs(RR(quadratic_L_function__numerical(1, d, 10000)
         ....:                - quadratic_L_function__exact(1, d))) > 0.001:
         ....:         print("We have a problem at d = {}: exact = {}, numerical = {}".format(d,
@@ -310,6 +316,6 @@ def quadratic_L_function__numerical(n, d, num_terms=1000):
 
     d1 = fundamental_discriminant(d)
     ans = R.zero()
-    for i in range(1,num_terms):
-        ans += R(kronecker_symbol(d1,i) / R(i)**n)
+    for i in range(1, num_terms):
+        ans += R(kronecker_symbol(d1, i) / R(i)**n)
     return ans

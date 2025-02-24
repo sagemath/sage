@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystals of Modified Nakajima Monomials
 
@@ -134,7 +135,7 @@ class NakajimaMonomial(Element):
         r"""
         INPUT:
 
-        - ``d`` -- a dictionary of with pairs of the form ``{(i,k): y}``
+        - ``d`` -- dictionary of with pairs of the form ``{(i,k): y}``
 
         EXAMPLES::
 
@@ -302,9 +303,9 @@ class NakajimaMonomial(Element):
         return_str = ''
         for x in L:
             if x[1] != 1:
-                return_str += "Y_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
+                return_str += "Y_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s} " % x[1]
             else:
-                return_str += "Y_{%s,%s} "%(x[0][0],x[0][1])
+                return_str += "Y_{%s,%s} " % (x[0][0],x[0][1])
         return return_str
 
     def _latex_A(self):
@@ -330,15 +331,15 @@ class NakajimaMonomial(Element):
         return_str = ''
         for x in L:
             if x[1] != 1:
-                return_str += "Y_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
+                return_str += "Y_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s} " % x[1]
             else:
-                return_str += "Y_{%s,%s} "%(x[0][0],x[0][1])
+                return_str += "Y_{%s,%s} " % (x[0][0],x[0][1])
         L = sorted(self._A.items(), key=lambda x:(x[0][0],x[0][1]))
         for x in L:
             if x[1] != 1:
-                return_str += "A_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
+                return_str += "A_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s} " % x[1]
             else:
-                return_str += "A_{%s,%s} "%(x[0][0],x[0][1])
+                return_str += "A_{%s,%s} " % (x[0][0],x[0][1])
         return return_str
 
     def _classical_weight(self):
@@ -699,7 +700,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
     where `\{h_i : i \in I\}` and `\{\Lambda_i : i \in I \}` are the simple
     coroots and fundamental weights, respectively.  With a chosen set of
-    non-negative integers `C = (c_{ij})_{i\neq j}` such that
+    nonnegative integers `C = (c_{ij})_{i\neq j}` such that
     `c_{ij} + c_{ji} = 1`, one defines
 
     .. MATH::
@@ -791,12 +792,12 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             sage: C = InfinityCrystalOfNakajimaMonomials._normalize_c(c, 2)
             Traceback (most recent call last):
             ...
-            ValueError: the c matrix must have 0's on the diagonal
+            ValueError: the c matrix must have 0s on the diagonal
             sage: c = matrix([[0,2],[-1,0]])
             sage: C = InfinityCrystalOfNakajimaMonomials._normalize_c(c, 2)
             Traceback (most recent call last):
             ...
-            ValueError: the c matrix must have non-negative entries
+            ValueError: the c matrix must have nonnegative entries
             sage: c = matrix([[0,1],[1,0]])
             sage: C = InfinityCrystalOfNakajimaMonomials._normalize_c(c, 2)
             Traceback (most recent call last):
@@ -810,11 +811,11 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
         c = MS(c)
         c.set_immutable()
         if any(c[i,i] != 0 for i in range(n)):
-            raise ValueError("the c matrix must have 0's on the diagonal")
+            raise ValueError("the c matrix must have 0s on the diagonal")
         if any(c[i,j] + c[j,i] != 1 for i in range(n) for j in range(i)):
             raise ValueError("transpose entries do not sum to 1")
         if any(c[i,j] < 0 or c[j,i] < 0 for i in range(n) for j in range(i)):
-            raise ValueError("the c matrix must have non-negative entries")
+            raise ValueError("the c matrix must have nonnegative entries")
         return c
 
     @staticmethod
@@ -863,9 +864,9 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``Y`` -- a dictionary whose key is a pair and whose value
+        - ``Y`` -- dictionary whose key is a pair and whose value
           is an integer
-        - ``A`` -- a dictionary whose key is a pair and whose value
+        - ``A`` -- dictionary whose key is a pair and whose value
           is an integer
 
         EXAMPLES::
@@ -972,8 +973,8 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
         - ``letter`` -- can be one of the following:
 
-          * ``'Y'`` - use `Y_{i,k}`, corresponds to fundamental weights
-          * ``'A'`` - use `A_{i,k}`, corresponds to simple roots
+          * ``'Y'`` -- use `Y_{i,k}`, corresponds to fundamental weights
+          * ``'A'`` -- use `A_{i,k}`, corresponds to simple roots
 
         EXAMPLES::
 

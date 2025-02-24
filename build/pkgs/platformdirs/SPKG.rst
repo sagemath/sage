@@ -1,10 +1,10 @@
-platformdirs: A small Python module for determining appropriate platform-specific dirs, e.g. a "user data dir".
-===============================================================================================================
+platformdirs: Small Python package for determining appropriate platform-specific dirs, e.g. a "user data dir"
+=============================================================================================================
 
 Description
 -----------
 
-A small Python module for determining appropriate platform-specific dirs, e.g. a "user data dir".
+Small Python package for determining appropriate platform-specific dirs, e.g. a "user data dir"
 
 License
 -------

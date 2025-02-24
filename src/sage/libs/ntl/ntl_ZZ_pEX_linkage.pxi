@@ -25,7 +25,7 @@ from sage.libs.ntl.ZZ_pEX cimport *
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
 from sage.libs.ntl.types cimport ZZ_pX_c, ZZ_pEX_c
 
-cdef ZZ_pEX_c *celement_new(cparent parent):
+cdef ZZ_pEX_c *celement_new(cparent parent) noexcept:
     """
     EXAMPLES::
 
@@ -36,7 +36,7 @@ cdef ZZ_pEX_c *celement_new(cparent parent):
         parent[0].zzpec[0].restore()
     return new ZZ_pEX_c()
 
-cdef int celement_delete(ZZ_pEX_c *e, cparent parent):
+cdef int celement_delete(ZZ_pEX_c *e, cparent parent) noexcept:
     """
     EXAMPLES::
 
@@ -48,7 +48,7 @@ cdef int celement_delete(ZZ_pEX_c *e, cparent parent):
         parent[0].zzpec[0].restore()
     del e
 
-cdef int celement_construct(ZZ_pEX_c *e, cparent parent):
+cdef int celement_construct(ZZ_pEX_c *e, cparent parent) noexcept:
     """
     EXAMPLES::
 
@@ -58,7 +58,7 @@ cdef int celement_construct(ZZ_pEX_c *e, cparent parent):
         parent[0].zzpc[0].restore()
         parent[0].zzpec[0].restore()
 
-cdef int celement_destruct(ZZ_pEX_c *e, cparent parent):
+cdef int celement_destruct(ZZ_pEX_c *e, cparent parent) noexcept:
     """
     EXAMPLES::
 
@@ -332,12 +332,12 @@ cdef inline int celement_pow(ZZ_pEX_c* res, ZZ_pEX_c* x, long e, ZZ_pEX_c *modul
         sage: (x+1)^(-2)
         1/(x^2 + 2*x + 1)
         sage: f = x+(a+1)
-        sage: f**50 == sum(binomial(50,i)*(a+1)**i*x**(50-i) for i in range(51))
+        sage: f**50 == sum(binomial(50,i)*(a+1)**i*x**(50-i) for i in range(51))        # needs sage.symbolic
         True
 
     TESTS:
 
-    Check that :trac:`15777` is fixed::
+    Check that :issue:`15777` is fixed::
 
         sage: k.<t> = GF(5**5)
         sage: x = polygen(k)
@@ -367,11 +367,11 @@ cdef inline int celement_pow(ZZ_pEX_c* res, ZZ_pEX_c* x, long e, ZZ_pEX_c *modul
             sig_off()
     else:
         if ZZ_pEX_deg(modulus[0]) == 1:
-             ZZ_pEX_rem(y, x[0], modulus[0])
-             sig_on()
-             ZZ_pEX_power(res[0], y, e)
-             sig_off()
-             return 0
+            ZZ_pEX_rem(y, x[0], modulus[0])
+            sig_on()
+            ZZ_pEX_power(res[0], y, e)
+            sig_off()
+            return 0
         ZZ_pEX_Modulus_build(mod, modulus[0])
         if ZZ_pEX_deg(x[0]) < ZZ_pEX_deg(modulus[0]):
             sig_on()

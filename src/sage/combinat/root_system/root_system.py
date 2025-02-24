@@ -33,15 +33,14 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     We construct the root system for type `B_3`::
 
-        sage: R=RootSystem(['B',3]); R
+        sage: R = RootSystem(['B',3]); R
         Root system of type ['B', 3]
 
     ``R`` models the root system abstractly. It comes equipped with various
     realizations of the root and weight lattices, where all computations
     take place. Let us play first with the root lattice::
 
-        sage: space = R.root_lattice()
-        sage: space
+        sage: space = R.root_lattice(); space
         Root lattice of the Root system of type ['B', 3]
 
     This is the free `\ZZ`-module `\bigoplus_i \ZZ.\alpha_i` spanned
@@ -77,8 +76,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     `\bigoplus_i \ZZ.\Lambda_i`, the weight
     space `\bigoplus_i \QQ.\Lambda_i`. For example::
 
-        sage: space = R.weight_space()
-        sage: space
+        sage: space = R.weight_space(); space
         Weight space over the Rational Field of the Root system of type ['B', 3]
 
     ::
@@ -90,8 +88,8 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     ::
 
-        sage: alpha = space.simple_roots()
-        sage: alpha[1] + alpha[2]
+        sage: alpha = space.simple_roots()                                              # needs sage.graphs
+        sage: alpha[1] + alpha[2]                                                       # needs sage.graphs
         Lambda[1] + Lambda[2] - 2*Lambda[3]
 
     The fundamental weights are the dual basis of the coroots::
@@ -102,8 +100,8 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     ::
 
-        sage: alphacheck = space.simple_coroots()
-        sage: list(alphacheck)
+        sage: alphacheck = space.simple_coroots()                                       # needs sage.graphs
+        sage: list(alphacheck)                                                          # needs sage.graphs
         [alphacheck[1], alphacheck[2], alphacheck[3]]
 
     ::
@@ -121,7 +119,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     `\alpha_i`, where `c` is the coefficient of
     `i` in `x`::
 
-        sage: s = space.simple_reflections()
+        sage: # needs sage.graphs
         sage: Lambda[1].simple_reflection(1)
         -Lambda[1] + Lambda[2]
         sage: Lambda[2].simple_reflection(1)
@@ -134,6 +132,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     It can be convenient to manipulate the simple reflections
     themselves::
 
+        sage: # needs sage.graphs
         sage: s = space.simple_reflections()
         sage: s[1](Lambda[1])
         -Lambda[1] + Lambda[2]
@@ -159,7 +158,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     In finite type `A`, we recover the natural representation of the
     symmetric group as group of permutation matrices::
 
-        sage: RootSystem(["A",2]).ambient_space().weyl_group().simple_reflections()
+        sage: RootSystem(["A",2]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.gap sage.libs.pari
         Finite family {1: [0 1 0]
                           [1 0 0]
                           [0 0 1],
@@ -170,7 +169,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     In type `B`, `C`, and `D`, we recover the natural representation
     of the Weyl group as groups of signed permutation matrices::
 
-        sage: RootSystem(["B",3]).ambient_space().weyl_group().simple_reflections()
+        sage: RootSystem(["B",3]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.gap sage.libs.pari
         Finite family {1: [0 1 0]
                           [1 0 0]
                           [0 0 1],
@@ -190,20 +189,21 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     Define the "identity" by an appropriate vector at level `-3`::
 
-        sage: e = L.basis(); Lambda = L.fundamental_weights()
-        sage: id = e[0] + 2*e[1] + 3*e[2]  - 3*Lambda[0]
+        sage: e = L.basis(); Lambda = L.fundamental_weights()                           # needs sage.graphs
+        sage: id = e[0] + 2*e[1] + 3*e[2]  - 3*Lambda[0]                                # needs sage.graphs
 
     The corresponding permutation is obtained by projecting it onto
     the classical ambient space::
 
         sage: L.classical()
         Ambient space of the Root system of type ['A', 2]
-        sage: L.classical()(id)
+        sage: L.classical()(id)                                                         # needs sage.graphs
         (1, 2, 3)
 
     Here is the orbit of the identity under the action of the finite
     group::
 
+        sage: # needs sage.graphs sage.libs.gap sage.libs.pari
         sage: W = L.weyl_group()
         sage: S3 = [ w.action(id) for w in W.classical() ]
         sage: [L.classical()(x) for x in S3]
@@ -211,6 +211,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     And the action of `s_0` on these yields::
 
+        sage: # needs sage.graphs sage.libs.gap sage.libs.pari
         sage: s = W.simple_reflections()
         sage: [L.classical()(s[0].action(x)) for x in S3]
         [(0, 2, 4), (-1, 1, 6), (-2, 3, 5), (0, 1, 5), (-1, 3, 4), (-2, 2, 6)]
@@ -218,7 +219,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     We can also plot various components of the ambient spaces::
 
         sage: L = RootSystem(['A',2]).ambient_space()
-        sage: L.plot()                                                                  # optional - sage.plot sage.symbolic
+        sage: L.plot()                                                                  # needs sage.plot sage.symbolic
         Graphics object consisting of 13 graphics primitives
 
     For more on plotting, see :ref:`sage.combinat.root_system.plot`.
@@ -266,11 +267,11 @@ class RootSystem(UniqueRepresentation, SageObject):
     TESTS::
 
         sage: R = RootSystem(['C',3])
-        sage: TestSuite(R).run()
+        sage: TestSuite(R).run()                                                        # needs sage.graphs
         sage: L = R.ambient_space()
         sage: s = L.simple_reflections() # this used to break the testsuite below due to caching an unpicklable method
         sage: s = L.simple_projections() # todo: not implemented
-        sage: TestSuite(L).run()
+        sage: TestSuite(L).run()                                                        # needs sage.graphs
         sage: L = R.root_space()
         sage: s = L.simple_reflections()
         sage: TestSuite(L).run()
@@ -300,7 +301,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     @staticmethod
     def __classcall__(cls, cartan_type, as_dual_of=None):
         """
-        Straighten arguments to enable unique representation
+        Straighten arguments to enable unique representation.
 
         .. SEEALSO:: :class:`UniqueRepresentation`
 
@@ -340,12 +341,12 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def _test_root_lattice_realizations(self, **options):
         """
-        Runs tests on all the root lattice realizations of this root
+        Run tests on all the root lattice realizations of this root
         system.
 
         EXAMPLES::
 
-            sage: RootSystem(["A",3])._test_root_lattice_realizations()
+            sage: RootSystem(["A",3])._test_root_lattice_realizations()                 # needs sage.graphs
 
         .. SEEALSO:: :class:`TestSuite`.
         """
@@ -379,7 +380,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def cartan_type(self):
         """
-        Returns the Cartan type of the root system.
+        Return the Cartan type of the root system.
 
         EXAMPLES::
 
@@ -392,12 +393,12 @@ class RootSystem(UniqueRepresentation, SageObject):
     @cached_method
     def dynkin_diagram(self):
         """
-        Returns the Dynkin diagram of the root system.
+        Return the Dynkin diagram of the root system.
 
         EXAMPLES::
 
             sage: R = RootSystem(['A',3])
-            sage: R.dynkin_diagram()
+            sage: R.dynkin_diagram()                                                    # needs sage.graphs
             O---O---O
             1   2   3
             A3
@@ -409,7 +410,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         EXAMPLES::
 
-            sage: RootSystem(['A',3]).cartan_matrix()
+            sage: RootSystem(['A',3]).cartan_matrix()                                   # needs sage.graphs
             [ 2 -1  0]
             [-1  2 -1]
             [ 0 -1  2]
@@ -429,7 +430,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     @cached_method
     def is_finite(self):
         """
-        Returns True if self is a finite root system.
+        Return ``True`` if ``self`` is a finite root system.
 
         EXAMPLES::
 
@@ -443,7 +444,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     @cached_method
     def is_irreducible(self):
         """
-        Returns True if self is an irreducible root system.
+        Return ``True`` if ``self`` is an irreducible root system.
 
         EXAMPLES::
 
@@ -456,7 +457,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def root_lattice(self):
         """
-        Returns the root lattice associated to self.
+        Return the root lattice associated to ``self``.
 
         EXAMPLES::
 
@@ -468,7 +469,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     @cached_method
     def root_space(self, base_ring=QQ):
         """
-        Returns the root space associated to self.
+        Return the root space associated to ``self``.
 
         EXAMPLES::
 
@@ -479,38 +480,42 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def root_poset(self, restricted=False, facade=False):
         r"""
-        Returns the (restricted) root poset associated to ``self``.
+        Return the (restricted) root poset associated to ``self``.
 
         The elements are given by the positive roots (resp. non-simple, positive roots), and
-        `\alpha \leq \beta` iff `\beta - \alpha` is a non-negative linear combination of simple roots.
+        `\alpha \leq \beta` iff `\beta - \alpha` is a nonnegative linear combination of simple roots.
 
         INPUT:
 
-        - ``restricted`` -- (default:False) if True, only non-simple roots are considered.
-        - ``facade`` -- (default:False) passes facade option to the poset generator.
+        - ``restricted`` -- boolean (default: ``False``); if ``True``, only
+          non-simple roots are considered
+        - ``facade`` -- boolean (default: ``False``); passes facade option to
+          the poset generator
 
         EXAMPLES::
 
-            sage: Phi = RootSystem(['A',2]).root_poset(); Phi
+            sage: Phi = RootSystem(['A',2]).root_poset(); Phi                           # needs sage.graphs
             Finite poset containing 3 elements
-            sage: sorted(Phi.cover_relations(), key=str)
+            sage: sorted(Phi.cover_relations(), key=str)                                # needs sage.graphs
             [[alpha[1], alpha[1] + alpha[2]], [alpha[2], alpha[1] + alpha[2]]]
 
-            sage: Phi = RootSystem(['A',3]).root_poset(restricted=True); Phi
+            sage: Phi = RootSystem(['A',3]).root_poset(restricted=True); Phi            # needs sage.graphs
             Finite poset containing 3 elements
-            sage: sorted(Phi.cover_relations(), key=str)
-            [[alpha[1] + alpha[2], alpha[1] + alpha[2] + alpha[3]], [alpha[2] + alpha[3], alpha[1] + alpha[2] + alpha[3]]]
+            sage: sorted(Phi.cover_relations(), key=str)                                # needs sage.graphs
+            [[alpha[1] + alpha[2], alpha[1] + alpha[2] + alpha[3]],
+             [alpha[2] + alpha[3], alpha[1] + alpha[2] + alpha[3]]]
 
-            sage: Phi = RootSystem(['B',2]).root_poset(); Phi
+            sage: Phi = RootSystem(['B',2]).root_poset(); Phi                           # needs sage.graphs
             Finite poset containing 4 elements
-            sage: Phi.cover_relations()
-            [[alpha[2], alpha[1] + alpha[2]], [alpha[1], alpha[1] + alpha[2]], [alpha[1] + alpha[2], alpha[1] + 2*alpha[2]]]
+            sage: Phi.cover_relations()                                                 # needs sage.graphs
+            [[alpha[2], alpha[1] + alpha[2]], [alpha[1], alpha[1] + alpha[2]],
+             [alpha[1] + alpha[2], alpha[1] + 2*alpha[2]]]
         """
         return self.root_lattice().root_poset(restricted=restricted, facade=facade)
 
     def coroot_lattice(self):
         """
-        Returns the coroot lattice associated to self.
+        Return the coroot lattice associated to ``self``.
 
         EXAMPLES::
 
@@ -521,7 +526,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def coroot_space(self, base_ring=QQ):
         """
-        Returns the coroot space associated to self.
+        Return the coroot space associated to ``self``.
 
         EXAMPLES::
 
@@ -533,7 +538,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     @cached_method
     def weight_lattice(self, extended=False):
         """
-        Returns the weight lattice associated to self.
+        Return the weight lattice associated to ``self``.
 
         .. SEEALSO::
 
@@ -546,15 +551,16 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3]).weight_lattice()
             Weight lattice of the Root system of type ['A', 3]
 
-            sage: RootSystem(['A',3,1]).weight_space(extended = True)
-            Extended weight space over the Rational Field of the Root system of type ['A', 3, 1]
+            sage: RootSystem(['A',3,1]).weight_space(extended=True)
+            Extended weight space over the Rational Field
+             of the Root system of type ['A', 3, 1]
         """
         return WeightSpace(self, ZZ, extended=extended)
 
     @cached_method
     def weight_space(self, base_ring=QQ, extended=False):
         """
-        Returns the weight space associated to self.
+        Return the weight space associated to ``self``.
 
         .. SEEALSO::
 
@@ -567,14 +573,15 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3]).weight_space()
             Weight space over the Rational Field of the Root system of type ['A', 3]
 
-            sage: RootSystem(['A',3,1]).weight_space(extended = True)
-            Extended weight space over the Rational Field of the Root system of type ['A', 3, 1]
+            sage: RootSystem(['A',3,1]).weight_space(extended=True)
+            Extended weight space over the Rational Field
+             of the Root system of type ['A', 3, 1]
         """
         return WeightSpace(self, base_ring, extended=extended)
 
     def coweight_lattice(self, extended=False):
         """
-        Returns the coweight lattice associated to self.
+        Return the coweight lattice associated to ``self``.
 
         This is the weight lattice of the dual root system.
 
@@ -589,14 +596,14 @@ class RootSystem(UniqueRepresentation, SageObject):
             sage: RootSystem(['A',3]).coweight_lattice()
             Coweight lattice of the Root system of type ['A', 3]
 
-            sage: RootSystem(['A',3,1]).coweight_lattice(extended = True)
+            sage: RootSystem(['A',3,1]).coweight_lattice(extended=True)
             Extended coweight lattice of the Root system of type ['A', 3, 1]
         """
         return self.dual.weight_lattice(extended=extended)
 
     def coweight_space(self, base_ring=QQ, extended=False):
         """
-        Returns the coweight space associated to self.
+        Return the coweight space associated to ``self``.
 
         This is the weight space of the dual root system.
 
@@ -612,7 +619,8 @@ class RootSystem(UniqueRepresentation, SageObject):
             Coweight space over the Rational Field of the Root system of type ['A', 3]
 
             sage: RootSystem(['A',3,1]).coweight_space(extended=True)
-            Extended coweight space over the Rational Field of the Root system of type ['A', 3, 1]
+            Extended coweight space over the Rational Field
+             of the Root system of type ['A', 3, 1]
         """
         return self.dual.weight_space(base_ring, extended=extended)
 
@@ -720,7 +728,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         An alternative base ring can be provided as an option::
 
             sage: e = RootSystem(['B',3]).ambient_space(RR)
-            sage: TestSuite(e).run()
+            sage: TestSuite(e).run()                                                    # needs sage.graphs
 
         It should contain the smallest ring over which the ambient
         space can be defined (`\ZZ` in type `A` or `\QQ` otherwise).
@@ -733,7 +741,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         you are welcome to experiment::
 
             sage: e = RootSystem(['G',2]).ambient_space(RR)
-            sage: TestSuite(e).run()
+            sage: TestSuite(e).run()                                                    # needs sage.graphs
             Failure in _test_root_lattice_realization:
             Traceback (most recent call last):
             ...
@@ -779,6 +787,55 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         return self.dual.ambient_space(base_ring)
 
+    def coxeter_number(self):
+        """
+        Return the Coxeter number of an irreducible finite root system.
+
+        .. SEEALSO::
+
+            :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.coxeter_number`.
+
+        EXAMPLES::
+
+            sage: rt = RootSystem(['C', 5])
+            sage: rt.coxeter_number()
+            10
+        """
+        # Check if RootSystem is finite and irreducible
+        if not (self.is_finite() and self.is_irreducible()):
+            raise ValueError("the Coxeter number is defined only for finite and irreducible root systems")
+        # Hand over to CartanType method
+        return self._cartan_type.coxeter_number()
+
+    def dual_coxeter_number(self):
+        """
+        Return the dual Coxeter number of a irreducible finite root system.
+
+        The dual Coxeter number is equal to 1 plus the sum of the coefficients
+        of simple roots in the highest short root of the dual root system.
+
+        .. SEEALSO:: :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.dual_coxeter_number`
+
+        EXAMPLES::
+
+            sage: rt = RootSystem(['C', 5])
+            sage: rt.dual_coxeter_number()
+            6
+
+        The dual Coxeter number is not the same concept as the Coxeter number
+        of the dual root system::
+
+            sage: rt.dual
+            Dual of root system of type ['C', 5]
+            sage: rt.dual.coxeter_number()
+            10
+        """
+        # Check if RootSystem is finite and irreducible
+        if not (self.is_finite() and self.is_irreducible()):
+            raise ValueError("the dual Coxeter number is defined only for finite and irreducible root systems")
+        # Hand over to CartanType method
+        return self._cartan_type.dual_coxeter_number()
+
 
 def WeylDim(ct, coeffs):
     """
@@ -786,11 +843,9 @@ def WeylDim(ct, coeffs):
 
     INPUT:
 
+    - ``ct`` -- a Cartan type
 
-    -  ``type`` - a Cartan type
-
-    -  ``coeffs`` - a list of nonnegative integers
-
+    - ``coeffs`` -- list of nonnegative integers
 
     The length of the list must equal the rank type[1]. A dominant
     weight hwv is constructed by summing the fundamental weights with
@@ -802,17 +857,20 @@ def WeylDim(ct, coeffs):
 
     For `SO(7)`, the Cartan type is `B_3`, so::
 
-        sage: WeylDim(['B',3],[1,0,0]) # standard representation of SO(7)
+        sage: WeylDim(['B',3],[1,0,0])  # standard representation of SO(7)
         7
-        sage: WeylDim(['B',3],[0,1,0]) # exterior square
+        sage: WeylDim(['B',3],[0,1,0])  # exterior square
         21
-        sage: WeylDim(['B',3],[0,0,1]) # spin representation of spin(7)
+        sage: WeylDim(['B',3],[0,0,1])  # spin representation of spin(7)
         8
-        sage: WeylDim(['B',3],[1,0,1]) # sum of the first and third fundamental weights
+        sage: WeylDim(['B',3],[1,0,1])  # sum of the first and third fundamental weights
         48
         sage: [WeylDim(['F',4],x) for x in ([1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1])]
         [52, 1274, 273, 26]
-        sage: [WeylDim(['E', 6], x) for x in ([0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 2], [0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0], [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1], [2, 0, 0, 0, 0, 0])]
+        sage: [WeylDim(['E', 6], x)
+        ....:  for x in ([0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1],
+        ....:            [0, 0, 0, 0, 0, 2], [0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0],
+        ....:            [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1], [2, 0, 0, 0, 0, 0])]
         [1, 78, 27, 351, 351, 351, 27, 650, 351]
     """
     ct = CartanType(ct)

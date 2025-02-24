@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.numerical.mip
 r"""
 Solve SAT problems Integer Linear Programming
 
@@ -9,14 +10,15 @@ can be expected to be slower than when using
 from .satsolver import SatSolver
 from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
 
+
 class SatLP(SatSolver):
     def __init__(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
-        Initializes the instance
+        Initialize the instance.
 
         INPUT:
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+        - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear Programming
           (MILP) solver to be used. If set to ``None``, the default one is used. For
           more information on MILP solvers and which default solver is used, see
           the method
@@ -24,15 +26,15 @@ class SatLP(SatSolver):
           of the class
           :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``). Sets the level of verbosity
+        - ``verbose`` -- integer (default: 0); sets the level of verbosity
           of the LP solver. Set to 0 by default, which means quiet.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
-          inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
+          inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
         EXAMPLES::
 
-            sage: S=SAT(solver="LP"); S
+            sage: S=SAT(solver='LP'); S
             an ILP-based SAT Solver
         """
         SatSolver.__init__(self)
@@ -47,13 +49,13 @@ class SatLP(SatSolver):
 
         EXAMPLES::
 
-            sage: S=SAT(solver="LP"); S
+            sage: S=SAT(solver='LP'); S
             an ILP-based SAT Solver
             sage: S.var()
             1
         """
         nvars = n = self._LP.number_of_variables()
-        while nvars==self._LP.number_of_variables():
+        while nvars == self._LP.number_of_variables():
             n += 1
             self._vars[n] # creates the variable if needed
         return n
@@ -64,7 +66,7 @@ class SatLP(SatSolver):
 
         EXAMPLES::
 
-            sage: S=SAT(solver="LP"); S
+            sage: S=SAT(solver='LP'); S
             an ILP-based SAT Solver
             sage: S.var()
             1
@@ -81,9 +83,9 @@ class SatLP(SatSolver):
 
         INPUT:
 
-        - ``lits`` - a tuple of integers != 0
+        - ``lits`` -- tuple of nonzero integers
 
-        .. note::
+        .. NOTE::
 
             If any element ``e`` in ``lits`` has ``abs(e)`` greater
             than the number of variables generated so far, then new
@@ -91,7 +93,7 @@ class SatLP(SatSolver):
 
         EXAMPLES::
 
-            sage: S=SAT(solver="LP"); S
+            sage: S=SAT(solver='LP'); S
             an ILP-based SAT Solver
             sage: for u,v in graphs.CycleGraph(6).edges(sort=False, labels=False):
             ....:     u,v = u+1,v+1
@@ -101,8 +103,8 @@ class SatLP(SatSolver):
         if 0 in lits:
             raise ValueError("0 should not appear in the clause: {}".format(lits))
         p = self._LP
-        p.add_constraint(p.sum(self._vars[x] if x>0 else 1-self._vars[-x] for x in lits)
-                         >=1)
+        p.add_constraint(p.sum(self._vars[x] if x > 0 else 1-self._vars[-x] for x in lits)
+                         >= 1)
 
     def __call__(self):
         """
@@ -119,7 +121,7 @@ class SatLP(SatSolver):
         EXAMPLES::
 
             sage: def is_bipartite_SAT(G):
-            ....:     S=SAT(solver="LP"); S
+            ....:     S=SAT(solver='LP'); S
             ....:     for u,v in G.edges(sort=False, labels=False):
             ....:         u,v = u+1,v+1
             ....:         S.add_clause((u,v))
@@ -147,7 +149,7 @@ class SatLP(SatSolver):
         """
         TESTS::
 
-            sage: S=SAT(solver="LP"); S
+            sage: S=SAT(solver='LP'); S
             an ILP-based SAT Solver
         """
         return "an ILP-based SAT Solver"

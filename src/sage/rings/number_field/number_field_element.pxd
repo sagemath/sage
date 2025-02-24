@@ -4,19 +4,18 @@ from sage.rings.integer cimport Integer
 from sage.rings.number_field.number_field_element_base cimport NumberFieldElement_base
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.structure.parent cimport Parent
-from sage.structure.parent_base cimport ParentWithBase
 from sage.libs.ntl.types cimport ZZ_c, ZZX_c
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 
 
 cdef class NumberFieldElement(NumberFieldElement_base):
-    cdef ZZX_c __numerator
-    cdef ZZ_c __denominator
+    cdef ZZX_c _numerator
+    cdef ZZ_c _denominator
     # Pointers to the defining polynomial (with numerator) for the field.
     # I keep these as pointers for arithmetic speed.
-    cdef ntl_ZZX __fld_numerator
-    cdef ntl_ZZ __fld_denominator
+    cdef ntl_ZZX _fld_numerator
+    cdef ntl_ZZ _fld_denominator
     cdef object __multiplicative_order
     cdef object __pari
     cdef object __matrix
@@ -32,15 +31,15 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     cdef number_field(self)
 
-    cdef void _ntl_coeff_as_mpz(self, mpz_t z, long i)
-    cdef void _ntl_denom_as_mpz(self, mpz_t z)
+    cdef void _ntl_coeff_as_mpz(self, mpz_t z, long i) noexcept
+    cdef void _ntl_denom_as_mpz(self, mpz_t z) noexcept
 
-    cdef void _reduce_c_(self)
+    cdef void _reduce_c_(self) noexcept
 
     cpdef list _coefficients(self)
 
-    cpdef bint is_rational(self)
-    cpdef bint is_one(self)
+    cpdef bint is_rational(self) noexcept
+    cpdef bint is_one(self) noexcept
     cdef int _randomize(self, num_bound, den_bound, distribution) except -1
 
 

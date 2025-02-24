@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from sage.libs.gmp.types cimport gmp_randstate_t
 
 # The c_random() method on randstate objects gives a value
@@ -19,11 +20,11 @@ cdef class randstate:
     cpdef set_seed_libc(self, bint force)
     cpdef set_seed_ntl(self, bint force)
 
-    cpdef int c_random(self)
-    cpdef double c_rand_double(self)
+    cpdef int c_random(self) noexcept
+    cpdef double c_rand_double(self) noexcept
 
     cpdef ZZ_seed(self)
     cpdef long_seed(self)
 
 cpdef randstate current_randstate()
-cpdef int random()
+cpdef int random() noexcept

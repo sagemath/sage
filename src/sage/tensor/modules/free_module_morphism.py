@@ -4,15 +4,18 @@ Free module morphisms
 The class :class:`FiniteRankFreeModuleMorphism` implements homomorphisms
 between two free modules of finite rank over the same commutative ring.
 
+The subclass :class:`FiniteRankFreeModuleEndomorphism` implements the
+special case of endomorphisms.
+
 AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
+- Matthias Koeppe (2024): add subclass :class:`FiniteRankFreeModuleEndomorphism`
 
 REFERENCES:
 
 - Chap. 13, 14 of R. Godement : *Algebra* [God1968]_
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
-
 """
 # *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -28,6 +31,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sage.categories.morphism import Morphism
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.integer import Integer
 
 if TYPE_CHECKING:
@@ -50,9 +54,12 @@ class FiniteRankFreeModuleMorphism(Morphism):
     This is a Sage *element* class, the corresponding *parent* class being
     :class:`~sage.tensor.modules.free_module_homset.FreeModuleHomset`.
 
+    For the special case of endomorphisms (`M=N`), use the subclass
+    :class:`FiniteRankFreeModuleEndomorphism`.
+
     INPUT:
 
-    - ``parent`` -- hom-set Hom(M,N) to which the homomorphism belongs
+    - ``parent`` -- Hom-set Hom(M,N) to which the homomorphism belongs
     - ``matrix_rep`` -- matrix representation of the homomorphism with
       respect to the bases ``bases``; this entry can actually
       be any material from which a matrix of size rank(N)*rank(M) of
@@ -64,10 +71,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
       default bases of each module is assumed.
     - ``name`` -- (default: ``None``) string; name given to the homomorphism
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote the
-      homomorphism; if None, ``name`` will be used.
-    - ``is_identity`` -- (default: ``False``) determines whether the
-      constructed object is the identity endomorphism; if set to ``True``, then
-      N must be M and the entry ``matrix_rep`` is not used.
+      homomorphism. If ``None``, ``name`` will be used.
 
     EXAMPLES:
 
@@ -166,31 +170,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
         34 f_0 - 51 f_1
         sage: phi(3*u + v) == 3*phi(u) + phi(v)
         True
-
-    The identity endomorphism::
-
-        sage: Id = End(M).one() ; Id
-        Identity endomorphism of Rank-3 free module M over the Integer Ring
-        sage: Id.parent()
-        Set of Morphisms from Rank-3 free module M over the Integer Ring
-         to Rank-3 free module M over the Integer Ring
-         in Category of finite dimensional modules over Integer Ring
-        sage: Id.parent() is End(M)
-        True
-
-    The matrix of Id with respect to the basis e is of course the identity
-    matrix::
-
-        sage: Id.matrix(e)
-        [1 0 0]
-        [0 1 0]
-        [0 0 1]
-
-    The identity acting on a module element::
-
-        sage: Id(v) is v
-        True
-
     """
     def __init__(self, parent, matrix_rep, bases=None, name=None,
                  latex_name=None, is_identity=False):
@@ -214,27 +193,9 @@ class FiniteRankFreeModuleMorphism(Morphism):
             [ 2  1  4]
             sage: latex(phi)
             \phi
-
-        Generic endomorphism::
-
-            sage: phi = FiniteRankFreeModuleMorphism(End(M), [[1,0,-3], [2,1,4], [7,8,9]],
-            ....:                                    name='phi', latex_name=r'\phi')
-            sage: phi
-            Generic endomorphism of Rank-3 free module M over the Integer Ring
-
-        Identity endomorphism::
-
-            sage: phi = FiniteRankFreeModuleMorphism(End(M), 'whatever', is_identity=True)
-            sage: phi
-            Identity endomorphism of Rank-3 free module M over the Integer Ring
-            sage: phi.matrix(e)
-            [1 0 0]
-            [0 1 0]
-            [0 0 1]
-            sage: latex(phi)
-            \mathrm{Id}
-
         """
+        if is_identity:
+            raise TypeError('use the subclass FiniteRankFreeModuleEndomorphism for the identity morphis')
         from sage.matrix.constructor import matrix
         from sage.misc.constant_function import ConstantFunction
         Morphism.__init__(self, parent)
@@ -263,41 +224,12 @@ class FiniteRankFreeModuleMorphism(Morphism):
         ring = parent.base_ring()
         n1 = fmodule1.rank()
         n2 = fmodule2.rank()
-        if is_identity:
-            # Construction of the identity endomorphism
-            if fmodule1 != fmodule2:
-                raise TypeError("the domain and codomain must coincide " +
-                                "for the identity endomorphism.")
-            if bases[0] != bases[1]:
-                raise TypeError("the two bases must coincide for " +
-                                "constructing the identity endomorphism.")
-            self._is_identity = True
-            zero = ring.zero()
-            one = ring.one()
-            matrix_rep = []
-            for i in range(n1):
-                row = [zero]*n1
-                row[i] = one
-                matrix_rep.append(row)
-            if name is None:
-                name = 'Id'
-            if latex_name is None and name == 'Id':
-                latex_name = r'\mathrm{Id}'
-            self._repr_type_str = 'Identity'
-        else:
-            # Construction of a generic morphism
-            self._is_identity = False
-            if isinstance(matrix_rep, ConstantFunction):
-                # the zero morphism
-                if matrix_rep().is_zero():
-                    matrix_rep = 0
-            if matrix_rep == 1:
-                if fmodule1 == fmodule2:
-                    # the identity endomorphism (again):
-                    self._is_identity = True
-                    self._repr_type_str = 'Identity'
-                    name = 'Id'
-                    latex_name = r'\mathrm{Id}'
+        # Construction of a generic morphism
+        self._is_identity = False
+        if isinstance(matrix_rep, ConstantFunction):
+            # the zero morphism
+            if matrix_rep().is_zero():
+                matrix_rep = 0
         self._matrices = {bases: matrix(ring, n2, n1, matrix_rep)}
         self._name = name
         if latex_name is None:
@@ -336,7 +268,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: phi = M.hom(N, [[-1,2,0], [5,1,2]])
             sage: phi._latex_()
             '\\mbox{Generic morphism:\n  From: Rank-3 free module M over the Integer Ring\n  To:   Rank-2 free module N over the Integer Ring}'
-
         """
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
@@ -351,9 +282,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
         - ``other`` -- a free module morphism (or 0)
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
 
         EXAMPLES::
 
@@ -409,7 +338,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: phi.__eq__(Hom(M,N).zero())
             True
-
         """
         if isinstance(other, (int, Integer)): # other should be 0
             if other == 0:
@@ -459,7 +387,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: Hom(M,N).zero().__ne__(0)
             False
-
         """
         return not self == other
 
@@ -503,9 +430,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
         - ``other`` -- a free module morphism (same parent as ``self``)
 
-        OUTPUT:
-
-        - the homomorphism resulting from the addition of ``self`` and ``other``
+        OUTPUT: the homomorphism resulting from the addition of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -550,7 +475,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
             sage: phi._add_(Hom(M,N).zero()) == phi
             True
-
         """
         # No need for consistency checks since self and other are guaranteed
         # to have the same parents
@@ -631,7 +555,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: phi._sub_(phi).is_zero()
             True
-
         """
         # No need for consistency checks since self and other are guaranteed
         # to have the same parents
@@ -659,12 +582,10 @@ class FiniteRankFreeModuleMorphism(Morphism):
         INPUT:
 
         - ``scalar`` -- element of the ring over which the parent of ``self``
-          is a module.
+          is a module
 
-        OUTPUT:
-
-        - the homomorphism resulting from the multiplication of ``self`` by
-          ``scalar``
+        OUTPUT: the homomorphism resulting from the multiplication of ``self``
+        by ``scalar``
 
         EXAMPLES::
 
@@ -696,9 +617,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         r"""
         Unary plus operator.
 
-        OUTPUT:
-
-        - an exact copy of ``self``
+        OUTPUT: an exact copy of ``self``
 
         EXAMPLES::
 
@@ -717,7 +636,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: s is phi
             False
-
         """
         resu = self.__class__(self.parent(), 0, is_identity=self._is_identity)
                                            # 0 = provisory value
@@ -733,9 +651,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         r"""
         Unary minus operator.
 
-        OUTPUT:
-
-        - the homomorphism `-f`, where `f` is ``self``
+        OUTPUT: the homomorphism `-f`, where `f` is ``self``
 
         EXAMPLES::
 
@@ -755,7 +671,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             [-5 -1 -2]
             sage: s.matrix() == -phi.matrix()
             True
-
         """
         resu = self.__class__(self.parent(), 0)  # 0 = provisory value
         for bases, mat in self._matrices.items():
@@ -780,9 +695,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
         - ``element`` -- element of the domain of ``self``
 
-        OUTPUT:
-
-        - the image of ``element`` by ``self``
+        OUTPUT: the image of ``element`` by ``self``
 
         EXAMPLES:
 
@@ -829,7 +742,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
             sage: phi(M.zero()) == N.zero()
             True
-
         """
         if self._is_identity:
             return element
@@ -915,7 +827,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: End(N).one().is_injective()
             True
-
         """
         # Some matrix representation is picked at random:
         matrix_rep = next(iter(self._matrices.values()))
@@ -950,7 +861,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             True
             sage: End(N).one().is_surjective()
             True
-
         """
         if self._is_identity:
             return True
@@ -999,7 +909,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: phi.matrix(ep)
             [1 0]
             [0 1]
-
         """
         if self._is_identity:
             return True
@@ -1020,6 +929,58 @@ class FiniteRankFreeModuleMorphism(Morphism):
     #
     # End of Morphism methods
     #
+
+    def _modules_and_bases(self, basis1=None, basis2=None):
+        r"""
+        Return domain, codomain, domain basis, and codomain basis.
+
+        This method implements default argument handling for methods
+        :meth:`matrix` and :meth:`display`.
+
+        INPUT:
+
+        - ``basis1`` -- (default: ``None``) basis of the domain of ``self``; if
+          none is provided, the domain's default basis is assumed
+        - ``basis2`` -- (default: ``None``) basis of the codomain of ``self``;
+          if none is provided, ``basis2`` is set to ``basis1`` if ``self`` is
+          an endomorphism, otherwise, ``basis2`` is set to the codomain's
+          default basis.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: N = FiniteRankFreeModule(ZZ, 2, name='N')
+            sage: e = M.basis('e'); f = N.basis('f')
+            sage: phi = M.hom(N, [[-1,2,0], [5,1,2]])
+            sage: phi._modules_and_bases()
+            (Rank-3 free module M over the Integer Ring,
+             Rank-2 free module N over the Integer Ring,
+             Basis (e_0,e_1,e_2) on the Rank-3 free module M over the Integer Ring,
+             Basis (f_0,f_1) on the Rank-2 free module N over the Integer Ring)
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi._modules_and_bases(ep)
+            (Rank-3 free module M over the Integer Ring,
+             Rank-2 free module N over the Integer Ring,
+             Basis (ep_0,ep_1,ep_2) on the Rank-3 free module M over the Integer Ring,
+             Basis (f_0,f_1) on the Rank-2 free module N over the Integer Ring)
+        """
+        fmodule1 = self.domain()
+        fmodule2 = self.codomain()
+        if basis1 is None:
+            basis1 = fmodule1.default_basis()
+        elif basis1 not in fmodule1.bases():
+            raise TypeError(str(basis1) + " is not a basis on the " +
+                            str(fmodule1) + ".")
+        if basis2 is None:
+            if self.is_endomorphism():
+                basis2 = basis1
+            else:
+                basis2 = fmodule2.default_basis()
+        elif basis2 not in fmodule2.bases():
+            raise TypeError(str(basis2) + " is not a basis on the " +
+                            str(fmodule2) + ".")
+        return fmodule1, fmodule2, basis1, basis2
 
     def matrix(self, basis1=None, basis2=None):
         r"""
@@ -1058,7 +1019,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: phi.matrix(e, f)  # given bases
             [-1  2  0]
             [ 5  1  2]
-            sage: type(phi.matrix())
+            sage: type(phi.matrix())                                                    # needs sage.libs.flint
             <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
 
         Matrix in bases different from those in which the homomorphism has
@@ -1105,24 +1066,9 @@ class FiniteRankFreeModuleMorphism(Morphism):
             [  1  -3   1]
             [-18  39 -18]
             [-25  54 -25]
-
         """
         from sage.matrix.constructor import matrix
-        fmodule1 = self.domain()
-        fmodule2 = self.codomain()
-        if basis1 is None:
-            basis1 = fmodule1.default_basis()
-        elif basis1 not in fmodule1.bases():
-            raise TypeError(str(basis1) + " is not a basis on the " +
-                            str(fmodule1) + ".")
-        if basis2 is None:
-            if self.is_endomorphism():
-                basis2 = basis1
-            else:
-                basis2 = fmodule2.default_basis()
-        elif basis2 not in fmodule2.bases():
-            raise TypeError(str(basis2) + " is not a basis on the " +
-                            str(fmodule2) + ".")
+        fmodule1, fmodule2, basis1, basis2 = self._modules_and_bases(basis1, basis2)
         if (basis1, basis2) not in self._matrices:
             if self._is_identity:
                 # The identity endomorphism
@@ -1228,7 +1174,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
             sage: psi._common_bases(phi) # matrix of phi w.r.t. (ep,f) computed
             (Basis (ep_0,ep_1,ep_2) on the Rank-3 free module M over the Integer Ring,
              Basis (f_0,f_1) on the Rank-2 free module N over the Integer Ring)
-
         """
         resu = None
         for bases in self._matrices:
@@ -1247,3 +1192,390 @@ class FiniteRankFreeModuleMorphism(Morphism):
                 except ValueError:
                     continue
         return resu
+
+    def display(self, basis1=None, basis2=None):
+        r"""
+        Display ``self`` as a matrix w.r.t to a pair of bases.
+
+        If the matrix is not known already, it is computed from the matrix in
+        another pair of bases by means of the change-of-basis formula.
+
+        INPUT:
+
+        - ``basis1`` -- (default: ``None``) basis of the domain of ``self``; if
+          none is provided, the domain's default basis is assumed
+        - ``basis2`` -- (default: ``None``) basis of the codomain of ``self``;
+          if none is provided, ``basis2`` is set to ``basis1`` if ``self`` is
+          an endomorphism, otherwise, ``basis2`` is set to the codomain's
+          default basis.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: N = FiniteRankFreeModule(ZZ, 2, name='N')
+            sage: e = M.basis('e'); f = N.basis('f')
+            sage: phi = M.hom(N, [[-1,2,0], [5,1,2]])
+            sage: phi.display()     # default bases
+                e_0 e_1 e_2
+            f_0⎛ -1   2   0⎞
+            f_1⎝  5   1   2⎠
+            sage: phi.display(e, f)  # given bases
+                e_0 e_1 e_2
+            f_0⎛ -1   2   0⎞
+            f_1⎝  5   1   2⎠
+
+        Matrix of an endomorphism::
+
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.display(ep)
+                 ep_0 ep_1 ep_2
+            ep_0⎛   1    2    3⎞
+            ep_1⎜   4    5    6⎟
+            ep_2⎝   7    8    9⎠
+            sage: phi.display(ep, ep)  # same as above
+                 ep_0 ep_1 ep_2
+            ep_0⎛   1    2    3⎞
+            ep_1⎜   4    5    6⎟
+            ep_2⎝   7    8    9⎠
+            sage: phi.display()  # matrix w.r.t to the module's default basis
+                e_0 e_1 e_2
+            e_0⎛  1  -3   1⎞
+            e_1⎜-18  39 -18⎟
+            e_2⎝-25  54 -25⎠
+        """
+        from sage.misc.latex import latex
+        from .format_utilities import is_atomic, FormattedExpansion
+        fmodule1, fmodule2, basis1, basis2 = self._modules_and_bases(basis1, basis2)
+        matrix = self.matrix(basis1, basis2)
+        if all(element._name for element in basis1):
+            basis1_names = [element._name for element in basis1]
+        else:
+            basis1_names = None
+        if all(element._name for element in basis2):
+            basis2_names = [element._name for element in basis2]
+        else:
+            basis2_names = None
+        resu_txt = matrix.str(unicode=True,
+                              top_border=basis1_names,
+                              left_border=basis2_names)
+        resu_latex = latex(matrix)
+        return FormattedExpansion(resu_txt, resu_latex)
+
+
+class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
+    r"""
+    Endomorphism of a free module of finite rank over a commutative ring.
+
+    An instance of this class is an endomorphism
+
+    .. MATH::
+
+        \phi:\ M \longrightarrow M,
+
+    where `M` is a free module of finite rank over a commutative ring `R`.
+
+    This is a Sage *element* class, the corresponding *parent* class being
+    :class:`~sage.tensor.modules.free_module_homset.FreeModuleEndset`.
+
+    INPUT:
+
+    - ``parent`` -- Hom-set Hom(M,M) to which the endomorphism belongs
+    - ``matrix_rep`` -- matrix representation of the endomorphism with
+      respect to the basis ``bases``; this entry can actually
+      be any material from which a matrix of size rank(N)*rank(M) of
+      elements of `R` can be constructed; the *columns* of the matrix give
+      the images of the basis of `M` (see the convention in the example below)
+    - ``bases`` -- (default: ``None``) pair ``(basis_domain, basis_codomain)``
+      defining the matrix representation, ``basis_domain`` and ``basis_codomain``
+      being two bases (typically the same) of the same module `M`; if ``None``,
+      the default basis of `M` is used for both.
+    - ``name`` -- (default: ``None``) string; name given to the endomorphism
+    - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote the
+      endomorphism. If ``None``, ``name`` will be used.
+    - ``is_identity`` -- boolean (default: ``False``); determines whether the
+      constructed object is the identity endomorphism. If set to ``True``,
+      then the entry ``matrix_rep`` is not used.
+
+    EXAMPLES:
+
+    The identity endomorphism::
+
+        sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+        sage: e = M.basis('e')
+        sage: Id = End(M).one(); Id
+        Identity endomorphism of Rank-3 free module M over the Integer Ring
+        sage: Id.parent()
+        Set of Morphisms from Rank-3 free module M over the Integer Ring
+         to Rank-3 free module M over the Integer Ring
+         in Category of finite dimensional modules over Integer Ring
+        sage: Id.parent() is End(M)
+        True
+
+    The matrix of ``Id`` with respect to the basis ``e`` is of course the identity
+    matrix::
+
+        sage: Id.matrix(e)
+        [1 0 0]
+        [0 1 0]
+        [0 0 1]
+
+    The identity acting on a module element::
+
+        sage: v = M([-2,1,4], basis=e, name='v'); v.display()
+        v = -2 e_0 + e_1 + 4 e_2
+        sage: Id(v) is v
+        True
+    """
+    def __init__(self, parent, matrix_rep, bases=None, name=None,
+                 latex_name=None, is_identity=False):
+        r"""
+        TESTS::
+
+            sage: from sage.tensor.modules.free_module_morphism import FiniteRankFreeModuleEndomorphism
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+
+        Generic endomorphism::
+
+            sage: phi = FiniteRankFreeModuleEndomorphism(End(M),
+            ....:                                        [[1,0,-3], [2,1,4], [7,8,9]],
+            ....:                                        name='phi', latex_name=r'\phi')
+            sage: phi
+            Generic endomorphism of Rank-3 free module M over the Integer Ring
+
+        Identity endomorphism::
+
+            sage: phi = FiniteRankFreeModuleEndomorphism(End(M), 'whatever',
+            ....:                                        is_identity=True)
+            sage: phi
+            Identity endomorphism of Rank-3 free module M over the Integer Ring
+            sage: phi.matrix(e)
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            sage: latex(phi)
+            \mathrm{Id}
+        """
+        from sage.matrix.special import identity_matrix
+        from sage.misc.constant_function import ConstantFunction
+
+        fmodule = parent.domain()
+        if bases is None:
+            def_basis = fmodule.default_basis()
+            if def_basis is None:
+                raise ValueError("the {} has no default ".format(fmodule) +
+                                 "basis")
+            bases = (def_basis, def_basis)
+        else:
+            bases = tuple(bases)  # insures bases is a tuple
+            if len(bases) != 2:
+                raise TypeError("the argument bases must contain 2 bases")
+            if bases[0] not in fmodule.bases():
+                raise TypeError("{} is not a basis on the {}".format(bases[0],
+                                                                     fmodule))
+            if bases[1] not in fmodule.bases():
+                raise TypeError("{} is not a basis on the {}".format(bases[1],
+                                                                     fmodule))
+        if not is_identity:
+            # Construction of a generic endomorphism
+            if isinstance(matrix_rep, ConstantFunction):
+                # the zero morphism
+                if matrix_rep().is_zero():
+                    matrix_rep = 0
+            if bases[0] == bases[1] and matrix_rep == 1:
+                is_identity = True
+        if is_identity:
+            # Construction of the identity endomorphism
+            if bases[0] != bases[1]:
+                raise TypeError("the two bases must coincide for " +
+                                "constructing the identity endomorphism.")
+            matrix_rep = 1
+            if name is None:
+                name = 'Id'
+            if latex_name is None and name == 'Id':
+                latex_name = r'\mathrm{Id}'
+        FiniteRankFreeModuleMorphism.__init__(self, parent, matrix_rep, bases,
+                                              name, latex_name)
+        if is_identity:
+            self._is_identity = True
+            self._repr_type_str = 'Identity'
+
+    def _some_matrix(self):
+        r"""
+        Return the matrix of the endomorphism ``self`` w.r.t. some basis.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi._some_matrix()
+            [1 2 3]
+            [4 5 6]
+            [7 8 9]
+        """
+        for (basis1, basis2), matrix in self._matrices.items():
+            if basis1 == basis2:
+                return matrix
+        for basis in self.domain().bases():
+            try:
+                return self.matrix(basis)
+            except ValueError:
+                pass
+        return self.matrix()
+
+    @lazy_attribute
+    def characteristic_polynomial(self):
+        r"""
+        Return the characteristic polynomial of ``self``.
+
+        :meth:`characteristic_polynomial` and :meth:`charpoly` are the same method.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.matrix(e)
+            [  1  -3   1]
+            [-18  39 -18]
+            [-25  54 -25]
+            sage: phi.characteristic_polynomial()
+            x^3 - 15*x^2 - 18*x
+            sage: phi.charpoly()
+            x^3 - 15*x^2 - 18*x
+            sage: phi.charpoly('T')
+            T^3 - 15*T^2 - 18*T
+        """
+        return self._some_matrix().characteristic_polynomial
+
+    charpoly = characteristic_polynomial
+
+    @lazy_attribute
+    def det(self):
+        r"""
+        Return the determinant of ``self``.
+
+        OUTPUT:
+
+        - element of the base ring of the modules on which ``self`` is defined,
+          equal to the determinant of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.matrix(e)
+            [  1  -3   1]
+            [-18  39 -18]
+            [-25  54 -25]
+            sage: phi.det()
+            0
+            sage: det(phi)
+            0
+        """
+        return self._some_matrix().det
+
+    determinant = det
+
+    @lazy_attribute
+    def fcp(self):
+        r"""
+        Return the factorization of the characteristic polynomial of ``self``.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.matrix(e)
+            [  1  -3   1]
+            [-18  39 -18]
+            [-25  54 -25]
+            sage: phi.fcp()                                                             # needs sage.libs.pari
+            x * (x^2 - 15*x - 18)
+            sage: phi.fcp('T')                                                          # needs sage.libs.pari
+            T * (T^2 - 15*T - 18)
+        """
+        return self._some_matrix().fcp
+
+    @lazy_attribute
+    def minimal_polynomial(self):
+        r"""
+        Return the minimal polynomial of ``self``.
+
+        :meth:`minimal_polynomial` and :meth:`minpoly` are the same method.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.matrix(e)
+            [  1  -3   1]
+            [-18  39 -18]
+            [-25  54 -25]
+            sage: phi.minpoly()                                                         # needs sage.libs.pari
+            x^3 - 15*x^2 - 18*x
+            sage: phi.minimal_polynomial()                                              # needs sage.libs.pari
+            x^3 - 15*x^2 - 18*x
+            sage: phi.minimal_polynomial('T')                                           # needs sage.libs.pari
+            T^3 - 15*T^2 - 18*T
+        """
+        return self._some_matrix().minimal_polynomial
+
+    minpoly = minimal_polynomial
+
+    @lazy_attribute
+    def trace(self):
+        r"""
+        Return the trace of ``self``.
+
+        OUTPUT:
+
+        - element of the base ring of the modules on which ``self`` is defined,
+          equal to the trace of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.matrix(e)
+            [  1  -3   1]
+            [-18  39 -18]
+            [-25  54 -25]
+            sage: phi.trace()
+            15
+            sage: id = M.identity_map()
+            sage: id.trace()
+            3
+        """
+        return self._some_matrix().trace

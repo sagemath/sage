@@ -56,7 +56,6 @@ For the precise specification see documentation for derivative_parse().
 AUTHORS:
 
 - David Harvey (2008-02)
-
 """
 
 from sage.rings.integer cimport Integer
@@ -69,10 +68,10 @@ def derivative_parse(args):
 
     INPUT:
 
-        args -- any iterable, interpreted as a sequence of 'variables' and
-        iteration counts. An iteration count is any integer type (python int
-        or Sage Integer). Iteration counts must be non-negative. Any object
-        which is not an integer is assumed to be a variable.
+    - ``args`` -- any iterable, interpreted as a sequence of 'variables' and
+      iteration counts. An iteration count is any integer type (python int
+      or Sage Integer). Iteration counts must be nonnegative. Any object
+      which is not an integer is assumed to be a variable.
 
     OUTPUT:
 
@@ -91,20 +90,20 @@ def derivative_parse(args):
 
     EXAMPLES::
 
-        sage: x = var("x")
-        sage: y = var("y")
+        sage: x = var("x")                                                              # needs sage.symbolic
+        sage: y = var("y")                                                              # needs sage.symbolic
         sage: from sage.misc.derivative import derivative_parse
 
     Differentiate twice with respect to x, then once with respect to y,
     then once with respect to x::
 
-        sage: derivative_parse([x, 2, y, x])
+        sage: derivative_parse([x, 2, y, x])                                            # needs sage.symbolic
         [x, x, y, x]
 
     Differentiate twice with respect to x, then twice with respect to
     the 'default variable'::
 
-        sage: derivative_parse([x, 2, 2])
+        sage: derivative_parse([x, 2, 2])                                               # needs sage.symbolic
         [x, x, None, None]
 
     Special case with empty input list::
@@ -115,11 +114,11 @@ def derivative_parse(args):
         sage: derivative_parse([-1])
         Traceback (most recent call last):
         ...
-        ValueError: derivative counts must be non-negative
+        ValueError: derivative counts must be nonnegative
 
     Special case with single list argument provided::
 
-        sage: derivative_parse(([x, y], ))
+        sage: derivative_parse(([x, y], ))                                              # needs sage.symbolic
         [x, y]
 
     If only the count is supplied::
@@ -135,6 +134,7 @@ def derivative_parse(args):
 
     Various other cases::
 
+        sage: # needs sage.symbolic
         sage: derivative_parse([x])
         [x]
         sage: derivative_parse([x, x])
@@ -145,7 +145,6 @@ def derivative_parse(args):
         []
         sage: derivative_parse([x, y, x, 2, 2, y])
         [x, y, x, x, None, None, y]
-
     """
     if not args:
         return [None]
@@ -161,7 +160,7 @@ def derivative_parse(args):
             # process iteration count
             count = int(arg)
             if count < 0:
-                raise ValueError("derivative counts must be non-negative")
+                raise ValueError("derivative counts must be nonnegative")
             if not got_var:
                 var = None
             for i from 0 <= i < count:
@@ -182,12 +181,12 @@ def derivative_parse(args):
 
 def multi_derivative(F, args):
     r"""
-    Calls F._derivative(var) for a sequence of variables specified by args.
+    Call F._derivative(var) for a sequence of variables specified by args.
 
     INPUT:
 
-        F -- any object with a _derivative(var) method.
-        args -- any tuple that can be processed by derivative_parse().
+    - ``F`` -- any object with a ``_derivative(var)`` method
+    - ``args`` -- any tuple that can be processed by :func:`derivative_parse`
 
     EXAMPLES::
 

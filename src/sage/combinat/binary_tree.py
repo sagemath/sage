@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Binary Trees
 
@@ -39,6 +38,7 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecated_function_alias
 
 
 class BinaryTree(AbstractClonableTree, ClonableArray,
@@ -65,8 +65,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
       be shortened to ``BinaryTree([None,None])``. It is also allowed to
       abbreviate ``[None, None]`` by ``[]``.
 
-    - ``check`` -- (default: ``True``) whether check for binary should be
-      performed or not.
+    - ``check`` -- boolean (default: ``True``); whether check for binary should
+      be performed or not
 
     EXAMPLES::
 
@@ -166,9 +166,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         `\QQ` (or any number field) has a ``list()`` method that
         returns itself as a `\QQ`-vector represented as a list.
-        Before :trac:`23961`, this would cause an infinite recursion
+        Before :issue:`23961`, this would cause an infinite recursion
         because `\QQ` elements give a list of length 1. For more
-        details, see :trac:`23961`. We test that constructing
+        details, see :issue:`23961`. We test that constructing
         binary trees from elements from `\QQ` terminates with
         an appropriate error::
 
@@ -592,7 +592,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
                   o   o   o   o
         """
         def node_to_str(bt):
-            return str(bt.label()) if hasattr(bt, "label") else u"o"
+            return str(bt.label()) if hasattr(bt, "label") else "o"
 
         if self.is_empty():
             from sage.typeset.unicode_art import empty_unicode_art
@@ -608,14 +608,14 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             node = node_to_str(self)
             rr_tree = self[1]._unicode_art_()
             if rr_tree._root > 2:
-                f_line = u" " * (rr_tree._root - 3) + node
-                s_line = u" " * (len(node) + rr_tree._root - 3) + u"╲"
+                f_line = " " * (rr_tree._root - 3) + node
+                s_line = " " * (len(node) + rr_tree._root - 3) + "╲"
                 t_repr = UnicodeArt([f_line, s_line]) * rr_tree
                 t_repr._root = rr_tree._root - 2
             else:
                 f_line = node
-                s_line = u" ╲"
-                t_line = u" " * (len(node) + 1)
+                s_line = " ╲"
+                t_line = " " * (len(node) + 1)
                 t_repr = UnicodeArt([f_line, s_line]) * (UnicodeArt([t_line]) + rr_tree)
                 t_repr._root = rr_tree._root
             t_repr._baseline = t_repr._h - 1
@@ -624,8 +624,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         if self[1].is_empty():
             node = node_to_str(self)
             lr_tree = self[0]._unicode_art_()
-            f_line = u" " * (lr_tree._root + 1) + node
-            s_line = u" " * lr_tree._root + u"╱"
+            f_line = " " * (lr_tree._root + 1) + node
+            s_line = " " * lr_tree._root + "╱"
             t_repr = UnicodeArt([f_line, s_line]) * lr_tree
             t_repr._root = lr_tree._root + 2
             t_repr._baseline = t_repr._h - 1
@@ -637,10 +637,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         nb_ = lr_tree._l - lr_tree._root + rr_tree._root - 1
         nb_L = nb_ // 2
         nb_R = nb_L + (nb_ % 2)
-        f_line = u" " * (lr_tree._root + 1) + u"_" * nb_L + node
-        f_line += u"_" * nb_R
-        s_line = u" " * lr_tree._root + u"╱" + u" " * (len(node) + rr_tree._root - 1 + (lr_tree._l - lr_tree._root)) + u"╲"
-        t_repr = UnicodeArt([f_line, s_line]) * (lr_tree + UnicodeArt([u" " * (len(node) + 2)]) + rr_tree)
+        f_line = " " * (lr_tree._root + 1) + "_" * nb_L + node
+        f_line += "_" * nb_R
+        s_line = " " * lr_tree._root + "╱" + " " * (len(node) + rr_tree._root - 1 + (lr_tree._l - lr_tree._root)) + "╲"
+        t_repr = UnicodeArt([f_line, s_line]) * (lr_tree + UnicodeArt([" " * (len(node) + 2)]) + rr_tree)
         t_repr._root = lr_tree._root + nb_L + 2
         t_repr._baseline = t_repr._h - 1
         return t_repr
@@ -707,10 +707,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``with_leaves`` -- (default: ``True``) a Boolean, determining
-          whether the resulting graph will be formed from the leaves
-          and the nodes of ``self`` (if ``True``), or only from the
-          nodes of ``self`` (if ``False``)
+        - ``with_leaves`` -- boolean (default: ``True``); whether the resulting
+          graph will be formed from the leaves and the nodes of ``self`` (if
+          ``True``), or only from the nodes of ``self`` (if ``False``)
 
         EXAMPLES::
 
@@ -747,7 +746,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t1.graph(with_leaves=False).edges(sort=True)
             [(0, 1, None), (0, 2, None), (2, 3, None), (2, 4, None)]
         """
-        from sage.graphs.graph import DiGraph
+        from sage.graphs.digraph import DiGraph
 
         if with_leaves:   # We want leaves and nodes.
 
@@ -867,10 +866,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         TESTS::
 
             sage: t1 = BinaryTree([[], [[], None]])
-            sage: t1.show()                                                             # optional - sage.plot
+            sage: t1.show()                                                             # needs sage.plot
         """
         try:
-            self.graph(with_leaves=with_leaves).show(layout='tree', tree_root=0, tree_orientation="down")
+            self.graph(with_leaves=with_leaves).show(layout='tree', tree_root=0, tree_orientation='down')
         except RuntimeError:
             # This is for the border case BinaryTree().show().
             self.graph(with_leaves=with_leaves).show()
@@ -914,7 +913,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         """
         self._require_mutable()
         child_lst = [self.__class__(self.parent(), x) for x in child_list]
-        if not(len(child_lst) == 2):
+        if len(child_lst) != 2:
             raise ValueError("the list must have length 2")
         self.__init__(self.parent(), child_lst, check=False)
 
@@ -943,7 +942,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         self._require_mutable()
         self.__init__(self.parent(), None)
 
-    def _to_dyck_word_rec(self, usemap="1L0R"):
+    def _to_dyck_word_rec(self, usemap='1L0R'):
         r"""
         EXAMPLES::
 
@@ -988,13 +987,14 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         EXAMPLES::
 
-            sage: BinaryTree().to_dyck_word_tamari()                                    # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: BinaryTree().to_dyck_word_tamari()
             []
-            sage: BinaryTree([]).to_dyck_word_tamari()                                  # optional - sage.combinat
+            sage: BinaryTree([]).to_dyck_word_tamari()
             [1, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word_tamari()                    # optional - sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word_tamari()
             [1, 1, 0, 0, 1, 0]
-            sage: BinaryTree([[[], [[], None]], [[], []]]).to_dyck_word_tamari()        # optional - sage.combinat
+            sage: BinaryTree([[[], [[], None]], [[], []]]).to_dyck_word_tamari()
             [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0]
         """
         return self.to_dyck_word("L1R0")
@@ -1128,9 +1128,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             ....:     return True
             sage: all( test_uni_join(p, q) for p in BinaryTrees(3) for q in BinaryTrees(3) )
             True
-            sage: p = BinaryTrees(6).random_element()                                   # optional - sage.combinat
-            sage: q = BinaryTrees(6).random_element()                                   # optional - sage.combinat
-            sage: test_uni_join(p, q)                                                   # optional - sage.combinat
+            sage: p = BinaryTrees(6).random_element()                                   # needs sage.combinat
+            sage: q = BinaryTrees(6).random_element()                                   # needs sage.combinat
+            sage: test_uni_join(p, q)                                                   # needs sage.combinat
             True
 
         Border cases::
@@ -1148,7 +1148,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         b = other.to_132_avoiding_permutation()
         return a.permutohedron_join(b).binary_search_tree_shape(left_to_right=False)
 
-    def tamari_meet(self, other, side="right"):
+    def tamari_meet(self, other, side='right'):
         r"""
         Return the meet of the binary trees ``self`` and ``other``
         (of equal size) in the `n`-th Tamari poset (where `n` is
@@ -1217,9 +1217,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             ....:     return True
             sage: all( test_uni_meet(p, q) for p in BinaryTrees(3) for q in BinaryTrees(3) )
             True
-            sage: p = BinaryTrees(6).random_element()                                   # optional - sage.combinat
-            sage: q = BinaryTrees(6).random_element()                                   # optional - sage.combinat
-            sage: test_uni_meet(p, q)                                                   # optional - sage.combinat
+            sage: p = BinaryTrees(6).random_element()                                   # needs sage.combinat
+            sage: q = BinaryTrees(6).random_element()                                   # needs sage.combinat
+            sage: test_uni_meet(p, q)                                                   # needs sage.combinat
             True
 
         Border cases::
@@ -1237,13 +1237,14 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         return from_tamari_sorting_tuple(meet)
 
     @combinatorial_map(name="to Dyck paths: up step, left tree, down step, right tree")
-    def to_dyck_word(self, usemap="1L0R"):
+    def to_dyck_word(self, usemap='1L0R'):
         r"""
         Return the Dyck word associated with ``self`` using the given map.
 
         INPUT:
 
-        - ``usemap`` -- a string, either ``1L0R``, ``1R0L``, ``L1R0``, ``R1L0``
+        - ``usemap`` -- string; either ``'1L0R'``, ``'1R0L'``, ``'L1R0'``,
+          ``'R1L0'``
 
         The bijection is defined recursively as follows:
 
@@ -1255,35 +1256,37 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         EXAMPLES::
 
-            sage: BinaryTree().to_dyck_word()                                           # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: BinaryTree().to_dyck_word()
             []
-            sage: BinaryTree([]).to_dyck_word()                                         # optional - sage.combinat
+            sage: BinaryTree([]).to_dyck_word()
             [1, 0]
-            sage: BinaryTree([[[], [[], None]], [[], []]]).to_dyck_word()               # optional - sage.combinat
+            sage: BinaryTree([[[], [[], None]], [[], []]]).to_dyck_word()
             [1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word()                           # optional - sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word()
             [1, 1, 0, 1, 0, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word("1R0L")                     # optional - sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word("1R0L")
             [1, 0, 1, 1, 0, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word("L1R0")                     # optional - sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word("L1R0")
             [1, 1, 0, 0, 1, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word("R1L0")                     # optional - sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word("R1L0")
             [1, 1, 0, 1, 0, 0]
-            sage: BinaryTree([[None,[]],None]).to_dyck_word("R10L")                     # optional - sage.combinat
+            sage: BinaryTree([[None,[]],None]).to_dyck_word("R10L")
             Traceback (most recent call last):
             ...
             ValueError: R10L is not a correct map
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: bt = BinaryTree([[[], [[], None]], [[], []]])
-            sage: bt == bt.to_dyck_word().to_binary_tree()                              # optional - sage.combinat
+            sage: bt == bt.to_dyck_word().to_binary_tree()
             True
-            sage: bt == bt.to_dyck_word("1R0L").to_binary_tree("1R0L")                  # optional - sage.combinat
+            sage: bt == bt.to_dyck_word("1R0L").to_binary_tree("1R0L")
             True
-            sage: bt == bt.to_dyck_word("L1R0").to_binary_tree("L1R0")                  # optional - sage.combinat
+            sage: bt == bt.to_dyck_word("L1R0").to_binary_tree("L1R0")
             True
-            sage: bt == bt.to_dyck_word("R1L0").to_binary_tree("R1L0")                  # optional - sage.combinat
+            sage: bt == bt.to_dyck_word("R1L0").to_binary_tree("R1L0")
             True
         """
         from sage.combinat.dyck_word import DyckWord
@@ -1291,7 +1294,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             raise ValueError("%s is not a correct map" % usemap)
         return DyckWord(self._to_dyck_word_rec(usemap))
 
-    def _to_ordered_tree(self, bijection="left", root=None):
+    def _to_ordered_tree(self, bijection='left', root=None):
         r"""
         Internal recursive method to obtain an ordered tree from a binary
         tree.
@@ -1301,16 +1304,16 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: bt = BinaryTree([[],[]])
             sage: bt._to_ordered_tree()
             [[], [[]]]
-            sage: bt._to_ordered_tree(bijection="right")
+            sage: bt._to_ordered_tree(bijection='right')
             [[[]], []]
-            sage: bt._to_ordered_tree(bijection="none")
+            sage: bt._to_ordered_tree(bijection='none')
             Traceback (most recent call last):
             ...
             ValueError: the bijection argument should be either left or right
             sage: bt = BinaryTree([[[], [[], None]], [[], []]])
             sage: bt._to_ordered_tree()
             [[], [[], []], [[], [[]]]]
-            sage: bt._to_ordered_tree(bijection="right")
+            sage: bt._to_ordered_tree(bijection='right')
             [[[[]], [[]]], [[]], []]
         """
         close_root = False
@@ -1375,7 +1378,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: bt.to_ordered_tree_right_branch()
             [[[[]], [[]]], [[]], []]
         """
-        return self._to_ordered_tree(bijection="right")
+        return self._to_ordered_tree(bijection='right')
 
     def _postfix_word(self, left_first=True, start=1):
         r"""
@@ -1423,7 +1426,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``reverse`` -- boolean (default ``False``) if ``True``,
+        - ``reverse`` -- boolean (default: ``False``); if ``True``,
           return instead the result for the left-right symmetric of the
           binary tree
 
@@ -1447,9 +1450,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
              ((1, 0, 0), 3),
              ((0, 0, 0), 3)]
 
-            sage: t = BinaryTrees(10).random_element()                                  # optional - sage.combinat
-            sage: u = t.left_right_symmetry()                                           # optional - sage.combinat
-            sage: t.tamari_sorting_tuple(True) == u.tamari_sorting_tuple()              # optional - sage.combinat
+            sage: t = BinaryTrees(10).random_element()                                  # needs sage.combinat
+            sage: u = t.left_right_symmetry()                                           # needs sage.combinat
+            sage: t.tamari_sorting_tuple(True) == u.tamari_sorting_tuple()              # needs sage.combinat
             True
 
         REFERENCES:
@@ -1541,10 +1544,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``with_leaves`` -- (default: ``False``) a Boolean, determining
-          whether the resulting graph will be formed from the leaves
-          and the nodes of ``self`` (if ``True``), or only from the
-          nodes of ``self`` (if ``False``)
+        - ``with_leaves`` -- boolean (default: ``False``); whether the
+          resulting graph will be formed from the leaves and the nodes of
+          ``self`` (if ``True``), or only from the nodes of ``self`` (if
+          ``False``)
 
         EXAMPLES::
 
@@ -1589,9 +1592,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         method provides the coordinates of this depiction, with the
         root as the top-left vertex.
 
-        OUTPUT:
-
-        a list of pairs of integers.
+        OUTPUT: list of pairs of integers
 
         Every vertex of the binary tree is mapped to a pair of
         integers. The conventions are the following. The root has
@@ -1614,11 +1615,11 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t = from_hexacode('2020222002000', BinaryTrees())
             sage: print(t.to_tilting())
             [(0, 1), (2, 3), (4, 5), (6, 7), (4, 7), (8, 9), (10, 11),
-            (8, 11), (4, 11), (12, 13), (4, 13), (2, 13), (0, 13)]
+             (8, 11), (4, 11), (12, 13), (4, 13), (2, 13), (0, 13)]
 
-            sage: w = DyckWord([1,1,1,1,0,1,1,0,0,0,1,1,0,1,0,1,1,0,1,1,0,0,0,0,0,0])   # optional - sage.combinat
-            sage: t2 = w.to_binary_tree()                                               # optional - sage.combinat
-            sage: len(t2.to_tilting()) == t2.node_number()                              # optional - sage.combinat
+            sage: w = DyckWord([1,1,1,1,0,1,1,0,0,0,1,1,0,1,0,1,1,0,1,1,0,0,0,0,0,0])   # needs sage.combinat
+            sage: t2 = w.to_binary_tree()                                               # needs sage.combinat
+            sage: len(t2.to_tilting()) == t2.node_number()                              # needs sage.combinat
             True
         """
         if not self:
@@ -1631,11 +1632,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        ``shift`` -- an integer (default 0)
+        - ``shift`` -- integer (default: 0)
 
-        OUTPUT:
-
-        list of tilting coordinates and number of leaves
+        OUTPUT: list of tilting coordinates and number of leaves
 
         EXAMPLES::
 
@@ -1671,13 +1670,13 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``with_leaves`` -- (default: ``False``) a Boolean, determining
-          whether the resulting poset will be formed from the leaves
-          and the nodes of ``self`` (if ``True``), or only from the
-          nodes of ``self`` (if ``False``)
-        - ``root_to_leaf`` -- (default: ``False``) a Boolean,
-          determining whether the poset orientation should be from root
-          to leaves (if ``True``) or from leaves to root (if ``False``).
+        - ``with_leaves`` -- boolean (default: ``False``); whether the
+          resulting poset will be formed from the leaves and the nodes of
+          ``self`` (if ``True``), or only from the nodes of ``self`` (if
+          ``False``)
+        - ``root_to_leaf`` -- boolean (default: ``False``); whether the poset
+          orientation should be from root to leaves (if ``True``) or from
+          leaves to root (if ``False``)
 
         EXAMPLES::
 
@@ -1873,7 +1872,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         labelled = self in LabelledBinaryTrees()
         labels = []
         t = self
-        while(t):
+        while t:
             border.append(t[1].left_border_symmetry())
             if labelled:
                 labels.append(t.label())
@@ -2526,12 +2525,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``side`` -- (default: 'left') set to 'left' to obtain a left
-          comb, and to 'right' to obtain a right comb.
+        - ``side`` -- (default: ``'left'``) set to ``'left'`` to obtain a left
+          comb, and to ``'right'`` to obtain a right comb
 
-        OUTPUT:
-
-        A list of binary trees.
+        OUTPUT: list of binary trees
 
         .. SEEALSO::
 
@@ -2668,9 +2665,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         composing it. A left (resp. right) branch is maximal if it is not
         included in a strictly longer left (resp. right) branch.
 
-        OUTPUT:
-
-        A list of two integers
+        OUTPUT: list of two integers
 
         EXAMPLES::
 
@@ -2819,7 +2814,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
           set to be the indeterminate `q` in the polynomial ring
           `\ZZ[q]`)
 
-        - ``q_factor`` -- a Boolean (default: ``False``) which
+        - ``q_factor`` -- a Boolean (default: ``False``); which
           determines whether to compute `h_{q} (T)` or to
           compute `f_{q} (T)` (namely, `h_{q} (T)` is obtained when
           ``q_factor == False``, and `f_{q} (T)` is obtained when
@@ -2832,36 +2827,37 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         only one vertex (which is a leaf)::
 
             sage: b = BinaryTree()
-            sage: b.q_hook_length_fraction()                                            # optional - sage.combinat
+            sage: b.q_hook_length_fraction()                                            # needs sage.combinat
             1
-            sage: b.q_hook_length_fraction(q_factor=True)                               # optional - sage.combinat
+            sage: b.q_hook_length_fraction(q_factor=True)                               # needs sage.combinat
             1
 
         Nothing different for a tree with one node and two leaves::
 
             sage: b = BinaryTree([]); b
             [., .]
-            sage: b.q_hook_length_fraction()                                            # optional - sage.combinat
+            sage: b.q_hook_length_fraction()                                            # needs sage.combinat
             1
-            sage: b.q_hook_length_fraction(q_factor=True)                               # optional - sage.combinat
+            sage: b.q_hook_length_fraction(q_factor=True)                               # needs sage.combinat
             1
 
         Let us get to a more interesting tree::
 
+            sage: # needs sage.combinat
             sage: b = BinaryTree([[[],[]],[[],None]]); b
             [[[., .], [., .]], [[., .], .]]
-            sage: b.q_hook_length_fraction()(q=1)                                       # optional - sage.combinat
+            sage: b.q_hook_length_fraction()(q=1)
             20
-            sage: b.q_hook_length_fraction()                                            # optional - sage.combinat
+            sage: b.q_hook_length_fraction()
             q^7 + 2*q^6 + 3*q^5 + 4*q^4 + 4*q^3 + 3*q^2 + 2*q + 1
-            sage: b.q_hook_length_fraction(q_factor=True)                               # optional - sage.combinat
+            sage: b.q_hook_length_fraction(q_factor=True)
             q^10 + 2*q^9 + 3*q^8 + 4*q^7 + 4*q^6 + 3*q^5 + 2*q^4 + q^3
-            sage: b.q_hook_length_fraction(q=2)                                         # optional - sage.combinat
+            sage: b.q_hook_length_fraction(q=2)
             465
-            sage: b.q_hook_length_fraction(q=2, q_factor=True)                          # optional - sage.combinat
+            sage: b.q_hook_length_fraction(q=2, q_factor=True)
             3720
             sage: q = PolynomialRing(ZZ, 'q').gen()
-            sage: b.q_hook_length_fraction(q=q**2)                                      # optional - sage.combinat
+            sage: b.q_hook_length_fraction(q=q**2)
             q^14 + 2*q^12 + 3*q^10 + 4*q^8 + 4*q^6 + 3*q^4 + 2*q^2 + 1
 
         Let us check the fact that `f_{q} (T)` is the generating function
@@ -2880,7 +2876,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             ....:     return all( q_hook_length_fraction_2(T)
             ....:                 == T.q_hook_length_fraction(q_factor=True)
             ....:                 for T in BinaryTrees(i) )
-            sage: test_genfun(4)                                                        # optional - sage.combinat
+            sage: test_genfun(4)                                                        # needs sage.combinat
             True
         """
         from sage.combinat.q_analogues import q_binomial
@@ -3214,7 +3210,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
             sage: b1 = BinaryTree([[],[]])
             sage: b2 = BinaryTree([None,[]])
-            sage: ascii_art((b1, b2, b1 \ b2))
+            sage: ascii_art((b1, b2, b1.under(b2)))
             (   o  , o  ,     _o_   )
             (  / \    \      /   \  )
             ( o   o    o    o     o )
@@ -3276,7 +3272,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         else:
             return B([self.under(bt[0]), bt[1]])
 
-    _backslash_ = under
+    _backslash_ = deprecated_function_alias(36394, under)
 
     def under_decomposition(self):
         r"""
@@ -3399,29 +3395,30 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: l = BinaryTree([g, u])
             sage: r = BinaryTree([u, g])
 
-            sage: list(g.dendriform_shuffle(g))                                         # optional - sage.combinat
+            sage: list(g.dendriform_shuffle(g))                                         # needs sage.combinat
             [[[., .], .], [., [., .]]]
 
-            sage: list(l.dendriform_shuffle(l))                                         # optional - sage.combinat
+            sage: list(l.dendriform_shuffle(l))                                         # needs sage.combinat
             [[[[[., .], .], .], .], [[[., .], [., .]], .],
             [[., .], [[., .], .]]]
 
-            sage: list(l.dendriform_shuffle(r))                                         # optional - sage.combinat
+            sage: list(l.dendriform_shuffle(r))                                         # needs sage.combinat
             [[[[., .], .], [., .]], [[., .], [., [., .]]]]
 
         TESTS::
 
-            sage: list(u.dendriform_shuffle(u))                                         # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: list(u.dendriform_shuffle(u))
             [.]
-            sage: list(u.dendriform_shuffle(g))                                         # optional - sage.combinat
+            sage: list(u.dendriform_shuffle(g))
             [[., .]]
-            sage: list(u.dendriform_shuffle(l))                                         # optional - sage.combinat
+            sage: list(u.dendriform_shuffle(l))
             [[[., .], .]]
-            sage: list(u.dendriform_shuffle(r))                                         # optional - sage.combinat
+            sage: list(u.dendriform_shuffle(r))
             [[., [., .]]]
-            sage: list(r.dendriform_shuffle(u))                                         # optional - sage.combinat
+            sage: list(r.dendriform_shuffle(u))
             [[., [., .]]]
-            sage: list(l.dendriform_shuffle(u))                                         # optional - sage.combinat
+            sage: list(l.dendriform_shuffle(u))
             [[[., .], .]]
         """
         from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
@@ -3531,32 +3528,33 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             ....:             if not BinaryTree(tree) == t:
             ....:                 return False
             ....:     return True
-            sage: test_bst_of_sc(4, False)                                              # optional - sage.combinat
+            sage: test_bst_of_sc(4, False)                                              # needs sage.combinat
             True
-            sage: test_bst_of_sc(5, False)   # long time                                # optional - sage.combinat
+            sage: test_bst_of_sc(5, False)      # long time                             # needs sage.combinat
             True
 
         The same with the left-to-right version of binary search::
 
-            sage: test_bst_of_sc(4, True)                                               # optional - sage.combinat
+            sage: test_bst_of_sc(4, True)                                               # needs sage.combinat
             True
-            sage: test_bst_of_sc(5, True)   # long time                                 # optional - sage.combinat
+            sage: test_bst_of_sc(5, True)       # long time                             # needs sage.combinat
             True
 
         Checking that the sylvester class is the set of linear extensions
         of the poset of the tree::
 
-            sage: all( sorted(t.canonical_labelling().sylvester_class())                # optional - sage.combinat
-            ....:      == sorted(list(v) for v in t.canonical_labelling().to_poset().linear_extensions())
-            ....:      for t in BinaryTrees(4) )
+            sage: all(sorted(t.canonical_labelling().sylvester_class())                 # needs sage.combinat sage.modules
+            ....:       == sorted(list(v)
+            ....:                 for v in t.canonical_labelling().to_poset().linear_extensions())
+            ....:     for t in BinaryTrees(4))
             True
 
         TESTS::
 
-            sage: list(BinaryTree([[],[]]).sylvester_class())                           # optional - sage.combinat
+            sage: list(BinaryTree([[],[]]).sylvester_class())                           # needs sage.combinat
             [[1, 3, 2], [3, 1, 2]]
             sage: bt = BinaryTree([[[],None],[[],[]]])
-            sage: l = list(bt.sylvester_class()); l                                     # optional - sage.combinat
+            sage: l = list(bt.sylvester_class()); l                                     # needs sage.combinat
             [[1, 2, 4, 6, 5, 3],
              [1, 4, 2, 6, 5, 3],
              [1, 4, 6, 2, 5, 3],
@@ -3577,14 +3575,14 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
              [6, 4, 1, 2, 5, 3],
              [6, 4, 1, 5, 2, 3],
              [6, 4, 5, 1, 2, 3]]
-            sage: len(l) == Integer(bt.q_hook_length_fraction()(q=1))                   # optional - sage.combinat
+            sage: len(l) == Integer(bt.q_hook_length_fraction()(q=1))                   # needs sage.combinat
             True
 
         Border cases::
 
-            sage: list(BinaryTree().sylvester_class())                                  # optional - sage.combinat
+            sage: list(BinaryTree().sylvester_class())                                  # needs sage.combinat
             [[]]
-            sage: list(BinaryTree([]).sylvester_class())                                # optional - sage.combinat
+            sage: list(BinaryTree([]).sylvester_class())                                # needs sage.combinat
             [[1]]
         """
         if self.is_empty():
@@ -3668,9 +3666,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         `T` which does not have 2 children. The resulting tree will
         have `2n + 1` nodes.
 
-        OUTPUT:
-
-        A full binary tree. See :meth:`is_full` for the definition of full.
+        OUTPUT: a full binary tree. See :meth:`is_full` for the definition of full
 
         .. SEEALSO::
 
@@ -3710,7 +3706,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
             sage: BinaryTree(None).to_full()
             [., .]
-
         """
         if self.is_empty():
             return BinaryTree("[.,.]")
@@ -3732,9 +3727,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
             bt == bt.prune().to_full()
 
-        OUTPUT:
-
-        A binary tree.
+        OUTPUT: a binary tree
 
         .. SEEALSO::
 
@@ -3932,8 +3925,8 @@ class BinaryTrees(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``size`` -- (optional) an integer
-    - ``full`` -- (optional) a boolean
+    - ``size`` -- integer (optional)
+    - ``full`` -- boolean (optional)
 
     OUTPUT:
 
@@ -4045,13 +4038,13 @@ def from_tamari_sorting_tuple(key):
 
     INPUT:
 
-    - ``key`` -- a tuple of integers
+    - ``key`` -- tuple of integers
 
     EXAMPLES::
 
         sage: from sage.combinat.binary_tree import from_tamari_sorting_tuple
-        sage: t = BinaryTrees(60).random_element()                                      # optional - sage.combinat
-        sage: from_tamari_sorting_tuple(t.tamari_sorting_tuple()[0]) == t               # optional - sage.combinat
+        sage: t = BinaryTrees(60).random_element()                                      # needs sage.combinat
+        sage: from_tamari_sorting_tuple(t.tamari_sorting_tuple()[0]) == t               # needs sage.combinat
         True
     """
     if not key:
@@ -4093,7 +4086,7 @@ class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
             sage: B is BinaryTrees_all()
             True
             sage: TestSuite(B).run() # long time
-            """
+        """
         DisjointUnionEnumeratedSets.__init__(
             self, Family(NonNegativeIntegers(), BinaryTrees_size),
             facade=True, keepkey=False)
@@ -4232,7 +4225,7 @@ class BinaryTrees_size(BinaryTrees):
 
     def cardinality(self):
         """
-        The cardinality of ``self``
+        The cardinality of ``self``.
 
         This is a Catalan number.
 
@@ -4255,16 +4248,16 @@ class BinaryTrees_size(BinaryTrees):
 
         EXAMPLES::
 
-            sage: BinaryTrees(5).random_element() # random                              # optional - sage.combinat
+            sage: BinaryTrees(5).random_element()  # random                             # needs sage.combinat
             [., [., [., [., [., .]]]]]
-            sage: BinaryTrees(0).random_element()                                       # optional - sage.combinat
+            sage: BinaryTrees(0).random_element()                                       # needs sage.combinat
             .
-            sage: BinaryTrees(1).random_element()                                       # optional - sage.combinat
+            sage: BinaryTrees(1).random_element()                                       # needs sage.combinat
             [., .]
 
         TESTS::
 
-            sage: all(BinaryTrees(10).random_element() in BinaryTrees(10)               # optional - sage.combinat
+            sage: all(BinaryTrees(10).random_element() in BinaryTrees(10)               # needs sage.combinat
             ....:     for i in range(20))
             True
         """
@@ -4481,7 +4474,7 @@ class FullBinaryTrees_size(BinaryTrees):
 
     def cardinality(self):
         r"""
-        The cardinality of ``self``
+        The cardinality of ``self``.
 
         This is a Catalan number.
 
@@ -4510,17 +4503,17 @@ class FullBinaryTrees_size(BinaryTrees):
 
         EXAMPLES::
 
-            sage: BinaryTrees(5, full=True).random_element()  # random                  # optional - sage.combinat
+            sage: BinaryTrees(5, full=True).random_element()  # random                  # needs sage.combinat
             [[], [[], []]]
-            sage: BinaryTrees(0, full=True).random_element()                            # optional - sage.combinat
+            sage: BinaryTrees(0, full=True).random_element()                            # needs sage.combinat
             .
-            sage: BinaryTrees(1, full=True).random_element()                            # optional - sage.combinat
+            sage: BinaryTrees(1, full=True).random_element()                            # needs sage.combinat
             [., .]
 
         TESTS::
 
             sage: B = BinaryTrees(19, full=True)
-            sage: all(B.random_element() in B for i in range(20))                       # optional - sage.combinat
+            sage: all(B.random_element() in B for i in range(20))                       # needs sage.combinat
             True
         """
         from sage.combinat.dyck_word import CompleteDyckWords_size
@@ -4635,10 +4628,10 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
       anyway!).
 
     - ``label`` -- (default: ``None``) the label to be put on the root
-      of this tree.
+      of this tree
 
-    - ``check`` -- (default: ``True``) whether checks should be
-      performed or not.
+    - ``check`` -- boolean (default: ``True``); whether checks should be
+      performed or not
 
     .. TODO::
 
@@ -4650,7 +4643,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
 
         sage: LabelledBinaryTree(None)
         .
-        sage: LabelledBinaryTree(None, label="ae")    # not well supported
+        sage: LabelledBinaryTree(None, label='ae')    # not well supported
         'ae'
         sage: LabelledBinaryTree([])
         None[., .]
@@ -4691,7 +4684,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
         sage: t1 == t1c
         False
 
-    We check for :trac:`16314`::
+    We check for :issue:`16314`::
 
         sage: t1 = LBT([ LBT([LBT([], label=2),
         ....:                 LBT([], label=5)], label=6),
@@ -5189,7 +5182,7 @@ class LabelledBinaryTrees(LabelledOrderedTrees):
         t = LT([], label=3)
         t1 = LT([t, t], label=42)
         t2 = LT([[], []], label=5)
-        return LT([t1, t2], label="toto")
+        return LT([t1, t2], label='toto')
 
     def unlabelled_trees(self):
         """
@@ -5235,9 +5228,9 @@ def binary_search_tree_shape(w, left_to_right=True):
 
     INPUT:
 
-    - ``w`` -- a list of integers
+    - ``w`` -- list of integers
 
-    - ``left_to_right`` -- boolean (default ``True``)
+    - ``left_to_right`` -- boolean (default: ``True``)
 
     OUTPUT: a non labelled binary tree
 

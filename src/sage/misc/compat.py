@@ -1,6 +1,6 @@
 """Cross-platform compatibility routines and wrappers."""
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2017 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -8,7 +8,7 @@
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 import os
 import subprocess
@@ -21,32 +21,7 @@ from sage.env import SAGE_LOCAL
 # Replacements (as needed) for Python stdlib functions to provide
 # better platform compatibility
 #################################################################
-if sys.platform == 'cygwin':
-    # find_library that works in cygwin adapted from
-    # http://cygwin-ports.svn.sourceforge.net/viewvc/cygwin-ports/ports/trunk/lang/python/2.5.2-ctypes-util-find_library.patch?revision=8245&view=markup
-    def _find_library(name):
-        libdirs = []
-        if SAGE_LOCAL:
-            libdirs.append(os.path.join(SAGE_LOCAL, 'lib'))
-        libdirs.extend(['/usr/local/lib', '/usr/lib'])
-        for libdir in libdirs:
-            for libext in ['dll.a', 'a']:
-                implib = os.path.join(libdir,
-                                      'lib{0}.{1}'.format(name, libext))
-                if not os.path.exists(implib):
-                    continue
-
-                cmd = ['dlltool', '-I', implib]
-
-                p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                          stderr=subprocess.PIPE,
-                                          universal_newlines=True)
-
-                stdout, stderr = p.communicate()
-
-                if p.returncode == 0:
-                    return stdout.strip()
-elif sys.platform == 'darwin':
+if sys.platform == 'darwin':
     # On OSX non-standard library paths are not automatically found by the
     # find_library implementation without setting DYLD_LIBRARY_PATH; see
     # https://github.com/sagemath/sage/issues/21399#comment:25
@@ -81,7 +56,7 @@ else:
 
 def find_library(name):
     """
-    Returns the shared library filename for a given library.
+    Return the shared library filename for a given library.
 
     The library name is given without any prefixes or suffixes--(e.g.
     just "Singular", not "libSingular", as shared library naming is
@@ -93,9 +68,8 @@ def find_library(name):
     EXAMPLES::
 
         sage: from sage.misc.compat import find_library
-        sage: find_library('giac')
+        sage: find_library('giac')                                                      # needs sage.libs.giac
         '...giac...'
-
     """
 
     result = _find_library(name)

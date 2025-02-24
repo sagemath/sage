@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.symbolic
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.symbolic
 r"""
 Vector Bundles
 """
@@ -14,6 +15,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.misc.cachefunc import cached_method
 from sage.categories.sets_cat import Sets
 from sage.categories.fields import Fields
+
 
 class VectorBundles(Category_over_base_ring):
     r"""
@@ -33,8 +35,7 @@ class VectorBundles(Category_over_base_ring):
 
     TESTS::
 
-        sage: TestSuite(C).run(skip="_test_category_over_bases")
-
+        sage: TestSuite(C).run(skip='_test_category_over_bases')
     """
     def __init__(self, base_space, base_field, name=None):
         r"""
@@ -45,8 +46,7 @@ class VectorBundles(Category_over_base_ring):
             sage: M = Manifold(2, 'M')
             sage: from sage.categories.vector_bundles import VectorBundles
             sage: C = VectorBundles(M, RR)
-            sage: TestSuite(C).run(skip="_test_category_over_bases")
-
+            sage: TestSuite(C).run(skip='_test_category_over_bases')
         """
         if base_field not in Fields().Topological():
             raise ValueError("base field must be a topological field")
@@ -62,7 +62,6 @@ class VectorBundles(Category_over_base_ring):
             sage: from sage.categories.vector_bundles import VectorBundles
             sage: VectorBundles(M, RR).super_categories()
             [Category of topological spaces]
-
         """
         return [Sets().Topological()]
 
@@ -76,7 +75,6 @@ class VectorBundles(Category_over_base_ring):
             sage: from sage.categories.vector_bundles import VectorBundles
             sage: VectorBundles(M, RR).base_space()
             2-dimensional topological manifold M
-
         """
         return self._base_space
 
@@ -93,11 +91,10 @@ class VectorBundles(Category_over_base_ring):
             sage: VectorBundles(M, RR)._repr_object_names()
             'vector bundles over Real Field with 53 bits of precision with base
              space 2-dimensional differentiable manifold M'
-
         """
         base_space = self._base_space
         return Category_over_base_ring._repr_object_names(self) + \
-               " with base space %s"%base_space
+               " with base space %s" % base_space
 
     class SubcategoryMethods:
         @cached_method
@@ -120,7 +117,6 @@ class VectorBundles(Category_over_base_ring):
                 sage: TestSuite(VectorBundles(M, RR).Differentiable()).run()
                 sage: VectorBundles(M, RR).Differentiable.__module__
                 'sage.categories.vector_bundles'
-
             """
             return self._with_axiom('Differentiable')
 

@@ -13,11 +13,11 @@ cdef class MultiModularBasis_base():
     cdef unsigned long _num_primes
 
     cdef mod_int _new_random_prime(self, set known_primes) except 1
-    cdef mod_int last_prime(self)
+    cdef mod_int last_prime(self) noexcept
     cdef _realloc_to_new_count(self, new_count)
     cdef int _extend_moduli_to_height_c(self, mpz_t height) except -1
-    cdef void _refresh_products(self, int start)
-    cdef void _refresh_prod(self)
+    cdef void _refresh_products(self, int start) noexcept
+    cdef void _refresh_prod(self) noexcept
     cdef void _refresh_precomputations(self, int start) except *
     cdef int min_moduli_count(self, mpz_t height) except -1
 

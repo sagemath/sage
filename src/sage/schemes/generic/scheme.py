@@ -19,13 +19,17 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.parent import Parent
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer_ring import ZZ
 from sage.categories.commutative_rings import CommutativeRings
-from sage.rings.ideal import is_Ideal
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.rings.ideal import Ideal_generic
+from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.point import SchemeTopologicalPoint_prime_ideal
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
+lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve_generic', as_='EllipticCurve')
 
 
 def is_Scheme(x):
@@ -34,21 +38,24 @@ def is_Scheme(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT:
-
-    Boolean. Whether ``x`` derives from :class:`Scheme`.
+    OUTPUT: boolean; whether ``x`` derives from :class:`Scheme`
 
     EXAMPLES::
 
         sage: from sage.schemes.generic.scheme import is_Scheme
         sage: is_Scheme(5)
+        doctest:warning...
+        DeprecationWarning: The function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: X = Spec(QQ)
         sage: is_Scheme(X)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead.")
     return isinstance(x, Scheme)
 
 
@@ -63,8 +70,8 @@ class Scheme(Parent):
       the base scheme. If a commutative ring is passed, the spectrum
       of the ring will be used as base.
 
-    - ``category`` -- the category (optional). Will be automatically
-      constructed by default.
+    - ``category`` -- the category (optional); will be automatically
+      constructed by default
 
     EXAMPLES::
 
@@ -77,7 +84,7 @@ class Scheme(Parent):
         sage: ProjectiveSpace(4, QQ).category()
         Category of schemes over Rational Field
 
-    There is a special and unique `Spec(\ZZ)` that is the default base
+    There is a special and unique `\mathrm{Spec}(\ZZ)` that is the default base
     scheme::
 
         sage: Spec(ZZ).base_scheme() is Spec(QQ).base_scheme()
@@ -90,24 +97,22 @@ class Scheme(Parent):
 
         TESTS:
 
-        The full test suite works since :trac:`7946`::
+        The full test suite works since :issue:`7946`::
 
             sage: R.<x, y> = QQ[]
             sage: I = (x^2 - y^2)*R
             sage: RmodI = R.quotient(I)
             sage: X = Spec(RmodI)
-            sage: TestSuite(X).run()
-
+            sage: TestSuite(X).run()                                                    # needs sage.libs.singular
         """
-        from sage.schemes.generic.morphism import is_SchemeMorphism
         from sage.categories.map import Map
         from sage.categories.rings import Rings
 
         if X is None:
             self._base_ring = ZZ
-        elif is_Scheme(X):
+        elif isinstance(X, Scheme):
             self._base_scheme = X
-        elif is_SchemeMorphism(X):
+        elif isinstance(X, SchemeMorphism):
             self._base_morphism = X
         elif X in CommutativeRings():
             self._base_ring = X
@@ -162,7 +167,7 @@ class Scheme(Parent):
 
         TESTS:
 
-        This shows that issue at :trac:`7389` is solved::
+        This shows that issue at :issue:`7389` is solved::
 
             sage: S = Spec(ZZ)
             sage: f = S.identity_morphism()
@@ -198,15 +203,13 @@ class Scheme(Parent):
         """
         Call syntax for schemes.
 
-        INPUT/OUTPUT:
-
-        The arguments must be one of the following:
+        INPUT/OUTPUT: the arguments must be one of the following:
 
         - a ring or a scheme `S`. Output will be the set `X(S)` of
           `S`-valued points on `X`.
 
         - If `S` is a list or tuple or just the coordinates, return a
-          point in `X(T)`, where `T` is the base scheme of self.
+          point in `X(T)`, where `T` is the base scheme of ``self``.
 
         EXAMPLES::
 
@@ -216,17 +219,17 @@ class Scheme(Parent):
 
             sage: A(QQ)
             Set of rational points of Affine Space of dimension 2 over Rational Field
-            sage: A(RR)
+            sage: A(RR)                                                                 # needs sage.rings.real_mpfr
             Set of rational points of Affine Space of dimension 2
              over Real Field with 53 bits of precision
 
         Space of dimension 2 over Rational Field::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: A(NumberField(x^2 + 1, 'a'))                                          # optional - sage.rings.number_field
+            sage: A(NumberField(x^2 + 1, 'a'))                                          # needs sage.rings.number_field
             Set of rational points of Affine Space of dimension 2
              over Number Field in a with defining polynomial x^2 + 1
-            sage: A(GF(7))                                                              # optional - sage.rings.finite_rings
+            sage: A(GF(7))
             Traceback (most recent call last):
             ...
             ValueError: There must be a natural map S --> R, but
@@ -243,7 +246,7 @@ class Scheme(Parent):
             sage: A(1, 0)
             (1, 0)
 
-        Check that :trac:`16832` is fixed::
+        Check that :issue:`16832` is fixed::
 
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: X = P.subscheme(x^2 - y^2)
@@ -255,7 +258,7 @@ class Scheme(Parent):
             S = args[0]
             if S in CommutativeRings():
                 return self.point_homset(S)
-            elif is_Scheme(S):
+            elif isinstance(S, Scheme):
                 return S.Hom(self)
             elif isinstance(S, (list, tuple)):
                 args = S
@@ -267,16 +270,14 @@ class Scheme(Parent):
 
     @cached_method
     def point_homset(self, S=None):
-        """
+        r"""
         Return the set of S-valued points of this scheme.
 
         INPUT:
 
-        - ``S`` -- a commutative ring.
+        - ``S`` -- a commutative ring
 
-        OUTPUT:
-
-        The set of morphisms `Spec(S)\to X`.
+        OUTPUT: the set of morphisms `\mathrm{Spec}(S) \to X`
 
         EXAMPLES::
 
@@ -285,14 +286,14 @@ class Scheme(Parent):
             Set of rational points of Projective Space of dimension 3 over Integer Ring
             sage: P.point_homset(QQ)
             Set of rational points of Projective Space of dimension 3 over Rational Field
-            sage: P.point_homset(GF(11))                                                # optional - sage.rings.finite_rings
+            sage: P.point_homset(GF(11))
             Set of rational points of Projective Space of dimension 3 over
              Finite Field of size 11
 
         TESTS::
 
             sage: P = ProjectiveSpace(QQ, 3)
-            sage: P.point_homset(GF(11))                                                # optional - sage.rings.finite_rings
+            sage: P.point_homset(GF(11))
             Traceback (most recent call last):
             ...
             ValueError: There must be a natural map S --> R, but
@@ -312,12 +313,10 @@ class Scheme(Parent):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
-        OUTPUT:
-
-        A point of the scheme.
+        OUTPUT: a point of the scheme
 
         EXAMPLES::
 
@@ -326,13 +325,13 @@ class Scheme(Parent):
             (4, 5)
 
             sage: R.<t> = PolynomialRing(QQ)
-            sage: E = EllipticCurve([t + 1, t, t, 0, 0])
-            sage: E.point([0, 0])
+            sage: E = EllipticCurve([t + 1, t, t, 0, 0])                                # needs sage.schemes
+            sage: E.point([0, 0])                                                       # needs sage.schemes
             (0 : 0 : 1)
         """
         # todo: update elliptic curve stuff to take point_homset as argument
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        if is_EllipticCurve(self):
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+        if isinstance(self, EllipticCurve_generic):
             try:
                 return self._point(self.point_homset(), v, check=check)
             except AttributeError:  # legacy code without point_homset
@@ -375,7 +374,7 @@ class Scheme(Parent):
 
     def __truediv__(self, Y):
         """
-        Return the base extension of self to Y.
+        Return the base extension of ``self`` to Y.
 
         See :meth:`base_extend` for details.
 
@@ -386,18 +385,16 @@ class Scheme(Parent):
             Affine Space of dimension 3 over Integer Ring
             sage: A/QQ
             Affine Space of dimension 3 over Rational Field
-            sage: A/GF(7)                                                               # optional - sage.rings.finite_rings
+            sage: A/GF(7)
             Affine Space of dimension 3 over Finite Field of size 7
         """
         return self.base_extend(Y)
 
     def base_ring(self):
         """
-        Return the base ring of the scheme self.
+        Return the base ring of the scheme ``self``.
 
-        OUTPUT:
-
-        A commutative ring.
+        OUTPUT: a commutative ring
 
         EXAMPLES::
 
@@ -424,9 +421,7 @@ class Scheme(Parent):
         """
         Return the base scheme.
 
-        OUTPUT:
-
-        A scheme.
+        OUTPUT: a scheme
 
         EXAMPLES::
 
@@ -455,9 +450,7 @@ class Scheme(Parent):
         Return the structure morphism from ``self`` to its base
         scheme.
 
-        OUTPUT:
-
-        A scheme morphism.
+        OUTPUT: a scheme morphism
 
         EXAMPLES::
 
@@ -498,7 +491,7 @@ class Scheme(Parent):
         OUTPUT:
 
         The global coordinate ring of this scheme, if
-        defined. Otherwise raise a ``ValueError``.
+        defined. Otherwise this raises a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -518,9 +511,7 @@ class Scheme(Parent):
         """
         Return the absolute dimension of this scheme.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -544,9 +535,7 @@ class Scheme(Parent):
         """
         Return the relative dimension of this scheme over its base.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -564,9 +553,7 @@ class Scheme(Parent):
         """
         Return the identity morphism.
 
-        OUTPUT:
-
-        The identity morphism of the scheme ``self``.
+        OUTPUT: the identity morphism of the scheme ``self``
 
         EXAMPLES::
 
@@ -590,12 +577,10 @@ class Scheme(Parent):
         - ``Y`` -- the codomain scheme (optional); if ``Y`` is not
           given, try to determine ``Y`` from context
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
-        OUTPUT:
-
-        The scheme morphism from ``self`` to ``Y`` defined by ``x``.
+        OUTPUT: the scheme morphism from ``self`` to ``Y`` defined by ``x``
 
         EXAMPLES::
 
@@ -607,7 +592,7 @@ class Scheme(Parent):
               Defn: Structure map
         """
         if Y is None:
-            if is_Scheme(x):
+            if isinstance(x, Scheme):
                 return self.Hom(x).natural_map()
             else:
                 raise TypeError("unable to determine codomain")
@@ -624,12 +609,10 @@ class Scheme(Parent):
         - ``category`` -- a category (optional); the category of the
           Hom-set
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
-          to check the defining data for consistency.
+        - ``check`` -- boolean (default: ``True``); whether
+          to check the defining data for consistency
 
-        OUTPUT:
-
-        The set of morphisms from ``self`` to ``Y``.
+        OUTPUT: the set of morphisms from ``self`` to ``Y``
 
         EXAMPLES::
 
@@ -645,10 +628,6 @@ class Scheme(Parent):
             sage: S._Hom_(P).__class__
             <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category'>
 
-            sage: E = EllipticCurve('37a1')
-            sage: Hom(E, E).__class__
-            <class 'sage.schemes.projective.projective_homset.SchemeHomset_polynomial_projective_space_with_category'>
-
             sage: Hom(Spec(ZZ), Spec(ZZ)).__class__
             <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category_with_equality_by_id'>
         """
@@ -663,7 +642,7 @@ class Scheme(Parent):
 
         INPUT:
 
-        - ``n`` -- integer.
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -672,18 +651,19 @@ class Scheme(Parent):
 
         EXAMPLES::
 
-            sage: P.<x> = PolynomialRing(GF(3))                                         # optional - sage.rings.finite_rings
-            sage: C = HyperellipticCurve(x^3 + x^2 + 1)                                 # optional - sage.rings.finite_rings
-            sage: C.count_points(4)                                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.schemes
+            sage: P.<x> = PolynomialRing(GF(3))
+            sage: C = HyperellipticCurve(x^3 + x^2 + 1)
+            sage: C.count_points(4)
             [6, 12, 18, 96]
-            sage: C.base_extend(GF(9,'a')).count_points(2)                              # optional - sage.rings.finite_rings
+            sage: C.base_extend(GF(9,'a')).count_points(2)                              # needs sage.rings.finite_rings
             [12, 96]
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # optional - sage.rings.finite_rings
-            sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # optional - sage.rings.finite_rings
-            sage: X.count_points(2)                                                     # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # needs sage.rings.finite_rings
+            sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # needs sage.rings.finite_rings
+            sage: X.count_points(2)                                                     # needs sage.libs.singular sage.rings.finite_rings
             [5, 17]
         """
         F = self.base_ring()
@@ -702,13 +682,13 @@ class Scheme(Parent):
 
         Derived classes should override this method.
 
-        OUTPUT: rational function in one variable.
+        OUTPUT: rational function in one variable
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # optional - sage.rings.finite_rings
-            sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # optional - sage.rings.finite_rings
-            sage: X.zeta_function()                                                     # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # needs sage.rings.finite_rings
+            sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # needs sage.rings.finite_rings
+            sage: X.zeta_function()                                                     # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -728,44 +708,43 @@ class Scheme(Parent):
 
         - ``t`` -- the variable which the series should be returned
 
-        OUTPUT:
-
-        A power series approximating the zeta function of ``self``
+        OUTPUT: a power series approximating the zeta function of ``self``
 
         EXAMPLES::
 
-            sage: P.<x> = PolynomialRing(GF(3))                                         # optional - sage.rings.finite_rings
-            sage: C = HyperellipticCurve(x^3 + x^2 + 1)                                 # optional - sage.rings.finite_rings
+            sage: P.<x> = PolynomialRing(GF(3))
+            sage: C = HyperellipticCurve(x^3 + x^2 + 1)                                 # needs sage.schemes
             sage: R.<t> = PowerSeriesRing(Integers())
-            sage: C.zeta_series(4, t)                                                   # optional - sage.rings.finite_rings
+            sage: C.zeta_series(4, t)                                                   # needs sage.schemes
             1 + 6*t + 24*t^2 + 78*t^3 + 240*t^4 + O(t^5)
-            sage: (1+2*t+3*t^2)/(1-t)/(1-3*t) + O(t^5)                                  # optional - sage.rings.finite_rings
+            sage: (1+2*t+3*t^2)/(1-t)/(1-3*t) + O(t^5)
             1 + 6*t + 24*t^2 + 78*t^3 + 240*t^4 + O(t^5)
 
         If the scheme has a method ``zeta_function``, this is used to
         provide the required approximation.
         Otherwise this function depends on ``count_points``, which is only
         defined for prime order fields for general schemes.
-        Nonetheless, since :trac:`15108` and :trac:`15148`, it supports
+        Nonetheless, since :issue:`15108` and :issue:`15148`, it supports
         hyperelliptic curves over non-prime fields::
 
-            sage: C.base_extend(GF(9, 'a')).zeta_series(4, t)                           # optional - sage.rings.finite_rings
+            sage: C.base_extend(GF(9, 'a')).zeta_series(4, t)                           # needs sage.rings.finite_rings sage.schemes
             1 + 12*t + 120*t^2 + 1092*t^3 + 9840*t^4 + O(t^5)
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # optional - sage.rings.finite_rings
-            sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # needs sage.rings.finite_rings
+            sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # needs sage.rings.finite_rings
+
             sage: R.<t> = PowerSeriesRing(Integers())
-            sage: X.zeta_series(2, t)                                                   # optional - sage.rings.finite_rings
+            sage: X.zeta_series(2, t)                                                   # needs sage.libs.singular sage.rings.finite_rings
             1 + 5*t + 21*t^2 + O(t^3)
 
         TESTS::
 
             sage: P.<x> = PolynomialRing(ZZ)
-            sage: C = HyperellipticCurve(x^3 + x + 1)
+            sage: C = HyperellipticCurve(x^3 + x + 1)                                   # needs sage.schemes
             sage: R.<t> = PowerSeriesRing(Integers())
-            sage: C.zeta_series(4, t)
+            sage: C.zeta_series(4, t)                                                   # needs sage.schemes
             Traceback (most recent call last):
             ...
             TypeError: zeta functions only defined for schemes
@@ -790,18 +769,24 @@ class Scheme(Parent):
 
 def is_AffineScheme(x):
     """
-    Return True if `x` is an affine scheme.
+    Return ``True`` if `x` is an affine scheme.
 
     EXAMPLES::
 
         sage: from sage.schemes.generic.scheme import is_AffineScheme
         sage: is_AffineScheme(5)
+        doctest:warning...
+        DeprecationWarning: The function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: E = Spec(QQ)
         sage: is_AffineScheme(E)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead.")
     return isinstance(x, AffineScheme)
+
 
 class AffineScheme(UniqueRepresentation, Scheme):
     """
@@ -827,7 +812,6 @@ class AffineScheme(UniqueRepresentation, Scheme):
 
         For affine spaces over a base ring and subschemes thereof, see
         :class:`sage.schemes.generic.algebraic_scheme.AffineSpace`.
-
     """
     def __init__(self, R, S=None, category=None):
         """
@@ -897,9 +881,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -917,9 +899,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -935,9 +915,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         Construct a scheme-valued or topological point of ``self``.
 
-        INPUT/OUTPUT:
-
-        The argument ``x`` must be one of the following:
+        INPUT/OUTPUT: the argument ``x`` must be one of the following:
 
         - a prime ideal of the coordinate ring; the output will
           be the corresponding point of `X`
@@ -952,8 +930,9 @@ class AffineScheme(UniqueRepresentation, Scheme):
             Point on Spectrum of Integer Ring defined by the Principal ideal (3) of Integer Ring
             sage: type(P)
             <class 'sage.schemes.generic.scheme.AffineScheme_with_category.element_class'>
-            sage: S(ZZ.ideal(next_prime(1000000)))
-            Point on Spectrum of Integer Ring defined by the Principal ideal (1000003) of Integer Ring
+            sage: S(ZZ.ideal(next_prime(1000000)))                                      # needs sage.libs.pari
+            Point on Spectrum of Integer Ring
+             defined by the Principal ideal (1000003) of Integer Ring
 
             sage: R.<x, y, z> = QQ[]
             sage: S = Spec(R)
@@ -962,7 +941,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
              in x, y, z over Rational Field defined by the Ideal (x, y, z)
               of Multivariate Polynomial Ring in x, y, z over Rational Field
 
-        This indicates the fix of :trac:`12734`::
+        This indicates the fix of :issue:`12734`::
 
             sage: S = Spec(ZZ)
             sage: S(ZZ)
@@ -1006,7 +985,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         if len(args) == 1:
             x = args[0]
             if ((isinstance(x, self.element_class) and (x.parent() is self or x.parent() == self))
-                or (is_Ideal(x) and x.ring() is self.coordinate_ring())):
+                or (isinstance(x, Ideal_generic) and x.ring() is self.coordinate_ring())):
                 # Construct a topological point from x.
                 return self._element_constructor_(x)
         try:
@@ -1036,7 +1015,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
                 return x
             elif x.parent() == self:
                 return self.element_class(self, x.prime_ideal())
-        elif is_Ideal(x) and x.ring() is self.coordinate_ring():
+        elif isinstance(x, Ideal_generic) and x.ring() is self.coordinate_ring():
             return self.element_class(self, x)
         raise TypeError('cannot convert %s to a topological point of %s' % (x, self))
 
@@ -1044,9 +1023,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         r"""
         Return an element of the spectrum of the ring.
 
-        OUTPUT:
-
-        A point of the affine scheme ``self``.
+        OUTPUT: a point of the affine scheme ``self``
 
         EXAMPLES::
 
@@ -1064,9 +1041,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         Return the underlying ring of this scheme.
 
-        OUTPUT:
-
-        A commutative ring.
+        OUTPUT: a commutative ring
 
         EXAMPLES::
 
@@ -1092,9 +1067,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         Return the absolute dimension of this scheme.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1112,9 +1085,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         Return the relative dimension of this scheme over its base.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1175,12 +1146,10 @@ class AffineScheme(UniqueRepresentation, Scheme):
         - ``Y`` -- the codomain scheme (optional); if ``Y`` is not
           given, try to determine ``Y`` from context
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
-        OUTPUT:
-
-        The scheme morphism from ``self`` to ``Y`` defined by ``x``.
+        OUTPUT: the scheme morphism from ``self`` to ``Y`` defined by ``x``
 
         EXAMPLES:
 
@@ -1199,12 +1168,12 @@ class AffineScheme(UniqueRepresentation, Scheme):
 
         TESTS:
 
-        We can construct a morphism to an affine curve (:trac:`7956`)::
+        We can construct a morphism to an affine curve (:issue:`7956`)::
 
             sage: S.<p,q> = QQ[]
             sage: A1.<r> = AffineSpace(QQ, 1)
-            sage: A1_emb = Curve(p - 2)
-            sage: A1.hom([2, r], A1_emb)
+            sage: A1_emb = Curve(p - 2)                                                 # needs sage.schemes
+            sage: A1.hom([2, r], A1_emb)                                                # needs sage.schemes
             Scheme morphism:
               From: Affine Space of dimension 1 over Rational Field
               To:   Affine Plane Curve over Rational Field defined by p - 2
@@ -1213,7 +1182,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         from sage.categories.map import Map
         from sage.categories.rings import Rings
 
-        if is_Scheme(x):
+        if isinstance(x, Scheme):
             return self.Hom(x).natural_map()
         if Y is None and isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
             # x is a morphism of Rings

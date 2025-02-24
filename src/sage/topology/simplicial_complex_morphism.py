@@ -126,9 +126,16 @@ def is_SimplicialComplexMorphism(x):
         sage: f = {0:0,1:1,3:3,4:4}
         sage: x = H(f)
         sage: is_SimplicialComplexMorphism(x)
+        doctest:warning...
+        DeprecationWarning: The function is_SimplicialComplexMorphism is deprecated;
+        use 'isinstance(..., SimplicialComplexMorphism)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
-
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_SimplicialComplexMorphism is deprecated; "
+                "use 'isinstance(..., SimplicialComplexMorphism)' instead.")
     return isinstance(x, SimplicialComplexMorphism)
 
 
@@ -161,17 +168,14 @@ class SimplicialComplexMorphism(Morphism):
         """
         if not isinstance(X, SimplicialComplex) or not isinstance(Y, SimplicialComplex):
             raise ValueError("X and Y must be SimplicialComplexes")
-        if not set(f.keys()) == set(X.vertices()):
+        if set(f.keys()) != set(X.vertices()):
             raise ValueError("f must be a dictionary from the vertex set of X to single values in the vertex set of Y")
         dim = X.dimension()
         Y_faces = Y.faces()
-        for k in range(dim+1):
+        for k in range(dim + 1):
             for i in X.faces()[k]:
-                tup = i.tuple()
-                fi = []
-                for j in tup:
-                    fi.append(f[j])
-                v = Simplex(set(fi))
+                fi = {f[j] for j in i.tuple()}
+                v = Simplex(fi)
             if v not in Y_faces[v.dimension()]:
                 raise ValueError("f must be a dictionary from the vertices of X to the vertices of Y")
         self._vertex_dictionary = f
@@ -244,20 +248,43 @@ class SimplicialComplexMorphism(Morphism):
             (0, 1)
             sage: g(Simplex([0,1]), orientation=True)                                   # needs sage.modules
             ((0, 1), -1)
+
+        TESTS:
+
+        Test that the problem in :issue:`36849` has been fixed::
+
+            sage: S = SimplicialComplex([[1,2]],is_mutable=False).barycentric_subdivision()
+            sage: T = SimplicialComplex([[1,2],[2,3],[1,3]],is_mutable=False).barycentric_subdivision()
+            sage: f = {x[0]:x[0] for x in S.cells()[0]}
+            sage: H = Hom(S,T)
+            sage: z = H(f)
+            sage: z.associated_chain_complex_morphism()
+            Chain complex morphism:
+              From: Chain complex with at most 2 nonzero terms over Integer Ring
+              To:   Chain complex with at most 2 nonzero terms over Integer Ring
         """
         dim = self.domain().dimension()
         if not isinstance(x, Simplex) or x.dimension() > dim or x not in self.domain().faces()[x.dimension()]:
             raise ValueError("x must be a simplex of the source of f")
         tup = x.tuple()
-        fx = []
-        for j in tup:
-            fx.append(self._vertex_dictionary[j])
+        fx = [self._vertex_dictionary[j] for j in tup]
         if orientation:
             from sage.algebras.steenrod.steenrod_algebra_misc import convert_perm
             from sage.combinat.permutation import Permutation
 
             if len(set(fx)) == len(tup):
-                oriented = Permutation(convert_perm(fx)).signature()
+                # We need to compare the image simplex, as given in
+                # the order specified by self, with its orientation in
+                # the codomain.
+                image = Simplex(set(fx))
+                Y_faces = self.codomain()._n_cells_sorted(image.dimension())
+                idx = Y_faces.index(image)
+                actual_image = Y_faces[idx]
+                # The signature of the permutation specified by self:
+                sign_image = Permutation(convert_perm(fx)).signature()
+                # The signature of the permutation of the simplex in the domain:
+                sign_simplex = Permutation(convert_perm(actual_image)).signature()
+                oriented = sign_image * sign_simplex
             else:
                 oriented = 1
             return (Simplex(set(fx)), oriented)
@@ -433,7 +460,7 @@ class SimplicialComplexMorphism(Morphism):
 
     def image(self):
         """
-        Computes the image simplicial complex of `f`.
+        Compute the image simplicial complex of `f`.
 
         EXAMPLES::
 
@@ -471,7 +498,6 @@ class SimplicialComplexMorphism(Morphism):
             Simplicial complex with vertex set (0, 1) and facets {(0, 1)}
             sage: z.image()
             Simplicial complex with vertex set (0, 2) and facets {(0, 2)}
-
         """
         fa = [self(i) for i in self.domain().facets()]
         return SimplicialComplex(fa, maximality_check=True)
@@ -522,7 +548,6 @@ class SimplicialComplexMorphism(Morphism):
             False
             sage: y.is_injective()
             True
-
         """
         v = [self._vertex_dictionary[i[0]] for i in self.domain().faces()[0]]
         for i in v:
@@ -530,7 +555,7 @@ class SimplicialComplexMorphism(Morphism):
                 return False
         return True
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         """
         If ``self`` is an identity morphism, returns ``True``.
         Otherwise, ``False``.
@@ -563,18 +588,15 @@ class SimplicialComplexMorphism(Morphism):
         """
         if self.domain() != self.codomain():
             return False
-        else:
-            f = dict()
-            for i in self.domain().vertices():
-                f[i] = i
-            if self._vertex_dictionary != f:
-                return False
-            else:
-                return True
+
+        f = {i: i for i in self.domain().vertices()}
+        return self._vertex_dictionary == f
 
     def fiber_product(self, other, rename_vertices=True):
         """
-        Fiber product of ``self`` and ``other``. Both morphisms should have
+        Fiber product of ``self`` and ``other``.
+
+        Both morphisms should have
         the same codomain. The method returns a morphism of simplicial
         complexes, which is the morphism from the space of the fiber product
         to the codomain.
@@ -620,7 +642,7 @@ class SimplicialComplexMorphism(Morphism):
 
     def mapping_torus(self):
         r"""
-        The mapping torus of a simplicial complex endomorphism
+        The mapping torus of a simplicial complex endomorphism.
 
         The mapping torus is the simplicial complex formed by taking
         the product of the domain of ``self`` with a `4` point
@@ -661,20 +683,20 @@ class SimplicialComplexMorphism(Morphism):
         for facet in self.domain()._facets:
             left = [("I0", v) for v in facet]
             right = [("I2", map_dict[v]) for v in facet]
-            for i in range(facet.dimension()+1):
-                facets.append(tuple(left[:i+1]+right[i:]))
+            facets.extend(tuple(left[:i + 1] + right[i:])
+                          for i in range(facet.dimension() + 1))
         return SimplicialComplex(facets)
 
     def induced_homology_morphism(self, base_ring=None, cohomology=False):
         """
-        The map in (co)homology induced by this map
+        Return the map in (co)homology induced by this map.
 
         INPUT:
 
-        - ``base_ring`` -- must be a field (optional, default ``QQ``)
+        - ``base_ring`` -- must be a field (default: ``QQ``)
 
-        - ``cohomology`` -- boolean (optional, default ``False``). If
-          ``True``, the map induced in cohomology rather than homology.
+        - ``cohomology`` -- boolean (default: ``False``); if
+          ``True``, the map induced in cohomology rather than homology
 
         EXAMPLES::
 

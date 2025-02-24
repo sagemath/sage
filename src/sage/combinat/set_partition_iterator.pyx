@@ -20,6 +20,7 @@ cdef list from_word(list w, list base_set):
             sp[b].append(x)
     return sp
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
 def set_partition_iterator(base_set):
@@ -30,7 +31,7 @@ def set_partition_iterator(base_set):
     EXAMPLES::
 
         sage: from sage.combinat.set_partition_iterator import set_partition_iterator
-        sage: list(set_partition_iterator([1,-1,x]))                                    # optional - sage.symbolic
+        sage: list(set_partition_iterator([1,-1,x]))                                    # needs sage.symbolic
         [[[1, -1, x]],
          [[1, -1], [x]],
          [[1, x], [-1]],
@@ -74,6 +75,7 @@ def set_partition_iterator(base_set):
             # H3: increase a_{n-1}
             a[last] += 1
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
 def _set_partition_block_gen(Py_ssize_t n, Py_ssize_t k, list a):
@@ -108,6 +110,7 @@ def _set_partition_block_gen(Py_ssize_t n, Py_ssize_t k, list a):
             yield P
         a[n-1] = n-1
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
 def set_partition_iterator_blocks(base_set, Py_ssize_t k):
@@ -119,12 +122,14 @@ def set_partition_iterator_blocks(base_set, Py_ssize_t k):
     EXAMPLES::
 
         sage: from sage.combinat.set_partition_iterator import set_partition_iterator_blocks
-        sage: list(set_partition_iterator_blocks([1,-1,x], 2))                          # optional - sage.symbolic
+        sage: list(set_partition_iterator_blocks([1,-1,x], 2))                          # needs sage.symbolic
         [[[1, x], [-1]], [[1], [-1, x]], [[1, -1], [x]]]
     """
     cdef list base = list(base_set)
     cdef Py_ssize_t n = len(base)
     cdef list a = list(range(n))
     # TODO: implement _set_partition_block_gen as an iterative algorithm
+    if n < k:
+        return
     for P in _set_partition_block_gen(n, k, a):
         yield from_word(<list> P, base)

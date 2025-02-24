@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Algebras With Basis
 
@@ -17,6 +18,7 @@ for these two notions.
 #******************************************************************************
 
 from sage.categories.filtered_modules import FilteredModulesCategory
+
 
 class FilteredAlgebrasWithBasis(FilteredModulesCategory):
     """
@@ -239,9 +241,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             - ``f`` -- a filtration-preserving linear map from ``self``
               to ``other`` (can be given as a morphism or as a function)
 
-            OUTPUT:
-
-            The graded linear map `\operatorname{gr} f`.
+            OUTPUT: the graded linear map `\operatorname{gr} f`
 
             EXAMPLES:
 
@@ -321,6 +321,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             `f` will lead into a graded algebra already, namely into
             the algebra of symmetric functions::
 
+                sage: # needs sage.combinat sage.modules
                 sage: h = SymmetricFunctions(QQ).h()
                 sage: def map_on_basis(m):  # redefining map_on_basis
                 ....:     d = m.dict()
@@ -351,6 +352,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             is already graded, so its associated graded algebra is
             implemented as itself::
 
+                sage: # needs sage.combinat sage.modules
                 sage: grh = h.graded_algebra(); grh is h
                 True
                 sage: grf = A.induced_graded_map(h, f); grf
@@ -384,6 +386,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             have one as the domain instead. Our new ``f`` will go from ``h``
             to ``A``::
 
+                sage: # needs sage.combinat sage.modules
                 sage: def map_on_basis(lam):  # redefining map_on_basis
                 ....:     return x ** (sum(lam)) + y ** (len(lam))
                 sage: f = h.module_morphism(on_basis=map_on_basis,
@@ -426,6 +429,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             The construct `\operatorname{gr} f` also makes sense when `f`
             is a filtration-preserving map between graded algebras. ::
 
+                sage: # needs sage.combinat sage.modules
                 sage: def map_on_basis(lam):  # redefining map_on_basis
                 ....:     return h[lam] + h[len(lam)]
                 sage: f = h.module_morphism(on_basis=map_on_basis,
@@ -459,6 +463,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             For another example, let us compute `\operatorname{gr} f` for a
             map `f` between two Clifford algebras::
 
+                sage: # needs sage.modules
                 sage: Q = QuadraticForm(ZZ, 2, [1,2,3])
                 sage: B = CliffordAlgebra(Q, names=['u','v']); B
                 The Clifford algebra of the Quadratic form in 2

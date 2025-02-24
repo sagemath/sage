@@ -10,7 +10,8 @@ cd pkg/io
 make
 cd ../..
 
-make testinstall
+# This is the same as 'dev/ci.sh testinstall' (but dev/ci.sh is not part of the GAP tarball)
+./gap tst/testinstall.g
 if [[ $? -ne 0 ]]; then
     exit 1
 fi

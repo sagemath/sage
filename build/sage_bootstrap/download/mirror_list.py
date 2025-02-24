@@ -4,7 +4,9 @@ Access the List of Sage Download Mirrors
 """
 
 #*****************************************************************************
-#       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2014-2016 Volker Braun <vbraun.name@gmail.com>
+#                     2015      Jeroen Demeyer
+#                     2023      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +21,7 @@ import logging
 log = logging.getLogger()
 
 from sage_bootstrap.compat import urllib, urlparse
-from sage_bootstrap.env import SAGE_DISTFILES
+from sage_bootstrap.env import SAGE_DISTFILES, SAGE_ROOT
 
 from fcntl import flock, LOCK_SH, LOCK_EX
 from errno import ENOLCK
@@ -41,17 +43,66 @@ class MirrorListException(RuntimeError):
     pass
         
 
-MIRRORLIST_FILENAME = os.path.join(SAGE_DISTFILES, 'mirror_list')
-
-
 class MirrorList(object):
-    
-    URL = 'http://www.sagemath.org/mirror_list'
-    MAXAGE = 24*60*60   # seconds
 
     def __init__(self):
-        self.filename = MIRRORLIST_FILENAME
-        self.mirrors = None
+        self.sources = []
+        upstream_d = os.path.join(SAGE_ROOT, '.upstream.d')
+        for fname in sorted(os.listdir(upstream_d)):
+            if '~' in fname or '#' in fname:
+                # Ignore auto-save and backup files
+                continue
+            try:
+                with open(os.path.join(upstream_d, fname), 'r') as f:
+                    for line in f:
+                        line = line.strip()
+                        if line.startswith('#'):
+                            continue
+                        if not line:
+                            continue
+                        line = line.replace('${SAGE_ROOT}', SAGE_ROOT)
+                        line = line.replace('${SAGE_DISTFILES}', SAGE_DISTFILES)
+                        if '${SAGE_SERVER}' in line:
+                            SAGE_SERVER = os.environ.get("SAGE_SERVER", "")
+                            if not SAGE_SERVER:
+                                continue
+                            line = line.replace('${SAGE_SERVER}', SAGE_SERVER)
+                        if line.endswith('mirror_list'):
+                            cache_filename = os.path.join(SAGE_DISTFILES, line.rpartition('/')[2])
+                            self.sources.append(MirrorList_from_url(line, cache_filename))
+                        else:
+                            self.sources.append([line])
+            except IOError:
+                # Silently ignore files that do not exist
+                pass
+
+    def __iter__(self):
+        """
+        Iterate through the list of mirrors.
+
+        This is the main entry point into the mirror list. Every
+        script should just use this function to try mirrors in order
+        of preference. This will not just yield the official mirrors,
+        but also urls for packages that are currently being tested.
+        """
+        for source in self.sources:
+            for mirror in source:
+                yield mirror
+
+
+class MirrorList_from_url(object):
+    
+    MAXAGE = 24*60*60   # seconds
+
+    def __init__(self, url, filename):
+        self.url = url
+        self.filename = filename
+        self._mirrors = None
+
+    @property
+    def mirrors(self):
+        if self._mirrors is not None:
+            return self._mirrors
 
         try:
             self.mirrorfile = open(self.filename, 'r+t')
@@ -67,8 +118,10 @@ class MirrorList(object):
                 # process while we waited for the lock?  Check again.
                 if self._must_refresh():
                     self._refresh()
-            if self.mirrors is None:
-                self.mirrors = self._load()
+            if self._mirrors is None:
+                self._mirrors = self._load()
+
+        return self._mirrors
 
     def _load(self, mirror_list=None):
         """
@@ -119,9 +172,7 @@ class MirrorList(object):
         timed_mirrors = []
         import time, socket
         log.info('Searching fastest mirror')
-        timeout = socket.getdefaulttimeout()
-        if timeout is None:
-            timeout = 1
+        timeout = 1
         for mirror in self.mirrors:
             if not mirror.startswith('http'):
                 log.debug('we currently can only handle http, got %s', mirror)
@@ -139,6 +190,11 @@ class MirrorList(object):
             result_ms = int(1000 * result)
             log.info(str(result_ms).rjust(5) + 'ms: ' + mirror)
             timed_mirrors.append((result, mirror))
+            timed_mirrors.sort()
+            if len(timed_mirrors) >= 5 and timed_mirrors[4][0] < 0.3:
+                # We don't need more than 5 decent mirrors
+                break
+
         if len(timed_mirrors) == 0:
             # We cannot reach any mirror directly, most likely firewall issue
             if 'http_proxy' not in os.environ:
@@ -146,8 +202,7 @@ class MirrorList(object):
                 raise MirrorListException('Failed to connect to any mirror, probably no internet connection')
             log.info('Cannot time mirrors via proxy, using default order')
         else:
-            timed_mirrors.sort()
-            self.mirrors = [m[1] for m in timed_mirrors]
+            self._mirrors = [m[1] for m in timed_mirrors]
         log.info('Fastest mirror: ' + self.fastest)
 
     def _age(self):
@@ -176,12 +231,12 @@ class MirrorList(object):
         """
         log.info('Downloading the Sage mirror list')
         try:
-            with contextlib.closing(urllib.urlopen(self.URL)) as f:
+            with contextlib.closing(urllib.urlopen(self.url)) as f:
                 mirror_list = f.read().decode("ascii")
         except IOError:
             log.critical('Downloading the mirror list failed, using cached version')
         else:
-            self.mirrors = self._load(mirror_list)
+            self._mirrors = self._load(mirror_list)
             self._rank_mirrors()
             self._save()
 
@@ -199,9 +254,9 @@ class MirrorList(object):
         except KeyError:
             pass
         for mirror in self.mirrors:
-            yield mirror
-        # If all else fails: Try the packages we host ourselves
-        yield 'http://sagepad.org/'
+            if not mirror.endswith('/'):
+                mirror += '/'
+            yield mirror + '/'.join(['spkg', 'upstream', '${SPKG}'])
 
     @property
     def fastest(self):

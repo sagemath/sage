@@ -1,4 +1,4 @@
-ImageMagick: A collection of tools and libraries for many image file formats
+imagemagick: A collection of tools and libraries for many image file formats
 ============================================================================
 
 Description

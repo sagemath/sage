@@ -240,7 +240,6 @@ cdef extern from 'symmetrica/macro.h':
         data n_data
 
 
-
     #MACROS
     #S_PA_I(OP a, INT i)
     OBJECTKIND s_o_k(OP a)
@@ -385,7 +384,7 @@ cdef object two, fifteen, thirty, zero, sage_maxint
 
 cdef int maxint = 2147483647
 
-cdef void late_import():
+cdef void late_import() noexcept:
     global matrix_constructor, \
            Integer, \
            Tableau, \
@@ -523,9 +522,10 @@ cdef int _op(object a, OP result) except -1:
     else:
         raise TypeError("cannot convert a (= %s) to OP" % a)
 
+
 def test_integer(object x):
     """
-    Tests functionality for converting between Sage's integers
+    Test functionality for converting between Sage's integers
     and symmetrica's integers.
 
     EXAMPLES::
@@ -616,7 +616,6 @@ cdef object _py_longint(OP a):
     return res
 
 
-
 ###########
 #Fractions#
 ###########
@@ -639,7 +638,7 @@ cdef object _py_vector(OP a):
         res.append( _py(s_v_i(a, i)))
     return res
 
-cdef void* _op_il_vector(object l, OP a):
+cdef void* _op_il_vector(object l, OP a) noexcept:
     cdef INT length, i
     length = len(l)
 
@@ -674,7 +673,7 @@ cdef object _py_sq_radical(OP a):
 ############
 #Partitions#
 ############
-cdef void* _op_partition(object p, OP a):
+cdef void* _op_partition(object p, OP a) noexcept:
     cdef int n, i, j
 
     if not EMPTYP(a):
@@ -701,7 +700,7 @@ cdef object _py_partition(OP a):
 ################
 #Skew Partition#
 ################
-cdef void* _op_skew_partition(object p, OP a):
+cdef void* _op_skew_partition(object p, OP a) noexcept:
     cdef OP gross, klein
     gross = callocobject()
     klein = callocobject()
@@ -716,7 +715,7 @@ cdef object _py_skew_partition(OP a):
 ##############
 #Permutations#
 ##############
-cdef void* _op_permutation(object p, OP a):
+cdef void* _op_permutation(object p, OP a) noexcept:
     cdef int n, i, j
 
     if not EMPTYP(a):
@@ -794,13 +793,12 @@ cdef object _py_polynom(OP a):
 
 cdef object _py_polynom_alphabet(OP a, object alphabet, object length):
     """
-    Converts a symmetrica multivariate polynomial a to a Sage multivariate
+    Convert a symmetrica multivariate polynomial a to a Sage multivariate
     polynomials.  Alphabet specifies the names of the variables which are
     fed into PolynomialRing.  length specifies the number of variables; if
     it is set to 0, then the number of variables is autodetected based on
     the number of variables in alphabet or the result obtained from
     symmetrica.
-
     """
     late_import()
     cdef OP pointer = a
@@ -861,7 +859,6 @@ cdef object _op_polynom(object d, OP res):
     return None
 
 
-
 #######################################
 #Schur symmetric functions and friends#
 #######################################
@@ -879,7 +876,7 @@ cdef object _py_schur(OP a):
     z._monomial_coefficients = z_elt
     return z
 
-cdef void* _op_schur(object d, OP res):
+cdef void* _op_schur(object d, OP res) noexcept:
     _op_schur_general(d, res)
 
 cdef object _py_monomial(OP a): #Monomial symmetric functions
@@ -895,7 +892,7 @@ cdef object _py_monomial(OP a): #Monomial symmetric functions
     z._monomial_coefficients = z_elt
     return z
 
-cdef void* _op_monomial(object d, OP res): #Monomial symmetric functions
+cdef void* _op_monomial(object d, OP res) noexcept: #Monomial symmetric functions
     cdef OP pointer = res
     _op_schur_general(d, res)
     while pointer != NULL:
@@ -915,7 +912,7 @@ cdef object _py_powsym(OP a):  #Power-sum symmetric functions
     z._monomial_coefficients = z_elt
     return z
 
-cdef void* _op_powsym(object d, OP res): #Power-sum symmetric functions
+cdef void* _op_powsym(object d, OP res) noexcept: #Power-sum symmetric functions
     cdef OP pointer = res
     _op_schur_general(d, res)
     while pointer != NULL:
@@ -936,7 +933,7 @@ cdef object _py_elmsym(OP a): #Elementary symmetric functions
     z._monomial_coefficients = z_elt
     return z
 
-cdef void* _op_elmsym(object d, OP res): #Elementary symmetric functions
+cdef void* _op_elmsym(object d, OP res) noexcept: #Elementary symmetric functions
     cdef OP pointer = res
     _op_schur_general(d, res)
     while pointer != NULL:
@@ -944,7 +941,7 @@ cdef void* _op_elmsym(object d, OP res): #Elementary symmetric functions
         pointer = s_s_n(pointer)
 
 
-cdef object _py_homsym(OP a): #Homogenous symmetric functions
+cdef object _py_homsym(OP a):  # Homogeneous symmetric functions
     late_import()
     z_elt = _py_schur_general(a)
     if len(z_elt) == 0:
@@ -957,7 +954,7 @@ cdef object _py_homsym(OP a): #Homogenous symmetric functions
     z._monomial_coefficients = z_elt
     return z
 
-cdef void* _op_homsym(object d, OP res): #Homogenous symmetric functions
+cdef void* _op_homsym(object d, OP res) noexcept:  # Homogeneous symmetric functions
     cdef OP pointer = res
     _op_schur_general(d, res)
     while pointer != NULL:
@@ -975,13 +972,13 @@ cdef object _py_schur_general(OP a):
         pointer = s_s_n(pointer)
     return d
 
-cdef void* _op_schur_general(object d, OP res):
+cdef void* _op_schur_general(object d, OP res) noexcept:
     if isinstance(d, dict):
         _op_schur_general_dict(d, res)
     else:
         _op_schur_general_sf(d, res)
 
-cdef void* _op_schur_general_sf(object f, OP res):
+cdef void* _op_schur_general_sf(object f, OP res) noexcept:
     late_import()
     base_ring = f.parent().base_ring()
     if not ( base_ring is QQ or base_ring is ZZ ):
@@ -989,7 +986,7 @@ cdef void* _op_schur_general_sf(object f, OP res):
 
     _op_schur_general_dict( f.monomial_coefficients(), res)
 
-cdef void* _op_schur_general_dict(object d, OP res):
+cdef void* _op_schur_general_dict(object d, OP res) noexcept:
     late_import()
 
     cdef OP next
@@ -1018,23 +1015,22 @@ cdef void* _op_schur_general_dict(object d, OP res):
         insert(next, res, NULL, NULL)
 
 
-
 ######################
 #Schubert Polynomials#
 ######################
-cdef void* _op_schubert_general(object d, OP res):
+cdef void* _op_schubert_general(object d, OP res) noexcept:
     if isinstance(d, dict):
         _op_schubert_dict(d, res)
     else:
         _op_schubert_sp(d, res)
 
-cdef void* _op_schubert_perm(object a, OP res):
+cdef void* _op_schubert_perm(object a, OP res) noexcept:
     cdef OP caperm = callocobject()
     _op_permutation(a, caperm)
     m_perm_sch(caperm, res)
     freeall(caperm)
 
-cdef void* _op_schubert_sp(object f, OP res):
+cdef void* _op_schubert_sp(object f, OP res) noexcept:
     late_import()
     base_ring = f.parent().base_ring()
     if not ( base_ring is QQ or base_ring is ZZ ):
@@ -1042,7 +1038,7 @@ cdef void* _op_schubert_sp(object f, OP res):
 
     _op_schubert_dict( f.monomial_coefficients(), res)
 
-cdef void* _op_schubert_dict(object d, OP res):
+cdef void* _op_schubert_dict(object d, OP res) noexcept:
     late_import()
 
     cdef OP next
@@ -1119,7 +1115,7 @@ cdef object _py_matrix(OP a):
         return matrix_constructor(res)
 
 
-cdef void* _op_matrix(object a, OP res):
+cdef void* _op_matrix(object a, OP res) noexcept:
     #FIXME: only constructs integer matrices
 
     cdef INT i,j,rows, cols
@@ -1168,8 +1164,6 @@ cdef object _py_tableau(OP t):
         return SkewTableau(res)
     else:
         return Tableau(res)
-
-
 
 
 def start():

@@ -1,2 +1,4 @@
-python39
-python39-devel
+python3.9
+python3.9-devel
+# Except on centos-stream-8 and almalinux-8, where it is called python39 and python39-devel; we special-case this in tox.ini
+python3.9-setuptools

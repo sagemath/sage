@@ -1,7 +1,7 @@
 # distutils: libraries = GSL_LIBRARIES
 # distutils: library_dirs = GSL_LIBDIR
 # distutils: include_dirs = GSL_INCDIR
-from .types cimport *
+from sage.libs.gsl.types cimport *
 
 cdef extern from "gsl/gsl_rng.h":
   cdef gsl_rng_type *gsl_rng_borosh13

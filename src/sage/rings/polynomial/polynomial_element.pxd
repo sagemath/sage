@@ -2,8 +2,8 @@ from sage.structure.element import Element
 from sage.structure.element cimport Element, CommutativeAlgebraElement, ModuleElement
 from sage.structure.parent cimport Parent
 from sage.rings.integer cimport Integer
-from .commutative_polynomial cimport CommutativePolynomial
-from .polynomial_compiled cimport CompiledPolynomialFunction
+from sage.rings.polynomial.commutative_polynomial cimport CommutativePolynomial
+from sage.rings.polynomial.polynomial_compiled cimport CompiledPolynomialFunction
 
 
 cdef class Polynomial(CommutativePolynomial):
@@ -38,19 +38,19 @@ cdef class Polynomial(CommutativePolynomial):
 
     cdef get_coeff_c(self, Py_ssize_t i)
     cdef get_unsafe(self, Py_ssize_t i)
-    cpdef long number_of_terms(self)
+    cpdef long number_of_terms(self) noexcept
 
     # See 23227
     cpdef _add_(self, right)
     cpdef _mul_(self, right)
     cpdef _floordiv_(self, right)
 
-    cdef public dict __cached_methods
+    cdef public dict _cached_methods
 
 cdef class Polynomial_generic_dense(Polynomial):
     cdef Polynomial_generic_dense _new_c(self, list coeffs, Parent P)
-    cdef list __coeffs
-    cdef int __normalize(self) except -1
+    cdef list _coeffs
+    cdef int _normalize(self) except -1
     cpdef list list(self, bint copy=*)
 
 cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
@@ -60,5 +60,5 @@ cpdef is_Polynomial(f)
 cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec)
 cpdef list _dict_to_list(dict x, zero)
 
-cpdef bint polynomial_is_variable(x)
+cpdef bint polynomial_is_variable(x) noexcept
 

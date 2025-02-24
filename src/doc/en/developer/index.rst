@@ -4,14 +4,6 @@
 Welcome to Sage Developer Guide
 ===============================
 
-.. NOTE::
-
-    Sage development moved to `GitHub <https://github.com/sagemath>`_ in
-    February 2023, from `the Sage Trac server <https://trac.sagemath.org>`_,
-    which had been the center of Sage development for a long time. After the
-    transition, this guide was updated accordingly. However, the legacy is
-    still with us in many aspects of the current Sage development.
-
 Everybody who uses Sage is encouraged to contribute something back to Sage at
 some point. You could:
 

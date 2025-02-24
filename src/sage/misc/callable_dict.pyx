@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Callable dictionaries
 """
@@ -25,8 +24,8 @@ cdef class CallableDict(dict):
     that this object is not picklable. When this feature is desired, a
     :class:`CallableDict` can be used instead. Note however that, with
     the current implementation, :class:`CallableDict` is slightly
-    slower than ``d.__getitem__`` (see :trac:`6484` for benchmarks, and
-    :trac:`18330` for potential for improvement).
+    slower than ``d.__getitem__`` (see :issue:`6484` for benchmarks, and
+    :issue:`18330` for potential for improvement).
 
     EXAMPLES::
 
@@ -37,7 +36,7 @@ cdef class CallableDict(dict):
         sage: d('zwei')
         2
 
-    In case the input is not in the dictionary, a :class:`ValueError`
+    In case the input is not in the dictionary, a :exc:`ValueError`
     is raised, for consistency with the function call syntax::
 
         sage: d[1]
@@ -57,7 +56,7 @@ cdef class CallableDict(dict):
 
         - ``x`` -- any hashable object
 
-        A :class:`ValueError` is raised if ``x`` is not in ``self``.
+        A :exc:`ValueError` is raised if ``x`` is not in ``self``.
 
         TESTS::
 

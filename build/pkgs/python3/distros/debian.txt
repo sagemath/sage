@@ -1,4 +1,4 @@
 python3
 libpython3-dev
-python3-distutils
+python3-setuptools
 python3-venv

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Graded Lie Algebras With Basis
 """
@@ -15,6 +16,7 @@ Graded Lie Algebras With Basis
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.misc.lazy_import import LazyImport
 
+
 class GradedLieAlgebrasWithBasis(GradedModulesCategory):
     """
     The category of graded Lie algebras with a distinguished basis.
@@ -22,10 +24,10 @@ class GradedLieAlgebrasWithBasis(GradedModulesCategory):
     EXAMPLES::
 
         sage: C = LieAlgebras(ZZ).WithBasis().Graded(); C
-        Category of graded lie algebras with basis over Integer Ring
+        Category of graded Lie algebras with basis over Integer Ring
         sage: C.super_categories()
         [Category of graded modules with basis over Integer Ring,
-         Category of lie algebras with basis over Integer Ring,
+         Category of Lie algebras with basis over Integer Ring,
          Category of graded Lie algebras over Integer Ring]
 
         sage: C is LieAlgebras(ZZ).WithBasis().Graded()

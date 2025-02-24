@@ -189,7 +189,6 @@ molas, conforme a figura abaixo,
     m_2 x_2''+ k_2 (x_2-x_1) = 0,
 
 
-
 onde, para :math:`i=1,2`, :math:`m_{i}` é a massa do objeto *i*,
 :math:`x_{i}` é o deslocamento com respeito à posição de equilíbrio da
 massa *i*, e :math:`k_{i}` é a constante de mola para a mola *i*.

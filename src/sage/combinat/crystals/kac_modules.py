@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Crystals of Kac modules of the general-linear Lie superalgebra
 """
@@ -794,7 +795,7 @@ def to_dual_tableau(elt):
 
     TESTS:
 
-    Check that :trac:`23935` is fixed::
+    Check that :issue:`23935` is fixed::
 
         sage: from sage.combinat.crystals.kac_modules import to_dual_tableau
         sage: T = crystals.Tableaux(['A',2], shape=[])

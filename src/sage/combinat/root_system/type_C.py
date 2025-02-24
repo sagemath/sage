@@ -31,7 +31,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     TESTS::
 
-        sage: TestSuite(e).run()
+        sage: TestSuite(e).run()                                                        # needs sage.graphs
     """
 
     def dimension(self):
@@ -212,29 +212,27 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type C.
+        Return a Dynkin diagram for type C.
 
         EXAMPLES::
 
-            sage: c = CartanType(['C',3]).dynkin_diagram()
-            sage: c
+            sage: c = CartanType(['C',3]).dynkin_diagram(); c                           # needs sage.graphs
             O---O=<=O
             1   2   3
             C3
-            sage: c.edges(sort=True)
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
-             sage: b = CartanType(['C',1]).dynkin_diagram()
-             sage: b
+             sage: b = CartanType(['C',1]).dynkin_diagram(); b                          # needs sage.graphs
              O
              1
              C1
-             sage: b.edges(sort=True)
+             sage: b.edges(sort=True)                                                   # needs sage.graphs
              []
         """
         return self.dual().dynkin_diagram().dual()
 
-    def _latex_dynkin_diagram(self, label=lambda x: x, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -270,9 +268,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             - :meth:`sage.combinat.root_system.type_C.CartanType._latex_dynkin_diagram`
             - :meth:`sage.combinat.root_system.type_BC_affine.CartanType._latex_dynkin_diagram`
         """
+        if label is None:
+            label = lambda i: i
         return self.dual()._latex_dynkin_diagram(label=label, node=node, node_dist=node_dist, dual=not dual)
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return a ascii art representation of the extended Dynkin diagram.
 
@@ -291,6 +291,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O---O---O---O=<=O
             3   4   5   6   7
         """
+        if label is None:
+            label = lambda i: i
         return self.dual().ascii_art(label=label, node=node).replace("=>=", "=<=")
 
     def _default_folded_cartan_type(self):
@@ -304,10 +306,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         n = self.n
-        return CartanTypeFolded(self, ['A', 2*n-1],
-            [[i, 2*n-i] for i in range(1, n)] + [[n]])
+        return CartanTypeFolded(self, ['A', 2*n - 1],
+                                [[i, 2*n - i] for i in range(1, n)] + [[n]])
 
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_C', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_C',
+                           'ambient_space', AmbientSpace)

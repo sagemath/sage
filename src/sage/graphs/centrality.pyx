@@ -38,7 +38,7 @@ cimport cython
 
 def centrality_betweenness(G, bint exact=False, bint normalize=True):
     r"""
-    Return the centrality betweenness of `G`
+    Return the centrality betweenness of `G`.
 
     The centrality betweenness of a vertex `v\in G` is defined by:
 
@@ -54,7 +54,7 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
     - ``G`` -- a (di)graph
 
     - ``exact`` -- boolean (default: ``False``); whether to compute over
-      rationals or on ``double`` C variables.
+      rationals or on ``double`` C variables
 
     - ``normalize`` -- boolean (default: ``True``); whether to renormalize the
       values by dividing them by `\binom {n-1} 2` (for graphs) or `2\binom {n-1}
@@ -115,18 +115,16 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
         {0: 0.0, 1: 0.0}
         sage: centrality_betweenness(Graph(2), exact=1)
         {0: 0, 1: 0}
-
     """
     if exact:
         return centrality_betweenness_C(G, <mpq_t> 0, normalize=normalize)
-    else:
-        return centrality_betweenness_C(G, <double>0, normalize=normalize)
+    return centrality_betweenness_C(G, <double>0, normalize=normalize)
 
 
 @cython.cdivision(True)
 cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
     r"""
-    Return the centrality betweenness of G (C implementation)
+    Return the centrality betweenness of G (C implementation).
 
     INPUT:
 
@@ -328,7 +326,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
     return {vv: betweenness_list[i] for i, vv in enumerate(int_to_vertex)}
 
 
-cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* reachU):
+cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* reachU) noexcept:
     r"""
     For each vertex ``v``, bounds the number of vertices reachable from ``v``.
 
@@ -461,7 +459,7 @@ cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* re
         reachU[i] = min(<int>reachU_scc[scc[i]], g.n)
 
 
-cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
+cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable) noexcept:
     r"""
     For each vertex ``v``, compute the number of vertices reachable from ``v``.
 
@@ -514,7 +512,7 @@ cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
             reachable[v] = len(currentcc)
 
 
-cdef void _sort_vertices_degree(short_digraph g, int* sorted_verts):
+cdef void _sort_vertices_degree(short_digraph g, int* sorted_verts) noexcept:
     r"""
     Sort vertices in decreasing order of degree.
 
@@ -697,7 +695,7 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
     cdef int* reachU
     cdef int* pred = <int*> mem.calloc(n, sizeof(int))
     cdef double *farness = <double*> mem.malloc(n * sizeof(double))
-    cdef int d, nd, x, v, w
+    cdef int d, nd, x, v
     cdef long f, gamma
     cdef int* queue = <int*> mem.malloc(n * sizeof(int))
     cdef double tildefL, tildefU
@@ -853,9 +851,7 @@ def centrality_closeness_random_k(G, int k=1):
 
     - ``k`` -- integer (default: 1); number of random nodes to choose
 
-    OUTPUT:
-
-    A dictionary associating to each vertex its estimated closeness centrality.
+    OUTPUT: a dictionary associating to each vertex its estimated closeness centrality
 
     EXAMPLES:
 
@@ -888,7 +884,6 @@ def centrality_closeness_random_k(G, int k=1):
         Traceback (most recent call last):
         ...
         ValueError: G must be an undirected Graph
-
     """
     G._scream_if_not_simple()
     if G.is_directed():

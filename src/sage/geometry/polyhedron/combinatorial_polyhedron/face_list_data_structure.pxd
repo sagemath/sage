@@ -14,7 +14,7 @@ Inline cython methods for lists of faces.
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
 
-from .face_data_structure             cimport *
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure             cimport *
 from libc.string                      cimport memset
 from cysignals.signals                cimport sig_check
 from cysignals.memory                 cimport check_allocarray, check_calloc, sig_free
@@ -36,7 +36,7 @@ ctypedef face_list_s face_list_t[1]
 
 cdef inline int face_list_init(face_list_t faces, size_t n_faces, size_t n_atoms, size_t n_coatoms) except -1:
     """
-    Sets the initial values for a list of faces with given number of faces
+    Set the initial values for a list of faces with given number of faces
     and number of atoms.
     """
     face_list_shallow_init(faces, n_faces, n_atoms, n_coatoms)
@@ -56,7 +56,7 @@ cdef inline int face_list_shallow_init(face_list_t faces, size_t n_faces, size_t
     faces.is_not_new_face = <bint *> check_allocarray(n_faces, sizeof(bint))
     faces.polyhedron_is_simple = False
 
-cdef inline void face_list_free(face_list_t faces):
+cdef inline void face_list_free(face_list_t faces) noexcept:
     """
     Free faces.
     """
@@ -66,7 +66,7 @@ cdef inline void face_list_free(face_list_t faces):
             face_free(faces.faces[i])
     face_list_shallow_free(faces)
 
-cdef inline void face_list_shallow_free(face_list_t faces):
+cdef inline void face_list_shallow_free(face_list_t faces) noexcept:
     """
     Free a shallow list of faces.
     """
@@ -106,7 +106,7 @@ cdef inline int face_list_shallow_copy(face_list_t dst, face_list_t src) except 
     for i in range(src.n_faces):
         dst.faces[i][0] = src.faces[i][0]
 
-cdef inline int add_face_shallow(face_list_t faces, face_t face) nogil except -1:
+cdef inline int add_face_shallow(face_list_t faces, face_t face) except -1 nogil:
     """
     Add a face to faces.
     """
@@ -124,7 +124,7 @@ cdef inline int add_face_deep(face_list_t faces, face_t face) except -1:
     face_copy(faces.faces[faces.n_faces], face)
     faces.n_faces += 1
 
-cdef inline void face_list_delete_faces_by_array(face_list_t faces, bint *delete):
+cdef inline void face_list_delete_faces_by_array(face_list_t faces, bint *delete) noexcept:
     r"""
     Remove face ``i`` if and only if ``delete[i]`` decreasing ``faces.n_faces``.
 
@@ -144,10 +144,10 @@ cdef inline void face_list_delete_faces_by_array(face_list_t faces, bint *delete
     faces.n_faces = n_newfaces
     faces.total_n_faces = n_newfaces
 
-cdef inline void face_list_delete_faces_by_face(face_list_t faces, face_t face):
+cdef inline void face_list_delete_faces_by_face(face_list_t faces, face_t face) noexcept:
     r"""
     Remove all faces such that the ``i``-th bit in ``face`` is not set
-    descreasing ``faces.n_faces``.
+    decreasing ``faces.n_faces``.
 
     .. WARNING::
 
@@ -170,9 +170,9 @@ cdef inline void face_list_delete_faces_by_face(face_list_t faces, face_t face):
 # Face Comparison
 #############################################################################
 
-cdef void sort_faces_list(face_list_t faces)
+cdef void sort_faces_list(face_list_t faces) noexcept
 
-cdef inline size_t find_face(face_t face, face_list_t faces):
+cdef inline size_t find_face(face_t face, face_list_t faces) noexcept:
     r"""
     Return the index of ``face`` in ``faces``.
 
@@ -187,7 +187,6 @@ cdef inline size_t find_face(face_t face, face_list_t faces):
     cdef size_t n_faces = faces.n_faces
     cdef face_t* faces_pt = faces.faces
     cdef int val
-
 
     while (n_faces > 1):
         # In each iteration step, we will look for ``face`` in
@@ -211,7 +210,7 @@ cdef inline size_t find_face(face_t face, face_list_t faces):
     else:
         return -1
 
-cdef inline bint is_contained_in_one_fused(face_t face, face_list_t faces, algorithm_variant algorithm) nogil:
+cdef inline bint is_contained_in_one_fused(face_t face, face_list_t faces, algorithm_variant algorithm) noexcept nogil:
     """
     Return whether ``face`` is contained in one of ``faces``.
     """
@@ -221,7 +220,7 @@ cdef inline bint is_contained_in_one_fused(face_t face, face_list_t faces, algor
             return True
     return False
 
-cdef inline bint is_not_maximal_fused(face_list_t faces, size_t j, algorithm_variant algorithm, bint* is_not_new_face) nogil:
+cdef inline bint is_not_maximal_fused(face_list_t faces, size_t j, algorithm_variant algorithm, bint* is_not_new_face) noexcept nogil:
     """
     Return whether face ``j`` is not maximal in ``faces``.
     """
@@ -246,7 +245,7 @@ cdef inline bint is_not_maximal_fused(face_list_t faces, size_t j, algorithm_var
 # Arithmetic
 #############################################################################
 
-cdef inline int face_list_intersection_fused(face_list_t dest, face_list_t A, face_t b, algorithm_variant algorithm) nogil except -1:
+cdef inline int face_list_intersection_fused(face_list_t dest, face_list_t A, face_t b, algorithm_variant algorithm) except -1 nogil:
     """
     Set ``dest`` to be the intersection of each face of ``A`` with ``b``.
     """
@@ -267,7 +266,7 @@ cdef inline int face_list_intersection_fused(face_list_t dest, face_list_t A, fa
 cdef inline size_t get_next_level_fused(
         face_list_t faces,
         face_list_t new_faces,
-        face_list_t visited_all, algorithm_variant algorithm) nogil except -1:
+        face_list_t visited_all, algorithm_variant algorithm) except -1 nogil:
     """
     Set ``new_faces`` to be the facets of ``faces.faces[face.n_faces-1]``
     that are not contained in a face of ``visited_all``.
@@ -280,9 +279,7 @@ cdef inline size_t get_next_level_fused(
     - ``new_faces`` -- needs to be of same size as ``faces``
     - ``visited_all`` -- the faces which have been visited before
 
-    OUTPUT:
-
-    - set ``new_faces`` to point to the new faces
+    OUTPUT: set ``new_faces`` to point to the new faces
 
     ALGORITHM:
 
@@ -337,7 +334,7 @@ cdef inline size_t get_next_level_fused(
 cdef inline size_t get_next_level(
         face_list_t faces,
         face_list_t new_faces,
-        face_list_t visited_all) nogil except -1:
+        face_list_t visited_all) except -1 nogil:
 
     cdef size_t output
     if faces.polyhedron_is_simple:
@@ -346,7 +343,7 @@ cdef inline size_t get_next_level(
         output = get_next_level_fused(faces, new_faces, visited_all, <standard> 0)
     return output
 
-cdef inline size_t bit_rep_to_coatom_rep(face_t face, face_list_t coatoms, size_t *output):
+cdef inline size_t bit_rep_to_coatom_rep(face_t face, face_list_t coatoms, size_t *output) noexcept:
     """
     Write the coatom-representation of face in output. Return length.
     ``face_length`` is the length of ``face`` and ``coatoms[i]``
@@ -361,12 +358,12 @@ cdef inline size_t bit_rep_to_coatom_rep(face_t face, face_list_t coatoms, size_
             count_length += 1
     return count_length
 
-cdef inline bint face_list_check_alignment(face_list_t faces):
+cdef inline bint face_list_check_alignment(face_list_t faces) noexcept:
     """
     Return whether all faces in ``faces`` are aligned correctly.
     """
     cdef size_t i
     for i in range(faces.n_faces):
-       if not face_check_alignment(faces.faces[i]):
-           return False
+        if not face_check_alignment(faces.faces[i]):
+            return False
     return True

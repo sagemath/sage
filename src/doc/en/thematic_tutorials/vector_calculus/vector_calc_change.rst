@@ -1,4 +1,4 @@
-.. -*- coding: utf-8 -*-
+.. .. sage-doctest: needs sage.plot sage.symbolic
 
 .. linkall
 

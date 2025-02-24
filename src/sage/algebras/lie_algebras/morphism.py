@@ -25,6 +25,8 @@ from sage.matrix.constructor import matrix
 from itertools import combinations
 
 # TODO: Refactor out common functionality with RingHomomorphism_im_gens
+
+
 class LieAlgebraHomomorphism_im_gens(Morphism):
     r"""
     A homomorphism of Lie algebras.
@@ -43,7 +45,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
       It should be a map from the base ring of the domain to the
       base ring of the codomain.
       Note that if base_map is nontrivial then the result will
-      not be a morphism in the category of lie algebras over
+      not be a morphism in the category of Lie algebras over
       the base ring.
     - ``check`` -- whether to run checks on the validity of the defining data
 
@@ -361,6 +363,7 @@ class LieAlgebraHomset(Homset):
 
     _an_element_ = zero
 
+
 class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
     r"""
     A morphism between two Lie algebras defined by images of a
@@ -380,9 +383,9 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
       It should be a map from the base ring of the domain to the
       base ring of the codomain.
       Note that if base_map is nontrivial then the result will
-      not be a morphism in the category of lie algebras over
+      not be a morphism in the category of Lie algebras over
       the base ring.
-    - ``check`` -- (default: ``True``) boolean; if ``False`` the
+    - ``check`` -- boolean (default: ``True``); if ``False`` the
       values  on the Lie brackets implied by ``on_generators`` will
       not be checked for contradictory values
 
@@ -461,8 +464,8 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
 
     A quotient type Lie algebra morphism::
 
-        sage: K.<A,B> = LieAlgebra(SR, abelian=True)
-        sage: L.morphism({X: A, Y: B})
+        sage: K.<A,B> = LieAlgebra(SR, abelian=True)                                    # needs sage.symbolic
+        sage: L.morphism({X: A, Y: B})                                                  # needs sage.symbolic
         Lie algebra morphism:
           From: Lie algebra on 4 generators (X, Y, Z, W) over Rational Field
           To:   Abelian Lie algebra on 2 generators (A, B) over Symbolic Ring
@@ -623,17 +626,17 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
         EXAMPLES::
 
             sage: L.<X,Y,Z,W> = LieAlgebra(QQ, {('X','Y'): {'Z':1}, ('X','Z'): {'W':1}})
-            sage: K.<A,B> = LieAlgebra(SR, abelian=True)
-            sage: phi = L.morphism({X: A, Y: B})
-            sage: phi(X)
+            sage: K.<A,B> = LieAlgebra(SR, abelian=True)                                # needs sage.symbolic
+            sage: phi = L.morphism({X: A, Y: B})                                        # needs sage.symbolic
+            sage: phi(X)                                                                # needs sage.symbolic
             A
-            sage: phi(Y)
+            sage: phi(Y)                                                                # needs sage.symbolic
             B
-            sage: phi(Z)
+            sage: phi(Z)                                                                # needs sage.symbolic
             0
-            sage: phi(W)
+            sage: phi(W)                                                                # needs sage.symbolic
             0
-            sage: phi(-X + 3*Y)
+            sage: phi(-X + 3*Y)                                                         # needs sage.symbolic
             -A + 3*B
 
             sage: K.<A,B,C> = LieAlgebra(QQ, {('A','B'): {'C':2}})

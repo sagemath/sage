@@ -1,4 +1,4 @@
-zlib readline sqlite libpng bzip2 liblzma xz libffi openssl
+zlib readline sqlite libpng bzip2 liblzma libffi openssl | xz pkgconf
 
 ----------
 All lines of this file are ignored except the first.

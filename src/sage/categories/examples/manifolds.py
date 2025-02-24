@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Examples of manifolds
 """
@@ -88,5 +89,6 @@ class Plane(UniqueRepresentation, Parent):
         return self(tuple([zero]*self._n))
 
     Element = ElementWrapper
+
 
 Example = Plane

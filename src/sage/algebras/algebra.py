@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Abstract base class for algebras
 """
@@ -17,12 +18,12 @@ Abstract base class for algebras
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.ring import Algebra
 from sage.categories.algebras import Algebras
+
 
 def is_Algebra(x):
     r"""
-    Return True if x is an Algebra.
+    Return ``True`` if `x` is an Algebra.
 
     EXAMPLES::
 
@@ -36,7 +37,4 @@ def is_Algebra(x):
     """
     from sage.misc.superseded import deprecation
     deprecation(35253, "the function is_Algebra is deprecated; use '... in Algebras(base_ring)' instead")
-    try:
-        return isinstance(x, Algebra) or x in Algebras(x.base_ring())
-    except Exception:
-        return False
+    return x in Algebras(x.base_ring())

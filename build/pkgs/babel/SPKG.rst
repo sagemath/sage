@@ -1,12 +1,18 @@
-babel: Internationalization utilities for Python
-================================================
+babel: Internationalization utilities
+=====================================
 
 Description
 -----------
 
-A collection of tools for internationalizing Python applications.
+Internationalization utilities
+
+License
+-------
+
+BSD-3-Clause
 
 Upstream Contact
 ----------------
 
-http://babel.pocoo.org/en/latest/
+https://pypi.org/project/Babel/
+

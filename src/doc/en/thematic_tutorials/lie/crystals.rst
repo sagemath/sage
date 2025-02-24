@@ -731,7 +731,7 @@ and `(2,1,0)`. This decomposition is predicted by Frobenius-Schur
 duality: the multiplicity of `\pi_\lambda^{GL(n)}` in
 `\otimes^3\mathbf{C}^3` is the degree of `\pi_\lambda^{S_3}`.
 
-It is useful to be able to select one irreducible constitutent of
+It is useful to be able to select one irreducible constituent of
 ``T``. If we only want one of the irreducible constituents of ``T``,
 we can specify a list of highest weight vectors by the option
 ``generators``. If the list has only one element, then we get an
@@ -881,7 +881,7 @@ subcrystal of ``Cspin`` `\otimes \mathcal{B}_\mu`, where
     B3(1/2,1/2,1/2) + B3(3/2,1/2,1/2) + B3(3/2,3/2,1/2)
 
 We see that just taking the tensor product of these two crystals will
-produce a reducible crystal with three constitutents, and we want to
+produce a reducible crystal with three constituents, and we want to
 extract the one we want. We do that as follows::
 
     sage: B3 = WeylCharacterRing("B3")

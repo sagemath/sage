@@ -1,0 +1,10 @@
+cd src
+
+export PIP_NO_INDEX=true
+export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
+
+# First build the sdist, then build the wheel from the sdist.
+# https://pypa-build.readthedocs.io/en/latest/#python--m-build
+# (Important because sagemath-objects uses MANIFEST.in for filtering.)
+# Do not install the wheel.
+sdh_build_and_store_wheel --sdist-then-wheel .

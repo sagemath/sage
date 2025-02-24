@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous functions (Cython)
 
@@ -22,6 +23,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
 
 from cpython.sequence cimport *
 from cpython.list cimport *
@@ -35,7 +37,8 @@ cdef extern from *:
 
 def running_total(L, start=None):
     """
-    Return a list where the i-th entry is the sum of all entries up to (and including) i.
+    Return a list where the `i`-th entry is the sum of all entries up to (and
+    including) `i`.
 
     INPUT:
 
@@ -304,8 +307,6 @@ class NonAssociative:
         """
         return NonAssociative(self, other)
 
-from copy import copy
-
 
 def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
     """
@@ -397,6 +398,7 @@ def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
 
     return sum
 
+
 cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff):
     """
     INPUT:
@@ -439,7 +441,8 @@ cpdef list normalize_index(object key, int size):
 
     INPUT:
 
-    - ``key`` -- the index key, which can be either an integer, a tuple/list of integers, or a slice.
+    - ``key`` -- the index key, which can be either an integer, a tuple/list of
+      integers, or a slice
     - ``size`` -- the size of the collection
 
     OUTPUT:
@@ -585,7 +588,7 @@ cpdef list normalize_index(object key, int size):
             raise IndexError("index out of range")
         return [index]
     elif isinstance(key, slice):
-        return list(xrange(*key.indices(size)))
+        return list(range(*key.indices(size)))
     elif type(key) is tuple:
         index_tuple = key
     elif type(key) is list:
@@ -621,10 +624,10 @@ cdef class sized_iter:
 
     - ``iterable`` -- object to be iterated over
 
-    - ``length`` -- (optional) the required length. If this is not
-      given, then ``len(iterable)`` will be used.
+    - ``length`` -- (optional) the required length; if this is not
+      given, then ``len(iterable)`` will be used
 
-    If the iterable does not have the given length, a ``ValueError`` is
+    If the iterable does not have the given length, a :exc:`ValueError` is
     raised during iteration.
 
     EXAMPLES::
@@ -735,7 +738,7 @@ def cyflush():
     Starting with Python 3, some output from external libraries (like
     FLINT) is not flushed, and so if a doctest produces such output,
     the output may not appear until a later doctest. See
-    :trac:`28649`.
+    :issue:`28649`.
 
     Use this function after a doctest which produces potentially
     unflushed output to force it to be flushed.
@@ -743,7 +746,7 @@ def cyflush():
     EXAMPLES::
 
         sage: R.<t> = QQ[]
-        sage: t^(sys.maxsize//2)
+        sage: t^(sys.maxsize//2)                                                        # needs sage.libs.flint
         Traceback (most recent call last):
         ...
         RuntimeError: FLINT exception

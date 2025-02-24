@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap sage.modules sage.rings.number_field
 """
 Binary Dihedral Groups
 

@@ -23,19 +23,19 @@ from sage.cpython.string cimport bytes_to_str
 from sage.structure.element cimport Element
 
 import sage.rings.abc
-from ..integer cimport Integer
-from ..rational cimport Rational
-from ..real_mpfi cimport RealIntervalFieldElement, RealIntervalField_class
-from ..real_mpfr cimport RealNumber
-from ..real_double cimport RealDoubleElement
-from ..complex_mpfr cimport ComplexNumber
-from ..complex_interval cimport ComplexIntervalFieldElement
-from ..complex_double cimport ComplexDoubleElement
+from sage.rings.integer cimport Integer
+from sage.rings.rational cimport Rational
+from sage.rings.real_mpfi cimport RealIntervalFieldElement, RealIntervalField_class
+from sage.rings.real_mpfr cimport RealNumber
+from sage.rings.real_double cimport RealDoubleElement
+from sage.rings.complex_mpfr cimport ComplexNumber
+from sage.rings.complex_interval cimport ComplexIntervalFieldElement
+from sage.rings.complex_double cimport ComplexDoubleElement
 
 from cypari2.gen cimport Gen
 
 
-cdef inline int return_real(mpfi_ptr im):
+cdef inline int return_real(mpfi_ptr im) noexcept:
     """
     Called by ``mpfi_set_sage`` on the imaginary part when converting
     a real number.
@@ -52,16 +52,16 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
 
     INPUT:
 
-    - ``re`` -- a pre-initialized MPFI interval.
+    - ``re`` -- a pre-initialized MPFI interval
 
-    - ``im`` -- a pre-initialized MPFI interval or NULL.
+    - ``im`` -- a pre-initialized MPFI interval or NULL
 
-    - ``x`` -- any Sage or Python object to be converted to an interval.
+    - ``x`` -- any Sage or Python object to be converted to an interval
 
     - ``field`` -- a ``RealIntervalField`` or ``ComplexIntervalField``
-      of the right precision (real or complex doesn't matter).
+      of the right precision (real or complex doesn't matter)
 
-    - ``base`` -- base to use for string conversion.
+    - ``base`` -- base to use for string conversion
 
     OUTPUT:
 

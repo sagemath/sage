@@ -42,10 +42,11 @@ FLINT
 .. toctree::
    :maxdepth: 1
 
-   sage/libs/flint/flint
-   sage/libs/flint/fmpz_poly
-   sage/libs/flint/arith
-   sage/libs/flint/qsieve
+   sage/libs/flint/fmpz_poly_sage
+   sage/libs/flint/fmpq_poly_sage
+   sage/libs/flint/arith_sage
+   sage/libs/flint/qsieve_sage
+   sage/libs/flint/ulong_extras_sage
 
 Giac
 ----

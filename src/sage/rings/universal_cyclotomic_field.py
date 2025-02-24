@@ -1,29 +1,10 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Universal cyclotomic field
 
 The universal cyclotomic field is the smallest subfield of the complex field
-containing all roots of unity. It is also the maximal Galois Abelian extension
+containing all roots of unity. It is also the maximal abelian extension
 of the rational numbers.
-
-The implementation simply wraps GAP Cyclotomic. As mentioned in their
-documentation: arithmetical operations are quite expensive, so the use of
-internally represented cyclotomics is not recommended for doing arithmetic over
-number fields, such as calculations with matrices of cyclotomics.
-
-.. NOTE::
-
-    There used to be a native Sage version of the universal cyclotomic field
-    written by Christian Stump (see :trac:`8327`). It was slower on most
-    operations and it was decided to use a version based on GAP instead (see
-    :trac:`18152`). One main difference in the design choices is that GAP stores
-    dense vectors whereas the native ones used Python dictionaries (storing only
-    nonzero coefficients). Most operations are faster with GAP except some
-    operation on very sparse elements. All details can be found in
-    :trac:`18152`.
-
-REFERENCES:
-
-- [Bre1997]
 
 EXAMPLES::
 
@@ -101,6 +82,26 @@ One can create matrices and polynomials::
     sage: E(3) * x - 1
     E(3)*x - 1
 
+The implementation simply wraps GAP Cyclotomic. As mentioned in their
+documentation: arithmetical operations are quite expensive, so the use of
+internally represented cyclotomics is not recommended for doing arithmetic over
+number fields, such as calculations with matrices of cyclotomics.
+
+.. NOTE::
+
+    There used to be a native Sage version of the universal cyclotomic field
+    written by Christian Stump (see :issue:`8327`). It was slower on most
+    operations and it was decided to use a version based on GAP instead (see
+    :issue:`18152`). One main difference in the design choices is that GAP stores
+    dense vectors whereas the native ones used Python dictionaries (storing only
+    nonzero coefficients). Most operations are faster with GAP except some
+    operation on very sparse elements. All details can be found in
+    :issue:`18152`.
+
+REFERENCES:
+
+- [Bre1997]_
+
 TESTS::
 
     sage: UCF.one()
@@ -114,7 +115,7 @@ TESTS::
     sage: UCF.zero().is_zero()
     True
 
-Check that :trac:`14240` is fixed::
+Check that :issue:`14240` is fixed::
 
     sage: K.<rho> = CyclotomicField(245)
     sage: h = K.random_element()
@@ -123,21 +124,21 @@ Check that :trac:`14240` is fixed::
     sage: h_ucf**2  # random
     -169539876343/589714020*E(245) + 27815735177/20058300*E(245)^2  + ... + + 7828432097501/842448600*E(245)^244
 
-Check that :trac:`16130` is fixed::
+Check that :issue:`16130` is fixed::
 
     sage: mat = matrix(UCF, 2, [-4, 2*E(7)^6, -5*E(13)^3 + 5*E(13)^8 - 4*E(13)^9, 0])
     sage: mat._echelon_classical()
     [1 0]
     [0 1]
 
-Check that :trac:`16631` is fixed::
+Check that :issue:`16631` is fixed::
 
     sage: UCF.one() / 2
     1/2
     sage: UCF.one() / 2r
     1/2
 
-Check that :trac:`17117` is fixed::
+Check that :issue:`17117` is fixed::
 
     sage: e3 = UCF.gen(3)
     sage: N(e3)
@@ -147,7 +148,7 @@ Check that :trac:`17117` is fixed::
     sage: imag(e3)
     -1/2*E(12)^7 + 1/2*E(12)^11
 
-Check that :trac:`25686` is fixed::
+Check that :issue:`25686` is fixed::
 
     sage: UCF = UniversalCyclotomicField()
     sage: UCF.is_finite()
@@ -155,12 +156,10 @@ Check that :trac:`25686` is fixed::
 
 AUTHORS:
 
-- Christian Stump (2013): initial Sage version (see :trac:`8327`)
-
-- Vincent Delecroix (2015): complete rewriting using libgap (see :trac:`18152`)
-
-- Sebastian Oehms (2018): deleting the method is_finite since it returned the wrong result (see :trac:`25686`)
-- Sebastian Oehms (2019): add :meth:`_factor_univariate_polynomial` (see :trac:`28631`)
+- Christian Stump (2013): initial Sage version (see :issue:`8327`)
+- Vincent Delecroix (2015): completed rewriting using libgap (see :issue:`18152`)
+- Sebastian Oehms (2018): deleted the method is_finite since it returned the wrong result (see :issue:`25686`)
+- Sebastian Oehms (2019): added :meth:`_factor_univariate_polynomial` (see :issue:`28631`)
 """
 
 import sage.rings.abc
@@ -170,10 +169,10 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import FieldElement, parent
+from sage.structure.parent import Parent
 
 from sage.structure.coerce import py_scalar_to_element
 from sage.categories.morphism import Morphism
-from sage.rings.ring import Field
 
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
@@ -292,7 +291,7 @@ class UCFtoQQbar(Morphism):
             sage: UCFtoQQbar(UCF.gen(3))  # indirect doctest
             -0.500000000000000? + 0.866025403784439?*I
 
-        Test that the bug reported in :trac:`19912` has been fixed::
+        Test that the bug reported in :issue:`19912` has been fixed::
 
             sage: UCFtoQQbar(UCF.gen(4)+1)
             I + 1
@@ -326,7 +325,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         self._obj = obj
         FieldElement.__init__(self, parent)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         TESTS::
 
@@ -358,7 +357,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         """
         return self.parent(), (str(self),)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Equality test.
 
@@ -401,7 +400,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             return self == other
         return self._obj == other._obj
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Difference test.
 
@@ -470,7 +469,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
     imag_part = imag
 
-    def is_real(self):
+    def is_real(self) -> bool:
         r"""
         Test whether this element is real.
 
@@ -489,7 +488,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         """
         return self._obj.RealPart() == self._obj
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         """
         Return whether ``self`` is an algebraic integer.
 
@@ -523,14 +522,14 @@ class UniversalCyclotomicFieldElement(FieldElement):
         r"""
         TESTS::
 
-            sage: SR(E(7))                                                              # optional - sage.symbolic
+            sage: SR(E(7))                                                              # needs sage.symbolic
             e^(2/7*I*pi)
-            sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))                                        # optional - sage.symbolic
+            sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))                                        # needs sage.symbolic
             -sqrt(5) + 1/4*I*sqrt(2*sqrt(5) + 10) - 1/4*I*sqrt(-2*sqrt(5) + 10) - 3/2
 
-        Test that the bug reported in :trac:`19912` has been fixed::
+        Test that the bug reported in :issue:`19912` has been fixed::
 
-            sage: SR(1+E(4))                                                            # optional - sage.symbolic
+            sage: SR(1+E(4))                                                            # needs sage.symbolic
             I + 1
         """
         from sage.symbolic.constants import pi, I
@@ -576,20 +575,21 @@ class UniversalCyclotomicFieldElement(FieldElement):
             [   E(3)    E(4)]
             [   E(5) -E(3)^2]
 
-            sage: Matrix(CyclotomicField(60),M) # indirect doctest
+            sage: Matrix(CyclotomicField(60),M)  # indirect doctest
             [zeta60^10 - 1     zeta60^15]
             [    zeta60^12     zeta60^10]
 
         Using a non-standard embedding::
 
-            sage: CF = CyclotomicField(5,embedding=CC(exp(4*pi*i/5)))
+            sage: # needs sage.symbolic
+            sage: CF = CyclotomicField(5, embedding=CC(exp(4*pi*i/5)))
             sage: x = E(5)
             sage: CC(x)
             0.309016994374947 + 0.951056516295154*I
             sage: CC(CF(x))
             0.309016994374947 + 0.951056516295154*I
 
-        Test that the bug reported in :trac:`19912` has been fixed::
+        Test that the bug reported in :issue:`19912` has been fixed::
 
             sage: a = 1+E(4); a
             1 + E(4)
@@ -620,7 +620,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         TESTS:
 
-        See :trac:`19514`::
+        See :issue:`19514`::
 
             sage: hash(UCF.one())
             1
@@ -642,12 +642,12 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: AA(UCF.gen(5))
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce algebraic number with non-zero imaginary
+            ValueError: Cannot coerce algebraic number with nonzero imaginary
             part to algebraic real
         """
         return R(QQbar(self))
 
-    def __float__(self):
+    def __float__(self) -> float:
         r"""
         TESTS::
 
@@ -676,7 +676,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: CC(E(3))
             -0.500000000000000 + 0.866025403784439*I
 
-        Check that :trac:`19825` is fixed::
+        Check that :issue:`19825` is fixed::
 
             sage: CIF(E(3))
             -0.500000000000000? + 0.866025403784439?*I
@@ -692,13 +692,13 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: _.imag().is_zero()
             True
 
-        Check that units are evaluated correctly (:trac:`23775`)::
+        Check that units are evaluated correctly (:issue:`23775`)::
 
             sage: CIF(1 + E(8) - E(8,3))
             2.41421356237310?
             sage: (1 + E(8) - E(8,3))._eval_complex_(CC)
             2.41421356237309
-            sage: (1 + E(8) - E(8,3))._eval_complex_(CDF) # abs tol 1e-14
+            sage: (1 + E(8) - E(8,3))._eval_complex_(CDF)  # abs tol 1e-14
             2.414213562373095
         """
         if self._obj.IsRat():
@@ -723,10 +723,10 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
             sage: RR(E(7) + E(7,6))
             1.24697960371747
-            sage: 2*cos(2*pi/7).n()
+            sage: 2*cos(2*pi/7).n()                                                     # needs sage.symbolic
             1.24697960371747
 
-        Check that units are evaluated correctly (:trac:`23775`)::
+        Check that units are evaluated correctly (:issue:`23775`)::
 
             sage: RIF(1 + E(8) - E(8,3))
             2.414213562373095?
@@ -748,7 +748,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
     _mpfr_ = _eval_real_
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Comparison (using the complex embedding).
 
@@ -845,7 +845,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         """
         return Infinity if self else ZZ.zero()
 
-    def is_rational(self):
+    def is_rational(self) -> bool:
         r"""
         Test whether this element is a rational number.
 
@@ -885,7 +885,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             raise TypeError("Unable to coerce to a rational")
         return Rational(self._obj.sage())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -1010,7 +1010,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         raise NotImplementedError("no powering implemented for non-rational exponents")
 
-    def is_square(self):
+    def is_square(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -1047,13 +1047,13 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, might return a
-           square root in the algebraic closure of the rationals. If false,
-           return a square root in the universal cyclotomic field or raises
-           an error.
+        - ``extend`` -- boolean (default: ``True``); if ``True``, might return
+          a square root in the algebraic closure of the rationals. If
+          ``False``, return a square root in the universal cyclotomic field or
+          raises an error.
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
-           list of all square roots.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a
+          list of all square roots
 
         EXAMPLES::
 
@@ -1109,7 +1109,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
                 return UCF_sqrt_int(D, UCF)
             else:
                 return UCF_sqrt_int(D.numerator(), UCF) / \
-                       UCF_sqrt_int(D.denominator(), UCF)
+                    UCF_sqrt_int(D.denominator(), UCF)
 
         # root of unity
         k = self._obj.Conductor()
@@ -1138,7 +1138,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         P = self.parent()
         return P.element_class(P, self._obj.ComplexConjugate())
 
-    def galois_conjugates(self, n=None):
+    def galois_conjugates(self, n=None) -> list:
         r"""
         Return the Galois conjugates of ``self``.
 
@@ -1249,7 +1249,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         INPUT:
 
-        - ``var`` -- (optional, default 'x') the name of the variable to use.
+        - ``var`` -- (default: ``'x'``) the name of the variable to use
 
         EXAMPLES::
 
@@ -1276,7 +1276,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         .. TODO::
 
             Polynomials with libgap currently does not implement a ``.sage()`` method
-            (see :trac:`18266`). It would be faster/safer to not use string to
+            (see :issue:`18266`). It would be faster/safer to not use string to
             construct the polynomial.
         """
         gap_p = libgap.MinimalPolynomial(libgap.eval("Rationals"), self._obj)
@@ -1320,7 +1320,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
             False
         """
         from sage.categories.fields import Fields
-        Field.__init__(self, base_ring=QQ, category=Fields().Infinite())
+        Parent.__init__(self, base=QQ, category=Fields().Infinite())
         self._populate_coercion_lists_(embedding=UCFtoQQbar(self))
         late_import()
 
@@ -1330,7 +1330,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
 
         This method is needed to make the following work::
 
-            sage: UCF.<E> = UniversalCyclotomicField() # indirect doctest
+            sage: UCF.<E> = UniversalCyclotomicField()  # indirect doctest
         """
         if n == 1:
             return (self.gen,)
@@ -1348,7 +1348,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         """
         return self.gen(5, 1) - self(3) * self.gen(5, 2)
 
-    def some_elements(self):
+    def some_elements(self) -> tuple:
         r"""
         Return a tuple of some elements in the universal cyclotomic field.
 
@@ -1363,7 +1363,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
                 self.gen(3, 1),
                 self.gen(7, 1) - self(2) / self(3) * self.gen(7, 2))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -1372,7 +1372,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         """
         return "Universal Cyclotomic Field"
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return ``True`` as this is an exact ring (i.e. not numerical).
 
@@ -1485,7 +1485,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         Some conversions from symbolic functions are possible::
 
             sage: UCF = UniversalCyclotomicField()
-            sage: [UCF(sin(pi/k, hold=True)) for k in range(1,10)]
+            sage: [UCF(sin(pi/k, hold=True)) for k in range(1,10)]                      # needs sage.symbolic
             [0,
              1,
              -1/2*E(12)^7 + 1/2*E(12)^11,
@@ -1495,7 +1495,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
              -1/2*E(28)^19 + 1/2*E(28)^23,
              1/2*E(16)^3 - 1/2*E(16)^5,
              -1/2*E(36)^25 + 1/2*E(36)^29]
-            sage: [UCF(cos(pi/k, hold=True)) for k in range(1,10)]
+            sage: [UCF(cos(pi/k, hold=True)) for k in range(1,10)]                      # needs sage.symbolic
             [-1,
              0,
              1/2,
@@ -1506,8 +1506,9 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
              1/2*E(16) - 1/2*E(16)^7,
              -1/2*E(9)^4 - 1/2*E(9)^5]
 
-             sage: UCF(1 + sqrt(-3/5))
-             4/5*E(15) + 4/5*E(15)^2 + 4/5*E(15)^4 + 6/5*E(15)^7 + 4/5*E(15)^8 + 6/5*E(15)^11 + 6/5*E(15)^13 + 6/5*E(15)^14
+             sage: UCF(1 + sqrt(-3/5))                                                  # needs sage.symbolic
+             4/5*E(15) + 4/5*E(15)^2 + 4/5*E(15)^4 + 6/5*E(15)^7 + 4/5*E(15)^8
+              + 6/5*E(15)^11 + 6/5*E(15)^13 + 6/5*E(15)^14
 
         .. TODO::
 
@@ -1585,8 +1586,8 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
 
         OUTPUT:
 
-        - A factorization of ``f`` over self into a unit and monic irreducible
-          factors
+        A factorization of ``f`` over ``self`` into a unit and monic
+        irreducible factors.
 
         .. NOTE::
 
@@ -1618,7 +1619,8 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
             sage: (x^3 - 8).factor()
             (x - 2) * (x - 2*E(3)) * (x - 2*E(3)^2)
 
-        In most situations, the factorization will fail with a ``NotImplementedError``::
+        In most situations, the factorization will fail with a
+        :exc:`NotImplementedError`::
 
             sage: (x^3 - 2).factor()
             Traceback (most recent call last):
@@ -1654,7 +1656,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         if f.degree() == 1:
             return Factorization([(f, 1)], unit)
 
-        # From now on, we restrict to polynomial with rational cofficients. The
+        # From now on, we restrict to polynomial with rational coefficients. The
         # factorization is provided only in the case it is a product of
         # cyclotomic polynomials and quadratic polynomials. In this situation
         # the roots belong to UCF and the polynomial factorizes as a product of
@@ -1682,8 +1684,8 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
                 m = p.is_cyclotomic(certificate=True)
                 if not m:
                     raise NotImplementedError('no known factorization for this polynomial')
-                for i in m.coprime_integers(m):
-                    factors.append((x - UCF.zeta(m, i), e))
+                factors.extend((x - UCF.zeta(m, i), e)
+                               for i in m.coprime_integers(m))
 
         return Factorization(factors, unit)
 
@@ -1699,7 +1701,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         """
         return Infinity
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return gap string representation of ``self``.
 

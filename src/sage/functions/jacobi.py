@@ -145,17 +145,21 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.symbolic.function import BuiltinFunction
-from sage.functions.trig import (arctan, arcsin, arccos, arccot, arcsec,
-                                 arccsc, csc, sec, sin, cos, tan, cot)
 from sage.functions.hyperbolic import (arctanh, arccosh, arcsinh, arcsech,
                                        arccsch, arccoth, cosh, coth, sech,
                                        csch, tanh, sinh)
-from sage.rings.rational_field import QQ
-from sage.rings.integer import Integer
 from sage.functions.special import elliptic_e, elliptic_kc
-from sage.libs.mpmath import utils
-from sage.misc.latex import latex
+from sage.functions.trig import (arctan, arcsin, arccos, arccot, arcsec,
+                                 arccsc, csc, sec, sin, cos, tan, cot)
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
+from sage.symbolic.function import BuiltinFunction
+
+lazy_import('sage.misc.latex', 'latex')
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('mpmath', 'ellipfun', as_='_mpmath_ellipfun')
 
 HALF = QQ((1, 2))
 
@@ -176,18 +180,19 @@ class Jacobi(BuiltinFunction):
 
         TESTS::
 
-            sage: N(jacobi("sn", I, 1/2))   # abs tol 1e-12
+            sage: N(jacobi("sn", I, 1/2))   # abs tol 1e-12                             # needs sage.symbolic
             -8.59454886300046e-73 + 1.34737147138542*I
 
-            sage: CN = fricas(jacobi('cn',x, 2)); CN  # optional - fricas
+            sage: # optional - fricas, needs sage.symbolic
+            sage: CN = fricas(jacobi('cn',x, 2)); CN
             jacobiCn(x,2)
-            sage: fricas.series(CN, x=0)  # optional - fricas
+            sage: fricas.series(CN, x=0)
                 1  2   3  4   17  6    79  8    1381  10      11
             1 - - x  + - x  - -- x  + --- x  - ----- x   + O(x  )
                 2      8      80      640      19200
-            sage: fricas(jacobi('sn',x, 2))  # optional - fricas
+            sage: fricas(jacobi('sn',x, 2))
             jacobiSn(x,2)
-            sage: fricas(jacobi('dn',x, 2))  # optional - fricas
+            sage: fricas(jacobi('dn',x, 2))
             jacobiDn(x,2)
         """
         if kind not in ['nd', 'ns', 'nc', 'dn', 'ds', 'dc', 'sn', 'sd',
@@ -208,7 +213,8 @@ class Jacobi(BuiltinFunction):
 
         Check that the simplifications are correct::
 
-            sage: from mpmath import almosteq
+            sage: # needs mpmath sage.symbolic
+            sage: from sage.libs.mpmath.all import almosteq
             sage: almosteq(n(jacobi_nd(8, 0, hold=True)), n(jacobi_nd(8, 0)))
             True
             sage: almosteq(n(jacobi_nd(1, 1, hold=True)), n(jacobi_nd(1, 1)))
@@ -356,13 +362,12 @@ class Jacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: jacobi_sn(3, 4).n(100)
+            sage: jacobi_sn(3, 4).n(100)                                                # needs mpmath sage.symbolic
             -0.33260000892770027112809652714 + 1.7077912301715219199143891076e-33*I
-            sage: jacobi_dn(I, I).n()
+            sage: jacobi_dn(I, I).n()                                                   # needs mpmath sage.symbolic
             0.874189950651018 + 0.667346865048825*I
         """
-        from mpmath import ellipfun
-        return utils.call(ellipfun, self.kind, x, m, parent=parent)
+        return _mpmath_utils_call(_mpmath_ellipfun, self.kind, x, m, parent=parent)
 
     def _derivative_(self, x, m, diff_param):
         r"""
@@ -371,6 +376,7 @@ class Jacobi(BuiltinFunction):
         sn, cn, and dn are analytic for all real ``x``, so we can check
         that the derivatives are correct by computing the series::
 
+            sage: # needs mpmath sage.symbolic
             sage: from mpmath import almosteq
             sage: a = 0.9327542442482303
             sage: b = 0.7402326293643771
@@ -413,86 +419,86 @@ class Jacobi(BuiltinFunction):
         elif diff_param == 1:
             # From Maxima
             if self.kind == 'nd':
-                return (HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                return (HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                               (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) -
-                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))/
+                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1))) /
                         jacobi_dn(x, m)**Integer(2))
             elif self.kind == 'ns':
                 return (HALF*(jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) -
-                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m)/
+                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m) /
                         jacobi_sn(x, m)**Integer(2))
             elif self.kind == 'nc':
                 return (-HALF*(jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                                (m - Integer(1)))*jacobi_dn(x, m)*
+                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                                (m - Integer(1)))*jacobi_dn(x, m) *
                                jacobi_sn(x, m)/m)/jacobi_cn(x, m)**Integer(2))
             elif self.kind == 'dn':
-                return (-HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                return (-HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                                (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) +
                         HALF*jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))
             elif self.kind == 'ds':
                 return (HALF*(jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) -
-                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m)*
+                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m) *
                         jacobi_dn(x, m)/jacobi_sn(x, m)**Integer(2) -
-                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                               (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) -
-                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))/
+                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1))) /
                         jacobi_sn(x, m))
             elif self.kind == 'dc':
                 return (-HALF*(jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                                (m - Integer(1)))*jacobi_dn(x, m)*
-                               jacobi_sn(x, m)/m)*jacobi_dn(x, m)/
+                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                                (m - Integer(1)))*jacobi_dn(x, m) *
+                               jacobi_sn(x, m)/m)*jacobi_dn(x, m) /
                         jacobi_cn(x, m)**Integer(2) -
-                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                                (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) -
-                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))/
+                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1))) /
                         jacobi_cn(x, m))
             elif self.kind == 'sn':
                 return (-HALF*jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) +
-                        HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m)
             elif self.kind == 'sd':
                 return (-HALF*(jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) -
-                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m)/
-                        jacobi_dn(x, m) + HALF*
-                        ((x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m) /
+                        jacobi_dn(x, m) + HALF *
+                        ((x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                           (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) -
-                         jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))*
+                         jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1))) *
                         jacobi_sn(x, m)/jacobi_dn(x, m)**Integer(2))
             elif self.kind == 'sc':
                 return (-HALF*(jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) -
-                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                                (m - Integer(1)))*jacobi_dn(x, m)*
+                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                                (m - Integer(1)))*jacobi_dn(x, m) *
                                jacobi_cn(x, m)/m)/jacobi_cn(x, m) -
                         HALF*(jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m)*
+                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m) *
                         jacobi_sn(x, m)/jacobi_cn(x, m)**Integer(2))
             elif self.kind == 'cn':
                 return (HALF*jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                        HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m)
             elif self.kind == 'cd':
                 return (HALF*(jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m)/
+                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m) /
                         jacobi_dn(x, m) +
-                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                                (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) -
-                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))*
+                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1))) *
                         jacobi_cn(x, m)/jacobi_dn(x, m)**Integer(2))
             elif self.kind == 'cs':
                 return (HALF*(jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) -
-                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m)*
+                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m) *
                         jacobi_cn(x, m)/jacobi_sn(x, m)**Integer(2) +
                         HALF*(jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m)/
+                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m) /
                         jacobi_sn(x, m))
 
     def _latex_(self):
@@ -508,7 +514,7 @@ class Jacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(jacobi_sn(x, 3))
+            sage: latex(jacobi_sn(x, 3))                                                # needs sage.symbolic
             \operatorname{sn}\left(x\middle|3\right)
         """
         return r"\operatorname{{{}}}\left({}\middle|{}\right)".format(self.kind,
@@ -561,6 +567,7 @@ class InverseJacobi(BuiltinFunction):
 
         Check that the simplifications are correct::
 
+            sage: # needs mpmath sage.symbolic
             sage: from mpmath import almosteq
             sage: almosteq(n(inverse_jacobi_cd(1, -8, hold=True)),
             ....:          n(inverse_jacobi_cd(1, -8)))
@@ -713,12 +720,12 @@ class InverseJacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: inverse_jacobi_cn(2, 3).n()
+            sage: inverse_jacobi_cn(2, 3).n()                                           # needs mpmath
             0.859663746362987*I
-            sage: inverse_jacobi_cd(3, 4).n(100)
+            sage: inverse_jacobi_cd(3, 4).n(100)                                        # needs mpmath
             -0.67214752201235862490069823239 + 2.1565156474996432354386749988*I
         """
-        return utils.call(inverse_jacobi_f, self.kind, x, m, parent=parent)
+        return _mpmath_utils_call(inverse_jacobi_f, self.kind, x, m, parent=parent)
 
     def _derivative_(self, x, m, diff_param):
         r"""
@@ -727,6 +734,7 @@ class InverseJacobi(BuiltinFunction):
         Check that ``dy/dx * dx/dy == 1``, where ``y = jacobi_pq(x, m)`` and
         ``x = inverse_jacobi_pq(y, m)``::
 
+            sage: # needs mpmath sage.symbolic
             sage: from mpmath import almosteq
             sage: a = 0.130103220857094
             sage: b = 0.437176765041986
@@ -899,7 +907,7 @@ class InverseJacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(inverse_jacobi_dn(x, 3))
+            sage: latex(inverse_jacobi_dn(x, 3))                                        # needs sage.symbolic
             \operatorname{arcdn}\left(x\middle|3\right)
         """
         return r"\operatorname{{arc{}}}\left({}\middle|{}\right)".format(self.kind,
@@ -927,7 +935,7 @@ def jacobi(kind, z, m, **kwargs):
 
     INPUT:
 
-    - ``kind`` -- a string of the form ``'pq'``, where ``p``, ``q`` are in
+    - ``kind`` -- string of the form ``'pq'``, where ``p``, ``q`` are in
       ``c``, ``d``, ``n``, ``s``
     - ``z`` -- a complex number
     - ``m`` -- a complex number; note that `m = k^2`, where `k` is
@@ -935,6 +943,7 @@ def jacobi(kind, z, m, **kwargs):
 
     EXAMPLES::
 
+        sage: # needs mpmath
         sage: jacobi('sn', 1, 1)
         tanh(1)
         sage: jacobi('cd', 1, 1/2)
@@ -944,8 +953,9 @@ def jacobi(kind, z, m, **kwargs):
         sage: (RDF(jacobi('cn', 1, 1/2)), RDF(jacobi('dn', 1, 1/2)),
         ....:  RDF(jacobi('cn', 1, 1/2) / jacobi('dn', 1, 1/2)))
         (0.5959765676721407, 0.8231610016315962, 0.7240097216593705)
-        sage: jsn = jacobi('sn', x, 1)
-        sage: P = plot(jsn, 0, 1)
+
+        sage: jsn = jacobi('sn', x, 1)                                                  # needs sage.symbolic
+        sage: P = plot(jsn, 0, 1)                                                       # needs sage.plot sage.symbolic
     """
     if kind == 'nd':
         return jacobi_nd(z, m, **kwargs)
@@ -988,7 +998,7 @@ def inverse_jacobi(kind, x, m, **kwargs):
 
     INPUT:
 
-    - ``kind`` -- a string of the form ``'pq'``, where ``p``, ``q`` are in
+    - ``kind`` -- string of the form ``'pq'``, where ``p``, ``q`` are in
       ``c``, ``d``, ``n``, ``s``
     - ``x`` -- a real number
     - ``m`` -- a real number; note that `m = k^2`, where `k` is the elliptic
@@ -996,20 +1006,24 @@ def inverse_jacobi(kind, x, m, **kwargs):
 
     EXAMPLES::
 
-        sage: jacobi('dn', inverse_jacobi('dn', 3, 0.4), 0.4)
+        sage: jacobi('dn', inverse_jacobi('dn', 3, 0.4), 0.4)                           # needs mpmath
         3.00000000000000
-        sage: inverse_jacobi('dn', 10, 1/10).n(digits=50)
+        sage: inverse_jacobi('dn', 10, 1/10).n(digits=50)                               # needs mpmath
         2.4777736267904273296523691232988240759001423661683*I
-        sage: inverse_jacobi_dn(x, 1)
+        sage: inverse_jacobi_dn(x, 1)                                                   # needs sage.symbolic
         arcsech(x)
-        sage: inverse_jacobi_dn(1, 3)
+        sage: inverse_jacobi_dn(1, 3)                                                   # needs mpmath
         0
+
+        sage: # needs sage.symbolic
         sage: m = var('m')
         sage: z = inverse_jacobi_dn(x, m).series(x, 4).subs(x=0.1, m=0.7)
         sage: jacobi_dn(z, 0.7)
         0.0999892750039819...
         sage: inverse_jacobi_nd(x, 1)
         arccosh(x)
+
+        sage: # needs mpmath
         sage: inverse_jacobi_nd(1, 2)
         0
         sage: inverse_jacobi_ns(10^-5, 3).n()
@@ -1022,7 +1036,7 @@ def inverse_jacobi(kind, x, m, **kwargs):
         0.499098231322220
         sage: inverse_jacobi('sn', 0.4707504, 0.5)
         0.499999911466555
-        sage: P = plot(inverse_jacobi('sn', x, 0.5), 0, 1)
+        sage: P = plot(inverse_jacobi('sn', x, 0.5), 0, 1)                              # needs sage.plot
     """
     if kind == 'nd':
         return inverse_jacobi_nd(x, m, **kwargs)
@@ -1076,11 +1090,11 @@ class JacobiAmplitude(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: jacobi_am(x, 0)
+            sage: jacobi_am(x, 0)                                                       # needs sage.symbolic
             x
-            sage: jacobi_am(0, x)
+            sage: jacobi_am(0, x)                                                       # needs sage.symbolic
             0
-            sage: jacobi_am(3, 4.)
+            sage: jacobi_am(3, 4.)                                                      # needs mpmath
             -0.339059208303591
         """
         if m == 0:
@@ -1093,18 +1107,18 @@ class JacobiAmplitude(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: jacobi_am(1, 2).n(100)
+            sage: jacobi_am(1, 2).n(100)                                                # needs mpmath
             0.73704379494724574105101929735
         """
-        return utils.call(jacobi_am_f, x, m, parent=parent)
+        return _mpmath_utils_call(jacobi_am_f, x, m, parent=parent)
 
     def _derivative_(self, x, m, diff_param):
         r"""
         TESTS::
 
-            sage: diff(jacobi_am(x, 3), x)
+            sage: diff(jacobi_am(x, 3), x)                                              # needs sage.symbolic
             jacobi_dn(x, 3)
-            sage: diff(jacobi_am(3, x), x)
+            sage: diff(jacobi_am(3, x), x)                                              # needs sage.symbolic
             -1/2*(x*jacobi_cn(3, x)*jacobi_sn(3, x) -...
             (3*x + elliptic_e(jacobi_am(3, x), x) - 3)*jacobi_dn(3, x))/((x - 1)*x)
         """
@@ -1128,7 +1142,7 @@ class JacobiAmplitude(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(jacobi_am(3,x))
+            sage: latex(jacobi_am(3,x))                                                 # needs sage.symbolic
             \operatorname{am}\left(3\middle|x\right)
         """
         return r"\operatorname{{am}}\left({}\middle|{}\right)".format(latex(x),
@@ -1146,9 +1160,10 @@ def inverse_jacobi_f(kind, x, m):
 
     TESTS::
 
-        sage: from mpmath import ellipfun, chop
+        sage: from mpmath import ellipfun, chop                                         # needs mpmath
         sage: from sage.functions.jacobi import inverse_jacobi_f
 
+        sage: # needs mpmath
         sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.6, 0), 0))
         mpf('0.59999999999999998')
         sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.6, 1), 1))
@@ -1162,6 +1177,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.8, 4), 4))
         mpf('0.80000000000000004')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('ns', inverse_jacobi_f('ns', 0.8, 0), 0))
         mpf('0.80000000000000004')
         sage: chop(ellipfun('ns', inverse_jacobi_f('ns', -0.7, 1), 1))
@@ -1173,6 +1189,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('ns', inverse_jacobi_f('ns', -10, 6), 6))
         mpf('-10.0')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('cn', inverse_jacobi_f('cn', -10, 0), 0))
         mpf('-9.9999999999999982')
         sage: chop(ellipfun('cn', inverse_jacobi_f('cn', 50, 1), 1))
@@ -1188,6 +1205,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('cn', inverse_jacobi_f('cn', -2, 0.9), 0.9))
         mpf('-2.0')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('nc', inverse_jacobi_f('nc', -4, 0), 0))
         mpf('-3.9999999999999987')
         sage: chop(ellipfun('nc', inverse_jacobi_f('nc', 7, 1), 1))
@@ -1199,6 +1217,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('nc', inverse_jacobi_f('nc', -18, -4), -4))
         mpf('-17.999999999999925')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -0.3, 1), 1))
         mpf('-0.29999999999999999')
         sage: chop(ellipfun('dn', inverse_jacobi_f('dn', 1, -1), -1))
@@ -1216,6 +1235,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -1.9, 0.2), 0.2))
         mpf('-1.8999999999999999')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('nd', inverse_jacobi_f('nd', -1.9, 1), 1))
         mpf('-1.8999999999999999')
         sage: chop(ellipfun('nd', inverse_jacobi_f('nd', 1, -1), -1))
@@ -1227,6 +1247,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('nd', inverse_jacobi_f('nd', -3, 0.8), 0.8))
         mpf('-2.9999999999999996')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('sc', inverse_jacobi_f('sc', -3, 0), 0))
         mpf('-3.0')
         sage: chop(ellipfun('sc', inverse_jacobi_f('sc', 2, 1), 1))
@@ -1236,6 +1257,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('sc', inverse_jacobi_f('sc', -7, 3), 3))
         mpf('-7.0')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('cs', inverse_jacobi_f('cs', -7, 0), 0))
         mpf('-6.9999999999999991')
         sage: chop(ellipfun('cs', inverse_jacobi_f('cs', 8, 1), 1))
@@ -1247,18 +1269,19 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('cs', inverse_jacobi_f('cs', -6, 8), 8))
         mpf('-6.0000000000000018')
 
-        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', -6, 0), 0))
+        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', -6, 0), 0))                    # needs mpmath
         mpf('-6.0000000000000009')
-        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 1, 3), 3))
+        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 1, 3), 3))                     # needs mpmath
         mpf('1.0')
-        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 6, 8), 8))
+        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 6, 8), 8))                     # needs mpmath
         mpf('6.0000000000000027')
 
-        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', 5, 0), 0))
+        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', 5, 0), 0))                     # needs mpmath
         mpf('5.0000000000000018')
-        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', -4, 2), 2))
+        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', -4, 2), 2))                    # needs mpmath
         mpf('-4.0000000000000018')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('sd', inverse_jacobi_f('sd', -4, 0), 0))
         mpf('-3.9999999999999991')
         sage: chop(ellipfun('sd', inverse_jacobi_f('sd', 7, 1), 1))
@@ -1268,12 +1291,10 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('sd', inverse_jacobi_f('sd', 8, 0.8), 0.8))
         mpf('7.9999999999999991')
 
-        sage: chop(ellipfun('ds', inverse_jacobi_f('ds', 4, 0.25), 0.25))
+        sage: chop(ellipfun('ds', inverse_jacobi_f('ds', 4, 0.25), 0.25))               # needs mpmath
         mpf('4.0')
     """
-    from mpmath import mp
-
-    ctx = mp
+    from mpmath import mp as ctx
     prec = ctx.prec
     try:
         x = ctx.convert(x)
@@ -1614,6 +1635,7 @@ def jacobi_am_f(x, m):
 
     TESTS::
 
+        sage: # needs mpmath
         sage: from mpmath import ellipf
         sage: from sage.functions.jacobi import jacobi_am_f
         sage: ellipf(jacobi_am_f(0.5, 1), 1)
@@ -1629,9 +1651,7 @@ def jacobi_am_f(x, m):
         sage: jacobi_am_f(-3, 2)
         mpf('0.36067407399586108')
     """
-    from mpmath import mp
-
-    ctx = mp
+    from mpmath import mp as ctx
     prec = ctx.prec
     try:
         x = ctx.convert(x)

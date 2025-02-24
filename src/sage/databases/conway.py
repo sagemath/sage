@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 r"""
-Frank Luebeck's tables of Conway polynomials over finite fields
+Frank Lübeck's tables of Conway polynomials over finite fields
 """
 # ****************************************************************************
 #
@@ -15,11 +14,6 @@ Frank Luebeck's tables of Conway polynomials over finite fields
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from collections.abc import Mapping
-import pickle
-
-from sage.features.databases import DatabaseConwayPolynomials
-
-_conwaydict = None
 
 
 class DictInMapping(Mapping):
@@ -95,14 +89,10 @@ class ConwayPolynomials(Mapping):
 
             sage: c = ConwayPolynomials()
             sage: c
-            Frank Luebeck's database of Conway polynomials
+            Frank Lübeck's database of Conway polynomials
         """
-        global _conwaydict
-        if _conwaydict is None:
-            _CONWAYDATA = DatabaseConwayPolynomials().absolute_filename()
-            with open(_CONWAYDATA, 'rb') as f:
-                _conwaydict = pickle.load(f)
-        self._store = _conwaydict
+        import conway_polynomials
+        self._store = conway_polynomials.database()
 
     def __repr__(self):
         """
@@ -112,9 +102,9 @@ class ConwayPolynomials(Mapping):
 
             sage: c = ConwayPolynomials()
             sage: c.__repr__()
-            "Frank Luebeck's database of Conway polynomials"
+            "Frank Lübeck's database of Conway polynomials"
         """
-        return "Frank Luebeck's database of Conway polynomials"
+        return "Frank Lübeck's database of Conway polynomials"
 
     def __getitem__(self, key):
         """
@@ -148,11 +138,16 @@ class ConwayPolynomials(Mapping):
         """
         Return the number of polynomials in this database.
 
-        TESTS::
+        TESTS:
+
+        The database currently contains `35357` polynomials, but due to
+        :issue:`35357` it will be extended by Conway polynomials of
+        degrees `1`, `2` and `3` for primes between `65537` and `110000`,
+        thus leading to a new total of `47090` entries::
 
             sage: c = ConwayPolynomials()
-            sage: len(c)
-            35352
+            sage: len(c) in [35357, 47090]
+            True
         """
         try:
             return self._len
@@ -179,7 +174,7 @@ class ConwayPolynomials(Mapping):
     def polynomial(self, p, n):
         """
         Return the Conway polynomial of degree ``n`` over ``GF(p)``,
-        or raise a RuntimeError if this polynomial is not in the
+        or raise a :exc:`RuntimeError` if this polynomial is not in the
         database.
 
         .. NOTE::
@@ -215,7 +210,7 @@ class ConwayPolynomials(Mapping):
 
     def has_polynomial(self, p, n):
         """
-        Return True if the database of Conway polynomials contains the
+        Return ``True`` if the database of Conway polynomials contains the
         polynomial of degree ``n`` over ``GF(p)``.
 
         INPUT:

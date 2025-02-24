@@ -1,22 +1,9 @@
 cd src/
-echo "patching win32/zlib.def with a binary patch"
-patch -p1 --posix --binary <"$SAGE_ROOT/build/pkgs/zlib/patches/cygwin-windef.diff_bin"
 
-if [ "$UNAME" = CYGWIN ]; then
-    export BINARY_PATH="$SAGE_LOCAL/bin"
-    export INCLUDE_PATH="$SAGE_LOCAL/include"
-    export LIBRARY_PATH="$SAGE_LOCAL/lib"
-    cp -f win32/Makefile.gcc Makefile || \
-        sdh_die "Error copying over zlib's Makefile for Cygwin."
-
-    # We want to install shared objects
-    sed -i 's/SHARED_MODE=0/SHARED_MODE=1/' Makefile
-else
-    # Trac #28890: zlib does not use a standard autoconf-generated configure
-    # script, so don't use the sdh_configure helper as it may have minor
-    # incompatibilities
-    ./configure --shared --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" || sdh_die "Error configuring $PKG_NAME"
-fi
+# Issue #28890: zlib does not use a standard autoconf-generated configure
+# script, so don't use the sdh_configure helper as it may have minor
+# incompatibilities
+./configure --shared --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" || sdh_die "Error configuring $PKG_NAME"
 
 sdh_make
 sdh_make_install

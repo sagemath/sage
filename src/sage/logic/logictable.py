@@ -62,7 +62,7 @@ Create a truth table of a boolean formula::
     True   True   False  True
     True   True   True   True
 
-Get the letex code for a truth table::
+Get the LaTeX code for a truth table::
 
     sage: latex(s.truthtable(5,11))
     \\\begin{tabular}{llll}c & b & a & value \\\hline True & False & True & False \\True & True & False & True \\True & True & True & True\end{tabular}
@@ -106,7 +106,7 @@ If the second argument is negative, truthtable defaults to the end::
     For statements that contain a variable list that when printed is longer
     than the latex page, the columns of the table will run off the screen.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2006 Chris Gorecki <chris.k.gorecki@gmail.com>
 #       Copyright (C) 2013 Paul Scurek <scurek86@gmail.com>
@@ -114,12 +114,13 @@ If the second argument is negative, truthtable defaults to the end::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # Global variables
 __table = []
 __vars_order = []
+
 
 class Truthtable:
     """
@@ -129,7 +130,7 @@ class Truthtable:
 
     - ``t`` -- a 2-D array containing the table values
 
-    - ``vo`` -- a list of the variables in the expression in order,
+    - ``vo`` -- list of the variables in the expression in order,
       with each variable occurring only once
     """
     def __init__(self, t, vo):
@@ -162,9 +163,7 @@ class Truthtable:
         r"""
         Return a latex representation of the calling table object.
 
-        OUTPUT:
-
-        The latex representation of the table.
+        OUTPUT: the latex representation of the table
 
         EXAMPLES:
 
@@ -202,9 +201,7 @@ class Truthtable:
         r"""
         Return a string representation of the calling table object.
 
-        OUTPUT:
-
-        The table as a 2-D string array.
+        OUTPUT: the table as a 2-D string array
 
         EXAMPLES:
 
@@ -244,10 +241,7 @@ class Truthtable:
             line = s = ""
             i = 0
             for e in row:
-                if e:
-                    j = 2
-                else:
-                    j = 1
+                j = 2 if e else 1
                 s = str(e) + ' ' * j
                 if i < len(vars_len):
                     while len(s) <= vars_len[i]:
@@ -262,9 +256,7 @@ class Truthtable:
         r"""
         Return a list representation of the calling table object.
 
-        OUTPUT:
-
-        A list representation of the table.
+        OUTPUT: list representation of the table
 
         EXAMPLES:
 
@@ -274,7 +266,6 @@ class Truthtable:
             sage: s = propcalc.formula("man->monkey&human")
             sage: s.truthtable().get_table_list()
              [['man', 'monkey', 'human'], [False, False, False, True], [False, False, True, True], [False, True, False, True], [False, True, True, True], [True, False, False, False], [True, False, True, False], [True, True, False, False], [True, True, True, True]]
-
         """
         t = self.__table[:]
         t.insert(0, self.__vars_order)

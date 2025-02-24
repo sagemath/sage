@@ -19,7 +19,7 @@ import sage.rings.abc
 from sage.structure.parent import Parent
 from sage.functions.log import log
 from sage.misc.functional import sqrt
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.sets.set import Set
 from pprint import pformat
 
@@ -27,15 +27,31 @@ from pprint import pformat
 ################################################################################
 
 def is_ProbabilitySpace(S):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ProbabilitySpace is deprecated; "
+                "use 'isinstance(..., ProbabilitySpace_generic)' instead.")
     return isinstance(S, ProbabilitySpace_generic)
 
 def is_DiscreteProbabilitySpace(S):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_DiscreteProbabilitySpace is deprecated; "
+                "use 'isinstance(..., DiscreteProbabilitySpace)' instead.")
     return isinstance(S, DiscreteProbabilitySpace)
 
 def is_RandomVariable(X):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_RandomVariable is deprecated; "
+                "use 'isinstance(..., RandomVariable_generic)' instead.")
     return isinstance(X, RandomVariable_generic)
 
 def is_DiscreteRandomVariable(X):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_DiscreteRandomVariable is deprecated; "
+                "use 'isinstance(..., DiscreteRandomVariable)' instead.")
     return isinstance(X, DiscreteRandomVariable)
 
 ################################################################################
@@ -49,7 +65,7 @@ class RandomVariable_generic(Parent):
     A random variable.
     """
     def __init__(self, X, RR):
-        if not is_ProbabilitySpace(X):
+        if not isinstance(X, ProbabilitySpace_generic):
             raise TypeError("Argument X (= %s) must be a probability space" % X)
         Parent.__init__(self, X)
         self._codomain = RR
@@ -77,11 +93,11 @@ class DiscreteRandomVariable(RandomVariable_generic):
 
         INPUT:
 
-        - X -- a probability space
-        - f -- a dictionary such that X[x] = value for x in X
+        - ``X`` -- a probability space
+        - ``f`` -- dictionary such that X[x] = value for x in X
           is the discrete function on X
         """
-        if not is_DiscreteProbabilitySpace(X):
+        if not isinstance(X, DiscreteProbabilitySpace):
             raise TypeError("Argument X (= %s) must be a discrete probability space" % X)
         if check:
             raise NotImplementedError("Not implemented")
@@ -118,7 +134,7 @@ class DiscreteRandomVariable(RandomVariable_generic):
     def expectation(self):
         r"""
         The expectation of the discrete random variable, namely
-        `\sum_{x \in S} p(x) X[x]`, where `X` = self and
+        `\sum_{x \in S} p(x) X[x]`, where `X` = ``self`` and
         `S` is the probability space of `X`.
         """
         E = 0
@@ -181,8 +197,8 @@ class DiscreteRandomVariable(RandomVariable_generic):
 
     def covariance(self, other):
         r"""
-        The covariance of the discrete random variable X = self with Y =
-        other.
+        The covariance of the discrete random variable X = ``self`` with Y =
+        ``other``.
 
         Let `S` be the probability space of `X` = self,
         with probability function `p`, and `E(X)` be the
@@ -204,8 +220,8 @@ class DiscreteRandomVariable(RandomVariable_generic):
 
     def translation_covariance(self, other, map):
         r"""
-        The covariance of the probability space X = self with image of Y =
-        other under the given map of the probability space.
+        The covariance of the probability space X = ``self`` with image of Y =
+        ``other`` under the given map of the probability space.
 
         Let `S` be the probability space of `X` = self,
         with probability function `p`, and `E(X)` be the
@@ -243,23 +259,23 @@ class DiscreteRandomVariable(RandomVariable_generic):
     def translation_standard_deviation(self, map):
         r"""
         The standard deviation of the translated discrete random variable
-        `X \circ e`, where `X` = self and `e` =
+        `X \circ e`, where `X` = ``self`` and `e` =
         map.
 
-        Let `S` be the probability space of `X` = self,
+        Let `S` be the probability space of `X` = ``self``,
         with probability function `p`, and `E(X)` be the
         expectation of `X`. Then the standard deviation of
         `X` is defined to be
 
         .. MATH::
 
-                     \sigma(X) = \sqrt{ \sum_{x \in S} p(x) (X(x) - E(x))^2}
+            \sigma(X) = \sqrt{ \sum_{x \in S} p(x) (X(x) - E(x))^2}
         """
         return sqrt(self.translation_variance(map))
 
     def correlation(self, other):
         """
-        The correlation of the probability space X = self with Y = other.
+        The correlation of the probability space X = ``self`` with Y = ``other``.
         """
         cov = self.covariance(other)
         sigX = self.standard_deviation()
@@ -270,8 +286,8 @@ class DiscreteRandomVariable(RandomVariable_generic):
 
     def translation_correlation(self, other, map):
         """
-        The correlation of the probability space X = self with image of Y =
-        other under map.
+        The correlation of the probability space X = ``self`` with image of Y =
+        ``other`` under map.
         """
         cov = self.translation_covariance(other, map)
         sigX = self.standard_deviation()
@@ -326,7 +342,7 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
             sage: X.set()
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
-            sage: X.entropy().n()
+            sage: X.entropy().n()                                                       # needs sage.libs.pari
             1.99993896484375
 
         A probability space can be defined on any list of elements::
@@ -337,17 +353,17 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             sage: X = DiscreteProbabilitySpace(S,P)
             sage: X
             Discrete probability space defined by {'A': 1/2, 'B': 1/4, 'C': 1/4}
-            sage: X.entropy().n()
+            sage: X.entropy().n()                                                       # needs sage.libs.pari
             1.50000000000000
         """
         if codomain is None:
             from sage.rings.real_mpfr import RealField
             codomain = RealField()
-        if not isinstance(codomain, sage.rings.abc.RealField) and not is_RationalField(codomain):
+        if not isinstance(codomain, sage.rings.abc.RealField) and not isinstance(codomain, RationalField):
             raise TypeError("Argument codomain (= %s) must be the reals or rationals" % codomain)
         if check:
             one = sum(P.values())
-            if is_RationalField(codomain):
+            if isinstance(codomain, RationalField):
                 if not one == 1:
                     raise TypeError("Argument P (= %s) does not define a probability function")
             else:

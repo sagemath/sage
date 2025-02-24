@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 """
 Coxeter Groups As Matrix Groups
 
@@ -19,23 +20,19 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.structure.unique_representation import UniqueRepresentation
+import sage.rings.abc
+
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_generic
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 from sage.matrix.args import SparseEntry
 from sage.matrix.matrix_space import MatrixSpace
-
-import sage.rings.abc
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-from sage.rings.number_field.number_field import QuadraticField
-
-from sage.misc.cachefunc import cached_method
-
 from sage.sets.family import Family
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_generic):
@@ -82,8 +79,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
     We can create Coxeter groups from Coxeter matrices::
 
-        sage: W = CoxeterGroup([[1, 6, 3], [6, 1, 10], [3, 10, 1]])
-        sage: W
+        sage: # needs sage.libs.gap sage.rings.number_field
+        sage: W = CoxeterGroup([[1, 6, 3], [6, 1, 10], [3, 10, 1]]); W
         Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
         [ 1  6  3]
         [ 6  1 10]
@@ -102,6 +99,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         [              0               1               0]
         [              1 E(20) - E(20)^9              -1]
         )
+
         sage: m = matrix([[1,3,3,3], [3,1,3,2], [3,3,1,2], [3,2,2,1]])
         sage: W = CoxeterGroup(m)
         sage: W.gens()
@@ -143,7 +141,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         [3 1 3 2]
         [3 3 1 2]
         [3 2 2 1]
-        sage: CoxeterGroup([[1,4],[4,1]], base_ring=QQ)
+        sage: CoxeterGroup([[1,4],[4,1]], base_ring=QQ)                                 # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: unable to convert sqrt(2) to a rational
@@ -152,6 +150,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
     graphs, we can input a Coxeter graph. Following the standard convention,
     edges with no label (i.e. labelled by ``None``) are treated as 3::
 
+        sage: # needs sage.libs.gap sage.rings.number_field
         sage: G = Graph([(0,3,None), (1,3,15), (2,3,7), (0,1,3)])
         sage: W = CoxeterGroup(G); W
         Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
@@ -166,6 +165,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
     Because there currently is no class for `\ZZ \cup \{ \infty \}`, labels
     of `\infty` are given by `-1` in the Coxeter matrix::
 
+        sage: # needs sage.libs.gap sage.rings.number_field
         sage: G = Graph([(0,1,None), (1,2,4), (0,2,oo)])
         sage: W = CoxeterGroup(G)
         sage: W.coxeter_matrix()
@@ -176,16 +176,14 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
     We can also create Coxeter groups from Cartan types using the
     ``implementation`` keyword::
 
-        sage: W = CoxeterGroup(['D',5], implementation="reflection")
-        sage: W
+        sage: W = CoxeterGroup(['D',5], implementation='reflection'); W
         Finite Coxeter group over Integer Ring with Coxeter matrix:
         [1 3 2 2 2]
         [3 1 3 2 2]
         [2 3 1 3 3]
         [2 2 3 1 2]
         [2 2 3 2 1]
-        sage: W = CoxeterGroup(['H',3], implementation="reflection")
-        sage: W
+        sage: W = CoxeterGroup(['H',3], implementation='reflection'); W                 # needs sage.libs.gap sage.rings.number_field
         Finite Coxeter group over
          Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
          with Coxeter matrix:
@@ -200,7 +198,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
         EXAMPLES::
 
-            sage: W1 = CoxeterGroup(['A',2], implementation="reflection", base_ring=ZZ)
+            sage: W1 = CoxeterGroup(['A',2], implementation='reflection', base_ring=ZZ)
             sage: W2 = CoxeterGroup([[1,3],[3,1]], index_set=(1,2))
             sage: W1 is W2
             True
@@ -219,6 +217,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             if data.is_simply_laced():
                 base_ring = ZZ
             elif data.is_finite():
+                from sage.rings.number_field.number_field import QuadraticField
                 letter = data.coxeter_type().cartan_type().type()
                 if letter in ['B', 'C', 'F']:
                     base_ring = QuadraticField(2)
@@ -227,8 +226,10 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 elif letter == 'H':
                     base_ring = QuadraticField(5)
                 else:
+                    from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
                     base_ring = UniversalCyclotomicField()
             else:
+                from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
                 base_ring = UniversalCyclotomicField()
         return super().__classcall__(cls, data, base_ring, data.index_set())
 
@@ -239,20 +240,24 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         EXAMPLES::
 
             sage: W = CoxeterGroup([[1,3,2],[3,1,3],[2,3,1]])
-            sage: TestSuite(W).run() # long time
-            sage: W = CoxeterGroup([[1,3,2],[3,1,4],[2,4,1]], base_ring=QQbar)
-            sage: TestSuite(W).run() # long time
-            sage: W = CoxeterGroup([[1,3,2],[3,1,6],[2,6,1]])
-            sage: TestSuite(W).run(max_runs=30) # long time
-            sage: W = CoxeterGroup([[1,3,2],[3,1,-1],[2,-1,1]])
-            sage: TestSuite(W).run(max_runs=30) # long time
+            sage: TestSuite(W).run()  # long time
 
-        We check that :trac:`16630` is fixed::
+            sage: # long time, needs sage.rings.number_field sage.symbolic
+            sage: W = CoxeterGroup([[1,3,2],[3,1,4],[2,4,1]], base_ring=QQbar)
+            sage: TestSuite(W).run()
+            sage: W = CoxeterGroup([[1,3,2],[3,1,6],[2,6,1]])
+            sage: TestSuite(W).run(max_runs=30)
+            sage: W = CoxeterGroup([[1,3,2],[3,1,-1],[2,-1,1]])
+            sage: TestSuite(W).run(max_runs=30)
+
+        We check that :issue:`16630` is fixed::
 
             sage: CoxeterGroup(['D',4], base_ring=QQ).category()
-            Category of finite irreducible coxeter groups
+            Category of finite irreducible Coxeter groups
+
+            sage: # needs sage.rings.number_field
             sage: CoxeterGroup(['H',4], base_ring=QQbar).category()
-            Category of finite irreducible coxeter groups
+            Category of finite irreducible Coxeter groups
             sage: F = CoxeterGroups().Finite()
             sage: all(CoxeterGroup([letter,i]) in F
             ....:     for i in range(2,5) for letter in ['A','B','D'])
@@ -260,9 +265,9 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             sage: all(CoxeterGroup(['E',i]) in F for i in range(6,9))
             True
             sage: CoxeterGroup(['F',4]).category()
-            Category of finite irreducible coxeter groups
+            Category of finite irreducible Coxeter groups
             sage: CoxeterGroup(['G',2]).category()
-            Category of finite irreducible coxeter groups
+            Category of finite irreducible Coxeter groups
             sage: all(CoxeterGroup(['H',i]) in F for i in range(3,5))
             True
             sage: all(CoxeterGroup(['I',i]) in F for i in range(2,5))
@@ -274,8 +279,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         MS = MatrixSpace(base_ring, n, sparse=True)
         one = MS.one()
         # FIXME: Hack because there is no ZZ \cup \{ \infty \}: -1 represents \infty
-        E = UniversalCyclotomicField().gen
-        if base_ring is UniversalCyclotomicField():
+        if isinstance(base_ring, sage.rings.abc.UniversalCyclotomicField):
+            E = base_ring.gen
 
             def val(x):
                 if x == -1:
@@ -283,6 +288,9 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 else:
                     return E(2 * x) + ~E(2 * x)
         elif isinstance(base_ring, sage.rings.abc.NumberField_quadratic):
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+
+            E = UniversalCyclotomicField().gen
 
             def val(x):
                 if x == -1:
@@ -332,7 +340,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
         EXAMPLES::
 
-            sage: CoxeterGroup([[1,3,2],[3,1,4],[2,4,1]])
+            sage: CoxeterGroup([[1,3,2],[3,1,4],[2,4,1]])                               # needs sage.libs.gap sage.rings.number_field
             Finite Coxeter group over Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095? with Coxeter matrix:
             [1 3 2]
             [3 1 4]
@@ -349,11 +357,12 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: W = CoxeterGroup(["A",4])
             sage: W2 = WeylGroup(["A",4])
             sage: W._coerce_map_from_(W2)
             True
-            sage: W3 = WeylGroup(["A",4], implementation="permutation")
+            sage: W3 = WeylGroup(["A",4], implementation='permutation')
             sage: W._coerce_map_from_(W3)
             True
             sage: W4 = WeylGroup(["A",3])
@@ -374,8 +383,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             sage: W.coxeter_matrix()
             [1 3]
             [3 1]
-            sage: W = CoxeterGroup(['H',3])
-            sage: W.coxeter_matrix()
+            sage: W = CoxeterGroup(['H',3])                                             # needs sage.libs.gap sage.rings.number_field
+            sage: W.coxeter_matrix()                                                    # needs sage.libs.gap sage.rings.number_field
             [1 3 2]
             [3 1 5]
             [2 5 1]
@@ -400,7 +409,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         EXAMPLES::
 
             sage: W = CoxeterGroup(['D',4])
-            sage: W.bilinear_form()
+            sage: W.bilinear_form()                                                     # needs sage.symbolic
             [   1 -1/2    0    0]
             [-1/2    1 -1/2 -1/2]
             [   0 -1/2    1    0]
@@ -414,6 +423,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap sage.rings.number_field
             sage: [l for l in range(2, 9) if
             ....:  CoxeterGroup([[1,3,2],[3,1,l],[2,l,1]]).is_finite()]
             [2, 3, 4, 5]
@@ -468,11 +478,12 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: W = CoxeterGroup([[1,3],[3,1]])
             sage: W.order()
             6
-            sage: W = CoxeterGroup([[1,-1],[-1,1]])
-            sage: W.order()
+            sage: W = CoxeterGroup([[1,-1],[-1,1]])                                     # needs sage.libs.gap
+            sage: W.order()                                                             # needs sage.libs.gap
             +Infinity
         """
         if self.is_finite():
@@ -502,7 +513,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A',3], implementation="reflection")
+            sage: W = CoxeterGroup(['A',3], implementation='reflection')
             sage: W.simple_reflection(1)
             [-1  1  0]
             [ 0  1  0]
@@ -581,6 +592,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             sage: W = CoxeterGroup(['A',3], implementation='reflection')
             sage: W.positive_roots()
             ((1, 0, 0), (1, 1, 0), (0, 1, 0), (1, 1, 1), (0, 1, 1), (0, 0, 1))
+
+            sage: # needs sage.libs.gap sage.rings.number_field
             sage: W = CoxeterGroup(['I',5], implementation='reflection')
             sage: W.positive_roots()
             ((1, 0),
@@ -637,6 +650,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
              (-1, -1, -1),
              (0, -1, -1),
              (0, 0, -1))
+
+            sage: # needs sage.libs.gap sage.rings.number_field
             sage: W = CoxeterGroup(['I',5], implementation='reflection')
             sage: len(W.roots())
             10
@@ -677,7 +692,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         EXAMPLES::
 
             sage: W = CoxeterGroup(['A',3], implementation='reflection')
-            sage: W.fundamental_weights()
+            sage: W.fundamental_weights()                                               # needs sage.symbolic
             Finite family {1: (3/2, 1, 1/2), 2: (1, 2, 1), 3: (1/2, 1, 3/2)}
         """
         simple_weights = self.bilinear_form().inverse()
@@ -694,7 +709,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         EXAMPLES::
 
             sage: W = CoxeterGroup(['A',3], implementation='reflection')
-            sage: W.fundamental_weight(1)
+            sage: W.fundamental_weight(1)                                               # needs sage.symbolic
             (3/2, 1, 1/2)
         """
         return self.fundamental_weights()[i]
@@ -712,7 +727,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['A',3], implementation="reflection")
+                sage: W = CoxeterGroup(['A',3], implementation='reflection')
                 sage: a,b,c = W.gens()
                 sage: elt = b*a*c
                 sage: elt.first_descent()
@@ -751,11 +766,11 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             - ``index_set`` -- (default: all of them) a subset (as a list
               or iterable) of the nodes of the Dynkin diagram
             - ``side`` -- (default: ``'right'``) ``'left'`` or ``'right'``
-            - ``positive`` -- (default: ``False``) boolean
+            - ``positive`` -- boolean (default: ``False``)
 
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['A',3], implementation="reflection")
+                sage: W = CoxeterGroup(['A',3], implementation='reflection')
                 sage: a,b,c = W.gens()
                 sage: elt = b*a*c
                 sage: elt.descents()
@@ -794,7 +809,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             `\ell(ws) < \ell(w)` then `w(\alpha_s) < 0`.
             Thus `i \in I` is a right descent if `w(\alpha_{s_i}) < 0`
             or equivalently if the matrix representing `w` has all entries
-            of the `i`-th column being non-positive.
+            of the `i`-th column being nonpositive.
 
             INPUT:
 
@@ -802,7 +817,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['A',3], implementation="reflection")
+                sage: W = CoxeterGroup(['A',3], implementation='reflection')
                 sage: a,b,c = W.gens()
                 sage: elt = b*a*c
                 sage: [elt.has_right_descent(i) for i in [1, 2, 3]]
@@ -821,7 +836,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['A',3], implementation="reflection")
+                sage: W = CoxeterGroup(['A',3], implementation='reflection')
                 sage: a,b,c = W.gens()
                 sage: elt = a*b*c
                 sage: elt.canonical_matrix()
@@ -832,7 +847,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             return self.matrix()
 
         @cached_method
-        def action_on_root_indices(self, i, side="left"):
+        def action_on_root_indices(self, i, side='left'):
             """
             Return the action on the set of roots.
 
@@ -840,7 +855,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
             EXAMPLES::
 
-                sage: W = CoxeterGroup(['A',3], implementation="reflection")
+                sage: W = CoxeterGroup(['A',3], implementation='reflection')
                 sage: w = W.w0
                 sage: w.action_on_root_indices(0)
                 11
@@ -881,7 +896,7 @@ def _matrix_test_right_descent(M, i, n, zero):
     EXAMPLES::
 
         sage: from sage.groups.matrix_gps.coxeter_group import _matrix_test_right_descent
-        sage: W = CoxeterGroup(['A',3], implementation="reflection")
+        sage: W = CoxeterGroup(['A',3], implementation='reflection')
         sage: a,b,c = W.gens()
         sage: elt = b*a*c
         sage: zero = W.base_ring().zero()

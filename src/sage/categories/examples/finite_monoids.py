@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Examples of finite monoids
 """
@@ -20,7 +21,7 @@ from sage.rings.integer_ring import ZZ
 
 class IntegerModMonoid(UniqueRepresentation, Parent):
     r"""
-    An example of a finite monoid: the integers mod `n`
+    An example of a finite monoid: the integers mod `n`.
 
     This class illustrates a minimal implementation of a finite monoid.
 
@@ -86,7 +87,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
             sage: M._repr_()
             'An example of a finite multiplicative monoid: the integers modulo 12'
         """
-        return "An example of a finite multiplicative monoid: the integers modulo %s"%self.n
+        return "An example of a finite multiplicative monoid: the integers modulo %s" % self.n
 
     def semigroup_generators(self):
         r"""
@@ -114,7 +115,6 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
             sage: M = FiniteMonoids().example()
             sage: M.one()
             1
-
         """
         return self(ZZ.one())
 
@@ -133,7 +133,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Returns an element of the monoid, as per :meth:`Sets.ParentMethods.an_element`.
+        Return an element of the monoid, as per :meth:`Sets.ParentMethods.an_element`.
 
         EXAMPLES::
 
@@ -145,5 +145,6 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
 
     class Element (ElementWrapper):
         wrapped_class = Integer
+
 
 Example = IntegerModMonoid

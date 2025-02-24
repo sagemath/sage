@@ -1,4 +1,4 @@
-$(PYTHON) soupsieve | $(PYTHON_TOOLCHAIN)
+ soupsieve | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

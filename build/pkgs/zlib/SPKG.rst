@@ -17,11 +17,3 @@ Upstream Contact
 ----------------
 
 -  http://www.zlib.net/
-
-Special Update/Build Instructions
----------------------------------
-
-Patches
-~~~~~~~
-
--  cygwin_symbols.patch: remove undefined symbols on Cygwin.

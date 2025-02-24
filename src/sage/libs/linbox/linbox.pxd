@@ -8,7 +8,7 @@
 from libc.stdint cimport uint32_t, uint64_t
 from libcpp.vector cimport vector as cppvector
 
-from .givaro cimport *
+from sage.libs.linbox.givaro cimport *
 
 cdef extern from "linbox/matrix/dense-matrix.h":
     ## template <class _Field, class _blasRep=typename Vector<_Field>::Dense >

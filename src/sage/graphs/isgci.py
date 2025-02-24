@@ -135,28 +135,28 @@ Predefined classes
 
    * - Apex
 
-     - :meth:`~Graph.is_apex()`,
-       :meth:`~Graph.apex_vertices()`
+     - :meth:`~sage.graphs.graph.Graph.is_apex`,
+       :meth:`~sage.graphs.graph.Graph.apex_vertices`
 
    * - AT_free
 
-     - :meth:`~Graph.is_asteroidal_triple_free`
+     - :meth:`~sage.graphs.graph.Graph.is_asteroidal_triple_free`
 
    * - Biconnected
 
-     - :meth:`~Graph.is_biconnected`,
-       :meth:`~GenericGraph.blocks_and_cut_vertices`,
-       :meth:`~GenericGraph.blocks_and_cuts_tree`
+     - :meth:`~sage.graphs.graph.Graph.is_biconnected`,
+       :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`,
+       :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cuts_tree`
 
    * - BinaryTrees
 
      - :meth:`~sage.graphs.graph_generators.GraphGenerators.BalancedTree`,
-       :meth:`~Graph.is_tree`
+       :meth:`~sage.graphs.graph.Graph.is_tree`
 
    * - Bipartite
 
      - :meth:`~sage.graphs.graph_generators.GraphGenerators.BalancedTree`,
-       :meth:`~sage.graphs.graph.Graph.is_bipartite`
+       :meth:`~sage.graphs.generic_graph.GenericGraph.is_bipartite`
 
    * - Block
 
@@ -212,7 +212,7 @@ Predefined classes
 
    * - Polyhedral
 
-     - :meth:`~sage.graphs.generic_graph.Graph.is_polyhedral`
+     - :meth:`~sage.graphs.graph.Graph.is_polyhedral`
 
    * - Split
 
@@ -293,7 +293,7 @@ result ::
 What ISGCI knows is that perfect graphs contain unimodular graph which contain
 bipartite graphs. Therefore bipartite graphs are perfect !
 
-.. note::
+.. NOTE::
 
     The inclusion digraph is **NOT ACYCLIC**. Indeed, several entries exist in
     the ISGCI database which represent the same graph class, for instance
@@ -378,7 +378,7 @@ Methods
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
 from sage.misc.unknown import Unknown
-from sage.env import GRAPHS_DATA_DIR
+from sage.features.databases import DatabaseGraphs
 from sage.misc.cachefunc import cached_method
 
 import os
@@ -655,7 +655,7 @@ class GraphClasses(UniqueRepresentation):
 
         INPUT:
 
-        - ``id`` (string) -- the desired class' ID
+        - ``id`` -- string; the desired class' ID
 
         .. SEEALSO::
 
@@ -719,9 +719,7 @@ class GraphClasses(UniqueRepresentation):
         r"""
         Return the graph class inclusions.
 
-        OUTPUT:
-
-        a list of dictionaries
+        OUTPUT: list of dictionaries
 
         Upon the first call, this loads the database from the local XML file.
         Subsequent calls are cached.
@@ -796,37 +794,33 @@ class GraphClasses(UniqueRepresentation):
             sage: graph_classes._download_db()  # optional - internet
         """
         import tempfile
+        data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
         u = urlopen('https://www.graphclasses.org/data.zip',
                     context=default_context())
-        with tempfile.NamedTemporaryFile(suffix=".zip") as f:
+        with tempfile.NamedTemporaryFile(suffix='.zip') as f:
             f.write(u.read())
             z = zipfile.ZipFile(f.name)
 
             # Save a systemwide updated copy whenever possible
             try:
-                z.extract(_XML_FILE, GRAPHS_DATA_DIR)
-                z.extract(_SMALLGRAPHS_FILE, GRAPHS_DATA_DIR)
-            except IOError:
+                z.extract(_XML_FILE, data_dir)
+                z.extract(_SMALLGRAPHS_FILE, data_dir)
+            except OSError:
                 pass
 
-    def _parse_db(self, directory):
+    def _parse_db(self):
         r"""
         Parse the ISGCI database and stores its content in ``self``.
 
-        INPUT:
-
-        - ``directory`` -- the name of the directory containing the latest
-          version of the database.
-
         EXAMPLES::
 
-            sage: from sage.env import GRAPHS_DATA_DIR
-            sage: graph_classes._parse_db(GRAPHS_DATA_DIR)
+            sage: graph_classes._parse_db()
         """
-        import xml.etree.cElementTree as ET
+        import xml.etree.ElementTree as ET
         from sage.graphs.graph import Graph
 
-        xml_file = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
+        data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
+        xml_file = os.path.join(data_dir, _XML_FILE)
         tree = ET.ElementTree(file=xml_file)
         root = tree.getroot()
         DB = _XML_to_dict(root)
@@ -838,7 +832,7 @@ class GraphClasses(UniqueRepresentation):
         inclusions = DB['Inclusions']['incl']
 
         # Parses the list of ISGCI small graphs
-        smallgraph_file = open(os.path.join(GRAPHS_DATA_DIR, _SMALLGRAPHS_FILE), 'r')
+        smallgraph_file = open(os.path.join(data_dir, _SMALLGRAPHS_FILE))
         smallgraphs = {}
 
         for line in smallgraph_file.readlines():
@@ -853,7 +847,7 @@ class GraphClasses(UniqueRepresentation):
 
     def update_db(self):
         r"""
-        Updates the ISGCI database by downloading the latest version from
+        Update the ISGCI database by downloading the latest version from
         internet.
 
         This method downloads the ISGCI database from the website
@@ -881,7 +875,7 @@ class GraphClasses(UniqueRepresentation):
 
     def _get_ISGCI(self):
         r"""
-        Returns the contents of the ISGCI database.
+        Return the contents of the ISGCI database.
 
         This method is mostly for internal use, but often provides useful
         information during debugging operations.
@@ -901,28 +895,11 @@ class GraphClasses(UniqueRepresentation):
 
             sage: graph_classes._get_ISGCI()  # long time (4s on sage.math, 2012)
         """
-        from sage.misc.misc import SAGE_DB
-
-        try:
-            open(os.path.join(SAGE_DB, _XML_FILE))
-
-            # Which copy is the most recent on the disk ?
-            if (os.path.getmtime(os.path.join(SAGE_DB, _XML_FILE)) >
-                    os.path.getmtime(os.path.join(GRAPHS_DATA_DIR, _XML_FILE))):
-
-                directory = os.path.join(SAGE_DB, _XML_FILE)
-
-            else:
-                directory = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
-
-        except IOError:
-            directory = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
-
-        self._parse_db(directory)
+        self._parse_db()
 
     def show_all(self):
         r"""
-        Prints all graph classes stored in ISGCI
+        Print all graph classes stored in ISGCI.
 
         EXAMPLES::
 
@@ -995,11 +972,9 @@ def _XML_to_dict(root):
 
     INPUT:
 
-    - ``root`` -- an ``xml.etree.cElementTree.ElementTree`` object.
+    - ``root`` -- an ``xml.etree.cElementTree.ElementTree`` object
 
-    OUTPUT:
-
-    A dictionary representing the XML data.
+    OUTPUT: a dictionary representing the XML data
 
     EXAMPLES::
 

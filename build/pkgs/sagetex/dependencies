@@ -1,4 +1,4 @@
-$(PYTHON) maxima scipy matplotlib pillow tachyon pyparsing
+ maxima scipy matplotlib pillow tachyon pyparsing | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 To build SageTeX, you just need Python and pyparsing, but to test (SAGE_CHECK=yes)
 SageTeX, you actually need to run Sage, produce plots,...

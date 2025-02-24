@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 """
 Free algebra elements
 
@@ -84,7 +84,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
     def _repr_(self):
         """
-        Return string representation of self.
+        Return string representation of ``self``.
 
         EXAMPLES::
 
@@ -92,13 +92,12 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: repr(-x+3*y*z)    # indirect doctest
             '-x + 3*y*z'
 
-        Github issue :trac:`11068` enables the use of local variable names::
+        Github issue :issue:`11068` enables the use of local variable names::
 
             sage: from sage.structure.parent_gens import localvars
             sage: with localvars(A, ['a','b','c']):
             ....:    print(-x+3*y*z)
             -a + 3*b*c
-
         """
         v = sorted(self._monomial_coefficients.items())
         P = self.parent()
@@ -110,7 +109,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
     def _latex_(self):
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -203,6 +202,56 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
                     del z_elt[key]
         return A._from_dict(z_elt)
 
+    def is_unit(self):
+        r"""
+        Return ``True`` if ``self`` is invertible.
+
+        EXAMPLES::
+
+            sage: A.<x, y, z> = FreeAlgebra(ZZ)
+            sage: A(-1).is_unit()
+            True
+            sage: A(2).is_unit()
+            False
+            sage: A(1 + x).is_unit()
+            False
+            sage: A.<x, y> = FreeAlgebra(QQ, degrees=(1,-1))
+            sage: A(x * y).is_unit()
+            False
+            sage: A(2).is_unit()
+            True
+        """
+        mc = self._monomial_coefficients
+        if not mc or len(mc) > 1:
+            return False
+        m, c = next(iter(mc.items()))
+        return m.is_one() and c.is_unit()
+
+    def __invert__(self):
+        """
+        EXAMPLES::
+
+            sage: A.<x, y, z> = FreeAlgebra(QQ)
+            sage: ~A(1)
+            1
+
+        TESTS::
+
+            sage: ~A(0)
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: element is not invertible
+
+            sage: ~A(1 + x)
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: element is not invertible
+        """
+        if self.is_unit():
+            m, c = next(iter(self._monomial_coefficients.items()))
+            return type(self)(self.parent(), {m: c.inverse_of_unit()})
+        raise ArithmeticError("element is not invertible")
+
     def _acted_upon_(self, scalar, self_on_left=False):
         """
         Return the action of a scalar on ``self``.
@@ -229,6 +278,32 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
     # For backward compatibility
     # _lmul_ = _acted_upon_
     # _rmul_ = _acted_upon_
+
+    def _im_gens_(self, codomain, im_gens, base_map):
+        """
+        Apply a morphism defined by its values on the generators.
+
+        EXAMPLES::
+
+            sage: ring = algebras.Free(QQ, ['a', 'b'])
+            sage: a, b = ring.gens()
+            sage: A = matrix(QQ, 2, 2, [2, 3, 4, 1])
+            sage: B = matrix(QQ, 2, 2, [1, 7, 7, 1])
+            sage: f = ring.hom([A, B])
+            sage: f(a*b+1)
+            [24 17]
+            [11 30]
+        """
+        n = self.parent().ngens()
+        if n == 0:
+            cf = next(iter(self._monomial_coefficients.values()))
+            return codomain.coerce(cf)
+
+        if base_map is None:
+            base_map = codomain
+
+        return codomain.sum(base_map(c) * m(*im_gens)
+                            for m, c in self._monomial_coefficients.items())
 
     def variables(self):
         """

@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([kiwisolver], [SAGE_PYTHON_PACKAGE_CHECK([kiwisolver])])

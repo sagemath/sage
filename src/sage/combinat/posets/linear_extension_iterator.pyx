@@ -5,6 +5,8 @@ Fast linear extension iterator
 cimport cython
 
 from copy import copy
+
+
 def _linear_extension_prepare(D):
     r"""
     The preprocessing routine in Figure 7 of "Generating Linear
@@ -12,7 +14,7 @@ def _linear_extension_prepare(D):
 
     INPUT:
 
-    - ``D``, the Hasse diagram of a poset
+    - ``D`` -- the Hasse diagram of a poset
 
     OUTPUT:
 
@@ -27,9 +29,8 @@ def _linear_extension_prepare(D):
         sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
         sage: _linear_extension_prepare(D)
         ([0, 1, 2, 3, 4], [1, 3], [2, 4])
-
     """
-    dag_copy = copy(D) # this copy is destroyed during preparation
+    dag_copy = copy(D)  # this copy is destroyed during preparation
     le = []
     a = []
     b = []
@@ -57,16 +58,16 @@ def _linear_extension_prepare(D):
 
     return (le, a, b)
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef void _linear_extension_switch(list _le, list _a, list _b, list _is_plus, Py_ssize_t i):
+cdef void _linear_extension_switch(list _le, list _a, list _b, list _is_plus, Py_ssize_t i) noexcept:
     """
     This implements the ``Switch`` procedure described on page 7
     of "Generating Linear Extensions Fast" by Pruesse and Ruskey.
 
     If ``i == -1``, then the sign is changed.  Otherwise, then
     ``_a[i]`` and ``_b[i]`` are transposed.
-
     """
     cdef Py_ssize_t a_index, b_index
     if i == -1:
@@ -81,9 +82,10 @@ cdef void _linear_extension_switch(list _le, list _a, list _b, list _is_plus, Py
         _b[i] = a
         _a[i] = b
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i):
+cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i) noexcept:
     """
     Return ``True`` if and only if ``_a[i]`` is incomparable with the
     element to its right in ``_le`` and the element to the right is
@@ -99,7 +101,6 @@ cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i
         False
         sage: _linear_extension_right_a(D, [0, 1, 2, 4, 3], [1, 4], [2, 3], 1)  # not tested
         False
-
     """
     cdef Py_ssize_t yindex
     x = _a[i]
@@ -109,11 +110,12 @@ cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i
     y = _le[yindex]
     return y != _b[i] and _D.are_incomparable(x, y)
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef bint _linear_extension_right_b(_D, list _le, list _a, list _b, Py_ssize_t i):
+cdef bint _linear_extension_right_b(_D, list _le, list _a, list _b, Py_ssize_t i) noexcept:
     """
-    Return True if and only if ``_b[i]`` is incomparable with the
+    Return ``True`` if and only if ``_b[i]`` is incomparable with the
     elements to its right in ``_le``.
 
     This is the ``Right`` function described on page 8 of
@@ -126,7 +128,6 @@ cdef bint _linear_extension_right_b(_D, list _le, list _a, list _b, Py_ssize_t i
         False
         sage: _linear_extension_right_b(D, [0, 1, 2, 4, 3], [1, 4], [2, 3], 1)  # not tested
         False
-
     """
     cdef Py_ssize_t yindex
     x = _b[i]
@@ -135,6 +136,7 @@ cdef bint _linear_extension_right_b(_D, list _le, list _a, list _b, Py_ssize_t i
         return False
     y = _le[yindex]
     return _D.are_incomparable(x, y)
+
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
@@ -148,9 +150,8 @@ def _linear_extension_gen(_D, list _le, list _a, list _b, list _is_plus, Py_ssiz
         sage: from sage.combinat.posets.linear_extension_iterator import _linear_extension_prepare, _linear_extension_gen
         sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
         sage: le, a, b = _linear_extension_prepare(D)
-        sage: [e for e in _linear_extension_gen(D, le, a, b, [True], len(a)-1)]
+        sage: [e for e in _linear_extension_gen(D, le, a, b, [True], len(a)-1)]         # needs sage.modules
         [[0, 2, 1, 3, 4]]
-
     """
     cdef int mra, mrb, mla
     cdef Py_ssize_t index, index1
@@ -248,7 +249,7 @@ def linear_extension_iterator(D):
 
     INPUT:
 
-    - ``D``, the Hasse diagram of a poset.
+    - ``D`` -- the Hasse diagram of a poset
 
     .. WARNING::
 
@@ -259,7 +260,7 @@ def linear_extension_iterator(D):
 
         sage: from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
         sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
-        sage: list(linear_extension_iterator(D))
+        sage: list(linear_extension_iterator(D))                                        # needs sage.modules
         [[0, 1, 2, 3, 4],
          [0, 2, 1, 3, 4],
          [0, 2, 1, 4, 3],
@@ -267,16 +268,16 @@ def linear_extension_iterator(D):
          [0, 1, 2, 4, 3]]
 
         sage: D = posets.BooleanLattice(3)._hasse_diagram
-        sage: len(list(linear_extension_iterator(D)))
+        sage: len(list(linear_extension_iterator(D)))                                   # needs sage.modules
         48
 
         sage: D = posets.AntichainPoset(9)._hasse_diagram
-        sage: len(list(linear_extension_iterator(D))) == factorial(9)           # long time
+        sage: len(list(linear_extension_iterator(D))) == factorial(9)   # long time, needs sage.modules
         True
     """
     _le, _a, _b = _linear_extension_prepare(D)
     _max_pair = len(_a) - 1
-    _is_plus = [True] # this is modified by _linear_extension_switch
+    _is_plus = [True]  # this is modified by _linear_extension_switch
 
     yield _le[:]
     for e in _linear_extension_gen(D, _le, _a, _b, _is_plus, _max_pair):

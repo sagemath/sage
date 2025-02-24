@@ -10,54 +10,60 @@ AUTHORS:
 - David Roe (2019): initial version
 """
 
-from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic, PermutationGroup_subgroup
 from sage.groups.abelian_gps.abelian_group import AbelianGroup_class, AbelianGroup_subgroup
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
-from sage.structure.category_object import normalize_names
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
+
+lazy_import('sage.groups.galois_group_perm', ['GaloisGroup_perm', 'GaloisSubgroup_perm'])
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
+
 
 def _alg_key(self, algorithm=None, recompute=False):
     r"""
     Return a key for use in cached_method calls.
 
-    If recompute is false, will cache using ``None`` as the key, so no recomputation will be done.
+    If recompute is false, will cache using ``None`` as the key, so no
+    recomputation will be done.
 
-    If recompute is true, will cache by algorithm, yielding a recomputation for each different algorithm.
+    If recompute is true, will cache by algorithm, yielding a recomputation
+    for each different algorithm.
 
     EXAMPLES::
 
         sage: from sage.groups.galois_group import _alg_key
         sage: R.<x> = ZZ[]
-        sage: K.<a> = NumberField(x^3 + 2*x + 2)
-        sage: G = K.galois_group()
-        sage: _alg_key(G, algorithm="pari", recompute=True)
+        sage: K.<a> = NumberField(x^3 + 2*x + 2)                                        # needs sage.rings.number_field
+        sage: G = K.galois_group()                                                      # needs sage.rings.number_field
+        sage: _alg_key(G, algorithm='pari', recompute=True)                             # needs sage.rings.number_field
         'pari'
     """
     if recompute:
         algorithm = self._get_algorithm(algorithm)
         return algorithm
 
+
 class _GMixin:
     r"""
-    This class provides some methods for Galois groups to be used for both permutation groups
-    and abelian groups, subgroups and full Galois groups.
+    This class provides some methods for Galois groups to be used for both
+    permutation groups and abelian groups, subgroups and full Galois groups.
 
-    It is just intended to provide common functionality between various different Galois group classes.
+    It is just intended to provide common functionality between various
+    different Galois group classes.
     """
     @lazy_attribute
     def _default_algorithm(self):
         """
-        A string, the default algorithm used for computing the Galois group
+        A string, the default algorithm used for computing the Galois group.
 
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^3 + 2*x + 2)
-            sage: G = K.galois_group()
-            sage: G._default_algorithm
+            sage: K.<a> = NumberField(x^3 + 2*x + 2)                                    # needs sage.rings.number_field
+            sage: G = K.galois_group()                                                  # needs sage.rings.number_field
+            sage: G._default_algorithm                                                  # needs sage.rings.number_field
             'pari'
         """
         return NotImplemented
@@ -74,9 +80,9 @@ class _GMixin:
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^3 - 2)
-            sage: G = K.galois_group()
-            sage: G._gcdata
+            sage: K.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
+            sage: G = K.galois_group()                                                  # needs sage.rings.number_field
+            sage: G._gcdata                                                             # needs sage.rings.number_field
             (Number Field in ac with defining polynomial x^6 + 108,
              Ring morphism:
                From: Number Field in a with defining polynomial x^3 - 2
@@ -87,10 +93,11 @@ class _GMixin:
 
     def _get_algorithm(self, algorithm):
         r"""
-        Allows overriding the default algorithm specified at object creation.
+        Allow overriding the default algorithm specified at object creation.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = ZZ[]
             sage: K.<a> = NumberField(x^3 + 2*x + 2)
             sage: G = K.galois_group()
@@ -109,9 +116,9 @@ class _GMixin:
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^3 + 2*x + 2)
-            sage: G = K.galois_group(names='b')
-            sage: G._galois_closure
+            sage: K.<a> = NumberField(x^3 + 2*x + 2)                                    # needs sage.rings.number_field
+            sage: G = K.galois_group(names='b')                                         # needs sage.rings.number_field
+            sage: G._galois_closure                                                     # needs sage.rings.number_field
             Number Field in b with defining polynomial x^6 + 12*x^4 + 36*x^2 + 140
         """
         return self._gcdata[0]
@@ -122,6 +129,7 @@ class _GMixin:
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x^3 - x + 1, 'a')
             sage: K.galois_group(names='b').splitting_field()
@@ -139,15 +147,16 @@ class _GMixin:
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^3 + 2*x + 2)
-            sage: G = K.galois_group(names='b')
-            sage: G._gc_map
+            sage: K.<a> = NumberField(x^3 + 2*x + 2)                                    # needs sage.rings.number_field
+            sage: G = K.galois_group(names='b')                                         # needs sage.rings.number_field
+            sage: G._gc_map                                                             # needs sage.rings.number_field
             Ring morphism:
               From: Number Field in a with defining polynomial x^3 + 2*x + 2
               To:   Number Field in b with defining polynomial x^6 + 12*x^4 + 36*x^2 + 140
               Defn: a |--> 1/36*b^4 + 5/18*b^2 - 1/2*b + 4/9
         """
         return self._gcdata[1]
+
 
 class _GaloisMixin(_GMixin):
     """
@@ -162,24 +171,24 @@ class _GaloisMixin(_GMixin):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^3 + 2*x + 2)
-            sage: G = K.galois_group()
-            sage: G._field
+            sage: K.<a> = NumberField(x^3 + 2*x + 2)                                    # needs sage.rings.number_field
+            sage: G = K.galois_group()                                                  # needs sage.rings.number_field
+            sage: G._field                                                              # needs sage.rings.number_field
             Number Field in a with defining polynomial x^3 + 2*x + 2
         """
         return NotImplemented
 
     def _repr_(self):
         """
-        String representation of this Galois group
+        String representation of this Galois group.
 
         EXAMPLES::
 
             sage: from sage.groups.galois_group import GaloisGroup_perm
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^3 + 2*x + 2)
-            sage: G = K.galois_group()
-            sage: GaloisGroup_perm._repr_(G)
+            sage: K.<a> = NumberField(x^3 + 2*x + 2)                                    # needs sage.rings.number_field
+            sage: G = K.galois_group()                                                  # needs sage.rings.number_field
+            sage: GaloisGroup_perm._repr_(G)                                            # needs sage.rings.number_field
             'Galois group of x^3 + 2*x + 2'
         """
         f = self._field.defining_polynomial()
@@ -193,6 +202,7 @@ class _GaloisMixin(_GMixin):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = ZZ[]
             sage: K.<a> = NumberField(x^3 + 2*x + 2)
             sage: L = K.galois_closure('b')
@@ -212,6 +222,7 @@ class _GaloisMixin(_GMixin):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = ZZ[]
             sage: K.<a> = NumberField(x^3 + 2*x + 2)
             sage: L.<b> = K.extension(x^2 + 3*a^2 + 8)
@@ -229,11 +240,11 @@ class _GaloisMixin(_GMixin):
 
         This behavior may change in the future::
 
-            sage: GL._field_degree
+            sage: GL._field_degree                                                      # needs sage.rings.number_field
             6
-            sage: GL.transitive_label()
+            sage: GL.transitive_label()                                                 # needs sage.rings.number_field
             '6T2'
-            sage: GL
+            sage: GL                                                                    # needs sage.rings.number_field
             Galois group 6T2 ([3]2) with order 6 of x^2 + 3*a^2 + 8
         """
         try:
@@ -249,9 +260,9 @@ class _GaloisMixin(_GMixin):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^8 - x^5 + x^4 - x^3 + 1)
-            sage: G = K.galois_group()
-            sage: G.transitive_label()
+            sage: K.<a> = NumberField(x^8 - x^5 + x^4 - x^3 + 1)                        # needs sage.rings.number_field
+            sage: G = K.galois_group()                                                  # needs sage.rings.number_field
+            sage: G.transitive_label()                                                  # needs sage.rings.number_field
             '8T44'
         """
         return "%sT%s" % (self._field_degree, self.transitive_number())
@@ -263,13 +274,14 @@ class _GaloisMixin(_GMixin):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^8 - x^5 + x^4 - x^3 + 1)
-            sage: G = K.galois_group()
+            sage: K.<a> = NumberField(x^8 - x^5 + x^4 - x^3 + 1)                        # needs sage.rings.number_field
+            sage: G = K.galois_group()                                                  # needs sage.rings.number_field
             sage: from sage.groups.galois_group import GaloisGroup_perm
-            sage: GaloisGroup_perm.is_galois(G)
+            sage: GaloisGroup_perm.is_galois(G)                                         # needs sage.rings.number_field
             False
         """
         return self.order() == self._field_degree
+
 
 class _SubGaloisMixin(_GMixin):
     """
@@ -283,6 +295,7 @@ class _SubGaloisMixin(_GMixin):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^4 + 1)
             sage: G = L.galois_group()
@@ -299,16 +312,18 @@ class _SubGaloisMixin(_GMixin):
 
         INPUT:
 
-        - ``name`` -- a variable name for the new field.
+        - ``name`` -- a variable name for the new field
 
         - ``polred`` -- whether to optimize the generator of the newly created field
-            for a simpler polynomial, using pari's polredbest.
-            Defaults to ``True`` when the degree of the fixed field is at most 8.
+            for a simpler polynomial, using Pari's :pari:`polredbest`;
+            defaults to ``True`` when the degree of the fixed field is at most 8
 
-        - ``threshold`` -- positive number; polred only performed if the cost is at most this threshold
+        - ``threshold`` -- positive number; polred only performed if the cost
+          is at most this threshold
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(3^12)
             sage: g = k.galois_group()([8])
             sage: k0, embed = g.fixed_field()
@@ -323,171 +338,16 @@ class _SubGaloisMixin(_GMixin):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^4 + 1)
             sage: G = L.galois_group()
             sage: H = G.decomposition_group(L.primes_above(3)[0])
-            sage: H.splitting_field() # indirect doctest
+            sage: H.splitting_field()  # indirect doctest
             Number Field in a with defining polynomial x^4 + 1
         """
         return self._ambient_group._gcdata
 
-class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
-    r"""
-    The group of automorphisms of a Galois closure of a given field.
-
-    INPUT:
-
-    - ``field`` -- a field, separable over its base
-
-    - ``names`` -- a string or tuple of length 1, giving a variable name for the splitting field
-
-    - ``gc_numbering`` -- boolean, whether to express permutations in terms of the
-        roots of the defining polynomial of the splitting field (versus the defining polynomial
-        of the original extension).  The default value may vary based on the type of field.
-    """
-    @abstract_method
-    def transitive_number(self, algorithm=None, recompute=False):
-        """
-        The transitive number (as in the GAP and Magma databases of transitive groups)
-        for the action on the roots of the defining polynomial of the top field.
-
-        EXAMPLES::
-
-            sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^3 + 2*x + 2)
-            sage: G = K.galois_group()
-            sage: G.transitive_number()
-            2
-        """
-
-    @lazy_attribute
-    def _gens(self):
-        """
-        The generators of this Galois group as permutations of the roots.  It's important that this
-        be computed lazily, since it's often possible to compute other attributes (such as the order
-        or transitive number) more cheaply.
-
-        EXAMPLES::
-
-            sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5-2)
-            sage: G = K.galois_group(gc_numbering=False)
-            sage: G._gens
-            [(1,2,3,5), (1,4,3,2,5)]
-        """
-        return NotImplemented
-
-    def __init__(self, field, algorithm=None, names=None, gc_numbering=False):
-        r"""
-        EXAMPLES::
-
-            sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^3 + 2*x + 2)
-            sage: G = K.galois_group()
-            sage: TestSuite(G).run()
-        """
-        self._field = field
-        self._default_algorithm = algorithm
-        self._base = field.base_field()
-        self._gc_numbering = gc_numbering
-        if names is None:
-            # add a c for Galois closure
-            names = field.variable_name() + 'c'
-        self._gc_names = normalize_names(1, names)
-        # We do only the parts of the initialization of PermutationGroup_generic
-        # that don't depend on _gens
-        from sage.categories.permutation_groups import PermutationGroups
-        category = PermutationGroups().FinitelyGenerated().Finite()
-        # Note that we DON'T call the __init__ method for PermutationGroup_generic
-        # Instead, the relevant attributes are computed lazily
-        super(PermutationGroup_generic, self).__init__(category=category)
-
-    @lazy_attribute
-    def _deg(self):
-        r"""
-        The number of moved points in the permutation representation.
-
-        This will be the degree of the original number field if `_gc_numbering``
-        is ``False``, or the degree of the Galois closure otherwise.
-
-        EXAMPLES::
-
-            sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5-2)
-            sage: G = K.galois_group(gc_numbering=False); G
-            Galois group 5T3 (5:4) with order 20 of x^5 - 2
-            sage: G._deg
-            5
-            sage: G = K.galois_group(gc_numbering=True); G._deg
-            20
-        """
-        if self._gc_numbering:
-            return self.order()
-        else:
-            try:
-                return self._field.degree()
-            except NotImplementedError: # relative number fields don't support degree
-                return self._field.relative_degree()
-
-    @lazy_attribute
-    def _domain(self):
-        r"""
-        The integers labeling the roots on which this Galois group acts.
-
-        EXAMPLES::
-
-            sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5-2)
-            sage: G = K.galois_group(gc_numbering=False); G
-            Galois group 5T3 (5:4) with order 20 of x^5 - 2
-            sage: G._domain
-            {1, 2, 3, 4, 5}
-            sage: G = K.galois_group(gc_numbering=True); G._domain
-            {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
-        """
-        return FiniteEnumeratedSet(range(1, self._deg+1))
-
-    @lazy_attribute
-    def _domain_to_gap(self):
-        r"""
-        Dictionary implementing the identity (used by PermutationGroup_generic).
-
-        EXAMPLES::
-
-            sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5-2)
-            sage: G = K.galois_group(gc_numbering=False)
-            sage: G._domain_to_gap[5]
-            5
-        """
-        return dict((key, i+1) for i, key in enumerate(self._domain))
-
-    @lazy_attribute
-    def _domain_from_gap(self):
-        r"""
-        Dictionary implementing the identity (used by PermutationGroup_generic).
-
-        EXAMPLES::
-
-            sage: R.<x> = ZZ[]
-            sage: K.<a> = NumberField(x^5-2)
-            sage: G = K.galois_group(gc_numbering=True)
-            sage: G._domain_from_gap[20]
-            20
-        """
-        return dict((i+1, key) for i, key in enumerate(self._domain))
-
-    def ngens(self):
-        r"""
-        Number of generators of this Galois group
-
-        EXAMPLES::
-
-            sage: QuadraticField(-23, 'a').galois_group().ngens()
-            1
-        """
-        return len(self._gens)
 
 class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
     r"""
@@ -499,7 +359,7 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
 
         TESTS::
 
-            sage: TestSuite(GF(9).galois_group()).run()
+            sage: TestSuite(GF(9).galois_group()).run()                                 # needs sage.rings.finite_rings
         """
         self._field = field
         self._default_algorithm = algorithm
@@ -513,7 +373,7 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
 
         EXAMPLES::
 
-            sage: GF(9).galois_group().is_galois()
+            sage: GF(9).galois_group().is_galois()                                      # needs sage.rings.finite_rings
             True
         """
         return True
@@ -521,11 +381,11 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
     @lazy_attribute
     def _gcdata(self):
         r"""
-        Return the Galois closure (ie, the finite field itself) together with the identity
+        Return the Galois closure (i.e., the finite field itself) together with the identity.
 
         EXAMPLES::
 
-            sage: GF(3^2).galois_group()._gcdata
+            sage: GF(3^2).galois_group()._gcdata                                        # needs sage.rings.finite_rings
             (Finite Field in z2 of size 3^2,
              Identity endomorphism of Finite Field in z2 of size 3^2)
         """
@@ -537,11 +397,12 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
         r"""
         Return a permutation group giving the action on the roots of a defining polynomial.
 
-        This is the regular representation for the abelian group, which is not necessarily the smallest degree permutation representation.
+        This is the regular representation for the abelian group, which is
+        not necessarily the smallest degree permutation representation.
 
         EXAMPLES::
 
-            sage: GF(3^10).galois_group().permutation_group()
+            sage: GF(3^10).galois_group().permutation_group()                           # needs sage.libs.gap sage.rings.finite_rings
             Permutation Group with generators [(1,2,3,4,5,6,7,8,9,10)]
         """
         return PermutationGroup(gap_group=self._gap_().RegularActionHomomorphism().Image())
@@ -558,10 +419,11 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
 
             sage: from sage.groups.galois_group import GaloisGroup_ab
             sage: Gtest = GaloisGroup_ab(field=None, generator_orders=(2,2,4))
-            sage: Gtest.transitive_number()
+            sage: Gtest.transitive_number()                                             # needs sage.libs.gap
             2
         """
         return ZZ(self.permutation_group()._gap_().TransitiveIdentification())
+
 
 class GaloisGroup_cyc(GaloisGroup_ab):
     r"""
@@ -573,11 +435,11 @@ class GaloisGroup_cyc(GaloisGroup_ab):
 
         EXAMPLES::
 
-            sage: GF(2^8).galois_group().transitive_number()
+            sage: GF(2^8).galois_group().transitive_number()                            # needs sage.rings.finite_rings
             1
-            sage: GF(3^32).galois_group().transitive_number()
+            sage: GF(3^32).galois_group().transitive_number()                           # needs sage.rings.finite_rings
             33
-            sage: GF(2^60).galois_group().transitive_number()
+            sage: GF(2^60).galois_group().transitive_number()                           # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NotImplementedError: transitive database only computed up to degree 47
@@ -597,24 +459,13 @@ class GaloisGroup_cyc(GaloisGroup_ab):
 
         EXAMPLES::
 
-            sage: GF(3^2).galois_group().signature()
+            sage: GF(3^2).galois_group().signature()                                    # needs sage.rings.finite_rings
             -1
-            sage: GF(3^3).galois_group().signature()
+            sage: GF(3^3).galois_group().signature()                                    # needs sage.rings.finite_rings
             1
         """
         return ZZ(1) if (self._field.degree() % 2) else ZZ(-1)
 
-class GaloisSubgroup_perm(PermutationGroup_subgroup, _SubGaloisMixin):
-    """
-    Subgroups of Galois groups (implemented as permutation groups), specified
-    by giving a list of generators.
-
-    Unlike ambient Galois groups, where we use a lazy ``_gens`` attribute in order
-    to enable creation without determining a list of generators,
-    we require that generators for a subgroup be specified during initialization,
-    as specified in the ``__init__`` method of permutation subgroups.
-    """
-    pass
 
 class GaloisSubgroup_ab(AbelianGroup_subgroup, _SubGaloisMixin):
     """
@@ -622,5 +473,5 @@ class GaloisSubgroup_ab(AbelianGroup_subgroup, _SubGaloisMixin):
     """
     pass
 
-GaloisGroup_perm.Subgroup = GaloisSubgroup_perm
+
 GaloisGroup_ab.Subgroup = GaloisSubgroup_ab

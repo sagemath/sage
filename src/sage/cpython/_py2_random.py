@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Except from the `random` module from Python 2.7.14 used solely for consistency
 in the doctest suite for random results that depend on the Python PRNG.
@@ -6,7 +7,7 @@ It should be made clear that the actual random data from the PRNG is consistent
 between Python versions, but the difference lies in higher-level methods such
 as `random.randint`.
 
-See :trac:`24508`
+See :issue:`24508`
 """
 
 # The following code was copied from
@@ -44,6 +45,7 @@ BPF = 53        # Number of bits in a float
 
 import _random
 
+
 class Random(_random.Random):
     """Random number generator base class used by bound module functions.
 
@@ -58,7 +60,6 @@ class Random(_random.Random):
     methods: random(), seed(), getstate(), setstate() and jumpahead().
     Optionally, implement a getrandbits() method so that randrange() can cover
     arbitrarily large ranges.
-
     """
 
     VERSION = 3     # used by getstate/setstate
@@ -92,19 +93,19 @@ class Random(_random.Random):
                 import time
                 a = int(time.time() * 256) # use fractional seconds
 
-        super(Random, self).seed(a)
+        super().seed(a)
         self.gauss_next = None
 
     def getstate(self):
         """Return internal state; can be passed to setstate() later."""
-        return self.VERSION, super(Random, self).getstate(), self.gauss_next
+        return self.VERSION, super().getstate(), self.gauss_next
 
     def setstate(self, state):
         """Restore internal state from object returned by getstate()."""
         version = state[0]
         if version == 3:
             version, internalstate, self.gauss_next = state
-            super(Random, self).setstate(internalstate)
+            super().setstate(internalstate)
         elif version == 2:
             version, internalstate, self.gauss_next = state
             # In version 2, the state was saved as signed ints, which causes
@@ -115,7 +116,7 @@ class Random(_random.Random):
                 internalstate = tuple( int(x) % (2**32) for x in internalstate )
             except ValueError as e:
                 raise TypeError(e)
-            super(Random, self).setstate(internalstate)
+            super().setstate(internalstate)
         else:
             raise ValueError("state with version %s passed to "
                              "Random.setstate() of version %s" %
@@ -131,7 +132,7 @@ class Random(_random.Random):
         # we use hashing to create a large n for the shuffle.
         s = repr(n) + repr(self.getstate())
         n = int(_hashlib.new('sha512', s).hexdigest(), 16)
-        super(Random, self).jumpahead(n)
+        super().jumpahead(n)
 
 ## ---- Methods below this point do not need to be overridden when
 ## ---- subclassing for the purpose of using a different core generator.
@@ -154,7 +155,6 @@ class Random(_random.Random):
 
         This fixes the problem with randint() which includes the
         endpoint; in Python this is usually not what you want.
-
         """
 
         # This code is a bit messy to make it fast for the
@@ -256,7 +256,6 @@ class Random(_random.Random):
 
         Optional arg random is a 0-argument function returning a random
         float in [0.0, 1.0); by default, the standard random.random.
-
         """
 
         if random is None:
@@ -281,9 +280,9 @@ class Random(_random.Random):
         population contains repeats, then each occurrence is a possible
         selection in the sample.
 
-        To choose a sample in a range of integers, use xrange as an argument.
+        To choose a sample in a range of integers, use range as an argument.
         This is especially fast and space efficient for sampling from a
-        large population:   sample(xrange(10000000), 60)
+        large population:   sample(range(10000000), 60)
         """
 
         # Sampling without replacement entails tracking either potential
@@ -346,7 +345,6 @@ class Random(_random.Random):
         and having a given mode value in-between.
 
         http://en.wikipedia.org/wiki/Triangular_distribution
-
         """
         u = self.random()
         try:
@@ -365,7 +363,6 @@ class Random(_random.Random):
         """Normal distribution.
 
         mu is the mean, and sigma is the standard deviation.
-
         """
         # mu = mean, sigma = standard deviation
 
@@ -392,7 +389,6 @@ class Random(_random.Random):
         If you take the natural logarithm of this distribution, you'll get a
         normal distribution with mean mu and standard deviation sigma.
         mu can have any value, and sigma must be greater than zero.
-
         """
         return _exp(self.normalvariate(mu, sigma))
 
@@ -406,7 +402,6 @@ class Random(_random.Random):
         a reserved word in Python.)  Returned values range from 0 to
         positive infinity if lambd is positive, and from negative
         infinity to 0 if lambd is negative.
-
         """
         # lambd: rate lambd = 1/mean
         # ('lambda' is a Python reserved word)
@@ -424,7 +419,6 @@ class Random(_random.Random):
         kappa is the concentration parameter, which must be greater than or
         equal to zero.  If kappa is equal to zero, this distribution reduces
         to a uniform random angle over the range 0 to 2*pi.
-
         """
         # mu:    mean angle (in radians between 0 and 2*pi)
         # kappa: concentration parameter kappa (>= 0)
@@ -475,7 +469,6 @@ class Random(_random.Random):
                     x ** (alpha - 1) * math.exp(-x / beta)
           pdf(x) =  --------------------------------------
                       math.gamma(alpha) * beta ** alpha
-
         """
 
         # alpha > 0, beta > 0, mean is alpha*beta, variance is alpha*beta**2
@@ -544,7 +537,6 @@ class Random(_random.Random):
         slightly faster than the normalvariate() function.
 
         Not thread-safe without a lock around calls.
-
         """
 
         # When x and y are two variables from [0, 1), uniformly
@@ -595,7 +587,6 @@ class Random(_random.Random):
 
         Conditions on the parameters are alpha > 0 and beta > 0.
         Returned values range between 0 and 1.
-
         """
 
         # This version due to Janne Sinkkonen, and matches all the std
@@ -621,7 +612,6 @@ class Random(_random.Random):
         """Weibull distribution.
 
         alpha is the scale parameter and beta is the shape parameter.
-
         """
         # Jain, pg. 499; bug fix courtesy Bill Arms
 

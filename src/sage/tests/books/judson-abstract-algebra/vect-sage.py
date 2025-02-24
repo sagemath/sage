@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -211,5 +210,4 @@ r"""
     sage: two = R(2)
     sage: V(two*u) == two*V(u)
     True
-
 """

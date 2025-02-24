@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 
 """Utilities for interfacing with the standard library's atexit module."""
 
@@ -25,12 +25,12 @@ cdef class restore_atexit:
 
     INPUT:
 
-    - ``run`` (bool, default: False) -- if True, when exiting the
+    - ``run`` -- boolean (default: ``False``); if ``True``, when exiting the
       context (but before restoring the old exit functions), run all
-      atexit functions which were added inside the context.
+      atexit functions which were added inside the context
 
-    - ``clear`` (bool, default: equal to ``run``) -- if True, clear
-      already registered atexit handlers upon entering the context.
+    - ``clear`` -- boolean (default: equal to ``run``); if ``True``, clear
+      already registered atexit handlers upon entering the context
 
     .. WARNING::
 
@@ -154,6 +154,10 @@ cdef extern from *:
     #undef _PyGC_FINALIZED
     #include "internal/pycore_interp.h"
     #include "internal/pycore_pystate.h"
+    #if PY_VERSION_HEX >= 0x030c0000
+    // struct atexit_callback was renamed in 3.12 to atexit_py_callback
+    #define atexit_callback atexit_py_callback
+    #endif
     static atexit_callback ** _atexit_callbacks(PyObject *self) {
         PyInterpreterState *interp = _PyInterpreterState_GET();
         struct atexit_state state = interp->atexit;

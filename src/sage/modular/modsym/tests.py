@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Testing modular symbols spaces
 
@@ -44,11 +45,11 @@ class Test:
 
         INPUT:
 
-        - levels --  list or int
-        - weights -- list or int
-        - onlyg0 -- bool, if True only select Gamma0 spaces for testing
-        - onlyg1 -- bool, if True only select Gamma1 spaces for testing
-        - onlychar -- bool, if True only selects spaces with character for testing
+        - ``levels`` -- list or integer
+        - ``weights`` -- list or integer
+        - ``onlyg0`` -- boolean; if ``True`` only select Gamma0 spaces for testing
+        - ``onlyg1`` -- boolean; if ``True`` only select Gamma1 spaces for testing
+        - ``onlychar`` -- boolean; if ``True`` only selects spaces with character for testing
 
         EXAMPLES::
 
@@ -91,7 +92,7 @@ class Test:
     def _modular_symbols_space(self):
         """
         Generate a random space of modular symbols subject to
-        the conditions of self.
+        the conditions of ``self``.
 
         EXAMPLES::
 
@@ -187,10 +188,13 @@ class Test:
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: from sage.modular.modsym.tests import Test
             sage: Test()._modular_symbols_space_character() # random
             level = 18, weight = 3, sign = 0
-            Modular Symbols space of dimension 0 and level 18, weight 3, character [1, zeta6 - 1], sign 0, over Cyclotomic Field of order 6 and degree 2
+            Modular Symbols space of dimension 0
+            and level 18, weight 3, character [1, zeta6 - 1], sign 0,
+            over Cyclotomic Field of order 6 and degree 2
         """
         level, weight, sign = self._level_weight_sign()
         G = dirichlet.DirichletGroup(level)
@@ -270,7 +274,8 @@ class Test:
             sage: Test().test_cs_dimension() # random
             gamma0
             level = 16, weight = 3, sign = -1
-            Modular Symbols space of dimension 0 for Gamma_0(16) of weight 3 with sign -1 over Rational Field
+            Modular Symbols space of dimension 0 for Gamma_0(16) of weight 3
+            with sign -1 over Rational Field
         """
         self._modular_symbols_space().cuspidal_submodule()
 
@@ -285,7 +290,8 @@ class Test:
             sage: Test().test_csnew_dimension() # random
             gamma0
             level = 3, weight = 3, sign = 1
-            Modular Symbols space of dimension 0 for Gamma_0(3) of weight 3 with sign 1 over Rational Field
+            Modular Symbols space of dimension 0 for Gamma_0(3) of weight 3
+            with sign 1 over Rational Field
         """
         M = self._modular_symbols_space()
         V = M.cuspidal_submodule().new_submodule()

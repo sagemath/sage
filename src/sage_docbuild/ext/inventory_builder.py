@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Inventory builder
 
@@ -23,10 +22,9 @@ class InventoryBuilder(DummyBuilder):
     A customized builder which only generates intersphinx "object.inv"
     inventory files. The documentation files are not written.
     """
-
     name = "inventory"
     format = "inventory"
-    epilog = "The inventory files are in %(outdir)s."
+    epilog = "The inventory file is in %(outdir)s."
 
     def get_outdated_docs(self) -> Iterable[str]:
         """
@@ -47,7 +45,7 @@ class InventoryBuilder(DummyBuilder):
                 srcmtime = path.getmtime(self.env.doc2path(docname))
                 if srcmtime > targetmtime:
                     yield docname
-            except EnvironmentError:
+            except OSError:
                 # source doesn't exist anymore
                 pass
 

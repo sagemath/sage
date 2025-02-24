@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.modules
 """
 This file contains test functions that can be used to search
 bugs by testing random finite posets and lattices.
@@ -90,6 +91,7 @@ set_inclusions = [
 
 sublattice_closed = ['distributive', 'modular', 'semidistributive', 'join_semidistributive', 'meet_semidistributive']
 
+
 def test_attrcall(name, L):
     """
     Return a function by name.
@@ -104,7 +106,7 @@ def test_attrcall(name, L):
         sage: N5 = posets.PentagonPoset()
         sage: N5.is_modular() == test_attrcall('is_modular', N5)
         True
-        sage: N5.is_constructible_by_doublings('convex') == test_attrcall('is_doubling_convex', N5)
+        sage: N5.is_constructible_by_doublings('convex') == test_attrcall('is_doubling_convex', N5)                     # needs sage.combinat
         True
     """
     if name == 'is_doubling_any':
@@ -120,6 +122,7 @@ def test_attrcall(name, L):
     if name == 'is_uniq_orthocomplemented':
         return L.is_orthocomplemented(unique=True)
     return attrcall(name)(L)
+
 
 def test_finite_lattice(L):
     """

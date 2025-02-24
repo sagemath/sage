@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.misc.cython
+# sage_setup: distribution = sagemath-objects
+# sage.doctest: needs sage.misc.cython
 r"""
 Fast conversion of Python objects to C long
 """
@@ -17,10 +18,10 @@ Fast conversion of Python objects to C long
 from libc.limits cimport LONG_MIN, LONG_MAX
 
 from cpython.object cimport Py_SIZE
-from cpython.int cimport PyInt_AS_LONG
-from cpython.long cimport PyLong_AsLong
 from cpython.number cimport PyNumber_Index, PyIndex_Check
 from cpython.longintrepr cimport py_long, PyLong_SHIFT, digit
+from sage.cpython.pycore_long cimport (
+    ob_digit, _PyLong_IsNegative, _PyLong_DigitCount)
 
 from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_get_si
 from sage.rings.integer_fake cimport is_Integer, Integer_AS_MPZ
@@ -30,8 +31,9 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
     r"""
     Given a Python object ``x`` cast it quickly to a C long.
 
-    A ``TypeError`` is raised if the input cannot be converted to an integer or
-    an ``OverflowError`` is raised if it does not fit into a C long.
+    A :exc:`TypeError` is raised if the input cannot be converted to
+    an integer or
+    an :exc:`OverflowError` is raised if it does not fit into a C long.
 
     TESTS:
 
@@ -52,7 +54,7 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
         OverflowError: exponent must be at most 2147483647           # 32-bit
         OverflowError: exponent must be at most 9223372036854775807  # 64-bit
 
-    See :trac:`22319`::
+    See :issue:`22319`::
 
         sage: a^pari(10)
         10000000000
@@ -83,7 +85,7 @@ cdef enum:
 cdef inline bint integer_check_long(x, long* value, int* err) except -1:
     """
     Return whether ``x`` is some integer type. This is true for the
-    Python types ``int`` and ``long``, for Sage Integers and for types
+    Python type ``int``, for Sage Integers and for types
     implementing ``__index__``.
 
     If possible, compute the value of this integer as C long and store
@@ -94,18 +96,18 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
 
     Possible errors when returning ``True``:
 
-    - ``0``: ``x`` was successfully converted to a C long and its value
-      is stored in ``*value``.
+    - ``0`` -- ``x`` was successfully converted to a C long and its value
+      is stored in ``*value``
 
-    - ``ERR_OVERFLOW``: ``x`` is an integer type but too large to store
-      in a C long.
+    - ``ERR_OVERFLOW`` -- ``x`` is an integer type but too large to store
+      in a C long
 
     Possible errors when returning ``False``:
 
-    - ``ERR_TYPE``: ``x`` is not an integer type of any kind.
+    - ``ERR_TYPE`` -- ``x`` is not an integer type of any kind
 
-    - ``ERR_INDEX``: ``x`` implements ``__index__`` but a ``TypeError``
-      was raised calling ``__index__()``.
+    - ``ERR_INDEX`` -- ``x`` implements ``__index__`` but a :exc:`TypeError`
+      was raised calling ``__index__()``
 
     - Other exceptions in ``__index__`` are simply propagated. This is
       the only way this function can raise an exception.
@@ -216,14 +218,14 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
         return 0
 
 
-cdef inline long dig(const digit* D, int n):
+cdef inline long dig(const digit* D, int n) noexcept:
     # Convenient helper function for integer_check_long_py()
     return (<long>D[n]) << (n * PyLong_SHIFT)
 
 
-cdef inline bint integer_check_long_py(x, long* value, int* err):
+cdef inline bint integer_check_long_py(x, long* value, int* err) noexcept:
     """
-    Return whether ``x`` is a python object of type ``int``.
+    Return whether ``x`` is a Python object of type ``int``.
 
     If possible, compute the value of this integer as C long and store
     it in ``*value``.
@@ -233,15 +235,15 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
 
     Possible errors when returning ``True``:
 
-    - ``0``: ``x`` was successfully converted to a C long and its value
-      is stored in ``*value``.
+    - ``0`` -- ``x`` was successfully converted to a C long and its value
+      is stored in ``*value``
 
-    - ``ERR_OVERFLOW``: ``x`` is a python object of type ``int`` but
-      too large to store in a C long.
+    - ``ERR_OVERFLOW`` -- ``x`` is a Python object of type ``int`` but
+      too large to store in a C long
 
     Possible errors when returning ``False``:
 
-    - ``ERR_TYPE``: ``x`` is not a python object of type ``int``.
+    - ``ERR_TYPE`` -- ``x`` is not a Python object of type ``int``
 
     EXAMPLES:
 
@@ -300,8 +302,11 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
         return 0
 
     # x is a Python "int" (aka PyLongObject or py_long in cython)
-    cdef const digit* D = (<py_long>x).ob_digit
-    cdef Py_ssize_t size = Py_SIZE(x)
+    cdef const digit* D = ob_digit(x)
+    cdef Py_ssize_t size = _PyLong_DigitCount(x)
+
+    if _PyLong_IsNegative(x):
+        size = -size
 
     # We assume PyLong_SHIFT <= BITS_IN_LONG <= 3 * PyLong_SHIFT.
     # This is true in all the default configurations:
@@ -377,7 +382,7 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
     return 1
 
 
-cdef inline bint is_small_python_int(obj):
+cdef inline bint is_small_python_int(obj) noexcept:
     """
     Test whether Python object is a small Python integer.
 

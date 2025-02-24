@@ -1,1 +1,1 @@
-"pkgconfig(zlib)"
+pkgconfig(zlib)

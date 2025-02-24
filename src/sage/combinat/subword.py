@@ -55,7 +55,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from typing import Iterator
+from collections.abc import Iterator
 import itertools
 
 from sage.structure.parent import Parent
@@ -292,11 +292,11 @@ class Subwords_w(Parent):
             sage: for i in range(100):
             ....:   w = S1.random_element()
             ....:   if w in S2:
-            ....:       assert(not w)
+            ....:       assert not w
             sage: for i in range(100):
             ....:   w = S2.random_element()
             ....:   if w in S1:
-            ....:       assert(not w)
+            ....:       assert not w
         """
         return self._build(elt for elt in self._w if prandom.randint(0, 1))
 
@@ -465,11 +465,11 @@ class Subwords_wk(Subwords_w):
             sage: for i in range(100):
             ....:   w = S1.random_element()
             ....:   if w in S2:
-            ....:       assert(not w)
+            ....:       assert not w
             sage: for i in range(100):
             ....:   w = S2.random_element()
             ....:   if w in S1:
-            ....:       assert(not w)
+            ....:       assert not w
         """
         sample = prandom.sample(self._w, self._k)
         if self._build is list:
@@ -540,7 +540,7 @@ def smallest_positions(word, subword, pos=0) -> list | bool:
 
     TESTS:
 
-    We check for :trac:`5534`::
+    We check for :issue:`5534`::
 
         sage: w = ["a", "b", "c", "d"]; ww = ["b", "d"]
         sage: x = sage.combinat.subword.smallest_positions(w, ww); ww

@@ -1,7 +1,7 @@
 # distutils: depends = NTL/ZZ.h
 
 from sage.libs.gmp.types cimport mpz_t
-from .types cimport ZZ_c, vec_ZZ_c, ZZX_c
+from sage.libs.ntl.types cimport ZZ_c, vec_ZZ_c, ZZX_c
 
 
 cdef extern from *:

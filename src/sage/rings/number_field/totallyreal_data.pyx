@@ -1,17 +1,13 @@
 # distutils: libraries = gmp
 """
-Enumeration of Totally Real Fields
+Enumeration of totally real fields: data
 
 AUTHORS:
 
-- Craig Citro and John Voight (2007-11-04):
-  Type checking and other polishing.
-- John Voight (2007-10-09):
-  Improvements: Smyth bound, Lagrange multipliers for b.
-- John Voight (2007-09-19):
-  Various optimization tweaks.
-- John Voight (2007-09-01):
-  Initial version.
+- John Voight (2007-09-01): Initial version
+- John Voight (2007-09-19): various optimization tweaks
+- John Voight (2007-10-09): improvements: Smyth bound, Lagrange multipliers for b
+- Craig Citro and John Voight (2007-11-04): type checking and other polishing
 """
 
 #*****************************************************************************
@@ -112,7 +108,8 @@ def hermite_constant(n):
 
     return gamma
 
-cdef double eval_seq_as_poly(int *f, int n, double x):
+
+cdef double eval_seq_as_poly(int *f, int n, double x) noexcept:
     r"""
     Evaluates the sequence a, thought of as a polynomial with
 
@@ -129,7 +126,7 @@ cdef double eval_seq_as_poly(int *f, int n, double x):
         s = s * x + f[i]
     return s
 
-cdef double newton(int *f, int *df, int n, double x0, double eps):
+cdef double newton(int *f, int *df, int n, double x0, double eps) noexcept:
     r"""
     Find the real root x of f (with derivative df) near x0
     with provable precision eps, i.e. |x-z| < eps where z is the actual
@@ -174,7 +171,7 @@ cdef double newton(int *f, int *df, int n, double x0, double eps):
     return x
 
 cdef void newton_in_intervals(int *f, int *df, int n, double *beta,
-                              double eps, double *rts):
+                              double eps, double *rts) noexcept:
     r"""
     Find the real roots of f in the intervals specified by beta:
 
@@ -215,7 +212,7 @@ cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
 
     TESTS:
 
-    Check that :trac:`13101` is solved::
+    Check that :issue:`13101` is solved::
 
         sage: sage.rings.number_field.totallyreal_data.lagrange_degree_3(4,12,19,42)
         [0.0, -1.0]
@@ -294,11 +291,10 @@ cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
                     3*nrsq*s1sq*s2sq - 3*nr*s1fo*s2 + \
                     s1sq*s1fo
 
-
         fcoeff = [ int(coeffs[i]) for i in range(7) ]
         f = ZZx(fcoeff)
         df = ZZx([i*coeffs[i] for i in range(1,7)])
-        f = f//gcd(f,df)
+        f = f//gcd(f, df)
         fcoeff = [int(c) for c in f.list()]
 
         rts = RRx(fcoeff).roots()
@@ -317,6 +313,7 @@ cdef long primessq[46]
 primessq_py = [4, 9, 25, 49, 121, 169, 289, 361, 529, 841, 961, 1369, 1681, 1849, 2209, 2809, 3481, 3721, 4489, 5041, 5329, 6241, 6889, 7921, 9409, 10201, 10609, 11449, 11881, 12769, 16129, 17161, 18769, 19321, 22201, 22801, 24649, 26569, 27889, 29929, 32041, 32761, 36481, 37249, 38809, 39601]
 for i from 0 <= i < 46:
     primessq[i] = primessq_py[i]
+
 
 def int_has_small_square_divisor(sage.rings.integer.Integer d):
     r"""
@@ -346,7 +343,8 @@ def int_has_small_square_divisor(sage.rings.integer.Integer d):
 
     return asq
 
-cdef int eval_seq_as_poly_int(int *f, int n, int x):
+
+cdef int eval_seq_as_poly_int(int *f, int n, int x) noexcept:
     r"""
     Evaluates the sequence a, thought of as a polynomial with
 
@@ -366,7 +364,7 @@ eps_abs = 10.**(-12)
 phi = 0.618033988749895
 sqrt2 = 1.41421356237310
 
-cdef int easy_is_irreducible(int *a, int n):
+cdef int easy_is_irreducible(int *a, int n) noexcept:
     r"""
     Very often, polynomials have roots in {+/-1, +/-2, +/-phi, sqrt2}, so we rule
     these out quickly.  Returns 0 if reducible, 1 if inconclusive.
@@ -409,6 +407,7 @@ cdef int easy_is_irreducible(int *a, int n):
 
     return 1
 
+
 def easy_is_irreducible_py(f):
     """
     Used solely for testing easy_is_irreducible.
@@ -427,7 +426,6 @@ def easy_is_irreducible_py(f):
     return easy_is_irreducible(a, len(f)-1)
 
 
-
 #****************************************************************************
 # Main class and routine
 #****************************************************************************
@@ -440,7 +438,7 @@ def easy_is_irreducible_py(f):
 cdef double eps_global
 eps_global = 10.**(-4)
 
-from .totallyreal_phc import __lagrange_bounds_phc
+from sage.rings.number_field.totallyreal_phc import __lagrange_bounds_phc
 
 cdef class tr_data:
     r"""
@@ -459,10 +457,10 @@ cdef class tr_data:
 
         INPUT:
 
-        n -- integer, the degree
-        B -- integer, the discriminant bound
-        a -- list (default: []), the coefficient list to begin with, where
-             a[len(a)]*x^n + ... + a[0]x^(n-len(a))
+        - ``n`` -- integer; the degree
+        - ``B`` -- integer; the discriminant bound
+        - ``a`` -- list (default: ``[]``); the coefficient list to begin with,
+          where ``a[len(a)]*x^n + ... + a[0]x^(n-len(a))``
 
         OUTPUT:
 
@@ -514,7 +512,6 @@ cdef class tr_data:
         for i from 0 <= i < (n+1)*n:
             self.beta[i] = <double>0
             self.gnk[i] = 0
-
 
         # Initialize variables.
         if a == []:
@@ -596,14 +593,12 @@ cdef class tr_data:
         INPUT:
 
         - ``verbose`` -- boolean to print verbosely computational details
-        - ``haltk`` -- integer, the level at which to halt the inductive
+        - ``haltk`` -- integer; the level at which to halt the inductive
           coefficient bounds
         - ``phc`` -- boolean, if PHCPACK is available, use it when `k = n-5` to
           compute an improved Lagrange multiplier bound
 
-        OUTPUT:
-
-        The next polynomial, as a sequence of integers
+        OUTPUT: the next polynomial, as a sequence of integers
 
         EXAMPLES::
 
@@ -635,7 +630,7 @@ cdef class tr_data:
 
         return g
 
-    cdef void incr(self, int *f_out, int verbose, int haltk, int phc):
+    cdef void incr(self, int *f_out, int verbose, int haltk, int phc) noexcept:
         r"""
         This function 'increments' the totally real data to the next
         value which satisfies the bounds essentially given by Rolle's
@@ -651,13 +646,13 @@ cdef class tr_data:
 
         INPUT:
 
-        - f_out -- an integer sequence, to be written with the coefficients of
+        - ``f_out`` -- integer sequence, to be written with the coefficients of
           the next polynomial
-        - verbose -- boolean to print verbosely computational details
-        - haltk -- integer, the level at which to halt the inductive
+        - ``verbose`` -- boolean to print verbosely computational details
+        - ``haltk`` -- integer; the level at which to halt the inductive
           coefficient bounds
-        - phc -- boolean, if PHCPACK is available, use it when k == n-5 to
-          compute an improved Lagrange multiplier bound
+        - ``phc`` -- boolean; if PHCPACK is available, use it when ``k == n-5``
+          to compute an improved Lagrange multiplier bound
 
         OUTPUT:
 
@@ -844,7 +839,6 @@ cdef class tr_data:
                         if tmp_dbl > akmin:
                             akmin = tmp_dbl
 
-
                     akmax = -eval_seq_as_poly(gnkm, n-k, betak[nk]) \
                             +fabs(eval_seq_as_poly(gnkm1, n-(k+1), betak[nk]))*eps_global
                     for i from 1 <= i < nk/2+1:
@@ -919,7 +913,6 @@ cdef class tr_data:
             amax = [0, 0, 0, 1]
             beta =  [...]
             gnk =  [...]
-
         """
         print("k =", self.k)
         print("a =", [self.a[i] for i in range(self.n + 1)])

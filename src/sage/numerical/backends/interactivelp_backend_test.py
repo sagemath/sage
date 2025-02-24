@@ -7,4 +7,4 @@ class TestInteractiveLPBackend(GenericBackendTests):
 
     @pytest.fixture
     def backend(self) -> GenericBackend:
-        return MixedIntegerLinearProgram(solver="InteractiveLP").get_backend()
+        return MixedIntegerLinearProgram(solver='InteractiveLP').get_backend()

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 `L`-series of modular abelian varieties
 
@@ -40,7 +41,7 @@ class Lseries(SageObject):
     """
     def __init__(self, abvar):
         """
-        Called when creating an L-series.
+        Called when creating an `L`-series.
 
         INPUT:
 
@@ -59,9 +60,7 @@ class Lseries(SageObject):
         """
         Return the abelian variety that this `L`-series is attached to.
 
-        OUTPUT:
-
-        a modular abelian variety
+        OUTPUT: a modular abelian variety
 
         EXAMPLES::
 
@@ -89,41 +88,38 @@ class Lseries_complex(Lseries):
 
         - ``s`` -- complex number
 
-        - ``prec`` -- integer (default: 53) the number of bits of precision
-          used in computing the lseries of the newforms.
+        - ``prec`` -- integer (default: 53); the number of bits of precision
+          used in computing the lseries of the newforms
 
-        OUTPUT:
-
-        a complex number L(A, s).
+        OUTPUT: a complex number L(A, s)
 
         EXAMPLES::
 
             sage: L = J0(23).lseries()
-            sage: L(1)
+            sage: L(1)                                                                  # needs sage.symbolic
             0.248431866590600
-            sage: L(1, prec=100)
+            sage: L(1, prec=100)                                                        # needs sage.symbolic
             0.24843186659059968120725033931
 
             sage: L = J0(389)[0].lseries()
-            sage: L(1) # long time (2s) abstol 1e-10
+            sage: L(1)                          # abstol 1e-10          # long time (2s), needs sage.symbolic
             -1.33139759782370e-19
-            sage: L(1, prec=100) # long time (2s) abstol 1e-20
+            sage: L(1, prec=100)                # abstol 1e-20          # long time (2s), needs sage.symbolic
             6.0129758648142797032650287762e-39
             sage: L.rational_part()
             0
 
             sage: L = J1(23)[0].lseries()
-            sage: L(1)
+            sage: L(1)                                                                  # needs sage.symbolic
             0.248431866590600
 
             sage: J = J0(11) * J1(11)
-            sage: J.lseries()(1)
+            sage: J.lseries()(1)                                                        # needs sage.symbolic
             0.0644356903227915
 
             sage: L = JH(17,[2]).lseries()
-            sage: L(1)
+            sage: L(1)                                                                  # needs sage.symbolic
             0.386769938387780
-
         """
         abelian_variety = self.abelian_variety()
         # Check for easy dimension zero case
@@ -154,9 +150,7 @@ class Lseries_complex(Lseries):
 
         - ``other`` -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -179,9 +173,7 @@ class Lseries_complex(Lseries):
 
         - ``other`` -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -198,9 +190,7 @@ class Lseries_complex(Lseries):
         """
         String representation of `L`-series.
 
-        OUTPUT:
-
-        a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -212,11 +202,9 @@ class Lseries_complex(Lseries):
 
     def vanishes_at_1(self):
         """
-        Return True if `L(1)=0` and return False otherwise.
+        Return ``True`` if `L(1)=0` and return ``False`` otherwise.
 
-        OUTPUT:
-
-        a boolean
+        OUTPUT: boolean
 
         EXAMPLES:
 
@@ -271,9 +259,7 @@ class Lseries_complex(Lseries):
         Return the rational part of this `L`-function at the central critical
         value 1.
 
-        OUTPUT:
-
-        a rational number
+        OUTPUT: a rational number
 
         EXAMPLES::
 
@@ -322,7 +308,7 @@ class Lseries_padic(Lseries):
         Lseries.__init__(self, abvar)
         p = Integer(p)
         if not p.is_prime():
-            raise ValueError("p (=%s) must be prime"%p)
+            raise ValueError("p (=%s) must be prime" % p)
         self.__p = p
 
     def __eq__(self, other):
@@ -334,11 +320,9 @@ class Lseries_padic(Lseries):
 
         INPUT:
 
-        other -- object
+        - ``other`` -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -363,11 +347,9 @@ class Lseries_padic(Lseries):
 
         INPUT:
 
-        other -- object
+        - ``other`` -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 

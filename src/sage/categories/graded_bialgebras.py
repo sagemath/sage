@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Graded bialgebras
 """
@@ -9,9 +10,10 @@ Graded bialgebras
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+
 def GradedBialgebras(base_ring):
     """
-    The category of graded bialgebras
+    The category of graded bialgebras.
 
     EXAMPLES::
 

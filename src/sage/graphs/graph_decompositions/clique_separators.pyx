@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # cython: binding=True
 # distutils: language = c++
 r"""
@@ -140,7 +139,7 @@ def make_labelled_rooted_tree(atoms, cliques):
     return to_tree(0, len(cliques))
 
 
-cdef inline bint is_clique(short_digraph sd, vector[int] Hx):
+cdef inline bint is_clique(short_digraph sd, vector[int] Hx) noexcept:
     """
     Check if the subgraph sd[Hx] is a clique.
 

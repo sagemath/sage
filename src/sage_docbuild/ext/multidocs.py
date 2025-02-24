@@ -17,7 +17,6 @@ More precisely this extension ensures the correct merging of
 - the list of python modules
 - the javascript index
 - the citations
-
 """
 import os
 import pickle
@@ -47,14 +46,14 @@ def merge_environment(app, env):
     """
     logger.info(bold('Merging environment/index files...'))
     for curdoc in app.env.config.multidocs_subdoc_list:
-        logger.info("    %s:"%curdoc, nonl=1)
+        logger.info("    %s:" % curdoc, nonl=1)
         docenv = get_env(app, curdoc)
         if docenv is not None:
             fixpath = lambda path: os.path.join(curdoc, path)
             todos = docenv.domaindata['todo'].get('todos', dict())
             citations = docenv.domaindata['citation'].get('citations', dict())
             indexentries = docenv.domaindata['index'].get('entries', dict())
-            logger.info(" %s todos, %s index, %s citations"%(
+            logger.info(" %s todos, %s index, %s citations" % (
                     sum(len(t) for t in todos.values()),
                     len(indexentries),
                     len(citations)
@@ -97,8 +96,8 @@ def merge_environment(app, env):
             for ind,mod in docenv.domaindata['py']['modules'].items():
                 newmodules[ind] = ModuleEntry(fixpath(mod.docname), mod.node_id, mod.synopsis, mod.platform, mod.deprecated)
             env.domaindata['py']['modules'].update(newmodules)
-            logger.info(", %s modules"%(len(newmodules)))
-    logger.info('... done (%s todos, %s index, %s citations, %s modules)'%(
+            logger.info(", %s modules" % (len(newmodules)))
+    logger.info('... done (%s todos, %s index, %s citations, %s modules)' % (
             sum(len(t) for t in env.domaindata['todo']['todos'].values()),
             len(env.domaindata['index']['entries']),
             len(env.domaindata['citation']['citations']),
@@ -115,7 +114,7 @@ def get_env(app, curdoc):
         app.env.doctreedir, curdoc, ENV_PICKLE_FILENAME)
     try:
         f = open(filename, 'rb')
-    except IOError:
+    except OSError:
         logger.debug(f"Unable to load pickled environment '{filename}'", exc_info=True)
         return None
     docenv = pickle.load(f)
@@ -131,12 +130,12 @@ def merge_js_index(app):
     logger.info(bold('Merging js index files...'))
     mapping = app.builder.indexer._mapping
     for curdoc in app.env.config.multidocs_subdoc_list:
-        logger.info("    %s:"%curdoc, nonl=1)
+        logger.info("    %s:" % curdoc, nonl=1)
         fixpath = lambda path: os.path.join(curdoc, path)
         index = get_js_index(app, curdoc)
         if index is not None:
             # merge the mappings
-            logger.info(" %s js index entries"%(len(index._mapping)))
+            logger.info(" %s js index entries" % (len(index._mapping)))
             for (ref, locs) in index._mapping.items():
                 newmapping = set(map(fixpath, locs))
                 if ref in mapping:
@@ -160,7 +159,7 @@ def merge_js_index(app):
             dest = os.path.join(app.outdir, "_sources", curdoc)
             if not os.path.exists(dest):
                 os.symlink(os.path.join("..", curdoc, "_sources"), dest)
-    logger.info('... done (%s js index entries)'%(len(mapping)))
+    logger.info('... done (%s js index entries)' % (len(mapping)))
     logger.info(bold('Writing js search indexes...'), nonl=1)
     return [] # no extra page to setup
 
@@ -171,7 +170,7 @@ def get_js_index(app, curdoc):
     """
     from sphinx.search import IndexBuilder, languages
     # FIXME: find the correct lang
-    sphinx_version=__import__("sphinx").__version__
+    sphinx_version = __import__("sphinx").__version__
     if (sphinx_version < '1.2'):
         indexer = IndexBuilder(app.env, 'en',
                                app.config.html_search_options)
@@ -181,7 +180,7 @@ def get_js_index(app, curdoc):
     indexfile = os.path.join(app.outdir, curdoc, 'searchindex.js')
     try:
         f = open(indexfile, 'r')
-    except IOError:
+    except OSError:
         logger.info("")
         logger.warning("Unable to fetch %s " % indexfile)
         return None
@@ -260,7 +259,7 @@ def fetch_citation(app: Sphinx, env):
         return
     with open(file, 'rb') as f:
         cache = pickle.load(f)
-    logger.info("done (%s citations)."%len(cache))
+    logger.info("done (%s citations)." % len(cache))
     cite = env.domaindata['citation'].get('citations', dict())
     for ind, (path, tag, lineno) in cache.items():
         if ind not in cite: # don't override local citation

@@ -1,7 +1,7 @@
 # distutils: libraries = GSL_LIBRARIES
 # distutils: library_dirs = GSL_LIBDIR
 # distutils: include_dirs = GSL_INCDIR
-from .types cimport *
+from sage.libs.gsl.types cimport *
 
 cdef extern from "gsl/gsl_complex.h":
   double GSL_REAL(gsl_complex z)
@@ -148,6 +148,3 @@ cdef extern from "gsl/gsl_complex_math.h":
   gsl_complex  gsl_complex_arccsch(gsl_complex z)
 
   gsl_complex  gsl_complex_arccoth(gsl_complex z)
-
-
-

@@ -191,7 +191,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         try:
             children = list(children)
         except TypeError:
-            raise TypeError("input ({}) is not a valid tree".format(children))
+            raise TypeError(f"input ({children}) is not a valid tree")
         #if not (children.__class__ is self.__class__
         #        and children.parent() == parent):
         children = [self.__class__(parent, x) for x in children]
@@ -215,7 +215,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         .. NOTE::
 
             The tree ``self`` must be normalized before calling this
-            method (see :meth:`normalize`). This doesn't matter
+            method (see :meth:`normalize`). This does not matter
             unless you are inside the :meth:`clone` context manager,
             because outside of it every rooted tree is already
             normalized.
@@ -425,11 +425,11 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
 
         INPUT:
 
-        - `x` -- a rooted tree
+        - ``x`` -- a rooted tree
 
-        - ``grafting_function`` -- a list of paths in ``self``
+        - ``grafting_function`` -- list of paths in ``self``
 
-        - ``path_prefix`` -- optional tuple (default ``()``)
+        - ``path_prefix`` -- tuple (default: ``()``)
 
         The ``path_prefix`` argument is only used for internal recursion.
 
@@ -467,7 +467,7 @@ class RootedTrees(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``size`` -- (optional) an integer
+    - ``size`` -- integer (optional)
 
     OUTPUT:
 
@@ -522,10 +522,10 @@ class RootedTrees_all(DisjointUnionEnumeratedSets, RootedTrees):
         """
         TESTS::
 
-            sage: sum(x**len(t)                                                         # optional - sage.symbolic
+            sage: sum(x**len(t)                                                         # needs sage.symbolic
             ....:     for t in set(RootedTree(t) for t in OrderedTrees(6)))
             x^5 + x^4 + 3*x^3 + 6*x^2 + 9*x
-            sage: sum(x**len(t) for t in RootedTrees(6))                                # optional - sage.symbolic
+            sage: sum(x**len(t) for t in RootedTrees(6))                                # needs sage.symbolic
             x^5 + x^4 + 3*x^3 + 6*x^2 + 9*x
 
             sage: TestSuite(RootedTrees()).run() # long time
@@ -625,14 +625,14 @@ class RootedTrees_size(RootedTrees):
     TESTS::
 
         sage: from sage.combinat.rooted_tree import RootedTrees_size
-        sage: for i in range(1, 6): TestSuite(RootedTrees_size(i)).run()                # optional - sage.combinat
+        sage: for i in range(1, 6): TestSuite(RootedTrees_size(i)).run()                # needs sage.combinat
     """
 
     def __init__(self, n):
         """
         TESTS::
 
-            sage: for i in range(1, 6):                                                 # optional - sage.combinat
+            sage: for i in range(1, 6):                                                 # needs sage.combinat
             ....:     TestSuite(RootedTrees(i)).run()
         """
         super().__init__(category=FiniteEnumeratedSets())
@@ -663,7 +663,7 @@ class RootedTrees_size(RootedTrees):
         """
         TESTS::
 
-            sage: RootedTrees(4).an_element()  # indirect doctest                       # optional - sage.combinat
+            sage: RootedTrees(4).an_element()  # indirect doctest                       # needs sage.combinat
             [[[[]]]]
         """
         return self.first()
@@ -681,11 +681,11 @@ class RootedTrees_size(RootedTrees):
             sage: from sage.combinat.rooted_tree import *
             sage: RootedTrees(1).list()
             [[]]
-            sage: RootedTrees(2).list()                                                 # optional - sage.combinat
+            sage: RootedTrees(2).list()                                                 # needs sage.combinat
             [[[]]]
-            sage: RootedTrees(3).list()                                                 # optional - sage.combinat
+            sage: RootedTrees(3).list()                                                 # needs sage.combinat
             [[[[]]], [[], []]]
-            sage: RootedTrees(4).list()                                                 # optional - sage.combinat
+            sage: RootedTrees(4).list()                                                 # needs sage.combinat
             [[[[[]]]], [[[], []]], [[], [[]]], [[], [], []]]
         """
         if self._n == 1:
@@ -757,7 +757,7 @@ class RootedTrees_size(RootedTrees):
             sage: S = RootedTrees(3)
             sage: S.element_class
             <class 'sage.combinat.rooted_tree.RootedTrees_all_with_category.element_class'>
-            sage: S.first().__class__ == RootedTrees().first().__class__                # optional - sage.combinat
+            sage: S.first().__class__ == RootedTrees().first().__class__                # needs sage.combinat
             True
         """
         return self._parent_for.element_class
@@ -808,10 +808,14 @@ class LabelledRootedTree(AbstractLabelledClonableTree, RootedTree):
 
     INPUT:
 
-    - ``children`` -- a list or tuple or more generally any iterable
+    - ``children`` -- list or tuple or more generally any iterable
       of trees or objects convertible to trees
 
-    - ``label`` -- any hashable Sage object (default is ``None``)
+    - ``label`` -- any hashable Sage object (default: ``None``)
+
+    .. NOTE::
+
+        It is required that all labels are comparable.
 
     EXAMPLES::
 
@@ -904,7 +908,7 @@ class LabelledRootedTree(AbstractLabelledClonableTree, RootedTree):
         .. NOTE::
 
             The tree ``self`` must be normalized before calling this
-            method (see :meth:`normalize`). This doesn't matter
+            method (see :meth:`normalize`). This does not matter
             unless you are inside the :meth:`clone` context manager,
             because outside of it every rooted tree is already
             normalized.
@@ -1038,7 +1042,7 @@ class LabelledRootedTrees_all(LabelledRootedTrees):
         t = LT([], label=3)
         t1 = LT([t, t], label=42)
         t2 = LT([[]], label=5)
-        return LT([t, t1, t2], label="alpha")
+        return LT([t, t1, t2], label='alpha')
 
     def unlabelled_trees(self):
         """

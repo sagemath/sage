@@ -13,7 +13,7 @@ Helper code for ternary quadratic forms
 # ****************************************************************************
 
 from sage.arith.misc import gcd, inverse_mod, xgcd
-from sage.matrix.constructor import matrix, identity_matrix, diagonal_matrix
+from sage.matrix.constructor import matrix
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.integer_ring import ZZ
@@ -27,7 +27,7 @@ def red_mfact(a, b):
 
     - ``a``, ``b`` -- integers
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -67,23 +67,31 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
         sage: Q(M) == Qr
         True
     """
-    M = identity_matrix(3)
+    # M = identity_matrix(3)
+    # M = matrix(ZZ, 3, [m11, m12, m13, m21, m22, m23, m31, m32, m33])
+    m11, m12, m13, m21, m22, m23, m31, m32, m33 = 1, 0, 0, 0, 1, 0, 0, 0, 1
 
     loop = True
 
     while loop:
 
         # adjust
-        v = a1+a2+a23+a13+a12
-        if v < 0:
-            M *= matrix(ZZ, 3, [1, 0, 1, 0, 1, 1, 0, 0, 1])
+        v = a1 + a2 + a23 + a13 + a12
+        if (v < 0):
+            # M *= matrix(ZZ, 3, [1, 0, 1, 0, 1, 1, 0, 0, 1])
+            [m13] = [m11 + m12 + m13]
+            [m23] = [m21 + m22 + m23]
+            [m33] = [m31 + m32 + m33]
             a3 += v
-            a23 += a12+2*a2
-            a13 += a12+2*a1
+            a23 += a12 + 2*a2
+            a13 += a12 + 2*a1
 
         # cuadred 12
         m = red_mfact(a1, a12)
-        M *= matrix(ZZ, 3, [1, m, 0, 0, 1, 0, 0, 0, 1])
+        # M *= matrix(ZZ, 3, [1, m, 0, 0, 1, 0, 0, 0, 1])
+        [m12] = [m*m11 + m12]
+        [m22] = [m*m21 + m22]
+        [m32] = [m*m31 + m32]
         t = a1*m
         a12 += t
         a2 += a12*m
@@ -92,7 +100,10 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
 
         # cuadred 23
         m = red_mfact(a2, a23)
-        M *= matrix(ZZ, 3, [1, 0, 0, 0, 1, m, 0, 0, 1])
+        # M *= matrix(ZZ, 3, [1, 0, 0, 0, 1, m, 0, 0, 1])
+        [m13] = [m*m12 + m13]
+        [m23] = [m*m22 + m23]
+        [m33] = [m*m32 + m33]
         t = a2*m
         a23 += t
         a3 += a23*m
@@ -101,7 +112,10 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
 
         # cuadred 13
         m = red_mfact(a1, a13)
-        M *= matrix(ZZ, 3, [1, 0, m, 0, 1, 0, 0, 0, 1])
+        # M *= matrix(ZZ, 3, [1, 0, m, 0, 1, 0, 0, 0, 1])
+        [m13] = [m*m11 + m13]
+        [m23] = [m*m21 + m23]
+        [m33] = [m*m31 + m33]
         t = a1*m
         a13 += t
         a3 += a13*m
@@ -110,19 +124,28 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
 
         # order 12
         if a1 > a2 or (a1 == a2 and abs(a23) > abs(a13)):
-            M *= matrix(ZZ, 3, [0, -1, 0, -1, 0, 0, 0, 0, -1])
+            # M *= matrix(ZZ, 3, [0, -1, 0, -1, 0, 0, 0, 0, -1])
+            [m11, m12, m13] = [-m12, -m11, -m13]
+            [m21, m22, m23] = [-m22, -m21, -m23]
+            [m31, m32, m33] = [-m32, -m31, -m33]
             [a1, a2] = [a2, a1]
             [a13, a23] = [a23, a13]
 
         # order 23
         if a2 > a3 or (a2 == a3 and abs(a13) > abs(a12)):
-            M *= matrix(ZZ, 3, [-1, 0, 0, 0, 0, -1, 0, -1, 0])
+            # M *= matrix(ZZ, 3, [-1, 0, 0, 0, 0, -1, 0, -1, 0])
+            [m11, m12, m13] = [-m11, -m13, -m12]
+            [m21, m22, m23] = [-m21, -m23, -m22]
+            [m31, m32, m33] = [-m31, -m33, -m32]
             [a2, a3] = [a3, a2]
             [a13, a12] = [a12, a13]
 
         # order 12
         if a1 > a2 or (a1 == a2 and abs(a23) > abs(a13)):
-            M *= matrix(ZZ, 3, [0, -1, 0, -1, 0, 0, 0, 0, -1])
+            # M *= matrix(ZZ, 3, [0, -1, 0, -1, 0, 0, 0, 0, -1])
+            [m11, m12, m13] = [-m12, -m11, -m13]
+            [m21, m22, m23] = [-m22, -m21, -m23]
+            [m31, m32, m33] = [-m32, -m31, -m33]
             [a1, a2] = [a2, a1]
             [a13, a23] = [a23, a13]
 
@@ -130,110 +153,159 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
         if a23*a13*a12 > 0:
             # a23, a13, a12 positive
 
-            if a23 < 0:
-                M *= diagonal_matrix([-1, 1, 1])
+            if (a23 < 0):
+                # M *= diagonal_matrix([-1, 1, 1])
+                m11 = -m11
+                m21 = -m21
+                m31 = -m31
                 a23 = -a23
-            if a13 < 0:
-                M *= diagonal_matrix([1, -1, 1])
+            if (a13 < 0):
+                # M *= diagonal_matrix([1, -1, 1])
+                m12 = -m12
+                m22 = -m22
+                m32 = -m32
                 a13 = -a13
-            if a12 < 0:
-                M *= diagonal_matrix([1, 1, -1])
+            if (a12 < 0):
+                # M *= diagonal_matrix([1, 1, -1])
+                m13 = -m13
+                m23 = -m23
+                m33 = -m33
                 a12 = -a12
 
         else:
             # a23, a13, a12 nonpositive
 
             [s1, s2, s3] = [a23 > 0, a13 > 0, a12 > 0]
-            if (s1+s2+s3) % 2:
+            if (s1 + s2 + s3) % 2:
                 if a23 == 0:
                     s1 = 1
                 else:
                     if a13 == 0:
                         s2 = 1
                     else:
-                        if a12 == 0:
+                        if (a12 == 0):
                             s3 = 1
             if s1:
-                M *= diagonal_matrix([-1, 1, 1])
+                # M *= diagonal_matrix([-1, 1, 1])
+                m11 = -m11
+                m21 = -m21
+                m31 = -m31
                 a23 = -a23
             if s2:
-                M *= diagonal_matrix([1, -1, 1])
+                # M *= diagonal_matrix([1, -1, 1])
+                m12 = -m12
+                m22 = -m22
+                m32 = -m32
                 a13 = -a13
             if s3:
-                M *= diagonal_matrix([1, 1, -1])
+                # M *= diagonal_matrix([1, 1, -1])
+                m13 = -m13
+                m23 = -m23
+                m33 = -m33
                 a12 = -a12
 
-        loop = not (abs(a23) <= a2 and abs(a13) <= a1 and abs(a12) <= a1 and a1+a2+a23+a13+a12 >= 0)
+        loop = not (abs(a23) <= a2 and abs(a13) <= a1 and abs(a12) <= a1 and a1 + a2 + a23 + a13 + a12 >= 0)
 
     # adj 3
-    if a1+a2+a23+a13+a12 == 0 and 2*a1+2*a13+a12 > 0:
-        M *= matrix(ZZ, 3, [-1, 0, 1, 0, -1, 1, 0, 0, 1])
-        # a3 += a1+a2+a23+a13+a12
-        a23 = -2*a2-a23-a12
-        a13 = -2*a1-a13-a12
+    if a1 + a2 + a23 + a13 + a12 == 0 and 2*a1 + 2*a13 + a12 > 0:
+        # M *= matrix(ZZ, 3, [-1, 0, 1, 0, -1, 1, 0, 0, 1])
+        [m11, m12, m13] = [-m11, -m12, m11 + m12 + m13]
+        [m21, m22, m23] = [-m21, -m22, m21 + m22 + m23]
+        [m31, m32, m33] = [-m31, -m32, m31 + m32 + m33]
+        # a3 += a1+a2+a23+a13+a12 = 0
+        a23 = -2*a2 - a23 - a12
+        a13 = -2*a1 - a13 - a12
 
     # adj 5.12
     if a1 == -a12 and a13 != 0:
-        M *= matrix(ZZ, 3, [-1, -1, 0, 0, -1, 0, 0, 0, 1])
-        # a2 += a1+a12
-        a23 = -a23-a13
+        # M *= matrix(ZZ, 3, [-1, -1, 0, 0, -1, 0, 0, 0, 1])
+        [m11, m12] = [-m11, -m11 - m12]
+        [m21, m22] = [-m21, -m21 - m22]
+        [m31, m32] = [-m31, -m31 - m32]
+        # a2 += a1 + a12 = 0
+        a23 = -a23 - a13
         a13 = -a13
-        a12 = -a12  # = 2*a1+a12
+        a12 = -a12  # = 2*a1 + a12
 
     # adj 5.13
     if a1 == -a13 and a12 != 0:
-        M *= matrix(ZZ, 3, [-1, 0, -1, 0, 1, 0, 0, 0, -1])
-        # a3 += a1+a13
-        a23 = -a23-a12
-        a13 = -a13  # = 2*a1+a13
+        # M *= matrix(ZZ, 3, [-1, 0, -1, 0, 1, 0, 0, 0, -1])
+        [m11, m13] = [-m11, -m11 - m13]
+        [m21, m23] = [-m21, -m21 - m23]
+        [m31, m33] = [-m31, -m31 - m33]
+        # a3 += a1 + a13 = 0
+        a23 = -a23 - a12
+        a13 = -a13  # = 2*a1 + a13
         a12 = -a12
 
     # adj 5.23
     if a2 == -a23 and a12 != 0:
-        M *= matrix(ZZ, 3, [1, 0, 0, 0, -1, -1, 0, 0, -1])
-        # a3 += a2+a23
-        a23 = -a23  # = 2*a2+a23
-        a13 = -a13-a12
+        # M *= matrix(ZZ, 3, [1, 0, 0, 0, -1, -1, 0, 0, -1])
+        [m12, m13] = [-m12, -m12 - m13]
+        [m22, m23] = [-m22, -m22 - m23]
+        [m32, m33] = [-m32, -m32 - m33]
+        # a3 += a2 + a23 = 0
+        a23 = -a23  # = 2*a2 + a23
+        a13 = -a13 - a12
         a12 = -a12
 
     # adj 4.12
     if a1 == a12 and a13 > 2*a23:
-        M *= matrix(ZZ, 3, [-1, -1, 0, 0, 1, 0, 0, 0, -1])
-        # a 2 += a1-a12
+        # M *= matrix(ZZ, 3, [-1, -1, 0, 0, 1, 0, 0, 0, -1])
+        [m11, m12, m13] = [-m11, -m11 + m12, -m13]
+        [m21, m22, m23] = [-m21, -m21 + m22, -m23]
+        [m31, m32, m33] = [-m31, -m31 + m32, -m33]
+        # a2 += a1 - a12 = 0
         a23 = -a23 + a13
         # a12 = 2*a1 - a12
 
     # adj 4.13
     if a1 == a13 and a12 > 2*a23:
-        M *= matrix(ZZ, 3, [-1, 0, -1, 0, -1, 0, 0, 0, 1])
-        # a3 += a1-a13
+        # M *= matrix(ZZ, 3, [-1, 0, -1, 0, -1, 0, 0, 0, 1])
+        [m11, m12, m13] = [-m11, -m12, -m11 + m13]
+        [m21, m22, m23] = [-m21, -m22, -m21 + m23]
+        [m31, m32, m33] = [-m31, -m32, -m31 + m33]
+        # a3 += a1 - a13 = 0
         a23 = -a23 + a12
         # a13 = 2*a1 - a13
 
     # adj 4.23
     if a2 == a23 and a12 > 2*a13:
-        M *= matrix(ZZ, 3, [-1, 0, 0, 0, -1, -1, 0, 0, 1])
-        # a3 += a2-a23
+        # M *= matrix(ZZ, 3, [-1, 0, 0, 0, -1, -1, 0, 0, 1])
+        [m11, m12, m13] = [-m11, -m12, -m12 + m13]
+        [m21, m22, m23] = [-m21, -m22, -m22 + m23]
+        [m31, m32, m33] = [-m31, -m32, -m32 + m33]
+        # a3 += a2 - a23 = 0
         # a23 = 2*a2 - a23
         a13 = -a13 + a12
 
     # order 12
     if a1 == a2 and abs(a23) > abs(a13):
-        M *= matrix(ZZ, 3, [0, -1, 0, -1, 0, 0, 0, 0, -1])
+        # M *= matrix(ZZ, 3, [0, -1, 0, -1, 0, 0, 0, 0, -1])
+        [m11, m12, m13] = [-m12, -m11, -m13]
+        [m21, m22, m23] = [-m22, -m21, -m23]
+        [m31, m32, m33] = [-m32, -m31, -m33]
         [a1, a2] = [a2, a1]
         [a13, a23] = [a23, a13]
 
     # order 23
     if a2 == a3 and abs(a13) > abs(a12):
-        M *= matrix(ZZ, 3, [-1, 0, 0, 0, 0, -1, 0, -1, 0])
+        # M *= matrix(ZZ, 3, [-1, 0, 0, 0, 0, -1, 0, -1, 0])
+        [m11, m12, m13] = [-m11, -m13, -m12]
+        [m21, m22, m23] = [-m21, -m23, -m22]
+        [m31, m32, m33] = [-m31, -m33, -m32]
         [a13, a12] = [a12, a13]
 
     # order 12
     if a1 == a2 and abs(a23) > abs(a13):
-        M *= matrix(ZZ, 3, [0, -1, 0, -1, 0, 0, 0, 0, -1])
+        # M *= matrix(ZZ, 3, [0, -1, 0, -1, 0, 0, 0, 0, -1])
+        [m11, m12, m13] = [-m12, -m11, -m13]
+        [m21, m22, m23] = [-m22, -m21, -m23]
+        [m31, m32, m33] = [-m32, -m31, -m33]
         [a13, a23] = [a23, a13]
 
-    return (a1, a2, a3, a23, a13, a12), M
+    return (a1, a2, a3, a23, a13, a12), \
+            matrix(ZZ, 3, (m11, m12, m13, m21, m22, m23, m31, m32, m33))
 
 
 def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):
@@ -477,10 +549,10 @@ def pseudorandom_primitive_zero_mod_p(a, b, c, r, s, t, p):
         sage: Q = TernaryQF([1, 2, 2, -1, 0, 0])
         sage: p = 1009
         sage: from sage.quadratic_forms.ternary import pseudorandom_primitive_zero_mod_p
-        sage: v = pseudorandom_primitive_zero_mod_p(1, 2, 2, -1, 0, 0, p)               # optional - sage.libs.pari
-        sage: v[2]                                                                      # optional - sage.libs.pari
+        sage: v = pseudorandom_primitive_zero_mod_p(1, 2, 2, -1, 0, 0, p)               # needs sage.libs.pari
+        sage: v[2]                                                                      # needs sage.libs.pari
         1
-        sage: Q(v)%p                                                                    # optional - sage.libs.pari
+        sage: Q(v)%p                                                                    # needs sage.libs.pari
         0
     """
     # [a, b, c, r, s, t] = Q.coefficients()
@@ -522,7 +594,6 @@ def _find_zeros_mod_p_odd(long long a, long long b, long long c, long long r, lo
         (0, 32, 1)
         sage: Q((0, 32, 1))
         2018
-
     """
 
     cdef long long a_i
@@ -579,19 +650,20 @@ def _find_zeros_mod_p(a, b, c, r, s, t, p):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: from sage.quadratic_forms.ternary import _find_zeros_mod_p
         sage: Q = TernaryQF([1, 2, 2, -1, 0, 0])
         sage: p = 1009
-        sage: zeros_1009 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, p)                      # optional - sage.libs.pari
-        sage: len(zeros_1009)                                                           # optional - sage.libs.pari
+        sage: zeros_1009 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, p)
+        sage: len(zeros_1009)
         1010
-        sage: zeros_1009.sort()                                                         # optional - sage.libs.pari
-        sage: zeros_1009[0]                                                             # optional - sage.libs.pari
+        sage: zeros_1009.sort()
+        sage: zeros_1009[0]
         (0, 32, 1)
         sage: Q((0, 32, 1))
         2018
-        sage: zeros_2 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, 2)                         # optional - sage.libs.pari
-        sage: zeros_2                                                                   # optional - sage.libs.pari
+        sage: zeros_2 = _find_zeros_mod_p(1, 2, 2, -1, 0, 0, 2)
+        sage: zeros_2
         [(0, 1, 0), (0, 0, 1), (1, 1, 1)]
     """
     if p == 2:
@@ -882,7 +954,26 @@ def extend(v):
         [ 30   0  -7]
         sage: M.det()
         2
+
+    TESTS::
+
+        sage: M = matrix(3, extend( (0, 0, 1) ))
+        sage: M.det()
+        1
+        sage: M.column(0)
+        (0, 0, 1)
+        sage: M = matrix(3, extend( (0, 0, -2) ))
+        sage: M.det()
+        2
+        sage: M.column(0)
+        (0, 0, -2)
     """
+    if v[0] == v[1] == 0:
+        if v[2] < 0:
+            return v[0], 0, 1, v[1], 1, 0, v[2], 0, 0
+        else:
+            return v[0], 1, 0, v[1], 0, 1, v[2], 0, 0
+
     b1 = xgcd(v[0], v[1])
     b2 = xgcd(b1[1], b1[2])
     b3 = xgcd(b1[0], v[2])
@@ -913,7 +1004,7 @@ def _find_p_neighbor_from_vec(a, b, c, r, s, t, p, v, mat=False):
         sage: Q.disc()
         29
         sage: v = (9, 7, 1)
-        sage: v in Q.find_zeros_mod_p(11)                                               # optional - sage.libs.pari
+        sage: v in Q.find_zeros_mod_p(11)                                               # needs sage.libs.pari
         True
         sage: q11, M = _find_p_neighbor_from_vec(1, 3, 3, -2, 0, -1, 11, v, mat=True)
         sage: Q11 = TernaryQF(q11)

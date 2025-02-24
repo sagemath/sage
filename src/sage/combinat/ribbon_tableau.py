@@ -58,7 +58,7 @@ class RibbonTableau(SkewTableau):
           1  0  1
 
     In the previous example, each ribbon is uniquely determined by a
-    non-zero entry.  The 0 entries are used to fill in the rest of the
+    nonzero entry.  The 0 entries are used to fill in the rest of the
     skew shape.
 
     .. NOTE::
@@ -164,14 +164,14 @@ class RibbonTableaux(UniqueRepresentation, Parent):
 
     INPUT(Optional):
 
-    - ``shape``  -- skew shape as a list of lists or an object of type
+    - ``shape`` -- skew shape as a list of lists or an object of type
       SkewPartition
 
-    - ``length`` -- integer, ``shape`` is partitioned into ribbons of
+    - ``length`` -- integer; ``shape`` is partitioned into ribbons of
       length ``length``
 
-    - ``weight`` -- list of integers, computed from the values of
-      non-zero entries labeling the ribbons
+    - ``weight`` -- list of integers; computed from the values of
+      nonzero entries labeling the ribbons
 
     EXAMPLES::
 
@@ -413,13 +413,13 @@ def insertion_tableau(skp, perm, evaluation, tableau, length):
     """
     INPUT:
 
-    -  ``skp`` -- skew partitions
+    - ``skp`` -- skew partitions
 
-    -  ``perm, evaluation`` -- non-negative integers
+    - ``perm, evaluation`` -- nonnegative integers
 
-    -  ``tableau`` -- skew tableau
+    - ``tableau`` -- skew tableau
 
-    -  ``length`` -- integer
+    - ``length`` -- integer
 
     TESTS::
 
@@ -480,11 +480,11 @@ def count_rec(nexts, current, part, weight, length):
     """
     INPUT:
 
-    -  ``nexts, current, part`` -- skew partitions
+    - ``nexts, current, part`` -- skew partitions
 
-    -  ``weight`` -- non-negative integer list
+    - ``weight`` -- nonnegative integer list
 
-    -  ``length`` -- integer
+    - ``length`` -- integer
 
     TESTS::
 
@@ -516,11 +516,11 @@ def list_rec(nexts, current, part, weight, length):
     """
     INPUT:
 
-    -  ``nexts, current, part`` -- skew partitions
+    - ``nexts, current, part`` -- skew partitions
 
-    -  ``weight`` -- non-negative integer list
+    - ``weight`` -- nonnegative integer list
 
-    -  ``length`` -- integer
+    - ``length`` -- integer
 
     TESTS::
 
@@ -575,11 +575,11 @@ def spin_rec(t, nexts, current, part, weight, length):
 
     INPUT:
 
-    -  ``weight`` -- list of non-negative integers
+    - ``weight`` -- list of nonnegative integers
 
-    -  ``length`` -- the length of the ribbons we're tiling with
+    - ``length`` -- the length of the ribbons we're tiling with
 
-    -  ``t`` -- the variable
+    - ``t`` -- the variable
 
     EXAMPLES::
 
@@ -620,7 +620,7 @@ def spin_rec(t, nexts, current, part, weight, length):
 
 def spin_polynomial_square(part, weight, length):
     r"""
-    Returns the spin polynomial associated with ``part``, ``weight``, and
+    Return the spin polynomial associated with ``part``, ``weight``, and
     ``length``, with the substitution `t \to t^2` made.
 
     EXAMPLES::
@@ -658,25 +658,26 @@ def spin_polynomial_square(part, weight, length):
 
 def spin_polynomial(part, weight, length):
     """
-    Returns the spin polynomial associated to ``part``, ``weight``, and
+    Return the spin polynomial associated to ``part``, ``weight``, and
     ``length``.
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.combinat.ribbon_tableau import spin_polynomial
-        sage: spin_polynomial([6,6,6],[4,2],3)                                          # optional - sage.symbolic
+        sage: spin_polynomial([6,6,6],[4,2],3)
         t^6 + t^5 + 2*t^4 + t^3 + t^2
-        sage: spin_polynomial([6,6,6],[4,1,1],3)                                        # optional - sage.symbolic
+        sage: spin_polynomial([6,6,6],[4,1,1],3)
         t^6 + 2*t^5 + 3*t^4 + 2*t^3 + t^2
-        sage: spin_polynomial([3,3,3,2,1], [2,2], 3)                                    # optional - sage.symbolic
+        sage: spin_polynomial([3,3,3,2,1], [2,2], 3)
         t^(7/2) + t^(5/2)
-        sage: spin_polynomial([3,3,3,2,1], [2,1,1], 3)                                  # optional - sage.symbolic
+        sage: spin_polynomial([3,3,3,2,1], [2,1,1], 3)
         2*t^(7/2) + 2*t^(5/2) + t^(3/2)
-        sage: spin_polynomial([3,3,3,2,1], [1,1,1,1], 3)                                # optional - sage.symbolic
+        sage: spin_polynomial([3,3,3,2,1], [1,1,1,1], 3)
         3*t^(7/2) + 5*t^(5/2) + 3*t^(3/2) + sqrt(t)
-        sage: spin_polynomial([5,4,3,2,1,1,1], [2,2,1], 3)                              # optional - sage.symbolic
+        sage: spin_polynomial([5,4,3,2,1,1,1], [2,2,1], 3)
         2*t^(9/2) + 6*t^(7/2) + 2*t^(5/2)
-        sage: spin_polynomial([[6]*6, [3,3]], [4,4,2], 3)                               # optional - sage.symbolic
+        sage: spin_polynomial([[6]*6, [3,3]], [4,4,2], 3)
         3*t^9 + 5*t^8 + 9*t^7 + 6*t^6 + 3*t^5
     """
     from sage.symbolic.ring import SR
@@ -1083,7 +1084,9 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
         return all(xi.is_semistandard() for xi in x)
 
     def __iter__(self):
-        """
+        r"""
+        Iterate over ``self``.
+
         EXAMPLES::
 
             sage: sp = SkewPartitions(3).list()
@@ -1098,6 +1101,21 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
             34
             sage: RibbonTableaux(a,weight,k).cardinality()
             34
+
+        TESTS:
+
+        Check that :issue:`36196` is fixed::
+
+            sage: shapes = [[[1], [0]], [[1], [0]], [[1], [0]]]
+            sage: weight = [1, 1, 1]
+            sage: SMST = SemistandardMultiSkewTableaux(shapes, weight)
+            sage: list(SMST)
+            [[[[1]], [[2]], [[3]]],
+             [[[2]], [[1]], [[3]]],
+             [[[1]], [[3]], [[2]]],
+             [[[2]], [[3]], [[1]]],
+             [[[3]], [[1]], [[2]]],
+             [[[3]], [[2]], [[1]]]]
         """
         parts = self._shape
         mu = self._weight
@@ -1122,9 +1140,12 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
         S = SkewTableaux()
         for lk in l:
             pos = 0  # Double check this
-            restmp = [S.from_shape_and_word(parts[0], [lk[j] for j in range(s[0])])]
+            lk = list(lk)
+            w = lk[:s[0]]
+            restmp = [S.from_shape_and_word(parts[0], w)]
             for i in range(1, len(parts)):
-                w = [lk[j] for j in range(pos + s[i - 1], pos + s[i - 1] + s[i])]
+                pos += s[i-1]
+                w = lk[pos: pos + s[i]]
                 restmp.append(S.from_shape_and_word(parts[i], w))
             yield self.element_class(self, restmp)
 
