@@ -1438,7 +1438,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         exact_terms = self.summands.copy()
         for term in self.summands.elements_topological():
             if not term.is_exact():
-                exact_terms.remove(term.growth)
+                exact_terms.remove(exact_terms.get_key(term))
 
         return self.parent(exact_terms)
 
@@ -2143,7 +2143,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         for term in self.summands.elements_topological():
             if not term.is_little_o_of_one():
                 large_terms.append(term)
-                expr_o.remove(term.growth)
+                expr_o.remove(expr_o.get_key(term))
 
         expr_o = P(expr_o)
 
