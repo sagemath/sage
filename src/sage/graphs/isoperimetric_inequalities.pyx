@@ -110,7 +110,7 @@ def cheeger_constant(g):
     elif g.num_verts() == 1:
         return Infinity
     elif not g.is_connected():
-        return QQ((0, 1))
+        return QQ.zero()
 
     cdef StaticSparseCGraph cg
     cdef short_digraph sd         # a copy of the graph g

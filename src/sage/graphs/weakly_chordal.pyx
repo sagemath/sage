@@ -277,7 +277,7 @@ def is_long_hole_free(g, certificate=False):
 
                     if not res:
                         # We release memory before returning the result
-                        if isinstance(g, StaticSparseBackend):
+                        if not isinstance(g, StaticSparseBackend):
                             free_short_digraph(sd)
                         bitset_free(dense_graph)
 
@@ -526,7 +526,7 @@ def is_long_antihole_free(g, certificate=False):
 
                     if not res:
                         # We release memory before returning the result
-                        if isinstance(g, StaticSparseBackend):
+                        if not isinstance(g, StaticSparseBackend):
                             free_short_digraph(sd)
                         bitset_free(dense_graph)
 
