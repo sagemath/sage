@@ -1434,7 +1434,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             x + y
             sage: O(x).exact_part()
             0
-        
+
         Check that the exact part of an expansion can also be determined for
         rings with custom element keys::
 
