@@ -543,7 +543,8 @@ def regular_sequence_is_bounded(S):
         return False
 
     try:
-        return is_bounded_via_mandel_simon_algorithm(make_positive(matricesProd))
+        if not is_bounded_via_mandel_simon_algorithm(make_positive(matricesProd)):
+            return False
     except ValueError:
         pass
 
