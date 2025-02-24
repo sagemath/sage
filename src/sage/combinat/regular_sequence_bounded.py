@@ -47,9 +47,6 @@ def multiply_reduce(A, B):
     r"""
     Return the matrix `A\cdot B` with entries `\min{(A\cdot B)_{ij},2}`.
 
-    This function is used in
-    :func:`<sage.combinat.regular_sequence_bounded.mandel_simon_algorithm>`.
-
     INPUT:
 
     - ``A`` -- an `m \times n` matrix
