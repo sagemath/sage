@@ -9,8 +9,11 @@ of the fillings of the puzzle with the specified pieces.
 Acknowledgements
 ----------------
 
-This code was written during Sage Days 45 at ICERM with Franco Saliola, Anne Schilling, and Avinash Dalal in discussions with Allen Knutson.
-The code was tested afterwards by Liz Beazley and Ed Richmond.
+The initial version of this code was written during Sage Days 45 at ICERM.
+
+- Franco Saliola, Allen Knutson, Avinash Dalal, Anne Schilling (Initial version, 2013)
+- Elizabeth Beazley, Ed Richmond (Testing, 2013)
+- Álvaro Gutiérrez (added .to_LRtableaux(), 2025)
 
 .. TODO::
 
@@ -21,10 +24,6 @@ The code was tested afterwards by Liz Beazley and Ed Richmond.
 
     - we should also have a 3-step puzzle pieces constructor, taken from p22 of
       :arxiv:`math/0610538`
-
-    - implement the bijection from puzzles to tableaux; see for example
-      R. Vakil, A geometric Littlewood-Richardson rule, :arxiv:`math/0302294`
-      or K. Purbhoo, Puzzles, Tableaux and Mosaics, :arxiv:`0705.1184`.
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Franco Saliola <saliola@gmail.com>,
@@ -32,7 +31,8 @@ The code was tested afterwards by Liz Beazley and Ed Richmond.
 #                     2013 Avinash Dalal,
 #                     2013 Anne Schilling,
 #                     2013 Elizabeth Beazley,
-#                     2013 Ed Richmond
+#                     2013 Ed Richmond,
+#                     2025 Álvaro Gutiérrez <gutierrez.caceres@outlook.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
@@ -1260,7 +1260,6 @@ class PuzzleFilling:
 
         EXAMPLES::
 
-
             sage: from sage.combinat.knutson_tao_puzzles import DeltaPiece, PuzzleFilling
             sage: piece = DeltaPiece('0','1','0')
             sage: P = PuzzleFilling('0101','0101'); P
@@ -1312,6 +1311,30 @@ class PuzzleFilling:
         """
         from pprint import pformat
         return pformat(self._squares)
+
+    def __eq__(self, other):
+        r"""
+        TESTS::
+
+            sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
+            sage: ps = KnutsonTaoPuzzleSolver("H")
+            sage: solns = ps('0101','1001')
+            sage: all(sol == sol for sol in solns)
+            True
+        """
+        return self._squares == other._squares
+
+    def __lt__(self, other):
+        r"""
+        TESTS::
+
+            sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
+            sage: ps = KnutsonTaoPuzzleSolver("H")
+            sage: solns = ps('0101','1001')
+            sage: sorted(solns) == sorted(solns, key=str)
+            True
+        """
+        return str(self) < str(other)
 
     def __iter__(self):
         r"""
@@ -1464,6 +1487,137 @@ class PuzzleFilling:
 
         return s
 
+    def to_LRtableau(self):
+        r"""
+        Creates a skew Littlewood--Richardson tableau from a puzzle.
+
+        We follow the bijection given in [Purbhoo07]_. A similar but different
+        bijection is given in [Vakil03]_.
+
+        .. WARNING::
+
+            This method only works for the classical cohomology puzzle pieces.
+
+        REFERENCES:
+
+        .. [Purbhoo07] K. Purbhoo, Puzzles, Tableaux and Mosaics, :arxiv:`0705.1184`
+
+        .. [Vakil03] R. Vakil, A geometric Littlewood-Richardson rule, :arxiv:`0302294`
+
+        OUTPUT:
+
+        - a LR skew tableau
+
+        EXAMPLES::
+
+            sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
+            sage: ps = KnutsonTaoPuzzleSolver("H")
+            sage: solns = ps('010101','010101')
+            sage: [puzzle.to_LRtableau() for puzzle in sorted(solns)]
+            [[[None, 1, 1], [None, 2], [None]],
+             [[None, None, 1], [None, 2], [1]],
+             [[None, None, 1], [None, 1], [2]],
+             [[None, None, None], [1, 1], [2]]]
+            sage: # Example similar to Figure 9 in Purbhoo07
+            ....: ps = KnutsonTaoPuzzleSolver('H')
+            ....: solns = ps('00000010001000010100', '00000000100010010100')
+            ....: puzzle = solns[168]
+            ....: tab = puzzle.to_LRtableau(); tab.pp()
+              .  .  .  .  .  .  .  .  .  .  1  1  1  1
+              .  .  .  .  .  .  .  1  1  1  2  2  2
+              .  .  .  .  .  1  1  2  2  3  3
+              .  .  1  2  2  3  4  4
+        """
+        from sage.combinat.partition import abacus_to_partition
+        from sage.combinat.skew_tableau import SkewTableau
+
+        k = sum(int(i) for i in self._ne_labels)
+        lam = abacus_to_partition(self.south_labels()) + [0]*k
+        tab = []
+        for i in range(self._n):
+            row = []
+            if self._ne_labels[i] == '1':
+                k -= 1
+                row += [None] * lam[k]
+                row += self._ne_to_south_path(i+1)
+                tab.insert(0, row)
+        while [] in tab:
+            tab.remove([])
+        return SkewTableau(tab)
+
+    def _ne_to_south_path(self, coord):
+        r"""
+        Returns the content row of the LR skew tableau corresponding to ``coord``.
+
+        This method traces out a path from ``coord`` to its "mirror" coordinate.
+        If ``coord`` specifies the `i`-th 1 from the top on the north-east border
+        of the puzzle, then its mirror is the `i`-th 1 from the west on the south
+        border. The algorithm records the content numbers of the traced horizontal
+        rhombi. See [Purbhoo07]_.
+
+        .. WARNING::
+
+            This method only works for the classical cohomology puzzle pieces.
+
+        REFERENCES:
+
+        .. [Purbhoo07] K. Purbhoo, Puzzles, Tableaux and Mosaics, :arxiv:`0705.1184`
+
+        INPUT:
+
+        - ``coord`` -- north-east boundary position counting from the top whose label is 1
+
+        OUTPUT:
+
+        - a list of numbers giving the content of one row in the LR tableau
+
+        TESTS::
+
+            sage: ps = KnutsonTaoPuzzleSolver("H")
+            sage: solns = ps('0101011','0101101')
+            sage: puzzle = sorted(solns)[4]
+            sage: puzzle[(1,1)]
+            0/1\10
+            sage: puzzle._ne_to_south_path(4)
+            [1, 1]
+            sage: puzzle._ne_to_south_path(3)
+            Traceback (most recent call last):
+            ...
+            AssertionError: the coordinate needs to be a coordinate of a 1 on the north-east boundary
+
+        """
+        assert self._ne_labels[coord-1] == '1', "the coordinate needs to be a coordinate of a 1 on the north-east boundary"
+
+        i = coord
+        j = self._n
+        moving = "west"
+        LR_list = []
+        while j != 0:
+            if moving == "west":
+                if j-i == 0:
+                    current_piece = self[(i,j)]
+                else:
+                    current_piece = self[(i,j)].north_piece()
+                current_labels = current_piece.border()
+                if current_labels == ('1', '1', '1'):
+                    moving = "south"
+                    LR_list = [i+1 for i in LR_list]
+                elif current_labels == ('0', '10', '1'):
+                    i = i-1
+                    j = j-1
+                    LR_list.insert(0, 0)
+            elif moving == "south":
+                if j-i < 1:
+                    break
+                current_piece = self[(i,j)].south_piece()
+                current_labels = current_piece.border()
+                if current_labels == ('1', '1', '1'):
+                    moving = "west"
+                j = j-1
+            assert j > 0, "something went wrong and the path escaped the puzzle"
+
+        return LR_list
+
 
 class KnutsonTaoPuzzleSolver(UniqueRepresentation):
     r"""
@@ -1601,14 +1755,13 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         sage: solns = ps('0101', '0101')
         sage: view(solns[0], viewer='pdf')  # not tested
 
-
     Below are examples of using each of the currently supported puzzles.
 
     Cohomology of the Grassmannian::
 
         sage: ps = KnutsonTaoPuzzleSolver("H")
         sage: solns = ps('0101', '0101')
-        sage: sorted(solns, key=str)
+        sage: sorted(solns)
         [{(1, 1): 0/0\0,
           (1, 2): 1/\0  0\/1,
           (1, 3): 0/\0  0\/0,
@@ -1633,7 +1786,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
         sage: ps = KnutsonTaoPuzzleSolver("HT")
         sage: solns = ps('0101', '0101')
-        sage: sorted(solns, key=str)
+        sage: sorted(solns)
         [{(1, 1): 0/0\0,
           (1, 2): 1/\0  0\/1,
           (1, 3): 0/\0  0\/0,
@@ -1667,7 +1820,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
         sage: ps = KnutsonTaoPuzzleSolver("K")
         sage: solns = ps('0101', '0101')
-        sage: sorted(solns, key=str)
+        sage: sorted(solns)
         [{(1, 1): 0/0\0,
           (1, 2): 1/\0  0\/1,
           (1, 3): 0/\0  0\/0,
@@ -1701,7 +1854,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
         sage: ps = KnutsonTaoPuzzleSolver("H2step")
         sage: solns = ps('01201', '01021')
-        sage: sorted(solns, key=str)
+        sage: sorted(solns)
         [{(1, 1): 0/0\0,
           (1, 2): 1/\0  0\/1,
           (1, 3): 2/\0  0\/2,
@@ -1750,7 +1903,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
         sage: ps = KnutsonTaoPuzzleSolver("HT2step")
         sage: solns = ps('10212', '12012')
-        sage: sorted(solns, key=str)
+        sage: sorted(solns)
         [{(1, 1): 1/1\1,
           (1, 2): 0/\(21)0  1\/2,
           (1, 3): 2/\1  (21)0\/0,
@@ -1892,7 +2045,6 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (4, 4): 1/1\1,
           (4, 5): 2/\1  1\/2,
           (5, 5): 2/2\2}]
-
 
     Belkale-Kumar puzzles (the following example is Figure 2 of [KnutsonPurbhoo10]_)::
 
@@ -2236,7 +2388,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
             sage: ps = KnutsonTaoPuzzleSolver('HT')
             sage: cp = ps.structure_constants('0101', '0101')
-            sage: sorted(cp.items(), key=str)
+            sage: sorted(cp.items())
             [(('0', '1', '0', '1'), y2 - y3),
             (('0', '1', '1', '0'), 1),
             (('1', '0', '0', '1'), 1)]
@@ -2245,17 +2397,17 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
             sage: ps = KnutsonTaoPuzzleSolver('K')
             sage: cp = ps.structure_constants('0101', '0101')
-            sage: sorted(cp.items(), key=str)
+            sage: sorted(cp.items())
             [(('0', '1', '1', '0'), 1), (('1', '0', '0', '1'), 1), (('1', '0', '1', '0'), -1)]
 
         Two-step::
 
             sage: ps = KnutsonTaoPuzzleSolver('H2step')
             sage: cp = ps.structure_constants('01122', '01122')
-            sage: sorted(cp.items(), key=str)
+            sage: sorted(cp.items())
             [(('0', '1', '1', '2', '2'), 1)]
             sage: cp = ps.structure_constants('01201', '01021')
-            sage: sorted(cp.items(), key=str)
+            sage: sorted(cp.items())
             [(('0', '2', '1', '1', '0'), 1),
              (('1', '2', '0', '0', '1'), 1),
              (('2', '0', '1', '0', '1'), 1)]
@@ -2264,7 +2416,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
             sage: ps = KnutsonTaoPuzzleSolver('HT2step')
             sage: cp = ps.structure_constants('10212', '12012')
-            sage: sorted(cp.items(), key=str)
+            sage: sorted(cp.items())
             [(('1', '2', '0', '1', '2'), y1*y2 - y2*y3 - y1*y4 + y3*y4),
              (('1', '2', '0', '2', '1'), y1 - y3),
              (('1', '2', '1', '0', '2'), y2 - y4),

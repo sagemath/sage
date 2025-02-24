@@ -7,11 +7,13 @@ AUTHORS:
 - Travis Scrimshaw, Arthur Lubovsky (2013-02-11):
   Factored out ``CombinatorialClass``
 - Trevor K. Karn (2022-08-03): added ``backward_slide``
+- Álvaro Gutiérrez (2025-02-24): added ``to_KTpuzzle``
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2013 Travis Scrimshaw <tcscrims at gmail.com>
 #       Copyright (C) 2013 Arthur Lubovsky
+#       Copyright (C) 2025 Álvaro Gutiérrez <gutierrez.caceres@outlook.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -1843,6 +1845,176 @@ class SkewTableau(ClonableList,
         kshapes = [la.k_conjugate(k) for la in shapes]
         return all(kshapes[i + 1].contains(kshapes[i])
                    for i in range(len(shapes) - 1))
+
+    def is_LR(self):
+        r"""
+        Checks whether ``self`` is a Littlewood--Richardson tableau.
+
+        A Littlewood--Richardson tableau (LR tableau) is a semistandard skew tableau whose
+        (row reading) word is Yamanouchi.
+
+        EXAMPLES::
+
+            sage: SkewTableau([[None,1],[1,2]]).is_LR()
+            True
+            sage: SkewTableau([[None,1],[2,1]]).is_LR()
+            False
+            sage: SkewTableau([[None,1],[2,2]]).is_LR()
+            False
+
+        """
+        return self.is_semistandard() and self.to_word().is_yamanouchi()
+
+    def to_KTpuzzle(self, size=None):
+        r"""
+        Takes a Littlewood--Richardson tableau and returns a Knutson--Tao puzzle.
+
+
+        INPUT:
+
+        - ``tableau`` -- a Littlewood--Richardson SkewTableau
+
+        - ``size`` -- the size of the output Knutson--Tao puzzle (optional)
+
+        TESTS::
+
+            sage: # Example from Purbhoo07
+            sage: tab = SkewTableau([
+            ....: [None]*10 + [1]*4,
+            ....: [None]*8 + [1]*2 + [2]*3,
+            ....: [None]*5 + [1]*2 + [2]*2 + [3]*2,
+            ....: [None] + [1]*2 + [2]*2 + [3] + [4]*2])
+            sage: puzzle = tab.to_KTpuzzle(20)
+            sage: puzzle[(5,10)]
+            1/\0  0\/1
+            sage: ''.join(puzzle.south_labels())
+            '01000010001001000000'
+            sage: # puzzle.plot() # not tested
+
+        EXAMPLES::
+
+            sage: ps = KnutsonTaoPuzzleSolver("H")
+            sage: puzzle = ps('01010','01001')[0]
+            sage: tab = puzzle.to_LRtableau(); tab
+            [[None, 1, 1], [2]]
+            sage: puzzle2 = tab.to_KTpuzzle()
+            sage: puzzle == puzzle2
+            True
+        """
+        assert self.is_LR(), "this method only applies to Littlewood-Richardson tableaux"
+
+        from sage.combinat.partition import abacus_to_partition
+        from sage.combinat.knutson_tao_puzzles import H_grassmannian_pieces, KnutsonTaoPuzzleSolver, PuzzleFilling
+
+        # Extract border of puzzle from tableau
+
+        tab_w = self.weight()
+        tab_out = self.outer_shape()
+        tab_inn = self.inner_shape()
+        L = len(self)
+
+        if size is None:
+            size = max(tab_w[0] + L, tab_out[0] + L)
+        assert size >= max(tab_w[0] + L, tab_out[0] + L), "the puzzle size inputted is too small"
+
+        n = size
+
+        lam = Partition(tab_w).to_abacus(size=size, ones=L)[::-1]
+        mu = [(n - L) - r for r in tab_out][::-1]
+        mu = Partition(mu).to_abacus(size=size, ones=L)[::-1]
+        nu = Partition(tab_inn).to_abacus(size=size, ones=L)
+
+        # Initialize puzzle
+
+        puzzle = PuzzleFilling(lam, mu)
+
+        # Find the locations of 1-triangles (blue by default in the plot)
+
+        chosenCols = [i+1 for i in range(n) if nu[i] == '1']
+        chosenRows = [i+1 for i in range(n) if lam[i] == '1']
+        delta_blue_positions = []
+        nabla_blue_positions = []
+        for col in range(L):
+            propagationRow = []
+            propagationCol = []
+            for row in range(col+1):
+                i = chosenRows[row]
+                j = chosenCols[col-row]
+
+                delta_blue_positions.append((j, i))
+
+                k = self[L-col+row-1].count(row+1)
+                nabla_blue_positions.append((j+k, i+k+1))
+
+                propagationCol.insert(0, j+k)
+                propagationRow.insert(0, i+k+1)
+            chosenRows = sorted(propagationRow) + chosenRows[col+1:]
+            chosenCols = sorted(propagationCol) + chosenCols[col+1:]
+
+        # Create a dictionary of boundaries
+        # (not all boundaries are in the dictionary)
+
+        D = {(i,j) : {} for i in range(1,n+1) for j in range(i,n+1)}
+        for (i,j) in delta_blue_positions:
+            D[(i,j)]['north_west'] = '1'
+            D[(i,j)]['north_east'] = '1'
+            (a, b) = (i, j)
+            while ((a-1, b) not in nabla_blue_positions and a > 1):
+                a -= 1
+                D[(a,b)]['north_east'] = '0'
+                D[(a,b)]['north_west'] = '1'
+                D[(a,b)]['south_east'] = '1'
+                D[(a,b)]['south_west'] = '0'
+            (a, b) = (i, j)
+            while ((a, b) not in nabla_blue_positions and b > a):
+                b -= 1
+                D[(a,b)]['north_west'] = '0'
+                D[(a,b)]['north_east'] = '10'
+        for (i,j) in nabla_blue_positions:
+            if (i,j) in D.keys():
+                D[(i,j)]['south_west'] = '1'
+                D[(i,j)]['south_east'] = '1'
+            (a, b) = (i, j)
+            while ((a, b-1) not in delta_blue_positions and a > 0):
+                a -= 1
+                b -= 1
+                D[(a,b)]['south_east'] = '10'
+                D[(a,b)]['south_west'] = '1'
+                D[(a+1,b)]['north_east'] = '1'
+                D[(a+1,b)]['north_west'] = '10'
+        for i in range(n):
+            D[(1,i+1)]['north_west'] = lam[i]
+            D[(i+1,i+1)]['south'] = nu[i]
+            D[(i+1,n)]['north_east'] = mu[i]
+
+        # Now fill piece by piece
+        # (like KnutsonTaoPuzzleSolver._fill_puzzle_by_pieces
+        #  but with the extra constraints given by the above)
+
+        all_pieces = H_grassmannian_pieces()
+        dirs = ('north_east', 'north_west', 'south_east', 'south_west')
+        rhombi = sorted(all_pieces.rhombus_pieces(), key=lambda p : ''.join(p[dir] for dir in dirs))
+            # the sorting guarantees that the 0/\0 0\/0 piece is always
+            # inserted if possible.
+        dirs = ('north_east', 'north_west', 'south')
+        triangles = sorted(all_pieces.delta_pieces(), key=lambda p : ''.join(p[dir] for dir in dirs))
+
+        for (i,j) in D.keys():
+            candidates = []
+            if i == j:
+                pieces = triangles
+                dirs = ('north_east', 'north_west', 'south')
+            else:
+                pieces = rhombi
+                dirs = ('north_east', 'north_west', 'south_east', 'south_west')
+            # Check what pieces have the desired boundaries
+            for piece in pieces:
+                if all(piece[dir] == D[(i,j)][dir] for dir in dirs if dir in D[(i,j)].keys()):
+                    candidates.append(piece)
+            # Place the smallest possible piece (the one with most 0s)
+            puzzle._squares[(i,j)] = candidates[0]
+
+        return puzzle
 
 
 def _label_skew(list_of_cells, sk):
