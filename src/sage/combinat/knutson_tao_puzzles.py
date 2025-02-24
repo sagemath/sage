@@ -2137,7 +2137,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
                     raise ValueError("max_letter needs to be specified")
         return super().__classcall__(cls, puzzle_pieces)
 
-    def __call__(self, lamda, mu, algorithm='strips'):
+    def __call__(self, lam, mu, algorithm='strips'):
         r"""
         TESTS::
 
@@ -2166,11 +2166,11 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
               (3, 4): 0/\0  1\/10,
               (4, 4): 10/0\1}]
         """
-        lamda, mu = tuple(lamda), tuple(mu)
+        lam, mu = tuple(lam), tuple(mu)
         if algorithm == 'pieces':
-            return list(self._fill_puzzle_by_pieces(lamda, mu))
+            return list(self._fill_puzzle_by_pieces(lam, mu))
         elif algorithm == 'strips':
-            return list(self._fill_puzzle_by_strips(lamda, mu))
+            return list(self._fill_puzzle_by_strips(lam, mu))
 
     solutions = __call__
 
@@ -2272,7 +2272,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
                     output.append(partial_filling + [piece])
         return output
 
-    def _fill_puzzle_by_pieces(self, lamda, mu):
+    def _fill_puzzle_by_pieces(self, lam, mu):
         r"""
         Fill puzzle pieces for given outer labels ``lambda`` and ``mu``.
 
@@ -2283,7 +2283,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
             sage: list(ps._fill_puzzle_by_pieces('0', '0'))
             [{(1, 1): 0/0\0}]
         """
-        queue = [PuzzleFilling(lamda, mu)]
+        queue = [PuzzleFilling(lam, mu)]
         while queue:
             PP = queue.pop()
             ne_label = PP.north_east_label_of_kink()
@@ -2300,7 +2300,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
                 else:
                     queue.append(PPcopy)
 
-    def _fill_puzzle_by_strips(self, lamda, mu):
+    def _fill_puzzle_by_strips(self, lam, mu):
         r"""
         Fill puzzle pieces by strips for given outer labels ``lambda`` and ``mu``.
 
@@ -2313,7 +2313,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
             sage: list(ps._fill_puzzle_by_strips('01', '01'))
             [{(1, 1): 0/0\0, (1, 2): 1/\0  0\/1, (2, 2): 1/1\1}]
         """
-        queue = [PuzzleFilling(lamda, mu)]
+        queue = [PuzzleFilling(lam, mu)]
         while queue:
             PP = queue.pop()
             i, _ = PP.kink_coordinates()
@@ -2323,7 +2323,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
                 nw_labels = PP._nw_labels
             else:
                 nw_labels = tuple(PP._squares[i - 1, k]['south_east']
-                                  for k in range(i, len(lamda) + 1))
+                                  for k in range(i, len(lam) + 1))
 
             # grab ne labels
             ne_label = PP._ne_labels[i - 1]
@@ -2357,7 +2357,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         m = len([gg.axes(False) for gg in g])
         return graphics_array(g, (m + 3) / 4, 4)
 
-    def structure_constants(self, lamda, mu, nu=None):
+    def structure_constants(self, lam, mu, nu=None):
         r"""
         Compute cohomology structure coefficients from puzzles.
 
@@ -2428,9 +2428,9 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
              (('2', '1', '1', '0', '2'), 1)]
         """
         from collections import defaultdict
-        R = PolynomialRing(Integers(), 'y', len(lamda) + 1)
+        R = PolynomialRing(Integers(), 'y', len(lam) + 1)
         z = defaultdict(R.zero)
-        for p in self(lamda, mu):
+        for p in self(lam, mu):
             z[p.south_labels()] += p.contribution()
         if nu is None:
             return dict(z)
