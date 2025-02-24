@@ -2700,11 +2700,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         2^2 * 3 * 5 * 7
         sage: [x for x in f]
         [(2, 2), (3, 1), (5, 1), (7, 1)]
-        sage: [p for p,e in f]
+        sage: [p for p, e in f]
         [2, 3, 5, 7]
-        sage: [e for p,e in f]
+        sage: [e for p, e in f]
         [2, 1, 1, 1]
-        sage: [p^e for p,e in f]
+        sage: [p^e for p, e in f]
         [4, 3, 5, 7]
 
     We can factor Python, numpy and gmpy2 numbers::
