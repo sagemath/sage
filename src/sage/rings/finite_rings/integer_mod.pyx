@@ -87,7 +87,8 @@ from sage.arith.long cimport (
 import sage.rings.rational as rational
 
 try:
-    from sage.libs.pari.all import pari, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
 except ImportError:
     class PariError(Exception):
         pass
@@ -1505,17 +1506,18 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         n = Integer(n)
         if n == 0:
             if self == 1:
-                if all: return [K(a) for a in range(1,K.order())]
-                else: return self
+                if all:
+                    return [K(a) for a in range(1, K.order())]
+                return self
             else:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                raise ValueError
         F = K.factored_order()
         if len(F) == 0:
             if all:
                 return [self]
-            else:
-                return self
+            return self
         if len(F) != 1:
             if all:
                 # we should probably do a first pass to see if there are any solutions so that we don't get giant intermediate lists and waste time...
@@ -1533,33 +1535,31 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         p, k = F[0]
         if self.is_zero():
             if n < 0:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                raise ValueError
             if all:
                 if k == 1:
                     return [self]
-                else:
-                    minval = max(1, (k/n).ceil())
-                    return [K(a*p**minval) for a in range(p**(k-minval))]
-            else:
-                return self
+                minval = max(1, (k/n).ceil())
+                return [K(a*p**minval) for a in range(p**(k-minval))]
+            return self
         if n < 0:
             try:
                 self = ~self
             except ZeroDivisionError:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                raise ValueError
             n = -n
         if p == 2 and k == 1:
-            if all: return [self]
-            else: return self
+            return [self] if all else self
         if k > 1:
             pval, upart = self.lift().val_unit(p)
             if not n.divides(pval):
                 if all:
                     return []
-                else:
-                    raise ValueError("no nth root")
+                raise ValueError("no nth root")
             if pval > 0:
                 if all:
                     return [K(a.lift()*p**(pval // n) + p**(k - (pval - pval//n)) * b) for a in mod(upart, p**(k-pval)).nth_root(n, all=True, algorithm=algorithm) for b in range(p**(pval - pval//n))]
@@ -1571,27 +1571,30 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 sign = [1]
                 if self % 4 == 3:
                     if n % 2 == 0:
-                        if all: return []
-                        else: raise ValueError("no nth root")
+                        if all:
+                            return []
+                        raise ValueError("no nth root")
                     else:
                         sign = [-1]
                         self = -self
                 elif n % 2 == 0:
                     if k > 2 and self % 8 == 5:
-                        if all: return []
-                        else: raise ValueError("no nth root")
+                        if all:
+                            return []
+                        raise ValueError("no nth root")
                     sign = [1, -1]
                 if k == 2:
-                    if all: return [K(s) for s in sign[:2]]
-                    else: return K(sign[0])
-                if all: modp = [mod(self,8)]
-                else: modp = mod(self,8)
+                    if all:
+                        return [K(s) for s in sign[:2]]
+                    return K(sign[0])
+                modp = [mod(self, 8)] if all else mod(self, 8)
             else:
                 sign = [1]
                 modp = self % p
                 self = self / K(R.teichmuller(modp))
                 modp = modp.nth_root(n, all=all, algorithm=algorithm)
-            # now self is congruent to 1 mod 4 or 1 mod p (for odd p), so the power series for p-adic log converges.
+            # now self is congruent to 1 mod 4 or 1 mod p (for odd p),
+            # so the power series for p-adic log converges.
             # Hensel lifting is probably better, but this is easier at the moment.
             plog = R(self).log()
             nval = n.valuation(p)
@@ -1599,11 +1602,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 if self == 1:
                     if all:
                         return [s*K(p*a+m.lift()) for a in range(p**(k-(2 if p==2 else 1))) for m in modp for s in sign]
-                    else:
-                        return K(modp.lift())
+                    return K(modp.lift())
                 else:
-                    if all: return []
-                    else: raise ValueError("no nth root")
+                    if all:
+                        return []
+                    raise ValueError("no nth root")
             if all:
                 ans = [plog // n + p**(k - nval) * i for i in range(p**nval)]
                 ans = [s*K(R.teichmuller(m) * a.exp()) for a in ans for m in modp for s in sign]
@@ -3193,10 +3196,12 @@ cdef int_fast32_t mod_pow_int(int_fast32_t base, int_fast32_t exp, int_fast32_t 
         if exp == 4: return (prod * prod) % n
 
     pow2 = base
-    if exp % 2: prod = base
-    else: prod = 1
+    if exp % 2:
+        prod = base
+    else:
+        prod = 1
     exp = exp >> 1
-    while(exp != 0):
+    while exp != 0:
         pow2 = pow2 * pow2
         if pow2 >= INTEGER_MOD_INT32_LIMIT: pow2 = pow2 % n
         if exp % 2:
@@ -3855,10 +3860,12 @@ cdef int_fast64_t mod_pow_int64(int_fast64_t base, int_fast64_t exp, int_fast64_
         if exp == 4: return (prod * prod) % n
 
     pow2 = base
-    if exp % 2: prod = base
-    else: prod = 1
+    if exp % 2:
+        prod = base
+    else:
+        prod = 1
     exp = exp >> 1
-    while(exp != 0):
+    while exp != 0:
         pow2 = pow2 * pow2
         if pow2 >= INTEGER_MOD_INT64_LIMIT: pow2 = pow2 % n
         if exp % 2:

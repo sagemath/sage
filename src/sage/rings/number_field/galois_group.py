@@ -16,7 +16,7 @@ from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.misc.superseded import deprecation
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.rings.infinity import infinity
 from sage.rings.number_field.number_field import refine_embedding
 from sage.rings.number_field.morphism import NumberFieldHomomorphism_im_gens

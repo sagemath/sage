@@ -918,7 +918,7 @@ class Factorization(SageObject):
             sage: pari(g)                                                               # needs sage.libs.pari
             [x - 1, 1; x + 1, 1; x^4 - x^3 + x^2 - x + 1, 1; x^4 + x^3 + x^2 + x + 1, 1]
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         from itertools import chain
 
         n = len(self)

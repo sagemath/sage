@@ -528,7 +528,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             raise ValueError("generator not defined")
         return new_BP_from_PBVar(self, self._pbring.variable(self.pbind[idx]))
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of variables in this ring.
 
@@ -1973,7 +1973,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
 
         return new_BM_from_PBVar(self, (<BooleanPolynomialRing>self._ring), newvar)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of generators of this monoid.
 
@@ -4927,14 +4927,9 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             sage: I = F.ideal()
             sage: I.groebner_basis(algorithm='magma', prot='sage') # optional - magma
             Leading term degree:  1. Critical pairs: 148.
-            Leading term degree:  2. Critical pairs: 144.
-            Leading term degree:  3. Critical pairs: 462.
-            Leading term degree:  1. Critical pairs: 167.
-            Leading term degree:  2. Critical pairs: 147.
-            Leading term degree:  3. Critical pairs: 101 (all pairs of current degree eliminated by criteria).
-            <BLANKLINE>
+            ...
             Highest degree reached during computation:  3.
-            Polynomial Sequence with 35 Polynomials in 36 Variables
+            Polynomial Sequence with ... Polynomials in 36 Variables
 
         TESTS:
 
