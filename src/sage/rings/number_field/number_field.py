@@ -136,14 +136,17 @@ lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldEl
 _NumberFields = NumberFields()
 
 
-def is_NumberFieldHomsetCodomain(codomain):
+def is_NumberFieldHomsetCodomain(codomain, category=None):
     """
-    Return whether ``codomain`` is a valid codomain for a number
-    field homset.
+    Return whether ``codomain`` is a valid codomain for a number field
+    homset (as an object in the category ``category`` if specified).
 
     This is used by NumberField._Hom_ to determine
     whether the created homsets should be a
     :class:`sage.rings.number_field.homset.NumberFieldHomset`.
+
+    This also takes into account the category, which checks if it is
+    a subcategory of :class:`Fields`.
 
     EXAMPLES:
 
@@ -173,7 +176,9 @@ def is_NumberFieldHomsetCodomain(codomain):
         False
     """
     from sage.categories.fields import Fields
-    return codomain in Fields()
+    if category is None:
+        return codomain in Fields()
+    return category.is_subcategory(Fields())
 
 
 def proof_flag(t):
@@ -1988,7 +1993,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: loads(dumps(H)) is H
             True
         """
-        if not is_NumberFieldHomsetCodomain(codomain):
+        if not is_NumberFieldHomsetCodomain(codomain, category):
             # Using LazyFormat fixes #28036 - infinite loop
             from sage.misc.lazy_format import LazyFormat
             raise TypeError(LazyFormat("%s is not suitable as codomain for homomorphisms from %s") % (codomain, self))
@@ -11476,7 +11481,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: End(CyclotomicField(21))
             Automorphism group of Cyclotomic Field of order 21 and degree 12
         """
-        if is_NumberFieldHomsetCodomain(codomain):
+        if is_NumberFieldHomsetCodomain(codomain, cat):
             from sage.rings.number_field.homset import CyclotomicFieldHomset
             return CyclotomicFieldHomset(self, codomain)
         else:
