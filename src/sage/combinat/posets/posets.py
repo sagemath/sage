@@ -5232,7 +5232,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         Factor the poset as a Cartesian product of smaller posets.
 
-        This only works for connected posets for the moment.
+        This only works for connected posets.
 
         The decomposition of a connected poset as a Cartesian product
         of posets (prime in the sense that they cannot be written as
@@ -5309,7 +5309,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         is_product, dic = G.is_cartesian_product(relabeling=True)
         if not is_product:
             return [self]
-        dic = {key: tuple(flatten(dic[key])) for key in dic}
+        dic = {key: tuple(flatten(val)) for key, val in dic.items()}
 
         prod_dg = dg.relabel(dic, inplace=False)
         v0 = next(iter(dic.values()))
@@ -5317,14 +5317,15 @@ class FinitePoset(UniqueRepresentation, Parent):
         factors_range = range(n)
 
         def edge_color(va, vb):
-            for i in range(n):
-                if va[i] != vb[i]:
-                    return i
+            return next(i for i, (vai, vbi) in enumerate(zip(va, vb))
+                        if vai != vbi)
 
-        neighbors_table = {x: [[y for y in prod_dg.neighbor_iterator(x)
-                                if edge_color(x, y) == i]
-                               for i in factors_range]
-                           for x in prod_dg}
+        neighbors_table = {}
+        for x in prod_dg:
+            z = [[] for _ in range(n)]
+            for y in prod_dg.neighbor_iterator(x):
+                z[edge_color(x, y)].append(y)
+            neighbors_table[x] = z
 
         fusion_edges = []
         for i0, i1 in Subsets(factors_range, 2):
