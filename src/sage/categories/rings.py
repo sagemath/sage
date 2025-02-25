@@ -594,8 +594,8 @@ class Rings(CategoryWithAxiom):
                 sage: S.is_field(proof=False)                                               # needs sage.libs.singular
                 False
             """
-#            if self.is_zero():
-#                return False
+            if self.is_zero():
+                return False
 
             if proof:
                 raise NotImplementedError("No way to prove that %s is an integral domain!" % self)
