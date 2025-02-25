@@ -77,7 +77,6 @@ from sage.data_structures.stream import (Stream_zero,
                                          Stream_exact,
                                          Stream_truncated,
                                          Stream_function)
-from sage.categories.sets_cat import cartesian_product
 from sage.categories.tensor import tensor
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.subset import subsets
@@ -640,6 +639,11 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: P = E(X*E1(-X))*(1+X) - 1
             sage: P.revert()[:5]
             [X, X^2, X*E_2 + 2*X^3, X*E_3 + 2*X^2*E_2 + E_2(X^2) + 5*X^4]
+
+        TESTS::
+
+            sage: (3 + 2*X).revert()
+            (-3/2) + 1/2*X
         """
         P = self.parent()
         if P._arity != 1:
@@ -651,10 +655,10 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         if (isinstance(coeff_stream, Stream_exact)
             and coeff_stream.order() >= 0
             and coeff_stream._degree == 2):
-            # self = a + b * p_1; self.revert() = -a/b + 1/b * p_1
+            # self = a + b * X; self.revert() = -a/b + 1/b * X
             a = coeff_stream[0]
-            b = coeff_stream[1][Partition([1])]
-            X = R(Partition([1]))
+            b = coeff_stream[1].coefficients()[0]
+            X = R(SymmetricGroup(1))  # as a polynomial species
             coeff_stream = Stream_exact((-a/b, 1/b * X),
                                         order=0)
             return P.element_class(P, coeff_stream)

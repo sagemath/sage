@@ -1785,9 +1785,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             2*E_2(X*Y)
         """
         P = self.parent()
-        M = P._indices
         P_one = P.one()
-        one = ZZ.one()
         result = P.zero()
         for m, c in self:
             result_m = P_one
