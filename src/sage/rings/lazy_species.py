@@ -100,12 +100,18 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
 
     INPUT:
 
-
     - ``n`` -- a nonnegative integer, the sum of the parts
     - ``d`` -- a nonnegative integer, the total weight
     - ``weight_multiplicities`` -- an iterable,
       ``weight_multiplicities[i]`` is the number of positions with
       weight `i+1`.
+
+    .. TODO::
+
+        Possibly this could be merged with
+        :class:`~sage.combinat.integer_vector_weighted.WeightedIntegerVectors`.
+        However, that class does not support fixing the sum of the
+        parts currently.
 
     EXAMPLES::
 
@@ -126,6 +132,7 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
          [2, 0, 0, 1],
          [1, 1, 0, 1],
          [0, 2, 0, 1]]
+
     """
     # the empty composition exists if and only if n == d == 0
     if not n:

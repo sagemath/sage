@@ -81,12 +81,31 @@ def _label_sets(arity, labels):
 
     - ``arity`` -- the arity of the species
     - ``labels`` -- an iterable of iterables
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _label_sets
+        sage: _label_sets(2, [[1, 2], ["x", "y", "z"]])
+        [(1, 2), ('x', 'y', 'z')]
+
+    TESTS::
+
+        sage: _label_sets(2, [[1, 1], ["x", "y", "z"]])
+        Traceback (most recent call last):
+        ...
+        ValueError: The argument labels must be a set, but [[1, 1], ['x', 'y', 'z']] has duplicates
+
+        sage: _label_sets(2, [[1, 2]])
+        Traceback (most recent call last):
+        ...
+        ValueError: arity of must be equal to the number of arguments provided
     """
     if len(labels) != arity:
         raise ValueError("arity of must be equal to the number of arguments provided")
 
     label_sets = [set(U) for U in labels]
-    assert all(len(U) == len(V) for U, V in zip(labels, label_sets)), f"The argument labels must be a set, but {labels} has duplicates"
+    if not all(len(U) == len(V) for U, V in zip(labels, label_sets)):
+        raise ValueError(f"The argument labels must be a set, but {labels} has duplicates")
     try:
         label_sets_sorted = [sorted(x) for x in label_sets]
     except TypeError:
@@ -1596,12 +1615,12 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: a
                 X*Y^2*E_2(X)
                 sage: list(a.structures([1, 2, 3], ["a", "b"]))
-                [((1,), ('a',), ('b',), (2, 3)),
-                 ((1,), ('b',), ('a',), (2, 3)),
-                 ((2,), ('a',), ('b',), (1, 3)),
+                [((1,), ('b',), ('a',), (2, 3)),
+                 ((1,), ('a',), ('b',), (2, 3)),
                  ((2,), ('b',), ('a',), (1, 3)),
-                 ((3,), ('a',), ('b',), (1, 2)),
-                 ((3,), ('b',), ('a',), (1, 2))]
+                 ((2,), ('a',), ('b',), (1, 3)),
+                 ((3,), ('b',), ('a',), (1, 2)),
+                 ((3,), ('a',), ('b',), (1, 2))]
 
                 sage: G = PermutationGroup([[(2,3),(4,5)]])
                 sage: a = M(G, {0: [1, 2, 3], 1: [4, 5]})
