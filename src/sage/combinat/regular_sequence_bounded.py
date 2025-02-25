@@ -122,7 +122,7 @@ def construct_phi(matrices):
         [2 2 2], [1 2 2], [1 2 2], [2 1 2], [0 1 2], [2 0 2], [1 2 2], [0 0 1]
         ]
 
-    Tests::
+    TESTS::
 
         sage: L = [Matrix([[20, 1, 0], [2, 0, 0], [117, 0, 8]]),
         ....: Matrix([[0, 2, 1], [1, 0, 0], [1,1,2]]), Matrix([[8, 1, 0],
@@ -541,7 +541,8 @@ def regular_sequence_is_bounded(S):
         return False
 
     try:
-        return is_bounded_via_mandel_simon_algorithm(make_positive(matricesProd))
+        if not is_bounded_via_mandel_simon_algorithm(make_positive(matricesProd)):
+            return False
     except ValueError:
         pass
 
