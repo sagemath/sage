@@ -11478,12 +11478,19 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                to Number Field in a with defining polynomial x^2 + 3
             sage: End(CyclotomicField(21))
             Automorphism group of Cyclotomic Field of order 21 and degree 12
+
+        ::
+
+            sage: K = CyclotomicField(3)
+            sage: Hom(K, ZZ).category()
+            Category of homsets of euclidean domains and noetherian rings
+
         """
         if not is_NumberFieldHomsetCodomain(codomain, category):
             raise TypeError
 
         from sage.rings.number_field.homset import CyclotomicFieldHomset
-        return CyclotomicFieldHomset(self, codomain)
+        return CyclotomicFieldHomset(self, codomain, category)
 
     def is_galois(self):
         """
