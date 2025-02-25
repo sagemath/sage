@@ -3581,6 +3581,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             Traceback (most recent call last):
             ...
             ValueError: shifts length should be the row dimension
+
+        .. SEEALSO::
+
+            :meth:`minimal_interpolant_basis`, :meth:`minimal_relation_basis`
         """
         m = self.nrows()
         n = self.ncols()
@@ -3909,6 +3913,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             Traceback (most recent call last):
             ...
             ValueError: shifts length should be the row dimension
+
+        .. SEEALSO::
+
+            :meth:`minimal_approximant_basis`, :meth:`minimal_relation_basis`
         """
         from sage.matrix.constructor import matrix  # for identity
         from copy import copy
@@ -4573,6 +4581,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             Traceback (most recent call last):
             ...
             ValueError: modulus matrix must be nonsingular
+
+        .. SEEALSO::
+
+            :meth:`minimal_approximant_basis`, :meth:`minimal_interpolant_basis`
         """
         from sage.matrix.constructor import matrix  # for matrix.block
 
