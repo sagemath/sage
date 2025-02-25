@@ -4,7 +4,7 @@ Boundedness of `k`-Regular Sequences
 This module contains a collection of algorithms to check for boundedness.
 This is done
 - based on eigenvalues and
-- by the criterion presented in [MS1977].
+- by the criterion presented in [MS1977a].
 
 Various
 =======
@@ -16,12 +16,6 @@ Various
     :mod:`sage.rings.cfinite_sequence`,
     :mod:`sage.combinat.binary_recurrence_sequences`.
 
-REFERENCES:
-
-.. [MS1977] Arnaldo Mandel, Imre Simon,
-   *On Finite Semigroups of Matrices*,
-   Theoretical Computer Science 5 (101-111),
-   North-Holland Publishing Company
 
 AUTHORS:
 
@@ -86,7 +80,7 @@ def multiply_reduce(A, B):
 
 def construct_phi(matrices):
     r"""
-    Return the set `\phi(S)` as defined in [MS1977].
+    Return the set `\phi(S)` as defined in [MS1977a].
 
     INPUT:
 
@@ -260,7 +254,7 @@ def is_bounded_via_mandel_simon_algorithm(matrices):
 
     ALGORITHM:
 
-    A criterion based on [MS1977] is used here.
+    A criterion based on [MS1977a] is used here.
 
     EXAMPLES::
 
