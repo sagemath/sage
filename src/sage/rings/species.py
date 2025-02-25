@@ -2677,15 +2677,14 @@ def _atomic_set_like_species(n, names):
 
     INPUT:
 
-        - ``n`` -- positive integer, the degree
-        - ``names`` -- an iterable of strings for the sorts of the
-          species
+    - ``n`` -- positive integer, the degree
+    - ``names`` -- an iterable of strings for the sorts of the species
 
     EXAMPLES::
 
         sage: from sage.rings.species import _atomic_set_like_species
         sage: _atomic_set_like_species(6, "X")
-        [E_2(E_3), E_2(X*E_2), E_2(X^3), E_3(E_2), E_3(X^2), E_6]
+        (E_2(E_3), E_2(X*E_2), E_2(X^3), E_3(E_2), E_3(X^2), E_6)
 
         sage: l = [len(_atomic_set_like_species(n, "X")) for n in range(12)]
         sage: l
@@ -2694,14 +2693,14 @@ def _atomic_set_like_species(n, names):
         0: A007650: Number of set-like atomic species of degree n.
 
         sage: _atomic_set_like_species(4, "U, V")
-        [E_2(E_2(V)), E_2(E_2(U)), E_2(V^2), E_2(U*V), E_2(U^2), E_4(U), E_4(V)]
+        (E_2(E_2(V)), E_2(E_2(U)), E_2(V^2), E_2(U*V), E_2(U^2), E_4(U), E_4(V))
     """
     if not n:
-        return []
+        return ()
     M1 = MolecularSpecies("X")
     M = MolecularSpecies(names)
     if n == 1:
-        return [M(SymmetricGroup(1), {s: [1]}) for s in range(M._arity)]
+        return tuple([M(SymmetricGroup(1), {s: [1]}) for s in range(M._arity)])
     result = []
     for d in divisors(n):
         if d == 1:
@@ -2722,4 +2721,4 @@ def _atomic_set_like_species(n, names):
             F = E_d(G)
             F.support()[0].rename(f"E_{d}({G})")
             result.append(F)
-    return result
+    return tuple(result)
