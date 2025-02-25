@@ -5335,7 +5335,6 @@ class FinitePoset(UniqueRepresentation, Parent):
                         fusion.add_edge([i0, i1])
                         break
 
-        fusion = fusion.transitive_closure()
         resu = []
         for s in fusion.connected_components(sort=False):
             subg = [x for x in prod_dg if all(x[i] == v0[i] for i in factors_range
