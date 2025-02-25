@@ -690,6 +690,9 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
 class SumSpeciesElement(LazySpeciesElement):
     def __init__(self, left, right):
+        r"""
+        Initialize the sum of two species.
+        """
         F = super(LazySpeciesElement, type(left))._add_(left, right)
         super().__init__(F.parent(), F._coeff_stream)
         self._left = left
@@ -703,6 +706,9 @@ class SumSpeciesElement(LazySpeciesElement):
 
 class ProductSpeciesElement(LazySpeciesElement):
     def __init__(self, left, right):
+        r"""
+        Initialize the product of two species.
+        """
         F = super(LazySpeciesElement, type(left))._mul_(left, right)
         super().__init__(F.parent(), F._coeff_stream)
         self._left = left
@@ -741,7 +747,9 @@ class ProductSpeciesElement(LazySpeciesElement):
 
 class CompositionSpeciesElement(LazySpeciesElement):
     def __init__(self, left, *args):
-        """
+        r"""
+        Initialize the composition of species.
+
         TESTS::
 
             sage: from sage.rings.lazy_species import LazySpecies
@@ -929,7 +937,9 @@ class LazySpecies(LazyCompletionGradedAlgebra):
         return tuple([self(g) for g in self._laurent_poly_ring._first_ngens(n)])
 
     def __init__(self, base_ring, names, sparse):
-        """
+        r"""
+        Initialize the ring of lazy species.
+
         EXAMPLES::
 
             sage: from sage.rings.lazy_species import LazySpecies
@@ -958,6 +968,9 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
 class SetSpecies(LazySpeciesElement):
     def __init__(self, parent):
+        r"""
+        Initialize the species of sets.
+        """
         S = parent(lambda n: SymmetricGroup(n))
         super().__init__(parent, S._coeff_stream)
 
@@ -978,6 +991,9 @@ class SetSpecies(LazySpeciesElement):
 
 class CycleSpecies(LazySpeciesElement):
     def __init__(self, parent):
+        r"""
+        Initialize the species of cycles.
+        """
         S = parent(lambda n: CyclicPermutationGroup(n) if n else 0)
         super().__init__(parent, S._coeff_stream)
 
@@ -1003,7 +1019,11 @@ class CycleSpecies(LazySpeciesElement):
 
 
 class GraphSpecies(LazySpeciesElement):
+
     def __init__(self, parent):
+        r"""
+        Initialize the species of simple graphs.
+        """
         P = parent._laurent_poly_ring
         S = parent(lambda n: sum(P(G.automorphism_group()) for G in graphs(n)))
         super().__init__(parent, S._coeff_stream)
@@ -1015,6 +1035,9 @@ class GraphSpecies(LazySpeciesElement):
 
 class SetPartitionSpecies(LazySpeciesElement):
     def __init__(self, parent):
+        r"""
+        Initialize the species of set partitions.
+        """
         E = parent.Sets()
         E1 = parent.Sets().restrict(1)
         super().__init__(parent, E(E1)._coeff_stream)
@@ -1030,6 +1053,9 @@ class SetPartitionSpecies(LazySpeciesElement):
 
 class RestrictedSpeciesElement(LazySpeciesElement):
     def __init__(self, F, min_degree, max_degree):
+        r"""
+        Initialize the restriction of a species to the given degrees.
+        """
         self._F = F
         self._min = min_degree
         self._max = max_degree
