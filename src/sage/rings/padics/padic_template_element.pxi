@@ -117,7 +117,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             ...
             TypeError: no conversion between padics when prime numbers differ
 
-        Check that bug #28555 is fixed::
+        Check that bug :issue:`28555` is fixed::
 
             sage: A.<a> = Qq(5^2)
             sage: A.base_ring()(A(1))
