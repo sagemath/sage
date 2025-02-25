@@ -143,15 +143,15 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         elif isinstance(x, pAdicGenericElement):
             if self.prime_pow.prime != x.parent().prime():
                 raise TypeError("no conversion between padics when prime numbers differ")
-            if not x.minimal_polynomial().degree().divides(self.parent().modulus().degree()):
-                raise TypeError("element in a proper extension")
             if not ((<pAdicGenericElement>x)._is_base_elt(self.prime_pow.prime) or x.parent() is self.parent()):
                 if x.parent().modulus().change_ring(self.base_ring()) == self.parent().modulus():
                     x = x.polynomial().change_ring(self.base_ring()).list()
                 else:
-                    if x.minimal_polynomial().degree() > 1:
-                        raise NotImplementedError("conversion from proper subextension not implemented")
-                    x = self.base_ring()(x.polynomial())
+                    if x.polynomial().degree() >= 1:
+                        if self.parent() is self.parent().base_ring():
+                            raise TypeError("element in a proper extension")
+                        raise NotImplementedError("conversion between different p-adic extensions not implemented")
+                    x = self.base_ring()(x.polynomial().constant_coefficient())
                     if x.is_zero():
                         absprec = min(absprec, x.precision_absolute()*self.prime_pow.e)
                         x = []
