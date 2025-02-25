@@ -12,6 +12,7 @@ AUTHORS:
 - Franco Saliola, Allen Knutson, Avinash Dalal, Anne Schilling (2013): initial version at Sage Days 45, ICERM
 - Elizabeth Beazley, Ed Richmond (2013): testing
 - Álvaro Gutiérrez (2025-02-24): added ``.to_LRtableaux()``
+- Julian Rüth (2025-02-24): clean up code
 
 .. TODO::
 
@@ -31,6 +32,7 @@ AUTHORS:
 #                     2013 Elizabeth Beazley,
 #                     2013 Ed Richmond,
 #                     2025 Álvaro Gutiérrez <gutierrez.caceres@outlook.com>
+#                     2025 Julian Rüth <julian.rueth@fsfe.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -636,14 +638,23 @@ class PuzzlePieces:
         sage: pieces.add_piece(NablaPiece('1','1','1'), rotations=60)
         sage: pieces.add_piece(NablaPiece('1','0','10'), rotations=60)
         sage: pieces
-        Nablas : [0\0/0, 0\10/1, 10\1/0, 1\0/10, 1\1/1]
-        Deltas : [0/0\0, 0/1\10, 1/10\0, 1/1\1, 10/0\1]
+        Nablas : (0\0/0, 1\1/1, 10\1/0, 0\10/1, 1\0/10)
+        Deltas : (0/0\0, 1/1\1, 0/1\10, 1/10\0, 10/0\1)
+
 
     The user can obtain the list of valid rhombi pieces as follows::
 
-        sage: sorted([p for p in pieces.rhombus_pieces()], key=str)
-        [0/\0  0\/0, 0/\0  1\/10, 0/\10  10\/0, 0/\10  1\/1, 1/\0  0\/1,
-        1/\1  10\/0, 1/\1  1\/1, 10/\1  0\/0, 10/\1  1\/10]
+        sage: pieces.rhombus_pieces()
+        (0/\0  0\/0,
+         10/\1  0\/0,
+         1/\1  1\/1,
+         0/\10  1\/1,
+         1/\1  10\/0,
+         0/\10  10\/0,
+         1/\0  0\/1,
+         0/\0  1\/10,
+         10/\1  1\/10)
+
     """
 
     def __init__(self, forbidden_border_labels=None):
@@ -658,16 +669,16 @@ class PuzzlePieces:
             sage: forbidden_border_labels = ['10']
             sage: pieces = PuzzlePieces(forbidden_border_labels)
             sage: pieces
-            Nablas : []
-            Deltas : []
+            Nablas : ()
+            Deltas : ()
 
             sage: PuzzlePieces('10')
             Traceback (most recent call last):
             ...
             TypeError: Input must be a list
         """
-        self._nabla_pieces = set()
-        self._delta_pieces = set()
+        self._nabla_pieces = {}
+        self._delta_pieces = {}
         if forbidden_border_labels is None:
             forbidden_border_labels = []
         if not isinstance(forbidden_border_labels, list):
@@ -723,33 +734,33 @@ class PuzzlePieces:
             sage: delta = DeltaPiece('a','b','c')
             sage: pieces = PuzzlePieces()
             sage: pieces
-            Nablas : []
-            Deltas : []
+            Nablas : ()
+            Deltas : ()
             sage: pieces.add_piece(delta)
             sage: pieces
-            Nablas : []
-            Deltas : [a/c\b, b/a\c, c/b\a]
+            Nablas : ()
+            Deltas : (b/a\c, a/c\b, c/b\a)
 
             sage: pieces = PuzzlePieces()
             sage: pieces.add_piece(delta,rotations=0)
             sage: pieces
-            Nablas : []
-            Deltas : [b/a\c]
+            Nablas : ()
+            Deltas : (b/a\c,)
 
             sage: pieces = PuzzlePieces()
             sage: pieces.add_piece(delta,rotations=60)
             sage: pieces
-            Nablas : [a\b/c, b\c/a, c\a/b]
-            Deltas : [a/c\b, b/a\c, c/b\a]
+            Nablas : (c\a/b, b\c/a, a\b/c)
+            Deltas : (b/a\c, a/c\b, c/b\a)
         """
         if isinstance(piece, NablaPiece):
             pieces_list = self._nabla_pieces
         else:
             pieces_list = self._delta_pieces
-        pieces_list.add(piece)
+        pieces_list[piece] = True
         if rotations == 120:
-            pieces_list.add(piece.clockwise_rotation())
-            pieces_list.add(piece.clockwise_rotation().clockwise_rotation())
+            pieces_list[piece.clockwise_rotation()] = True
+            pieces_list[piece.clockwise_rotation().clockwise_rotation()] = True
         elif rotations == 180:
             self.add_piece(piece.half_turn_rotation(), rotations=0)
         elif rotations == 60:
@@ -791,8 +802,8 @@ class PuzzlePieces:
             sage: pieces = PuzzlePieces()
             sage: pieces.add_T_piece('1','3')
             sage: pieces
-            Nablas : [3\T1|3/1]
-            Deltas : [1/T1|3\3]
+            Nablas : (3\T1|3/1,)
+            Deltas : (1/T1|3\3,)
             sage: pieces._forbidden_border_labels
             ['T1|3']
         """
@@ -808,11 +819,12 @@ class PuzzlePieces:
             sage: delta = DeltaPiece('a','b','c')
             sage: pieces.add_piece(delta,rotations=60)
             sage: pieces
-            Nablas : [a\b/c, b\c/a, c\a/b]
-            Deltas : [a/c\b, b/a\c, c/b\a]
+            Nablas : (c\a/b, b\c/a, a\b/c)
+            Deltas : (b/a\c, a/c\b, c/b\a)
+
         """
-        s = "Nablas : %s\n" % sorted(self._nabla_pieces, key=str)
-        s += "Deltas : %s" % sorted(self._delta_pieces, key=str)
+        s = f"Nablas : {self.nabla_pieces()}\n"
+        s += f"Deltas : {self.delta_pieces()}"
         return s
 
     def delta_pieces(self):
@@ -825,10 +837,11 @@ class PuzzlePieces:
             sage: pieces = PuzzlePieces()
             sage: delta = DeltaPiece('a','b','c')
             sage: pieces.add_piece(delta,rotations=60)
-            sage: sorted([p for p in pieces.delta_pieces()], key=str)
-            [a/c\b, b/a\c, c/b\a]
+            sage: pieces.delta_pieces()
+            (b/a\c, a/c\b, c/b\a)
+
         """
-        return self._delta_pieces
+        return tuple(self._delta_pieces)
 
     def nabla_pieces(self):
         r"""
@@ -840,12 +853,13 @@ class PuzzlePieces:
             sage: pieces = PuzzlePieces()
             sage: delta = DeltaPiece('a','b','c')
             sage: pieces.add_piece(delta,rotations=60)
-            sage: sorted([p for p in pieces.nabla_pieces()], key=str)
-            [a\b/c, b\c/a, c\a/b]
-        """
-        return self._nabla_pieces
+            sage: pieces.nabla_pieces()
+            (c\a/b, b\c/a, a\b/c)
 
-    def rhombus_pieces(self) -> set:
+        """
+        return tuple(self._nabla_pieces)
+
+    def rhombus_pieces(self) -> tuple:
         r"""
         Return a set of all allowable rhombus pieces.
 
@@ -858,15 +872,16 @@ class PuzzlePieces:
             sage: pieces = PuzzlePieces()
             sage: delta = DeltaPiece('a','b','c')
             sage: pieces.add_piece(delta,rotations=60)
-            sage: sorted([p for p in pieces.rhombus_pieces()], key=str)
-            [a/\b  b\/a, b/\c  c\/b, c/\a  a\/c]
+            sage: pieces.rhombus_pieces()
+            (b/\c  c\/b, a/\b  b\/a, c/\a  a\/c)
+
         """
-        rhombi = set()
+        rhombi = {}
         for nabla in self._nabla_pieces:
             for delta in self._delta_pieces:
                 if delta['south'] == nabla['north']:
-                    rhombi.add(RhombusPiece(delta, nabla))
-        return rhombi
+                    rhombi[RhombusPiece(delta, nabla)] = True
+        return tuple(rhombi)
 
     def boundary_deltas(self) -> tuple:
         r"""
@@ -878,8 +893,8 @@ class PuzzlePieces:
             sage: pieces = PuzzlePieces(['a'])
             sage: delta = DeltaPiece('a','b','c')
             sage: pieces.add_piece(delta,rotations=60)
-            sage: sorted([p for p in pieces.boundary_deltas()], key=str)
-            [a/c\b, c/b\a]
+            sage: pieces.boundary_deltas()
+            (a/c\b, c/b\a)
         """
         return tuple(delta for delta in self.delta_pieces()
                     if delta['south'] not in self._forbidden_border_labels)
@@ -899,8 +914,8 @@ def H_grassmannian_pieces():
 
         sage: from sage.combinat.knutson_tao_puzzles import H_grassmannian_pieces
         sage: H_grassmannian_pieces()
-        Nablas : [0\0/0, 0\10/1, 10\1/0, 1\0/10, 1\1/1]
-        Deltas : [0/0\0, 0/1\10, 1/10\0, 1/1\1, 10/0\1]
+        Nablas : (0\0/0, 1\1/1, 10\1/0, 0\10/1, 1\0/10)
+        Deltas : (0/0\0, 1/1\1, 0/1\10, 1/10\0, 10/0\1)
     """
     forbidden_border_labels = ['10']
     pieces = PuzzlePieces(forbidden_border_labels)
@@ -923,8 +938,8 @@ def HT_grassmannian_pieces():
 
         sage: from sage.combinat.knutson_tao_puzzles import HT_grassmannian_pieces
         sage: HT_grassmannian_pieces()
-        Nablas : [0\0/0, 0\10/1, 10\1/0, 1\0/10, 1\1/1, 1\T0|1/0]
-        Deltas : [0/0\0, 0/1\10, 0/T0|1\1, 1/10\0, 1/1\1, 10/0\1]
+        Nablas : (0\0/0, 1\1/1, 10\1/0, 0\10/1, 1\0/10, 1\T0|1/0)
+        Deltas : (0/0\0, 1/1\1, 0/1\10, 1/10\0, 10/0\1, 0/T0|1\1)
     """
     pieces = H_grassmannian_pieces()
     pieces.add_T_piece('0', '1')
@@ -943,8 +958,8 @@ def K_grassmannian_pieces():
 
         sage: from sage.combinat.knutson_tao_puzzles import K_grassmannian_pieces
         sage: K_grassmannian_pieces()
-        Nablas : [0\0/0, 0\10/1, 0\K/1, 10\1/0, 1\0/10, 1\0/K, 1\1/1, K\1/0]
-        Deltas : [0/0\0, 0/1\10, 1/10\0, 1/1\1, 10/0\1, K/K\K]
+        Nablas : (0\0/0, 1\1/1, 10\1/0, 0\10/1, 1\0/10, 1\0/K, K\1/0, 0\K/1)
+        Deltas : (0/0\0, 1/1\1, 0/1\10, 1/10\0, 10/0\1, K/K\K)
     """
     pieces = H_grassmannian_pieces()
     pieces.add_forbidden_label('K')
@@ -967,10 +982,8 @@ def H_two_step_pieces():
 
         sage: from sage.combinat.knutson_tao_puzzles import H_two_step_pieces
         sage: H_two_step_pieces()
-        Nablas : [(21)0\21/0, 0\(21)0/21, 0\0/0, 0\10/1, 0\20/2, 10\1/0, 10\2(10)/2, 1\0/10, 1\1/1, 1\21/2,
-        2(10)\2/10, 20\2/0, 21\0/(21)0, 21\2/1, 2\0/20, 2\1/21, 2\10/2(10), 2\2/2]
-        Deltas : [(21)0/0\21, 0/0\0, 0/1\10, 0/21\(21)0, 0/2\20, 1/10\0, 1/1\1, 1/2\21, 10/0\1, 10/2\2(10),
-        2(10)/10\2, 2/2(10)\10, 2/20\0, 2/21\1, 2/2\2, 20/0\2, 21/(21)0\0, 21/1\2]
+        Nablas : (0\0/0, 1\1/1, 2\2/2, 0\10/1, 1\0/10, 10\1/0, 0\20/2, 2\0/20, 20\2/0, 1\21/2, 2\1/21, 21\2/1, 0\(21)0/21, 21\0/(21)0, (21)0\21/0, 10\2(10)/2, 2\10/2(10), 2(10)\2/10)
+        Deltas : (0/0\0, 1/1\1, 2/2\2, 1/10\0, 10/0\1, 0/1\10, 2/20\0, 20/0\2, 0/2\20, 2/21\1, 21/1\2, 1/2\21, 21/(21)0\0, (21)0/0\21, 0/21\(21)0, 2/2(10)\10, 2(10)/10\2, 10/2\2(10))
     """
     forbidden_border_labels = ['10', '20', '21', '(21)0', '2(10)']
     pieces = PuzzlePieces(forbidden_border_labels)
@@ -998,12 +1011,8 @@ def HT_two_step_pieces():
 
        sage: from sage.combinat.knutson_tao_puzzles import HT_two_step_pieces
        sage: HT_two_step_pieces()
-       Nablas : [(21)0\21/0, 0\(21)0/21, 0\0/0, 0\10/1, 0\20/2, 10\1/0, 10\2(10)/2,
-       1\0/10, 1\1/1, 1\21/2, 1\T0|1/0, 2(10)\2/10, 20\2/0, 21\0/(21)0, 21\2/1, 21\T0|21/0,
-       21\T10|21/10, 2\0/20, 2\1/21, 2\10/2(10), 2\2/2, 2\T0|2/0, 2\T10|2/10, 2\T1|2/1]
-       Deltas : [(21)0/0\21, 0/0\0, 0/1\10, 0/21\(21)0, 0/2\20, 0/T0|1\1, 0/T0|21\21, 0/T0|2\2,
-       1/10\0, 1/1\1, 1/2\21, 1/T1|2\2, 10/0\1, 10/2\2(10), 10/T10|21\21, 10/T10|2\2, 2(10)/10\2,
-       2/2(10)\10, 2/20\0, 2/21\1, 2/2\2, 20/0\2, 21/(21)0\0, 21/1\2]
+       Nablas : (0\0/0, 1\1/1, 2\2/2, 0\10/1, 1\0/10, 10\1/0, 0\20/2, 2\0/20, 20\2/0, 1\21/2, 2\1/21, 21\2/1, 0\(21)0/21, 21\0/(21)0, (21)0\21/0, 10\2(10)/2, 2\10/2(10), 2(10)\2/10, 1\T0|1/0, 2\T0|2/0, 2\T1|2/1, 2\T10|2/10, 21\T0|21/0, 21\T10|21/10)
+       Deltas : (0/0\0, 1/1\1, 2/2\2, 1/10\0, 10/0\1, 0/1\10, 2/20\0, 20/0\2, 0/2\20, 2/21\1, 21/1\2, 1/2\21, 21/(21)0\0, (21)0/0\21, 0/21\(21)0, 2/2(10)\10, 2(10)/10\2, 10/2\2(10), 0/T0|1\1, 0/T0|2\2, 1/T1|2\2, 10/T10|2\2, 0/T0|21\21, 10/T10|21\21)
     """
     pieces = H_two_step_pieces()
     for label1, label2 in (('0', '1'), ('0', '2'), ('1', '2'),
@@ -1044,8 +1053,8 @@ def BK_pieces(max_letter):
 
         sage: from sage.combinat.knutson_tao_puzzles import BK_pieces
         sage: BK_pieces(3)
-        Nablas : [1\1/1, 1\2(1)/2, 1\3(1)/3, 2(1)\2/1, 2\1/2(1), 2\2/2, 2\3(2)/3, 3(1)\3/1, 3(2)\3/2, 3\1/3(1), 3\2/3(2), 3\3/3]
-        Deltas : [1/1\1, 1/2\2(1), 1/3\3(1), 2(1)/1\2, 2/2(1)\1, 2/2\2, 2/3\3(2), 3(1)/1\3, 3(2)/2\3, 3/3(1)\1, 3/3(2)\2, 3/3\3]
+        Nablas : (1\1/1, 2\2/2, 1\2(1)/2, 2\1/2(1), 2(1)\2/1, 3\3/3, 1\3(1)/3, 3\1/3(1), 3(1)\3/1, 2\3(2)/3, 3\2/3(2), 3(2)\3/2)
+        Deltas : (1/1\1, 2/2\2, 2/2(1)\1, 2(1)/1\2, 1/2\2(1), 3/3\3, 3/3(1)\1, 3(1)/1\3, 1/3\3(1), 3/3(2)\2, 3(2)/2\3, 2/3\3(2))
     """
     forbidden_border_labels = ['%s(%s)' % (i, j)
                                for i in range(1, max_letter + 1)
@@ -1287,7 +1296,7 @@ class PuzzleFilling:
             sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
             sage: ps = KnutsonTaoPuzzleSolver("HT")
             sage: puzzles = ps('0101','1001')
-            sage: sorted([p.contribution() for p in puzzles], key=str)
+            sage: [p.contribution() for p in puzzles]
             [1, y1 - y3]
         """
         R = PolynomialRing(Integers(), 'y', self._n + 1)
@@ -1320,23 +1329,12 @@ class PuzzleFilling:
 
             sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
             sage: ps = KnutsonTaoPuzzleSolver("H")
-            sage: solns = ps('0101','1001')
-            sage: all(sol == sol for sol in solns)
+            sage: ps('0101','1001') == ps('0101','1001')
             True
+            sage: ps('0110','1001') == ps('0101','1001')
+            False
         """
         return self._squares == other._squares
-
-    def __lt__(self, other):
-        r"""
-        TESTS::
-
-            sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
-            sage: ps = KnutsonTaoPuzzleSolver("H")
-            sage: solns = ps('0101','1001')
-            sage: sorted(solns) == sorted(solns, key=str)
-            True
-        """
-        return str(self) < str(other)
 
     def __iter__(self):
         r"""
@@ -1515,11 +1513,11 @@ class PuzzleFilling:
             sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
             sage: ps = KnutsonTaoPuzzleSolver("H")
             sage: solns = ps('010101','010101')
-            sage: [puzzle.to_LRtableau() for puzzle in sorted(solns)]
-            [[[None, 1, 1], [None, 2], [None]],
-             [[None, None, 1], [None, 2], [1]],
+            sage: [puzzle.to_LRtableau() for puzzle in solns]
+            [[[None, None, None], [1, 1], [2]],
              [[None, None, 1], [None, 1], [2]],
-             [[None, None, None], [1, 1], [2]]]
+             [[None, None, 1], [None, 2], [1]],
+             [[None, 1, 1], [None, 2], [None]]]
             sage: # Example similar to Figure 9 in Purbhoo07
             ....: ps = KnutsonTaoPuzzleSolver('H')
             ....: solns = ps('00000010001000010100', '00000000100010010100')
@@ -1577,11 +1575,11 @@ class PuzzleFilling:
 
             sage: ps = KnutsonTaoPuzzleSolver("H")
             sage: solns = ps('0101011','0101101')
-            sage: puzzle = sorted(solns)[4]
+            sage: puzzle = solns[4]
             sage: puzzle[(1,1)]
-            0/1\10
+            0/0\0
             sage: puzzle._ne_to_south_path(4)
-            [1, 1]
+            [2]
             sage: puzzle._ne_to_south_path(3)
             Traceback (most recent call last):
             ...
@@ -1621,7 +1619,7 @@ class PuzzleFilling:
         return LR_list
 
 
-class KnutsonTaoPuzzleSolver(UniqueRepresentation):
+class KnutsonTaoPuzzleSolver():
     r"""
     Return puzzle solver function used to create all puzzles with given boundary conditions.
 
@@ -1655,8 +1653,8 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
         sage: from sage.combinat.knutson_tao_puzzles import H_grassmannian_pieces
         sage: H_grassmannian_pieces()
-        Nablas : [0\0/0, 0\10/1, 10\1/0, 1\0/10, 1\1/1]
-        Deltas : [0/0\0, 0/1\10, 1/10\0, 1/1\1, 10/0\1]
+        Nablas : (0\0/0, 1\1/1, 10\1/0, 0\10/1, 1\0/10)
+        Deltas : (0/0\0, 1/1\1, 0/1\10, 1/10\0, 10/0\1)
 
     In the string representation, the nabla pieces are depicted as
     ``c\a/b``, where `a` is the label of the north edge, `b` is the label
@@ -1667,15 +1665,15 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
         sage: KnutsonTaoPuzzleSolver(H_grassmannian_pieces())
         Knutson-Tao puzzle solver with pieces:
-        Nablas : [0\0/0, 0\10/1, 10\1/0, 1\0/10, 1\1/1]
-        Deltas : [0/0\0, 0/1\10, 1/10\0, 1/1\1, 10/0\1]
+        Nablas : (0\0/0, 1\1/1, 10\1/0, 0\10/1, 1\0/10)
+        Deltas : (0/0\0, 1/1\1, 0/1\10, 1/10\0, 10/0\1)
 
     The following shorthand to create the above puzzle solver is also supported::
 
         sage: KnutsonTaoPuzzleSolver('H')
         Knutson-Tao puzzle solver with pieces:
-        Nablas : [0\0/0, 0\10/1, 10\1/0, 1\0/10, 1\1/1]
-        Deltas : [0/0\0, 0/1\10, 1/10\0, 1/1\1, 10/0\1]
+        Nablas : (0\0/0, 1\1/1, 10\1/0, 0\10/1, 1\0/10)
+        Deltas : (0/0\0, 1/1\1, 0/1\10, 1/10\0, 10/0\1)
 
     The solver will compute all fillings of the puzzle with the given
     puzzle pieces. The user specifies the labels of north-east and
@@ -1695,18 +1693,8 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         sage: solns = ps('0101', '0101')
         sage: len(solns)
         2
-        sage: solns.sort(key=str)
         sage: solns
-        [{(1, 1): 0/0\0,
-          (1, 2): 1/\0  0\/1,
-          (1, 3): 0/\0  0\/0,
-          (1, 4): 1/\0  0\/1,
-          (2, 2): 1/1\1,
-          (2, 3): 0/\10  1\/1,
-          (2, 4): 1/\1  10\/0,
-          (3, 3): 1/1\1,
-          (3, 4): 0/\0  1\/10,
-          (4, 4): 10/0\1}, {(1, 1): 0/1\10,
+        [{(1, 1): 0/1\10,
           (1, 2): 1/\1  10\/0,
           (1, 3): 0/\0  1\/10,
           (1, 4): 1/\0  0\/1,
@@ -1715,7 +1703,17 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (2, 4): 1/\1  1\/1,
           (3, 3): 0/0\0,
           (3, 4): 1/\0  0\/1,
-          (4, 4): 1/1\1}]
+          (4, 4): 1/1\1},
+         {(1, 1): 0/0\0,
+          (1, 2): 1/\0  0\/1,
+          (1, 3): 0/\0  0\/0,
+          (1, 4): 1/\0  0\/1,
+          (2, 2): 1/1\1,
+          (2, 3): 0/\10  1\/1,
+          (2, 4): 1/\1  10\/0,
+          (3, 3): 1/1\1,
+          (3, 4): 0/\0  1\/10,
+          (4, 4): 10/0\1}]
 
     The pieces in a puzzle filling are indexed by pairs of nonnegative
     integers `(i, j)` with `1 \leq i \leq j \leq n`, where `n` is the
@@ -1724,7 +1722,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
         sage: f = solns[0]
         sage: [f[i, i] for i in range(1,5)]
-        [0/0\0, 1/1\1, 1/1\1, 10/0\1]
+        [0/1\10, 0/0\0, 0/0\0, 1/1\1]
 
     The pieces indexed by `(i, j)` for `j > i` are a pair consisting of
     a delta piece and nabla piece glued together along the south edge and
@@ -1732,7 +1730,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
         sage: f = solns[0]
         sage: f[1, 2]
-        1/\0  0\/1
+        1/\1  10\/0
 
     There are various methods and options to display puzzle solutions.
     A single puzzle can be displayed using the plot method of the puzzle::
@@ -1762,18 +1760,8 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
     Cohomology of the Grassmannian::
 
         sage: ps = KnutsonTaoPuzzleSolver("H")
-        sage: solns = ps('0101', '0101')
-        sage: sorted(solns)
-        [{(1, 1): 0/0\0,
-          (1, 2): 1/\0  0\/1,
-          (1, 3): 0/\0  0\/0,
-          (1, 4): 1/\0  0\/1,
-          (2, 2): 1/1\1,
-          (2, 3): 0/\10  1\/1,
-          (2, 4): 1/\1  10\/0,
-          (3, 3): 1/1\1,
-          (3, 4): 0/\0  1\/10,
-          (4, 4): 10/0\1}, {(1, 1): 0/1\10,
+        sage: ps('0101', '0101')
+        [{(1, 1): 0/1\10,
           (1, 2): 1/\1  10\/0,
           (1, 3): 0/\0  1\/10,
           (1, 4): 1/\0  0\/1,
@@ -1782,14 +1770,43 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (2, 4): 1/\1  1\/1,
           (3, 3): 0/0\0,
           (3, 4): 1/\0  0\/1,
-          (4, 4): 1/1\1}]
+          (4, 4): 1/1\1},
+         {(1, 1): 0/0\0,
+          (1, 2): 1/\0  0\/1,
+          (1, 3): 0/\0  0\/0,
+          (1, 4): 1/\0  0\/1,
+          (2, 2): 1/1\1,
+          (2, 3): 0/\10  1\/1,
+          (2, 4): 1/\1  10\/0,
+          (3, 3): 1/1\1,
+          (3, 4): 0/\0  1\/10,
+          (4, 4): 10/0\1}]
 
     Equivariant puzzles::
 
         sage: ps = KnutsonTaoPuzzleSolver("HT")
-        sage: solns = ps('0101', '0101')
-        sage: sorted(solns)
-        [{(1, 1): 0/0\0,
+        sage: ps('0101', '0101')
+        [{(1, 1): 0/1\10,
+          (1, 2): 1/\1  10\/0,
+          (1, 3): 0/\0  1\/10,
+          (1, 4): 1/\0  0\/1,
+          (2, 2): 0/0\0,
+          (2, 3): 10/\1  0\/0,
+          (2, 4): 1/\1  1\/1,
+          (3, 3): 0/0\0,
+          (3, 4): 1/\0  0\/1,
+          (4, 4): 1/1\1},
+         {(1, 1): 0/0\0,
+          (1, 2): 1/\0  0\/1,
+          (1, 3): 0/\0  0\/0,
+          (1, 4): 1/\0  0\/1,
+          (2, 2): 1/1\1,
+          (2, 3): 0/\10  1\/1,
+          (2, 4): 1/\1  10\/0,
+          (3, 3): 1/1\1,
+          (3, 4): 0/\0  1\/10,
+          (4, 4): 10/0\1},
+         {(1, 1): 0/0\0,
           (1, 2): 1/\0  0\/1,
           (1, 3): 0/\0  0\/0,
           (1, 4): 1/\0  0\/1,
@@ -1798,50 +1815,13 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (2, 4): 1/\1  1\/1,
           (3, 3): 0/0\0,
           (3, 4): 1/\0  0\/1,
-          (4, 4): 1/1\1}, {(1, 1): 0/0\0,
-          (1, 2): 1/\0  0\/1,
-          (1, 3): 0/\0  0\/0,
-          (1, 4): 1/\0  0\/1,
-          (2, 2): 1/1\1,
-          (2, 3): 0/\10  1\/1,
-          (2, 4): 1/\1  10\/0,
-          (3, 3): 1/1\1,
-          (3, 4): 0/\0  1\/10,
-          (4, 4): 10/0\1}, {(1, 1): 0/1\10,
-          (1, 2): 1/\1  10\/0,
-          (1, 3): 0/\0  1\/10,
-          (1, 4): 1/\0  0\/1,
-          (2, 2): 0/0\0,
-          (2, 3): 10/\1  0\/0,
-          (2, 4): 1/\1  1\/1,
-          (3, 3): 0/0\0,
-          (3, 4): 1/\0  0\/1,
           (4, 4): 1/1\1}]
 
     K-Theory puzzles::
 
         sage: ps = KnutsonTaoPuzzleSolver("K")
-        sage: solns = ps('0101', '0101')
-        sage: sorted(solns)
-        [{(1, 1): 0/0\0,
-          (1, 2): 1/\0  0\/1,
-          (1, 3): 0/\0  0\/0,
-          (1, 4): 1/\0  0\/1,
-          (2, 2): 1/1\1,
-          (2, 3): 0/\10  1\/1,
-          (2, 4): 1/\1  10\/0,
-          (3, 3): 1/1\1,
-          (3, 4): 0/\0  1\/10,
-          (4, 4): 10/0\1}, {(1, 1): 0/1\10,
-          (1, 2): 1/\1  10\/0,
-          (1, 3): 0/\0  1\/10,
-          (1, 4): 1/\0  0\/1,
-          (2, 2): 0/0\0,
-          (2, 3): 10/\1  0\/0,
-          (2, 4): 1/\1  1\/1,
-          (3, 3): 0/0\0,
-          (3, 4): 1/\0  0\/1,
-          (4, 4): 1/1\1}, {(1, 1): 0/1\10,
+        sage: ps('0101', '0101')
+        [{(1, 1): 0/1\10,
           (1, 2): 1/\1  10\/0,
           (1, 3): 0/\0  1\/K,
           (1, 4): 1/\0  0\/1,
@@ -1850,42 +1830,33 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (2, 4): 1/\1  K\/0,
           (3, 3): 1/1\1,
           (3, 4): 0/\0  1\/10,
+          (4, 4): 10/0\1},
+         {(1, 1): 0/1\10,
+          (1, 2): 1/\1  10\/0,
+          (1, 3): 0/\0  1\/10,
+          (1, 4): 1/\0  0\/1,
+          (2, 2): 0/0\0,
+          (2, 3): 10/\1  0\/0,
+          (2, 4): 1/\1  1\/1,
+          (3, 3): 0/0\0,
+          (3, 4): 1/\0  0\/1,
+          (4, 4): 1/1\1},
+         {(1, 1): 0/0\0,
+          (1, 2): 1/\0  0\/1,
+          (1, 3): 0/\0  0\/0,
+          (1, 4): 1/\0  0\/1,
+          (2, 2): 1/1\1,
+          (2, 3): 0/\10  1\/1,
+          (2, 4): 1/\1  10\/0,
+          (3, 3): 1/1\1,
+          (3, 4): 0/\0  1\/10,
           (4, 4): 10/0\1}]
 
     Two-step puzzles::
 
         sage: ps = KnutsonTaoPuzzleSolver("H2step")
-        sage: solns = ps('01201', '01021')
-        sage: sorted(solns)
-        [{(1, 1): 0/0\0,
-          (1, 2): 1/\0  0\/1,
-          (1, 3): 2/\0  0\/2,
-          (1, 4): 0/\0  0\/0,
-          (1, 5): 1/\0  0\/1,
-          (2, 2): 1/2\21,
-          (2, 3): 2/\2  21\/1,
-          (2, 4): 0/\10  2\/21,
-          (2, 5): 1/\1  10\/0,
-          (3, 3): 1/1\1,
-          (3, 4): 21/\2  1\/1,
-          (3, 5): 0/\0  2\/20,
-          (4, 4): 1/1\1,
-          (4, 5): 20/\2  1\/10,
-          (5, 5): 10/0\1}, {(1, 1): 0/1\10,
-          (1, 2): 1/\1  10\/0,
-          (1, 3): 2/\1  1\/2,
-          (1, 4): 0/\0  1\/10,
-          (1, 5): 1/\0  0\/1,
-          (2, 2): 0/2\20,
-          (2, 3): 2/\2  20\/0,
-          (2, 4): 10/\1  2\/20,
-          (2, 5): 1/\1  1\/1,
-          (3, 3): 0/0\0,
-          (3, 4): 20/\2  0\/0,
-          (3, 5): 1/\0  2\/2(10),
-          (4, 4): 0/0\0,
-          (4, 5): 2(10)/\2  0\/1,
-          (5, 5): 1/1\1}, {(1, 1): 0/2\20,
+        sage: ps('01201', '01021')
+        [{(1, 1): 0/2\20,
           (1, 2): 1/\21  20\/0,
           (1, 3): 2/\2  21\/1,
           (1, 4): 0/\0  2\/20,
@@ -1899,118 +1870,50 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (3, 5): 21/\0  0\/21,
           (4, 4): 10/0\1,
           (4, 5): 21/\2  1\/1,
-          (5, 5): 1/1\1}]
+          (5, 5): 1/1\1},
+         {(1, 1): 0/1\10,
+          (1, 2): 1/\1  10\/0,
+          (1, 3): 2/\1  1\/2,
+          (1, 4): 0/\0  1\/10,
+          (1, 5): 1/\0  0\/1,
+          (2, 2): 0/2\20,
+          (2, 3): 2/\2  20\/0,
+          (2, 4): 10/\1  2\/20,
+          (2, 5): 1/\1  1\/1,
+          (3, 3): 0/0\0,
+          (3, 4): 20/\2  0\/0,
+          (3, 5): 1/\0  2\/2(10),
+          (4, 4): 0/0\0,
+          (4, 5): 2(10)/\2  0\/1,
+          (5, 5): 1/1\1},
+         {(1, 1): 0/0\0,
+          (1, 2): 1/\0  0\/1,
+          (1, 3): 2/\0  0\/2,
+          (1, 4): 0/\0  0\/0,
+          (1, 5): 1/\0  0\/1,
+          (2, 2): 1/2\21,
+          (2, 3): 2/\2  21\/1,
+          (2, 4): 0/\10  2\/21,
+          (2, 5): 1/\1  10\/0,
+          (3, 3): 1/1\1,
+          (3, 4): 21/\2  1\/1,
+          (3, 5): 0/\0  2\/20,
+          (4, 4): 1/1\1,
+          (4, 5): 20/\2  1\/10,
+          (5, 5): 10/0\1}]
+
 
     Two-step equivariant puzzles::
 
         sage: ps = KnutsonTaoPuzzleSolver("HT2step")
-        sage: solns = ps('10212', '12012')
-        sage: sorted(solns)
-        [{(1, 1): 1/1\1,
-          (1, 2): 0/\(21)0  1\/2,
-          (1, 3): 2/\1  (21)0\/0,
-          (1, 4): 1/\1  1\/1,
-          (1, 5): 2/\1  1\/2,
-          (2, 2): 2/2\2,
-          (2, 3): 0/\2  2\/0,
-          (2, 4): 1/\2  2\/1,
-          (2, 5): 2/\2  2\/2,
-          (3, 3): 0/0\0,
-          (3, 4): 1/\0  0\/1,
-          (3, 5): 2/\0  0\/2,
-          (4, 4): 1/1\1,
-          (4, 5): 2/\1  1\/2,
-          (5, 5): 2/2\2}, {(1, 1): 1/1\1,
-          (1, 2): 0/\(21)0  1\/2,
-          (1, 3): 2/\1  (21)0\/0,
-          (1, 4): 1/\1  1\/1,
-          (1, 5): 2/\1  1\/2,
-          (2, 2): 2/2\2,
-          (2, 3): 0/\2  2\/0,
-          (2, 4): 1/\21  2\/2,
-          (2, 5): 2/\2  21\/1,
-          (3, 3): 0/0\0,
-          (3, 4): 2/\0  0\/2,
-          (3, 5): 1/\0  0\/1,
-          (4, 4): 2/2\2,
-          (4, 5): 1/\1  2\/21,
-          (5, 5): 21/1\2}, {(1, 1): 1/1\1,
-          (1, 2): 0/\(21)0  1\/2,
-          (1, 3): 2/\1  (21)0\/0,
-          (1, 4): 1/\1  1\/1,
-          (1, 5): 2/\1  1\/2,
-          (2, 2): 2/2\2,
-          (2, 3): 0/\20  2\/2,
-          (2, 4): 1/\21  20\/0,
-          (2, 5): 2/\2  21\/1,
-          (3, 3): 2/2\2,
-          (3, 4): 0/\0  2\/20,
-          (3, 5): 1/\0  0\/1,
-          (4, 4): 20/0\2,
-          (4, 5): 1/\1  2\/21,
-          (5, 5): 21/1\2}, {(1, 1): 1/1\1,
-          (1, 2): 0/\1  1\/0,
-          (1, 3): 2/\1  1\/2,
-          (1, 4): 1/\1  1\/1,
-          (1, 5): 2/\1  1\/2,
-          (2, 2): 0/2\20,
-          (2, 3): 2/\2  20\/0,
-          (2, 4): 1/\2  2\/1,
-          (2, 5): 2/\2  2\/2,
-          (3, 3): 0/0\0,
-          (3, 4): 1/\0  0\/1,
-          (3, 5): 2/\0  0\/2,
-          (4, 4): 1/1\1,
-          (4, 5): 2/\1  1\/2,
-          (5, 5): 2/2\2}, {(1, 1): 1/1\1,
-          (1, 2): 0/\1  1\/0,
-          (1, 3): 2/\1  1\/2,
-          (1, 4): 1/\1  1\/1,
-          (1, 5): 2/\1  1\/2,
-          (2, 2): 0/2\20,
-          (2, 3): 2/\2  20\/0,
-          (2, 4): 1/\21  2\/2,
-          (2, 5): 2/\2  21\/1,
-          (3, 3): 0/0\0,
-          (3, 4): 2/\0  0\/2,
-          (3, 5): 1/\0  0\/1,
-          (4, 4): 2/2\2,
-          (4, 5): 1/\1  2\/21,
-          (5, 5): 21/1\2}, {(1, 1): 1/1\1,
-          (1, 2): 0/\10  1\/1,
-          (1, 3): 2/\10  10\/2,
-          (1, 4): 1/\1  10\/0,
-          (1, 5): 2/\1  1\/2,
-          (2, 2): 1/2\21,
-          (2, 3): 2/\2  21\/1,
-          (2, 4): 0/\2  2\/0,
-          (2, 5): 2/\2  2\/2,
-          (3, 3): 1/1\1,
-          (3, 4): 0/\0  1\/10,
-          (3, 5): 2/\0  0\/2,
-          (4, 4): 10/0\1,
-          (4, 5): 2/\1  1\/2,
-          (5, 5): 2/2\2}, {(1, 1): 1/1\1,
-          (1, 2): 0/\10  1\/1,
-          (1, 3): 2/\10  10\/2,
-          (1, 4): 1/\1  10\/0,
-          (1, 5): 2/\1  1\/2,
-          (2, 2): 1/2\21,
-          (2, 3): 2/\2  21\/1,
-          (2, 4): 0/\20  2\/2,
-          (2, 5): 2/\2  20\/0,
-          (3, 3): 1/1\1,
-          (3, 4): 2/\1  1\/2,
-          (3, 5): 0/\0  1\/10,
-          (4, 4): 2/2\2,
-          (4, 5): 10/\1  2\/20,
-          (5, 5): 20/0\2}, {(1, 1): 1/2\21,
-          (1, 2): 0/\20  21\/1,
-          (1, 3): 2/\2  20\/0,
+        sage: ps('10212', '12012')
+        [{(1, 1): 1/2\21,
+          (1, 2): 0/\21  21\/0,
+          (1, 3): 2/\2  21\/1,
           (1, 4): 1/\1  2\/21,
           (1, 5): 2/\1  1\/2,
-          (2, 2): 1/1\1,
-          (2, 3): 0/\1  1\/0,
+          (2, 2): 0/1\10,
+          (2, 3): 1/\1  10\/0,
           (2, 4): 21/\2  1\/1,
           (2, 5): 2/\2  2\/2,
           (3, 3): 0/0\0,
@@ -2018,7 +1921,8 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (3, 5): 2/\0  0\/2,
           (4, 4): 1/1\1,
           (4, 5): 2/\1  1\/2,
-          (5, 5): 2/2\2}, {(1, 1): 1/2\21,
+          (5, 5): 2/2\2},
+         {(1, 1): 1/2\21,
           (1, 2): 0/\20  21\/1,
           (1, 3): 2/\2  20\/0,
           (1, 4): 1/\1  2\/21,
@@ -2032,14 +1936,120 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (3, 5): 2/\0  0\/2,
           (4, 4): 10/0\1,
           (4, 5): 2/\1  1\/2,
-          (5, 5): 2/2\2}, {(1, 1): 1/2\21,
-          (1, 2): 0/\21  21\/0,
-          (1, 3): 2/\2  21\/1,
+          (5, 5): 2/2\2},
+         {(1, 1): 1/2\21,
+          (1, 2): 0/\20  21\/1,
+          (1, 3): 2/\2  20\/0,
           (1, 4): 1/\1  2\/21,
           (1, 5): 2/\1  1\/2,
-          (2, 2): 0/1\10,
-          (2, 3): 1/\1  10\/0,
+          (2, 2): 1/1\1,
+          (2, 3): 0/\1  1\/0,
           (2, 4): 21/\2  1\/1,
+          (2, 5): 2/\2  2\/2,
+          (3, 3): 0/0\0,
+          (3, 4): 1/\0  0\/1,
+          (3, 5): 2/\0  0\/2,
+          (4, 4): 1/1\1,
+          (4, 5): 2/\1  1\/2,
+          (5, 5): 2/2\2},
+         {(1, 1): 1/1\1,
+          (1, 2): 0/\10  1\/1,
+          (1, 3): 2/\10  10\/2,
+          (1, 4): 1/\1  10\/0,
+          (1, 5): 2/\1  1\/2,
+          (2, 2): 1/2\21,
+          (2, 3): 2/\2  21\/1,
+          (2, 4): 0/\20  2\/2,
+          (2, 5): 2/\2  20\/0,
+          (3, 3): 1/1\1,
+          (3, 4): 2/\1  1\/2,
+          (3, 5): 0/\0  1\/10,
+          (4, 4): 2/2\2,
+          (4, 5): 10/\1  2\/20,
+          (5, 5): 20/0\2},
+         {(1, 1): 1/1\1,
+          (1, 2): 0/\10  1\/1,
+          (1, 3): 2/\10  10\/2,
+          (1, 4): 1/\1  10\/0,
+          (1, 5): 2/\1  1\/2,
+          (2, 2): 1/2\21,
+          (2, 3): 2/\2  21\/1,
+          (2, 4): 0/\2  2\/0,
+          (2, 5): 2/\2  2\/2,
+          (3, 3): 1/1\1,
+          (3, 4): 0/\0  1\/10,
+          (3, 5): 2/\0  0\/2,
+          (4, 4): 10/0\1,
+          (4, 5): 2/\1  1\/2,
+          (5, 5): 2/2\2},
+         {(1, 1): 1/1\1,
+          (1, 2): 0/\(21)0  1\/2,
+          (1, 3): 2/\1  (21)0\/0,
+          (1, 4): 1/\1  1\/1,
+          (1, 5): 2/\1  1\/2,
+          (2, 2): 2/2\2,
+          (2, 3): 0/\20  2\/2,
+          (2, 4): 1/\21  20\/0,
+          (2, 5): 2/\2  21\/1,
+          (3, 3): 2/2\2,
+          (3, 4): 0/\0  2\/20,
+          (3, 5): 1/\0  0\/1,
+          (4, 4): 20/0\2,
+          (4, 5): 1/\1  2\/21,
+          (5, 5): 21/1\2},
+         {(1, 1): 1/1\1,
+          (1, 2): 0/\(21)0  1\/2,
+          (1, 3): 2/\1  (21)0\/0,
+          (1, 4): 1/\1  1\/1,
+          (1, 5): 2/\1  1\/2,
+          (2, 2): 2/2\2,
+          (2, 3): 0/\2  2\/0,
+          (2, 4): 1/\21  2\/2,
+          (2, 5): 2/\2  21\/1,
+          (3, 3): 0/0\0,
+          (3, 4): 2/\0  0\/2,
+          (3, 5): 1/\0  0\/1,
+          (4, 4): 2/2\2,
+          (4, 5): 1/\1  2\/21,
+          (5, 5): 21/1\2},
+         {(1, 1): 1/1\1,
+          (1, 2): 0/\(21)0  1\/2,
+          (1, 3): 2/\1  (21)0\/0,
+          (1, 4): 1/\1  1\/1,
+          (1, 5): 2/\1  1\/2,
+          (2, 2): 2/2\2,
+          (2, 3): 0/\2  2\/0,
+          (2, 4): 1/\2  2\/1,
+          (2, 5): 2/\2  2\/2,
+          (3, 3): 0/0\0,
+          (3, 4): 1/\0  0\/1,
+          (3, 5): 2/\0  0\/2,
+          (4, 4): 1/1\1,
+          (4, 5): 2/\1  1\/2,
+          (5, 5): 2/2\2},
+         {(1, 1): 1/1\1,
+          (1, 2): 0/\1  1\/0,
+          (1, 3): 2/\1  1\/2,
+          (1, 4): 1/\1  1\/1,
+          (1, 5): 2/\1  1\/2,
+          (2, 2): 0/2\20,
+          (2, 3): 2/\2  20\/0,
+          (2, 4): 1/\21  2\/2,
+          (2, 5): 2/\2  21\/1,
+          (3, 3): 0/0\0,
+          (3, 4): 2/\0  0\/2,
+          (3, 5): 1/\0  0\/1,
+          (4, 4): 2/2\2,
+          (4, 5): 1/\1  2\/21,
+          (5, 5): 21/1\2},
+         {(1, 1): 1/1\1,
+          (1, 2): 0/\1  1\/0,
+          (1, 3): 2/\1  1\/2,
+          (1, 4): 1/\1  1\/1,
+          (1, 5): 2/\1  1\/2,
+          (2, 2): 0/2\20,
+          (2, 3): 2/\2  20\/0,
+          (2, 4): 1/\2  2\/1,
           (2, 5): 2/\2  2\/2,
           (3, 3): 0/0\0,
           (3, 4): 1/\0  0\/1,
@@ -2074,50 +2084,9 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (5, 5): 2(1)/1\2}]
     """
 
-    def __init__(self, puzzle_pieces):
+    def __init__(self, puzzle_pieces, max_letter=None):
         r"""
         Knutson-Tao puzzle solver.
-
-        TESTS:
-
-        Check that UniqueRepresentation works::
-
-            sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver, H_grassmannian_pieces
-            sage: ps = KnutsonTaoPuzzleSolver(H_grassmannian_pieces())
-            sage: qs = KnutsonTaoPuzzleSolver("H")
-            sage: ps
-            Knutson-Tao puzzle solver with pieces:
-            Nablas : [0\0/0, 0\10/1, 10\1/0, 1\0/10, 1\1/1]
-            Deltas : [0/0\0, 0/1\10, 1/10\0, 1/1\1, 10/0\1]
-            sage: qs
-            Knutson-Tao puzzle solver with pieces:
-            Nablas : [0\0/0, 0\10/1, 10\1/0, 1\0/10, 1\1/1]
-            Deltas : [0/0\0, 0/1\10, 1/10\0, 1/1\1, 10/0\1]
-            sage: ps == qs
-            True
-        """
-        self._puzzle_pieces = puzzle_pieces
-        self._rhombus_pieces = tuple(puzzle_pieces.rhombus_pieces())
-        self._bottom_deltas = tuple(puzzle_pieces.boundary_deltas())
-
-    @staticmethod
-    def __classcall_private__(cls, puzzle_pieces, max_letter=None):
-        r"""
-        TESTS::
-
-            sage: from sage.combinat.knutson_tao_puzzles import *
-            sage: KnutsonTaoPuzzleSolver(H_grassmannian_pieces()) == KnutsonTaoPuzzleSolver("H") # indirect doctest
-            True
-            sage: KnutsonTaoPuzzleSolver(HT_grassmannian_pieces()) == KnutsonTaoPuzzleSolver("HT")
-            True
-            sage: KnutsonTaoPuzzleSolver(K_grassmannian_pieces()) == KnutsonTaoPuzzleSolver("K")
-            True
-            sage: KnutsonTaoPuzzleSolver(H_two_step_pieces()) == KnutsonTaoPuzzleSolver("H2step")
-            True
-            sage: KnutsonTaoPuzzleSolver(HT_two_step_pieces()) == KnutsonTaoPuzzleSolver("HT2step")
-            True
-            sage: KnutsonTaoPuzzleSolver(BK_pieces(3)) == KnutsonTaoPuzzleSolver("BK",3)
-            True
         """
         if isinstance(puzzle_pieces, str):
             if puzzle_pieces == "H":
@@ -2135,7 +2104,9 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
                     puzzle_pieces = BK_pieces(max_letter)
                 else:
                     raise ValueError("max_letter needs to be specified")
-        return super().__classcall__(cls, puzzle_pieces)
+        self._puzzle_pieces = puzzle_pieces
+        self._rhombus_pieces = puzzle_pieces.rhombus_pieces()
+        self._bottom_deltas = puzzle_pieces.boundary_deltas()
 
     def __call__(self, lam, mu, algorithm='strips'):
         r"""
@@ -2181,8 +2152,8 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
             sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
             sage: KnutsonTaoPuzzleSolver('H')
             Knutson-Tao puzzle solver with pieces:
-            Nablas : [0\0/0, 0\10/1, 10\1/0, 1\0/10, 1\1/1]
-            Deltas : [0/0\0, 0/1\10, 1/10\0, 1/1\1, 10/0\1]
+            Nablas : (0\0/0, 1\1/1, 10\1/0, 0\10/1, 1\0/10)
+            Deltas : (0/0\0, 1/1\1, 0/1\10, 1/10\0, 10/0\1)
         """
         return "Knutson-Tao puzzle solver with pieces:\n%s" % self._puzzle_pieces
 
@@ -2195,8 +2166,9 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
             sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
             sage: ps = KnutsonTaoPuzzleSolver('H')
             sage: ps.puzzle_pieces()
-            Nablas : [0\0/0, 0\10/1, 10\1/0, 1\0/10, 1\1/1]
-            Deltas : [0/0\0, 0/1\10, 1/10\0, 1/1\1, 10/0\1]
+            Nablas : (0\0/0, 1\1/1, 10\1/0, 0\10/1, 1\0/10)
+            Deltas : (0/0\0, 1/1\1, 0/1\10, 1/10\0, 10/0\1)
+
         """
         return self._puzzle_pieces
 
