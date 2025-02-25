@@ -348,7 +348,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
         return Family(A, build_monomial)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 
