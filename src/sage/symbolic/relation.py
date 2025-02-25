@@ -576,12 +576,105 @@ def string_to_list_of_solutions(s):
     v = symbolic_expression_from_maxima_string(s, equals_sub=True)
     return Sequence(v, universe=Objects(), cr_str=True)
 
+
+def _normalize_to_relational(f):
+    """
+    Normalize the input to a relational expression or a list of relational expressions.
+
+    TESTS::
+
+        sage: from sage.symbolic.relation import _normalize_to_relational
+        sage: x, y = var('x, y')
+        sage: _normalize_to_relational(x == 1)
+        x == 1
+        sage: _normalize_to_relational([x == 1, y == 2])
+        [x == 1, y == 2]
+        sage: _normalize_to_relational(x - 1)
+        x - 1 == 0
+        sage: _normalize_to_relational([x - 1, y - 2])
+        [x - 1 == 0, y - 2 == 0]
+        sage: _normalize_to_relational((x - 1, y - 2))
+        [x - 1 == 0, y - 2 == 0]
+        sage: _normalize_to_relational(1)
+        False
+    """
+    if isinstance(f, (list, tuple)):
+        return [_normalize_to_relational(g) for g in f]
+    from sage.symbolic.expression import Expression
+    if isinstance(f, bool) or (isinstance(f, Expression) and f.is_relational()):
+        return f
+    return f == 0
+
+
+def _normalize_to_nonrelational(f):
+    """
+    Normalize the input to a non-relational expression or a list of non-relational expressions.
+
+    TESTS::
+
+        sage: from sage.symbolic.relation import _normalize_to_nonrelational
+        sage: x, y = var('x, y')
+        sage: _normalize_to_nonrelational(x == 1)
+        x - 1
+        sage: _normalize_to_nonrelational([x == 1, y == 2])
+        [x - 1, y - 2]
+        sage: _normalize_to_nonrelational(x - 1)
+        x - 1
+        sage: _normalize_to_nonrelational([x - 1, y - 2])
+        [x - 1, y - 2]
+        sage: _normalize_to_nonrelational((x - 1, y - 2))
+        [x - 1, y - 2]
+        sage: _normalize_to_nonrelational(1)
+        1
+        sage: _normalize_to_nonrelational(True)
+        0
+        sage: _normalize_to_nonrelational(False)
+        1
+    """
+    if isinstance(f, (list, tuple)):
+        return [_normalize_to_nonrelational(g) for g in f]
+    if isinstance(f, bool):
+        return 0 if f else 1
+    from sage.symbolic.expression import Expression
+    if isinstance(f, Expression) and f.is_relational():
+        assert f.operator() == operator.eq
+        return f.lhs() - f.rhs()
+    return f
+
+
+def _normalize_to_list_expressions(f) -> list:
+    """
+    Normalize either a single equation or a list of equations into a list of
+    equations.
+
+    TESTS::
+
+        sage: from sage.symbolic.relation import _normalize_to_list_expressions
+        sage: x, y = var('x, y')
+        sage: _normalize_to_list_expressions(x == 1)
+        [x == 1]
+        sage: _normalize_to_list_expressions([x == 1, y == 2])
+        [x == 1, y == 2]
+        sage: _normalize_to_list_expressions({})
+        Traceback (most recent call last):
+        ...
+        TypeError: must be a symbolic expression or a list of symbolic expressions
+    """
+    from sage.symbolic.expression import Expression
+    if isinstance(f, (Expression, bool)):
+        f = [f]
+    if not isinstance(f, (list, tuple)) or not all(isinstance(s, (Expression, bool)) for s in f):
+        raise TypeError("must be a symbolic expression or a list of symbolic expressions")
+    return f
+
+
 ###########
 # Solving #
 ###########
 
 
-def solve(f, *args, **kwds):
+def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=None,
+          solution_dict=False, algorithm=None, domain=None):
     r"""
     Algebraically solve an equation or system of equations (over the
     complex numbers) for given variables. Inequalities and systems
@@ -929,12 +1022,12 @@ def solve(f, *args, **kwds):
 
         sage: # needs sage.libs.giac
         sage: solve([(2/3)^x-2], [x], algorithm='giac')
-        ...[[-log(2)/(log(3) - log(2))]]
+        [-log(2)/(log(3) - log(2))]
 
         sage: # needs sage.libs.giac
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')
-        ...[-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
+        [-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
 
         sage: # needs sage.libs.giac
         sage: x, y = SR.var('x,y')
@@ -946,9 +1039,7 @@ def solve(f, *args, **kwds):
         sage: solve([sin(x)==x,y^2==x],x,y)
         [sin(x) == x, y^2 == x]
         sage: solve(0==1,x)
-        Traceback (most recent call last):
-        ...
-        TypeError:  The first argument must be a symbolic expression or a list of symbolic expressions.
+        []
 
     Test if the empty list is returned, too, when (a list of)
     dictionaries (is) are requested (:issue:`8553`)::
@@ -1026,108 +1117,92 @@ def solve(f, *args, **kwds):
         sage: solve([1], x)
         Traceback (most recent call last):
         ...
-        TypeError: The first argument to solve() should be a symbolic expression
-        or a list of symbolic expressions.
+        TypeError: must be a symbolic expression or a list of symbolic expressions
+
+    Automatic computation of the variables to solve for::
+
+        sage: var("x y")
+        (x, y)
+        sage: solve(x==1)
+        [x == 1]
+        sage: solve([x == 1, y == 2])
+        [[y == 2, x == 1]]
+        sage: solve([x == 1])
+        [x == 1]
+        sage: solve(x == 1)
+        [x == 1]
+        sage: solve([x - x == 1])
+        []
+        sage: solve(x - x == 1)
+        []
+        sage: solve([x - x == 0])
+        []
+        sage: solve(x - x == 0)
+        []
     """
     from sage.structure.element import Expression
-    explicit_solutions = kwds.get('explicit_solutions', None)
-    multiplicities = kwds.get('multiplicities', None)
-    to_poly_solve = kwds.get('to_poly_solve', None)
-    solution_dict = kwds.get('solution_dict', False)
-    algorithm = kwds.get('algorithm', None)
-    domain = kwds.get('domain', None)
+    f = _normalize_to_list_expressions(f)
 
-    if len(args) > 1:
-        x = args
-    else:
-        x = args[0]
-    if isinstance(x, (list, tuple)):
-        for i in x:
-            if not isinstance(i, Expression):
-                raise TypeError("%s is not a valid variable." % repr(i))
-    elif x is None:
-        vars = f.variables()
-        if len(vars) == 0:
-            if multiplicities:
-                return [], []
-            else:
-                return []
-        x = vars[0]
-    elif not isinstance(x, Expression):
-        raise TypeError("%s is not a valid variable." % repr(x))
-
-    if isinstance(f, (list, tuple)) and len(f) == 1:
-        # f is a list with a single element
-        if isinstance(f[0], Expression):
-            f = f[0]
-        else:
-            raise TypeError("The first argument to solve() should be a "
-                            "symbolic expression or a list of symbolic "
-                            "expressions.")
-
-    if isinstance(f, Expression):  # f is a single expression
-        return _solve_expression(f, x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
-
-    if not isinstance(f, (list, tuple)):
-        raise TypeError("The first argument must be a symbolic expression or a list of symbolic expressions.")
-
-    # f is a list of such expressions or equations
-
+    # Normalize x to list of variables
     if not args:
-        raise TypeError("Please input variables to solve for.")
-    if isinstance(x, Expression) and x.is_symbol():
-        variables = args
+        x = None
     else:
-        variables = tuple(x)
+        x = args
+        if len(x) == 1 and (isinstance(x[0], (list, tuple)) or x[0] is None):
+            x = x[0]
+    if x is None:
+        x = list({v for s in f for v in s.variables()})
 
-    for v in variables:
-        if not (isinstance(v, Expression) and v.is_symbol()):
-            raise TypeError("%s is not a valid variable." % repr(v))
+    for i in x:
+        if not (isinstance(i, Expression) and i.is_symbol()):
+            raise TypeError(f"{i} is not a valid variable.")
 
-    try:
-        f = [s for s in f if s is not True]
-    except TypeError:
-        raise ValueError("Unable to solve %s for %s" % (f, args))
+    # Handle special cases
+    if not x:
+        if multiplicities:
+            return [], []
+        else:
+            return []
 
+    f = [s for s in f if s is not True]
     if any(s is False for s in f):
         return []
+
+    if len(f) == 1:
+        return _solve_expression(f[0], x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
 
     if algorithm == 'sympy':
         from sympy import solve as ssolve
         from sage.interfaces.sympy import sympy_set_to_list
-        if isinstance(f, Expression):  # f is a single expression
-            sympy_f = f._sympy_()
-        else:
-            sympy_f = [s._sympy_() for s in f]
+        sympy_f = [s._sympy_() for s in f]
         if isinstance(f, Expression) and f.is_symbol():
             sympy_vars = (x._sympy_(),)
         else:
             sympy_vars = tuple([v._sympy_() for v in x])
-        if len(sympy_vars) > 1 or not isinstance(f, Expression):
-            ret = ssolve(sympy_f, sympy_vars, dict=True)
-            if isinstance(ret, dict):
-                if solution_dict:
-                    l = []
-                    for d in ret:
-                        r = {}
-                        for (v, ex) in d.items():
-                            r[v._sage_()] = ex._sage_()
-                        l.append(r)
-                    return l
-                else:
-                    return [[v._sage_() == ex._sage_()
-                             for v, ex in d.items()]
-                            for d in ret]
-            elif isinstance(ret, list):
+        ret = ssolve(sympy_f, sympy_vars, dict=True)
+        if isinstance(ret, dict):
+            if solution_dict:
                 l = []
-                for sol in ret:
+                for d in ret:
                     r = {}
-                    for (v, ex) in sol.items():
+                    for (v, ex) in d.items():
                         r[v._sage_()] = ex._sage_()
                     l.append(r)
                 return l
             else:
-                return sympy_set_to_list(ret, sympy_vars)
+                return [[v._sage_() == ex._sage_()
+                         for v, ex in d.items()]
+                        for d in ret]
+        elif isinstance(ret, list):
+            l = []
+            for sol in ret:
+                r = {}
+                for (v, ex) in sol.items():
+                    r[v._sage_()] = ex._sage_()
+                l.append(r)
+            return l
+        else:
+            return sympy_set_to_list(ret, sympy_vars)
 
     if algorithm == 'giac':
         return _giac_solver(f, x, solution_dict)
@@ -1136,32 +1211,32 @@ def solve(f, *args, **kwds):
     m = maxima(f)
 
     try:
-        s = m.solve(variables)
+        s = m.solve(x)
     except Exception:  # if Maxima gave an error, try its to_poly_solve
         try:
-            s = m.to_poly_solve(variables)
+            s = m.to_poly_solve(x)
         except TypeError as mess:  # if that gives an error, raise an error.
             if "Error executing code in Maxima" in str(mess):
-                raise ValueError("Sage is unable to determine whether the system %s can be solved for %s" % (f, args))
+                raise ValueError(f"Sage is unable to determine whether the system {f} can be solved for {x}")
             else:
                 raise
 
     if len(s) == 0:  # if Maxima's solve gave no solutions, try its to_poly_solve
         try:
-            s = m.to_poly_solve(variables)
+            s = m.to_poly_solve(x)
         except Exception:  # if that gives an error, stick with no solutions
             s = []
 
     if len(s) == 0:  # if to_poly_solve gave no solutions, try use_grobner
         try:
-            s = m.to_poly_solve(variables, 'use_grobner=true')
+            s = m.to_poly_solve(x, 'use_grobner=true')
         except Exception:  # if that gives an error, stick with no solutions
             s = []
 
     sol_list = string_to_list_of_solutions(repr(s))
 
     # Relaxed form suggested by Mike Hansen (#8553):
-    if kwds.get('solution_dict', None):
+    if solution_dict:
         if not sol_list:  # fixes IndexError on empty solution list (#8553)
             return []
         if isinstance(sol_list[0], list):
@@ -1270,6 +1345,9 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     """
     from sage.structure.element import Expression
 
+    if isinstance(x, (list, tuple)) and len(x) == 1:
+        x = x[0]
+
     if f.is_relational():
         if f.operator() is not operator.eq:
             if algorithm == 'sympy':
@@ -1292,9 +1370,8 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                     return solve_ineq([f])  # trying solve_ineq_fourier
                 except Exception:
                     raise NotImplementedError("solving only implemented for equalities and few special inequalities, see solve_ineq")
-        ex = f
     else:
-        ex = (f == 0)
+        f = (f == 0)
 
     if multiplicities and to_poly_solve:
         raise NotImplementedError("to_poly_solve does not return multiplicities")
@@ -1307,7 +1384,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         return any(isinstance(a, GenericDeclaration) and a.has(v) and
                    a._assumption in ['even', 'odd', 'integer', 'integervalued']
                    for a in alist)
-    if len(ex.variables()) and all(has_integer_assumption(var) for var in ex.variables()):
+    if len(f.variables()) and all(has_integer_assumption(var) for var in f.variables()):
         return f.solve_diophantine(x, solution_dict=solution_dict)
 
     if algorithm == 'sympy':
@@ -1318,9 +1395,9 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         else:
             sympy_vars = tuple([v._sympy_() for v in x])
         if domain == 'real':
-            ret = solveset(ex._sympy_(), sympy_vars[0], S.Reals)
+            ret = solveset(f._sympy_(), sympy_vars[0], S.Reals)
         else:
-            ret = solveset(ex._sympy_(), sympy_vars[0])
+            ret = solveset(f._sympy_(), sympy_vars[0])
         ret = sympy_set_to_list(ret, sympy_vars)
         if solution_dict:
             ret = [{sol.left(): sol.right()} for sol in ret]
@@ -1330,7 +1407,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         return _giac_solver(f, x, solution_dict)
 
     # from here on, maxima is used for solution
-    m = ex._maxima_()
+    m = f._maxima_()
     P = m.parent()
     if explicit_solutions:
         P.eval('solveexplicit: true')  # switches Maxima to looking for only explicit solutions
@@ -1376,7 +1453,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     if to_poly_solve:
         if len(X) == 0:
             # Maxima's solve gave no solutions
-            solutions_so_far = [ex]
+            solutions_so_far = [f]
             ignore_exceptions = True
         else:
             solutions_so_far = X
@@ -1440,16 +1517,16 @@ def _giac_solver(f, x, solution_dict=False):
 
         sage: # needs sage.libs.giac
         sage: solve([(2/3)^x-2], [x], algorithm='giac')
-        ...[[-log(2)/(log(3) - log(2))]]
+        [-log(2)/(log(3) - log(2))]
         sage: solve([(2/3)^x-2], [x], algorithm='giac', solution_dict=True)
-        ...[{x: -log(2)/(log(3) - log(2))}]
+        [{x: -log(2)/(log(3) - log(2))}]
 
         sage: # needs sage.libs.giac
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')
-        ...[-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
+        [-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
         sage: solve(f, x, algorithm='giac', solution_dict=True)
-        ...[{x: -2*arctan(sqrt(2))}, {x: 0}, {x: 2*arctan(sqrt(2))}, {x: pi}]
+        [{x: -2*arctan(sqrt(2))}, {x: 0}, {x: 2*arctan(sqrt(2))}, {x: pi}]
 
         sage: # needs sage.libs.giac
         sage: x, y = SR.var('x,y')
@@ -1457,6 +1534,7 @@ def _giac_solver(f, x, solution_dict=False):
         [[2, 5], [5, 2]]
     """
     from sage.libs.giac.giac import libgiac
+    f = _normalize_to_list_expressions(_normalize_to_nonrelational(f))
     giac_f = libgiac(f)
     giac_vars = libgiac(x)
     ret = giac_f.solve(giac_vars)
