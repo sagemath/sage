@@ -61,7 +61,7 @@ A triangulation of it::
     (2, 3, 4)
     sage: list(t)
     [(1, 3, 4), (2, 3, 4)]
-    sage: t.plot(axes=False)                                                            # needs sage.plot
+    sage: t.plot(axes=False)                                                       # needs sage.plot
     Graphics object consisting of 12 graphics primitives
 
 .. PLOT::
@@ -91,7 +91,7 @@ A 3-dimensional point configuration::
     sage: p = [[0,-1,-1], [0,0,1], [0,1,0], [1,-1,-1], [1,0,1], [1,1,0]]
     sage: points = PointConfiguration(p)
     sage: triang = points.triangulate()
-    sage: triang.plot(axes=False)                                                       # needs sage.plot
+    sage: triang.plot(axes=False)                                                 # needs sage.plot
     Graphics3d Object
 
 .. PLOT::
@@ -116,7 +116,7 @@ The standard example of a non-regular triangulation (requires TOPCOM)::
     16
     sage: len(nonregular)
     2
-    sage: nonregular[0].plot(aspect_ratio=1, axes=False)                                # needs sage.plot
+    sage: nonregular[0].plot(aspect_ratio=1, axes=False)                          # needs sage.plot
     Graphics object consisting of 25 graphics primitives
     sage: PointConfiguration.set_engine('internal')   # to make doctests independent of TOPCOM
 
@@ -1131,10 +1131,10 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
             sage: pyramid = PointConfiguration([[1,0,0], [0,1,1], [0,1,-1],
             ....:                               [0,-1,-1], [0,-1,1]])
-            sage: G = pyramid.restricted_automorphism_group()                           # needs sage.graphs sage.groups
-            sage: G == PermutationGroup([[(3,5)], [(2,3),(4,5)], [(2,4)]])              # needs sage.graphs sage.groups
+            sage: G = pyramid.restricted_automorphism_group()                      # needs sage.graphs sage.groups
+            sage: G == PermutationGroup([[(3,5)], [(2,3),(4,5)], [(2,4)]])         # needs sage.graphs sage.groups
             True
-            sage: DihedralGroup(4).is_isomorphic(G)                                     # needs sage.graphs sage.groups
+            sage: DihedralGroup(4).is_isomorphic(G)                                # needs sage.graphs sage.groups
             True
 
         The square with an off-center point in the middle. Note that
@@ -1142,9 +1142,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         `D_4` of the convex hull::
 
             sage: square = PointConfiguration([(3/4,3/4), (1,1), (1,-1), (-1,-1), (-1,1)])
-            sage: square.restricted_automorphism_group()                                # needs sage.graphs sage.groups
+            sage: square.restricted_automorphism_group()                           # needs sage.graphs sage.groups
             Permutation Group with generators [(3,5)]
-            sage: DihedralGroup(1).is_isomorphic(_)                                     # needs sage.graphs sage.groups
+            sage: DihedralGroup(1).is_isomorphic(_)                                # needs sage.graphs sage.groups
             True
         """
         v_list = [ vector(p.projective()) for p in self ]
@@ -1532,9 +1532,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)                                                 # needs sage.plot
+            sage: Tpos.plot(axes=False)                                            # needs sage.plot
             Graphics object consisting of 11 graphics primitives
-            sage: Tneg.plot(axes=False)                                                 # needs sage.plot
+            sage: Tneg.plot(axes=False)                                            # needs sage.plot
             Graphics object consisting of 11 graphics primitives
 
         The 3d analog::
@@ -1549,7 +1549,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)                                                 # needs sage.plot
+            sage: Tpos.plot(axes=False)                                            # needs sage.plot
             Graphics3d Object
         """
         flips = []
@@ -2039,7 +2039,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
     pushing_triangulation = placing_triangulation
 
     @cached_method
-    def Gale_transform(self, points=None):
+    def Gale_transform(self, points=None, homogenize=True):
         r"""
         Return the Gale transform of ``self``.
 
@@ -2048,6 +2048,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         - ``points`` -- tuple of points or point indices or ``None``
           (default). A subset of points for which to compute the Gale
           transform. By default, all points are used.
+
+        - ``homogenize`` -- boolean (default: ``True``); whether to add a row
+          of 1's before taking the transform.
 
         OUTPUT: a matrix over :meth:`base_ring`
 
@@ -2064,6 +2067,50 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: points = (pc.point(0), pc.point(1), pc.point(3), pc.point(4))
             sage: pc.Gale_transform(points)
             [ 1 -1  1 -1]
+
+        It is possible to take the inverse of the Gale transform, by specifying
+        whether to homogenize or not::
+
+            sage: pc2 = PointConfiguration([[0,0],[3,0],[0,3],[3,3],[1,1]])
+            sage: pc2.Gale_transform(homogenize=False)
+            [ 1  0  0  0  0]
+            [ 0  1  1  0 -3]
+            [ 0  0  0  1 -3]
+            sage: pc2.Gale_transform(homogenize=True)
+            [ 1  1  1  0 -3]
+            [ 0  2  2 -1 -3]
+
+        It might not affect the result (when acyclic)::
+
+            sage: PC = PointConfiguration([[4,0,0],[0,4,0],[0,0,4],[2,1,1],[1,2,1],[1,1,2]])
+            sage: GT = PC.Gale_transform(homogenize=False);GT
+            [ 1  0  0 -3  1  1]
+            [ 0  1  0  1 -3  1]
+            [ 0  0  1  1  1 -3]
+            sage: GT = PC.Gale_transform(homogenize=True);GT
+            [ 1  0  0 -3  1  1]
+            [ 0  1  0  1 -3  1]
+            [ 0  0  1  1  1 -3]
+
+        The following point configuration is totally cyclic (the cone spanned
+        by the vectors is equal to the vector space spanned by the points),
+        hence its Gale dual is acyclic (there is a linear functional that is
+        positive in all the points of the configuration) when not homogenized::
+
+            sage: pc3 = PointConfiguration([[-1, -1, -1], [-1, 0, 0], [0, -1, 0], [0, 0, -1], [1, 0, 0], [0, 0, 1], [0, 1, 0]])
+            sage: g_hom = pc3.Gale_transform(homogenize=True);g_hom
+            [ 1  0  0 -2  1 -1  1]
+            [ 0  1  0 -1  1 -1  0]
+            [ 0  0  1 -1  0 -1  1]
+            sage: g_inhom = pc3.Gale_transform(homogenize=False);g_inhom
+            [1 0 0 0 1 1 1]
+            [0 1 0 0 1 0 0]
+            [0 0 1 0 0 0 1]
+            [0 0 0 1 0 1 0]
+            sage: Polyhedron(rays=g_hom.columns())
+            A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 1 vertex and 3 lines
+            sage: Polyhedron(rays=g_inhom.columns())
+            A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 1 vertex and 4 rays
         """
         self._assert_is_affine()
         if points is None:
@@ -2073,8 +2120,119 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 points = [ self.point(ZZ(i)) for i in points ]
             except TypeError:
                 pass
-        m = matrix([ (1,) + p.affine() for p in points])
+        if homogenize:
+            m = matrix([(1,) + p.affine() for p in points])
+        else:
+            m = matrix([p.affine() for p in points])
         return m.left_kernel().matrix()
+
+    def deformation_cone(self, collection):
+        r"""
+        Return the deformation cone for the ``collection`` of subconfigurations
+        of ``self``.
+
+        INPUT:
+
+        - ``collection`` -- a collection of subconfigurations of ``self``.
+          Subconfigurations are given as indices
+
+        OUTPUT: a polyhedron. It contains the liftings of the point configuration
+        making the collection a regular (or coherent, or projective, or
+        polytopal) subdivision.
+
+        EXAMPLES::
+
+            sage: PC = PointConfiguration([(-1, -1), (-1, 0), (0, -1), (1, 0), (0, 1)])
+            sage: coll = [(1, 4), (0, 2), (0, 1), (2, 3), (3, 4)]
+            sage: dc = PC.deformation_cone(coll);dc
+            A 5-dimensional polyhedron in QQ^5 defined as the convex hull of 1 vertex, 3 rays, 2 lines
+            sage: dc.rays()
+            (A ray in the direction (1, 0, 1, 0, 0),
+             A ray in the direction (1, 1, 0, 0, 0),
+             A ray in the direction (1, 1, 1, 0, 0))
+            sage: dc.lines()
+            (A line in the direction (1, 0, 1, 0, -1),
+             A line in the direction (1, 1, 0, -1, 0))
+            sage: dc.an_element()
+            (3, 2, 2, 0, 0)
+
+        We add to the interior element the first line and we verify that the
+        given rays are defining rays of the lower hull::
+
+            sage: P = Polyhedron(rays=[(-1, -1, 4), (-1, 0, 3), (0, -1, 2), (1, 0, -1), (0, 1, 0)])
+            sage: P.rays()
+            (A ray in the direction (-1, -1, 4),
+             A ray in the direction (-1, 0, 3),
+             A ray in the direction (0, -1, 2),
+             A ray in the direction (0, 1, 0),
+             A ray in the direction (1, 0, -1))
+
+        Let's verify the mother of all examples explained in Section 7.1.1 of
+        [DLRS2010]_::
+
+            sage: def mother(epsilon=0):
+            ....:     return PointConfiguration([(4-epsilon,epsilon,0),(0,4-epsilon,epsilon),(epsilon,0,4-epsilon),(2,1,1),(1,2,1),(1,1,2)])
+
+            sage: epsilon = 0
+            sage: m = mother(0)
+            sage: m.points()
+            (P(4, 0, 0), P(0, 4, 0), P(0, 0, 4), P(2, 1, 1), P(1, 2, 1), P(1, 1, 2))
+            sage: S1 = [(0,1,4),(0,3,4),(1,2,5),(1,4,5),(0,2,3),(2,3,5)]
+            sage: S2 = [(0,1,3),(1,3,4),(1,2,4),(2,4,5),(0,2,5),(0,3,5)]
+
+        Both subdivisions `S1` and `S2` are not regular::
+
+            sage: mother_dc1 = m.deformation_cone(S1)
+            sage: mother_dc1
+            A 4-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex, 1 ray, 3 lines
+            sage: mother_dc2 = m.deformation_cone(S2)
+            sage: mother_dc2
+            A 4-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex, 1 ray, 3 lines
+
+        Notice that they have a ray which provides a degenerate lifting which
+        only provides a coarsening of the subdivision from the lower hull (it
+        has 5 facets, and should have 8)::
+
+            sage: result = Polyhedron([vector(list(m.points()[_])+[mother_dc1.rays()[0][_]]) for _ in range(len(m.points()))])
+            sage: result.f_vector()
+            (1, 6, 9, 5, 1)
+
+        But if we use epsilon to perturb the configuration, suddenly
+        `S1` becomes regular::
+
+            sage: epsilon = 1/2
+            sage: mp = mother(epsilon)
+            sage: mp.points()
+            (P(7/2, 1/2, 0),
+             P(0, 7/2, 1/2),
+             P(1/2, 0, 7/2),
+             P(2, 1, 1),
+             P(1, 2, 1),
+             P(1, 1, 2))
+            sage: mother_dc1 = mp.deformation_cone(S1);mother_dc1
+            A 6-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex, 3 rays, 3 lines
+            sage: mother_dc2 = mp.deformation_cone(S2);mother_dc2
+            A 3-dimensional polyhedron in QQ^6 defined as the convex hull of 1 vertex and 3 lines
+
+        .. SEEALSO::
+
+            :meth:`~sage.schemes.toric.variety.Kaehler_cone`
+
+        REFERENCES:
+
+            For more information, see Section 5.4 of [DLRS2010]_ and Section
+            2.2 of [ACEP2020].
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        gale = self.Gale_transform(homogenize=False)
+        dual_rays = gale.columns()
+        n = self.n_points()
+        K = None
+        for cone_indices in collection:
+            dual_cone = Polyhedron(rays=[dual_rays[i] for i in range(n) if i not in cone_indices])
+            K = K.intersection(dual_cone) if K is not None else dual_cone
+        preimages = [gale.solve_right(r.vector()) for r in K.rays()]
+        return Polyhedron(lines=matrix(self.points()).transpose().rows(),rays=preimages)
 
     def plot(self, **kwds):
         r"""
