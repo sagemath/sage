@@ -138,19 +138,12 @@ _NumberFields = NumberFields()
 
 def is_NumberFieldHomsetCodomain(codomain, category=None):
     """
-    Return whether ``codomain`` is a valid codomain for a number field
-    homset (as an object in the category ``category`` if specified).
-
-    This is used by NumberField._Hom_ to determine
-    whether the created homsets should be a
-    :class:`sage.rings.number_field.homset.NumberFieldHomset`.
-
-    This also takes into account the category, which checks if it is
-    a subcategory of :class:`Fields`.
+    Return whether ``codomain`` is a valid codomain for a
+    :class:`NumberFieldHomset` in ``category``.
 
     EXAMPLES:
 
-    This currently accepts any parent (CC, RR, ...) in :class:`Fields`::
+    This currently accepts any ring (CC, RR, ...)::
 
         sage: from sage.rings.number_field.number_field import is_NumberFieldHomsetCodomain
         sage: is_NumberFieldHomsetCodomain(QQ)
@@ -175,10 +168,18 @@ def is_NumberFieldHomsetCodomain(codomain, category=None):
         sage: is_NumberFieldHomsetCodomain(gap.Rationals)                               # needs sage.libs.gap
         False
     """
-    from sage.categories.fields import Fields
+    from sage.categories.all import Rings
+
     if category is None:
-        return codomain in Fields()
-    return category.is_subcategory(Fields())
+        category = Rings()
+
+    if not category.is_subcategory(Rings()):
+        return False
+
+    if codomain not in category:
+        return False
+
+    return True
 
 
 def proof_flag(t):
@@ -1994,9 +1995,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             True
         """
         if not is_NumberFieldHomsetCodomain(codomain, category):
-            # Using LazyFormat fixes #28036 - infinite loop
-            from sage.misc.lazy_format import LazyFormat
-            raise TypeError(LazyFormat("%s is not suitable as codomain for homomorphisms from %s") % (codomain, self))
+            raise TypeError
+
         from sage.rings.number_field.homset import NumberFieldHomset
         return NumberFieldHomset(self, codomain, category)
 
@@ -11457,12 +11457,10 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         zeta = self.gen()
         return sum(QQ(c) * zeta**i for i, c in enumerate(coeffs))
 
-    def _Hom_(self, codomain, cat=None):
+    def _Hom_(self, codomain, category=None):
         """
         Return homset of homomorphisms from the cyclotomic field ``self`` to
         the number field codomain.
-
-        The ``cat`` option is currently ignored.
 
         EXAMPLES:
 
@@ -11481,11 +11479,11 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: End(CyclotomicField(21))
             Automorphism group of Cyclotomic Field of order 21 and degree 12
         """
-        if is_NumberFieldHomsetCodomain(codomain, cat):
-            from sage.rings.number_field.homset import CyclotomicFieldHomset
-            return CyclotomicFieldHomset(self, codomain)
-        else:
+        if not is_NumberFieldHomsetCodomain(codomain, category):
             raise TypeError
+
+        from sage.rings.number_field.homset import CyclotomicFieldHomset
+        return CyclotomicFieldHomset(self, codomain)
 
     def is_galois(self):
         """
