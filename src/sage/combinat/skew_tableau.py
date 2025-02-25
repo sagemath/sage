@@ -1868,8 +1868,6 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``tableau`` -- a Littlewood--Richardson SkewTableau
-
         - ``size`` -- the size of the output Knutson--Tao puzzle (optional)
 
         TESTS::
@@ -1907,18 +1905,15 @@ class SkewTableau(ClonableList,
         tab_w = self.weight()
         tab_out = self.outer_shape()
         tab_inn = self.inner_shape()
-        L = len(self)
 
         if size is None:
-            size = max(tab_w[0] + L, tab_out[0] + L)
-        assert size >= max(tab_w[0] + L, tab_out[0] + L), "the puzzle size inputted is too small"
+            size = max(tab_w[0] + len(self), tab_out[0] + len(self))
+        assert size >= max(tab_w[0] + len(self), tab_out[0] + len(self)), "the puzzle size inputted is too small"
 
-        n = size
-
-        lam = Partition(tab_w).to_abacus(size=size, ones=L)[::-1]
-        mu = [(n - L) - r for r in tab_out][::-1]
-        mu = Partition(mu).to_abacus(size=size, ones=L)[::-1]
-        nu = Partition(tab_inn).to_abacus(size=size, ones=L)
+        lam = Partition(tab_w).to_abacus(size=size, ones=len(self))[::-1]
+        mu = [(size - len(self)) - r for r in tab_out][::-1]
+        mu = Partition(mu).to_abacus(size=size, ones=len(self))[::-1]
+        nu = Partition(tab_inn).to_abacus(size=size, ones=len(self))
 
         # Initialize puzzle
 
@@ -1926,11 +1921,11 @@ class SkewTableau(ClonableList,
 
         # Find the locations of 1-triangles (blue by default in the plot)
 
-        chosenCols = [i+1 for i in range(n) if nu[i] == '1']
-        chosenRows = [i+1 for i in range(n) if lam[i] == '1']
+        chosenCols = [i+1 for i in range(size) if nu[i] == '1']
+        chosenRows = [i+1 for i in range(size) if lam[i] == '1']
         delta_blue_positions = []
         nabla_blue_positions = []
-        for col in range(L):
+        for col in range(len(self)):
             propagationRow = []
             propagationCol = []
             for row in range(col+1):
@@ -1939,7 +1934,7 @@ class SkewTableau(ClonableList,
 
                 delta_blue_positions.append((j, i))
 
-                k = self[L-col+row-1].count(row+1)
+                k = self[len(self)-col+row-1].count(row+1)
                 nabla_blue_positions.append((j+k, i+k+1))
 
                 propagationCol.insert(0, j+k)
@@ -1950,7 +1945,7 @@ class SkewTableau(ClonableList,
         # Create a dictionary of boundaries
         # (not all boundaries are in the dictionary)
 
-        D = {(i,j) : {} for i in range(1,n+1) for j in range(i,n+1)}
+        D = {(i,j) : {} for i in range(1,size+1) for j in range(i,size+1)}
         for (i,j) in delta_blue_positions:
             D[(i,j)]['north_west'] = '1'
             D[(i,j)]['north_east'] = '1'
@@ -1978,10 +1973,10 @@ class SkewTableau(ClonableList,
                 D[(a,b)]['south_west'] = '1'
                 D[(a+1,b)]['north_east'] = '1'
                 D[(a+1,b)]['north_west'] = '10'
-        for i in range(n):
+        for i in range(size):
             D[(1,i+1)]['north_west'] = lam[i]
             D[(i+1,i+1)]['south'] = nu[i]
-            D[(i+1,n)]['north_east'] = mu[i]
+            D[(i+1,size)]['north_east'] = mu[i]
 
         # Now fill piece by piece
         # (like KnutsonTaoPuzzleSolver._fill_puzzle_by_pieces
