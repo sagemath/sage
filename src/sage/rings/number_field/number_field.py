@@ -152,18 +152,16 @@ def is_NumberFieldHomsetCodomain(codomain, category=None):
         sage: is_NumberFieldHomsetCodomain(NumberField(x^2 + 1, 'x'))
         True
         sage: is_NumberFieldHomsetCodomain(ZZ)
-        False
+        True
         sage: is_NumberFieldHomsetCodomain(3)
         False
         sage: is_NumberFieldHomsetCodomain(MatrixSpace(QQ, 2))
-        False
+        True
         sage: is_NumberFieldHomsetCodomain(InfinityRing)
-        False
+        True
 
-    Question: should, for example, QQ-algebras be accepted as well?
-
-    Caveat: Gap objects are not (yet) in :class:`Fields`, and therefore
-    not accepted as number field homset codomains::
+    Gap objects are not (yet) in :class:`Fields`, and therefore not accepted as
+    number field homset codomains::
 
         sage: is_NumberFieldHomsetCodomain(gap.Rationals)                               # needs sage.libs.gap
         False
