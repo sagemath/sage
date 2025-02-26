@@ -890,7 +890,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         - ``long_output`` -- boolean (default: ``False``);
           when ``False``, only return the Macaulay matrix
-          when ``True``, return the Macaulay matrix and two list,
+          when ``True``, return the Macaulay matrix and two lists,
           the first one is the list of monomials corresponding
           to the rows of the matrix,
           the second one is a list of tuples, each tuple is the
