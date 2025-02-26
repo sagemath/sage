@@ -856,7 +856,7 @@ class PolynomialSequence_generic(Sequence_generic):
           to degree ``degree``
           when ``True``, the given system of equations
           must be homogeneous, and the rows of the Macaulay matrix
-          are only the element L multipled by monomials, such that
+          are the elements of the input sequence of polynomials multiplied by monomials, such that
           the product is homogeneous of degree ``degree`` + maximum
           degree in this system.
 
