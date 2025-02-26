@@ -874,7 +874,7 @@ class PolynomialSequence_generic(Sequence_generic):
           the second one is a list of tuples, each tuple is the
           data of a monomial and a polynomial of the system.
           the product of the elements of a given tuple is the equation
-          describing each line of the matrix
+          describing each row of the matrix
 
         EXAMPLES::
 
