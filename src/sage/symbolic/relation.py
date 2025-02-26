@@ -1547,6 +1547,10 @@ def _giac_solver(f, x, solution_dict=False):
     from sage.libs.giac.giac import libgiac
     f = _normalize_to_list_expressions(_normalize_to_nonrelational(f))
     giac_f = libgiac(f)
+    if isinstance(x, tuple):
+        # Python tuple is translated to giac seq which we don't want
+        # (if its length is > 1 then the library call errors out)
+        x = list(x)
     giac_vars = libgiac(x)
     ret = giac_f.solve(giac_vars)
     sols = ret.sage()
