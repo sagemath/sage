@@ -863,27 +863,30 @@ class PolynomialSequence_generic(Sequence_generic):
           the Macaulay matrix are all the monomials of the polynomial
           ring up to degree ``degree``,
           when ``True``, the columns of the Macaulay matrix are only
-          the monomials that appears effectively in the system of
+          the monomials that appears effectively in the sequence of
           polynomials equations
 
         - ``homogeneous`` -- boolean (default: ``False``);
-          when ``False``, the system of equations is not supposed to be
+          when ``False``, the sequence of equations is not supposed to be
           homogeneous and the rows of the Macaulay matrix of degree
-          ``degree`` contain all the equations of this system of
+          ``degree`` contain all the equations of this sequence of
           polynomials and all the products between the element of
-          this system and the monomials of the polynomial ring up
+          this sequence and the monomials of the polynomial ring up
           to degree ``degree``
-          when ``True``, the given system of equations
+          when ``True``, the given systemsequence of equations
           must be homogeneous, and the rows of the Macaulay matrix
-          are the elements of the input sequence of polynomials multiplied by monomials, such that
-          the product is homogeneous of degree ``degree`` + maximum
+          are the elements of the input sequence of polynomials
+          multiplied by monomials, such that the product is homogeneous
+          of degree: the sum of ``degree`` and maximum
           degree in this system.
 
         - ``set_variables`` -- boolean (default: ``None``);
           when ``None`` the Macaulay matrix is constructed
           using all the variables of the base ring of polynomials.
-          when ``set_variables`` is a list of  variables, it is
-          used instead of all the variables of the base ring of polynomials.
+          when ``set_variables`` is a list of variables (which must
+          be in the parent of the input sequence of polynomials), it is
+          used instead of all the variables of the base ring of polynomials
+          when multiplying the equations of the given sequence.
 
         - ``long_output`` -- boolean (default: ``False``);
           when ``False``, only return the Macaulay matrix
