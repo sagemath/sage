@@ -669,7 +669,7 @@ class AbstractTree:
         - ``middle_action`` -- (optional) a function which takes a node as
           input, and does something each time it explore one of its children
 
-        - ``last_action`` -- (optional) a function which takes a node as
+        - ``final_action`` -- (optional) a function which takes a node as
           input, and does something the last time it is reached during exploration
 
         - ``leaf_action`` -- (optional) a function which takes a leaf as
@@ -963,7 +963,7 @@ class AbstractTree:
 
         depths = [0]
         self.contour_traversal(fr_action, m_action, fn_action, lf_action)
-        return m
+        return Integer(m)
 
     def paths_to_the_right(self, path):
         r"""
@@ -1254,7 +1254,7 @@ class AbstractTree:
                 m.append(mx + 1)
 
         self.contour_traversal(final_action=action, leaf_action=action)
-        return m[0] + 1
+        return Integer(m[0] + 1)
 
     def _ascii_art_(self):
         r"""
