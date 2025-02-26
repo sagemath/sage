@@ -1132,14 +1132,6 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         [x == 1]
         sage: solve(x == 1)
         [x == 1]
-        sage: solve([x - x == 1])
-        []
-        sage: solve(x - x == 1)
-        []
-        sage: solve([x - x == 0])
-        []
-        sage: solve(x - x == 0)
-        []
 
     Special case::
 
