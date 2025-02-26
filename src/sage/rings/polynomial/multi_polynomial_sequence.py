@@ -859,12 +859,10 @@ class PolynomialSequence_generic(Sequence_generic):
         INPUT:
 
         - ``remove_zero`` -- boolean (default: ``False``);
-          when ``False``, the columns of
-          the Macaulay matrix are all the monomials of the polynomial
-          ring up to degree ``degree``,
-          when ``True``, the columns of the Macaulay matrix are only
-          the monomials that appears effectively in the sequence of
-          polynomials equations
+          when ``False``, the columns of the Macaulay matrix are all the
+          monomials of the polynomial ring up to degree ``degree``, when
+          ``True``, the columns of the Macaulay matrix are only the monomials
+          that effectively appear in the sequence of polynomials
 
         - ``homogeneous`` -- boolean (default: ``False``);
           when ``False``, the sequence of equations is not supposed to be
