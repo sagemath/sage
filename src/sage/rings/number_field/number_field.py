@@ -166,7 +166,7 @@ def is_NumberFieldHomsetCodomain(codomain, category=None):
         sage: is_NumberFieldHomsetCodomain(gap.Rationals)                               # needs sage.libs.gap
         False
     """
-    from sage.categories.all import Rings
+    from sage.categories.rings import Rings
 
     if category is None:
         category = Rings()
