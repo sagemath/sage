@@ -849,8 +849,8 @@ class PolynomialSequence_generic(Sequence_generic):
 
         - ``homogeneous`` -- boolean (default: ``False``);
           when ``False``, the system of equations is not supposed to be
-          homogeneous and the row of the Macaulay matrix of degree
-          ``degree`` contains all the equations of this system of
+          homogeneous and the rows of the Macaulay matrix of degree
+          ``degree`` contain all the equations of this system of
           polynomials and all the products between the element of
           this system and the monomials of the polynomial ring up
           to degree ``degree``
