@@ -851,7 +851,11 @@ class PolynomialSequence_generic(Sequence_generic):
         A, v = self.coefficients_monomials(sparse=sparse)
         return A, matrix(R,len(v),1,v)
 
-    def macaulay_matrix(self, degree, remove_zero=False, homogeneous=False, variables=None, return_indices=False) :
+    def macaulay_matrix(self, degree,
+                        homogeneous=False,
+                        variables=None,
+                        return_indices=False,
+                        remove_zero=False):
         r"""
         Return the Macaulay matrix of degree ``degree`` of this sequence
         of polynomials.
@@ -903,7 +907,7 @@ class PolynomialSequence_generic(Sequence_generic):
             [2 0 0 0 4 1 0 4 0 3]
             [6 0 5 0 4 0 3 0 0 0]
 
-        Example with the option homogeneous::
+        Example with a sequence of homogeneous polynomials::
 
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: L = Sequence([x*y^2 + y^3 + x*y*z + y*z^2,
@@ -920,8 +924,9 @@ class PolynomialSequence_generic(Sequence_generic):
             [0 1 0 0 2 0 1 2 0 0 0 0 0 2 0]
             [1 0 0 2 0 1 2 0 0 0 0 0 2 0 0]
 
-        Same example as before but with all options
-        activated excepted the ``variables`` option::
+        Same example for which we now ask to remove monomials that do not
+        appear in the sequence (``remove_zero=True``), and to return the row
+        and column indices::
 
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: L = Sequence([x*y + 2*z^2, y^2 + y*z, x*z])
@@ -941,7 +946,8 @@ class PolynomialSequence_generic(Sequence_generic):
             [x^2*y, x*y^2, y^3, x^2*z, x*y*z, y^2*z, x*z^2, y*z^2, z^3]
             ]
 
-        Example with the ``variables`` option::
+        Example in which we build rows using monomials that involve only a
+        subset of the ring variables (``variables=['x']``)::
 
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: L = Sequence([2*y*z - 2*z^2 - 3*x + z - 3,
@@ -969,12 +975,12 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: PolynomialSequence_generic([], R).macaulay_matrix(1)
             Traceback (most recent call last):
             ...
-            TypeError: the list of polynomials must be non empty
+            TypeError: the sequence of polynomials must be nonempty
 
             sage: Sequence([x*y, x**2]).macaulay_matrix(-1)
             Traceback (most recent call last):
             ...
-            ValueError: the degree must be a non negative number
+            ValueError: the degree must be nonnegative
 
         REFERENCES:
 
@@ -983,9 +989,9 @@ class PolynomialSequence_generic(Sequence_generic):
         from sage.matrix.constructor import matrix
 
         if len(self) == 0:
-            raise TypeError('the list of polynomials must be non empty')
+            raise TypeError('the sequence of polynomials must be nonempty')
         if degree < 0:
-            raise ValueError('the degree must be a non negative number')
+            raise ValueError('the degree must be nonnegative')
 
         S = self.ring()
         F = S.base_ring()
