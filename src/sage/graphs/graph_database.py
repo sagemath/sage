@@ -428,7 +428,7 @@ class GraphQuery(GenericGraphQuery):
             SQLQuery.__init__(self, graph_db)
 
             # if display_cols is None:
-            #    raise TypeError, 'Nonetype display_cols cannot retrieve data.'
+            #     raise TypeError('Nonetype display_cols cannot retrieve data')
 
             master_join = {}
 

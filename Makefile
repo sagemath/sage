@@ -253,9 +253,13 @@ TEST_TARGET = $@
 
 TEST = ./sage -t --logfile=$(TEST_LOG) $(TEST_FLAGS) --optional=$(TEST_OPTIONAL) $(TEST_FILES)
 
+test-git-no-uncommitted-changes:
+	./tools/test-git-no-uncommitted-changes
+
 test: all
 	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)
-	$(TEST)
+	$(TEST); \
+	$(MAKE) test-git-no-uncommitted-changes
 
 check:
 	@$(MAKE) test
@@ -302,7 +306,8 @@ ptestoptionallong:
 test-nodoc: TEST_OPTIONAL := $(TEST_OPTIONAL),!sagemath_doc_html,!sagemath_doc_pdf
 test-nodoc: build
 	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)
-	$(TEST)
+	$(TEST); \
+	$(MAKE) test-git-no-uncommitted-changes
 
 check-nodoc:
 	@$(MAKE) test-nodoc
@@ -387,5 +392,6 @@ list:
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \
 	test check testoptional testall testlong testoptionallong testallong \
 	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong \
+	test-git-no-uncommitted-changes \
 	list \
 	doc-clean clean sagelib-clean build-clean

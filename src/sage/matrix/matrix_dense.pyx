@@ -11,6 +11,7 @@ TESTS::
 cimport sage.matrix.matrix as matrix
 
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
+from sage.calculus.functional import derivative
 import sage.matrix.matrix_space
 import sage.structure.sequence
 
@@ -275,11 +276,19 @@ cdef class Matrix_dense(matrix.Matrix):
             sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
+
+        TESTS:
+
+        Verify that :issue:`15067` is fixed::
+
+            sage: u = matrix(1, 2, [-1, 1])
+            sage: derivative(u, x)
+            [0 0]
         """
         # We could just use apply_map
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
-        v = [z.derivative(var) for z in self.list()]
+        v = [sage.calculus.functional.derivative(z, var) for z in self.list()]
         if R is None:
             v = sage.structure.sequence.Sequence(v)
             R = v.universe()
