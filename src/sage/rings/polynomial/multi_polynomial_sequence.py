@@ -870,7 +870,7 @@ class PolynomialSequence_generic(Sequence_generic):
           when ``False``, only return the Macaulay matrix
           when ``True``, return the Macaulay matrix and two list,
           the first one is the list of monomials corresponding
-          to the lines of the matrix,
+          to the rows of the matrix,
           the second one is a list of tuples, each tuple is the
           data of a monomial and a polynomial of the system.
           the product of the elements of a given tuple is the equation
