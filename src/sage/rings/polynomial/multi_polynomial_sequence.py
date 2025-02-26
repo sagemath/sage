@@ -854,7 +854,7 @@ class PolynomialSequence_generic(Sequence_generic):
           polynomials and all the products between the element of
           this system and the monomials of the polynomial ring up
           to degree ``degree``
-          when ``True``, the given system of equation this system
+          when ``True``, the given system of equations
           must be homogeneous, and the rows of the Macaulay matrix
           are only the element L multipled by monomials, such that
           the product is homogeneous of degree ``degree`` + maximum
