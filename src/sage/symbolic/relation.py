@@ -1140,6 +1140,11 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         []
         sage: solve(x - x == 0)
         []
+
+    Special case::
+
+        sage: solve([], [])
+        [[]]
     """
     from sage.structure.element import Expression
     f = _normalize_to_list_expressions(f)
@@ -1168,15 +1173,19 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
             raise TypeError(f"{i} is not a valid variable.")
 
     # Handle special cases
-    if not x:
+    f = [s for s in f if s is not True]
+    if any(s is False for s in f):
         if multiplicities:
             return [], []
         else:
             return []
 
-    f = [s for s in f if s is not True]
-    if any(s is False for s in f):
-        return []
+    if not x:
+        if multiplicities:
+            from sage.rings.integer_ring import ZZ
+            return [[]], [ZZ.one()]
+        else:
+            return [[]]
 
     if len(f) == 1:
         return _solve_expression(f[0], x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
