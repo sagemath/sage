@@ -1125,8 +1125,9 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         (x, y)
         sage: solve(x==1)
         [x == 1]
-        sage: solve([x == 1, y == 2])
+        sage: solve([x == 1, y == 2])  # random
         [[y == 2, x == 1]]
+        sage: assert solve([x == 1, y == 2]) in ([[x == 1, y == 2]], [[y == 2, x == 1]])
         sage: solve([x == 1])
         [x == 1]
         sage: solve(x == 1)
@@ -1153,8 +1154,17 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
     if x is None:
         x = list({v for s in f for v in s.variables()})
 
+    require_all_variables_to_be_symbol = len(f) > 1
+    # we support y = function('y')(x); solve(diff(y)==x, y), in this case y = y(x) is not a symbol
+    # but only if one equation is provided
+    # there is also desolve()
     for i in x:
-        if not (isinstance(i, Expression) and i.is_symbol()):
+        complain = False
+        if not isinstance(i, Expression):
+            complain = True
+        elif require_all_variables_to_be_symbol and not i.is_symbol():
+            complain = True
+        if complain:
             raise TypeError(f"{i} is not a valid variable.")
 
     # Handle special cases
