@@ -629,10 +629,9 @@ class PolynomialRing_generic(Ring):
         Return the list of all monomials of the given total
         degree in this univariate polynomial ring, which is simply the list with one element ``[self.gen()**degree]``.
 
-        .. NOTE::
-
-            This method extends a method with the same name
-            used for multivariate polynomials rings.
+        .. SEEALSO::
+        
+            :meth:`sage.rings.polynomial.multi_polynomial_ring_base.MPolynomialRing_base.monomials_of_degree`
 
         EXAMPLES::
 
