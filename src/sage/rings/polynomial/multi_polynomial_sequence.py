@@ -851,7 +851,7 @@ class PolynomialSequence_generic(Sequence_generic):
         A, v = self.coefficients_monomials(sparse=sparse)
         return A, matrix(R,len(v),1,v)
 
-    def macaulay_matrix(self, degree, remove_zero=False, homogeneous=False, set_variables=None, long_output=False) :
+    def macaulay_matrix(self, degree, remove_zero=False, homogeneous=False, variables=None, return_indices=False) :
         r"""
         Return the Macaulay matrix of degree ``degree`` of this sequence
         of polynomials.
@@ -865,34 +865,30 @@ class PolynomialSequence_generic(Sequence_generic):
           that effectively appear in the sequence of polynomials
 
         - ``homogeneous`` -- boolean (default: ``False``);
-          when ``False``, the sequence of equations is not supposed to be
-          homogeneous and the rows of the Macaulay matrix of degree
-          ``degree`` contain all the equations of this sequence of
-          polynomials and all the products between the element of
-          this sequence and the monomials of the polynomial ring up
-          to degree ``degree``
-          when ``True``, the given systemsequence of equations
-          must be homogeneous, and the rows of the Macaulay matrix
-          are the elements of the input sequence of polynomials
-          multiplied by monomials, such that the product is homogeneous
-          of degree: the sum of ``degree`` and maximum
-          degree in this system.
+          when ``False``, the polynomials in the sequence are not necessarily
+          homogeneous and the rows of the Macaulay matrix represent all
+          possible products between a polynomial of this sequence and the
+          monomials of the polynomial ring up to degree ``degree``;
+          when ``True``, the polynomials in the sequence must be homogeneous,
+          and the rows of the Macaulay matrix represent all possible products
+          between a polynomial of this sequence and a monomial of the
+          polynomial ring such that the product is homogeneous of degree equal
+          to the sum of ``degree`` and the maximum degree in the sequence
 
-        - ``set_variables`` -- boolean (default: ``None``);
-          when ``None`` the Macaulay matrix is constructed
-          using all the variables of the base ring of polynomials.
-          when ``set_variables`` is a list of variables (which must
-          be in the parent of the input sequence of polynomials), it is
-          used instead of all the variables of the base ring of polynomials
-          when multiplying the equations of the given sequence.
+        - ``variables`` -- boolean (default: ``None``);
+          when ``None``, ``variables`` is interpreted as being the list of
+          all variables of the ring of the polynomials in the sequence;
+          otherwise ``variables`` is a list describing a subset of these
+          variables, and only these variables are used (instead of all ring
+          variables) when forming monomials to multiply the polynomials of the
+          sequence
 
-        - ``long_output`` -- boolean (default: ``False``);
-          when ``False``, only return the Macaulay matrix
-          when ``True``, return the Macaulay matrix and two lists,
-          the first one is a list of pairs, each pair is the
-          data of a monomial and one of the input polynomials;
-          the product of the elements of a given tuple is the equation
-          describing each row of the matrix
+        - ``return_indices`` -- boolean (default: ``False``);
+          when ``False``, only return the Macaulay matrix;
+          when ``True``, return the Macaulay matrix and two lists:
+          the first one is a list of pairs, each of them containing
+          a monomial and one of the input polynomials, whose
+          product describes the corresponding row of the matrix;
           the second one is the list of monomials corresponding
           to the columns of the matrix
 
@@ -925,11 +921,11 @@ class PolynomialSequence_generic(Sequence_generic):
             [1 0 0 2 0 1 2 0 0 0 0 0 2 0 0]
 
         Same example as before but with all options
-        activated excepted the ``set_variables`` option::
+        activated excepted the ``variables`` option::
 
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: L = Sequence([x*y + 2*z^2, y^2 + y*z, x*z])
-            sage: L.macaulay_matrix(1, homogeneous=True, remove_zero=True, long_output=True)
+            sage: L.macaulay_matrix(1, homogeneous=True, remove_zero=True, return_indices=True)
             [
             [0 0 0 0 1 0 0 0 2]
             [0 1 0 0 0 0 0 2 0]
@@ -945,13 +941,13 @@ class PolynomialSequence_generic(Sequence_generic):
             [x^2*y, x*y^2, y^3, x^2*z, x*y*z, y^2*z, x*z^2, y*z^2, z^3]
             ]
 
-        Example with the ``set_variables`` option::
+        Example with the ``variables`` option::
 
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: L = Sequence([2*y*z - 2*z^2 - 3*x + z - 3,
             ....:               -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y,
             ....:               -2*y - z - 3])
-            sage: L.macaulay_matrix(1, set_variables=['x'], remove_zero=True, long_output=True)
+            sage: L.macaulay_matrix(1, variables=['x'], remove_zero=True, return_indices=True)
             [
             [ 0  0  0  0  0  0  0  0  0  2 -2 -3  0  1 -3]
             [ 0  0  0  2 -2 -3  0  0  1  0  0 -3  0  0  0]
@@ -993,10 +989,10 @@ class PolynomialSequence_generic(Sequence_generic):
 
         S = self.ring()
         F = S.base_ring()
-        if set_variables is None:
+        if variables is None:
             R = S
         else:
-            R = PolynomialRing(F, set_variables)
+            R = PolynomialRing(F, variables)
 
         degree_system = self.maximal_degree()
 
@@ -1021,7 +1017,7 @@ class PolynomialSequence_generic(Sequence_generic):
         monomials_sys.sort(reverse=True)
         macaulay = matrix(F, [[(mon*poly).monomial_coefficient(m) for m in monomials_sys] for mon, poly in augmented_system])
 
-        return [macaulay, augmented_system, monomials_sys] if long_output else macaulay
+        return [macaulay, augmented_system, monomials_sys] if return_indices else macaulay
 
     def subs(self, *args, **kwargs):
         """
