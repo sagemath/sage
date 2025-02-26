@@ -627,7 +627,7 @@ class PolynomialRing_generic(Ring):
     def monomials_of_degree(self, degree):
         r"""
         Return the list of all monomials of the given total
-        degree in this univariate polynomial ring.
+        degree in this univariate polynomial ring, which is simply the list with one element ``[self.gen()**degree]``.
 
         .. NOTE::
 
