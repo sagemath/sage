@@ -1984,4 +1984,3 @@ class Projection(SageObject):
                     back_vertices.append(v)
 
         return front_facets, back_facets, front_vertices, back_vertices
-
