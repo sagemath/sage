@@ -244,6 +244,7 @@ from sage.misc.method_decorator import MethodDecorator
 from sage.misc.misc_c import prod
 from sage.misc.verbose import get_verbose, verbose
 from sage.rings.ideal import Ideal_generic
+from sage.rings.quotient_ring import QuotientRingIdeal_generic
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.noncommutative_ideals import Ideal_nc
@@ -5643,7 +5644,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         return result_ring.ideal(result)
 
 
-class MPolynomialIdeal_quotient(MPolynomialIdeal):
+class MPolynomialIdeal_quotient(QuotientRingIdeal_generic, MPolynomialIdeal):
     r"""
     An ideal in a quotient of a multivariate polynomial ring.
 
