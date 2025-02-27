@@ -984,7 +984,9 @@ class PolynomialSequence_generic(Sequence_generic):
         """
         from sage.matrix.constructor import matrix
 
-        if len(self) == 0:
+        m = len(self)
+
+        if m == 0:
             raise ValueError('the sequence of polynomials must be nonempty')
         if degree < 0:
             raise ValueError('the degree must be nonnegative')
@@ -996,32 +998,57 @@ class PolynomialSequence_generic(Sequence_generic):
         else:
             R = PolynomialRing(F, variables)
 
+        # maximum degree for monomials appearing in considered polynomial multiples
         target_degree = self.maximal_degree() + degree
+
+        # precompute `monomials_of_degree(deg)` for the relevant values of `deg`
+        # homogeneous:
+        #     row_indices: we need them for deg = target_degree - self[i].degree(),
+        #                  for all i = 0 ... len(self)-1
+        #     column_indices: we need them for deg = target_degree
+        # non homogeneous:
+        #     row_indices: we need them for deg = 0 ... target_degree - self[i].degree(),
+        #                  for all i = 0 ... len(self)-1,
+        #                  -> i.e. for deg = 0 ... target_degree - min(self[i].degree() for all i)
+        #     column_indices: we need them for deg = 0 ... target_degree
+        R_monomials_of_degree = {}
+        S_monomials_of_degree = {}
+        if homogeneous:
+            for poly_deg in set([poly.degree() for poly in self]):
+                deg = target_degree - poly_deg
+                R_monomials_of_degree[deg] = R.monomials_of_degree(deg)
+            S_monomials_of_degree[target_degree] = S.monomials_of_degree(target_degree)
+        else:
+            max_deg = target_degree - min(poly.degree() for poly in self)
+            for deg in range(max_deg+1):
+                R_monomials_of_degree[deg] = R.monomials_of_degree(deg)
+            for deg in range(target_degree+1):
+                S_monomials_of_degree[deg] = S.monomials_of_degree(deg)
 
         row_indices = []
         if homogeneous:
-            for i in range(len(self)):
+            for i in range(m):
                 deg = target_degree - self[i].degree()
-                row_indices += [(mon, i) for mon in R.monomials_of_degree(deg)]
+                row_indices += [(mon, i) for mon in R_monomials_of_degree[deg]]
         else:
-            for i in range(len(self)):
+            for i in range(m):
                 for deg in range(target_degree - self[i].degree() + 1):
-                    row_indices += [(mon, i) for mon in R.monomials_of_degree(deg)]
+                    row_indices += [(mon, i) for mon in R_monomials_of_degree[deg]]
 
+        # compute sorted list of monomials that index the columns
         if remove_zero:
             column_indices = list(set(sum(((mon * self[i]).monomials() for mon, i in row_indices), [])))
         else:
             if homogeneous :
-                column_indices = S.monomials_of_degree(target_degree)
+                column_indices = S_monomials_of_degree[target_degree]
             else:
-                column_indices = sum((S.monomials_of_degree(deg)
-                                         for deg in range(target_degree + 1)), [])
+                column_indices = [mon for deg in range(target_degree + 1)
+                                      for mon in S_monomials_of_degree[deg]]
 
-        column_indices = list(column_indices)
         column_indices.sort(reverse=True)
-        macaulay = matrix(F, [[(mon * self[i]).monomial_coefficient(m)
-                                               for m in column_indices]
-                                              for mon, i in row_indices])
+        macaulay = matrix(F, [[(mrow * self[i]).monomial_coefficient(mcol)
+                                               for mcol in column_indices]
+                                              for mrow, i in row_indices])
 
         return [macaulay, row_indices, column_indices] if return_indices else macaulay
 
