@@ -2617,8 +2617,8 @@ class MPolynomialIdeal_singular_repr(
         See :mod:`~sage.rings.polynomial.msolve` for more information. ::
 
             sage: I.variety(RBF, algorithm='msolve', proof=False)   # optional - msolve
-            [{x: [2.76929235423863 +/- 2.08e-15], y: [0.361103080528647 +/- 4.53e-16]},
-             {x: 1.000000000000000, y: 1.000000000000000}]
+            [{y: [0.361103080528647 +/- 4.53e-16], x: [2.76929235423863 +/- 2.08e-15]},
+             {y: 1.000000000000000, x: 1.000000000000000}]
 
         Computation over floating point numbers may compute only a partial solution,
         or even none at all. Notice that x values are missing from the following variety::
@@ -2672,10 +2672,10 @@ class MPolynomialIdeal_singular_repr(
             sage: sorted(I.variety(algorithm='msolve',          # optional - msolve, needs sage.rings.finite_rings
             ....:                  proof=False),
             ....:        key=str)
-            [{x: 1, y: 1},
-             {x: 1, y: 536870908},
-             {x: 536870908, y: 1},
-             {x: 536870908, y: 536870908}]
+            [{y: 1, x: 1},
+             {y: 1, x: 536870908},
+             {y: 536870908, x: 1},
+             {y: 536870908, x: 536870908}]
 
         but may fail in small characteristic, especially with ideals of high
         degree with respect to the characteristic::
@@ -3482,7 +3482,7 @@ class MPolynomialIdeal_macaulay2_repr:
 
             sage: R.<x,y,z,w> = PolynomialRing(ZZ, 4)
             sage: I = ideal(x*y-z^2, y^2-w^2)
-            sage: I._reduce_using_macaulay2(x*y-z^2 + y^2)    # optional  - macaulay2
+            sage: I._reduce_using_macaulay2(x*y-z^2 + y^2)    # optional - macaulay2
             w^2
         """
         I = self._macaulay2_()
@@ -5500,11 +5500,22 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
              of Multivariate Polynomial Ring in x0, x1, x2, x3, x4, y0, y1, y2, y3, y4,
              z0, z1, z2, z3, z4 over Finite Field of size 3
             sage: J += sage.rings.ideal.FieldIdeal(J.ring())  # ensure radical ideal
-            sage: from sage.doctest.fixtures import reproducible_repr
-            sage: print(reproducible_repr(J.variety()))
-            [{x0: 1, x1: 0, x2: 0, x3: 0, x4: 0,
-              y0: 0, y1: 0, y2: 0, y3: 0, y4: 0,
-              z0: 0, z1: 0, z2: 0, z3: 0, z4: 0}]
+            sage: J.variety()
+            [{z4: 0,
+              z3: 0,
+              z2: 0,
+              z1: 0,
+              z0: 0,
+              y4: 0,
+              y3: 0,
+              y2: 0,
+              y1: 0,
+              y0: 0,
+              x4: 0,
+              x3: 0,
+              x2: 0,
+              x1: 0,
+              x0: 1}]
 
 
         Weil restrictions are often used to study elliptic curves over
