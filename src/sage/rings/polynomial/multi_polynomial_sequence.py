@@ -998,29 +998,32 @@ class PolynomialSequence_generic(Sequence_generic):
 
         target_degree = self.maximal_degree() + degree
 
-        augmented_system = []
+        row_indices = []
         if homogeneous:
             for i in range(len(self)):
                 deg = target_degree - self[i].degree()
-                augmented_system += [(mon, i) for mon in R.monomials_of_degree(deg)]
+                row_indices += [(mon, i) for mon in R.monomials_of_degree(deg)]
         else:
             for i in range(len(self)):
                 for deg in range(target_degree - self[i].degree() + 1):
-                    augmented_system += [(mon, i) for mon in R.monomials_of_degree(deg)]
+                    row_indices += [(mon, i) for mon in R.monomials_of_degree(deg)]
 
         if remove_zero:
-            monomials_sys = list(set(sum(((mon * self[i]).monomials() for mon, i in augmented_system), [])))
+            column_indices = list(set(sum(((mon * self[i]).monomials() for mon, i in row_indices), [])))
         else:
             if homogeneous :
-                monomials_sys = S.monomials_of_degree(target_degree)
+                column_indices = S.monomials_of_degree(target_degree)
             else:
-                monomials_sys = sum((S.monomials_of_degree(deg) for deg in range(target_degree + 1)), [])
+                column_indices = sum((S.monomials_of_degree(deg)
+                                         for deg in range(target_degree + 1)), [])
 
-        monomials_sys = list(monomials_sys)
-        monomials_sys.sort(reverse=True)
-        macaulay = matrix(F, [[(mon * self[i]).monomial_coefficient(m) for m in monomials_sys] for mon, i in augmented_system])
+        column_indices = list(column_indices)
+        column_indices.sort(reverse=True)
+        macaulay = matrix(F, [[(mon * self[i]).monomial_coefficient(m)
+                                               for m in column_indices]
+                                              for mon, i in row_indices])
 
-        return [macaulay, augmented_system, monomials_sys] if return_indices else macaulay
+        return [macaulay, row_indices, column_indices] if return_indices else macaulay
 
     def subs(self, *args, **kwargs):
         """
