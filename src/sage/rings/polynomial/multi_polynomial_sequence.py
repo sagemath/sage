@@ -1050,13 +1050,15 @@ class PolynomialSequence_generic(Sequence_generic):
                 column_indices = [mon for deg in range(target_degree + 1)
                                       for mon in S_monomials_of_degree[deg]]
         column_indices.sort(reverse=True)
+        dict_columns = {mon.exponents()[0] : j for (j, mon) in enumerate(column_indices)}
 
         # actually build the Macaulay matrix
         macaulay_mat = matrix(F, len(row_indices), len(column_indices))
         for (ii, (mrow, i)) in enumerate(row_indices):
-            multiple = mrow * self[i]
-            for (jj, mcol) in enumerate(column_indices):
-                macaulay_mat[ii, jj] = multiple.monomial_coefficient(mcol)
+            # in row ii, we put coefficients of the multiple mrow * self[i]
+            poly = mrow * self[i]
+            for mon, coeff in poly.iterator_exp_coeff():
+                macaulay_mat[ii, dict_columns[mon]] = coeff
 
         if not return_indices:
             return macaulay_mat
