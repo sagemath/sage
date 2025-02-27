@@ -889,12 +889,11 @@ class PolynomialSequence_generic(Sequence_generic):
 
         - ``return_indices`` -- boolean (default: ``False``);
           when ``False``, only return the Macaulay matrix;
-          when ``True``, return the Macaulay matrix and two lists:
-          the first one is a list of pairs, each of them containing
-          a monomial and one of the input polynomials, whose
-          product describes the corresponding row of the matrix;
-          the second one is the list of monomials corresponding
-          to the columns of the matrix
+          when ``True``, return the Macaulay matrix and two lists: the first
+          one is a list of pairs, each of them containing a monomial and the
+          index in the sequence of the input polynomial, whose product
+          describes the corresponding row of the matrix; the second one is the
+          list of monomials corresponding to the columns of the matrix
 
         EXAMPLES::
 
@@ -941,8 +940,7 @@ class PolynomialSequence_generic(Sequence_generic):
             [0 0 0 0 0 0 1 0 0]
             [0 0 0 0 1 0 0 0 0]
             [0 0 0 1 0 0 0 0 0],
-            [(z, x*y + 2*z^2), (y, x*y + 2*z^2), (x, x*y + 2*z^2), (z, y^2 + y*z),
-             (y, y^2 + y*z), (x, y^2 + y*z), (z, x*z), (y, x*z), (x, x*z)],
+            [(z, 0), (y, 0), (x, 0), (z, 1), (y, 1), (x, 1), (z, 2), (y, 2), (x, 2)],
             [x^2*y, x*y^2, y^3, x^2*z, x*y*z, y^2*z, x*z^2, y*z^2, z^3]
             ]
 
@@ -962,9 +960,7 @@ class PolynomialSequence_generic(Sequence_generic):
             [ 0  0  0  0  0  0  0  0  0  0  0  0 -2 -1 -3]
             [ 0  0  0  0  0  0 -2  0 -1  0  0 -3  0  0  0]
             [-2  0 -1  0  0 -3  0  0  0  0  0  0  0  0  0],
-            [(1, 2*y*z - 2*z^2 - 3*x + z - 3), (x, 2*y*z - 2*z^2 - 3*x + z - 3),
-             (1, -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y), (x, -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y),
-             (1, -2*y - z - 3), (x, -2*y - z - 3), (x^2, -2*y - z - 3)],
+            [(1, 0), (x, 0), (1, 1), (x, 1), (1, 2), (x, 2), (x^2, 2)],
             [x^2*y, x*y^2, x^2*z, x*y*z, x*z^2, x^2, x*y, y^2, x*z, y*z, z^2, x, y, z, 1]
             ]
 
@@ -975,7 +971,7 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: PolynomialSequence_generic([], R).macaulay_matrix(1)
             Traceback (most recent call last):
             ...
-            TypeError: the sequence of polynomials must be nonempty
+            ValueError: the sequence of polynomials must be nonempty
 
             sage: Sequence([x*y, x**2]).macaulay_matrix(-1)
             Traceback (most recent call last):
@@ -988,8 +984,10 @@ class PolynomialSequence_generic(Sequence_generic):
         """
         from sage.matrix.constructor import matrix
 
-        if len(self) == 0:
-            raise TypeError('the sequence of polynomials must be nonempty')
+        m = len(self)
+
+        if m == 0:
+            raise ValueError('the sequence of polynomials must be nonempty')
         if degree < 0:
             raise ValueError('the degree must be nonnegative')
 
@@ -1000,28 +998,29 @@ class PolynomialSequence_generic(Sequence_generic):
         else:
             R = PolynomialRing(F, variables)
 
-        degree_system = self.maximal_degree()
+        target_degree = self.maximal_degree() + degree
 
         augmented_system = []
         if homogeneous:
-            for poly in self:
-                augmented_system += [(mon, poly) for mon in R.monomials_of_degree(degree_system - poly.degree() + degree)]
+            for i in range(len(self)):
+                deg = target_degree - self[i].degree()
+                augmented_system += [(mon, i) for mon in R.monomials_of_degree(deg)]
         else:
-            for poly in self:
-                for deg in range(degree_system - poly.degree() + degree + 1):
-                    augmented_system += [(mon, poly) for mon in R.monomials_of_degree(deg)]
+            for i in range(len(self)):
+                for deg in range(target_degree - self[i].degree() + 1):
+                    augmented_system += [(mon, i) for mon in R.monomials_of_degree(deg)]
 
         if remove_zero:
-            monomials_sys = list(set(sum(((mon*poly).monomials() for mon, poly in augmented_system), [])))
+            monomials_sys = list(set(sum(((mon * self[i]).monomials() for mon, i in augmented_system), [])))
         else:
             if homogeneous :
-                monomials_sys = S.monomials_of_degree(degree_system+degree)
+                monomials_sys = S.monomials_of_degree(target_degree)
             else:
-                monomials_sys = sum((S.monomials_of_degree(i) for i in range(degree_system + degree + 1)), [])
+                monomials_sys = sum((S.monomials_of_degree(deg) for deg in range(target_degree + 1)), [])
 
         monomials_sys = list(monomials_sys)
         monomials_sys.sort(reverse=True)
-        macaulay = matrix(F, [[(mon*poly).monomial_coefficient(m) for m in monomials_sys] for mon, poly in augmented_system])
+        macaulay = matrix(F, [[(mon * self[i]).monomial_coefficient(m) for m in monomials_sys] for mon, i in augmented_system])
 
         return [macaulay, augmented_system, monomials_sys] if return_indices else macaulay
 
