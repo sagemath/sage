@@ -347,7 +347,7 @@ jobs:
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}
-        if: always() && (inputs.logs_artifact == true || inputs.logs_artifact == null)
+        if: always() && (inputs.logs_artifact == true || github.event_name == 'workflow_dispatch')
 
       - name: Print out logs for immediate inspection
         # and markup the output with GitHub Actions logging commands
