@@ -120,6 +120,14 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from collections.abc import Hashable
+from copyreg import constructor as copyreg_constructor
+import os
+import shlex
+from subprocess import Popen, PIPE
+from warnings import warn
+from functools import reduce
+from io import IOBase, StringIO
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.combinat.posets.posets', 'FinitePoset')
@@ -158,16 +166,6 @@ from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.geometry.convex_set import ConvexSet_compact
 import sage.geometry.abc
-
-from copy import copy
-from collections.abc import Hashable
-from copyreg import constructor as copyreg_constructor
-import os
-import shlex
-from subprocess import Popen, PIPE
-from warnings import warn
-from functools import reduce
-from io import IOBase, StringIO
 
 
 class SetOfAllLatticePolytopesClass(Set_generic):

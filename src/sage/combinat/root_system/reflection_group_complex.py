@@ -196,26 +196,25 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method, cached_function
-from sage.misc.misc_c import prod
 from sage.categories.category import Category
-from sage.categories.permutation_groups import PermutationGroups
 from sage.categories.complex_reflection_groups import ComplexReflectionGroups
 from sage.categories.coxeter_groups import CoxeterGroups
+from sage.categories.permutation_groups import PermutationGroups
+from sage.combinat.root_system.cartan_matrix import CartanMatrix
 from sage.combinat.root_system.reflection_group_element import ComplexReflectionGroupElement, _gap_return
-from sage.sets.family import Family
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
-from sage.combinat.permutation import Permutation
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
+from sage.interfaces.gap3 import gap3
 from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
-from sage.structure.element import Matrix
-from sage.interfaces.gap3 import gap3
-from sage.modules.free_module_element import vector
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
+from sage.misc.cachefunc import cached_method, cached_function
+from sage.misc.misc_c import prod
 from sage.misc.sage_eval import sage_eval
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.sets.family import Family
+from sage.structure.element import Matrix
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
