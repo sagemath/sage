@@ -145,12 +145,10 @@ class GeneralizedYoungWall(CombinatorialElement):
         """
         Return a unicode art representation of ``self``.
 
-        .. TODO:: Fix this !
-
         TESTS::
 
             sage: y = crystals.infinity.GeneralizedYoungWalls(2)([[0,2,1],[1,0,2,1,0],[],[0],[1,0,2],[],[],[1]])
-            sage: unicode_art(y)  # known bug
+            sage: unicode_art(y)
                             ┌───┐
                             │ 1 │
                             └───┘
@@ -177,7 +175,8 @@ class GeneralizedYoungWall(CombinatorialElement):
         import unicodedata
         v = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
         vl = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND LEFT')
-        table = [[None] * (self.cols - len(row)) + row for row in reversed(self)]
+        table = [[None] * (self.cols - len(row)) + list(reversed(row))
+                 for row in reversed(self)]
         ret = []
         for i, row in enumerate(ascii_art_table(table, use_unicode=True).splitlines()):
             if row[-1] == " ":
@@ -428,7 +427,11 @@ class GeneralizedYoungWall(CombinatorialElement):
             15
         """
         n = self.parent().cartan_type().rank() - 1
-        m = lambda i: len([1 for r in self.data if r and r[0] == (i - 1) % (n + 1)])
+
+        def m(i):
+            mod = (i - 1) % (n + 1)
+            return len([1 for r in self.data if r and r[0] == mod])
+
         for r in self.data:
             if r and r[0] == n:
                 raise ValueError('Statistic only valid for generalized Young walls in Y_0')
@@ -1041,8 +1044,10 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
 
             sage: TestSuite(YLa).run(skip=["_test_enumerated_set_contains","_test_stembridge_local_axioms"]) # long time
         """
+        cat = (RegularCrystals(), HighestWeightCrystals(),
+               InfiniteEnumeratedSets())
         InfinityCrystalOfGeneralizedYoungWalls.__init__(self, n,
-                category=(RegularCrystals(), HighestWeightCrystals(), InfiniteEnumeratedSets()))
+                                                        category=cat)
         self.hw = La
 
     Element = CrystalOfGeneralizedYoungWallsElement
