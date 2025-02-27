@@ -29,7 +29,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element, get_coercion_model
 from sage.all import QQ, Integer
-from sage.algebras.flag import Flag, Pattern
+from sage.algebras.flag import _Flag, Pattern
 
 from sage.all import vector
 
@@ -320,7 +320,7 @@ class FlagAlgebraElement(Element):
         return self.parent().theory()
 
     def custom_coerce(self, other):
-        if isinstance(other, Flag) or isinstance(other, Pattern):
+        if isinstance(other, _Flag):
             if self.ftype()!=other.ftype():
                 raise ValueError("The ftypes must agree.")
             alg = self.parent()
@@ -552,7 +552,7 @@ class FlagAlgebraElement(Element):
         return self.__class__(self.parent(), ressize, vals)
     
     def __getitem__(self, flag):
-        if isinstance(flag, Flag):
+        if isinstance(flag, _Flag) and not isinstance(flag, Pattern):
             ind = self.parent().get_index(flag)
         elif isinstance(flag, Integer) and \
             0 <= flag and \
@@ -565,7 +565,7 @@ class FlagAlgebraElement(Element):
         return self._values[ind]
     
     def __setitem__(self, flag, value):
-        if isinstance(flag, Flag):
+        if isinstance(flag, _Flag) and not isinstance(flag, Pattern):
             ind = self.parent().get_index(flag)
         elif isinstance(flag, Integer) and \
             0 <= flag and \
@@ -901,7 +901,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         return self._index_set[n]
 
     def get_index(self, flag):
-        if not isinstance(flag, Flag):
+        if not isinstance(flag, _Flag):
             return -1
         if flag.ftype()!=self.ftype():
             return -1
@@ -974,7 +974,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         if len(args)==1:
             v = args[0]
             base = self.base()
-            if isinstance(v, Flag):
+            if isinstance(v, _Flag) and not isinstance(v, Pattern):
                 ind = self.get_index(v)
                 size = self.get_size(v.size())
                 if ind!=-1:

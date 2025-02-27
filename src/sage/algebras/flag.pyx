@@ -449,7 +449,7 @@ cpdef tuple overlap_generator(int n, theoryR, tuple small0, tuple small1, tuple 
     return tuple(ret)
 
 
-cdef class Flag(Element):
+cdef class _Flag(Element):
     cdef int _n
     cdef int _ftype_size
     
@@ -522,8 +522,20 @@ cdef class Flag(Element):
     
     vertex_number = size
 
-    cpdef blocks(self):
-        return self._blocks
+    cpdef blocks(self, key=None):
+        r"""
+        Returns the blocks
+
+        INPUT:
+
+        - ``key`` -- 
+
+        OUTPUT: 
+        """
+        if key==None:
+            return self._blocks
+        else:
+            return self._blocks[key]
     
     cpdef tuple ftype_points(self):
         r"""
@@ -572,7 +584,7 @@ cdef class Flag(Element):
     cpdef tuple unique(self, bint weak = False):
         return ((), ())
     
-    cpdef bint weak_equal(self, Flag other):
+    cpdef bint weak_equal(self, _Flag other):
         if self.theory() != other.theory():
             return False
         if self._ftype_size != other._ftype_size:
@@ -581,7 +593,7 @@ cdef class Flag(Element):
         cdef tuple oun = other.unique(weak=True)
         return sun[0] == oun[0]
     
-    cpdef bint normal_equal(self, Flag other):
+    cpdef bint normal_equal(self, _Flag other):
         if self.theory() != other.theory():
             return False
         if self._ftype_size != other._ftype_size:
@@ -590,37 +602,12 @@ cdef class Flag(Element):
         cdef tuple oun = other.unique(weak=False)
         return sun[0] == oun[0]
     
-    cpdef bint strong_equal(self, Flag other):
+    cpdef bint strong_equal(self, _Flag other):
         if self.theory() != other.theory():
             return False
         if self.ftype_points() != other.ftype_points():
             return False
         return self._blocks == other._blocks
-
-    # Core loops
-
-    cpdef list ftypes_inside(self, target):
-        r"""
-        Returns the possible ways self ftype appears in target
-
-        INPUT:
-
-        - ``target`` -- Flag; the flag where we are looking for copies of self
-
-        OUTPUT: list of Flags with ftype matching as self, not necessarily unique
-        """
-        cdef list ret = []
-        cdef list lrp = list(range(target.size()))
-        cdef tuple ftype_points
-        cdef Flag newflag
-        for ftype_points in itertools.permutations(range(target.size()), self._n):
-            sig_check()
-            if target.subflag(ftype_points, ftype_points)==self:
-                newflag = target.subflag(lrp, ftype_points)
-                if newflag not in ret:
-                    ret.append(newflag)
-        return ret
-    
 
     # Flag algebra compatibility
     def afae(self):
@@ -630,7 +617,7 @@ cdef class Flag(Element):
 
     def custom_coerce(self, other):
         from sage.algebras.flag_algebras import FlagAlgebra, FlagAlgebraElement
-        if isinstance(other, Flag) or isinstance(other, Pattern):
+        if isinstance(other, _Flag) or isinstance(other, Pattern):
             if self.ftype()!=other.ftype():
                 raise ValueError("The ftypes must agree.")
             alg = FlagAlgebra(self.theory(), QQ, self.ftype())
@@ -843,7 +830,6 @@ cdef class Flag(Element):
         r"""
         Loads this flag from a dictionary
         """
-        self._set_parent(dd['theory'])
         self._n = dd['n']
         self._ftype_points = dd['ftype_points']
         self._ftype_size = len(self._ftype_points)
@@ -943,7 +929,7 @@ cdef class Flag(Element):
         oafae = safae.parent(other)
         return self.afae().density(oafae)
 
-cdef class BuiltFlag(Flag):
+cdef class BuiltFlag(_Flag):
     cdef set _automorphisms
     cdef tuple _weak_unique
     cdef BuiltFlag _ftype
@@ -954,7 +940,7 @@ cdef class BuiltFlag(Flag):
         self._weak_unique = None
         self._unique = None
         self._ftype = None
-        Flag.__init__(self, theory, n, ftype)
+        _Flag.__init__(self, theory, n, ftype)
     
     cpdef tuple _relation_list(self):
         cdef dict ret = {}
@@ -990,21 +976,6 @@ cdef class BuiltFlag(Flag):
     cpdef dict signature(self):
         return self.theory().signature()
 
-    cpdef blocks(self, key=None):
-        r"""
-        Returns the blocks
-
-        INPUT:
-
-        - ``key`` -- 
-
-        OUTPUT: 
-        """
-        if key==None:
-            return self._blocks
-        else:
-            return self._blocks[key]
-    
     cpdef BuiltFlag ftype(self):
         r"""
         Returns the ftype of this `Flag`
@@ -1351,6 +1322,28 @@ cdef class BuiltFlag(Flag):
         new_ftype_points = [points.index(ii) for ii in ftype_points]
         return BuiltFlag(self.theory(), len(points), new_ftype_points, **blocks)
 
+    cpdef list ftypes_inside(self, target):
+        r"""
+        Returns the possible ways self ftype appears in target
+
+        INPUT:
+
+        - ``target`` -- Flag; the flag where we are looking for copies of self
+
+        OUTPUT: list of Flags with ftype matching as self, not necessarily unique
+        """
+        cdef list ret = []
+        cdef list lrp = list(range(target.size()))
+        cdef tuple ftype_points
+        cdef BuiltFlag newflag
+        for ftype_points in itertools.permutations(range(target.size()), self._n):
+            sig_check()
+            if target.subflag(ftype_points, ftype_points)==self:
+                newflag = target.subflag(lrp, ftype_points)
+                if newflag not in ret:
+                    ret.append(newflag)
+        return ret
+
     cpdef list signature_changes(self):
         cdef list ret = []
         cdef list perms = self.theory()._signature_perms()
@@ -1457,7 +1450,7 @@ cdef class BuiltFlag(Flag):
         r"""
         Saves this flag to a dictionary
         """
-        dd = Flag.__getstate__(self)
+        dd = _Flag.__getstate__(self)
         dd['weak_unique'] = self._weak_unique
         dd['automorphisms'] = self._automorphisms
         return dd
@@ -1466,12 +1459,15 @@ cdef class BuiltFlag(Flag):
         r"""
         Loads this flag from a dictionary
         """
-        Flag.__setstate__(self, dd)
+        _Flag.__setstate__(self, dd)
+        self._set_parent(dd['theory'])
         self._weak_unique = dd['weak_unique']
         self._automorphisms = dd['automorphisms']
         self._ftype = None
 
-cdef class ExoticFlag(Flag):
+cdef class ExoticFlag(_Flag):
+
+    cdef ExoticFlag _ftype
     
     def __init__(self, theory, n, ftype, **params):
         r"""
@@ -1515,41 +1511,53 @@ cdef class ExoticFlag(Flag):
         self._blocks = {}
         for xx in theory._signature.keys():
             if xx in params:
-                self._blocks[xx] = [list(yy) for yy in params[xx]]
+                self._blocks[xx] = tuple([tuple(yy) for yy in params[xx]])
             else:
-                self._blocks[xx] = []
+                self._blocks[xx] = tuple()
         self._unique = ()
-        Flag.__init__(self, theory, n, ftype)
+        self._ftype = None
+        _Flag.__init__(self, theory, n, ftype)
     
     # Basic properties
 
-    cpdef blocks(self, as_tuple=False, key=None):
+    cpdef ExoticFlag ftype(self):
         r"""
-        Returns the blocks
+        Returns the ftype of this `Flag`
 
-        INPUT:
+        EXAMPLES::
 
-        - ``as_tuple`` -- boolean (default: `False`); if the result should
-            contain the blocks as a tuple
+        Ftype of a pointed triangle is just a point ::
 
-        OUTPUT: A dictionary, one entry for each element in the signature
-            and list (or tuple) of the blocks for that signature.
+            
+            sage: pointed_triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]], ftype=[0])
+            sage: pointed_triangle.ftype()
+            Ftype on 1 points with edges=()
+        
+        And with two points it is ::
+        
+            sage: two_pointed_triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]], ftype=[0, 1])
+            sage: two_pointed_triangle.ftype()
+            Ftype on 2 points with edges=(01)
+
+        .. NOTE::
+
+            This is essentially the subflag, but the order of points matter. The result is saved
+            for speed.
+
+        .. SEEALSO::
+
+            :func:`subflag`
         """
-        if as_tuple:
-            if key != None:
-                return tuple([tuple(yy) for yy in self._blocks[key]])
-            ret = {}
-            for xx in self._blocks:
-                ret[xx] = tuple([tuple(yy) for yy in self._blocks[xx]])
-            return ret
-        if key!=None:
-            return self._blocks[key]
-        return self._blocks
+        if self._ftype==None:
+            if self.is_ftype():
+                self._ftype = self
+            self._ftype = self.subflag([])
+        return self._ftype
     
 
     # Isomorphisms and related stuff
 
-    def unique(self, weak=False):
+    cpdef tuple unique(self, bint weak = False):
         r"""
         This returns a unique identifier that can equate isomorphic
         objects
@@ -1578,13 +1586,13 @@ cdef class ExoticFlag(Flag):
             :func:`__eq__`
         """
         if weak:
-            return self.theory().identify(self._n, [self._ftype_points], **self._blocks)
+            return (self.theory().identify(self._n, [self._ftype_points], 
+            **self._blocks), None)
         if self._unique==():
             self._unique = self.theory().identify(
                 self._n, self._ftype_points, **self._blocks)
-        return self._unique
+        return (self._unique, None)
     
-
     # Core loops
 
     cpdef ExoticFlag subflag(self, points=None, ftype_points=None):
@@ -1632,14 +1640,36 @@ cdef class ExoticFlag(Flag):
         if ftype_points==None:
             ftype_points = self._ftype_points
         if points==None:
-            points = list(range(self._n))
+            points = tuple(range(self._n))
         else:
-            points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
+            points = tuple([ii for ii in range(self._n) if (ii in points or ii in ftype_points)])
         if len(points)==self._n and ftype_points==self._ftype_points:
             return self
         blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
         new_ftype_points = [points.index(ii) for ii in ftype_points]
         return ExoticFlag(self.parent(), len(points), ftype=new_ftype_points, **blocks)
+
+    cpdef list ftypes_inside(self, target):
+        r"""
+        Returns the possible ways self ftype appears in target
+
+        INPUT:
+
+        - ``target`` -- Flag; the flag where we are looking for copies of self
+
+        OUTPUT: list of Flags with ftype matching as self, not necessarily unique
+        """
+        cdef list ret = []
+        cdef list lrp = list(range(target.size()))
+        cdef tuple ftype_points
+        cdef ExoticFlag newflag
+        for ftype_points in itertools.permutations(range(target.size()), self._n):
+            sig_check()
+            if target.subflag(ftype_points, ftype_points)==self:
+                newflag = target.subflag(lrp, ftype_points)
+                if newflag not in ret:
+                    ret.append(newflag)
+        return ret
 
     cpdef densities(self, n1, n1flgs, n2, n2flgs, ftype_remap, large_ftype, small_ftype):
         r"""
@@ -1693,7 +1723,7 @@ cdef class ExoticFlag(Flag):
                 else:
                     large_points[ii] = difference[vii-small_size]
             ind_large_ftype = self.subflag([], ftype_points=large_points)
-            if ind_large_ftype.unique()==None:
+            if ind_large_ftype.unique()[0]==None:
                 continue
             
             valid_ftypes += 1
@@ -1702,7 +1732,7 @@ cdef class ExoticFlag(Flag):
                 not_large_points = [ii for ii in range(N) if ii not in large_points]
                 for n1_extra_points in itertools.combinations(not_large_points, n1 - large_size):
                     n1_subf = self.subflag(n1_extra_points, ftype_points=large_points)
-                    if n1_subf.unique()==None:
+                    if n1_subf.unique()[0]==None:
                         continue
                     try:
                         n1_ind = n1flgs.index(n1_subf)
@@ -1716,7 +1746,7 @@ cdef class ExoticFlag(Flag):
                     remaining_points = [ii for ii in not_large_points if ii not in n1_extra_points]
                     for n2_extra_points in itertools.combinations(remaining_points, n2 - large_size):
                         n2_subf = self.subflag(n2_extra_points, ftype_points=large_points)
-                        if n2_subf.unique()==None:
+                        if n2_subf.unique()[0]==None:
                             continue
                         valid_flag_pairs += 1
                         try:
@@ -1739,10 +1769,9 @@ cdef class ExoticFlag(Flag):
         r"""
         Loads this flag from a dictionary
         """
-        Flag.__setstate__(self, dd)
+        _Flag.__setstate__(self, dd)
+        self._set_parent(dd['theory'])
         self._ftype = None
-    
-
 
 cdef tuple _generate_all_relations(int n, dict relation):
     cdef int arity = relation["arity"]
@@ -1809,12 +1838,12 @@ cdef dict _pattern_ftype_fix(tuple ftype_points, dict blocks, dict signature):
             fix[xx+"_m"] = tuple(newmsxx)
     return fix
 
-cdef class Pattern(Flag):
+cdef class Pattern(_Flag):
     
     cdef BuiltFlag _ftype
     
     def __init__(self, theory, n, ftype, **params):
-        Flag.__init__(self, theory, n, ftype)
+        _Flag.__init__(self, theory, n, ftype)
         cdef dict blocks = _standardize_blocks(params, theory._signature, True)
         cdef dict blfix = _pattern_overlap_fix(self._ftype_points, blocks, theory._signature)
         if blfix!={}:
@@ -1855,15 +1884,6 @@ cdef class Pattern(Flag):
         return tuple(ret)
     
     #Basic properties
-    
-    cpdef blocks(self, str key=None, bint missing=True):
-        if key!=None:
-            if missing:
-                key += "_m"
-            return self._blocks[key]
-        if missing:
-            return self._blocks
-        return {kk:self._blocks[kk] for kk in self.theory().signature().keys()}
 
     cpdef BuiltFlag ftype(self):
         if self._ftype==None:
@@ -1948,21 +1968,3 @@ cdef class Pattern(Flag):
         return targ_alg(self.size(), vector(base, len(aflags), targ_vec))
     
     afae = as_flag_algebra_element
-    
-    def custom_coerce(self, other):
-        from sage.algebras.flag_algebras import FlagAlgebra, FlagAlgebraElement
-        if isinstance(other, Flag) or isinstance(other, Pattern):
-            if self.ftype()!=other.ftype():
-                raise ValueError("The ftypes must agree.")
-            alg = FlagAlgebra(self.theory(), QQ, self.ftype())
-            return (alg(self), alg(other))
-        elif isinstance(other, FlagAlgebraElement):
-            if self.ftype()!=other.ftype():
-                raise ValueError("The ftypes must agree.")
-            base = other.base()
-            alg = other.parent()
-            return (alg(self), other)
-        else:
-            base = coercion_model.common_parent(QQ, other.parent())
-            alg = FlagAlgebra(self.theory(), base, self.ftype())
-            return (alg(self), alg(base(other)))
