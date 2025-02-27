@@ -292,7 +292,6 @@ rm -rf /source-tree/.git
 if [ -d /sage ]; then
   BASE_VERSION=\$(cat /sage/VERSION.txt)
   if (cd /source-tree && .ci/retrofit-worktree.sh worktree-image /sage); then
-    rm -rf /source-tree
     echo "### Starting incremental build from \$BASE_VERSION"
   else
     echo "retrofit-worktree.sh failed..."
