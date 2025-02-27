@@ -157,7 +157,7 @@ jobs:
           ["maximal"]
       free_disk_space: true
       incremental: false
-      docker_targets: "with-system-packages configured with-targets-pre"
+      docker_targets: "with-system-packages configured with-targets-pre with-targets"
       targets_pre: all-sage-local
       targets: build doc-html
       docker_push_repository: ghcr.io/${{ github.repository }}/
