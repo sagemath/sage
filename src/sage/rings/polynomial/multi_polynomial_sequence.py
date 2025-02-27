@@ -984,9 +984,7 @@ class PolynomialSequence_generic(Sequence_generic):
         """
         from sage.matrix.constructor import matrix
 
-        m = len(self)
-
-        if m == 0:
+        if len(self) == 0:
             raise ValueError('the sequence of polynomials must be nonempty')
         if degree < 0:
             raise ValueError('the degree must be nonnegative')
