@@ -991,6 +991,11 @@ class PolynomialSequence_generic(Sequence_generic):
             raise ValueError('the sequence of polynomials must be nonempty')
         if degree < 0:
             raise ValueError('the degree must be nonnegative')
+        if homogeneous :
+            for i in range(m):
+                if not(self[i].is_homogeneous()):
+                    raise ValueError('all the polynomials of the sequence must be homogeneous')
+
 
         # handle subset of variables
         S = self.ring()
