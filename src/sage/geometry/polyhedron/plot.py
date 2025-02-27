@@ -1955,7 +1955,6 @@ class Projection(SageObject):
              [4, 9, 16, 21, 3, 5, 15, 17, 10, 22, 2, 6, 8, 7, 11, 20, 23])
 
         """
-        P = self.parent_polyhedron
         facet_ineqs = self.face_inequalities
         front_facets = []
         back_facets = []
