@@ -986,11 +986,13 @@ class PolynomialSequence_generic(Sequence_generic):
 
         m = len(self)
 
+        # handle unsuitable input
         if m == 0:
             raise ValueError('the sequence of polynomials must be nonempty')
         if degree < 0:
             raise ValueError('the degree must be nonnegative')
 
+        # handle subset of variables
         S = self.ring()
         F = S.base_ring()
         if variables is None:
@@ -1025,6 +1027,8 @@ class PolynomialSequence_generic(Sequence_generic):
             for deg in range(target_degree+1):
                 S_monomials_of_degree[deg] = S.monomials_of_degree(deg)
 
+        # compute list of extended monomials (ring monomials + polynomial position)
+        # that will be used to construct the rows
         row_indices = []
         if homogeneous:
             for i in range(m):
