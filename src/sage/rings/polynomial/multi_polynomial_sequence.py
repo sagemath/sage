@@ -930,7 +930,7 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: L = Sequence([x*y + 2*z^2, y^2 + y*z, x*z])
             sage: L.macaulay_matrix(1, homogeneous=True, remove_zero=True, return_indices=True)
-            [
+            (
             [0 0 0 0 1 0 0 0 2]
             [0 1 0 0 0 0 0 2 0]
             [1 0 0 0 0 0 2 0 0]
@@ -942,7 +942,7 @@ class PolynomialSequence_generic(Sequence_generic):
             [0 0 0 1 0 0 0 0 0],
             [(z, 0), (y, 0), (x, 0), (z, 1), (y, 1), (x, 1), (z, 2), (y, 2), (x, 2)],
             [x^2*y, x*y^2, y^3, x^2*z, x*y*z, y^2*z, x*z^2, y*z^2, z^3]
-            ]
+            )
 
         Example in which we build rows using monomials that involve only a
         subset of the ring variables (``variables=['x']``)::
@@ -952,7 +952,7 @@ class PolynomialSequence_generic(Sequence_generic):
             ....:               -3*y^2 + 3*y*z + 2*z^2 - 2*x - 2*y,
             ....:               -2*y - z - 3])
             sage: L.macaulay_matrix(1, variables=['x'], remove_zero=True, return_indices=True)
-            [
+            (
             [ 0  0  0  0  0  0  0  0  0  2 -2 -3  0  1 -3]
             [ 0  0  0  2 -2 -3  0  0  1  0  0 -3  0  0  0]
             [ 0  0  0  0  0  0  0 -3  0  3  2 -2 -2  0  0]
@@ -962,7 +962,7 @@ class PolynomialSequence_generic(Sequence_generic):
             [-2  0 -1  0  0 -3  0  0  0  0  0  0  0  0  0],
             [(1, 0), (x, 0), (1, 1), (x, 1), (1, 2), (x, 2), (x^2, 2)],
             [x^2*y, x*y^2, x^2*z, x*y*z, x*z^2, x^2, x*y, y^2, x*z, y*z, z^2, x, y, z, 1]
-            ]
+            )
 
         TESTS::
 
@@ -1041,6 +1041,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         # compute sorted list of monomials that index the columns
         if remove_zero:
+            # FIXME clean (and refactor multiplications?)
             column_indices = list(set(sum(((mon * self[i]).monomials() for mon, i in row_indices), [])))
         else:
             if homogeneous :
@@ -1048,13 +1049,19 @@ class PolynomialSequence_generic(Sequence_generic):
             else:
                 column_indices = [mon for deg in range(target_degree + 1)
                                       for mon in S_monomials_of_degree[deg]]
-
         column_indices.sort(reverse=True)
-        macaulay = matrix(F, [[(mrow * self[i]).monomial_coefficient(mcol)
-                                               for mcol in column_indices]
-                                              for mrow, i in row_indices])
 
-        return [macaulay, row_indices, column_indices] if return_indices else macaulay
+        # actually build the Macaulay matrix
+        macaulay_mat = matrix(F, len(row_indices), len(column_indices))
+        for (ii, (mrow, i)) in enumerate(row_indices):
+            multiple = mrow * self[i]
+            for (jj, mcol) in enumerate(column_indices):
+                macaulay_mat[ii, jj] = multiple.monomial_coefficient(mcol)
+
+        if not return_indices:
+            return macaulay_mat
+        else:
+            return macaulay_mat, row_indices, column_indices
 
     def subs(self, *args, **kwargs):
         """
