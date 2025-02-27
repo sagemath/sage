@@ -78,10 +78,6 @@ on:
         description: 'Elapsed time (seconds) at which to kill the build'
         default: 20000
         type: number
-      logs_artifact:
-        description: 'Switch for uploading logs artifact'
-        default: true
-        type: boolean
       logs_artifact_postfix:
         description: 'Postfix (default: none) for logs artifact name'
         default: ""
@@ -347,7 +343,7 @@ jobs:
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}
-        if: always() && (inputs.logs_artifact == true || github.event_name == 'workflow_dispatch')
+        if: always()
 
       - name: Print out logs for immediate inspection
         # and markup the output with GitHub Actions logging commands

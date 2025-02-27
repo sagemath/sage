@@ -56,7 +56,7 @@ jobs:
       targets: build doc-html
       targets_optional: ptest
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      logs_artifact: false
+      logs_artifact_postfix: "-default"
 
   # The following jobs run for all supported platforms. See the default list
   # for tox_system_factors in docker.yml.
