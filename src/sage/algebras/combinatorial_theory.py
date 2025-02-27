@@ -149,7 +149,7 @@ import itertools
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.all import QQ, NN, Integer, ZZ, infinity
-from sage.algebras.flag import Flag, Pattern, inductive_generator, overlap_generator
+from sage.algebras.flag import BuiltFlag, ExoticFlag, Pattern, inductive_generator, overlap_generator
 from sage.algebras.flag_algebras import FlagAlgebra, FlagAlgebraElement
 
 from sage.categories.sets_cat import Sets
@@ -390,6 +390,8 @@ def _remove_kernel(mat, factor=1024, threshold=1e-4):
 class CombinatorialTheory(Parent, UniqueRepresentation):
     def __init__(self, name):
         self._name = name
+        self._excluded = tuple()
+        self._printlevel = 1
         Parent.__init__(self, category=(Sets(), ))
         self._populate_coercion_lists_()
 
@@ -418,6 +420,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             {'edges': {'arity': 2, 'group': 0, 'ordered': False}}
         """
         return self._signature
+
+    def symmetries(self):
+        r"""
+        Returns the symmetry data for this theory
+        """
+        return self._symmetries
 
     # Persistend data management
     def _calcs_dir(self):
@@ -681,22 +689,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         for param in to_pop:
             table_constructor.pop(param, None)
         return table_constructor
-
-    def _print_eigenvalues(self, table_constructor, sdp_result):
-        r"""
-        Helper to quickly print the eigenvalues of each X matrix from the result
-        of an SDP.
-        """
-        block_index = 0
-        for params in table_constructor.keys():
-            ftype = params[1]
-            for plus_index in range(len(table_constructor[params])):
-                X_approx = matrix(sdp_result['X'][block_index + plus_index])
-                X_eigenvalues = X_approx.eigenvalues()
-                print("{} index {} has eigenvalues {}\n\n".format(
-                    ftype, plus_index, X_eigenvalues
-                    ))
-            block_index += len(table_constructor[params])
     
     def _tables_to_sdp_data(self, table_constructor, prev_data=None):
         r"""
@@ -884,7 +876,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 pbar = None
             for ii in iterator:
                 fv = positives[ii]
-                if isinstance(fv, Flag):
+                if isinstance(fv, ExoticFlag) or isinstance(fv, BuiltFlag):
                     continue
                 kf = fv.ftype().size()
                 nf = fv.size()
@@ -1982,7 +1974,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         positives_list_exact = []
         if positives != None:
             for ii, fv in enumerate(positives):
-                if isinstance(fv, Flag):
+                if isinstance(fv, BuiltFlag) or isinstance(fv, ExoticFlag):
                     continue
                 nf = fv.size()
                 df = target_size + fv.ftype().size() - nf
@@ -2032,7 +2024,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     verify = verify_certificate
     
-    
+
+    # Generating flags
+
+    def _find_ftypes(self, empstrs, ftype):
+        import multiprocessing as mp
+        pool = mp.Pool(mp.cpu_count()-1)
+        pares = pool.map(ftype.ftypes_inside, empstrs)
+        pool.close(); pool.join()
+        return tuple(itertools.chain.from_iterable(pares))
+
     # Generating tables
 
     def sym_asym_bases(self, n, ftype=None):
@@ -2072,7 +2073,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
 class BuiltTheory(CombinatorialTheory):
     
-    Element = Flag
+    Element = BuiltFlag
     
     def __init__(self, name, relation_name="edges", arity=2, 
                  is_ordered=False, _from_data=None):
@@ -2126,24 +2127,9 @@ class BuiltTheory(CombinatorialTheory):
             }}
             self._sources = None
             self._symmetries = ((1, 1, tuple()), )
-        self._excluded = tuple()
         self._no_question = True
-        self._printlevel = 1
         CombinatorialTheory.__init__(self, name)
     
-    def symmetries(self):
-        r"""
-        Returns the symmetry data for this theory
-
-        OUTPUT: A tuple containing the signature data
-
-        EXAMPLES::
-
-            sage: GraphTheory.symmetries()
-            ((1, 1, ()),)
-        """
-        return self._symmetries
-
     # Parent methods
     def _element_constructor_(self, n, **kwds):
         r"""
@@ -2188,7 +2174,7 @@ class BuiltTheory(CombinatorialTheory):
             :func:`__init__` of :class:`Flag`
         """
 
-        if isinstance(n, Flag) or isinstance(n, Pattern):
+        if isinstance(n, BuiltFlag) or isinstance(n, Pattern):
             if n.parent()==self:
                 return n
             n = n.as_pattern()
@@ -2379,133 +2365,7 @@ class BuiltTheory(CombinatorialTheory):
         """
         res = [self._an_element_()]
         return res
-
-    # Persistend data management
-    def _calcs_dir(self):
-        r"""
-        Returns the path where the calculations are stored.
-
-        EXAMPLES::
-
-            sage: GraphTheory._calcs_dir()
-            '/home/bodnalev/.sage/calcs'
-        """
-        calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
-        if not os.path.exists(calcs_dir):
-            os.makedirs(calcs_dir)
-        return calcs_dir
-
-    def _save(self, data, key=None, path=None, name=None):
-        r"""
-        Saves a calculation to persistent memory.
-        """
-        if name==None:
-            if key==None:
-                raise ValueError(
-                    "Either the key or the name must be provided!"
-                    )
-            serialized_key = pickle.dumps((self, key))
-            hashed_key = hashlib.sha256(serialized_key).hexdigest()
-            file_name = self._name + "." + hashed_key
-        else:
-            file_name = name
-
-        if path==None:
-            file_path = os.path.join(self._calcs_dir(), file_name)
-        elif path=="":
-            file_path = file_name
-        else:
-            if not os.path.exists(path):
-                os.makedirs(path)
-            file_path = os.path.join(path, file_name)
-        save_object = {'key': key, 'data': data}
-        with open(file_path, "wb") as file:
-            pickle.dump(save_object, file)
-
-    def _load(self, key=None, path=None, name=None):
-        r"""
-        Tries to load a calculation from persistent memory.
-        """
-        if key!=None:
-            serialized_key = pickle.dumps((self, key))
-            hashed_key = hashlib.sha256(serialized_key).hexdigest()
-            file_name = self._name + "." + hashed_key
-        if name!=None:
-            file_name = name
-
-        if path==None:
-            file_path = os.path.join(self._calcs_dir(), file_name)
-        else:
-            if not os.path.exists(path):
-                os.makedirs(path)
-            file_path = os.path.join(path, file_name)
-        
-        if not os.path.exists(file_path):
-            return None
-
-        with open(file_path, "rb") as file:
-            save_object = pickle.load(file)
-        
-        if key!=None and save_object != None and save_object['key'] != key:
-            import warnings
-            warnings.warn("Hash collision or corrupted data!")
-            return None
-        
-        return save_object['data']
-
-    def show_files(self):
-        r"""
-        Shows the persistent files saved from this theory.
-        """
-        for xx in os.listdir(self._calcs_dir()):
-            if xx.startswith(self._name + "."):
-                file_path = os.path.join(self._calcs_dir(), xx)
-                with open(file_path , "rb") as file:
-                    data = pickle.load(file)
-                if data != None:
-                    print(data["key"][:2])
-
-    def clear(self):
-        r"""
-        Clears all calculation from the persistent memory.
-        """
-        for xx in os.listdir(self._calcs_dir()):
-            if xx.startswith(self._name + "."):
-                file_path = os.path.join(self._calcs_dir(), xx)
-                os.remove(file_path)
-
-    def _serialize(self, excluded=None):
-        r"""
-        Serializes this theory. Note this contains information about 
-        the structures excluded from this theory.
-
-        EXAMPLES::
-
-            sage: GraphTheory._serialize()
-            {'excluded': ((3, (), ((0, 1), (0, 2), (1, 2))),),
-             'name': 'Graph',
-             'signature': {'edges': {'arity': 2, 'group': 0, 'ordered': False}},
-             'sources': None,
-             'symmetries': ((1, 1, ()),)}
-        """
-        if excluded==None:
-            excluded = self.get_total_excluded(100000)
-        else:
-            excluded = tuple(excluded)
-        sourceser = None
-        if self._sources != None:
-            sourceser = (
-                self._sources[0]._serialize(),
-                self._sources[1]._serialize()
-            )
-        return {
-            "name": self._name,
-            "signature": self._signature,
-            "symmetries": self._symmetries,
-            "sources": sourceser,
-            "excluded": tuple([xx._serialize() for xx in excluded])
-        }
-
+    
     # Optimizing and rounding
 
     def blowup_construction(self, target_size, pattern_size, 
@@ -2845,7 +2705,7 @@ class BuiltTheory(CombinatorialTheory):
                 pbar = None
             for ii in iterator:
                 fv = positives[ii]
-                if isinstance(fv, Flag):
+                if isinstance(fv, BuiltFlag):
                     continue
                 kf = fv.ftype().size()
                 nf = fv.size()
@@ -2979,7 +2839,7 @@ class BuiltTheory(CombinatorialTheory):
         """
         import gc
         import time
-        
+
         # set up parameters
         if round_params==None:
             round_params={}
@@ -3943,7 +3803,7 @@ class BuiltTheory(CombinatorialTheory):
         positives_list_exact = []
         if positives != None:
             for ii, fv in enumerate(positives):
-                if isinstance(fv, Flag):
+                if isinstance(fv, BuiltFlag):
                     continue
                 nf = fv.size()
                 df = target_size + fv.ftype().size() - nf
@@ -3992,9 +3852,9 @@ class BuiltTheory(CombinatorialTheory):
         return result
     
     verify = verify_certificate
-    
-    
+
     # Generating flags
+    
     def _guess_number(self, n):
         if n==0:
             return 1
@@ -4033,15 +3893,6 @@ class BuiltTheory(CombinatorialTheory):
         if val==None:
             val = True
         self._no_question = val
-
-    def get_total_excluded(self, n):
-        if self._sources == None:
-            ret = [xx for xx in self._excluded if xx.size()<=n]
-        else:
-            ret = [xx for xx in self._excluded if xx.size()<=n]
-            ret += list(self._sources[0].get_total_excluded(n))
-            ret += list(self._sources[1].get_total_excluded(n))
-        return tuple(ret)
 
     def generate_flags(self, n, ftype=None, run_bound=500000):
         r"""
@@ -4140,20 +3991,13 @@ class BuiltTheory(CombinatorialTheory):
         self._save(ret, key)
         return ret
     
-    def _find_ftypes(self, empstrs, ftype):
-        import multiprocessing as mp
-        pool = mp.Pool(mp.cpu_count()-1)
-        pares = pool.map(ftype.ftypes_inside, empstrs)
-        pool.close(); pool.join()
-        return tuple(itertools.chain.from_iterable(pares))
-    
     generate = generate_flags
 
     def exclude(self, structs=None, force=False):
         #Set up structs to contain all we want to exclude
         if structs==None:
             structs = []
-        elif type(structs)==Flag or type(structs)==Pattern:
+        elif type(structs)==BuiltFlag or type(structs)==Pattern:
             structs = [structs]
         if not force:
             structs += list(self._excluded)
@@ -4168,7 +4012,7 @@ class BuiltTheory(CombinatorialTheory):
                     xx = self.Pattern(xx.size(), **xx.blocks())
                 extension = xx.compatible_flags()
                 self._excluded = tuple(list(self._excluded) + extension)
-            elif isinstance(xx, Flag):
+            elif isinstance(xx, BuiltFlag):
                 if xx.theory()!=self:
                     xxpat = xx.as_pattern()
                     selfpat = self.Pattern(xxpat.size(), **xxpat.blocks())
@@ -4183,8 +4027,17 @@ class BuiltTheory(CombinatorialTheory):
 
     reset = reset_exclude
 
+    def get_total_excluded(self, n):
+        if self._sources == None:
+            ret = [xx for xx in self._excluded if xx.size()<=n]
+        else:
+            ret = [xx for xx in self._excluded if xx.size()<=n]
+            ret += list(self._sources[0].get_total_excluded(n))
+            ret += list(self._sources[1].get_total_excluded(n))
+        return tuple(ret)
+
     def match_pattern(self, pattern):
-        if pattern is Flag:
+        if pattern is BuiltFlag:
             return [pattern]
         ss = pattern
         if len(ss.ftype_points())!=0:
@@ -4341,43 +4194,10 @@ class BuiltTheory(CombinatorialTheory):
     mpt = mul_project_table
     table = mul_project_table
     
-    def sym_asym_bases(self, n, ftype=None):
-        r"""
-        Generate the change of base matrices for the symmetric
-        and the asymmetric subspaces
-        """
-
-        flags = self.generate_flags(n, ftype)
-        uniques = []
-        sym_base = []
-        asym_base = []
-        for xx in flags:
-            xxid = xx.unique(weak=True)
-            if xxid not in uniques:
-                uniques.append(xxid)
-                sym_base.append(xx.afae())
-            else:
-                sym_ind = uniques.index(xxid)
-                asym_base.append(sym_base[sym_ind] - xx.afae())
-                sym_base[sym_ind] += xx
-        m_sym = matrix(
-            len(sym_base), len(flags), 
-            [xx.values() for xx in sym_base], sparse=True
-            )
-        m_asym = matrix(
-            len(asym_base), len(flags), 
-            [xx.values() for xx in asym_base], sparse=True
-            )
-        return m_sym, m_asym
-    
-    def _density_wrapper(self, ar):
-        r"""
-        Helper function used in the parallelization of calculating densities
-        """
-        return ar[0].densities(*ar[1:])
 
 class ExoticTheory(CombinatorialTheory):
-    Element = Flag
+    
+    Element = ExoticFlag
     
     def __init__(self, name, generator, identifier, size_combine=None, **signature):
         r"""
@@ -4449,10 +4269,10 @@ class ExoticTheory(CombinatorialTheory):
         else:
             self._size_combine = size_combine
             self._sizes = [ii for ii in range(100) if size_combine(0, ii, 0) == ii]
-        self._excluded = []
-        self._cache = {}
         self._generator = generator
         self._identifier = identifier
+        self._sources = None
+        self._symmetries = None
         CombinatorialTheory.__init__(self, name)
     
     # Parent methods
@@ -4568,30 +4388,6 @@ class ExoticTheory(CombinatorialTheory):
         return res
     
     
-    # Persistend data management
-
-    def _serialize(self, excluded=None):
-        r"""
-        Serializes this theory. 
-        """
-        if excluded==None:
-            excluded = tuple(self._excluded)
-        else:
-            excluded = tuple(excluded)
-        sourceser = None
-        if self._sources != None:
-            sourceser = (
-                self._sources[0]._serialize(),
-                self._sources[1]._serialize()
-            )
-        return {
-            "name": self._name,
-            "signature": self._signature,
-            "symmetries": self._symmetries,
-            "sources": sourceser,
-            "excluded": tuple([xx._serialize() for xx in excluded])
-        }
-
     # Optimizing and rounding
 
     def blowup_construction(self, target_size, pattern_size, symbolic=False, symmetric=True, unordered=False, **kwargs):
@@ -4870,7 +4666,7 @@ class ExoticTheory(CombinatorialTheory):
             positives_list_exact = []
             for ii in (pbar:= tqdm(range(len(positives)))):
                 fv = positives[ii]
-                if isinstance(fv, Flag):
+                if isinstance(fv, ExoticFlag):
                     continue
                 kf = fv.ftype().size()
                 nf = fv.size()
@@ -5294,7 +5090,7 @@ class ExoticTheory(CombinatorialTheory):
         positives_list_exact = []
         if positives != None:
             for ii, fv in enumerate(positives):
-                if isinstance(fv, Flag):
+                if isinstance(fv, ExoticFlag):
                     continue
                 nf = fv.size()
                 df = target_size + fv.ftype().size() - nf
@@ -5379,58 +5175,38 @@ class ExoticTheory(CombinatorialTheory):
         and is cached for some speed
         """
         return self._identifier(n, ftype_points, **blocks)
-    
-    def exclude(self, flags=[]):
-        r"""
-        Exclude some induced flags from the theory
+
+    def exclude(self, structs=None, force=False):
+        #Set up structs to contain all we want to exclude
+        if structs==None:
+            structs = []
+        elif type(structs)==ExoticFlag:
+            structs = [structs]
+        if not force:
+            structs += list(self._excluded)
         
-        This allows creation of CombinatorialTheory -s with excluded
-        flags. The flags are not allowed to appear as an induced
-        substructure in any of the generated flags later.
+        #Make structs sorted, so it is as small as possible
+        structs.sort(key=lambda x : x.size())
+        self._excluded = tuple()
 
-        INPUT:
-
-        - ``flags`` -- list of flags or a flag (default: `[]`); 
-            The list of flags to exclude, flags are treated as
-            a singleton list
-
-        EXAMPLES::
-
-        How to create triangle-free graphs ::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]])
-            sage: GraphTheory.exclude(triangle)
-        
-        There are 14 graphs on 5 vertices without triangles ::
-        
-            sage: len(GraphTheory.generate_flags(5))
-            14
-
-        .. NOTE::
-
-            Calling :func:`exclude` again will overwrite the list
-            of excluded structures. So calling exclude() again, gives
-            back the original theory
-
-        TESTS::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: ThreeGraphTheory.exclude(ThreeGraphTheory(4))
-            sage: len(ThreeGraphTheory.generate_flags(5))
-            23
-            sage: TournamentTheory.exclude(TournamentTheory(3, edges=[[0, 1], [1, 2], [2, 0]]))
-            sage: TournamentTheory.generate_flags(5)
-            (Flag on 5 points, ftype from [] with edges=[[1, 0], [2, 0], [2, 1], [3, 0], [3, 1], [3, 2], [4, 0], [4, 1], [4, 2], [4, 3]],)
-            
-        """
-        if type(flags)==Flag:
-            if flags.unique() != None:
-                self._excluded = [flags]
+        for xx in structs:
+            if isinstance(xx, ExoticFlag):
+                if xx.theory()!=self:
+                    print("{} is from a different theory".format(xx))
+                else:
+                    if xx in self.generate(xx.size()):
+                        self._excluded = tuple(list(self._excluded) + [xx])
             else:
-                self._excluded = []
-        else:
-            self._excluded = [xx for xx in flags if xx.unique() != None]
+                print("Excluding objects with type {} is not supported".format(type(xx)))
+
+    def reset_exclude(self):
+        self.exclude(force=True)
+
+    reset = reset_exclude
+
+    def get_total_excluded(self, n):
+        ret = [xx for xx in self._excluded if xx.size()<=n]
+        return tuple(ret)
     
     def _check_excluded(self, elms):
         r"""
@@ -5452,8 +5228,10 @@ class ExoticTheory(CombinatorialTheory):
         """
         if ftype==None:
             ftype = self.empty()
-        ind = (excluded, n, ftype)
-        loaded = self._load(ind, False)
+        
+        key = ("generate", n, 
+               self._serialize(excluded), ftype._serialize())
+        loaded = self._load(key=key)
         if loaded != None:
             return loaded
         
@@ -5462,34 +5240,28 @@ class ExoticTheory(CombinatorialTheory):
         if ftype.size()==0: #just generate empty elements
             if n==0:
                 ret = (self.empty_element(), )
-                self._save(ind, ret, False)
-                return ret
-            if len(excluded)==0: #just return the output of the generator
+            elif len(excluded)==0: #just return the output of the generator
                 ret = tuple([self.element_class(self, n, **xx) for xx in self._generator(n)])
-                self._save(ind, ret, False)
-                return ret
-            
-            #otherwise check each generated for the excluded values
-            slist = [(xx, excluded) for xx in self._gfe(tuple(), n, None)]
+            else:
+                #otherwise check each generated for the excluded values
+                slist = [(xx, excluded) for xx in self._gfe(tuple(), n, None)]
+                pool = mp.Pool(mp.cpu_count()-1)
+                canincl = pool.map(self._check_excluded, slist)
+                pool.close(); pool.join()
+                ret = tuple([slist[ii][0] for ii in range(len(slist)) if canincl[ii]])
+        else:
+            #generate flags by first getting the empty structures then finding the flags
+            empstrs = self._gfe(excluded, n, None)
             pool = mp.Pool(mp.cpu_count()-1)
-            canincl = pool.map(self._check_excluded, slist)
+            pares = pool.map(ftype._ftypes_inside, empstrs)
             pool.close(); pool.join()
-            ret = tuple([slist[ii][0] for ii in range(len(slist)) if canincl[ii]])
-            self._save(ind, ret, False)
-            return ret
-        
-        #generate flags by first getting the empty structures then finding the flags
-        empstrs = self._gfe(excluded, n, None)
-        pool = mp.Pool(mp.cpu_count()-1)
-        pares = pool.map(ftype._ftypes_inside, empstrs)
-        pool.close(); pool.join()
-        ret = []
-        for coll in pares:
-            for xx in coll:
-                if xx not in ret:
-                    ret.append(xx)
-        ret = tuple(ret)
-        self._save(ind, ret, False)
+            ret = []
+            for coll in pares:
+                for xx in coll:
+                    if xx not in ret:
+                        ret.append(xx)
+            ret = tuple(ret)
+        self._save(ret, key=key)
         return ret
     
     def generate_flags(self, n, ftype=None):
@@ -5617,8 +5389,11 @@ class ExoticTheory(CombinatorialTheory):
         r"""
         The (hidden) cached version of :func:`mul_project_table`
         """
-        ind = (excluded, N, n1, n2, large_ftype, ftype_inj)
-        loaded = self._load(ind, True)
+        #Trying to load
+        key = ("table", (n1, n2, N), 
+               large_ftype._serialize(), tuple(ftype_inj), 
+               self._serialize(excluded))
+        loaded = self._load(key=key)
         if loaded != None:
             return loaded
         
@@ -5648,15 +5423,9 @@ class ExoticTheory(CombinatorialTheory):
             MatrixArgs(QQ, mat[0], mat[1], entries=mat[2]).matrix()/max(1, QQ(mat[4]*mat[3]/(max(1, mat[5])))) \
             for mat in mats])
         
-        self._save(ind, ret, True)
+        self._save(ret, key=key)
         return ret
     
-    def _density_wrapper(self, ar):
-        r"""
-        Helper function used in the parallelization of calculating densities
-        """
-        return ar[0].densities(ar[1], ar[2], ar[3], ar[4], ar[5], ar[6], ar[7])
- 
 
 def combine(name, *theories, symmetries=False):
     if not isinstance(name, str):
@@ -5679,6 +5448,8 @@ def combine(name, *theories, symmetries=False):
     result_excluded = []
 
     for theory in theories:
+        if not isinstance(theory, BuiltTheory):
+            raise ValueError("Only built theories are allowed!")
         next_group_increment = 0
         if len(theory._signature.keys())!=1:
             can_symmetry = False
@@ -5976,30 +5747,30 @@ def _cube_size_combine(k, n1, n2):
         return None
     return QQ(n1*n2/k)
 
-_PermutationTheory = ExoticTheory('Permutation', 
+PermutationTheory = ExoticTheory('Permutation', 
                                         _generator_permutation, 
                                         _identify_permutation, 
                                         edges=2)
 
-_OEGraphTheory = ExoticTheory('OEdgeGraph', 
+OEGraphTheory = ExoticTheory('OEdgeGraph', 
                                     _generator_oe_graph, 
                                     _identify_oe_graph, 
                                     edges=2)
 
-_OVGraphTheory = ExoticTheory('OVertexGraph', 
+OVGraphTheory = ExoticTheory('OVertexGraph', 
                                     _generator_ov_graph, 
                                     _identify_ov_graph, 
                                     edges=2)
 
 # should only be used up to size 8.
-_HypercubeGraphTheory = ExoticTheory('HypercubeGraph', 
+HypercubeGraphTheory = ExoticTheory('HypercubeGraph', 
                                      _generator_cube_graphs, 
                                      _identify_cube_graphs, 
                                      size_combine=_cube_size_combine, 
                                      edges=2)
 
 # should only be used up to size 16.
-_HypercubeVertexTheory = ExoticTheory('HypercubeVertex', 
+HypercubeVertexTheory = ExoticTheory('HypercubeVertex', 
                                          _generator_cube_points, 
                                          _identify_cube_points, 
                                          size_combine=_cube_size_combine, 
@@ -6007,13 +5778,13 @@ _HypercubeVertexTheory = ExoticTheory('HypercubeVertex',
 
 def Theory(name, *args, **kwdargs):
     if name=="Permutation":
-        return _PermutationTheory
+        return PermutationTheory
     if name=="OEdgeGraph":
-        return _OEGraphTheory
+        return OEGraphTheory
     if name=="OVertexGraph":
-        return _OVGraphTheory
+        return OVGraphTheory
     if name=="HypercubeGraph":
-        return _HypercubeGraphTheory
+        return HypercubeGraphTheory
     if name=="HypercubeVertex":
-        return _HypercubeVertexTheory
+        return HypercubeVertexTheory
     return BuiltTheory(name, *args, **kwdargs)

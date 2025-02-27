@@ -453,8 +453,8 @@ cdef class Flag(Element):
     cdef int _n
     cdef int _ftype_size
     
-    cdef list _ftype_points
-    cdef list _not_ftype_points
+    cdef tuple _ftype_points
+    cdef tuple _not_ftype_points
     cdef dict _blocks
     cdef tuple _unique
 
