@@ -36,7 +36,6 @@ AUTHORS:
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.manifolds.utilities import ExpressionNice
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
 from sage.structure.element import AlgebraElement, ModuleElementWithMutability
 from sage.structure.mutability import Mutability
 from sage.structure.parent import Parent

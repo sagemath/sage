@@ -2354,12 +2354,14 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: set(E.gens()) <= set([P,-P])
             True
 
-        Check that :issue:`38813` has been fixed:
+        Check that :issue:`38813` has been fixed::
 
-            sage: set_random_seed(91390048253425197917505296851335255685)
+            sage: # long time
             sage: E = EllipticCurve([-127^2,0])
-            sage: E.gens(use_database=False, algorithm='pari', pari_effort=4)   # long time
+            sage: l = E.gens(use_database=False, algorithm='pari', pari_effort=4); l   # random
             [(611429153205013185025/9492121848205441 : 15118836457596902442737698070880/924793900700594415341761 : 1)]
+            sage: a = E(611429153205013185025/9492121848205441, 15118836457596902442737698070880/924793900700594415341761)
+            sage: assert len(l) == 1 and ((l[0] - a).is_finite_order() or (l[0] + a).is_finite_order())
         """
         if proof is None:
             from sage.structure.proof.proof import get_flag

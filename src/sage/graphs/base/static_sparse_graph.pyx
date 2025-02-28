@@ -802,21 +802,43 @@ def tarjan_strongly_connected_components(G):
         ....:      s2 = Set(map(Set,scc2))
         ....:      if s1 != s2:
         ....:          print("Ooch !")
+
+    Immutable digraphs::
+
+        sage: from sage.graphs.base.static_sparse_graph import tarjan_strongly_connected_components
+        sage: G = digraphs.RandomDirectedGNP(10, .4)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = DiGraph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: tarjan_strongly_connected_components(G) == tarjan_strongly_connected_components(H)
+        True
     """
     from sage.graphs.digraph import DiGraph
 
     if not isinstance(G, DiGraph):
         raise ValueError("G must be a DiGraph.")
 
-    cdef MemoryAllocator mem = MemoryAllocator()
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        g = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+
+    cdef MemoryAllocator mem = MemoryAllocator()
     cdef int * scc = <int*> mem.malloc(g.n * sizeof(int))
     sig_on()
     cdef int nscc = tarjan_strongly_connected_components_C(g, scc)
     sig_off()
-    free_short_digraph(g)
+
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(g)
 
     cdef int i
     cdef list output = [[] for i in range(nscc)]
@@ -872,6 +894,7 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
 
     output.n = nscc
     output.m = m
+    output.edge_labels = NULL
 
     output.neighbors = <uint32_t **> check_allocarray((1+<int>output.n), sizeof(uint32_t *))
 
@@ -920,15 +943,37 @@ def strongly_connected_components_digraph(G):
         ....:     for e in g.edges(sort=False):
         ....:         assert(sccs[e[0]]==sccs[e[1]] or scc_digraph.has_edge(sccs[e[0]],sccs[e[1]]))
         ....:         assert(sccs[e[0]] >= sccs[e[1]])
+
+    Immutable digraphs::
+
+        sage: from sage.graphs.base.static_sparse_graph import strongly_connected_components_digraph
+        sage: G = digraphs.RandomDirectedGNP(10, .4)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = DiGraph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: A = strongly_connected_components_digraph(G)[0]
+        sage: B = strongly_connected_components_digraph(H)[0]
+        sage: A.is_isomorphic(B)
+        True
     """
     from sage.graphs.digraph import DiGraph
     if not isinstance(G, DiGraph):
         raise ValueError("G must be a DiGraph.")
 
-    cdef MemoryAllocator mem = MemoryAllocator()
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph g, scc_g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        g = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+
+    cdef MemoryAllocator mem = MemoryAllocator()
     cdef int * scc = <int*> mem.malloc(g.n * sizeof(int))
     cdef int i, j, nscc
     cdef list edges = []
@@ -944,7 +989,11 @@ def strongly_connected_components_digraph(G):
             edges.append((i, scc_g.neighbors[i][j]))
     output.add_edges(edges)
     sig_off()
-    free_short_digraph(g)
+
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(g)
+    free_short_digraph(scc_g)
+
     return output, {v: scc[i] for i, v in enumerate(int_to_vertex)}
 
 
@@ -968,7 +1017,8 @@ cdef void free_short_digraph(short_digraph g) noexcept:
     """
     sig_free(g.edges)
     sig_free(g.neighbors)
-    cpython.Py_XDECREF(g.edge_labels)
+    if g.edge_labels != NULL:
+        cpython.Py_XDECREF(g.edge_labels)
 
 
 def triangles_count(G):
@@ -986,14 +1036,35 @@ def triangles_count(G):
         {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
         sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3*binomial(15,3)           # needs sage.symbolic
         True
+
+    TESTS:
+
+    Immutable graphs::
+
+        sage: from sage.graphs.base.static_sparse_graph import triangles_count
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: triangles_count(G) == triangles_count(H)
+        True
     """
     from sage.rings.integer import Integer
     G._scream_if_not_simple()
 
     # g is a copy of G. If G is internally a static sparse graph, we use it.
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        g = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     cdef uint64_t * count = <uint64_t *> check_calloc(G.order(), sizeof(uint64_t))
 
@@ -1027,7 +1098,8 @@ def triangles_count(G):
 
     ans = {w: Integer(count[i] // 2) for i, w in enumerate(int_to_vertex)}
 
-    free_short_digraph(g)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(g)
     sig_free(count)
     return ans
 
@@ -1111,7 +1183,7 @@ def spectral_radius(G, prec=1e-10):
         sage: while not G.is_strongly_connected():
         ....:     shuffle(r)
         ....:     G.add_edges(enumerate(r), loops=False)
-        sage: spectral_radius(G, 1e-10)  # random
+        sage: spectral_radius(G, 1e-10)  # random  # long time
         (1.9997956006500042, 1.9998043797692782)
 
     The algorithm takes care of multiple edges::

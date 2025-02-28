@@ -11,7 +11,6 @@
 # *****************************************************************************
 
 import os
-import subprocess
 import sys
 
 from sage.env import SAGE_LOCAL

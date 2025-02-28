@@ -361,7 +361,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         cdef c_vector_modint* v
 
         # Build a table that gives the nonzero positions in each column of right
-        nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
+        nonzero_positions_in_columns = [set() for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
         for i from 0 <= i < right._nrows:
             v = &(right.rows[i])

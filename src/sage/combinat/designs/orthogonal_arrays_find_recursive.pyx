@@ -391,10 +391,10 @@ cpdef find_construction_3_5(int k, int n):
             for s in range(min(i+1,nn)):
                 for r in range(max(0,i-nn-s), min(s+1,i-s+1,nn)):
                     t = i - r - s
-                    if ((nn-r-1)*(nn-s) < t         and
-                        (r==0 or is_available(k,r)) and
-                        (s==0 or is_available(k,s)) and
-                        (t==0 or is_available(k,t))):
+                    if ((nn-r-1)*(nn-s) < t and
+                        (r==0 or is_available(k, r)) and
+                        (s==0 or is_available(k, s)) and
+                        (t==0 or is_available(k, t))):
                         from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_5
                         return construction_3_5, (k,nn,mm,r,s,t)
 
@@ -481,15 +481,15 @@ cpdef find_q_x(int k, int n):
         x = (n-q**2+q-2)/(2-q)
         if (x < q and
             0 < x and
-            n == (q-1)*(q-x)+x+2             and
-            is_available(k+1,q-x-1)          and
-            is_available(k+1,q-x+1)          and
+            n == (q-1)*(q-x)+x+2 and
+            is_available(k+1, q-x-1) and
+            is_available(k+1, q-x+1) and
             # The next is always True, because q is a prime power
             # is_available(k+1,q) and
-            is_available(k, x+2 )            and
+            is_available(k, x+2 ) and
             smallInteger(q).is_prime_power()):
             from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_q_x
-            return construction_q_x, (k,q,x)
+            return construction_q_x, (k, q, x)
     return False
 
 cpdef find_thwart_lemma_3_5(int k, int N):
@@ -865,11 +865,11 @@ def int_as_sum(int value, list S, int k_max):
                 vv = v-i
                 if vv == 0:
                     return D[v] + (i,)
-                if (vv > 0            and   # The new integer i is too big
+                if (vv > 0 and              # The new integer i is too big
                     vv <= j*max_value and   # The new integer i is too small
-                    vv not in D       and   # We had it in D     already
+                    vv not in D and         # We had it in D     already
                     vv not in new_D):       # We had it in new_D already
-                    new_D[vv] = D[v]+(i,)
+                    new_D[vv] = D[v] + (i,)
         if not new_D:
             break
         D.update(new_D)

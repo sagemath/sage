@@ -429,7 +429,7 @@ def spanning_stars(M):
     # remove low degree vertices
     H = []
     # candidate vertices
-    V_0 = set([])
+    V_0 = set()
     d = 0
     while G.order():
         x, d = min(G.degree_iterator(labels=True), key=itemgetter(1))
@@ -444,7 +444,7 @@ def spanning_stars(M):
     # greedily remove vertices
     G2 = G.copy()
     # set of picked vertices
-    V_1 = set([])
+    V_1 = set()
     while G2.order():
         # choose vertex with maximum degree in G2
         x, d = max(G2.degree_iterator(labels=True), key=itemgetter(1))

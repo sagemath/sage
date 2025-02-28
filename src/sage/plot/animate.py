@@ -1412,25 +1412,25 @@ class APngAssembler:
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_add_png", reads=False)
             enter _add_png('...png')
-              write _current_chunk = (...'\x00\x00\x00\r', ...'IHDR', ...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', ...'\xb8\x1f9\xc6')
+              write _current_chunk = (...'\x00\x00\x00\r',...'IHDR',...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00',...'\xb8\x1f9\xc6')
               call _copy() -> None
               call _first_IHDR(...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00') -> None
-              write _current_chunk = (...'\x00\x00\x00\x04', ...'gAMA', ...'\x00\x01\x86\xa0', ...'1\xe8\x96_')
+              write _current_chunk = (...'\x00\x00\x00\x04',...'gAMA',...'\x00\x01\x86\xa0',...'1\xe8\x96_')
               call _copy() -> None
-              write _current_chunk = (...'\x00\x00\x00\x07', ...'tIME', ...'\x07\xde\x06\x1b\x0b&$', ...'\x1f0z\xd5')
-              write _current_chunk = (...'\x00\x00\x00\x08', ...'IDAT', ...'img1data', ...'\xce\x8aI\x99')
+              write _current_chunk = (...'\x00\x00\x00\x07',...'tIME',...'\x07\xde\x06\x1b\x0b&$',...'\x1f0z\xd5')
+              write _current_chunk = (...'\x00\x00\x00\x08',...'IDAT',...'img1data',...'\xce\x8aI\x99')
               call _first_IDAT(...'img1data') -> None
-              write _current_chunk = (...'\x00\x00\x00\x00', ...'IEND', ...'', ...'\xaeB`\x82')
+              write _current_chunk = (...'\x00\x00\x00\x00',...'IEND',...'',...'\xaeB`\x82')
               write _first = False
             exit _add_png -> None
             enter _add_png('...png')
-              write _current_chunk = (...'\x00\x00\x00\r', ...'IHDR', ...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', ...'\xb8\x1f9\xc6')
-              write _current_chunk = (...'\x00\x00\x00\x04', ...'gAMA', ...'\x00\x01\x86\xa0', ...'1\xe8\x96_')
-              write _current_chunk = (...'\x00\x00\x00\x04', ...'IDAT', ...'img2', ...'\x0ei\xab\x1d')
+              write _current_chunk = (...'\x00\x00\x00\r',...'IHDR',...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00',...'\xb8\x1f9\xc6')
+              write _current_chunk = (...'\x00\x00\x00\x04',...'gAMA',...'\x00\x01\x86\xa0',...'1\xe8\x96_')
+              write _current_chunk = (...'\x00\x00\x00\x04',...'IDAT',...'img2',...'\x0ei\xab\x1d')
               call _next_IDAT(...'img2') -> None
-              write _current_chunk = (...'\x00\x00\x00\x04', ...'IDAT', ...'data', ...'f\x94\xcbx')
+              write _current_chunk = (...'\x00\x00\x00\x04',...'IDAT',...'data',...'f\x94\xcbx')
               call _next_IDAT(...'data') -> None
-              write _current_chunk = (...'\x00\x00\x00\x00', ...'IEND', ...'', ...'\xaeB`\x82')
+              write _current_chunk = (...'\x00\x00\x00\x00',...'IEND',...'',...'\xaeB`\x82')
               write _first = False
             exit _add_png -> None
         """
@@ -1553,16 +1553,16 @@ class APngAssembler:
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_copy")
             enter _copy()
-              read _current_chunk = (...'\x00\x00\x00\r', ...'IHDR', ...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', ...'\xb8\x1f9\xc6')
-              read out = <_io.BytesIO object at ...
-              read out = <_io.BytesIO object at ...
-              read out = <_io.BytesIO object at ...
-              read out = <_io.BytesIO object at ...
+              read _current_chunk = (...'\x00\x00\x00\r',...'IHDR',...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00',...'\xb8\x1f9\xc6')
+              read out = <_io.BytesIO... at ...
+              read out = <_io.BytesIO... at ...
+              read out = <_io.BytesIO... at ...
+              read out = <_io.BytesIO... at ...
             exit _copy -> None
             enter _copy()
-              read _current_chunk = (...'\x00\x00\x00\x04', ...'gAMA', ...'\x00\x01\x86\xa0', ...'1\xe8\x96_')
+              read _current_chunk = (...'\x00\x00\x00\x04',...'gAMA',...'\x00\x01\x86\xa0',...'1\xe8\x96_')
             ...
-              read _current_chunk = (...'\x00\x00\x00\x08', ...'IDAT', ...'img1data', ...'\xce\x8aI\x99')
+              read _current_chunk = (...'\x00\x00\x00\x08',...'IDAT',...'img1data',...'\xce\x8aI\x99')
             ...
             exit _copy -> None
         """
@@ -1581,7 +1581,7 @@ class APngAssembler:
               read _actl_written = False
               read num_frames = 2
               read num_plays = 0
-              call _chunk(...'acTL', ...'\x00\x00\x00\x02\x00\x00\x00\x00') -> None
+              call _chunk(...'acTL',...'\x00\x00\x00\x02\x00\x00\x00\x00') -> None
               write _actl_written = True
             exit _actl -> None
         """

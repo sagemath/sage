@@ -10,7 +10,6 @@ Factory for symbolic functions
 #                  https://www.gnu.org/licenses/
 ###############################################################################
 from __future__ import annotations
-from typing import Union
 
 from sage.symbolic.function import (SymbolicFunction, sfunctions_funcs,
                                     unpickle_wrapper)

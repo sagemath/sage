@@ -32,6 +32,8 @@ from memory_allocator cimport MemoryAllocator
 from sage.cpython.string cimport char_to_str
 from sage.libs.gmp.mpz cimport *
 from sage.misc.prandom import random
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_reverse
@@ -1327,6 +1329,18 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         sage: b, C = fh(G, find_path=False)
         sage: b, len(C)
         (True, 4)
+
+    Immutable graphs::
+
+        sage: G = graphs.PetersenGraph()
+        sage: H = Graph(G, immutable=True)
+        sage: fh(H)
+        (False, [7, 5, 0, 1, 2, 3, 8, 6, 9, 4])
+        sage: fh(H, find_path=True)
+        (True, [5, 0, 1, 6, 8, 3, 2, 7, 9, 4])
+        sage: G = DiGraph([(0, 1), (1, 2), (2, 3)], immutable=True)
+        sage: fh(G)
+        (False, [0, 1, 2, 3])
     """
     G._scream_if_not_simple()
 
@@ -1372,13 +1386,23 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     memset(member, 0, n * sizeof(int))
 
     # static copy of the graph for more efficient operations
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
     cdef short_digraph rev_sd
     cdef bint reverse = False
     if directed:
-        init_reverse(rev_sd, sd)
+        if isinstance(G, StaticSparseBackend) and cg._directed:
+            rev_sd = <short_digraph> cg.g_rev
+        else:
+            init_reverse(rev_sd, sd)
 
     # A list to store the available vertices at each step
     cdef list available_vertices = []
@@ -1518,9 +1542,11 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
         if bigcount * reset_bound > max_iter:
             output = [int_to_vertex[longest_path[i]] for i in range(longest)]
-            free_short_digraph(sd)
+            if not isinstance(G, StaticSparseBackend):
+                free_short_digraph(sd)
             if directed:
-                free_short_digraph(rev_sd)
+                if not (isinstance(G, StaticSparseBackend) and cg._directed):
+                    free_short_digraph(rev_sd)
                 if longest_reversed:
                     return (False, output[::-1])
             return (False, output)
@@ -1551,8 +1577,9 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
                            f"{int_to_vertex[path[0]]} are not adjacent")
 
     output = [int_to_vertex[path[i]] for i in range(length)]
-    free_short_digraph(sd)
-    if directed:
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
+    if directed and not (isinstance(G, StaticSparseBackend) and cg._directed):
         free_short_digraph(rev_sd)
 
     return (True, output)

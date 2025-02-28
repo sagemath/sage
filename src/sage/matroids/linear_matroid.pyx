@@ -1332,8 +1332,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: M = Matroid(groundset='abcdefgh', ring=GF(5),
             ....: reduced_matrix=[[2, 1, 1, 0],
             ....:                 [1, 1, 0, 1], [1, 0, 1, 1], [0, 1, 1, 2]])
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
             Linear matroid of rank 3 on 5 elements represented over the Finite
             Field of size 5
         """
@@ -2847,7 +2847,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             if sol:
                 if certificate:
                     (certX, certY) = cert_pair
-                    cert = set([])
+                    cert = set()
                     for x in certX:
                         cert.add(dX[x])
                     for y in certY:
@@ -3783,8 +3783,8 @@ cdef class BinaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: M = matroids.catalog.Fano()
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
             Binary matroid of rank 2 on 4 elements, type (0, 6)
         """
         self._move_current_basis(contractions, deletions)
@@ -4720,8 +4720,8 @@ cdef class TernaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: M = matroids.catalog.P8()
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
             Ternary matroid of rank 3 on 5 elements, type 0-
         """
         self._move_current_basis(contractions, deletions)
@@ -5488,8 +5488,8 @@ cdef class QuaternaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))              # needs sage.rings.finite_rings
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))             # needs sage.rings.finite_rings
+            sage: N = M._minor(contractions=set(['a']), deletions=set())              # needs sage.rings.finite_rings
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))             # needs sage.rings.finite_rings
             Quaternary matroid of rank 4 on 7 elements
         """
         self._move_current_basis(contractions, deletions)

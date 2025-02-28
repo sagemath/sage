@@ -266,3 +266,27 @@ class KeyConvertingDict(dict):
         if kwds:
             seq = ((f(k), v) for k, v in kwds.items())
             u(seq)
+
+    def _repr_pretty_(self, p, cycle):
+        """
+        For pretty printing in the Sage command prompt.
+
+        Since ``KeyConvertingDict`` inherits from ``dict``, we just use IPython's
+        built-in ``dict`` pretty printer.
+        When :issue:`36801` is fixed, this function will be redundant.
+
+        EXAMPLES::
+
+            sage: from sage.misc.converting_dict import KeyConvertingDict
+            sage: d = KeyConvertingDict(int)
+            sage: d["3"] = 4
+            sage: d["1"] = 2
+            sage: repr(d)    # dictionaries are insertion ordered since Python 3.6
+            '{3: 4, 1: 2}'
+            sage: d          # indirect doctest
+            {1: 2, 3: 4}
+
+        The last example output will be ``{3: 4, 1: 2}`` outside of doctesting,
+        see :func:`sage.doctest.forker.init_sage`.
+        """
+        p.pretty(dict(self))

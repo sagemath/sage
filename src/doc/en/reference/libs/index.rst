@@ -48,13 +48,6 @@ FLINT
    sage/libs/flint/qsieve_sage
    sage/libs/flint/ulong_extras_sage
 
-Giac
-----
-.. toctree::
-   :maxdepth: 1
-
-   sage/libs/giac
-
 GMP-ECM
 -------
 .. toctree::

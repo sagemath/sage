@@ -565,7 +565,7 @@ def package_systems():
         [Feature('homebrew'), Feature('sage_spkg'), Feature('pip')]
     """
     # The current implementation never returns more than one system.
-    from subprocess import run, CalledProcessError, PIPE
+    from subprocess import run, CalledProcessError
     global _cache_package_systems
     if _cache_package_systems is None:
         from .pkg_systems import PackageSystem, SagePackageSystem, PipPackageSystem

@@ -12,7 +12,6 @@ Features for testing the presence of ``fricas``
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-import os
 import subprocess
 from . import Executable, FeatureTestResult
 

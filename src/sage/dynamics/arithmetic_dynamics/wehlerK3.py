@@ -2066,8 +2066,8 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         Points = []
 
         if (self.Gpoly(component,0)(P0) != 0):
-             #We are using the quadratic formula, we need this check to ensure that the points
-             #will be rational
+            # We are using the quadratic formula, we need this check
+            # to ensure that the points will be rational
             T0 = (self.Hpoly(component, 0, 1)(P0)**2 - 4*self.Gpoly(component, 0)(P0)*self.Gpoly(component, 1)(P0))
             T1 = (self.Hpoly(component, 0, 2)(P0)**2 - 4*self.Gpoly(component, 0)(P0)*self.Gpoly(component, 2)(P0))
             if (T0.is_square() and T1.is_square()):

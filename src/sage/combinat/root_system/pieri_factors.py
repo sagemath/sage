@@ -519,7 +519,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
     @staticmethod
     def __classcall__(cls, W, min_length=0, max_length=infinity,
-                      min_support=frozenset([]), max_support=None):
+                      min_support=frozenset(), max_support=None):
         r"""
         TESTS::
 

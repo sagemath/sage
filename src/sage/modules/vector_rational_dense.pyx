@@ -308,7 +308,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i  in range(self._degree):
+        for i in range(self._degree):
             mpq_mul(z._entries[i], self._entries[i], r._entries[i])
         return z
 

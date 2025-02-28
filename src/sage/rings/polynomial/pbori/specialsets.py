@@ -87,7 +87,7 @@ if __name__ == '__main__':
     print(list(all_monomials_of_degree_d(1, [])))
     print(list(power_set([Variable(i) for i in range(2)])))
     print(list(power_set([Variable(i) for i in range(4)])))
-    print(list(power_set([])))
+    print(list(power_set()))
     # every monomial in the first 8 var, which is at most linear in the first 5
     print(list(mod_mon_set(
         power_set([Variable(i) for i in range(8)]),

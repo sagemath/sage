@@ -47,7 +47,6 @@ import socket
 import sys
 import sysconfig
 from . import version
-from pathlib import Path
 import subprocess
 
 

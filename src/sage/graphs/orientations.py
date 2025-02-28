@@ -557,13 +557,11 @@ def acyclic_orientations(G):
         # A graph without edge cannot be oriented
         return
 
-    from sage.rings.infinity import Infinity
     from sage.combinat.subset import Subsets
 
     def reorder_vertices(G):
         n = G.order()
         ko = n
-        k = n
         G_copy = G.copy()
         vertex_labels = {v: None for v in G_copy.vertices()}
 

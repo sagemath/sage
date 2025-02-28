@@ -43,10 +43,9 @@ REFERENCES:
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         https://www.gnu.org/licenses/
 # ##############################################################################
+import re
 
 from . import graph
-import os
-import re
 from sage.rings.integer import Integer
 from sage.databases.sql_db import SQLDatabase, SQLQuery
 from sage.features.databases import DatabaseGraphs
