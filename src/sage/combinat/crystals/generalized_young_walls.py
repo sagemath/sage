@@ -553,12 +553,12 @@ class GeneralizedYoungWall(CombinatorialElement):
 
             sage: x = crystals.infinity.GeneralizedYoungWalls(3)([[],[1,0,3,2],[2,1],[3,2,1,0,3,2],[],[],[2]])
             sage: t = x.tikz()
-            sage: _ = t.pdf(view=False)
+            sage: _ = t.pdf(view=False)         # long time (2s), optional - latex
 
         ::
 
             sage: t = x.tikz(latex_large=True)
-            sage: _ = t.pdf(view=False)
+            sage: _ = t.pdf(view=False)         # long time (2s), optional - latex
 
         """
         from sage.misc.latex_standalone import TikzPicture
