@@ -62,15 +62,13 @@ from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.misc import gcd
-from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.polynomial.polynomial_ring import polygens
 from sage.rings.ideal import Ideal_generic
 
 import sage.rings.number_field.order
 
-#TODO I*u works when u lies in I.ring().number_field(), but u*I doesn't
+# TODO I*u works when u lies in I.ring().number_field(), but u*I doesn't
 
 
 def NumberFieldOrderIdeal(O, *args, **kwds):
