@@ -100,6 +100,11 @@ jobs:
         run: |
           conda install --yes python-build
           python -m build --sdist --no-isolation --outdir dist .
+
+          ./bootstrap
+          ./configure
+          make pypi-sdists V=0
+          mv upstream/sage*.tar.gz dist/
           ls -l dist
 
       - uses: actions/upload-artifact@v4
