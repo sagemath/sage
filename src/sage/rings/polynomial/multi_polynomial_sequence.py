@@ -161,6 +161,7 @@ Classes
 -------
 """
 
+from sage.misc.persist import register_unpickle_override
 from sage.misc.cachefunc import cached_method
 from sage.misc.converting_dict import KeyConvertingDict
 from sage.misc.method_decorator import MethodDecorator
@@ -313,11 +314,11 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     except ImportError:
         BooleanMonomialMonoid = ()
 
-    is_ring = lambda r: (isinstance(r, (MPolynomialRing_base,
-                                        BooleanMonomialMonoid,
-                                        InfinitePolynomialRing_sparse))
-                         or (isinstance(r, QuotientRing_nc)
-                             and isinstance(r.cover_ring(), MPolynomialRing_base)))
+    def is_ring(r): return (isinstance(r, (MPolynomialRing_base,
+                                           BooleanMonomialMonoid,
+                                           InfinitePolynomialRing_sparse))
+                            or (isinstance(r, QuotientRing_nc)
+                                and isinstance(r.cover_ring(), MPolynomialRing_base)))
 
     if is_ring(arg1):
         ring, gens = arg1, arg2
@@ -704,14 +705,14 @@ class PolynomialSequence_generic(Sequence_generic):
         # Expand R by r new variables.
         T = 'T'
         while T in [str(x) for x in Xs]:
-            T = T+'T'
+            T = T + 'T'
         Ts = [T + str(j) for j in range(r)]
-        RR = PolynomialRing(K,d+r,tuple(Xs+Ts))
+        RR = PolynomialRing(K, d + r, tuple(Xs + Ts))
         Vs = list(RR.gens())
-        Xs = Vs[0 :d]
+        Xs = Vs[0:d]
         Ts = Vs[d:]
 
-        J = RR.ideal([ Ts[j] - RR(self[j]) for j in range(r)])
+        J = RR.ideal([Ts[j] - RR(self[j]) for j in range(r)])
         JJ = J.elimination_ideal(Xs)
         # By the elimination theorem, JJ is the kernel of the ring morphism
         # `phi:K[\bar T] \to K[\bar X]` that fixes `K` and sends each
@@ -722,7 +723,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         # Coerce JJ into `K[T_1,\ldots,T_r]`.
         # Choosing the negdeglex order simply because i find it useful in my work.
-        RRR = PolynomialRing(K,r,tuple(Ts),order='negdeglex')
+        RRR = PolynomialRing(K, r, tuple(Ts), order='negdeglex')
         return RRR.ideal(JJ.gens())
 
     def coefficients_monomials(self, order=None, sparse=True):
@@ -849,7 +850,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         R = self.ring()
         A, v = self.coefficients_monomials(sparse=sparse)
-        return A, matrix(R,len(v),1,v)
+        return A, matrix(R, len(v), 1, v)
 
     def macaulay_matrix(self, degree,
                         homogeneous=False,
@@ -1026,11 +1027,11 @@ class PolynomialSequence_generic(Sequence_generic):
             raise ValueError('the sequence of polynomials must be nonempty')
         if degree < 0:
             raise ValueError('the degree must be nonnegative')
-        if homogeneous :
+        if homogeneous:
             for i in range(m):
-                if not(self[i].is_homogeneous()):
+                if not (self[i].is_homogeneous()):
                     raise ValueError('all the polynomials of the sequence must be homogeneous')
-        if not (row_order is None or row_order=="TOP" or row_order=="POT") :
+        if not (row_order is None or row_order == "TOP" or row_order == "POT"):
             raise ValueError('the argument of ``row_order`` must be ``None``, "TOP" or "POT" ')
 
         # handle subset of variables
@@ -1039,13 +1040,13 @@ class PolynomialSequence_generic(Sequence_generic):
         if variables is None:
             R = S
         else:
-            vars_names_base_ring=list(S.variable_names())
-            for x in variables :
-                if str(x) not in vars_names_base_ring :
+            vars_names_base_ring = list(S.variable_names())
+            for x in variables:
+                if str(x) not in vars_names_base_ring:
                     raise ValueError("the variables must be in the polynomial ring")
             try:
-                R=PolynomialRing(F, variables,
-                                      order=S.term_order())
+                R = PolynomialRing(F, variables,
+                                   order=S.term_order())
             except ValueError:
                 raise ValueError("impossible to use the original term order (most likely because it was a block order). Please specify the term order for the subring")
 
@@ -1071,9 +1072,9 @@ class PolynomialSequence_generic(Sequence_generic):
             S_monomials_of_degree[target_degree] = S.monomials_of_degree(target_degree)
         else:
             max_deg = target_degree - min(poly.degree() for poly in self)
-            for deg in range(max_deg+1):
+            for deg in range(max_deg + 1):
                 R_monomials_of_degree[deg] = R.monomials_of_degree(deg)
-            for deg in range(target_degree+1):
+            for deg in range(target_degree + 1):
                 S_monomials_of_degree[deg] = S.monomials_of_degree(deg)
 
         # compute list of extended monomials (ring monomials + polynomial position)
@@ -1081,49 +1082,47 @@ class PolynomialSequence_generic(Sequence_generic):
         row_indices = []
         if homogeneous:
             # order the rows with POT (or None)
-            if row_order is None or row_order=="TOP" :
+            if row_order is None or row_order == "TOP":
                 for i in range(m):
                     deg = target_degree - self[i].degree()
                     R_monomials_of_degree[deg].sort()
                     row_indices += [(mon, i) for mon in R_monomials_of_degree[deg]]
             # order the rows with TOP
-            else :
+            else:
                 R_monomials_of_degree[deg].sort()
                 for mon in R_monomials_of_degree[deg]:
                     row_indices += [(mon, i) for i in range(m)]
         else:
-            #order the row with POT (or None)
-            if row_order is None or row_order=="TOP" :
+            # order the row with POT (or None)
+            if row_order is None or row_order == "TOP":
                 for i in range(m):
-                    R_monomials_usefull=[]
+                    R_monomials_usefull = []
                     for deg in range(target_degree - self[i].degree() + 1):
-                        R_monomials_usefull+=R_monomials_of_degree[deg]
+                        R_monomials_usefull += R_monomials_of_degree[deg]
                     R_monomials_usefull.sort()
-                    row_indices += [(mon, i) for mon in  R_monomials_usefull]
-            #order the row with TOP
-            else :
-                R_monomials_usefull=[]
-                for deg in range(max_deg +1):
-                    R_monomials_usefull+=R_monomials_of_degree[deg]
+                    row_indices += [(mon, i) for mon in R_monomials_usefull]
+            # order the row with TOP
+            else:
+                R_monomials_usefull = []
+                for deg in range(max_deg + 1):
+                    R_monomials_usefull += R_monomials_of_degree[deg]
                 R_monomials_usefull.sort()
                 for mon in R_monomials_usefull:
-                    row_indices += [(mon, i) for i in range(m) 
-                                             if mon.degree()<= target_degree - self[i].degree() + 1]
+                    row_indices += [(mon, i) for i in range(m)
+                                    if mon.degree() <= target_degree - self[i].degree() + 1]
 
         # compute sorted list of monomials that index the columns
         if remove_zero:
             # FIXME clean (and refactor multiplications?)
             column_indices = list(set(sum(((mon * self[i]).monomials() for mon, i in row_indices), [])))
         else:
-            if homogeneous :
+            if homogeneous:
                 column_indices = S_monomials_of_degree[target_degree]
             else:
                 column_indices = [mon for deg in range(target_degree + 1)
-                                      for mon in S_monomials_of_degree[deg]]
+                                  for mon in S_monomials_of_degree[deg]]
         column_indices.sort(reverse=not reverse_column_order)
-        dict_columns = {mon.exponents()[0] : j for (j, mon) in enumerate(column_indices)}
-
-
+        dict_columns = {mon.exponents()[0]: j for (j, mon) in enumerate(column_indices)}
 
         # actually build the Macaulay matrix
         macaulay_mat = matrix(F, len(row_indices), len(column_indices))
@@ -1237,7 +1236,7 @@ class PolynomialSequence_generic(Sequence_generic):
         if self._is_short_for_repr():
             return super()._repr_()
         else:
-            return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self),self.nvariables())
+            return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self), self.nvariables())
 
     def _repr_pretty_(self, p, cycle):
         """
@@ -1299,10 +1298,10 @@ class PolynomialSequence_generic(Sequence_generic):
         if isinstance(right, PolynomialSequence_generic) and right.ring() == self.ring():
             return PolynomialSequence(self.ring(), self.parts() + right.parts())
 
-        elif isinstance(right,(tuple,list)) and all((x.parent() == self.ring() for x in right)):
+        elif isinstance(right, (tuple, list)) and all((x.parent() == self.ring() for x in right)):
             return PolynomialSequence(self.ring(), self.parts() + (right,))
 
-        elif isinstance(right,MPolynomialIdeal) and (right.ring() is self.ring() or right.ring() == self.ring()):
+        elif isinstance(right, MPolynomialIdeal) and (right.ring() is self.ring() or right.ring() == self.ring()):
             return PolynomialSequence(self.ring(), self.parts() + (right.gens(),))
 
         else:
@@ -1447,7 +1446,7 @@ class PolynomialSequence_generic(Sequence_generic):
         try:
             return max(f.degree() for f in self)
         except ValueError:
-            return -1 # empty sequence
+            return -1  # empty sequence
 
     def __reduce__(self):
         """
@@ -1544,7 +1543,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         R = self.ring()
 
-        if isinstance(R,MPolynomialRing_libsingular):
+        if isinstance(R, MPolynomialRing_libsingular):
             return PolynomialSequence(R, interred_libsingular(self), immutable=True)
         else:
             try:
@@ -1554,8 +1553,8 @@ class PolynomialSequence_generic(Sequence_generic):
                 ret = []
                 for f in self._singular_().interred():
                     f = R(f)
-                    ret.append(f.lc()**(-1)*f) # lead coeffs are not reduced by interred
-                s.option("set",o)
+                    ret.append(f.lc()**(-1) * f)  # lead coeffs are not reduced by interred
+                s.option("set", o)
             except TypeError:
                 from sage.rings.polynomial.toy_buchberger import \
                     inter_reduction
@@ -1599,6 +1598,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
     r"""
     Polynomial Sequences over `\GF{2}`.
     """
+
     def eliminate_linear_variables(self, maxlength=Infinity, skip=None, return_reductors=False, use_polybori=False):
         """
         Return a new system where linear leading variables are
@@ -1744,7 +1744,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         else:
             # slower, more flexible solution
             if skip is None:
-                skip = lambda lm, tail: False
+                def skip(lm, tail): return False
 
             while True:
                 linear = []
@@ -1753,7 +1753,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
                 for f in F:
                     if f.degree() == 1 and len(f) <= maxlength + 1:
                         flm = f.lex_lead()
-                        if skip(flm, f-flm):
+                        if skip(flm, f - flm):
                             higher.append(f)
                             continue
                         linear.append(f)
@@ -1933,8 +1933,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
                 from sage.rings.polynomial.pbori.pbori import \
                     BooleanPolynomialRing
 
-                R_solving = BooleanPolynomialRing( T.nvariables(), [str(_) for _ in list(T.variables())] )
-            S = PolynomialSequence( R_solving, [ R_solving(f) for f in T] )
+                R_solving = BooleanPolynomialRing(T.nvariables(), [str(_) for _ in list(T.variables())])
+            S = PolynomialSequence(R_solving, [R_solving(f) for f in T])
 
         if S != []:
             if algorithm == "polybori":
@@ -1961,27 +1961,27 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         if S.variables() == ():
             solved_variables = set()
         else:
-            solved_variables = { R_origin(x).lm() for x in R_solving.gens() }
-        eliminated_variables = { f.lex_lead() for f in reductors }
-        leftover_variables = { x.lm() for x in R_origin.gens() } - solved_variables - eliminated_variables
+            solved_variables = {R_origin(x).lm() for x in R_solving.gens()}
+        eliminated_variables = {f.lex_lead() for f in reductors}
+        leftover_variables = {x.lm() for x in R_origin.gens()} - solved_variables - eliminated_variables
 
-        key_convert = lambda x: R_origin(x).lm()
+        def key_convert(x): return R_origin(x).lm()
         if leftover_variables != set():
             partial_solutions = solutions
             solutions = []
             for sol in partial_solutions:
-                for v in VectorSpace( GF(2), len(leftover_variables) ):
+                for v in VectorSpace(GF(2), len(leftover_variables)):
                     new_solution = KeyConvertingDict(key_convert, sol)
-                    for var,val in zip(leftover_variables, v):
-                        new_solution[ var ] = val
-                    solutions.append( new_solution )
+                    for var, val in zip(leftover_variables, v):
+                        new_solution[var] = val
+                    solutions.append(new_solution)
         else:
-            solutions = [ KeyConvertingDict(key_convert, sol)
-                          for sol in solutions ]
+            solutions = [KeyConvertingDict(key_convert, sol)
+                         for sol in solutions]
 
         for r in reductors:
             for sol in solutions:
-                sol[ r.lm() ] = r.subs(sol).constant_coefficient()
+                sol[r.lm()] = r.subs(sol).constant_coefficient()
 
         return solutions
 
@@ -2158,7 +2158,5 @@ class PolynomialSequence_gf2e(PolynomialSequence_generic):
         return PolynomialSequence(J)
 
 
-from sage.misc.persist import register_unpickle_override
-
-register_unpickle_override("sage.crypto.mq.mpolynomialsystem","MPolynomialSystem_generic", PolynomialSequence_generic)
-register_unpickle_override("sage.crypto.mq.mpolynomialsystem","MPolynomialRoundSystem_generic", PolynomialSequence_generic)
+register_unpickle_override("sage.crypto.mq.mpolynomialsystem", "MPolynomialSystem_generic", PolynomialSequence_generic)
+register_unpickle_override("sage.crypto.mq.mpolynomialsystem", "MPolynomialRoundSystem_generic", PolynomialSequence_generic)
