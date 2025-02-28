@@ -855,31 +855,28 @@ class PolynomialSequence_generic(Sequence_generic):
                         homogeneous=False,
                         variables=None,
                         return_indices=False,
-                        remove_zero=False):
+                        remove_zero=False,
+                        reverse_column_order=False,
+                        row_order=None):
         r"""
-        Return the Macaulay matrix of degree ``degree`` of this sequence
+        Return the Macaulay matrix of degree ``degree`` for this sequence
         of polynomials.
 
         INPUT:
 
-        - ``remove_zero`` -- boolean (default: ``False``);
-          when ``False``, the columns of the Macaulay matrix are all the
-          monomials of the polynomial ring up to degree ``degree``, when
-          ``True``, the columns of the Macaulay matrix are only the monomials
-          that effectively appear in the sequence of polynomials
-
         - ``homogeneous`` -- boolean (default: ``False``);
-          when ``False``, the polynomials in the sequence are not necessarily
-          homogeneous and the rows of the Macaulay matrix represent all
-          possible products between a polynomial of this sequence and the
-          monomials of the polynomial ring up to degree ``degree``;
-          when ``True``, the polynomials in the sequence must be homogeneous,
-          and the rows of the Macaulay matrix represent all possible products
-          between a polynomial of this sequence and a monomial of the
-          polynomial ring such that the product is homogeneous of degree equal
-          to the sum of ``degree`` and the maximum degree in the sequence
+          when ``False``, the polynomials in the sequence do not need to be homogeneous
+          the rows of the Macaulay matrix correspond to all possible products
+          between a polynomial from the sequence and monomials of the polynomial
+          ring up to degree ``degree``;
+          when ``True``, all polynomials in the sequence must be homogeneous.
+          the rows of the Macaulay matrix then represent all possible products
+          between a polynomial in the sequence and a monomial of the polynomial
+          ring such that the resulting product is homogeneous of degree 
+          ``degree + d_max``, where ``d_max`` is the maximum degree among the
+          input polynomials
 
-        - ``variables`` -- boolean (default: ``None``);
+        - ``variables`` -- list (default: ``None``);
           when ``None``, ``variables`` is interpreted as being the list of
           all variables of the ring of the polynomials in the sequence;
           otherwise ``variables`` is a list describing a subset of these
@@ -894,6 +891,28 @@ class PolynomialSequence_generic(Sequence_generic):
           index in the sequence of the input polynomial, whose product
           describes the corresponding row of the matrix; the second one is the
           list of monomials corresponding to the columns of the matrix
+          
+        - ``remove_zero`` -- boolean (default: ``False``);
+          when ``False``, all monomials of the polynomial ring up to 
+          degree ``degree``are included as columns in the Macaulay matrix;
+          when ``True``, only the monomials that actually appear in the polynomial
+          sequence are included
+          
+        - ``reverse_column_order`` -- boolean (default: ``False``);
+          when ``False``, by default the order for the columns is the same
+          as the order of the polynomial ring;
+          when ``True``, the order of the rows is the reverse of the order
+          of the monomial of the polynomial ring
+
+        - ``row_order`` -- str (default: ``None``);
+          determines the ordering of the columns in the matrix;
+          when ``None`` (or ``"POT"``), a **position over term** (POT) order is used: 
+          columns are first ordered by the index of the corresponding polynomial
+          in the sequence, and then by the (multiplicative) monomials;
+          when set to ``"TOP"``, the columns follow a **term over position**
+          (TOP) order: columns are firt ordered by the (multiplicative) monomials 
+          and then by the index of the corresponding polynomial
+          in the sequence
 
         EXAMPLES::
 
@@ -978,6 +997,22 @@ class PolynomialSequence_generic(Sequence_generic):
             ...
             ValueError: the degree must be nonnegative
 
+            sage: Sequence([y*z + z^2 - 1,f2=x*y - z^2 - x ]).macaulay_matrix(0, homogeneous=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: all the polynomials of the sequence must be homogeneous
+
+            sage:Sequence([y*z + z^2 - 1,x*y - z^2 - x ]).macaulay_matrix(0, row_order="POP")
+            Traceback (most recent call last):
+            ...
+            ValueError: the argument of ``row_order`` must be ``None``, "TOP" or "POT"
+
+            sage: R1.<t>=PolynomialRing(GF(3))
+            sage: Sequence([y*z + z^2 - 1,x*y - z^2 - x ]).macaulay_matrix(1, variables=[t])
+            Traceback (most recent call last):
+            ...
+            ValueError: the variables must be in the polynomial ring
+
         REFERENCES:
 
         [Mac1902]_, Chapter 1 of [Mac1916]_
@@ -995,7 +1030,8 @@ class PolynomialSequence_generic(Sequence_generic):
             for i in range(m):
                 if not(self[i].is_homogeneous()):
                     raise ValueError('all the polynomials of the sequence must be homogeneous')
-
+        if not (row_order is None or row_order=="TOP" or row_order=="POT") :
+            raise ValueError('the argument of ``row_order`` must be ``None``, "TOP" or "POT" ')
 
         # handle subset of variables
         S = self.ring()
@@ -1003,7 +1039,15 @@ class PolynomialSequence_generic(Sequence_generic):
         if variables is None:
             R = S
         else:
-            R = PolynomialRing(F, variables)
+            vars_names_base_ring=list(S.variable_names())
+            for x in variables :
+                if str(x) not in vars_names_base_ring :
+                    raise ValueError("the variables must be in the polynomial ring")
+            try:
+                R=PolynomialRing(F, variables,
+                                      order=S.term_order())
+            except ValueError:
+                raise ValueError("impossible to use the original term order (most likely because it was a block order). Please specify the term order for the subring")
 
         # maximum degree for monomials appearing in considered polynomial multiples
         target_degree = self.maximal_degree() + degree
@@ -1036,13 +1080,35 @@ class PolynomialSequence_generic(Sequence_generic):
         # that will be used to construct the rows
         row_indices = []
         if homogeneous:
-            for i in range(m):
-                deg = target_degree - self[i].degree()
-                row_indices += [(mon, i) for mon in R_monomials_of_degree[deg]]
-        else:
-            for i in range(m):
-                for deg in range(target_degree - self[i].degree() + 1):
+            # order the rows with POT (or None)
+            if row_order is None or row_order=="TOP" :
+                for i in range(m):
+                    deg = target_degree - self[i].degree()
+                    R_monomials_of_degree[deg].sort()
                     row_indices += [(mon, i) for mon in R_monomials_of_degree[deg]]
+            # order the rows with TOP
+            else :
+                R_monomials_of_degree[deg].sort()
+                for mon in R_monomials_of_degree[deg]:
+                    row_indices += [(mon, i) for i in range(m)]
+        else:
+            #order the row with POT (or None)
+            if row_order is None or row_order=="TOP" :
+                for i in range(m):
+                    R_monomials_usefull=[]
+                    for deg in range(target_degree - self[i].degree() + 1):
+                        R_monomials_usefull+=R_monomials_of_degree[deg]
+                    R_monomials_usefull.sort()
+                    row_indices += [(mon, i) for mon in  R_monomials_usefull]
+            #order the row with TOP
+            else :
+                R_monomials_usefull=[]
+                for deg in range(max_deg +1):
+                    R_monomials_usefull+=R_monomials_of_degree[deg]
+                R_monomials_usefull.sort()
+                for mon in R_monomials_usefull:
+                    row_indices += [(mon, i) for i in range(m) 
+                                             if mon.degree()<= target_degree - self[i].degree() + 1]
 
         # compute sorted list of monomials that index the columns
         if remove_zero:
@@ -1054,8 +1120,10 @@ class PolynomialSequence_generic(Sequence_generic):
             else:
                 column_indices = [mon for deg in range(target_degree + 1)
                                       for mon in S_monomials_of_degree[deg]]
-        column_indices.sort(reverse=True)
+        column_indices.sort(reverse=not reverse_column_order)
         dict_columns = {mon.exponents()[0] : j for (j, mon) in enumerate(column_indices)}
+
+
 
         # actually build the Macaulay matrix
         macaulay_mat = matrix(F, len(row_indices), len(column_indices))
