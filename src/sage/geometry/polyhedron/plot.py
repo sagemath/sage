@@ -1953,7 +1953,6 @@ class Projection(SageObject):
              [1, 3, 6, 7, 11, 12, 13, 14, 15, 16, 21, 23, 25],
              [2, 3, 14, 15, 0, 12, 1, 4, 13, 16, 6, 7, 18, 19, 20, 21, 23],
              [4, 9, 16, 21, 3, 5, 15, 17, 10, 22, 2, 6, 8, 7, 11, 20, 23])
-
         """
         facet_ineqs = self.face_inequalities
         front_facets = []
@@ -1971,7 +1970,7 @@ class Projection(SageObject):
             A = f_ineq.A()
             b = f_ineq.b()
             for v in self.points:
-                if A*self.coords[v]+b < 0.0005 and v not in front_vertices:
+                if A * self.coords[v] + b < 0.0005 and v not in front_vertices:
                     front_vertices.append(v)
 
         back_vertices = []
