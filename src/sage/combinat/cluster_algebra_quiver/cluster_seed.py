@@ -332,7 +332,7 @@ class ClusterSeed(SageObject):
                 else:
                     labelset = set(user_labels)
                     # Sanitizes our ``user_labels`` to use Integers instead of ints
-                    user_labels = [ZZ(x) if x in ZZ else x for x in user_labels]
+                    user_labels = [Integer(x) if x in ZZ else x for x in user_labels]
                 if labelset != set(self._nlist + self._mlist) and labelset != set(range(self._n + self._m)):
                     raise ValueError('user_labels conflict with both the given'
                                      ' vertex labels and the default labels')
@@ -3593,7 +3593,7 @@ class ClusterSeed(SageObject):
                             else:
                                 orbits = [index for index in range(n) if index > i or sd2._M[index, i] != 0]
 
-                            clusters[cl2] = [sd2, orbits, clusters[key][2]+[i]]
+                            clusters[cl2] = [sd2, orbits, clusters[key][2] + [i]]
                             if return_paths:
                                 yield (sd2, clusters[cl2][2])
                             else:
@@ -3602,10 +3602,10 @@ class ClusterSeed(SageObject):
             if show_depth and gets_bigger:
                 timer2 = time.time()
                 dc = str(depth_counter)
-                dc += ' ' * (5-len(dc))
+                dc += ' ' * (5 - len(dc))
                 nr = str(len(clusters))
-                nr += ' ' * (10-len(nr))
-                print(f"Depth: {dc} found: {nr} Time: {timer2-timer:.2f} s")
+                nr += ' ' * (10 - len(nr))
+                print(f"Depth: {dc} found: {nr} Time: {timer2 - timer:.2f} s")
 
     def mutation_class(self, depth=infinity, show_depth=False, return_paths=False,
                        up_to_equivalence=True, only_sink_source=False):
@@ -4718,7 +4718,7 @@ class ClusterSeed(SageObject):
             for l in range(num_cols):
                 denominator = denominator * (R.gen(l))**vd[i][0][l]
             # Each copy of a vector in vd contributes a factor of the Laurent polynomial calculated from it.
-            final = (numerator/denominator)**vd[i][1]
+            final = (numerator / denominator)**vd[i][1]
             finalP.append(final)
         laurentP = 1
         # The UCA element for the vector a is the product of the elements produced from the vectors in its decomposition.
@@ -4740,10 +4740,8 @@ def _bino(n, k):
         0
     """
     if n >= 0:
-        from sage.arith.misc import binomial
-        return binomial(n, k)
-    else:
-        return 0
+        return Integer(n).binomial(k)
+    return 0
 
 
 def coeff_recurs(p, q, a1, a2, b, c):
@@ -5192,7 +5190,7 @@ class ClusterVariable(FractionFieldElement):
             mt = self._mutation_type._repr_()
             # mt is a string of the shape "['A', 15]"
             # where A is a single letter and 15 is an integer
-            Phi = RootSystem([mt[2: 3], ZZ(mt[6: -1])])
+            Phi = RootSystem([mt[2: 3], Integer(mt[6: -1])])
             Phiplus = Phi.root_lattice().simple_roots()
 
             if self.denominator() == 1:

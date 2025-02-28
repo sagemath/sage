@@ -265,7 +265,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
         raise NotImplementedError("proof and height bound only implemented for real and complex numbers")
 
     else:
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         y = pari(z)
         f = y.algdep(degree)
 
@@ -378,7 +378,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
         from sage.libs.flint.arith_sage import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
     elif algorithm == 'pari' or algorithm == 'gp':
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         x = pari(n).bernfrac()         # Use the PARI C library
         return Rational(x)
     elif algorithm == 'gap':
@@ -470,7 +470,7 @@ def factorial(n, algorithm='gmp'):
     if algorithm == 'gmp':
         return ZZ(n).factorial()
     elif algorithm == 'pari':
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return pari.factorial(n)
     else:
         raise ValueError('unknown algorithm')
@@ -1841,7 +1841,6 @@ def gcd(a, b=None, **kwargs):
         except TypeError:
             return m(py_scalar_to_element(b), **kwargs)
 
-    from sage.structure.sequence import Sequence
     seq = Sequence(py_scalar_to_element(el) for el in a)
     if seq.universe() is ZZ:
         return GCD_list(seq)
@@ -3165,7 +3164,7 @@ class Euler_Phi:
             return ZZ.zero()
         if n <= 2:
             return ZZ.one()
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return ZZ(pari(n).eulerphi())
 
     def plot(self, xmin=1, xmax=50, pointsize=30, rgbcolor=(0, 0, 1),
@@ -3499,10 +3498,15 @@ def crt(a, b, m=None, n=None):
 CRT = crt
 
 
-def CRT_list(values, moduli):
-    r""" Given a list ``values`` of elements and a list of corresponding
+def CRT_list(values, moduli=None):
+    r"""
+    Given a list ``values`` of elements and a list of corresponding
     ``moduli``, find a single element that reduces to each element of
     ``values`` modulo the corresponding moduli.
+
+    This function can also be called with one argument, each element
+    of the list is a :mod:`modular integer <sage.rings.finite_rings.integer_mod>`.
+    In this case, it returns another modular integer.
 
     .. SEEALSO::
 
@@ -3529,6 +3533,13 @@ def CRT_list(values, moduli):
         Traceback (most recent call last):
         ...
         ValueError: no solution to crt problem since gcd(180,150) does not divide 92-1
+
+    Call with one argument::
+
+        sage: x = CRT_list([mod(2,3),mod(3,5),mod(2,7)]); x
+        23
+        sage: x.parent()
+        Ring of integers modulo 105
 
     The arguments must be lists::
 
@@ -3565,6 +3576,21 @@ def CRT_list(values, moduli):
         sage: CRT_list([mpz(2),mpz(3),mpz(2)], [mpz(3),mpz(5),mpz(7)])
         23
 
+    Tests for call with one argument::
+
+        sage: x = CRT_list([mod(2,3)]); x
+        2
+        sage: x.parent()
+        Ring of integers modulo 3
+        sage: x = CRT_list([]); x
+        0
+        sage: x.parent()
+        Ring of integers modulo 1
+        sage: x = CRT_list([2]); x
+        Traceback (most recent call last):
+        ...
+        TypeError: if one argument is given, it should be a list of IntegerMod
+
     Make sure we are not mutating the input lists::
 
         sage: xs = [1,2,3]
@@ -3576,14 +3602,26 @@ def CRT_list(values, moduli):
         sage: ms
         [5, 7, 9]
     """
-    if not isinstance(values, list) or not isinstance(moduli, list):
+    if not isinstance(values, list) or (moduli is not None and not isinstance(moduli, list)):
         raise ValueError("arguments to CRT_list should be lists")
-    if len(values) != len(moduli):
-        raise ValueError("arguments to CRT_list should be lists of the same length")
-    if not values:
-        return ZZ.zero()
-    if len(values) == 1:
-        return moduli[0].parent()(values[0])
+    return_mod = moduli is None
+    if return_mod:
+        from sage.rings.finite_rings.integer_mod import IntegerMod_abstract, Mod
+        if not values:
+            return Mod(0, 1)
+        if not all(isinstance(v, IntegerMod_abstract) for v in values):
+            raise TypeError("if one argument is given, it should be a list of IntegerMod")
+        if len(values) == 1:
+            return values[0]
+        moduli = [v.modulus() for v in values]
+        values = [v.lift() for v in values]
+    else:
+        if len(values) != len(moduli):
+            raise ValueError("arguments to CRT_list should be lists of the same length")
+        if not values:
+            return ZZ.zero()
+        if len(values) == 1:
+            return moduli[0].parent()(values[0])
 
     # The result is computed using a binary tree. In typical cases,
     # this scales much better than folding the list from one side.
@@ -3594,7 +3632,10 @@ def CRT_list(values, moduli):
             vs[i] = CRT(vs[i], v, ms[i], m)
             ms[i] = lcm(ms[i], m)
         values, moduli = vs, ms
-    return values[0] % moduli[0]
+    if return_mod:
+        return Mod(values[0], moduli[0])
+    else:
+        return values[0] % moduli[0]
 
 
 def CRT_basis(moduli):
@@ -4426,7 +4467,7 @@ def primitive_root(n, check=True):
         sage: primitive_root(mpz(-46))                                                  # needs sage.libs.pari
         5
     """
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     if not check:
         return ZZ(pari(n).znprimroot())
     n = ZZ(n).abs()
@@ -4483,7 +4524,7 @@ def nth_prime(n):
     """
     if n <= 0:
         raise ValueError("nth prime meaningless for nonpositive n (=%s)" % n)
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     return ZZ(pari.prime(n))
 
 
@@ -4601,7 +4642,7 @@ class Moebius:
         # Use fast PARI algorithm
         if n == 0:
             return ZZ.zero()
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return ZZ(pari(n).moebius())
 
     def __repr__(self):
@@ -4686,7 +4727,7 @@ class Moebius:
             return self.range(start, 0, step) + [ZZ.zero()] +\
                    self.range(step, stop, step)
 
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
 
         if step == 1:
             v = pari('vector(%s, i, moebius(i-1+%s))' % (stop - start, start))
@@ -4816,7 +4857,7 @@ def number_of_divisors(n):
     m = ZZ(n)
     if m.is_zero():
         raise ValueError("input must be nonzero")
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     return ZZ(pari(m).numdiv())
 
 
@@ -4889,7 +4930,7 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
     if algorithm == "pari":
         if p == -1:
             p = 0
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return ZZ(pari(a).hilbert(b, p))
 
     elif algorithm == 'direct':

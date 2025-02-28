@@ -276,8 +276,10 @@ def _extract_embedded_position(docstring):
         from sage.misc.temporary_file import spyx_tmp
         if raw_filename.startswith('sage/'):
             import sage
-            try_filenames = [os.path.join(directory, raw_filename[5:])
+            from sage.env import SAGE_SRC
+            try_filenames = [os.path.join(directory, raw_filename.removeprefix('sage/'))
                              for directory in sage.__path__]
+            try_filenames.append(os.path.join(SAGE_SRC, raw_filename))  # meson editable install
         else:
             try_filenames = []
         try_filenames.append(
@@ -1286,6 +1288,15 @@ def sage_getfile(obj):
         sage: sage_getfile(P)                                                           # needs sage.libs.singular
         '...sage/rings/polynomial/multi_polynomial_libsingular...'
 
+    Another bug with editable meson install::
+
+        sage: P.<x,y> = QQ[]
+        sage: I = P * [x,y]
+        sage: path = sage_getfile(I.groebner_basis); path
+        '.../sage/rings/qqbar_decorators.py'
+        sage: path == sage_getfile(sage.rings.qqbar_decorators)
+        True
+
     A problem fixed in :issue:`16309`::
 
         sage: cython(                                                                   # needs sage.misc.cython
@@ -1317,6 +1328,12 @@ def sage_getfile(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
         return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
+    else:
+        if hasattr(obj, '__init__'):
+            pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
+            if pos is not None:
+                (_, filename, _) = pos
+                return filename
 
     # No go? fall back to inspect.
     try:
@@ -1325,7 +1342,12 @@ def sage_getfile(obj):
         return ''
     for suffix in import_machinery.EXTENSION_SUFFIXES:
         if sourcefile.endswith(suffix):
-            return sourcefile[:-len(suffix)]+os.path.extsep+'pyx'
+            # TODO: the following is incorrect in meson editable install
+            # because the build is out-of-tree,
+            # but as long as either the class or its __init__ method has a
+            # docstring, _sage_getdoc_unformatted should return correct result
+            # see https://github.com/mesonbuild/meson-python/issues/723
+            return sourcefile.removesuffix(suffix)+os.path.extsep+'pyx'
     return sourcefile
 
 
@@ -2345,12 +2367,8 @@ def sage_getsourcelines(obj):
         try:
             return inspect.getsourcelines(obj)
         except (OSError, TypeError) as err:
-            try:
-                objinit = obj.__init__
-            except AttributeError:
-                pass
-            else:
-                d = _sage_getdoc_unformatted(objinit)
+            if hasattr(obj, '__init__'):
+                d = _sage_getdoc_unformatted(obj.__init__)
                 pos = _extract_embedded_position(d)
                 if pos is None:
                     if inspect.isclass(obj):

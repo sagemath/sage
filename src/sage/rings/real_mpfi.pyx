@@ -252,7 +252,7 @@ TESTS::
 
     sage: import numpy                                                                  # needs numpy
     sage: if int(numpy.version.short_version[0]) > 1:                                   # needs numpy
-    ....:     numpy.set_printoptions(legacy="1.25")                                     # needs numpy
+    ....:     _ = numpy.set_printoptions(legacy="1.25")                                     # needs numpy
     sage: RIF(2) == numpy.int8('2')                                                     # needs numpy
     True
     sage: numpy.int8('2') == RIF(2)                                                     # needs numpy
@@ -950,16 +950,16 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         """
         return 1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return a list of generators.
+        Return a tuple of generators.
 
         EXAMPLES::
 
             sage: RIF.gens()
-            [1]
+            (1,)
         """
-        return [self.gen()]
+        return (self.gen(),)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
