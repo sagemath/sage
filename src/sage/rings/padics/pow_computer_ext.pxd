@@ -48,7 +48,7 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
     cdef void cleanup_ZZ_pX_FM_Eis(self) noexcept
 
 cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
-    cdef object c # using a python list so that we can store ntl_ZZ_pContext_class objects
+    cdef object c  # using a python list so that we can store ntl_ZZ_pContext_class objects
     cdef ZZ_pX_Modulus_c *mod
 
     cdef void cleanup_ZZ_pX_small(self) noexcept
@@ -62,14 +62,14 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
     cdef void cleanup_ZZ_pX_small_Eis(self) noexcept
 
 cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
-    cdef object context_list # using a python list so that we can store ntl_ZZ_pContext_class objects
+    cdef object context_list  # using a python list so that we can store ntl_ZZ_pContext_class objects
     cdef ZZ_pX_Modulus_c *modulus_list
 
     cdef ntl_ZZ_pContext_class top_context
     cdef ZZ_pX_Modulus_c top_mod
 
-    cdef object context_dict #currently using a dict, optimize for speed later
-    cdef object modulus_dict #currently using a dict, optimize for speed later
+    cdef object context_dict  # currently using a dict, optimize for speed later
+    cdef object modulus_dict  # currently using a dict, optimize for speed later
 
     cdef void cleanup_ZZ_pX_big(self) noexcept
 
@@ -81,7 +81,7 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
 
     cdef void cleanup_ZZ_pX_big_Eis(self) noexcept
 
-#cdef class PowComputer_ZZ_pEX(PowComputer_ext):
+# cdef class PowComputer_ZZ_pEX(PowComputer_ext):
 #    cdef ntl_ZZ_pEContext get_context(self, long n)
 #    cdef ntl_ZZ_pEContext get_top_context(self)
 #    cdef void restore_context(self, long n)
@@ -89,19 +89,18 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
 #    cdef ZZ_pEX_Modulus_c get_modulus(self, long n)
 #    cdef ZZ_pEX_Modulus_c get_top_modulus(self)
 #
-#cdef class PowComputer_ZZ_pEX_FM(PowComputer_ZZ_pEX):
+# cdef class PowComputer_ZZ_pEX_FM(PowComputer_ZZ_pEX):
 #    cdef ZZ_pEX_c poly
 #    cdef ntl_ZZ_pEContext c
 #    cdef ZZ_pEX_Modulus_c mod
 #
 #
-#cdef class PowComputer_ZZ_pEX_small(PowComputer_ZZ_pEX):
+# cdef class PowComputer_ZZ_pEX_small(PowComputer_ZZ_pEX):
 #    cdef ZZ_pEX_c *poly
 #    cdef ntl_ZZ_pEContext *c
 #    cdef ZZ_pEX_Modulus_c *mod
 #
-#cdef class PowComputer_ZZ_pEX_big(PowComputer_ZZ_pEX):
+# cdef class PowComputer_ZZ_pEX_big(PowComputer_ZZ_pEX):
 #    cdef ZZ_pEX_c poly
-#    cdef context_dict #currently using a dict, optimize for speed later
-#    cdef modulus_dict #currently using a dict, optimize for speed later
-#
+#    cdef context_dict  # currently using a dict, optimize for speed later
+#    cdef modulus_dict  # currently using a dict, optimize for speed later

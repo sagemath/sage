@@ -1969,28 +1969,6 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         if isinstance(self.object, TypeVar):
             if self.object.__doc__ == TypeVar.__doc__:
                 return []
-        # ------------------------------------------------------------------
-        # This section is kept for compatibility with python 3.9
-        # see https://github.com/sagemath/sage/pull/38549#issuecomment-2327790930
-        if sys.version_info[:2] < (3, 10):
-            if inspect.isNewType(self.object) or isinstance(self.object, TypeVar):
-                parts = self.modname.strip('.').split('.')
-                orig_objpath = self.objpath
-                for i in range(len(parts)):
-                    new_modname = '.'.join(parts[:len(parts) - i])
-                    new_objpath = parts[len(parts) - i:] + orig_objpath
-                    try:
-                        analyzer = ModuleAnalyzer.for_module(new_modname)
-                        analyzer.analyze()
-                        key = ('', new_objpath[-1])
-                        comment = list(analyzer.attr_docs.get(key, []))
-                        if comment:
-                            self.objpath = new_objpath
-                            self.modname = new_modname
-                            return [comment]
-                    except PycodeError:
-                        pass
-        # ------------------------------------------------------------------
         if self.doc_as_attr:
             # Don't show the docstring of the class when it is an alias.
             if self.get_variable_comment():

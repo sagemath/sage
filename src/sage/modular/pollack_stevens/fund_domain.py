@@ -129,20 +129,16 @@ class PollackStevensModularDomain(SageObject):
         self._reps = reps
 
         self._indices = sorted(indices)
-        self._gens = [M2Z(reps[i]) for i in self._indices]
+        self._gens = tuple(M2Z(reps[i]) for i in self._indices)
         self._ngens = len(indices)
 
         if len(rels) != len(reps):
             raise ValueError("length of reps and length of rels must be equal")
         self._rels = rels
-        self._rel_dict = {}
-        for j, L in enumerate(rels):
-            self._rel_dict[reps[j]] = L
+        self._rel_dict = {reps[j]: L for j, L in enumerate(rels)}
 
         self._equiv_ind = equiv_ind
-        self._equiv_rep = {}
-        for ky in equiv_ind:
-            self._equiv_rep[ky] = reps[equiv_ind[ky]]
+        self._equiv_rep = {ky: reps[vy] for ky, vy in equiv_ind.items()}
 
     def _repr_(self):
         r"""
@@ -203,19 +199,19 @@ class PollackStevensModularDomain(SageObject):
         """
         return iter(self._reps)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return the list of coset representatives chosen as generators.
+        Return the tuple of coset representatives chosen as generators.
 
         EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.fund_domain import ManinRelations
             sage: A = ManinRelations(11)
             sage: A.gens()
-            [
+            (
             [1 0]  [ 0 -1]  [-1 -1]
             [0 1], [ 1  3], [ 3  2]
-            ]
+            )
         """
         return self._gens
 
@@ -812,7 +808,7 @@ class ManinRelations(PollackStevensModularDomain):
             # interior path on either of the last two cusps
 
             for s in range(r + 2, len(cusps)):
-            # s is in the index of the cusp on the right of the path
+                # s is in the index of the cusp on the right of the path
                 cusp1 = cusps[r]
                 cusp2 = cusps[s]
                 if self.is_unimodular_path(cusp1, cusp2):
@@ -1213,10 +1209,10 @@ class ManinRelations(PollackStevensModularDomain):
 
                         if (b1 ** 2 + b2 ** 2 + b1 * b2) % N != 0:
 
-                        # this congruence is exactly equivalent to
-                        # gam * [0 -1; 1 -1] * gam^(-1) is in Gamma_0(N)
-                        # where gam is the matrix corresponding to the
-                        # unimodular path connecting cusp1 to cusp2
+                            # this congruence is exactly equivalent to
+                            # gam * [0 -1; 1 -1] * gam^(-1) is in Gamma_0(N)
+                            # where gam is the matrix corresponding to the
+                            # unimodular path connecting cusp1 to cusp2
 
                             C[s] = "i"  # The '?' is changed to an 'i'
                              # indicating that a new cusp needs to

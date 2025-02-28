@@ -21,7 +21,6 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModule_Tensor
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.categories.modules import Modules
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector

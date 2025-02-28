@@ -501,4 +501,3 @@ def check_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
             msg += "and\n"
             msg += f"{sage_input(g)}"
             raise ValueError(msg)
-    return

@@ -109,17 +109,20 @@ easily::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.interfaces.abc
 import sage.misc.latex as latex
 import sage.structure.parent_gens
+
+from sage.structure.parent import Parent
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
 from sage.rings import ideal, quotient_ring_element, ring
 from sage.structure.category_object import normalize_names
 from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.category_object import check_default_category
 
 _Rings = Rings()
 _CommRings = CommutativeRings()
@@ -333,7 +336,7 @@ def QuotientRing(R, I, names=None, **kwds):
         I_lift = S.ideal(G)
         J = R.defining_ideal()
         if S == ZZ:
-            return Integers((I_lift+J).gen(), **kwds)
+            return Integers((I_lift + J).gen(), **kwds)
         return R.__class__(S, I_lift + J, names=names)
     if R in _CommRings:
         return QuotientRing_generic(R, I, names, **kwds)
@@ -379,16 +382,15 @@ def is_QuotientRing(x):
 
 _RingsQuotients = _Rings.Quotients()
 _CommutativeRingsQuotients = _CommRings.Quotients()
-from sage.structure.category_object import check_default_category
 
 
 @richcmp_method
-class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
+class QuotientRing_nc(Parent):
     """
     The quotient ring of `R` by a twosided ideal `I`.
 
-    This class is for rings that do not inherit from
-    :class:`~sage.rings.ring.CommutativeRing`.
+    This class is for rings that are not in the category
+    ``Rings().Commutative()``.
 
     EXAMPLES:
 
@@ -495,8 +497,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             raise TypeError("The second argument must be an ideal of the given ring, but %s is not" % I)
         self.__R = R
         self.__I = I
-        #sage.structure.parent_gens.ParentWithGens.__init__(self, R.base_ring(), names)
-        ##
+
         # Unfortunately, computing the join of categories, which is done in
         # check_default_category, is very expensive.
         # However, we don't just want to use the given category without mixing in
@@ -510,10 +511,10 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
                 except (AttributeError, NotImplementedError):
                     commutative = False
                 if commutative:
-                    category = check_default_category(_CommutativeRingsQuotients,category)
+                    category = check_default_category(_CommutativeRingsQuotients, category)
                 else:
-                    category = check_default_category(_RingsQuotients,category)
-            ring.Ring.__init__(self, R.base_ring(), names=names, category=category)
+                    category = check_default_category(_RingsQuotients, category)
+            Parent.__init__(self, base=R.base_ring(), names=names, category=category)
         # self._populate_coercion_lists_([R]) # we don't want to do this, since subclasses will often implement improved coercion maps.
 
     def construction(self):
@@ -589,7 +590,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return "%s/%s" % (latex.latex(self.cover_ring()), latex.latex(self.defining_ideal()))
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Tell whether this quotient ring is commutative.
 
@@ -1146,7 +1147,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
                 try:
                     if R.defining_ideal().change_ring(C) <= self.defining_ideal():
                         return True
-                except AttributeError: # Not all ideals have a change_ring
+                except AttributeError:  # Not all ideals have a change_ring
                     pass
         return C.has_coerce_map_from(R)
 
@@ -1246,6 +1247,20 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return self(self.__R.gen(i))
 
+    def gens(self) -> tuple:
+        r"""
+        Return a tuple containing generators of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = PolynomialRing(QQ)
+            sage: S = R.quotient_ring(x^2 + y^2)
+            sage: S.gens()
+            (xbar, ybar)
+        """
+        return tuple(self(self.__R.gen(i))
+                     for i in range(self.cover_ring().ngens()))
+
     def _singular_(self, singular=None):
         """
         Return the Singular quotient ring of ``self`` if the base ring is
@@ -1269,8 +1284,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: S = R.quotient_ring(x^2 + y^2)
             sage: S._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 2
+            // coefficients: QQ...
+            // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
             //        block   2 : ordering C
@@ -1310,7 +1325,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         if singular is None:
             from sage.interfaces.singular import singular
         self.__R._singular_().set_ring()
-        self.__singular = singular("%s" % self.__I._singular_().name(),"qring")
+        self.__singular = singular("%s" % self.__I._singular_().name(), "qring")
         return self.__singular
 
     def _magma_init_(self, magma):

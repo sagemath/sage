@@ -1809,11 +1809,9 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: ee = oeis('A001113') ; ee             # optional -- internet
-            A001113: Decimal expansion of e.
-
+            sage: ee = oeis.find_by_id('A00260')        # optional -- internet
             sage: ee.programs('pari')[0]                # optional -- internet
-            0: default(realprecision, 50080); x=exp(1); for (n=1, 50000, d=floor(x); x=(x-d)*10; write("b001113.txt", n, " ", d)); \\ _Harry J. Smith_, Apr 15 2009
+            0: {a(n) = binomial(...)};...
 
             sage: G = oeis.find_by_id('A27642')   # optional -- internet
             sage: G.programs('all')               # optional -- internet
