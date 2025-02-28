@@ -872,7 +872,7 @@ class PolynomialSequence_generic(Sequence_generic):
           when ``True``, all polynomials in the sequence must be homogeneous.
           the rows of the Macaulay matrix then represent all possible products
           between a polynomial in the sequence and a monomial of the polynomial
-          ring such that the resulting product is homogeneous of degree 
+          ring such that the resulting product is homogeneous of degree
           ``degree + d_max``, where ``d_max`` is the maximum degree among the
           input polynomials
 
@@ -891,13 +891,13 @@ class PolynomialSequence_generic(Sequence_generic):
           index in the sequence of the input polynomial, whose product
           describes the corresponding row of the matrix; the second one is the
           list of monomials corresponding to the columns of the matrix
-          
+
         - ``remove_zero`` -- boolean (default: ``False``);
-          when ``False``, all monomials of the polynomial ring up to 
+          when ``False``, all monomials of the polynomial ring up to
           degree ``degree``are included as columns in the Macaulay matrix;
           when ``True``, only the monomials that actually appear in the polynomial
           sequence are included
-          
+
         - ``reverse_column_order`` -- boolean (default: ``False``);
           when ``False``, by default the order for the columns is the same
           as the order of the polynomial ring;
@@ -906,11 +906,11 @@ class PolynomialSequence_generic(Sequence_generic):
 
         - ``row_order`` -- str (default: ``None``);
           determines the ordering of the columns in the matrix;
-          when ``None`` (or ``"POT"``), a **position over term** (POT) order is used: 
+          when ``None`` (or ``"POT"``), a **position over term** (POT) order is used:
           columns are first ordered by the index of the corresponding polynomial
           in the sequence, and then by the (multiplicative) monomials;
           when set to ``"TOP"``, the columns follow a **term over position**
-          (TOP) order: columns are firt ordered by the (multiplicative) monomials 
+          (TOP) order: columns are firt ordered by the (multiplicative) monomials
           and then by the index of the corresponding polynomial
           in the sequence
 
@@ -997,7 +997,7 @@ class PolynomialSequence_generic(Sequence_generic):
             ...
             ValueError: the degree must be nonnegative
 
-            sage: Sequence([y*z + z^2 - 1,f2=x*y - z^2 - x ]).macaulay_matrix(0, homogeneous=True)
+            sage: Sequence([y*z + z^2 - 1,x*y - z^2 - x ]).macaulay_matrix(0, homogeneous=True)
             Traceback (most recent call last):
             ...
             ValueError: all the polynomials of the sequence must be homogeneous
