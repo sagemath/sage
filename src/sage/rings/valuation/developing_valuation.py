@@ -169,7 +169,7 @@ class DevelopingValuation(DiscretePseudoValuation):
             return self.simplify(f*self._pow(f, e-1, error=error*(e-1)/e, effective_degree=effective_degree*(e-1)/e),
                                  error=error, effective_degree=effective_degree)
 
-    def coefficients(self, f):
+    def coefficients(self, f, algorithm="iterative"):
         r"""
         Return the `\phi`-adic expansion of ``f``.
 
@@ -194,6 +194,7 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v = v.augmentation( x^2 + x + 1, 1)
             sage: list(v.coefficients(f))
             [(1 + O(2^5))*x + 2 + O(2^5), 1 + O(2^5)]
+
         """
         domain = self.domain()
         f = domain.coerce(f)
@@ -205,11 +206,37 @@ class DevelopingValuation(DiscretePseudoValuation):
                 f = f(domain.gen() - self.phi()[0])
             for c in f.coefficients(sparse=False):
                 yield domain(c)
+        elif algorithm == "iterative":
+            yield from self._coefficients_iterative(f)
+        elif algorithm == "divide-and-conquer":
+            yield from self._coefficients_divide_and_conquer(f)
         else:
-            while f.degree() >= 0:
-                f, r = self._quo_rem(f)
-                yield r
+            raise ValueError("unknown algorithm for coefficients()")
 
+    def _coefficients_iterative(self, f):
+        while f.degree() >= 0:
+            f, r = self._quo_rem(f)
+            yield r
+
+    def _coefficients_divide_and_conquer(self, f):
+        phi = self.phi()
+
+        ncoefficients = f.degree() // phi.degree() + 1
+        stack = [(f, ncoefficients)]
+
+        while stack:
+            f, ncoefficients = stack.pop()
+            if f.degree() < phi.degree():
+                yield f
+                for _ in range(ncoefficients - 1):
+                    yield self.domain().zero()
+                continue
+
+            assert ncoefficients > 1
+            ncoefficients, mcoefficients = ncoefficients // 2, -(-ncoefficients // 2)
+            f, g = f.quo_rem(self.phi() ** ncoefficients)
+            stack.append((f, mcoefficients))
+            stack.append((g, ncoefficients))
     def _quo_rem(self, f):
         r"""
         Return the quotient and remainder of ``f`` divided by the key
