@@ -917,7 +917,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         t = sorted(self._hasse_diagram.neutral_elements())
         return [self._vertex_to_element(v) for v in t]
 
-    def is_join_distributive(self, certificate=False):
+    def is_join_distributive(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is join-distributive and ``False``
         otherwise.
@@ -1006,7 +1006,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         diamond = next(self._hasse_diagram.subgraph_search_iterator(M3, return_graphs=False))
         return (False, self[diamond[0]])
 
-    def is_meet_distributive(self, certificate=False):
+    def is_meet_distributive(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is meet-distributive and ``False``
         otherwise.
@@ -1094,7 +1094,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         diamond = next(self._hasse_diagram.subgraph_search_iterator(M3, return_graphs=False))
         return (False, self[diamond[4]])
 
-    def is_stone(self, certificate=False):
+    def is_stone(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is a Stone lattice, and ``False``
         otherwise.
@@ -1189,7 +1189,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         return ok
 
-    def is_distributive(self, certificate=False):
+    def is_distributive(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is distributive, and ``False``
         otherwise.
@@ -1229,7 +1229,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
               :meth:`is_semidistributive`, :meth:`is_join_distributive`,
               :meth:`is_meet_distributive`, :meth:`is_subdirectly_reducible`,
               :meth:`is_trim`,
-              :meth:`is_constructible_by_doublings` (by interval doubling),
+              :meth:`is_congruence_uniform`,
               :meth:`is_extremal`
 
             - Stronger properties: :meth:`is_stone`
@@ -1263,7 +1263,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                         self._vertex_to_element(diamond[2]),
                         self._vertex_to_element(diamond[3])))
 
-    def is_semidistributive(self):
+    def is_semidistributive(self) -> bool:
         """
         Return ``True`` if the lattice is both join- and meet-semidistributive,
         and ``False`` otherwise.
@@ -1309,7 +1309,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                  H.out_degree_sequence().count(1)) and
                 self.is_meet_semidistributive())
 
-    def is_meet_semidistributive(self, certificate=False):
+    def is_meet_semidistributive(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is meet-semidistributive, and ``False``
         otherwise.
@@ -1401,7 +1401,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, None)
         return True
 
-    def is_join_semidistributive(self, certificate=False):
+    def is_join_semidistributive(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is join-semidistributive, and ``False``
         otherwise.
@@ -1497,7 +1497,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         return all(H.kappa_dual(v) is not None
                    for v in H if H.out_degree(v) == 1)
 
-    def is_extremal(self):
+    def is_extremal(self) -> bool:
         """
         Return ``True`` if the lattice is extremal, and ``False``
         otherwise.
@@ -1527,7 +1527,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         mi = len(self.meet_irreducibles())
         return ji == mi == self.height() - 1
 
-    def is_trim(self, certificate=False):
+    def is_trim(self, certificate=False) -> bool | tuple:
         """
         Return whether a lattice is trim.
 
@@ -1649,7 +1649,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                         out += [(y, x, z)]
         return True if not verbose else out
 
-    def is_complemented(self, certificate=False):
+    def is_complemented(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is complemented, and
         ``False`` otherwise.
@@ -1700,7 +1700,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, None)
         return (False, self._vertex_to_element(e))
 
-    def is_cosectionally_complemented(self, certificate=False):
+    def is_cosectionally_complemented(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is cosectionally complemented, and
         ``False`` otherwise.
@@ -1776,7 +1776,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 return False
         return (True, None) if certificate else True
 
-    def is_relatively_complemented(self, certificate=False):
+    def is_relatively_complemented(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is relatively complemented, and
         ``False`` otherwise.
@@ -1889,7 +1889,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                                     self._vertex_to_element(e3)))
         return (True, None) if certificate else True
 
-    def is_sectionally_complemented(self, certificate=False):
+    def is_sectionally_complemented(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is sectionally complemented, and
         ``False`` otherwise.
@@ -2160,7 +2160,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 if self.meet(x, element) == self.bottom() and
                 self.join(x, element) == self.top()]
 
-    def is_pseudocomplemented(self, certificate=False):
+    def is_pseudocomplemented(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is pseudocomplemented, and ``False``
         otherwise.
@@ -2227,7 +2227,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, None)
         return True
 
-    def is_join_pseudocomplemented(self, certificate=False):
+    def is_join_pseudocomplemented(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is join-pseudocomplemented, and
         ``False`` otherwise.
@@ -2397,7 +2397,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return True
         raise AssertionError("bug in is_orthocomplemented()")
 
-    def is_atomic(self, certificate=False):
+    def is_atomic(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is atomic, and ``False`` otherwise.
 
@@ -2455,7 +2455,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 return (False, self._vertex_to_element(v))
         return (True, None)
 
-    def is_coatomic(self, certificate=False):
+    def is_coatomic(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is coatomic, and ``False`` otherwise.
 
@@ -2513,7 +2513,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 return (False, self._vertex_to_element(v))
         return (True, None)
 
-    def is_geometric(self):
+    def is_geometric(self) -> bool:
         """
         Return ``True`` if the lattice is geometric, and ``False`` otherwise.
 
@@ -2558,7 +2558,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         return self.is_atomic() and self.is_upper_semimodular()
 
-    def is_planar(self):
+    def is_planar(self) -> bool:
         r"""
         Return ``True`` if the lattice is *upward* planar, and ``False``
         otherwise.
@@ -2623,7 +2623,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         g.add_edge(0, self.cardinality() - 1)
         return g.is_planar()
 
-    def is_modular(self, L=None, certificate=False):
+    def is_modular(self, L=None, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is modular and ``False`` otherwise.
 
@@ -2728,7 +2728,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return (True, None)
         return True
 
-    def is_modular_element(self, x):
+    def is_modular_element(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is a modular element and ``False`` otherwise.
 
@@ -2760,7 +2760,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         return self.is_modular([x])
 
-    def is_left_modular_element(self, x):
+    def is_left_modular_element(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is a left modular element
         and ``False`` otherwise.
@@ -2793,7 +2793,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                    self.join(y, self.meet(x, z))
                    for y, z in self.cover_relations_iterator())
 
-    def is_upper_semimodular(self, certificate=False):
+    def is_upper_semimodular(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is upper semimodular and
         ``False`` otherwise.
@@ -2853,7 +2853,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                             self._vertex_to_element(nonmodular[1])))
         return False
 
-    def is_lower_semimodular(self, certificate=False):
+    def is_lower_semimodular(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is lower semimodular and
         ``False`` otherwise.
@@ -2908,7 +2908,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                             self._vertex_to_element(nonmodular[1])))
         return False
 
-    def is_supersolvable(self, certificate=False):
+    def is_supersolvable(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is supersolvable, and
         ``False`` otherwise.
@@ -3165,7 +3165,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                                                            elms[i + 1] + 1)]))
                 for i in range(n - 1)]
 
-    def is_vertically_decomposable(self, certificate=False):
+    def is_vertically_decomposable(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is vertically decomposable, and
         ``False`` otherwise.
@@ -3259,7 +3259,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         return LatticePoset(self.subposet(current_set))
 
-    def is_sublattice(self, other):
+    def is_sublattice(self, other) -> bool:
         """
         Return ``True`` if the lattice is a sublattice of ``other``,
         and ``False`` otherwise.
@@ -3757,7 +3757,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         comps = self.complements()
         return self.sublattice([e for e in neutrals if e in comps])
 
-    def is_dismantlable(self, certificate=False):
+    def is_dismantlable(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is dismantlable, and ``False``
         otherwise.
@@ -3872,7 +3872,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return True
         return (True, [self[e] for e in cert])
 
-    def is_interval_dismantlable(self, certificate=False):
+    def is_interval_dismantlable(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is interval dismantlable, and
         ``False`` otherwise.
@@ -3985,7 +3985,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return result if certificate else True
         return (False, minimal_non_int_dismant(self)) if certificate else False
 
-    def is_sublattice_dismantlable(self):
+    def is_sublattice_dismantlable(self) -> bool:
         """
         Return ``True`` if the lattice is sublattice dismantlable, and
         ``False`` otherwise.
@@ -4058,7 +4058,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         return False
 
-    def is_subdirectly_reducible(self, certificate=False):
+    def is_subdirectly_reducible(self, certificate=False) -> bool | tuple:
         r"""
         Return ``True`` if the lattice is subdirectly reducible.
 
@@ -4441,7 +4441,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         return self.is_constructible_by_doublings(type="interval")
 
-    def is_isoform(self, certificate=False):
+    def is_isoform(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is isoform and ``False`` otherwise.
 
@@ -4516,7 +4516,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     return False
         return ok
 
-    def is_uniform(self, certificate=False):
+    def is_uniform(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is uniform and ``False`` otherwise.
 
@@ -4596,7 +4596,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     return False
         return ok
 
-    def is_regular(self, certificate=False):
+    def is_regular(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is regular and ``False`` otherwise.
 
@@ -4664,7 +4664,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     return False
         return ok
 
-    def is_simple(self, certificate=False):
+    def is_simple(self, certificate=False) -> bool | tuple:
         """
         Return ``True`` if the lattice is simple and ``False`` otherwise.
 
