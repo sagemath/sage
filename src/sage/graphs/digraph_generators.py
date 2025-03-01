@@ -1755,7 +1755,7 @@ class DiGraphGenerators:
 
         if is_dense:
             edges = ((u, v) for u in range(n) for v in range(n)
-                         if ((u != v) or loops) and (v not in adj[u]))
+                     if (u != v or loops) and v not in adj[u])
             return DiGraph([range(n), edges], format='vertices_and_edges',
                            loops=loops, immutable=immutable)
 
