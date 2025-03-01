@@ -1,9 +1,35 @@
 """
-Valuation for power series and Laurent series.
-"""
+Discrete valuations for power series and Laurent series
 
+This module provides a generic implementation for discrete valuations on rings
+whose elements are represented as series such as power series and Laurent
+series.
+
+EXAMPLES::
+
+    sage: R.<t> = QQ[[]]
+    sage: v = R.valuation()
+    sage: v(0)
+    +Infinity
+    sage: v(1)
+    0
+    sage: v(t)
+    1
+
+    sage: R.fraction_field().valuation()
+    t-adic valuation
+
+    sage: R.<t> = LazyPowerSeriesRing(QQ)
+    sage: R.valuation()
+    t-adic valuation
+
+    sage: R.fraction_field().valuation()
+    t-adic valuation
+
+"""
 # ****************************************************************************
 #       Copyright (C) 2025 Xavier Caruso <xavier@caruso.ovh>
+#                     2025 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -19,11 +45,11 @@ from sage.rings.valuation.valuation import DiscreteValuation
 
 class SeriesValuationFactory(UniqueFactory):
     r"""
-    Create a valuation over a power series ring or a Laurent series ring.
+    Creates a valuation over a power series ring or a Laurent series ring.
 
     INPUT:
 
-    - ``R`` -- the ring
+    - ``R`` -- a series ring
 
     EXAMPLES:
 
@@ -31,6 +57,12 @@ class SeriesValuationFactory(UniqueFactory):
         sage: v = R.valuation()
         sage: v
         t-adic valuation
+
+    TESTS::
+
+        sage: R.valuation() is R.valuation()
+        True
+
     """
     def create_key_and_extra_args(self, R):
         r"""
@@ -66,13 +98,33 @@ SeriesValuation = SeriesValuationFactory("sage.rings.series_valuation.SeriesValu
 
 class SeriesValuation_generic(DiscreteValuation):
     r"""
-    A class for valuation on power series and Laurent Series
+    A discrete valuation on power series and Laurent Series
+
+    EXAMPLES::
+
+        sage: R.<t> = QQ[[]]
+        sage: R.valuation()
+        t-adic valuation
+
+        sage: K = R.fraction_field()
+        sage: K.valuation()
+        t-adic valuation
+
+        sage: RL.<t> = LazyPowerSeriesRing(QQ)
+        sage: RL.valuation()
+        t-adic valuation
+
+        sage: KL = RL.fraction_field()
+        sage: KL.valuation()
+        t-adic valuation
 
     TESTS::
 
-        sage: K.<t> = LaurentSeriesRing(QQ)
-        sage: v = K.valuation()
-        sage: TestSuite(v).run()
+        sage: TestSuite(R.valuation()).run()
+        sage: TestSuite(K.valuation()).run()
+        sage: TestSuite(RL.valuation()).run()
+        sage: TestSuite(KL.valuation()).run()
+
     """
     def _repr_(self):
         r"""
@@ -155,7 +207,7 @@ class SeriesValuation_generic(DiscreteValuation):
 
     def lift(self, x):
         r"""
-        Return a lift of ``x`` in the underlying ring.
+        Return a lift of ``x`` from the residue field to the series ring.
 
         EXAMPLES::
 

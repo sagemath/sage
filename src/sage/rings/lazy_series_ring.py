@@ -622,7 +622,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
     def valuation(self):
         r"""
-        Return the valuation on this power series ring.
+        Return the valuation on this lazy series ring.
 
         EXAMPLES::
 
@@ -635,6 +635,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             1
             sage: v(t + 1)
             0
+
         """
         from sage.rings.series_valuation import SeriesValuation
         return SeriesValuation(self)
