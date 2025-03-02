@@ -432,7 +432,7 @@ Test the ``--debug`` option::
         s...: a = 3
         s...: b = 5
         s...: a + b
-        8...
+        8
     sage:
     <BLANKLINE>
     Returning to doctests...

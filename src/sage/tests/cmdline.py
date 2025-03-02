@@ -375,7 +375,7 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
             4
         **********************************************************************
         Previously executed commands:
-            s...: assert True is False...
+            s...: assert True is False
         sage:
         <BLANKLINE>
         Returning to doctests...
