@@ -573,8 +573,6 @@ class FiniteFieldFactory(UniqueFactory):
             ...
             ValueError: wrong input for finite field constructor
         """
-        import sage.arith.all
-
         for key, val in kwds.items():
             if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_names']:
                 raise TypeError("create_key_and_extra_args() got an unexpected keyword argument '%s'" % key)
