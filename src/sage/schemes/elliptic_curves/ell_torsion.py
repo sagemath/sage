@@ -339,6 +339,17 @@ def torsion_bound(E, number_of_places=20):
         16
         sage: E.torsion_subgroup().invariants()
         (4, 4)
+
+    TESTS:
+
+    Verify that :issue:`39580` is fixed::
+
+        sage: # needs sage.rings.number_field
+        sage: t = var('t')
+        sage: K.<a> = NumberField(20*t^4 + 40*t^3 + 28*t^2 + 8*t + 1)
+        sage: E = EllipticCurve(K, [0, -3/2 ,0, 1/2, 0])
+        sage: E.torsion_subgroup()
+        Torsion Subgroup isomorphic to Z/2 + Z/2 ...
     """
     from sage.rings.integer_ring import ZZ
     from sage.rings.finite_rings.finite_field_constructor import GF
@@ -418,13 +429,13 @@ def torsion_bound(E, number_of_places=20):
 
     while k < number_of_places:
         p = p.next_prime()
-        if p.divides(disc_E) or p.divides(disc_f):
+        if p.divides(disc_E) or p.divides(disc_f) or p.divides(den):
             continue
         k += 1
         for fi, ei in f.factor_mod(p):
             di = fi.degree()
             Fq = GF((p, di))
-            ai = fi.roots(Fq, multiplicities=False)[0]
+            ai = fi.roots(Fq, multiplicities=False)[0] / den
 
             def red(c):
                 return Fq.sum(Fq(c[j]) * ai**j for j in range(d))
