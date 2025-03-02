@@ -3306,7 +3306,7 @@ class PermutationGroup_generic(FiniteGroup):
             TypeError: junk is not a permutation group
         """
         if other is None:
-            return PermutationGroup(gap_group=libgap.DerivedSubgroup(self))
+            return self.subgroup(gap_group=libgap.DerivedSubgroup(self))
         else:
             from sage.categories.finite_permutation_groups import FinitePermutationGroups
             if other not in FinitePermutationGroups():
