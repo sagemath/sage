@@ -3257,21 +3257,23 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         ALGORITHM: See :func:`~sage.arith.misc.algdep`.
 
-        INPUT: Type ``algdep?`` at the top level prompt. All additional
-        parameters are passed onto the top-level :func:`algdep` command.
+        INPUT: Type ``algebraic_dependency?`` at the top level prompt.
+
+        All additional parameters are passed onto the top-level
+        :func:`algebraic_dependency` command.
 
         EXAMPLES::
 
             sage: C = ComplexField()
             sage: z = (1/2)*(1 + sqrt(3.0) *C.0); z
             0.500000000000000 + 0.866025403784439*I
-            sage: p = z.algdep(5); p
+            sage: p = z.algebraic_dependency(5); p
             x^2 - x + 1
             sage: p(z)
             1.11022302462516e-16
         """
-        from sage.arith.misc import algdep
-        return algdep(self, n, **kwds)
+        from sage.arith.misc import algebraic_dependency
+        return algebraic_dependency(self, n, **kwds)
 
     # Alias
     algdep = algebraic_dependency

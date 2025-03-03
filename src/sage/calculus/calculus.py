@@ -420,7 +420,7 @@ To check that :issue:`27092` is fixed::
 
 import math
 import re
-from sage.arith.misc import algdep
+from sage.arith.misc import algebraic_dependency
 from sage.rings.complex_arb import ComplexBallField
 from sage.rings.complex_interval_field import ComplexIntervalField_class
 from sage.rings.complex_mpfr import ComplexField_class
@@ -1162,7 +1162,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
             for degree in degree_list:
 
-                f = QQ[var](algdep(a, degree))  # TODO: use the known_bits parameter?
+                f = QQ[var](algebraic_dependency(a, degree))  # TODO: use the known_bits parameter?
                 # If indeed we have found a minimal polynomial,
                 # it should be accurate to a much higher precision.
                 error = abs(f(aa))
