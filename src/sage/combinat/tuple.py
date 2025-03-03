@@ -136,12 +136,22 @@ class Tuples(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             IndexError: index i (=27) is greater than or equal to the cardinality
+            sage: T[-28]
+            Traceback (most recent call last):
+            ...
+            IndexError: i (=-1) must be a nonnegative integer
 
         Verify that `unrank` works correctly for Tuples where `k = 1`. ::
 
             sage: T = Tuples(range(6), 1)
             sage: T[5]
             (5,)
+
+        Verify that `unrank` works when called directly. ::
+
+            sage: T = Tuples(range(4), 3)
+            sage: T.unrank(19)
+            (3, 0, 1)
 
         Verify that :issue:`39534` has been fixed. ::
 
@@ -151,7 +161,7 @@ class Tuples(Parent, UniqueRepresentation):
         """
         r = ZZ(i)
         if r < 0:
-            raise IndexError("i (={}) must be a nonnegative integer")
+            raise IndexError("i (={}) must be a nonnegative integer".format(i))
         ts = len(self.S)
         elt = []
         for _ in range(0, self.k):

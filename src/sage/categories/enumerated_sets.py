@@ -458,9 +458,12 @@ class EnumeratedSets(CategoryWithAxiom):
                 sage: F[1::2]
                 [2]
             """
+            from sage.rings.infinity import Infinity
             if isinstance(i, slice):
                 return self.unrank_range(i.start, i.stop, i.step)
             if i < 0:
+                i += self.cardinality()
+            if i is Infinity:
                 return self.list()[i]
             return self.unrank(i)
 
