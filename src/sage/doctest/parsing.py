@@ -39,36 +39,44 @@ import platform
 import re
 from collections import defaultdict
 from functools import reduce
+from re import Pattern
 from typing import Literal, Union, overload
 
+from sage.doctest.check_tolerance import (
+    ToleranceExceededError,
+    check_tolerance_complex_domain,
+    check_tolerance_real_domain,
+    float_regex,
+)
+from sage.doctest.external import available_software, external_software
+from sage.doctest.marked_output import MarkedOutput
+from sage.doctest.rif_tol import RIFtol, add_tolerance
 from sage.misc.cachefunc import cached_function
 from sage.repl.preparse import preparse, strip_string_literals
-from sage.doctest.rif_tol import RIFtol, add_tolerance
-from sage.doctest.marked_output import MarkedOutput
-from sage.doctest.check_tolerance import (
-    ToleranceExceededError, check_tolerance_real_domain,
-    check_tolerance_complex_domain, float_regex)
-
-from .external import available_software, external_software
-
 
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:
-ansi_escape_sequence = re.compile(r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])")
+ansi_escape_sequence: Pattern[str] = re.compile(
+    r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])"
+)
 
-special_optional_regex = (
+special_optional_regex_raw = (
     "py2|long time|not implemented|not tested|optional|needs|known bug|flaky"
 )
-tag_with_explanation_regex = r"((?:!?\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
-optional_regex = re.compile(
-    rf"[^ a-z]\s*(?P<cmd>{special_optional_regex})(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)",
+tag_with_explanation_regex_raw = r"((?:!?\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
+optional_regex: Pattern[str] = re.compile(
+    rf"[^ a-z]\s*(?P<cmd>{special_optional_regex_raw})(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex_raw})\s*)*)",
     re.IGNORECASE,
 )
-special_optional_regex = re.compile(special_optional_regex, re.IGNORECASE)
-tag_with_explanation_regex = re.compile(tag_with_explanation_regex, re.IGNORECASE)
+special_optional_regex: Pattern[str] = re.compile(
+    special_optional_regex_raw, re.IGNORECASE
+)
+tag_with_explanation_regex: Pattern[str] = re.compile(
+    tag_with_explanation_regex_raw, re.IGNORECASE
+)
 
-nodoctest_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*nodoctest')
-optionaltag_regex = re.compile(r"^(\w|[.])+$")
-optionalfiledirective_regex = re.compile(
+no_doctest_regex: Pattern[str] = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*nodoctest')
+optional_tag_regex: Pattern[str] = re.compile(r"^(\w|[.])+$")
+optional_file_directive_regex: Pattern[str] = re.compile(
     r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctest: (.*)'
 )
 
@@ -179,7 +187,7 @@ def parse_optional_tags(
         sage: special_optional_regex.pattern
         'py2|long time|not implemented|not tested|optional|needs|known bug|flaky'
     """
-    safe, literals, state = strip_string_literals(string)
+    safe, literals, _ = strip_string_literals(string)
     split = safe.split('\n', 1)
     if len(split) > 1:
         first_line, rest = split
@@ -243,7 +251,7 @@ def parse_optional_tags(
         return tags
 
 
-def parse_file_optional_tags(lines):
+def parse_file_optional_tags(lines) -> dict[str, str | None]:
     r"""
     Scan the first few lines for file-level doctest directives.
 
@@ -278,11 +286,11 @@ def parse_file_optional_tags(lines):
         ....:     parse_file_optional_tags(enumerate(f))
         {'flaky': None}
     """
-    tags = {}
+    tags: dict[str, str | None] = {}
     for line_count, line in lines:
-        if nodoctest_regex.match(line):
+        if no_doctest_regex.match(line):
             tags['not tested'] = None
-        if m := optionalfiledirective_regex.match(line):
+        if m := optional_file_directive_regex.match(line):
             file_tag_string = m.group(2)
             tags.update(parse_optional_tags('#' + file_tag_string))
         if line_count >= 10:
@@ -291,7 +299,7 @@ def parse_file_optional_tags(lines):
 
 
 @cached_function
-def _standard_tags():
+def _standard_tags() -> frozenset[str]:
     r"""
     Return the set of the names of all standard features.
 
@@ -338,7 +346,7 @@ def _tag_group(tag):
         return 'special'
 
 
-def unparse_optional_tags(tags, prefix='# '):
+def unparse_optional_tags(tags, prefix='# ') -> str:
     r"""
     Return a comment string that sets ``tags``.
 
@@ -613,7 +621,7 @@ def parse_tolerance(source, want):
     return want
 
 
-def pre_hash(s):
+def pre_hash(s) -> str:
     """
     Prepends a string with its length.
 
