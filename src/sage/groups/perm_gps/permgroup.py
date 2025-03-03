@@ -3305,7 +3305,7 @@ class PermutationGroup_generic(FiniteGroup):
             ...
             TypeError: junk is not a permutation group
 
-        TEST:
+        TESTS:
             
         Verify that :issue`39416` is fixed::
 
