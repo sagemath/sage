@@ -105,7 +105,7 @@ class Tuples(Parent, UniqueRepresentation):
             sage: T[73451]
             (0, 0, 1, 4, 2, 4)
 
-        TESTS::
+        TESTS:
 
         Verify that `unrank` is giving the correct result. ::
 
