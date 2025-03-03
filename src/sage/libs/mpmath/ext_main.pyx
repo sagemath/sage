@@ -1178,7 +1178,7 @@ cdef class Context:
         if kwargs:
             if 'prec' in kwargs:
                 opts.prec = int(kwargs['prec'])
-            if 'dps'  in kwargs:
+            if 'dps' in kwargs:
                 opts.prec = libmp.dps_to_prec(int(kwargs['dps']))
             if 'rounding' in kwargs:
                 opts.rounding = rndmode_from_python(kwargs['rounding'])
@@ -1350,7 +1350,7 @@ cdef class Context:
         opts.rounding = global_opts.rounding
         if kwargs:
             if 'prec' in kwargs: opts.prec = int(kwargs['prec'])
-            if 'dps'  in kwargs: opts.prec = libmp.dps_to_prec(int(kwargs['dps']))
+            if 'dps' in kwargs: opts.prec = libmp.dps_to_prec(int(kwargs['dps']))
             if 'rounding' in kwargs: opts.rounding = rndmode_from_python(kwargs['rounding'])
         if typx == 1:
             if MPF_sgn(&tmp_opx_re) < 0:
@@ -1435,7 +1435,7 @@ cdef class wrapped_libmp_function:
         rounding = rndmode_to_python(global_opts.rounding)
         if kwargs:
             if 'prec' in kwargs: prec = int(kwargs['prec'])
-            if 'dps'  in kwargs: prec = libmp.dps_to_prec(int(kwargs['dps']))
+            if 'dps' in kwargs: prec = libmp.dps_to_prec(int(kwargs['dps']))
             if 'rounding' in kwargs: rounding = kwargs['rounding']
         typx = MPF_set_any(&tmp_opx_re, &tmp_opx_im, x, global_opts, 1)
         if typx == 1:
@@ -1846,7 +1846,7 @@ cdef class mpf(mpf_base):
         opts = global_opts
         if kwargs:
             if 'prec' in kwargs: opts.prec = int(kwargs['prec'])
-            if 'dps'  in kwargs: opts.prec = libmp.dps_to_prec(int(kwargs['dps']))
+            if 'dps' in kwargs: opts.prec = libmp.dps_to_prec(int(kwargs['dps']))
             if 'rounding' in kwargs: opts.rounding = rndmode_from_python(kwargs['rounding'])
         if MPF_set_any(&self.value, &self.value, x, opts, 1) != 1:
             raise TypeError

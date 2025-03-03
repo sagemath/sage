@@ -34,7 +34,6 @@ from sage.sets.family import Family
 from sage.matrix.constructor import matrix
 from sage.rings.rational_field import QQ
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
-from sage.modules.free_module_element import vector
 from sage.categories.modules_with_basis import ModulesWithBasis
 
 
