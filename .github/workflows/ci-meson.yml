@@ -25,6 +25,19 @@ jobs:
         os: [ubuntu]
         python: ['3.11', '3.12']
         editable: [false, true]
+        is-pull-request:
+          - ${{ github.event_name == 'pull_request' }}
+          # trick from https://github.com/orgs/community/discussions/26253#discussioncomment-6745038
+          # in PR, only run the combinations listed below; otherwise, run all combinations
+        exclude:
+          - is-pull-request: true
+        include:
+          - os: ubuntu
+            python: 3.11
+            editable: false
+          - os: ubuntu
+            python: 3.12
+            editable: true
 
     steps:
       - uses: actions/checkout@v4
