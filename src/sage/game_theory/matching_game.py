@@ -493,7 +493,7 @@ class MatchingGame(SageObject):
                         zip(set(self._suitors), set(other._suitors))))
 
     __hash__ = None
-   # not hashable because this is mutable.
+    # not hashable because this is mutable.
 
     def plot(self):
         r"""

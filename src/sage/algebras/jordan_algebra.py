@@ -1298,7 +1298,6 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
             sage: len(B)
             27
         """
-        import itertools
         R = self.base_ring()
         OB = self._O.basis()
         base = [R.zero()] * 3 + [self._O.zero()] * 3
