@@ -3135,7 +3135,7 @@ def petersen_family(generate=False):
     # for as long as we generate new graphs.
     P = PetersenGraph()
 
-    l = set([])
+    l = set()
     l_new = [P.canonical_label().graph6_string()]
 
     while l_new:
