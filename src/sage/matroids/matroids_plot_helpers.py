@@ -708,8 +708,8 @@ def tracklims(lims, x_i=[], y_i=[]):
     """
     if lims is not None and lims[0] is not None and lims[1] is not None and \
        lims[2] is not None and lims[3] is not None:
-        lims = [min(min(x_i), lims[0]), max(max(x_i), lims[1]),
-                min(min(y_i), lims[2]), max(max(y_i), lims[3])]
+        lims = [min(*x_i, lims[0]), max(*x_i, lims[1]),
+                min(*y_i, lims[2]), max(*y_i, lims[3])]
     else:
         lims = [min(x_i), max(x_i), min(y_i), max(y_i)]
     return lims
