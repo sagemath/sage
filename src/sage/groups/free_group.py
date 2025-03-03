@@ -457,8 +457,9 @@ class FreeGroupElement(ElementLibGAP):
                 R = ring
             symb = list(im_gens)
             symb += reversed([a**(-1) for a in im_gens])
-        i = gen.Tietze()[0]  # So ``gen`` is the `i`-th
-                             # generator of the free group.
+        i = gen.Tietze()[0]
+        # so gen is the i-th generator of the free group
+
         a = R.zero()
         coef = R.one()
         while l:
@@ -506,7 +507,7 @@ class FreeGroupElement(ElementLibGAP):
         for i in range(k):
             exponent = exponent_syllable(g, i+1).sage()
             generator = gen(generator_syllable(g, i+1).sage() - 1)
-            result.append( (generator, exponent) )
+            result.append((generator, exponent))
         return tuple(result)
 
     def __call__(self, *values):
@@ -936,6 +937,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             Finitely presented group < a, b, c, d | a*b*a^-1 >
         """
         from sage.groups.finitely_presented import FinitelyPresentedGroup
-        return FinitelyPresentedGroup(self, tuple(map(self, relations) ), **kwds)
+        return FinitelyPresentedGroup(self,
+                                      tuple(map(self, relations)), **kwds)
 
     __truediv__ = quotient
