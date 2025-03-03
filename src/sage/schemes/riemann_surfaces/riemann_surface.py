@@ -114,7 +114,7 @@ The initial version of this code was developed alongside [BSZ2019]_.
 
 from scipy.spatial import Voronoi
 from sage.arith.functions import lcm
-from sage.arith.misc import GCD, algdep
+from sage.arith.misc import GCD, algebraic_dependency
 from sage.ext.fast_callable import fast_callable
 from sage.graphs.graph import Graph
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
@@ -617,7 +617,7 @@ class RiemannSurface:
         sage: f = Y^2+X*Y+phi*Y-(X^3-X^2-2*phi*X+phi)
         sage: S = RiemannSurface(f,prec=prec, differentials=[1])
         sage: tau = S.riemann_matrix()[0, 0]
-        sage: tau.algdep(6).degree() == 2
+        sage: tau.algebraic_dependency(6).degree() == 2
         True
     """
 
@@ -2292,7 +2292,7 @@ class RiemannSurface:
             sage: m = S.matrix_of_integral_values(B)
             sage: parent(m)
             Full MatrixSpace of 1 by 2 dense matrices over Complex Field with 53 bits of precision
-            sage: (m[0,0]/m[0,1]).algdep(3).degree() # curve is CM, so the period is quadratic
+            sage: (m[0,0]/m[0,1]).algebraic_dependency(3).degree() # curve is CM, so the period is quadratic
             2
 
         .. NOTE::
@@ -2412,7 +2412,7 @@ class RiemannSurface:
 
             sage: x = polygen(QQ)
             sage: K.<a> = NumberField(x^2 - x + 2)
-            sage: all(len(m.algdep(6).roots(K)) > 0 for m in M.list())
+            sage: all(len(m.algebraic_dependency(6).roots(K)) > 0 for m in M.list())
             True
         """
         PeriodMatrix = self.period_matrix()
@@ -2689,7 +2689,7 @@ class RiemannSurface:
             d = 1
             while True:
                 d += 1
-                dep = algdep(alpha, d, height_bound=10**d)
+                dep = algebraic_dependency(alpha, d, height_bound=10**d)
                 if dep and dep(alpha) < epscomp:
                     return dep
 
