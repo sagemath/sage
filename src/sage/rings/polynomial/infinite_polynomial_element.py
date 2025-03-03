@@ -1269,17 +1269,18 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         EXAMPLES::
 
-            sage: R.<x>=InfinitePolynomialRing(QQ)
-            sage: p1=x[0] + x[1]**2
-            sage: gcd(p1,p1+3)
+            sage: R.<x> = InfinitePolynomialRing(QQ)
+            sage: p1 = x[0] + x[1]^2
+            sage: gcd(p1, p1 + 3)
             1
-            sage: gcd(p1,p1)==p1
+            sage: gcd(p1, p1) == p1
             True
         """
         P = self.parent()
         self._p = P._P(self._p)
         x._p = P._P(x._p)
-        return self.__class__.__base__(self.parent(), self._p.gcd(x._p))
+        g = self._p.gcd(x._p)
+        return self.__class__.__base__(P, g)
 
 
 class InfinitePolynomial_sparse(InfinitePolynomial):
