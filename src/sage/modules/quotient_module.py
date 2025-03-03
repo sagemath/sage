@@ -539,10 +539,10 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
         Ensure that :issue:`39507` is fixed::
             sage: V = VectorSpace(GF(2),3)
-            sage: A = V.subspace([(1,0,0)])
+            sage: A = V.subspace([(0,1,0), (1,1,1)])
             sage: B = A.subspace([])
             sage: list(A/B)
-            [(0), (1)]
+            [(0, 0), (1, 0), (0, 1), (1, 1)]
         """
         if isinstance(x, self.element_class) and x.parent() is self:
             return x
