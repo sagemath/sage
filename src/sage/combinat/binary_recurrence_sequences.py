@@ -360,10 +360,10 @@ class BinaryRecurrenceSequence(SageObject):
 
         - ``m`` -- integer; modulo which the period of the recurrence relation is calculated
 
-        - ``eventual`` -- boolean (default: `False`); if `True`, allow the
+        - ``eventual`` -- boolean (default: ``False``); if ``True``, allow the
           sequence to be eventually periodic, rather than requiring it to be
           purely periodic. So `n_1` might not be congruent to `n_2` modulo
-          `period(m)` unless `n_1` and `n_2` are large.
+          ``period(m)`` unless `n_1` and `n_2` are large.
 
         OUTPUT: integer (the period of the sequence modulo m)
 
@@ -397,8 +397,8 @@ class BinaryRecurrenceSequence(SageObject):
             sage: S.period(17)
             8
 
-        Letting `eventual` be `True` allows us to find the period of a sequence
-        that is not purely periodic.::
+        Letting ``eventual`` be ``True`` allows us to find the period of a
+        sequence that is not purely periodic. ::
 
             sage: T = BinaryRecurrenceSequence(5,12,u0=0,u1=1)
             sage: [T(n) % 10 for n in range(20)]
