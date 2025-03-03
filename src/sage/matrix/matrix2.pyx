@@ -12986,6 +12986,11 @@ cdef class Matrix(Matrix1):
             [5*z2 + 6       z2       z2]
             sage: U == B * B.H
             True
+
+        TESTS:
+
+        If the matrix is not full rank, we compute the rank and throw an exception.
+
             sage: U = matrix(GF(3**2),[[1,4,7],[4,1,4],[7,4,1]])
             sage: U._cholesky_extended_ff()
             Traceback (most recent call last)
