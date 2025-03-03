@@ -332,8 +332,8 @@ class DualMatroid(Matroid):
         EXAMPLES::
 
             sage: M = matroids.catalog.Vamos().dual()
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
             Dual of 'M / {'b', 'c'} \ {'a'}, where M is Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},

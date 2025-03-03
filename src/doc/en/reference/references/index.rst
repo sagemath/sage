@@ -3269,6 +3269,9 @@ REFERENCES:
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              http://www-math.mit.edu/~hajiagha/pp11.ps
 
+.. [Han2016] \G.-N. Han, *Hankel continued fraction and its applications*,
+             Adv. in Math., 303, 2016, pp. 295-321.
+
 .. [Han1960] Haim Hanani,
              *On quadruple systems*,
              pages 145--157, vol. 12,
@@ -3917,6 +3920,11 @@ REFERENCES:
             and combinatorics of Young tableaux*,
             Algebra i Analiz, 1995, Volume 7, Issue 1, pp. 92--152.
             http://math.uoregon.edu/~arkadiy/bk1.pdf
+
+.. [KD2015] Donald Keedwell and József Dénes, Latin Squares and their
+            Applications (2nd ed.), Elsevier B.V., Amsterdam-Netherlands,
+            2015. ISBN 978-0-444-63555-6, :mathscinet:`MR3495977`,
+            :doi:`10.1016/C2014-0-03412-0`
 
 .. [Ke1991] \A. Kerber. Algebraic combinatorics via finite group
             actions, 2.2 p. 70. BI-Wissenschaftsverlag,
@@ -6500,6 +6508,9 @@ REFERENCES:
 .. _ref-T:
 
 **T**
+
+.. [Tae2012] Lenny Taelman, *Special L-values of Drinfeld modules*,
+             Ann. Math. 175 (1), 2012, 369–391
 
 .. [Tak1999] Kisao Takeuchi, Totally real algebraic number fields of
              degree 9 with small discriminant, Saitama Math. J.  17

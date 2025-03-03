@@ -179,22 +179,18 @@ AUTHORS:
 ########################################################################
 
 import itertools
-
-from sage.features import FeatureNotPresentError
-from sage.features.topcom import TOPCOMExecutable
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
-
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import vector
-
 from copy import copy
 import sys
 import pexpect
 
+from sage.features import FeatureNotPresentError
+from sage.features.topcom import TOPCOMExecutable
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.geometry.triangulation.base import \
     PointConfiguration_base, Point, ConnectedTriangulationsIterator
