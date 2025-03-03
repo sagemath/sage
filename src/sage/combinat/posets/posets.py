@@ -3462,7 +3462,7 @@ class FinitePoset(UniqueRepresentation, Parent):
           ``self`` such that ``b`` covers ``a`` and returning elements
           in a totally ordered set.
 
-        - ``return_raising_chains`` (optional; default:``False``) if
+        - ``return_raising_chains`` (optional; default: ``False``) if
           ``True``, returns the set of all raising chains in ``self``,
           if possible.
 
