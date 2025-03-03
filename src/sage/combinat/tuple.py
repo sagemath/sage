@@ -90,6 +90,78 @@ class Tuples(Parent, UniqueRepresentation):
         """
         return "Tuples of %s of length %s" % (self.S, self.k)
 
+    def unrank(self, i):
+        """
+        Return the `i`-th element of the set of Tuples.
+
+        INPUT:
+
+        - ``i`` -- integer between `0` and `n-1` where `n` is the cardinality
+          of this set.
+
+        EXAMPLES::
+
+            sage: T = Tuples(range(7), 6)
+            sage: T[73451]
+            (0, 0, 1, 4, 2, 4)
+
+        TESTS::
+
+        Verify that `unrank` is giving the correct result. ::
+
+            sage: T = Tuples(range(4), 5)
+            sage: all(T[i] == x for i,x in enumerate(T))
+            True
+
+        Verify that `unrank` is fast for large inputs. ::
+
+            sage: Tuples(range(3), 30)[10^12]
+            (1, 0, 0, 1, 1, 1, 2, 0, 1, 2, 0, 1, 1, 0, 2, 1, 1, 0, 1, 2, 1, 2,
+            1, 1, 0, 1, 0, 0, 0, 0)
+
+        Verify that `unrank` normalizes ``i``. ::
+
+            sage: T = Tuples(range(3), 2)
+            sage: T[QQ(4/2)]
+            (2, 0)
+            sage: T[QQ(1/2)]
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+
+        Verify that `unrank` throws an error when ``i`` is out of bounds. ::
+
+            sage: T = Tuples(range(3), 3)
+            sage: T[27]
+            Traceback (most recent call last):
+            ...
+            IndexError: index i (=27) is greater than or equal to the cardinality
+
+        Verify that `unrank` works correctly for Tuples where `k = 1`. ::
+
+            sage: T = Tuples(range(6), 1)
+            sage: T[5]
+            (5,)
+
+        Verify that :issue:`39534` has been fixed. ::
+
+            sage: Tuples(range(3), 30).random_element() #random
+            (0, 2, 2, 1, 2, 1, 0, 2, 0, 2, 1, 0, 0, 2, 1, 1, 2, 0, 2, 1, 1, 0,
+            2, 2, 0, 0, 0, 2, 1, 1)
+        """
+        r = ZZ(i)
+        if r < 0:
+            raise IndexError("i (={}) must be a nonnegative integer")
+        ts = len(self.S)
+        elt = []
+        for _ in range(0, self.k):
+            elt.append(self.S[r % ts])
+            r //= ts
+        if r > 0:
+            raise IndexError("index i (={}) is greater than or equal to the cardinality"
+                             .format(i))
+        return tuple(elt)
+
     def __iter__(self):
         """
         EXAMPLES::
