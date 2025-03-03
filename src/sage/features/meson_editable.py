@@ -1,14 +1,13 @@
 r"""
 Feature for testing if Meson editable install is used.
 """
-
-import sys
 from . import Feature, FeatureTestResult
 
 
 class MesonEditable(Feature):
     r"""
-    A :class:`~sage.features.Feature` describing if Meson editable install is used.
+    A :class:`~sage.features.Feature` describing if Meson editable install
+    is used.
 
     EXAMPLES::
 
