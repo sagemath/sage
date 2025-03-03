@@ -16,7 +16,6 @@ Number-theoretic functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import math
-import sys
 
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import increase_recursion_limit
