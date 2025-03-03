@@ -29,7 +29,7 @@ from sage.categories.fields import Fields
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.factory import Zp, Zq
-from sage.rings.padics.witt_vector import WittVector
+from sage.rings.padics.witt_vector import WittVector, WittVector_phantom
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -577,3 +577,13 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             +Infinity
         """
         return self.base().cardinality()**(self._prec)
+
+
+class WittVectorRing_phantom(WittVectorRing):
+    Element = WittVector_phantom
+
+    def __init__(self, base_ring, prec, p, mod, lift):
+        algorithm = "phantom"
+        WittVectorRing.__init__(self, base_ring, prec, p, algorithm)
+        self._mod = mod
+        self._lift = lift

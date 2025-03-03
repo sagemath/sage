@@ -457,3 +457,94 @@ class WittVector(CommutativeRingElement):
                 vec_k = (-x for x in vec_k)
 
         self._vec = tuple([R(x) for x in vec_k])
+
+
+class WittVector_phantom(WittVector):
+    def __init__(self, parent, vec=None, phantom=None):
+        self._prec = prec = parent.precision()
+        R = parent.base_ring()
+        p = parent._prime
+        mod = parent._mod
+        lift = parent._lift
+        if phantom is not None:
+            self._phantom = phantom
+            self._vec = [mod(phantom[0])]
+            self._powers = [phantom[0]]
+        elif vec is None:
+            zero = R.zero()
+            zerolift = lift(zero)
+            self._vec = prec * [zero]
+            self._phantom = prec * [zero]
+        elif isinstance(vec, WittVector_phantom):
+            self._vec = vec._vec
+            self._phantom = vec._phantom
+            self._powers = vec._powers
+        elif isinstance(vec, int) or isinstance(vec, Integer):
+            y = lift(vec)
+            self._vec = [mod(y)]
+            self._powers = [y]
+            self._phantom = prec * [y]
+        elif isinstance(vec, tuple) or isinstance(vec, list):
+            if len(vec) < self._prec:
+                raise ValueError(f'{vec} has not the correct length. '
+                                 'Expected length has to be at least '
+                                 f'{self._prec}.')
+            # We compute the phantom components
+            self._vec = [R(v) for v in vec]
+            x = [lift(v) for v in self._vec]
+            self._phantom = [x[0]]
+            for n in range(1, prec):
+                for i in range(n):
+                    x[i] = x[i] ** p
+                self._phantom.append(sum(x[i] * p**i for i in range(n+1)))
+            self._powers = None
+        else:
+            raise ValueError(f'{vec} cannot be interpreted as a Witt vector.')
+        CommutativeRingElement.__init__(self, parent)
+
+    def _compute_vector(self, prec=None):
+        maxprec = self._prec
+        if prec is None:
+            prec = maxprec
+        else:
+            prec = min(prec, maxprec)
+        phantom = self._phantom
+        powers = self._powers
+        vec = self._vec
+        p = self.parent()._prime
+        mod = self.parent()._mod
+        for n in range(len(vec), prec):
+            for i in range(n):
+                powers[i] = powers[i] ** p
+            c = (phantom[n] - sum(powers[i] * p**i for i in range(n))) // p**n
+            self._vec.append(mod(c))
+            self._powers.append(c)
+
+    def __repr__(self):
+        self._compute_vector()
+        return str(tuple(self._vec))
+
+    def phantom(self):
+        return self._phantom
+
+    def __getitem__(self, i):
+        if i < 0 or i >= prec:
+            raise IndexError
+        self._compute_vector(i+1)
+        return self._vec[i]
+
+    def _add_(self, other):
+        phantom = [self._phantom[i] + other._phantom[i] for i in range(self._prec)]
+        return self.__class__(self.parent(), phantom=phantom)
+
+    def _sub_(self, other):
+        phantom = [self._phantom[i] - other._phantom[i] for i in range(self._prec)]
+        return self.__class__(self.parent(), phantom=phantom)
+
+    def _neg_(self):
+        phantom = [-v for v in self._phantom]
+        return self.__class__(self.parent(), phantom=phantom)
+
+    def _mul_(self, other):
+        phantom = [self._phantom[i] * other._phantom[i] for i in range(self._prec)]
+        return self.__class__(self.parent(), phantom=phantom)
