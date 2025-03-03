@@ -1521,6 +1521,27 @@ class QuotientRingIdeal_generic(ideal.Ideal_generic):
         Ideal (3, 0) of Ring of integers modulo 9
     """
 
+    def _lift(self):
+        """
+        Return an ideal of the cover ring that corresponds to this ideal.
+
+        EXAMPLES::
+
+            sage: Zmod(15).ideal(6)._lift()
+            Principal ideal (3) of Integer Ring
+            sage: R.<x,y> = QQ[]
+            sage: S = R.quotient(x)
+            sage: S.ideal(y)._lift()
+            Ideal (x, y) of Multivariate Polynomial Ring in x, y over Rational Field
+        """
+        R = self.ring()
+        if hasattr(R, 'defining_ideal'):
+            Igens = list(R.defining_ideal().gens())
+        else:
+            Igens = [R.modulus()]
+        Igens += [g.lift() for g in self.gens()]
+        return R.cover_ring().ideal(Igens)
+
     def _contains_(self, other):
         r"""
         Check whether this ideal contains the given element.
@@ -1550,15 +1571,19 @@ class QuotientRingIdeal_generic(ideal.Ideal_generic):
             sage: 5-5*t in S.ideal(t^2 - 1)
             True
         """
-        R = self.ring()
-        assert other in R
-        if hasattr(R, 'defining_ideal'):
-            Igens = list(R.defining_ideal().gens())
-        else:
-            Igens = [R.modulus()]
-        Igens += [g.lift() for g in self.gens()]
-        J = R.cover_ring().ideal(Igens)
-        return other.lift() in J
+        assert other in self.ring()
+        return other.lift() in self._lift()
+
+    def radical(self):
+        """
+        Return the radical of this ideal.
+
+        EXAMPLES::
+
+            sage: Zmod(16).ideal(4).radical()
+            Principal ideal (2) of Ring of integers modulo 16
+        """
+        return self.ring().ideal(self._lift().radical())
 
 
 class QuotientRingIdeal_principal(ideal.Ideal_principal, QuotientRingIdeal_generic):
