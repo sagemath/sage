@@ -2981,8 +2981,8 @@ cdef class GLPKBackend(GenericBackend):
 
         i = glp_eval_tab_row(self.lp, k + 1, c_indices, c_values)
 
-        indices = [c_indices[j+1] - 1 for j in range(i)]
-        values  = [c_values[j+1]      for j in range(i)]
+        indices = [c_indices[j + 1] - 1 for j in range(i)]
+        values = [c_values[j + 1] for j in range(i)]
         return (indices, values)
 
     cpdef eval_tab_col(self, int k):
@@ -3079,8 +3079,8 @@ cdef class GLPKBackend(GenericBackend):
 
         i = glp_eval_tab_col(self.lp, k + 1, c_indices, c_values)
 
-        indices = [c_indices[j+1] - 1 for j in range(i)]
-        values  = [c_values[j+1]      for j in range(i)]
+        indices = [c_indices[j + 1] - 1 for j in range(i)]
+        values  = [c_values[j + 1] for j in range(i)]
         return (indices, values)
 
     def __dealloc__(self):
