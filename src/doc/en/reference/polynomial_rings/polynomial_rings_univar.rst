@@ -45,3 +45,4 @@ whereas others have multiple bases.
    sage/rings/polynomial/polynomial_fateman
 
    sage/rings/polynomial/integer_valued_polynomials
+   sage/rings/polynomial/q_integer_valued_polynomials

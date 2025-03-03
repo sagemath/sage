@@ -793,7 +793,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
-            sage: TestSuite(ki_db).run()    # long time indirect doctest
+            sage: TestSuite(ki_db).run()    # optional - database_knotinfo, long time, indirect doctest
         """
         from sage.knots.knotinfo import KnotInfo
         from sage.misc.misc import some_tuples
@@ -838,6 +838,8 @@ column_demo_sample = {
     'fibered':              ['Fibered',              KnotInfoColumnTypes.OnlyKnots],
     'unoriented':           ['Unoriented',           KnotInfoColumnTypes.OnlyLinks],
     'symmetry_type':        ['Symmetry Type',        KnotInfoColumnTypes.OnlyKnots],
+    'geometric_type':       ['Geometric Type',       KnotInfoColumnTypes.OnlyKnots],
+    'cosmetic_crossing':    ['Cosmetic Crossing',    KnotInfoColumnTypes.OnlyKnots],
     'width':                ['Width',                KnotInfoColumnTypes.OnlyKnots],
     'arc_notation':         ['Arc Notation',         KnotInfoColumnTypes.OnlyLinks],
     'dt_code':              ['DT code',              KnotInfoColumnTypes.OnlyLinks]
@@ -1019,6 +1021,18 @@ data_demo_sample = {
         'reversible',
         'reversible'
         ],
+    dc.geometric_type: [
+        '',
+        'torus knot T(2,3)',
+        'hyperbolic',
+        'torus knot T(2,5)',
+        'hyperbolic',
+        'hyperbolic',
+        'hyperbolic',
+        'hyperbolic',
+        'torus knot T(2,7)',
+        'hyperbolic'],
+    dc.cosmetic_crossing: ['', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
     dc.homfly_polynomial: [
         '',
         '(2*v^2-v^4)+v^2*z^2',

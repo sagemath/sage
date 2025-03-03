@@ -49,7 +49,3 @@ latex_documents = [
   ('index', name + '.tex', project,
    'The Sage Group', 'manual'),
 ]
-
-# the definition of \\at in the standard preamble of the sphinx doc
-# conflicts with that in babel/french[b]
-latex_elements['preamble'] += '\\let\\at\\undefined'

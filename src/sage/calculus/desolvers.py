@@ -741,7 +741,7 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
     # maxima("de:"+de._repr_()+"=0;")
     # if ics is not None:
     #     d = len(ics)
-    #     for i in range(0,d-1):
+    #     for i in range(d-1):
     #         ic = "atvalue(diff("+vars[1]+"("+vars[0]+"),"+str(vars[0])+","+str(i)+"),"+str(vars[0])+"="+str(ics[0])+","+str(ics[1+i])+")"
     #         maxima(ic)
     #
@@ -913,7 +913,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm='maxima'):
 
     if len(des) == 1 and algorithm == "maxima":
         return desolve_laplace(des[0], vars[0], ics=ics, ivar=ivar)
-    ivars = set([])
+    ivars = set()
     for i, de in enumerate(des):
         if not (isinstance(de, Expression) and de.is_relational()):
             des[i] = de == 0
@@ -1357,14 +1357,10 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
             XMAX = XMIN
             YMAX = YMIN
             for s, t in sol:
-                if s > XMAX:
-                    XMAX = s
-                if s < XMIN:
-                    XMIN = s
-                if t > YMAX:
-                    YMAX = t
-                if t < YMIN:
-                    YMIN = t
+                XMAX = max(s, XMAX)
+                XMIN = min(s, XMIN)
+                YMAX = max(t, YMAX)
+                YMIN = min(t, YMIN)
             return plot_slope_field(de, (ivar, XMIN, XMAX), (dvar, YMIN, YMAX)) + R
 
     if not (isinstance(dvar, Expression) and dvar.is_symbol()):
@@ -1444,11 +1440,10 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
 
     - Robert Marik (10-2009)
     """
-
     if ics is None:
         raise ValueError("No initial conditions, specify with ics=[x0,y01,y02,...].")
 
-    ivars = set([])
+    ivars = set()
 
     for de in des:
         ivars = ivars.union(set(de.variables()))

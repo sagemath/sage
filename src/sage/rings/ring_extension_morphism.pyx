@@ -21,7 +21,7 @@ from sage.structure.richcmp import op_EQ, op_NE
 
 from sage.structure.element cimport Element
 from sage.categories.map import Map
-from sage.rings.ring cimport CommutativeRing
+from sage.structure.parent cimport Parent
 from sage.rings.morphism cimport RingMap
 from sage.rings.ring_extension cimport RingExtension_generic, RingExtensionWithBasis
 from sage.rings.ring_extension_element cimport RingExtensionElement
@@ -57,7 +57,7 @@ cdef are_equal_morphisms(f, g):
         sage: H(f^2) == H(g^2)  # indirect doctest
         True
     """
-    cdef CommutativeRing b
+    cdef Parent b
     cdef tuple gens
     if f is None and g is None:
         return True
@@ -461,7 +461,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         if self.base_map() is not None:
             s += "with map on base ring"
             ss = self.base_map()._repr_defn()
-            ss = re.sub('\nwith map on base ring:?$', '', ss, 0, re.MULTILINE)
+            ss = re.sub('\nwith map on base ring:?$', '', ss, flags=re.MULTILINE)
             if ss != "": s += ":\n" + ss
         if s != "" and s[-1] == "\n":
             s = s[:-1]
@@ -821,7 +821,7 @@ cdef class MapRelativeRingToFreeModule(Map):
               From: Field in z6 with defining polynomial x^2 + (10*z3^2 + z3 + 6)*x + z3 over its base
               To:   Vector space of dimension 2 over Finite Field in z3 of size 11^3
         """
-        cdef CommutativeRing L, base
+        cdef Parent L, base
 
         self._degree = (<RingExtensionWithBasis>E)._degree_over(K)
         self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]

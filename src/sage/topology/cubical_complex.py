@@ -67,8 +67,9 @@ reflected in the fact that they have isomorphic homology groups.
    see the :mod:`Generic Cell Complex <sage.homology.cell_complex>`
    page instead.
 """
-
 from copy import copy
+from functools import total_ordering
+
 from .cell_complex import GenericCellComplex
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
@@ -77,8 +78,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-from sage.misc.superseded import deprecation
-from functools import total_ordering
 
 lazy_import('sage.matrix.constructor', 'matrix')
 
@@ -1472,13 +1471,13 @@ class CubicalComplex(GenericCellComplex):
             ...
             NotImplementedError: suspensions are not implemented for cubical complexes
         """
-#         if n<0:
-#             raise ValueError, "n must be nonnegative."
-#         if n==0:
-#             return self
-#         if n==1:
-#             return self.join(cubical_complexes.Sphere(0))
-#         return self.suspension().suspension(int(n-1))
+        # if n < 0:
+        #     raise ValueError("n must be nonnegative")
+        # if n == 0:
+        #     return self
+        # if n == 1:
+        #     return self.join(cubical_complexes.Sphere(0))
+        # return self.suspension().suspension(int(n-1))
         raise NotImplementedError("suspensions are not implemented for cubical complexes")
 
     def product(self, other):

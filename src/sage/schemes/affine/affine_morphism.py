@@ -42,12 +42,10 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 import sys
-
-import sage.rings.abc
 
 from sage.categories.homset import Hom, End
 from sage.categories.fields import Fields
@@ -541,7 +539,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             Scheme endomorphism of Projective Space of dimension 1
              over Algebraic Field
               Defn: Defined on coordinates by sending (x0 : x1) to
-                    (x0*x1 : 1/2*x0^2 + x0*x1 + 3/2*x1^2)
+                    (2*x0*x1 : x0^2 + 2*x0*x1 + 3*x1^2)
 
         ::
 
@@ -1018,8 +1016,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
                 poly_numerator = poly.numerator()
                 poly_denominator = poly.denominator()
                 degree = max(poly_numerator.degree(), poly_denominator.degree())
-                if degree > max_degree:
-                    max_degree = degree
+                max_degree = max(degree, max_degree)
             # polynomial affine map
             elif poly.degree() > max_degree:
                 max_degree = poly.degree()

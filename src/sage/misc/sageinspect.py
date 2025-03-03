@@ -238,11 +238,11 @@ def _extract_embedded_position(docstring):
 
     The following has been fixed in :issue:`13916`::
 
-        sage: cython('''cpdef test_funct(x,y): return''')                               # needs sage.misc.cython
+        sage: cython('''cpdef test_funct(x, y): return''')                               # needs sage.misc.cython
         sage: func_doc = inspect.getdoc(test_funct)                                     # needs sage.misc.cython
         sage: with open(_extract_embedded_position(func_doc)[1]) as f:                  # needs sage.misc.cython
         ....:     print(f.read())
-        cpdef test_funct(x,y): return
+        cpdef test_funct(x, y): return
 
     Ensure that the embedded filename of the compiled function is
     correct.  In particular it should be relative to ``spyx_tmp()`` in
@@ -252,11 +252,11 @@ def _extract_embedded_position(docstring):
         sage: from sage.env import DOT_SAGE
         sage: from sage.misc.sage_ostools import restore_cwd
         sage: with restore_cwd(DOT_SAGE):                                               # needs sage.misc.cython
-        ....:     cython('''cpdef test_funct(x,y): return''')
+        ....:     cython('''cpdef test_funct(x, y): return''')
         sage: func_doc = inspect.getdoc(test_funct)                                     # needs sage.misc.cython
         sage: with open(_extract_embedded_position(func_doc)[1]) as f:                  # needs sage.misc.cython
         ....:     print(f.read())
-        cpdef test_funct(x,y): return
+        cpdef test_funct(x, y): return
     """
     try:
         res = __embedded_position_re.search(docstring)
@@ -276,8 +276,10 @@ def _extract_embedded_position(docstring):
         from sage.misc.temporary_file import spyx_tmp
         if raw_filename.startswith('sage/'):
             import sage
-            try_filenames = [os.path.join(directory, raw_filename[5:])
+            from sage.env import SAGE_SRC
+            try_filenames = [os.path.join(directory, raw_filename.removeprefix('sage/'))
                              for directory in sage.__path__]
+            try_filenames.append(os.path.join(SAGE_SRC, raw_filename))  # meson editable install
         else:
             try_filenames = []
         try_filenames.append(
@@ -311,7 +313,7 @@ def _extract_embedded_signature(docstring, name):
         sage: from sage.misc.sageinspect import _extract_embedded_signature
         sage: from sage.misc.nested_class import MainClass
         sage: print(_extract_embedded_signature(MainClass.NestedClass.NestedSubClass.dummy.__doc__, 'dummy')[0])
-        File: sage/misc/nested_class.pyx (starting at line ...)
+        File: ...sage/misc/nested_class.pyx (starting at line ...)
         ...
         sage: _extract_embedded_signature(MainClass.NestedClass.NestedSubClass.dummy.__doc__, 'dummy')[1]
         FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds', defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -1093,7 +1095,7 @@ def _sage_getargspec_cython(source):
 
     Some malformed input is detected::
 
-        sage: sgc('def f(x,y')
+        sage: sgc('def f(x, y')
         Traceback (most recent call last):
         ...
         SyntaxError: Unexpected EOF while parsing argument list
@@ -1286,6 +1288,15 @@ def sage_getfile(obj):
         sage: sage_getfile(P)                                                           # needs sage.libs.singular
         '...sage/rings/polynomial/multi_polynomial_libsingular...'
 
+    Another bug with editable meson install::
+
+        sage: P.<x,y> = QQ[]
+        sage: I = P * [x,y]
+        sage: path = sage_getfile(I.groebner_basis); path
+        '.../sage/rings/qqbar_decorators.py'
+        sage: path == sage_getfile(sage.rings.qqbar_decorators)
+        True
+
     A problem fixed in :issue:`16309`::
 
         sage: cython(                                                                   # needs sage.misc.cython
@@ -1317,6 +1328,12 @@ def sage_getfile(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
         return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
+    else:
+        if hasattr(obj, '__init__'):
+            pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
+            if pos is not None:
+                (_, filename, _) = pos
+                return filename
 
     # No go? fall back to inspect.
     try:
@@ -1325,7 +1342,12 @@ def sage_getfile(obj):
         return ''
     for suffix in import_machinery.EXTENSION_SUFFIXES:
         if sourcefile.endswith(suffix):
-            return sourcefile[:-len(suffix)]+os.path.extsep+'pyx'
+            # TODO: the following is incorrect in meson editable install
+            # because the build is out-of-tree,
+            # but as long as either the class or its __init__ method has a
+            # docstring, _sage_getdoc_unformatted should return correct result
+            # see https://github.com/mesonbuild/meson-python/issues/723
+            return sourcefile.removesuffix(suffix)+os.path.extsep+'pyx'
     return sourcefile
 
 
@@ -1484,7 +1506,7 @@ def sage_getargspec(obj):
         ....: 'cdef class MyClass:',
         ....: '    def _sage_src_(self):',
         ....: '        return "def foo(x, a=\\\')\\\"\\\', b={(2+1):\\\'bar\\\', not 1:3, 3<<4:5}): return\\n"',
-        ....: '    def __call__(self, m,n): return "something"']
+        ....: '    def __call__(self, m, n): return "something"']
         sage: cython('\n'.join(cython_code))
         sage: O = MyClass()
         sage: print(sage.misc.sageinspect.sage_getsource(O))
@@ -1525,11 +1547,11 @@ def sage_getargspec(obj):
         ....: '''
         ....: class Foo:
         ....:     @staticmethod
-        ....:     def join(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
+        ....:     def join(categories, bint as_list=False, tuple ignore_axioms=(), tuple axioms=()): pass
         ....: cdef class Bar:
         ....:     @staticmethod
-        ....:     def join(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
-        ....:     cpdef meet(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
+        ....:     def join(categories, bint as_list=False, tuple ignore_axioms=(), tuple axioms=()): pass
+        ....:     cpdef meet(categories, bint as_list=False, tuple ignore_axioms=(), tuple axioms=()): pass
         ....: ''')
         sage: sage_getargspec(Foo.join)
         FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
@@ -1850,7 +1872,7 @@ def _sage_getdoc_unformatted(obj):
         sage: from sage.misc.sageinspect import _sage_getdoc_unformatted
         sage: print(_sage_getdoc_unformatted(sage.rings.integer.Integer))
         Integer(x=None, base=0)
-        File: sage/rings/integer.pyx (starting at line ...)
+        File: ...sage/rings/integer.pyx (starting at line ...)
         <BLANKLINE>
             The :class:`Integer` class represents arbitrary precision
             integers. It derives from the :class:`Element` class, so
@@ -1865,28 +1887,10 @@ def _sage_getdoc_unformatted(obj):
         sage: _sage_getdoc_unformatted(isinstance.__class__)
         ''
 
-    Construct an object raising an exception when accessing the
-    ``__doc__`` attribute. This should not give an error in
-    ``_sage_getdoc_unformatted``, see :issue:`19671`::
-
-        sage: class NoSageDoc():
-        ....:     @property
-        ....:     def __doc__(self):
-        ....:         raise Exception("no doc here")
-        sage: obj = NoSageDoc()
-        sage: obj.__doc__
-        Traceback (most recent call last):
-        ...
-        Exception: no doc here
-        sage: _sage_getdoc_unformatted(obj)
-        ''
     """
     if obj is None:
         return ''
-    try:
-        r = obj.__doc__
-    except Exception:
-        return ''
+    r = obj.__doc__
 
     # Check if the __doc__ attribute was actually a string, and
     # not a 'getset_descriptor' or similar.
@@ -2004,8 +2008,8 @@ def sage_getdoc(obj, obj_name='', embedded=False):
 
         sage: from sage.misc.sageinspect import sage_getdoc
         sage: sage_getdoc(identity_matrix)[87:124]                                      # needs sage.modules
-        'Return the n x n identity matrix over'
-        sage: def f(a,b,c,d=1): return a+b+c+d
+        '...the n x n identity matrix...'
+        sage: def f(a, b, c, d=1): return a+b+c+d
         ...
         sage: import functools
         sage: f1 = functools.partial(f, 1,c=2)
@@ -2244,9 +2248,9 @@ def sage_getsourcelines(obj):
     TESTS::
 
         sage: # needs sage.misc.cython
-        sage: cython('''cpdef test_funct(x,y): return''')
+        sage: cython('''cpdef test_funct(x, y): return''')
         sage: sage_getsourcelines(test_funct)
-        (['cpdef test_funct(x,y): return\n'], 1)
+        (['cpdef test_funct(x, y): return\n'], 1)
 
     The following tests that an instance of ``functools.partial`` is correctly
     dealt with (see :issue:`9976`)::
@@ -2363,12 +2367,8 @@ def sage_getsourcelines(obj):
         try:
             return inspect.getsourcelines(obj)
         except (OSError, TypeError) as err:
-            try:
-                objinit = obj.__init__
-            except AttributeError:
-                pass
-            else:
-                d = _sage_getdoc_unformatted(objinit)
+            if hasattr(obj, '__init__'):
+                d = _sage_getdoc_unformatted(obj.__init__)
                 pos = _extract_embedded_position(d)
                 if pos is None:
                     if inspect.isclass(obj):

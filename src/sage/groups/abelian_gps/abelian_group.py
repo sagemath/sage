@@ -365,6 +365,13 @@ def _normalize(n, gens_orders=None, names='f'):
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 's' to an integer
+
+    Verify that :issue:`38967` is fixed::
+
+        sage: AbelianGroup([-4])
+        Traceback (most recent call last):
+        ...
+        ValueError: orders of generators cannot be negative but they are (-4,)
     """
     if gens_orders is None:
         if isinstance(n, (list, tuple)):
@@ -376,6 +383,8 @@ def _normalize(n, gens_orders=None, names='f'):
     if len(gens_orders) < n:
         gens_orders = [0] * (n - len(gens_orders)) + list(gens_orders)
     gens_orders = tuple(ZZ(i) for i in gens_orders)
+    if any(i < 0 for i in gens_orders):
+        raise ValueError(f'orders of generators cannot be negative but they are {gens_orders}')
     if len(gens_orders) > n:
         raise ValueError('gens_orders (='+str(gens_orders)+') must have length n (='+str(n)+')')
     if isinstance(names, list):
@@ -1301,10 +1310,26 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             (1,)
             sage: list(G)
             [1]
+
+        We can also iterate over infinite groups::
+
+            sage: A = AbelianGroup([3,0,5,0])
+            sage: for a in A:
+            ....:   if a^2 == A([1, 2, 3, 4]):
+            ....:       print(a, a^2)
+            ....:       break
+            f0^2*f1*f2^4*f3^2 f0*f1^2*f2^3*f3^4
         """
         invs = self.gens_orders()
-        for t in mrange(invs):
-            yield self(t)
+        if 0 not in invs:
+            # The group is finite
+            yield from map(self, mrange(invs))
+        else:
+            # A similar approach works for infinite groups.
+            # (This would also work for finite groups, but is more complicated.)
+            from sage.misc.mrange import cantor_product
+            yield from map(self, cantor_product(*[range(n) if n
+                                                  else ZZ for n in invs]))
 
     def number_of_subgroups(self, order=None):
         r"""
@@ -1836,7 +1861,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             return left.is_isomorphic(right)
         if left_ambient is not right_ambient:
             return False
-        return left <= right and right <= left
+        return left <= right <= left
 
     __eq__ = equals
 

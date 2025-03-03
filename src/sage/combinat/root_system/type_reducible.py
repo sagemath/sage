@@ -90,7 +90,7 @@ class CartanType(SageObject, CartanType_abstract):
              ((1, 0), 5), ((1, 1), 6), ((1, 2), 7), ((1, 3), 8), ((1, 4), 9), ((1, 5), 10),
              ((2, 1), 11), ((2, 2), 12), ((2, 3), 13)]
 
-        Similarly, the attribute `_shifts` specifies by how much the
+        Similarly, the attribute ``_shifts`` specifies by how much the
         indices of the bases of the ambient spaces of the components
         are shifted in the ambient space of this Cartan type::
 
@@ -525,7 +525,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             [(1, 1, 0, 0, 0), (0, 0, 0, 1/2, 1/2)]
         """
         shift = self.root_system.cartan_type()._shifts[i]
-        return self._from_dict( dict([(shift+k, c) for (k,c) in v ]))
+        return self._from_dict({shift + k: c for k, c in v})
 
     @cached_method
     def simple_root(self, i):

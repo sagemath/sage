@@ -1271,7 +1271,7 @@ cdef class ntl_mat_ZZ():
             rank = int(mat_ZZ_LLL(&det2,&self.x,int(a),int(b),int(verbose)))
             return rank, make_ZZ_sig_off(det2)
 
-    def LLL_FP(self, delta=0.75 , return_U=False, verbose=False):
+    def LLL_FP(self, delta=0.75, return_U=False, verbose=False):
         r"""
         Perform approximate LLL reduction of \code{self} (puts
         \code{self} in an LLL form) subject to the following

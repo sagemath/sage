@@ -31,9 +31,9 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.manifolds.chart import Chart, RealChart, CoordChange
+from sage.manifolds.chart import Chart, CoordChange, RealChart
 from sage.manifolds.differentiable.vectorframe import CoordFrame
+from sage.misc.cachefunc import cached_method
 
 
 class DiffChart(Chart):
@@ -1068,6 +1068,7 @@ class RealDiffChart(DiffChart, RealChart):
         return self._dom_restrict[subset]
 
 #******************************************************************************
+
 
 class DiffCoordChange(CoordChange):
     r"""

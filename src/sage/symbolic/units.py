@@ -40,7 +40,7 @@ Calling the convert function with no target returns base SI units::
     sage: t.convert()
     1/100000*kilogram*meter/second^2
 
-Giving improper units to convert to raises a ValueError::
+Giving improper units to convert to raises a :exc:`ValueError`::
 
     sage: t.convert(units.charge.coulomb)
     Traceback (most recent call last):
@@ -55,7 +55,7 @@ Converting temperatures works as well::
     sage: s.convert()
     293.150000000000*kelvin
 
-Trying to multiply temperatures by another unit then converting raises a ValueError::
+Trying to multiply temperatures by another unit then converting raises a :exc:`ValueError`::
 
     sage: wrong = 50*units.temperature.celsius*units.length.foot
     sage: wrong.convert()
@@ -94,20 +94,23 @@ from .ring import SR
 from .expression import Expression
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.rings.rational_field import QQ
 
 ###############################################################################
 # Unit conversions dictionary.
 ###############################################################################
+one = QQ.one()
+
 
 unitdict = {
 'acceleration':
-        {'gal': '1/100',
-        'galileo': '1/100',
+        {'gal': one / 100,
+        'galileo': one / 100,
         'gravity': '9.80665000000000'},
 
 'amount_of_substance':
         {'elementary_entity': '1/6.02214129000000e23',
-        'mole': '1'},
+        'mole': 1},
 
 'angles':
         {'arc_minute': '1/10800*pi',
@@ -115,173 +118,173 @@ unitdict = {
         'degree': '1/180*pi',
         'grade': '1/200*pi',
         'quadrant': '1/2*pi',
-        'radian': '1',
+        'radian': 1,
         'right_angle': '1/2*pi'},
 
 'area':
-        {'acre': '316160658/78125',
-        'are': '100',
-        'barn': '1/10000000000000000000000000000',
-        'hectare': '10000',
-        'rood': '158080329/156250',
-        'section': '40468564224/15625',
-        'square_chain': '158080329/390625',
-        'square_meter': '1',
-        'township': '1456868312064/15625'},
+        {'acre': QQ(316160658) / 78125,
+        'are': 100,
+        'barn': one / 10000000000000000000000000000,
+        'hectare': 10000,
+        'rood': QQ(158080329) / 156250,
+        'section': QQ(40468564224) / 15625,
+        'square_chain': QQ(158080329) / 390625,
+        'square_meter': 1,
+        'township': QQ(1456868312064) / 15625},
 
 'capacitance':
-        {'abfarad': '1000000000',
-        'farad': '1',
-        'statfarad': '25000/22468879468420441'},
+        {'abfarad': 1000000000,
+        'farad': 1,
+        'statfarad': QQ(25000) / 22468879468420441},
 
 'charge':
-        {'abcoulomb': '10',
-        'coulomb': '1',
+        {'abcoulomb': 10,
+        'coulomb': 1,
         'elementary_charge': '1.60217646200000e-19',
         'faraday': '96485.3399000000',
-        'franklin': '1/2997924580',
-        'statcoulomb': '1/2997924580'},
+        'franklin': one / 2997924580,
+        'statcoulomb': one / 2997924580},
 
 'conductance':
-        {'abmho': '1000000000',
-        'mho': '1',
-        'siemens': '1'},
+        {'abmho': 1000000000,
+        'mho': 1,
+        'siemens': 1},
 
 'current':
-        {'abampere': '10',
-        'amp': '1',
-        'ampere': '1',
-        'biot': '10',
-        'statampere': '1/2997924580'},
+        {'abampere': 10,
+        'amp': 1,
+        'ampere': 1,
+        'biot': 10,
+        'statampere': one / 2997924580},
 
 'electric_potential':
-        {'abvolt': '1/100000000',
-        'statvolt': '149896229/500000',
-        'volt': '1'},
+        {'abvolt': one / 100000000,
+        'statvolt': QQ(149896229) / 500000,
+        'volt': 1},
 
 'energy':
-        {'british_thermal_unit': '52752792631/50000000',
-        'btu': '52752792631/50000000',
-        'calorie': '10467/2500',
+        {'british_thermal_unit': QQ(52752792631) / 50000000,
+        'btu': QQ(52752792631) / 50000000,
+        'calorie': QQ(10467) / 2500,
         'electron_volt': '1.60217733000000e-19',
-        'erg': '1/10000000',
+        'erg': one / 10000000,
         'ev': '1.60217733000000e-19',
-        'joule': '1',
+        'joule': 1,
         'rydberg': '2.17987200000000e-18',
-        'therm': '52752792631/500'},
+        'therm': QQ(52752792631) / 500},
 
 'fiber_linear_mass_density':
-        {'denier': '1/9000000',
-        'tex': '1/1000000'},
+        {'denier': one / 9000000,
+        'tex': one / 1000000},
 
 'force':
-        {'dyne': '1/100000',
-        'gram_weight': '196133/20000000',
-        'kilogram_force': '196133/20000',
-        'kilogram_weight': '196133/20000',
-        'newton': '1',
-        'pound_force': '8896443230521/2000000000000',
-        'pound_weight': '8896443230521/2000000000000',
-        'poundal': '17281869297/125000000000',
-        'ton_force': '8896443230521/1000000000'},
+        {'dyne': one / 100000,
+        'gram_weight': QQ(196133) / 20000000,
+        'kilogram_force': QQ(196133) / 20000,
+        'kilogram_weight': QQ(196133) / 20000,
+        'newton': 1,
+        'pound_force': QQ(8896443230521) / 2000000000000,
+        'pound_weight': QQ(8896443230521) / 2000000000000,
+        'poundal': QQ(17281869297) / 125000000000,
+        'ton_force': QQ(8896443230521) / 1000000000},
 
 'frequency':
-        {'1/second': '1',
-        'hertz': '1'},
+        {'1/second': 1,
+        'hertz': 1},
 
 'illuminance':
-        {'foot_candle': '1562500/145161',
-        'lux': '1',
-        'phot': '10000'},
+        {'foot_candle': QQ(1562500) / 145161,
+        'lux': 1,
+        'phot': 10000},
 
 'inductance':
-        {'abhenry': '1/1000000000',
-        'henry': '1',
-        'stathenry': '22468879468420441/25000'},
+        {'abhenry': one / 1000000000,
+        'henry': 1,
+        'stathenry': QQ(22468879468420441) / 25000},
 
 'information':
-        {'bit': '1',
-        'byte': '8',
-        'nibble': '4'},
+        {'bit': 1,
+        'byte': 8,
+        'nibble': 4},
 
 'information_rate':
-        {'baud': '1'},
+        {'baud': 1},
 
 'inverse_length':
-        {'diopter': '1',
-        'kayser': '100'},
+        {'diopter': 1,
+        'kayser': 100},
 
 'length':
-        {'angstrom': '1/10000000000',
-        'astronomical_unit': '149597870691',
-        'bolt': '4572/125',
-        'cable_international': '926/5',
-        'cable_us': '27432/125',
-        'caliber': '127/500000',
-        'centimeter': '1/100',
-        'chain': '12573/625',
-        'cicero': '125/27706',
-        'cubit': '1143/2500',
-        'didot': '125/332472',
-        'dtp_point': '127/360000',
-        'ell': '1143/1000',
-        'fathom': '1143/625',
-        'feet': '381/1250',
-        'fermi': '1/1000000000000000',
-        'foot': '381/1250',
-        'furlong': '25146/125',
-        'hand': '127/1250',
-        'inch': '127/5000',
-        'kilometer': '1000',
-        'league': '603504/125',
-        'light_year': '9460730472580800',
-        'link': '12573/62500',
-        'meter': '1',
-        'micron': '1/1000000',
-        'mil': '127/5000000',
-        'millimeter': '1/1000',
-        'mile': '201168/125',
-        'nautical_mile': '1852',
+        {'angstrom': one / 10000000000,
+        'astronomical_unit': 149597870691,
+        'bolt': QQ(4572) / 125,
+        'cable_international': QQ(926) / 5,
+        'cable_us': QQ(27432) / 125,
+        'caliber': QQ(127) / 500000,
+        'centimeter': one / 100,
+        'chain': QQ(12573) / 625,
+        'cicero': QQ(125) / 27706,
+        'cubit': QQ(1143) / 2500,
+        'didot': QQ(125) / 332472,
+        'dtp_point': QQ(127) / 360000,
+        'ell': QQ(1143) / 1000,
+        'fathom': QQ(1143) / 625,
+        'feet': QQ(381) / 1250,
+        'fermi': one / 1000000000000000,
+        'foot': QQ(381) / 1250,
+        'furlong': QQ(25146) / 125,
+        'hand': QQ(127) / 1250,
+        'inch': QQ(127) / 5000,
+        'kilometer': 1000,
+        'league': QQ(603504) / 125,
+        'light_year': 9460730472580800,
+        'link': QQ(12573) / 62500,
+        'meter': 1,
+        'micron': one / 1000000,
+        'mil': QQ(127) / 5000000,
+        'millimeter': one / 1000,
+        'mile': QQ(201168) / 125,
+        'nautical_mile': 1852,
         'parsec': '3.08570000000000e16',
-        'perch': '12573/2500',
-        'pica': '127/30000',
-        'pole': '12573/2500',
-        'rod': '12573/2500',
-        'rope': '762/125',
-        'skein': '13716/125',
-        'stadion': '118491/625',
-        'stadium': '115443/625',
-        'statute_mile': '201168/125',
-        'survey_foot': '1200/3937',
-        'survey_mile': '6336000/3937',
+        'perch': QQ(12573) / 2500,
+        'pica': QQ(127) / 30000,
+        'pole': QQ(12573) / 2500,
+        'rod': QQ(12573) / 2500,
+        'rope': QQ(762) / 125,
+        'skein': QQ(13716) / 125,
+        'stadion': QQ(118491) / 625,
+        'stadium': QQ(115443) / 625,
+        'statute_mile': QQ(201168) / 125,
+        'survey_foot': QQ(1200) / 3937,
+        'survey_mile': QQ(6336000) / 3937,
         'x_unit': '1.00210000000000e-13',
-        'yard': '1143/1250'},
+        'yard': QQ(1143) / 1250},
 
 'luminance':
         {'apostilb': '1/pi',
         'lambert': '10000/pi',
-        'nit': '1',
-        'stilb': '10000'},
+        'nit': 1,
+        'stilb': 10000},
 
 'luminous_energy':
-        {'lumerg': '1',
-        'talbot': '1'},
+        {'lumerg': 1,
+        'talbot': 1},
 
 'luminous_flux':
-        {'lumen': '1'},
+        {'lumen': 1},
 
 'luminous_intensity':
-        {'candela': '1',
-        'candle': '1',
-        'hefnerkerze': '1019/1128'},
+        {'candela': 1,
+        'candle': 1,
+        'hefnerkerze': QQ(1019) / 1128},
 
 'magnetic_field':
-        {'gauss': '1/10000',
-        'tesla': '1'},
+        {'gauss': one / 10000,
+        'tesla': 1},
 
 'magnetic_flux':
-        {'maxwell': '1/100000000',
-        'weber': '1'},
+        {'maxwell': one / 100000000,
+        'weber': 1},
 
 'magnetic_intensity':
         {'oersted': '250/pi'},
@@ -291,110 +294,110 @@ unitdict = {
         'nuclear_magneton': '5.05078324000000e-27'},
 
 'magnetomotive_force':
-        {'ampere_turn': '1',
+        {'ampere_turn': 1,
         'gilbert': '5/2/pi'},
 
 'mass':
         {'amu': '1.66053878200000e-27',
-        'assay_ton': '7/240',
+        'assay_ton': QQ(7) / 240,
         'atomic_mass_unit': '1.66053878200000e-27',
-        'avoirdupois_ounce': '45359237/1600000000',
-        'avoirdupois_pound': '45359237/100000000',
-        'bale': '45359237/200000',
-        'carat': '1/5000',
-        'cental': '45359237/1000000',
+        'avoirdupois_ounce': QQ(45359237) / 1600000000,
+        'avoirdupois_pound': QQ(45359237) / 100000000,
+        'bale': QQ(45359237) / 200000,
+        'carat': one / 5000,
+        'cental': QQ(45359237) / 1000000,
         'dalton': '1.66053878200000e-27',
         'drachma': "(0.00429234000000000, {'greek':1})",
-        'geepound': '14593903/1000000',
-        'grain': '6479891/100000000000',
-        'gram': '1/1000',
-        'gross_hundredweight': '317514659/6250000',
-        'hundredweight': '317514659/6250000',
-        'kilogram': '1',
+        'geepound': QQ(14593903) / 1000000,
+        'grain': QQ(6479891) / 100000000000,
+        'gram': one / 1000,
+        'gross_hundredweight': QQ(317514659) / 6250000,
+        'hundredweight': QQ(317514659) / 6250000,
+        'kilogram': 1,
         'libra': '0.325971000000000',
-        'long_ton': '317514659/312500',
+        'long_ton': QQ(317514659) / 312500,
         'metric_ton': '1000',
         'mina': "(0.429234000000000, {'greek':100})",
-        'net_hundredweight': '45359237/1000000',
+        'net_hundredweight': QQ(45359237) / 1000000,
         'obol': "(0.000715380000000000,{'greek':1/6})",
-        'ounce': '45359237/1600000000',
-        'ounce_troy': '19439673/625000000',
-        'pennyweight': '19439673/12500000000',
+        'ounce': QQ(45359237) / 1600000000,
+        'ounce_troy': QQ(19439673) / 625000000,
+        'pennyweight': QQ(19439673) / 12500000000,
         'pondus': '0.325969000000000',
-        'pound': '45359237/100000000',
-        'pound_troy': '58319019/156250000',
-        'quintal': '100',
+        'pound': QQ(45359237) / 100000000,
+        'pound_troy': QQ(58319019) / 156250000,
+        'quintal': 100,
         'shekel': '0.0141000000000000',
-        'short_hundredweight': '45359237/1000000',
-        'short_ton': '45359237/50000',
-        'slug': '14593903/1000000',
+        'short_hundredweight': QQ(45359237) / 1000000,
+        'short_ton': QQ(45359237) / 50000,
+        'slug': QQ(14593903) / 1000000,
         'solar_mass': '1.98892000000000e30',
-        'stone': '317514659/50000000',
+        'stone': QQ(317514659) / 50000000,
         'talent': "(25.7540400000000, {'greek':6000})",
-        'ton': '45359237/50000',
-        'tonne': '1000',
-        'wey': '2857631931/25000000'},
+        'ton': QQ(45359237) / 50000,
+        'tonne': 1000,
+        'wey': QQ(2857631931) / 25000000},
 
 'power':
-        {'cheval_vapeur': '588399/800',
-        'horsepower': '37284993579113511/50000000000000',
-        'watt': '1'},
+        {'cheval_vapeur': QQ(588399) / 800,
+        'horsepower': QQ(37284993579113511) / 50000000000000,
+        'watt': 1},
 
 'pressure':
-        {'atmosphere': '101325',
-        'bar': '100000',
-        'barye': '1/10',
+        {'atmosphere': 101325,
+        'bar': 100000,
+        'barye': QQ((1, 10)),
         'inch_mercury': '3386.38900000000',
         'millimeter_mercury': '133.322400000000',
         'mmhg': '133.322400000000',
-        'pa': '1',
-        'pascal': '1',
-        'pounds_per_square_inch': '8896443230521/1290320000',
-        'psi': '8896443230521/1290320000',
-        'torr': '20265/152'},
+        'pa': 1,
+        'pascal': 1,
+        'pounds_per_square_inch': QQ(8896443230521) / 1290320000,
+        'psi': QQ(8896443230521) / 1290320000,
+        'torr': QQ(20265) / 152},
 
 'radiation':
-        {'becquerel': '1',
-        'curie': '37000000000',
-        'rutherford': '1000000'},
+        {'becquerel': 1,
+        'curie': 37000000000,
+        'rutherford': 1000000},
 
 'radiation_absorbed':
-        {'gray': '1',
-        'rad': '1/100'},
+        {'gray': 1,
+        'rad': one / 100},
 
 'radiation_ionizing':
         {'roentgen': '0.000258000000000000',
         'rontgen': '0.000258000000000000'},
 
 'resistance':
-        {'abohm': '1/1000000000',
-        'ohm': '1',
-        'statohm': '22468879468420441/25000'},
+        {'abohm': one / 1000000000,
+        'ohm': 1,
+        'statohm': QQ(22468879468420441) / 25000},
 
 'si_prefixes':
-        {'atto': '1/1000000000000000000',
-        'centi': '1/100',
-        'deca': '10',
-        'deci': '1/10',
-        'exa': '1000000000000000000',
-        'femto': '1/1000000000000000',
-        'giga': '1000000000',
-        'hecto': '100',
-        'kilo': '1000',
-        'mega': '1000000',
-        'micro': '1/1000000',
-        'milli': '1/1000',
-        'nano': '1/1000000000',
-        'peta': '1000000000000000',
-        'pico': '1/1000000000000',
-        'tera': '1000000000000',
-        'yocto': '1/1000000000000000000000000',
-        'yotta': '1000000000000000000000000',
-        'zepto': '1/1000000000000000000000',
-        'zetta': '1000000000000000000000'},
+        {'atto': one / 1000000000000000000,
+        'centi': one / 100,
+        'deca': 10,
+        'deci': QQ((1, 10)),
+        'exa': 1000000000000000000,
+        'femto': one / 1000000000000000,
+        'giga': 1000000000,
+        'hecto': 100,
+        'kilo': 1000,
+        'mega': 1000000,
+        'micro': one / 1000000,
+        'milli': one / 1000,
+        'nano': one / 1000000000,
+        'peta': 1000000000000000,
+        'pico': one / 1000000000000,
+        'tera': 1000000000000,
+        'yocto': one / 1000000000000000000000000,
+        'yotta': 1000000000000000000000000,
+        'zepto': one / 1000000000000000000000,
+        'zetta': 1000000000000000000000},
 
 'solid_angle':
-        {'steradian': '1'},
+        {'steradian': 1},
 
 'temperature':
         {'celsius': '(x + 273.15), (x), (x*9/5 + 32), ((x+273.15)*9/5)',
@@ -404,83 +407,83 @@ unitdict = {
         'rankine': '(5/9*x), ((x-491.67)*5/9), (x-459.67), (x)'},
 
 'time':
-        {'century': '3153600000',
-        'day': '86400',
-        'decade': '315360000',
-        'fortnight': '1209600',
-        'hour': '3600',
-        'millenium': '31536000000',
-        'minute': '60',
-        'month': '2628000',
-        'second': '1',
+        {'century': 3153600000,
+        'day': 86400,
+        'decade': 315360000,
+        'fortnight': 1209600,
+        'hour': 3600,
+        'millenium': 31536000000,
+        'minute': 60,
+        'month': 2628000,
+        'second': 1,
         'sidereal_day': "(86164.0905308330, {'sidereal':86400})",
         'sidereal_second': "(0.997269566329086, {'sidereal':1})",
         'sidereal_year': '3.15581497632000e7',
         'tropical_year': '3.15569251779840e7',
-        'week': '604800',
-        'year': '31536000'},
+        'week': 604800,
+        'year': 31536000},
 
 'unit_multipliers':
-        {'bakers_dozen': '13',
-        'dozen': '12',
-        'gross': '144',
-        'percent': '1/100'},
+        {'bakers_dozen': 13,
+        'dozen': 12,
+        'gross': 144,
+        'percent': one / 100},
 
 'velocity':
         {'knot': '463/900'},
 
 'viscosity_absolute':
-        {'poise': '1/10',
-        'reyn': '8896443230521/1290320000'},
+        {'poise': one / 10,
+        'reyn': QQ(8896443230521) / 1290320000},
 
 'viscosity_kinematic':
-        {'stokes': '1/10000'},
+        {'stokes': one / 10000},
 
 'viscosity_other':
-        {'rhes': '10'},
+        {'rhes': 10},
 
 'volume':
-        {'bag': '660732565629/6250000000000',
-        'barrel': '9936705933/62500000000',
-        'board_foot': '18435447/7812500000',
-        'bucket': '473176473/31250000000',
-        'bushel': '220244188543/6250000000000',
-        'butt': '29810117799/62500000000',
-        'cord': '884901456/244140625',
-        'cubic_meter': '1',
-        'cup': '473176473/2000000000000',
-        'ephah': '1982197696887/50000000000000',
-        'fifth': '473176473/625000000000',
-        'firkin': '4091481/100000000',
-        'fluid_dram': '473176473/128000000000000',
-        'fluid_ounce': '473176473/16000000000000',
-        'gallon': '473176473/125000000000',
-        'gill': '473176473/4000000000000',
-        'hogshead': '29810117799/125000000000',
-        'imperial_gallon': '454609/100000000',
-        'imperial_pint': '454609/800000000',
-        'jeroboam': '473176473/156250000000',
-        'jigger': '1419529419/32000000000000',
-        'liter': '1/1000',
-        'magnum': '473176473/250000000000',
-        'minim': '157725491/2560000000000000',
-        'noggin': '473176473/4000000000000',
-        'omer': '1982197696887/500000000000000',
-        'peck': '220244188543/25000000000000',
-        'pint': '473176473/1000000000000',
-        'pony': '1419529419/64000000000000',
-        'puncheon': '9936705933/31250000000',
-        'quart': '473176473/500000000000',
-        'register_ton': '55306341/19531250',
-        'seam': '220244188543/781250000000',
-        'shot': '473176473/16000000000000',
-        'stere': '1',
-        'tablespoon': '473176473/32000000000000',
-        'teaspoon': '157725491/32000000000000',
-        'tun': '29810117799/31250000000',
-        'uk_gallon': '454609/100000000',
-        'uk_pint': '454609/800000000',
-        'wine_bottle': '3/4000'}
+        {'bag': QQ(660732565629) / 6250000000000,
+        'barrel': QQ(9936705933) / 62500000000,
+        'board_foot': QQ(18435447) / 7812500000,
+        'bucket': QQ(473176473) / 31250000000,
+        'bushel': QQ(220244188543) / 6250000000000,
+        'butt': QQ(29810117799) / 62500000000,
+        'cord': QQ(884901456) / 244140625,
+        'cubic_meter': 1,
+        'cup': QQ(473176473) / 2000000000000,
+        'ephah': QQ(1982197696887) / 50000000000000,
+        'fifth': QQ(473176473) / 625000000000,
+        'firkin': QQ(4091481) / 100000000,
+        'fluid_dram': QQ(473176473) / 128000000000000,
+        'fluid_ounce': QQ(473176473) / 16000000000000,
+        'gallon': QQ(473176473) / 125000000000,
+        'gill': QQ(473176473) / 4000000000000,
+        'hogshead': QQ(29810117799) / 125000000000,
+        'imperial_gallon': QQ(454609) / 100000000,
+        'imperial_pint': QQ(454609) / 800000000,
+        'jeroboam': QQ(473176473) / 156250000000,
+        'jigger': QQ(1419529419) / 32000000000000,
+        'liter': one / 1000,
+        'magnum': QQ(473176473) / 250000000000,
+        'minim': QQ(157725491) / 2560000000000000,
+        'noggin': QQ(473176473) / 4000000000000,
+        'omer': QQ(1982197696887) / 500000000000000,
+        'peck': QQ(220244188543) / 25000000000000,
+        'pint': QQ(473176473) / 1000000000000,
+        'pony': QQ(1419529419) / 64000000000000,
+        'puncheon': QQ(9936705933) / 31250000000,
+        'quart': QQ(473176473) / 500000000000,
+        'register_ton': QQ(55306341) / 19531250,
+        'seam': QQ(220244188543) / 781250000000,
+        'shot': QQ(473176473) / 16000000000000,
+        'stere': 1,
+        'tablespoon': QQ(473176473) / 32000000000000,
+        'teaspoon': QQ(157725491) / 32000000000000,
+        'tun': QQ(29810117799) / 31250000000,
+        'uk_gallon': QQ(454609) / 100000000,
+        'uk_pint': QQ(454609) / 800000000,
+        'wine_bottle': QQ(3) / 4000}
 }
 
 unit_to_type = {}
@@ -500,7 +503,8 @@ def evalunitdict():
     """
     from sage.misc.sage_eval import sage_eval
     for key, value in unitdict.items():
-        unitdict[key] = {a: sage_eval(repr(b)) for a, b in value.items()}
+        unitdict[key] = {a: (sage_eval(repr(b)) if isinstance(b, str) else b)
+                         for a, b in value.items()}
 
     # FEATURE IDEA: create a function that would allow users to add
     # new entries to the table without having to know anything about
@@ -1213,7 +1217,7 @@ def unitdocs(unit):
         sage: sage.symbolic.units.unitdocs('amu')
         'Abbreviation for atomic mass unit.\nApproximately equal to 1.660538782*10^-27 kilograms.'
 
-    Units not in the list unit_docs will raise a ValueError::
+    Units not in the list unit_docs will raise a :exc:`ValueError`::
 
         sage: sage.symbolic.units.unitdocs('earth')
         Traceback (most recent call last):
@@ -1276,7 +1280,7 @@ def convert(expr, target):
         sage: sage.symbolic.units.convert(units.mass.kilogram, units.mass.pound)
         100000000/45359237*pound
 
-    Raises :exc:`ValueError` if expr and target are not convertible::
+    This raises :exc:`ValueError` if expr and target are not convertible::
 
         sage: sage.symbolic.units.convert(units.mass.kilogram, units.length.foot)
         Traceback (most recent call last):
@@ -1375,7 +1379,7 @@ def base_units(unit):
         sage: sage.symbolic.units.base_units(units.volume.liter)
         1/1000*meter^3
 
-    Returns variable if 'unit' is not a unit::
+    Returns variable if ``unit`` is not a unit::
 
         sage: sage.symbolic.units.base_units(var('x'))
         x
@@ -1383,18 +1387,21 @@ def base_units(unit):
     from sage.misc.sage_eval import sage_eval
     if str(unit) not in unit_to_type:
         return unit
-    elif unit_to_type[str(unit)] == 'si_prefixes' or unit_to_type[str(unit)] == 'unit_multipliers':
-        return sage_eval(unitdict[unit_to_type[str(unit)]][str(unit)])
+    if unit_to_type[str(unit)] in ['si_prefixes', 'unit_multipliers']:
+        number = unitdict[unit_to_type[str(unit)]][str(unit)]
+        return (sage_eval(number) if isinstance(number, str) else number)
+
+    v = SR.var(unit_to_type[str(unit)])
+    if str(v) in unit_derivations:
+        base = unit_derivations_expr(v)
+        for i in base.variables():
+            base = base.subs({i: SR.var(value_to_unit[str(i)][1])})
+        number = unitdict[str(v)][str(unit)]
+        return base * (sage_eval(number) if isinstance(number, str) else number)
     else:
-        v = SR.var(unit_to_type[str(unit)])
-        if str(v) in unit_derivations:
-            base = unit_derivations_expr(v)
-            for i in base.variables():
-                base = base.subs({i: SR.var(value_to_unit[str(i)]['1'])})
-            return base * sage_eval(unitdict[str(v)][str(unit)])
-        else:
-            base = SR.var(value_to_unit[str(v)]['1']) * sage_eval(unitdict[str(v)][str(unit)])
-            return base
+        base = SR.var(value_to_unit[str(v)][1])
+        number = unitdict[str(v)][str(unit)]
+        return base * (sage_eval(number) if isinstance(number, str) else number)
 
 
 def convert_temperature(expr, target):
@@ -1416,12 +1423,12 @@ def convert_temperature(expr, target):
         sage: t.convert(units.temperature.kelvin)
         273.150000000000*kelvin
 
-    If target is None then it defaults to kelvin::
+    If target is ``None`` then it defaults to kelvin::
 
         sage: t.convert()
         273.150000000000*kelvin
 
-    Raises :exc:`ValueError` when either input is not a unit of temperature::
+    This raises :exc:`ValueError` when either input is not a unit of temperature::
 
         sage: t.convert(units.length.foot)
         Traceback (most recent call last):

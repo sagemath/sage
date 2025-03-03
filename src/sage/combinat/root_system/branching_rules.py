@@ -136,7 +136,7 @@ def branch_weyl_character(chi, R, S, rule='default'):
         sage: B4 = WeylCharacterRing("B4", style='coroots')
         sage: A6 = WeylCharacterRing("A6", style='coroots')
         sage: A7 = WeylCharacterRing("A7", style='coroots')
-        sage: def try_default_rule(R,S): return [R(f).branch(S) for f in R.fundamental_weights()]
+        sage: def try_default_rule(R, S): return [R(f).branch(S) for f in R.fundamental_weights()]
         sage: try_default_rule(A2,A1)
         [A1(0) + A1(1), A1(0) + A1(1)]
         sage: try_default_rule(D4,B3)
@@ -1774,7 +1774,8 @@ def branching_rule(Rtype, Stype, rule='default'):
             if all(t[0] == 'A' for t in stypes):
                 def rule(x):
                     ret = [sum(x[i*ns[1]:(i+1)*ns[1]]) for i in range(ns[0])]
-                    ret.extend([sum(x[ns[1]*j+i] for j in range(ns[0])) for i in range(ns[1])])
+                    ret.extend(sum(x[ns[1]*j+i] for j in range(ns[0]))
+                               for i in range(ns[1]))
                     return ret
                 return BranchingRule(Rtype, Stype, rule, "tensor")
             else:

@@ -90,10 +90,10 @@ def Words(alphabet=None, length=None, finite=True, infinite=True):
         sage: Words('natural numbers')
         Finite and infinite words over Non negative integers
     """
-    if isinstance(alphabet, FiniteWords) or \
-       isinstance(alphabet, InfiniteWords) or \
-       isinstance(alphabet, FiniteOrInfiniteWords) or \
-       isinstance(alphabet, Words_n):
+    if isinstance(alphabet, (FiniteWords,
+                             InfiniteWords,
+                             FiniteOrInfiniteWords,
+                             Words_n)):
         return alphabet
 
     if length is None:
@@ -1227,8 +1227,7 @@ class FiniteWords(AbstractLanguage):
             TypeError: codomain (=a) must be an instance of FiniteWords
         """
         n = self.alphabet().cardinality()
-        if min_length < 0:
-            min_length = 0
+        min_length = max(min_length, 0)
         # create an iterable of compositions (all "compositions" if arg is
         # None, or [arg] otherwise)
         if arg is None:

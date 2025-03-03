@@ -36,13 +36,14 @@ from sage.structure.parent import Parent
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.integer_ring import ZZ
 
 from sage.structure.unique_representation import UniqueRepresentation
 
 from .element import DrinfeldModularFormsElement
+
 
 class DrinfeldModularForms(Parent, UniqueRepresentation):
     r"""
@@ -118,7 +119,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     Use the :meth:`gens` method to obtain the generators of the ring::
 
         sage: M.gens()
-        [g1, g2, g3]
+        (g1, g2, g3)
         sage: M.inject_variables()  # assign the variable g1, g2, g3
         Defining g1, g2, g3
         sage: T*g1*g2 + g3
@@ -129,23 +130,23 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
         sage: M.<F, G, H> = DrinfeldModularForms(K)
         sage: M.gens()
-        [F, G, H]
+        (F, G, H)
         sage: M = DrinfeldModularForms(K, 5, names='f')  # must specify the rank
         sage: M.gens()
-        [f1, f2, f3, f4, f5]
+        (f1, f2, f3, f4, f5)
         sage: M = DrinfeldModularForms(K, names='u, v, w, x')
         sage: M.gens()
-        [u, v, w, x]
+        (u, v, w, x)
         sage: M = DrinfeldModularForms(K, names=['F', 'G', 'H'])
         sage: M.gens()
-        [F, G, H]
+        (F, G, H)
 
     Set the keyword parameter ``has_type`` to ``True`` in order to create
     the ring of Drinfeld modular forms of arbitrary type::
 
         sage: M = DrinfeldModularForms(K, 4, has_type=True)
         sage: M.gens()
-        [g1, g2, g3, h4]
+        (g1, g2, g3, h4)
         sage: h4 = M.3
         sage: h4.type()
         1
@@ -264,7 +265,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         if not isinstance(base_ring, FractionField_generic):
             raise TypeError("base ring must be a fraction field of a "
                             "polynomial ring")
-        if not isinstance(base_ring.base(), PolynomialRing_general):
+        if not isinstance(base_ring.base(), PolynomialRing_generic):
             raise NotImplementedError("Drinfeld modular forms are currently "
                                       "only implemented for A = Fq[T]")
         if not base_ring.characteristic():
@@ -430,13 +431,11 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             [(T^2 + T)*g1, g1^3 + (T^4 + T)*g2, g1^4*g2 + g1*g2^2, g2^5]
         """
         a = a.numerator()
-        d = a.degree()
         poly_ring = PolynomialRing(self._base_ring, self.rank(), 'g')
         poly_ring_gens = poly_ring.gens()
         Frob = poly_ring.frobenius_endomorphism()
         gen = [self._base_ring.gen()]
-        for g in poly_ring_gens:
-            gen.append(g)
+        gen.extend(poly_ring_gens)
         ore_pol_ring = OrePolynomialRing(poly_ring, Frob, 't')
         gen = ore_pol_ring(gen)
         f = sum(c*(gen**idx) for idx, c in enumerate(a.coefficients(sparse=False)))
@@ -582,8 +581,6 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             ...
             TypeError: unable to convert a to an element in Fq[T]
         """
-        K = self._base_ring
-        T = K.gen()
         if a is None:
             return [self._generator_coefficient_form(i)
                     for i in range(1, self.rank() + 1)]
@@ -621,18 +618,18 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         """
         return self(self._poly_ring.gen(n))
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return a list of generators of this ring.
+        Return a tuple of generators of this ring.
 
         EXAMPLES::
 
             sage: A = GF(3)['T']; K = Frac(A); T = K.gen()
             sage: M = DrinfeldModularForms(K, 5)
             sage: M.gens()
-            [g1, g2, g3, g4, g5]
+            (g1, g2, g3, g4, g5)
         """
-        return [self(g) for g in self._poly_ring.gens()]
+        return tuple(self(g) for g in self._poly_ring.gens())
 
     def ngens(self):
         r"""

@@ -232,7 +232,8 @@ class ClusterQuiver(SageObject):
                                    values))
 
         # constructs a quiver from a mutation type
-        if type( data ) in [QuiverMutationType_Irreducible,QuiverMutationType_Reducible]:
+        if isinstance(data, (QuiverMutationType_Irreducible,
+                             QuiverMutationType_Reducible)):
             if frozen is not None:
                 print('The input specifies a mutation type, so the'
                       ' additional parameter frozen is ignored.'
@@ -1532,7 +1533,7 @@ class ClusterQuiver(SageObject):
             from sage.plot.plot import Graphics
             from sage.plot.text import text
 
-            def _plot_arrow( v, k, center=(0,0) ):
+            def _plot_arrow( v, k, center=(0, 0) ):
                 return text(r"$\longleftrightarrow$",(center[0],center[1]), fontsize=25) + text(r"$\mu_"+str(v)+"$",(center[0],center[1]+0.15), fontsize=15) \
                     + text("$"+str(k)+"$",(center[0],center[1]-0.2), fontsize=15)
 
@@ -1950,10 +1951,15 @@ class ClusterQuiver(SageObject):
             path = None
         elif not return_path and self._mutation_type == 'undetermined infinite mutation type':
             is_finite = False
-        elif type( self._mutation_type ) in [QuiverMutationType_Irreducible, QuiverMutationType_Reducible] and self._mutation_type.is_mutation_finite():
+        elif (isinstance(self._mutation_type, (QuiverMutationType_Irreducible,
+                                               QuiverMutationType_Reducible))
+              and self._mutation_type.is_mutation_finite()):
             is_finite = True
             path = None
-        elif not return_path and type( self._mutation_type ) in [QuiverMutationType_Irreducible, QuiverMutationType_Reducible] and not self._mutation_type.is_mutation_finite():
+        elif (not return_path and isinstance(self._mutation_type,
+                                             (QuiverMutationType_Irreducible,
+                                              QuiverMutationType_Reducible))
+              and not self._mutation_type.is_mutation_finite()):
             is_finite = False
         else:
             # turning dg_component into a canonical form

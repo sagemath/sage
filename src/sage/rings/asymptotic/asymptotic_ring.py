@@ -428,7 +428,7 @@ from .misc import WithLocals
 
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 lazy_import('sage.rings.polynomial.multi_polynomial_ring_base', 'MPolynomialRing_base')
-lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
 lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
@@ -4013,7 +4013,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
                                        (data, self)), e)
                 return sum(summands, self.zero())
 
-        elif isinstance(P, PolynomialRing_general):
+        elif isinstance(P, PolynomialRing_generic):
             p = P.gen()
             try:
                 return sum(iter(self.create_summand('exact', growth=p**i,
@@ -4316,6 +4316,16 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             sage: ex.has_same_summands(asymptotic_expansions.HarmonicNumber(
             ....:    'n', precision=5))
             True
+
+        Positive and negative singularities::
+
+            sage: def permutations_odd_cycles(z):
+            ....:     return sqrt((1+z) / (1-z))
+            sage: ex = B.coefficients_of_generating_function(
+            ....:     permutations_odd_cycles, (1, -1,), precision=2,
+            ....: ); ex
+            sqrt(2)/sqrt(pi)*n^(-1/2) - 1/2*sqrt(1/2)/sqrt(pi)*n^(-3/2)*(-1)^n
+            + O(n^(-5/2))
 
         .. WARNING::
 

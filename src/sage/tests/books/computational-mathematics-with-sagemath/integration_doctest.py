@@ -181,7 +181,7 @@ Sage example in ./integration.tex, line 979::
 Sage example in ./integration.tex, line 990::
 
   sage: f = lambda y: numerical_integral(lambda x: exp(y*sin(x)),  \
-                                         0, sqrt(y))[0]
+  ....:                                  0, sqrt(y))[0]
   sage: f(0.0), f(0.5), f(1.0) # abs tol 2e-15
   (0.0, 0.8414895067661431, 1.6318696084180513)
 
@@ -193,14 +193,14 @@ Sage example in ./integration.tex, line 998::
 Sage example in ./integration.tex, line 1008::
 
   sage: f = lambda y: sage.calculus.calculus.nintegral(exp(y*sin(x)), \
-                                                       x, 0, sqrt(y))[0]
+  ....:                                                x, 0, sqrt(y))[0]
   sage: numerical_integral(f, 0, 1) # abs tol 2e-16
   (0.8606791942204567, 6.301207560882096e-07)
 
 Sage example in ./integration.tex, line 1016::
 
   sage: f = lambda y: RDF(mpmath.quad(lambda x: mpmath.exp(y*mpmath.sin(x)), \
-                                      [0, sqrt(y)]))
+  ....:                               [0, sqrt(y)]))
   sage: numerical_integral(f, 0, 1) # abs tol 2e-16
   (0.8606791942204567, 6.301207561187562e-07)
 
@@ -226,12 +226,12 @@ Sage example in ./integration.tex, line 1228::
 
 Sage example in ./integration.tex, line 1244::
 
-  sage: def f_1(t,y,params): return [y[1],params[0]*(1-y[0]^2)*y[1]-y[0]]
+  sage: def f_1(t, y, params): return [y[1],params[0]*(1-y[0]^2)*y[1]-y[0]]
   sage: T.function = f_1
 
 Sage example in ./integration.tex, line 1266::
 
-  sage: def j_1(t,y,params):
+  sage: def j_1(t, y, params):
   ....:     return [[0, 1],
   ....:             [-2*params[0]*y[0]*y[1]-1, params[0]*(1-y[0]^2)],
   ....:             [0,0]]

@@ -14,8 +14,8 @@ Miscellaneous matrix functions
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.fields import Fields
 _Fields = Fields()
@@ -309,4 +309,4 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
                            " algorithm... please contact sage-devel@googlegroups.com")
 
     p = p[0]
-    return p[min(nrows,ncols)] if permanent_only else p
+    return p[min(nrows, ncols)] if permanent_only else p

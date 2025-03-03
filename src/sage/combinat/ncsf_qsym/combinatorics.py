@@ -51,7 +51,7 @@ def coeff_pi(J, I):
     return prod(prod(K.partial_sums()) for K in J.refinement_splitting(I))
 
 
-def coeff_lp(J,I):
+def coeff_lp(J, I):
     r"""
     Return the coefficient `lp_{J,I}` as defined in [NCSF]_.
 
@@ -73,7 +73,7 @@ def coeff_lp(J,I):
     return prod(K[-1] for K in J.refinement_splitting(I))
 
 
-def coeff_ell(J,I):
+def coeff_ell(J, I):
     r"""
     Return the coefficient `\ell_{J,I}` as defined in [NCSF]_.
 
@@ -293,11 +293,11 @@ def number_of_SSRCT(content_comp, shape_comp):
         else:
             return ZZ.zero()
     s = ZZ.zero()
-    cond = lambda al,be: all(al[j] <= be_val
-                             and not any(al[i] <= k and k <= be[i]
-                                         for k in range(al[j], be_val)
-                                         for i in range(j))
-                             for j, be_val in enumerate(be))
+    cond = lambda al, be: all(al[j] <= be_val
+                              and not any(al[i] <= k <= be[i]
+                                          for k in range(al[j], be_val)
+                                          for i in range(j))
+                              for j, be_val in enumerate(be))
     C = Compositions(content_comp.size()-content_comp[0],
                      inner=[1]*len(shape_comp),
                      outer=list(shape_comp))

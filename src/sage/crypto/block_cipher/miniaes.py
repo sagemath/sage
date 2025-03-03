@@ -1642,7 +1642,7 @@ class MiniAES(SageObject):
             return B(S)
         # G is a matrix over GF(16)
         elif isinstance(G, Matrix_dense):
-            if not (G.base_ring() is K):
+            if G.base_ring() is not K:
                 raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
             S = "".join(str(self._GF_to_bin[G[i][j]])
                         for i in range(G.nrows()) for j in range(G.ncols()))
@@ -1772,7 +1772,7 @@ class MiniAES(SageObject):
             return [self._GF_to_int[g] for g in G]
         # G is a matrix over GF(16)
         elif isinstance(G, Matrix_dense):
-            if not (G.base_ring() is K):
+            if G.base_ring() is not K:
                 raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
             return [self._GF_to_int[G[i][j]] for i in range(G.nrows()) for j in range(G.ncols())]
         # the type of G doesn't match the supported types

@@ -49,6 +49,7 @@ AUTHORS:
 - Emily A. Kirkman (2006)
 - Michael C. Yurko (2009)
 - David Coudert    (2012)
+- Janmenjaya Panda (2024)
 
 Functions and methods
 ---------------------
@@ -58,6 +59,7 @@ Functions and methods
 #                              and Emily A. Kirkman
 #           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
 #           Copyright (C) 2012 David Coudert <david.coudert@inria.fr>
+#           Copyright (C) 2024 Janmenjaya Panda <janmenjaya.panda.22@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -201,7 +203,7 @@ class DiGraphGenerators:
         218
     """
 
-    def ButterflyGraph(self, n, vertices='strings'):
+    def ButterflyGraph(self, n, vertices='strings', immutable=False):
         r"""
         Return a `n`-dimensional butterfly graph.
 
@@ -220,6 +222,9 @@ class DiGraphGenerators:
         - ``vertices`` -- string (default: ``'strings'``); specifies whether the
           vertices are zero-one strings (default) or tuples over GF(2)
           (``vertices='vectors'``)
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph.
 
         EXAMPLES::
 
@@ -321,15 +326,19 @@ class DiGraphGenerators:
             for x in range(n + 1):
                 pos[v, x] = (dec * x, i)
         return DiGraph([pos.keys(), E], format='vertices_and_edges', pos=pos,
-                       name="{}-dimensional Butterfly".format(n))
+                       name="{}-dimensional Butterfly".format(n),
+                       immutable=immutable)
 
-    def Path(self, n):
+    def Path(self, n, immutable=False):
         r"""
         Return a directed path on `n` vertices.
 
         INPUT:
 
         - ``n`` -- integer; number of vertices in the path
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph.
 
         EXAMPLES::
 
@@ -341,15 +350,13 @@ class DiGraphGenerators:
             sage: g.automorphism_group().cardinality()                                  # needs sage.groups
             1
         """
-        g = DiGraph(n, name='Path')
-
-        if n:
-            g.add_path(list(range(n)))
-
+        g = DiGraph([range(n), zip(range(n - 1), range(1, n))],
+                    format='vertices_and_edges', name='Path',
+                    immutable=immutable)
         g.set_pos({i: (i, 0) for i in range(n)})
         return g
 
-    def StronglyRegular(self, n):
+    def StronglyRegular(self, n, immutable=False):
         r"""
         Return a Strongly Regular digraph with `n` vertices.
 
@@ -359,6 +366,9 @@ class DiGraphGenerators:
         INPUT:
 
         - ``n`` -- integer; the number of vertices of the digraph
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph.
 
         .. SEEALSO::
 
@@ -395,14 +405,22 @@ class DiGraphGenerators:
         H = skew_hadamard_matrix(n + 1, skew_normalize=True)
         M = H[1:, 1:]
         M = (M + ones_matrix(n)) / 2 - identity_matrix(n)
-        return DiGraph(M, format='adjacency_matrix', name='Strongly regular digraph')
+        return DiGraph(M, format='adjacency_matrix', immutable=immutable,
+                       name='Strongly regular digraph')
 
-    def Paley(self, q):
+    def Paley(self, q, immutable=False):
         r"""
         Return a Paley digraph on `q` vertices.
 
         Parameter `q` must be the power of a prime number and congruent to 3 mod
         4.
+
+        INPUT:
+
+        - ``q`` -- integer; the number of vertices of the digraph
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph.
 
         .. SEEALSO::
 
@@ -446,13 +464,12 @@ class DiGraphGenerators:
             raise ValueError("parameter q must be a prime power")
         if not mod(q, 4) == 3:
             raise ValueError("parameter q must be congruent to 3 mod 4")
-        g = DiGraph([FiniteField(q, 'a'),
-                     lambda i, j: (i != j) and (j - i).is_square()],
-                    loops=False,
-                    name="Paley digraph with parameter {}".format(q))
-        return g
+        return DiGraph([FiniteField(q, 'a'),
+                        lambda i, j: (i != j) and (j - i).is_square()],
+                       format='rule', loops=False, immutable=immutable,
+                       name="Paley digraph with parameter {}".format(q))
 
-    def TransitiveTournament(self, n):
+    def TransitiveTournament(self, n, immutable=False):
         r"""
         Return a transitive tournament on `n` vertices.
 
@@ -463,6 +480,9 @@ class DiGraphGenerators:
         INPUT:
 
         - ``n`` -- integer; number of vertices in the tournament
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph.
 
         EXAMPLES::
 
@@ -488,17 +508,17 @@ class DiGraphGenerators:
             ...
             ValueError: the number of vertices cannot be strictly negative
         """
-        g = DiGraph(n, name="Transitive Tournament")
+        if n < 0:
+            raise ValueError('the number of vertices cannot be strictly negative')
 
-        for i in range(n - 1):
-            for j in range(i + 1, n):
-                g.add_edge(i, j)
-
+        from itertools import combinations
+        g = DiGraph([range(n), combinations(range(n), 2)],
+                    format='vertices_and_edges', immutable=immutable,
+                    name="Transitive Tournament")
         g._circle_embedding(list(range(n)))
-
         return g
 
-    def RandomTournament(self, n):
+    def RandomTournament(self, n, immutable=False):
         r"""
         Return a random tournament on `n` vertices.
 
@@ -509,6 +529,9 @@ class DiGraphGenerators:
         INPUT:
 
         - ``n`` -- integer; number of vertices
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph.
 
         EXAMPLES::
 
@@ -531,15 +554,17 @@ class DiGraphGenerators:
             - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.Complete`
             - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.RandomSemiComplete`
         """
-        from sage.misc.prandom import random
-        g = DiGraph(n, name="Random Tournament")
+        if n < 0:
+            raise ValueError('the number of vertices cannot be strictly negative')
 
-        for i in range(n - 1):
-            for j in range(i + 1, n):
-                if random() <= .5:
-                    g.add_edge(i, j)
-                else:
-                    g.add_edge(j, i)
+        from itertools import combinations
+        from sage.misc.prandom import getrandbits
+
+        bits = getrandbits(n * (n - 1) // 2)
+        edges = ((i, j) if (bits >> k) & 1 else (j, i)
+                 for k, (i, j) in enumerate(combinations(range(n), 2)))
+        g = DiGraph([range(n), edges], format='vertices_and_edges',
+                    immutable=immutable, name="Random Tournament")
 
         g._circle_embedding(list(range(n)))
 
@@ -547,7 +572,8 @@ class DiGraphGenerators:
 
     def tournaments_nauty(self, n,
                           min_out_degree=None, max_out_degree=None,
-                          strongly_connected=False, debug=False, options=""):
+                          strongly_connected=False, debug=False, options="",
+                          immutable=False):
         r"""
         Iterator over all tournaments on `n` vertices using Nauty.
 
@@ -568,6 +594,9 @@ class DiGraphGenerators:
         - ``options`` -- string; anything else that should be forwarded as input
           to Nauty's gentourng. See its documentation for more information :
           `<https://pallini.di.uniroma1.it>`_.
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          immutable or mutable digraphs.
 
         EXAMPLES::
 
@@ -610,6 +639,18 @@ class DiGraphGenerators:
         if debug:
             yield sp.stderr.readline()
 
+        def edges(s):
+            i = 0
+            j = 1
+            for b in s[:-1]:
+                yield (i, j) if b == '0' else (j, i)
+
+                if j == n - 1:
+                    i += 1
+                    j = i + 1
+                else:
+                    j += 1
+
         gen = sp.stdout
         while True:
             try:
@@ -618,24 +659,10 @@ class DiGraphGenerators:
                 # Exhausted list of graphs from nauty geng
                 return
 
-            G = DiGraph(n)
-            i = 0
-            j = 1
-            for b in s[:-1]:
-                if b == '0':
-                    G.add_edge(i, j)
-                else:
-                    G.add_edge(j, i)
+            yield DiGraph([range(n), edges(s)], format='vertices_and_edges',
+                          immutable=immutable)
 
-                if j == n - 1:
-                    i += 1
-                    j = i + 1
-                else:
-                    j += 1
-
-            yield G
-
-    def nauty_directg(self, graphs, options='', debug=False):
+    def nauty_directg(self, graphs, options='', debug=False, immutable=False):
         r"""
         Return an iterator yielding digraphs using nauty's ``directg`` program.
 
@@ -666,6 +693,9 @@ class DiGraphGenerators:
 
         - ``debug`` -- boolean (default: ``False``); if ``True`` ``directg``
           standard error and standard output are displayed
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          immutable or mutable digraphs.
 
         EXAMPLES::
 
@@ -757,9 +787,9 @@ class DiGraphGenerators:
             # digraph6 specifications:
             # http://users.cecs.anu.edu.au/~bdm/data/formats.txt
             if line and line[0] == '&':
-                yield DiGraph(line[1:], format='dig6')
+                yield DiGraph(line[1:], format='dig6', immutable=immutable)
 
-    def nauty_posetg(self, options='', debug=False):
+    def nauty_posetg(self, options='', debug=False, immutable=False):
         r"""
         Return a generator which creates all posets using ``nauty``.
 
@@ -779,6 +809,9 @@ class DiGraphGenerators:
           string. A line leading with ">A" indicates a successful initiation of
           the program with some information on the arguments, while a line
           beginning with ">E" indicates an error with the input.
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          immutable or mutable posets.
 
         The possible options, obtained as output of ``genposetg --help``::
 
@@ -813,10 +846,9 @@ class DiGraphGenerators:
             except StopIteration:
                 # Exhausted list of graphs from nauty genposetg
                 return
-            G = DiGraph(s[1:-1], format='dig6')
-            yield G
+            yield DiGraph(s[1:-1], format='dig6', immutable=immutable)
 
-    def Complete(self, n, loops=False):
+    def Complete(self, n, loops=False, immutable=False):
         r"""
         Return the complete digraph on `n` vertices.
 
@@ -826,6 +858,9 @@ class DiGraphGenerators:
 
         - ``loops`` -- boolean (default: ``False``); whether to add loops or
           not, i.e., edges from `u` to itself
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph.
 
         .. SEEALSO::
 
@@ -849,23 +884,31 @@ class DiGraphGenerators:
             ...
             ValueError: the number of vertices cannot be strictly negative
         """
-        G = DiGraph(n, name="Complete digraph" + (" with loops" if loops else ''), loops=loops)
+        if n < 0:
+            raise ValueError('the number of vertices cannot be strictly negative')
 
-        if loops:
-            G.add_edges((u, u) for u in range(n))
-
-        G.add_edges((u, v) for u in range(n) for v in range(n) if u != v)
+        edges = ((u, v) for u in range(n) for v in range(n) if u != v or loops)
+        G = DiGraph([range(n), edges], format='vertices_and_edges',
+                    loops=loops, immutable=immutable,
+                    name="Complete digraph" + (" with loops" if loops else ''))
 
         G._circle_embedding(list(range(n)))
 
         return G
 
-    def Circuit(self, n):
+    def Circuit(self, n, immutable=False):
         r"""
         Return the circuit on `n` vertices.
 
         The circuit is an oriented
         :meth:`~sage.graphs.graph_generators.GraphGenerators.CycleGraph`.
+
+        INPUT:
+
+        - ``n`` -- integer; number of vertices
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph.
 
         EXAMPLES:
 
@@ -875,21 +918,25 @@ class DiGraphGenerators:
             sage: len(circuit.strongly_connected_components()) == 1
             True
         """
-        g = DiGraph(n, name='Circuit')
-
+        if n < 0:
+            raise ValueError('the number of vertices cannot be strictly negative')
         if n == 1:
-            g.allow_loops(True)
-            g.add_edge(0, 0)
-            return g
-        elif n:
-            g.add_edges(zip(range(n - 1), range(1, n)))
-            g.add_edge(n - 1, 0)
-            g._circle_embedding(list(range(n)))
+            return DiGraph([(0, 0)], format='list_of_edges', loops=True,
+                           immutable=immutable, name='Circuit')
+
+        from itertools import chain
+        edges = zip(range(n), chain(range(1, n), [0]))
+        g = DiGraph([range(n), edges], format='vertices_and_edges',
+                    immutable=immutable, name='Circuit')
+        g._circle_embedding(list(range(n)))
         return g
 
-    def Circulant(self, n, integers):
+    def Circulant(self, n, integers, immutable=False):
         r"""
         Return a circulant digraph on `n` vertices from a set of integers.
+
+        A circulant digraph of order `n` has an arc from vertex `i` to
+        vertex `i+j \pmod{n}`, for each `j` in ``integers``.
 
         INPUT:
 
@@ -899,18 +946,33 @@ class DiGraphGenerators:
           that there is an edge from `i` to `j` if and only if `(j-i) \pmod{n}`
           is an integer
 
-        EXAMPLES::
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph.
 
-            sage: digraphs.Circulant(13,[3,5,7])
-            Circulant graph ([3, 5, 7]): Digraph on 13 vertices
+        EXAMPLES:
 
-        TESTS::
+        Construct and show the circulant graph [3, 5, 7], a digraph on 13
+        vertices::
 
-            sage: digraphs.Circulant(13,[3,5,7,"hey"])
+            sage: g = digraphs.Circulant(13, [3, 5, 7])
+            sage: g.show()                          # long time                             # needs sage.plot
+
+        The Koh-Tindell digraph [LM2024]_ is the circulant digraph of order 7
+        with parameters `[1, 5]`.  This `2`-diregular digraph is
+        vertex-transitive but not arc-transitive. The associated bipartite
+        digraph of the Koh-Tindell digraph is a Pfaffian orientation of the
+        Heawood graph. Construct and show the Koh-Tindell digraph::
+
+            sage: kohTindellDigraph = digraphs.Circulant(7, [1, 5])
+            sage: kohTindellDigraph.show()          # long time                             # needs sage.plot
+
+        TESTS:
+
+            sage: digraphs.Circulant(13, [3, 5, 7, "hey"])
             Traceback (most recent call last):
             ...
             ValueError: the list must contain only integers
-            sage: digraphs.Circulant(3,[3,5,7,3.4])
+            sage: digraphs.Circulant(3, [3, 5, 7, 3.4])
             Traceback (most recent call last):
             ...
             ValueError: the list must contain only integers
@@ -925,15 +987,14 @@ class DiGraphGenerators:
             if not i % n:
                 loops = True
 
-        G = DiGraph(n, name="Circulant graph (" + str(integers) + ")", loops=loops)
-
+        edges = ((v, (v + j) % n) for j in integers for v in range(n))
+        G = DiGraph([range(n), edges], format='vertices_and_edges',
+                    loops=loops, immutable=immutable,
+                    name="Circulant graph (" + str(integers) + ")")
         G._circle_embedding(list(range(n)))
-        for v in range(n):
-            G.add_edges((v, (v + j) % n) for j in integers)
-
         return G
 
-    def DeBruijn(self, k, n, vertices='strings'):
+    def DeBruijn(self, k, n, vertices='strings', immutable=False):
         r"""
         Return the De Bruijn digraph with parameters `k,n`.
 
@@ -959,6 +1020,9 @@ class DiGraphGenerators:
         - ``vertices`` -- string (default: ``'strings'``); whether the vertices
           are words over an alphabet (default) or integers
           (``vertices='string'``)
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph
 
         EXAMPLES:
 
@@ -1013,40 +1077,48 @@ class DiGraphGenerators:
         """
         from sage.rings.integer import Integer
 
+        name = f"De Bruijn digraph (k={k}, n={n})"
         if vertices == 'strings':
             from sage.combinat.words.words import Words
 
             W = Words(list(range(k)) if isinstance(k, Integer) else k, n)
             A = Words(list(range(k)) if isinstance(k, Integer) else k, 1)
-            g = DiGraph(loops=True)
 
             if not n:
-                g.allow_multiple_edges(True)
-                v = W[0]
-                vs = v.string_rep()
-                for a in A:
-                    g.add_edge(vs, vs, a.string_rep())
+                multiedges = True
+
+                def edges():
+                    v = W[0]
+                    vs = v.string_rep()
+                    return ((vs, vs, a.string_rep()) for a in A)
+
             else:
-                for w in W:
-                    ww = w[1:]
-                    ws = w.string_rep()
-                    for a in A:
-                        g.add_edge(ws, (ww * a).string_rep(), a.string_rep())
+                multiedges = False
+
+                def edges():
+                    for w in W:
+                        ww = w[1:]
+                        ws = w.string_rep()
+                        yield from ((ws, (ww * a).string_rep(), a.string_rep())
+                                    for a in A)
+
+            return DiGraph(edges(), format='list_of_edges', name=name,
+                           loops=True, multiedges=multiedges,
+                           immutable=immutable)
 
         elif vertices == 'integers':
             d = k if isinstance(k, Integer) else len(list(k))
             if not d:
-                g = DiGraph(loops=True, multiedges=True)
-            else:
-                g = digraphs.GeneralizedDeBruijn(d ** n, d)
+                return DiGraph(loops=True, multiedges=True, name=name,
+                               immutable=immutable)
+
+            return digraphs.GeneralizedDeBruijn(d ** n, d, immutable=immutable,
+                                                name=name)
 
         else:
             raise ValueError('unknown type for vertices')
 
-        g.name("De Bruijn digraph (k={}, n={})".format(k, n))
-        return g
-
-    def GeneralizedDeBruijn(self, n, d):
+    def GeneralizedDeBruijn(self, n, d, immutable=False, name=None):
         r"""
         Return the generalized de Bruijn digraph of order `n` and degree `d`.
 
@@ -1064,6 +1136,12 @@ class DiGraphGenerators:
           one)
 
         - ``d`` -- integer; degree of the digraph (must be at least one)
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph
+
+        - ``name`` -- string (default: ``None``); when set, the specified name
+          is used instead of the default one
 
         .. SEEALSO::
 
@@ -1098,15 +1176,15 @@ class DiGraphGenerators:
             raise ValueError("order must be greater than or equal to one")
         if d < 1:
             raise ValueError("degree must be greater than or equal to one")
+        if name is None:
+            name = f"Generalized de Bruijn digraph (n={n}, d={d})"
 
-        GB = DiGraph(n, loops=True, multiedges=True,
-                     name="Generalized de Bruijn digraph (n={}, d={})".format(n, d))
-        for u in range(n):
-            for a in range(u * d, u * d + d):
-                GB.add_edge(u, a % n)
-        return GB
+        edges = ((u, a % n) for u in range(n) for a in range(u * d, u * d + d))
+        return DiGraph([range(n), edges], format='vertices_and_edges',
+                       loops=True, multiedges=True, immutable=immutable,
+                       name=name)
 
-    def ImaseItoh(self, n, d):
+    def ImaseItoh(self, n, d, immutable=False, name=None):
         r"""
         Return the Imase-Itoh digraph of order `n` and degree `d`.
 
@@ -1127,6 +1205,12 @@ class DiGraphGenerators:
 
         - ``d`` -- integer; degree of the digraph (must be greater than or
           equal to one)
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph
+
+        - ``name`` -- string (default: ``None``); when set, the specified name
+          is used instead of the default one
 
         EXAMPLES::
 
@@ -1164,15 +1248,15 @@ class DiGraphGenerators:
             raise ValueError("order must be greater than or equal to two")
         if d < 1:
             raise ValueError("degree must be greater than or equal to one")
+        if name is None:
+            name = f"Imase and Itoh digraph (n={n}, d={d})"
 
-        II = DiGraph(n, loops=True, multiedges=True,
-                     name="Imase and Itoh digraph (n={}, d={})".format(n, d))
-        for u in range(n):
-            for a in range(-u * d - d, -u * d):
-                II.add_edge(u, a % n)
-        return II
+        edges = ((u, a % n) for u in range(n) for a in range(-u * d - d, -u * d))
+        return DiGraph([range(n), edges], format='vertices_and_edges',
+                       loops=True, multiedges=True, immutable=immutable,
+                       name=name)
 
-    def Kautz(self, k, D, vertices='strings'):
+    def Kautz(self, k, D, vertices='strings', immutable=False):
         r"""
         Return the Kautz digraph of degree `d` and diameter `D`.
 
@@ -1206,6 +1290,9 @@ class DiGraphGenerators:
         - ``vertices`` -- string (default: ``'strings'``); whether the vertices
           are words over an alphabet (default) or integers
           (``vertices='strings'``)
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+          an immutable or mutable digraph
 
         EXAMPLES::
 
@@ -1281,6 +1368,8 @@ class DiGraphGenerators:
 
         from sage.rings.integer import Integer
 
+        name = f"Kautz digraph (k={k}, D={D})"
+
         if vertices == 'strings':
             from sage.combinat.words.words import Words
 
@@ -1290,7 +1379,7 @@ class DiGraphGenerators:
                 raise ValueError("degree must be greater than or equal to one")
 
             # We start building the set of vertices
-            V = [i for i in my_alphabet]
+            V = list(my_alphabet)
             for i in range(D - 1):
                 VV = []
                 for w in V:
@@ -1298,25 +1387,24 @@ class DiGraphGenerators:
                 V = VV
 
             # We now build the set of arcs
-            G = DiGraph()
-            for u in V:
-                us = u.string_rep()
-                for a in my_alphabet:
-                    if not u.has_suffix(a):
-                        G.add_edge(us, (u[1:] * a).string_rep(),
-                                   a.string_rep())
+            def edges():
+                for u in V:
+                    us = u.string_rep()
+                    yield from ((us, (u[1:] * a).string_rep(), a.string_rep())
+                                for a in my_alphabet if not u.has_suffix(a))
+
+            return DiGraph(edges(), format='list_of_edges',
+                           name=name, immutable=immutable)
 
         elif vertices == 'integers':
             d = k if isinstance(k, Integer) else (len(list(k)) - 1)
             if d < 1:
                 raise ValueError("degree must be greater than or equal to one")
-            G = digraphs.ImaseItoh((d + 1) * (d ** (D - 1)), d)
+            return digraphs.ImaseItoh((d + 1) * (d ** (D - 1)), d,
+                                      name=name, immutable=immutable)
 
         else:
             raise ValueError('unknown type for vertices')
-
-        G.name("Kautz digraph (k={}, D={})".format(k, D))
-        return G
 
     def RandomDirectedAcyclicGraph(self, n, p, weight_max=None):
         r"""
@@ -1640,7 +1728,7 @@ class DiGraphGenerators:
         if is_dense:
             for u in range(n):
                 for v in range(n):
-                    if ((u != v) or loops) and (not (v in adj[u])):
+                    if ((u != v) or loops) and (v not in adj[u]):
                         D.add_edge(u, v)
 
         return D

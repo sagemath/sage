@@ -120,6 +120,26 @@ satisfying, but we have chosen the latter.
     sage: a == 2
     False
 
+Some default printing options can be set by modifying module globals::
+
+    sage: from sage.rings import real_mpfi
+    sage: x = RIF(sqrt(2), sqrt(2)+1e-10); x
+    1.4142135624?
+    sage: real_mpfi.printing_error_digits = 2
+    sage: x
+    1.414213562424?51
+    sage: real_mpfi.printing_style = 'brackets'
+    sage: x
+    [1.4142135623730949 .. 1.4142135624730952]
+    sage: real_mpfi.printing_style = 'question'; real_mpfi.printing_error_digits = 0  # revert to default
+
+The default value of using scientific notation can be configured at field construction instead::
+
+    sage: RealIntervalField(53, sci_not=False)(0.5)
+    0.50000000000000000?
+    sage: RealIntervalField(53, sci_not=True)(0.5)
+    5.0000000000000000?e-1
+
 COMPARISONS:
 
 Comparison operations (``==``, ``!=``, ``<``, ``<=``, ``>``, ``>=``)
@@ -232,7 +252,7 @@ TESTS::
 
     sage: import numpy                                                                  # needs numpy
     sage: if int(numpy.version.short_version[0]) > 1:                                   # needs numpy
-    ....:     numpy.set_printoptions(legacy="1.25")                                     # needs numpy
+    ....:     _ = numpy.set_printoptions(legacy="1.25")                                     # needs numpy
     sage: RIF(2) == numpy.int8('2')                                                     # needs numpy
     True
     sage: numpy.int8('2') == RIF(2)                                                     # needs numpy
@@ -816,9 +836,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         prec = self._prec
 
         # Direct and efficient conversions
-        if S is ZZ or S is QQ:
-            return True
-        if S is int or S is long:
+        if S is ZZ or S is QQ or S is int:
             return True
         if isinstance(S, RealIntervalField_class):
             return (<RealIntervalField_class>S)._prec >= prec
@@ -932,16 +950,16 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         """
         return 1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return a list of generators.
+        Return a tuple of generators.
 
         EXAMPLES::
 
             sage: RIF.gens()
-            [1]
+            (1,)
         """
-        return [self.gen()]
+        return (self.gen(),)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
@@ -4978,7 +4996,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         return (~self).arctanh()
 
-    def algdep(self, n):
+    def algebraic_dependency(self, n):
         r"""
         Return a polynomial of degree at most `n` which is
         approximately satisfied by ``self``.
@@ -4994,13 +5012,13 @@ cdef class RealIntervalFieldElement(RingElement):
 
         ALGORITHM:
 
-        Uses the PARI C-library ``algdep`` command.
+        This uses the PARI C-library :pari:`algdep` command.
 
         EXAMPLES::
 
             sage: r = sqrt(RIF(2)); r
             1.414213562373095?
-            sage: r.algdep(5)
+            sage: r.algebraic_dependency(5)
             x^2 - 2
 
         If we compute a wrong, but precise, interval, we get a wrong
@@ -5008,7 +5026,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
             sage: r = sqrt(RealIntervalField(200)(2)) + (1/2)^40; r
             1.414213562374004543503461652447613117632171875376948073176680?
-            sage: r.algdep(5)
+            sage: r.algebraic_dependency(5)
             7266488*x^5 + 22441629*x^4 - 90470501*x^3 + 23297703*x^2 + 45778664*x + 13681026
 
         But if we compute an interval that includes the number we mean,
@@ -5016,13 +5034,13 @@ cdef class RealIntervalFieldElement(RingElement):
         interval is very imprecise::
 
             sage: r = r.union(sqrt(2.0))
-            sage: r.algdep(5)
+            sage: r.algebraic_dependency(5)
             x^2 - 2
 
         Even on this extremely imprecise interval we get an answer which is
         technically correct::
 
-            sage: RIF(-1, 1).algdep(5)
+            sage: RIF(-1, 1).algebraic_dependency(5)
             x
         """
         # If 0 is in the interval, then we have no known bits!  But
@@ -5035,7 +5053,10 @@ cdef class RealIntervalFieldElement(RingElement):
 
         known_bits = -self.relative_diameter().log2()
 
-        return sage.arith.misc.algdep(self.center(), n, known_bits=known_bits)
+        return sage.arith.misc.algebraic_dependency(self.center(),
+                                                    n, known_bits=known_bits)
+
+    algdep = algebraic_dependency
 
     def factorial(self):
         """

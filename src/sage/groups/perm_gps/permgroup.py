@@ -380,13 +380,12 @@ def PermutationGroup(gens=None, *args, **kwds):
         ...
         TypeError: gens must be a tuple, list, or GapElement
 
-    This will raise an error after the deprecation period::
+    This now raises an error (:issue:`31510`)::
 
         sage: G = PermutationGroup([(1,2,3,4)], [(1,7,3,5)])
-        doctest:warning
+        Traceback (most recent call last):
         ...
-        DeprecationWarning: gap_group, domain, canonicalize, category will become keyword only
-        See https://github.com/sagemath/sage/issues/31510 for details.
+        ValueError: please use keywords gap_group=, domain=, canonicalize=, category= in the input
     """
     if not isinstance(gens, ExpectElement) and hasattr(gens, '_permgroup_'):
         return gens._permgroup_()
@@ -402,18 +401,7 @@ def PermutationGroup(gens=None, *args, **kwds):
             raise ValueError("you must specify the domain for an action")
         return PermutationGroup_action(gens, action, domain, gap_group=gap_group)
     if args:
-        from sage.misc.superseded import deprecation
-        deprecation(31510, "gap_group, domain, canonicalize, category will become keyword only")
-        if len(args) > 4:
-            raise ValueError("invalid input")
-        args = list(args)
-        gap_group = args.pop(0)
-        if args:
-            domain = args.pop(0)
-            if args:
-                canonicalize = args.pop(0)
-                if args:
-                    category = args.pop(0)
+        raise ValueError("please use keywords gap_group=, domain=, canonicalize=, category= in the input")
     return PermutationGroup_generic(gens=gens, gap_group=gap_group, domain=domain,
                                     canonicalize=canonicalize, category=category)
 
@@ -1068,7 +1056,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return list(self)
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         """
         Return whether ``item`` is an element of this group.
 
@@ -1105,33 +1093,6 @@ class PermutationGroup_generic(FiniteGroup):
             return False
         return True
 
-    def has_element(self, item):
-        """
-        Return whether ``item`` is an element of this group -
-        however *ignores* parentage.
-
-        EXAMPLES::
-
-            sage: G = CyclicPermutationGroup(4)
-            sage: gens = G.gens()
-            sage: H = DihedralGroup(4)
-            sage: g = G([(1,2,3,4)]); g
-            (1,2,3,4)
-            sage: G.has_element(g)
-            doctest:warning
-            ...
-            DeprecationWarning: G.has_element(g) is deprecated; use :meth:`__contains__`, i.e., `g in G` instead
-            See https://github.com/sagemath/sage/issues/33831 for details.
-            True
-            sage: h = H([(1,2),(3,4)]); h
-            (1,2)(3,4)
-            sage: G.has_element(h)
-            False
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(33831, "G.has_element(g) is deprecated; use :meth:`__contains__`, i.e., `g in G` instead")
-        return item in self
-
     def __iter__(self):
         r"""
         Return an iterator going through all elements in ``self``.
@@ -1161,9 +1122,9 @@ class PermutationGroup_generic(FiniteGroup):
         """
         if len(self._gens) == 1:
             return self._iteration_monogen()
-        else:
-            # TODO: this is too slow for moderatly small permutation groups
-            return self.iteration(algorithm='SGS')
+
+        # TODO: this is too slow for moderately small permutation groups
+        return self.iteration(algorithm='SGS')
 
     def _iteration_monogen(self):
         r"""
@@ -2733,6 +2694,25 @@ class PermutationGroup_generic(FiniteGroup):
             raise TypeError("{0} does not convert to a permutation group element".format(g))
         return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g))
 
+    def are_conjugate(self, H1, H2):
+        r"""
+        Return whether ``H1`` and ``H2`` are conjugate subgroups in ``G``.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H1 = PermutationGroup([(1,2)])
+            sage: H2 = PermutationGroup([(2,3)])
+            sage: G.are_conjugate(H1, H2)
+            True
+            sage: G = SymmetricGroup(4)
+            sage: H1 = PermutationGroup([[(1,3),(2,4)], [(1,2),(3,4)]])
+            sage: H2 = PermutationGroup([[(1,2)], [(1,2),(3,4)]])
+            sage: G.are_conjugate(H1, H2)
+            False
+        """
+        return libgap.IsConjugate(self, H1, H2).sage()
+
     def direct_product(self, other, maps=True):
         """
         Wraps GAP's ``DirectProduct``, ``Embedding``, and ``Projection``.
@@ -2974,20 +2954,21 @@ class PermutationGroup_generic(FiniteGroup):
                 raise ValueError(msg)
 
         # create a parallel list of the automorphisms of N in GAP
-        libgap.eval('N := Group({})'.format(list(N.gens())))
-        gens_string = ",".join(str(x) for x in N.gens())
-        homomorphism_cmd = 'alpha := GroupHomomorphismByImages(N, N, [{0}],[{1}])'
-        libgap.eval('morphisms := []')
+        N_gap = libgap.eval(f'Group({list(N.gens())})')
+        morphisms = libgap.eval('[]')
+        libgap_gens = N_gap.GeneratorsOfGroup()
         for alpha in mapping[1]:
-            images_string = ",".join(str(alpha(n)) for n in N.gens())
-            libgap.eval(homomorphism_cmd.format(gens_string, images_string))
-            libgap.eval('Add(morphisms, alpha)')
+            images = [alpha(g) for g in N.gens()]
+            alpha_gap = N_gap.GroupHomomorphismByImages(N_gap,
+                                                        libgap_gens, images)
+            morphisms.Add(alpha_gap)
         # create the necessary homomorphism from self into the
         # automorphism group of N in GAP
-        libgap.eval('H := Group({0})'.format(mapping[0]))
-        libgap.eval('phi := GroupHomomorphismByImages(H, AutomorphismGroup(N),{},morphisms)'.format(mapping[0]))
-        libgap.eval('sdp := SemidirectProduct(H, phi, N)')
-        return PermutationGroup(gap_group='sdp')
+        H = libgap.eval(f'Group({mapping[0]})')
+        phi = H.GroupHomomorphismByImages(N_gap.AutomorphismGroup(),
+                                          H.GeneratorsOfGroup(), morphisms)
+        sdp = H.SemidirectProduct(phi, N_gap)
+        return PermutationGroup(gap_group=sdp)
 
     def holomorph(self):
         r"""
@@ -3047,11 +3028,11 @@ class PermutationGroup_generic(FiniteGroup):
 
         - Kevin Halasz (2012-08-14)
         """
-        libgap.eval('G := Group({})'.format(list(self.gens())))
-        libgap.eval('aut := AutomorphismGroup(G)')
-        libgap.eval('alpha := InverseGeneralMapping(NiceMonomorphism(aut))')
-        libgap.eval('product := SemidirectProduct(NiceObject(aut),alpha,G)')
-        return PermutationGroup(gap_group='product')
+        G = libgap.eval(f'Group({list(self.gens())})')
+        aut = G.AutomorphismGroup()
+        alpha = aut.NiceMonomorphism().InverseGeneralMapping()
+        product = aut.NiceObject().SemidirectProduct(alpha, G)
+        return PermutationGroup(gap_group=product)
 
     def subgroup(self, gens=None, gap_group=None, domain=None, category=None, canonicalize=True, check=True):
         """

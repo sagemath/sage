@@ -1314,7 +1314,7 @@ class Gap(Gap_generic):
             sline = int(sline) - 1
             if self.is_remote():
                 self._get_tmpfile()
-            with open(self._local_tmpfile(), "r",
+            with open(self._local_tmpfile(),
                       encoding=gap_encoding) as fobj:
                 help = fobj.read()
             if pager:

@@ -328,11 +328,11 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
         def commute_w_hd(w, al): # al is given as a dictionary
             ret = P.one()
             for k in al:
-                x = sum(c * gens_dict[i] for i,c in alpha[k].weyl_action(w))
+                x = sum(c * gens_dict[i] for i, c in alpha[k].weyl_action(w))
                 ret *= x**al[k]
-            ret = ret.dict()
+            ret = ret.monomial_coefficients()
             for k in ret:
-                yield (self._hd({I[i]: e for i,e in enumerate(k) if e != 0}), ret[k])
+                yield (self._hd({I[i]: e for i, e in enumerate(k) if e != 0}), ret[k])
 
         # Do Lac Ra if they are both non-trivial
         if dl and dr:
@@ -369,18 +369,19 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
             #   so we must commute Lac Rs = Rs Lac'
             #   and obtain La (Ls Rs) (Lac' Rac)
             ret = P.one()
-            for k in dl:
+            r1_red = right[1].reduced_word()
+            for k, dlk in dl.items():
                 x = sum(c * gens_dict[i]
-                        for i,c in alphacheck[k].weyl_action(right[1].reduced_word(),
-                                                             inverse=True))
-                ret *= x**dl[k]
-            ret = ret.dict()
-            w = left[1]*right[1]
+                        for i, c in alphacheck[k].weyl_action(r1_red,
+                                                              inverse=True))
+                ret *= x**dlk
+            ret = ret.monomial_coefficients()
+            w = left[1] * right[1]
             return self._from_dict({(left[0], w,
-                                      self._h({I[i]: e for i,e in enumerate(k)
-                                               if e != 0}) * right[2]
+                                     self._h({I[i]: e for i, e in enumerate(k)
+                                              if e != 0}) * right[2]
                                      ): ret[k]
-                                     for k in ret})
+                                    for k in ret})
 
         # Otherwise dr is non-trivial and we have La Ls Ra Rs Rac,
         #   so we must commute Ls Ra = Ra' Ls

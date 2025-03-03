@@ -32,14 +32,15 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.structure.category_object import CategoryObject
-from sage.categories.vector_bundles import VectorBundles
-from sage.structure.unique_representation import UniqueRepresentation
 import sage.rings.abc
-from sage.rings.cc import CC
-from sage.rings.real_mpfr import RR
-from sage.rings.integer import Integer
+from sage.categories.vector_bundles import VectorBundles
 from sage.manifolds.vector_bundle_fiber import VectorBundleFiber
+from sage.rings.cc import CC
+from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RR
+from sage.structure.category_object import CategoryObject
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
     r"""
@@ -436,7 +437,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         """
         if domain is None:
             domain = self._base_space
-        from .trivialization import Trivialization
+        from sage.manifolds.trivialization import Trivialization
         return Trivialization(self, name, domain=domain, latex_name=latex_name)
 
     def transitions(self):
@@ -637,8 +638,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         """
         if domain is None:
             domain = self._base_space
-        from sage.manifolds.section_module import (SectionModule,
-                                                   SectionFreeModule)
+        from sage.manifolds.section_module import SectionFreeModule, SectionModule
         if domain not in self._section_modules:
             if force_free or domain in self._trivial_parts:
                 self._section_modules[domain] = SectionFreeModule(self, domain)
@@ -927,8 +927,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             [1 2]
             [0 3]
         """
-        from sage.tensor.modules.free_module_automorphism import \
-            FreeModuleAutomorphism
+        from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
         sec_module = frame1._fmodule
         if frame2._fmodule != sec_module:
             raise ValueError("the two frames are not defined on the same " +
@@ -1153,7 +1152,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             [Local frame (E|_U, (e_0,e_1)),
              Local frame (E|_V, (f_0,f_1))]
         """
-        from .local_frame import LocalFrame
+        from sage.manifolds.local_frame import LocalFrame
         if isinstance(orientation, LocalFrame):
             orientation = [orientation]
         elif isinstance(orientation, (tuple, list)):

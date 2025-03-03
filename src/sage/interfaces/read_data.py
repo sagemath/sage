@@ -36,7 +36,7 @@ def read_data(f, t):
         sage: l = read_data(indata, RealField(17)); l
         [1.234, 5.678]
     """
-    with open(f, "r") as fp:
+    with open(f) as fp:
         l = []
         while True:
             s = fp.readline().strip()

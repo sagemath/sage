@@ -423,7 +423,8 @@ cdef class CoxGroup(SageObject):
             sage: W = CoxGroup(['A', 5]); W
             Coxeter group of type A and rank 5
         """
-        return "Coxeter group of type %s and rank %s"%(self.type(), self.rank())
+        return "Coxeter group of type %s and rank %s" % (self.type(),
+                                                         self.rank())
 
     def __iter__(self):
         """

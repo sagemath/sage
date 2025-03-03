@@ -95,6 +95,7 @@ def simon_two_descent_work(E, two_tor_rk):
         ...
         DeprecationWarning: Use E.rank(algorithm="pari") instead, as this script has been ported over to pari.
         See https://github.com/sagemath/sage/issues/35621 for details.
+        ...
         (0, 0, 0, 0, [])
         sage: E = EllipticCurve('37a')
         sage: simon_two_descent_work(E, E.two_torsion_rank())
@@ -873,8 +874,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     # Try harder to compute the Heegner index, where it matters
     if heegner_index is None:
-        if max_height < 18:
-            max_height = 18
+        max_height = max(max_height, 18)
         for D in BSD.heegner_index_upper_bound:
             M = BSD.heegner_index_upper_bound[D]
             for p in kolyvagin_primes:

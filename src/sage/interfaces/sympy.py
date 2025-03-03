@@ -418,8 +418,8 @@ def _sympysage_Subs(self):
         sage: from sympy.core.singleton import S
     """
     args = self.args
-    substi = dict([(args[1][i]._sage_(), args[2][i]._sage_())
-                   for i in range(len(args[1]))])
+    substi = {args[1][i]._sage_(): args[2][i]._sage_()
+              for i in range(len(args[1]))}
     return args[0]._sage_().subs(substi)
 
 

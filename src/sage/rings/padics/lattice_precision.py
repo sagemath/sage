@@ -636,13 +636,16 @@ class DifferentialPrecisionGeneric(SageObject):
         """
         self._p = p
         self._label = label
-        self._elements = [ ]
-        self._matrix = { } # A dictionary whose keys are weak references to tracked elements
-                           # and values corresponding columns in the matrix
-                           # representing the precision lattice
-        self._collected_references = [ ]
-        self._marked_for_deletion = [ ]
-        self._approx_zero = pRational(p, ZZ(0))
+        self._elements = []
+
+        self._matrix = {}
+        # A dictionary whose keys are weak references to tracked
+        # elements and values corresponding columns in the matrix
+        # representing the precision lattice
+
+        self._collected_references = []
+        self._marked_for_deletion = []
+        self._approx_zero = pRational(p, ZZ.zero())
         self._threshold_deletion = DEFAULT_THRESHOLD_DELETION
         self._history_init = None
         self._history = None
@@ -1674,8 +1677,7 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
                     col[i] = col[i].reduce(prec)
                     col[i].normalize()
                     dval = col[i].valuation() - prec
-                    if dval < diffval[i-index]:
-                        diffval[i-index] = dval
+                    diffval[i-index] = min(dval, diffval[i-index])
             # We update history
             if self._history is not None:
                 self._history.append(('partial reduce', index, walltime(tme)))
@@ -2124,8 +2126,7 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
             col = self._matrix[ref]
             row = [ x.value() for x in col ]
             valcol = min([ x.valuation() for x in col ])
-            if valcol < val:
-                val = valcol
+            val = min(valcol, val)
             row += (n-len(row)) * [ZZ(0)]
             rows.append(row)
         from sage.matrix.constructor import matrix
@@ -2719,8 +2720,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
             col = self._matrix[ref]
             row = [ x.value() for x in col ]
             valcol = min([ x.valuation() for x in col ])
-            if valcol < val:
-                val = valcol
+            val = min(valcol, val)
             row += (n-len(row)) * [ZZ(0)]
             rows.append(row)
         from sage.matrix.constructor import matrix
@@ -2742,7 +2742,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
         return M
 
 
-class pAdicLatticeElementWeakProxy():
+class pAdicLatticeElementWeakProxy:
     r"""
     The implementations of :class:`DifferentialPrecisionGeneric` hold
     weak references to :class:`pAdicLatticeElement`. They are stored in

@@ -85,7 +85,6 @@ for system in $systems; do
             alpine)     tab "Alpine";;
             arch)       tab "Arch Linux";;
             conda)      tab "conda-forge";;
-            cygwin)     tab "Cygwin";;
             debian)     tab "Debian/Ubuntu";;
             fedora)     tab "Fedora/Redhat/CentOS";;
             freebsd)    tab "FreeBSD";;

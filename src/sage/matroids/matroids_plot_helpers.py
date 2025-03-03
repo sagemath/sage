@@ -859,7 +859,6 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
         pl = [list(x) for x in pts2.values()]
         lims = tracklims([None, None, None, None], [pt[0] for pt in pl],
                          [pt[1] for pt in pl])
-        j = 0
         for ll in trilines:
             if len(ll) >= 3:
                 ptsx, ptsy, x_i, y_i = createline(pts2, ll, lineorders1)

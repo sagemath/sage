@@ -205,7 +205,7 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         if not ans:
             # opening a file is slow (30e-6s), so we read the file
             # numOfLatticePoints only in case of a IndexError above
-            with open(tempd.name + '/numOfLatticePoints', 'r') as f:
+            with open(tempd.name + '/numOfLatticePoints') as f:
                 ans = f.read()
 
         if raw_output:

@@ -40,7 +40,7 @@ cdef class CVXOPTBackend(GenericBackend):
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
     """
 
-    cdef list objective_function #c_matrix
+    cdef list objective_function  # c_matrix
     cdef list G_matrix
     cdef str prob_name
     cdef bint is_maximize
@@ -55,7 +55,7 @@ cdef class CVXOPTBackend(GenericBackend):
     cdef dict answer
     cdef dict param
 
-    def __cinit__(self, maximization = True):
+    def __cinit__(self, maximization=True):
         """
         Cython constructor.
 
@@ -65,7 +65,7 @@ cdef class CVXOPTBackend(GenericBackend):
             sage: p = get_solver(solver='CVXOPT')
         """
 
-        self.objective_function = [] #c_matrix in the example for cvxopt
+        self.objective_function = []  # c_matrix in the example for cvxopt
         self.G_matrix = []
         self.prob_name = ''
         self.obj_constant_term = 0
@@ -79,12 +79,12 @@ cdef class CVXOPTBackend(GenericBackend):
         self.row_name_var = []
         self.col_name_var = []
 
-        self.param = {"show_progress":False,
-                      "maxiters":100,
-                      "abstol":1e-7,
-                      "reltol":1e-6,
-                      "feastol":1e-7,
-                      "refinement":0 }
+        self.param = {"show_progress": False,
+                      "maxiters": 100,
+                      "abstol": 1e-7,
+                      "reltol": 1e-6,
+                      "feastol": 1e-7,
+                      "refinement": 0}
         self.answer = {}
         if maximization:
             self.set_sense(+1)
@@ -276,7 +276,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.objective_function[variable]
 
-    cpdef set_objective(self, list coeff, d = 0.0):
+    cpdef set_objective(self, list coeff, d=0.0):
         """
         Set the objective function.
 
@@ -915,7 +915,7 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.col_name_var[index]
         return "x_" + repr(index)
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable.
 
@@ -944,7 +944,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.col_upper_bound[index]
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable.
 
@@ -973,7 +973,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.col_lower_bound[index]
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter.
 

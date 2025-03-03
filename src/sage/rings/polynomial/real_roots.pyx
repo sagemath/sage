@@ -1248,7 +1248,7 @@ def de_casteljau_intvec(Vector_integer_dense c, int c_bitsize, Rational x, int u
 # An ULP is a "unit in the last place"; it is the (varying) unit for
 # how much adjacent floating-point numbers differ from each other.
 # A half-ULP is half this amount; it is the maximum rounding error
-# in the basic operations (+,-,*,/) in a correctly-operating IEEE
+# in the basic operations (+, -, *, /) in a correctly-operating IEEE
 # floating-point unit.
 # (Note that by default, the x86 does not use IEEE double precision;
 # instead, it uses extra precision, which can (counterintuitively)

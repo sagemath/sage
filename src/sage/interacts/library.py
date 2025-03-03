@@ -2,7 +2,7 @@ r"""
 Sage Interacts
 
 Sage interacts are applications of the `@interact decorator <../../sagenb/notebook/interact.html>`_.
-They are conveniently accessible in the Sage Notebook via ``interacts.[TAB].[TAB]()``.
+They are conveniently accessible in the Sage notebook via ``interacts.[TAB].[TAB]()``.
 The first ``[TAB]`` lists categories and the second ``[TAB]`` reveals the interact examples.
 
 EXAMPLES:
@@ -496,6 +496,7 @@ def quadratic_equation(A, B, C):
            r"\frac{-%s\pm\sqrt{%s}}{%s} = %s$"
     html(calc % (B, dis1, A, B, dis2, (2*A), sol))
 
+
 @library_interact(
     a0=lambda: slider(0, 360, 1, 30, label='A'),
     a1=lambda: slider(0, 360, 1, 180, label='B'),
@@ -924,7 +925,7 @@ def bisection_method(title, f, interval, d, maxn):
           maxn: IntSlider(value=10, description='max iterations', max=15)
     """
     def _bisection_method(f, a, b, maxn, eps):
-        intervals = [(a,b)]
+        intervals = [(a, b)]
         round = 1
         two = float(2)
         while True:
@@ -937,12 +938,12 @@ def bisection_method(title, f, interval, d, maxn):
             if abs(fc) < eps:
                 return c, intervals
             if fa*fc < 0:
-                a, b = a, c
+                b = c
             elif fc*fb < 0:
-                a, b = c, b
+                a = c
             else:
                 raise ValueError("f must have a sign change in the interval (%s,%s)" % (a,b))
-            intervals.append((a,b))
+            intervals.append((a, b))
             round += 1
         return c, intervals
 
@@ -1464,12 +1465,13 @@ def riemann_sum(
         b = interval_g[0][1]
     func = symbolic_expression(f).function(x)
     division = [a]+[a+random()*(b-a) for i in range(n-1)]+[b]
-    division = sorted([i for i in division])
+    division = sorted(division)
     xs = [division[i]+random()*(division[i+1]-division[i]) for i in range(n)]
     ys = [func(x_val) for x_val in xs]
     rects = Graphics()
     for i in range(n):
-        body = [[division[i],0],[division[i],ys[i]],[division[i+1],ys[i]],[division[i+1],0]]
+        body = [[division[i], 0], [division[i], ys[i]],
+                [division[i+1], ys[i]], [division[i+1], 0]]
         if ys[i].n() > 0:
             color_rect = 'green'
         else:
@@ -1486,7 +1488,7 @@ def riemann_sum(
             ["$i$", "$[x_{i-1},x_i]$", r"$\eta_i$", r"$f(\eta_i)$", "$x_{i}-x_{i-1}$"]
         ] + [
             [i+1,[division[i],division[i+1]],xs[i],ys[i],delka_intervalu[i]] for i in range(n)
-        ],  header_row=True))
+        ], header_row=True))
 
     html(r'Riemann sum: $\displaystyle\sum_{i=1}^{%s} f(\eta_i)(x_i-x_{i-1})=%s$ ' %
          (latex(n),latex(sum([ys[i]*delka_intervalu[i] for i in range(n)]))))

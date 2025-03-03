@@ -395,7 +395,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         - ``require_final_EF`` -- boolean (default: ``True``); whether to
           require the returned key polynomials to be in one-to-one
-          correspondance to the extensions of this valuation to ``L`` and
+          correspondence to the extensions of this valuation to ``L`` and
           require them to have the ramification index and residue degree of the
           valuations they correspond to.
 
@@ -770,7 +770,7 @@ class DiscreteValuation(DiscretePseudoValuation):
                                    reduce_init=[]).run_serial()
         else:
             raise NotImplementedError(algorithm)
-        leafs = set([node.valuation for node in nodes])
+        leafs = {node.valuation for node in nodes}
         for node in nodes:
             if node.parent is None:
                 continue
@@ -1043,7 +1043,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         return super()._ge_(other)
 
 
-class MacLaneApproximantNode():
+class MacLaneApproximantNode:
     r"""
     A node in the tree computed by :meth:`DiscreteValuation.mac_lane_approximants`.
 

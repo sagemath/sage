@@ -224,6 +224,24 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             return (-1)**m * self([a+b for (a,b) in zip(ga, range(-r,0))])
         return self.zero()
 
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: S = SymmetricFunctions(QQ).s()
+            sage: t = 4*S[3,2]+9
+            sage: mt = magma(t); mt
+            9 + 4*$.[3,2]
+            sage: mt.sage()
+            9*s[] + 4*s[3, 2]
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        return f"SymmetricFunctionAlgebraSchur({Bref})"
+
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def __pow__(self, n):
             """
@@ -843,4 +861,6 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.schur', 'SymmetricFunctionAlgebraElement_schur',  SymmetricFunctionAlgebra_schur.Element)
+register_unpickle_override('sage.combinat.sf.schur',
+                           'SymmetricFunctionAlgebraElement_schur',
+                           SymmetricFunctionAlgebra_schur.Element)

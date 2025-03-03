@@ -253,6 +253,8 @@ CartesianProductGrowthGroups = CartesianProductFactory('CartesianProductGrowthGr
 
 from sage.combinat.posets.cartesian_product import CartesianProductPoset
 from .growth_group import GenericGrowthGroup
+
+
 class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
     r"""
     A Cartesian product of growth groups.
@@ -834,7 +836,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         from sage.categories.cartesian_product import cartesian_product
         return pushout(cartesian_product(newS), cartesian_product(newO))
 
-    def gens_monomial(self):
+    def gens_monomial(self) -> tuple:
         r"""
         Return a tuple containing monomial generators of this growth group.
 

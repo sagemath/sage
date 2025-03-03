@@ -251,14 +251,14 @@ class Macdonald(UniqueRepresentation):
             sage: P(Q([2]))
             ((q*t^2-q*t-t+1)/(q^3-q^2-q+1))*McdP[2]
             sage: P(Q([2,1]))
-            ((-q*t^4+2*q*t^3-q*t^2+t^2-2*t+1)/(-q^4*t+2*q^3*t-q^2*t+q^2-2*q+1))*McdP[2, 1]
+            -((q*t^4-2*q*t^3+q*t^2-t^2+2*t-1)/(-q^4*t+2*q^3*t-q^2*t+q^2-2*q+1))*McdP[2, 1]
 
         ::
 
             sage: P(J([2]))
             (q*t^2-q*t-t+1)*McdP[2]
             sage: P(J([2,1]))
-            (-q*t^4+2*q*t^3-q*t^2+t^2-2*t+1)*McdP[2, 1]
+            -(q*t^4-2*q*t^3+q*t^2-t^2+2*t-1)*McdP[2, 1]
 
         By transitivity, one get coercions from the classical bases::
 
@@ -278,13 +278,13 @@ class Macdonald(UniqueRepresentation):
             sage: P2 = Macyz.P()
             sage: P3 = Maczx.P()
             sage: m(P1[2,1])
-            ((-2*x*y^2+x*y-y^2+x-y+2)/(-x*y^2+1))*m[1, 1, 1] + m[2, 1]
+            -((2*x*y^2-x*y+y^2-x+y-2)/(-x*y^2+1))*m[1, 1, 1] + m[2, 1]
             sage: m(P2[2,1])
-            ((-2*y*z^2+y*z-z^2+y-z+2)/(-y*z^2+1))*m[1, 1, 1] + m[2, 1]
+            -((2*y*z^2-y*z+z^2-y+z-2)/(-y*z^2+1))*m[1, 1, 1] + m[2, 1]
             sage: m(P1(P2(P3[2,1])))
-            ((-2*x^2*z-x^2+x*z-x+z+2)/(-x^2*z+1))*m[1, 1, 1] + m[2, 1]
+            -((2*x^2*z+x^2-x*z+x-z-2)/(-x^2*z+1))*m[1, 1, 1] + m[2, 1]
             sage: P1(P2[2])
-            ((-x*y^2+2*x*y*z-y^2*z-x+2*y-z)/(x*y^2*z-x*y-y*z+1))*McdP[1, 1] + McdP[2]
+            -((x*y^2-2*x*y*z+y^2*z+x-2*y+z)/(x*y^2*z-x*y-y*z+1))*McdP[1, 1] + McdP[2]
             sage: m(z*P1[2]+x*P2[2])
             ((x^2*y^2*z+x*y^2*z^2-x^2*y^2+x^2*y*z-x*y*z^2+y^2*z^2-x^2*y-2*x*y*z-y*z^2+x*y-y*z+x+z)/(x*y^2*z-x*y-y*z+1))*m[1, 1] + (x+z)*m[2]
         """
@@ -405,7 +405,7 @@ class Macdonald(UniqueRepresentation):
         ::
 
             sage: s(J([2]))
-            (-q*t+t^2+q-t)*s[1, 1] + (q*t^2-q*t-t+1)*s[2]
+            -(q*t-t^2-q+t)*s[1, 1] + (q*t^2-q*t-t+1)*s[2]
             sage: J(s([2]))
             ((q-t)/(q*t^4-q*t^3-q*t^2-t^3+q*t+t^2+t-1))*McdJ[1, 1] + (1/(q*t^2-q*t-t+1))*McdJ[2]
         """
@@ -483,9 +483,10 @@ class Macdonald(UniqueRepresentation):
             sage: Ht = Sym.macdonald().Ht()
             sage: s = Sym.schur()
             sage: Ht(s([2,1]))
-            (q/(q*t^2-t^3-q^2+q*t))*McdHt[1, 1, 1] + ((-q^2-q*t-t^2)/(q^2*t^2-q^3-t^3+q*t))*McdHt[2, 1] + (t/(-q^3+q^2*t+q*t-t^2))*McdHt[3]
+            (q/(q*t^2-t^3-q^2+q*t))*McdHt[1, 1, 1] - ((q^2+q*t+t^2)/(q^2*t^2-q^3-t^3+q*t))*McdHt[2, 1]
+            + (t/(-q^3+q^2*t+q*t-t^2))*McdHt[3]
             sage: Ht(s([2]))
-            ((-q)/(-q+t))*McdHt[1, 1] + (t/(-q+t))*McdHt[2]
+            -(q/(-q+t))*McdHt[1, 1] + (t/(-q+t))*McdHt[2]
         """
         return MacdonaldPolynomials_ht(self)
 
@@ -506,10 +507,11 @@ class Macdonald(UniqueRepresentation):
 
             sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
             sage: S = Sym.macdonald().S(); S
-            Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald S basis
+            Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t
+            over Rational Field in the Macdonald S basis
             sage: p = Sym.power()
             sage: p(S[2,1])
-            ((1/3*t^3-t^2+t-1/3)/(q^3-3*q^2+3*q-1))*p[1, 1, 1] + ((-1/3*t^3+1/3)/(q^3-1))*p[3]
+            ((1/3*t^3-t^2+t-1/3)/(q^3-3*q^2+3*q-1))*p[1, 1, 1] - ((1/3*t^3-1/3)/(q^3-1))*p[3]
             sage: J = Sym.macdonald().J()
             sage: S(J([2]))
             (q^3-q^2-q+1)*McdS[2]
@@ -521,7 +523,7 @@ class Macdonald(UniqueRepresentation):
             sage: S(J[2])
             q*McdS[1, 1] + McdS[2]
             sage: p(S[2,1])
-            (-1/3*t^3+t^2-t+1/3)*p[1, 1, 1] + (1/3*t^3-1/3)*p[3]
+            -(1/3*t^3-t^2+t-1/3)*p[1, 1, 1] + (1/3*t^3-1/3)*p[3]
 
             sage: from sage.combinat.sf.macdonald import qt_kostka
             sage: qt_kostka([2],[1,1])
@@ -534,9 +536,9 @@ class Macdonald(UniqueRepresentation):
             sage: S = Sym.macdonald().S()
             sage: s = Sym.schur()
             sage: S(s([2]))
-            ((q^2-q*t-q+t)/(t^3-t^2-t+1))*McdS[1, 1] + ((-q^2*t+q*t+q-1)/(-t^3+t^2+t-1))*McdS[2]
+            ((q^2-q*t-q+t)/(t^3-t^2-t+1))*McdS[1, 1] - ((q^2*t-q*t-q+1)/(-t^3+t^2+t-1))*McdS[2]
             sage: s(S([1,1]))
-            ((-q*t^2+q*t+t-1)/(-q^3+q^2+q-1))*s[1, 1] + ((q*t-t^2-q+t)/(-q^3+q^2+q-1))*s[2]
+            -((q*t^2-q*t-t+1)/(-q^3+q^2+q-1))*s[1, 1] + ((q*t-t^2-q+t)/(-q^3+q^2+q-1))*s[2]
         """
         return MacdonaldPolynomials_s(self)
 
@@ -903,11 +905,11 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: J([1])^2 #indirect doctest
             ((q-1)/(q*t-1))*McdJ[1, 1] + ((t-1)/(q*t-1))*McdJ[2]
             sage: J.product( J[1], J[2] )
-            ((-q^2+1)/(-q^2*t+1))*McdJ[2, 1] + ((-t+1)/(-q^2*t+1))*McdJ[3]
+            -((q^2-1)/(-q^2*t+1))*McdJ[2, 1] - ((t-1)/(-q^2*t+1))*McdJ[3]
             sage: H.product( H[1], H[2] )
-            ((q^2-1)/(q^2*t-1))*McdH[2, 1] + ((-t+1)/(-q^2*t+1))*McdH[3]
+            ((q^2-1)/(q^2*t-1))*McdH[2, 1] - ((t-1)/(-q^2*t+1))*McdH[3]
             sage: P.product( P[1], P[2] )
-            ((-q^3*t^2+q*t^2+q^2-1)/(-q^3*t^2+q^2*t+q*t-1))*McdP[2, 1] + McdP[3]
+            -((q^3*t^2-q*t^2-q^2+1)/(-q^3*t^2+q^2*t+q*t-1))*McdP[2, 1] + McdP[3]
             sage: Q.product(Q[1],Q[2])
             McdQ[2, 1] + ((q^2*t-q^2+q*t-q+t-1)/(q^2*t-1))*McdQ[3]
             sage: Ht.product(Ht[1],Ht[2])
@@ -970,15 +972,15 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
                 ((q^2*t+q*t-t-1)/(q*t-1))*McdP[1, 1] + McdP[2]
                 sage: H = Sym.macdonald().H()
                 sage: H([1,1]).nabla()
-                t*McdH[1, 1] + (-t^2+1)*McdH[2]
+                t*McdH[1, 1] - (t^2-1)*McdH[2]
                 sage: H([1,1]).nabla(q=1)
-                ((t^2+q-t-1)/(q*t-1))*McdH[1, 1] + ((-t^3+t^2+t-1)/(q*t-1))*McdH[2]
+                ((t^2+q-t-1)/(q*t-1))*McdH[1, 1] - ((t^3-t^2-t+1)/(q*t-1))*McdH[2]
                 sage: H(0).nabla()
                 0
                 sage: H([2,2,1]).nabla(t=1/H.t)
-                ((-q^2)/(-t^4))*McdH[2, 2, 1]
+                -(q^2/(-t^4))*McdH[2, 2, 1]
                 sage: H([2,2,1]).nabla(t=1/H.t,power=-1)
-                ((-t^4)/(-q^2))*McdH[2, 2, 1]
+                -(t^4/(-q^2))*McdH[2, 2, 1]
             """
             parent = self.parent()
             if (q is None and t is None):
@@ -1179,7 +1181,7 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
              -q*t^4 + 2*q*t^3 - q*t^2 + t^2 - 2*t + 1,
              q*t^3 - t^4 - q*t^2 + t^3 - q*t + t^2 + q - t]
              sage: Sym.schur()( J[2,1] )
-             (q*t^3-t^4-q*t^2+t^3-q*t+t^2+q-t)*s[1, 1, 1] + (-q*t^4+2*q*t^3-q*t^2+t^2-2*t+1)*s[2, 1]
+             (q*t^3-t^4-q*t^2+t^3-q*t+t^2+q-t)*s[1, 1, 1] - (q*t^4-2*q*t^3+q*t^2-t^2+2*t-1)*s[2, 1]
         """
         q, t = QQqt.gens()
         S = self._macdonald.S()
@@ -1292,7 +1294,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
             McdH[2, 1]
             sage: H2 = Sym.macdonald(t=0).H()
             sage: H2(q*s[1, 1, 1] + (q*t+1)*s[2, 1] + t*s[3])
-            (-q^2*t+1)*McdH[2, 1] + t*McdH[3]
+            -(q^2*t-1)*McdH[2, 1] + t*McdH[3]
 
             sage: Sym = SymmetricFunctions(FractionField(QQ['x']))
             sage: x = Sym.base_ring().gen()
@@ -1478,7 +1480,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
             sage: s = SymmetricFunctions(FractionField(QQ['q','t'])).s()
             sage: Ht = s.symmetric_function_ring().macdonald().Ht()
             sage: Ht._s_to_self(s[2])
-            ((-q)/(-q+t))*McdHt[1, 1] + (t/(-q+t))*McdHt[2]
+            -(q/(-q+t))*McdHt[1, 1] + (t/(-q+t))*McdHt[2]
         """
         return self._m_to_self(self._m(x))
 
@@ -1877,7 +1879,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
                 sage: S = Sym.macdonald().S()
                 sage: a = S(1)
                 sage: a = a._creation_by_determinant(1); a
-                (-q+1)*McdS[1]
+                -(q-1)*McdS[1]
                 sage: a = a._creation_by_determinant(3)
                 sage: Sym.macdonald().J()(a)
                 McdJ[2, 1, 1]
@@ -1905,7 +1907,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
                 sage: S = Sym.macdonald().S()
                 sage: a = S(1)
                 sage: a.creation(1)
-                (-q+1)*McdS[1]
+                -(q-1)*McdS[1]
                 sage: a.creation(2)
                 (q^2*t-q*t-q+1)*McdS[1, 1] + (q^2-q*t-q+t)*McdS[2]
             """
@@ -1998,16 +2000,16 @@ def qt_kostka(lam, mu):
     for p2 in parts:
         res = s(H(p2))
         for p1 in parts:
-            _qt_kostka_cache[(p1,p2)] = QQqt(res.coefficient(p1).numerator())
+            _qt_kostka_cache[(p1, p2)] = QQqt(res.coefficient(p1).numerator())
 
-    return _qt_kostka_cache[(lam,mu)]
+    return _qt_kostka_cache[(lam, mu)]
 
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_h',  MacdonaldPolynomials_h.Element)
+register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_h', MacdonaldPolynomials_h.Element)
 register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_ht', MacdonaldPolynomials_ht.Element)
-register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_j',  MacdonaldPolynomials_j.Element)
-register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_p',  MacdonaldPolynomials_p.Element)
-register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_q',  MacdonaldPolynomials_q.Element)
-register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_s',  MacdonaldPolynomials_s.Element)
+register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_j', MacdonaldPolynomials_j.Element)
+register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_p', MacdonaldPolynomials_p.Element)
+register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_q', MacdonaldPolynomials_q.Element)
+register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_s', MacdonaldPolynomials_s.Element)

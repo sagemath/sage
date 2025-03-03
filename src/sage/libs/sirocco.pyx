@@ -1,4 +1,4 @@
-#cython: boundscheck=False, wraparound=False
+# cython: boundscheck=False, wraparound=False
 # distutils: libraries = sirocco
 # distutils: language = c++
 # sage_setup: distribution = sagemath-sirocco

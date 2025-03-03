@@ -216,6 +216,24 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
         """
         return self.base_ring().sum(d*list(rho).count(d) for d in divisors(k))
 
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: P = SymmetricFunctions(QQ).p()
+            sage: t = 4*P[3,2]+9
+            sage: mt = magma(t); mt
+            9 + 4*$.[3,2]
+            sage: mt.sage()
+            9*p[] + 4*p[3, 2]
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        return f"SymmetricFunctionAlgebraPower({Bref})"
+
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def omega(self):
             r"""
@@ -325,9 +343,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             parent = self.parent()
             x = parent(x)
             if zee is None:
-                f = lambda part1, part2:  sfa.zee(part1)
+                f = lambda part1, part2: sfa.zee(part1)
             else:
-                f = lambda part1, part2:  zee(part1)
+                f = lambda part1, part2: zee(part1)
             return parent._apply_multi_module_morphism(self, x, f, orthogonal=True)
 
         def _derivative(self, part):
@@ -933,4 +951,6 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.powersum', 'SymmetricFunctionAlgebraElement_power',  SymmetricFunctionAlgebra_power.Element)
+register_unpickle_override('sage.combinat.sf.powersum',
+                           'SymmetricFunctionAlgebraElement_power',
+                           SymmetricFunctionAlgebra_power.Element)

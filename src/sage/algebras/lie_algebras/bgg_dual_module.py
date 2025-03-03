@@ -172,7 +172,7 @@ class BGGDualModule(CombinatorialFreeModule):
         return self._module._repr_generator(m) + "^*"
 
     def _latex_generator(self, m):
-        """
+        r"""
         Return a latex representation of the generator indexed by ``m``.
 
         EXAMPLES::

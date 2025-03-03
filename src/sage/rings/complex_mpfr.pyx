@@ -48,7 +48,6 @@ from sage.rings.integer cimport Integer
 
 from sage.rings.complex_double cimport ComplexDoubleElement
 from sage.rings.real_mpfr cimport RealNumber
-from sage.libs.gsl.complex cimport *
 
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 from sage.rings.integer_ring import ZZ
@@ -57,9 +56,10 @@ cimport gmpy2
 gmpy2.import_gmpy2()
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
+    from cypari2.handle_error import PariError
 except ImportError:
-    pari_gen = ()
+    pari_gen = PariError = ()
 
 # Some objects that are not imported at startup in order to break
 # circular imports
@@ -1435,7 +1435,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         if self.is_real():
             return self.real().__pari__()
-        return sage.libs.pari.all.pari.complex(self.real() or 0, self.imag())
+        return sage.libs.pari.pari.complex(self.real() or 0, self.imag())
 
     def __mpc__(self):
         """
@@ -1917,10 +1917,10 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_mul(t1, self.__im, self.__im, rnd)
 
         mpfr_add(t0, t0, t1, rnd)         # now t0 is the norm
-        mpfr_div(x.__re, self.__re, t0, rnd)   #     x.__re = self.__re/norm
+        mpfr_div(x.__re, self.__re, t0, rnd)   # x.__re = self.__re/norm
 
         mpfr_neg(t1, self.__im, rnd)
-        mpfr_div(x.__im, t1, t0, rnd)  #     x.__im = -self.__im/norm
+        mpfr_div(x.__im, t1, t0, rnd)  # x.__im = -self.__im/norm
 
         mpfr_clear(t0)
         mpfr_clear(t1)
@@ -2402,7 +2402,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         try:
             return self._parent(self.__pari__().eta(not omit_frac))
-        except sage.libs.pari.all.PariError:
+        except PariError:
             raise ValueError("value must be in the upper half plane")
 
     def sin(self):
@@ -2879,7 +2879,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         try:
             return self._parent(self.__pari__().gamma())
-        except sage.libs.pari.all.PariError:
+        except PariError:
             from sage.rings.infinity import UnsignedInfinityRing
             return UnsignedInfinityRing.gen()
 
@@ -3257,21 +3257,23 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         ALGORITHM: Uses the PARI C-library :pari:`algdep` command.
 
-        INPUT: Type ``algdep?`` at the top level prompt. All additional
-        parameters are passed onto the top-level :func:`algdep` command.
+        INPUT: Type ``algebraic_dependency?`` at the top level prompt.
+
+        All additional parameters are passed onto the top-level
+        :func:`algebraic_dependency` command.
 
         EXAMPLES::
 
             sage: C = ComplexField()
             sage: z = (1/2)*(1 + sqrt(3.0) *C.0); z
             0.500000000000000 + 0.866025403784439*I
-            sage: p = z.algdep(5); p
+            sage: p = z.algebraic_dependency(5); p
             x^2 - x + 1
             sage: p(z)
             1.11022302462516e-16
         """
-        from sage.arith.misc import algdep
-        return algdep(self, n, **kwds)
+        from sage.arith.misc import algebraic_dependency
+        return algebraic_dependency(self, n, **kwds)
 
     # Alias
     algdep = algebraic_dependency

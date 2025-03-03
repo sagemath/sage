@@ -493,7 +493,7 @@ class MatchingGame(SageObject):
                         zip(set(self._suitors), set(other._suitors))))
 
     __hash__ = None
-   # not hashable because this is mutable.
+    # not hashable because this is mutable.
 
     def plot(self):
         r"""
@@ -939,7 +939,7 @@ class MatchingGame(SageObject):
         return {key: self._sol_dict[key][0] for key in self._suitors}
 
 
-class Player():
+class Player:
     r"""
     A class to act as a data holder for the players used of the
     matching games.

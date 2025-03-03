@@ -553,7 +553,6 @@ class Polyhedron_polymake(Polyhedron_base):
         if parent is None:
             from .parent import Polyhedra
             from sage.rings.rational_field import QQ
-            from sage.rings.qqbar import AA
             if polymake_polytope.typeof()[0] == 'Polymake::polytope::Polytope__Rational':
                 base_ring = QQ
             else:
@@ -717,13 +716,15 @@ class Polyhedron_polymake(Polyhedron_base):
         P = self._polymake_polytope
         P1 = other._polymake_polytope
 
-        tester.assertEqual(P.F_VECTOR,        P1.F_VECTOR)
-        tester.assertEqual(P.VERTICES,        P1.VERTICES)
+        tester.assertEqual(P.F_VECTOR, P1.F_VECTOR)
+        tester.assertEqual(P.VERTICES, P1.VERTICES)
         tester.assertEqual(P.LINEALITY_SPACE, P1.LINEALITY_SPACE)
-        tester.assertEqual(P.FACETS,          P1.FACETS)
-        tester.assertEqual(P.AFFINE_HULL,     P1.AFFINE_HULL)
+        tester.assertEqual(P.FACETS, P1.FACETS)
+        tester.assertEqual(P.AFFINE_HULL, P1.AFFINE_HULL)
 
 #########################################################################
+
+
 class Polyhedron_QQ_polymake(Polyhedron_polymake, Polyhedron_QQ):
     r"""
     Polyhedra over `\QQ` with polymake.

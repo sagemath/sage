@@ -28,7 +28,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
     """
     A class implementing Frobenius endomorphisms on `p`-adic fields.
     """
-    def __init__ (self,domain,n=1):
+    def __init__ (self, domain, n=1):
         """
         INPUT:
 
@@ -218,7 +218,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         return self._power
 
-    def __pow__(self,n,modulus):
+    def __pow__(self, n, modulus):
         """
         Return the `n`-th iterate of this endomorphism.
 

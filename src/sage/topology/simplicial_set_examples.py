@@ -123,7 +123,7 @@ class Nerve(SimplicialSet_arbitrary):
 
     def __ne__(self, other) -> bool:
         """
-        Return the negation of `__eq__`.
+        Return the negation of ``__eq__``.
 
         EXAMPLES::
 
@@ -657,7 +657,7 @@ def simplicial_data_from_kenzo_output(filename) -> dict:
     """
     from pyparsing import OneOrMore, nestedExpr
 
-    with open(filename, 'r') as f:
+    with open(filename) as f:
         data = f.read()
     dim = 0
     start = 0

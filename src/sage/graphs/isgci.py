@@ -500,7 +500,7 @@ class GraphClass(SageObject, CachedRepresentation):
             sage: graph_classes.Chordal == graph_classes.Tree
             Unknown
         """
-        return self >= other and other >= self
+        return self >= other >= self
 
     def __lt__(self, other):
         r"""
@@ -832,7 +832,7 @@ class GraphClasses(UniqueRepresentation):
         inclusions = DB['Inclusions']['incl']
 
         # Parses the list of ISGCI small graphs
-        smallgraph_file = open(os.path.join(data_dir, _SMALLGRAPHS_FILE), 'r')
+        smallgraph_file = open(os.path.join(data_dir, _SMALLGRAPHS_FILE))
         smallgraphs = {}
 
         for line in smallgraph_file.readlines():
@@ -852,13 +852,8 @@ class GraphClasses(UniqueRepresentation):
 
         This method downloads the ISGCI database from the website
         `GraphClasses.org <http://www.graphclasses.org/>`_. It then extracts the
-        zip file and parses its XML content.
-
-        Depending on the credentials of the user running Sage when this command
-        is run, one attempt is made at saving the result in Sage's directory so
-        that all users can benefit from it. If the credentials are not
-        sufficient, the XML file are saved instead in the user's directory (in
-        the SAGE_DB folder).
+        zip file and parses its XML content. The XML file is saved in the directory
+        controlled by the :class:`DatabaseGraphs` class (usually, ``$HOME/.sage/db``).
 
         EXAMPLES::
 

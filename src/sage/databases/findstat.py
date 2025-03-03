@@ -213,6 +213,7 @@ from sage.databases.oeis import FancyTuple
 
 from ast import literal_eval
 from copy import deepcopy
+from pathlib import Path
 import re
 import webbrowser
 import tempfile
@@ -491,8 +492,9 @@ def _submit(args, url):
         ....:         "CurrentEmail": ""}
         sage: _submit(args, url)                                                # optional -- webbrowser
     """
-    f = tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False)
+    f = tempfile.NamedTemporaryFile(mode='w', suffix='.html', encoding='utf-8', delete=False)
     verbose("Created temporary file %s" % f.name, caller_name='FindStat')
+    f.write('<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n')
     f.write(FINDSTAT_POST_HEADER)
     f.write(url)
     for key, value in args.items():
@@ -506,7 +508,7 @@ def _submit(args, url):
     f.write(FINDSTAT_FORM_FOOTER)
     f.close()
     verbose("Opening file with webbrowser", caller_name='FindStat')
-    webbrowser.open(f.name)
+    webbrowser.open(Path(f.name).as_uri())
 
 
 def _data_to_str(data, domain, codomain=None):
@@ -1784,7 +1786,7 @@ class FindStatFunction(SageObject):
         EXAMPLES::
 
             sage: q = findstat([(d, randint(1,1000)) for d in DyckWords(4)])              # optional -- internet
-            sage: q.set_sage_code("def statistic(x):\n    return randint(1,1000)")        # optional -- internet
+            sage: q.set_sage_code("def statistic(x):\n    return randint(1, 1000)")        # optional -- internet
             sage: print(q.sage_code())                                                    # optional -- internet
             def statistic(x):
                 return randint(1,1000)
@@ -2211,7 +2213,7 @@ class FindStatStatistic(Element,
 
         included = _get_json(url)["included"]
         # slightly simplify the representation
-        data = {key: val for key, val in included["Statistics"][self.id_str()].items()}
+        data = dict(included["Statistics"][self.id_str()].items())
         # we replace the list of identifiers in Bibliography with the dictionary
         data["Bibliography"] = included["References"]
         return data
@@ -4002,16 +4004,17 @@ def _finite_lattices(n):
     TESTS::
 
         sage: from sage.databases.findstat import _finite_lattices
-        sage: [L.cover_relations() for L in _finite_lattices(4)]
-        [[['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']],
-         [['bottom', 0], [0, 1], [1, 'top']]]
+        sage: sorted((L.cover_relations() for L in _finite_lattices(4)),
+        ....:        key=len)
+        [[['bottom', 0], [0, 1], [1, 'top']],
+         [['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']]]
     """
     if n <= 2:
         for P in Posets(n):
             if P.is_lattice():
                 yield LatticePoset(P)
     else:
-        for P in Posets(n-2):
+        for P in Posets(n - 2):
             Q = P.with_bounds()
             if Q.is_lattice():
                 yield LatticePoset(Q)
@@ -4351,7 +4354,7 @@ class FindStatCollection(Element,
                 g = (x for x in self._sageconstructor_overridden
                      if self.element_level(x) == level)
 
-        return lazy_list(((x, function(x)) for x in g))
+        return lazy_list((x, function(x)) for x in g)
 
     def id(self):
         r"""

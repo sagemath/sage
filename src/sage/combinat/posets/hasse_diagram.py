@@ -27,7 +27,8 @@ from sage.misc.rest_index_of_methods import gen_rest_table_index
 from sage.rings.integer_ring import ZZ
 
 lazy_import('sage.combinat.posets.hasse_cython_flint',
-            ['moebius_matrix_fast', 'coxeter_matrix_fast'])
+            ['moebius_matrix_fast', 'coxeter_matrix_fast',
+             'chain_poly'])
 lazy_import('sage.matrix.constructor', 'matrix')
 lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
 
@@ -2100,14 +2101,16 @@ class HasseDiagram(DiGraph):
             for e in orbit:
                 orbit_number[e] = ind
 
-        comps = [None] * n
         mt = self.meet_matrix()
         jn = self.join_matrix()
-        for e in range(n):
-            # Fix following after issue #20727
-            comps[e] = [x for x in range(n) if
-                        mt[e, x] == 0 and jn[e, x] == n - 1 and
-                        x in orbits[orbit_number[dual_isomorphism[e]]]]
+
+        items = ((e, dual_isomorphism[e]) for e in range(n))
+
+        # Fix following after issue #20727
+        comps = [[x for x in range(n)
+                  if mt[e, x] == 0 and jn[e, x] == n - 1 and
+                  x in orbits[orbit_number[dual_e]]]
+                 for e, dual_e in items]
 
         # Fitting is done by this recursive function:
         def recursive_fit(orthocomplements, unbinded):
@@ -2412,6 +2415,23 @@ class HasseDiagram(DiGraph):
         .. SEEALSO:: :meth:`antichains`
         """
         return IncreasingChains(self._leq_storage, element_class, exclude, conversion)
+
+    def chain_polynomial(self):
+        """
+        Return the chain polynomial of the poset.
+
+        The coefficient of `q^k` is the number of chains of `k`
+        elements in the poset. List of coefficients of this polynomial
+        is also called a *f-vector* of the poset.
+
+        EXAMPLES::
+
+            sage: P = posets.ChainPoset(3)
+            sage: H = P._hasse_diagram
+            sage: t = H.chain_polynomial(); t
+            q^3 + 3*q^2 + 3*q + 1
+        """
+        return chain_poly(self._leq_storage)._sage_('q')  # noqa: F821
 
     def is_linear_interval(self, t_min, t_max) -> bool:
         """

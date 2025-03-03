@@ -32,14 +32,14 @@ To create new types of output, you must create your own subclass of
     file system.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.structure.sage_object import SageObject
@@ -264,9 +264,9 @@ class OutputUnicodeArt(OutputBase):
             ⎜  3  -1   0⎟
             ⎝ -1  -1   0⎠
         """
-        return cls(u'⎛-11   0   1⎞\n'
-                   u'⎜  3  -1   0⎟\n'
-                   u'⎝ -1  -1   0⎠')
+        return cls('⎛-11   0   1⎞\n'
+                   '⎜  3  -1   0⎟\n'
+                   '⎝ -1  -1   0⎠')
 
     def print_to_stdout(self):
         """

@@ -26,7 +26,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.arith.misc import bernoulli
 from sage.categories.rings import Rings

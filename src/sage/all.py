@@ -28,7 +28,8 @@ except for the known bad apples::
     sage: def is_not_allowed(frame):
     ....:     module = inspect.getmodule(frame)
     ....:     if module is None: return False
-    ....:     return not any(module.__name__.startswith(name) for name in allowed)
+    ....:     return not any(module.__name__.startswith(name)
+    ....:                    for name in allowed)
     sage: [inspect.getmodule(f).__name__ for f in frames if is_not_allowed(f)]
     []
 
@@ -57,97 +58,98 @@ import os
 import operator
 import math
 
-################ end setup warnings ###############################
+# ############### end setup warnings ###############################
 
-from sage.all__sagemath_repl import *  # includes .all__sagemath_objects, .all__sagemath_environment
+from sage.all__sagemath_repl import *
+# this includes .all__sagemath_objects, .all__sagemath_environment
 
-###################################################################
+# ##################################################################
 
 # This import also sets up the interrupt handler
 from cysignals.signals import (AlarmInterrupt, SignalError,
-        sig_on_reset as sig_on_count)
+                               sig_on_reset as sig_on_count)
 
-from time                import sleep
+from time import sleep
 from functools import reduce  # in order to keep reduce in python3
 
 import sage.misc.lazy_import
 
-from sage.misc.all       import *         # takes a while
-from sage.typeset.all    import *
+from sage.misc.all import *         # takes a while
+from sage.typeset.all import *
 
 from sage.misc.sh import sh
 
-from sage.libs.all       import *
+from sage.libs.all import *
 from sage.data_structures.all import *
 
-from sage.structure.all  import *
-from sage.rings.all      import *
-from sage.arith.all      import *
-from sage.matrix.all     import *
+from sage.structure.all import *
+from sage.rings.all import *
+from sage.arith.all import *
+from sage.matrix.all import *
 
-from sage.symbolic.all   import *
-from sage.modules.all    import *
-from sage.monoids.all    import *
-from sage.algebras.all   import *
-from sage.modular.all    import *
-from sage.sat.all        import *
-from sage.schemes.all    import *
-from sage.graphs.all     import *
-from sage.groups.all     import *
-from sage.arith.power    import generic_power as power
-from sage.databases.all  import *
+from sage.symbolic.all import *
+from sage.modules.all import *
+from sage.monoids.all import *
+from sage.algebras.all import *
+from sage.modular.all import *
+from sage.sat.all import *
+from sage.schemes.all import *
+from sage.graphs.all import *
+from sage.groups.all import *
+from sage.arith.power import generic_power as power
+from sage.databases.all import *
 from sage.categories.all import *
-from sage.sets.all       import *
+from sage.sets.all import *
 from sage.probability.all import *
 from sage.interfaces.all import *
 
-from sage.functions.all  import *
-from sage.calculus.all   import *
+from sage.functions.all import *
+from sage.calculus.all import *
 
-from sage.cpython.all    import *
+from sage.cpython.all import *
 
-from sage.crypto.all     import *
+from sage.crypto.all import *
 import sage.crypto.mq as mq
 
-from sage.plot.all       import *
-from sage.plot.plot3d.all     import *
+from sage.plot.all import *
+from sage.plot.plot3d.all import *
 
-from sage.coding.all     import *
-from sage.combinat.all   import *
+from sage.coding.all import *
+from sage.combinat.all import *
 
 from sage.lfunctions.all import *
 
-from sage.geometry.all   import *
-from sage.geometry.triangulation.all   import *
-from sage.geometry.riemannian_manifolds.all   import *
+from sage.geometry.all import *
+from sage.geometry.triangulation.all import *
+from sage.geometry.riemannian_manifolds.all import *
 
-from sage.dynamics.all   import *
+from sage.dynamics.all import *
 
-from sage.homology.all   import *
+from sage.homology.all import *
 
-from sage.topology.all   import *
+from sage.topology.all import *
 
 from sage.quadratic_forms.all import *
 
-from sage.games.all      import *
+from sage.games.all import *
 
-from sage.logic.all      import *
+from sage.logic.all import *
 
-from sage.numerical.all  import *
+from sage.numerical.all import *
 
-from sage.stats.all      import *
+from sage.stats.all import *
 import sage.stats.all as stats
 
-from sage.parallel.all   import *
+from sage.parallel.all import *
 
-from sage.ext.fast_callable  import fast_callable
-from sage.ext.fast_eval      import fast_float
+from sage.ext.fast_callable import fast_callable
+from sage.ext.fast_eval import fast_float
 
 from sage.sandpiles.all import *
 
-from sage.tensor.all     import *
+from sage.tensor.all import *
 
-from sage.matroids.all   import *
+from sage.matroids.all import *
 
 from sage.game_theory.all import *
 
@@ -167,7 +169,7 @@ from sage.rings.qqbar import _init_qqbar
 _init_qqbar()
 
 ###########################################################
-#### WARNING:
+#    WARNING:
 # DO *not* import numpy / matplotlib / networkx here!!
 # Each takes a surprisingly long time to initialize,
 # and that initialization should be done more on-the-fly
@@ -191,20 +193,29 @@ copyright = license
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.categories.category', 'Sets', Sets)
-register_unpickle_override('sage.categories.category_types', 'HeckeModules', HeckeModules)
-register_unpickle_override('sage.categories.category_types', 'Objects', Objects)
-register_unpickle_override('sage.categories.category_types', 'Rings', Rings)
-register_unpickle_override('sage.categories.category_types', 'Fields', Fields)
-register_unpickle_override('sage.categories.category_types', 'VectorSpaces', VectorSpaces)
-register_unpickle_override('sage.categories.category_types', 'Schemes_over_base', sage.categories.schemes.Schemes_over_base)
-register_unpickle_override('sage.categories.category_types', 'ModularAbelianVarieties', ModularAbelianVarieties)
+register_unpickle_override('sage.categories.category_types', 'HeckeModules',
+                           HeckeModules)
+register_unpickle_override('sage.categories.category_types', 'Objects',
+                           Objects)
+register_unpickle_override('sage.categories.category_types', 'Rings',
+                           Rings)
+register_unpickle_override('sage.categories.category_types', 'Fields',
+                           Fields)
+register_unpickle_override('sage.categories.category_types', 'VectorSpaces',
+                           VectorSpaces)
+register_unpickle_override('sage.categories.category_types',
+                           'Schemes_over_base',
+                           sage.categories.schemes.Schemes_over_base)
+register_unpickle_override('sage.categories.category_types',
+                           'ModularAbelianVarieties',
+                           ModularAbelianVarieties)
 register_unpickle_override('sage.libs.pari.gen_py', 'pari', pari)
 
 # Cache the contents of star imports.
 sage.misc.lazy_import.save_cache_file()
 
 
-### Debugging for Singular, see trac #10903
+# ##### Debugging for Singular, see issue #10903
 # from sage.libs.singular.ring import poison_currRing
 # sys.settrace(poison_currRing)
 
@@ -226,7 +237,7 @@ del clean_namespace
 sage.misc.lazy_import.finish_startup()
 
 
-### Python broke large ints; see trac #34506
+# Python broke large ints; see trac #34506
 
 if hasattr(sys, "set_int_max_str_digits"):
     sys.set_int_max_str_digits(0)

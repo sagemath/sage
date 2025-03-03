@@ -1170,7 +1170,7 @@ class GraphLatex(SageObject):
                     raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, x in value.items():
-                        if not type(x) in [int, Integer, float, RealLiteral] or not x >= 0.0:
+                        if type(x) not in [int, Integer, float, RealLiteral] or not x >= 0.0:
                             raise ValueError('%s option for %s needs to be a positive number, not %s' % (name, key, x))
             elif name in boolean_dicts:
                 if not isinstance(value, dict):
@@ -1201,7 +1201,7 @@ class GraphLatex(SageObject):
                     raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, p in value.items():
-                        if not (type(p) in [float, RealLiteral] and (0 <= p) and (p <= 1)) and (p not in label_places):
+                        if not (isinstance(p, (float, RealLiteral)) and (0 <= p <= 1)) and (p not in label_places):
                             raise ValueError('%s option for %s needs to be a number between 0.0 and 1.0 or a place (like "above"), not %s' % (name, key, p))
             elif name == 'loop_placements':
                 if not isinstance(value, dict):
@@ -1561,6 +1561,21 @@ class GraphLatex(SageObject):
             %
             %
             %
+            \end{tikzpicture}
+
+        For a complicated vertex, a TeX box is used. ::
+
+            sage: B = crystals.Tableaux(['B', 2], shape=[1])
+            sage: latex(B)  # optional - !dot2tex
+            \begin{tikzpicture}
+            ...
+            \newsavebox{\vertex}
+            \sbox{\vertex}{${\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{1}c}\cline{1-1}
+            \lr{1}\\\cline{1-1}
+            \end{array}$}
+            }$}\Vertex[style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=circle},LabelOut=false,L=\usebox{\vertex},x=...,y=...]{v0}
+            ...
             \end{tikzpicture}
         """
         # This routine does not handle multiple edges
@@ -1938,48 +1953,66 @@ class GraphLatex(SageObject):
                     s += [str(round(el_color[edge][2], 4)), '}\n']
             s += ['%\n']
 
-        # Create each vertex
+        # Create vertices
+        v = []
+        box = ''
+        used = False
         for u in vertex_list:
-            s += ['\\Vertex[']
+            t = [r'\Vertex[']
             # colors, shapes, sizes, labels/placement for 'Custom' style
             if customized:
-                s += ['style={']  # begin style list
-                s += ['minimum size=', str(round(float(scale * v_size[u]), 4)),
+                t += ['style={']  # begin style list
+                t += ['minimum size=', str(round(float(scale * v_size[u]), 4)),
                       units, ',']
-                s += ['draw=', vertex_color_names[u], ',']
-                s += ['fill=', vertex_fill_color_names[u], ',']
+                t += ['draw=', vertex_color_names[u], ',']
+                t += ['fill=', vertex_fill_color_names[u], ',']
                 if vertex_labels:
-                    s += ['text=', vertex_label_color_names[u], ',']
+                    t += ['text=', vertex_label_color_names[u], ',']
                 if v_shape[u] == 'sphere':
-                    s += ['shape=circle,shading=ball,line width=0pt,ball color=', vertex_color_names[u], ',']
+                    t += ['shape=circle,shading=ball,line width=0pt,ball color=', vertex_color_names[u], ',']
                 else:
-                    s += ['shape=', v_shape[u]]
-                s += ['},']  # end style list
+                    t += ['shape=', v_shape[u]]
+                t += ['},']  # end style list
                 if vertex_labels:
                     if vl_placement[u] == 'center':
-                        s += ['LabelOut=false,']
+                        t += ['LabelOut=false,']
                     else:
-                        s += ['LabelOut=true,']
-                        s += ['Ldist=', str(round(float(scale * vl_placement[u][0]), 4)), units, ',']
-                        s += ['Lpos=', str(round(float(vl_placement[u][1]), 4)), ',']  # degrees, no units
+                        t += ['LabelOut=true,']
+                        t += ['Ldist=', str(round(float(scale * vl_placement[u][0]), 4)), units, ',']
+                        t += ['Lpos=', str(round(float(vl_placement[u][1]), 4)), ',']  # degrees, no units
                 else:
-                    s += ['NoLabel,']
+                    t += ['NoLabel,']
             # vertex label information is available to all pre-built styles
             # but may be ignored by the style, so not apparent
             if vertex_labels or not customized:
                 if vertex_labels_math and not (isinstance(u, str) and u[0] == '$' and u[-1] == '$'):
-                    lab = r'\hbox{$%s$}' % latex(u)
+                    ltx = str(latex(u))
+                    if '\\' in ltx:  # complicated case; use \sbox
+                        box = r'\sbox{\vertex}{$' + ltx + '$}'
+                        lab = r'\usebox{\vertex}'
+                    else:
+                        lab = r'\hbox{$%s$}' % ltx
                 else:
                     lab = r'\hbox{%s}' % u
-                s += ['L=', lab, ',']
+                t += ['L=', lab, ',']
             scaled_pos = translate(pos[u])
-            s += ['x=', str(round(float(scale * scaled_pos[0]), 4)), units, ',']
-            s += ['y=', str(round(float(scale * scaled_pos[1]), 4)), units]
-            s += [']']
-            s += ['{', prefix, str(index_of_vertex[u]), '}\n']
+            t += ['x=', str(round(float(scale * scaled_pos[0]), 4)), units, ',']
+            t += ['y=', str(round(float(scale * scaled_pos[1]), 4)), units]
+            t += [']']
+            t += ['{', prefix, str(index_of_vertex[u]), '}\n']
+            if box:
+                v += [box] + t
+                box = ''
+                used = True
+            else:
+                v += t
+        if used:
+            s += [r'\newsavebox{\vertex}' + '\n'] + v
+        else:
+            s += v
         s += ['%\n']
 
-        # Create each edge or loop
+        # Create edges and loops
         for e in self._graph.edges(sort=False):
             edge = (e[0], e[1])
             loop = e[0] == e[1]

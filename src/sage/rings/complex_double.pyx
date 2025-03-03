@@ -2439,34 +2439,38 @@ cdef class ComplexDoubleElement(FieldElement):
             from sage.libs.pari.convert_sage_complex_double import complex_double_element_zeta
         return complex_double_element_zeta(self)
 
-    def algdep(self, long n):
+    def algebraic_dependency(self, long n):
         """
         Return a polynomial of degree at most `n` which is
-        approximately satisfied by this complex number. Note that the
-        returned polynomial need not be irreducible, and indeed usually
-        won't be if `z` is a good approximation to an algebraic
-        number of degree less than `n`.
+        approximately satisfied by this complex number.
 
-        ALGORITHM: Uses the PARI C-library algdep command.
+        Note that the returned polynomial need not be irreducible, and
+        indeed usually will not be if `z` is a good approximation to an
+        algebraic number of degree less than `n`.
+
+        ALGORITHM: Uses the PARI C-library :pari:`algdep` command.
 
         EXAMPLES::
 
             sage: z = (1/2)*(1 + RDF(sqrt(3)) * CDF.0); z   # abs tol 1e-16             # needs sage.symbolic
             0.5 + 0.8660254037844387*I
-            sage: p = z.algdep(5); p                                                    # needs sage.libs.pari sage.symbolic
+            sage: p = z.algebraic_dependency(5); p                                      # needs sage.libs.pari sage.symbolic
             x^2 - x + 1
             sage: abs(z^2 - z + 1) < 1e-14                                              # needs sage.symbolic
             True
 
         ::
 
-            sage: CDF(0,2).algdep(10)                                                   # needs sage.libs.pari
+            sage: CDF(0,2).algebraic_dependency(10)                                     # needs sage.libs.pari
             x^2 + 4
-            sage: CDF(1,5).algdep(2)                                                    # needs sage.libs.pari
+            sage: CDF(1,5).algebraic_dependency(2)                                      # needs sage.libs.pari
             x^2 - 2*x + 26
         """
-        from sage.arith.misc import algdep
-        return algdep(self, n)
+        from sage.arith.misc import algebraic_dependency
+        return algebraic_dependency(self, n)
+
+    algdep = algebraic_dependency
+
 
 cdef class FloatToCDF(Morphism):
     """
@@ -2601,7 +2605,7 @@ cdef class ComplexToCDF(Morphism):
 cdef ComplexDoubleField_class _CDF
 _CDF = ComplexDoubleField_class()
 CDF = _CDF  # external interface
-cdef ComplexDoubleElement I = ComplexDoubleElement(0,1)
+cdef ComplexDoubleElement I = ComplexDoubleElement(0, 1)
 
 
 def ComplexDoubleField():
@@ -2619,7 +2623,7 @@ def ComplexDoubleField():
 
 
 from sage.misc.parser import Parser
-cdef cdf_parser = Parser(float, float,  {"I" : _CDF.gen(), "i" : _CDF.gen()})
+cdef cdf_parser = Parser(float, float,  {"I": _CDF.gen(), "i": _CDF.gen()})
 
 cdef inline double complex extract_double_complex(ComplexDoubleElement x) noexcept:
     """

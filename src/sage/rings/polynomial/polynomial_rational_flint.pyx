@@ -38,7 +38,7 @@ from sage.libs.flint.fmpq_poly_sage cimport *
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
 
-from cypari2.gen import Gen as pari_gen
+from cypari2.gen cimport Gen as pari_gen
 
 from sage.rings.complex_arb cimport ComplexBall
 from sage.rings.integer cimport Integer, smallInteger
@@ -236,7 +236,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         elif isinstance(x, Rational):
             fmpq_poly_set_mpq(self._poly, (<Rational> x).value)
 
-        elif isinstance(x, list) or isinstance(x, tuple):
+        elif isinstance(x, (list, tuple)):
 
             if len(x) == 0:
                 return
@@ -1160,7 +1160,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         if do_sig: sig_off()
         return res
 
-    def __pow__(Polynomial_rational_flint self, exp, ignored):
+    def __pow__(Polynomial_rational_flint self, exp, mod):
         """
         Return ``self`` raised to the power of ``exp``.
 
@@ -1266,9 +1266,22 @@ cdef class Polynomial_rational_flint(Polynomial):
             ...
             TypeError: no canonical coercion from Univariate Polynomial
             Ring in R over Rational Field to Rational Field
+
+        Check that using third argument raises an error::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: pow(x, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
         cdef Polynomial_rational_flint res
         cdef long n
+
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
 
         try:
             n = pyobject_to_long(exp)
@@ -1482,7 +1495,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             fmpz_get_mpz(den.value, <fmpz *> fmpq_poly_denref(self._poly))
         return den
 
-    def _derivative(self, var = None):
+    def _derivative(self, var=None):
         """
         Return the derivative of this polynomial with respect to ``var``.
 
@@ -2149,7 +2162,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             Transitive group number 183 of degree 12
 
             sage: f.galois_group(algorithm='magma')  # optional - magma
-            Transitive group number 5 of degree 4
+            Transitive group number 183 of degree 12
 
         TESTS:
 

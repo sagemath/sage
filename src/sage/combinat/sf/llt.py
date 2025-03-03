@@ -83,13 +83,13 @@ class LLT_class(UniqueRepresentation):
         sage: s(HS3t[2,1])
         s[2, 1] + t*s[3]
         sage: HS3x(HS3t[2,1])
-        HSp3[2, 1] + (-x+t)*HSp3[3]
+        HSp3[2, 1] - (x-t)*HSp3[3]
         sage: s(HS3x(HS3t[2,1]))
         s[2, 1] + t*s[3]
         sage: LLT3t2 = Symxt.llt(3,t=2)
         sage: HC3t2 = LLT3t2.hcospin()
         sage: HS3x(HC3t2[3,1])
-        2*HSp3[3, 1] + (-2*x+1)*HSp3[4]
+        2*HSp3[3, 1] - (2*x-1)*HSp3[4]
     """
     @staticmethod
     def __classcall__(cls, Sym, k, t='t'):
@@ -764,5 +764,5 @@ class LLT_cospin(LLT_generic):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_spin',  LLT_spin.Element)
-register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_cospin',  LLT_cospin.Element)
+register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_spin', LLT_spin.Element)
+register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_cospin', LLT_cospin.Element)

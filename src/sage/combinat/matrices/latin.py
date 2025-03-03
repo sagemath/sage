@@ -1212,8 +1212,8 @@ class LatinSquare:
 
                     dlx_rows.append([c_OFFSET, r_OFFSET, xy_OFFSET])
 
-                    if max_column_nr < max(c_OFFSET, r_OFFSET, xy_OFFSET):
-                        max_column_nr = max(c_OFFSET, r_OFFSET, xy_OFFSET)
+                    max_column_nr = max(max_column_nr, c_OFFSET,
+                                        r_OFFSET, xy_OFFSET)
 
         # We will have missed some columns. We
         # have to add 'dummy' rows so that the C++ DLX solver will find
@@ -2444,7 +2444,7 @@ def p3_group_bitrade_generators(p):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.latin import *
-        sage: p3_group_bitrade_generators(3)
+        sage: p3_group_bitrade_generators(3)  # random output
         ((2,6,7)(3,8,9),
          (1,2,3)(4,7,8)(5,6,9),
          (1,9,2)(3,7,4)(5,8,6),

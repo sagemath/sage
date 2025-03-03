@@ -32,7 +32,6 @@ Base class for polyhedra: Miscellaneous methods
 
 from sage.misc.cachefunc import cached_method
 
-import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
@@ -584,7 +583,7 @@ class Polyhedron_base(Polyhedron_base7):
         for vertex in affine_basis:
             vertex_vector = vertex.vector()
             raw_data += [[sum(i**2 for i in vertex_vector)] +
-                         [i for i in vertex_vector] + [1]]
+                         list(vertex_vector) + [1]]
         matrix_data = matrix(raw_data)
 
         # The determinant "a" should not be zero because

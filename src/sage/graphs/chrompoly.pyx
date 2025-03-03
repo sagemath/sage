@@ -31,7 +31,7 @@ from memory_allocator cimport MemoryAllocator
 from sage.libs.gmp.mpz cimport *
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.rings.ring cimport Ring
+from sage.rings.ring cimport CommutativeRing
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -436,7 +436,7 @@ def chromatic_polynomial_with_cache(G, cache=None):
         ...
         TypeError: parameter cache must be a dictionary or None
     """
-    cdef Ring R = PolynomialRing(ZZ, "x", implementation="FLINT")
+    cdef CommutativeRing R = PolynomialRing(ZZ, "x", implementation="FLINT")
     cdef Polynomial_integer_dense_flint one = R.one()
     cdef Polynomial_integer_dense_flint zero = R.zero()
     cdef Polynomial_integer_dense_flint x = R.gen()

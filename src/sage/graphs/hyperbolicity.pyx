@@ -418,8 +418,7 @@ cdef inline distances_and_far_apart_pairs(gg,
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, gg, edge_labelled=False, vertex_list=int_to_vertex,
-                       sort_neighbors=False)
+    init_short_digraph(sd, gg, edge_labelled=False, vertex_list=int_to_vertex)
     cdef uint32_t** p_vertices = sd.neighbors
     cdef uint32_t* p_tmp
     cdef uint32_t* end

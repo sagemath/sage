@@ -273,7 +273,7 @@ cdef get_reduced_hexagons(factory, tuple mp_params):
         if i % n_proc == child_id:
             he = req_cy(basis, r_matrix, fvars, _Nk_ij, id_anyon, sextuple)
             if he:
-                red = reduce_poly_dict(he.dict(), _nnz, _ks, one)
+                red = reduce_poly_dict(he.monomial_coefficients(), _nnz, _ks, one)
 
                 # Avoid pickling cyclotomic coefficients
                 red = _flatten_coeffs(red)
@@ -341,7 +341,7 @@ cdef get_reduced_pentagons(factory, tuple mp_params):
         if i % n_proc == child_id:
             pe = feq_cy(basis, fvars, _Nk_ij, id_anyon, zero, nonuple, prune=True)
             if pe:
-                red = reduce_poly_dict(pe.dict(), _nnz, _ks, one)
+                red = reduce_poly_dict(pe.monomial_coefficients(), _nnz, _ks, one)
 
                 # Avoid pickling cyclotomic coefficients
                 red = _flatten_coeffs(red)
@@ -399,7 +399,7 @@ cdef list compute_gb(factory, tuple args):
     cdef MPolynomialRing_libsingular R = PolynomialRing(factory._FR.field(), len(sorted_vars), 'a', order=term_order)
 
     # Zip tuples into R and compute Groebner basis
-    cdef idx_map = {old : new for new, old in enumerate(sorted_vars)}
+    cdef idx_map = {old: new for new, old in enumerate(sorted_vars)}
     nvars = len(sorted_vars)
     F = factory.field()
     cdef list polys = list()

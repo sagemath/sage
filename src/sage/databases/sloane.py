@@ -12,7 +12,7 @@ To look up a sequence, type
 ::
 
     sage: SloaneEncyclopedia[60843]  # optional - sloane_database
-    [1, 6, 21, 107]
+    [1, 6, 21, 107, 47176870]
 
 To get the name of a sequence, type
 
@@ -149,6 +149,17 @@ class SloaneEncyclopediaClass:
         self.load()
         return len(self.__data__)
 
+    def is_installed(self):
+        """
+        Check if a local copy of the encyclopedia is installed.
+
+        EXAMPLES::
+
+            sage: SloaneEncyclopedia.is_installed()  # optional - sloane_database
+            True
+        """
+        return os.path.exists(self.__file__) and os.path.exists(self.__file_names__)
+
     def find(self, seq, maxresults=30):
         """
         Return a list of all sequences which have seq as a subsequence, up
@@ -274,7 +285,7 @@ class SloaneEncyclopediaClass:
         for L in file_seq:
             if len(L) == 0:
                 continue
-            m = entry.search(L)
+            m = entry.search(L.decode('utf-8'))
             if m:
                 seqnum = int(m.group('num'))
                 msg = m.group('body').strip()
@@ -287,10 +298,13 @@ class SloaneEncyclopediaClass:
             for L in file_names:
                 if not L:
                     continue
-                m = entry.search(L)
+                m = entry.search(L.decode('utf-8'))
                 if m:
                     seqnum = int(m.group('num'))
-                    self.__data__[seqnum][3] = m.group('body').strip()
+                    if seqnum in self.__data__:
+                        self.__data__[seqnum][3] = m.group('body').strip()
+                    else:
+                        self.__data__[seqnum] = [seqnum, None, 'unknown', m.group('body').strip()]
             file_names.close()
             self.__loaded_names__ = True
         except KeyError:
