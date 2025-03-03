@@ -964,28 +964,27 @@ class AlgebraicClosureFiniteField_generic(Field):
 
         new_coeffs = [self.inclusion(c[0].degree(), l)(c[1]) for c in coeffs]
 
-        polys = [(g,m,l,phi) for g,m in P(new_coeffs).factor()]
+        polys = [(g, m, l, phi) for g, m in P(new_coeffs).factor()]
         roots = []    # a list of pair (root,multiplicity)
         while polys:
-            g,m,l,phi = polys.pop()
+            g, m, l, phi = polys.pop()
 
-            if g.degree() == 1: # found a root
+            if g.degree() == 1:  # found a root
                 r = phi(-g.constant_coefficient())
-                roots.append((r,m))
-            else: # look at the extension of degree g.degree() which contains at
-                  # least one root of g
+                roots.append((r, m))
+            else:
+                # look at the extension of degree g.degree() which
+                # contains at least one root of g
                 ll = l * g.degree()
                 psi = self.inclusion(l, ll)
                 FF, pphi = self.subfield(ll)
-                # note: there is no coercion from the l-th subfield to the ll-th
-                # subfield. The line below does the conversion manually.
+                # note: there is no coercion from the l-th subfield to
+                # the ll-th subfield. The line below does the
+                # conversion manually.
                 g = PolynomialRing(FF, 'x')([psi(_) for _ in g])
-                polys.extend((gg,m,ll,pphi) for gg,_ in g.factor())
+                polys.extend((gg, m, ll, pphi) for gg, _ in g.factor())
 
-        if multiplicities:
-            return roots
-        else:
-            return [r[0] for r in roots]
+        return roots if multiplicities else [r[0] for r in roots]
 
     def _factor_univariate_polynomial(self, p, **kwds):
         r"""
