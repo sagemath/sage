@@ -432,7 +432,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 sage: P[-1]
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: cannot list an infinite set
+                ValueError: infinite list
 
             ::
 
