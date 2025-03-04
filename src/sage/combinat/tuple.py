@@ -157,6 +157,31 @@ class Tuples(Parent, UniqueRepresentation):
             ...
             IndexError: index out of range
 
+        Verify that :meth:`unrank` works with non-integer sets::
+
+            sage: T = Tuples(['a', 'b', 'c'], 3)
+            sage: T[15]
+            ('a', 'c', 'b')
+            sage: T = Tuples([None, 1, ZZ, GF(2)], 5)
+            sage: T[30]
+            (Integer Ring, Finite Field of size 2, 1, None, None)
+
+        Verify that :meth:`unrank` gives the correct answer when `|S| < 1`::
+
+            sage: T = Tuples([],5)
+            sage: T[0]
+            Traceback (most recent call last):
+            ...
+            IndexError: index i (=0) is greater than or equal to the cardinality
+            sage: list(T)
+            []
+
+        Verify that :meth:`unrank` gives the correct answer when `|S| = 1`::
+
+            sage: T = Tuples([1],5)
+            sage: T[0]
+            (1, 1, 1, 1, 1)
+
         Verify that :issue:`39534` has been fixed::
 
             sage: T = Tuples(range(3), 30).random_element()
@@ -165,18 +190,16 @@ class Tuples(Parent, UniqueRepresentation):
             sage: len(T)
             30
         """
-        r = ZZ(i)
-        if r < 0:
+        i = ZZ(i)
+        if i < 0:
             raise IndexError("index out of range")
-        ts = len(self.S)
-        elt = []
-        for _ in range(self.k):
-            elt.append(self.S[r % ts])
-            r //= ts
-        if r > 0:
+        if i >= self.cardinality():
             raise IndexError("index i (={}) is greater than or equal to the cardinality"
                              .format(i))
-        return tuple(elt)
+        ts = len(self.S)
+        if ts == 1:
+            return tuple(self.S[0] for _ in range(self.k))
+        return tuple(i.digits(ts, self.S, self.k))
 
     def __iter__(self):
         """
