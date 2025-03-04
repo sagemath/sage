@@ -9732,7 +9732,7 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
 
 def abacus_to_partition(abacus):
     r"""
-    Returns a partition from an abacus.
+    Return a partition from an abacus.
 
     An abacus is a function `w : \mathbb{Z} \to \{0,1\}` such that
     `w(n) = 0` for `n \ll 0` and `w(n) = 1` for `n \gg 0`. It is usually
