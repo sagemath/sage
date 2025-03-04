@@ -12993,12 +12993,12 @@ cdef class Matrix(Matrix1):
 
             sage: U = matrix(GF(3**2),[[1,4,7],[4,1,4],[7,4,1]])
             sage: U._cholesky_extended_ff()
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: matrix is not full rank
             sage: U = matrix(GF(3**2),[[0,4,7],[4,1,4],[7,4,1]])
             sage: U._cholesky_extended_ff()
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: matrix is not full rank
         """
