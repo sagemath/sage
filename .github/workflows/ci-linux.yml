@@ -62,7 +62,7 @@ jobs:
   # for tox_system_factors in docker.yml.
 
   standard:
-    if: ${{ success() || failure() }}
+    if: always()
     uses: ./.github/workflows/docker.yml
     with:
       tox_packages_factors: >-
@@ -132,7 +132,7 @@ jobs:
       max_parallel: 15
 
   minimal:
-    if: ${{ success() || failure() }}
+    if: always()
     uses: ./.github/workflows/docker.yml
     with:
       tox_packages_factors: >-
@@ -144,12 +144,11 @@ jobs:
       targets: build doc-html
       targets_optional: ptest
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Reduced from 30 because it may run in parallel with 'standard' and 'standard-sitepackages' above.
       # Calibrated for clogging the job pipeline until the "default" job has finished.
       max_parallel: 24
 
   maximal:
-    if: ${{ success() || failure() }}
+    if: always()
     needs: [minimal]
     uses: ./.github/workflows/docker.yml
     with:
@@ -163,7 +162,7 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   optional:
-    if: ${{ success() || failure() }}
+    if: always()
     needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
@@ -172,14 +171,14 @@ jobs:
       incremental: true
       free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
-      from_docker_target: "with-targets-pre"
+      from_docker_target: "with-targets"
       docker_targets: "with-targets-optional"
       # We remove packages starting with _, in particular package _develop
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep -v ^_))'
       logs_artifact_postfix: "-optional"
 
   experimental:
-    if: ${{ success() || failure() }}
+    if: always()
     needs: [optional]
     uses: ./.github/workflows/docker.yml
     with:
@@ -188,7 +187,7 @@ jobs:
       incremental: true
       free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
-      from_docker_target: "with-targets-pre"
+      from_docker_target: "with-targets"
       docker_targets: "with-targets-optional"
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc))'
       logs_artifact_postfix: "-experimental"
