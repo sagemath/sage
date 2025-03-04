@@ -470,10 +470,9 @@ class EnumeratedSets(CategoryWithAxiom):
                 to an integer
             """
             from sage.rings.infinity import Infinity
-            from sage.rings.integer_ring import ZZ
             if isinstance(i, slice):
                 return self.unrank_range(i.start, i.stop, i.step)
-            i = ZZ(i)
+            i = Integer(i)
             if i < 0:
                 i += self.cardinality()
             if i < 0:
