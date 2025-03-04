@@ -1352,7 +1352,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         return (min_exp, order_1)
 
-    def quasi_part_gens(self, r=None, min_exp=0, max_exp=infinity, order_1=ZZ.zero()):
+    def quasi_part_gens(self, r=None, min_exp=0, max_exp=infinity, order_1=ZZ.zero()) -> tuple:
         r"""
         Return a basis in ``self`` of the subspace of (quasi) weakly
         holomorphic forms which satisfy the specified properties on
@@ -1391,17 +1391,20 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: QF = QuasiWeakModularForms(n=8, k=10/3, ep=-1)
             sage: QF.default_prec(1)
             sage: QF.quasi_part_gens(min_exp=-1)
-            [q^-1 + O(q), 1 + O(q), q^-1 - 9/(128*d) + O(q), 1 + O(q), q^-1 - 19/(64*d) + O(q), q^-1 + 1/(64*d) + O(q)]
+            (q^-1 + O(q), 1 + O(q), q^-1 - 9/(128*d) + O(q),
+             1 + O(q), q^-1 - 19/(64*d) + O(q), q^-1 + 1/(64*d) + O(q))
 
             sage: QF.quasi_part_gens(min_exp=-1, max_exp=-1)
-            [q^-1 + O(q), q^-1 - 9/(128*d) + O(q), q^-1 - 19/(64*d) + O(q), q^-1 + 1/(64*d) + O(q)]
+            (q^-1 + O(q), q^-1 - 9/(128*d) + O(q),
+             q^-1 - 19/(64*d) + O(q), q^-1 + 1/(64*d) + O(q))
             sage: QF.quasi_part_gens(min_exp=-2, r=1)
-            [q^-2 - 9/(128*d)*q^-1 - 261/(131072*d^2) + O(q), q^-1 - 9/(128*d) + O(q), 1 + O(q)]
+            (q^-2 - 9/(128*d)*q^-1 - 261/(131072*d^2) + O(q),
+             q^-1 - 9/(128*d) + O(q), 1 + O(q))
 
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
             sage: MF = ModularForms(k=36)
             sage: MF.quasi_part_gens(min_exp=2)
-            [q^2 + 194184*q^4 + O(q^5), q^3 - 72*q^4 + O(q^5)]
+            (q^2 + 194184*q^4 + O(q^5), q^3 - 72*q^4 + O(q^5))
 
             sage: from sage.modular.modform_hecketriangle.space import QuasiModularForms
             sage: MF = QuasiModularForms(n=5, k=6, ep=-1)
@@ -1409,17 +1412,17 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.dimension()
             3
             sage: MF.quasi_part_gens(r=0)
-            [1 - 37/(200*d)*q + O(q^2)]
+            (1 - 37/(200*d)*q + O(q^2),)
             sage: MF.quasi_part_gens(r=0)[0] == MF.E6()
             True
             sage: MF.quasi_part_gens(r=1)
-            [1 + 33/(200*d)*q + O(q^2)]
+            (1 + 33/(200*d)*q + O(q^2),)
             sage: MF.quasi_part_gens(r=1)[0] == MF.E2()*MF.E4()
             True
             sage: MF.quasi_part_gens(r=2)
-            []
+            ()
             sage: MF.quasi_part_gens(r=3)
-            [1 - 27/(200*d)*q + O(q^2)]
+            (1 - 27/(200*d)*q + O(q^2),)
             sage: MF.quasi_part_gens(r=3)[0] == MF.E2()^3
             True
 
@@ -1429,18 +1432,18 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.dimension()
             8
             sage: MF.quasi_part_gens(r=0)
-            [q - 34743/(640000*d^2)*q^3 + O(q^4), q^2 - 69/(200*d)*q^3 + O(q^4)]
+            (q - 34743/(640000*d^2)*q^3 + O(q^4), q^2 - 69/(200*d)*q^3 + O(q^4))
             sage: MF.quasi_part_gens(r=1)
-            [q - 9/(200*d)*q^2 + 37633/(640000*d^2)*q^3 + O(q^4),
-             q^2 + 1/(200*d)*q^3 + O(q^4)]
+            (q - 9/(200*d)*q^2 + 37633/(640000*d^2)*q^3 + O(q^4),
+             q^2 + 1/(200*d)*q^3 + O(q^4))
             sage: MF.quasi_part_gens(r=2)
-            [q - 1/(4*d)*q^2 - 24903/(640000*d^2)*q^3 + O(q^4)]
+            (q - 1/(4*d)*q^2 - 24903/(640000*d^2)*q^3 + O(q^4),)
             sage: MF.quasi_part_gens(r=3)
-            [q + 1/(10*d)*q^2 - 7263/(640000*d^2)*q^3 + O(q^4)]
+            (q + 1/(10*d)*q^2 - 7263/(640000*d^2)*q^3 + O(q^4),)
             sage: MF.quasi_part_gens(r=4)
-            [q - 11/(20*d)*q^2 + 53577/(640000*d^2)*q^3 + O(q^4)]
+            (q - 11/(20*d)*q^2 + 53577/(640000*d^2)*q^3 + O(q^4),)
             sage: MF.quasi_part_gens(r=5)
-            [q - 1/(5*d)*q^2 + 4017/(640000*d^2)*q^3 + O(q^4)]
+            (q - 1/(5*d)*q^2 + 4017/(640000*d^2)*q^3 + O(q^4),)
 
             sage: MF.quasi_part_gens(r=1)[0] == MF.E2() * CuspForms(n=5, k=16, ep=1).gen(0)
             True
@@ -1453,9 +1456,9 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.quasi_part_gens(r=1, min_exp=-2) == MF.quasi_part_gens(r=1, min_exp=1)
             True
             sage: MF.quasi_part_gens(r=1)
-            [q - 8*q^2 - 8*q^3 + 5952*q^4 + O(q^5),
+            (q - 8*q^2 - 8*q^3 + 5952*q^4 + O(q^5),
              q^2 - 8*q^3 + 208*q^4 + O(q^5),
-             q^3 - 16*q^4 + O(q^5)]
+             q^3 - 16*q^4 + O(q^5))
 
             sage: MF = QuasiWeakModularForms(n=infinity, k=4, ep=1)
             sage: MF.quasi_part_gens(r=2, min_exp=2, order_1=-2)[0] == MF.E2()^2 * MF.E4()^(-2) * MF.f_inf()^2
@@ -1463,23 +1466,22 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: [v.order_at(-1) for v in MF.quasi_part_gens(r=0, min_exp=2, order_1=-2)]
             [-2, -2]
         """
-
-        if (not self.is_weakly_holomorphic()):
+        if not self.is_weakly_holomorphic():
             from warnings import warn
             warn("This function only determines generators of (quasi) weakly modular forms!")
 
-        (min_exp, order_1) = self._canonical_min_exp(min_exp, order_1)
+        min_exp, order_1 = self._canonical_min_exp(min_exp, order_1)
 
         # For modular forms spaces the quasi parts are all zero except for r=0
-        if (self.is_modular()):
+        if self.is_modular():
             r = ZZ(r)
-            if (r != 0):
-                return []
+            if r:
+                return ()
 
         # The lower bounds on the powers of f_inf and E4 determine
         # how large powers of E2 we can fit in...
         n = self.hecke_n()
-        if (n == infinity):
+        if n == infinity:
             max_numerator_weight = self._weight - 4*min_exp - 4*order_1 + 4
         else:
             max_numerator_weight = self._weight - 4*n/(n-2)*min_exp + 4
@@ -1487,30 +1489,28 @@ class FormsSpace_abstract(FormsRing_abstract):
         # If r is not specified we gather all generators for all possible r's
         if r is None:
             gens = []
-            for rnew in range(QQ(max_numerator_weight/ZZ(2)).floor() + 1):
-                gens += self.quasi_part_gens(r=rnew, min_exp=min_exp, max_exp=max_exp, order_1=order_1)
-            return gens
+            for rnew in range(QQ(max_numerator_weight / ZZ(2)).floor() + 1):
+                gens.extend(self.quasi_part_gens(r=rnew, min_exp=min_exp, max_exp=max_exp, order_1=order_1))
+            return tuple(gens)
 
         r = ZZ(r)
         if r < 0 or 2*r > max_numerator_weight:
-            return []
+            return ()
 
         E2 = self.E2()
-        ambient_weak_space = self.graded_ring().reduce_type("weak", degree=(self._weight-QQ(2*r), self._ep*(-1)**r))
+        ambient_weak_space = self.graded_ring().reduce_type("weak",
+                                                            degree=(self._weight-QQ(2*r), self._ep*(-1)**r))
         order_inf = ambient_weak_space._l1 - order_1
 
-        if (max_exp == infinity):
+        if max_exp == infinity:
             max_exp = order_inf
-        elif (max_exp < min_exp):
-            return []
+        elif max_exp < min_exp:
+            return ()
         else:
             max_exp = min(ZZ(max_exp), order_inf)
 
-        gens = []
-        for m in range(min_exp, max_exp + 1):
-            gens += [ self(ambient_weak_space.F_basis(m, order_1=order_1)*E2**r) ]
-
-        return gens
+        return tuple(self(ambient_weak_space.F_basis(m, order_1=order_1) * E2**r)
+                     for m in range(min_exp, max_exp + 1))
 
     def quasi_part_dimension(self, r=None, min_exp=0, max_exp=infinity, order_1=ZZ.zero()):
         r"""
@@ -2096,7 +2096,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             q^-1 + O(q^5)
 
             sage: MF = ModularForms(k=36)
-            sage: MF.q_basis() == MF.gens()
+            sage: MF.q_basis() == list(MF.gens())
             True
 
             sage: QF = QuasiModularForms(k=6)
@@ -2490,11 +2490,11 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         return self.module()(self.ambient_space().coordinate_vector(v))
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         This method should be overloaded by subclasses.
 
-        Return a basis of ``self``.
+        Return a basis of ``self`` as a tuple.
 
         Note that the coordinate vector of elements of ``self``
         are with respect to this basis.
@@ -2503,11 +2503,10 @@ class FormsSpace_abstract(FormsRing_abstract):
 
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
             sage: ModularForms(k=12).gens() # defined in space.py
-            [1 + 196560*q^2 + 16773120*q^3 + 398034000*q^4 + O(q^5),
-             q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5)]
+            (1 + 196560*q^2 + 16773120*q^3 + 398034000*q^4 + O(q^5),
+             q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5))
         """
-
-        raise NotImplementedError("No generators are implemented yet for {}!".format(self))
+        raise NotImplementedError(f"No generators are implemented yet for {self}!")
 
     def gen(self, k=0):
         r"""
