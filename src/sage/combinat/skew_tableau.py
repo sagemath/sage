@@ -1947,23 +1947,23 @@ class SkewTableau(ClonableList,
         for i,j in delta_blue_positions:
             D[(i,j)]['north_west'] = '1'
             D[(i,j)]['north_east'] = '1'
-            a, b = (i, j)
+            a, b = i, j
             while ((a-1, b) not in nabla_blue_positions and a > 1):
                 a -= 1
                 D[(a,b)]['north_east'] = '0'
                 D[(a,b)]['north_west'] = '1'
                 D[(a,b)]['south_east'] = '1'
                 D[(a,b)]['south_west'] = '0'
-            a, b = (i, j)
+            a, b = i, j
             while ((a, b) not in nabla_blue_positions and b > a):
                 b -= 1
                 D[(a,b)]['north_west'] = '0'
                 D[(a,b)]['north_east'] = '10'
-        for i,j in nabla_blue_positions:
-            if (i,j) in D.keys():
+        for i, j in nabla_blue_positions:
+            if (i,j) in D:
                 D[(i,j)]['south_west'] = '1'
                 D[(i,j)]['south_east'] = '1'
-            a, b = (i, j)
+            a, b = i, j
             while ((a, b-1) not in delta_blue_positions and a > 0):
                 a -= 1
                 b -= 1
@@ -1988,7 +1988,7 @@ class SkewTableau(ClonableList,
         dirs = ('north_east', 'north_west', 'south')
         triangles = sorted(all_pieces.delta_pieces(), key=lambda p : ''.join(p[dir] for dir in dirs))
 
-        for i,j in D:
+        for i, j in D:
             candidates = []
             if i == j:
                 pieces = triangles
