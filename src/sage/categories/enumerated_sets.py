@@ -463,6 +463,8 @@ class EnumeratedSets(CategoryWithAxiom):
                 return self.unrank_range(i.start, i.stop, i.step)
             if i < 0:
                 i += self.cardinality()
+            if i < 0:
+                raise IndexError("index out of range")
             if i is Infinity:
                 return self.list()[i]
             return self.unrank(i)

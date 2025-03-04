@@ -139,7 +139,7 @@ class Tuples(Parent, UniqueRepresentation):
             sage: T[-28]
             Traceback (most recent call last):
             ...
-            IndexError: i (=-1) must be a nonnegative integer
+            IndexError: index out of range
 
         Verify that `unrank` works correctly for Tuples where `k = 1`. ::
 
@@ -161,7 +161,7 @@ class Tuples(Parent, UniqueRepresentation):
         """
         r = ZZ(i)
         if r < 0:
-            raise IndexError("i (={}) must be a nonnegative integer".format(i))
+            raise IndexError("index out of range")
         ts = len(self.S)
         elt = []
         for _ in range(0, self.k):
