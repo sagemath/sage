@@ -7,7 +7,7 @@ AUTHORS:
 - Travis Scrimshaw, Arthur Lubovsky (2013-02-11):
   Factored out ``CombinatorialClass``
 - Trevor K. Karn (2022-08-03): added ``backward_slide``
-- Álvaro Gutiérrez (2025-02-24): added ``to_KTpuzzle``
+- Álvaro Gutiérrez (2025-02-24): added ``to_knutson_tao_puzzle``
 
 """
 # ****************************************************************************
@@ -1842,26 +1842,26 @@ class SkewTableau(ClonableList,
         return all(kshapes[i + 1].contains(kshapes[i])
                    for i in range(len(shapes) - 1))
 
-    def is_LR(self):
+    def is_littlewood_richarsdon(self):
         r"""
         Checks whether ``self`` is a Littlewood--Richardson tableau.
 
-        A Littlewood--Richardson tableau (LR tableau) is a semistandard skew tableau whose
+        A Littlewood--Richardson tableau is a semistandard skew tableau whose
         (row reading) word is Yamanouchi.
 
         EXAMPLES::
 
-            sage: SkewTableau([[None,1],[1,2]]).is_LR()
+            sage: SkewTableau([[None,1],[1,2]]).is_littlewood_richarsdon()
             True
-            sage: SkewTableau([[None,1],[2,1]]).is_LR()
+            sage: SkewTableau([[None,1],[2,1]]).is_littlewood_richarsdon()
             False
-            sage: SkewTableau([[None,1],[2,2]]).is_LR()
+            sage: SkewTableau([[None,1],[2,2]]).is_littlewood_richarsdon()
             False
 
         """
         return self.is_semistandard() and self.to_word().is_yamanouchi()
 
-    def to_KTpuzzle(self, size=None):
+    def to_knutson_tao_puzzle(self, size=None):
         r"""
         Takes a Littlewood--Richardson tableau and returns a Knutson--Tao puzzle.
 
@@ -1869,6 +1869,16 @@ class SkewTableau(ClonableList,
         INPUT:
 
         - ``size`` -- the size of the output Knutson--Tao puzzle (optional)
+
+        EXAMPLES::
+
+            sage: ps = KnutsonTaoPuzzleSolver("H")
+            sage: puzzle = ps('01010','01001')[0]
+            sage: tab = puzzle.to_littlewood_richarsdon_tableau(); tab
+            [[None, 1, 1], [2]]
+            sage: puzzle2 = tab.to_knutson_tao_puzzle()
+            sage: puzzle == puzzle2
+            True
 
         TESTS::
 
@@ -1878,24 +1888,14 @@ class SkewTableau(ClonableList,
             ....: [None]*8 + [1]*2 + [2]*3,
             ....: [None]*5 + [1]*2 + [2]*2 + [3]*2,
             ....: [None] + [1]*2 + [2]*2 + [3] + [4]*2])
-            sage: puzzle = tab.to_KTpuzzle(20)
+            sage: puzzle = tab.to_knutson_tao_puzzle(20)
             sage: puzzle[(5,10)]
             1/\0  0\/1
             sage: ''.join(puzzle.south_labels())
             '01000010001001000000'
             sage: # puzzle.plot() # not tested
-
-        EXAMPLES::
-
-            sage: ps = KnutsonTaoPuzzleSolver("H")
-            sage: puzzle = ps('01010','01001')[0]
-            sage: tab = puzzle.to_LRtableau(); tab
-            [[None, 1, 1], [2]]
-            sage: puzzle2 = tab.to_KTpuzzle()
-            sage: puzzle == puzzle2
-            True
         """
-        assert self.is_LR(), "this method only applies to Littlewood-Richardson tableaux"
+        assert self.is_littlewood_richarsdon(), "this method only applies to Littlewood-Richardson tableaux"
 
         from sage.combinat.partition import abacus_to_partition
         from sage.combinat.knutson_tao_puzzles import H_grassmannian_pieces, KnutsonTaoPuzzleSolver, PuzzleFilling
