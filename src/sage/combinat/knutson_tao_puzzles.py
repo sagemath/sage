@@ -11,7 +11,7 @@ AUTHORS:
 
 - Franco Saliola, Allen Knutson, Avinash Dalal, Anne Schilling (2013): initial version at Sage Days 45, ICERM
 - Elizabeth Beazley, Ed Richmond (2013): testing
-- Álvaro Gutiérrez (2025-02-24): added ``to_littlewood_richarsdon_tableau``
+- Álvaro Gutiérrez (2025-02-24): added ``to_littlewood_richardson_tableau``
 - Julian Rüth (2025-02-24): clean up code
 
 .. TODO::
@@ -1487,7 +1487,7 @@ class PuzzleFilling:
 
         return s
 
-    def to_littlewood_richarsdon_tableau(self):
+    def to_littlewood_richardson_tableau(self):
         r"""
         Creates a skew Littlewood--Richardson tableau from a puzzle.
 
@@ -1513,7 +1513,7 @@ class PuzzleFilling:
             sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
             sage: ps = KnutsonTaoPuzzleSolver("H")
             sage: solns = ps('010101','010101')
-            sage: [puzzle.to_littlewood_richarsdon_tableau() for puzzle in solns]
+            sage: [puzzle.to_littlewood_richardson_tableau() for puzzle in solns]
             [[[None, None, None], [1, 1], [2]],
              [[None, None, 1], [None, 1], [2]],
              [[None, None, 1], [None, 2], [1]],
@@ -1522,7 +1522,7 @@ class PuzzleFilling:
             ....: ps = KnutsonTaoPuzzleSolver('H')
             ....: solns = ps('00000010001000010100', '00000000100010010100')
             ....: puzzle = solns[168]
-            ....: tab = puzzle.to_littlewood_richarsdon_tableau(); tab.pp()
+            ....: tab = puzzle.to_littlewood_richardson_tableau(); tab.pp()
               .  .  .  .  .  .  .  .  .  .  1  1  1  1
               .  .  .  .  .  .  .  1  1  1  2  2  2
               .  .  .  .  .  1  1  2  2  3  3

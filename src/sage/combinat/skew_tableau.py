@@ -1842,7 +1842,7 @@ class SkewTableau(ClonableList,
         return all(kshapes[i + 1].contains(kshapes[i])
                    for i in range(len(shapes) - 1))
 
-    def is_littlewood_richarsdon(self):
+    def is_littlewood_richardson(self):
         r"""
         Checks whether ``self`` is a Littlewood--Richardson tableau.
 
@@ -1851,11 +1851,11 @@ class SkewTableau(ClonableList,
 
         EXAMPLES::
 
-            sage: SkewTableau([[None,1],[1,2]]).is_littlewood_richarsdon()
+            sage: SkewTableau([[None,1],[1,2]]).is_littlewood_richardson()
             True
-            sage: SkewTableau([[None,1],[2,1]]).is_littlewood_richarsdon()
+            sage: SkewTableau([[None,1],[2,1]]).is_littlewood_richardson()
             False
-            sage: SkewTableau([[None,1],[2,2]]).is_littlewood_richarsdon()
+            sage: SkewTableau([[None,1],[2,2]]).is_littlewood_richardson()
             False
 
         """
@@ -1874,7 +1874,7 @@ class SkewTableau(ClonableList,
 
             sage: ps = KnutsonTaoPuzzleSolver("H")
             sage: puzzle = ps('01010','01001')[0]
-            sage: tab = puzzle.to_littlewood_richarsdon_tableau(); tab
+            sage: tab = puzzle.to_littlewood_richardson_tableau(); tab
             [[None, 1, 1], [2]]
             sage: puzzle2 = tab.to_knutson_tao_puzzle()
             sage: puzzle == puzzle2
@@ -1895,7 +1895,7 @@ class SkewTableau(ClonableList,
             '01000010001001000000'
             sage: # puzzle.plot() # not tested
         """
-        assert self.is_littlewood_richarsdon(), "this method only applies to Littlewood-Richardson tableaux"
+        assert self.is_littlewood_richardson(), "this method only applies to Littlewood-Richardson tableaux"
 
         from sage.combinat.partition import abacus_to_partition
         from sage.combinat.knutson_tao_puzzles import H_grassmannian_pieces, KnutsonTaoPuzzleSolver, PuzzleFilling
