@@ -5824,7 +5824,7 @@ class Partition(CombinatorialElement):
         An abacus is a function `w : \mathbb{Z} \to \{0,1\}` such that
         `w(n) = 0` for `n \ll 0` and `w(n) = 1` for `n \gg 0`. It is usually
         represented with an infinite tuple, e.g. `(...,0,0,0,1,0,0,1,0,1,1,...)`.
-        Here, we use finite tuples, and assume everything to the left is a 0
+        Here we use finite tuples and assume everything to the left is a 0
         and everything to the right is a 1.
 
         A partition determines an abacus via the following interpretation:
@@ -5833,9 +5833,8 @@ class Partition(CombinatorialElement):
         step record a 0. The resulting word is the corresponding abacus.
 
         The abacus will be of length at least ``size``, by padding with
-        0s on the right if necessary. The number of 1s in
-        the abacus will be at least ``ones``, by padding with 1s on the
-        left if necessary.
+        0s on the right if necessary. The number of 1s in the abacus will
+        be at least ``ones``, by padding with 1s on the left if necessary.
 
         INPUT:
 
@@ -9769,11 +9768,15 @@ def abacus_to_partition(abacus):
         []
         sage: abacus_to_partition(['0','0','0','1','1','1'])
         [3, 3, 3]
+        sage: abacus_to_partition('--*-**')
+        Traceback (most recent call last):
+        ...
+        ValueError: an abacus should be a tuple, list or string of 0s and 1s
     """
     part = []
     n = len(abacus)
     k = 0
-    for i in range(0,n):
+    for i in range(n):
         if abacus[i] == '1' or abacus[i] == 1:
             k += 1
             part.insert(0, i+1-k)

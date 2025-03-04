@@ -1857,14 +1857,12 @@ class SkewTableau(ClonableList,
             False
             sage: SkewTableau([[None,1],[2,2]]).is_littlewood_richardson()
             False
-
         """
         return self.is_semistandard() and self.to_word().is_yamanouchi()
 
     def to_knutson_tao_puzzle(self, size=None):
         r"""
         Return a Knutson--Tao puzzle.
-
 
         INPUT:
 
@@ -1893,7 +1891,7 @@ class SkewTableau(ClonableList,
             1/\0  0\/1
             sage: ''.join(puzzle.south_labels())
             '01000010001001000000'
-            sage: # puzzle.plot() # not tested
+            sage: puzzle.plot() # not tested
         """
         assert self.is_littlewood_richardson(), "this method only applies to Littlewood-Richardson tableaux"
 
@@ -1946,26 +1944,26 @@ class SkewTableau(ClonableList,
         # (not all boundaries are in the dictionary)
 
         D = {(i,j) : {} for i in range(1,size+1) for j in range(i,size+1)}
-        for (i,j) in delta_blue_positions:
+        for i,j in delta_blue_positions:
             D[(i,j)]['north_west'] = '1'
             D[(i,j)]['north_east'] = '1'
-            (a, b) = (i, j)
+            a, b = (i, j)
             while ((a-1, b) not in nabla_blue_positions and a > 1):
                 a -= 1
                 D[(a,b)]['north_east'] = '0'
                 D[(a,b)]['north_west'] = '1'
                 D[(a,b)]['south_east'] = '1'
                 D[(a,b)]['south_west'] = '0'
-            (a, b) = (i, j)
+            a, b = (i, j)
             while ((a, b) not in nabla_blue_positions and b > a):
                 b -= 1
                 D[(a,b)]['north_west'] = '0'
                 D[(a,b)]['north_east'] = '10'
-        for (i,j) in nabla_blue_positions:
+        for i,j in nabla_blue_positions:
             if (i,j) in D.keys():
                 D[(i,j)]['south_west'] = '1'
                 D[(i,j)]['south_east'] = '1'
-            (a, b) = (i, j)
+            a, b = (i, j)
             while ((a, b-1) not in delta_blue_positions and a > 0):
                 a -= 1
                 b -= 1
@@ -1990,7 +1988,7 @@ class SkewTableau(ClonableList,
         dirs = ('north_east', 'north_west', 'south')
         triangles = sorted(all_pieces.delta_pieces(), key=lambda p : ''.join(p[dir] for dir in dirs))
 
-        for (i,j) in D.keys():
+        for i,j in D:
             candidates = []
             if i == j:
                 pieces = triangles
@@ -2000,7 +1998,7 @@ class SkewTableau(ClonableList,
                 dirs = ('north_east', 'north_west', 'south_east', 'south_west')
             # Check what pieces have the desired boundaries
             for piece in pieces:
-                if all(piece[dir] == D[(i,j)][dir] for dir in dirs if dir in D[(i,j)].keys()):
+                if all(piece[dir] == D[(i,j)][dir] for dir in dirs if dir in D[(i,j)]):
                     candidates.append(piece)
             # Place the smallest possible piece (the one with most 0s)
             puzzle._squares[(i,j)] = candidates[0]

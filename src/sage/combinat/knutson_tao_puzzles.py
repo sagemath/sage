@@ -1584,7 +1584,6 @@ class PuzzleFilling:
             Traceback (most recent call last):
             ...
             AssertionError: the coordinate needs to be a coordinate of a 1 on the north-east boundary
-
         """
         assert self._ne_labels[coord-1] == '1', "the coordinate needs to be a coordinate of a 1 on the north-east boundary"
 
