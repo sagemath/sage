@@ -152,6 +152,10 @@ class Tuples(Parent, UniqueRepresentation):
             sage: T = Tuples(range(4), 3)
             sage: T.unrank(19)
             (3, 0, 1)
+            sage: T.unrank(-1)
+            Traceback (most recent call last):
+            ...
+            IndexError: index out of range
 
         Verify that :issue:`39534` has been fixed::
 

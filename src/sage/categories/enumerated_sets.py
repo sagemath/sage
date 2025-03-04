@@ -457,10 +457,23 @@ class EnumeratedSets(CategoryWithAxiom):
                 [1]
                 sage: F[1::2]
                 [2]
+
+            TESTS:
+
+            Verify that an infinite index raises an error::
+
+                sage: F = FiniteEnumeratedSet([1,2,3,4,5])
+                sage: F[oo]
+                Traceback (most recent call last):
+                ...
+                TypeError: unable to coerce <class 'sage.rings.infinity.PlusInfinity'>
+                to an integer
             """
             from sage.rings.infinity import Infinity
+            from sage.rings.integer_ring import ZZ
             if isinstance(i, slice):
                 return self.unrank_range(i.start, i.stop, i.step)
+            i = ZZ(i)
             if i < 0:
                 i += self.cardinality()
             if i < 0:
