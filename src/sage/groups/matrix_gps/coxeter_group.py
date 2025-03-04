@@ -546,6 +546,18 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             [-1  1]  [ 0 -1]  [ 1  0]
             [ 0  1], [-1  0], [ 1 -1]
             ]
+
+        TESTS::
+
+            sage: W = CoxeterGroup(CoxeterType(['A', 2]).relabel({1: 'r', 2: 's'}))
+            sage: F = W._positive_roots_reflections()
+            sage: F.keys()
+            [(1, 0), (1, 1), (0, 1)]
+            sage: list(F)
+            [
+            [-1  1]  [ 0 -1]  [ 1  0]
+            [ 0  1], [-1  0], [ 1 -1]
+            ]
         """
         if not self.is_finite():
             raise NotImplementedError('not available for infinite groups')
