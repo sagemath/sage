@@ -5817,7 +5817,7 @@ class Partition(CombinatorialElement):
 
     def to_abacus(self, size=0, ones=0):
         r"""
-        Return an abacus from a partition.
+        Return an abacus.
 
         This is the inverse to :func:`.abacus_to_partition`.
 
@@ -5832,9 +5832,10 @@ class Partition(CombinatorialElement):
         convention. For each vertical step, record a 1; for each horizontal
         step record a 0. The resulting word is the corresponding abacus.
 
-        Additionally, if ``size`` is given, the abacus will be of length at least
-        ``size`` (by padding with 0s on the right). The number of 1s in the abacus
-        will be at least ``ones``.
+        The abacus will be of length at least ``size``, by padding with 
+        0s on the right if necessary. The number of 1s in
+        the abacus will be at least ``ones``, by padding with 1s on the
+        left if necessary.
 
         INPUT:
 
