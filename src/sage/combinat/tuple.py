@@ -96,8 +96,8 @@ class Tuples(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``i`` -- integer between `0` and `n-1` where `n` is the cardinality
-          of this set.
+        - ``i`` -- integer between `0` and `n-1`, where `n` is the cardinality
+          of this set
 
         EXAMPLES::
 
