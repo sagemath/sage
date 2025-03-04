@@ -17,21 +17,27 @@ from sage.libs.singular.decl cimport ring
 
 # To work with singular rings, you need to balance singular_ring_new with
 # singular_ring_delete or singular_ring_reference with
-# singular_ring_delete. That is, either use one of the two patterns:
+# singular_ring_delete; the latter will, when appropriate, also deallocate
+# the <int*> that is being used for the reference count.
+# That is, either use one of the two patterns:
 #
 # cdef class myclass_new():
-#     cdef ring* myring;
+#     cdef ring *myring;
+#     cdef int *ref
 #     def __cinit__():
-#         self.myring = singular_ring_new(...)
+#         self.ref = <int*>sig_malloc(sizeof(int))
+#         self.myring = singular_ring_reference(singular_ring_new(...), self.ref)
 #     def __dealloc__():
-#         singular_ring_delete(self.myring)
+#         singular_ring_delete(self.myring, self.ref)
 #
 # cdef class myclass_reference():
-#     cdef ring* refring;
-#     def __cinit__(ring* some_ring):
-#         self.refring = singular_ring_reference(some_ring)
+#     cdef ring *refring
+#     cdef int *ref
+#     def __cinit__(ring *some_ring, int *refcount_for_some_ring):
+#         self.ref = refcount_for_some_ring
+#         self.refring = singular_ring_reference(some_ring, self.ref)
 #     def __dealloc__():
-#         singular_ring_delete(self.refring)
+#         singular_ring_delete(self.refring, self.ref)
 #
 # You must not refer to Python/Cython classes in the Cython
 # destructor, the following is INVALID:
@@ -48,10 +54,8 @@ from sage.libs.singular.decl cimport ring
 cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL
 
 # reference an existing ring
-cdef ring *singular_ring_reference(ring *existing_ring) except NULL
+cdef ring *singular_ring_reference(ring *existing_ring, int *refcount) except NULL
 
-# carefully delete a ring once its refcount is zero
-cdef void singular_ring_delete(ring *doomed) noexcept
-
-# Used internally for reference counting
-cdef wrap_ring(ring* R)
+# carefully delete a ring once its refcount is zero, in that case
+# also deallocating refcount
+cdef int singular_ring_delete(ring *doomed, int *refcount) except 1

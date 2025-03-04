@@ -894,7 +894,8 @@ cdef class FreeAlgebra_letterplace_libsingular():
         from sage.libs.singular.function import singular_function
         freeAlgebra = singular_function("freeAlgebra")
         cdef RingWrap rw = freeAlgebra(commutative_ring, degbound)
-        self._lp_ring = singular_ring_reference(rw._ring)
+        self._lp_ring_ref = rw._ring_ref
+        self._lp_ring = singular_ring_reference(rw._ring, self._lp_ring_ref)
         # `_lp_ring` viewed as `MPolynomialRing_libsingular` with additional
         # letterplace attributes set (for internal use only)
         self._lp_ring_internal = new_CRing(rw, commutative_ring.base_ring())
@@ -909,4 +910,4 @@ cdef class FreeAlgebra_letterplace_libsingular():
         (since this method can be at unpredictable times due to garbage
         collection).
         """
-        singular_ring_delete(self._lp_ring)
+        singular_ring_delete(self._lp_ring, self._lp_ring_ref)

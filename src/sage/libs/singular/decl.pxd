@@ -212,6 +212,7 @@ cdef extern from "singular/Singular/libsingular.h":
 
         n_Procs_s* cf  # coefficient field/ring
         int ref
+        int sage_ref
 
         # return total degree of p
 

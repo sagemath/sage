@@ -231,7 +231,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
 
     return 0
 
-cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
+cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) except -2:
     """
     Compare two Singular elements ``p`` and ``q`` in ``r``.
 
@@ -285,6 +285,8 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
     """
     cdef number *h
     cdef int tmp
+    assert r, "A valid ring must be provided"
+    assert r.ref >= 0, "This ring has %d references and thus has previously been deleted"%(r.ref)
 
     if r != currRing:
         rChangeCurrRing(r)

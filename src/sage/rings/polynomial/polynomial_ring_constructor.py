@@ -627,6 +627,29 @@ def PolynomialRing(base_ring, *args, **kwds):
 
         sage: PolynomialRing(InfinityRing, 2, 'x')
         Multivariate Polynomial Ring in x0, x1 over The Infinity Ring
+
+    By :trac:`13447`, polynomial rings can be garbage collected::
+
+        sage: from sage.libs.singular.ring import total_ring_reference_count
+        sage: n = total_ring_reference_count()
+        sage: P.<x,y,z> = GF(19)[]
+        sage: del P,x,y,z
+        sage: import gc
+        sage: _ = gc.collect()
+        sage: n == total_ring_reference_count()
+        True
+
+    The following still leaks, likely because of strong refs in the coercion system::
+
+        sage: from sage.libs.singular.ring import total_ring_reference_count
+        sage: n = total_ring_reference_count()
+        sage: P.<x,y,z> = GF(19)[]
+        sage: p = 2*x^3+x*y*z-z^2*x^2
+        sage: del P,x,y,z,p
+        sage: _ = gc.collect()
+        sage: n == total_ring_reference_count()
+        False
+
     """
     from sage.rings.semirings.tropical_semiring import TropicalSemiring
     if base_ring not in Rings() and not isinstance(base_ring, TropicalSemiring):

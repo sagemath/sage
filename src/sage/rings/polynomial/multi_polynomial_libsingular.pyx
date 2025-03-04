@@ -173,7 +173,7 @@ AUTHORS:
 from warnings import warn
 
 from cpython.object cimport Py_NE
-from cysignals.memory cimport sig_malloc, sig_free
+from cysignals.memory cimport sig_malloc, sig_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.cpython.string cimport char_to_str, str_to_bytes
@@ -260,7 +260,6 @@ import sage.rings.polynomial.polynomial_singular_interface
 cimport cypari2.gen
 from sage.rings.polynomial import polynomial_element
 
-permstore=[]
 cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
     def __cinit__(self):
@@ -381,15 +380,15 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             NotImplementedError: polynomials in -1 variables are not supported in Singular
         """
         self._ngens = n
-        self._ring = singular_ring_new(base_ring, n, names, order)
+        if self._ring_ref is NULL:
+            self._ring_ref = <int*>sig_calloc(1, sizeof(int))
+        self._ring = singular_ring_reference( singular_ring_new(base_ring, n, names, order), self._ring_ref )
         self._zero_element = new_MP(self, NULL)
         cdef MPolynomial_libsingular one = new_MP(self, p_ISet(1, self._ring))
         self._one_element = one
         self._one_element_poly = one._poly
         MPolynomialRing_base.__init__(self, base_ring, n, names, order)
         self._has_singular = True
-        #permanently store a reference to this ring until deallocation works reliably
-        permstore.append(self)
 
     def __dealloc__(self):
         r"""
@@ -418,8 +417,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: del R3
             sage: _ = gc.collect()
         """
-        if self._ring != NULL:  # the constructor did not raise an exception
-            singular_ring_delete(self._ring)
+        singular_ring_delete(self._ring, self._ring_ref)
+        self._ring = NULL
 
     def __copy__(self):
         """
@@ -432,23 +431,30 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: # needs sage.rings.function_field
             sage: import gc
             sage: from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
-            sage: from sage.libs.singular.ring import ring_refcount_dict
+            sage: from sage.libs.singular.ring import total_ring_reference_count
             sage: gc.collect()  # random output
-            sage: n = len(ring_refcount_dict)
+            sage: n = total_ring_reference_count()
             sage: R = MPolynomialRing_libsingular(GF(547), 2, ('x', 'y'),
             ....:                                 TermOrder('degrevlex', 2))
-            sage: len(ring_refcount_dict) == n + 1
+
+        We have references to the underlying libsingular ring from `R`, from its two
+        generators and from the zero and one elements of `R`. Therefore::
+
+            sage: # needs sage.rings.function_field
+            sage: total_ring_reference_count() == n + 4
             True
+
+        By :trac:`13447`, multivariate polynomial rings are no longer strongly
+        cached. Therefore we have::
+
+            sage: # needs sage.rings.function_field
             sage: Q = copy(R)   # indirect doctest
             sage: p = R.gen(0)^2 + R.gen(1)^2
             sage: q = copy(p)
-            sage: del R
-            sage: del Q
-            sage: del p
-            sage: del q
+            sage: del R, Q, p, q
             sage: gc.collect()  # random output
-            sage: len(ring_refcount_dict) == n
-            False
+            sage: total_ring_reference_count() == n
+            True
         """
         return self
 
@@ -1909,18 +1915,27 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             0
         """
         self._poly = NULL
+        # During cyclic garbage collection, it can happen that the parent
+        # is deallocated before the element. But in order to deallocate the element,
+        # we need a pointer to a valid libsingular ring. Therefore, the element
+        # should not just store a pointer to the libsingular ring, but we increase
+        # the ring's reference count.
+        # _parent_ring and _parent_ring_ref are the same pointers as _parent._ring
+        # and _parent_ring_ref; this is needed since during deallocation of the
+        # element the parent may already be gone.
         self._parent = parent
-        self._parent_ring = singular_ring_reference(parent._ring)
+        self._parent_ring_ref = (<MPolynomialRing_libsingular>parent)._ring_ref
+        self._parent_ring = singular_ring_reference(parent._ring, self._parent_ring_ref)
 
     def __dealloc__(self):
         # WARNING: the Cython class self._parent is now no longer accessible!
         if self._poly==NULL:
             # e.g. MPolynomialRing_libsingular._zero_element
-            singular_ring_delete(self._parent_ring)
+            singular_ring_delete(self._parent_ring, self._parent_ring_ref)
             return
         assert self._parent_ring != NULL # the constructor has no way to raise an exception
         p_Delete(&self._poly, self._parent_ring)
-        singular_ring_delete(self._parent_ring)
+        singular_ring_delete(self._parent_ring, self._parent_ring_ref)
 
     def __copy__(self):
         """
@@ -6244,7 +6259,16 @@ cdef inline MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, p
     """
     cdef MPolynomial_libsingular p = MPolynomial_libsingular.__new__(MPolynomial_libsingular)
     p._parent = parent
-    p._parent_ring = singular_ring_reference(parent._ring)
+    # During cyclic garbage collection, it can happen that the parent
+    # is deallocated before the element. But in order to deallocate the element,
+    # we need a pointer to a valid libsingular ring. Therefore, the element
+    # should not just store a pointer to the libsingular ring, but we increase
+    # the ring's reference count.
+    # _parent_ring and _parent_ring_ref are the same pointers as _parent._ring
+    # and _parent_ring_ref; this is needed since during deallocation of the
+    # element the parent may already be gone.
+    p._parent_ring_ref = parent._ring_ref
+    p._parent_ring = singular_ring_reference(parent._ring, p._parent_ring_ref)
     p._poly = juice
     p_Normalize(p._poly, p._parent_ring)
     return p
