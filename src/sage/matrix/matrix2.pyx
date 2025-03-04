@@ -13009,7 +13009,8 @@ cdef class Matrix(Matrix1):
 
         F = self._base_ring
         n = self.nrows()
-
+        if self.fetch("rank") not in [n, None]:
+            raise ValueError("matrix is not full rank")
         if not (F.is_finite() and F.order().is_square()):
             raise ValueError("the base ring must be a finite field of square order")
 
