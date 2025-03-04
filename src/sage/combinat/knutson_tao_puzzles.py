@@ -1489,7 +1489,7 @@ class PuzzleFilling:
 
     def to_littlewood_richardson_tableau(self):
         r"""
-        Creates a skew Littlewood--Richardson tableau from a puzzle.
+        Create a skew Littlewood--Richardson tableau from a puzzle.
 
         We follow the bijection given in [Purbhoo07]_. A similar but different
         bijection is given in [Vakil03]_.

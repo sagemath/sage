@@ -1844,7 +1844,7 @@ class SkewTableau(ClonableList,
 
     def is_littlewood_richardson(self):
         r"""
-        Checks whether ``self`` is a Littlewood--Richardson tableau.
+        Check whether ``self`` is a Littlewood--Richardson tableau.
 
         A Littlewood--Richardson tableau is a semistandard skew tableau whose
         (row reading) word is Yamanouchi.
@@ -1863,7 +1863,7 @@ class SkewTableau(ClonableList,
 
     def to_knutson_tao_puzzle(self, size=None):
         r"""
-        Takes a Littlewood--Richardson tableau and returns a Knutson--Tao puzzle.
+        Take a Littlewood--Richardson tableau and return a Knutson--Tao puzzle.
 
 
         INPUT:
