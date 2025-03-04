@@ -528,7 +528,7 @@ class WittVector_phantom(WittVector):
         return self._phantom
 
     def __getitem__(self, i):
-        if i < 0 or i >= prec:
+        if i < 0 or i >= self._prec:
             raise IndexError
         self._compute_vector(i+1)
         return self._vec[i]
