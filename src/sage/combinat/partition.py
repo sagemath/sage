@@ -5832,7 +5832,7 @@ class Partition(CombinatorialElement):
         convention. For each vertical step, record a 1; for each horizontal
         step record a 0. The resulting word is the corresponding abacus.
 
-        The abacus will be of length at least ``size``, by padding with 
+        The abacus will be of length at least ``size``, by padding with
         0s on the right if necessary. The number of 1s in
         the abacus will be at least ``ones``, by padding with 1s on the
         left if necessary.
