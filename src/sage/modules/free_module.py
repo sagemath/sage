@@ -4966,27 +4966,47 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         """
         return self.submodule_with_basis(gens, check=check, already_echelonized=already_echelonized)
 
-    def complement(self):
+    def complement(self, *, orthogonal=None):
         r"""
-        Return the complement of ``self`` in the
+        Return the complementary subspace of ``self`` in the
+        :meth:`~sage.modules.free_module.FreeModule_ambient_field.ambient_vector_space`.
+
+        EXAMPLES::
+        """
+        if orthogonal is None:
+            from sage.misc.superseded import deprecation
+            deprecation(31487, "The functionality of the complement() function"
+                               + " of a vector space is being updated. The original"
+                               + " functionality is being moved to the"
+                               + " orthogonal_complement() function. This function"
+                               + " will instead return a complementary subspace")
+            return orthogonal_complement(self)
+        if orthogonal is True:
+            return orthogonal_complement(self)
+        if orthogonal is False:
+            return 1
+
+    def orthogonal_complement(self):
+        r"""
+        Return the orthogonal complement of ``self`` in the
         :meth:`~sage.modules.free_module.FreeModule_ambient_field.ambient_vector_space`.
 
         EXAMPLES::
 
             sage: V = QQ^3
-            sage: V.complement()
+            sage: V.orthogonal_complement()
             Vector space of degree 3 and dimension 0 over Rational Field
             Basis matrix:
             []
-            sage: V == V.complement().complement()
+            sage: V == V.orthogonal_complement().orthogonal_complement()
             True
             sage: W = V.span([[1, 0, 1]])
-            sage: X = W.complement(); X
+            sage: X = W.orthogonal_complement(); X
             Vector space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
             [ 1  0 -1]
             [ 0  1  0]
-            sage: X.complement() == W
+            sage: X.orthogonal_complement() == W
             True
             sage: X + W == V
             True
@@ -4998,16 +5018,16 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             sage: V = QQ^3
             sage: W = V.subspace_with_basis([[1,0,1],[-1,1,0]])
             sage: X = W.subspace_with_basis([[1,0,1]])
-            sage: X.complement()
+            sage: X.orthogonal_complement()
             Vector space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
             [ 1  0 -1]
             [ 0  1  0]
 
-        All these complements are only done with respect to the inner
+        All these orthogonal complements are only done with respect to the inner
         product in the usual basis.  Over finite fields, this means
-        we can get complements which are only isomorphic to a vector
-        space decomposition complement. ::
+        we can get orthogonal complements which are only isomorphic to a vector
+        space decomposition orthogonal complements. ::
 
             sage: F2 = GF(2, 'x')
             sage: V = F2^6
@@ -5015,7 +5035,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             Vector space of degree 6 and dimension 1 over Finite Field of size 2
             Basis matrix:
             [1 1 0 0 0 0]
-            sage: W.complement()
+            sage: W.orthogonal_complement()
             Vector space of degree 6 and dimension 5 over Finite Field of size 2
             Basis matrix:
             [1 1 0 0 0 0]
@@ -5023,7 +5043,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             [0 0 0 1 0 0]
             [0 0 0 0 1 0]
             [0 0 0 0 0 1]
-            sage: W.intersection(W.complement())
+            sage: W.intersection(W.orthogonal_complement())
             Vector space of degree 6 and dimension 1 over Finite Field of size 2
             Basis matrix:
             [1 1 0 0 0 0]
