@@ -1863,7 +1863,7 @@ class SkewTableau(ClonableList,
 
     def to_knutson_tao_puzzle(self, size=None):
         r"""
-        Take a Littlewood--Richardson tableau and return a Knutson--Tao puzzle.
+        Return a Knutson--Tao puzzle.
 
 
         INPUT:
