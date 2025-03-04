@@ -464,7 +464,7 @@ class EnumeratedSets(CategoryWithAxiom):
             if i < 0:
                 i += self.cardinality()
             if i is Infinity:
-                return self.list()[i]
+                raise ValueError("infinite list")
             return self.unrank(i)
 
         def __len__(self):
