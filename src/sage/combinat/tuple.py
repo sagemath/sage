@@ -107,7 +107,7 @@ class Tuples(Parent, UniqueRepresentation):
 
         TESTS:
 
-        Verify that `unrank` is giving the correct result. ::
+        Verify that :meth:`unrank` is giving the correct result::
 
             sage: T = Tuples(range(4), 5)
             sage: all(T[i] == x for i,x in enumerate(T))
