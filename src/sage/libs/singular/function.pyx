@@ -813,7 +813,7 @@ cdef class Converter(SageObject):
         """
         Append the ring ``r`` to the list.
         """
-        cdef ring *_r =  access_singular_ring(r)
+        cdef ring *_r = access_singular_ring(r)
         return self._append(<void *>_r, RING_CMD)
 
     cdef leftv *append_matrix(self, mat) except NULL:
@@ -1454,6 +1454,7 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
     global currRingHdl
     global currentVoice
     global myynest
+
     cdef ring *si_ring
     if isinstance(R, MPolynomialRing_libsingular):
         si_ring = (<MPolynomialRing_libsingular>R)._ring

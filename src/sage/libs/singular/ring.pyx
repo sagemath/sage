@@ -584,6 +584,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
 cdef int ring_reference_count = 0
 
+
 def total_ring_reference_count():
     """
     Return the total number of all references to libsingular rings.
@@ -604,6 +605,7 @@ def total_ring_reference_count():
 
     """
     return ring_reference_count
+
 
 cdef ring *singular_ring_reference(ring *existing_ring, int *refcount) except NULL:
     """
@@ -643,7 +645,7 @@ cdef ring *singular_ring_reference(ring *existing_ring, int *refcount) except NU
         sage: total_ring_reference_count() - n
         4
 
-    By :trac:`13447`, there is no longer a strong cache for multivariate
+    By :issue:`39628`, there is no longer a strong cache for multivariate
     polynomial rings. Thus, we obtain::
 
         sage: del P

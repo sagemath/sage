@@ -628,7 +628,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: PolynomialRing(InfinityRing, 2, 'x')
         Multivariate Polynomial Ring in x0, x1 over The Infinity Ring
 
-    By :trac:`13447`, polynomial rings can be garbage collected::
+    By :issue:`39628`, polynomial rings can be garbage collected::
 
         sage: from sage.libs.singular.ring import total_ring_reference_count
         sage: n = total_ring_reference_count()

@@ -444,7 +444,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: total_ring_reference_count() == n + 4
             True
 
-        By :trac:`13447`, multivariate polynomial rings are no longer strongly
+        By :issue:`39628`, multivariate polynomial rings are no longer strongly
         cached. Therefore we have::
 
             sage: # needs sage.rings.function_field
