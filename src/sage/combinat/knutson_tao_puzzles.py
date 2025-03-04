@@ -11,7 +11,7 @@ AUTHORS:
 
 - Franco Saliola, Allen Knutson, Avinash Dalal, Anne Schilling (2013): initial version at Sage Days 45, ICERM
 - Elizabeth Beazley, Ed Richmond (2013): testing
-- Álvaro Gutiérrez (2025-02-24): added ``.to_LRtableaux()``
+- Álvaro Gutiérrez (2025-02-24): added ``to_littlewood_richarsdon_tableau``
 - Julian Rüth (2025-02-24): clean up code
 
 .. TODO::
@@ -1487,7 +1487,7 @@ class PuzzleFilling:
 
         return s
 
-    def to_LRtableau(self):
+    def to_littlewood_richarsdon_tableau(self):
         r"""
         Creates a skew Littlewood--Richardson tableau from a puzzle.
 
@@ -1506,14 +1506,14 @@ class PuzzleFilling:
 
         OUTPUT:
 
-        - a LR skew tableau
+        - a Littlewood--Richardson skew tableau
 
         EXAMPLES::
 
             sage: from sage.combinat.knutson_tao_puzzles import KnutsonTaoPuzzleSolver
             sage: ps = KnutsonTaoPuzzleSolver("H")
             sage: solns = ps('010101','010101')
-            sage: [puzzle.to_LRtableau() for puzzle in solns]
+            sage: [puzzle.to_littlewood_richarsdon_tableau() for puzzle in solns]
             [[[None, None, None], [1, 1], [2]],
              [[None, None, 1], [None, 1], [2]],
              [[None, None, 1], [None, 2], [1]],
@@ -1522,7 +1522,7 @@ class PuzzleFilling:
             ....: ps = KnutsonTaoPuzzleSolver('H')
             ....: solns = ps('00000010001000010100', '00000000100010010100')
             ....: puzzle = solns[168]
-            ....: tab = puzzle.to_LRtableau(); tab.pp()
+            ....: tab = puzzle.to_littlewood_richarsdon_tableau(); tab.pp()
               .  .  .  .  .  .  .  .  .  .  1  1  1  1
               .  .  .  .  .  .  .  1  1  1  2  2  2
               .  .  .  .  .  1  1  2  2  3  3
@@ -1547,7 +1547,7 @@ class PuzzleFilling:
 
     def _ne_to_south_path(self, coord):
         r"""
-        Returns the content row of the LR skew tableau corresponding to ``coord``.
+        Return the content row of the Littlewood--Richardson skew tableau corresponding to ``coord``.
 
         This method traces out a path from ``coord`` to its "mirror" coordinate.
         If ``coord`` specifies the `i`-th 1 from the top on the north-east border
@@ -1569,7 +1569,7 @@ class PuzzleFilling:
 
         OUTPUT:
 
-        - a list of numbers giving the content of one row in the LR tableau
+        - a list of numbers giving the content of one row in the Littlewood--Richardson tableau
 
         TESTS::
 
