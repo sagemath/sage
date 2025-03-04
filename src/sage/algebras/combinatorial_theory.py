@@ -1008,7 +1008,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         for X in iterator:
             Xr = _round_matrix(X, method=0, denom=denom)
             Xnp = np.array(Xr)
-            eigenvalues, eigenvectors = LA.eig(Xnp)
+            eigenvalues, eigenvectors = LA.eigh(Xnp)
             emin = min(eigenvalues)
             if emin<0:
                 eminr = ceil(-emin*denom)/denom
