@@ -164,7 +164,7 @@ class Tuples(Parent, UniqueRepresentation):
             raise IndexError("i (={}) must be a nonnegative integer".format(i))
         ts = len(self.S)
         elt = []
-        for _ in range(0, self.k):
+        for _ in range(self.k):
             elt.append(self.S[r % ts])
             r //= ts
         if r > 0:
