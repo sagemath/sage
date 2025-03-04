@@ -113,13 +113,13 @@ class Tuples(Parent, UniqueRepresentation):
             sage: all(T[i] == x for i,x in enumerate(T))
             True
 
-        Verify that `unrank` is fast for large inputs. ::
+        Verify that :meth:`unrank` is fast for large inputs::
 
             sage: Tuples(range(3), 30)[10^12]
             (1, 0, 0, 1, 1, 1, 2, 0, 1, 2, 0, 1, 1, 0, 2, 1, 1, 0, 1, 2, 1, 2,
             1, 1, 0, 1, 0, 0, 0, 0)
 
-        Verify that `unrank` normalizes ``i``. ::
+        Verify that :meth:`unrank` normalizes ``i``::
 
             sage: T = Tuples(range(3), 2)
             sage: T[QQ(4/2)]
@@ -129,7 +129,7 @@ class Tuples(Parent, UniqueRepresentation):
             ...
             TypeError: no conversion of this rational to integer
 
-        Verify that `unrank` throws an error when ``i`` is out of bounds. ::
+        Verify that :meth:`unrank` throws an error when ``i`` is out of bounds::
 
             sage: T = Tuples(range(3), 3)
             sage: T[27]
@@ -141,19 +141,19 @@ class Tuples(Parent, UniqueRepresentation):
             ...
             IndexError: index out of range
 
-        Verify that `unrank` works correctly for Tuples where `k = 1`. ::
+        Verify that :meth:`unrank` works correctly for Tuples where `k = 1`::
 
             sage: T = Tuples(range(6), 1)
             sage: T[5]
             (5,)
 
-        Verify that `unrank` works when called directly. ::
+        Verify that :meth:`unrank` works when called directly::
 
             sage: T = Tuples(range(4), 3)
             sage: T.unrank(19)
             (3, 0, 1)
 
-        Verify that :issue:`39534` has been fixed. ::
+        Verify that :issue:`39534` has been fixed::
 
             sage: T = Tuples(range(3), 30).random_element()
             sage: all(v in range(3) for v in T)
