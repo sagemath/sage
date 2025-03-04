@@ -933,7 +933,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         self._flats_generator = dict()
         names_groundset = ['A{}'.format(''.join(str(x))) for x in E]
         names_flats = ['B{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
-        poly_ring = ChowRingIdeal._construct_ambient_poly_ring(R, names_flats + names_groundset, E + self._flats)
+        poly_ring = ChowRingIdeal._construct_ambient_poly_ring(R, names_flats + names_groundset, self._flats + E)
         for i, x in enumerate(E):
             self._flats_generator[x] = poly_ring.gens()[i]
         for i, F in enumerate(self._flats):
