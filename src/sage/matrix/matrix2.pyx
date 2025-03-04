@@ -13101,6 +13101,7 @@ cdef class Matrix(Matrix1):
                 r = n - 1
 
         if r < n:
+            self.cache('rank', r)
             raise ValueError("matrix is not full rank")
 
         # Normalize diagonal elements to 1
