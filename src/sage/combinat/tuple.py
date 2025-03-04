@@ -155,9 +155,11 @@ class Tuples(Parent, UniqueRepresentation):
 
         Verify that :issue:`39534` has been fixed. ::
 
-            sage: Tuples(range(3), 30).random_element() #random
-            (0, 2, 2, 1, 2, 1, 0, 2, 0, 2, 1, 0, 0, 2, 1, 1, 2, 0, 2, 1, 1, 0,
-            2, 2, 0, 0, 0, 2, 1, 1)
+            sage: T = Tuples(range(3), 30).random_element()
+            sage: all(v in range(3) for v in T)
+            True
+            sage: len(T)
+            30
         """
         r = ZZ(i)
         if r < 0:
