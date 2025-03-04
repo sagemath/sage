@@ -4329,9 +4329,14 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         return self._hasse_diagram.coxeter_transformation()
 
-    def coxeter_polynomial(self):
+    def coxeter_polynomial(self, algorithm="sage"):
         """
         Return the Coxeter polynomial of the poset.
+
+        INPUT:
+
+        - ``algorithm`` -- optional (default: ``"sage"``) ;
+          the unique other option is ``"magma"``
 
         OUTPUT: a polynomial in one variable
 
@@ -4349,11 +4354,22 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: p.coxeter_polynomial()                                                # needs sage.groups sage.libs.flint
             x^6 + x^5 - x^3 + x + 1
 
+        TESTS::
+
+            sage: P = posets.PentagonPoset()
+            sage: P.coxeter_polynomial("magma")  # optional - magma
+            x^5 + x^4 + x + 1
+
         .. SEEALSO::
 
             :meth:`coxeter_transformation`, :meth:`coxeter_smith_form`
         """
-        return self._hasse_diagram.coxeter_transformation().charpoly()
+        cox_matrix = self._hasse_diagram.coxeter_transformation()
+        if algorithm == "magma":
+            from sage.interfaces.magma import magma
+            dense_matrix = magma(cox_matrix).Matrix()
+            return dense_matrix.CharacteristicPolynomial().sage()
+        return cox_matrix.charpoly()
 
     def coxeter_smith_form(self, algorithm='singular'):
         """
