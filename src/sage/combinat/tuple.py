@@ -96,8 +96,8 @@ class Tuples(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``i`` -- integer between `0` and `n-1` where `n` is the cardinality
-          of this set.
+        - ``i`` -- integer between `0` and `n-1`, where `n` is the cardinality
+          of this set
 
         EXAMPLES::
 
@@ -155,16 +155,18 @@ class Tuples(Parent, UniqueRepresentation):
 
         Verify that :issue:`39534` has been fixed. ::
 
-            sage: Tuples(range(3), 30).random_element() #random
-            (0, 2, 2, 1, 2, 1, 0, 2, 0, 2, 1, 0, 0, 2, 1, 1, 2, 0, 2, 1, 1, 0,
-            2, 2, 0, 0, 0, 2, 1, 1)
+            sage: T = Tuples(range(3), 30).random_element()
+            sage: all(v in range(3) for v in T)
+            True
+            sage: len(T)
+            30
         """
         r = ZZ(i)
         if r < 0:
             raise IndexError("index out of range")
         ts = len(self.S)
         elt = []
-        for _ in range(0, self.k):
+        for _ in range(self.k):
             elt.append(self.S[r % ts])
             r //= ts
         if r > 0:

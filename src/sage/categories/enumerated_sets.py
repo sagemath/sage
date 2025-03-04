@@ -466,7 +466,7 @@ class EnumeratedSets(CategoryWithAxiom):
             if i < 0:
                 raise IndexError("index out of range")
             if i is Infinity:
-                return self.list()[i]
+                raise ValueError("infinite list")
             return self.unrank(i)
 
         def __len__(self):
