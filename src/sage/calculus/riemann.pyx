@@ -201,7 +201,7 @@ cdef class Riemann_Map:
     cdef exterior
 
     def __init__(self, fs, fprimes, COMPLEX_T a, int N=500, int ncorners=4,
-                 opp=False, exterior = False):
+                 opp=False, exterior=False):
         """
         Initialize the ``Riemann_Map`` class. See the class :class:`Riemann_Map`
         for full documentation on the input of this initialization method.
@@ -1077,7 +1077,7 @@ cdef class Riemann_Map:
                                                                 plot_points)
         g = Graphics()
         g.add_primitive(ComplexPlot(complex_to_rgb(z_values), (xmin, xmax),
-                                    (ymin, ymax),options))
+                                    (ymin, ymax), options))
         return g
 
 cdef comp_pt(clist, loop=True):
