@@ -346,6 +346,8 @@ ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!
 #:make:
 ARG TARGETS_PRE="all-sage-local"
 $RUN$CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_PRE}$ENDRUN$THEN_SAVE_STATUS
+# Strip executables in local to reduce the image size
+RUN if command -v strip >/dev/null; then LC_ALL=C find local -type f -exec sh -c 'test -x "{}" && strip "{}"' ';' >/dev/null 2>&1; fi || true
 
 FROM with-targets-pre AS with-targets
 ARG NUMPROC=8
@@ -356,8 +358,6 @@ ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!
 RUN cd /sage && touch configure build/make/Makefile
 ARG TARGETS="build"
 $RUN$CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS}$ENDRUN$THEN_SAVE_STATUS
-# Strip executables in local, src, pkgs to reduce image size
-RUN LC_ALL=C find local src pkgs -type f -exec strip '{}' ';' 2>&1 | grep -v "file format not recognized" || true
 
 FROM with-targets AS with-targets-optional
 ARG NUMPROC=8
