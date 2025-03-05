@@ -375,6 +375,7 @@ class Magmas(Category_singleton):
             return [MagmaticAlgebras(self.base_ring())]
 
         class ParentMethods:
+
             def is_field(self, proof=True):
                 r"""
                 Return ``True`` if ``self`` is a field.
@@ -396,7 +397,9 @@ class Magmas(Category_singleton):
                     ...
                     NotImplementedError
                 """
-                raise NotImplementedError
+                if not self.base_ring().is_field(proof):
+                    return False
+                return (self.basis().keys().cardinality() == 1)
 
     class Commutative(CategoryWithAxiom):
 
