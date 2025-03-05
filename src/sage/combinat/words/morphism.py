@@ -1362,11 +1362,8 @@ class WordMorphism(SageObject):
         """
         if not self.is_letter_permutation():
             return False
-        for letter in self.domain().alphabet():
-            img = self.image(letter)
-            if img[0] != letter:
-                return False
-        return True
+        return all(self.image(letter)[0] == letter
+                   for letter in self.domain().alphabet())
 
     def is_letter_permutation(self):
         r"""

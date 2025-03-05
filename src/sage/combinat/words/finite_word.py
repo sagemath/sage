@@ -3128,11 +3128,11 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``morphismsG`` -- list of all morphisms of `G`.
-        - ``inverseMorphismsG`` -- list of inverses of all morphisms of `G`.
-        - ``palindromesTrees`` -- list of tree graphs, which contain data
-            about palindromic factors of ``self``. Contains one tree graph for
-            every antimorphism of `G`.
+        - ``morphismsG`` -- list of all morphisms of `G`
+        - ``inverseMorphismsG`` -- list of inverses of all morphisms of `G`
+        - ``palindromesTrees`` -- list of tree graphs that contain data
+          about palindromic factors of ``self``; contains one tree graph for
+          every antimorphism of `G`
 
         OUTPUT:
 
@@ -3860,7 +3860,7 @@ class FiniteWord_class(Word_class):
 
     def _find_lps_for_all_prefixes_from_maximal_palindrome_lengths(self, maximalPalindromeLengths):
         r"""
-        This is private method. It returns lengths of lps for all prefixes of ``self``.
+        Return the lengths of lps for all prefixes of ``self``.
 
         INPUT:
 
@@ -3882,7 +3882,7 @@ class FiniteWord_class(Word_class):
             [0, 1, 2, 3, 4]
         """
         result = [0]
-        if len(maximalPalindromeLengths) == 0:
+        if not maximalPalindromeLengths:
             return result
         from collections import deque
         currentIndexesWithRemoveIndexes = deque()
@@ -3891,7 +3891,7 @@ class FiniteWord_class(Word_class):
         i = 1
         currentPos = 0
         while i + 1 < len(maximalPalindromeLengths):
-            if len(currentIndexesWithRemoveIndexes) > 0:
+            if currentIndexesWithRemoveIndexes:
                 resIndex = currentIndexesWithRemoveIndexes[0][0]
                 result.append(i - resIndex)
             else:
@@ -3900,7 +3900,7 @@ class FiniteWord_class(Word_class):
             currentIndexesWithRemoveIndexes.append([i + 1, currentPos + 1 + ((maximalPalindromeLengths[i + 1] + 1) // 2)])
             i += 2
             currentPos += 1
-            while (len(currentIndexesWithRemoveIndexes) > 0
+            while (currentIndexesWithRemoveIndexes
                    and currentIndexesWithRemoveIndexes[0][1] <= currentPos):
                 currentIndexesWithRemoveIndexes.popleft()
         if len(currentIndexesWithRemoveIndexes) > 0:
@@ -3912,16 +3912,16 @@ class FiniteWord_class(Word_class):
 
     def _find_lacunas_from_palindromes_tree(self, palindromesTree):
         r"""
-        This is private method. Returns all lacunas of ``self``using
-        palindromes tree from ``_get_palindromic_factors_data`` method.
+        Return all lacunas of ``self``using palindromes tree from
+        :meth:`_get_palindromic_factors_data` method.
 
         INPUT:
 
-        - palindromes tree -- data structure returned by ``_get_palindromic_factors_data`` method.
+        - ``palindromesTree`` -- data structure returned by :meth:`_get_palindromic_factors_data`
 
         OUTPUT:
 
-        a list -- list of all the lacunas of ``self`` in ascending order.
+        list of all the lacunas of ``self`` in ascending order
 
         EXAMPLES::
 
@@ -3945,32 +3945,26 @@ class FiniteWord_class(Word_class):
             if minimalCenterIndex is not None and not endsWithSpecialLetter:
                 rightLetterIndex = (minimalCenterIndex + actualPalindromeLength - 1) // 2
                 lacunas[rightLetterIndex] = False
-        result = []
-        i = 0
-        while i < len(lacunas):
-            if lacunas[i]:
-                result.append(i)
-            i += 1
-        return result
+        return [i for i,lac in enumerate(lacunas) if lac]
 
     @cached_method
     def _get_palindromic_factors_data(self, f=None):
         r"""
-        This is private method. It returns some data which provides information
-        about palindromic factors or ``f``-palindromic factors of ``self``.
+        Return some data that provides information about palindromic
+        factors or ``f``-palindromic factors of ``self``.
 
         INPUT:
 
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``).
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``; it must
+          be callable on letters as well as words (e.g. ``WordMorphism``)
 
         OUTPUT:
 
-        - ``list`` -- list of lengths of the maximal palindromes (or ``f``-palindrome)
-            for each symmetry axis (letter or space between two letters).
-        - ``tree`` -- tree graph, which contains data about palindromic
-            (or ``f``-palindromic) factors as described in [Rom2024]_.
-            Represented as Python list, the first node is the root.
+        - list of lengths of the maximal palindromes (or ``f``-palindrome)
+          for each symmetry axis (letter or space between two letters)
+        - tree graph that contains data about palindromic
+          (or ``f``-palindromic) factors as described in [Rom2024]_;
+          represented as Python list, the first node is the root
 
         ALGORITHM:
 
@@ -4048,25 +4042,25 @@ class FiniteWord_class(Word_class):
 
     def _build_palindromes_tree(self, diffForest, wordWithSpecialLetter, specialLetter):
         r"""
-        This is private method. It uses data extracted from apply of
-        Manacher's algorithm on ``wordWithSpecialLetter`` to build
+        This uses data extracted from applying Manacher's algorithm
+        on ``wordWithSpecialLetter`` to build
         tree graph which contains data about palindromic factors
         of ``wordWithSpecialLetter``.
 
         INPUT:
 
-        - ``diffForest`` -- forest graph, which contains data extracted
-            from apply of Manacher's algorithm on ``wordWithSpecialLetter``.
-        - ``wordWithSpecialLetter`` -- a word, such that
-            every second letter of it is the same letter and all other letters
-            are different from this letter.
+        - ``diffForest`` -- forest graph that contains data extracted
+          from apply of Manacher's algorithm on ``wordWithSpecialLetter``
+        - ``wordWithSpecialLetter`` -- word such that
+          every second letter of it is the same letter and all other letters
+          are different from this letter
         - ``specialLetter`` -- a letter, which is the every second letter
-            of ``wordWithSpecialLetter``.
+          of ``wordWithSpecialLetter``
 
         OUTPUT:
 
-        a tree -- tree graph, which contains data about
-        palindromic factors of ``wordWithSpecialLetter``.
+        a tree graph that contains data about
+        palindromic factors of ``wordWithSpecialLetter``
 
         EXAMPLES::
 
@@ -4172,27 +4166,27 @@ class FiniteWord_class(Word_class):
     def _get_accumulated_data_about_manachers_algorithm_in_forest_format(
             self, maximalPalindromeRadiuses, initialPalindromeRadiuses, previousPositions):
         r"""
-        This is private method. It takes data about already applied
-        Manacher's algorithm and accumulates it in format of forest graph.
+        This takes data about already applied Manacher's algorithm
+        and accumulates it in format of forest graph.
 
         INPUT:
 
         - ``maximalPalindromeRadiuses`` -- list of radiuses of the maximal
-            palindromesfor each symmetry axis (letter or space between
-            two letters).
+          palindromesfor each symmetry axis (letter or space between
+          two letters)
         - ``initialPalindromeRadiuses`` -- for each symmetry axis (letter
-            or space between two letters) a radius of the palindrome, which
-            was initial palindrome from which Manacher's algorithm
-            started to increment radius in this symmetry axis.
+          or space between two letters) a radius of the palindrome, which
+          was initial palindrome from which Manacher's algorithm
+          started to increment radius in this symmetry axis
         - ``previousPositions`` -- for each symmetry axis (letter or space
-            between two letters) an index of ``wordWithSpecialLetter``, from
-            which Manacher's algorithm copied initial radius in this
-            symmetry axis (``None`` if radius was not copied in this
-            symmetry axis).
+          between two letters) an index of ``wordWithSpecialLetter``, from
+          which Manacher's algorithm copied initial radius in this
+          symmetry axis (``None`` if radius was not copied in this
+          symmetry axis)
 
         OUTPUT:
 
-        a forest -- forest graph, which contains accumulated data
+        a forest graph that contains accumulated data
         about applied Manacher's algorithm
 
         EXAMPLES::
@@ -4239,22 +4233,20 @@ class FiniteWord_class(Word_class):
         """
         diffForest = []
         treeAndNodeIndexes = [None] * len(previousPositions)
-        i = 0
-        while i < len(previousPositions):
+        for i, prev_pos in enumerate(previousPositions)):
             if initialPalindromeRadiuses[i] != maximalPalindromeRadiuses[i]:
-                if previousPositions[i] is None:
+                if prev_pos is None:
                     treeIndex, nodeIndex = len(diffForest), 0
                     diffForest.append([[i, initialPalindromeRadiuses[i], maximalPalindromeRadiuses[i], []]])
                     treeAndNodeIndexes[i] = (treeIndex, nodeIndex)
                 else:
-                    previousPositionIndex = previousPositions[i]
+                    previousPositionIndex = prev_pos
                     treeIndex, nodeIndex = treeAndNodeIndexes[previousPositionIndex]
                     tree = diffForest[treeIndex]
                     newNodeIndex = len(tree)
                     tree[nodeIndex][3].append(newNodeIndex)
                     tree.append([i, initialPalindromeRadiuses[i], maximalPalindromeRadiuses[i], []])
                     treeAndNodeIndexes[i] = (treeIndex, newNodeIndex)
-            i += 1
         return diffForest
 
     def _get_data_from_manachers_algorithm(self, word, morphism):
@@ -4264,31 +4256,31 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``word`` -- a word, such that every second letter of it
-            is the same letter and all other letters are different from
-            this letter. Manacher's algorithm will be applied on this word.
-        - ``morphism`` -- a morphism which will be used for defining
-            which factors of ``word`` are palindromes.
+        - ``word`` -- word such that every second letter of it
+          is the same letter and all other letters are different from
+          this letter
+        - ``morphism`` -- morphism that will be used for defining
+          which factors of ``word`` are palindromes
 
         OUTPUT:
 
-        - ``list`` -- list of radiuses of the maximal palindromes
-            for each symmetry axis (letter or space between two letters).
-        - ``list`` -- list of lengths of the maximal palindromes
-            for each symmetry axis (letter or space between two letters).
-        - ``list`` -- for each symmetry axis (letter or space
-            between two letters) a radius of the palindrome, which
-            was initial palindrome from which Manacher's algorithm
-            started to increment radius in this symmetry axis.
-        - ``list`` -- for each symmetry axis (letter or space
-            between two letters) an index of ``word``, from
-            which Manacher's algorithm copied initial radius in this
-            symmetry axis (``None`` if radius was not copied in this
-            symmetry axis).
+        - list of radii of the maximal palindromes
+          for each symmetry axis (letter or space between two letters)
+        - list of lengths of the maximal palindromes
+          for each symmetry axis (letter or space between two letters)
+        - list of radii of the palindrome for each symmetry axis
+          (letter or space between two letters) , which
+          was the initial palindrome from which Manacher's algorithm
+          started to increment radius in this symmetry axis
+        - list of indices of ``word`` for each symmetry axis
+          (letter or space between two letters) , from
+          which Manacher's algorithm copied initial radius in this
+          symmetry axis (``None`` if radius was not copied in this
+          symmetry axis)
 
         ALGORITHM:
 
-        Manacher's algorithm from [Man1975]_
+        Manacher's algorithm from [Man1975]_.
 
         EXAMPLES::
 
@@ -4354,8 +4346,8 @@ class FiniteWord_class(Word_class):
         oddPosResults = [x - x % 2 for x in maximalPalindromeRadiuses[1::2]]
         maximalPalindromeLengths[::2] = evenPosResults
         maximalPalindromeLengths[1::2] = oddPosResults
-        return maximalPalindromeRadiuses, maximalPalindromeLengths, \
-            initialPalindromeRadiuses, previousPositions
+        return (maximalPalindromeRadiuses, maximalPalindromeLengths,
+                initialPalindromeRadiuses, previousPositions)
 
     def length_border(self):
         r"""
