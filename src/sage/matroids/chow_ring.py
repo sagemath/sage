@@ -527,9 +527,9 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
                 sage: y = ch.an_element(); y
                 Aab
                 sage: semigroup = ch.semigroup()
-                sage: x = semigroup.an_element(); x
-                ('h','c','g','b','f','a','e','d')
-                sage: x * y  # indirect doctest
+                sage: p, q, r = list(semigroup.semigroup_generators()); p
+                ('f','h')('e','g')
+                sage: p * y  # indirect doctest
                 Aab
             """
             P = self.parent()
