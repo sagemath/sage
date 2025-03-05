@@ -364,6 +364,8 @@ ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!sage_sws2rst"
 ARG TARGETS_OPTIONAL="ptest"
+# Strip executables in local, src, pkgs to reduce image size
+RUN LC_ALL=C find local src pkgs -type f -exec strip '{}' ';' 2>&1 | grep -v "file format not recognized" || true
 $RUN$CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_OPTIONAL} || echo "(error ignored)"$ENDRUN$THEN_SAVE_STATUS
 
 #:end:
