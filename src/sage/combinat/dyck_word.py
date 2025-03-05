@@ -90,7 +90,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.posets import Posets
 
-from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.words.word import Word
@@ -544,13 +544,13 @@ class DyckWord(CombinatorialElement):
             row = "  " * (n - alst[-1] - 1) + final_fall + "\n"
             for i in range(n - 1):
                 c = 0
-                row = row + "  "*(n-i-2-alst[-i-2])
+                row = row + "  " * (n-i-2-alst[-i-2])
                 c += n-i-2-alst[-i-2]
                 if alst[-i-2]+1 != alst[-i-1]:
                     row += " _"
                 c += alst[-i-2] - alst[-i-1]
                 if underpath:
-                    row += "__"*(alst[-i-2]-alst[-i-1])+"|" + labels[-1] + "x "*(n-c-2-i) + " ."*i + "\n"
+                    row += "__" * (alst[-i-2]-alst[-i-1]) + "|" + labels[-1] + "x "*(n-c-2-i) + " ." * i + "\n"
                 else:
                     row += "__"*(alst[-i-2]-alst[-i-1])+"| " + "x "*(n-c-2-i) + " ."*i + labels[-1] + "\n"
                 labels.pop()
@@ -3286,14 +3286,14 @@ class DyckWords(UniqueRepresentation, Parent):
                     return CompleteDyckWords_all()
                 return DyckWords_all()
 
-            k1 = ZZ(k1)
+            k1 = Integer(k1)
             if k1 < 0:
                 raise ValueError("k1 (= %s) must be nonnegative" % k1)
             return CompleteDyckWords_size(k1)
         else:
-            k1 = ZZ(k1)
+            k1 = Integer(k1)
 
-        k2 = ZZ(k2)
+        k2 = Integer(k2)
         if k1 < 0 or (k2 is not None and k2 < 0):
             raise ValueError("k1 (= %s) and k2 (= %s) must be nonnegative, with k1 >= k2" % (k1, k2))
         if k1 < k2:
@@ -3638,8 +3638,8 @@ class DyckWordBacktracker(GenericBacktracker):
         # Dyck paths, not words; having k1 opening parens and k2 closing
         # parens corresponds to paths of length k1 + k2 ending at height
         # k1 - k2.
-        k1 = ZZ(k1)
-        k2 = ZZ(k2)
+        k1 = Integer(k1)
+        k2 = Integer(k2)
         self.n = k1 + k2
         self.endht = k1 - k2
 
@@ -3697,8 +3697,8 @@ class DyckWords_size(DyckWords):
             Integer Ring
             sage: TestSuite(DyckWords(4,2)).run()
         """
-        self.k1 = ZZ(k1)
-        self.k2 = ZZ(k2)
+        self.k1 = Integer(k1)
+        self.k2 = Integer(k2)
         DyckWords.__init__(self, category=FiniteEnumeratedSets())
 
     def _repr_(self) -> str:
@@ -3780,8 +3780,7 @@ class DyckWords_size(DyckWords):
             ....:      for p in range(7))
             True
         """
-        from sage.arith.misc import binomial
-        return (self.k1 - self.k2 + 1) * binomial(self.k1 + self.k2, self.k2) // (self.k1 + 1)
+        return (self.k1 - self.k2 + 1) * (self.k1 + self.k2).binomial(self.k2) // (self.k1 + 1)
 
 ################################################################
 # Complete Dyck words

@@ -355,16 +355,16 @@ def cyclotomic_to_gamma(cyclo_up, cyclo_down) -> dict:
         sage: cyclotomic_to_gamma([6], [1])
         {2: -1, 3: -1, 6: 1}
     """
-    dico = defaultdict(int)
+    dico: dict[int, int] = defaultdict(int)
     for d in cyclo_up:
         dico[d] += 1
     for d in cyclo_down:
         dico[d] -= 1
 
-    resu = defaultdict(int)
+    resu: dict[int, int] = defaultdict(int)
     for n in dico:
         for d in divisors(n):
-            resu[d] += moebius(n / d) * dico[n]
+            resu[d] += moebius(n // d) * dico[n]
 
     return {d: resu[d] for d in resu if resu[d]}
 
@@ -399,7 +399,7 @@ def gamma_list_to_cyclotomic(galist):
         sage: gamma_list_to_cyclotomic([8, 2, 2, 2, -6, -4, -3, -1])
         ([2, 2, 8], [3, 3, 6])
     """
-    resu = defaultdict(int)
+    resu: dict[int, int] = defaultdict(int)
     for n in galist:
         eps = sgn(n)
         for d in divisors(abs(n)):
@@ -824,7 +824,7 @@ class HypergeometricData:
         alpha = [(x, 'a') for x in self._alpha]
         beta = [(x, 'b') for x in self._beta]
         height = 0
-        hodge = defaultdict(int)
+        hodge: dict[int, int] = defaultdict(int)
         for x, letter in sorted(alpha + beta):
             if letter == 'a':
                 hodge[height] += 1
@@ -1423,7 +1423,7 @@ class HypergeometricData:
         if q > 2 ** 31:
             raise ValueError("p^f cannot exceed 2^31")
 
-        m = defaultdict(int)
+        m: dict[int, int] = defaultdict(int)
         for b in beta:
             u = b * (q - 1)
             if u.is_integer():

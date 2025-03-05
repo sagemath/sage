@@ -528,7 +528,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             raise ValueError("generator not defined")
         return new_BP_from_PBVar(self, self._pbring.variable(self.pbind[idx]))
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of variables in this ring.
 
@@ -1425,8 +1425,8 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             sage: B.<x,y> = BooleanPolynomialRing(2)
             sage: B._singular_() # indirect doctest
             polynomial ring, over a field, global ordering
-            //   coefficients: ZZ/2
-            //   number of vars : 2
+            // coefficients: ZZ/2...
+            // number of vars : 2
             //        block   1 : ordering lp
             //                  : names    x y
             //        block   2 : ordering C
@@ -1973,7 +1973,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
 
         return new_BM_from_PBVar(self, (<BooleanPolynomialRing>self._ring), newvar)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of generators of this monoid.
 
@@ -4927,14 +4927,9 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             sage: I = F.ideal()
             sage: I.groebner_basis(algorithm='magma', prot='sage') # optional - magma
             Leading term degree:  1. Critical pairs: 148.
-            Leading term degree:  2. Critical pairs: 144.
-            Leading term degree:  3. Critical pairs: 462.
-            Leading term degree:  1. Critical pairs: 167.
-            Leading term degree:  2. Critical pairs: 147.
-            Leading term degree:  3. Critical pairs: 101 (all pairs of current degree eliminated by criteria).
-            <BLANKLINE>
+            ...
             Highest degree reached during computation:  3.
-            Polynomial Sequence with 35 Polynomials in 36 Variables
+            Polynomial Sequence with ... Polynomials in 36 Variables
 
         TESTS:
 
@@ -5031,11 +5026,10 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
 
         A simple example::
 
-            sage: from sage.doctest.fixtures import reproducible_repr
             sage: R.<x,y,z> = BooleanPolynomialRing()
             sage: I = ideal( [ x*y*z + x*z + y + 1, x+y+z+1 ] )
-            sage: print(reproducible_repr(I.variety()))
-            [{x: 0, y: 1, z: 0}, {x: 1, y: 1, z: 1}]
+            sage: I.variety()
+            [{z: 0, y: 1, x: 0}, {z: 1, y: 1, x: 1}]
 
         TESTS:
 
@@ -5052,14 +5046,16 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             ....:     x1*x2 + x1*x4 + x1*x5 + x1*x6 + x2*x3 + x2*x4 + x2*x5 + x3*x5 + x5*x6 + x5 + x6,
             ....:     x1*x2 + x1*x6 + x2*x4 + x2*x5 + x2*x6 + x3*x6 + x4*x6 + x5*x6 + x5]
             sage: I = R.ideal( polys )
-            sage: print(reproducible_repr(I.variety()))
-             [{x1: 0, x2: 0, x3: 0, x4: 0, x5: 0, x6: 0}, {x1: 1, x2: 1, x3: 1, x4: 0, x5: 0, x6: 1}]
+            sage: I.variety()
+             [{x6: 0, x5: 0, x4: 0, x3: 0, x2: 0, x1: 0},
+              {x6: 1, x5: 0, x4: 0, x3: 1, x2: 1, x1: 1}]
 
             sage: R = PolynomialRing(GF(2), 6, ['x%d'%(i+1) for i in range(6)], order='lex')
             sage: I = R.ideal( polys )
             sage: v = (I + sage.rings.ideal.FieldIdeal(R)).variety()
-            sage: print(reproducible_repr(v))
-            [{x1: 0, x2: 0, x3: 0, x4: 0, x5: 0, x6: 0}, {x1: 1, x2: 1, x3: 1, x4: 0, x5: 0, x6: 1}]
+            sage: v
+            [{x6: 0, x5: 0, x4: 0, x3: 0, x2: 0, x1: 0},
+             {x6: 1, x5: 0, x4: 0, x3: 1, x2: 1, x1: 1}]
 
 
         Check that :issue:`13976` is fixed::

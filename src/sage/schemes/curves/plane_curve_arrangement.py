@@ -513,7 +513,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             {0: [x1, x2], 1: [x0], 2: [x3], 3: [x3^-1*x2^-1*x1^-1*x0^-1]}
             sage: A.fundamental_group(vertical=False)
             Finitely presented group
-            < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x1*x0*x1^-1*x0^-1, (x0*x2)^2*(x0^-1*x2^-1)^2 >
+            < x0, x1, x2 | x2*x1^-1*x2^-1*x1, x1*x0*x1^-1*x0^-1, (x0*x2)^2*(x0^-1*x2^-1)^2 >
             sage: A.meridians(vertical=False)
             {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0], 3: [x0*x2^-1*x0^-1*x2^-1*x1^-1*x0^-1]}
             sage: G = A.fundamental_group(simplified=False, vertical=False)
@@ -834,7 +834,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: A.fundamental_group().sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >
             sage: A.meridians()
-            {0: [x1], 1: [x0], 2: [x1^-1*x0^-1*x1^-1]}
+            {0: [x1], 1: [x0], 2: [x0^-1*x1^-2]}
             sage: G = A.fundamental_group(simplified=False)
             sage: G.sorted_presentation()
             Finitely presented group
@@ -945,7 +945,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: A.fundamental_group().sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >
             sage: A.meridians()
-            {0: [x1], 1: [x0], 2: [x1^-1*x0^-1*x1^-1]}
+            {0: [x1], 1: [x0], 2: [x0^-1*x1^-2]}
             sage: A = H(y^2 + x*z, z, x)
             sage: A.fundamental_group()
             Finitely presented group < x0, x1 | (x1*x0)^2*(x1^-1*x0^-1)^2 >

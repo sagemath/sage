@@ -116,7 +116,7 @@ lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractional
 lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
-from sage.libs.pari.all import PariError
+from cypari2.handle_error import PariError
 
 
 class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
@@ -2117,9 +2117,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                                 h = max([R(emb(c).abs()) for c in poly.coefficients()])
                         else: #non-archimedean
                             if BR == QQ:
-                                h = max([R(v)**(-R(c.valuation(v)))  for c in poly.coefficients()])
+                                h = max(R(v)**(-R(c.valuation(v))) for c in poly.coefficients())
                             else:
-                                h = max([R(c.abs_non_arch(v, prec=prec)) for c in poly.coefficients()])
+                                h = max(R(c.abs_non_arch(v, prec=prec)) for c in poly.coefficients())
                         maxh = max(h, maxh)
             if maxh == 0:
                 maxh = 1  #avoid division by 0
@@ -2259,10 +2259,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: RSA768 = 123018668453011775513049495838496272077285356959533479219732245215\
-            ....: 1726400507263657518745202199786469389956474942774063845925192557326303453731548\
-            ....: 2685079170261221429134616704292143116022212404792747377940806653514195974598569\
-            ....: 02143413
+            sage: RSA768 = Integer('123018668453011775513049495838496272077285356959533479219732245215'
+            ....: '1726400507263657518745202199786469389956474942774063845925192557326303453731548'
+            ....: '2685079170261221429134616704292143116022212404792747377940806653514195974598569'
+            ....: '02143413')
             sage: P.<x,y> = ProjectiveSpace(QQ,1)
             sage: f = DynamicalSystem_projective([RSA768*x^2 + y^2, x*y])
             sage: Q = P(RSA768,1)
