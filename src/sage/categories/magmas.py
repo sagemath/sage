@@ -392,9 +392,8 @@ class Magmas(Category_singleton):
                     sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
                     False
                     sage: Magmas().example().algebra(QQ).is_field()
-                    Traceback (most recent call last):
-                    ...
-                    NotImplementedError
+                    False
+
                 """
                 if not self.base_ring().is_field(proof):
                     return False
