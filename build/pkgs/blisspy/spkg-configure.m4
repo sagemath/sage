@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([blisspy], [SAGE_PYTHON_PACKAGE_CHECK([blisspy])])
