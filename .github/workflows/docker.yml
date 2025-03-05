@@ -18,8 +18,6 @@ on:
         # 'tox -e update_docker_platforms' updates below
         default: >-
           [
-           "ubuntu-xenial-toolchain-gcc_9",
-           "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
            "ubuntu-jammy",
            "ubuntu-noble",
