@@ -572,7 +572,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
 
     def gens(self):
         """
-        Return a list [x, T] where x and T are the generators of the ring
+        Return a tuple (x, T) where x and T are the generators of the ring
         (as element *of this ring*).
 
         .. NOTE::

@@ -801,6 +801,21 @@ class Rings(CategoryWithAxiom):
                 from sage.modules.free_module import FreeModule
                 return FreeModule(self, n)
 
+        def nilradical(self):
+            """
+            Return the nilradical of this ring.
+
+            EXAMPLES::
+
+                sage: QQ['x,y'].nilradical()
+                Ideal (0) of Multivariate Polynomial Ring in x, y over Rational Field
+
+            .. SEEALSO::
+
+                :meth:`~sage.categories.finite_dimensional_lie_algebras_with_basis.FiniteDimensionalLieAlgebrasWithBasis.ParentMethods.nilradical`
+            """
+            return self.zero_ideal().radical()
+
         @cached_method
         def unit_ideal(self):
             """
@@ -935,6 +950,22 @@ class Rings(CategoryWithAxiom):
                 Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
                 sage: R.ideal()
                 Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
+
+            Check ``ideal_class=`` keyword argument when input is empty::
+
+                sage: from sage.rings.ideal import Ideal_pid
+                sage: class CustomIdealClass(Ideal_pid):
+                ....:     pass
+                sage: type(ZZ.ideal(6))
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: type(ZZ.ideal(6, ideal_class=CustomIdealClass))
+                <class '...CustomIdealClass'>
+                sage: type(ZZ.ideal())
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: type(ZZ.ideal(ideal_class=CustomIdealClass))
+                <class '...CustomIdealClass'>
+                sage: type(ZZ.ideal((), ideal_class=CustomIdealClass))
+                <class '...CustomIdealClass'>
             """
             if 'coerce' in kwds:
                 coerce = kwds['coerce']

@@ -4996,7 +4996,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         return (~self).arctanh()
 
-    def algdep(self, n):
+    def algebraic_dependency(self, n):
         r"""
         Return a polynomial of degree at most `n` which is
         approximately satisfied by ``self``.
@@ -5012,13 +5012,13 @@ cdef class RealIntervalFieldElement(RingElement):
 
         ALGORITHM:
 
-        Uses the PARI C-library ``algdep`` command.
+        This uses the PARI C-library :pari:`algdep` command.
 
         EXAMPLES::
 
             sage: r = sqrt(RIF(2)); r
             1.414213562373095?
-            sage: r.algdep(5)
+            sage: r.algebraic_dependency(5)
             x^2 - 2
 
         If we compute a wrong, but precise, interval, we get a wrong
@@ -5026,7 +5026,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
             sage: r = sqrt(RealIntervalField(200)(2)) + (1/2)^40; r
             1.414213562374004543503461652447613117632171875376948073176680?
-            sage: r.algdep(5)
+            sage: r.algebraic_dependency(5)
             7266488*x^5 + 22441629*x^4 - 90470501*x^3 + 23297703*x^2 + 45778664*x + 13681026
 
         But if we compute an interval that includes the number we mean,
@@ -5034,13 +5034,13 @@ cdef class RealIntervalFieldElement(RingElement):
         interval is very imprecise::
 
             sage: r = r.union(sqrt(2.0))
-            sage: r.algdep(5)
+            sage: r.algebraic_dependency(5)
             x^2 - 2
 
         Even on this extremely imprecise interval we get an answer which is
         technically correct::
 
-            sage: RIF(-1, 1).algdep(5)
+            sage: RIF(-1, 1).algebraic_dependency(5)
             x
         """
         # If 0 is in the interval, then we have no known bits!  But
@@ -5053,7 +5053,10 @@ cdef class RealIntervalFieldElement(RingElement):
 
         known_bits = -self.relative_diameter().log2()
 
-        return sage.arith.misc.algdep(self.center(), n, known_bits=known_bits)
+        return sage.arith.misc.algebraic_dependency(self.center(),
+                                                    n, known_bits=known_bits)
+
+    algdep = algebraic_dependency
 
     def factorial(self):
         """
