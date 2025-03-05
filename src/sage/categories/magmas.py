@@ -381,8 +381,7 @@ class Magmas(Category_singleton):
                 Return ``True`` if ``self`` is a field.
 
                 For a magma algebra `R S` this is always false unless
-                `S` is trivial and the base ring `R` is a field and
-                the square of the unique element of `S` is non-zero.
+                `S` is trivial and the base ring `R` is a field.
 
                 EXAMPLES::
 
@@ -399,7 +398,7 @@ class Magmas(Category_singleton):
                 """
                 if not self.base_ring().is_field(proof):
                     return False
-                return (self.basis().keys().cardinality() == 1)
+                return self.basis().keys().cardinality() == 1
 
     class Commutative(CategoryWithAxiom):
 
