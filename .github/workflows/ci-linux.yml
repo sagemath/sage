@@ -61,7 +61,7 @@ jobs:
   # for tox_system_factors in docker.yml.
 
   standard:
-    if: always()
+    if: ${{ success() || failure() }}
     uses: ./.github/workflows/docker.yml
     with:
       tox_packages_factors: >-
@@ -131,7 +131,7 @@ jobs:
       max_parallel: 15
 
   minimal:
-    if: always()
+    if: ${{ success() || failure() }}
     uses: ./.github/workflows/docker.yml
     with:
       tox_packages_factors: >-
@@ -147,7 +147,7 @@ jobs:
       max_parallel: 24
 
   maximal:
-    if: always()
+    if: ${{ success() || failure() }}
     needs: [minimal]
     uses: ./.github/workflows/docker.yml
     with:
@@ -162,7 +162,7 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   optional:
-    if: always()
+    if: ${{ success() || failure() }}
     needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
@@ -178,7 +178,7 @@ jobs:
       logs_artifact_postfix: "-optional"
 
   experimental:
-    if: always()
+    if: ${{ success() || failure() }}
     needs: [optional]
     uses: ./.github/workflows/docker.yml
     with:

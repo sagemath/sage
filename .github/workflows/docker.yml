@@ -385,4 +385,4 @@ jobs:
           else
              echo "No Docker images created."
           fi
-        if: always() && inputs.docker_push_repository
+        if: ${{ always() && inputs.docker_push_repository }}
