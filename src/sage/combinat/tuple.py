@@ -194,6 +194,19 @@ class Tuples(Parent, UniqueRepresentation):
             ...
             IndexError: index i (=1) is greater than or equal to the cardinality
 
+        Verify that :meth:`unrank` gives the correct answer when `|S| < 1` and
+        `k = 0`::
+
+            sage: T = Tuples(range(0), 0)
+            sage: T[0]
+            ()
+            sage: T[-1]
+            ()
+            sage: T[1]
+            Traceback (most recent call last):
+            ...
+            IndexError: index i (=1) is greater than or equal to the cardinality
+
         Verify that :issue:`39534` has been fixed::
 
             sage: T = Tuples(range(3), 30).random_element()
@@ -209,7 +222,7 @@ class Tuples(Parent, UniqueRepresentation):
             raise IndexError("index i (={}) is greater than or equal to the cardinality"
                              .format(i))
         ts = len(self.S)
-        if ts == 1:
+        if ts <= 1:
             return tuple(self.S[0] for _ in range(self.k))
         return tuple(i.digits(ts, self.S, self.k))
 
