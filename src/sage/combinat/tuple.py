@@ -182,6 +182,18 @@ class Tuples(Parent, UniqueRepresentation):
             sage: T[0]
             (1, 1, 1, 1, 1)
 
+        Verify that :meth:`unrank` gives the correct answer when `k = 0`::
+
+            sage: T = Tuples(range(6), 0)
+            sage: list(T)
+            [()]
+            sage: T[0]
+            ()
+            sage: T[1]
+            Traceback (most recent call last):
+            ...
+            IndexError: index i (=1) is greater than or equal to the cardinality
+
         Verify that :issue:`39534` has been fixed::
 
             sage: T = Tuples(range(3), 30).random_element()
