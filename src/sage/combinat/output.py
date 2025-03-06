@@ -238,8 +238,16 @@ def tex_from_array(array, with_lines=True):
     lr = lr_macro.substitute(bar='|' if with_lines else '')
     if Tableaux.options.convention == "English":
         return '{%s\n%s\n}' % (lr, tex_from_skew_array(array, with_lines))
-    else:
-        return '{%s\n%s\n}' % (lr, tex_from_skew_array(array[::-1], with_lines, align='t'))
+    return '{%s\n%s\n}' % (lr, tex_from_skew_array(array[::-1], with_lines,
+                                                   align='t'))
+
+
+def svg_from_array(array, with_lines=True):
+    """
+    """
+    if Tableaux.options.convention == "English":
+        return svg_from_skew_array(array, with_lines)
+    return svg_from_skew_array(array[::-1], with_lines, align='t')
 
 
 def tex_from_array_tuple(a_tuple, with_lines=True):
@@ -340,7 +348,8 @@ def tex_from_array_tuple(a_tuple, with_lines=True):
 
 def tex_from_skew_array(array, with_lines=False, align='b'):
     r"""
-    This function creates latex code for a "skew composition" ``array``.
+    Create latex code for a "skew composition" ``array``.
+
     That is, for a two dimensional array in which each row can begin with
     an arbitrary number ``None``'s and the remaining entries could, in
     principle, be anything but probably should be strings or integers of similar
@@ -411,6 +420,43 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
         tex += '&'.join('' if c is None else r'%s%s%s' % (lr_start, c, lr_end) for c in array[r])
         tex += end_line(r+1)+'\n'
     return tex+r'\end{array}$'+raisebox_end
+
+
+def svg_from_skew_array(array, with_lines=False, align='b'):
+    """
+    Return the svg code for this skew array.
+
+    EXAMPLES::
+
+        sage: array=[[None, 2,3,4],[None,None],[5,6,7,8]]
+        sage: sage.combinat.output.svg_from_skew_array(array)
+        '<?xml version="1.0" ...</svg>'
+    """
+    resu = '<?xml version=\"1.0\" standalone=\"no\"?>'
+    resu += '<svg xmlns=\"http://www.w3.org/2000/svg\" '
+    resu += 'xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"300\" viewBox='
+
+    resu1 = '<defs><polygon points=\"0, 0 10, 0 10, 10 0, 10\" '
+    resu1 += 'id=\"square\" style=\"stroke-width:0.1;stroke:black;fill:white\"/></defs>'
+    resu1 += '<g style=\"stroke-width:0.1;fill:steelblue;font-size:6;dominant-baseline:middle;text-anchor:middle\">'
+
+    Nx = max((len(line) for line in array), default=0)
+    Ny = len(array)
+    # viewBox
+    resu += '\"%.3f %.3f %.3f %.3f \">' % (-5, -5,
+                                           10 * Nx + 10, 10 * Ny + 10)
+    resu += resu1
+
+    for i, line in enumerate(array):
+        ci = 10 * i
+        for j, content in enumerate(line):
+            cj = 10 * j
+            if content is not None:
+                resu += '<use transform=\"translate(%.3f, %.3f)' % (cj, ci)
+                resu += '\" xlink:href=\"#square\" />'
+                resu += f'<text x=\"{cj + 5}\" y=\"{ci + 5}\">{content}</text>'
+    return resu + '</g></svg>'
+
 
 
 def ascii_art_table(data, use_unicode=False, convention='English'):

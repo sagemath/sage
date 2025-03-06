@@ -771,6 +771,21 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         from sage.combinat.output import tex_from_array
         return tex_from_array(self)
 
+    def _repr_svg_(self) -> str:
+        """
+        Return the svg picture of the tableau.
+
+        This can be displayed by Jupyter.
+
+        EXAMPLES::
+
+            sage: T = Tableau([[2, 1, 1], [1, 1]])
+            sage: T._repr_svg_()                                                       # needs sage.modules
+            '<?xml...</g></svg>'
+        """
+        from sage.combinat.output import svg_from_array
+        return svg_from_array(self)
+
     def __truediv__(self, t):
         """
         Return the skew tableau ``self``/``t``, where ``t`` is a partition
