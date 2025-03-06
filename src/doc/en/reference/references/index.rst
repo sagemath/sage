@@ -2812,10 +2812,10 @@ REFERENCES:
 .. [Ful1989] \W. Fulton. Algebraic curves: an introduction to algebraic geometry. Addison-Wesley,
              Redwood City CA (1989).
 
-.. [Ful1992] \W. Fulton. *Flags, Schubert polynomials, degeneracy loci, and
+.. [Ful1992] William Fulton. *Flags, Schubert polynomials, degeneracy loci, and
              determinantal formulas*. Duke Math. J. **65** (1992), no. 3, 381-420.
 
-.. [Ful1993] Wiliam Fulton, *Introduction to Toric Varieties*,
+.. [Ful1993] William Fulton, *Introduction to Toric Varieties*,
             Princeton University Press, 1993.
 
 .. [Ful1997] William Fulton,
