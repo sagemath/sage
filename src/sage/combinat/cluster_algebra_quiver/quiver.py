@@ -238,10 +238,9 @@ class ClusterQuiver(SageObject):
             user_labels = [tuple(x) if isinstance(x, list) else x
                            for x in user_labels]
         elif isinstance(user_labels, dict):
-            values = [tuple(user_labels[x])
-                      if isinstance(user_labels[x], list) else user_labels[x]
-                      for x in user_labels]
-            user_labels = dict(zip(user_labels, values))
+            user_labels = {x: tuple(label) if isinstance(label, list)
+                           else label
+                           for x, label in user_labels.items()}
 
         # constructs a quiver from a mutation type
         if isinstance(data, (QuiverMutationType_Irreducible,
@@ -277,37 +276,41 @@ class ClusterQuiver(SageObject):
             #   format the input appropriately.  Thus we handle several
             #   special cases this way.
             if len(data) == 2 and isinstance(data[0], str):
-                if data[0] == 'TR' or data[0] == 'GR' or (data[0] == 'C' and data[1] == 2):
-                    if data[1] in ZZ:
-                        quiv = ClusterQuiver(QuiverMutationType_Irreducible(data[0], data[1])._digraph)
+                d0, d1 = data
+                if d0 == 'TR' or d0 == 'GR' or (d0 == 'C' and d1 == 2):
+                    if d1 in ZZ:
+                        quiv = ClusterQuiver(QuiverMutationType_Irreducible(d0, d1)._digraph)
                         quiv._mutation_type = mutation_type
                         self.__init__(quiv)
-                    elif isinstance(data[1], list):
-                        quiv = ClusterQuiver(QuiverMutationType_Irreducible(data[0], tuple(data[1]))._digraph)
+                    elif isinstance(d1, list):
+                        quiv = ClusterQuiver(QuiverMutationType_Irreducible(d0, tuple(d1))._digraph)
                         quiv._mutation_type = mutation_type
                         self.__init__(quiv)
                 else:
                     self.__init__(mutation_type.standard_quiver())
             elif len(data) == 3 and isinstance(data[0], str):
-                if (data[0] == 'F' and data[1] == 4 and data[2] == [2, 1]) or (data[0] == 'G' and data[1] == 2 and data[2] == [3, 1]):
-                    quiv = ClusterQuiver(QuiverMutationType_Irreducible(data[0], data[1], tuple(data[2]))._digraph)
+                d0, d1, d2 = data
+                if ((d0 == 'F' and d1 == 4 and d2 == [2, 1]) or
+                        (d0 == 'G' and d1 == 2 and d2 == [3, 1])):
+                    quiv = ClusterQuiver(QuiverMutationType_Irreducible(d0, d1, tuple(d2))._digraph)
                     quiv._mutation_type = mutation_type
                     self.__init__(quiv)
-                elif (data[0] == 'F' and data[1] == 4 and data[2] == (2, 1)) or (data[0] == 'G' and data[1] == 2 and data[2] == (3, 1)):
-                    quiv = ClusterQuiver(QuiverMutationType_Irreducible(data[0], data[1], data[2])._digraph)
+                elif ((d0 == 'F' and d1 == 4 and d2 == (2, 1)) or
+                      (d0 == 'G' and d1 == 2 and d2 == (3, 1))):
+                    quiv = ClusterQuiver(QuiverMutationType_Irreducible(d0, d1, d2)._digraph)
                     quiv._mutation_type = mutation_type
                     self.__init__(quiv)
-                elif data[0] == 'A' and isinstance(data[1], list) and data[2] == 1:
-                    if len(data[1]) == 2 and min(data[1]) == 0:
-                        quiv = ClusterQuiver(QuiverMutationType_Irreducible(data[0], tuple(data[1]), data[2])._digraph)
+                elif d0 == 'A' and isinstance(d1, list) and d2 == 1:
+                    if len(d1) == 2 and min(d1) == 0:
+                        quiv = ClusterQuiver(QuiverMutationType_Irreducible(d0, tuple(d1), d2)._digraph)
                         quiv._mutation_type = mutation_type
                         self.__init__(quiv)
                     else:
                         self.__init__(mutation_type.standard_quiver())
 
-                elif data[0] == 'A' and isinstance(data[1], tuple) and data[2] == 1:
-                    if len(data[1]) == 2 and min(data[1]) == 0:
-                        quiv = ClusterQuiver(QuiverMutationType_Irreducible(data[0], data[1], data[2])._digraph)
+                elif d0 == 'A' and isinstance(d1, tuple) and d2 == 1:
+                    if len(d1) == 2 and min(d1) == 0:
+                        quiv = ClusterQuiver(QuiverMutationType_Irreducible(d0, d1, d2)._digraph)
                         quiv._mutation_type = mutation_type
                         self.__init__(quiv)
                     else:
@@ -606,19 +609,19 @@ class ClusterQuiver(SageObject):
             dg = Graph(self._digraph)
 
         # For each edge in our graph we assign a color
-        for edge in dg.edges(sort=True):
-            v1, v2, (a, b) = edge
+        for v1, v2, ab in dg.edges(sort=True):
 
             if v1 in nlist and v2 in nlist:
-                if (a, b) == (1, -1):
+                if ab == (1, -1):
                     color_dict[colors[0]].append((v1, v2))
                 else:
                     color_dict[colors[6]].append((v1, v2))
             else:
-                if (a, b) == (1, -1):
+                if ab == (1, -1):
                     color_dict[colors[1]].append((v1, v2))
                 else:
                     color_dict[colors[5]].append((v1, v2))
+            a, b = ab
             if a == -b:
                 if a == 1:
                     dg.set_edge_label(v1, v2, '')
@@ -1273,9 +1276,9 @@ class ClusterQuiver(SageObject):
              (4, 0, (1, -1)), (5, 1, (1, -1))]
         """
         dg = self._digraph.copy(immutable=False)
-        dg.add_edges([(self._n+self._m+i, i) for i in range(self._n)])
+        dg.add_edges([(self._n + self._m + i, i) for i in range(self._n)])
         Q = ClusterQuiver(dg, frozen=list(range(self._n,
-                                                self._n + self._m + self._n)))
+                                                2 * self._n + self._m)))
         Q._mutation_type = self._mutation_type
         if inplace:
             self.__init__(Q)
@@ -2021,8 +2024,7 @@ class ClusterQuiver(SageObject):
             sage: S = ClusterQuiver(['B',4]); S.number_of_edges()
             3
         """
-        digraph_edges = self.digraph().edges(sort=False)
-        return sum(edge[2][0] for edge in digraph_edges)
+        return sum(label[0] for label in self.digraph().edge_labels())
 
     def relabel(self, relabelling, inplace=True):
         r"""
@@ -2051,13 +2053,11 @@ class ClusterQuiver(SageObject):
         dict_labels = {}
 
         # Organize labels noting that for:
-        #    _digraph: { old_vertex: new_vertex}
+        #    _digraph: {old_vertex: new_vertex}
         #    _vertex_dictionary: {num: new_vertex}
         if isinstance(relabelling, list):
-            digraph_labels = {old_vertices[i]: relabelling[i]
-                              for i in range(len(relabelling))}
-            dict_labels = {range(len(relabelling))[i]: relabelling[i]
-                           for i in range(len(relabelling))}
+            digraph_labels = dict(zip(old_vertices, relabelling))
+            dict_labels = dict(enumerate(relabelling))
         elif isinstance(relabelling, dict):
             # need to make sure we map correctly
             for key in relabelling:
