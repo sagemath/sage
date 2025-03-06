@@ -325,7 +325,6 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.subgraph_search_count` | Return the number of labelled occurrences of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_iterator` | Return an iterator over the labelled copies of ``G`` in ``self``.
     :meth:`~GenericGraph.has_subgraph_decomposition` | Return whether a graph has a decomposition into isometric copies of another graph.
-    :meth:`~GenericGraph._subgraph_decomposition_dlx` | Return the dancing links solver searching for decompositions of self into isometric copies of a subgraph.
     :meth:`~GenericGraph.characteristic_polynomial` | Return the characteristic polynomial of the adjacency matrix of the (di)graph.
     :meth:`~GenericGraph.genus` | Return the minimal genus of the graph.
     :meth:`~GenericGraph.crossing_number` | Return the crossing number of the graph.
@@ -15093,12 +15092,11 @@ class GenericGraph(GenericGraph_pyx):
              sage: dlx, F = G2._subgraph_decomposition_dlx(claw, induced=True)
              sage: dlx
              Dancing links solver for 0 columns and 0 rows
-
         """
         from sage.combinat.matrices.dancing_links import dlx_solver
 
         edges = list(self.edges(labels=False))
-        edge_to_column_id = {frozenset(edge):i for (i,edge) in enumerate(edges)}
+        edge_to_column_id = {frozenset(edge):i for i,edge in enumerate(edges)}
 
         rows = set()
         for g in self.subgraph_search_iterator(G, induced=induced, return_graphs=True):
@@ -15141,7 +15139,6 @@ class GenericGraph(GenericGraph_pyx):
 
         EXAMPLES::
 
-            sage: from slabbe.graph import has_graph_decomposition
             sage: G1 = Graph( [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3),
             ....: (1, 5), (2, 3), (2, 4), (3, 5), (4, 6), (4, 7), (5, 6), (5, 7), (6, 8),
             ....: (6, 10), (7, 9), (7, 11), (8, 9), (8, 10), (9, 11), (10, 11)])
@@ -15169,7 +15166,6 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G2.has_subgraph_decomposition(claw, induced=True)
             False
-
         """
         dlx, F = self._subgraph_decomposition_dlx(G, induced=induced)
 
@@ -15178,12 +15174,9 @@ class GenericGraph(GenericGraph_pyx):
 
         if not certificate:
             return has_solution
-        else:
-            if has_solution:
-                return (has_solution, F(solution))
-            else:
-                return (has_solution, solution)
-
+        if has_solution:
+            return has_solution, F(solution)
+        return has_solution, solution
 
     def random_subgraph(self, p, inplace=False):
         """
