@@ -15035,10 +15035,10 @@ class GenericGraph(GenericGraph_pyx):
                     yield self.subgraph(g, edges=[(G_to_g[u], G_to_g[v])
                                                   for u, v in G.edge_iterator(labels=False)])
 
-    def _subgraph_decomposition_dlx(self, G, induced=False):
+    def subgraph_decompositions(self, G, induced=False):
         r"""
-        Return the dancing links solver searching for decompositions of
-        self into isometric copies of a subgraph.
+        Return an iterator over decompositions of the graph into isometric copies of
+        another graph.
 
         INPUT:
 
@@ -15048,10 +15048,7 @@ class GenericGraph(GenericGraph_pyx):
 
         OUTPUT:
 
-        a tuple:
-
-        - the dancing links solver
-        - a function turning a dancing links solution to graph decomposition
+        An iterator of lists of lists of edges
 
         EXAMPLES::
 
@@ -15059,39 +15056,27 @@ class GenericGraph(GenericGraph_pyx):
             ....: (1, 5), (2, 3), (2, 4), (3, 5), (4, 6), (4, 7), (5, 6), (5, 7), (6, 8),
             ....: (6, 10), (7, 9), (7, 11), (8, 9), (8, 10), (9, 11), (10, 11)])
             sage: claw = graphs.ClawGraph()
-            sage: dlx, F = G1._subgraph_decomposition_dlx(claw)
-            sage: dlx
-            Dancing links solver for 22 columns and 36 rows
-            sage: dlx.number_of_solutions(ncpus=1)
-            0
+            sage: list(G1.subgraph_decompositions(claw))
+            []
 
-        The following graph has 8 distinct claw-decompositions::
+        ::
 
             sage: G2 = Graph([(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4),
             ....:    (1, 5), (2, 4), (2, 5), (3, 5), (4, 5)])
-            sage: claw = graphs.ClawGraph()
-            sage: dlx, F = G2._subgraph_decomposition_dlx(claw)
-            sage: dlx
-            Dancing links solver for 12 columns and 27 rows
-            sage: dlx.number_of_solutions(ncpus=1)
-            8
+            sage: G2.has_subgraph_decomposition(claw)
+            True
+            sage: it = G2.subgraph_decompositions(claw)
+            sage: next(it)                           # random
+            [[(0, 1), (0, 2), (0, 3)],
+             [(0, 4), (1, 4), (2, 4)],
+             [(1, 2), (1, 3), (1, 5)],
+             [(2, 5), (3, 5), (4, 5)]]
 
-        The dancing links solver and the function `F` can be used to
-        enumerate all solutions::
+        It as no claw-decomposition if we restrict to claws that are
+        induced subraphs::
 
-            sage: for solution in dlx.solutions_iterator():     # random
-            ....:     F(solution)
-            ....:     break
-            [[(0, 3), (1, 3), (3, 5)],
-             [(0, 1), (1, 2), (1, 5)],
-             [(0, 2), (2, 4), (2, 5)],
-             [(0, 4), (1, 4), (4, 5)]]
-
-        TESTS::
-
-             sage: dlx, F = G2._subgraph_decomposition_dlx(claw, induced=True)
-             sage: dlx
-             Dancing links solver for 0 columns and 0 rows
+            sage: list(G2.subgraph_decompositions(claw, induced=True))
+            []
         """
         from sage.combinat.matrices.dancing_links import dlx_solver
 
@@ -15104,79 +15089,10 @@ class GenericGraph(GenericGraph_pyx):
             L = sorted(edge_to_column_id[frozenset(edge)] for edge in g_edges)
             rows.add(tuple(L))
         rows = list(list(row) for row in rows)
+        dlx = dlx_solver(rows)
 
-        def solution_to_decomposition(solution):
-            return [[edges[j] for j in rows[i]] for i in solution]
-
-        return dlx_solver(rows), solution_to_decomposition
-
-    def has_subgraph_decomposition(self, G, induced=False, certificate=False):
-        r"""
-        Return whether a graph has a decomposition into isometric copies of
-        another graph.
-
-        This is an answer to the question posted at
-        https://ask.sagemath.org/question/81610/test-if-a-graph-has-a-claw-decomposition/
-
-        INPUT:
-
-        - ``G`` -- graph
-        - ``induced`` -- boolean (default: ``False``); whether or not to
-          consider only the induced copies of ``G`` in ``self``
-        - ``certificate`` -- boolean (default: ``False``); if ``True``, a
-          decomposition of ``self`` is returned.
-
-        OUTPUT:
-
-        A boolean, or a tuple ``(boolean, solution)`` if certificate is ``True``
-
-        In the latter case, ``solution`` is a list of lists of edges.
-
-        .. SEEALSO::
-
-            :meth:`_subgraph_decomposition_dlx` which allows to
-            enumerate/count the solutions from the dancing links solver.
-
-        EXAMPLES::
-
-            sage: G1 = Graph( [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3),
-            ....: (1, 5), (2, 3), (2, 4), (3, 5), (4, 6), (4, 7), (5, 6), (5, 7), (6, 8),
-            ....: (6, 10), (7, 9), (7, 11), (8, 9), (8, 10), (9, 11), (10, 11)])
-            sage: claw = graphs.ClawGraph()
-            sage: G1.has_subgraph_decomposition(claw)
-            False
-            sage: G1.has_subgraph_decomposition(claw, certificate=True)
-            (False, None)
-
-        ::
-
-            sage: G2 = Graph([(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4),
-            ....:    (1, 5), (2, 4), (2, 5), (3, 5), (4, 5)])
-            sage: G2.has_subgraph_decomposition(claw)
-            True
-            sage: G2.has_subgraph_decomposition(claw, certificate=True)     # random
-            (True,
-            [[(0, 1), (0, 2), (0, 3)],
-             [(0, 4), (1, 4), (2, 4)],
-             [(1, 2), (1, 3), (1, 5)],
-             [(2, 5), (3, 5), (4, 5)]])
-
-        It as no claw-decomposition if we restrict to claws that are
-        induced subraphs::
-
-            sage: G2.has_subgraph_decomposition(claw, induced=True)
-            False
-        """
-        dlx, F = self._subgraph_decomposition_dlx(G, induced=induced)
-
-        solution = dlx.one_solution(ncpus=1)
-        has_solution = not solution is None
-
-        if not certificate:
-            return has_solution
-        if has_solution:
-            return has_solution, F(solution)
-        return has_solution, solution
+        for solution in dlx.solutions_iterator():
+            yield [[edges[j] for j in rows[i]] for i in solution]
 
     def random_subgraph(self, p, inplace=False):
         """
