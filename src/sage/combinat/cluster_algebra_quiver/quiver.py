@@ -71,13 +71,18 @@ class ClusterQuiver(SageObject):
 
     - ``data`` -- can be any of the following::
 
-      * :class:`QuiverMutationType`
-      * :class:`str` -- string representing a :class:`QuiverMutationType`
+      - :class:`QuiverMutationType`
+
+      - :class:`str` -- string representing a :class:`QuiverMutationType`
         or a common quiver type (see Examples)
-      * :class:`ClusterQuiver`
-      * :class:`Matrix` -- a skew-symmetrizable matrix
-      * :class:`DiGraph` -- must be the input data for a quiver
-      * List of edges -- must be the edge list of a digraph for a quiver
+
+      - :class:`ClusterQuiver`
+
+      - :class:`Matrix` -- a skew-symmetrizable matrix
+
+      - :class:`DiGraph` -- must be the input data for a quiver
+
+      - List of edges -- must be the edge list of a digraph for a quiver
 
     - ``frozen`` -- (default: ``None``) sets the list of frozen variables
       if the input type is a :class:`DiGraph`, it is ignored otherwise
@@ -219,7 +224,7 @@ class ClusterQuiver(SageObject):
         ValueError: the input data was not recognized
     """
 
-    def __init__(self, data, frozen=None, user_labels=None):
+    def __init__(self, data, frozen=None, user_labels=None) -> None:
         """
         TESTS::
 
@@ -502,7 +507,7 @@ class ClusterQuiver(SageObject):
         """
         return isinstance(other, ClusterQuiver) and self._M == other._M
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return a hash of ``self``.
 
@@ -515,7 +520,7 @@ class ClusterQuiver(SageObject):
         """
         return hash(self._M)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the description of ``self``.
 
@@ -2230,7 +2235,7 @@ class ClusterQuiver(SageObject):
         return Fan([Cone(s.d_matrix().columns())
                     for s in seed.mutation_class()])
 
-    def g_vector_fan(self):
+    def g_vector_fan(self) -> Fan:
         r"""
         Return the g-vector fan associated with the quiver.
 
@@ -2269,7 +2274,6 @@ class ClusterQuiver(SageObject):
             ValueError: only supported for quivers of finite type
         """
         from .cluster_seed import ClusterSeed
-        from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 
         if not (self.is_finite()):
