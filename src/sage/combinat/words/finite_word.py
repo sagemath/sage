@@ -3912,7 +3912,7 @@ class FiniteWord_class(Word_class):
 
     def _find_lacunas_from_palindromes_tree(self, palindromes_tree):
         r"""
-        Return all lacunas of ``self``using palindromes tree from
+        Return all lacunas of ``self`` using palindromes tree from
         :meth:`_get_palindromic_factors_data` method.
 
         INPUT:
