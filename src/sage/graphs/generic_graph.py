@@ -324,7 +324,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.subgraph_search` | Return a copy of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_count` | Return the number of labelled occurrences of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_iterator` | Return an iterator over the labelled copies of ``G`` in ``self``.
-    :meth:`~GenericGraph.has_subgraph_decomposition` | Return whether a graph has a decomposition into isometric copies of another graph.
+    :meth:`~GenericGraph.subgraph_decompositions` | Return an iterator over the graph decompositions into isometric copies of another graph.
     :meth:`~GenericGraph.characteristic_polynomial` | Return the characteristic polynomial of the adjacency matrix of the (di)graph.
     :meth:`~GenericGraph.genus` | Return the minimal genus of the graph.
     :meth:`~GenericGraph.crossing_number` | Return the crossing number of the graph.
@@ -15063,8 +15063,6 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G2 = Graph([(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4),
             ....:    (1, 5), (2, 4), (2, 5), (3, 5), (4, 5)])
-            sage: G2.has_subgraph_decomposition(claw)
-            True
             sage: it = G2.subgraph_decompositions(claw)
             sage: next(it)                           # random
             [[(0, 1), (0, 2), (0, 3)],
@@ -15077,16 +15075,52 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: list(G2.subgraph_decompositions(claw, induced=True))
             []
+
+        Works for digraphs::
+
+            sage: G = DiGraph([(0,1), (1,2), (2,3), (3,4)], format='list_of_edges')
+            sage: H = DiGraph([(0,1), (1,2)], format='list_of_edges')
+            sage: sorted(sorted(edges) for edges in G.subgraph_decompositions(H))
+            [[[(0, 1), (1, 2)], [(2, 3), (3, 4)]]]
+
+        ::
+
+            sage: G = DiGraph([(0,1), (1,2), (2,3), (4,3)], format='list_of_edges')
+            sage: H = DiGraph([(0,1), (1,2)], format='list_of_edges')
+            sage: sorted(sorted(edges) for edges in G.subgraph_decompositions(H))
+            []
+
+        ::
+
+            sage: G = DiGraph([(0,1), (1,0), (1,2), (2,1)], format='list_of_edges')
+            sage: H = DiGraph([(0,1), (1,2)], format='list_of_edges')
+            sage: sorted(sorted(edges) for edges in G.subgraph_decompositions(H))
+            [[[(0, 1), (1, 2)], [(1, 0), (2, 1)]]]
+
+        TESTS:
+
+        The graph ``G`` needs to be a simple graph::
+
+            sage: G = DiGraph([(0,1), (0,1), (1,2), (1,2), (2,3), (3,4)], 
+            ....:             format='list_of_edges', multiedges=True)
+            sage: H = DiGraph([(0,1), (1,2)], format='list_of_edges')
+            sage: list(G.subgraph_decompositions(H))
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with
+            multiedges. Perhaps this method can be updated to handle them,
+            but in the meantime if you want to use it please disallow
+            multiedges using allow_multiple_edges().
         """
         from sage.combinat.matrices.dancing_links import dlx_solver
 
         edges = list(self.edges(labels=False))
-        edge_to_column_id = {frozenset(edge):i for i,edge in enumerate(edges)}
+        edge_to_column_id = {edge:i for i,edge in enumerate(edges)}
 
         rows = set()
         for g in self.subgraph_search_iterator(G, induced=induced, return_graphs=True):
             g_edges = g.edges(labels=False)
-            L = sorted(edge_to_column_id[frozenset(edge)] for edge in g_edges)
+            L = sorted(edge_to_column_id[edge] for edge in g_edges)
             rows.add(tuple(L))
         rows = list(list(row) for row in rows)
         dlx = dlx_solver(rows)
