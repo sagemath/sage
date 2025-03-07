@@ -33,6 +33,8 @@ if TYPE_CHECKING:
 def cputime(t: float = 0, subprocesses: bool = False) -> float: ...
 @overload
 def cputime(t: GlobalCputime, subprocesses: bool) -> GlobalCputime: ...
+
+
 def cputime(
     t: float | GlobalCputime = 0, subprocesses: bool = False
 ) -> float | GlobalCputime:
