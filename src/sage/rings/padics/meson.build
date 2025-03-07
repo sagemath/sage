@@ -128,7 +128,7 @@ foreach name, pyx : extension_data_cpp
   deps = [py_dep, cysignals, gmp, ntl]
   if name == 'pow_computer_flint'
     deps += [flint]
-  elif name == 'padic_ZZ_pX_CA_element'
+  elif name == 'padic_ZZ_pX_CA_element' or name == 'padic_ZZ_pX_CR_element' or name == 'padic_ZZ_pX_FM_element'
     deps += [cypari2]
   endif
   py.extension_module(
