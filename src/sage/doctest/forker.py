@@ -248,7 +248,7 @@ def init_sage(controller: DocTestController | None = None) -> None:
 
     try:
         import sympy
-    except ImportError:
+    except (ImportError, AttributeError):
         # Do not require sympy for running doctests (Issue #25106).
         pass
     else:
@@ -1097,7 +1097,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             False
             sage: doctests, extras = FDS.create_doctests(globs)
             sage: ex0 = doctests[0].examples[0]
-            sage: flags = 32768 if sys.version_info.minor < 8 else 524288
+            sage: flags = 524288
             sage: def compiler(ex):
             ....:     return compile(ex.source, '<doctest sage.doctest.forker[0]>',
             ....:                    'single', flags, 1)
