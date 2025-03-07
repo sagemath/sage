@@ -1,5 +1,6 @@
 py.install_sources(
   'S_unit_solver.py',
+  '__init__.py',
   'all.py',
   'bdd_height.py',
   'class_group.py',

@@ -823,7 +823,7 @@ class CompositionTableauxBacktracker(GenericBacktracker):
             # We check to make sure that k does not violate the Triple Rule
             if j != 0 and i != 0 and any(k == obj_copy[m][j] for m in range(i)):
                 continue
-            if j != 0 and i != 0 and any(obj_copy[m][j] < k and k <= obj_copy[m][j - 1]
+            if j != 0 and i != 0 and any(obj_copy[m][j] < k <= obj_copy[m][j - 1]
                                          for m in range(i)):
                 continue
 

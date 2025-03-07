@@ -967,16 +967,10 @@ class Modules(Category_module):
                      (Free Algebra on 2 generators (None0, None1) over Rational Field,
                       Free Algebra on 2 generators (None0, None1) over Rational Field))
                 """
-                try:
-                    factors = self.tensor_factors()
-                except (TypeError, NotImplementedError):
-                    from sage.misc.superseded import deprecation
-                    deprecation(34393, "implementations of Modules().TensorProducts() now must define the method tensor_factors")
-                    return None
-                return (TensorProductFunctor(),
-                        factors)
+                factors = self.tensor_factors()
+                return (TensorProductFunctor(), factors)
 
-            @abstract_method(optional=True)
+            @abstract_method
             def tensor_factors(self):
                 """
                 Return the tensor factors of this tensor product.
@@ -992,16 +986,4 @@ class Modules(Category_module):
                     F # G
                     sage: T.tensor_factors()
                     (F, G)
-
-                TESTS::
-
-                    sage: Cat = ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts()
-                    sage: M = CombinatorialFreeModule(ZZ,                               # needs sage.modules
-                    ....:                             ((1, 1), (1, 2), (2, 1), (2, 2)),
-                    ....:                             category=Cat)
-                    sage: M.construction()                                              # needs sage.modules
-                    doctest:warning...
-                    DeprecationWarning: implementations of Modules().TensorProducts() now must define the method tensor_factors
-                    See https://github.com/sagemath/sage/issues/34393 for details.
-                    (VectorFunctor, Integer Ring)
                 """

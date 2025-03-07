@@ -903,12 +903,12 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         else:
             raise ValueError("Matrix is empty")
         if (i < 0) or (i >= self.Data.Nor):
-            raise IndexError("Index {} out of range 0..{}",format(i,self.Data.Nor-1))
+            raise IndexError("Index {} out of range 0..{}",format(i, self.Data.Nor-1))
         cdef PTR p
-        p = MatGetPtr(self.Data,i)
-        L = [FfToInt(FfExtract(p,k)) for k in range(self.Data.Noc)]
-        if j!=-1:
-            if not(isinstance(j,int) or isinstance(j,Integer)):
+        p = MatGetPtr(self.Data, i)
+        L = [FfToInt(FfExtract(p, k)) for k in range(self.Data.Noc)]
+        if j != -1:
+            if not isinstance(j, (int, Integer)):
                 raise TypeError("Second index must be an integer")
             if j >= self.Data.Nor:
                 raise IndexError("Index out of range")

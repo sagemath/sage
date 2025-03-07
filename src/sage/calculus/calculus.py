@@ -387,6 +387,7 @@ Ensure that :issue:`8624` is fixed::
 Ensure that :issue:`25626` is fixed. As the form of the answer is dependent of
 the giac version, we simplify it (see :issue:`34037`)::
 
+    sage: # needs sage.libs.giac
     sage: t = SR.var('t')
     sage: integrate(exp(t)/(t + 1)^2, t, algorithm='giac').full_simplify()
     ((t + 1)*Ei(t + 1) - e^(t + 1))/(t*e + e)
@@ -418,7 +419,7 @@ To check that :issue:`27092` is fixed::
 """
 
 import re
-from sage.arith.misc import algdep
+from sage.arith.misc import algebraic_dependency
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RealDoubleElement
@@ -1116,7 +1117,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
             for degree in degree_list:
 
-                f = QQ[var](algdep(a, degree))  # TODO: use the known_bits parameter?
+                f = QQ[var](algebraic_dependency(a, degree))  # TODO: use the known_bits parameter?
                 # If indeed we have found a minimal polynomial,
                 # it should be accurate to a much higher precision.
                 error = abs(f(aa))

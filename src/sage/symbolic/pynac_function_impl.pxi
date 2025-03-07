@@ -47,14 +47,16 @@ cpdef call_registered_function(unsigned serial,
         res = g_function_evalv(serial, vec, hold)
     elif nargs == 1:
         res = g_function_eval1(serial,
-                (<Expression>args[0])._gobj, hold)
+                               (<Expression>args[0])._gobj, hold)
     elif nargs == 2:
-        res = g_function_eval2(serial, (<Expression>args[0])._gobj,
-                (<Expression>args[1])._gobj, hold)
+        res = g_function_eval2(serial,
+                               (<Expression>args[0])._gobj,
+                               (<Expression>args[1])._gobj, hold)
     elif nargs == 3:
         res = g_function_eval3(serial,
-                (<Expression>args[0])._gobj, (<Expression>args[1])._gobj,
-                (<Expression>args[2])._gobj, hold)
+                               (<Expression>args[0])._gobj,
+                               (<Expression>args[1])._gobj,
+                               (<Expression>args[2])._gobj, hold)
 
     if allow_numeric_result and is_a_numeric(res):
         return py_object_from_numeric(res)

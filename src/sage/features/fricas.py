@@ -12,9 +12,9 @@ Features for testing the presence of ``fricas``
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-import os
 import subprocess
 from . import Executable, FeatureTestResult
+
 
 class FriCAS(Executable):
     r"""
@@ -61,6 +61,7 @@ class FriCAS(Executable):
                     reason="Call `{command}` did not produce output which contains `{expected}`".format(command=" ".join(command), expected=expected))
 
         return FeatureTestResult(self, True)
+
 
 def all_features():
     return [FriCAS()]

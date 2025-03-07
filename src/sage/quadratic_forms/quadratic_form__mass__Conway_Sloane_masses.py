@@ -656,7 +656,6 @@ def conway_mass(self):
 #        ans *= zeta(RR(j))
 #
 #    # Extra L-factor for even dimensional forms  -- DO THIS!!!
-#    raise NotImplementedError, "This routine is not finished yet... =("
+#    raise NotImplementedError("This routine is not finished yet")
 #
-#    # Return the answer
 #    return ans

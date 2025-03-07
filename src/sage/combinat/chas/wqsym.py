@@ -986,12 +986,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             cur = {data[0]: 1}
             for B in data[1:]:
                 ret = {}
-                for A in cur:
+                for A, curA in cur.items():
                     for C in ShuffleProduct_overlapping(A, B, element_constructor=OSP, add=union):
                         if C in ret:
-                            ret[C] += cur[A]
+                            ret[C] += curA
                         else:
-                            ret[C] = cur[A]
+                            ret[C] = curA
                 cur = ret
 
             # Return the result in the X basis

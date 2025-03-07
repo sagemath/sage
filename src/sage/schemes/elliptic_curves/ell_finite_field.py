@@ -2810,18 +2810,8 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
         try:
             endo = iso * E.isogeny(None, iso.domain(), degree=q)
         except (NotImplementedError, ValueError):  #FIXME catching ValueError here is a workaround for #38481
-            #FIXME this code could be simplified/optimized after #37388 and/or #35949
-            def _isogs(E, d):
-                if d.is_one():
-                    yield E.identity_morphism()
-                    return
-                l = d.prime_factors()[-1]
-                for phi in E.isogenies_prime_degree(l):
-                    for psi in _isogs(phi.codomain(), d//l):
-                        yield psi * phi
-            endos = (iso*phi for phi in _isogs(E, q) for iso in phi.codomain().isomorphisms(E))
-#            endos = (iso*phi for phi in E.isogenies_degree(q)
-#                             for iso in phi.codomain().isomorphisms(E))
+            endos = (iso*phi for phi in E.isogenies_degree(q)
+                             for iso in phi.codomain().isomorphisms(E))
             endo = next(endo for endo in endos if endo.trace().is_zero())
 
     endo._degree = ZZ(q)
@@ -2941,6 +2931,7 @@ def EllipticCurve_with_order(m, *, D=None):
                         Et.set_order(m_val, check=False)
                         seen.add(Et)
                         yield Et
+
 
 def EllipticCurve_with_prime_order(N):
     r"""

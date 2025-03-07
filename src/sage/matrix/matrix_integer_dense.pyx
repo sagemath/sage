@@ -2065,7 +2065,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 raise ValueError("ntl only computes HNF for square matrices of full rank.")
 
             import sage.libs.ntl.ntl_mat_ZZ
-            v =  sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols)
+            v = sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols)
             for i from 0 <= i < self._nrows:
                 for j from 0 <= j < self._ncols:
                     v[i,j] = self.get_unsafe(nr-i-1,nc-j-1)
@@ -4385,14 +4385,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = random_matrix(ZZ, 2000, 2000)
             sage: B = random_matrix(ZZ, 2000, 2000)
-            sage: t0 = walltime()
-            sage: alarm(2); A._solve_iml(B)  # long time
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
-            sage: t = walltime(t0)
-            sage: t < 10 or t
-            True
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_iml(B)
 
         ALGORITHM: Uses IML.
 
@@ -4549,14 +4543,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = random_matrix(ZZ, 2000, 2000)
             sage: B = random_matrix(ZZ, 2000, 2000)
-            sage: t0 = walltime()
-            sage: alarm(2); A._solve_flint(B)  # long time
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
-            sage: t = walltime(t0)
-            sage: t < 10 or t
-            True
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_flint(B)
 
         AUTHORS:
 
@@ -4813,14 +4801,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: w.charpoly().factor()
             (x - 3) * (x + 2)
             sage: w.decomposition()
-            [
-            (Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [ 5 -2], True),
-            (Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [0 1], True)
-            ]
+            [(Free module of degree 2 and rank 1 over Integer Ring
+              Echelon basis matrix:
+              [ 5 -2],
+              True),
+             (Free module of degree 2 and rank 1 over Integer Ring
+              Echelon basis matrix:
+              [0 1],
+              True)]
         """
         F = self.charpoly().factor()
         if len(F) == 1:
@@ -4954,11 +4942,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 row_i = A.row(i)
                 row_n = A.row(n)
 
-                ag = a//g
-                bg = b//g
+                ag = a // g
+                bg = b // g
 
-                new_top = s*row_i  +  t*row_n
-                new_bot = bg*row_i - ag*row_n
+                new_top = s * row_i + t * row_n
+                new_bot = bg * row_i - ag * row_n
 
                 # OK -- now we have to make sure the top part of the matrix
                 # but with row i replaced by
@@ -5435,6 +5423,16 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [  3   4   5]
             [  6   7   8]
             [  1   5 -10]
+
+        TESTS:
+
+        Ensure that :issue:`11328` is fixed::
+
+            sage: m = matrix([[int(1),int(1)],[int(1),int(1)]])
+            sage: m.insert_row(1,[int(2),int(3)])
+            [1 1]
+            [2 3]
+            [1 1]
         """
         cdef Matrix_integer_dense res = self._new(self._nrows + 1, self._ncols)
         cdef Py_ssize_t j
@@ -5450,7 +5448,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             for i from 0 <= i < index:
                 fmpz_init_set(fmpz_mat_entry(res._matrix,i,j), fmpz_mat_entry(self._matrix,i,j))
 
-            z = row[j]
+            z = ZZ(row[j])
+
             fmpz_set_mpz(zflint,z.value)
             fmpz_init_set(fmpz_mat_entry(res._matrix,index,j), zflint)
 
@@ -5725,9 +5724,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         ri = nr
         for i from 0 <= i < nr:
             rj = nc
-            ri =  ri-1
+            ri -= 1
             for j from 0 <= j < nc:
-                rj = rj-1
+                rj -= 1
                 fmpz_init_set(fmpz_mat_entry(A._matrix, rj, ri),
                               fmpz_mat_entry(self._matrix, i, j))
         sig_off()

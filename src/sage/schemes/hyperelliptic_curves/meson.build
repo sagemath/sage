@@ -1,5 +1,6 @@
 inc_hypellfrob = include_directories('hypellfrob')
 py.install_sources(
+  '__init__.py',
   'all.py',
   'constructor.py',
   'hyperelliptic_finite_field.py',

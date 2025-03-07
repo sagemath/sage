@@ -521,7 +521,7 @@ cdef class CoercionModel:
 
         sage: import numpy                                                              # needs numpy
         sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
-        ....:     numpy.set_printoptions(legacy="1.25")                                 # needs numpy
+        ....:     __ = numpy.set_printoptions(legacy="1.25")                            # needs numpy
 
         sage: # needs sage.rings.real_mpfr
         sage: x = polygen(RR)
@@ -1891,7 +1891,7 @@ cdef class CoercionModel:
             1/2*x
             sage: cm.discover_action(F, ZZ, operator.truediv)
             Right inverse action by Rational Field on
-             Free Algebra on 1 generators (x,) over Rational Field
+             Free Algebra on 1 generator (x,) over Rational Field
              with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Rational Field

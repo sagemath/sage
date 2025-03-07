@@ -178,11 +178,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             Modular Forms subspace of dimension 3 of Modular Forms space of dimension 42
              for Congruence Subgroup Gamma0(225) of weight 2 over Rational Field
             sage: e.basis()
-            [
-            q + O(q^6),
-            q^2 + O(q^6),
-            q^4 + O(q^6)
-            ]
+            [q + O(q^6), q^2 + O(q^6), q^4 + O(q^6)]
         """
 
         if p is not None:
@@ -210,24 +206,12 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             Eisenstein subspace of dimension 5 of Modular Forms space of dimension 5
              for Congruence Subgroup Gamma0(12) of weight 2 over Rational Field
             sage: E.basis()
-            [
-            1 + O(q^6),
-            q + 6*q^5 + O(q^6),
-            q^2 + O(q^6),
-            q^3 + O(q^6),
-            q^4 + O(q^6)
-            ]
+            [1 + O(q^6), q + 6*q^5 + O(q^6), q^2 + O(q^6), q^3 + O(q^6), q^4 + O(q^6)]
             sage: E.change_ring(GF(5))
             Eisenstein subspace of dimension 5 of Modular Forms space of dimension 5
              for Congruence Subgroup Gamma0(12) of weight 2 over Finite Field of size 5
             sage: E.change_ring(GF(5)).basis()
-            [
-            1 + O(q^6),
-            q + q^5 + O(q^6),
-            q^2 + O(q^6),
-            q^3 + O(q^6),
-            q^4 + O(q^6)
-            ]
+            [1 + O(q^6), q + q^5 + O(q^6), q^2 + O(q^6), q^3 + O(q^6), q^4 + O(q^6)]
         """
         if base_ring == self.base_ring():
             return self
@@ -243,71 +227,48 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         EXAMPLES::
 
             sage: EisensteinForms(11,2).eisenstein_series()
-            [
-            5/12 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6)
-            ]
+            [5/12 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6)]
             sage: EisensteinForms(1,4).eisenstein_series()
-            [
-            1/240 + q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6)
-            ]
+            [1/240 + q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6)]
             sage: EisensteinForms(1,24).eisenstein_series()
-            [
-            236364091/131040 + q + 8388609*q^2 + 94143178828*q^3
-                + 70368752566273*q^4 + 11920928955078126*q^5 + O(q^6)
-            ]
+            [236364091/131040 + q + 8388609*q^2 + 94143178828*q^3 + 70368752566273*q^4 + 11920928955078126*q^5 + O(q^6)]
             sage: EisensteinForms(5,4).eisenstein_series()
-            [
-            1/240 + q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6),
-            1/240 + q^5 + O(q^6)
-            ]
+            [1/240 + q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6), 1/240 + q^5 + O(q^6)]
             sage: EisensteinForms(13,2).eisenstein_series()
-            [
-            1/2 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6)
-            ]
+            [1/2 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6)]
 
             sage: E = EisensteinForms(Gamma1(7),2)
             sage: E.set_precision(4)
             sage: E.eisenstein_series()
-            [
-            1/4 + q + 3*q^2 + 4*q^3 + O(q^4),
-            1/7*zeta6 - 3/7 + q + (-2*zeta6 + 1)*q^2 + (3*zeta6 - 2)*q^3 + O(q^4),
-            q + (-zeta6 + 2)*q^2 + (zeta6 + 2)*q^3 + O(q^4),
-            -1/7*zeta6 - 2/7 + q + (2*zeta6 - 1)*q^2 + (-3*zeta6 + 1)*q^3 + O(q^4),
-            q + (zeta6 + 1)*q^2 + (-zeta6 + 3)*q^3 + O(q^4)
-            ]
+            [1/4 + q + 3*q^2 + 4*q^3 + O(q^4),
+             1/7*zeta6 - 3/7 + q + (-2*zeta6 + 1)*q^2 + (3*zeta6 - 2)*q^3 + O(q^4),
+             q + (-zeta6 + 2)*q^2 + (zeta6 + 2)*q^3 + O(q^4),
+             -1/7*zeta6 - 2/7 + q + (2*zeta6 - 1)*q^2 + (-3*zeta6 + 1)*q^3 + O(q^4),
+             q + (zeta6 + 1)*q^2 + (-zeta6 + 3)*q^3 + O(q^4)]
 
             sage: eps = DirichletGroup(13).0^2
             sage: ModularForms(eps,2).eisenstein_series()
-            [
-            -7/13*zeta6 - 11/13 + q + (2*zeta6 + 1)*q^2 + (-3*zeta6 + 1)*q^3
-                + (6*zeta6 - 3)*q^4 - 4*q^5 + O(q^6),
-            q + (zeta6 + 2)*q^2 + (-zeta6 + 3)*q^3 + (3*zeta6 + 3)*q^4 + 4*q^5 + O(q^6)
-            ]
+            [-7/13*zeta6 - 11/13 + q + (2*zeta6 + 1)*q^2 + (-3*zeta6 + 1)*q^3 + (6*zeta6 - 3)*q^4 - 4*q^5 + O(q^6),
+             q + (zeta6 + 2)*q^2 + (-zeta6 + 3)*q^3 + (3*zeta6 + 3)*q^4 + 4*q^5 + O(q^6)]
 
             sage: M = ModularForms(19,3).eisenstein_subspace()
             sage: M.eisenstein_series()
-            [
-            ]
+            []
 
             sage: M = ModularForms(DirichletGroup(13).0, 1)
             sage: M.eisenstein_series()
-            [
-            -1/13*zeta12^3 + 6/13*zeta12^2 + 4/13*zeta12 + 2/13 + q + (zeta12 + 1)*q^2
-                + zeta12^2*q^3 + (zeta12^2 + zeta12 + 1)*q^4 + (-zeta12^3 + 1)*q^5 + O(q^6)
-            ]
+            [-1/13*zeta12^3 + 6/13*zeta12^2 + 4/13*zeta12 + 2/13 + q + (zeta12 + 1)*q^2 + zeta12^2*q^3 + (zeta12^2 + zeta12 + 1)*q^4 + (-zeta12^3 + 1)*q^5 + O(q^6)]
 
             sage: M = ModularForms(GammaH(15, [4]), 4)
             sage: M.eisenstein_series()
-            [
-            1/240 + q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6),
-            1/240 + q^3 + O(q^6),
-            1/240 + q^5 + O(q^6),
-            1/240 + O(q^6),
-            1 + q - 7*q^2 - 26*q^3 + 57*q^4 + q^5 + O(q^6),
-            1 + q^3 + O(q^6),
-            q + 7*q^2 + 26*q^3 + 57*q^4 + 125*q^5 + O(q^6),
-            q^3 + O(q^6)
-            ]
+            [1/240 + q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6),
+             1/240 + q^3 + O(q^6),
+             1/240 + q^5 + O(q^6),
+             1/240 + O(q^6),
+             1 + q - 7*q^2 - 26*q^3 + 57*q^4 + q^5 + O(q^6),
+             1 + q^3 + O(q^6),
+             q + 7*q^2 + 26*q^3 + 57*q^4 + 125*q^5 + O(q^6),
+             q^3 + O(q^6)]
         """
         P = self.parameters()
         E = Sequence([element.EisensteinSeries(self.change_ring(chi.base_ring()),
@@ -562,30 +523,41 @@ class EisensteinSubmodule_eps(EisensteinSubmodule_params):
         6
 
         sage: M.eisenstein_series()
-        [
-        -1/3*zeta6 - 1/3 + q + (2*zeta6 - 1)*q^2 + q^3
-             + (-2*zeta6 - 1)*q^4 + (-5*zeta6 + 1)*q^5 + O(q^6),
-        -1/3*zeta6 - 1/3 + q^3 + O(q^6),
-        q + (-2*zeta6 + 1)*q^2 + (-2*zeta6 - 1)*q^4 + (5*zeta6 - 1)*q^5 + O(q^6),
-        q + (zeta6 + 1)*q^2 + 3*q^3 + (zeta6 + 2)*q^4 + (-zeta6 + 5)*q^5 + O(q^6),
-        q^3 + O(q^6),
-        q + (-zeta6 - 1)*q^2 + (zeta6 + 2)*q^4 + (zeta6 - 5)*q^5 + O(q^6)
-        ]
+        [-1/3*zeta6 - 1/3 + q + (2*zeta6 - 1)*q^2 + q^3 + (-2*zeta6 - 1)*q^4 + (-5*zeta6 + 1)*q^5 + O(q^6),
+         -1/3*zeta6 - 1/3 + q^3 + O(q^6),
+         q + (-2*zeta6 + 1)*q^2 + (-2*zeta6 - 1)*q^4 + (5*zeta6 - 1)*q^5 + O(q^6),
+         q + (zeta6 + 1)*q^2 + 3*q^3 + (zeta6 + 2)*q^4 + (-zeta6 + 5)*q^5 + O(q^6),
+         q^3 + O(q^6),
+         q + (-zeta6 - 1)*q^2 + (zeta6 + 2)*q^4 + (zeta6 - 5)*q^5 + O(q^6)]
         sage: M.eisenstein_subspace().T(2).matrix().fcp()
         (x + 2*zeta3 + 1) * (x + zeta3 + 2) * (x - zeta3 - 2)^2 * (x - 2*zeta3 - 1)^2
         sage: ModularSymbols(e,2).eisenstein_subspace().T(2).matrix().fcp()
         (x + 2*zeta3 + 1) * (x + zeta3 + 2) * (x - zeta3 - 2)^2 * (x - 2*zeta3 - 1)^2
 
         sage: M.basis()
-        [
-        1 - 3*zeta3*q^6 + (-2*zeta3 + 2)*q^9 + O(q^10),
-        q + (5*zeta3 + 5)*q^7 + O(q^10),
-        q^2 - 2*zeta3*q^8 + O(q^10),
-        q^3 + (zeta3 + 2)*q^6 + 3*q^9 + O(q^10),
-        q^4 - 2*zeta3*q^7 + O(q^10),
-        q^5 + (zeta3 + 1)*q^8 + O(q^10)
-        ]
+        [1 - 3*zeta3*q^6 + (-2*zeta3 + 2)*q^9 + O(q^10),
+         q + (5*zeta3 + 5)*q^7 + O(q^10),
+         q^2 - 2*zeta3*q^8 + O(q^10),
+         q^3 + (zeta3 + 2)*q^6 + 3*q^9 + O(q^10),
+         q^4 - 2*zeta3*q^7 + O(q^10),
+         q^5 + (zeta3 + 1)*q^8 + O(q^10)]
     """
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: e = DirichletGroup(27,CyclotomicField(3)).0**2
+            sage: M = ModularForms(e,2,prec=10).eisenstein_subspace()
+            sage: pari.mfdim(M)
+            6
+            sage: pari.mfparams(M)
+            [27, 2, Mod(10, 27), 3, t^2 + t + 1]
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight(), self.character()], 3)
+
     # TODO
     # def _compute_q_expansion_basis(self, prec):
     #     B = EisensteinSubmodule_params._compute_q_expansion_basis(self, prec)

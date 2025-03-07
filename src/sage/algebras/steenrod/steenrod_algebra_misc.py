@@ -567,7 +567,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
 
 
 def milnor_mono_to_string(mono, latex=False, generic=False):
-    """
+    r"""
     String representation of element of the Milnor basis.
 
     This is used by the _repr_ and _latex_ methods.
@@ -720,7 +720,7 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
 
 
 def wood_mono_to_string(mono, latex=False):
-    """
+    r"""
     String representation of element of Wood's Y and Z bases.
 
     This is used by the _repr_ and _latex_ methods.
@@ -806,7 +806,7 @@ def wall_mono_to_string(mono, latex=False):
 
 
 def wall_long_mono_to_string(mono, latex=False):
-    """
+    r"""
     Alternate string representation of element of Wall's basis.
 
     This is used by the _repr_ and _latex_ methods.
@@ -891,7 +891,7 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
 
 
 def arnonA_long_mono_to_string(mono, latex=False, p=2):
-    """
+    r"""
     Alternate string representation of element of Arnon's A basis.
 
     This is used by the _repr_ and _latex_ methods.

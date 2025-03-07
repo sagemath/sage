@@ -82,4 +82,3 @@ cdef iterator *setup_canonical_generator(int degree,
     iterator *cangen_prealloc) except NULL
 
 cdef iterator *start_canonical_generator(StabilizerChain *, void *, int, iterator *) except NULL
-

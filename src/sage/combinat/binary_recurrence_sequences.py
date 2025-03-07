@@ -729,8 +729,8 @@ class BinaryRecurrenceSequence(SageObject):
 
                     # Check how long each element has persisted, if it is for at least 7 cycles,
                     # then we check to see if it is actually a perfect power
-                    for i in Possible_count:
-                        if Possible_count[i] == 7:
+                    for i, pci in Possible_count.items():
+                        if pci == 7:
                             n = Integer(i)
                             if n < Bound:
                                 if _is_p_power(self(n), p):

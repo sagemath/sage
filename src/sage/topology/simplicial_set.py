@@ -455,7 +455,7 @@ class AbstractSimplex_class(SageObject):
 
     def __ne__(self, other):
         """
-        This returns the negation of `__eq__`.
+        This returns the negation of ``__eq__``.
 
         EXAMPLES::
 

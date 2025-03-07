@@ -45,7 +45,7 @@ from sage.categories.morphism import IdentityMorphism
 
 import sage.rings.rational_field as rational_field
 
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 
 
 QQ = rational_field.RationalField()

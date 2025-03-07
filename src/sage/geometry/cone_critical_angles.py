@@ -31,9 +31,8 @@ an end-user would run. Breaking somewhat with tradition, only those
 methods have been prefixed with an underscore.
 """
 
-from sage.functions.trig import arccos, cos
+from sage.functions.trig import arccos
 from sage.matrix.constructor import matrix
-from sage.misc.misc import powerset
 from sage.rings.integer_ring import ZZ
 from sage.rings.qqbar import AA
 from sage.rings.rational_field import QQ

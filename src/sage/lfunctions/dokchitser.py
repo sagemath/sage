@@ -287,7 +287,6 @@ class Dokchitser(SageObject):
 
         cls.__globals_re = re.compile(
             '([^a-zA-Z0-9_]|^)(%s)([^a-zA-Z0-9_]|$)' % '|'.join(cls.__globals))
-        return
 
     @classmethod
     def _teardown_gp(cls, instance=None):

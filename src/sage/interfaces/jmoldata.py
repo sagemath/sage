@@ -28,7 +28,6 @@ from sage.cpython.string import bytes_to_str
 import os
 import re
 import subprocess
-import sys
 from pathlib import Path
 
 

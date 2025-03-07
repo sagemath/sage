@@ -474,7 +474,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 sage: n in C
                 True
 
-            TODO: implement _test_random which checks uniformness
+            TODO: implement _test_random which checks uniformity
             """
             from sage.misc.prandom import randint
             c = self.cardinality()

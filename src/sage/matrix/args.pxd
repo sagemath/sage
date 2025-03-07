@@ -12,7 +12,7 @@ cdef enum entries_type:
     MA_FLAG_SPARSE        = 0x20_00  # Sparse by default
 
     # types of input entries
-    MA_ENTRIES_UNKNOWN    =       0  # anything
+    MA_ENTRIES_UNKNOWN    = 0        # anything
     MA_ENTRIES_ZERO       = 0x17_01  # zero matrix
     MA_ENTRIES_SCALAR     = 0x17_02  # single scalar value
     MA_ENTRIES_SEQ_SEQ    = 0x10_03  # list of lists

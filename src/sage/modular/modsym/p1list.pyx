@@ -75,7 +75,7 @@ cdef int c_p1_normalize_int(int N, int u, int v,
         v += N
     if u == 0:
         uu[0] = 0
-        if arith_int.c_gcd_int(v,N) == 1:
+        if arith_int.c_gcd_int(v, N) == 1:
             vv[0] = 1
         else:
             vv[0] = 0
@@ -96,7 +96,7 @@ cdef int c_p1_normalize_int(int N, int u, int v,
     # Adjust s modulo N/g so it is coprime to N.
     if g != 1:
         d = N // g
-        while arith_int.c_gcd_int(s,N) != 1:
+        while arith_int.c_gcd_int(s, N) != 1:
             s = (s+d) % N
 
     # Multiply [u,v] by s; then [s*u,s*v] = [g,s*v] (mod N)
@@ -112,7 +112,7 @@ cdef int c_p1_normalize_int(int N, int u, int v,
         for k in range(2, g + 1):
             v = (v + vNg) % N
             t = (t + Ng) % N
-            if v<min_v and arith_int.c_gcd_int(t,N)==1:
+            if v<min_v and arith_int.c_gcd_int(t, N)==1:
                 min_v = v
                 min_t = t
     v = min_v
@@ -217,7 +217,7 @@ def p1list_int(int N):
     if N == 1:
         return [(0, 0)]
 
-    lst = [(0,1)]
+    lst = [(0, 1)]
     c = 1
     for d in range(N):
         lst.append((c, d))
@@ -240,7 +240,7 @@ def p1list_int(int N):
                     while arith_int.c_gcd_int(d1, c) != 1:
                         d1 += h
                     c_p1_normalize_int(N, c, d1, &u, &v, &s, 0)
-                    lst.append((u,v))
+                    lst.append((u, v))
     lst.sort()
     return lst
 
@@ -321,9 +321,9 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
     ll_N = <long> N
 
-    #if N<=0 or N >= 2**31:
-    #    raise OverflowError("Modulus is too large (must be < 46340)")
-    #    return -1
+    # if N <= 0 or N >= 2**31:
+    #     raise OverflowError("Modulus is too large (must be < 46340)")
+    #     return -1
 
     u = u % N
     v = v % N
@@ -333,14 +333,14 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
         v += N
     if u == 0:
         uu[0] = 0
-        if arith_int.c_gcd_int(v,N) == 1:
+        if arith_int.c_gcd_int(v, N) == 1:
             vv[0] = 1
         else:
             vv[0] = 0
         ss[0] = v
         return 0
 
-    #g = xgcd_int_llong(u, N, &s, &t)
+    # g = xgcd_int_llong(u, N, &s, &t)
     g = <int> arith_llong.c_xgcd_longlong(u, N, &ll_s, &ll_t)
     s = <int>(ll_s % ll_N)
     t = <int>(ll_t % ll_N)
@@ -357,7 +357,7 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
     # Adjust s modulo N/g so it is coprime to N.
     if g != 1:
         d = N // g
-        while arith_int.c_gcd_int(s,N) != 1:
+        while arith_int.c_gcd_int(s, N) != 1:
             s = (s+d) % N
 
     # Multiply [u,v] by s; then [s*u,s*v] = [g,s*v] (mod N)
@@ -466,7 +466,7 @@ def p1list_llong(int N):
     if N == 1:
         return [(0, 0)]
 
-    lst = [(0,1)]
+    lst = [(0, 1)]
     c = 1
     for d in range(N):
         lst.append((c, d))
@@ -720,7 +720,7 @@ cdef class P1List():
         else:
             raise OverflowError("p1list not defined for such large N.")
         self.__list.sort()
-        self.__end_hash = dict([(x,i) for i, x in enumerate(self.__list[N+1:])])
+        self.__end_hash = {x: i for i, x in enumerate(self.__list[N+1:])}
 
         # Allocate memory for xgcd table.
         self.g = NULL
@@ -828,7 +828,7 @@ cdef class P1List():
         """
         return len(self.__list)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the string representation of this P1List.
 
@@ -838,7 +838,7 @@ cdef class P1List():
             sage: str(L)            # indirect doctest
             'The projective line over the integers modulo 8'
         """
-        return "The projective line over the integers modulo %s" % self.__N
+        return f"The projective line over the integers modulo {self.__N}"
 
     def lift_to_sl2z(self, int i):
         r"""
@@ -870,7 +870,7 @@ cdef class P1List():
         cdef int c, d, N
 
         if self.__N == 1:
-            return [1,0,0,1]
+            return [1, 0, 0, 1]
 
         c, d = self.__list[i]
         N = self.__N
@@ -909,9 +909,9 @@ cdef class P1List():
             True
         """
         cdef int u, v, uu, vv, ss
-        u,v = self.__list[i]
+        u, v = self.__list[i]
         self._normalize(self.__N, -u, v, &uu, &vv, &ss, 0)
-        _, j = search(self.__list, (uu,vv))
+        _, j = search(self.__list, (uu, vv))
         return j
 
     def apply_S(self, int i):
@@ -941,9 +941,9 @@ cdef class P1List():
             True
         """
         cdef int u, v, uu, vv, ss
-        u,v = self.__list[i]
+        u, v = self.__list[i]
         self._normalize(self.__N, -v, u, &uu, &vv, &ss, 0)
-        _, j = search(self.__list, (uu,vv))
+        _, j = search(self.__list, (uu, vv))
         return j
 
     def apply_T(self, int i):
@@ -973,9 +973,9 @@ cdef class P1List():
             True
         """
         cdef int u, v, uu, vv, ss
-        u,v = self.__list[i]
+        u, v = self.__list[i]
         self._normalize(self.__N, v, -u-v, &uu, &vv, &ss, 0)
-        _, j = search(self.__list, (uu,vv))
+        _, j = search(self.__list, (uu, vv))
         return j
 
     cpdef index(self, int u, int v):
@@ -1014,7 +1014,7 @@ cdef class P1List():
                 return -1
             return 0
         try:
-            return self.__end_hash[(uu,vv)] + self.__N + 1
+            return self.__end_hash[(uu, vv)] + self.__N + 1
         except KeyError:
             return -1
 
@@ -1053,7 +1053,7 @@ cdef class P1List():
             i[0] = 0
             return
         try:
-            i[0] = self.__end_hash[(uu,vv)] + self.__N + 1
+            i[0] = self.__end_hash[(uu, vv)] + self.__N + 1
             return
         except KeyError:
             i[0] = -1
@@ -1084,7 +1084,7 @@ cdef class P1List():
             sage: all(L.index_of_normalized_pair(L[i][0],L[i][1])==i for i in range(len(L)))
             True
         """
-        t, i = search(self.__list, (u,v))
+        t, i = search(self.__list, (u, v))
         if t:
             return i
         return -1
@@ -1129,7 +1129,7 @@ cdef class P1List():
         """
         cdef int uu, vv, ss
         self._normalize(self.__N, u, v, &uu, &vv, &ss, 0)
-        return (uu,vv)
+        return (uu, vv)
 
     def normalize_with_scalar(self, int u, int v):
         r"""
@@ -1365,27 +1365,7 @@ def lift_to_sl2z(c, d, N):
         [1, 0, 0, 1]
     """
     if N <= 46340:
-        return lift_to_sl2z_int(c,d,N)
-    elif N <= 2147483647:
-        return lift_to_sl2z_llong(c,d,N)
-    else:
-        raise NotImplementedError("N too large")
-
-
-def _make_p1list(n):
-    """
-    Helper function used in pickling.
-
-    Not intended for end-users.
-
-    EXAMPLES::
-
-        sage: from sage.modular.modsym.p1list import _make_p1list
-        sage: _make_p1list(3)
-        doctest:...: DeprecationWarning: _make_p1list() is deprecated
-        See https://github.com/sagemath/sage/issues/25848 for details.
-        The projective line over the integers modulo 3
-    """
-    from sage.misc.superseded import deprecation_cython as deprecation
-    deprecation(25848, '_make_p1list() is deprecated')
-    return P1List(n)
+        return lift_to_sl2z_int(c, d, N)
+    if N <= 2147483647:
+        return lift_to_sl2z_llong(c, d, N)
+    raise NotImplementedError("N too large")

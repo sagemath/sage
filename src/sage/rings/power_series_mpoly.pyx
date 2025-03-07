@@ -8,7 +8,7 @@ from sage.rings import power_series_poly
 
 
 try:
-    from sage.libs.pari.all import PariError
+    from cypari2.handle_error import PariError
 except ImportError:
     PariError = ()
 

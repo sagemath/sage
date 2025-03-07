@@ -38,14 +38,14 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.modules import Modules
-from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
 from sage.manifolds.differentiable.diff_form import DiffForm, DiffFormParal
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
 from sage.tensor.modules.reflexive_module import ReflexiveModule_abstract
 
 
@@ -863,7 +863,9 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
                     and self._domain.is_subset(other._domain)
                     and self._ambient_domain.is_subset(other._ambient_domain))
 
-        from sage.manifolds.differentiable.tensorfield_module import TensorFieldFreeModule
+        from sage.manifolds.differentiable.tensorfield_module import (
+            TensorFieldFreeModule,
+        )
         if isinstance(other, TensorFieldFreeModule):
             # coercion of a type-(0,1) tensor to a linear form
             return (self._fmodule is other._fmodule and self._degree == 1

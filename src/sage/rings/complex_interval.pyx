@@ -249,7 +249,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         if not self.real().is_zero():
             s = self.real().str(base=base, style=style)
         if not self.imag().is_zero():
-            y  =  self.imag()
+            y  = self.imag()
             if s:
                 if y < 0:
                     s += " - "
@@ -2237,7 +2237,7 @@ cdef _circle_invert_standard(
     # Consider the images
     #          f(xmin + ymin * I), ..., f(xmax + ymax * I)
     # of the four corners of the input rect under inversion f.
-    # Now consider the the axis-parallel rectangle R that these images span.
+    # Now consider the axis-parallel rectangle R that these images span.
     # In general, the image of the input rect might not be contained in R.
     # In case 1, however, (and only in case 1) it is and we furthermore know
     # which image is mapped to which edge of R. Thus, we have:

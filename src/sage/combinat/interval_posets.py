@@ -47,6 +47,7 @@ from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
@@ -592,8 +593,8 @@ class TamariIntervalPoset(Element,
         n = self._size
         m = other.size()
         relations = self._poset.cover_relations()
-        relations.extend([(i + n, j + n)
-                          for i, j in other._poset.cover_relations_iterator()])
+        relations.extend((i + n, j + n)
+                         for i, j in other._poset.cover_relations_iterator())
         P = FinitePoset(DiGraph([list(range(1, n + m + 1)), relations],
                                 format='vertices_and_edges'))  # type:ignore
         return TamariIntervalPoset(P, check=False)  # type:ignore
@@ -1980,9 +1981,9 @@ class TamariIntervalPoset(Element,
         relations = [(i - start + 1, j - start + 1)
                      for (i, j) in self.increasing_cover_relations()
                      if i >= start and j < end]
-        relations.extend([(j - start + 1, i - start + 1)
-                          for (j, i) in self.decreasing_cover_relations()
-                          if i >= start and j < end])
+        relations.extend((j - start + 1, i - start + 1)
+                         for (j, i) in self.decreasing_cover_relations()
+                         if i >= start and j < end)
         return TamariIntervalPoset(end - start, relations, check=False)
 
     sub_poset = subposet
@@ -3110,7 +3111,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             rroots, rrelations, rindex = get_relations(bt[1], start=index + 1)
             roots.append(index)
             relations.extend(rrelations)
-            relations.extend([(j, index) for j in rroots])
+            relations.extend((j, index) for j in rroots)
             return roots, relations, rindex
 
         _, relations, index = get_relations(binary_tree)
@@ -3224,7 +3225,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             roots, relations, rindex = get_relations(bt[1], start=index + 1)
             roots.append(index)
             relations.extend(lrelations)
-            relations.extend([(j, index) for j in lroots])
+            relations.extend((j, index) for j in lroots)
             return roots, relations, rindex
 
         _, relations, index = get_relations(binary_tree)
@@ -3757,11 +3758,10 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             sage: [TamariIntervalPosets(i).cardinality() for i in range(6)]
             [1, 1, 3, 13, 68, 399]
         """
-        from sage.arith.misc import binomial
         n = self._size
         if n == 0:
-            return Integer(1)
-        return (2 * binomial(4 * n + 1, n - 1)) // (n * (n + 1))
+            return ZZ.one()
+        return (2 * Integer(4 * n + 1).binomial(n - 1)) // (n * (n + 1))
         # return Integer(2 * factorial(4*n+1)/(factorial(n+1)*factorial(3*n+2)))
 
     def __iter__(self) -> Iterator[TIP]:

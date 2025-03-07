@@ -18,6 +18,7 @@ Feature for testing the presence of ``kenzo``
 
 from . import Feature, FeatureTestResult
 
+
 class Kenzo(Feature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :ref:`Kenzo <spkg_kenzo>`.

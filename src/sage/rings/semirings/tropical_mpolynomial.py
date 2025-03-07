@@ -33,9 +33,9 @@ REFERENCES:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 
 
 class TropicalMPolynomial(MPolynomial_polydict):
@@ -286,8 +286,9 @@ class TropicalMPolynomial(MPolynomial_polydict):
             multivariate polynomial in two variables
         """
         from random import random
-        from sage.plot.graphics import Graphics
+
         from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.plot.graphics import Graphics
         from sage.sets.real_set import RealSet
         from sage.symbolic.relation import solve
 
@@ -399,7 +400,11 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1.tropical_variety()
             Tropical surface of 1*x*y + (-1/2)*x*z + 4*z^2
         """
-        from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalSurface, TropicalVariety
+        from sage.rings.semirings.tropical_variety import (
+            TropicalCurve,
+            TropicalSurface,
+            TropicalVariety,
+        )
 
         if self.parent().ngens() == 2:
             return TropicalCurve(self)
@@ -617,8 +622,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
              A vertex at (1, 0, 1, 0),
              A vertex at (1, 1, 0, 0))]
         """
-        from sage.geometry.polyhedron.constructor import Polyhedron
         from sage.geometry.polyhedral_complex import PolyhedralComplex
+        from sage.geometry.polyhedron.constructor import Polyhedron
 
         TV = self.tropical_variety()
         cycles = []
@@ -627,18 +632,14 @@ class TropicalMPolynomial(MPolynomial_polydict):
             for indices in TV._vertices_components().values():
                 cycle = []
                 for index in indices:
-                    vertices = TV._keys[index[0]]
-                    for v in vertices:
-                        cycle.append(v)
+                    cycle.extend(TV._keys[index[0]])
                 cycles.append(cycle)
         else:
             line_comps = TV.weight_vectors()[1]
             for indices in line_comps.values():
                 cycle = []
                 for index in indices:
-                    vertices = TV._keys[index]
-                    for v in vertices:
-                        cycle.append(v)
+                    cycle.extend(TV._keys[index])
                 cycles.append(cycle)
 
         polyhedron_lst = []
@@ -652,16 +653,28 @@ class TropicalMPolynomial(MPolynomial_polydict):
         r"""
         Return a string representation of ``self``.
 
+        Note that ``x`` equals ``0*x``, which is different from
+        ``1*x``.  Therefore, we represent monomials always together
+        with their coefficients, to avoid confusion.
+
         EXAMPLES::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: x + R(-1)*y + R(-3)
             0*x + (-1)*y + (-3)
+
         """
         if not self.monomial_coefficients():
             return str(self.parent().base().zero())
-        s = super()._repr_()
+        try:
+            key = self.parent().term_order().sortkey
+        except AttributeError:
+            key = None
+        atomic = self.parent().base_ring()._repr_option('element_is_atomic')
+        s = self.element().poly_repr(self.parent().variable_names(),
+                                     atomic_coefficients=atomic,
+                                     sortkey=key)
         if self.monomials()[-1].is_constant():
             if self.monomial_coefficient(self.parent()(0)) < 0:
                 s = s.replace(" - ", " + -")
@@ -729,8 +742,8 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R = PolynomialRing(T, 5, 'x')
             sage: TestSuite(R).run()
         """
-        from sage.rings.semirings.tropical_semiring import TropicalSemiring
         from sage.categories.semirings import Semirings
+        from sage.rings.semirings.tropical_semiring import TropicalSemiring
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
         Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
@@ -915,7 +928,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         return self.gens()[n]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 

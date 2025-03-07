@@ -71,10 +71,9 @@
 #
 # - sdh_cmake [...]
 #
-#    Runs `cmake` in the current directory with the given arguments, as well as
-#    additional arguments passed to cmake (assuming packages are using the
-#    GNUInstallDirs module) so that `CMAKE_INSTALL_PREFIX` and
-#    `CMAKE_INSTALL_LIBDIR` are set correctly.
+#    Runs `cmake` with the given arguments, as well as additional arguments
+#    (assuming packages are using the GNUInstallDirs module) so that
+#    `CMAKE_INSTALL_PREFIX` and `CMAKE_INSTALL_LIBDIR` are set correctly.
 #
 # - sdh_install [-T] SRC [SRC...] DEST
 #
@@ -416,9 +415,9 @@ sdh_pip_uninstall() {
 
 sdh_cmake() {
     echo "Configuring $PKG_NAME with cmake"
-    cmake . -DCMAKE_INSTALL_PREFIX="${SAGE_INST_LOCAL}" \
-            -DCMAKE_INSTALL_LIBDIR=lib \
-            "$@"
+    cmake -DCMAKE_INSTALL_PREFIX="${SAGE_INST_LOCAL}" \
+          -DCMAKE_INSTALL_LIBDIR=lib \
+          "$@"
     if [ $? -ne 0 ]; then
         if [ -f "$(pwd)/CMakeFiles/CMakeOutput.log" ]; then
             sdh_die <<_EOF_

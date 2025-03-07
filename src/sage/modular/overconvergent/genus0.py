@@ -194,6 +194,7 @@ classical) does not apply.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Iterator
 
 import weakref
 
@@ -693,7 +694,7 @@ class OverconvergentModularFormsSpace(Module):
         """
         return self._radius
 
-    def gens(self):
+    def gens(self) -> Iterator:
         r"""
         Return a generator object that iterates over the (infinite) set of
         basis vectors of ``self``.
@@ -1187,7 +1188,7 @@ class OverconvergentModularFormsSpace(Module):
             F = self.base_ring()
 
         if F.is_exact():
-            # raise TypeError, "cannot calculate eigenfunctions over exact base fields"
+            # raise TypeError("cannot calculate eigenfunctions over exact base fields")
             F = pAdicField(self.prime(), 100)  # noqa:F821
 
         m = self.hecke_matrix(self.prime(), n, use_recurrence=True, exact_arith=exact_arith)

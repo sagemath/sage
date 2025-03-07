@@ -643,8 +643,8 @@ cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it) noexcept:
         cgd.iterator_stack[i].data = allocate_sgd(degree)
         cgd.iterator_stack[i].next = &subset_generator_next
         if cgd.iterator_stack[i].data is NULL or \
-           cgd.object_stack[i]        is NULL or \
-           cgd.parent_stack[i]        is NULL:
+           cgd.object_stack[i] is NULL or \
+           cgd.parent_stack[i] is NULL:
             for j from 0 <= j <= i:
                 deallocate_sgd(cgd.iterator_stack[i].data)
                 free_subset(cgd.object_stack[i])

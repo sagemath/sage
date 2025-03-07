@@ -32,32 +32,36 @@ AUTHORS:
 # ****************************************************************************
 
 import importlib
-import random
+import json
 import os
+import random
+import shlex
 import sys
 import time
-import json
-import shlex
 import types
-import sage.misc.flatten
-import sage.misc.randstate as randstate
-from sage.structure.sage_object import SageObject
-from sage.env import DOT_SAGE, SAGE_LIB, SAGE_SRC, SAGE_VENV, SAGE_EXTCODE
-from sage.misc.temporary_file import tmp_dir
+
 from cysignals.signals import AlarmInterrupt, init_cysignals
 
-from .sources import FileDocTestSource, DictAsObject, get_basename
-from .forker import DocTestDispatcher
-from .reporting import DocTestReporter
-from .util import Timer, count_noun, dict_difference
-from .external import available_software
-from .parsing import parse_optional_tags, parse_file_optional_tags, unparse_optional_tags, \
-     nodoctest_regex, optionaltag_regex, optionalfiledirective_regex
-
+import sage.misc.flatten
+import sage.misc.randstate as randstate
+from sage.doctest.external import available_software
+from sage.doctest.forker import DocTestDispatcher
+from sage.doctest.parsing import (
+    optional_tag_regex,
+    parse_file_optional_tags,
+    unparse_optional_tags,
+)
+from sage.doctest.reporting import DocTestReporter
+from sage.doctest.sources import DictAsObject, FileDocTestSource, get_basename
+from sage.doctest.util import Timer, count_noun, dict_difference
+from sage.env import DOT_SAGE, SAGE_EXTCODE, SAGE_LIB, SAGE_SRC
+from sage.misc.temporary_file import tmp_dir
+from sage.structure.sage_object import SageObject
 
 # Optional tags which are always automatically added
 
 auto_optional_tags = set()
+
 
 class DocTestDefaults(SageObject):
     """
@@ -464,7 +468,7 @@ class DocTestController(SageObject):
                 s = options.hide.lower()
                 options.hide = set(s.split(','))
                 for h in options.hide:
-                    if not optionaltag_regex.search(h):
+                    if not optional_tag_regex.search(h):
                         raise ValueError('invalid optional tag {!r}'.format(h))
             if 'all' in options.hide:
                 options.hide.discard('all')
@@ -507,10 +511,10 @@ class DocTestController(SageObject):
                 # Check that all tags are valid
                 for o in options.optional:
                     if o.startswith('!'):
-                        if not optionaltag_regex.search(o[1:]):
+                        if not optional_tag_regex.search(o[1:]):
                             raise ValueError('invalid optional tag {!r}'.format(o))
                         options.disabled_optional.add(o[1:])
-                    elif not optionaltag_regex.search(o):
+                    elif not optional_tag_regex.search(o):
                         raise ValueError('invalid optional tag {!r}'.format(o))
 
                 options.optional |= auto_optional_tags
@@ -530,7 +534,7 @@ class DocTestController(SageObject):
                 else:
                     # Check that all tags are valid
                     for o in options.probe:
-                        if not optionaltag_regex.search(o):
+                        if not optional_tag_regex.search(o):
                             raise ValueError('invalid optional tag {!r}'.format(o))
 
         self.options = options
@@ -1350,12 +1354,12 @@ class DocTestController(SageObject):
         opt = self.options
 
         if opt.gdb:
-            cmd = f'''exec gdb --eval-command="run" --args '''
+            cmd = '''exec gdb --eval-command="run" --args '''
             flags = ""
             if opt.logfile:
                 sage_cmd += f" --logfile {shlex.quote(opt.logfile)}"
         elif opt.lldb:
-            cmd = f'''exec lldb --one-line "process launch" --one-line "cont" -- '''
+            cmd = '''exec lldb --one-line "process launch" --one-line "cont" -- '''
             flags = ""
         else:
             if opt.logfile is None:

@@ -148,7 +148,7 @@ from sage.rings import (
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Expression, parent
@@ -717,10 +717,37 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         if self.base_ring().has_coerce_map_from(S):
             return True
-        if (isinstance(S, (PolynomialRing_general, PowerSeriesRing_generic, LazyPowerSeriesRing))
+        if (isinstance(S, (PolynomialRing_generic, PowerSeriesRing_generic, LazyPowerSeriesRing))
                 and self.base_ring().has_coerce_map_from(S.base_ring())
                 and self.variable_names() == S.variable_names()):
             return True
+
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: R = QQ[['y']]
+            sage: R._magma_init_(magma)
+            'SageCreateWithNames(PowerSeriesRing(_sage_ref...),["y"])'
+            sage: S = magma(R)
+            sage: S
+            Power series ring in y over Rational Field
+            sage: S.1
+            y
+            sage: S.sage() == R
+            True
+
+            sage: # optional - magma
+            sage: magma(PowerSeriesRing(GF(7), 'x'))                                     # needs sage.rings.finite_rings
+            Power series ring in x over GF(7)
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        s = 'PowerSeriesRing(%s)' % (Bref)
+        return magma._with_names(s, self.variable_names())
 
     def _element_constructor_(self, f, prec=infinity, check=True):
         """
@@ -1323,7 +1350,9 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             return self.__laurent_series_ring
 
 
-class PowerSeriesRing_domain(PowerSeriesRing_generic, ring.IntegralDomain):
+class PowerSeriesRing_domain(PowerSeriesRing_generic):
+    _default_category = _IntegralDomains
+
     def fraction_field(self):
         """
         Return the Laurent series ring over the fraction field of the base

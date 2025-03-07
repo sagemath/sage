@@ -47,7 +47,7 @@ class build_py(setuptools_build_py):
             print(f"Running {cmd}")
             sys.stdout.flush()
             if os.system(cmd) != 0:
-                print(f"configure failed; this may be caused by missing build prerequisites.")
+                print("configure failed; this may be caused by missing build prerequisites.")
                 sys.stdout.flush()
                 PREREQ_SPKG = "_prereq bzip2 xz libffi"  # includes python3 SPKG_DEPCHECK packages
                 os.system(f'cd {SAGE_ROOT} && export SYSTEM=$(build/bin/sage-guess-package-system 2>/dev/null) && export PACKAGES="$(build/bin/sage-get-system-packages $SYSTEM {PREREQ_SPKG})" && [ -n "$PACKAGES" ] && echo "You can install the required build prerequisites using the following shell command" && echo "" && build/bin/sage-print-system-package-command $SYSTEM --verbose --sudo install $PACKAGES && echo ""')
@@ -95,7 +95,7 @@ class build_py(setuptools_build_py):
 
         def ignore(path, names):
             # exclude all embedded src trees
-            if fnmatch.fnmatch(path, f'*/build/pkgs/*'):
+            if fnmatch.fnmatch(path, '*/build/pkgs/*'):
                 return ['src']
             ### ignore more stuff --- .tox etc.
             return [name for name in names

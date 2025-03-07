@@ -1208,10 +1208,8 @@ def two_descent_by_two_isogeny(E,
         Elliptic Curve defined by y^2 = x^3 - x^2 - 900*x - 10098 over Rational Field
         sage: E.sha().an()
         4
-        sage: alarm(0.5); two_descent_by_two_isogeny(E, global_limit_large=10^8)
-        Traceback (most recent call last):
-        ...
-        AlarmInterrupt
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5): two_descent_by_two_isogeny(E, global_limit_large=10^8)
     """
     cdef Integer a1, a2, a3, a4, a6, s2, s4, s6
     cdef Integer c, d, x0
@@ -1318,7 +1316,7 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
                 p_list_len += 1
     else:
         # Factor more slowly using Pari via Python.
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         d = Integer(0)
         mpz_set(d.value, d_mpz)
         primes = list(pari(d).factor()[0])

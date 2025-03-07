@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'abstract_word.py',
   'all.py',
   'alphabet.py',

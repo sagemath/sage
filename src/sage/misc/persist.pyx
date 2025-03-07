@@ -44,7 +44,7 @@ comp = zlib
 comp_other = bz2
 
 from sage.misc.sage_unittest import TestSuite
-
+from sage.misc.superseded import deprecation
 
 # We define two global dictionaries `already_pickled` and
 # `already_unpickled`, which are intended to help you to implement
@@ -57,7 +57,7 @@ from sage.misc.sage_unittest import TestSuite
 # Apart from this, you are free to use these variables as you like.
 #
 # However, the standard utilisation is the following.
-# The pickling method (namely `__reduce__`) checks if the id of the
+# The pickling method (namely ``__reduce__``) checks if the id of the
 # current element appears in the dictionary `already_pickled`. If it
 # does not, the methods records that this element is about to be
 # pickled by adding the entry { id: True } to `already_pickled`.
@@ -72,8 +72,8 @@ from sage.misc.sage_unittest import TestSuite
 # `already_unpickled` and finally returns the element.
 #
 # For a working example, see sage.rings.padics.lazy_template.LazyElement_unknown
-already_pickled = { }
-already_unpickled = { }
+already_pickled = {}
+already_unpickled = {}
 
 
 cdef _normalize_filename(s):
@@ -92,7 +92,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     an ``.sobj`` extension added if it doesn't have one.  Or, if the input
     is a filename ending in ``.py``, ``.pyx``, ``.sage``, ``.spyx``,
     ``.f``, ``.f90`` or ``.m``, load that file into the current running
-    session.
+    session using :func:`sage.repl.load.load`.
 
     Loaded files are not loaded into their own namespace, i.e., this is
     much more like Python's ``execfile`` than Python's ``import``.
@@ -176,7 +176,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         sage.repl.load.load(filename, globals())
         return
 
-    ## Check if filename starts with "http://" or "https://"
+    # Check if filename starts with "http://" or "https://"
     lower = filename.lower()
     if lower.startswith("http://") or lower.startswith("https://"):
         from sage.misc.remote_file import get_remote_file
@@ -186,7 +186,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         tmpfile_flag = False
         filename = _normalize_filename(filename)
 
-    ## Load file by absolute filename
+    # Load file by absolute filename
     with open(filename, 'rb') as fobj:
         X = loads(fobj.read(), compress=compress, **kwargs)
     try:
@@ -194,7 +194,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     except AttributeError:
         pass
 
-    ## Delete the tempfile, if it exists
+    # Delete the tempfile, if it exists
     if tmpfile_flag:
         os.unlink(filename)
 
@@ -303,7 +303,7 @@ def _base_dumps(obj, compress=True):
 
     global already_pickled
     gherkin = SagePickler.dumps(obj)
-    already_pickled = { }
+    already_pickled = {}
 
     if compress:
         return comp.compress(gherkin)
@@ -334,7 +334,7 @@ def dumps(obj, compress=True):
         ans = obj.dumps(compress)
     except (AttributeError, RuntimeError, TypeError):
         ans = _base_dumps(obj, compress=compress)
-    already_pickled = { }
+    already_pickled = {}
     return ans
 
 
@@ -588,8 +588,7 @@ def unpickle_global(module, name):
 
     def error():
         raise ImportError("cannot import {1} from {0}, call "
-            "register_unpickle_override({0!r}, {1!r}, ...) to fix this".format(
-                module, name))
+                          "register_unpickle_override({0!r}, {1!r}, ...) to fix this".format(module, name))
 
     mod = sys.modules.get(module)
     if mod is not None:
@@ -624,9 +623,9 @@ class _BasePickler(pickle.Pickler):
     """
 
     def __init__(self, file_obj, protocol=None, persistent_id=None, *,
-                    fix_imports=True):
+                 fix_imports=True):
         super(_BasePickler, self).__init__(file_obj, protocol,
-                                            fix_imports=fix_imports)
+                                           fix_imports=fix_imports)
         self._persistent_id = persistent_id
 
         def persistent_id(self, obj):
@@ -825,7 +824,7 @@ class SagePickler(_BasePickler):
         buf = io.BytesIO()
         pickler = cls(buf, **kwargs)
         pickler.dump(obj)
-        already_pickled = { }
+        already_pickled = {}
         return buf.getvalue()
 
 
@@ -988,7 +987,7 @@ def loads(s, compress=True, **kwargs):
     unpickler = SageUnpickler(io.BytesIO(s), **kwargs)
     global already_unpickled
     ans = unpickler.load()
-    already_unpickled = { }
+    already_unpickled = {}
     return ans
 
 
@@ -1060,7 +1059,7 @@ def picklejar(obj, dir=None):
 
     global already_pickled
     s = comp.compress(SagePickler.dumps(obj))
-    already_pickled = { }
+    already_pickled = {}
 
     typ = str(type(obj))
     name = ''.join([x if (x.isalnum() or x == '_') else '_' for x in typ])
@@ -1231,6 +1230,8 @@ def db(name):
 
     The database directory is ``$HOME/.sage/db``.
     """
+    deprecation(39012, "Directly use pickle/unpickle instead of db/db_save.")
+
     from sage.misc.misc import SAGE_DB
     return load('%s/%s' % (SAGE_DB, name))
 
@@ -1241,6 +1242,8 @@ def db_save(x, name=None):
 
     The database directory is ``$HOME/.sage/db``.
     """
+    deprecation(39012, "Directly use pickle/unpickle instead of db/db_save.")
+
     try:
         x.db(name)
     except AttributeError:

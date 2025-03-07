@@ -7,22 +7,22 @@ AUTHOR:
 - William Stein, 2010-03
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cpython.object cimport PyObject_RichCompare
 from libc.math cimport log, sqrt, exp, isnormal, isfinite, M_PI
 cdef double sqrt2pi = sqrt(2*M_PI)
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.misc.flatten  import flatten
+from sage.misc.flatten import flatten
 from sage.structure.element import Matrix
 
 from sage.stats.time_series cimport TimeSeries
@@ -1332,7 +1332,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
                 # the m-components of the probability.
                 alpha_minus = alpha._values[t*N + j] / prob
                 for m in range(M):
-                    numer =  alpha_minus * G.prob_m(obs._values[t], m) * beta._values[t*N + j]
+                    numer = alpha_minus * G.prob_m(obs._values[t], m) * beta._values[t*N + j]
                     mixed_gamma._values[m*T + t] = numer / P
 
         return mixed_gamma

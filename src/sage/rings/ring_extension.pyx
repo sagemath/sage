@@ -1314,7 +1314,7 @@ cdef class RingExtension_generic(Parent):
         elt = self._backend.an_element()
         return self.element_class(self, elt)
 
-    def gens(self, base=None):
+    def gens(self, base=None) -> tuple:
         r"""
         Return the generators of this extension over ``base``.
 
@@ -2661,7 +2661,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         S = PolynomialRing(self._base, name=var)
         return S(coeffs)
 
-    def gens(self, base=None):
+    def gens(self, base=None) -> tuple:
         r"""
         Return the generators of this extension over ``base``.
 

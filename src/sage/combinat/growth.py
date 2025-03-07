@@ -2592,11 +2592,11 @@ class RuleLLMS(Rule):
             z, h = x, e
         elif x == t != y:
             z, h = y, e
-        else: #  x != t and y != t
+        else:   # x != t and y != t
             qx = SkewPartition([x.to_partition(), t.to_partition()])
             qy = SkewPartition([y.to_partition(), t.to_partition()])
             if not all(c in qx.cells() for c in qy.cells()):
-                res = [(j-i) % self.k for i,j in qx.cells()]
+                res = [(j-i) % self.k for i, j in qx.cells()]
                 assert len(set(res)) == 1
                 r = res[0]
                 z = y.affine_symmetric_group_simple_action(r)

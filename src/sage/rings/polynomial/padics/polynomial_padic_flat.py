@@ -11,7 +11,7 @@
 from sage.rings.polynomial.polynomial_element import Polynomial_generic_dense, Polynomial
 from sage.rings.polynomial.padics.polynomial_padic import Polynomial_padic
 from sage.rings.infinity import infinity
-from sage.libs.pari.all import pari_gen
+from cypari2.gen import Gen as pari_gen
 import sage.rings.padics.misc
 
 

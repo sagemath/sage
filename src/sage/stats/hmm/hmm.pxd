@@ -14,4 +14,3 @@ cdef class HiddenMarkovModel:
     cdef TimeSeries A, pi
 
     cdef TimeSeries _baum_welch_gamma(self, TimeSeries alpha, TimeSeries beta)
-

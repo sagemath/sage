@@ -146,7 +146,7 @@ cdef class ArgumentFixer:
 
         cdef dict default_map
         self._defaults = default_map = {}
-        for k,v in zip(self._arg_names[-self._ndefault:], defaults):
+        for k, v in zip(self._arg_names[-self._ndefault:], defaults):
             default_map[k] = v
 
     def __repr__(self):
@@ -221,10 +221,10 @@ cdef class ArgumentFixer:
                     val = defaults[name]
             else:
                 val = args[i]
-            ARGS.append((name,val))
+            ARGS.append((name, val))
         extra_args = args[self._nargs:]
         for k in sorted(kwargs_.keys()):
-            ARGS.append((k,kwargs_[k]))
+            ARGS.append((k, kwargs_[k]))
         return tuple(extra_args), tuple(ARGS)
 
     def fix_to_pos(self, *args, **kwds):
@@ -289,7 +289,7 @@ cdef class ArgumentFixer:
             if lenargs >= nargs:
                 return args, ()
             # we take the given arguments, plus the default arguments
-            return args + self._default_tuple[-nargs+lenargs:],()
+            return args + self._default_tuple[-nargs+lenargs:], ()
         cdef list Largs = list(args)
         cdef dict kwargs = dict(kwds)
         cdef Py_ssize_t i

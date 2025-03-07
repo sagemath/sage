@@ -7,6 +7,30 @@ This module provides the
 which constructs a general dense univariate Ore polynomial ring over a
 commutative base with equipped with an endomorphism and/or a derivation.
 
+TESTS:
+
+The Ore polynomial ring is commutative if the twisting morphism is the
+identity and the twisting derivation vanishes. ::
+
+    sage: # needs sage.rings.finite_rings
+    sage: k.<a> = GF(5^3)
+    sage: Frob = k.frobenius_endomorphism()
+    sage: S.<x> = k['x', Frob]
+    sage: S.is_commutative()
+    False
+    sage: T.<y> = k['y', Frob^3]
+    sage: T.is_commutative()
+    True
+
+    sage: R.<t> = GF(5)[]
+    sage: der = R.derivation()
+    sage: A.<d> = R['d', der]
+    sage: A.is_commutative()
+    False
+    sage: B.<b> = R['b', 5*der]
+    sage: B.is_commutative()
+    True
+
 AUTHOR:
 
 - Xavier Caruso (2020-04)
@@ -21,25 +45,21 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.misc.prandom import randint
+from sage.categories.algebras import Algebras
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.morphism import Morphism
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
+from sage.misc.prandom import randint
 from sage.rings.infinity import Infinity
-from sage.structure.category_object import normalize_names
-from sage.structure.parent import Parent
-
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer import Integer
-from sage.structure.element import Element
-
-from sage.categories.commutative_rings import CommutativeRings
-from sage.categories.algebras import Algebras
-from sage.rings.ring import _Fields
-
-from sage.categories.morphism import Morphism
-
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomialBaseringInjection
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.ring import _Fields
+from sage.structure.category_object import normalize_names
+from sage.structure.element import Element
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.derivation', 'RingDerivation')
 
@@ -317,15 +337,17 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             Univariate Polynomial Ring in x over Finite Field in a of size 5^2
             sage: S.<x> = OrePolynomialRing(k, Frob, polcast=False)
             sage: S
-            Ore Polynomial Ring in x over Finite Field in a of size 5^2 twisted by Identity
+            Ore Polynomial Ring in x over Finite Field in a of size 5^2 untwisted
         """
         if base_ring not in CommutativeRings():
             raise TypeError('base_ring must be a commutative ring')
-        if isinstance(twist, Morphism):
+        if twist is None:
+            morphism = derivation = None
+        elif isinstance(twist, Morphism):
             if (twist.domain() is not base_ring
              or twist.codomain() is not base_ring):
                 raise TypeError("the twisting morphism must be an endomorphism of base_ring (=%s)" % base_ring)
-            if twist.is_identity() and polcast:
+            if twist.is_identity():
                 morphism = None
             else:
                 morphism = twist
@@ -421,7 +443,11 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         self._morphism = morphism
         self._derivation = derivation
         self._fraction_field = None
-        category = Algebras(base_ring).or_subcategory(category)
+        if morphism is None and derivation is None:
+            cat = Algebras(base_ring).Commutative()
+        else:
+            cat = Algebras(base_ring)
+        category = cat.or_subcategory(category)
         Parent.__init__(self, base_ring, names=name,
                         normalize=True, category=category)
 
@@ -506,7 +532,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             pass
         if isinstance(a, str):
             try:
-                from sage.misc.parser import Parser, LookupNameMaker
+                from sage.misc.parser import LookupNameMaker, Parser
                 R = self.base_ring()
                 p = Parser(Integer, R, LookupNameMaker({self.variable_name(): self.gen()}, R))
                 return self(p.parse(a))
@@ -596,6 +622,37 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             if P.variable_name() == self.variable_name():
                 return base_ring.has_coerce_map_from(P.base_ring())
 
+    def _repr_twist(self):
+        r"""
+        Return a string representation of the twisting morphisms.
+
+        This is a helper method.
+
+        TESTS::
+
+            sage: F.<z> = GF(5^3)
+            sage: Frob = F.frobenius_endomorphism()
+
+            sage: S.<x> = OrePolynomialRing(F, Frob)
+            sage: S._repr_twist()
+            'twisted by z |--> z^5'
+
+            sage: T.<y> = OrePolynomialRing(F, Frob^3, polcast=False)
+            sage: T._repr_twist()
+            'untwisted'
+        """
+        s = ""
+        if self._morphism is not None:
+            s += self._morphism._repr_short()
+        if self._derivation is not None:
+            if s != "":
+                s += " and "
+            s += self._derivation._repr_()
+        if s == "":
+            return "untwisted"
+        else:
+            return "twisted by " + s
+
     def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
@@ -613,13 +670,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             sage: T
             Ore Polynomial Ring in d over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
         """
-        s = "Ore Polynomial Ring in %s over %s twisted by " % (self.variable_name(), self.base_ring())
-        if self._derivation is None:
-            s += self._morphism._repr_short()
-        else:
-            if self._morphism is not None:
-                s += "%s and " % self._morphism._repr_short()
-            s += self._derivation._repr_()
+        s = "Ore Polynomial Ring in %s over %s %s" % (self.variable_name(), self.base_ring(), self._repr_twist())
         if self.is_sparse():
             s = "Sparse " + s
         return s
@@ -1094,36 +1145,6 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             irred = self.random_element((degree, degree), monic=monic)
             if irred.is_irreducible():
                 return irred
-
-    def is_commutative(self) -> bool:
-        r"""
-        Return ``True`` if this Ore polynomial ring is commutative.
-
-        This holds if the twisting morphism is the identity and the
-        twisting derivation vanishes.
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.finite_rings
-            sage: k.<a> = GF(5^3)
-            sage: Frob = k.frobenius_endomorphism()
-            sage: S.<x> = k['x', Frob]
-            sage: S.is_commutative()
-            False
-            sage: T.<y> = k['y', Frob^3]
-            sage: T.is_commutative()
-            True
-
-            sage: R.<t> = GF(5)[]
-            sage: der = R.derivation()
-            sage: A.<d> = R['d', der]
-            sage: A.is_commutative()
-            False
-            sage: B.<b> = R['b', 5*der]
-            sage: B.is_commutative()
-            True
-        """
-        return self._morphism is None and self._derivation is None
 
     def is_field(self, proof=False) -> bool:
         r"""

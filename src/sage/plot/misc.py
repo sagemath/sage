@@ -63,10 +63,10 @@ def setup_for_eval_on_grid(funcs,
 
     EXAMPLES::
 
-        sage: x,y,z=var('x,y,z')
-        sage: f(x,y)=x+y-z
-        sage: g(x,y)=x+y
-        sage: h(y)=-y
+        sage: x,y,z = var('x,y,z')
+        sage: f(x,y) = x+y-z
+        sage: g(x,y) = x+y
+        sage: h(y) = -y
         sage: sage.plot.misc.setup_for_eval_on_grid(f, [(0, 2),(1,3),(-4,1)], plot_points=5)
         (<sage...>, [(0.0, 2.0, 0.5), (1.0, 3.0, 0.5), (-4.0, 1.0, 1.25)])
         sage: sage.plot.misc.setup_for_eval_on_grid([g,h], [(0, 2),(-1,1)], plot_points=5)
@@ -149,7 +149,7 @@ def setup_for_eval_on_grid(funcs,
     # pad the variables if we don't have enough
     nargs = len(ranges)
     if len(vars) < nargs:
-        vars += ('_',)*(nargs-len(vars))
+        vars += ('_',) * (nargs - len(vars))
 
     ranges = [[float(z) for z in r] for r in ranges]
 
@@ -157,12 +157,13 @@ def setup_for_eval_on_grid(funcs,
         plot_points = 2
 
     if not isinstance(plot_points, (list, tuple)):
-        plot_points = [plot_points]*len(ranges)
+        plot_points = [plot_points] * len(ranges)
     elif len(plot_points) != nargs:
         raise ValueError("plot_points must be either an integer or a list of integers, one for each range")
 
     plot_points = [int(p) if p >= 2 else 2 for p in plot_points]
-    range_steps = [abs(range[1] - range[0])/(p-1) for range, p in zip(ranges, plot_points)]
+    range_steps = [abs(range[1] - range[0]) / (p - 1)
+                   for range, p in zip(ranges, plot_points)]
     if min(range_steps) == float(0):
         raise ValueError("plot start point and end point must be different")
 
@@ -206,11 +207,12 @@ def setup_for_eval_on_grid(funcs,
 
     # Handle vectors, lists, tuples, etc.
     if isinstance(funcs, Iterable):
-        funcs = tuple( try_make_fast(f) for f in funcs )
+        funcs = tuple(try_make_fast(f) for f in funcs)
     else:
         funcs = try_make_fast(funcs)
 
-    #TODO: raise an error if there is a function/method in funcs that takes more values than we have ranges
+    # TODO: raise an error if there is a function/method in funcs that
+    # takes more values than we have ranges
 
     if return_vars:
         return (funcs,
@@ -242,10 +244,10 @@ def unify_arguments(funcs):
 
     EXAMPLES::
 
-        sage: x,y,z=var('x,y,z')
-        sage: f(x,y)=x+y-z
-        sage: g(x,y)=x+y
-        sage: h(y)=-y
+        sage: x,y,z = var('x,y,z')
+        sage: f(x,y) = x+y-z
+        sage: g(x,y) = x+y
+        sage: h(y) = -y
         sage: sage.plot.misc.unify_arguments((f,g,h))
         ((x, y, z), (z,))
         sage: sage.plot.misc.unify_arguments((g,h))
@@ -284,8 +286,10 @@ def _multiple_of_constant(n, pos, const):
     r"""
     Function for internal use in formatting ticks on axes with
     nice-looking multiples of various symbolic constants, such
-    as `\pi` or `e`.  Should only be used via keyword argument
-    `tick_formatter` in :meth:`plot.show`.  See documentation
+    as `\pi` or `e`.
+
+    This should only be used via keyword argument
+    ``tick_formatter`` in :meth:`plot.show`.  See documentation
     for the matplotlib.ticker module for more details.
 
     EXAMPLES:
@@ -311,11 +315,11 @@ def _multiple_of_constant(n, pos, const):
     from sage.misc.latex import latex
     from sage.rings.continued_fraction import continued_fraction
     from sage.rings.infinity import Infinity
-    cf = continued_fraction(n/const)
+    cf = continued_fraction(n / const)
     k = 1
     while cf.quotient(k) != Infinity and cf.denominator(k) < 12:
         k += 1
-    return '$%s$' % latex(cf.convergent(k-1)*const)
+    return '$%s$' % latex(cf.convergent(k - 1) * const)
 
 
 def get_matplotlib_linestyle(linestyle, return_type):
@@ -401,10 +405,14 @@ def get_matplotlib_linestyle(linestyle, return_type):
         {'solid', 'dashed', 'dotted', dashdot', 'None'}, respectively {'-',
         '--', ':', '-.', ''}
     """
-    long_to_short_dict = {'solid' : '-','dashed' : '--', 'dotted' : ':',
-                        'dashdot':'-.'}
-    short_to_long_dict = {'-' : 'solid','--' : 'dashed', ':' : 'dotted',
-                        '-.':'dashdot'}
+    long_to_short_dict = {'solid': '-',
+                          'dashed': '--',
+                          'dotted': ':',
+                          'dashdot': '-.'}
+    short_to_long_dict = {'-': 'solid',
+                          '--': 'dashed',
+                          ':': 'dotted',
+                          '-.': 'dashdot'}
 
     # We need this to take care of region plot. Essentially, if None is
     # passed, then we just return back the same thing.
@@ -416,16 +424,16 @@ def get_matplotlib_linestyle(linestyle, return_type):
     elif linestyle.startswith("steps"):
         if linestyle.startswith("steps-mid"):
             return "steps-mid" + get_matplotlib_linestyle(
-                                    linestyle.strip("steps-mid"), "short")
+                linestyle.strip("steps-mid"), "short")
         elif linestyle.startswith("steps-post"):
             return "steps-post" + get_matplotlib_linestyle(
-                                    linestyle.strip("steps-post"), "short")
+                linestyle.strip("steps-post"), "short")
         elif linestyle.startswith("steps-pre"):
             return "steps-pre" + get_matplotlib_linestyle(
-                                    linestyle.strip("steps-pre"), "short")
+                linestyle.strip("steps-pre"), "short")
         else:
             return "steps" + get_matplotlib_linestyle(
-                                    linestyle.strip("steps"), "short")
+                linestyle.strip("steps"), "short")
 
     if return_type == 'short':
         if linestyle in short_to_long_dict.keys():

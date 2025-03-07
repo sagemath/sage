@@ -30,11 +30,14 @@ AUTHORS:
 
 - Vincent Neiger (2024-02-13): added basis_completion(), _is_basis_completion(),
   _basis_completion_via_reversed_approx().
+
+- Vincent Neiger (2025-02-16): added minimal_relation_basis(),
+  minimal_interpolation_basis().
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
 #       Copyright (C) 2017 Johan Rosenkilde
-#       Copyright (C) 2018,2020,2021,2024 Vincent Neiger
+#       Copyright (C) 2018,2020,2021,2024,2025 Vincent Neiger
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -45,7 +48,6 @@ AUTHORS:
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 from sage.rings.integer_ring import ZZ
-
 
 cdef class Matrix_polynomial_dense(Matrix_generic_dense):
     r"""
@@ -119,7 +121,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
+            sage: M = matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
             sage: M._check_shift_dimension(shifts=[1,3,2])
 
             sage: M._check_shift_dimension(shifts=[1,3,2], row_wise=False)
@@ -145,19 +147,19 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
+            sage: M = matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
             sage: M.degree()
             3
 
         The zero matrix has degree ``-1``::
 
-            sage: M = Matrix(pR, 2, 3)
+            sage: M = matrix(pR, 2, 3)
             sage: M.degree()
             -1
 
         For an empty matrix, the degree is not defined::
 
-            sage: M = Matrix(pR, 3, 0)
+            sage: M = matrix(pR, 3, 0)
             sage: M.degree()
             Traceback (most recent call last):
             ...
@@ -199,7 +201,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
+            sage: M = matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
             sage: M.degree_matrix()
             [ 1 -1  0]
             [ 3 -1 -1]
@@ -248,7 +250,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             sage: pR.<x> = GF(7)[]
 
-            sage: M = Matrix([
+            sage: M = matrix([
             ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
             ....:    [      6*x^2+3*x+1,       1,           2,         0],
             ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
@@ -272,16 +274,16 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix([
+            sage: M = matrix([
             ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
             ....:    [      6*x^2+3*x+1,       1,           2,         0],
             ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
             ....:     ])
             sage: M.is_constant()
             False
-            sage: M = Matrix(pR, [[1,5,2], [3,1,5]]); M.is_constant()
+            sage: M = matrix(pR, [[1,5,2], [3,1,5]]); M.is_constant()
             True
-            sage: M = Matrix.zero(pR, 3, 5); M.is_constant()
+            sage: M = matrix.zero(pR, 3, 5); M.is_constant()
             True
 
         .. SEEALSO::
@@ -319,7 +321,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             sage: pR.<x> = GF(7)[]
 
-            sage: M = Matrix([
+            sage: M = matrix([
             ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
             ....:    [      6*x^2+3*x+1,       1,           2,         0],
             ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
@@ -415,7 +417,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             sage: pR.<x> = GF(7)[]
 
-            sage: M = Matrix([
+            sage: M = matrix([
             ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
             ....:    [      6*x^2+3*x+1,       1,           2,         0],
             ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
@@ -506,7 +508,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             sage: pR.<x> = GF(7)[]
 
-            sage: M = Matrix([
+            sage: M = matrix([
             ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
             ....:    [      6*x^2+3*x+1,       1,           2,         0],
             ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
@@ -614,7 +616,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             sage: pR.<x> = GF(7)[]
 
-            sage: M = Matrix([
+            sage: M = matrix([
             ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
             ....:    [      6*x^2+3*x+1,       1,           2,         0],
             ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
@@ -749,7 +751,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: A = Matrix(pR, 3, 3,
+            sage: A = matrix(pR, 3, 3,
             ....:            [[4*x+5,           5*x^2 + x + 1, 4*x^2 + 4],
             ....:             [6*x^2 + 6*x + 6, 4*x^2 + 5*x,   4*x^2 + x + 3],
             ....:             [3*x^2 + 2,       4*x + 1,       x^2 + 3*x]])
@@ -845,9 +847,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-
             sage: pR.<x> = GF(7)[]
-            sage: A = Matrix(pR, 3, 3,
+            sage: A = matrix(pR, 3, 3,
             ....:            [[4*x+5,           5*x^2 + x + 1, 4*x^2 + 4],
             ....:             [6*x^2 + 6*x + 6, 4*x^2 + 5*x,   4*x^2 + x + 3],
             ....:             [3*x^2 + 2,       4*x + 1,       x^2 + 3*x]])
@@ -859,7 +860,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: B == X*A % x**4
             True
 
-            sage: B = Matrix(pR, 2, 3,
+            sage: B = matrix(pR, 2, 3,
             ....:            [[3*x, x^2 + x + 2, x^2 + 2*x + 3],
             ....:             [  0,   6*x^2 + 1,             1]])
             sage: A.solve_left_series_trunc(B, 3)
@@ -894,7 +895,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [5*x^2 + 2*x + 5         5*x + 5         2*x + 4]
             [5*x^3 + 2*x + 1 2*x^2 + 2*x + 5           4*x^2]
 
-            sage: V = Matrix([[3*x^2 + 4*x + 1, 4*x]])
+            sage: V = matrix([[3*x^2 + 4*x + 1, 4*x]])
             sage: A[:2,:].solve_left_series_trunc(V*A[:2,:], 4) == V
             True
 
@@ -994,7 +995,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: A = Matrix(pR, 3, 3,
+            sage: A = matrix(pR, 3, 3,
             ....:     [[4*x+5,           5*x^2 + x + 1, 4*x^2 + 4],
             ....:      [6*x^2 + 6*x + 6, 4*x^2 + 5*x,   4*x^2 + x + 3],
             ....:      [3*x^2 + 2,       4*x + 1,       x^2 + 3*x]])
@@ -1005,7 +1006,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             (2*x^3 + x^2, 5*x^3 + x^2 + 5*x + 6, 4*x^3 + 6*x^2 + 4*x)
             sage: B == A*X % x**4
             True
-            sage: B = Matrix(pR, 3, 2,
+            sage: B = matrix(pR, 3, 2,
             ....:            [[5*x^2 + 6*x + 3, 4*x^2 + 6*x + 4],
             ....:             [  x^2 + 4*x + 2,         5*x + 2],
             ....:             [        5*x + 3,               0]])
@@ -1043,7 +1044,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [  x^2 + 3*x + 5 3*x^2 + 4*x + 4]
             [        5*x + 3         3*x + 2]
 
-            sage: V = Matrix([[2*x^2 + 5*x + 1], [3*x^2+4]])
+            sage: V = matrix([[2*x^2 + 5*x + 1], [3*x^2+4]])
             sage: A[:,:2].solve_right_series_trunc(A[:,:2]*V, 4) == V
             True
 
@@ -1102,7 +1103,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
+            sage: M = matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
             sage: M.row_degrees()
             [1, 3]
 
@@ -1112,7 +1113,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         A zero row in a polynomial matrix can be identified in the (shifted)
         row degrees as the entries equal to ``min(shifts)-1``::
 
-            sage: M = Matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0], [0, 0, 0]])
+            sage: M = matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0], [0, 0, 0]])
             sage: M.row_degrees()
             [1, 3, -1]
 
@@ -1122,13 +1123,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         The row degrees of an empty matrix (`0\times n` or `m\times 0`) is
         not defined::
 
-            sage: M = Matrix(pR, 0, 3)
+            sage: M = matrix(pR, 0, 3)
             sage: M.row_degrees()
             Traceback (most recent call last):
             ...
             ValueError: empty matrix does not have row degrees
 
-            sage: M = Matrix(pR, 3, 0)
+            sage: M = matrix(pR, 3, 0)
             sage: M.row_degrees()
             Traceback (most recent call last):
             ...
@@ -1169,7 +1170,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
+            sage: M = matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
             sage: M.column_degrees()
             [3, -1, 0]
 
@@ -1185,13 +1186,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         The column degrees of an empty matrix (`0\times n` or `m\times 0`) is
         not defined::
 
-            sage: M = Matrix(pR, 0, 3)
+            sage: M = matrix(pR, 0, 3)
             sage: M.column_degrees()
             Traceback (most recent call last):
             ...
             ValueError: empty matrix does not have column degrees
 
-            sage: M = Matrix(pR, 3, 0)
+            sage: M = matrix(pR, 3, 0)
             sage: M.column_degrees()
             Traceback (most recent call last):
             ...
@@ -1250,7 +1251,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
+            sage: M = matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
             sage: M.leading_matrix()
             [3 0 0]
             [1 0 0]
@@ -1325,13 +1326,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, 0, 0)
+            sage: M = matrix(pR, 0, 0)
             sage: M._is_empty_popov()
             True
             sage: M._is_empty_popov(include_zero_vectors=False)
             True
 
-            sage: M = Matrix(pR, 0, 3)
+            sage: M = matrix(pR, 0, 3)
             sage: M._is_empty_popov(include_zero_vectors=False)
             True
             sage: M._is_empty_popov(row_wise=False)
@@ -1396,7 +1397,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
+            sage: M = matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
             sage: M.is_reduced()
             False
 
@@ -1410,7 +1411,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:              include_zero_vectors=False)
             False
 
-            sage: M = Matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0], [0, 1, 0]])
+            sage: M = matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0], [0, 1, 0]])
             sage: M.is_reduced(shifts=[2,0,0], row_wise=False)
             True
 
@@ -1476,7 +1477,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
+            sage: M = matrix(pR, [[3*x+1, 0, 1], [x^3+3, 0, 0]])
             sage: M.leading_positions()
             [0, 0]
 
@@ -1507,7 +1508,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         The leading positions and pivot degrees of an empty matrix (`0\times n`
         or `m\times 0`) is not defined::
 
-            sage: M = Matrix(pR, 0, 3)
+            sage: M = matrix(pR, 0, 3)
             sage: M.leading_positions()
             Traceback (most recent call last):
             ...
@@ -1518,7 +1519,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ...
             ValueError: empty matrix does not have leading positions
 
-            sage: M = Matrix(pR, 3, 0)
+            sage: M = matrix(pR, 3, 0)
             sage: M.leading_positions(row_wise=False)
             Traceback (most recent call last):
             ...
@@ -1608,7 +1609,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix([ [x^3+3*x^2+6*x+6, 3*x^2+3*x+6, 4*x^2+x+3],
+            sage: M = matrix([ [x^3+3*x^2+6*x+6, 3*x^2+3*x+6, 4*x^2+x+3],
             ....:              [5,               1,           0        ],
             ....:              [2*x^2+2,         2*x+5,       x^2+4*x+6] ])
             sage: M.is_weak_popov()
@@ -1637,7 +1638,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Rectangular matrices are supported::
 
-            sage: M = Matrix([
+            sage: M = matrix([
             ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
             ....:    [      6*x^2+3*x+1,       1,           2,         0],
             ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
@@ -1650,7 +1651,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Zero rows (resp. columns) can be forbidden::
 
-            sage: M = Matrix([
+            sage: M = matrix([
             ....:   [      6*x+4,       0,             5*x+1, 0],
             ....:   [          2, 5*x + 1,       6*x^2+3*x+1, 0],
             ....:   [2*x^2+5*x+5,       1, 2*x^3+4*x^2+6*x+4, 0]
@@ -1748,7 +1749,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [[x^4+6*x^3+4*x+4, 3*x+6,     3  ],
+            sage: M = matrix(pR, [[x^4+6*x^3+4*x+4, 3*x+6,     3  ],
             ....:                 [x^2+6*x+6,       x^2+5*x+5, 2  ],
             ....:                 [3*x,             6*x+5,     x+5]])
             sage: M.is_popov()
@@ -1763,7 +1764,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M[:2,:].is_popov(shifts=[0,1,2])
             True
 
-            sage: M = Matrix(pR, [[x^4+3*x^3+x^2+2*x+6, x^3+5*x^2+5*x+1],
+            sage: M = matrix(pR, [[x^4+3*x^3+x^2+2*x+6, x^3+5*x^2+5*x+1],
             ....:                 [6*x+1,               x^2+4*x+1      ],
             ....:                 [6,                   6              ]])
             sage: M.is_popov(row_wise=False)
@@ -1774,7 +1775,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         One can forbid zero rows (or columns if not working row-wise)::
 
-            sage: N = Matrix(pR, [[x^4+3*x^3+x^2+2*x+6, 6*x+1     ],
+            sage: N = matrix(pR, [[x^4+3*x^3+x^2+2*x+6, 6*x+1     ],
             ....:                 [5*x^2+5*x+1,         x^2+4*x+1 ],
             ....:                 [0,                   0         ]])
 
@@ -1886,7 +1887,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [[x^4+6*x^3+4*x+4, 3*x+6,     3  ],
+            sage: M = matrix(pR, [[x^4+6*x^3+4*x+4, 3*x+6,     3  ],
             ....:                 [0,               x^2+5*x+5, 2  ],
             ....:                 [0,               0,         x+5]])
 
@@ -1897,7 +1898,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.is_hermite(row_wise=False, lower_echelon=True)
             False
 
-            sage: N = Matrix(pR, [[x+5, 0,               0        ],
+            sage: N = matrix(pR, [[x+5, 0,               0        ],
             ....:                 [2,   x^4+6*x^3+4*x+4, 0        ],
             ....:                 [3,   3*x^3+6,         x^2+5*x+5]])
             sage: N.is_hermite()
@@ -2001,7 +2002,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [
+            sage: M = matrix(pR, [
             ....:    [      6*x+4,       5*x^3+5*x,       6*x^2+2*x+2],
             ....:    [4*x^2+5*x+2, x^4+5*x^2+2*x+4, 4*x^3+6*x^2+6*x+5]])
             sage: P, U = M.weak_popov_form(transformation=True)
@@ -2175,8 +2176,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         one = R.one()
 
         if transformation:
-            from sage.matrix.constructor import identity_matrix
-            U = identity_matrix(R, m)
+            from sage.matrix.constructor import matrix
+            U = matrix.identity(R, m)
 
         # initialise to_row and conflicts list
         to_row = [[] for i in range(n)]
@@ -2286,7 +2287,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: M = Matrix(pR, [
+            sage: M = matrix(pR, [
             ....:     [      6*x+4,       5*x^3+5*x,       6*x^2+2*x+2],
             ....:     [4*x^2+5*x+2, x^4+5*x^2+2*x+4, 4*x^3+6*x^2+6*x+5]])
 
@@ -2652,11 +2653,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: A = Matrix(pR, 3, 2,
+            sage: A = matrix(pR, 3, 2,
             ....:            [[      3*x^3 + 3*x,         2*x^3 + 4],
             ....:             [  3*x^3 + 6*x + 5, 6*x^3 + 5*x^2 + 1],
             ....:             [  2*x^3 + 2*x + 6,   3*x^2 + 2*x + 2]])
-            sage: B = Matrix(pR, 3, 3,
+            sage: B = matrix(pR, 3, 3,
             ....:            [[              3,       x + 3,               6],
             ....:             [3*x^3 + 3*x + 1, 4*x^2 + 3*x,   6*x^3 + x + 4],
             ....:             [  4*x^2 + x + 4, 3*x^2 + 4*x, 3*x^2 + 3*x + 2]])
@@ -2747,10 +2748,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Case where `B` is a square, column reduced matrix::
 
             sage: pR.<x> = GF(7)[]
-            sage: A = Matrix(pR, 2, 3,
+            sage: A = matrix(pR, 2, 3,
             ....:     [[3*x^3 + 3*x, 3*x^3 + 6*x + 5,   2*x^3 + 2*x + 6],
             ....:      [2*x^3 + 4,   6*x^3 + 5*x^2 + 1, 3*x^2 + 2*x + 2]])
-            sage: B = Matrix(pR, 3, 3,
+            sage: B = matrix(pR, 3, 3,
             ....:     [[4*x^2 + 3*x + 3, 3*x^2 + 3*x + 1,   4*x^2 + x + 4],
             ....:      [6*x^2 + 2*x + 3,     4*x^2 + 3*x,     3*x^2 + 4*x],
             ....:      [5*x^2 + 3*x + 6,   6*x^2 + x + 4, 3*x^2 + 3*x + 2]])
@@ -2769,7 +2770,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ValueError: column dimension of self should be the column dimension
             of the input matrix
 
-            sage: B = Matrix(pR, 3, 3,
+            sage: B = matrix(pR, 3, 3,
             ....:     [[3,     3*x^3 + 3*x + 1, 4*x^2 + x + 4],
             ....:      [x + 3, 4*x^2 + 3*x,     3*x^2 + 4*x],
             ....:      [6,     6*x^3 + x + 4,   3*x^2 + 3*x + 2]])
@@ -2790,7 +2791,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         With a nonsingular but also non-reduced matrix, there exists a
         solution, but it might not be unique::
 
-            sage: B = Matrix(pR, 3, 3,
+            sage: B = matrix(pR, 3, 3,
             ....:     [[              5,               0, 2*x + 6],
             ....:      [            4*x, 3*x^2 + 4*x + 5,   x + 1],
             ....:      [3*x^2 + 5*x + 2, 6*x^3 + 4*x + 6,       3]])
@@ -2808,10 +2809,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: A == Q*B+R and all(cdegR[i] < cdegB[i] for i in range(3))
             True
 
-            sage: Q2 = Matrix(pR, 2, 3,
+            sage: Q2 = matrix(pR, 2, 3,
             ....:      [[6*x^2 + 3*x + 1, 4*x^2 + 3*x + 6, 5*x + 1],
             ....:       [  x^2 + 5*x + 3, 5*x^2 + 3*x + 2,   x + 2]])
-            sage: R2 = Matrix(pR, 2, 3,
+            sage: R2 = matrix(pR, 2, 3,
             ....:      [[    5*x, 3*x + 4, 5],
             ....:       [4*x + 6,     5*x, 4]])
             sage: A == Q2*B + R2
@@ -2849,11 +2850,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         remainder, in which case this method will find it via normal form
         computation::
 
-            sage: B = Matrix(pR, 1, 2, [[x, x]])
-            sage: A = Matrix(pR, 1, 2, [[x, x+2]])
+            sage: B = matrix(pR, 1, 2, [[x, x]])
+            sage: A = matrix(pR, 1, 2, [[x, x+2]])
             sage: A.right_quo_rem(B)
             ([1], [0 2])
-            sage: A == 1*B + Matrix([[0,2]])
+            sage: A == 1*B + matrix([[0,2]])
             True
 
         .. SEEALSO::
@@ -2902,10 +2903,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: A = Matrix(pR, 2, 3,
+            sage: A = matrix(pR, 2, 3,
             ....:     [[3*x^3 + 3*x, 3*x^3 + 6*x + 5,   2*x^3 + 2*x + 6],
             ....:      [2*x^3 + 4,   6*x^3 + 5*x^2 + 1, 3*x^2 + 2*x + 2]])
-            sage: B = Matrix(pR, 3, 3,
+            sage: B = matrix(pR, 3, 3,
             ....:     [[4*x^2 + 3*x + 3, 3*x^2 + 3*x + 1,   4*x^2 + x + 4],
             ....:      [6*x^2 + 2*x + 3,     4*x^2 + 3*x,     3*x^2 + 4*x],
             ....:      [5*x^2 + 3*x + 6,   6*x^2 + x + 4, 3*x^2 + 3*x + 2]])
@@ -2919,7 +2920,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: A == Q*B+R and R.degree() < 2
             True
 
-            sage: B = Matrix(pR, 3, 3,
+            sage: B = matrix(pR, 3, 3,
             ....:     [[4*x + 3*x + 3, 3*x^3 + 3*x + 1,   4*x^2 + x + 4],
             ....:      [6*x + 2*x + 3,     4*x^2 + 3*x,     3*x^2 + 4*x],
             ....:      [6,             6*x^3 + x + 4,   3*x^2 + 3*x + 2]])
@@ -2980,10 +2981,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: A = Matrix(pR, 2, 3,
+            sage: A = matrix(pR, 2, 3,
             ....:     [[3*x^3 + 3*x, 3*x^3 + 6*x + 5,   2*x^3 + 2*x + 6],
             ....:      [2*x^3 + 4,   6*x^3 + 5*x^2 + 1, 3*x^2 + 2*x + 2]])
-            sage: B = Matrix(pR, 3, 3,
+            sage: B = matrix(pR, 3, 3,
             ....:     [[4*x + 3*x + 3, 3*x^3 + 3*x + 1,   4*x^2 + x + 4],
             ....:      [6*x + 2*x + 3,     4*x^2 + 3*x,     3*x^2 + 4*x],
             ....:      [6,             6*x^3 + x + 4,   3*x^2 + 3*x + 2]])
@@ -3004,7 +3005,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         With a nonsingular but also non-reduced matrix, there exists a solution
         and one is found by this method, but it might not be unique::
 
-            sage: B = Matrix(pR, 3, 3,
+            sage: B = matrix(pR, 3, 3,
             ....:     [[              5,               0, 2*x + 6],
             ....:      [            4*x, 3*x^2 + 4*x + 5,   x + 1],
             ....:      [3*x^2 + 5*x + 2, 6*x^3 + 4*x + 6,       3]])
@@ -3022,10 +3023,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: A == Q*B+R and all(cdegR[i] < cdegB[i] for i in range(3))
             True
 
-            sage: Q2 = Matrix(pR, 2, 3,
+            sage: Q2 = matrix(pR, 2, 3,
             ....:      [[6*x^2 + 3*x + 1, 4*x^2 + 3*x + 6, 5*x + 1],
             ....:       [  x^2 + 5*x + 3, 5*x^2 + 3*x + 2,   x + 2]])
-            sage: R2 = Matrix(pR, 2, 3,
+            sage: R2 = matrix(pR, 2, 3,
             ....:      [[    5*x, 3*x + 4, 5],
             ....:       [4*x + 6,     5*x, 4]])
             sage: A == Q2*B + R2
@@ -3060,9 +3061,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         columns), even when there is a solution, this method might not find
         it::
 
-            sage: B = Matrix(pR, 1, 2, [[x, x]])
-            sage: A = Matrix(pR, 1, 2, [[x, x+2]])
-            sage: A == 1*B + Matrix([[0,2]])    # a valid quo_rem
+            sage: B = matrix(pR, 1, 2, [[x, x]])
+            sage: A = matrix(pR, 1, 2, [[x, x+2]])
+            sage: A == 1*B + matrix([[0,2]])    # a valid quo_rem
             True
             sage: A._right_quo_rem_solve(B)
             Traceback (most recent call last):
@@ -3146,10 +3147,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: B = Matrix(pR, [
+            sage: B = matrix(pR, [
             ....:     [      6*x+4,       5*x^3+5*x,       6*x^2+2*x+2],
             ....:     [4*x^2+5*x+2, x^4+5*x^2+2*x+4, 4*x^3+6*x^2+6*x+5]])
-            sage: A = Matrix(pR, 1, 3, [
+            sage: A = matrix(pR, 1, 3, [
             ....:     [3*x^4+3*x^3+4*x^2+5*x+1, x^4+x^3+5*x^2+4*x+4, 4*x^4+2*x^3+x]])
 
             sage: Q, R = A.reduce(B,return_quotient=True); R
@@ -3191,7 +3192,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         several columns, and a matrix `B` which does not have full column rank
         (its column-wise Popov form has a zero column)::
 
-            sage: A = Matrix(pR, 2, 2,
+            sage: A = matrix(pR, 2, 2,
             ....:     [[5*x^3 + 2*x^2 + 4*x + 1,           x^3 + 4*x + 4],
             ....:      [2*x^3 + 5*x^2 + 2*x + 4,         2*x^3 + 3*x + 2]])
             sage: (Q,R) = A.reduce(B,row_wise=False, return_quotient=True); R
@@ -3310,13 +3311,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         computing minimal approximant bases, 2006]::
 
             sage: order = 8; shifts = [1,1,0,0,0]
-            sage: pmat = Matrix(pR, 5, 1, [
+            sage: pmat = matrix(pR, 5, 1, [
             ....:     pR([35,  0, 41, 87,  3, 42, 22, 90]),
             ....:     pR([80, 15, 62, 87, 14, 93, 24,  0]),
             ....:     pR([42, 57, 90, 87, 22, 80, 71, 53]),
             ....:     pR([37, 72, 74,  6,  5, 75, 23, 47]),
             ....:     pR([36, 10, 74,  1, 29, 44, 87, 74])])
-            sage: appbas = Matrix(pR, [
+            sage: appbas = matrix(pR, [
             ....:     [x+47,   57, 58*x+44,     9*x+23,      93*x+76],
             ....:     [  15, x+18, 52*x+23,     15*x+58,     93*x+88],
             ....:     [  17,   86, x^2+77*x+16, 76*x+29,     90*x+78],
@@ -3331,7 +3332,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         not an approximant basis since its rows generate a module strictly
         contained in the set of approximants for ``pmat`` at order 8::
 
-            sage: M = x^8 * Matrix.identity(pR, 5)
+            sage: M = x^8 * matrix.identity(pR, 5)
             sage: M.is_minimal_approximant_basis(pmat, 8)                               # needs sage.libs.pari
             False
 
@@ -3339,7 +3340,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         its column-wise approximant bases at order 8 are all `1\times 1`
         matrices `[c x^8]` for some nonzero field element `c`::
 
-            sage: M = Matrix(pR, [x^8])
+            sage: M = matrix(pR, [x^8])
             sage: M.is_minimal_approximant_basis(
             ....:     pmat, 8, row_wise=False, normal_form=True)
             True
@@ -3359,7 +3360,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ValueError: shifts length should be the column dimension
                         of the input matrix
 
-            sage: Matrix(pR, [x^8]).is_minimal_approximant_basis(pmat, 8)
+            sage: matrix(pR, [x^8]).is_minimal_approximant_basis(pmat, 8)
             Traceback (most recent call last):
             ...
             ValueError: column dimension should be the row dimension of the
@@ -3464,15 +3465,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             normal_form=False):
         r"""
         Return an approximant basis in ``shifts``-ordered weak Popov form for
-        this polynomial matrix at order ``order``.
+        this polynomial matrix at order ``order``. This is a direct extension
+        of the so-called Hermite-Padé approximation, which corresponds to the
+        case where ``self`` is a single vector.
 
         Assuming we work row-wise, if `F` is an `m \times n` polynomial matrix
-        and `(d_0,\ldots,d_{n-1})` are positive integers, then an approximant
-        basis for `F` at order `(d_0,\ldots,d_{n-1})` is a polynomial matrix
-        whose rows form a basis of the module of approximants for `F` at order
+        and `(d_0,\ldots,d_{n-1})` are integers, then an approximant basis for
+        `F` at order `(d_0,\ldots,d_{n-1})` is a polynomial matrix whose rows
+        form a basis of the module of approximants for `F` at order
         `(d_0,\ldots,d_{n-1})`. The latter approximants are the polynomial
         vectors `p` of size `m` such that the column `j` of `p F` has valuation
-        at least `d_j`, for all `0 \le j \le n-1`.
+        at least `d_j`, for all `0 \le j \le n-1` (for `j` such that `d_j \le
+        0`, this constraint is void).
 
         If ``normal_form`` is ``True``, then the output basis `P` is
         furthermore in ``shifts``-Popov form. By default, `P` is considered
@@ -3492,7 +3496,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``order`` -- list of positive integers, or a positive integer
+        - ``order`` -- list of integers, or an integer
 
         - ``shifts`` -- (default: ``None``) list of integers;
           ``None`` is interpreted as ``shifts=[0,...,0]``
@@ -3518,7 +3522,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: pR.<x> = GF(7)[]
 
             sage: order = [4, 3]; shifts = [-1, 2, 0]
-            sage: F = Matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5*x^2 + 4*x + 1],
+            sage: F = matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5*x^2 + 4*x + 1],
             ....:                 [        2*x^2 + 2*x + 3, 6*x^2 + 6*x + 3],
             ....:                 [4*x^3         +   x + 1, 4*x^2 + 2*x + 3]])
             sage: P = F.minimal_approximant_basis(order, shifts)
@@ -3542,7 +3546,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         give a single integer::
 
             sage: (F.minimal_approximant_basis(3) ==
-            ....:  F.minimal_approximant_basis([3,3], shifts=None))
+            ....:  F.minimal_approximant_basis([3,3], shifts=[0,0,0]))
             True
 
         One can work column-wise by specifying ``row_wise=False``::
@@ -3557,6 +3561,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:      3, row_wise=False).transpose())
             True
 
+        Zero or negative order entries are supported, and amount to ignoring
+        the corresponding column of ``self`` (or corresponding row, if column-wise)::
+
+            sage: P = F.minimal_approximant_basis([4, 0, 3], row_wise=False)
+            sage: P == F.minimal_approximant_basis([4, -2, 3], row_wise=False)
+            True
+            sage: P == F[[0,2],:].minimal_approximant_basis([4,3], row_wise=False)
+            True
+
         Errors are raised if the input dimensions are not sound::
 
             sage: P = F.minimal_approximant_basis([4], shifts)
@@ -3569,12 +3582,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ...
             ValueError: shifts length should be the row dimension
 
-        An error is raised if order does not contain only positive integers::
+        .. SEEALSO::
 
-            sage: P = F.minimal_approximant_basis([1,0], shifts)
-            Traceback (most recent call last):
-            ...
-            ValueError: order should consist of positive integers
+            :meth:`minimal_interpolant_basis`, :meth:`minimal_relation_basis`
         """
         m = self.nrows()
         n = self.ncols()
@@ -3596,10 +3606,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         elif (not row_wise) and len(order) != m:
             raise ValueError("order length should be the row dimension")
 
-        for o in order:
-            if o < 1:
-                raise ValueError("order should consist of positive integers")
-
         # compute approximant basis
         # if required, normalize it into shifted Popov form
         if row_wise:
@@ -3610,21 +3616,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 # Note: -deg(P[i,i]) = shifts[i] - rdeg[i]
                 degree_shifts = [shifts[i] - rdeg[i] for i in range(m)]
                 # compute approximant basis with that list as shifts
-                P,rdeg = self._approximant_basis_iterative(order,
-                        degree_shifts)
+                P,rdeg = self._approximant_basis_iterative(order, degree_shifts)
                 # left-multiply by inverse of leading matrix
                 lmat = P.leading_matrix(shifts=degree_shifts)
                 P = lmat.inverse() * P
         else:
-            P,rdeg = self.transpose()._approximant_basis_iterative(order,
-                    shifts)
+            P,rdeg = self.transpose()._approximant_basis_iterative(order, shifts)
             if normal_form:
                 # compute the list "- pivot degree"
                 # (since weak Popov, pivot degree is rdeg-shifts entrywise)
                 degree_shifts = [shifts[i] - rdeg[i] for i in range(n)]
                 # compute approximant basis with that list as shifts
-                P, rdeg = self.transpose()._approximant_basis_iterative(
-                    order, degree_shifts)
+                P, rdeg = self.T._approximant_basis_iterative(order, degree_shifts)
                 P = P.transpose()
                 # right-multiply by inverse of leading matrix
                 lmat = P.leading_matrix(shifts=degree_shifts, row_wise=False)
@@ -3637,8 +3640,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
     def _approximant_basis_iterative(self, order, shifts):
         r"""
         Return a ``shifts``-ordered weak Popov approximant basis for this
-        polynomial matrix at order ``order``
-        (see :meth:`minimal_approximant_basis` for definitions).
+        polynomial matrix at order ``order`` (see
+        :meth:`minimal_approximant_basis` for definitions).
 
         The output basis is considered row-wise, that is, its rows are
         left-approximants for the columns of ``self``. It is guaranteed that
@@ -3651,7 +3654,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``order`` -- list of positive integers
+        - ``order`` -- list of integers
 
         - ``shifts`` -- list of integers
 
@@ -3671,84 +3674,86 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: pR.<x> = GF(7)[]
 
         This method supports any number of columns or rows, as well as
-        arbitrary shifts and orders::
+        arbitrary shifts and orders, and the returned list is the shifted row
+        degrees of the output basis::
 
             sage: order = [4, 1, 2]; shifts = [-3, 4]
-            sage: pmat = Matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5, 4],
-            ....:                    [2*x^3 + 2*x^2 + 2*x + 3, 6, 6*x + 3]])
-            sage: appbas, rdeg = pmat._approximant_basis_iterative(order,
-            ....:                                                  shifts)
-            sage: appbas.is_minimal_approximant_basis(pmat, order, shifts)
+            sage: pmat = matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6,   5*x^2, 3*x^2 + 4],
+            ....:                    [2*x^3 + 2*x^2 + 2*x + 3, x^3 + 6,   6*x + 3]])
+            sage: P, rdeg = pmat._approximant_basis_iterative(order, shifts)
+            sage: P.is_minimal_approximant_basis(pmat, order, shifts)
+            True
+            sage: rdeg == P.row_degrees(shifts)
             True
 
-        The returned list is the shifted row degrees of ``appbas``::
+        Zero or negative orders are supported::
 
-            sage: rdeg == appbas.row_degrees(shifts)
+            sage: order = [4, 0, 2]; shifts = [3, -1]
+            sage: P, rdeg = pmat._approximant_basis_iterative(order, shifts)
+            sage: P.is_minimal_approximant_basis(pmat, order, shifts)
+            True
+            sage: rdeg == P.row_degrees(shifts)
+            True
+            sage: order = [4, -3, 2]; shifts = [3, -1]
+            sage: P2, rdeg = pmat._approximant_basis_iterative(order, shifts)
+            sage: P == P2
             True
 
         Approximant bases for the zero matrix are all constant unimodular
         matrices; in fact, this algorithm returns the identity::
 
-            sage: pmat = Matrix(pR, 3, 2)
-            sage: appbas,rdeg = pmat._approximant_basis_iterative([2,5],
-            ....:                                                 [5,0,-4])
-            sage: rdeg == [5,0,-4] and appbas == Matrix.identity(pR, 3)
+            sage: pmat = matrix(pR, 3, 2)
+            sage: P,rdeg = pmat._approximant_basis_iterative([2,5], [5,0,-4])
+            sage: rdeg == [5,0,-4] and P == matrix.identity(pR, 3)
             True
         """
-        # Define parameters and perform some sanity checks
-        m = self.nrows()
-        n = self.ncols()
-        polynomial_ring = self.base_ring()
-        X = polynomial_ring.gen()
+        from sage.matrix.constructor import matrix  # for identity
+        m, n = self.dimensions()
 
-        # 'rest_order': the orders that remains to be dealt with
-        # 'rest_index': indices of orders that remains to be dealt with
-        rest_order = list(order)
-        rest_index = list(range(n))
+        # 'rem_order': the orders that remains to be dealt with
+        # 'rem_index': indices of orders that remains to be dealt with
+        rem_order = [d for d in order if d > 0]
+        rem_index = [j for j in range(n) if order[j] > 0]
 
-        # initialization of the residuals (= input self)
+        # initialization of the residuals (= input self, without columns with zero order)
         # and of the approximant basis (= identity matrix)
-        from sage.matrix.constructor import identity_matrix
-        appbas = identity_matrix(polynomial_ring, m)
-        residuals = self.__copy__()
+        appbas = matrix.identity(self.base_ring(), m)
+        residuals = self.matrix_from_columns(rem_index)
 
-        # throughout the algorithm, 'rdeg' will be the shifts-row degrees of
-        # 'appbas'
+        # throughout the algorithm, 'rdeg' is the shifts-row degrees of 'appbas'
         # --> initially, 'rdeg' is the shift-row degree of the identity matrix
-        rdeg = list(shifts)
+        rdeg = [s for s in shifts]
 
-        while rest_order:
+        while rem_order:
             # invariant:
             #   * appbas is a shifts-ordered weak Popov approximant basis for
             #   (self,doneorder)
             #   where doneorder = the already processed order, that is, the
-            #   tuple order-rest_order (entrywise subtraction)
+            #   tuple order-rem_order (entrywise subtraction)
             #   * rdeg is the shifts-row degree of appbas
             #   * residuals is the submatrix of columns (appbas * self)[:,j]
-            #   for all j such that rest_order[j] > 0
+            #   for all j such that rem_order[j] > 0
 
             # choice for the next coefficient to be dealt with: first of the
-            # largest entries in order (--> process 'self' degree-wise, and
-            # left to right)
+            # largest entries in order
             # Note: one may also consider the first one in order (--> process
             # 'self' columnwise, from left column to right column, set j=0
-            # instead of the below), but it seems to often be (barely) slower
-            max_rest_order = max(rest_order)
-            for ind, value in enumerate(rest_order):
-                if value == max_rest_order:
+            # instead of the below), but it seems to often be (a bit) slower
+            max_rem_order = max(rem_order)
+            for ind, value in enumerate(rem_order):
+                if value == max_rem_order:
                     j = ind
                     break
-            d = order[rest_index[j]] - rest_order[j]
+            d = order[rem_index[j]] - rem_order[j]
 
             # coefficient = the coefficient of degree d of the column j of the
             # residual matrix
             # --> this is very likely nonzero and we want to make it zero, so
-            # that this column becomes zero mod X^{d+1}
+            # that this column becomes zero mod x^{d+1}
             coefficient = [residuals[i, j][d] for i in range(m)]
 
             # Lambda: collect rows [i] with nonzero coefficient[i]
-            # pi: index of the first row with smallest shift, among those in
-            # Lambda
+            # pi: index of the first row with smallest shift, among those in Lambda
             Lambda = []
             pi = -1
             for i in range(m):
@@ -3763,22 +3768,382 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                     scalar = -coefficient[row]/coefficient[pi]
                     appbas.add_multiple_of_row(row, pi, scalar)
                     residuals.add_multiple_of_row(row, pi, scalar)
-                # update row pi
+                # update row pi: multiply by x
                 rdeg[pi] += 1
-                appbas.rescale_row(pi, X)
-                residuals.rescale_row(pi, X)
+                for jj in range(m):
+                    appbas[pi, jj] = appbas[pi, jj].shift(1)
+                for jj in range(residuals.ncols()):
+                    residuals[pi, jj] = residuals[pi, jj].shift(1)
 
-            # Decrement rest_order[j], unless there is no more work to do in
-            # this column, i.e. if rest_order[j] was 1:
-            # in this case remove the column j of
-            # residual,rest_order,rest_index
-            if rest_order[j] == 1:
+            # Decrement rem_order[j], unless there is no more work to do in
+            # this column (i.e. if rem_order[j] was 1) in which case
+            # remove the column j of residual,rem_order,rem_index
+            if rem_order[j] == 1:
                 residuals = residuals.delete_columns([j])
-                rest_order.pop(j)
-                rest_index.pop(j)
+                rem_order.pop(j)
+                rem_index.pop(j)
             else:
-                rest_order[j] -= 1
+                rem_order[j] -= 1
         return appbas, rdeg
+
+    def minimal_interpolant_basis(self,
+            points,
+            shifts=None,
+            row_wise=True,
+            normal_form=False):
+        r"""
+        Return an interpolant basis in ``shifts``-ordered weak Popov form for
+        this polynomial matrix with respect to the points in ``points``. This
+        is a general form of interpolation problems usually called M-Padé
+        approximation or vector rational interpolation.
+
+        Assuming we work row-wise, if `F` is an `m \times n` polynomial matrix
+        and `a_{i,j}, 0 \le i < d_j` are elements (called points) of the base
+        field for some integers `d_0,\ldots,d_{n-1}`, then an interpolant basis
+        for `F` with respect to these points is a polynomial matrix whose rows
+        form a basis of the module of interpolants for `F` with respect to the
+        points. The latter interpolants are the polynomial vectors `p` of size
+        `m` such that the column `j` of `p F` vanishes modulo `\mu_j = \prod_{0
+        \le i < d_j} (x - a_{i,j})` (that is, it vanishes at all points
+        `a_{i,j}`'s, with multiplicity in case of repeated points), for all `0
+        \le j \le n-1`. For `j` such that `d_j \le 0`, i.e. the `j` th list of
+        points is empty, this constraint on the column `j` is void.
+
+        If ``normal_form`` is ``True``, then the output basis `P` is
+        furthermore in ``shifts``-Popov form. By default, `P` is considered
+        row-wise, that is, its rows are left-interpolants for ``self``; if
+        ``row_wise`` is ``False`` then its columns are right-interpolants for
+        ``self``. It is guaranteed that the degree of the output basis is at
+        most `\deg(\lcm(\mu_j, 0 \le j < n))`, independently of ``shifts``.
+
+        An error is raised if the input dimensions are not sound: if working
+        row-wise (resp. column-wise), the length of ``points`` must be the
+        number of columns (resp. rows) of ``self``, while the length of
+        ``shifts`` must be the number of rows (resp. columns) of ``self``.
+
+        If a single list is provided for ``points``, then it is converted into
+        a list containing the provided list repeated the suitable number of
+        times.
+
+        INPUT:
+
+        - ``points`` -- list of elements from the base field (or coercible into
+          it), or list of such lists
+
+        - ``shifts`` -- (default: ``None``) list of integers;
+          ``None`` is interpreted as ``shifts=[0,...,0]``
+
+        - ``row_wise`` -- boolean (default: ``True``); if ``True`` then the
+          output basis is considered row-wise and operates on the left of
+          ``self``. Otherwise it is column-wise and operates on the right of
+          ``self``.
+
+        - ``normal_form`` -- boolean (default: ``False``); if ``True`` then the
+          output basis is in ``shifts``-Popov form
+
+        OUTPUT: a polynomial matrix
+
+        ALGORITHM:
+
+        The implementation is inspired from the iterative algorithms described
+        in [Bec1992]_ and [VBB1992]_ ; for obtaining the normal form, it relies
+        directly on Lemmas 3.3 and 4.1 in [JNSV2016]_ .
+
+        EXAMPLES::
+
+            sage: ff = GF(7)
+            sage: xring.<x> = ff[]
+
+        This method supports any number of columns or rows, as well as
+        arbitrary shifts and lists of points::
+
+            sage: F = matrix([[5*x^3 + 4*x^2 + 4*x + 6, 5*x^3 + 5*x^2 +   5],
+            ....:             [2*x^3 + 2*x^2 + 2*x + 3, 3*x^3 +   6*x +   4],
+            ....:             [          x^2 + 6*x + 3, 5*x^3 + 2*x^2 + 3*x]])
+            sage: points = [[ff(3), ff(0), ff(6), ff(3)], [ff(1), ff(1), ff(1)]]
+            sage: mod1 = (x - 3) * x * (x - 6) * (x - 3)
+            sage: mod2 = (x - 1)**3
+
+            sage: P = F.minimal_interpolant_basis(points, shifts=[0,0,0])
+            sage: P.is_weak_popov(ordered=True)
+            True
+            sage: G = P*F
+            sage: G[:,0] % mod1 == 0 and G[:,1] % mod2 == 0
+            True
+            sage: P.det() == mod1 * mod2
+            True
+
+        The last test highlights that for "sufficiently generic" input, the
+        fact that the returned matrix generates the module of interpolants is
+        equivalent to the fact that its determinant is the product of the
+        linear factors defined by the interpolation points.
+
+        If shifts are not specified, they are chosen as uniform `[0,\ldots,0]`
+        by default. Besides, if the lists of points are all identical, one can
+        rather give a single list::
+
+            sage: P = F.minimal_interpolant_basis([points[0], points[0]])
+            sage: P == F.minimal_interpolant_basis(points[0], shifts=[0,0,0])
+            True
+
+        One can work column-wise by specifying ``row_wise=False``. Empty lists
+        of points are supported, and amount to ignoring the corresponding
+        column of ``self`` (or corresponding row, if column-wise)::
+
+            sage: points[1] = []
+            sage: shifts = [-1, 2, 0]
+            sage: Ft = F.transpose()
+            sage: P = Ft.minimal_interpolant_basis(points, shifts=shifts, row_wise=False)
+            sage: P == Ft[0,:].minimal_interpolant_basis([points[0]], shifts=shifts, row_wise=False)
+            True
+            sage: P.is_weak_popov(shifts=shifts, ordered=True, row_wise=False)
+            True
+            sage: G = Ft * P
+            sage: G[0,:] % mod1 == 0 and P.det() == mod1
+            True
+
+        Errors are raised if the input dimensions are not sound::
+
+            sage: P = F.minimal_interpolant_basis([points[0]])
+            Traceback (most recent call last):
+            ...
+            ValueError: points length should be the column dimension
+
+            sage: P = F.minimal_interpolant_basis(points, shifts=[0,0,0,0])
+            Traceback (most recent call last):
+            ...
+            ValueError: shifts length should be the row dimension
+
+        .. SEEALSO::
+
+            :meth:`minimal_approximant_basis`, :meth:`minimal_relation_basis`
+        """
+        from sage.matrix.constructor import matrix  # for identity
+        from copy import copy
+
+        m = self.nrows()
+        n = self.ncols()
+
+        # set default shifts / check shifts dimension
+        if shifts is None:
+            shifts = [0] * m if row_wise else [0] * n
+        elif row_wise and len(shifts) != m:
+            raise ValueError('shifts length should be the row dimension')
+        elif (not row_wise) and len(shifts) != n:
+            raise ValueError('shifts length should be the column dimension')
+
+        # deal with corner case where there is no equation to solve
+        if row_wise and (n == 0 or len(points) == 0):
+            return matrix.identity(self.base_ring(), m)
+        elif (not row_wise) and (m == 0 or len(points) == 0):
+            return matrix.identity(self.base_ring(), n)
+
+        # thanks to the above corner case, from here on, points is a nonempty list
+        # if its entries are field elements, build full list of lists of points
+        if not isinstance(points[0], list):
+            if row_wise:
+                points = [copy(points) for j in range(n)]
+            else:
+                points = [copy(points) for i in range(m)]
+
+        # check length of points
+        if row_wise and len(points) != n:
+            raise ValueError("points length should be the column dimension")
+        elif (not row_wise) and len(points) != m:
+            raise ValueError("points length should be the row dimension")
+
+        # compute interpolant basis
+        # if required, normalize it into shifted Popov form
+        if row_wise:
+            P, rdeg = self._interpolant_basis_iterative(points, shifts)
+            if normal_form:
+                # compute the list "- pivot degree"
+                # (since weak Popov, pivot degree is rdeg-shifts entrywise)
+                # Note: -deg(P[i,i]) = shifts[i] - rdeg[i]
+                degree_shifts = [shifts[i] - rdeg[i] for i in range(m)]
+                # compute interpolant basis with that list as shifts
+                P, rdeg = self._interpolant_basis_iterative(points, degree_shifts)
+                # left-multiply by inverse of leading matrix
+                lmat = P.leading_matrix(shifts=degree_shifts)
+                P = lmat.inverse() * P
+        else:
+            P, rdeg = self.transpose()._interpolant_basis_iterative(points, shifts)
+            if normal_form:
+                # compute the list "- pivot degree"
+                # (since weak Popov, pivot degree is rdeg-shifts entrywise)
+                degree_shifts = [shifts[i] - rdeg[i] for i in range(n)]
+                # compute interpolant basis with that list as shifts
+                P, rdeg = self.T._interpolant_basis_iterative(points, degree_shifts)
+                P = P.transpose()
+                # right-multiply by inverse of leading matrix
+                lmat = P.leading_matrix(shifts=degree_shifts, row_wise=False)
+                P = P * lmat.inverse()
+            else:
+                P = P.transpose()
+
+        return P
+
+    def _interpolant_basis_iterative(self, points, shifts):
+        r"""
+        Return a ``shifts``-ordered weak Popov interpolant basis for this
+        polynomial matrix with respect to points specified in ``points`` (see
+        :meth:`minimal_interpolant_basis` for definitions).
+
+        The output basis is considered row-wise, that is, its rows are
+        left-interpolants for the columns of ``self``.
+
+        The input dimensions are supposed to be sound: the length of ``points``
+        must be the number of columns of ``self``, while the length of
+        ``shifts`` must be the number of rows of ``self``.
+
+        INPUT:
+
+        - ``points`` -- list of lists of elements from the base field (or
+          coercible into it)
+
+        - ``shifts`` -- list of integers
+
+        OUTPUT:
+
+        - a polynomial matrix (the interpolant basis ``P``).
+
+        - a list of integers (the shifts-row degrees of ``P``).
+
+        ALGORITHM:
+
+        This is inspired from the iterative algorithms described in [Bec1992]_
+        and [VBB1992]_ .
+
+        EXAMPLES::
+
+            sage: ff = GF(7)
+            sage: xring.<x> = ff[]
+
+        This method supports any number of columns or rows, as well as
+        arbitrary shifts and lists of points. The returned list is the shifted
+        row degrees of the interpolation basis::
+
+            sage: F = matrix([[5*x^3 + 4*x^2 + 4*x + 6, 5*x^3 + 5*x^2 +   5],
+            ....:             [2*x^3 + 2*x^2 + 2*x + 3, 3*x^3 +   6*x +   4],
+            ....:             [          x^2 + 6*x + 3, 5*x^3 + 2*x^2 + 3*x]])
+            sage: points = [[ff(3), ff(0), ff(6), ff(3)], [ff(1), ff(1), ff(1)]]
+            sage: mod1 = (x - 3) * x * (x - 6) * (x - 3)
+            sage: mod2 = (x - 1)**3
+
+            sage: P, rdeg = F._interpolant_basis_iterative(points, [0,0,0])
+            sage: rdeg == P.row_degrees()
+            True
+            sage: P.is_weak_popov(ordered=True)
+            True
+            sage: G = P*F
+            sage: G[:,0] % mod1 == 0 and G[:,1] % mod2 == 0
+            True
+
+        For "sufficiently generic" input, the fact that the returned matrix
+        generates the module of interpolants is equivalent to the fact that its
+        determinant is the product of the linear factors defined by the
+        interpolation points::
+
+            sage: P.det() == mod1 * mod2
+            True
+
+            sage: points[1] = []
+            sage: shifts = [-1, 2, 0]
+            sage: P, rdeg = F._interpolant_basis_iterative(points, shifts)
+            sage: rdeg == P.row_degrees(shifts=shifts)
+            True
+            sage: P.is_weak_popov(shifts=shifts, ordered=True)
+            True
+            sage: G = P*F
+            sage: G[:,0] % mod1 == 0 and P.det() == mod1
+            True
+
+        Interpolant bases for the zero matrix are all constant unimodular
+        matrices; in fact, this algorithm returns the identity::
+
+            sage: F = matrix(xring, 4, 2)
+            sage: P,rdeg = F._interpolant_basis_iterative(points, shifts)
+            sage: rdeg == shifts and P == 1
+            True
+        """
+        from sage.matrix.constructor import matrix  # for identity
+        from copy import copy
+        m, n = self.dimensions()
+
+        # 'rem_points': the points that remain to be dealt with
+        # 'rem_index': indices of lists of points that remain to be dealt with
+        rem_points = [copy(pts) for pts in points if len(pts) > 0]
+        rem_index = [j for j in range(n) if len(points[j]) > 0]
+
+        # initialization of the residuals (= input self, without columns associated to no point)
+        # and of the interpolant basis (= identity matrix)
+        intbas = matrix.identity(self.base_ring(), m)
+        residuals = self.matrix_from_columns(rem_index)
+
+        # throughout the algorithm, 'rdeg' is the shifts-row degrees of 'intbas'
+        # --> initially, 'rdeg' is the shift-row degree of the identity matrix
+        rdeg = [s for s in shifts]
+
+        while rem_points:
+            # invariant:
+            #   * intbas is a shifts-ordered weak Popov interpolant basis for
+            #   self and the already processed points
+            #   * rdeg is the shifts-row degree of intbas
+            #   * residuals is the submatrix of columns
+            #        (intbas * self)[:,j] / prod_i(x - points[j][i])
+            #   for all j in rem_index and where i goes through the already
+            #   processed points from points[j]
+
+            # choice for the next point to be dealt with: last point of the
+            # list points[j] that has largest length
+            # Note: one may also consider a point of points[j] for the smallest
+            # possible j (--> roughly, set j=0 instead of the below), but it
+            # seems to often be (a bit) slower
+            max_rem_points = max(len(pts) for pts in rem_points)
+            for ind, pts in enumerate(rem_points):
+                if len(pts) == max_rem_points:
+                    j = ind
+                    break
+            pt = rem_points[j].pop()
+
+            # evals = the evaluations at pt of the column j of the residual matrix
+            # --> this is very likely nonzero and we want to make it zero, so
+            # that this column becomes zero mod (x - pt)
+            evals = [residuals[i, j](pt) for i in range(m)]
+
+            # Lambda: collect rows [i] with nonzero evals[i]
+            # pi: index of the first row with smallest shift, among those in Lambda
+            Lambda = []
+            pi = -1
+            for i in range(m):
+                if evals[i] != 0:
+                    Lambda.append(i)
+                    if pi < 0 or rdeg[i] < rdeg[pi]:
+                        pi = i
+            if Lambda: # otherwise, nothing to do
+                # update all rows in Lambda--{pi}
+                Lambda.remove(pi)
+                for row in Lambda:
+                    scalar = -evals[row]/evals[pi]
+                    intbas.add_multiple_of_row(row, pi, scalar)
+                    residuals.add_multiple_of_row(row, pi, scalar)
+                # update row pi: multiply by x - pt
+                rdeg[pi] += 1
+                x = self.base_ring().gen()
+                intbas.rescale_row(pi, x - pt)
+                residuals.rescale_row(pi, x - pt)
+                # divide residual column by x - pt
+                for i in range(m):
+                    residuals[i, j] = residuals[i, j] // (x - pt)
+
+            # If rem_points[j] is now empty, there is no more work to do in
+            # this column: remove column j of residual,rem_points,rem_index
+            if len(rem_points[j]) == 0:
+                residuals = residuals.delete_columns([j])
+                rem_points.pop(j)
+                rem_index.pop(j)
+
+        return intbas, rdeg
 
     def is_minimal_kernel_basis(self,
             pmat,
@@ -3822,22 +4187,22 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(97)[]
-            sage: pmat = Matrix(pR, [[1], [x], [x**2]])
+            sage: pmat = matrix(pR, [[1], [x], [x**2]])
 
-            sage: kerbas = Matrix(pR, [[x,-1,0], [0,x,-1]])
+            sage: kerbas = matrix(pR, [[x,-1,0], [0,x,-1]])
             sage: kerbas.is_minimal_kernel_basis(pmat)
             True
 
         A matrix in Popov form which has the right rank, all rows in the
         kernel, but does not generate the kernel::
 
-            sage: kerbas = Matrix(pR, [[x**2,0,-1], [0,x,-1]])
+            sage: kerbas = matrix(pR, [[x**2,0,-1], [0,x,-1]])
             sage: kerbas.is_minimal_kernel_basis(pmat)
             False
 
         Shifts and right kernel bases are supported (with ``row_wise``), and one can test whether the kernel basis is normalized in shifted-Popov form (with ``normal_form``)::
 
-            sage: kerbas = Matrix(pR, [[-x,-x**2], [1,0], [0,1]])
+            sage: kerbas = matrix(pR, [[-x,-x**2], [1,0], [0,1]])
             sage: kerbas.is_minimal_kernel_basis(
             ....:     pmat.transpose(), row_wise=False,
             ....:     normal_form=True, shifts=[0,1,2])
@@ -3944,18 +4309,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         EXAMPLES::
 
             sage: pR.<x> = GF(7)[]
-            sage: pmat = Matrix([[(x+1)*(x+3)], [(x+1)*(x+3)+1]])
+            sage: pmat = matrix([[(x+1)*(x+3)], [(x+1)*(x+3)+1]])
             sage: pmat.minimal_kernel_basis()
             [6*x^2 + 3*x + 3   x^2 + 4*x + 3]
 
-            sage: pmat = Matrix([[(x+1)*(x+3)], [(x+1)*(x+4)]])
+            sage: pmat = matrix([[(x+1)*(x+3)], [(x+1)*(x+4)]])
             sage: pmat.minimal_kernel_basis()
             [6*x + 3   x + 3]
 
             sage: pmat.minimal_kernel_basis(row_wise=False)
             []
 
-            sage: pmat = Matrix(pR, [[1, x, x**2]])
+            sage: pmat = matrix(pR, [[1, x, x**2]])
             sage: pmat.minimal_kernel_basis(row_wise=False, normal_form=True)
             [x 0]
             [6 x]
@@ -3969,30 +4334,30 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Some particular cases (matrix is zero, dimension is zero, column is zero)::
 
-            sage: Matrix(pR, 2, 1).minimal_kernel_basis()
+            sage: matrix(pR, 2, 1).minimal_kernel_basis()
             [1 0]
             [0 1]
 
-            sage: Matrix(pR, 2, 0).minimal_kernel_basis()
+            sage: matrix(pR, 2, 0).minimal_kernel_basis()
             [1 0]
             [0 1]
 
-            sage: Matrix(pR, 0, 2).minimal_kernel_basis()
+            sage: matrix(pR, 0, 2).minimal_kernel_basis()
             []
 
-            sage: Matrix(pR, 3, 2, [[1,0],[1,0],[1,0]]).minimal_kernel_basis()
+            sage: matrix(pR, 3, 2, [[1,0],[1,0],[1,0]]).minimal_kernel_basis()
             [6 1 0]
             [6 0 1]
 
-            sage: Matrix(pR, 3, 2, [[x,0],[1,0],[x+1,0]]).minimal_kernel_basis()
+            sage: matrix(pR, 3, 2, [[x,0],[1,0],[x+1,0]]).minimal_kernel_basis()
             [6 x 0]
             [6 6 1]
 
         TESTS:
 
-        We check that PR #37208 is fixed::
+        We check that the issue in PR #37208 is fixed::
 
-            sage: Matrix(pR, 2, 0).minimal_kernel_basis().is_sparse()
+            sage: matrix(pR, 2, 0).minimal_kernel_basis().is_sparse()
             False
         """
         from sage.matrix.constructor import matrix
@@ -4028,17 +4393,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # orders for approximation
             orders = self.column_degrees(degree_bounds)
             for i in range(n): orders[i] = orders[i]+1
-
-            # note: minimal_approximant_basis requires orders[i] > 0
+            # note:
             # -> if d>0, then degree_bounds > 0 entry-wise and this tuple
-            # `orders` already has all entries strictly positive
-            # -> if d==0, then `orders[i]` is zero exactly when the column i
-            # of self is zero; we may as well take orders[i] == 1 for such
-            # columns which do not influence the left kernel
-            if d == 0:
-                for i in range(n):
-                    if orders[i] == 0:
-                        orders[i] = 1
+            # `orders` has all entries strictly positive
+            # -> if d==0, then `orders[i]` is zero exactly when the column i of
+            # self is zero; such columns do not influence the left kernel
 
             # compute approximant basis and retrieve kernel rows
             P = self.minimal_approximant_basis(orders,shifts,True,normal_form)
@@ -4071,13 +4430,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # note: minimal_approximant_basis requires orders[i] > 0
             # -> if d>0, then degree_bounds > 0 entry-wise and this tuple
             # `orders` already has all entries strictly positive
-            # -> if d==0, then `orders[i]` is zero exactly when the row i
-            # of self is zero; we may as well take orders[i] == 1 for such
-            # rows which do not influence the right kernel
-            if d == 0:
-                for i in range(m):
-                    if orders[i] == 0:
-                        orders[i] = 1
+            # -> if d==0, then `orders[i]` is zero exactly when the row i of
+            # self is zero; such rows do not influence the right kernel
 
             # compute approximant basis and retrieve kernel columns
             P = self.minimal_approximant_basis(orders,shifts,False,normal_form)
@@ -4086,6 +4440,218 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 if P[j, j].degree() + shifts[j] <= degree_bound:
                     column_indices.append(j)
             return P[:,column_indices]
+
+    def minimal_relation_basis(self,
+            mod,
+            shifts=None,
+            row_wise=True,
+            normal_form=False,
+            reduced_input=False):
+        r"""
+        Return a relation basis in ``shifts``-ordered weak Popov form for this
+        polynomial matrix with respect to the module defined by ``mod``.
+
+        The description below uses notation `F` for ``self``, `M` for ``mod``,
+        and `s` for the shifts ``shifts``. `F` is an `m \times n` polynomial
+        matrix and `M` is a nonsingular `n \times n` matrix.
+
+        If we work row-wise (resp. column-wise), a relation basis for `F`
+        modulo `M` is a polynomial matrix `P` whose rows (resp. columns) form a
+        basis of the module of polynomial vectors `p` of size `m` such that `p
+        F` (resp. `F p`) belongs to the row space (resp. column space) of `M`.
+        Such a basis `P` is an `m \times m` nonsingular matrix, which this
+        method computes in `s`-ordered weak Popov form.
+
+        If ``normal_form`` is ``True``, then the output `P` is the canonical
+        `s`-Popov basis. If ``reduced_input`` is ``True``, then the provided
+        `M` should be column reduced (resp. row reduced) and `F` should be
+        reduced modulo `M`, that is, should have column (resp. row) degrees
+        strictly bounded entry-wise by those of `M`. When those properties are
+        known to be true, setting ``reduced_input`` to the non-default ``True``
+        may save some computation time.
+
+        An error is raised if the dimensions of the input matrices or the
+        length of the input shift are not sound. When ``reduced_input`` is the
+        default ``False``, an error is raised if `M` is singular.
+
+        Here are two special cases of relation bases.
+
+        - minimal approximant bases, for which `M` is a diagonal of powers
+          `x^{d_0}, \ldots, x^{d_{n-1}}` (see
+          :meth:`minimal_approximant_basis`, which may be called directly for
+          better performance),
+        - minimal interpolant bases, for which `M` is a diagonal of polynomials
+          that split into known linear factors (see
+          :meth:`minimal_interpolant_basis`, which may be called directly for
+          better performance).
+
+        INPUT:
+
+        - ``mod`` -- polynomial matrix, nonsingular
+
+        - ``shifts`` -- (default: ``None``) list of integers;
+          ``None`` is interpreted as ``shifts=[0,...,0]``
+
+        - ``row_wise`` -- boolean (default: ``True``). If ``True``, compute
+          left relations for ``self`` modulo the row space of ``mod``;
+          otherwise, compute right relations for ``self`` modulo the column
+          space of ``mod``
+
+        - ``normal_form`` -- boolean (default: ``False``); if
+          ``True`` then the output basis is in ``shifts``-Popov form
+
+        - ``reduced_input`` -- boolean (default: ``False``). If ``True``, and
+          working row-wise (resp. column-wise), then ``mod`` must be column
+          (resp. row) reduced and its column (resp. row) degrees must be strict
+          upper bounds on those of ``self`` entry-wise
+
+        OUTPUT: a polynomial matrix
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+
+        When M is a diagonal of powers of the variable, a relation basis is the
+        same as an approximant basis::
+
+            sage: M = matrix.diagonal([x**4, x**3], sparse=False)
+            sage: shifts = [-1, 2, 0]
+            sage: F = matrix(pR, [[5*x^3 + 4*x^2 + 4*x + 6, 5*x^2 + 4*x + 1],
+            ....:                 [        2*x^2 + 2*x + 3, 6*x^2 + 6*x + 3],
+            ....:                 [4*x^3         +   x + 1, 4*x^2 + 2*x + 3]])
+            sage: P_app = F.minimal_approximant_basis([4, 3], shifts, normal_form=True)
+            sage: P_rel = F.minimal_relation_basis(M, shifts, normal_form=True)
+            sage: P_app == P_rel
+            True
+
+        If ``self`` is the identity matrix, then relation bases are simply
+        matrices that are left-unimodularly equivalent to `M`::
+
+            sage: # M is both row and column reduced
+            sage: M = x**3 + matrix([[6*x**2, 2, x], [2, 2, 6*x], [x**2, 3, 6]])
+            sage: F1 = matrix.identity(pR, 3)  # cdeg(F1) < cdeg(M)
+            sage: P1 = F1.minimal_relation_basis(M, shifts=[0,1,2], normal_form=True)
+            sage: P1 == M.popov_form(shifts=[0,1,2])
+            True
+
+        One can consider column-wise relations; unspecified shift means taking
+        the uniform `[0,\ldots, 0]` shift::
+
+            sage: F2 = matrix([[              1, 6*x + 2,   5,         3, 5*x^2 + 3],
+            ....:              [2*x^2 + 4*x + 4, 3*x + 1, 5*x, 6*x^2 + 5,         6],
+            ....:              [        5*x + 4, 3*x + 1,   2,   2*x + 2,   2*x + 1]])
+            sage: P2 = F2.minimal_relation_basis(M, row_wise=False)
+            sage: P2.is_weak_popov(shifts=[0]*5, row_wise=False)
+            True
+            sage: Q,R = (F2*P2).left_quo_rem(M)  # F2*P2 = M*Q + 0
+            sage: R == 0
+            True
+
+        Unless requiring a normal form, the output basis will most often not be
+        the canonical one::
+
+            sage: P2.is_popov(shifts=[0]*5, row_wise=False)
+            False
+
+        By default, this supports input ``self`` that are not reduced modulo
+        ``M``, unless ``reduced_input`` is specified as ``True``::
+
+            sage: G1 = F1 + x * M  # G1 == F1 mod M; G1 not reduced mod M
+            sage: P1bis = G1.minimal_relation_basis(M, shifts=[0,1,2], normal_form=True)
+            sage: P1bis == P1
+            True
+            sage: P = G1.minimal_relation_basis(M, shifts=[0,1,2], reduced_input=True)
+            sage: P.is_weak_popov(shifts=[0,1,2])
+            False
+
+        By default, this supports any nonsingular matrix ``M``, and nonsingularity
+        is checked (unless ``reduced_input`` is specified as ``True``)::
+
+            sage: M1 = matrix([[1,x**10,x**10],[0,1,0],[0,0,1]]) * M
+            sage: M1.is_reduced(row_wise=False)  # M1 not column reduced
+            False
+            sage: P1bis = F1.minimal_relation_basis(M1, shifts=[0,1,2], normal_form=True)
+            sage: P1bis == P1  # True since M and M1 have same row space
+            True
+            sage: P = F1.minimal_relation_basis(M1, shifts=[0,1,2], reduced_input=True)
+            sage: P.is_weak_popov(shifts=[0,1,2])
+            False
+            sage: M2 = M.with_row_set_to_multiple_of_row(0, 1, x)  # M2 is singular
+            sage: F1.minimal_relation_basis(M2)
+            Traceback (most recent call last):
+            ...
+            ValueError: modulus matrix must be nonsingular
+
+        .. SEEALSO::
+
+            :meth:`minimal_approximant_basis`, :meth:`minimal_interpolant_basis`
+        """
+        from sage.matrix.constructor import matrix  # for matrix.block
+
+        m = self.nrows()
+        n = self.ncols()
+
+        # set default shifts / check shifts dimension
+        if shifts is None:
+            shifts = [0] * m if row_wise else [0] * n
+        elif row_wise and len(shifts) != m:
+            raise ValueError('shifts length should be the row dimension')
+        elif (not row_wise) and len(shifts) != n:
+            raise ValueError('shifts length should be the column dimension')
+
+        # check modulus dimension
+        if row_wise and mod.dimensions() != (n, n):
+            raise ValueError("modulus matrix dimensions must be the column dimension of self")
+        elif (not row_wise) and mod.dimensions() != (m, m):
+            raise ValueError("modulus matrix dimensions must be the row dimension of self")
+
+        # make sure input is reduced, unless guaranteed by the user
+        if not reduced_input:
+            # Ensure reducedness of input mod
+            #    Say we work row-wise: we want a column reduced matrix,
+            #    left-unimodularly equivalent to mod; among the possibilities we
+            #    have at least all shifted row-wise Popov forms of mod (including
+            #    the Hermite form). Some choice of shifts might be smarter than
+            #    others, but without more information, we will fix the choice to
+            #    the uniform [0,...,0]. The informed user may want to do this step
+            #    before calling this method, with their own choice of shift.
+            #    -> check, in case, to avoid unnecessary computations
+            if not mod.is_reduced(row_wise=(not row_wise), include_zero_vectors=False):
+                mod = mod.popov_form(row_wise=row_wise, include_zero_vectors=False)
+                if not mod.is_square():
+                    raise ValueError("modulus matrix must be nonsingular")
+
+            # Ensure self is reduced modulo mod
+            if row_wise:
+                self = self._right_quo_rem_reduced(mod)[1]
+            else:
+                self = self.T._right_quo_rem_reduced(mod.T)[1].T
+
+        # compute extended shift for kernel basis computation
+        # -> for correctness, the constraint on the added part is that it
+        # must have maximum entry at most min(shifts)
+        # [see Lemma 4.2, Neiger-Vu, Computing Canonical Bases of Modules of
+        # Univariate Relations, Proc. ISSAC 2017]
+        min_shift = min(shifts)
+        if row_wise:
+            extended_shifts = [s - min_shift for s in shifts] + [0]*n
+        else:
+            extended_shifts = [s - min_shift for s in shifts] + [0]*m
+
+        # build matrix for kernel computation
+        if row_wise:
+            F = matrix.block([[self],[mod]])
+        else:
+            F = matrix.block([[self, mod]])
+
+        # compute shifted weak Popov kernel basis
+        kbas = F.minimal_kernel_basis(shifts=extended_shifts, normal_form=normal_form, row_wise=row_wise)
+
+        # extract sought basis and return
+        if row_wise:
+            return kbas[:m,:m]
+        else:
+            return kbas[:n,:n]
 
     def _basis_completion_via_reversed_approx(self):
         r"""
@@ -4116,8 +4682,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         completed row-wise into a `3 \times 3` unimodular matrix::
 
             sage: mat = matrix(ring, 2, 3, \
-                    [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
-                     [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
+            ....:   [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
+            ....:    [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
             sage: rcomp = mat._basis_completion_via_reversed_approx(); rcomp
             [  2*x^2 + 1 4*x^2 + 3*x 2*x^2 + 3*x]
             sage: mat.stack(rcomp).determinant()
@@ -4128,9 +4694,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         completion has two columns; in both cases, the Smith form is preserved::
 
             sage: mat = matrix(ring, 3, 2, \
-                    [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
-                     [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
-                     [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
+            ....:   [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
+            ....:    [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
+            ....:    [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
             sage: mat.smith_form(transformation=False)
             [x + 3     0]
             [    0     0]
@@ -4327,8 +4893,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         there is nothing to complete)::
 
             sage: mat = matrix(ring, 2, 3, \
-                    [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
-                     [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
+            ....:   [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
+            ....:    [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
             sage: rcomp = mat.basis_completion(); rcomp
             [  2*x^2 + 1 4*x^2 + 3*x 2*x^2 + 3*x]
             sage: mat.stack(rcomp).determinant()
@@ -4341,9 +4907,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         completion has two columns; in both cases, the Smith form is preserved::
 
             sage: mat = matrix(ring, 3, 2, \
-                    [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
-                     [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
-                     [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
+            ....:   [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
+            ....:    [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
+            ....:    [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
             sage: mat.smith_form(transformation=False)
             [x + 3     0]
             [    0     0]
@@ -4378,8 +4944,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             1
 
             sage: mat = matrix([[x*(x-1), x*(x-2)], \
-                                [x*(x-2), x*(x-3)], \
-                                [(x-1)*(x-2), (x-1)*(x-3)]])
+            ....:               [x*(x-2), x*(x-3)], \
+            ....:               [(x-1)*(x-2), (x-1)*(x-3)]])
             sage: mat.smith_form(transformation=False)
             [1 0]
             [0 x]
@@ -4496,14 +5062,14 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: ring.<x> = GF(7)[]
             sage: mat1 = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
             sage: rcomp1 = matrix(ring, 2, 3, \
-                    [[5*x^2 + 4*x + 1, 5*x^2 + 2*x, 5*x^2], \
-                     [2*x^3 + 4*x^2, 2*x^3 + 6*x^2 + 2*x + 1, 2*x^3 + x^2 + 3*x]])
+            ....:   [[5*x^2 + 4*x + 1, 5*x^2 + 2*x, 5*x^2], \
+            ....:    [2*x^3 + 4*x^2, 2*x^3 + 6*x^2 + 2*x + 1, 2*x^3 + x^2 + 3*x]])
             sage: rcomp1._is_basis_completion(mat1)
             True
 
             sage: mat2 = matrix(ring, 2, 3, \
-                    [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
-                     [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
+            ....:   [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
+            ....:    [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
             sage: rcomp2 = matrix(ring, 1, 3, [[2*x^2 + 1, 4*x^2 + 3*x, 2*x^2 + 3*x]])
             sage: rcomp2._is_basis_completion(mat2)
             True
@@ -4512,16 +5078,16 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             True
 
             sage: mat3 = matrix(ring, 3, 2, \
-                    [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
-                     [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
-                     [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
+            ....:   [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
+            ....:    [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
+            ....:    [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
             sage: rcomp3 = matrix(ring, 1, 2, [[x + 1, 2*x]])
             sage: rcomp3._is_basis_completion(mat3)
             True
             sage: ccomp3 = matrix(ring, 3, 2, \
-                                    [[3*x + 1, 4*x + 4], \
-                                     [    2*x, 5*x + 1], \
-                                     [    6*x,       x]])
+            ....:                   [[3*x + 1, 4*x + 4], \
+            ....:                    [    2*x, 5*x + 1], \
+            ....:                    [    6*x,       x]])
             sage: ccomp3._is_basis_completion(mat3, row_wise=False)
             True
 

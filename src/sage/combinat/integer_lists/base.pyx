@@ -83,7 +83,7 @@ cdef class IntegerListsBackend():
         self.max_length = Integer(max_length) if max_length != Infinity else Infinity
 
         self.min_slope = Integer(min_slope) if min_slope != -Infinity else -Infinity
-        self.max_slope = Integer(max_slope) if max_slope !=  Infinity else Infinity
+        self.max_slope = Integer(max_slope) if max_slope != Infinity else Infinity
 
         self.min_part = Integer(min_part) if min_part != -Infinity else -Infinity
         self.max_part = Integer(max_part) if max_part != Infinity else Infinity

@@ -307,7 +307,7 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
             ....: 5*x - y + 1])
             sage: Q = C([-1,0])
             sage: Q.tangents()
-            [y, x + 1, x - y + 1, x + y + 1]
+            [y, x - y + 1, x + 1, x + y + 1]
         """
         return self.codomain().tangents(self)
 

@@ -1807,7 +1807,7 @@ def solve_ineq_fourier(ineq, vars=None):
     - Robert Marik (01-2010)
     """
     if vars is None:
-        setvars = set([])
+        setvars = set()
         for i in (ineq):
             setvars = setvars.union(set(i.variables()))
             vars = list(setvars)

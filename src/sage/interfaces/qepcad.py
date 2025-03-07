@@ -830,9 +830,9 @@ class Qepcad:
 
             sage: (x, y, z) = var('x, y, z')
             sage: conds = [-z < 0, -y + z < 0, x^2 + x*y + 2*x*z + 2*y*z - x < 0, \
-                           x^2 + x*y + 3*x*z + 2*y*z + 2*z^2 - x - z < 0, \
-                           -2*x + 1 < 0, -x*y - x*z - 2*y*z - 2*z^2 + z < 0, \
-                           x + 3*y + 3*z - 1 < 0]
+            ....:          x^2 + x*y + 3*x*z + 2*y*z + 2*z^2 - x - z < 0, \
+            ....:          -2*x + 1 < 0, -x*y - x*z - 2*y*z - 2*z^2 + z < 0, \
+            ....:          x + 3*y + 3*z - 1 < 0]
             sage: qepcad(conds, memcells=3000000) # optional - qepcad
             2 x - 1 > 0 /\ z > 0 /\ z - y < 0 /\ 3 z + 3 y + x - 1 < 0
         """

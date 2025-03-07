@@ -1761,9 +1761,9 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
                 else:
                     A._is_simple = True
                     D.append((A, n))
-        # The eisenstein part
-        for E in self.eisenstein_submodule().decomposition(anemic=True):
-            D.append((E, 1))
+        # The Eisenstein part
+        D.extend((E, 1) for E in
+                 self.eisenstein_submodule().decomposition(anemic=True))
 
         r = self.dimension()
         s = sum(A.rank() * mult for A, mult in D)

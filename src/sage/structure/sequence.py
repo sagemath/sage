@@ -70,13 +70,13 @@ specifying the universe of the sequence::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
+from sage.misc.persist import register_unpickle_override
 import sage.structure.sage_object
 import sage.structure.coerce
 
 
 def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=None, use_sage_types=False):
-    """
+    r"""
     A mutable list of elements with a common guaranteed universe,
     which can be set immutable.
 
@@ -98,10 +98,10 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
       immutable
 
     - ``cr`` -- boolean (default: ``False``); if ``True``, then print a carriage return
-      after each comma when printing this sequence
+      after each comma when calling ``repr()`` on this sequence (see note below)
 
-    - ``cr_str`` -- boolean (default: ``False``); if ``True``, then print a carriage return
-      after each comma when calling ``str()`` on this sequence
+    - ``cr_str`` -- boolean (default: same as ``cr``); if ``True``, then print a carriage return
+      after each comma when calling ``str()`` on this sequence (see note below)
 
     - ``use_sage_types`` -- boolean (default: ``False``); if ``True``, coerce the
       built-in Python numerical types int, float, complex to the corresponding
@@ -203,12 +203,55 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
         sage: v.universe()
         Finite Field of size 5
 
+    .. NOTE::
+
+        ``cr`` and ``cr_str`` is not recommended (because IPython's pretty printer is used);
+        nevertheless it is kept for backwards compatibility.
+
+        By default ``Sequence`` are printed using IPython's pretty printer,
+        so ``cr`` and ``cr_str`` are not taken into account at all::
+
+            sage: Sequence([1, 2, 3], cr=False)
+            [1, 2, 3]
+            sage: Sequence([1, 2, 3], cr=True)
+            [1, 2, 3]
+
+        Nevertheless, before the pretty printer exists, ``repr()`` is used.
+        Now ``cr`` and ``cr_str`` still affects the behavior of ``repr()`` and ``str()``::
+
+            sage: repr(Sequence([1, 2, 3], cr=False))
+            '[1, 2, 3]'
+            sage: repr(Sequence([1, 2, 3], cr=True))
+            '[\n1,\n2,\n3\n]'
+
+        In any case, this behavior should probably not be relied upon.
+
     TESTS::
 
         sage: Sequence(["a"], universe=ZZ)
         Traceback (most recent call last):
         ...
         TypeError: unable to convert a to an element of Integer Ring
+
+    Here are some tests for ``cr`` and ``cr_str``, even though they shouldn't be used.
+    ``cr_str`` can be weird in this case, but we keep the current implementation
+    (the feature is not recommended anyway so it doesn't make much difference)::
+
+        sage: str(Sequence([1, 2, 3], cr=True, cr_str=True))
+        '[\n1,\n2,\n3\n]'
+        sage: str(Sequence([1, 2, 3], cr=True, cr_str=False))
+        '[\n1,\n2,\n3\n]'
+
+    In the opposite case, ``cr_str`` works fine::
+
+        sage: str(Sequence([1, 2, 3], cr=False, cr_str=False))
+        '[1, 2, 3]'
+        sage: str(Sequence([1, 2, 3], cr=False, cr_str=True))
+        '[\n1,\n2,\n3\n]'
+        sage: repr(Sequence([1, 2, 3], cr=False, cr_str=False))
+        '[1, 2, 3]'
+        sage: repr(Sequence([1, 2, 3], cr=False, cr_str=True))
+        '[1, 2, 3]'
     """
     if universe is None:
         if isinstance(x, Sequence_generic):
@@ -239,7 +282,7 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
             # start the pairwise coercion
             for i in range(len(x) - 1):
                 try:
-                    x[i], x[i+1] = sage.structure.element.canonical_coercion(x[i],x[i+1])
+                    x[i], x[i+1] = sage.structure.element.canonical_coercion(x[i], x[i+1])
                 except TypeError:
                     from sage.categories.objects import Objects
                     universe = Objects()
@@ -257,7 +300,7 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
     except ImportError:
         pass
     else:
-        if isinstance(universe, MPolynomialRing_base) or isinstance(universe, BooleanMonomialMonoid) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
+        if isinstance(universe, (MPolynomialRing_base, BooleanMonomialMonoid)) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
             return PolynomialSequence(x, universe, immutable=immutable, cr=cr, cr_str=cr_str)
 
     return Sequence_generic(x, universe, check, immutable, cr, cr_str, use_sage_types)
@@ -285,8 +328,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
     - ``immutable`` -- boolean (default: ``True``); whether or not this sequence is
       immutable
 
-    - ``cr`` -- boolean (default: ``False``); if ``True``, then print a carriage return
-      after each comma when printing this sequence
+    - ``cr``, ``cr_str`` -- see :func:`Sequence`
 
     - ``use_sage_types`` -- boolean (default: ``False``); if ``True``, coerce the
       built-in Python numerical types int, float, complex to the corresponding
@@ -406,11 +448,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             [1, 2, 3, 4, 5]
             sage: a = Sequence([1..3], universe=QQ, check=False, immutable=True, cr=True, cr_str=False, use_sage_types=True)
             sage: a
-            [
-            1,
-            2,
-            3
-            ]
+            [1, 2, 3]
             sage: a = Sequence([1..5], universe=QQ, check=False, immutable=True, cr_str=True, use_sage_types=True)
             sage: a
             [1, 2, 3, 4, 5]
@@ -515,16 +553,16 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
                             check=False,
                             immutable=False,
                             cr=self.__cr)
-        else:
-            return list.__getitem__(self,n)
+
+        return list.__getitem__(self, n)
 
     # We have to define the *slice functions as long as Sage uses Python 2.*
     # otherwise the inherited *slice functions from list are called
     def __getslice__(self, i, j):
-        return self.__getitem__(slice(i,j))
+        return self.__getitem__(slice(i, j))
 
     def __setslice__(self, i, j, value):
-        return self.__setitem__(slice(i,j), value)
+        return self.__setitem__(slice(i, j), value)
 
     def append(self, x):
         """
@@ -646,6 +684,9 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
     def _repr_(self):
         """
+        Return a string representation of this sequence.
+        Typically, :meth:`_repr_pretty_` is used instead of this method.
+
         EXAMPLES::
 
             sage: Sequence([1,2/3,-2/5])._repr_()
@@ -661,6 +702,21 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             return '[\n' + ',\n'.join(repr(x) for x in self) + '\n]'
         else:
             return list.__repr__(self)
+
+    def _repr_pretty_(self, p, cycle):
+        """
+        For pretty printing in the Sage command prompt.
+
+        Since ``Sequence`` inherits from ``list``, we just use IPython's built-in
+        ``list`` pretty printer.
+        When :issue:`36801` is fixed, this function will be redundant.
+
+        EXAMPLES::
+
+            sage: Sequence([1,2/3,-2/5])  # indirect doctest
+            [1, 2/3, -2/5]
+        """
+        p.pretty(list(self))
 
     def _latex_(self):
         r"""
@@ -863,26 +919,25 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             sage: hash(S)
             34
         """
-        if name == "_Sequence_generic__cr" and hasattr(self,"_Sequence__cr"):
+        if name == "_Sequence_generic__cr" and hasattr(self, "_Sequence__cr"):
             self.__cr = self._Sequence__cr
             return self.__cr
-        elif name == "_Sequence_generic__cr_str" and hasattr(self,"_Sequence__cr_str"):
+        if name == "_Sequence_generic__cr_str" and hasattr(self, "_Sequence__cr_str"):
             self.__cr_str = self._Sequence__cr_str
             return self.__cr_str
-        elif name == "_Sequence_generic__immutable" and hasattr(self,"_Sequence__immutable"):
+        if name == "_Sequence_generic__immutable" and hasattr(self, "_Sequence__immutable"):
             self.__immutable = self._Sequence__immutable
             return self.__immutable
-        elif name == "_Sequence_generic__universe" and hasattr(self,"_Sequence__universe"):
+        if name == "_Sequence_generic__universe" and hasattr(self, "_Sequence__universe"):
             self.__universe = self._Sequence__universe
             return self.__universe
-        elif name == "_Sequence_generic__hash" and hasattr(self,"_Sequence__hash"):
+        if name == "_Sequence_generic__hash" and hasattr(self, "_Sequence__hash"):
             self.__hash = self._Sequence__hash
             return self.__hash
-        else:
-            raise AttributeError("'Sequence_generic' object has no attribute '%s'" % name)
+
+        raise AttributeError("'Sequence_generic' object has no attribute '%s'" % name)
 
 
 seq = Sequence
 
-from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.structure.sequence', 'Sequence', Sequence_generic)

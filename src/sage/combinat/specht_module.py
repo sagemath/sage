@@ -34,7 +34,6 @@ from sage.sets.family import Family
 from sage.matrix.constructor import matrix
 from sage.rings.rational_field import QQ
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
-from sage.modules.free_module_element import vector
 from sage.categories.modules_with_basis import ModulesWithBasis
 
 
@@ -1036,7 +1035,7 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
 
 class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
     r"""
-    The simgle `S_n`-module associated with a partition `\lambda`.
+    The simple `S_n`-module associated with a partition `\lambda`.
 
     The simple module `D^{\lambda}` is the quotient of the Specht module
     `S^{\lambda}` by its :class:`maximal submodule <MaximalSpechtSubmodule>`

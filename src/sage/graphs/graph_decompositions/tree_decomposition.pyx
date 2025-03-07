@@ -75,7 +75,7 @@ The treewidth of a clique is `n-1` and its treelength is 1::
 
     :meth:`treewidth` | Compute the treewidth of `G` (and provide a decomposition).
     :meth:`treelength` | Compute the treelength of `G` (and provide a decomposition).
-    :meth:`make_nice_tree_decomposition` | Return a *nice* tree decomposition (TD) of the TD `tree_decomp`.
+    :meth:`make_nice_tree_decomposition` | Return a *nice* tree decomposition (TD) of the TD ``tree_decomp``.
     :meth:`label_nice_tree_decomposition` | Return a nice tree decomposition with nodes labelled accordingly.
     :meth:`is_valid_tree_decomposition` | Check whether `T` is a valid tree-decomposition for `G`.
     :meth:`reduced_tree_decomposition` | Return a reduced tree-decomposition of `T`.
@@ -830,7 +830,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
     .. WARNING::
 
-        This method assumes that the vertices of the input tree `tree_decomp`
+        This method assumes that the vertices of the input tree ``tree_decomp``
         are hashable and have attribute ``issuperset``, e.g., ``frozenset`` or
         :class:`~sage.sets.set.Set_object_enumerated_with_category`.
 

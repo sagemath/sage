@@ -305,7 +305,7 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
         [a13, a23] = [a23, a13]
 
     return (a1, a2, a3, a23, a13, a12), \
-            matrix(ZZ, 3, (m11, m12, m13, m21, m22, m23, m31, m32, m33))
+        matrix(ZZ, 3, (m11, m12, m13, m21, m22, m23, m31, m32, m33))
 
 
 def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):

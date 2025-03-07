@@ -382,7 +382,7 @@ class QSystem(CombinatorialFreeModule):
         d = {a: self.Q(a, 1) for a in I}
         return Family(I, d.__getitem__)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 

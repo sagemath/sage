@@ -36,13 +36,13 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 sage: KW = W.algebra(K)
                 sage: w = W.an_element()
                 sage: KW.demazure_lusztig_operator_on_basis(w, 0, q1, q2)
-                (-q2)*323123 + (q1+q2)*123
+                -q2*323123 + (q1+q2)*123
                 sage: KW.demazure_lusztig_operator_on_basis(w, 1, q1, q2)
                 q1*1231
                 sage: KW.demazure_lusztig_operator_on_basis(w, 2, q1, q2)
                 q1*1232
                 sage: KW.demazure_lusztig_operator_on_basis(w, 3, q1, q2)
-                (q1+q2)*123 + (-q2)*12
+                (q1+q2)*123 - q2*12
 
             At `q_1=1` and `q_2=0` we recover the action of the
             isobaric divided differences `\pi_i`::
@@ -112,13 +112,13 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 sage: x = KW.monomial(W.an_element()); x
                 123
                 sage: T[0](x)
-                (-q2)*323123 + (q1+q2)*123
+                -q2*323123 + (q1+q2)*123
                 sage: T[1](x)
                 q1*1231
                 sage: T[2](x)
                 q1*1232
                 sage: T[3](x)
-                (q1+q2)*123 + (-q2)*12
+                (q1+q2)*123 - q2*12
 
                 sage: T._test_relations()
 
@@ -174,7 +174,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 Weyl Group of type ['B', 2] (as a matrix group acting on the ambient space)
                 sage: w = W.an_element()
                 sage: E[w]                                                              # needs sage.rings.number_field
-                (q2/(-q1+q2))*2121 + ((-q2)/(-q1+q2))*121 - 212 + 12
+                (q2/(-q1+q2))*2121 - (q2/(-q1+q2))*121 - 212 + 12
             """
             W = self.basis().keys()
             if not W.cartan_type().is_finite():

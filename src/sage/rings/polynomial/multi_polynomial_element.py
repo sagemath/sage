@@ -467,6 +467,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: repr(-I*y - x^2)  # indirect doctest
             '-x^2 + (-I)*y'
         """
+        if self.is_gen():
+            return self.parent().variable_names()[self.degrees().nonzero_positions()[0]]
         try:
             key = self.parent().term_order().sortkey
         except AttributeError:
@@ -636,12 +638,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: GF(3037000453)['x','y'].gen(0).degree(x0)                             # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            TypeError: x must canonically coerce to parent
+            TypeError: argument is not coercible to the parent
 
             sage: GF(3037000453)['x','y'].gen(0).degree(x^2)                            # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            TypeError: x must be one of the generators of the parent
+            TypeError: argument is not a generator
 
         TESTS::
 
@@ -802,7 +804,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         zero = self.parent().base_ring().zero()
         return self.element().get(exp, zero)
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return underlying dictionary with keys the exponents and values
         the coefficients of this polynomial.
@@ -817,7 +819,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         ``dict`` is an alias::
 
-            sage: f.dict()  # needs sage.rings.number_field
+            sage: f.dict()                                                              # needs sage.rings.number_field
             {(1, 5, 2): 1, (2, 0, 1): 1, (4, 1, 3): 1}
         """
         return self.element().dict()

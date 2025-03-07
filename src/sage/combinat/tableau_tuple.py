@@ -823,7 +823,7 @@ class TableauTuple(CombinatorialElement):
         """
         return self[l][r][c]
 
-    def is_row_strict(self):
+    def is_row_strict(self) -> bool:
         """
         Return ``True`` if the tableau ``self`` is row strict and ``False``
         otherwise.
@@ -874,7 +874,7 @@ class TableauTuple(CombinatorialElement):
                 return (k, cell[0], cell[1])
         return None
 
-    def is_column_strict(self):
+    def is_column_strict(self) -> bool:
         """
         Return ``True`` if the tableau ``self`` is column strict and ``False``
         otherwise.
@@ -925,7 +925,7 @@ class TableauTuple(CombinatorialElement):
                 return (k, cell[0], cell[1])
         return None
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         r"""
         Return ``True`` if the tableau ``self`` is a standard tableau and
         ``False`` otherwise.
@@ -1173,7 +1173,7 @@ class TableauTuple(CombinatorialElement):
             ...
             IndexError: (2, 1, 2) is not an addable cell of the tableau
         """
-        (k, r, c) = cell
+        k, r, c = cell
         tab = self.to_list()
 
         try:
@@ -4926,7 +4926,6 @@ class StandardTableauTuples_shape(StandardTableauTuples):
             yield tableau_from_list(tab)
 
         # all done!
-        return
 
     def last(self):
         r"""
@@ -5018,7 +5017,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
         while m < mu.size():
             m += 1
             i = randint(0, len(addables) - 1)  # index for a random addable cell
-            (k, r, c) = addables[i]  # the actual cell
+            k, r, c = addables[i]  # the actual cell
             # remove the cell we just added from the list addable nodes
             addables.pop(i)
             # add m into the tableau
@@ -5337,7 +5336,7 @@ def _add_entry_fast(T, cell, m):
           6  8       12 14     2 11
                               10
     """
-    (k, r, c) = cell
+    k, r, c = cell
     tab = T.to_list()
 
     try:

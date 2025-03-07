@@ -111,7 +111,8 @@ def code_parser(text):
     lines = ['::', '']
     for s in text.splitlines():
         l = s[6:] if s.startswith('sage: ') else s
-        if not l: continue
+        if not l:
+            continue
         prefix = '    ....: ' if l[0] == ' ' else '    sage: '
         lines.append(prefix + l)
     return '\n'.join(lines)

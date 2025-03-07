@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'backend_cdd.py',
   'backend_cdd_rdf.py',

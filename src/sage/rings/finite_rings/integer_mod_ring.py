@@ -67,9 +67,8 @@ import sage.misc.prandom as random
 from sage.arith.misc import factor
 from sage.arith.misc import primitive_root
 from sage.arith.misc import CRT_basis
-from sage.rings.ring import Field, CommutativeRing
+from sage.rings.ring import Field
 from sage.misc.mrange import cartesian_product_iterator
-import sage.rings.ring as ring
 import sage.rings.abc
 from sage.rings.finite_rings import integer_mod
 import sage.rings.integer as integer
@@ -77,7 +76,8 @@ import sage.rings.integer_ring as integer_ring
 import sage.rings.quotient_ring as quotient_ring
 
 try:
-    from sage.libs.pari.all import pari, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
 except ImportError:
     class PariError(Exception):
         pass
@@ -750,12 +750,12 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             self._factory_data[3]['category'] = Fields()
         else:
             if self.category().is_subcategory(Fields()):
-                raise ValueError("""THIS SAGE SESSION MIGHT BE SERIOUSLY COMPROMISED!
-The order {} is not prime, but this ring has been put
-into the category of fields. This may already have consequences
-in other parts of Sage. Either it was a mistake of the user,
-or a probabilistic primality test has failed.
-In the latter case, please inform the developers.""".format(self.order()))
+                raise ValueError(("THIS SAGE SESSION MIGHT BE SERIOUSLY COMPROMISED!\n"
+                    "The order {} is not prime, but this ring has been put\n"
+                    "into the category of fields. This may already have consequences\n"
+                    "in other parts of Sage. Either it was a mistake of the user,\n"
+                    "or a probabilistic primality test has failed.\n"
+                    "In the latter case, please inform the developers.").format(self.order()))
         return is_prime
 
     @cached_method
@@ -1541,14 +1541,15 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: while not all(found):
             ....:     found[R.random_element()] = True
 
-        We test ``bound``-option::
+        We test the ``bound`` option::
 
-            sage: R.random_element(2) in [R(16), R(17), R(0), R(1), R(2)]
+            sage: R.random_element(2) in [R(-2), R(-1), R(0), R(1), R(2)]
             True
         """
         if bound is not None:
-            return CommutativeRing.random_element(self, bound)
-        a = random.randint(0, self.order() - 1)
+            a = random.randint(-bound, bound)
+        else:
+            a = random.randint(0, self.order() - 1)
         return self(a)
 
     @staticmethod
@@ -2030,7 +2031,7 @@ def crt(v):
         1027
     """
     if len(v) == 0:
-        return IntegerModRing(1)(1)
+        return IntegerModRing(1).one()
     x = v[0]
     for i in range(1, len(v)):
         x = x.crt(v[i])

@@ -257,7 +257,7 @@ class FloatingPointGeneric(LocalGeneric):
         tester = self._tester(**options)
         S = tester.some_elements()
         from sage.misc.misc import some_tuples
-        for x,y,z in some_tuples(S, 3, tester._max_runs):
+        for x, y, z in some_tuples(S, 3, tester._max_runs):
             tester.assertTrue(((x + y) + z).is_equal_to(x + (y + z), min(x.precision_absolute(), y.precision_absolute(), z.precision_absolute())))
 
 
@@ -265,7 +265,8 @@ class FloatingPointRingGeneric(FloatingPointGeneric):
     pass
 
 
-class FloatingPointFieldGeneric(FloatingPointGeneric):#, sage.rings.ring.Field):
+class FloatingPointFieldGeneric(FloatingPointGeneric):
+    # in category of Fields()
     pass
 
 
@@ -273,7 +274,8 @@ class CappedRelativeRingGeneric(CappedRelativeGeneric):
     pass
 
 
-class CappedRelativeFieldGeneric(CappedRelativeGeneric):#, sage.rings.ring.Field):
+class CappedRelativeFieldGeneric(CappedRelativeGeneric):
+    # in category of Fields()
     pass
 
 
@@ -312,7 +314,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
         sage: R._prec_type()
         'lattice-float'
     """
-    def __init__(self, p, prec, print_mode, names, label=None):
+    def __init__(self, p, prec, print_mode, names, label=None, category=None):
         """
         Initialization.
 
@@ -355,7 +357,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
         else:
             raise ValueError("subtype must be either 'cap' or 'float'")
         self._element_class = self.__make_element_class__(element_class)
-        pAdicGeneric.__init__(self, self, p, prec, print_mode, names, None)
+        pAdicGeneric.__init__(self, self, p, prec, print_mode, names, None, category=category)
 
     def _prec_type(self):
         """

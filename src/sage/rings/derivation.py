@@ -193,7 +193,7 @@ from sage.modules.module import Module
 from sage.structure.element import ModuleElement
 from sage.rings.integer_ring import ZZ
 
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.power_series_ring import PowerSeriesRing_generic
 from sage.rings.laurent_series_ring import LaurentSeriesRing
@@ -331,9 +331,9 @@ class RingDerivationModule(Module, UniqueRepresentation):
             self._basis = [ ]
             self._dual_basis = [ ]
             self._constants = (domain, True)
-        elif (isinstance(domain, (PolynomialRing_general, MPolynomialRing_base, PowerSeriesRing_generic, LaurentSeriesRing))
+        elif (isinstance(domain, (PolynomialRing_generic, MPolynomialRing_base, PowerSeriesRing_generic, LaurentSeriesRing))
               or (isinstance(domain, FractionField_generic)
-                  and isinstance(domain.ring(), (PolynomialRing_general, MPolynomialRing_base)))):
+                  and isinstance(domain.ring(), (PolynomialRing_generic, MPolynomialRing_base)))):
             self._base_derivation = RingDerivationModule(domain.base_ring(), defining_morphism)
             self.Element = RingDerivationWithoutTwist_function
             try:
@@ -649,7 +649,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
             raise NotImplementedError("generators are not implemented for this derivation module")
         return len(self._gens)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of this module of derivations.
 
@@ -996,7 +996,7 @@ class RingDerivationWithoutTwist(RingDerivation):
         parent = self.parent()
         return [self(x) for x in parent.dual_basis()]
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         r"""
         Return dictionary of nonzero coordinates (on the canonical
         basis) of this derivation.

@@ -29,10 +29,8 @@ EXAMPLES::
     sage: H.base_ring()
     Integer Ring
     sage: d = H.decomposition(); d
-    [
-    Submodule of rank 2 of Integral Homology of Abelian variety J0(43) of dimension 3,
-    Submodule of rank 4 of Integral Homology of Abelian variety J0(43) of dimension 3
-    ]
+    [Submodule of rank 2 of Integral Homology of Abelian variety J0(43) of dimension 3,
+     Submodule of rank 4 of Integral Homology of Abelian variety J0(43) of dimension 3]
     sage: a = d[0]
     sage: a.hecke_matrix(5)
     [-4  0]
@@ -603,10 +601,8 @@ class Homology_submodule(Homology):
         EXAMPLES::
 
             sage: J0(37).homology().decomposition() # indirect doctest
-            [
-            Submodule of rank 2 of Integral Homology of Abelian variety J0(37) of dimension 2,
-            Submodule of rank 2 of Integral Homology of Abelian variety J0(37) of dimension 2
-            ]
+            [Submodule of rank 2 of Integral Homology of Abelian variety J0(37) of dimension 2,
+             Submodule of rank 2 of Integral Homology of Abelian variety J0(37) of dimension 2]
         """
         if not isinstance(other, Homology_submodule):
             return NotImplemented
@@ -626,10 +622,8 @@ class Homology_submodule(Homology):
             sage: H = J0(48).homology(); H
             Integral Homology of Abelian variety J0(48) of dimension 3
             sage: d = H.decomposition(); d
-            [
-            Submodule of rank 2 of Integral Homology of Abelian variety J0(48) of dimension 3,
-            Submodule of rank 4 of Integral Homology of Abelian variety J0(48) of dimension 3
-            ]
+            [Submodule of rank 2 of Integral Homology of Abelian variety J0(48) of dimension 3,
+             Submodule of rank 4 of Integral Homology of Abelian variety J0(48) of dimension 3]
             sage: d[0].ambient_hecke_module()
             Integral Homology of Abelian variety J0(48) of dimension 3
         """
@@ -662,10 +656,8 @@ class Homology_submodule(Homology):
         EXAMPLES::
 
             sage: d = J0(43).homology().decomposition(2); d
-            [
-            Submodule of rank 2 of Integral Homology of Abelian variety J0(43) of dimension 3,
-            Submodule of rank 4 of Integral Homology of Abelian variety J0(43) of dimension 3
-            ]
+            [Submodule of rank 2 of Integral Homology of Abelian variety J0(43) of dimension 3,
+             Submodule of rank 4 of Integral Homology of Abelian variety J0(43) of dimension 3]
 
         Because the first factor has dimension 2 it corresponds to an
         elliptic curve, so we have a Hecke bound of 1.
@@ -690,14 +682,9 @@ class Homology_submodule(Homology):
         EXAMPLES::
 
             sage: d = J0(125).homology(GF(17)).decomposition(2); d
-            [
-            Submodule of rank 4 of Homology with coefficients in Finite Field of size 17
-             of Abelian variety J0(125) of dimension 8,
-            Submodule of rank 4 of Homology with coefficients in Finite Field of size 17
-             of Abelian variety J0(125) of dimension 8,
-            Submodule of rank 8 of Homology with coefficients in Finite Field of size 17
-             of Abelian variety J0(125) of dimension 8
-            ]
+            [Submodule of rank 4 of Homology with coefficients in Finite Field of size 17 of Abelian variety J0(125) of dimension 8,
+             Submodule of rank 4 of Homology with coefficients in Finite Field of size 17 of Abelian variety J0(125) of dimension 8,
+             Submodule of rank 8 of Homology with coefficients in Finite Field of size 17 of Abelian variety J0(125) of dimension 8]
             sage: t = d[0].hecke_matrix(17); t
             [16 15 15  0]
             [ 0  5  0  2]

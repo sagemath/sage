@@ -406,30 +406,23 @@ Sage example in ./linalg.tex, line 2726::
   sage: A.eigenvalues()
   [4, 1, 2, 2]
   sage: A.eigenvectors_right()
-  [(4, [
-  (1, 5, 5, 1)
-  ], 1), (1, [
-  (0, 1, 1, 4)
-  ], 1), (2, [
-  (1, 3, 0, 1),
-  (0, 0, 1, 1)
-  ], 2)]
+    [(4, [(1, 5, 5, 1)], 1),
+     (1, [(0, 1, 1, 4)], 1),
+     (2, [(1, 3, 0, 1), (0, 0, 1, 1)], 2)]
   sage: A.eigenspaces_right()
-  [
-  (4, Vector space of degree 4 and dimension 1 over Finite Field
-  of size 7
-  User basis matrix:
-  [1 5 5 1]),
-  (1, Vector space of degree 4 and dimension 1 over Finite Field
-  of size 7
-  User basis matrix:
-  [0 1 1 4]),
-  (2, Vector space of degree 4 and dimension 2 over Finite Field
-  of size 7
-  User basis matrix:
-  [1 3 0 1]
-  [0 0 1 1])
-  ]
+    [(4,
+      Vector space of degree 4 and dimension 1 over Finite Field of size 7
+      User basis matrix:
+      [1 5 5 1]),
+     (1,
+      Vector space of degree 4 and dimension 1 over Finite Field of size 7
+      User basis matrix:
+      [0 1 1 4]),
+     (2,
+      Vector space of degree 4 and dimension 2 over Finite Field of size 7
+      User basis matrix:
+      [1 3 0 1]
+      [0 0 1 1])]
 
 Sage example in ./linalg.tex, line 2770::
 

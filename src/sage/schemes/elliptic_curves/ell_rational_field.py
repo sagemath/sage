@@ -80,7 +80,7 @@ from sage.structure.coerce import py_scalar_to_element
 from sage.structure.element import Element, RingElement
 
 lazy_import("sage.functions.log", "log")
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import("sage.functions.gamma", "gamma_inc")
 lazy_import('sage.interfaces.gp', 'gp')
 
@@ -444,7 +444,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a1')
-            sage: E.mwrank() #random
+            sage: E.mwrank() # random
             ...
             sage: print(E.mwrank())
             Curve [0,0,1,-1,0] :        Basic pair: I=48, J=-432
@@ -808,16 +808,28 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``selmer_only`` -- boolean (default: ``False``); selmer_only switch
 
-        - ``first_limit`` -- (default: 20) firstlim is bound
-          on x+z second_limit- (default: 8) secondlim is bound on log max
-          x,z , i.e. logarithmic
+        - ``first_limit`` -- integer (default: 20); naive height bound on
+          first point search on quartic homogeneous spaces (before
+          testing local solubility; very simple search with no
+          overheads).
 
-        - ``n_aux`` -- (default: -1) n_aux only relevant for
-          general 2-descent when 2-torsion trivial; n_aux=-1 causes default
-          to be used (depends on method)
+        - ``second_limit`` -- integer (default: 8); logarithmic height bound on
+          second point search on quartic homogeneous spaces (after
+          testing local solubility; sieve-assisted search)
 
-        - ``second_descent`` -- (default: ``True``)
-          second_descent only relevant for descent via 2-isogeny
+        - ``n_aux`` -- integer (default: -1); if positive, the number of
+          auxiliary primes used in sieve-assisted search for quartics.
+          If -1 (the default) use a default value (set in the eclib
+          code in ``src/qrank/mrank1.cc`` in DEFAULT_NAUX: currently 8).
+          Only relevant for curves with no 2-torsion, where full
+          2-descent is carried out.  Worth increasing for curves
+          expected to be of rank > 6 to one or two more than the
+          expected rank.
+
+        - ``second_descent`` -- boolean (default: ``True``); flag specifying
+          whether or not a second descent will be carried out.  Only relevant
+          for curves with 2-torsion.  Recommended left as the default except for
+          experts interested in details of Selmer groups.
 
         OUTPUT:
 
@@ -2256,9 +2268,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``algorithm`` -- one of the following:
 
-          - ``'mwrank_shell'`` -- default; call mwrank shell command
+          - ``'mwrank_lib'`` -- default; call mwrank C library
 
-          - ``'mwrank_lib'`` -- call mwrank C library
+          - ``'mwrank_shell'`` -- call mwrank shell command
 
           - ``'pari'`` -- use ellrank in pari
 
@@ -2268,7 +2280,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         - ``use_database`` -- boolean (default: ``True``); if ``True``, attempts to
           find curve and gens in the (optional) database
 
-        - ``descent_second_limit`` -- (default: 12) used in 2-descent
+        - ``descent_second_limit`` -- (default: 12); logarithmic height bound on
+          second point search on quartic homogeneous spaces (after
+          testing local solubility; sieve-assisted search). Used in 2-descent.
+          See also ``second_limit``
+          in :meth:`~sage.libs.eclib.interface.mwrank_EllipticCurve.two_descent`
 
         - ``sat_bound`` -- (default: 1000) bound on primes used in
           saturation.  If the computed bound on the index of the
@@ -2319,7 +2335,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              over Rational Field
             sage: E1.gens() # random (if database not used)
             [(-400 : 8000 : 1), (0 : -8000 : 1)]
-            sage: E1.gens(algorithm='pari')   #random
+            sage: E1.gens(algorithm='pari')   # random
             [(-400 : 8000 : 1), (0 : -8000 : 1)]
 
         TESTS::
@@ -2337,6 +2353,15 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: P = E.lift_x(10/9)
             sage: set(E.gens()) <= set([P,-P])
             True
+
+        Check that :issue:`38813` has been fixed::
+
+            sage: # long time
+            sage: E = EllipticCurve([-127^2,0])
+            sage: l = E.gens(use_database=False, algorithm='pari', pari_effort=4); l   # random
+            [(611429153205013185025/9492121848205441 : 15118836457596902442737698070880/924793900700594415341761 : 1)]
+            sage: a = E(611429153205013185025/9492121848205441, 15118836457596902442737698070880/924793900700594415341761)
+            sage: assert len(l) == 1 and ((l[0] - a).is_finite_order() or (l[0] + a).is_finite_order())
         """
         if proof is None:
             from sage.structure.proof.proof import get_flag
@@ -2389,14 +2414,15 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             True
 
             sage: E = EllipticCurve([-127^2,0])
-            sage: E.gens(use_database=False, algorithm='pari',pari_effort=4)   # random
+            sage: E.gens(use_database=False, algorithm='pari', pari_effort=4)   # long time, random
             [(611429153205013185025/9492121848205441 : 15118836457596902442737698070880/924793900700594415341761 : 1)]
 
         TESTS::
 
+            sage: E = EllipticCurve([-127^2,0])
             sage: P = E.lift_x(611429153205013185025/9492121848205441)
-            sage: ge = set(E.gens(use_database=False, algorithm='pari',pari_effort=4))
-            sage: ge <= set([P+T for T in E.torsion_points()]
+            sage: ge = set(E.gens(use_database=False, algorithm='pari',pari_effort=4))   # long time
+            sage: ge <= set([P+T for T in E.torsion_points()]  # long time
             ....:        + [-P+T for T in E.torsion_points()])
             True
         """

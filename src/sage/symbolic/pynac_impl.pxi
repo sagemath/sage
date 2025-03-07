@@ -40,11 +40,10 @@ from sage.arith.functions import lcm
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.all cimport *
-from sage.libs.gsl.types cimport *
 from sage.libs.gsl.complex cimport *
 from sage.libs.gsl.gamma cimport gsl_sf_lngamma_complex_e
 from sage.libs.mpmath import utils as mpmath_utils
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.misc.persist import loads, dumps
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer, smallInteger

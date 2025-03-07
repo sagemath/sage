@@ -1525,7 +1525,7 @@ class GRSGaoDecoder(Decoder):
         """
         G = PolRing.one()
         x = PolRing.gen()
-        for i in range(0, self.code().length()):
+        for i in range(self.code().length()):
             G = G*(x-self.code().evaluation_points()[i])
         return G
 
@@ -1612,11 +1612,10 @@ class GRSGaoDecoder(Decoder):
         if n == C.dimension() or r in C:
             return r, self.connected_encoder().unencode_nocheck(r)
 
-        points = [(alphas[i], r[i]/col_mults[i]) for i in
-                range(0, n)]
+        points = [(alphas[i], r[i]/col_mults[i]) for i in range(n)]
         R = PolRing.lagrange_polynomial(points)
 
-        (Q1, Q0) = self._partial_xgcd(G, R, PolRing)
+        Q1, Q0 = self._partial_xgcd(G, R, PolRing)
 
         h, rem = Q1.quo_rem(Q0)
         if not rem.is_zero():
@@ -1915,6 +1914,12 @@ class GRSErrorErasureDecoder(Decoder):
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True
+            sage: n_era = C.minimum_distance() - 1
+            sage: Chan = channels.ErrorErasureChannel(C.ambient_space(),
+            ....:                                     D.decoding_radius(n_era), n_era)
+            sage: y = Chan(c)
+            sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
+            True
 
         TESTS:
 
@@ -1958,14 +1963,14 @@ class GRSErrorErasureDecoder(Decoder):
                                 [word[i] for i in range(len(word))
                                  if not erasure_vector[i]])
         C1_length = len(punctured_word)
-        if C1_length == k:
-            return self.connected_encoder().unencode_nocheck(word)
         C1_evaluation_points = [self.code().evaluation_points()[i] for i in
                 range(n) if erasure_vector[i] != 1]
         C1_column_multipliers = [self.code().column_multipliers()[i] for i in
                 range(n) if erasure_vector[i] != 1]
         C1 = GeneralizedReedSolomonCode(C1_evaluation_points, k,
                 C1_column_multipliers)
+        if C1_length == k:
+            return C1.unencode(punctured_word, nocheck=True)
         return C1.decode_to_message(punctured_word)
 
     def decoding_radius(self, number_erasures):
@@ -1997,7 +2002,7 @@ class GRSErrorErasureDecoder(Decoder):
             ValueError: The number of erasures exceed decoding capability
         """
         diff = self.code().minimum_distance() - 1 - number_erasures
-        if diff <= 0:
+        if diff < 0:
             raise ValueError("The number of erasures exceed decoding capability")
         else:
             return diff // 2

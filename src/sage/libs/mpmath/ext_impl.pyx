@@ -1183,10 +1183,14 @@ cdef MPF_exp(MPF *y, MPF *x, MPopts opts):
     cdef mpz_t t, u
     cdef tuple w
     if x.special:
-        if x.special == S_ZERO: MPF_set_si(y, 1)
-        elif x.special == S_NINF: MPF_set_zero(y)
-        elif x.special == S_INF: MPF_set_inf(y)
-        else: MPF_set_nan(y)
+        if x.special == S_ZERO:
+            MPF_set_si(y, 1)
+        elif x.special == S_NINF:
+            MPF_set_zero(y)
+        elif x.special == S_INF:
+            MPF_set_inf(y)
+        else:
+            MPF_set_nan(y)
         return
     wp = opts.prec + 14
     sign = mpz_sgn(x.man) < 0
@@ -2116,7 +2120,7 @@ cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
             raise ZeroDivisionError
 
         # Multiply real factors
-        for k in range(0, cancellable_real):
+        for k in range(cancellable_real):
             sig_check()
             mpz_mul(PRE, PRE, AREAL[k])
             mpz_fdiv_q(PRE, PRE, BREAL[k])
@@ -2129,7 +2133,7 @@ cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
             mpz_mul_2exp(PRE, PRE, wp)
             mpz_fdiv_q(PRE, PRE, BREAL[k])
         if have_complex:
-            for k in range(0, cancellable_real):
+            for k in range(cancellable_real):
                 sig_check()
                 mpz_mul(PIM, PIM, AREAL[k])
                 mpz_fdiv_q(PIM, PIM, BREAL[k])

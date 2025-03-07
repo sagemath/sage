@@ -642,6 +642,9 @@ class Function_arccos(GinacFunction):
             (0.9045568943023814-1.0612750619050357j)
             sage: acos(SR(2.1))                                                         # needs sage.symbolic
             1.37285914424258*I
+
+            sage: arcsin(sqrt(2)/2)
+            1/4*pi
         """
         GinacFunction.__init__(self, 'arccos', latex_name=r"\arccos",
                 conversions=dict(maxima='acos', sympy='acos',

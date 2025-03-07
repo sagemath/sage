@@ -14,8 +14,6 @@ This module implements general operation tables, which are very matrix-like.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import copy
-
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import Matrix
 
@@ -777,7 +775,6 @@ class OperationTable(SageObject):
             raise ValueError('LaTeX symbol must be a string, not %s' % latex)
         self._ascii_symbol = ascii
         self._latex_symbol = latex
-        return None
 
     def column_keys(self):
         r"""
@@ -931,7 +928,6 @@ class OperationTable(SageObject):
             (1,2)
         """
         self._width, self._names, self._name_dict = self._name_maker(names)
-        return None
 
     def matrix_of_variables(self):
         r"""

@@ -1,5 +1,6 @@
 py.install_sources(
   'SJT.py',
+  '__init__.py',
   'abstract_tree.py',
   'affine_permutation.py',
   'algebraic_combinatorics.py',

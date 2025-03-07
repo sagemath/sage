@@ -288,3 +288,18 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             return constructor.ModularForms(self.character().restrict(N), self.weight(), self.base_ring(), prec=self.prec())
         else:
             raise ValueError("N (=%s) must be a divisor or a multiple of the level of self (=%s)" % (N, self.level()))
+
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: m = ModularForms(DirichletGroup(17).0^2, 2)
+            sage: pari.mfdim(m)
+            3
+            sage: pari.mfparams(m)
+            [17, 2, Mod(9, 17), 4, t^4 + 1]
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight(), self.character()], 4)

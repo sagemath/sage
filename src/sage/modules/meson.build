@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'complex_double_vector.py',
   'diamond_cutting.py',
@@ -9,6 +10,8 @@ py.install_sources(
   'free_module_homspace.py',
   'free_module_integer.py',
   'free_module_morphism.py',
+  'free_module_pseudohomspace.py',
+  'free_module_pseudomorphism.py',
   'free_quadratic_module.py',
   'free_quadratic_module_integer_symmetric.py',
   'matrix_morphism.py',
@@ -16,6 +19,7 @@ py.install_sources(
   'module.pxd',
   'module_functors.py',
   'multi_filtered_vector_space.py',
+  'numpy_util.pxd',
   'quotient_module.py',
   'real_double_vector.py',
   'submodule.py',
@@ -76,7 +80,10 @@ foreach name, pyx : extension_data
   )
 endforeach
 
-extension_data_cpp = {'vector_mod2_dense': files('vector_mod2_dense.pyx')}
+extension_data_cpp = {
+  'numpy_util' : files('numpy_util.pyx'),
+  'vector_mod2_dense': files('vector_mod2_dense.pyx'),
+}
 
 foreach name, pyx : extension_data_cpp
   py.extension_module(

@@ -14,6 +14,7 @@ Feature for testing the presence of ``ffmpeg``
 
 from . import Executable, FeatureTestResult
 
+
 class FFmpeg(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :ref:`ffmpeg <spkg_ffmpeg>`.
@@ -75,19 +76,19 @@ class FFmpeg(Executable):
         # The `-nostdin` is needed to avoid the command to hang, see
         # https://stackoverflow.com/questions/16523746/ffmpeg-hangs-when-run-in-background
         commands = []
-        for ext in ['.avi', '.flv', '.gif', '.mkv', '.mov', #'.mpg',
-                '.mp4', '.ogg', '.ogv', '.webm', '.wmv']:
+        for ext in ['.avi', '.flv', '.gif', '.mkv', '.mov',
+                    '.mp4', '.ogg', '.ogv', '.webm', '.wmv']:
 
             cmd = ['ffmpeg', '-nostdin', '-y', '-f', 'image2', '-r', '5',
-                    '-i', filename_png, '-pix_fmt', 'rgb24', '-loop', '0',
-                    filename + ext]
+                   '-i', filename_png, '-pix_fmt', 'rgb24', '-loop', '0',
+                   filename + ext]
             commands.append(cmd)
 
         for ext in ['.avi', '.flv', '.gif', '.mkv', '.mov', '.mpg',
-                '.mp4', '.ogg', '.ogv', '.webm', '.wmv']:
+                    '.mp4', '.ogg', '.ogv', '.webm', '.wmv']:
 
             cmd = ['ffmpeg', '-nostdin', '-y', '-f', 'image2', '-i',
-                    filename_png, filename + ext]
+                   filename_png, filename + ext]
             commands.append(cmd)
 
         # Running the commands and reporting any issue encountered

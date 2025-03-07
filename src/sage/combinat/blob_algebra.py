@@ -17,22 +17,19 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import Element, get_coercion_model
-from sage.structure.richcmp import richcmp
-#from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.misc.cachefunc import cached_method
-from sage.combinat.subset import powerset
-from sage.arith.misc import binomial
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.algebras import Algebras
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.diagram_algebras import (TemperleyLiebDiagrams, diagram_latex,
                                             TL_diagram_ascii_art)
-from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.dyck_word import DyckWords
-
-#@add_metaclass(InheritComparisonClasscallMetaclass)
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.subset import powerset
+from sage.misc.cachefunc import cached_method
+from sage.rings.integer import Integer
+from sage.structure.element import Element, get_coercion_model
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class BlobDiagram(Element):
@@ -167,7 +164,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
             sage: BD4 = BlobDiagrams(4)
             sage: TestSuite(BD4).run()
         """
-        self._n = n
+        self._n = Integer(n)
         self._TL_diagrams = TemperleyLiebDiagrams(n)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
@@ -181,7 +178,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
             sage: BlobDiagrams(4)
             Blob diagrams of order 4
         """
-        return "Blob diagrams of order {}".format(self._n)
+        return f"Blob diagrams of order {self._n}"
 
     def cardinality(self):
         r"""
@@ -194,7 +191,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
             sage: BD4.cardinality()
             70
         """
-        return binomial(2*self._n, self._n)
+        return (2 * self._n).binomial(self._n)
 
     def order(self):
         r"""
@@ -221,7 +218,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
             sage: sorted(BD4.base_set())
             [-4, -3, -2, -1, 1, 2, 3, 4]
         """
-        return frozenset(range(1,self._n+1)).union(range(-self._n,0))
+        return frozenset(range(1, self._n + 1)).union(range(-self._n, 0))
 
     def _element_constructor_(self, marked, unmarked=None):
         r"""

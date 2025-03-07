@@ -178,21 +178,21 @@ cdef hypergraph h_init(int n, list H) noexcept:
     """
     cdef int x,i
     cdef hypergraph h
-    h.n          = n
-    h.m          = len(H)
-    h.limbs      = (n+63) // 64  # =ceil(n/64)
-    h.names      = <int *>  sig_malloc(sizeof(int)*n)
-    h.sets       = <uint64_t **> sig_malloc(h.m*sizeof(uint64_t *))
-    h.set_space  = <uint64_t *>  sig_calloc(h.m*(h.limbs+1),sizeof(uint64_t))
+    h.n = n
+    h.m = len(H)
+    h.limbs = (n+63) // 64  # =ceil(n/64)
+    h.names = <int *> sig_malloc(sizeof(int)*n)
+    h.sets = <uint64_t **> sig_malloc(h.m*sizeof(uint64_t *))
+    h.set_space = <uint64_t *> sig_calloc(h.m*(h.limbs+1),sizeof(uint64_t))
 
     # Consistency check
     for S in H:
         for x in S:
-            if x<0 or x>=n:
+            if x < 0 or x >= n:
                 h.n = -1
 
-    if (h.names     == NULL or
-        h.sets      == NULL or
+    if (h.names == NULL or
+        h.sets == NULL or
         h.set_space == NULL or
         h.n == -1):
         h.n = -1

@@ -200,13 +200,12 @@ def combinations(n, t):
         n = int(n)
     else:
         n = Infinity
-    assert 0 <= t and t <= n, "t(={}) must be >=0 and <=n(={})".format(t,n)
+    assert 0 <= t <= n, "t(={}) must be >=0 and <=n(={})".format(t, n)
     if t == 0 or t == n:
         return iter([])
     if t % 2:
-        return _revolving_door_odd(n,t)
-    else:
-        return _revolving_door_even(n,t)
+        return _revolving_door_odd(n, t)
+    return _revolving_door_even(n, t)
 
 
 def _revolving_door_odd(n, t):

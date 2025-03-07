@@ -990,7 +990,8 @@ cdef class LazyImport():
 
 
 def lazy_import(module, names, as_=None, *,
-    at_startup=False, namespace=None, deprecation=None, feature=None):
+                at_startup=False, namespace=None,
+                deprecation=None, feature=None):
     """
     Create a lazy import object and inject it into the caller's global
     namespace. For the purposes of introspection and calling, this is

@@ -68,7 +68,7 @@ def _make_color_list(n, colors=None, color_map=None, randomize=False):
 
         sage: import numpy as np
         sage: if int(np.version.short_version[0]) > 1:
-        ....:     np.set_printoptions(legacy="1.25")
+        ....:     _ = np.set_printoptions(legacy="1.25")
         sage: from sage.combinat.fully_packed_loop import _make_color_list
         sage: _make_color_list(5)
         sage: _make_color_list(5, ['blue', 'red'])
@@ -1361,8 +1361,8 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         """
         if isinstance(generator, AlternatingSignMatrix):
             SVM = generator.to_six_vertex_model()
-        elif isinstance(generator, SquareIceModel.Element) or \
-                isinstance(generator, SixVertexConfiguration):
+        elif isinstance(generator, (SquareIceModel.Element,
+                                    SixVertexConfiguration)):
             SVM = generator
         else:  # Not ASM nor SVM
             try:

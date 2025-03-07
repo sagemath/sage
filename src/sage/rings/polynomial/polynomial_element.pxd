@@ -61,4 +61,3 @@ cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec)
 cpdef list _dict_to_list(dict x, zero)
 
 cpdef bint polynomial_is_variable(x) noexcept
-

@@ -452,12 +452,13 @@ examples.
 #  Distributed under the terms of the GNU General Public License (GPL)
 # ****************************************************************************
 
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
+from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.tensor import tensor
-from sage.categories.homset import Hom
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.sets.family import Family
 
 ######################################################
 # the main class
@@ -1346,10 +1347,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         right_q = sorted(all_q - a)
                         sign = Permutation(convert_perm(left_q + right_q)).signature()
                         tens_q[(tuple(left_q), tuple(right_q))] = sign
-                    tens = {}
-                    for l, r in zip(left_p, right_p):
-                        for q in tens_q:
-                            tens[((q[0], l), (q[1], r))] = tens_q[q]
+                    tens = {((q[0], l), (q[1], r)): tq
+                            for l, r in zip(left_p, right_p)
+                            for q, tq in tens_q.items()}
                     return self.tensor_square()._from_dict(tens, coerce=True)
             elif basis == 'serre-cartan':
                 result = self.tensor_square().one()
@@ -2620,7 +2620,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             return sum(self._profile)
         return sum(self._profile[0]) + len([a for a in self._profile[1] if a == 2])
 
-    def gens(self):
+    def gens(self) -> Family:
         r"""
         Family of generators for this algebra.
 
@@ -2677,7 +2677,6 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(p=5, profile=[[2,1], [2,2,2]]).algebra_generators()
             Family (Q_0, P(1), P(5))
         """
-        from sage.sets.family import Family
         from sage.sets.non_negative_integers import NonNegativeIntegers
         from sage.rings.infinity import Infinity
         n = self.ngens()
@@ -2827,10 +2826,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             tot += 1
         return test
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Return ``True`` if ``self`` is graded commutative, as determined by the
-        profile function.  In particular, a sub-Hopf algebra of the
+        profile function.
+
+        In particular, a sub-Hopf algebra of the
         mod 2 Steenrod algebra is commutative if and only if there is
         an integer `n>0` so that its profile function `e` satisfies
 

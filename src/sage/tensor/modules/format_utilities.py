@@ -247,7 +247,7 @@ def format_unop_txt(operator, name):
     if name is None:
         return None
     if not is_atomic(name) or not is_atomic_wedge_txt(name):
-    #!# is_atomic_otimes_txt should be added
+        # ! is_atomic_otimes_txt should be added
         name = '(' + name + ')'
     return operator + name
 
@@ -270,7 +270,7 @@ def format_unop_latex(operator, name):
     if name is None:
         return None
     if not is_atomic(name) or not is_atomic_wedge_latex(name):
-    #!# is_atomic_otimes_latex should be added
+        # ! is_atomic_otimes_latex should be added
         name = r'\left(' + name + r'\right)'
     return operator + name
 

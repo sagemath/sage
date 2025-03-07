@@ -418,6 +418,7 @@ class Feature(TrivialUniqueRepresentation):
             return True
         return False
 
+
 class FeatureNotPresentError(RuntimeError):
     r"""
     A missing feature error.
@@ -564,7 +565,7 @@ def package_systems():
         [Feature('homebrew'), Feature('sage_spkg'), Feature('pip')]
     """
     # The current implementation never returns more than one system.
-    from subprocess import run, CalledProcessError, PIPE
+    from subprocess import run, CalledProcessError
     global _cache_package_systems
     if _cache_package_systems is None:
         from .pkg_systems import PackageSystem, SagePackageSystem, PipPackageSystem
@@ -819,9 +820,9 @@ class StaticFile(FileFeature):
         A :exc:`FeatureNotPresentError` is raised if the file cannot be found::
 
             sage: from sage.features import StaticFile
-            sage: StaticFile(name='no_such_file', filename='KaT1aihu',\
-                             search_path=(), spkg='some_spkg',\
-                             url='http://rand.om').absolute_filename()  # optional - sage_spkg
+            sage: StaticFile(name='no_such_file', filename='KaT1aihu',  # optional - sage_spkg
+            ....:            search_path=(), spkg='some_spkg',
+            ....:            url='http://rand.om').absolute_filename()
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: no_such_file is not available.

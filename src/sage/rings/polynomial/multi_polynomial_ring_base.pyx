@@ -77,6 +77,20 @@ cdef class MPolynomialRing_base(CommutativeRing):
             ....:     pass
             sage: Foo(QQ, 2, ['x','y'], 'degrevlex')                                                                    # needs sage.libs.singular
             Multivariate Polynomial Ring in x, y over Rational Field
+
+        Check that :meth:`basis` works correctly::
+
+            sage: R = PolynomialRing(QQ, [])
+            sage: R.basis()
+            Lazy family (...monomial...(i))_{i in Integer vectors of length 0}
+            sage: [*R.basis()]
+            [1]
+            sage: R.<x,y> = QQ[]
+            sage: R.basis()
+            Lazy family (...monomial...(i))_{i in Integer vectors of length 2}
+            sage: import itertools
+            sage: list(itertools.islice(R.basis(), 16))
+            [1, x, y, x^2, x*y, y^2, x^3, x^2*y, x*y^2, y^3, x^4, x^3*y, x^2*y^2, x*y^3, y^4, x^5]
         """
         if base_ring not in _CommutativeRings:
             raise TypeError("The base ring %s is not a commutative ring" % base_ring)
@@ -90,17 +104,14 @@ cdef class MPolynomialRing_base(CommutativeRing):
         self._term_order = order
         self._has_singular = False  # cannot convert to Singular by default
         self._magma_cache = {}
-        # Ring.__init__ already does assign the names.
-        # It would be a mistake to call ParentWithGens.__init__
-        # as well, assigning the names twice.
-        # ParentWithGens.__init__(self, base_ring, names)
         if base_ring.is_zero():
             category = categories.rings.Rings().Finite()
         else:
             category = polynomial_default_category(base_ring.category(), n)
+        # Ring.__init__ assigns the names.
         Ring.__init__(self, base_ring, names, category=category)
         from sage.combinat.integer_vector import IntegerVectors
-        self._indices = IntegerVectors(self._ngens)
+        self._indices = IntegerVectors(length=self._ngens)
 
     def is_integral_domain(self, proof=True):
         """
@@ -142,7 +153,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
              Multivariate Polynomial Ring in x, y over Rational Field
         """
         base = self.base_ring()
-        if isinstance(base, MPolynomialRing_base) or isinstance(base, polynomial_ring.PolynomialRing_general):
+        if isinstance(base, (MPolynomialRing_base, polynomial_ring.PolynomialRing_generic)):
             from sage.rings.polynomial.flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
@@ -432,8 +443,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
             Also, if the solution is not unique, it spits out one solution,
             without any notice that there are more.
 
-            Lastly, the interpolation function for univariate polynomial rings
-            is called :meth:`lagrange_polynomial`.
+            For interpolation in the univariate case use
+            :meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial`.
 
         .. WARNING::
 
@@ -453,7 +464,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         .. SEEALSO::
 
-            :meth:`lagrange_polynomial<sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial>`
+            :meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial`
         """
         from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
@@ -602,7 +613,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
                 elif self.base_ring().has_coerce_map_from(P._mpoly_base_ring(self.variable_names())):
                     return self(x)
 
-            elif isinstance(P, polynomial_ring.PolynomialRing_general):
+            elif isinstance(P, polynomial_ring.PolynomialRing_generic):
                 if P.variable_name() in self.variable_names():
                     if self.has_coerce_map_from(P.base_ring()):
                         return self(x)
@@ -1383,13 +1394,32 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         TESTS:
 
-        Check that ETuples also work::
+        Check that :class:`.ETuple`s and :class:`.IntegerVector` also work
+        (:class:`.IntegerVector` is used for :meth:`basis`)::
 
+            sage: from sage.combinat.integer_vector import IntegerVector, IntegerVectors
             sage: from sage.rings.polynomial.polydict import ETuple
             sage: R.monomial(ETuple(e))
             x*y^2*z^3
+            sage: R.monomial(IntegerVector(IntegerVectors(), e))
+            x*y^2*z^3
+
+        Corner case::
+
+            sage: R = PolynomialRing(QQ, [])
+            sage: R
+            Multivariate Polynomial Ring in no variables over Rational Field
+            sage: R.monomial(())
+            1
+            sage: R.monomial()
+            1
+            sage: R.monomial(ETuple([]))
+            1
+            sage: R.monomial(IntegerVector(IntegerVectors(), []))
+            1
         """
-        if len(exponents) == 1 and isinstance((e := exponents[0]), (tuple, ETuple)):
+        from sage.combinat.integer_vector import IntegerVector
+        if len(exponents) == 1 and isinstance((e := exponents[0]), (tuple, IntegerVector, ETuple)):
             return self({e: self.base_ring().one()})
         return self({exponents: self.base_ring().one()})
 

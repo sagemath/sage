@@ -39,6 +39,7 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # *************************************************************************
 
+from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
 from sage.categories.modules import Modules
 from sage.misc.cachefunc import cached_method
@@ -46,7 +47,6 @@ from sage.misc.lazy_import import lazy_import
 from sage.modules.module import Module
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.ring import Ring
 from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Parent
 from .sigma0 import _default_adjuster
@@ -281,8 +281,8 @@ class OverconvergentDistributions_abstract(Module):
             ...
             ValueError: p must be prime
         """
-        if not isinstance(base, Ring):
-            raise TypeError("base must be a ring")
+        if base not in CommutativeRings():
+            raise TypeError("base must be a commutative ring")
         # from sage.rings.padics.pow_computer import PowComputer
         # should eventually be the PowComputer on ZpCA once that uses longs.
         Dist, WeightKAction = get_dist_classes(p, prec_cap, base,
@@ -649,10 +649,13 @@ class Symk_class(OverconvergentDistributions_abstract):
         if hasattr(base, 'prime'):
             p = base.prime()
         else:
-            p = ZZ(0)
-        OverconvergentDistributions_abstract.__init__(self, k, p, k + 1, base, character,
-                                        adjuster, act_on_left, dettwist,
-                                        act_padic, implementation)
+            p = ZZ.zero()
+        OverconvergentDistributions_abstract.__init__(self, k, p, k + 1,
+                                                      base, character,
+                                                      adjuster, act_on_left,
+                                                      dettwist,
+                                                      act_padic,
+                                                      implementation)
 
     def _an_element_(self):
         r"""

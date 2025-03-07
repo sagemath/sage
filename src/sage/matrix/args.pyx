@@ -297,9 +297,12 @@ cdef class MatrixArgs:
     Test invalid input::
 
         sage: MatrixArgs(ZZ, 2, 2, entries='abcd').finalized()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+        over Integer Ring; typ=SCALAR; entries='abcd'>
+        sage: matrix(ZZ, 2, 2, entries='abcd')
         Traceback (most recent call last):
         ...
-        TypeError: unable to convert 'abcd' to a matrix
+        TypeError: unable to convert 'abcd' to an integer
         sage: MatrixArgs(ZZ, 2, 2, entries=MatrixArgs()).finalized()
         Traceback (most recent call last):
         ...
@@ -1515,12 +1518,19 @@ cdef class MatrixArgs:
             [()  0  0]
             [ 0 ()  0]
             [ 0  0 ()]
+
+        Verify that :issue:`34821` is fixed::
+
+            sage: matrix(ZZ, 2, 2, "3")
+            [3 0]
+            [0 3]
         """
         # Check basic Python types. This is very fast, so it doesn't
         # hurt to do these first.
         if self.entries is None:
             return MA_ENTRIES_ZERO
-        if isinstance(self.entries, (int, float, complex, Integer)):
+        if isinstance(self.entries, (int, float, complex, Integer, str)):
+            # Note that a string is not considered to be a sequence.
             if self.entries:
                 return MA_ENTRIES_SCALAR
             return MA_ENTRIES_ZERO
@@ -1565,9 +1575,6 @@ cdef class MatrixArgs:
         if isinstance(self.entries, MatrixArgs):
             # Prevent recursion
             return MA_ENTRIES_UNKNOWN
-        if isinstance(self.entries, str):
-            # Blacklist strings, we don't want them to be considered a sequence
-            return MA_ENTRIES_UNKNOWN
         try:
             self.entries = list(self.entries)
         except TypeError:
@@ -1586,6 +1593,16 @@ cdef class MatrixArgs:
         is a sequence.
 
         If the entries are invalid, return ``MA_ENTRIES_UNKNOWN``.
+
+        TESTS:
+
+        Verify that :issue:`34821` is fixed::
+
+            sage: matrix(ZZ, 1,2, ["1", "2"])
+            [1 2]
+            sage: matrix(ZZ, 2,1, ["1", "2"])
+            [1]
+            [2]
         """
         if not self.entries:
             return MA_ENTRIES_SEQ_FLAT
@@ -1601,13 +1618,11 @@ cdef class MatrixArgs:
                 return MA_ENTRIES_SEQ_SEQ
             else:
                 return MA_ENTRIES_SEQ_FLAT
-        if isinstance(x, (int, float, complex)):
+        if isinstance(x, (int, float, complex, str)):
+            # Note that a string is not considered to be a sequence.
             return MA_ENTRIES_SEQ_FLAT
         if isinstance(x, Element) and element_is_scalar(<Element>x):
             return MA_ENTRIES_SEQ_FLAT
-        if isinstance(x, str):
-            # Blacklist strings, we don't want them to be considered a sequence
-            return MA_ENTRIES_UNKNOWN
         try:
             iter(x)
         except TypeError:

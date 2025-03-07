@@ -581,8 +581,7 @@ def _point_outside_subgroup(P):
         Q = E.random_point()
         if n*Q or not P.weil_pairing(Q,n).is_one():
             return Q
-    else:
-        raise NotImplementedError('could not find a point outside the kernel')
+    raise NotImplementedError('could not find a point outside the kernel')
 
 
 class EllipticCurveHom_velusqrt(EllipticCurveHom):

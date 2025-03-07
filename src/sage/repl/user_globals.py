@@ -102,7 +102,7 @@ def get_globals():
     return user_globals
 
 
-def set_globals(g):
+def set_globals(g: dict) -> None:
     """
     Set the dictionary of all user globals to ``g``.
 

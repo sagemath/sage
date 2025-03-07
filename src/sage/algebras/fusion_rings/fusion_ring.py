@@ -1564,15 +1564,14 @@ class FusionRing(WeylCharacterRing):
             R = ZZ['q']
             q = R.gen()
             expr = R.fraction_field().one()
-            for val in powers:
-                exp = powers[val]
+            for val, exp in powers.items():
                 if exp > 0:
                     expr *= q_int(P._nf * val, q)**exp
                 elif exp < 0:
                     expr /= q_int(P._nf * val, q)**(-exp)
             expr = R(expr)
-            expr = expr.substitute(q=q**4) / (q**(2*expr.degree()))
-            zet = P.field().gen() ** (P._cyclotomic_order/P._l)
+            expr = expr.substitute(q=q**4) / (q**(2 * expr.degree()))
+            zet = P.field().gen() ** (P._cyclotomic_order / P._l)
             ret = expr.substitute(q=zet)
 
             if (not base_coercion) or (self.parent()._basecoer is None):

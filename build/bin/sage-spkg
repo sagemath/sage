@@ -603,14 +603,14 @@ case "$PKG_SRC" in
 esac
 
 # Poison the proxy variable to forbid downloads in spkg-install
-# for normal packages
-case $PKG_SRC_TYPE in
-  normal|wheel)
-    export http_proxy=http://192.0.2.0:5187/
-    export https_proxy=$http_proxy
-    export ftp_proxy=$http_proxy
-    export rsync_proxy=$http_proxy
-    ;;
+# for normal/wheel standard packages
+case "$PKG_TYPE:$PKG_SRC_TYPE" in
+    standard:normal|standard:wheel)
+        export http_proxy=http://192.0.2.0:5187/
+        export https_proxy=$http_proxy
+        export ftp_proxy=$http_proxy
+        export rsync_proxy=$http_proxy
+        ;;
 esac
 
 # Make sage-logger show the full logs

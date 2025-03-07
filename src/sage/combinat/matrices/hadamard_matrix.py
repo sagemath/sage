@@ -1503,7 +1503,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     - ``n`` -- integer; the order of the matrix to be constructed
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
       the matrix exists
-    - ``check`` -- bolean (default: ``True``); if ``True``, check that the matrix
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
       is a Hadamard matrix before returning
 
     OUTPUT:

@@ -1358,7 +1358,6 @@ class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
             sage: latex(phi)
             \mathrm{Id}
         """
-        from sage.matrix.special import identity_matrix
         from sage.misc.constant_function import ConstantFunction
 
         fmodule = parent.domain()

@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'cell_module.py',
   'indexed_element.pxd',

@@ -311,8 +311,7 @@ class LocalOptions:
             {'diagram': 'diagram representation',
             'list': 'list representation'}}
         """
-        for key in options:
-            value = options[key]
+        for key, value in options.items():
             self.__setitem__(key, value)
         for key in get_values:
             return self.__getitem__(key)

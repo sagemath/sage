@@ -108,7 +108,7 @@ Check that inheritance works (after passing the subclass to
     'Instance docstring'
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -116,7 +116,7 @@ Check that inheritance works (after passing the subclass to
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cpython.object cimport PyObject, PyTypeObject
 

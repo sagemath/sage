@@ -22,7 +22,8 @@ from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.misc.sageinspect import sage_getargspec
-from sage.libs.gsl.all cimport *
+from sage.libs.gsl.types cimport *
+from sage.libs.gsl.odeiv cimport *
 import sage.calculus.interpolation
 
 

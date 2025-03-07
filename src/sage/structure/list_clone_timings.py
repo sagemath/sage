@@ -73,12 +73,12 @@ Various timings using a Python class::
     cy_add1_mutable(e)                   :  625 loops, best of 3: 14.1 µs per loop
     cy_add1_with(e)                      :  625 loops, best of 3: 17.5 µs per loop
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009-2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.list_clone import ClonableArray
 from sage.structure.list_clone_demo import IncreasingArrays
@@ -116,7 +116,7 @@ class IncreasingArraysPy(IncreasingArrays):
 
 
 #####################################################################
-######                    Timings functions                    ######
+#                         Timings functions                         #
 #####################################################################
 def add1_internal(bla):
     """

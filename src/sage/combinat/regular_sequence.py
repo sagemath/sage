@@ -335,7 +335,7 @@ class RegularSequence(RecognizableSeries):
     def is_degenerated(self):
         r"""
         Return whether this `k`-regular sequence is degenerated,
-        i.e., whether this `k`-regular sequence does not satisfiy
+        i.e., whether this `k`-regular sequence does not satisfy
         `\mu[0] \mathit{right} = \mathit{right}`.
 
         EXAMPLES::
@@ -368,7 +368,7 @@ class RegularSequence(RecognizableSeries):
     def _error_if_degenerated_(self):
         r"""
         Raise an error if this `k`-regular sequence is degenerated,
-        i.e., if this `k`-regular sequence does not satisfiy
+        i.e., if this `k`-regular sequence does not satisfy
         `\mu[0] \mathit{right} = \mathit{right}`.
 
         TESTS::
@@ -1882,8 +1882,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
                     return U.inverse(), m_indices
                 except ZeroDivisionError:
                     pass
-            else:
-                raise RuntimeError('no invertible submatrix found')
+            raise RuntimeError('no invertible submatrix found')
 
         def linear_combination_candidate(t_L, r_L, lines):
             r"""

@@ -669,7 +669,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             Hyperelliptic Curve over Finite Field in a of size 3^2
             defined by y^2 + x^10*y = x^3 + x + 2
             sage: D = magma(C); D                                                       # needs sage.rings.finite_rings
-            Hyperelliptic Curve defined by y^2 + (x^10)*y = x^3 + x + 2 over GF(3^2)
+            Hyperelliptic Curve defined by y^2 + x^10*y = x^3 + x + 2 over GF(3^2)
             sage: D.sage()                                                              # needs sage.rings.finite_rings
             Hyperelliptic Curve over Finite Field in a of size 3^2
             defined by y^2 + x^10*y = x^3 + x + 2

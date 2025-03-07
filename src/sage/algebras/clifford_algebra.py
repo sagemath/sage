@@ -787,7 +787,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         """
         return self._from_dict({FrozenBitset((i,)): self.base_ring().one()}, remove_zeros=False)
 
-    def algebra_generators(self):
+    def algebra_generators(self) -> Family:
         """
         Return the algebra generators of ``self``.
 
@@ -801,7 +801,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         d = {x: self.gen(i) for i, x in enumerate(self.variable_names())}
         return Family(self.variable_names(), lambda x: d[x])
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` (as an algebra).
 
@@ -844,7 +844,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         """
         return FrozenBitset()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Check if ``self`` is a commutative algebra.
 

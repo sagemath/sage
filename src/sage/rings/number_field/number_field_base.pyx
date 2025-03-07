@@ -65,7 +65,7 @@ cdef class NumberField(Field):
         +Infinity
     """
     # This token docstring is mostly there to prevent Sphinx from pasting in
-    # the docstring of the __init__ method inherited from IntegralDomain, which
+    # the docstring of the __init__ method inherited from Field, which
     # is rather confusing.
     def _pushout_(self, other):
         r"""

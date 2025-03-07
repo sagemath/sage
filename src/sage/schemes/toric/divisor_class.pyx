@@ -46,7 +46,7 @@ divisor representing a divisor class::
 """
 
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
@@ -54,7 +54,7 @@ divisor representing a divisor class::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from sage.libs.gmp.mpq cimport *
 

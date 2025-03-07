@@ -2525,7 +2525,7 @@ class CategoryWithAxiom_over_base_ring(CategoryWithAxiom, Category_over_base_rin
         Category_over_base_ring.__init__(self, base_category.base_ring())
 
 
-class CategoryWithAxiom_singleton(Category_singleton, CategoryWithAxiom):#, Category_singleton, FastHashable_class):
+class CategoryWithAxiom_singleton(Category_singleton, CategoryWithAxiom):  # Category_singleton, FastHashable_class):
     pass
 
 

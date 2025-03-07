@@ -1559,7 +1559,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                     res[deg] = term
             return {i: res[i] for i in sorted(res.keys())}
 
-        def monomial_coefficients(self):
+        def monomial_coefficients(self, copy=True):
             r"""
             A dictionary that determines the element.
 
@@ -1578,7 +1578,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 sage: sorted(elt.dict().items())
                 [((0, 1, 1, 0), -5), ((1, 1, 0, 0), 1), ((1, 2, 3, 1), 7)]
             """
-            return self.lift().monomial_coefficients()
+            return self.lift().monomial_coefficients(copy=copy)
 
         dict = monomial_coefficients
 

@@ -24,10 +24,10 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
-from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
-from .scalarfield import DiffScalarField
+from sage.manifolds.differentiable.scalarfield import DiffScalarField
 from sage.misc.decorators import options
+from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
+from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
 
 class TangentVector(FiniteRankFreeModuleElement):
@@ -448,13 +448,13 @@ class TangentVector(FiniteRankFreeModuleElement):
             graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)
             sphinx_plot(graph_v + graph_S2)
         """
+        from sage.manifolds.differentiable.chart import DiffChart
+        from sage.misc.functional import numerical_approx
         from sage.plot.arrow import arrow2d
-        from sage.plot.text import text
         from sage.plot.graphics import Graphics
         from sage.plot.plot3d.shapes import arrow3d
         from sage.plot.plot3d.shapes2 import text3d
-        from sage.misc.functional import numerical_approx
-        from sage.manifolds.differentiable.chart import DiffChart
+        from sage.plot.text import text
 
         scale = extra_options.pop("scale")
 

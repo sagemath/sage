@@ -38,11 +38,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ******************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.structure.mutability import Mutability
+from sage.manifolds.differentiable.vector_bundle import DifferentiableVectorBundle
 from sage.rings.integer import Integer
-from sage.manifolds.differentiable.vector_bundle import \
-    DifferentiableVectorBundle
+from sage.structure.mutability import Mutability
+from sage.structure.sage_object import SageObject
 
 
 class BundleConnection(SageObject, Mutability):

@@ -295,20 +295,16 @@ class HeckeAlgebraElement(AlgebraElement):
             sage: M = ModularSymbols(11)
             sage: t2 = M.hecke_operator(2)
             sage: t2.decomposition()
-            [
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field]
 
         ::
 
             sage: M = ModularSymbols(33, sign=1).new_submodule()
             sage: T = M.hecke_operator(2)
             sage: T.decomposition()
-            [
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 6 for Gamma_0(33) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 6 for Gamma_0(33) of weight 2 with sign 1 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 6 for Gamma_0(33) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 6 for Gamma_0(33) of weight 2 with sign 1 over Rational Field]
         """
         try:
             return self.__decomposition

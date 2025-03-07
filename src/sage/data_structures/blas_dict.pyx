@@ -23,7 +23,7 @@ nonzero (as tested with `bool(v)`).
 
 This is mostly used by :class:`CombinatorialFreeModule`.
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Christian Stump <christian.stump@univie.ac.at>
 #                     2016 Travis Scrimshaw <tscrimsh@umn.edu>
 #                     2016 Nicolas M. Thiéry <nthiery at users.sf.net>
@@ -32,8 +32,8 @@ This is mostly used by :class:`CombinatorialFreeModule`.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 cpdef int iaxpy(a, dict X, dict Y, bint remove_zeros=True, bint factor_on_left=True) except -1:
     r"""
@@ -112,13 +112,13 @@ cpdef int iaxpy(a, dict X, dict Y, bint remove_zeros=True, bint factor_on_left=T
         flag = -1
     elif not a:
         return 0
-    for (key, value) in X.iteritems():
+    for key, value in X.items():
         if flag == -1:
             if key in Y:
-                Y[key]  -= value
+                Y[key] -= value
             else:
-                Y[key]  = -value
-                continue # no need to check for zero
+                Y[key] = -value
+                continue  # no need to check for zero
         else:
             if flag != 1:
                 # If we had the guarantee that `a` is in the base
@@ -136,8 +136,8 @@ cpdef int iaxpy(a, dict X, dict Y, bint remove_zeros=True, bint factor_on_left=T
             if key in Y:
                 Y[key] += value
             else:
-                Y[key]  = value
-                continue # no need to check for zero
+                Y[key] = value
+                continue  # no need to check for zero
         if remove_zeros and not Y[key]:
             del Y[key]
     return 0
@@ -217,7 +217,7 @@ cpdef dict negate(dict D):
         sage: blas.negate(D1)
         {0: -1, 1: -1}
     """
-    return { key: -value for key, value in D.iteritems() }
+    return {key: -value for key, value in D.items()}
 
 cpdef dict scal(a, dict D, bint factor_on_left=True):
     r"""
@@ -345,7 +345,7 @@ cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True):
     cdef dict D
 
     for D, a in dict_factor_iter:
-        if not a: # We multiply by 0, so nothing to do
+        if not a:  # We multiply by 0, so nothing to do
             continue
         if not result and a == 1:
             result = D.copy()
