@@ -607,7 +607,7 @@ def make_recording_dict(D, st, gt):
     EXAMPLES::
 
         sage: from sage.doctest.util import make_recording_dict
-        sage: D = make_recording_dict({'a':4,'d':42},set([]),set(['not_here']))
+        sage: D = make_recording_dict({'a':4,'d':42},set(),set(['not_here']))
         sage: sorted(D.items())
         [('a', 4), ('d', 42)]
         sage: D.got
