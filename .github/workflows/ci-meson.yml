@@ -19,19 +19,19 @@ permissions:
 
 jobs:
   test:
-    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }})
+    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }}, ${{ matrix.tests }})
     runs-on: ${{ matrix.os }}-latest
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu]
+        os: ['ubuntu']
         python: ['3.11', '3.12']
         tests: ['all']
         include:
-          - os: ubuntu
-            python: 3.12
-            tests: new
+          - os: 'ubuntu'
+            python: '3.12'
+            tests: 'new'
 
     steps:
       - uses: actions/checkout@v4
@@ -48,7 +48,7 @@ jobs:
           # List remotes (for debugging)
           git remote -v
           # Reset the branch to develop
-          git reset --soft upstream/develop
+          git reset --soft origin/develop
           # Show uncommitted changes
           git status
 
