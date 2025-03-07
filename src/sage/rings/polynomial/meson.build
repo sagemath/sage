@@ -152,7 +152,7 @@ foreach name, pyx : extension_data_cpp
   elif name == 'polynomial_zmod_flint'
     deps += [flint]
   elif name == 'polynomial_integer_dense_flint'
-    deps += [flint, ntl]
+    deps += [cypari2, flint, ntl]
   else
     deps += [cypari2, givaro, mpfi, mpfr, ntl, pari, singular]
   endif
