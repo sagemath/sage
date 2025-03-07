@@ -75,10 +75,10 @@ from sage.rings.polynomial.pbori.pbori import (
 )
 
 # The following imports are necessary to make these objects available for backward compatibility
-from sage.rings.polynomial.pbori.pbori import Monomial as Monomial
-from sage.rings.polynomial.pbori.pbori import OrderCode as OrderCode
-from sage.rings.polynomial.pbori.pbori import Polynomial as Polynomial
-from sage.rings.polynomial.pbori.pbori import Variable as Variable
+from sage.rings.polynomial.pbori.pbori import Monomial as Monomial  # noqa: PLC0414
+from sage.rings.polynomial.pbori.pbori import OrderCode as OrderCode  # noqa: PLC0414
+from sage.rings.polynomial.pbori.pbori import Polynomial as Polynomial  # noqa: PLC0414
+from sage.rings.polynomial.pbori.pbori import Variable as Variable  # noqa: PLC0414
 from sage.rings.polynomial.pbori.pbori import gauss_on_polys as _gauss_on_polys
 
 
