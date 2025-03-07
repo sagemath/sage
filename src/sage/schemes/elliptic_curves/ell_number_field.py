@@ -158,7 +158,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             [(52 : 111 : 1)]
             sage: EK = E.base_extend(K)
             sage: EK.gens()
-            [(52 : 111 : 1)]
+            ((52 : 111 : 1),)
         """
         E = super().base_extend(R)
         if isinstance(E, EllipticCurve_number_field):
@@ -290,7 +290,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
         # time (when known_points may have increased) will not cause
         # another execution of simon_two_descent.
         try:
-            result = self._simon_two_descent_data[lim1,lim3,limtriv,maxprob,limbigprime]
+            result = self._simon_two_descent_data[lim1, lim3, limtriv,
+                                                  maxprob, limbigprime]
             if verbose == 0:
                 return result
         except AttributeError:
@@ -2327,9 +2328,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<a> = NumberField(x^2 + 23, 'a')
             sage: E = EllipticCurve(K,[0,0,0,101,0])
             sage: E.gens()
-            [(23831509/8669448*a - 2867471/8669448 : 76507317707/18049790736*a - 424166479633/18049790736 : 1),
+            ((23831509/8669448*a - 2867471/8669448 : 76507317707/18049790736*a - 424166479633/18049790736 : 1),
              (-2031032029/969232392*a + 58813561/969232392 : -15575984630401/21336681877488*a + 451041199309/21336681877488 : 1),
-             (-186948623/4656964 : 549438861195/10049728312*a : 1)]
+             (-186948623/4656964 : 549438861195/10049728312*a : 1))
 
         It can happen that no points are found if the height bounds
         used in the search are too small (see :issue:`10745`)::
@@ -2337,13 +2338,13 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<t> = NumberField(x^4 + x^2 - 7)
             sage: E = EllipticCurve(K, [1, 0, 5*t^2 + 16, 0, 0])
             sage: E.gens(lim1=1, lim3=1)
-            []
+            ()
             sage: E.rank()
             1
             sage: gg=E.gens(lim3=13); gg  # long time (about 4s)
-            [(... : 1)]
+            ((... : 1),)
 
-        Check that the the point found has infinite order, and that it is on the curve::
+        Check that the point found has infinite order, and that it is on the curve::
 
             sage: P=gg[0]; P.order()  # long time
             +Infinity
@@ -2355,7 +2356,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<t> = NumberField(x^2 - 17)
             sage: E = EllipticCurve(K, [-4, 0])
             sage: E.gens()
-            [(-1/2*t + 1/2 : -1/2*t + 1/2 : 1), (-t + 3 : -2*t + 10 : 1)]
+            ((-1/2*t + 1/2 : -1/2*t + 1/2 : 1), (-t + 3 : -2*t + 10 : 1))
             sage: E.rank()
             2
 
@@ -2367,7 +2368,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: EK.rank()
             0
             sage: EK.gens()
-            []
+            ()
 
         IMPLEMENTATION:
 
@@ -2377,10 +2378,10 @@ class EllipticCurve_number_field(EllipticCurve_field):
         PARI/GP scripts from http://www.math.unicaen.fr/~simon/.
         """
         try:
-            return self.gens_quadratic(**kwds)
+            return tuple(self.gens_quadratic(**kwds))
         except ValueError:
             self.simon_two_descent(**kwds)
-            return self._known_points
+            return tuple(self._known_points)
 
     def period_lattice(self, embedding):
         r"""
@@ -2447,7 +2448,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
              -0.14934463314391922099120107422 - 2.0661954627294548995621225062*I)
         """
         from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
-        return PeriodLattice_ell(self,embedding)
+        return PeriodLattice_ell(self, embedding)
 
     def real_components(self, embedding):
         """

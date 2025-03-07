@@ -2,16 +2,21 @@
 r"""
 Sage Runtime Environment
 
-Verify that importing ``sage.all`` works in Sage's Python without any ``SAGE_``
-environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
-(see also :issue:`29446`)::
+Verify that importing ``sage.all`` works in Sage's Python without any
+``SAGE_`` environment variables, and has the same ``SAGE_ROOT`` and
+``SAGE_LOCAL`` (see also :issue:`29446`). If ``SAGE_ROOT`` is a path,
+we normalize it, but keep in mind that ``SAGE_ROOT`` may also be
+``None``::
 
     sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
     sage: from subprocess import check_output
     sage: module_name = "sage.all"   # hide .all import from the linter
     sage: cmd  = f"from {module_name} import SAGE_ROOT, SAGE_LOCAL;"
     sage: cmd +=  "from os.path import samefile;"
-    sage: cmd += f"s1 = samefile(SAGE_ROOT, '{SAGE_ROOT}') if SAGE_ROOT else True;"
+    sage: if SAGE_ROOT is None:
+    ....:     cmd +=  "s1 = SAGE_ROOT is None;"
+    ....: else:
+    ....:     cmd += f"s1 = samefile(SAGE_ROOT, '{SAGE_ROOT}');"
     sage: cmd += f"s2 = samefile(SAGE_LOCAL, '{SAGE_LOCAL}');"
     sage: cmd += "print(s1 and s2);"
     sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
@@ -41,6 +46,8 @@ import sysconfig
 from typing import Optional
 
 from . import version
+import subprocess
+
 
 # All variables set by var() appear in this SAGE_ENV dict
 SAGE_ENV = dict()
@@ -310,6 +317,10 @@ def sage_include_directories(use_sources=False):
         sage: dirs = sage.env.sage_include_directories(use_sources=True)
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
+
+    ::
+
+        sage: # optional - !meson_editable (no need, see :issue:`39275`)
         sage: dirs = sage.env.sage_include_directories(use_sources=False)
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True

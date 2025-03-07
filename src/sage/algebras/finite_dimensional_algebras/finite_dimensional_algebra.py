@@ -497,7 +497,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         return True
 
     @cached_method
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return ``True`` if ``self`` is commutative.
 

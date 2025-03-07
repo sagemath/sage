@@ -2,6 +2,7 @@ iml = cc.find_library('iml')
 
 
 py.install_sources(
+  '__init__.py',
   'action.pxd',
   'all.py',
   'all__sagemath_meataxe.py',
@@ -98,7 +99,7 @@ extension_data = {
 foreach name, pyx : extension_data
   dependencies = [py_dep, cysignals, gmp]
   if name == 'matrix_gfpn_dense'
-    dependencies += [mtx, meataxe]
+    dependencies += [mtx]
   elif name == 'matrix_gap'
     dependencies += [gap]
   elif name == 'misc_mpfr'

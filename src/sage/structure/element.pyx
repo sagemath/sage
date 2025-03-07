@@ -817,9 +817,9 @@ cdef class Element(SageObject):
             ngens = parent.ngens()
         except (AttributeError, NotImplementedError, TypeError):
             return self
-        variables=[]
-        # use "gen" instead of "gens" as a ParentWithGens is not
-        # required to have the latter
+        variables = []
+
+        # using gen instead of gens
         for i in range(ngens):
             gen = parent.gen(i)
             if str(gen) in kwds:
@@ -4661,7 +4661,7 @@ def coerce_binop(method):
 
     EXAMPLES:
 
-    Sparse polynomial rings uses `@coerce_binop` on `gcd`::
+    Sparse polynomial rings uses ``@coerce_binop`` on ``gcd``::
 
         sage: S.<x> = PolynomialRing(ZZ, sparse=True)
         sage: f = x^2
@@ -4695,7 +4695,7 @@ def coerce_binop(method):
         sage: h.gcd(f, 'modular')
         1
 
-    We demonstrate a small class using `@coerce_binop` on a method::
+    We demonstrate a small class using ``@coerce_binop`` on a method::
 
         sage: from sage.structure.element import coerce_binop
         sage: class MyRational(Rational):
@@ -4737,6 +4737,7 @@ def coerce_binop(method):
         TypeError: algorithm 1 not supported
     """
     @sage_wraps(method)
+    @cython.binding(True)
     def new_method(self, other, *args, **kwargs):
         if have_same_parent(self, other):
             return method(self, other, *args, **kwargs)

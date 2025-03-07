@@ -70,6 +70,7 @@ computations for structural invariants are available.
    sage/coding/goppa_code
    sage/coding/kasami_codes
    sage/coding/ag_code
+   sage/coding/gabidulin_code
 
 .. toctree::
    :hidden:

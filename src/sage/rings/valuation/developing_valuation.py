@@ -81,8 +81,8 @@ class DevelopingValuation(DiscretePseudoValuation):
         DiscretePseudoValuation.__init__(self, parent)
 
         domain = parent.domain()
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if not isinstance(domain, PolynomialRing_general) or not domain.ngens() == 1:
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if not isinstance(domain, PolynomialRing_generic) or not domain.ngens() == 1:
             raise TypeError("domain must be a univariate polynomial ring but %r is not" % (domain,))
 
         phi = domain.coerce(phi)

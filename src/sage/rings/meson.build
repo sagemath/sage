@@ -1,8 +1,8 @@
 py.install_sources(
+  '__init__.py',
   'abc.pxd',
   'algebraic_closure_finite_field.py',
   'all.py',
-  'all__sagemath_categories.py',
   'all__sagemath_objects.py',
   'big_oh.py',
   'cc.py',
@@ -72,6 +72,7 @@ py.install_sources(
   'ring_extension_element.pxd',
   'ring_extension_homset.py',
   'ring_extension_morphism.pxd',
+  'species.py',
   'sum_of_squares.pxd',
   'tate_algebra.py',
   'tate_algebra_element.pxd',

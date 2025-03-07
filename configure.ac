@@ -222,7 +222,7 @@ dnl Exit autoconf with exit code 16 in this case. This will be
 dnl caught by the bootstrap script.
 m4_exit(16)])
 
-PKG_PROG_PKG_CONFIG([0.29], [PKG_CONFIG=false])
+PKG_PROG_PKG_CONFIG([0.29], [PKG_CONFIG=])
 
 AC_CHECK_PROG(found_ranlib, ranlib, yes, no)
 if test x$found_ranlib != xyes
@@ -431,7 +431,7 @@ AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
 ])
 AC_SUBST([SAGE_SPKG_OPTIONS])
 
-AC_ARG_ENABLE([sagelib],
+AC_ARG_ENABLE([sage_conf],
   AS_HELP_STRING([--disable-sage_conf],
                  [disable build of the sage_conf package]), [
     for pkg in sage_conf; do

@@ -173,6 +173,11 @@ call individually::
     3.60546360143265208591582056420772677481026899659802474544                    # 32-bit
 """
 
+from cypari2 import Pari
+
+from sage.ext.memory import init_memory_functions
+
+
 def _get_pari_instance():
     """
     TESTS::
@@ -180,14 +185,12 @@ def _get_pari_instance():
         sage: pari  # indirect doctest
         Interface to the PARI C library
     """
-    from cypari2 import Pari
-    stack_initial = 1024*1024
-    stack_max = 1024*stack_initial
+    stack_initial = 1024 * 1024
+    stack_max = 1024 * stack_initial
     P = Pari(stack_initial, stack_max)
 
     # pari_init_opts() overrides MPIR's memory allocation functions,
     # so we need to reset them.
-    from sage.ext.memory import init_memory_functions
     init_memory_functions()
 
     # PARI sets debugmem=1 by default but we do not want those warning

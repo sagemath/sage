@@ -19,11 +19,11 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.structure.element import ModuleElementWithMutability
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 from sage.tensor.modules.tensor_with_indices import TensorWithIndices
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
 
 
 class Section(ModuleElementWithMutability):
@@ -2213,8 +2213,10 @@ class Section(ModuleElementWithMutability):
             return self.copy()
         ###
         # General case:
-        from sage.tensor.modules.format_utilities import (format_mul_txt,
-                                                          format_mul_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_mul_latex,
+            format_mul_txt,
+        )
         resu = self._new_instance()
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = scalar.restrict(dom) * rst

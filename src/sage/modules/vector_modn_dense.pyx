@@ -315,7 +315,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         cdef Vector_modn_dense r = right
 
         if use_32bit_type(self._p):
-            n =  IntegerMod_int.__new__(IntegerMod_int)
+            n = IntegerMod_int.__new__(IntegerMod_int)
             IntegerMod_abstract.__init__(n, self.base_ring())
             n.ivalue = 0
             for i in range(self._degree):

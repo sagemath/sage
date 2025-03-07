@@ -1212,7 +1212,8 @@ class LatinSquare:
 
                     dlx_rows.append([c_OFFSET, r_OFFSET, xy_OFFSET])
 
-                    max_column_nr = max(max_column_nr, max(c_OFFSET, r_OFFSET, xy_OFFSET))
+                    max_column_nr = max(max_column_nr, c_OFFSET,
+                                        r_OFFSET, xy_OFFSET)
 
         # We will have missed some columns. We
         # have to add 'dummy' rows so that the C++ DLX solver will find

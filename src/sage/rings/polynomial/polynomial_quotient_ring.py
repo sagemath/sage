@@ -34,7 +34,7 @@ TESTS::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 
@@ -42,7 +42,7 @@ from . import polynomial_element
 import sage.rings.rational_field
 
 from sage.arith.misc import crt
-from sage.rings.ring import Field, IntegralDomain, CommutativeRing
+from sage.rings.ring import Field, CommutativeRing
 
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
@@ -383,7 +383,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         1
 
     The test suite passes. However, we have to skip the test for its elements,
-    since `an_element` has been cached in the call above and its class does not
+    since ``an_element`` has been cached in the call above and its class does not
     match the new category's element class anymore::
 
         sage: TestSuite(Q).run(skip=['_test_elements'])                                 # needs sage.rings.number_field
@@ -749,8 +749,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: Q = P.quo([(x^2 + 1)])
             sage: singular(Q)        # indirect doctest                                 # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 1
+            // coefficients: QQ...
+            // number of vars : 1
             //        block   1 : ordering lp
             //                  : names    xbar
             //        block   2 : ordering C
@@ -2277,7 +2277,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
         return richcmp(self.parent(), other.parent(), op)
 
 
-class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDomain):
+class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, CommutativeRing):
     """
     EXAMPLES::
 

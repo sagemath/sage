@@ -60,7 +60,8 @@ from sage.misc.cachefunc import cached_method
 
 
 try:
-    from sage.libs.pari.all import pari_gen, pari
+    from sage.libs.pari import pari
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -1630,7 +1631,7 @@ class BinaryQF(SageObject):
 
         ALGORITHM: :pari:`qfbsolve` or :pari:`qfbcornacchia`
 
-        TODO:: Replace `_flag` with human-readable parameters c.f. :issue:`37119`
+        TODO:: Replace ``_flag`` with human-readable parameters c.f. :issue:`37119`
 
         EXAMPLES::
 
@@ -1736,7 +1737,7 @@ class BinaryQF(SageObject):
             sage: Q(*xy)
             0
 
-        Test for different `_flag` values::
+        Test for different ``_flag`` values::
 
             sage: # needs sage.libs.pari
             sage: Q = BinaryQF([1, 0, 5])

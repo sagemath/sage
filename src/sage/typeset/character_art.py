@@ -685,8 +685,8 @@ class CharacterArt(SageObject):
 
         if self._baseline is not None and Nelt._baseline is not None:
             # left treatement
-            for line in self._matrix:
-                new_matrix.append(line + " " * (self._l - len(line)))
+            new_matrix.extend(line + " " * (self._l - len(line))
+                              for line in self._matrix)
 
             if new_h > self._h:
                 # |                 new_h > self._h
@@ -695,8 +695,9 @@ class CharacterArt(SageObject):
                 #  | }               :: Nelt._baseline - self._baseline
                 #  | }
                 if new_baseline > self._baseline:
-                    for k in range(new_baseline - self._baseline):
-                        new_matrix.append(" " * self._l)
+                    l_space = " " * self._l
+                    new_matrix.extend(l_space
+                                      for k in range(new_baseline - self._baseline))
                 #  | }              new_h > self._h
                 #  | }              new_h - new_baseline > self._h - self._baseline
                 # ||<-- baseline    number of white lines at the top
@@ -722,8 +723,8 @@ class CharacterArt(SageObject):
             for j in range(Nelt._h):
                 new_matrix[i + j] += Nelt._matrix[j]
         else:
-            for line in self._matrix:
-                new_matrix.append(line + " " * (self._l - len(line)))
+            new_matrix.extend(line + " " * (self._l - len(line))
+                              for line in self._matrix)
             for i, line_i in enumerate(Nelt._matrix):
                 if i == len(new_matrix):
                     new_matrix.append(" " * self._l + line_i)

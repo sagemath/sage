@@ -128,7 +128,7 @@ class CNFEncoder(ANF2CNFConverter):
         self.cutting_number = cutting_number
 
         if use_xor_clauses is None:
-            use_xor_clauses = hasattr(solver,"add_xor_clause")
+            use_xor_clauses = hasattr(solver, "add_xor_clause")
         self.use_xor_clauses = use_xor_clauses
 
         self.ring = ring
@@ -222,7 +222,7 @@ class CNFEncoder(ANF2CNFConverter):
                     indices.append(nav.value())
                     nav = t
                 else:
-                    if self.random_generator.randint(0,1):
+                    if self.random_generator.randint(0, 1):
                         indices.append(nav.value())
                         nav = t
 
@@ -337,11 +337,11 @@ class CNFEncoder(ANF2CNFConverter):
             for fpart, this_equal_zero in self.split_xor(f, equal_zero):
                 ll = len(fpart)
                 for p in self.permutations(ll, this_equal_zero):
-                    self.solver.add_clause([ p[i]*fpart[i] for i in range(ll) ])
+                    self.solver.add_clause([p[i] * fpart[i] for i in range(ll)])
         else:
             ll = len(f)
             for p in self.permutations(ll, equal_zero):
-                self.solver.add_clause([ p[i]*f[i] for i in range(ll) ])
+                self.solver.add_clause([p[i] * f[i] for i in range(ll)])
 
     @cached_method
     def monomial(self, m):
@@ -387,19 +387,19 @@ class CNFEncoder(ANF2CNFConverter):
             For correctness, this function is cached.
         """
         if m.deg() == 1:
-            return m.index()+1
-        else:
-            # we need to encode the relationship between the monomial
-            # and its variables
-            variables = [self.monomial(v) for v in m.variables()]
-            monomial = self.var(m)
+            return m.index() + 1
 
-            # (a | -w) & (b | -w) & (w | -a | -b) <=> w == a*b
-            for v in variables:
-                self.solver.add_clause( (v, -monomial) )
-            self.solver.add_clause( tuple([monomial] + [-v for v in variables]) )
+        # we need to encode the relationship between the monomial
+        # and its variables
+        variables = [self.monomial(v) for v in m.variables()]
+        monomial = self.var(m)
 
-            return monomial
+        # (a | -w) & (b | -w) & (w | -a | -b) <=> w == a*b
+        for v in variables:
+            self.solver.add_clause((v, -monomial))
+        self.solver.add_clause(tuple([monomial] + [-v for v in variables]))
+
+        return monomial
 
     @cached_function
     def permutations(length, equal_zero):

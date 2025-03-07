@@ -30,10 +30,8 @@ works out nicely::
     sage: T.invariants()
     [15]
     sage: d = J.decomposition(); d
-    [
-    Simple abelian subvariety 50a(1,50) of dimension 1 of J0(50),
-    Simple abelian subvariety 50b(1,50) of dimension 1 of J0(50)
-    ]
+    [Simple abelian subvariety 50a(1,50) of dimension 1 of J0(50),
+     Simple abelian subvariety 50b(1,50) of dimension 1 of J0(50)]
     sage: d[0].rational_torsion_subgroup().order()
     3
     sage: d[1].rational_torsion_subgroup().order()

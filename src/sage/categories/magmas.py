@@ -398,7 +398,7 @@ class Magmas(Category_singleton):
     class Commutative(CategoryWithAxiom):
 
         class ParentMethods:
-            def is_commutative(self):
+            def is_commutative(self) -> bool:
                 """
                 Return ``True``, since commutative magmas are commutative.
 

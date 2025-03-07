@@ -56,6 +56,13 @@ cdef number *sa2si_NF(object element, ring *_ring) noexcept
 cdef number *sa2si(Element elem, ring * _ring) noexcept
 
 # ==============
+# Error handling
+# ==============
+
+cdef int start_catch_error() except -1
+cdef object check_error()
+
+# ==============
 # Initialisation
 # ==============
 

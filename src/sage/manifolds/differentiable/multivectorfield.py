@@ -36,9 +36,9 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 
 
 class MultivectorField(TensorField):
@@ -300,8 +300,8 @@ class MultivectorField(TensorField):
             sage: c.display(e_uv)
             a∧b = (-v^2 + u) ∂/∂u∧∂/∂v
         """
-        from sage.typeset.unicode_characters import unicode_wedge
         from sage.tensor.modules.format_utilities import is_atomic
+        from sage.typeset.unicode_characters import unicode_wedge
         if self._domain.is_subset(other._domain):
             if not self._ambient_domain.is_subset(other._ambient_domain):
                 raise ValueError("incompatible ambient domains for exterior " +
@@ -1401,10 +1401,10 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             True
         """
         from itertools import combinations
+
         from sage.combinat.permutation import Permutation
-        from sage.tensor.modules.comp import (Components, CompWithSym,
-                                              CompFullyAntiSym)
         from sage.manifolds.differentiable.scalarfield import DiffScalarField
+        from sage.tensor.modules.comp import CompFullyAntiSym, Components, CompWithSym
         pp = self._tensor_rank
         mp1 = (-1)**(pp+1)
         if isinstance(other, DiffScalarField):

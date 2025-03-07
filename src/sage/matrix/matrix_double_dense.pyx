@@ -2396,8 +2396,8 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         r"""
         Return ``True`` if the matrix is (skew-)Hermitian.
 
-        For internal purposes. This function is used in `is_hermitian`
-        and `is_skew_hermitian` functions.
+        For internal purposes. This function is used in ``is_hermitian``
+        and ``is_skew_hermitian`` functions.
 
         INPUT:
 

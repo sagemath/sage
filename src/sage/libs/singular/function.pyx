@@ -97,7 +97,7 @@ from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_g
 from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
 from sage.libs.singular.polynomial cimport singular_vector_maximal_component
-from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec, si2sa_bigintvec
+from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec, si2sa_bigintvec, start_catch_error, check_error
 from sage.libs.singular.singular import error_messages
 
 from sage.interfaces.singular import get_docstring
@@ -276,8 +276,8 @@ cdef class RingWrap:
             sage: l = ringlist(P)
             sage: ring = singular_function("ring")
             sage: ring(l, ring=P)._output()
-            //   coefficients: QQ
-            //   number of vars : 3
+            // coefficients: QQ...
+            // number of vars : 3
             //        block   1 : ordering dp
             //                  : names    x y z
             //        block   2 : ordering C
@@ -386,11 +386,8 @@ def is_sage_wrapper_for_singular_ring(ring):
         sage: is_sage_wrapper_for_singular_ring(P)
         True
     """
-    if isinstance(ring, MPolynomialRing_libsingular):
-        return True
-    if isinstance(ring, NCPolynomialRing_plural):
-        return True
-    return False
+    return isinstance(ring, (MPolynomialRing_libsingular,
+                             NCPolynomialRing_plural))
 
 
 cdef new_sage_polynomial(ring,  poly *p):
@@ -523,8 +520,7 @@ cdef class Converter(SageObject):
             elif is_sage_wrapper_for_singular_ring(a):
                 v = self.append_ring(a)
 
-            elif isinstance(a, MPolynomialIdeal) or \
-                    isinstance(a, NCPolynomialIdeal):
+            elif isinstance(a, (MPolynomialIdeal, NCPolynomialIdeal)):
                 v = self.append_ideal(a)
 
             elif isinstance(a, int):
@@ -569,8 +565,7 @@ cdef class Converter(SageObject):
             elif isinstance(a, tuple):
                 is_intvec = True
                 for i in a:
-                    if not (isinstance(i, int)
-                        or isinstance(i, Integer)):
+                    if not isinstance(i, (int, Integer)):
                         is_intvec = False
                         break
                 if is_intvec:
@@ -584,7 +579,7 @@ cdef class Converter(SageObject):
                 v = self.append_int(a)
 
             else:
-                raise TypeError("unknown argument type '%s'"%(type(a),))
+                raise TypeError("unknown argument type '%s'" % (type(a),))
 
             if attributes and a in attributes:
                 for attrib in attributes[a]:
@@ -593,7 +588,7 @@ cdef class Converter(SageObject):
                         atSet(v, omStrDup("isSB"), <void*>val, INT_CMD)
                         setFlag(v, FLAG_STD)
                     else:
-                        raise NotImplementedError("Support for attribute '%s' not implemented yet."%attrib)
+                        raise NotImplementedError("Support for attribute '%s' not implemented yet." % attrib)
 
     def ring(self):
         """
@@ -808,15 +803,15 @@ cdef class Converter(SageObject):
         """
         Append the number ``n`` to the list.
         """
-        cdef number *_n =  sa2si(n, self._singular_ring)
+        cdef number *_n = sa2si(n, self._singular_ring)
         return self._append(<void *>_n, NUMBER_CMD)
 
     cdef leftv *append_ring(self, r) except NULL:
         """
         Append the ring ``r`` to the list.
         """
-        cdef ring *_r =  access_singular_ring(r)
-        _r.ref+=1
+        cdef ring *_r = access_singular_ring(r)
+        _r.ref += 1
         return self._append(<void *>_r, RING_CMD)
 
     cdef leftv *append_matrix(self, mat) except NULL:
@@ -838,7 +833,7 @@ cdef class Converter(SageObject):
         """
         Append the integer ``n`` to the list.
         """
-        cdef long _n =  n
+        cdef long _n = n
         return self._append(<void*>_n, INT_CMD)
 
     cdef leftv *append_list(self, l) except NULL:
@@ -1304,8 +1299,9 @@ cdef class SingularFunction(SageObject):
                     from sage.rings.rational_field import QQ
                     dummy_ring = PolynomialRing(QQ, "dummy", implementation='singular') # seems a reasonable default
                 ring = dummy_ring
-        if not (isinstance(ring, MPolynomialRing_libsingular) or isinstance(ring, NCPolynomialRing_plural)):
-            raise TypeError("cannot call Singular function '%s' with ring parameter of type '%s'" % (self._name,type(ring)))
+        if not isinstance(ring, (MPolynomialRing_libsingular,
+                                 NCPolynomialRing_plural)):
+            raise TypeError("cannot call Singular function '%s' with ring parameter of type '%s'" % (self._name, type(ring)))
         return call_function(self, args, ring, interruptible, attributes)
 
     def _instancedoc_(self):
@@ -1450,10 +1446,8 @@ EXAMPLES::
 
 cdef inline call_function(SingularFunction self, tuple args, object R, bint signal_handler=True, attributes=None):
     global currRingHdl
-    global errorreported
     global currentVoice
     global myynest
-    global error_messages
 
     cdef ring *si_ring
     if isinstance(R, MPolynomialRing_libsingular):
@@ -1474,29 +1468,28 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
 
     currentVoice = NULL
     myynest = 0
-    errorreported = 0
-
-    while error_messages:
-        error_messages.pop()
+    start_catch_error()
 
     with opt_ctx: # we are preserving the global options state here
         if signal_handler:
-            sig_on()
-            _res = self.call_handler.handle_call(argument_list, si_ring)
-            sig_off()
+            try:
+                sig_on()
+                _res = self.call_handler.handle_call(argument_list, si_ring)
+                sig_off()
+            finally:
+                s = check_error()
         else:
             _res = self.call_handler.handle_call(argument_list, si_ring)
+            s = check_error()
 
-    if myynest:
-        myynest = 0
+    myynest = 0
 
     if currentVoice:
         currentVoice = NULL
 
-    if errorreported:
-        errorreported = 0
+    if s:
         raise RuntimeError("error in Singular function call %r:\n%s" %
-            (self._name, "\n".join(error_messages)))
+                           (self._name, "\n".join(s)))
 
     res = argument_list.to_python(_res)
 

@@ -409,6 +409,7 @@ from sage.rings import ideal
 import sage.structure.all
 from sage.structure.richcmp cimport (richcmp, rich_to_bool)
 from sage.misc.cachefunc import cached_method
+from sage.categories.rings import Rings
 from sage.categories.facade_sets import FacadeSets
 
 
@@ -1036,7 +1037,7 @@ cdef class RingHomomorphism(RingMap):
         from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
         from sage.rings.quotient_ring import QuotientRing_nc
         from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         B = self.codomain()
         graph, from_B, to_A = self._graph_ideal()
         Q = graph.ring()
@@ -1045,8 +1046,10 @@ cdef class RingHomomorphism(RingMap):
             # avoid adding the 0-ideal to the graph ideal in order to benefit
             # from a cached Gröbner basis
             graph_I = graph
-        elif (isinstance(B, MPolynomialRing_base) or isinstance(B, PolynomialRing_general)
-              or isinstance(B, QuotientRing_nc) or isinstance(B, PolynomialQuotientRing_generic)):
+        elif isinstance(B, (MPolynomialRing_base,
+                            PolynomialRing_generic,
+                            QuotientRing_nc,
+                            PolynomialQuotientRing_generic)):
             graph_I = graph + from_B(I)
         else:
             # nonzero fractional ideals of number fields not yet supported
@@ -1286,7 +1289,8 @@ cdef class RingHomomorphism(RingMap):
         from sage.rings.ideal import Ideal_generic
         A = self.domain()
         B = self.codomain()
-        if not (A.is_commutative() and B.is_commutative()):
+        Comm = Rings().Commutative()
+        if not (A in Comm and B in Comm):
             raise NotImplementedError("rings are not commutative")
         if A.base_ring() != B.base_ring():
             raise NotImplementedError("base rings must be equal")
@@ -3137,7 +3141,7 @@ def _tensor_product_ring(B, A):
     from sage.rings.number_field.number_field_base import NumberField
     from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
     from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
-    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     from sage.rings.polynomial.term_order import TermOrder
     from sage.rings.quotient_ring import QuotientRing_nc
@@ -3150,7 +3154,7 @@ def _tensor_product_ring(B, A):
 
     def term_order(A):
         # univariate rings do not have a term order
-        if (isinstance(A, PolynomialRing_general) or isinstance(A, PolynomialQuotientRing_generic)
+        if (isinstance(A, (PolynomialRing_generic, PolynomialQuotientRing_generic))
             or (isinstance(A, (NumberField, FiniteField))
                 and not A.is_prime_field())):
             return TermOrder('lex', 1)
@@ -3166,7 +3170,7 @@ def _tensor_product_ring(B, A):
                        order=term_order(B) + term_order(A))
 
     def relations(A, R_gens_A):
-        if isinstance(A, MPolynomialRing_base) or isinstance(A, PolynomialRing_general):
+        if isinstance(A, (MPolynomialRing_base, PolynomialRing_generic)):
             return []
         elif isinstance(A, PolynomialQuotientRing_generic):
             to_R = A.ambient().hom(R_gens_A, R, check=False)

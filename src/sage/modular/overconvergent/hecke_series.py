@@ -236,15 +236,11 @@ def low_weight_generators(N, p, m, NN):
         [q + 116*q^4 + 115*q^5 + 102*q^6 + 121*q^7 + 96*q^8 + 106*q^9 + O(q^10)]], 4)
     """
     M = ModularFormsRing(N, base_ring=Zmod(p))
-
     b = M.gen_forms(maxweight=8)
-
-    weightbound = max([f.weight() for f in b])
-    generators = []
-
-    for k in range(2, weightbound + 2, 2):
-        generators.append([f.qexp(NN).change_ring(Zmod(p ** m)) for f in b if f.weight() == k])
-
+    weightbound = max(f.weight() for f in b)
+    generators = [[f.qexp(NN).change_ring(Zmod(p ** m))
+                   for f in b if f.weight() == k]
+                  for k in range(2, weightbound + 2, 2)]
     return generators, weightbound
 
 

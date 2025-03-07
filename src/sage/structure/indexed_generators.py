@@ -316,7 +316,7 @@ class IndexedGenerators:
                     return names[m]
                 except KeyError:
                     return None
-            else: # treat it like a list
+            else:  # treat it like a list
                 try:
                     i = self._indices.rank(m)
                 except (AttributeError, TypeError, KeyError, ValueError):
@@ -458,7 +458,7 @@ class IndexedGenerators:
                 return self.prefix() + left + (', '.join(repr(val) for val in m)) + right
         if not quotes and isinstance(m, str):
             return self.prefix() + left + m + right
-        return self.prefix() + left + repr(m) + right # mind the (m), to accept a tuple for m
+        return self.prefix() + left + repr(m) + right  # mind the (m), to accept a tuple for m
 
     def _ascii_art_generator(self, m):
         r"""

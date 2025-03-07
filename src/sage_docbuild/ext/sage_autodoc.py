@@ -37,13 +37,14 @@ AUTHORS:
 - François Bissey (2024-09-10): Tweaks to support python 3.9 (and older sphinx) as well
 
 - François Bissey (2024-11-12): rebased on Sphinx 8.1.3 (while trying to keep python 3.9 compatibility)
+
+- François Bissey (2025-02-24): Remove python 3.9 support hacks, making us closer to upstream
 """
 
 from __future__ import annotations
 
 import functools
 import operator
-import sys
 import re
 from inspect import Parameter, Signature
 from typing import TYPE_CHECKING, Any, NewType, TypeVar
@@ -81,8 +82,12 @@ from sage.misc.sageinspect import (sage_getdoc_original,
                                    is_function_or_cython_function)
 
 _getdoc = getdoc
+
+
 def getdoc(obj, *args, **kwargs):
     return sage_getdoc_original(obj)
+
+
 # ------------------------------------------------------------------
 
 if TYPE_CHECKING:
@@ -705,7 +710,7 @@ class Documenter:
 
         # add additional content (e.g. from document), if present
         if more_content:
-            for line, src in zip(more_content.data, more_content.items):
+            for line, src in zip(more_content.data, more_content.items, strict=True):
                 self.add_line(line, src[0], src[1])
 
     def get_object_members(self, want_all: bool) -> tuple[bool, list[ObjectMember]]:
@@ -1076,7 +1081,7 @@ class ModuleDocumenter(Documenter):
         super().add_content(None)
         self.indent = old_indent
         if more_content:
-            for line, src in zip(more_content.data, more_content.items):
+            for line, src in zip(more_content.data, more_content.items, strict=True):
                 self.add_line(line, src[0], src[1])
 
     @classmethod
@@ -1612,14 +1617,8 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
     def can_document_member(
         cls: type[Documenter], member: Any, membername: str, isattr: bool, parent: Any,
     ) -> bool:
-        # support both sphinx 8 and py3.9/older sphinx
-        try:
-            result_bool = isinstance(member, type) or (
-                isattr and isinstance(member, NewType | TypeVar))
-        except:
-            result_bool = isinstance(member, type) or (
-                isattr and (inspect.isNewType(member) or isinstance(member, TypeVar)))
-        return result_bool
+        return isinstance(member, type) or (
+            isattr and isinstance(member, NewType | TypeVar))
 
     def import_object(self, raiseerror: bool = False) -> bool:
         ret = super().import_object(raiseerror)
@@ -1692,12 +1691,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             # -------------------------------------------------------------------
             else:
                 self.doc_as_attr = True
-            # support both sphinx 8 and py3.9/older sphinx
-            try:
-                test_bool = isinstance(self.object, NewType | TypeVar)
-            except:
-                test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
-            if test_bool:
+            if isinstance(self.object, NewType | TypeVar):
                 modname = getattr(self.object, '__module__', self.modname)
                 if modname != self.modname and self.modname.startswith(modname):
                     bases = self.modname[len(modname):].strip('.').split('.')
@@ -1706,12 +1700,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         return ret
 
     def _get_signature(self) -> tuple[Any | None, str | None, Signature | None]:
-        # support both sphinx 8 and py3.9/older sphinx
-        try:
-            test_bool = isinstance(self.object, NewType | TypeVar)
-        except:
-            test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
-        if test_bool:
+        if isinstance(self.object, NewType | TypeVar):
             # Suppress signature
             return None, None, None
 
@@ -1896,24 +1885,14 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             self.directivetype = 'attribute'
         super().add_directive_header(sig)
 
-        # support both sphinx 8 and py3.9/older sphinx
-        try:
-            test_bool = isinstance(self.object, NewType | TypeVar)
-        except:
-            test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
-        if test_bool:
+        if isinstance(self.object, NewType | TypeVar):
             return
 
         if self.analyzer and '.'.join(self.objpath) in self.analyzer.finals:
             self.add_line('   :final:', sourcename)
 
         canonical_fullname = self.get_canonical_fullname()
-        # support both sphinx 8 and py3.9/older sphinx
-        try:
-            newtype_test = isinstance(self.object, NewType)
-        except:
-            newtype_test = inspect.isNewType(self.object)
-        if (not self.doc_as_attr and not newtype_test
+        if (not self.doc_as_attr and not isinstance(self.object, NewType)
                 and canonical_fullname and self.fullname != canonical_fullname):
             self.add_line('   :canonical: %s' % canonical_fullname, sourcename)
 
@@ -1965,28 +1944,6 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         if isinstance(self.object, TypeVar):
             if self.object.__doc__ == TypeVar.__doc__:
                 return []
-        # ------------------------------------------------------------------
-        # This section is kept for compatibility with python 3.9
-        # see https://github.com/sagemath/sage/pull/38549#issuecomment-2327790930
-        if sys.version_info[:2] < (3, 10):
-            if inspect.isNewType(self.object) or isinstance(self.object, TypeVar):
-                parts = self.modname.strip('.').split('.')
-                orig_objpath = self.objpath
-                for i in range(len(parts)):
-                    new_modname = '.'.join(parts[:len(parts) - i])
-                    new_objpath = parts[len(parts) - i:] + orig_objpath
-                    try:
-                        analyzer = ModuleAnalyzer.for_module(new_modname)
-                        analyzer.analyze()
-                        key = ('', new_objpath[-1])
-                        comment = list(analyzer.attr_docs.get(key, []))
-                        if comment:
-                            self.objpath = new_objpath
-                            self.modname = new_modname
-                            return [comment]
-                    except PycodeError:
-                        pass
-        # ------------------------------------------------------------------
         if self.doc_as_attr:
             # Don't show the docstring of the class when it is an alias.
             if self.get_variable_comment():
@@ -2050,12 +2007,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             return None
 
     def add_content(self, more_content: StringList | None) -> None:
-        # support both sphinx 8 and py3.9/older sphinx
-        try:
-            newtype_test = isinstance(self.object, NewType)
-        except:
-            newtype_test = inspect.isNewType(self.object)
-        if newtype_test:
+        if isinstance(self.object, NewType):
             if self.config.autodoc_typehints_format == "short":
                 supertype = restify(self.object.__supertype__, "smart")
             else:
@@ -3024,14 +2976,9 @@ class PropertyDocumenter(DocstringStripSignatureMixin,  # type: ignore[misc]
 
 def autodoc_attrgetter(app: Sphinx, obj: Any, name: str, *defargs: Any) -> Any:
     """Alternative getattr() for types"""
-    try:
-        for typ, func in app.registry.autodoc_attrgetters.items():
-            if isinstance(obj, typ):
-                return func(obj, name, *defargs)
-    except AttributeError:
-        for typ, func in app.registry.autodoc_attrgettrs.items():
-            if isinstance(obj, typ):
-                return func(obj, name, *defargs)
+    for typ, func in app.registry.autodoc_attrgetters.items():
+        if isinstance(obj, typ):
+            return func(obj, name, *defargs)
 
     return safe_getattr(obj, name, *defargs)
 

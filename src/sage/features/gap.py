@@ -16,6 +16,7 @@ from . import Feature, FeatureTestResult, PythonModule
 from .join_feature import JoinFeature
 from .sagemath import sage__libs__gap
 
+
 class GapPackage(Feature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of a GAP package.

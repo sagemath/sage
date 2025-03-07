@@ -475,6 +475,7 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
         # Prevent finding twice a solution
         p.add_constraint(p.sum(b[u] for u in dom) <= best - 1)
 
+
 def dominating_set(g, k=1, independent=False, total=False, connected=False, value_only=False,
                    solver=None, verbose=0, *, integrality_tolerance=1e-3):
     r"""
@@ -586,6 +587,7 @@ def dominating_set(g, k=1, independent=False, total=False, connected=False, valu
 # ==============================================================================
 # Enumeration of minimal dominating set as described in [BDHPR2019]_
 # ==============================================================================
+
 
 def _parent(G, dom, V_prev):
     r"""

@@ -1556,7 +1556,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         gmat = fpylll.IntegerMatrix(dim, dim)
         for i in range(dim):
             for j in range(dim):
-                gmat[i,j] = gram[i,j]
+                gmat[i, j] = gram[i, j]
         gso = fpylll.GSO.Mat(gmat, gram=True)
         ok = gso.update_gso()
         assert ok
@@ -1564,11 +1564,12 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         coord = None
         if target is not None:
             coord = basis.solve_left(target)
-            Mu = 1 + matrix([gso.get_mu(i,j) for j in range(dim)] for i in range(dim))
+            Mu = 1 + matrix([gso.get_mu(i, j) for j in range(dim)]
+                            for i in range(dim))
             coord *= Mu
 
         count = 8
-        bound = gso.get_r(dim-1, dim-1)
+        bound = gso.get_r(dim - 1, dim - 1)
         seen = set()
         while True:
             enum = fpylll.Enumeration(gso, count, fpylll.EvaluatorStrategy.BEST_N_SOLUTIONS)
@@ -1579,8 +1580,8 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             if len(combs) < count:
                 bound *= 2
                 continue
-            for length,comb in combs:
-                vec = sum(ZZ(c)*b for c,b in zip(comb,basis))
+            for length, comb in combs:
+                vec = sum(ZZ(c) * b for c, b in zip(comb, basis))
                 if tuple(vec) not in seen:
                     yield vec
                     seen.add(tuple(vec))

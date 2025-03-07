@@ -14,7 +14,7 @@ class Glucose(Executable):
     EXAMPLES::
 
         sage: from sage.features.sat import Glucose
-        sage: GlucoseExecutable().is_present()                  # optional - glucose
+        sage: Glucose().is_present()                  # optional - glucose
         FeatureTestResult('glucose', True)
     """
     def __init__(self, executable="glucose"):
@@ -59,7 +59,7 @@ class Pycosat(PythonModule):
     EXAMPLES::
 
         sage: from sage.features.sat import Pycosat
-        sage: PycosatExecutable().is_present()                  # optional - pycosat
+        sage: Pycosat().is_present()                  # optional - pycosat
         FeatureTestResult('pycosat', True)
     """
     def __init__(self):
@@ -81,7 +81,7 @@ class Pycryptosat(PythonModule):
     EXAMPLES::
 
         sage: from sage.features.sat import Pycryptosat
-        sage: PycryptosatExecutable().is_present()              # optional - pycryptosat
+        sage: Pycryptosat().is_present()              # optional - pycryptosat
         FeatureTestResult('pycryptosat', True)
     """
     def __init__(self):

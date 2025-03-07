@@ -63,16 +63,17 @@ from collections import deque
 
 from libc.string cimport memset
 from libc.stdint cimport uint32_t
-from libcpp.queue cimport priority_queue
-from libcpp.pair cimport pair
 from libcpp.vector cimport vector
 from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
+from sage.data_structures.pairing_heap cimport PairingHeap_of_n_integers
+from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from sage.graphs.base.static_sparse_graph cimport out_degree
-from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
 from sage.graphs.graph_decompositions.slice_decomposition cimport \
         extended_lex_BFS
 
@@ -753,8 +754,7 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
     - ``labels`` -- boolean (default: ``False``); whether to return the labels
       assigned to each vertex
 
-    - ``initial_vertex`` -- (default: ``None``) the first vertex to
-      consider
+    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
 
     - ``algorithm`` -- string (default: ``None``); one of the following
       algorithms:
@@ -819,6 +819,18 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
         sage: g = Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5), (3, 5), (3, 6), (4, 5), (5, 6)])
         sage: g.lex_M()
         [6, 4, 5, 3, 2, 1]
+
+    The ordering depends on the initial vertex::
+
+        sage: G = graphs.HouseGraph()
+        sage: G.lex_M(algorithm='lex_M_slow', initial_vertex=0)
+        [4, 3, 2, 1, 0]
+        sage: G.lex_M(algorithm='lex_M_slow', initial_vertex=2)
+        [1, 4, 3, 0, 2]
+        sage: G.lex_M(algorithm='lex_M_fast', initial_vertex=0)
+        [4, 3, 2, 1, 0]
+        sage: G.lex_M(algorithm='lex_M_fast', initial_vertex=2)
+        [1, 4, 3, 0, 2]
 
     TESTS:
 
@@ -1127,6 +1139,18 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
+
+    Immutable graphs::
+
+        sage: from sage.graphs.traversals import lex_M_fast
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: lex_M_fast(G) == lex_M_fast(H)
+        True
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -1136,22 +1160,30 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
 
     # ==> Initialization
 
-    cdef list int_to_v = list(G)
     cdef int i, j, k, v, w, z
 
-    if initial_vertex is not None:
-        # We put the initial vertex at first place in the ordering
-        i = int_to_v.index(initial_vertex)
-        int_to_v[0], int_to_v[i] = int_to_v[i], int_to_v[0]
-
+    cdef list int_to_v
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_v = cg._vertex_to_labels
+    else:
+        int_to_v = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
 
     cdef int n = G.order()
 
     cdef list unnumbered_vertices = list(range(n))
+
+    if initial_vertex is not None:
+        # We put the initial vertex at the first place
+        i = int_to_v.index(initial_vertex)
+        unnumbered_vertices[0], unnumbered_vertices[i] = unnumbered_vertices[i], unnumbered_vertices[0]
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* label = <int*>mem.allocarray(n, sizeof(int))
@@ -1237,7 +1269,8 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
                     k += 2
                 label[w] = k
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
 
     cdef list ordering = [int_to_v[alpha[i]] for i in range(n)]
 
@@ -1354,9 +1387,9 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
         sage: G.maximum_cardinality_search(initial_vertex=0)
         [3, 2, 1, 0]
         sage: G.maximum_cardinality_search(initial_vertex=1)
-        [0, 3, 2, 1]
+        [3, 2, 0, 1]
         sage: G.maximum_cardinality_search(initial_vertex=2)
-        [0, 1, 3, 2]
+        [0, 3, 1, 2]
         sage: G.maximum_cardinality_search(initial_vertex=3)
         [0, 1, 2, 3]
         sage: G.maximum_cardinality_search(initial_vertex=3, reverse=True)
@@ -1388,6 +1421,17 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
         Traceback (most recent call last):
         ...
         ValueError: vertex (17) is not a vertex of the graph
+
+    Immutable graphs;:
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.maximum_cardinality_search() == H.maximum_cardinality_search()
+        True
     """
     if tree:
         from sage.graphs.digraph import DiGraph
@@ -1398,17 +1442,27 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     if N == 1:
         return (list(G), DiGraph(G)) if tree else list(G)
 
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
+    cdef short_digraph sd
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     if initial_vertex is None:
         initial_vertex = 0
     elif initial_vertex in G:
-        initial_vertex = int_to_vertex.index(initial_vertex)
+        if isinstance(G, StaticSparseBackend):
+            initial_vertex = cg._vertex_to_int[initial_vertex]
+        else:
+            initial_vertex = int_to_vertex.index(initial_vertex)
     else:
         raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
 
-    cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
     cdef uint32_t** p_vertices = sd.neighbors
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
@@ -1420,27 +1474,18 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     cdef int i, u, v
     for i in range(N):
-        weight[i] = 0
-        seen[i] = False
         pred[i] = i
 
-    # We emulate a heap with decrease key operation using a priority queue.
-    # A vertex can be inserted multiple times (up to its degree), but only the
-    # first extraction (with maximum weight) matters. The size of the queue will
-    # never exceed O(m).
-    cdef priority_queue[pair[int, int]] pq
-    pq.push((0, initial_vertex))
+    # We emulate a max-heap data structure using a min-heap with negative values
+    cdef PairingHeap_of_n_integers P = PairingHeap_of_n_integers(N)
+    P.push(initial_vertex, 0)
 
     # The ordering alpha is feed in reversed order and revert afterword
     cdef list alpha = []
 
-    while not pq.empty():
-        _, u = pq.top()
-        pq.pop()
-        if seen[u]:
-            # We use a lazy decrease key mode, so u can be several times in pq
-            continue
-
+    while P:
+        u = P.top_item()
+        P.pop()
         alpha.append(int_to_vertex[u])
         seen[u] = True
 
@@ -1450,12 +1495,13 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
             v = p_tmp[0]
             if not seen[v]:
                 weight[v] += 1
-                pq.push((weight[v], v))
+                P.decrease(v, -weight[v])
                 if pred[v] == v:
                     pred[v] = u
             p_tmp += 1
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
 
     if len(alpha) < N:
         raise ValueError("the input graph is not connected")
@@ -1762,16 +1808,18 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: vertex (17) is not a vertex of the graph
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.maximum_cardinality_search_M() == H.maximum_cardinality_search_M()
+        True
     """
-    cdef list int_to_vertex = list(G)
-
-    if initial_vertex is None:
-        initial_vertex = 0
-    elif initial_vertex in G:
-        initial_vertex = int_to_vertex.index(initial_vertex)
-    else:
-        raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
-
     cdef int N = G.order()
     if not N:
         return ([], [], [])
@@ -1781,8 +1829,26 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+
+    if initial_vertex is None:
+        initial_vertex = 0
+    elif initial_vertex in G:
+        if isinstance(G, StaticSparseBackend):
+            initial_vertex = cg._vertex_to_int[initial_vertex]
+        else:
+            initial_vertex = int_to_vertex.index(initial_vertex)
+    else:
+        raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* alpha = <int*>mem.calloc(N, sizeof(int))
@@ -1794,7 +1860,8 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     maximum_cardinality_search_M_short_digraph(sd, initial_vertex, alpha, alpha_inv, F, X)
     sig_off()
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
 
     cdef int u, v
     return ([int_to_vertex[alpha[u]] for u in range(N)],
