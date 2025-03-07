@@ -948,12 +948,12 @@ cpdef _OA_cache_set(int k, int n, truth_value):
         _OA_cache_size = new_cache_size
 
     if truth_value is True:
-        _OA_cache[n].max_true    = k if k>_OA_cache[n].max_true    else _OA_cache[n].max_true
+        _OA_cache[n].max_true = k if k>_OA_cache[n].max_true else _OA_cache[n].max_true
     elif truth_value is Unknown:
         _OA_cache[n].min_unknown = k if k<_OA_cache[n].min_unknown else _OA_cache[n].min_unknown
         _OA_cache[n].max_unknown = k if k>_OA_cache[n].max_unknown else _OA_cache[n].max_unknown
     else:
-        _OA_cache[n].min_false   = k if k<_OA_cache[n].min_false   else _OA_cache[n].min_false
+        _OA_cache[n].min_false = k if k<_OA_cache[n].min_false else _OA_cache[n].min_false
 
 cpdef _OA_cache_get(int k, int n):
     r"""
