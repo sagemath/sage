@@ -47,8 +47,7 @@ Distribution._removed = staticmethod(lambda ep: True)
 
 import sage.env
 sage.env.SAGE_SRC = os.getcwd()
-from sage.env import sage_include_directories
-from sage_setup.cython_options import cython_aliases
+from sage.env import cython_aliases, sage_include_directories
 
 sys.excepthook = excepthook
 
