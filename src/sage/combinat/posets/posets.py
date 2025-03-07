@@ -5232,7 +5232,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         Factor the poset as a Cartesian product of smaller posets.
 
-        This only works for connected posets for the moment.
+        This only works for connected posets.
 
         The decomposition of a connected poset as a Cartesian product
         of posets (prime in the sense that they cannot be written as
@@ -5270,18 +5270,23 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.factor()
             Traceback (most recent call last):
             ...
-            NotImplementedError: the poset is not connected
+            NotImplementedError: the poset is empty or not connected
 
             sage: P = posets.Crown(2)
             sage: P.factor()
             [Finite poset containing 4 elements]
 
             sage: Poset().factor()
-            [Finite poset containing 0 elements]
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: the poset is empty or not connected
 
             sage: factor(posets.BooleanLattice(2))
             [Finite poset containing 2 elements,
             Finite poset containing 2 elements]
+
+            sage: factor(Poset(DiGraph([[0,1],[1,2],[0,3]])))
+            [Finite poset containing 4 elements]
 
         REFERENCES:
 
@@ -5293,33 +5298,40 @@ class FinitePoset(UniqueRepresentation, Parent):
         from sage.graphs.graph import Graph
         from sage.misc.flatten import flatten
         dg = self._hasse_diagram
-        if not dg.is_connected():
-            raise NotImplementedError('the poset is not connected')
+        if not dg.is_connected() or not dg.order():
+            raise NotImplementedError('the poset is empty or not connected')
         if Integer(dg.num_verts()).is_prime():
             return [self]
+        if sum(e for _, e in self.degree_polynomial().factor()) == 1:
+            return [self]
+
         G = dg.to_undirected()
         is_product, dic = G.is_cartesian_product(relabeling=True)
         if not is_product:
             return [self]
-        dic = {key: tuple(flatten(dic[key])) for key in dic}
+        dic = {key: tuple(flatten(val)) for key, val in dic.items()}
 
         prod_dg = dg.relabel(dic, inplace=False)
         v0 = next(iter(dic.values()))
         n = len(v0)
         factors_range = range(n)
-        fusion = Graph(n)
 
         def edge_color(va, vb):
-            for i in range(n):
-                if va[i] != vb[i]:
-                    return i
+            return next(i for i, (vai, vbi) in enumerate(zip(va, vb))
+                        if vai != vbi)
 
+        neighbors_table = {}
+        for x in prod_dg:
+            z = [[] for _ in range(n)]
+            for y in prod_dg.neighbor_iterator(x):
+                z[edge_color(x, y)].append(y)
+            neighbors_table[x] = z
+
+        fusion_edges = []
         for i0, i1 in Subsets(factors_range, 2):
             for x in prod_dg:
-                neigh0 = [y for y in prod_dg.neighbor_iterator(x)
-                          if edge_color(x, y) == i0]
-                neigh1 = [z for z in prod_dg.neighbor_iterator(x)
-                          if edge_color(x, z) == i1]
+                neigh0 = neighbors_table[x][i0]
+                neigh1 = neighbors_table[x][i1]
                 for x0, x1 in product(neigh0, neigh1):
                     _x2 = list(x0)
                     _x2[i1] = x1[i1]
@@ -5327,15 +5339,16 @@ class FinitePoset(UniqueRepresentation, Parent):
                     A0 = prod_dg.has_edge(x, x0)
                     B0 = prod_dg.has_edge(x1, x2)
                     if A0 != B0:
-                        fusion.add_edge([i0, i1])
+                        fusion_edges.append([i0, i1])
                         break
                     A1 = prod_dg.has_edge(x, x1)
                     B1 = prod_dg.has_edge(x0, x2)
                     if A1 != B1:
-                        fusion.add_edge([i0, i1])
+                        fusion_edges.append([i0, i1])
                         break
 
-        fusion = fusion.transitive_closure()
+        fusion = Graph([list(range(n)), fusion_edges],
+                       format="vertices_and_edges")
         resu = []
         for s in fusion.connected_components(sort=False):
             subg = [x for x in prod_dg if all(x[i] == v0[i] for i in factors_range

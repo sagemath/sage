@@ -124,6 +124,8 @@ cdef class StaticSparseCGraph(CGraph):
                 self.number_of_loops = <int *>check_calloc(self.g.n, sizeof(int))
             except MemoryError:
                 free_short_digraph(self.g)
+                if self._directed:
+                    free_short_digraph(self.g_rev)
                 raise
             for i in range(self.g.n):
                 for tmp in range(out_degree(self.g, i)):
