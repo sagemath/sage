@@ -99,7 +99,7 @@ jobs:
         # that is needed to make tools/update-meson.py run correctly
         shell: bash -l {0}
         run: |
-          python3 tools/update-meson.py
+          python tools/update-meson.py
           if ! ./tools/test-git-no-uncommitted-changes; then
             git add --intent-to-add .  # also show newly created files in git diff
             git status
