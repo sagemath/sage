@@ -2597,16 +2597,11 @@ def find_object_modules(obj):
 
     EXAMPLES::
 
-        sage: from sage.misc.dev_tools import find_object_modules
+        sage: from sage.misc.sageinspect import find_object_modules
         sage: find_object_modules(RR)                                                   # needs sage.rings.real_mpfr
         {'sage.rings.real_mpfr': ['RR']}
         sage: find_object_modules(ZZ)
         {'sage.rings.integer_ring': ['Z', 'ZZ']}
-
-    .. NOTE::
-
-        It might be a good idea to move this function in
-        :mod:`sage.misc.sageinspect`.
     """
     # see if the object is defined in its own module
     # might be wrong for class instances as the instantiation might appear
