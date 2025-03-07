@@ -1329,6 +1329,12 @@ def sage_getfile(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
         return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
+    else:
+        if hasattr(obj, '__init__'):
+            pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
+            if pos is not None:
+                (_, filename, _) = pos
+                return filename
 
     # No go? fall back to inspect.
     try:
@@ -1337,6 +1343,11 @@ def sage_getfile(obj):
         return ''
     for suffix in import_machinery.EXTENSION_SUFFIXES:
         if sourcefile.endswith(suffix):
+            # TODO: the following is incorrect in meson editable install
+            # because the build is out-of-tree,
+            # but as long as either the class or its __init__ method has a
+            # docstring, _sage_getdoc_unformatted should return correct result
+            # see https://github.com/mesonbuild/meson-python/issues/723
             return sourcefile.removesuffix(suffix)+os.path.extsep+'pyx'
     return sourcefile
 
@@ -2357,12 +2368,8 @@ def sage_getsourcelines(obj):
         try:
             return inspect.getsourcelines(obj)
         except (OSError, TypeError) as err:
-            try:
-                objinit = obj.__init__
-            except AttributeError:
-                pass
-            else:
-                d = _sage_getdoc_unformatted(objinit)
+            if hasattr(obj, '__init__'):
+                d = _sage_getdoc_unformatted(obj.__init__)
                 pos = _extract_embedded_position(d)
                 if pos is None:
                     if inspect.isclass(obj):
