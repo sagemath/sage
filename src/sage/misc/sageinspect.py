@@ -2586,6 +2586,7 @@ def __internal_tests():
         True
     """
 
+
 def find_object_modules(obj):
     r"""
     Return a dictionary whose keys are the names of the modules where ``obj``
