@@ -48,6 +48,7 @@ jobs:
           # List remotes (for debugging)
           git remote -v
           # Reset the branch to develop
+          git fetch origin develop
           git reset --soft origin/develop
           # Show uncommitted changes
           git status
