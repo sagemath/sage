@@ -152,7 +152,6 @@ host-requires = [
 ]
 
 dependencies = [
-  "pkg:generic/ppl",
   "pkg:generic/sagemath-polytopes-db",
   "pkg:generic/sagemath-elliptic-curves",
   "pkg:generic/sagemath-graphs",
