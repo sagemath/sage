@@ -39,7 +39,7 @@ jobs:
       - name: Merge CI fixes from sagemath/sage
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          .github/workflows/merge-fixes.shmerge-fixes.sh
+          .github/workflows/merge-fixes.sh
 
       - name: Add prebuilt tree as a worktree
         id: worktree

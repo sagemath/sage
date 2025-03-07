@@ -178,7 +178,7 @@ jobs:
         # so that multi-stage builds can work correctly.
         run: |
           mkdir -p upstream
-          .github/workflows/merge-fixes.shmerge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
+          .github/workflows/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
@@ -300,7 +300,7 @@ jobs:
         # This step needs to happen after the commit sha is put in DOCKER_TAG
         # so that multi-stage builds can work correctly.
         run: |
-          .github/workflows/merge-fixes.shmerge-fixes.sh
+          .github/workflows/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -420,7 +420,7 @@ jobs:
         # This step needs to happen after the commit sha is put in DOCKER_TAG
         # so that multi-stage builds can work correctly.
         run: |
-          .github/workflows/merge-fixes.shmerge-fixes.sh
+          .github/workflows/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
 
