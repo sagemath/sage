@@ -21,6 +21,7 @@ py.install_sources(
   'cython.py',
   'decorators.py',
   'defaults.py',
+  'dev_tools.py',
   'edit_module.py',
   'element_with_label.py',
   'explain_pickle.py',

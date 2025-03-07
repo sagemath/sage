@@ -14,6 +14,8 @@ from sage.misc.misc import (BackslashOperator,
 
 from sage.misc.banner import version
 
+from sage.misc.dev_tools import import_statements
+
 from sage.misc.html import html, pretty_print_default
 
 from sage.misc.table import table
