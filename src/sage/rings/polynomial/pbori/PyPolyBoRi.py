@@ -99,6 +99,7 @@ BoolePolynomialVector = BooleanPolynomialVector
 def WeakRingRef(ring):
     return weakref.weakref(ring)
 
+
 _add_up_polynomials = add_up_polynomials
 
 
