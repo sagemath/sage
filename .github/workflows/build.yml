@@ -145,13 +145,11 @@ jobs:
         id: image
         uses: docker/build-push-action@v6
         with:
-          push:       false
+          push:       true
           load:       false
           context:    .
           tags:       ${{ env.BUILD_IMAGE }}
           target:     with-targets
-          cache-from: type=gha
-          cache-to:   type=gha,mode=max
           build-args: |
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
@@ -265,13 +263,11 @@ jobs:
         id: image
         uses: docker/build-push-action@v6
         with:
-          push:       false
+          push:       true
           load:       false
           context:    .
           tags:       ${{ env.BUILD_IMAGE }}
           target:     with-targets
-          cache-from: type=gha
-          cache-to:   type=gha,mode=max
           build-args: |
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
