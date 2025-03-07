@@ -145,6 +145,7 @@ foreach name, pyx : extension_data_cpp
   deps = [py_dep, cysignals, gmp]
   if name == 'polynomial_rational_flint'
     deps += [
+      cypari2,
       flint,
       mpfi,
       ntl,  # indirect dependency
