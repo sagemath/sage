@@ -8100,6 +8100,6 @@ cdef class PolynomialFactory:
             raise TypeError("cannot convert %s to BooleanPolynomial" %
                             type(arg))
 
-Monomial = MonomialFactory()
-Polynomial = PolynomialFactory()
-Variable = VariableFactory()
+cdef MonomialFactory Monomial = MonomialFactory()
+cdef PolynomialFactory Polynomial = PolynomialFactory()
+cdef VariableFactory Variable = VariableFactory()
