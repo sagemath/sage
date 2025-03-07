@@ -191,7 +191,7 @@ import sage.misc.weak_dict
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
-from sage.rings.polynomial.polynomial_element cimport Polynomial
+from sage.rings.polynomial.polynomial_element cimport Polynomial as Polynomial_generic
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
@@ -853,7 +853,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
                     new_monom *= var_mapping[i]
                 p += new_monom
             return p
-        elif isinstance(other, (MPolynomial, Polynomial)) and \
+        elif isinstance(other, (MPolynomial, Polynomial_generic)) and \
                 self.base_ring().has_coerce_map_from(other.base_ring()) and \
                 (other.parent().ngens() <= self._pbring.nVariables()):
             try:
@@ -966,7 +966,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
                     new_monom *= var_mapping[i]
                 p += new_monom
             return p
-        elif (isinstance(other, (MPolynomial, Polynomial))) and \
+        elif (isinstance(other, (MPolynomial, Polynomial_generic))) and \
                 self.base_ring().has_coerce_map_from(other.base_ring()):
             try:
                 var_mapping = get_var_mapping(self, other)
@@ -975,7 +975,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             p = self._zero_element
             exponents = other.exponents()
             coefs = other.coefficients()
-            if isinstance(other, Polynomial):
+            if isinstance(other, Polynomial_generic):
                 # we have a univariate polynomial.
                 # That case had only been implemented
                 # in github issue #9138:
