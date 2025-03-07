@@ -61,7 +61,7 @@ jobs:
       - name: Merge CI fixes from sagemath/sage
         run: |
           mkdir -p upstream
-          .ci/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
+          .github/workflows/merge-fixes.shmerge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
@@ -122,7 +122,7 @@ jobs:
           eval $(sage-print-system-package-command auto update)
           eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
           eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive texlive_luatex free_fonts xindy)
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
 
       - name: Build doc (PDF)
         id: docbuild
@@ -130,7 +130,7 @@ jobs:
         run: |
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy doc
         id: copy

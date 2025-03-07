@@ -39,13 +39,13 @@ jobs:
       - name: Merge CI fixes from sagemath/sage
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          .ci/merge-fixes.sh
+          .github/workflows/merge-fixes.shmerge-fixes.sh
 
       - name: Add prebuilt tree as a worktree
         id: worktree
         run: |
           set -ex
-          .ci/retrofit-worktree.sh worktree-image /sage
+          .github/workflows/retrofit-worktree.sh worktree-image /sage
 
       - name: Incremental build (sagelib deps)
         id: incremental

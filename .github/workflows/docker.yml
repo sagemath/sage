@@ -188,7 +188,7 @@ jobs:
         # Handle both the old and new location of write-dockerfile.sh,
         # because docker.yml is a reusable workflow.
         run: |
-          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore; for a in build/bin/write-dockerfile.sh .ci/write-dockerfile.sh; do if [ -r $a ]; then echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - $a; fi; done; git diff)
+          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore; for a in build/bin/write-dockerfile.sh .github/workflows/merge-fixes.shwrite-dockerfile.sh; do if [ -r $a ]; then echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - $a; fi; done; git diff)
         if: inputs.upstream_artifact
 
       - name: Try to login to ghcr.io
@@ -209,7 +209,7 @@ jobs:
             # This line needs to be run before the step "Merge CI fixes from sagemath/sage".
             DOCKER_TAG="$(git describe --dirty --always)"
             echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
-            # From the docker documentation via .ci/update-env.sh:
+            # From the docker documentation via docker/update-env.sh:
             # "A tag name must be valid ASCII and may
             # contain lowercase and uppercase letters, digits, underscores, periods and
             # dashes. A tag name may not start with a period or a dash and may contain a
@@ -228,7 +228,7 @@ jobs:
         # This step needs to happen after the commit sha is put in DOCKER_TAG
         # so that multi-stage builds can work correctly.
         run: |
-          .ci/merge-fixes.sh
+          .github/workflows/merge-fixes.shmerge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
