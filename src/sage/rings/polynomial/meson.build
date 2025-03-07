@@ -151,7 +151,7 @@ foreach name, pyx : extension_data_cpp
       ntl,  # indirect dependency
     ]
   elif name == 'polynomial_zmod_flint'
-    deps += [flint]
+    deps += [cypari2, flint]
   elif name == 'polynomial_integer_dense_flint'
     deps += [cypari2, flint, ntl]
   else
