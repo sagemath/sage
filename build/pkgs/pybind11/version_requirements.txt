@@ -1,1 +1,2 @@
-pybind11 >=2.6
+pybind11>=2.12.0,<2.13.0
+# see https://github.com/scipy/scipy/blob/maintenance/1.14.x/pyproject.toml
