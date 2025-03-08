@@ -569,7 +569,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         simple_roots = FreeModule(self.base_ring(), self.ngens()).gens()
 
         refls = self.simple_reflections()
-        refls_index = {refl_i[1]: refl_i[0] for refl_i in enumerate(refls)}
+        refls_index = {refl_i[1]: refl_i[0] for refl_i in enumerate(refls.keys())}
         resu = []
         d = {}
         for i in range(1, N + 1):
