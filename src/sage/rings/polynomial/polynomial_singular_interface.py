@@ -68,6 +68,14 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
          //                  : names    X
          //        block   2 : ordering C,
          None)
+
+    Verify that :issue:`39640` is fixed::
+
+        sage: R.<x,y>=RR[]
+        sage: I=R.ideal(x)
+        sage: Q=R.quotient(I)
+        sage: Q(1/3)
+        0.333333333333333
     """
     make_ring = lambda s: singular.ring(s, _vars, order=order)
 
@@ -82,7 +90,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
         #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
         precision = base_ring.precision()
         digits = (2*precision + 4) // 7
-        return make_ring(f"(real,{digits},0)"), None
+        return make_ring(f"(real,{digits},10)"), None
 
     elif isinstance(base_ring, sage.rings.abc.ComplexField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
@@ -94,7 +102,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
     elif isinstance(base_ring, sage.rings.abc.RealDoubleField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
         #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
-        return make_ring("(real,15,0)"), None
+        return make_ring("(real,15,10)"), None
 
     elif isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
@@ -205,7 +213,7 @@ class PolynomialRing_singular_repr:
             sage: R.<x,y> = PolynomialRing(RealField(100))                              # needs sage.rings.real_mpfr
             sage: singular(R)                                                           # needs sage.libs.singular sage.rings.real_mpfr
             polynomial ring, over a field, global ordering
-            // coefficients: Float()...
+            // coefficients: Float(...)...
             // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
