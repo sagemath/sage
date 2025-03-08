@@ -24,17 +24,10 @@ jobs:
       matrix:
         os: [ubuntu]
         python: ['3.11', '3.12']
-        editable: [false, true]
-        is-pull-request:
-          - ${{ github.event_name == 'pull_request' }}
-          # trick from https://github.com/orgs/community/discussions/26253#discussioncomment-6745038
-          # in PR, only run the combinations listed below; otherwise, run all combinations
-        exclude:
-          - is-pull-request: true
+        editable:
+          ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
         include:
-          - os: ubuntu
-            python: 3.11
-            editable: false
+          # one additional editable run in pull_request, this has no effect if not pull_request
           - os: ubuntu
             python: 3.12
             editable: true
