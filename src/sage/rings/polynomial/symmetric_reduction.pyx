@@ -254,9 +254,9 @@ cdef class SymmetricReductionStrategy:
         return richcmp((left._parent, left._lm, left._tail),
                        (right._parent, right._lm, right._tail), op)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return the list of Infinite Polynomials modulo which ``self`` reduces.
+        Return the tuple of Infinite Polynomials modulo which ``self`` reduces.
 
         EXAMPLES::
 
@@ -269,9 +269,9 @@ cdef class SymmetricReductionStrategy:
                 y_2*y_1^2,
                 y_2^2*y_1
             sage: S.gens()
-            [y_2*y_1^2, y_2^2*y_1]
+            (y_2*y_1^2, y_2^2*y_1)
         """
-        return self._lm
+        return tuple(self._lm)
 
     def setgens(self, L):
         """

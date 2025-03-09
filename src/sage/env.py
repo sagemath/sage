@@ -47,7 +47,6 @@ import socket
 import sys
 import sysconfig
 from . import version
-from pathlib import Path
 import subprocess
 
 
@@ -319,6 +318,10 @@ def sage_include_directories(use_sources=False):
         sage: dirs = sage.env.sage_include_directories(use_sources=True)
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
+
+    ::
+
+        sage: # optional - !meson_editable (no need, see :issue:`39275`)
         sage: dirs = sage.env.sage_include_directories(use_sources=False)
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
