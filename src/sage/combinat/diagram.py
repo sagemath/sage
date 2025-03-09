@@ -32,6 +32,7 @@ from sage.combinat.permutation import Permutations
 from sage.combinat.skew_partition import SkewPartition
 from sage.combinat.skew_tableau import SkewTableaux
 from sage.combinat.tableau import Tableau
+from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_import import lazy_import
 from sage.structure.element import Matrix
@@ -533,6 +534,28 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         """
         from sage.combinat.specht_module import specht_module_rank
         return specht_module_rank(self, base_ring)
+
+    @cached_method
+    def essential_set(self):
+        r"""
+        Return the essential set of ``self`` as defined by Fulton.
+
+        Let `D` be a diagram. Then the *essential set* of `D` are the
+        cells `(i, j) \in D` such that `(i+1, j) \notin D` and
+        `(i, j+1) \notin D`; that is, the maximally southwest elements
+        in each connected component of `D`.
+
+        EXAMPLES::
+
+            sage: w = Permutation([2, 1, 5, 4, 3])
+            sage: D = w.rothe_diagram()
+            sage: D.essential_set()
+            ((0, 0), (2, 3), (3, 2))
+        """
+        ret = [c for c in self._cells if (c[0]+1, c[1]) not in self._cells
+               and (c[0], c[1]+1) not in self._cells]
+        ret.sort()
+        return tuple(ret)
 
 
 class Diagrams(UniqueRepresentation, Parent):
