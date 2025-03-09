@@ -929,7 +929,7 @@ class MatchingCoveredGraph(Graph):
           property of matching covered, then the graph is updated and nothing
           is returned.
 
-        - If the edge is provided with an invalid format, a :exc:`ValueError`
+        - If the edge is provided in an invalid format, a :exc:`ValueError`
           is returned.
 
         WARNING:
@@ -1192,7 +1192,7 @@ class MatchingCoveredGraph(Graph):
           property of matching covered, then the graph is updated and nothing
           is returned.
 
-        - If ``edges`` is provided with an invalid format, a :exc:`ValueError`
+        - If ``edges`` is provided in an invalid format, a :exc:`ValueError`
           is returned.
 
         EXAMPLES:
