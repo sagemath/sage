@@ -42,7 +42,7 @@ AUTHORS:
 
 - John Cremona
 
-- Katie Ahrens (ASCII art and "show" method)
+- Katie Ahrens (unicode art method)
 """
 
 # ****************************************************************************
@@ -313,31 +313,43 @@ class KodairaSymbol_class(SageObject):
     def _parse_ascii(self):
         """Parses ascii art representation of Kodaira symbols.
 
-         Called by the show() method"""
+         Called by the _unicode_art() method"""
 
         string = str(self)
         if string.startswith('I') and list(string)[1] == '0' and list(string)[-1] == '*':
-            string = "I_0*"
+            #I_0*
+            return("1\n\\ |\n \\|\n\\ |\\\n1\\|\n  \\\n  |\n  |\n  |/\n1/| /\n/ |/\n /|\n/ |\n1")
         elif string.startswith('I') and list(string)[1].isdigit() and list(string)[-1] == '*':
-            string = "I_n*"
+            #I_n*
+            return("   \\ 1\n    \\\n  \\  \\\n 1 \\  \\\n    \\  \\/\n     \\/ \\\n    / \\\n \\ / 2\n  /\\\n /  \\\n    2 \\\n       :\n \\  2 /\n  \\  /\n   \\/\n   /\\\n  /  \\2\n      \\/\n     / \\\n   1/   \\/\n   /   / \\\n      /   \\\n     /\n    /")
         elif string.startswith('I') and list(string)[1].isdigit():
-            string = "I_n"
+            #I_n
+            return(" _/___\\_\n /  1  \\ 1\n :     :\n :     :\n_\\____/_\n1 \\  /  1\n    1")
         elif string == "In":
-            string = "I_n"
-        with open(f"{SAGE_ROOT}/src/sage/schemes/elliptic_curves/kodaira_art", "r") as op:
-            kodaira_art = op.readlines()
-        start = kodaira_art.index(string+"\n")
-        end = kodaira_art.index("END\n", start) 
-        return "".join(kodaira_art[start+2:end])
+            #also I_n
+            return(" _/___\\_\n /  1  \\ 1\n :     :\n :     :\n_\\____/_\n1 \\  /  1\n    1")
+            #string = "I_n"
+        elif string == "II":
+            return("\\     /\n \\   /\n  \\ /\n   |\n1  |")
+        elif string == "III":
+            return("  \\     /\n   \\   /\n    \\ /\n     |\n     |\n    /\\\n   /  \\\n1 /    \\ 1")
+        elif string == "IV":
+            return(" \\    /\n  \\  /\n1__\\/__\n   /\\\n1 /  \\ 1\n /    \\")
+        elif string == "IV*":
+            return("     \\ /\n    /  \\\n   /     \\|\n  /       |\\\n          |\n 1|       |\n _|_______|\n  |   2   |\n          |\n          |\n        3 |/\n  \\       /\n1  \\    / |\n     \\/ 2 |\n     /\\")
+        elif string == "III*":
+            return("  \\   \\ / 3\n1  \\ 2/ \\\n   / \\   \\\n  /   \\  |\\\n         |\n  _______|\n     2   |\n        4|\n         |/\n    \\/   /\n    /\\  /|\n  1/ 2\\/3|\n  /   /\\")
+        elif string == "II*":
+            return(" \\   2/\\   \\/ 5\n1  \\/  3\\4/ \\\n  / \\  / \\   \\\n /   /\\   \\  |\\\n             |\n             |\n             |\n             |\n       \\     |/\n        \\   /|\n        2\\ /4\n         / \\")
 
-    def show(self):
+    def _unicode_art_(self):
         r"""
-        Prints an ascii art representation of the Kodaira symbol.
+        Prints a unicode art representation of the Kodaira symbol.
         Returns None.
 
         EXAMPLES::
 
-            sage: KodairaSymbol('In').show()
+            sage: unicode_art(KodairaSymbol('In'))
             <BLANKLINE>
             _/___\_
             /  1  \ 1
@@ -348,7 +360,7 @@ class KodairaSymbol_class(SageObject):
                1
             <BLANKLINE>
             <BLANKLINE>
-            sage: KodairaSymbol('III*').show()
+            sage: unicode_art(KodairaSymbol('III*'))
             <BLANKLINE>
             \   \ / 3
             1 \ 2/ \
@@ -368,9 +380,10 @@ class KodairaSymbol_class(SageObject):
 
 
         """
+        from sage.typeset.unicode_art import unicode_art
         print()
-        print(self._parse_ascii())
-        return
+        #print(self._parse_ascii())
+        return(unicode_art(self._parse_ascii()))
 
 
 _ks_cache = {}
@@ -397,7 +410,7 @@ def KodairaSymbol(symbol):
         [I0*, II*, III*, IV*, I1*, I2*, I3*, I4*, I5*]
         sage: all(KS(str(KS(n))) == KS(n) for n in range(-10,10) if n != 0)
         True
-        sage: KS(2).show()
+        sage: unicode_art(KS(2))
         <BLANKLINE>
          \     /
           \   /
