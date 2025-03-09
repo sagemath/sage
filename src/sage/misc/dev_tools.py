@@ -14,11 +14,67 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import os
 import re
 import sys
 from collections import defaultdict
 
 from sage.misc.sageinspect import find_object_modules
+
+
+def runsnake(command):
+    """
+    Graphical profiling with ``runsnake``.
+
+    INPUT:
+
+    - ``command`` -- the command to be run as a string
+
+    EXAMPLES::
+
+        sage: from sage.misc.dev_tools import runsnake
+        sage: runsnake("list(SymmetricGroup(3))")        # optional - runsnake
+        ...
+
+    ``command`` is first preparsed (see :func:`preparse`)::
+
+        sage: runsnake('for x in range(1,4): print(x^2)') # optional - runsnake
+        1
+        4
+        9
+
+    :func:`runsnake` requires the program ``runsnake``. Due to non
+    trivial dependencies (python-wxgtk, ...), installing it within the
+    Sage distribution is unpractical. Hence, we recommend installing
+    it with the system wide Python. On Ubuntu 10.10, this can be done
+    with::
+
+        > sudo apt-get install python-profiler python-wxgtk2.8 python-setuptools
+        > sudo easy_install RunSnakeRun
+
+    See the ``runsnake`` website for instructions for other platforms.
+
+    :func:`runsnake` further assumes that the system wide Python is
+    installed in ``/usr/bin/python``.
+
+    .. SEEALSO::
+
+        - `The runsnake website <http://www.vrplumber.com/programming/runsnakerun/>`_
+        - ``%prun``
+        - :class:`Profiler`
+    """
+    import cProfile
+    from sage.misc.temporary_file import tmp_filename
+    from sage.misc.misc import get_main_globals
+    from sage.repl.preparse import preparse
+    from sage.misc.superseded import deprecation
+
+    deprecation(39274, "just use the runsnake program directly")
+
+    tmpfile = tmp_filename()
+    cProfile.runctx(preparse(command.lstrip().rstrip()), get_main_globals(),
+                    locals(), filename=tmpfile)
+    os.system("/usr/bin/python -E `which runsnake` %s &" % tmpfile)
 
 
 def import_statement_string(module, names, lazy):
