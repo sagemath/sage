@@ -38,7 +38,6 @@ TESTS::
 
 import sage.rings.fraction_field
 import sage.rings.abc
-import sage.rings.number_field as number_field
 
 from sage.rings.rational_field import RationalField
 from sage.rings.function_field.function_field_rational import RationalFunctionField
