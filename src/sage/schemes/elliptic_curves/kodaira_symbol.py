@@ -310,8 +310,8 @@ class KodairaSymbol_class(SageObject):
         """
         return self._pari
 
-    def _parse_ascii(self):
-        """Parses ascii art representation of Kodaira symbols.
+    def _make_ascii(self):
+        """Makes the ascii art representation of Kodaira symbols.
 
          Called by the _unicode_art() method"""
 
@@ -344,8 +344,7 @@ class KodairaSymbol_class(SageObject):
 
     def _unicode_art_(self):
         r"""
-        Prints a unicode art representation of the Kodaira symbol.
-        Returns None.
+        Returns a unicode art representation of the Kodaira symbol.
 
         EXAMPLES::
 
@@ -381,9 +380,7 @@ class KodairaSymbol_class(SageObject):
 
         """
         from sage.typeset.unicode_art import unicode_art
-        print()
-        #print(self._parse_ascii())
-        return(unicode_art(self._parse_ascii()))
+        return(unicode_art(self._make_ascii()))
 
 
 _ks_cache = {}
