@@ -3507,7 +3507,8 @@ class MatchingCoveredGraph(Graph):
               order to ensure the resultant graph is matching covered.
 
             * In the context of matching covered graphs, *bisubdividing* an edge
-              *t* times is defined as subdividing the edge *2t* times.
+              *t* times is defined as subdividing the edge *2t* times, for some
+              nonnegative integer *t*.
 
         OUTPUT:
 
@@ -3716,7 +3717,8 @@ class MatchingCoveredGraph(Graph):
               order to ensure the resultant graph is matching covered.
 
             * In the context of matching covered graphs, *bisubdividing* an edge
-              *t* times is defined as subdividing the edge *2t* times.
+              *t* times is defined as subdividing the edge *2t* times, for some
+              nonnegative integer *t*.
 
         OUTPUT:
 
