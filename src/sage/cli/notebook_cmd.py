@@ -32,7 +32,7 @@ class JupyterNotebookCmd:
         Initialize the command.
         """
         self.options = options
-    
+
     def run(self) -> int:
         r"""
         Start the Jupyter notebook server.
@@ -48,5 +48,5 @@ class JupyterNotebookCmd:
             from jupyterlab.labapp import main
         else:
             raise ValueError(f"Unknown notebook type: {self.options.notebook}")
-        
+
         return main([])
