@@ -13,7 +13,8 @@ SageMath version and banner info
 # ****************************************************************************
 import sys
 
-from sage.env import (SAGE_VERSION, SAGE_VERSION_BANNER, SAGE_BANNER)
+from sage.env import SAGE_BANNER, SAGE_VERSION
+from sage.version import banner as sage_banner
 
 
 def version():
@@ -25,12 +26,16 @@ def version():
     EXAMPLES::
 
        sage: version()
+       doctest:warning
+       ...
+       DeprecationWarning: Use sage.version instead.
+       ...
        'SageMath version ..., Release Date: ...'
     """
     from sage.misc.superseded import deprecation
 
-    deprecation(1, "Use sage.version instead.")
-    return SAGE_VERSION_BANNER
+    deprecation(39015, "Use sage.version instead.")
+    return sage_banner
 
 
 def banner_text(full=True):
@@ -57,13 +62,13 @@ def banner_text(full=True):
         SageMath version ..., Release Date: ...
     """
     if not full:
-        return version()
+        return sage_banner
 
     bars = "─" * 68
     s = []
     a = s.append
     a('┌' + bars + '┐')
-    a("\n│ %-66s │\n" % version())
+    a("\n│ %-66s │\n" % sage_banner)
     python_version = sys.version_info[:3]
     a("│ %-66s │\n" % 'Using Python {}.{}.{}. Type "help()" for help.'.format(*python_version))
     a('└' + bars + '┘')
