@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   test:
-    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }}, ${{ matrix.tests }})${{ matrix.editable && ', editable' || '' }})
+    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }}, ${{ matrix.tests }}${{ matrix.editable && ', editable' || '' }})
     runs-on: ${{ matrix.os }}-latest
 
     strategy:
@@ -35,9 +35,10 @@ jobs:
             python: '3.12'
             tests: 'new'
           # one additional editable run in pull_request, this has no effect if not pull_request
-          - os: ubuntu
+          - os: 'ubuntu'
             python: 3.12
             editable: true
+            tests: 'all'
 
     steps:
       - uses: actions/checkout@v4
