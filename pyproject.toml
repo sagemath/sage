@@ -3,7 +3,7 @@ build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
     'meson-python',
-    'cypari2 >=2.1.1',
+    'cypari2 >=2.2.1',
     # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
     'cysignals >=1.11.2, != 1.12.0',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
@@ -19,7 +19,7 @@ description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dependencies = [
     'six >=1.15.0',
     'conway-polynomials >=0.8',
-    'cypari2 >=2.1.1',
+    'cypari2 >=2.2.1',
     # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
     'cysignals >=1.11.2, != 1.12.0',
     'cython >=3.0, != 3.0.3',
