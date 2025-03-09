@@ -42,7 +42,7 @@ AUTHORS:
 
 - John Cremona
 
-- Katie Ahrens (ASCII art and "show" method)  
+- Katie Ahrens (ASCII art and "show" method)
 """
 
 # ****************************************************************************
@@ -77,7 +77,7 @@ class KodairaSymbol_class(SageObject):
     Users should use the ``KodairaSymbol()`` function to construct
     Kodaira Symbols rather than use the class constructor directly.
     """
- 
+
     def __init__(self, symbol):
         r"""
         Constructor for Kodaira Symbol class.
@@ -312,29 +312,28 @@ class KodairaSymbol_class(SageObject):
 
     def _parse_ascii(self):
         """Parses ascii art representation of Kodaira symbols.
-          
+
          Called by the show() method"""
 
         string = str(self)
-        if string.startswith('I') and list(string)[1]=='0' and list(string)[-1]=='*':
-            string="I_0*"
-        elif string.startswith('I') and list(string)[1].isdigit() and list(string)[-1]=='*':
-            string="I_n*"
+        if string.startswith('I') and list(string)[1] == '0' and list(string)[-1] == '*':
+            string = "I_0*"
+        elif string.startswith('I') and list(string)[1].isdigit() and list(string)[-1] == '*':
+            string = "I_n*"
         elif string.startswith('I') and list(string)[1].isdigit():
-            string="I_n"
-        elif string=="In":
-            string="I_n"
+            string = "I_n"
+        elif string == "In":
+            string = "I_n"
         with open(f"{SAGE_ROOT}/src/sage/schemes/elliptic_curves/kodaira_art", "r") as op:
             kodaira_art = op.readlines()
-        start=kodaira_art.index(string+"\n")
-        end=kodaira_art.index("END\n", start)        
+        start = kodaira_art.index(string+"\n")
+        end = kodaira_art.index("END\n", start) 
         return "".join(kodaira_art[start+2:end])
-
 
     def show(self):
         r"""
         Prints an ascii art representation of the Kodaira symbol.
-        Returns None. 
+        Returns None.
 
         EXAMPLES::
 
@@ -367,11 +366,12 @@ class KodairaSymbol_class(SageObject):
             <BLANKLINE>
             <BLANKLINE>
 
-            
+
         """
         print()
         print(self._parse_ascii())
-        return 
+        return
+
 
 _ks_cache = {}
 
@@ -414,7 +414,7 @@ def KodairaSymbol(symbol):
         ks = _ks_cache[symbol]()
         if ks is not None:
             return ks
-      
+
     ks = KodairaSymbol_class(symbol)
     _ks_cache[symbol] = weakref.ref(ks)
     return ks
