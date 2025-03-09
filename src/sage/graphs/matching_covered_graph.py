@@ -73,7 +73,6 @@ AUTHORS:
         ``random_subgraph()`` | Return a random matching covered subgraph containing each vertex with probability ``p``.
         ``save_afile()`` | Save the graph to file in alist format.
         ``strong_product()`` | Return the strong product of ``self`` and ``other``.
-        ``subdivide_edges()`` | Subdivide `k` times edges from an iterable container.
         ``subgraph()`` | Return the matching covered subgraph containing the given vertices and edges.
         ``subgraph_search()`` | Return a copy of (matching covered) ``G`` in ``self``.
         ``subgraph_search_count()`` | Return the number of labelled occurrences of (matching covered) ``G`` in ``self``.
