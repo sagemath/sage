@@ -368,7 +368,7 @@ class DyckWord(CombinatorialElement):
         - ``diagonal`` -- boolean (default: ``False``); value to draw the
           diagonal or not
 
-        - ``line width`` -- (default: 2*``tikz_scale``) value representing the
+        - ``line width`` -- (default: ``2*tikz_scale``) value representing the
           line width
 
         - ``color`` -- (default: black) the line color
@@ -676,7 +676,7 @@ class DyckWord(CombinatorialElement):
         - ``labelling`` -- (if type is "N-E") a list of labels assigned to
           the up steps in ``self``
 
-        - ``underpath`` -- (if type is "N-E", default:``True``) if ``True``,
+        - ``underpath`` -- (if type is "N-E", default: ``True``) if ``True``,
           the labelling is shown under the path; otherwise, it is shown to
           the right of the path
 

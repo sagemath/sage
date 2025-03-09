@@ -9,16 +9,13 @@ Singleton categories
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
+from cpython.type cimport PyType_IsSubtype
 
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.categories.category import Category
 from sage.structure.category_object cimport CategoryObject
 from sage.structure.dynamic_class import DynamicMetaclass
-
-# I have no idea why this is necessary, but otherwise the type import fails (maybe because its shadowed by sage's cpython module?)
-from cpython.method cimport PyMethod_Check
-from cpython.type cimport PyType_IsSubtype
 
 # This helper class is used to implement Category_singleton.__contains__
 # In particular, the docstring is what appears upon C.__contains__?

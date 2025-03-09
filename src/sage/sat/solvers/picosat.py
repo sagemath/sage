@@ -130,7 +130,7 @@ class PicoSAT(SatSolver):
             raise ValueError("0 should not appear in the clause: {}".format(lits))
         # pycosat does not handle Sage integers
         lits = [int(i) for i in lits]
-        self._nvars = max(self._nvars, max(abs(i) for i in lits))
+        self._nvars = max(self._nvars, *(abs(i) for i in lits))
         self._clauses.append(lits)
 
     def __call__(self, assumptions=None):

@@ -30,20 +30,20 @@ AUTHOR:
 * canonical generation function
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Robert L. Miller <rlmillster@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from libc.string cimport memcpy
 from cpython.mem cimport *
 from cpython.object cimport PyObject_RichCompare
-from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
+from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.structure.element cimport Matrix
 from sage.misc.timing import cputime

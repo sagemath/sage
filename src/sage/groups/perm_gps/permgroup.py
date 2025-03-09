@@ -3304,9 +3304,17 @@ class PermutationGroup_generic(FiniteGroup):
             Traceback (most recent call last):
             ...
             TypeError: junk is not a permutation group
+
+        TESTS:
+
+        Verify that :issue`39416` is fixed::
+
+            sage: G = PermutationGroup(gens=[(1,2), (2,4)], domain={1, 2, 4})
+            sage: G.commutator()
+            Permutation Group with generators [(1,2,4)]
         """
         if other is None:
-            return PermutationGroup(gap_group=libgap.DerivedSubgroup(self))
+            return PermutationGroup(gap_group=libgap.DerivedSubgroup(self), domain=self.domain())
         else:
             from sage.categories.finite_permutation_groups import FinitePermutationGroups
             if other not in FinitePermutationGroups():

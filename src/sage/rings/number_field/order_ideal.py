@@ -774,9 +774,8 @@ def _random_for_testing():
     from sage.rings.number_field.number_field import QuadraticField
     from sage.arith.misc import primes
     from sage.rings.finite_rings.integer_mod_ring import Zmod
-    from sage.misc.misc_c import prod
     while True:
-        d = ZZ(choice((-1,+1)) * randrange(1,10**5))
+        d = ZZ(choice((-1, +1)) * randrange(1, 10**5))
         if not d.is_square():
             break
     K,t = QuadraticField(d).objgen()

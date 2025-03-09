@@ -12,10 +12,10 @@ EXAMPLES::
     sage: x = polygen(ZZ, 'x')
     sage: K.<xi> = NumberField(x^2 + x + 1)
     sage: S = K.primes_above(3)
-    sage: expected = [((0, 1), (4, 0), xi + 2, -xi - 1),
-    ....:             ((1, -1), (0, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
+    sage: expected = [((4, 1), (4, 0), xi + 2, -xi - 1),
+    ....:             ((3, -1), (2, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
     ....:             ((1, 0), (5, 0), xi + 1, -xi),
-    ....:             ((2, 0), (5, 1), xi, -xi + 1)]
+    ....:             ((2, 0), (3, 1), xi, -xi + 1)]
     sage: sols = solve_S_unit_equation(K, S, 200)
     sage: eq_up_to_order(sols, expected)
     True
@@ -1381,7 +1381,7 @@ def defining_polynomial_for_Kp(prime, prec=106):
         sage: from sage.rings.number_field.S_unit_solver import defining_polynomial_for_Kp
         sage: K.<a> = QuadraticField(2)
         sage: p2 = K.prime_above(7); p2
-        Fractional ideal (-2*a + 1)
+        Fractional ideal (2*a - 1)
         sage: defining_polynomial_for_Kp(p2, 10)
         x + 266983762
 
@@ -1448,7 +1448,7 @@ def embedding_to_Kp(a, prime, prec):
         sage: from sage.rings.number_field.S_unit_solver import embedding_to_Kp
         sage: K.<a> = QuadraticField(17)
         sage: p = K.prime_above(13); p
-        Fractional ideal (-a + 2)
+        Fractional ideal (a - 2)
         sage: embedding_to_Kp(a-3, p, 15)
         -20542890112375827
 
@@ -1791,10 +1791,10 @@ def sieve_ordering(SUK, q):
          Residue field of Fractional ideal (2*xi + 1))
 
         sage: sieve_data[2]
-        ([18, 12, 16, 8], [18, 16, 10, 4], [18, 10, 12, 10])
+        ([18, 9, 16, 8], [18, 7, 10, 4], [18, 3, 12, 10])
 
         sage: sieve_data[3]
-        (648, 2916, 3888)
+        (972, 972, 3888)
     """
 
     K = SUK.number_field()
@@ -2170,23 +2170,23 @@ def construct_complement_dictionaries(split_primes_list, SUK, verbose=False):
         sage: SUK = K.S_unit_group(S=K.primes_above(H))
         sage: split_primes_list = [3, 7]
         sage: actual = construct_complement_dictionaries(split_primes_list, SUK)
-        sage: expected = {3: {(0, 1, 0): [(1, 0, 0), (0, 1, 0)],
-        ....:                 (1, 0, 0): [(1, 0, 0), (0, 1, 0)]},
-        ....:             7: {(0, 1, 0): [(1, 0, 0), (1, 4, 4), (1, 2, 2)],
+        sage: expected = {3: {(0, 1, 0): [(0, 1, 0), (1, 0, 0)],
+        ....:                 (1, 0, 0): [(0, 1, 0), (1, 0, 0)]},
+        ....:             7: {(0, 1, 0): [(1, 0, 0), (1, 2, 2), (1, 4, 4)],
         ....:                 (0, 1, 2): [(0, 1, 2), (0, 3, 4), (0, 5, 0)],
-        ....:                 (0, 3, 2): [(1, 0, 0), (1, 4, 4), (1, 2, 2)],
+        ....:                 (0, 3, 2): [(1, 0, 0), (1, 2, 2), (1, 4, 4)],
         ....:                 (0, 3, 4): [(0, 1, 2), (0, 3, 4), (0, 5, 0)],
         ....:                 (0, 5, 0): [(0, 1, 2), (0, 3, 4), (0, 5, 0)],
-        ....:                 (0, 5, 4): [(1, 0, 0), (1, 4, 4), (1, 2, 2)],
-        ....:                 (1, 0, 0): [(0, 5, 4), (0, 3, 2), (0, 1, 0)],
-        ....:                 (1, 0, 2): [(1, 0, 4), (1, 4, 2), (1, 2, 0)],
-        ....:                 (1, 0, 4): [(1, 2, 4), (1, 4, 0), (1, 0, 2)],
-        ....:                 (1, 2, 0): [(1, 2, 4), (1, 4, 0), (1, 0, 2)],
-        ....:                 (1, 2, 2): [(0, 5, 4), (0, 3, 2), (0, 1, 0)],
-        ....:                 (1, 2, 4): [(1, 0, 4), (1, 4, 2), (1, 2, 0)],
-        ....:                 (1, 4, 0): [(1, 0, 4), (1, 4, 2), (1, 2, 0)],
-        ....:                 (1, 4, 2): [(1, 2, 4), (1, 4, 0), (1, 0, 2)],
-        ....:                 (1, 4, 4): [(0, 5, 4), (0, 3, 2), (0, 1, 0)]}}
+        ....:                 (0, 5, 4): [(1, 0, 0), (1, 2, 2), (1, 4, 4)],
+        ....:                 (1, 0, 0): [(0, 1, 0), (0, 3, 2), (0, 5, 4)],
+        ....:                 (1, 0, 2): [(1, 0, 4), (1, 2, 0), (1, 4, 2)],
+        ....:                 (1, 0, 4): [(1, 0, 2), (1, 2, 4), (1, 4, 0)],
+        ....:                 (1, 2, 0): [(1, 0, 2), (1, 2, 4), (1, 4, 0)],
+        ....:                 (1, 2, 2): [(0, 1, 0), (0, 3, 2), (0, 5, 4)],
+        ....:                 (1, 2, 4): [(1, 0, 4), (1, 2, 0), (1, 4, 2)],
+        ....:                 (1, 4, 0): [(1, 0, 4), (1, 2, 0), (1, 4, 2)],
+        ....:                 (1, 4, 2): [(1, 0, 2), (1, 2, 4), (1, 4, 0)],
+        ....:                 (1, 4, 4): [(0, 1, 0), (0, 3, 2), (0, 5, 4)]}}
         sage: all(set(actual[p][vec]) == set(expected[p][vec])
         ....:     for p in [3, 7] for vec in expected[p])
         True
@@ -2693,9 +2693,9 @@ def sieve_below_bound(K, S, bound=10, bump=10, split_primes_list=[], verbose=Fal
         sage: SUK = UnitGroup(K, S=tuple(K.primes_above(3)))
         sage: S = SUK.primes()
         sage: sols = sieve_below_bound(K, S, 10)
-        sage: expected = [((1, -1), (0, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
-        ....:             ((0, 1), (4, 0), xi + 2, -xi - 1),
-        ....:             ((2, 0), (5, 1), xi, -xi + 1),
+        sage: expected = [((3, -1), (2, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
+        ....:             ((4, 1), (4, 0), xi + 2, -xi - 1),
+        ....:             ((2, 0), (3, 1), xi, -xi + 1),
         ....:             ((1, 0), (5, 0), xi + 1, -xi)]
         sage: eq_up_to_order(sols, expected)
         True
@@ -2758,10 +2758,10 @@ def solve_S_unit_equation(K, S, prec=106, include_exponents=True, include_bound=
         sage: K.<xi> = NumberField(x^2 + x + 1)
         sage: S = K.primes_above(3)
         sage: sols = solve_S_unit_equation(K, S, 200)
-        sage: expected = [((0, 1), (4, 0), xi + 2, -xi - 1),
-        ....:             ((1, -1), (0, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
+        sage: expected = [((4, 1), (4, 0), xi + 2, -xi - 1),
+        ....:             ((3, -1), (2, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
         ....:             ((1, 0), (5, 0), xi + 1, -xi),
-        ....:             ((2, 0), (5, 1), xi, -xi + 1)]
+        ....:             ((2, 0), (3, 1), xi, -xi + 1)]
         sage: eq_up_to_order(sols, expected)
         True
 
@@ -2769,7 +2769,7 @@ def solve_S_unit_equation(K, S, prec=106, include_exponents=True, include_bound=
 
         sage: solutions, bound = solve_S_unit_equation(K, S, 100, include_bound=True)
         sage: bound
-        7
+        6
 
     You can omit the exponent vectors::
 

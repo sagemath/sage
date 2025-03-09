@@ -1,8 +1,7 @@
 SAGE_SPKG_CONFIGURE([pari], [
   dnl See gp_version below on how the version is computed from MAJV.MINV.PATCHV
-  m4_pushdef([SAGE_PARI_MINVER],["134916"])dnl this version and higher allowed
-  dnl Do not allow Pari 2.17 or later, see #38769:
-  m4_pushdef([SAGE_PARI_MAXVER],["135424"])dnl this version and higher not allowed
+  m4_pushdef([SAGE_PARI_MINVER],["135245"])dnl this version and higher allowed
+  m4_pushdef([SAGE_PARI_MAXVER],["999999"])dnl this version and higher not allowed
   SAGE_SPKG_DEPCHECK([gmp readline], [
     AC_PATH_PROG([GP], [gp])
     if test x$GP = x; then dnl GP test
