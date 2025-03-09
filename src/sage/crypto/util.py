@@ -516,3 +516,54 @@ def random_blum_prime(lbound, ubound, ntries=100):
         if n > ntries:
             raise ValueError("Maximum number of attempts exceeded.")
     return p
+
+def hash_object(obj, algorithm='sha256'):
+    r"""
+    Computes the hash value of a Python object using a specified hashing algorithm.  
+
+    This function converts the object into binary data (bytes) using `pickle`,  
+    then calculates its hash using hashing algorithm.  
+
+    INPUT:
+
+    - ``obj`` -- any Python object that can be serialized using `pickle`.
+
+    - ``algorithm`` -- (default: ``'sha256'``) a string specifying the hashing 
+      algorithm to use.
+
+    OUTPUT: 
+
+    - A hexadecimal string representing the hash of the serialized object.
+
+    EXAMPLES:
+
+    Compute the SHA-256 hash of different objects::
+
+        sage: from sage.crypto.util import hash_object
+        sage: hash_object({"name": "Alice", "age": 30})
+        '4681eace7299d1684b2e5348990f4f9e5fc7b39bd207106a11b0d9cc29db3a0c'
+        sage: hash_object([1, 2, 3])
+        '425979013bc36da1d25c3642be16210ff57afce89a749f8de16ccd9c49e00160'
+        sage: hash_object((10, 20, 30))
+        '1113392698b43dc204e4ca84308055d043bd7cbc2211e0858528eac2470302d2'
+        sage: hash_object("Hello, world")
+        '36f3578a84f08efefa437d61b16a949492fc5e22f97a113315c175c7aa1cf979'
+
+    TESTS:
+
+    Ensure that different objects produce different hashes::
+        sage: from sage.crypto.util import hash_object
+        sage: hash_object([1, 2, 3]) != hash_object([1, 2, 4])
+        True
+    """
+    from hashlib import new
+    from pickle import dumps
+
+    # Convert the object to bytes
+    obj_bytes = dumps(obj) 
+    # Create a hash object using the specified algorithm 
+    hasher = new(algorithm) 
+    # Pass the data to the hash object
+    hasher.update(obj_bytes)  
+    # Return the hash as a hexadecimal string
+    return hasher.hexdigest() 
