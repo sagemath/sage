@@ -3503,12 +3503,15 @@ class MatchingCoveredGraph(Graph):
             * The number of subdivisions must be a nonnegative even integer in
               order to ensure the resultant graph is matching covered.
 
+            * In the context of matching covered graphs, *bisubdividing* an edge
+              *t* times is defined as subdividing the edge *2t* times.
+
         OUTPUT:
 
-        - If an edge is provided with a valid format and the parameter ``k`` in
-          the argument is a nonnegative even integer then the graph is updated
-          and nothing is returned, otherwise a :exc:`ValueError` is returned if
-          ``k`` is not a nonnegative even integer,
+        - If an existent edge is provided with a valid format and the parameter
+          ``k`` in the argument is a nonnegative even integer then the graph is
+          updated and nothing is returned, otherwise a :exc:`ValueError` is
+          returned if ``k`` is not a nonnegative even integer,
 
         - If the graph does not contain the edge provided, a :exc:`ValueError`
           is returned. Also, a :exc:`ValueError` is thrown incase the provided
@@ -3516,16 +3519,23 @@ class MatchingCoveredGraph(Graph):
 
         EXAMPLES:
 
-        Subdividing `4` times an edge of the Petersen graph::
+        Subdividing `4` times an edge of the Petersen graph. Please note that
+        the perfect matching captured at ``self.get_matching()`` also gets
+        updated::
 
             sage: P = graphs.PetersenGraph()
             sage: G = MatchingCoveredGraph(P)
+            sage: G.get_matching()
+            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
             sage: G.subdivide_edge(0, 1, 4)
             sage: G.edges()
             [(0, 4, None), (0, 5, None), (0, 10, None), (1, 2, None), (1, 6, None),
              (1, 13, None), (2, 3, None), (2, 7, None), (3, 4, None), (3, 8, None),
              (4, 9, None), (5, 7, None), (5, 8, None), (6, 8, None), (6, 9, None),
              (7, 9, None), (10, 11, None), (11, 12, None), (12, 13, None)]
+            sage: G.get_matching()
+            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None),
+             (4, 9, None), (10, 11, None), (12, 13, None)]
 
         Subdividing a multiple edge::
 
@@ -3553,7 +3563,7 @@ class MatchingCoveredGraph(Graph):
             ...
             ValueError: this method takes at least 2 and at most 4 arguments
 
-        A :exc:`ValueError` is returned for `k` being in invalid format or
+        A :exc:`ValueError` is returned for `k` being in an invalid format or
         being not an even nonnegative, or for nonexistent or invalid edges::
 
             sage: G.subdivide_edge(0, 1, 'label')  # No. of subdivision: 'label'
@@ -3635,16 +3645,32 @@ class MatchingCoveredGraph(Graph):
         new_vertices = []
         vertex_label = 0
         while len(new_vertices) < k:
-            while vertex_label in self.vertices() or vertex_label in new_vertices:
+            while vertex_label in self or vertex_label in new_vertices:
                 vertex_label += 1
 
             new_vertices.append(vertex_label)
 
-        self.add_edges(
+        M = Graph(self.get_matching())
+        M.delete_edge(u, v, l)
+
+        self._backend.del_edge(u, v, l, self._directed)
+        self._backend.add_edges(
             [(u, new_vertices[0], l), (new_vertices[-1], v, l)] +
-            [(new_vertices[i], new_vertices[i + 1], l) for i in range(k - 1)]
+            [(new_vertices[i], new_vertices[i + 1], l) for i in range(k - 1)],
+            self._directed, remove_loops=True
         )
-        self.delete_edge(u, v, l)
+
+        if M.degree(u):
+            M.add_edges(
+                [(new_vertices[i], new_vertices[i + 1], l) for i in range(0, k - 1, 2)]
+            )
+        else:
+            M.add_edges(
+                [(u, new_vertices[0], l), (new_vertices[-1], v, l)] +
+                [(new_vertices[i], new_vertices[i + 1], l) for i in range(1, k - 1, 2)]
+            )
+
+        self.update_matching(M)
 
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
