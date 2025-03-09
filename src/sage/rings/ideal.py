@@ -1695,6 +1695,17 @@ class Ideal_pid(Ideal_principal):
             return ZZ.residue_field(self, check=False)
         raise NotImplementedError("residue_field() is only implemented for ZZ and rings of integers of number fields.")
 
+    def radical(self):
+        r"""
+        Return the radical of this ideal.
+
+        EXAMPLES::
+
+            sage: ZZ.ideal(12).radical()
+            Principal ideal (6) of Integer Ring
+        """
+        return self.ring().ideal(self.gen().radical())
+
 
 class Ideal_fractional(Ideal_generic):
     """

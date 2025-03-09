@@ -1036,7 +1036,7 @@ cdef class IntegerRing_class(CommutativeRing):
         from sage.rings.finite_rings.residue_field import ResidueField
         return ResidueField(p, names = None, check = check)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple ``(1,)`` containing a single element, the additive
         generator of the integers, which is 1.

@@ -254,13 +254,7 @@ TEST_TARGET = $@
 TEST = ./sage -t --logfile=$(TEST_LOG) $(TEST_FLAGS) --optional=$(TEST_OPTIONAL) $(TEST_FILES)
 
 test-git-no-uncommitted-changes:
-	@UNCOMMITTED=$$(git status --porcelain); \
-	if [ -n "$$UNCOMMITTED" ]; then \
-	    echo "Error: the git repo has uncommitted changes:"; \
-	    echo "$$UNCOMMITTED"; \
-	    echo; \
-	    exit 1; \
-	fi
+	./tools/test-git-no-uncommitted-changes
 
 test: all
 	@echo '### make $(TEST_TARGET): Running $(TEST)' >> $(TEST_LOG)

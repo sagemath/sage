@@ -12,17 +12,14 @@ Sage.
 Python language standard
 ========================
 
-Sage library code needs to be compatible with all versions of Python
-that Sage supports.  The information regarding the supported versions
-can be found in the files ``build/pkgs/python3/spkg-configure.m4`` and
-``src/setup.cfg.m4``.
-
-Python 3.9 is the oldest supported version.  Hence,
-all language and library features that are available in Python 3.9 can
-be used; but features introduced in Python 3.10 cannot be used.  If a
-feature is deprecated in a newer supported version, it must be ensured
-that deprecation warnings issued by Python do not lead to failures in
-doctests.
+Sage follows the time window-based support policy
+`SPEC 0 — Minimum Supported Dependencies <https://scientific-python.org/specs/spec-0000/>`_
+for Python versions.
+The current minimum supported Python version can be found in the 
+``pyproject.toml`` file. Accordingly, only language and library features 
+available in this version can be used. If a feature is deprecated in a newer 
+supported version, it must be ensured that deprecation warnings issued by
+Python do not lead to failures in doctests.
 
 Some key language and library features have been backported to older Python versions
 using one of two mechanisms:
@@ -34,21 +31,9 @@ using one of two mechanisms:
   of annotations).  All Sage library code that uses type annotations
   should include this ``__future__`` import and follow PEP 563.
 
-- Backport packages
-
-  - `importlib_metadata <../reference/spkg/importlib_metadata>`_
-    (to be used in place of ``importlib.metadata``),
-  - `importlib_resources <../reference/spkg/importlib_resources>`_
-    (to be used in place of ``importlib.resources``),
-  - `typing_extensions <../reference/spkg/typing_extensions>`_
-    (to be used in place of ``typing``).
-
-  The Sage library declares these packages as dependencies and ensures that
-  versions that provide features of Python 3.11 are available.
-
-Meta :issue:`29756` keeps track of newer Python features and serves
-as a starting point for discussions on how to make use of them in the
-Sage library.
+- The `typing_extensions <../reference/spkg/typing_extensions>`_ package
+  is used to backport features from newer versions of the ``typing`` module.
+  The Sage library declares this package as a dependency.
 
 
 Design

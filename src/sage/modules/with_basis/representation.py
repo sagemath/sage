@@ -2878,7 +2878,6 @@ class SchurFunctorRepresentation(Subrepresentation):
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         from sage.categories.tensor import tensor
-        from sage.matrix.matrix_space import MatrixSpace
 
         R = V.base_ring()
         self._shape = shape

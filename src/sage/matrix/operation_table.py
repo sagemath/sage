@@ -14,8 +14,6 @@ This module implements general operation tables, which are very matrix-like.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import copy
-
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import Matrix
 

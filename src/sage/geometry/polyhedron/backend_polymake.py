@@ -553,7 +553,6 @@ class Polyhedron_polymake(Polyhedron_base):
         if parent is None:
             from .parent import Polyhedra
             from sage.rings.rational_field import QQ
-            from sage.rings.qqbar import AA
             if polymake_polytope.typeof()[0] == 'Polymake::polytope::Polytope__Rational':
                 base_ring = QQ
             else:

@@ -37,6 +37,7 @@ from sage.misc.lazy_string import _LazyString
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.fraction_field import FractionField_generic
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.structure.parent import Parent
@@ -621,9 +622,17 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError('generator must have positive degree')
 
         # Instantiate the appropriate class:
-        if base_field.is_finite():
+        backend = base_field.backend(force=True)
+        if backend.is_finite():
             from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
             return DrinfeldModule_finite(gen, category)
+        if isinstance(backend, FractionField_generic):
+            ring = backend.ring()
+            if (isinstance(ring, PolynomialRing_generic)
+            and ring.base_ring() is function_ring_base
+            and base_morphism(T) == ring.gen()):
+                from .charzero_drinfeld_module import DrinfeldModule_rational
+                return DrinfeldModule_rational(gen, category)
         if not category._characteristic:
             from .charzero_drinfeld_module import DrinfeldModule_charzero
             return DrinfeldModule_charzero(gen, category)

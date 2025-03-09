@@ -1358,7 +1358,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         except IndexError:
             raise ValueError("Generator %s not defined" % n)
 
-    def gens(self):
+    def gens(self) -> list:
         """
         Return a complete set of generators for ``self``.
 

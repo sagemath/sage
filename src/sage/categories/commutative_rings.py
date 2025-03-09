@@ -140,12 +140,13 @@ class CommutativeRings(CategoryWithAxiom):
 
         def _ideal_class_(self, n=0):
             r"""
-            Return a callable object that can be used to create ideals in this
-            commutative ring.
+            Return a callable object that can be used to create ideals
+            in this commutative ring.
 
-            This class can depend on `n`, the number of generators of the ideal.
-            The default input of `n=0` indicates an unspecified number of generators,
-            in which case a class that works for any number of generators is returned.
+            This class can depend on `n`, the number of generators of
+            the ideal.  The default input of `n=0` indicates an
+            unspecified number of generators, in which case a class
+            that works for any number of generators is returned.
 
             EXAMPLES::
 

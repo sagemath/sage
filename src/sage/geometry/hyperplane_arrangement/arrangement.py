@@ -2199,7 +2199,7 @@ class HyperplaneArrangementElement(Element):
         while R:
             # Transfer the "next step" to the "current step"
             curTest = list(nextTest)
-            nextTest = set([])
+            nextTest = set()
             # we want to test each region that we haven't hit yet
             for r in R:
                 # Since it's graded, it suffices to look at the regions of the previous rank

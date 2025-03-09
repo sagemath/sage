@@ -32,9 +32,9 @@ primary focus is number theory. There are two very distinct
 interfaces that you can use in Sage:
 
 
--  ``gp`` -- the "**G** o **P** ARI" interpreter, and
+-  ``gp`` -- the **PARI** interpreter, and
 
--  ``pari`` -- the PARI C library.
+-  ``pari`` -- the **PARI** C library.
 
 
 For example, the following are two ways of doing the same thing.

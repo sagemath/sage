@@ -913,7 +913,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm='maxima'):
 
     if len(des) == 1 and algorithm == "maxima":
         return desolve_laplace(des[0], vars[0], ics=ics, ivar=ivar)
-    ivars = set([])
+    ivars = set()
     for i, de in enumerate(des):
         if not (isinstance(de, Expression) and de.is_relational()):
             des[i] = de == 0
@@ -1440,11 +1440,10 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
 
     - Robert Marik (10-2009)
     """
-
     if ics is None:
         raise ValueError("No initial conditions, specify with ics=[x0,y01,y02,...].")
 
-    ivars = set([])
+    ivars = set()
 
     for de in des:
         ivars = ivars.union(set(de.variables()))

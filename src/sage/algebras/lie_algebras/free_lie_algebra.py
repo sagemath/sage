@@ -419,7 +419,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
         """
         return self.Lyndon().lie_algebra_generators()
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self`` in the Lyndon basis.
 

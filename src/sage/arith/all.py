@@ -1,6 +1,7 @@
 from sage.misc.lazy_import import lazy_import
 
-from sage.arith.misc import (algdep, bernoulli, is_prime, is_prime_power,
+from sage.arith.misc import (algdep, algebraic_dependency,
+                             bernoulli, is_prime, is_prime_power,
                              is_pseudoprime, is_pseudoprime_power,
                              prime_powers, primes_first_n, eratosthenes, primes,
                              next_prime_power, next_probable_prime, next_prime,

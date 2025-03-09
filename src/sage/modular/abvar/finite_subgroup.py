@@ -579,11 +579,13 @@ class FiniteSubgroup(Module):
             self.__order = o
             return o
 
-    def gens(self):
+    def gens(self) -> Sequence:
         """
         Return generators for this finite subgroup.
 
-        EXAMPLES: We list generators for several cuspidal subgroups::
+        EXAMPLES:
+
+        We list generators for several cuspidal subgroups::
 
             sage: J0(11).cuspidal_subgroup().gens()
             [[(0, 1/5)]]

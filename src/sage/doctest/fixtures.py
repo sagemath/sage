@@ -50,6 +50,15 @@ def reproducible_repr(val):
     r"""
     String representation of an object in a reproducible way.
 
+    .. NOTE::
+
+        This function is deprecated, in most cases it suffices to use
+        the automatic sorting of dictionary keys and set items by a displayhook.
+        See :func:`sage.doctest.forker.init_sage`.
+        If used in a format string, use :func:`IPython.lib.pretty.pretty`.
+        In the rare cases where the ordering of the elements is not reliable
+        or transitive, ``sorted`` with a sane key can be used instead.
+
     This tries to ensure that the returned string does not depend on
     factors outside the control of the doctest.
     One example is the order of elements in a hash-based structure.
@@ -74,6 +83,7 @@ def reproducible_repr(val):
 
     EXAMPLES::
 
+        sage: # not tested (test fails because of deprecation warning)
         sage: from sage.doctest.fixtures import reproducible_repr
         sage: print(reproducible_repr(set(["a", "c", "b", "d"])))
         set(['a', 'b', 'c', 'd'])
@@ -81,11 +91,24 @@ def reproducible_repr(val):
         frozenset(['a', 'b', 'c', 'd'])
         sage: print(reproducible_repr([1, frozenset("cab"), set("bar"), 0]))
         [1, frozenset(['a', 'b', 'c']), set(['a', 'b', 'r']), 0]
-        sage: print(reproducible_repr({3.0: "three", "2": "two", 1: "one"}))            # optional - sage.rings.real_mpfr
+        sage: print(reproducible_repr({3.0: "three", "2": "two", 1: "one"}))            # needs sage.rings.real_mpfr
         {'2': 'two', 1: 'one', 3.00000000000000: 'three'}
         sage: print(reproducible_repr("foo\nbar"))  # demonstrate default case
         'foo\nbar'
+
+    TESTS:
+
+    Ensures deprecation warning is printed out::
+
+        sage: from sage.doctest.fixtures import reproducible_repr
+        sage: print(reproducible_repr(set(["a", "c", "b", "d"])))
+        doctest:warning...
+        DeprecationWarning: reproducible_repr is deprecated, see its documentation for details
+        See https://github.com/sagemath/sage/issues/39420 for details.
+        set(['a', 'b', 'c', 'd'])
     """
+    from sage.misc.superseded import deprecation
+    deprecation(39420, 'reproducible_repr is deprecated, see its documentation for details')
 
     def sorted_pairs(iterable, pairs=False):
         # We don't know whether container data structures will have
@@ -181,22 +204,23 @@ class AttributeAccessTracerHelper:
             4
         """
         val = getattr(self.delegate, name)
+        from IPython.lib.pretty import pretty
         if callable(val) and name not in self.delegate.__dict__:
             @wraps(val)
             def wrapper(*args, **kwds):
-                arglst = [reproducible_repr(arg) for arg in args]
-                arglst.extend("{}={}".format(k, reproducible_repr(v))
+                arglst = [pretty(arg) for arg in args]
+                arglst.extend("{}={}".format(k, pretty(v))
                               for k, v in sorted(kwds.items()))
                 res = val(*args, **kwds)
                 print("{}call {}({}) -> {}"
                       .format(self.prefix, name, ", ".join(arglst),
-                              reproducible_repr(res)))
+                              pretty(res)))
                 return res
             return wrapper
         else:
             if self.reads:
                 print("{}read {} = {}".format(self.prefix, name,
-                                              reproducible_repr(val)))
+                                              pretty(val)))
             return val
 
     def set(self, name, val):
@@ -218,8 +242,9 @@ class AttributeAccessTracerHelper:
             sage: foo.x
             2
         """
+        from IPython.lib.pretty import pretty
         print("{}write {} = {}".format(self.prefix, name,
-                                       reproducible_repr(val)))
+                                       pretty(val)))
         setattr(self.delegate, name, val)
 
 
@@ -373,11 +398,12 @@ def trace_method(obj, meth, **kwds):
 
     @wraps(f)
     def g(*args, **kwds):
-        arglst = [reproducible_repr(arg) for arg in args]
-        arglst.extend("{}={}".format(k, reproducible_repr(v))
+        from IPython.lib.pretty import pretty
+        arglst = [pretty(arg) for arg in args]
+        arglst.extend("{}={}".format(k, pretty(v))
                       for k, v in sorted(kwds.items()))
         print("enter {}({})".format(meth, ", ".join(arglst)))
         res = f(t, *args, **kwds)
-        print("exit {} -> {}".format(meth, reproducible_repr(res)))
+        print("exit {} -> {}".format(meth, pretty(res)))
         return res
     setattr(obj, meth, g)

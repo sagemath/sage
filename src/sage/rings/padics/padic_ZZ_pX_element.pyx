@@ -513,7 +513,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         Return a rational approximation of ``self``.
 
         This does not try to optimize which rational is picked: see
-        ``algdep`` for another option.
+        ``algebraic_dependency`` for another option.
 
         EXAMPLES::
 

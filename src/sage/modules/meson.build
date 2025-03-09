@@ -10,6 +10,8 @@ py.install_sources(
   'free_module_homspace.py',
   'free_module_integer.py',
   'free_module_morphism.py',
+  'free_module_pseudohomspace.py',
+  'free_module_pseudomorphism.py',
   'free_quadratic_module.py',
   'free_quadratic_module_integer_symmetric.py',
   'matrix_morphism.py',

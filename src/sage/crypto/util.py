@@ -11,21 +11,19 @@ AUTHORS:
   ``is_blum_prime``, ``least_significant_bits``, ``random_blum_prime``.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (c) 2009, 2010 Minh Van Nguyen <nguyenminh2@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
-from sage.arith.functions import lcm
 from sage.arith.misc import is_prime, primes, random_prime
 from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.integer_mod import Mod as mod
-from sage.rings.integer import Integer
 
 lazy_import('sage.arith.misc', ('carmichael_lambda'), deprecation=34719)
 lazy_import('sage.monoids.string_monoid', 'BinaryStrings')

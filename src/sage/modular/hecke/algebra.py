@@ -518,10 +518,12 @@ class HeckeAlgebra_base(CachedRepresentation, Parent):
                 trace_matrix[i, j] = trace_matrix[j, i] = basis[i].matrix().trace_of_product(basis[j].matrix())
         return trace_matrix.det()
 
-    def gens(self):
+    def gens(self) -> Iterator:
         r"""
-        Return a generator over all Hecke operator `T_n` for
-        `n = 1, 2, 3, \ldots`. This is infinite.
+        Return a generator over all Hecke operator `T_n`
+        for `n = 1, 2, 3, \ldots`.
+
+        This is infinite.
 
         EXAMPLES::
 

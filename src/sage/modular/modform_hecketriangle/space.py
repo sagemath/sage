@@ -219,9 +219,9 @@ class QuasiModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
         self._module = FreeModule(self.coeff_ring(), self.dimension())
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return a basis of ``self`` as a list of basis elements.
+        Return a basis of ``self`` as a tuple of basis elements.
 
         EXAMPLES::
 
@@ -229,16 +229,15 @@ class QuasiModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF = QuasiModularForms(n=5, k=6, ep=-1)
             sage: MF.default_prec(2)
             sage: MF.gens()
-            [1 - 37/(200*d)*q + O(q^2),
+            (1 - 37/(200*d)*q + O(q^2),
              1 + 33/(200*d)*q + O(q^2),
-             1 - 27/(200*d)*q + O(q^2)]
+             1 - 27/(200*d)*q + O(q^2))
 
             sage: MF = QuasiModularForms(n=infinity, k=2, ep=-1)
             sage: MF.default_prec(2)
             sage: MF.gens()
-            [1 - 24*q + O(q^2), 1 - 8*q + O(q^2)]
+            (1 - 24*q + O(q^2), 1 - 8*q + O(q^2))
         """
-
         return self.quasi_part_gens()
 
     @cached_method
@@ -255,7 +254,6 @@ class QuasiModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: len(MF.gens()) == MF.dimension()
             True
         """
-
         return self.quasi_part_dimension()
 
     @cached_method
@@ -384,9 +382,9 @@ class QuasiCuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
         self._module = FreeModule(self.coeff_ring(), self.dimension())
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return a basis of ``self`` as a list of basis elements.
+        Return a basis of ``self`` as a tuple of basis elements.
 
         EXAMPLES::
 
@@ -396,19 +394,18 @@ class QuasiCuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.dimension()
             7
             sage: MF.gens()
-            [q - 17535/(262144*d^2)*q^3 + O(q^4),
+            (q - 17535/(262144*d^2)*q^3 + O(q^4),
              q^2 - 47/(128*d)*q^3 + O(q^4),
              q - 9/(128*d)*q^2 + 15633/(262144*d^2)*q^3 + O(q^4),
              q^2 - 7/(128*d)*q^3 + O(q^4),
              q - 23/(64*d)*q^2 - 3103/(262144*d^2)*q^3 + O(q^4),
              q - 3/(64*d)*q^2 - 4863/(262144*d^2)*q^3 + O(q^4),
-             q - 27/(64*d)*q^2 + 17217/(262144*d^2)*q^3 + O(q^4)]
+             q - 27/(64*d)*q^2 + 17217/(262144*d^2)*q^3 + O(q^4))
 
             sage: MF = QuasiCuspForms(n=infinity, k=10, ep=-1)
             sage: MF.gens()
-            [q - 16*q^2 - 156*q^3 - 256*q^4 + O(q^5), q - 60*q^3 - 256*q^4 + O(q^5)]
+            (q - 16*q^2 - 156*q^3 - 256*q^4 + O(q^5), q - 60*q^3 - 256*q^4 + O(q^5))
         """
-
         return self.quasi_part_gens()
 
     @cached_method
@@ -660,9 +657,9 @@ class ModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
         self._module = FreeModule(self.coeff_ring(), self.dimension())
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return a basis of ``self`` as a list of basis elements.
+        Return a basis of ``self`` as a tuple of basis elements.
 
         EXAMPLES::
 
@@ -671,15 +668,16 @@ class ModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.dimension()
             4
             sage: MF.gens()
-            [1 + 360360*q^4 + O(q^5),
+            (1 + 360360*q^4 + O(q^5),
              q + 21742*q^4 + O(q^5),
              q^2 + 702*q^4 + O(q^5),
-             q^3 - 6*q^4 + O(q^5)]
+             q^3 - 6*q^4 + O(q^5))
 
             sage: ModularForms(n=infinity, k=4).gens()
-            [1 + 240*q^2 + 2160*q^4 + O(q^5), q - 8*q^2 + 28*q^3 - 64*q^4 + O(q^5)]
+            (1 + 240*q^2 + 2160*q^4 + O(q^5),
+             q - 8*q^2 + 28*q^3 - 64*q^4 + O(q^5))
         """
-        return [self.F_basis(m) for m in range(self.dimension())]
+        return tuple(self.F_basis(m) for m in range(self.dimension()))
 
     @cached_method
     def dimension(self):
@@ -800,9 +798,9 @@ class CuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
         self._module = FreeModule(self.coeff_ring(), self.dimension())
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return a basis of ``self`` as a list of basis elements.
+        Return a basis of ``self`` as a tuple of basis elements.
 
         EXAMPLES::
 
@@ -813,16 +811,16 @@ class CuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: MF.dimension()
             3
             sage: MF.gens()
-            [q + 296888795/(10319560704*d^3)*q^4 + O(q^5),
+            (q + 296888795/(10319560704*d^3)*q^4 + O(q^5),
              q^2 + 6629/(221184*d^2)*q^4 + O(q^5),
-             q^3 - 25/(96*d)*q^4 + O(q^5)]
+             q^3 - 25/(96*d)*q^4 + O(q^5))
 
             sage: MF = CuspForms(n=infinity, k=8, ep=1)
             sage: MF.gen(0) == MF.E4()*MF.f_inf()
             True
         """
-        return [self.F_basis(m, order_1=ZZ.one())
-                for m in range(1, self.dimension() + 1)]
+        return tuple(self.F_basis(m, order_1=ZZ.one())
+                     for m in range(1, self.dimension() + 1))
 
     @cached_method
     def dimension(self):
@@ -978,18 +976,19 @@ class ZeroForm(FormsSpace_abstract, Module, UniqueRepresentation):
                         k=k, ep=ep)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return a basis of ``self`` as a list of basis elements.
-        Since this is the zero module an empty list is returned.
+        Return a basis of ``self`` as a tuple of basis elements.
+
+        Since this is the zero module an empty tuple is returned.
 
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.space import ZeroForm
             sage: ZeroForm(6, CC, 3, -1).gens()
-            []
+            ()
         """
-        return []
+        return ()
 
     @cached_method
     def dimension(self):

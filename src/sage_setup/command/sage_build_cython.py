@@ -104,8 +104,7 @@ class sage_build_cython(Command):
                         ('force', 'force')]
 
         # Python 3.5 now has a parallel option as well
-        if sys.version_info[:2] >= (3, 5):
-            inherit_opts.append(('parallel', 'parallel'))
+        inherit_opts.append(('parallel', 'parallel'))
 
         self.set_undefined_options('build_ext', *inherit_opts)
 

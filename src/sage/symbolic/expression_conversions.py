@@ -18,8 +18,6 @@ overridden by subclasses.
 from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
 from functools import reduce
 
-import sage.rings.abc
-
 from sage.misc.lazy_import import lazy_import
 from sage.symbolic.ring import SR
 from sage.structure.element import Expression

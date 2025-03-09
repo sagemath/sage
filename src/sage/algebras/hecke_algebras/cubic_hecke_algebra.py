@@ -1415,7 +1415,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         from sage.sets.family import Family
         return Family(self._cubic_braid_group.gens(), self.monomial)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 

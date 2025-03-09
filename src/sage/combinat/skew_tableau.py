@@ -620,7 +620,7 @@ class SkewTableau(ClonableList,
 
     evaluation = weight
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         """
         Return ``True`` if ``self`` is a standard skew tableau and ``False``
         otherwise.
@@ -640,7 +640,7 @@ class SkewTableau(ClonableList,
         w = [i for row in self for i in row if i is not None]
         return sorted(w) == list(range(1, len(w) + 1)) and self.is_semistandard()
 
-    def is_semistandard(self):
+    def is_semistandard(self) -> bool:
         """
         Return ``True`` if ``self`` is a semistandard skew tableau and
         ``False`` otherwise.
@@ -1324,7 +1324,7 @@ class SkewTableau(ClonableList,
             corner = self.cells_containing(i)[0]
 
             # slide t2_new backwards, record i in the vacated square
-            (t2_new, (x, y)) = t2_new.slide(corner, True)
+            t2_new, (x, y) = t2_new.slide(corner, True)
             t1_new[x][y] = i
 
         t1_new = SkewTableau(t1_new)
@@ -1582,10 +1582,12 @@ class SkewTableau(ClonableList,
         rows.reverse()
         return [self.inner_shape(), rows]
 
-    def is_ribbon(self):
+    def is_ribbon(self) -> bool:
         r"""
         Return ``True`` if and only if the shape of ``self`` is a
-        ribbon, that is, if it has exactly one cell in each of `q`
+        ribbon.
+
+        This means that it has exactly one cell in each of `q`
         consecutive diagonals for some nonnegative integer `q`.
 
         EXAMPLES::
@@ -1824,7 +1826,7 @@ class SkewTableau(ClonableList,
                     cell_list.append((r, c))
         return cell_list
 
-    def is_k_tableau(self, k):
+    def is_k_tableau(self, k) -> bool:
         r"""
         Check whether ``self`` is a valid skew weak `k`-tableau.
 
@@ -1857,11 +1859,9 @@ def _label_skew(list_of_cells, sk):
         sage: skew_tableau._label_skew(l, empty)
         [[1, 4], [3, 2]]
     """
-    i = 1
     skew = [list(row) for row in sk]
-    for row, column in list_of_cells:
+    for i, (row, column) in enumerate(list_of_cells, start=1):
         skew[row][column] = i
-        i += 1
     return skew
 
 

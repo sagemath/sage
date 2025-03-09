@@ -3295,11 +3295,11 @@ def _check_database():
         if _brouwer_database[params]['status'] != "impossible":
             raise RuntimeError("Brouwer's db does not seem to know that {} in unfeasible".format(params))
         comment = _brouwer_database[params]['comments']
-        if ('Krein'    in comment or
+        if ('Krein' in comment or
             'Absolute' in comment or
-            'Conf'     in comment or
-            'mu=1'     in comment or
-            '&mu;=2'   in comment):
+            'Conf' in comment or
+            'mu=1' in comment or
+            '&mu;=2' in comment):
             continue
         raise RuntimeError("We detected that {} was unfeasible, but maybe we should not have".format(params))
 

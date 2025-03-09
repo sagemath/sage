@@ -69,7 +69,7 @@ class PackageSystem(Feature):
             sage: fedora.spkg_installation_hint('openblas')  # optional - SAGE_ROOT
             'To install openblas using the fedora package manager, you can try to run:\n!sudo yum install openblas-devel'
         """
-        from subprocess import run, CalledProcessError, PIPE
+        from subprocess import run, CalledProcessError
         lines = []
         system = self.name
         try:

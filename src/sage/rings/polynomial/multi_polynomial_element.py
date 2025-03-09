@@ -467,6 +467,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: repr(-I*y - x^2)  # indirect doctest
             '-x^2 + (-I)*y'
         """
+        if self.is_gen():
+            return self.parent().variable_names()[self.degrees().nonzero_positions()[0]]
         try:
             key = self.parent().term_order().sortkey
         except AttributeError:

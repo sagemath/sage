@@ -47,7 +47,6 @@ from sage.structure.richcmp cimport richcmp_not_equal
 
 cdef extern from "sl2z.hpp":
     cppclass cpp_SL2Z "SL2Z":
-        mpz_class a, b, c, d
         cpp_SL2Z(int, int, int, int)
         cpp_SL2Z(mpz_class, mpz_class, mpz_class, mpz_class)
         mpz_class a()

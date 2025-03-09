@@ -774,8 +774,7 @@ falls wir im Bogenmass rechnen möchten. Ansonsten müssen wir wie oben beschrie
 
 Ihre Umkehrfunktionen sind auch mit den nicht sehr überraschenden Namen ``asin()``, ``acos()``, ``atan()`` und ``acot()`` versehen.
 Sie geben uns aber wie oben erklärt nur Winkel im Bogenmass zurück. Möchten wir im Gradmass rechnen, müssen wir wieder
-konvertieren. Die exakte Berechnung der Werte funktioniert in die Gegenrichtung nur, falls im ursprünglichen Wert keine
-Wurzeln vorkommen::
+konvertieren. Exakte Berechnung der Werte funktioniert, wenn es möglich ist::
 
     sage: atan(1)
     1/4*pi
@@ -784,12 +783,7 @@ Wurzeln vorkommen::
     sage: rad2deg(x) = x*(180/pi)
     sage: rad2deg(acos(-1/2))
     120
-
-Falls wir Wurzelterme verwenden, müssen wir mit der Funktion ``simplify_full()`` vereinfachen::
-
     sage: acos(sqrt(3)/2)
-    arccos(1/2*sqrt(3))
-    sage: (acos(sqrt(3)/2)).simplify_full()
     1/6*pi
 
 Sage kann auch weitere Regeln für trigonometrische Funktionen anwenden, um Terme zu vereinfachen. Es kennt zum Beispiel auch die
