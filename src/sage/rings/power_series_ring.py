@@ -143,7 +143,6 @@ from sage.rings import (
     power_series_mpoly,
     power_series_poly,
     power_series_ring_element,
-    ring,
 )
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.infinity import infinity
