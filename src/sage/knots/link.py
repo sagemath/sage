@@ -3043,7 +3043,7 @@ class Link(SageObject):
             sage: # needs sage.libs.homfly
             sage: L = Link([[[1, -1], [2, -2]], [1, 1]])
             sage: L2 = Link([[1, 4, 2, 3], [2, 4, 1, 3]])
-            sage: L2.homfly_polynomial()
+            sage: L2.homfly_polynomial()  # not tested (:issue:`39544`)
             -L*M^-1 - L^-1*M^-1
             sage: L.homfly_polynomial()
             -L*M^-1 - L^-1*M^-1
