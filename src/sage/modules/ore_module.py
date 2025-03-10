@@ -114,8 +114,8 @@ the method :meth:`sage.modules.ore_module.OreModule.span`::
     sage: V
     Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
     sage: V.basis()
-    [u0 + (z^2 + 2*z + 2)*u2 + 4*z*u3,
-     u1 + (2*z^2 + 4*z + 4)*u2 + u3]
+    [u0 + (z^2+2*z+2)*u2 + 4*z*u3,
+     u1 + (2*z^2+4*z+4)*u2 + u3]
 
 We underline that the span is really the `\mathcal S`-span and
 not the `R`-span (as otherwise, it will not be a Ore module).
@@ -131,14 +131,14 @@ names to the basis vectors::
     sage: v0
     v0
     sage: U(v0)
-    u0 + (z^2 + 2*z + 2)*u2 + 4*z*u3
+    u0 + (z^2+2*z+2)*u2 + 4*z*u3
 
 A coercion map from `V` to `U` is automatically created.
 Hence, we can safely combine vectors in `V` and vectors in `U` in a
 single expression::
 
     sage: v0 - u0
-    (z^2 + 2*z + 2)*u2 + 4*z*u3
+    (z^2+2*z+2)*u2 + 4*z*u3
 
 We can create the quotient `U/V` using a similar syntax::
 
@@ -576,7 +576,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             sage: M.random_element()   # random
             (3*z^2 + 4*z + 2, 3*z^2 + z)
             sage: Me.random_element()  # random
-            (2*z + 4)*e0 + (z^2 + 4*z + 4)*e1
+            (2*z+4)*e0 + (z^2+4*z+4)*e1
 
         At this point, there is no coercion map between ``M``
         and ``Me``. Therefore, adding elements in both parents
@@ -594,7 +594,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
             sage: Me = M.rename_basis('e', coerce=True)
             sage: M.random_element() + Me.random_element()  # random
-            2*z^2*e0 + (z^2 + z + 4)*e1
+            2*z^2*e0 + (z^2+z+4)*e1
 
         .. WARNING::
 
@@ -635,7 +635,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
             sage: K.<z> = GF(5^3)
             sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
-            sage: P = X^3 + z*X^2 - z^2*X + (z + 2)
+            sage: P = X^3 + z*X^2 - z^2*X + (z+2)
             sage: M = S.quotient_module(P)
             sage: M.pseudohom()
             Free module pseudomorphism (twisted by z |--> z^5) defined by the matrix
@@ -767,7 +767,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
             sage: K.<z> = GF(5^3)
             sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
-            sage: P = X^3 + z*X^2 - z^2*X + (z + 2)
+            sage: P = X^3 + z*X^2 - z^2*X + (z+2)
             sage: M = S.quotient_module(P)
             sage: M.matrix()
             [      0       1       0]
@@ -1270,9 +1270,9 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             sage: MP
             Ore module of rank 4 over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
             sage: MP.basis()
-            [e0 + (t^4 + t^2 + 3)*e4 + t^3*e5,
-             e1 + (4*t^3 + 2*t)*e4 + (4*t^2 + 3)*e5,
-             e2 + (2*t^2 + 2)*e4 + 2*t*e5,
+            [e0 + (t^4+t^2+3)*e4 + t^3*e5,
+             e1 + (4*t^3+2*t)*e4 + (4*t^2+3)*e5,
+             e2 + (2*t^2+2)*e4 + 2*t*e5,
              e3 + 4*t*e4 + 4*e5]
 
         When there is only one generated, encapsulating it in a list in
@@ -1290,7 +1290,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             [u0, u1]
 
             sage: M(u0)
-            e0 + (t^2 + 4)*e2 + 3*t^3*e3 + (t^2 + 1)*e4 + 3*t*e5
+            e0 + (t^2+4)*e2 + 3*t^3*e3 + (t^2+1)*e4 + 3*t*e5
 
         Note that a coercion map from the submodule to the ambient module
         is automatically set::
@@ -1302,7 +1302,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         expression perfectly works::
 
             sage: t*u0 + e1
-            t*e0 + e1 + (t^3 + 4*t)*e2 + 3*t^4*e3 + (t^3 + t)*e4 + 3*t^2*e5
+            t*e0 + e1 + (t^3+4*t)*e2 + 3*t^4*e3 + (t^3+t)*e4 + 3*t^2*e5
 
         Here is an example with multiple generators::
 
@@ -1318,8 +1318,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             sage: N
             Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
             sage: N.basis()
-            [e0 + (t^2 + 4)*e2 + 3*t^3*e3 + (t^2 + 1)*e4 + 3*t*e5,
-             e1 + (4*t^2 + 4)*e3 + 3*t*e4 + 4*e5]
+            [e0 + (t^2+4)*e2 + 3*t^3*e3 + (t^2+1)*e4 + 3*t*e5,
+             e1 + (4*t^2+4)*e3 + 3*t*e4 + 4*e5]
 
         .. SEEALSO::
 
@@ -1383,7 +1383,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         and ``modP`` in the same formula works::
 
             sage: t*u0 + e1
-            (t^3 + 4*t)*u0 + (t^2 + 2)*u1
+            (t^3+4*t)*u0 + (t^2+2)*u1
 
         One can combine the construction of quotients and submodules without
         trouble. For instance, here we build the space `M P / M P^2`::
@@ -1393,7 +1393,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             sage: N
             Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
             sage: N.basis()
-            [e2 + (2*t^2 + 2)*e4 + 2*t*e5,
+            [e2 + (2*t^2+2)*e4 + 2*t*e5,
              e3 + 4*t*e4 + 4*e5]
 
         .. SEEALSO::
@@ -1554,7 +1554,7 @@ class OreSubmodule(OreModule):
             sage: M.<v,w> = S.quotient_module((X + z)^2)
             sage: N = M.span((X + z)*v)
             sage: N.an_element()  # indirect doctest
-            v + (3*z^2 + 4)*w
+            v + (3*z^2+4)*w
         """
         return self._ambient(x)._repr_()
 

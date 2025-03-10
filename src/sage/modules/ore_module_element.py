@@ -16,7 +16,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.misc.latex import latex
+from sage.misc.repr import repr_lincomb
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
 
 
@@ -39,37 +39,14 @@ class OreModuleElement(FreeModuleElement_generic_dense):
             sage: w - v  # indirect doctest
             -v + w
             sage: X^5*v  # indirect doctest
-            ((-4*t + 2)/(t^4 + 4*t^3 + 6*t^2 + 4*t + 1))*v + ((t - 5)/(t^3 + 3*t^2 + 3*t + 1))*w
+            ((-4*t+2)/(t^4+4*t^3+6*t^2+4*t+1))*v + ((t-5)/(t^3+3*t^2+3*t+1))*w
         """
         parent = self.parent()
+        names = parent._names
         if parent._names is None:
             return self.parent()._repr_element(self)
         else:
-            rank = parent.rank()
-            names = parent._names
-            s = ""
-            for i in range(rank):
-                c = self[i]
-                sc = str(c)
-                if sc == "0":
-                    continue
-                if sc == "1":
-                    s += " + %s" % names[i]
-                elif sc == "-1":
-                    s += " - %s" % names[i]
-                elif c._is_atomic():
-                    if sc[0] == "-":
-                        s += " - %s*%s" % (-c, names[i])
-                    else:
-                        s += " + %s*%s" % (sc, names[i])
-                else:
-                    s += " + (%s)*%s" % (c, names[i])
-            if s == "":
-                return "0"
-            elif s[1] == '-':
-                return '-' + s[3:]
-            else:
-                return s[3:]
+            return repr_lincomb([(names[i], self[i]) for i in range(len(names))])
 
     def _latex_(self):
         r"""
@@ -84,7 +61,7 @@ class OreModuleElement(FreeModuleElement_generic_dense):
             sage: latex(v - w)
             v - w
             sage: latex(w - v)
-            - v + w
+            -v + w
             sage: latex(X^5*v)
             \left(\frac{-4 t + 2}{t^{4} + 4 t^{3} + 6 t^{2} + 4 t + 1}\right) v + \left(\frac{t - 5}{t^{3} + 3 t^{2} + 3 t + 1}\right) w
         """
@@ -92,31 +69,8 @@ class OreModuleElement(FreeModuleElement_generic_dense):
         if parent._names is None:
             return self.parent()._latex_element(self)
         else:
-            rank = parent.rank()
             names = parent._latex_names
-            s = ""
-            for i in range(rank):
-                c = self[i]
-                sc = str(c)
-                if sc == "0":
-                    continue
-                if sc == "1":
-                    s += " + %s" % names[i]
-                elif sc == "-1":
-                    s += " - %s" % names[i]
-                elif c._is_atomic():
-                    if sc[0] == "-":
-                        s += " - %s %s" % (latex(-c), names[i])
-                    else:
-                        s += " + %s %s" % (latex(c), names[i])
-                else:
-                    s += " + \\left(%s\\right) %s" % (latex(c), names[i])
-            if s == "":
-                return "0"
-            elif s[1] == '-':
-                return s[1:]
-            else:
-                return s[3:]
+            return repr_lincomb([(names[i], self[i]) for i in range(len(names))], is_latex=True)
 
     def is_mutable(self):
         r"""

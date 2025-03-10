@@ -444,12 +444,12 @@ class OreModuleMorphism(Morphism):
             sage: M.<v,w> = S.quotient_module(X^2 + z*X + 1)
             sage: f = M.multiplication_map(X^3)
             sage: f(v)
-            (2*z^2 + 4*z + 4)*v + (4*z^2 + 3*z + 3)*w
+            (2*z^2+4*z+4)*v + (4*z^2+3*z+3)*w
 
         We check that it is the correct answer::
 
             sage: X^3 * v
-            (2*z^2 + 4*z + 4)*v + (4*z^2 + 3*z + 3)*w
+            (2*z^2+4*z+4)*v + (4*z^2+3*z+3)*w
         """
         return self.codomain()(x * self._matrix)
 
@@ -752,9 +752,9 @@ class OreModuleMorphism(Morphism):
             sage: ker
             Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
             sage: ker.basis()
-            [m0 + (2*z^2 + 3*z + 1)*m3 + (4*z^2 + 3*z + 3)*m4 + (2*z^2 + 3*z)*m5,
-             m1 + (z + 3)*m3 + (z^2 + z + 4)*m4,
-             m2 + (2*z^2 + 4*z + 2)*m4 + (2*z^2 + z + 1)*m5]
+            [m0 + (2*z^2+3*z+1)*m3 + (4*z^2+3*z+3)*m4 + (2*z^2+3*z)*m5,
+             m1 + (z+3)*m3 + (z^2+z+4)*m4,
+             m2 + (2*z^2+4*z+2)*m4 + (2*z^2+z+1)*m5]
         """
         ker = self._matrix.left_kernel_matrix()
         return OreSubmodule(self.domain(), ker, names)
@@ -780,9 +780,9 @@ class OreModuleMorphism(Morphism):
             sage: im
             Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
             sage: im.basis()
-            [m0 + (2*z^2 + 3*z + 1)*m3 + (4*z^2 + 3*z + 3)*m4 + (2*z^2 + 3*z)*m5,
-             m1 + (z + 3)*m3 + (z^2 + z + 4)*m4,
-             m2 + (2*z^2 + 4*z + 2)*m4 + (2*z^2 + z + 1)*m5]
+            [m0 + (2*z^2+3*z+1)*m3 + (4*z^2+3*z+3)*m4 + (2*z^2+3*z)*m5,
+             m1 + (z+3)*m3 + (z^2+z+4)*m4,
+             m2 + (2*z^2+4*z+2)*m4 + (2*z^2+z+1)*m5]
         """
         return OreSubmodule(self.codomain(), self._matrix, names)
 
