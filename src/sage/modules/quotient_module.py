@@ -538,6 +538,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         TESTS:
 
         Ensure that :issue:`39507` is fixed::
+
             sage: V = VectorSpace(GF(2),3)
             sage: A = V.subspace([(0,1,0), (1,1,1)])
             sage: B = A.subspace([])
