@@ -34,7 +34,6 @@ from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgEx
 
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring cimport IntegerRing_class
-from sage.rings.integer_ring import ZZ
 import sage.rings.abc
 from sage.rings.number_field.number_field_base cimport NumberField
 from sage.rings.rational_field import RationalField
