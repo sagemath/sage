@@ -32,12 +32,10 @@ AUTHORS:
 # ***************************************************************************
 
 import re
-import operator
 from cysignals.signals cimport sig_check
 from sage.structure.element import coerce_binop
 
 from sage.rings.infinity import infinity
-from sage.matrix.special import companion_matrix
 from sage.structure.element cimport Element, RingElement, AlgebraElement
 from sage.structure.parent cimport Parent
 from sage.categories.homset import Hom
@@ -2966,67 +2964,6 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             ans += self[i] * Xi
         return ans
 
-    def quotient_module(self, names=None):
-        r"""
-        Return the quotient ring `A/AP` as a module over `A`
-        where `A` denotes the underlying Ore polynomial ring
-        and `P` denotes this Ore polynomial.
-
-        INPUT:
-
-        - ``names`` (default: ``None``) -- a string or a list
-          of string, the names of the vector of the canonical
-          basis
-
-        EXAMPLES::
-
-            sage: k.<a> = GF(5^3)
-            sage: S.<x> = k['a', k.frobenius_endomorphism()]
-            sage: P = x^3 + a*x^2 + a^2 + 1
-            sage: M = P.quotient_module()
-            sage: M
-            Ore module of rank 3 over Finite Field in a of size 5^3 twisted by a |--> a^5
-
-        The argument ``names`` can be used to give chosen names
-        to the vectors in the canonical basis::
-
-            sage: M = P.quotient_module(names=('u', 'v', 'w'))
-            sage: M.basis()
-            [u, v, w]
-
-        or even::
-
-            sage: M = P.quotient_module(names='e')
-            sage: M.basis()
-            [e0, e1, e2]
-
-        Note that the bracket construction also works::
-
-            sage: M.<u,v,w> = P.quotient_module()
-            sage: M.basis()
-            [u, v, w]
-
-        With this construction, the vectors `u`, `v` and `w`
-        are directly available in the namespace::
-
-            sage: x*u + v
-            2*v
-
-        We refer to :module:`sage.modules.ore_module` for a
-        tutorial on Ore modules in SageMath.
-
-        .. SEEALSO:
-
-            :mod:`sage.modules.ore_module`
-        """
-        from sage.modules.ore_module import OreModule, OreAction
-        S = self.parent()
-        coeffs = self.right_monic().list()
-        f = companion_matrix(coeffs, format='bottom')
-        M = OreModule(f, S, names=names)
-        M._unset_coercions_used()
-        M.register_action(OreAction(S, M, True, operator.mul))
-        return M
 
 cdef class ConstantOrePolynomialSection(Map):
     r"""

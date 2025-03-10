@@ -45,6 +45,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+import operator
 from sage.categories.algebras import Algebras
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.morphism import Morphism
@@ -1303,7 +1304,14 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
             :mod:`sage.modules.ore_module`
         """
-        return self(P).quotient_module(names=names)
+        from sage.matrix.special import companion_matrix
+        from sage.modules.ore_module import OreModule, OreAction
+        coeffs = self(P).right_monic().list()
+        f = companion_matrix(coeffs, format='bottom')
+        M = OreModule(f, self, names=names)
+        M._unset_coercions_used()
+        M.register_action(OreAction(self, M, True, operator.mul))
+        return M
 
     def _pushout_(self, other):
         r"""
