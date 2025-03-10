@@ -12,7 +12,7 @@ equipped with the map giving the action of the Ore variable `X`.
 We refer to :mod:`sage.modules.ore_module` for more details.
 
 A morphism of Ore modules is a `R`-linear morphism commuting
-with the Ore action, or equivalenty a `\mathcal S`-linear.
+with the Ore action, or equivalenty a `\mathcal S`-linear map.
 
 .. RUBRIC:: Construction of morphisms
 
@@ -32,7 +32,7 @@ we want to build::
     Ore module endomorphism of Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5
 
 Clearly, this method is not optimal: typing all the entries of the
-defining matrix is long and is a potential source of errors.
+defining matrix is long and a potential source of errors.
 
 Instead, one can use a dictionary encoding the values taken by the
 morphism on a set of generators; the morphism is then automatically
