@@ -250,7 +250,6 @@ class OreAction(Action):
             sage: X*e0  # indirect doctest
             e1
         """
-        M = x.parent()
         ans = P[0]*x
         y = x
         for i in range(1, P.degree() + 1):
@@ -1224,7 +1223,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
                 rows.append(self(gen).list())
         if len(rows) < 2*rank:
             zero = rank * [base.zero()]
-            rows += (2*rank - len(rows)) * [rank*[0]]
+            rows += (2*rank - len(rows)) * [zero]
         M = matrix(base, rows)
         M.echelonize()
         oldr = 0

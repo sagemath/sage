@@ -266,7 +266,7 @@ from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 from sage.categories.map import Map
 from sage.categories.morphism import Morphism
-from sage.modules.ore_module import OreModule, OreSubmodule, OreQuotientModule
+from sage.modules.ore_module import OreSubmodule, OreQuotientModule
 
 
 class OreModuleMorphism(Morphism):
