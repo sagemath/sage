@@ -94,8 +94,7 @@ Conversions::
     [4, 2]
 
     sage: int(pari(RealField(63)(2^63 - 1)))                                            # needs sage.rings.real_mpfr
-    9223372036854775807   # 32-bit
-    9223372036854775807   # 64-bit
+    9223372036854775807
     sage: int(pari(RealField(63)(2^63 + 2)))                                            # needs sage.rings.real_mpfr
     9223372036854775810
 
@@ -1231,8 +1230,7 @@ Elliptic curves::
     sage: e.ellheight([1,0])
     0.476711659343740
     sage: e.ellheight([1,0], precision=128).sage()
-    0.47671165934373953737948605888465305945902294218            # 32-bit
-    0.476711659343739537379486058884653059459022942211150879336  # 64-bit
+    0.476711659343739537379486058884653059459022942211150879336
     sage: e.ellheight([1, 0], [-1, 1])
     0.418188984498861
 
@@ -1502,7 +1500,7 @@ Quadratic class numbers::
     sage: pari(-104).quadclassunit()
     [6, [6], [Qfb(5, -4, 6)], 1]
     sage: pari(109).quadclassunit()
-    [1, [], [], 5.56453508676047]
+    [1, [], [], 5.56453508676047, -1]
     sage: pari(10001).quadclassunit() # random generators
     [16, [16], [Qfb(10, 99, -5, 0.E-38)], 5.29834236561059]
     sage: pari(10001).quadclassunit()[0]
@@ -1749,13 +1747,13 @@ General number fields::
     sage: y = QQ['yy'].0; _ = pari(y) # pari has variable ordering rules
     sage: x = QQ['zz'].0; nf = pari(x^2 + 2).nfinit()
     sage: nf.nfroots(y^2 + 2)
-    [Mod(-zz, zz^2 + 2), Mod(zz, zz^2 + 2)]
+    [Mod(-zz, zz^2 + 2), Mod(zz, zz^2 + 2)]~
     sage: nf = pari(x^3 + 2).nfinit()
     sage: nf.nfroots(y^3 + 2)
-    [Mod(zz, zz^3 + 2)]
+    [Mod(zz, zz^3 + 2)]~
     sage: nf = pari(x^4 + 2).nfinit()
     sage: nf.nfroots(y^4 + 2)
-    [Mod(-zz, zz^4 + 2), Mod(zz, zz^4 + 2)]
+    [Mod(-zz, zz^4 + 2), Mod(zz, zz^4 + 2)]~
 
     sage: nf = pari('x^2 + 1').nfinit()
     sage: nf.nfrootsof1()
@@ -1806,12 +1804,11 @@ library::
     sage: e = pari([0,0,0,-82,0]).ellinit()
     sage: eta1 = e.elleta(precision=50)[0]
     sage: eta1.sage()
-    3.6054636014326520859158205642077267748 # 64-bit
-    3.605463601432652085915820564           # 32-bit
+    3.6054636014326520859158205642077267748
     sage: eta1 = e.elleta(precision=150)[0]
     sage: eta1.sage()
     3.605463601432652085915820564207726774810268996598024745444380641429820491740 # 64-bit
-    3.60546360143265208591582056420772677481026899659802474544                    # 32-bit
+    3.605463601432652085915820564207726774810268996598024745444380641430          # 32-bit
     sage: from cypari2 import Pari
     sage: pari = Pari()
 

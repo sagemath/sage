@@ -143,17 +143,17 @@ Factorizations can involve fairly abstract mathematical objects::
     sage: K.<a> = NumberField(x^2 + 3); K
     Number Field in a with defining polynomial x^2 + 3
     sage: f = K.factor(15); f
-    (Fractional ideal (1/2*a + 3/2))^2 * (Fractional ideal (5))
+    (Fractional ideal (-a))^2 * (Fractional ideal (5))
     sage: f.universe()
     Monoid of ideals of Number Field in a with defining polynomial x^2 + 3
     sage: f.unit()
     Fractional ideal (1)
     sage: g = K.factor(9); g
-    (Fractional ideal (1/2*a + 3/2))^4
+    (Fractional ideal (-a))^4
     sage: f.lcm(g)
-    (Fractional ideal (1/2*a + 3/2))^4 * (Fractional ideal (5))
+    (Fractional ideal (-a))^4 * (Fractional ideal (5))
     sage: f.gcd(g)
-    (Fractional ideal (1/2*a + 3/2))^2
+    (Fractional ideal (-a))^2
     sage: f.is_integral()
     True
 
