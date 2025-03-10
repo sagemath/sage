@@ -4968,10 +4968,32 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
     def complement(self, *, orthogonal=None):
         r"""
-        Return the complementary subspace of ``self`` in the
+        Returns a complementary subspace of ``self`` in the
         :meth:`~sage.modules.free_module.FreeModule_ambient_field.ambient_vector_space`.
 
         EXAMPLES::
+
+            sage: V = RR^3
+            sage: S = V.subspace([[1,0,0], [0,1,0]])
+            sage: C = S.complement(orthogonal=False)
+            sage: C
+            Vector space of degree 3 and dimension 1 over Real Field with 53
+            bits of precision
+            Basis matrix:
+            [0.000000000000000 0.000000000000000  1.00000000000000]
+            sage: C + S == V
+            True
+            sage: V = VectorSpace(GF(2), 3)
+            sage: S = V.subspace([[1,1,1], [0,0,1]])
+            sage: C = S.complement(orthogonal=False)
+            sage: C
+            Vector space of degree 3 and dimension 1 over Finite Field of size 2
+            Basis matrix:
+            [0 1 0]
+            sage: C + S == V
+            True
+            sage: C.complement(orthogonal=False) == S
+            False
         """
         if orthogonal is None:
             from sage.misc.superseded import deprecation
@@ -4980,11 +5002,17 @@ class FreeModule_generic_field(FreeModule_generic_pid):
                                + " functionality is being moved to the"
                                + " orthogonal_complement() function. This function"
                                + " will instead return a complementary subspace")
-            return orthogonal_complement(self)
+            return self.orthogonal_complement()
         if orthogonal is True:
-            return orthogonal_complement(self)
+            return self.orthogonal_complement()
         if orthogonal is False:
-            return 1
+            pivotTuple = self.basis_matrix().pivots()
+            ambientBasisSize = self.ambient_vector_space().dimension()
+            nonPivotList = [i for i in range(ambientBasisSize) if i not in
+            pivotTuple]
+            complementBasis = [self.ambient_vector_space().basis()[i] for i in
+            nonPivotList]
+            return self.ambient_vector_space().subspace(complementBasis)
 
     def orthogonal_complement(self):
         r"""
