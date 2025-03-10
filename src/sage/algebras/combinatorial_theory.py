@@ -377,6 +377,7 @@ def _remove_kernel(mat, factor=1024, threshold=1e-4):
     LLL_reduced = M_augmented.LLL()
     LLL_coeffs = LLL_reduced[:, :d]
     norm_test = LLL_coeffs * mat
+    #print("norms are: ", " ".join([str(int(log(rr.norm(1)/d, 10))) for rr in norm_test]))
     kernel_base = [LLL_coeffs[ii] for ii,rr in enumerate(norm_test) if rr.norm(1)/d < threshold]
     if len(kernel_base)==0:
         return mat, matrix.identity(d, sparse=True)
@@ -1065,6 +1066,240 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         return result, X_matrices_rounded, e_vector_rounded, \
             slacks, [phi_vector_rounded]
     
+    def _round_sdp_solution_no_phi_alter(self, sdp_result, sdp_data, 
+                                         table_constructor, constraints_data, 
+                                         **params):
+        r"""
+        Round the SDP results output to get something exact.
+        """
+        import gc
+        import time
+
+        # set up parameters
+        denom = params.get("denom", 1024)
+        ring = params.get("ring", QQ)
+        slack_threshold = params.get("slack_threshold", 1e-9)
+        linear_threshold = params.get("linear_threshold", 1e-6)
+        kernel_threshold = params.get("kernel_threshold", 1e-4)
+        kernel_denom = params.get("kernel_denom", 1024)
+        
+        # unpack variables
+        block_sizes, target_list_exact, _, __ = sdp_data
+        target_vector_exact = vector(ring, target_list_exact)
+        flags_num, _, positives_list_exact, __ = constraints_data
+        _ = None; __ = None; gc.collect()
+        positives_matrix_exact = matrix(
+            ring, len(positives_list_exact), flags_num, positives_list_exact
+            )
+        
+        # find the one_vector from the equality constraint
+        one_vector_exact = positives_matrix_exact.rows()[-2] 
+        # remove the equality constraints
+        positives_matrix_exact = positives_matrix_exact[:-2, :]
+
+        # dim: |F_n|, c vector, primal slack for flags
+        c_vector_approx = vector(sdp_result['X'][-2]) 
+
+        c_zero_inds = [
+            FF for FF, xx in enumerate(c_vector_approx) if 
+            (xx<=slack_threshold)
+            ]
+
+        # same as m, number of positive constraints (-2 for the equality)
+        positives_num = -block_sizes[-1] - 2 
+        # dim: m, the e vector, primal slack for positivitives
+        e_vector_approx = vector(sdp_result['X'][-1][:-2])
+        # as above but rounded
+        e_vector_rounded = vector(QQ, 
+                                  _round_list(e_vector_approx, method=0, denom=denom)
+                                  ) 
+
+        # The f (ff) positivity constraints where the e vector is zero/nonzero
+        e_zero_inds = [
+            ff for ff, xx in enumerate(e_vector_approx) if \
+                (xx<linear_threshold)
+                ]
+        e_nonzero_inds = [
+            ff for ff in range(positives_num) if ff not in e_zero_inds
+            ]
+
+
+
+        bound_exact = _round(sdp_result['primal'], method=1)
+        # the constraints for the flags that are exact
+        corrected_target_relevant_exact = vector(
+            ring, 
+            [target_vector_exact[FF] - bound_exact for FF in c_zero_inds]
+            )
+        # the d^f_F matrix, but only the relevant parts for the rounding
+        # so F where c_F = 0 and f where e_f != 0
+        positives_matrix_relevant_exact = matrix(
+            ring, len(e_nonzero_inds), len(c_zero_inds), 
+            [[positives_matrix_exact[ff][FF] for FF in c_zero_inds] \
+             for ff in e_nonzero_inds]
+             )
+        # the e vector, but only the nonzero entries
+        e_nonzero_list_rounded = [e_vector_rounded[ff] for ff in e_nonzero_inds]
+        
+        
+        
+        # 
+        # Flatten the matrices relevant for the rounding
+        # 
+        # M table transforms to a matrix, (with nondiagonal entries doubled)
+        # only the FF index matrices corresponding with tight constraints are used
+        # 
+        # X transforms to a vector
+        # only the semidefinite blocks are used
+        # 
+
+        # The relevant entries of M flattened to a matrix this will be indexed by 
+        # c_zero_inds and the triples from the types
+        
+        self.fprint("Flattening X matrices")
+        start_time = time.time()
+        M_flat_relevant_matrix_exact = matrix(
+            ring, len(c_zero_inds), 0, 0, sparse=True
+            )
+        X_flat_list = []
+        block_index = 0
+        X_recover_bases = []
+        X_sizes_corrected = []
+
+        for params in table_constructor.keys():
+            ns, ftype, target_size = params
+            table = self.mul_project_table(
+                ns, ns, ftype, ftype_inj=[], target_size=target_size
+                )
+
+            for plus_index, base in enumerate(table_constructor[params]):
+                
+                X_approx = matrix(sdp_result['X'][block_index + plus_index])
+                X_kernel_removed, recover_base = _remove_kernel(X_approx, kernel_denom, kernel_threshold)
+                X_recover_bases.append(recover_base)
+                X_sizes_corrected.append(X_kernel_removed.nrows())
+                X_rounded_flattened = _round_list(
+                    _flatten_matrix(X_kernel_removed.rows()), method=0, denom=denom
+                    )
+                X_flat_list.extend(X_rounded_flattened)
+                
+                M_extra = []
+
+                X_adjusted_base = recover_base.T * base
+                for FF in c_zero_inds:
+                    M_FF = table[FF]
+                    M_extra.append(
+                        _flatten_matrix(
+                            (X_adjusted_base * M_FF * X_adjusted_base.T).rows(), doubled=True
+                            )
+                        )
+
+                M_flat_relevant_matrix_exact = \
+                    M_flat_relevant_matrix_exact.augment(
+                        matrix(ring, M_extra)
+                        )
+                
+                gc.collect()
+
+            block_index += len(table_constructor[params])
+
+        # 
+        # Append the relevant M matrix and the X with the additional values from
+        # the positivity constraints. Then correct the x vector values
+        # 
+
+        M_matrix_final = M_flat_relevant_matrix_exact.augment(
+            positives_matrix_relevant_exact.T
+            )
+        x_vector_final = vector(
+            ring, 
+            X_flat_list + e_nonzero_list_rounded
+            )
+        self.fprint("This took {}s".format(time.time() - start_time))
+        start_time = time.time()
+        self.fprint("Correcting flat X matrices")
+        self.fprint("Dimensions: ", M_matrix_final.dimensions())
+        # Correct the values of the x vector, based on the minimal L_2 norm
+        residual = M_matrix_final * x_vector_final - corrected_target_relevant_exact
+        M_self_prod = matrix(M_matrix_final * M_matrix_final.T, sparse=False)
+        x_vector_corr = x_vector_final - M_matrix_final.T * (
+            M_self_prod.pseudoinverse() * residual
+        )
+        self.fprint("This took {}s".format(time.time() - start_time))
+        start_time = time.time()
+
+        self.fprint("Unflattening X matrices")
+
+        #
+        # Recover the X matrices and e vector from the corrected x
+        #
+        
+        e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
+        if len(e_nonzero_vector_corr)>0 and min(e_nonzero_vector_corr)<0:
+            self.fprint("Linear coefficient is negative: {}".format(
+                min(e_nonzero_vector_corr)
+                ))
+            e_nonzero_vector_corr = [max(xx, 0) for xx in e_nonzero_vector_corr]
+        e_vector_dict = dict(zip(e_nonzero_inds, e_nonzero_vector_corr))
+        e_vector_corr = vector(ring, positives_num, e_vector_dict)
+        self.fprint("This took {}s".format(time.time() - start_time))
+        start_time = time.time()
+
+        X_final = []
+        slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
+        block_index = 0
+        self.fprint("Calculating resulting bound")
+        if self._printlevel > 0:
+            iterator = tqdm(table_constructor.keys())
+        else:
+            iterator = table_constructor.keys()
+        for params in iterator:
+            ns, ftype, target_size = params
+            table = self.mul_project_table(
+                ns, ns, ftype, ftype_inj=[], target_size=target_size
+                )
+            for plus_index, base in enumerate(table_constructor[params]):
+                block_dim = X_sizes_corrected[block_index + plus_index]
+                X_ii_raw, x_vector_corr = _unflatten_matrix(
+                    x_vector_corr, block_dim
+                    )
+                X_ii_raw = matrix(ring, X_ii_raw)
+                recover_base = X_recover_bases[block_index + plus_index]
+                X_ii_small = recover_base * X_ii_raw * recover_base.T
+                
+                # verify semidefiniteness
+                if not X_ii_small.is_positive_semidefinite():
+                    self.fprint("Rounded X matrix "+ 
+                        "{} is not semidefinite: {}".format(
+                            block_index+plus_index, 
+                            min(X_ii_small.eigenvalues())
+                            ))
+                    return None
+                
+                # update slacks
+                for gg, morig in enumerate(table):
+                    M = base * morig * base.T
+                    M_flat_vector_exact = vector(
+                        _flatten_matrix(M.rows(), doubled=True)
+                        )
+                    slacks[gg] -= M_flat_vector_exact*vector(
+                        _flatten_matrix(X_ii_small.rows(), doubled=False)
+                        )
+                
+                X_final.append(X_ii_small)
+            block_index += len(table_constructor[params])
+
+        # scale back slacks with the one vector, the minimum is the final result
+        result = min([slacks[ii]/oveii \
+                    for ii, oveii in enumerate(one_vector_exact) if \
+                        oveii!=0])
+        # pad the slacks, so it is all positive where it counts
+        slacks -= result*one_vector_exact
+        self.fprint("This took {}s".format(time.time() - start_time))
+        start_time = time.time()
+
+        return result, X_final, e_vector_corr, slacks, []
+
     def _round_sdp_solution_phi(self, sdp_result, sdp_data, 
                                 table_constructor, constraints_data, 
                                 phi_vectors_exact, **params):
@@ -1711,7 +1946,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             if (not exact):
                 return help_return(initial_sol['primal'] * mult, 
                                    sdpo=initial_sol)
-
+                
             # Guess the construction in this case
             if construction==None:
                 one_vector = constraints_data[-1]
@@ -1731,10 +1966,18 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     self.fprint("The initial run didn't provide an "+
                           "accurate construction")
                     construction = []
-            
             # If nothing was provided or the guess failed, 
             # then round the current solution
             if construction==[]:
+                rounding_output = self._round_sdp_solution_no_phi_alter(
+                    initial_sol, sdp_data, table_constructor, 
+                    constraints_data, **params)
+                if rounding_output!=None:
+                    return help_return(rounding_output[0] * mult, roundo=rounding_output)
+                else:
+                    construction=False
+            
+            if construction==False:
                 rounding_output = self._round_sdp_solution_no_phi(
                     initial_sol, sdp_data, table_constructor, 
                     constraints_data, **params)
