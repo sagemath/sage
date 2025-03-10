@@ -1764,7 +1764,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
           ``LinBox::FFPACK`` implementation, since the latter also
           computes the transformation matrix (which we
           ignore). However, ``efd=True`` uses more memory than FFLAS
-          directly (default=``True``)
+          directly (default: ``True``)
 
         EXAMPLES::
 
