@@ -18,36 +18,37 @@ machines, it is crucial to test changes to Sage, in particular
 when external packages are added or upgraded, on a wide
 spectrum of platforms.
 
+- Individual PR, upon creation and update, automatically goes through "checks"
+  implemented by `GitHub Actions <https://github.com/sagemath/sage/actions>`_
+  to identify errors early and ensure code quality. In particular, Build & Test
+  workflows perform an incremental build of Sage on the PR branch and run
+  doctests on a selection of major platforms including Ubuntu, macOS, and
+  Conda.
 
-Testing PRs with GitHub Actions
-===============================
+  For PRs making changes to external packages, the Docker-based testing workflow
+  `CI Linux incremental <https://github.com/sagemath/sage/actions/workflows/ci-linux-incremental.yml>`_
+  checks the PR branch on an array of Linux platforms.
 
-`GitHub Actions <https://github.com/sagemath/sage/actions>`_ are automatically
-and constantly testing GitHub PRs to identify errors early and ensure code
-quality. In particular, Build & Test workflows perform an incremental build of
-Sage and run doctests on a selection of major platforms including Ubuntu,
-macOS, and Conda.
+- Before a new release, the release manager runs a fleet of `buildbots
+  <http://build.sagemath.org>`_ to make it sure that Sage builds correctly on
+  all of our supported platforms.
 
+- After a new release, our Docker-based testing workflows `CI Linux <https://github.com/sagemath/sage/actions/workflows/ci-linux.yml>`_
+  and `CI macOS <https://github.com/sagemath/sage/actions/workflows/ci-macos.yml>`_
+  perform extensive testing on a multitude of platforms.
 
-Sage buildbots
-==============
+- Sage developers and users are encouraged to test releases that are announced
+  on `Sage Release <https://groups.google.com/forum/#!forum/sage-release>`_ on
+  their machines and to report the results (successes and failures) by
+  responding to the announcements.
 
-Before a new release, the release manager runs a fleet of `buildbots
-<http://build.sagemath.org>`_ to make it sure that Sage builds correctly on all
-of our supported platforms.
-
-
-Test reports on sage-release
-============================
-
-Sage developers and users are encouraged to test releases that are announced on
-`Sage Release <https://groups.google.com/forum/#!forum/sage-release>`_ on their
-machines and to report the results (successes and failures) by responding to the
-announcements.
+In the rest, we focus on our Docker-based testing framework that developers can
+use to test Sage and fix portability issues for platforms other than their own
+machines.
 
 
-Testing on multiple platforms using Docker
-==========================================
+Docker-based testing
+====================
 
 `Docker <https://www.docker.com>`_ is a popular virtualization
 software, running Linux operating system images ("Docker images") in
@@ -475,7 +476,7 @@ directory into it.  This copying is subject to the exclusions in the
 ``.gitignore`` file (via a symbolic link from ``.dockerignore``).
 Therefore, only the sources are copied, but not your configuration
 (such as the file ``config.status``), nor the ``$SAGE_LOCAL`` tree,
-nor any other build artefacts.
+nor any other build artifacts.
 
 Because of this, you can build a Docker image using the generated
 ``Dockerfile`` from your main Sage development tree.  It does not have
@@ -829,7 +830,7 @@ keep the source tree clean to the extent possible. In particular:
 
 This makes it possible for advanced users to test several ``local``
 tox environments (such as ``local-direct``) out of one worktree.  However, because a
-build still writes configuration scripts and build artefacts (such as
+build still writes configuration scripts and build artifacts (such as
 ``config.status``) into the worktree, only one ``local`` build can run
 at a time in a given worktree.
 
@@ -992,21 +993,19 @@ options::
 Automatic testing on multiple platforms on GitHub Actions
 =========================================================
 
-The Sage source tree includes a default configuration for GitHub
-Actions that runs our portability tests on a multitude of platforms on
-every push of a tag (but not of a branch) to a repository for which
-GitHub Actions are enabled.
-
-In particular, it automatically runs on our main repository sagemath/sage
-on every release tag.
+The Sage source tree includes a configuration (a suite of scripts) for GitHub
+Actions that runs portability tests on a multitude of platforms
+using the Docker-based testing framework described above, on every push of a
+tag (but not of a branch) to a repository for which GitHub Actions are enabled.
+In particular, it runs on our main repository sagemath/sage on every release
+tag.
 
 This is defined in the files
 
-- :sage_root:`.github/workflows/ci-linux.yml`
-  (which calls :sage_root:`.github/workflows/docker.yml`) and
-
-- :sage_root:`.github/workflows/ci-macos.yml`
-  (which calls :sage_root:`.github/workflows/macos.yml`).
+- :sage_root:`.github/workflows/ci-linux.yml` CI Linux workflow
+- :sage_root:`.github/workflows/docker.yml` called by CI Linux workflow
+- :sage_root:`.github/workflows/ci-macos.yml` CI macOS workflow
+- :sage_root:`.github/workflows/macos.yml` called by CI macOS workflow
 
 GitHub Actions runs these build jobs on 2-core machines with 7 GB of
 RAM memory and 14 GB of SSD disk space, cf.
@@ -1015,12 +1014,26 @@ and has a time limit of 6h per job. This could be just barely enough for a
 typical ``minimal`` build followed by ``make ptest`` to succeed; for
 added robustness, we split it into two jobs. Our workflow stores
 Docker images corresponding to various build phases within these two
-jobs on `GitHub Packages <https://github.com/features/packages>`_ (ghcr.io).
+jobs on `GitHub Packages <https://github.com/orgs/sagemath/packages?repo_name=sage>`_ (ghcr.io).
 
 Build logs can be inspected during the run and become available as
 "artifacts" when all jobs of the workflow have finished.  Each job
 generates one tarball.  "Annotations" highlight certain top-level
 errors or warnings issued during the build.
+
+.. NOTE::
+
+    The list of the default platforms tested by the CI Linux workflow is in the
+    item ``tox_system_factors`` of the file
+    :sage_root:`.github/workflows/docker.yml`.  However, do not modify the list
+    directly. Instead use the command ::
+
+    $ tox -e update_docker_platforms
+
+    to update the list (and this documentation accordingly) from the "Master list
+    of platforms tested in CI Linux" (search for ``DEFAULT_SYSTEM_FACTORS``) in
+    :sage_root:`tox.ini`, which dictates how to create testing environments for
+    all platforms and build modes.
 
 In addition to these automatic runs in our main repository, all Sage
 developers can run the same tests on GitHub Actions in their personal
@@ -1039,8 +1052,8 @@ of system configurations.
 
 - Push your branch to ``origin`` (your fork).
 
-- Go to the Actions tab of your fork and select the workflow you would like to run,
-  for example "CI Linux".
+- Go to the Actions tab of your fork and select the workflow "CI Linux"
+  or "CI macOS".
 
 - Click on "Run workflow" above the list of workflow runs and select
   your branch as the branch on which the workflow will run.
@@ -1048,8 +1061,8 @@ of system configurations.
 For more information, see the `GitHub documentation
 <https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/manually-running-a-workflow>`_.
 
-Alternatively, you can trigger a run of tests by creating and pushing
-a custom tag as follows.
+Alternatively, you can trigger CI workflows at the same time by creating and
+pushing a custom tag as follows.
 
 - Create a ("lightweight", not "annotated") tag with an arbitrary
   name, say ``ci`` (for "Continuous Integration")::
@@ -1060,10 +1073,17 @@ a custom tag as follows.
 
     git push -f origin ci
 
-(In both commands, the "force" option (``-f``) allows overwriting a
-previous tag of that name.)
+In both commands, the "force" option (``-f``) allows overwriting a
+previous tag of that name.
 
-Either way, when the workflow has been triggered, you can inspect it
+The `workflow for Linux portability CI
+<https://github.com/sagemath/sage/actions/workflows/docker.yml>`_ is convenient
+when you are fixing issues for specific Linux platforms. The "Run workflow"
+button allows you to precisely select the platforms and the build targets
+tailored for the issues you are tackling. This is for advanced developers, who
+read the workflow script :sage_root:`.github/workflows/docker.yml` in detail.
+
+When any CI workflow has been triggered, you can inspect it
 by using the workflow status page in the "Actions" tab of your
 repository.
 
@@ -1074,9 +1094,28 @@ pane if ``make build doc-html`` finished without error.  (It also runs
 package testsuites and the Sage doctests but failures in these are not
 reflected in the left pane; see below.)
 
-The right pane ("Artifacts") offers archives of the logs for download.
+Clicking an item in the left pane opens a log viewer on the right. The most
+important item in the log viewer is the step "Configure and build Sage ...",
+where you see full logs generated from the workflow. If the job failed, these
+logs show at what point in the build process the failure occurred.
 
-Scrolling down in the right pane shows "Annotations":
+.. NOTE::
+
+    The massive volume of logs would look overwhelming at first sight. Here are
+    some guides:
+
+    - ``► ...``: These are commands executed by the workflow :sage_root:`.github/workflows/docker.yml`.
+    - ``docker-...:``: These are commands executed by Tox :sage_root:`tox.ini`.
+    - ``#xx ...`` where ``xx`` is a number: These show the commands executed by
+      Docker building Sage with the Dockerfile generated by
+      :sage_root:`.ci/write-dockerfile.sh`.
+    - Other lines are output from the commands executed by the workflow, Tox,
+      or Docker. The majority of these will likely be the output from the Sage
+      build process.
+
+The "Artifacts" pane on the right offers archives of the logs for download.
+
+The "Annotations" pane on the right shows errors, warnings or notices:
 
 * Red "check failure" annotations appear for each log file that
   contains a build error. For example, you might see::
@@ -1103,6 +1142,8 @@ Scrolling down in the right pane shows "Annotations":
 Clicking on the annotations does not take you to a very useful
 place. To view details, click on one of the items in the pane. This
 changes the right pane to a log viewer.
+
+
 
 The ``docker`` workflows automatically push images to
 ``ghcr.io``.  You find them in the Packages tab of your
@@ -1136,7 +1177,7 @@ Our portability CI on GitHub Actions builds `Docker images
 <https://github.com/orgs/sagemath/packages?tab=packages&q=with-targets-optional>`_
 for all tested Linux platforms (and system package configurations) and
 makes them available on `GitHub Packages
-<https://github.com/features/packages>`_ (ghcr.io).
+<https://github.com/orgs/sagemath/packages?repo_name=sage>`_ (ghcr.io).
 
 This makes it easy for developers to debug problems that showed up in
 the build logs for a given platform. These images are not intended for production
@@ -1174,20 +1215,17 @@ Also `smaller images corresponding to earlier build stages
 <https://github.com/orgs/sagemath/packages?tab=packages&q=sage-debian-bullseye-standard>`_
 are available:
 
-* ``-with-system-packages`` provides a system installation with
-  system packages installed, no source tree,
+* ``-with-system-packages`` provides a system installation with system packages
+  installed, no source tree,
 
-* ``-configured`` contains a partial source tree
-  (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
-  the run of the ``configure`` script,
+* ``-configured`` contains the source tree (:envvar:`SAGE_ROOT`) and has
+  completed the bootstrapping phase and the run of the ``configure`` script,
 
-* ``-with-targets-pre`` contains a partial source tree
-  (:envvar:`SAGE_ROOT`) and a full installation
-  of all non-Python packages (:envvar:`SAGE_LOCAL`),
+* ``-with-targets-pre`` contains the source tree and a full installation of all
+  non-Python packages (:envvar:`SAGE_LOCAL`),
 
-* ``-with-targets`` contains the full source tree and a full
-  installation of Sage, including the HTML documentation, but ``make
-  ptest`` has not been run yet.
+* ``-with-targets`` contains the source tree and a full installation of Sage,
+  including the HTML documentation, but ``make ptest`` has not been run yet.
 
 Note that some of these images are outdated due to build errors.
 Moreover, standard and minimal images are discontinued.
