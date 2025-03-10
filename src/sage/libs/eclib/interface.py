@@ -155,7 +155,7 @@ class mwrank_EllipticCurve(SageObject):
             sage: E = mwrank_EllipticCurve([0, 0, 1, -1, 0])
             sage: E.saturate() # no output
             sage: E.gens()
-            [[0, -1, 1]]
+            ([0, -1, 1],)
 
             sage: E = mwrank_EllipticCurve([0, 0, 1, -1, 0])
             sage: E.set_verbose(1)
@@ -551,10 +551,10 @@ class mwrank_EllipticCurve(SageObject):
 
             sage: E = mwrank_EllipticCurve([0, 0, 0, -1002231243161, 0])
             sage: E.gens()
-            [[-1001107, -4004428, 1]]
+            ([-1001107, -4004428, 1],)
             sage: E.saturate()
             sage: E.gens()
-            [[-1001107, -4004428, 1]]
+            ([-1001107, -4004428, 1],)
 
         Check that :issue:`18031` is fixed::
 
@@ -569,7 +569,7 @@ class mwrank_EllipticCurve(SageObject):
             self.__two_descent_data().saturate(bound, lower)
             self.__saturate = bound
 
-    def gens(self) -> list:
+    def gens(self) -> tuple:
         """
         Return a list of the generators for the Mordell-Weil group.
 
@@ -577,10 +577,10 @@ class mwrank_EllipticCurve(SageObject):
 
             sage: E = mwrank_EllipticCurve([0, 0, 1, -1, 0])
             sage: E.gens()
-            [[0, -1, 1]]
+            ([0, -1, 1],)
         """
         self.saturate()
-        return parse_point_list(self.__two_descent_data().getbasis())
+        return tuple(parse_point_list(self.__two_descent_data().getbasis()))
 
     def certain(self):
         r"""
@@ -869,7 +869,7 @@ class mwrank_MordellWeil(SageObject):
 
             sage: E = mwrank_EllipticCurve([0,0,1,-7,6])
             sage: E.gens()
-            [[1, -1, 1], [-2, 3, 1], [-14, 25, 8]]
+            ([1, -1, 1], [-2, 3, 1], [-14, 25, 8])
             sage: EQ = mwrank_MordellWeil(E)
             sage: EQ.process([[1, -1, 1], [-2, 3, 1], [-14, 25, 8]])
             P1 = [1:-1:1]         is generator number 1

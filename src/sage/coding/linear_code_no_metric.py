@@ -374,7 +374,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         return self.dimension() / self.length()
 
     @cached_method
-    def gens(self) -> list:
+    def gens(self) -> tuple:
         r"""
         Return the generators of this code as a list of vectors.
 
@@ -382,10 +382,10 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.gens()
-             [(1, 0, 0, 0, 0, 1, 1), (0, 1, 0, 0, 1, 0, 1),
-              (0, 0, 1, 0, 1, 1, 0), (0, 0, 0, 1, 1, 1, 1)]
+             ((1, 0, 0, 0, 0, 1, 1), (0, 1, 0, 0, 1, 0, 1),
+              (0, 0, 1, 0, 1, 1, 0), (0, 0, 0, 1, 1, 1, 1))
         """
-        return self.generator_matrix().rows()
+        return tuple(self.generator_matrix().rows())
 
     def basis(self):
         r"""
