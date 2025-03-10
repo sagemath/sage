@@ -214,6 +214,9 @@ static ex sin_eval(const ex & x)
 
 	// simplify sin(I*x) --> I*sinh(x)
 	if (is_multiple_of_I(x_red.expand()))
+                // to avoid infinite recursion, check if the input is 0
+                if (is_multiple_of_I((I*x_red).expand()))
+                        return sin_eval(0);
 		return I*sinh(x_red/I);
 
 	if (is_exactly_a<function>(x_red)) {
@@ -423,7 +426,10 @@ static ex cos_eval(const ex & x)
 
 	// simplify cos(I*x) --> cosh(x)
 	if (is_multiple_of_I(x_red.expand()))
-		return cosh(x_red/I);
+                // to avoid infinite recursion, check if the input is 0
+                if (is_multiple_of_I((I*x_red).expand()))
+                        return cos_eval(0);
+                return cosh(x_red/I);
 
 	if (is_exactly_a<function>(x_red)) {
 		const ex &t = x_red.op(0);
@@ -635,6 +641,9 @@ static ex tan_eval(const ex & x)
                 x_red = x;
 
 	if (is_multiple_of_I(x_red.expand()))
+                // to avoid infinite recursion, check if the input is 0
+                if (is_multiple_of_I((I*x_red).expand()))
+                        return tan_eval(0);
 		return I*tanh(x_red/I);
 
 	if (is_exactly_a<function>(x_red)) {
@@ -744,6 +753,9 @@ static ex cot_eval(const ex & x)
 		return UnsignedInfinity;
 
 	if (is_multiple_of_I(x.expand()))
+                // to avoid infinite recursion, check if the input is 0
+                if (is_multiple_of_I((I*x).expand()))
+                        return cot_eval(0);
 		return -I*coth(x/I);
 
 	if (is_exactly_a<function>(x)) {
@@ -879,6 +891,9 @@ REGISTER_FUNCTION(cot, eval_func(cot_eval).
 static ex sec_eval(const ex & x)
 {
 	if (is_multiple_of_I(x.expand()))
+                // to avoid infinite recursion, check if the input is 0
+                if (is_multiple_of_I((I*x).expand()))
+                        return 1;
 		return sech(x/I);
 
 	if (is_exactly_a<function>(x)) {
@@ -994,6 +1009,9 @@ static ex csc_eval(const ex & x)
 {
 
 	if (is_multiple_of_I(x.expand()))
+                // to avoid infinite recursion, check if the input is 0
+                if (is_multiple_of_I((I*x).expand()))
+                        return UnsignedInfinity;
 		return -I*csch(x/I);
 
 	if (is_exactly_a<function>(x)) {
