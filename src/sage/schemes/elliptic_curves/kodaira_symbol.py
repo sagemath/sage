@@ -318,29 +318,29 @@ class KodairaSymbol_class(SageObject):
         string = str(self)
         if string.startswith('I') and list(string)[1] == '0' and list(string)[-1] == '*':
             #I_0*
-            return("1\n\\ |\n \\|\n\\ |\\\n1\\|\n  \\\n  |\n  |\n  |/\n1/| /\n/ |/\n /|\n/ |\n1")
+            return "1\n\\ |\n \\|\n\\ |\\\n1\\|\n  \\\n  |\n  |\n  |/\n1/| /\n/ |/\n /|\n/ |\n1"
         elif string.startswith('I') and list(string)[1].isdigit() and list(string)[-1] == '*':
             #I_n*
-            return("   \\ 1\n    \\\n  \\  \\\n 1 \\  \\\n    \\  \\/\n     \\/ \\\n    / \\\n \\ / 2\n  /\\\n /  \\\n    2 \\\n       :\n \\  2 /\n  \\  /\n   \\/\n   /\\\n  /  \\2\n      \\/\n     / \\\n   1/   \\/\n   /   / \\\n      /   \\\n     /\n    /")
+            return "   \\ 1\n    \\\n  \\  \\\n 1 \\  \\\n    \\  \\/\n     \\/ \\\n    / \\\n \\ / 2\n  /\\\n /  \\\n    2 \\\n       :\n \\  2 /\n  \\  /\n   \\/\n   /\\\n  /  \\2\n      \\/\n     / \\\n   1/   \\/\n   /   / \\\n      /   \\\n     /\n    /"
         elif string.startswith('I') and list(string)[1].isdigit():
             #I_n
-            return(" _/___\\_\n /  1  \\ 1\n :     :\n :     :\n_\\____/_\n1 \\  /  1\n    1")
+            return " _/___\\_\n /  1  \\ 1\n :     :\n :     :\n_\\____/_\n1 \\  /  1\n    1"
         elif string == "In":
             #also I_n
-            return(" _/___\\_\n /  1  \\ 1\n :     :\n :     :\n_\\____/_\n1 \\  /  1\n    1")
+            return " _/___\\_\n /  1  \\ 1\n :     :\n :     :\n_\\____/_\n1 \\  /  1\n    1"
             #string = "I_n"
         elif string == "II":
-            return("\\     /\n \\   /\n  \\ /\n   |\n1  |")
+            return "\\     /\n \\   /\n  \\ /\n   |\n1  |"
         elif string == "III":
-            return("  \\     /\n   \\   /\n    \\ /\n     |\n     |\n    /\\\n   /  \\\n1 /    \\ 1")
+            return "  \\     /\n   \\   /\n    \\ /\n     |\n     |\n    /\\\n   /  \\\n1 /    \\ 1"
         elif string == "IV":
-            return(" \\    /\n  \\  /\n1__\\/__\n   /\\\n1 /  \\ 1\n /    \\")
+            return " \\    /\n  \\  /\n1__\\/__\n   /\\\n1 /  \\ 1\n /    \\"
         elif string == "IV*":
-            return("     \\ /\n    /  \\\n   /     \\|\n  /       |\\\n          |\n 1|       |\n _|_______|\n  |   2   |\n          |\n          |\n        3 |/\n  \\       /\n1  \\    / |\n     \\/ 2 |\n     /\\")
+            return "     \\ /\n    /  \\\n   /     \\|\n  /       |\\\n          |\n 1|       |\n _|_______|\n  |   2   |\n          |\n          |\n        3 |/\n  \\       /\n1  \\    / |\n     \\/ 2 |\n     /\\"
         elif string == "III*":
-            return("  \\   \\ / 3\n1  \\ 2/ \\\n   / \\   \\\n  /   \\  |\\\n         |\n  _______|\n     2   |\n        4|\n         |/\n    \\/   /\n    /\\  /|\n  1/ 2\\/3|\n  /   /\\")
+            return "  \\   \\ / 3\n1  \\ 2/ \\\n   / \\   \\\n  /   \\  |\\\n         |\n  _______|\n     2   |\n        4|\n         |/\n    \\/   /\n    /\\  /|\n  1/ 2\\/3|\n  /   /\\"
         elif string == "II*":
-            return(" \\   2/\\   \\/ 5\n1  \\/  3\\4/ \\\n  / \\  / \\   \\\n /   /\\   \\  |\\\n             |\n             |\n             |\n             |\n       \\     |/\n        \\   /|\n        2\\ /4\n         / \\")
+            return " \\   2/\\   \\/ 5\n1  \\/  3\\4/ \\\n  / \\  / \\   \\\n /   /\\   \\  |\\\n             |\n             |\n             |\n             |\n       \\     |/\n        \\   /|\n        2\\ /4\n         / \\"
 
     def _unicode_art_(self):
         r"""
@@ -380,7 +380,7 @@ class KodairaSymbol_class(SageObject):
 
         """
         from sage.typeset.unicode_art import unicode_art
-        return(unicode_art(self._make_ascii()))
+        return unicode_art(self._make_ascii())
 
 
 _ks_cache = {}
