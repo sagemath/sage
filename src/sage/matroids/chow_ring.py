@@ -215,11 +215,11 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
 
             sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
             sage: ch.basis()
-            Family (1, B02, B02*A5, B01, B01*A5, B13, B13^2, B03, B03*A5, B14,
-            B14^2, B25, B25^2, B04, B04*A5, B15, B15^2, B34, B34^2, B012345,
-            B012345^2, B05, B05*A5, B23, B23^2, B35, B35^2, A0, A0^2, A2, A2^2,
-            B12, B12*A5, B24, B24^2, B45, B45^2, A1, A1^2, A3, A3^2, A4, A4^2,
-            A5, A5^2, A5^3)
+            Family (1, B1, B1*B012345, B0, B0*B012345, B01, B01^2, B2,
+            B2*B012345, B02, B02^2, B12, B12^2, B3, B3*B012345, B03, B03^2,
+            B13, B13^2, B23, B23^2, B4, B4*B012345, B04, B04^2, B14, B14^2,
+            B24, B24^2, B34, B34^2, B5, B5*B012345, B05, B05^2, B15, B15^2,
+            B25, B25^2, B35, B35^2, B45, B45^2, B012345, B012345^2, B012345^3)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'fy')
@@ -461,42 +461,43 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
                 sage: for b in ch.basis():
                 ....:     print(b, b.homogeneous_degree())
                 1 0
-                Babf 1
-                Babf*Ae 2
-                Bace 1
-                Bace*Ae 2
-                Badg 1
-                Badg*Ae 2
+                Ba 1
+                Ba*Babcdefg 2
+                Bb 1
+                Bb*Babcdefg 2
+                Bc 1
+                Bc*Babcdefg 2
+                Bd 1
+                Bd*Babcdefg 2
                 Bbcd 1
-                Bbcd*Ae 2
-                Aa 1
-                Aa^2 2
+                Bbcd^2 2
+                Be 1
+                Be*Babcdefg 2
+                Bace 1
+                Bace^2 2
+                Bf 1
+                Bf*Babcdefg 2
+                Babf 1
+                Babf^2 2
+                Bdef 1
+                Bdef^2 2
+                Bg 1
+                Bg*Babcdefg 2
+                Badg 1
+                Badg^2 2
                 Bbeg 1
-                Bbeg*Ae 2
-                Ac 1
-                Ac^2 2
+                Bbeg^2 2
                 Bcfg 1
-                Bcfg*Ae 2
+                Bcfg^2 2
                 Babcdefg 1
                 Babcdefg^2 2
-                Af 1
-                Af^2 2
-                Bdef 1
-                Bdef*Ae 2
-                Ad 1
-                Ad^2 2
-                Ag 1
-                Ag^2 2
-                Ab 1
-                Ab^2 2
-                Ae 1
-                Ae^2 2
-                Ae^3 3
+                Babcdefg^3 3
                 sage: v = sum(ch.basis()); v
-                Ae^3 + Babcdefg^2 + Ac^2 + Ad^2 + Aa^2 + Ag^2 + Ab^2 + Af^2 +
-                Babf*Ae + Bace*Ae + Badg*Ae + Bbcd*Ae + Bbeg*Ae + Bcfg*Ae +
-                Bdef*Ae + Ae^2 + Babf + Bace + Badg + Bbcd + Bbeg + Bcfg +
-                Bdef + Babcdefg + Ac + Ad + Aa + Ag + Ab + Af + Ae + 1
+                Babcdefg^3 + Babf^2 + Bace^2 + Badg^2 + Bbcd^2 + Bbeg^2 +
+                Bcfg^2 + Bdef^2 + Ba*Babcdefg + Bb*Babcdefg + Bc*Babcdefg +
+                Bd*Babcdefg + Be*Babcdefg + Bf*Babcdefg + Bg*Babcdefg +
+                Babcdefg^2 + Ba + Bb + Bc + Bd + Be + Bf + Bg + Babf + Bace +
+                Badg + Bbcd + Bbeg + Bcfg + Bdef + Babcdefg + 1
                 sage: v.homogeneous_degree()
                 Traceback (most recent call last):
                 ...
@@ -527,8 +528,7 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
                 sage: y = ch.an_element(); y
                 Aab
                 sage: semigroup = ch.semigroup()
-                sage: x = semigroup([('e','g'),('f','h')]); x
-                ('g','e')('f','h')
+                sage: x = semigroup([('a','c'),('d','b')])
                 sage: x * y  # indirect doctest
                 Aab
             """
