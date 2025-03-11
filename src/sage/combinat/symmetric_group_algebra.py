@@ -10,28 +10,34 @@ Symmetric Group Algebra
 # ****************************************************************************
 import itertools
 
+from sage.algebras.cellular_basis import CellularBasis
+from sage.algebras.group_algebra import GroupAlgebra_class
+from sage.arith.misc import factorial
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.weyl_groups import WeylGroups
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.partition import Partitions, Partitions_n, _Partitions
+from sage.combinat.permutation import (
+    Permutation,
+    Permutations,
+    from_permutation_group_element,
+)
+from sage.combinat.permutation_cython import left_action_same_n, right_action_same_n
+from sage.combinat.skew_tableau import SkewTableau
+from sage.combinat.tableau import (
+    StandardTableaux,
+    StandardTableaux_shape,
+    StandardTableaux_size,
+    Tableau,
+)
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.algebras_with_basis import AlgebrasWithBasis
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.permutation import (Permutation, Permutations,
-                                       from_permutation_group_element)
-from sage.combinat.permutation_cython import (left_action_same_n,
-                                              right_action_same_n)
-from sage.combinat.partition import _Partitions, Partitions, Partitions_n
-from sage.combinat.tableau import (Tableau, StandardTableaux_size,
-                                   StandardTableaux_shape, StandardTableaux)
-from sage.combinat.skew_tableau import SkewTableau
-from sage.algebras.group_algebra import GroupAlgebra_class
-from sage.algebras.cellular_basis import CellularBasis
-from sage.categories.weyl_groups import WeylGroups
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import QQ
-from sage.arith.misc import factorial
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import vector
 from sage.misc.lazy_import import lazy_import
 from sage.misc.persist import register_unpickle_override
+from sage.modules.free_module_element import vector
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 
 lazy_import('sage.groups.perm_gps.permgroup_element',
             'PermutationGroupElement')
@@ -1162,8 +1168,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             if mu not in self._blocks_dictionary:
                 raise ValueError("the {1}-core of {0} is not a {1}-core of a partition of {2}".format(la, p, self.n))
 
-        from sage.libs.gap.libgap import libgap
         from sage.data_structures.blas_dict import iaxpy
+        from sage.libs.gap.libgap import libgap
         G = self._indices
         character_table = [c.sage() for c in libgap.Irr(libgap.SymmetricGroup(self.n))]
         Pn = Partitions_n(self.n)
@@ -1333,7 +1339,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             p = n + 1
         la = Partitions_n(n)(la)
         Tlad, alpha = la.ladder_tableau(p, ladder_lengths=True)
-        if not all(val < p for val in alpha):
+        if any(val >= p for val in alpha):
             raise ValueError(f"{la} is not {p}-ladder restricted")
         Tclass = Tlad.residue_sequence(p).standard_tableaux()
         Elad = sum(epsilon_ik(T, T) for T in Tclass)
@@ -1721,7 +1727,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: SGA.specht_module_dimension([(1,1),(1,3),(2,2),(3,1),(3,2)])
             16
         """
-        from sage.combinat.specht_module import specht_module_spanning_set, _to_diagram
+        from sage.combinat.specht_module import _to_diagram, specht_module_spanning_set
         D = _to_diagram(D)
         span_set = specht_module_spanning_set(D, self)
         return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
