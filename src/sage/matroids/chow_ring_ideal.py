@@ -339,8 +339,8 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
             sage: ch = matroids.AG(2,3).chow_ring(QQ, False, 'fy')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
-            [1, A012, A345, A236, A156, A046, A247, A137, A057, A678, A258,
-             A148, A038, A012345678, A012345678^2]
+            [1, A156, A236, A012, A046, A345, A057, A137, A247, A038, A148,
+             A258, A678, A012345678, A012345678^2]
             sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
             True
         """
