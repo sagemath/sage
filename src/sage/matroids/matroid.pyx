@@ -8073,7 +8073,7 @@ cdef class Matroid(SageObject):
 
           * ``"fy"`` - the Feitchner-Yuzvinsky presentation
           * ``"atom-free"`` - the atom-free presentation
-          *``"simplicial"`` - the simplicial presentation
+          * ``"simplicial"`` - the simplicial presentation
 
         EXAMPLES::
 
