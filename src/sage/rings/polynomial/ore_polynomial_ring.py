@@ -1300,7 +1300,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         We refer to :mod:`sage.modules.ore_module` for a
         tutorial on Ore modules in SageMath.
 
-        .. SEEALSO:
+        .. SEEALSO::
 
             :mod:`sage.modules.ore_module`
         """
