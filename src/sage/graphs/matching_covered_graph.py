@@ -1141,21 +1141,19 @@ class MatchingCoveredGraph(Graph):
             if u == v:
                 raise ValueError('loops are not allowed in '
                                  'matching covered graphs')
-
-            # TODO: A ligher incremental method to check whether the new graph
-            # is matching covered instead of creating a new graph and checking
-
-            G = Graph(self, multiedges=self.allows_multiple_edges())
-            G.add_edge(u, v, label=label)
-
-            try:
-                self.__init__(data=G, matching=self.get_matching())
-
-            except Exception:
+           
+            # Add the new edge to the graph using the original method from the base class
+            super().add_edge(u, v, label=label) 
+            # Check if the graph is still matching covered after adding the edge
+            if not self.is_matching_covered():
+                # If it is no longer matching covered, immediately remove the edge to restore the previous state and raise an exception 
+                super().delete_edge(u, v, label=label)  
                 raise ValueError('the graph obtained after the addition of '
                                  'edge (%s) is not matching covered'
                                  % str((u, v, label)))
-
+            # Update the matching only if the graph remains matching covered after adding the edge
+            self._matching = self.get_matching()
+               
         else:
             # At least one of u or v is a nonexistent vertex.
             # Thus, the resulting graph is either disconnected
