@@ -124,7 +124,7 @@ method :meth:`sage.modules.ore_module.OreModule.is_zero`::
     True
 
 Actually, in our use case, one can, more simply, use the method
-:meth:`sage.modules.ore_modules_morphism.OreModuleMorphism.is_injective`::
+:meth:`sage.modules.ore_module_morphism.OreModuleMorphism.is_injective`::
 
     sage: f.is_injective()
     True

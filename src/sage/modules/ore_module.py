@@ -54,7 +54,7 @@ is also easily accessible::
     sage: X*v
     (3*z^2 + 2*z, 2*z^2 + 4*z + 4)
 
-The method :meth:`sage.rings.modules.ore_module.OreModule.pseudohom`
+The method :meth:`sage.modules.ore_module.OreModule.pseudohom`
 returns the map `f` defining the action of `X`::
 
     sage: M.pseudohom()
@@ -162,7 +162,7 @@ Shortcuts for creating quotients are also available::
 .. RUBRIC:: Morphisms of Ore modules
 
 For a tutorial on morphisms of Ore modules, we refer to
-:mod:`sage.modules.ore_modules_morphism`.
+:mod:`sage.modules.ore_module_morphism`.
 
 AUTHOR:
 
@@ -1172,7 +1172,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
     def _span(self, gens):
         r"""
         Return a matrix whose lines form a basis over the base field
-        of the submodule of this Ore modules generated over the Ore
+        of the submodule of this Ore module generated over the Ore
         ring by ``gens``.
 
         INPUT:
