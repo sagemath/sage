@@ -380,8 +380,8 @@ def KodairaSymbol(symbol):
     INPUT:
 
     - ``symbol`` (string or integer) -- Either a string of the form
-    "I0", "I1", ..., "In", "II", "III", "IV", "I0*", "I1*", ..., "In*", "II*", "III*", or "IV*",
-    or an integer encoding a Kodaira symbol using PARI's conventions.
+      "I0", "I1", ..., "In", "II", "III", "IV", "I0*", "I1*", ..., "In*", "II*", "III*", or "IV*",
+      or an integer encoding a Kodaira symbol using PARI's conventions.
 
     OUTPUT:
 
