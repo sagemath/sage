@@ -1069,7 +1069,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             raise NotImplementedError  # TODO: fix this once we have nested embeddings of finite fields
         else:
             raise ValueError("must be a perfect square.")
-    
+
     def conj_sqrt(FiniteField_givaroElement self):
         r"""
         Return a conjugate square root of this finite field element in its
