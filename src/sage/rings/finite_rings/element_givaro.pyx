@@ -1069,6 +1069,56 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             raise NotImplementedError  # TODO: fix this once we have nested embeddings of finite fields
         else:
             raise ValueError("must be a perfect square.")
+    
+    def conj_sqrt(FiniteField_givaroElement self):
+        r"""
+        Return a conjugate square root of this finite field element in its
+        parent, if there is one.  Otherwise, raise a :exc:`ValueError`.
+
+        ALGORITHM:
+
+        ``self`` is stored as `a^k` for some generator `a`.
+        Return `a^{k/(q+1)}` for `k` divisible by `q+1`.
+
+        .. WARNING::
+
+            This is only implemented for elements whose exponent
+            is divisible by `q+1` in fields of order `q**2`.
+
+        EXAMPLES::
+
+            sage: k.<a> = GF(7**2)
+            sage: k(0).conj_sqrt()
+            0
+            sage: z = k(2).conj_sqrt(); z
+            z2 + 4
+            sage: z*z.conjugate()
+            2
+            sage: z = k(3).conj_sqrt(); z
+            z2
+            sage: z*z.conjugate()
+            3
+            sage: z = k(4).conj_sqrt(); z
+            2*z2 + 6
+            sage: z*z.conjugate()
+            4
+            sage: k.<a> = GF(7**3)
+            sage: k(3).conj_sqrt()
+            Traceback (most recent call last):
+            ...
+            ValueError: exponent must be divisible by q+1
+        """
+        if not self.parent().order().is_square():
+            raise ValueError("the base ring must be a finite field of square order")
+        q = self.parent().order().sqrt()
+
+        if self == 0:
+            return 0
+        z = self.parent().multiplicative_generator()
+        k = self.log(z)  # Compute discrete log of u to the base z
+        if k % (q+1) != 0:
+            raise ValueError("exponent must be divisible by q+1")
+        return z ** (k//(q+1))
 
     cpdef _add_(self, right):
         """
