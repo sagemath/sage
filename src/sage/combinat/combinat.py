@@ -606,6 +606,8 @@ def eulerian_number(n, k, algorithm='recursive') -> Integer:
         [0, 1, 4, 1, 0]
     """
     n = ZZ(n)
+    if n == 0:
+        return ZZ.one() if k == 0 else ZZ.zero()
     if k < 0 or k > n - 1:
         return ZZ.zero()
     if k == 0 or k == n - 1:
@@ -658,6 +660,8 @@ def eulerian_polynomial(n, algorithm='derivative'):
     R = PolynomialRing(ZZ, 't')
     if n < 0:
         return R.zero()
+    if n == 0:
+        return R.one()
     if n == 1:
         return R.one()
     t = R.gen()
