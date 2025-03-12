@@ -366,6 +366,10 @@ def external_features():
     r"""
     Generate the features that are only to be tested if ``--optional=external`` is used.
 
+    .. SEEALSO::
+
+        :func:`sage.features.all.all_features`
+
     EXAMPLES::
 
         sage: from sage.doctest.external import external_features
@@ -387,7 +391,7 @@ def external_features():
     yield Gurobi()
 
 
-def external_software() -> list[str]:
+def _external_software() -> list[str]:
     """
     Return the alphabetical list of external software supported by this module.
 
@@ -400,7 +404,7 @@ def external_software() -> list[str]:
     return sorted(f.name for f in external_features())
 
 
-external_software = external_software()
+external_software: list[str] = _external_software()
 
 
 class AvailableSoftware:

@@ -419,7 +419,7 @@ To check that :issue:`27092` is fixed::
 """
 
 import re
-from sage.arith.misc import algdep
+from sage.arith.misc import algebraic_dependency
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RealDoubleElement
@@ -794,8 +794,7 @@ def nintegral(ex, x, a, b,
     to high precision::
 
         sage: gp.eval('intnum(x=17,42,exp(-x^2)*log(x))')
-        '2.565728500561051474934096410 E-127'            # 32-bit
-        '2.5657285005610514829176211363206621657 E-127'  # 64-bit
+        '2.5657285005610514829176211363206621657 E-127'
         sage: old_prec = gp.set_real_precision(50)
         sage: gp.eval('intnum(x=17,42,exp(-x^2)*log(x))')
         '2.5657285005610514829173563961304957417746108003917 E-127'
@@ -1117,7 +1116,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
             for degree in degree_list:
 
-                f = QQ[var](algdep(a, degree))  # TODO: use the known_bits parameter?
+                f = QQ[var](algebraic_dependency(a, degree))  # TODO: use the known_bits parameter?
                 # If indeed we have found a minimal polynomial,
                 # it should be accurate to a much higher precision.
                 error = abs(f(aa))
