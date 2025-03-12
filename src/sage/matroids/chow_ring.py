@@ -371,6 +371,7 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
         EXAMPLES::
 
             sage: ch = matroids.Z(3).chow_ring(QQ, False, 'simplicial')
+            sage: q = polygen(QQ, 'x')
             sage: gchi = ch.graded_character(); gchi
             (q^2 + 8*q + 1, q^2 + 8*q + 1, q^2 + 8*q + 1, q^2 + 8*q + 1,
              q^2 + 8*q + 1, q^2 + 8*q + 1)
