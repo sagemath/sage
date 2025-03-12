@@ -310,19 +310,13 @@ class KodairaSymbol_class(SageObject):
         """
         return self._pari
 
-    def _make_ascii(self):
-        """Makes the ascii art representation of Kodaira symbols.
-
-         Called by the _unicode_art() method"""
-
     def _unicode_art_(self):
         r"""
-        Returns a unicode art representation of the Kodaira symbol.
+        Return a unicode art representation of the Kodaira symbol.
 
         EXAMPLES::
 
             sage: unicode_art(KodairaSymbol('In'))
-            <BLANKLINE>
             _/___\_
             /  1  \ 1
             :     :
@@ -330,10 +324,7 @@ class KodairaSymbol_class(SageObject):
             _\____/_
             1 \  / 1
                1
-            <BLANKLINE>
-            <BLANKLINE>
             sage: unicode_art(KodairaSymbol('III*'))
-            <BLANKLINE>
             \   \ / 3
             1 \ 2/ \
               / \   \
@@ -347,10 +338,6 @@ class KodairaSymbol_class(SageObject):
                /\  /|
              1/ 2\/3|
                 /   /\
-            <BLANKLINE>
-            <BLANKLINE>
-
-
         """
         from sage.typeset.unicode_art import unicode_art
         string = str(self)
@@ -383,7 +370,6 @@ class KodairaSymbol_class(SageObject):
             return
 
 
-
 _ks_cache = {}
 
 
@@ -411,15 +397,11 @@ def KodairaSymbol(symbol):
         sage: all(KS(str(KS(n))) == KS(n) for n in range(-10,10) if n != 0)
         True
         sage: unicode_art(KS(2))
-        <BLANKLINE>
          \     /
           \   /
            \ /
             |
          1  |
-        <BLANKLINE>
-        <BLANKLINE>
-
 
     """
 
