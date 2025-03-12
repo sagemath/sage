@@ -33,7 +33,7 @@ class ChowRingIdeal(MPolynomialIdeal):
             sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False, 'simplicial')
             sage: ch.defining_ideal().matroid()
             U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
-            {3: {{0, 1, 2, 3, 4, 5}}}
+             {3: {{0, 1, 2, 3, 4, 5}}}
         """
         return self._matroid
 
@@ -113,9 +113,9 @@ class ChowRingIdeal(MPolynomialIdeal):
             sage: names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
             sage: ch.defining_ideal()._construct_ambient_poly_ring(ch.defining_ideal().ring(), names, flats)
             Multivariate Polynomial Ring in Aa, Ab, Ac, Ad, Ae, Af, Ag, Aabf,
-            Aace, Aadg, Abcd, Abeg, Acfg, Ade, Adf, Aef, Aabcdefg over
-            Multivariate Polynomial Ring in Aabf, Aace, Aadg, Abcd, Abeg,
-            Acfg, Ade, Adf, Aef, Aabcdefg over Rational Field
+             Aace, Aadg, Abcd, Abeg, Acfg, Ade, Adf, Aef, Aabcdefg over
+             Multivariate Polynomial Ring in Aabf, Aace, Aadg, Abcd, Abeg,
+             Acfg, Ade, Adf, Aef, Aabcdefg over Rational Field
         """
         try:
             poly_ring = PolynomialRing(R, names, len(names))  # self.ring
@@ -165,12 +165,12 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
         sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False, 'fy')
         sage: ch.defining_ideal()
         Chow ring ideal of U(3, 6): Matroid of rank 3 on 6 elements with
-        circuit-closures {3: {{0, 1, 2, 3, 4, 5}}} - non augmented in
+         circuit-closures {3: {{0, 1, 2, 3, 4, 5}}} - non augmented in
         Feitchner-Yuzvinksy presentation
         sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'fy')
         sage: ch.defining_ideal()
         Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
-        type (3, 0) - non augmented in Feitchner-Yuzvinksy presentation
+         type (3, 0) - non augmented in Feitchner-Yuzvinksy presentation
     """
     def __init__(self, M, R):
         r"""
@@ -250,7 +250,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'fy')
             sage: ch.defining_ideal()
             Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
-            type (3, 0) - non augmented in Feitchner-Yuzvinksy presentation
+             type (3, 0) - non augmented in Feitchner-Yuzvinksy presentation
         """
         return "Chow ring ideal of {} - non augmented in Feitchner-Yuzvinksy presentation".format(self._matroid)
 
@@ -333,7 +333,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
             sage: ch = matroids.Z(3).chow_ring(QQ, False, 'fy')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
-            [1, Ax2x3y1, Ax1x3y2, Ay1y2y3, Ax1x2y3, Atx3y3, Atx2y2, Atx1y1,
+            [1, Ax2x3y1, Ax1x3y2, Ax1x2y3, Ay1y2y3, Atx1y1, Atx2y2, Atx3y3,
              Atx1x2x3y1y2y3, Atx1x2x3y1y2y3^2]
             sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
             True
@@ -420,7 +420,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
         sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False, 'atom-free')
         sage: ch.defining_ideal()
         Chow ring ideal of NonFano: Ternary matroid of rank 3 on 7 elements,
-        type 0- - non augmented in the atom-free presentation
+         type 0- - non augmented in the atom-free presentation
     """
     def __init__(self, M, R):
         r"""
@@ -509,7 +509,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'atom-free')
             sage: ch.defining_ideal()
             Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
-            type (3, 0) - non augmented in the atom-free presentation
+             type (3, 0) - non augmented in the atom-free presentation
         """
         return "Chow ring ideal of {} - non augmented in the atom-free presentation".format(self._matroid)
 
@@ -657,7 +657,7 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
         sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False, 'simplicial')
         sage: ch.defining_ideal()
         Chow ring ideal of NonFano: Ternary matroid of rank 3 on 7 elements,
-        type 0- - non augmented in simplicial presentation
+         type 0- - non augmented in simplicial presentation
     """
     def __init__(self, M, R):
         r"""
@@ -728,7 +728,7 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'simplicial')
             sage: ch.defining_ideal()
             Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
-            type (3, 0) - non augmented in simplicial presentation
+             type (3, 0) - non augmented in simplicial presentation
         """
         return "Chow ring ideal of {} - non augmented in simplicial presentation".format(self._matroid)
 
@@ -1166,7 +1166,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
         sage: ch.defining_ideal()
         Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6
-        elements with 16 bases in the atom-free presentation
+         elements with 16 bases in the atom-free presentation
     """
     def __init__(self, M, R):
         r"""
@@ -1231,7 +1231,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal()
             Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on
-            6 elements with 16 bases in the atom-free presentation
+             6 elements with 16 bases in the atom-free presentation
         """
         return "Augmented Chow ring ideal of {} in the atom-free presentation".format(self._matroid)
 

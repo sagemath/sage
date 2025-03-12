@@ -111,7 +111,7 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
         sage: ch = M1.chow_ring(QQ, False, 'fy')
         sage: ch
         Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning
-        circuits in Feitchner-Yuzvinsky presentation over Rational Field
+         circuits in Feitchner-Yuzvinsky presentation over Rational Field
     """
     def __init__(self, R, M, augmented, presentation=None):
         r"""
@@ -124,19 +124,25 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
         """
         self._matroid = M
         self._augmented = augmented
+        if presentation is None:
+            presentation = "fy"
         self._presentation = presentation
         if augmented:
             if presentation == 'fy':
                 self._ideal = AugmentedChowRingIdeal_fy(M, R)
             elif presentation == 'atom-free':
                 self._ideal = AugmentedChowRingIdeal_atom_free(M, R)
+            else:
+                raise ValueError("Invalid presentation {presentation}")
         else:
             if presentation == 'fy':
                 self._ideal = ChowRingIdeal_nonaug_fy(M, R)
-            if presentation == 'atom-free':
+            elif presentation == 'atom-free':
                 self._ideal = ChowRingIdeal_nonaug_af(M, R)
-            if presentation == 'simplicial':
+            elif presentation == 'simplicial':
                 self._ideal = ChowRingIdeal_nonaug_sp(M, R)
+            else:
+                raise ValueError("Invalid presentation {presentation}")
         C = CommutativeRings().Quotients() & KahlerAlgebras(R)
         QuotientRing_generic.__init__(self, R=self._ideal.ring(),
                                       I=self._ideal,
@@ -152,7 +158,7 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
             sage: ch = M1.chow_ring(QQ, False, 'fy')
             sage: ch
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
-            type (3, 0) in Feitchner-Yuzvinsky presentation over Rational Field
+             type (3, 0) in Feitchner-Yuzvinsky presentation over Rational Field
         """
         output = "Chow ring of {}".format(self._matroid)
         if self._augmented:
@@ -191,7 +197,7 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
             sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
             sage: ch.matroid()
             U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
-            {3: {{0, 1, 2, 3, 4, 5}}}
+             {3: {{0, 1, 2, 3, 4, 5}}}
         """
         return self._matroid
 
@@ -216,24 +222,24 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
             sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
             sage: ch.basis()
             Family (1, B0, B0*B012345, B1, B1*B012345, B01, B01^2, B2,
-             B2*B012345, B12, B12^2, B02, B02^2, B3, B3*B012345, B23, B23^2,
-             B13, B13^2, B03, B03^2, B4, B4*B012345, B34, B34^2, B24, B24^2,
-             B14, B14^2, B04, B04^2, B5, B5*B012345, B45, B45^2, B35, B35^2,
-             B25, B25^2, B15, B15^2, B05, B05^2, B012345, B012345^2, B012345^3)
+            B2*B012345, B12, B12^2, B02, B02^2, B3, B3*B012345, B23, B23^2,
+            B13, B13^2, B03, B03^2, B4, B4*B012345, B34, B34^2, B24, B24^2,
+            B14, B14^2, B04, B04^2, B5, B5*B012345, B45, B45^2, B35, B35^2,
+            B25, B25^2, B15, B15^2, B05, B05^2, B012345, B012345^2, B012345^3)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'fy')
             sage: ch.basis()
             Family (1, Abcd, Aace, Adef, Aabf, Acfg, Abeg, Aadg, Aabcdefg,
-             Aabcdefg^2)
+            Aabcdefg^2)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
             sage: ch.basis()
             Family (1, A0, A0*A012345, A1, A1*A012345, A2, A2*A012345, A3,
-             A3*A012345, A23, A23^2, A013, A013^2, A4, A4*A012345, A124, A124^2,
-             A04, A04^2, A5, A5*A012345, A345, A345^2, A15, A15^2, A025, A025^2,
-             A012345, A012345^2, A012345^3)
+            A3*A012345, A23, A23^2, A013, A013^2, A4, A4*A012345, A124, A124^2,
+            A04, A04^2, A5, A5*A012345, A345, A345^2, A15, A15^2, A025, A025^2,
+            A012345, A012345^2, A012345^3)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
         """
