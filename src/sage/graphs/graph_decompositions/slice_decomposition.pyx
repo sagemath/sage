@@ -414,9 +414,10 @@ cdef class SliceDecomposition(SageObject):
 
         # Translate the results with the actual vertices of the graph
         self.sigma = tuple(Gbackend.vertex_label(v_int) for v_int in sigma)
-        self.sigma_inv = {v: i  for i, v in enumerate(self.sigma)}
-        self.lex_label = {i: tuple(Gbackend.vertex_label(v_int) for v_int in lli)
-                                    for i, lli in enumerate(lex_label)}
+        self.sigma_inv = {v: i for i, v in enumerate(self.sigma)}
+        self.lex_label = {i: tuple(Gbackend.vertex_label(v_int)
+                                   for v_int in lli)
+                          for i, lli in enumerate(lex_label)}
 
     def __eq__(self, other):
         """

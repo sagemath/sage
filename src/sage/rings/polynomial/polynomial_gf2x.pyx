@@ -26,7 +26,7 @@ include "sage/libs/ntl/ntl_GF2X_linkage.pxi"
 # and then the interface
 include "polynomial_template.pxi"
 
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 
 from sage.libs.m4ri cimport mzd_write_bit, mzd_read_bit
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense

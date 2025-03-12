@@ -4795,15 +4795,14 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
                 # Singleton intervals are vertical lines,
                 #   so we don't need to worry about them
                 if len(I) > 1 and I[0] < cur[0]:
-                    cur, level[j] = level[j], cur
+                    cur, level[j] = I, cur
                     level.append([cur[0]])
                     level.append([cur[1]])
                     break
             else:
                 level.append(cur)
                 return  # We have stopped
-        else:
-            intervals.append([cur])
+        intervals.append([cur])
     # Build a set of intervals that defines where to draw the diagram
     intervals = [[]]
     propogating = []

@@ -501,7 +501,6 @@ class SuffixTrie(SageObject):
             sage: t.show()                                                              # needs sage.plot
         """
         self.plot(*args, **kwds).show()
-        return
 
 ################################################################################
 # Suffix Trees
@@ -656,7 +655,6 @@ class ImplicitSuffixTree(SageObject):
         # set the active state
         s, k = self._canonize(s, (k, i))
         self._active_state = (s, (k, i+1))
-        return
 
     def _test_and_split(self, s, k_p, letter):
         r"""
@@ -918,7 +916,6 @@ class ImplicitSuffixTree(SageObject):
             sage: t.show(word_labels=False)                                             # needs sage.plot
         """
         self.plot(word_labels=word_labels, *args, **kwds).show()
-        return
 
     #####
     # Various methods
@@ -1115,7 +1112,6 @@ class ImplicitSuffixTree(SageObject):
             end_state, r = self._test_and_split(s, (k, i-1), end_of_string)
         # remove the end of string symbol from the word
         self._letters.pop()
-        return
 
     def edge_iterator(self):
         r"""
