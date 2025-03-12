@@ -1600,7 +1600,6 @@ cdef class CoercionModel:
         """
         if homs is None:
             return None
-        cdef Map x_map, y_map
         R_map, S_map = homs
         if isinstance(R, type):
             R = Set_PythonType(R)
