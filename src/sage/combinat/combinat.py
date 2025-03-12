@@ -660,9 +660,7 @@ def eulerian_polynomial(n, algorithm='derivative'):
     R = PolynomialRing(ZZ, 't')
     if n < 0:
         return R.zero()
-    if n == 0:
-        return R.one()
-    if n == 1:
+    if n <= 1:
         return R.one()
     t = R.gen()
     if algorithm == 'derivative':
