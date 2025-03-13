@@ -1111,7 +1111,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             ...
             ValueError: the base ring must be a finite field of square order
             sage: k.<a> = GF(7**2)
-            sage: k.multiplicative_generator().conj_sqrt()
+            sage: a.conj_sqrt()
             Traceback (most recent call last):
             ...
             ValueError: element must be element of base field GF(7)
