@@ -654,7 +654,7 @@ class MatchingCoveredGraph(Graph):
                 "verbose": verbose,
                 "integrality_tolerance": integrality_tolerance,
                 "args": args,
-                **kwds  
+                "kwds": kwds  
             }
 
         else:
