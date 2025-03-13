@@ -371,9 +371,11 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
                     monomial_basis.append(expression)
         return PolynomialSequence(R, [monomial_basis])
 
+
 # Redirecting the unpickling of old class:
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.chow_ring_ideal', 'ChowRingIdeal_nonaug_fy', ChowRingIdeal_nonaug_fy)
+
 
 class ChowRingIdeal_nonaug_af(ChowRingIdeal):
     r"""
