@@ -1102,11 +1102,19 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             2*z2 + 6
             sage: z*z.conjugate()
             4
+            
+        TESTS::
+
             sage: k.<a> = GF(7**3)
             sage: k(3).conj_sqrt()
             Traceback (most recent call last):
             ...
-            ValueError: exponent must be divisible by q+1
+            ValueError: the base ring must be a finite field of square order
+            sage: k.<a> = GF(7**2)
+            sage: k.multiplicative_generator().conj_sqrt()
+            Traceback (most recent call last):
+            ...
+            ValueError: element must be element of base field GF(7)
         """
         if not self.parent().order().is_square():
             raise ValueError("the base ring must be a finite field of square order")
@@ -1117,7 +1125,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         z = self.parent().multiplicative_generator()
         k = self.log(z)  # Compute discrete log of u to the base z
         if k % (q+1) != 0:
-            raise ValueError("exponent must be divisible by q+1")
+            raise ValueError(f"element must be element of base field GF({q})")
         return z ** (k//(q+1))
 
     cpdef _add_(self, right):
