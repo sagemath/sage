@@ -645,6 +645,18 @@ class MatchingCoveredGraph(Graph):
             else:
                 self._matching = Graph(self).matching()
 
+            # Store all parameters used in this instance for reference if needed            
+            self._params = {
+                "data": data,
+                "matching": self._matching,
+                "algorithm": algorithm,
+                "solver": solver,
+                "verbose": verbose,
+                "integrality_tolerance": integrality_tolerance,
+                "args": args,
+                **kwds  
+            }
+
         else:
             raise TypeError('input data is of unknown type')
 
@@ -1145,7 +1157,7 @@ class MatchingCoveredGraph(Graph):
             # Add the new edge to the graph using the original method from the base class
             super().add_edge(u, v, label=label) 
             # Check if the graph is still matching covered after adding the edge
-            if not self.is_matching_covered():
+            if not self.is_matching_covered(**{k: self._params[k] for k in ["algorithm", "solver", "verbose","integrality_tolerance"]}):
                 # If it is no longer matching covered, immediately remove the edge to restore the previous state and raise an exception 
                 super().delete_edge(u, v, label=label)  
                 raise ValueError('the graph obtained after the addition of '
