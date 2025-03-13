@@ -409,7 +409,8 @@ def tex_from_skew_array(array, with_lines=False, align='b') -> str:
                 finish = max(len(array[r]), len(array[r-1]))
             return r'\\' if start > finish else r'\\\cline{%s-%s}' % (start, finish)
     else:
-        end_line = lambda r: r'\\'
+        def end_line(r):
+            return r'\\'
 
     # now we draw the array
     raisebox_start = r'\raisebox{-.6ex}{'
@@ -465,7 +466,6 @@ def svg_from_skew_array(array, with_lines=False, align='b') -> str:
                 resu += '\" xlink:href=\"#square\" />'
                 resu += f'<text x=\"{cj + 5}\" y=\"{ci + 5}\">{content}</text>'
     return resu + '</g></svg>'
-
 
 
 def ascii_art_table(data, use_unicode=False, convention='English'):
@@ -814,8 +814,8 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
             str_list.append(st)
 
     import re
-    mm = min(len(re.search('^ +', l)[0]) for l in str_list) - 1
-    str_list = [l[mm:].rstrip() for l in str_list]
+    mm = min(len(re.search('^ +', ell)[0]) for ell in str_list) - 1
+    str_list = [ell[mm:].rstrip() for ell in str_list]
     while not str_list[-1]:
         str_list.pop()
     return "\n".join(str_list)
@@ -823,7 +823,9 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
 
 def box_exists(tab, i, j) -> bool:
     r"""
-    Return ``True`` if ``tab[i][j]`` exists and is not ``None``; in particular this
+    Return ``True`` if ``tab[i][j]`` exists and is not ``None``.
+
+    In particular this
     allows for `tab[i][j]` to be ``''`` or ``0``.
 
     INPUT:
