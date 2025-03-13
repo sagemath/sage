@@ -20,7 +20,7 @@ foreach name, pyx : extension_data_cpp
     install: true,
     override_options: ['cython_language=cpp'],
     include_directories: [inc_flint],
-    dependencies: [py_dep, blas, flint, fplll, givaro, gmp, gmpxx, linbox],
+    dependencies: [py_dep, blas, flint, givaro, gmp, gmpxx, linbox],
   )
 endforeach
 

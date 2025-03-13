@@ -47,13 +47,13 @@ REFERENCES:
 from collections import Counter
 from copy import copy
 from cpython.object cimport Py_EQ, Py_NE
-from sage.graphs.graph import Graph
+import networkx as nx
+
 from sage.graphs.digraph import DiGraph
 from sage.graphs.bipartite_graph import BipartiteGraph
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
 from sage.matroids.minor_matroid import MinorMatroid
 from sage.matroids.utilities import newlabel
-import networkx as nx
 
 
 cdef class TransversalMatroid(BasisExchangeMatroid):

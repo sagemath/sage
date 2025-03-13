@@ -1529,18 +1529,15 @@ class QuotientRingIdeal_generic(ideal.Ideal_generic):
 
             sage: Zmod(15).ideal(6)._lift()
             Principal ideal (3) of Integer Ring
+            sage: ZZ.ideal(Zmod(15).ideal(6))  # different from the above!
+            Principal ideal (6) of Integer Ring
             sage: R.<x,y> = QQ[]
             sage: S = R.quotient(x)
             sage: S.ideal(y)._lift()
             Ideal (x, y) of Multivariate Polynomial Ring in x, y over Rational Field
         """
         R = self.ring()
-        if hasattr(R, 'defining_ideal'):
-            Igens = list(R.defining_ideal().gens())
-        else:
-            Igens = [R.modulus()]
-        Igens += [g.lift() for g in self.gens()]
-        return R.cover_ring().ideal(Igens)
+        return R.defining_ideal() + R.cover_ring().ideal([g.lift() for g in self.gens()])
 
     def _contains_(self, other):
         r"""
