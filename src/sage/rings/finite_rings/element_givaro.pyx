@@ -1102,7 +1102,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             2*z2 + 6
             sage: z*z.conjugate()
             4
-            
+
         TESTS::
 
             sage: k.<a> = GF(7**3)
