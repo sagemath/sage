@@ -1,4 +1,3 @@
-from collections.abc import Iterator
 from typing import Any
 
 class CliffordAlgebraElement:
