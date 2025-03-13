@@ -451,7 +451,13 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         else:
             self._entries = <celement *> check_allocarray(self._nrows * self._ncols, sizeof(celement))
 
+        # TODO: it is a bit of a waste to allocate _matrix when ncols=0. Though some
+        # of the code expects self._matrix[i] to be valid, even though it points to
+        # an empty vector.
         self._matrix = <celement **> check_allocarray(self._nrows, sizeof(celement*))
+        if self._nrows == 0:
+            return
+
         cdef Py_ssize_t i
         self._matrix[0] = self._entries
         for i in range(self._nrows - 1):
