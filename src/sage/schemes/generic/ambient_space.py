@@ -315,7 +315,7 @@ class AmbientSpace(Scheme):
         """
         return self.coordinate_ring().gen(n)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the coordinate ring of the scheme
         ``self``.
