@@ -15,7 +15,7 @@ on:
       platform:
         description: 'Platform'
         required: true
-        default: 'ubuntu-jammy-standard'
+        default: 'ubuntu-noble-standard'
       docker_tag:
         description: 'Docker tag'
         required: true
@@ -68,8 +68,8 @@ concurrency:
 
 env:
   # Adapted from docker.yml
-  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-incremental"
-  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-with-targets:ci"
+  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-noble-standard' }}-incremental"
+  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-noble-standard' }}-with-targets:ci"
   FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
   FROM_DOCKER_TARGET:     "with-targets"
   FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
@@ -107,6 +107,8 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           # File extensions for doctests per sage.doctest.control.skipfile
+          # Also src/sage/doctests/tests/ are excluded because of nodoctest file
+          # which would make sage.doctest.control.skipdir return True
           files_yaml: |
             configures:
               - 'build/pkgs/*/spkg-configure.m4'
@@ -118,6 +120,7 @@ jobs:
             doctests:
               - 'src/**/*.{py,pyx,pxd,pxi,sage,spyx,rst,tex}'
               - '!src/{setup,conftest*}.py'
+              - '!src/sage/doctest/tests/*'
 
       - name: Determine targets to build
         id: build-targets
@@ -247,7 +250,7 @@ jobs:
           ./sage -python -m uv run pytest -c tox.ini -qq --doctest --collect-only || true
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Test changed files (sage -t --new)
+      - name: Test changed files
         if: (success() || failure()) && steps.container.outcome == 'success' && steps.changed-files.outputs.doctests_all_changed_files
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4

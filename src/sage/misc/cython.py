@@ -26,9 +26,10 @@ import shutil
 import webbrowser
 from pathlib import Path
 
-from sage.env import SAGE_LOCAL, cython_aliases, sage_include_directories
+from sage.env import (SAGE_LOCAL, cython_aliases,
+                      sage_include_directories)
 from sage.misc.cachefunc import cached_function
-from sage.misc.sage_ostools import redirection, restore_cwd
+from sage.misc.sage_ostools import restore_cwd, redirection
 from sage.misc.temporary_file import spyx_tmp, tmp_filename
 from sage.repl.user_globals import get_globals
 
@@ -97,7 +98,7 @@ def _webbrowser_open_file(path):
 
 def cython(filename, verbose=0, compile_message=False,
            use_cache=False, create_local_c_file=False, annotate=True, view_annotate=False,
-           view_annotate_callback=_webbrowser_open_file, sage_namespace=True, create_local_so_file=False):
+           view_annotate_callback=None, sage_namespace=True, create_local_so_file=False):
     r"""
     Compile a Cython file. This converts a Cython file to a C (or C++ file),
     and then compiles that. The .c file and the .so file are
@@ -133,7 +134,8 @@ def cython(filename, verbose=0, compile_message=False,
     - ``view_annotate_callback`` -- function; a function that takes a string
       being the path to the html file. This can be overridden to change
       what to do with the annotated html file. Have no effect unless
-      ``view_annotate`` is ``True``.
+      ``view_annotate`` is ``True``. By default, the html file is opened in a
+      web browser.
 
     - ``sage_namespace`` -- boolean (default: ``True``); if ``True``, import
       ``sage.all``
@@ -280,11 +282,11 @@ def cython(filename, verbose=0, compile_message=False,
         sage: len(collected_paths)
         1
     """
-    if not filename.endswith("pyx"):
-        print(
-            "Warning: file (={}) should have extension .pyx".format(filename),
-            file=sys.stderr,
-        )
+    if view_annotate_callback is None:
+        # needed because of https://github.com/sagemath/sage/pull/38946#issuecomment-2656329774
+        view_annotate_callback = _webbrowser_open_file
+    if not filename.endswith('pyx'):
+        print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
 
     # base is the name of the .so module that we create. If we are
     # creating a local shared object file, we use a more natural

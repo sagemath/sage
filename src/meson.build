@@ -106,11 +106,8 @@ zlib = dependency('zlib', version: '>=1.2.11')
 ec = dependency('eclib', version: '>=20231211')
 # Cannot be found via pkg-config
 ecm = cc.find_library('ecm')
-# Cannot be found via pkg-config
-ppl = cc.find_library('ppl')
 gmpxx = dependency('gmpxx')
 fflas = dependency('fflas-ffpack', version: '>=2.5.0')
-fplll = dependency('fplll')
 givaro = dependency('givaro', version: '>=4.2.0')
 linbox = dependency('linbox', required: false, version: '>=1.7.0')
 if not linbox.found()

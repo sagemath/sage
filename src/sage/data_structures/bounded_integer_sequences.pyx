@@ -195,7 +195,7 @@ cdef bint biseq_init_list(biseq_t R, list data, size_t bound) except -1:
         sig_check()
         item_c = item
         if item_c > bound:
-            raise OverflowError("list item {!r} larger than {}".format(item, bound) )
+            raise OverflowError("list item {!r} larger than {}".format(item, bound))
         biseq_inititem(R, index, item_c)
         index += 1
 
@@ -389,7 +389,8 @@ cdef mp_size_t biseq_contains(biseq_t S1, biseq_t S2, mp_size_t start) except -2
     sig_on()
     for index from start <= index <= S1.length-S2.length:
         if mpn_equal_bits_shifted(S2.data.bits, S1.data.bits,
-                S2.length*S2.itembitsize, index*S2.itembitsize):
+                                  S2.length * S2.itembitsize,
+                                  index * S2.itembitsize):
             sig_off()
             return index
     sig_off()
@@ -424,7 +425,8 @@ cdef mp_size_t biseq_startswith_tail(biseq_t S1, biseq_t S2, mp_size_t start) ex
     sig_on()
     for index from start <= index < S2.length:
         if mpn_equal_bits_shifted(S1.data.bits, S2.data.bits,
-                (S2.length - index)*S2.itembitsize, index*S2.itembitsize):
+                                  (S2.length - index) * S2.itembitsize,
+                                  index * S2.itembitsize):
             sig_off()
             return index
     sig_off()
@@ -1381,35 +1383,35 @@ def _biseq_stresstest():
     cdef list L = [BoundedIntegerSequence(6, [randint(0, 5) for z in range(randint(4, 10))]) for y in range(100)]
     cdef BoundedIntegerSequence S, T
     while True:
-        branch = randint(0,4)
+        branch = randint(0, 4)
         if branch == 0:
-            L[randint(0,99)] = L[randint(0,99)]+L[randint(0,99)]
+            L[randint(0, 99)] = L[randint(0, 99)] + L[randint(0, 99)]
         elif branch == 1:
-            x = randint(0,99)
+            x = randint(0, 99)
             if len(L[x]):
-                y = randint(0,len(L[x])-1)
-                z = randint(y,len(L[x])-1)
-                L[randint(0,99)] = L[x][y:z]
+                y = randint(0, len(L[x]) - 1)
+                z = randint(y, len(L[x]) - 1)
+                L[randint(0, 99)] = L[x][y:z]
             else:
-                L[x] = BoundedIntegerSequence(6, [randint(0,5) for z in range(randint(4,10))])
+                L[x] = BoundedIntegerSequence(6, [randint(0, 5) for z in range(randint(4, 10))])
         elif branch == 2:
-            t = list(L[randint(0,99)])
-            t = repr(L[randint(0,99)])
-            t = L[randint(0,99)].list()
+            t = list(L[randint(0, 99)])
+            t = repr(L[randint(0, 99)])
+            t = L[randint(0, 99)].list()
         elif branch == 3:
-            x = randint(0,99)
+            x = randint(0, 99)
             if len(L[x]):
-                y = randint(0,len(L[x])-1)
+                y = randint(0, len(L[x])-1)
                 t = L[x][y]
                 try:
                     t = L[x].index(t)
                 except ValueError:
-                    raise ValueError("{} should be in {} (bound {}) at position {}".format(t,L[x],L[x].bound(),y))
+                    raise ValueError("{} should be in {} (bound {}) at position {}".format(t, L[x], L[x].bound(), y))
             else:
-                L[x] = BoundedIntegerSequence(6, [randint(0,5) for z in range(randint(4,10))])
+                L[x] = BoundedIntegerSequence(6, [randint(0, 5) for z in range(randint(4, 10))])
         elif branch == 4:
-            S = L[randint(0,99)]
-            T = L[randint(0,99)]
-            biseq_startswith(S.data,T.data)
+            S = L[randint(0, 99)]
+            T = L[randint(0, 99)]
+            biseq_startswith(S.data, T.data)
             biseq_contains(S.data, T.data, 0)
             biseq_startswith_tail(S.data, T.data, 0)
