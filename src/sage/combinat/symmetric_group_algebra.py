@@ -2163,7 +2163,6 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             ...
             NotImplementedError: not implemented when p|n!; dimension of invariant forms may be greater than one
         """
-        from sage.matrix.special import diagonal_matrix
         F = self.base_ring()
         G = self.group()
 
@@ -2189,22 +2188,12 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             raise ValueError("the base ring must be a finite field of square order")
         if F.characteristic().divides(G.cardinality()):
             raise NotImplementedError("not implemented when p|n!; dimension of invariant forms may be greater than one")
-        q = F.order().sqrt()
-
-        def conj_square_root(u):
-            if not u:
-                return F.zero()
-            z = F.multiplicative_generator()
-            k = u.log(z)
-            if k % (q+1) != 0:
-                raise ValueError(f"unable to factor as {u} is not in base field GF({q})")
-            return z ** ((k//(q+1)) % (q-1))
 
         dft_matrix = self.dft()
         n = dft_matrix.nrows()
         for i in range(n):
             d = sum(dft_matrix[i, j] * dft_matrix[i, j].conjugate() for j in range(n))
-            dft_matrix[i] *= ~conj_square_root(d)
+            dft_matrix[i] *= ~d.conj_sqrt()
         return dft_matrix
 
     def _dft_seminormal(self, mult='l2r'):
