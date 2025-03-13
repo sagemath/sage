@@ -396,8 +396,9 @@ class QuaternionAlgebraFactory(UniqueFactory):
                     raise ValueError("quaternion algebra over a number field must have an even number of ramified places")
 
                 # We want to compute the correct quaternion algebra over K with PARI
-                # As PARI optimizes the polynomial used to define the number field, we need to precompute
-                # this optimization in Sage and then permute the local invariants correctly
+                # As PARI computes an alternative representation of K given by an integral
+                # and monic defining polynomial, we precompute this representation and then
+                # permute the local invariants (using an isomorphism between the representations)
                 x = polygen(QQ, 'x')
                 g = K.pari_polynomial().sage({'x': x})
                 alpha = g.roots(ring=K, multiplicities=False)[0]
