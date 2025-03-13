@@ -22,7 +22,7 @@ from sage.combinat.tableau import Tableaux
 lr_macro = Template(r'\def\lr#1{\multicolumn{1}{$bar@{\hspace{.6ex}}c@{\hspace{.6ex}}$bar}{\raisebox{-.3ex}{$$#1$$}}}')
 
 
-def tex_from_array(array, with_lines=True):
+def tex_from_array(array, with_lines=True) -> str:
     r"""
     Return a latex string for a two dimensional array of partition, composition
     or skew composition shape.
@@ -242,15 +242,22 @@ def tex_from_array(array, with_lines=True):
                                                    align='t'))
 
 
-def svg_from_array(array, with_lines=True):
+def svg_from_array(array, with_lines=True) -> str:
     """
+    Return the svg code for this array.
+
+    EXAMPLES::
+
+        sage: array=[[1,9,1],[6,9,1],[2,8,3,3]]
+        sage: sage.combinat.output.svg_from_array(array)
+        '<?xml version="1.0" ...</svg>'
     """
     if Tableaux.options.convention == "English":
         return svg_from_skew_array(array, with_lines)
     return svg_from_skew_array(array[::-1], with_lines, align='t')
 
 
-def tex_from_array_tuple(a_tuple, with_lines=True):
+def tex_from_array_tuple(a_tuple, with_lines=True) -> str:
     r"""
     Return a latex string for a tuple of two dimensional array of partition,
     composition or skew composition shape.
@@ -340,20 +347,21 @@ def tex_from_array_tuple(a_tuple, with_lines=True):
     lr = lr_macro.substitute(bar='|' if with_lines else '')
     if Tableaux.options.convention == "English":
         return '{%s\n%s\n}' % (lr, ','.join(
-            r'\emptyset' if comp == [] else tex_from_skew_array(comp, with_lines) for comp in a_tuple))
+            r'\emptyset' if not comp else tex_from_skew_array(comp, with_lines) for comp in a_tuple))
     else:
         return '{%s\n%s\n}' % (lr, ','.join(
-            r'\emptyset' if comp == [] else tex_from_skew_array(comp[::-1], with_lines, align='t') for comp in a_tuple))
+            r'\emptyset' if not comp else tex_from_skew_array(comp[::-1], with_lines, align='t') for comp in a_tuple))
 
 
-def tex_from_skew_array(array, with_lines=False, align='b'):
+def tex_from_skew_array(array, with_lines=False, align='b') -> str:
     r"""
     Create latex code for a "skew composition" ``array``.
 
-    That is, for a two dimensional array in which each row can begin with
-    an arbitrary number ``None``'s and the remaining entries could, in
-    principle, be anything but probably should be strings or integers of similar
-    width. A row consisting completely of ``None``'s is allowed.
+    That is, for a two dimensional array in which each row can begin
+    with an arbitrary number ``None``'s and the remaining entries
+    could, in principle, be anything but probably should be strings or
+    integers of similar width. A row consisting completely of
+    ``None``'s is allowed.
 
     INPUT:
 
@@ -417,12 +425,13 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     tex = r'%s$\begin{array}[%s]{*{%s}c}' % (raisebox_start, align, max(map(len, array)))
     tex += end_line(0)+'\n'
     for r in range(len(array)):
-        tex += '&'.join('' if c is None else r'%s%s%s' % (lr_start, c, lr_end) for c in array[r])
+        tex += '&'.join('' if c is None else r'%s%s%s' % (lr_start, c, lr_end)
+                        for c in array[r])
         tex += end_line(r+1)+'\n'
-    return tex+r'\end{array}$'+raisebox_end
+    return tex + r'\end{array}$' + raisebox_end
 
 
-def svg_from_skew_array(array, with_lines=False, align='b'):
+def svg_from_skew_array(array, with_lines=False, align='b') -> str:
     """
     Return the svg code for this skew array.
 
