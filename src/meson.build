@@ -137,8 +137,6 @@ ec = dependency(
 # Cannot be found via pkg-config
 ec = cc.find_library('ec', required: not is_windows, disabler: true)
 ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
-# Cannot be found via pkg-config
-ppl = cc.find_library('ppl', required: not is_windows, disabler: true)
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
 fflas = dependency(
   'fflas-ffpack',
@@ -146,7 +144,6 @@ fflas = dependency(
   disabler: true,
   version: '>=2.5.0',
 )
-fplll = dependency('fplll', required: not is_windows, disabler: true)
 givaro = dependency(
   'givaro',
   required: not is_windows,

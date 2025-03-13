@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   test:
-    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }})
+    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }}${{ matrix.editable && ', editable' || '' }})
     runs-on: ${{ matrix.os }}-latest
 
     strategy:
@@ -24,7 +24,13 @@ jobs:
       matrix:
         os: [ubuntu, windows]
         python: ['3.11', '3.12']
+        editable:
+          ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
         include:
+          # one additional editable run in pull_request, this has no effect if not pull_request
+          - os: ubuntu
+            python: 3.12
+            editable: true
           - os: windows
             python: '3.13'
 
@@ -92,7 +98,7 @@ jobs:
           fi
 
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
-          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir . -v
+          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable && '--editable' || '' }} . -v
 
       - name: Check update-meson
         # this step must be after build, because meson.build creates a number of __init__.py files
@@ -115,7 +121,9 @@ jobs:
         shell: bash -l {0}
         run: |
           # We don't install sage_setup, so don't try to test it
-          rm -R ./src/sage_setup/
+          # If editable then deleting the directory will cause sage to detect rebuild, which will cause ninja to fail
+          # so we don't delete the directory in this case
+          ${{ matrix.editable && 'true' || 'rm -R ./src/sage_setup/' }}
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             # Ignore errors on Windows, for now
             pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
@@ -127,5 +135,5 @@ jobs:
         uses: actions/upload-artifact@v4.5.0
         if: failure()
         with:
-          name: ${{ runner.os }}-meson-${{ matrix.python }}-log
+          name: ${{ runner.os }}-meson-${{ matrix.python }}${{ matrix.editable && '-editable' || '' }}-log
           path: builddir/meson-logs/
