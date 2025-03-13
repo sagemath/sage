@@ -24,7 +24,7 @@ foreach name, pyx : extension_data_cpp
       'cpp_std=c++11',
     ],
     include_directories: [inc_flint],
-    dependencies: [py_dep, blas, flint, fplll, givaro, gmp, gmpxx, linbox],
+    dependencies: [py_dep, blas, flint, givaro, gmp, gmpxx, linbox],
   )
 endforeach
 

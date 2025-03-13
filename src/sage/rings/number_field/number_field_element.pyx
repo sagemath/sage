@@ -891,6 +891,43 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
+            sage: a._random_element()  # random
+            -1/2*a^2 - 4
+            sage: K.<a> = NumberField(x^2 - 5)
+            sage: a._random_element()  # random
+            -1/48*a - 1/2
+
+        With denominator bound one, we always get integral elements::
+
+            sage: K = QuadraticField(2)
+            sage: uu = [K.random_element(den_bound=1) for _ in range(5)]
+            sage: uu  # random
+            [0, a + 2, -12*a - 2, -a + 1, -a - 2]
+            sage: all(u.is_integral() for u in uu)
+            True
+
+        Without this constraint, we do not always get them::
+
+            sage: K = QuadraticField(2)
+            sage: uu = [K.random_element() for _ in range(100)]
+            sage: all(u.is_integral() for u in uu)
+            False
+
+        Random integral elements can also be picked using the random_element
+        method of the number field's "ring of integers" or "maximal order" ::
+
+            sage: K = QuadraticField(2)
+            sage: O = K.maximal_order()
+            sage: O.random_element()  # random
+            5*a - 6
+            sage: O = K.ring_of_integers()
+            sage: O.random_element()  # random
+            -4*a + 1
+
+        TESTS::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2)
             sage: a._random_element().parent() is K
             True
             sage: K.<a> = NumberField(x^2 - 5)
@@ -1954,14 +1991,14 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: (6*i + 6).factor()
-            (-i) * (i + 1)^3 * 3
+            (i - 1)^3 * 3
 
         In the following example, the class number is 2.  If a factorization
         in prime elements exists, we will find it::
 
             sage: K.<a> = NumberField(x^2 - 10)
             sage: factor(169*a + 531)
-            (-6*a - 19) * (-3*a - 1) * (-2*a + 9)
+            (-6*a - 19) * (2*a - 9) * (3*a + 1)
             sage: factor(K(3))
             Traceback (most recent call last):
             ...
@@ -2043,7 +2080,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             0
             sage: R = K.maximal_order()
             sage: R(i+1).gcd(2)
-            i + 1
+            i - 1
             sage: R = K.order(2*i)
             sage: R(1).gcd(R(4*i))
             1
@@ -4238,7 +4275,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: P5s = F(5).support()
             sage: P5s
-            [Fractional ideal (-t^2 - 1), Fractional ideal (t^2 - 2*t - 1)]
+            [Fractional ideal (t^2 + 1), Fractional ideal (t^2 - 2*t - 1)]
             sage: all(5 in P5 for P5 in P5s)
             True
             sage: all(P5.is_prime() for P5 in P5s)
@@ -4487,7 +4524,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: f = Qi.embeddings(K)[0]
             sage: a = f(2+3*i) * (2-zeta)^2
             sage: a.descend_mod_power(Qi,2)
-            [-2*i + 3, 3*i + 2]
+            [3*i + 2, 2*i - 3]
 
         An absolute example::
 
