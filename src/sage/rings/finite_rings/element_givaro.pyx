@@ -1091,15 +1091,15 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: k(0).conj_sqrt()
             0
             sage: z = k(2).conj_sqrt(); z
-            z2 + 4
+            a + 4
             sage: z*z.conjugate()
             2
             sage: z = k(3).conj_sqrt(); z
-            z2
+            a
             sage: z*z.conjugate()
             3
             sage: z = k(4).conj_sqrt(); z
-            2*z2 + 6
+            2*a + 6
             sage: z*z.conjugate()
             4
 
