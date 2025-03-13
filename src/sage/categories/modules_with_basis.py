@@ -1308,7 +1308,29 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             except (AttributeError, TypeError):
                 from sage.rings.integer_ring import ZZ
                 return ZZ(len(self.basis()))
+        
+        def rank(self):
+            """
+            Return the rank of ``self``.
+            Note the rank of ``self`` should equal dimension of ``self``,
+            assuming infinite rank is defined in the context.
 
+            EXAMPLES::
+
+                sage: A.<x,y> = algebras.DifferentialWeyl(QQ)                           # needs sage.modules
+                sage: A.rank()                                                          # needs sage.modules
+                +Infinity
+
+                sage: R.<x,y> = QQ[]
+                sage: R.rank()
+                +Infinity
+
+                sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+                sage: F.rank()
+                3
+            """
+            return self.dimension()
+            
         def _from_dict(self, d, coerce=True, remove_zeros=True):
             """
             Construct an element of ``self`` from the dictionary ``d``.
