@@ -645,18 +645,6 @@ class MatchingCoveredGraph(Graph):
             else:
                 self._matching = Graph(self).matching()
 
-            # Store all parameters used in this instance for reference if needed            
-            self._params = {
-                "data": data,
-                "matching": self._matching,
-                "algorithm": algorithm,
-                "solver": solver,
-                "verbose": verbose,
-                "integrality_tolerance": integrality_tolerance,
-                "args": args,
-                "kwds": kwds  
-            }
-
         else:
             raise TypeError('input data is of unknown type')
 
@@ -1154,25 +1142,22 @@ class MatchingCoveredGraph(Graph):
                 raise ValueError('loops are not allowed in '
                                  'matching covered graphs')
            
-            # Add the new edge to the graph using the original method from the base class
-            super().add_edge(u, v, label=label) 
-            # Check if the graph is still matching covered after adding the edge
-            if not self.is_matching_covered(**{k: self._params[k] for k in ["algorithm", "solver", "verbose","integrality_tolerance"]}):
-                # If it is no longer matching covered, immediately remove the edge to restore the previous state and raise an exception 
-                super().delete_edge(u, v, label=label)  
-                raise ValueError('the graph obtained after the addition of '
+            # If (u, v, label) is a multiple edge/ an existing edge
+            if self.has_edge(u, v):
+                self._backend.add_edge(u, v, label, self._directed)
+                return
+            # Check if there exists an M-alternating odd uv path starting and
+            # ending with edges in self._matching
+            from sage.graphs.matching import M_alternating_even_mark
+            w = next((b if a == u else a) for a, b, *_ in self.get_matching() if u in (a, b))
+            if v in M_alternating_even_mark(self, w, self.get_matching()):
+                # There exists a perfect matching containing the edge (u, v, label)
+                self._backend.add_edge(u, v, label, self._directed)
+                return
+            
+        raise ValueError('the graph obtained after the addition of '
                                  'edge (%s) is not matching covered'
                                  % str((u, v, label)))
-            # Update the matching only if the graph remains matching covered after adding the edge
-            self._matching = self.get_matching()
-               
-        else:
-            # At least one of u or v is a nonexistent vertex.
-            # Thus, the resulting graph is either disconnected
-            # or has an odd order, hence not matching covered
-            raise ValueError('the graph obtained after the addition of edge '
-                             '(%s) is not matching covered'
-                             % str((u, v, label)))
 
     @doc_index('Overwritten methods')
     def add_edges(self, edges, loops=False):
