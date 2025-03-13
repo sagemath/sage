@@ -377,7 +377,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         con = Conic(D, names=names)
         return con, con.hom(T, self), self.hom(T.inverse(), con)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of the coordinate ring of ``self``.
 
@@ -945,28 +945,28 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             point = Sequence(point)
             B = self.base_ring()
             Q = PolynomialRing(B, 'x,y')
-            [x, y] = Q.gens()
+            x, y = Q.gens()
             gens = self.ambient_space().gens()
             P = PolynomialRing(B, 4, ['X', 'Y', 'T0', 'T1'])
-            [X, Y, T0, T1] = P.gens()
-            c3 = [j for j in range(2,-1,-1) if point[j] != 0][0]
-            c1 = [j for j in range(3) if j != c3][0]
-            c2 = [j for j in range(3) if j != c3 and j != c1][0]
-            L = [0,0,0]
-            L[c1] = Y*T1*point[c1] + Y*T0
-            L[c2] = Y*T1*point[c2] + X*T0
-            L[c3] = Y*T1*point[c3]
+            X, Y, T0, T1 = P.gens()
+            c3 = next(j for j in range(2, -1, -1) if point[j] != 0)
+            c1 = next(j for j in range(3) if j != c3)
+            c2 = next(j for j in range(3) if j != c3 and j != c1)
+            L = [0, 0, 0]
+            L[c1] = Y * T1 * point[c1] + Y * T0
+            L[c2] = Y * T1 * point[c2] + X * T0
+            L[c3] = Y * T1 * point[c3]
             bezout = P(self.defining_polynomial()(L) / T0)
-            t = [bezout([x,y,0,-1]),bezout([x,y,1,0])]
-            par = (tuple([Q(p([x,y,t[0],t[1]])/y) for p in L]),
-                   tuple([gens[m]*point[c3]-gens[c3]*point[m]
-                       for m in [c2,c1]]))
+            t = [bezout([x, y, 0, -1]), bezout([x, y, 1, 0])]
+            par = (tuple([Q(p([x, y, t[0], t[1]]) / y) for p in L]),
+                   tuple([gens[m] * point[c3] - gens[c3] * point[m]
+                          for m in [c2, c1]]))
             if self._parametrization is None:
                 self._parametrization = par
         if not morphism:
             return par
         P1 = ProjectiveSpace(self.base_ring(), 1, 'x,y')
-        return P1.hom(par[0],self), self.Hom(P1)(par[1], check=False)
+        return P1.hom(par[0], self), self.Hom(P1)(par[1], check=False)
 
     def point(self, v, check=True):
         r"""
