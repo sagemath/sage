@@ -179,7 +179,6 @@ lint = [
   "ruff",
   "pycodestyle",
   "flake8-rst-docstrings",
-  "pkg:generic/sagemath-graphs",
 ]
 dev = [
   "toml",
