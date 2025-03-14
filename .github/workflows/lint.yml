@@ -41,4 +41,4 @@ jobs:
 
     - name: Validate docstring markup as RST
       if: (success() || failure()) && steps.deps.outcome == 'success'
-      run: uv run --frozen --only-group lint -- flake8 --select=RST src/sage/
+      run: uv run --frozen --only-group lint -- flake8 --select=RST src/sage/ --config src/tox.ini
