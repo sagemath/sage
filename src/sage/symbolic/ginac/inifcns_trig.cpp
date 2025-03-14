@@ -212,10 +212,12 @@ static ex sin_eval(const ex & x)
         else
                 x_red = x;
 
+
+        ex x_red_expanded = x_red.expand();
 	// simplify sin(I*x) --> I*sinh(x)
-	if (is_multiple_of_I(x_red.expand())) {
+	if (is_multiple_of_I(x_red_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x_red.expand()))
+                if (is_zero(x_red_expanded))
                         return _ex0;
 		return I*sinh(x_red/I);
         }
@@ -425,10 +427,11 @@ static ex cos_eval(const ex & x)
         else
                 x_red = x;
 
+        ex x_red_expanded = x_red.expand();
 	// simplify cos(I*x) --> cosh(x)
-	if (is_multiple_of_I(x_red.expand())) {
+	if (is_multiple_of_I(x_red_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x_red.expand()))
+                if (is_zero(x_red_expanded))
                         return _ex1;
                 return cosh(x_red/I);
         }
@@ -642,9 +645,10 @@ static ex tan_eval(const ex & x)
         else
                 x_red = x;
 
-	if (is_multiple_of_I(x_red.expand())) {
+        ex x_red_expanded = x_red.expand();
+	if (is_multiple_of_I(x_red_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x_red.expand()))
+                if (is_zero(x_red_expanded))
                         return _ex0;
 		return I*tanh(x_red/I);
         }
@@ -755,9 +759,10 @@ static ex cot_eval(const ex & x)
 	if (x.is_zero())
 		return UnsignedInfinity;
 
-	if (is_multiple_of_I(x.expand())) {
+        ex x_expanded = x.expand();
+	if (is_multiple_of_I(x_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x.expand()))
+                if (is_zero(x_expanded))
                         return UnsignedInfinity;
 		return -I*coth(x/I);
         }
@@ -894,9 +899,10 @@ REGISTER_FUNCTION(cot, eval_func(cot_eval).
 
 static ex sec_eval(const ex & x)
 {
-	if (is_multiple_of_I(x.expand())) {
+        ex x_expanded = x.expand();
+	if (is_multiple_of_I(x_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x.expand()))
+                if (is_zero(x_expanded))
                         return _ex1;
 		return sech(x/I);
         }
@@ -1012,10 +1018,10 @@ REGISTER_FUNCTION(sec, eval_func(sec_eval).
 
 static ex csc_eval(const ex & x)
 {
-
-	if (is_multiple_of_I(x.expand())) {
+        ex x_expanded = x.expand();
+	if (is_multiple_of_I(x_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x.expand()))
+                if (is_zero(x_expanded))
                         return UnsignedInfinity;
 		return -I*csch(x/I);
         }
