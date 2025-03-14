@@ -381,7 +381,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
     r"""
     The Chow ring ideal of a matroid `M` in atom-free presentation.
 
-    The *Chow ring ideal* for a matroid `M` in atom-free presentation
+    The *Chow ring ideal* of a matroid `M` in atom-free presentation
     is defined as the ideal `(I_M + J_M + K_M)` of the polynomial ring
 
     .. MATH::
@@ -397,7 +397,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
 
       .. MATH::
 
-          x_F \sum_{F' \superseteq F \vee i} x_{F'}
+          x_F \sum_{F' \supseteq F \vee i} x_{F'}
 
       for all flats `F` and `i` in `E - F`, where `E` is the groundset of
       the matroid, and
@@ -405,7 +405,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
 
       .. MATH::
 
-          \sum_{F \superseteq i \vee j} x_F^2 + \sum_{F' \superset F \superseteq i \vee j} 2 x_F x_{F'}
+          \sum_{F \supseteq i \vee j} x_F^2 + \sum_{F' \supset F \supseteq i \vee j} 2 x_F x_{F'}
 
       for all elements `i, j` in `E`, such that `i \neq j`.
 
