@@ -213,11 +213,12 @@ static ex sin_eval(const ex & x)
                 x_red = x;
 
 	// simplify sin(I*x) --> I*sinh(x)
-	if (is_multiple_of_I(x_red.expand()))
+	if (is_multiple_of_I(x_red.expand())) {
                 // to avoid infinite recursion, check if the input expands to 0
                 if (is_zero(x_red.expand()))
-                        return 0;
+                        return _ex0;
 		return I*sinh(x_red/I);
+        }
 
 	if (is_exactly_a<function>(x_red)) {
 		const ex &t = x_red.op(0);
@@ -425,11 +426,12 @@ static ex cos_eval(const ex & x)
                 x_red = x;
 
 	// simplify cos(I*x) --> cosh(x)
-	if (is_multiple_of_I(x_red.expand()))
+	if (is_multiple_of_I(x_red.expand())) {
                 // to avoid infinite recursion, check if the input expands to 0
                 if (is_zero(x_red.expand()))
-                        return 1;
+                        return _ex1;
                 return cosh(x_red/I);
+        }
 
 	if (is_exactly_a<function>(x_red)) {
 		const ex &t = x_red.op(0);
@@ -640,11 +642,12 @@ static ex tan_eval(const ex & x)
         else
                 x_red = x;
 
-	if (is_multiple_of_I(x_red.expand()))
+	if (is_multiple_of_I(x_red.expand())) {
                 // to avoid infinite recursion, check if the input expands to 0
                 if (is_zero(x_red.expand()))
-                        return 0;
+                        return _ex0;
 		return I*tanh(x_red/I);
+        }
 
 	if (is_exactly_a<function>(x_red)) {
 		const ex &t = x_red.op(0);
@@ -752,11 +755,12 @@ static ex cot_eval(const ex & x)
 	if (x.is_zero())
 		return UnsignedInfinity;
 
-	if (is_multiple_of_I(x.expand()))
+	if (is_multiple_of_I(x.expand())) {
                 // to avoid infinite recursion, check if the input expands to 0
                 if (is_zero(x.expand()))
                         return UnsignedInfinity;
 		return -I*coth(x/I);
+        }
 
 	if (is_exactly_a<function>(x)) {
 		const ex &t = x.op(0);
@@ -890,11 +894,12 @@ REGISTER_FUNCTION(cot, eval_func(cot_eval).
 
 static ex sec_eval(const ex & x)
 {
-	if (is_multiple_of_I(x.expand()))
+	if (is_multiple_of_I(x.expand())) {
                 // to avoid infinite recursion, check if the input expands to 0
                 if (is_zero(x.expand()))
-                        return 1;
+                        return _ex1;
 		return sech(x/I);
+        }
 
 	if (is_exactly_a<function>(x)) {
 		const ex &t = x.op(0);
@@ -1008,11 +1013,12 @@ REGISTER_FUNCTION(sec, eval_func(sec_eval).
 static ex csc_eval(const ex & x)
 {
 
-	if (is_multiple_of_I(x.expand()))
+	if (is_multiple_of_I(x.expand())) {
                 // to avoid infinite recursion, check if the input expands to 0
                 if (is_zero(x.expand()))
                         return UnsignedInfinity;
 		return -I*csch(x/I);
+        }
 
 	if (is_exactly_a<function>(x)) {
 		const ex &t = x.op(0);
