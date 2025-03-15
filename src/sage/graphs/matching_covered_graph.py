@@ -3525,32 +3525,40 @@ class MatchingCoveredGraph(Graph):
 
             sage: P = graphs.PetersenGraph()
             sage: G = MatchingCoveredGraph(P)
-            sage: G.get_matching()
-            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+            sage: V, E = set(G.vertices()), set(G.edges())
+            sage: M = set(G.get_matching())
             sage: G.subdivide_edge(0, 1, 4)
-            sage: G.edges()
-            [(0, 4, None), (0, 5, None), (0, 10, None), (1, 2, None), (1, 6, None),
-             (1, 13, None), (2, 3, None), (2, 7, None), (3, 4, None), (3, 8, None),
-             (4, 9, None), (5, 7, None), (5, 8, None), (6, 8, None), (6, 9, None),
-             (7, 9, None), (10, 11, None), (11, 12, None), (12, 13, None)]
-            sage: G.get_matching()
-            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None),
-             (4, 9, None), (10, 11, None), (12, 13, None)]
+            sage: W, F = set(G.vertices()), set(G.edges())
+            sage: N = set(G.get_matching())
+            sage: sorted(W - V)
+            [10, 11, 12, 13]
+            sage: sorted(F - E), sorted(E - F)
+            ([(0, 10, None), (1, 13, None), (10, 11, None), (11, 12, None),
+             (12, 13, None)], [(0, 1, None)])
+            sage: if (0, 1, None) in M:
+            ....:     assert sorted(N - M), sorted(M - N) == \
+            ....:         ([(0, 10, None), (1, 13, None), (11, 12, None)], [(0, 1, None)])
+            ....: else:
+            ....:     assert sorted(N - M), sorted(M - N) == \
+            ....:         ([(10, 11, None), (12, 13, None)], [])
 
         Subdividing a multiple edge::
 
-            sage: K = graphs.CompleteGraph(4)
+            sage: K = graphs.CycleGraph(4)
             sage: K.allow_multiple_edges(1)
             sage: K.add_edges([(0, 1, 2), (0, 1, 'label'), (0, 1, 0.5)])
             sage: K.delete_edge(0, 1, None)
             sage: G = MatchingCoveredGraph(K)
+            sage: V, E = set(G.vertices()), set(G.edges())
             sage: G.edge_label(0, 1)
             [2, 'label', 0.500000000000000]
             sage: G.subdivide_edge(0, 1, 6)  # the edge: (0, 1, 2)
-            sage: G.edges()
-            [(0, 1, 'label'), (0, 1, 0.500000000000000), (0, 2, None),
-             (0, 3, None), (0, 4, 2), (1, 2, None), (1, 3, None), (1, 9, 2),
-             (2, 3, None), (4, 5, 2), (5, 6, 2), (6, 7, 2), (7, 8, 2), (8, 9, 2)]
+            sage: W, F = set(G.vertices()), set(G.edges())
+            sage: sorted(W - V)
+            [4, 5, 6, 7, 8, 9]
+            sage: sorted(F - E), sorted(E - F)
+            ([(0, 4, 2), (1, 9, 2), (4, 5, 2), (5, 6, 2), (6, 7, 2),
+              (7, 8, 2), (8, 9, 2)], [(0, 1, 2)])
 
         If too many or too less arguments are given, an exception is raised::
 
@@ -3611,8 +3619,7 @@ class MatchingCoveredGraph(Graph):
                     raise ValueError(f'the given edge {(u, v, None)} does not exist')
 
                 l = self.edge_label(u, v)
-                if isinstance(l, list):
-                    l = next(iter(l))
+                l = l[0] if isinstance(l, list) else l
 
             elif len(edge) == 3:
                 u, v, l = edge
@@ -3646,16 +3653,11 @@ class MatchingCoveredGraph(Graph):
         if k == 0:
             return
 
-        new_vertices = []
-        vertex_label = 0
-        while len(new_vertices) < k:
-            while vertex_label in self or vertex_label in new_vertices:
-                vertex_label += 1
-
-            new_vertices.append(vertex_label)
+        new_vertices = [self._backend.add_vertex(None) for _ in range(k)]
 
         M = Graph(self.get_matching())
-        M.delete_edge(u, v, l)
+        if M.has_edge(u, v, l):
+            M.delete_edge(u, v, l)
 
         self._backend.del_edge(u, v, l, self._directed)
         self._backend.add_edges(
