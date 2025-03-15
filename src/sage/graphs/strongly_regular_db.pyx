@@ -2784,7 +2784,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
     - ``v``, ``k``, ``l``, ``mu`` -- ``integers`` -- note that ``mu``, if unspecified, is
       automatically determined from ``v``, ``k``, ``l``
 
-    - ``existence`` -- boolean;``False``; instead of building the graph,
+    - ``existence`` -- boolean (default: ``False``); instead of building the graph,
       return:
 
         - ``True`` -- meaning that a `(v,k,\lambda,\mu)`-strongly regular graph

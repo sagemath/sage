@@ -23,15 +23,9 @@ on:
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
         description: 'Stringified JSON object'
         default: >-
-          [["12",     "",             "homebrew-macos-usrlocal-minimal"],
-           ["12",     "",             "homebrew-macos-usrlocal-standard"],
-           ["12",     "",             "homebrew-macos-usrlocal-python3_xcode-standard"],
-           ["12",     "",             "homebrew-macos-usrlocal-maximal"],
-           ["13",     "xcode_15.0",   "homebrew-macos-usrlocal-standard"],
+          [
            ["latest", "",             "homebrew-macos-opthomebrew-standard"],
-           ["13",     "",             "conda-forge-macos-minimal"],
-           ["13",     "",             "conda-forge-macos-standard"],
-           ["latest", "",             "conda-forge-macos-standard"]]
+          ]
         type: string
       extra_sage_packages:
         description: 'Extra Sage packages to install as system packages'

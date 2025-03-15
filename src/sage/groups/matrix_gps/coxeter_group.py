@@ -546,6 +546,18 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             [-1  1]  [ 0 -1]  [ 1  0]
             [ 0  1], [-1  0], [ 1 -1]
             ]
+
+        TESTS::
+
+            sage: W = CoxeterGroup(CoxeterType(['A', 2]).relabel({1: 'r', 2: 's'}))
+            sage: F = W._positive_roots_reflections()
+            sage: F.keys()
+            [(1, 0), (1, 1), (0, 1)]
+            sage: list(F)
+            [
+            [-1  1]  [ 0 -1]  [ 1  0]
+            [ 0  1], [-1  0], [ 1 -1]
+            ]
         """
         if not self.is_finite():
             raise NotImplementedError('not available for infinite groups')
@@ -557,13 +569,14 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         simple_roots = FreeModule(self.base_ring(), self.ngens()).gens()
 
         refls = self.simple_reflections()
+        refls_index = {refl_i[1]: refl_i[0] for refl_i in enumerate(refls.keys())}
         resu = []
         d = {}
         for i in range(1, N + 1):
             segment = word[:i]
             last = segment.pop()
             ref = refls[last]
-            rt = simple_roots[last - 1]
+            rt = simple_roots[refls_index[last]]
             while segment:
                 last = segment.pop()
                 cr = refls[last]

@@ -61,7 +61,6 @@ Methods
 
 from collections import deque
 
-from libc.string cimport memset
 from libc.stdint cimport uint32_t
 from libcpp.vector cimport vector
 from cysignals.signals cimport sig_on, sig_off
@@ -73,7 +72,6 @@ from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
 from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
-from sage.graphs.base.static_sparse_graph cimport out_degree
 from sage.graphs.graph_decompositions.slice_decomposition cimport \
         extended_lex_BFS
 

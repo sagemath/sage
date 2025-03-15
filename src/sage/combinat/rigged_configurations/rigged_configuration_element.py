@@ -826,7 +826,7 @@ class RiggedConfigurationElement(ClonableArray):
         a = self.parent()._rc_index_inverse[a]
         if not self[a]:
             return ZZ.zero()
-        return Integer(-min(0, min(self[a].rigging)))
+        return Integer(-min(0, *self[a].rigging))
 
     def phi(self, a):
         r"""
@@ -851,7 +851,7 @@ class RiggedConfigurationElement(ClonableArray):
         p_inf = self.parent()._calc_vacancy_number(self, a, float("inf"))
         if not self[a]:
             return Integer(p_inf)
-        return Integer(p_inf - min(0, min(self[a].rigging)))
+        return Integer(p_inf - min(0, *self[a].rigging))
 
     def vacancy_number(self, a, i):
         r"""
@@ -2315,7 +2315,7 @@ class KRRCTypeA2DualElement(KRRCNonSimplyLacedElement):
         if not self[a]:
             epsilon = 0
         else:
-            epsilon = -min(0, min(self[a].rigging))
+            epsilon = -min(0, *self[a].rigging)
         n = len(self.parent()._rc_index)
         if a == n-1: # -1 for indexing
             epsilon *= 2
@@ -2349,7 +2349,7 @@ class KRRCTypeA2DualElement(KRRCNonSimplyLacedElement):
         if not self[a]:
             phi = p_inf
         else:
-            phi = p_inf - min(0, min(self[a].rigging))
+            phi = p_inf - min(0, *self[a].rigging)
         n = len(self.parent()._rc_index)
         if a == n-1: # -1 for indexing
             phi *= 2

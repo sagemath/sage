@@ -691,10 +691,10 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
             sage: # needs sage.rings.number_field
             sage: ideal = A.ideal(5).factor()[1][0]; ideal
-            Fractional ideal (2*a + 1)
+            Fractional ideal (-2*a - 1)
             sage: g = f.conjugate(conj, new_ideal=ideal)
             sage: g.domain().ideal()
-            Fractional ideal (2*a + 1)
+            Fractional ideal (-2*a - 1)
         """
         if self.domain().is_padic_base():
             return DynamicalSystem_Berkovich(self._system.conjugate(M, adjugate=adjugate))

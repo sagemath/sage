@@ -1246,10 +1246,10 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: P.<x,y> = ProjectiveSpace(QQbar, 1)
             sage: Q = P([-1/2*QQbar(sqrt(2)) + QQbar(I), 1])
             sage: S = Q._number_field_from_algebraics(); S
-            (1/2*a^3 + a^2 - 1/2*a : 1)
+            (-1/2*a^3 + a^2 + 1/2*a : 1)
             sage: S.codomain()
             Projective Space of dimension 1 over Number Field in a with defining
-             polynomial y^4 + 1 with a = 0.7071067811865475? + 0.7071067811865475?*I
+             polynomial y^4 + 1 with a = -0.7071067811865475? - 0.7071067811865475?*I
 
         The following was fixed in :issue:`23808`::
 
@@ -1259,7 +1259,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: Q = P([-1/2*QQbar(sqrt(2)) + QQbar(I), 1]);Q
             (-0.7071067811865475? + 1*I : 1)
             sage: S = Q._number_field_from_algebraics(); S
-            (1/2*a^3 + a^2 - 1/2*a : 1)
+            (-1/2*a^3 + a^2 + 1/2*a : 1)
             sage: T = S.change_ring(QQbar)  # Used to fail
             sage: T
             (-0.7071067811865475? + 1.000000000000000?*I : 1)
