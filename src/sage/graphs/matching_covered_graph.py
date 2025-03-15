@@ -3735,21 +3735,28 @@ class MatchingCoveredGraph(Graph):
         that the perfect matching captured at ``self.get_matching()`` also gets
         updated::
 
-            sage: K = graphs.CompleteGraph(4)
+            sage: K = graphs.CycleGraph(4)
             sage: G = MatchingCoveredGraph(K)
-            sage: G.get_matching()
-            [(0, 3, None), (1, 2, None)]
+            sage: V, E = set(G.vertices()), set(G.edges())
+            sage: M = set(G.get_matching())
             sage: G.subdivide_edges(G.edges(), 2)
-            sage: G.edges()
-            [(0, 4, None), (0, 6, None), (0, 8, None),
-             (1, 5, None), (1, 10, None), (1, 14, None),
-             (2, 7, None), (2, 12, None), (2, 15, None),
-             (3, 9, None), (3, 11, None), (3, 13, None),
-             (4, 5, None), (6, 7, None), (8, 9, None),
-             (10, 11, None), (12, 13, None), (14, 15, None)]
-            sage: G.get_matching()
-            [(0, 8, None), (1, 14, None), (2, 15, None), (3, 9, None),
-             (4, 5, None), (6, 7, None), (10, 11, None), (12, 13, None)]
+            sage: W, F = set(G.vertices()), set(G.edges())
+            sage: N = set(G.get_matching())
+            sage: sorted(W - V)
+            [4, 5, 6, 7, 8, 9, 10, 11]
+            sage: sorted(F - E), sorted(E - F)
+            ([(0, 6, None), (0, 8, None), (1, 9, None), (1, 10, None),
+              (2, 4, None), (2, 11, None), (3, 5, None), (3, 7, None),
+              (4, 5, None), (6, 7, None), (8, 9, None), (10, 11, None)],
+             [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)])
+            sage: if (0, 1, None) in M:
+            ....:     assert sorted(N - M), sorted(M - N) == \
+            ....:         ([(0, 8, None), (1, 9, None), (2, 4, None), (3, 5, None), \
+            ....:       (6, 7, None), (10, 11, None)], [(0, 1, None), (2, 3, None)])
+            ....: else:
+            ....:     assert sorted(N - M), sorted(M - N) == \
+            ....:         ([(0, 6, None), (1, 10, None), (2, 11, None), (3, 7, None), \
+            ....:           (4, 5, None), (8, 9, None)], [(0, 3, None), (1, 2, None)])
 
         Subdividing edges with at least one of which is a multiple edge::
 
@@ -3761,63 +3768,52 @@ class MatchingCoveredGraph(Graph):
             ....:     (2, 3, 0.5), (2, 3, 'mark')
             ....: ])
             sage: G.delete_edge(0, 1, None)
-            sage: E = set(G.edges())
-            sage: G.subdivide_edges(
-            ....:     [(0, 1), (1, 2), (2, 3)], 4
-            ....: )  # edges considered: (0, 1, 2), (1, 2, None), (2, 3, None)
-            sage: set(G.edges()) - E
-            {(0, 10, 2), (1, 13, 2), (1, 14, None), (2, 17, None),
-             (2, 18, None), (3, 21, None), (10, 11, 2), (11, 12, 2),
-             (12, 13, 2), (14, 15, None), (15, 16, None),
-             (16, 17, None), (18, 19, None), (19, 20, None),
-             (20, 21, None)}
-            sage: E - set(G.edges())
-            {(0, 1, 2), (1, 2, None), (2, 3, None)}
+            sage: V, E = set(G.vertices()), set(G.edges())
+            sage: G.subdivide_edges([(0, 1), (1, 2), (2, 3)], 4)
+            ....: # edges considered: (0, 1, 2), (1, 2, None), (2, 3, None)
+            sage: W, F = set(G.vertices()), set(G.edges())
+            sage: sorted(W - V)
+            [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+            sage: sorted(F - E), sorted(E - F)
+            ([(0, 10, 2), (1, 13, 2), (1, 14, None), (2, 17, None),
+              (2, 18, None), (3, 21, None), (10, 11, 2), (11, 12, 2),
+              (12, 13, 2), (14, 15, None), (15, 16, None), (16, 17, None),
+              (18, 19, None), (19, 20, None), (20, 21, None)],
+             [(0, 1, 2), (1, 2, None), (2, 3, None)])
 
         Subdividing edges with at least one of which is nonexistent::
 
-            sage: G.subdivide_edges(
-            ....:     [(4, 5), (1, 5)], 4
-            ....: )  # edges considered: (4, 5, None), (1, 5, None)
+            sage: G.subdivide_edges([(4, 5), (1, 5)], 4)
+            ....: # edges considered: (4, 5, None), (1, 5, None)
             Traceback (most recent call last):
             ...
             ValueError: the given edge (1, 5, None) does not exist
 
         When ``k`` is not a nonnegative even integer::
 
-            sage: G.subdivide_edges(
-            ....:     [(0, 1), (1, 2), (2, 3)], 3
-            ....: )
+            sage: G.subdivide_edges([(0, 1), (1, 2), (2, 3)], 3)
             Traceback (most recent call last):
             ...
             ValueError: the number of subdivisions must be a nonnegative even integer
 
         Providing a noniterable object as ``edges``::
 
-            sage: G.subdivide_edges(
-            ....:     G.order(), 4
-            ....: )
+            sage: G.subdivide_edges(G.order(), 4)
             Traceback (most recent call last):
             ...
             ValueError: expected an iterable of edges, but got a non-iterable object
 
         Providing arguments in an invalid format::
 
-            sage: G.subdivide_edges(
-            ....:     [(0, ), (0, 1, 'label')], 4
-            ....: )
+            sage: G.subdivide_edges([(0, ), (0, 1, 'label')], 4)
             Traceback (most recent call last):
             ...
             ValueError: need more than 1 value to unpack
-            sage: G.subdivide_edges(
-            ....:     [(0, 1, 2, 4), (0, 1, 'label')], 4
-            ....: )
+            sage: G.subdivide_edges([(0, 1, 2, 4), (0, 1, 'label')], 4)
             Traceback (most recent call last):
             ...
             ValueError: too many values to unpack (expected 2)
-            sage: G.subdivide_edges(
-            ....:     [0, (0, 1, 'label')], 4
-            ....: )
+            sage: G.subdivide_edges([0, (0, 1, 'label')], 4)
             Traceback (most recent call last):
             ...
             TypeError: input edges is of unknown type
@@ -3852,14 +3848,7 @@ class MatchingCoveredGraph(Graph):
                 raise TypeError('input edges is of unknown type')
 
         edges = list(set(edges))
-
-        new_vertices = []
-        vertex_label = 0
-        while len(new_vertices) < k * len(edges):
-            while vertex_label in self or vertex_label in new_vertices:
-                vertex_label += 1
-
-            new_vertices.append(vertex_label)
+        new_vertices = new_vertices = [self._backend.add_vertex(None) for _ in range(k * len(edges))]
 
         M = Graph(self.get_matching())
 
@@ -3885,11 +3874,11 @@ class MatchingCoveredGraph(Graph):
                 self._directed, remove_loops=True
             )
 
-            M.delete_edge(u, v, l)
+            if M.has_edge(u, v, l):
+                M.delete_edge(u, v, l)
             if M.degree(u):
-                M.add_edges(
-                    [(new_vertices[i * k + j], new_vertices[i * k + j + 1], l) for j in range(0, k - 1, 2)]
-                )
+                M.add_edges((new_vertices[i * k + j], new_vertices[i * k + j + 1], l)
+                    for j in range(0, k - 1, 2))
             else:
                 M.add_edges(
                     [(u, new_vertices[i * k], l), (new_vertices[(i + 1) * k - 1], v, l)] +
