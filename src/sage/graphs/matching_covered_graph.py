@@ -3725,6 +3725,9 @@ class MatchingCoveredGraph(Graph):
               *t* times is defined as subdividing the edge *2t* times, for some
               nonnegative integer *t*.
 
+            * Please note that if a single edge is present in the iterable, it
+              is considered only one time for the subdivision operation.
+
         OUTPUT:
 
         - If existent edges are provided with a valid format and the parameter
@@ -3742,18 +3745,18 @@ class MatchingCoveredGraph(Graph):
         that the perfect matching captured at ``self.get_matching()`` also gets
         updated::
 
-            sage: K = graphs.CycleGraph(4)
-            sage: G = MatchingCoveredGraph(K)
+            sage: C = graphs.CycleGraph(4)
+            sage: G = MatchingCoveredGraph(C)
             sage: V, E = set(G.vertices()), set(G.edges())
             sage: M = set(G.get_matching())
-            sage: G.subdivide_edges(G.edges(), 2)
+            sage: G.subdivide_edges(sorted(G.edges()), 2)
             sage: W, F = set(G.vertices()), set(G.edges())
             sage: N = set(G.get_matching())
             sage: sorted(W - V)
             [4, 5, 6, 7, 8, 9, 10, 11]
             sage: sorted(F - E), sorted(E - F)
-            ([(0, 6, None), (0, 8, None), (1, 9, None), (1, 10, None),
-              (2, 4, None), (2, 11, None), (3, 5, None), (3, 7, None),
+            ([(0, 4, None), (0, 6, None), (1, 7, None), (1, 8, None),
+              (2, 9, None), (2, 10, None), (3, 5, None), (3, 11, None),
               (4, 5, None), (6, 7, None), (8, 9, None), (10, 11, None)],
              [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)])
             sage: if (0, 1, None) in M:
@@ -3765,13 +3768,33 @@ class MatchingCoveredGraph(Graph):
             ....:         ([(0, 6, None), (1, 10, None), (2, 11, None), (3, 7, None), \
             ....:           (4, 5, None), (8, 9, None)], [(0, 3, None), (1, 2, None)])
 
+        If a single is present multiple times in the iterable, it is considered
+        only once::
+
+            sage: C = graphs.CycleGraph(4)
+            sage: G = MatchingCoveredGraph(C)
+            sage: V, E = set(G.vertices()), set(G.edges())
+            sage: M = set(G.get_matching())
+            sage: G.subdivide_edges([(0, 1), (0, 1, None)], 2)
+            sage: W, F = set(G.vertices()), set(G.edges())
+            sage: N = set(G.get_matching())
+            sage: sorted(W - V)
+            [4, 5]
+            sage: sorted(F - E), sorted(E - F)
+            ([(0, 4, None), (1, 5, None), (4, 5, None)], [(0, 1, None)])
+            sage: if (0, 1, None) in M:
+            ....:     assert sorted(N - M), sorted(M - N) == \
+            ....:         ([(0, 4, None), (1, 5, None)], [(0, 1, None)])
+            ....:     assert sorted(N - M), sorted(M - N) == \
+            ....:         ([(4, 5, None)], [])
+
         Subdividing edges with at least one of which is a multiple edge::
 
             sage: T = graphs.TricornGraph()
             sage: G = MatchingCoveredGraph(T)
             sage: G.allow_multiple_edges(True)
             sage: G.add_edges([
-            ....:     (0, 1, 'label'), (0, 1, 2),
+            ....:     (0, 1, 2), (0, 1, 'label'),
             ....:     (2, 3, 0.5), (2, 3, 'mark')
             ....: ])
             sage: G.delete_edge(0, 1, None)
@@ -3782,8 +3805,8 @@ class MatchingCoveredGraph(Graph):
             sage: sorted(W - V)
             [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
             sage: sorted(F - E), sorted(E - F)
-            ([(0, 10, 2), (1, 13, 2), (1, 14, None), (2, 17, None),
-              (2, 18, None), (3, 21, None), (10, 11, 2), (11, 12, 2),
+            ([(0, 10, 2), (1, 13, 2), (1, 18, None), (2, 14, None),
+              (2, 21, None), (3, 17, None), (10, 11, 2), (11, 12, 2),
               (12, 13, 2), (14, 15, None), (15, 16, None), (16, 17, None),
               (18, 19, None), (19, 20, None), (20, 21, None)],
              [(0, 1, 2), (1, 2, None), (2, 3, None)])
@@ -3801,7 +3824,7 @@ class MatchingCoveredGraph(Graph):
             sage: G.subdivide_edges([(0, 1), (1, 2), (2, 3)], 3)
             Traceback (most recent call last):
             ...
-            ValueError: the number of subdivisions must be a nonnegative even integer
+            ValueError: the number of subdivisions must be a nonnegative even integer, but found 3
 
         Providing a noniterable object as ``edges``::
 
@@ -3815,51 +3838,46 @@ class MatchingCoveredGraph(Graph):
             sage: G.subdivide_edges([(0, ), (0, 1, 'label')], 4)
             Traceback (most recent call last):
             ...
-            ValueError: need more than 1 value to unpack
+            ValueError: need more than 1 value to unpack for edge: (0,)
             sage: G.subdivide_edges([(0, 1, 2, 4), (0, 1, 'label')], 4)
             Traceback (most recent call last):
             ...
-            ValueError: too many values to unpack (expected 2)
+            ValueError: too many values to unpack (expected 2) for edge: (0, 1, 2, 4)
             sage: G.subdivide_edges([0, (0, 1, 'label')], 4)
             Traceback (most recent call last):
             ...
-            TypeError: input edges is of unknown type
+            TypeError: input edge 0 is of unknown type
 
         .. SEEALSO::
 
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.subdivide_edge`
         """
-        from sage.graphs.views import EdgesView
-        if isinstance(edges, EdgesView):
-            edges = list(edges)
-
-        if k < 0 or k % 2:
-            raise ValueError('the number of subdivisions must be a nonnegative even integer')
-
-        if k == 0:
-            return
-
         from collections.abc import Iterable
         if not isinstance(edges, Iterable):
             raise ValueError('expected an iterable of edges, but got a non-iterable object')
 
-        for edge in edges:
-            if isinstance(edge, tuple):
-                if len(edge) <= 1:
-                    raise ValueError('need more than 1 value to unpack')
-
-                elif len(edge) > 3:
-                    raise ValueError('too many values to unpack (expected 2)')
-
-            else:
-                raise TypeError('input edges is of unknown type')
-
         edges = list(set(edges))
-        new_vertices = new_vertices = [self._backend.add_vertex(None) for _ in range(k * len(edges))]
 
-        M = Graph(self.get_matching())
+        if k < 0 or k % 2:
+            raise ValueError('the number of subdivisions must be a '
+                             f'nonnegative even integer, but found {k}')
+
+        if k == 0:
+            return
 
         for i, edge in enumerate(edges):
+            if hasattr(edge, '__len__'):
+                if len(edge) <= 1:
+                    raise ValueError('need more than 1 value to unpack '
+                                     f'for edge: {edge}')
+
+                elif len(edge) > 3:
+                    raise ValueError('too many values to unpack (expected 2) '
+                                     f'for edge: {edge}')
+
+            else:
+                raise TypeError(f'input edge {edge} is of unknown type')
+
             u, v, l = None, None, None
 
             if len(edge) == 2:
@@ -3874,6 +3892,16 @@ class MatchingCoveredGraph(Graph):
             elif len(edge) == 3:
                 u, v, l = edge
 
+            edges[i] = (u, v, l)
+
+        edges = list(set(edges))
+        new_vertices = new_vertices = [self._backend.add_vertex(None) for _ in range(k * len(edges))]
+
+        M = Graph(self.get_matching())
+
+        for i, edge in enumerate(edges):
+            u, v, l = edge
+
             self._backend.del_edge(u, v, l, self._directed)
             self._backend.add_edges(
                 [(u, new_vertices[i * k], l), (new_vertices[(i + 1) * k - 1], v, l)] +
@@ -3883,6 +3911,7 @@ class MatchingCoveredGraph(Graph):
 
             if M.has_edge(u, v, l):
                 M.delete_edge(u, v, l)
+
             if M.degree(u):
                 M.add_edges((new_vertices[i * k + j], new_vertices[i * k + j + 1], l)
                     for j in range(0, k - 1, 2))
