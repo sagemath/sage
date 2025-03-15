@@ -1141,23 +1141,24 @@ class MatchingCoveredGraph(Graph):
             if u == v:
                 raise ValueError('loops are not allowed in '
                                  'matching covered graphs')
-           
+
             # If (u, v, label) is a multiple edge/ an existing edge
             if self.has_edge(u, v):
                 self._backend.add_edge(u, v, label, self._directed)
                 return
+
             # Check if there exists an M-alternating odd uv path starting and
             # ending with edges in self._matching
             from sage.graphs.matching import M_alternating_even_mark
             w = next((b if a == u else a) for a, b, *_ in self.get_matching() if u in (a, b))
+
             if v in M_alternating_even_mark(self, w, self.get_matching()):
                 # There exists a perfect matching containing the edge (u, v, label)
                 self._backend.add_edge(u, v, label, self._directed)
                 return
-            
-        raise ValueError('the graph obtained after the addition of '
-                                 'edge (%s) is not matching covered'
-                                 % str((u, v, label)))
+
+        raise ValueError('the graph obtained after the addition of edge '
+                         '(%s) is not matching covered' % str((u, v, label)))
 
     @doc_index('Overwritten methods')
     def add_edges(self, edges, loops=False):
