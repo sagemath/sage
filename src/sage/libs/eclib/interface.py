@@ -571,7 +571,7 @@ class mwrank_EllipticCurve(SageObject):
 
     def gens(self) -> tuple:
         """
-        Return a list of the generators for the Mordell-Weil group.
+        Return a tuple of the generators for the Mordell-Weil group.
 
         EXAMPLES::
 

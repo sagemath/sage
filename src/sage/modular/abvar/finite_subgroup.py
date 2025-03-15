@@ -581,7 +581,7 @@ class FiniteSubgroup(Module):
 
     def gens(self) -> tuple:
         """
-        Return generators for this finite subgroup.
+        Return a tuple of the generators for this finite subgroup.
 
         EXAMPLES:
 

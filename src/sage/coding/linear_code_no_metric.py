@@ -376,7 +376,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
     @cached_method
     def gens(self) -> tuple:
         r"""
-        Return the generators of this code as a list of vectors.
+        Return the generators of this code as a tuple of vectors.
 
         EXAMPLES::
 
