@@ -3506,6 +3506,9 @@ class MatchingCoveredGraph(Graph):
               *t* times is defined as subdividing the edge *2t* times, for some
               nonnegative integer *t*.
 
+            * For two input arguments, the first one must be of the form
+              `(u, v)` or `(u, v, label)`
+
         OUTPUT:
 
         - If an existent edge is provided with a valid format and the parameter
@@ -3581,15 +3584,18 @@ class MatchingCoveredGraph(Graph):
             sage: G.subdivide_edge(0, 1, 3)  # No. of subdivisions: 3
             Traceback (most recent call last):
             ...
-            ValueError: the number of subdivisions must be a nonnegative even integer
+            ValueError: the number of subdivisions must be a nonnegative even integer,
+            but found 3
             sage: G.subdivide_edge(0, 1, -1)  # No. of subdivisions: -1
             Traceback (most recent call last):
             ...
-            ValueError: the number of subdivisions must be a nonnegative even integer
+            ValueError: the number of subdivisions must be a nonnegative even integer,
+            but found -1
             sage: G.subdivide_edge(0, 1, 0.5)  # No. of subdivisions: 0.5
             Traceback (most recent call last):
             ...
-            ValueError: the number of subdivisions must be a nonnegative even integer
+            ValueError: the number of subdivisions must be a nonnegative even integer,
+            but found 0.500000000000000
             sage: G.subdivide_edge(0, 5, 4)
             Traceback (most recent call last):
             ...
@@ -3598,7 +3604,7 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: for two input arguments, the first one must be of the form
-            (u, v) or (u, v, l)
+            (u, v) or (u, v, l), but found: (0, 1, 'label', None)
             sage: G.subdivide_edge((0), 4)
             Traceback (most recent call last):
             ...
@@ -3626,7 +3632,7 @@ class MatchingCoveredGraph(Graph):
 
             else:
                 raise ValueError('for two input arguments, the first one must be '
-                                 'of the form (u, v) or (u, v, l)')
+                                 f'of the form (u, v) or (u, v, l), but found: {edge}')
 
         elif len(args) == 3:
             u, v, k = args
@@ -3648,7 +3654,8 @@ class MatchingCoveredGraph(Graph):
             raise ValueError(f'the given edge {(u, v, l)} does not exist')
 
         if k < 0 or k % 2:
-            raise ValueError('the number of subdivisions must be a nonnegative even integer')
+            raise ValueError('the number of subdivisions must be a '
+                             f'nonnegative even integer, but found {k}')
 
         if k == 0:
             return
