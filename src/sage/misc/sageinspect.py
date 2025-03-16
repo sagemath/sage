@@ -1626,9 +1626,7 @@ def sage_getargspec(obj):
     if hasattr(obj, '__code__'):
         # Note that this may give a wrong result for the constants!
         try:
-            args, varargs, varkw = inspect.getargs(obj.__code__)
-            return inspect.FullArgSpec(args, varargs, varkw, obj.__defaults__,
-                                       kwonlyargs=[], kwonlydefaults=None, annotations={})
+            return inspect.getfullargspec(obj)
         except (TypeError, AttributeError):
             pass
     if isclassinstance(obj):
