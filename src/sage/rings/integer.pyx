@@ -6965,8 +6965,6 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         Return the unique integer between `0` and `mn` that is congruent to
         the integer modulo `m` and to `y` modulo `n`.
 
-        We assume that `m` and `n` are coprime.
-
         EXAMPLES::
 
             sage: n = 17
