@@ -374,7 +374,7 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
 
     # complete generators to a generating set
     if matrix(base_ring, generators).rank() < dim:
-        complement = ambient.span(generators).complement()
+        complement = ambient.span(generators).orthogonal_complement()
         generators = generators + list(complement.gens())
     # normalize generators II
     generators = tuple(ambient(v) for v in generators)
@@ -1200,7 +1200,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         filtration = {}
         prev_deg = minus_infinity
         for deg, V in self._filt[1:]:
-            filtration[-prev_deg] = V.complement().echelonized_basis()
+            filtration[-prev_deg] = V.orthogonal_complement().echelonized_basis()
             prev_deg = deg
         return FilteredVectorSpace(filtration, base_ring=self.base_ring())
 

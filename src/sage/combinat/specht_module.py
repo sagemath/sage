@@ -1006,7 +1006,7 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
                 raise NotImplementedError(f"only implemented for {p}-regular partitions")
             TV = TM._dense_free_module()
             SV = TV.submodule(specht_module.lift.matrix().columns())
-            basis = (SV & SV.complement()).basis()
+            basis = (SV & SV.orthogonal_complement()).basis()
             basis = [specht_module.retract(TM.from_vector(b)) for b in basis]
             basis = Family(specht_module.echelon_form(basis))
 

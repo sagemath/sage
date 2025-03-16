@@ -4968,7 +4968,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
     def complement(self, *, orthogonal=None):
         r"""
-        Returns a complementary subspace of ``self`` in the
+        Return a complementary subspace of ``self`` in the
         :meth:`~sage.modules.free_module.FreeModule_ambient_field.ambient_vector_space`.
 
         EXAMPLES::
