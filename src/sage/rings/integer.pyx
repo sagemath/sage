@@ -6976,6 +6976,16 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             17
             sage: m%11
             5
+
+        `crt` also works for some non-coprime moduli::
+
+            sage: 6.crt(0,10,4)
+            16
+            sage: 6.crt(0,10,10)
+            Traceback (most recent call last):
+            ...
+            ValueError: no solution to crt problem since gcd(10,10) does not
+            divide 6-0
         """
         cdef object g, s
         cdef Integer _y, _m, _n
@@ -6984,7 +6994,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         _n = Integer(n)
         g, s, _ = _m.xgcd(_n)
         if not g.is_one():
-            raise ArithmeticError("CRT requires that gcd of moduli is 1.")
+            if (self % g) <> (_y % g):
+                raise ValueError("no solution to crt problem since gcd(%s,%s) does not divide %s-%s" % (_m, _n, self, _y))
+            return (self + g * Integer(0).crt((_y - self) // g, _m // g, _n // g)) % _n.lcm(_m)
         # Now s*m + t*n = 1, so the answer is x + (y-x)*s*m, where x=self.
         return (self + (_y - self) * s * _m) % (_m * _n)
 
