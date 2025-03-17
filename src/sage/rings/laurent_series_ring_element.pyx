@@ -1089,6 +1089,8 @@ cdef class LaurentSeries(AlgebraElement):
             sage: S.<t> = LaurentSeriesRing(QQ)
             sage: (t+t^2).truncate_neg(-1)
             t + t^2
+            sage: (t+t^2).truncate_neg(-2)
+            t + t^2
         """
         return type(self)(self._parent, self.__u >> (n - self.__n), n)
 
