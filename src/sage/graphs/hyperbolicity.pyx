@@ -273,13 +273,13 @@ cdef tuple hyperbolicity_basic_algorithm(int N,
 
     INPUT:
 
-    - ``N`` -- number of vertices of the graph.
+    - ``N`` -- number of vertices of the graph
 
     - ``distances`` -- path distance matrix (see the distance_all_pairs
-      module).
+      module)
 
     - ``verbose`` -- boolean (default: ``False``); set to ``True`` to display
-      some information during execution.
+      some information during execution
 
     OUTPUT:
 
@@ -291,7 +291,6 @@ cdef tuple hyperbolicity_basic_algorithm(int N,
 
     - ``certificate`` -- 4-tuple of vertices maximizing the value `h`. If no
       such 4-tuple is found, the empty list [] is returned.
-
     """
     cdef int a, b, c, d, hh, h_LB
     cdef list certificate
@@ -509,14 +508,14 @@ cdef inline pair** sort_pairs(uint32_t N,
 
     OUTPUT:
 
-     - ``nb_p`` -- the number of pairs to be included;
+    - ``nb_p`` -- the number of pairs to be included;
 
-     - ``nb_pairs_of_length`` -- an array containing in position k the number
-       of pairs (i,j) that are included and such that values[i][j] = k.
+    - ``nb_pairs_of_length`` -- an array containing in position k the number
+      of pairs (i,j) that are included and such that values[i][j] = k
 
-     - ``pairs_of_length`` -- this function returns this array, containing in
-       position k a pointer to the first included pair (i,j) such that
-       values[i][j] = k.
+    - ``pairs_of_length`` -- this function returns this array, containing in
+      position k a pointer to the first included pair (i,j) such that
+      values[i][j] = k.
     """
     # pairs_of_length[d] is the list of pairs of vertices at distance d
     cdef pair** pairs_of_length = <pair**>check_allocarray(D + 1, sizeof(pair*))
@@ -599,20 +598,20 @@ cdef tuple hyperbolicity_BCCM(int N,
     - ``distances`` -- path distance matrix
 
     - ``far_apart_pairs`` -- 0/1 matrix of far-apart pairs. Pair ``(i,j)`` is
-      far-apart if ``far_apart_pairs[i][j]\neq 0``.
+      far-apart if ``far_apart_pairs[i][j]\neq 0``
 
     - ``D`` -- diameter of the graph
 
     - ``h_LB`` -- lower bound on the hyperbolicity
 
-    - ``approximation_factor`` -- When the approximation factor is set to some
+    - ``approximation_factor`` -- when the approximation factor is set to some
       value larger than 1.0, the function stop computations as soon as the
       ratio between the upper bound and the best found solution is less than
       the approximation factor. When the approximation factor is 1.0, the
       problem is solved optimally.
 
-     - ``additive_gap`` -- When sets to a positive number, the function stop
-       computations as soon as the difference between the upper bound and the
+    - ``additive_gap`` -- when set to a positive number, the function stop
+      computations as soon as the difference between the upper bound and the
        best found solution is less than additive gap. When the gap is 0.0, the
        problem is solved optimally.
 
@@ -623,18 +622,18 @@ cdef tuple hyperbolicity_BCCM(int N,
 
     This function returns a tuple ( h, certificate, h_UB ), where:
 
-    - ``h`` -- is an integer. When 4-tuples with hyperbolicity larger or equal
+    - ``h`` -- integer; when 4-tuples with hyperbolicity larger or equal
      to `h_LB are found, h is the maximum computed value and so twice the
      hyperbolicity of the graph. If no such 4-tuple is found, it returns -1.
 
-    - ``certificate`` -- is a list of vertices. When 4-tuples with
+    - ``certificate`` -- is a list of vertices; when 4-tuples with
       hyperbolicity larger that h_LB are found, certificate is the list of the
       4 vertices for which the maximum value (and so the hyperbolicity of the
       graph) has been computed. If no such 4-tuple is found, it returns the
       empty list [].
 
-    - ``h_UB`` -- is an integer equal to the proven upper bound for `h`. When
-      ``h == h_UB``, the returned solution is optimal.
+    - ``h_UB`` -- integer equal to the proven upper bound for `h`; when
+      ``h == h_UB``, the returned solution is optimal
     """
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int h = 0, hh  # can get negative value
@@ -857,42 +856,42 @@ cdef tuple hyperbolicity_CCL(int N,
     - ``distances`` -- path distance matrix
 
     - ``far_apart_pairs`` -- 0/1 matrix of far-apart pairs. Pair ``(i,j)`` is
-      far-apart if ``far_apart_pairs[i][j]\neq 0``.
+      far-apart if ``far_apart_pairs[i][j]\neq 0``
 
     - ``D`` -- diameter of the graph
 
     - ``h_LB`` -- lower bound on the hyperbolicity
 
-    - ``approximation_factor`` -- When the approximation factor is set to some
+    - ``approximation_factor`` -- when the approximation factor is set to some
       value larger than 1.0, the function stop computations as soon as the
       ratio between the upper bound and the best found solution is less than
       the approximation factor. When the approximation factor is 1.0, the
       problem is solved optimally.
 
-     - ``additive_gap`` -- When sets to a positive number, the function stop
-       computations as soon as the difference between the upper bound and the
+    - ``additive_gap`` -- when set to a positive number, the function stop
+      computations as soon as the difference between the upper bound and the
        best found solution is less than additive gap. When the gap is 0.0, the
        problem is solved optimally.
 
-    - ``verbose`` -- (default: ``False``) is boolean set to ``True`` to display
+    - ``verbose`` -- boolean (default: ``False``); set to ``True`` to display
       some information during execution
 
     OUTPUT:
 
     This function returns a tuple ( h, certificate, h_UB ), where:
 
-    - ``h`` -- is an integer. When 4-tuples with hyperbolicity larger or equal
+    - ``h`` -- integer; when 4-tuples with hyperbolicity larger or equal
      to `h_LB are found, h is the maximum computed value and so twice the
      hyperbolicity of the graph. If no such 4-tuple is found, it returns -1.
 
-    - ``certificate`` -- is a list of vertices. When 4-tuples with
+    - ``certificate`` -- is a list of vertices; when 4-tuples with
       hyperbolicity larger that h_LB are found, certificate is the list of the
       4 vertices for which the maximum value (and so the hyperbolicity of the
       graph) has been computed. If no such 4-tuple is found, it returns the
       empty list [].
 
-    - ``h_UB`` -- is an integer equal to the proven upper bound for `h`. When
-      ``h == h_UB``, the returned solution is optimal.
+    - ``h_UB`` -- integer equal to the proven upper bound for `h`; when
+      ``h == h_UB``, the returned solution is optimal
     """
     cdef int hh  # can get negative value
     cdef int a, b, c, d, h, h_UB
@@ -1071,7 +1070,7 @@ def hyperbolicity(G,
 
     - ``G`` -- a connected Graph
 
-    - ``algorithm`` -- (default: ``'BCCM'``); specifies the algorithm to use
+    - ``algorithm`` -- (default: ``'BCCM'``) specifies the algorithm to use
       among:
 
           - ``'basic'`` is an exhaustive algorithm considering all possible
@@ -1097,30 +1096,30 @@ def hyperbolicity(G,
             The ``additive_gap`` and ``approximation_factor`` parameters cannot
             be used in combination with this method and so are ignored.
 
-    - ``approximation_factor`` -- (default: None) When the approximation factor
+    - ``approximation_factor`` -- (default: ``None``) when the approximation factor
       is set to some value (larger than 1.0), the function stop computations as
       soon as the ratio between the upper bound and the best found solution is
       less than the approximation factor. When the approximation factor is 1.0,
       the problem is solved optimally. This parameter is used only when the
       chosen algorithm is ``'CCL'``, ``'CCL+FA'``, or ``'BCCM'``.
 
-    - ``additive_gap`` -- (default: None) When sets to a positive number, the
+    - ``additive_gap`` -- (default: ``None``) when set to a positive number, the
       function stop computations as soon as the difference between the upper
       bound and the best found solution is less than additive gap. When the gap
       is 0.0, the problem is solved optimally. This parameter is used only when
       the chosen algorithm is ``'CCL'`` or ``'CCL+FA'``, or ``'BCCM'``.
 
-    - ``verbose`` -- (default: ``False``) is a boolean set to True to display
+    - ``verbose`` -- boolean (default: ``False``); set to ``True`` to display
       some information during execution: new upper and lower bounds, etc.
 
     OUTPUT:
 
     This function returns the tuple ( delta, certificate, delta_UB ), where:
 
-    - ``delta`` -- the hyperbolicity of the graph (half-integer value).
+    - ``delta`` -- the hyperbolicity of the graph (half-integer value)
 
     - ``certificate`` -- is the list of the 4 vertices for which the maximum
-      value has been computed, and so the hyperbolicity of the graph.
+      value has been computed, and so the hyperbolicity of the graph
 
     - ``delta_UB`` -- is an upper bound for ``delta``. When ``delta ==
       delta_UB``, the returned solution is optimal. Otherwise, the approximation
@@ -1492,8 +1491,8 @@ cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances):
 
     OUTPUT:
 
-    - ``hdict`` -- A dictionary such that hdict[i] is the number of 4-tuples of
-      hyperbolicity i among the considered 4-tuples.
+    - ``hdict`` -- dictionary such that hdict[i] is the number of 4-tuples of
+      hyperbolicity i among the considered 4-tuples
     """
     # We initialize the table of hyperbolicity. We use an array of unsigned long
     # int instead of a dictionary since it is much faster.
@@ -1548,12 +1547,12 @@ cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t
 
     - ``distances`` -- matrix of distances in the graph
 
-    - ``sampling_size`` -- number of 4-tuples considered. Default value is 1000.
+    - ``sampling_size`` -- number of 4-tuples considered. Default value is 1000
 
     OUTPUT:
 
-    - ``hdict`` -- A dictionary such that hdict[i] is the number of 4-tuples of
-                hyperbolicity i among the considered 4-tuples.
+    - ``hdict`` -- dictionary such that hdict[i] is the number of 4-tuples of
+                hyperbolicity i among the considered 4-tuples
     """
     cdef int i, a, b, c, d
     cdef uint64_t j
@@ -1607,21 +1606,21 @@ def hyperbolicity_distribution(G, algorithm='sampling', sampling_size=10**6):
 
     INPUT:
 
-    - ``G`` -- a Graph.
+    - ``G`` -- a Graph
 
-    - ``algorithm`` -- (default: 'sampling') When algorithm is 'sampling', it
+    - ``algorithm`` -- (default: ``'sampling'``) when algorithm is 'sampling', it
       returns the distribution of the hyperbolicity over a sample of
       ``sampling_size`` 4-tuples. When algorithm is 'exact', it computes the
       distribution of the hyperbolicity over all 4-tuples. Be aware that the
       computation time can be HUGE.
 
     - ``sampling_size`` -- (default: `10^6`) number of 4-tuples considered in
-      the sampling. Used only when ``algorithm == 'sampling'``.
+      the sampling. Used only when ``algorithm == 'sampling'``
 
     OUTPUT:
 
-    - ``hdict`` -- A dictionary such that hdict[i] is the number of 4-tuples of
-      hyperbolicity i.
+    - ``hdict`` -- dictionary such that hdict[i] is the number of 4-tuples of
+      hyperbolicity i
 
     EXAMPLES:
 

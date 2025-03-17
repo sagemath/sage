@@ -36,7 +36,6 @@ class Text(GraphicPrimitive):
     .. PLOT::
 
         sphinx_plot(text("I like Fibonacci",(3,5)))
-
     """
     def __init__(self, string, point, options):
         """
@@ -100,7 +99,6 @@ class Text(GraphicPrimitive):
             'The layer level in which to draw'
             sage: T[0]._allowed_options()['rotation']
             'How to rotate the text: angle in degrees, vertical, horizontal'
-
         """
         return {'fontsize': 'How big the text is. Either the size in points or a relative size, e.g. \'smaller\', \'x-large\', etc',
                 'fontstyle': 'A string either \'normal\', \'italic\' or \'oblique\'',
@@ -133,7 +131,6 @@ class Text(GraphicPrimitive):
             sage: s=t.plot3d()
             sage: s.jmol_repr(s.testing_render_params())[0][1]
             'color atom  [0,0,255]'
-
         """
         if options is None:
             options = dict(self.options())
@@ -162,7 +159,6 @@ class Text(GraphicPrimitive):
             'label "ABC"'
             sage: s._trans
             (1.0, 1.0, 0)
-
         """
         from sage.plot.plot3d.shapes2 import text3d
         options = self._plot3d_options()
@@ -173,11 +169,10 @@ class Text(GraphicPrimitive):
         """
         TESTS::
 
-            sage: t1 = text("Hello",(1,1), vertical_alignment="top", fontsize=30, rgbcolor='black')
-            sage: t2 = text("World", (1,1), horizontal_alignment="left", fontsize=20, zorder=-1)
+            sage: t1 = text("Hello", (1,1), vertical_alignment='top', fontsize=30, rgbcolor='black')
+            sage: t2 = text("World", (1,1), horizontal_alignment='left', fontsize=20, zorder=-1)
             sage: t1 + t2   # render the sum
             Graphics object consisting of 2 graphics primitives
-
         """
         options = self.options()
         opts = {}
@@ -227,39 +222,42 @@ def text(string, xy, **options):
 
     2D OPTIONS:
 
-    - ``fontsize`` - How big the text is. Either an integer that
+    - ``fontsize`` -- how big the text is. Either an integer that
       specifies the size in points or a string which specifies a size (one of
-      'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large')
+      ``'xx-small'``, ``'x-small'``, ``'small'``, ``'medium'``, ``'large'``,
+      ``'x-large'``, ``'xx-large'``).
 
-    - ``fontstyle`` - A string either 'normal', 'italic' or 'oblique'
+    - ``fontstyle`` -- string either ``'normal'``, ``'italic'`` or ``'oblique'``
 
-    - ``fontweight`` - A numeric value in the range 0-1000 or a string (one of
-      'ultralight', 'light', 'normal', 'regular', 'book',' 'medium', 'roman',
-      'semibold', 'demibold', 'demi', 'bold', 'heavy', 'extra bold', 'black')
+    - ``fontweight`` -- a numeric value in the range 0-1000 or a string (one of
+      ``'ultralight'``, ``'light'``, ``'normal'``, ``'regular'``, ``'book'``,
+      ``'medium'``, ``'roman'``, ``'semibold'``, ``'demibold'``, ``'demi'``,
+      ``'bold'``, ``'heavy'``, ``'extra bold'``, ``'black'``)
 
-    - ``rgbcolor`` - The color as an RGB tuple
+    - ``rgbcolor`` -- the color as an RGB tuple
 
-    - ``hue`` - The color given as a hue
+    - ``hue`` -- the color given as a hue
 
-    - ``alpha`` - A float (0.0 transparent through 1.0 opaque)
+    - ``alpha`` -- a float (0.0 transparent through 1.0 opaque)
 
-    - ``background_color`` - The background color
+    - ``background_color`` -- the background color
 
-    - ``rotation`` - How to rotate the text: angle in degrees, vertical, horizontal
+    - ``rotation`` -- how to rotate the text: angle in degrees, vertical, horizontal
 
-    - ``vertical_alignment`` - How to align vertically: top, center, bottom
+    - ``vertical_alignment`` -- how to align vertically: top, center, bottom
 
-    - ``horizontal_alignment`` - How to align horizontally: left, center, right
+    - ``horizontal_alignment`` -- how to align horizontally: left, center, right
 
-    - ``zorder`` - The layer level in which to draw
+    - ``zorder`` -- the layer level in which to draw
 
-    - ``clip`` - (default: False) Whether to clip or not
+    - ``clip`` -- boolean (default: ``False``); whether to clip or not
 
-    - ``axis_coords`` - (default: False) If True, use axis coordinates, so that
-      (0,0) is the lower left and (1,1) upper right, regardless of the x and y
-      range of plotted values.
+    - ``axis_coords`` -- boolean (default: ``False``); if ``True``, use axis
+      coordinates, so that (0,0) is the lower left and (1,1) upper right,
+      regardless of the x and y range of plotted values
 
-    - ``bounding_box`` - A dictionary specifying a bounding box. Currently the text location.
+    - ``bounding_box`` -- dictionary specifying a bounding box; currently the
+      text location
 
     EXAMPLES::
 
@@ -305,30 +303,30 @@ def text(string, xy, **options):
 
     ::
 
-        sage: text("Sage is really neat!!",(0,0), rotation="vertical")
+        sage: text("Sage is really neat!!", (0,0), rotation='vertical')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        sphinx_plot(text("Sage is really neat!!",(0,0), rotation="vertical"))
+        sphinx_plot(text("Sage is really neat!!", (0,0), rotation='vertical'))
 
     You can also align text differently::
 
-        sage: t1 = text("Hello", (1,1), vertical_alignment="top")
-        sage: t2 = text("World", (1,0.5), horizontal_alignment="left")
+        sage: t1 = text("Hello", (1,1), vertical_alignment='top')
+        sage: t2 = text("World", (1,0.5), horizontal_alignment='left')
         sage: t1 + t2   # render the sum
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
-        t1 = text("Hello",(1,1), vertical_alignment="top")
-        t2 = text("World", (1,0.5), horizontal_alignment="left")
+        t1 = text("Hello", (1,1), vertical_alignment='top')
+        t2 = text("World", (1,0.5), horizontal_alignment='left')
         sphinx_plot(t1 + t2)
 
     You can save text as part of PDF output::
 
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".pdf") as f:
+        sage: with tempfile.NamedTemporaryFile(suffix='.pdf') as f:
         ....:     text("sage", (0,0), rgbcolor=(0,0,0)).save(f.name)
 
     Some examples of bounding box::

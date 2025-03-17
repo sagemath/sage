@@ -35,7 +35,7 @@ This is the interface used by the maxima object::
     <class 'sage.interfaces.maxima.Maxima'>
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Maxima, a :class:`RuntimeError` exception is raised.
+anything from Maxima, a :exc:`RuntimeError` exception is raised.
 
 EXAMPLES: We evaluate a very simple expression in Maxima.
 
@@ -410,7 +410,7 @@ Long Input
 The MAXIMA interface reads in even very long input (using files) in
 a robust manner, as long as you are creating a new object.
 
-.. note::
+.. NOTE::
 
    Using ``maxima.eval`` for long input is much less robust, and is
    not recommended.
@@ -475,8 +475,6 @@ Test that the output is parseable (:issue:`31796`)::
     a and (b or c)
     sage: bar == foo
     True
-
-
 """
 
 # ****************************************************************************
@@ -506,9 +504,9 @@ from sage.env import MAXIMA
 from .expect import (Expect, ExpectElement, gc_disabled)
 
 from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
-                             MaximaAbstractElement,
-                             MaximaAbstractFunctionElement,
-                             MaximaAbstractElementFunction)
+                              MaximaAbstractElement,
+                              MaximaAbstractFunctionElement,
+                              MaximaAbstractElementFunction)
 from sage.misc.instancedoc import instancedoc
 
 
@@ -588,10 +586,13 @@ class Maxima(MaximaAbstract, Expect):
         self._ask = [b'zero or nonzero\\?', b'an integer\\?',
                      b'positive, negative or zero\\?', b'positive or negative\\?',
                      b'positive or zero\\?', b'equal to .*\\?']
+
         self._prompt_wait = ([self._prompt] +
                              [re.compile(x) for x in self._ask] +
-                             [b'Break [0-9]+'])  # note that you might need to change _expect_expr if you
-                                                 # change this
+                             [b'Break [0-9]+'])
+        # note that you might need to change _expect_expr if you
+        # change this _prompt_wait
+
         self._error_re = re.compile('(Principal Value|debugmode|incorrect syntax|Maxima encountered a Lisp error)')
         self._display2d = False
 
@@ -627,7 +628,6 @@ class Maxima(MaximaAbstract, Expect):
             sage: m._start()
             sage: m.is_running()
             True
-
         """
         Expect._start(self)
         self._sendline(r":lisp (defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (tex-d x '\\partial)) l r lop rop ))")
@@ -779,8 +779,6 @@ class Maxima(MaximaAbstract, Expect):
             Traceback (most recent call last):
             ...
             TypeError: Error executing code in Maxima...
-
-
         """
         if len(line) == 0:
             return ''
@@ -816,7 +814,7 @@ class Maxima(MaximaAbstract, Expect):
 
         self._expect_expr()
         assert len(self._before()) == 0, \
-                'Maxima expect interface is confused!'
+            'Maxima expect interface is confused!'
         r = self._output_prompt_re
         m = r.search(out)
         if m is not None:
@@ -977,7 +975,7 @@ class Maxima(MaximaAbstract, Expect):
         """
         Send a lisp command to Maxima.
 
-        .. note::
+        .. NOTE::
 
            The output of this command is very raw - not pretty.
 
@@ -989,7 +987,7 @@ class Maxima(MaximaAbstract, Expect):
             (
         """
         self._eval_line(':lisp %s\n""' % cmd, allow_use_file=False,
-               wait_for_prompt=False, reformat=False, error_check=False)
+                        wait_for_prompt=False, reformat=False, error_check=False)
         self._expect_expr('(%i)')
         return self._before()
 
@@ -1104,25 +1102,25 @@ class Maxima(MaximaAbstract, Expect):
     # living in the symbolic ring and return something
     # that is hopefully coercible into the symbolic ring again.
 
-#    def sr_integral(self,*args):
+#    def sr_integral(self, *args):
 #        return args[0]._maxima_().integrate(*args[1:])
 
-#    def sr_sum(self,expression,v,a,b):
+#    def sr_sum(self, expression, v, a, b):
 #        sum  = "'sum(%s, %s, %s, %s)" % tuple([repr(expr._maxima_()) for expr in (expression, v, a, b)])
 #        result = self.simplify_sum(sum)
 #        result = result.ratsimp()
 #        return expression.parent()(result)
 
-#    def sr_limit(self,ex,*args):
+#    def sr_limit(self, ex, *args):
 #        return ex._maxima_().limit(*args)
 
-#    def sr_tlimit(self,ex,*args):
+#    def sr_tlimit(self, ex, *args):
 #        return ex._maxima_().tlimit(*args)
 
 
 def is_MaximaElement(x):
     """
-    Return True if ``x`` is of type :class:`MaximaElement`.
+    Return ``True`` if ``x`` is of type :class:`MaximaElement`.
 
     EXAMPLES::
 

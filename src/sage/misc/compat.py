@@ -1,6 +1,6 @@
 """Cross-platform compatibility routines and wrappers."""
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2017 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -8,10 +8,9 @@
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 import os
-import subprocess
 import sys
 
 from sage.env import SAGE_LOCAL
@@ -56,7 +55,7 @@ else:
 
 def find_library(name):
     """
-    Returns the shared library filename for a given library.
+    Return the shared library filename for a given library.
 
     The library name is given without any prefixes or suffixes--(e.g.
     just "Singular", not "libSingular", as shared library naming is
@@ -70,7 +69,6 @@ def find_library(name):
         sage: from sage.misc.compat import find_library
         sage: find_library('giac')                                                      # needs sage.libs.giac
         '...giac...'
-
     """
 
     result = _find_library(name)

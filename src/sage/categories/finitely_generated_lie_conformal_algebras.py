@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Finitely Generated Lie Conformal Algebras
 

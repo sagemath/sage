@@ -22,26 +22,24 @@ AUTHORS:
 # ****************************************************************************
 
 
-def AllMatroids(n, r=None, type="all"):
+def AllMatroids(n, r=None, type='all'):
     r"""
-    Return an iterator over all matroids of certain number of elements (and,
-    optionally, of specific rank and type).
+    Iterate over all matroids of certain number of elements (and, optionally,
+    of specific rank and type).
 
     INPUT:
 
     - ``n`` -- integer; the number of elements of the matroids
-    - ``r`` -- integer (optional); the rank of the matroids; `0 \le r \le n`
-    - ``type`` -- string (default: ``'all'``); the type of the matroids; must
+    - ``r`` -- integer (optional); the rank of the matroids (`0 \le r \le n`)
+    - ``type`` -- string (default: ``'all'``); the type of the matroids. Must
       be one of the following:
 
       * ``'all'`` -- all matroids; available: (n=0-9), (n=0-12, r=0-2),
         (n=0-11, r=3)
-      * ``'unorientable'`` -- all unorientable matroids; the rank ``r`` must be
+      * ``'unorientable'`` -- all unorientable matroids; the rank `r` must be
         specified; available: (n=7-11, r=3), (n=7-9, r=4)
       * any other type for which there exists an ``is_type`` method;
         availability same as for ``'all'``
-
-    OUTPUT: an iterator over matroids
 
     EXAMPLES::
 
@@ -54,7 +52,7 @@ def AllMatroids(n, r=None, type="all"):
 
     ::
 
-        sage: for M in matroids.AllMatroids(5, 3, "simple"):                            # optional - matroid_database
+        sage: for M in matroids.AllMatroids(5, 3, 'simple'):                            # optional - matroid_database
         ....:     M
         simple_n05_r03_#0: Matroid of rank 3 on 5 elements with 10 bases
         simple_n05_r03_#1: Matroid of rank 3 on 5 elements with 9 bases
@@ -64,7 +62,7 @@ def AllMatroids(n, r=None, type="all"):
     ::
 
         sage: # optional - matroid_database
-        sage: for M in matroids.AllMatroids(4, type="paving"):
+        sage: for M in matroids.AllMatroids(4, type='paving'):
         ....:     M
         paving_n04_r00_#0: Matroid of rank 0 on 4 elements with 1 bases
         paving_n04_r01_#0: Matroid of rank 1 on 4 elements with 4 bases
@@ -86,22 +84,22 @@ def AllMatroids(n, r=None, type="all"):
         ....:     M
         Traceback (most recent call last):
         ...
-        ValueError: (n=10, r=4, type="all") is not available in the database
-        sage: for M in matroids.AllMatroids(12, 3, "unorientable"):
+        ValueError: (n=10, r=4, type='all') is not available in the database
+        sage: for M in matroids.AllMatroids(12, 3, 'unorientable'):
         ....:     M
         Traceback (most recent call last):
         ...
-        ValueError: (n=12, r=3, type="unorientable") is not available in the database
-        sage: for M in matroids.AllMatroids(8, type="unorientable"):
+        ValueError: (n=12, r=3, type='unorientable') is not available in the database
+        sage: for M in matroids.AllMatroids(8, type='unorientable'):
         ....:     M
         Traceback (most recent call last):
         ...
-        ValueError: The rank needs to be specified for type "unorientable"
-        sage: for M in matroids.AllMatroids(6, type="nice"):
+        ValueError: The rank needs to be specified for type 'unorientable'
+        sage: for M in matroids.AllMatroids(6, type='nice'):
         ....:     M
         Traceback (most recent call last):
         ...
-        AttributeError: The type "nice" is not available. There needs to be an "is_nice()"
+        AttributeError: The type 'nice' is not available. There needs to be an 'is_nice()'
         attribute for the type to be supported.
 
     REFERENCES:
@@ -132,7 +130,7 @@ def AllMatroids(n, r=None, type="all"):
         ....:     [  None,  None,   None, None, None, None, None, None,  None,   None,  None,      1,   12],
         ....:     [  None,  None,   None, None, None, None, None, None,  None,   None,  None,   None,    1]
         ....: ]
-        sage: for r in range(0, 12 + 1): # long time
+        sage: for r in range(0, 12 + 1):  # long time
         ....:     for n in range(r, 12 + 1):
         ....:         if all[r][n] and all[r][n] < 1000:
         ....:             assert len(list(matroids.AllMatroids(n, r))) == all[r][n]
@@ -145,21 +143,21 @@ def AllMatroids(n, r=None, type="all"):
         ....:     [ None,  None,   None,    1,    2,    4,    9,   23,    68,   383,  5249, 232928, None],
         ....:     [ None,  None,   None, None,    1,    3,   11,   49,   617, 185981, None,   None, None]
         ....: ]
-        sage: for r in range(0, 4 + 1): # long time
+        sage: for r in range(0, 4 + 1):  # long time
         ....:     for n in range(r, 12 + 1):
         ....:         if simple[r][n] and simple[r][n] < 1000:
-        ....:             assert len(list(matroids.AllMatroids(n, r, "simple"))) == simple[r][n]
-        ....:             for M in matroids.AllMatroids(n, r, "simple"):
+        ....:             assert len(list(matroids.AllMatroids(n, r, 'simple'))) == simple[r][n]
+        ....:             for M in matroids.AllMatroids(n, r, 'simple'):
         ....:                 assert M.is_valid() and M.is_simple()
         sage: unorientable = [
         ....:     [1,  3,    18,  201, 9413],
         ....:     [1, 34, 12284, None, None]
         ....: ]
-        sage: for r in range(0, 1 + 1): # long time
+        sage: for r in range(0, 1 + 1):  # long time
         ....:     for n in range(0, 4 + 1):
         ....:         if unorientable[r][n] and unorientable[r][n] < 1000:
-        ....:             assert len(list(matroids.AllMatroids(n+7, r+3, "unorientable"))) == unorientable[r][n]
-        ....:             for M in matroids.AllMatroids(n+7, r+3, "unorientable"):
+        ....:             assert len(list(matroids.AllMatroids(n+7, r+3, 'unorientable'))) == unorientable[r][n]
+        ....:             for M in matroids.AllMatroids(n+7, r+3, 'unorientable'):
         ....:                 assert M.is_valid()
     """
     from sage.matroids.constructor import Matroid
@@ -167,44 +165,44 @@ def AllMatroids(n, r=None, type="all"):
     DatabaseMatroids().require()
     import matroid_database
 
-    if type != "all" and type != "unorientable":
+    if type != 'all' and type != 'unorientable':
         try:
-            getattr(Matroid(bases=[[1, 2], [1, 3]]), "is_" + type)
+            getattr(Matroid(bases=[[1, 2], [1, 3]]), 'is_' + type)
         except AttributeError:
             raise AttributeError(
-                "The type \"%s\" is not available. " % type +
-                "There needs to be an \"is_%s()\" attribute for the " % type +
+                "The type '%s' is not available. " % type +
+                "There needs to be an 'is_%s()' attribute for the " % type +
                 "type to be supported."
             )
 
-    if r is None and type == "unorientable":
-        raise ValueError("The rank needs to be specified for type \"%s\"" % type)
+    if r is None and type == 'unorientable':
+        raise ValueError("The rank needs to be specified for type '%s'" % type)
 
     if r is None:
-        rng = range(0, n+1)
+        rng = range(0, n + 1)
     else:
-        rng = range(r, r+1)
+        rng = range(r, r + 1)
 
     for r in rng:
-        if (r == 0 or r == n) and type != "unorientable":
+        if (r == 0 or r == n) and type != 'unorientable':
             M = Matroid(groundset=range(n), bases=[range(r)])
-            M.rename(type + "_n" + str(n).zfill(2) + "_r" + str(r).zfill(2) + "_#" + "0" + ": " + repr(M))
-            if type == "all":
+            M.rename(type + '_n' + str(n).zfill(2) + '_r' + str(r).zfill(2) + '_#' + '0' + ': ' + repr(M))
+            if type == 'all':
                 yield M
             else:
-                f = getattr(M, "is_" + type)
+                f = getattr(M, 'is_' + type)
                 if f():
                     yield M
         else:
-            rp = min(r, n - r) if (type != "unorientable") else r
-            type_db = "all" if (type != "unorientable") else "unorientable"
+            rp = min(r, n - r) if (type != 'unorientable') else r
+            type_db = 'all' if (type != 'unorientable') else 'unorientable'
 
-            matroids_bases = getattr(matroid_database, type_db + "_matroids_bases")
+            matroids_bases = getattr(matroid_database, type_db + '_matroids_bases')
             try:
                 matroids_bases(n, rp).__next__()
             except ValueError:
                 raise ValueError(
-                    "(n=%s, r=%s, type=\"%s\")" % (n, r, type)
+                    "(n=%s, r=%s, type='%s')" % (n, r, type)
                     + " is not available in the database"
                 )
 
@@ -212,14 +210,14 @@ def AllMatroids(n, r=None, type="all"):
             for B in matroids_bases(n, rp):
                 M = Matroid(groundset=range(n), bases=B)
 
-                if type != "unorientable" and n - r < r:
+                if type != 'unorientable' and n - r < r:
                     M = M.dual()
-                M.rename(type + "_n" + str(n).zfill(2) + "_r" + str(r).zfill(2) + "_#" + str(cnt) + ": " + repr(M))
-                if type == "all" or type == "unorientable":
+                M.rename(type + '_n' + str(n).zfill(2) + '_r' + str(r).zfill(2) + '_#' + str(cnt) + ': ' + repr(M))
+                if type == 'all' or type == 'unorientable':
                     yield M
                     cnt += 1
                 else:
-                    f = getattr(M, "is_" + type)
+                    f = getattr(M, 'is_' + type)
                     if f():
                         yield M
                         cnt += 1
@@ -227,7 +225,7 @@ def AllMatroids(n, r=None, type="all"):
 
 def OxleyMatroids():
     """
-    Return an iterator over Oxley's matroid collection.
+    Iterate over Oxley's matroid collection.
 
     EXAMPLES::
 
@@ -277,7 +275,7 @@ def OxleyMatroids():
 
 def BrettellMatroids():
     """
-    Return an iterator over Brettell's matroid collection.
+    Iterate over Brettell's matroid collection.
 
     EXAMPLES::
 
@@ -326,7 +324,7 @@ def BrettellMatroids():
 
 def VariousMatroids():
     """
-    Return an iterator over various other named matroids.
+    Iterate over various other named matroids.
 
     EXAMPLES::
 

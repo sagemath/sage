@@ -13,38 +13,37 @@ Manifold Subsets Defined as Pullbacks of Subsets under Continuous Maps
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.categories.sets_cat import Sets, EmptySetError
+import sage.geometry.abc
 from sage.categories.metric_spaces import MetricSpaces
+from sage.categories.sets_cat import EmptySetError, Sets
+from sage.manifolds.chart import Chart
+from sage.manifolds.scalarfield import ScalarField
+from sage.manifolds.subset import ManifoldSubset
 from sage.misc.lazy_import import lazy_import
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
+from sage.modules.free_module_element import vector
+from sage.rings.complex_double import CDF
 from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.complex_double import CDF
 from sage.rings.real_double import RDF
 from sage.rings.real_lazy import CLF, RLF
-from sage.symbolic.ring import SR
-from sage.modules.free_module_element import vector
-from sage.manifolds.subset import ManifoldSubset
-from sage.manifolds.chart import Chart
-from sage.manifolds.scalarfield import ScalarField
 from sage.sets.real_set import RealSet
-import sage.geometry.abc
+from sage.symbolic.ring import SR
 
 lazy_import('sage.geometry.relative_interior', 'RelativeInterior')
 
 
 class ManifoldSubsetPullback(ManifoldSubset):
-
     """
     Manifold subset defined as a pullback of a subset under a continuous map.
 
     INPUT:
 
-    - ``map`` - an instance of :class:`~sage.manifolds.continuous_map.ContinuousMap`,
+    - ``map`` -- an instance of :class:`~sage.manifolds.continuous_map.ContinuousMap`,
       :class:`ScalarField`, or :class:`Chart`
 
-    - ``codomain_subset`` - an instance of :class:`~sage.manifolds.subset.ManifoldSubset`,
+    - ``codomain_subset`` -- an instance of :class:`~sage.manifolds.subset.ManifoldSubset`,
       :class:`RealSet`, or :class:`~sage.geometry.convex_set.ConvexSet_base`
 
     EXAMPLES::
@@ -104,8 +103,8 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
     Using the embedding map of a submanifold::
 
-        sage: M = Manifold(3, 'M', structure="topological")
-        sage: N = Manifold(2, 'N', ambient=M, structure="topological"); N
+        sage: M = Manifold(3, 'M', structure='topological')
+        sage: N = Manifold(2, 'N', ambient=M, structure='topological'); N
         2-dimensional topological submanifold N
          immersed in the 3-dimensional topological manifold M
         sage: CM.<x,y,z> = M.chart()
@@ -134,7 +133,6 @@ class ManifoldSubsetPullback(ManifoldSubset):
          embedded in the 3-dimensional topological manifold M
         sage: N.point((2,0)) in D
         False
-
     """
     @staticmethod
     def __classcall_private__(cls, map, codomain_subset, inverse=None,
@@ -154,7 +152,6 @@ class ManifoldSubsetPullback(ManifoldSubset):
             Subset x_y_inv_P of the 2-dimensional topological manifold R^2
             sage: S is ManifoldSubsetPullback(c_cart, P)
             True
-
         """
 
         try:
@@ -291,7 +288,6 @@ class ManifoldSubsetPullback(ManifoldSubset):
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 point, 3 closure_points
             sage: ManifoldSubsetPullback._is_open(T)
             False
-
         """
 
         if isinstance(codomain_subset, ManifoldSubset):
@@ -311,7 +307,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         if hasattr(codomain_subset, 'minimized_constraints'):
             try:
-                from ppl import NNC_Polyhedron, C_Polyhedron
+                from ppl import C_Polyhedron, NNC_Polyhedron
             except ImportError:
                 pass
             else:
@@ -361,7 +357,6 @@ class ManifoldSubsetPullback(ManifoldSubset):
             ()
             sage: _interval_restriction(t^2, RealSet.unbounded_above_closed(0)[0])
             []
-
         """
 
         conjunction = []
@@ -428,7 +423,6 @@ class ManifoldSubsetPullback(ManifoldSubset):
             ()
             sage: _realset_restriction(t, RealSet([-5, -4], (-1, 1), [3, 4], [6, 7]))
             ([t > -1, t < 1], [t >= 3, t <= 4])
-
         """
         disjunction = []
         for interval in realset:
@@ -453,7 +447,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         - ``expr`` -- a symbolic expression
         - ``polyhedron`` -- an instance of :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
-        - ``relint`` -- whether the restriction should use the relative interior.
+        - ``relint`` -- whether the restriction should use the relative interior
 
         OUTPUT:
 
@@ -501,12 +495,13 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         INPUT:
 
-        - ``map`` -- an instance of :class:`ScalarField` or :class:`Chart`.
+        - ``map`` -- an instance of :class:`ScalarField` or :class:`Chart`
 
-        - ``codomain_subset`` - if ``map`` is a :class:`ScalarField`, an instance of :class:`RealSet`;
-          if ``map`` is a :class:`Chart`, the relative interior of a polyhedron.
+        - ``codomain_subset`` -- if ``map`` is a :class:`ScalarField`, an
+          instance of :class:`RealSet`; if ``map`` is a :class:`Chart`, the
+          relative interior of a polyhedron
 
-        For other inputs, a :class:`NotImplementedError` will be raised.
+        For other inputs, a :exc:`NotImplementedError` will be raised.
 
         OUTPUT:
 
@@ -536,7 +531,6 @@ class ManifoldSubsetPullback(ManifoldSubset):
             (1, 4)
             sage: _coord_def(r_squared, I)
             {Chart (R^2, (x, y)): [x^2 + y^2 > 1, x^2 + y^2 < 4]}
-
         """
         if isinstance(map, ScalarField) and isinstance(codomain_subset, RealSet):
 
@@ -574,7 +568,6 @@ class ManifoldSubsetPullback(ManifoldSubset):
             sage: cl_O = ManifoldSubsetPullback(r_squared, cl_I); cl_O
             Subset f_inv_[1, 4] of the 2-dimensional topological manifold R^2
             sage: TestSuite(cl_O).run(skip='_test_elements')
-
         """
         if inverse is None and isinstance(map, Chart):
             chart = map
@@ -814,7 +807,6 @@ class ManifoldSubsetPullback(ManifoldSubset):
             Subset McF of the 2-dimensional topological manifold R^2
             sage: McF.is_closed()
             True
-
         """
         if self.manifold().dimension() == 0:
             return True
@@ -829,7 +821,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
             # Regardless of their base_ring, we treat polyhedra as closed
             # convex subsets of R^n
             return True
-        elif is_FreeModule(self._codomain_subset) and self._codomain_subset.rank() != infinity:
+        elif isinstance(self._codomain_subset, FreeModule_generic) and self._codomain_subset.rank() != infinity:
             if self._codomain_subset.base_ring() in MetricSpaces().Complete():
                 # Closed topological vector subspace
                 return True
@@ -845,7 +837,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
         else:
             if hasattr(self._codomain_subset, 'is_topologically_closed'):
                 try:
-                    from ppl import NNC_Polyhedron, C_Polyhedron
+                    from ppl import C_Polyhedron, NNC_Polyhedron
                 except ImportError:
                     pass
                 else:
@@ -878,7 +870,6 @@ class ManifoldSubsetPullback(ManifoldSubset):
             Subset f_inv_[1, 2] of the 2-dimensional topological manifold R^2
             sage: cl_O.is_closed()
             True
-
         """
         if self.is_closed():
             return self

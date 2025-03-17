@@ -26,7 +26,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.skew_partition import SkewPartition, SkewPartitions
-from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, SemistandardSkewTableaux
+from sage.combinat.skew_tableau import (SkewTableau, SkewTableaux,
+                                        SemistandardSkewTableaux)
 from sage.combinat.tableau import Tableaux
 from sage.combinat.partition import Partition, _Partitions
 from sage.combinat.permutation import to_standard
@@ -58,7 +59,7 @@ class RibbonTableau(SkewTableau):
           1  0  1
 
     In the previous example, each ribbon is uniquely determined by a
-    non-zero entry.  The 0 entries are used to fill in the rest of the
+    nonzero entry.  The 0 entries are used to fill in the rest of the
     skew shape.
 
     .. NOTE::
@@ -94,7 +95,8 @@ class RibbonTableau(SkewTableau):
         try:
             rt = [tuple(row) for row in rt]
         except TypeError:
-            raise TypeError("each element of the ribbon tableau must be an iterable")
+            raise TypeError("each element of the ribbon tableau "
+                            "must be an iterable")
         if not all(row for row in rt):
             raise TypeError("a ribbon tableau cannot have empty rows")
         # calls the inherited __init__ method (of SkewTableau )
@@ -164,14 +166,14 @@ class RibbonTableaux(UniqueRepresentation, Parent):
 
     INPUT(Optional):
 
-    - ``shape``  -- skew shape as a list of lists or an object of type
+    - ``shape`` -- skew shape as a list of lists or an object of type
       SkewPartition
 
-    - ``length`` -- integer, ``shape`` is partitioned into ribbons of
+    - ``length`` -- integer; ``shape`` is partitioned into ribbons of
       length ``length``
 
-    - ``weight`` -- list of integers, computed from the values of
-      non-zero entries labeling the ribbons
+    - ``weight`` -- list of integers; computed from the values of
+      nonzero entries labeling the ribbons
 
     EXAMPLES::
 
@@ -195,9 +197,10 @@ class RibbonTableaux(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [vanLeeuwen91] Marc. A. A. van Leeuwen, *Edge sequences, ribbon tableaux,
-       and an action of affine permutations*. Europe J. Combinatorics. **20**
-       (1999). http://wwwmathlabo.univ-poitiers.fr/~maavl/pdf/edgeseqs.pdf
+    .. [vanLeeuwen91] Marc. A. A. van Leeuwen, *Edge sequences,
+       ribbon tableaux, and an action of affine permutations*.
+       Europe J. Combinatorics. **20** (1999).
+       http://wwwmathlabo.univ-poitiers.fr/~maavl/pdf/edgeseqs.pdf
     """
     @staticmethod
     def __classcall_private__(cls, shape=None, weight=None, length=None):
@@ -318,10 +321,11 @@ class RibbonTableaux_shape_weight_length(RibbonTableaux):
             sage: RibbonTableaux([[2,2],[]],[1,1],2).list()
             [[[0, 0], [1, 2]], [[1, 0], [2, 0]]]
         """
-        for x in graph_implementation_rec(self._shape, self._weight, self._length, list_rec):
+        for x in graph_implementation_rec(self._shape, self._weight,
+                                          self._length, list_rec):
             yield self.from_expr(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -332,7 +336,7 @@ class RibbonTableaux_shape_weight_length(RibbonTableaux):
         """
         return "Ribbon tableaux of shape %s and weight %s with %s-ribbons" % (repr(self._shape), list(self._weight), self._length)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Note that this just checks to see if ``x`` appears in ``self``.
 
@@ -413,13 +417,13 @@ def insertion_tableau(skp, perm, evaluation, tableau, length):
     """
     INPUT:
 
-    -  ``skp`` -- skew partitions
+    - ``skp`` -- skew partitions
 
-    -  ``perm, evaluation`` -- non-negative integers
+    - ``perm, evaluation`` -- nonnegative integers
 
-    -  ``tableau`` -- skew tableau
+    - ``tableau`` -- skew tableau
 
-    -  ``length`` -- integer
+    - ``length`` -- integer
 
     TESTS::
 
@@ -480,11 +484,11 @@ def count_rec(nexts, current, part, weight, length):
     """
     INPUT:
 
-    -  ``nexts, current, part`` -- skew partitions
+    - ``nexts, current, part`` -- skew partitions
 
-    -  ``weight`` -- non-negative integer list
+    - ``weight`` -- nonnegative integer list
 
-    -  ``length`` -- integer
+    - ``length`` -- integer
 
     TESTS::
 
@@ -516,11 +520,11 @@ def list_rec(nexts, current, part, weight, length):
     """
     INPUT:
 
-    -  ``nexts, current, part`` -- skew partitions
+    - ``nexts, current, part`` -- skew partitions
 
-    -  ``weight`` -- non-negative integer list
+    - ``weight`` -- nonnegative integer list
 
-    -  ``length`` -- integer
+    - ``length`` -- integer
 
     TESTS::
 
@@ -575,11 +579,11 @@ def spin_rec(t, nexts, current, part, weight, length):
 
     INPUT:
 
-    -  ``weight`` -- list of non-negative integers
+    - ``weight`` -- list of nonnegative integers
 
-    -  ``length`` -- the length of the ribbons we're tiling with
+    - ``length`` -- the length of the ribbons we're tiling with
 
-    -  ``t`` -- the variable
+    - ``t`` -- the variable
 
     EXAMPLES::
 
@@ -620,7 +624,7 @@ def spin_rec(t, nexts, current, part, weight, length):
 
 def spin_polynomial_square(part, weight, length):
     r"""
-    Returns the spin polynomial associated with ``part``, ``weight``, and
+    Return the spin polynomial associated with ``part``, ``weight``, and
     ``length``, with the substitution `t \to t^2` made.
 
     EXAMPLES::
@@ -658,7 +662,7 @@ def spin_polynomial_square(part, weight, length):
 
 def spin_polynomial(part, weight, length):
     """
-    Returns the spin polynomial associated to ``part``, ``weight``, and
+    Return the spin polynomial associated to ``part``, ``weight``, and
     ``length``.
 
     EXAMPLES::
@@ -855,7 +859,7 @@ class MultiSkewTableau(CombinatorialElement):
             [5, 3, 1]
         """
         weights = [x.weight() for x in self]
-        m = max([len(x) for x in weights])
+        m = max(len(x) for x in weights)
         weight = [0] * m
         for w in weights:
             for i in range(len(w)):

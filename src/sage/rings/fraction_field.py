@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Fraction Field of Integral Domains
 
@@ -102,9 +101,9 @@ def FractionField(R, names=None):
 
     INPUT:
 
-    -  ``R`` -- an integral domain
+    - ``R`` -- an integral domain
 
-    -  ``names`` -- ignored
+    - ``names`` -- ignored
 
     EXAMPLES:
 
@@ -152,10 +151,18 @@ def is_FractionField(x) -> bool:
 
         sage: from sage.rings.fraction_field import is_FractionField
         sage: is_FractionField(Frac(ZZ['x']))
+        doctest:warning...
+        DeprecationWarning: The function is_FractionField is deprecated;
+        use 'isinstance(..., FractionField_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         True
         sage: is_FractionField(QQ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38128,
+                "The function is_FractionField is deprecated; "
+                "use 'isinstance(..., FractionField_generic)' instead.")
     return isinstance(x, FractionField_generic)
 
 
@@ -171,7 +178,7 @@ class FractionField_generic(ring.Field):
 
         INPUT:
 
-        -  ``R`` -- an integral domain
+        - ``R`` -- an integral domain
 
         EXAMPLES::
 
@@ -180,14 +187,20 @@ class FractionField_generic(ring.Field):
             sage: Frac(QQ['x,y']).variable_names()
             ('x', 'y')
             sage: category(Frac(QQ['x']))
-            Category of quotient fields
+            Category of infinite quotient fields
+
+        TESTS::
+
+            sage: F = FractionField(QQ['x'])
+            sage: F.cardinality()
+            +Infinity
         """
         self._R = R
         self._element_class = element_class
         cat = category
-        if self in Rings().Infinite():
+        if R in Rings().Infinite():
             cat = cat.Infinite()
-        elif self in Rings().Finite():
+        elif R in Rings().Finite():
             cat = cat.Finite()
         Parent.__init__(self, base=R, names=R._names, category=cat)
 
@@ -385,11 +398,9 @@ class FractionField_generic(ring.Field):
 
         INPUT:
 
-        -  ``x`` -- Number field element
+        - ``x`` -- number field element
 
-        OUTPUT:
-
-        -  Element of ``self``
+        OUTPUT: Element of ``self``
 
         TESTS:
 
@@ -433,7 +444,6 @@ class FractionField_generic(ring.Field):
 
             sage: Frac(QQ['a','b','c']).is_finite()
             False
-
         """
         return self._R.is_finite()
 
@@ -547,6 +557,40 @@ class FractionField_generic(ring.Field):
         """
         return self.ring().is_exact()
 
+    def _convert_from_finite_precision_laurent_series(self, x):
+        """
+        Construct an element of this fraction field approximating a Laurent series.
+
+        INPUT:
+
+        - ``x`` -- a Laurent series, must have finite precision
+
+        OUTPUT: Element of ``self``
+
+        This internal method should not be used directly, use :meth:`__call__` instead,
+        which will delegates to :meth:`_element_constructor_`. There are some tests there.
+
+        .. NOTE::
+
+            Uses the algorithm described in `<https://mathoverflow.net/a/14874>`_.
+            This may be changed to use Berlekamp--Massey algorithm or something else
+            to compute Padé approximant in the future.
+
+        TESTS::
+
+            sage: F = QQ['x'].fraction_field()
+            sage: R = LaurentSeriesRing(QQ, 'x')
+            sage: f = ~R(x^2 + x + 3); f
+            1/3 - 1/9*x - 2/27*x^2 + 5/81*x^3 + ... + O(x^20)
+            sage: F._convert_from_finite_precision_laurent_series(f)
+            1/(x^2 + x + 3)
+        """
+        integral_part = self(x.truncate(1))
+        fractional_part = x.truncate_neg(1)
+        if fractional_part.is_zero():
+            return integral_part
+        return integral_part + ~self._convert_from_finite_precision_laurent_series(~fractional_part)
+
     def _element_constructor_(self, x, y=None, coerce=True):
         """
         Construct an element of this fraction field.
@@ -643,19 +687,94 @@ class FractionField_generic(ring.Field):
             sage: x = FF(elt)
             sage: F(x)
             -1/2/(a^2 + a)
+
+        Conversion from power series to rational function field gives an approximation::
+
+            sage: F.<x> = Frac(QQ['x'])
+            sage: R.<x> = QQ[[]]
+            sage: f = 1/(x+1)
+            sage: f.parent()
+            Power Series Ring in x over Rational Field
+            sage: F(f)
+            doctest:warning...
+            DeprecationWarning: Previously conversion from power series to rational function field truncates
+             instead of gives an approximation. Use .truncate() to recover the old behavior
+            See https://github.com/sagemath/sage/issues/39485 for details.
+            1/(x + 1)
+
+        Previously, the power series was truncated. To recover the old behavior, use
+        :meth:`~sage.rings.power_series_ring_element.PowerSeries.truncate`::
+
+            sage: F(f.truncate())
+            -x^19 + x^18 - x^17 + x^16 - x^15 + x^14 - x^13 + x^12 - x^11 + x^10 - x^9 + x^8 - x^7 + x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
+
+        Conversion from Laurent series to rational function field gives an approximation::
+
+            sage: F.<x> = Frac(QQ['x'])
+            sage: R.<x> = QQ[[]]
+            sage: f = Frac(R)(1/(x+1))
+            sage: f.parent()
+            Laurent Series Ring in x over Rational Field
+            sage: F(f)
+            1/(x + 1)
+            sage: f = f.truncate(20); f  # infinite precision
+            1 - x + x^2 - x^3 + x^4 - x^5 + x^6 - x^7 + x^8 - x^9 + x^10 - x^11 + x^12 - x^13 + x^14 - x^15 + x^16 - x^17 + x^18 - x^19
+            sage: f.parent()
+            Laurent Series Ring in x over Rational Field
+            sage: F(f)
+            -x^19 + x^18 - x^17 + x^16 - x^15 + x^14 - x^13 + x^12 - x^11 + x^10 - x^9 + x^8 - x^7 + x^6 - x^5 + x^4 - x^3 + x^2 - x + 1
+            sage: f = 1/(x*(x+1))
+            sage: f.parent()
+            Laurent Series Ring in x over Rational Field
+            sage: F(f)
+            1/(x^2 + x)
+
+        ::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<x> = QQ[[]]
+            sage: f = 1/(x+1); f.parent()
+            Power Series Ring in x over Rational Field
+            sage: K(f)
+            doctest:warning...
+            DeprecationWarning: Previously conversion from power series to rational function field truncates
+             instead of gives an approximation. Use .truncate() to recover the old behavior
+            See https://github.com/sagemath/sage/issues/39485 for details.
+            1/(x + 1)
+            sage: f = Frac(R)(1/(x+1))
+            sage: K(f)
+            1/(x + 1)
+            sage: f = 1/(x*(x+1))
+            sage: K(f)
+            1/(x^2 + x)
         """
         if isinstance(x, (list, tuple)) and len(x) == 1:
             x = x[0]
         if y is None:
             if parent(x) is self:
                 return x
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            if isinstance(self.ring(), PolynomialRing_generic):
+                from sage.rings.power_series_ring_element import PowerSeries
+                from sage.rings.laurent_series_ring_element import LaurentSeries
+                if isinstance(x, PowerSeries):
+                    from sage.misc.superseded import deprecation
+                    deprecation(
+                        39485,
+                        "Previously conversion from power series to rational function field truncates "
+                        "instead of gives an approximation. Use .truncate() to recover the old behavior")
+                    x = x.laurent_series()
+                if isinstance(x, LaurentSeries):
+                    from sage.rings.infinity import infinity
+                    if x.prec() == infinity:
+                        return self(x.laurent_polynomial())
+                    return self._convert_from_finite_precision_laurent_series(x)
             ring_one = self.ring().one()
             try:
                 return self._element_class(self, x, ring_one, coerce=coerce)
             except (TypeError, ValueError):
                 pass
-            y = self._element_class(self, ring_one, ring_one,
-                                    coerce=False, reduce=False)
+            y = self.one()
         else:
             if parent(x) is self:
                 y = self(y)
@@ -681,7 +800,11 @@ class FractionField_generic(ring.Field):
         x = py_scalar_to_element(x)
         y = py_scalar_to_element(y)
 
-        from sage.libs.pari.all import pari_gen
+        try:
+            from cypari2.gen import Gen as pari_gen
+        except ImportError:
+            pari_gen = ()
+
         if isinstance(x, pari_gen) and x.type() == 't_POL':
             # This recursive approach is needed because PARI
             # represents multivariate polynomials as iterated
@@ -1032,7 +1155,6 @@ class FractionField_1poly_field(FractionField_generic):
             sage: f = x^3 + a
             sage: f.factor()
             (x + 2*a + 1)^3
-
         """
         # The default implementation would try to convert this element to singular and factor there.
         # This fails silently over some base fields, see #23642, so we convert
@@ -1053,7 +1175,6 @@ class FractionField_1poly_field(FractionField_generic):
         .. SEEALSO::
 
             :meth:`sage.rings.function_field.RationalFunctionField.field`
-
         """
         from sage.rings.function_field.constructor import FunctionField
         return FunctionField(self.base_ring(), names=self.variable_name())
@@ -1075,7 +1196,6 @@ class FractionField_1poly_field(FractionField_generic):
                      over Finite Field of size 5
             sage: f(~L.gen())
             1/t
-
         """
         from sage.rings.function_field.function_field_rational import (
             RationalFunctionField,
@@ -1116,7 +1236,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
         True
         sage: R.is_subring(R.fraction_field())
         True
-
     """
     def is_surjective(self):
         r"""
@@ -1127,7 +1246,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             sage: R.<x> = QQ[]
             sage: R.fraction_field().coerce_map_from(R).is_surjective()
             False
-
         """
         return self.domain().is_field()
 
@@ -1143,7 +1261,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             sage: R.<x> = QQ[]
             sage: R.fraction_field().coerce_map_from(R).is_injective()
             True
-
         """
         return True
 
@@ -1158,7 +1275,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             Section map:
               From: Fraction Field of Univariate Polynomial Ring in x over Rational Field
               To:   Univariate Polynomial Ring in x over Rational Field
-
         """
         from sage.categories.homset import Hom
         from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
@@ -1180,7 +1296,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             False
             sage: f == f
             True
-
         """
         if type(self) is not type(other):
             return NotImplemented
@@ -1195,7 +1310,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             sage: R.<x> = QQ[]
             sage: hash(R.fraction_field().coerce_map_from(R)) == hash(R.fraction_field().coerce_map_from(R))
             True
-
         """
         return hash((type(self), self.domain()))
 
@@ -1219,7 +1333,6 @@ class FractionFieldEmbeddingSection(Section):
         sage: isinstance(f, FractionFieldEmbeddingSection)
         True
         sage: TestSuite(f).run()
-
     """
     def _call_(self, x, check=True):
         r"""
@@ -1313,7 +1426,6 @@ class FractionFieldEmbeddingSection(Section):
             False
             sage: f == f
             True
-
         """
         if type(self) is not type(other):
             return NotImplemented
@@ -1328,6 +1440,5 @@ class FractionFieldEmbeddingSection(Section):
             sage: R.<x> = QQ[]
             sage: hash(R.fraction_field().coerce_map_from(R).section()) == hash(R.fraction_field().coerce_map_from(R).section())
             True
-
         """
         return hash((type(self), self.codomain()))

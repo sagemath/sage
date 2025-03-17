@@ -1,1 +1,1 @@
-python-certifi
+python3-certifi

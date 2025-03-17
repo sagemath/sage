@@ -1,5 +1,11 @@
-"""
+r"""
 Laurent Series
+
+Laurent series in Sage are represented internally as a power of the variable
+times the power series part. If a Laurent series `f` is represented as
+`f = t^n \cdot u` where `t` is the variable and `u` has nonzero constant term,
+`u` can be accessed through :meth:`~LaurentSeries.valuation_zero_part` and `n`
+can be accessed through :meth:`~LaurentSeries.valuation`.
 
 EXAMPLES::
 
@@ -34,11 +40,6 @@ Saving and loading.
     True
     sage: loads(K.dumps()) == K                                                         # needs sage.rings.real_mpfr
     True
-
-IMPLEMENTATION: Laurent series in Sage are represented internally
-as a power of the variable times the unit part (which need not be a
-unit - it's a polynomial with nonzero constant term). The zero
-Laurent series has unit part 0.
 
 AUTHORS:
 
@@ -78,6 +79,10 @@ from sage.misc.derivative import multi_derivative
 
 
 def is_LaurentSeries(x):
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38266,
+                       "The function is_LaurentSeries is deprecated; "
+                       "use 'isinstance(..., LaurentSeries)' instead.")
     return isinstance(x, LaurentSeries)
 
 
@@ -85,8 +90,8 @@ cdef class LaurentSeries(AlgebraElement):
     r"""
     A Laurent Series.
 
-    We consider a Laurent series of the form `t^n \cdot f` where `f` is a
-    power series.
+    We consider a Laurent series of the form `f = t^n \cdot u` where `u` is a
+    power series with nonzero constant term.
 
     INPUT:
 
@@ -148,7 +153,6 @@ cdef class LaurentSeries(AlgebraElement):
         ## same parent are unique.
         elif parent is not f.parent():
             f = parent._power_series_ring(f)
-
 
         # self is that t^n * u:
         if not f:
@@ -232,7 +236,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def is_monomial(self):
         """
-        Return ``True`` if this element is a monomial.  That is, if self is
+        Return ``True`` if this element is a monomial.  That is, if ``self`` is
         `x^n` for some integer `n`.
 
         EXAMPLES::
@@ -404,7 +408,7 @@ cdef class LaurentSeries(AlgebraElement):
             5*x^-1 + 3 + 2*x
         """
         if n == 0:
-            raise ValueError('n must be non zero')
+            raise ValueError('n must be nonzero')
 
         if n < 0:
             if not self.prec() is infinity:
@@ -627,7 +631,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def exponents(self):
         """
-        Return the exponents appearing in self with nonzero coefficients.
+        Return the exponents appearing in ``self`` with nonzero coefficients.
 
         EXAMPLES::
 
@@ -663,7 +667,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or ``None`` (default: ``None``), the
+        - ``absprec`` -- integer or ``None`` (default: ``None``); the
           absolute precision of the result. If ``None``, lifts to an exact
           element.
 
@@ -822,7 +826,6 @@ cdef class LaurentSeries(AlgebraElement):
         # 3. Subtract
         return type(self)(self._parent, f1 - f2, m)
 
-
     def add_bigoh(self, prec):
         """
         Return the truncated series at chosen precision ``prec``.
@@ -956,7 +959,6 @@ cdef class LaurentSeries(AlgebraElement):
             sage: h = x^2 + 2*x^4 + x^6
             sage: h^(1/2)
             x + x^3
-
         """
         cdef LaurentSeries self = _self
 
@@ -988,7 +990,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def shift(self, k):
         r"""
-        Returns this Laurent series multiplied by the power `t^n`.
+        Return this Laurent series multiplied by the power `t^n`.
         Does not change this series.
 
         .. NOTE::
@@ -1028,7 +1030,7 @@ cdef class LaurentSeries(AlgebraElement):
     def truncate(self, long n):
         r"""
         Return the Laurent series of degree ` < n` which is
-        equivalent to self modulo `x^n`.
+        equivalent to ``self`` modulo `x^n`.
 
         EXAMPLES::
 
@@ -1071,7 +1073,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         This is equivalent to::
 
-            self - self.truncate(n)
+            ``self - self.truncate(n)``
 
         EXAMPLES::
 
@@ -1300,7 +1302,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: g.valuation()
             0
 
-        Note that the valuation of an element undistinguishable from
+        Note that the valuation of an element indistinguishable from
         zero is infinite::
 
             sage: h = f - f; h
@@ -1404,7 +1406,7 @@ cdef class LaurentSeries(AlgebraElement):
         ``precision`` is not given, then the precision of the reverse defaults
         to the default precision of ``f.parent()``.
 
-        Note that this is only possible if the valuation of self is exactly
+        Note that this is only possible if the valuation of ``self`` is exactly
         1.
 
         The implementation depends on the underlying power series element
@@ -1564,7 +1566,6 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return multi_derivative(self, args)
 
-
     def _derivative(self, var=None):
         """
         The formal derivative of this Laurent series with respect to var.
@@ -1624,7 +1625,6 @@ cdef class LaurentSeries(AlgebraElement):
         u = self._parent._power_series_ring(v, self.__u.prec())
         return type(self)(self._parent, u, n-1)
 
-
     def integral(self):
         r"""
         The formal integral of this Laurent series with 0 constant term.
@@ -1682,7 +1682,6 @@ cdef class LaurentSeries(AlgebraElement):
             raise ArithmeticError("Coefficients of integral cannot be coerced into the base ring")
         return type(self)(self._parent, u, n+1)
 
-
     def nth_root(self, long n, prec=None):
         r"""
         Return the ``n``-th root of this Laurent power series.
@@ -1691,7 +1690,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         - ``n`` -- integer
 
-        - ``prec`` -- integer (optional) - precision of the result. Though, if
+        - ``prec`` -- integer (optional); precision of the result. Though, if
           this series has finite precision, then the result cannot have larger
           precision.
 

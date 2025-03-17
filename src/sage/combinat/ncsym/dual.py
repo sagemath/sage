@@ -13,22 +13,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import factorial
+from sage.categories.fields import Fields
+from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
+from sage.categories.rings import Rings
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.ncsym.bases import NCSymBasis_abstract, NCSymDualBases
+from sage.combinat.partition import Partition
+from sage.combinat.set_partition import SetPartitions
+from sage.combinat.sf.sf import SymmetricFunctions
+from sage.combinat.subset import Subsets
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
-from sage.categories.rings import Rings
-from sage.categories.fields import Fields
-
-from sage.combinat.ncsym.bases import NCSymDualBases, NCSymBasis_abstract
-from sage.combinat.partition import Partition
-from sage.combinat.set_partition import SetPartitions
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.sf.sf import SymmetricFunctions
-from sage.combinat.subset import Subsets
-from sage.arith.misc import factorial
-from sage.sets.set import Set
 
 
 class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
@@ -86,7 +84,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
         """
         return self.w()
 
-    _shorthands = tuple(['w'])
+    _shorthands = ('w',)
 
     def dual(self):
         r"""
@@ -166,9 +164,8 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             The dual basis to the `\mathbf{w}` basis is the monomial basis
             of the symmetric functions in non-commuting variables.
 
-            OUTPUT:
-
-            - the monomial basis of the symmetric functions in non-commuting variables
+            OUTPUT: the monomial basis of the symmetric functions in
+            non-commuting variables
 
             EXAMPLES::
 
@@ -200,9 +197,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
             - ``A``, ``B`` -- set partitions
 
-            OUTPUT:
-
-            - an element of the `\mathbf{w}` basis
+            OUTPUT: an element of the `\mathbf{w}` basis
 
             EXAMPLES::
 
@@ -228,24 +223,25 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
                 sage: w.product_on_basis(A, SetPartition([]))
                 w{{1}, {2, 3}}
             """
-            if len(A) == 0:
+            if not A:
                 return self.monomial(B)
-            if len(B) == 0:
+            if not B:
                 return self.monomial(A)
 
             P = SetPartitions()
             n = A.size()
-            k = B.size()
+            m = n + B.size()
 
             def unions(s):
                 a = sorted(s)
-                b = sorted(Set(range(1, n+k+1)).difference(s))
+                b = [j for j in range(1, m + 1) if j not in s]
                 # -1 for indexing
-                ret = [[a[i-1] for i in sorted(part)] for part in A]
-                ret += [[b[i-1] for i in sorted(part)] for part in B]
+                ret = [[a[i - 1] for i in sorted(part)] for part in A]
+                ret.extend([b[i - 1] for i in sorted(part)] for part in B)
                 return P(ret)
+
             return self.sum_of_terms([(unions(s), 1)
-                    for s in Subsets(n+k, n)])
+                                      for s in Subsets(m, n)])
 
         def coproduct_on_basis(self, A):
             r"""
@@ -258,7 +254,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT:
 
@@ -277,9 +273,9 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             """
             n = A.size()
             return self.tensor_square().sum_of_terms([
-                (( A.restriction(range(1, i+1)).standardization(),
-                   A.restriction(range(i+1, n+1)).standardization() ), 1)
-                for i in range(n+1)], distinct=True)
+                ((A.restriction(range(1, i + 1)).standardization(),
+                  A.restriction(range(i + 1, n + 1)).standardization()), 1)
+                for i in range(n + 1)], distinct=True)
 
         def antipode_on_basis(self, A):
             r"""
@@ -287,11 +283,9 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element in the basis ``self``
+            OUTPUT: an element in the basis ``self``
 
             EXAMPLES::
 
@@ -307,8 +301,8 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             if A.size() == 1:
                 return -self(A)
             cpr = self.coproduct_on_basis(A)
-            return -sum( c*self.monomial(B1)*self.antipode_on_basis(B2)
-                         for ((B1,B2),c) in cpr if B2 != A )
+            return -sum(c * self.monomial(B1) * self.antipode_on_basis(B2)
+                        for (B1, B2), c in cpr if B2 != A)
 
         def duality_pairing(self, x, y):
             r"""
@@ -322,9 +316,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             - ``y`` -- an element of the symmetric functions in non-commuting
               variables
 
-            OUTPUT:
-
-            - an element of the base ring of ``self``
+            OUTPUT: an element of the base ring of ``self``
 
             EXAMPLES::
 
@@ -351,7 +343,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             """
             x = self(x)
             y = self.dual_basis()(y)
-            return sum(coeff * y[I] for (I, coeff) in x)
+            return sum(coeff * y[I] for I, coeff in x)
 
         def sum_of_partitions(self, la):
             r"""
@@ -361,11 +353,9 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``la`` -- an integer partition
+            - ``la`` -- integer partition
 
-            OUTPUT:
-
-            - an element of ``self``
+            OUTPUT: an element of ``self``
 
             EXAMPLES::
 
@@ -394,7 +384,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             EXAMPLES::
 
@@ -422,7 +412,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             cur = 1
             prev_len = 0
             for p in A:
-                if prev_len > len(p) or list(p) != list(range(cur, cur+len(p))):
+                if prev_len > len(p) or list(p) != list(range(cur, cur + len(p))):
                     return None
                 prev_len = len(p)
                 cur += len(p)
@@ -444,8 +434,8 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- an integer
-                - ``letter`` -- (default: ``'x'``) a string
+                - ``n`` -- integer
+                - ``letter`` -- string (default: ``'x'``)
 
                 OUTPUT:
 
@@ -470,16 +460,21 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
                     sage: w[[1,3],[2]].expand(3, letter='y')
                     y02*y11*y20
                 """
-                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                 from sage.combinat.permutation import Permutations
+                from sage.rings.polynomial.polynomial_ring_constructor import (
+                    PolynomialRing,
+                )
 
                 m = self.parent()
-                names = ['{}{}{}'.format(letter, i, j) for i in range(n) for j in range(n)]
-                R = PolynomialRing(m.base_ring(), n*n, names)
-                x = [[R.gens()[i*n+j] for j in range(n)] for i in range(n)]
-                I = R.ideal([x[i][j]*x[i][k] for j in range(n) for k in range(n) for i in range(n)])
+                names = [f'{letter}{i}{j}' for i in range(n) for j in range(n)]
+                R = PolynomialRing(m.base_ring(), n * n, names)
+                x = [[R.gens()[i * n + j]
+                      for j in range(n)] for i in range(n)]
+                I = R.ideal([x[i][j] * x[i][k]
+                             for j in range(n) for k in range(n) for i in range(n)])
                 Q = R.quotient(I, names)
-                x = [[Q.gens()[i*n+j] for j in range(n)] for i in range(n)]
+                x = [[Q.gens()[i * n + j]
+                      for j in range(n)] for i in range(n)]
                 P = SetPartitions()
 
                 def on_basis(A):
@@ -491,7 +486,8 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
                     for p in Permutations(k):
                         if P(p.to_cycles()) == A:
                             # -1 for indexing
-                            ret += R.sum(prod(x[I[i]][I[p[i]-1]] for i in range(k))
+                            ret += R.sum(prod(x[I[i]][I[p[i] - 1]]
+                                              for i in range(k))
                                          for I in Subsets(range(n), k))
                     return ret
 
@@ -592,5 +588,5 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
                     raise ValueError("not a symmetric function")
                 h = SymmetricFunctions(self.parent().base_ring()).homogeneous()
                 d = {A.shape(): c for A, c in self}
-                return h.sum_of_terms([( AA, cc / prod([factorial(i) for i in AA.to_exp()]) )
-                                        for AA, cc in d.items()], distinct=True)
+                return h.sum_of_terms([(AA, cc / prod(factorial(i) for i in AA.to_exp()))
+                                       for AA, cc in d.items()], distinct=True)

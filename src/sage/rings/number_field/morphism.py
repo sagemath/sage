@@ -5,18 +5,17 @@ This module provides classes to represent ring homomorphisms between number
 fields (i.e. field embeddings).
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
 
 from sage.rings.morphism import RingHomomorphism_im_gens, RingHomomorphism
 from sage.structure.sequence import Sequence
@@ -26,7 +25,7 @@ from sage.structure.richcmp import richcmp
 class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
     def __invert__(self):
         r"""
-        Return the inverse of an isomorphism of absolute number fields
+        Return the inverse of an isomorphism of absolute number fields.
 
         EXAMPLES::
 
@@ -88,16 +87,16 @@ class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
     def preimage(self, y):
         r"""
         Compute a preimage of `y` in the domain, provided one exists.
-        Raises a :class:`ValueError` if `y` has no preimage.
+        Raises a :exc:`ValueError` if `y` has no preimage.
 
         INPUT:
 
-        - ``y`` -- an element of the codomain of ``self``.
+        - ``y`` -- an element of the codomain of ``self``
 
         OUTPUT:
 
         Returns the preimage of `y` in the domain, if one exists.
-        Raises a :class:`ValueError` if `y` has no preimage.
+        Raises a :exc:`ValueError` if `y` has no preimage.
 
         EXAMPLES::
 
@@ -221,7 +220,7 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
     def _richcmp_(self, other, op):
         """
-        Compare
+        Compare.
 
         EXAMPLES::
 

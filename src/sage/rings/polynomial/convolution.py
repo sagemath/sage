@@ -191,7 +191,7 @@ def _fft(L, K, start, depth, root):
     `S = R[y]/(y^K + 1)`.
 
     This function performs an inplace FFT, i.e. evaluates the
-    polynomial at x = each D-th root of unity in S (namely the powers
+    polynomial at x = each `D`-th root of unity in S (namely the powers
     of `y^{2K/D}`), with results in bit-reversed order.
     """
     half = 1 << (depth - 1)

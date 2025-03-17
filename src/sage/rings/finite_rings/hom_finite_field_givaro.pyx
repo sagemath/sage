@@ -99,7 +99,6 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
 
         self._codomain_cache = (<FiniteField_givaroElement>(self._codomain.gen()))._cache
 
-
     cpdef Element _call_(self, x):
         """
         TESTS::
@@ -181,7 +180,6 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
         self._order_domain = domain.cardinality() - 1
         self._order_codomain = codomain.cardinality() - 1
 
-
     cpdef Element _call_(self, x):
         """
         TESTS::
@@ -207,7 +205,6 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
         return make_FiniteField_givaroElement(self._codomain_cache, log)
 
 
-
 cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):
     def __init__(self, domain, power=1):
         """
@@ -228,7 +225,6 @@ cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):
         if not isinstance(domain, FiniteField_givaro):
             raise TypeError("The domain is not an instance of FiniteField_givaro")
         FrobeniusEndomorphism_finite_field.__init__(self, domain, power)
-
 
     def fixed_field(self):
         """

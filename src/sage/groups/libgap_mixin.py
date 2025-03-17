@@ -9,7 +9,7 @@ the parent/element.
 If your group implementation uses libgap, then you should add
 :class:`GroupMixinLibGAP` as the first class that you are deriving
 from. This ensures that it properly overrides any default methods that
-just raise :class:`NotImplementedError`.
+just raise :exc:`NotImplementedError`.
 """
 
 from sage.libs.gap.libgap import libgap
@@ -578,7 +578,7 @@ class GroupMixinLibGAP:
 
     def exponent(self):
         r"""
-        Computes the exponent of the group.
+        Compute the exponent of the group.
 
         The exponent `e` of a group `G` is the LCM of the orders of its
         elements, that is, `e` is the smallest integer such that `g^e = 1`
@@ -678,7 +678,7 @@ class GroupMixinLibGAP:
 
         INPUT:
 
-        - ``values`` -- a list of values of the character
+        - ``values`` -- list of values of the character
 
         OUTPUT: a group character
 
@@ -946,4 +946,16 @@ class GroupMixinLibGAP:
             sage: F == G, G == H, F == H
             (False, False, False)
         """
-        return self.gap().IsomorphismGroups(H.gap()) != libgap.fail
+        # If GAP doesn't know that the groups are finite, it will
+        # check. This emits an informational warning, and then
+        # annotates the groups as being finite (assuming they were) so
+        # that future isomorphism checks are silent. This can lead to
+        # apparent non-determinism in the output as statements are
+        # rearranged. There's nothing the user can do about this
+        # anyway, and it happens in trivial cases like the alternating
+        # group on one element, so we prefer to hide the warning.
+        old_warnlevel = libgap.InfoLevel(libgap.InfoWarning)
+        libgap.SetInfoLevel(libgap.InfoWarning, 0)
+        result = self.gap().IsomorphismGroups(H.gap()) != libgap.fail
+        libgap.SetInfoLevel(libgap.InfoWarning, old_warnlevel)
+        return result

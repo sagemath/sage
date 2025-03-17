@@ -60,12 +60,10 @@ cpdef gen_to_sage(Gen z, locals=None):
 
     - ``z`` -- PARI ``gen``
 
-    - ``locals`` -- optional dictionary used in fallback cases that
+    - ``locals`` -- (optional) dictionary used in fallback cases that
       involve :func:`sage_eval`
 
-    OUTPUT:
-
-    One of the following depending on the PARI type of ``z``
+    OUTPUT: one of the following depending on the PARI type of ``z``
 
     - a :class:`~sage.rings.integer.Integer` if ``z`` is an integer (type ``t_INT``)
 
@@ -88,7 +86,7 @@ cpdef gen_to_sage(Gen z, locals=None):
 
     - a matrix if ``z`` is a matrix (type ``t_MAT``)
 
-    - a padic element (type ``t_PADIC``)
+    - a `p`-adic element (type ``t_PADIC``)
 
     - a :class:`~sage.rings.infinity.Infinity` if ``z`` is an infinity
       (type ``t_INF``)
@@ -248,7 +246,7 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: a.parent()
         Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
 
-    Conversion of p-adics::
+    Conversion of `p`-adics::
 
         sage: # needs sage.rings.padics
         sage: z = pari('569 + O(7^8)'); z
@@ -381,7 +379,7 @@ cpdef set_integer_from_gen(Integer self, Gen x):
             sig_on()
             x = new_gen(FF_to_FpXQ_i((<Gen>x).g))
         else:
-            raise TypeError("Unable to coerce PARI %s to an Integer"%x)
+            raise TypeError("Unable to coerce PARI %s to an Integer" % x)
 
     # Now we have a true PARI integer, convert it to Sage
     INT_to_mpz(self.value, (<Gen>x).g)
@@ -575,17 +573,16 @@ cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False):
         sage: pari_prime_range(2, 19)
         [2, 3, 5, 7, 11, 13, 17]
     """
-    cdef long p = 0
-    cdef byteptr pari_prime_ptr = diffptr
+    cdef ulong i = 1
     res = []
-    while p < c_start:
-        NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
-    while p < c_stop:
+    while pari_PRIMES[i] < c_start:
+        i+=1
+    while pari_PRIMES[i] < c_stop:
         if py_ints:
-            res.append(p)
+            res.append(pari_PRIMES[i])
         else:
             z = <Integer>PY_NEW(Integer)
-            mpz_set_ui(z.value, p)
+            mpz_set_ui(z.value, pari_PRIMES[i])
             res.append(z)
-        NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
+        i+=1
     return res

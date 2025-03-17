@@ -4,7 +4,6 @@ Path algebra elements
 AUTHORS:
 
 - Simon King (2015-08)
-
 """
 
 # ****************************************************************************
@@ -107,7 +106,6 @@ cdef class PathAlgebraElement(RingElement):
     computations are not available for path algebras, yet. Hence, to
     implement computations in graded quotients of free algebras, the
     letterplace implementation currently is the only option.
-
     """
     def __cinit__(self):
         """
@@ -140,11 +138,11 @@ cdef class PathAlgebraElement(RingElement):
 
         INPUT:
 
-        - ``S``, a path algebra.
+        - ``S`` -- path algebra
 
-        - ``data``, a dictionary. Most of its keys are
+        - ``data`` -- dictionary; most of its keys are
           :class:`~sage.quivers.paths.QuiverPath`, the value giving its
-          coefficient.
+          coefficient
 
         .. NOTE::
 
@@ -157,17 +155,17 @@ cdef class PathAlgebraElement(RingElement):
             Defining e_1, x, y, z
             sage: (x+2*z+1)^2
             e_1 + 4*z + 2*x + 4*z*z + 2*x*z + 2*z*x + x*x
-            sage: P2 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
+            sage: P2 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
             sage: P2.inject_variables()
             Defining e_1, x, y, z
             sage: (x+2*z+1)^2
             4*z*z + 2*x*z + 2*z*x + x*x + 4*z + 2*x + e_1
-            sage: P3 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="negdeglex")
+            sage: P3 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='negdeglex')
             sage: P3.inject_variables()
             Defining e_1, x, y, z
             sage: (x+2*z+1)^2
             e_1 + 4*z + 2*x + 4*z*z + 2*z*x + 2*x*z + x*x
-            sage: P4 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="deglex")
+            sage: P4 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='deglex')
             sage: P4.inject_variables()
             Defining e_1, x, y, z
             sage: (x+2*z+1)^2
@@ -268,9 +266,10 @@ cdef class PathAlgebraElement(RingElement):
             sage: X         # indirect doctest
             5*e_0 + a + 2*b + 3*c + 3*e_2
         """
+        parent = self._parent
         return repr_lincomb(self._sorted_items_for_printing(), strip_one=True,
-            scalar_mult=self.parent()._print_options['scalar_mult'],
-            repr_monomial=self._parent._repr_monomial)
+                            scalar_mult=parent._print_options['scalar_mult'],
+                            repr_monomial=parent._repr_monomial)
 
     def _latex_(self):
         r"""
@@ -285,11 +284,12 @@ cdef class PathAlgebraElement(RingElement):
             sage: latex(X*X)
             10 e_0 + 3 a\cdot c + 5 a + b + 3 c\cdot a + 6 c\cdot b + 9 e_2
         """
+        parent = self._parent
         return repr_lincomb(self._sorted_items_for_printing(),
-            scalar_mult=self.parent()._print_options['scalar_mult'],
-            latex_scalar_mult=self.parent()._print_options['latex_scalar_mult'],
-            repr_monomial=self._parent._latex_monomial,
-            is_latex=True, strip_one=True)
+                            scalar_mult=parent._print_options['scalar_mult'],
+                            latex_scalar_mult=parent._print_options['latex_scalar_mult'],
+                            repr_monomial=parent._latex_monomial,
+                            is_latex=True, strip_one=True)
 
     # Basic properties
 
@@ -409,7 +409,7 @@ cdef class PathAlgebraElement(RingElement):
 
         EXAMPLES::
 
-            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
+            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
             sage: P.inject_variables()
             Defining e_1, x, y, z
             sage: p = (x+2*z+1)^3
@@ -465,7 +465,7 @@ cdef class PathAlgebraElement(RingElement):
 
         EXAMPLES::
 
-            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
+            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
             sage: P.inject_variables()
             Defining e_1, x, y, z
             sage: p = (x+2*z+1)^3
@@ -504,7 +504,7 @@ cdef class PathAlgebraElement(RingElement):
 
         EXAMPLES::
 
-            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
+            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
             sage: P.inject_variables()
             Defining e_1, x, y, z
             sage: p = (x+2*z+1)^3
@@ -561,7 +561,7 @@ cdef class PathAlgebraElement(RingElement):
 
         EXAMPLES::
 
-            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
+            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
             sage: P.inject_variables()
             Defining e_1, x, y, z
             sage: p = (x+2*z+1)^3
@@ -616,7 +616,7 @@ cdef class PathAlgebraElement(RingElement):
 
         EXAMPLES::
 
-            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
+            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
             sage: P.inject_variables()
             Defining e_1, x, y, z
             sage: p = (x+2*z+1)^3
@@ -691,7 +691,7 @@ cdef class PathAlgebraElement(RingElement):
 
         INPUT:
 
-        An element of the underlying partial semigroup.
+        - ``P`` -- an element of the underlying partial semigroup
 
         OUTPUT:
 
@@ -700,7 +700,7 @@ cdef class PathAlgebraElement(RingElement):
 
         EXAMPLES::
 
-            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
+            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
             sage: P.inject_variables()
             Defining e_1, x, y, z
             sage: p = (x+2*z+1)^3
@@ -738,7 +738,7 @@ cdef class PathAlgebraElement(RingElement):
 
         EXAMPLES::
 
-            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
+            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
             sage: P.inject_variables()
             Defining e_1, x, y, z
             sage: p = (x+2*z+1)^3
@@ -790,7 +790,7 @@ cdef class PathAlgebraElement(RingElement):
         """
         EXAMPLES::
 
-            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
+            sage: P = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
             sage: P.inject_variables()
             Defining e_1, x, y, z
             sage: p = (x+2*z+1)^3
@@ -922,7 +922,7 @@ cdef class PathAlgebraElement(RingElement):
         EXAMPLES::
 
             sage: P1 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(3,'t'))
-            sage: P2 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(3,'t'), order="deglex")
+            sage: P2 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(3,'t'), order='deglex')
             sage: P1.inject_variables()
             Defining e_1, x, y, z
             sage: p = x+y
@@ -1196,6 +1196,8 @@ cdef class PathAlgebraElement(RingElement):
             sage: z*3
             3*a + 6*b + 9*e_2
         """
+        if self.data == NULL:
+            return self
         cdef path_homog_poly_t * out = homog_poly_scale(self.data, right)
         cdef path_homog_poly_t * outnxt
         if out.poly.nterms == 0:
@@ -1226,6 +1228,8 @@ cdef class PathAlgebraElement(RingElement):
             sage: 3*z
             3*a + 6*b + 9*e_2
         """
+        if self.data == NULL:
+            return self
         cdef path_homog_poly_t * out = homog_poly_scale(self.data, left)
         cdef path_homog_poly_t * outnxt
         if out.poly.nterms == 0:
@@ -1312,7 +1316,11 @@ cdef class PathAlgebraElement(RingElement):
             sage: pA^5 == sage_eval(repr(pF^5), A.gens_dict())
             True
         """
+        if self.data == NULL:
+            return self
         cdef PathAlgebraElement right = other
+        if right.data == NULL:
+            return right
         cdef path_homog_poly_t *H1 = self.data
         cdef path_homog_poly_t *H2
         cdef path_term_t *T2

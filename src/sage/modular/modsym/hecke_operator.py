@@ -23,7 +23,7 @@ class HeckeOperator(sage.modular.hecke.hecke_operator.HeckeOperator):
         """
         Return the image of ``x`` under ``self``.
 
-        If ``x`` is not in ``self.domain()``, raise a :class:`TypeError`.
+        If ``x`` is not in ``self.domain()``, raise a :exc:`TypeError`.
 
         EXAMPLES::
 

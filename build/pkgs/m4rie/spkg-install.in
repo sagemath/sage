@@ -23,6 +23,9 @@ export LDFLAGS
 # build M4RIE
 
 cd $ROOT_DIR/src/
+
+cp "$SAGE_ROOT"/config/config.* .
+
 sdh_configure --enable-shared --disable-static $ENABLE_DEBUG
 sdh_make
 sdh_make_install

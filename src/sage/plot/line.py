@@ -103,7 +103,7 @@ class Line(GraphicPrimitive_xydata):
             0.5
             sage: m.thickness
             10
-            sage: L = line([(1,1), (1,2), (2,2), (2,1)], linestyle=":")
+            sage: L = line([(1,1), (1,2), (2,2), (2,1)], linestyle=':')
             sage: L.plot3d()
             Traceback (most recent call last):
             ...
@@ -141,7 +141,6 @@ class Line(GraphicPrimitive_xydata):
             E = EllipticCurve('37a').plot(thickness=5).plot3d()
             F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)
             sphinx_plot(E+F)
-
         """
         from sage.plot.plot3d.shapes2 import line3d
         options = self._plot3d_options()
@@ -166,11 +165,9 @@ class Line(GraphicPrimitive_xydata):
 
         INPUT:
 
-        - ``i`` -- an integer between 0 and the number of points minus 1
+        - ``i`` -- integer between 0 and the number of points minus 1
 
-        OUTPUT:
-
-        A 2-tuple of floats.
+        OUTPUT: 2-tuple of floats
 
         EXAMPLES::
 
@@ -193,7 +190,7 @@ class Line(GraphicPrimitive_xydata):
 
         INPUT:
 
-        - ``i`` -- an integer between 0 and the number of points on the
+        - ``i`` -- integer between 0 and the number of points on the
           line minus 1
 
         - ``point`` -- a 2-tuple of floats
@@ -276,13 +273,13 @@ class Line(GraphicPrimitive_xydata):
 
 def line(points, **kwds):
     """
-    Returns either a 2-dimensional or 3-dimensional line depending
+    Return either a 2-dimensional or 3-dimensional line depending
     on value of points.
 
     INPUT:
 
-    -  ``points`` - either a single point (as a tuple), a list of
-       points, a single complex number, or a list of complex numbers.
+    - ``points`` -- either a single point (as a tuple), a list of
+      points, a single complex number, or a list of complex numbers
 
     For information regarding additional arguments, see either line2d?
     or line3d?.
@@ -323,8 +320,8 @@ def line2d(points, **options):
 
     INPUT:
 
-    -  ``points`` - either a single point (as a tuple), a list of
-       points, a single complex number, or a list of complex numbers.
+    - ``points`` -- either a single point (as a tuple), a list of
+      points, a single complex number, or a list of complex numbers
 
     Type ``line2d.options`` for a dictionary of the default options for
     lines.  You can change this to change the defaults for all future
@@ -332,39 +329,39 @@ def line2d(points, **options):
 
     INPUT:
 
-    - ``alpha`` -- How transparent the line is
+    - ``alpha`` -- how transparent the line is
 
-    - ``thickness`` -- How thick the line is
+    - ``thickness`` -- how thick the line is
 
-    - ``rgbcolor`` -- The color as an RGB tuple
+    - ``rgbcolor`` -- the color as an RGB tuple
 
-    - ``hue`` -- The color given as a hue
+    - ``hue`` -- the color given as a hue
 
-    - ``legend_color`` -- The color of the text in the legend
+    - ``legend_color`` -- the color of the text in the legend
 
     - ``legend_label`` -- the label for this item in the legend
 
 
     Any MATPLOTLIB line option may also be passed in.  E.g.,
 
-    - ``linestyle`` - (default: "-") The style of the line, which is one of
-       - ``"-"`` or ``"solid"``
-       - ``"--"`` or ``"dashed"``
-       - ``"-."`` or ``"dash dot"``
-       - ``":"`` or ``"dotted"``
+    - ``linestyle`` -- (default: ``'-'``) the style of the line, which is one of
+       - ``'-'`` or ``'solid'``
+       - ``'--'`` or ``'dashed'``
+       - ``'-.'`` or ``'dash dot'``
+       - ``':'`` or ``'dotted'``
        - ``"None"`` or ``" "`` or ``""`` (nothing)
 
-       The linestyle can also be prefixed with a drawing style (e.g., ``"steps--"``)
+       The linestyle can also be prefixed with a drawing style (e.g., ``'steps--'``)
 
-       - ``"default"`` (connect the points with straight lines)
-       - ``"steps"`` or ``"steps-pre"`` (step function; horizontal
+       - ``'default'`` (connect the points with straight lines)
+       - ``'steps'`` or ``'steps-pre'`` (step function; horizontal
          line is to the left of point)
-       - ``"steps-mid"`` (step function; points are in the middle of
+       - ``'steps-mid'`` (step function; points are in the middle of
          horizontal lines)
-       - ``"steps-post"`` (step function; horizontal line is to the
+       - ``'steps-post'`` (step function; horizontal line is to the
          right of point)
 
-    - ``marker``  - The style of the markers, which is one of
+    - ``marker``  -- the style of the markers, which is one of
        - ``"None"`` or ``" "`` or ``""`` (nothing) -- default
        - ``","`` (pixel), ``"."`` (point)
        - ``"_"`` (horizontal line), ``"|"`` (vertical line)

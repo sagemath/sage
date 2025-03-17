@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Factory for cached representations
 
@@ -40,7 +41,6 @@ AUTHORS:
 - Robert Bradshaw (2008): initial version.
 - Simon King (2013): extended documentation.
 - Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
-
 """
 
 #*****************************************************************************
@@ -171,15 +171,15 @@ cdef class UniqueFactory(SageObject):
         ....:         return args, {'impl':kwds.get('impl', None)}
         ....:     def create_object(self, version, key, **extra_args):
         ....:         impl = extra_args['impl']
-        ....:         if impl=='C':
+        ....:         if impl == 'C':
         ....:             return C(*key)
-        ....:         if impl=='D':
+        ....:         if impl == 'D':
         ....:             return D(*key)
         ....:         return E(*key)
         ....:
 
     Now we can create a factory instance. It is supposed to be found under the
-    name ``"F"`` in the ``"__main__"`` module. Note that in an interactive
+    name ``'F'`` in the ``__main__`` module. Note that in an interactive
     session, ``F`` would automatically be in the ``__main__`` module. Hence,
     the second and third of the following four lines are only needed in
     doctests.  ::
@@ -237,7 +237,7 @@ cdef class UniqueFactory(SageObject):
     only considered an "extra argument" that does not count for the key.
     ::
 
-        sage: c is F(1, impl='C') is F(1, impl="D") is F(1)                             # needs sage.misc.cython
+        sage: c is F(1, impl='C') is F(1, impl='D') is F(1)                             # needs sage.misc.cython
         True
 
     However, pickling and unpickling does not use the cache. This is because
@@ -292,9 +292,9 @@ cdef class UniqueFactory(SageObject):
         """
         INPUT:
 
-        - ``name`` -- string. A name in the global namespace referring
-          to self or a fully qualified path name to self, which is
-          used to locate the factory on unpickling.
+        - ``name`` -- string; a name in the global namespace referring to
+          ``self`` or a fully qualified path name to ``self``, which is used to
+          locate the factory on unpickling
 
         EXAMPLES::
 
@@ -374,7 +374,7 @@ cdef class UniqueFactory(SageObject):
 
     cpdef get_object(self, version, key, extra_args):
         """
-        Returns the object corresponding to ``key``, creating it with
+        Return the object corresponding to ``key``, creating it with
         ``extra_args`` if necessary (for example, it isn't in the cache
         or it is unpickling from an older version of Sage).
 
@@ -403,7 +403,6 @@ cdef class UniqueFactory(SageObject):
             Making object (1 + O(2^20), 'c')
             sage: d is test_factory.get_object(3.0, (K(1), 'c'), {})                    # needs sage.rings.padics
             True
-
         """
         cache_key = key
         try:
@@ -520,7 +519,7 @@ cdef class UniqueFactory(SageObject):
         The ``GF`` factory used to have a custom :meth:`other_keys`
         method, but this was removed in :issue:`16934`::
 
-            sage: # needs sage.libs.linbox sage.ring.finite_rings
+            sage: # needs sage.libs.linbox sage.rings.finite_rings
             sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key
             (27, ('k',), x^3 + 2*x + 1, 'givaro', 3, 3, True, None, 'poly', True, True, True)
             sage: K = GF.create_object(0, key); K
@@ -569,6 +568,7 @@ cdef class UniqueFactory(SageObject):
 
 # This is used to handle old UniqueFactory pickles
 factory_unpickles = {}
+
 
 def register_factory_unpickle(name, callable):
     """
@@ -631,6 +631,7 @@ def register_factory_unpickle(name, callable):
     """
     #global factory_unpickles
     factory_unpickles[name] = callable
+
 
 def generic_factory_unpickle(factory, *args):
     """
@@ -713,7 +714,6 @@ def generic_factory_unpickle(factory, *args):
         False
         sage: loads(dumps(b)) is b
         True
-
     """
     cdef UniqueFactory F
     if factory is not None:
@@ -729,6 +729,7 @@ def generic_factory_unpickle(factory, *args):
     # strip this.
     return factory(*args[1], **args[2])
 
+
 def generic_factory_reduce(self, proto):
     """
     Used to provide a ``__reduce__`` method if one does not already exist.
@@ -743,6 +744,7 @@ def generic_factory_reduce(self, proto):
         raise NotImplementedError("__reduce__ not implemented for %s" % type(self))
     else:
         return self._factory_data[0].reduce_data(self)
+
 
 def lookup_global(name):
     """

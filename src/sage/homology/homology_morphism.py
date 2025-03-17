@@ -51,12 +51,12 @@ class InducedHomologyMorphism(Morphism):
     INPUT:
 
     - ``map`` -- the map of simplicial complexes
-    - ``base_ring`` -- a field (optional, default ``QQ``)
-    - ``cohomology`` -- boolean (optional, default ``False``). If
+    - ``base_ring`` -- a field (default: ``QQ``)
+    - ``cohomology`` -- boolean (default: ``False``); if
       ``True``, return the induced map in cohomology rather than
-      homology.
+      homology
 
-    .. note::
+    .. NOTE::
 
         This is not intended to be used directly by the user, but instead
         via the method
@@ -135,10 +135,10 @@ class InducedHomologyMorphism(Morphism):
         INPUT:
 
         - ``map`` -- the map of simplicial complexes
-        - ``base_ring`` -- a field (optional, default ``QQ``)
-        - ``cohomology`` -- boolean (optional, default ``False``). If
+        - ``base_ring`` -- a field (default: ``QQ``)
+        - ``cohomology`` -- boolean (default: ``False``); if
           ``True``, return the induced map in cohomology rather than
-          homology.
+          homology
 
         EXAMPLES::
 
@@ -213,7 +213,7 @@ class InducedHomologyMorphism(Morphism):
 
         INPUT:
 
-        - ``deg`` -- (optional, default ``None``) the degree
+        - ``deg`` -- (default: ``None``) the degree
 
         EXAMPLES::
 

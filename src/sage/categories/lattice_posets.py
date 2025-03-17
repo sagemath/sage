@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Lattice posets
 """
@@ -13,6 +14,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category import Category
 from sage.categories.posets import Posets
+
 
 class LatticePosets(Category):
     r"""
@@ -36,12 +38,11 @@ class LatticePosets(Category):
 
         sage: C = LatticePosets()
         sage: TestSuite(C).run()
-
     """
     @cached_method
     def super_categories(self):
         r"""
-        Returns a list of the (immediate) super categories of
+        Return a list of the (immediate) super categories of
         ``self``, as per :meth:`Category.super_categories`.
 
         EXAMPLES::
@@ -58,11 +59,11 @@ class LatticePosets(Category):
         @abstract_method
         def meet(self, x, y):
             """
-            Returns the meet of `x` and `y` in this lattice
+            Return the meet of `x` and `y` in this lattice.
 
             INPUT:
 
-             - ``x``, ``y`` -- elements of ``self``
+            - ``x``, ``y`` -- elements of ``self``
 
             EXAMPLES::
 
@@ -74,11 +75,11 @@ class LatticePosets(Category):
         @abstract_method
         def join(self, x, y):
             """
-            Returns the join of `x` and `y` in this lattice
+            Return the join of `x` and `y` in this lattice.
 
             INPUT:
 
-             - ``x``, ``y`` -- elements of ``self``
+            - ``x``, ``y`` -- elements of ``self``
 
             EXAMPLES::
 

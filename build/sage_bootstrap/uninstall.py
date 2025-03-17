@@ -249,7 +249,7 @@ def run_spkg_script(spkg_name, path, script_name,
             log_file = pth.join(log_directory, script + '.log')
             subprocess.check_call(['sage-logger', '-p', script, log_file])
         else:
-            subprocess.check_call([script])
+            subprocess.check_call(['sage-logger', '-P', script_name, script])
     elif if_does_not_exist == 'ignore':
         pass
     elif if_does_not_exist == 'log':

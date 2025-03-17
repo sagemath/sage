@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``fricas``
 """
@@ -11,9 +12,9 @@ Features for testing the presence of ``fricas``
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-import os
 import subprocess
 from . import Executable, FeatureTestResult
+
 
 class FriCAS(Executable):
     r"""
@@ -33,9 +34,9 @@ class FriCAS(Executable):
             sage: isinstance(FriCAS(), FriCAS)
             True
         """
-        Executable.__init__(self, name="fricas", spkg="fricas",
-                            executable="fricas",
-                            url="https://fricas.github.io")
+        Executable.__init__(self, name='fricas', spkg='fricas',
+                            executable='fricas',
+                            url='https://fricas.github.io')
 
     def is_functional(self):
         r"""
@@ -60,6 +61,7 @@ class FriCAS(Executable):
                     reason="Call `{command}` did not produce output which contains `{expected}`".format(command=" ".join(command), expected=expected))
 
         return FeatureTestResult(self, True)
+
 
 def all_features():
     return [FriCAS()]

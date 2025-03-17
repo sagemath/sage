@@ -4,7 +4,6 @@ Graded rings of modular forms for Hecke triangle groups
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
@@ -51,17 +50,15 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: `\Z`).
+        - ``base_ring`` -- the base_ring (default: `\Z`)
 
-        - ``red_hom``    -- If ``True`` then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: ``False``).
-                            This is mainly used by the (Hecke) forms.
+        - ``red_hom`` -- if ``True`` then results of binary operations are
+          considered homogeneous whenever it makes sense (default: ``False``).
+          This is mainly used by the (Hecke) forms.
 
-        OUTPUT:
-
-        The corresponding abstract (Hecke) forms ring.
+        OUTPUT: the corresponding abstract (Hecke) forms ring
 
         EXAMPLES::
 
@@ -261,16 +258,17 @@ class FormsRing_abstract(Parent):
     def default_prec(self, prec=None):
         r"""
         Set the default precision ``prec`` for the Fourier expansion.
-        If ``prec=None`` (default) then the current default precision is returned instead.
+        If ``prec=None`` (default) then the current default precision is
+        returned instead.
 
         INPUT:
 
-        - ``prec`` -- An integer.
+        - ``prec`` -- integer
 
-        NOTE:
+        .. NOTE::
 
-        This is also used as the default precision for the Fourier
-        expansion when evaluating forms.
+            This is also used as the default precision for the Fourier
+            expansion when evaluating forms.
 
         EXAMPLES::
 
@@ -409,14 +407,12 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``analytic_type``  -- An ``AnalyticType`` or something which
-                                coerces into it (default: ``None``).
+        - ``analytic_type`` -- an ``AnalyticType`` or something which
+          coerces into it (default: ``None``)
 
-        - ``ring``           -- Whether to extend to a graded ring (default: ``False``).
+        - ``ring`` -- whether to extend to a graded ring (default: ``False``)
 
-        OUTPUT:
-
-        The new extended space.
+        OUTPUT: the new extended space
 
         EXAMPLES::
 
@@ -455,14 +451,13 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``analytic_type``   -- An ``AnalyticType`` or something which coerces into it (default: ``None``).
+        - ``analytic_type`` -- an ``AnalyticType`` or something which coerces
+          into it (default: ``None``)
 
-        - ``degree``          -- ``None`` (default) or the degree of the homogeneous component to which
-                                 ``self`` should be reduced.
+        - ``degree`` -- ``None`` (default) or the degree of the homogeneous
+          component to which ``self`` should be reduced
 
-        OUTPUT:
-
-        The new reduced space.
+        OUTPUT: the new reduced space
 
         EXAMPLES::
 
@@ -646,7 +641,7 @@ class FormsRing_abstract(Parent):
 
     def get_d(self, fix_d=False, d_num_prec=None):
         r"""
-        Return the parameter ``d`` of self either as a formal
+        Return the parameter ``d`` of ``self`` either as a formal
         parameter or as a numerical approximation with the specified
         precision (resp. an exact value in the arithmetic cases).
 
@@ -655,18 +650,14 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``fix_d``      -- If ``False`` (default) a formal parameter is
-                            used for ``d``.
+        - ``fix_d`` -- if ``False`` (default) a formal parameter is
+          used for ``d``. If ``True`` then the numerical value of ``d`` is used
+          (or an exact value if the group is arithmetic). Otherwise, the given
+          value is used for ``d``.
 
-                            If ``True`` then the numerical value of
-                            ``d`` is used (or an exact value if the
-                            group is arithmetic).  Otherwise, the given
-                            value is used for ``d``.
-
-        - ``d_num_prec`` -- An integer.  The numerical precision of
-                            ``d``. Default: ``None``, in which case
-                            the default numerical precision of
-                            ``self.parent()`` is used.
+        - ``d_num_prec`` -- integer (default: ``None``); the numerical
+          precision of ``d``. By default, the default numerical precision of
+          ``self.parent()`` is used.
 
         OUTPUT:
 
@@ -718,18 +709,18 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``prec``       -- An integer or ``None`` (default), namely the desired default
-                            precision of the space of power series. If nothing is specified
-                            the default precision of ``self`` is used.
+        - ``prec`` -- an integer or ``None`` (default), namely the desired
+          default precision of the space of power series. If nothing is
+          specified the default precision of ``self`` is used.
 
-        - ``fix_d``      -- If ``False`` (default) a formal parameter is used for ``d``.
-                            If ``True`` then the numerical value of ``d`` is used
-                            (resp. an exact value if the group is arithmetic).
-                            Otherwise the given value is used for ``d``.
+        - ``fix_d`` -- if ``False`` (default) a formal parameter is used for
+          ``d``. If ``True`` then the numerical value of ``d`` is used (resp.
+          an exact value if the group is arithmetic). Otherwise the given value
+          is used for ``d``.
 
-        - ``d_num_prec`` -- The precision to be used if a numerical value for ``d`` is substituted.
-                            Default: ``None`` in which case the default
-                            numerical precision of ``self.parent()`` is used.
+        - ``d_num_prec`` -- the precision to be used if a numerical value for
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
         OUTPUT:
 
@@ -1020,9 +1011,9 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``k``  -- An integer.
+        - ``k`` -- integer
 
-        - ``ep`` -- `+1` or `-1`.
+        - ``ep`` -- `+1` or `-1`
 
         EXAMPLES::
 
@@ -1727,7 +1718,6 @@ class FormsRing_abstract(Parent):
         It is in particular also a generator of the graded ring of
         ``self`` and  the polynomial variable ``z`` exactly corresponds to ``E2``.
 
-
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiMeromorphicModularFormsRing, QuasiModularFormsRing, CuspFormsRing
@@ -1791,11 +1781,10 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``k``  -- A non-negative even integer, namely the weight.
-
-                    If ``k=None`` (default) then the weight of ``self``
-                    is choosen if ``self`` is homogeneous and the
-                    weight is possible, otherwise ``k=0`` is set.
+        - ``k`` -- a nonnegative even integer, namely the weight.
+          If ``k`` is ``None`` (default) then the weight of ``self`` is chosen if
+          ``self`` is homogeneous and the weight is possible, otherwise ``k``
+          is set to `0`.
 
         OUTPUT:
 
@@ -1894,7 +1883,7 @@ class FormsRing_abstract(Parent):
                 raise TypeError(None)
             k = 2*ZZ(k/2)
         except TypeError:
-            raise TypeError("k={} must be a non-negative even integer!".format(k))
+            raise TypeError("k={} must be a nonnegative even integer!".format(k))
 
         # The case n=infinity is special (there are 2 cusps)
         # Until we/I get confirmation what is what sort of Eisenstein series

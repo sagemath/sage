@@ -170,20 +170,20 @@ from copy import deepcopy
 
 class PseudolineArrangement:
 
-    def __init__(self, seq, encoding="auto"):
+    def __init__(self, seq, encoding='auto'):
         r"""
-        Creates an arrangement of pseudolines.
+        Create an arrangement of pseudolines.
 
         INPUT:
 
-        - ``seq`` (a sequence describing the line arrangement). It can be:
+        - ``seq`` -- a sequence describing the line arrangement. It can be:
 
           - A list of `n` permutations of size `n-1`.
           - A list of `\binom n 2` transpositions
           - A Felsner matrix, given as a sequence of `n` binary vectors of
             length `n-1`.
 
-        - ``encoding`` (information on how the data should be interpreted), and
+        - ``encoding`` -- information on how the data should be interpreted, and
           can assume any value among 'transpositions', 'permutations', 'Felsner'
           or 'auto'. In the latter case, the type will be guessed (default
           behaviour).
@@ -275,7 +275,7 @@ class PseudolineArrangement:
 
             i = 0
             while crossings > 0:
-                if (seq[i] != [] and
+                if (seq[i] and
                     (seq[i][0] == 0 and
                      seq[i+1][0] == 1)):
 
@@ -290,7 +290,7 @@ class PseudolineArrangement:
                     seq[i].pop(0)
                     seq[i+1].pop(0)
 
-                    if i > 0 and seq[i-1] is not []:
+                    if i > 0 and seq[i - 1]:
                         i -= 1
                     else:
                         i += 1
@@ -462,8 +462,8 @@ class PseudolineArrangement:
             l.append((x+2, l[-1][1]))
             L += line(l)
 
-            L += text(str(i), (0, l[0][1]+.3), horizontal_alignment="right")
-            L += text(str(i), (x+2, l[-1][1]+.3), horizontal_alignment="left")
+            L += text(str(i), (0, l[0][1]+.3), horizontal_alignment='right')
+            L += text(str(i), (x+2, l[-1][1]+.3), horizontal_alignment='left')
 
         return L.show(axes=False, **args)
 

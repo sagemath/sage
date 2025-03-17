@@ -300,10 +300,10 @@ class multiples:
 
         INPUT:
 
-        - ``P`` -- step value: any Sage object on which a binary operation is defined
-        - ``n`` -- number of multiples: non-negative integer
-        - ``P0`` - offset (default 0): Sage object which can be 'added' to P
-        - ``indexed`` -- boolean (default ``False``)
+        - ``P`` -- step value; any Sage object on which a binary operation is defined
+        - ``n`` -- number of multiples; nonnegative integer
+        - ``P0`` -- offset (default: 0); Sage object which can be 'added' to P
+        - ``indexed`` -- boolean (default: ``False``)
 
           If ``indexed==False``, then the iterator delivers ``P0+i*P``
           (if ``operation=='+'``) or ``P0*P**i`` (if
@@ -392,13 +392,13 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     - ``bounds`` -- a 2-tuple of integers ``(lower,upper)`` with ``0<=lower<=upper``
     - ``operation`` -- string: ``'*'``, ``'+'``, other
     - ``identity`` -- the identity element of the group
-    - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
 
     OUTPUT:
 
     An integer `n` such that `a^n = b` (or `na = b`).  If no
-    such `n` exists, this function raises a :class:`ValueError` exception.
+    such `n` exists, this function raises a :exc:`ValueError` exception.
 
     .. NOTE::
 
@@ -526,11 +526,11 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     - ``base`` -- a group element
     - ``ord`` -- the order of ``base`` or ``None``, in this case we try
       to compute it
-    - ``operation`` -- a string (default: ``'*'``) denoting whether we
+    - ``operation`` -- string (default: ``'*'``); denoting whether we
       are in an additive group or a multiplicative one
     - ``identity`` -- the group's identity
-    - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
     - ``hash_function`` -- having an efficient hash function is critical
       for this algorithm (see examples)
 
@@ -570,7 +570,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
         ...
         ValueError: for Pollard rho algorithm the order of the group must be prime
 
-    If it fails to find a suitable logarithm, it raises a :class:`ValueError`::
+    If it fails to find a suitable logarithm, it raises a :exc:`ValueError`::
 
         sage: I = IntegerModRing(171980)
         sage: discrete_log_rho(I(31002), I(15501))                                      # needs sage.libs.pari
@@ -686,7 +686,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     raise ValueError("Pollard rho algorithm failed to find a logarithm")
 
 
-def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs'):
+def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs', *, verify=True):
     r"""
     Totally generic discrete log function.
 
@@ -702,6 +702,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - ``op`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
     - ``algorithm`` -- string denoting what algorithm to use for prime-order
       logarithms: ``'bsgs'``, ``'rho'``, ``'lambda'``
+    - ``verify`` -- boolean (default: ``True``); whether to verify that output is
+      correct before returning it.
 
     ``a`` and ``base`` must be elements of some group with identity
     given by ``identity``, inverse of ``x`` by ``inverse(x)``, and group
@@ -717,7 +719,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     assuming that ``ord`` is a multiple of the order of the base `b`.
     If ``ord`` is not specified, an attempt is made to compute it.
 
-    If no such `n` exists, this function raises a :class:`ValueError` exception.
+    If no such `n` exists, this function raises a :exc:`ValueError` exception.
 
     .. WARNING::
 
@@ -784,7 +786,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(eta,eps,bounds=(0,100))                                      # needs sage.rings.number_field
         Traceback (most recent call last):
         ...
-        ValueError: no discrete log of -11515*a - 55224 found to base 5*a - 24
+        ValueError: no discrete log of -11515*a - 55224 found to base 5*a - 24 with bounds (0, 100)
 
     But we can invert the base (and negate the result) instead::
 
@@ -888,6 +890,16 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ....: else:
         ....:     assert res == sol
 
+    Verify that :issue:`38316` is fixed::
+
+        sage: F = GF(5)
+        sage: base = F(3)
+        sage: a = F(1)
+        sage: discrete_log(a, base, bounds=(1,2), operation="*")
+        Traceback (most recent call last):
+        ...
+        ValueError: no discrete log of 1 found to base 3 with bounds (1, 2)
+
     AUTHORS:
 
     - William Stein and David Joyner (2005-01-05)
@@ -897,6 +909,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     from operator import mul, add, pow
     power = mul if operation in addition_names else pow
     mult = add if operation in addition_names else mul
+    original_a = a # Store the original value of a so we can verify the answer
     if op:
         mult = op
         power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
@@ -963,9 +976,13 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                 break  # we have log%running_mod. if we know that log<running_mod, then we have the value of log.
         l = l[:i + 1]
         from sage.arith.misc import CRT_list
-        return (CRT_list(l, mods) + offset) % ord
+        result = (CRT_list(l, mods) + offset) % ord
+        if (verify and power(base, result) != original_a):
+            raise ValueError
+        return result
     except ValueError:
-        raise ValueError("no discrete log of %s found to base %s" % (a, base))
+        with_bounds = f" with bounds {bounds}" if bounds else ""
+        raise ValueError(f"no discrete log of {original_a} found to base {base}{with_bounds}")
 
 
 def discrete_log_generic(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs'):
@@ -984,14 +1001,14 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 
     INPUT:
 
-    - a -- a group element
-    - base -- a group element
-    - bounds -- a couple (lb,ub) representing the range where we look for a logarithm
-    - operation -- string: '+', '*' or 'other'
-    - identity -- the identity element of the group
-    - inverse() -- function of 1 argument ``x`` returning inverse of ``x``
-    - op() -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
-    - hash_function -- having an efficient hash function is critical for this algorithm
+    - ``a`` -- a group element
+    - ``base`` -- a group element
+    - ``bounds`` -- a couple (lb,ub) representing the range where we look for a logarithm
+    - ``operation`` -- string: '+', '*' or 'other'
+    - ``identity`` -- the identity element of the group
+    - ``inverse`` -- function of 1 argument ``x`` returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
+    - ``hash_function`` -- having an efficient hash function is critical for this algorithm
 
     OUTPUT: integer `n` such that `a=base^n` (or `a=n*base`)
 
@@ -1025,7 +1042,6 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
     AUTHOR:
 
         -- Yann Laigle-Chapuy (2009-01-25)
-
     """
     from sage.rings.integer import Integer
     from operator import mul, add
@@ -1201,13 +1217,13 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     INPUT:
 
     - ``P`` -- a Sage object which is a group element
-    - ``m`` -- a Sage integer which is a multiple of the order of ``P``,
+    - ``m`` -- Sage integer which is a multiple of the order of ``P``,
       i.e. we require that ``m*P=0`` (or ``P**m=1``)
     - ``check`` -- a Boolean (default: ``True``), indicating whether we check if ``m``
       really is a multiple of the order
     - ``factorization`` -- the factorization of ``m``, or ``None`` in which
       case this function will need to factor ``m``
-    - ``plist`` -- a list of the prime factors of ``m``, or ``None``. Kept for compatibility only,
+    - ``plist`` -- list of the prime factors of ``m``, or ``None``. Kept for compatibility only,
       prefer the use of ``factorization``
     - ``operation`` -- string: ``'+'`` (default), ``'*'`` or ``None``
     - ``identity`` -- the identity element of the group
@@ -1258,6 +1274,17 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: K.<a> = GF(3^60)
         sage: order_from_multiple(a, 3^60 - 1, operation='*', check=False)
         42391158275216203514294433200
+
+    TESTS:
+
+    Check that :issue:`38489` is fixed::
+
+        sage: from sage.groups.generic import order_from_multiple
+        sage: plist = [43, 257, 547, 881]
+        sage: m = prod(plist[:-1])
+        sage: elt = Zmod(m)(plist[-1])
+        sage: order_from_multiple(elt, m, plist=plist)
+        6044897
     """
     Z = integer_ring.ZZ
 
@@ -1326,6 +1353,8 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
                 if abs(sum_left + v - (S / 2)) > abs(sum_left - (S / 2)):
                     break
                 sum_left += v
+            if not 0 < k < l:
+                k = l // 2
             L1 = L[:k]
             L2 = L[k:]
             # recursive calls
@@ -1354,14 +1383,14 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     - ``d`` -- (optional) a positive integer; only ``m`` which are
       multiples of this will be considered
 
-    - ``operation`` -- string: ``'+'`` (default ) or ``'*'`` or other.
+    - ``operation`` -- string; ``'+'`` (default) or ``'*'`` or other.
       If other, the following must be supplied:
 
-      - ``identity`` -- the identity element for the group;
-      - ``inverse()`` -- a function of one argument giving the inverse
-        of a group element;
-      - ``op()`` -- a function of 2 arguments defining the group binary
-        operation.
+      - ``identity`` -- the identity element for the group
+      - ``inverse`` -- a function of one argument giving the inverse
+        of a group element
+      - ``op`` -- a function of 2 arguments defining the group binary
+        operation
 
     .. NOTE::
 
@@ -1490,12 +1519,18 @@ def has_order(P, n, operation='+'):
         sage: has_order(x, -8)
         False
 
+    Check for :issue:`38708`::
+
+        sage: has_order(Mod(2,3), int(2), operation='*')
+        True
+
     .. NOTE::
 
         In some cases, order *testing* can be much faster than
         *computing* the order using :func:`order_from_multiple`.
     """
-    if isinstance(n, sage.rings.integer.Integer):
+    if not isinstance(n, sage.structure.factorization.Factorization):
+        n = integer_ring.ZZ(n)
         if n <= 0:
             return False
         n = n.factor()
@@ -1540,14 +1575,14 @@ def merge_points(P1, P2, operation='+',
 
     - ``P1`` -- a pair `(g_1,n_1)` where `g_1` is a group element of order `n_1`
     - ``P2`` -- a pair `(g_2,n_2)` where `g_2` is a group element of order `n_2`
-    - ``operation`` -- string: ``'+'`` (default) or ``'*'`` or other. If
+    - ``operation`` -- string; ``'+'`` (default) or ``'*'`` or other. If
       other, the following must be supplied:
 
-      - ``identity`` -- the identity element for the group;
-      - ``inverse()`` -- a function of one argument giving the inverse
-        of a group element;
-      - ``op()`` -- a function of 2 arguments defining the group
-        binary operation.
+      - ``identity`` -- the identity element for the group
+      - ``inverse`` -- a function of one argument giving the inverse
+        of a group element
+      - ``op`` -- a function of 2 arguments defining the group
+        binary operation
 
     OUTPUT: a pair `(g_3,n_3)` where `g_3` has order `n_3=\hbox{lcm}(n_1,n_2)`
 
@@ -1626,7 +1661,7 @@ def structure_description(G, latex=False):
 
     INPUT:
 
-    - ``latex`` -- a boolean (default: ``False``); if ``True``, return a
+    - ``latex`` -- boolean (default: ``False``); if ``True``, return a
       LaTeX formatted string
 
     OUTPUT: string

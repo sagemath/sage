@@ -61,21 +61,19 @@ class SymbolicLogic:
     """
     def statement(self, s):
         r"""
-        Return a token list to be used by other functions in the class
+        Return a token list to be used by other functions in the class.
 
         INPUT:
 
-        - ``s`` -- a string containing the logic expression to be manipulated
+        - ``s`` -- string containing the logic expression to be manipulated
 
-        - ``global vars`` -- a dictionary with variable names as keys and the
+        - ``global vars`` -- dictionary with variable names as keys and the
           variables' current boolean values as dictionary values
 
-        - ``global vars_order`` -- a list of the variables in the order
+        - ``global vars_order`` -- list of the variables in the order
           that they are found
 
-        OUTPUT:
-
-        A list of length three containing the following in this order:
+        OUTPUT: list of length three containing the following in this order:
 
         1. a list of tokens
         2. a dictionary of variable/value pairs
@@ -119,13 +117,13 @@ class SymbolicLogic:
 
         INPUT:
 
-        - ``statement`` -- a list; it contains the tokens and the two global
+        - ``statement`` -- list; it contains the tokens and the two global
           variables vars and vars_order
 
-        - ``start`` -- (default: 0) an integer; this represents the row of
+        - ``start`` -- integer (default: 0); this represents the row of
           the truth table from which to start
 
-        - ``end`` -- (default: -1) an integer; this represents the last row
+        - ``end`` -- integer (default: -1); this represents the last row
           of the truth table to be created
 
         OUTPUT:
@@ -206,9 +204,7 @@ class SymbolicLogic:
         - ``table`` -- object created by :meth:`truthtable()` method; it
           contains the variable values and the evaluation of the statement
 
-        OUTPUT:
-
-        A formatted version of the truth table.
+        OUTPUT: a formatted version of the truth table
 
         EXAMPLES:
 
@@ -292,9 +288,7 @@ class SymbolicLogic:
         - ``statement1`` -- the first statement
         - ``statement2`` -- the second statement
 
-        OUTPUT:
-
-        A new statement which or'd the given statements together.
+        OUTPUT: a new statement which or'd the given statements together
 
         EXAMPLES::
 
@@ -375,13 +369,11 @@ def get_bit(x, c):
 
     INPUT:
 
-    - ``x`` -- an integer; this is the number from which to take the bit
+    - ``x`` -- integer; this is the number from which to take the bit
 
-    - ``c`` -- an integer; this is the bit number to be taken
+    - ``c`` -- integer; this is the bit number to be taken
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if bit ``c`` of ``x`` is 1.
 
@@ -416,11 +408,9 @@ def eval(toks):
 
     INPUT:
 
-    - ``toks`` -- a list of tokens; this represents a boolean expression
+    - ``toks`` -- list of tokens; this represents a boolean expression
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if expression evaluates to ``True``.
 
@@ -459,12 +449,10 @@ def eval_ltor_toks(lrtoks):
 
     INPUT:
 
-    - ``lrtoks`` -- a list of tokens; this represents a part of a boolean
+    - ``lrtoks`` -- list of tokens; this represents a part of a boolean
       formula that contains no inner parentheses
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if expression evaluates to ``True``.
 
@@ -498,7 +486,7 @@ def reduce_bins(lrtoks):
 
     INPUT:
 
-    - ``lrtoks`` -- a list of tokens; this represents a part of a boolean
+    - ``lrtoks`` -- list of tokens; this represents a part of a boolean
       formula that contains no inner parentheses or monotonic operators
 
     OUTPUT:
@@ -536,7 +524,7 @@ def reduce_monos(lrtoks):
 
     INPUT:
 
-    - ``lrtoks`` -- a list of tokens; this represents a part of a boolean
+    - ``lrtoks`` -- list of tokens; this represents a part of a boolean
       expression that contains now inner parentheses
 
     OUTPUT:
@@ -573,12 +561,10 @@ def eval_mon_op(args):
 
     INPUT:
 
-    - ``args`` -- a list of length 2; this contains the token 'NOT' and
+    - ``args`` -- list of length 2; this contains the token 'NOT' and
       then a variable name
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if the variable in ``args`` is ``False``.
 
@@ -611,7 +597,7 @@ def eval_bin_op(args):
 
     INPUT:
 
-    - ``args`` -- a list of length 3; this contains a variable name,
+    - ``args`` -- list of length 3; this contains a variable name,
       then a binary operator, and then a variable name, in that order
 
     OUTPUT:
@@ -663,15 +649,13 @@ def eval_and_op(lval, rval):
 
     INPUT:
 
-    - ``lval`` -- a string; this represents the value of the variable
+    - ``lval`` -- string; this represents the value of the variable
       appearing to the left of the 'and' operator
 
-    - ``rval`` -- a string; this represents the value of the variable
+    - ``rval`` -- string; this represents the value of the variable
       appearing to the right of the 'and' operator
 
-    OUTPUT:
-
-    The result of applying 'and' to ``lval`` and ``rval`` as a string.
+    OUTPUT: the result of applying 'and' to ``lval`` and ``rval`` as a string
 
     .. NOTE::
 
@@ -697,15 +681,13 @@ def eval_or_op(lval, rval):
 
     INPUT:
 
-    - ``lval`` -- a string; this represents the value of the variable
+    - ``lval`` -- string; this represents the value of the variable
       appearing to the left of the 'or' operator
 
-    - ``rval`` -- a string; this represents the value of the variable
+    - ``rval`` -- string; this represents the value of the variable
       appearing to the right of the 'or' operator
 
-    OUTPUT:
-
-    A string representing the result of applying 'or' to ``lval`` and ``rval``.
+    OUTPUT: string representing the result of applying 'or' to ``lval`` and ``rval``
 
     .. NOTE::
 
@@ -731,10 +713,10 @@ def eval_ifthen_op(lval, rval):
 
     INPUT:
 
-    - ``lval`` -- a string; this represents the value of the variable
+    - ``lval`` -- string; this represents the value of the variable
       appearing to the left of the 'if then' operator
 
-    - ``rval`` -- a string;t his represents the value of the variable
+    - ``rval`` -- string; this represents the value of the variable
       appearing to the right of the 'if then' operator
 
     OUTPUT:
@@ -766,10 +748,10 @@ def eval_iff_op(lval, rval):
 
     INPUT:
 
-    - ``lval`` -- a string; this represents the value of the variable
+    - ``lval`` -- string; this represents the value of the variable
       appearing to the left of the 'if and only if' operator
 
-    - ``rval`` -- a string; this represents the value of the variable
+    - ``rval`` -- string; this represents the value of the variable
       appearing to the right of the 'if and only if' operator
 
     OUTPUT:
@@ -801,13 +783,11 @@ def tokenize(s, toks):
 
     INPUT:
 
-    - ``s`` -- a string; this contains a boolean expression
+    - ``s`` -- string; this contains a boolean expression
 
-    - ``toks`` -- a list; this will be populated with the tokens of ``s``
+    - ``toks`` -- list; this will be populated with the tokens of ``s``
 
-    OUTPUT:
-
-    ``None``; the tokens of ``s`` are placed in ``toks``.
+    OUTPUT: none; the tokens of ``s`` are placed in ``toks``
 
     .. NOTE::
 

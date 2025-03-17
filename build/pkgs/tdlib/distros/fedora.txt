@@ -1,0 +1,2 @@
+python3-tdlib
+python3-tdlib-devel

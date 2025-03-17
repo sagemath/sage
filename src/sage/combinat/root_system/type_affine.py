@@ -158,8 +158,8 @@ class AmbientSpace(CombinatorialFreeModule):
             return (1 if isinstance(x, str) else 0, x)
         CombinatorialFreeModule.__init__(self, base_ring,
                                          basis_keys,
-                                         prefix="e",
-                                         latex_prefix="e",
+                                         prefix='e',
+                                         latex_prefix='e',
                                          sorting_key=sortkey,
                                          category=WeightLatticeRealizations(base_ring))
         self._weight_space = self.root_system.weight_space(base_ring=base_ring,extended=True)
@@ -170,7 +170,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
     def _name_string(self, capitalize=True, base_ring=False, type=True):
         r"""
-        Utility to implement _repr_
+        Utility to implement _repr_.
 
         EXAMPLES::
 
@@ -402,7 +402,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
     def _plot_projection(self, x):
         r"""
-        Implements the default projection to be used for plots
+        Implement the default projection to be used for plots.
 
         For affine ambient spaces, the default implementation is to
         project onto the classical coordinates according to the

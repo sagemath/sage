@@ -25,7 +25,7 @@ AUTHORS:
 - Bill Page (2006-10): Created this (based on Maxima interface)
 
 
-  .. note::
+  .. NOTE::
 
      Bill Page put a huge amount of effort into the Sage Axiom
      interface over several days during the Sage Days 2 coding
@@ -35,7 +35,7 @@ AUTHORS:
 
 - Bill Page (2007-08): Minor modifications to support axiom4sage-0.3
 
-.. note::
+.. NOTE::
 
    The axiom4sage-0.3.spkg is based on an experimental version of the
    FriCAS fork of the Axiom project by Waldek Hebisch that uses
@@ -43,7 +43,7 @@ AUTHORS:
    clisp.
 
 If the string "error" (case insensitive) occurs in the output of
-anything from axiom, a :class:`RuntimeError` exception is raised.
+anything from axiom, a :exc:`RuntimeError` exception is raised.
 
 EXAMPLES: We evaluate a very simple expression in axiom.
 
@@ -279,7 +279,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
 
     def _quit_string(self):
         """
-        Returns the string used to quit Axiom.
+        Return the string used to quit Axiom.
 
         EXAMPLES::
 
@@ -299,7 +299,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
 
     def _commands(self):
         """
-        Returns a list of commands available. This is done by parsing the
+        Return a list of commands available. This is done by parsing the
         result of the first section of the output of ')what things'.
 
         EXAMPLES::
@@ -322,7 +322,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
 
     def _tab_completion(self, verbose=True, use_disk_cache=True):
         """
-        Returns a list of all the commands defined in Axiom and optionally
+        Return a list of all the commands defined in Axiom and optionally
         (per default) store them to disk.
 
         EXAMPLES::
@@ -383,7 +383,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
             sage: axiom.set('xx', '2')    #optional - axiom
             sage: axiom.get('xx')         #optional - axiom
             '2'
-
         """
         cmd = '%s := %s' % (var, value)
         out = self._eval_line(cmd, reformat=False)
@@ -525,7 +524,7 @@ class Axiom(PanAxiom):
 
     def _function_element_class(self):
         """
-        Returns the Axiom function element class.
+        Return the Axiom function element class.
 
         EXAMPLES::
 
@@ -615,7 +614,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
     def type(self):
         """
-        Returns the type of an AxiomElement.
+        Return the type of an AxiomElement.
 
         EXAMPLES::
 
@@ -644,9 +643,9 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
     def __getitem__(self, n):
         r"""
-        Return the n-th element of this list.
+        Return the `n`-th element of this list.
 
-        .. note::
+        .. NOTE::
 
            Lists are 1-based.
 
@@ -677,7 +676,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
     def comma(self, *args):
         """
-        Returns a Axiom tuple from self and args.
+        Return an Axiom tuple from ``self`` and ``args``.
 
         EXAMPLES::
 
@@ -724,7 +723,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
     def as_type(self, type):
         """
-        Returns self as type.
+        Return ``self`` as type.
 
         EXAMPLES::
 
@@ -734,7 +733,6 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             1.2
             sage: _.type()                     #optional - axiom
             DoubleFloat
-
         """
         P = self._check_valid()
         type = P(type)
@@ -752,7 +750,6 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
               x  + 1
             sage: a.unparsed_input_form() #optional - axiom
             'x*x+1'
-
         """
         P = self._check_valid()
         s = P.eval('unparse(%s::InputForm)' % self._name)
@@ -768,7 +765,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
     def _sage_(self):
         """
-        Convert self to a Sage object.
+        Convert ``self`` to a Sage object.
 
         EXAMPLES::
 
@@ -824,8 +821,6 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             y^2 + x^2 + 1/2
             sage: _.parent()
             Multivariate Polynomial Ring in y, x over Rational Field
-
-
         """
         P = self._check_valid()
         type = str(self.type())
@@ -949,7 +944,7 @@ AxiomExpectFunction = PanAxiomExpectFunction
 
 def is_AxiomElement(x):
     """
-    Return True if ``x`` is of type :class:`AxiomElement`.
+    Return ``True`` if ``x`` is of type :class:`AxiomElement`.
 
     EXAMPLES::
 
@@ -973,7 +968,7 @@ axiom = Axiom(name='axiom')
 
 def reduce_load_Axiom():
     """
-    Returns the Axiom interface object defined in
+    Return the Axiom interface object defined in
     sage.interfaces.axiom.
 
     EXAMPLES::
@@ -1000,7 +995,6 @@ def axiom_console():
            Issue )summary for a summary of useful system commands.
            Issue )quit to leave AXIOM and return to shell.
         -----------------------------------------------------------------------------
-
     """
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():

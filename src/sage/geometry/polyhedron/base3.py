@@ -38,6 +38,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from .base2 import Polyhedron_base2
 
+
 class Polyhedron_base3(Polyhedron_base2):
     """
     Methods related to the combinatorics of a polyhedron.
@@ -73,7 +74,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
     def _init_empty_polyhedron(self):
         """
-        Initializes an empty polyhedron.
+        Initialize an empty polyhedron.
 
         TESTS::
 
@@ -380,7 +381,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         INPUT:
 
-        - ``face_dimension`` -- integer (default ``None``),
+        - ``face_dimension`` -- integer (default: ``None``);
           yield only faces of this dimension if specified
 
         - ``algorithm`` -- string (optional);
@@ -610,12 +611,12 @@ class Polyhedron_base3(Polyhedron_base2):
 
     def faces(self, face_dimension):
         """
-        Return the faces of given dimension
+        Return the faces of given dimension.
 
         INPUT:
 
-        - ``face_dimension`` -- integer. The dimension of the faces
-          whose representation will be returned.
+        - ``face_dimension`` -- integer; the dimension of the faces
+          whose representation will be returned
 
         OUTPUT:
 
@@ -838,9 +839,7 @@ class Polyhedron_base3(Polyhedron_base2):
         """
         Return the bounded edges (excluding rays and lines).
 
-        OUTPUT:
-
-        A generator for pairs of vertices, one pair per edge.
+        OUTPUT: a generator for pairs of vertices, one pair per edge
 
         EXAMPLES::
 
@@ -1206,7 +1205,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
     def is_simplicial(self):
         """
-        Tests if the polytope is simplicial
+        Test if the polytope is simplicial.
 
         A polytope is simplicial if every facet is a simplex.
 
@@ -1253,9 +1252,7 @@ class Polyhedron_base3(Polyhedron_base2):
           to return a vertex of the polytope which is the apex of a pyramid,
           if found
 
-        OUTPUT:
-
-        If ``certificate`` is ``True``, returns a tuple containing:
+        OUTPUT: if ``certificate`` is ``True``, returns a tuple containing:
 
         1. Boolean.
         2. The apex of the pyramid or ``None``.
@@ -1303,9 +1300,7 @@ class Polyhedron_base3(Polyhedron_base2):
           to return two vertices of the polytope which are the apices of a
           bipyramid, if found
 
-        OUTPUT:
-
-        If ``certificate`` is ``True``, returns a tuple containing:
+        OUTPUT: if ``certificate`` is ``True``, returns a tuple containing:
 
         1. Boolean.
         2. ``None`` or a tuple containing:
@@ -1360,9 +1355,7 @@ class Polyhedron_base3(Polyhedron_base2):
           to return two facets of the polytope which are the bases of a prism,
           if found
 
-        OUTPUT:
-
-        If ``certificate`` is ``True``, returns a tuple containing:
+        OUTPUT: if ``certificate`` is ``True``, returns a tuple containing:
 
         1. Boolean.
         2. ``None`` or a tuple containing:
@@ -1500,7 +1493,6 @@ class Polyhedron_base3(Polyhedron_base2):
             3
             sage: [polytopes.cyclic_polytope(5,n).neighborliness() for n in range(6,10)]
             [6, 2, 2, 2]
-
         """
         return self.combinatorial_polyhedron().neighborliness()
 
@@ -1550,7 +1542,6 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: testpolys = [polytopes.cube(), polytopes.cyclic_polytope(6, 9), polytopes.simplex(6)]
             sage: [(P.neighborliness() >= P.dim() // 2) == P.is_neighborly() for P in testpolys]
             [True, True, True]
-
         """
         return self.combinatorial_polyhedron().is_neighborly()
 

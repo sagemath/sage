@@ -190,13 +190,13 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         """
         mpz_set(self._entries[i], (<Integer>value).value)
 
-    def list(self,copy=True):
+    def list(self, copy=True):
         """
         The list of entries of the vector.
 
         INPUT:
 
-        - ``copy``, ignored optional argument.
+        - ``copy`` -- ignored optional argument
 
         EXAMPLES::
 
@@ -223,7 +223,6 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         for i in range(self._degree):
             mpz_add(z._entries[i], self._entries[i], r._entries[i])
         return z
-
 
     cpdef _sub_(self, right):
         cdef Vector_integer_dense z, r
@@ -308,7 +307,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - singular -- \Singular interface instance (default: None)
+        - ``singular`` -- \Singular interface instance (default: ``None``)
 
         EXAMPLES::
 
@@ -326,7 +325,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         name = singular._next_var_name()
         values = str(self.list())[1:-1]
-        singular.eval("intvec %s = %s"%(name, values))
+        singular.eval("intvec %s = %s" % (name, values))
 
         from sage.interfaces.singular import SingularElement
         return SingularElement(singular, 'foobar', name, True)

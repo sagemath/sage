@@ -78,7 +78,7 @@ cdef class PythonPartitionStack:
             sage: P # implicit doctest
             PythonPartitionStack of degree 7 and depth 0.
         """
-        return "PythonPartitionStack of degree %d and depth %d."%(self.c_ps.degree, self.c_ps.depth)
+        return "PythonPartitionStack of degree %d and depth %d." % (self.c_ps.degree, self.c_ps.depth)
 
     def display(self):
         """
@@ -204,7 +204,7 @@ cdef class PythonPartitionStack:
 
     def set_entry(self, int i, int entry):
         """
-        Set the ith entry of the entries array to entry.
+        Set the `i`-th entry of the entries array to entry.
 
         EXAMPLES::
 
@@ -219,7 +219,7 @@ cdef class PythonPartitionStack:
 
     def get_entry(self, int i):
         """
-        Get the ith entry of the entries array.
+        Get the `i`-th entry of the entries array.
 
         EXAMPLES::
 
@@ -247,7 +247,7 @@ cdef class PythonPartitionStack:
 
     def set_level(self, int i, int level):
         """
-        Set the ith entry of the levels array to entry.
+        Set the `i`-th entry of the levels array to entry.
 
         EXAMPLES::
 
@@ -264,7 +264,7 @@ cdef class PythonPartitionStack:
 
     def get_level(self, int i):
         """
-        Get the ith entry of the levels array.
+        Get the `i`-th entry of the levels array.
 
         EXAMPLES::
 
@@ -333,6 +333,7 @@ cdef class PythonPartitionStack:
                     cell = []
         return partition
 
+
 class PythonObjectWrapper:
     """
     Instances of this class wrap a Python object and the refinement functions.
@@ -344,11 +345,11 @@ class PythonObjectWrapper:
         EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
-            sage: def acae(a,b):
+            sage: def acae(a, b):
             ....:  return 0
-            sage: def rari(a,b,c):
+            sage: def rari(a, b, c):
             ....:  return 0
-            sage: def cs(a,b,c,d,e):
+            sage: def cs(a, b, c, d, e):
             ....:  return 0
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
             sage: P = PythonObjectWrapper(None, acae, rari, cs, 7) # implicit doctest
@@ -367,6 +368,7 @@ class PythonObjectWrapper:
         self.acae_fn = acae_fn
         self.rari_fn = rari_fn
         self.cs_fn = cs_fn
+
 
 cdef bint all_children_are_equivalent_python(PartitionStack *PS, void *S) noexcept:
     """
@@ -397,6 +399,7 @@ cdef int compare_structures_python(int *gamma_1, int *gamma_2, void *S1, void *S
     cdef list gamma_1_py = [gamma_1[i] for i from 0 <= i < degree]
     cdef list gamma_2_py = [gamma_2[i] for i from 0 <= i < degree]
     return S1_obj.cs_fn(gamma_1_py, gamma_2_py, S1_obj.obj, S2_obj.obj, degree)
+
 
 def aut_gp_and_can_lab_python(S, partition, n,
     all_children_are_equivalent,
@@ -431,11 +434,11 @@ def aut_gp_and_can_lab_python(S, partition, n,
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_python import aut_gp_and_can_lab_python
-        sage: def acae(a,b):
+        sage: def acae(a, b):
         ....:  return 0
-        sage: def rari(a,b,c):
+        sage: def rari(a, b, c):
         ....:  return 0
-        sage: def cs(a,b,c,d,e):
+        sage: def cs(a, b, c, d, e):
         ....:  return 0
         sage: aut_gp_and_can_lab_python(None, [[0,1,2,3],[4,5]], 6, acae, rari, cs, True, True, True)
         ([[0, 1, 3, 2, 4, 5],
@@ -447,7 +450,6 @@ def aut_gp_and_can_lab_python(S, partition, n,
          48)
         sage: factorial(4)*factorial(2)
         48
-
     """
     obj_wrapper = PythonObjectWrapper(S, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)
     cdef aut_gp_and_can_lab *output
@@ -489,7 +491,7 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
     refine_and_return_invariant,
     compare_structures):
     """
-    Calls the double coset function.
+    Call the double coset function.
 
     INPUT:
 
@@ -511,16 +513,16 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_python import double_coset_python
-        sage: def acae(a,b):
+        sage: def acae(a, b):
         ....:     return 0
-        sage: def rari(a,b,c):
+        sage: def rari(a, b, c):
         ....:     return 0
-        sage: def cs(a,b,c,d,e):
+        sage: def cs(a, b, c, d, e):
         ....:     return 0
         sage: double_coset_python(None, None, [[0,1,2,3],[4,5]], [2,3,1,5,0,4], 6, acae, rari, cs)
         [1, 2, 3, 5, 0, 4]
 
-        sage: def compare_lists(p1,p2,l1,l2,deg):
+        sage: def compare_lists(p1, p2, l1, l2, deg):
         ....:     for i in range(len(l1)):
         ....:         a1 = l1[p1[i]]
         ....:         a2 = l2[p2[i]]
@@ -530,7 +532,6 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
 
         sage: double_coset_python([0,0,1], [1,0,0], [[0,1,2]], [0,1,2], 3, acae, rari, compare_lists)
         [1, 2, 0]
-
     """
     obj_wrapper1 = PythonObjectWrapper(S1, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)
     obj_wrapper2 = PythonObjectWrapper(S2, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)

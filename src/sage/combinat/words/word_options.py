@@ -24,21 +24,21 @@ word_options = {'identifier': 'word: ',
 
 def WordOptions(**kwargs):
     """
-    Sets the global options for elements of the word class.
+    Set the global options for elements of the word class.
     The defaults are for words to be displayed in list notation.
 
     INPUT:
 
-    -  ``display`` - 'string' (default), or 'list', words are displayed in
-       string or list notation.
-    -  ``truncate`` - boolean (default: True), whether to truncate the string
-       output of long words (see truncate_length below).
-    -  ``truncate_length`` - integer (default: 40), if the length of the word
-       is greater than this integer, then the word is truncated.
-    -  ``letter_separator`` - (string, default: ",") if the string
-       representation of letters have length greater than 1, then
-       the letters are separated by this string in the string
-       representation of the word.
+    - ``display`` -- 'string' (default), or 'list', words are displayed in
+      string or list notation
+    - ``truncate`` -- boolean (default: ``True``); whether to truncate the string
+      output of long words (see truncate_length below)
+    - ``truncate_length`` -- integer (default: 40); if the length of the word
+      is greater than this integer, then the word is truncated
+    - ``letter_separator`` -- string (default: ``','``); if the string
+      representation of letters have length greater than 1, then
+      the letters are separated by this string in the string
+      representation of the word
 
     If no parameters are set, then the function returns a copy of the
     options dictionary.
@@ -68,7 +68,7 @@ def WordOptions(**kwargs):
             word_options['display'] = kwargs['display']
     elif 'truncate' in kwargs:
         if not isinstance(kwargs['truncate'], bool):
-            raise ValueError("truncate must be True or False")
+            raise ValueError("truncate must be ``True`` or False")
         else:
             word_options['truncate'] = kwargs['truncate']
     elif 'truncate_length' in kwargs:
@@ -88,11 +88,11 @@ def WordOptions(**kwargs):
             word_options['identifier'] = kwargs['identifier']
     elif 'cache' in kwargs:
         if not isinstance(kwargs['cache'], bool):
-            raise ValueError("cache must be True or False")
+            raise ValueError("cache must be ``True`` or False")
         else:
             word_options['cache'] = kwargs['cache']
     elif 'old_repr' in kwargs:
         if not isinstance(kwargs['old_repr'], bool):
-            raise ValueError("old_repr must be True or False")
+            raise ValueError("old_repr must be ``True`` or False")
         else:
             word_options['old_repr'] = kwargs['old_repr']

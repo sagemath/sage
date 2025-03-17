@@ -464,7 +464,7 @@ Hecke triangle groups and elements:
   For each group element a very specific conjugacy representative
   can be obtained. For hyperbolic and parabolic elements the
   representative is a product ``V(j)``-matrices. They all
-  have non-negative trace and the number of factors is called
+  have nonnegative trace and the number of factors is called
   the block length of the element (which is implemented).
 
   Note: For this decomposition special care is given to the
@@ -559,7 +559,6 @@ Hecke triangle groups and elements:
       [      1     lam]
       [    lam lam + 2]
       sage: G.element_repr_method("default")
-
 
 
 Modular forms ring and spaces for Hecke triangle groups:
@@ -1016,12 +1015,12 @@ Modular forms ring and spaces for Hecke triangle groups:
       sage: QF = QuasiWeakModularForms(n=8, k=10/3, ep=-1)
       sage: QF.default_prec(1)
       sage: QF.quasi_part_gens(min_exp=-1)
-      [q^-1 + O(q),
+      (q^-1 + O(q),
        1 + O(q),
        q^-1 - 9/(128*d) + O(q),
        1 + O(q),
        q^-1 - 19/(64*d) + O(q),
-       q^-1 + 1/(64*d) + O(q)]
+       q^-1 + 1/(64*d) + O(q))
       sage: QF.default_prec(QF.required_laurent_prec(min_exp=-1))
       sage: QF.q_basis(min_exp=-1)    # long time
       [q^-1 + O(q^5),
@@ -1043,9 +1042,9 @@ Modular forms ring and spaces for Hecke triangle groups:
       3
       sage: MF.default_prec(2)
       sage: MF.gens()
-      [1 - 37/(200*d)*q + O(q^2),
+      (1 - 37/(200*d)*q + O(q^2),
        1 + 33/(200*d)*q + O(q^2),
-       1 - 27/(200*d)*q + O(q^2)]
+       1 - 27/(200*d)*q + O(q^2))
 
 
 - **Coordinate vectors for (quasi) holomorphic modular forms and (quasi) cusp forms:**
@@ -1136,7 +1135,7 @@ Modular forms ring and spaces for Hecke triangle groups:
       sage: MF.dimension()
       2
       sage: MF.gens()
-      [1 + 240*q^2 + 2160*q^4 + O(q^5), q - 8*q^2 + 28*q^3 - 64*q^4 + O(q^5)]
+      (1 + 240*q^2 + 2160*q^4 + O(q^5), q - 8*q^2 + 28*q^3 - 64*q^4 + O(q^5))
       sage: E4(i)
       1.941017189...
       sage: E4.order_at(-1)
@@ -1144,8 +1143,8 @@ Modular forms ring and spaces for Hecke triangle groups:
 
       sage: MF = (E2/E4).reduced_parent()
       sage: MF.quasi_part_gens(order_1=-1)
-      [1 - 40*q + 552*q^2 - 4896*q^3 + 33320*q^4 + O(q^5),
-       1 - 24*q + 264*q^2 - 2016*q^3 + 12264*q^4 + O(q^5)]
+      (1 - 40*q + 552*q^2 - 4896*q^3 + 33320*q^4 + O(q^5),
+       1 - 24*q + 264*q^2 - 2016*q^3 + 12264*q^4 + O(q^5))
       sage: prec = MF.required_laurent_prec(order_1=-1)
       sage: qexp = (E2/E4).q_expansion(prec=prec)
       sage: qexp
@@ -1197,7 +1196,6 @@ Modular forms ring and spaces for Hecke triangle groups:
      True
 
 
-
 Future ideas:
 -------------
 
@@ -1214,5 +1212,4 @@ Future ideas:
 - Support for general triangle groups (hard)
 
 - Support for "congruence" subgroups (hard)
-
 """

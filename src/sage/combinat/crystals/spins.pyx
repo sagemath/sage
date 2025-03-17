@@ -11,9 +11,9 @@ We follow Kashiwara and Nakashima (Journal of Algebra 165, 1994) in
 representing the elements of the spin crystal by sequences of signs
 `\pm`.
 """
-#TODO: Do we want the following two representations?
+# TODO: Do we want the following two representations?
 #
-#Two other representations are available as attributes
+# Two other representations are available as attributes
 #:meth:`Spin.internal_repn` and :meth:`Spin.signature` of the crystal element.
 #
 #- A numerical internal representation, an integer `n` such that if `n-1`
@@ -24,7 +24,7 @@ representing the elements of the spin crystal by sequences of signs
 #  ``-`` by `-1`.
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
 #                          Nicolas Thiery <nthiery at users.sf.net>
 #                          Daniel Bump    <bump at match.stanford.edu>
@@ -39,8 +39,8 @@ representing the elements of the spin crystal by sequences of signs
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from cysignals.memory cimport sig_malloc, sig_free
@@ -65,7 +65,7 @@ def CrystalOfSpins(ct):
     Return the spin crystal of the given type `B`.
 
     This is a combinatorial model for the crystal with highest weight
-    `Lambda_n` (the `n`-th fundamental weight). It has
+    `\Lambda_n` (the `n`-th fundamental weight). It has
     `2^n` elements, here called Spins. See also
     :func:`~sage.combinat.crystals.letters.CrystalOfLetters`,
     :func:`~sage.combinat.crystals.spins.CrystalOfSpinsPlus`,
@@ -73,7 +73,7 @@ def CrystalOfSpins(ct):
 
     INPUT:
 
-    -  ``['B', n]`` - A Cartan type `B_n`.
+    - ``['B', n]`` -- a Cartan type `B_n`
 
     EXAMPLES::
 
@@ -108,12 +108,12 @@ def CrystalOfSpinsPlus(ct):
     r"""
     Return the plus spin crystal of the given type D.
 
-    This is the crystal with highest weight `Lambda_n` (the
+    This is the crystal with highest weight `\Lambda_n` (the
     `n`-th fundamental weight).
 
     INPUT:
 
-    -  ``['D', n]`` - A Cartan type `D_n`.
+    - ``['D', n]`` -- a Cartan type `D_n`
 
     EXAMPLES::
 
@@ -141,12 +141,12 @@ def CrystalOfSpinsMinus(ct):
     r"""
     Return the minus spin crystal of the given type D.
 
-    This is the crystal with highest weight `Lambda_{n-1}`
+    This is the crystal with highest weight `\Lambda_{n-1}`
     (the `(n-1)`-st fundamental weight).
 
     INPUT:
 
-    -  ``['D', n]`` - A Cartan type `D_n`.
+    - ``['D', n]`` -- a Cartan type `D_n`
 
     EXAMPLES::
 
@@ -494,7 +494,7 @@ cdef class Spin(Element):
 
     def _latex_(self):
         r"""
-        Gives the latex output of a spin column.
+        Give the latex output of a spin column.
 
         EXAMPLES::
 

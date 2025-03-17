@@ -36,7 +36,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
     The integer-valued polynomial ring over a base ring `R`.
 
     Integer-valued polynomial rings are commutative and associative
-    algebras, with a basis indexed by non-negative integers.
+    algebras, with a basis indexed by nonnegative integers.
 
     There are two natural bases, made of the sequence
     `\binom{x}{n}` for `n \geq 0` (the *binomial basis*) and of
@@ -189,7 +189,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 Convert a polynomial into the ring of integer-valued polynomials.
 
-                This raises a :class:`ValueError` if this is not possible.
+                This raises a :exc:`ValueError` if this is not possible.
 
                 INPUT:
 
@@ -331,7 +331,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - `j` -- integer (default: 1)
+                - ``j`` -- integer (default: 1)
 
                 In the binomial basis, the shift by 1 corresponds to
                 a summation operator from `0` to `x`.
@@ -470,7 +470,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             CombinatorialFreeModule.__init__(self, A.base_ring(),
                                              NonNegativeIntegers(),
                                              category=A.Bases(),
-                                             prefix="S",
+                                             prefix='S',
                                              latex_prefix=r"\mathbb{S}")
 
         def _realization_name(self) -> str:
@@ -514,7 +514,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an integer
+            - ``i`` -- integer
 
             EXAMPLES::
 
@@ -537,7 +537,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``h`` -- a tuple or vector
+            - ``h`` -- tuple or vector
 
             .. SEEALSO:: :meth:`Element.h_vector`
 
@@ -692,7 +692,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an integer
+            - ``i`` -- integer
 
             EXAMPLES::
 
@@ -757,7 +757,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - `k` -- integer (default: 1)
+                - ``k`` -- integer (default: 1)
 
                 EXAMPLES::
 
@@ -981,7 +981,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             """
             CombinatorialFreeModule.__init__(self, A.base_ring(),
                                              NonNegativeIntegers(),
-                                             latex_prefix="",
+                                             latex_prefix='',
                                              category=A.Bases())
 
         def _realization_name(self) -> str:
@@ -1026,7 +1026,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an integer
+            - ``i`` -- integer
 
             EXAMPLES::
 
@@ -1174,7 +1174,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an integer
+            - ``i`` -- integer
 
             EXAMPLES::
 
@@ -1195,7 +1195,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - `k` -- integer (default: 1)
+                - ``k`` -- integer (default: 1)
 
                 EXAMPLES::
 

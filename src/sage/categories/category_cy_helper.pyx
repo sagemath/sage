@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fast functions for the category framework
 
@@ -5,18 +6,17 @@ Fast functions for the category framework
 AUTHOR:
 
 - Simon King (initial version)
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Simon King <simon.king@uni-jena.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 #######################################
 #  Sorting
@@ -47,7 +47,7 @@ cpdef tuple _sort_uniq(categories):
 
     INPUT:
 
-    - ``categories`` -- a list (or iterable) of categories
+    - ``categories`` -- list (or iterable) of categories
 
     OUTPUT: a sorted tuple of mutually incomparable categories
 
@@ -79,9 +79,9 @@ cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
 
     INPUT:
 
-    - ``categories`` -- a list (or iterable) of categories
+    - ``categories`` -- list (or iterable) of categories
 
-    - ``JoinCategory`` -- A type such that instances of that type will be
+    - ``JoinCategory`` -- a type such that instances of that type will be
       replaced by its super categories. Usually, this type is
       :class:`JoinCategory`.
 
@@ -122,12 +122,12 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
 
     INPUT:
 
-    - ``categories`` -- tuple of categories to be joined,
+    - ``categories`` -- tuple of categories to be joined
     - ``axioms`` -- tuple of strings; the names of some
-      supplementary axioms.
+      supplementary axioms
     - ``ignore_axioms`` -- tuple of pairs ``(cat, axiom)``, such
       that ``axiom`` will not be applied to ``cat``, should ``cat``
-      occur in the algorithm.
+      occur in the algorithm
 
     EXAMPLES::
 
@@ -294,7 +294,7 @@ cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms):
 
     - ``all_axioms`` -- all available axioms
 
-    - ``axioms`` -- a set (or iterable) of axioms
+    - ``axioms`` -- set (or iterable) of axioms
 
     .. NOTE::
 

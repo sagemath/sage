@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.graphs sage.combinat
 r"""
 Supercrystals
@@ -20,6 +21,7 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.crystals import Crystals
 from sage.categories.tensor import TensorProductsCategory
+
 
 class SuperCrystals(Category_singleton):
     def super_categories(self):
@@ -52,7 +54,7 @@ class SuperCrystals(Category_singleton):
                   Crystal of BKK tableaux of shape [2, 1] of gl(2|3)]
                 sage: G = T.digraph()
                 sage: H = S.digraph()
-                sage: G.is_isomorphic(H, edge_labels= True)
+                sage: G.is_isomorphic(H, edge_labels=True)
                 True
             """
             cartan_type = self.cartan_type()
@@ -119,7 +121,7 @@ class SuperCrystals(Category_singleton):
                         edge_opts['label'] = LatexExpr(str(l))
                     return edge_opts
 
-                G.set_latex_options(format="dot2tex", edge_labels=True, edge_options=edge_options)
+                G.set_latex_options(format='dot2tex', edge_labels=True, edge_options=edge_options)
                 return G
 
             def genuine_highest_weight_vectors(self):

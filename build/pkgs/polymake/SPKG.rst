@@ -50,14 +50,19 @@ you will need the ``local::lib`` Perl module installed::
 
    cpan -i XML::Writer XML::LibXML XML::LibXSLT File::Slurp Term::ReadLine::Gnu JSON SVG MongoDB
 
-Several Sage packages should be installed before installing the ``polymake``
-package to give a more featureful Polymake installation::
+Before installing the ``polymake`` package, refer to the SPKG pages for the following packages to ensure a more featureful Polymake installation:
 
-   sage -i 4ti2 latte_int topcom qhull
+- [4ti2](https://doc.sagemath.org/html/en/reference/spkg/4ti2.html)
+- [latte_int](https://doc.sagemath.org/html/en/reference/spkg/latte_int.html)
+- [topcom](https://doc.sagemath.org/html/en/reference/spkg/topcom.html)
+- [qhull](https://doc.sagemath.org/html/en/reference/spkg/qhull.html)
 
-Software that would need to be installed manually (no Sage package
-available) for a more featureful Polymake installation: ``azove``, ``porta``,
-``vinci``, ``SplitsTree4``.
+For additional software that may enhance your Polymake installation (but for which no Sage package is available), you can manually install the following:
+
+- ``azove``
+- ``porta``
+- ``vinci``
+- ``SplitsTree4``
 
 Information on missing Polymake prerequisites after installing polymake::
 
@@ -65,10 +70,8 @@ Information on missing Polymake prerequisites after installing polymake::
    (sage-sh) $ polymake
    polytope> show_unconfigured;
 
-In order to use Polymake from Sage, you will also need the ``jupymake``
-package::
+In order to use Polymake from Sage, please refer to the [Jupymake SPKG page](https://doc.sagemath.org/html/en/reference/spkg/jupymake.html) for installation instructions.
 
-  sage -i jupymake
 
 
 Debugging polymake install problems

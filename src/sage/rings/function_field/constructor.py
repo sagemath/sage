@@ -22,7 +22,6 @@ AUTHORS:
 
 - Julian Rueth (2011-09-14): replaced ``@cached_function`` with
   ``UniqueFactory``
-
 """
 
 # ****************************************************************************
@@ -39,6 +38,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.structure.factory import UniqueFactory
+
 
 class FunctionFieldFactory(UniqueFactory):
     """
@@ -89,7 +89,7 @@ class FunctionFieldFactory(UniqueFactory):
             names = (names,)
         return (F, names)
 
-    def create_object(self, version, key,**extra_args):
+    def create_object(self, version, key, **extra_args):
         """
         Create the object from the key and extra arguments. This is only
         called if the object was not found in the cache.
@@ -143,7 +143,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         sage: L is M                                                                    # needs sage.rings.function_field
         True
     """
-    def create_key(self,polynomial,names):
+    def create_key(self, polynomial, names):
         """
         Given the arguments and keywords, create a key that uniquely
         determines this object.
@@ -168,7 +168,6 @@ class FunctionFieldExtensionFactory(UniqueFactory):
             sage: N.<z> = K.extension(z - 1)
             sage: M is N
             False
-
         """
         if names is None:
             names = polynomial.variable_name()
@@ -176,7 +175,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
             names = (names,)
         return (polynomial,names,polynomial.base_ring())
 
-    def create_object(self,version,key,**extra_args):
+    def create_object(self, version, key, **extra_args):
         """
         Create the object from the key and extra arguments. This is only
         called if the object was not found in the cache.

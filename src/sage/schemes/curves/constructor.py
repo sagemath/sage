@@ -25,7 +25,6 @@ AUTHORS:
 - David Kohel (2006-01)
 
 - Grayson Jorgenson (2016-06)
-
 """
 # ********************************************************************
 #      Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -40,16 +39,16 @@ from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 
 from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.rational_field import QQ
 
 from sage.structure.all import Sequence
 
-from sage.schemes.generic.ambient_space import is_AmbientSpace
-from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
-from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
-from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
+from sage.schemes.generic.ambient_space import AmbientSpace
+from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
+from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
+from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 from sage.schemes.plane_conics.constructor import Conic
 
 from .projective_curve import (ProjectiveCurve,
@@ -108,7 +107,7 @@ def Curve(F, A=None):
 
     - ``F`` -- a multivariate polynomial, or a list or tuple of polynomials, or an algebraic scheme
 
-    - ``A`` -- (default: None) an ambient space in which to create the curve
+    - ``A`` -- (default: ``None``) an ambient space in which to create the curve
 
     EXAMPLES:
 
@@ -233,15 +232,15 @@ def Curve(F, A=None):
         0
     """
     if A is None:
-        if is_AmbientSpace(F) and F.dimension() == 1:
+        if isinstance(F, AmbientSpace) and F.dimension() == 1:
             return Curve(F.coordinate_ring().zero(), F)
 
-        if is_AlgebraicScheme(F):
+        if isinstance(F, AlgebraicScheme):
             return Curve(F.defining_polynomials(), F.ambient_space())
 
         if isinstance(F, (list, tuple)):
             P = Sequence(F).universe()
-            if not is_MPolynomialRing(P):
+            if not isinstance(P, MPolynomialRing_base):
                 raise TypeError("universe of F must be a multivariate polynomial ring")
             for f in F:
                 if not f.is_homogeneous():
@@ -291,7 +290,7 @@ def Curve(F, A=None):
         else:
             raise TypeError("F (={}) must be a multivariate polynomial".format(F))
     else:
-        if not is_AmbientSpace(A):
+        if not isinstance(A, AmbientSpace):
             raise TypeError("ambient space must be either an affine or projective space")
         if not isinstance(F, (list, tuple)):
             F = [F]
@@ -304,7 +303,7 @@ def Curve(F, A=None):
 
     k = A.base_ring()
 
-    if is_AffineSpace(A):
+    if isinstance(A, AffineSpace_generic):
         if n == 1:
             if A.coordinate_ring().ideal(F).is_zero():
                 if isinstance(k, FiniteField):
@@ -337,7 +336,7 @@ def Curve(F, A=None):
             return AffinePlaneCurve_field(A, F)
         return AffinePlaneCurve(A, F)
 
-    elif is_ProjectiveSpace(A):
+    elif isinstance(A, ProjectiveSpace_ring):
         if n == 1:
             if A.coordinate_ring().ideal(F).is_zero():
                 if isinstance(k, FiniteField):

@@ -16,7 +16,6 @@ Note that because they are called by the constructors of :class:`Graph` and
 
 Functions
 ---------
-
 """
 from sage.cpython.string import bytes_to_str
 from sage.misc.rest_index_of_methods import gen_rest_table_index
@@ -104,8 +103,8 @@ def from_sparse6(G, g6_string):
         k = int((ZZ(n) - 1).nbits())
         ords = [ord(i) for i in s]
         if any(o > 126 or o < 63 for o in ords):
-            raise RuntimeError("the string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in range(63, 127)]))
-        bits = ''.join([int_to_binary_string(o-63).zfill(6) for o in ords])
+            raise RuntimeError("the string seems corrupt: valid characters are \n" + ''.join(chr(i) for i in range(63, 127)))
+        bits = ''.join(int_to_binary_string(o-63).zfill(6) for o in ords)
         if not k:
             b = [int(x) for x in bits]
             x = [0] * len(b)
@@ -145,6 +144,13 @@ def from_dig6(G, dig6_string):
         sage: from_dig6(g, digraphs.Circuit(10).dig6_string())
         sage: g.is_isomorphic(digraphs.Circuit(10))
         True
+
+    The string may represent a directed graph with loops::
+
+        sage: L = DiGraph(loops=True)
+        sage: from_dig6(L, 'CW`C')
+        sage: L.edges(labels=False, sort=True)
+        [(0, 1), (0, 2), (1, 2), (2, 3), (3, 3)]
     """
     from .generic_graph_pyx import length_and_string_from_graph6, binary_string_from_dig6
     if isinstance(dig6_string, bytes):
@@ -190,9 +196,9 @@ def from_seidel_adjacency_matrix(G, M):
         sage: g.is_isomorphic(graphs.PetersenGraph())                                   # needs sage.modules
         True
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     from sage.rings.integer_ring import ZZ
-    assert is_Matrix(M)
+    assert isinstance(M, Matrix)
 
     if M.base_ring() != ZZ:
         try:
@@ -240,9 +246,9 @@ def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
         sage: g.is_isomorphic(graphs.PetersenGraph())                                   # needs sage.modules
         True
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     from sage.rings.integer_ring import ZZ
-    assert is_Matrix(M)
+    assert isinstance(M, Matrix)
     # note: the adjacency matrix might be weighted and hence not
     # necessarily consists of integers
     if not weighted and M.base_ring() != ZZ:
@@ -316,8 +322,8 @@ def from_incidence_matrix(G, M, loops=False, multiedges=False, weighted=False):
         sage: g.is_isomorphic(graphs.PetersenGraph())                                   # needs sage.modules
         True
     """
-    from sage.structure.element import is_Matrix
-    assert is_Matrix(M)
+    from sage.structure.element import Matrix
+    assert isinstance(M, Matrix)
 
     oriented = any(M[pos] < 0 for pos in M.nonzero_positions(copy=False))
 
@@ -411,8 +417,8 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
         sage: list(G.edges(sort=True, labels=False))                                    # needs sage.modules
         [(1, 0)]
     """
-    from sage.structure.element import is_Matrix
-    assert is_Matrix(M)
+    from sage.structure.element import Matrix
+    assert isinstance(M, Matrix)
 
     positions = []
     for c in M.columns():
@@ -445,7 +451,7 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
 
     - ``G`` -- a graph
 
-    - ``M`` -- a dictionary of dictionaries
+    - ``M`` -- dictionary of dictionaries
 
     - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
       whether to consider the graph as having loops, multiple edges, or weights
@@ -542,7 +548,7 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
 
     - ``G`` -- a :class:`Graph` or :class:`DiGraph`
 
-    - ``D`` -- a dictionary of lists
+    - ``D`` -- dictionary of lists
 
     - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
       whether to consider the graph as having loops, multiple edges, or weights

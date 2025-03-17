@@ -6,12 +6,12 @@ Parametric plots
 from .parametric_surface import ParametricSurface
 from .shapes2 import line3d
 from sage.arith.srange import xsrange, srange
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.misc.decorators import rename_keyword
 
 
 @rename_keyword(alpha='opacity')
-def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
+def parametric_plot3d(f, urange, vrange=None, plot_points='automatic',
                       boundary_style=None, **kwds):
     r"""
     Return a parametric three-dimensional space curve or surface.
@@ -37,30 +37,30 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
 
     INPUT:
 
-    - ``f`` - a 3-tuple of functions or expressions, or vector of size 3
+    - ``f`` -- a 3-tuple of functions or expressions, or vector of size 3
 
-    - ``urange`` - a 2-tuple (u_min, u_max) or a 3-tuple
+    - ``urange`` -- a 2-tuple (u_min, u_max) or a 3-tuple
       (u, u_min, u_max)
 
-    - ``vrange`` - (optional - only used for surfaces) a
+    - ``vrange`` -- (optional, only used for surfaces) a
       2-tuple (v_min, v_max) or a 3-tuple (v, v_min, v_max)
 
-    - ``plot_points`` - (default: "automatic", which is
+    - ``plot_points`` -- (default: "automatic", which is
       75 for curves and [40,40] for surfaces) initial number of sample
       points in each parameter; an integer for a curve, and a pair of
       integers for a surface.
 
-    - ``boundary_style`` - (default: None, no boundary) a dict that describes
+    - ``boundary_style`` -- (default: None, no boundary) a dict that describes
       how to draw the boundaries of regions by giving options that are passed
       to the line3d command.
 
-    - ``mesh`` - bool (default: False) whether to display
+    - ``mesh`` -- boolean (default: ``False``); whether to display
       mesh grid lines
 
-    - ``dots`` - bool (default: False) whether to display
+    - ``dots`` -- boolean (default: ``False``); whether to display
       dots at mesh grid points
 
-    .. note::
+    .. NOTE::
 
        #. By default for a curve any points where `f_x`,
           `f_y`, or `f_z` do not evaluate to a real number
@@ -71,7 +71,6 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
 
        #. mesh and dots are not supported when using the Tachyon ray tracer
           renderer.
-
 
     EXAMPLES: We demonstrate each of the four ways to call this
     function.
@@ -167,7 +166,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
     values in the interval [0,1]. ::
 
         sage: u,v = var('u,v')
-        sage: def cf(u,v): return sin(u+v/2)**2
+        sage: def cf(u, v): return sin(u+v/2)**2
         sage: P = parametric_plot3d((cos(u), sin(u)+cos(v), sin(v)),
         ....:   (u,0,2*pi), (v,-pi,pi), color=(cf,colormaps.PiYG), plot_points=[60,60])
         sage: P.show(viewer='tachyon')
@@ -175,7 +174,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
     .. PLOT::
 
         u,v = var('u,v')
-        def cf(u,v): return sin(u+v/2)**2
+        def cf(u, v): return sin(u+v/2)**2
         P = parametric_plot3d((cos(u), sin(u)+cos(v), sin(v)),
             (u,0,2*pi), (v,-pi,pi), color=(cf,colormaps.PiYG), plot_points=[60,60])
         sphinx_plot(P)
@@ -183,7 +182,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
     Another example, a colored Möbius band::
 
         sage: cm = colormaps.ocean
-        sage: def c(x,y): return sin(x*y)**2
+        sage: def c(x, y): return sin(x*y)**2
         sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
         sage: MoebiusStrip(5, 1, plot_points=200, color=(c,cm))
         Graphics3d Object
@@ -191,7 +190,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
     .. PLOT::
 
         cm = colormaps.ocean
-        def c(x,y): return sin(x*y)**2
+        def c(x, y): return sin(x*y)**2
         from sage.plot.plot3d.parametric_surface import MoebiusStrip
         sphinx_plot(MoebiusStrip(5, 1, plot_points=200, color=(c,cm)))
 
@@ -199,8 +198,8 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
 
         sage: from sage.plot.plot3d.parametric_surface import ParametricSurface
         sage: cm = colormaps.autumn
-        sage: def c(x,y): return sin(x*y)**2
-        sage: def g(x,y): return x, y+sin(y), x**2 + y**2
+        sage: def c(x, y): return sin(x*y)**2
+        sage: def g(x, y): return x, y+sin(y), x**2 + y**2
         sage: ParametricSurface(g, (srange(-10,10,0.1), srange(-5,5.0,0.1)), color=(c,cm))
         Graphics3d Object
 
@@ -208,8 +207,8 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
 
         from sage.plot.plot3d.parametric_surface import ParametricSurface
         cm = colormaps.autumn
-        def c(x,y): return sin(x*y)**2
-        def g(x,y): return x, y+sin(y), x**2 + y**2
+        def c(x, y): return sin(x*y)**2
+        def g(x, y): return x, y+sin(y), x**2 + y**2
         sphinx_plot(ParametricSurface(g, (srange(-10,10,0.1), srange(-5,5.0,0.1)), color=(c,cm)))
 
     We call the space curve function but with polynomials instead of
@@ -302,8 +301,8 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: u, v = var('u,v')
         sage: f1 = (4+(3+cos(v))*sin(u), 4+(3+cos(v))*cos(u), 4+sin(v))
         sage: f2 = (8+(3+cos(v))*cos(u), 3+sin(v), 4+(3+cos(v))*sin(u))
-        sage: p1 = parametric_plot3d(f1, (u,0,2*pi), (v,0,2*pi), texture="red")
-        sage: p2 = parametric_plot3d(f2, (u,0,2*pi), (v,0,2*pi), texture="blue")
+        sage: p1 = parametric_plot3d(f1, (u,0,2*pi), (v,0,2*pi), texture='red')
+        sage: p2 = parametric_plot3d(f2, (u,0,2*pi), (v,0,2*pi), texture='blue')
         sage: p1 + p2
         Graphics3d Object
 
@@ -312,8 +311,8 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         u, v = var('u,v')
         f1 = (4+(3+cos(v))*sin(u), 4+(3+cos(v))*cos(u), 4+sin(v))
         f2 = (8+(3+cos(v))*cos(u), 3+sin(v), 4+(3+cos(v))*sin(u))
-        p1 = parametric_plot3d(f1, (u,0,2*pi), (v,0,2*pi), texture="red")
-        p2 = parametric_plot3d(f2, (u,0,2*pi), (v,0,2*pi), texture="blue")
+        p1 = parametric_plot3d(f1, (u,0,2*pi), (v,0,2*pi), texture='red')
+        p2 = parametric_plot3d(f2, (u,0,2*pi), (v,0,2*pi), texture='blue')
         sphinx_plot(p1 + p2)
 
     A cylindrical Star of David::
@@ -363,7 +362,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = cos(u)*(4*sqrt(1-v^2)*sin(abs(u))^abs(u))
         sage: f_y = sin(u)*(4*sqrt(1-v^2)*sin(abs(u))^abs(u))
         sage: f_z = v
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-1,1), frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-1,1), frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -372,7 +371,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = cos(u)*(4*sqrt(1-v**2)*sin(abs(u))**abs(u))
         f_y = sin(u) *(4*sqrt(1-v**2)*sin(abs(u))**abs(u))
         f_z = v
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-1,1), frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-1,1), frame=False, color='red'))
 
     A Trefoil knot (:wikipedia:`Trefoil_knot`)::
 
@@ -380,7 +379,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = (4*(1+0.25*sin(3*v))+cos(u))*cos(2*v)
         sage: f_y = (4*(1+0.25*sin(3*v))+cos(u))*sin(2*v)
         sage: f_z = sin(u)+2*cos(3*v)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), frame=False, color="blue")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), frame=False, color='blue')
         Graphics3d Object
 
     .. PLOT::
@@ -389,7 +388,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = (4*(1+0.25*sin(3*v))+cos(u))*cos(2*v)
         f_y = (4*(1+0.25*sin(3*v))+cos(u))*sin(2*v)
         f_z = sin(u)+2*cos(3*v)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), frame=False, color="blue"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), frame=False, color='blue'))
 
     Green bowtie::
 
@@ -397,7 +396,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = sin(u) / (sqrt(2) + sin(v))
         sage: f_y = sin(u) / (sqrt(2) + cos(v))
         sage: f_z = cos(u) / (1 + sqrt(2))
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), frame=False, color="green")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), frame=False, color='green')
         Graphics3d Object
 
     .. PLOT::
@@ -406,7 +405,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = sin(u) / (sqrt(2) + sin(v))
         f_y = sin(u) / (sqrt(2) + cos(v))
         f_z = cos(u) / (1 + sqrt(2))
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), frame=False, color="green"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), frame=False, color='green'))
 
     Boy's surface (:wikipedia:`Boy%27s_surface` and https://mathcurve.com/surfaces/boy/boy.shtml)::
 
@@ -420,7 +419,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         ....:                   (v,0,pi),
         ....:                   plot_points=[90,90],
         ....:                   frame=False,
-        ....:                   color="orange")
+        ....:                   color='orange')
         Graphics3d Object
 
     .. PLOT::
@@ -431,7 +430,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_y = K * (cos(u)*sin(2*v)-sqrt(2)*sin(u)*sin(v))
         f_z = 3 * K * cos(u)
         P = parametric_plot3d([f_x, f_y, f_z], (u,-2*pi,2*pi), (v,0,pi),
-                              plot_points=[90,90], frame=False, color="orange") # long time -- about 30 seconds
+                              plot_points=[90,90], frame=False, color='orange') # long time -- about 30 seconds
         sphinx_plot(P)
 
     Maeder's Owl also known as Bour's minimal surface (:wikipedia:`Bour%27s_minimal_surface`)::
@@ -441,7 +440,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_y = -v*sin(u) - 0.5*v^2*sin(2*u)
         sage: f_z = 4 * v^1.5 * cos(3*u/2) / 3
         sage: parametric_plot3d([f_x, f_y, f_z], (u,-2*pi,2*pi), (v,0,1),
-        ....:                    plot_points=[90,90], frame=False, color="purple")
+        ....:                    plot_points=[90,90], frame=False, color='purple')
         Graphics3d Object
 
     .. PLOT::
@@ -451,7 +450,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_y = -v*sin(u) - 0.5*v**2*sin(2*u)
         f_z = 4 * v**1.5 * cos(3*u/2) / 3
         P = parametric_plot3d([f_x, f_y, f_z], (u,-2*pi,2*pi), (v,0,1),
-                              plot_points=[90,90], frame=False, color="purple")
+                              plot_points=[90,90], frame=False, color='purple')
         sphinx_plot(P)
 
     Bracelet::
@@ -460,7 +459,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = (2 + 0.2*sin(2*pi*u))*sin(pi*v)
         sage: f_y = 0.2 * cos(2*pi*u) * 3 * cos(2*pi*v)
         sage: f_z = (2 + 0.2*sin(2*pi*u))*cos(pi*v)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,pi/2), (v,0,3*pi/4), frame=False, color="gray")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,pi/2), (v,0,3*pi/4), frame=False, color='gray')
         Graphics3d Object
 
     .. PLOT::
@@ -469,7 +468,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = (2 + 0.2*sin(2*pi*u))*sin(pi*v)
         f_y = 0.2 * cos(2*pi*u) * 3* cos(2*pi*v)
         f_z = (2 + 0.2*sin(2*pi*u))*cos(pi*v)
-        P = parametric_plot3d([f_x, f_y, f_z], (u,0,pi/2), (v,0,3*pi/4), frame=False, color="gray")
+        P = parametric_plot3d([f_x, f_y, f_z], (u,0,pi/2), (v,0,3*pi/4), frame=False, color='gray')
         sphinx_plot(P)
 
 
@@ -479,7 +478,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = cos(u) * cos(2*v)
         sage: f_y = sin(u) * cos(2*v)
         sage: f_z = sin(v)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,pi), frame=False, color="green")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,pi), frame=False, color='green')
         Graphics3d Object
 
     .. PLOT::
@@ -488,7 +487,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = cos(u) * cos(2*v)
         f_y = sin(u) * cos(2*v)
         f_z = sin(v)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,pi), frame=False, color="green"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,pi), frame=False, color='green'))
 
 
     Funny folded surface - with square projection::
@@ -497,7 +496,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = cos(u) * sin(2*v)
         sage: f_y = sin(u) * cos(2*v)
         sage: f_z = sin(v)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="green")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='green')
         Graphics3d Object
 
     .. PLOT::
@@ -506,7 +505,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = cos(u) * sin(2*v)
         f_y = sin(u) * cos(2*v)
         f_z = sin(v)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="green"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='green'))
 
     Surface of revolution of figure 8::
 
@@ -514,7 +513,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = cos(u) * sin(2*v)
         sage: f_y = sin(u) * sin(2*v)
         sage: f_z = sin(v)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="green")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='green')
         Graphics3d Object
 
     .. PLOT::
@@ -523,7 +522,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = cos(u) * sin(2*v)
         f_y = sin(u) * sin(2*v)
         f_z = sin(v)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="green"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='green'))
 
     Yellow Whitney's umbrella (:wikipedia:`Whitney_umbrella`)::
 
@@ -531,7 +530,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = u*v
         sage: f_y = u
         sage: f_z = v^2
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-1,1), (v,-1,1), frame=False, color="yellow")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-1,1), (v,-1,1), frame=False, color='yellow')
         Graphics3d Object
 
     .. PLOT::
@@ -540,7 +539,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = u*v
         f_y = u
         f_z = v**2
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-1,1), (v,-1,1), frame=False, color="yellow"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-1,1), (v,-1,1), frame=False, color='yellow'))
 
     Cross cap (:wikipedia:`Cross-cap`)::
 
@@ -548,7 +547,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = (1+cos(v)) * cos(u)
         sage: f_y = (1+cos(v)) * sin(u)
         sage: f_z = -tanh((2/3)*(u-pi)) * sin(v)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -557,7 +556,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = (1+cos(v)) * cos(u)
         f_y = (1+cos(v)) * sin(u)
         f_z = -tanh((2.0/3.0)*(u-pi)) * sin(v)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='red'))
 
     Twisted torus::
 
@@ -565,7 +564,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = (3+sin(v)+cos(u)) * cos(2*v)
         sage: f_y = (3+sin(v)+cos(u)) * sin(2*v)
         sage: f_z = sin(u) + 2*cos(v)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -574,7 +573,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = (3+sin(v)+cos(u)) * cos(2*v)
         f_y = (3+sin(v)+cos(u)) * sin(2*v)
         f_z = sin(u) + 2*cos(v)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='red'))
 
     Four intersecting discs::
 
@@ -582,7 +581,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = v*cos(u) - 0.5*v^2*cos(2*u)
         sage: f_y = -v*sin(u) - 0.5*v^2*sin(2*u)
         sage: f_z = 4 * v^1.5 * cos(3*u/2) / 3
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,4*pi), (v,0,2*pi), frame=False, color="red", opacity=0.7)
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,4*pi), (v,0,2*pi), frame=False, color='red', opacity=0.7)
         Graphics3d Object
 
     .. PLOT::
@@ -591,7 +590,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = v*cos(u) - 0.5*v**2*cos(2*u)
         f_y = -v*sin(u) - 0.5*v**2*sin(2*u)
         f_z = 4 * v**1.5 * cos(3.0*u/2.0) /3
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,4*pi), (v,0,2*pi), frame=False, color="red", opacity=0.7))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,4*pi), (v,0,2*pi), frame=False, color='red', opacity=0.7))
 
     Steiner surface/Roman's surface (see
     :wikipedia:`Roman_surface` and
@@ -601,7 +600,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = (sin(2*u) * cos(v) * cos(v))
         sage: f_y = (sin(u) * sin(2*v))
         sage: f_z = (cos(u) * sin(2*v))
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi/2,pi/2), (v,-pi/2,pi/2), frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi/2,pi/2), (v,-pi/2,pi/2), frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -610,7 +609,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = (sin(2*u) * cos(v) * cos(v))
         f_y = (sin(u) * sin(2*v))
         f_z = (cos(u) * sin(2*v))
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi/2,pi/2), (v,-pi/2,pi/2), frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi/2,pi/2), (v,-pi/2,pi/2), frame=False, color='red'))
 
     Klein bottle? (see :wikipedia:`Klein_bottle`)::
 
@@ -618,7 +617,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = (3*(1+sin(v)) + 2*(1-cos(v)/2)*cos(u)) * cos(v)
         sage: f_y = (4+2*(1-cos(v)/2)*cos(u)) * sin(v)
         sage: f_z = -2 * (1-cos(v)/2) * sin(u)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="green")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='green')
         Graphics3d Object
 
     .. PLOT::
@@ -627,7 +626,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = (3*(1+sin(v)) + 2*(1-cos(v)/2)*cos(u)) * cos(v)
         f_y = (4+2*(1-cos(v)/2)*cos(u)) * sin(v)
         f_z = -2 * (1-cos(v)/2) * sin(u)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="green"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='green'))
 
     A Figure 8 embedding of the Klein bottle (see
     :wikipedia:`Klein_bottle`)::
@@ -636,7 +635,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = (2+cos(v/2)*sin(u)-sin(v/2)*sin(2*u)) * cos(v)
         sage: f_y = (2+cos(v/2)*sin(u)-sin(v/2)*sin(2*u)) * sin(v)
         sage: f_z = sin(v/2)*sin(u) + cos(v/2)*sin(2*u)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -645,7 +644,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = (2+cos(0.5*v)*sin(u)-sin(0.5*v)*sin(2*u)) * cos(v)
         f_y = (2+cos(0.5*v)*sin(u)-sin(0.5*v)*sin(2*u)) * sin(v)
         f_z = sin(v*0.5)*sin(u) + cos(v*0.5)*sin(2*u)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0,2*pi), frame=False, color='red'))
 
     Enneper's surface (see
     :wikipedia:`Enneper_surface`)::
@@ -654,7 +653,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = u - u^3/3 + u*v^2
         sage: f_y = v - v^3/3 + v*u^2
         sage: f_z = u^2 - v^2
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-2,2), (v,-2,2), frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-2,2), (v,-2,2), frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -663,7 +662,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = u - u**3/3 + u*v**2
         f_y = v - v**3/3 + v*u**2
         f_z = u**2 - v**2
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-2,2), (v,-2,2), frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-2,2), (v,-2,2), frame=False, color='red'))
 
     Henneberg's surface
     (see http://xahlee.org/surface/gallery_m.html)::
@@ -672,7 +671,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = 2*sinh(u)*cos(v) - (2/3)*sinh(3*u)*cos(3*v)
         sage: f_y = 2*sinh(u)*sin(v) + (2/3)*sinh(3*u)*sin(3*v)
         sage: f_z = 2 * cosh(2*u) * cos(2*v)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-1,1), (v,-pi/2,pi/2), frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-1,1), (v,-pi/2,pi/2), frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -681,7 +680,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = 2.0*sinh(u)*cos(v) - (2.0/3.0)*sinh(3*u)*cos(3*v)
         f_y = 2.0*sinh(u)*sin(v) + (2.0/3.0)*sinh(3*u)*sin(3*v)
         f_z = 2.0 * cosh(2*u) * cos(2*v)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-1,1), (v,-pi/2,pi/2), frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-1,1), (v,-pi/2,pi/2), frame=False, color='red'))
 
     Dini's spiral::
 
@@ -689,7 +688,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = cos(u) * sin(v)
         sage: f_y = sin(u) * sin(v)
         sage: f_z = (cos(v)+log(tan(v/2))) + 0.2*u
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,12.4), (v,0.1,2), frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,12.4), (v,0.1,2), frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -698,7 +697,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = cos(u) * sin(v)
         f_y = sin(u) * sin(v)
         f_z = (cos(v)+log(tan(v*0.5))) + 0.2*u
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,12.4), (v,0.1,2), frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,12.4), (v,0.1,2), frame=False, color='red'))
 
     Catalan's surface (see
     http://xahlee.org/surface/catalan/catalan.html)::
@@ -707,7 +706,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = u - sin(u)*cosh(v)
         sage: f_y = 1 - cos(u)*cosh(v)
         sage: f_z = 4 * sin(1/2*u) * sinh(v/2)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,3*pi), (v,-2,2), frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,3*pi), (v,-2,2), frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -716,7 +715,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = u - sin(u)*cosh(v)
         f_y = 1.0 - cos(u)*cosh(v)
         f_z = 4.0 * sin(0.5*u) * sinh(0.5*v)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,3*pi), (v,-2,2), frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,3*pi), (v,-2,2), frame=False, color='red'))
 
     A Conchoid::
 
@@ -845,7 +844,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = (sinh(v)*cos(3*u)) / (1+cosh(u)*cosh(v))
         sage: f_y = (sinh(v)*sin(3*u)) / (1+cosh(u)*cosh(v))
         sage: f_z = (cosh(v)*sinh(u)) / (1+cosh(u)*cosh(v))
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), plot_points=[50,50], frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), plot_points=[50,50], frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -855,7 +854,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = (sinh(v)*cos(3*u)) / (1+cosh(u)*cosh(v))
         f_y = (sinh(v)*sin(3*u)) / (1+cosh(u)*cosh(v))
         f_z = (cosh(v)*sinh(u)) / (1+cosh(u)*cosh(v))
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), plot_points=[50,50], frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), plot_points=[50,50], frame=False, color='red'))
 
     A Helicoid (lines through a helix,
     :wikipedia:`Helix`)::
@@ -864,7 +863,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = sinh(v) * sin(u)
         sage: f_y = -sinh(v) * cos(u)
         sage: f_z = 3 * u
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), plot_points=[50,50], frame=False, color="red")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), plot_points=[50,50], frame=False, color='red')
         Graphics3d Object
 
     .. PLOT::
@@ -873,7 +872,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = sinh(v) * sin(u)
         f_y = -sinh(v) * cos(u)
         f_z = 3 * u
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), plot_points=[50,50], frame=False, color="red"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi,pi), (v,-pi,pi), plot_points=[50,50], frame=False, color='red'))
 
     Kuen's surface
     (http://virtualmathmuseum.org/Surface/kuen/kuen.html)::
@@ -881,7 +880,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = (2*(cos(u) + u*sin(u))*sin(v))/(1+ u^2*sin(v)^2)
         sage: f_y = (2*(sin(u) - u*cos(u))*sin(v))/(1+ u^2*sin(v)^2)
         sage: f_z = log(tan(1/2 *v)) + (2*cos(v))/(1+ u^2*sin(v)^2)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0.01,pi-0.01), plot_points=[50,50], frame=False, color="green")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0.01,pi-0.01), plot_points=[50,50], frame=False, color='green')
         Graphics3d Object
 
     .. PLOT::
@@ -890,7 +889,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = (2.0*(cos(u)+u*sin(u))*sin(v)) / (1.0+u**2*sin(v)**2)
         f_y = (2.0*(sin(u)-u*cos(u))*sin(v)) / (1.0+u**2*sin(v)**2)
         f_z = log(tan(0.5 *v)) + (2*cos(v))/(1.0+u**2*sin(v)**2)
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0.01,pi-0.01), plot_points=[50,50], frame=False, color="green"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,0,2*pi), (v,0.01,pi-0.01), plot_points=[50,50], frame=False, color='green'))
 
     A 5-pointed star::
 
@@ -899,7 +898,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = cos(u) * cos(v) * G1 * G2
         sage: f_y = cos(u) * sin(v) * G1 * G2
         sage: f_z = sin(u) * G1
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi/2,pi/2), (v,0,2*pi), plot_points=[50,50], frame=False, color="green")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-pi/2,pi/2), (v,0,2*pi), plot_points=[50,50], frame=False, color='green')
         Graphics3d Object
 
     .. PLOT::
@@ -910,14 +909,14 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = cos(u) * cos(v) * G1 * G2
         f_y = cos(u) * sin(v) * G1 * G2
         f_z = sin(u) * G1
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi/2,pi/2), (v,0,2*pi), plot_points=[50,50], frame=False, color="green"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-pi/2,pi/2), (v,0,2*pi), plot_points=[50,50], frame=False, color='green'))
 
     A cool self-intersecting surface (Eppener surface?)::
 
         sage: f_x = u - u^3/3 + u*v^2
         sage: f_y = v - v^3/3 + v*u^2
         sage: f_z = u^2 - v^2
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-25,25), (v,-25,25), plot_points=[50,50], frame=False, color="green")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-25,25), (v,-25,25), plot_points=[50,50], frame=False, color='green')
         Graphics3d Object
 
     .. PLOT::
@@ -926,7 +925,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = u - u**3/3 + u*v**2
         f_y = v - v**3/3 + v*u**2
         f_z = u**2 - v**2
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-25,25), (v,-25,25), plot_points=[50,50], frame=False, color="green"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-25,25), (v,-25,25), plot_points=[50,50], frame=False, color='green'))
 
     The breather surface
     (:wikipedia:`Breather_surface`)::
@@ -936,7 +935,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = (2*K*cosh(0.4*u)*(-(K*cos(v)*cos(K*v)) - sin(v)*sin(K*v)))/G
         sage: f_y = (2*K*cosh(0.4*u)*(-(K*sin(v)*cos(K*v)) + cos(v)*sin(K*v)))/G
         sage: f_z = -u + (2*0.84*cosh(0.4*u)*sinh(0.4*u))/G
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-13.2,13.2), (v,-37.4,37.4), plot_points=[90,90], frame=False, color="green")
+        sage: parametric_plot3d([f_x, f_y, f_z], (u,-13.2,13.2), (v,-37.4,37.4), plot_points=[90,90], frame=False, color='green')
         Graphics3d Object
 
     .. PLOT::
@@ -947,7 +946,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         f_x = (2*K*cosh(0.4*u)*(-(K*cos(v)*cos(K*v)) - sin(v)*sin(K*v)))/G
         f_y = (2*K*cosh(0.4*u)*(-(K*sin(v)*cos(K*v)) + cos(v)*sin(K*v)))/G
         f_z = -u + (2*0.84*cosh(0.4*u)*sinh(0.4*u))/G
-        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-13.2,13.2), (v,-37.4,37.4), plot_points=[90,90], frame=False, color="green"))
+        sphinx_plot(parametric_plot3d([f_x, f_y, f_z], (u,-13.2,13.2), (v,-37.4,37.4), plot_points=[90,90], frame=False, color='green'))
 
     TESTS::
 
@@ -970,29 +969,28 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: x, y = var('x,y')
         sage: plot3d(x*y^2 - sin(x), (x,-1,1), (y,-1,1))
         Graphics3d Object
-
     """
     # TODO:
     #   * Surface -- behavior of functions not defined everywhere -- see note above
     #   * Iterative refinement
 
-    # color_function -- (default: "automatic") how to determine the color of curves and surfaces
-    # color_function_scaling -- (default: True) whether to scale the input to color_function
-    # exclusions -- (default: "automatic") u points or (u,v) conditions to exclude.
+    # color_function -- (default: ``'automatic'``) how to determine the color of curves and surfaces
+    # color_function_scaling -- boolean (default: ``True``); whether to scale the input to color_function
+    # exclusions -- (default: ``'automatic'``) u points or (u,v) conditions to exclude.
     #         (E.g., exclusions could be a function e = lambda u, v: False if u < v else True
-    # exclusions_style -- (default: None) what to draw at excluded points
-    # max_recursion -- (default: "automatic") maximum number of recursive subdivisions,
+    # exclusions_style -- (default: ``None``) what to draw at excluded points
+    # max_recursion -- (default: ``'automatic'``) maximum number of recursive subdivisions,
     #                   when ...
-    # mesh -- (default: "automatic") how many mesh divisions in each direction to draw
-    # mesh_functions -- (default: "automatic") how to determine the placement of mesh divisions
-    # mesh_shading -- (default: None) how to shade regions between mesh divisions
-    # plot_range -- (default: "automatic") range of values to include
+    # mesh -- (default: ``'automatic'``) how many mesh divisions in each direction to draw
+    # mesh_functions -- (default: ``'automatic'``) how to determine the placement of mesh divisions
+    # mesh_shading -- (default: ``None``) how to shade regions between mesh divisions
+    # plot_range -- (default: ``'automatic'``) range of values to include
 
-    if is_Vector(f):
+    if isinstance(f, Vector):
         f = tuple(f)
 
-    if isinstance(f, (list, tuple)) and len(f) > 0 and isinstance(f[0], (list, tuple)):
-        return sum([parametric_plot3d(v, urange, vrange, plot_points=plot_points, **kwds) for v in f])
+    if isinstance(f, (list, tuple)) and f and isinstance(f[0], (list, tuple)):
+        return sum(parametric_plot3d(v, urange, vrange, plot_points=plot_points, **kwds) for v in f)
 
     if not isinstance(f, (tuple, list)) or len(f) != 3:
         raise ValueError("f must be a list, tuple, or vector of length 3")
@@ -1030,13 +1028,13 @@ def _parametric_plot3d_curve(f, urange, plot_points, **kwds):
 
     INPUT:
 
-    - ``f`` - a 3-tuple of functions or expressions, or vector of size 3
+    - ``f`` -- a 3-tuple of functions or expressions, or vector of size 3
 
-    - ``urange`` - a 2-tuple (u_min, u_max) or a 3-tuple
+    - ``urange`` -- a 2-tuple (u_min, u_max) or a 3-tuple
       (u, u_min, u_max)
 
-    - ``plot_points`` - (default: "automatic", which is 75) initial
-      number of sample points in each parameter; an integer.
+    - ``plot_points`` -- integer (default: 75, "automatic"); initial
+      number of sample points in each parameter
 
     EXAMPLES:
 
@@ -1054,7 +1052,6 @@ def _parametric_plot3d_curve(f, urange, plot_points, **kwds):
         sage: u = var('u')
         sage: parametric_plot3d((sin(u), cos(u), u/10), (u,0,20))
         Graphics3d Object
-
     """
     from sage.plot.misc import setup_for_eval_on_grid
     g, ranges = setup_for_eval_on_grid(f, [urange], plot_points)
@@ -1083,19 +1080,19 @@ def _parametric_plot3d_surface(f, urange, vrange, plot_points, boundary_style, *
 
     INPUT:
 
-    - ``f`` - a 3-tuple of functions or expressions, or vector of size 3
+    - ``f`` -- a 3-tuple of functions or expressions, or vector of size 3
 
-    - ``urange`` - a 2-tuple (u_min, u_max) or a 3-tuple
+    - ``urange`` -- a 2-tuple (u_min, u_max) or a 3-tuple
       (u, u_min, u_max)
 
-    - ``vrange`` - a 2-tuple (v_min, v_max) or a 3-tuple
+    - ``vrange`` -- a 2-tuple (v_min, v_max) or a 3-tuple
       (v, v_min, v_max)
 
-    - ``plot_points`` - (default: "automatic", which is [40,40]
+    - ``plot_points`` -- (default: "automatic", which is [40,40]
       for surfaces) initial number of sample points in each parameter;
       a pair of integers.
 
-    - ``boundary_style`` - (default: None, no boundary) a dict that describes
+    - ``boundary_style`` -- (default: None, no boundary) a dict that describes
       how to draw the boundaries of regions by giving options that are passed
       to the line3d command.
 
@@ -1124,7 +1121,9 @@ def _parametric_plot3d_surface(f, urange, vrange, plot_points, boundary_style, *
 
     if boundary_style is not None:
         for u in (urange[0], urange[-1]):
-            G += line3d([(g[0](u,v), g[1](u,v), g[2](u,v)) for v in vrange], **boundary_style)
+            G += line3d([(g[0](u, v), g[1](u, v), g[2](u, v)) for v in vrange],
+                        **boundary_style)
         for v in (vrange[0], vrange[-1]):
-            G += line3d([(g[0](u,v), g[1](u,v), g[2](u,v)) for u in urange], **boundary_style)
+            G += line3d([(g[0](u, v), g[1](u, v), g[2](u, v)) for u in urange],
+                        **boundary_style)
     return G

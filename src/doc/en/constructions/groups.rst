@@ -124,31 +124,25 @@ You can compute conjugacy classes of a finite group using "natively"::
 
 You can use the Sage-GAP interface::
 
-    sage: gap.eval("G := Group((1,2)(3,4),(1,2,3))")
-    'Group([ (1,2)(3,4), (1,2,3) ])'
-    sage: gap.eval("CG := ConjugacyClasses(G)")
-    '[ ()^G, (2,3,4)^G, (2,4,3)^G, (1,2)(3,4)^G ]'
-    sage: gap.eval("gamma := CG[3]")
-    '(2,4,3)^G'
-    sage: gap.eval("g := Representative(gamma)")
-    '(2,4,3)'
+    sage: libgap.eval("G := Group((1,2)(3,4),(1,2,3))")
+    Group([ (1,2)(3,4), (1,2,3) ])
+    sage: libgap.eval("CG := ConjugacyClasses(G)")
+    [ ()^G, (2,3,4)^G, (2,4,3)^G, (1,2)(3,4)^G ]
+    sage: libgap.eval("gamma := CG[3]")
+    (2,4,3)^G
+    sage: libgap.eval("g := Representative(gamma)")
+    (2,4,3)
 
 Or, here's another (more "pythonic") way to do this type of computation::
 
-    sage: G = gap.Group('[(1,2,3), (1,2)(3,4), (1,7)]')
+    sage: G = libgap.eval("Group([(1,2,3), (1,2)(3,4), (1,7)])")
     sage: CG = G.ConjugacyClasses()
     sage: gamma = CG[2]
     sage: g = gamma.Representative()
     sage: CG; gamma; g
-    [ ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), () ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (4,7) ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (3,4,7) ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (2,3)(4,7) ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (2,3,4,7) ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (1,2)(3,4,7) ),
-      ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (1,2,3,4,7) ) ]
-    ConjugacyClass( SymmetricGroup( [ 1, 2, 3, 4, 7 ] ), (4,7) )
-    (4,7)
+    [ ()^G, (4,7)^G, (3,4,7)^G, (2,3)(4,7)^G, (2,3,4,7)^G, (1,2)(3,4,7)^G, (1,2,3,4,7)^G ]
+    (3,4,7)^G
+    (3,4,7)
 
 .. index::
    pair: group; normal subgroups
@@ -162,29 +156,29 @@ If you want to find all the normal subgroups of a permutation group
 :math:`G` (up to conjugacy), you can use Sage's interface to GAP::
 
     sage: G = AlternatingGroup( 5 )
-    sage: gap(G).NormalSubgroups()
-    [ AlternatingGroup( [ 1 .. 5 ] ), Group( () ) ]
+    sage: libgap(G).NormalSubgroups()
+    [ Alt( [ 1 .. 5 ] ), Group(()) ]
 
 or
 
 ::
 
-    sage: G = gap("AlternatingGroup( 5 )")
+    sage: G = libgap.AlternatingGroup( 5 )
     sage: G.NormalSubgroups()
-    [ AlternatingGroup( [ 1 .. 5 ] ), Group( () ) ]
+    [ Alt( [ 1 .. 5 ] ), Group(()) ]
 
 Here's another way, working more directly with GAP::
 
-    sage: print(gap.eval("G := AlternatingGroup( 5 )"))
+    sage: libgap.eval("G := AlternatingGroup( 5 )")
     Alt( [ 1 .. 5 ] )
-    sage: print(gap.eval("normal := NormalSubgroups( G )"))
+    sage: libgap.eval("normal := NormalSubgroups( G )")
     [ Alt( [ 1 .. 5 ] ), Group(()) ]
-    sage: G = gap.new("DihedralGroup( 10 )")
+    sage: G = libgap.eval("DihedralGroup( 10 )")
     sage: G.NormalSubgroups().SortedList()
-    [ Group( <identity> of ... ), Group( [ f2 ] ), Group( [ f1, f2 ] ) ]
-    sage: print(gap.eval("G := SymmetricGroup( 4 )"))
+    [ Group([  ]), Group([ f2 ]), <pc group of size 10 with 2 generators> ]
+    sage: libgap.eval("G := SymmetricGroup( 4 )")
     Sym( [ 1 .. 4 ] )
-    sage: print(gap.eval("normal := NormalSubgroups( G );"))
+    sage: libgap.eval("normal := NormalSubgroups( G );")
     [ Sym( [ 1 .. 4 ] ), Alt( [ 1 .. 4 ] ), Group([ (1,4)(2,3),  ... ]),
           Group(()) ]
 
@@ -201,7 +195,7 @@ How do you compute the center of a group in Sage?
 Although Sage calls GAP to do the computation of the group center,
 ``center`` is "wrapped" (i.e., Sage has a class PermutationGroup with
 associated class method "center"), so the user does not need to use
-the ``gap`` command. Here's an example::
+the ``libgap`` command. Here's an example::
 
     sage: G = PermutationGroup(['(1,2,3)(4,5)', '(3,4)'])
     sage: G.center()

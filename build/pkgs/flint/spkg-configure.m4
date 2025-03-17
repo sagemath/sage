@@ -1,6 +1,6 @@
 SAGE_SPKG_CONFIGURE([flint], [
     SAGE_SPKG_DEPCHECK([mpfr], [
-        AC_CHECK_HEADER(flint/flint.h, [dnl
+        AC_CHECK_HEADERS([flint/flint.h flint/padic.h], [dnl
           dnl gr_get_fexpr appears in Flint 3.0
           AC_SEARCH_LIBS([gr_get_fexpr], [flint], [dnl
             dnl Assume Flint 3.2 is too new

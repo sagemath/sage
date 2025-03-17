@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Base class for old-style parent objects
 
@@ -202,16 +203,16 @@ cdef class Parent(parent.Parent):
 
     cdef _coerce_c_impl(self, x):     # OVERRIDE THIS FOR CYTHON CLASSES
         """
-        Canonically coerce x in assuming that the parent of x is not
-        equal to self.
+        Canonically coerce ``x`` in assuming that the parent of ``x`` is not
+        equal to ``self``.
         """
         check_old_coerce(self)
         raise TypeError
 
     def _coerce_impl(self, x):        # OVERRIDE THIS FOR PYTHON CLASSES
         """
-        Canonically coerce x in assuming that the parent of x is not
-        equal to self.
+        Canonically coerce ``x`` in assuming that the parent of ``x`` is not
+        equal to ``self``.
         """
         check_old_coerce(self)
         return self._coerce_c_impl(x)

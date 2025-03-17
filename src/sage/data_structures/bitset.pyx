@@ -16,7 +16,7 @@ linear in ``capacity``.
     faster.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Jason Grout <jason-sage@creativetrax.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -28,8 +28,8 @@ linear in ``capacity``.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
@@ -62,28 +62,26 @@ cdef class FrozenBitset:
 
     INPUT:
 
-    - ``iter`` -- initialization parameter (default: ``None``). Valid input
+    - ``iter`` -- initialization parameter (default: ``None``); valid inputs
       are:
 
       - :class:`Bitset` and :class:`FrozenBitset` -- If this is a
-        :class:`Bitset` or :class:`FrozenBitset`, then it is copied.
+        :class:`Bitset` or :class:`FrozenBitset`, then it is copied
 
-      - ``None`` -- If ``None``, then the bitset is set to the empty set.
+      - ``None`` -- if ``None``, then the bitset is set to the empty set
 
-      - string -- If a nonempty string, then the bitset is initialized by
+      - ``string`` -- if a nonempty string, then the bitset is initialized by
         including an element if the index of the string is ``1``. If the
-        string is empty, then raise a :class:`ValueError`.
+        string is empty, then raise a :exc:`ValueError`.
 
-      - iterable -- If an iterable, then it is assumed to contain a list of
-        nonnegative integers and those integers are placed in the set.
+      - ``iterable`` -- if an iterable, then it is assumed to contain a list of
+        nonnegative integers and those integers are placed in the set
 
-    - ``capacity`` -- (default: ``None``) The maximum capacity of the bitset.
+    - ``capacity`` -- (default: ``None``) the maximum capacity of the bitset.
       If this is not specified, then it is automatically calculated from the
       passed iterable.  It must be at least one.
 
-    OUTPUT:
-
-    - None.
+    OUTPUT: none
 
     The string representation of a :class:`FrozenBitset` ``FB`` can be
     understood as follows. Let `B = b_0 b_1 b_2 \cdots b_k` be the string
@@ -560,13 +558,7 @@ cdef class FrozenBitset:
         """
         Test if the bitset is empty.
 
-        INPUT:
-
-        - None.
-
-        OUTPUT:
-
-        - ``True`` if the bitset is empty; ``False`` otherwise.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -771,7 +763,6 @@ cdef class FrozenBitset:
             ...
             ValueError: other cannot be None
         """
-        cdef bint retval
         if other is None:
             raise ValueError("other cannot be None")
         cdef FrozenBitset left, right
@@ -786,7 +777,7 @@ cdef class FrozenBitset:
         # Assumes ``left.size <= right.size``.
         return bitset_are_disjoint(left._bitset, right._bitset)
 
-    def __contains__(self, unsigned long n):
+    def __contains__(self, unsigned long n) -> bool:
         """
         Test to see if ``n`` is in ``self``.
 
@@ -829,7 +820,7 @@ cdef class FrozenBitset:
         """
         return bitset_len(self._bitset)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return a string representing the bitset as a binary vector.
 
@@ -856,7 +847,6 @@ cdef class FrozenBitset:
             True
         """
         return bitset_bytes(self._bitset)
-
 
     def __repr__(self):
         """
@@ -1185,7 +1175,7 @@ cdef class FrozenBitset:
 
     cpdef complement(self):
         """
-        Return the complement of self.
+        Return the complement of ``self``.
 
         EXAMPLES::
 
@@ -1209,7 +1199,7 @@ cdef class FrozenBitset:
 
     def __invert__(self):
         """
-        Return the complement of self.
+        Return the complement of ``self``.
 
         EXAMPLES::
 
@@ -1800,7 +1790,7 @@ cdef class Bitset(FrozenBitset):
         """
         Update the bitset by removing ``n``.
 
-        This raises a :class:`KeyError` if ``n`` is not contained
+        This raises a :exc:`KeyError` if ``n`` is not contained
         in the bitset.
 
         EXAMPLES::
@@ -1875,7 +1865,7 @@ cdef class Bitset(FrozenBitset):
         """
         Remove and return an arbitrary element from the set.
 
-        This raises a :class:`KeyError` if the set is empty.
+        This raises a :exc:`KeyError` if the set is empty.
 
         EXAMPLES::
 
@@ -2122,7 +2112,6 @@ def test_bitset(py_a, py_b, long n):
         to size 69          111001111001111001111001111001111001111001111001111001111001111001111
         to size 138          111001111001111001111001111001111001111001111001111001111001111001111000000000000000000000000000000000000000000000000000000000000000000000
         to original size    111001111001111001111001111001111001111001111001111001111001111001111000000000000000000000000000000000000000000000000000000000000000000000000000000000
-
     """
     cdef bint bit = True
     cdef bitset_t a, b, r
@@ -2280,9 +2269,7 @@ def test_bitset_set_first_n(py_a, long n):
         sage: from sage.data_structures.bitset import test_bitset_set_first_n
         sage: test_bitset_set_first_n('00'*64, 128)
         a.set_first_n(n)    11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
-
     """
-    cdef bint bit = True
     cdef bitset_t a
 
     bitset_from_str(a, py_a)
@@ -2325,7 +2312,7 @@ def test_bitset_remove(py_a, long n):
 
 def test_bitset_pop(py_a):
     """
-    Tests for the bitset_pop function.
+    Test for the bitset_pop function.
 
     TESTS::
 
@@ -2352,11 +2339,10 @@ def test_bitset_unpickle(data):
 
     INPUT:
 
-    - ``data`` -- A tuple of data as would be produced by the internal, Cython-only, method ``bitset_pickle``.
+    - ``data`` -- tuple of data as would be produced by the internal,
+      Cython-only, method ``bitset_pickle``
 
-    OUTPUT:
-
-    A list form of the bitset corresponding to the pickled data.
+    OUTPUT: list form of the bitset corresponding to the pickled data
 
     EXAMPLES:
 

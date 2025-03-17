@@ -262,7 +262,7 @@ class DiGraph(GenericGraph):
          <https://networkx.github.io/>`__ digraph, or `igraph
          <http://igraph.org/python/>`__ digraph.
 
-    - ``pos`` -- dict (default: ``None``); a positioning dictionary. For
+    - ``pos`` -- dictionary (default: ``None``); a positioning dictionary. For
       example, the spring layout from NetworkX for the 5-cycle is::
 
          {0: [-0.91679746, 0.88169588],
@@ -272,7 +272,7 @@ class DiGraph(GenericGraph):
           4: [-1.125     ,-0.50118505]}
 
     - ``name`` -- string (default: ``None``); gives the graph a name (e.g.,
-      name="complete")
+      name='complete')
 
     - ``loops`` -- boolean (default: ``None``); whether to allow loops (ignored
       if data is an instance of the DiGraph class)
@@ -286,24 +286,24 @@ class DiGraph(GenericGraph):
     - ``format`` -- string (default: ``None``); if set to ``None``,
       :class:`DiGraph` tries to guess input's format. To avoid this possibly
       time-consuming step, one of the following values can be specified (see
-      description above): ``"int"``, ``"dig6"``, ``"rule"``,
-      ``"list_of_edges"``, ``"dict_of_lists"``, ``"dict_of_dicts"``,
-      ``"adjacency_matrix"``, ``"weighted_adjacency_matrix"``,
-      ``"incidence_matrix"``, ``"NX"``, ``"igraph"``.
+      description above): ``'int'``, ``'dig6'``, ``'rule'``,
+      ``'list_of_edges'``, ``'dict_of_lists'``, ``'dict_of_dicts'``,
+      ``'adjacency_matrix'``, ``'weighted_adjacency_matrix'``,
+      ``'incidence_matrix'``, ``"NX"``, ``'igraph'``.
 
     - ``sparse`` -- boolean (default: ``True``); ``sparse=True`` is an alias for
       ``data_structure="sparse"``, and ``sparse=False`` is an alias for
       ``data_structure="dense"``
 
-    - ``data_structure`` -- string (default: ``"sparse"``); one of the following
+    - ``data_structure`` -- string (default: ``'sparse'``); one of the following
       (for more information, see :mod:`~sage.graphs.base.overview`):
 
-      * ``"dense"`` -- selects the :mod:`~sage.graphs.base.dense_graph` backend
+      * ``'dense'`` -- selects the :mod:`~sage.graphs.base.dense_graph` backend
 
-      * ``"sparse"`` -- selects the :mod:`~sage.graphs.base.sparse_graph`
+      * ``'sparse'`` -- selects the :mod:`~sage.graphs.base.sparse_graph`
         backend
 
-      * ``"static_sparse"`` -- selects the
+      * ``'static_sparse'`` -- selects the
         :mod:`~sage.graphs.base.static_sparse_backend` (this backend is faster
         than the sparse backend and smaller in memory, and it is immutable, so
         that the resulting graphs can be used as dictionary keys).
@@ -482,8 +482,8 @@ class DiGraph(GenericGraph):
         sage: import networkx
         sage: g = networkx.DiGraph({0:[1,2,3], 2:[4]})
         sage: G = DiGraph(g)
-        sage: G_imm = DiGraph(G, data_structure="static_sparse")
-        sage: H_imm = DiGraph(G, data_structure="static_sparse")
+        sage: G_imm = DiGraph(G, data_structure='static_sparse')
+        sage: H_imm = DiGraph(G, data_structure='static_sparse')
         sage: H_imm is G_imm
         False
         sage: H_imm == G_imm == G
@@ -521,7 +521,7 @@ class DiGraph(GenericGraph):
     _directed = True
 
     def __init__(self, data=None, pos=None, loops=None, format=None,
-                 weighted=None, data_structure="sparse",
+                 weighted=None, data_structure='sparse',
                  vertex_labels=True, name=None,
                  multiedges=None, convert_empty_dict_labels_to_None=None,
                  sparse=True, immutable=False, hash_labels=None):
@@ -581,7 +581,7 @@ class DiGraph(GenericGraph):
             ....:      3:{5:4},4:{5:1,6:5},5:{4:1,6:7,5:1}}
             sage: grafo3 = DiGraph(B, weighted=True)
             sage: matad = grafo3.weighted_adjacency_matrix()                            # needs sage.modules
-            sage: grafo4 = DiGraph(matad, format="adjacency_matrix", weighted=True)     # needs sage.modules
+            sage: grafo4 = DiGraph(matad, format='adjacency_matrix', weighted=True)     # needs sage.modules
             sage: grafo4.shortest_path(0, 6, by_weight=True)                            # needs sage.modules
             [0, 1, 2, 5, 4, 6]
 
@@ -613,7 +613,7 @@ class DiGraph(GenericGraph):
 
         Unknown input format::
 
-            sage: DiGraph(4, format="HeyHeyHey")
+            sage: DiGraph(4, format='HeyHeyHey')
             Traceback (most recent call last):
             ...
             ValueError: unknown input format 'HeyHeyHey'
@@ -638,7 +638,7 @@ class DiGraph(GenericGraph):
         """
         msg = ''
         GenericGraph.__init__(self)
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
         if sparse is False:
             if data_structure != "sparse":
@@ -671,7 +671,7 @@ class DiGraph(GenericGraph):
             format = 'dig6'
             if data[:8] == ">>dig6<<":
                 data = data[8:]
-        if format is None and is_Matrix(data):
+        if format is None and isinstance(data, Matrix):
             if data.is_square():
                 format = 'adjacency_matrix'
             else:
@@ -873,7 +873,7 @@ class DiGraph(GenericGraph):
         r"""
         Return the ``dig6`` representation of the digraph as an ASCII string.
 
-        This is only valid for single (no multiple edges) digraphs on at most
+        This is only valid for simple (no multiple edges) digraphs on at most
         `2^{18} - 1 = 262143` vertices.
 
         .. NOTE::
@@ -893,6 +893,9 @@ class DiGraph(GenericGraph):
             sage: D = DiGraph({0: [1, 2], 1: [2], 2: [3], 3: [0]})
             sage: D.dig6_string()
             'CW`_'
+            sage: L = DiGraph({0: [1, 2], 1: [2], 2: [3], 3: [3]})
+            sage: L.dig6_string()
+            'CW`C'
 
         TESTS::
 
@@ -937,7 +940,7 @@ class DiGraph(GenericGraph):
 
         OUTPUT:
 
-        * When ``certificate=False``, returns a boolean value.
+        * When ``certificate=False``, returns a boolean value
 
         * When ``certificate=True``:
 
@@ -1025,13 +1028,13 @@ class DiGraph(GenericGraph):
 
         INPUT:
 
-         - ``data_structure`` -- string (default: ``None``); one of
-           ``"sparse"``, ``"static_sparse"``, or ``"dense"``. See the
-           documentation of :class:`Graph` or :class:`DiGraph`.
+        - ``data_structure`` -- string (default: ``None``); one of
+          ``'sparse'``, ``'static_sparse'``, or ``'dense'``. See the
+          documentation of :class:`Graph` or :class:`DiGraph`.
 
-         - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an
-           alias for ``data_structure="sparse"``, and ``sparse=False`` is an
-           alias for ``data_structure="dense"``.
+        - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an
+          alias for ``data_structure="sparse"``, and ``sparse=False`` is an
+          alias for ``data_structure="dense"``.
 
         EXAMPLES::
 
@@ -1057,7 +1060,6 @@ class DiGraph(GenericGraph):
             {0: 'foo', 1: None, 2: None}
             sage: G.get_vertices()
             {0: 'foo', 1: None, 2: None}
-
         """
         if sparse is not None:
             if data_structure is not None:
@@ -1132,7 +1134,7 @@ class DiGraph(GenericGraph):
         - ``vertices`` -- a vertex or a list of vertices
 
         - ``labels`` -- boolean (default: ``True``); whether to return edges as
-          pairs of vertices, or as triples containing the labels.
+          pairs of vertices, or as triples containing the labels
 
         EXAMPLES::
 
@@ -1151,7 +1153,7 @@ class DiGraph(GenericGraph):
         - ``vertices`` -- a vertex or a list of vertices
 
         - ``labels`` -- boolean (default: ``True``); whether to return edges as
-          pairs of vertices, or as triples containing the labels.
+          pairs of vertices, or as triples containing the labels
 
         EXAMPLES::
 
@@ -1179,7 +1181,7 @@ class DiGraph(GenericGraph):
         - ``vertices`` -- a vertex or a list of vertices
 
         - ``labels`` -- boolean (default: ``True``); whether to return edges as
-          pairs of vertices, or as triples containing the labels.
+          pairs of vertices, or as triples containing the labels
 
         EXAMPLES::
 
@@ -1202,8 +1204,31 @@ class DiGraph(GenericGraph):
             ....:     print(a)
             1
             4
+
+        TESTS:
+
+        With multiple edges, check that the neighbors are listed only once::
+
+            sage: D = DiGraph([[0, 1, 2], [(0, 1), (0, 1), (1, 2) ]],multiedges=True)
+            sage: list(D.neighbor_in_iterator(0))
+            []
+            sage: list(D.neighbor_in_iterator(1))
+            [0]
+            sage: list(D.neighbor_in_iterator(2))
+            [1]
+
+        Check that the iterator lists ``vertex`` in the presence of loop(s):
+
+            sage: D = DiGraph([[0, 1, 2], [(0, 0), (0, 0), (1, 1)]],multiedges=True, loops=True)
+            sage: list(D.neighbor_in_iterator(0))
+            [0]
+            sage: list(D.neighbor_in_iterator(1))
+            [1]
+            sage: list(D.neighbor_in_iterator(2))
+            []
+
         """
-        return iter(set(self._backend.iterator_in_nbrs(vertex)))
+        yield from self._backend.iterator_in_nbrs(vertex)
 
     def neighbors_in(self, vertex):
         """
@@ -1233,8 +1258,31 @@ class DiGraph(GenericGraph):
             1
             2
             3
+
+        TESTS:
+
+        With multiple edges, check that the neighbors are listed only once::
+
+            sage: D = DiGraph([[0, 1, 2], [(0, 1), (0, 1), (1, 2) ]],multiedges=True)
+            sage: list(D.neighbor_out_iterator(0))
+            [1]
+            sage: list(D.neighbor_out_iterator(1))
+            [2]
+            sage: list(D.neighbor_out_iterator(2))
+            []
+
+        Check that the iterator lists ``vertex`` in the presence of loop(s):
+
+            sage: D = DiGraph([[0, 1, 2], [(0, 0), (0, 0), (1, 1)]],multiedges=True, loops=True)
+            sage: list(D.neighbor_out_iterator(0))
+            [0]
+            sage: list(D.neighbor_out_iterator(1))
+            [1]
+            sage: list(D.neighbor_out_iterator(2))
+            []
+
         """
-        return iter(set(self._backend.iterator_out_nbrs(vertex)))
+        yield from self._backend.iterator_out_nbrs(vertex)
 
     def neighbors_out(self, vertex):
         """
@@ -1270,7 +1318,7 @@ class DiGraph(GenericGraph):
         if vertices in self:
             return self._backend.in_degree(vertices)
         elif labels:
-            return {v: d for v, d in self.in_degree_iterator(vertices, labels=labels)}
+            return dict(self.in_degree_iterator(vertices, labels=labels))
         return list(self.in_degree_iterator(vertices, labels=labels))
 
     def in_degree_iterator(self, vertices=None, labels=False):
@@ -1340,7 +1388,7 @@ class DiGraph(GenericGraph):
         if vertices in self:
             return self._backend.out_degree(vertices)
         elif labels:
-            return {v: d for v, d in self.out_degree_iterator(vertices, labels=labels)}
+            return dict(self.out_degree_iterator(vertices, labels=labels))
         return list(self.out_degree_iterator(vertices, labels=labels))
 
     def out_degree_iterator(self, vertices=None, labels=False):
@@ -1397,9 +1445,7 @@ class DiGraph(GenericGraph):
         r"""
         Return a list of sources of the digraph.
 
-        OUTPUT:
-
-        - list of the vertices of the digraph that have no edges going into them
+        OUTPUT: list of the vertices of the digraph that have no edges going into them
 
         EXAMPLES::
 
@@ -1416,9 +1462,7 @@ class DiGraph(GenericGraph):
         """
         Return a list of sinks of the digraph.
 
-        OUTPUT:
-
-        - list of the vertices of the digraph that have no edges beginning at them
+        OUTPUT: list of the vertices of the digraph that have no edges beginning at them
 
         EXAMPLES::
 
@@ -1493,7 +1537,7 @@ class DiGraph(GenericGraph):
           use constraint generation when solving the Mixed Integer Linear
           Program.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -1501,7 +1545,7 @@ class DiGraph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
+        - ``verbose`` -- integer (default: 0); sets the level of
           verbosity. Set to 0 by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
@@ -1556,8 +1600,8 @@ class DiGraph(GenericGraph):
         is an edge, then `vu` is an edge too), then obviously the cardinality of
         its feedback arc set is the number of edges in the first graph::
 
-            sage: cycle=graphs.CycleGraph(5)
-            sage: dcycle=DiGraph(cycle)
+            sage: cycle = graphs.CycleGraph(5)
+            sage: dcycle = DiGraph(cycle)
             sage: cycle.size()
             5
             sage: dcycle.feedback_edge_set(value_only=True)                             # needs sage.numerical.mip
@@ -1863,7 +1907,7 @@ class DiGraph(GenericGraph):
 
         EXAMPLES:
 
-        If ``inplace`` is ``True`` (default value), ``self`` is modified::
+        If ``inplace`` is ``True`` (default), ``self`` is modified::
 
             sage: D = DiGraph([(0, 1 ,2)])
             sage: D.reverse_edge(0, 1)
@@ -2050,11 +2094,11 @@ class DiGraph(GenericGraph):
 
         INPUT:
 
-        - ``edges`` -- a list of edges in the DiGraph.
+        - ``edges`` -- list of edges in the DiGraph
 
         - ``inplace`` -- boolean (default: ``True``); if ``False``, a new
           digraph is created and returned as output, otherwise ``self`` is
-          modified.
+          modified
 
         - ``multiedges`` -- boolean (default: ``None``); if ``True``, input
           graph will be forced to allow parallel edges when necessary (for more
@@ -2062,11 +2106,11 @@ class DiGraph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`~DiGraph.reverse_edge` - Reverses a single edge.
+            :meth:`~DiGraph.reverse_edge` -- reverses a single edge
 
         EXAMPLES:
 
-        If ``inplace`` is ``True`` (default value), ``self`` is modified::
+        If ``inplace`` is ``True`` (default), ``self`` is modified::
 
             sage: D = DiGraph({ 0: [1, 1, 3], 2: [3, 3], 4: [1, 5]}, multiedges=true)
             sage: D.reverse_edges([[0, 1], [0, 3]])
@@ -2167,41 +2211,41 @@ class DiGraph(GenericGraph):
 
         INPUT:
 
-        - ``v`` - either a single vertex or a list of vertices. If it is not
-          specified, then it is taken to be all vertices.
+        - ``v`` -- either a single vertex or a list of vertices. If it is not
+          specified, then it is taken to be all vertices
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
 
-          - ``'BFS'`` - the computation is done through a BFS centered on each
-            vertex successively. Works only if ``by_weight==False``.
+          - ``'BFS'`` -- the computation is done through a BFS centered on each
+            vertex successively. Works only if ``by_weight==False``
 
-          - ``'Floyd-Warshall-Cython'`` - a Cython implementation of the
+          - ``'Floyd-Warshall-Cython'`` -- a Cython implementation of the
             Floyd-Warshall algorithm. Works only if ``by_weight==False`` and
             ``v is None`` or ``v`` should contain all vertices of ``self``.
 
-          - ``'Floyd-Warshall-Python'`` - a Python implementation of the
+          - ``'Floyd-Warshall-Python'`` -- a Python implementation of the
             Floyd-Warshall algorithm. Works also with weighted graphs, even with
             negative weights (but no negative cycle is allowed). However, ``v``
             must be ``None`` or ``v`` should contain all vertices of ``self``.
 
-          - ``'Dijkstra_NetworkX'`` - the Dijkstra algorithm, implemented in
+          - ``'Dijkstra_NetworkX'`` -- the Dijkstra algorithm, implemented in
             NetworkX. It works with weighted graphs, but no negative weight is
             allowed.
 
-          - ``'Dijkstra_Boost'`` - the Dijkstra algorithm, implemented in Boost
-            (works only with positive weights).
+          - ``'Dijkstra_Boost'`` -- the Dijkstra algorithm, implemented in Boost
+            (works only with positive weights)
 
-          - ``'Johnson_Boost'`` - the Johnson algorithm, implemented in
+          - ``'Johnson_Boost'`` -- the Johnson algorithm, implemented in
             Boost (works also with negative weights, if there is no negative
             cycle). Works only if ``v is None`` or ``v`` should contain all
             vertices of ``self``.
 
-          - ``'From_Dictionary'`` - uses the (already computed) distances, that
-            are provided by input variable ``dist_dict``.
+          - ``'From_Dictionary'`` -- uses the (already computed) distances, that
+            are provided by input variable ``dist_dict``
 
           - ``None`` (default): Sage chooses the best algorithm:
             ``'From_Dictionary'`` if ``dist_dict`` is not None, ``'BFS'`` for
@@ -2217,11 +2261,11 @@ class DiGraph(GenericGraph):
         - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
           that the ``weight_function`` outputs a number for each edge
 
-        - ``dist_dict`` -- a dictionary (default: ``None``); a dict of dicts of
+        - ``dist_dict`` -- dictionary (default: ``None``); a dict of dicts of
           distances (used only if ``algorithm=='From_Dictionary'``)
 
         - ``with_labels`` -- boolean (default: ``False``); whether to return a
-          list or a dictionary keyed by vertices.
+          list or a dictionary keyed by vertices
 
         EXAMPLES::
 
@@ -2383,7 +2427,7 @@ class DiGraph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); see method
           :meth:`eccentricity` for the list of available algorithms
@@ -2452,7 +2496,7 @@ class DiGraph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
@@ -2622,7 +2666,7 @@ class DiGraph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); see method
           :meth:`eccentricity` for the list of available algorithms
@@ -2693,7 +2737,7 @@ class DiGraph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); see method
           :meth:`eccentricity` for the list of available algorithms
@@ -2767,20 +2811,18 @@ class DiGraph(GenericGraph):
           (e.g. ``['a', 'b', 'c', 'a']`` and ``['b', 'c', 'a',
           'b']``). Otherwise, all cycles are enumerated.
 
-        - ``max_length`` -- non negative integer (default: ``None``); the
+        - ``max_length`` -- nonnegative integer (default: ``None``); the
           maximum length of the enumerated paths. If set to ``None``, then all
           lengths are allowed.
 
-        - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
-          the empty paths are also enumerated.
+        - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
+          the empty paths are also enumerated
 
         - ``remove_acyclic_edges`` -- boolean (default: ``True``); whether
           acyclic edges must be removed from the graph.  Used to avoid
           recomputing it for each vertex
 
-        OUTPUT:
-
-            iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -2887,16 +2929,14 @@ class DiGraph(GenericGraph):
           (e.g. ``['a', 'b', 'c', 'a']`` and ``['b', 'c', 'a',
           'b']``). Otherwise, all cycles are enumerated.
 
-        - ``max_length`` -- non negative integer (default: ``None``); the
+        - ``max_length`` -- nonnegative integer (default: ``None``); the
           maximum length of the enumerated paths. If set to ``None``, then all
           lengths are allowed.
 
-        - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
-          the empty paths are also enumerated.
+        - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
+          the empty paths are also enumerated
 
-        OUTPUT:
-
-            iterator
+        OUTPUT: iterator
 
         .. SEEALSO::
 
@@ -3034,16 +3074,14 @@ class DiGraph(GenericGraph):
           (e.g. ``['a', 'b', 'c', 'a']`` and ``['b', 'c', 'a',
           'b']``). Otherwise, all cycles are enumerated.
 
-        - ``max_length`` -- non negative integer (default: ``None``); the
+        - ``max_length`` -- nonnegative integer (default: ``None``); the
           maximum length of the enumerated paths. If set to ``None``, then all
           lengths are allowed.
 
-        - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
-          the empty paths are also enumerated.
+        - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
+          the empty paths are also enumerated
 
-        OUTPUT:
-
-            list
+        OUTPUT: list
 
         .. NOTE::
 
@@ -3061,30 +3099,30 @@ class DiGraph(GenericGraph):
             sage: g = graphs.PetersenGraph().to_directed()
             sage: g.all_simple_cycles(max_length=4)
             [[0, 1, 0], [0, 4, 0], [0, 5, 0], [1, 2, 1], [1, 6, 1], [2, 3, 2],
-             [2, 7, 2], [3, 8, 3], [3, 4, 3], [4, 9, 4], [5, 8, 5], [5, 7, 5],
+             [2, 7, 2], [3, 4, 3], [3, 8, 3], [4, 9, 4], [5, 7, 5], [5, 8, 5],
              [6, 8, 6], [6, 9, 6], [7, 9, 7]]
             sage: g.all_simple_cycles(max_length=6)
             [[0, 1, 0], [0, 4, 0], [0, 5, 0], [1, 2, 1], [1, 6, 1], [2, 3, 2],
-             [2, 7, 2], [3, 8, 3], [3, 4, 3], [4, 9, 4], [5, 8, 5], [5, 7, 5],
+             [2, 7, 2], [3, 4, 3], [3, 8, 3], [4, 9, 4], [5, 7, 5], [5, 8, 5],
              [6, 8, 6], [6, 9, 6], [7, 9, 7], [0, 1, 2, 3, 4, 0],
              [0, 1, 2, 7, 5, 0], [0, 1, 6, 8, 5, 0], [0, 1, 6, 9, 4, 0],
-             [0, 4, 9, 6, 1, 0], [0, 4, 9, 7, 5, 0], [0, 4, 3, 8, 5, 0],
-             [0, 4, 3, 2, 1, 0], [0, 5, 8, 3, 4, 0], [0, 5, 8, 6, 1, 0],
-             [0, 5, 7, 9, 4, 0], [0, 5, 7, 2, 1, 0], [1, 2, 3, 8, 6, 1],
+             [0, 4, 3, 2, 1, 0], [0, 4, 3, 8, 5, 0], [0, 4, 9, 6, 1, 0],
+             [0, 4, 9, 7, 5, 0], [0, 5, 7, 2, 1, 0], [0, 5, 7, 9, 4, 0],
+             [0, 5, 8, 3, 4, 0], [0, 5, 8, 6, 1, 0], [1, 2, 3, 8, 6, 1],
              [1, 2, 7, 9, 6, 1], [1, 6, 8, 3, 2, 1], [1, 6, 9, 7, 2, 1],
-             [2, 3, 8, 5, 7, 2], [2, 3, 4, 9, 7, 2], [2, 7, 9, 4, 3, 2],
-             [2, 7, 5, 8, 3, 2], [3, 8, 6, 9, 4, 3], [3, 4, 9, 6, 8, 3],
-             [5, 8, 6, 9, 7, 5], [5, 7, 9, 6, 8, 5], [0, 1, 2, 3, 8, 5, 0],
+             [2, 3, 4, 9, 7, 2], [2, 3, 8, 5, 7, 2], [2, 7, 5, 8, 3, 2],
+             [2, 7, 9, 4, 3, 2], [3, 4, 9, 6, 8, 3], [3, 8, 6, 9, 4, 3],
+             [5, 7, 9, 6, 8, 5], [5, 8, 6, 9, 7, 5], [0, 1, 2, 3, 8, 5, 0],
              [0, 1, 2, 7, 9, 4, 0], [0, 1, 6, 8, 3, 4, 0],
-             [0, 1, 6, 9, 7, 5, 0], [0, 4, 9, 6, 8, 5, 0],
-             [0, 4, 9, 7, 2, 1, 0], [0, 4, 3, 8, 6, 1, 0],
-             [0, 4, 3, 2, 7, 5, 0], [0, 5, 8, 3, 2, 1, 0],
-             [0, 5, 8, 6, 9, 4, 0], [0, 5, 7, 9, 6, 1, 0],
-             [0, 5, 7, 2, 3, 4, 0], [1, 2, 3, 4, 9, 6, 1],
+             [0, 1, 6, 9, 7, 5, 0], [0, 4, 3, 2, 7, 5, 0],
+             [0, 4, 3, 8, 6, 1, 0], [0, 4, 9, 6, 8, 5, 0],
+             [0, 4, 9, 7, 2, 1, 0], [0, 5, 7, 2, 3, 4, 0],
+             [0, 5, 7, 9, 6, 1, 0], [0, 5, 8, 3, 2, 1, 0],
+             [0, 5, 8, 6, 9, 4, 0], [1, 2, 3, 4, 9, 6, 1],
              [1, 2, 7, 5, 8, 6, 1], [1, 6, 8, 5, 7, 2, 1],
              [1, 6, 9, 4, 3, 2, 1], [2, 3, 8, 6, 9, 7, 2],
-             [2, 7, 9, 6, 8, 3, 2], [3, 8, 5, 7, 9, 4, 3],
-             [3, 4, 9, 7, 5, 8, 3]]
+             [2, 7, 9, 6, 8, 3, 2], [3, 4, 9, 7, 5, 8, 3],
+             [3, 8, 5, 7, 9, 4, 3]]
 
         The complete graph (without loops) on `4` vertices::
 
@@ -3102,52 +3140,52 @@ class DiGraph(GenericGraph):
 
             sage: g = graphs.CompleteGraph(20).to_directed()
             sage: g.all_simple_cycles(max_length=2)
-            [[0, 1, 0], [0, 2, 0], [0, 3, 0], [0, 4, 0], [0, 5, 0], [0, 6, 0],
-             [0, 7, 0], [0, 8, 0], [0, 9, 0], [0, 10, 0], [0, 11, 0],
-             [0, 12, 0], [0, 13, 0], [0, 14, 0], [0, 15, 0], [0, 16, 0],
-             [0, 17, 0], [0, 18, 0], [0, 19, 0], [1, 2, 1], [1, 3, 1],
-             [1, 4, 1], [1, 5, 1], [1, 6, 1], [1, 7, 1], [1, 8, 1], [1, 9, 1],
-             [1, 10, 1], [1, 11, 1], [1, 12, 1], [1, 13, 1], [1, 14, 1],
-             [1, 15, 1], [1, 16, 1], [1, 17, 1], [1, 18, 1], [1, 19, 1],
-             [2, 3, 2], [2, 4, 2], [2, 5, 2], [2, 6, 2], [2, 7, 2], [2, 8, 2],
-             [2, 9, 2], [2, 10, 2], [2, 11, 2], [2, 12, 2], [2, 13, 2],
-             [2, 14, 2], [2, 15, 2], [2, 16, 2], [2, 17, 2], [2, 18, 2],
-             [2, 19, 2], [3, 4, 3], [3, 5, 3], [3, 6, 3], [3, 7, 3], [3, 8, 3],
-             [3, 9, 3], [3, 10, 3], [3, 11, 3], [3, 12, 3], [3, 13, 3],
-             [3, 14, 3], [3, 15, 3], [3, 16, 3], [3, 17, 3], [3, 18, 3],
-             [3, 19, 3], [4, 5, 4], [4, 6, 4], [4, 7, 4], [4, 8, 4], [4, 9, 4],
-             [4, 10, 4], [4, 11, 4], [4, 12, 4], [4, 13, 4], [4, 14, 4],
-             [4, 15, 4], [4, 16, 4], [4, 17, 4], [4, 18, 4], [4, 19, 4],
-             [5, 6, 5], [5, 7, 5], [5, 8, 5], [5, 9, 5], [5, 10, 5],
-             [5, 11, 5], [5, 12, 5], [5, 13, 5], [5, 14, 5], [5, 15, 5],
-             [5, 16, 5], [5, 17, 5], [5, 18, 5], [5, 19, 5], [6, 7, 6],
-             [6, 8, 6], [6, 9, 6], [6, 10, 6], [6, 11, 6], [6, 12, 6],
-             [6, 13, 6], [6, 14, 6], [6, 15, 6], [6, 16, 6], [6, 17, 6],
-             [6, 18, 6], [6, 19, 6], [7, 8, 7], [7, 9, 7], [7, 10, 7],
-             [7, 11, 7], [7, 12, 7], [7, 13, 7], [7, 14, 7], [7, 15, 7],
-             [7, 16, 7], [7, 17, 7], [7, 18, 7], [7, 19, 7], [8, 9, 8],
-             [8, 10, 8], [8, 11, 8], [8, 12, 8], [8, 13, 8], [8, 14, 8],
-             [8, 15, 8], [8, 16, 8], [8, 17, 8], [8, 18, 8], [8, 19, 8],
-             [9, 10, 9], [9, 11, 9], [9, 12, 9], [9, 13, 9], [9, 14, 9],
-             [9, 15, 9], [9, 16, 9], [9, 17, 9], [9, 18, 9], [9, 19, 9],
-             [10, 11, 10], [10, 12, 10], [10, 13, 10], [10, 14, 10],
-             [10, 15, 10], [10, 16, 10], [10, 17, 10], [10, 18, 10],
-             [10, 19, 10], [11, 12, 11], [11, 13, 11], [11, 14, 11],
-             [11, 15, 11], [11, 16, 11], [11, 17, 11], [11, 18, 11],
-             [11, 19, 11], [12, 13, 12], [12, 14, 12], [12, 15, 12],
+            [[0, 16, 0], [0, 1, 0], [0, 17, 0], [0, 2, 0], [0, 18, 0],
+             [0, 3, 0], [0, 19, 0], [0, 4, 0], [0, 5, 0], [0, 6, 0], [0, 7, 0],
+             [0, 8, 0], [0, 9, 0], [0, 10, 0], [0, 11, 0], [0, 12, 0],
+             [0, 13, 0], [0, 14, 0], [0, 15, 0], [1, 16, 1], [1, 17, 1],
+             [1, 2, 1], [1, 18, 1], [1, 3, 1], [1, 19, 1], [1, 4, 1], [1, 5, 1],
+             [1, 6, 1], [1, 7, 1], [1, 8, 1], [1, 9, 1], [1, 10, 1], [1, 11, 1],
+             [1, 12, 1], [1, 13, 1], [1, 14, 1], [1, 15, 1], [2, 16, 2],
+             [2, 17, 2], [2, 18, 2], [2, 3, 2], [2, 19, 2], [2, 4, 2],
+             [2, 5, 2], [2, 6, 2], [2, 7, 2], [2, 8, 2], [2, 9, 2], [2, 10, 2],
+             [2, 11, 2], [2, 12, 2], [2, 13, 2], [2, 14, 2], [2, 15, 2],
+             [3, 16, 3], [3, 17, 3], [3, 18, 3], [3, 19, 3], [3, 4, 3],
+             [3, 5, 3], [3, 6, 3], [3, 7, 3], [3, 8, 3], [3, 9, 3], [3, 10, 3],
+             [3, 11, 3], [3, 12, 3], [3, 13, 3], [3, 14, 3], [3, 15, 3],
+             [4, 16, 4], [4, 17, 4], [4, 18, 4], [4, 19, 4], [4, 5, 4],
+             [4, 6, 4], [4, 7, 4], [4, 8, 4], [4, 9, 4], [4, 10, 4], [4, 11, 4],
+             [4, 12, 4], [4, 13, 4], [4, 14, 4], [4, 15, 4], [5, 16, 5],
+             [5, 17, 5], [5, 18, 5], [5, 19, 5], [5, 6, 5], [5, 7, 5],
+             [5, 8, 5], [5, 9, 5], [5, 10, 5], [5, 11, 5], [5, 12, 5],
+             [5, 13, 5], [5, 14, 5], [5, 15, 5], [6, 16, 6], [6, 17, 6],
+             [6, 18, 6], [6, 19, 6], [6, 7, 6], [6, 8, 6], [6, 9, 6],
+             [6, 10, 6], [6, 11, 6], [6, 12, 6], [6, 13, 6], [6, 14, 6],
+             [6, 15, 6], [7, 16, 7], [7, 17, 7], [7, 18, 7], [7, 19, 7],
+             [7, 8, 7], [7, 9, 7], [7, 10, 7], [7, 11, 7], [7, 12, 7],
+             [7, 13, 7], [7, 14, 7], [7, 15, 7], [8, 16, 8], [8, 17, 8],
+             [8, 18, 8], [8, 19, 8], [8, 9, 8], [8, 10, 8], [8, 11, 8],
+             [8, 12, 8], [8, 13, 8], [8, 14, 8], [8, 15, 8], [9, 16, 9],
+             [9, 17, 9], [9, 18, 9], [9, 19, 9], [9, 10, 9], [9, 11, 9],
+             [9, 12, 9], [9, 13, 9], [9, 14, 9], [9, 15, 9], [10, 16, 10],
+             [10, 17, 10], [10, 18, 10], [10, 19, 10], [10, 11, 10],
+             [10, 12, 10], [10, 13, 10], [10, 14, 10], [10, 15, 10],
+             [11, 16, 11], [11, 17, 11], [11, 18, 11], [11, 19, 11],
+             [11, 12, 11], [11, 13, 11], [11, 14, 11], [11, 15, 11],
              [12, 16, 12], [12, 17, 12], [12, 18, 12], [12, 19, 12],
-             [13, 14, 13], [13, 15, 13], [13, 16, 13], [13, 17, 13],
-             [13, 18, 13], [13, 19, 13], [14, 15, 14], [14, 16, 14],
-             [14, 17, 14], [14, 18, 14], [14, 19, 14], [15, 16, 15],
-             [15, 17, 15], [15, 18, 15], [15, 19, 15], [16, 17, 16],
-             [16, 18, 16], [16, 19, 16], [17, 18, 17], [17, 19, 17],
-             [18, 19, 18]]
+             [12, 13, 12], [12, 14, 12], [12, 15, 12], [13, 16, 13],
+             [13, 17, 13], [13, 18, 13], [13, 19, 13], [13, 14, 13],
+             [13, 15, 13], [14, 16, 14], [14, 17, 14], [14, 18, 14],
+             [14, 19, 14], [14, 15, 14], [15, 16, 15], [15, 17, 15],
+             [15, 18, 15], [15, 19, 15], [16, 17, 16], [16, 18, 16],
+             [16, 19, 16], [17, 18, 17], [17, 19, 17], [18, 19, 18]]
+
             sage: g = graphs.CompleteGraph(20).to_directed()
             sage: g.all_simple_cycles(max_length=2, starting_vertices=[0])
-            [[0, 1, 0], [0, 2, 0], [0, 3, 0], [0, 4, 0], [0, 5, 0], [0, 6, 0],
+            [[0, 16, 0], [0, 1, 0], [0, 17, 0], [0, 2, 0], [0, 18, 0],
+             [0, 3, 0], [0, 19, 0], [0, 4, 0], [0, 5, 0], [0, 6, 0],
              [0, 7, 0], [0, 8, 0], [0, 9, 0], [0, 10, 0], [0, 11, 0],
-             [0, 12, 0], [0, 13, 0], [0, 14, 0], [0, 15, 0], [0, 16, 0],
-             [0, 17, 0], [0, 18, 0], [0, 19, 0]]
+             [0, 12, 0], [0, 13, 0], [0, 14, 0], [0, 15, 0]]
 
         One may prefer to distinguish equivalent cycles having distinct starting
         vertices (compare the following examples)::
@@ -3170,11 +3208,10 @@ class DiGraph(GenericGraph):
         EXAMPLES::
 
             sage: Q = DiGraph({1: {2: ['a', 'c']}, 2: {3: ['b']}})
-            sage: F = Q.path_semigroup(); F
+            sage: F = Q.path_semigroup(); F                                             # needs sage.libs.flint
             Partial semigroup formed by the directed paths of Multi-digraph on 3 vertices
-            sage: list(F)
+            sage: list(F)                                                               # needs sage.libs.flint
             [e_1, e_2, e_3, a, c, b, a*b, c*b]
-
         """
         from sage.quivers.path_semigroup import PathSemigroup
         return PathSemigroup(self)
@@ -3198,11 +3235,11 @@ class DiGraph(GenericGraph):
 
     # Directed Acyclic Graphs (DAGs)
 
-    def topological_sort(self, implementation="default"):
+    def topological_sort(self, implementation='default'):
         """
         Return a topological sort of the digraph if it is acyclic.
 
-        If the digraph contains a directed cycle, a :class:`TypeError`
+        If the digraph contains a directed cycle, a :exc:`TypeError`
         is raised. As topological sorts are not necessarily unique,
         different implementations may yield different results.
 
@@ -3213,15 +3250,15 @@ class DiGraph(GenericGraph):
 
         INPUT:
 
-        - ``implementation`` -- string (default: ``"default"``); either use the
+        - ``implementation`` -- string (default: ``'default'``); either use the
           default Cython implementation, or the default NetworkX library
           (``implementation = "NetworkX"``)
 
         .. SEEALSO::
 
-            - :meth:`is_directed_acyclic` -- Tests whether a directed graph is
-              acyclic (can also join a certificate -- a topological sort or a
-              circuit in the graph).
+            - :meth:`is_directed_acyclic` -- tests whether a directed graph is
+              acyclic (can also join a certificate; a topological sort or a
+              circuit in the graph)
 
         EXAMPLES::
 
@@ -3284,7 +3321,7 @@ class DiGraph(GenericGraph):
         Return an iterator over all topological sorts of the digraph if
         it is acyclic.
 
-        If the digraph contains a directed cycle, a :class:`TypeError`
+        If the digraph contains a directed cycle, a :exc:`TypeError`
         is raised.
 
         A topological sort is an ordering of the vertices of the digraph such
@@ -3325,7 +3362,7 @@ class DiGraph(GenericGraph):
 
     # Visualization
 
-    def layout_acyclic(self, rankdir="up", **options):
+    def layout_acyclic(self, rankdir='up', **options):
         """
         Return a ranked layout so that all edges point upward.
 
@@ -3374,7 +3411,6 @@ class DiGraph(GenericGraph):
             sage: pos = H.layout_acyclic(rankdir='left')
             sage: pos[1][0] < pos[0][0] - .5
             True
-
         """
         if have_dot2tex():
             return self.layout_graphviz(rankdir=rankdir, **options)
@@ -3455,9 +3491,7 @@ class DiGraph(GenericGraph):
         r"""
         Return the level set decomposition of the digraph.
 
-        OUTPUT:
-
-        - a list of non empty lists of vertices of this graph
+        OUTPUT: list of non empty lists of vertices of this graph
 
         The level set decomposition of the digraph is a list `l` such that the
         level `l[i]` contains all the vertices having all their predecessors in
@@ -3663,8 +3697,8 @@ class DiGraph(GenericGraph):
           ``self.edges()``; so, if ``self.edges()`` outputs an edge in the form
           ``(1, 3, None)``, then ``(1, 3)`` will not do!
 
-        - ``ends`` -- (optional, default: ``(self.sources(), self.sinks())``) a
-          pair `(S, T)` of an iterable `S` and an iterable `T`.
+        - ``ends`` -- (default: ``(self.sources(), self.sinks())``) a
+          pair `(S, T)` of an iterable `S` and an iterable `T`
 
         - ``backend`` -- string or ``None`` (default); the backend to use;
           see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
@@ -3943,20 +3977,18 @@ class DiGraph(GenericGraph):
         contains all vertices of the digraph.
 
         If no spanning out branching rooted at ``source`` exist, raises
-        ValueError or return non spanning out branching rooted at ``source``,
-        depending on the value of ``spanning``.
+        :exc:`ValueError` or return non spanning out branching rooted at
+        ``source``, depending on the value of ``spanning``.
 
         INPUT:
 
-        - ``source`` -- vertex used as the source for all out branchings.
+        - ``source`` -- vertex used as the source for all out branchings
 
         - ``spanning`` -- boolean (default: ``True``); if ``False`` return
           maximum out branching from ``source``. Otherwise, return spanning out
           branching if exists.
 
-        OUTPUT:
-
-        An iterator over the out branchings rooted in the given source.
+        OUTPUT: an iterator over the out branchings rooted in the given source
 
         .. SEEALSO::
 
@@ -4054,7 +4086,7 @@ class DiGraph(GenericGraph):
             This function makes use of the following to keep track of partial
             out branchings:
 
-            - ``list_edges`` -- list of edges in self.
+            - ``list_edges`` -- list of edges in self
             - ``list_merged_edges`` -- list of edges that are currently merged
             - ``graph`` -- a copy of self where edges have an appropriate label
             """
@@ -4117,7 +4149,7 @@ class DiGraph(GenericGraph):
 
         def _singleton_out_branching():
             r"""
-            Returns a DiGraph containing only ``source`` and no edges.
+            Return a DiGraph containing only ``source`` and no edges.
             """
             D = DiGraph()
             D.add_vertex(source)
@@ -4161,20 +4193,18 @@ class DiGraph(GenericGraph):
         contains all vertices of the digraph.
 
         If no spanning in branching rooted at ``source`` exist, raises
-        ValueError or return non spanning in branching rooted at ``source``,
-        depending on the value of ``spanning``.
+        :exc:`ValueError` or return non spanning in branching rooted at
+        ``source``, depending on the value of ``spanning``.
 
         INPUT:
 
-        - ``source`` -- vertex used as the source for all in branchings.
+        - ``source`` -- vertex used as the source for all in branchings
 
         - ``spanning`` -- boolean (default: ``True``); if ``False`` return
           maximum in branching to ``source``. Otherwise, return spanning in
           branching if exists.
 
-        OUTPUT:
-
-        An iterator over the in branchings rooted in the given source.
+        OUTPUT: an iterator over the in branchings rooted in the given source
 
         .. SEEALSO::
 
@@ -4272,7 +4302,7 @@ class DiGraph(GenericGraph):
             This function makes use of the following to keep track of partial in
             branchings:
 
-            - ``list_edges`` -- list of edges in self.
+            - ``list_edges`` -- list of edges in self
             - ``list_merged_edges`` -- list of edges that are currently merged
             - ``graph`` -- a copy of self where edges have an appropriate label
             """
@@ -4335,7 +4365,7 @@ class DiGraph(GenericGraph):
 
         def _singleton_in_branching():
             r"""
-            Returns a DiGraph containing only ``source`` and no edges.
+            Return a DiGraph containing only ``source`` and no edges.
             """
             D = DiGraph()
             D.add_vertex(source)

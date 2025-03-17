@@ -137,10 +137,10 @@ class SixVertexConfiguration(ClonableArray):
 
         - ``color`` -- can be any of the following:
 
-          * ``4`` - use 4 colors: black, red, blue, and green with each
+          * ``4`` -- use 4 colors: black, red, blue, and green with each
             corresponding to up, right, down, and left respectively
-          * ``2`` - use 2 colors: red for horizontal, blue for vertical arrows
-          * ``'sign'`` - use red for right and down arrows, blue for left
+          * ``2`` -- use 2 colors: red for horizontal, blue for vertical arrows
+          * ``'sign'`` -- use red for right and down arrows, blue for left
             and up arrows
           * a list of 4 colors for each direction
           * a function which takes a direction and a boolean corresponding
@@ -361,13 +361,13 @@ class SixVertexModel(UniqueRepresentation, Parent):
 
       There are also the following predefined boundary conditions:
 
-      * ``'ice'`` - The top and bottom boundary conditions are outward and the
+      * ``'ice'`` -- the top and bottom boundary conditions are outward and the
         left and right boundary conditions are inward; this gives the square
         ice model. Also called domain wall boundary conditions.
-      * ``'domain wall'`` - Same as ``'ice'``.
-      * ``'alternating'`` - The boundary conditions alternate between inward
+      * ``'domain wall'`` -- same as ``'ice'``.
+      * ``'alternating'`` -- the boundary conditions alternate between inward
         and outward.
-      * ``'free'`` - There are no boundary conditions.
+      * ``'free'`` -- there are no boundary conditions.
 
     EXAMPLES:
 
@@ -777,7 +777,7 @@ class SquareIceModel(SixVertexModel):
                 [ 0  1 -1  1]
                 [ 0  0  1  0]
             """
-            from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix #AlternatingSignMatrices
-            #ASM = AlternatingSignMatrices(self.parent()._nrows)
-            #return ASM(self.to_signed_matrix())
+            from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix  # AlternatingSignMatrices
+            # ASM = AlternatingSignMatrices(self.parent()._nrows)
+            # return ASM(self.to_signed_matrix())
             return AlternatingSignMatrix(self.to_signed_matrix())

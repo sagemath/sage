@@ -1,9 +1,1 @@
-cd src
-if [ "$SAGE_EDITABLE" = yes ]; then
-    sdh_pip_editable_install .
-    if [ "$SAGE_WHEELS" = yes ]; then
-        sdh_setup_bdist_wheel && sdh_store_wheel .
-    fi
-else
-    sdh_pip_install .
-fi
+../sage_setup/spkg-install.in

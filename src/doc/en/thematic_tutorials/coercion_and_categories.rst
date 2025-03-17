@@ -91,7 +91,6 @@ elements. But some old stuff in Sage doesn't use it.  **Volunteers for
 refactoring are welcome!**
 
 
-
 The parent
 ----------
 
@@ -116,45 +115,24 @@ This base class provides a lot more methods than a general parent::
      '_coerce_impl',
      '_default_category',
      '_gens',
-     '_ideal_monoid',
      '_latex_names',
      '_list',
      '_one_element',
      '_pseudo_fraction_field',
-     '_unit_ideal',
      '_zero_element',
-     '_zero_ideal',
      'algebraic_closure',
+     'an_embedding',
      'base_extend',
-     'derivation',
-     'derivation_module',
-     'divides',
      'epsilon',
      'extension',
      'fraction_field',
-     'frobenius_endomorphism',
      'gen',
      'gens',
-     'ideal',
-     'ideal_monoid',
-     'integral_closure',
-     'is_commutative',
      'is_field',
-     'is_integrally_closed',
-     'is_noetherian',
-     'is_prime_field',
-     'is_subring',
-     'krull_dimension',
-     'localization',
      'ngens',
      'one',
      'order',
-     'prime_subfield',
-     'principal_ideal',
-     'random_element',
-     'unit_ideal',
      'zero',
-     'zero_ideal',
      'zeta',
      'zeta_order']
 

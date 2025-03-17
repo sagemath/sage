@@ -1,6 +1,5 @@
 # cython: binding=True
 # distutils: language = c++
-
 """
 Graph coloring
 
@@ -106,7 +105,8 @@ def format_coloring(data, value_only=False, hex_colors=False, vertex_color_dict=
         {0: ['a', 'b'], 1: ['c'], 2: ['d']}
         sage: format_coloring(color_classes, value_only=False, hex_colors=True)         # needs sage.plot
         {'#0000ff': ['d'], '#00ff00': ['c'], '#ff0000': ['a', 'b']}
-        sage: format_coloring(color_classes, value_only=False, hex_colors=False, vertex_color_dict=True)
+        sage: format_coloring(color_classes, value_only=False, hex_colors=False,
+        ....:                 vertex_color_dict=True)
         {'a': 0, 'b': 0, 'c': 1, 'd': 2}
         sage: format_coloring(color_classes, value_only=False, hex_colors=True,         # needs sage.plot
         ....:                 vertex_color_dict=True)
@@ -122,7 +122,8 @@ def format_coloring(data, value_only=False, hex_colors=False, vertex_color_dict=
         sage: format_coloring([], value_only=False, hex_colors=True,                    # needs sage.plot
         ....:                 vertex_color_dict=True)
         {}
-        sage: format_coloring([], value_only=False, hex_colors=False, vertex_color_dict=True)
+        sage: format_coloring([], value_only=False, hex_colors=False,
+        ....:                 vertex_color_dict=True)
         {}
     """
     if value_only:
@@ -148,22 +149,22 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
 
     INPUT:
 
-    * ``G`` -- a graph
+    - ``G`` -- a graph
 
-    * ``n`` -- a positive integer; the number of colors
+    - ``n`` -- positive integer; the number of colors
 
-    * ``count_only`` -- boolean (default: ``False``); when set to ``True``, it
+    - ``count_only`` -- boolean (default: ``False``); when set to ``True``, it
       returns 1 for each coloring and ignores other parameters
 
-    * ``hex_colors`` -- boolean (default: ``False``); when set to ``False``,
+    - ``hex_colors`` -- boolean (default: ``False``); when set to ``False``,
       colors are labeled [0, 1, ..., `n - 1`], otherwise the RGB Hex labeling
       is used
 
-    * ``vertex_color_dict`` -- boolean (default: ``False``); when set to
+    - ``vertex_color_dict`` -- boolean (default: ``False``); when set to
       ``True``, it returns a dictionary ``{vertex: color}``, otherwise it
       returns a dictionary ``{color: [list of vertices]}``
 
-    * ``color_classes`` -- boolean (default: ``False``); when set to ``True``,
+    - ``color_classes`` -- boolean (default: ``False``); when set to ``True``,
       the method returns only a list of the color classes and ignores parameters
       ``hex_colors`` and ``vertex_color_dict``
 
@@ -233,7 +234,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
         ....:     print(C)
         Traceback (most recent call last):
         ...
-        ValueError: n must be non-negative
+        ValueError: n must be nonnegative
         sage: G = Graph({0: [1], 1: [2]})
         sage: for c in all_graph_colorings(G, 2, vertex_color_dict=True):
         ....:     print(c)
@@ -266,7 +267,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
     if not n or n > G.order():
         return
     if n < 0:
-        raise ValueError("n must be non-negative")
+        raise ValueError("n must be nonnegative")
 
     cdef list V = list(G)
 
@@ -337,7 +338,7 @@ cpdef first_coloring(G, n=0, hex_colors=False):
 
     INPUT:
 
-    -  ``n`` -- integer (default: 0); the minimal number of colors to try
+    - ``n`` -- integer (default: 0); the minimal number of colors to try
 
     - ``hex_colors`` -- boolean (default: ``False``); when set to ``True``, the
       partition returned is a dictionary whose keys are colors and whose values
@@ -367,13 +368,13 @@ cpdef first_coloring(G, n=0, hex_colors=False):
 
 cpdef number_of_n_colorings(G, n):
     r"""
-    Compute the number of `n`-colorings of a graph
+    Compute the number of `n`-colorings of a graph.
 
     INPUT:
 
     - ``G`` -- a graph
 
-    - ``n`` -- a positive integer; the number of colors
+    - ``n`` -- positive integer; the number of colors
 
     EXAMPLES::
 
@@ -466,7 +467,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
 
     INPUT:
 
-    - ``g`` -- a graph.
+    - ``g`` -- a graph
 
     - ``k`` -- integer (default: ``None``); tests whether the graph is
       `k`-colorable.  The function returns a partition of the vertex set in `k`
@@ -483,7 +484,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
       partition returned is a dictionary whose keys are colors and whose values
       are the color classes (ideal for plotting).
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -491,7 +492,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
@@ -749,7 +750,7 @@ def fractional_chromatic_number(G, solver='PPL', verbose=0,
 
     - ``G`` -- a graph
 
-    - ``solver`` -- (default: ``"PPL"``); specify a Linear Program (LP) solver
+    - ``solver`` -- (default: ``'PPL'``) specify a Linear Program (LP) solver
       to be used. If set to ``None``, the default one is used. For more
       information on LP solvers and which default solver is used, see the method
       :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the
@@ -758,11 +759,11 @@ def fractional_chromatic_number(G, solver='PPL', verbose=0,
 
       .. NOTE::
 
-          The default solver used here is ``"PPL"`` which provides exact
+          The default solver used here is ``'PPL'`` which provides exact
           results, i.e. a rational number, although this may be slower that
           using other solvers.
 
-    - ``verbose`` -- integer (default: `0`); sets the level of verbosity of
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity of
       the LP solver
 
     - ``check_components`` -- boolean (default: ``True``); whether the method is
@@ -827,7 +828,7 @@ def fractional_chromatic_number(G, solver='PPL', verbose=0,
     return obj
 
 
-def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbose=0):
+def fractional_chromatic_index(G, solver='PPL', verbose_constraints=False, verbose=0):
     r"""
     Return the fractional chromatic index of the graph.
 
@@ -860,7 +861,7 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
 
     - ``G`` -- a graph
 
-    - ``solver`` -- (default: ``"PPL"``); specify a Linear Program (LP) solver
+    - ``solver`` -- (default: ``'PPL'``) specify a Linear Program (LP) solver
       to be used. If set to ``None``, the default one is used. For more
       information on LP solvers and which default solver is used, see the method
       :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the
@@ -869,7 +870,7 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
 
       .. NOTE::
 
-          The default solver used here is ``"PPL"`` which provides exact
+          The default solver used here is ``'PPL'`` which provides exact
           results, i.e. a rational number, although this may be slower that
           using other solvers. Be aware that this method may loop endlessly when
           using some non exact solvers as reported in :issue:`23658` and
@@ -878,7 +879,7 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
     - ``verbose_constraints`` -- boolean (default: ``False``); whether to
       display which constraints are being generated
 
-    - ``verbose`` -- integer (default: `0`); sets the level of verbosity of the
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity of the
       LP solver
 
     EXAMPLES:
@@ -1002,7 +1003,7 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
       coloring)`` is returned, where ``coloring`` is a dictionary associating
       its color (integer) to each vertex of the graph.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1010,7 +1011,7 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
@@ -1156,7 +1157,7 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
       coloring)`` is returned, where ``coloring`` is a dictionary associating
       its color (integer) to each vertex of the graph.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1164,7 +1165,7 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
@@ -1301,7 +1302,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
     INPUT:
 
-    - ``g`` -- a graph.
+    - ``g`` -- a graph
 
     - ``value_only`` -- boolean (default: ``False``):
 
@@ -1319,7 +1320,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
       - When set to ``False``, tries to find a `\Delta`-edge-coloring using
         Mixed Integer Linear Programming (MILP). If impossible, returns a
-        `(\Delta + 1)`-edge-coloring.  Please note that determinating if the
+        `(\Delta + 1)`-edge-coloring.  Please note that determining if the
         chromatic index of a graph equals `\Delta` is computationally difficult,
         and could take a long time.
 
@@ -1327,7 +1328,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
       partition returned is a dictionary whose keys are colors and whose values
       are the color classes (ideal for plotting)
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1335,7 +1336,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
@@ -1541,9 +1542,7 @@ def _vizing_edge_coloring(g):
 
     - ``g`` -- a graph
 
-    OUTPUT:
-
-    a partition of the edge set into at most `\Delta + 1` matchings
+    OUTPUT: a partition of the edge set into at most `\Delta + 1` matchings
 
     .. SEEALSO::
 
@@ -1806,7 +1805,7 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
       - If ``value_only = False``, returns the color classes according to the
         value of ``hex_colors``
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1814,7 +1813,7 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
@@ -2004,7 +2003,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
       - If ``value_only = False``, returns the color classes according to the
         value of ``hex_colors``
 
-    - ``k`` -- integer; the number of colors to use.
+    - ``k`` -- integer; the number of colors to use
 
       - If ``k > 0``, computes an acyclic edge coloring using `k` colors.
 
@@ -2014,7 +2013,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
       - If ``k = None``, computes a decomposition using the least possible
         number of colors.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -2022,7 +2021,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers

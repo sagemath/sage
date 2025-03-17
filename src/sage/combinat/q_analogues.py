@@ -105,7 +105,7 @@ def q_factorial(n, q=None):
         sage: q_factorial(3, p)
         p^3 + 2*p^2 + 2*p + 1
 
-    The `q`-analogue of `n!` is only defined for `n` a non-negative
+    The `q`-analogue of `n!` is only defined for `n` a nonnegative
     integer (:issue:`11411`)::
 
         sage: q_factorial(-2)
@@ -144,7 +144,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     INPUT:
 
-    - ``n, k`` -- the values `n` and `k` defined above
+    - ``n``, ``k`` -- the values `n` and `k` defined above
 
     - ``q`` -- (default: ``None``) the variable `q`; if ``None``, then use a
       default variable in `\ZZ[q]`
@@ -289,9 +289,9 @@ def q_binomial(n, k, q=None, algorithm='auto'):
     Check that arbitrary polynomials work::
 
         sage: R.<x> = ZZ[]
-        sage: q_binomial(2, 1, x^2 - 1, algorithm="naive")
+        sage: q_binomial(2, 1, x^2 - 1, algorithm='naive')
         x^2
-        sage: q_binomial(2, 1, x^2 - 1, algorithm="cyclotomic")
+        sage: q_binomial(2, 1, x^2 - 1, algorithm='cyclotomic')
         x^2
 
     Check that the parent is always the parent of ``q``::
@@ -305,7 +305,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     ::
 
-        sage: q_binomial(2, 1, x^2 - 1, algorithm="quantum")
+        sage: q_binomial(2, 1, x^2 - 1, algorithm='quantum')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm 'quantum'
@@ -470,9 +470,9 @@ def q_catalan_number(n, q=None, m=1):
 
     INPUT:
 
-    - ``q`` -- optional variable
+    - ``q`` -- (optional) variable
 
-    - ``m`` -- (optional integer) to get instead the ``m``-Fuss-Catalan numbers
+    - ``m`` -- (optional) integer; to get instead the ``m``-Fuss-Catalan numbers
 
     If `q` is unspecified, then it defaults to using the generator `q` for
     a univariate polynomial ring over the integers.
@@ -646,8 +646,7 @@ def q_jordan(t, q=None):
 
     INPUT:
 
-    -  ``t`` -- an integer partition, or an argument accepted by
-       :class:`Partition`
+    - ``t`` -- integer partition, or an argument accepted by :class:`Partition`
 
     - ``q`` -- (default: ``None``) the variable `q`; if ``None``, then use a
       default variable in `\ZZ[q]`
@@ -871,9 +870,9 @@ def q_stirling_number1(n, k, q=None):
 
     INPUT:
 
-    - ``n``, ``k`` -- integers with ``1 <= k <= n``
+    - ``n``, ``k`` -- integers with `1 \leq k \leq n`
 
-    - ``q`` -- optional variable (default `q`)
+    - ``q`` -- variable (default: `q`)
 
     OUTPUT: a polynomial in the variable `q`
 
@@ -937,9 +936,9 @@ def q_stirling_number2(n, k, q=None):
 
     INPUT:
 
-    - ``n``, ``k`` -- integers with ``1 <= k <= n``
+    - ``n``, ``k`` -- integers with `1 \leq k \leq n`
 
-    - ``q`` -- optional variable (default `q`)
+    - ``q`` -- variable (default: `q`)
 
     OUTPUT: a polynomial in the variable `q`
 
@@ -1002,7 +1001,7 @@ def number_of_irreducible_polynomials(n, q=None, m=1):
 
     - ``n`` -- positive integer
     - ``q`` -- ``None`` (default) or a prime power
-    - ``m`` -- positive integer (default `1`)
+    - ``m`` -- positive integer (default: `1`)
 
     OUTPUT: integer or integer-valued polynomial over `\QQ`
 

@@ -31,7 +31,7 @@ We can construct a polynomial sequence for a random plaintext-ciphertext
 pair and study it::
 
     sage: set_random_seed(1)
-    sage: while True:  # workaround (see :issue:`31891`)                                 # needs sage.rings.polynomial.pbori
+    sage: while True:  # workaround (see :issue:`31891`)                                # needs sage.rings.polynomial.pbori
     ....:     try:
     ....:         F, s = sr.polynomial_system()
     ....:         break
@@ -122,7 +122,7 @@ Using these building blocks we can implement a simple XL algorithm
 easily::
 
     sage: sr = mq.SR(1,1,1,4, gf2=True, polybori=True, order='lex')                     # needs sage.rings.polynomial.pbori
-    sage: while True:  # workaround (see :issue:`31891`)                                 # needs sage.rings.polynomial.pbori
+    sage: while True:  # workaround (see :issue:`31891`)                                # needs sage.rings.polynomial.pbori
     ....:     try:
     ....:         F, s = sr.polynomial_system()
     ....:         break
@@ -168,9 +168,10 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.infinity import Infinity
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.quotient_ring import is_QuotientRing
+from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing_sparse
+from sage.rings.quotient_ring import QuotientRing_nc
 from sage.structure.sequence import Sequence_generic
 
 try:
@@ -188,7 +189,7 @@ def is_PolynomialSequence(F):
 
     INPUT:
 
-    - ``F`` - anything
+    - ``F`` -- anything
 
     EXAMPLES::
 
@@ -197,12 +198,16 @@ def is_PolynomialSequence(F):
         sage: F = Sequence(I, P); F
         [x^2 + y^2, x^2 - y^2]
 
-        sage: from sage.rings.polynomial.multi_polynomial_sequence import is_PolynomialSequence
-        sage: is_PolynomialSequence(F)
+        sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
+        sage: isinstance(F, PolynomialSequence_generic)
         True
-
     """
-    return isinstance(F,PolynomialSequence_generic)
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_PolynomialSequence is deprecated; "
+                "use 'isinstance(..., PolynomialSequence_generic)' instead.")
+    return isinstance(F, PolynomialSequence_generic)
+
 
 def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     """
@@ -210,17 +215,14 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     INPUT:
 
-    - ``arg1`` - a multivariate polynomial ring, an ideal or a matrix
+    - ``arg1`` -- a multivariate polynomial ring, an ideal or a matrix
 
-    - ``arg2`` - an iterable object of parts or polynomials
-      (default:``None``)
+    - ``arg2`` -- an iterable object of parts or polynomials
+      (default: ``None``)
 
-      - ``immutable`` - if ``True`` the sequence is immutable (default: ``False``)
+      - ``immutable`` -- if ``True`` the sequence is immutable (default: ``False``)
 
-      - ``cr`` - print a line break after each element (default: ``False``)
-
-      - ``cr_str`` - print a line break after each element if 'str' is
-        called (default: ``None``)
+      - ``cr``, ``cr_str`` -- see :func:`~sage.structure.sequence.Sequence`
 
     EXAMPLES::
 
@@ -271,7 +273,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     TESTS:
 
-    A PolynomialSequence can exist with elements in an infinite field of
+    A ``PolynomialSequence`` can exist with elements in an infinite field of
     characteristic 2 (see :issue:`19452`)::
 
         sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
@@ -281,7 +283,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         sage: PolynomialSequence([0], R)
         [0]
 
-    A PolynomialSequence can be created from an iterator (see :issue:`25989`)::
+    A ``PolynomialSequence`` can be created from an iterator (see :issue:`25989`)::
 
         sage: R.<x,y,z> = QQ[]
         sage: PolynomialSequence(iter(R.gens()))
@@ -290,14 +292,32 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         [x, y, z]
         sage: PolynomialSequence(iter([(x,y), (z,)]), R)
         [x, y, z]
+
+    A ``PolynomialSequence`` can be created from elements of an
+    ``InfinitePolynomialRing``::
+
+        sage: R.<a> = InfinitePolynomialRing(QQ)
+        sage: s = PolynomialSequence([a[i]-a[i+1] for i in range(3)])
+        sage: s
+        [-a_1 + a_0, -a_2 + a_1, -a_3 + a_2]
+        sage: s.coefficients_monomials()
+        (
+        [ 0  0 -1  1]
+        [ 0 -1  1  0]
+        [-1  1  0  0], (a_3, a_2, a_1, a_0)
+        )
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     try:
         from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
     except ImportError:
         BooleanMonomialMonoid = ()
 
-    is_ring = lambda r: is_MPolynomialRing(r) or isinstance(r, BooleanMonomialMonoid) or (is_QuotientRing(r) and is_MPolynomialRing(r.cover_ring()))
+    is_ring = lambda r: (isinstance(r, (MPolynomialRing_base,
+                                        BooleanMonomialMonoid,
+                                        InfinitePolynomialRing_sparse))
+                         or (isinstance(r, QuotientRing_nc)
+                             and isinstance(r.cover_ring(), MPolynomialRing_base)))
 
     if is_ring(arg1):
         ring, gens = arg1, arg2
@@ -305,7 +325,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     elif is_ring(arg2):
         ring, gens = arg2, arg1
 
-    elif is_Matrix(arg1):
+    elif isinstance(arg1, Matrix):
         ring, gens = arg1.base_ring(), arg1.list()
 
     elif isinstance(arg1, MPolynomialIdeal):
@@ -373,6 +393,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     elif K.degree() > 1:
         return PolynomialSequence_gf2e(parts, ring, immutable=immutable, cr=cr, cr_str=cr_str)
 
+
 class PolynomialSequence_generic(Sequence_generic):
     def __init__(self, parts, ring, immutable=False, cr=False, cr_str=None):
         """
@@ -380,16 +401,13 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        - ``part`` - a list of lists with polynomials
+        - ``parts`` -- a list of lists with polynomials
 
-        -  ``ring`` - a multivariate polynomial ring
+        - ``ring`` -- a multivariate polynomial ring
 
-        - ``immutable`` - if ``True`` the sequence is immutable (default: ``False``)
+        - ``immutable`` -- if ``True`` the sequence is immutable (default: ``False``)
 
-        - ``cr`` - print a line break after each element (default: ``False``)
-
-        - ``cr_str`` - print a line break after each element if 'str'
-          is called (default: ``None``)
+        - ``cr``, ``cr_str`` -- see :func:`~sage.structure.sequence.Sequence`
 
         EXAMPLES::
 
@@ -414,7 +432,7 @@ class PolynomialSequence_generic(Sequence_generic):
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c]
         """
 
-        Sequence_generic.__init__(self, sum(parts,tuple()), ring, check=False, immutable=immutable,
+        Sequence_generic.__init__(self, sum(parts, tuple()), ring, check=False, immutable=immutable,
                                   cr=cr, cr_str=cr_str, use_sage_types=True)
         self._ring = ring
         self._parts = parts
@@ -525,10 +543,10 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        - ``args`` - list of arguments passed to
+        - ``args`` -- list of arguments passed to
           ``MPolynomialIdeal.groebner_basis`` call
 
-        - ``kwargs`` - dictionary of arguments passed to
+        - ``kwargs`` -- dictionary of arguments passed to
           ``MPolynomialIdeal.groebner_basis`` call
 
         EXAMPLES::
@@ -619,10 +637,10 @@ class PolynomialSequence_generic(Sequence_generic):
 
     def algebraic_dependence(self):
         r"""
-        Returns the ideal of annihilating polynomials for the
+        Return the ideal of annihilating polynomials for the
         polynomials in ``self``, if those polynomials are algebraically
         dependent.
-        Otherwise, returns the zero ideal.
+        Otherwise, return the zero ideal.
 
         OUTPUT:
 
@@ -721,8 +739,8 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        - ``sparse`` - construct a sparse matrix (default: ``True``)
-        - ``order`` - a list or tuple specifying the order of monomials (default: ``None``)
+        - ``sparse`` -- construct a sparse matrix (default: ``True``)
+        - ``order`` -- list or tuple specifying the order of monomials (default: ``None``)
 
         EXAMPLES::
 
@@ -748,7 +766,7 @@ class PolynomialSequence_generic(Sequence_generic):
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c)
         """
         from sage.modules.free_module_element import vector
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
 
         if order is None:
             v = sorted(self.monomials(), reverse=True)
@@ -759,7 +777,7 @@ class PolynomialSequence_generic(Sequence_generic):
                 raise ValueError("order argument can only accept list or tuple")
 
         y = dict(zip(v, range(len(v))))  # construct dictionary for fast lookups
-        A = Matrix(self.ring().base_ring(), len(self), len(v), sparse=sparse)
+        A = matrix(self.ring().base_ring(), len(self), len(v), sparse=sparse)
         for x, poly in enumerate(self):
             for c, m in poly:
                 try:
@@ -782,7 +800,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        - ``sparse`` - construct a sparse matrix (default: ``True``)
+        - ``sparse`` -- construct a sparse matrix (default: ``True``)
 
         EXAMPLES::
 
@@ -825,13 +843,13 @@ class PolynomialSequence_generic(Sequence_generic):
             [      2*a*b + 2*b*c + 2*c*d - b]
             [        b^2 + 2*a*c + 2*b*d - c]
         """
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
         from sage.misc.superseded import deprecation
         deprecation(37035, "the function coefficient_matrix is deprecated; use coefficients_monomials instead")
 
         R = self.ring()
         A, v = self.coefficients_monomials(sparse=sparse)
-        return A, Matrix(R,len(v),1,v)
+        return A, matrix(R,len(v),1,v)
 
     def subs(self, *args, **kwargs):
         """
@@ -841,8 +859,8 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        -  ``args`` - arguments to be passed to :meth:`MPolynomial.subs`
-        -  ``kwargs`` - keyword arguments to be passed to :meth:`MPolynomial.subs`
+        - ``args`` -- arguments to be passed to :meth:`MPolynomial.subs`
+        - ``kwargs`` -- keyword arguments to be passed to :meth:`MPolynomial.subs`
 
         EXAMPLES::
 
@@ -852,7 +870,7 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: F = F.subs(s); F                                                      # needs sage.rings.polynomial.pbori
             Polynomial Sequence with 40 Polynomials in 16 Variables
         """
-        return PolynomialSequence(self._ring, [tuple([f.subs(*args,**kwargs) for f in r]) for r in self._parts])
+        return PolynomialSequence(self._ring, [tuple([f.subs(*args, **kwargs) for f in r]) for r in self._parts])
 
     def _singular_(self):
         """
@@ -900,9 +918,43 @@ class PolynomialSequence_generic(Sequence_generic):
         v = [x._magma_init_(magma) for x in list(self)]
         return 'ideal<%s|%s>' % (P, ','.join(v))
 
+    def _is_short_for_repr(self):
+        """
+        Return whether this system is considered short for :meth:`_repr_`.
+        """
+        return len(self) < 20
+
     def _repr_(self):
         """
         Return a string representation of this system.
+        Typically, :meth:`_repr_pretty_` is used instead of this method.
+
+        EXAMPLES::
+
+            sage: # needs sage.libs.singular
+            sage: P.<a,b,c,d> = PolynomialRing(GF(127))
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: F = Sequence(I); print(F._repr_())
+            [a + 2*b + 2*c + 2*d - 1,
+             a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
+             2*a*b + 2*b*c + 2*c*d - b,
+             b^2 + 2*a*c + 2*b*d - c]
+
+        If the system contains 20 or more polynomials, a short summary
+        is printed::
+
+            sage: sr = mq.SR(allow_zero_inversions=True, gf2=True)                      # needs sage.rings.polynomial.pbori
+            sage: F,s = sr.polynomial_system(); F                                       # needs sage.rings.polynomial.pbori
+            Polynomial Sequence with 36 Polynomials in 20 Variables
+        """
+        if self._is_short_for_repr():
+            return super()._repr_()
+        else:
+            return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self),self.nvariables())
+
+    def _repr_pretty_(self, p, cycle):
+        """
+        For pretty printing in the Sage command prompt.
 
         EXAMPLES::
 
@@ -921,12 +973,11 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: sr = mq.SR(allow_zero_inversions=True, gf2=True)                      # needs sage.rings.polynomial.pbori
             sage: F,s = sr.polynomial_system(); F                                       # needs sage.rings.polynomial.pbori
             Polynomial Sequence with 36 Polynomials in 20 Variables
-
         """
-        if len(self) < 20:
-            return Sequence_generic._repr_(self)
+        if self._is_short_for_repr():
+            super()._repr_pretty_(p, cycle)
         else:
-            return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self),self.nvariables())
+            p.text(repr(self))
 
     def __add__(self, right):
         """
@@ -958,7 +1009,7 @@ class PolynomialSequence_generic(Sequence_generic):
              b^2 + 2*a*c + 2*b*d - c,
              a^127 + a]
         """
-        if is_PolynomialSequence(right) and right.ring() == self.ring():
+        if isinstance(right, PolynomialSequence_generic) and right.ring() == self.ring():
             return PolynomialSequence(self.ring(), self.parts() + right.parts())
 
         elif isinstance(right,(tuple,list)) and all((x.parent() == self.ring() for x in right)):
@@ -1105,7 +1156,6 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: F = Sequence([], universe=P)
             sage: F.maximal_degree()
             -1
-
         """
         try:
             return max(f.degree() for f in self)
@@ -1126,7 +1176,6 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: f = P.hom([y,z,x])
             sage: hash(f) == hash(loads(dumps(f)))
             True
-
         """
         return PolynomialSequence, (self._ring, self._parts, self._is_immutable,
                                     self._Sequence_generic__cr, self._Sequence_generic__cr_str)
@@ -1196,11 +1245,10 @@ class PolynomialSequence_generic(Sequence_generic):
         Check that :issue:`26952` is fixed::
 
             sage: Qp = pAdicField(2)
-            sage: R.<x,y,z> = PolynomialRing(Qp, implementation="generic")              # needs sage.rings.padics
+            sage: R.<x,y,z> = PolynomialRing(Qp, implementation='generic')              # needs sage.rings.padics
             sage: F = Sequence([z*x+y^3,z+y^3,3*z+x*y])
             sage: F.reduced()
             [y^3 + z, x*y + (1 + 2 + O(2^20))*z, x*z - z]
-
         """
         from sage.rings.polynomial.multi_polynomial_ideal_libsingular import \
             interred_libsingular
@@ -1234,7 +1282,7 @@ class PolynomialSequence_generic(Sequence_generic):
     @singular_gb_standard_options
     def is_groebner(self, singular=singular):
         r"""
-        Returns ``True`` if the generators of this ideal (``self.gens()``)
+        Return ``True`` if the generators of this ideal (``self.gens()``)
         form a Groebner basis.
 
         Let `I` be the set of generators of this ideal. The check is
@@ -1242,7 +1290,9 @@ class PolynomialSequence_generic(Sequence_generic):
         forms a Groebner basis if and only if for every element `S` in
         `Syz(LM(I))`:
 
-            `S * G = \sum_{i=0}^{m} h_ig_i ---->_G 0.`
+        .. MATH::
+
+            S \star G = \sum_{i=0}^{m} h_i g_i \longrightarrow_G 0.
 
         EXAMPLES::
 
@@ -1254,9 +1304,9 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: I2 = Ideal(I.groebner_basis())
             sage: I2.basis.is_groebner()
             True
-
         """
         return self.ideal().basis_is_groebner()
+
 
 class PolynomialSequence_gf2(PolynomialSequence_generic):
     r"""
@@ -1270,21 +1320,21 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         INPUT:
 
-        - ``maxlength`` - an optional upper bound on the number of
+        - ``maxlength`` -- an optional upper bound on the number of
           monomials by which a variable is replaced. If
           ``maxlength==+Infinity`` then no condition is checked.
           (default: +Infinity).
 
-        - ``skip`` - an optional callable to skip eliminations. It
+        - ``skip`` -- an optional callable to skip eliminations. It
           must accept two parameters and return either ``True`` or
           ``False``. The two parameters are the leading term and the
           tail of a polynomial (default: ``None``).
 
-        - ``return_reductors`` - if ``True`` the list of polynomials
+        - ``return_reductors`` -- if ``True`` the list of polynomials
           with linear leading terms which were used for reduction is
           also returned (default: ``False``).
 
-        - ``use_polybori`` - if ``True`` then ``polybori.ll.eliminate`` is
+        - ``use_polybori`` -- if ``True`` then ``polybori.ll.eliminate`` is
           called. While this is typically faster than what is implemented here, it
           is less flexible (``skip`` is not supported) and may increase the
           degree (default: ``False``)
@@ -1485,7 +1535,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             g.reduction_strategy.opt_red_tail = True
             return g
 
-    def solve(self, algorithm='polybori', n=1,  eliminate_linear_variables=True, verbose=False, **kwds):
+    def solve(self, algorithm='polybori', n=1,
+              eliminate_linear_variables=True, verbose=False, **kwds):
         r"""
         Find solutions of this boolean polynomial system.
 
@@ -1496,39 +1547,37 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         INPUT:
 
-        * ``self`` - a sequence of boolean polynomials
+        - ``self`` -- a sequence of boolean polynomials
 
-        * ``algorithm`` - the method to use. Possible values are
-          ``polybori``, ``sat`` and ``exhaustive_search``. (default:
-          ``polybori``, since it is always available)
+        - ``algorithm`` -- the method to use. Possible values are
+          ``'polybori'``, ``'sat'`` and ``'exhaustive_search'``. (default:
+          ``'polybori'``, since it is always available)
 
-        * ``n`` - number of solutions to return. If ``n == +Infinity``
-          then all solutions are returned. If `n < \infty` then `n`
-          solutions are returned if the equations have at least `n`
-          solutions. Otherwise, all the solutions are
-          returned. (default: ``1``)
+        - ``n`` -- (default: 1) number of solutions to return. If
+          ``n == +Infinity`` then all solutions are returned. If `n < \infty`
+          then `n` solutions are returned if the equations have at least `n`
+          solutions. Otherwise, all the solutions are returned.
 
-        * ``eliminate_linear_variables`` - whether to eliminate
+        - ``eliminate_linear_variables`` -- whether to eliminate
           variables that appear linearly. This reduces the number of
           variables (makes solving faster a priori), but is likely to
           make the equations denser (may make solving slower depending
           on the method).
 
-        * ``verbose`` - whether to display progress and (potentially)
-          useful information while the computation runs. (default:
-          ``False``)
+        - ``verbose`` -- boolean (default: ``False``); whether to display
+          progress and (potentially) useful information while the computation
+          runs
 
         EXAMPLES:
 
         Without argument, a single arbitrary solution is returned::
 
             sage: # needs sage.rings.polynomial.pbori
-            sage: from sage.doctest.fixtures import reproducible_repr
             sage: R.<x,y,z> = BooleanPolynomialRing()
             sage: S = Sequence([x*y + z, y*z + x, x + y + z + 1])
             sage: sol = S.solve()
-            sage: print(reproducible_repr(sol))
-            [{x: 0, y: 1, z: 0}]
+            sage: sol
+            [{z: 0, y: 1, x: 0}]
 
         We check that it is actually a solution::
 
@@ -1538,8 +1587,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         We obtain all solutions::
 
             sage: sols = S.solve(n=Infinity)                                            # needs sage.rings.polynomial.pbori
-            sage: print(reproducible_repr(sols))                                        # needs sage.rings.polynomial.pbori
-            [{x: 0, y: 1, z: 0}, {x: 1, y: 1, z: 1}]
+            sage: sols                                                                  # needs sage.rings.polynomial.pbori
+            [{z: 0, y: 1, x: 0}, {z: 1, y: 1, x: 1}]
             sage: [S.subs(x) for x in sols]                                             # needs sage.rings.polynomial.pbori
             [[0, 0, 0], [0, 0, 0]]
 
@@ -1547,16 +1596,16 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         package ``FES`` is present::
 
             sage: sol = S.solve(algorithm='exhaustive_search')  # optional - fes        # needs sage.rings.polynomial.pbori
-            sage: print(reproducible_repr(sol))                 # optional - fes        # needs sage.rings.polynomial.pbori
-            [{x: 1, y: 1, z: 1}]
+            sage: sol                                           # optional - fes        # needs sage.rings.polynomial.pbori
+            [{z: 1, y: 1, x: 1}]
             sage: S.subs(sol[0])                                # optional - fes        # needs sage.rings.polynomial.pbori
             [0, 0, 0]
 
         And we may use SAT-solvers if they are available::
 
             sage: sol = S.solve(algorithm='sat')        # optional - pycryptosat        # needs sage.rings.polynomial.pbori
-            sage: print(reproducible_repr(sol))         # optional - pycryptosat        # needs sage.rings.polynomial.pbori
-            [{x: 0, y: 1, z: 0}]
+            sage: sol                                   # optional - pycryptosat        # needs sage.rings.polynomial.pbori
+            [{z: 0, y: 1, x: 0}]
             sage: S.subs(sol[0])                                                        # needs sage.rings.polynomial.pbori
             [0, 0, 0]
 
@@ -1583,7 +1632,6 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y + z])     # needs sage.rings.polynomial.pbori
             sage: S.solve()                                                             # needs sage.rings.polynomial.pbori
             []
-
         """
         from sage.modules.free_module import VectorSpace
 
@@ -1708,8 +1756,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         INPUT:
 
-        - ``sparse`` - construct a sparse matrix (default: ``True``)
-        - ``order`` - a list or tuple specifying the order of monomials (default: ``None``)
+        - ``sparse`` -- construct a sparse matrix (default: ``True``)
+        - ``order`` -- list or tuple specifying the order of monomials (default: ``None``)
 
         EXAMPLES::
 
@@ -1739,7 +1787,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             (a + b + c)
         """
         from sage.modules.free_module_element import vector
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
         from sage.rings.polynomial.multi_polynomial_ring_base import \
             BooleanPolynomialRing_base
 
@@ -1754,7 +1802,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         R = self.ring()
         K = R.base_ring()
         y = dict(zip(v, range(len(v))))  # construct dictionary for fast lookups
-        A = Matrix(K, len(self), len(v), sparse=sparse)
+        A = matrix(K, len(self), len(v), sparse=sparse)
 
         if isinstance(R, BooleanPolynomialRing_base):
             one = K.one()

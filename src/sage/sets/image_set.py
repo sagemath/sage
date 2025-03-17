@@ -16,18 +16,17 @@ Image Sets
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Iterator
+from collections.abc import Iterator
 
-from sage.categories.map import is_Map
+from sage.categories.map import Map
 from sage.categories.poor_man_map import PoorManMap
 from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
-from sage.modules.free_module import FreeModule
 from sage.structure.element import Expression
-from sage.structure.parent import Parent, is_Parent
+from sage.structure.parent import Parent
 
 from .set import Set_base, Set_add_sub_operators, Set_boolean_operators
 
@@ -52,7 +51,7 @@ class ImageSubobject(Parent):
       - ``None`` (default): infer from ``map`` or default to ``False``
       - ``False``: do not assume that ``map`` is injective
       - ``True``: ``map`` is known to be injective
-      - ``"check"``: raise an error when ``map`` is not injective
+      - ``'check'``: raise an error when ``map`` is not injective
 
     - ``inverse`` -- a function (optional); a map from `f(X)` to `X`
 
@@ -82,15 +81,16 @@ class ImageSubobject(Parent):
             sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',
             ....:                         '_test_some_elements', '_test_elements'])
         """
-        if not is_Parent(domain_subset):
+        if not isinstance(domain_subset, Parent):
             from sage.sets.set import Set
             domain_subset = Set(domain_subset)
 
-        if not is_Map(map) and not isinstance(map, PoorManMap):
+        if not isinstance(map, Map) and not isinstance(map, PoorManMap):
             map_name = f"The map {map}"
             if isinstance(map, Expression) and map.is_callable():
                 domain = map.parent().base()
                 if len(map.arguments()) != 1:
+                    from sage.modules.free_module import FreeModule
                     domain = FreeModule(domain, len(map.arguments()))
                 function = map
 
@@ -100,7 +100,7 @@ class ImageSubobject(Parent):
                 domain = domain_subset
             map = PoorManMap(map, domain, name=map_name)
 
-        if is_Map(map):
+        if isinstance(map, Map):
             map_category = map.category_for()
             if is_injective is None:
                 try:

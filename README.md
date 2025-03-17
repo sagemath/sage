@@ -69,7 +69,7 @@ virtualization).
 
 Detailed information on supported platforms for a specific version of Sage
 can be found in the section _Availability and installation help_ of the
-[release tour](https://wiki.sagemath.org/ReleaseTours) for this version.
+[release tour for this version](https://github.com/sagemath/sage/releases).
 
 We highly appreciate contributions to Sage that fix portability bugs
 and help port Sage to new platforms; let us know at the [sage-devel
@@ -92,7 +92,7 @@ below](#sagemath-docker-images)) or other virtualization solutions.
 [macOS] Preparing the Platform
 ------------------------------
 
-- If your Mac uses the Apple Silicon (M1, M2, M3; arm64) architecture and
+- If your Mac uses the Apple Silicon (M1, M2, M3, M4; arm64) architecture and
   you set up your Mac by transferring files from an older Mac, make sure
   that the directory ``/usr/local`` does not contain an old copy of Homebrew
   (or other software) for the x86_64 architecture that you may have copied
@@ -222,7 +222,7 @@ in the Installation Guide.
       more details.
 
     - Python 3.4 or later, or Python 2.7, a full installation including
-      `urllib`; but ideally version 3.9.x, 3.10.x, 3.11.x, 3.12.x, which
+      `urllib`; but ideally version 3.11.x or later, which
       will avoid having to build Sage's own copy of Python 3.
       See [build/pkgs/python3/SPKG.rst](build/pkgs/python3/SPKG.rst)
       for more details.
@@ -334,12 +334,18 @@ in the Installation Guide.
 11. Optional, but highly recommended: Set some environment variables to
     customize the build.
 
-    For example, the `MAKE` environment variable controls whether to
-    run several jobs in parallel.  On a machine with 4 processors, say,
-    typing `export MAKE="make -j4"` will configure the build script to
-    perform a parallel compilation of Sage using 4 jobs. On some
-    powerful machines, you might even consider `-j16`, as building with
-    more jobs than CPU cores can speed things up further.
+    The `MAKEFLAGS` variable controls whether to run several jobs in parallel.
+    To saturate all the execution threads of your CPU, we recommend to run
+    `export MAKEFLAGS="-j$(nproc) -l$(nproc).5"` if you are on Linux, and
+    `export MAKEFLAGS="-j$(sysctl -n hw.ncpu) -l$(sysctl -n hw.ncpu).5"` if you
+    are on macOS.
+
+    Note that the compilation may nonetheless use a different number of
+    processes, e.g., for parts that are built with `ninja` which automatically
+    decides on the amount of parallelity to use. In practice, you might
+    therefore see twice as many processes during the build process than your
+    CPU has execution threads. Unless your system is low on RAM, this should
+    not affect the time the compilation takes substantially.
 
     To reduce the terminal output during the build, type `export V=0`.
     (`V` stands for "verbosity".)
@@ -489,8 +495,8 @@ Troubleshooting
 ---------------
 
 If you have problems building Sage, check the Sage Installation Guide,
-as well as the version-specific Sage Installation FAQ in the [Sage Release
-Tour](https://wiki.sagemath.org/ReleaseTours) corresponding to the
+as well as the version-specific installation help in the [release
+tour](https://github.com/sagemath/sage/releases) corresponding to the
 version that you are installing.
 
 Please do not hesitate to ask for help in the [SageMath forum
@@ -551,11 +557,11 @@ SAGE_ROOT                 Root directory (create by git clone)
 │       │   ├── installed/
 │       │   │             Records of installed non-Python packages
 │       │   ├── scripts/  Scripts for uninstalling installed packages
-│       │   └── venv-python3.9  (SAGE_VENV)
+│       │   └── venv-python  (SAGE_VENV)
 │       │       │         Installation hierarchy (virtual environment)
 │       │       │         for Python packages
 │       │       ├── bin/  Executables and installed scripts
-│       │       ├── lib/python3.9/site-packages/
+│       │       ├── lib/python/site-packages/
 │       │       │         Python modules/packages are installed here
 │       │       └── var/lib/sage/
 │       │           └── wheels/
@@ -679,7 +685,7 @@ information, patches, and build scripts are in the accompanying
 part of the Sage git repository.
 
 <p align="center">
-   Copyright (C) 2005-2024 The Sage Development Team
+   Copyright (C) 2005-2025 The Sage Development Team
 </p>
 <p align="center">
    https://www.sagemath.org

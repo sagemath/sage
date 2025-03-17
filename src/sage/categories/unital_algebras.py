@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Unital algebras
 """
@@ -318,7 +319,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                     sage: Aone().parent() is A                                          # needs sage.combinat sage.modules
                     True
                 """
-                return self.monomial(self.one_basis()) #.
+                return self.monomial(self.one_basis())
 
             @lazy_attribute
             def one(self):
@@ -409,6 +410,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs sage.modules
                     sage: S2 = simplicial_complexes.Sphere(2)
                     sage: H = S2.cohomology_ring(QQ)
                     sage: C = cartesian_product([H, H])

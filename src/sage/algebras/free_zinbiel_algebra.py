@@ -343,7 +343,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         return FreeZinbielAlgebra(R, n=len(A), names=A, side=self._side)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -535,7 +535,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         The things that coerce into ``self`` are
 
         - free Zinbiel algebras whose set `E` of labels is
-          a subset of the corresponding self of ``set`, and whose base
+          a subset of the corresponding ``self`` of ``set``, and whose base
           ring has a coercion map into ``self.base_ring()``
 
         EXAMPLES::

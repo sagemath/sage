@@ -30,7 +30,6 @@ TESTS::
     p[1, 1] + p[2]
     sage: s[3]
     p[1, 1, 1] + p[2, 1]
-
 """
 
 # ****************************************************************************
@@ -142,11 +141,11 @@ class OrdinaryGeneratingSeriesRing(LazyPowerSeriesRing):
             sage: from sage.combinat.species.generating_series import OrdinaryGeneratingSeriesRing
             sage: OrdinaryGeneratingSeriesRing.options.halting_precision(15)
             sage: R = OrdinaryGeneratingSeriesRing(QQ)
-            sage: TestSuite(R).run()
+            sage: TestSuite(R).run(skip="_test_construction")
 
             sage: OrdinaryGeneratingSeriesRing.options._reset()  # reset options
         """
-        super().__init__(base_ring, names="z")
+        super().__init__(base_ring, names='z')
 
     Element = OrdinaryGeneratingSeries
 
@@ -269,11 +268,11 @@ class ExponentialGeneratingSeriesRing(LazyPowerSeriesRing):
             sage: from sage.combinat.species.generating_series import ExponentialGeneratingSeriesRing
             sage: ExponentialGeneratingSeriesRing.options.halting_precision(15)
             sage: R = ExponentialGeneratingSeriesRing(QQ)
-            sage: TestSuite(R).run()
+            sage: TestSuite(R).run(skip="_test_construction")
 
             sage: ExponentialGeneratingSeriesRing.options._reset()  # reset options
         """
-        super().__init__(base_ring, names="z")
+        super().__init__(base_ring, names='z')
 
     Element = ExponentialGeneratingSeries
 

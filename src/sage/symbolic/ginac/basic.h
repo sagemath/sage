@@ -43,19 +43,6 @@ struct _object;
 typedef _object PyObject;
 #endif
 
-#ifdef PYNAC_HAVE_LIBGIAC
-namespace giac
-{
-        class gen;
-        template <class T> class tensor;
-        typedef class tensor<gen> polynome;
-}
-namespace GiNaC
-{
-struct ex_is_less;
-}
-#endif
-
 namespace GiNaC {
 
 class ex;
@@ -315,9 +302,6 @@ public:
 	const basic & clearflag(unsigned f) const {flags &= ~f; return *this;}
 
 	void ensure_if_modifiable() const;
-#ifdef PYNAC_HAVE_LIBGIAC
-        const giac::polynome to_polynome(ex_int_map& map, exvector& revmap);
-#endif
 
 	// member variables
 	tinfo_t tinfo_key;                  ///< type info

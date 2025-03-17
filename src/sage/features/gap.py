@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of the SageMath interfaces to ``gap`` and of GAP packages
 """
@@ -15,6 +16,7 @@ from . import Feature, FeatureTestResult, PythonModule
 from .join_feature import JoinFeature
 from .sagemath import sage__libs__gap
 
+
 class GapPackage(Feature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of a GAP package.
@@ -29,7 +31,7 @@ class GapPackage(Feature):
     EXAMPLES::
 
         sage: from sage.features.gap import GapPackage
-        sage: GapPackage("grape", spkg="gap_packages")
+        sage: GapPackage("grape", spkg='gap_packages')
         Feature('gap_package_grape')
     """
     def __init__(self, package, **kwds):
@@ -37,7 +39,7 @@ class GapPackage(Feature):
         TESTS::
 
             sage: from sage.features.gap import GapPackage
-            sage: isinstance(GapPackage("grape", spkg="gap_packages"), GapPackage)
+            sage: isinstance(GapPackage("grape", spkg='gap_packages'), GapPackage)
             True
         """
         Feature.__init__(self, f"gap_package_{package}", **kwds)
@@ -53,7 +55,7 @@ class GapPackage(Feature):
         EXAMPLES::
 
             sage: from sage.features.gap import GapPackage
-            sage: GapPackage("grape", spkg="gap_packages")._is_present()  # optional - gap_package_grape
+            sage: GapPackage("grape", spkg='gap_packages')._is_present()  # optional - gap_package_grape
             FeatureTestResult('gap_package_grape', True)
         """
         try:
@@ -75,11 +77,12 @@ class GapPackage(Feature):
 
 
 def all_features():
-    return [GapPackage("atlasrep", spkg="gap_packages"),
-            GapPackage("design", spkg="gap_packages"),
-            GapPackage("grape", spkg="gap_packages"),
-            GapPackage("guava", spkg="gap_packages"),
-            GapPackage("hap", spkg="gap_packages"),
-            GapPackage("polycyclic", spkg="gap_packages"),
-            GapPackage("qpa", spkg="gap_packages"),
-            GapPackage("quagroup", spkg="gap_packages")]
+    return [GapPackage("atlasrep", spkg='gap_packages'),
+            GapPackage("design", spkg='gap_packages'),
+            GapPackage("grape", spkg='gap_packages'),
+            GapPackage("guava", spkg='gap_packages'),
+            GapPackage("hap", spkg='gap_packages'),
+            GapPackage("polenta", spkg='gap_packages'),
+            GapPackage("polycyclic", spkg='gap_packages'),
+            GapPackage("qpa", spkg='gap_packages'),
+            GapPackage("quagroup", spkg='gap_packages')]

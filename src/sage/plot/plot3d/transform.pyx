@@ -104,7 +104,6 @@ cdef class Transformation:
             point_c_upper_bound(&upper, upper, res)
         return (lower.x, lower.y, lower.z), (upper.x, upper.y, upper.z)
 
-
     cdef void transform_point_c(self, point_c* res, point_c P) noexcept:
         point_c_transform(res, self._matrix_data, P)
 
@@ -138,7 +137,7 @@ def rotate_arbitrary(v, double theta):
 
     INPUT:
 
-    - ``theta`` - real number, the angle
+    - ``theta`` -- real number, the angle
 
     EXAMPLES::
 

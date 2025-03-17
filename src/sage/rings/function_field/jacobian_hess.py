@@ -48,7 +48,6 @@ divisor. Hence a point of the Jacobian group is represented by `D`.
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
-
 """
 
 # ****************************************************************************
@@ -607,7 +606,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         """
         Construct an element of ``self`` from ``x``.
 
-        If ``x`` is an effective divisor, then it is assumed to of
+        If ``x`` is an effective divisor, then it must be of
         degree `g`, the genus of the function field.
 
         EXAMPLES::
@@ -635,9 +634,11 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             if x.degree() == 0:
                 return self.point(x)
             if x.is_effective():
+                if x.degree() != self._genus:
+                    raise ValueError(f"effective divisor is not of degree {self._genus}")
                 return self.element_class(self, *self._get_dS_ds(x))
 
-        raise ValueError(f"Cannot construct a point from {x}")
+        raise ValueError(f"cannot construct a point from {x}")
 
     def _get_dS_ds(self, divisor):
         """
@@ -806,6 +807,8 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             sage: G.point(p - b)
             [Place (y + 2, z + 1)]
         """
+        if divisor.degree() != 0:
+            raise ValueError('divisor not of degree zero')
         c = divisor + self._base_div
         f = c.basis_function_space()[0]
         d = f.divisor() + c
@@ -833,7 +836,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
 class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base):
     """
-    Jacobian groups of function fields over finite fields
+    Jacobian groups of function fields over finite fields.
 
     INPUT:
 

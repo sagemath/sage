@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Generate random rationals in Sage
 """

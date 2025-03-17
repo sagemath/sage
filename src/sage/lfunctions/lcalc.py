@@ -6,7 +6,7 @@ access to Rubinstein's lcalc calculator with extra PARI
 functionality compiled in
 and is a standard part of Sage.
 
-.. note::
+.. NOTE::
 
    Each call to ``lcalc`` runs a complete
    ``lcalc`` process. On a typical Linux system, this
@@ -44,22 +44,19 @@ prec = 32
 
 class LCalc(SageObject):
     r"""
-    Rubinstein's `L`-functions Calculator
+    Rubinstein's `L`-functions Calculator.
 
     Type ``lcalc.[tab]`` for a list of useful commands that
     are implemented using the command line interface, but return
     objects that make sense in Sage. For each command the possible
-    inputs for the L-function are:
+    inputs for the `L`-function are:
 
 
-    -  ``"`` - (default) the Riemann zeta function
+    - ``"`` -- (default) the Riemann zeta function
 
-    -  ``'tau'`` - the L function of the Ramanujan delta
-       function
+    - ``'tau'`` -- the L function of the Ramanujan delta function
 
-    -  elliptic curve E - where E is an elliptic curve over
-       `\QQ`; defines `L(E,s)`
-
+    - ``E`` -- an elliptic curve over `\QQ`; defines `L(E,s)`
 
     You can also use the complete command-line interface of
     Rubinstein's `L`-functions calculations program via this
@@ -108,12 +105,9 @@ class LCalc(SageObject):
 
         INPUT:
 
+        - ``n`` -- integer
 
-        -  ``n`` - integer
-
-        -  ``L`` - defines `L`-function (default:
-           Riemann zeta function)
-
+        - ``L`` -- defines `L`-function (default: Riemann zeta function)
 
         This function also checks the Riemann Hypothesis and makes sure no
         zeros are missed. This means it looks for several dozen zeros to
@@ -144,13 +138,9 @@ class LCalc(SageObject):
 
         INPUT:
 
+        - ``x, y, stepsize`` -- positive floating point numbers
 
-        -  ``x, y, stepsize`` - positive floating point
-           numbers
-
-        -  ``L`` - defines `L`-function (default:
-           Riemann zeta function)
-
+        - ``L`` -- defines `L`-function (default: Riemann zeta function)
 
         OUTPUT: list of pairs (zero, S(T)).
 
@@ -177,12 +167,9 @@ class LCalc(SageObject):
 
         INPUT:
 
+        - ``s`` -- complex number
 
-        -  ``s`` - complex number
-
-        -  ``L`` - defines `L`-function (default:
-           Riemann zeta function)
-
+        - ``L`` -- defines `L`-function (default: Riemann zeta function)
 
         EXAMPLES::
 
@@ -210,21 +197,14 @@ class LCalc(SageObject):
 
         INPUT:
 
+        - ``s0, s1`` -- complex numbers
 
-        -  ``s0, s1`` - complex numbers
+        - ``number_samples`` -- integer
 
-        -  ``number_samples`` - integer
+        - ``L`` -- defines `L`-function (default: Riemann zeta function)
 
-        -  ``L`` - defines `L`-function (default:
-           Riemann zeta function)
-
-
-        OUTPUT:
-
-
-        -  ``list`` - list of pairs (s, zeta(s)), where the s
-           are equally spaced sampled points on the line from s0 to s1.
-
+        OUTPUT: list of pairs `(s, L(s))`, where the `s` are equally spaced
+        sampled points on the line from `s_0` to `s_1`
 
         EXAMPLES::
 
@@ -276,7 +256,6 @@ class LCalc(SageObject):
             2.0
             sage: values[4][1] # abs tol 1e-8
             0.552975867 + 0.0*I
-
         """
         L = self._compute_L(L)
         CC = ComplexField(prec)
@@ -301,22 +280,15 @@ class LCalc(SageObject):
 
         INPUT:
 
+        - ``s`` -- complex numbers
 
-        -  ``s`` - complex numbers
+        - ``dmin`` -- integer
 
-        -  ``dmin`` - integer
+        - ``dmax`` -- integer
 
-        -  ``dmax`` - integer
+        - ``L`` -- defines `L`-function (default: Riemann zeta function)
 
-        -  ``L`` - defines `L`-function (default:
-           Riemann zeta function)
-
-
-        OUTPUT:
-
-
-        -  ``list`` - list of pairs (d, L(s,chi_d))
-
+        OUTPUT: list of pairs `(d, L(s,\chi_d))`
 
         EXAMPLES::
 
@@ -372,23 +344,16 @@ class LCalc(SageObject):
 
         INPUT:
 
+        - ``n`` -- integer
 
-        -  ``n`` - integer
+        - ``dmin`` -- integer
 
-        -  ``dmin`` - integer
+        - ``dmax`` -- integer
 
-        -  ``dmax`` - integer
+        - ``L`` -- defines `L`-function (default: Riemann zeta function)
 
-        -  ``L`` - defines `L`-function (default:
-           Riemann zeta function)
-
-
-        OUTPUT:
-
-
-        -  ``dict`` - keys are the discriminants `d`,
-           and values are list of corresponding zeros.
-
+        OUTPUT: dictionary; keys are the discriminants `d`, and values are list
+        of corresponding zeros
 
         EXAMPLES::
 
@@ -421,14 +386,11 @@ class LCalc(SageObject):
 
         INPUT:
 
-
-        -  ``L`` - defines `L`-function (default:
-           Riemann zeta function)
-
+        - ``L`` -- defines `L`-function (default: Riemann zeta function)
 
         OUTPUT: integer
 
-        .. note::
+        .. NOTE::
 
            Of course this is not provably correct in general, since it
            is an open problem to compute analytic ranks provably

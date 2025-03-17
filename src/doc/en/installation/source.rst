@@ -5,7 +5,7 @@
 Install from Source Code
 ========================
 
-Building Sage from the :wikipedia:`source code <Source_code>` has the major
+Building Sage from the source code has the major
 advantage that your install will be optimized for your particular computer and
 should therefore offer better performance and compatibility than a binary
 install.
@@ -370,6 +370,12 @@ does not raise an :class:`ImportError`, then it worked.
 Installation steps
 ------------------
 
+.. hint:: 
+
+  The following steps use the classical ``./configure && make`` build
+  process. The modern Meson build system is also supported, see
+  :ref:`build-source-meson`.
+
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.
 
@@ -602,8 +608,9 @@ Make targets
 ------------
 
 To build Sage from scratch, you would typically execute ``make`` in Sage's home
-directory to build Sage and its :wikipedia:`HTML <HTML>`
-documentation.
+directory to build Sage and its documentation in HTML format, suitable for
+viewing in a web browser.
+
 The ``make`` command is pretty smart, so if your build of Sage is interrupted,
 then running ``make`` again should cause it to pick up where it left off.
 The ``make`` command can also be given options, which control what is built and
@@ -662,8 +669,8 @@ Environment variables
 Sage uses several environment variables to control its build process.
 Most users won't need to set any of these: the build process just works on many
 platforms.
-(Note though that setting :envvar:`MAKE`, as described below, can significantly
-speed up the process.)
+(Note though that setting :envvar:`MAKEFLAGS`, as described below, can
+significantly speed up the process.)
 Building Sage involves building many packages, each of which has its own
 compilation instructions.
 
@@ -673,19 +680,26 @@ Standard environment controlling the build process
 
 Here are some of the more commonly used variables affecting the build process:
 
-.. envvar:: MAKE
+.. envvar:: MAKEFLAGS
 
-  One useful setting for this variable when building Sage is
-  ``MAKE='make -jNUM'`` to tell the ``make`` program to run ``NUM`` jobs in
-  parallel when building.
-  Note that some Sage packages may not support this variable.
+  This variable can be set to tell the ``make`` program to build things in
+  parallel. Set it to ``-jNUM`` to run ``NUM`` jobs in parallel when building.
+  Add ``-lNUM`` to tell make not to spawn more processes when the load exceeds
+  ``NUM``.
 
-  Some people advise using more jobs than there are CPU cores, at least if the
-  system is not heavily loaded and has plenty of RAM; for example, a good
-  setting for ``NUM`` might be between 1 and 1.5 times the number of cores.
-  In addition, the ``-l`` option sets a load limit: ``MAKE='make -j4 -l5.5``,
-  for example, tells ``make`` to try to use four jobs, but to not start more
-  than one job if the system load average is above 5.5.
+  A good value for this variable is ``MAKEFLAGS="-j$(nproc) -l$(nproc).5"`` on
+  Linux and ``MAKEFLAGS="-j$(sysctl -n hw.ncpu) -l$(sysctl -n hw.ncpu).5"`` on
+  macOS. This instructs make to use all the execution threads of your CPU while
+  bounding the load if there are other processes generating load. If your
+  system does not have a lot of RAM, you might want to choose lower limits, if
+  you have lots of RAM, it can sometimes be beneficial to set these limits
+  slightly higher.
+
+  Note that some parts of the SageMath build system do not respect this
+  variable, e.g., when ninja gets invoked, it figures out the number of
+  processes to use on its own so the number of processes and the system load
+  you see might exceed the number configured here.
+
   See the manual page for GNU ``make``: `Command-line options
   <https://www.gnu.org/software/make/manual/make.html#Options-Summary>`_
   and `Parallel building
@@ -1124,12 +1138,12 @@ see a list, execute ``sage.env.[TAB]`` while running Sage.
 
     Variables dealing with valgrind and friends:
 
-    - :envvar:`SAGE_TIMEOUT_VALGRIND` - used for Sage's doctesting: the
+    - :envvar:`SAGE_TIMEOUT_VALGRIND` -- used for Sage's doctesting: the
       number of seconds to allow a doctest before timing it out, if tests
       are run using ``??``.  If this isn't set, the default is 1024*1024
       seconds.
 
-    - :envvar:`SAGE_VALGRIND` - trigger black magic in Python.
+    - :envvar:`SAGE_VALGRIND` -- trigger black magic in Python.
 
     - :envvar:`SAGE_MEMCHECK_FLAGS`, :envvar:`SAGE_MASSIF_FLAGS`,
       :envvar:`SAGE_CACHEGRIND_FLAGS`, :envvar:`SAGE_OMEGA_FLAGS` - flags

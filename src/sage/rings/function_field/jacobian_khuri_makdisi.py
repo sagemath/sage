@@ -66,9 +66,9 @@ space associated with certain multiple of `B` (depending on the model). This
 allows representing points of Jacobian as matrices once we fix a basis of the
 Riemann-Roch space.
 
-
 EXAMPLES::
 
+    sage: # long time
     sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
     sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
     sage: F = C.function_field()
@@ -108,7 +108,6 @@ EXAMPLES::
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
-
 """
 
 # ****************************************************************************
@@ -156,6 +155,7 @@ class JacobianPoint(JacobianPoint_base):
 
     EXAMPLES::
 
+        sage: # long time
         sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
         sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
         sage: b = C([0,1,0]).place()
@@ -171,7 +171,6 @@ class JacobianPoint(JacobianPoint_base):
         [0 0 0 1 0 0 0 0 5]
         [0 0 0 0 0 1 0 0 5]
         [0 0 0 0 0 0 1 0 4]
-
     """
     def __init__(self, parent, w):
         """
@@ -179,6 +178,7 @@ class JacobianPoint(JacobianPoint_base):
 
         TESTS::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: b = C([0,1,0]).place()
@@ -199,6 +199,7 @@ class JacobianPoint(JacobianPoint_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -221,6 +222,7 @@ class JacobianPoint(JacobianPoint_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: F = C.function_field()
@@ -245,6 +247,7 @@ class JacobianPoint(JacobianPoint_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -278,6 +281,7 @@ class JacobianPoint(JacobianPoint_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -309,6 +313,7 @@ class JacobianPoint(JacobianPoint_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: F = C.function_field()
@@ -339,10 +344,11 @@ class JacobianPoint(JacobianPoint_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -362,10 +368,11 @@ class JacobianPoint(JacobianPoint_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -397,6 +404,7 @@ class JacobianPoint(JacobianPoint_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -429,6 +437,7 @@ class JacobianPoint(JacobianPoint_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -453,6 +462,7 @@ class JacobianPoint(JacobianPoint_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: F = C.function_field()
@@ -496,6 +506,7 @@ class JacobianGroupEmbedding(Map):
 
     EXAMPLES::
 
+        sage: # long time
         sage: k = GF(5)
         sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
         sage: C = Curve(x^3 + z^3 - y^2*z, P2)
@@ -517,6 +528,7 @@ class JacobianGroupEmbedding(Map):
 
         TESTS::
 
+            sage: # long time
             sage: k = GF(5)
             sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
             sage: C = Curve(x^3 + z^3 - y^2*z, P2)
@@ -541,6 +553,7 @@ class JacobianGroupEmbedding(Map):
 
         TESTS::
 
+            sage: # long time
             sage: k = GF(5)
             sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
             sage: C = Curve(x^3 + z^3 - y^2*z, P2)
@@ -564,6 +577,7 @@ class JacobianGroupEmbedding(Map):
 
         TESTS::
 
+            sage: # long time
             sage: k = GF(5)
             sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
             sage: C = Curve(x^3 + z^3 - y^2*z, P2)
@@ -595,6 +609,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
     EXAMPLES::
 
+        sage: # long time
         sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
         sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
         sage: h = C.function(y/x).divisor_of_poles()
@@ -612,6 +627,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         TESTS::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -622,6 +638,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         D0 = base_div
 
+        self._base_div_degree = base_div.degree()
         self._V_cache = 10*[None]
 
         V_cache = self._V_cache
@@ -675,6 +692,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -696,6 +714,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         TESTS:
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -722,6 +741,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         TESTS::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -763,10 +783,12 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             if x.degree() == 0:
                 return self.point(x)
             if x.is_effective():
+                if x.degree() != self._base_div_degree:
+                    raise ValueError(f"effective divisor is not of degree {self._base_div_degree}")
                 wd = self._wd_from_divisor(x)
                 return self.element_class(self, wd)
 
-        raise ValueError(f"Cannot construct a point from {x}")
+        raise ValueError(f"cannot construct a point from {x}")
 
     def point(self, divisor):
         """
@@ -778,6 +800,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -811,6 +834,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -842,6 +866,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
 
     EXAMPLES::
 
+        sage: # long time
         sage: k = GF(7)
         sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
         sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
@@ -865,6 +890,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
 
         TESTS::
 
+            sage: # long time
             sage: k = GF(7)
             sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
@@ -955,6 +981,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
 
         TESTS::
 
+            sage: # long time
             sage: k = GF(7)
             sage: A.<x,y> = AffineSpace(k,2)
             sage: C = Curve(y^2 + x^3 + 2*x + 1).projective_closure()
@@ -989,6 +1016,7 @@ class Jacobian(UniqueRepresentation, Jacobian_base):
 
         TESTS::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: J = C.jacobian(model='km_large')
@@ -996,6 +1024,7 @@ class Jacobian(UniqueRepresentation, Jacobian_base):
 
         ::
 
+            sage: # long time
             sage: J = C.jacobian(model='km_unknown')
             Traceback (most recent call last):
             ...

@@ -32,12 +32,12 @@ class QuotientRingElement(RingElement):
 
     INPUT:
 
-    - ``parent`` - the ring `R/I`
+    - ``parent`` -- the ring `R/I`
 
-    - ``rep`` - a representative of the element in `R`; this is used
+    - ``rep`` -- a representative of the element in `R`; this is used
       as the internal representation of the element
 
-    - ``reduce`` - bool (optional, default: True) - if True, then the
+    - ``reduce`` -- boolean (default: ``True``); if ``True``, then the
       internal representation of the element is ``rep`` reduced modulo
       the ideal `I`
 
@@ -121,7 +121,7 @@ class QuotientRingElement(RingElement):
 
     def lift(self):
         """
-        If self is an element of `R/I`, then return self as an
+        If ``self`` is an element of `R/I`, then return ``self`` as an
         element of `R`.
 
         EXAMPLES::
@@ -137,7 +137,7 @@ class QuotientRingElement(RingElement):
 
     def __bool__(self):
         """
-        Return ``True`` if quotient ring element is non-zero in the
+        Return ``True`` if quotient ring element is nonzero in the
         quotient ring `R/I`, by determining whether the element
         is in `I`.
 
@@ -159,7 +159,7 @@ class QuotientRingElement(RingElement):
 
     def is_unit(self):
         """
-        Return ``True`` if self is a unit in the quotient ring.
+        Return ``True`` if ``self`` is a unit in the quotient ring.
 
         EXAMPLES::
 
@@ -209,7 +209,6 @@ class QuotientRingElement(RingElement):
             sage: Q = S.quo(I)
             sage: Q.0
             Sq(1)
-
         """
         from sage.structure.parent_gens import localvars
         P = self.parent()
@@ -462,7 +461,7 @@ class QuotientRingElement(RingElement):
 
         - ``codomain`` -- a ring
 
-        - ``im_gens`` -- a tuple of elements `f(x)` in ``codomain``,
+        - ``im_gens`` -- tuple of elements `f(x)` in ``codomain``,
           one for each `x` in ``self.parent().gens()``, that define
           a homomorphism `f` from ``self.parent()`` to ``codomain``
 
@@ -493,7 +492,7 @@ class QuotientRingElement(RingElement):
 
     def __int__(self):
         """
-        Try to convert self (an element of `R/I`) to an integer by
+        Try to convert ``self`` (an element of `R/I`) to an integer by
         converting its lift in `R` to an integer.  Return a TypeError
         if no such conversion can be found.
 
@@ -725,7 +724,6 @@ class QuotientRingElement(RingElement):
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category.element_class'>
             sage: (a+3*a*b+b).lm()                                                      # needs sage.libs.singular
             a*b
-
         """
         return self.__class__(self.parent(), self.__rep.lm())
 
@@ -783,9 +781,7 @@ class QuotientRingElement(RingElement):
         """
         Return the monomials in ``self``.
 
-        OUTPUT:
-
-        A list of monomials.
+        OUTPUT: list of monomials
 
         EXAMPLES::
 
@@ -801,14 +797,13 @@ class QuotientRingElement(RingElement):
         """
         return [self.__class__(self.parent(), m) for m in self.__rep.monomials()]
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
-        Return Singular representation of self.
+        Return Singular representation of ``self``.
 
         INPUT:
 
-        -  ``singular`` - a non-standard interpreter may be
-           provided
+        - ``singular`` -- a non-standard interpreter may be provided
 
         EXAMPLES::
 
@@ -818,8 +813,8 @@ class QuotientRingElement(RingElement):
             sage: Q = P.quo(I)
             sage: Q._singular_()
             polynomial ring, over a field, global ordering
-            //   coefficients: ZZ/2
-            //   number of vars : 2
+            // coefficients: ZZ/2...
+            // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
             //        block   2 : ordering C
@@ -844,12 +839,14 @@ class QuotientRingElement(RingElement):
             a - 2/3*b
         """
         if singular is None:
-            raise ImportError("could not import singular")
+            singular = singular_default
+            if singular is None:
+                raise ImportError("could not import singular")
         return self.__rep._singular_(singular)
 
     def _magma_init_(self, magma):
         """
-        Returns the Magma representation of this quotient ring element.
+        Return the Magma representation of this quotient ring element.
 
         EXAMPLES::
 
@@ -941,7 +938,7 @@ class QuotientRingElement(RingElement):
 
         INPUT:
 
-        -  ``G`` - a list of quotient ring elements
+        - ``G`` -- list of quotient ring elements
 
         .. WARNING::
 

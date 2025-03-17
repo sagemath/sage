@@ -16,7 +16,6 @@ REFERENCES:
 
 - Chaps. 13, 14 of R. Godement : *Algebra* [God1968]_
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -180,7 +179,6 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
             ....:                      latex_name=r'\mathcal{L}(M,N)')
             sage: latex(H)
             \mathcal{L}(M,N)
-
         """
         Homset.__init__(self, fmodule1, fmodule2)
         self._name = name
@@ -199,7 +197,6 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
             '\\mathrm{Hom}\\left(M,N\\right)'
             sage: latex(H)  # indirect doctest
             \mathrm{Hom}\left(M,N\right)
-
         """
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
@@ -238,7 +235,6 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
             [5 6]
             sage: a == H([[1,2],[3,4],[5,6]], bases=(e,f))
             True
-
         """
         from sage.structure.parent import Parent
         return Parent.__call__(self, *args, **kwds)
@@ -263,10 +259,10 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
           by the default bases of each module is assumed.
         - ``name`` -- (default: ``None``) string; name given to the
           homomorphism
-        - ``latex_name`` -- (default: ``None``)string;  LaTeX symbol to denote
-          the homomorphism; if none is provided, ``name`` will be used.
-        - ``is_identity`` -- (default: ``False``) determines whether the
-          constructed object is the identity endomorphism; if set to ``True``,
+        - ``latex_name`` -- (default: ``None``) string;  LaTeX symbol to denote
+          the homomorphism. If none is provided, ``name`` will be used.
+        - ``is_identity`` -- boolean (default: ``False``); determines whether the
+          constructed object is the identity endomorphism. If set to ``True``,
           then N must be M and the entry ``matrix_rep`` is not used.
 
         EXAMPLES:
@@ -319,7 +315,6 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
             Generic endomorphism of Rank-3 free module M over the Integer Ring
             sage: phi_a1 == phi
             True
-
         """
         # Standard construction:
         return self.element_class(self, matrix_rep, bases=bases, name=name,
@@ -344,7 +339,6 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
             [1 1 1]
             sage: phi == Hom(M,N).an_element()
             True
-
         """
         ring = self.base_ring()
         m = self.domain().rank()
@@ -470,7 +464,6 @@ class FreeModuleEndset(FreeModuleHomset):
             ....:                      latex_name=r'\mathcal{L}(M,N)')
             sage: latex(H)
             \mathcal{L}(M,N)
-
         """
         FreeModuleHomset.__init__(self, fmodule, fmodule, name, latex_name)
         self._one = None  # to be set by self.one()
@@ -496,7 +489,6 @@ class FreeModuleEndset(FreeModuleHomset):
 
             sage: End(M)._coerce_map_from_(M.general_linear_group())
             True
-
         """
         from sage.tensor.modules.tensor_free_module import TensorFreeModule
         from sage.tensor.modules.free_module_linear_group import \
@@ -532,10 +524,10 @@ class FreeModuleEndset(FreeModuleHomset):
           by the default bases of each module is assumed.
         - ``name`` -- (default: ``None``) string; name given to the
           homomorphism
-        - ``latex_name`` -- (default: ``None``)string;  LaTeX symbol to denote
-          the homomorphism; if none is provided, ``name`` will be used.
-        - ``is_identity`` -- (default: ``False``) determines whether the
-          constructed object is the identity endomorphism; if set to ``True``,
+        - ``latex_name`` -- (default: ``None``) string;  LaTeX symbol to denote
+          the homomorphism. If none is provided, ``name`` will be used.
+        - ``is_identity`` -- boolean (default: ``False``); determines whether the
+          constructed object is the identity endomorphism. If set to ``True``,
           then N must be M and the entry ``matrix_rep`` is not used.
 
         EXAMPLES:
@@ -571,7 +563,6 @@ class FreeModuleEndset(FreeModuleHomset):
             Generic endomorphism of Rank-3 free module M over the Integer Ring
             sage: phi_a1 == phi
             True
-
         """
         if isinstance(matrix_rep, FreeModuleTensor):
             # coercion of a type-(1,1) tensor to an endomorphism
@@ -652,7 +643,6 @@ class FreeModuleEndset(FreeModuleHomset):
             sage: GL = M.general_linear_group()
             sage: M.identity_map() == GL(H.one())
             True
-
         """
         if self._one is None:
             self._one = self.element_class(self, [], is_identity=True)

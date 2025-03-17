@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Realizations Covariant Functorial Construction
 
@@ -21,11 +22,12 @@ from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
+
 class RealizationsCategory(RegressiveCovariantConstructionCategory):
     """
-    An abstract base class for all categories of realizations category
+    An abstract base class for all categories of realizations category.
 
-    Relization are implemented as
+    Realization are implemented as
     :class:`~sage.categories.covariant_functorial_construction.RegressiveCovariantConstructionCategory`.
     See there for the documentation of how the various bindings such
     as ``Sets().Realizations()`` and ``P.Realizations()``, where ``P``
@@ -46,6 +48,7 @@ class RealizationsCategory(RegressiveCovariantConstructionCategory):
     """
 
     _functor_category = "Realizations"
+
 
 def Realizations(self):
     """
@@ -105,9 +108,10 @@ def Realizations(self):
 
 Category.Realizations = Realizations
 
+
 class Category_realization_of_parent(Category_over_base, BindableClass):
     """
-    An abstract base class for categories of all realizations of a given parent
+    An abstract base class for categories of all realizations of a given parent.
 
     INPUT:
 
@@ -159,7 +163,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
 
     def _get_name(self):
         """
-        Return a human readable string specifying which kind of bases this category is for
+        Return a human readable string specifying which kind of bases this category is for.
 
         It is obtained by splitting and lower casing the last part of
         the class name.
@@ -169,7 +173,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
             sage: from sage.categories.realizations import Category_realization_of_parent
             sage: class MultiplicativeBasesOnPrimitiveElements(Category_realization_of_parent):
             ....:     def super_categories(self): return [Objects()]
-            sage: Sym = SymmetricFunctions(QQ); Sym.rename("Sym")                       # needs sage.combinat sage.modules
+            sage: Sym = SymmetricFunctions(QQ); Sym.rename('Sym')                       # needs sage.combinat sage.modules
             sage: MultiplicativeBasesOnPrimitiveElements(Sym)._get_name()               # needs sage.combinat sage.modules
             'multiplicative bases on primitive elements'
         """
@@ -187,7 +191,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
             sage: from sage.categories.realizations import Category_realization_of_parent
             sage: class MultiplicativeBasesOnPrimitiveElements(Category_realization_of_parent):
             ....:     def super_categories(self): return [Objects()]
-            sage: Sym = SymmetricFunctions(QQ); Sym.rename("Sym")                       # needs sage.combinat sage.modules
+            sage: Sym = SymmetricFunctions(QQ); Sym.rename('Sym')                       # needs sage.combinat sage.modules
             sage: C = MultiplicativeBasesOnPrimitiveElements(Sym); C                    # needs sage.combinat sage.modules
             Category of multiplicative bases on primitive elements of Sym
             sage: C._repr_object_names()                                                # needs sage.combinat sage.modules
