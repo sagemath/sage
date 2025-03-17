@@ -186,8 +186,8 @@ This basic implementation is formed by the following steps:
 
 - Python uses double\--underscore methods for arithmetic methods and string
   representations. Sage's base classes often have a default implementation,
-  and it is requested to **implement SINGLE underscore methods ``_repr_``, and
-  similarly ``_add_``, ``_mul_`` etc.**
+  and it is requested to **implement SINGLE underscore methods _repr_, and
+  similarly _add_, _mul_ etc.**
 
   The double underscore methods that can be implemented by subclasses are
   listed above.
@@ -273,7 +273,7 @@ considerations:
   from those already present in Sage, we use a different string representation.
 
 - Arithmetic is implemented in single\--underscore method ``_add_``, ``_mul_``,
-  etc. **We do not override the default double underscore ``__add__``, ``__mul__``**,
+  etc. **We do not override the default double underscore __add__, __mul__**,
   since otherwise, we could not use Sage's coercion model.
 
   The double underscore methods that can be implemented by subclasses are
