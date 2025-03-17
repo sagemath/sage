@@ -1651,6 +1651,45 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             return cert_dict
         return result
     
+    def _handle_sdp_params(self, **params):
+        sdp_params=["axtol", "atytol", "objtol", "pinftol", "dinftol", "maxiter", 
+                    "minstepfrac", "maxstepfrac", "minstepp", "minstepd", "usexzgap", 
+                    "tweakgap", "affine", "printlevel", "perturbobj", "fastmode"]
+        
+        if "precision" in params:
+            precision = params["precision"]
+            if "axtol" not in params:
+                params["axtol"] = precision
+            if "atytol" not in params:
+                params["atytol"] = precision
+            if "objtol" not in params:
+                params["objtol"] = precision
+            if "pinftol" not in params:
+                params["pinftol"] = 1/precision
+            if "dinftol" not in params:
+                params["dinftol"] = 1/precision
+            if "minstepp" not in params:
+                params["minstepp"] = precision
+            if "minstepd" not in params:
+                params["minstepd"] = precision
+        
+        if self._printlevel != 1:
+            if params=={}:
+                params = {"printlevel": self._printlevel}
+            else:
+                if "printlevel" not in params:
+                    params["printlevel"] = self._printlevel
+        if params!={}:
+            with open("param.csdp", "w") as paramsfile:
+                for key, value in params.items():
+                    if str(key) not in sdp_params:
+                        continue
+                    paramsfile.write(f"{key}={value}\n")
+            if "printlevel" in params:
+                self._printlevel = params["printlevel"]
+            else:
+                self._printlevel = 1
+
     def solve_sdp(self, target_element, target_size, construction, 
                   maximize=True, positives=None, file=None, 
                   specific_ftype=None, **params):
@@ -1661,32 +1700,10 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         import time
 
         #
-        # Handling parameters
-        #
-        sdp_params=["axtol", "atytol", "objtol", "pinftol", "dinftol", "maxiter", 
-                    "minstepfrac", "maxstepfrac", "minstepp", "minstepd", "usexzgap", 
-                    "tweakgap", "affine", "printlevel", "perturbobj", "fastmode"]
-        if self._printlevel != 1:
-            if params=={}:
-                params = {"printlevel": self._printlevel}
-            else:
-                if "printlevel" not in params:
-                    params["printlevel"] = self._printlevel
-        if params!={}:
-            with open("param.csdp", "w") as paramsfile:
-                for key, value in params.items():
-                    if key not in sdp_params:
-                        continue
-                    paramsfile.write(f"{key}={value}\n")
-            if "printlevel" in params:
-                self._printlevel = params["printlevel"]
-            else:
-                self._printlevel = 1
-        
-        #
         # Initial setup
         #
 
+        self._handle_sdp_params(**params)
         base_flags = self.generate_flags(target_size)
         self.fprint("Base flags generated, their number is {}".format(
             len(base_flags)
@@ -1853,35 +1870,14 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         import time
 
         #
-        # Handling parameters
+        # Initial setup
         #
 
-        sdp_params=["axtol", "atytol", "objtol", "pinftol", "dinftol", "maxiter", 
-                    "minstepfrac", "maxstepfrac", "minstepp", "minstepd", "usexzgap", 
-                    "tweakgap", "affine", "printlevel", "perturbobj", "fastmode"]
-        if self._printlevel != 1:
-            if params=={}:
-                params = {"printlevel": self._printlevel}
-            else:
-                if "printlevel" not in params:
-                    params["printlevel"] = self._printlevel
-        if params!={}:
-            with open("param.csdp", "w") as paramsfile:
-                for key, value in params.items():
-                    if str(key) not in sdp_params:
-                        continue
-                    paramsfile.write(f"{key}={value}\n")
-            if "printlevel" in params:
-                self._printlevel = params["printlevel"]
-            else:
-                self._printlevel = 1
+        self._handle_sdp_params(**params)
         
         constr_print_limit = params.get("constr_print_limit", 1000)
         constr_error_threshold = params.get("constr_error_threshold", 1e-6)
         
-        #
-        # Initial setup
-        #
         if target_size not in self.sizes():
             raise ValueError("For theory {}, size {} is not allowed.".format(self._name, target_size))
 

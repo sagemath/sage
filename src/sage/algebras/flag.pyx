@@ -23,6 +23,7 @@ from cysignals.signals cimport sig_check
 from sage.structure.element cimport Element
 from sage.structure.coerce cimport coercion_model
 from blisspy cimport canonical_form_from_edge_list, automorphism_group_gens_from_edge_list
+from tqdm import tqdm
 
 # Elementary block operations
 cdef tuple _subblock_helper(tuple points, tuple block, bint inverse = False):
@@ -340,6 +341,8 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, tuple e
     cdef tuple sign_perm
     
     #Pre calculate the cosets and Fs classes
+    #print("generate coset precalc")
+    #for F in tqdm(smaller_structures):
     for F in smaller_structures:
         for missing_point in range(n-1):
             sig_check()
@@ -387,6 +390,8 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, tuple e
     cdef list G_perm_list
 
     #Check ways to combine
+    #print("generate checking pairs")
+    #for Fs_canonical in tqdm(subf_classes):
     for Fs_canonical in subf_classes:
         for ii, (F_canonical_blocks, _) in enumerate(subf_classes[Fs_canonical]):
             F_canonical_blocks = _perm_blocks(F_canonical_blocks, perm_0)
