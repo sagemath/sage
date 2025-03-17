@@ -43,6 +43,15 @@ Outline
   must not be overridden. Instead, the actual implementation should be in
   *single underscore* methods, such as ``_add_`` or ``_mul_``.
 
+  Exceptions are ``__lshift__``, ``__rshift__``, ``__invert__``,
+  where no default implementation is provided.
+
+  Also note that if the class is implemented in Cython, currently
+  SageMath uses a legacy behavior with ``c_api_binop_methods=True``,
+  so the ``self`` argument may not have the correct type
+  in ``__lshift__`` and ``__rshift__``. See
+  `Cython documentation <https://docs.cython.org/en/latest/src/userguide/special_methods.html#arithmetic-methods>`_.
+
 - Turn your parent structure into an object of a category
 
   Declare the category during initialisation\---Your parent structure will
@@ -177,8 +186,8 @@ This basic implementation is formed by the following steps:
 
 - Python uses double\--underscore methods for arithmetic methods and string
   representations. Sage's base classes often have a default implementation,
-  and it is requested to **implement SINGLE underscore methods _repr_, and
-  similarly _add_, _mul_ etc.**
+  and it is requested to **implement SINGLE underscore methods ``_repr_``, and
+  similarly ``_add_``, ``_mul_`` etc.**
 
 - You are encouraged to **make your parent "unique"**. That's to say, parents
   should only evaluate equal if they are identical. Sage provides frameworks
@@ -261,7 +270,7 @@ considerations:
   from those already present in Sage, we use a different string representation.
 
 - Arithmetic is implemented in single\--underscore method ``_add_``, ``_mul_``,
-  etc. **We do not override the default double underscore __add__, __mul__**,
+  etc. **We do not override the default double underscore ``__add__``, ``__mul__``**,
   since otherwise, we could not use Sage's coercion model.
 
 - Comparisons can be implemented using ``_richcmp_``.
