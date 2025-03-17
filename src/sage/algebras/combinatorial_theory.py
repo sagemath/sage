@@ -688,6 +688,31 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     )
         return res
 
+    def get_Z_matrices(self, phi_vector, table_constructor, test=True):
+        Zs = []
+        for param in table_constructor.keys():
+            ns, ftype, target_size = param
+            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], 
+                                           target_size=target_size)
+            Zm = [None for _ in range(len(table_constructor[param]))]
+            for gg, morig in enumerate(table):
+                if phi_vector[gg]==0:
+                    continue
+                for ii, base in enumerate(table_constructor[param]):
+                    mat = base * morig * base.T
+                    if Zm[ii]==None:
+                        Zm[ii] = mat*phi_vector[gg]
+                    else:
+                        Zm[ii] += mat*phi_vector[gg]
+            Zs.append(Zm)
+            for Zii in Zm:
+                if test and (not Zii.is_positive_semidefinite()):
+                    self.fprint("Construction based Z matrix for " + 
+                                "{} is not semidef: {}".format(
+                                    ftype, min(Zii.eigenvalues())
+                                    ))
+        return Zs
+
     def _adjust_table_phi(self, table_constructor, phi_vectors_exact, 
                           test=False):
         r"""
@@ -739,6 +764,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 table_constructor[param] = new_bases
             else:
                 to_pop.append(param)
+        
         for param in to_pop:
             table_constructor.pop(param, None)
         return table_constructor
@@ -1934,7 +1960,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         # without any construction
         #
         
-        if construction==None or construction==[]:
+        if construction==None or construction==[] or construction is False:
             self.fprint("Running sdp without construction. " + 
                   "Used block sizes are {}".format(sdp_data[0]))
             
@@ -1969,13 +1995,18 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             # If nothing was provided or the guess failed, 
             # then round the current solution
             if construction==[]:
-                rounding_output = self._round_sdp_solution_no_phi_alter(
-                    initial_sol, sdp_data, table_constructor, 
-                    constraints_data, **params)
+                try:
+                    rounding_output = self._round_sdp_solution_no_phi_alter(
+                        initial_sol, sdp_data, table_constructor, 
+                        constraints_data, **params)
+                except:
+                    rounding_output = None
+                    construction = False
+                
                 if rounding_output!=None:
                     return help_return(rounding_output[0] * mult, roundo=rounding_output)
                 else:
-                    construction=False
+                    construction = False
             
             if construction==False:
                 rounding_output = self._round_sdp_solution_no_phi(
@@ -2327,15 +2358,18 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         uniques = []
         sym_base = []
         asym_base = []
+        sym_base_lasts = []
         for xx in flags:
             xxid = xx.unique(weak=True)[0]
             if xxid not in uniques:
                 uniques.append(xxid)
                 sym_base.append(xx.afae())
+                sym_base_lasts.append(xx.afae())
             else:
                 sym_ind = uniques.index(xxid)
-                asym_base.append(sym_base[sym_ind] - xx.afae())
+                asym_base.append(sym_base_lasts[sym_ind] - xx)
                 sym_base[sym_ind] += xx
+                sym_base_lasts[sym_ind] = xx
         m_sym = matrix(
             len(sym_base), len(flags), 
             [xx.values() for xx in sym_base], sparse=True
