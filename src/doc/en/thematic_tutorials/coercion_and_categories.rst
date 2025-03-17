@@ -43,8 +43,8 @@ Outline
   must not be overridden. Instead, the actual implementation should be in
   *single underscore* methods, such as ``_add_`` or ``_mul_``.
 
-  Exceptions are ``__lshift__``, ``__rshift__``, ``__invert__``,
-  where no default implementation is provided.
+  Exceptions are ``__lshift__``, ``__rshift__``, ``__and__``, ``__or__``,
+  ``__xor__``, ``__invert__``, where no default implementation is provided.
 
   Also note that if the class is implemented in Cython, currently
   SageMath uses a legacy behavior with ``c_api_binop_methods=True``,
@@ -162,7 +162,7 @@ be complemented later.
     ....:     def characteristic(self):
     ....:         return self.base().characteristic()
 
-.. end ouf output
+.. end of output
 
 This basic implementation is formed by the following steps:
 
@@ -188,6 +188,9 @@ This basic implementation is formed by the following steps:
   representations. Sage's base classes often have a default implementation,
   and it is requested to **implement SINGLE underscore methods ``_repr_``, and
   similarly ``_add_``, ``_mul_`` etc.**
+
+  The double underscore methods that can be implemented by subclasses are
+  listed above.
 
 - You are encouraged to **make your parent "unique"**. That's to say, parents
   should only evaluate equal if they are identical. Sage provides frameworks
@@ -272,6 +275,13 @@ considerations:
 - Arithmetic is implemented in single\--underscore method ``_add_``, ``_mul_``,
   etc. **We do not override the default double underscore ``__add__``, ``__mul__``**,
   since otherwise, we could not use Sage's coercion model.
+
+  The double underscore methods that can be implemented by subclasses are
+  listed above.
+
+  Note that the double-underscore method ``__neg__`` just directly call the
+  single-underscore method ``_neg_``, the operation is unary so the coercion model
+  is unnecessary.
 
 - Comparisons can be implemented using ``_richcmp_``.
   This automatically makes the relational operators like
