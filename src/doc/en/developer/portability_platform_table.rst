@@ -1132,113 +1132,59 @@
 .. |codespace-centos-stream-9-python3.12-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.12-maximal%2Fdevcontainer.json
 
-.. |image-almalinux-8-python3.9-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-system-packages
+.. |image-almalinux-{9-python3.11}-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-minimal-with-system-packages
 
-.. |image-almalinux-8-python3.9-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-minimal-configured
+.. |image-almalinux-{9-python3.11}-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-minimal-configured
 
-.. |image-almalinux-8-python3.9-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-targets-pre
+.. |image-almalinux-{9-python3.11}-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-minimal-with-targets-pre
 
-.. |image-almalinux-8-python3.9-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-targets
+.. |image-almalinux-{9-python3.11}-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-minimal-with-targets
 
-.. |image-almalinux-8-python3.9-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-targets-optional
+.. |image-almalinux-{9-python3.11}-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-minimal-with-targets-optional
 
-.. |codespace-almalinux-8-python3.9-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-8-python3.9-minimal%2Fdevcontainer.json
+.. |codespace-almalinux-{9-python3.11}-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-{9-python3.11}-minimal%2Fdevcontainer.json
 
-.. |image-almalinux-8-python3.9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-standard-with-system-packages
+.. |image-almalinux-{9-python3.11}-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-standard-with-system-packages
 
-.. |image-almalinux-8-python3.9-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-standard-configured
+.. |image-almalinux-{9-python3.11}-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-standard-configured
 
-.. |image-almalinux-8-python3.9-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-standard-with-targets-pre
+.. |image-almalinux-{9-python3.11}-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-standard-with-targets-pre
 
-.. |image-almalinux-8-python3.9-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-standard-with-targets
+.. |image-almalinux-{9-python3.11}-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-standard-with-targets
 
-.. |image-almalinux-8-python3.9-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-standard-with-targets-optional
+.. |image-almalinux-{9-python3.11}-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-standard-with-targets-optional
 
-.. |codespace-almalinux-8-python3.9-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-8-python3.9-standard%2Fdevcontainer.json
+.. |codespace-almalinux-{9-python3.11}-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-{9-python3.11}-standard%2Fdevcontainer.json
 
-.. |image-almalinux-8-python3.9-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-maximal-with-system-packages
+.. |image-almalinux-{9-python3.11}-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-maximal-with-system-packages
 
-.. |image-almalinux-8-python3.9-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-maximal-configured
+.. |image-almalinux-{9-python3.11}-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-maximal-configured
 
-.. |image-almalinux-8-python3.9-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-maximal-with-targets-pre
+.. |image-almalinux-{9-python3.11}-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-maximal-with-targets-pre
 
-.. |image-almalinux-8-python3.9-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-maximal-with-targets
+.. |image-almalinux-{9-python3.11}-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-maximal-with-targets
 
-.. |image-almalinux-8-python3.9-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-maximal-with-targets-optional
+.. |image-almalinux-{9-python3.11}-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-{9-python3.11}-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-almalinux-{9-python3.11}-maximal-with-targets-optional
 
-.. |codespace-almalinux-8-python3.9-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-8-python3.9-maximal%2Fdevcontainer.json
-
-.. |image-almalinux-9-python3.11-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-system-packages
-
-.. |image-almalinux-9-python3.11-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-minimal-configured
-
-.. |image-almalinux-9-python3.11-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-targets-pre
-
-.. |image-almalinux-9-python3.11-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-targets
-
-.. |image-almalinux-9-python3.11-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-targets-optional
-
-.. |codespace-almalinux-9-python3.11-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-9-python3.11-minimal%2Fdevcontainer.json
-
-.. |image-almalinux-9-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-standard-with-system-packages
-
-.. |image-almalinux-9-python3.11-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-standard-configured
-
-.. |image-almalinux-9-python3.11-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-standard-with-targets-pre
-
-.. |image-almalinux-9-python3.11-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-standard-with-targets
-
-.. |image-almalinux-9-python3.11-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-standard-with-targets-optional
-
-.. |codespace-almalinux-9-python3.11-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-9-python3.11-standard%2Fdevcontainer.json
-
-.. |image-almalinux-9-python3.11-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-maximal-with-system-packages
-
-.. |image-almalinux-9-python3.11-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-maximal-configured
-
-.. |image-almalinux-9-python3.11-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-maximal-with-targets-pre
-
-.. |image-almalinux-9-python3.11-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-maximal-with-targets
-
-.. |image-almalinux-9-python3.11-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-maximal-with-targets-optional
-
-.. |codespace-almalinux-9-python3.11-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-9-python3.11-maximal%2Fdevcontainer.json
+.. |codespace-almalinux-{9-python3.11}-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-{9-python3.11}-maximal%2Fdevcontainer.json
 
 .. |image-gentoo-python3.10-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
    :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-system-packages
@@ -1564,6 +1510,60 @@
 .. |codespace-opensuse-tumbleweed-python3.10-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-python3.10-maximal%2Fdevcontainer.json
 
+.. |image-opensuse-tumbleweed-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-system-packages
+
+.. |image-opensuse-tumbleweed-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-minimal-configured
+
+.. |image-opensuse-tumbleweed-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-targets-pre
+
+.. |image-opensuse-tumbleweed-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-targets
+
+.. |image-opensuse-tumbleweed-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-targets-optional
+
+.. |codespace-opensuse-tumbleweed-minimal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-minimal%2Fdevcontainer.json
+
+.. |image-opensuse-tumbleweed-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-standard-with-system-packages
+
+.. |image-opensuse-tumbleweed-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-standard-configured
+
+.. |image-opensuse-tumbleweed-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-standard-with-targets-pre
+
+.. |image-opensuse-tumbleweed-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-standard-with-targets
+
+.. |image-opensuse-tumbleweed-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-standard-with-targets-optional
+
+.. |codespace-opensuse-tumbleweed-standard| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-standard%2Fdevcontainer.json
+
+.. |image-opensuse-tumbleweed-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-maximal-with-system-packages
+
+.. |image-opensuse-tumbleweed-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-maximal-configured
+
+.. |image-opensuse-tumbleweed-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-maximal-with-targets-pre
+
+.. |image-opensuse-tumbleweed-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-maximal-with-targets
+
+.. |image-opensuse-tumbleweed-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
+   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-maximal-with-targets-optional
+
+.. |codespace-opensuse-tumbleweed-maximal| image:: https://github.com/codespaces/badge.svg
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-maximal%2Fdevcontainer.json
+
 .. list-table::
    :widths: 50 50 40
    :header-rows: 1
@@ -1803,27 +1803,16 @@
    * -    ‑*maximal*
      - |image-centos-stream-9-python3.12-maximal-with-system-packages| |image-centos-stream-9-python3.12-maximal-with-targets-pre|
      -
-   * - **almalinux**-8-python3.9 
+   * - **almalinux**-{9-python3.11} 
        
           ‑*minimal*
-     - |image-almalinux-8-python3.9-minimal-with-system-packages| |image-almalinux-8-python3.9-minimal-with-targets-pre| |image-almalinux-8-python3.9-minimal-with-targets| |image-almalinux-8-python3.9-minimal-with-targets-optional|
-     - |codespace-almalinux-8-python3.9-minimal|
+     - |image-almalinux-{9-python3.11}-minimal-with-system-packages| |image-almalinux-{9-python3.11}-minimal-with-targets-pre| |image-almalinux-{9-python3.11}-minimal-with-targets| |image-almalinux-{9-python3.11}-minimal-with-targets-optional|
+     - |codespace-almalinux-{9-python3.11}-minimal|
    * -    ‑*standard*
-     - |image-almalinux-8-python3.9-standard-with-system-packages| |image-almalinux-8-python3.9-standard-with-targets-pre| |image-almalinux-8-python3.9-standard-with-targets| |image-almalinux-8-python3.9-standard-with-targets-optional|
-     - |codespace-almalinux-8-python3.9-standard|
+     - |image-almalinux-{9-python3.11}-standard-with-system-packages| |image-almalinux-{9-python3.11}-standard-with-targets-pre| |image-almalinux-{9-python3.11}-standard-with-targets| |image-almalinux-{9-python3.11}-standard-with-targets-optional|
+     - |codespace-almalinux-{9-python3.11}-standard|
    * -    ‑*maximal*
-     - |image-almalinux-8-python3.9-maximal-with-system-packages| |image-almalinux-8-python3.9-maximal-with-targets-pre|
-     -
-   * - **almalinux**-9-python3.11 
-       
-          ‑*minimal*
-     - |image-almalinux-9-python3.11-minimal-with-system-packages| |image-almalinux-9-python3.11-minimal-with-targets-pre| |image-almalinux-9-python3.11-minimal-with-targets| |image-almalinux-9-python3.11-minimal-with-targets-optional|
-     - |codespace-almalinux-9-python3.11-minimal|
-   * -    ‑*standard*
-     - |image-almalinux-9-python3.11-standard-with-system-packages| |image-almalinux-9-python3.11-standard-with-targets-pre| |image-almalinux-9-python3.11-standard-with-targets| |image-almalinux-9-python3.11-standard-with-targets-optional|
-     - |codespace-almalinux-9-python3.11-standard|
-   * -    ‑*maximal*
-     - |image-almalinux-9-python3.11-maximal-with-system-packages| |image-almalinux-9-python3.11-maximal-with-targets-pre|
+     - |image-almalinux-{9-python3.11}-maximal-with-system-packages| |image-almalinux-{9-python3.11}-maximal-with-targets-pre|
      -
    * - **gentoo**-python3.10 
        
@@ -1890,4 +1879,15 @@
      - |codespace-opensuse-tumbleweed-python3.10-standard|
    * -    ‑*maximal*
      - |image-opensuse-tumbleweed-python3.10-maximal-with-system-packages| |image-opensuse-tumbleweed-python3.10-maximal-with-targets-pre|
+     -
+   * - **opensuse**-tumbleweed 
+       
+          ‑*minimal*
+     - |image-opensuse-tumbleweed-minimal-with-system-packages| |image-opensuse-tumbleweed-minimal-with-targets-pre| |image-opensuse-tumbleweed-minimal-with-targets| |image-opensuse-tumbleweed-minimal-with-targets-optional|
+     - |codespace-opensuse-tumbleweed-minimal|
+   * -    ‑*standard*
+     - |image-opensuse-tumbleweed-standard-with-system-packages| |image-opensuse-tumbleweed-standard-with-targets-pre| |image-opensuse-tumbleweed-standard-with-targets| |image-opensuse-tumbleweed-standard-with-targets-optional|
+     - |codespace-opensuse-tumbleweed-standard|
+   * -    ‑*maximal*
+     - |image-opensuse-tumbleweed-maximal-with-system-packages| |image-opensuse-tumbleweed-maximal-with-targets-pre|
      -
