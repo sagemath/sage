@@ -248,7 +248,7 @@ def init_sage(controller: DocTestController | None = None) -> None:
 
     try:
         import sympy
-    except ImportError:
+    except (ImportError, AttributeError):
         # Do not require sympy for running doctests (Issue #25106).
         pass
     else:
@@ -664,7 +664,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             # We print the example we're running for easier debugging
             # if this file times out or crashes.
             with OriginalSource(example):
-                print("sage: " + example.source[:-1] + " ## line %s ##" % (test.lineno + example.lineno + 1))
+                assert example.source.endswith("\n"), example
+                print("sage: " + example.source[:-1].replace("\n", "\n....: ") + " ## line %s ##" % (test.lineno + example.lineno + 1))
             # Update the position so that result comparison works
             self._fakeout.getvalue()
             if not quiet:
