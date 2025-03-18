@@ -1018,7 +1018,7 @@ class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
         """
         R = self.scalar_product_matrix(permutation)
         return self._scalar_product_matrix_inverse * R
-    
+
     def invariant_symmetric_bilinear_form(self):
         r"""
         Return an invariant symmetric bilinear form associated with the representation.
