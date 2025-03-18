@@ -2576,7 +2576,16 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             lift.set_from_int( x * self._modulus.int32 + self.ivalue )
             return lift
         except ZeroDivisionError:
-            raise ZeroDivisionError("moduli must be coprime")
+            g = lift
+            g.set_from_int(gcd_int(self.ivalue, other.ivalue))
+            if (self.ivalue % g.ivalue) <> (other.ivalue % g.ivalue):
+                raise ValueError("no solution to crt problem since gcd(%s,%s) does not divide %s-%s" % (self._modulus.int32, other._modulus.int32, self.ivalue, other.ivalue))
+            recur1 = IntegerMod_int(IntegerModRing(self._modulus.int32 // g.ivalue))
+            recur1.set_from_int(0)
+            recur2 = IntegerMod_int(IntegerModRing(other._modulus.int32 // g.ivalue))
+            recur2.set_from_int(other.ivalue - self.ivalue)
+            recur = recur1._crt(recur2)
+            return self + g * recur
 
     def __copy__(IntegerMod_int self):
         """
