@@ -1,4 +1,4 @@
-# sage.doctest: flaky
+# sage.doctest: flaky (:issue:`39538`)
 """
 Fusion Rings
 """
