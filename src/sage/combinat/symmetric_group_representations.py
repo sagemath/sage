@@ -1061,6 +1061,7 @@ class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         G = Permutations(self._n) #symmetric group
+        G_gens = [G([2, 1]), G([(i % self._n) + 1 for i in range(1,self._n + 1)])] #small gen set {(1 2), (1 2 ... n)}
         F = self._ring
         rho = self.representation_matrix
         d_rho = self.dimension() #dim. of rep'n
@@ -1081,7 +1082,7 @@ class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
             return augmented_system
 
         #solve the linear system for U for all group elements
-        total_system = sum((augmented_matrix(g) for g in G.gens()), [])
+        total_system = sum((augmented_matrix(g) for g in G_gens), [])
         null_space = matrix(F, total_system).right_kernel()
         if null_space.dimension() == 0:
             raise ValueError("no invariant bilinear form")
