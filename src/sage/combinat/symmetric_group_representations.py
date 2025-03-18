@@ -497,78 +497,6 @@ class SymmetricGroupRepresentation_generic_class(Element):
         values = [self(g).trace() for g in Sym.conjugacy_classes_representatives()]
         return Sym.character(values)
 
-    def invariant_symmetric_bilinear_form(self):
-        r"""
-        Return an invariant symmetric bilinear form associated with the representation.
-
-        This yields a solution `U` to the equation `\rho(g)^T U \rho(g) = U` for all `g` in `G`. We can
-        solve this equation by computing the null space of the matrix of coefficients of the linear
-        equations. Generically, this null space will be one dimensional. However, It may have higher dimension
-        in the modular case when the decomposition factors have multiplicity. Note that the forms
-        decompose into a sum of symmetric and alternating forms.
-
-        EXAMPLES::
-
-            sage: spc_5_GF49 = SymmetricGroupRepresentation([3,1,1], ring=GF(7**2))
-            sage: U = spc_5_GF49.invariant_symmetric_bilinear_form(); U
-            [1 5 2 5 2 0]
-            [5 1 5 5 0 2]
-            [2 5 1 0 5 2]
-            [5 5 0 1 5 5]
-            [2 0 5 5 1 5]
-            [0 2 2 5 5 1]
-            sage: U == U.H
-            True
-            sage: spc_4_GF121 = SymmetricGroupRepresentation([2,1,1], ring=GF(11**2))
-            sage: U = spc_4_GF121.invariant_symmetric_bilinear_form(); U
-            [1 4 7]
-            [4 1 4]
-            [7 4 1]
-            sage: U == U.H
-            True
-            sage: spc_5_GF4 = SymmetricGroupRepresentation([3,1,1], ring=GF(2**2))
-            sage: U = spc_5_GF4.invariant_symmetric_bilinear_form(); U
-            [
-            [1 1 1 1 1 0]  [0 0 0 0 0 1]
-            [1 1 1 1 0 1]  [0 0 0 0 1 0]
-            [1 1 1 0 1 1]  [0 0 0 1 0 0]
-            [1 1 0 1 1 1]  [0 0 1 0 0 0]
-            [1 0 1 1 1 1]  [0 1 0 0 0 0]
-            [0 1 1 1 1 1], [1 0 0 0 0 0]
-            ]
-        """
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        G = Permutations(self._n) #symmetric group
-        F = self._ring
-        self._specht = Permutations(sum(self._partition)).algebra(self._ring).specht_module(self._partition)
-        rho = self._specht.representation_matrix
-        d_rho = self._specht.dimension() #dim. of rep'n
-        R = PolynomialRing(F, 'u', d_rho**2)
-        U_vars = R.gens() #d_rho^2 formal variables u_i
-        Utemp = matrix(R, d_rho, d_rho, U_vars) #matrix of unknowns u_i
-
-        #linear system to solve for U for single group element g
-        def augmented_matrix(g):
-            rho_g = rho(g)
-            equation_matrix = rho_g.transpose() * Utemp * rho_g.conjugate() - Utemp
-            augmented_system = []
-            for i in range(d_rho):
-                for j in range(d_rho):
-                    linear_expression = equation_matrix[i, j]
-                    row = [linear_expression.coefficient(u) for u in U_vars]
-                    augmented_system.append(row)
-            return augmented_system
-
-        #solve the linear system for U for all group elements
-        total_system = sum((augmented_matrix(g) for g in G.gens()), [])
-        null_space = matrix(F, total_system).right_kernel()
-        if null_space.dimension() == 0:
-            raise ValueError("no invariant bilinear form")
-        if null_space.dimension() == 1:
-            return matrix(F, d_rho, d_rho, null_space.basis()[0])
-        else:
-            return [matrix(F, d_rho, d_rho, B) for B in null_space.basis()]
-
 
 class SymmetricGroupRepresentations_class(UniqueRepresentation,Parent):
     r"""
@@ -1090,6 +1018,77 @@ class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
         """
         R = self.scalar_product_matrix(permutation)
         return self._scalar_product_matrix_inverse * R
+    
+    def invariant_symmetric_bilinear_form(self):
+        r"""
+        Return an invariant symmetric bilinear form associated with the representation.
+
+        This yields a solution `U` to the equation `\rho(g)^T U \rho(g) = U` for all `g` in `G`. We can
+        solve this equation by computing the null space of the matrix of coefficients of the linear
+        equations. Generically, this null space will be one dimensional. However, It may have higher dimension
+        in the modular case when the decomposition factors have multiplicity. Note that the forms
+        decompose into a sum of symmetric and alternating forms.
+
+        EXAMPLES::
+
+            sage: spc_5_GF49 = SymmetricGroupRepresentation([3,1,1], ring=GF(7**2))
+            sage: U = spc_5_GF49.invariant_symmetric_bilinear_form(); U
+            [1 5 2 5 2 0]
+            [5 1 5 5 0 2]
+            [2 5 1 0 5 2]
+            [5 5 0 1 5 5]
+            [2 0 5 5 1 5]
+            [0 2 2 5 5 1]
+            sage: U == U.H
+            True
+            sage: spc_4_GF121 = SymmetricGroupRepresentation([2,1,1], ring=GF(11**2))
+            sage: U = spc_4_GF121.invariant_symmetric_bilinear_form(); U
+            [1 4 7]
+            [4 1 4]
+            [7 4 1]
+            sage: U == U.H
+            True
+            sage: spc_5_GF4 = SymmetricGroupRepresentation([3,1,1], ring=GF(2**2))
+            sage: U = spc_5_GF4.invariant_symmetric_bilinear_form(); U
+            [
+            [1 1 1 1 1 0]  [0 0 0 0 0 1]
+            [1 1 1 1 0 1]  [0 0 0 0 1 0]
+            [1 1 1 0 1 1]  [0 0 0 1 0 0]
+            [1 1 0 1 1 1]  [0 0 1 0 0 0]
+            [1 0 1 1 1 1]  [0 1 0 0 0 0]
+            [0 1 1 1 1 1], [1 0 0 0 0 0]
+            ]
+        """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        G = Permutations(self._n) #symmetric group
+        F = self._ring
+        rho = self.representation_matrix
+        d_rho = self.dimension() #dim. of rep'n
+        R = PolynomialRing(F, 'u', d_rho**2)
+        U_vars = R.gens() #d_rho^2 formal variables u_i
+        Utemp = matrix(R, d_rho, d_rho, U_vars) #matrix of unknowns u_i
+
+        #linear system to solve for U for single group element g
+        def augmented_matrix(g):
+            rho_g = rho(g)
+            equation_matrix = rho_g.transpose() * Utemp * rho_g.conjugate() - Utemp
+            augmented_system = []
+            for i in range(d_rho):
+                for j in range(d_rho):
+                    linear_expression = equation_matrix[i, j]
+                    row = [linear_expression.coefficient(u) for u in U_vars]
+                    augmented_system.append(row)
+            return augmented_system
+
+        #solve the linear system for U for all group elements
+        total_system = sum((augmented_matrix(g) for g in G.gens()), [])
+        null_space = matrix(F, total_system).right_kernel()
+        if null_space.dimension() == 0:
+            raise ValueError("no invariant bilinear form")
+        if null_space.dimension() == 1:
+            return matrix(F, d_rho, d_rho, null_space.basis()[0])
+        else:
+            return [matrix(F, d_rho, d_rho, B) for B in null_space.basis()]
 
 
 class SpechtRepresentations(SymmetricGroupRepresentations_class):
@@ -1216,7 +1215,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             [       1        4]
             [       0 2*z2 + 2]
         """
-        U = self.invariant_symmetric_bilinear_form()
+        U = self._specht.invariant_symmetric_bilinear_form()
         return U.cholesky(extended=True).H
 
     def _representation_matrix_uncached(self, permutation):
