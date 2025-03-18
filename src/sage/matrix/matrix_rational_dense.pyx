@@ -1499,9 +1499,10 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         - ``algorithm`` -- an optional specification of an algorithm. One of
 
-          - ``None``: (default) uses flint for small dimension and multimodular otherwise
+          - ``None``: (default) uses flint,
 
-          - ``'flint'``: use the flint library,
+          - ``'flint'``: use the flint library (which automatically chooses between Gaussian
+            elimination, multimodular, and fraction-free LU decomposition),
 
           - ``'padic'``: an algorithm based on the IML `p`-adic solver,
 
@@ -1560,10 +1561,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         self.check_mutability()
 
         if algorithm is None:
-            if self._nrows <= 25 or self._ncols <= 25:
-                algorithm = 'flint'
-            else:
-                algorithm = 'multimodular'
+            algorithm = 'flint'
 
         if algorithm == 'flint':
             pivots = self._echelonize_flint()
