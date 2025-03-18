@@ -221,7 +221,7 @@ Check that we can invert matrices::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element import Element, RingElement, parent
+from sage.structure.element import Element, ModuleElement, RingElement, parent
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.misc.misc_c import prod
 from sage.arith.power import generic_power
@@ -262,7 +262,7 @@ from sage.data_structures.stream import (
 )
 
 
-class LazyModuleElement(Element):
+class LazyModuleElement(ModuleElement):
     r"""
     A lazy sequence with a module structure given by term-wise
     addition and scalar multiplication.
