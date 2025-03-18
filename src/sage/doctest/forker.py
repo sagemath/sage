@@ -1889,6 +1889,29 @@ class DocTestDispatcher(SageObject):
                 sage -t ...
                     [1 test, ...s wall]
 
+        Segmentation fault and abort are also handled::
+
+            sage: with NTF(suffix='.py', mode='w+t') as f1:
+            ....:     t = walltime()
+            ....:     _ = f1.write(f"# sage.doctest: flaky\n'''\n"
+            ....:                  f"sage: from cysignals.tests import unguarded_abort\n"
+            ....:                  f"sage: sleep(1.5r)\n"
+            ....:                  f"sage: if walltime() < {t+1}: unguarded_abort()\n"
+            ....:                  f"'''")
+            ....:     f1.flush()
+            ....:     DC = DocTestController(DocTestDefaults(timeout=10),
+            ....:                            [f1.name])
+            ....:     DC.expand_files_into_sources()
+            ....:     DD = DocTestDispatcher(DC)
+            ....:     DR = DocTestReporter(DC)
+            ....:     DC.reporter = DR
+            ....:     DC.dispatcher = DD
+            ....:     DC.timer = Timer().start()
+            ....:     DD.parallel_dispatch()
+                sage -t ...
+                sage -t ...
+                    [3 tests, ...s wall]
+
         This test always fail, so even flaky can't help it::
 
             sage: with NTF(suffix='.py', mode='w+t') as f1:
@@ -1972,11 +1995,11 @@ class DocTestDispatcher(SageObject):
         # List of alive DocTestWorkers (child processes). Workers which
         # are done but whose messages have not been read are also
         # considered alive.
-        workers = []
+        workers: list[DocTestWorker] = []
 
         # List of DocTestWorkers which have finished running but
         # whose results have not been reported yet.
-        finished = []
+        finished: list[DocTestWorker] = []
 
         # If exitfirst is set and we got a failure.
         abort_now = False
@@ -2048,7 +2071,7 @@ class DocTestDispatcher(SageObject):
                     # "finished" list.
                     # Create a new list "new_workers" containing the active
                     # workers (to avoid updating "workers" in place).
-                    new_workers = []
+                    new_workers: list[DocTestWorker] = []
                     for w in workers:
                         if w.rmessages is not None or w.is_alive():
                             if now >= w.deadline:
@@ -2091,11 +2114,14 @@ class DocTestDispatcher(SageObject):
                     workers = new_workers
 
                     # Similarly, process finished workers.
-                    new_finished = []
+                    new_finished: list[DocTestWorker] = []
                     for w in finished:
-                        if w.killed and w.num_retries_left > 0:
+                        if w.num_retries_left > 0:
                             # in this case, the messages from w should be suppressed
                             # (better handling could be implemented later)
+                            # should also check w.killed or w.result if want to only retry
+                            # on timeout/segmentation fault
+                            # in that case w.source.file_optional_tags['flaky'] can be checked
                             if follow is w:
                                 follow = None
                             workers.append(start_new_worker(w.source, w.num_retries_left - 1))
@@ -2326,7 +2352,10 @@ class DocTestWorker(multiprocessing.Process):
 
         # Create Queue for the result. Since we're running only one
         # doctest, this "queue" will contain only 1 element.
-        self.result_queue = multiprocessing.Queue(1)
+        self.result_queue: "Queue[tuple[int, DictAsObject]]" = multiprocessing.Queue(1)
+
+        # See :meth:`DocTestTask.__call__` for more information of this.
+        self.result: tuple[int, DictAsObject]
 
         # Temporary file for stdout/stderr of the child process.
         # Normally, this isn't used in the master process except to
@@ -2667,6 +2696,11 @@ class DocTestTask:
         - ``(doctests, result_dict)`` where ``doctests`` is the number of
           doctests and ``result_dict`` is a dictionary annotated with
           timings and error information.
+
+          ``result_dict`` contains the key ``'err'`` (possibly ``None``),
+          and optionally contain the keys ``'walltime'``, ``'cputime'``,
+          ``'walltime_skips'``, ``'tb'``, ``'tab_linenos'``, ``'optionals'``,
+          ``'failures'``.
 
         - Also put ``(doctests, result_dict)`` onto the ``result_queue``
           if the latter isn't None.
