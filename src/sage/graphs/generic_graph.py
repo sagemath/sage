@@ -21638,7 +21638,7 @@ class GenericGraph(GenericGraph_pyx):
         positions = dot2tex.dot2tex(self.graphviz_string(**options), format='positions', prog=prog)
 
         return {key_to_vertex[key]: pos for key, pos in positions.items()}
-    
+
     def layout_tutte(self, external_face, external_face_pos=None, **options):
         r"""
         Compute graph layout based on a Tutte embedding.
@@ -21649,9 +21649,9 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``external_face`` -- list; the external face to be made a polygon
 
-        - ``external_face_pos`` -- dictionary (default: ``None``); the positions of the vertices 
+        - ``external_face_pos`` -- dictionary (default: ``None``); the positions of the vertices
           of the external face. If ``None``, will automatically generate a unit sided regular polygon.
-        
+
         - ``**options`` -- other parameters not used here
 
         OUTPUT: a dictionary mapping vertices to positions
@@ -21676,7 +21676,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         from sage.matrix.constructor import zero_matrix
         from sage.rings.real_mpfr import RR
-        
+
         if len(external_face) < 3:
             raise ValueError("External face must have at least 3 vertices")
 
@@ -21687,7 +21687,7 @@ class GenericGraph(GenericGraph_pyx):
         if (not C.is_cycle(directed_cycle=False)):
             raise ValueError("External face must be a cycle")
         external_face_ordered = C.depth_first_search(start=external_face[0], ignore_direction=False)
-        
+
         from sage.graphs.connectivity import vertex_connectivity
         if (not vertex_connectivity(self, k=3)):
             raise ValueError("Graph must be 3-connected")
@@ -21725,8 +21725,7 @@ class GenericGraph(GenericGraph_pyx):
                 M[i, i] = len(nv)
 
         sol = M.pseudoinverse()*b
-        return {V[i]:sol[i] for i in range(n)}  
-        
+        return {V[i]:sol[i] for i in range(n)}
 
     def _layout_bounding_box(self, pos):
         """
@@ -22046,7 +22045,7 @@ class GenericGraph(GenericGraph_pyx):
             of the tree using the keyword tree_root, otherwise a root will be
             selected at random. Then the tree will be plotted in levels,
             depending on minimum distance for the root.
-          
+
           - ``'tutte'`` -- uses the Tutte embedding algorithm. The graph must be
             a 3-connected, planar graph.
 
@@ -22115,7 +22114,7 @@ class GenericGraph(GenericGraph_pyx):
           "down".  If "up" (resp., "down"), then the root of the tree will
           appear on the bottom (resp., top) and the tree will grow upwards
           (resp. downwards). Ignored unless ``layout='tree'``.
-        
+
         - ``external_face`` -- list of vertices; the external face to be made a
           in the Tutte layout. Ignored unless ``layout='tutte''``.
 
