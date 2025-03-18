@@ -21649,8 +21649,9 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``external_face`` -- list; the external face to be made a polygon
 
-        - ``external_face_pos`` -- dictionary (default: ``None``); the positions of the vertices
-          of the external face. If ``None``, will automatically generate a unit sided regular polygon.
+        - ``external_face_pos`` -- dictionary (default: ``None``); the positions
+          of the vertices of the external face. If ``None``, will automatically
+          generate a unit sided regular polygon.
 
         - ``**options`` -- other parameters not used here
 
@@ -21661,7 +21662,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.plot(layout='tutte', external_face=[0,1,2])                        # needs sage.plot
             Graphics object consisting of 20 graphics primitives
             sage: g = graphs.CubeGraph(n=3, embedding=2)
-            sage: g.plot(layout='tutte', external_face=['101','111','001','011'], external_face_pos={'101':(1,0), '111':(0,0), '001':(2,1), '011':(-1,1)}) # needs sage.plot
+            sage: g.plot(layout='tutte', external_face=['101','111','001',
+            '011'], external_face_pos={'101':(1,0), '111':(0,0), '001':(2,1),
+            '011':(-1,1)})                                                              # needs sage.plot
             Graphics object consisting of 21 graphics primitives
             sage: g = graphs.CompleteGraph(n=5)
             sage: g.plot(layout='tutte', external_face=[0,1,2])
@@ -22119,8 +22122,8 @@ class GenericGraph(GenericGraph_pyx):
           in the Tutte layout. Ignored unless ``layout='tutte''``.
 
         - ``external_face_pos`` -- dictionary (default: ``None``). If specified,
-          used as the positions for the external face in the Tutte layout. Ignored
-          unless ``layout='tutte'``.
+          used as the positions for the external face in the Tutte layout.
+          Ignored unless ``layout='tutte'``.
 
         - ``save_pos`` -- boolean (default: ``False``); save position computed
           during plotting
