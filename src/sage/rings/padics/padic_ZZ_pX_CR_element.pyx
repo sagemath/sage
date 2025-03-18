@@ -201,7 +201,7 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
-from sage.libs.pari.all import pari_gen
+from cypari2.gen cimport Gen as pari_gen
 from sage.interfaces.abc import GpElement
 from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.padics.padic_ext_element cimport pAdicExtElement
@@ -223,7 +223,7 @@ cdef inline int check_ordp(long a) except -1:
 
 
 cdef class pAdicZZpXCRElement(pAdicZZpXElement):
-    def __init__(self, parent, x, absprec = infinity, relprec = infinity, empty = False):
+    def __init__(self, parent, x, absprec=infinity, relprec=infinity, empty=False):
         r"""
         Create an element of a capped relative precision, unramified
         or Eisenstein extension of `\ZZ_p` or `\QQ_p`.
@@ -2327,7 +2327,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         ZZ_to_mpz(ans.value, &tmp_z)
         return ans
 
-    def is_zero(self, absprec = None):
+    def is_zero(self, absprec=None):
         r"""
         Return whether the valuation of this element is at least
         ``absprec``.  If ``absprec`` is ``None``, checks if this element
@@ -2585,7 +2585,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         return ZZ_pX_ConstTerm((<pAdicZZpXCRElement>self).unit)
 
-    def is_equal_to(self, right, absprec = None):
+    def is_equal_to(self, right, absprec=None):
         """
         Return whether this element is equal to ``right`` modulo ``self.uniformizer()^absprec``.
 
@@ -2703,7 +2703,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         ZZ_pX_conv_modulus(ans.unit, self.unit, self.prime_pow.get_context_capdiv(rprec).x)
         return ans
 
-    def expansion(self, n = None, lift_mode = 'simple'):
+    def expansion(self, n=None, lift_mode='simple'):
         """
         Return a list giving a series representation of ``self``.
 
@@ -2877,7 +2877,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
         return matrix(R, n, n,  L)
 
-#     def matrix(self, base = None):
+#     def matrix(self, base=None):
 #         """
 #         If base is None, return the matrix of right multiplication by
 #         the element on the power basis `1, x, x^2, \ldots, x^{d-1}`
@@ -2915,7 +2915,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 #         """
 #         raise NotImplementedError
 
-    def teichmuller_expansion(self, n = None):
+    def teichmuller_expansion(self, n=None):
         r"""
         Return a list [`a_0`, `a_1`,..., `a_n`] such that:
 
@@ -3060,7 +3060,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         else:
             self.prime_pow.teichmuller_set_c(&self.unit, &self.unit, self.relprec)
 
-#    def padded_list(self, n, lift_mode = 'simple'):
+#    def padded_list(self, n, lift_mode='simple'):
 #        """
 #        Return a list of coefficients of pi starting with `pi^0` up to
 #        `pi^n` exclusive (padded with zeros if needed)
@@ -3130,7 +3130,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         mpz_set_ui(ans.value, self.relprec)
         return ans
 
-#    def residue(self, n = 1):
+#    def residue(self, n=1):
 #        """
 #        Reduces this element modulo pi^n.
 #        """

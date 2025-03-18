@@ -43,6 +43,9 @@ class Dokchitser(SageObject):
     r"""
     Dokchitser's `L`-functions Calculator.
 
+    PARI code can be found on
+    `Dokchitser's homepage <https://people.maths.bris.ac.uk/~matyd/computel>`_.
+
     Create a Dokchitser `L`-series with
 
     Dokchitser(conductor, gammaV, weight, eps, poles, residues, init,
@@ -153,7 +156,7 @@ class Dokchitser(SageObject):
 
     We redefine the default bound on the coefficients: Deligne's
     estimate on tau(n) is better than the default
-    coefgrow(n)=`(4n)^{11/2}` (by a factor 1024), so
+    coefgrow(n)= `(4n)^{11/2}` (by a factor 1024), so
     re-defining coefgrow() improves efficiency (slightly faster). ::
 
         sage: L.num_coeffs()
@@ -284,7 +287,6 @@ class Dokchitser(SageObject):
 
         cls.__globals_re = re.compile(
             '([^a-zA-Z0-9_]|^)(%s)([^a-zA-Z0-9_]|$)' % '|'.join(cls.__globals))
-        return
 
     @classmethod
     def _teardown_gp(cls, instance=None):
@@ -486,6 +488,10 @@ class Dokchitser(SageObject):
 
         - ``s`` -- complex number
 
+        - ``c`` -- internal parameter, call with `c>1` to get the same value
+          with a different cutoff point (`c` close to `1`); should return the
+          same answer, good to check if everything works with right precision
+
         .. NOTE::
 
            Evaluation of the function takes a long time, so each
@@ -500,16 +506,28 @@ class Dokchitser(SageObject):
             0.00000000000000000000000000000
             sage: L(1+I)
             -1.3085436607849493358323930438 + 0.81298000036784359634835412129*I
+            sage: L(1+I, 1.2)
+            -1.3085436607849493358323930438 + 0.81298000036784359634835412129*I
+
+        TESTS::
+
+            sage: L(1+I, 0)
+            Traceback (most recent call last):
+            ...
+            RuntimeError
         """
         self.__check_init()
         s = self.__CC(s)
         try:
-            return self.__values[s]
+            return self.__values[s, c]
         except AttributeError:
             self.__values = {}
         except KeyError:
             pass
-        z = self._gp_call_inst('L', s)
+        if c is None:
+            z = self._gp_call_inst('L', s)
+        else:
+            z = self._gp_call_inst('L', s, c)
         CC = self.__CC
         if 'pole' in z:
             print(z)
@@ -522,10 +540,10 @@ class Dokchitser(SageObject):
             msg = z[:i].replace('digits', 'decimal digits')
             verbose(msg, level=-1)
             ans = CC(z[i + 1:])
-            self.__values[s] = ans
+            self.__values[s, c] = ans
             return ans
         ans = CC(z)
-        self.__values[s] = ans
+        self.__values[s, c] = ans
         return ans
 
     def derivative(self, s, k=1):
@@ -571,7 +589,7 @@ class Dokchitser(SageObject):
 
         - ``a`` -- complex number (default: 0); point about which to expand
 
-        - ``k`` -- integer (default: 6); series is `O(``var``^k)`
+        - ``k`` -- integer (default: 6); series is `O(\texttt{var}^k)`
 
         - ``var`` -- string (default: ``'z'``); variable of power series
 

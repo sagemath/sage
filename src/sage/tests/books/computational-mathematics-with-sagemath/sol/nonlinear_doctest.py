@@ -38,7 +38,7 @@ Sage example in ./sol/nonlinear.tex, line 49::
   sage: from types import GeneratorType, FunctionType
   sage: def checklength(u, v, w, prec):
   ....:     return abs(v - u) < 2 * prec
-  sage: def iterate(series,check=checklength,prec=10^-5,maxit=100):
+  sage: def iterate(series, check=checklength, prec=10^-5, maxit=100):
   ....:     assert isinstance(series, GeneratorType)
   ....:     assert isinstance(check, FunctionType)
   ....:     niter = 2

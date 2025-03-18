@@ -26,23 +26,12 @@ jobs:
         # On pushes to tags or branches, test the whole matrix.
         os: >-
           ${{ github.event_name == 'pull_request'
-                && fromJson('["ubuntu-latest"]')
+                && fromJson('["ubuntu-latest", "macos-latest"]')
                 || fromJson('["ubuntu-latest", "macos-latest", "macos-13"]') }}
-        python: >-
-          ${{ github.event_name == 'pull_request'
-                && fromJson('["3.9"]')
-                || fromJson('["3.9", "3.10", "3.11"]') }}
+        python: ['3.11', '3.12']
         # Optional environment is disabled for now as its not yet working
         # environment: [environment, environment-optional]
         conda-env: [environment]
-        # On pull requests, only test two jobs:
-        # Ubuntu with Python 3.9, macOS (arm64) with Python 3.11.
-        # Build & Test currently uses Python 3.10 (on ubuntu-jammy).
-        # Together, they cover the supported minor Python versions.
-        include: >-
-          ${{ github.event_name == 'pull_request'
-                && fromJson('[{"os": "macos-latest", "python": "3.11", "conda-env": "environment"}]')
-                || fromJson('[]') }}
 
     steps:
       - uses: actions/checkout@v4
@@ -59,7 +48,7 @@ jobs:
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('src/environment-3.11.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-3.11.yml') }}
 
       - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v3
@@ -69,8 +58,8 @@ jobs:
           use-mamba: true
           channels: conda-forge
           channel-priority: true
-          activate-environment: sage
-          environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
+          activate-environment: sage-dev
+          environment-file: ${{ matrix.conda-env }}-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
 
       - name: Print Conda environment
         shell: bash -l {0}

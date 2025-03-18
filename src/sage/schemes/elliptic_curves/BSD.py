@@ -95,6 +95,7 @@ def simon_two_descent_work(E, two_tor_rk):
         ...
         DeprecationWarning: Use E.rank(algorithm="pari") instead, as this script has been ported over to pari.
         See https://github.com/sagemath/sage/issues/35621 for details.
+        ...
         (0, 0, 0, 0, [])
         sage: E = EllipticCurve('37a')
         sage: simon_two_descent_work(E, E.two_torsion_rank())

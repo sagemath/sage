@@ -839,7 +839,7 @@ cdef class PowerSeries(AlgebraElement):
         v = [a[i] for i in range(min(prec, len(a)))]
         return self._parent(v, prec)
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         r"""
         Return the coefficient of `t^n` in this power series, where
         `t` is the indeterminate of the power series ring.
@@ -1045,7 +1045,7 @@ cdef class PowerSeries(AlgebraElement):
         else:
             n = int(n)
             v = {}
-            for k, x in self.dict().iteritems():
+            for k, x in self.monomial_coefficients().items():
                 if k >= n:
                     v[k-n] = x
         return self._parent(v, self.prec()-n)
@@ -1383,6 +1383,86 @@ cdef class PowerSeries(AlgebraElement):
                 raise ValueError('vanishing term, no further expansion')
             serie = (u - 1 - A * t) / (B * t ** 2)
         return tuple(resu)
+
+    def super_delta_fraction(self, delta):
+        r"""
+        Return the super delta continued fraction of ``self``.
+
+        This is a continued fraction of the following shape:
+
+        .. MATH::
+
+            \cfrac{v_0 x^{k_0}} {U_1(x) -
+            \cfrac{v_1 x^{k_0 + k_1 + \delta}} {U_2(x) -
+            \cfrac{v_2 x^{k_0 + k_1 + k_2 + \delta}} {U_3(x) - \cdots} } }
+
+        where each `U_j(x) = 1 + u_j(x) x`.
+
+        INPUT:
+
+        - ``delta`` -- positive integer, usually 2
+
+        OUTPUT: list of `(v_j, k_j, U_{j+1}(x))_{j \geq 0}`
+
+        REFERENCES:
+
+        - [Han2016]_
+
+        EXAMPLES::
+
+            sage: deg = 30
+            sage: PS = PowerSeriesRing(QQ, 'q', default_prec=deg+1)
+            sage: q = PS.gen()
+            sage: F = prod([(1+q**k).add_bigoh(deg+1) for k in range(1,deg)])
+            sage: F.super_delta_fraction(2)
+            [(1, 0, -q + 1),
+             (1, 1, q + 1),
+             (-1, 2, -q^3 + q^2 - q + 1),
+             (1, 1, q^2 + q + 1),
+             (-1, 0, -q + 1),
+             (-1, 1, q^2 + q + 1),
+             (-1, 0, -q + 1),
+             (1, 1, 3*q^2 + 2*q + 1),
+             (-4, 0, -q + 1)]
+
+        A Jacobi continued fraction::
+
+            sage: t = PowerSeriesRing(QQ, 't').gen()
+            sage: s = sum(factorial(k) * t**k for k in range(12)).O(12)
+            sage: s.super_delta_fraction(2)
+            [(1, 0, -t + 1),
+            (1, 0, -3*t + 1),
+            (4, 0, -5*t + 1),
+            (9, 0, -7*t + 1),
+            (16, 0, -9*t + 1),
+            (25, 0, -11*t + 1)]
+        """
+        q = self.parent().gen()
+        Gi, Gj = self.parent().one(), self
+        deg = self.prec()
+
+        list_vkU = []
+        di = Gi.valuation()
+        ci = Gi[di]
+
+        while deg >= 0:
+            dj = Gj.valuation()
+            cj = Gj[dj]
+            k, v = dj - di, cj / ci
+            c = v * q**k
+            gi = Gi.add_bigoh(dj + delta)
+            gj = Gj.add_bigoh(k + dj + delta)
+            U = (c * gi / gj).truncate()
+            Gk = (U * Gj - Gi * c) >> (k + delta)
+            deg -= 2 * k + delta
+            if deg < 0:
+                break
+            list_vkU.append((v, k, U))
+            if deg == 0 or Gk.degree() == -1:
+                break
+            di, ci, Gi, Gj = dj, cj, Gj, Gk
+
+        return list_vkU
 
     def stieltjes_continued_fraction(self):
         r"""
@@ -2317,7 +2397,7 @@ cdef class PowerSeries(AlgebraElement):
         coeffs = self[:prec]
         return self._parent(coeffs, prec)
 
-    def solve_linear_de(self, prec = infinity, b = None, f0 = None):
+    def solve_linear_de(self, prec=infinity, b=None, f0=None):
         r"""
         Obtain a power series solution to an inhomogeneous linear
         differential equation of the form:

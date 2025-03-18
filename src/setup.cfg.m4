@@ -9,7 +9,7 @@ license_files = LICENSE.txt
 include(`setup_cfg_metadata.m4')dnl'
 
 [options]
-python_requires = >=3.9, <3.13
+python_requires = >=3.11, <3.14
 install_requires =
     SPKG_INSTALL_REQUIRES_six
 dnl From build/pkgs/sagelib/dependencies
@@ -57,8 +57,6 @@ scripts =
     bin/sage-runtests
     bin/sage-fixdoctests
     bin/sage-coverage
-    # The following is deprecated but might still be used in user package install scripts
-    bin/sage-cython
     # Helper scripts invoked by sage script
     # (they would actually belong to something like libexec)
     bin/sage-cachegrind

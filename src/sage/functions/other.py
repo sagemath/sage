@@ -1860,7 +1860,7 @@ class Function_prod(BuiltinFunction):
             sage: isinstance(r.operator(),      # known bug                             # needs sympy
             ....:     sage.functions.other.Function_prod)
             True
-            sage: giac(sprod(m, m, 1, n)).sage()
+            sage: giac(sprod(m, m, 1, n)).sage()  # needs giac
             factorial(n)
         """
         BuiltinFunction.__init__(self, "product", nargs=4,

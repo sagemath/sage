@@ -22,8 +22,6 @@ from sage.misc.misc import inject_variable
 from sage.misc.cachefunc import cached_method
 from sage.sets.set import Set
 from sage.rings.number_field.number_field import CyclotomicField
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.ideal import Ideal
 from sage.matrix.constructor import matrix
 
 
@@ -133,7 +131,7 @@ class FusionDouble(CombinatorialFreeModule):
         sage: G = SmallPermutationGroup(16,9)
         sage: F = FusionDouble(G, prefix='b', inject_variables=True)
         sage: b13^2 # long time (4s)
-        b0 + b2 + b4 + b15 + b16 + b17 + b18 + b24 + b26 + b27
+        b0 + b3 + b4
     """
     @staticmethod
     def __classcall_private__(cls, G, prefix='s', inject_variables=False):
@@ -152,7 +150,7 @@ class FusionDouble(CombinatorialFreeModule):
             F.inject_variables()
         return F
 
-    def __init__(self, G, prefix='s'):
+    def __init__(self, G, prefix='s') -> None:
         """
         EXAMPLES::
 
@@ -194,7 +192,7 @@ class FusionDouble(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, ZZ, list(self._names),
                                          prefix=prefix, bracket=False, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -575,6 +573,7 @@ class FusionDouble(CombinatorialFreeModule):
         r"""
         Return the global quantum dimension, which is the sum of the squares of the
         quantum dimensions of the simple objects.
+
         For the Drinfeld double, it is the square of the order of the underlying quantum group.
 
         EXAMPLES::
@@ -614,7 +613,7 @@ class FusionDouble(CombinatorialFreeModule):
 
     D_minus = D_plus = total_q_order
 
-    def is_multiplicity_free(self, verbose=False):
+    def is_multiplicity_free(self, verbose=False) -> bool:
         """
         Return ``True`` if all fusion coefficients are at most 1.
 
@@ -642,7 +641,7 @@ class FusionDouble(CombinatorialFreeModule):
                     return False
             return True
 
-        return all(self.N_ijk(i,j,k) <= 1 for i in self.basis()
+        return all(self.N_ijk(i, j, k) <= 1 for i in self.basis()
                    for j in self.basis() for k in self.basis())
 
     @cached_method
@@ -705,7 +704,8 @@ class FusionDouble(CombinatorialFreeModule):
             q1 + q2 + q5 + q6 + q7
         """
         d = {k.support_of_term(): val for k in self.basis()
-             if (val := self.N_ijk(self.monomial(a),self.monomial(b),self.dual(k)))}
+             if (val := self.N_ijk(self.monomial(a), self.monomial(b),
+                                   self.dual(k)))}
         return self._from_dict(d, remove_zeros=False)
 
     def group(self):
@@ -737,7 +737,7 @@ class FusionDouble(CombinatorialFreeModule):
         return self.fmats
 
     class Element(CombinatorialFreeModule.Element):
-        def is_simple_object(self):
+        def is_simple_object(self) -> bool:
             r"""
             Determine whether ``self`` is a simple object (basis element) of the fusion ring.
 
@@ -755,7 +755,7 @@ class FusionDouble(CombinatorialFreeModule):
             class representative `g` and an irreducible character `\chi` of
             the centralizer of `g`.
 
-            Returns the conjugacy class representative of the underlying
+            This returns the conjugacy class representative of the underlying
             group corresponding to a simple object. See also :meth:`char`.
 
             EXAMPLES::
@@ -794,7 +794,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         def ribbon(self, base_coercion=True):
             """
-            The twist or ribbon of the simple object.
+            Return the twist or ribbon of the simple object.
 
             EXAMPLES::
 
@@ -840,7 +840,7 @@ class FusionDouble(CombinatorialFreeModule):
             zeta = P.field().gen()
             rib = self.ribbon()
             norm = 2 * P._cyclotomic_order
-            for k in range(4*P._cyclotomic_order):
+            for k in range(4 * P._cyclotomic_order):
                 if zeta ** k == rib:
                     return k / norm
 
@@ -895,4 +895,4 @@ class FusionDouble(CombinatorialFreeModule):
             """
             if not self.is_simple_object():
                 raise ValueError("quantum dimension is only available for simple objects")
-            return self.parent().s_ij(self,self.parent().one())
+            return self.parent().s_ij(self, self.parent().one())

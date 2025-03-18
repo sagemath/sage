@@ -1,4 +1,4 @@
-# Read Misc/README.valgrind in the Python sourcs for a thorough explanation
+# Read Misc/README.valgrind in the Python sources for a thorough explanation
 #
 # In short: We need these unless we compile python without pyalloc,
 # but that would be prohibitively slow. 

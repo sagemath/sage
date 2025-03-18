@@ -42,6 +42,7 @@ from sage.modules.free_module_element import vector
 
 from .base4 import Polyhedron_base4
 
+
 class Polyhedron_base5(Polyhedron_base4):
     """
     Methods constructing new polyhedra
@@ -657,6 +658,72 @@ class Polyhedron_base5(Polyhedron_base4):
         lambda_V = block_matrix([[V, I_n], [V, 2*I_n]])
         parent = self.parent().change_ring(self.base_ring(), ambient_dim=self.ambient_dim() + n)
         return parent.element_class(parent, [lambda_V, [], []], None)
+
+    def deformation_cone(self):
+        r"""
+        Return the deformation cone of ``self``.
+
+        Let `P` be a `d`-polytope in `\RR^r` with `n` facets. The deformation
+        cone is a polyhedron in `\RR^n` whose points are the right-hand side `b`
+        in `Ax\leq b` where `A` is the matrix of facet normals of ``self``, so
+        that the resulting polytope has a normal fan which is a coarsening of
+        the normal fan of ``self``.
+
+        EXAMPLES:
+
+        Let's examine the deformation cone of the square with one truncated
+        vertex::
+
+            sage: tc = Polyhedron([(1, -1), (1/3, 1), (1, 1/3), (-1, 1), (-1, -1)])
+            sage: dc = tc.deformation_cone()
+            sage: dc.an_element()
+            (2, 1, 1, 0, 0)
+            sage: [_.A() for _ in tc.Hrepresentation()]
+            [(1, 0), (0, 1), (0, -1), (-3, -3), (-1, 0)]
+            sage: P = Polyhedron(rays=[(1, 0, 2), (0, 1, 1), (0, -1, 1), (-3, -3, 0), (-1, 0, 0)])
+            sage: P.rays()
+            (A ray in the direction (-1, -1, 0),
+             A ray in the direction (-1, 0, 0),
+             A ray in the direction (0, -1, 1),
+             A ray in the direction (0, 1, 1),
+             A ray in the direction (1, 0, 2))
+
+        Now, let's compute the deformation cone of the pyramid over a square
+        and verify that it is not full dimensional::
+
+            sage: py = Polyhedron([(0, -1, -1), (0, -1, 1), (0, 1, -1), (0, 1, 1), (1, 0, 0)])
+            sage: dc_py = py.deformation_cone(); dc_py
+            A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 1 vertex, 1 ray, 3 lines
+            sage: [ineq.b() for ineq in py.Hrepresentation()]
+            [0, 1, 1, 1, 1]
+            sage: r = dc_py.rays()[0]
+            sage: l1,l2,l3 = dc_py.lines()
+            sage: r.vector()-l1.vector()/2-l2.vector()-l3.vector()/2
+            (0, 1, 1, 1, 1)
+
+        .. SEEALSO::
+
+            :meth:`~sage.schemes.toric.variety.Kaehler_cone`
+
+        REFERENCES:
+
+        For more information, see Section 5.4 of [DLRS2010]_ and Section
+        2.2 of [ACEP2020].
+        """
+        from .constructor import Polyhedron
+        m = matrix([ineq.A() for ineq in self.Hrepresentation()])
+        m = m.transpose()
+        m_ker = m.right_kernel_matrix(basis='computed')
+        gale = tuple(m_ker.columns())
+        collection = (f.ambient_H_indices() for f in self.faces(0))
+        n = len(gale)
+        c = None
+        for cone_indices in collection:
+            dual_cone = Polyhedron(rays=[gale[i] for i in range(n) if i not in
+                                         cone_indices])
+            c = c.intersection(dual_cone) if c is not None else dual_cone
+        preimages = [m_ker.solve_right(r.vector()) for r in c.rays()]
+        return Polyhedron(lines=m.rows(), rays=preimages)
 
     ###########################################################
     # Binary operations.
@@ -2452,7 +2519,7 @@ class Polyhedron_base5(Polyhedron_base4):
         if tester is None:
             tester = self._tester(**options)
 
-        if self.backend() == 'normaliz' and not self.base_ring() in (ZZ, QQ):
+        if self.backend() == 'normaliz' and self.base_ring() not in (ZZ, QQ):
             # Speeds up the doctest for significantly.
             self = self.change_ring(self._internal_base_ring)
 

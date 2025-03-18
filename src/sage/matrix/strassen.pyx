@@ -20,7 +20,7 @@ from sage.matrix.matrix_window cimport MatrixWindow
 from cysignals.signals cimport sig_on, sig_off
 
 
-def strassen_window_multiply(C, A,B, cutoff):
+def strassen_window_multiply(C, A, B, cutoff):
     """
     Multiply the submatrices specified by A and B, places result in
     C. Assumes that A and B have compatible dimensions to be

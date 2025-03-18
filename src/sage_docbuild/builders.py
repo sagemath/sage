@@ -1054,7 +1054,7 @@ class ReferenceSubBuilder(DocBuilder):
                 try:
                     tag_name = line[line.index('feature_') + 8:].strip()
                     for feature in all_features():
-                        if tag_name == feature.name.replace('.', '_'):
+                        if tag_name == feature.name.replace('.', '_') and feature.is_present():
                             break
                     else:
                         skip = True

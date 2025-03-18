@@ -817,9 +817,9 @@ cdef class Element(SageObject):
             ngens = parent.ngens()
         except (AttributeError, NotImplementedError, TypeError):
             return self
-        variables=[]
-        # use "gen" instead of "gens" as a ParentWithGens is not
-        # required to have the latter
+        variables = []
+
+        # using gen instead of gens
         for i in range(ngens):
             gen = parent.gen(i)
             if str(gen) in kwds:
@@ -2719,7 +2719,7 @@ cdef class RingElement(ModuleElement):
         Exponent overflow should throw an :exc:`OverflowError` (:issue:`2956`)::
 
             sage: K.<x,y> = AA[]                                                        # needs sage.rings.number_field
-            sage: x^(2^64 + 12345)                                                      # needs sage.rings.number_field
+            sage: x^(2^64 + 12345)  # known bug: macos                                  # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             OverflowError: exponent overflow (2147483648)
@@ -4661,7 +4661,7 @@ def coerce_binop(method):
 
     EXAMPLES:
 
-    Sparse polynomial rings uses `@coerce_binop` on `gcd`::
+    Sparse polynomial rings uses ``@coerce_binop`` on ``gcd``::
 
         sage: S.<x> = PolynomialRing(ZZ, sparse=True)
         sage: f = x^2
@@ -4695,11 +4695,11 @@ def coerce_binop(method):
         sage: h.gcd(f, 'modular')
         1
 
-    We demonstrate a small class using `@coerce_binop` on a method::
+    We demonstrate a small class using ``@coerce_binop`` on a method::
 
         sage: from sage.structure.element import coerce_binop
         sage: class MyRational(Rational):
-        ....:     def __init__(self,value):
+        ....:     def __init__(self, value):
         ....:         self.v = value
         ....:     @coerce_binop
         ....:     def test_add(self, other, keyword='z'):
@@ -4737,6 +4737,7 @@ def coerce_binop(method):
         TypeError: algorithm 1 not supported
     """
     @sage_wraps(method)
+    @cython.binding(True)
     def new_method(self, other, *args, **kwargs):
         if have_same_parent(self, other):
             return method(self, other, *args, **kwargs)

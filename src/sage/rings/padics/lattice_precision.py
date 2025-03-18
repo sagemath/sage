@@ -636,13 +636,16 @@ class DifferentialPrecisionGeneric(SageObject):
         """
         self._p = p
         self._label = label
-        self._elements = [ ]
-        self._matrix = { } # A dictionary whose keys are weak references to tracked elements
-                           # and values corresponding columns in the matrix
-                           # representing the precision lattice
-        self._collected_references = [ ]
-        self._marked_for_deletion = [ ]
-        self._approx_zero = pRational(p, ZZ(0))
+        self._elements = []
+
+        self._matrix = {}
+        # A dictionary whose keys are weak references to tracked
+        # elements and values corresponding columns in the matrix
+        # representing the precision lattice
+
+        self._collected_references = []
+        self._marked_for_deletion = []
+        self._approx_zero = pRational(p, ZZ.zero())
         self._threshold_deletion = DEFAULT_THRESHOLD_DELETION
         self._history_init = None
         self._history = None
@@ -2739,7 +2742,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
         return M
 
 
-class pAdicLatticeElementWeakProxy():
+class pAdicLatticeElementWeakProxy:
     r"""
     The implementations of :class:`DifferentialPrecisionGeneric` hold
     weak references to :class:`pAdicLatticeElement`. They are stored in

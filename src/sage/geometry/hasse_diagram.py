@@ -146,7 +146,7 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
                 atoms = atoms.intersection(coatom_to_atoms[coatom])
             H[atom] = (atoms, coatoms)
         # 8: compute the set G of minimal sets in H
-        minimals = set([])
+        minimals = set()
         while candidates:
             candidate = candidates.pop()
             atoms = H[candidate][0]
@@ -188,9 +188,7 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
                 if required_atoms is None or atom in required_atoms)
     new_order = head + [n for n in new_order if n not in head]
     # "Invert" this list to a dictionary
-    labels = {}
-    for new, old in enumerate(new_order):
-        labels[old] = new
+    labels = {old: new for new, old in enumerate(new_order)}
     L.relabel(labels)
     # Construct the actual poset elements
     elements = [None] * next_index

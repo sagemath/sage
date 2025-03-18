@@ -159,7 +159,7 @@ def unimod_matrices_from_infty(r, s):
         return []
 
 
-class ManinMap():
+class ManinMap:
     r"""
     Map from a set of right coset representatives of `\Gamma_0(N)` in
     `SL_2(\ZZ)` to a coefficient module that satisfies the Manin
@@ -315,13 +315,13 @@ class ManinMap():
             sage: from sage.modular.pollack_stevens.fund_domain import ManinRelations
             sage: S = Symk(0,QQ)
             sage: MR = ManinRelations(37); MR.gens()
-            [
+            (
             [1 0]  [ 0 -1]  [-1 -1]  [-1 -2]  [-2 -3]  [-3 -1]  [-1 -4]  [-4 -3]
             [0 1], [ 1  4], [ 4  3], [ 3  5], [ 5  7], [ 7  2], [ 2  7], [ 7  5],
             <BLANKLINE>
             [-2 -3]
             [ 3  4]
-            ]
+            )
 
             sage: data  = {M2Z([-2,-3,5,7]): S(0), M2Z([1,0,0,1]): S(0), M2Z([-1,-2,3,5]): S(0), M2Z([-1,-4,2,7]): S(1), M2Z([0,-1,1,4]): S(1), M2Z([-3,-1,7,2]): S(-1), M2Z([-2,-3,3,4]): S(0), M2Z([-4,-3,7,5]): S(0), M2Z([-1,-1,4,3]): S(0)}
             sage: D = OverconvergentDistributions(2, 37, 40)
@@ -354,13 +354,13 @@ class ManinMap():
             sage: from sage.modular.pollack_stevens.fund_domain import ManinRelations
             sage: S = Symk(0,QQ)
             sage: MR = ManinRelations(37); MR.gens()
-            [
+            (
             [1 0]  [ 0 -1]  [-1 -1]  [-1 -2]  [-2 -3]  [-3 -1]  [-1 -4]  [-4 -3]
             [0 1], [ 1  4], [ 4  3], [ 3  5], [ 5  7], [ 7  2], [ 2  7], [ 7  5],
             <BLANKLINE>
             [-2 -3]
             [ 3  4]
-            ]
+            )
 
             sage: data  = {M2Z([-2,-3,5,7]): S(0), M2Z([1,0,0,1]): S(0), M2Z([-1,-2,3,5]): S(0), M2Z([-1,-4,2,7]): S(1), M2Z([0,-1,1,4]): S(1), M2Z([-3,-1,7,2]): S(-1), M2Z([-2,-3,3,4]): S(0), M2Z([-4,-3,7,5]): S(0), M2Z([-1,-1,4,3]): S(0)}
             sage: f = ManinMap(S,MR,data)

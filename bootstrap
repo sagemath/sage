@@ -139,7 +139,6 @@ EOF
     # ONLY stderr, and to re-output the results back to stderr leaving
     # stdout alone. Basically we swap the two descriptors using a
     # third, filter, and then swap them back.
-    ./bootstrap-conda && \
     aclocal -I m4 && \
     automake --add-missing --copy build/make/Makefile-auto 3>&1 1>&2 2>&3 \
         | sed "${QUIET_SED_FILTER}" 3>&1 1>&2 2>&3 && \
@@ -225,12 +224,8 @@ save () {
 	config/install-sh config/compile config/config.guess config/config.sub config/missing \
 	build/make/Makefile-auto.in \
 	src/doc/en/installation/*.txt \
-	$(find src/doc/en/reference/spkg -name index.rst -prune -o -maxdepth 1 -name "*.rst" -print) \
-	environment-3.[89].yml environment-3.1[0-9].yml \
-	src/environment-3.[89].yml src/environment-3.1[0-9].yml \
-	environment-optional-3.[89].yml environment-optional-3.1[0-9].yml \
-	src/environment-optional-3.[89].yml src/environment-optional-3.1[0-9].yml \
-	src/Pipfile \
+	$(find src/doc/en/reference/spkg -maxdepth 1 -name index.rst -prune -o -name "*.rst" -print) \
+	environment-3.1[0-9]-*.yml \
 	src/pyproject.toml \
 	src/requirements.txt \
 	src/setup.cfg \
@@ -240,6 +235,7 @@ save () {
 	build/pkgs/gmpy2/version_requirements.txt \
 	build/pkgs/jupyter_core/version_requirements.txt \
 	build/pkgs/memory_allocator/version_requirements.txt \
+        build/pkgs/meson/version_requirements.txt \
 	build/pkgs/numpy/version_requirements.txt \
 	build/pkgs/pkgconfig/version_requirements.txt \
 	build/pkgs/pplpy/version_requirements.txt \

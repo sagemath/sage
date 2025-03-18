@@ -43,15 +43,18 @@ method :meth:`realloc <sage.graphs.base.c_graph.CGraph.realloc>`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.data_structures.bitset_base cimport *
-from sage.rings.integer cimport smallInteger
-from sage.arith.long cimport pyobject_to_long
-from libcpp.queue cimport priority_queue, queue
-from libcpp.stack cimport stack
-from libcpp.pair cimport pair
-from sage.rings.integer_ring import ZZ
 from cysignals.memory cimport check_allocarray, sig_free
+from libcpp.pair cimport pair
+from libcpp.queue cimport queue
+from libcpp.stack cimport stack
+
+from sage.arith.long cimport pyobject_to_long
 from sage.data_structures.bitset cimport FrozenBitset
+from sage.data_structures.bitset_base cimport *
+from sage.data_structures.pairing_heap cimport PairingHeap
+from sage.rings.integer cimport smallInteger
+
+from sage.rings.integer_ring import ZZ
 
 
 cdef extern from "Python.h":
@@ -2824,7 +2827,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
             # WARNING
             # If you modify this, you must keep in mind the documentation in the
-            # corresponding method in `generic_graph.py` in the method `edge_iterator`.
+            # corresponding method in ``generic_graph.py`` in the method ``edge_iterator``.
             # E.g. code assumes that you can use an iterator to relabel or delete arcs.
 
             u_int = cg._next_neighbor_unsafe(v_int, -1, out, &l_int)
@@ -3737,7 +3740,6 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef dict pred_x = {}
         cdef dict pred_y = {}
         cdef dict pred_current
-        cdef dict pred_other
 
         # Stores the distances from x and y
         cdef dict dist_x = {}
@@ -3745,95 +3747,90 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef dict dist_current
         cdef dict dist_other
 
-        # Lists of vertices who are left to be explored. They are represented
-        # as pairs of pair and pair: ((distance, side), (predecessor, name)).
-        # 1 indicates x's side, -1 indicates y's, the distance being
-        # defined relatively.
-        cdef priority_queue[pair[pair[double, int], pair[int, int]]] pq
-        pq.push(((0, 1), (x_int, x_int)))
-        pq.push(((0, -1), (y_int, y_int)))
-        cdef list neighbors
-
-        cdef list shortest_path = []
+        # We use 2 min-heap data structures (pairing heaps), one for the
+        # exploration from x and the other for the reverse exploration to y.
+        # Each heap associates to a vertex a pair (distance, pred).
+        cdef PairingHeap[int, pair[double, int]] px = PairingHeap[int, pair[double, int]]()
+        cdef PairingHeap[int, pair[double, int]] py = PairingHeap[int, pair[double, int]]()
+        cdef PairingHeap[int, pair[double, int]] * ptmp
+        px.push(x_int, (0, x_int))
+        py.push(y_int, (0, y_int))
 
         # Meeting_vertex is a vertex discovered through x and through y
         # which defines the shortest path found
         # (of length shortest_path_length).
         cdef int meeting_vertex = -1
+        cdef double shortest_path_length
+        cdef double f_tmp
 
         if reduced_weight is not None:
             def weight_function(e):
                 return reduced_weight[(e[0], e[1])]
 
         # As long as the current side (x or y) is not totally explored ...
-        while not pq.empty():
-            (distance, side), (pred, v) = pq.top()
-            # priority_queue by default is max heap
-            # negative value of distance is stored in priority_queue to get
-            # minimum distance
-            distance = -distance
-            pq.pop()
+        while not (px.empty() and py.empty()):
+            if (px.empty() or
+                    (not py.empty() and px.top_value().first > py.top_value().first)):
+                side = -1
+                ptmp = &py
+            else:  # px is not empty
+                side = 1
+                ptmp = &px
+            v, (distance, pred) = ptmp.top()
             if meeting_vertex != -1 and distance > shortest_path_length:
                 break
+            ptmp.pop()
 
             if side == 1:
                 dist_current, dist_other = dist_x, dist_y
-                pred_current, pred_other = pred_x, pred_y
+                pred_current = pred_x
+                nbr_iter = self.cg().out_neighbors(v)
             else:
                 dist_current, dist_other = dist_y, dist_x
-                pred_current, pred_other = pred_y, pred_x
+                pred_current = pred_y
+                nbr_iter = self.cg().in_neighbors(v)
 
-            if v not in dist_current:
-                if not distance_flag:
-                    pred_current[v] = pred
-                dist_current[v] = distance
+            dist_current[v] = distance
+            if not distance_flag:
+                pred_current[v] = pred
 
-                if v in dist_other:
-                    f_tmp = distance + dist_other[v]
-                    if meeting_vertex == -1 or f_tmp < shortest_path_length:
-                        meeting_vertex = v
-                        shortest_path_length = f_tmp
-                if side == 1:
-                    nbr = self.cg().out_neighbors(v)
-                else:
-                    nbr = self.cg().in_neighbors(v)
+            if v in dist_other:
+                f_tmp = distance + dist_other[v]
+                if meeting_vertex == -1 or f_tmp < shortest_path_length:
+                    meeting_vertex = v
+                    shortest_path_length = f_tmp
 
-                if not exclude_e and not exclude_v:
-                    neighbors = []
-                    for n in nbr:
-                        if include_v and n not in include_vertices_int:
-                            continue
-                        neighbors.append(n)
-                else:
-                    neighbors = []
-                    for w in nbr:
-                        if exclude_v and w in exclude_vertices_int:
-                            continue
-                        if (exclude_e and
-                            ((side == 1 and (v, w) in exclude_edges_int) or
-                             (side == -1 and (w, v) in exclude_edges_int))):
-                            continue
-                        if include_v and w not in include_vertices_int:
-                            continue
-                        neighbors.append(w)
-                for w in neighbors:
-                    # If the neighbor is new, adds its non-found neighbors to
-                    # the queue.
-                    if w not in dist_current:
-                        v_obj = self.vertex_label(v)
-                        w_obj = self.vertex_label(w)
-                        if side == -1:
-                            v_obj, w_obj = w_obj, v_obj
-                        if self._multiple_edges:
-                            edge_label = min(weight_function((v_obj, w_obj, l)) for l in self.get_edge_label(v_obj, w_obj))
-                        else:
-                            edge_label = weight_function((v_obj, w_obj, self.get_edge_label(v_obj, w_obj)))
-                        if edge_label < 0:
-                            raise ValueError("the graph contains an edge with negative weight")
-                        # priority_queue is by default max_heap
-                        # negative value of distance + edge_label is stored in
-                        # priority_queue to get minimum distance
-                        pq.push(((-(distance + edge_label), side), (v, w)))
+            if not exclude_e and not exclude_v:
+                neighbors = (w for w in nbr_iter
+                             if not include_v or w in include_vertices_int)
+            else:
+                neighbors = (w for w in nbr_iter
+                             if ((not exclude_v or w not in exclude_vertices_int) and
+                                 (not exclude_e or
+                                  ((side == 1 and (v, w) not in exclude_edges_int) or
+                                   (side == -1 and (w, v) not in exclude_edges_int))) and
+                                 (not include_v or w in include_vertices_int)))
+
+            for w in neighbors:
+                # If w has not yet been extracted from the heap, we check if we
+                # can improve its path
+                if w not in dist_current:
+                    v_obj = self.vertex_label(v)
+                    w_obj = self.vertex_label(w)
+                    if side == -1:
+                        v_obj, w_obj = w_obj, v_obj
+                    if self._multiple_edges:
+                        edge_label = min(weight_function((v_obj, w_obj, l)) for l in self.get_edge_label(v_obj, w_obj))
+                    else:
+                        edge_label = weight_function((v_obj, w_obj, self.get_edge_label(v_obj, w_obj)))
+                    if edge_label < 0:
+                        raise ValueError("the graph contains an edge with negative weight")
+                    f_tmp = distance + edge_label
+                    if ptmp.contains(w):
+                        if ptmp.value(w).first > f_tmp:
+                            ptmp.decrease(w, (f_tmp, v))
+                    else:
+                        ptmp.push(w, (f_tmp, v))
 
         # No meeting point has been found
         if meeting_vertex == -1:
@@ -3841,32 +3838,33 @@ cdef class CGraphBackend(GenericGraphBackend):
                 from sage.rings.infinity import Infinity
                 return Infinity
             return []
-        else:
-            # build the shortest path and returns it.
-            if distance_flag:
-                if shortest_path_length in ZZ:
-                    return int(shortest_path_length)
-                else:
-                    return shortest_path_length
-            w = meeting_vertex
 
-            while w != x_int:
-                shortest_path.append(self.vertex_label(w))
-                w = pred_x[w]
+        if distance_flag:
+            if shortest_path_length in ZZ:
+                return int(shortest_path_length)
+            return shortest_path_length
 
-            shortest_path.append(x)
-            shortest_path.reverse()
+        # build the shortest path and return it.
+        cdef list shortest_path = []
+        w = meeting_vertex
+        while w != x_int:
+            shortest_path.append(self.vertex_label(w))
+            w = pred_x[w]
 
-            if meeting_vertex == y_int:
-                return shortest_path
+        shortest_path.append(x)
+        shortest_path.reverse()
 
-            w = pred_y[meeting_vertex]
-            while w != y_int:
-                shortest_path.append(self.vertex_label(w))
-                w = pred_y[w]
-            shortest_path.append(y)
-
+        if meeting_vertex == y_int:
             return shortest_path
+
+        w = pred_y[meeting_vertex]
+        while w != y_int:
+            shortest_path.append(self.vertex_label(w))
+            w = pred_y[w]
+
+        shortest_path.append(y)
+
+        return shortest_path
 
     def bidirectional_dijkstra(self, x, y, weight_function=None,
                                distance_flag=False):
@@ -3899,7 +3897,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
             sage: G = Graph(graphs.PetersenGraph())
             sage: for (u, v) in G.edges(sort=True, labels=None):
-            ....:    G.set_edge_label(u, v, 1)
+            ....:     G.set_edge_label(u, v, 1)
             sage: G.shortest_path(0, 1, by_weight=True)
             [0, 1]
             sage: G.shortest_path_length(0, 1, by_weight=True)
@@ -3928,7 +3926,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
             sage: G = DiGraph({0: [1, 2], 1: [4], 2: [3, 4], 4: [5], 5: [6]}, multiedges=True)
             sage: for u, v in list(G.edges(labels=None, sort=False)):
-            ....:    G.set_edge_label(u, v, 1)
+            ....:     G.set_edge_label(u, v, 1)
             sage: G.distance(0, 5, by_weight=true)
             3
         """
@@ -3954,7 +3952,6 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef dict pred_x = {}
         cdef dict pred_y = {}
         cdef dict pred_current
-        cdef dict pred_other
 
         # Stores the distances from x and y
         cdef dict dist_x = {}
@@ -3962,77 +3959,81 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef dict dist_current
         cdef dict dist_other
 
-        # Lists of vertices who are left to be explored. They are represented
-        # as pairs of pair and pair: ((distance, side), (predecessor, name)).
-        # 1 indicates x's side, -1 indicates y's, the distance being
-        # defined relatively.
-        cdef priority_queue[pair[pair[double, int], pair[int, int]]] pq
-        pq.push(((0, 1), (x_int, x_int)))
-        pq.push(((0, -1), (y_int, y_int)))
-        cdef list neighbors
+        # We use 2 min-heap data structures (pairing heaps), one for the
+        # exploration from x and the other for the reverse exploration to y.
+        # Each heap associates to a vertex a pair (distance, pred).
+        cdef PairingHeap[int, pair[double, int]] px = PairingHeap[int, pair[double, int]]()
+        cdef PairingHeap[int, pair[double, int]] py = PairingHeap[int, pair[double, int]]()
+        cdef PairingHeap[int, pair[double, int]] * ptmp
+        px.push(x_int, (0, x_int))
+        py.push(y_int, (0, y_int))
 
-        cdef list shortest_path = []
+        cdef list neighbors
 
         # Meeting_vertex is a vertex discovered through x and through y
         # which defines the shortest path found
         # (of length shortest_path_length).
         cdef int meeting_vertex = -1
+        cdef double shortest_path_length
+        cdef double f_tmp
 
         if weight_function is None:
             def weight_function(e):
                 return 1 if e[2] is None else e[2]
 
         # As long as the current side (x or y) is not totally explored ...
-        while not pq.empty():
-            (distance, side), (pred, v) = pq.top()
-            # priority_queue by default is max heap
-            # negative value of distance is stored in priority_queue to get
-            # minimum distance
-            distance = -distance
-            pq.pop()
+        while not (px.empty() and py.empty()):
+            if (px.empty() or
+                    (not py.empty() and px.top_value().first > py.top_value().first)):
+                side = -1
+                ptmp = &py
+            else:  # px is not empty
+                side = 1
+                ptmp = &px
+            v, (distance, pred) = ptmp.top()
             if meeting_vertex != -1 and distance > shortest_path_length:
                 break
+            ptmp.pop()
 
             if side == 1:
                 dist_current, dist_other = dist_x, dist_y
-                pred_current, pred_other = pred_x, pred_y
+                pred_current = pred_x
+                neighbors = self.cg().out_neighbors(v)
             else:
                 dist_current, dist_other = dist_y, dist_x
-                pred_current, pred_other = pred_y, pred_x
+                pred_current = pred_y
+                neighbors = self.cg().in_neighbors(v)
 
-            if v not in dist_current:
-                if not distance_flag:
-                    pred_current[v] = pred
-                dist_current[v] = distance
+            dist_current[v] = distance
+            if not distance_flag:
+                pred_current[v] = pred
 
-                if v in dist_other:
-                    f_tmp = distance + dist_other[v]
-                    if meeting_vertex == -1 or f_tmp < shortest_path_length:
-                        meeting_vertex = v
-                        shortest_path_length = f_tmp
+            if v in dist_other:
+                f_tmp = distance + dist_other[v]
+                if meeting_vertex == -1 or f_tmp < shortest_path_length:
+                    meeting_vertex = v
+                    shortest_path_length = f_tmp
 
-                if side == 1:
-                    neighbors = self.cg().out_neighbors(v)
-                else:
-                    neighbors = self.cg().in_neighbors(v)
-                for w in neighbors:
-                    # If the neighbor is new, adds its non-found neighbors to
-                    # the queue.
-                    if w not in dist_current:
-                        v_obj = self.vertex_label(v)
-                        w_obj = self.vertex_label(w)
-                        if side == -1:
-                            v_obj, w_obj = w_obj, v_obj
-                        if self._multiple_edges:
-                            edge_label = min(weight_function((v_obj, w_obj, l)) for l in self.get_edge_label(v_obj, w_obj))
-                        else:
-                            edge_label = weight_function((v_obj, w_obj, self.get_edge_label(v_obj, w_obj)))
-                        if edge_label < 0:
-                            raise ValueError("the graph contains an edge with negative weight")
-                        # priority_queue is by default max_heap
-                        # negative value of distance + edge_label is stored in
-                        # priority_queue to get minimum distance
-                        pq.push(((-(distance + edge_label), side), (v, w)))
+            for w in neighbors:
+                # If w has not yet been extracted from the heap, we check if we
+                # can improve its path
+                if w not in dist_current:
+                    v_obj = self.vertex_label(v)
+                    w_obj = self.vertex_label(w)
+                    if side == -1:
+                        v_obj, w_obj = w_obj, v_obj
+                    if self._multiple_edges:
+                        edge_label = min(weight_function((v_obj, w_obj, l)) for l in self.get_edge_label(v_obj, w_obj))
+                    else:
+                        edge_label = weight_function((v_obj, w_obj, self.get_edge_label(v_obj, w_obj)))
+                    if edge_label < 0:
+                        raise ValueError("the graph contains an edge with negative weight")
+                    f_tmp = distance + edge_label
+                    if ptmp.contains(w):
+                        if ptmp.value(w).first > f_tmp:
+                            ptmp.decrease(w, (f_tmp, v))
+                    else:
+                        ptmp.push(w, (f_tmp, v))
 
         # No meeting point has been found
         if meeting_vertex == -1:
@@ -4040,32 +4041,33 @@ cdef class CGraphBackend(GenericGraphBackend):
                 from sage.rings.infinity import Infinity
                 return Infinity
             return []
-        else:
-            # build the shortest path and returns it.
-            if distance_flag:
-                if shortest_path_length in ZZ:
-                    return int(shortest_path_length)
-                else:
-                    return shortest_path_length
-            w = meeting_vertex
 
-            while w != x_int:
-                shortest_path.append(self.vertex_label(w))
-                w = pred_x[w]
+        if distance_flag:
+            if shortest_path_length in ZZ:
+                return int(shortest_path_length)
+            return shortest_path_length
 
-            shortest_path.append(x)
-            shortest_path.reverse()
+        # build the shortest path and return it.
+        cdef list shortest_path = []
+        w = meeting_vertex
+        while w != x_int:
+            shortest_path.append(self.vertex_label(w))
+            w = pred_x[w]
 
-            if meeting_vertex == y_int:
-                return shortest_path
+        shortest_path.append(x)
+        shortest_path.reverse()
 
-            w = pred_y[meeting_vertex]
-            while w != y_int:
-                shortest_path.append(self.vertex_label(w))
-                w = pred_y[w]
-            shortest_path.append(y)
-
+        if meeting_vertex == y_int:
             return shortest_path
+
+        w = pred_y[meeting_vertex]
+        while w != y_int:
+            shortest_path.append(self.vertex_label(w))
+            w = pred_y[w]
+
+        shortest_path.append(y)
+
+        return shortest_path
 
     def shortest_path_all_vertices(self, v, cutoff=None,
                                    distance_flag=False):
@@ -4176,7 +4178,8 @@ cdef class CGraphBackend(GenericGraphBackend):
     # Searching
     ###################################
 
-    def depth_first_search(self, v, reverse=False, ignore_direction=False):
+    def depth_first_search(self, v, reverse=False, ignore_direction=False,
+                           forbidden_vertices=None):
         r"""
         Return a depth-first search from vertex ``v``.
 
@@ -4191,6 +4194,9 @@ cdef class CGraphBackend(GenericGraphBackend):
         - ``ignore_direction`` -- boolean (default: ``False``); this is only
           relevant to digraphs. If this is a digraph, ignore all orientations
           and consider the graph as undirected.
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
 
         ALGORITHM:
 
@@ -4234,7 +4240,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         Traversing the Petersen graph using depth-first search::
 
-            sage: G = Graph(graphs.PetersenGraph())
+            sage: G = graphs.PetersenGraph()
             sage: list(G.depth_first_search(0))
             [0, 5, 8, 6, 9, 7, 2, 3, 4, 1]
 
@@ -4251,14 +4257,33 @@ cdef class CGraphBackend(GenericGraphBackend):
             ....: "Stuttgart": ["Nurnberg"], "Erfurt": ["Wurzburg"]})
             sage: list(G.depth_first_search("Stuttgart"))
             ['Stuttgart', 'Nurnberg', ...]
+
+        Avoiding some cities:
+
+            sage: list(G.depth_first_search("Stuttgart",
+            ....:                 forbidden_vertices=["Frankfurt", "Munchen"]))
+            ['Stuttgart', 'Nurnberg', 'Wurzburg', 'Erfurt']
+
+        TESTS:
+
+        The start vertex cannot be forbidden::
+
+            sage: G = graphs.PetersenGraph()
+            sage: list(G.depth_first_search(0, forbidden_vertices=[0, 1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
         """
         return Search_iterator(self,
                                v,
                                direction=-1,
                                reverse=reverse,
-                               ignore_direction=ignore_direction)
+                               ignore_direction=ignore_direction,
+                               forbidden_vertices=forbidden_vertices)
 
-    def breadth_first_search(self, v, reverse=False, ignore_direction=False, report_distance=False, edges=False):
+    def breadth_first_search(self, v, reverse=False, ignore_direction=False,
+                             report_distance=False, edges=False,
+                             forbidden_vertices=None):
         r"""
         Return a breadth-first search from vertex ``v``.
 
@@ -4285,6 +4310,9 @@ cdef class CGraphBackend(GenericGraphBackend):
 
           Note that parameters ``edges`` and ``report_distance`` cannot be
           ``True`` simultaneously.
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
 
         ALGORITHM:
 
@@ -4337,6 +4365,22 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G = graphs.EuropeMap(continental=True)
             sage: list(G.breadth_first_search("Portugal"))
             ['Portugal', 'Spain', ..., 'Greece']
+
+        Avoiding some countries:
+
+            sage: list(G.breadth_first_search("Portugal",
+            ....:                      forbidden_vertices=["Germany","Italy"]))
+            ['Portugal', 'Spain', ..., 'Sweden']
+
+        TESTS:
+
+        The start vertex cannot be forbidden::
+
+            sage: G = graphs.PetersenGraph()
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[0]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
         """
         return Search_iterator(self,
                                v,
@@ -4344,15 +4388,21 @@ cdef class CGraphBackend(GenericGraphBackend):
                                reverse=reverse,
                                ignore_direction=ignore_direction,
                                report_distance=report_distance,
-                               edges=edges)
+                               edges=edges,
+                               forbidden_vertices=forbidden_vertices)
 
     ###################################
     # Connectedness
     ###################################
 
-    def is_connected(self):
+    def is_connected(self, forbidden_vertices=None):
         r"""
         Check whether the graph is connected.
+
+        INPUT:
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search
 
         EXAMPLES:
 
@@ -4369,6 +4419,16 @@ cdef class CGraphBackend(GenericGraphBackend):
         A graph with non-integer vertex labels::
 
             sage: Graph(graphs.CubeGraph(3)).is_connected()
+            True
+
+        A graph with forbidden vertices::
+
+            sage: G = graphs.PathGraph(5)
+            sage: G._backend.is_connected()
+            True
+            sage: G._backend.is_connected(forbidden_vertices=[1])
+            False
+            sage: G._backend.is_connected(forbidden_vertices=[0, 1])
             True
 
         TESTS::
@@ -4389,8 +4449,18 @@ cdef class CGraphBackend(GenericGraphBackend):
         if v_int == -1:
             return True
         v = self.vertex_label(v_int)
-        cdef size_t n = 0
-        for _ in self.depth_first_search(v, ignore_direction=True):
+        cdef set forbidden = set(forbidden_vertices) if forbidden_vertices else set()
+        while v in forbidden:
+            v_int = bitset_next(cg.active_vertices, v_int + 1)
+            if v_int == -1:
+                # The empty graph is connected. So the graph with only forbidden
+                # vertices also is
+                return True
+            v = self.vertex_label(v_int)
+
+        cdef size_t n = len(forbidden)
+        for _ in self.depth_first_search(v, ignore_direction=True,
+                                         forbidden_vertices=forbidden):
             n += 1
         return n == cg.num_verts
 
@@ -4720,7 +4790,8 @@ cdef class Search_iterator:
     cdef in_neighbors
 
     def __init__(self, graph, v, direction=0, reverse=False,
-                 ignore_direction=False, report_distance=False, edges=False):
+                 ignore_direction=False, report_distance=False, edges=False,
+                 forbidden_vertices=None):
         r"""
         Initialize an iterator for traversing a (di)graph.
 
@@ -4762,11 +4833,16 @@ cdef class Search_iterator:
           Note that parameters ``edges`` and ``report_distance`` cannot be
           ``True`` simultaneously.
 
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
+
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
             sage: list(g.breadth_first_search(0))
             [0, 1, 4, 5, 2, 6, 3, 9, 7, 8]
+            sage: list(g.breadth_first_search(0, forbidden_vertices=[1, 2]))
+            [0, 4, 5, 3, 9, 7, 8, 6]
 
         TESTS:
 
@@ -4805,9 +4881,18 @@ cdef class Search_iterator:
         bitset_set_first_n(self.seen, 0)
 
         cdef int v_id = self.graph.get_vertex(v)
+        cdef int u_id
 
         if v_id == -1:
             raise LookupError("vertex ({0}) is not a vertex of the graph".format(repr(v)))
+
+        if forbidden_vertices is not None:
+            for u in forbidden_vertices:
+                u_id = self.graph.get_vertex(u)
+                if u_id != -1:
+                    if u_id == v_id:
+                        raise ValueError(f"the start vertex is in the set of forbidden vertices")
+                    bitset_add(self.seen, u_id)
 
         if direction == 0:
             self.fifo.push(v_id)

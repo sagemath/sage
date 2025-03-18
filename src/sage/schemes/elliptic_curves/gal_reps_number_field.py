@@ -132,7 +132,7 @@ class GaloisRepresentation(SageObject):
         else:
             return "Compatible family of Galois representations associated to the " + repr(self.E)
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         r"""
         Compare two Galois representations.
 
@@ -800,17 +800,17 @@ def deg_one_primes_iter(K, principal_only=False):
         [Fractional ideal (2, a + 1),
          Fractional ideal (3, a + 1),
          Fractional ideal (3, a + 2),
-         Fractional ideal (a),
+         Fractional ideal (-a),
          Fractional ideal (7, a + 3),
          Fractional ideal (7, a + 4)]
         sage: it = deg_one_primes_iter(K, True)
         sage: [next(it) for _ in range(6)]
-        [Fractional ideal (a),
-         Fractional ideal (-2*a + 3),
-         Fractional ideal (2*a + 3),
+        [Fractional ideal (-a),
+         Fractional ideal (2*a - 3),
+         Fractional ideal (-2*a - 3),
          Fractional ideal (a + 6),
          Fractional ideal (a - 6),
-         Fractional ideal (-3*a + 4)]
+         Fractional ideal (3*a - 4)]
     """
     # imaginary quadratic fields have no principal primes of norm < disc / 4
     start = K.discriminant().abs() // 4 if principal_only and K.signature() == (0,1) else 2
@@ -1191,7 +1191,7 @@ def Billerey_P_l(E, l):
     return P
 
 
-def Billerey_B_l(E,l,B=0):
+def Billerey_B_l(E, l, B=0):
     r"""
     Return Billerey's `B_l`, adapted from the definition in [Bil2011]_, after (9).
 

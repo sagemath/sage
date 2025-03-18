@@ -378,7 +378,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
         """
         return self.a_realization().one()
 
-    def retract(self,la):
+    def retract(self, la):
         r"""
         Give the retract map from the symmetric functions to the quotient ring of
         `k`-bounded symmetric functions. This method is here to make the TestSuite run
@@ -492,7 +492,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
 
     class ParentMethods:
 
-        def retract(self,la):
+        def retract(self, la):
             r"""
             Give the retract map from the symmetric functions to the quotient ring of
             `k`-bounded symmetric functions. This method is here to make the TestSuite run

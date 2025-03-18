@@ -154,7 +154,7 @@ cdef class dancing_linksWrapper:
         Initialization of the search algorithm.
 
         This adds the rows to the instance of dancing_links. This method is
-        used by `__init__` and `reinitialize` methods and should not be
+        used by ``__init__`` and ``reinitialize`` methods and should not be
         used directly.
 
         EXAMPLES::

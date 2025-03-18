@@ -95,7 +95,7 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.fraction_field import FractionField
@@ -142,7 +142,7 @@ def CFiniteSequences(base_ring, names=None, category=None):
 
         sage: TestSuite(C).run()
     """
-    if isinstance(base_ring, PolynomialRing_general):
+    if isinstance(base_ring, PolynomialRing_generic):
         polynomial_ring = base_ring
         base_ring = polynomial_ring.base_ring()
     if names is None:

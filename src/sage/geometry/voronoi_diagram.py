@@ -290,7 +290,7 @@ class VoronoiDiagram(SageObject):
                 cell_colors = rainbow(self._n)
                 shuffle(cell_colors)
             else:
-                if not (isinstance(cell_colors, list) or (isinstance(cell_colors, dict))):
+                if not isinstance(cell_colors, (list, dict)):
                     raise AssertionError("'cell_colors' must be a list or a dictionary")
             for i, p in enumerate(self._P):
                 col = cell_colors[i]

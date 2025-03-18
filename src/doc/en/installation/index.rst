@@ -217,6 +217,7 @@ More information:
    binary
    conda
    source
+   meson
    launching
    troubles
 

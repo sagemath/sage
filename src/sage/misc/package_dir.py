@@ -246,8 +246,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     Implicit namespace packages (PEP 420) are only recognized if they
     follow the conventions of the Sage library, i.e., the directory contains
-    a file ``all.py`` or a file matching the pattern ``all__*.py``
-    such as ``all__sagemath_categories.py``.
+    a file ``all.py`` or a file matching the pattern ``all__*.py``.
 
     INPUT:
 
@@ -262,6 +261,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     :mod:`sage.cpython` is an ordinary package::
 
+        sage: # optional - !meson_editable
         sage: from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
         sage: directory = sage.cpython.__path__[0]; directory
         '.../sage/cpython'
@@ -271,6 +271,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
     :mod:`sage.libs.mpfr` only has an ``__init__.pxd`` file, but we consider
     it a package directory for consistency with Cython::
 
+        sage: # optional - !meson_editable
         sage: directory = os.path.join(sage.libs.__path__[0], 'mpfr'); directory
         '.../sage/libs/mpfr'
         sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
@@ -278,16 +279,39 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     :mod:`sage` is designated to become an implicit namespace package::
 
+        sage: # optional - !meson_editable
         sage: directory = sage.__path__[0]; directory
         '.../sage'
-        sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
+        sage: is_package_or_sage_namespace_package_dir(directory)
         True
 
     Not a package::
 
+        sage: # optional - !meson_editable
         sage: directory = os.path.join(sage.symbolic.__path__[0], 'ginac'); directory   # needs sage.symbolic
         '.../sage/symbolic/ginac'
         sage: is_package_or_sage_namespace_package_dir(directory)                       # needs sage.symbolic
+        False
+
+    TESTS::
+
+        sage: # optional - meson_editable
+        sage: from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
+        sage: directory = os.path.dirname(sage.cpython.__file__); directory
+        '.../sage/cpython'
+        sage: is_package_or_sage_namespace_package_dir(directory)
+        True
+
+        sage: # optional - meson_editable
+        sage: directory = os.path.join(os.path.dirname(sage.libs.__file__), 'mpfr'); directory
+        '.../sage/libs/mpfr'
+        sage: is_package_or_sage_namespace_package_dir(directory)
+        True
+
+        sage: # optional - meson_editable, sage.symbolic
+        sage: directory = os.path.join(os.path.dirname(sage.symbolic.__file__), 'ginac'); directory
+        '.../sage/symbolic/ginac'
+        sage: is_package_or_sage_namespace_package_dir(directory)
         False
     """
     if os.path.exists(os.path.join(path, '__init__.py')):                # ordinary package
@@ -346,8 +370,15 @@ def walk_packages(path=None, prefix='', onerror=None):
 
     EXAMPLES::
 
+        sage: # optional - !meson_editable
         sage: sorted(sage.misc.package_dir.walk_packages(sage.misc.__path__))  # a namespace package
         [..., ModuleInfo(module_finder=FileFinder('.../sage/misc'), name='package_dir', ispkg=False), ...]
+
+    TESTS::
+
+        sage: # optional - meson_editable
+        sage: sorted(sage.misc.package_dir.walk_packages(sage.misc.__path__))
+        [..., ModuleInfo(module_finder=<...MesonpyPathFinder object...>, name='package_dir', ispkg=False), ...]
     """
     # Adapted from https://github.com/python/cpython/blob/3.11/Lib/pkgutil.py
 
@@ -371,9 +402,9 @@ def walk_packages(path=None, prefix='', onerror=None):
                     yielded[name] = 1
                     yield ModuleInfo(i, name, ispkg)
 
-    def iter_importer_modules(importer, prefix=''):
+    def _iter_importer_modules_helper(importer, prefix=''):
         r"""
-        Yield :class:`ModuleInfo` for all modules of ``importer``.
+        Helper function for :func:`iter_importer_modules`.
         """
         from importlib.machinery import FileFinder
 
@@ -392,11 +423,6 @@ def walk_packages(path=None, prefix='', onerror=None):
 
             for fn in filenames:
                 modname = inspect.getmodulename(fn)
-                if modname and (modname in ['__init__', 'all']
-                                or modname.startswith('all__')
-                                or modname in yielded):
-                    continue
-
                 path = os.path.join(importer.path, fn)
                 ispkg = False
 
@@ -414,6 +440,18 @@ def walk_packages(path=None, prefix='', onerror=None):
 
         else:
             yield from importer.iter_modules(prefix)
+
+    def iter_importer_modules(importer, prefix=''):
+        r"""
+        Yield :class:`ModuleInfo` for all modules of ``importer``.
+        """
+        for name, ispkg in sorted(list(_iter_importer_modules_helper(importer, prefix))):
+            # we sort again for consistency of output ordering if importer is not
+            # a FileFinder (needed in doctest of :func:`sage.misc.dev_tools/load_submodules`)
+            modname = name.rsplit('.', 1)[-1]
+            if modname in ['__init__', 'all'] or modname.startswith('all__'):
+                continue
+            yield name, ispkg
 
     def seen(p, m={}):
         if p in m:
@@ -603,7 +641,7 @@ if __name__ == '__main__':
             else:
                 handle_file(*os.path.split(path))
 
-    print(f"sage --fixdistributions: checking consistency")
+    print("sage --fixdistributions: checking consistency")
 
     for package in ordinary_packages:
         if len(package_distributions_per_directives[package]) > 1:

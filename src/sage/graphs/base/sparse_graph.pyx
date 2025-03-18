@@ -1569,7 +1569,7 @@ cdef class SparseGraphBackend(CGraphBackend):
 
             # WARNING
             # If you modify this, you must keep in mind the documentation in the
-            # corresponding method in `generic_graph.py` in the method `edge_iterator`.
+            # corresponding method in ``generic_graph.py`` in the method ``edge_iterator``.
             # E.g. code assumes that you can use an iterator to relabel or delete arcs.
 
             r = self._cg._neighbors_BTNode_unsafe(v_int, out, neighbors, maxdegree)

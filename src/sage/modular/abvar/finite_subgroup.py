@@ -88,15 +88,15 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.rings.abc
 
@@ -579,11 +579,13 @@ class FiniteSubgroup(Module):
             self.__order = o
             return o
 
-    def gens(self):
+    def gens(self) -> Sequence:
         """
         Return generators for this finite subgroup.
 
-        EXAMPLES: We list generators for several cuspidal subgroups::
+        EXAMPLES:
+
+        We list generators for several cuspidal subgroups::
 
             sage: J0(11).cuspidal_subgroup().gens()
             [[(0, 1/5)]]

@@ -30,7 +30,11 @@ from . import macdonald
 from . import jack
 from . import orthotriang
 
-translate = {'monomial':'MONOMIAL', 'homogeneous':'HOMSYM', 'powersum':'POWSYM', 'elementary':'ELMSYM', 'Schur':'SCHUR'}
+translate = {'monomial': 'MONOMIAL',
+             'homogeneous': 'HOMSYM',
+             'powersum': 'POWSYM',
+             'elementary': 'ELMSYM',
+             'Schur': 'SCHUR'}
 
 conversion_functions = {}
 
@@ -55,11 +59,11 @@ def init():
         s[1, 1, 1, 1] - s[2, 1, 1] + 2*s[2, 2] - s[3, 1] + s[4]
     """
     import sage.libs.symmetrica.all as symmetrica
-    for other_basis in translate:
-        for basis in translate:
+    for other_basis, other_name in translate.items():
+        for basis, name in translate.items():
             try:
                 conversion_functions[(other_basis, basis)] = getattr(symmetrica,
-                     't_{}_{}'.format(translate[other_basis], translate[basis]))
+                        f't_{other_name}_{name}')
             except AttributeError:
                 pass
 

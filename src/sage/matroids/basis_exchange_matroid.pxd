@@ -90,6 +90,6 @@ cdef class BasisExchangeMatroid(Matroid):
     cpdef _is_isomorphism(self, other, morphism)
     cdef bint __is_isomorphism(self, BasisExchangeMatroid other, morphism) noexcept
 
-    cpdef bint is_valid(self) noexcept
+    cpdef is_valid(self, certificate=*)
 
 cdef bint nxksrd(bitset_s *b, long n, long k, bint succ) noexcept

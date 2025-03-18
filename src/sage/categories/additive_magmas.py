@@ -971,8 +971,8 @@ class AdditiveMagmas(Category_singleton):
                     [Category of unital magmas]
 
                     sage: C.super_categories()
-                    [Category of unital algebras with basis over Rational Field,
-                     Category of additive magma algebras over Rational Field]
+                    [Category of additive magma algebras over Rational Field,
+                     Category of unital algebras with basis over Rational Field]
                 """
                 from sage.categories.magmas import Magmas
                 return [Magmas().Unital()]

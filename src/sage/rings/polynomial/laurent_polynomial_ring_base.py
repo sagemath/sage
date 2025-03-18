@@ -30,6 +30,7 @@ from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
 from sage.combinat.integer_vector import IntegerVectors
 
+
 class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     """
     Laurent polynomial ring (base class).
@@ -42,6 +43,8 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         sage: R.<x1,x2> = LaurentPolynomialRing(QQ)
         sage: R.category()
         Join of Category of unique factorization domains
+            and Category of algebras with basis
+                over (number fields and quotient fields and metric spaces)
             and Category of commutative algebras
                 over (number fields and quotient fields and metric spaces)
             and Category of infinite sets

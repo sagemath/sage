@@ -1115,7 +1115,7 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
 def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check=True):
     r"""
-    Create a Hadamard matrix using the contruction detailed in [CW1972]_.
+    Create a Hadamard matrix using the construction detailed in [CW1972]_.
 
     Given four circulant matrices `X_1`, X_2, X_3, X_4` of order `n` with entries (0, 1, -1)
     such that the entrywise product of two distinct matrices is always equal to `0` and that
@@ -1135,7 +1135,7 @@ def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check
     - ``C`` -- the matrix described above
     - ``D`` -- the matrix described above
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the resulting
-      matrix is Hadamard before returing it
+      matrix is Hadamard before returning it
 
     EXAMPLES::
 
@@ -1302,7 +1302,7 @@ def _get_baumert_hall_units(n, existence=False):
 
     - ``n`` -- integer; the size of the Baumert-Hall units
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check whether
-      the units can be contructed
+      the units can be constructed
 
     OUTPUT:
 
@@ -1503,7 +1503,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     - ``n`` -- integer; the order of the matrix to be constructed
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
       the matrix exists
-    - ``check`` -- bolean (default: ``True``); if ``True``, check that the matrix
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
       is a Hadamard matrix before returning
 
     OUTPUT:
@@ -2395,7 +2395,7 @@ def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
 
 def skew_hadamard_matrix_spence_construction(n, check=True):
     r"""
-    Construct skew Hadamard matrix of order `n` using Spence constrution.
+    Construct skew Hadamard matrix of order `n` using Spence construction.
 
     This function will construct skew Hadamard matrix of order `n=2(q+1)` where `q` is
     a prime power with `q = 5` (mod 8). The construction is taken from [Spe1977]_, and the

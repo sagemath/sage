@@ -704,7 +704,7 @@ Sage example in ./combinat.tex, line 2116::
 
 Sage example in ./combinat.tex, line 2130::
 
-  sage: def words(alphabet,l):
+  sage: def words(alphabet, l):
   ....:    if l == 0: yield []
   ....:    else:
   ....:        for word in words(alphabet, l-1):

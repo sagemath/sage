@@ -845,7 +845,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         - Devise a mechanism so that pickling bases of symmetric
           functions pickles the coercions which have a cache.
     """
-
     def __init__(self, R):
         r"""
         Initialization of ``self``.
@@ -1604,7 +1603,7 @@ class SymmetricaConversionOnBasis:
 
             sage: Sym = SymmetricFunctions(QQ['x'])
             sage: p = Sym.p(); s = Sym.s()
-            sage: def t(x) : [(p,c)] = x; return [ (p,2*c), (p.conjugate(), c) ]
+            sage: def t(x) : [(p, c)] = x; return [ (p, 2*c), (p.conjugate(), c) ]
             sage: f = sage.combinat.sf.sf.SymmetricaConversionOnBasis(t, p, s)
             sage: f(Partition([3,1]))
             s[2, 1, 1] + 2*s[3, 1]

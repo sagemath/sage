@@ -46,6 +46,7 @@ from sage.rings.rational cimport Rational
 from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport rich_to_bool
 cimport sage.modules.free_module_element as free_module_element
+from libc.stdint cimport uintptr_t
 
 from sage.libs.m4ri cimport *
 
@@ -192,8 +193,44 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             TypeError: can...t initialize vector from nonzero non-list
             sage: (GF(2)**0).zero_vector()
             ()
+
+        Check construction from numpy arrays::
+
+            sage: # needs numpy
+            sage: import numpy
+            sage: VS = VectorSpace(GF(2),3)
+            sage: VS(numpy.array([0,-3,7], dtype=numpy.int8))
+            (0, 1, 1)
+            sage: VS(numpy.array([0,-3,7], dtype=numpy.int32))
+            (0, 1, 1)
+            sage: VS(numpy.array([0,-3,7], dtype=numpy.int64))
+            (0, 1, 1)
+            sage: VS(numpy.array([False,True,False], dtype=bool))
+            (0, 1, 0)
+            sage: VS(numpy.array([[1]]))
+            Traceback (most recent call last):
+            ...
+            ValueError: numpy array must have dimension 1
+            sage: VS(numpy.array([1,2,3,4]))
+            Traceback (most recent call last):
+            ...
+            ValueError: numpy array must have the right length
+
+        Make sure it's reasonably fast::
+
+            sage: # needs numpy
+            sage: import numpy
+            sage: VS = VectorSpace(GF(2),2*10^7)
+            sage: v = VS(numpy.random.randint(0, 1, size=VS.dimension()))  # around 300ms
         """
-        cdef Py_ssize_t i
+        try:
+            import numpy
+        except ImportError:
+            pass
+        else:
+            from .numpy_util import set_mzd_from_numpy
+            if set_mzd_from_numpy(<uintptr_t>self._entries, self._degree, x):
+                return
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("x must be a list of the right length")
@@ -201,13 +238,13 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
                 xi = x[i]
                 if isinstance(xi, (IntegerMod_int, int, Integer)):
                     # the if/else statement is because in some compilers, (-1)%2 is -1
-                    mzd_write_bit(self._entries, 0, i, 1 if xi%2 else 0)
+                    mzd_write_bit(self._entries, 0, i, 1 if xi % 2 else 0)
                 elif isinstance(xi, Rational):
                     if not (xi.denominator() % 2):
                         raise ZeroDivisionError("inverse does not exist")
                     mzd_write_bit(self._entries, 0, i, 1 if (xi.numerator() % 2) else 0)
                 else:
-                    mzd_write_bit(self._entries, 0, i, xi%2)
+                    mzd_write_bit(self._entries, 0, i, xi % 2)
         elif x != 0:
             raise TypeError("can't initialize vector from nonzero non-list")
         elif self._degree:
@@ -381,7 +418,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         cdef IntegerMod_int n
         cdef Vector_mod2_dense r = right
         cdef m4ri_word tmp = 0
-        n =  IntegerMod_int.__new__(IntegerMod_int)
+        n = IntegerMod_int.__new__(IntegerMod_int)
         IntegerMod_abstract.__init__(n, self.base_ring())
         n.ivalue = 0
         cdef m4ri_word *lrow = mzd_row(self._entries, 0)
@@ -502,8 +539,8 @@ def unpickle_v0(parent, entries, degree, is_immutable):
     for i in range(degree):
         if isinstance(entries[i], (IntegerMod_int, int, Integer)):
             xi = entries[i]
-            mzd_write_bit(v._entries, 0, i, xi%2)
+            mzd_write_bit(v._entries, 0, i, xi % 2)
         else:
-            mzd_write_bit(v._entries, 0, i, entries[i]%2)
+            mzd_write_bit(v._entries, 0, i, entries[i] % 2)
     v._is_immutable = int(is_immutable)
     return v

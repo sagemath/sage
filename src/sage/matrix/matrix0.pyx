@@ -1019,7 +1019,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     if ind < 0 or ind >= ncols:
                         raise IndexError("matrix index out of range")
             elif isinstance(col_index, slice):
-                col_list =  list(range(*col_index.indices(ncols)))
+                col_list = list(range(*col_index.indices(ncols)))
             else:
                 if not PyIndex_Check(col_index):
                     raise TypeError("index must be an integer")
@@ -2977,7 +2977,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         self.permute_rows(row_permutation)
         self.permute_columns(column_permutation)
 
-    def with_permuted_rows_and_columns(self,row_permutation,column_permutation):
+    def with_permuted_rows_and_columns(self, row_permutation, column_permutation):
         r"""
         Return the matrix obtained from permuting the rows and
         columns of ``self`` by applying the permutation group

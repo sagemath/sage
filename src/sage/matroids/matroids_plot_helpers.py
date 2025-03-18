@@ -708,8 +708,8 @@ def tracklims(lims, x_i=[], y_i=[]):
     """
     if lims is not None and lims[0] is not None and lims[1] is not None and \
        lims[2] is not None and lims[3] is not None:
-        lims = [min(min(x_i), lims[0]), max(max(x_i), lims[1]),
-                min(min(y_i), lims[2]), max(max(y_i), lims[3])]
+        lims = [min(*x_i, lims[0]), max(*x_i, lims[1]),
+                min(*y_i, lims[2]), max(*y_i, lims[3])]
     else:
         lims = [min(x_i), max(x_i), min(y_i), max(y_i)]
     return lims
@@ -859,7 +859,6 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
         pl = [list(x) for x in pts2.values()]
         lims = tracklims([None, None, None, None], [pt[0] for pt in pl],
                          [pt[1] for pt in pl])
-        j = 0
         for ll in trilines:
             if len(ll) >= 3:
                 ptsx, ptsy, x_i, y_i = createline(pts2, ll, lineorders1)

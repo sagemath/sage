@@ -49,11 +49,12 @@ Functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import operator
+
 from sage.misc.cachefunc import cached_function
 
 
 def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
-          Factorization_sort=False, Factorization_simplify=True):
+                  Factorization_sort=False, Factorization_simplify=True):
     r"""
     Return `\Omega_{\mathrm{op}}` of ``expression`` with respect to ``var``.
 
@@ -221,33 +222,33 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
         sage: MacMahonOmega(mu, 1, [1 - x*mu], op=operator.lt)
         Traceback (most recent call last):
         ...
-        NotImplementedError: At the moment, only Omega_ge is implemented.
+        NotImplementedError: only Omega_ge is implemented
 
         sage: MacMahonOmega(mu, 1, Factorization([(1 - x*mu, -1)]))
         Traceback (most recent call last):
         ...
-        ValueError: Factorization (-mu*x + 1)^-1 of the denominator
-        contains negative exponents.
+        ValueError: factorization (-mu*x + 1)^-1 of the denominator
+        contains negative exponents
 
         sage: MacMahonOmega(2*mu, 1, [1 - x*mu])
         Traceback (most recent call last):
         ...
-        ValueError: 2*mu is not a variable.
+        ValueError: 2*mu is not a variable
 
         sage: MacMahonOmega(mu, 1, Factorization([(0, 2)]))
         Traceback (most recent call last):
         ...
-        ZeroDivisionError: Denominator contains a factor 0.
+        ZeroDivisionError: denominator contains a factor 0
 
         sage: MacMahonOmega(mu, 1, [2 - x*mu])
         Traceback (most recent call last):
         ...
-        NotImplementedError: Factor 2 - x*mu is not normalized.
+        NotImplementedError: factor 2 - x*mu is not normalized
 
         sage: MacMahonOmega(mu, 1, [1 - x*mu - mu^2])
         Traceback (most recent call last):
         ...
-        NotImplementedError: Cannot handle factor 1 - x*mu - mu^2.
+        NotImplementedError: cannot handle factor 1 - x*mu - mu^2
 
     ::
 
@@ -259,12 +260,14 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
     from sage.arith.misc import factor
     from sage.misc.misc_c import prod
     from sage.rings.integer_ring import ZZ
-    from sage.rings.polynomial.laurent_polynomial_ring \
-        import LaurentPolynomialRing, LaurentPolynomialRing_univariate
+    from sage.rings.polynomial.laurent_polynomial_ring import (
+        LaurentPolynomialRing,
+        LaurentPolynomialRing_univariate,
+    )
     from sage.structure.factorization import Factorization
 
     if op != operator.ge:
-        raise NotImplementedError('At the moment, only Omega_ge is implemented.')
+        raise NotImplementedError('only Omega_ge is implemented')
 
     if denominator is None:
         if isinstance(expression, Factorization):
@@ -285,9 +288,9 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
         if not isinstance(denominator, Factorization):
             denominator = factor(denominator)
         if not denominator.is_integral():
-            raise ValueError('Factorization {} of the denominator '
-                             'contains negative exponents.'.format(denominator))
-        numerator *= ZZ(1) / denominator.unit()
+            raise ValueError(f'factorization {denominator} of '
+                             'the denominator contains negative exponents')
+        numerator *= ZZ.one() / denominator.unit()
         factors_denominator = tuple(factor
                                     for factor, exponent in denominator
                                     for _ in range(exponent))
@@ -304,45 +307,45 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
         L = LaurentPolynomialRing(L0, var)
         var = L.gen()
     else:
-        raise ValueError('{} is not a variable.'.format(var))
+        raise ValueError(f'{var} is not a variable')
 
     other_factors = []
     to_numerator = []
     decoded_factors = []
-    for factor in factors_denominator:
-        factor = L(factor)
-        D = factor.dict()
+    for fact in factors_denominator:
+        fac = L(fact)
+        D = fac.monomial_coefficients()
         if not D:
-            raise ZeroDivisionError('Denominator contains a factor 0.')
+            raise ZeroDivisionError('denominator contains a factor 0')
         elif len(D) == 1:
             exponent, coefficient = next(iter(D.items()))
             if exponent == 0:
-                other_factors.append(L0(factor))
+                other_factors.append(L0(fac))
             else:
-                to_numerator.append(factor)
+                to_numerator.append(fac)
         elif len(D) == 2:
             if D.get(0, 0) != 1:
-                raise NotImplementedError('Factor {} is not normalized.'.format(factor))
+                raise NotImplementedError(f'factor {fac} is not normalized')
             D.pop(0)
             exponent, coefficient = next(iter(D.items()))
             decoded_factors.append((-coefficient, exponent))
         else:
-            raise NotImplementedError('Cannot handle factor {}.'.format(factor))
+            raise NotImplementedError(f'cannot handle factor {fac}')
     numerator = L(numerator) / prod(to_numerator)
 
     result_numerator, result_factors_denominator = \
-        _Omega_(numerator.dict(), decoded_factors)
+        _Omega_(numerator.monomial_coefficients(), decoded_factors)
     if result_numerator == 0:
         return Factorization([], unit=result_numerator)
 
     return Factorization([(result_numerator, 1)] +
-                         list((f, -1) for f in other_factors) +
-                         list((1-f, -1) for f in result_factors_denominator),
+                         [(f, -1) for f in other_factors] +
+                         [(1 - f, -1) for f in result_factors_denominator],
                          sort=Factorization_sort,
                          simplify=Factorization_simplify)
 
 
-def _simplify_(numerator, terms):
+def _simplify_(numerator, terms) -> tuple:
     r"""
     Cancels common factors of numerator and denominator.
 
@@ -438,7 +441,7 @@ def _Omega_(A, decoded_factors):
         (x + 1) * (-x*y + 1)^-1
     """
     if not decoded_factors:
-        return sum(c for a, c in A.items() if a >= 0), tuple()
+        return sum(c for a, c in A.items() if a >= 0), ()
 
     # Below we sort to make the caching more efficient. Doing this here
     # (in contrast to directly in Omega_ge) results in much cleaner
@@ -459,7 +462,7 @@ def _Omega_(A, decoded_factors):
         numerator += c * n.subs(rules)
 
     if numerator == 0:
-        factors_denominator = tuple()
+        factors_denominator = ()
     return _simplify_(numerator,
                       tuple(f.subs(rules) for f in factors_denominator))
 
@@ -557,19 +560,18 @@ def Omega_ge(a, exponents):
     logger.info('Omega_ge: a=%s, exponents=%s', a, exponents)
 
     from sage.arith.functions import lcm
-    from sage.arith.srange import srange
     from sage.rings.integer_ring import ZZ
-    from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
     from sage.rings.number_field.number_field import CyclotomicField
+    from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 
     if not exponents or any(e == 0 for e in exponents):
         raise NotImplementedError
 
-    rou = sorted(set(abs(e) for e in exponents) - set([1]))
+    rou = sorted({abse for e in exponents if (abse := abs(e)) != 1})
     ellcm = lcm(rou)
     B = CyclotomicField(ellcm, 'zeta')
     zeta = B.gen()
-    z_names = tuple('z{}'.format(i) for i in range(len(exponents)))
+    z_names = tuple(f'z{i}' for i in range(len(exponents)))
     L = LaurentPolynomialRing(B, ('t',) + z_names, len(z_names) + 1)
     t = L.gens()[0]
     Z = LaurentPolynomialRing(ZZ, z_names, len(z_names))
@@ -577,7 +579,7 @@ def Omega_ge(a, exponents):
     powers[2] = L(-1)
     powers[1] = L(1)
     exponents_and_values = tuple(
-        (e, tuple(powers[abs(e)]**j * z for j in srange(abs(e))))
+        (e, tuple(powers[abs(e)]**j * z for j in range(abs(e))))
         for z, e in zip(L.gens()[1:], exponents))
     x = tuple(v for e, v in exponents_and_values if e > 0)
     y = tuple(v for e, v in exponents_and_values if e < 0)
@@ -589,7 +591,7 @@ def Omega_ge(a, exponents):
         It is assumed that ``var`` only occurs with exponents
         divisible by ``exponent``.
         """
-        p = tuple(var.dict().popitem()[0]).index(1)  # var is the p-th generator
+        p = tuple(var.monomial_coefficients().popitem()[0]).index(1)  # var is the p-th generator
 
         def subs_e(e):
             e = list(e)
@@ -597,8 +599,8 @@ def Omega_ge(a, exponents):
             e[p] = e[p] // exponent
             return tuple(e)
         parent = expression.parent()
-        result = parent({subs_e(e): c for e, c in expression.dict().items()})
-        return result
+        return parent({subs_e(e): c
+                       for e, c in expression.monomial_coefficients().items()})
 
     def de_power(expression):
         expression = Z(expression)
@@ -718,8 +720,8 @@ def _Omega_numerator_(a, x, y, t):
     from sage.arith.srange import srange
     from sage.misc.misc_c import prod
 
-    x_flat = sum(x, tuple())
-    y_flat = sum(y, tuple())
+    x_flat = sum(x, ())
+    y_flat = sum(y, ())
     n = len(x_flat)
     m = len(y_flat)
     xy = x_flat + y_flat
@@ -806,12 +808,13 @@ def _Omega_numerator_P_(a, x, y, t):
         p2 = Pprev.subs({t: x2})
         logger.debug('Omega_numerator: P(%s): preparing...', n)
         dividend = x1 * (1-x2) * prod(1 - x2*yy for yy in y) * p1 - \
-                x2 * (1-x1) * prod(1 - x1*yy for yy in y) * p2
+            x2 * (1-x1) * prod(1 - x1*yy for yy in y) * p2
         logger.debug('Omega_numerator: P(%s): dividing...', n)
         q, r = dividend.quo_rem(x1 - x2)
         assert r == 0
         result = q
-    logger.debug('Omega_numerator: P(%s) has %s terms', n, result.number_of_terms())
+    logger.debug('Omega_numerator: P(%s) has %s terms', n,
+                 result.number_of_terms())
     return result
 
 
@@ -899,11 +902,11 @@ def _Omega_factors_denominator_(x, y):
     from sage.misc.misc_c import prod
 
     result = tuple(prod(1 - xx for xx in gx) for gx in x) + \
-             sum(((prod(1 - xx*yy for xx in gx for yy in gy),)
-                  if len(gx) != len(gy)
-                  else tuple(prod(1 - xx*yy for xx in gx) for yy in gy)
-                  for gx in x for gy in y),
-                 tuple())
+        sum(((prod(1 - xx*yy for xx in gx for yy in gy),)
+             if len(gx) != len(gy)
+             else tuple(prod(1 - xx*yy for xx in gx) for yy in gy)
+             for gx in x for gy in y),
+            ())
 
     logger.info('Omega_denominator: %s factors', len(result))
     return result

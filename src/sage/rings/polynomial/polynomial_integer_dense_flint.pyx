@@ -55,7 +55,8 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
-from sage.libs.pari.all import pari, pari_gen
+from sage.libs.pari import pari
+from cypari2.gen cimport Gen as pari_gen
 from sage.structure.factorization import Factorization
 
 from sage.rings.fraction_field_element import FractionFieldElement
@@ -1035,7 +1036,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
-    def __pow__(Polynomial_integer_dense_flint self, exp, ignored):
+    def __pow__(Polynomial_integer_dense_flint self, exp, mod):
         """
         EXAMPLES::
 
@@ -1114,9 +1115,22 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             ...
             TypeError: no canonical coercion from Univariate Polynomial
             Ring in R over Integer Ring to Rational Field
+
+        Check that using third argument raises an error::
+
+            sage: R.<x> = PolynomialRing(ZZ, implementation='FLINT')
+            sage: pow(x, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
         cdef long nn
         cdef Polynomial_integer_dense_flint res
+
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
 
         try:
             nn = pyobject_to_long(exp)

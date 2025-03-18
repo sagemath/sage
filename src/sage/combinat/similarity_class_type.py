@@ -101,7 +101,7 @@ similarity classes of `k`-tuples of `n\times n` matrices with entries in
 
     sage: from sage.combinat.similarity_class_type import order_of_general_linear_group, centralizer_algebra_dim
     sage: q = ZZ['q'].gen()
-    sage: def simultaneous_similarity_classes(n,k):
+    sage: def simultaneous_similarity_classes(n, k):
     ....:     return SimilarityClassTypes(n).sum(lambda la: q**(k*centralizer_algebra_dim(la)), invertible = True)/order_of_general_linear_group(n)
     sage: simultaneous_similarity_classes(3, 2)
     q^10 + q^8 + 2*q^7 + 2*q^6 + 2*q^5 + q^4

@@ -8,7 +8,8 @@ from sage.structure.element cimport Element
 from sage.rings.infinity import infinity
 
 try:
-    from sage.libs.pari.all import pari_gen, PariError
+    from cypari2.handle_error import PariError
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
     PariError = ()
@@ -794,7 +795,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         return self.__f.list()
 
-    def dict(self):
+    def monomial_coefficients(self, copy=True):
         """
         Return a dictionary of coefficients for ``self``.
 
@@ -806,10 +807,17 @@ cdef class PowerSeries_poly(PowerSeries):
 
             sage: R.<t> = ZZ[[]]
             sage: f = 1 + t^10 + O(t^12)
+            sage: f.monomial_coefficients()
+            {0: 1, 10: 1}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {0: 1, 10: 1}
         """
-        return self.__f.dict()
+        return self.__f.monomial_coefficients(copy=copy)
+
+    dict = monomial_coefficients
 
     def _derivative(self, var=None):
         """
@@ -867,7 +875,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f._derivative(),
                                 self.prec()-1, check=False)
 
-    def integral(self,var=None):
+    def integral(self, var=None):
         """
         Return the integral of this power series.
 

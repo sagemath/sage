@@ -642,7 +642,7 @@ def from_rank(r, n, k):
     TESTS::
 
         sage: from sage.combinat.combination import from_rank
-        sage: def _comb_largest(a,b,x):
+        sage: def _comb_largest(a, b, x):
         ....:     w = a - 1
         ....:     while binomial(w,b) > x:
         ....:         w -= 1

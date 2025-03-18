@@ -962,7 +962,7 @@ cdef class BuiltinFunction(Function):
 
             sage: import numpy                                                          # needs numpy
             sage: if int(numpy.version.short_version[0]) > 1:                           # needs numpy
-            ....:     numpy.set_printoptions(legacy="1.25")                             # needs numpy
+            ....:     __ = numpy.set_printoptions(legacy="1.25")                        # needs numpy
 
             sage: sin(numpy.int32(0))                                                   # needs numpy
             0.0
@@ -1294,7 +1294,7 @@ cdef class SymbolicFunction(Function):
             sage: t(x, y)
             foo(x, y)
 
-            sage: def ev(self, x,y): return 2*x
+            sage: def ev(self, x, y): return 2*x
             sage: foo = function("foo", nargs=2, eval_func=ev)                          # needs sage.symbolic
             sage: foo.__getstate__()                                                    # needs sage.symbolic
             (2, 'foo', 2, None, {}, True,

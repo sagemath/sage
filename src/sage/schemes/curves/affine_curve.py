@@ -141,7 +141,6 @@ from sage.rings.infinity import infinity
 from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-from sage.rings.infinity import infinity
 
 from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
 from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
@@ -579,7 +578,7 @@ class AffinePlaneCurve(AffineCurve):
             TypeError: (=(1, 1)) is not a point on (=Affine Plane Curve over
             Rational Field defined by x^6 - x^3 + y^3)
         """
-        if not self.base_ring() in Fields():
+        if self.base_ring() not in Fields():
             raise TypeError("curve must be defined over a field")
 
         # Check whether P is a point on this curve
@@ -866,7 +865,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         """
         super().__init__(A, X)
 
-        if not A.base_ring() in Fields():
+        if A.base_ring() not in Fields():
             raise TypeError("curve not defined over a field")
 
         d = super(Curve_generic, self).dimension()
@@ -1320,7 +1319,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             self(P)
         except TypeError:
             raise TypeError("(=%s) must be a point on this curve" % P)
-        if not self.base_ring() in Fields():
+        if self.base_ring() not in Fields():
             raise TypeError("the base ring of this curve must be a field")
         if not self.is_irreducible():
             raise TypeError("this curve must be irreducible")

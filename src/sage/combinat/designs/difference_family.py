@@ -292,8 +292,8 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
 
         # Normalized number of occurrences added to counter
         stabi = len(stab[i])
-        for gg in tmp_counter:
-            counter[gg] += tmp_counter[gg]//stabi
+        for gg, tmp_gg in tmp_counter.items():
+            counter[gg] += tmp_gg // stabi
 
     # Check the counter and report any error
     too_few = []
@@ -330,7 +330,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
     return True
 
 
-def singer_difference_set(q,d):
+def singer_difference_set(q, d):
     r"""
     Return a difference set associated to the set of hyperplanes in a projective
     space of dimension `d` over `GF(q)`.
@@ -641,7 +641,7 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
     return D
 
 
-def one_cyclic_tiling(A,n):
+def one_cyclic_tiling(A, n):
     r"""
     Given a subset ``A`` of the cyclic additive group `G = Z / nZ` return
     another subset `B` so that `A + B = G` and `|A| |B| = n` (i.e. any element
@@ -1579,7 +1579,7 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
     - ``H`` -- list; a submodule of ``G`` of order `n`
     - ``params`` -- tuple in the form `(m, n, k, d)`
     - ``verbose`` -- boolean (default: ``False``); if ``True``, the function
-      will be verbose when the sequences do not satisfy the contraints
+      will be verbose when the sequences do not satisfy the constraints
 
     EXAMPLES::
 
@@ -1659,7 +1659,7 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
     - ``lmbda`` -- integer; the parameter `\lambda` of the supplementary difference sets
     - ``G`` -- a group of order `v`
     - ``verbose`` -- boolean (default: ``False``); if ``True``, the function will
-      be verbose when the sets do not satisfy the contraints
+      be verbose when the sets do not satisfy the constraints
 
     EXAMPLES::
 
@@ -1757,7 +1757,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     OUTPUT:
 
     If ``existence=False``, the function returns the 4 sets (containing integers),
-    or raises an error if ``q`` does not satify the constraints.
+    or raises an error if ``q`` does not satisfy the constraints.
     If ``existence=True``, the function returns a boolean representing whether
     supplementary difference sets can be constructed.
 
@@ -3084,7 +3084,7 @@ def are_complementary_difference_sets(G, A, B, verbose=False):
     - ``A`` -- set of elements of ``G``
     - ``B`` -- set of elements of ``G``
     - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will
-      be verbose when the sets do not satisfy the contraints
+      be verbose when the sets do not satisfy the constraints
 
     EXAMPLES::
 
@@ -3532,7 +3532,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
     For `k=6,7` we look at the set of small prime powers for which a
     construction is available::
 
-        sage: def prime_power_mod(r,m):
+        sage: def prime_power_mod(r, m):
         ....:     k = m+r
         ....:     while True:
         ....:         if is_prime_power(k):
@@ -3690,7 +3690,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         3 Turyn 1965 construction
         4 McFarland 1973 construction
         5 False
-        6 Unknown
+        6 The database contains a (144,66,30)-difference family
         7 False
         8 McFarland 1973 construction
         9 Unknown

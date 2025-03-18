@@ -105,7 +105,7 @@ cdef class Matroid(SageObject):
     cpdef is_coclosed(self, X)
 
     # verification
-    cpdef bint is_valid(self) noexcept
+    cpdef is_valid(self, certificate=*)
 
     # enumeration
     cpdef SetSystem circuits(self, k=*)
@@ -234,9 +234,9 @@ cdef class Matroid(SageObject):
     cpdef broken_circuit_complex(self, ordering=*)
 
     # visualization
-    cpdef plot(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*)
-    cpdef show(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*,lims=*)
-    cpdef _fix_positions(self,pos_dict=*,lineorders=*)
+    cpdef plot(self, B=*, lineorders=*, pos_method=*, pos_dict=*, save_pos=*)
+    cpdef show(self, B=*, lineorders=*, pos_method=*, pos_dict=*, save_pos=*, lims=*)
+    cpdef _fix_positions(self, pos_dict=*, lineorders=*)
 
     # construction
     cpdef direct_sum(self, matroids)
