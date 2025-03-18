@@ -5019,6 +5019,34 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         Return the orthogonal complement of ``self`` in the
         :meth:`~sage.modules.free_module.FreeModule_ambient_field.ambient_vector_space`.
 
+        .. WARNING:
+
+        All of these orthogonal complements are only done with respect to the inner
+        product in the usual basis. Therefore, even though "orthogonal complement"
+        has "complement" in its name, the subspace returned by this method may
+        not actually be a complementary subspace (unless the ``base_field`` is a
+        subfield of the real numbers). The following example is an illustration of this
+        over a finite field. ::
+
+            sage: F2 = GF(2, 'x')
+            sage: V = F2^6
+            sage: W = V.span([[1,1,0,0,0,0]]); W
+            Vector space of degree 6 and dimension 1 over Finite Field of size 2
+            Basis matrix:
+            [1 1 0 0 0 0]
+            sage: W.orthogonal_complement()
+            Vector space of degree 6 and dimension 5 over Finite Field of size 2
+            Basis matrix:
+            [1 1 0 0 0 0]
+            [0 0 1 0 0 0]
+            [0 0 0 1 0 0]
+            [0 0 0 0 1 0]
+            [0 0 0 0 0 1]
+            sage: W.intersection(W.orthogonal_complement())
+            Vector space of degree 6 and dimension 1 over Finite Field of size 2
+            Basis matrix:
+            [1 1 0 0 0 0]
+
         EXAMPLES::
 
             sage: V = QQ^3
@@ -5051,30 +5079,6 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             Basis matrix:
             [ 1  0 -1]
             [ 0  1  0]
-
-        All these orthogonal complements are only done with respect to the inner
-        product in the usual basis.  Over finite fields, this means
-        we can get orthogonal complements which are only isomorphic to a vector
-        space decomposition orthogonal complements. ::
-
-            sage: F2 = GF(2, 'x')
-            sage: V = F2^6
-            sage: W = V.span([[1,1,0,0,0,0]]); W
-            Vector space of degree 6 and dimension 1 over Finite Field of size 2
-            Basis matrix:
-            [1 1 0 0 0 0]
-            sage: W.orthogonal_complement()
-            Vector space of degree 6 and dimension 5 over Finite Field of size 2
-            Basis matrix:
-            [1 1 0 0 0 0]
-            [0 0 1 0 0 0]
-            [0 0 0 1 0 0]
-            [0 0 0 0 1 0]
-            [0 0 0 0 0 1]
-            sage: W.intersection(W.orthogonal_complement())
-            Vector space of degree 6 and dimension 1 over Finite Field of size 2
-            Basis matrix:
-            [1 1 0 0 0 0]
         """
         # Check simple cases
         if self.dimension() == 0:
