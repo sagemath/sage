@@ -207,6 +207,14 @@ def O(*x, **kwds):
         # zero.add_bigoh() because zero has ramification index 1
         return x.add_bigoh(x.valuation(), **kwds)
 
+    from sage.rings.padics.padic_ZZ_pX_FM_element import pAdicZZpXFMElement
+    from sage.rings.padics.padic_fixed_mod_element import pAdicFixedModElement
+    if isinstance(x, (pAdicZZpXFMElement, pAdicFixedModElement)):
+        # fixed modulus elements does not keep track of their own precision,
+        # we must return zero (that said it is not recommended to use O()
+        # in this case, because it does nothing)
+        return x.parent().zero()
+
     try:
         return x.parent().zero().add_bigoh(x.valuation(), **kwds)
     except AttributeError:
