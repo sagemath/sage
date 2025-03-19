@@ -30,7 +30,7 @@ tools/update-meson.py
 
 ## Find Outdated Deprecations
 
-Code that is deprecated for at least one year can be safely removed. This command searches for deprecated code in the source folder and prints all old deprecations.
+Code that is deprecated can be safely removed one year after the first stable release containing the deprecation. This command searches for deprecated code in the source folder and prints all old deprecations.
 
 Within an active virtual environment where `pygithub` and `tqdm` is installed, run the following command:
 

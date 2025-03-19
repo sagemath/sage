@@ -56,7 +56,7 @@ def main():
 
     deprecations = search_deprecations(options.sourcedir)
 
-    one_year_ago = datetime.now(timezone.utc) - timedelta(days=365)
+    one_year_ago = datetime.now(timezone.utc) - timedelta(days=365 + 90)
     old_deprecations: set[tuple[str, int, datetime]] = set()
     for filepath, pr_number in tqdm.tqdm(deprecations):
         closed_date = get_pr_closed_date(options.token, pr_number)
