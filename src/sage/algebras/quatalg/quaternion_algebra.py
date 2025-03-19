@@ -418,7 +418,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
                 # Compute the correct quaternion algebra over L in PARI
                 A = L.__pari__().alginit([2, [fin_places_pari, [QQ((1,2))] * len(fin_places_pari)],
-                                          inv_arch_pari], maxord=0)
+                                          inv_arch_pari], flag=0)
 
                 # Obtain representation of A in terms of invariants in L
                 a_L = L(A.algsplittingfield().disc()[1])
