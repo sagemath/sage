@@ -2035,10 +2035,23 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
           (:meth:`antipode`) of the seminormal basis instead of
           the seminormal basis.
 
-        EXAMPLES::
+        - ``form`` -- string (default: ``"modular"`` if `p|n!` else ``"seminormal"``);
+          one of the following:
 
-            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
-            sage: QS3.dft()
+          * ``"seminormal"`` -- use the seminormal basis
+          * ``"modular"`` -- use the modular DFT, which uses the Peirce decomposition
+            of the group algebra into blocks with central orthogonal idempotents
+          * ``"unitary"`` -- use the unitary DFT, which computes the extended
+            Cholesky decomposition of an `S_n`-invariant symmetric bilinear form as
+            a change-of-basis matrix (for positive characteristics, it must be
+            a finite field of square order)
+
+        EXAMPLES:
+
+        The default is the seminormal DFT when the characteristic does not divide the group order::
+
+            sage: QQ_S3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: QQ_S3.dft()
             [   1    1    1    1    1    1]
             [   1  1/2   -1 -1/2 -1/2  1/2]
             [   0  3/4    0  3/4 -3/4 -3/4]
@@ -2046,11 +2059,36 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [   1 -1/2    1 -1/2 -1/2 -1/2]
             [   1   -1   -1    1    1   -1]
 
-        Over fields of characteristic `p > 0` such that `p \mid n!`, we use the
+        The unitary form works in characteristic zero::
+
+            sage: U = QQ_S3.dft(form='unitary'); U
+            [-1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2]
+            [       1/3*sqrt3        1/6*sqrt3       -1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3        1/6*sqrt3]
+            [               0              1/2                0              1/2             -1/2             -1/2]
+            [               0              1/2                0             -1/2              1/2             -1/2]
+            [       1/3*sqrt3       -1/6*sqrt3        1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3       -1/6*sqrt3]
+            [-1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2]
+            sage: U*U.H == 1
+            True
+
+        Over finite fields of square order with characteristic `p > n`, we can perform the unitary DFT::
+
+            sage: GF25_S3 = SymmetricGroupAlgebra(GF(5**2), 3)
+            sage: U = GF25_S3.dft(form='unitary'); U
+            [       1        1        1        1        1        1]
+            [2*z2 + 4   z2 + 2 3*z2 + 1 4*z2 + 3 4*z2 + 3   z2 + 2]
+            [       0        2        0        2        3        3]
+            [       0   z2 + 1        0 4*z2 + 4   z2 + 1 4*z2 + 4]
+            [2*z2 + 4 4*z2 + 3 2*z2 + 4 4*z2 + 3 4*z2 + 3 4*z2 + 3]
+            [       1        4        4        1        1        4]
+            sage: U*U.H == 1
+            True
+
+        Over fields of characteristic `p > 0` such that `p|n!`, we use the
         modular Fourier transform (:issue:`37751`)::
 
-            sage: GF2S3 = SymmetricGroupAlgebra(GF(2), 3)
-            sage: GF2S3.dft()
+            sage: GF2_S3 = SymmetricGroupAlgebra(GF(2), 3)
+            sage: GF2_S3.dft()
             [1 0 0 0 1 0]
             [0 1 0 0 0 1]
             [0 0 1 0 0 1]
@@ -2066,7 +2104,108 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             return self._dft_seminormal(mult=mult)
         if form == "modular":
             return self._dft_modular()
+        if form == "unitary":
+            return self._dft_unitary()
         raise ValueError("invalid form (= %s)" % form)
+
+    def _dft_unitary(self):
+        """
+        Return the unitary form of the discrete Fourier transform for ``self``.
+
+        EXAMPLES::
+
+            sage: QQ_S3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: QQ_S3._dft_unitary()
+            [-1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2]
+            [       1/3*sqrt3        1/6*sqrt3       -1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3        1/6*sqrt3]
+            [               0              1/2                0              1/2             -1/2             -1/2]
+            [               0              1/2                0             -1/2              1/2             -1/2]
+            [       1/3*sqrt3       -1/6*sqrt3        1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3       -1/6*sqrt3]
+            [-1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2]
+            sage: GF49_S3 = SymmetricGroupAlgebra(GF(7**2), 3)
+            sage: GF49_S3._dft_unitary()
+            [5*z2 + 5 5*z2 + 5 5*z2 + 5 5*z2 + 5 5*z2 + 5 5*z2 + 5]
+            [2*z2 + 5   z2 + 6 5*z2 + 2 6*z2 + 1 6*z2 + 1   z2 + 6]
+            [       0 4*z2 + 5        0 4*z2 + 5 3*z2 + 2 3*z2 + 2]
+            [       0 3*z2 + 2        0 4*z2 + 5 3*z2 + 2 4*z2 + 5]
+            [2*z2 + 5 6*z2 + 1 2*z2 + 5 6*z2 + 1 6*z2 + 1 6*z2 + 1]
+            [5*z2 + 5 2*z2 + 2 2*z2 + 2 5*z2 + 5 5*z2 + 5 2*z2 + 2]
+
+        TESTS::
+
+            sage: QQ_S3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: U = QQ_S3._dft_unitary()
+            sage: U*U.H == 1
+            True
+            sage: GF25_S3 = SymmetricGroupAlgebra(GF(5**2), 3)
+            sage: U = GF25_S3._dft_unitary()
+            sage: U*U.H == 1
+            True
+            sage: GF5_S3 = SymmetricGroupAlgebra(GF(5), 3)
+            sage: U = GF5_S3._dft_unitary()
+            Traceback (most recent call last):
+            ...
+            ValueError: the base ring must be a finite field of square order
+            sage: Z5_S3 = SymmetricGroupAlgebra(Integers(5), 3)
+            sage: U = Z5_S3._dft_unitary()
+            Traceback (most recent call last):
+            ...
+            ValueError: the base ring must be a finite field of square order
+            sage: F.<x> = FunctionField(GF(3))
+            sage: GF3_x_S3 = SymmetricGroupAlgebra(F, 5)
+            sage: U = GF3_x_S3._dft_unitary()
+            Traceback (most recent call last):
+            ...
+            ValueError: the base ring must be a finite field of square order
+            sage: GF9_S3 = SymmetricGroupAlgebra(GF(3**2), 3)
+            sage: U = GF9_S3._dft_unitary()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: not implemented when p|n!; dimension of invariant forms may be greater than one
+        """
+        from sage.matrix.special import diagonal_matrix
+        F = self.base_ring()
+        G = self.group()
+
+        if F.characteristic() == 0:
+            from sage.misc.functional import sqrt
+            from sage.rings.number_field.number_field import NumberField
+            dft_matrix = self.dft()
+            n = dft_matrix.nrows()
+            diag = [sum(dft_matrix[i, j] * dft_matrix[i, j].conjugate() for j in range(n))
+                    for i in range(n)]
+            primes_needed = {factor for d in diag for factor, _ in d.squarefree_part().factor()}
+            names = [f"sqrt{factor}" for factor in primes_needed]
+            x = PolynomialRing(QQ, 'x').gen()
+            K = NumberField([x**2 - d for d in primes_needed], names=names)
+            dft_matrix = dft_matrix.change_ring(K)
+            for i, d in enumerate(diag):
+                dft_matrix[i] *= ~sqrt(K(d))
+            return dft_matrix
+
+        # positive characteristic case
+        assert F.characteristic() > 0, "F must have positive characteristic"
+        if not (F.is_field() and F.is_finite() and F.order().is_square()):
+            raise ValueError("the base ring must be a finite field of square order")
+        if F.characteristic().divides(G.cardinality()):
+            raise NotImplementedError("not implemented when p|n!; dimension of invariant forms may be greater than one")
+        q = F.order().sqrt()
+
+        def conj_square_root(u):
+            if not u:
+                return F.zero()
+            z = F.multiplicative_generator()
+            k = u.log(z)
+            if k % (q+1) != 0:
+                raise ValueError(f"unable to factor as {u} is not in base field GF({q})")
+            return z ** ((k//(q+1)) % (q-1))
+
+        dft_matrix = self.dft()
+        n = dft_matrix.nrows()
+        for i in range(n):
+            d = sum(dft_matrix[i, j] * dft_matrix[i, j].conjugate() for j in range(n))
+            dft_matrix[i] *= ~conj_square_root(d)
+        return dft_matrix
 
     def _dft_seminormal(self, mult='l2r'):
         """

@@ -166,7 +166,6 @@ except ImportError:
 from sage.rings.polynomial.polynomial_ring_constructor import polynomial_default_category
 
 import sage.misc.latex as latex
-from sage.misc.prandom import randint
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 

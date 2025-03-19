@@ -539,7 +539,7 @@ class HyperbolicGeodesic(SageObject):
     def is_parallel(self, other):
         r"""
         Return ``True`` if the two given hyperbolic geodesics are either
-        ultra parallel or asymptotically parallel and``False`` otherwise.
+        ultra parallel or asymptotically parallel and ``False`` otherwise.
 
         INPUT:
 
