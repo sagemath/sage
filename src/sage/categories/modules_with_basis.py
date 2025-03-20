@@ -1312,8 +1312,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
         def rank(self):
             """
             Return the rank of ``self``.
-            Note the rank of ``self`` should equal dimension of ``self``,
-            assuming infinite rank is defined in the context.
+            
+            Since there is a (distinguished) basis, the rank of ``self``
+            is equal to the cardinality of the basis (which equals
+            the :meth:`dimension` of ``self``).
 
             EXAMPLES::
 
