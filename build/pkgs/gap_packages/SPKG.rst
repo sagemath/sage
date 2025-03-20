@@ -122,6 +122,10 @@ LieRing - contains functionality for working with finitely presented Lie
 rings and the Lazard correspondence. (Author: Serena Cicalo', Willem
 Adriaan de Graaf)
 
+LINS - provides an algorithm for computing the normal subgroups of a
+finitely presented group up to some given index bound. (Author:
+Friedrich Rober)
+
 loops - Provides researchers in nonassociative algebra with a
 computational tool that integrates standard notions of loop theory with
 libraries of loops and group-theoretical algorithms of GAP. The package
