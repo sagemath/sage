@@ -1377,11 +1377,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             from sage.interfaces.singular import singular
 
         if self.ngens() == 1:
-            _vars = str(self.gen())
-            if "*" in _vars: # 1.000...000*x
-                _vars = _vars.split("*")[1]
+            _vars = self.variable_name()
         else:
-            _vars = str(self.gens())
+            _vars = "(" + ",".join(self.variable_names()) + ")"
 
         order = self.term_order().singular_str()%dict(ngens=self.ngens())
 
@@ -1457,7 +1455,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             return op == Py_NE
 
         def cmp_key(x):
-            return (x.base_ring(), [str(v) for v in x.gens()], x.term_order())
+            return (x.base_ring(), x.variable_names(), x.term_order())
         return richcmp(cmp_key(left), cmp_key(right), op)
 
     def __reduce__(self):
