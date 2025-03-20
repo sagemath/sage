@@ -127,7 +127,7 @@ jobs:
       # Calibrated for clogging the job pipeline until the "default" job has finished.
       max_parallel: 24
 
-  maximal-optional:
+  maximal:
     if: ${{ success() || failure() }}
     needs: [minimal]
     uses: ./.github/workflows/docker.yml
