@@ -136,8 +136,10 @@ jobs:
           ["maximal"]
       free_disk_space: true
       incremental: false
-      docker_targets: "with-targets-optional"
-      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep -v ^_))'
+      docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
+      targets_pre: all-sage-local
+      targets: build doc-html
+      targets_optional: ptest
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   optional:
