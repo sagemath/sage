@@ -1308,11 +1308,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             except (AttributeError, TypeError):
                 from sage.rings.integer_ring import ZZ
                 return ZZ(len(self.basis()))
-        
+
         def rank(self):
             """
             Return the rank of ``self``.
-            
+
             Since there is a (distinguished) basis, the rank of ``self``
             is equal to the cardinality of the basis (which equals
             the :meth:`dimension` of ``self``).
@@ -1332,7 +1332,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 3
             """
             return self.dimension()
-            
+
         def _from_dict(self, d, coerce=True, remove_zeros=True):
             """
             Construct an element of ``self`` from the dictionary ``d``.
