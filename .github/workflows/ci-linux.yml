@@ -83,25 +83,6 @@ jobs:
     needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
-      # Only test systems with a usable system python (>= 3.9)
-      tox_system_factors: >-
-        ["ubuntu-jammy",
-         "ubuntu-lunar",
-         "ubuntu-mantic",
-         "debian-bookworm",
-         "debian-trixie",
-         "debian-sid",
-         "linuxmint-21.1",
-         "linuxmint-21.2",
-         "fedora-40",
-         "centos-stream-9-python3.9",
-         "almalinux-8-python3.9",
-         "gentoo-python3.10",
-         "gentoo-python3.11",
-         "archlinux-latest",
-         "opensuse-15.5-gcc_11-python3.11",
-         "opensuse-tumbleweed-python3.10",
-         "opensuse-tumbleweed"]
       tox_packages_factors: >-
         ["standard-sitepackages"]
       free_disk_space: true
@@ -146,7 +127,7 @@ jobs:
       # Calibrated for clogging the job pipeline until the "default" job has finished.
       max_parallel: 24
 
-  maximal:
+  maximal-optional:
     if: ${{ success() || failure() }}
     needs: [minimal]
     uses: ./.github/workflows/docker.yml
@@ -155,10 +136,8 @@ jobs:
           ["maximal"]
       free_disk_space: true
       incremental: false
-      docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
-      targets_pre: all-sage-local
-      targets: build doc-html
-      targets_optional: ptest
+      docker_targets: "with-targets-optional"
+      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep -v ^_))'
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   optional:
