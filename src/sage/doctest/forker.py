@@ -1872,6 +1872,7 @@ class DocTestDispatcher(SageObject):
 
         Test flaky files. This test should fail the first time and success the second time::
 
+            sage: # long time
             sage: with NTF(suffix='.py', mode='w+t') as f1:
             ....:     t = walltime()
             ....:     _ = f1.write(f"# sage.doctest: flaky\n'''\nsage: sleep(10 if walltime() < {t+1} else 0)\n'''")
@@ -1891,13 +1892,14 @@ class DocTestDispatcher(SageObject):
 
         Segmentation fault and abort are also handled::
 
+            sage: # long time
             sage: with NTF(suffix='.py', mode='w+t') as f1:
             ....:     t = walltime()
-            ....:     _ = f1.write(f"# sage.doctest: flaky\n'''\n"
+            ....:     _ = f1.write(f"# sage.doctest: flaky\n"
+            ....:                  f"'''\n"
             ....:                  f"sage: from cysignals.tests import unguarded_abort\n"
-            ....:                  f"sage: sleep(1.5r)\n"
-            ....:                  f"sage: if walltime() < {t+1}: unguarded_abort()\n"
-            ....:                  f"'''")
+            ....:                  f"sage: if walltime() < {t+0.5r}: sleep(1r); unguarded_abort()\n"
+            ....:                  f"'''\n")
             ....:     f1.flush()
             ....:     DC = DocTestController(DocTestDefaults(timeout=10),
             ....:                            [f1.name])
@@ -1910,10 +1912,11 @@ class DocTestDispatcher(SageObject):
             ....:     DD.parallel_dispatch()
                 sage -t ...
                 sage -t ...
-                    [3 tests, ...s wall]
+                    [2 tests, ...s wall]
 
         This test always fail, so even flaky can't help it::
 
+            sage: # long time
             sage: with NTF(suffix='.py', mode='w+t') as f1:
             ....:     _ = f1.write(f"# sage.doctest: flaky\n'''\nsage: sleep(10)\n'''")
             ....:     f1.flush()
@@ -1934,6 +1937,7 @@ class DocTestDispatcher(SageObject):
 
         Of course without flaky, the test should fail (since it timeouts the first time)::
 
+            sage: # long time
             sage: with NTF(suffix='.py', mode='w+t') as f1:
             ....:     t = walltime()
             ....:     _ = f1.write(f"'''\nsage: sleep(10 if walltime() < {t+1} else 0)\n'''")
@@ -1951,6 +1955,31 @@ class DocTestDispatcher(SageObject):
                 Timed out
             **********************************************************************
             ...
+
+        If it doesn't fail the first time, it must not be retried::
+
+            sage: from contextlib import redirect_stdout
+            sage: from io import StringIO
+            sage: with NTF(suffix='.py', mode='w+t') as f1, StringIO() as f, redirect_stdout(f):
+            ....:     t = walltime()
+            ....:     _ = f1.write(f"'''\nsage: sleep(0.5)\n'''")
+            ....:     f1.flush()
+            ....:     DC = DocTestController(DocTestDefaults(timeout=2),
+            ....:                            [f1.name])
+            ....:     DC.expand_files_into_sources()
+            ....:     DD = DocTestDispatcher(DC)
+            ....:     DR = DocTestReporter(DC)
+            ....:     DC.reporter = DR
+            ....:     DC.dispatcher = DD
+            ....:     DC.timer = Timer().start()
+            ....:     DD.parallel_dispatch()
+            ....:     s = f.getvalue()
+            sage: print(s)
+            sage -t ...
+            **********************************************************************
+            ...
+            sage: s.count("sage -t")
+            1
         """
         opt = self.controller.options
 
@@ -2048,7 +2077,7 @@ class DocTestDispatcher(SageObject):
                         if num_retries_left is not None:
                             w.num_retries_left = num_retries_left
                         elif 'flaky' in source.file_optional_tags:
-                            w.num_retries_left = 1
+                            w.num_retries_left = 2
                         heading = self.controller.reporter.report_head(w.source)
                         if not self.controller.options.only_errors:
                             w.messages = heading + "\n"
@@ -2116,7 +2145,7 @@ class DocTestDispatcher(SageObject):
                     # Similarly, process finished workers.
                     new_finished: list[DocTestWorker] = []
                     for w in finished:
-                        if w.num_retries_left > 0:
+                        if (w.killed or w.result[1].err) and w.num_retries_left > 0:
                             # in this case, the messages from w should be suppressed
                             # (better handling could be implemented later)
                             # should also check w.killed or w.result if want to only retry
