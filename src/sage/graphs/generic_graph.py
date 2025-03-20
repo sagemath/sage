@@ -21639,7 +21639,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return {key_to_vertex[key]: pos for key, pos in positions.items()}
 
-    def layout_tutte(self, external_face, external_face_pos=None, **options):
+    def layout_tutte(self, external_face=None, external_face_pos=None, **options):
         r"""
         Compute graph layout based on a Tutte embedding.
 
@@ -21647,7 +21647,8 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``external_face`` -- list; the external face to be made a polygon
+        - ``external_face`` -- list (default: ``None``); the external face to
+          be made a polygon
 
         - ``external_face_pos`` -- dictionary (default: ``None``); the positions
           of the vertices of the external face. If ``None``, will automatically
@@ -21680,42 +21681,42 @@ class GenericGraph(GenericGraph_pyx):
         from sage.matrix.constructor import zero_matrix
         from sage.rings.real_mpfr import RR
 
-        if len(external_face) < 3:
-            raise ValueError("External face must have at least 3 vertices")
+        if (external_face is not None) and (len(external_face) < 3):
+            raise ValueError("external face must have at least 3 vertices")
 
-        if (not self.is_planar()):
-            raise ValueError("Graph must be planar")
+        if not self.is_planar():
+            raise ValueError("graph must be planar")
 
-        C = self.subgraph(vertices=external_face)
-        if (not C.is_cycle(directed_cycle=False)):
-            raise ValueError("External face must be a cycle")
-        external_face_ordered = C.depth_first_search(start=external_face[0], ignore_direction=False)
+        if not self.vertex_connectivity(k=3):
+            raise ValueError("graph must be 3-connected")
 
-        from sage.graphs.connectivity import vertex_connectivity
-        if (not vertex_connectivity(self, k=3)):
-            raise ValueError("Graph must be 3-connected")
+        if external_face is None:
+            from sage.graphs.graph import Graph
+            H = Graph(self) # take a (undirected) copy H of the graph
+            u, v = next(H.edge_iterator(labels=False))  # take any edge (u, v) of H
+            H.delete_edge(u, v)  # remove edge (u, v) from H
+            external_face = H.shortest_path(v, u)
+            # Compute a shortest path from v to u in H minus (u, v)H = G.
+            # Cycle existence is guaranteed since G is 3-connected.
+        else:
+            C = self.subgraph(vertices=external_face)
+            if (not C.is_cycle(directed_cycle=False)):
+                raise ValueError("external face must be a cycle")
+            external_face = C.depth_first_search(start=external_face[0], ignore_direction=False)
 
-        from math import sin, cos, pi
         pos = dict()
-
         if external_face_pos is None:
-            external_face_length = len(external_face)
-            a0 = pi/external_face_length + pi/2
-            for i, vertex in enumerate(external_face_ordered):
-                ai = a0 + pi*2*i/external_face_length
-                pos[vertex] = (cos(ai), sin(ai))
+            pos = self._circle_embedding(external_face, return_dict=True)
         else:
             for v, p in external_face_pos.items():
                 pos[v] = p
 
-        V = self.vertices()
-        n = len(V)
+        n = self.order()
         M = zero_matrix(RR, n, n)
         b = zero_matrix(RR, n, 2)
 
-        vertices_to_indices = {v:I for I, v in enumerate(V)}
-        for i in range(n):
-            v = V[i]
+        vertices_to_indices = {v: i for i, v in enumerate(self)}
+        for i, v in enumerate(self):
             if v in pos:
                 M[i, i] = 1
                 b[i, 0] = pos[v][0]
@@ -21728,7 +21729,7 @@ class GenericGraph(GenericGraph_pyx):
                 M[i, i] = len(nv)
 
         sol = M.pseudoinverse()*b
-        return {V[i]:sol[i] for i in range(n)}
+        return dict(zip(self, sol))
 
     def _layout_bounding_box(self, pos):
         """
