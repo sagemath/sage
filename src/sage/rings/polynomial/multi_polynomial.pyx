@@ -2001,31 +2001,39 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``I`` -- an ideal of the polynomial ring in which ``self`` lives
+        - ``I`` -- an ideal of the polynomial ring in which ``self`` lives,
+          or a single polynomial
 
         OUTPUT: a multivariate polynomial representing the inverse of ``f`` modulo `I`
 
         EXAMPLES::
 
-           sage: R.<x1,x2> = QQ[]
-           sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
-           sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g                               # needs sage.libs.singular
-           1/16*x1 + 3/16
-           sage: (f*g).reduce(I)                                                        # needs sage.libs.singular
-           1
+            sage: R.<x1,x2> = QQ[]
+            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
+            sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g                               # needs sage.libs.singular
+            1/16*x1 + 3/16
+            sage: (f*g).reduce(I)                                                        # needs sage.libs.singular
+            1
 
         Test a non-invertible element::
 
-           sage: R.<x1,x2> = QQ[]
-           sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
-           sage: f = x1 + x2
-           sage: f.inverse_mod(I)                                                       # needs sage.libs.singular
-           Traceback (most recent call last):
-           ...
-           ArithmeticError: element is non-invertible
+            sage: R.<x1,x2> = QQ[]
+            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
+            sage: f = x1 + x2
+            sage: f.inverse_mod(I)                                                       # needs sage.libs.singular
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: element is non-invertible
+
+        TESTS::
+
+            sage: R.<x,y> = ZZ[]
+            sage: x.inverse_mod(x*y-1)
+            y
         """
         P = self.parent()
-        B = I.gens()
+        from sage.rings.ideal import Ideal_generic
+        B = I.gens() if isinstance(I, Ideal_generic) else (I,)
         try:
             XY = P.one().lift((self,) + tuple(B))
             return P(XY[0])
