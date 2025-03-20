@@ -148,7 +148,7 @@ import itertools
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.all import QQ, NN, Integer, ZZ, infinity
+from sage.all import QQ, NN, Integer, ZZ, infinity, RR
 from sage.algebras.flag import BuiltFlag, ExoticFlag, Pattern, inductive_generator, overlap_generator
 from sage.algebras.flag_algebras import FlagAlgebra, FlagAlgebraElement
 
@@ -387,6 +387,14 @@ def _remove_kernel(mat, factor=1024, threshold=1e-4):
     norm_factor = image_space * image_space.T
     mat_recover = image_space.T * norm_factor.inverse()
     return kernel_removed_mat, mat_recover
+
+def custom_psd_test(mat):
+    dim = mat.nrows()
+    for ii in range(dim):
+        pmin = mat[:ii+1, :ii+1]
+        if pmin.det()<0:
+            return False
+    return True
 
 class _CombinatorialTheory(Parent, UniqueRepresentation):
     def __init__(self, name):
@@ -1538,12 +1546,24 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 X_ii_small = recover_base * X_ii_raw * recover_base.T
                 
                 # verify semidefiniteness
-                if not X_ii_small.is_positive_semidefinite():
-                    self.fprint("Rounded X matrix "+ 
-                        "{} is not semidefinite: {}".format(
-                            block_index+plus_index, 
-                            min(X_ii_small.eigenvalues())
-                            ))
+                invalid = False
+                try:
+                    if not X_ii_small.is_positive_semidefinite():
+                        self.fprint("Rounded X matrix "+ 
+                            "{} is not semidefinite: {}".format(
+                                block_index+plus_index, 
+                                min(X_ii_small.eigenvalues())
+                                ))
+                        invalid = True
+                except:
+                    if not custom_psd_test(X_ii_small):
+                        self.fprint("Rounded X matrix "+ 
+                            "{} is not semidefinite: {}".format(
+                                block_index+plus_index, 
+                                min(X_ii_small.eigenvalues())
+                                ))
+                        invalid = True
+                if invalid:
                     return None
                 
                 # update slacks
@@ -1592,7 +1612,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 else:
                     X_ii += base.T * X_original[block_index + plus_index] * base
             block_index += len(table_constructor[params])
-            X_flats.append(vector(QQ, _flatten_matrix(X_ii.rows())))
+            X_flats.append(vector(_flatten_matrix(X_ii.rows())))
         return X_flats
     
     def _format_optimizer_output(self, table_constructor, mult=1, 
@@ -1656,7 +1676,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     "minstepfrac", "maxstepfrac", "minstepp", "minstepd", "usexzgap", 
                     "tweakgap", "affine", "printlevel", "perturbobj", "fastmode"]
         
-        if "precision" in params:
+        if "precision" in params and params["precision"]!=None:
             precision = params["precision"]
             if "axtol" not in params:
                 params["axtol"] = precision
@@ -3142,7 +3162,7 @@ class ExoticTheory(_CombinatorialTheory):
             self._size_combine = None
         else:
             self._size_combine = size_combine
-            self._sizes = [ii for ii in range(100) if size_combine(0, ii, 0) == ii]
+            self._sizes = [ii for ii in range(1000) if size_combine(0, ii, 0) == ii]
         self._generator = generator
         self._identifier = identifier
         self._sources = None
