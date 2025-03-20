@@ -47,7 +47,6 @@ from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMuta
 from sage.combinat.cluster_algebra_quiver.mutation_class import _principal_part, _digraph_mutate, _matrix_to_digraph, _dg_canonical_form, _mutation_class_iter, _digraph_to_dig6, _dig6_to_matrix
 from sage.combinat.cluster_algebra_quiver.mutation_type import _connected_mutation_type, _mutation_type_from_data, is_mutation_finite
 from sage.combinat.cluster_algebra_quiver.interact import cluster_interact
-from sage.geometry.fan import Fan
 from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
 from sage.graphs.views import EdgesView
@@ -2187,7 +2186,7 @@ class ClusterQuiver(SageObject):
         poly = (-1)**N * ((1 - q) * Reineke_submat.det()).numerator()
         return poly(q**2)  # replacing q by v**2
 
-    def d_vector_fan(self) -> Fan:
+    def d_vector_fan(self):
         r"""
         Return the d-vector fan associated with the quiver.
 
@@ -2225,6 +2224,8 @@ class ClusterQuiver(SageObject):
             ...
             ValueError: only makes sense for quivers of finite type
         """
+        from sage.geometry.fan import Fan
+
         if not self.is_finite():
             raise ValueError('only makes sense for quivers of finite type')
 
@@ -2235,7 +2236,7 @@ class ClusterQuiver(SageObject):
         return Fan([Cone(s.d_matrix().columns())
                     for s in seed.mutation_class()])
 
-    def g_vector_fan(self) -> Fan:
+    def g_vector_fan(self):
         r"""
         Return the g-vector fan associated with the quiver.
 
@@ -2275,6 +2276,7 @@ class ClusterQuiver(SageObject):
         """
         from .cluster_seed import ClusterSeed
         from sage.geometry.cone import Cone
+        from sage.geometry.fan import Fan
 
         if not (self.is_finite()):
             raise ValueError('only supported for quivers of finite type')
