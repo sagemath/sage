@@ -268,114 +268,6 @@
 .. |codespace-debian-bookworm-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bookworm-maximal%2Fdevcontainer.json
 
-.. |image-debian-trixie-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-minimal-with-system-packages
-
-.. |image-debian-trixie-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-minimal-configured
-
-.. |image-debian-trixie-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-minimal-with-targets-pre
-
-.. |image-debian-trixie-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-minimal-with-targets
-
-.. |image-debian-trixie-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-minimal-with-targets-optional
-
-.. |codespace-debian-trixie-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-trixie-minimal%2Fdevcontainer.json
-
-.. |image-debian-trixie-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-standard-with-system-packages
-
-.. |image-debian-trixie-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-standard-configured
-
-.. |image-debian-trixie-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-standard-with-targets-pre
-
-.. |image-debian-trixie-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-standard-with-targets
-
-.. |image-debian-trixie-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-standard-with-targets-optional
-
-.. |codespace-debian-trixie-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-trixie-standard%2Fdevcontainer.json
-
-.. |image-debian-trixie-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-maximal-with-system-packages
-
-.. |image-debian-trixie-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-maximal-configured
-
-.. |image-debian-trixie-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-maximal-with-targets-pre
-
-.. |image-debian-trixie-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-maximal-with-targets
-
-.. |image-debian-trixie-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-maximal-with-targets-optional
-
-.. |codespace-debian-trixie-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-trixie-maximal%2Fdevcontainer.json
-
-.. |image-debian-sid-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-minimal-with-system-packages
-
-.. |image-debian-sid-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-minimal-configured
-
-.. |image-debian-sid-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-minimal-with-targets-pre
-
-.. |image-debian-sid-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-minimal-with-targets
-
-.. |image-debian-sid-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-minimal-with-targets-optional
-
-.. |codespace-debian-sid-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-sid-minimal%2Fdevcontainer.json
-
-.. |image-debian-sid-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-standard-with-system-packages
-
-.. |image-debian-sid-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-standard-configured
-
-.. |image-debian-sid-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-standard-with-targets-pre
-
-.. |image-debian-sid-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-standard-with-targets
-
-.. |image-debian-sid-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-standard-with-targets-optional
-
-.. |codespace-debian-sid-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-sid-standard%2Fdevcontainer.json
-
-.. |image-debian-sid-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-maximal-with-system-packages
-
-.. |image-debian-sid-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-maximal-configured
-
-.. |image-debian-sid-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-maximal-with-targets-pre
-
-.. |image-debian-sid-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-maximal-with-targets
-
-.. |image-debian-sid-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-debian-sid-maximal-with-targets-optional
-
-.. |codespace-debian-sid-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-sid-maximal%2Fdevcontainer.json
-
 .. |image-linuxmint-21-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21-minimal-with-system-packages
 
@@ -1186,60 +1078,6 @@
 .. |codespace-almalinux-{9-python3.11}-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-{9-python3.11}-maximal%2Fdevcontainer.json
 
-.. |image-gentoo-python3.10-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-system-packages
-
-.. |image-gentoo-python3.10-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-configured
-
-.. |image-gentoo-python3.10-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets-pre
-
-.. |image-gentoo-python3.10-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets
-
-.. |image-gentoo-python3.10-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets-optional
-
-.. |codespace-gentoo-python3.10-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.10-minimal%2Fdevcontainer.json
-
-.. |image-gentoo-python3.10-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-with-system-packages
-
-.. |image-gentoo-python3.10-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-configured
-
-.. |image-gentoo-python3.10-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-with-targets-pre
-
-.. |image-gentoo-python3.10-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-with-targets
-
-.. |image-gentoo-python3.10-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-with-targets-optional
-
-.. |codespace-gentoo-python3.10-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.10-standard%2Fdevcontainer.json
-
-.. |image-gentoo-python3.10-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-maximal-with-system-packages
-
-.. |image-gentoo-python3.10-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-maximal-configured
-
-.. |image-gentoo-python3.10-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets-pre
-
-.. |image-gentoo-python3.10-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets
-
-.. |image-gentoo-python3.10-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-maximal-with-targets-optional
-
-.. |codespace-gentoo-python3.10-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.10-maximal%2Fdevcontainer.json
-
 .. |image-gentoo-python3.11-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
    :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-minimal-with-system-packages
 
@@ -1456,60 +1294,6 @@
 .. |codespace-opensuse-15.5-gcc_11-python3.11-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-15.5-gcc_11-python3.11-maximal%2Fdevcontainer.json
 
-.. |image-opensuse-tumbleweed-python3.10-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-system-packages
-
-.. |image-opensuse-tumbleweed-python3.10-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-configured
-
-.. |image-opensuse-tumbleweed-python3.10-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-targets-pre
-
-.. |image-opensuse-tumbleweed-python3.10-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-targets
-
-.. |image-opensuse-tumbleweed-python3.10-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-targets-optional
-
-.. |codespace-opensuse-tumbleweed-python3.10-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-python3.10-minimal%2Fdevcontainer.json
-
-.. |image-opensuse-tumbleweed-python3.10-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-system-packages
-
-.. |image-opensuse-tumbleweed-python3.10-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-configured
-
-.. |image-opensuse-tumbleweed-python3.10-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-targets-pre
-
-.. |image-opensuse-tumbleweed-python3.10-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-targets
-
-.. |image-opensuse-tumbleweed-python3.10-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-targets-optional
-
-.. |codespace-opensuse-tumbleweed-python3.10-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-python3.10-standard%2Fdevcontainer.json
-
-.. |image-opensuse-tumbleweed-python3.10-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-maximal-with-system-packages
-
-.. |image-opensuse-tumbleweed-python3.10-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-maximal-configured
-
-.. |image-opensuse-tumbleweed-python3.10-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-maximal-with-targets-pre
-
-.. |image-opensuse-tumbleweed-python3.10-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-maximal-with-targets
-
-.. |image-opensuse-tumbleweed-python3.10-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-maximal-with-targets-optional
-
-.. |codespace-opensuse-tumbleweed-python3.10-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-python3.10-maximal%2Fdevcontainer.json
-
 .. |image-opensuse-tumbleweed-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-system-packages
 
@@ -1626,28 +1410,6 @@
      - |codespace-debian-bookworm-standard|
    * -    ‑*maximal*
      - |image-debian-bookworm-maximal-with-system-packages| |image-debian-bookworm-maximal-with-targets-pre|
-     -
-   * - **debian**-trixie 
-       
-          ‑*minimal*
-     - |image-debian-trixie-minimal-with-system-packages| |image-debian-trixie-minimal-with-targets-pre| |image-debian-trixie-minimal-with-targets| |image-debian-trixie-minimal-with-targets-optional|
-     - |codespace-debian-trixie-minimal|
-   * -    ‑*standard*
-     - |image-debian-trixie-standard-with-system-packages| |image-debian-trixie-standard-with-targets-pre| |image-debian-trixie-standard-with-targets| |image-debian-trixie-standard-with-targets-optional|
-     - |codespace-debian-trixie-standard|
-   * -    ‑*maximal*
-     - |image-debian-trixie-maximal-with-system-packages| |image-debian-trixie-maximal-with-targets-pre|
-     -
-   * - **debian**-sid 
-       
-          ‑*minimal*
-     - |image-debian-sid-minimal-with-system-packages| |image-debian-sid-minimal-with-targets-pre| |image-debian-sid-minimal-with-targets| |image-debian-sid-minimal-with-targets-optional|
-     - |codespace-debian-sid-minimal|
-   * -    ‑*standard*
-     - |image-debian-sid-standard-with-system-packages| |image-debian-sid-standard-with-targets-pre| |image-debian-sid-standard-with-targets| |image-debian-sid-standard-with-targets-optional|
-     - |codespace-debian-sid-standard|
-   * -    ‑*maximal*
-     - |image-debian-sid-maximal-with-system-packages| |image-debian-sid-maximal-with-targets-pre|
      -
    * - **linuxmint**-21 
        
@@ -1814,17 +1576,6 @@
    * -    ‑*maximal*
      - |image-almalinux-{9-python3.11}-maximal-with-system-packages| |image-almalinux-{9-python3.11}-maximal-with-targets-pre|
      -
-   * - **gentoo**-python3.10 
-       
-          ‑*minimal*
-     - |image-gentoo-python3.10-minimal-with-system-packages| |image-gentoo-python3.10-minimal-with-targets-pre| |image-gentoo-python3.10-minimal-with-targets| |image-gentoo-python3.10-minimal-with-targets-optional|
-     - |codespace-gentoo-python3.10-minimal|
-   * -    ‑*standard*
-     - |image-gentoo-python3.10-standard-with-system-packages| |image-gentoo-python3.10-standard-with-targets-pre| |image-gentoo-python3.10-standard-with-targets| |image-gentoo-python3.10-standard-with-targets-optional|
-     - |codespace-gentoo-python3.10-standard|
-   * -    ‑*maximal*
-     - |image-gentoo-python3.10-maximal-with-system-packages| |image-gentoo-python3.10-maximal-with-targets-pre|
-     -
    * - **gentoo**-python3.11 
        
           ‑*minimal*
@@ -1868,17 +1619,6 @@
      - |codespace-opensuse-15.5-gcc_11-python3.11-standard|
    * -    ‑*maximal*
      - |image-opensuse-15.5-gcc_11-python3.11-maximal-with-system-packages| |image-opensuse-15.5-gcc_11-python3.11-maximal-with-targets-pre|
-     -
-   * - **opensuse**-tumbleweed-python3.10 
-       
-          ‑*minimal*
-     - |image-opensuse-tumbleweed-python3.10-minimal-with-system-packages| |image-opensuse-tumbleweed-python3.10-minimal-with-targets-pre| |image-opensuse-tumbleweed-python3.10-minimal-with-targets| |image-opensuse-tumbleweed-python3.10-minimal-with-targets-optional|
-     - |codespace-opensuse-tumbleweed-python3.10-minimal|
-   * -    ‑*standard*
-     - |image-opensuse-tumbleweed-python3.10-standard-with-system-packages| |image-opensuse-tumbleweed-python3.10-standard-with-targets-pre| |image-opensuse-tumbleweed-python3.10-standard-with-targets| |image-opensuse-tumbleweed-python3.10-standard-with-targets-optional|
-     - |codespace-opensuse-tumbleweed-python3.10-standard|
-   * -    ‑*maximal*
-     - |image-opensuse-tumbleweed-python3.10-maximal-with-system-packages| |image-opensuse-tumbleweed-python3.10-maximal-with-targets-pre|
      -
    * - **opensuse**-tumbleweed 
        
