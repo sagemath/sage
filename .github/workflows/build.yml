@@ -311,6 +311,8 @@ jobs:
 
       - name: Generate Dockerfile
         # From docker.yml
+        # tox -e <environment name> command runs commands in `tox.ini`,
+        # in particular the script `.ci/write-dockerfile.sh`, to generate `Dockerfile`.
         run: |
           tox -e ${{ env.TOX_ENV }}
           cp .tox/${{ env.TOX_ENV }}/Dockerfile .

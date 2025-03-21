@@ -16220,21 +16220,25 @@ class GenericGraph(GenericGraph_pyx):
             {0: 1/3, 1: 1/3, 2: 0, 3: 1/3, 4: 1/3, 5: 1/3,
              6: 1/3, 7: 1/3, 8: 0, 9: 1/3, 10: 1/3, 11: 0}
 
-            sage: (graphs.FruchtGraph()).clustering_coeff(weight=True)                  # needs networkx
+            sage: # needs networkx
+            sage: import numpy
+            sage: if int(numpy.version.short_version[0]) > 1:
+            ....:     numpy.set_printoptions(legacy="1.25")
+            sage: graphs.FruchtGraph().clustering_coeff(weight=True)
             {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0,
              3: 0.3333333333333333, 4: 0.3333333333333333,
              5: 0.3333333333333333, 6: 0.3333333333333333,
              7: 0.3333333333333333, 8: 0, 9: 0.3333333333333333,
              10: 0.3333333333333333, 11: 0}
 
-            sage: (graphs.FruchtGraph()).clustering_coeff(nodes=[0,1,2])
+            sage: graphs.FruchtGraph().clustering_coeff(nodes=[0,1,2])
             {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0.0}
 
-            sage: (graphs.FruchtGraph()).clustering_coeff(nodes=[0,1,2],                # needs networkx
+            sage: graphs.FruchtGraph().clustering_coeff(nodes=[0,1,2],                # needs networkx
             ....:                                         weight=True)
             {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0}
 
-            sage: (graphs.GridGraph([5,5])).clustering_coeff(nodes=[(0,0),(0,1),(2,2)])
+            sage: graphs.GridGraph([5,5]).clustering_coeff(nodes=[(0,0),(0,1),(2,2)])
             {(0, 0): 0.0, (0, 1): 0.0, (2, 2): 0.0}
 
         TESTS:
