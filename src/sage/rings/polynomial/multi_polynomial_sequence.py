@@ -870,7 +870,7 @@ class PolynomialSequence_generic(Sequence_generic):
           the rows of the Macaulay matrix correspond to all possible products
           between a polynomial from the sequence and monomials of the polynomial
           ring up to degree ``degree``;
-          when ``True``, all polynomials in the sequence must be homogeneous.
+          when ``True``, all polynomials in the sequence must be homogeneous, and
           the rows of the Macaulay matrix then represent all possible products
           between a polynomial in the sequence and a monomial of the polynomial
           ring such that the resulting product is homogeneous of degree
@@ -900,18 +900,18 @@ class PolynomialSequence_generic(Sequence_generic):
           sequence are included
 
         - ``reverse_column_order`` -- boolean (default: ``False``);
-          when ``False``, by default the order for the columns is the same
+          when ``False``, by default, the order of the columns is the same
           as the order of the polynomial ring;
-          when ``True``, the order of the rows is the reverse of the order
-          of the monomial of the polynomial ring
+          when ``True``, the order of the columns is the reverse of the order
+          of the polynomial ring
 
         - ``row_order`` -- str (default: ``None``);
-          determines the ordering of the columns in the matrix;
+          determines the ordering of the rows in the matrix;
           when ``None`` (or ``"POT"``), a **position over term** (POT) order is used:
-          columns are first ordered by the index of the corresponding polynomial
+          rows are first ordered by the index of the corresponding polynomial
           in the sequence, and then by the (multiplicative) monomials;
-          when set to ``"TOP"``, the columns follow a **term over position**
-          (TOP) order: columns are firt ordered by the (multiplicative) monomials
+          when set to ``"TOP"``, the rows follow a **term over position**
+          (TOP) order: rows are first ordered by the (multiplicative) monomials
           and then by the index of the corresponding polynomial
           in the sequence
 
@@ -1014,6 +1014,17 @@ class PolynomialSequence_generic(Sequence_generic):
             ...
             ValueError: the variables must be in the polynomial ring
 
+        sage: Sequence([y*z + z^2 - 1,x*y - z^2 - x ]).macaulay_matrix(1, row_order="increasing")
+        Traceback (most recent call last):
+        ...
+        ValueError: the argument of ``row_order`` must be ``None``, "TOP" or "POT"
+
+        sage: R.<x,y,z> = PolynomialRing(GF(7),order='degrevlex(2),neglex(1)')
+        sage: Sequence([y*z + z^2 - 1,x*y - z^2 - x ]).macaulay_matrix(1, variables=[x,z])
+        Traceback (most recent call last):
+        ...
+        ValueError: impossible to use the original term order (most likely because it was a block order). Please specify the term order for the subring
+
         REFERENCES:
 
         [Mac1902]_, Chapter 1 of [Mac1916]_
@@ -1032,7 +1043,7 @@ class PolynomialSequence_generic(Sequence_generic):
                 if not (self[i].is_homogeneous()):
                     raise ValueError('all the polynomials of the sequence must be homogeneous')
         if not (row_order is None or row_order == "TOP" or row_order == "POT"):
-            raise ValueError('the argument of ``row_order`` must be ``None``, "TOP" or "POT" ')
+            raise ValueError('the argument of ``row_order`` must be ``None``, "TOP" or "POT"')
 
         # handle subset of variables
         S = self.ring()
@@ -1112,7 +1123,7 @@ class PolynomialSequence_generic(Sequence_generic):
                 R_monomials_useful.sort()
                 for mon in R_monomials_useful:
                     row_indices += [(mon, i) for i in range(m)
-                                    if mon.degree() <= target_degree - self[i].degree() + 1]
+                                    if mon.degree() + self[i].degree() <= target_degree]
 
         # compute sorted list of monomials that index the columns
         if remove_zero:
