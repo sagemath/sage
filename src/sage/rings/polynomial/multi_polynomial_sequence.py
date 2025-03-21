@@ -1105,7 +1105,7 @@ class PolynomialSequence_generic(Sequence_generic):
                     R_monomials_useful += R_monomials_of_degree[i]
                 R_monomials_useful.sort()
                 for mon in R_monomials_useful:
-                    row_indices += [(mon, i) for i in range(m) if self[i].degree() + mon.degree()==target_degree]
+                    row_indices += [(mon, i) for i in range(m) if self[i].degree() + mon.degree() == target_degree]
         else:
             # order the row with POT (or None)
             if row_order is None or row_order == "POT":
