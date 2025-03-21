@@ -870,7 +870,7 @@ class PolynomialSequence_generic(Sequence_generic):
           the rows of the Macaulay matrix correspond to all possible products
           between a polynomial from the sequence and monomials of the polynomial
           ring up to degree ``degree``;
-          when ``True``, all polynomials in the sequence must be homogeneous.
+          when ``True``, all polynomials in the sequence must be homogeneous, and
           the rows of the Macaulay matrix then represent all possible products
           between a polynomial in the sequence and a monomial of the polynomial
           ring such that the resulting product is homogeneous of degree
