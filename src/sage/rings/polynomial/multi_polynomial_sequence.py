@@ -1014,6 +1014,17 @@ class PolynomialSequence_generic(Sequence_generic):
             ...
             ValueError: the variables must be in the polynomial ring
 
+        sage: Sequence([y*z + z^2 - 1,x*y - z^2 - x ]).macaulay_matrix(1, row_order="increasing")
+        Traceback (most recent call last):
+        ...
+        ValueError: the argument of ``row_order`` must be ``None``, "TOP" or "POT"
+
+        sage: R.<x,y,z> = PolynomialRing(GF(7),order='degrevlex(2),neglex(1)')
+        sage: Sequence([y*z + z^2 - 1,x*y - z^2 - x ]).macaulay_matrix(1, variables=[x,z])
+        Traceback (most recent call last):
+        ...
+        ValueError: impossible to use the original term order (most likely because it was a block order). Please specify the term order for the subring
+
         REFERENCES:
 
         [Mac1902]_, Chapter 1 of [Mac1916]_
