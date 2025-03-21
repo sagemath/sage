@@ -68,7 +68,6 @@ from sage.structure.factorization import Factorization
 from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singular_repr
 from sage.structure.sequence import Sequence
 from .multi_polynomial import MPolynomial, is_MPolynomial
-from sage.categories.morphism import Morphism
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.superseded import deprecated_function_alias
 from sage.rings.rational_field import QQ
@@ -467,6 +466,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: repr(-I*y - x^2)  # indirect doctest
             '-x^2 + (-I)*y'
         """
+        if self.is_gen():
+            return self.parent().variable_names()[self.degrees().nonzero_positions()[0]]
         try:
             key = self.parent().term_order().sortkey
         except AttributeError:
