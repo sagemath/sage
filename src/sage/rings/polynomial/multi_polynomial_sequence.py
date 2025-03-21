@@ -1043,7 +1043,7 @@ class PolynomialSequence_generic(Sequence_generic):
                 if not (self[i].is_homogeneous()):
                     raise ValueError('all the polynomials of the sequence must be homogeneous')
         if not (row_order is None or row_order == "TOP" or row_order == "POT"):
-            raise ValueError('the argument of ``row_order`` must be ``None``, "TOP" or "POT" ')
+            raise ValueError('the argument of ``row_order`` must be ``None``, "TOP" or "POT"')
 
         # handle subset of variables
         S = self.ring()
