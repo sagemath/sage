@@ -1120,7 +1120,7 @@ class PolynomialSequence_generic(Sequence_generic):
                 R_monomials_usefull.sort()
                 for mon in R_monomials_usefull:
                     row_indices += [(mon, i) for i in range(m)
-                                    if mon.degree() <= target_degree - self[i].degree() + 1]
+                                    if mon.degree() + self[i].degree() <= target_degree]
 
         # compute sorted list of monomials that index the columns
         if remove_zero:
