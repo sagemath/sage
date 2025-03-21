@@ -28,8 +28,8 @@ from itertools import product
 from sage.categories.fields import Fields
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.padics.factory import Zp
-from sage.rings.padics.witt_vector import WittVector
+from sage.rings.padics.factory import Zp, Zq
+from sage.rings.padics.witt_vector import WittVector, WittVector_phantom
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -38,29 +38,41 @@ from sage.sets.primes import Primes
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-def _fast_char_p_power(x, n, p=None):
+def fast_char_p_power(x, n, p=None):
     r"""
-    Raise `x^n` in characteristic `p`.
+    Return `x^n` assuming that `x` lives in a ring of
+    characteristic `p`.
 
     If `x` is not an element of a ring of characteristic `p`,
     this throws an error.
 
-    If `x` is an element of GF(p^k), this is already fast.
-    However, is x is a polynomial, this seems to be slow?
-
     EXAMPLES::
 
+        sage: from sage.rings.padics.witt_vector_ring import fast_char_p_power
         sage: t = GF(1913)(33)
-        sage: sage.rings.padics.witt_vector_ring._fast_char_p_power(t, 77)
+        sage: fast_char_p_power(t, 77)
         1371
-    """
-    if n not in ZZ:
-        raise ValueError(f'Exponent {n} is not an integer')
-    if n == 0 or x == 1:
-        return x.parent().one()
-    if x.parent().characteristic() not in Primes():
-        raise ValueError(f'{x} is not in a ring of prime characteristic')
 
+    ::
+
+        sage: K.<t> = GF(5^3)
+        sage: fast_char_p_power(t, 385)
+        4*t^2 + 1
+        sage: t^385
+        4*t^2 + 1
+
+    ::
+
+        sage: A.<x> = K[]
+        sage: fast_char_p_power(x + 1, 10)
+        x^10 + 2*x^5 + 1
+
+    ::
+
+        sage: B.<u,v> = K[]
+        sage: fast_char_p_power(u + v, 1250)
+        u^1250 + 2*u^625*v^625 + v^1250
+    """
     x_is_Polynomial = isinstance(x, Polynomial)
     x_is_MPolynomial = isinstance(x, MPolynomial)
 
@@ -69,7 +81,7 @@ def _fast_char_p_power(x, n, p=None):
     if x.is_gen():
         return x**n
     if n < 0:
-        x = x**-1  # This may throw an error.
+        x = ~x
         n = -n
 
     P = x.parent()
@@ -77,7 +89,7 @@ def _fast_char_p_power(x, n, p=None):
         p = P.characteristic()
     base_p_digits = ZZ(n).digits(base=p)
 
-    x_to_the_n = 1
+    xn = 1
 
     for p_exp, digit in enumerate(base_p_digits):
         if digit == 0:
@@ -86,7 +98,7 @@ def _fast_char_p_power(x, n, p=None):
         term_dict = {}
         for e_int_or_tuple, c in inner_term.dict().items():
             power = p**p_exp
-            new_c = _fast_char_p_power(c, power)
+            new_c = fast_char_p_power(c, power)
             new_e_tuple = None
             if x_is_Polynomial:  # Then the dict keys are ints
                 new_e_tuple = e_int_or_tuple * power
@@ -94,9 +106,9 @@ def _fast_char_p_power(x, n, p=None):
                 new_e_tuple = e_int_or_tuple.emul(power)
             term_dict[new_e_tuple] = new_c
         term = P(term_dict)
-        x_to_the_n *= term
+        xn *= term
 
-    return x_to_the_n
+    return xn
 
 
 class WittVectorRing(CommutativeRing, UniqueRepresentation):
@@ -265,9 +277,11 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         if algorithm == 'standard':
             self._generate_sum_and_product_polynomials(base_ring)
-
         elif algorithm == 'finotti':
             self._generate_binomial_table()
+        elif algorithm == 'Zq_isomorphism':
+            self._padic_ring = Zq(base_ring.cardinality(), prec, type='fixed-mod',
+                                  modulus=base_ring.modulus(), names=['z'])
 
         CommutativeRing.__init__(self, base_ring)
 
@@ -445,8 +459,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             for t in range(1, k+1):
                 for i in range(1, p**t):
                     scriptN[t].append(self._binomial_table[t][i]
-                                      * _fast_char_p_power(x, i)
-                                      * _fast_char_p_power(y, p**t - i))
+                                      * fast_char_p_power(x, i)
+                                      * fast_char_p_power(y, p**t - i))
             indexN = [p**i - 1 for i in range(k+1)]
             for t in range(2, k+1):
                 for i in range(1, t):
@@ -642,5 +656,15 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             (3, 0)
         """
         if x not in self.base():
-            raise Exception(f'{x} not in {self.base()}')
+            raise TypeError(f'{x} not in {self.base()}')
         return self((x,) + tuple(0 for _ in range(self._prec-1)))
+
+
+class WittVectorRing_phantom(WittVectorRing):
+    Element = WittVector_phantom
+
+    def __init__(self, base_ring, prec, p, mod, lift):
+        algorithm = "phantom"
+        WittVectorRing.__init__(self, base_ring, prec, p, algorithm)
+        self._mod = mod
+        self._lift = lift

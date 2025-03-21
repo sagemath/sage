@@ -7,7 +7,6 @@ AUTHORS:
 
 - Jacob Dennerlein (2022-11-28): initial version
 - Rubén Muñoz-\-Bertrand (2025-02-13): major refactoring and clean-up
-
 """
 
 # ****************************************************************************
@@ -28,6 +27,60 @@ from sage.rings.padics.factory import Zp, Zq
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import op_EQ, op_NE
+
+
+def padic_to_vector(x, F):
+    r"""
+    Return the coordinates in `W(F)` of `x \in \mathbb Z_q`.
+
+    INPUT:
+
+    - ``x`` -- an element in an unramified `p`-adic ring
+
+    - ``F`` -- (a field isomorphic to) the residue field
+
+    EXAMPLES::
+
+        sage: from sage.rings.padics.witt_vector import padic_to_vector
+        sage: R.<a> = ZqFM(5^2, prec=5)
+        sage: F.<b> = GF(5^2)
+        sage: x = (3*a + 4)*5 + (2*a + 1)*5^2 + 5^4
+        sage: padic_to_vector(x, F)
+        [0, 2*b + 2, 2*b + 3, 4*b, 2*b + 2]
+    """
+    prec = x.precision_absolute()
+    val = x.valuation()
+    if x == 0:
+        return prec * [F.zero()]
+    p = x.parent().prime()
+    E = list(x.teichmuller_expansion())
+    return [F(E[i].residue().polynomial()) ** (p**i) for i in range(prec)]
+
+
+def vector_to_padic(v, R):
+    r"""
+    Return the element `x \in R` corresponding to the element
+    of `W(\mathbb F_q)` whose coordinates are `v`.
+
+    INPUT:
+
+    - ``v`` -- a tuple of elements in a finite field
+
+    - ``R`` -- (a ring isomorphic to) the corresponding `p`-adic ring
+
+    EXAMPLES::
+
+        sage: from sage.rings.padics.witt_vector import vector_to_padic
+        sage: R.<a> = ZqFM(5^2, prec=5)
+        sage: F.<b> = GF(5^2)
+        sage: v = [F(0), 2*b + 2, 2*b + 3, 4*b, 2*b + 2]
+        sage: vector_to_padic(v, R)
+        (3*a + 4)*5 + (2*a + 1)*5^2 + 5^4
+    """
+    p = R.prime()
+    F = R.residue_field()
+    v = [F(c.polynomial()) for c in v]
+    return sum(R.teichmuller(v[i].nth_root(p**i)) << i for i in range(len(v)))
 
 
 class WittVector(CommutativeRingElement):
@@ -177,27 +230,28 @@ class WittVector(CommutativeRingElement):
             # note here this is tuple addition, i.e. concatenation
             sum_vec = tuple(s[i](*(self._vec + other.vec()))
                             for i in range(self._prec))
+
         elif alg == 'finotti':
             x = self._vec
             y = other.vec()
             prec = P.precision()
-
             G = []
             for n in range(prec):
                 G_n = [x[n], y[n]]
                 for i in range(n):
                     G_n.append(P._eta_bar(G[i], n - i))
                 G.append(G_n)
-            sum_vec = tuple(sum(G[i]) for i in range(prec))
+            sum_vec = tuple(sum(G[i]) for i in range(self._prec))
+
         elif alg == 'Zq_isomorphism':
-            x = self._vector_to_series(self._vec)
-            y = self._vector_to_series(other.vec())
-            sum_vec = self._series_to_vector(x + y)
+            x = vector_to_padic(self._vec, P._padic_ring)
+            y = vector_to_padic(other.vec(), P._padic_ring)
+            sum_vec = padic_to_vector(x + y, P.base_ring())
+
         elif alg == 'p_invertible':
             p = P.prime()  # we know p is a unit in this case!
             x = self._vec
             y = other.vec()
-
             sum_vec = [x[0] + y[0]]
             for n in range(1, self._prec):
                 next_sum = x[n] + y[n] + \
@@ -232,36 +286,38 @@ class WittVector(CommutativeRingElement):
             return other
 
         alg = P.algorithm()
-        from sage.rings.padics.witt_vector_ring import _fast_char_p_power as _fcppow
         if alg == 'standard':
             p = P.prod_polynomials()
             # note here this is tuple addition, i.e. concatenation
             prod_vec = tuple(p[i](*(self._vec + other.vec()))
                              for i in range(self._prec))
+
         elif alg == 'finotti':
+            from sage.rings.padics.witt_vector_ring import fast_char_p_power
             x = self._vec
             y = other.vec()
             prec = P.precision()
             p = P.prime()
-
             G = [[x[0] * y[0]]]
             for n in range(1, prec):
-                G_n = [_fcppow(x[0], p**n) * y[n], _fcppow(y[0], p**n) * x[n]]
-                G_n.extend(_fcppow(x[i], p**(n - i)) * _fcppow(y[n - i], p**i)
+                G_n = [fast_char_p_power(x[0], p**n) * y[n],
+                       fast_char_p_power(y[0], p**n) * x[n]]
+                G_n.extend(fast_char_p_power(x[i], p**(n - i)) * fast_char_p_power(y[n - i], p**i)
                            for i in range(1, n))
                 for i in range(n):
                     G_n.append(P._eta_bar(G[i], n - i))
                 G.append(G_n)
             prod_vec = tuple(sum(G[i]) for i in range(prec))
+
         elif alg == 'Zq_isomorphism':
-            x = self._vector_to_series(self._vec)
-            y = self._vector_to_series(other.vec())
-            prod_vec = self._series_to_vector(x * y)
+            x = vector_to_padic(self._vec, P._padic_ring)
+            y = vector_to_padic(other.vec(), P._padic_ring)
+            prod_vec = padic_to_vector(x * y, P.base_ring())
+
         elif alg == 'p_invertible':
             p = P.prime()  # we know p is a unit in this case!
             x = self._vec
             y = other.vec()
-
             prod_vec = [x[0] * y[0]]
             for n in range(1, self._prec):
                 next_prod = (
@@ -373,8 +429,8 @@ class WittVector(CommutativeRingElement):
         R = parent.base()
 
         if p == R.characteristic():
-            self._int_to_vector_char_p(k, R)
-            return
+            Z = Zp(p, prec=self._prec + 1, type='fixed-mod')
+            self._vec = padic_to_vector(Z(k), R)
 
         should_negate = False
         if k < 0:
@@ -401,75 +457,6 @@ class WittVector(CommutativeRingElement):
 
         self._vec = tuple([R(x) for x in vec_k])
 
-    def _int_to_vector_char_p(self, k, R):
-        """
-        Return the image of ``k`` in ``self`` with coefficients in ``parent``
-        which has characteristic `p`.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(13), p=13, prec=3)
-            sage: W(11)
-            (11, 7, 4)
-        """
-        p = R.characteristic()
-        Z = Zp(p, prec=self._prec+1, type='fixed-mod')
-        F = GF(p)
-
-        series = Z(k)
-        vec_k = []
-        for _ in range(self._prec):
-            # Probably slightly faster to do "series % p,"
-            # but this way, temp is in F_p
-            temp = F(series)
-            vec_k.append(R(temp))  # make sure elements of vector are in base
-            series = (series - Z.teichmuller(temp)) // p
-
-        self._vec = tuple(vec_k)
-
-    def _series_to_vector(self, series):
-        r"""
-        Computes the canonical bijection from `\mathbb Z_q` to
-        `W(\mathbb F_q)`.
-        """
-        P = self.parent()
-        F = P.base()  # known to be finite
-        R = Zq(F.cardinality(), prec=P.precision(), type='fixed-mod',
-               modulus=F.polynomial(), names=['z'])
-        K = R.residue_field()
-        p = P.prime()
-
-        series = R(series)
-        witt_vector = []
-        for i in range(P.precision()):
-            temp = K(series)
-            elem = temp.polynomial()(F.gen())  # hack to convert to F
-            # (K != F for some reason)
-            witt_vector.append(elem**(p**i))
-            series = (series - R.teichmuller(temp)) // p
-        return witt_vector
-
-    def _vector_to_series(self, vec):
-        r"""
-        Computes the canonical bijection from `W(\mathbb F_q)` to
-        `\mathbb Z_q`.
-        """
-        P = self.parent()
-        F = P.base()
-        R = Zq(F.cardinality(), prec=P.precision(), type='fixed-mod',
-               modulus=F.polynomial(), names=['z'])
-        K = R.residue_field()
-        p = P.prime()
-
-        series = R.zero()
-        for i in range(P.precision()):
-            temp = vec[i].nth_root(p**i)
-            elem = temp.polynomial()(K.gen())
-            # hack to convert to K (F != K for some reason)
-
-            series += p**i * R.teichmuller(elem)
-        return series
-
     def vec(self):
         """
         Return the underlying tuple of the truncated Witt vector.
@@ -482,3 +469,94 @@ class WittVector(CommutativeRingElement):
             (1, 2, 3)
         """
         return self._vec
+
+
+class WittVector_phantom(WittVector):
+    def __init__(self, parent, vec=None, phantom=None):
+        self._prec = prec = parent.precision()
+        R = parent.base_ring()
+        p = parent._prime
+        mod = parent._mod
+        lift = parent._lift
+        if phantom is not None:
+            self._phantom = phantom
+            self._vec = [mod(phantom[0])]
+            self._powers = [phantom[0]]
+        elif vec is None:
+            zero = R.zero()
+            zerolift = lift(zero)
+            self._vec = prec * [zero]
+            self._phantom = prec * [zero]
+        elif isinstance(vec, WittVector_phantom):
+            self._vec = vec._vec
+            self._phantom = vec._phantom
+            self._powers = vec._powers
+        elif isinstance(vec, int) or isinstance(vec, Integer):
+            y = lift(vec)
+            self._vec = [mod(y)]
+            self._powers = [y]
+            self._phantom = prec * [y]
+        elif isinstance(vec, tuple) or isinstance(vec, list):
+            if len(vec) < self._prec:
+                raise ValueError(f'{vec} has not the correct length. '
+                                 'Expected length has to be at least '
+                                 f'{self._prec}.')
+            # We compute the phantom components
+            self._vec = [R(v) for v in vec]
+            x = [lift(v) for v in self._vec]
+            self._phantom = [x[0]]
+            for n in range(1, prec):
+                for i in range(n):
+                    x[i] = x[i] ** p
+                self._phantom.append(sum(x[i] * p**i for i in range(n+1)))
+            self._powers = None
+        else:
+            raise ValueError(f'{vec} cannot be interpreted as a Witt vector.')
+        CommutativeRingElement.__init__(self, parent)
+
+    def _compute_vector(self, prec=None):
+        maxprec = self._prec
+        if prec is None:
+            prec = maxprec
+        else:
+            prec = min(prec, maxprec)
+        phantom = self._phantom
+        powers = self._powers
+        vec = self._vec
+        p = self.parent()._prime
+        mod = self.parent()._mod
+        for n in range(len(vec), prec):
+            for i in range(n):
+                powers[i] = powers[i] ** p
+            c = (phantom[n] - sum(powers[i] * p**i for i in range(n))) // p**n
+            self._vec.append(mod(c))
+            self._powers.append(c)
+
+    def __repr__(self):
+        self._compute_vector()
+        return str(tuple(self._vec))
+
+    def phantom(self):
+        return self._phantom
+
+    def __getitem__(self, i):
+        if i < 0 or i >= self._prec:
+            raise IndexError
+        self._compute_vector(i+1)
+        return self._vec[i]
+
+    def _add_(self, other):
+        phantom = [self._phantom[i] + other._phantom[i] for i in range(self._prec)]
+        return self.__class__(self.parent(), phantom=phantom)
+
+    def _sub_(self, other):
+        phantom = [self._phantom[i] - other._phantom[i] for i in range(self._prec)]
+        return self.__class__(self.parent(), phantom=phantom)
+
+    def _neg_(self):
+        phantom = [-v for v in self._phantom]
+        return self.__class__(self.parent(), phantom=phantom)
+
+    def _mul_(self, other):
+        phantom = [self._phantom[i] * other._phantom[i] for i in range(self._prec)]
+        return self.__class__(self.parent(), phantom=phantom)
