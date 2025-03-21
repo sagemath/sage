@@ -900,10 +900,10 @@ class PolynomialSequence_generic(Sequence_generic):
           sequence are included
 
         - ``reverse_column_order`` -- boolean (default: ``False``);
-          when ``False``, by default the order for the columns is the same
+          when ``False``, by default, the order of the columns is the same
           as the order of the polynomial ring;
-          when ``True``, the order of the rows is the reverse of the order
-          of the monomial of the polynomial ring
+          when ``True``, the order of the columns is the reverse of the order
+          of the polynomial ring
 
         - ``row_order`` -- str (default: ``None``);
           determines the ordering of the columns in the matrix;
