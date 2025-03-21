@@ -1080,6 +1080,16 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f = 1/(1-t)
             sage: f.truncate_neg(15)
             t^15 + t^16 + t^17 + t^18 + t^19 + O(t^20)
+
+        TESTS:
+
+        Check that :issue:`39710` is fixed::
+
+            sage: S.<t> = LaurentSeriesRing(QQ)
+            sage: (t+t^2).truncate_neg(-1)
+            t + t^2
+            sage: (t+t^2).truncate_neg(-2)
+            t + t^2
         """
         return type(self)(self._parent, self.__u >> (n - self.__n), n)
 
