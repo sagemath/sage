@@ -1461,7 +1461,6 @@ class PolynomialSequence_generic(Sequence_generic):
             return max(f.degree() for f in self)
         except ValueError:
             return -1  # empty sequence
-    
     def minimal_degree(self):
         """
         Return the minimal degree of any polynomial in this sequence.
