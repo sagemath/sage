@@ -906,12 +906,12 @@ class PolynomialSequence_generic(Sequence_generic):
           of the polynomial ring
 
         - ``row_order`` -- str (default: ``None``);
-          determines the ordering of the columns in the matrix;
+          determines the ordering of the rows in the matrix;
           when ``None`` (or ``"POT"``), a **position over term** (POT) order is used:
-          columns are first ordered by the index of the corresponding polynomial
+          rows are first ordered by the index of the corresponding polynomial
           in the sequence, and then by the (multiplicative) monomials;
-          when set to ``"TOP"``, the columns follow a **term over position**
-          (TOP) order: columns are firt ordered by the (multiplicative) monomials
+          when set to ``"TOP"``, the rows follow a **term over position**
+          (TOP) order: rows are first ordered by the (multiplicative) monomials
           and then by the index of the corresponding polynomial
           in the sequence
 
