@@ -1082,32 +1082,35 @@ class PolynomialSequence_generic(Sequence_generic):
         row_indices = []
         if homogeneous:
             # order the rows with POT (or None)
-            if row_order is None or row_order == "TOP":
+            if row_order is None or row_order == "POT":
                 for i in range(m):
                     deg = target_degree - self[i].degree()
                     R_monomials_of_degree[deg].sort()
                     row_indices += [(mon, i) for mon in R_monomials_of_degree[deg]]
             # order the rows with TOP
             else:
-                R_monomials_of_degree[deg].sort()
-                for mon in R_monomials_of_degree[deg]:
-                    row_indices += [(mon, i) for i in range(m)]
+                R_monomials_useful=[]
+                for i in range(degree,target_degree-self.minimal_degree()+1):
+                    R_monomials_useful+=R_monomials_of_degree[i]
+                R_monomials_useful.sort()
+                for mon in R_monomials_useful:
+                    row_indices += [(mon, i) for i in range(m) if self[i].degree() + mon.degree()==target_degree]
         else:
             # order the row with POT (or None)
-            if row_order is None or row_order == "TOP":
+            if row_order is None or row_order == "POT":
                 for i in range(m):
-                    R_monomials_usefull = []
+                    R_monomials_useful = []
                     for deg in range(target_degree - self[i].degree() + 1):
-                        R_monomials_usefull += R_monomials_of_degree[deg]
-                    R_monomials_usefull.sort()
-                    row_indices += [(mon, i) for mon in R_monomials_usefull]
+                        R_monomials_useful += R_monomials_of_degree[deg]
+                    R_monomials_useful.sort()
+                    row_indices += [(mon, i) for mon in R_monomials_useful]
             # order the row with TOP
             else:
-                R_monomials_usefull = []
+                R_monomials_useful = []
                 for deg in range(max_deg + 1):
-                    R_monomials_usefull += R_monomials_of_degree[deg]
-                R_monomials_usefull.sort()
-                for mon in R_monomials_usefull:
+                    R_monomials_useful += R_monomials_of_degree[deg]
+                R_monomials_useful.sort()
+                for mon in R_monomials_useful:
                     row_indices += [(mon, i) for i in range(m)
                                     if mon.degree() <= target_degree - self[i].degree() + 1]
 
@@ -1445,6 +1448,26 @@ class PolynomialSequence_generic(Sequence_generic):
         """
         try:
             return max(f.degree() for f in self)
+        except ValueError:
+            return -1  # empty sequence
+    
+    def minimal_degree(self):
+        """
+        Return the minimal degree of any polynomial in this sequence.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = PolynomialRing(GF(7))
+            sage: F = Sequence([x*y + x, x])
+            sage: F.minimal_degree()
+            1
+            sage: P.<x,y,z> = PolynomialRing(GF(7))
+            sage: F = Sequence([], universe=P)
+            sage: F.minimal_degree()
+            -1
+        """
+        try:
+            return min(f.degree() for f in self)
         except ValueError:
             return -1  # empty sequence
 
