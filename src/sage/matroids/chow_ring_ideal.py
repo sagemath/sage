@@ -63,6 +63,8 @@ class ChowRingIdeal(MPolynomialIdeal):
         flats.sort(key=lambda X: (len(X), sorted(X)))
         ranks = {F: self._matroid.rank(F) for F in flats}
         chains = lattice_flats.chains()  # Only chains
+        print(lattice_flats._element_to_vertex_dict)
+        print(lattice_flats._hasse_diagram._leq_storage)
         return (ranks, chains)
 
     def flats_to_generator_dict(self):
@@ -333,8 +335,16 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
             sage: ch = matroids.Z(3).chow_ring(QQ, False, 'fy')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
-            [1, Ax2x3y1, Ax1x3y2, Ax1x2y3, Ay1y2y3, Atx1y1, Atx2y2, Atx3y3,
-             Atx1x2x3y1y2y3, Atx1x2x3y1y2y3^2]
+            {frozenset({'x1'}): 0, frozenset({'x2'}): 1, frozenset({'x3'}): 2, frozenset({'y1'}): 3, frozenset({'x3', 'x2', 'y1'}): 4, frozenset({'y2'}): 5, frozenset({'x3', 'x1', 'y2'}): 6, frozenset({'y3'}): 7, frozenset({'x1', 'x2', 'y3'}): 8, frozenset({'y1', 'y2', 'y3'}): 9, frozenset({'t'}): 10, frozenset({'x1', 'y1', 't'}): 11, frozenset({'x2', 't', 'y2'}): 12, frozenset({'x3', 't', 'y3'}): 13, frozenset({'x2', 'y1', 'y2', 't', 'x3', 'x1', 'y3'}): 14}
+            [{0, 6, 8, 11, 14}, {1, 4, 8, 12, 14}, {2, 4, 6, 13, 14}, {3, 4, 9, 11, 14}, {4, 14}, {5, 6, 9, 12, 14}, {6, 14}, {7, 8, 9, 13, 14}, {8, 14}, {9, 14}, {10, 11, 12, 13, 14}, {11, 14}, {12, 14}, {13, 14}, {14}]
+            [1, Ax2x3y1, Ax1x3y2,
+                Ax1x2y3,
+                Ay1y2y3,
+                Atx1y1,
+                Atx2y2,
+                Atx3y3,
+                Atx1x2x3y1y2y3,
+                Atx1x2x3y1y2y3^2]
             sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
             True
             sage: ch = matroids.AG(2,3).chow_ring(QQ, False, 'fy')
