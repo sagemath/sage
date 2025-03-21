@@ -1102,7 +1102,7 @@ class PolynomialSequence_generic(Sequence_generic):
             else:
                 R_monomials_useful = []
                 for i in range(degree,target_degree-self.minimal_degree()+1):
-                    R_monomials_useful+=R_monomials_of_degree[i]
+                    R_monomials_useful += R_monomials_of_degree[i]
                 R_monomials_useful.sort()
                 for mon in R_monomials_useful:
                     row_indices += [(mon, i) for i in range(m) if self[i].degree() + mon.degree()==target_degree]
