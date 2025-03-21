@@ -2784,7 +2784,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
     - ``v``, ``k``, ``l``, ``mu`` -- ``integers`` -- note that ``mu``, if unspecified, is
       automatically determined from ``v``, ``k``, ``l``
 
-    - ``existence`` -- boolean;``False``; instead of building the graph,
+    - ``existence`` -- boolean (default: ``False``); instead of building the graph,
       return:
 
         - ``True`` -- meaning that a `(v,k,\lambda,\mu)`-strongly regular graph
@@ -3295,11 +3295,11 @@ def _check_database():
         if _brouwer_database[params]['status'] != "impossible":
             raise RuntimeError("Brouwer's db does not seem to know that {} in unfeasible".format(params))
         comment = _brouwer_database[params]['comments']
-        if ('Krein'    in comment or
+        if ('Krein' in comment or
             'Absolute' in comment or
-            'Conf'     in comment or
-            'mu=1'     in comment or
-            '&mu;=2'   in comment):
+            'Conf' in comment or
+            'mu=1' in comment or
+            '&mu;=2' in comment):
             continue
         raise RuntimeError("We detected that {} was unfeasible, but maybe we should not have".format(params))
 
