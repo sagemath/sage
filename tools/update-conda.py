@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-# Requirements: pip install https://github.com/conda/grayskull conda-lock
-# Usage: python tools/update-conda.py .
+# See README.md for more details
 
 import argparse
 import subprocess
