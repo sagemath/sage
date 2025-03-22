@@ -4794,6 +4794,20 @@ cdef class Matrix(sage.structure.element.Matrix):
             ....:                [8*x^2 + 12*x + 15,  8*x^2 + 9*x + 16]])
             sage: m.rank()
             2
+
+        Check that :issue:`7392` is fixed::
+
+            sage: m = matrix(2,[1.5,1.75,1.5,1.75]); m
+            [1.50000000000000 1.75000000000000]
+            [1.50000000000000 1.75000000000000]
+            sage: m.rank()
+            1
+
+            sage: M = matrix(RR,[1.5,1.75,1.5,1.75]); M
+            [1.50000000000000 1.75000000000000]
+            [1.50000000000000 1.75000000000000]
+            sage: M.rank()
+            1
         """
         x = self.fetch('rank')
         if x is not None:
