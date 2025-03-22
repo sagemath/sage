@@ -391,6 +391,16 @@ class BipartiteGraph(Graph):
             Traceback (most recent call last):
             ...
             LookupError: vertex (7) is not a vertex of the graph
+
+        Check that :issue:`39295` is fixed::
+
+            sage: B = BipartiteGraph(matrix([[1, 1], [1, 1]]), immutable=True)
+            sage: print(B.vertices(), B.edges())
+            [0, 1, 2, 3] [(0, 2, None), (0, 3, None), (1, 2, None), (1, 3, None)]
+            sage: B.add_vertices([4], left=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
         """
         if kwds is None:
             kwds = {'loops': False}
@@ -472,9 +482,6 @@ class BipartiteGraph(Graph):
             self.left = set(range(ncols))
             self.right = set(range(ncols, nrows + ncols))
 
-            # ensure that the vertices exist even if there
-            # are no associated edges (trac #10356)
-            vertices = list(self.left) + list(self.right)
             edges = []
             if kwds.get("multiedges", False):
                 for ii in range(ncols):
@@ -494,7 +501,7 @@ class BipartiteGraph(Graph):
 
             # ensure that construction works
             # when immutable=True (trac #39295)
-            Graph.__init__(self, data=[vertices, edges], format='vertices_and_edges')
+            Graph.__init__(self, data=[range(nrows + ncols), edges], format='vertices_and_edges', *args, **kwds)
         else:
             if partition is not None:
                 left, right = set(partition[0]), set(partition[1])
