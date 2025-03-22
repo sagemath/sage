@@ -21696,7 +21696,7 @@ class GenericGraph(GenericGraph_pyx):
 
         if external_face is None:
             from sage.graphs.graph import Graph
-            H = Graph(self) # take a (undirected) copy H of the graph
+            H = Graph(self)  # take a (undirected) copy H of the graph
             u, v = next(H.edge_iterator(labels=False))  # take any edge (u, v) of H
             H.delete_edge(u, v)  # remove edge (u, v) from H
             external_face = H.shortest_path(v, u)
