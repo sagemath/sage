@@ -467,7 +467,6 @@ class BipartiteGraph(Graph):
             if kwds.get("multiedges", False) and kwds.get("weighted", False):
                 raise TypeError("weighted multi-edge bipartite graphs from "
                                 "reduced adjacency matrix not supported")
-            Graph.__init__(self, *args, **kwds)
             ncols = data.ncols()
             nrows = data.nrows()
             self.left = set(range(ncols))
@@ -475,24 +474,27 @@ class BipartiteGraph(Graph):
 
             # ensure that the vertices exist even if there
             # are no associated edges (trac #10356)
-            self.add_vertices(self.left)
-            self.add_vertices(self.right)
-
+            vertices = list(self.left) + list(self.right)
+            edges = []
             if kwds.get("multiedges", False):
                 for ii in range(ncols):
                     for jj in range(nrows):
                         if data[jj, ii]:
-                            self.add_edges([(ii, jj + ncols)] * data[jj, ii])
+                            edges.extend([(ii, jj + ncols)] * data[jj, ii])
             elif kwds.get("weighted", False):
                 for ii in range(ncols):
                     for jj in range(nrows):
                         if data[jj, ii]:
-                            self.add_edge((ii, jj + ncols, data[jj, ii]))
+                            edges.append((ii, jj + ncols, data[jj, ii]))
             else:
                 for ii in range(ncols):
                     for jj in range(nrows):
                         if data[jj, ii]:
-                            self.add_edge((ii, jj + ncols))
+                            edges.append((ii, jj + ncols))
+
+            # ensure that construction works
+            # when immutable=True (trac #39295)
+            Graph.__init__(self, data=[vertices, edges], format='vertices_and_edges')
         else:
             if partition is not None:
                 left, right = set(partition[0]), set(partition[1])
