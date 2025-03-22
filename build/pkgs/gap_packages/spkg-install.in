@@ -99,7 +99,7 @@ do
     export CFLAGS
     cd "$PKG_SRC_DIR/$pkg"
     ./configure "$GAP_ROOT"
-    sdh_make -j1
+    sdh_make
     install_compiled_pkg "$pkg"
     cd "$PKG_SRC_DIR"
 done
@@ -124,7 +124,7 @@ do
     cd "$PKG_SRC_DIR/$pkg"
     sdh_configure --with-gaproot="$GAP_ROOT" ${pararr[$parind]}
     ((parind+=1))
-    sdh_make -j1
+    sdh_make
     install_compiled_pkg "$pkg"
     cd "$PKG_SRC_DIR"
 done
