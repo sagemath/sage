@@ -114,7 +114,7 @@ Methods
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from libc.stdlib cimport qsort
@@ -133,7 +133,7 @@ cdef inline int bs_get(uint64_t * bitset, int index) noexcept:
     r"""
     Return a bit of a bitset
     """
-    return (bitset[index//64]>>(index%64))&1
+    return (bitset[index // 64] >> (index % 64)) & 1
 
 cdef inline void bs_set(uint64_t * bitset, int index, int bit) noexcept:
     r"""
@@ -142,8 +142,8 @@ cdef inline void bs_set(uint64_t * bitset, int index, int bit) noexcept:
     "bit" *MUST* be equal to either 0 or to 1. The code does not involve any
     "if".
     """
-    bitset[index//64] &= ~((<uint64_t> 1)<<index%64)
-    bitset[index//64] |= (<uint64_t> bit)<<index%64
+    bitset[index // 64] &= ~((<uint64_t> 1) << index % 64)
+    bitset[index // 64] |= (<uint64_t> bit) << index % 64
 
 cdef inline int bs_issubset64(uint64_t * b1, uint64_t b2, int limbs) noexcept:
     r"""
