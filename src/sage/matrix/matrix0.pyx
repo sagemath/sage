@@ -4797,13 +4797,13 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Check that :issue:`7392` is fixed::
 
-            sage: m = matrix(2,[1.5,1.75,1.5,1.75]); m
+            sage: m = matrix(2, [1.5, 1.75, 1.5, 1.75]); m
             [1.50000000000000 1.75000000000000]
             [1.50000000000000 1.75000000000000]
             sage: m.rank()
             1
 
-            sage: M = matrix(RR,[1.5,1.75,1.5,1.75]); M
+            sage: M = matrix(RR, [[1.5, 1.75], [1.5, 1.75]]); M
             [1.50000000000000 1.75000000000000]
             [1.50000000000000 1.75000000000000]
             sage: M.rank()
