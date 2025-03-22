@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Base class for matrices, part 0
 
@@ -47,6 +48,8 @@ from sage.rings.integer_ring import IntegerRing_class
 import sage.modules.free_module
 
 from sage.matrix.matrix_misc import row_iterator
+
+numpy = None
 
 _Fields = Fields()
 _IntegralDomains = IntegralDomains()
@@ -4797,7 +4800,12 @@ cdef class Matrix(sage.structure.element.Matrix):
             return x
         if self._nrows == 0 or self._ncols == 0:
             return 0
-        r = len(self.pivots())
+
+        global numpy
+        if numpy is None:
+            import numpy
+        m = self.numpy()
+        r = numpy.linalg.matrix_rank(m)
         self.cache('rank', r)
         return r
 
