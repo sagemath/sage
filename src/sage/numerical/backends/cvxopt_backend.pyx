@@ -300,7 +300,7 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         for i in range(len(coeff)):
             self.objective_function[i] = coeff[i]
-        obj_constant_term = d
+        self.obj_constant_term = d
 
     cpdef set_verbosity(self, int level):
         """

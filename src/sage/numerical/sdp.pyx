@@ -656,7 +656,7 @@ cdef class SemidefiniteProgram(SageObject):
 
         ##### Constraints
         print("Constraints:")
-        for 0<= i < b.nrows():
+        for i in range(b.nrows()):
             indices, values = b.row(i)
             print(" ", end=" ")
             # Constraint's name
@@ -666,7 +666,7 @@ cdef class SemidefiniteProgram(SageObject):
             l = sorted(zip(indices,values))
             l.reverse()
             if l[-1][0] == -1:
-                last_i,last_value = l.pop()
+                _, last_value = l.pop()
             else:
                 last_value = matrix.zero( l[0][1].dimensions()[0],l[0][1].dimensions()[1]  )
             l.reverse()

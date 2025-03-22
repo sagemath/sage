@@ -990,7 +990,6 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         from sage.rings.integer import Integer as Integer
         cdef int i
-        cdef str s
         cdef GenericBackend b = self._backend
 
         result = []
@@ -1005,7 +1004,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             return (lb, b.row(indices), ub)
 
         # List of constraints
-        elif isinstance(indices, list):
+        if isinstance(indices, list):
             for i in indices:
                 lb, ub = b.row_bounds(i)
                 result.append((lb, b.row(i), ub))
@@ -1013,8 +1012,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             return result
 
         # Weird Input
-        else:
-            raise ValueError("constraints() requires a list of integers, though it will accommodate None or an integer.")
+        raise ValueError("constraints() requires a list of integers, though it will accommodate None or an integer.")
 
     def polyhedron(self, **kwds):
         r"""

@@ -18,6 +18,7 @@
 /config.log
 /config.status
 /configure
+/real_configure
 /confdefs.h
 
 /m4/sage_spkg_configures.m4

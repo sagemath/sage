@@ -298,7 +298,7 @@ class WeilPolynomials_iter():
             k = Integer(k)
             if len(modlist) == 0 and k != 0:
                 raise ValueError("Leading coefficient must be specified exactly")
-            if len(modlist) > 0 and ((k != 0 and modlist[-1]%k != 0) or (k == 0 and modlist[-1] != 0)):
+            if modlist and ((k != 0 and modlist[-1] % k != 0) or (k == 0 and modlist[-1] != 0)):
                 raise ValueError("Invalid moduli")
             coefflist.append(j)
             modlist.append(k)

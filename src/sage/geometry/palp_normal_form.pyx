@@ -195,7 +195,7 @@ def _palp_PM_max(Matrix_integer_dense PM, check=False):
         else:
             S[i] = i + 1
 
-    cdef int l, np, cf, ccf, n_s_bar, d1, v0, vc, vj
+    cdef int l, cf, ccf, n_s_bar, d1, v0, vc, vj
     cdef list l_r
 
     # We determine the other rows of PM_max in turn by use of perms and

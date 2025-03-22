@@ -1421,6 +1421,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: (-12).digits(2)
             [0, 0, -1, -1]
 
+        We can sum the digits of an integer in any base::
+
+            sage: sum(14.digits())
+            5
+            sage: 14.digits(base=2), sum(14.digits(base=2))
+            ([0, 1, 1, 1], 3)
+            sage: sum(13408967.digits())
+            38
+            sage: 13408967.digits(base=7), sum(13408967.digits(base=7))
+            ([5, 2, 1, 5, 5, 6, 1, 2, 2], 29)
+            sage: 13408967.digits(base=1111), sum(13408967.digits(base=1111))
+            ([308, 959, 10], 1277)
+
         We support large bases.
 
         ::

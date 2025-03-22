@@ -519,13 +519,15 @@ cdef class FractionFieldElement(FieldElement):
         """
         if self.is_zero():
             return "0"
-        s = "%s" % self._numerator
+        s = str(self._numerator)
         if self._denominator != 1:
-            denom_string = str( self._denominator )
+            denom_string = str(self._denominator)
             if self._denominator._is_atomic() and not ('*' in denom_string or '/' in denom_string):
-                s = "%s/%s"%(self._numerator._coeff_repr(no_space=False),denom_string)
+                s = "%s/%s" % (self._numerator._coeff_repr(no_space=False),
+                               denom_string)
             else:
-                s = "%s/(%s)"%(self._numerator._coeff_repr(no_space=False),denom_string)
+                s = "%s/(%s)" % (self._numerator._coeff_repr(no_space=False),
+                                 denom_string)
         return s
 
     def _latex_(self):
@@ -563,8 +565,8 @@ cdef class FractionFieldElement(FieldElement):
             return "0"
         if self._denominator == 1:
             return latex.latex(self._numerator)
-        return "\\frac{%s}{%s}"%(latex.latex(self._numerator),
-                                 latex.latex(self._denominator))
+        return "\\frac{%s}{%s}" % (latex.latex(self._numerator),
+                                   latex.latex(self._denominator))
 
     def _magma_init_(self, magma):
         """

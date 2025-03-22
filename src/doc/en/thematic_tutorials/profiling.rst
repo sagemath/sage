@@ -76,11 +76,19 @@ further inspection::
 For more information see ``%prun?`` or `this page
 <https://ipython.org/ipython-doc/dev/interactive/magics.html#magic-prun>`__.
 
-**Visualize the statistics:** you can obtain a more graphical output with
-`RunSnake <http://www.vrplumber.com/programming/runsnakerun/>`_ and Sage's
-function :func:`runsnake`::
+**Visualize the statistics:** you can obtain a more graphical output
+with `RunSnakeRun <https://pypi.org/project/RunSnakeRun/>`_. Passing
+``-D <file>`` to ``%prun`` will dump its output, in binary, to
+``<file>``::
 
-  sage: runsnake('random_prime(2**500)')
+  sage: %prun -D random_prime.prof random_prime(2**500)
+
+Now, in a terminal, you can open that file in ``runsnake``::
+
+  $ runsnake random_prime.prof
+
+RunSnakeRun does not need access to the Sage library, so the simplest
+way to install it is via pip or your distribution's package manager.
 
 Python-level line-by-line profiling: %lprun
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -148,6 +148,7 @@ py.install_sources(
   'noetherian_rings.py',
   'number_fields.py',
   'objects.py',
+  'ore_modules.py',
   'partially_ordered_monoids.py',
   'permutation_groups.py',
   'pointed_sets.py',

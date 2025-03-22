@@ -471,8 +471,6 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     if algorithm != "fast":
         raise ValueError(f"unknown algorithm '{algorithm}'")
 
-    cdef size_t n = G.order()
-
     # For algorithm "fast" we need to convert G to an undirected graph
     if G.is_directed():
         G = G.to_undirected()
@@ -485,8 +483,6 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     # Initialize variables needed by the fast algorithm
     cdef vector[int] sigma_int
     cdef vector[int] pred
-    # Initialize variables needed by the slow algorithm
-    cdef dict lexicographic_label
     # Temporary variables
     cdef int vi, i, initial_v_int
 
@@ -497,8 +493,8 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     else:
         initial_v_int = -1
     extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, &pred, NULL, NULL)
-    sigma = [ Gbackend.vertex_label(vi) for vi in sigma_int ]
-    predecessor = { u: sigma[i] for u, i in zip(sigma, pred) if i != -1 }
+    sigma = [Gbackend.vertex_label(vi) for vi in sigma_int]
+    predecessor = {u: sigma[i] for u, i in zip(sigma, pred) if i != -1}
 
     if reverse:
         sigma.reverse()

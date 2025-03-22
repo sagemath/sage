@@ -43,7 +43,6 @@ import types
 from cysignals.signals import AlarmInterrupt, init_cysignals
 
 import sage.misc.flatten
-import sage.misc.randstate as randstate
 from sage.doctest.external import available_software
 from sage.doctest.forker import DocTestDispatcher
 from sage.doctest.parsing import (
@@ -55,6 +54,7 @@ from sage.doctest.reporting import DocTestReporter
 from sage.doctest.sources import DictAsObject, FileDocTestSource, get_basename
 from sage.doctest.util import Timer, count_noun, dict_difference
 from sage.env import DOT_SAGE, SAGE_EXTCODE, SAGE_LIB, SAGE_SRC
+from sage.misc import randstate
 from sage.misc.temporary_file import tmp_dir
 from sage.structure.sage_object import SageObject
 
@@ -893,7 +893,7 @@ class DocTestController(SageObject):
             Doctesting ...
         """
         opj = os.path.join
-        from sage.env import SAGE_SRC, SAGE_DOC_SRC, SAGE_ROOT, SAGE_ROOT_GIT, SAGE_DOC
+        from sage.env import SAGE_DOC, SAGE_DOC_SRC, SAGE_ROOT, SAGE_ROOT_GIT, SAGE_SRC
         # SAGE_ROOT_GIT can be None on distributions which typically
         # only have the SAGE_LOCAL install tree but not SAGE_ROOT
         if SAGE_ROOT_GIT is not None:
@@ -1042,10 +1042,9 @@ class DocTestController(SageObject):
                                             bool(self.options.optional),
                                             if_installed=self.options.if_installed):
                                 yield os.path.join(root, file)
-                else:
-                    if not skipfile(path, bool(self.options.optional),
-                                    if_installed=self.options.if_installed, log=self.log):  # log when directly specified filenames are skipped
-                        yield path
+                elif not skipfile(path, bool(self.options.optional),
+                                if_installed=self.options.if_installed, log=self.log):  # log when directly specified filenames are skipped
+                    yield path
         self.sources = [FileDocTestSource(path, self.options) for path in expand()]
 
     def filter_sources(self):
@@ -1551,7 +1550,7 @@ class DocTestController(SageObject):
             return self.run_val_gdb()
         else:
             self.create_run_id()
-            from sage.env import SAGE_ROOT_GIT, SAGE_LOCAL, SAGE_VENV
+            from sage.env import SAGE_LOCAL, SAGE_ROOT_GIT, SAGE_VENV
             # SAGE_ROOT_GIT can be None on distributions which typically
             # only have the SAGE_LOCAL install tree but not SAGE_ROOT
             if (SAGE_ROOT_GIT is not None) and os.path.isdir(SAGE_ROOT_GIT):
@@ -1686,9 +1685,9 @@ def run_doctests(module, options=None):
         IP = get_ipython()
         if IP is not None:
             old_color = IP.colors
-            IP.run_line_magic('colors', 'NoColor')
+            IP.run_line_magic('colors', 'nocolor')
             old_config_color = IP.config.TerminalInteractiveShell.colors
-            IP.config.TerminalInteractiveShell.colors = 'NoColor'
+            IP.config.TerminalInteractiveShell.colors = 'nocolor'
 
     try:
         DC.run()

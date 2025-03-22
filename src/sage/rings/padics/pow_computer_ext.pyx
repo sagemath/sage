@@ -518,7 +518,7 @@ cdef class PowComputer_ext(PowComputer_class):
             sage: PC  # indirect doctest
             PowComputer_ext for 5, with polynomial [9765620 0 1]
         """
-        return "PowComputer_ext for %s, with polynomial %s"%(self.prime, self.polynomial())
+        return "PowComputer_ext for %s, with polynomial %s" % (self.prime, self.polynomial())
 
     def __reduce__(self):
         """

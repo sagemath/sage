@@ -630,7 +630,7 @@ class HeckeAlgebra_full(HeckeAlgebra_base):
 
     def is_anemic(self):
         """
-        Return False, since this the full Hecke algebra.
+        Return ``False``, since this the full Hecke algebra.
 
         EXAMPLES::
 
