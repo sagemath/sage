@@ -377,7 +377,9 @@ cdef canonical_form_from_edge_list(int Vnr, list Vout, list Vin, int Lnr=1, list
     return new_edges
 
 
-cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True, certificate=False) noexcept:
+cpdef canonical_form(G, partition=None, return_graph=False,
+                     use_edge_labels=True, certificate=False,
+                     immutable=None) noexcept:
     r"""
     Return a canonical label for the given (di)graph.
 
@@ -403,6 +405,12 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     - ``certificate`` -- boolean (default: ``False``); when set to ``True``,
       returns the labeling of G into a canonical graph
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable (di)graph. ``immutable=None`` (default) means that
+      the (di)graph and its canonical (di)graph will behave the same way.
+
+      This parameter is ignored when ``return_graph`` is ``False``.
 
     TESTS::
 
@@ -503,6 +511,19 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         Traceback (most recent call last):
         ...
         ValueError: some vertices of the graph are not in the partition
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: g = Graph({1: {2: 'a'}})
+        sage: canonical_form(g, return_graph=True).is_immutable()                   # optional - bliss
+        False
+        sage: canonical_form(g, return_graph=True, immutable=True).is_immutable()   # optional - bliss
+        True
+        sage: g = Graph({1: {2: 'a'}}, immutable=True)
+        sage: canonical_form(g, return_graph=True).is_immutable()                   # optional - bliss
+        True
+        sage: canonical_form(g, return_graph=True, immutable=False).is_immutable()  # optional - bliss
+        False
     """
     # We need this to convert the numbers from <unsigned int> to <long>.
     # This assertion should be true simply for memory reasons.
@@ -579,14 +600,17 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
     relabel = {int2vert[i]: j for i, j in relabel.items()}
 
     if return_graph:
+        if immutable is None:
+            immutable = G.is_immutable()
         if directed:
-            from sage.graphs.digraph import DiGraph
-            H = DiGraph(new_edges, loops=G.allows_loops(), multiedges=G.allows_multiple_edges())
+            from sage.graphs.digraph import DiGraph as GT
         else:
-            from sage.graphs.graph import Graph
-            H = Graph(new_edges, loops=G.allows_loops(), multiedges=G.allows_multiple_edges())
+            from sage.graphs.graph import Graph as GT
 
-        H.add_vertices(range(G.order()))
+        H = GT([range(G.order()), new_edges], format='vertices_and_edges',
+               loops=G.allows_loops(), multiedges=G.allows_multiple_edges(),
+               immutable=immutable)
+
         return (H, relabel) if certificate else H
 
     # Warning: this may break badly in Python 3 if the graph is not simple
