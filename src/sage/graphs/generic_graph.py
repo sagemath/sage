@@ -21664,19 +21664,19 @@ class GenericGraph(GenericGraph_pyx):
             Graphics object consisting of 20 graphics primitives
             sage: g = graphs.CubeGraph(n=3, embedding=2)
             sage: g.plot(layout='tutte', external_face=['101','111','001',
-            '011'], external_face_pos={'101':(1,0), '111':(0,0), '001':(2,1),
-            '011':(-1,1)})                                                              # needs sage.plot
+            ....:       '011'], external_face_pos={'101':(1,0), '111':(0,0),
+            ....: '001':(2,1), '011':(-1,1)})                                          # needs sage.plot
             Graphics object consisting of 21 graphics primitives
             sage: g = graphs.CompleteGraph(n=5)
             sage: g.plot(layout='tutte', external_face=[0,1,2])
             Traceback (most recent call last):
             ...
-            ValueError: Graph must be planar
+            ValueError: graph must be planar
             sage: g = graphs.CycleGraph(n=10)
             sage: g.layout(layout='tutte', external_face=[0,1,2,3,4,5,6,7,8,9])
             Traceback (most recent call last):
             ...
-            ValueError: Graph must be 3-connected
+            ValueError: graph must be 3-connected
         """
         from sage.matrix.constructor import zero_matrix
         from sage.rings.real_mpfr import RR
