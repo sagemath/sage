@@ -712,7 +712,6 @@ cdef class Element(SageObject):
         """
         tester = self._tester(**options)
         SageObject._test_category(self, tester=tester)
-        category = self.category()
         # Tests that self inherits methods from the categories
         if can_assign_class(self):
             # For usual Python classes, that should be done with
