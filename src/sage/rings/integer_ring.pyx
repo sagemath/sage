@@ -799,13 +799,14 @@ cdef class IntegerRing_class(CommutativeRing):
         cdef Integer n_max, n_min, n_width
         cdef randstate rstate = current_randstate()
         cdef int den = rstate.c_random()-SAGE_RAND_MAX/2
-        if den == 0: den = 1
+        if den == 0:
+            den = 1
         if (distribution is None and x is None) or distribution == "1/n":
             mpz_set_si(value, (SAGE_RAND_MAX/5*2) / den)
         elif distribution is None or distribution == "uniform":
             if y is None:
                 if x is None:
-                    mpz_set_si(value, rstate.c_random()%5 - 2)
+                    mpz_set_si(value, rstate.c_random() % 5 - 2)
                 else:
                     n_max = x if isinstance(x, Integer) else self(x)
                     mpz_urandomm(value, rstate.gmp_state, n_max.value)

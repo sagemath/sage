@@ -1094,13 +1094,13 @@ cdef class Rational(sage.structure.element.FieldElement):
             '<mo>-</mo><mfrac><mrow><mn>17</mn></mrow><mrow><mn>37</mn></mrow></mfrac>'
         """
         if self.denom() == 1:
-            return '<mn>%s</mn>'%(self.numer())
+            return '<mn>%s</mn>' % (self.numer())
         else:
             from sage.misc.mathml import mathml
             t = ''
             if self < 0:
                 t = t + '<mo>-</mo>'
-            t = t + '<mfrac><mrow>%s</mrow><mrow>%s</mrow></mfrac>'%(
+            t = t + '<mfrac><mrow>%s</mrow><mrow>%s</mrow></mfrac>' % (
                 mathml(abs(self.numer())), mathml(self.denom()))
             return t
 
@@ -3831,7 +3831,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: magma(3/1).Type()             # optional - magma
             FldRatElt
         """
-        return '%s/%s'%(self.numerator(), self.denominator())
+        return '%s/%s' % (self.numerator(), self.denominator())
 
     def _sage_input_(self, sib, coerced):
         r"""
