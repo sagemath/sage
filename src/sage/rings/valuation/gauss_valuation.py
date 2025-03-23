@@ -47,7 +47,7 @@ from .inductive_valuation import NonFinalInductiveValuation
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.factory import UniqueFactory
-
+from sage.rings.infinity import infinity
 
 class GaussValuationFactory(UniqueFactory):
     r"""
@@ -809,3 +809,21 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             return infinity
         else:
             return self._base_valuation.upper_bound(coefficients[-1])
+
+    def reduce_to_unit(self, f):
+        r"""
+            Reduce the unit part of an element.
+
+            Given an element `f`, this method returns the reduction of `f` after shifting it to have valuation 0.
+
+            Parameters:
+            f -- an element of the domain
+
+            Returns:
+            The reduction of `f * u`, where `u` is an element with valuation `-v(f)`.
+        """
+        s = self(f)
+        if s == infinity:
+            return self.reduce(f)  # f is zero
+        u = self.equivalence_unit(-s)
+        return self.reduce(f * u)
