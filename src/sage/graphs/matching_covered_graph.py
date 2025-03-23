@@ -1393,6 +1393,7 @@ class MatchingCoveredGraph(Graph):
                              'but got a non-iterable object')
 
         edges = list(edges)
+        links = []  # to extract the nonloop input edges
         for i, edge in enumerate(edges):
             if hasattr(edge, '__len__'):
                 if len(edge) <= 1:
@@ -1414,20 +1415,15 @@ class MatchingCoveredGraph(Graph):
             elif len(edge) == 3:
                 u, v, l = edge
 
-            edges[i] = (u, v, l)
-
-        # Remove all the loops from edges
-        for edge in edges:
-            if edge[0] == edge[1]:
-                edges.remove(edge)
+            links.append((u, v, l))
 
         # If each of the input edges is existent
-        if all(self.has_edge(*edge) for edge in edges):
-            self._backend.add_edges(edges, self._directed)
+        if all(self.has_edge(*edge) for edge in links):
+            self._backend.add_edges(links, self._directed)
             return
 
         # Check if all the incident vertices of the input edges are existent
-        new_vertices = list(set([x for u, v, *_ in edges
+        new_vertices = list(set([x for u, v, *_ in links
                                  for x in [u, v] if (x not in self)]))
 
         # Throw error if the no. of new vertices is odd
@@ -1437,7 +1433,7 @@ class MatchingCoveredGraph(Graph):
 
         try:
             G = Graph(self, multiedges=self.allows_multiple_edges())
-            G.add_edges(edges=edges, loops=loops)
+            G.add_edges(edges=links, loops=loops)
 
             # Check if G has a vertex with at most 1 neighbor
             if any(len(G.neighbors(v)) <= 1 for v in G):
@@ -1452,13 +1448,13 @@ class MatchingCoveredGraph(Graph):
             else:
                 # Check if the existing perfect matching may be extended to a
                 # perfect matching of the new graph
-                edges_with_two_new_vertices = []
+                links_with_two_new_vertices = []
 
-                for edge in edges:
+                for edge in links:
                     if edge[0] in new_vertices and edge[1] in new_vertices:
-                        edges_with_two_new_vertices.append(edge)
+                        links_with_two_new_vertices.append(edge)
 
-                H = Graph(data=edges_with_two_new_vertices, format='list_of_edges')
+                H = Graph(data=links_with_two_new_vertices, format='list_of_edges')
                 M = Graph(self.get_matching()).union(Graph(H.matching()))
 
                 # Check if M is a perfect matching of the resulting graph
