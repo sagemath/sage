@@ -558,10 +558,21 @@ class BipartiteGraph(Graph):
         self._hash_labels = hash_labels
 
         return
+    
     def clear(self):
         """
         Clear all the vertices and edges in the graph.
+
         This method will also clear the left and right vertex sets.
+
+        EXAMPLES::
+
+            sage: B = BipartiteGraph(graphs.CompleteBipartiteGraph(7, 9))
+            sage: B.clear()
+            sage: B.left
+            set()
+            sage: B.right
+            set()
         """
         super().clear()
         self.left.clear()
