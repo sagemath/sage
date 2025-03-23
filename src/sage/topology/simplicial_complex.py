@@ -4087,7 +4087,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             # true if X has fewer than five vertices, fewer than 5 facets, or
             # has dimension 1.
             if (vertex_count := len(X._vertex_to_index)) == len(nerve._facets):
-                if probable or vertex_count < 5 or facet_count < 5 or first_len < 3:
+                if (probable or vertex_count < 5 or facet_count < 5 or first_len < 3):
                     return False
                 break
             X = nerve
@@ -4246,7 +4246,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y_nerve = Y.nerve(); Y_nerve
             Simplicial complex with vertex set (0,) and facets {(0,)}
         """
-        facets = [tuple(i for i in range(len(self._facets)) if vertex in self._facets[i]) for vertex in self.vertices()]
+        facets = [tuple(i
+                  for i in range(len(self._facets))
+                  if vertex in self._facets[i])
+                  for vertex in self.vertices()]
         return SimplicialComplex(facets)
 
     def reduce(self):
@@ -4268,7 +4271,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         base_dim = base.dimension()
         nerve = self.nerve()
         nerve_dim = nerve.dimension()
-        while len(nerve._facets) < len(base.vertices()) or nerve_dim < base_dim:
+        while (len(nerve._facets) < len(base.vertices())
+               or nerve_dim < base_dim):
             base = nerve
             base_dim = nerve_dim
             nerve = nerve.nerve()
@@ -4354,9 +4358,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         new_link_facets.append(facet - new_set)
                 edge_link = SimplicialComplex(edge_link_facets,
                                               maximality_check=False)
-                intersection_faces = {of & nf for of in old_link_facets for nf in new_link_facets}
+                intersection_faces = {of & nf
+                                      for of in old_link_facets
+                                      for nf in new_link_facets}
                 intersection = SimplicialComplex(intersection_faces)
-                if edge_link.is_deformation_retract(intersection, probable=lazy):
+                if edge_link.is_deformation_retract(intersection,
+                                                    probable=lazy):
                     pinched = True
                     renamed.add(old)
                     for facet in list(facets):
