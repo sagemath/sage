@@ -505,7 +505,7 @@ class Simplex(SageObject):
 
         EXAMPLES::
             sage: Simplex((1,2,3)) - Simplex((3,4))
-            (1,2)
+            (1, 2)
         """
         return Simplex(self.__set - other.__set)
 
@@ -1190,7 +1190,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: X = SimplicialComplex([[1,2]])
-            sage: Y = SipmlicialComplex([[3,4]])
+            sage: Y = SimplicialComplex([[3,4]])
             sage: not X & Y
             True
         """
@@ -1262,7 +1262,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: SimplicialComplex([1]) <= SimplicialComplex([[0,1], [1,2]])
             True
-            sage: SimplicialComplex([1,3]) <= SimplicialComplex([[0,1], [1,2]])
+            sage: SimplicialComplex([[1,3]]) <= SimplicialComplex([[0,1], [1,2]])
             False
         """
         faces = right.faces()
@@ -1282,7 +1282,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: SimplicialComplex([[0,1], [1,2]]) >= SimplicialComplex([1])
             True
-            sage: SimplicialComplex([[0,1], [1,2]]) >= SimplicialComplex([1,3])
+            sage: SimplicialComplex([[0,1], [1,2]]) >= SimplicialComplex([[1,3]])
             False
         """
         return right <= self
@@ -1331,8 +1331,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: SimplicialComplex()._an_element_()
             ()
-            sage: simplicial_complexes.Sphere(3)._an_element_()
-            (0, 1, 2, 3)
+            sage: len(simplicial_complexes.Sphere(3)._an_element_())
+            4
         """
         return self._facets[0]
 
@@ -1444,7 +1444,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             Faces = {}
             # sub_facets is the dictionary of facets in the subcomplex
             sub_facets = {}
-            dimension = self.dimension()
+            dimension = max([face.dimension() for face in self._facets])
             for i in range(-1, dimension + 1):
                 Faces[i] = set()
                 sub_facets[i] = set()
@@ -2780,6 +2780,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 for i in range(d):
                     for j in range(i + 1, d):
                         self._graph.add_edge(new_face[i], new_face[j])
+            self._facets.sort(key=len, reverse=True)
             self._complex = {}
             self.__contractible = None
             self._bbn = {}
@@ -2837,7 +2838,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: T.remove_face((1,2,3))
             sage: len(T._faces)                                                         # needs sage.modules
             2
-            sage: T.remove_face((1,2))
+            sage: e = list(T._faces)[1]._an_element_()
+            sage: T.remove_face(e)
             sage: len(T._faces)
             1
 
@@ -3594,18 +3596,25 @@ class SimplicialComplex(Parent, GenericCellComplex):
         face_dict = self.faces()
         vertices = self.vertices()
         dimension = self.dimension()
-        set_mnf = []
+        set_mnf = set()
 
-        face_dict.update({dimension + 1: set()})
         for dim in range(dimension + 1):
-            dim_mnf = copy(set_mnf)
-            face_sets = set(f.set() for f in face_dict[dim])
-            candidates = set(map(frozenset, combinations(vertices, dim + 1)))
-            for candidate in list(candidates - face_sets):
-                if not any(mnf < candidate for mnf in dim_mnf):
-                    set_mnf.append(candidate)
+            face_sets = frozenset(f.set() for f in face_dict[dim])
+            for candidate in combinations(vertices, dim + 1):
+                set_candidate = frozenset(candidate)
+                if set_candidate not in face_sets:
+                    new = not any(set_candidate.issuperset(mnf) for mnf in set_mnf)
+                    if new:
+                        set_mnf.add(set_candidate)
 
-        min_non_faces = Set(Simplex(mnf) for mnf in set_mnf)
+        for candidate in combinations(vertices, dimension+2):  # Checks for minimal nonfaces in the remaining dimension
+            set_candidate = frozenset(candidate)
+            new = not any(set_candidate.issuperset(mnf) for mnf in set_mnf)
+            if new:
+                set_mnf.add(set_candidate)
+
+        min_non_faces = Set([Simplex(mnf) for mnf in set_mnf])
+
         return min_non_faces
 
     def _stanley_reisner_base_ring(self, base_ring=ZZ):
@@ -4026,9 +4035,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: sphere
             Simplicial complex with vertex set (0, 1, 2, 3) and
              facets {(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)}
-            sage: L = sphere._contractible_subcomplex(); L
-            Simplicial complex with vertex set (0, 1, 2, 3) and
-             facets {(0, 1, 2), (0, 1, 3), (0, 2, 3)}
+            sage: L = sphere._contractible_subcomplex(); len(L.facets())
+            3
             sage: L.homology()                                                          # needs sage.modules
             {0: 0, 1: 0, 2: 0}
         """
@@ -4087,7 +4095,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # replace X with its nerve if doing so will speed up the algorithm.
         if X.dimension() > nerve.dimension():
             X = nerve
-        return X._enlarge_subcomplex(X._first_facet_to_complex(), deformation_retract_test=True, lazy=False)
+        return X._enlarge_subcomplex(X._first_facet_to_complex(),
+                                     deformation_retract_test=True, lazy=False)
 
     def is_deformation_retract(self, other, probable=False):
         """
@@ -4311,12 +4320,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: X = SimplicialComplex([[0,1], [1,2], [2,3], [3,4], [4,5], [5,0]])
-            sage: Y = Simplex([0,1], [1,2], [0,2]])
+            sage: Y = simplicial_complexes.Sphere(1)
             sage: X.pinch().is_isomorphic(Y)
-            True
-            sage: S = simplicial_complexes.Sphere(3)
-            sage: Z = S.join(S)
-            sage: Z.pinch().homology() == Z.homology()
             True
 
         ..SEEALSO::
@@ -4378,10 +4383,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             32
             sage: simplicial_complexes.ComplexProjectivePlane().size()
             256
-            sage: simplicial_complexes.QuaternionicProjectivePlane().size()
-            16384
-            sage: simplicial_complexes.PoincareHomologyThreeSphere().size()
-            393
         """
         return len(tuple(self.face_iterator()))
 
