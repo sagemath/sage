@@ -498,6 +498,17 @@ class Simplex(SageObject):
         """
         return Simplex(self.__tuple + other.__tuple)
 
+    def __sub__(self, other):
+        """
+        Simplex obtained by removing the vertices of `other` from those of
+        `self`
+
+        EXAMPLES::
+            sage: Simplex((1,2,3)) - Simplex((3,4))
+            (1,2)
+        """
+        return Simplex(self.__set - other.__set)
+
     def face(self, n):
         """
         The `n`-th face of this simplex.
@@ -563,8 +574,17 @@ class Simplex(SageObject):
         # return self.dimension() < 0
         return not self.__tuple
 
-    # Make the empty simplex falsey
     def __bool__(self):
+        """
+        Return ``True`` iff the simplex is non-empty (the opposite of ``is_empty``).
+
+        EXAMPLES:
+
+            sage: Simplex([]) or 3
+            3
+            sage: not Simplex(2)
+            False
+        """
         return not not self.__tuple
 
     def join(self, right, rename_vertices=True):
@@ -857,7 +877,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
     (or tuples, etc.) of vertices.  Maximal faces are also known as
     'facets'. ``maximal_faces`` can also be a list containing a single
     nonnegative integer `n`, in which case this constructs the
-    simplicial complex with a single `n`-simplex as the only facet.
+    simplicial complex with a single `n`-simplex as the only facet unless the
+    keyword ``use_simplex_convention`` is set to ``False``.
 
     Alternatively, the maximal faces can be defined from a monotone boolean
     function on the subsets of a set `X`. While defining ``maximal_faces=None``,
@@ -968,7 +989,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
                  name_check=False,
                  is_mutable=True,
                  is_immutable=False,
-                 use_simplex_convention=True,
                  category=None):
         """
         Define a simplicial complex.  See ``SimplicialComplex`` for more
@@ -1042,7 +1062,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 if not isinstance(maximal_faces, (list, tuple, Simplex)):
                     # Convert it into a list (in case it is an iterable)
                     maximal_faces = list(maximal_faces)
-                if len(maximal_faces) == 1 and isinstance(maximal_faces[0], (int, Integer)) and use_simplex_convention:
+                if len(maximal_faces) == 1 and isinstance(maximal_faces[0], (int, Integer)):
                     # list containing a single nonnegative integer n;
                     # construct the simplicial complex with a single n-simplex as the only facet.
                     vertices = tuple(range(maximal_faces[0] + 1))
@@ -1153,6 +1173,19 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # bigraded_betti_numbers(base_ring=base_ring)
         self._bbn_all_computed = set()
 
+    def __bool__(self):
+        """
+        Make the empty simplicial complex falsy.
+
+        EXAMPLES::
+
+            sage: X = SimplicialComplex([[1,2]])
+            sage: Y = SipmlicialComplex([[3,4]])
+            sage: not X & Y
+            True
+        """
+        return self._an_element_().__bool__()
+
     def __hash__(self):
         """
         Compute the hash value of ``self``.
@@ -1211,6 +1244,39 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         return not self.__eq__(right)
 
+    def __le__(self,right):
+        """
+        Return ``True`` iff every face of ``self`` is a face of ``right``.
+
+        EXAMPLES::
+
+            sage: SimplicialComplex([1]) <= SimplicialComplex([[0,1], [1,2]])
+            True
+            sage: SimplicialComplex([1,3]) <= SimplicialComplex([[0,1], [1,2]])
+            False
+        """
+        faces = right.faces()
+        for facet in self._facets:
+            dim = facet.dimension()
+            if dim not in faces:
+                return False
+            if facet not in faces[dim]:
+                return False
+        return True
+
+    def __ge__(self,right):
+        """
+        Return ``True`` iff every face of ``right`` is a face of ``self``.
+
+        EXAMPLES::
+
+            sage: SimplicialComplex([[0,1], [1,2]]) >= SimplicialComplex([1])
+            True
+            sage: SimplicialComplex([[0,1], [1,2]]) >= SimplicialComplex([1,3])
+            False
+        """
+        return right <= self
+
     def __copy__(self):
         """
         Return a mutable copy of ``self``.
@@ -1259,6 +1325,19 @@ class SimplicialComplex(Parent, GenericCellComplex):
             (0, 1, 2, 3)
         """
         return self._facets[0]
+
+    def dimension(self):
+        """
+        The dimension of this simplicial complex.
+
+        EXAMPLES::
+
+            sage: simplicial_complexes.SurfaceOfGenus(20).dimension()
+            2
+            sage: simplicial_complexes.RudinBall().dimension()
+            3
+        """
+        return self._an_element_().dimension()
 
     def __contains__(self, x):
         """
@@ -1355,7 +1434,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             Faces = {}
             # sub_facets is the dictionary of facets in the subcomplex
             sub_facets = {}
-            dimension = max([face.dimension() for face in self._facets])
+            dimension = self.dimension()
             for i in range(-1, dimension + 1):
                 Faces[i] = set()
                 sub_facets[i] = set()
@@ -1768,7 +1847,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if d == 0:
             return len(self.facets()) == 2
         F = self.facets()
-        X = self.faces()[d-1]
+        X = self.faces().get(d-1) or []
         # is each (d-1)-simplex is the face of exactly two facets?
         for s in X:
             if len([a for a in [s.is_face(f) for f in F] if a]) != 2:
@@ -2995,8 +3074,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         s = Simplex(simplex)
         for f in self._facets:
             if s.is_face(f):
-                faces.append(Simplex(f.set().difference(s.set())))
-        return SimplicialComplex(faces, is_mutable=is_mutable)
+                faces.append(f - s)
+        return SimplicialComplex(faces, is_mutable=is_mutable, maximality_check=False)
 
     def star(self, simplex, is_mutable=True):
         """
@@ -3877,15 +3956,21 @@ class SimplicialComplex(Parent, GenericCellComplex):
         facets.extend(self.faces()[n])
         return SimplicialComplex(facets, is_immutable=self._is_immutable)
 
-    def _seed(self):
+    def _first_facet_to_complex(self):
         """
-        The first facet as a simplicial complex. A shorthand in some of the
-        following methods.
+        The first facet as a simplicial complex.
+
+        EXAMPLES::
+
+            sage: SimplicialComplex([[1,2],[3,4,5]])._first_facet_to_complex()
+            Simplicial complex with vertex set (3, 4, 5) and facets {(3, 4, 5)}
+            sage: SimplicialComplex()._first_facet_to_complex()
+            Simplicial complex with vertex set () and facets {()}
         """
         return SimplicialComplex([self._an_element_()],
                                  is_mutable=False, maximality_check=False)
 
-    def _contractible_subcomplex(self, verbose=False, lazy=False):
+    def _contractible_subcomplex(self, verbose=False, lazy=True):
         """
         Find a contractible subcomplex `L` of this simplicial complex,
         preferably one which is as large as possible.
@@ -3894,6 +3979,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         - ``verbose`` -- boolean (default: ``False``); if ``True``, print some
           messages as the simplicial complex is computed
+        - ``lazy`` -- boolean (default: ``True``); see below
+
+        If ``lazy`` is ``True``, internally pass ``probable=True`` to
+        the method ``is_contractible``. This can cause ``is_contractible`` to
+        return false negatives, possibly resulting in ``_contractible_subcomplex``
+        omitting some facets it could contain. However, when used e.g. for
+        homology computations, this speed tradeoff tends to be worthwhile.
 
         Motivation: if `K` is the original complex and if `L` is
         contractible, then the relative homology `H_*(K,L)` is
@@ -3925,19 +4017,17 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: L.homology()                                                          # needs sage.modules
             {0: 0, 1: 0, 2: 0}
         """
-        return self._enlarge_subcomplex(self._seed(),
+        return self._enlarge_subcomplex(self._first_facet_to_complex(),
                                         verbose=verbose, lazy=lazy)
-
-    def dimension(self):
-        return self._an_element_().dimension()
-
-    # Make the empty simplicial complex falsey
-    def __bool__(self):
-        return self._an_element_().__bool__()
 
     def is_contractible(self, probable=False):
         """
         Check whether the complex is contractible.
+
+        INPUT:
+
+        - ``probable`` -- boolean (default: ``False``); when ``True``, speed
+        up the algorithm at the risk of possible false negatives
 
         EXAMPLES::
 
@@ -3950,31 +4040,51 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: X.is_contractible()
             True
         """
+        # The empty simplicial complex is not contractible
         if not self:
             return False
         X = self
+        # We try a sequence of inexpensive shortcuts to test contractibility
         while True:
+            # A non-empty simplicial complex with a single facet is
+            # contractible
             if (facet_count := len(facet_list := X._facets)) == 1:
                 return True
+            # A simplicial complex of dimension 0 with multiple facets is not
+            # contractible
             if (first_len := len(X._an_element_())) == 1:
                 return False
+            # A simplicial complex with two facets is contractible iff its
+            # facets overlap
             if facet_count == 2:
                 return len(X._vertex_to_index) != first_len + len(facet_list[1])
             nerve = X.nerve()
+            # The Čech nerve of a contractible simplicial complex X usually has
+            # fewer facets than X has vertices, and this is guaranteed to be
+            # true if X has fewer than five vertices, fewer than 5 facets, or
+            # has dimension 1.
             if (vertex_count := len(X._vertex_to_index)) == len(nerve._facets):
                 if probable or vertex_count < 5 or facet_count < 5 or first_len < 3:
                     return False
-                if X.dimension() > nerve.dimension():
-                    X = nerve
                 break
             X = nerve
-        return X._enlarge_subcomplex(X._seed(), deformation_retract_test=True)
+        # A simplicial complex is homotopy equivalent to its Čech nerve, so we
+        # replace X with its nerve if doing so will speed up the algorithm.
+        if X.dimension() > nerve.dimension():
+            X = nerve
+        return X._enlarge_subcomplex(X._first_facet_to_complex(), deformation_retract_test=True, lazy=False)
 
     def is_deformation_retract(self, other, probable=False):
         """
         Check whether the complex is homotopy equivalent to a supercomplex by
         trying to enlarge the given complex without changing its homotopy type
         to include all of the facets of the supercomplex.
+
+        INPUT:
+
+        - ``other`` -- a simplicial complex of which ``self`` is a subcomplex
+        - ``probable`` -- boolean (default: ``False``); when ``True``, speed up
+          the algorithm at the risk of possible false negatives
 
         EXAMPLES::
 
@@ -3983,13 +4093,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: C = A.product(simplicial_complexes.Simplex(1))
             sage: B.is_deformation_retract(C)
             True
+            sage: A.is_deformation_retract(C) # `A` is not a subcomplex of `C`
+            False
         """
         return other._enlarge_subcomplex(self, deformation_retract_test=True,
                                          lazy=probable)
 
     def _enlarge_subcomplex(self, subcomplex, verbose=False,
-                            deformation_retract_test=False, lazy=True,
-                            include_remainder=False):
+                            deformation_retract_test=False, lazy=True):
         """
         Given a subcomplex `S` of this simplicial complex `K`, find a
         subcomplex `L`, as large as possible, containing `S` which is
@@ -4003,15 +4114,28 @@ class SimplicialComplex(Parent, GenericCellComplex):
         - ``subcomplex`` -- a subcomplex of this simplicial complex
         - ``verbose`` -- boolean (default: ``False``); if ``True``, print some
           messages as the simplicial complex is computed
+        - ``deformation_retract_test`` -- boolean (default: ``False``); see below
+        - ``lazy`` -- boolean (default: ``True``); see below
 
         OUTPUT: a complex `L` containing ``subcomplex`` and contained
         in ``self``, homotopy equivalent to ``subcomplex``
 
+        If ``deformation_retract_test`` is ``True``, return instead a boolean
+        value indicating whether ``subcomplex`` is a deformation retract of
+        ``self``.
+
+        If ``lazy`` is ``True``, internally pass ``probable=True`` to
+        the method ``is_contractible``. This can cause ``is_contractible`` to
+        return false negatives, possibly resulting in ``_enlarge_subcomplex``
+        omitting some facets it could contain. However, when used e.g. for
+        homology computations, this speed tradeoff is usually worthwhile.
+
         Algorithm: start with the subcomplex `S` and loop through the
         facets of `K` which are not in `S`.  For each one, see whether
         its intersection with `S` is contractible, and if so, add it.
-        This is recursive: testing for contractibility calls this
-        routine again, via ``_contractible_subcomplex``.
+        When ``lazy`` is ``False``, this can recursive: testing for
+        contractibility may call this routine again via
+        ``_contractible_subcomplex``.
 
         EXAMPLES::
 
@@ -4041,8 +4165,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             enlarged = self.__enlarged[subcomplex]
             if deformation_retract_test:
                 return enlarged == self
-            if include_remainder:
-                return enlarged, SimplicialComplex(set(self._facets) - set(enlarged._facets))
             return enlarged
         faces = [x for x in list(self._facets) if x not in subcomplex._facets]
         # For consistency when using different Python versions, for example, sort 'faces'.
@@ -4072,24 +4194,23 @@ class SimplicialComplex(Parent, GenericCellComplex):
         L = SimplicialComplex(new_facets, maximality_check=False,
                               is_immutable=self._is_immutable)
         self.__enlarged[subcomplex] = L
-        # If 'faces', the list of facets in 'self' but not the enlarged
+        # If `faces`, the list of facets in `self` but not the enlarged
         # subcomplex, is empty, then we have exhibited the original subcomplex
-        # as a deformation retraction of self.
+        # as a deformation retraction of `self`.
         if deformation_retract_test:
             return not faces
         # Use the same sorting on the vertices in L as in the ambient complex.
         L._vertex_to_index = self._vertex_to_index
-        if include_remainder:
-            return L, SimplicialComplex(faces)
         return L
 
     def nerve(self):
         """
         The Čech nerve of the simplicial complex. The nerve is homotopy
         equivalent to the original complex but exchanges vertices and
-        facets. Because facets are defined by their vertices, distinct vertices
-        can be sent to the same facet of the nerve. This can be used to
-        simplify the simplicial complex.
+        facets (this extends to a Galois connection between sets of vertices
+        and sets of facets). Because facets are defined by their vertices,
+        distinct vertices can be sent to the same facet of the nerve. This can
+        be used to simplify the simplicial complex.
 
         EXAMPLES::
 
@@ -4103,11 +4224,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
             Simplicial complex with vertex set (0,) and facets {(0,)}
         """
         facets = [tuple(i for i in range(len(self._facets)) if vertex in self._facets[i]) for vertex in self.vertices()]
-        return SimplicialComplex(facets, use_simplex_convention=False)
+        return SimplicialComplex(facets)
 
     def reduce(self):
         """
-        Apply nerve repeatedly until the resulting simplicial complex has as
+        Apply ``nerve`` repeatedly until the resulting simplicial complex has as
         low a dimension and as few vertices as possible. In some cases this can
         appreciably speed up calculations.
 
@@ -4119,40 +4240,15 @@ class SimplicialComplex(Parent, GenericCellComplex):
             Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)}
         """
         base = self
+        base_dim = base.dimension()
         nerve = self.nerve()
-        while len(nerve._facets) < len(base.vertices()) or nerve.dimension() < base.dimension():
+        nerve_dim = nerve.dimension()
+        while len(nerve._facets) < len(base.vertices()) or nerve_dim < base_dim:
             base = nerve
+            base_dim = nerve_dim
             nerve = nerve.nerve()
+            nerve_dim = nerve.dimension()
         return base
-
-    def connectedness(self):
-        """
-        The connectedness of the simplicial complex, i.e. the greatest integer
-        n such that the nth homotopy group of the complex is trivial. A
-        connectedness of -2 means the complex is empty, -1 that the complex is
-        non-empty but disconnected, and Infinity means that the space is
-        contractible.
-
-        EXAMPLES::
-
-            sage: simplicial_complexes.Sphere(5).connectedness()
-            4
-            sage: simplicial_complexes.Torus().suspension(2).connectedness()
-            2
-            sage: X = simplicial_complexes.KleinBottle()._contractible_subcomplex.connectedness()
-            'Infinity'
-        """
-        if self._an_element_().is_empty():
-            return -2
-        reduced = self.reduce()
-        contractible = reduced._contractible_subcomplex()
-        remainder_facets = list(set(reduced._facets) - set(contractible._facets))
-        if not remainder_facets:
-            return 'Infinity'
-        result = min(face.dimension()
-                     for facet in remainder_facets
-                     for face in (contractible & facet).minimal_nonfaces())
-        return result - 1
 
     def pinch(self, lazy=True):
         """
@@ -4161,6 +4257,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         complex and contracting them. In some cases, this can substantially
         accelerate homology computations, but in other cases, it may fail to
         provide much or any benefit.
+
+        INPUT:
+
+        - ``lazy`` -- boolean (default: ``True``); see below
+
+        If ``lazy`` is true, internally pass ``probable=True`` to
+        ``is_deformation_retract``. This may result in some collapsible edges
+        remaining uncollapsed, but the speed tradeoff is generally worthwhile.
 
         EXAMPLES::
 
@@ -4232,7 +4336,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: simplicial_complexes.PoincareHomologyThreeSphere().size()
             393
         """
-        return len(list(self.face_iterator()))
+        return len(tuple(self.face_iterator()))
 
     def _cubical_(self):
         r"""
