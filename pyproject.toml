@@ -175,6 +175,11 @@ lint = [
   "pycodestyle",
   "flake8-rst-docstrings",
 ]
+dev = [
+  "conda-lock",
+  "grayskull",
+  "toml",
+]
 
 [tool.ruff]
 # https://docs.astral.sh/ruff/configuration
