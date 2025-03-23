@@ -3528,14 +3528,14 @@ class MatchingCoveredGraph(Graph):
 
             sage: P = graphs.PetersenGraph()
             sage: G = MatchingCoveredGraph(P)
-            sage: V, E = set(G.vertices()), set(G.edges())
+            sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: M = set(G.get_matching())
             sage: G.subdivide_edge(0, 1, 4)
-            sage: W, F = set(G.vertices()), set(G.edges())
+            sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: N = set(G.get_matching())
             sage: sorted(W - V)
             [10, 11, 12, 13]
-            sage: sorted(F - E), sorted(E - F)
+            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
             ([(0, 10, None), (1, 13, None), (10, 11, None), (11, 12, None),
              (12, 13, None)], [(0, 1, None)])
             sage: if (0, 1, None) in M:
@@ -3549,17 +3549,17 @@ class MatchingCoveredGraph(Graph):
 
             sage: K = graphs.CycleGraph(4)
             sage: K.allow_multiple_edges(1)
-            sage: K.add_edges([(0, 1, 2), (0, 1, 'label'), (0, 1, 0.5)])
+            sage: K.add_edges([(0, 1, 2), (0, 1, 3), (0, 1, 0.5)])
             sage: K.delete_edge(0, 1, None)
             sage: G = MatchingCoveredGraph(K)
-            sage: V, E = set(G.vertices()), set(G.edges())
+            sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: G.edge_label(0, 1)
-            [2, 'label', 0.500000000000000]
+            [2, 3, 0.500000000000000]
             sage: G.subdivide_edge(0, 1, 6)  # the edge: (0, 1, 2)
-            sage: W, F = set(G.vertices()), set(G.edges())
+            sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: sorted(W - V)
             [4, 5, 6, 7, 8, 9]
-            sage: sorted(F - E), sorted(E - F)
+            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
             ([(0, 4, 2), (1, 9, 2), (4, 5, 2), (5, 6, 2), (6, 7, 2),
               (7, 8, 2), (8, 9, 2)], [(0, 1, 2)])
 
