@@ -564,7 +564,7 @@ class BipartiteGraph(Graph):
         Clear all the vertices and edges in the graph.
 
         This method extends the functionality of method :meth:`~sage.graphs.generic_graph.GenericGraph.clear`
-        to also clear vertex sets `left` and `right`.
+        to also clear vertex sets ``left`` and ``right``.
 
         EXAMPLES::
 
