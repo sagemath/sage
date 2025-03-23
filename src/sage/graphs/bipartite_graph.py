@@ -563,11 +563,12 @@ class BipartiteGraph(Graph):
         """
         Clear all the vertices and edges in the graph.
 
-        This method will also clear the left and right vertex sets.
+        This method extends the functionality of method :meth:`~sage.graphs.generic_graph.GenericGraph.clear`
+        to also clear vertex sets `left` and `right`.
 
         EXAMPLES::
 
-            sage: B = BipartiteGraph(graphs.CompleteBipartiteGraph(7, 9))
+            sage: B = BipartiteGraph(graphs.CycleGraph(4))
             sage: B.clear()
             sage: B.left
             set()
