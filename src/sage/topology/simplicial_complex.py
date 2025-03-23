@@ -811,6 +811,16 @@ class Simplex(SageObject):
             return sorted(map(str, self)) < sorted(map(str, other))
 
     def __len__(self):
+        """
+        Define the `length` of a simplex to be the number of vertices it has.
+
+        EXAMPLES::
+
+            sage: len(Simplex(4))
+            5
+            sage: len(Simplex([]))
+            0
+        """
         return len(self.__tuple)
 
     def __hash__(self):
@@ -2455,6 +2465,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
              2: [(Z, (0, 1, 2) - (0, 1, 5) + (0, 2, 6) - (0, 3, 4) + (0, 3, 5)
                       - (0, 4, 6) - (1, 2, 4) + (1, 3, 4) - (1, 3, 6) + (1, 5, 6)
                       - (2, 3, 5) + (2, 3, 6) + (2, 4, 5) - (4, 5, 6))]}
+
+        .. SEEALSO::
+
+            :meth:`sage.topology.simplicial_complex.SimplicialComplex.reduce`,
+            :meth:`sage.topology.simplicial_complex.SimplicialComplex.pinch`
         """
         from sage.homology.homology_group import HomologyGroup
 
@@ -4076,9 +4091,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def is_deformation_retract(self, other, probable=False):
         """
-        Check whether the complex is homotopy equivalent to a supercomplex by
-        trying to enlarge the given complex without changing its homotopy type
-        to include all of the facets of the supercomplex.
+        Check whether the complex is homotopy equivalent to a given supercomplex.
 
         INPUT:
 
@@ -4093,7 +4106,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: C = A.product(simplicial_complexes.Simplex(1))
             sage: B.is_deformation_retract(C)
             True
-            sage: A.is_deformation_retract(C) # `A` is not a subcomplex of `C`
+            sage: A.is_deformation_retract(C) # A is not a subcomplex of C
             False
         """
         return other._enlarge_subcomplex(self, deformation_retract_test=True,
@@ -4205,12 +4218,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def nerve(self):
         """
-        The Čech nerve of the simplicial complex. The nerve is homotopy
-        equivalent to the original complex but exchanges vertices and
-        facets (this extends to a Galois connection between sets of vertices
-        and sets of facets). Because facets are defined by their vertices,
-        distinct vertices can be sent to the same facet of the nerve. This can
-        be used to simplify the simplicial complex.
+        Return the Čech nerve of the simplicial complex.
+
+        The nerve is homotopy equivalent to the original complex but exchanges
+        vertices and facets (this extends to a Galois connection between sets
+        of vertices and sets of facets). Because facets are defined by their
+        vertices, distinct vertices can be sent to the same facet of the nerve.
+        This can be used to simplify the simplicial complex.
 
         EXAMPLES::
 
@@ -4229,8 +4243,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
     def reduce(self):
         """
         Apply ``nerve`` repeatedly until the resulting simplicial complex has as
-        low a dimension and as few vertices as possible. In some cases this can
-        appreciably speed up calculations.
+        low a dimension and as few vertices as possible.
+
+        In some cases, especially when the number of vertices exceeds the
+        number of facets, this can significantly speed up computations.
 
         EXAMPLES::
 
@@ -4252,11 +4268,23 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def pinch(self, lazy=True):
         """
-        Simplify the simplicial complex by identifying edges which can be
-        contracted ('pinched') without altering the homotopy type of the
-        complex and contracting them. In some cases, this can substantially
-        accelerate homology computations, but in other cases, it may fail to
-        provide much or any benefit.
+        Identify edges which can be contracted without changing the homotopy
+        and contract those edges.
+
+        In some cases, contracting these edges can substantially accelerate
+        homology computations, but in other cases, it may fail to provide much
+        or any benefit.
+
+        .. NOTE::
+
+            This method is most useful when the number of facets is much
+            smaller than the maximum possible number of facets given the number
+            of vertices in the simplicial complex.
+
+        .. NOTE::
+
+            When the number of vertices exceeds the number of facets, it is
+            more efficient to start with the ``reduce`` method.
 
         INPUT:
 
@@ -4266,16 +4294,35 @@ class SimplicialComplex(Parent, GenericCellComplex):
         ``is_deformation_retract``. This may result in some collapsible edges
         remaining uncollapsed, but the speed tradeoff is generally worthwhile.
 
+        OUTPUT: A simplicial complex homotopy equivalent to ``self`` in which
+        collapsible edges have been collapsed.
+
+        ALGORITHM:
+
+        For each edge ``(x,y)`` in ``self``, find the links in ``self`` of:
+            - ``(x,y)``
+            - ``(x)``
+            - ``(y)``
+        Compute the intersection ``I`` of the links of ``(x)`` and ``(y)``.
+        The link ``L`` of ``(x,y)`` is a subcomplex of ``I``. Check whether
+        ``L`` is a deformation retract of ``I``. If so, the edge ``(x,y)``
+        can be contracted without altering the homotopy type of ``self``.
+
         EXAMPLES::
 
             sage: X = SimplicialComplex([[0,1], [1,2], [2,3], [3,4], [4,5], [5,0]])
-            sage: X.pinch()
-            Simplicial complex with vertex set (0, 2, 5) and facets {(0, 2), (0, 5), (2, 5)}
+            sage: Y = Simplex([0,1], [1,2], [0,2]])
+            sage: X.pinch().is_isomorphic(Y)
+            True
             sage: S = simplicial_complexes.Sphere(3)
-            sage: Y = S.join(S).join(S); Y
-            Simplicial complex with 15 vertices and 125 facets
-            sage: Y.pinch() # long time
-            Simplicial complex with 13 vertices and 13 facets
+            sage: Z = S.join(S)
+            sage: Z.pinch().homology() == Z.homology()
+            True
+
+        ..SEEALSO::
+
+            :meth:`sage.topology.simplicial_complex.SimplicialComplex.link`,
+            :meth:`sage.topology.simplicial_complex.SimplicialComplex.reduce`
         """
         efset = frozenset()
         edges = {edge.set() for edge in self.n_faces(1)}
