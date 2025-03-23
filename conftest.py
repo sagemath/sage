@@ -181,6 +181,9 @@ def pytest_collect_file(
             if file_path.name == "__main__.py" or file_path.name == "setup.py":
                 # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).
                 return IgnoreCollector.from_parent(parent)
+            if file_path.name == "all.py":
+                # all.py do not contain tests and may fail when imported twice / in the wrong order
+                return IgnoreCollector.from_parent(parent)
             if (
                 (
                     file_path.name == "postprocess.py"
