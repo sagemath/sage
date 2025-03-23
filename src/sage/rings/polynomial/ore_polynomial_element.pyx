@@ -2951,9 +2951,9 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         if var is None:
             var = parent.variable_name()
         if derivation is None:
-            S = OrePolynomialRing(k, morphism, var)
+            S = OrePolynomialRing(k, morphism, var, polcast=False)
         else:
-            S = OrePolynomialRing(k, derivation, var)
+            S = OrePolynomialRing(k, derivation, var, polcast=False)
         if not self:
             return S.zero()
         X = S.gen() + s
