@@ -3517,7 +3517,7 @@ class MatchingCoveredGraph(Graph):
           returned if ``k`` is not a nonnegative even integer,
 
         - If the graph does not contain the edge provided, a :exc:`ValueError`
-          is returned. Also, a :exc:`ValueError` is thrown incase the provided
+          is returned. Also, a :exc:`ValueError` is thrown in case the provided
           arguments are not valid.
 
         EXAMPLES:
@@ -3625,7 +3625,8 @@ class MatchingCoveredGraph(Graph):
                     raise ValueError(f'the given edge {(u, v, None)} does not exist')
 
                 l = self.edge_label(u, v)
-                l = l[0] if isinstance(l, list) else l
+                if self.allows_multiple_edges() and isinstance(l, list):
+                    l = l[0]
 
             elif len(edge) == 3:
                 u, v, l = edge
