@@ -15690,6 +15690,10 @@ cdef class Matrix(Matrix1):
         Return the conjugate of self, i.e. the matrix whose entries are the
         conjugates of the entries of ``self``.
 
+        .. SEEALSO::
+
+            :attr:`C`
+
         EXAMPLES::
 
             sage: # needs sage.rings.complex_double sage.symbolic
@@ -15744,6 +15748,10 @@ cdef class Matrix(Matrix1):
             This function is sometimes known as the "adjoint" of a matrix,
             though there is substantial variation and some confusion with
             the use of that term.
+
+        .. SEEALSO::
+
+            :meth:`conjugate`, :meth:`~.Matrix_dense.transpose`, :attr:`H`
 
         OUTPUT:
 
@@ -18562,6 +18570,10 @@ cdef class Matrix(Matrix1):
         r"""
         Return the conjugate-transpose (Hermitian) matrix.
 
+        .. SEEALSO::
+
+            :meth:`conjugate_transpose`
+
         EXAMPLES::
 
             sage: A = matrix(QQbar, [[     -3,  5 - 3*I, 7 - 4*I],                      # needs sage.rings.number_field
@@ -18572,7 +18584,7 @@ cdef class Matrix(Matrix1):
             [ 5 + 3*I -1 - 6*I -3 - 6*I]
             [ 7 + 4*I  3 - 5*I  5 - 1*I]
         """
-        return self.conjugate().transpose()
+        return self.conjugate_transpose()
 
 
 def _smith_diag(d, transformation=True):
