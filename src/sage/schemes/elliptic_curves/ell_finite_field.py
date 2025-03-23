@@ -3179,7 +3179,7 @@ def EllipticCurve_with_prime_order(N):
         """
         import heapq
         hq = [(1, 1, -1)]
-        while len(hq):
+        while hq:
             abs_n, n, idx = heapq.heappop(hq)
             yield n
             for nxt in range(idx + 1, len(S)):
