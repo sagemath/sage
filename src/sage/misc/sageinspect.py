@@ -1600,6 +1600,19 @@ def sage_getargspec(obj):
         sage: shell.run_cell('f = Foo()')
         sage: shell.run_cell('f??')
         ...the source code string...
+    
+    Test that :issue:`39627` is fixed:
+        sage: from sage.misc.sageinspect import sage_formatargspec
+        sage: def afunc(a, b=1, *, x=2, y, z=3):
+        ....:     return
+        ....: 
+        sage: sage_getargspec(afunc)
+        FullArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=(1,), kwonlyargs=['x', 'y', 'z'], kwonlydefaults={'x': 2, 'z': 3}, annotations={})
+        sage: sage_formatargspec(*sage_getargspec(afunc))
+        '(a, b=1, *, x=2, y, z=3)'
+        sage: sage_getargspec(sage.categories.enumerated_sets.EnumeratedSets.ParentMethods.map)
+        FullArgSpec(args=['self', 'f', 'name'], varargs=None, varkw=None, defaults=(None,), kwonlyargs=['is_injective'], kwonlydefaults={'is_injective': True}, annotations={})
+         
     """
     from sage.misc.lazy_attribute import lazy_attribute
     from sage.misc.abstract_method import AbstractMethod
