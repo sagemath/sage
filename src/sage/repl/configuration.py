@@ -25,12 +25,12 @@ the IPython simple prompt is being used::
 # ****************************************************************************
 
 
-import sys
 import copy
+import sys
+
 from traitlets.config.loader import Config
 
 from sage.repl.prompts import SagePrompts
-
 
 # Name of the Sage IPython extension
 SAGE_EXTENSION = 'sage'
@@ -72,7 +72,7 @@ class SageIpythonConfiguration:
         """
         Return the IPython color palette.
 
-        This returns ``'NoColor'`` during doctests to avoid ANSI escape
+        This returns ``'nocolor'`` during doctests to avoid ANSI escape
         sequences.
 
         EXAMPLES::
@@ -82,7 +82,7 @@ class SageIpythonConfiguration:
             True
         """
         if not self._allow_ansi():
-            return 'NoColor'
+            return 'nocolor'
         from sage.repl.interpreter import SageTerminalInteractiveShell
         return SageTerminalInteractiveShell.colors.default()
 

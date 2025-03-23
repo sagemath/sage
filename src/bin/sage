@@ -488,10 +488,6 @@ usage_advanced() {
         echo "  --fixdoctests file.py"
         echo "                      -- Run doctests and replace output of failing doctests"
         echo "                         with actual output."
-        echo "  --fiximports <files|dirs>"
-        echo "                      -- Replace imports from sage.PAC.KAGE.all by specific"
-        echo "                         imports when sage.PAC.KAGE is an implicit namespace"
-        echo "                         package"
         echo "  --fixdistributions <files|dirs>"
         echo "                      -- Check or update '# sage_setup: distribution'"
         echo "                         directives in source files"
@@ -953,11 +949,6 @@ fi
 
 if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
     exec sage-startuptime.py "$@"
-fi
-
-if [ "$1" = '-fiximports' -o "$1" = '--fiximports' ]; then
-    shift
-    exec sage-python -m sage.misc.replace_dot_all "$@"
 fi
 
 if [ "$1" = '-fixdistributions' -o "$1" = '--fixdistributions' ]; then

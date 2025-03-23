@@ -1142,27 +1142,23 @@ class MatchingCoveredGraph(Graph):
                 raise ValueError('loops are not allowed in '
                                  'matching covered graphs')
 
-            # TODO: A ligher incremental method to check whether the new graph
-            # is matching covered instead of creating a new graph and checking
+            # If (u, v, label) is a multiple edge/ an existing edge
+            if self.has_edge(u, v):
+                self._backend.add_edge(u, v, label, self._directed)
+                return
 
-            G = Graph(self, multiedges=self.allows_multiple_edges())
-            G.add_edge(u, v, label=label)
+            # Check if there exists an M-alternating odd uv path starting and
+            # ending with edges in self._matching
+            from sage.graphs.matching import M_alternating_even_mark
+            w = next((b if a == u else a) for a, b, *_ in self.get_matching() if u in (a, b))
 
-            try:
-                self.__init__(data=G, matching=self.get_matching())
+            if v in M_alternating_even_mark(self, w, self.get_matching()):
+                # There exists a perfect matching containing the edge (u, v, label)
+                self._backend.add_edge(u, v, label, self._directed)
+                return
 
-            except Exception:
-                raise ValueError('the graph obtained after the addition of '
-                                 'edge (%s) is not matching covered'
-                                 % str((u, v, label)))
-
-        else:
-            # At least one of u or v is a nonexistent vertex.
-            # Thus, the resulting graph is either disconnected
-            # or has an odd order, hence not matching covered
-            raise ValueError('the graph obtained after the addition of edge '
-                             '(%s) is not matching covered'
-                             % str((u, v, label)))
+        raise ValueError('the graph obtained after the addition of edge '
+                         '(%s) is not matching covered' % str((u, v, label)))
 
     @doc_index('Overwritten methods')
     def add_edges(self, edges, loops=False):
