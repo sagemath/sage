@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu']
+        os: ['ubuntu', 'macos']
         python: ['3.11', '3.12']
         tests: ['all']
         editable:
