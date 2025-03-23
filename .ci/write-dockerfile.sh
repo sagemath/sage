@@ -26,7 +26,7 @@ WITH_SYSTEM_SPKG="${3:-yes}"
 IGNORE_MISSING_SYSTEM_PACKAGES="${4:-no}"
 EXTRA_SAGE_PACKAGES="${5:-_bootstrap}"
 ##
-## Environment variables that take influence:
+## Environment variables that influence:
 ##
 ## - BOOTSTRAP
 ## - CONFIGURE_ARGS
@@ -346,8 +346,6 @@ ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!
 #:make:
 ARG TARGETS_PRE="all-sage-local"
 $RUN$CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_PRE}$ENDRUN$THEN_SAVE_STATUS
-# Strip executables in local to reduce the image size
-RUN if command -v strip >/dev/null; then LC_ALL=C find local -type f -exec sh -c 'test -x "{}" && strip "{}"' ';' >/dev/null 2>&1; fi || true
 
 FROM with-targets-pre AS with-targets
 ARG NUMPROC=8
