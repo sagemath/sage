@@ -181,7 +181,7 @@ lint = [
   "flake8-rst-docstrings",
 ]
 dev = [
-  "toml",
-  "grayskull",
   "conda-lock",
+  "grayskull",
+  "toml",
 ]

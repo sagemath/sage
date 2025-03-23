@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-# Requirements: pip install https://github.com/conda/grayskull conda-lock
-# Usage: python tools/update-conda.py .
+# See README.md for more details
 
 import argparse
 import subprocess
@@ -254,8 +253,11 @@ def get_dev_dependencies(pyproject_toml: Path) -> list[str]:
     dev_dependencies = (
         dependency_groups.get("test", [])
         + dependency_groups.get("docs", [])
+        + dependency_groups.get("lint", [])
         + dependency_groups.get("dev", [])
     )
+    # Remove dependencies that are not available on conda
+    dev_dependencies.remove("relint")
     return dev_dependencies
 
 

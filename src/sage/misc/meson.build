@@ -62,7 +62,6 @@ py.install_sources(
   'random_testing.py',
   'randstate.pxd',
   'remote_file.py',
-  'replace_dot_all.py',
   'repr.py',
   'rest_index_of_methods.py',
   'sage_eval.py',
