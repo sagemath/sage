@@ -3736,7 +3736,7 @@ class MatchingCoveredGraph(Graph):
           returned if ``k`` is not a nonnegative even integer,
 
         - If the graph does not contain at least one of the edges provided, a
-          :exc:`ValueError` is returned. Also, a :exc:`ValueError` is thrown incase
+          :exc:`ValueError` is returned. Also, a :exc:`ValueError` is thrown in case
           the provided arguments are not valid.
 
         EXAMPLES:
@@ -3824,7 +3824,7 @@ class MatchingCoveredGraph(Graph):
             sage: G.subdivide_edges([(0, 4), (0, 4, None)], 4)
             Traceback (most recent call last):
             ...
-            ValueError: input contains 2 no. of multiple edge (0, 4, None),
+            ValueError: input contains 2 copies of the edge (0, 4, None),
             but the graph contains 1
 
         When ``k`` is not a nonnegative even integer::
@@ -3871,9 +3871,6 @@ class MatchingCoveredGraph(Graph):
         if k == 0:
             return
 
-        from collections import defaultdict
-        edge_frequency = defaultdict(int)
-
         for i, edge in enumerate(edges):
             if hasattr(edge, '__len__'):
                 if len(edge) <= 1:
@@ -3895,25 +3892,26 @@ class MatchingCoveredGraph(Graph):
                     raise ValueError(f'the given edge {(u, v, None)} does not exist')
 
                 l = self.edge_label(u, v)
-                if isinstance(l, list):
-                    l = next(iter(l))
+                if self.allows_multiple_edges() and isinstance(l, list):
+                    l = l[0]
 
             elif len(edge) == 3:
                 u, v, l = edge
 
             edges[i] = (u, v, l)
-            edge_frequency[edges[i]] += 1
 
-        for edge in edge_frequency:
+        from collections import Counter
+        edge_frequency = Counter(edges)
+
+        for edge, n in edge_frequency.items():
             u, v, l = edge
-            n = edge_frequency[edge]
 
             labels = self.edge_label(u, v)
             c = labels.count(l) if isinstance(labels, list) else 1
 
             if c < n:
-                raise ValueError(f'input contains {n} no. of multiple '
-                                 f'edge {edge}, but the graph contains {c}')
+                raise ValueError(f'input contains {n} copies of the edge '
+                                 f'{edge}, but the graph contains {c}')
 
         new_vertices = [self._backend.add_vertex(None) for _ in range(k * len(edges))]
         M = Graph(self.get_matching())
