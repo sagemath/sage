@@ -91,7 +91,7 @@ from .number_field_element_quadratic import OrderElement_quadratic
 
 from sage.rings.monomials import monomials
 
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 
 
 def quadratic_order_class_number(disc):

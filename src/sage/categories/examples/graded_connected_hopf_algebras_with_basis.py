@@ -12,7 +12,7 @@ Examples of graded connected Hopf algebras with basis
 
 from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.arith.misc import binomial
+from sage.rings.integer import Integer
 from sage.misc.cachefunc import cached_method
 from sage.sets.non_negative_integers import NonNegativeIntegers
 
@@ -144,8 +144,8 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             P0 # P3 + 3*P1 # P2 + 3*P2 # P1 + P3 # P0
         """
         return self.sum_of_terms(
-            ((i-j, j), binomial(i, j))
-            for j in range(i+1)
+            ((i - j, j), Integer(i).binomial(j))
+            for j in range(i + 1)
         )
 
 

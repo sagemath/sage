@@ -62,8 +62,6 @@ classifiers = [
     "Operating System :: POSIX",
     "Operating System :: MacOS :: MacOS X",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -71,7 +69,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 urls = {Homepage = "https://www.sagemath.org"}
-requires-python = ">=3.9, <3.14"
+requires-python = ">=3.11, <3.14"
 
 [project.optional-dependencies]
 R = [
@@ -115,7 +113,6 @@ host-requires = [
   "pkg:generic/eclib",
   "pkg:generic/ecm",
   "pkg:generic/fflas-ffpack",
-  "pkg:generic/fplll",
   "pkg:generic/flint",
   "pkg:generic/libgd",
   "pkg:generic/gap",
@@ -145,7 +142,6 @@ host-requires = [
   "pkg:generic/pari-galdata",
   "pkg:generic/pari-seadata",
   "pkg:generic/planarity",
-  "pkg:generic/ppl",
   "pkg:generic/primesieve",
   "pkg:generic/primecount",
   "pkg:generic/qhull",
@@ -156,10 +152,10 @@ host-requires = [
 ]
 
 dependencies = [
-  "pkg:generic/tachyon",
   "pkg:generic/sagemath-polytopes-db",
   "pkg:generic/sagemath-elliptic-curves",
   "pkg:generic/sagemath-graphs",
+  "pkg:generic/tachyon",
 ]
 
 [dependency-groups]
@@ -178,4 +174,9 @@ lint = [
   "ruff",
   "pycodestyle",
   "flake8-rst-docstrings",
+]
+dev = [
+  "conda-lock",
+  "grayskull",
+  "toml",
 ]

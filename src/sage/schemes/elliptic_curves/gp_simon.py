@@ -106,7 +106,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         E = E_orig.change_ring(to_K)
         with localvars(K.polynomial().parent(), 'y'):
             # Simon's program requires that this name be y.
-            K_pari = pari.bnfinit(K.polynomial())
+            K_pari = pari.bnfinit(K.polynomial(), 1)
         known_points = [P.change_ring(to_K) for P in known_points]
     else:
         deprecation(38461, "please use the 2-descent algorithm over QQ inside pari")

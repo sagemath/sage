@@ -31,7 +31,7 @@ We can construct a polynomial sequence for a random plaintext-ciphertext
 pair and study it::
 
     sage: set_random_seed(1)
-    sage: while True:  # workaround (see :issue:`31891`)                                 # needs sage.rings.polynomial.pbori
+    sage: while True:  # workaround (see :issue:`31891`)                                # needs sage.rings.polynomial.pbori
     ....:     try:
     ....:         F, s = sr.polynomial_system()
     ....:         break
@@ -122,7 +122,7 @@ Using these building blocks we can implement a simple XL algorithm
 easily::
 
     sage: sr = mq.SR(1,1,1,4, gf2=True, polybori=True, order='lex')                     # needs sage.rings.polynomial.pbori
-    sage: while True:  # workaround (see :issue:`31891`)                                 # needs sage.rings.polynomial.pbori
+    sage: while True:  # workaround (see :issue:`31891`)                                # needs sage.rings.polynomial.pbori
     ....:     try:
     ....:         F, s = sr.polynomial_system()
     ....:         break
@@ -170,6 +170,7 @@ from sage.rings.infinity import Infinity
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing_sparse
 from sage.rings.quotient_ring import QuotientRing_nc
 from sage.structure.sequence import Sequence_generic
 
@@ -272,7 +273,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     TESTS:
 
-    A PolynomialSequence can exist with elements in an infinite field of
+    A ``PolynomialSequence`` can exist with elements in an infinite field of
     characteristic 2 (see :issue:`19452`)::
 
         sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
@@ -282,7 +283,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         sage: PolynomialSequence([0], R)
         [0]
 
-    A PolynomialSequence can be created from an iterator (see :issue:`25989`)::
+    A ``PolynomialSequence`` can be created from an iterator (see :issue:`25989`)::
 
         sage: R.<x,y,z> = QQ[]
         sage: PolynomialSequence(iter(R.gens()))
@@ -291,6 +292,20 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         [x, y, z]
         sage: PolynomialSequence(iter([(x,y), (z,)]), R)
         [x, y, z]
+
+    A ``PolynomialSequence`` can be created from elements of an
+    ``InfinitePolynomialRing``::
+
+        sage: R.<a> = InfinitePolynomialRing(QQ)
+        sage: s = PolynomialSequence([a[i]-a[i+1] for i in range(3)])
+        sage: s
+        [-a_1 + a_0, -a_2 + a_1, -a_3 + a_2]
+        sage: s.coefficients_monomials()
+        (
+        [ 0  0 -1  1]
+        [ 0 -1  1  0]
+        [-1  1  0  0], (a_3, a_2, a_1, a_0)
+        )
     """
     from sage.structure.element import Matrix
     try:
@@ -298,7 +313,11 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     except ImportError:
         BooleanMonomialMonoid = ()
 
-    is_ring = lambda r: isinstance(r, (MPolynomialRing_base, BooleanMonomialMonoid)) or (isinstance(r, QuotientRing_nc) and isinstance(r.cover_ring(), MPolynomialRing_base))
+    is_ring = lambda r: (isinstance(r, (MPolynomialRing_base,
+                                        BooleanMonomialMonoid,
+                                        InfinitePolynomialRing_sparse))
+                         or (isinstance(r, QuotientRing_nc)
+                             and isinstance(r.cover_ring(), MPolynomialRing_base)))
 
     if is_ring(arg1):
         ring, gens = arg1, arg2
@@ -382,7 +401,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        - ``part`` -- list of lists with polynomials
+        - ``parts`` -- a list of lists with polynomials
 
         - ``ring`` -- a multivariate polynomial ring
 
@@ -413,7 +432,7 @@ class PolynomialSequence_generic(Sequence_generic):
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c]
         """
 
-        Sequence_generic.__init__(self, sum(parts,tuple()), ring, check=False, immutable=immutable,
+        Sequence_generic.__init__(self, sum(parts, tuple()), ring, check=False, immutable=immutable,
                                   cr=cr, cr_str=cr_str, use_sage_types=True)
         self._ring = ring
         self._parts = parts
@@ -1271,7 +1290,9 @@ class PolynomialSequence_generic(Sequence_generic):
         forms a Groebner basis if and only if for every element `S` in
         `Syz(LM(I))`:
 
-            `S * G = \sum_{i=0}^{m} h_ig_i ---->_G 0.`
+        .. MATH::
+
+            S \star G = \sum_{i=0}^{m} h_i g_i \longrightarrow_G 0.
 
         EXAMPLES::
 
@@ -1552,12 +1573,11 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         Without argument, a single arbitrary solution is returned::
 
             sage: # needs sage.rings.polynomial.pbori
-            sage: from sage.doctest.fixtures import reproducible_repr
             sage: R.<x,y,z> = BooleanPolynomialRing()
             sage: S = Sequence([x*y + z, y*z + x, x + y + z + 1])
             sage: sol = S.solve()
-            sage: print(reproducible_repr(sol))
-            [{x: 0, y: 1, z: 0}]
+            sage: sol
+            [{z: 0, y: 1, x: 0}]
 
         We check that it is actually a solution::
 
@@ -1567,8 +1587,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         We obtain all solutions::
 
             sage: sols = S.solve(n=Infinity)                                            # needs sage.rings.polynomial.pbori
-            sage: print(reproducible_repr(sols))                                        # needs sage.rings.polynomial.pbori
-            [{x: 0, y: 1, z: 0}, {x: 1, y: 1, z: 1}]
+            sage: sols                                                                  # needs sage.rings.polynomial.pbori
+            [{z: 0, y: 1, x: 0}, {z: 1, y: 1, x: 1}]
             sage: [S.subs(x) for x in sols]                                             # needs sage.rings.polynomial.pbori
             [[0, 0, 0], [0, 0, 0]]
 
@@ -1576,16 +1596,16 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         package ``FES`` is present::
 
             sage: sol = S.solve(algorithm='exhaustive_search')  # optional - fes        # needs sage.rings.polynomial.pbori
-            sage: print(reproducible_repr(sol))                 # optional - fes        # needs sage.rings.polynomial.pbori
-            [{x: 1, y: 1, z: 1}]
+            sage: sol                                           # optional - fes        # needs sage.rings.polynomial.pbori
+            [{z: 1, y: 1, x: 1}]
             sage: S.subs(sol[0])                                # optional - fes        # needs sage.rings.polynomial.pbori
             [0, 0, 0]
 
         And we may use SAT-solvers if they are available::
 
             sage: sol = S.solve(algorithm='sat')        # optional - pycryptosat        # needs sage.rings.polynomial.pbori
-            sage: print(reproducible_repr(sol))         # optional - pycryptosat        # needs sage.rings.polynomial.pbori
-            [{x: 0, y: 1, z: 0}]
+            sage: sol                                   # optional - pycryptosat        # needs sage.rings.polynomial.pbori
+            [{z: 0, y: 1, x: 0}]
             sage: S.subs(sol[0])                                                        # needs sage.rings.polynomial.pbori
             [0, 0, 0]
 
