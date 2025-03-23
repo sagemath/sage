@@ -21663,13 +21663,14 @@ class GenericGraph(GenericGraph_pyx):
         OUTPUT: a dictionary mapping vertices to positions
 
         EXAMPLES::
+
             sage: g = graphs.WheelGraph(n=7)
             sage: g.plot(layout='tutte', external_face=[0,1,2])                        # needs sage.plot
             Graphics object consisting of 20 graphics primitives
             sage: g = graphs.CubeGraph(n=3, embedding=2)
             sage: g.plot(layout='tutte', external_face=['101','111','001',
             ....:       '011'], external_face_pos={'101':(1,0), '111':(0,0),
-            ....: '001':(2,1), '011':(-1,1)})                                          # needs sage.plot
+            ....:       '001':(2,1), '011':(-1,1)})                                    # needs sage.plot
             Graphics object consisting of 21 graphics primitives
             sage: g = graphs.CompleteGraph(n=5)
             sage: g.plot(layout='tutte', external_face=[0,1,2])
@@ -21688,32 +21689,27 @@ class GenericGraph(GenericGraph_pyx):
         if (external_face is not None) and (len(external_face) < 3):
             raise ValueError("external face must have at least 3 vertices")
 
-        if not self.is_planar():
+        if not self.is_planar(set_embedding=True):
             raise ValueError("graph must be planar")
 
         if not self.vertex_connectivity(k=3):
             raise ValueError("graph must be 3-connected")
 
+        faces_edges = self.faces()
+        faces_vertices = [[edge[0] for edge in face] for face in faces_edges]
         if external_face is None:
-            from sage.graphs.graph import Graph
-            H = Graph(self)  # take a (undirected) copy H of the graph
-            u, v = next(H.edge_iterator(labels=False))  # take any edge (u, v) of H
-            H.delete_edge(u, v)  # remove edge (u, v) from H
-            external_face = H.shortest_path(v, u)
-            # Compute a shortest path from v to u in H minus (u, v)H = G.
-            # Cycle existence is guaranteed since G is 3-connected.
+            external_face = faces_vertices[0]
         else:
-            C = self.subgraph(vertices=external_face)
-            if (not C.is_cycle(directed_cycle=False)):
-                raise ValueError("external face must be a cycle")
-            external_face = C.depth_first_search(start=external_face[0], ignore_direction=False)
+            # Check that external_face is a face and order it correctly
+            matching_face = next((f for f in faces_vertices if sorted(external_face) == sorted(f)), None)
+            if matching_face is None:
+                raise ValueError("external face must be a face of the graph")
+            external_face = matching_face
 
-        pos = dict()
         if external_face_pos is None:
             pos = self._circle_embedding(external_face, return_dict=True)
         else:
-            for v, p in external_face_pos.items():
-                pos[v] = p
+            pos = external_face_pos.copy()
 
         n = self.order()
         M = zero_matrix(RR, n, n)
@@ -22123,7 +22119,7 @@ class GenericGraph(GenericGraph_pyx):
           appear on the bottom (resp., top) and the tree will grow upwards
           (resp. downwards). Ignored unless ``layout='tree'``.
 
-        - ``external_face`` -- list of vertices; the external face to be made a
+        - ``external_face`` -- list of vertices (default: ``None``); the external face to be made a
           in the Tutte layout. Ignored unless ``layout='tutte''``.
 
         - ``external_face_pos`` -- dictionary (default: ``None``). If specified,
