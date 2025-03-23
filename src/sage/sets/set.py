@@ -1520,6 +1520,38 @@ class Set_object_union(Set_object_binary):
         sympy_init()
         return Union(self._X._sympy_(), self._Y._sympy_())
 
+    def __bool__(self):
+        """
+        Return ``True`` if this set is not empty.
+
+        EXAMPLES::
+
+            sage: bool(Set(GF(3)).union(Set(GF(2))))
+            True
+            sage: bool(Set(GF(3)).intersection(Set(GF(2))))
+            False
+
+        TESTS:
+
+        This should still work in the case the first set is nonempty
+        and the second set has :meth:`is_empty` unimplemented::
+
+            sage: C = ConditionSet(QQ, lambda x: x > 0)
+            sage: C.is_empty()
+            Traceback (most recent call last):
+            ...
+            AttributeError...
+            sage: C.is_finite()
+            Traceback (most recent call last):
+            ...
+            AttributeError...
+            sage: bool(Set([1]) + C)
+            True
+            sage: (Set([1]) + C).is_empty()
+            False
+        """
+        return bool(self._X) or bool(self._Y)
+
 
 class Set_object_intersection(Set_object_binary):
     """

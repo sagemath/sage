@@ -104,7 +104,7 @@ jobs:
 
       - name: Get changed files and packages
         id: changed-files
-        uses: tj-actions/changed-files@v45
+        uses: tj-actions/changed-files@v46
         with:
           # File extensions for doctests per sage.doctest.control.skipfile
           # Also src/sage/doctests/tests/ are excluded because of nodoctest file
@@ -311,6 +311,8 @@ jobs:
 
       - name: Generate Dockerfile
         # From docker.yml
+        # tox -e <environment name> command runs commands in `tox.ini`,
+        # in particular the script `.ci/write-dockerfile.sh`, to generate `Dockerfile`.
         run: |
           tox -e ${{ env.TOX_ENV }}
           cp .tox/${{ env.TOX_ENV }}/Dockerfile .

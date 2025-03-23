@@ -125,7 +125,6 @@ from sage.misc.explain_pickle import explain_pickle, unpickle_newobj, unpickle_g
 lazy_import('sage.misc.inline_fortran', 'fortran')
 
 lazy_import('sage.misc.banner', 'banner', deprecation=34259)
-lazy_import('sage.misc.dev_tools', 'runsnake', deprecation=34259)
 lazy_import('sage.misc.edit_module', 'set_edit_template', deprecation=34259)
 lazy_import('sage.misc.profiler', 'Profiler', deprecation=34259)
 lazy_import('sage.misc.trace', 'trace', deprecation=34259)

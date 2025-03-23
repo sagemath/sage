@@ -63,15 +63,6 @@ EXAMPLES::
     {0: 0, 1: C4, 2: 0}
     sage: simplicial_complexes.MatchingComplex(6).homology()                            # needs sage.modules
     {0: 0, 1: Z^16, 2: 0}
-
-TESTS::
-
-    sage: from sage.topology.simplicial_complex_examples import PseudoQuaternionicProjectivePlane
-    sage: H = PseudoQuaternionicProjectivePlane()                                       # needs sage.groups
-    doctest:warning...:
-    DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated.
-    Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
-    See https://github.com/sagemath/sage/issues/34568 for details.
 """
 
 from .simplicial_complex import SimplicialComplex
@@ -617,9 +608,6 @@ def QuaternionicProjectivePlane():
     return UniqueSimplicialComplex([[g(index) for index in tup]
                                     for tup in start_list
                                     for g in PermutationGroup([P, S])])
-
-
-PseudoQuaternionicProjectivePlane = deprecated_function_alias(34568, QuaternionicProjectivePlane)
 
 
 def PoincareHomologyThreeSphere():

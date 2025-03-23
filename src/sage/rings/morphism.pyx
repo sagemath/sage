@@ -2098,9 +2098,9 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         """
         RingHomomorphism.__init__(self, parent)
         if underlying.domain() != parent.domain().base():
-            raise ValueError("The given homomorphism has to have the domain %s"%parent.domain().base())
+            raise ValueError("The given homomorphism has to have the domain %s" % parent.domain().base())
         if underlying.codomain() != parent.codomain().base():
-            raise ValueError("The given homomorphism has to have the codomain %s"%parent.codomain().base())
+            raise ValueError("The given homomorphism has to have the codomain %s" % parent.codomain().base())
         if parent.domain().construction()[0] != parent.codomain().construction()[0]:
             raise ValueError(f"domain ({parent.domain()}) and codomain ({parent.codomain()}) must have the same functorial construction over their base rings")
         self._underlying = underlying
