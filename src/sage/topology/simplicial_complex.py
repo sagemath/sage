@@ -482,22 +482,6 @@ class Simplex(SageObject):
         """
         return iter(self.__tuple)
 
-    def __add__(self, other):
-        """
-        Simplex obtained by concatenating the underlying tuples of the
-        two arguments.
-
-        INPUT:
-
-        - ``other`` -- another simplex
-
-        EXAMPLES::
-
-            sage: Simplex((1,2,3)) + Simplex((5,6))
-            (1, 2, 3, 5, 6)
-        """
-        return Simplex(self.__tuple + other.__tuple)
-
     def __sub__(self, other):
         """
         Simplex obtained by removing the vertices of `other` from those of
@@ -587,6 +571,23 @@ class Simplex(SageObject):
         """
         return not not self.__tuple
 
+    def intersection(self, right):
+        """
+        The intersection of ``self`` with ``right``
+
+        INPUT:
+
+            - ``right`` -- a simplex
+
+        EXAMPLES::
+
+            sage: Simplex([1, 2, 3]).intersection(Simplex([2, 3, 4]))
+            (2, 3)
+        """
+        return Simplex(self.__set & other.__set)
+
+    __and__ = intersection
+
     def join(self, right, rename_vertices=True):
         """
         The join of this simplex with another one.
@@ -621,6 +622,26 @@ class Simplex(SageObject):
         else:
             vertex_set = self.__tuple + right.__tuple
         return Simplex(vertex_set)
+
+    __add__ = join
+
+    def merge(self, other):
+        """
+        Simplex obtained by taking the union of the underlying sets of the
+        two arguments.
+
+        INPUT:
+
+        - ``other`` -- another simplex
+
+        EXAMPLES::
+
+            sage: Simplex((1,2,3)).merge(Simplex((3,4)))
+            (1, 2, 3, 4)
+        """
+        return Simplex(self.__set | other.__set)
+
+    __or__ = merge
 
     def product(self, other, rename_vertices=True):
         r"""
@@ -743,7 +764,7 @@ class Simplex(SageObject):
         """
         if not isinstance(other, Simplex):
             return False
-        return self.__set == other.set()
+        return self.__set == other.__set
 
     def __ne__(self, other):
         """
@@ -887,8 +908,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
     (or tuples, etc.) of vertices.  Maximal faces are also known as
     'facets'. ``maximal_faces`` can also be a list containing a single
     nonnegative integer `n`, in which case this constructs the
-    simplicial complex with a single `n`-simplex as the only facet unless the
-    keyword ``use_simplex_convention`` is set to ``False``.
+    simplicial complex with a single `n`-simplex as the only facet.
 
     Alternatively, the maximal faces can be defined from a monotone boolean
     function on the subsets of a set `X`. While defining ``maximal_faces=None``,
@@ -4087,7 +4107,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             # true if X has fewer than five vertices, fewer than 5 facets, or
             # has dimension 1.
             if (vertex_count := len(X._vertex_to_index)) == len(nerve._facets):
-                if (probable or vertex_count < 5 or facet_count < 5 or first_len < 3):
+                if (probable or vertex_count < 5 or facet_count < 5
+                    or first_len < 3):
                     return False
                 break
             X = nerve
