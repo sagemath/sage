@@ -3747,16 +3747,16 @@ class MatchingCoveredGraph(Graph):
 
             sage: C = graphs.CycleGraph(4)
             sage: G = MatchingCoveredGraph(C)
-            sage: V, E = set(G.vertices()), set(G.edges())
+            sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: M = set(G.get_matching())
-            sage: G.subdivide_edges(sorted(G.edges()), 2)
-            sage: W, F = set(G.vertices()), set(G.edges())
+            sage: G.subdivide_edges(E, 2)
+            sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: N = set(G.get_matching())
             sage: sorted(W - V)
             [4, 5, 6, 7, 8, 9, 10, 11]
-            sage: sorted(F - E), sorted(E - F)
-            ([(0, 4, None), (0, 6, None), (1, 7, None), (1, 8, None),
-              (2, 9, None), (2, 10, None), (3, 5, None), (3, 11, None),
+            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
+            ([(0, 4, None), (0, 6, None), (1, 5, None), (1, 8, None),
+              (2, 9, None), (2, 10, None), (3, 7, None), (3, 11, None),
               (4, 5, None), (6, 7, None), (8, 9, None), (10, 11, None)],
              [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)])
             sage: if (0, 1, None) in M:
@@ -3768,20 +3768,23 @@ class MatchingCoveredGraph(Graph):
             ....:         ([(0, 6, None), (1, 10, None), (2, 11, None), (3, 7, None), \
             ....:           (4, 5, None), (8, 9, None)], [(0, 3, None), (1, 2, None)])
 
-        If a single is present multiple times in the iterable, it is considered
-        only once::
+        If a single is present multiple times in the iterable, if that many (or
+        more) edges are present in the graph, each of those edges gets subdivided::
 
             sage: C = graphs.CycleGraph(4)
             sage: G = MatchingCoveredGraph(C)
-            sage: V, E = set(G.vertices()), set(G.edges())
-            sage: M = set(G.get_matching())
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edges([(0, 1)] * 3)
+            sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
+            sage: M = list(G.get_matching())
             sage: G.subdivide_edges([(0, 1), (0, 1, None)], 2)
-            sage: W, F = set(G.vertices()), set(G.edges())
+            sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: N = set(G.get_matching())
             sage: sorted(W - V)
-            [4, 5]
-            sage: sorted(F - E), sorted(E - F)
-            ([(0, 4, None), (1, 5, None), (4, 5, None)], [(0, 1, None)])
+            [4, 5, 6, 7]
+            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
+            ([(0, 4, None), (0, 6, None), (1, 5, None), (1, 7, None),
+              (4, 5, None), (6, 7, None)], [(0, 1, None), (0, 1, None)])
             sage: if (0, 1, None) in M:
             ....:     assert sorted(N - M), sorted(M - N) == \
             ....:         ([(0, 4, None), (1, 5, None)], [(0, 1, None)])
@@ -3794,19 +3797,19 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(T)
             sage: G.allow_multiple_edges(True)
             sage: G.add_edges([
-            ....:     (0, 1, 2), (0, 1, 'label'),
-            ....:     (2, 3, 0.5), (2, 3, 'mark')
+            ....:     (0, 1, 2), (0, 1, 3),
+            ....:     (2, 3, 0.5), (2, 3, 4)
             ....: ])
             sage: G.delete_edge(0, 1, None)
-            sage: V, E = set(G.vertices()), set(G.edges())
+            sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: G.subdivide_edges([(0, 1), (1, 2), (2, 3)], 4)
             ....: # edges considered: (0, 1, 2), (1, 2, None), (2, 3, None)
-            sage: W, F = set(G.vertices()), set(G.edges())
+            sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: sorted(W - V)
             [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
-            sage: sorted(F - E), sorted(E - F)
-            ([(0, 10, 2), (1, 13, 2), (1, 18, None), (2, 14, None),
-              (2, 21, None), (3, 17, None), (10, 11, 2), (11, 12, 2),
+            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
+            ([(0, 10, 2), (1, 13, 2), (1, 14, None), (2, 17, None),
+              (2, 18, None), (3, 21, None), (10, 11, 2), (11, 12, 2),
               (12, 13, 2), (14, 15, None), (15, 16, None), (16, 17, None),
               (18, 19, None), (19, 20, None), (20, 21, None)],
              [(0, 1, 2), (1, 2, None), (2, 3, None)])
@@ -3818,6 +3821,11 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: the given edge (1, 5, None) does not exist
+            sage: G.subdivide_edges([(0, 4), (0, 4, None)], 4)
+            Traceback (most recent call last):
+            ...
+            ValueError: input contains 2 no. of multiple edge (0, 4, None),
+            but the graph contains 1
 
         When ``k`` is not a nonnegative even integer::
 
@@ -3856,14 +3864,15 @@ class MatchingCoveredGraph(Graph):
         if not isinstance(edges, Iterable):
             raise ValueError('expected an iterable of edges, but got a non-iterable object')
 
-        edges = list(set(edges))
-
         if k < 0 or k % 2:
             raise ValueError('the number of subdivisions must be a '
                              f'nonnegative even integer, but found {k}')
 
         if k == 0:
             return
+
+        from collections import defaultdict
+        edge_frequency = defaultdict(int)
 
         for i, edge in enumerate(edges):
             if hasattr(edge, '__len__'):
@@ -3893,10 +3902,20 @@ class MatchingCoveredGraph(Graph):
                 u, v, l = edge
 
             edges[i] = (u, v, l)
+            edge_frequency[edges[i]] += 1
 
-        edges = list(set(edges))
-        new_vertices = new_vertices = [self._backend.add_vertex(None) for _ in range(k * len(edges))]
+        for edge in edge_frequency:
+            u, v, l = edge
+            n = edge_frequency[edge]
 
+            labels = self.edge_label(u, v)
+            c = labels.count(l) if isinstance(labels, list) else 1
+
+            if c < n:
+                raise ValueError(f'input contains {n} no. of multiple '
+                                 f'edge {edge}, but the graph contains {c}')
+
+        new_vertices = [self._backend.add_vertex(None) for _ in range(k * len(edges))]
         M = Graph(self.get_matching())
 
         for i, edge in enumerate(edges):
