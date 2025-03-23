@@ -1183,6 +1183,9 @@ class MatchingCoveredGraph(Graph):
           ``(v, v, 'label')`` are removed from the iterator. If ``loops`` is
           set to ``True``, a :exc:`ValueError` is thrown.
 
+        - Please note that all the loops present in the iterator are ignored,
+          provided that ``loops`` is set to ``False`` or ``None``.
+
         OUTPUT:
 
         - If ``loops`` is set to ``True``, a :exc:`ValueError` is returned.
@@ -1415,7 +1418,8 @@ class MatchingCoveredGraph(Graph):
             elif len(edge) == 3:
                 u, v, l = edge
 
-            links.append((u, v, l))
+            if u != v:
+                links.append((u, v, l))
 
         # If each of the input edges is existent
         if all(self.has_edge(*edge) for edge in links):
