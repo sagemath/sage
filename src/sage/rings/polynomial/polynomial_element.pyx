@@ -8451,19 +8451,19 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: # needs sage.libs.flint
             sage: Pol.<x> = CBF[]
-            sage: (x^2 + 2).roots(multiplicities=False)
-            [[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
-            [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I]
+            sage: set((x^2 + 2).roots(multiplicities=False))
+            {[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
+             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I}
             sage: (x^3 - 1/2).roots(RBF, multiplicities=False)
             [[0.7937005259840997 +/- ...e-17]]
             sage: ((x - 1)^2).roots(multiplicities=False, proof=False)
             doctest:...
             UserWarning: roots may have been lost...
-            [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
-             [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
+            [[1.000000000... +/- ...] + [+/- ...]*I,
+             [1.000000000... +/- ...] + [+/- ...]*I]
             sage: ((x - 1)^2).roots(multiplicities=False, proof=False, warn=False)
-            [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
-             [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
+            [[1.000000000... +/- ...] + [+/- ...]*I,
+             [1.000000000... +/- ...] + [+/- ...]*I]
 
         Note that coefficients in a number field with defining polynomial
         `x^2 + 1` are considered to be Gaussian rationals (with the
@@ -10365,7 +10365,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def _is_squarefree_generic(self):
         r"""
-        Return False if this polynomial is not square-free, i.e., if there is a
+        Return ``False`` if this polynomial is not square-free, i.e., if there is a
         non-unit `g` in the polynomial ring such that `g^2` divides ``self``.
 
         EXAMPLES::
