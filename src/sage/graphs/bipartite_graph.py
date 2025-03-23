@@ -558,6 +558,14 @@ class BipartiteGraph(Graph):
         self._hash_labels = hash_labels
 
         return
+    def clear(self):
+        """
+        Clear all the vertices and edges in the graph.
+        This method will also clear the left and right vertex sets.
+        """
+        super().clear()
+        self.left.clear()
+        self.right.clear()
 
     @cached_method
     def __hash__(self):
