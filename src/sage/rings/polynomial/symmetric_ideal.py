@@ -915,7 +915,7 @@ class SymmetricIdeal(Ideal_generic):
             ....:      'y_0*z_0 + 2*z_0^2 - 2*z_0 - 1',
             ....:      'y_0^2 + 2*y_0*z_0 - 2*z_0^2 + 2*z_0 - 2',
             ....:      '-y_0^2 - 2*y_0*z_0 - z_0^2 + y_0 - 1'] * X
-            sage: I.groebner_basis()                                                    # needs sage.combinat
+            sage: I.groebner_basis()   # not tested (:issue:`39537`)                    # needs sage.combinat
             [1]
 
             sage: Y.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex',
