@@ -76,7 +76,7 @@ def KostkaFoulkesPolynomial(mu, nu, t=None):
         sage: KostkaFoulkesPolynomial([2,4],[2,2])
         Traceback (most recent call last):
         ...
-        ValueError: mu must be a partition
+        ValueError: mu must be a partition or a skew partition
         sage: KostkaFoulkesPolynomial([2,2],[2,4])
         Traceback (most recent call last):
         ...
@@ -89,7 +89,7 @@ def KostkaFoulkesPolynomial(mu, nu, t=None):
     if mu not in _Partitions:
         if mu in SkewPartitions():
             return kfpoly_skew(mu, nu, t)
-        raise ValueError("mu must be a partition or skew partition")
+        raise ValueError("mu must be a partition or a skew partition")
     if nu not in _Partitions:
         raise ValueError("nu must be a partition")
     if sum(mu) != sum(nu):
