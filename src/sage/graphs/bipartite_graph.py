@@ -500,7 +500,7 @@ class BipartiteGraph(Graph):
                             edges.append((ii, jj + ncols))
 
             # ensure that construction works
-            # when immutable=True (trac #39295)
+            # when immutable=True (issue #39295)
             Graph.__init__(self, data=[range(nrows + ncols), edges], format='vertices_and_edges', *args, **kwds)
         else:
             if partition is not None:
