@@ -1139,6 +1139,11 @@ def _sage_getargspec_cython(source):
                     defaults=('a string', {(1, 2, 3): True}),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
     """
+    if not isinstance(source, str):
+        # the caller ought to ensure this, but if it forgets (e.g. passing None),
+        # we raise the correct exception type to avoid confusing error message
+        # and possible further hard-to-debug errors, see :issue:`39735`
+        raise TypeError
     defpos = source.find('def ')
     assert defpos > -1, "The given source does not contain 'def'"
     s = source[defpos:].strip()
