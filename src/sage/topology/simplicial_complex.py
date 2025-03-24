@@ -396,9 +396,10 @@ class Simplex(SageObject):
             if N < 0:
                 raise ValueError('the n-simplex is only defined if n > -2')
             self.__tuple = tuple(range(N))
+            self.__set = frozenset(self.__tuple)
         except TypeError:
+            self.__set = frozenset(X)
             self.__tuple = tuple(X)
-        self.__set = frozenset(self.__tuple)
 
     def tuple(self):
         """
@@ -584,7 +585,7 @@ class Simplex(SageObject):
             sage: Simplex([1, 2, 3]).intersection(Simplex([2, 3, 4]))
             (2, 3)
         """
-        return Simplex(self.__set & other.__set)
+        return Simplex(self.__set & right.__set)
 
     __and__ = intersection
 
@@ -1133,7 +1134,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 gen_dict[v] = v
         # build set of facets
         good_faces = []
-        maximal_simplices = [Simplex(f) for f in maximal_faces]
+        maximal_simplices = [f if isinstance(f,Simplex)else Simplex(f)
+                             for f in maximal_faces]
 
         # Sorting the facets is important for the maximality check and also allows us to speed up checking the dimension of the simplicial complex.
         maximal_simplices.sort(key=len, reverse=True)
@@ -4211,7 +4213,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             return enlarged
         faces = [x for x in list(self._facets) if x not in subcomplex._facets]
         # For consistency when using different Python versions, for example, sort 'faces'.
-        faces = sorted(faces, key=str)
+        faces.sort(key=str)
         done = False
         new_facets = sorted(subcomplex._facets, key=str)
         while not done:
@@ -4355,13 +4357,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
             :meth:`sage.topology.simplicial_complex.SimplicialComplex.reduce`
         """
         efset = frozenset()
-        edges = {edge.set() for edge in self.n_faces(1)}
-        facets = {facet.set() for facet in self._facets}
+        X = self
         renamed = set()
         pinched = True
         while pinched:
             pinched = False
-            for edge in list(edges):
+            facets = {facet.set() for facet in X._facets}
+            for edge in X.faces()[1]:
+                edge = edge.set()
                 old, new = edge
                 if old in renamed or new in renamed:
                     continue
@@ -4393,12 +4396,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                             facet -= old_set
                             facet |= new_set
                             facets.add(facet)
-                    for e in list(edges):
-                        if old in e:
-                            edges.remove(e)
-                            e = e.__xor__(edge)
-                            edges.add(e)
-                    edges.remove(efset)
+            if pinched:
+                X = SimplicialComplex(facets)
         return SimplicialComplex(facets)
 
     def size(self):
