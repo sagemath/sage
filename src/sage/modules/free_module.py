@@ -5002,7 +5002,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
                                + " functionality is being moved to the"
                                + " orthogonal_complement() function. This function"
                                + " will instead return a complementary subspace")
-            return self.orthogonal_complement()
+            orthogonal = True
         if orthogonal is True:
             return self.orthogonal_complement()
         if orthogonal is False:
