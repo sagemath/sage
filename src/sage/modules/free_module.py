@@ -4997,11 +4997,12 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         """
         if orthogonal is None:
             from sage.misc.superseded import deprecation
-            deprecation(31487, "The functionality of the complement() function"
-                               + " of a vector space is being updated. The original"
-                               + " functionality is being moved to the"
-                               + " orthogonal_complement() function. This function"
-                               + " will instead return a complementary subspace")
+            deprecation(31487, "Use of the 'complement' method without specifying"
+                               + " a value for the 'orthogonal' keyword is"
+                               + " deprecated. Either specify 'orthogonal=False'"
+                               + " to obtain a complementary subspace, or use the"
+                               + " 'orthogonal_complement' method to obtain the"
+                               + " orthogonal complement.")
             orthogonal = True
         if orthogonal:
             return self.orthogonal_complement()
