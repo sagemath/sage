@@ -10,9 +10,7 @@ AUTHORS:
 
 REFERENCE:
 
-    Ronald C. Read, An Introduction to Chromatic Polynomials,
-    Journal of Combinatorial Theory 4 (1968), 52-71.
-    doi:10.1016/S0021-9800(68)80087-0
+    See [Read1968]_ and the :wikipedia:`Chromatic_polynomial` for more details on this notion in graphs.
 
 """
 
