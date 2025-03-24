@@ -10,8 +10,10 @@ AUTHORS:
 
 REFERENCE:
 
-    Ronald C Read, An improved method for computing the chromatic polynomials of
-    sparse graphs.
+    Ronald C. Read, An Introduction to Chromatic Polynomials,
+    Journal of Combinatorial Theory 4 (1968), 52-71.
+    doi:10.1016/S0021-9800(68)80087-0
+
 """
 
 # ****************************************************************************
