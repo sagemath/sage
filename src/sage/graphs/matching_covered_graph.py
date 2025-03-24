@@ -3908,7 +3908,7 @@ class MatchingCoveredGraph(Graph):
             u, v, l = edge
 
             labels = self.edge_label(u, v)
-            c = labels.count(l) if isinstance(labels, list) else 1
+            c = labels.count(l) if self.allows_multiple_edges() and isinstance(labels, list) else 1
 
             if c < n:
                 raise ValueError(f'input contains {n} copies of the edge '
