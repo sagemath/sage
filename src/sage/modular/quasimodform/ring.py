@@ -5,7 +5,7 @@ Let `E_2` be the weight 2 Eisenstein series defined by
 
 .. MATH::
 
-    E_2(z) = 1 - \frac{2k}{B_k} \sum_{n=1}^{\infty} \sigma(n) q^n
+    E_2(z) = 1 - 24 \sum_{n=1}^{\infty} \sigma(n) q^n
 
 where `\sigma` is the sum of divisors function and `q = \mathrm{exp}(2\pi i z)`
 is the classical parameter at infinity, with `\mathrm{im}(z)>0`. This weight 2
@@ -14,7 +14,7 @@ modularity condition:
 
 .. MATH::
 
-    z^2 E_2(-1/z) = E_2(z) + \frac{2k}{4\pi i B_k z}.
+    z^2 E_2(-1/z) = E_2(z) + \frac{6}{\pi i z}.
 
 `E_2` is a quasimodular form of weight 2. General quasimodular forms of given
 weight can also be defined. We denote by `QM` the graded ring of quasimodular
