@@ -968,8 +968,14 @@ class LazyFamily(AbstractFamily):
             category = InfiniteEnumeratedSets()
         elif isinstance(set, (list, tuple, range)):
             category = FiniteEnumeratedSets()
-        else:
-            category = EnumeratedSets()
+        else:  # some sets such as QQ implements is_finite() but is not in InfiniteEnumeratedSets()
+            try:
+                if set.is_finite():
+                    category = FiniteEnumeratedSets()
+                else:
+                    category = InfiniteEnumeratedSets()
+            except (AttributeError, NotImplementedError):
+                category = EnumeratedSets()
 
         Parent.__init__(self, category=category)
 
