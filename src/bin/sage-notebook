@@ -37,11 +37,9 @@ class NotebookJupyter():
                 # notebook 7
                 from notebook.app import main
         except ImportError:
-            import traceback
-            traceback.print_exc()
             print("The Jupyter notebook is not installed (at least not in this Sage installation).")
-            print("You can install it by running")
-            print("  sage -i notebook")
+            print("You can install it by running the following command:")
+            print("  sage -pip install notebook")
             print("Alternatively, you can follow the instructions at")
             print("  " + _system_jupyter_url)
             print("to use Sage with an existing Jupyter notebook installation.")
@@ -61,11 +59,9 @@ class NotebookJupyterlab():
         try:
             from jupyterlab.labapp import main
         except ImportError:
-            import traceback
-            traceback.print_exc()
             print("Jupyterlab is not installed (at least not in this Sage installation).")
-            print("You can install it by running")
-            print("  sage -i jupyterlab")
+            print("You can install it by running the following command")
+            print("  sage -pip install jupyterlab")
             print("Alternatively, you can follow the instructions at")
             print("  " + _system_jupyter_url)
             print("to use Sage with an existing Jupyterlab installation.")
