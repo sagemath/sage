@@ -637,7 +637,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
     # Optimizing and rounding
 
     def blowup_construction(self, target_size, pattern_size, 
-                            symbolic_parts=False, symbolic=False,
+                            symbolic_parts=False, symbolic=False, printlevel=None,
                             **kwargs):
         
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -657,6 +657,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
 
         res = 0
         terms = ((sum(Xs))**target_size).dict()
+        if printlevel!=None:
+            self._printlevel = printlevel
         if self._printlevel>0:
             iterator = tqdm(terms)
         else:
