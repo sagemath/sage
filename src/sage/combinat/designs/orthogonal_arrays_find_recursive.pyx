@@ -146,12 +146,13 @@ cpdef find_product_decomposition(int k, int n):
     """
     cdef int n1,n2
     for n1 in range(2, n):
-        n2 = n/n1  # n2 is decreasing along the loop
+        if n % n1:
+            # we want to iterate only through divisors of n1... it seems
+            # faster to use that rather than calling the divisors function
+            continue
+        n2 = n // n1  # n2 is decreasing along the loop
         if n2 < n1:
             break
-        if n%n1:  # we want to iterate only through divisors of n1... it seems
-                  # faster to use that rather than calling the divisors function
-            continue
         if is_available(k, n1) and is_available(k, n2):
             from sage.combinat.designs.orthogonal_arrays import wilson_construction
             return wilson_construction, (None,k,n1,n2,(),False)
@@ -187,11 +188,11 @@ cpdef find_wilson_decomposition_with_one_truncated_group(int k, int n):
     """
     cdef int r,u,m
     # If there exists a TD(k+1,t) then k+1 < t+2, i.e. k <= t
-    for r in range(max(1,k),n-1):
-        u = n%r
+    for r in range(max(1, k), n - 1):
+        u = n % r
         # We ensure that 1<=u, and that there can exists a TD(k,u), i.e k<u+2
         # (unless u == 1)
-        if u == 0 or (u>1 and k >= u+2):
+        if u == 0 or (u > 1 and k >= u + 2):
             continue
 
         m = n // r
