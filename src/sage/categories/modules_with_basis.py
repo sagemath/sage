@@ -2215,6 +2215,52 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 3*x*y^2
             """
             return self.parent().term(*self.trailing_item(*args, **kwds))
+        
+        def apply_map(self, phi):
+            """
+            Return a function that applies ``phi`` to its argument.
+
+            EXAMPLES::
+
+                sage: from sage.modules.vector_symbolic_dense import apply_map
+                sage: v = vector([1,2,3])
+                sage: f = apply_map(lambda x: x+1)
+                sage: f(v)
+                (2, 3, 4)
+            """
+            def apply(self, *args, **kwds):
+                """
+                Generic function used to implement common symbolic operations
+                elementwise as methods of a vector.
+
+                EXAMPLES::
+
+                    sage: var('x,y')
+                    (x, y)
+                    sage: v = vector([sin(x)^2 + cos(x)^2, log(x*y), sin(x/(x^2 + x)), factorial(x+1)/factorial(x)])
+                    sage: v.simplify_trig()
+                    (1, log(x*y), sin(1/(x + 1)), factorial(x + 1)/factorial(x))
+                    sage: v.canonicalize_radical()
+                    (cos(x)^2 + sin(x)^2, log(x) + log(y), sin(1/(x + 1)), factorial(x + 1)/factorial(x))
+                    sage: v.simplify_rational()
+                    (cos(x)^2 + sin(x)^2, log(x*y), sin(1/(x + 1)), factorial(x + 1)/factorial(x))
+                    sage: v.simplify_factorial()
+                    (cos(x)^2 + sin(x)^2, log(x*y), sin(x/(x^2 + x)), x + 1)
+                    sage: v.simplify_full()
+                    (1, log(x*y), sin(1/(x + 1)), x + 1)
+
+                    sage: v = vector([sin(2*x), sin(3*x)])
+                    sage: v.simplify_trig()
+                    (2*cos(x)*sin(x), (4*cos(x)^2 - 1)*sin(x))
+                    sage: v.simplify_trig(False)
+                    (sin(2*x), sin(3*x))
+                    sage: v.simplify_trig(expand=False)
+                    (sin(2*x), sin(3*x))
+                """
+                return self.apply_map(lambda x: phi(x, *args, **kwds))
+
+            apply.__doc__ += "\nSee Expression." + phi.__name__ + "() for optional arguments."
+            return apply
 
         def map_coefficients(self, f, new_base_ring=None):
             """
