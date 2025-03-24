@@ -5003,7 +5003,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
                                + " orthogonal_complement() function. This function"
                                + " will instead return a complementary subspace")
             orthogonal = True
-        if orthogonal is True:
+        if orthogonal:
             return self.orthogonal_complement()
         if orthogonal is False:
             pivotTuple = self.basis_matrix().pivots()
