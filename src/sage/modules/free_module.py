@@ -5005,7 +5005,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             orthogonal = True
         if orthogonal:
             return self.orthogonal_complement()
-        if orthogonal is False:
+        else:
             pivotTuple = self.basis_matrix().pivots()
             ambientBasisSize = self.ambient_vector_space().dimension()
             nonPivotList = [i for i in range(ambientBasisSize) if i not in
