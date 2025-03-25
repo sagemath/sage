@@ -4356,6 +4356,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
             :meth:`sage.topology.simplicial_complex.SimplicialComplex.link`,
             :meth:`sage.topology.simplicial_complex.SimplicialComplex.reduce`
         """
+        # The `lazy` shortcut never has downsides in dimension less than 4 so
+        # we even override the user in that case.
+        if self.dimension() < 4:
+            lazy = True
         efset = frozenset()
         X = self
         renamed = set()
