@@ -507,7 +507,7 @@ class Simplex(SageObject):
             sage: S.face(3)
             (0, 1, 2, 4)
         """
-        if n >= 0 and n <= self.dimension():
+        if 0 <= n <= self.dimension():
             return Simplex(self.__tuple[:n] + self.__tuple[n+1:])
         raise IndexError(f"{self} does not have an n-th face for n={n}")
 
@@ -1098,7 +1098,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             self._faces = copy(C._faces)
             self._gen_dict = copy(C._gen_dict)
             self._complex = copy(C._complex)
-            self.__contractible = copy(C.__contractible)
             self.__enlarged = copy(C.__enlarged)
             self._graph = copy(C._graph)
             self._vertex_to_index = copy(C._vertex_to_index)
@@ -1118,8 +1117,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 except ValueError:  # v is not an integer
                     try:
                         normalize_names(1, v)
-                    except ValueError:
-                        raise ValueError(f"the vertex {v} does not have an appropriate name")
+                    except ValueError as exc:
+                        raise ValueError(f"the vertex {v} does not have an appropriate name") from exc
             # build dictionary of generator names
             try:
                 gen_dict[v] = f'x{int(v)}'
@@ -1175,9 +1174,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # complex from dim d-1 to dim d, take the transpose of this
         # one.
         self._complex = {}
-        # self.__contractible: if not None, a contractible subcomplex
-        # of self, as found by the _contractible_subcomplex method.
-        self.__contractible = None
         # self.__enlarged: dictionary of enlarged subcomplexes,
         # indexed by subcomplexes.  For use in the _enlarge_subcomplex
         # method.
@@ -2793,7 +2789,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         self._graph.add_edge(new_face[i], new_face[j])
             self._facets.sort(key=len, reverse=True)
             self._complex = {}
-            self.__contractible = None
             self._bbn = {}
             self._bbn_all_computed = set()
 
@@ -2924,7 +2919,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             elif len(face) == 2:
                 self._graph.delete_edge(face[0], face[1])
         self._complex = {}
-        self.__contractible = None
         self.__enlarged = {}
         self._bbn = {}
         self._bbn_all_computed = set()
@@ -4212,7 +4206,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 print(f"  looping through {len(faces)} facets")
             for f in list(faces):
                 f_set = f.set()
-                f_the_set = {f}
                 int_facets = {a.set() & f_set for a in list(new_facets)}
                 intersection = SimplicialComplex(int_facets)
                 if intersection.is_contractible(probable=lazy):
