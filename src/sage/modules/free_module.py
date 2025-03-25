@@ -5006,14 +5006,13 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             orthogonal = True
         if orthogonal:
             return self.orthogonal_complement()
-        else:
-            pivot_tuple = self.basis_matrix().pivots()
-            ambient_basis_size = self.ambient_vector_space().dimension()
-            non_pivot_list = [i for i in range(ambient_basis_size) if i not in
-            pivot_tuple]
-            complement_basis = [self.ambient_vector_space().basis()[i] for i in
-            non_pivot_list]
-            return self.ambient_vector_space().subspace(complement_basis)
+        pivot_tuple = self.basis_matrix().pivots()
+        ambient_basis_size = self.ambient_vector_space().dimension()
+        non_pivot_list = [i for i in range(ambient_basis_size) if i not in
+        pivot_tuple]
+        complement_basis = [self.ambient_vector_space().basis()[i] for i in
+        non_pivot_list]
+        return self.ambient_vector_space().subspace(complement_basis)
 
     def orthogonal_complement(self):
         r"""
