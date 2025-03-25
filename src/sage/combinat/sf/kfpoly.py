@@ -37,7 +37,7 @@ def KostkaFoulkesPolynomial(mu, nu, t=None):
     `\nu` is a partition of the same size.
 
     The Kostka-Foulkes polynomial is defined to be the sum
-    of the monomials `t^{\operatorname{charge}(T)` over all
+    of the monomials `t^{\operatorname{charge}(T)}` over all
     semistandard tableaux `T` of shape `\lambda / \mu``,
     where `\operatorname{charge}(T)` denotes the charge
     of the reading word of `T`
@@ -53,7 +53,7 @@ def KostkaFoulkesPolynomial(mu, nu, t=None):
 
     - the Kostka-Foulkes polynomial indexed by ``mu`` and ``nu`` and
       evaluated at the parameter ``t``.  If ``t`` is ``None`` the resulting
-      polynomial is in the polynomial ring `\ZZ['t']`.
+      polynomial is in the polynomial ring `\ZZ[t]`.
 
     EXAMPLES::
 
@@ -146,7 +146,7 @@ def kfpoly(mu, nu, t=None):
 def kfpoly_skew(lamu, nu, t=None):
     r"""
     Return the Kostka-Foulkes polynomial `K_{\lambda / \mu, \nu}(t)`
-    by summing `t^{\operatorname{charge}(T)` over all semistandard
+    by summing `t^{\operatorname{charge}(T)}` over all semistandard
     tableaux `T` of shape `\lambda / \mu``.
 
     INPUT:
