@@ -245,44 +245,50 @@ def lattice_paths(t1, t2, length=None):
         if len(t1) == 0 or len(t2) == 0:
             return [[]]
         # 1 x n (or k x 1) rectangle:
-        if len(t1) == 1:
+        elif len(t1) == 1:
             return [[(t1[0], w) for w in t2]]
-        if len(t2) == 1:
+        elif len(t2) == 1:
             return [[(v, t2[0]) for v in t1]]
-        # recursive: paths in rectangle with either one fewer row
-        # or column, plus the upper right corner
-        return ([path + [(t1[-1], t2[-1])] for path
-                    in lattice_paths(t1[:-1], t2)] +
-                [path + [(t1[-1], t2[-1])] for path
-                    in lattice_paths(t1, t2[:-1])])
-    if length > len(t1) + len(t2) - 1:
-        return []
-    # as above, except make sure that lengths are correct.  if
-    # not, return an empty list.
-    #
-    # 0 x n (or k x 0) rectangle:
-    if len(t1) == 0 or len(t2) == 0:
-        if length == 0:
-            return [[]]
-        return []
-    # 1 x n (or k x 1) rectangle:
-    if len(t1) == 1:
-        if length == len(t2):
-            return [[(t1[0], w) for w in t2]]
-        return []
-    if len(t2) == 1:
-        if length == len(t1):
-            return [[(v, t2[0]) for v in t1]]
-        return []
-    # recursive: paths of length one fewer in rectangle with
-    # either one fewer row, one fewer column, or one fewer of
-    # each, and then plus the upper right corner
-    return ([path + [(t1[-1], t2[-1])] for path
-                in lattice_paths(t1[:-1], t2, length=length-1)] +
-            [path + [(t1[-1], t2[-1])] for path
-                in lattice_paths(t1, t2[:-1], length=length-1)] +
-            [path + [(t1[-1], t2[-1])] for path
-                in lattice_paths(t1[:-1], t2[:-1], length=length-1)])
+        else:
+            # recursive: paths in rectangle with either one fewer row
+            # or column, plus the upper right corner
+            return ([path + [(t1[-1], t2[-1])] for path
+                     in lattice_paths(t1[:-1], t2)] +
+                    [path + [(t1[-1], t2[-1])] for path
+                     in lattice_paths(t1, t2[:-1])])
+    else:
+        if length > len(t1) + len(t2) - 1:
+            return []
+        # as above, except make sure that lengths are correct.  if
+        # not, return an empty list.
+        #
+        # 0 x n (or k x 0) rectangle:
+        elif len(t1) == 0 or len(t2) == 0:
+            if length == 0:
+                return [[]]
+            else:
+                return []
+        # 1 x n (or k x 1) rectangle:
+        elif len(t1) == 1:
+            if length == len(t2):
+                return [[(t1[0], w) for w in t2]]
+            else:
+                return []
+        elif len(t2) == 1:
+            if length == len(t1):
+                return [[(v, t2[0]) for v in t1]]
+            else:
+                return []
+        else:
+            # recursive: paths of length one fewer in rectangle with
+            # either one fewer row, one fewer column, or one fewer of
+            # each, and then plus the upper right corner
+            return ([path + [(t1[-1], t2[-1])] for path
+                     in lattice_paths(t1[:-1], t2, length=length-1)] +
+                    [path + [(t1[-1], t2[-1])] for path
+                     in lattice_paths(t1, t2[:-1], length=length-1)] +
+                    [path + [(t1[-1], t2[-1])] for path
+                     in lattice_paths(t1[:-1], t2[:-1], length=length-1)])
 
 
 def rename_vertex(n, keep, left=True):
@@ -509,7 +515,8 @@ class Simplex(SageObject):
         """
         if n >= 0 and n <= self.dimension():
             return Simplex(self.__tuple[:n] + self.__tuple[n+1:])
-        raise IndexError(f"{self} does not have an n-th face for n={n}")
+        else:
+            raise IndexError("{} does not have an n-th face for n={}".format(self, n))
 
     def faces(self):
         """
@@ -687,7 +694,7 @@ class Simplex(SageObject):
 
         answer = []
         for x in lattice_paths(self.tuple(), other.tuple()):
-            new = tuple("L" + str(v) + "R" + str(w) for v, w in x)
+            new = tuple(["L" + str(v) + "R" + str(w) for v, w in x])
             answer.append(Simplex(new))
         return answer
 
@@ -1114,15 +1121,15 @@ class SimplicialComplex(Parent, GenericCellComplex):
             if name_check:
                 try:
                     if int(v) < 0:
-                        raise ValueError(f"the vertex {v} does not have an appropriate name")
+                        raise ValueError("the vertex %s does not have an appropriate name" % v)
                 except ValueError:  # v is not an integer
                     try:
                         normalize_names(1, v)
                     except ValueError:
-                        raise ValueError(f"the vertex {v} does not have an appropriate name")
+                        raise ValueError("the vertex %s does not have an appropriate name" % v)
             # build dictionary of generator names
             try:
-                gen_dict[v] = f'x{int(v)}'
+                gen_dict[v] = 'x%s' % int(v)
             except Exception:
                 gen_dict[v] = v
         # build set of facets
@@ -1454,22 +1461,22 @@ class SimplicialComplex(Parent, GenericCellComplex):
                                            is_mutable=False)
 
         if subcomplex not in self._faces:
-            # faces is the dictionary of faces in self but not in
+            # Faces is the dictionary of faces in self but not in
             # subcomplex, indexed by dimension
-            faces = {}
+            Faces = {}
             # sub_facets is the dictionary of facets in the subcomplex
             sub_facets = {}
-            dimension = self.dimension()
+            dimension = max([face.dimension() for face in self._facets])
             for i in range(-1, dimension + 1):
-                faces[i] = set()
+                Faces[i] = set()
                 sub_facets[i] = set()
             for f in self._facets:
                 dim = f.dimension()
-                faces[dim].add(f)
+                Faces[dim].add(f)
             if subcomplex is not None:
                 for g in subcomplex._facets:
                     dim = g.dimension()
-                    faces[dim].discard(g)
+                    Faces[dim].discard(g)
                     sub_facets[dim].add(g)
             # bad_faces is the set of faces in the subcomplex in the
             # current dimension
@@ -1480,10 +1487,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 bad_bdries = sub_facets[dim-1]
                 for f in bad_faces:
                     bad_bdries.update(f.faces())
-                for f in faces[dim]:
-                    faces[dim-1].update(set(f.faces()).difference(bad_bdries))
+                for f in Faces[dim]:
+                    Faces[dim-1].update(set(f.faces()).difference(bad_bdries))
                 bad_faces = bad_bdries
-            self._faces[subcomplex] = faces
+            self._faces[subcomplex] = Faces
         return self._faces[subcomplex]
 
     def face_iterator(self, increasing=True):
@@ -1507,12 +1514,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: sorted(S1.face_iterator())
             [(), (0,), (0, 1), (0, 2), (1,), (1, 2), (2,)]
         """
-        faces = self.faces()
+        Fs = self.faces()
         dim_index = range(-1, self.dimension() + 1)
         if not increasing:
             dim_index = reversed(dim_index)
         for i in dim_index:
-            yield from faces[i]
+            yield from Fs[i]
 
     cells = faces
 
@@ -1641,7 +1648,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         d = simplex.dimension()
         if d in self.faces() and simplex in self.faces()[d]:
             return simplex.face(i)
-        raise ValueError('this simplex is not in this simplicial complex')
+        else:
+            raise ValueError('this simplex is not in this simplicial complex')
 
     def f_triangle(self):
         r"""
@@ -1941,18 +1949,19 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 facets.extend(f.product(g, rename_vertices))
         if self != right:
             return SimplicialComplex(facets, is_mutable=is_mutable)
-        # Need to sort the vertices compatibly with the sorting in
-        # self, so that the diagonal map is defined properly.
-        V = self._vertex_to_index
-        L = len(V)
-        d = {}
-        for v in V.keys():
-            for w in V.keys():
-                if rename_vertices:
-                    d['L' + str(v) + 'R' + str(w)] = V[v] * L + V[w]
-                else:
-                    d[(v, w)] = V[v] * L + V[w]
-        return SimplicialComplex(facets, is_mutable=is_mutable, sort_facets=d)
+        else:
+            # Need to sort the vertices compatibly with the sorting in
+            # self, so that the diagonal map is defined properly.
+            V = self._vertex_to_index
+            L = len(V)
+            d = {}
+            for v in V.keys():
+                for w in V.keys():
+                    if rename_vertices:
+                        d['L' + str(v) + 'R' + str(w)] = V[v] * L + V[w]
+                    else:
+                        d[(v, w)] = V[v] * L + V[w]
+            return SimplicialComplex(facets, is_mutable=is_mutable, sort_facets=d)
 
     def join(self, right, rename_vertices=True, is_mutable=True):
         """
@@ -2104,8 +2113,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         new_facets.append(f.join(Simplex([u]), rename_vertices=False))
                     new_facets.append(f.join(w, rename_vertices=False))
                 return SimplicialComplex(new_facets)
-            return self.join(SimplicialComplex([["0"], ["1"]], is_mutable=is_mutable),
-                             rename_vertices=True)
+            else:
+                return self.join(SimplicialComplex([["0"], ["1"]], is_mutable=is_mutable),
+                                 rename_vertices=True)
         return self.suspension(1, is_mutable).suspension(int(n-1), is_mutable)
 
     def union(self, right, is_mutable=True):
@@ -2198,9 +2208,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 right_dict[v] = "R" + str(v)
 
             for f in self._facets:
-                facets.append(tuple(left_dict[v] for v in f))
+                facets.append(tuple([left_dict[v] for v in f]))
             for f in right._facets:
-                facets.append(tuple(right_dict[v] for v in f))
+                facets.append(tuple([right_dict[v] for v in f]))
         else:
             facets = self._facets + right._facets
         return SimplicialComplex(facets, is_mutable=is_mutable)
@@ -2297,7 +2307,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 differentials[first] = matrix(base_ring, 0, len(current))
         for n in dimensions[1:]:
             if verbose:
-                print(f"  starting dimension {n}")
+                print("  starting dimension %s" % n)
             if (n, subcomplex) in self._complex:
                 if cochain:
                     differentials[n-1] = self._complex[(n, subcomplex)].transpose().change_ring(base_ring)
@@ -2306,7 +2316,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     differentials[n] = self._complex[(n, subcomplex)].change_ring(base_ring)
                     mat = differentials[n]
                 if verbose:
-                    print(f"    boundary matrix (cached): it's {mat.nrows()} by {mat.ncols()}.")
+                    print("    boundary matrix (cached): it's {} by {}.".format(mat.nrows(), mat.ncols()))
             else:
                 # 'current' is the list of faces in dimension n
                 #
@@ -2345,7 +2355,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     self._complex[(n, subcomplex)] = mat
                     differentials[n] = mat.change_ring(base_ring)
                 if verbose:
-                    print(f"    boundary matrix computed: it's {mat.nrows()} by {mat.ncols()}.")
+                    print("    boundary matrix computed: it's {} by {}.".format(mat.nrows(), mat.ncols()))
         # now for the cochain complex, compute the last dimension by
         # hand, and don't cache it.
         if cochain:
@@ -2359,8 +2369,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if cochain:
             return ChainComplex(data=differentials, degree=1,
                                 base_ring=base_ring, check=check)
-        return ChainComplex(data=differentials, degree=-1,
-                            base_ring=base_ring, check=check)
+        else:
+            return ChainComplex(data=differentials, degree=-1,
+                                base_ring=base_ring, check=check)
 
     def _homology_(self, dim=None, base_ring=ZZ, subcomplex=None,
                    cohomology=False, enlarge=True, algorithm='pari',
@@ -2500,7 +2511,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         if verbose:
             print("starting calculation of the homology of this")
-            print(f"{self.dimension()}-dimensional simplicial complex")
+            print("%s-dimensional simplicial complex" % self.dimension())
         if subcomplex is None:
             if enlarge:
                 if verbose:
@@ -2510,7 +2521,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     print("Done finding contractible subcomplex.")
                     vec = [len(self.faces(subcomplex=L)[n-1]) for n in range(self.dimension()+2)]
                     print("The difference between the f-vectors is:")
-                    print(f"  {vec}")
+                    print("  %s" % vec)
             else:
                 L = SimplicialComplex([[self.vertices()[0]]])
         else:
@@ -3200,7 +3211,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             H = S.homology(base_ring=base_ring)
             if base_ring in Fields():
                 return all(H[j].dimension() == 0 for j in range(S.dimension()))
-            return not any(H[j].invariants() for j in range(S.dimension()))
+            else:
+                return not any(H[j].invariants() for j in range(S.dimension()))
 
         @parallel(ncpus=ncpus)
         def all_homologies_in_list_vanish(Fs):
@@ -4220,11 +4232,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     remove_these.append(f)
                     done = False
             if verbose and not done:
-                print(f"    added {len(remove_these)} facets")
+                print("    added %s facets" % len(remove_these))
             for f in remove_these:
                 faces.remove(f)
         if verbose:
-            print(f"  now constructing a simplicial complex with {len(self.vertices())} vertices and {len(new_facets)} facets")
+            print("  now constructing a simplicial complex with {} vertices and {} facets".format(len(self.vertices()), len(new_facets)))
         L = SimplicialComplex(new_facets, maximality_check=False,
                               is_immutable=self._is_immutable)
         self.__enlarged[subcomplex] = L
@@ -4629,7 +4641,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             rels.append(z[0]*z[1].inverse()*z[2])
         if simplify:
             return FG.quotient(rels).simplified()
-        return FG.quotient(rels)
+        else:
+            return FG.quotient(rels)
 
     def is_isomorphic(self, other, certificate=False):
         r"""
@@ -4840,7 +4853,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             <class 'sage.categories.homset.Homset_with_category_with_equality_by_id'>
         """
         if not category.is_subcategory(SimplicialComplexes()):
-            raise TypeError(f"{category} is not a subcategory of SimplicialComplexes()")
+            raise TypeError("{} is not a subcategory of SimplicialComplexes()".format(category))
         from sage.topology.simplicial_complex_homset import SimplicialComplexHomset
         return SimplicialComplexHomset(self, other)
 
@@ -4954,12 +4967,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
             # Sorting failed.
             facets = self._facets
 
-        vertex_string = f"with vertex set {tuple(vertices)}"
+        vertex_string = "with vertex set {}".format(tuple(vertices))
         if len(vertex_string) > vertex_limit:
-            vertex_string = f"with {len(vertices)} vertices"
+            vertex_string = "with %s vertices" % len(vertices)
         facet_string = 'facets {' + repr(facets)[1:-1] + '}'
         if len(facet_string) > facet_limit:
-            facet_string = f"{len(facets)} facets"
+            facet_string = "%s facets" % len(facets)
         return "Simplicial complex " + vertex_string + " and " + facet_string
 
     def set_immutable(self):
@@ -5112,7 +5125,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             C = Skel.coloring()
             C = C if len(C) == d else False
             return C
-        return Skel.chromatic_number() == d
+        else:
+            return Skel.chromatic_number() == d
 
     def is_partitionable(self, certificate=False,
                          *, solver=None, integrality_tolerance=1e-3):
@@ -5203,10 +5217,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
         sol = round(IP.solve())
         if sol < sum(self.f_vector()):
             return False
-        if not certificate:
+        elif not certificate:
             return True
-        x = IP.get_values(y, convert=bool, tolerance=integrality_tolerance)
-        return [RFPairs[i] for i in range(n) if x[i]]
+        else:
+            x = IP.get_values(y, convert=bool, tolerance=integrality_tolerance)
+            return [RFPairs[i] for i in range(n) if x[i]]
 
     def intersection(self, other):
         r"""
@@ -5335,7 +5350,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                             B[ind] = ZZ.zero()
                         B[ind] += len(H[j-k-1].gens())
                         if verbose:
-                            print(f"{ind}: Non-trivial homology {H[j-k-1]} in dimension {j-k-1} of the full subcomplex generated by a set of vertices {x}")
+                            print("{}: Non-trivial homology {} in dimension {} of the full subcomplex generated by a set of vertices {}".format(ind, H[j-k-1], j-k-1, x))
 
         self._bbn[base_ring] = B
         self._bbn_all_computed.add(base_ring)
@@ -5397,7 +5412,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if base_ring in self._bbn and not verbose:
             if base_ring in self._bbn_all_computed:
                 return self._bbn[base_ring].get((a, b), ZZ.zero())
-            if (a, b) in self._bbn[base_ring]:
+            elif (a, b) in self._bbn[base_ring]:
                 return self._bbn[base_ring][a, b]
 
         from sage.homology.homology_group import HomologyGroup
@@ -5414,7 +5429,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             if b+a-1 in H and H[b+a-1] != H0:
                 B += len(H[b+a-1].gens())
                 if verbose:
-                    print(f"Non-trivial homology {H[b+a-1]} in dimension {b+a-1} of the full subcomplex generated by a set of vertices {x}")
+                    print("Non-trivial homology {} in dimension {} of the full subcomplex generated by a set of vertices {}".format(H[b+a-1], b+a-1, x))
 
         B = ZZ(B)
 
@@ -5555,7 +5570,7 @@ def facets_for_RP4():
     for g in G:
         d = g.dict()
         for t in [t1, t2]:
-            new = tuple(d[j] for j in t)
+            new = tuple([d[j] for j in t])
             if new not in facets:
                 facets.append(new)
     return facets
@@ -5584,5 +5599,5 @@ def facets_for_K3():
     G = PermutationGroup([[(1, 3, 8, 4, 9, 16, 15, 2, 14, 12, 6, 7, 13, 5, 10)],
                           [(1, 11, 16), (2, 10, 14), (3, 12, 13),
                            (4, 9, 15), (5, 7, 8)]])
-    return ([tuple(g(i) for i in (1, 2, 3, 8, 12)) for g in G]
-            + [tuple(g(i) for i in (1, 2, 5, 8, 14)) for g in G])
+    return ([tuple([g(i) for i in (1, 2, 3, 8, 12)]) for g in G]
+            + [tuple([g(i) for i in (1, 2, 5, 8, 14)]) for g in G])
