@@ -26,6 +26,9 @@ AUTHORS:
 - Jeremy Martin (2016-06-02): added cone_vertices, decone, is_balanced,
   is_partitionable, intersection methods
 
+- Kaya Arro (2025-03-25): added `is_contractible`, `is_deformation_retract`,
+  `nerve`, `reduce`, and `pinch` methods and some smaller changes.
+
 This module implements the basic structure of finite simplicial
 complexes. Given a set `V` of "vertices", a simplicial complex on `V`
 is a collection `K` of subsets of `V` satisfying the condition that if
@@ -4253,6 +4256,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         vertices, distinct vertices can be sent to the same facet of the nerve.
         This can be used to simplify the simplicial complex.
 
+        If all facets containing vertex ``x`` also contain vertex ``y``, taking
+        ``nerve`` twice will cause ``x`` and ``y`` to be identified. The method
+        ``reduce`` exploits this to simplify the simplicial complex.
+
+        ..SEEALSO::
+
+            :meth:`sage.topology.simplicial_complex.SimplicialComplex.reduce`
+
         EXAMPLES::
 
             sage: X = SimplicialComplex(simplicial_complexes.Torus()); X
@@ -4277,6 +4288,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         In some cases, especially when the number of vertices exceeds the
         number of facets, this can significantly speed up computations.
+
+        ..SEEALSO::
+
+            :meth:`sage.topology.simplicial_complex.SimplicialComplex.nerve`
 
         EXAMPLES::
 
