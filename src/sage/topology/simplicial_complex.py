@@ -4383,7 +4383,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                             facets.add(facet)
             if pinched:
                 X = SimplicialComplex(facets)
-        return SimplicialComplex(facets)
+        return X
 
     def size(self):
         """
