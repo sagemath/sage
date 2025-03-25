@@ -10,7 +10,7 @@ AUTHORS:
 
 REFERENCE:
 
-    See [Read1968]_ and the :wikipedia:`Chromatic_polynomial` for more details on this notion in graphs.
+    See [Rea1968]_ and the :wikipedia:`Chromatic_polynomial` for more details on this notion in graphs.
 
 """
 
@@ -41,7 +41,7 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
     Compute the chromatic polynomial of the graph G.
 
     The algorithm used is a recursive one, based on the following observations
-    of Read:
+    of Read [Rea1968]_:
 
         - The chromatic polynomial of a tree on n vertices is x(x-1)^(n-1).
 

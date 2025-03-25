@@ -5644,6 +5644,9 @@ REFERENCES:
               Congressus numerantium, 1994.
               Pages 97--110
 
+.. [Rea1968] Ronald C. Read, An improved method for computing the chromatic polynomials of
+             sparse graphs.
+
 .. [Rea2004] Nathan Reading.
              *Cambrian Lattices*.
              :arxiv:`math/0402086v2`.
@@ -5685,10 +5688,6 @@ REFERENCES:
              2003.
              `Downloadable from Reutenauer's website
              <http://www.lacim.uqam.ca/~christo/Publi%C3%A9s/2003/free%20Lie%20algebras.pdf>`_
-
-.. [Read1968] Ronald C. Read, *An Introduction to Chromatic Polynomials*,
-              Journal of Combinatorial Theory 4 (1968), 52-71.
-              :doi:`10.1016/S0021-9800(68)80087-0`.
 
 .. [Rho69] John Rhodes, *Characters and complexity of finite semigroups*
            \J. Combinatorial Theory, vol 6, 1969
