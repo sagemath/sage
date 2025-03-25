@@ -10,7 +10,8 @@ AUTHORS:
 
 REFERENCE:
 
-    See [Rea1968]_ and the :wikipedia:`Chromatic_polynomial` for more details on this notion in graphs.
+    See [Rea1968]_ and the :wikipedia:`Chromatic_polynomial` for more details
+    on this notion in graphs.
 
 """
 
