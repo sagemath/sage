@@ -4072,6 +4072,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: X= A.wedge(B)
             sage: X.is_contractible()
             True
+
         """
         # The empty simplicial complex is not contractible
         if not self:
@@ -4323,10 +4324,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         ALGORITHM:
 
-        For each edge ``(x,y)`` in ``self``, find the links in ``self`` of:
-            - ``(x,y)``
-            - ``(x)``
-            - ``(y)``
+        For each edge ``(x,y)`` in ``self``, find the links in ``self`` of
+        ``(x,y)``, ``(x)``, and ``(y)``.
+
         Compute the intersection ``I`` of the links of ``(x)`` and ``(y)``.
         The link ``L`` of ``(x,y)`` is a subcomplex of ``I``. Check whether
         ``L`` is a deformation retract of ``I``. If so, the edge ``(x,y)``
