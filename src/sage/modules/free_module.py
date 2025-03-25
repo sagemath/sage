@@ -5019,7 +5019,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         Return the orthogonal complement of ``self`` in the
         :meth:`~sage.modules.free_module.FreeModule_ambient_field.ambient_vector_space`.
 
-        .. WARNING:
+        .. WARNING::
 
             All of these orthogonal complements are only done with respect to the inner
             product in the usual basis. Therefore, even though "orthogonal complement"
