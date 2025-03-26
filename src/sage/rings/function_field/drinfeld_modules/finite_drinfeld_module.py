@@ -296,19 +296,19 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         .. NOTE::
 
-            Available algorithms are:
+                Available algorithms are:
 
-                - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
-                central simple algebra (CSA) over `\mathbb
-                F_q[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
-                - ``'crystalline'`` -- it uses the action of the Frobenius
-                on the crystalline cohomology (see [MS2023]_).
-                - ``'gekeler'`` -- it tries to identify coefficients by
-                writing that the characteristic polynomial annihilates the
-                Frobenius endomorphism; this algorithm may fail is some
-                cases (see [Gek2008]_).
-                - ``'motive'`` -- it uses the action of the Frobenius on the
-                Anderson motive (see Chapter 2 of [CL2023]_).
+                    - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
+                    central simple algebra (CSA) over `\mathbb
+                    F_q[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
+                    - ``'crystalline'`` -- it uses the action of the Frobenius
+                    on the crystalline cohomology (see [MS2023]_).
+                    - ``'gekeler'`` -- it tries to identify coefficients by
+                    writing that the characteristic polynomial annihilates the
+                    Frobenius endomorphism; this algorithm may fail is some
+                    cases (see [Gek2008]_).
+                    - ``'motive'`` -- it uses the action of the Frobenius on the
+                    Anderson motive (see Chapter 2 of [CL2023]_).
 
         The method raises an exception if the user asks for an
         unimplemented algorithm, even if the characteristic polynomial
@@ -774,13 +774,13 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         .. NOTE::
 
-            Available algorithms are:
+                Available algorithms are:
 
-                - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
-                central simple algebra (CSA) over `\mathbb
-                F_q[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
-                - ``'crystalline'`` -- it uses the action of the Frobenius
-                on the crystalline cohomology (see [MS2023]_).
+                    - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
+                    central simple algebra (CSA) over `\mathbb
+                    F_q[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
+                    - ``'crystalline'`` -- it uses the action of the Frobenius
+                    on the crystalline cohomology (see [MS2023]_).
 
         The method raises an exception if the user asks for an
         unimplemented algorithm, even if the characteristic has already
