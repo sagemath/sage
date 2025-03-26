@@ -777,6 +777,13 @@ def integral(x, *args, **kwds):
         ...
         sage: result                                                                    # needs sage.symbolic
         -1/4
+
+    Verify that :issue:`33034` is fixed::
+
+        sage: f(x) = (x + sin(3*x)) * exp(-3*x*I)
+        sage: h(x) = f(x) - f(x).expand()
+        sage: integral(h(x), (x, 0, 2*pi))
+        0
     """
     if hasattr(x, 'integral'):
         return x.integral(*args, **kwds)
@@ -1141,9 +1148,16 @@ def log(*args, **kwds):
         -Infinity
         sage: log(int(0), 1/2)
         +Infinity
+
+    Check if sub-issue detailed in :issue:`38971` is fixed::
+
+        sage: log(6, base=0)
+        0
+        sage: log(e, base=0)
+        0
     """
     base = kwds.pop('base', None)
-    if base:
+    if base is not None:
         args = args + (base,)
     if not args:
         raise TypeError("log takes at least 1 arguments (0 given)")

@@ -112,6 +112,7 @@ import ast
 import inspect
 import functools
 import os
+import sys
 import tokenize
 import re
 
@@ -276,8 +277,10 @@ def _extract_embedded_position(docstring):
         from sage.misc.temporary_file import spyx_tmp
         if raw_filename.startswith('sage/'):
             import sage
-            try_filenames = [os.path.join(directory, raw_filename[5:])
+            from sage.env import SAGE_SRC
+            try_filenames = [os.path.join(directory, raw_filename.removeprefix('sage/'))
                              for directory in sage.__path__]
+            try_filenames.append(os.path.join(SAGE_SRC, raw_filename))  # meson editable install
         else:
             try_filenames = []
         try_filenames.append(
@@ -1286,6 +1289,15 @@ def sage_getfile(obj):
         sage: sage_getfile(P)                                                           # needs sage.libs.singular
         '...sage/rings/polynomial/multi_polynomial_libsingular...'
 
+    Another bug with editable meson install::
+
+        sage: P.<x,y> = QQ[]
+        sage: I = P * [x,y]
+        sage: path = sage_getfile(I.groebner_basis); path
+        '.../sage/rings/qqbar_decorators.py'
+        sage: path == sage_getfile(sage.rings.qqbar_decorators)
+        True
+
     A problem fixed in :issue:`16309`::
 
         sage: cython(                                                                   # needs sage.misc.cython
@@ -1317,6 +1329,12 @@ def sage_getfile(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
         return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
+    else:
+        if hasattr(obj, '__init__'):
+            pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
+            if pos is not None:
+                (_, filename, _) = pos
+                return filename
 
     # No go? fall back to inspect.
     try:
@@ -1325,7 +1343,12 @@ def sage_getfile(obj):
         return ''
     for suffix in import_machinery.EXTENSION_SUFFIXES:
         if sourcefile.endswith(suffix):
-            return sourcefile[:-len(suffix)]+os.path.extsep+'pyx'
+            # TODO: the following is incorrect in meson editable install
+            # because the build is out-of-tree,
+            # but as long as either the class or its __init__ method has a
+            # docstring, _sage_getdoc_unformatted should return correct result
+            # see https://github.com/mesonbuild/meson-python/issues/723
+            return sourcefile.removesuffix(suffix)+os.path.extsep+'pyx'
     return sourcefile
 
 
@@ -2345,12 +2368,8 @@ def sage_getsourcelines(obj):
         try:
             return inspect.getsourcelines(obj)
         except (OSError, TypeError) as err:
-            try:
-                objinit = obj.__init__
-            except AttributeError:
-                pass
-            else:
-                d = _sage_getdoc_unformatted(objinit)
+            if hasattr(obj, '__init__'):
+                d = _sage_getdoc_unformatted(obj.__init__)
                 pos = _extract_embedded_position(d)
                 if pos is None:
                     if inspect.isclass(obj):
@@ -2566,3 +2585,72 @@ def __internal_tests():
         sage: _extract_embedded_position(s) is None
         True
     """
+
+
+def find_object_modules(obj):
+    r"""
+    Return a dictionary whose keys are the names of the modules where ``obj``
+    appear and the value at a given module name is the list of names that
+    ``obj`` have in that module.
+
+    It is very unlikely that the output dictionary has several keys except when
+    ``obj`` is an instance of a class.
+
+    EXAMPLES::
+
+        sage: from sage.misc.sageinspect import find_object_modules
+        sage: find_object_modules(RR)                                                   # needs sage.rings.real_mpfr
+        {'sage.rings.real_mpfr': ['RR']}
+        sage: find_object_modules(ZZ)
+        {'sage.rings.integer_ring': ['Z', 'ZZ']}
+    """
+    # see if the object is defined in its own module
+    # might be wrong for class instances as the instantiation might appear
+    # outside of the module !!
+    module_name = None
+    if isclassinstance(obj):
+        module_name = obj.__class__.__module__
+    elif hasattr(obj, '__module__') and obj.__module__:
+        module_name = obj.__module__
+
+    if module_name:
+        if module_name not in sys.modules:
+            raise ValueError("this should never happen")
+        d = sys.modules[module_name].__dict__
+        matching = sorted(key for key in d if d[key] is obj)
+        if matching:
+            return {module_name: matching}
+
+    # otherwise, we parse all (already loaded) modules and hope to find
+    # something
+    module_to_obj = {}
+    for module_name, module in sys.modules.items():
+        if module_name != '__main__' and hasattr(module, '__dict__'):
+            d = module.__dict__
+            names = [key for key in d if d[key] is obj]
+            if names:
+                module_to_obj[module_name] = names
+
+    # if the object is an instance, we try to guess where it is defined
+    if isclassinstance(obj):
+        dec_pattern = re.compile(r"^(\w[\w0-9\_]*)\s*=", re.MULTILINE)
+        module_to_obj2 = {}
+        for module_name, obj_names in module_to_obj.items():
+            module_to_obj2[module_name] = []
+            try:
+                src = sage_getsource(sys.modules[module_name])
+            except TypeError:
+                pass
+            else:
+                m = dec_pattern.search(src)
+                while m:
+                    if m.group(1) in obj_names:
+                        module_to_obj2[module_name].append(m.group(1))
+                    m = dec_pattern.search(src, m.end())
+            if not module_to_obj2[module_name]:
+                del module_to_obj2[module_name]
+
+        if module_to_obj2:
+            return module_to_obj2
+
+    return module_to_obj

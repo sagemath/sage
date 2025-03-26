@@ -164,6 +164,7 @@ Individual Categories
    sage/categories/objects
    sage/categories/operads
    sage/categories/operads_with_basis
+   sage/categories/ore_modules
    sage/categories/partially_ordered_monoids
    sage/categories/permutation_groups
    sage/categories/pointed_sets

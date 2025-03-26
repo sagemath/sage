@@ -61,7 +61,7 @@ from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.functional import rank
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.schemes.hyperelliptic_curves.hypellfrob', 'hypellfrob')
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field

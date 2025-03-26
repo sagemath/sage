@@ -163,6 +163,16 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 1.0*I to float; use abs() or real_part() as desired
+
+        TESTS:
+
+        Verify that :issue:`10758` is fixed. ::
+
+            sage: F = FFT(1)
+            sage: F[0] = (1,1)
+            sage: F[0] = 1
+            sage: F[0]
+            (1.0, 0.0)
         """
         # just set real for now
         if i < 0 or i >= self.n:
@@ -172,6 +182,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             self.data[2*i+1] = xy[1]
         else:
             self.data[2*i] = xy
+            self.data[2*i+1] = 0
 
     def __getitem__(self, i):
         """
