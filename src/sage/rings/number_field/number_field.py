@@ -169,7 +169,7 @@ def is_NumberFieldHomsetCodomain(codomain, category=None):
     from sage.categories.rings import Rings
 
     if category is None:
-        category = Rings()
+        category = codomain.category()
 
     if not category.is_subcategory(Rings()):
         return False
