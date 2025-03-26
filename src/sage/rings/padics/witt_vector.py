@@ -21,6 +21,8 @@ AUTHORS:
 # ****************************************************************************
 
 
+from sage.misc.latex import tuple_function
+from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.rings.padics.factory import Zp, Zq
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -188,60 +190,6 @@ class WittVector(CommutativeRingElement):
         """
         return self._prec
 
-    def _richcmp_(self, other, op) -> bool:
-        """
-        Compare ``self`` and ``other``.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(3), prec=4)
-            sage: t = W([1,2,0,1])
-            sage: u = 1/t
-            sage: u == t
-            False
-            sage: t != t
-            False
-        """
-        if not isinstance(other, WittVector):
-            return NotImplemented
-        if op == op_EQ:
-            return self._vec == other.vec()
-        if op == op_NE:
-            return self._vec != other.vec()
-        return NotImplemented
-
-    def _repr_(self) -> str:
-        """
-        Return a string representation.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(ZZ, p=3, prec=4)
-            sage: t = W([1,2,0,1]); t
-            (1, 2, 0, 1)
-        """
-        return '(' + ', '.join(map(str, self._vec)) + ')'
-
-    def _neg_(self):
-        """
-        Return the opposite of ``self``.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(3), prec=4)
-            sage: t = W([1,2,0,1])
-            sage: -t
-            (2, 1, 0, 2)
-        """
-        P = self.parent()
-        # If p == 2, -1 == (-1, -1, -1, ...)
-        # Otherwise, -1 == (-1, 0, 0, ...)
-        if P.prime() == 2:
-            all_ones = P(tuple(-1 for _ in range(self._prec)))
-            return all_ones * self
-        neg_vec = tuple(-self[i] for i in range(self._prec))
-        return P(neg_vec)
-
     def _div_(self, other):
         """
         Return the quotient of ``self`` and ``other``.
@@ -262,6 +210,48 @@ class WittVector(CommutativeRingElement):
             return other._invert_()
 
         return self * other._invert_()
+
+    def _int_to_vector(self, k, parent):
+        """
+        Return the image of ``k`` in ``self`` with coefficients in ``parent``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(ZZ, p=23, prec=2)
+            sage: W(-123)  # indirect doctest
+            (-123, 50826444131062300759362981690761165250849615528)
+        """
+        p = parent.prime()
+        R = parent.base()
+
+        if p == R.characteristic():
+            Z = Zp(p, prec=self._prec + 1, type='fixed-mod')
+            self._vec = padic_to_vector(Z(k), R)
+
+        should_negate = False
+        if k < 0:
+            k = -k
+            should_negate = True
+
+        vec_k = [k]
+        for n in range(1, self._prec):
+            total = (
+                k - k**(p**n)
+                - sum(p**(n-i) * vec_k[n-i]**(p**i) for i in range(1, n))
+            )
+            total //= p**n
+            vec_k.append(total)
+
+        if should_negate:
+            if p == 2:
+                vec_k = (
+                    parent(vec_k)
+                    * parent((tuple(-1 for _ in range(self._prec))))
+                ).vec()
+            else:
+                vec_k = (-x for x in vec_k)
+
+        self._vec = tuple([R(x) for x in vec_k])
 
     def _invert_(self):
         """
@@ -308,47 +298,89 @@ class WittVector(CommutativeRingElement):
 
         return P(inv_vec)
 
-    def _int_to_vector(self, k, parent):
-        """
-        Return the image of ``k`` in ``self`` with coefficients in ``parent``.
+    def _latex_(self):
+        r"""
+        Return a `\LaTeX` representation of ``self``.
 
         EXAMPLES::
 
-            sage: W = WittVectorRing(ZZ, p=23, prec=2)
-            sage: W(-123)  # indirect doctest
-            (-123, 50826444131062300759362981690761165250849615528)
+            sage: W=WittVectorRing(ZZ, p=7, prec=3)
+            sage: t=W([6,1,6])
+            sage: latex(t)
+            \left(6, 1, 6\right)
         """
-        p = parent.prime()
-        R = parent.base()
+        return tuple_function(self._vec)
 
-        if p == R.characteristic():
-            Z = Zp(p, prec=self._prec + 1, type='fixed-mod')
-            self._vec = padic_to_vector(Z(k), R)
+    def _neg_(self):
+        """
+        Return the opposite of ``self``.
 
-        should_negate = False
-        if k < 0:
-            k = -k
-            should_negate = True
+        EXAMPLES::
 
-        vec_k = [k]
-        for n in range(1, self._prec):
-            total = (
-                k - k**(p**n)
-                - sum(p**(n-i) * vec_k[n-i]**(p**i) for i in range(1, n))
-            )
-            total //= p**n
-            vec_k.append(total)
+            sage: W = WittVectorRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: -t
+            (2, 1, 0, 2)
+        """
+        P = self.parent()
+        # If p == 2, -1 == (-1, -1, -1, ...)
+        # Otherwise, -1 == (-1, 0, 0, ...)
+        if P.prime() == 2:
+            all_ones = P(tuple(-1 for _ in range(self._prec)))
+            return all_ones * self
+        neg_vec = tuple(-self[i] for i in range(self._prec))
+        return P(neg_vec)
 
-        if should_negate:
-            if p == 2:
-                vec_k = (
-                    parent(vec_k)
-                    * parent((tuple(-1 for _ in range(self._prec))))
-                ).vec()
-            else:
-                vec_k = (-x for x in vec_k)
+    def _repr_(self) -> str:
+        """
+        Return a string representation.
 
-        self._vec = tuple([R(x) for x in vec_k])
+        EXAMPLES::
+
+            sage: W = WittVectorRing(ZZ, p=3, prec=4)
+            sage: t = W([1,2,0,1]); t
+            (1, 2, 0, 1)
+        """
+        return '(' + ', '.join(map(str, self._vec)) + ')'
+
+    def _richcmp_(self, other, op) -> bool:
+        """
+        Compare ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: u = 1/t
+            sage: u == t
+            False
+            sage: t != t
+            False
+        """
+        if not isinstance(other, WittVector):
+            return NotImplemented
+        if op == op_EQ:
+            return self._vec == other.vec()
+        if op == op_NE:
+            return self._vec != other.vec()
+        return NotImplemented
+
+    def _vector_(self, R=None):
+        """
+        Return the underlying vector from ``self``.
+
+        EXAMPLES::
+
+             sage: W = WittVectorRing(QQ, p=29, prec=3)
+             sage: t = W([-10,50,2/5])
+             sage: vector(t)
+             (-10, 50, 2/5)
+             sage: vector(GF(3), t)
+             (2, 2, 1)
+        """
+        if R is None:
+            return vector(self._vec)
+        return vector(R, self._vec)
 
     def vec(self):
         """
@@ -442,47 +474,6 @@ class WittVector_phantom(WittVector):
             raise ValueError(f'{vec} cannot be interpreted as a Witt vector.')
         CommutativeRingElement.__init__(self, parent)
 
-    def _compute_vector(self, prec=None):
-        """
-        Computes the Witt vector ``self`` from the ghost components of its
-        lift.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(17), prec=3)
-            sage: t = W(phantom=[1,1,290]); t  # indirect doctest
-            (1, 0, 1)
-        """
-        maxprec = self._prec
-        if prec is None:
-            prec = maxprec
-        else:
-            prec = min(prec, maxprec)
-        phantom = self._phantom
-        powers = self._powers
-        vec = self._vec
-        p = self.parent()._prime
-        mod = self.parent().base()
-        for n in range(len(vec), prec):
-            for i in range(n):
-                powers[i] = powers[i] ** p
-            c = (phantom[n] - sum(powers[i] * p**i for i in range(n))) // p**n
-            self._vec.append(mod(c))
-            self._powers.append(c)
-
-    def _repr_(self):
-        """
-        Return a string representation.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(3), prec=4)
-            sage: t = W([1,2,0,1]); t
-            (1, 2, 0, 1)
-        """
-        self._compute_vector()
-        return super()._repr_()
-
     def __getitem__(self, i):
         """
         Return the ``i``-th component of ``self``.
@@ -516,21 +507,63 @@ class WittVector_phantom(WittVector):
         phantom = [self._phantom[i] + other.phantom()[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
 
-    def _sub_(self, other):
+    def _compute_vector(self, prec=None):
         """
-        Return the difference of the phantom components of the lift of
-        ``self`` and ``other``.
+        Computes the Witt vector ``self`` from the ghost components of its
+        lift.
 
         EXAMPLES::
 
-            sage: W = WittVectorRing(GF(3,'t'), prec=3)
-            sage: t = W([1,2,2])
-            sage: u = W([1,0,2])
-            sage: r = t - u
-            sage: r.phantom()
-            [O(3), 2*3 + O(3^2), 2*3 + 2*3^2 + O(3^3)]
+            sage: W = WittVectorRing(GF(17), prec=3)
+            sage: t = W(phantom=[1,1,290]); t  # indirect doctest
+            (1, 0, 1)
         """
-        phantom = [self._phantom[i] - other.phantom()[i] for i in range(self._prec)]
+        maxprec = self._prec
+        if prec is None:
+            prec = maxprec
+        else:
+            prec = min(prec, maxprec)
+        phantom = self._phantom
+        powers = self._powers
+        vec = self._vec
+        p = self.parent()._prime
+        mod = self.parent().base()
+        for n in range(len(vec), prec):
+            for i in range(n):
+                powers[i] = powers[i] ** p
+            c = (phantom[n] - sum(powers[i] * p**i for i in range(n))) // p**n
+            self._vec.append(mod(c))
+            self._powers.append(c)
+
+    def _latex_(self):
+        r"""
+        Return a `\LaTeX` representation of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(2), prec=4)
+            sage: t = W(phantom=[1,1,1,9])
+            sage: latex(t)
+            \left(1, 0, 0, 1\right)
+        """
+        self._compute_vector()
+        return super()._latex_()
+
+    def _mul_(self, other):
+        """
+        Return the product of the phantom components of the lift of ``self``
+        and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(7,'t'), prec=3)
+            sage: t = W([1,0,5])
+            sage: u = W([0,1,3])
+            sage: r = t * u
+            sage: r.phantom()
+            [O(7), 7 + O(7^2), 7 + 3*7^2 + O(7^3)]
+        """
+        phantom = [self._phantom[i] * other.phantom()[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
 
     def _neg_(self):
@@ -549,22 +582,18 @@ class WittVector_phantom(WittVector):
         phantom = [-v for v in self._phantom]
         return self.__class__(self.parent(), phantom=phantom)
 
-    def _mul_(self, other):
+    def _repr_(self):
         """
-        Return the product of the phantom components of the lift of ``self``
-        and ``other``.
+        Return a string representation.
 
         EXAMPLES::
 
-            sage: W = WittVectorRing(GF(7,'t'), prec=3)
-            sage: t = W([1,0,5])
-            sage: u = W([0,1,3])
-            sage: r = t * u
-            sage: r.phantom()
-            [O(7), 7 + O(7^2), 7 + 3*7^2 + O(7^3)]
+            sage: W = WittVectorRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1]); t
+            (1, 2, 0, 1)
         """
-        phantom = [self._phantom[i] * other.phantom()[i] for i in range(self._prec)]
-        return self.__class__(self.parent(), phantom=phantom)
+        self._compute_vector()
+        return super()._repr_()
 
     def _richcmp_(self, other, op) -> bool:
         """
@@ -598,6 +627,37 @@ class WittVector_phantom(WittVector):
                     if isinstance(other, WittVector_phantom)
                     else self.vec() != other.vec())
         return NotImplemented
+
+    def _sub_(self, other):
+        """
+        Return the difference of the phantom components of the lift of
+        ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(3,'t'), prec=3)
+            sage: t = W([1,2,2])
+            sage: u = W([1,0,2])
+            sage: r = t - u
+            sage: r.phantom()
+            [O(3), 2*3 + O(3^2), 2*3 + 2*3^2 + O(3^3)]
+        """
+        phantom = [self._phantom[i] - other.phantom()[i] for i in range(self._prec)]
+        return self.__class__(self.parent(), phantom=phantom)
+
+    def _vector_(self, R):
+        """
+        Return the underlying vector from ``self``.
+
+        EXAMPLES::
+
+             sage: W = WittVectorRing(GF(13), prec=2)
+             sage: t = W([1, 3])
+             sage: vector(t)
+             (1, 3)
+        """
+        self._compute_vector()
+        return super()._vector_(R)
 
     def phantom(self):
         """

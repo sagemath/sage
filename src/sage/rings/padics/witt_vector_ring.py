@@ -26,6 +26,7 @@ AUTHORS:
 from itertools import product
 
 from sage.categories.fields import Fields
+from sage.misc.latex import latex
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.factory import Zp
@@ -292,18 +293,6 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         for t in product(self.base(), repeat=self._prec):
             yield self(t)
 
-    def _repr_(self):
-        """
-        Return a string representation of the ring.
-
-        EXAMPLES::
-
-            sage: WittVectorRing(QQ, p=2, prec=5)
-            Ring of truncated 2-typical Witt vectors of length 5 over Rational Field
-        """
-        return f"Ring of truncated {self._prime}-typical Witt vectors of "\
-               f"length {self._prec} over {self.base()}"
-
     def _coerce_map_from_(self, S):
         """"
         Check whether there is a coerce map from ``S``.
@@ -392,6 +381,35 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         for n in range(prec):
             self._sum_polynomials[n] = S(self._sum_polynomials[n])
             self._prod_polynomials[n] = S(self._prod_polynomials[n])
+
+    def _latex_(self):
+        r"""
+        Return a `\LaTeX` representation of ``self``.
+
+        .. WARNING::
+
+            This representation follows the standard representation in the
+            literature which does not mention `p`.
+
+        EXAMPLES::
+
+            sage: W=WittVectorRing(PolynomialRing(GF(3),'t'))
+            sage: latex(W)
+            W(\Bold{F}_{3}[t])
+        """
+        return "W(%s)" % latex(self.base())
+
+    def _repr_(self):
+        """
+        Return a string representation of the ring.
+
+        EXAMPLES::
+
+            sage: WittVectorRing(QQ, p=2, prec=5)
+            Ring of truncated 2-typical Witt vectors of length 5 over Rational Field
+        """
+        return f"Ring of truncated {self._prime}-typical Witt vectors of "\
+               f"length {self._prec} over {self.base()}"
 
     def cardinality(self):
         """
