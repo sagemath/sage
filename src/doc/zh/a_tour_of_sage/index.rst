@@ -34,7 +34,7 @@ Sage 的命令行提示符为 "``sage:``"。在实验以下示例时，你只需
 
 ::
 
-    sage: x = var('x')   # create a symbolic variable
+    sage: x = var('x')   # 创建符号变量
     sage: integrate(sqrt(x) * sqrt(1 + x), x)
     1/4*((x + 1)^(3/2)/x^(3/2) + sqrt(x + 1)/sqrt(x))/((x + 1)^2/x^2 - 2*(x + 1)/x + 1)
     - 1/8*log(sqrt(x + 1)/sqrt(x) + 1) + 1/8*log(sqrt(x + 1)/sqrt(x) - 1)
@@ -53,7 +53,7 @@ Sage 的命令行提示符为 "``sage:``"。在实验以下示例时，你只需
 
 ::
 
-    sage: S[0].rhs()  # right hand side of the equation
+    sage: S[0].rhs()  # 方程的右侧
     -1/2*sqrt(4*a + 1) - 1/2
 
 Sage 当然可以绘制各种常用函数。
@@ -77,7 +77,7 @@ Sage 仅需一秒钟就能计算出矩阵的特征值并绘制它们。
 
 ::
 
-    sage: e = m.eigenvalues()  # about 1 second
+    sage: e = m.eigenvalues()  # 大约 1 秒
     sage: w = [(i, abs(e[i])) for i in range(len(e))]
     sage: show(points(w))
 
@@ -93,7 +93,7 @@ Sage 可以处理非常大的数字，甚至是数百万或数十亿位的数字
 
 ::
 
-    sage: n = factorial(1000000)  # about 1 second
+    sage: n = factorial(1000000)  # 大约 1 秒
     sage: len(n.digits())
     5565709
 
@@ -104,7 +104,7 @@ Sage 可以处理非常大的数字，甚至是数百万或数十亿位的数字
     sage: N(pi, digits=100)
     3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117068
 
-让 Sage 对一个二元多项式进行。
+让 Sage 对一个二元多项式进行因式分解。
 
 ::
 
@@ -123,11 +123,11 @@ Sage 可以处理非常大的数字，甚至是数百万或数十亿位的数字
     sage: F.expand()
     x^99 + y^99
 
-Sage 可以在 1 秒钟内计算出将一亿分解为正整数之和的方式数量。
+Sage 可以在 1 秒内计算出将一亿分解为正整数之和的方式数量。
 
 ::
 
-    sage: z = Partitions(10^8).cardinality()  # about .1 second
+    sage: z = Partitions(10^8).cardinality()  # 大约 0.1 秒
     sage: z
     1760517045946249141360373894679135204009...
 
