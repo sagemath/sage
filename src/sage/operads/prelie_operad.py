@@ -15,8 +15,8 @@ AUTHORS:
 # ****************************************************************************
 from typing import NewType
 
-from sage.categories.operads_with_basis import OperadsWithBasis
 from sage.categories.cartesian_product import cartesian_product
+from sage.categories.operads_with_basis import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.rooted_tree import LabelledRootedTrees
 from sage.functions.other import factorial
