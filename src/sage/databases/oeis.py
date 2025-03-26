@@ -145,6 +145,7 @@ from urllib.parse import urlencode
 # ****************************************************************************
 from urllib.request import urlopen, Request
 
+from sage.version import version
 from sage.cpython.string import bytes_to_str
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
@@ -178,7 +179,7 @@ def _fetch(url):
     """
     try:
         verbose("Fetching URL %s ..." % url, caller_name='OEIS')
-        with urlopen(Request(url, headers={'User-Agent': 'SageMath'})) as f:
+        with urlopen(Request(url, headers={'User-Agent': f'SageMath/{version}'})) as f:
             return bytes_to_str(f.read())
     except OSError as msg:
         raise OSError("%s\nerror fetching %s" % (msg, url))
