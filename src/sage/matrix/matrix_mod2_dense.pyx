@@ -2138,7 +2138,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         A doubly lexical ordering of a matrix is an ordering of the rows
         and of the columns of the matrix so that both the rows and the
-        columns, as vectors, are lexically increasing. See [Anna1987]_.
+        columns, as vectors, are lexically increasing. See [Lub1987]_.
         A lexical ordering of vectors is the standard dictionary ordering,
         except that vectors will be read from highest to lowest coordinate.
         Thus row vectors will be compared from right to left, and column
@@ -2163,11 +2163,11 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         ALGORITHM:
 
-        The algorithm is adapted from section 3 of [Hoffman1985]_. The time
+        The algorithm is adapted from section 3 of [HAM1985]_. The time
         complexity of this algorithm is `O(n \cdot m^2)` for a `n \times m`
         matrix.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: A = Matrix(GF(2), [
             ....:                    [0, 1],

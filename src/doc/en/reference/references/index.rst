@@ -269,9 +269,6 @@ REFERENCES:
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
              369–379. https://doi.org/10.1007/BF02677478
 
-.. [Anna1987] Lubiw, Anna. Doubly Lexical Orderings of Matrices.
-              SIAM Journal on Computing 16.5 (1987): 854-879.
-
 .. [ANR2023] Robert Angarone, Anastasia Nathanson, and Victor Reiner. *Chow rings of
              matroids as permutation representations*, 2023. :arxiv:`2309.14312`.
 
@@ -3275,6 +3272,10 @@ REFERENCES:
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              http://www-math.mit.edu/~hajiagha/pp11.ps
 
+.. [HAM1985] Hoffman, Alan J., Anthonius Wilhelmus Johannes Kolen, and Michel Sakarovitch.
+             Totally-balanced and greedy matrices.
+             SIAM Journal on Algebraic Discrete Methods 6.4 (1985): 721-730.
+
 .. [Han2016] \G.-N. Han, *Hankel continued fraction and its applications*,
              Adv. in Math., 303, 2016, pp. 295-321.
 
@@ -3423,10 +3424,6 @@ REFERENCES:
 
 .. [Hoc] Winfried Hochstaettler, "About the Tic-Tac-Toe Matroid",
          preprint.
-
-.. [Hoffman1985] Hoffman, Alan J., Anthonius Wilhelmus Johannes Kolen, and Michel Sakarovitch.
-                 Totally-balanced and greedy matrices.
-                 SIAM Journal on Algebraic Discrete Methods 6.4 (1985): 721-730.
 
 .. [HJ18] Thorsten Holm and  Peter Jorgensen
     *A p-angulated generalisation of Conway and Coxeter's theorem on frieze patterns*,
@@ -4701,6 +4698,9 @@ REFERENCES:
 .. [LT2018] Zhiqiang Li, Shaobin Tan.
             *Verma modules for rank two Heisenberg-Virasoro algebra*.
             Preprint, (2018). :arxiv:`1807.07735`.
+
+.. [Lub1987] Lubiw, Anna. Doubly Lexical Orderings of Matrices.
+             SIAM Journal on Computing 16.5 (1987): 854-879.
 
 .. [Lut2002] Frank H. Lutz, Császár's Torus, Electronic Geometry Model
              No. 2001.02.069
