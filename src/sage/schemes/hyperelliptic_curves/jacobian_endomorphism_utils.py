@@ -62,7 +62,7 @@ the LMFDB label of the curve is 169.a.169.1::
     sage: A.geometric_endomorphism_algebra_is_field()
     False
 
-.. WARNING:
+.. WARNING:: # added colon
 
     There is a very small chance that the algorithms return ``False`` for the
     two methods described above when in fact one or both of them are ``True``.

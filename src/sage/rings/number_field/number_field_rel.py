@@ -38,7 +38,7 @@ We do some arithmetic in a tower of relative number fields::
     sage: a.parent()
     Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
-.. WARNING:
+.. WARNING:: # added colon
 
     Doing arithmetic in towers of relative fields that depends on canonical
     coercions is currently VERY SLOW.  It is much better to explicitly coerce
