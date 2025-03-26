@@ -504,13 +504,15 @@ class Monoids(CategoryWithAxiom):
 
         class ParentMethods:
 
-            def is_field(self, proof=True):
+            def is_field(self, proof=True) -> bool:
                 r"""
                 Return ``True`` if ``self`` is a field.
+
                 For a monoid algebra `R S` this is always false unless
                 `S` is trivial and the base ring `R` is a field.
 
                 EXAMPLES::
+
                     sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
                     True
                     sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.combinat sage.groups
