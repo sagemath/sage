@@ -21,7 +21,6 @@ AUTHORS:
 # ****************************************************************************
 
 
-from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
 from sage.rings.padics.factory import Zp, Zq
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -49,9 +48,8 @@ def padic_to_vector(x, F):
         [0, 2*b + 2, 2*b + 3, 4*b, 2*b + 2]
     """
     prec = x.precision_absolute()
-    val = x.valuation()
     if x == 0:
-        return prec * [F.zero()]
+        return x.parent().precision_cap() * [F.zero()]
     p = x.parent().prime()
     E = list(x.teichmuller_expansion())
     return [F(E[i].residue().polynomial()) ** (p**i) for i in range(prec)]
@@ -135,16 +133,8 @@ class WittVector(CommutativeRingElement):
         if vec is not None:
             if isinstance(vec, int) or isinstance(vec, Integer):
                 self._int_to_vector(vec, parent)
-            elif isinstance(vec, WittVector):
-                if vec.parent().precision() < self._prec:
-                    raise ValueError(f'{vec} has not the correct length. '
-                                     'Expected length has to be at least '
-                                     f'{self._prec}.')
-                if not B.has_coerce_map_from(vec.parent().base()):
-                    raise ValueError('Cannot coerce an element of '
-                                     f'{vec.base()} to an element of {B}.')
-                self._vec = tuple(B(vec.vec()[i]) for i in range(self._prec))
-            elif isinstance(vec, tuple) or isinstance(vec, list):
+            elif (isinstance(vec, tuple) or isinstance(vec, list)
+                    or isinstance(vec, WittVector)):
                 if len(vec) < self._prec:
                     raise ValueError(f'{vec} has not the correct length. '
                                      'Expected length has to be at least '
@@ -156,6 +146,21 @@ class WittVector(CommutativeRingElement):
         else:
             self._vec = (B(0) for i in range(self._prec))
         CommutativeRingElement.__init__(self, parent)
+
+    def __getitem__(self, i):
+        """
+        Return the ``i``-th component of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(ZZ, p=2, prec=4)
+            sage: t = W([-1,2,-4,8])
+            sage: t[2]
+            -4
+        """
+        if i < 0 or i >= self._prec:
+            raise IndexError
+        return self._vec[i]
 
     def __hash__(self) -> int:
         """
@@ -169,6 +174,19 @@ class WittVector(CommutativeRingElement):
             -2438844084280889141
         """
         return hash(self._vec)
+
+    def __len__(self):
+        """
+        Return the length of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(QQ, p=11, prec=100)
+            sage: t = W.zero()
+            sage: len(t)
+            100
+        """
+        return self._prec
 
     def _richcmp_(self, other, op) -> bool:
         """
@@ -198,136 +216,11 @@ class WittVector(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W = WittVectorRing(GF(3), prec=4)
+            sage: W = WittVectorRing(ZZ, p=3, prec=4)
             sage: t = W([1,2,0,1]); t
             (1, 2, 0, 1)
         """
         return '(' + ', '.join(map(str, self._vec)) + ')'
-
-    def _add_(self, other):
-        """
-        Return the sum of ``self`` and ``other``.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(3), prec=4)
-            sage: t = W([1,2,0,1])
-            sage: u = 1/t
-            sage: u + t
-            (2, 1, 1, 1)
-        """
-        P = self.parent()
-
-        # As a slight optimization, we'll check for zero ahead of time.
-        if other == P.zero():
-            return self
-        elif self == P.zero():
-            return other
-
-        alg = P.algorithm()
-        if alg == 'standard':
-            s = P.sum_polynomials()
-            # note here this is tuple addition, i.e. concatenation
-            sum_vec = tuple(s[i](*(self._vec + other.vec()))
-                            for i in range(self._prec))
-
-        elif alg == 'finotti':
-            x = self._vec
-            y = other.vec()
-            prec = P.precision()
-            G = []
-            for n in range(prec):
-                G_n = [x[n], y[n]]
-                for i in range(n):
-                    G_n.append(P._eta_bar(G[i], n - i))
-                G.append(G_n)
-            sum_vec = tuple(sum(G[i]) for i in range(self._prec))
-
-        elif alg == 'Zq_isomorphism':
-            x = vector_to_padic(self._vec, P._padic_ring)
-            y = vector_to_padic(other.vec(), P._padic_ring)
-            sum_vec = padic_to_vector(x + y, P.base_ring())
-
-        elif alg == 'p_invertible':
-            p = P.prime()  # we know p is a unit in this case!
-            x = self._vec
-            y = other.vec()
-            sum_vec = [x[0] + y[0]]
-            for n in range(1, self._prec):
-                next_sum = x[n] + y[n] + \
-                    sum((x[i]**(p**(n - i)) + y[i]**(p**(n - i))
-                         - sum_vec[i]**(p**(n - i)))
-                        / p**(n - i)
-                        for i in range(n))
-                sum_vec.append(next_sum)
-
-        return P(sum_vec)
-
-    def _mul_(self, other):
-        """
-        Return the product of ``self`` and ``other``.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(3), prec=4)
-            sage: t = W([1,2,0,1])
-            sage: u = 1/t + 1
-            sage: u * t
-            (2, 0, 0, 1)
-        """
-        P = self.parent()
-
-        # As a slight optimization, we'll check for zero or one ahead of time.
-        if self == P.zero() or other == P.zero():
-            return P.zero()
-        if other == P.one():
-            return self
-        if self == P.one():
-            return other
-
-        alg = P.algorithm()
-        if alg == 'standard':
-            p = P.prod_polynomials()
-            # note here this is tuple addition, i.e. concatenation
-            prod_vec = tuple(p[i](*(self._vec + other.vec()))
-                             for i in range(self._prec))
-
-        elif alg == 'finotti':
-            from sage.rings.padics.witt_vector_ring import fast_char_p_power
-            x = self._vec
-            y = other.vec()
-            prec = P.precision()
-            p = P.prime()
-            G = [[x[0] * y[0]]]
-            for n in range(1, prec):
-                G_n = [fast_char_p_power(x[0], p**n) * y[n],
-                       fast_char_p_power(y[0], p**n) * x[n]]
-                G_n.extend(fast_char_p_power(x[i], p**(n - i)) * fast_char_p_power(y[n - i], p**i)
-                           for i in range(1, n))
-                for i in range(n):
-                    G_n.append(P._eta_bar(G[i], n - i))
-                G.append(G_n)
-            prod_vec = tuple(sum(G[i]) for i in range(prec))
-
-        elif alg == 'Zq_isomorphism':
-            x = vector_to_padic(self._vec, P._padic_ring)
-            y = vector_to_padic(other.vec(), P._padic_ring)
-            prod_vec = padic_to_vector(x * y, P.base_ring())
-
-        elif alg == 'p_invertible':
-            p = P.prime()  # we know p is a unit in this case!
-            x = self._vec
-            y = other.vec()
-            prod_vec = [x[0] * y[0]]
-            for n in range(1, self._prec):
-                next_prod = (
-                    sum(p**i * x[i]**(p**(n - i)) for i in range(n + 1)) *
-                    sum(p**i * y[i]**(p**(n - i)) for i in range(n + 1)) -
-                    sum(p**i * prod_vec[i]**(p**(n - i)) for i in range(n))
-                ) / p**n
-                prod_vec.append(next_prod)
-
-        return P(prod_vec)
 
     def _neg_(self):
         """
@@ -346,7 +239,7 @@ class WittVector(CommutativeRingElement):
         if P.prime() == 2:
             all_ones = P(tuple(-1 for _ in range(self._prec)))
             return all_ones * self
-        neg_vec = tuple(-self._vec[i] for i in range(self._prec))
+        neg_vec = tuple(-self[i] for i in range(self._prec))
         return P(neg_vec)
 
     def _div_(self, other):
@@ -381,24 +274,24 @@ class WittVector(CommutativeRingElement):
             sage: ~t
             (1, 1, 1, 0)
         """
-        if not self._vec[0].is_unit():
+        if not self[0].is_unit():
             raise ZeroDivisionError(f"Inverse of {self} does not exist.")
         P = self.parent()
 
         if self == P.one():
             return self
         if self._prec == 1:
-            return P((self._vec[0]**-1, ))
+            return P((self[0]**-1, ))
 
         # Strategy: Multiply ``self`` by ``(Y_0, Y_1, ...)``, set equal
         # to (1, 0, 0, ...), and solve.
         var_names = [f'Y{i}' for i in range(1, self._prec)]
         poly_ring = PolynomialRing(P.base(), var_names)
-        inv_vec = list((self._vec[0]**-1,) + poly_ring.gens())
+        inv_vec = list((self[0]**-1,) + poly_ring.gens())
         # We'll fill this in one-by-one
 
         from sage.rings.padics.witt_vector_ring import WittVectorRing
-        W = WittVectorRing(poly_ring, p=P.prime(), prec=P.precision())
+        W = WittVectorRing(poly_ring, p=P.prime(), prec=self._prec)
         prod_vec = (W(self._vec) * W(inv_vec)).vec()
         for i in range(1, self._prec):
             poly = prod_vec[i](inv_vec[1:])
@@ -422,7 +315,7 @@ class WittVector(CommutativeRingElement):
         EXAMPLES::
 
             sage: W = WittVectorRing(ZZ, p=23, prec=2)
-            sage: W(-123)
+            sage: W(-123)  # indirect doctest
             (-123, 50826444131062300759362981690761165250849615528)
         """
         p = parent.prime()
@@ -472,40 +365,75 @@ class WittVector(CommutativeRingElement):
 
 
 class WittVector_phantom(WittVector):
+    r"""
+    Child class for truncated Witt vectors using the ``Zq_isomorphism``
+    algorithm.
+
+    Here, a Witt vector with coefficients in `\mathbb F_q` is lifted to
+    another Witt vector with coefficients in `\mathbb Z_q` whose phantom
+    components are stored. Computations are done with these phantom
+    components, and the corresponding Witt vectors in `\mathbb F_q` are
+    computed from these ghost components only when needed.
+
+    EXAMPLES:
+
+        sage: W=WittVectorRing(GF(7), prec=5)
+        sage: t=W.one()
+        sage: t
+        (1, 0, 0, 0, 0)
+        sage: t.phantom()
+        [1 + O(7^5), 1 + O(7^5), 1 + O(7^5), 1 + O(7^5), 1 + O(7^5)]
+        sage: u=7*t
+        sage: u.phantom()
+        [7 + O(7^6), 7 + O(7^6), 7 + O(7^6), 7 + O(7^6), 7 + O(7^6)]
+        sage: u[1]
+        1
+    """
     def __init__(self, parent, vec=None, phantom=None):
-        self._prec = prec = parent.precision()
-        R = parent.base_ring()
-        p = parent._prime
-        mod = parent._mod
-        lift = parent._lift
+        """
+        Initialises ``self`` from the data.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(7), prec=3)
+            sage: e = W.one(); e
+            (1, 0, 0)
+            sage: 7*e
+            (0, 1, 0)
+        """
+        self._prec = parent.precision()
+        R = parent.base()
+        p = parent.prime()
+        lift = Zq(R.cardinality(), prec=self._prec, modulus=R.modulus(),
+                  names=(R.variable_name(),), res_name=R.variable_name())
         if phantom is not None:
             self._phantom = phantom
-            self._vec = [mod(phantom[0])]
+            self._vec = [R(phantom[0])]
             self._powers = [phantom[0]]
         elif vec is None:
             zero = R.zero()
-            zerolift = lift(zero)
-            self._vec = prec * [zero]
-            self._phantom = prec * [zero]
+            self._vec = self._prec * [zero]
+            self._phantom = self._prec * [zero]
         elif isinstance(vec, WittVector_phantom):
             self._vec = vec._vec
             self._phantom = vec._phantom
             self._powers = vec._powers
         elif isinstance(vec, int) or isinstance(vec, Integer):
             y = lift(vec)
-            self._vec = [mod(y)]
+            self._vec = padic_to_vector(lift(y), R)
             self._powers = [y]
-            self._phantom = prec * [y]
-        elif isinstance(vec, tuple) or isinstance(vec, list):
+            self._phantom = self._prec * [y]
+        elif (isinstance(vec, tuple) or isinstance(vec, list)
+                or isinstance(vec, WittVector)):
             if len(vec) < self._prec:
                 raise ValueError(f'{vec} has not the correct length. '
                                  'Expected length has to be at least '
                                  f'{self._prec}.')
             # We compute the phantom components
-            self._vec = [R(v) for v in vec]
+            self._vec = tuple(R(vec[i]) for i in range(self._prec))
             x = [lift(v) for v in self._vec]
             self._phantom = [x[0]]
-            for n in range(1, prec):
+            for n in range(1, self._prec):
                 for i in range(n):
                     x[i] = x[i] ** p
                 self._phantom.append(sum(x[i] * p**i for i in range(n+1)))
@@ -515,6 +443,16 @@ class WittVector_phantom(WittVector):
         CommutativeRingElement.__init__(self, parent)
 
     def _compute_vector(self, prec=None):
+        """
+        Computes the Witt vector ``self`` from the ghost components of its
+        lift.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(17), prec=3)
+            sage: t = W(phantom=[1,1,290]); t  # indirect doctest
+            (1, 0, 1)
+        """
         maxprec = self._prec
         if prec is None:
             prec = maxprec
@@ -524,7 +462,7 @@ class WittVector_phantom(WittVector):
         powers = self._powers
         vec = self._vec
         p = self.parent()._prime
-        mod = self.parent()._mod
+        mod = self.parent().base()
         for n in range(len(vec), prec):
             for i in range(n):
                 powers[i] = powers[i] ** p
@@ -532,31 +470,384 @@ class WittVector_phantom(WittVector):
             self._vec.append(mod(c))
             self._powers.append(c)
 
-    def __repr__(self):
-        self._compute_vector()
-        return str(tuple(self._vec))
+    def _repr_(self):
+        """
+        Return a string representation.
 
-    def phantom(self):
-        return self._phantom
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1]); t
+            (1, 2, 0, 1)
+        """
+        self._compute_vector()
+        return super()._repr_()
 
     def __getitem__(self, i):
+        """
+        Return the ``i``-th component of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(13,'t'), prec=3)
+            sage: t = W([10,5,2])
+            sage: t[1]
+            5
+        """
         if i < 0 or i >= self._prec:
             raise IndexError
         self._compute_vector(i+1)
         return self._vec[i]
 
     def _add_(self, other):
-        phantom = [self._phantom[i] + other._phantom[i] for i in range(self._prec)]
+        """
+        Return the sum of the phantom components of the lift of ``self`` and
+        ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(11,'t'), prec=3)
+            sage: t = W([6,1,6])
+            sage: u = W([0,5,0])
+            sage: r = t + u
+            sage: r.phantom()
+            [6 + O(11), 6 + 3*11 + O(11^2), 6 + 3*11 + 3*11^2 + O(11^3)]
+        """
+        phantom = [self._phantom[i] + other.phantom()[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
 
     def _sub_(self, other):
-        phantom = [self._phantom[i] - other._phantom[i] for i in range(self._prec)]
+        """
+        Return the difference of the phantom components of the lift of
+        ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(3,'t'), prec=3)
+            sage: t = W([1,2,2])
+            sage: u = W([1,0,2])
+            sage: r = t - u
+            sage: r.phantom()
+            [O(3), 2*3 + O(3^2), 2*3 + 2*3^2 + O(3^3)]
+        """
+        phantom = [self._phantom[i] - other.phantom()[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
 
     def _neg_(self):
+        """
+        Return the opposite of the phantom component of the lift of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(23,'t'), prec=4)
+            sage: t = W([1,0,1,17])
+            sage: r = -t
+            sage: r.phantom()
+            [22 + O(23), 22 + 22*23 + O(23^2), 22 + 22*23 + 21*23^2 + O(23^3),
+            22 + 22*23 + 21*23^2 + 5*23^3 + O(23^4)]
+        """
         phantom = [-v for v in self._phantom]
         return self.__class__(self.parent(), phantom=phantom)
 
     def _mul_(self, other):
-        phantom = [self._phantom[i] * other._phantom[i] for i in range(self._prec)]
+        """
+        Return the product of the phantom components of the lift of ``self``
+        and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(7,'t'), prec=3)
+            sage: t = W([1,0,5])
+            sage: u = W([0,1,3])
+            sage: r = t * u
+            sage: r.phantom()
+            [O(7), 7 + O(7^2), 7 + 3*7^2 + O(7^3)]
+        """
+        phantom = [self._phantom[i] * other.phantom()[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
+
+    def _richcmp_(self, other, op) -> bool:
+        """
+        Compare ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: u = 1/t
+            sage: u == t
+            False
+            sage: t != t
+            False
+
+            sage: W_standard = WittVectorRing(GF(3), prec=4, algorithm='standard')
+            sage: u + t == W_standard(u) + W_standard(t)
+            True
+            sage: W_finotti = WittVectorRing(GF(3), prec=4, algorithm='finotti')
+            sage: u * t == W_finotti(u) * W_standard(t)
+            True
+        """
+        if not isinstance(other, WittVector):
+            return NotImplemented
+        if op == op_EQ:
+            return (self._phantom == other.phantom()
+                    if isinstance(other, WittVector_phantom)
+                    else self.vec() == other.vec())
+        if op == op_NE:
+            return (self._phantom != other.phantom()
+                    if isinstance(other, WittVector_phantom)
+                    else self.vec() != other.vec())
+        return NotImplemented
+
+    def phantom(self):
+        """
+        Return the phantom components of the lift of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(5,'t'), prec=3)
+            sage: t = W([1,1,3])
+            sage: t.phantom()
+            [1 + O(5), 1 + 5 + O(5^2), 1 + 5 + 3*5^2 + O(5^3)]
+        """
+        return self._phantom
+
+    def vec(self):
+        """
+        Return the underlying tuple of the truncated Witt vector.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(7), p=7, prec=3)
+            sage: v = W([1,2,3])
+            sage: v.vec()
+            (1, 2, 3)
+        """
+        self._compute_vector()
+
+        return self._vec
+
+
+class WittVector_finotti(WittVector):
+    """
+    Child class for truncated Witt vectors using Finotti's algorithm.
+
+    EXAMPLES:
+
+        sage: W=WittVectorRing(GF(7), prec=4, algorithm='finotti')
+        sage: 49*W.one()
+        (0, 0, 1, 0)
+    """
+    def _add_(self, other):
+        """
+        Return the sum of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(PolynomialRing(GF(7), 'x'), prec=2)
+            sage: t = W([x+3,x+2])
+            sage: u = W([6,x])
+            sage: t + u
+            (x + 2, x^6 + x^5 + 4*x^4 + 3*x^3 + 3*x^2 + 2*x + 2)
+        """
+        P = self.parent()
+
+        # As a slight optimization, we'll check for zero ahead of time.
+        if other == P.zero():
+            return self
+        elif self == P.zero():
+            return other
+
+        G = []
+        for n in range(self._prec):
+            G_n = [self[n], other[n]]
+            for i in range(n):
+                G_n.append(P._eta_bar(G[i], n - i))
+            G.append(G_n)
+        sum_vec = tuple(sum(G[i]) for i in range(self._prec))
+
+        return P(sum_vec)
+
+    def _mul_(self, other):
+        """
+        Return the product of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(PolynomialRing(GF(5), 'x'), prec=3)
+            sage: t = W([1,2,3])
+            sage: u = W([x,x^2,x^3])
+            sage: t * u
+            (x, 2*x^5 + x^2, 3*x^25 + 4*x^22 + 4*x^19 + 2*x^16 + 3*x^13 + 2*x^10 + x^3)
+        """
+        P = self.parent()
+
+        # As a slight optimization, we'll check for zero or one ahead of time.
+        if self == P.zero() or other == P.zero():
+            return P.zero()
+        if other == P.one():
+            return self
+        if self == P.one():
+            return other
+
+        from sage.rings.padics.witt_vector_ring import fast_char_p_power
+        p = P.prime()
+        G = [[self[0] * other[0]]]
+        for n in range(1, self._prec):
+            G_n = [fast_char_p_power(self[0], p**n) * other[n],
+                   fast_char_p_power(other[0], p**n) * self[n]]
+            G_n.extend(fast_char_p_power(self[i], p**(n - i))
+                       * fast_char_p_power(other[n - i], p**i)
+                       for i in range(1, n))
+            for i in range(n):
+                G_n.append(P._eta_bar(G[i], n - i))
+            G.append(G_n)
+        prod_vec = tuple(sum(G[i]) for i in range(self._prec))
+
+        return P(prod_vec)
+
+
+class WittVector_pinvertible(WittVector):
+    """
+    Child class for truncated Witt vectors using the ``p_invertible``
+    algorithm.
+
+    EXAMPLES:
+
+        sage: W=WittVectorRing(QQ, p=3, prec=3)
+        sage: t=W.random_element()
+        sage: t-t
+        (0, 0, 0)
+    """
+    def _add_(self, other):
+        """
+        Return the sum of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(QQ, p=11, prec=2)
+            sage: t = W([1/2,3/4])
+            sage: u = W([5/6,7/8])
+            sage: t + u
+            (4/3, -7787621/15116544)
+        """
+        P = self.parent()
+
+        # As a slight optimization, we'll check for zero ahead of time.
+        if other == P.zero():
+            return self
+        elif self == P.zero():
+            return other
+
+        p = P.prime()  # we know p is a unit in this case!
+        sum_vec = [self[0] + other[0]]
+        for n in range(1, self._prec):
+            next_sum = self[n] + other[n] + \
+                sum((self[i]**(p**(n - i)) + other[i]**(p**(n - i))
+                     - sum_vec[i]**(p**(n - i)))
+                    / p**(n - i)
+                    for i in range(n))
+            sum_vec.append(next_sum)
+
+        return P(sum_vec)
+
+    def _mul_(self, other):
+        """
+        Return the product of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(QQ, p=3, prec=3)
+            sage: t = W([1/2,3/4,5/6])
+            sage: u = W([7/8,9/10,11/12])
+            sage: t * u
+            (7/16, 27033/10240, 5808213977/1342177280)
+        """
+        P = self.parent()
+
+        # As a slight optimization, we'll check for zero or one ahead of time.
+        if self == P.zero() or other == P.zero():
+            return P.zero()
+        if other == P.one():
+            return self
+        if self == P.one():
+            return other
+
+        p = P.prime()  # we know p is a unit in this case!
+        prod_vec = [self[0] * other[0]]
+        for n in range(1, self._prec):
+            next_prod = (
+                sum(p**i * self[i]**(p**(n - i)) for i in range(n + 1)) *
+                sum(p**i * other[i]**(p**(n - i)) for i in range(n + 1)) -
+                sum(p**i * prod_vec[i]**(p**(n - i)) for i in range(n))
+            ) / p**n
+            prod_vec.append(next_prod)
+
+        return P(prod_vec)
+
+
+class WittVector_standard(WittVector):
+    """
+    Child class for truncated Witt vectors using the ``standard`` algorithm.
+
+    EXAMPLES:
+
+        sage: W=WittVectorRing(GF(5), prec=3, algorithm='standard')
+        sage: 5*W.one()
+        (0, 1, 0)
+    """
+    def _add_(self, other):
+        """
+        Return the sum of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(Integers(25), p=5, prec=3)
+            sage: t = W([1,2,3])
+            sage: u = W([4,5,6])
+            sage: t + u
+            (5, 12, 4)
+        """
+        P = self.parent()
+
+        # As a slight optimization, we'll check for zero ahead of time.
+        if other == P.zero():
+            return self
+        elif self == P.zero():
+            return other
+
+        s = P.sum_polynomials()
+        # note here this is tuple addition, i.e. concatenation
+        sum_vec = tuple(s[i](*(self._vec + other.vec()))
+                        for i in range(self._prec))
+
+        return P(sum_vec)
+
+    def _mul_(self, other):
+        """
+        Return the product of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(Integers(13), p=2, prec=3)
+            sage: t = W([1,2,3])
+            sage: u = W([4,5,6])
+            sage: t * u
+            (4, 5, 5)
+        """
+        P = self.parent()
+
+        # As a slight optimization, we'll check for zero or one ahead of time.
+        if self == P.zero() or other == P.zero():
+            return P.zero()
+        if other == P.one():
+            return self
+        if self == P.one():
+            return other
+
+        p = P.prod_polynomials()
+        # note here this is tuple addition, i.e. concatenation
+        prod_vec = tuple(p[i](*(self._vec + other.vec()))
+                         for i in range(self._prec))
+
+        return P(prod_vec)
