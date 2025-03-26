@@ -4736,6 +4736,60 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Invariants of a matrix
     ###################################################
 
+    def SVD(self):
+        """
+        Return the Singular Value Decomposition (SVD) of this matrix.
+
+        OUTPUT:
+        
+        A tuple (U, Sigma, V) where:
+        - U is a unitary matrix
+        - Sigma is a diagonal matrix with non-negative real entries (singular values)
+        - V is a unitary matrix
+        such that self = U * Sigma * V.conjugate().transpose()
+
+        EXAMPLES::
+
+            sage: A = matrix(RDF, [[1,2], [3,4], [5,6]])
+            sage: U, Sigma, V = A.SVD()
+            sage: U.parent()
+            Full MatrixSpace of 3 by 3 dense matrices over Real Double Field
+            sage: Sigma.parent() 
+            Full MatrixSpace of 3 by 2 dense matrices over Real Double Field
+            sage: V.parent()
+            Full MatrixSpace of 2 by 2 dense matrices over Real Double Field
+
+        TESTS::
+
+            sage: A = matrix(RDF, 2, range(4))
+            sage: U, S, V = A.SVD()
+            sage: (U * S * V.conjugate().transpose() - A).norm() < 1e-14
+            True
+        """
+        from sage.matrix.constructor import matrix
+        import numpy
+
+        # Convert matrix entries to numpy array
+        m, n = self.dimensions()
+        A = numpy.zeros((m,n))
+        for i in range(m):
+            for j in range(n):
+                A[i,j] = float(self[i,j])
+
+        # Compute SVD
+        U, s, Vh = numpy.linalg.svd(A, full_matrices=True)
+
+        # Convert singular values to diagonal matrix
+        Sigma = numpy.zeros((m,n))
+        Sigma[:min(m,n),:min(m,n)] = numpy.diag(s)
+
+        # Convert back to Sage matrices
+        U_sage = matrix(self.base_ring(), U)
+        Sigma_sage = matrix(self.base_ring(), Sigma) 
+        V_sage = matrix(self.base_ring(), Vh.T)
+
+        return U_sage, Sigma_sage, V_sage
+
     def pivots(self):
         """
         Return the pivot column positions of this matrix.
@@ -4754,14 +4808,12 @@ cdef class Matrix(sage.structure.element.Matrix):
         x = self.fetch('pivots')
         if x is not None:
             return tuple(x)
-        self.echelon_form()
-        x = self.fetch('pivots')
-        if x is None:
-            print(self)
-            print(self.nrows())
-            print(self.dict())
-            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'" % self.parent())
-        return tuple(x)
+
+        _, S, _ = self.SVD()
+        tol = 1e-10  # Tolerance for zero singular values
+        pivots = tuple(i for i,s in enumerate(S.diagonal()) if abs(s) > tol)
+        self.cache('pivots', pivots)
+        return pivots
 
     def rank(self):
         """
