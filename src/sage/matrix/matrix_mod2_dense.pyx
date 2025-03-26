@@ -2271,10 +2271,10 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
                         row_start += 1
                     while row_start < row_end and mzd_read_bit(A._entries, row_end, largest_col):
                         row_end -= 1
-                    if row_start < row_end: # swap row
+                    if row_start < row_end:  # swap row
                         A.swap_rows_c(row_start, row_end)
                         row_swapped[row_start], row_swapped[row_end] = row_swapped[row_end], row_swapped[row_start]
-                partition_start = partition_end + 1 # for next partition
+                partition_start = partition_end + 1  # for next partition
 
             for row in range(A._nrows - 1):
                 if mzd_read_bit(A._entries, row, largest_col) != mzd_read_bit(A._entries, row + 1, largest_col):
