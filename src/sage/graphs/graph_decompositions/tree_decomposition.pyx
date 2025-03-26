@@ -83,7 +83,7 @@ The treewidth of a clique is `n-1` and its treelength is 1::
     :meth:`length_of_tree_decomposition` | Return the length of the tree decomposition `T` of `G`.
 
 
-.. TODO:
+.. TODO::
 
     - Approximation of treelength based on :meth:`~sage.graphs.graph.Graph.lex_M`
     - Approximation of treelength based on BFS Layering

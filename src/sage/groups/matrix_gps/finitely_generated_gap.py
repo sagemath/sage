@@ -606,14 +606,14 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         Let `K[x]` be a polynomial ring and `\chi` a linear character for `G`. Let
 
-        .. MATH:
+        .. MATH::
 
             K[x]^G_{\chi} = \{f \in K[x] | \pi f = \chi(\pi) f \forall \pi\in G\}
 
         be the ring of invariants of `G` relative to `\chi`. Then the Reynolds operator
         is a map `R` from `K[x]` into `K[x]^G_{\chi}` defined by
 
-        .. MATH:
+        .. MATH::
 
             f \mapsto \frac{1}{|G|} \sum_{ \pi \in G} \chi(\pi) f.
 

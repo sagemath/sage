@@ -768,7 +768,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return an abbreviated field name as string.
 
-        .. NOTE: This should rather be a method of fields and rings.
+        .. NOTE:: This should rather be a method of fields and rings.
 
         RAISES:
 
