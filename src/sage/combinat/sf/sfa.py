@@ -6492,7 +6492,7 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
         - ``name`` -- the name of the basis
         - ``args`` -- any further arguments necessary to initialize the basis
 
-        .. WARNING:: # added colon
+        .. WARNING::
 
             Strictly speaking, this is not necessarily a functor on
             :class:`CommutativeRings`, but rather a functor on
@@ -6632,7 +6632,7 @@ class SymmetricFunctionsFamilyFunctor(SymmetricFunctionsFunctor):
 
         - ``basis`` -- the basis of the symmetric function algebra
 
-        .. WARNING:: # added colon
+        .. WARNING::
 
             Strictly speaking, this is not necessarily a functor on
             :class:`CommutativeRings`, but rather a functor on
