@@ -18,9 +18,10 @@ Quiver Homspace
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
+
 from sage.categories.homset import Homset
-from sage.quivers.morphism import QuiverRepHom
 from sage.misc.cachefunc import cached_method
+from sage.quivers.morphism import QuiverRepHom
 
 
 class QuiverHomSpace(Homset):

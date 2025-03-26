@@ -237,12 +237,12 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
         """
         if ambient_field is None:
             if K.coerce_embedding() is None:
-                raise TypeError("No embedding available for %s"%K)
+                raise TypeError("No embedding available for %s" % K)
             Kemb = K
             while Kemb.coerce_embedding() is not None:
                 Kemb = Kemb.coerce_embedding().codomain()
             if L.coerce_embedding() is None:
-                raise TypeError("No embedding available for %s"%L)
+                raise TypeError("No embedding available for %s" % L)
             Lemb = L
             while Lemb.coerce_embedding() is not None:
                 Lemb = Lemb.coerce_embedding().codomain()
