@@ -8180,7 +8180,7 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
 
     def is_ambient(self):
         """
-        Return False since this is not an ambient module.
+        Return ``False`` since this is not an ambient module.
 
         EXAMPLES::
 
