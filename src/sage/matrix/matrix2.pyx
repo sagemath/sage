@@ -6472,11 +6472,21 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQ, 3, 3, range(9))
             sage: A.change_ring(RR).eigenspaces_left()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: eigenspaces cannot be computed reliably
-            for inexact rings such as Real Field with 53 bits of precision,
+            doctest:warning...
+            UserWarning: eigenspaces cannot be computed reliably for inexact rings such as Real Field with 53 bits of precision,
             consult numerical or symbolic matrix classes for other options
+            [(13.3484692283495,
+              Vector space of degree 3 and dimension 0 over Real Field with 53 bits of precision
+              User basis matrix:
+              []),
+             (-0.000000000000000,
+              Vector space of degree 3 and dimension 1 over Real Field with 53 bits of precision
+              User basis matrix:
+              [ 1.00000000000000 -2.00000000000000  1.00000000000000]),
+             (-1.34846922834953,
+              Vector space of degree 3 and dimension 0 over Real Field with 53 bits of precision
+              User basis matrix:
+              [])]
 
             sage: # needs scipy
             sage: em = A.change_ring(RDF).eigenmatrix_left()
@@ -6552,9 +6562,10 @@ cdef class Matrix(Matrix1):
             msg = 'matrix must be square, not {0} x {1}'
             raise TypeError(msg.format(self.nrows(), self.ncols()))
         if not self.base_ring().is_exact():
+            from warnings import warn
             msg = ("eigenspaces cannot be computed reliably for inexact rings such as {0},\n",
                    "consult numerical or symbolic matrix classes for other options")
-            raise NotImplementedError(''.join(msg).format(self.base_ring()))
+            warn(''.join(msg).format(self.base_ring()))
 
         format = self._eigenspace_format(format)
 
@@ -6826,12 +6837,18 @@ cdef class Matrix(Matrix1):
 
     right_eigenspaces = eigenspaces_right
 
-    def eigenvalues(self, extend=True):
+    def eigenvalues(self, extend=True, algorithm=None):
         r"""
         Return a sequence of the eigenvalues of a matrix, with
         multiplicity. If the eigenvalues are roots of polynomials in ``QQ``,
         then ``QQbar`` elements are returned that represent each separate
         root.
+
+        INPUT:
+
+        - ``extend`` -- (default: ``True``); see below
+        - ``algorithm`` -- (default: ``None``); algorithm to use,
+          see :meth:`eigenvectors_left`
 
         If the option ``extend`` is set to ``False``, only eigenvalues in the base
         ring are considered.
@@ -6923,6 +6940,51 @@ cdef class Matrix(Matrix1):
                From: Finite Field in z3 of size 3^3
                To:   Algebraic closure of Finite Field of size 3
                Defn: z3 |--> z3)
+
+        TESTS::
+
+            sage: m = matrix(RR, [[0, 1], [-1, 0]])
+        """
+        if algorithm is None:
+            algorithm = "sage"
+        if algorithm == "sage":
+            return self._eigenvalues_sage(extend=extend)
+        else:
+            return self._eigenvectors_result_to_eigenvalues(
+                    self.eigenvectors_left(extend=extend, algorithm=algorithm))
+
+    def _eigenvectors_result_to_eigenvalues(self, result: list):
+        """
+        Convert the result of :meth:`eigenvectors_left` to a list of eigenvalues.
+
+        INPUT:
+
+        - ``result`` -- a list of tuples of the form ``(e,V,n)`` as in :meth:`eigenvectors_left`
+
+        OUTPUT: a Sequence of eigenvalues
+
+        TESTS::
+
+            sage: A = matrix(QQ, [[1, 2], [3, 4]])
+            sage: l = A.eigenvectors_left(); l
+            [(-0.3722813232690144?, [(1, -0.4574271077563382?)], 1),
+             (5.372281323269015?, [(1, 1.457427107756339?)], 1)]
+            sage: A._eigenvectors_result_to_eigenvalues(l)
+            [-0.3722813232690144?, 5.372281323269015?]
+        """
+        return Sequence([e for e, _, _ in result])
+
+    def _eigenvalues_sage(self, extend=True):
+        """
+        Compute the eigenvalues of a matrix using algorithm implemented in Sage.
+
+        TESTS::
+
+            sage: A = matrix(QQ, [[1, 2], [3, 4]])
+            sage: A._eigenvalues_sage()
+            [-0.3722813232690144?, 5.372281323269015?]
+            sage: A.eigenvalues(algorithm="sage")
+            [-0.3722813232690144?, 5.372281323269015?]
         """
         x = self.fetch('eigenvalues')
         if x is not None:
@@ -6962,7 +7024,7 @@ cdef class Matrix(Matrix1):
         self.cache('eigenvalues', eigenvalues)
         return eigenvalues
 
-    def eigenvectors_left(self, other=None, *, extend=True):
+    def eigenvectors_left(self, other=None, *, extend=True, algorithm=None) -> list:
         r"""
         Compute the left eigenvectors of a matrix.
 
@@ -6975,14 +7037,19 @@ cdef class Matrix(Matrix1):
 
         - ``extend`` -- boolean (default: ``True``)
 
+        - ``algorithm`` -- string (default: ``None``); the algorithm, options are
+          ``'sage'``, ``'flint'``, ``'mpmath'``, ``'pari'``, ``'scipy'``; if ``None``, the
+          algorithm is chosen automatically (``'scipy'`` is only supported for matrices over ``RDF`` or ``CDF``)
+
         OUTPUT:
 
-        For each distinct eigenvalue, returns a list of the form (e,V,n)
-        where e is the eigenvalue, V is a list of eigenvectors forming a
-        basis for the corresponding left eigenspace, and n is the algebraic
+        Returns a list of tuples of the form ``(e,V,n)``,
+        each tuple corresponds to a distinct eigenvalue,
+        where ``e`` is the eigenvalue, ``V`` is a list of eigenvectors forming a
+        basis for the corresponding left eigenspace, and ``n`` is the algebraic
         multiplicity of the eigenvalue.
 
-        If the option extend is set to False, then only the eigenvalues that
+        If the option ``extend`` is set to ``False``, then only the eigenvalues that
         live in the base ring are considered.
 
         EXAMPLES:
@@ -7053,15 +7120,54 @@ cdef class Matrix(Matrix1):
                                           'for RDF and CDF, but not for %s'
                                           % self.base_ring())
 
-        x = self.fetch('eigenvectors_left')
-        if x is not None:
-            return x
+        if algorithm is None:
+            R = self.base_ring()
+            from sage.rings.abc import RealField, ComplexField
+            if isinstance(R, (RealField, ComplexField)):
+                algorithm = 'flint'
+            else:
+                algorithm = 'sage'
 
+        if algorithm == 'sage':
+            return self._eigenvectors_left_sage(extend=extend)
+        elif algorithm == 'flint':
+            return self._fix_eigenvectors_extend(self._eigenvectors_left_flint(), extend)
+        elif algorithm == 'mpmath':
+            return self._fix_eigenvectors_extend(self._eigenvectors_left_mpmath(), extend)
+        elif algorithm == 'pari':
+            return self._fix_eigenvectors_extend(self._eigenvectors_left_pari(), extend)
+        else:
+            raise ValueError('algorithm value not recognized')
+
+    def _eigenvectors_left_sage(self, *, extend=True) -> list:
+        """
+        Compute the left eigenvectors of a matrix
+        using a generic algorithm implemented in Sage.
+
+        INPUT:
+
+        - ``extend`` -- boolean (default: ``True``)
+
+        OUTPUT:
+
+        See :meth:`eigenvectors_left`.
+
+        TESTS::
+
+            sage: m = matrix(RR, [[0, 1], [-2, 0]])
+            sage: m.eigenvectors_left(algorithm="sage")
+            doctest:warning...
+            UserWarning: eigenspaces cannot be computed reliably for inexact rings such as Real Field with 53 bits of precision,
+            consult numerical or symbolic matrix classes for other options
+            [(-1.41421356237310*I, [(1.00000000000000, 0.707106781186548*I)], 1),
+             (1.41421356237310*I, [(1.00000000000000, -0.707106781186548*I)], 1)]
+            sage: m.eigenvectors_left(algorithm="sage", extend=False)
+            []
+        """
         if not self.base_ring().is_exact():
             from warnings import warn
             warn("Using generic algorithm for an inexact ring, which may result in garbage from numerical precision issues.")
 
-        from sage.categories.homset import hom
         eigenspaces = self.eigenspaces_left(format='galois', algebraic_multiplicity=True)
         evec_list = []
         n = self._nrows
@@ -7075,19 +7181,158 @@ cdef class Matrix(Matrix1):
                 if eigval.parent().fraction_field() == F:
                     evec_eval_list.append((eigval, eigbasis, eigmult))
                 else:
-                    try:
-                        from sage.rings.qqbar import QQbar
-                        eigval_conj = eigval.galois_conjugates(QQbar)
-                    except AttributeError:
-                        raise NotImplementedError("eigenvectors are not implemented for matrices with eigenvalues that are not in the fraction field of the base ring or in QQbar")
+                    from sage.categories.homset import Hom
+                    from sage.rings.abc import RealField
+                    if isinstance(self.base_ring(), RealField):
+                        # then eigval is an element of RR[x]/f(x)
+                        # find all morphism of that ring into CC
+                        f = eigval.parent().modulus()
+                        rs = f.roots(self.base_ring().complex_field(), multiplicities=False)
+                        g = eigval.lift()
+                        eigval_conj = [g(r) for r in rs]
+                    else:
+                        try:
+                            from sage.rings.qqbar import QQbar
+                            eigval_conj = eigval.galois_conjugates(QQbar)
+                        except AttributeError:
+                            raise NotImplementedError("eigenvectors are not implemented for matrices with eigenvalues that are not in the fraction field of the base ring or in QQbar")
 
                     for e in eigval_conj:
-                        m = hom(eigval.parent(), e.parent(), e)
+                        m = Hom(eigval.parent(), e.parent())(e, check=False)
+                        # check=False because the base_ring may not be exact
                         space = (e.parent())**n
                         evec_list = [(space)([m(i) for i in v]) for v in eigbasis]
                         evec_eval_list.append((e, evec_list, eigmult))
 
         return evec_eval_list
+
+    def _fix_eigenvectors_extend(self, result: list, extend: bool) -> list:
+        """
+        Fix the eigenvectors if the extend option is set to False.
+
+        INPUT:
+
+        - ``result`` -- list of tuples of the form ``(e,V,n)``
+          as in :meth:`eigenvectors_left`
+        - ``extend`` -- boolean
+
+        OUTPUT:
+
+        If ``extend`` is ``True``, return ``result`` unchanged.
+        Otherwise, return a new list with only the eigenvalues that live in the base ring.
+
+        TESTS::
+
+            sage: m = matrix(RR, [[0, 1], [-2, 0]])
+            sage: l = m.eigenvectors_left(algorithm="pari"); l
+            [(-1.4142135623730950487637880730318329370*I,
+              [(0.707106781186547524*I, 1.00000000000000000)],
+              1),
+             (1.4142135623730950487637880730318329370*I,
+              [(-0.707106781186547524*I, 1.00000000000000000)],
+              1)]
+            sage: m._fix_eigenvectors_extend(l, extend=True)
+            [(-1.4142135623730950487637880730318329370*I,
+              [(0.707106781186547524*I, 1.00000000000000000)],
+              1),
+             (1.4142135623730950487637880730318329370*I,
+              [(-0.707106781186547524*I, 1.00000000000000000)],
+              1)]
+            sage: m._fix_eigenvectors_extend(l, extend=False)
+            []
+        """
+        if extend:
+            return result
+        R = self.base_ring()
+        try:
+            if R.algebraic_closure() is R:
+                return result
+        except (AttributeError, NotImplementedError):
+            pass
+        return [(e, V, n) for e, V, n in result if e in R]
+
+    def _eigenvectors_left_flint(self) -> list:
+        """
+        Compute the left eigenvectors of a matrix
+        using the FLINT library.
+
+        Only works for matrices over ``RealField`` or ``ComplexField``.
+
+        INPUT:
+
+        - ``extend`` -- boolean (default: ``True``)
+
+        OUTPUT:
+
+        See :meth:`eigenvectors_left`.
+
+        TESTS::
+
+            sage: m = matrix(RR, [[0, 1], [-2, 0]])
+            sage: m.eigenvectors_left(algorithm="flint")
+            doctest:warning...
+            FutureWarning: This class/method/function is marked as experimental.
+            It, its functionality or its interface might change without a formal deprecation.
+            See https://github.com/sagemath/sage/issues/30393 for details.
+            [(-1.41421356237309*I, [(-0.816496580927726, -0.577350269189626*I)], 1),
+             (1.41421356237310*I, [(-0.866025403784438*I, -0.612372435695794)], 1)]
+            sage: m.eigenvectors_left(algorithm="flint", extend=False)
+            []
+        """
+        from sage.rings.complex_arb import ComplexBallField
+        from sage.rings.complex_mpfr import ComplexField
+        C = ComplexField(self.base_ring().precision())
+        return [(C(e), [v.change_ring(C) for v in V], n) for e, V, n in
+                self.change_ring(ComplexBallField(self.base_ring().precision())).eigenvectors_left()]
+
+    def _eigenvectors_left_mpmath(self) -> list:
+        """
+        Compute the left eigenvectors of a matrix
+        using ``mpmath``.
+
+        Only works for matrices over ``RealField`` or ``ComplexField``.
+
+            sage: m = matrix(RR, [[0, 1], [-2, 0]])
+            sage: m.eigenvectors_left(algorithm="mpmath")
+            [(-1.41421356237309*I, [(-0.866025403784439, -0.612372435695794*I)], 1),
+             (1.41421356237309*I, [(-0.816496580927726*I, -0.577350269189626)], 1)]
+            sage: m.eigenvectors_left(algorithm="mpmath", extend=False)
+            []
+        """
+        from mpmath import mp
+        eigenvalues, eigenvectors = mp.eig(self._mpmath_(), left=True, right=False)
+        from sage.rings.complex_mpfr import ComplexField
+        C = ComplexField(self.base_ring().precision())
+        from sage.modules.free_module_element import vector
+        return [
+                (C(e), [vector(C, V)], 1)
+                for e, V in zip(eigenvalues, eigenvectors.tolist())
+                ]
+
+    def _eigenvectors_left_pari(self) -> list:
+        """
+        Compute the left eigenvectors of a matrix
+        using the PARI library.
+
+        Only works for matrices over ``RealField`` or ``ComplexField``.
+
+            sage: m = matrix(RR, [[0, 1], [-2, 0]])
+            sage: m.eigenvectors_left(algorithm="pari")
+            [(-1.4142135623730950487637880730318329370*I,
+              [(0.707106781186547524*I, 1.00000000000000000)],
+              1),
+             (1.4142135623730950487637880730318329370*I,
+              [(-0.707106781186547524*I, 1.00000000000000000)],
+              1)]
+            sage: m.eigenvectors_left(algorithm="pari", extend=False)
+            []
+        """
+        from sage.libs.pari import pari
+        eigenvalues, eigenvectors = pari(self).mateigen(flag=1, precision=self.base_ring().precision()).sage()
+        return [
+                (e, [V], 1)
+                for e, V in zip(eigenvalues, eigenvectors.columns())
+                ]
 
     left_eigenvectors = eigenvectors_left
 

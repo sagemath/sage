@@ -738,6 +738,33 @@ cdef class Matrix(Matrix0):
         A = numpy.matrix(self.list(), dtype=dtype, copy=copy)
         return numpy.resize(A,(self.nrows(), self.ncols()))
 
+    def _mpmath_(self, prec=None, rounding=None):
+        """
+        Return a ``mpmath`` matrix.
+
+        INPUT: See :meth:`sage.structure.element.Element._mpmath_`.
+
+        EXAMPLES::
+
+            sage: # needs mpmath
+            sage: m = matrix(SR, 2, 2, [1, 2, 3, pi])
+            sage: from mpmath import mp
+            sage: mp.dps = 30
+            sage: mp.matrix(m)  # not tested (doesn't work yet)
+            sage: m._mpmath_(mp.prec)
+            matrix(
+            [['1.0', '2.0'],
+             ['3.0', '3.14159265358979323846264338328']])
+        """
+        if prec is None:
+            R = self.base_ring()
+            try:
+                prec = R.precision()
+            except AttributeError:
+                prec = 53
+        from mpmath import mp
+        return mp.matrix([[item._mpmath_(prec, rounding) for item in row] for row in self])
+
     # Define the magic "__array__" function so that numpy.array(m) can convert
     # a matrix m to a numpy array.
     # See http://docs.scipy.org/doc/numpy/user/c-info.how-to-extend.html#converting-an-arbitrary-sequence-object
