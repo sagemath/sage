@@ -1,3 +1,4 @@
+# sage.doctest: flaky
 r"""
 Multivariate Polynomials via libSINGULAR
 

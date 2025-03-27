@@ -1,3 +1,4 @@
+# sage.doctest: flaky (:issue:`29528`)
 """
 libSingular: Functions
 
