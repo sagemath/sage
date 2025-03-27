@@ -280,10 +280,9 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
     g.m = G.size()
 
     cdef int isdigraph = G.is_directed()
-    cdef uint32_t i, v_id, j
+    cdef uint32_t i, j
     cdef list vertices = vertex_list if vertex_list is not None else list(G)
     cdef dict v_to_id = {v: i for i, v in enumerate(vertices)}
-    cdef list neighbor_label
     cdef list edge_labels
     # Loops are not stored twice for undirected graphs
     cdef int n_edges = g.m if isdigraph else 2*g.m - G.number_of_loops()
