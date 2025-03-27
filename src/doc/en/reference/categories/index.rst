@@ -162,6 +162,7 @@ Individual Categories
    sage/categories/monoids
    sage/categories/number_fields
    sage/categories/objects
+   sage/categories/ore_modules
    sage/categories/partially_ordered_monoids
    sage/categories/permutation_groups
    sage/categories/pointed_sets
