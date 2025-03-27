@@ -319,7 +319,7 @@ def variety_size_from_gb(I):
         sage: variety_size_from_gb([x(1)*x(2), x(2)*x(3)])
         5.0
         sage: mons = [Monomial([r.variable(i) for i in range(100) if i!=j])\
-            for j in range(100)]
+        ....: for j in range(100)]
         sage: variety_size_from_gb(mons)
         1.2676506002282294e+30
     """

@@ -317,7 +317,7 @@ from sage.combinat.combinatorial_map import combinatorial_map
 lazy_import('sage.combinat.skew_partition', 'SkewPartition')
 lazy_import('sage.combinat.partition_tuple', 'PartitionTuple')
 lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
 lazy_import("sage.symbolic.ring", "var")
 
@@ -7596,8 +7596,19 @@ class Partitions_parts_in(Partitions):
             sage: P2 = Partitions(4, parts_in=(1,2))
             sage: P is P2
             True
+
+        Ensure that :issue:`38640` is fixed::
+
+            sage: list(Partitions(4,parts_in=vector(QQ,[2,4])))
+            [[4], [2, 2]]
+            sage: list(Partitions(4,parts_in=vector(QQ,[2,1/4])))
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+            sage: list(Partitions(4,parts_in=vector(ZZ,[2,4])))
+            [[4], [2, 2]]
         """
-        parts = tuple(sorted(parts))
+        parts = tuple(sorted(set(map(ZZ,parts))))
         return super().__classcall__(cls, Integer(n), parts)
 
     def __init__(self, n, parts):

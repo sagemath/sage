@@ -409,6 +409,7 @@ from sage.rings import ideal
 import sage.structure.all
 from sage.structure.richcmp cimport (richcmp, rich_to_bool)
 from sage.misc.cachefunc import cached_method
+from sage.categories.rings import Rings
 from sage.categories.facade_sets import FacadeSets
 
 
@@ -1288,7 +1289,8 @@ cdef class RingHomomorphism(RingMap):
         from sage.rings.ideal import Ideal_generic
         A = self.domain()
         B = self.codomain()
-        if not (A.is_commutative() and B.is_commutative()):
+        Comm = Rings().Commutative()
+        if not (A in Comm and B in Comm):
             raise NotImplementedError("rings are not commutative")
         if A.base_ring() != B.base_ring():
             raise NotImplementedError("base rings must be equal")
@@ -2096,9 +2098,9 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         """
         RingHomomorphism.__init__(self, parent)
         if underlying.domain() != parent.domain().base():
-            raise ValueError("The given homomorphism has to have the domain %s"%parent.domain().base())
+            raise ValueError("The given homomorphism has to have the domain %s" % parent.domain().base())
         if underlying.codomain() != parent.codomain().base():
-            raise ValueError("The given homomorphism has to have the codomain %s"%parent.codomain().base())
+            raise ValueError("The given homomorphism has to have the codomain %s" % parent.codomain().base())
         if parent.domain().construction()[0] != parent.codomain().construction()[0]:
             raise ValueError(f"domain ({parent.domain()}) and codomain ({parent.codomain()}) must have the same functorial construction over their base rings")
         self._underlying = underlying

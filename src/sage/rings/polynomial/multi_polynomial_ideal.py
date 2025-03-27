@@ -244,11 +244,11 @@ from sage.misc.method_decorator import MethodDecorator
 from sage.misc.misc_c import prod
 from sage.misc.verbose import get_verbose, verbose
 from sage.rings.ideal import Ideal_generic
+from sage.rings.quotient_ring import QuotientRingIdeal_generic
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
-from sage.structure.element import parent
 from sage.structure.richcmp import (op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE,
                                     rich_to_bool, richcmp_method)
 from sage.structure.sequence import Sequence, Sequence_generic
@@ -408,7 +408,7 @@ class MPolynomialIdeal_magma_repr:
             sage: I = sage.rings.ideal.Cyclic(R, 6)
             sage: gb = I.groebner_basis('magma:GroebnerBasis', deg_bound=4)
             sage: len(gb)
-            5
+            7
         """
         R = self.ring()
         if not deg_bound:
@@ -2617,8 +2617,8 @@ class MPolynomialIdeal_singular_repr(
         See :mod:`~sage.rings.polynomial.msolve` for more information. ::
 
             sage: I.variety(RBF, algorithm='msolve', proof=False)   # optional - msolve
-            [{x: [2.76929235423863 +/- 2.08e-15], y: [0.361103080528647 +/- 4.53e-16]},
-             {x: 1.000000000000000, y: 1.000000000000000}]
+            [{y: [0.361103080528647 +/- 4.53e-16], x: [2.76929235423863 +/- 2.08e-15]},
+             {y: 1.000000000000000, x: 1.000000000000000}]
 
         Computation over floating point numbers may compute only a partial solution,
         or even none at all. Notice that x values are missing from the following variety::
@@ -2672,10 +2672,10 @@ class MPolynomialIdeal_singular_repr(
             sage: sorted(I.variety(algorithm='msolve',          # optional - msolve, needs sage.rings.finite_rings
             ....:                  proof=False),
             ....:        key=str)
-            [{x: 1, y: 1},
-             {x: 1, y: 536870908},
-             {x: 536870908, y: 1},
-             {x: 536870908, y: 536870908}]
+            [{y: 1, x: 1},
+             {y: 1, x: 536870908},
+             {y: 536870908, x: 1},
+             {y: 536870908, x: 536870908}]
 
         but may fail in small characteristic, especially with ideals of high
         degree with respect to the characteristic::
@@ -2733,15 +2733,15 @@ class MPolynomialIdeal_singular_repr(
             sage: R.inject_variables()
             Defining...
             sage: I = Ideal([x1 + 1, x2, x3 + 1, x5*x10 + x10 + x18, x5*x11 + x11, \
-                             x5*x18, x6, x7 + 1, x9, x10*x11 + x10 + x18, x10*x18 + x18, \
-                             x11*x18, x12, x13, x14, x15, x16 + 1, x17 + x18 + 1, x19, x20, \
-                             x21 + 1, x22, x23, x24, x25 + 1, x28 + 1, x29 + 1, x30, x8, \
-                             x26, x1^2 + x1, x2^2 + x2, x3^2 + x3, x4^2 + x4, x5^2 + x5, \
-                             x6^2 + x6, x7^2 + x7, x8^2 + x8, x9^2 + x9, x10^2 + x10, \
-                             x11^2 + x11, x12^2 + x12, x13^2 + x13, x14^2 + x14, x15^2 + x15, \
-                             x16^2 + x16, x17^2 + x17, x18^2 + x18, x19^2 + x19, x20^2 + x20, \
-                             x21^2 + x21, x22^2 + x22, x23^2 + x23, x24^2 + x24, x25^2 + x25, \
-                             x26^2 + x26, x27^2 + x27, x28^2 + x28, x29^2 + x29, x30^2 + x30])
+            ....:            x5*x18, x6, x7 + 1, x9, x10*x11 + x10 + x18, x10*x18 + x18, \
+            ....:            x11*x18, x12, x13, x14, x15, x16 + 1, x17 + x18 + 1, x19, x20, \
+            ....:            x21 + 1, x22, x23, x24, x25 + 1, x28 + 1, x29 + 1, x30, x8, \
+            ....:            x26, x1^2 + x1, x2^2 + x2, x3^2 + x3, x4^2 + x4, x5^2 + x5, \
+            ....:            x6^2 + x6, x7^2 + x7, x8^2 + x8, x9^2 + x9, x10^2 + x10, \
+            ....:            x11^2 + x11, x12^2 + x12, x13^2 + x13, x14^2 + x14, x15^2 + x15, \
+            ....:            x16^2 + x16, x17^2 + x17, x18^2 + x18, x19^2 + x19, x20^2 + x20, \
+            ....:            x21^2 + x21, x22^2 + x22, x23^2 + x23, x24^2 + x24, x25^2 + x25, \
+            ....:            x26^2 + x26, x27^2 + x27, x28^2 + x28, x29^2 + x29, x30^2 + x30])
             sage: I.basis_is_groebner()
             True
             sage: sorted("".join(str(V[g]) for g in R.gens()) for V in I.variety())  # long time (6s on sage.math, 2011)
@@ -3482,7 +3482,7 @@ class MPolynomialIdeal_macaulay2_repr:
 
             sage: R.<x,y,z,w> = PolynomialRing(ZZ, 4)
             sage: I = ideal(x*y-z^2, y^2-w^2)
-            sage: I._reduce_using_macaulay2(x*y-z^2 + y^2)    # optional  - macaulay2
+            sage: I._reduce_using_macaulay2(x*y-z^2 + y^2)    # optional - macaulay2
             w^2
         """
         I = self._macaulay2_()
@@ -5500,11 +5500,22 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
              of Multivariate Polynomial Ring in x0, x1, x2, x3, x4, y0, y1, y2, y3, y4,
              z0, z1, z2, z3, z4 over Finite Field of size 3
             sage: J += sage.rings.ideal.FieldIdeal(J.ring())  # ensure radical ideal
-            sage: from sage.doctest.fixtures import reproducible_repr
-            sage: print(reproducible_repr(J.variety()))
-            [{x0: 1, x1: 0, x2: 0, x3: 0, x4: 0,
-              y0: 0, y1: 0, y2: 0, y3: 0, y4: 0,
-              z0: 0, z1: 0, z2: 0, z3: 0, z4: 0}]
+            sage: J.variety()
+            [{z4: 0,
+              z3: 0,
+              z2: 0,
+              z1: 0,
+              z0: 0,
+              y4: 0,
+              y3: 0,
+              y2: 0,
+              y1: 0,
+              y0: 0,
+              x4: 0,
+              x3: 0,
+              x2: 0,
+              x1: 0,
+              x0: 1}]
 
 
         Weil restrictions are often used to study elliptic curves over
@@ -5632,7 +5643,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         return result_ring.ideal(result)
 
 
-class MPolynomialIdeal_quotient(MPolynomialIdeal):
+class MPolynomialIdeal_quotient(QuotientRingIdeal_generic, MPolynomialIdeal):
     r"""
     An ideal in a quotient of a multivariate polynomial ring.
 

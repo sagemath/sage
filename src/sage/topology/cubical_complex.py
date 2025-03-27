@@ -67,8 +67,9 @@ reflected in the fact that they have isomorphic homology groups.
    see the :mod:`Generic Cell Complex <sage.homology.cell_complex>`
    page instead.
 """
-
 from copy import copy
+from functools import total_ordering
+
 from .cell_complex import GenericCellComplex
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
@@ -77,8 +78,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-from sage.misc.superseded import deprecation
-from functools import total_ordering
 
 lazy_import('sage.matrix.constructor', 'matrix')
 
@@ -1271,11 +1270,11 @@ class CubicalComplex(GenericCellComplex):
                 # nonzero via a dictionary.
                 matrix_data = {}
                 col = 0
-                if len(old) and len(current):
+                if old and current:
                     for cube in current:
                         faces = cube.faces_as_pairs()
                         sign = 1
-                        for (upper, lower) in faces:
+                        for upper, lower in faces:
                             # trac 32203: use two "try/except" loops
                             # in case lower is in old but upper is not.
                             try:
