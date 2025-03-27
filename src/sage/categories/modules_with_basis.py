@@ -1309,6 +1309,30 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 from sage.rings.integer_ring import ZZ
                 return ZZ(len(self.basis()))
 
+        def rank(self):
+            """
+            Return the rank of ``self``.
+
+            Since there is a (distinguished) basis, the rank of ``self``
+            is equal to the cardinality of the basis (which equals
+            the :meth:`dimension` of ``self``).
+
+            EXAMPLES::
+
+                sage: A.<x,y> = algebras.DifferentialWeyl(QQ)                           # needs sage.modules
+                sage: A.rank()                                                          # needs sage.modules
+                +Infinity
+
+                sage: R.<x,y> = QQ[]
+                sage: R.rank()
+                +Infinity
+
+                sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+                sage: F.rank()
+                3
+            """
+            return self.dimension()
+
         def _from_dict(self, d, coerce=True, remove_zeros=True):
             """
             Construct an element of ``self`` from the dictionary ``d``.

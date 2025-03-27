@@ -199,8 +199,18 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cysignals.memory cimport sig_free
-from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
+from libc.stdint cimport uint32_t
+from memory_allocator cimport MemoryAllocator
+
+from sage.data_structures.bitset_base cimport *
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
+from sage.graphs.base.static_sparse_graph cimport (short_digraph,
+                                                   init_short_digraph,
+                                                   free_short_digraph,
+                                                   simple_BFS,
+                                                   out_degree)
+
 from copy import copy
 
 
@@ -747,14 +757,17 @@ def is_permutation(g, algorithm='greedy', certificate=False, check=True,
 
 def is_transitive(g, certificate=False):
     r"""
-    Test whether the digraph is transitive.
+    Check whether the digraph is transitive.
 
     A digraph is transitive if for any pair of vertices `u,v\in G` linked by a
     `uv`-path the edge `uv` belongs to `G`.
 
     INPUT:
 
-    - ``certificate`` -- whether to return a certificate for negative answers
+    - ``g`` -- a digraph
+
+    - ``certificate`` -- boolean (default: ``False``); whether to return a
+      certificate for negative answers
 
       - If ``certificate = False`` (default), this method returns ``True`` or
         ``False`` according to the graph.
@@ -783,30 +796,55 @@ def is_transitive(g, certificate=False):
         True
     """
     cdef int n = g.order()
-
     if n <= 2:
         return True
 
-    cdef list int_to_vertex = list(g)
-    cdef unsigned short * distances = c_distances_all_pairs(g, vertex_list=int_to_vertex)
-    cdef unsigned short * c_distances = distances
+    # Copying the whole graph to obtain the list of neighbors quicker than by
+    # calling out_neighbors. This data structure is well documented in the
+    # module sage.graphs.base.static_sparse_graph
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
+    cdef short_digraph sd
+    if isinstance(g, StaticSparseBackend):
+        cg = <StaticSparseCGraph> g._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(g)
+        init_short_digraph(sd, g, edge_labelled=False, vertex_list=int_to_vertex)
 
-    cdef int i, j
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef uint32_t * distances = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
+    cdef uint32_t * waiting_list = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
+    cdef bitset_t seen
+    bitset_init(seen, n)
 
-    # Only 3 distances can appear in the matrix of all distances : 0, 1, and
-    # infinity. Anything else is a proof of nontransitivity !
+    cdef uint32_t u, v
+    cdef int i
 
-    for j in range(n):
-        for i in range(n):
-            if c_distances[i] != <unsigned short> -1 and c_distances[i] > 1:
-                sig_free(distances)
-                if certificate:
+    for u in range(n):
 
-                    return int_to_vertex[j], int_to_vertex[i]
-                else:
-                    return False
+        # 1. perform a breadth first search from u
+        _ = simple_BFS(sd, u, distances, NULL, waiting_list, seen)
 
-        c_distances += n
+        # 2. Check whether the BFS reaches vertices that are not in the closed
+        # neighborhood of u.
+        if bitset_len(seen) != out_degree(sd, u) + 1:
+            if certificate:
+                bitset_discard(seen, u)
+                for i in range(out_degree(sd, u)):
+                    bitset_discard(seen, sd.neighbors[u][i])
+                v = bitset_first(seen)
 
-    sig_free(distances)
+            bitset_free(seen)
+            if not isinstance(g, StaticSparseBackend):
+                free_short_digraph(sd)
+            if certificate:
+                return (int_to_vertex[u], int_to_vertex[v])
+            return False
+
+    bitset_free(seen)
+    if not isinstance(g, StaticSparseBackend):
+        free_short_digraph(sd)
+
     return True
