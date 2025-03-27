@@ -720,7 +720,7 @@ class WittVectorRing_finotti(WittVectorRing):
 
 class WittVectorRing_phantom(WittVectorRing):
     """
-    Child class for truncated Witt vectors using the ``phantom` algorithm.
+    Child class for truncated Witt vectors using the ``phantom`` algorithm.
 
     .. WARNING::
 
