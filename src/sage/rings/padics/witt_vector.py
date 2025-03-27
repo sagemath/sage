@@ -24,7 +24,9 @@ AUTHORS:
 from sage.misc.latex import tuple_function
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
-from sage.rings.padics.factory import Zp, Zq
+from sage.rings.padics.factory import QqFP, Zp
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import op_EQ, op_NE
@@ -32,7 +34,7 @@ from sage.structure.richcmp import op_EQ, op_NE
 
 def padic_to_vector(x, F):
     r"""
-    Return the coordinates in `W(F)` of `x \in \mathbb Z_q`.
+    Return the coordinates in `W(F)` of `x \in \mathbb Q_q`.
 
     INPUT:
 
@@ -47,14 +49,14 @@ def padic_to_vector(x, F):
         sage: F.<b> = GF(5^2)
         sage: x = (3*a + 4)*5 + (2*a + 1)*5^2 + 5^4
         sage: padic_to_vector(x, F)
-        [0, 2*b + 2, 2*b + 3, 4*b, 2*b + 2]
+        (0, 2*b + 2, 2*b + 3, 4*b, 2*b + 2)
     """
-    prec = x.precision_absolute()
+    prec = x.parent().precision_cap()
     if x == 0:
-        return x.parent().precision_cap() * [F.zero()]
+        return tuple(F.zero() for i in range(prec))
     p = x.parent().prime()
-    E = list(x.teichmuller_expansion())
-    return [F(E[i].residue().polynomial()) ** (p**i) for i in range(prec)]
+    return tuple(F(x.teichmuller_expansion(i).residue().polynomial()) ** (p**i)
+                 for i in range(prec))
 
 
 def vector_to_padic(v, R):
@@ -398,7 +400,7 @@ class WittVector(CommutativeRingElement):
 
 class WittVector_phantom(WittVector):
     r"""
-    Child class for truncated Witt vectors using the ``Zq_isomorphism``
+    Child class for truncated Witt vectors using the ``phantom``
     algorithm.
 
     Here, a Witt vector with coefficients in `\mathbb F_q` is lifted to
@@ -414,10 +416,10 @@ class WittVector_phantom(WittVector):
         sage: t
         (1, 0, 0, 0, 0)
         sage: t.phantom()
-        [1 + O(7^5), 1 + O(7^5), 1 + O(7^5), 1 + O(7^5), 1 + O(7^5)]
+        [1, 1, 1, 1, 1]
         sage: u=7*t
         sage: u.phantom()
-        [7 + O(7^6), 7 + O(7^6), 7 + O(7^6), 7 + O(7^6), 7 + O(7^6)]
+        [7, 7, 7, 7, 7]
         sage: u[1]
         1
     """
@@ -436,23 +438,32 @@ class WittVector_phantom(WittVector):
         self._prec = parent.precision()
         R = parent.base()
         p = parent.prime()
-        lift = Zq(R.cardinality(), prec=self._prec, modulus=R.modulus(),
-                  names=(R.variable_name(),), res_name=R.variable_name())
+        base = R
+        if (isinstance(R, PolynomialRing_generic)
+                or isinstance(R, MPolynomialRing_base)):
+            base = R.base()
+        base_lift = QqFP(base.cardinality(), prec=self._prec,
+                         modulus=base.modulus(), names=(base.variable_name(),),
+                         res_name=base.variable_name())
+        lift = base_lift
+        if (isinstance(R, PolynomialRing_generic)
+                or isinstance(R, MPolynomialRing_base)):
+            lift = R.change_ring(base_lift)
         if phantom is not None:
             self._phantom = phantom
-            self._vec = [R(phantom[0])]
+            self._vec = (R(phantom[0]),)
             self._powers = [phantom[0]]
         elif vec is None:
             zero = R.zero()
-            self._vec = self._prec * [zero]
+            self._vec = (zero for i in range(self._prec))
             self._phantom = self._prec * [zero]
         elif isinstance(vec, WittVector_phantom):
             self._vec = vec._vec
             self._phantom = vec._phantom
             self._powers = vec._powers
         elif isinstance(vec, int) or isinstance(vec, Integer):
-            y = lift(vec)
-            self._vec = padic_to_vector(lift(y), R)
+            y = base_lift(vec)
+            self._vec = padic_to_vector(y, R)
             self._powers = [y]
             self._phantom = self._prec * [y]
         elif (isinstance(vec, tuple) or isinstance(vec, list)
@@ -502,7 +513,7 @@ class WittVector_phantom(WittVector):
             sage: u = W([0,5,0])
             sage: r = t + u
             sage: r.phantom()
-            [6 + O(11), 6 + 3*11 + O(11^2), 6 + 3*11 + 3*11^2 + O(11^3)]
+            [6, 6 + 3*11 + 9*11^2, 6 + 3*11 + 3*11^2]
         """
         phantom = [self._phantom[i] + other.phantom()[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
@@ -525,14 +536,13 @@ class WittVector_phantom(WittVector):
             prec = min(prec, maxprec)
         phantom = self._phantom
         powers = self._powers
-        vec = self._vec
         p = self.parent()._prime
         mod = self.parent().base()
-        for n in range(len(vec), prec):
+        for n in range(len(self._vec), prec):
             for i in range(n):
                 powers[i] = powers[i] ** p
             c = (phantom[n] - sum(powers[i] * p**i for i in range(n))) // p**n
-            self._vec.append(mod(c))
+            self._vec += (mod(c),)
             self._powers.append(c)
 
     def _latex_(self):
@@ -561,7 +571,7 @@ class WittVector_phantom(WittVector):
             sage: u = W([0,1,3])
             sage: r = t * u
             sage: r.phantom()
-            [O(7), 7 + O(7^2), 7 + 3*7^2 + O(7^3)]
+            [0, 7, 7 + 3*7^2 + 5*7^3]
         """
         phantom = [self._phantom[i] * other.phantom()[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
@@ -576,8 +586,8 @@ class WittVector_phantom(WittVector):
             sage: t = W([1,0,1,17])
             sage: r = -t
             sage: r.phantom()
-            [22 + O(23), 22 + 22*23 + O(23^2), 22 + 22*23 + 21*23^2 + O(23^3),
-            22 + 22*23 + 21*23^2 + 5*23^3 + O(23^4)]
+            [22 + 22*23 + 22*23^2 + 22*23^3, 22 + 22*23 + 22*23^2 + 22*23^3,
+            22 + 22*23 + 21*23^2 + 22*23^3, 22 + 22*23 + 21*23^2 + 5*23^3]
         """
         phantom = [-v for v in self._phantom]
         return self.__class__(self.parent(), phantom=phantom)
@@ -616,17 +626,8 @@ class WittVector_phantom(WittVector):
             sage: u * t == W_finotti(u) * W_standard(t)
             True
         """
-        if not isinstance(other, WittVector):
-            return NotImplemented
-        if op == op_EQ:
-            return (self._phantom == other.phantom()
-                    if isinstance(other, WittVector_phantom)
-                    else self.vec() == other.vec())
-        if op == op_NE:
-            return (self._phantom != other.phantom()
-                    if isinstance(other, WittVector_phantom)
-                    else self.vec() != other.vec())
-        return NotImplemented
+        self._compute_vector()
+        return super()._richcmp_(other, op)
 
     def _sub_(self, other):
         """
@@ -640,7 +641,7 @@ class WittVector_phantom(WittVector):
             sage: u = W([1,0,2])
             sage: r = t - u
             sage: r.phantom()
-            [O(3), 2*3 + O(3^2), 2*3 + 2*3^2 + O(3^3)]
+            [0, 2*3, 2*3 + 2*3^2]
         """
         phantom = [self._phantom[i] - other.phantom()[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
@@ -668,7 +669,7 @@ class WittVector_phantom(WittVector):
             sage: W = WittVectorRing(GF(5,'t'), prec=3)
             sage: t = W([1,1,3])
             sage: t.phantom()
-            [1 + O(5), 1 + 5 + O(5^2), 1 + 5 + 3*5^2 + O(5^3)]
+            [1, 1 + 5, 1 + 5 + 3*5^2]
         """
         return self._phantom
 
@@ -704,7 +705,7 @@ class WittVector_finotti(WittVector):
 
         EXAMPLES::
 
-            sage: W = WittVectorRing(PolynomialRing(GF(7), 'x'), prec=2)
+            sage: W = WittVectorRing(PolynomialRing(GF(7), 'x'), prec=2, algorithm='finotti')
             sage: t = W([x+3,x+2])
             sage: u = W([6,x])
             sage: t + u
@@ -734,7 +735,7 @@ class WittVector_finotti(WittVector):
 
         EXAMPLES::
 
-            sage: W = WittVectorRing(PolynomialRing(GF(5), 'x'), prec=3)
+            sage: W = WittVectorRing(PolynomialRing(GF(5), 'x'), prec=3, algorithm='finotti')
             sage: t = W([1,2,3])
             sage: u = W([x,x^2,x^3])
             sage: t * u

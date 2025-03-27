@@ -25,6 +25,7 @@ AUTHORS:
 
 from itertools import product
 
+from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
 from sage.misc.latex import latex
 from sage.rings.integer import Integer
@@ -37,7 +38,9 @@ from sage.rings.padics.witt_vector import (
     WittVector_standard,
 )
 from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import CommutativeRing
 from sage.sets.primes import Primes
@@ -54,27 +57,35 @@ def choose_witt_vector_algorithm(algorithm, base_ring, prime, char):
         sage: W = WittVectorRing(ZZ, p=53)
         sage: type(W)  # indirect doctest
         <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_standard_with_category'>
+
+        sage: W = WittVectorRing(PolynomialRing(GF(5), 't,u'))
+        sage: type(W)  # indirect doctest
+        <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_phantom_with_category'>
     """
     if prime == char:
         if algorithm == 'p_invertible':
             raise ValueError("The 'p_invertible' algorithm only works when p "
                              "is a unit in the ring of coefficients.")
-        elif base_ring in Fields().Finite():
+        elif (base_ring in Fields().Finite()
+              or (isinstance(base_ring, PolynomialRing_generic)
+                  or isinstance(base_ring, MPolynomialRing_base))
+              and base_ring.base() in Fields().Finite()):
             if algorithm is None:
-                algorithm = 'Zq_isomorphism'
+                algorithm = 'phantom'
         elif algorithm is None:
             algorithm = 'finotti'
-        elif algorithm == 'Zq_isomorphism':
-            raise ValueError("The 'Zq_isomorphism' algorithm only works when "
-                             "the coefficient ring is a finite field of "
-                             "characteristic p.")
+        elif algorithm == 'phantom':
+            raise ValueError("The 'phantom' algorithm only works when the "
+                             "coefficient ring is a finite field of "
+                             "p, or a polynomial ring on that field.")
     elif algorithm == 'finotti':
         raise ValueError("The 'finotti' algorithm only works for "
                          "coefficients rings of characteristic p.")
-    elif algorithm == 'Zq_isomorphism':
-        raise ValueError("The 'Zq_isomorphism' algorithm only works when the "
+    elif algorithm == 'phantom':
+        raise ValueError("The 'phantom' algorithm only works when the "
                          "coefficient ring is a finite field of "
-                         "characteristic p.")
+                         "characteristic p, or a polynomial ring on that "
+                         "field.")
     elif base_ring(prime).is_unit():
         if algorithm is None:
             algorithm = 'p_invertible'
@@ -188,8 +199,9 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
     - ``finotti`` -- Finotti's algorithm; it can be used when the base
       ring has characteristic `p`;
 
-    - ``Zq_isomorphism`` -- computes the ring laws in `\mathbb Z_q`
-      when the base ring is `\mathbb F_q` for a power `q` of `p`.
+    - ``phantom`` -- computes the ring laws using the phantom components
+      using a lift of the base ring, assuming that it is either `\mathbb F_q`
+      for a power `q` of `p`, or a polynomial ring on that ring.
 
     EXAMPLES::
 
@@ -231,7 +243,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         sage: WittVectorRing(QQ, p=5, algorithm='moon')
         Traceback (most recent call last):
         ...
-        ValueError: algorithm must be one of None, 'standard', 'p_invertible', 'finotti', 'Zq_isomorphism'
+        ValueError: algorithm must be one of None, 'standard', 'p_invertible', 'finotti', 'phantom'
     """
     def __classcall_private__(cls, base_ring, prec=1, p=None, algorithm=None):
         r"""
@@ -243,16 +255,16 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: W
             Ring of truncated 5-typical Witt vectors of length 1 over Rational Field
         """
-        if not isinstance(base_ring, CommutativeRing):
+        if base_ring not in CommutativeRings():
             raise TypeError(f'{base_ring} is not a commutative ring')
         elif not (isinstance(prec, int) or isinstance(prec, Integer)):
             raise TypeError(f'{prec} is not an integer')
         elif prec <= 0:
             raise ValueError(f'{prec} must be positive')
         elif algorithm not in [None, 'standard', 'p_invertible', 'finotti',
-                               'Zq_isomorphism']:
+                               'phantom']:
             raise ValueError("algorithm must be one of None, 'standard', "
-                             "'p_invertible', 'finotti', 'Zq_isomorphism'")
+                             "'p_invertible', 'finotti', 'phantom'")
 
         prec = Integer(prec)
         char = base_ring.characteristic()
@@ -270,7 +282,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         match choose_witt_vector_algorithm(algorithm, base_ring, prime, char):
             case 'finotti':
                 child = WittVectorRing_finotti
-            case 'Zq_isomorphism':
+            case 'phantom':
                 child = WittVectorRing_phantom
             case 'p_invertible':
                 child = WittVectorRing_pinvertible
@@ -318,7 +330,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         EXAMPLES::
 
             sage: P.<X1,X2,Y1,Y2> = PolynomialRing(GF(3),'X1,X2,Y1,Y2')
-            sage: W = WittVectorRing(P, p=3, prec=2)
+            sage: W = WittVectorRing(P, p=3, prec=2, algorithm='standard')
             sage: W([X1,X2]) + W([Y1,Y2])  # indirect doctest
             (X1 + Y1, -X1^2*Y1 - X1*Y1^2 + X2 + Y2)
             sage: W([X1,X2]) * W([Y1,Y2])  # indirect doctest
@@ -584,9 +596,9 @@ class WittVectorRing_finotti(WittVectorRing):
 
         EXAMPLES::
 
-            sage: W = WittVectorRing(PolynomialRing(GF(3), 't'), p=3, prec=3)
+            sage: W = WittVectorRing(PowerSeriesRing(GF(3), 't'), p=3, prec=3)
             sage: W
-            Ring of truncated 3-typical Witt vectors of length 3 over Univariate Polynomial Ring in t over Finite Field of size 3
+            Ring of truncated 3-typical Witt vectors of length 3 over Power Series Ring in t over Finite Field of size 3
             sage: type(W)
             <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_finotti_with_category'>
 
@@ -608,7 +620,7 @@ class WittVectorRing_finotti(WittVectorRing):
         EXAMPLES::
 
             sage: R.<x,y,z,t> = PolynomialRing(GF(5))
-            sage: W = WittVectorRing(R, prec=2)
+            sage: W = WittVectorRing(R, prec=2, algorithm='finotti')
             sage: (W([x,y]) + W([z,t]))[1]  # indirect doctest
             -x^4*z - 2*x^3*z^2 - 2*x^2*z^3 - x*z^4 + y + t
         """
@@ -676,7 +688,7 @@ class WittVectorRing_finotti(WittVectorRing):
         EXAMPLES::
 
             sage: R.<x,y,z,t> = PolynomialRing(GF(7))
-            sage: W = WittVectorRing(R, prec=2)
+            sage: W = WittVectorRing(R, prec=2, algorithm='finotti')
             sage: W([x,y]) + W([z,t])  # indirect doctest
             (x + z, -x^6*z - 3*x^5*z^2 + 2*x^4*z^3 + 2*x^3*z^4 - 3*x^2*z^5 - x*z^6 + y + t)
         """
@@ -708,7 +720,7 @@ class WittVectorRing_finotti(WittVectorRing):
 
 class WittVectorRing_phantom(WittVectorRing):
     """
-    Child class for truncated Witt vectors using the ``Zq_isomorphism`` algorithm.
+    Child class for truncated Witt vectors using the ``phantom` algorithm.
 
     .. WARNING::
 
