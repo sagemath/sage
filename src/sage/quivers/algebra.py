@@ -19,8 +19,9 @@ Path Algebras
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.misc.cachefunc import cached_method
+
 from .algebra_elements import PathAlgebraElement
 
 
