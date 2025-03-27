@@ -1478,7 +1478,7 @@ class AbstractTree:
         while l_repr:
             tr = l_repr.pop(0)
             acc += UnicodeArt([" "]) + tr
-            if not len(l_repr):
+            if not l_repr:
                 lf_sep += "─" * (tr._root) + "╮"
                 ls_sep += " " * (tr._root) + "│"
             else:
