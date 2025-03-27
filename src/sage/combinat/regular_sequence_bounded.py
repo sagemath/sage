@@ -4,7 +4,7 @@ Boundedness of `k`-Regular Sequences
 This module contains a collection of algorithms to check for boundedness.
 This is done
 - based on eigenvalues and
-- by the criterion presented in [MS1977a].
+- by the criterion presented in [MS1977a]_.
 
 Various
 =======
@@ -80,7 +80,7 @@ def multiply_reduce(A, B):
 
 def construct_phi(matrices):
     r"""
-    Return the set `\phi(S)` as defined in [MS1977a].
+    Return the set `\phi(S)` as defined in [MS1977a]_.
 
     INPUT:
 
@@ -254,7 +254,7 @@ def is_bounded_via_mandel_simon_algorithm(matrices):
 
     ALGORITHM:
 
-    A criterion based on [MS1977a] is used here.
+    A criterion based on [MS1977a]_ is used here.
 
     EXAMPLES::
 
