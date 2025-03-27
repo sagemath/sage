@@ -517,6 +517,52 @@ from collections import namedtuple
 TestResults = namedtuple('TestResults', 'failed attempted')
 
 
+def _parse_example_timeout(source: str, default_timeout: float) -> float:
+    """
+    Parse the timeout value from a doctest example's source.
+
+    INPUT:
+
+    - ``source`` -- the source code of a ``doctest.Example``
+    - ``default_timeout`` -- the default timeout value to use
+
+    OUTPUT:
+
+    - a float, the timeout value to use for the example
+
+    TESTS::
+
+        sage: from sage.doctest.forker import _parse_example_timeout
+        sage: _parse_example_timeout("sleep(10)  # long time (10s)", 5.0r)
+        10.0
+        sage: _parse_example_timeout("sleep(10)  # long time", 5.0r)
+        5.0
+        sage: _parse_example_timeout("sleep(10)  # long time (1a2s)", 5.0r)
+        Traceback (most recent call last):
+        ...
+        ValueError: malformed optional tag '# long time (1a2s)', should be <number>s
+        sage: _parse_example_timeout("sleep(10)  # long time (:issue:`12345`)", 5.0r)
+        5.0
+    """
+    # TODO this double-parsing is inefficient, should make :meth:`SageDocTestParser.parse`
+    # return subclass of doctest.Example that already include the timeout value
+    from sage.doctest.parsing import parse_optional_tags
+    value = parse_optional_tags(source).get("long time", None)
+    if value is None:
+        # either has the "long time" tag without any value in parentheses,
+        # or tag not present
+        return default_timeout
+    assert isinstance(value, str)
+    match = re.fullmatch(r'(\S*\d)\s*s', value.strip())
+    if match:
+        try:
+            return float(match[1])
+        except ValueError:
+            raise ValueError(f"malformed optional tag '# long time ({value})', should be <number>s")
+    else:
+        return default_timeout
+
+
 class SageDocTestRunner(doctest.DocTestRunner):
     def __init__(self, *args, **kwds):
         """
@@ -582,6 +628,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         Since it needs to be able to read stdout, it should be called
         while spoofing using :class:`SageSpoofInOut`.
 
+        INPUT: see :meth:`run`.
+
         EXAMPLES::
 
             sage: from sage.doctest.parsing import SageOutputChecker
@@ -627,6 +675,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         check = self._checker.check_output
 
         # Process each example.
+        example: doctest.Example
         for examplenum, example in enumerate(test.examples):
             if failures:
                 # If exitfirst is set, abort immediately after a
@@ -816,8 +865,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
             if example.warnings:
                 for warning in example.warnings:
                     out(self._failure_header(test, example, f'Warning: {warning}'))
+
             if outcome is SUCCESS:
-                if self.options.warn_long > 0 and example.cputime + check_timer.cputime > self.options.warn_long:
+                if self.options.warn_long > 0 and example.cputime + check_timer.cputime > _parse_example_timeout(
+                        example.source, self.options.warn_long):
                     self.report_overtime(out, test, example, got,
                                          check_timer=check_timer)
                 elif example.warnings:
@@ -1184,7 +1235,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             example.total_state = self.running_global_digest.hexdigest()
             example.doctest_state = self.running_doctest_digest.hexdigest()
 
-    def _failure_header(self, test, example, message='Failed example:'):
+    def _failure_header(self, test, example, message='Failed example:', extra=None):
         """
         We strip out ``sage:`` prompts, so we override
         :meth:`doctest.DocTestRunner._failure_header` for better
@@ -1195,6 +1246,14 @@ class SageDocTestRunner(doctest.DocTestRunner):
         - ``test`` -- a :class:`doctest.DocTest` instance
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
+
+        - ``message`` -- a message to be shown. Must not have a newline
+
+        - ``extra`` -- an extra message to be shown in GitHub annotation
+
+        Note that ``message`` and ``extra`` are not accepted by
+        :meth:`doctest.DocTestRunner._failure_header`, as such by Liskov
+        substitution principle this method must be callable without passing those.
 
         OUTPUT: string used for reporting that the given example failed
 
@@ -1259,6 +1318,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     message += ' [failed in baseline]'
                 else:
                     command = f'::error title={message}'
+                if extra:
+                    message += f': {extra}'
                 if extra := getattr(example, 'extra', None):
                     message += f': {extra}'
                 if test.filename:
@@ -1559,12 +1620,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
             Test ran for 1.23s cpu, 2.50s wall
             Check ran for 2.34s cpu, 3.12s wall
         """
-        out(self._failure_header(test, example, 'Warning: slow doctest:') +
-            ('Test ran for %.2fs cpu, %.2fs wall\nCheck ran for %.2fs cpu, %.2fs wall\n'
-             % (example.cputime,
-                example.walltime,
-                check_timer.cputime,
-                check_timer.walltime)))
+        time_info = ('Test ran for %.2fs cpu, %.2fs wall\nCheck ran for %.2fs cpu, %.2fs wall\n'
+                     % (example.cputime,
+                        example.walltime,
+                        check_timer.cputime,
+                        check_timer.walltime))
+        out(self._failure_header(test, example, 'Warning: slow doctest:', time_info) + time_info)
 
     def report_unexpected_exception(self, out, test, example, exc_info):
         r"""
@@ -2142,7 +2203,7 @@ class DocTestDispatcher(SageObject):
             sage: DC.reporter = DR
             sage: DC.dispatcher = DD
             sage: DC.timer = Timer().start()
-            sage: DD.dispatch()
+            sage: DD.dispatch()  # long time (20s)
             sage -t .../sage/modules/free_module_homspace.py
                 [... tests, ...s wall]
             sage -t .../sage/rings/big_oh.py

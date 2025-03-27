@@ -205,7 +205,7 @@ Test all interacts from the Sage interact library::
     Exact value of the integral \(\displaystyle\int_{0}^{2}x^{2} +
     1\,\mathrm{d}x=4.666666666666668\)
 
-    sage: test(interacts.calculus.function_tool)
+    sage: test(interacts.calculus.function_tool)  # long time (10s)
     ...Interactive function <function function_tool at ...> with 7 widgets
       f: EvalText(value='sin(x)', description='f')
       g: EvalText(value='cos(x)', description='g')
