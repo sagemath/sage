@@ -56,13 +56,22 @@ Graaf)
 crime - package to compute the cohomology ring of finite p-groups,
 induced maps, and Massey products. (Author: Marcus Bishop)
 
+crypting - The crypting package provides some cryptographic primitives so that the JupyterKernel package works.
+(Authors: Markus Pfeiffer and The GAP Team)
+
 cryst - Computing with crystallographic groups (Authors: Bettina Eick,
 Franz Gähler, Werner Nickel)
 
 CTblLib - The GAP Character Table Library (Author: Thomas Breuer)
 
+datastructures - The datastructures package provides some standard data structures.
+(Authors: Markus Pfeiffer, Max Horn, Christopher Jefferson and Steve Linton)
+
 DESIGN is a package for classifying, partitioning and studying block
 designs. (Author: Leonard H. Soicher)
+
+Digraphs -  GAP package containing methods for graphs, digraphs, and multidigraphs.
+(Authors: Jan De Beule, Julius Jonusas, James Mitchell, Wilf A. Wilson, Michael Young, Marina Anagnostopoulou-Merkouri, Finn Buck, Stuart Burrell, Graham Campbell, Raiyan Chowdhury, Reinis Cirpons, Ashley Clayton, Tom Conti-Leslie, Joseph Edwards, Luna Elliott, Isuru Fernando, Ewan Gilligan, Sebastian Gutsche, Samantha Harper, Max Horn, Christopher Jefferson, Olexandr Konovalov, Hyeokjun Kwon, Andrea Lee, Saffron McIver, Michael Orlitzky, Matthew Pancer, Markus Pfeiffer, Daniel Pointon, Lea Racine, Christopher Russell, Artur Schaefer, Isabella Scott, Kamran Sharma, Finn Smith, Ben Spiers, Maria Tsalakou, Meike Weiss, Murray Whyte and Fabian Zickgraf)
 
 FactInt is a package providing routines for factoring integers, in
 particular:
@@ -106,6 +115,10 @@ hecke - Provides functions for calculating decomposition matrices of
 Hecke algebras of the symmetric groups and q-Schur algebras. Hecke is a
 port of the GAP 3 package Specht 2.4 to GAP 4. (Author: Dmitriy Traytel)
 
+IO - as its name suggests, provides bindings for GAP to the lower levels
+of Input/Output functionality in the C library.
+(Authors: Max Neunhöffer and Max Horn)
+
 LAGUNA - this package provides functionality for calculation of the
 normalized unit group of the modular group algebra of the finite p-group
 and for investigation of Lie algebra associated with group algebras and
@@ -136,6 +149,13 @@ mapclass - The package calculates the mapping class group orbits for a
 given finite group. (Authors: Adam James, Kay Magaard, Sergey
 Shpectorov, Helmut Volklein)
 
+nq - This package provides access to the ANU nilpotent quotient program
+for computing nilpotent factor groups of finitely presented groups.
+(Authors: Max Horn and Werner Nickel)
+
+orb - This package is about enumerating orbits in various ways.
+(Authors: Juergen Mueller, Max Neunhöffer, Felix Noeske and Max Horn)
+
 polymake - an interface with the (standalone) polymake program used by
 HAPcryst. (Author: Marc Roeder)
 
@@ -152,6 +172,34 @@ Adriaan de Graaf)
 
 repsn - The package provides GAP functions for computing characteristic
 zero matrix representations of finite groups. (Author: Vahid Dabbaghian)
+
+Semigroups - This is a GAP package for semigroups, and monoids. There are
+particularly efficient methods for finitely presented semigroups and monoids,
+and for semigroups and monoids consisting of transformations, partial
+permutations, bipartitions, partitioned binary relations, subsemigroups of
+regular Rees 0-matrix semigroups, and matrices of various semirings including
+boolean matrices, matrices over finite fields, and certain tropical matrices.
+Semigroups contains efficient methods for creating semigroups, monoids, and
+inverse semigroups and monoids, calculating their Green's structure, ideals,
+size, elements, group of units, small generating sets, testing membership,
+finding the inverses of a regular element, factorizing elements over the
+generators, and so on. It is possible to test if a semigroup satisfies a
+particular property, such as if it is regular, simple, inverse, completely
+regular, and a large number of further properties. There are methods for
+finding presentations for a semigroup, the congruences of a semigroup, the
+maximal subsemigroups of a finite semigroup, smaller degree partial
+permutation representations, and the character tables of inverse semigroups.
+There are functions for producing pictures of the Green's structure of a
+semigroup, and for drawing graphical representations of certain types of
+elements. (Authors: James Mitchell, Marina Anagnostopoulou-Merkouri,
+Thomas Breuer, Stuart Burrell, Reinis Cirpons, Tom Conti-Leslie,
+Joseph Edwards, Attila Egri-Nagy, Luke Elliott, Fernando Flores Brito,
+Tillman Froehlich, Nick Ham, Robert Hancock, Max Horn, Christopher Jefferson,
+Julius Jonusas, Chinmaya Nagpal, Olexandr Konovalov, Artemis Konstantinidi,
+Hyeokjun Kwon, Dima V. Pasechnik, Markus Pfeiffer, Christopher Russell,
+Jack Schmidt, Sergio Siccha, Finn Smith, Ben Spiers, Nicolas Thiéry,
+Maria Tsalakou, Chris Wensley, Murray Whyte, Wilf A. Wilson, Tianrun Yang,
+Michael Young and Fabian Zickgraf)
 
 sla - a package for doing computations with simple Lie algebras (Author:
 Willem Adriaan de Graaf)

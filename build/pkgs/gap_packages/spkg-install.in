@@ -110,7 +110,7 @@ done
 #############################################################################
 ########## add extra parameters for packages' configures here ###############
 #
-# ng         : none
+# nq         : none
 # io         : none
 # semigroups needs to use external libsemigroups
 # digraphs   needs to use external planarity
