@@ -1573,16 +1573,26 @@ class PolyhedralComplex(GenericCellComplex):
             ....:         Polyhedron(rays=[[1,0,0], [-1,-1,0]])])
             sage: pc4b.is_convex()
             False
+
+        Test empty and entire space cases::
+
+            sage: pc_empty = PolyhedralComplex([Polyhedron([])])
+            sage: pc_empty.is_convex()
+            True
+            sage: pc_entire = PolyhedralComplex([Polyhedron(vertices=[(0, 0)])])
+            sage: pc_entire.is_convex()
+            True
         """
         if self._is_convex is not None:
             return self._is_convex
         if not self.is_pure():
             self._is_convex = False
             return False
-        if self.dimension() == -1:
-            self._is_convex = True
-            return True
         d = self.dimension()
+        if d == -1:
+            self._is_convex = True
+            self._polyhedron = Polyhedron(ambient_dim=self.ambient_dimension(), backend=self._backend)
+            return True
         if not self.is_full_dimensional():
             # if max cells must lie in different subspaces, can't be convex.
             from sage.modules.free_module import span
