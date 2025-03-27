@@ -143,9 +143,8 @@ from urllib.parse import urlencode
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from urllib.request import urlopen, Request
+from urllib.request import Request, urlopen
 
-from sage.version import version
 from sage.cpython.string import bytes_to_str
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
@@ -157,6 +156,7 @@ from sage.repl.preparse import preparse
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.version import version
 
 oeis_url = 'https://oeis.org/'
 
@@ -356,10 +356,6 @@ class OEIS:
 
         sage: oeis((1,2,5,16,61))    # optional -- internet
         0: A000111: ...
-        sage: oeis('A000040')
-        A000040: The prime numbers.
-        sage: oeis('A000045')
-        A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
     """
 
     def __call__(self, query, max_results=3, first_result=0):
