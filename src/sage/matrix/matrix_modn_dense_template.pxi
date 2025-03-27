@@ -444,17 +444,21 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             raise OverflowError("p (=%s) must be < %s." % (p, MAX_MODULUS))
 
         if zeroed_alloc:
-            self._entries = <celement *>check_calloc(self._nrows * self._ncols, sizeof(celement))
+            self._entries = <celement *> check_calloc(self._nrows * self._ncols, sizeof(celement))
         else:
-            self._entries = <celement *>check_allocarray(self._nrows * self._ncols, sizeof(celement))
+            self._entries = <celement *> check_allocarray(self._nrows * self._ncols, sizeof(celement))
 
-        self._matrix = <celement **>check_allocarray(self._nrows, sizeof(celement*))
-        cdef unsigned int k
+        # TODO: it is a bit of a waste to allocate _matrix when ncols=0. Though some
+        # of the code expects self._matrix[i] to be valid, even though it points to
+        # an empty vector.
+        self._matrix = <celement **> check_allocarray(self._nrows, sizeof(celement*))
+        if self._nrows == 0:
+            return
+
         cdef Py_ssize_t i
-        k = 0
-        for i in range(self._nrows):
-            self._matrix[i] = self._entries + k
-            k = k + self._ncols
+        self._matrix[0] = self._entries
+        for i in range(self._nrows - 1):
+            self._matrix[i + 1] = self._matrix[i] + self._ncols
 
     def __dealloc__(self):
         """
