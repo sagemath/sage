@@ -2190,6 +2190,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         TESTS:
 
+        This algorithm works correctly for the matrix in
+        Example 3.7 in [HAM1985]_::
+
             sage: A = Matrix(GF(2), [[1, 1, 0, 0, 0, 0, 0],
             ....:                    [1, 1, 0, 0, 0, 0, 0],
             ....:                    [1, 1, 0, 1, 0, 0, 0],
@@ -2210,7 +2213,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             ....:                 break
             ....:             if B[k][j] < B[k][i]:
             ....:                 break
-            ....:
+            sage: flag
+            True
             sage: for i in range(B.nrows()):
             ....:     for j in range(i):
             ....:         for k in reversed(range(B.ncols())):
@@ -2219,7 +2223,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             ....:                 break
             ....:             if B[j][k] < B[i][k]:
             ....:                 break
-            ....:
             sage: flag
             True
             sage: r, c = A.doubly_lexical_ordering(inplace=True)
@@ -2232,8 +2235,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: r, c = A.doubly_lexical_ordering(inplace=True)
             Traceback (most recent call last):
             ...
-            TypeError: This matrix is immutable and can thus not be changed. Use inplace=False or create a mutable copy.
-
+            TypeError: This matrix is immutable and can thus not be changed.
+             Use inplace=False or create a mutable copy.
         """
 
         if inplace and self.is_immutable():
