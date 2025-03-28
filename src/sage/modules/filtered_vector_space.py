@@ -361,6 +361,11 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
         sage: gens = [(int(1),int(0)), (0,1), (-1,-1)]
         sage: construct_from_generators_indices(iter(gens), {int(0):[0, int(1)], 2:[2]}, QQ, True)
         QQ^2 >= QQ^1 >= QQ^1 >= 0
+
+    Verify that :issue:`39775` has been fixed::
+
+        sage: FilteredVectorSpace([[1,0,1]], {1:[0]}, base_ring=GF(2))
+        GF(2)^1 >= 0 in GF(2)^3
     """
     # normalize generators
     generators = [list(g) for g in generators]
@@ -374,7 +379,7 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
 
     # complete generators to a generating set
     if matrix(base_ring, generators).rank() < dim:
-        complement = ambient.span(generators).complement()
+        complement = ambient.span(generators).complement(orthogonal=False)
         generators = generators + list(complement.gens())
     # normalize generators II
     generators = tuple(ambient(v) for v in generators)
@@ -1200,7 +1205,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         filtration = {}
         prev_deg = minus_infinity
         for deg, V in self._filt[1:]:
-            filtration[-prev_deg] = V.complement().echelonized_basis()
+            filtration[-prev_deg] = V.orthogonal_complement().echelonized_basis()
             prev_deg = deg
         return FilteredVectorSpace(filtration, base_ring=self.base_ring())
 

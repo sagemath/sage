@@ -355,7 +355,7 @@ class AffineSubspace(SageObject):
             [0 1 0]
             sage: C = AffineSubspace((0,0,1), U)
             sage: A.intersection(C)
-            sage: C = AffineSubspace((7,8,9), U.complement())
+            sage: C = AffineSubspace((7,8,9), U.orthogonal_complement())
             sage: A.intersection(C)
             Affine space p + W where:
               p = (7, 8, 0)

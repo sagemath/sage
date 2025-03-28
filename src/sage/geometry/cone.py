@@ -3367,7 +3367,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         with the orthogonal complement of the span of its dual::
 
             sage: K = random_cone(max_ambient_dim = 8)
-            sage: expected = K.dual().span().vector_space().complement()
+            sage: expected = K.dual().span().vector_space().orthogonal_complement()
             sage: K.linear_subspace() == expected
             True
         """
@@ -5016,7 +5016,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         perp_vectors = ( W(tp.list()) for tp in tensor_products )
 
         # Now find the Lyapunov-like transformations (as long vectors).
-        LL_vectors = W.span(perp_vectors).complement()
+        LL_vectors = W.span(perp_vectors).orthogonal_complement()
 
         # And finally convert the long vectors back to matrices.
         M = MatrixSpace(F, n, n)
