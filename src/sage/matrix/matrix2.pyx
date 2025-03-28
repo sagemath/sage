@@ -6943,25 +6943,57 @@ cdef class Matrix(Matrix1):
 
         TESTS::
 
-            sage: m = matrix(RR, [[0, 1], [-1, 0]])
+            sage: import warnings
+            sage: warnings.simplefilter("always")
+            sage: m = matrix(RR, [[0, 1], [-2, 0]])
+            sage: m.eigenvalues()
+            doctest:warning...
+            FutureWarning: This class/method/function is marked as experimental.
+            It, its functionality or its interface might change without a formal deprecation.
+            See https://github.com/sagemath/sage/issues/30393 for details.
+            [-1.41421356237309*I, 1.41421356237310*I]
+            sage: m.eigenvalues(algorithm="sage")
+            doctest:warning...
+            UserWarning: Using generic algorithm for an inexact ring,
+            which will probably give incorrect results due to numerical precision issues.
+            [-1.41421356237310*I, 1.41421356237310*I]
+
+        ``algorithm="flint"`` is supposed to raise a ``FutureWarning`` but
+        the implementation in :class:`sage.misc.superseded.experimental`
+        only raises the warning at most once. ::
+
+            sage: m.eigenvalues(algorithm="flint")  # supposed to have FutureWarning but _already_issued is unconditional
+            [-1.41421356237309*I, 1.41421356237310*I]
+            sage: m.eigenvalues(algorithm="mpmath")  # abs tol 1e-14
+            [-1.41421356237309*I, 1.41421356237309*I]
+            sage: m.eigenvalues(algorithm="pari")  # abs tol 1e-14
+            [-1.4142135623730950487637880730318329370*I,
+             1.4142135623730950487637880730318329370*I]
         """
         if algorithm is None:
-            algorithm = "sage"
+            from sage.rings.abc import RealField, ComplexField
+            R = self.base_ring()
+            if isinstance(R, (RealField, ComplexField)):
+                algorithm = "flint"
+            else:
+                algorithm = "sage"
         if algorithm == "sage":
             return self._eigenvalues_sage(extend=extend)
         else:
             return self._eigenvectors_result_to_eigenvalues(
                     self.eigenvectors_left(extend=extend, algorithm=algorithm))
 
-    def _eigenvectors_result_to_eigenvalues(self, result: list):
+    def _eigenvectors_result_to_eigenvalues(self, eigenvectors: list) -> Sequence:
         """
-        Convert the result of :meth:`eigenvectors_left` to a list of eigenvalues.
+        Convert the result of :meth:`eigenvectors_left` to a sequence of eigenvalues
+        suitable to be returned by :meth:`eigenvalues`.
 
         INPUT:
 
-        - ``result`` -- a list of tuples of the form ``(e,V,n)`` as in :meth:`eigenvectors_left`
+        - ``eigenvectors`` -- a list of tuples of the form ``(e,V,n)``
+          as returned by :meth:`eigenvectors_left`
 
-        OUTPUT: a Sequence of eigenvalues
+        OUTPUT: a :class:`Sequence` of eigenvalues
 
         TESTS::
 
@@ -6972,7 +7004,7 @@ cdef class Matrix(Matrix1):
             sage: A._eigenvectors_result_to_eigenvalues(l)
             [-0.3722813232690144?, 5.372281323269015?]
         """
-        return Sequence([e for e, _, _ in result])
+        return Sequence([e for e, _, _ in eigenvectors])
 
     def _eigenvalues_sage(self, extend=True):
         """
@@ -7154,6 +7186,8 @@ cdef class Matrix(Matrix1):
 
         TESTS::
 
+            sage: import warnings
+            sage: warnings.simplefilter("always")
             sage: m = matrix(RR, [[0, 1], [-2, 0]])
             sage: m.eigenvectors_left(algorithm="sage")
             doctest:warning...
@@ -7162,6 +7196,9 @@ cdef class Matrix(Matrix1):
             [(-1.41421356237310*I, [(1.00000000000000, 0.707106781186548*I)], 1),
              (1.41421356237310*I, [(1.00000000000000, -0.707106781186548*I)], 1)]
             sage: m.eigenvectors_left(algorithm="sage", extend=False)
+            doctest:warning...
+            UserWarning: eigenspaces cannot be computed reliably for inexact rings such as Real Field with 53 bits of precision,
+            consult numerical or symbolic matrix classes for other options
             []
         """
         if not self.base_ring().is_exact():
@@ -7206,19 +7243,19 @@ cdef class Matrix(Matrix1):
 
         return evec_eval_list
 
-    def _fix_eigenvectors_extend(self, result: list, extend: bool) -> list:
+    def _fix_eigenvectors_extend(self, eigenvectors: list, extend: bool) -> list:
         """
         Fix the eigenvectors if the extend option is set to ``False``.
 
         INPUT:
 
-        - ``result`` -- list of tuples of the form ``(e,V,n)``
-          as in :meth:`eigenvectors_left`
+        - ``eigenvectors`` -- a list of tuples of the form ``(e,V,n)``
+          as returned by :meth:`eigenvectors_left`
         - ``extend`` -- boolean
 
         OUTPUT:
 
-        If ``extend`` is ``True``, return ``result`` unchanged.
+        If ``extend`` is ``True``, return ``eigenvectors`` unchanged.
         Otherwise, return a new list with only the eigenvalues that live in the base ring.
 
         TESTS::
@@ -7242,14 +7279,14 @@ cdef class Matrix(Matrix1):
             []
         """
         if extend:
-            return result
+            return eigenvectors
         R = self.base_ring()
         try:
             if R.algebraic_closure() is R:
-                return result
+                return eigenvectors
         except (AttributeError, NotImplementedError):
             pass
-        return [(e, V, n) for e, V, n in result if e in R]
+        return [(e, V, n) for e, V, n in eigenvectors if e in R]
 
     def _eigenvectors_left_flint(self) -> list:
         """
@@ -7266,14 +7303,15 @@ cdef class Matrix(Matrix1):
 
         See :meth:`eigenvectors_left`.
 
-        TESTS::
+        TESTS:
+
+        This method is supposed to raise a ``FutureWarning`` but
+        the implementation in :class:`sage.misc.superseded.experimental`
+        only raises the warning at most once, because of doctest ordering
+        the warning is not seen below. ::
 
             sage: m = matrix(RR, [[0, 1], [-2, 0]])
             sage: m.eigenvectors_left(algorithm="flint")
-            doctest:warning...
-            FutureWarning: This class/method/function is marked as experimental.
-            It, its functionality or its interface might change without a formal deprecation.
-            See https://github.com/sagemath/sage/issues/30393 for details.
             [(-1.41421356237309*I, [(-0.816496580927726, -0.577350269189626*I)], 1),
              (1.41421356237310*I, [(-0.866025403784438*I, -0.612372435695794)], 1)]
             sage: m.eigenvectors_left(algorithm="flint", extend=False)
