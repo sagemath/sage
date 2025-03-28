@@ -2437,6 +2437,9 @@ cdef class ModuleElement(Element):
         """
         return None
 
+    cpdef _floordiv_(self, right):
+        return None
+
     ##################################################
     # Other properties
     ##################################################

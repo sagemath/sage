@@ -301,6 +301,25 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             mpz_neg(z._entries[i], self._entries[i])
         return z
 
+    cpdef _floordiv_(self, Element right):
+        """
+        Floor division (whole division //) of dense vectors over integers
+
+        EXAMPLES::
+
+            sage: v = vector(ZZ,[1,2,3])
+            sage: v//2
+            (0, 1, 1)
+        """
+        cdef Vector_integer_dense z
+        cdef Integer a
+        a = right       
+        z = self._new_c()
+        cdef Py_ssize_t i
+        for i in range(self._degree):
+            mpz_fdiv_q(z._entries[i], self._entries[i], a.value)
+        return z
+
     def _singular_(self, singular=None):
         r"""
         Return \Singular representation of this integer vector.

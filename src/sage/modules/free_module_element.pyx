@@ -4564,6 +4564,17 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
+    cpdef _floordiv_(self, Element right):
+        """
+        """
+        if right._parent is self._parent._base:
+            v = [(<RingElement>x)._floordiv_(right) for x in self._entries]
+        else:
+            v = [x // right for x in self._entries]
+        return self._new_c(v)
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
     cpdef _pairwise_product_(left, Vector right):
         """
         EXAMPLES::
