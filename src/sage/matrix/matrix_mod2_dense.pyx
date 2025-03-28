@@ -2226,7 +2226,19 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A == B
             True
 
+        An immutable matrix calling with ``inplace=True`` will raise an error::
+
+            sage: A = Matrix(GF(2), [[0, 1], [1, 0]], immutable=True)
+            sage: r, c = A.doubly_lexical_ordering(inplace=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: This matrix is immutable and can thus not be changed. Use inplace=False or create a mutable copy.
+
         """
+
+        if inplace and self.is_immutable():
+            raise TypeError("This matrix is immutable and can thus not be changed."
+                            " Use inplace=False or create a mutable copy.")
 
         partition_rows = [False for _ in range(self._nrows - 1)]
         partition_num = 1
