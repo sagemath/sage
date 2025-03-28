@@ -2551,8 +2551,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         """
         Use the Chinese Remainder Theorem to find an element of the
         integers modulo the product of the moduli that reduces to ``self`` and
-        to ``other``. The modulus of ``other`` must be coprime to the modulus
-        of ``self``.
+        to ``other``.
 
         EXAMPLES::
 
@@ -2560,6 +2559,21 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             sage: b = mod(2,7)
             sage: a.crt(b)
             23
+
+        ``crt`` also works for some non-coprime moduli::
+
+            sage: r = mod(6,10).crt(mod(0,4))
+            sage: r
+            16
+            sage: r.modulus()
+            20
+            sage: type(r)
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            sage: mod(6,10).crt(mod(0,10))
+            Traceback (most recent call last):
+            ...
+            ValueError: no solution to crt problem since gcd(10,10) does not
+            divide 6 - 0
 
         AUTHORS:
 
@@ -2576,16 +2590,16 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             lift.set_from_int( x * self._modulus.int32 + self.ivalue )
             return lift
         except ZeroDivisionError:
-            g = lift
-            g.set_from_int(gcd_int(self.ivalue, other.ivalue))
-            if (self.ivalue % g.ivalue) <> (other.ivalue % g.ivalue):
-                raise ValueError("no solution to crt problem since gcd(%s,%s) does not divide %s-%s" % (self._modulus.int32, other._modulus.int32, self.ivalue, other.ivalue))
-            recur1 = IntegerMod_int(IntegerModRing(self._modulus.int32 // g.ivalue))
-            recur1.set_from_int(0)
-            recur2 = IntegerMod_int(IntegerModRing(other._modulus.int32 // g.ivalue))
-            recur2.set_from_int(other.ivalue - self.ivalue)
-            recur = recur1._crt(recur2)
-            return self + g * recur
+            g = gcd_int(self._modulus.int32, other._modulus.int32)
+            if (self.ivalue % g) <> (other.ivalue % g):
+                raise ValueError(f"no solution to crt problem since gcd({self._modulus.int32},{other._modulus.int32}) does not divide {self.ivalue} - {other.ivalue}")
+            zero = IntegerMod_int(IntegerModRing(self._modulus.int32 / g))
+            zero.set_from_int(0)
+            y_minus_x = IntegerMod_int(IntegerModRing(other._modulus.int32 / g))
+            y_minus_x.set_from_int((other.ivalue - self.ivalue) / g)
+            second_crt = IntegerMod_int(IntegerModRing(lcm(self._modulus.int32, other._modulus.int32)))
+            second_crt.set_from_int(zero._crt(y_minus_x))
+            return self.ivalue + g * second_crt
 
     def __copy__(IntegerMod_int self):
         """
@@ -3382,8 +3396,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         """
         Use the Chinese Remainder Theorem to find an element of the
         integers modulo the product of the moduli that reduces to ``self`` and
-        to ``other``. The modulus of ``other`` must be coprime to the modulus
-        of ``self``.
+        to ``other``.
 
         EXAMPLES::
 
@@ -3403,6 +3416,21 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             sage: type(a.crt(b)) == type(b.crt(a)) and type(a.crt(b)) == type(mod(1, 9 * 10^10))
             True
 
+        ``crt`` also works for some non-coprime moduli::
+
+            sage: r = mod(6,5^10*2).crt(mod(0,4))
+            sage: r
+            19531256
+            sage: r.modulus()
+            39062500
+            sage: type(r)
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+            sage: mod(6,10^4).crt(mod(0,10^4))
+            Traceback (most recent call last):
+            ...
+            ValueError: no solution to crt problem since gcd(10000,10000) does not
+            divide 6 - 0
+
         AUTHORS:
 
         - Robert Bradshaw
@@ -3418,7 +3446,16 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             lift.set_from_int( x * self._modulus.int64 + self.ivalue )
             return lift
         except ZeroDivisionError:
-            raise ZeroDivisionError("moduli must be coprime")
+            g = gcd_int(self._modulus.int64, other._modulus.int64)
+            if (self.ivalue % g) <> (other.ivalue % g):
+                raise ValueError(f"no solution to crt problem since gcd({self._modulus.int64},{other._modulus.int64}) does not divide {self.ivalue} - {other.ivalue}")
+            zero = IntegerMod_int64(IntegerModRing(self._modulus.int64 / g))
+            zero.set_from_int(0)
+            y_minus_x = IntegerMod_int64(IntegerModRing(other._modulus.int64 / g))
+            y_minus_x.set_from_int((other.ivalue - self.ivalue) / g)
+            second_crt = IntegerMod_int64(IntegerModRing(lcm(self._modulus.int64, other._modulus.int64)))
+            second_crt.set_from_int(zero._crt(y_minus_x))
+            return self.ivalue + g * second_crt
 
     def __copy__(IntegerMod_int64 self):
         """
