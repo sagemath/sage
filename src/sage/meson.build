@@ -147,14 +147,8 @@ subdir('sat')
 # meson-python maps 'datadir' currently the python prefix, see
 # https://github.com/mesonbuild/meson-python/issues/517
 kernel_dir = get_option('datadir') / 'share/jupyter/kernels/sagemath'
-install_data(
-    'ext_data/notebook-ipython/logo.svg',
-    install_dir: kernel_dir,
-)
-install_data(
-    'ext_data/notebook-ipython/logo-64x64.png',
-    install_dir: kernel_dir,
-)
+install_data('ext_data/notebook-ipython/logo.svg', install_dir: kernel_dir)
+install_data('ext_data/notebook-ipython/logo-64x64.png', install_dir: kernel_dir)
 kernel_data = configuration_data()
 kernel_data.set('SAGE_VERSION', meson.project_version())
 configure_file(
