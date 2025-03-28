@@ -2169,8 +2169,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         EXAMPLES::
 
-            sage: A = Matrix(GF(2), [
-            ....:                    [0, 1],
+            sage: A = Matrix(GF(2), [[0, 1],
             ....:                    [1, 0]])
             sage: r, c = A.doubly_lexical_ordering()
             sage: r
@@ -2183,8 +2182,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         ::
 
-            sage: A = Matrix(GF(2), [
-            ....:                    [0, 1],
+            sage: A = Matrix(GF(2), [[0, 1],
             ....:                    [1, 0]])
             sage: r, c = A.doubly_lexical_ordering(inplace=True); A
             [1 0]
@@ -2192,8 +2190,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         TESTS:
 
-            sage: A = Matrix(GF(2), [
-            ....:                    [1, 1, 0, 0, 0, 0, 0],
+            sage: A = Matrix(GF(2), [[1, 1, 0, 0, 0, 0, 0],
             ....:                    [1, 1, 0, 0, 0, 0, 0],
             ....:                    [1, 1, 0, 1, 0, 0, 0],
             ....:                    [0, 0, 1, 1, 0, 0, 0],
@@ -2245,17 +2242,12 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             for col in range(i):
                 parition_i = 0
                 for row in reversed(range(A._nrows)):
-                    count1[col][parition_i] += 1 if mzd_read_bit(A._entries, row, col) else 0
+                    count1[col][parition_i] += mzd_read_bit(A._entries, row, col)
                     if row > 0 and partition_rows[row - 1]:
                         parition_i += 1
 
             # calculate largest_col = col s.t. count1[col] is lexicographically largest (0 <= col < i)
-            largest_col = 0
-            largest_count1 = count1[0]
-            for col in range(1, i):
-                if count1[col] >= largest_count1:
-                    largest_col = col
-                    largest_count1 = count1[col]
+            _, largest_col = max((c, i) for i, c in enumerate(count1))
 
             # We refine each partition of rows according to the value of A[:][largest_col].
             # and also move down rows that satisfy A[row][largest_col] = 1 in each partition.
