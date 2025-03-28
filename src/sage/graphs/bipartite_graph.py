@@ -558,6 +558,27 @@ class BipartiteGraph(Graph):
         self._hash_labels = hash_labels
 
         return
+    
+    def clear(self):
+        """
+        Clear all the vertices and edges in the graph.
+        
+        This method extends the functionality of method
+        :meth:`~sage.graphs.generic_graph.GenericGraph.clear`
+        to also clear vertex sets ``left`` and ``right``.
+
+        EXAMPLES::
+
+            sage: B = BipartiteGraph(graphs.CycleGraph(4))
+            sage: B.clear()
+            sage: B.left
+            set()
+            sage: B.right
+            set()
+        """
+        super().clear()
+        self.left.clear()
+        self.right.clear()
 
     @cached_method
     def __hash__(self):
