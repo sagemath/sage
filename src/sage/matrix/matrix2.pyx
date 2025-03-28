@@ -6946,42 +6946,52 @@ cdef class Matrix(Matrix1):
             sage: import warnings
             sage: warnings.simplefilter("always")
             sage: m = matrix(RR, [[0, 1], [-2, 0]])
-            sage: m.eigenvalues()
-            doctest:warning...
-            FutureWarning: This class/method/function is marked as experimental.
-            It, its functionality or its interface might change without a formal deprecation.
-            See https://github.com/sagemath/sage/issues/30393 for details.
-            [-1.41421356237309*I, 1.41421356237310*I]
+
+        Test different algorithms::
+
             sage: m.eigenvalues(algorithm="sage")
             doctest:warning...
             UserWarning: Using generic algorithm for an inexact ring,
             which will probably give incorrect results due to numerical precision issues.
             [-1.41421356237310*I, 1.41421356237310*I]
-
-        ``algorithm="flint"`` is supposed to raise a ``FutureWarning`` but
-        the implementation in :class:`sage.misc.superseded.experimental`
-        only raises the warning at most once. ::
-
-            sage: m.eigenvalues(algorithm="flint")  # supposed to have FutureWarning but _already_issued is unconditional
+            sage: m.eigenvalues(algorithm="flint")
+            doctest:warning...
+            FutureWarning: This class/method/function is marked as experimental.
+            It, its functionality or its interface might change without a formal deprecation.
+            See https://github.com/sagemath/sage/issues/30393 for details.
             [-1.41421356237309*I, 1.41421356237310*I]
             sage: m.eigenvalues(algorithm="mpmath")  # abs tol 1e-14
             [-1.41421356237309*I, 1.41421356237309*I]
             sage: m.eigenvalues(algorithm="pari")  # abs tol 1e-14
             [-1.4142135623730950487637880730318329370*I,
              1.4142135623730950487637880730318329370*I]
+
+        The following currently uses ``algorithm="flint"`` under the hood,
+        but ``FutureWarning`` must not be raised. This is because the internal
+        implementation may change in the future to keep the external interface.
+
+        ::
+
+            sage: m.eigenvalues()
+            [-1.41421356237309*I, 1.41421356237310*I]
         """
         if algorithm is None:
             from sage.rings.abc import RealField, ComplexField
             R = self.base_ring()
             if isinstance(R, (RealField, ComplexField)):
-                algorithm = "flint"
+                return self._eigenvectors_result_to_eigenvalues(
+                        self._eigenvectors_left(
+                            extend=extend, algorithm="flint",
+                            suppress_future_warning=True))
             else:
                 algorithm = "sage"
         if algorithm == "sage":
             return self._eigenvalues_sage(extend=extend)
         else:
             return self._eigenvectors_result_to_eigenvalues(
-                    self.eigenvectors_left(extend=extend, algorithm=algorithm))
+                    self._eigenvectors_left(
+                        extend=extend, algorithm=algorithm,
+                        suppress_future_warning=False))
 
     def _eigenvectors_result_to_eigenvalues(self, eigenvectors: list) -> Sequence:
         """
@@ -7010,12 +7020,16 @@ cdef class Matrix(Matrix1):
         """
         Compute the eigenvalues of a matrix using algorithm implemented in Sage.
 
+        INPUT:
+
+        - ``extend`` -- boolean (default: ``True``)
+
         TESTS::
 
             sage: A = matrix(QQ, [[1, 2], [3, 4]])
-            sage: A._eigenvalues_sage()
+            sage: A.eigenvalues(algorithm="sage")  # indirect doctest
             [-0.3722813232690144?, 5.372281323269015?]
-            sage: A.eigenvalues(algorithm="sage")
+            sage: A._eigenvalues_sage()
             [-0.3722813232690144?, 5.372281323269015?]
         """
         x = self.fetch('eigenvalues')
@@ -7137,6 +7151,21 @@ cdef class Matrix(Matrix1):
             sage: K.<i> = QuadraticField(-1)
             sage: m = matrix(K, 4, [2,4*i,-i,0, -4*i,2,-1,0, 2*i,-2,0,0, 4*i+4, 4*i-4,1-i,-2])
             sage: assert all(m*v == e*v for e, vs, _ in m.eigenvectors_right() for v in vs)
+
+        The following currently uses ``algorithm="flint"`` under the hood,
+        but ``FutureWarning`` must not be raised. This is because the internal
+        implementation may change in the future to keep the external interface.
+
+        ::
+
+            sage: import warnings
+            sage: warnings.simplefilter("always")
+            sage: m = matrix(RR, [[0, 1], [-2, 0]])
+            sage: m.eigenvectors_left()
+            [(-1.41421356237309*I, [(-0.816496580927726, -0.577350269189626*I)], 1),
+             (1.41421356237310*I, [(-0.866025403784438*I, -0.612372435695794)], 1)]
+            sage: m.eigenvectors_left(extend=False)
+            []
         """
         if other is not None:
             if isinstance(other, bool):
@@ -7156,14 +7185,30 @@ cdef class Matrix(Matrix1):
             R = self.base_ring()
             from sage.rings.abc import RealField, ComplexField
             if isinstance(R, (RealField, ComplexField)):
-                algorithm = 'flint'
+                return self._eigenvectors_left(
+                        other, extend=extend, algorithm='flint', suppress_future_warning=True)
             else:
                 algorithm = 'sage'
+        return self._eigenvectors_left(
+                other, extend=extend, algorithm=algorithm, suppress_future_warning=False)
 
+    def _eigenvectors_left(self, other=None, *, extend: bool, algorithm: str,
+                           suppress_future_warning: bool) -> list:
+        """
+        Do the same thing as :meth:`eigenvectors_left`, but ``algorithm``
+        cannot be ``None``, and ``suppress_future_warning`` is provided
+        to suppress the ``FutureWarning`` raised by the flint method.
+
+        TESTS::
+
+            sage: m = matrix(RR, [[0, 1], [-2, 0]])
+            sage: m._eigenvectors_left(extend=False, algorithm="flint", suppress_future_warning=True)
+            []
+        """
         if algorithm == 'sage':
             return self._eigenvectors_left_sage(extend=extend)
         elif algorithm == 'flint':
-            return self._fix_eigenvectors_extend(self._eigenvectors_left_flint(), extend)
+            return self._fix_eigenvectors_extend(self._eigenvectors_left_flint(suppress_future_warning), extend)
         elif algorithm == 'mpmath':
             return self._fix_eigenvectors_extend(self._eigenvectors_left_mpmath(), extend)
         elif algorithm == 'pari':
@@ -7288,7 +7333,7 @@ cdef class Matrix(Matrix1):
             pass
         return [(e, V, n) for e, V, n in eigenvectors if e in R]
 
-    def _eigenvectors_left_flint(self) -> list:
+    def _eigenvectors_left_flint(self, suppress_future_warning: bool) -> list:
         """
         Compute the left eigenvectors of a matrix
         using the FLINT library.
@@ -7297,7 +7342,8 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``)
+        - ``suppress_future_warning`` -- boolean; whether to suppress
+          the ``FutureWarning``
 
         OUTPUT:
 
@@ -7308,15 +7354,21 @@ cdef class Matrix(Matrix1):
         This method is supposed to raise a ``FutureWarning`` but
         the implementation in :class:`sage.misc.superseded.experimental`
         only raises the warning at most once, because of doctest ordering
-        the warning is not seen below. ::
+        the warning is not seen below. See :issue:`39811`. ::
 
             sage: m = matrix(RR, [[0, 1], [-2, 0]])
-            sage: m.eigenvectors_left(algorithm="flint")
+            sage: m.eigenvectors_left(algorithm="flint")  # indirect doctest
             [(-1.41421356237309*I, [(-0.816496580927726, -0.577350269189626*I)], 1),
              (1.41421356237310*I, [(-0.866025403784438*I, -0.612372435695794)], 1)]
             sage: m.eigenvectors_left(algorithm="flint", extend=False)
             []
         """
+        if suppress_future_warning:
+            import warnings
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=FutureWarning)
+                result = self._eigenvectors_left_flint(False)
+            return result
         from sage.rings.complex_arb import ComplexBallField
         from sage.rings.complex_mpfr import ComplexField
         C = ComplexField(self.base_ring().precision())
