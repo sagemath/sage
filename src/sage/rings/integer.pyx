@@ -7009,7 +7009,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 raise ValueError(f"no solution to crt problem since gcd({_m},{_n}) does not divide {self} - {_y}")
             return (self + g * Integer(0).crt((_y - self) // g, _m // g, _n // g)) % _m.lcm(_n)
         # Now s*m + t*n = 1, so the answer is x + (y-x)*s*m, where x=self.
-        return (self + (_y - self) * s * _m) % _m.lcm(_n)
+        return (self + (_y - self) * s * _m) % (_m * _n)
 
     def test_bit(self, long index):
         r"""
