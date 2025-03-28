@@ -1747,7 +1747,8 @@ class Polyhedron_base5(Polyhedron_base4):
                     p = self.change_ring(new_ring)
                     tester.assertIsInstance(scalar*p, Polyhedron_base)
 
-    def linear_transformation(self, linear_transf, new_base_ring=None):
+    def linear_transformation(self, linear_transf,
+                              new_base_ring=None):
         """
         Return the linear transformation of ``self``.
 
@@ -1807,6 +1808,12 @@ class Polyhedron_base5(Polyhedron_base4):
 
         TESTS:
 
+        One can scale by a scalar as follows::
+
+            sage: P = polytopes.simplex()
+            sage: P.linear_transformation(2)
+            A 3-dimensional polyhedron in QQ^4 defined as the convex hull of 4 vertices
+
         Linear transformation respects backend::
 
             sage: P = polytopes.simplex(backend='field')
@@ -1862,6 +1869,11 @@ class Polyhedron_base5(Polyhedron_base4):
             True
         """
         is_injective = False
+
+        if linear_transf in self.base_ring():
+            # allow for scalar input
+            linear_transf = linear_transf * self.ambient_vector_space().matrix()
+
         if linear_transf.nrows() != 0:
             if new_base_ring:
                 R = new_base_ring
@@ -1870,17 +1882,18 @@ class Polyhedron_base5(Polyhedron_base4):
 
             # Multiplying a matrix with a vector is slow.
             # So we multiply the entire vertex matrix etc.
-            # Still we create generators, as possibly the Vrepresentation will be discarded later on.
+            # Still we create generators, as possibly the Vrepresentation
+            # will be discarded later on.
             if self.n_vertices():
-                new_vertices = ( v for v in ((linear_transf*self.vertices_matrix(R)).transpose()) )
+                new_vertices = iter((linear_transf*self.vertices_matrix(R)).transpose())
             else:
                 new_vertices = ()
             if self.n_rays():
-                new_rays = ( r for r in matrix(R, self.rays())*linear_transf.transpose() )
+                new_rays = iter(matrix(R, self.rays())*linear_transf.transpose())
             else:
                 new_rays = ()
             if self.n_lines():
-                new_lines = ( l for l in matrix(R, self.lines())*linear_transf.transpose() )
+                new_lines = iter(matrix(R, self.lines())*linear_transf.transpose())
             else:
                 new_lines = ()
 
@@ -1906,14 +1919,14 @@ class Polyhedron_base5(Polyhedron_base4):
                     # Note that such N must exist, as our map is injective on the polytope.
                     # It is uniquely defined by considering a basis of the homogeneous vertices.
                     N = new_homogeneous_basis.solve_left(homogeneous_basis)
-                    new_inequalities = ( h for h in matrix(R, self.inequalities())*N )
+                    new_inequalities = iter(matrix(R, self.inequalities())*N)
 
                     # The equations are the left kernel matrix of the homogeneous vertices
                     # or equivalently a basis thereof.
                     new_equations = (new_homogeneous_basis.transpose()).right_kernel_matrix()
 
         else:
-            new_vertices = [[] for v in self.vertex_generator() ]
+            new_vertices = [[] for v in self.vertex_generator()]
             new_rays = []
             new_lines = []
 
