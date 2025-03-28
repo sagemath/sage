@@ -935,6 +935,9 @@ class BipartiteGraph(Graph):
             ...
             ValueError: vertex (0) not in the graph
         """
+        # Convert vertices to a list
+        vertices = list(vertices)
+
         # remove vertices from the graph
         Graph.delete_vertices(self, vertices)
 
