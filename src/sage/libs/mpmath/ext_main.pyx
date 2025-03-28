@@ -2134,7 +2134,9 @@ cdef class mpf(mpf_base):
 
     def _mpfr_(self, RR):
         """
-        Returns a Sage ``RealNumber``::
+        Return a Sage ``RealNumber``.
+
+        EXAMPLES::
 
             sage: from mpmath import mpf
             sage: mpf(3)._mpfr_(RealField(53))
@@ -2589,7 +2591,9 @@ cdef class mpc(mpnumber):
 
     def _complex_mpfr_field_(self, CC):
         """
-        Return a Sage complex number::
+        Return a Sage complex number.
+
+        EXAMPLES::
 
             sage: from mpmath import mpc
             sage: CC(mpc(1,2))  # indirect doctest

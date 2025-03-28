@@ -7208,7 +7208,7 @@ cdef class Matrix(Matrix1):
 
     def _fix_eigenvectors_extend(self, result: list, extend: bool) -> list:
         """
-        Fix the eigenvectors if the extend option is set to False.
+        Fix the eigenvectors if the extend option is set to ``False``.
 
         INPUT:
 
