@@ -391,6 +391,15 @@ class BipartiteGraph(Graph):
             Traceback (most recent call last):
             ...
             LookupError: vertex (7) is not a vertex of the graph
+        
+        Check that :issue:`39756` is fixed::
+
+            sage: B = BipartiteGraph([(0,2), (0,3), (1,2), (1,3)])
+            sage: B.left, B.right
+            ({0, 1}, {2, 3})
+            sage: B.clear()
+            sage: B.left, B.right
+            (set(), set())
         """
         if kwds is None:
             kwds = {'loops': False}
