@@ -827,6 +827,12 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             sage: f = R(sqrt(1+x))
             sage: f
             1 + 1/2*x - 1/8*x^2 + 1/16*x^3 - 5/128*x^4 + 7/256*x^5 - 21/1024*x^6 + O(x^7)
+            sage: g = R(sin(x))
+            sage: g
+            x - 1/6*x^3 + 1/120*x^5 + O(x^7)
+            sage: t = R(e^x)
+            sage: t
+            1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
 
         Laurent series with nonnegative valuation are accepted (see
         :issue:`6431`)::
@@ -887,16 +893,13 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
                 else:
                     raise TypeError("Can only convert series into ring with same variable name.")
             else:
-                from sage.symbolic.ring import SR
-                L = LazyPowerSeriesRing(self.base_ring(), self.variable_name())
+                from sage.symbolic.ring import SR    
                 sym_var = SR.var(self.variable_name())
                 if f.is_polynomial(sym_var):
                     poly_ring = self._poly_ring()
                     return self.element_class(self, poly_ring(f), prec, check=check)
-                try:
-                    func = f.function(sym_var)
-                except Exception:
-                    func = lambda a: f.subs({sym_var: a})
+                func = f.function(sym_var) # test for exception
+                L = LazyPowerSeriesRing(self.base_ring(), self.variable_name())
                 series_lazy = L.taylor(func)    
                 return self(series_lazy, prec=prec, check=check)
         else:
