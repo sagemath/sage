@@ -482,26 +482,26 @@ class BipartiteGraph(Graph):
             self.left = set(range(ncols))
             self.right = set(range(ncols, nrows + ncols))
 
-            edges = []
-            if kwds.get("multiedges", False):
-                for ii in range(ncols):
-                    for jj in range(nrows):
-                        if data[jj, ii]:
-                            edges.extend([(ii, jj + ncols)] * data[jj, ii])
-            elif kwds.get("weighted", False):
-                for ii in range(ncols):
-                    for jj in range(nrows):
-                        if data[jj, ii]:
-                            edges.append((ii, jj + ncols, data[jj, ii]))
-            else:
-                for ii in range(ncols):
-                    for jj in range(nrows):
-                        if data[jj, ii]:
-                            edges.append((ii, jj + ncols))
+            def edges():
+                if kwds.get("multiedges", False):
+                    for ii in range(ncols):
+                        for jj in range(nrows):
+                            for _ in range(data[jj, ii]):
+                                yield (ii, jj + ncols)
+                elif kwds.get("weighted", False):
+                    for ii in range(ncols):
+                        for jj in range(nrows):
+                            if data[jj, ii]:
+                                yield (ii, jj + ncols, data[jj, ii])
+                else:
+                    for ii in range(ncols):
+                        for jj in range(nrows):
+                            if data[jj, ii]:
+                                yield (ii, jj + ncols)
 
             # ensure that construction works
             # when immutable=True (issue #39295)
-            Graph.__init__(self, data=[range(nrows + ncols), edges], format='vertices_and_edges', *args, **kwds)
+            Graph.__init__(self, data=[range(nrows + ncols), edges()], format='vertices_and_edges', *args, **kwds)
         else:
             if partition is not None:
                 left, right = set(partition[0]), set(partition[1])
