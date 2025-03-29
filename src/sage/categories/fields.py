@@ -527,6 +527,22 @@ class Fields(CategoryWithAxiom):
                 True
             """
             return self
+        
+        def _pseudo_fraction_field(self):
+            """
+            The fraction field of ``self`` is always available as ``self``.
+
+            EXAMPLES::
+
+                sage: QQ._pseudo_fraction_field()
+                Rational Field
+                sage: K = GF(5)
+                sage: K._pseudo_fraction_field()
+                Finite Field of size 5
+                sage: K._pseudo_fraction_field() is K
+                True
+            """
+            return self
 
         def ideal(self, *gens, **kwds):
             """
