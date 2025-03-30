@@ -1490,6 +1490,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     from sage.repl.configuration import sage_ipython_config
                     from IPython.terminal.embed import InteractiveShellEmbed
                     cfg = sage_ipython_config.default()
+                    cfg.InteractiveShell.enable_tip = False
                     # Currently this doesn't work: prompts only work in pty
                     # We keep simple_prompt=True, prompts will be "In [0]:"
                     # cfg.InteractiveShell.prompts_class = DebugPrompts
