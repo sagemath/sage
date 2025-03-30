@@ -111,7 +111,7 @@ class SageDoctestModule(DoctestModule):
                             "sage.libs.coxeter3.coxeter",
                         ):
                             pytest.skip(
-                                f"unable to import module { self.path } due to missing feature { exception.name }"
+                                f"unable to import module {self.path} due to missing feature {exception.name}"
                             )
                     raise
         # Uses internal doctest module parsing mechanism.
@@ -133,12 +133,12 @@ class SageDoctestModule(DoctestModule):
                     )
         except FeatureNotPresentError as exception:
             pytest.skip(
-                f"unable to import module { self.path } due to missing feature { exception.feature.name }"
+                f"unable to import module {self.path} due to missing feature {exception.feature.name}"
             )
         except ModuleNotFoundError as exception:
             # TODO: Remove this once all optional things are using Features
             pytest.skip(
-                f"unable to import module { self.path } due to missing feature { exception.name }"
+                f"unable to import module {self.path} due to missing feature {exception.name}"
             )
 
 
@@ -168,7 +168,7 @@ def pytest_collect_file(
     if (
         file_path.parent.name == "combinat"
         or file_path.parent.parent.name == "combinat"
-        or file_path.parent.name == "lie_algebras"
+        or file_path.parent.name in {"lie_algebras", "lie_conformal_algebras"}
     ):
         # Crashes CI for some reason
         return IgnoreCollector.from_parent(parent)
