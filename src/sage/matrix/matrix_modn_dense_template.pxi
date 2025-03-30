@@ -444,17 +444,21 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             raise OverflowError("p (=%s) must be < %s." % (p, MAX_MODULUS))
 
         if zeroed_alloc:
-            self._entries = <celement *>check_calloc(self._nrows * self._ncols, sizeof(celement))
+            self._entries = <celement *> check_calloc(self._nrows * self._ncols, sizeof(celement))
         else:
-            self._entries = <celement *>check_allocarray(self._nrows * self._ncols, sizeof(celement))
+            self._entries = <celement *> check_allocarray(self._nrows * self._ncols, sizeof(celement))
 
-        self._matrix = <celement **>check_allocarray(self._nrows, sizeof(celement*))
-        cdef unsigned int k
+        # TODO: it is a bit of a waste to allocate _matrix when ncols=0. Though some
+        # of the code expects self._matrix[i] to be valid, even though it points to
+        # an empty vector.
+        self._matrix = <celement **> check_allocarray(self._nrows, sizeof(celement*))
+        if self._nrows == 0:
+            return
+
         cdef Py_ssize_t i
-        k = 0
-        for i in range(self._nrows):
-            self._matrix[i] = self._entries + k
-            k = k + self._ncols
+        self._matrix[0] = self._entries
+        for i in range(self._nrows - 1):
+            self._matrix[i + 1] = self._matrix[i] + self._ncols
 
     def __dealloc__(self):
         """
@@ -514,6 +518,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: Matrix(Integers(4618990), 2, 2, [-1, int(-2), GF(7)(-3), 1/7])        # needs sage.rings.finite_rings
             [4618989 4618988]
             [      4 2639423]
+
+            sage: Matrix(IntegerModRing(200), [[int(2**128+1), int(2**256+1), int(2**1024+1)]])        # needs sage.rings.finite_rings
+            [ 57 137  17]
         """
         ma = MatrixArgs_init(parent, entries)
         cdef long i, j
@@ -525,10 +532,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             se = <SparseEntry>t
             x = se.entry
             v = self._matrix[se.i]
-            if type(x) is int:
-                tmp = (<long>x) % p
-                v[se.j] = tmp + (tmp<0)*p
-            elif type(x) is IntegerMod_int and (<IntegerMod_int>x)._parent is R:
+            if type(x) is IntegerMod_int and (<IntegerMod_int>x)._parent is R:
                 v[se.j] = <celement>(<IntegerMod_int>x).ivalue
             elif type(x) is Integer:
                 if coerce:
@@ -1764,7 +1768,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
           ``LinBox::FFPACK`` implementation, since the latter also
           computes the transformation matrix (which we
           ignore). However, ``efd=True`` uses more memory than FFLAS
-          directly (default=``True``)
+          directly (default: ``True``)
 
         EXAMPLES::
 

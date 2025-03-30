@@ -5455,6 +5455,16 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [  3   4   5]
             [  6   7   8]
             [  1   5 -10]
+
+        TESTS:
+
+        Ensure that :issue:`11328` is fixed::
+
+            sage: m = matrix([[int(1),int(1)],[int(1),int(1)]])
+            sage: m.insert_row(1,[int(2),int(3)])
+            [1 1]
+            [2 3]
+            [1 1]
         """
         cdef Matrix_integer_dense res = self._new(self._nrows + 1, self._ncols)
         cdef Py_ssize_t j
@@ -5470,7 +5480,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             for i from 0 <= i < index:
                 fmpz_init_set(fmpz_mat_entry(res._matrix,i,j), fmpz_mat_entry(self._matrix,i,j))
 
-            z = row[j]
+            z = ZZ(row[j])
+
             fmpz_set_mpz(zflint,z.value)
             fmpz_init_set(fmpz_mat_entry(res._matrix,index,j), zflint)
 

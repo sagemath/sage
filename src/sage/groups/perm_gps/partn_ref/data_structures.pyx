@@ -617,17 +617,17 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True) noexcept:
     SC.OP_scratch = OP_new(n)
     # bitset_init without the MemoryError:
     cdef long limbs = (default_num_bits - 1)/(8*sizeof(unsigned long)) + 1
-    SC.gen_used.size   = default_num_bits
-    SC.gen_is_id.size  = default_num_bits
-    SC.gen_used.limbs  = limbs
+    SC.gen_used.size = default_num_bits
+    SC.gen_is_id.size = default_num_bits
+    SC.gen_used.limbs = limbs
     SC.gen_is_id.limbs = limbs
-    SC.gen_used.bits   = <mp_limb_t*>sig_malloc(limbs * sizeof(mp_limb_t))
-    SC.gen_is_id.bits  = <mp_limb_t*>sig_malloc(limbs * sizeof(mp_limb_t))
+    SC.gen_used.bits = <mp_limb_t*>sig_malloc(limbs * sizeof(mp_limb_t))
+    SC.gen_is_id.bits = <mp_limb_t*>sig_malloc(limbs * sizeof(mp_limb_t))
 
     # check for allocation failures
-    if int_array        is NULL or int_ptrs          is NULL or \
+    if int_array is NULL or int_ptrs is NULL or \
        SC.gen_used.bits is NULL or SC.gen_is_id.bits is NULL or \
-       SC.OP_scratch    is NULL:
+       SC.OP_scratch is NULL:
         sig_free(int_array)
         sig_free(int_ptrs)
         SC_dealloc(SC)
