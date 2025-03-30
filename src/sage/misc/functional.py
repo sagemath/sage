@@ -129,7 +129,7 @@ def category(x):
         return Objects()
 
 
-def characteristic_polynomial(x, var='x'):
+def characteristic_polynomial(x, var='x', algorithm=None):
     """
     Return the characteristic polynomial of ``x`` in the given variable.
 
@@ -163,6 +163,9 @@ def characteristic_polynomial(x, var='x'):
         sage: charpoly(b).list()
         [sqrt(y), -3*sqrt(y) - 1, 3*sqrt(y) + 3, -sqrt(y) - 3, 1]
     """
+    if algorithm == "pari":
+        from sage.libs.pari.all import pari
+        return pari(x).charpoly(var)
     try:
         return x.charpoly(var)
     except AttributeError:
