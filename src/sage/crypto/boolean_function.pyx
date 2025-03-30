@@ -1051,7 +1051,7 @@ cdef class BooleanFunction(SageObject):
         else:
             res = None
 
-        return res, len(kg) if dim else res
+        return (res, len(kg)) if dim else res
 
     def algebraic_immunity(self, annihilator=False):
         """
