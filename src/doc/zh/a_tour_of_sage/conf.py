@@ -32,19 +32,24 @@ html_theme_options.update({
 })
 
 # General information about the project.
-project = "A Tour of Sage"
+project = "Sage 之旅"
+name = 'a_tour_of_sage'
+language = "zh_CN"
+
+# The LaTeX engine to build the docs in Chinese.
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-latex_engine
+latex_engine = 'xelatex'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = project
-html_short_title = project
+html_title = project + " v" + release
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'a_tour_of_sage'
+htmlhelp_basename = name
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'a_tour_of_sage.tex', 'A Tour Of Sage',
+  ('index', name + '.tex', project,
    'The Sage Development Team', 'manual'),
 ]
