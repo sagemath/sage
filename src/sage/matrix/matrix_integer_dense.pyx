@@ -774,11 +774,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ....:     ans_classical = m1._multiply_classical(m2)
             ....:     ans_linbox = m1._multiply_linbox(m2)
             ....:     if ans_flint != ans_classical:
-            ....:         raise RuntimeError("ERROR\nm1=\n{}\nm2=\n{}\nans_flint=\n{}\nans_classical=\n{}".format(
-            ....:                 m1.str(), m2.str(), ans_flint.str(), ans_classical.str()))
+            ....:         raise RuntimeError(f"ERROR: m1={m1.str()} m2= {m2.str()} ans_flint= {ans_flint.str()} ans_classical= {ans_classical.str()}")
             ....:     if ans_flint != ans_linbox:
-            ....:         raise RuntimeError("ERROR\nm1=\n{}\nm2=\n{}\nans_flint=\n{}\nans_linbox=\n{}".format(
-            ....:                 m1.str(), m2.str(), ans_flint.str(), ans_linbox.str()))
+            ....:         raise RuntimeError(f"ERROR: m1={m1.str()} m2= {m2.str()} ans_flint= {ans_flint.str()} ans_linbox= {ans_linbox.str()}")
         """
         if self._ncols != right._nrows:
             raise IndexError("Number of columns of self must equal number of rows of right.")

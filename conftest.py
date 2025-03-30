@@ -173,10 +173,13 @@ def pytest_collect_file(
         # Crashes CI for some reason
         return IgnoreCollector.from_parent(parent)
     if file_path.suffix == ".pyx":
-        # We don't allow pytests to be defined in Cython files.
-        # Normally, Cython files are filtered out already by pytest and we only
-        # hit this here if someone explicitly runs `pytest some_file.pyx`.
-        return IgnoreCollector.from_parent(parent)
+        if parent.config.option.doctest:
+            return SageDoctestModule.from_parent(parent, path=file_path)
+        else:
+            # We don't allow pytests to be defined in Cython files.
+            # Normally, Cython files are filtered out already by pytest and we only
+            # hit this here if someone explicitly runs `pytest some_file.pyx`.
+            return IgnoreCollector.from_parent(parent)
     elif file_path.suffix == ".py":
         if parent.config.option.doctest:
             if file_path.name in {"__main__.py", "setup.py"}:
