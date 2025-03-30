@@ -3,6 +3,7 @@
 
 import argparse
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import toml as tomllib
@@ -62,56 +63,64 @@ def update_conda(source_dir: Path) -> None:
         print(f"pyproject.toml not found in {pyproject_toml}")
         return
 
-    for platform_key, platform_value in platforms.items():
-        for python in pythons:
-            dependencies = get_dependencies(pyproject_toml, python)
-            for tag in tags:
-                # Pin Python version
-                pinned_dependencies = {
-                    f"python={python}" if dep == "python" else dep
-                    for dep in dependencies
-                }
+    def process_platform_python(platform_key, platform_value, python):
+        dependencies = get_dependencies(pyproject_toml, python)
+        for tag in tags:
+            # Pin Python version
+            pinned_dependencies = {
+                f"python={python}" if dep == "python" else dep
+                for dep in dependencies
+            }
 
-                dev_dependencies = get_dev_dependencies(pyproject_toml)
-                print(f"Adding dev dependencies: {dev_dependencies}")
-                pinned_dependencies = pinned_dependencies.union(dev_dependencies)
+            dev_dependencies = get_dev_dependencies(pyproject_toml)
+            print(f"Adding dev dependencies: {dev_dependencies}")
+            pinned_dependencies = pinned_dependencies.union(dev_dependencies)
 
-                pinned_dependencies = sorted(pinned_dependencies)
+            pinned_dependencies = sorted(pinned_dependencies)
 
-                env_file = source_dir / f"environment{tag}-{python}.yml"
-                write_env_file(env_file, pinned_dependencies)
-                lock_file = source_dir / f"environment{tag}-{python}-{platform_value}"
-                lock_file_gen = (
-                    source_dir / f"environment{tag}-{python}-{platform_value}.yml"
-                )
-                print(
-                    f"Updating lock file for {env_file} at {lock_file_gen}", flush=True
-                )
-                subprocess.run(
-                    [
-                        "conda-lock",
-                        "--mamba",
-                        "--channel",
-                        "conda-forge",
-                        "--kind",
-                        "env",
-                        "--platform",
-                        platform_key,
-                        "--file",
-                        str(env_file),
-                        "--lockfile",
-                        str(lock_file),
-                        "--filename-template",
-                        str(lock_file),
-                    ],
-                    check=True,
-                )
+            env_file = source_dir / f"environment{tag}-{python}.yml"
+            write_env_file(env_file, pinned_dependencies)
+            lock_file = source_dir / f"environment{tag}-{python}-{platform_value}"
+            lock_file_gen = (
+                source_dir / f"environment{tag}-{python}-{platform_value}.yml"
+            )
+            print(
+                f"Updating lock file for {env_file} at {lock_file_gen}", flush=True
+            )
+            subprocess.run(
+                [
+                    "conda-lock",
+                    "--mamba",
+                    "--channel",
+                    "conda-forge",
+                    "--kind",
+                    "env",
+                    "--platform",
+                    platform_key,
+                    "--file",
+                    str(env_file),
+                    "--lockfile",
+                    str(lock_file),
+                    "--filename-template",
+                    str(lock_file),
+                ],
+                check=True,
+            )
 
-                # Add conda env name to lock file at beginning
-                with open(lock_file_gen, "r+") as f:
-                    content = f.read()
-                    f.seek(0, 0)
-                    f.write(f"name: sage{tag or '-dev'}\n{content}")
+            # Add conda env name to lock file at beginning
+            with open(lock_file_gen, "r+") as f:
+                content = f.read()
+                f.seek(0, 0)
+                f.write(f"name: sage{tag or '-dev'}\n{content}")
+
+    with ThreadPoolExecutor() as executor:
+        futures = [
+            executor.submit(process_platform_python, platform_key, platform_value, python)
+            for platform_key, platform_value in platforms.items()
+            for python in pythons
+        ]
+        for future in futures:
+            future.result()
 
 
 def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
