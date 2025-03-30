@@ -192,7 +192,6 @@ cdef class ModuleElement(Element):
     cpdef _lmul_(self, Element right)
     # self._lmul_(x) is self * x
     cpdef _rmul_(self, Element left)
-    cpdef _floordiv_(self, Element right)
 
 cdef class ModuleElementWithMutability(ModuleElement):
     cdef bint _is_immutable

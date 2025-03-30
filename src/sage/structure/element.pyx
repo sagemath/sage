@@ -2437,9 +2437,6 @@ cdef class ModuleElement(Element):
         """
         return None
 
-    cpdef _floordiv_(self, right):
-        return None
-
     ##################################################
     # Other properties
     ##################################################
@@ -3741,6 +3738,28 @@ cdef class Vector(ModuleElementWithMutability):
         if isinstance(right, Matrix):
             return right.solve_left(self)
         raise bin_op_exception('/', self, right)
+
+    def __floordiv__(self, right):
+        """
+        Floor divide this vector by a scalar only.
+
+        TESTS::
+
+            sage: b = vector([3, 9])
+            sage: b//2
+            (1, 4)
+
+            sage: v = vector([1, -3, 3])
+            sage: v//2
+            (0, -2, 1)
+        """
+        right = py_scalar_to_element(right)
+        if isinstance(right, RingElement):
+            if right.is_zero():
+                raise ZeroDivisionError("division by zero vector")
+            return self._floordiv_(right)
+        else:
+            raise bin_op_exception('//', self, right)
 
     def _magma_init_(self, magma):
         """
