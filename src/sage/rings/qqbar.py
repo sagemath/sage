@@ -3789,6 +3789,99 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         sage: AA(sqrt(65537))                                                           # needs sage.symbolic
         256.0019531175495?
     """
+    def ceil(self):
+        """
+        Return the ceiling of self, the smallest integer >= self.
+
+        This method first check if the number is algebraically an integer.
+        If not, it checks if the number is real. If it is real (and not
+        an integer), it uses numerical interval methods to find the ceiling.
+        If the number is complex with a non-zero imaginary part, it raises
+        a TypeError, as ceiling is typically not defined for such numbers.
+
+        EXAMPLES::
+
+        sage: QQbar(37/10).ceil()
+        4
+        sage: QQbar(-37/10).ceil()
+        -3
+        sage: QQbar(4).ceil()
+        4
+        sage: QQbar(0).ceil()
+        0
+        sage: ceil(QQbar(sqrt(8)) - 2*QQbar(sqrt(2)))  # Test case from #39345
+        0
+        sage: QQbar(sqrt(2)).ceil()
+        2
+        sage: QQbar(-sqrt(2)).ceil()
+        -1
+        sage: AA(sqrt(2)).ceil()  # Works for AA too
+        2
+
+        sage: ceil(QQbar(3/2 + 10^(-100)*I))  # Testing complex near real
+        Traceback (most recent call last):
+        ...
+        TypeError: ceil() not defined for complex numbers with non-zero imaginary part
+        """
+        if self.is_integer():
+            return ZZ(self)
+
+        imag_part = self.imag()
+        if not imag_part.is_zero():
+             raise TypeError("ceil() not defined for complex numbers with non-zero imaginary part")
+
+        # If the number is real and confirmed not an integer, use the interval refinement method.
+        # We need to ensure we operate on an AlgebraicReal instance to call _floor_ceil.
+        # AA._floor_ceil is defined in the AlgebraicReal subclass.
+        real_self = AA(self)
+        return real_self._floor_ceil(lambda x: x.ceil())
+
+    def floor(self):
+        """
+        Return the floor of self, the largest integer <= self.
+
+        This method first checks if the number is algebraically an integer.
+        If not, it checks if the number is real. If it is real (and not
+        an integer), it uses numerical interval methods to find the floor.
+        If the number is complex with a non-zero imaginary part, it raises
+        a TypeError, as floor is typically not defined for such numbers.
+
+        EXAMPLES::
+
+        sage: QQbar(37/10).floor()
+        3
+        sage: QQbar(-37/10).floor()
+        -4
+        sage: QQbar(4).floor()
+        4
+        sage: QQbar(0).floor()
+        0
+        sage: floor(QQbar(sqrt(8)) - 2*QQbar(sqrt(2)))  # Test case from #39345
+        0
+        sage: QQbar(sqrt(2)).floor()  
+        1
+        sage: QQbar(-sqrt(2)).floor()
+        -2
+        sage: AA(sqrt(2)).floor()  # Works for AA too
+        1
+
+        sage: floor(QQbar(3/2 + 10^(-100)*I))  # Testing complex near real
+        Traceback (most recent call last):
+        ...
+        TypeError: floor() not defined for complex numbers with non-zero imaginary part
+        """
+        # Check for exact integer FIRST.
+        if self.is_integer():
+            return ZZ(self)
+
+        # Check if the number is real.
+        imag_part = self.imag()
+        if not imag_part.is_zero():
+             raise TypeError("floor() not defined for complex numbers with non-zero imaginary part")
+
+        # If it's real and confirmed not an integer, use the interval refinement method.
+        real_self = AA(self)
+        return real_self._floor_ceil(lambda x: x.floor())
 
     def __init__(self, parent, x):
         r"""
