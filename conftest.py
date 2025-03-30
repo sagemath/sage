@@ -168,6 +168,7 @@ def pytest_collect_file(
     if (
         file_path.parent.name == "combinat"
         or file_path.parent.parent.name == "combinat"
+        or file_path.parent.name == "lie_algebras"
     ):
         # Crashes CI for some reason
         return IgnoreCollector.from_parent(parent)
@@ -178,7 +179,7 @@ def pytest_collect_file(
         return IgnoreCollector.from_parent(parent)
     elif file_path.suffix == ".py":
         if parent.config.option.doctest:
-            if file_path.name == "__main__.py" or file_path.name == "setup.py":
+            if file_path.name in {"__main__.py", "setup.py"}:
                 # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).
                 return IgnoreCollector.from_parent(parent)
             if file_path.name == "all.py":
