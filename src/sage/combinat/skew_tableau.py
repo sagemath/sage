@@ -1054,7 +1054,7 @@ class SkewTableau(ClonableList,
         return SkewTableaux()(new_st)
 
     reverse_slide = backward_slide
-
+    
     def rectify(self, algorithm=None):
         """
         Return a :class:`StandardTableau`, :class:`SemistandardTableau`,
@@ -1119,7 +1119,51 @@ class SkewTableau(ClonableList,
         if self in SemistandardSkewTableaux():
             return SemistandardTableau(rect[:])
         return Tableau(rect)
+    
+    def add_entry(self, cell, m):
+        r"""
+        Return the result of setting the entry in cell ``cell'' equal to ``m'' in the skew tableau ``self''.
+        If the cell is already part of ``self'', it replaces the current entry. 
+        Otherwise, it attempts to add the cell to the skew tableau.
 
+        """
+
+        tab = self.to_list()
+        r, c = cell
+        try:
+            tab[r][c] = m
+        except IndexError: 
+            if r >= len(tab):
+                if r == len(tab) and c == 0:
+                    tab.append([m])
+                else:
+                    raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
+            else:
+                tab_r = tab[r]
+                if c == len(tab_r) and (r == 0 or len(tab_r) < len(tab[r-1])):
+                    tab_r.append(m)
+                else:
+                    raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
+                
+        # attempt to return a tableau of the same type as self
+        if tab in self.parent():
+            return self.parent()(tab)
+        else:
+            try:
+                return self.parent().Element(tab)
+            except Exception:
+                return SkewTableau(tab)
+            
+    def anti_restrict(self, n):
+        """
+        Return the skew tableau formed by removing all of the cells from
+        ``self`` that are filled with a number at most `n`.
+
+        EXAMPLES::
+        """
+        t_new = [[None if g <= n else g for g in row] for row in self]
+        return SkewTableau(t_new)
+    
     def to_list(self):
         r"""
         Return a (mutable) list representation of ``self``.
