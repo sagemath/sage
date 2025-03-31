@@ -133,6 +133,11 @@ def characteristic_polynomial(x, var='x', algorithm=None):
     """
     Return the characteristic polynomial of ``x`` in the given variable.
     
+    Parameters:
+    - `x`: The matrix or element for which the characteristic polynomial is to be computed.
+    - `var`: The variable name for the polynomial (default: 'x').
+    - `algorithm`: The algorithm to use for computation. Supported values: None (default), "pari".
+    
     EXAMPLES::
 
         sage: # needs sage.libs.pari sage.modules
@@ -154,6 +159,22 @@ def characteristic_polynomial(x, var='x', algorithm=None):
         sage: from sage.libs.pari.gen import pari
         sage: M = MatrixSpace(QQ, 2, 2)
         sage: A = M([1, 2, 3, 4])
+        sage: characteristic_polynomial(A, algorithm="pari")
+        x^2 - 5*x - 2
+
+        sage: # Testing with different fields
+        sage: R = MatrixSpace(RR, 2)
+        sage: A = R([1.5, 2.5, 3.5, 4.5])
+        sage: characteristic_polynomial(A, algorithm="pari")
+        x^2 - 6.0*x - 1.25
+
+        sage: R = MatrixSpace(ZZ, 2)
+        sage: A = R([1, 2, 3, 4])
+        sage: characteristic_polynomial(A, algorithm="pari")
+        x^2 - 5*x - 2
+
+        sage: R = MatrixSpace(QQ['i'], 2)
+        sage: A = R([1, 2, 3, 4])
         sage: characteristic_polynomial(A, algorithm="pari")
         x^2 - 5*x - 2
 
