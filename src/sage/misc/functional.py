@@ -165,7 +165,8 @@ def characteristic_polynomial(x, var='x', algorithm=None):
     """
     if algorithm == "pari":
         from sage.libs.pari.all import pari
-        return pari(x).charpoly(var)
+        pari_poly = pari(x).charpoly(var)
+        return pari_poly.sage()
     try:
         return x.charpoly(var)
     except AttributeError:
