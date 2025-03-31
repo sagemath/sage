@@ -512,7 +512,10 @@ class Polyhedron_base2(Polyhedron_base1):
         # for more complicate polytopes, triangulate & use smith normal form
         from sage.geometry.integral_points import simplex_points
         if self.is_simplex():
-            return simplex_points(self.Vrepresentation())
+            points = simplex_points(self.Vrepresentation())
+            for p in points:
+                p.set_immutable()
+            return points
         triangulation = self.triangulate()
         points = set()
         for simplex in triangulation:
