@@ -199,57 +199,6 @@ cdef class SymbolicSeries(Expression):
         cdef Expression ex = new_Expression_from_GEx(self._parent, x)
         return ex
 
-    def coefficients(self, x=None, sparse=True):
-        r"""
-        Return the coefficients of this symbolic series as a list of pairs.
-
-        INPUT:
-
-        - ``x`` -- (optional) variable
-
-        - ``sparse`` -- boolean (default: ``True``); if ``False`` return a list
-          with as much entries as the order of the series
-
-        OUTPUT: depending on the value of ``sparse``,
-
-        - A list of pairs ``(expr, n)``, where ``expr`` is a symbolic
-          expression and ``n`` is a power (``sparse=True``, default)
-
-        - A list of expressions where the ``n``-th element is the coefficient of
-          ``x^n`` when ``self`` is seen as polynomial in ``x`` (``sparse=False``).
-
-        EXAMPLES::
-
-            sage: s = (1/(1-x)).series(x,6); s
-            1 + 1*x + 1*x^2 + 1*x^3 + 1*x^4 + 1*x^5 + Order(x^6)
-            sage: s.coefficients()
-            [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5]]
-            sage: s.coefficients(x, sparse=False)
-            [1, 1, 1, 1, 1, 1]
-            sage: x,y = var("x,y")
-            sage: s = (1/(1-y*x-x)).series(x,3); s
-            1 + (y + 1)*x + ((y + 1)^2)*x^2 + Order(x^3)
-            sage: s.coefficients(x, sparse=False)
-            [1, y + 1, (y + 1)^2]
-        """
-        if x is None:
-            x = self.default_variable()
-        l = [[self.coefficient(x, d), d] for d in range(self.degree(x))]
-        if sparse:
-            return l
-
-        from sage.rings.integer_ring import ZZ
-        if any(not c[1] in ZZ for c in l):
-            raise ValueError("cannot return dense coefficient list with noninteger exponents")
-        val = l[0][1]
-        if val < 0:
-            raise ValueError("cannot return dense coefficient list with negative valuation")
-        deg = l[-1][1]
-        ret = [ZZ(0)] * int(deg+1)
-        for c in l:
-            ret[c[1]] = c[0]
-        return ret
-
     def power_series(self, base_ring):
         """
         Return the algebraic power series associated to this symbolic series.
