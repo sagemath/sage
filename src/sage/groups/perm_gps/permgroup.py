@@ -1809,26 +1809,71 @@ class PermutationGroup_generic(FiniteGroup):
                 try:
                     return self._domain_to_gap[x]
                 except KeyError:
-                    raise ValueError('{0} is not part of the domain'.format(x))
-            x = [input_for_gap(xx, depth+1, container) for xx in x]
+                    if isinstance(x, PermutationGroupElement):
+                        try:
+                            return libgap(x)
+                        except Exception as e:
+                            raise ValueError(f"Could not convert permutation element {x} to GAP: {e}")
+                    else:
+                        # x is neither a standard domain element nor a convertible permutation.
+                        raise ValueError(f'{x} (type {type(x)}) is not part of the domain or a convertible element for this action')
+                except TypeError:
+                    raise TypeError(f'Unhashable type {type(x)} encountered where a domain element or permutation was expected.')
+
+            # Recursive step: process elements within the container x
+            processed_elements = []
+            try:
+                # Iterate through the elements xx of the container x
+                for xx in x:
+                    processed_elements.append(input_for_gap(xx, depth + 1, container))
+            except TypeError as e:
+                 raise TypeError(f"Input structure error at depth {depth}: expected an iterable, but got {type(x)}. {e}")
+
+            x_processed = processed_elements
+
             if container[depth] is Set:
-                x.sort()
-            return x
+                try:
+                    gap_list = libgap(x_processed) # Convert Python list to GAP list
+                    gap_list.Sort()
+                    x_processed = gap_list.sage() # Convert back to Python list
+                except Exception as e:
+                    raise TypeError(f"Could not sort elements for GAP Set representation at depth {depth}: {e}. Elements: {x_processed}")
+            return x_processed
 
         def gap_to_output(x, depth, container):
             if depth == len(container):
-                return self._domain_from_gap[x]
+                try:
+                    return self._domain_from_gap[Integer(x)] # Ensure conversion from potential GapInteger
+                except Exception as e:
+                     raise TypeError(f"Failed to convert GAP result element '{x}' back to Sage domain element: {e}")
             else:
-                x = [gap_to_output(xx, depth+1, container) for xx in x]
-                return container[depth](x)
+                # Recursively convert elements within the container
+                try:
+                    converted_elements = [gap_to_output(xx, depth + 1, container) for xx in x]
+                    return container[depth](converted_elements)
+                except Exception as e:
+                    raise TypeError(f"Failed to convert nested GAP result structure at depth {depth}: {e}")
+
         try:
             container = actions[action]
         except KeyError:
-            raise NotImplementedError("this action is not implemented (yet?)")
-        point = input_for_gap(point, 0, container)
-        result = self.gap().Orbit(point, getattr(libgap, action)).sage()
-        result = [gap_to_output(x, 0, container) for x in result]
-        return tuple(result)
+            raise NotImplementedError(f"Action '{action}' is not implemented or recognized.")
+
+        # Convert the initial Sage point/structure to GAP format
+        try:
+            point_gap = input_for_gap(point, 0, container)
+        except (ValueError, TypeError) as e:
+             raise ValueError(f"Invalid input point structure for action '{action}': {e}")
+
+        # Perform the orbit calculation in GAP
+        try:
+            gap_action_func = getattr(libgap, action)
+            result_gap = self.gap().Orbit(point_gap, gap_action_func)
+            result_sage = [gap_to_output(x, 0, container) for x in result_gap.sage()]
+        except Exception as e:
+             raise RuntimeError(f"GAP computation or result conversion failed for orbit: {e}")
+
+        return tuple(result_sage)
 
     def transversals(self, point):
         r"""
