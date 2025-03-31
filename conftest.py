@@ -165,10 +165,11 @@ def pytest_collect_file(
 
     See `pytest documentation <https://docs.pytest.org/en/latest/reference/reference.html#std-hook-pytest_collect_file>`_.
     """
-    if (
-        file_path.parent.name in { "combinat", "algebras"}
-        or file_path.parent.parent.name in { "combinat", "algebras"}
-    ):
+    if file_path.parent.name in {
+        "combinat",
+        "algebras",
+        "calculus",
+    } or file_path.parent.parent.name in {"combinat", "algebras", "calculus"}:
         # Crashes CI for some reason
         return IgnoreCollector.from_parent(parent)
     if file_path.suffix == ".pyx":
