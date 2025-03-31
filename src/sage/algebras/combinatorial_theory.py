@@ -2173,7 +2173,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         #
         #sdp_data = self._make_sdp_data_integer(sdp_data)
         
-        with open(file, "a") as file:
+        with open(file, "w") as file:
             block_sizes, target, mat_inds, mat_vals = sdp_data
 
             file.write("{}\n{}\n".format(len(target), len(block_sizes)))
