@@ -22,7 +22,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.morphism import Morphism
-from sage.structure.richcmp import rich_to_bool, richcmp
+from sage.structure.richcmp import richcmp
 from sage.modules.free_module_morphism import FreeModuleMorphism
 
 
@@ -505,12 +505,6 @@ class FreeModulePseudoMorphism(Morphism):
             ...
             TypeError: unsupported operand parent(s) for <: 'Set of Pseudoendomorphisms (twisted by z |--> z^7) of Vector space of dimension 2 over Finite Field in z of size 7^3' and '<class 'sage.modules.free_module.FreeModule_ambient_field_with_category'>'
         """
-        parent = self.parent()
-        if other.parent() is not parent:
-            try:
-                other = parent(other)
-            except ValueError:
-                return NotImplemented
         return richcmp(self._matrix, other._matrix, op)
 
     def ore_module(self, names=None):
