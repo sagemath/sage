@@ -166,9 +166,8 @@ def pytest_collect_file(
     See `pytest documentation <https://docs.pytest.org/en/latest/reference/reference.html#std-hook-pytest_collect_file>`_.
     """
     if (
-        file_path.parent.name == "combinat"
-        or file_path.parent.parent.name == "combinat"
-        or file_path.parent.name in {"lie_algebras", "lie_conformal_algebras"}
+        file_path.parent.name in { "combinat", "algebras"}
+        or file_path.parent.parent.name in { "combinat", "algebras"}
     ):
         # Crashes CI for some reason
         return IgnoreCollector.from_parent(parent)
