@@ -148,7 +148,7 @@ import itertools
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.all import QQ, NN, Integer, ZZ, infinity, RR
+from sage.all import QQ, NN, Integer, ZZ, infinity, RR, RDF
 from sage.algebras.flag import BuiltFlag, ExoticFlag, Pattern, inductive_generator, overlap_generator
 from sage.algebras.flag_algebras import FlagAlgebra, FlagAlgebraElement
 
@@ -1600,26 +1600,35 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         Basically undoes the sym/asym changes and the reductions by the 
         constructions' kernels.
         """
+        from fractions import Fraction
         if X_original==None:
             return None
         X_flats = []
         block_index = 0
         for params in table_constructor.keys():
-            ns, ftype, target_size = params
             X_ii = None
             for plus_index, base in enumerate(table_constructor[params]):
-                base_scale = base * base.T
                 if X_ii == None:
                     X_ii = base.T * X_original[block_index + plus_index] * base
                 else:
                     X_ii += base.T * X_original[block_index + plus_index] * base
             block_index += len(table_constructor[params])
-            X_flats.append(vector(_flatten_matrix(X_ii.rows())))
+            X_flat = _flatten_matrix(X_ii.rows())
+            if QQ.has_coerce_map_from(X_ii.base_ring()):
+                X_flat = [
+                    Fraction(int(num.numerator()), int(num.denominator())) for 
+                    num in X_flat
+                    ]
+            elif X_ii.base_ring()==RDF or X_ii.base_ring()==RR:
+                X_flat = [float(num) for num in X_flat]
+            else:
+                X_flat = vector(X_flat)
+            X_flats.append(X_flat)
         return X_flats
     
     def _format_optimizer_output(self, table_constructor, mult=1, 
                                  sdp_output=None, rounding_output=None, 
-                                 file=None):
+                                 file=None, **misc):
         r"""
         Formats the outputs to a nice certificate
         
@@ -1628,31 +1637,56 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         list of base flags, the list of used (typed) flags
         """
         
+        from fractions import Fraction
+
         target_size = 0
         typed_flags = {}
         for params in table_constructor.keys():
             ns, ftype, target_size = params
-            typed_flags[(ns, ftype)] = self.generate_flags(ns, ftype)
-        
-        base_flags = self.generate_flags(target_size)
-        
+            typed_flags[(ns, ftype._pythonize())] = [
+                flg._pythonize() for flg in self.generate_flags(ns, ftype)
+            ]
+        if target_size==0:
+            raise ValueError("Empty type constraints!")
+
+        base_flags = [
+            flg._pythonize() for flg in self.generate_flags(target_size)
+        ]
+
+        def pythonize(dim, data):
+            if data==None:
+                return None
+            if dim==0:
+                num, denom = data.as_integer_ratio()
+                return Fraction(int(num), int(denom))
+            return [pythonize(dim-1, xx) for xx in data]
+
         result = None
         X_original = None
         e_vector = None
         slacks = None
         phi_vecs = None
-        
+        target = pythonize(1, misc.get("target", None))
+        positives = pythonize(2, misc.get("positives", None))
+        maximize = mult==-1
+
         if sdp_output!=None:
+            #these should be regular float (and stay like that)
             result = sdp_output['primal']
-            X_original = [matrix(dat) for dat in sdp_output['X'][:-2]]
-            e_vector = vector(sdp_output['X'][-1])
-            slacks = vector(sdp_output['X'][-2])
-            phi_vecs = [vector(sdp_output['y'])]
+            oresult = result
+            e_vector = sdp_output['X'][-1]
+            slacks = sdp_output['X'][-2]
+            phi_vecs = [sdp_output['y']]
+            #except this, but this is transformed back
+            X_original = [matrix(xx) for xx in sdp_output['X'][:-2]]
         elif rounding_output!=None:
-            result, X_original, e_vector, slacks, phi_vecs = rounding_output
-        
-        result *= mult
-        #Ps, Ls, Ds = self._fix_X_bases_pld(table_constructor, X_original)
+            oresult, X_original, e_vector, slacks, phi_vecs = rounding_output
+            result = pythonize(0, oresult)
+            e_vector = pythonize(1, e_vector)
+            slacks = pythonize(1, slacks)
+            phi_vecs = pythonize(2, phi_vecs)
+        result *= int(mult)
+        oresult *= mult
         Xs = self._fix_X_bases(table_constructor, X_original)
         
         cert_dict = {"result": result, 
@@ -1661,7 +1695,11 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                      "slack vector": slacks,
                      "phi vectors": phi_vecs,
                      "base flags": base_flags,
-                     "typed flags": typed_flags
+                     "typed flags": typed_flags,
+                     "target": target,
+                     "positives": positives,
+                     "maximize": maximize,
+                     "target size": int(target_size) 
                     }
         
         if file!=None and file!="" and file!="notebook":
@@ -1671,7 +1709,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 pickle.dump(cert_dict, file_handle)
         if file=="notebook":
             return cert_dict
-        return result
+        return oresult
     
     def _handle_sdp_params(self, **params):
         sdp_params=["axtol", "atytol", "objtol", "pinftol", "dinftol", "maxiter", 
@@ -1848,9 +1886,11 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             return value
         return self._format_optimizer_output(
             table_constructor, 
-            mult=mult,  
+            mult=mult,
             rounding_output=rounding_output,
-            file=certificate_file
+            file=certificate_file,
+            target=vector(sdp_data[1])*mult,
+            positives=constraints_data[2]
             )
 
     def optimize_problem(self, target_element, target_size, maximize=True, 
@@ -1970,7 +2010,9 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 mult=mult, 
                 sdp_output=sdpo, 
                 rounding_output=roundo,
-                file=file
+                file=file,
+                target=target_vector_exact*mult,
+                positives=constraints_data[2]
                 )
 
         #
@@ -2173,7 +2215,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         #
         #sdp_data = self._make_sdp_data_integer(sdp_data)
         
-        with open(file, "a") as file:
+        with open(file, "w") as file:
             block_sizes, target, mat_inds, mat_vals = sdp_data
 
             file.write("{}\n{}\n".format(len(target), len(block_sizes)))
@@ -2191,7 +2233,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     "%.10e" % mat_vals[ii]
                 ))
 
-    def verify_certificate(self, file_or_cert, target_element, target_size, 
+    def verify_certificate(self, file_or_cert, target_element=None, target_size=None, 
                            maximize=True, positives=None, **params):
         r"""
         Verifies the certificate provided by the optimizer 
@@ -2205,7 +2247,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         #
         # Load the certificate file (only pickle is supported)
         #
-        
+
         if isinstance(file_or_cert, str):
             file = file_or_cert
             if not file.endswith(".pickle"):
@@ -2215,13 +2257,26 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         else:
             certificate = file_or_cert
         
-        
+        from fractions import Fraction
+        def to_sage(data):
+            if isinstance(data, Fraction):
+                return QQ(data)
+            if isinstance(data, float):
+                return RR(data)
+            try:
+                return [to_sage(xx) for xx in data]
+            except:
+                pass
+            return data
+
+        print("result data is {} after sagify it is {}".format(certificate["result"], 
+                                                               to_sage(certificate["result"])))
+
         #
         # Checking eigenvalues and positivity constraints
         #
         
-        res = certificate["result"]
-        e_values = vector(certificate["e vector"])
+        e_values = to_sage(certificate["e vector"])
 
         if len(e_values)>0 and min(e_values)<0:
             print("Solution is not valid!")
@@ -2229,31 +2284,24 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                   min(e_values))
             return -1
         
-        X_flats = certificate["X matrices"]
-        # Ps = certificate["P dictionaries"]
-        # Ds = certificate["D vectors"]
-        # Ls = certificate["L matrices"]
+        X_flats = to_sage(certificate["X matrices"])
         self.fprint("Checking X matrices")
         if self._printlevel > 0:
             iterator = tqdm(enumerate(X_flats))
         else:
             iterator = enumerate(X_flats)
         for ii, Xf in iterator:
-            X = matrix(QQ, _unflatten_matrix(Xf)[0])
-            if not (X.is_positive_semidefinite()):
-                print("Solution is not valid!")
-                self.fprint("Matrix {} is not semidefinite".format(ii))
-                return -1
-            # P = matrix(QQ, len(Ddiag), len(Ddiag), Ps[ii], sparse=True)
-            # D = diagonal_matrix(QQ, Ddiag, sparse=True)
-            # Larr, _ = _unflatten_matrix(
-            #     Ls[ii], dim=len(Ddiag), 
-            #     doubled=False, upper=True
-            #     )
-            # L = matrix(QQ, Larr).T
-            # PL = P*L
-            # X = PL * D * PL.T
-            # X_flats.append(vector(QQ, _flatten_matrix(X.rows())))
+            X = matrix(_unflatten_matrix(Xf)[0])
+            try:
+                if not (X.is_positive_semidefinite()):
+                    print("Solution is not valid!")
+                    self.fprint("Matrix {} is not semidefinite".format(ii))
+                    return -1
+            except:
+                if not (custom_psd_test(X)):
+                    print("Solution is not valid!")
+                    self.fprint("Matrix {} is not semidefinite".format(ii))
+                    return -1
 
         self.fprint("Solution matrices are all positive semidefinite, " + 
               "linear coefficients are all non-negative")
@@ -2262,22 +2310,34 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         # Initial setup
         #
 
+        if target_size==None:
+            if "target size" in certificate:
+                target_size = to_sage(certificate["target size"])
+            else:
+                raise ValueError("Target size must be specified "+
+                                 "if it is not part of the certificate!")
+
         mult = -1 if maximize else 1
         base_flags = certificate["base flags"]
-        target_vector_exact = (
-            target_element.project()*(mult)<<\
-                (target_size - target_element.size())
-                ).values()
-        if target_element.ftype().size()==0:
-            one_vector = vector([1]*len(base_flags))
+        one_vector = vector([1]*len(base_flags))
+        if target_element==None:
+            if "target" in certificate:
+                target_vector_exact = vector(to_sage(certificate["target"]))
+            else:
+                raise ValueError("Target must be specified "+
+                                 "if it is not part of the certificate!")
         else:
-            one_vector = (
-                target_element.ftype().project()<<\
-                    (target_size - target_element.ftype().size())
+            target_vector_exact = (
+                target_element.project()*(mult)<<\
+                    (target_size - target_element.size())
                     ).values()
-        
+            if not (target_element.ftype().afae()==1):
+                one_vector = (
+                    target_element.ftype().project()<<\
+                        (target_size - target_element.ftype().size())
+                        ).values()
         ftype_data = list(certificate["typed flags"].keys())
-
+        
         #
         # Create the semidefinite matrix data
         #
@@ -2290,6 +2350,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             iterator = enumerate(ftype_data)
         for ii, dat in iterator:
             ns, ftype = dat
+            ftype = self._element_constructor_(ftype[0], ftype=ftype[1], **dict(ftype[2]))
             #calculate the table
             table = self.mul_project_table(
                 ns, ns, ftype, ftype_inj=[], target_size=target_size
@@ -2301,8 +2362,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         # Create the data from linear constraints
         #
 
-        positives_list_exact = []
         if positives != None:
+            positives_list_exact = []
             for ii, fv in enumerate(positives):
                 if isinstance(fv, BuiltFlag) or isinstance(fv, ExoticFlag):
                     continue
@@ -2312,16 +2373,22 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     nf, df, fv.ftype(), ftype_inj=[], target_size=target_size
                     )
                 fvvals = fv.values()
-                m = matrix(QQ, [vector(fvvals*mat) for mat in mult_table])
+                m = matrix([vector(fvvals*mat) for mat in mult_table])
                 positives_list_exact += list(m.T)
                 self.fprint("Done with positivity constraint {}".format(ii))
+            positives_matrix_exact = matrix(
+                len(positives_list_exact), len(base_flags), 
+                positives_list_exact
+                )
+            e_values = vector(e_values[:len(positives_list_exact)])
         else:
-            e_values = vector(QQ, 0)
-        positives_matrix_exact = matrix(
-            QQ, 
-            len(positives_list_exact), len(base_flags), 
-            positives_list_exact
-            )
+            if "positives" in certificate:
+                posls = to_sage(certificate["positives"])[:-2]
+                positives_matrix_exact = matrix(len(posls), len(base_flags), posls)
+                e_values = vector(e_values[:len(posls)])
+            else:
+                positives_matrix_exact = matrix(0, len(base_flags), [])
+                e_values = vector(QQ, [])
 
         self.fprint("Done calculating linear constraints")
 
@@ -2337,11 +2404,14 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         else:
             iterator = enumerate(table_list)
         for ii, table in iterator:
-            for gg, mat_gg in enumerate(table):
+            slvecdel = []
+            for mat_gg in table:
                 mat_flat = vector(
                     _flatten_matrix(mat_gg.rows(), doubled=True)
                     )
-                slacks[gg] -= mat_flat * X_flats[ii]
+                slvecdel.append(mat_flat * vector(X_flats[ii]))
+            slacks -= vector(slvecdel)
+        
         result = min(
             [slacks[ii]/oveii for ii, oveii in enumerate(one_vector) \
              if oveii!=0]

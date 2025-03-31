@@ -453,7 +453,6 @@ cpdef tuple overlap_generator(int n, theoryR, tuple small0, tuple small1, tuple 
     # ))
     return tuple(ret)
 
-
 cdef class _Flag(Element):
     cdef int _n
     cdef int _ftype_size
@@ -492,6 +491,19 @@ cdef class _Flag(Element):
         for kk in blocks:
             ret.append(blocks[kk])
         return tuple(ret)
+
+    def _pythonize(self):
+        blret = {}
+        blocks = self._blocks
+        for kk in blocks:
+            blret[kk] = tuple([
+                tuple([int(pp) for pp in edge]) for edge in blocks[kk]
+            ])
+        return tuple([
+            int(self.size()), 
+            tuple([int(ii) for ii in self.ftype_points()]), 
+            tuple(blret.items())
+            ])
 
     # Basic properties
 
