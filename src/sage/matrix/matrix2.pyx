@@ -6848,7 +6848,9 @@ cdef class Matrix(Matrix1):
 
         - ``extend`` -- (default: ``True``); see below
         - ``algorithm`` -- (default: ``None``); algorithm to use,
-          see :meth:`eigenvectors_left`
+          supported values are ``'sage'``, ``'flint'``, ``'mpmath'``, ``'pari'``
+          (passed to :meth:`eigenvectors_left`), or ``'pari_charpoly'``; if ``None``,
+          the algorithm is chosen automatically
 
         If the option ``extend`` is set to ``False``, only eigenvalues in the base
         ring are considered.
@@ -6965,28 +6967,23 @@ cdef class Matrix(Matrix1):
             sage: m.eigenvalues(algorithm="pari")  # abs tol 1e-14
             [-1.4142135623730950487637880730318329370*I,
              1.4142135623730950487637880730318329370*I]
-
-        The following currently uses ``algorithm="flint"`` under the hood,
-        but ``FutureWarning`` must not be raised. This is because the internal
-        implementation may change in the future to keep the external interface.
-
-        ::
-
+            sage: m.eigenvalues(algorithm="pari_charpoly")  # abs tol 1e-14
+            [-1.41421356237309505*I, 1.41421356237309505*I]
             sage: m.eigenvalues()
-            [-1.41421356237309*I, 1.41421356237310*I]
+            [-1.41421356237309505*I, 1.41421356237309505*I]
         """
         if algorithm is None:
             from sage.rings.abc import RealField, ComplexField
             R = self.base_ring()
             if isinstance(R, (RealField, ComplexField)):
-                return self._eigenvectors_result_to_eigenvalues(
-                        self._eigenvectors_left(
-                            extend=extend, algorithm="flint",
-                            suppress_future_warning=True))
+                algorithm = "pari_charpoly"
             else:
                 algorithm = "sage"
         if algorithm == "sage":
             return self._eigenvalues_sage(extend=extend)
+        elif algorithm == "pari_charpoly":
+            from sage.libs.pari import pari
+            return pari(self).charpoly().polroots().sage()
         else:
             return self._eigenvectors_result_to_eigenvalues(
                     self._eigenvectors_left(
