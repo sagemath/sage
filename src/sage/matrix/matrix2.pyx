@@ -6837,7 +6837,7 @@ cdef class Matrix(Matrix1):
 
     right_eigenspaces = eigenspaces_right
 
-    def eigenvalues(self, extend=True, algorithm=None):
+    def eigenvalues(self, extend=True, algorithm=None) -> Sequence:
         r"""
         Return a sequence of the eigenvalues of a matrix, with
         multiplicity. If the eigenvalues are roots of polynomials in ``QQ``,
@@ -6971,6 +6971,8 @@ cdef class Matrix(Matrix1):
             [-1.41421356237309505*I, 1.41421356237309505*I]
             sage: m.eigenvalues()
             [-1.41421356237309505*I, 1.41421356237309505*I]
+            sage: type(m.eigenvalues())
+            <class 'sage.structure.sequence.Sequence_generic'>
         """
         if algorithm is None:
             from sage.rings.abc import RealField, ComplexField
@@ -6983,7 +6985,7 @@ cdef class Matrix(Matrix1):
             return self._eigenvalues_sage(extend=extend)
         elif algorithm == "pari_charpoly":
             from sage.libs.pari import pari
-            return pari(self).charpoly().polroots().sage()
+            return Sequence(pari(self).charpoly().polroots().sage())
         else:
             return self._eigenvectors_result_to_eigenvalues(
                     self._eigenvectors_left(
@@ -7013,7 +7015,7 @@ cdef class Matrix(Matrix1):
         """
         return Sequence([e for e, _, _ in eigenvectors])
 
-    def _eigenvalues_sage(self, extend=True):
+    def _eigenvalues_sage(self, extend=True) -> Sequence:
         """
         Compute the eigenvalues of a matrix using algorithm implemented in Sage.
 
