@@ -62,6 +62,8 @@ AUTHORS:
 
 - Matthew Lancellotti (2018-09-14): Added a bunch of "k" methods to Partition.
 
+- Álvaro Gutiérrez (2025-02-24): added functionality to translate to and from abaci
+
 EXAMPLES:
 
 There are `5` partitions of the integer `4`::
@@ -274,8 +276,12 @@ We use the lexicographic ordering::
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
+#                     2025 Álvaro Gutiérrez <gutierrez.caceres@outlook.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
@@ -5809,6 +5815,62 @@ class Partition(CombinatorialElement):
         R = SymmetricGroupAlgebra(base_ring, sum(self))
         return TabloidModule(R, self)
 
+    def to_abacus(self, size=0, ones=0):
+        r"""
+        Return an abacus.
+
+        This is the inverse to :func:`.abacus_to_partition`.
+
+        An abacus is a function `w : \mathbb{Z} \to \{0,1\}` such that
+        `w(n) = 0` for `n \ll 0` and `w(n) = 1` for `n \gg 0`. It is usually
+        represented with an infinite tuple, e.g. `(...,0,0,0,1,0,0,1,0,1,1,...)`.
+        Here we use finite tuples and assume everything to the left is a 0
+        and everything to the right is a 1.
+
+        A partition determines an abacus via the following interpretation:
+        read the outline of the Young diagram of the partition, with English
+        convention. For each vertical step, record a 1; for each horizontal
+        step record a 0. The resulting word is the corresponding abacus.
+
+        The abacus will be of length at least ``size``, by padding with
+        0s on the right if necessary. The number of 1s in the abacus will
+        be at least ``ones``, by padding with 1s on the left if necessary.
+
+        INPUT:
+
+        - ``size``, ``ones`` -- Integer (optional. Default: 0)
+
+        OUTPUT:
+
+        - a string of 0s and 1s.
+
+        EXAMPLES::
+
+            sage: Partition([3,2,1]).to_abacus()
+            '010101'
+            sage: Partition([3,2,1]).to_abacus(size=10)
+            '0101010000'
+            sage: Partition([3,3]).to_abacus()
+            '00011'
+            sage: Partition([]).to_abacus(size=6)
+            '000000'
+            sage: Partition([]).to_abacus(ones=2)
+            '11'
+            sage: Partition([2,2]).to_abacus(size=4)
+            '0011'
+            sage: Partition([2,2]).to_abacus(size=5)
+            '00110'
+            sage: Partition([2,2]).to_abacus(size=5, ones=3)
+            '10011'
+
+        """
+        L = max(ones,len(self))
+        lam = list(self)+[0]*(L+1-len(self))
+        abacus = [1] * L
+        for i in range(L):
+            abacus = abacus[:(L-i-1)] + [0]*(lam[i]-lam[i+1]) + abacus[(L-i-1):]
+        return ''.join(map(str, abacus + [0]*(size-len(abacus))))
+
 
 ##############
 # Partitions #
@@ -9675,6 +9737,63 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
             [1]
         """
         return self.element_class(self, Partitions_n._an_element_(self).conjugate())
+
+##################################################################
+
+
+def abacus_to_partition(abacus):
+    r"""
+    Return a partition from an abacus.
+
+    An abacus is a function `w : \mathbb{Z} \to \{0,1\}` such that
+    `w(n) = 0` for `n \ll 0` and `w(n) = 1` for `n \gg 0`. It is usually
+    represented with an infinite tuple, e.g. `(...,0,0,0,1,0,0,1,0,1,1,...)`.
+    Here, we use finite tuples, and assume everything to the left is a 0
+    and everything to the right is a 1.
+
+    An abacus determines a partition, via the following interpretation:
+    a 1 in the abacus encodes a vertical line, and a 0 encodes a
+    horizontal one. Reading from left to right, the abacus spells the
+    outline of the Young diagram.
+
+    This is the inverse to :meth:`Partition.to_abacus`.
+
+    INPUT:
+
+    - ``abacus`` -- a tuple, a list or a string of 1's and 0's
+
+    OUTPUT:
+
+    - a Partition
+
+    EXAMPLES::
+
+        sage: from sage.combinat.partition import abacus_to_partition
+        sage: abacus_to_partition('010101')
+        [3, 2, 1]
+        sage: abacus_to_partition([1,1,0,0,0])
+        []
+        sage: abacus_to_partition((0,0,0,1,1))
+        [3, 3]
+        sage: abacus_to_partition(('1','1','1','0','0','0'))
+        []
+        sage: abacus_to_partition(['0','0','0','1','1','1'])
+        [3, 3, 3]
+        sage: abacus_to_partition('--*-**')
+        Traceback (most recent call last):
+        ...
+        ValueError: an abacus should be a tuple, list or string of 0s and 1s
+    """
+    part = []
+    n = len(abacus)
+    k = 0
+    for i in range(n):
+        if abacus[i] == '1' or abacus[i] == 1:
+            k += 1
+            part.insert(0, i+1-k)
+        elif abacus[i] != '0' and abacus[i] != 0:
+            raise ValueError('an abacus should be a tuple, list or string of 0s and 1s')
+    return Partition(part)
 
 
 #########################################################################
