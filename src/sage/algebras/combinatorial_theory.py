@@ -1628,7 +1628,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
     
     def _format_optimizer_output(self, table_constructor, mult=1, 
                                  sdp_output=None, rounding_output=None, 
-                                 file=None, **misc):
+                                 file=None, target_size=0, **misc):
         r"""
         Formats the outputs to a nice certificate
         
@@ -1639,10 +1639,9 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         
         from fractions import Fraction
 
-        target_size = 0
         typed_flags = {}
         for params in table_constructor.keys():
-            ns, ftype, target_size = params
+            ns, ftype, _target_size = params
             typed_flags[(ns, ftype._pythonize())] = [
                 flg._pythonize() for flg in self.generate_flags(ns, ftype)
             ]
@@ -1841,7 +1840,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     table_constructor, 
                     (constraints_data[0], None, constraints_data[2], None), 
                     phi_vectors_exact, 
-                    mult)
+                    mult, target_size)
                 pickle.dump(save_data, file_handle)
 
         return final_sol["primal"]*mult
@@ -1860,7 +1859,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         
         sdp_result, sdp_data, table_constructor, \
             constraints_data, phi_vectors_exact, \
-            mult = save_data
+            mult, target_size = save_data
         
 
         #
@@ -1890,7 +1889,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             rounding_output=rounding_output,
             file=certificate_file,
             target=vector(sdp_data[1])*mult,
-            positives=constraints_data[2]
+            positives=constraints_data[2],
+            target_size=target_size
             )
 
     def optimize_problem(self, target_element, target_size, maximize=True, 
@@ -2012,7 +2012,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 rounding_output=roundo,
                 file=file,
                 target=target_vector_exact*mult,
-                positives=constraints_data[2]
+                positives=constraints_data[2],
+                target_size=target_size
                 )
 
         #
