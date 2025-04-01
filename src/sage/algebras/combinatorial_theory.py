@@ -1675,7 +1675,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             #these should be regular float (and stay like that)
             result = sdp_output['primal']
             oresult = result
-            e_vector = sdp_output['X'][-1]
+            e_vector = sdp_output['X'][-1][:-2]
             slacks = sdp_output['X'][-2]
             phi_vecs = [sdp_output['y']]
             #except this, but this is transformed back
@@ -2386,7 +2386,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             e_values = vector(e_values[:len(positives_list_exact)])
         else:
             if "positives" in certificate:
-                posls = to_sage(certificate["positives"])[:-2]
+                posls = to_sage(certificate["positives"])
                 positives_matrix_exact = matrix(len(posls), len(base_flags), posls)
                 e_values = vector(e_values[:len(posls)])
             else:
