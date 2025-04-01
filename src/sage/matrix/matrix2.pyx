@@ -3035,6 +3035,61 @@ cdef class Matrix(Matrix1):
         self.cache('minpoly', mp)
         return mp
 
+    def minpoly_lin(self, var='x', **kwds):
+        r"""
+        Return the minimal polynomial of ``self``.
+
+        This uses a purely linear-algebraic algorithm (essentially
+        Gaussian elimination, applied to the powers of ``self``).
+        It is slow but it requires no factorization of polynomials.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: A = matrix(GF(9, 'c'), 4, [1,1,0,0, 0,1,0,0, 0,0,5,0, 0,0,0,5])
+            sage: A.minpoly_lin()
+            x^3 + 2*x^2 + 2*x + 1
+            sage: A.minpoly_lin()(A) == 0
+            True
+            sage: CF = CyclotomicField()
+            sage: i = CF.gen(4)
+            sage: A = matrix(CF, 4, [1,1,0,0, 0,1,0,0, 0,0,1+i,0, 0,0,0,-i])
+            sage: A.minpoly_lin()
+            x^4 - 3*x^3 + (4 - E(4))*x^2 + (-3 + 2*E(4))*x + 1 - E(4)
+
+        The default variable name is `x`, but you can specify
+        another name::
+
+            sage: # needs sage.rings.finite_rings
+            sage: A.minpoly_lin('y')
+            y^4 - 3*y^3 + (4 - E(4))*y^2 + (-3 + 2*E(4))*y + 1 - E(4)
+        """
+        f = self.fetch('minpoly')
+        if f is not None:
+            return f.change_variable_name(var)
+
+        n = self.nrows()
+        F = self.base_ring()
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        P = PolynomialRing(F, "x")
+        x = P.gen()
+        from sage.modules.free_module_element import vector
+        from sage.matrix.constructor import matrix
+
+        pow = self**0
+        pows = []
+        for k in range(n+1):
+            pows.append(vector(pow.list()))
+            pow *= self
+            Mpows = matrix(pows)
+            try:
+                cs = Mpows.solve_left(vector(pow.list()))
+            except ValueError:
+                continue
+            mp = x**(k+1) - P.sum(cs[i] * x**i for i in range(k+1))
+            self.cache('minpoly', mp)
+            return mp
+
     def _test_minpoly(self, **options):
         """
         Check that :meth:`minpoly` works.
