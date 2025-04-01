@@ -1667,6 +1667,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         phi_vecs = None
         target = pythonize(1, misc.get("target", None))
         positives = pythonize(2, misc.get("positives", None))
+        if positives!=None:
+            positives = positives[:-2]
         maximize = mult==-1
 
         if sdp_output!=None:
