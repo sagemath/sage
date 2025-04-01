@@ -1516,6 +1516,14 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             [[(0, 0)], [], [(1, 1), (-1, -1), (0, 1), (0, -1), (1, 0), (-1, 0)]]
             sage: A2.short_vectors(3, up_to_sign_flag=True)                             # needs sage.graphs sage.libs.pari
             [[(0, 0)], [], [(1, 1), (0, 1), (1, 0)]]
+
+        TESTS::
+        
+            sage: A2 = IntegralLattice(IntegralLattice('A2').gram_matrix())             # needs sage.graphs
+            sage: A2.short_vectors(3)                                                   # needs sage.graphs sage.libs.pari
+            [[(0, 0)], [], [(1, 1), (-1, -1), (0, 1), (0, -1), (1, 0), (-1, 0)]]
+            sage: A2.short_vectors(3, up_to_sign_flag=True)                             # needs sage.graphs sage.libs.pari
+            [[(0, 0)], [], [(1, 1), (0, 1), (1, 0)]]  
         """
         p, m = self.signature_pair()
         if p * m != 0:
@@ -1525,7 +1533,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             e = -2
         from sage.quadratic_forms.quadratic_form import QuadraticForm
         q = QuadraticForm(e * self.gram_matrix())
-        short = q.short_vector_list_up_to_length(n, *kwargs)
+        short = q.short_vector_list_up_to_length(n, **kwargs)
         return [[self(v * self.basis_matrix()) for v in L] for L in short]
 
     def _fplll_enumerate(self, target=None):
