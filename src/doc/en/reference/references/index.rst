@@ -5652,6 +5652,10 @@ REFERENCES:
               Congressus numerantium, 1994.
               Pages 97--110
 
+.. [Rea1968] Ronald C. Read,
+             An improved method for computing the chromatic polynomials of sparse graphs,
+             Research Report CORR 87-20, C & O Dept. Univ. of Waterloo, 1987.
+
 .. [Rea2004] Nathan Reading.
              *Cambrian Lattices*.
              :arxiv:`math/0402086v2`.
