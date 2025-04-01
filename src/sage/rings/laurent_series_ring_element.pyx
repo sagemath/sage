@@ -332,8 +332,7 @@ cdef class LaurentSeries(AlgebraElement):
         if self.is_zero():
             if self.prec() is infinity:
                 return "0"
-            else:
-                return "O(%s^%s)"%(self._parent.variable_name(),self.prec())
+            return "O(%s^%s)" % (self._parent.variable_name(), self.prec())
         s = " "
         v = self.__u.list()
         valuation = self.__n
@@ -349,14 +348,14 @@ cdef class LaurentSeries(AlgebraElement):
                 if not first:
                     s += " + "
                 if not atomic_repr and (x[1:].find("+") != -1 or x[1:].find("-") != -1):
-                    x = "(%s)"%x
+                    x = "(%s)" % x
                 if e == 1:
-                    var = "*%s"%X
+                    var = "*%s" % X
                 elif e == 0:
                     var = ""
                 else:
-                    var = "*%s^%s"%(X,e)
-                s += "%s%s"%(x,var)
+                    var = "*%s^%s" % (X, e)
+                s += "%s%s" % (x, var)
                 first = False
         s = s.replace(" + -", " - ")
         s = s.replace(" 1*"," ")
@@ -364,13 +363,13 @@ cdef class LaurentSeries(AlgebraElement):
         if self.prec() == 0:
             bigoh = "O(1)"
         elif self.prec() == 1:
-            bigoh = "O(%s)"%self._parent.variable_name()
+            bigoh = "O(%s)" % self._parent.variable_name()
         else:
-            bigoh = "O(%s^%s)"%(self._parent.variable_name(),self.prec())
+            bigoh = "O(%s^%s)" % (self._parent.variable_name(),self.prec())
         if self.prec() != infinity:
             if s == " ":
                 return bigoh
-            s += " + %s"%bigoh
+            s += " + %s" % bigoh
         return s[1:]
 
     def verschiebung(self, n):
@@ -472,20 +471,20 @@ cdef class LaurentSeries(AlgebraElement):
                 if not first:
                     s += " + "
                 if not atomic_repr and e > 0 and (x[1:].find("+") != -1 or x[1:].find("-") != -1):
-                    x = "\\left(%s\\right)"%x
+                    x = "\\left(%s\\right)" % x
                 if e == 1:
-                    var = "|%s"%X
+                    var = "|%s" % X
                 elif e == 0:
                     var = ""
                 elif e > 0:
-                    var = "|%s^{%s}"%(X,e)
+                    var = "|%s^{%s}" % (X, e)
                 if e >= 0:
-                    s += "%s%s"%(x,var)
+                    s += "%s%s" % (x, var)
                 else: # negative e
                     if e == -1:
-                        s += "\\frac{%s}{%s}"%(x, X)
+                        s += "\\frac{%s}{%s}" % (x, X)
                     else:
-                        s += "\\frac{%s}{%s^{%s}}"%(x, X,-e)
+                        s += "\\frac{%s}{%s^{%s}}" % (x, X, -e)
                 first = False
         s = s.replace(" + -", " - ")
         s = s.replace(" 1|"," ")
@@ -496,12 +495,12 @@ cdef class LaurentSeries(AlgebraElement):
             if pr == 0:
                 bigoh = "O(1)"
             elif pr == 1:
-                bigoh = "O(%s)"%(X,)
+                bigoh = "O(%s)" % (X,)
             else:
-                bigoh = "O(%s^{%s})"%(X,pr)
+                bigoh = "O(%s^{%s})" % (X, pr)
             if s == " ":
                 return bigoh
-            s += " + %s"%bigoh
+            s += " + %s" % bigoh
         return s[1:]
 
     def __hash__(self):
@@ -1081,6 +1080,16 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f = 1/(1-t)
             sage: f.truncate_neg(15)
             t^15 + t^16 + t^17 + t^18 + t^19 + O(t^20)
+
+        TESTS:
+
+        Check that :issue:`39710` is fixed::
+
+            sage: S.<t> = LaurentSeriesRing(QQ)
+            sage: (t+t^2).truncate_neg(-1)
+            t + t^2
+            sage: (t+t^2).truncate_neg(-2)
+            t + t^2
         """
         return type(self)(self._parent, self.__u >> (n - self.__n), n)
 

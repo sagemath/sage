@@ -3869,8 +3869,8 @@ class RiemannSurface:
                 ys = []
                 for gi in gis:
                     # This test is a bit clunky, it surely can be made more efficient.
-                    if len(ys):
-                        ers = min([gi(y, r).abs() for y in ys])
+                    if ys:
+                        ers = min(gi(y, r).abs() for y in ys)
                     else:
                         ers = 1
 

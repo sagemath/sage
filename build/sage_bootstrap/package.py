@@ -15,12 +15,11 @@ Sage Packages
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import re
-import os
 import logging
+import os
+import re
 
 from sage_bootstrap.env import SAGE_ROOT
-
 
 log = logging.getLogger()
 
@@ -442,8 +441,6 @@ class Package(object):
         """
         # after a '|', we have order-only build dependencies
         return self.__dependencies.partition('|')[0].strip().split()
-
-    dependencies = dependencies_runtime
 
     @property
     def dependencies_check(self):

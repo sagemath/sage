@@ -18,16 +18,17 @@ Path Semigroups
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.monoids import Monoids
+from sage.categories.semigroups import Semigroups
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.semigroups import Semigroups
-from sage.categories.monoids import Monoids
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
+
 from .paths import QuiverPath
 from .representation import QuiverRep
 
@@ -1131,14 +1132,16 @@ class PathSemigroup(UniqueRepresentation, Parent):
             if len(path) == 1:
                 return [self.element_class(self, path[0], path[0], [])]
             paths = []
-            l = Q.edge_label(path[0], path[1])
-            if isinstance(l, str):
+            ell = Q.edge_label(path[0], path[1])
+            if isinstance(ell, str):
                 for b in _v_to_e(path[1:]):
-                    paths.append(self([(path[0], path[1], l)] + list(b), check=False))
+                    paths.append(self([(path[0], path[1], ell)]
+                                      + list(b), check=False))
             else:
-                for a in l:
+                for a in ell:
                     for b in _v_to_e(path[1:]):
-                        paths.append(self([(path[0], path[1], a)] + list(b), check=False))
+                        paths.append(self([(path[0], path[1], a)]
+                                          + list(b), check=False))
             return paths
 
         # For each vertex path we append the resulting edge paths

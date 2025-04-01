@@ -1270,11 +1270,11 @@ class CubicalComplex(GenericCellComplex):
                 # nonzero via a dictionary.
                 matrix_data = {}
                 col = 0
-                if len(old) and len(current):
+                if old and current:
                     for cube in current:
                         faces = cube.faces_as_pairs()
                         sign = 1
-                        for (upper, lower) in faces:
+                        for upper, lower in faces:
                             # trac 32203: use two "try/except" loops
                             # in case lower is in old but upper is not.
                             try:

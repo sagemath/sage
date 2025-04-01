@@ -3337,7 +3337,7 @@ def HoffmanSingletonGraph():
             D.append(p)
         vv = 'q%s' % (int(p[1]) + 1)
         v = [v[-1] for v in H.neighbors(p) if v[:2] == vv]
-        if len(v):
+        if v:
             s = int(v[0])
         l += 1
     map = H.relabel(range(50), return_map=True)

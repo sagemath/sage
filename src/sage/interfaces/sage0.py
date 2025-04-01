@@ -21,12 +21,11 @@ import pickle
 import re
 import textwrap
 
-from .expect import Expect, ExpectElement, FunctionElement
 import sage.repl.preparse
-
+from sage.interfaces.expect import Expect, ExpectElement, FunctionElement
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.misc.persist import dumps, load
 from sage.misc.instancedoc import instancedoc
+from sage.misc.persist import dumps, load
 
 
 class Sage(ExtraTabCompletion, Expect):
@@ -167,7 +166,7 @@ class Sage(ExtraTabCompletion, Expect):
                 # to avoid problems with locking.
                 '--HistoryManager.hist_file=:memory:',
                 # Disable everything that prints ANSI codes
-                '--colors=NoColor',
+                '--colors=nocolor',
                 '--no-term-title',
                 '--simple-prompt',
             ])
