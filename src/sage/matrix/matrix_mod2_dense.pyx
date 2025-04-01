@@ -2148,18 +2148,18 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         - ``inplace`` -- boolean (default: ``False``); using ``inplace=True``
           will permute the rows and columns of the current matrix
-          according to a doubly lexical ordering. This will modify the matrix.
+          according to a doubly lexical ordering; this will modify the matrix
 
         OUTPUT:
 
-        Returns a pair (``row_ordering``, ``col_ordering``). Each item
-        is a ``PermutationGroupElement`` that represents a doubly lexical
-        ordering of the rows or columns.
+        A pair ``(row_ordering, col_ordering)`` of
+        :class:`~sage.groups.perm_gps.constructor.PermutationGroupElement`
+        that represents a doubly lexical ordering of the rows or columns.
 
         .. SEEALSO::
 
-            - :meth:`~sage.matrix.matrix2.Matrix.permutation_normal_form` --
-              a similar matrix normal form
+            :meth:`~sage.matrix.matrix2.Matrix.permutation_normal_form`;
+            a similar matrix normal form
 
         ALGORITHM:
 
@@ -2204,27 +2204,18 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             ....:                    [0, 0, 0, 1, 1, 1, 0]])
             sage: r, c = A.doubly_lexical_ordering()
             sage: B = A.with_permuted_rows_and_columns(r, c)
-            sage: flag = True
             sage: for i in range(B.ncols()):
             ....:     for j in range(i):
             ....:         for k in reversed(range(B.nrows())):
-            ....:             if B[k][j] > B[k][i]:
-            ....:                 flag = False
-            ....:                 break
+            ....:             assert B[k][j] <= B[k][i]
             ....:             if B[k][j] < B[k][i]:
             ....:                 break
-            sage: flag
-            True
             sage: for i in range(B.nrows()):
             ....:     for j in range(i):
             ....:         for k in reversed(range(B.ncols())):
-            ....:             if B[j][k] > B[i][k]:
-            ....:                 flag = False
-            ....:                 break
+            ....:             assert B[j][k] <= B[i][k]
             ....:             if B[j][k] < B[i][k]:
             ....:                 break
-            sage: flag
-            True
             sage: r, c = A.doubly_lexical_ordering(inplace=True)
             sage: A == B
             True
@@ -2235,25 +2226,26 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: r, c = A.doubly_lexical_ordering(inplace=True)
             Traceback (most recent call last):
             ...
-            TypeError: This matrix is immutable and can thus not be changed.
-             Use inplace=False or create a mutable copy.
+            TypeError: this matrix is immutable;
+             use inplace=False or apply to a mutable copy.
         """
 
         if inplace and self.is_immutable():
-            raise TypeError("This matrix is immutable and can thus not be changed."
-                            " Use inplace=False or create a mutable copy.")
+            raise TypeError("this matrix is immutable;"
+                            " use inplace=False or apply to a mutable copy.")
 
-        partition_rows = [False for _ in range(self._nrows - 1)]
-        partition_num = 1
-        row_swapped = list(range(1, self._nrows + 1))
-        col_swapped = list(range(1, self._ncols + 1))
+        cdef list partition_rows = [False for _ in range(self._nrows - 1)]
+        cdef int partition_num = 1
+        cdef list row_swapped = list(range(1, self._nrows + 1))
+        cdef list col_swapped = list(range(1, self._ncols + 1))
 
         cdef Matrix_mod2_dense A = self if inplace else self.__copy__()
 
+        cdef int i, col, row, partition_i, partition_start, partition_end
+        cdef int largest_col, row_start, row_end
         for i in reversed(range(1, A._ncols + 1)):
-
             # count 1 for each partition and column
-            count1 = [[0 for _ in range(partition_num)] for _ in range(i)]
+            count1 = [[0]*partition_num for _ in range(i)]
             for col in range(i):
                 parition_i = 0
                 for row in reversed(range(A._nrows)):
