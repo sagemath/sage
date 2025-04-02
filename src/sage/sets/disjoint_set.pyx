@@ -67,11 +67,18 @@ from sage.misc.lazy_import import LazyImport
 SetPartition = LazyImport('sage.combinat.set_partition', 'SetPartition')
 
 
-cpdef DisjointSet(arg):
+cpdef DisjointSet(arg=None): # Add default =None
     r"""
-    Construct a disjoint set where each element of ``arg`` is in its
-    own set. If ``arg`` is an integer, then the disjoint set returned is
-    made of the integers from ``0`` to ``arg - 1``.
+    Construct a disjoint set.
+
+    If ``arg`` is ``None`` or not provided, an empty disjoint set is
+    returned.
+
+    If ``arg`` is an integer `n`, the disjoint set returned is
+    made of the integers from ``0`` to ``n - 1``.
+
+    Otherwise, ``arg`` must be an iterable, and each element of ``arg``
+    is put in its own set.
 
     A disjoint-set data structure (sometimes called union-find data structure)
     is a data structure that keeps track of a partitioning of a set into a
@@ -89,9 +96,22 @@ cpdef DisjointSet(arg):
 
     INPUT:
 
-    - ``arg`` -- nonnegative integer or an iterable of hashable objects
+    - ``arg`` -- nonnegative integer, an iterable of hashable objects, or ``None``
 
     EXAMPLES:
+
+    Create an empty disjoint set::
+
+        sage: D = DisjointSet()
+        sage: D
+        {}
+        sage: D.cardinality()
+        0
+        sage: isinstance(D, sage.sets.disjoint_set.DisjointSet_of_hashables)
+        True
+        sage: D.make_set('a')
+        sage: D
+        {{'a'}}
 
     From a nonnegative integer::
 
@@ -109,11 +129,15 @@ cpdef DisjointSet(arg):
 
     From a set partition (see :issue:`38693`)::
 
+        sage: from sage.combinat.set_partition import SetPartition # Lazy import needs explicit import for doctest
         sage: SP = SetPartition(DisjointSet(5))
         sage: DisjointSet(SP)
         {{0}, {1}, {2}, {3}, {4}}
         sage: DisjointSet(SP) == DisjointSet(5)
         True
+        sage: SPEmpty = SetPartition([])
+        sage: DisjointSet(SPEmpty)
+        {}
 
     TESTS::
 
@@ -131,7 +155,7 @@ cpdef DisjointSet(arg):
         ...
         ValueError: arg must be a nonnegative integer (-1 given)
 
-    or an iterable::
+    or an iterable or None::
 
         sage: DisjointSet(4.3)                                                          # needs sage.rings.real_mpfr
         Traceback (most recent call last):
@@ -145,14 +169,24 @@ cpdef DisjointSet(arg):
         ...
         TypeError: unhashable type: 'dict'
     """
+
+    if arg is None:
+        return DisjointSet_of_hashables([]) # Return empty hashable set
+
     if isinstance(arg, (Integer, int)):
         if arg < 0:
             raise ValueError('arg must be a nonnegative integer (%s given)' % arg)
         return DisjointSet_of_integers(arg)
+
     elif isinstance(arg, SetPartition):
-        return DisjointSet(arg.base_set())
+        base = arg.base_set()
+        return DisjointSet([] if base is None else base)
+
     else:
-        return DisjointSet_of_hashables(arg)
+        try:
+            return DisjointSet_of_hashables(arg)
+        except TypeError as e:
+            raise e from None
 
 cdef class DisjointSet_class(SageObject):
     r"""
@@ -841,7 +875,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         cdef int r = <int> OP_find(self._nodes, i)
         return self._int_to_el[r]
 
-    cpdef void union(self, e, f) except *:
+    cpdef void union(self, e, f, bint add_new=False) except *:
         r"""
         Combine the set of ``e`` and the set of ``f`` into one.
 
@@ -851,8 +885,12 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
         INPUT:
 
-        - ``e`` -- element in ``self``
-        - ``f`` -- element in ``self``
+        - ``e`` -- element in ``self`` (or element to add if ``add_new=True``)
+        - ``f`` -- element in ``self`` (or element to add if ``add_new=True``)
+        - ``add_new`` -- boolean (default: ``False``); if ``True``, automatically
+          add ``e`` and/or ``f`` to the disjoint set using ``make_set`` if
+          they are not already present before performing the union. If ``False``,
+          raise a ``KeyError`` if ``e`` or ``f`` are not already in the set.
 
         EXAMPLES::
 
@@ -868,13 +906,76 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: e.union('b', 'e')
             sage: e
             {{'a', 'b', 'c', 'e'}, {'d'}}
-            sage: e.union('a', 2**10)
+
+        Attempting to union non-existent elements fails by default::
+
+            sage: e.union('a', 'z')
             Traceback (most recent call last):
             ...
-            KeyError: 1024
+            KeyError: 'z'
+            sage: e.union('z', 'a') # Check order
+            Traceback (most recent call last):
+            ...
+            KeyError: 'z'
+
+        Using ``add_new=True`` to dynamically add elements::
+
+            sage: D = DisjointSet(['x', 'y'])
+            sage: D.union('x', 'z', add_new=True)
+            sage: D
+            {{'x', 'z'}, {'y'}}
+            sage: D.union('p', 'q', add_new=True)
+            sage: D
+            {{'p', 'q'}, {'x', 'z'}, {'y'}}
+            sage: D.union('y', 'p', add_new=True)
+            sage: D
+            {{'p', 'q', 'y'}, {'x', 'z'}}
+            sage: D.find('q')
+            'p'
+
+        Test with empty initial set::
+            sage: D_empty = DisjointSet()
+            sage: D_empty.union(1, 2, add_new=True)
+            sage: D_empty
+            {{1, 2}}
+            sage: D_empty.union(2, 3, add_new=True)
+            sage: D_empty
+            {{1, 2, 3}}
+            sage: D_empty.union(4, 4, add_new=True) # Add a singleton
+            sage: D_empty
+            {{1, 2, 3}, {4}}
+            sage: D_empty.union(1, 4, add_new=True)
+            sage: D_empty
+            {{1, 2, 3, 4}}
+
+        Default behavior is still enforced::
+            sage: D_empty.union(1, 5) # add_new is False by default
+            Traceback (most recent call last):
+            ...
+            KeyError: 5
         """
-        cdef int i = <int> self._el_to_int[e]
-        cdef int j = <int> self._el_to_int[f]
+
+        cdef int i, j
+
+        try:
+            i = <int> self._el_to_int[e]
+        except KeyError:
+            if add_new:
+                self.make_set(e)
+                i = <int> self._el_to_int[e]
+            else:
+                # Re-raise the original KeyError for clarity
+                raise KeyError(e) from None
+
+        try:
+            j = <int> self._el_to_int[f]
+        except KeyError:
+            if add_new:
+                self.make_set(f)
+                j = <int> self._el_to_int[f]
+            else:
+                raise KeyError(f) from None
+
         OP_join(self._nodes, i, j)
 
     def make_set(self, new_elt=None):
