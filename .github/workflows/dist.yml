@@ -1,4 +1,4 @@
-name: Prepare source distributions and wheels
+name: Deploy release assets
 
 on:
   push:

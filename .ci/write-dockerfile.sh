@@ -1,12 +1,23 @@
 #! /usr/bin/env bash
-set -e
-shopt -s extglob
 ##
 ## Write a Dockerfile for portability testing to stdout.
 ##
 ## This script needs to be run from SAGE_ROOT (root of the Sage repository).
 ## It is called by $SAGE_ROOT/tox.ini for all environments 'tox -e docker-...'
 ##
+## The generated Dockerfile needs Sage source tree directory as context,
+## and builds Sage docker images based on the source tree.
+##
+## Hence this is how to use it:
+##
+##   git worktree add source-tree
+##   docker build source-tree -f Dockerfile ...
+##   git worktree remove source-tree
+##
+## where we assume the current directory is SAGE_ROOT.
+##
+set -e
+shopt -s extglob
 ## Positional arguments:
 ##
 SYSTEM="${1:-debian}"
@@ -15,7 +26,7 @@ WITH_SYSTEM_SPKG="${3:-yes}"
 IGNORE_MISSING_SYSTEM_PACKAGES="${4:-no}"
 EXTRA_SAGE_PACKAGES="${5:-_bootstrap}"
 ##
-## Environment variables that take influence:
+## Environment variables that influence:
 ##
 ## - BOOTSTRAP
 ## - CONFIGURE_ARGS
@@ -274,32 +285,28 @@ cat <<EOF
 
 FROM with-system-packages AS bootstrapped
 #:bootstrapping:
-RUN rm -rf /new /sage/.git
-$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap conftest.py configure_wrapper configure.ac sage .homebrew-build-env tox.ini .gitignore /new/
-$ADD config/config.rpath /new/config/config.rpath
-$ADD src/doc/bootstrap /new/src/doc/bootstrap
-$ADD src/bin /new/src/bin
-$ADD src/pyproject.toml src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt /new/src/
-$ADD m4 /new/m4
-$ADD pkgs /new/pkgs
-$ADD build /new/build
-$ADD .upstream.d /new/.upstream.d
-ADD .ci /.ci
-RUN if [ -d /sage ]; then \\
-        echo "### Incremental build from \$(cat /sage/VERSION.txt)" && \\
-        printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \\
-        printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore && \\
-        if ! (cd /new && /.ci/retrofit-worktree.sh worktree-image /sage); then \\
-            echo "retrofit-worktree.sh failed, falling back to replacing /sage"; \\
-            for a in local logs; do \\
-                if [ -d /sage/\$a ]; then mv /sage/\$a /new/; fi; \\
-            done; \\
-            rm -rf /sage; \\
-            mv /new /sage; \\
-        fi; \\
-    else \\
-        mv /new /sage; \\
-    fi
+RUN rm -rf /source-tree
+$ADD . /source-tree
+RUN <<EOT
+rm -rf /source-tree/.git
+if [ -d /sage ]; then
+  BASE_VERSION=\$(cat /sage/VERSION.txt)
+  if (cd /source-tree && .ci/retrofit-worktree.sh worktree-image /sage); then
+    echo "### Starting incremental build from \$BASE_VERSION"
+  else
+    echo "retrofit-worktree.sh failed..."
+    rm -rf /sage
+    mv /source-tree /sage
+    echo "### Starting build from scratch"
+  fi
+else
+  git config --global user.name "ci-sage workflow"
+  git config --global user.email "ci-sage@example.com"
+  (cd /source-tree && git init && git add -A && git commit --quiet --allow-empty -m "new")
+  mv /source-tree /sage
+  echo "### Starting build from scratch"
+fi
+EOT
 WORKDIR /sage
 ARG BOOTSTRAP="${BOOTSTRAP-./bootstrap}"
 $RUN sh -x -c "\${BOOTSTRAP}"$ENDRUN$THEN_SAVE_STATUS
@@ -346,18 +353,7 @@ ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!python3,!cysignals,!linbox,!ppl,!cmake,!rpy2,!sage_sws2rst"
-$ADD .gitignore /new/.gitignore
-$ADD src /new/src
-RUN cd /new && rm -rf .git && \\
-    if /.ci/retrofit-worktree.sh worktree-pre /sage; then \\
-        cd /sage && touch configure build/make/Makefile; \\
-    else \\
-        echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"; \\
-        rm -rf /sage/src; \\
-        mv src /sage/src; \\
-        cd /sage && ./bootstrap && ./config.status; \\
-    fi; \\
-    cd /sage && rm -rf .git; rm -rf /new || echo "(error ignored)"
+RUN cd /sage && touch configure build/make/Makefile
 ARG TARGETS="build"
 $RUN$CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS}$ENDRUN$THEN_SAVE_STATUS
 

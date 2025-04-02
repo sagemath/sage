@@ -1,1 +1,1 @@
-_bootstrap git pytest pytest_xdist github_cli
+git pytest pytest_xdist github_cli
