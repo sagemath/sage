@@ -151,22 +151,17 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.degree()
             3
 
-        The zero matrix has degree ``-1``::
+        A zero matrix (including zero matrices) has degree ``-1``::
 
             sage: M = matrix(pR, 2, 3)
             sage: M.degree()
             -1
-
-        For an empty matrix, the degree is not defined::
-
             sage: M = matrix(pR, 3, 0)
             sage: M.degree()
-            Traceback (most recent call last):
-            ...
-            ValueError: empty matrix does not have a degree
+            -1
         """
         if self.nrows() == 0 or self.ncols() == 0:
-            raise ValueError('empty matrix does not have a degree')
+            return -1
         return max(self[i, j].degree()
                    for i in range(self.nrows()) for j in range(self.ncols()))
 
@@ -231,13 +226,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         from sage.matrix.constructor import matrix
         zero_degree = min(shifts) - 1
         if row_wise:
-            return matrix( ZZ, [[ self[i,j].degree() + shifts[j]
+            return matrix(ZZ, [[self[i,j].degree() + shifts[j]
                 if self[i,j] != 0 else zero_degree
-                for j in range(self.ncols()) ] for i in range(self.nrows())] )
+                for j in range(self.ncols()) ] for i in range(self.nrows())])
         else:
-            return matrix( ZZ, [[ self[i,j].degree() + shifts[i]
+            return matrix(ZZ, [[self[i,j].degree() + shifts[i]
                 if self[i,j] != 0 else zero_degree
-                for j in range(self.ncols()) ] for i in range(self.nrows())] )
+                for j in range(self.ncols()) ] for i in range(self.nrows())])
 
     def constant_matrix(self):
         r"""
@@ -261,7 +256,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [4 1 5 6]
         """
         from sage.matrix.constructor import matrix
-        return matrix([[self[i,j].constant_coefficient()
+        return matrix(self.base_ring().base_ring(), [[self[i,j].constant_coefficient()
             for j in range(self.ncols())] for i in range(self.nrows())])
 
     def is_constant(self):
@@ -792,13 +787,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         """
         if d <= 0:
             raise ValueError("the precision must be positive")
+        if self.nrows() != self.ncols():
+            raise ArithmeticError("the input matrix must be square")
         try:
             inv_trunc = self.constant_matrix().inverse()
         except ZeroDivisionError:
             raise ZeroDivisionError("the constant matrix term self(0)"
                                     " must be invertible")
-        except ArithmeticError:
-            raise ArithmeticError("the input matrix must be square")
 
         # in comments below, A=self, B=inv_trunc
         # at this point, B = A^{-1} mod x
@@ -907,16 +902,68 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         .. SEEALSO::
 
             :meth:`solve_right_series_trunc` .
+
+        TESTS::
+
+            sage: ring.<x> = QQ[]
+            sage: A = matrix(ring, 0, 5)
+            sage: B = vector(ring, [1, 0, x**2+1, 0, x])
+            sage: A.solve_left_series_trunc(B, 3)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+
+            sage: B = vector(ring, 5)
+            sage: A.solve_left_series_trunc(B, 3)
+            ()
+
+            sage: A = matrix(ring, 5, 0)
+            sage: B = vector(ring, 0)
+            sage: A.solve_left_series_trunc(B, 3)
+            (0, 0, 0, 0, 0)
+
+            sage: A = matrix(ring, 0, 5)
+            sage: B = matrix(ring, 2, 5, [[1, 0, x**2+1, 0, x], [0, 0, 0, 0, 0]])
+            sage: A.solve_left_series_trunc(B, 3)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+
+            sage: B = matrix(ring, 2, 5)
+            sage: A.solve_left_series_trunc(B, 3)
+            []
+
+            sage: A = matrix(ring, 5, 0)
+            sage: B = matrix(ring, 2, 0)
+            sage: A.solve_left_series_trunc(B, 3)
+            [0 0 0 0 0]
+            [0 0 0 0 0]
         """
         from sage.structure.element import Vector
+        from sage.matrix.constructor import matrix
+        from sage.matrix.constructor import vector
         if isinstance(B, Vector):
             if self.ncols() != B.degree():
                 raise ValueError("number of columns of self must equal "
                                  "degree of right-hand side")
+            if self.ncols() == 0:
+                return vector(self.base_ring(), self.nrows())
+            if self.nrows() == 0:
+                if not B.is_zero():
+                    raise ValueError("matrix equation has no solutions")
+                else:
+                    return vector(self.base_ring(), 0)
         else:
             if self.ncols() != B.ncols():
                 raise ValueError("number of columns of self must equal "
                                  "number of columns of right-hand side")
+            if self.ncols() == 0:
+                return matrix(self.base_ring(), B.nrows(), self.nrows())
+            if self.nrows() == 0:
+                if not B.is_zero():
+                    raise ValueError("matrix equation has no solutions")
+                else:
+                    return matrix(self.base_ring(), B.nrows(), 0)
 
         if d <= 0:
             raise ValueError("the precision must be positive")
@@ -941,7 +988,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         except (ZeroDivisionError,ArithmeticError):
             # general case (possibly no solution)
             m = self.nrows()
-            from sage.matrix.constructor import matrix
             if isinstance(B, Vector):
                 F = matrix.block([[self],[-B.row()]])
                 s = [0]*m + [d]
@@ -1120,24 +1166,27 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.row_degrees(shifts=[-2,1,2])
             [2, 1, -3]
 
-        The row degrees of an empty matrix (`0\times n` or `m\times 0`) is
-        not defined::
+        The row degrees of a row-empty matrix `0\times n` is an empty list,
+        while those of a column-empty matrix `m\times 0` is a list of `m` times
+        `-1`::
 
             sage: M = matrix(pR, 0, 3)
             sage: M.row_degrees()
-            Traceback (most recent call last):
-            ...
-            ValueError: empty matrix does not have row degrees
+            []
+            sage: M.row_degrees(shifts=[1,2,3])
+            []
 
             sage: M = matrix(pR, 3, 0)
             sage: M.row_degrees()
-            Traceback (most recent call last):
-            ...
-            ValueError: empty matrix does not have row degrees
+            [-1, -1, -1]
+            sage: M.row_degrees(shifts=[])
+            [-1, -1, -1]
         """
         self._check_shift_dimension(shifts,row_wise=True)
-        if self.ncols() == 0 or self.nrows() == 0:
-            raise ValueError('empty matrix does not have row degrees')
+        if self.nrows() == 0:
+            return []
+        if self.ncols() == 0:  # shifts is None (or empty list [])
+            return [-1]*self.nrows()
         if shifts is None:
             return [ max([ self[i,j].degree() for j in range(self.ncols()) ])
                     for i in range(self.nrows()) ]
@@ -1183,28 +1232,31 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.column_degrees(shifts=[-2,1])
             [4, -3, -2]
 
-        The column degrees of an empty matrix (`0\times n` or `m\times 0`) is
-        not defined::
-
-            sage: M = matrix(pR, 0, 3)
-            sage: M.column_degrees()
-            Traceback (most recent call last):
-            ...
-            ValueError: empty matrix does not have column degrees
+        The columns degrees of a column-empty matrix `m\times 0` is an empty
+        list, while those of a row-empty matrix `0\times n` is a list of `n`
+        times `-1`::
 
             sage: M = matrix(pR, 3, 0)
             sage: M.column_degrees()
-            Traceback (most recent call last):
-            ...
-            ValueError: empty matrix does not have column degrees
+            []
+            sage: M.column_degrees(shifts=[1,2,3])
+            []
+
+            sage: M = matrix(pR, 0, 3)
+            sage: M.column_degrees()
+            [-1, -1, -1]
+            sage: M.column_degrees(shifts=[])
+            [-1, -1, -1]
 
         .. SEEALSO::
 
             The documentation of :meth:`row_degrees`.
         """
         self._check_shift_dimension(shifts,row_wise=False)
-        if self.ncols() == 0 or self.nrows() == 0:
-            raise ValueError('empty matrix does not have column degrees')
+        if self.nrows() == 0:  # shifts is None (or empty list [])
+            return [-1]*self.ncols()
+        if self.ncols() == 0:
+            return []
         if shifts is None:
             return [ max([ self[i,j].degree() for i in range(self.nrows()) ])
                     for j in range(self.ncols()) ]
@@ -1274,31 +1326,40 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.leading_matrix(shifts=[2,0], row_wise=False)
             [3 0 1]
             [1 0 0]
+
+        TESTS::
+
+            sage: M = matrix(pR, 0, 3)
+            sage: M.leading_matrix(shifts=[1,2,3])
+            []
+
+            sage: M.leading_matrix(shifts=[], row_wise=False)
+            []
         """
         self._check_shift_dimension(shifts,row_wise)
         from sage.matrix.constructor import matrix
         if row_wise:
             row_degrees = self.row_degrees(shifts)
             if shifts is None:
-                return matrix([ [ self[i,j].leading_coefficient()
+                return matrix([[self[i,j].leading_coefficient()
                     if self[i,j].degree() == row_degrees[i] else 0
-                    for j in range(self.ncols()) ]
-                    for i in range(self.nrows()) ])
-            return matrix([ [ self[i,j].leading_coefficient()
+                    for j in range(self.ncols())]
+                    for i in range(self.nrows())])
+            return matrix([[self[i,j].leading_coefficient()
                 if self[i,j].degree() + shifts[j] == row_degrees[i] else 0
-                for j in range(self.ncols()) ]
-                for i in range(self.nrows()) ])
+                for j in range(self.ncols())]
+                for i in range(self.nrows())])
         else:
             column_degrees = self.column_degrees(shifts)
             if shifts is None:
-                return matrix([ [ self[i,j].leading_coefficient()
+                return matrix([[self[i,j].leading_coefficient()
                     if self[i,j].degree() == column_degrees[j] else 0
-                    for j in range(self.ncols()) ]
-                    for i in range(self.nrows()) ])
-            return matrix([ [ self[i,j].leading_coefficient()
+                    for j in range(self.ncols())]
+                    for i in range(self.nrows())])
+            return matrix([[self[i,j].leading_coefficient()
                 if self[i,j].degree() + shifts[i] == column_degrees[j] else 0
-                for j in range(self.ncols()) ]
-                for i in range(self.nrows()) ])
+                for j in range(self.ncols())]
+                for i in range(self.nrows())])
 
     def _is_empty_popov(self, row_wise=True, include_zero_vectors=True):
         r"""
@@ -1509,26 +1570,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         or `m\times 0`) is not defined::
 
             sage: M = matrix(pR, 0, 3)
-            sage: M.leading_positions()
-            Traceback (most recent call last):
-            ...
-            ValueError: empty matrix does not have leading positions
+            sage: M.leading_positions(return_degree=True)
+            ([], [])
 
-            sage: M.leading_positions(row_wise=False)
-            Traceback (most recent call last):
-            ...
-            ValueError: empty matrix does not have leading positions
-
-            sage: M = matrix(pR, 3, 0)
-            sage: M.leading_positions(row_wise=False)
-            Traceback (most recent call last):
-            ...
-            ValueError: empty matrix does not have leading positions
+            sage: M.leading_positions(shifts=[], row_wise=False, return_degree=True)
+            ([-1, -1, -1], [-1, -1, -1])
         """
         self._check_shift_dimension(shifts,row_wise)
-
-        if self.ncols() == 0 or self.nrows() == 0:
-            raise ValueError('empty matrix does not have leading positions')
 
         if row_wise:
             row_degrees = self.row_degrees(shifts)
@@ -1538,7 +1586,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                     (self[i,j].degree() == row_degrees[i]) ] ))
                     for i in range(self.nrows()) ]
             else:
-                zero_degree=min(shifts) - 1
+                zero_degree = -1
+                if len(shifts) > 0:
+                    zero_degree += min(shifts)
                 pivot_index = [ (-1 if row_degrees[i] == zero_degree else
                     max( [ j for j in range(self.ncols()) if
                     (self[i,j] != 0 and
@@ -1557,7 +1607,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 (self[i,j].degree() == column_degrees[j]) ] ))
                 for j in range(self.ncols()) ]
         else:
-            zero_degree=min(shifts) - 1
+            zero_degree = -1
+            if len(shifts) > 0:
+                zero_degree += min(shifts)
             pivot_index = [ (-1 if column_degrees[j] == zero_degree else
                 max( [ i for i in range(self.nrows()) if
                 (self[i,j] != 0 and
@@ -1928,7 +1980,22 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         .. SEEALSO::
 
             :meth:`hermite_form` .
+
+        TESTS::
+
+            sage: M = matrix(pR, 0, 3)
+            sage: M.is_hermite()
+            True
+
+            sage: M.is_hermite(row_wise=False)
+            True
+
+            sage: M.is_hermite(row_wise=False, include_zero_vectors=False)
+            False
         """
+        # empty matrices
+        if self.ncols() == 0 or self.nrows() == 0:
+            return self._is_empty_popov(row_wise, include_zero_vectors=include_zero_vectors)
         # shift for lower echelon
         shift = [j*(self.degree() + 1) for j in range(self.ncols())] \
                 if row_wise else \
@@ -2057,6 +2124,20 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [                5*x + 5                       2                       6]
             sage: M*U[:,:2] == P and (M*U[:,2]).is_zero()
             True
+
+        Empty matrices are supported::
+
+            sage: M = matrix.random(pR, 0, 3)
+            sage: M.weak_popov_form()
+            []
+            sage: M.weak_popov_form(transformation=True)
+            ([], [])
+            sage: M.weak_popov_form(row_wise=False, transformation=True)
+            (
+                [1 0 0]
+                [0 1 0]
+            [], [0 0 1]
+            )
 
         .. SEEALSO::
 
@@ -2861,6 +2942,36 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             :meth:`left_quo_rem` ,
             :meth:`reduce` .
+
+        TESTS::
+
+            sage: M = matrix(pR, 0, 3)
+            sage: Q,R = M.right_quo_rem(matrix(pR, 0, 3)); Q,R
+            ([], [])
+            sage: Q.dimensions(), R.dimensions()
+            ((0, 0), (0, 3))
+
+            sage: Q,R = M.right_quo_rem(matrix.identity(pR, 3)); Q,R
+            ([], [])
+            sage: Q.dimensions(), R.dimensions()
+            ((0, 3), (0, 3))
+
+            sage: Q,R = M.right_quo_rem(matrix.ones(pR, 4, 3)); Q,R
+            ([], [])
+            sage: Q.dimensions(), R.dimensions()
+            ((0, 4), (0, 3))
+
+            sage: M = matrix(pR, 3, 0)
+            sage: M.right_quo_rem(matrix(pR, 4, 0))
+            (
+            [0 0 0 0]
+            [0 0 0 0]
+            [0 0 0 0], []
+            )
+
+            sage: M = matrix(pR, 0, 0)
+            sage: M.right_quo_rem(matrix(pR, 0, 0))
+            ([], [])
         """
         if self.ncols() != B.ncols():
             raise ValueError("column dimension of self should be the"
@@ -2941,7 +3052,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # Step 0: find parameter d  (delta in above reference)
         cdegA = self.column_degrees() # zero columns of A --> entries -1 in cdegA
         cdeg = B.column_degrees()  # all nonnegative since column reduced
-        d = max([cdegA[i]-cdeg[i]+1 for i in range(B.nrows())])
+        d = -1 if B.nrows() == 0 else max([cdegA[i]-cdeg[i]+1 for i in range(B.nrows())])
         if d<=0: # A already reduced modulo B, quotient is zero
             return (self.parent().zero().__copy__(), self)
         # Step 1: reverse input matrices
@@ -4585,6 +4696,20 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         .. SEEALSO::
 
             :meth:`minimal_approximant_basis`, :meth:`minimal_interpolant_basis`
+
+        TESTS::
+
+            sage: M = x**3 + matrix([[6*x**2, 2, x], [2, 2, 6*x], [x**2, 3, 6]])
+            sage: matrix(pR, 0, 3).minimal_relation_basis(M)
+            []
+
+            sage: M = matrix(pR, 0, 0)
+            sage: matrix(pR, 2, 0).minimal_relation_basis(M)
+            [1 0]
+            [0 1]
+
+            sage: matrix(pR, 0, 0).minimal_relation_basis(M)
+            []
         """
         from sage.matrix.constructor import matrix  # for matrix.block
 
@@ -4632,7 +4757,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # must have maximum entry at most min(shifts)
         # [see Lemma 4.2, Neiger-Vu, Computing Canonical Bases of Modules of
         # Univariate Relations, Proc. ISSAC 2017]
-        min_shift = min(shifts)
+        min_shift = 0 if len(shifts) == 0 else min(shifts)
         if row_wise:
             extended_shifts = [s - min_shift for s in shifts] + [0]*n
         else:
