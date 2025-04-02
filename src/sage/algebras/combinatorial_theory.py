@@ -148,7 +148,7 @@ import itertools
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.all import QQ, NN, Integer, ZZ, infinity, RR, RDF
+from sage.all import QQ, NN, Integer, ZZ, infinity, RR, RDF, RealField
 from sage.algebras.flag import BuiltFlag, ExoticFlag, Pattern, inductive_generator, overlap_generator
 from sage.algebras.flag_algebras import FlagAlgebra, FlagAlgebraElement
 
@@ -158,6 +158,7 @@ from sage.all import vector, matrix, diagonal_matrix
 from sage.misc.prandom import randint
 from sage.arith.misc import falling_factorial, binomial, factorial
 from sage.misc.functional import round
+from sage.functions.other import ceil
 from functools import lru_cache
 
 import hashlib
@@ -2143,7 +2144,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
 
     def external_optimize(self, target_element, target_size, maximize=True, 
                           positives=None, construction=None, file=None, 
-                          specific_ftype=None):
+                          specific_ftype=None, **params):
         if (not isinstance(file, str)) or file=="":
             raise ValueError("File name is invalid.")
         if not file.endswith(".dat-s"):
@@ -2212,19 +2213,18 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             )
         self.fprint("Constraints finished")
 
+        #
+        # Writing the data to a file
+        #
 
-        #
-        # Make sdp data integer and write it to a file
-        #
-        #sdp_data = self._make_sdp_data_integer(sdp_data)
-        
+        precision = ceil(params.get("precision", 20) * log(10, 2).n())
+        R = RealField(prec=precision, sci_not=True)
         with open(file, "w") as file:
             block_sizes, target, mat_inds, mat_vals = sdp_data
-
             file.write("{}\n{}\n".format(len(target), len(block_sizes)))
             file.write(" ".join(map(str, block_sizes)) + "\n")
             for xx in target:
-                file.write("%.10e " % xx)
+                file.write(str(R(xx)) + " ")
             file.write("\n")
 
             for ii in range(len(mat_vals)):
@@ -2233,7 +2233,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     mat_inds[ii*4 + 1],
                     mat_inds[ii*4 + 2],
                     mat_inds[ii*4 + 3],
-                    "%.10e" % mat_vals[ii]
+                    str(R(mat_vals[ii]))
                 ))
 
     def verify_certificate(self, file_or_cert, target_element=None, target_size=None, 
