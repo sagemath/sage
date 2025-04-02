@@ -1518,12 +1518,13 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             [[(0, 0)], [], [(1, 1), (0, 1), (1, 0)]]
 
         TESTS::
-        
-            sage: A2 = IntegralLattice(IntegralLattice('A2').gram_matrix())             # needs sage.graphs
-            sage: A2.short_vectors(3)                                                   # needs sage.graphs sage.libs.pari
+
+        Check that keyword arguments are passed to :meth:`sage.quadratic_forms.short_vector_list_up_to_length`
+        (:issue:`39848`)::
+
+            sage: A2 = IntegralLattice('A2')                                            # needs sage.graphs
+            sage: A2.short_vectors(3, up_to_sign_flag=False)                            # needs sage.graphs sage.libs.pari
             [[(0, 0)], [], [(1, 1), (-1, -1), (0, 1), (0, -1), (1, 0), (-1, 0)]]
-            sage: A2.short_vectors(3, up_to_sign_flag=True)                             # needs sage.graphs sage.libs.pari
-            [[(0, 0)], [], [(1, 1), (0, 1), (1, 0)]]  
         """
         p, m = self.signature_pair()
         if p * m != 0:
