@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 SageMath version 10.6.rc1, Release Date: 2025-03-27
+=======
+SageMath version 10.7.beta0, Release Date: 2025-04-02
+>>>>>>> 871ba9daed15374d6b2ff1c533970f44b70f21e9
