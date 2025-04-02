@@ -1517,7 +1517,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: A2.short_vectors(3, up_to_sign_flag=True)                             # needs sage.graphs sage.libs.pari
             [[(0, 0)], [], [(1, 1), (0, 1), (1, 0)]]
 
-        TESTS::
+        TESTS:
 
         Check that keyword arguments are passed to :meth:`sage.quadratic_forms.short_vector_list_up_to_length`
         (:issue:`39848`)::
