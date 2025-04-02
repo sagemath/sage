@@ -2238,7 +2238,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: B.doubly_lexical_ordering()
             ((), ())
         """
-
         if inplace and self.is_immutable():
             raise TypeError("this matrix is immutable;"
                             " use inplace=False or apply to a mutable copy.")
