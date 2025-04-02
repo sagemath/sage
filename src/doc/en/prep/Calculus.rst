@@ -77,7 +77,7 @@ What is the limit of this function as :math:`x` approaches :math:`1`?
 ::
 
     sage: lim(f,x=1)
-    x |--> 2
+    2
 
 Sage gives the answer we expect.  The syntax for limits is pretty
 straightforward, though it may differ slightly from that of other
@@ -108,8 +108,8 @@ The syntax uses the extra  *keyword*  ``dir``.
 ::
 
     sage: lim(f,x=1,dir='-'); lim(f,x=1,dir='right'); f(1)
-    x |--> 2
-    x |--> 2
+    2
+    2
     2
 
 By comparing with :math:`f(1)`, we see that :math:`f(x)` is continuous

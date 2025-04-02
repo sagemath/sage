@@ -1215,9 +1215,10 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
         sage: f.limit(x, 5)
         7776/3125
 
-    The positional `limit(expr, v, a)` syntax is particularly useful when
-    the limit variable `v` is an indexed variable or another expression
-    that cannot be used as a keyword argument (fixes :issue:`38761`)::
+    The positional ``limit(expr, v, a)`` syntax is particularly useful 
+    when the limit variable ``v`` is an indexed variable or another 
+    expression that cannot be used as a keyword argument 
+    (fixes :issue:`38761`)::
 
         sage: y = var('y', n=3)
         sage: g = sum(y); g
