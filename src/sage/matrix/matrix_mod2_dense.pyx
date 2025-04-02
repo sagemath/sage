@@ -2228,11 +2228,28 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             ...
             TypeError: this matrix is immutable;
              use inplace=False or apply to a mutable copy.
+
+        The algorithm works collectly for a matrix with nrows=0 or ncols=0::
+
+            sage: A = Matrix(GF(2), 0, 2, [])
+            sage: A.doubly_lexical_ordering()
+            ((), ())
+            sage: B = Matrix(GF(2), 2, 0, [])
+            sage: B.doubly_lexical_ordering()
+            ((), ())
         """
 
         if inplace and self.is_immutable():
             raise TypeError("this matrix is immutable;"
                             " use inplace=False or apply to a mutable copy.")
+
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.groups.perm_gps.permgroup_element import make_permgroup_element_v2
+        symmetric_group_nrows = SymmetricGroup(self._nrows)
+        symmetric_group_ncols = SymmetricGroup(self._ncols)
+
+        if self._nrows == 0 or self._ncols == 0:
+            return symmetric_group_nrows.one(), symmetric_group_ncols.one()
 
         cdef list partition_rows = [False for _ in range(self._nrows - 1)]
         cdef int partition_num = 1
@@ -2285,10 +2302,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             A.swap_columns_c(largest_col, i - 1)
             col_swapped[largest_col], col_swapped[i - 1] = col_swapped[i - 1], col_swapped[largest_col]
 
-        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-        from sage.groups.perm_gps.permgroup_element import make_permgroup_element_v2
-        symmetric_group_nrows = SymmetricGroup(self._nrows)
-        symmetric_group_ncols = SymmetricGroup(self._ncols)
         row_ordering = make_permgroup_element_v2(symmetric_group_nrows, row_swapped, symmetric_group_nrows.domain())
         col_ordering = make_permgroup_element_v2(symmetric_group_ncols, col_swapped, symmetric_group_ncols.domain())
 
