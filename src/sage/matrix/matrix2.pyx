@@ -7089,7 +7089,8 @@ cdef class Matrix(Matrix1):
           * ``'flint'``
           * ``'mpmath'``
           * ``'pari'``
-          * ``'scipy'`` - only supported for matrices over :class:`RDF` and :class:`CDF`
+          * ``'scipy'`` - only supported for matrices over :class:`RDF <.RealDoubleField_class>`
+            and :class:`CDF <.ComplexDoubleField_class>`
 
         OUTPUT:
 
