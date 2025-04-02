@@ -1643,11 +1643,16 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
     else:
         raise ValueError("Unknown algorithm: %s" % effective_algorithm)
 
+    original_parent = ex.parent()
+
     try:
-        return SR(l)
-    except TypeError:
-        # If conversion fails returning the raw object
-        return l
+        return original_parent(l)
+    except (TypeError, ValueError):
+        try:
+            return SR(l)
+        except TypeError:
+            return l
+
 
 
 # lim is alias for limit
@@ -1656,7 +1661,7 @@ lim = limit
 
 def mma_free_limit(expression, v, a, dir=None):
     """
-    Limit using Mathematica's online interface.
+    Limit using Mathematica's online interface (WolframAlpha).
 
     INPUT:
 
@@ -1664,26 +1669,50 @@ def mma_free_limit(expression, v, a, dir=None):
     - ``v`` -- variable
     - ``a`` -- value where the variable goes to
     - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (default: ``None``)
+      Can also use 'plus', 'right', 'above' for '+' and
+      'minus', 'left', 'below' for '-'.
+
+    OUTPUT:
+
+    A symbolic expression representing the limit, constructed in the
+    same parent ring as the input ``expression`` if possible.
 
     EXAMPLES::
 
         sage: from sage.calculus.calculus import mma_free_limit # Needs to be imported for direct test
         sage: x = var('x')
-        sage: mma_free_limit(sin(x)/x, x, a=0) # optional - internet
+        sage: mma_free_limit(sin(x)/x, x, 0) # optional - internet
         1
 
     Another simple limit::
 
-        sage: mma_free_limit(exp(-x), x, a=oo) # optional - internet
+        sage: mma_free_limit(exp(-x), x, oo) # optional - internet
         0
+
+    Test directional limit::
+        sage: mma_free_limit(1/x, x, 0, dir='+') # optional - internet
+        +Infinity
+
+    Test with callable function (should return callable if result is not constant):
+        sage: t = var('t')
+        sage: f(x) = x*t
+        sage: mma_free_limit(f, x, 5) # optional - internet
+        x |--> 5*t
+
+    Test with callable function resulting in constant (should return constant callable):
+        sage: g(x) = x^2 + 1
+        sage: mma_free_limit(g, x, 2) # optional - internet
+        x |--> 5
     """
-    from sage.interfaces.mathematica import request_wolfram_alpha, parse_moutput_from_json, symbolic_expression_from_mathematica_string
+    original_parent = expression.parent()
+
     dir_plus = ['plus', '+', 'above', 'right']
     dir_minus = ['minus', '-', 'below', 'left']
+
     try:
         math_expr = expression._mathematica_().name()
     except AttributeError:
-        math_expr = str(expression._mathematica_()) # Fallback if no .name()
+        math_expr = str(expression._mathematica_())
 
     try:
         variable = v._mathematica_().name()
@@ -1695,7 +1724,7 @@ def mma_free_limit(expression, v, a, dir=None):
     except AttributeError:
         limit_point = str(a._mathematica_())
 
-
+    input_str = None
     if dir is None:
         input_str = "Limit[{},{} -> {}]".format(math_expr, variable, limit_point)
     elif dir in dir_plus:
@@ -1709,11 +1738,23 @@ def mma_free_limit(expression, v, a, dir=None):
         raise ValueError("dir must be one of " + ", ".join(map(repr, dir_both)))
 
     json_page_data = request_wolfram_alpha(input_str)
+
     all_outputs = parse_moutput_from_json(json_page_data)
     if not all_outputs:
         raise ValueError("no outputs found in the answer from Wolfram Alpha for input: " + input_str)
-    first_output = all_outputs[0]
-    return SR(symbolic_expression_from_mathematica_string(first_output))
+
+    first_output_mathematica_string = all_outputs[0]
+
+    sage_result_object = symbolic_expression_from_mathematica_string(first_output_mathematica_string)
+
+    try:
+        return original_parent(sage_result_object)
+    except (TypeError, ValueError):
+        try:
+            return SR(sage_result_object)
+        except TypeError:
+             return sage_result_object
+
 
 ###################################################################
 # Laplace transform
