@@ -151,7 +151,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.degree()
             3
 
-        A zero matrix (including zero matrices) has degree ``-1``::
+        A zero matrix (including empty matrices) has degree ``-1``::
 
             sage: M = matrix(pR, 2, 3)
             sage: M.degree()
