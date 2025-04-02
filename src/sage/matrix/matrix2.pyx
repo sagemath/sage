@@ -7082,9 +7082,14 @@ cdef class Matrix(Matrix1):
 
         - ``extend`` -- boolean (default: ``True``)
 
-        - ``algorithm`` -- string (default: ``None``); the algorithm, options are
-          ``'sage'``, ``'flint'``, ``'mpmath'``, ``'pari'``, ``'scipy'``; if ``None``, the
-          algorithm is chosen automatically (``'scipy'`` is only supported for matrices over ``RDF`` or ``CDF``)
+        - ``algorithm`` -- string (default: ``None``); if ``None``, then it is
+          chosen automatically; options are:
+
+          * ``'sage'``
+          * ``'flint'``
+          * ``'mpmath'``
+          * ``'pari'``
+          * ``'scipy'`` - only supported for matrices over :class:`RDF` and :class:`CDF`
 
         OUTPUT:
 
