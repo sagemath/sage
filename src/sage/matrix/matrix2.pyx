@@ -7089,8 +7089,8 @@ cdef class Matrix(Matrix1):
           * ``'flint'``
           * ``'mpmath'``
           * ``'pari'``
-          * ``'scipy'`` - only supported for matrices over :class:`RDF <.RealDoubleField_class>`
-            and :class:`CDF <.ComplexDoubleField_class>`
+          * ``'scipy'`` - only supported for matrices over :class:`RDF <sage.rings.real_double.RealDoubleField_class>`
+            and :class:`CDF <sage.rings.complex_double.ComplexDoubleField_class>`
 
         OUTPUT:
 
