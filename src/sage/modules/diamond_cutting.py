@@ -250,6 +250,18 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         sage: V = calculate_voronoi_cell(matrix([[1, 0], [0, 1]]))
         sage: V.volume()
         1
+
+    TESTS:
+
+    Verify that :issue:`39507` is fixed::
+
+        sage: from sage.modules.free_module_integer import IntegerLattice
+        sage: v = vector(ZZ, [1,1,1,-1])
+        sage: L = IntegerLattice([v])
+        sage: print(v in L)
+        True
+        sage: print(L.closest_vector(v))
+        (1, 1, 1, -1)
     """
     dim = basis.dimensions()
     artificial_length = None
@@ -258,8 +270,13 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         def approx_norm(v):
             r, r1 = (v.inner_product(v)).sqrtrem()
             return r + (r1 > 0)
+        from sage.rings.rational_field import QQ
+        additional_vectors = (QQ**dim[1]).subspace(basis).complement().basis()
+        for v in additional_vectors:
+            v *= v.denominator()
+        additional_vectors = matrix(additional_vectors)
         artificial_length = max(approx_norm(v) for v in basis) * 2
-        additional_vectors = identity_matrix(dim[1]) * artificial_length
+        additional_vectors *= artificial_length
         basis = basis.stack(additional_vectors)
         # LLL-reduce to get quadratic matrix
         basis = basis.LLL()
