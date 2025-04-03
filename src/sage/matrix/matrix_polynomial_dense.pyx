@@ -4757,7 +4757,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # must have maximum entry at most min(shifts)
         # [see Lemma 4.2, Neiger-Vu, Computing Canonical Bases of Modules of
         # Univariate Relations, Proc. ISSAC 2017]
-        min_shift = 0 if len(shifts) == 0 else min(shifts)
+        min_shift = min(shifts, default=0)
         if row_wise:
             extended_shifts = [s - min_shift for s in shifts] + [0]*n
         else:
