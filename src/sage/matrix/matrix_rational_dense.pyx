@@ -1499,7 +1499,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         - ``algorithm`` -- an optional specification of an algorithm. One of
 
-          - ``None``: (default) uses flint,
+          - ``None``: (default) try to pick the best choice,
 
           - ``'flint'``: use flint library
             `function <https://flintlib.org/doc/fmpq_mat.html#c.fmpq_mat_rref>`_,
@@ -1569,7 +1569,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         self.check_mutability()
 
         if algorithm is None:
-            algorithm = 'flint'
+            algorithm = 'flint_multimodular'
 
         if algorithm in ('flint', 'flint_classical', 'flint_multimodular', 'flint_fflu'):
             pivots = self._echelonize_flint(algorithm)
