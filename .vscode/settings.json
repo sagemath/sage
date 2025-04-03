@@ -108,7 +108,9 @@
         "zmax",
         "zmin"
     ],
-    "editor.formatOnType": true,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
     "esbonio.sphinx.confDir": "",
     // Don't update the settings.json file with values inferred from Meson (we provide them manually)
     "mesonbuild.modifySettings": false,
