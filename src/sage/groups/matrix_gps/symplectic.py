@@ -128,10 +128,33 @@ def Sp(n, R, var='a', invariant_form=None):
         [-1  0  0  0]
         [ 0 -2  0  0]
 
-        sage: Sp(4,3, invariant_form=[[0,0,0,1],[0,0,1,0],[0,2,0,0], [2,0,0,0]])
+        sage: # Example showing the GAP limitation check for finite fields/rings
+        sage: I = Matrix(Zmod(11),4,4,[0,0,1,0,0,0,0,1,-1,0,0,0,0,-1,0,0])
+
+        sage: # GF(p) with invariant_form still raises NotImplementedError
+        sage: Sp(4, GF(11), invariant_form=I)
         Traceback (most recent call last):
         ...
         NotImplementedError: invariant_form for finite groups is fixed by GAP
+
+        sage: # Zmod(p) with invariant_form NOW raises NotImplementedError (Fix #36441)
+        sage: Sp(4, Zmod(11), invariant_form=I)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: invariant_form for finite groups is fixed by GAP
+
+        sage: # QQ (infinite ring) with invariant_form does NOT raise error
+        sage: I_QQ = Matrix(QQ, 4, 4, [0,0,1,0, 0,0,0,1, -1,0,0,0, 0,-1,0,0])
+        sage: Sp(4, QQ, invariant_form=I_QQ)
+        Symplectic Group of degree 4 over Rational Field with respect to alternating bilinear form
+        [ 0  0  1  0]
+        [ 0  0  0  1]
+        [-1  0  0  0]
+        [ 0 -1  0  0]
+
+        sage: # Zmod(p) without invariant_form does NOT raise error
+        sage: Sp(4, Zmod(11))
+        Symplectic Group of degree 4 over Ring of integers modulo 11
 
     TESTS::
 
@@ -149,7 +172,7 @@ def Sp(n, R, var='a', invariant_form=None):
         raise ValueError('the degree must be even')
 
     if invariant_form is not None:
-        if isinstance(ring, FiniteField):
+        if ring.is_finite(): # Checking is the ring finite?
             raise NotImplementedError("invariant_form for finite groups is fixed by GAP")
 
         invariant_form = normalize_args_invariant_form(ring, degree, invariant_form)
