@@ -261,7 +261,8 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     r"""
     Displays a warning message with a traceback.
 
-    INPUT: see :func:`warnings.showwarning`.
+    INPUT: see :func:`warnings.showwarning` with the difference that with ``file=None``
+           the message will be written to stdout.
 
     OUTPUT: none
 
@@ -293,7 +294,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     lines.extend(traceback.format_exception_only(category, category(message)))
 
     if file is None:
-        file = sys.stderr
+        file = sys.stdout
     try:
         file.writelines(lines)
         file.flush()
