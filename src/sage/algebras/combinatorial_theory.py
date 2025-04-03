@@ -2244,6 +2244,40 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     str(R(mat_vals[ii]))
                 ))
 
+    def construction_from_certificate(self, file_or_cert):
+        if isinstance(file_or_cert, str):
+            file = file_or_cert
+            if not file.endswith(".pickle"):
+                file += ".pickle"
+            with open(file, 'rb') as file:
+                certificate = pickle.load(file)
+        else:
+            certificate = file_or_cert
+        conss = certificate["phi vectors"]
+        if "target size" not in certificate:
+            raise ValueError("The certificate contains no target size")
+        tsize = certificate["target size"]
+        if len(conss)==0:
+            raise ValueError("The certificate contains no constructions")
+        cons = conss[0]
+        if len(cons)==0:
+            return 0
+        if isinstance(cons[0], float):
+            R = RR
+            vals = cons
+        else:
+            R = QQ
+            vals = []
+            for ii, xx in enumerate(cons):
+                try:
+                    vals.append(R(xx))
+                except:
+                    R = xx.parent()
+                    for jj in range(ii):
+                        vals[jj] = R(vals[jj])
+        FA = FlagAlgebra(self, R)
+        return FA(tsize, vals)
+
     def verify_certificate(self, file_or_cert, target_element=None, target_size=None, 
                            maximize=True, positives=None, **params):
         r"""
