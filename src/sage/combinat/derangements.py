@@ -281,6 +281,9 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D = Derangements([1,1,2,2,2])
             sage: D.list()
             []
+            sage: D = Derangements(0)
+            sage: D.list()
+            [[]]
         """
         if self.__multi:
             for p in Permutations(self._set):
@@ -309,7 +312,10 @@ class Derangements(UniqueRepresentation, Parent):
              [3, 4, 1, 2],
              [2, 1, 4, 3]]
         """
-        if n <= 1:
+        if n == 0:
+            yield []
+            return 
+        elif n == 1:
             return
         elif n == 2:
             yield [2, 1]
@@ -359,7 +365,9 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D._count_der(5)
             44
         """
-        if n <= 1:
+        if n == 0:
+            return Integer(1)
+        if n == 1:
             return Integer(0)
         if n == 2:
             return Integer(1)
@@ -415,6 +423,9 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D = Derangements([1,1,2,2,2])
             sage: D.cardinality()
             0
+            sage: D = Derangements(0)
+            sage: D.cardinality()
+            1
         """
         if self.__multi:
             sL = set(self._set)
