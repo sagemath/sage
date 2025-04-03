@@ -65,6 +65,7 @@ config_file = configure_file(
 
 # Packages that need no processing and can be installed directly
 no_processing = [
+  'cli',
   'databases',
   'doctest',
   'ext_data',
