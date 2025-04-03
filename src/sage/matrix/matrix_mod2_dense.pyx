@@ -2264,10 +2264,11 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             count1 = [[0]*partition_num for _ in range(i)]
             for col in range(i):
                 parition_i = 0
-                for row in reversed(range(A._nrows)):
+                for row in reversed(range(1, A._nrows)):
                     count1[col][parition_i] += mzd_read_bit(A._entries, row, col)
-                    if row > 0 and partition_rows[row - 1]:
+                    if partition_rows[row - 1]:
                         parition_i += 1
+                count1[col][parition_i] += mzd_read_bit(A._entries, 0, col)  # special case of row == 0
 
             # calculate largest_col = col s.t. count1[col] is lexicographically largest (0 <= col < i)
             _, largest_col = max((c, i) for i, c in enumerate(count1))
