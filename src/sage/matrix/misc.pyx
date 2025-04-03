@@ -205,8 +205,8 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         sage: A.pivots()
         (0, 1, 2)
 
-    A small benchmark, showing that the multimodular algorithm is sometimes faster
-    and sometimes slower than the flint algorithm::
+    A small benchmark, showing that flint fraction-free multimodular algorithm
+    is always faster than the fraction-free multimodular algorithm implemented in Python::
 
         sage: import copy
         sage: def benchmark(num_row, num_col, entry_size, timeout=2, integer_coefficient=True):
@@ -214,7 +214,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         ....:         randint(1, 2^entry_size) if integer_coefficient else ZZ(randint(1, 2^entry_size))/randint(1, 2^entry_size)
         ....:         for col in range(num_col)] for row in range(num_row)])
         ....:     data=[]
-        ....:     for algorithm in ("flint", "padic", "multimodular"):
+        ....:     for algorithm in ("flint_fflu", "flint_multimodular", "padic", "multimodular"):
         ....:         # classical is too slow
         ....:         B = copy.copy(A)
         ....:         t = walltime()
@@ -227,10 +227,15 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         ....:             cancel_alarm()
         ....:         data.append((round(walltime(t), 4), algorithm))
         ....:     return sorted(data)
-        sage: benchmark(20, 20, 10000)  # long time (multimodular wins)
-        [...'multimodular'...'flint'...]
-        sage: benchmark(39, 40, 200)  # long time (flint wins)
-        [...'flint'...'multimodular'...]
+        sage: benchmark(20, 20, 10000)  # long time
+        [...'flint_multimodular'...'multimodular'...'flint_fflu'...]
+        sage: benchmark(39, 40, 200)  # long time
+        [...'flint_multimodular'...'flint_fflu'...'multimodular'...]
+
+    In older versions of flint
+    before this `issue <https://github.com/flintlib/flint/issues/2129>`_
+    is fixed, ``algorithm='flint'`` (automatic choice) may be slower than
+    ``algorithm='flint_multimodular'``.
 
     In this case, there are more columns than rows, which means the resulting
     matrix has height much higher than the input matrix. We check that the function
