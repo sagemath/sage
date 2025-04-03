@@ -3291,6 +3291,16 @@ cdef class Matrix(Matrix1):
             sage: A._charpoly_df()
             x^3 + 8*x^2 + 10*x + 1
 
+        .. NOTE::
+
+            The key feature of this implementation is that it is division-free.
+            This means that it can be used as a generic implementation for any
+            ring (commutative and with multiplicative identity).  The algorithm
+            is described in full detail as Algorithm 3.1 in [Sei2002]_.
+
+            Note that there is a missing minus sign in front of the last term in
+            the penultimate line of Algorithm 3.1.
+
         TESTS::
 
             sage: A = matrix(ZZ, 0, 0)
@@ -3309,15 +3319,11 @@ cdef class Matrix(Matrix1):
             sage: matrix(4, 4, lambda i, j: R.an_element())._charpoly_df()              # needs sage.combinat
             B[1]*x^4 - 4*B[u]*x^3
 
-        .. NOTE::
+        Test that the function is interruptible::
 
-            The key feature of this implementation is that it is division-free.
-            This means that it can be used as a generic implementation for any
-            ring (commutative and with multiplicative identity).  The algorithm
-            is described in full detail as Algorithm 3.1 in [Sei2002]_.
-
-            Note that there is a missing minus sign in front of the last term in
-            the penultimate line of Algorithm 3.1.
+            sage: m = matrix.random(RR, 128)
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(1): m.charpoly()
         """
 
         # Validate assertions
@@ -3374,6 +3380,7 @@ cdef class Matrix(Matrix1):
                     for j in range(t+1):
                         s = s + M.get_unsafe(i, j) * a.get_unsafe(p-1, j)
                     a.set_unsafe(p, i, s)
+                    sig_check()
 
                 # Set A[p, t] to be the (t)th entry in a[p, t]
                 A[p] = a.get_unsafe(p, t)
@@ -15690,6 +15697,10 @@ cdef class Matrix(Matrix1):
         Return the conjugate of self, i.e. the matrix whose entries are the
         conjugates of the entries of ``self``.
 
+        .. SEEALSO::
+
+            :attr:`C`
+
         EXAMPLES::
 
             sage: # needs sage.rings.complex_double sage.symbolic
@@ -15744,6 +15755,10 @@ cdef class Matrix(Matrix1):
             This function is sometimes known as the "adjoint" of a matrix,
             though there is substantial variation and some confusion with
             the use of that term.
+
+        .. SEEALSO::
+
+            :meth:`conjugate`, :meth:`~.Matrix_dense.transpose`, :attr:`H`
 
         OUTPUT:
 
@@ -18562,6 +18577,10 @@ cdef class Matrix(Matrix1):
         r"""
         Return the conjugate-transpose (Hermitian) matrix.
 
+        .. SEEALSO::
+
+            :meth:`conjugate_transpose`
+
         EXAMPLES::
 
             sage: A = matrix(QQbar, [[     -3,  5 - 3*I, 7 - 4*I],                      # needs sage.rings.number_field
@@ -18572,7 +18591,7 @@ cdef class Matrix(Matrix1):
             [ 5 + 3*I -1 - 6*I -3 - 6*I]
             [ 7 + 4*I  3 - 5*I  5 - 1*I]
         """
-        return self.conjugate().transpose()
+        return self.conjugate_transpose()
 
 
 def _smith_diag(d, transformation=True):
