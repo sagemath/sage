@@ -1648,11 +1648,7 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
     try:
         return original_parent(l)
     except (TypeError, ValueError):
-        try:
-            return SR(l)
-        except TypeError:
-            return l
-
+        return SR(l) 
 
 
 # lim is alias for limit
@@ -1750,10 +1746,7 @@ def mma_free_limit(expression, v, a, dir=None):
     try:
         return original_parent(sage_result_object)
     except (TypeError, ValueError):
-        try:
-            return SR(sage_result_object)
-        except TypeError:
-             return sage_result_object
+        return SR(sage_result_object)
 
 
 ###################################################################
