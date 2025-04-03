@@ -181,7 +181,7 @@ available:
 
 In case the Sage kernel is not listed, you can check if the file ``kernel.json``
 is present in ``<path to env>/share/jupyter/kernels/sagemath``. 
-If it is not there, you can create it using ̀ `jupyter kernelspec install``
+If it is not there, you can create it using ``jupyter kernelspec install``
 as described below.
 
 You may already have a global installation of Jupyter. For added
