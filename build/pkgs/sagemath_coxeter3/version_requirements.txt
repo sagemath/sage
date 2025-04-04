@@ -1,6 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-<<<<<<< HEAD
-sagemath-coxeter3 ~= 10.6rc1
-=======
 sagemath-coxeter3 ~= 10.7b0
->>>>>>> origin/develop

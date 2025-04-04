@@ -1,6 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-<<<<<<< HEAD
-sage-docbuild ~= 10.6rc1
-=======
 sage-docbuild ~= 10.7b0
->>>>>>> origin/develop
