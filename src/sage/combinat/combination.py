@@ -33,7 +33,6 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
 from sage.misc.persist import register_unpickle_override
 from sage.misc.superseded import deprecation
-from sage.misc.prandom import shuffle
 
 _NEGATIVE_K_DEPRECATION_MSG = (
     "Calling Combinations with k < 0 currently returns an empty list, "
