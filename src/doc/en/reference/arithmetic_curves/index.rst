@@ -89,7 +89,6 @@ To be sorted
 .. toctree::
    :maxdepth: 1
 
-   sage/schemes/elliptic_curves/addition_formulas_ring
    sage/schemes/elliptic_curves/BSD
    sage/schemes/elliptic_curves/cardinality
    sage/schemes/elliptic_curves/descent_two_isogeny
