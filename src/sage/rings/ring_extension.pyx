@@ -2214,9 +2214,9 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         if base is self:
             return ZZ(1)
         elif base is self._base:
-            return len(self._basis)
+            return ZZ(len(self._basis))
         else:
-            return len(self._basis) * self._base._degree_over(base)
+            return ZZ(len(self._basis) * self._base._degree_over(base))
 
     cpdef _is_finite_over(self, Parent base):
         r"""

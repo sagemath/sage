@@ -169,6 +169,8 @@ class FiniteField_ntl_gf2e(FiniteField):
         """
         return self._cache.degree()
 
+    absolute_degree = degree
+
     def _element_constructor_(self, e):
         """
         Coerces several data types to ``self``.

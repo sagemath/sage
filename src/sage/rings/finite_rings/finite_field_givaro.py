@@ -182,6 +182,8 @@ class FiniteField_givaro(FiniteField):
         """
         return Integer(self._cache.exponent())
 
+    absolute_degree = degree
+
     def _repr_option(self, key):
         """
         Metadata about the :meth:`_repr_` output.

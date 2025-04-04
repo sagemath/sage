@@ -371,8 +371,13 @@ class CommutativeRings(CategoryWithAxiom):
                 sage: f(1+u)
                 1 + u^25
             """
-            from sage.rings.morphism import FrobeniusEndomorphism_generic
-            return FrobeniusEndomorphism_generic(self, n)
+            from sage.categories.fields import Fields
+            if self in Fields() and self.is_finite():
+                from sage.rings.finite_rings.hom_finite_field import FrobeniusEndomorphism_finite_field
+                return FrobeniusEndomorphism_finite_field(self, n)
+            else:
+                from sage.rings.morphism import FrobeniusEndomorphism_generic
+                return FrobeniusEndomorphism_generic(self, n)
 
         def derivation_module(self, codomain=None, twist=None):
             r"""

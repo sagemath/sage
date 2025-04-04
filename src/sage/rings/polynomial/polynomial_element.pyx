@@ -2655,7 +2655,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             # When we have a ring, then we can find an irreducible factor of degree `d` providing
             # that d divides the degree of the extension from the base ring to the given ring
-            allowed_extension_degree = ring.degree() // self.base_ring().degree()
+            allowed_extension_degree = ring.absolute_degree() // self.base_ring().absolute_degree()
             try:
                 f = self.any_irreducible_factor(assume_squarefree=assume_squarefree, ext_degree=allowed_extension_degree)
             except ValueError:
