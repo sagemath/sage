@@ -1514,17 +1514,18 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
           - ``'padic'``: an algorithm based on the IML `p`-adic solver,
 
-          - ``'multimodular'``: uses a multimodular algorithm implemented in Python
+          - ``'multimodular'``: uses a multimodular algorithm implemented in Cython
             that uses linbox modulo many primes,
+            see :func:`~sage.matrix.misc.matrix_rational_echelon_form_multimodular`,
 
           - ``'classical'``: just clear each column using Gauss elimination.
 
         - ``height_guess``, ``**kwds`` -- all passed to the
-          multimodular algorithm; ignored by other algorithms
+          ``'multimodular'`` algorithm; ignored by other algorithms
 
         - ``proof`` -- boolean or ``None`` (default: None, see
           proof.linear_algebra or sage.structure.proof). Passed to the
-          multimodular algorithm. Note that the Sage global default is
+          ``'multimodular'`` algorithm. Note that the Sage global default is
           ``proof=True``.
 
         EXAMPLES::
