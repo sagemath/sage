@@ -186,7 +186,7 @@ SageTeX 的文档维护在 :file:`SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf`�
 这是使用 LaTeX 和 Sage 对该文件进行排版的预生成结果。
 你也可以从 `SageTeX 页面 <https://github.com/sagemath/sagetex>`_ 获取这些文件。
 
-SageTeX 和 TeXLive
+SageTeX 与 TeXLive
 -------------------
 
 一个潜在的令人困惑的问题是流行的 TeX 发行版 `TeXLive <http://www.tug.org/texlive/>`_ 包含 SageTeX。

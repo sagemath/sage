@@ -166,7 +166,7 @@ Cython 代码：``test.spyx``:
 
     sage: s = "sage"; type(s)
     <... 'str'>
-    sage: s = 'sage'; type(s)      # 即可以使用单引号也可以使用双引号
+    sage: s = 'sage'; type(s)      # 既可以使用单引号也可以使用双引号
     <... 'str'>
     sage: s = [1,2,3,4]; type(s)
     <... 'list'>

@@ -82,7 +82,7 @@ MathJax 是一个开源的 JavaScript 数学显示引擎，可以在所有现代
 
 在 Jupyter Notebook 中自动 LaTeX 渲染（启用 ``%display latex``）
 是通过 :class:`sage.misc.html.MathJax` 类内部实现的。
-该类的对象将 Sage 对象通过 ``latex()`` 转换为 MathJax 需要的 HTML 形式，然后将其包装在 HTML 中。::
+该类的对象将 Sage 对象通过 ``latex()`` 转换为 MathJax 需要的 HTML 形式，然后将其包装在 HTML 中。  ::
 
     sage: from sage.misc.html import MathJax
     sage: mj = MathJax()
@@ -118,7 +118,7 @@ MathJax 是一个开源的 JavaScript 数学显示引擎，可以在所有现代
 ``latex.matrix_delimiters`` 方法是一个很好的例子。
 它可以用来更改矩阵周围的符号 -- 大括号、方括号、花括号、竖线。
 不强制执行任何样式，你可以随意混合搭配。
-注意，LaTeX 所需的反斜杠在 Python 字符串中需要额外加一个斜杠以便正确转义::
+注意，LaTeX 所需的反斜杠在 Python 字符串中需要额外加一个斜杠以便正确转义。  ::
 
     sage: A = matrix(ZZ, 2, 2, range(4))
     sage: latex(A)
@@ -143,7 +143,7 @@ MathJax 是一个开源的 JavaScript 数学显示引擎，可以在所有现代
 
 常见环和域（整数、有理数、实数等）的排版方式可以通过 ``latex.blackboard_bold`` 方法来控制。
 这些集合默认以粗体排版，但有时可以选择以双重划线格式书写，如某些书面作品所做的那样。
-这可以通过重新定义 Sage 内置的 ``\Bold{}`` 宏来实现。::
+这可以通过重新定义 Sage 内置的 ``\Bold{}`` 宏来实现。 ::
 
     sage: latex(QQ)
     \Bold{Q}
@@ -175,7 +175,7 @@ MathJax 是一个开源的 JavaScript 数学显示引擎，可以在所有现代
         latex.blackboard_bold(False)
         %display plain
 
-可以通过加入新的宏来利用 LaTeX 的可扩展性。可以添加单个宏，以便在 MathJax 解释 LaTeX 片段时使用::
+可以通过加入新的宏来利用 LaTeX 的可扩展性。可以添加单个宏，以便在 MathJax 解释 LaTeX 片段时使用。 ::
 
     sage: latex.add_macro(r"\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}")
     sage: latex.extra_macros()
@@ -219,7 +219,7 @@ MathJax 是一个开源的 JavaScript 数学显示引擎，可以在所有现代
 系统范围内的 TeX 被调用来处理完整的 LaTeX 文档，例如，当你 ``view(foo)`` 时，
 其中 ``foo`` 是一个复杂的 Sage 对象，太复杂以至于 ``MathJax`` 无法处理。
 命令 ``latex_extra_preamble`` 用于构建完整 LaTeX 文档的导言部分，下面将展示如何完成这项工作。
-如往常一样，请注意 Python 字符串中需要双反斜杠。::
+如往常一样，请注意 Python 字符串中需要双反斜杠。 ::
 
     sage: latex.extra_macros('')
     sage: latex.extra_preamble('')
@@ -241,7 +241,7 @@ MathJax 是一个开源的 JavaScript 数学显示引擎，可以在所有现代
 然后尝试将其添加到导言部分。
 
 这里我们将几何包添加到导言部分并用它来设置 TeX 将在页面上使用的区域尺寸（有效地设置边距）。
-如往常一样，请注意 Python 字符串中需要双反斜杠。::
+如往常一样，请注意 Python 字符串中需要双反斜杠。 ::
 
     sage: from sage.misc.latex import latex_extra_preamble
     sage: latex.extra_macros('')
@@ -256,7 +256,7 @@ MathJax 是一个开源的 JavaScript 数学显示引擎，可以在所有现代
     ...
     \newcommand{\Bold}[1]{\mathbf{#1}}
 
-可以通过检查其存在性来添加特定包，以下示例展示了这种情况。作为示例，我们将尝试向导言部分添加一个可能不存在的包。::
+可以通过检查其存在性来添加特定包，以下示例展示了这种情况。作为示例，我们将尝试向导言部分添加一个可能不存在的包。 ::
 
     sage: latex.extra_preamble('')
     sage: latex.extra_preamble()
@@ -286,7 +286,7 @@ MathJax 是一个开源的 JavaScript 数学显示引擎，可以在所有现代
 这是 :class:`sage.misc.latex.LatexExamples` 类的一个实例，如下所示。
 目前该类有交换图、组合图、扭结理论和 pstricks 的示例，分别使用以下包：xy，tkz-graph，xypic，pstricks。
 导入后，对 ``latex_examples`` 使用 tab 补全查看内置示例。
-调用每个示例会返回一些关于如何正确呈现该示例的说明。要实际查看示例，需要使用 ``view(foo)`` （导言部分、引擎等均设置正确）。::
+调用每个示例会返回一些关于如何正确呈现该示例的说明。要实际查看示例，需要使用 ``view(foo)`` （导言部分、引擎等均设置正确）。 ::
 
     sage: from sage.misc.latex import latex_examples
     sage: foo = latex_examples.diagram()

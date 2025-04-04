@@ -62,7 +62,7 @@ Sage 还可以计算特征值和特征向量::
 特征值和特征向量可以通过 Maxima 在有理数域 ``QQ`` 或实数域 ``RR`` 上计算（见下文的 :ref:`section-maxima`）。
 
 如 :ref:`section-rings` 所述，矩阵定义的环会影响其某些性质。
-在下面的示例中，``matrix`` 命令的第一个参数告诉 Sage 将矩阵视为整数矩阵（``ZZ``）、有理数矩阵（``QQ``）或实数矩阵（`RR``）::
+在下面的示例中，``matrix`` 命令的第一个参数告诉 Sage 将矩阵视为整数矩阵（``ZZ``）、有理数矩阵（``QQ``）或实数矩阵（``RR``） ::
 
     sage: AZ = matrix(ZZ, [[2,0], [0,1]])
     sage: AQ = matrix(QQ, [[2,0], [0,1]])
@@ -91,7 +91,7 @@ Sage 还可以计算特征值和特征向量::
 矩阵空间
 -------------
 
-我们创建了一个定义在有理数域 `:math:\QQ` 上的 `3 \times 3` 矩阵空间 :math:`\text{Mat}_{3\times 3}(\QQ)`::
+我们创建了一个定义在有理数域 :math:`\QQ` 上的 `3 \times 3` 矩阵空间 :math:`\text{Mat}_{3\times 3}(\QQ)`::
 
     sage: M = MatrixSpace(QQ,3)
     sage: M

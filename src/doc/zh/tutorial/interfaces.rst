@@ -120,7 +120,7 @@ GAP
 
 Sage 附带用于计算离散数学，尤其是群论的 GAP。
 
-以下是 GAP 的 `IdGroup`` 函数的例子。
+以下是 GAP 的 ``IdGroup`` 函数的例子。
 
 ::
 
