@@ -746,14 +746,18 @@ class GraphGenerators:
         sage: G.delete_vertex(0)
         Traceback (most recent call last):
         ...
-        ValueError: graph is immutable; please change a copy instead (use function copy())
+        TypeError: This graph is immutable and can thus not be changed.
+         Create a mutable copy, e.g., by `copy(g)` or
+         `g.copy(immutable=False)`
         sage: G = next(graphs(4, degree_sequence=[3]*4))
         sage: G.delete_vertex(0)
         sage: G = next(graphs(4, degree_sequence=[3]*4, immutable=True))
         sage: G.delete_vertex(0)
         Traceback (most recent call last):
         ...
-        ValueError: graph is immutable; please change a copy instead (use function copy())
+        TypeError: This graph is immutable and can thus not be changed.
+         Create a mutable copy, e.g., by `copy(g)` or
+         `g.copy(immutable=False)`
 
     REFERENCE:
 
