@@ -214,7 +214,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         ....:         randint(1, 2^entry_size) if integer_coefficient else ZZ(randint(1, 2^entry_size))/randint(1, 2^entry_size)
         ....:         for col in range(num_col)] for row in range(num_row)])
         ....:     data=[]
-        ....:     for algorithm in ("flint_fflu", "flint_multimodular", "padic", "multimodular"):
+        ....:     for algorithm in ("flint:fflu", "flint:multimodular", "padic", "multimodular"):
         ....:         # classical is too slow
         ....:         B = copy.copy(A)
         ....:         t = walltime()
@@ -228,14 +228,14 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         ....:         data.append((round(walltime(t), 4), algorithm))
         ....:     return sorted(data)
         sage: benchmark(20, 20, 10000)  # long time
-        [...'flint_multimodular'...'multimodular'...'flint_fflu'...]
+        [...'flint:multimodular'...'multimodular'...'flint:fflu'...]
         sage: benchmark(39, 40, 200)  # long time
-        [...'flint_multimodular'...'flint_fflu'...'multimodular'...]
+        [...'flint:multimodular'...'flint:fflu'...'multimodular'...]
 
     In older versions of flint
     before this `issue <https://github.com/flintlib/flint/issues/2129>`_
     is fixed, ``algorithm='flint'`` (automatic choice) may be slower than
-    ``algorithm='flint_multimodular'``.
+    ``algorithm='flint:multimodular'``.
 
     In this case, there are more columns than rows, which means the resulting
     matrix has height much higher than the input matrix. We check that the function
