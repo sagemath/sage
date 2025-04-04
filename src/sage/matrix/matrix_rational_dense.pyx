@@ -1509,7 +1509,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             `fraction-free multimodular <https://flintlib.org/doc/fmpz_mat.html#c.fmpz_mat_rref_mul>`_,
             and `fraction-free LU decomposition <https://flintlib.org/doc/fmpz_mat.html#c.fmpz_mat_rref_fflu>`_,
 
-          - ``'flint_classical'``, ``'flint_multimodular'``, ``'flint_fflu'``: use the
+          - ``'flint:classical'``, ``'flint:multimodular'``, ``'flint:fflu'``: use the
             flint library as above, but select an algorithm explicitly,
 
           - ``'padic'``: an algorithm based on the IML `p`-adic solver,
@@ -1556,8 +1556,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
         Echelonizing a matrix in place throws away the cache of
         the old matrix (:issue:`14506`)::
 
-            sage: for algo in ["flint", "padic", "multimodular", "classical", "flint_classical",
-            ....:              "flint_multimodular", "flint_fflu"]:
+            sage: for algo in ["flint", "padic", "multimodular", "classical", "flint:classical",
+            ....:              "flint:multimodular", "flint:fflu"]:
             ....:      a = Matrix(QQ, [[1,2],[3,4]])
             ....:      _ = a.det()          # fills the cache
             ....:      _ = a._clear_denom() # fills the cache
@@ -1569,9 +1569,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         self.check_mutability()
 
         if algorithm is None:
-            algorithm = 'flint_multimodular'
+            algorithm = 'flint:multimodular'
 
-        if algorithm in ('flint', 'flint_classical', 'flint_multimodular', 'flint_fflu'):
+        if algorithm in ('flint', 'flint:classical', 'flint:multimodular', 'flint:fflu'):
             pivots = self._echelonize_flint(algorithm)
         elif algorithm == 'multimodular':
             pivots = self._echelonize_multimodular(height_guess, proof, **kwds)
@@ -1700,7 +1700,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         if algorithm == 'flint':
             r = fmpq_mat_rref(self._matrix, self._matrix)
-        elif algorithm == 'flint_classical':
+        elif algorithm == 'flint:classical':
             r = fmpq_mat_rref_classical(self._matrix, self._matrix)
         else:
             # copied from fmpq_mat_rref_fraction_free
@@ -1708,10 +1708,10 @@ cdef class Matrix_rational_dense(Matrix_dense):
             fmpq_mat_get_fmpz_mat_rowwise(Aclear, NULL, self._matrix)
             fmpz_init(den)
 
-            if algorithm == 'flint_fflu':
+            if algorithm == 'flint:fflu':
                 r = fmpz_mat_rref_fflu(Aclear, den, Aclear)
             else:
-                assert algorithm == 'flint_multimodular'
+                assert algorithm == 'flint:multimodular'
                 r = fmpz_mat_rref_mul(Aclear, den, Aclear)
 
             if r == 0:
