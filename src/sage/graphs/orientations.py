@@ -113,7 +113,9 @@ def _initialize_digraph(G, edges, name=None, weighted=None, sparse=None,
         sage: D.add_edge((2, 3))
         Traceback (most recent call last):
         ...
-        ValueError: graph is immutable; please change a copy instead (use function copy())
+        TypeError: This graph is immutable and can thus not be changed.
+         Create a mutable copy, e.g., by `copy(g)` or
+         `g.copy(immutable=False)`
         sage: G = Graph([(1, 2)])
         sage: D = _initialize_digraph(G, [])
         sage: D.vertices()
