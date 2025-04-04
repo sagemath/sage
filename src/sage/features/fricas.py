@@ -48,7 +48,7 @@ class FriCAS(Executable):
         EXAMPLES::
             sage: from sage.features.fricas import FriCAS
             sage: FriCAS().get_version() # optional - fricas
-            '1.3.8'
+            '1.3...'
         """
         try:
             output = subprocess.check_output(['fricas', '--version'], stderr=subprocess.STDOUT)
