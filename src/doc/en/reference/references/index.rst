@@ -2757,6 +2757,12 @@ REFERENCES:
              Kirillov-Reshetikhin crystals for nonexceptional types*.
              Contemp. Math. 506 (2010) 127-143 ( :arxiv:`0811.1604` )
 
+.. [FP1985] U. Fincke and M. Pohst.
+            *Improved Methods for Calculating Vectors of Short Length in a
+            Lattice, Including a Complexity Analysis*.
+            Mathematics of Computation, 44 (1985), no. 1, 463-471.
+            :doi:`10.1090/S0025-5718-1985-0777278-8`
+
 .. [FP1996] Komei Fukuda, Alain Prodon: Double Description Method
             Revisited, Combinatorics and Computer Science, volume 1120
             of Lecture Notes in Computer Science, page
