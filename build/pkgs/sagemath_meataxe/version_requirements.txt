@@ -1,2 +1,6 @@
 # This file is updated on every release by the sage-update-version script
+<<<<<<< HEAD
 sagemath-meataxe ~= 10.6rc1
+=======
+sagemath-meataxe ~= 10.7b0
+>>>>>>> origin/develop
