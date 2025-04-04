@@ -605,7 +605,9 @@ class DiGraph(GenericGraph):
             sage: g.add_edge("Hey", "Heyyyyyyy")
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: This graph is immutable and can thus not be changed.
+             Create a mutable copy, e.g., by `copy(g)` or
+             `g.copy(immutable=False)`
             sage: {g:1}[g]
             1
             sage: copy(g) is g    # copy is mutable again
