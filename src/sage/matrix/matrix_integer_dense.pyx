@@ -895,6 +895,43 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return M
 
+    cpdef _floordiv_(self, right):
+        """
+        Integer division (whole division //) of dense matrices over integer
+
+        EXAMPLES::
+
+            sage: m = matrix(ZZ, [[1,2], [3,4]])
+            sage: m // 2
+            [0 1]
+            [1 2]
+
+            sage: M = matrix(2, [-1, -3, -5, 0])
+            sage: M // 2
+            [-1 -2]
+            [-3  0]
+        """
+        cdef Matrix_integer_dense M
+        nr = self._nrows
+        nc = self._ncols
+
+        M = self._new(nr, nc)
+
+        cdef fmpz_t s, r
+        
+        # set r = right
+        fmpz_set_si(r, right)
+        fmpz_init(s)
+        sig_on()
+        for i from 0 <= i < nr:
+            for j from 0 <= j < nc:
+                fmpz_set_si(s, 0)   # set s = 0
+                fmpz_fdiv_q(s, fmpz_mat_entry(self._matrix, i, j), r)
+                fmpz_set(fmpz_mat_entry(M._matrix, i, j), s)
+        sig_off()
+        fmpz_clear(s)
+        return M
+
     def __pow__(sself, n, dummy):
         r"""
         Return the ``n``-th power of this matrix.
