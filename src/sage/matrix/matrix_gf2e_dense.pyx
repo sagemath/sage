@@ -963,6 +963,22 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
                 break
         return pivots
 
+    def is_invertible(self):
+        """
+        Return if invertible by checking full rank.
+
+        EXAMPLES::
+
+            sage: m = Matrix(GL(2^8, GF(2^8)).random_element())
+            sage: m.is_invertible()
+            True
+        """
+        if self._ncols != self._nrows:
+            return False
+        if self._nrows != self.rank():
+            return False
+        return True
+
     def __invert__(self):
         """
         EXAMPLES::
@@ -980,7 +996,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef Matrix_gf2e_dense A
         A = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent, 0, 0, 0)
 
-        if self.rank() != self._nrows:
+        if not self.is_invertible():
             raise ZeroDivisionError("Matrix does not have full rank.")
 
         if self._nrows:
