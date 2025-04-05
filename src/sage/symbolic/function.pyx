@@ -141,6 +141,7 @@ from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element, parent, Expression
 from sage.misc.lazy_attribute import lazy_attribute
 
+from sage.structure.parent cimport Parent
 from sage.structure.coerce cimport (coercion_model,
         py_scalar_to_element, is_numpy_type, is_mpmath_type)
 from sage.structure.richcmp cimport richcmp
@@ -1054,6 +1055,7 @@ cdef class BuiltinFunction(Function):
                 res = super().__call__(
                         *args, coerce=coerce, hold=hold)
 
+        cdef Parent arg_parent
         if any(isinstance(x, Element) for x in args):
             if (self._preserved_arg
                     and isinstance(args[self._preserved_arg-1], Element)):
