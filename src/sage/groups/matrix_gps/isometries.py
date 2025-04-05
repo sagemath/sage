@@ -256,7 +256,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
             TypeError: matrix must be orthogonal with respect to the invariant form
         """
         F = self.invariant_bilinear_form()
-        if x * F * x.transpose() != F:
+        if x.transpose() * F * x != F:
             raise TypeError('matrix must be orthogonal '
                 'with respect to the invariant form')
 
