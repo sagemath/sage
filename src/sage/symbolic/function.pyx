@@ -157,6 +157,7 @@ try:
 except ImportError:
     register_or_update_function = None
 
+cdef object SR = None, PolynomialRing_commutative = None, MPolynomialRing_polydict_domain = None
 
 # List of functions which ginac allows us to define custom behavior for.
 # Changing the order of this list could cause problems unpickling old pickles.
@@ -1057,11 +1058,15 @@ cdef class BuiltinFunction(Function):
             if (self._preserved_arg
                     and isinstance(args[self._preserved_arg-1], Element)):
                 arg_parent = parent(args[self._preserved_arg-1])
-                from sage.symbolic.ring import SR
+                global SR
+                if SR is None:
+                    from sage.symbolic.ring import SR
                 if arg_parent is SR:
                     return res
-                from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
-                from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict_domain
+                global PolynomialRing_commutative, MPolynomialRing_polydict_domain
+                if PolynomialRing_commutative is None:
+                    from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
+                    from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict_domain
                 if isinstance(arg_parent, (PolynomialRing_commutative,
                                            MPolynomialRing_polydict_domain)):
                     try:
