@@ -3038,15 +3038,15 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
         .. WARNING::
             
-            For inputs with precision greater than the default, this does not check
-            that the function is well-defined in the base ring::
+            :issue:`39838` For inputs with precision greater than the default, 
+            this does not check that the function is well-defined in the base ring::
 
                 sage: LazyPowerSeriesRing(QQ, "x").taylor(sqrt(2)*x^100)
                 O(x^7)
                 sage: LazyPowerSeriesRing(QQ, "x").taylor(sqrt(2)*x^100).add_bigoh(101)
                 Traceback (most recent call last)
                 ...
-                TypeError: unable to convert sqrt(2) to a rational
+                TypeError: self must be a numeric expression
 
         EXAMPLES::
 
