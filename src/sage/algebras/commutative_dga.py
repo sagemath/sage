@@ -4382,3 +4382,53 @@ def total_degree(deg):
     if deg in ZZ:
         return deg
     return sum(deg)
+
+
+
+# Benchmarking block for development/testing only — not used in Sage runtime
+
+# import time
+
+# def run_tests():
+#     """
+#     Benchmark and verify correctness of exterior_algebra_basis_opt
+#     against the original implementation.
+
+#     Measures:
+#       - Execution time for both versions
+#       - Speedup ratio
+#       - Whether outputs match
+#       - Number of basis elements generated
+#     """
+#     test_cases = [
+#         (2, (1, 2, 3), "Small"),
+#         (4, (1, 2, 3, 1, 2), "Medium"),
+#         (6, tuple(range(1, 9)), "Large")
+#     ]
+
+#     print("=== Performance and Result Comparison ===")
+#     print(f"{'Test Case':<10} | {'Original (s)':<12} | {'Optimized (s)':<12} | {'Speedup':<9} | {'Match?':<7} | {'#Elements':<10}")
+#     print("-" * 85)
+
+#     for n, degrees, label in test_cases:
+#         start = time.time()
+#         orig_result = exterior_algebra_basis(n, degrees)
+#         orig_time = time.time() - start
+
+#         start = time.time()
+#         opt_result = exterior_algebra_basis_opt(n, degrees)
+#         opt_time = time.time() - start
+
+#         match = sorted(orig_result) == sorted(opt_result)
+#         speedup = orig_time / opt_time if opt_time > 0 else float("inf")
+
+#         print(f"{label:<10} | {orig_time:.6f}   | {opt_time:.6f}   | {speedup:>6.2f}×  | {str(match):<7} | {len(orig_result):<10}")
+
+#         if label == "Small":
+#             print("\n--- Detailed Comparison (Small Case) ---")
+#             print("Original:", orig_result)
+#             print("Optimized:", opt_result)
+#             print()
+
+# if __name__ == "__main__":
+#     run_tests()
