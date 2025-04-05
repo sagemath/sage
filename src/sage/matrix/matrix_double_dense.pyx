@@ -1881,7 +1881,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         OUTPUT:
 
-        ``U, S, V`` -- immutable matrices such that ``A = U*S*V.conj().transpose()``
+        ``U, S, V`` -- immutable matrices such that ``A = U*S*V.conjugate_transpose()``
         where `U` and `V` are orthogonal and `S` is zero off of the diagonal
 
         Note that if ``self`` is m-by-n, then the dimensions of the
