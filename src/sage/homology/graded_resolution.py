@@ -197,6 +197,40 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
         return '\u2295'.join(f'{self._name}' + '({})'.format(-sh)
                              for sh in shifts)
 
+    def __hash__(self):
+        r"""
+        Return a hash of ``self``.
+
+        EXAMPLES::
+
+            sage: S.<x,y,z,w> = PolynomialRing(QQ)
+            sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+            sage: r = I.graded_free_resolution()
+            sage: rm = I.graded_free_resolution(shifts=[-1])
+            sage: hash(r) != hash(rm)
+            True
+        """
+        return hash(tuple(self._maps) + tuple([tuple(X) for X in self._res_shifts]))
+
+    def __eq__(self, other):
+        r"""
+        Check equality.
+
+        EXAMPLES::
+
+            sage: S.<x,y,z,w> = PolynomialRing(QQ)
+            sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+            sage: r = I.graded_free_resolution()
+            sage: rm = I.graded_free_resolution(shifts=[0])
+            sage: r == rm
+            True
+            sage: r is rm
+            False
+        """
+        return (isinstance(other, type(self))
+                and self._maps == other._maps
+                and self._res_shifts == other._res_shifts)
+
     def shifts(self, i):
         r"""
         Return the shifts of ``self``.
@@ -392,7 +426,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
             from sage.matrix.constructor import matrix
             val = self._module.gen(0)
             self._res_shifts = [[compute_degree(val.degree(), 0)]]
-            return [matrix([[val]])]
+            return [matrix([[val]], immutable=True)]
 
         M = self._m()
 
@@ -560,6 +594,8 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
             prev_shifts = new_shifts
 
         self._res_shifts = res_shifts
+        for M in res_mats:
+            M.set_immutable()
         return res_mats
 
 

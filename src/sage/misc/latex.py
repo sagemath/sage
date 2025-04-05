@@ -630,6 +630,7 @@ def latex_extra_preamble():
         \newcommand{\PSL}{\mathrm{PSL}}
         \newcommand{\lcm}{\mathop{\operatorname{lcm}}}
         \newcommand{\dist}{\mathrm{dist}}
+        \newcommand{\rank}{\mathop{\operatorname{rank}}}
         \newcommand{\Bold}[1]{\mathbf{#1}}
         <BLANKLINE>
     """
