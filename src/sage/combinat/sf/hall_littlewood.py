@@ -19,8 +19,9 @@ Notation used in the definitions follows mainly [Mac1995]_.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.libs.symmetrica.all import hall_littlewood
+from sage.libs.symmetrica.symmetrica import hall_littlewood_symmetrica as hall_littlewood
 from . import sfa
 import sage.combinat.partition
 from sage.matrix.constructor import matrix
@@ -385,7 +386,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         # common category BasesByOrthotriangularity (shared with Jack, HL, orthotriang, Mcdo)
         if hasattr(self, "_s_cache"):
             # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-            category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
+            category = ModulesWithBasis(self._sym.base_ring())
             self   .register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
             self._s.register_coercion(SetMorphism(Hom(self, self._s, category), self._self_to_s))
 
@@ -856,7 +857,7 @@ class HallLittlewood_q(HallLittlewood_generic):
 
         self._P = self._hall_littlewood.P()
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-        category = sage.categories.all.ModulesWithBasis(self.base_ring())
+        category = ModulesWithBasis(self.base_ring())
 
         phi = self.module_morphism(diagonal=self._P._q_to_p_normalization,
                                    codomain=self._P, category=category)

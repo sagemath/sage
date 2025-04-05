@@ -385,7 +385,8 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
     if n < 0:
         raise ArithmeticError('Bell numbers not defined for negative indices')
     if algorithm == 'mpmath':
-        from sage.libs.mpmath.all import bell, mp, mag
+        from sage.libs.mpmath.all import bell, mag
+        from mpmath import mp
         old_prec = mp.dps
         if 'prec' in options:
             mp.dps = options['prec']

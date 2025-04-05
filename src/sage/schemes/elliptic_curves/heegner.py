@@ -2985,7 +2985,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
             sage: heegner_point(389,-7,1).plot(pointsize=50)
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.plot.all import point
+        from sage.plot.point import point
         return point(CDF(self.tau()), **kwds)
 
 
@@ -4280,7 +4280,8 @@ class KolyvaginPoint(HeegnerPoint):
         E = self.curve()
         if E.root_number() == -1:
             P = self.numerical_approx(prec=prec)
-            from sage.plot.all import point, Graphics
+            from sage.plot.point import point
+            from sage.plot.graphics import Graphics
             if not P:
                 # point at infinity
                 return Graphics()

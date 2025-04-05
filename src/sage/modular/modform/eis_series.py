@@ -425,7 +425,7 @@ def eisenstein_series_lseries(weight, prec=53,
         -5.0235535164599797471968418348135050804419155747868718371029
     """
     f = eisenstein_series_qexp(weight, prec)
-    from sage.lfunctions.all import Dokchitser
+    from sage.lfunctions.dokchitser import Dokchitser
     j = weight
     L = Dokchitser(conductor=1,
                    gammaV=[0, 1],

@@ -30,6 +30,7 @@ REFERENCES:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.unique_representation import UniqueRepresentation
 from . import sfa
 import sage.combinat.ribbon_tableau as ribbon_tableau
@@ -450,7 +451,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym, self._basis_name)
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-        category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
+        category = ModulesWithBasis(self._sym.base_ring())
         self._m = llt._sym.m()
         self   .register_coercion(SetMorphism(Hom(self._m, self, category), self._m_to_self))
         self._m.register_coercion(SetMorphism(Hom(self, self._m, category), self._self_to_m))

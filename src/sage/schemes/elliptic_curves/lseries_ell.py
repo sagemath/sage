@@ -172,7 +172,7 @@ class Lseries_ell(SageObject):
             return L
 
         if algorithm == 'gp':
-            from sage.lfunctions.all import Dokchitser
+            from sage.lfunctions.dokchitser import Dokchitser
             key = (prec, max_imaginary_part, max_asymp_coeffs)
             try:
                 return self.__dokchitser[key]

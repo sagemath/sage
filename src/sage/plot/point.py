@@ -583,7 +583,7 @@ def point2d(points, **options):
         sage: P = point((0.5, 0.5), legend_label='test')
     """
     from sage.plot.plot import xydata_from_point_list
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.structure.element import Expression
 
     # points could be a single number

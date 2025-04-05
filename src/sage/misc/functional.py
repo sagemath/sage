@@ -1780,7 +1780,7 @@ def isqrt(x):
     try:
         return x.isqrt()
     except AttributeError:
-        from sage.functions.all import floor
+        from sage.functions.other import floor
         n = Integer(floor(x))
         return n.isqrt()
 
@@ -1824,7 +1824,7 @@ def squarefree_part(x):
     except AttributeError:
         pass
     from sage.arith.misc import factor
-    from sage.structure.all import parent
+    from sage.structure.element import parent
     F = factor(x)
     n = parent(x)(1)
     for p, e in F:

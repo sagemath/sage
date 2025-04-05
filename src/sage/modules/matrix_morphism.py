@@ -52,7 +52,8 @@ AUTHOR:
 import sage.categories.morphism
 import sage.categories.homset
 from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
-from sage.structure.all import Sequence, parent
+from sage.structure.sequence import Sequence
+from sage.structure.element import parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
 

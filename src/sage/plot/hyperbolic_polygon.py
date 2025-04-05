@@ -287,7 +287,7 @@ def hyperbolic_polygon(pts, model='UHP', resolution=200, **options):
         P = hyperbolic_polygon(pts, model='HM', color='yellow', fill=True)
         sphinx_plot(P)
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     g = Graphics()
     g._set_extra_kwds(g._extract_kwds_for_show(options))
 

@@ -208,9 +208,25 @@ import sage.groups.abelian_gps.abelian_group
 import sage.rings.complex_interval_field
 
 from sage.structure.factory import UniqueFactory
-from . import number_field_element
-from . import number_field_element_quadratic
-from .number_field_ideal import NumberFieldIdeal, NumberFieldFractionalIdeal
+from sage.rings.number_field.number_field_element import (
+    NumberFieldElement_absolute,
+    OrderElement_relative,
+    OrderElement_absolute,
+    NumberFieldElement,
+)
+from sage.rings.number_field.number_field_element_quadratic import (
+    NumberFieldElement_quadratic,
+    NumberFieldElement_quadratic_sqrt,
+    is_sqrt_disc,
+    Q_to_quadratic_field_element,
+    Z_to_quadratic_field_element,
+    NumberFieldElement_gaussian,
+    OrderElement_quadratic,
+)
+from sage.rings.number_field.number_field_ideal import (
+    NumberFieldIdeal,
+    NumberFieldFractionalIdeal,
+)
 from sage.libs.pari import pari
 from cypari2.gen import Gen as pari_gen
 
@@ -1713,13 +1729,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K([1]).parent()
             Number Field in a with defining polynomial x
         """
-        if isinstance(x, number_field_element.NumberFieldElement):
+        if isinstance(x, NumberFieldElement):
             K = x.parent()
             if K is self:
                 return x
-            elif isinstance(x, (number_field_element.OrderElement_absolute,
-                                number_field_element.OrderElement_relative,
-                                number_field_element_quadratic.OrderElement_quadratic)):
+            elif isinstance(x, (OrderElement_absolute,
+                                OrderElement_relative,
+                                OrderElement_quadratic)):
                 L = K.number_field()
                 if L is self:
                     return self._element_class(self, x)
@@ -6773,10 +6789,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         try:
             return (self.__polynomial_ntl, self.__denominator_ntl)
         except AttributeError:
-            self.__denominator_ntl = ntl.ZZ()
+            from sage.libs.ntl.ntl_ZZ import ntl_ZZ
+            from sage.libs.ntl.ntl_ZZX import ntl_ZZX
+
+            self.__denominator_ntl = ntl_ZZ()
             den = self.polynomial().denominator()
             self.__denominator_ntl.set_from_sage_int(ZZ(den))
-            self.__polynomial_ntl = ntl.ZZX((self.polynomial()*den).list())
+            self.__polynomial_ntl = ntl_ZZX((self.polynomial() * den).list())
         return (self.__polynomial_ntl, self.__denominator_ntl)
 
     def polynomial(self):
@@ -8079,7 +8098,7 @@ class NumberField_absolute(NumberField_generic):
         """
         NumberField_generic.__init__(self, polynomial, name, latex_name, check, embedding,
                                      assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structure=structure)
-        self._element_class = number_field_element.NumberFieldElement_absolute
+        self._element_class = NumberFieldElement_absolute
         self._zero_element = self._element_class(self, 0)
         self._one_element = self._element_class(self, 1)
 
@@ -10833,12 +10852,12 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             self._cache_an_element = None
 
             if n == 4:
-                self._element_class = number_field_element_quadratic.NumberFieldElement_gaussian
+                self._element_class = NumberFieldElement_gaussian
                 self._D = ZZ(-1)
                 self._NumberField_generic__gen = self._element_class(self, (QQ(0), QQ.one()))
             else:
                 # n is 3 or 6
-                self._element_class = number_field_element_quadratic.NumberFieldElement_quadratic
+                self._element_class = NumberFieldElement_quadratic
                 self._D = ZZ(-3)
                 one_half = QQ((1, 2))
                 if n == 3:
@@ -11191,9 +11210,9 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
         elif self.degree() == 2:
             if K is ZZ:
-                return number_field_element_quadratic.Z_to_quadratic_field_element(self)
+                return Z_to_quadratic_field_element(self)
             if K is QQ:
-                return number_field_element_quadratic.Q_to_quadratic_field_element(self)
+                return Q_to_quadratic_field_element(self)
 
         return NumberField_absolute._coerce_map_from_(self, K)
 
@@ -11337,7 +11356,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: K(O.1^2 + O.1 - 2)
             z^2 + z - 2
         """
-        if isinstance(x, number_field_element.NumberFieldElement):
+        if isinstance(x, NumberFieldElement):
             if isinstance(x.parent(), NumberField_cyclotomic):
                 return self._coerce_from_other_cyclotomic_field(x)
             else:
@@ -12050,19 +12069,19 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         parts = -b/(2*a), (Dpoly/D).sqrt()/(2*a)
 
         if a.is_one() and b.is_zero() and c.is_one():
-            self._element_class = number_field_element_quadratic.NumberFieldElement_gaussian
+            self._element_class = NumberFieldElement_gaussian
         else:
-            if number_field_element_quadratic.is_sqrt_disc(parts[0], parts[1]):
-                self._element_class = number_field_element_quadratic.NumberFieldElement_quadratic_sqrt
+            if is_sqrt_disc(parts[0], parts[1]):
+                self._element_class = NumberFieldElement_quadratic_sqrt
             else:
-                self._element_class = number_field_element_quadratic.NumberFieldElement_quadratic
+                self._element_class = NumberFieldElement_quadratic
 
         self._NumberField_generic__gen = self._element_class(self, parts)
 
         # we must set the flag _standard_embedding *before* any element creation
         # Note that in the following code, no element is built.
         if self.coerce_embedding() is not None and CDF.has_coerce_map_from(self):
-            rootD = CDF(number_field_element_quadratic.NumberFieldElement_quadratic(self, (QQ(0), QQ(1))))
+            rootD = CDF(NumberFieldElement_quadratic(self, (QQ(0), QQ(1))))
             if D > 0:
                 self._standard_embedding = rootD.real() > 0
             else:
@@ -12103,11 +12122,11 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
             True
         """
         if K is ZZ:
-            return number_field_element_quadratic.Z_to_quadratic_field_element(self)
+            return Z_to_quadratic_field_element(self)
         if K is int:
             return self._coerce_map_via([ZZ], int)  # faster than direct
         if K is QQ:
-            return number_field_element_quadratic.Q_to_quadratic_field_element(self)
+            return Q_to_quadratic_field_element(self)
         return NumberField_absolute._coerce_map_from_(self, K)
 
     def _latex_(self):

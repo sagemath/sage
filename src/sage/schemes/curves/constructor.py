@@ -43,7 +43,7 @@ from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.rational_field import QQ
 
-from sage.structure.all import Sequence
+from sage.structure.sequence import Sequence
 
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
