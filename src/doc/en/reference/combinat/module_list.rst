@@ -207,6 +207,7 @@ Comprehensive Module List
     sage/combinat/ranker
     sage/combinat/recognizable_series
     sage/combinat/regular_sequence
+    sage/combinat/regular_sequence_bounded
     sage/combinat/restricted_growth
     sage/combinat/ribbon
     sage/combinat/ribbon_shaped_tableau
