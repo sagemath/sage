@@ -3044,9 +3044,9 @@ class LazyPowerSeriesRing(LazySeriesRing):
                 sage: LazyPowerSeriesRing(QQ, "x").taylor(sqrt(2)*x^100)
                 O(x^7)
                 sage: LazyPowerSeriesRing(QQ, "x").taylor(sqrt(2)*x^100).add_bigoh(101)
-                Traceback (most recent call last)
+                Traceback (most recent call last):
                 ...
-                TypeError: self must be a numeric expression
+                TypeError: unable to convert sqrt(2) to a rational
 
         EXAMPLES::
 
