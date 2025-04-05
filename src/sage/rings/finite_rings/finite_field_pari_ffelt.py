@@ -206,8 +206,6 @@ class FiniteField_pari_ffelt(FiniteField):
         """
         return self._degree
 
-     absolute_degree = degree
-
     def _pari_frobenius(self, k=1):
         """
         Return a cached PARI Frobenius endomorphism (internally defined

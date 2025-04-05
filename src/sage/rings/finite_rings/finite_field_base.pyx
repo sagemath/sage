@@ -151,6 +151,23 @@ cdef class FiniteField(Field):
         """
         return True
 
+    def absolute_degree(self):
+        r"""
+        Return the degree of this finite field over its
+        prime subfield.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(7^3)
+            sage: K.absolute_degree()
+            3
+
+            sage: L.<b> = K.extension(2)
+            sage: L.absolute_degree()
+            6
+        """
+        return self.degree()
+
     def __repr__(self):
         """
         String representation of this finite field.
@@ -1997,54 +2014,6 @@ cdef class FiniteField(Field):
             rs.append(emb(g))
         rs += [r for r,_ in g.minpoly().roots(ring=K) if r not in rs]
         return [self.hom([r]) for r in rs]
-
-    def frobenius_endomorphism(self, n=1):
-        """
-        INPUT:
-
-        - ``n`` -- integer (default: 1)
-
-        OUTPUT:
-
-        The `n`-th power of the absolute arithmetic Frobenius
-        endomorphism on this finite field.
-
-        EXAMPLES::
-
-            sage: k.<t> = GF(3^5)
-            sage: Frob = k.frobenius_endomorphism(); Frob
-            Frobenius endomorphism t |--> t^3 on Finite Field in t of size 3^5
-
-            sage: a = k.random_element()                                                # needs sage.modules
-            sage: Frob(a) == a^3                                                        # needs sage.modules
-            True
-
-        We can specify a power::
-
-            sage: k.frobenius_endomorphism(2)
-            Frobenius endomorphism t |--> t^(3^2) on Finite Field in t of size 3^5
-
-        The result is simplified if possible::
-
-            sage: k.frobenius_endomorphism(6)
-            Frobenius endomorphism t |--> t^3 on Finite Field in t of size 3^5
-            sage: k.frobenius_endomorphism(5)
-            Identity endomorphism of Finite Field in t of size 3^5
-
-        Comparisons work::
-
-            sage: k.frobenius_endomorphism(6) == Frob
-            True
-            sage: from sage.categories.morphism import IdentityMorphism
-            sage: k.frobenius_endomorphism(5) == IdentityMorphism(k)
-            True
-
-        AUTHOR:
-
-        - Xavier Caruso (2012-06-29)
-        """
-        from sage.rings.finite_rings.hom_finite_field import FrobeniusEndomorphism_finite_field
-        return FrobeniusEndomorphism_finite_field(self, n)
 
     def galois_group(self):
         r"""

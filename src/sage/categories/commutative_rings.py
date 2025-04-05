@@ -15,6 +15,7 @@ Commutative rings
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.structure.sequence import Sequence
+from sage.rings.integer import Integer
 
 
 class CommutativeRings(CategoryWithAxiom):
@@ -370,14 +371,40 @@ class CommutativeRings(CategoryWithAxiom):
                  over Finite Field of size 5
                 sage: f(1+u)
                 1 + u^25
+
+            Over a finite field, the result is simplified::
+
+                sage: k.<t> = GF(3^5)
+                sage: k.frobenius_endomorphism(6)
+                Frobenius endomorphism t |--> t^3 on Finite Field in t of size 3^5
+                sage: k.frobenius_endomorphism(5)
+                Identity endomorphism of Finite Field in t of size 3^5
+
+            and comparisons work::
+
+                sage: k.frobenius_endomorphism(6) == k.frobenius_endomorphism()
+                True
+                sage: from sage.categories.morphism import IdentityMorphism
+                sage: k.frobenius_endomorphism(5) == IdentityMorphism(k)
+                True
+
+            TESTS::
+
+                sage: K.frobenius_endomorphism(u)
+                Traceback (most recent call last):
+                ...
+                TypeError: n (=u) is not an integer
             """
-            from sage.categories.fields import Fields
-            if self in Fields() and self.is_finite():
-                from sage.rings.finite_rings.hom_finite_field import FrobeniusEndomorphism_finite_field
-                return FrobeniusEndomorphism_finite_field(self, n)
+            from sage.categories.finite_fields import FiniteFields
+            try:
+                n = Integer(n)
+            except TypeError:
+                raise TypeError("n (=%s) is not an integer" % n)
+            if self in FiniteFields():
+                from sage.rings.finite_rings.hom_finite_field import FrobeniusEndomorphism_finite_field as cls
             else:
-                from sage.rings.morphism import FrobeniusEndomorphism_generic
-                return FrobeniusEndomorphism_generic(self, n)
+                from sage.rings.morphism import FrobeniusEndomorphism_generic as cls
+            return cls(self, n)
 
         def derivation_module(self, codomain=None, twist=None):
             r"""
