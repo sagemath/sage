@@ -394,6 +394,13 @@ class CommutativeRings(CategoryWithAxiom):
                 Traceback (most recent call last):
                 ...
                 TypeError: n (=u) is not an integer
+
+            ::
+
+                sage: E = k.over()
+                sage: f = E.frobenius_endomorphism()
+                sage: type(f)
+                <class 'sage.rings.finite_rings.hom_finite_field.FrobeniusEndomorphism_finite_field'>
             """
             from sage.categories.finite_fields import FiniteFields
             try:
