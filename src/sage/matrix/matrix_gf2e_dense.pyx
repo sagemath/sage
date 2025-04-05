@@ -999,10 +999,9 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         if not self.is_invertible():
             raise ZeroDivisionError("Matrix does not have full rank.")
 
-        if self._nrows:
-            sig_on()
-            mzed_invert_newton_john(A._entries, self._entries)
-            sig_off()
+        sig_on()
+        mzed_invert_newton_john(A._entries, self._entries)
+        sig_off()
 
         return A
 
