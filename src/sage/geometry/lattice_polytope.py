@@ -120,6 +120,8 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
 from collections.abc import Hashable
 from copyreg import constructor as copyreg_constructor
 import os
@@ -128,7 +130,7 @@ from subprocess import Popen, PIPE
 from warnings import warn
 from functools import reduce
 from io import IOBase, StringIO
-
+from typing import TYPE_CHECKING, Literal
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.combinat.posets.posets', 'FinitePoset')
 from sage.arith.misc import GCD as gcd
@@ -166,6 +168,9 @@ from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.geometry.convex_set import ConvexSet_compact
 import sage.geometry.abc
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 
 
 class SetOfAllLatticePolytopesClass(Set_generic):
@@ -570,7 +575,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             self._ambient_facet_indices = tuple(ambient_facet_indices)
             self._vertices = ambient.vertices(self._ambient_vertex_indices)
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 
@@ -4440,7 +4445,7 @@ class NefPartition(SageObject, Hashable):
             pass
         return result
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 

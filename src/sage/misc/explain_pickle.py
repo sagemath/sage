@@ -152,13 +152,14 @@ old pickles to work).
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
-
+from __future__ import annotations
 
 import pickletools
 import re
 import sys
 import types
 
+from typing import TYPE_CHECKING, Literal
 import zlib as comp
 import bz2 as comp_other
 
@@ -168,6 +169,9 @@ from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 from sage.misc.sage_eval import sage_eval
 from sage.misc.persist import (unpickle_override, unpickle_global, dumps,
                                register_unpickle_override, SageUnpickler)
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 
 
 # Python 3 does not have a "ClassType". Instead, we ensure that
@@ -358,7 +362,7 @@ class PickleObject:
         self.expression = expression
         self.immutable = False
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Extracts the expression from a PickleObject, and sets the immutable
         flag.

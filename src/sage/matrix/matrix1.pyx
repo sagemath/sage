@@ -18,12 +18,12 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 from cpython.sequence cimport PySequence_Fast
 
 import sage.modules.free_module
 from sage.structure.coerce cimport coercion_model
 
+from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 
 cdef class Matrix(Matrix0):
     ###################################################
@@ -621,7 +621,7 @@ cdef class Matrix(Matrix0):
             matrix._sage_object = self
         return matrix
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
