@@ -101,10 +101,11 @@ from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.quotient_ring import QuotientRing_nc
 from sage.rings.quotient_ring_element import QuotientRingElement
 from sage.misc.cachefunc import cached_function
-from itertools import product
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 
 import sage.interfaces.abc
+from itertools import product
+from functools import lru_cache
 
 
 def sorting_keys(element):
@@ -4272,6 +4273,84 @@ class CohomologyClass(SageObject, CachedRepresentation):
 #     return res
 
 
+@cached_function
+def exterior_algebra_basis(n, degrees):
+    """
+    Compute a basis of the graded exterior algebra in total degree `n` 
+    given a list of generator degrees.
+
+    In graded exterior algebras:
+      - Odd-degree generators (e.g., degree 1, 3, 5...) are anti-commutative,
+        meaning xᵢ² = 0, so their exponents can only be 0 or 1.
+      - Even-degree generators are commutative, so their exponents can be 
+        any non-negative integer, as long as the total degree sums to `n`.
+
+    Parameters:
+        n (int): Desired total degree of monomials to generate.
+        degrees (tuple of int): Degrees of the generators (e.g., (1, 2, 3)).
+
+    Returns:
+        list of list of int: A list of indicator vectors, where each inner list
+        corresponds to a monomial.
+          - For each generator, the value is the exponent of that generator
+          - For odd-degree generators: values will be 0 or 1
+          - For even-degree generators: values may be >1 if degree allows
+
+    EXAMPLES::
+
+        sage: exterior_algebra_basis_opt(3, (1, 2, 3))
+        [[0, 0, 1], [1, 1, 0]]
+    """
+
+    # Ensure the degrees are hashable (for @lru_cache)
+    if not isinstance(degrees, tuple):
+        degrees = tuple(degrees)
+
+    # Base Case 1: Degree 0 → only the unit monomial (all exponents 0)
+    if n == 0:
+        return [[0] * len(degrees)]
+
+    # Base Case 2: No generators left → no way to build degree `n`
+    if not degrees:
+        return []
+
+    # Base Case 3: Only one generator — possible only if its degree equals `n`
+    if len(degrees) == 1:
+        return [[1]] if degrees[0] == n else []
+
+    # Quick Rejection:
+    # If the smallest generator is too big or total is too small, skip
+    if min(degrees) > n or sum(degrees) < n:
+        return []
+
+    # Base Case 4: All generators exactly sum to `n` → one full monomial
+    if sum(degrees) == n:
+        return [[1] * len(degrees)]
+
+    # Split the degrees into two halves for divide-and-conquer
+    k = len(degrees) // 2
+    left_degrees = degrees[:k]
+    right_degrees = degrees[k:]
+
+    result = []
+
+    # Loop over all valid ways to split degree `n` across left/right sides
+    # Try j for left side, (n - j) for right
+    for j in range(max(0, n - sum(right_degrees)), min(n, sum(left_degrees)) + 1):
+        # Recursively compute valid basis for each side
+        left = exterior_algebra_basis(j, left_degrees)
+        right = exterior_algebra_basis(n - j, right_degrees)
+
+        # Combine all left-right monomial combinations
+        for l in left:
+            for r in right:
+                result.append(l + r)
+
+    # Sort for deterministic output (useful in testing and comparison)
+    return sorted(result)
+
+
+
 def total_degree(deg):
     """
     Total degree of ``deg``.
@@ -4303,9 +4382,3 @@ def total_degree(deg):
     if deg in ZZ:
         return deg
     return sum(deg)
-
-
-
-
-
-    
