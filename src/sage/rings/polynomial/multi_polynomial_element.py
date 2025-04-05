@@ -539,7 +539,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         macaulay2.use(m2_parent)
         return macaulay2('substitute(%s,%s)' % (repr(self), m2_parent._name))
 
-    def degrees(self):
+    def degrees(self,as_ETuples=True):
         r"""
         Return a tuple (precisely - an ``ETuple``) with the
         degree of each variable in this polynomial. The list of degrees is,
@@ -552,6 +552,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = 3*x^2 - 2*y + 7*x^2*y^2 + 5
             sage: f.degrees()
             (2, 2, 0)
+            sage: type(f.degrees())
+            <class 'sage.rings.polynomial.polydict.ETuple'>
+            sage: type(f.degrees(as_ETuples=False))
+            <class 'tuple'>
             sage: f = x^2 + z^2
             sage: f.degrees()
             (2, 0, 2)
@@ -565,10 +569,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             (0, 0, 0, 0)
         """
         if not self:
-            return polydict.ETuple({}, self.parent().ngens())
+            degree= polydict.ETuple({}, self.parent().ngens())
         else:
-            return self._MPolynomial_element__element.max_exp()
-
+            degree= self._MPolynomial_element__element.max_exp()
+        return polydict.ETuple(degree) if as_ETuples else tuple(degree)
     def degree(self, x=None, std_grading=False):
         """
         Return the degree of ``self`` in ``x``, where ``x`` must be one of the
