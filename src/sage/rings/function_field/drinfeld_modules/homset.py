@@ -576,4 +576,4 @@ class DrinfeldModuleHomset(Homset):
             us.append(u)
         us.sort(key = lambda u: u.degree())
 
-        return [phi.hom(u) for u in us]
+        return [self(u) for u in us]
