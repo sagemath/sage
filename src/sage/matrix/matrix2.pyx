@@ -7311,14 +7311,14 @@ cdef class Matrix(Matrix1):
         TESTS::
 
             sage: m = matrix(RR, [[0, 1], [-2, 0]])
-            sage: l = m.eigenvectors_left(algorithm="pari"); l
+            sage: l = m.eigenvectors_left(algorithm="pari"); l  # abs tol 1e-14
             [(-1.4142135623730950487637880730318329370*I,
               [(0.707106781186547524*I, 1.00000000000000000)],
               1),
              (1.4142135623730950487637880730318329370*I,
               [(-0.707106781186547524*I, 1.00000000000000000)],
               1)]
-            sage: m._fix_eigenvectors_extend(l, extend=True)
+            sage: m._fix_eigenvectors_extend(l, extend=True)  # abs tol 1e-14
             [(-1.4142135623730950487637880730318329370*I,
               [(0.707106781186547524*I, 1.00000000000000000)],
               1),
@@ -7412,7 +7412,7 @@ cdef class Matrix(Matrix1):
         Only works for matrices over ``RealField`` or ``ComplexField``.
 
             sage: m = matrix(RR, [[0, 1], [-2, 0]])
-            sage: m.eigenvectors_left(algorithm="pari")
+            sage: m.eigenvectors_left(algorithm="pari")  # abs tol 1e-14
             [(-1.4142135623730950487637880730318329370*I,
               [(0.707106781186547524*I, 1.00000000000000000)],
               1),
