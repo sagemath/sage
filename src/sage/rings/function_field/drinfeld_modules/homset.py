@@ -22,10 +22,13 @@ AUTHORS:
 
 import operator
 
+from sage.categories.finite_fields import FiniteFields
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Homset
 from sage.categories.action import Action
 from sage.misc.latex import latex
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.matrix.constructor import Matrix
 from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
 
 
@@ -417,3 +420,160 @@ class DrinfeldModuleHomset(Homset):
         # would call __init__ instead of __classcall_private__. This
         # seems to work, but I don't know what I'm doing.
         return DrinfeldModuleMorphism(self, *args, **kwds)
+
+    def basis(self):
+        r"""
+        Return a basis of this homset over the underlying
+        function ring `\mathbb F_q[T]`.
+
+        ALGORITHM:
+
+        The isogenies `u : \phi \to \psi' correspond to
+        the vectors `u \in M(\phi)` such that
+
+        .. MATH::
+
+            \sum_{k=0}^r g_k \tau^k(u) = T u
+
+        where the `g_k` are the coefficients of `\psi_T`
+
+        The algorithm consists in solving the above system
+        viewed as a linear system over `\mathbb F_q[T]`.
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: End(phi).basis()
+            [Identity morphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z,
+             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+               Defn: t^2,
+             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+               Defn: 2*t^4 + z*t^3 + z]
+
+        ::
+
+            sage: psi = DrinfeldModule(A, [z, 3*z + 1, 2*z, 4*z + 1])
+            sage: H = Hom(phi, psi)
+            sage: H.basis()
+            [Drinfeld Module morphism:
+               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
+               Defn: t + 1,
+             Drinfeld Module morphism:
+               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
+               Defn: (z + 4)*t^2 + 4*z*t + z + 4,
+             Drinfeld Module morphism:
+               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
+               Defn: 3*t^3 + (z + 2)*t^2 + 4*z*t + z + 4]
+
+        When `\phi` and `\psi` are not isogenous, an empty list is returned::
+
+            sage: psi = DrinfeldModule(A, [z, 3*z, 2*z, 4*z])
+            sage: Hom(phi, psi).basis()
+            []
+
+        TESTS::
+
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: End(phi).basis()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: computing basis of homsets are currently only implemented over finite fields
+        """
+        if self.base() not in FiniteFields():
+            raise NotImplementedError("computing basis of homsets are currently only implemented over finite fields")
+        phi = self.domain()
+        psi = self.codomain()
+        r = phi.rank()
+        if psi.rank() != r:
+            return []
+        Fo = phi.base_over_constants_field()
+        Fq = Fo.base()
+        F = Fo.backend()
+        q = Fq.cardinality()
+        A = phi.function_ring()
+        T = A.gen()
+
+        AF = PolynomialRing(F, name='T')
+        TF = AF.gen()
+
+        Frob = lambda x: x**q
+        FrobT = lambda P: P.map_coefficients(Frob)
+
+        phiT = phi.gen()
+        psiT = psi.gen()
+
+        # We compute the tau^i in M(phi)
+        lc = ~(phiT[r])
+        xT = [-AF(lc*phiT[i]) for i in range(r)]
+        xT[0] += lc*TF
+        taus = []
+        for i in range(r):
+            taui = r * [AF.zero()]
+            taui[i] = AF.one()
+            taus.append(taui)
+        for i in range(r):
+            s = FrobT(taui[-1])
+            taui = [s*xT[0]] + [FrobT(taui[j-1]) + s*xT[j] for j in range(1,r)]
+            taus.append(taui)
+
+        # We precompute the Frob^k(z^i)
+        d = Fo.degree(Fq)
+        z = F(Fo.gen())
+        zs = []
+        zq = z
+        for k in range(r+1):
+            x = F.one()
+            for i in range(d):
+                zs.append(x)
+                x *= zq
+            zq = zq ** q
+
+        # We compute the linear system to solve
+        rows = []
+        for i in range(d):
+            for j in range(r):
+                # For x = z^i * tau^j, we compute
+                #    sum(g_k*tau^k(x), k=0..r) - T*x
+                #  = sum(g_k*Frob^k(z^i)*tau^(k+j), k=0..r) - T*x
+                row = r * [AF.zero()]
+                for k in range(r+1):
+                    s = psiT[k] * zs[k*d + i]
+                    for l in range(r):
+                        row[l] += s*taus[k+j][l]
+                row[j] -= zs[i] * TF
+                # We write it in the A-basis
+                rowFq = []
+                for c in row:
+                    c0 = Fo(c[0]).vector()
+                    c1 = Fo(c[1]).vector()
+                    rowFq += [c0[k] + T*c1[k] for k in range(d)]
+                rows.append(rowFq)
+        M = Matrix(rows)
+
+        # We solve the linear system
+        P, U = M.popov_form(transformation=True, include_zero_vectors=False)
+        if P.nrows() == r*d:
+            return []
+        ker = U.submatrix(P.nrows())
+        ker = ker.popov_form()  # we try to minimize the output
+
+        # We reconstruct the isogenies
+        us = []
+        S = phi.ore_polring(); t = S.gen()
+        for row in range(ker.nrows()):
+            u = S.zero()
+            for i in range(d):
+                for j in range(r):
+                    a = ker[row, i*r + j]
+                    u += zs[i] * t**j * sum(a[k] * phiT**k for k in range(a.degree() + 1))
+            us.append(u)
+        us.sort(key = lambda u: u.degree())
+
+        return [phi.hom(u) for u in us]
