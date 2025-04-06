@@ -4761,7 +4761,10 @@ REFERENCES:
 
 **M**
 
-.. [Mac1916] \F.S. Macaulay. The algebraic theory of modular systems
+.. [Mac1902] \F.S. Macaulay. *On some formula in elimination.*
+             London Mathematical Society, 33, 1902, 3--27
+
+.. [Mac1916] \F.S. Macaulay. *The algebraic theory of modular systems*
              Cambridge university press, 1916.
 
 .. [Mac1995] \I. G. Macdonald, Symmetric functions and Hall
@@ -5105,6 +5108,11 @@ REFERENCES:
 
 .. [MS1977] \F. J. MacWilliams, N. J. A. Sloane, *The Theory of Error-Correcting
             Codes*, North-Holland, Amsterdam, 1977
+
+.. [MS1977a] Arnaldo Mandel, Imre Simon,
+             *On Finite Semigroups of Matrices*,
+             Theoretical Computer Science 5 (101-111),
+             North-Holland Publishing Company
 
 .. [MS1994] \P. Martin and H. Saleur.
             *The blob algebra and the periodic Temperley-Lieb algebra*.
@@ -5649,6 +5657,10 @@ REFERENCES:
               *Alley CATs in search of good homes.*
               Congressus numerantium, 1994.
               Pages 97--110
+
+.. [Rea1968] Ronald C. Read,
+             An improved method for computing the chromatic polynomials of sparse graphs,
+             Research Report CORR 87-20, C & O Dept. Univ. of Waterloo, 1987.
 
 .. [Rea2004] Nathan Reading.
              *Cambrian Lattices*.
