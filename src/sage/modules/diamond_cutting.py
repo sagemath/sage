@@ -141,15 +141,6 @@ def diamond_cut(V, GM, C, verbose=False):
 
     OUTPUT: a :class:`Polyhedron` instance
 
-    EXAMPLES::
-
-        sage: from sage.modules.diamond_cutting import diamond_cut
-        sage: V = Polyhedron([[0], [2]])
-        sage: GM = matrix([2])
-        sage: V = diamond_cut(V, GM, 4)
-        sage: V.vertices()
-        (A vertex at (2), A vertex at (0))
-
     ALGORITHM:
 
     Use the algorithm in (2.8) of [FP1985]_ to iterate through the nonzero
@@ -158,6 +149,15 @@ def diamond_cut(V, GM, C, verbose=False):
     ``{hv, -hv}``.) For each such vector ``hv``, intersect ``V`` with the
     half-spaces defined by ``plane_inequality(hv)`` and
     ``plane_inequality(-hv)``.
+
+    EXAMPLES::
+
+        sage: from sage.modules.diamond_cutting import diamond_cut
+        sage: V = Polyhedron([[0], [2]])
+        sage: GM = matrix([2])
+        sage: V = diamond_cut(V, GM, 4)
+        sage: V.vertices()
+        (A vertex at (2), A vertex at (0))
     """
     if verbose:
         print("Cut\n{}\nwith squared radius {}".format(GM, C))
