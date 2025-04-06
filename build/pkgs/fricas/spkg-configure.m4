@@ -1,4 +1,7 @@
 SAGE_SPKG_CONFIGURE(
+dnl
+dnl make sure that the minimal version is also set in src/sage/feature/fricas.py
+dnl
     [fricas], [
         AC_CACHE_CHECK([for FriCAS >= 1.3.8], [ac_cv_path_FRICAS], [
         AC_PATH_PROGS_FEATURE_CHECK([FRICAS], [fricas], [
