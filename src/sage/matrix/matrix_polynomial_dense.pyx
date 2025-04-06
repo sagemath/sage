@@ -1232,7 +1232,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.column_degrees(shifts=[-2,1])
             [4, -3, -2]
 
-        The columns degrees of a column-empty matrix `m\times 0` is an empty
+        The column degrees of a column-empty matrix `m\times 0` is an empty
         list, while those of a row-empty matrix `0\times n` is a list of `n`
         times `-1`::
 
