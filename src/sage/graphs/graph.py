@@ -9265,7 +9265,7 @@ class Graph(GenericGraph):
             sage: P.is_projective_planar()        # long
             True
 
-        K_{4,4}` has a projective plane crossing number of 2. One of the
+        `K_{4,4}` has a projective plane crossing number of 2. One of the
            minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
            dictionary from :meth:`~Graph.minor`::
 

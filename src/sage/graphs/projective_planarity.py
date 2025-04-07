@@ -24,6 +24,7 @@ forbidden minors is K_{4,4} - e, so we get a 1-to-1 dictionary from
 AUTHORS:
 
 - Juan M. Lazaro Ruiz (2025-01-27): initial version
+- Steve Schluchter (2025-04-06). gently edited
 
 """
 
@@ -37,7 +38,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import deepcopy
 
 from sage.graphs.graph import Graph
 from sage.graphs.generators.basic import (
@@ -356,7 +356,7 @@ P2_FORBIDDEN_MINORS = [locals()[f'G{i}'] for i in range(1, 36)]
 def get_p2_forbidden_minor(G, **minor_kwargs):
     """
     Check if one of the minimal forbidden minors of the projective plane is an
-    induced minor of G.
+    induced minor of ``G``.
 
     INPUT:
 
@@ -367,19 +367,19 @@ def get_p2_forbidden_minor(G, **minor_kwargs):
 
     OUTPUT:
 
-    Return :meth:`~Graph.minor` output if an element of P2_FORBIDDEN_MINORS is
+    Return :meth:`~Graph.minor` output if an element of `P2_FORBIDDEN_MINORS` is
     a minor of G else None
 
     EXAMPLES:
 
-    #. The Peterson graph is a known projective planar graph so it doesn't have
+    The Peterson graph is a known projective planar graph so it doesn't have
        a forbidden minor::
 
         sage: P = graphs.PetersenGraph()
         sage: _ = get_p2_forbidden_minor(P); type(_)        # long
         <class 'NoneType'>
 
-    #. `K_{4,4}` has a projective plane crossing number of 2. One of the minimal
+    `K_{4,4}` has a projective plane crossing number of 2. One of the minimal
        forbidden minors is `K_{4,4} - e`, so we get a one-to-one dictionary from
        :meth:`~Graph.minor`::
 
@@ -400,16 +400,15 @@ def get_p2_forbidden_minor(G, **minor_kwargs):
 
     for forbidden_minor in P2_FORBIDDEN_MINORS:
         # Can't be a minor if it has more vertices or edges than G
-        if (
-            forbidden_minor.num_verts() > num_verts_G
-            or forbidden_minor.num_edges() > num_edges_G
-        ):
+        if (forbidden_minor.num_verts() > num_verts_G
+                or forbidden_minor.num_edges() > num_edges_G):
             continue
 
         try:
             minor_map = G.minor(forbidden_minor, **minor_kwargs)
             if minor_map is not None:
                 return minor_map
+        #G.minor throws a ValueError if a minor is not found        
         except ValueError:
             continue
 
