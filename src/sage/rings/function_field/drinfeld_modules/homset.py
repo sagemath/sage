@@ -282,6 +282,7 @@ class DrinfeldModuleHomset(Homset):
         self.register_action(DrinfeldModuleMorphismAction(A, self, False, operator.mul))
         if X is Y:
             self.register_coercion(A)
+        self._basis = None
 
     def _latex_(self):
         r"""
@@ -465,11 +466,11 @@ class DrinfeldModuleHomset(Homset):
              Drinfeld Module morphism:
                From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
                To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
-               Defn: (z + 4)*t^2 + 4*z*t + z + 4,
+               Defn: 3*t^3 + (z + 2)*t^2 + 4*z*t + z + 4,
              Drinfeld Module morphism:
                From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
                To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
-               Defn: 3*t^3 + (z + 2)*t^2 + 4*z*t + z + 4]
+               Defn: (z + 4)*t^2 + 4*z*t + z + 4]
 
         When `\phi` and `\psi` are not isogenous, an empty list is returned::
 
@@ -500,80 +501,77 @@ class DrinfeldModuleHomset(Homset):
         A = phi.function_ring()
         T = A.gen()
 
-        AF = PolynomialRing(F, name='T')
-        TF = AF.gen()
+        if self._basis is None:
+            AF = PolynomialRing(F, name='T')
+            TF = AF.gen()
 
-        Frob = lambda x: x**q
-        FrobT = lambda P: P.map_coefficients(Frob)
+            Frob = lambda x: x**q
+            FrobT = lambda P: P.map_coefficients(Frob)
 
-        phiT = phi.gen()
-        psiT = psi.gen()
+            phiT = phi.gen()
+            psiT = psi.gen()
 
-        # We compute the tau^i in M(phi)
-        lc = ~(phiT[r])
-        xT = [-AF(lc*phiT[i]) for i in range(r)]
-        xT[0] += lc*TF
-        taus = []
-        for i in range(r):
-            taui = r * [AF.zero()]
-            taui[i] = AF.one()
-            taus.append(taui)
-        for i in range(r):
-            s = FrobT(taui[-1])
-            taui = [s*xT[0]] + [FrobT(taui[j-1]) + s*xT[j] for j in range(1,r)]
-            taus.append(taui)
+            # We compute the tau^i in M(phi)
+            lc = ~(phiT[r])
+            xT = [-AF(lc*phiT[i]) for i in range(r)]
+            xT[0] += lc*TF
+            taus = []
+            for i in range(r):
+                taui = r * [AF.zero()]
+                taui[i] = AF.one()
+                taus.append(taui)
+            for i in range(r):
+                s = FrobT(taui[-1])
+                taui = [s*xT[0]] + [FrobT(taui[j-1]) + s*xT[j] for j in range(1,r)]
+                taus.append(taui)
 
-        # We precompute the Frob^k(z^i)
-        d = Fo.degree(Fq)
-        z = F(Fo.gen())
-        zs = []
-        zq = z
-        for k in range(r+1):
-            x = F.one()
+            # We precompute the Frob^k(z^i)
+            d = Fo.degree(Fq)
+            z = F(Fo.gen())
+            zs = []
+            zq = z
+            for k in range(r+1):
+                x = F.one()
+                for i in range(d):
+                    zs.append(x)
+                    x *= zq
+                zq = zq ** q
+
+            # We compute the linear system to solve
+            rows = []
             for i in range(d):
-                zs.append(x)
-                x *= zq
-            zq = zq ** q
+                for j in range(r):
+                    # For x = z^i * tau^j, we compute
+                    #    sum(g_k*tau^k(x), k=0..r) - T*x
+                    #  = sum(g_k*Frob^k(z^i)*tau^(k+j), k=0..r) - T*x
+                    row = r * [AF.zero()]
+                    for k in range(r+1):
+                        s = psiT[k] * zs[k*d + i]
+                        for l in range(r):
+                            row[l] += s*taus[k+j][l]
+                    row[j] -= zs[i] * TF
+                    # We write it in the A-basis
+                    rowFq = []
+                    for c in row:
+                        c0 = Fo(c[0]).vector()
+                        c1 = Fo(c[1]).vector()
+                        rowFq += [c0[k] + T*c1[k] for k in range(d)]
+                    rows.append(rowFq)
+            M = Matrix(rows)
 
-        # We compute the linear system to solve
-        rows = []
-        for i in range(d):
-            for j in range(r):
-                # For x = z^i * tau^j, we compute
-                #    sum(g_k*tau^k(x), k=0..r) - T*x
-                #  = sum(g_k*Frob^k(z^i)*tau^(k+j), k=0..r) - T*x
-                row = r * [AF.zero()]
-                for k in range(r+1):
-                    s = psiT[k] * zs[k*d + i]
-                    for l in range(r):
-                        row[l] += s*taus[k+j][l]
-                row[j] -= zs[i] * TF
-                # We write it in the A-basis
-                rowFq = []
-                for c in row:
-                    c0 = Fo(c[0]).vector()
-                    c1 = Fo(c[1]).vector()
-                    rowFq += [c0[k] + T*c1[k] for k in range(d)]
-                rows.append(rowFq)
-        M = Matrix(rows)
-
-        # We solve the linear system
-        P, U = M.popov_form(transformation=True, include_zero_vectors=False)
-        if P.nrows() == r*d:
-            return []
-        ker = U.submatrix(P.nrows())
-        ker = ker.popov_form()  # we try to minimize the output
+            # We solve the linear system
+            self._basis = M.minimal_kernel_basis()
 
         # We reconstruct the isogenies
-        us = []
+        isogenies = []
         S = phi.ore_polring(); t = S.gen()
+        ker = self._basis
         for row in range(ker.nrows()):
             u = S.zero()
             for i in range(d):
                 for j in range(r):
                     a = ker[row, i*r + j]
                     u += zs[i] * t**j * sum(a[k] * phiT**k for k in range(a.degree() + 1))
-            us.append(u)
-        us.sort(key = lambda u: u.degree())
+            isogenies.append(self(u))
 
-        return [self(u) for u in us]
+        return isogenies
