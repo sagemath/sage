@@ -9286,8 +9286,7 @@ class Graph(GenericGraph):
         p2_forbidden_minor = get_p2_forbidden_minor(self, **minor_kwargs)
         if minor_map:
             return p2_forbidden_minor
-        else:
-            return p2_forbidden_minor is None
+        return p2_forbidden_minor is None
 
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
