@@ -80,7 +80,7 @@
 
     sage: CC
     Complex Field with 53 bits of precision
-    sage: CC.0  # CC 的第 0 个生成器
+    sage: CC.0  # 0th generator of CC
     1.00000000000000*I
 
 对于多项式环，你可以在创建环时同时获得环及其生成器，或者仅获得生成器，如下所示：
@@ -199,7 +199,7 @@ Sage 还支持任意基环上的幂级数和 Laurent 级数环。
 
 ::
 
-    sage: R = PolynomialRing(GF(5),3,"z") # 其中 3 = 变量数量
+    sage: R = PolynomialRing(GF(5),3,"z") # here, 3 = number of variables
     sage: R
     Multivariate Polynomial Ring in z0, z1, z2 over Finite Field of size 5
 

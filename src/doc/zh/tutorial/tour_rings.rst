@@ -58,16 +58,16 @@
 
 ::
 
-    sage: i = CC(i)       # 浮点复数
+    sage: i = CC(i)       # floating point complex number
     sage: i == CC.0
     True
     sage: a, b = 4/3, 2/3
     sage: z = a + b*i
     sage: z
     1.33333333333333 + 0.666666666666667*I
-    sage: z.imag()        # 虚部
+    sage: z.imag()        # imaginary part
     0.666666666666667
-    sage: z.real() == a   # 比较前自动强制转换
+    sage: z.real() == a   # automatic coercion before comparison
     True
     sage: a + b
     2
@@ -77,9 +77,9 @@
     Rational Field
     sage: parent(4/2)
     Rational Field
-    sage: 2/3 + 0.1       # 相加前自动强制转换
+    sage: 2/3 + 0.1       # automatic coercion before addition
     0.766666666666667
-    sage: 0.1 + 2/3       # sage 中的强制转换规则是对称的
+    sage: 0.1 + 2/3       # coercion rules are symmetric in Sage
     0.766666666666667
 
 以下是 Sage 中一些基本环的更多示例。
@@ -113,9 +113,9 @@
 
     sage: GF(3)
     Finite Field of size 3
-    sage: GF(27, 'a')  # 如果不是素数域，则需要命名该生成器
+    sage: GF(27, 'a')  # need to name the generator if not a prime field
     Finite Field in a of size 3^3
     sage: Zp(5)
     5-adic Ring with capped relative precision 20
-    sage: sqrt(3) in QQbar # QQ 的代数闭包
+    sage: sqrt(3) in QQbar # algebraic closure of QQ
     True

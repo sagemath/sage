@@ -29,7 +29,7 @@
 
 ::
 
-       sage: var('z')   # 将 z 定义为变量
+       sage: var('z')   # define z to be a variable
        z
        sage: f(z)
        z^2
@@ -43,7 +43,7 @@
 ::
 
        sage: g(x) = x^2
-       sage: g        # g 将 x 发送给 x^2
+       sage: g        # g sends x to x^2
        x |--> x^2
        sage: g(3)
        9
@@ -171,7 +171,7 @@
 
 ::
 
-         sage: f(x) = x        # 而非 'f = x'
+         sage: f(x) = x        # instead of 'f = x'
          sage: g = f.derivative()
          sage: g
          x |--> 1
@@ -185,7 +185,7 @@
 ::
 
          sage: f = x
-         sage: g(x) = f.derivative()  # 而非 'g = f.derivative()'
+         sage: g(x) = f.derivative()  # instead of 'g = f.derivative()'
          sage: g
          x |--> 1
          sage: g(3)
@@ -201,7 +201,7 @@
          sage: g = f.derivative()
          sage: g
          1
-         sage: g(x=3)    # 而非 'g(3)'
+         sage: g(x=3)    # instead of 'g(3)'
          1
 
 最后，还有另一种方法可以区分 ``f = x`` 和 ``f(x) = x`` 的导数
@@ -210,9 +210,9 @@
 
        sage: f(x) = x
        sage: g = f.derivative()
-       sage: g.variables()  # g 中存在的变量
+       sage: g.variables()  # the variables present in g
        ()
-       sage: g.arguments()  # 可以传递给 g 的参数
+       sage: g.arguments()  # the arguments which can be plugged into g
        (x,)
        sage: f = x
        sage: h = f.derivative()

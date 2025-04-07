@@ -24,15 +24,15 @@ Sage 提供所有基本的数学运算：
 
 ::
 
-    sage: 2**3    #  ** 表示幂运算
+    sage: 2**3    #  ** means exponent
     8
-    sage: 2^3     #  ^ 是 ** 的同义词（与 Python 不同）
+    sage: 2^3     #  ^ is a synonym for ** (unlike in Python)
     8
-    sage: 10 % 3  #  对于整数参数，% 表示取模，即余数
+    sage: 10 % 3  #  for integer arguments, % means mod, i.e., remainder
     1
     sage: 10/4
     5/2
-    sage: 10//4   #  对于整数参数，// 返回整数商
+    sage: 10//4   #  for integer arguments, // returns the integer quotient
     2
     sage: 4 * (10 // 4) + 10 % 4 == 10
     True

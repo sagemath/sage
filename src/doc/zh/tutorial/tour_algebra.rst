@@ -150,8 +150,8 @@ Sage 可以对许多函数进行微分和积分。
 
 ::
 
-    sage: t = var('t')    # 定义变量 t
-    sage: x = function('x')(t)   # 将 x 定义为该变量的函数
+    sage: t = var('t')    # define a variable t
+    sage: x = function('x')(t)   # define x to be a function of that variable
     sage: DE = diff(x, t) + x - 1
     sage: desolve(DE, [x,t])
     (_C + e^t)*e^(-t)

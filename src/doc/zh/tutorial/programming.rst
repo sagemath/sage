@@ -166,7 +166,7 @@ Cython 代码：``test.spyx``:
 
     sage: s = "sage"; type(s)
     <... 'str'>
-    sage: s = 'sage'; type(s)      # 既可以使用单引号也可以使用双引号
+    sage: s = 'sage'; type(s)      # you can use either single or double quotes
     <... 'str'>
     sage: s = [1,2,3,4]; type(s)
     <... 'list'>
@@ -412,7 +412,7 @@ Python 有内建的集合类型。它提供的主要功能是快速查找元素�
 ::
 
     sage: X = set([1,19,'a']);   Y = set([1,1,1, 2/3])
-    sage: X   # 随机排序
+    sage: X   # random sort order
     {1, 19, 'a'}
     sage: X == set(['a', 1, 1, 19])
     True
@@ -431,7 +431,7 @@ Sage 也有自己的集合类型（在某些情况下使用 Python 内建集合�
 ::
 
     sage: X = Set([1,19,'a']);   Y = Set([1,1,1, 2/3])
-    sage: X   # 随机排序
+    sage: X   # random sort order
     {'a', 1, 19}
     sage: X == Set(['a', 1, 1, 19])
     True
@@ -465,7 +465,7 @@ Sage 也有自己的集合类型（在某些情况下使用 Python 内建集合�
 ::
 
     sage: w = (4*p + 1 for p in Primes() if is_prime(4*p+1))
-    sage: w         # 下一行中的 0xb0853d6c 是一个十六进制随机数
+    sage: w         # in the next line, 0xb0853d6c is a random 0x number
     <generator object at 0xb0853d6c>
     sage: next(w)
     13
@@ -511,7 +511,7 @@ Sage 也有自己的集合类型（在某些情况下使用 Python 内建集合�
 ::
 
     sage: for i in range(5):
-    ....:     print(i)  # 按两下回车
+    ....:     print(i)  # now hit enter twice
     ....:
     0
     1

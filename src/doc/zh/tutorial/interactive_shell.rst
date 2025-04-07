@@ -58,7 +58,7 @@ Sage 会话
      _1 = 2^2 * 5^2
     sage: kronecker_symbol(3,5)
      _2 = -1
-    sage: %hist   # 仅在交互式 Shell 中可用，notebook 中不可用。
+    sage: %hist   # This only works from the interactive shell, not the notebook.
     1: factor(100)
     2: kronecker_symbol(3,5)
     3: %hist
@@ -270,7 +270,7 @@ GMP 表现稍好（预料之中，因为为 Sage 构建的 PARI 版本使用 GMP
     sage: a = int(1938)^int(99484)
     sage: b = 1938^99484
     sage: c = pari(1938)^pari(99484)
-    sage: cputime(t)                       # 输出有点随机
+    sage: cputime(t)                       # somewhat random output
     0.64
 
 .. skip
@@ -671,7 +671,7 @@ Sage 拥有集成帮助系统。输入函数名后跟 ? 可以查看该函数的
 ::
 
     sage: E = EllipticCurve('11a')
-    sage: v = E.anlist(100000)              # 需要一段时间
+    sage: v = E.anlist(100000)              # takes a while
     sage: save(E, 'E')
     sage: quit
 
@@ -685,7 +685,7 @@ Sage 拥有集成帮助系统。输入函数名后跟 ? 可以查看该函数的
     -rw-r--r--  1 was was 153500 2006-01-28 19:23 E.sobj
     ~/tmp$ sage [...]
     sage: E = load('E')
-    sage: v = E.anlist(100000)              # 立即！
+    sage: v = E.anlist(100000)              # instant!
 
 （在 Python 中，保存和加载使用 ``cPickle`` 模块实现。
 具体来说，Sage 对象 ``x`` 可以通过 ``cPickle.dumps(x, 2)`` 保存。注意 ``2``！）

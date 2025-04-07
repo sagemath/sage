@@ -33,7 +33,7 @@ Sage 提供了线性代数中的标准构造，例如矩阵的特征多项式、
     sage: X = A.solve_right(Y)
     sage: X
     (-2, 1, 0)
-    sage: A * X   # 检查我们的答案...
+    sage: A * X   # checking our answer...
     (0, -4, -1)
 
 倘若无解，Sage 会返回错误：

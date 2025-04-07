@@ -264,19 +264,19 @@ Maxima 还了解各种特殊函数，拥有通过 gnuplot 进行绘图的能力�
 
 绘制多个函数的二维图像（请勿输入 ``....:``）::
 
-    sage: maxima.plot2d('[cos(7*x),cos(23*x)^4,sin(13*x)^3]','[x,0,1]',  # 未经测试
+    sage: maxima.plot2d('[cos(7*x),cos(23*x)^4,sin(13*x)^3]','[x,0,1]',  # not tested
     ....:     '[plot_format,openmath]')
 
 可以用鼠标移动的“动态”三维图（请勿输入 ``....:``）::
 
-    sage: maxima.plot3d ("2^(-u^2 + v^2)", "[u, -3, 3]", "[v, -2, 2]",  # 未经测试
+    sage: maxima.plot3d ("2^(-u^2 + v^2)", "[u, -3, 3]", "[v, -2, 2]",  # not tested
     ....:     '[plot_format, openmath]')
-    sage: maxima.plot3d("atan(-x^2 + y^3/4)", "[x, -4, 4]", "[y, -4, 4]",  # 未经测试
+    sage: maxima.plot3d("atan(-x^2 + y^3/4)", "[x, -4, 4]", "[y, -4, 4]",  # not tested
     ....:     "[grid, 50, 50]",'[plot_format, openmath]')
 
 接下来的绘图是著名的莫比乌斯带（请勿输入 ``....:``）::
 
-    sage: maxima.plot3d("[cos(x)*(3 + y*cos(x/2)), sin(x)*(3 + y*cos(x/2)), y*sin(x/2)]",  # 未经测试
+    sage: maxima.plot3d("[cos(x)*(3 + y*cos(x/2)), sin(x)*(3 + y*cos(x/2)), y*sin(x/2)]",  # not tested
     ....:     "[x, -4, 4]", "[y, -4, 4]", '[plot_format, openmath]')
 
 接下来的绘图是著名克莱因瓶（请勿输入 ``....:``）::
@@ -287,5 +287,5 @@ Maxima 还了解各种特殊函数，拥有通过 gnuplot 进行绘图的能力�
     -5*(cos(1/2*x)*cos(y) + sin(1/2*x)*sin(2*y) + 3.0)*sin(x)
     sage: maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
     5*(cos(x/2)*sin(2*y)-sin(x/2)*cos(y))
-    sage: maxima.plot3d ("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]",  # 未经测试
+    sage: maxima.plot3d ("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]",  # not tested
     ....:     "[y, -%pi, %pi]", "['grid, 40, 40]", '[plot_format, openmath]')
