@@ -21,8 +21,8 @@ for string theory in physics, as they serve as ambient spaces for mirror pairs
 of Calabi-Yau manifolds via constructions due to Victor V. Batyrev
 [Bat1994]_ and Lev A. Borisov [Bor1993]_.
 
-From the combinatorial point of view, the "crepant" requirement is much simpler
-and more natural to work with than "coherent." For this reason, the code in this
+From the combinatorial point of view, the "crepant" requirement is much more simple
+and natural to work with than "coherent." For this reason, the code in this
 module will allow work with arbitrary crepant subdivisions without checking
 whether they are coherent or not. We refer to corresponding toric varieties as
 **CPR-Fano toric varieties**.
