@@ -9259,13 +9259,13 @@ class Graph(GenericGraph):
 
         EXAMPLES:
 
-        #. The Peterson graph is a known projective planar graph::
+        The Peterson graph is a known projective planar graph::
 
             sage: P = graphs.PetersenGraph()
             sage: P.is_projective_planar()        # long
             True
 
-        #. `K_{4,4}` has a projective plane crossing number of 2. One of the
+        K_{4,4}` has a projective plane crossing number of 2. One of the
            minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
            dictionary from :meth:`~Graph.minor`::
 
