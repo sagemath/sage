@@ -539,7 +539,7 @@ class HyperbolicGeodesic(SageObject):
     def is_parallel(self, other):
         r"""
         Return ``True`` if the two given hyperbolic geodesics are either
-        ultra parallel or asymptotically parallel and``False`` otherwise.
+        ultra parallel or asymptotically parallel and ``False`` otherwise.
 
         INPUT:
 
@@ -1854,9 +1854,9 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: g = HyperbolicPlane().UHP().get_geodesic(1, 1 + I)
             sage: h = HyperbolicPlane().UHP().get_geodesic(-sqrt(2), sqrt(2))
             sage: g.angle(h)
-            arccos(1/2*sqrt(2))
+            1/4*pi
             sage: h.angle(g)
-            arccos(1/2*sqrt(2))
+            1/4*pi
 
         Angle is unoriented, as opposed to oriented. ::
 

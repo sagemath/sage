@@ -131,7 +131,6 @@ This base class provides a lot more methods than a general parent::
      'ngens',
      'one',
      'order',
-     'random_element',
      'zero']
 
 The following is a very basic implementation of fraction fields, that needs to
