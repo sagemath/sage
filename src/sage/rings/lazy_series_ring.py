@@ -553,6 +553,38 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                     return ret
                 return ret.shift(valuation - x._coeff_stream.order())
 
+            # Handle symbolic series
+            from sage.symbolic.expression import SymbolicSeries
+            if isinstance(x, SymbolicSeries):
+                var = x.default_variable()
+                coeffs = x.coefficients(var, sparse=True)
+                
+                # Determine the valuation (lowest exponent)
+                min_exp = min(exp for _, exp in coeffs) if coeffs else 0
+                
+                # Extract coefficients
+                BR = self._internal_poly_ring.base_ring()
+                initial_coefficients = []
+                
+                # Adjust the valuation if provided
+                if valuation is not None:
+                    offset = valuation - min_exp
+                else:
+                    valuation = min_exp
+                    offset = 0
+                
+                for coef, exp in sorted(coeffs, key=lambda c: c[1]):
+                    while len(initial_coefficients) < exp - min_exp + offset:
+                        initial_coefficients.append(BR.zero())
+                    initial_coefficients.append(BR(coef))
+                
+                # Create the series
+                coeff_stream = Stream_exact(initial_coefficients, 
+                                           order=valuation, 
+                                           degree=degree, 
+                                           constant=constant)
+                return self.element_class(self, coeff_stream)
+
             # Handle when it is a power series
             if isinstance(x, LazyPowerSeries):
                 stream = x._coeff_stream
