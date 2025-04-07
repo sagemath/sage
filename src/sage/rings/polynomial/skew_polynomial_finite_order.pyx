@@ -396,7 +396,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
 
         TESTS:
 
-        We test that the cache works correctly::
+        We test that the cache works correctly (see :issue:`39883`)::
 
             sage: f = u^5 + t*u^4 + t^2*u^3 + t^3*u^2 + t^4*u + t^5
             sage: f.reduced_norm()
