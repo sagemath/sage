@@ -91,6 +91,7 @@ Libraries of algorithms
    sage/graphs/lovasz_theta
    sage/graphs/schnyder
    sage/graphs/planarity
+   sage/graphs/projective_planarity
    sage/graphs/traversals
    sage/graphs/graph_plot
    sage/graphs/graph_plot_js
@@ -121,3 +122,5 @@ Libraries of algorithms
    sage/graphs/domination
 
 .. include:: ../footer.txt
+
+        
