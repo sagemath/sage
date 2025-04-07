@@ -182,7 +182,7 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
 
     def is_congruence(self):
         r"""
-        Return True, since this is a congruence subgroup.
+        Return ``True``, since this is a congruence subgroup.
 
         EXAMPLES::
 
