@@ -144,7 +144,7 @@ class ClassFunction_gap(SageObject):
         """
         return str(self._gap_classfunction)
 
-    def _gap_(self, *args):
+    def _gap_(self, gap):
         r"""
         Coerce ``self`` into a GAP element.
 
