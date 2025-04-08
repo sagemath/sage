@@ -832,7 +832,7 @@ class ClassFunction_libgap(SageObject):
         """
         return self._gap_classfunction
 
-    gap = _gap_ = _libgap_
+    gap = _libgap_
 
     def _repr_(self):
         r"""
