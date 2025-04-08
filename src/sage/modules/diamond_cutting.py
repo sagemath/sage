@@ -289,7 +289,6 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         additional_vectors = additional_vectors.LLL()
         artificial_length = ceil((radius / min(approx_norm(v) for v in additional_vectors)) * 1.1)
         additional_vectors *= artificial_length
-        print(additional_vectors.parent())
         basis = basis.stack(additional_vectors)
         basis = matrix([v for v in basis if v])
         dim = basis.dimensions()
@@ -297,8 +296,6 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         raise ValueError("invalid matrix")
     basis = basis / 2
     radius = radius / 4
-    print(basis)
-    print(basis.parent())
 
     ieqs = []
     for v in basis:
