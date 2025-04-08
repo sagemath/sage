@@ -264,6 +264,15 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         (1, 1, 1, -1)
     """
     dim = basis.dimensions()
+    # LLL-reduce for efficiency.
+    basis = basis.LLL()
+    if radius is None:
+        from sage.rings.real_double import RDF
+        tranposedRDFMatrix = (basis.transpose()).change_ring(RDF)
+        Q, R = tranposedRDFMatrix.QR()
+        radius = 0
+        for i in range(dim[0]):
+            radius += R[i][i] * R[i][i]
     artificial_length = None
     if dim[0] < dim[1]:
         # introduce "artificial" basis points (representing infinity)
@@ -275,26 +284,27 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         for v in additional_vectors:
             v *= v.denominator()
         additional_vectors = matrix(additional_vectors)
-        artificial_length = max(approx_norm(v) for v in basis) * 2
+        from sage.rings.rational_field import ZZ
+        additional_vectors = additional_vectors.change_ring(ZZ)
+        additional_vectors = additional_vectors.LLL()
+        artificial_length = ceil((radius / min(approx_norm(v) for v in additional_vectors)) * 1.1)
         additional_vectors *= artificial_length
+        print(additional_vectors.parent())
         basis = basis.stack(additional_vectors)
-        # LLL-reduce to get quadratic matrix
-        basis = basis.LLL()
         basis = matrix([v for v in basis if v])
         dim = basis.dimensions()
     if dim[0] != dim[1]:
         raise ValueError("invalid matrix")
     basis = basis / 2
+    radius = radius / 4
+    print(basis)
+    print(basis.parent())
 
     ieqs = []
     for v in basis:
         ieqs.append(plane_inequality(v))
         ieqs.append(plane_inequality(-v))
     Q = Polyhedron(ieqs=ieqs)
-
-    # twice the length of longest vertex in Q is a safe choice
-    if radius is None:
-        radius = 2 * max(v.inner_product(v) for v in basis)
 
     V = diamond_cut(Q, basis, radius, verbose=verbose)
 
