@@ -293,6 +293,10 @@ cdef Obj gap_eval(str gap_string) except? NULL:
     r"""
     Evaluate a string in GAP.
 
+    This function cannot be used directly from Python, use
+    :meth:`~sage.libs.gap.libgap.Gap.eval` method on global ``libgap``
+    variable instead.
+
     INPUT:
 
     - ``gap_string`` -- string; a valid statement in GAP

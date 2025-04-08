@@ -42,5 +42,4 @@ cdef initialize()
 ### Evaluate string in GAP #################################################
 ############################################################################
 
-# Evaluate a string
 cdef Obj gap_eval(str gap_string) except? NULL
