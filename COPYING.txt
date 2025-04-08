@@ -1,4 +1,4 @@
-This file is about the copyright on Sage and all included components.
+This file is about the copyright on Sage and all included components. 
 
 Sage is a compilation both of original Python, C, C++, and Cython code,
 and of existing free mathematics-related software.  All standard
