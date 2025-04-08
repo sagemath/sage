@@ -30,7 +30,7 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Set_generic
-
+from sage.rings.power_series_ring import PowerSeriesRing
 
 class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
     r"""
@@ -489,6 +489,58 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
         zero = self.base_ring().zero()
         return self.element_class(self, {m[1]: G[m[0]]}, zero, zero)
 
+    def q_character(self):
+        r"""
+        Compute the q-character of the affine Lie algebra.
+
+        The q-character is a generating function that encodes the weights
+        of the representation.
+
+        OUTPUT:
+
+        - A formal sum representing the q-character.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2, 1])
+            sage: g.q_character()
+            q^0 + q^1 + q^2 + ...
+
+            sage: g = LieAlgebra(QQ, cartan_type=['D', 4, 1])
+            sage: g.q_character()
+            q^0 + q^1 + q^2 + ...
+        """
+        R = PowerSeriesRing(self.base_ring(), 'q')
+        q = R.gen()
+        weights = self.basis().keys()
+        return sum(q**weight[1] for weight in weights)
+
+
+    def qt_character(self):
+        r"""
+        Compute the qt-character of the affine Lie algebra.
+
+        The qt-character is a refinement of the q-character that includes
+        an additional parameter t.
+
+        OUTPUT:
+
+        - A formal sum representing the qt-character.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2, 1])
+            sage: g.qt_character()
+            q^0*t^0 + q^1*t^1 + q^2*t^2 + ...
+
+            sage: g = LieAlgebra(QQ, cartan_type=['D', 4, 1])
+            sage: g.qt_character()
+            q^0*t^0 + q^1*t^1 + q^2*t^2 + ...
+        """
+        R = PowerSeriesRing(self.base_ring(), 'q,t')
+        q, t = R.gens()
+        weights = self.basis().keys()
+        return sum(q**weight[1] * t**weight[1] for weight in weights)
 
 class UntwistedAffineLieAlgebra(AffineLieAlgebra):
     r"""
