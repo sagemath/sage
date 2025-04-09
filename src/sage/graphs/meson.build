@@ -46,6 +46,7 @@ py.install_sources(
   'mcqd.pxd',
   'orientations.py',
   'partial_cube.py',
+  'projective_planarity.py',
   'pq_trees.py',
   'print_graphs.py',
   'schnyder.py',
