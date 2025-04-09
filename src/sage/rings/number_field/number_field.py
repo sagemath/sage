@@ -2639,6 +2639,102 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         return NumberField(self.defining_polynomial(), names, check=False, structure=structure.NameChange(self))
 
+    @cached_method
+    def _polred(self, names=None, polredabs=False, isomorphism_map=False):
+        r"""
+        Return ``self`` as an absolute number field defined by a polynomial with
+        with reasonably small coefficients by calling PARI ``polredbest`` (or ``polredabs``)
+        and optionally the isomorphism map
+
+        INPUT:
+
+        - ``names`` -- string (default: ``self._names``); name of generator of the absolute field
+        - ``polredabs`` -- boolean (default: ``False``); call ``polredabs`` instead of ``polredbest``
+        - ``isomorphism_map`` -- boolean (default: ``False``); to also return the isomorphism map
+
+        OUTPUT: an absolute number field isomorphic to self defined by a polynomial with
+        smaller discriminant and the isomorphism map
+
+
+        EXAMPLES::
+
+            sage: f = ZZ['x']('x^3 - 12*x^2 + 2*x - 3')
+            sage: NumberField(f, 'a').polred(polredabs=True, isomorphism_map=True)
+            (Number Field in a with defining polynomial x^3 - x^2 + 35*x - 26,
+             Ring morphism:
+               From: Number Field in a with defining polynomial x^3 - 12*x^2 + 2*x - 3
+               To:   Number Field in a with defining polynomial x^3 - x^2 + 35*x - 26
+               Defn: a |--> 1/3*a^2 + 35/3)
+            sage: NumberField(f, 'a').polred(polredabs=False, isomorphism_map=True)
+            (Number Field in a with defining polynomial x^3 - 46*x - 123,
+             Ring morphism:
+               From: Number Field in a with defining polynomial x^3 - 12*x^2 + 2*x - 3
+               To:   Number Field in a with defining polynomial x^3 - 46*x - 123
+               Defn: a |--> a + 4)
+        """
+        if names is None:
+            names = self._names
+        f = self.defining_polynomial()._pari_with_name()
+        t = f.polredabs(flag=1) if polredabs else f.polredbest(flag=1)
+        R = self.polynomial_ring()
+        K = NumberField(R(t[0]), names)
+        if not isomorphism_map:
+            return K
+        return K, self.hom([K(t[1])], check=False)
+
+    def polredbest(self, names=None, isomorphism_map=False):
+        """
+        Return ``self`` as an absolute number field defined by a polynomial with
+        with reasonably small coefficients, by calling PARI ``polredbest``,
+        and optionally the isomorphism map
+
+        INPUT:
+
+        - ``names`` -- string (default: ``self._names``); name of generator of the absolute field
+        - ``isomorphism_map`` -- boolean (default: ``False``); to also return the isomorphism map
+
+        OUTPUT: an absolute number field isomorphic to self defined by a polynomial with
+        with reasonably small coefficients, by calling PARI ``polredbest``, and the isomorphism map
+
+        EXAMPLES::
+
+            sage: f = ZZ['x']('x^3 - 12*x^2 + 2*x - 3')
+            sage: NumberField(f, 'a').polredbest()
+            (Number Field in a with defining polynomial x^3 - 46*x - 123,
+             Ring morphism:
+               From: Number Field in a with defining polynomial x^3 - 12*x^2 + 2*x - 3
+               To:   Number Field in a with defining polynomial x^3 - 46*x - 123
+               Defn: a |--> a + 4)
+        """
+        return self._polred(names=names, polredabs=False, isomorphism_map=isomorphism_map)
+
+
+    def polredabs(self, names=None, isomorphism_map=False):
+        """
+        Returns ``self`` as an absolute number field defined by canonical polynomial,
+        such that the sum of the squares of the of the roots is minimal,
+        by calling PARI ``polredabs``, and optionally the isomorphism map
+
+        INPUT:
+
+        - ``names`` -- string (default: ``self._names``); name of generator of the absolute field
+        - ``isomorphism_map`` -- boolean (default: ``False``); to also return the isomorphism map
+
+        OUTPUT: an absolute number field isomorphic to self defined by a canonical polynomial,
+        such that the sum of the squares of the of the roots is minimal
+
+        EXAMPLES::
+
+            sage: f = ZZ['x']('x^3 - 12*x^2 + 2*x - 3')
+            sage: NumberField(f, 'a').polredabs(isomorphism_map=True)
+            (Number Field in a with defining polynomial x^3 - x^2 + 35*x - 26,
+             Ring morphism:
+               From: Number Field in a with defining polynomial x^3 - 12*x^2 + 2*x - 3
+               To:   Number Field in a with defining polynomial x^3 - x^2 + 35*x - 26
+               Defn: a |--> 1/3*a^2 + 35/3)
+        """
+        return self._polred(names=names, polredabs=True, isomorphism_map=isomorphism_map)
+
     def is_isomorphic(self, other, isomorphism_maps=False) -> bool:
         """
         Return ``True`` if ``self`` is isomorphic as a number field to ``other``.
