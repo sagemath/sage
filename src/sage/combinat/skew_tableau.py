@@ -1121,10 +1121,53 @@ class SkewTableau(ClonableList,
         return Tableau(rect)
     
     def add_entry(self, cell, m):
-        r"""
+        """
         Return the result of setting the entry in cell ``cell'' equal to ``m'' in the skew tableau ``self''.
         If the cell is already part of ``self'', it replaces the current entry. 
         Otherwise, it attempts to add the cell to the skew tableau.
+
+        INPUT:
+
+        - ``cell`` -- a pair of nonnegative integers
+        - ``m`` -- a nonnegative integer
+
+        OUTPUT:
+
+        The skew tableau ``self`` with entry in cell ``cell`` set to ``m``. This overwrites an existing entry if ``cell`` already belongs to ``self``, otherwise it adds the cell to the shape.
+
+        .. NOTE::
+
+            Both coordinates of ``cell`` are interpreted as starting at `0`.
+            So, ``cell == (0, 0)`` corresponds to the northwesternmost cell
+
+        EXAMPLES::
+
+            sage: S = SkewTableau([[None, None,1],[1,2,5]]); S.pp()
+            .  .  1
+            1  2  5
+            sage: T = S.add_entry([0,1],1); T.pp()
+            .  1  1
+            1  2  5
+            sage: U = T.add_entry([2,0],3); U.pp()
+            .  1  1
+            1  2  5
+            3
+
+        TESTS::
+
+            sage: S = SkewTableau([[None, None, 1]])
+            sage: S.add_entry([0,0],1)
+            Traceback (most recent call last):
+            ...
+            TypeError: not a valid skew tableau
+            sage: S.add_entry([0,1],1)
+            [[None, 1, 1]]
+            sage: S.add_entry([1,0],1)
+            [[None, None, 1], [1]]
+            sage: S.add_entry([1000,1000], 3)
+            Traceback (most recent call last):
+            ...
+            IndexError: (1000, 1000) is not an addable cell of the tableau
 
         """
 
@@ -1144,7 +1187,7 @@ class SkewTableau(ClonableList,
                     tab_r.append(m)
                 else:
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
-                
+
         # attempt to return a tableau of the same type as self
         if tab in self.parent():
             return self.parent()(tab)
@@ -1157,9 +1200,23 @@ class SkewTableau(ClonableList,
     def anti_restrict(self, n):
         """
         Return the skew tableau formed by removing all of the cells from
-        ``self`` that are filled with a number at most `n`.
+        ``self`` that are filled with a number at most ``n``.
+
+        INPUT:
+
+        - ``n`` -- a nonnegative integer 
+
+        OUTPUT:
+
+        The skew tableau ``self`` with all entries less than or equal to ``n`` removed.
 
         EXAMPLES::
+
+            sage: S = SkewTableau([[None,1,2,3],[4,5,6]])
+            sage: S.anti_restrict(2)
+            [[None, None, None, 3], [4, 5, 6]]
+            sage: S.anti_restrict(1).anti_restrict(2) == S.anti_restrict(2)
+            True
         """
         t_new = [[None if g <= n else g for g in row] for row in self]
         return SkewTableau(t_new)
