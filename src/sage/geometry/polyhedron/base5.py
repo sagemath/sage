@@ -1521,6 +1521,8 @@ class Polyhedron_base5(Polyhedron_base4):
 
         OUTPUT: the translated polyhedron
 
+        .. SEEALSO:: :meth:`linear_transformation`, :meth:`dilation`
+
         EXAMPLES::
 
             sage: P = Polyhedron([[0,0], [1,0], [0,1]], base_ring=ZZ)
@@ -1605,6 +1607,8 @@ class Polyhedron_base5(Polyhedron_base4):
 
         The polyhedron dilated by that scalar, possibly coerced to a
         bigger base ring.
+
+        .. SEEALSO:: :meth:`linear_transformation`, :meth:`translation`
 
         EXAMPLES::
 
@@ -1763,6 +1767,8 @@ class Polyhedron_base5(Polyhedron_base4):
         The polyhedron transformed by that matrix, possibly coerced to a
         bigger base ring.
 
+        .. SEEALSO:: :meth:`dilation`, :meth:`translation`
+
         EXAMPLES::
 
             sage: b3 = polytopes.Birkhoff_polytope(3)
@@ -1810,9 +1816,12 @@ class Polyhedron_base5(Polyhedron_base4):
 
         One can scale by a scalar as follows::
 
-            sage: P = polytopes.simplex()
-            sage: P.linear_transformation(2)
-            A 3-dimensional polyhedron in QQ^4 defined as the convex hull of 4 vertices
+            sage: P = polytopes.cube()
+            sage: P2 = P.linear_transformation(2); P2
+            A 3-dimensional polyhedron in QQ^3 defined as
+            the convex hull of 8 vertices
+            sage: P2.volume()
+            64
 
         Linear transformation respects backend::
 
