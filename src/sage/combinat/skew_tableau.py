@@ -7,6 +7,7 @@ AUTHORS:
 - Travis Scrimshaw, Arthur Lubovsky (2013-02-11):
   Factored out ``CombinatorialClass``
 - Trevor K. Karn (2022-08-03): added ``backward_slide``
+- Joseph McDonough (2025-04-09): added ``add_entry`` and ``anti_restrict``
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
