@@ -2327,6 +2327,18 @@ cdef class Matrix(Matrix1):
             self.cache('det', d)
             return d
 
+        # calculate the determinant using echelon form of a matrix
+        # determinant is the product of its diagonal entries in echelon form
+        if algorithm == "rref":
+            E = self.fetch('echelon_form')
+            if E is None:
+                E = self.echelon_form()
+            d = E[0, 0]
+            for i in range(1, self._nrows):
+                d = d * E[i, i]
+            self.cache('det', d)
+            return d
+
         # Generic division-free algorithm to compute the characteristic
         # polynomial.
         #
