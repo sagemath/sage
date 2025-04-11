@@ -485,7 +485,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         """
         if self._prod_polynomials is None:
             self._generate_sum_and_product_polynomials(self._coefficient_ring)
-        return self._prod_polynomials
+        return self._prod_polynomials.copy()
 
     def random_element(self, *args, **kwds):
         """
@@ -523,7 +523,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         """
         if self._sum_polynomials is None:
             self._generate_sum_and_product_polynomials(self._coefficient_ring)
-        return self._sum_polynomials
+        return self._sum_polynomials.copy()
 
     def teichmuller_lift(self, x):
         """
