@@ -470,8 +470,8 @@ class WittVector_phantom(WittVector):
             self._phantom = vec._phantom
             self._powers = vec._powers
         elif isinstance(vec, int) or isinstance(vec, Integer):
+            self._int_to_vector(vec, parent)
             y = base_lift(vec)
-            self._vec = padic_to_vector(y, R)
             self._powers = [y]
             self._phantom = self._prec * [y]
         elif (isinstance(vec, tuple) or isinstance(vec, list)
