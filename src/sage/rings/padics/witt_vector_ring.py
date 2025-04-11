@@ -47,57 +47,6 @@ from sage.sets.primes import Primes
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-def choose_witt_vector_algorithm(algorithm, base_ring, prime, char):
-    """
-    Given the parameters, chooses the adequate algorithm to compute Witt
-    vectors.
-
-    EXAMPLES::
-
-        sage: W = WittVectorRing(ZZ, p=53)
-        sage: type(W)  # indirect doctest
-        <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_standard_with_category'>
-
-        sage: W = WittVectorRing(PolynomialRing(GF(5), 't,u'))
-        sage: type(W)  # indirect doctest
-        <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_phantom_with_category'>
-    """
-    if prime == char:
-        if algorithm == 'p_invertible':
-            raise ValueError("The 'p_invertible' algorithm only works when p "
-                             "is a unit in the ring of coefficients.")
-        elif (base_ring in Fields().Finite()
-              or (isinstance(base_ring, PolynomialRing_generic)
-                  or isinstance(base_ring, MPolynomialRing_base))
-              and base_ring.base() in Fields().Finite()):
-            if algorithm is None:
-                algorithm = 'phantom'
-        elif algorithm is None:
-            algorithm = 'finotti'
-        elif algorithm == 'phantom':
-            raise ValueError("The 'phantom' algorithm only works when the "
-                             "coefficient ring is a finite field of "
-                             "p, or a polynomial ring on that field.")
-    elif algorithm == 'finotti':
-        raise ValueError("The 'finotti' algorithm only works for "
-                         "coefficients rings of characteristic p.")
-    elif algorithm == 'phantom':
-        raise ValueError("The 'phantom' algorithm only works when the "
-                         "coefficient ring is a finite field of "
-                         "characteristic p, or a polynomial ring on that "
-                         "field.")
-    elif base_ring(prime).is_unit():
-        if algorithm is None:
-            algorithm = 'p_invertible'
-    elif algorithm is None:
-        algorithm = 'standard'
-    elif algorithm == 'p_invertible':
-        raise ValueError("The 'p_invertible' algorithm only works when p is "
-                         "a unit in the ring of coefficients.")
-
-    return algorithm
-
-
 def fast_char_p_power(x, n, p=None):
     r"""
     Return `x^n` assuming that `x` lives in a ring of
@@ -244,6 +193,18 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         Traceback (most recent call last):
         ...
         ValueError: algorithm must be one of None, 'standard', 'p_invertible', 'finotti', 'phantom'
+
+        sage: W = WittVectorRing(ZZ, p=53)
+        sage: type(W)
+        <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_standard_with_category'>
+
+        sage: W = WittVectorRing(PolynomialRing(GF(13), 't'))
+        sage: type(W)
+        <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_phantom_with_category'>
+
+        sage: W = WittVectorRing(PolynomialRing(GF(5), 't,u'))
+        sage: type(W)
+        <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_finotti_with_category'>
     """
     def __classcall_private__(cls, base_ring, prec=1, p=None, algorithm=None):
         r"""
@@ -261,10 +222,6 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             raise TypeError(f'{prec} is not an integer')
         elif prec <= 0:
             raise ValueError(f'{prec} must be positive')
-        elif algorithm not in [None, 'standard', 'p_invertible', 'finotti',
-                               'phantom']:
-            raise ValueError("algorithm must be one of None, 'standard', "
-                             "'p_invertible', 'finotti', 'phantom'")
 
         prec = Integer(prec)
         char = base_ring.characteristic()
@@ -273,23 +230,36 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             if char not in Primes():
                 raise ValueError(f'{base_ring} has non-prime characteristic '
                                  'and no prime was supplied')
-            prime = char
-        else:
-            if p not in Primes():
-                raise ValueError('p must be a prime number')
-            prime = p
+            p = char
+        elif p not in Primes():
+            raise ValueError('p must be a prime number')
 
-        match choose_witt_vector_algorithm(algorithm, base_ring, prime, char):
+        match algorithm:
+            case None:
+                if p == char:
+                    if (base_ring in Fields().Finite()
+                        or isinstance(base_ring, PolynomialRing_generic)
+                           and base_ring.base() in Fields().Finite()):
+                        child = WittVectorRing_phantom
+                    else:
+                        child = WittVectorRing_finotti
+                elif base_ring(p).is_unit():
+                    child = WittVectorRing_pinvertible
+                else:
+                    child = WittVectorRing_standard
             case 'finotti':
                 child = WittVectorRing_finotti
             case 'phantom':
                 child = WittVectorRing_phantom
             case 'p_invertible':
                 child = WittVectorRing_pinvertible
-            case _:
+            case 'standard':
                 child = WittVectorRing_standard
+            case _:
+                raise ValueError("algorithm must be one of None, 'standard', "
+                                 "'p_invertible', 'finotti', 'phantom'")
 
-        return child.__classcall__(child, base_ring, prec, prime)
+        return child.__classcall__(child, base_ring, prec, p)
 
     def __iter__(self):
         """
@@ -604,6 +574,10 @@ class WittVectorRing_finotti(WittVectorRing):
 
             sage: TestSuite(W).run()
         """
+        if base_ring.characteristic() != prime:
+            raise ValueError("The 'finotti' algorithm only works for "
+                             "coefficients rings of characteristic p.")
+
         self._prec = prec
         self._prime = prime
         self._sum_polynomials = None
@@ -749,6 +723,15 @@ class WittVectorRing_phantom(WittVectorRing):
 
             sage: TestSuite(W).run()
         """
+        if not (base_ring.characteristic() == prime
+                and (base_ring in Fields().Finite()
+                     or ((isinstance(base_ring, PolynomialRing_generic)
+                          or isinstance(base_ring, MPolynomialRing_base))
+                         and base_ring.base() in Fields().Finite()))):
+            raise ValueError("The 'phantom' algorithm only works when the "
+                             "coefficient ring is a finite field of "
+                             "p, or a polynomial ring on that field.")
+
         self._prec = prec
         self._prime = prime
         self._sum_polynomials = None
@@ -788,6 +771,10 @@ class WittVectorRing_pinvertible(WittVectorRing):
 
             sage: TestSuite(W).run()
         """
+        if not base_ring(prime).is_unit():
+            raise ValueError("The 'p_invertible' algorithm only works when p "
+                             "is a unit in the ring of coefficients.")
+
         self._prec = prec
         self._prime = prime
         self._sum_polynomials = None
