@@ -125,8 +125,8 @@ class WittVector(CommutativeRingElement):
             sage: 1/t
             (1, 1, 1, 0)
 
-            sage: W=WittVectorRing(ZZ, p=5, prec=2)
-            sage: WW=WittVectorRing(ZZ, p=5, prec=2)
+            sage: W = WittVectorRing(ZZ, p=5, prec=2)
+            sage: WW = WittVectorRing(ZZ, p=5, prec=2)
             sage: W((4,10)) * WW((-5,12,1))
             (-20, -18362)
             sage: WW((1,2,3)) + W((1,2))
@@ -307,8 +307,8 @@ class WittVector(CommutativeRingElement):
 
         EXAMPLES::
 
-            sage: W=WittVectorRing(ZZ, p=7, prec=3)
-            sage: t=W([6,1,6])
+            sage: W = WittVectorRing(ZZ, p=7, prec=3)
+            sage: t = W([6,1,6])
             sage: latex(t)
             \left(6, 1, 6\right)
         """
@@ -419,13 +419,13 @@ class WittVector_phantom(WittVector):
 
     EXAMPLES:
 
-        sage: W=WittVectorRing(GF(7), prec=5)
-        sage: t=W.one()
+        sage: W = WittVectorRing(GF(7), prec=5)
+        sage: t = W.one()
         sage: t
         (1, 0, 0, 0, 0)
         sage: t.phantom()
         [1, 1, 1, 1, 1]
-        sage: u=7*t
+        sage: u = 7*t
         sage: u.phantom()
         [7, 7, 7, 7, 7]
         sage: u[1]
@@ -703,7 +703,7 @@ class WittVector_finotti(WittVector):
 
     EXAMPLES:
 
-        sage: W=WittVectorRing(GF(7), prec=4, algorithm='finotti')
+        sage: W = WittVectorRing(GF(7), prec=4, algorithm='finotti')
         sage: 49*W.one()
         (0, 0, 1, 0)
     """
@@ -783,8 +783,8 @@ class WittVector_pinvertible(WittVector):
 
     EXAMPLES:
 
-        sage: W=WittVectorRing(QQ, p=3, prec=3)
-        sage: t=W.random_element()
+        sage: W = WittVectorRing(QQ, p=3, prec=3)
+        sage: t = W.random_element()
         sage: t-t
         (0, 0, 0)
     """
@@ -861,7 +861,7 @@ class WittVector_standard(WittVector):
 
     EXAMPLES:
 
-        sage: W=WittVectorRing(GF(5), prec=3, algorithm='standard')
+        sage: W = WittVectorRing(GF(5), prec=3, algorithm='standard')
         sage: 5*W.one()
         (0, 1, 0)
     """

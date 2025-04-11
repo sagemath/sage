@@ -405,7 +405,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: W=WittVectorRing(PolynomialRing(GF(3),'t'))
+            sage: W = WittVectorRing(PolynomialRing(GF(3),'t'))
             sage: latex(W)
             W(\Bold{F}_{3}[t])
         """
@@ -584,7 +584,7 @@ class WittVectorRing_finotti(WittVectorRing):
 
     EXAMPLES:
 
-        sage: W=WittVectorRing(GF(49), prec=3, algorithm='finotti')
+        sage: W = WittVectorRing(GF(49), prec=3, algorithm='finotti')
         sage: W
         Ring of truncated 7-typical Witt vectors of length 3 over Finite Field in z2 of size 7^2
     """
@@ -729,7 +729,7 @@ class WittVectorRing_phantom(WittVectorRing):
 
     EXAMPLES:
 
-        sage: W=WittVectorRing(GF(19), prec=20)
+        sage: W = WittVectorRing(GF(19), prec=20)
         sage: W
         Ring of truncated 19-typical Witt vectors of length 20 over Finite Field of size 19
     """
@@ -768,7 +768,7 @@ class WittVectorRing_pinvertible(WittVectorRing):
 
     EXAMPLES:
 
-        sage: W=WittVectorRing(QQ, p=31, prec=20)
+        sage: W = WittVectorRing(QQ, p=31, prec=20)
         sage: W
         Ring of truncated 31-typical Witt vectors of length 20 over Rational Field
     """
@@ -807,7 +807,7 @@ class WittVectorRing_standard(WittVectorRing):
 
     EXAMPLES:
 
-        sage: W=WittVectorRing(GF(3), prec=3, algorithm='standard')
+        sage: W = WittVectorRing(GF(3), prec=3, algorithm='standard')
         sage: W
         Ring of truncated 3-typical Witt vectors of length 3 over Finite Field of size 3
     """
