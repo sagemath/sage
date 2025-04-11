@@ -275,22 +275,23 @@ class WittVector(CommutativeRingElement):
         if self._prec == 1:
             return P((self[0]**-1, ))
 
-        # Strategy: Multiply ``self`` by ``(Y_0, Y_1, ...)``, set equal
+        # Strategy: Multiply ``self`` by an unknown Witt vector, set equal
         # to (1, 0, 0, ...), and solve.
-        var_names = [f'Y{i}' for i in range(1, self._prec)]
-        poly_ring = PolynomialRing(P.base(), var_names)
-        inv_vec = list((self[0]**-1,) + poly_ring.gens())
+        poly_ring = PolynomialRing(P.base(), 'x')
+        x = poly_ring.gen()
+        inv_vec = (list([self[0]**-1])
+                   + list(poly_ring.zero() for i in range(self._prec-1)))
         # We'll fill this in one-by-one
 
         from sage.rings.padics.witt_vector_ring import WittVectorRing
         W = WittVectorRing(poly_ring, p=P.prime(), prec=self._prec)
-        prod_vec = (W(self._vec) * W(inv_vec)).vec()
         for i in range(1, self._prec):
-            poly = prod_vec[i](inv_vec[1:])
-            Y_i = poly.parent().gens()[i - 1]
+            inv_vec[i] = x
+            prod_vec = (W(self._vec) * W(inv_vec)).vec()
+            poly = prod_vec[i]
             try:
                 inv_vec[i] = (-poly.constant_coefficient()
-                              / poly.monomial_coefficient(Y_i))
+                              / poly.monomial_coefficient(x))
             except ZeroDivisionError:
                 raise ZeroDivisionError(f"Inverse of {self} does not exist.")
             try:
