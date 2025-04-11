@@ -126,13 +126,13 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
     INPUT:
 
-    - ``base_ring`` -- commutative ring of coefficients
+    - ``coefficient_ring`` -- commutative ring of coefficients
 
     - ``prec`` -- integer (default: `1`), length of the truncated Witt
       vectors in the ring
 
     - ``p`` -- a prime number (default: ``None``); when it is not set, it
-      defaults to the characteristic of ``base_ring`` when it is prime.
+      defaults to the characteristic of ``coefficient_ring`` when it is prime.
 
     - ``algorithm`` -- the name of the algorithm to use for the ring laws
       (default: ``None``); when it is not set, the most adequate algorithm
@@ -143,14 +143,14 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
     - ``standard`` -- the schoolbook algorithm;
 
     - ``p_invertible`` -- uses some optimisations when `p` is invertible
-      in the base ring;
+      in the coefficient ring;
 
-    - ``finotti`` -- Finotti's algorithm; it can be used when the base
+    - ``finotti`` -- Finotti's algorithm; it can be used when the coefficient
       ring has characteristic `p`;
 
     - ``phantom`` -- computes the ring laws using the phantom components
-      using a lift of ``base_ring``, assuming that it is either `\mathbb F_q`
-      for a power `q` of `p`, or a polynomial ring on that ring.
+      using a lift of ``coefficient_ring``, assuming that it is either
+      `\mathbb F_q` for a power `q` of `p`, or a polynomial ring on that ring.
 
     EXAMPLES::
 
@@ -206,7 +206,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         sage: type(W)
         <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_finotti_with_category'>
     """
-    def __classcall_private__(cls, base_ring, prec=1, p=None, algorithm=None):
+    def __classcall_private__(cls, coefficient_ring, prec=1, p=None, algorithm=None):
         r"""
         Construct the ring of truncated Witt vectors from the parameters.
 
@@ -216,20 +216,20 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: W
             Ring of truncated 5-typical Witt vectors of length 1 over Rational Field
         """
-        if base_ring not in CommutativeRings():
-            raise TypeError(f'{base_ring} is not a commutative ring')
+        if coefficient_ring not in CommutativeRings():
+            raise TypeError(f'{coefficient_ring} is not a commutative ring')
         elif not (isinstance(prec, int) or isinstance(prec, Integer)):
             raise TypeError(f'{prec} is not an integer')
         elif prec <= 0:
             raise ValueError(f'{prec} must be positive')
 
         prec = Integer(prec)
-        char = base_ring.characteristic()
+        char = coefficient_ring.characteristic()
 
         if p is None:
             if char not in Primes():
-                raise ValueError(f'{base_ring} has non-prime characteristic '
-                                 'and no prime was supplied')
+                raise ValueError(f'{coefficient_ring} has non-prime '
+                                 'characteristic and no prime was supplied')
             p = char
         elif p not in Primes():
             raise ValueError('p must be a prime number')
@@ -237,13 +237,15 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         match algorithm:
             case None:
                 if p == char:
-                    if (base_ring in Fields().Finite()
-                        or isinstance(base_ring, PolynomialRing_generic)
-                           and base_ring.base() in Fields().Finite()):
+                    if (coefficient_ring in Fields().Finite()
+                        or isinstance(coefficient_ring,
+                                      PolynomialRing_generic)
+                        and coefficient_ring.base()
+                            in Fields().Finite()):
                         child = WittVectorRing_phantom
                     else:
                         child = WittVectorRing_finotti
-                elif base_ring(p).is_unit():
+                elif coefficient_ring(p).is_unit():
                     child = WittVectorRing_pinvertible
                 else:
                     child = WittVectorRing_standard
@@ -259,7 +261,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
                 raise ValueError("algorithm must be one of None, 'standard', "
                                  "'p_invertible', 'finotti', 'phantom'")
 
-        return child.__classcall__(child, base_ring, prec, p)
+        return child.__classcall__(child, coefficient_ring, prec, p)
 
     def __iter__(self):
         """
@@ -272,25 +274,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1),
             (2, 2)]
         """
-        for t in product(self.base(), repeat=self._prec):
+        for t in product(self._coefficient_ring, repeat=self._prec):
             yield self(t)
-
-    def _coerce_map_from_(self, S):
-        """"
-        Check whether there is a coerce map from ``S``.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(25), p=5,prec=2)
-            sage: W.has_coerce_map_from(WittVectorRing(GF(5), p=5, prec=3))  # indirect doctest
-            True
-        """
-        if isinstance(S, WittVectorRing):
-            return (
-                S.precision() >= self._prec
-                and self.base().has_coerce_map_from(S.base()))
-        if S is ZZ:
-            return True
 
     def _generate_sum_and_product_polynomials(self, base):
         """
@@ -331,7 +316,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             implementation = 'singular'
 
         # We first generate the "universal" polynomials and then project
-        # to the base ring.
+        # to the coefficient ring.
         R = PolynomialRing(ZZ, var_names, implementation=implementation)
         x_y_vars = R.gens()
         x_vars = x_y_vars[:prec]
@@ -379,7 +364,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: latex(W)
             W(\Bold{F}_{3}[t])
         """
-        return "W(%s)" % latex(self.base())
+        return "W(%s)" % latex(self._coefficient_ring)
 
     def _repr_(self):
         """
@@ -391,7 +376,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             Ring of truncated 2-typical Witt vectors of length 5 over Rational Field
         """
         return f"Ring of truncated {self._prime}-typical Witt vectors of "\
-               f"length {self._prec} over {self.base()}"
+               f"length {self._prec} over {self._coefficient_ring}"
 
     def cardinality(self):
         """
@@ -404,7 +389,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: WittVectorRing(QQ, p=2).cardinality()
             +Infinity
         """
-        return self.base().cardinality()**(self._prec)
+        return self._coefficient_ring.cardinality()**(self._prec)
 
     def characteristic(self):
         """
@@ -420,13 +405,25 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             162
         """
         p = self._prime
-        if self.base()(p).is_unit():
+        if self._coefficient_ring(p).is_unit():
             # If p is invertible, W_n(R) is isomorphic to R^n.
-            return self.base().characteristic()
+            return self._coefficient_ring.characteristic()
 
         # This is Jacob Dennerlein's Corollary 3.3. in "Computational
         # Aspects of Mixed Characteristic Witt Vectors" (preprint)
-        return p**(self._prec-1) * self.base().characteristic()
+        return p**(self._prec-1) * self._coefficient_ring.characteristic()
+
+    def coefficient_ring(self):
+        """
+        Return the coefficient ring of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(Zp(5), p=5)
+            sage: W.coefficient_ring()
+            5-adic Ring with capped relative precision 20
+        """
+        return self._coefficient_ring
 
     def is_finite(self):
         """
@@ -439,7 +436,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: WittVectorRing(ZZ, p=2).is_finite()
             False
         """
-        return self.base().is_finite()
+        return self._coefficient_ring.is_finite()
 
     def precision(self):
         """
@@ -486,13 +483,13 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             [X0*Y0, X1*Y0^2 + X0^2*Y1 + 2*X1*Y1]
         """
         if self._prod_polynomials is None:
-            self._generate_sum_and_product_polynomials(self.base())
+            self._generate_sum_and_product_polynomials(self._coefficient_ring)
         return self._prod_polynomials
 
     def random_element(self, *args, **kwds):
         """
         Return the length of the truncated Witt vectors in ``length``. Extra
-        arguments are passed to the random generator of the base ring.
+        arguments are passed to the random generator of the coefficient ring.
 
         EXAMPLES::
 
@@ -504,7 +501,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             (x^5 - 2*x^4 - 4*x^3 - 2*x^2 + 1, -x^5 + 2*x^4 - x - 1,
             -x^5 + 7*x^4 + 3*x^3 - 24*x^2 - 1)
         """
-        return self(tuple(self.base().random_element(*args, **kwds)
+        return self(tuple(self._coefficient_ring.random_element(*args, **kwds)
                           for _ in range(self._prec)))
 
     def sum_polynomials(self):
@@ -524,7 +521,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             -X0^3*Y0 - 2*X0^2*Y0^2 - X0*Y0^3 + X0*X1*Y0 + X0*Y0*Y1 - X1*Y1 + X2 + Y2]
         """
         if self._sum_polynomials is None:
-            self._generate_sum_and_product_polynomials(self.base())
+            self._generate_sum_and_product_polynomials(self._coefficient_ring)
         return self._sum_polynomials
 
     def teichmuller_lift(self, x):
@@ -538,8 +535,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: WittVectorRing(GF(125,'t'), prec=2).teichmuller_lift(3)
             (3, 0)
         """
-        if x not in self.base():
-            raise TypeError(f'{x} not in {self.base()}')
+        if x not in self._coefficient_ring:
+            raise TypeError(f'{x} not in {self._coefficient_ring}')
         return self((x,) + tuple(0 for _ in range(self._prec-1)))
 
 
@@ -560,7 +557,7 @@ class WittVectorRing_finotti(WittVectorRing):
     """
     Element = WittVector_finotti
 
-    def __init__(self, base_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime):
         r"""
         Initialises ``self``.
 
@@ -574,18 +571,61 @@ class WittVectorRing_finotti(WittVectorRing):
 
             sage: TestSuite(W).run()
         """
-        if base_ring.characteristic() != prime:
+        if coefficient_ring.characteristic() != prime:
             raise ValueError("The 'finotti' algorithm only works for "
                              "coefficients rings of characteristic p.")
 
+        self._coefficient_ring = coefficient_ring
         self._prec = prec
         self._prime = prime
-        self._sum_polynomials = None
         self._prod_polynomials = None
+        self._sum_polynomials = None
 
         self._generate_binomial_table()
 
-        CommutativeRing.__init__(self, base_ring)
+        CommutativeRing.__init__(self, self)
+
+    def _coerce_map_from_(self, S):
+        """"
+        Check whether there is a coerce map from ``S``.
+
+        EXAMPLES::
+
+            sage: K = GF(7)
+            sage: WK = WittVectorRing(K, prec=3)
+            sage: W = WittVectorRing(PolynomialRing(K, 't'), prec=3)
+            sage: Wf = WittVectorRing(PolynomialRing(K, 't'), prec=3, algorithm='finotti')
+            sage: WW = WittVectorRing(PolynomialRing(K, 't,u'), prec=3)
+            sage: Wf.has_coerce_map_from(WK)  # indirect doctest
+            True
+            sage: Wf.has_coerce_map_from(W)  # indirect doctest
+            False
+            sage: WW.has_coerce_map_from(W)  # indirect doctest
+            True
+            sage: WW.has_coerce_map_from(Wf)  # indirect doctest
+            True
+            sage: WW.has_coerce_map_from(WK)  # indirect doctest
+            True
+        """
+        if (isinstance(S, WittVectorRing_finotti)
+            or isinstance(S,
+                          WittVectorRing_standard)):
+            return (
+                S.precision() >= self._prec
+                and self._prime == S.prime()
+                and self._coefficient_ring.has_coerce_map_from(
+                    S.coefficient_ring()))
+        if isinstance(S, WittVectorRing_phantom):
+            return (
+                S.precision() >= self._prec
+                and self._prime == S.prime()
+                and self._coefficient_ring.has_coerce_map_from(
+                    S.coefficient_ring())
+                and (isinstance(self._coefficient_ring, MPolynomialRing_base)
+                     or S.precision() != self._prec
+                     or S.coefficient_ring() is not self._coefficient_ring))
+        if S is ZZ:
+            return True
 
     def _eta_bar(self, vec, eta_index):
         r"""
@@ -709,7 +749,7 @@ class WittVectorRing_phantom(WittVectorRing):
     """
     Element = WittVector_phantom
 
-    def __init__(self, base_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime):
         r"""
         Initialises ``self``.
 
@@ -723,21 +763,63 @@ class WittVectorRing_phantom(WittVectorRing):
 
             sage: TestSuite(W).run()
         """
-        if not (base_ring.characteristic() == prime
-                and (base_ring in Fields().Finite()
-                     or ((isinstance(base_ring, PolynomialRing_generic)
-                          or isinstance(base_ring, MPolynomialRing_base))
-                         and base_ring.base() in Fields().Finite()))):
+        if not (coefficient_ring.characteristic() == prime
+                and (coefficient_ring in Fields().Finite()
+                     or ((isinstance(coefficient_ring, PolynomialRing_generic)
+                          or isinstance(coefficient_ring,
+                                        MPolynomialRing_base))
+                         and coefficient_ring.base() in Fields().Finite()))):
             raise ValueError("The 'phantom' algorithm only works when the "
                              "coefficient ring is a finite field of "
                              "p, or a polynomial ring on that field.")
 
+        self._coefficient_ring = coefficient_ring
         self._prec = prec
         self._prime = prime
-        self._sum_polynomials = None
         self._prod_polynomials = None
+        self._sum_polynomials = None
 
-        CommutativeRing.__init__(self, base_ring)
+        CommutativeRing.__init__(self, self)
+
+    def _coerce_map_from_(self, S):
+        """"
+        Check whether there is a coerce map from ``S``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(25), prec=2)
+            sage: W.has_coerce_map_from(WittVectorRing(GF(5), prec=3))  # indirect doctest
+            True
+            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=5, prec=3))  # indirect doctest
+            True
+            sage: W.has_coerce_map_from(WittVectorRing(PolynomialRing(GF(5), 't,u'), prec=3))  # indirect doctest
+            False
+            sage: WW = WittVectorRing(PolynomialRing(GF(5), 't'), prec=3)
+            sage: WW.has_coerce_map_from(W)  # indirect doctest
+            False
+            sage: W.has_coerce_map_from(WW)  # indirect doctest
+            False
+        """
+        if (isinstance(S, WittVectorRing_phantom)
+            or isinstance(S,
+                          WittVectorRing_standard)):
+            return (
+                S.precision() >= self._prec
+                and self._prime == S.prime()
+                and self._coefficient_ring.has_coerce_map_from(
+                    S.coefficient_ring()))
+        if isinstance(S, WittVectorRing_finotti):
+            return (
+                S.precision() >= self._prec
+                and self._prime == S.prime()
+                and self._coefficient_ring.has_coerce_map_from(
+                    S.coefficient_ring())
+                and (not isinstance(self._coefficient_ring,
+                                    MPolynomialRing_base)
+                     or S.precision() != self._prec
+                     or S.coefficient_ring() is not self._coefficient_ring))
+        if S is ZZ:
+            return True
 
 
 class WittVectorRing_pinvertible(WittVectorRing):
@@ -757,7 +839,7 @@ class WittVectorRing_pinvertible(WittVectorRing):
     """
     Element = WittVector_pinvertible
 
-    def __init__(self, base_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime):
         r"""
         Initialises ``self``.
 
@@ -771,16 +853,38 @@ class WittVectorRing_pinvertible(WittVectorRing):
 
             sage: TestSuite(W).run()
         """
-        if not base_ring(prime).is_unit():
+        if not coefficient_ring(prime).is_unit():
             raise ValueError("The 'p_invertible' algorithm only works when p "
                              "is a unit in the ring of coefficients.")
 
+        self._coefficient_ring = coefficient_ring
         self._prec = prec
         self._prime = prime
-        self._sum_polynomials = None
         self._prod_polynomials = None
+        self._sum_polynomials = None
 
-        CommutativeRing.__init__(self, base_ring)
+        CommutativeRing.__init__(self, self)
+
+    def _coerce_map_from_(self, S):
+        """"
+        Check whether there is a coerce map from ``S``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(QQ, p=3, prec=3)
+            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=3, prec=3))  # indirect doctest
+            True
+            sage: W.has_coerce_map_from(WittVectorRing(QQ, p=3, prec=2))  # indirect doctest
+            False
+        """
+        if isinstance(S, WittVectorRing):
+            return (
+                S.precision() >= self._prec
+                and self._prime == S.prime()
+                and self._coefficient_ring.has_coerce_map_from(
+                    S.coefficient_ring()))
+        if S is ZZ:
+            return True
 
 
 class WittVectorRing_standard(WittVectorRing):
@@ -800,7 +904,7 @@ class WittVectorRing_standard(WittVectorRing):
     """
     Element = WittVector_standard
 
-    def __init__(self, base_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime):
         r"""
         Initialises ``self``.
 
@@ -814,9 +918,38 @@ class WittVectorRing_standard(WittVectorRing):
 
             sage: TestSuite(W).run()
         """
+        self._coefficient_ring = coefficient_ring
         self._prec = prec
         self._prime = prime
 
-        self._generate_sum_and_product_polynomials(base_ring)
+        self._generate_sum_and_product_polynomials(coefficient_ring)
 
-        CommutativeRing.__init__(self, base_ring)
+        CommutativeRing.__init__(self, self)
+
+    def _coerce_map_from_(self, S):
+        """"
+        Check whether there is a coerce map from ``S``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(PolynomialRing(ZZ, 'x'), p=5, prec=2)
+            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=5, prec=3))  # indirect doctest
+            True
+            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=3, prec=3))  # indirect doctest
+            False
+        """
+        if isinstance(S, WittVectorRing_standard):
+            return (
+                S.precision() >= self._prec
+                and self._prime == S.prime()
+                and self._coefficient_ring.has_coerce_map_from(
+                    S.coefficient_ring()))
+        if isinstance(S, WittVectorRing):
+            return (
+                (S.precision() > self._prec
+                 or S.coefficient_ring is not self._coefficient_ring)
+                and self._prime == S.prime()
+                and self._coefficient_ring.has_coerce_map_from(
+                    S.coefficient_ring()))
+        if S is ZZ:
+            return True

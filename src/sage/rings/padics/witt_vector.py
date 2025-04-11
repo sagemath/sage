@@ -133,7 +133,7 @@ class WittVector(CommutativeRingElement):
             (2, -2)
         """
         self._prec = parent.precision()
-        B = parent.base()
+        B = parent.coefficient_ring()
         if vec is not None:
             if isinstance(vec, int) or isinstance(vec, Integer):
                 self._int_to_vector(vec, parent)
@@ -224,7 +224,7 @@ class WittVector(CommutativeRingElement):
             (-123, 50826444131062300759362981690761165250849615528)
         """
         p = parent.prime()
-        R = parent.base()
+        R = parent.coefficient_ring()
 
         if p == R.characteristic():
             Z = Zp(p, prec=self._prec + 1, type='fixed-mod')
@@ -277,7 +277,7 @@ class WittVector(CommutativeRingElement):
 
         # Strategy: Multiply ``self`` by an unknown Witt vector, set equal
         # to (1, 0, 0, ...), and solve.
-        poly_ring = PolynomialRing(P.base(), 'x')
+        poly_ring = PolynomialRing(P.coefficient_ring(), 'x')
         x = poly_ring.gen()
         inv_vec = (list([self[0]**-1])
                    + list(poly_ring.zero() for i in range(self._prec-1)))
@@ -295,7 +295,7 @@ class WittVector(CommutativeRingElement):
             except ZeroDivisionError:
                 raise ZeroDivisionError(f"Inverse of {self} does not exist.")
             try:
-                inv_vec[i] = P.base()(inv_vec[i])
+                inv_vec[i] = P.coefficient_ring()(inv_vec[i])
             except ValueError:
                 raise ZeroDivisionError(f"Inverse of {self} does not exist.")
 
@@ -375,7 +375,7 @@ class WittVector(CommutativeRingElement):
         INPUT:
 
         - ``R`` -- the base ring (default: ``None``) of the returned vector,
-          when no ring is given the base ring of ``self`` is used.
+          when no ring is given the coefficient ring of ``self`` is used.
 
         EXAMPLES::
 
@@ -444,7 +444,7 @@ class WittVector_phantom(WittVector):
             (0, 1, 0)
         """
         self._prec = parent.precision()
-        R = parent.base()
+        R = parent.coefficient_ring()
         p = parent.prime()
         base = R
         if (isinstance(R, PolynomialRing_generic)
@@ -545,7 +545,7 @@ class WittVector_phantom(WittVector):
         phantom = self._phantom
         powers = self._powers
         p = self.parent()._prime
-        mod = self.parent().base()
+        mod = self.parent().coefficient_ring()
         for n in range(len(self._vec), prec):
             for i in range(n):
                 powers[i] = powers[i] ** p
