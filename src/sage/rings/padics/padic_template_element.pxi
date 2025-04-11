@@ -126,6 +126,13 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             Traceback (most recent call last):
             ...
             TypeError: element in a proper extension
+
+        Check that bug :issue:`33527` is fixed::
+
+            sage: K = Qq(25, names='a')
+            sage: K0 = K.base_ring()
+            sage: K0(K(1))
+            1 + O(5^20)
         """
         self.prime_pow = <PowComputer_?>parent.prime_pow
         pAdicGenericElement.__init__(self, parent)
