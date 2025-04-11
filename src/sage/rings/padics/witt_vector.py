@@ -372,6 +372,11 @@ class WittVector(CommutativeRingElement):
         """
         Return the underlying vector from ``self``.
 
+        INPUT:
+
+        - ``R`` -- the base ring (default: ``None``) of the returned vector,
+          when no ring is given the base ring of ``self`` is used.
+
         EXAMPLES::
 
              sage: W = WittVectorRing(QQ, p=29, prec=3)
