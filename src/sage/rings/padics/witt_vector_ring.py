@@ -200,7 +200,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
       ring has characteristic `p`;
 
     - ``phantom`` -- computes the ring laws using the phantom components
-      using a lift of the base ring, assuming that it is either `\mathbb F_q`
+      using a lift of ``base_ring``, assuming that it is either `\mathbb F_q`
       for a power `q` of `p`, or a polynomial ring on that ring.
 
     EXAMPLES::
