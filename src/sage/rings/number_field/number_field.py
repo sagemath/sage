@@ -4205,7 +4205,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         TESTS:
 
-        Checking that the representation in not improved in a costly manner::
+        Checking that the representation in not improved in a costly manner (see :issue:`39920`)::
 
             sage: from sage.doctest.util import alarm
             sage: K = NumberField(ZZ['x']([1]*200 + [2]), 'a')
