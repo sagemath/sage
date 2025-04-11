@@ -2812,7 +2812,10 @@ REFERENCES:
 .. [Ful1989] \W. Fulton. Algebraic curves: an introduction to algebraic geometry. Addison-Wesley,
              Redwood City CA (1989).
 
-.. [Ful1993] Wiliam Fulton, *Introduction to Toric Varieties*,
+.. [Ful1992] William Fulton. *Flags, Schubert polynomials, degeneracy loci, and
+             determinantal formulas*. Duke Math. J. **65** (1992), no. 3, 381-420.
+
+.. [Ful1993] William Fulton, *Introduction to Toric Varieties*,
             Princeton University Press, 1993.
 
 .. [Ful1997] William Fulton,
@@ -3268,6 +3271,9 @@ REFERENCES:
 
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              http://www-math.mit.edu/~hajiagha/pp11.ps
+
+.. [Han2016] \G.-N. Han, *Hankel continued fraction and its applications*,
+             Adv. in Math., 303, 2016, pp. 295-321.
 
 .. [Han1960] Haim Hanani,
              *On quadruple systems*,
@@ -3917,6 +3923,11 @@ REFERENCES:
             and combinatorics of Young tableaux*,
             Algebra i Analiz, 1995, Volume 7, Issue 1, pp. 92--152.
             http://math.uoregon.edu/~arkadiy/bk1.pdf
+
+.. [KD2015] Donald Keedwell and József Dénes, Latin Squares and their
+            Applications (2nd ed.), Elsevier B.V., Amsterdam-Netherlands,
+            2015. ISBN 978-0-444-63555-6, :mathscinet:`MR3495977`,
+            :doi:`10.1016/C2014-0-03412-0`
 
 .. [Ke1991] \A. Kerber. Algebraic combinatorics via finite group
             actions, 2.2 p. 70. BI-Wissenschaftsverlag,
@@ -4744,7 +4755,10 @@ REFERENCES:
 
 **M**
 
-.. [Mac1916] \F.S. Macaulay. The algebraic theory of modular systems
+.. [Mac1902] \F.S. Macaulay. *On some formula in elimination.*
+             London Mathematical Society, 33, 1902, 3--27
+
+.. [Mac1916] \F.S. Macaulay. *The algebraic theory of modular systems*
              Cambridge university press, 1916.
 
 .. [Mac1995] \I. G. Macdonald, Symmetric functions and Hall
@@ -5088,6 +5102,11 @@ REFERENCES:
 
 .. [MS1977] \F. J. MacWilliams, N. J. A. Sloane, *The Theory of Error-Correcting
             Codes*, North-Holland, Amsterdam, 1977
+
+.. [MS1977a] Arnaldo Mandel, Imre Simon,
+             *On Finite Semigroups of Matrices*,
+             Theoretical Computer Science 5 (101-111),
+             North-Holland Publishing Company
 
 .. [MS1994] \P. Martin and H. Saleur.
             *The blob algebra and the periodic Temperley-Lieb algebra*.
@@ -5632,6 +5651,10 @@ REFERENCES:
               *Alley CATs in search of good homes.*
               Congressus numerantium, 1994.
               Pages 97--110
+
+.. [Rea1968] Ronald C. Read,
+             An improved method for computing the chromatic polynomials of sparse graphs,
+             Research Report CORR 87-20, C & O Dept. Univ. of Waterloo, 1987.
 
 .. [Rea2004] Nathan Reading.
              *Cambrian Lattices*.

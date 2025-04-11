@@ -248,7 +248,7 @@ def init_sage(controller: DocTestController | None = None) -> None:
 
     try:
         import sympy
-    except ImportError:
+    except (ImportError, AttributeError):
         # Do not require sympy for running doctests (Issue #25106).
         pass
     else:
@@ -261,7 +261,8 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     r"""
     Displays a warning message with a traceback.
 
-    INPUT: see :func:`warnings.showwarning`.
+    INPUT: see :func:`warnings.showwarning` with the difference that with ``file=None``
+           the message will be written to stdout.
 
     OUTPUT: none
 
@@ -293,7 +294,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     lines.extend(traceback.format_exception_only(category, category(message)))
 
     if file is None:
-        file = sys.stderr
+        file = sys.stdout
     try:
         file.writelines(lines)
         file.flush()
@@ -664,7 +665,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             # We print the example we're running for easier debugging
             # if this file times out or crashes.
             with OriginalSource(example):
-                print("sage: " + example.source[:-1] + " ## line %s ##" % (test.lineno + example.lineno + 1))
+                assert example.source.endswith("\n"), example
+                print("sage: " + example.source[:-1].replace("\n", "\n....: ") + " ## line %s ##" % (test.lineno + example.lineno + 1))
             # Update the position so that result comparison works
             self._fakeout.getvalue()
             if not quiet:
@@ -1489,6 +1491,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     from sage.repl.configuration import sage_ipython_config
                     from IPython.terminal.embed import InteractiveShellEmbed
                     cfg = sage_ipython_config.default()
+                    cfg.InteractiveShell.enable_tip = False
                     # Currently this doesn't work: prompts only work in pty
                     # We keep simple_prompt=True, prompts will be "In [0]:"
                     # cfg.InteractiveShell.prompts_class = DebugPrompts

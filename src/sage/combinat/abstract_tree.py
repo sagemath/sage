@@ -276,8 +276,7 @@ class AbstractTree:
         while stack:
             node = stack.pop()
             action(node)
-            for i in range(len(node)):
-                subtree = node[-i - 1]
+            for subtree in reversed(node):
                 if not subtree.is_empty():
                     stack.append(subtree)
 
@@ -639,14 +638,121 @@ class AbstractTree:
                 # subtrees, and should not be exploded again, but instead
                 # should be manipulated and removed from the stack.
                 stack.append(None)
-                for i in range(len(node)):
-                    subtree = node[-i - 1]
+                for subtree in reversed(node):
                     if not subtree.is_empty():
                         stack.append(subtree)
             else:
                 stack.pop()
                 node = stack.pop()
                 action(node)
+
+    def contour_traversal(self, first_action=None, middle_action=None, final_action=None, leaf_action=None):
+        r"""
+        Run the counterclockwise countour traversal algorithm (iterative
+        implementation) and subject every node encountered
+        to some procedure ``first_action``, ``middle_action`` or ``final_action`` each time it reaches it.
+
+        ALGORITHM:
+
+        - if the root is a leaf, apply `leaf_action`
+        - else
+            -  apply `first_action` to the root
+            - iteratively apply `middle_action` to the root and traverse each subtree
+              from the leftmost one to the rightmost one
+            - apply `final_action` to the root
+
+        INPUT:
+
+        - ``first_action`` -- (optional) a function which takes a node as
+          input, and does something the first time it is reached during exploration
+
+        - ``middle_action`` -- (optional) a function which takes a node as
+          input, and does something each time it explore one of its children
+
+        - ``final_action`` -- (optional) a function which takes a node as
+          input, and does something the last time it is reached during exploration
+
+        - ``leaf_action`` -- (optional) a function which takes a leaf as
+          input, and does something when it is reached during exploration.
+
+        OUTPUT:
+
+        ``None``. (This is *not* an iterator.)
+
+        TESTS::
+
+            sage: l = []
+            sage: t = OrderedTree([[],[[],[],]]).canonical_labelling()
+            sage: t
+            1[2[], 3[4[], 5[]]]
+            sage: t.contour_traversal(lambda node: (l.append(node.label()),l.append('a')),
+            ....:   lambda node: (l.append(node.label()),l.append('b')),
+            ....:   lambda node: (l.append(node.label()),l.append('c')),
+            ....:   lambda node: (l.append(node.label())))
+            sage: l
+            [1, 'a', 1, 'b', 2, 1, 'b', 3, 'a', 3, 'b', 4, 3, 'b', 5, 3, 'c', 1, 'c']
+
+            sage: l = []
+            sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).canonical_labelling()
+            sage: b
+            3[1[., 2[., .]], 7[5[4[., .], 6[., .]], 8[., .]]]
+            sage: b.contour_traversal(lambda node: l.append(node.label()),
+            ....:   lambda node: l.append(node.label()),
+            ....:   lambda node: l.append(node.label()),
+            ....:   None)
+            sage: l
+            [3, 3, 1, 1, 1, 2, 2, 2, 2, 1, 3, 7, 7, 5, 5, 4, 4, 4, 4, 5, 6, 6, 6, 6, 5, 7, 8, 8, 8, 8, 7, 3]
+
+        The following test checks that things do not go wrong if some among
+        the descendants of the tree are equal or even identical::
+
+            sage: u = BinaryTree(None)
+            sage: v = BinaryTree([u, u])
+            sage: w = BinaryTree([v, v])
+            sage: t = BinaryTree([w, w])
+            sage: t.node_number()
+            7
+            sage: l = []
+            sage: t.contour_traversal(first_action = lambda node: l.append(0))
+            sage: len(l)
+            7
+        """
+        if first_action is None:
+            def first_action(x):
+                return
+        if middle_action is None:
+            def middle_action(x):
+                return
+        if final_action is None:
+            def final_action(x):
+                return
+        if leaf_action is None:
+            def leaf_action(x):
+                return
+        stack = []
+        stack.append(self)
+        corners = [0, 0]
+        while stack:
+            node = stack.pop()
+            if not node:
+                leaf_action(node)
+                corners.pop()
+                corners[-1] += 1
+            elif not corners[-1]:
+                first_action(node)
+                middle_action(node)
+                stack.append(node)
+                stack.append(node[0])
+                corners.append(0)
+            elif corners[-1] == len(node):
+                final_action(node)
+                corners.pop()
+                corners[-1] += 1
+            else:
+                middle_action(node)
+                stack.append(node)
+                stack.append(node[corners[-1]])
+                corners.append(0)
 
     def breadth_first_order_traversal(self, action=None):
         r"""
@@ -823,12 +929,41 @@ class AbstractTree:
             True
             sage: [T.node_number_at_depth(i) for i in range(3)]
             [0, 0, 0]
+
+        Check that we do not hit a recursion limit::
+
+            sage: T = OrderedTree([])
+            sage: for _ in range(9999):
+            ....:     T = OrderedTree([T])
+            sage: T.node_number_at_depth(2000)
+            1
         """
         if self.is_empty():
-            return Integer(0)
-        if depth == 0:
-            return Integer(1)
-        return sum(son.node_number_at_depth(depth - 1) for son in self)
+            return 0
+        m = 0
+
+        def fr_action(node):
+            nonlocal m, depths, depth
+            if depths[-1] == depth:
+                m += 1
+
+        def m_action(node):
+            nonlocal depths
+            depths.append(depths[-1] + 1)
+
+        def fn_action(node):
+            nonlocal depths
+            depths.pop()
+
+        def lf_action(node):
+            nonlocal m, depths, depth
+            if depths[-1] == depth:
+                m += 1
+            depths.pop()
+
+        depths = [0]
+        self.contour_traversal(fr_action, m_action, fn_action, lf_action)
+        return Integer(m)
 
     def paths_to_the_right(self, path):
         r"""
@@ -1052,11 +1187,25 @@ class AbstractTree:
             2
             sage: BinaryTree([[None, [[], []]], None]).node_number()
             5
+
+        TESTS:
+
+        Check that we do not hit a recursion limit::
+
+            sage: T = OrderedTree([])
+            sage: for _ in range(9999):
+            ....:     T = OrderedTree([T])
+            sage: T.node_number()
+            10000
         """
-        if self.is_empty():
-            return Integer(0)
-        else:
-            return sum((i.node_number() for i in self), Integer(1))
+        count = 0
+
+        def incr(node):
+            nonlocal count
+            count += 1
+
+        self.iterative_pre_order_traversal(incr)
+        return Integer(count)
 
     def depth(self):
         """
@@ -1079,11 +1228,33 @@ class AbstractTree:
             0
             sage: BinaryTree([[],[[],[]]]).depth()
             3
+
+        TESTS:
+
+        Check that we do not hit a recursion limit::
+
+            sage: T = OrderedTree([])
+            sage: for _ in range(9999):
+            ....:     T = OrderedTree([T])
+            sage: T.depth()
+            10000
         """
-        if self:
-            return Integer(1 + max(i.depth() for i in self))
-        else:
-            return Integer(0 if self.is_empty() else 1)
+        if self.is_empty():
+            return 0
+        m = []
+
+        def action(node):
+            nonlocal m
+            if node.is_empty():
+                m.append(-1)
+            elif not bool(node):
+                m.append(0)
+            else:
+                mx = max(m.pop() for _ in node)
+                m.append(mx + 1)
+
+        self.contour_traversal(final_action=action, leaf_action=action)
+        return Integer(m[0] + 1)
 
     def _ascii_art_(self):
         r"""
@@ -1307,7 +1478,7 @@ class AbstractTree:
         while l_repr:
             tr = l_repr.pop(0)
             acc += UnicodeArt([" "]) + tr
-            if not len(l_repr):
+            if not l_repr:
                 lf_sep += "─" * (tr._root) + "╮"
                 ls_sep += " " * (tr._root) + "│"
             else:

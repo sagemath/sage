@@ -1863,7 +1863,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve('389a1')
             sage: E._known_points = []  # clear cached points
             sage: E.simon_two_descent()
-            (2, 2, [(5/4 : 5/8 : 1), (-3/4 : 7/8 : 1)])
+            (2, 2, [(-3/4 : 7/8 : 1), (5/4 : 5/8 : 1)])
             sage: E = EllipticCurve('5077a1')
             sage: E.simon_two_descent()
             (3, 3, [(1 : 0 : 1), (2 : 0 : 1), (0 : 2 : 1)])
@@ -2354,12 +2354,14 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: set(E.gens()) <= set([P,-P])
             True
 
-        Check that :issue:`38813` has been fixed:
+        Check that :issue:`38813` has been fixed::
 
-            sage: set_random_seed(91390048253425197917505296851335255685)
+            sage: # long time
             sage: E = EllipticCurve([-127^2,0])
-            sage: E.gens(use_database=False, algorithm='pari', pari_effort=4)   # long time
+            sage: l = E.gens(use_database=False, algorithm='pari', pari_effort=4); l   # random
             [(611429153205013185025/9492121848205441 : 15118836457596902442737698070880/924793900700594415341761 : 1)]
+            sage: a = E(611429153205013185025/9492121848205441, 15118836457596902442737698070880/924793900700594415341761)
+            sage: assert len(l) == 1 and ((l[0] - a).is_finite_order() or (l[0] + a).is_finite_order())
         """
         if proof is None:
             from sage.structure.proof.proof import get_flag
