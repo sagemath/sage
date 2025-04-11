@@ -163,7 +163,7 @@ class WittVector(CommutativeRingElement):
             -4
         """
         if i < 0 or i >= self._prec:
-            raise IndexError
+            raise IndexError('Index out of the truncated Witt vector range.')
         return self._vec[i]
 
     def __hash__(self) -> int:
@@ -497,7 +497,7 @@ class WittVector_phantom(WittVector):
             5
         """
         if i < 0 or i >= self._prec:
-            raise IndexError
+            raise IndexError('Index out of the truncated Witt vector range.')
         self._compute_vector(i+1)
         return self._vec[i]
 
