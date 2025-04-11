@@ -2642,7 +2642,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     @cached_method
     def _polred(self, names=None, polredabs=False, isomorphism_map=False):
         r"""
-        Return ``self`` as an absolute number field defined by a polynomial with
+        Return ``self`` as an absolute number field defined by a monic polynomial with
         with reasonably small coefficients by calling PARI ``polredbest`` (or ``polredabs``)
         and optionally the isomorphism map
 
@@ -2684,7 +2684,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def polredbest(self, names=None, isomorphism_map=False):
         """
-        Return ``self`` as an absolute number field defined by a polynomial with
+        Return ``self`` as an absolute number field defined by a monic polynomial with
         with reasonably small coefficients, by calling PARI ``polredbest``,
         and optionally the isomorphism map
 
@@ -2711,7 +2711,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def polredabs(self, names=None, isomorphism_map=False):
         """
-        Returns ``self`` as an absolute number field defined by canonical polynomial,
+        Returns ``self`` as an absolute number field defined by canonical monic polynomial,
         such that the sum of the squares of the of the roots is minimal,
         by calling PARI ``polredabs``, and optionally the isomorphism map
 
