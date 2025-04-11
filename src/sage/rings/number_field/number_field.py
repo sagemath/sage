@@ -4202,6 +4202,18 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<a> = NumberField(2*x^2 + 1/3)
             sage: K._pari_absolute_structure()
             (y^2 + 6, Mod(1/6*y, y^2 + 6), Mod(6*y, y^2 + 1/6))
+
+        TESTS:
+
+        Checking that the representation in not improved in a costly manner::
+
+            sage: from sage.doctest.util import alarm
+            sage: K = NumberField(ZZ['x']([1]*200 + [2]), 'a')
+            sage: QQasNF = NumberField(ZZ['x']([1,-1]), 'b')
+            sage: alarm(0.5) # ensuring that a trivial isomorphism finishes in reasonable time
+            sage: K.is_isomorphic(QQasNF)
+            False
+            sage: cancel_alarm()
         """
         f = self.absolute_polynomial()._pari_with_name('y')
         f *= f.content().denominator()
