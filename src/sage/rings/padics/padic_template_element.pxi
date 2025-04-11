@@ -148,7 +148,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
                     x = x.polynomial().change_ring(self.base_ring()).list()
                 else:
                     if x.polynomial().degree() >= 1:
-                        if self.parent() is self.parent().base_ring():
+                        if self.parent() is x.parent().base_ring():
                             raise TypeError("element in a proper extension")
                         raise NotImplementedError("conversion between different p-adic extensions not implemented")
                     x = self.base_ring()(x.polynomial().constant_coefficient())
