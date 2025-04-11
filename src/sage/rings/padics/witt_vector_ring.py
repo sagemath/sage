@@ -582,7 +582,30 @@ class WittVectorRing_finotti(WittVectorRing):
         self._prod_polynomials = None
         self._sum_polynomials = None
 
-        self._generate_binomial_table()
+        import numpy as np
+        p = self._prime
+        R = Zp(p, prec=self._prec+1, type='fixed-mod')
+        v_p = ZZ.valuation(p)
+        table = [[0]]
+        for k in range(1, self._prec+1):
+            pk = p**k
+            row = np.empty(pk, dtype=int)
+            row[0] = 0
+            prev_bin = 1
+            for i in range(1, pk // 2 + 1):
+                val = v_p(i)
+                # Instead of calling binomial each time, we compute the
+                # coefficients recursively. This is MUCH faster.
+                next_bin = prev_bin * (pk - (i-1)) // i
+                prev_bin = next_bin
+                series = R(-next_bin // p**(k-val))
+                for _ in range(val):
+                    temp = series % p
+                    series = (series - R.teichmuller(temp)) // p
+                row[i] = ZZ(series % p)
+                row[pk - i] = row[i]  # binomial coefficients are symmetric
+            table.append(row)
+        self._binomial_table = table
 
         CommutativeRing.__init__(self, self)
 
@@ -691,46 +714,6 @@ class WittVectorRing_finotti(WittVectorRing):
                     result = self._eta_bar(scriptM[t-s], s)
                     scriptM[t].append(result)
             return sum(scriptM[k])
-
-    def _generate_binomial_table(self):
-        r"""
-        This method first computes the binomial coefficients `\binom{p^k}{i}`
-        for `k` varying between `0` and ``prec`` and `i` varying between `0`
-        and `p^k`. It then stores its `v_p(i)`-th multiplicative
-        representative in a table, where `v_p` denotes the `p`-adic valuation,
-        and multiplicative representative is in the sense of strict `p`-rings.
-
-        EXAMPLES::
-
-            sage: R.<x,y,z,t> = PolynomialRing(GF(7))
-            sage: W = WittVectorRing(R, prec=2, algorithm='finotti')
-            sage: W([x,y]) + W([z,t])  # indirect doctest
-            (x + z, -x^6*z - 3*x^5*z^2 + 2*x^4*z^3 + 2*x^3*z^4 - 3*x^2*z^5 - x*z^6 + y + t)
-        """
-        import numpy as np
-        p = self._prime
-        R = Zp(p, prec=self._prec+1, type='fixed-mod')
-        v_p = ZZ.valuation(p)
-        table = [[0]]
-        for k in range(1, self._prec+1):
-            pk = p**k
-            row = np.empty(pk, dtype=int)
-            row[0] = 0
-            prev_bin = 1
-            for i in range(1, pk // 2 + 1):
-                val = v_p(i)
-                # Instead of calling binomial each time, we compute the
-                # coefficients recursively. This is MUCH faster.
-                next_bin = prev_bin * (pk - (i-1)) // i
-                prev_bin = next_bin
-                series = R(-next_bin // p**(k-val))
-                for _ in range(val):
-                    temp = series % p
-                    series = (series - R.teichmuller(temp)) // p
-                row[i] = ZZ(series % p)
-                row[pk - i] = row[i]  # binomial coefficients are symmetric
-            table.append(row)
-        self._binomial_table = table
 
 
 class WittVectorRing_phantom(WittVectorRing):
