@@ -105,8 +105,6 @@ AUTHORS:
         :delim: |
 
         ``add_ear()`` | Add an ear to the graph with the provided end vertices number of internal vertices.
-        ``bisubdivide_edge()`` | Bisubdivide an edge `k` times.
-        ``bisubdivide_edges()`` | Bisubdivide `k` times edges from an iterable container.
         ``efficient_ear_decomposition()`` | Return a matching covered ear decomposition computed at the fastest possible time.
         ``is_removable_double_ear()`` | Check whether the pair of ears form a removable double ear.
         ``is_removable_doubleton()`` | Check whether the pair of edges constitute a removable doubleton.
