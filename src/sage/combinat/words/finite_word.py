@@ -2381,11 +2381,11 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g.
-          :class:`~sage.combinat.words.morphism.WordMorphism`). The
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`); the
           default value corresponds to usual palindromes, i.e., ``f``
-          equal to the identity.
+          equal to the identity
 
         EXAMPLES::
 
@@ -2488,11 +2488,11 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g. ``WordMorphism``)
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT: word; if ``f`` is ``None``, the longest palindromic suffix of
-        ``self``. Otherwise, the longest ``f``-palindromic suffix of ``self``.
+        OUTPUT: word; the longest palindromic (or ``f``-palindromic) suffix of ``self``
 
         EXAMPLES::
 
@@ -2561,18 +2561,19 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g. ``WordMorphism``).
-          The default value corresponds to usual palindromes, i.e.,
-          ``f`` equal to the identity.
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`);
+          the default value corresponds to usual palindromes, i.e.,
+          ``f`` equal to the identity
 
         OUTPUT:
 
-        - ``list`` -- list of the length of the longest palindromic
-          suffix (lps) for each non-empty prefix of ``self``
-        - ``list`` -- list of all the lacunas, i.e. positions where there is no
+        - list of lengths of the longest palindromic suffixes (lps)
+          for each non-empty prefix of ``self``
+        - list of all lacunas, i.e. positions where there is no
           unioccurrent lps
-        - ``set`` -- set of palindromic factors of ``self``
+        - set of palindromic factors (substrings) of ``self``
 
         EXAMPLES::
 
@@ -2612,12 +2613,13 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``). The
-          default value corresponds to usual palindromes, i.e., ``f`` equal to
-          the identity.
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`);
+          the default value corresponds to usual palindromes, i.e.,
+          ``f`` equal to the identity
 
-        OUTPUT: list of all the lacunas of self
+        OUTPUT: list of all lacunas of ``self``
 
         EXAMPLES::
 
@@ -2643,16 +2645,17 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``). The
-          default value corresponds to usual palindromes, i.e., ``f`` equal to
-          the identity.
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`);
+          the default value corresponds to usual palindromes, i.e.,
+          ``f`` equal to the identity
 
         OUTPUT:
 
-        a list -- list of the length of the unioccurrent longest palindromic
-        suffix (lps) for each non-empty prefix of ``self``.
-        No unioccurrent lps are indicated by ``None``.
+        list of lengths of unioccurrent longest palindromic
+        suffixes (lps) for each non-empty prefix of ``self``;
+        non-unioccurrent lps are indicated by ``None``
 
         EXAMPLES::
 
@@ -2682,14 +2685,14 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``pos`` -- integer; position of the symmetry axis of the palindrome.
-          If ``pos`` is even, then it is position of letter.
-          If ``pos`` is odd, then it is position of space between two letters.
+        - ``pos`` -- integer; position of the symmetry axis of the palindrome;
+          if ``pos`` is even, then it is position of letter;
+          if ``pos`` is odd, then it is position of space between two letters
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        - ``f`` -- letter permutation (default: ``None``), on the alphabet; it must be
-          callable on letters as well as words (e.g. ``WordMorphism``)
-
-        OUTPUT: length of the longest ``f``-palindrome centered at position ``pos``
+        OUTPUT: non-negative integer
 
         EXAMPLES::
 
@@ -2746,16 +2749,16 @@ class FiniteWord_class(Word_class):
 
     def lengths_maximal_palindromes(self, f=None):
         r"""
-        Return the length of maximal palindromes centered at each position.
+        Return lengths of maximal palindromes (or ``f``-palindrome)
+        centered at each symmetry axis (letter or space between two letters).
 
         INPUT:
 
         - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
           it must be callable on letters as well as words (e.g.
-          ``WordMorphism``)
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT: list; the length of the maximal palindrome (or ``f``-palindrome)
-        with a given symmetry axis (letter or space between two letters)
+        OUTPUT: list of non-negative integers
 
         ALGORITHM:
 
@@ -2809,16 +2812,16 @@ class FiniteWord_class(Word_class):
 
     def lps_lengths(self, f=None):
         r"""
-        Return the length of the longest palindromic suffix of each prefix.
+        Return lengths of longest palindromic (or ``f``-palindromic) suffixes
+        for each prefix of ``self``.
 
         INPUT:
 
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g.
-          ``WordMorphism``).
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT: list; the length of the longest palindromic (or
-        ``f``-palindromic) suffix of each prefix of ``self``
+        OUTPUT: list of non-negative integers
 
         EXAMPLES::
 
@@ -2841,16 +2844,15 @@ class FiniteWord_class(Word_class):
 
     def palindromes(self, f=None):
         r"""
-        Return the set of all palindromic (or ``f``-palindromic) factors of ``self``.
+        Return set of all palindromic (or ``f``-palindromic) factors of ``self``.
 
         INPUT:
 
         - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
-          it must be callable on letters as well as words (e.g. ``WordMorphism``).
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT: a set -- If ``f`` is ``None``, the set of all palindromic
-        factors of ``self``; otherwise, the set of all ``f``-palindromic
-        factors of ``self``
+        OUTPUT: set of words
 
         EXAMPLES::
 
@@ -2873,14 +2875,14 @@ class FiniteWord_class(Word_class):
 
     def palindromic_complexity(self, n, f=None):
         r"""
-        Return the number of distinct palindromic factors of length ``n`` of ``self``.
+        Return the number of distinct palindromic factors (substrings) of length ``n`` of ``self``.
 
         INPUT:
 
-        - ``n`` -- the length of the factors
-
+        - ``n`` -- length of the factors (substrings)
         - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
-          it must be callable on letters as well as words (e.g. ``WordMorphism``)
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
         EXAMPLES::
 
@@ -2942,15 +2944,13 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``). The
-          default value corresponds to usual palindromes, i.e., ``f`` equal to
-          the identity.
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`);
+          the default value corresponds to usual palindromes, i.e.,
+          ``f`` equal to the identity
 
-        OUTPUT:
-
-        an integer -- If ``f`` is ``None``, the palindromic defect of ``self``;
-        otherwise, the ``f``-palindromic defect of ``self``.
+        OUTPUT: non-negative integer
 
         EXAMPLES::
 
@@ -3057,21 +3057,17 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``morphisms`` -- an iterable of letter permutations (default: ``[]``)
-            on the alphabet of ``self``. Letter permutations must be callable on
-            letters as well as words (e.g. ``WordMorphism``). If the identity
-            morphisms is not in `morphisms`, then it is added automatically.
-        - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
-            on the alphabet of ``self``. If ``antimorphisms`` is empty, then
-            antimorphism which acts as identity on letters is added to it.
-            Letter permutations must be callable on letters as well
-            as words (e.g. ``WordMorphism``).
+        - ``morphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; letter permutations must be callable on
+          letters as well as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`);
+          if the identity morphism is not in ``morphisms``, then it is added automatically
+        - ``antimorphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; if ``antimorphisms`` is empty, then
+          antimorphism that acts as identity on letters is added to it;
+          letter permutations must be callable on letters as well
+          as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT:
-
-        an integer -- the `G`-defect of ``self``, where `G` is a finite group
-        of morphisms and antimorphisms, which is generated from
-        `morphisms` and `antimorphisms`.
+        OUTPUT: non-negative integer
 
         ALGORITHM:
 
@@ -3136,8 +3132,8 @@ class FiniteWord_class(Word_class):
 
         OUTPUT:
 
-        a tree -- tree graph, which contains data about `G`-palindromic
-        classes of equivalence of factors of ``self``.
+        a tree graph that contains data about `G`-palindromic
+        classes of equivalence of factors (substrings) of ``self``
 
         EXAMPLES:
 
@@ -3245,22 +3241,17 @@ class FiniteWord_class(Word_class):
                         if left_letter != special_letter:
                             equivalence_left_letter, equivalence_right_letter = inverse_morphism(left_letter)[0], inverse_morphism(right_letter)[0]
                         g_node[0][(equivalence_left_letter, equivalence_right_letter)] = new_G_node_index
-                        i = 0
-                        while i < len(morphisms_G):
-                            morphism = morphisms_G[i]
+                        for i, morphism in enumerate(morphisms_G):
                             cur_left_letter, cur_right_letter = special_letter, special_letter
                             if equivalence_left_letter != special_letter:
                                 cur_left_letter, cur_right_letter = morphism(equivalence_left_letter)[0], morphism(equivalence_right_letter)[0]
                             g_node[1][i][(cur_left_letter, cur_right_letter)] = (new_G_node_index, i)
-                            i += 1
-                        i = 0
                         cur_max_dict_index = 0
                         next_dicts_identifiers = dict()
                         next_dicts = []
                         new_G_node_dict_ref_list = []
                         new_G_node_dict_local_indexes_list = []
-                        while i < len(morphisms_G):
-                            morphism = morphisms_G[i]
+                        for i, morphism in enumerate(morphisms_G):
                             cur_left_letter, cur_right_letter = special_letter, special_letter
                             if equivalence_left_letter != special_letter:
                                 cur_left_letter, cur_right_letter = morphism(equivalence_left_letter)[0], morphism(equivalence_right_letter)[0]
@@ -3271,7 +3262,6 @@ class FiniteWord_class(Word_class):
                             cur_dict_index = next_dicts_identifiers[(g_node[2][i], cur_left_letter, cur_right_letter)]
                             new_G_node_dict_ref_list.append(next_dicts[cur_dict_index])
                             new_G_node_dict_local_indexes_list.append(cur_dict_index)
-                            i += 1
                         new_G_node = [dict(), new_G_node_dict_ref_list, new_G_node_dict_local_indexes_list, ends_with_special_letter]
                         g_palindromes_tree.append(new_G_node)
                         _, next_G_dict_index = g_node_dict[(left_letter, right_letter)]
@@ -3289,13 +3279,10 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``morphisms_G`` -- list of all morphisms of `G`.
+        - ``morphisms_G`` -- list of all morphisms of `G`
+        - ``antimorphisms_G`` -- list of all antimorphisms of `G`
 
-        - ``antimorphisms_G`` -- list of all antimorphisms of `G`.
-
-        OUTPUT:
-
-        an integer -- `g_G(self)`
+        OUTPUT: non-negative integer
 
         EXAMPLES:
 
@@ -3340,21 +3327,21 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``morphisms`` -- an iterable of letter permutations (default: ``[]``)
-            on the alphabet of ``self``. Letter permutations must be callable on
-            letters as well as words (e.g. ``WordMorphism``). If the identity
-            morphisms is not in `morphisms`, then it is added automatically.
-        - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
-            on the alphabet of ``self``. If ``antimorphisms`` is empty, then
-            antimorphism which acts as identity on letters is added to it.
-            Letter permutations must be callable on letters as well
-            as words (e.g. ``WordMorphism``).
+        - ``morphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; letter permutations must be callable on
+          letters as well as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`);
+          if the identity morphism is not in ``morphisms``, then it is added automatically
+        - ``antimorphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; if ``antimorphisms`` is empty, then
+          antimorphism that acts as identity on letters is added to it;
+          letter permutations must be callable on letters as well
+          as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`)
 
         OUTPUT:
 
-        - ``list`` -- list of morphisms of `G`.
-        - ``list`` -- list of antimorphisms of `G`.
-        - ``list`` -- list of inverses of morphisms of `G`.
+        - list of morphisms of `G`
+        - list of antimorphisms of `G`
+        - list of inverses of morphisms of `G`
 
         ALGORITHM:
 
@@ -3465,23 +3452,23 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``morphisms`` -- an iterable of letter permutations (default: ``[]``)
-            on the alphabet of ``self``. Letter permutations must be callable on
-            letters as well as words (e.g. ``WordMorphism``). If the identity
-            morphisms is not in `morphisms`, then it is added automatically.
-        - ``antimorphisms`` -- an iterable of letter permutations (default: ``[]``)
-            on the alphabet of ``self``. If ``antimorphisms`` is empty, then
-            antimorphism which acts as identity on letters is added to it.
-            Letter permutations must be callable on letters as well
-            as words (e.g. ``WordMorphism``).
+        - ``morphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; letter permutations must be callable on
+          letters as well as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`);
+          if the identity morphism is not in ``morphisms``, then it is added automatically
+        - ``antimorphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; if ``antimorphisms`` is empty, then
+          antimorphism that acts as identity on letters is added to it;
+          letter permutations must be callable on letters as well
+          as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`)
 
         OUTPUT:
 
-        - ``list`` -- list of morphisms with updated domain.
-        - ``list`` -- list of antimorphisms with updated domain.
-        - ``letter`` -- generated letter `s_1`.
-        - ``letter`` -- generated letter `s_2`.
-        - ``list`` -- list of letters of updated domain.
+        - list of morphisms with updated domain
+        - list of antimorphisms with updated domain
+        - letter `s_1`
+        - letter `s_2`
+        - list of letters of updated domain
 
         EXAMPLES:
 
@@ -3564,12 +3551,10 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
-          it must be callable on letters as well as words (e.g. ``WordMorphism``)
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT:
-
-        boolean -- If ``f`` is ``None``, whether ``self`` is full;
-        otherwise, whether ``self`` is full of ``f``-palindromes.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3620,8 +3605,8 @@ class FiniteWord_class(Word_class):
 
     def palindromic_closure(self, side='right', f=None):
         r"""
-        Return the shortest palindrome having ``self`` as a prefix
-        (or as a suffix if ``side`` is ``'left'``).
+        Return the shortest palindrome (or ``f``-palindrome) having ``self``
+        as a prefix (or as a suffix if ``side`` is ``'left'``).
 
         See [DeLuca2006]_.
 
@@ -3629,15 +3614,11 @@ class FiniteWord_class(Word_class):
 
         - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) the
           direction of the  closure
-
         - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
-          it must be callable on letters as well as words (e.g. ``WordMorphism``)
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT:
-
-        a word -- If ``f`` is ``None``, the right palindromic closure of ``self``;
-        otherwise, the right ``f``-palindromic closure of ``self``.
-        If ``side`` is ``'left'``, the left palindromic closure.
+        OUTPUT: word
 
         EXAMPLES::
 
@@ -3703,7 +3684,8 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
-          it must be callable on letters as well as words (e.g. ``WordMorphism``)
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
         EXAMPLES::
 
@@ -3729,13 +3711,12 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``prohibited_letters`` -- iterable
-          (default is empty Python set) of letters.
+        - ``prohibited_letters`` -- iterable (default is empty Python set) of letters
 
         OUTPUT:
 
-        an integer -- lowest non-negative integer which is not contained
-        as a letter in ``self`` and ``prohibited_letters``.
+        lowest non-negative integer that is not contained
+        as a letter in ``self`` and ``prohibited_letters``
 
         EXAMPLES::
 
@@ -3767,17 +3748,14 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- non-negative integer, amount of letters
-          which will be returned
-
-        - ``prohibited_letters`` -- iterable
-          (default is empty Python set) of letters.
+        - ``n`` -- non-negative integer, count of letters that will be returned
+        - ``prohibited_letters`` -- iterable (default is empty Python set) of letters
 
         OUTPUT:
 
-        a list -- list of lowest non-negative integers
-        which are not contained as letters in ``self``
-        and ``prohibited_letters``.
+        list of lowest non-negative integers
+        that are not contained as letters in ``self``
+        and ``prohibited_letters``
 
         EXAMPLES::
 
@@ -3813,18 +3791,19 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``). The
-          default value corresponds to usual palindromes, i.e., ``f`` equal to
-          the identity.
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`);
+          the default value corresponds to usual palindromes, i.e.,
+          ``f`` equal to the identity
 
         OUTPUT:
 
-        - a word -- copy of ``self`` with not used letter inserted
-            between each pair of consecutive letters.
-        - a morphism -- copy of ``f`` which returns the letter which was inserted
-            into ``self``, when applied on the same letter.
-        - a letter -- not used letter which was inserted into ``self``.
+        - word that is a copy of ``self`` with not used letter inserted
+          between each pair of consecutive letters
+        - morphism that is a copy of ``f`` with the inserted letter added
+          to its domain; image of the inserted letter is the inserted letter
+        - letter that was inserted into ``self``
 
         EXAMPLES::
 
@@ -3864,11 +3843,10 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        a list -- lengths of maximal palindromes or ``f``-palindromes centered at each symmetry axis.
+        - ``maximal_palindrome_lengths`` -- lengths of maximal palindromes
+          or ``f``-palindromes centered at each symmetry axis
 
-        OUTPUT:
-
-        a list -- lengths of longest palindromic suffixes for all prefixes of ``self``.
+        OUTPUT: list of non-negative integers
 
         EXAMPLES::
 
@@ -3903,7 +3881,7 @@ class FiniteWord_class(Word_class):
             while (current_indexes_with_remove_indexes
                    and current_indexes_with_remove_indexes[0][1] <= current_pos):
                 current_indexes_with_remove_indexes.popleft()
-        if len(current_indexes_with_remove_indexes) > 0:
+        if current_indexes_with_remove_indexes:
             res_index = current_indexes_with_remove_indexes[0][0]
             result.append(i - res_index)
         else:
@@ -3912,16 +3890,14 @@ class FiniteWord_class(Word_class):
 
     def _find_lacunas_from_palindromes_tree(self, palindromes_tree):
         r"""
-        Return all lacunas of ``self`` using palindromes tree from
+        Return all lacunas of ``self`` in ascending order using palindromes tree from
         :meth:`_get_palindromic_factors_data` method.
 
         INPUT:
 
         - ``palindromes_tree`` -- data structure returned by :meth:`_get_palindromic_factors_data`
 
-        OUTPUT:
-
-        list of all the lacunas of ``self`` in ascending order
+        OUTPUT: list of non-negative integers
 
         EXAMPLES::
 
@@ -3955,8 +3931,9 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``; it must
-          be callable on letters as well as words (e.g. ``WordMorphism``)
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
         OUTPUT:
 
@@ -4054,7 +4031,7 @@ class FiniteWord_class(Word_class):
         - ``word_with_special_letter`` -- word such that
           every second letter of it is the same letter and all other letters
           are different from this letter
-        - ``special_letter`` -- a letter, which is the every second letter
+        - ``special_letter`` -- letter that is the every second letter
           of ``word_with_special_letter``
 
         OUTPUT:
@@ -4171,15 +4148,15 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``maximal_palindrome_radiuses`` -- list of radiuses of the maximal
-          palindromesfor each symmetry axis (letter or space between
+        - ``maximal_palindrome_radiuses`` -- list of radii of maximal
+          palindromes for each symmetry axis (letter or space between
           two letters)
         - ``initial_palindrome_radiuses`` -- for each symmetry axis (letter
-          or space between two letters) a radius of the palindrome, which
+          or space between two letters) a radius of the palindrome that
           was initial palindrome from which Manacher's algorithm
           started to increment radius in this symmetry axis
         - ``previous_positions`` -- for each symmetry axis (letter or space
-          between two letters) an index of ``word_with_special_letter``, from
+          between two letters) an index of ``word_with_special_letter`` from
           which Manacher's algorithm copied initial radius in this
           symmetry axis (``None`` if radius was not copied in this
           symmetry axis)
@@ -4260,7 +4237,7 @@ class FiniteWord_class(Word_class):
           is the same letter and all other letters are different from
           this letter
         - ``morphism`` -- morphism that will be used for defining
-          which factors of ``word`` are palindromes
+          which factors (substrings) of ``word`` are palindromes
 
         OUTPUT:
 
@@ -4269,11 +4246,11 @@ class FiniteWord_class(Word_class):
         - list of lengths of the maximal palindromes
           for each symmetry axis (letter or space between two letters)
         - list of radii of the palindrome for each symmetry axis
-          (letter or space between two letters) , which
+          (letter or space between two letters), which
           was the initial palindrome from which Manacher's algorithm
           started to increment radius in this symmetry axis
         - list of indices of ``word`` for each symmetry axis
-          (letter or space between two letters) , from
+          (letter or space between two letters), from
           which Manacher's algorithm copied initial radius in this
           symmetry axis (``None`` if radius was not copied in this
           symmetry axis)
