@@ -6595,7 +6595,7 @@ class FiniteWord_class(Word_class):
                 abelian[lost] -= 1
                 abel_max[gain] = max(abel_max[gain], abelian[gain])
                 abel_min[lost] = min(abel_min[lost], abelian[lost])
-            best = max(best, max(abel_max[a] - abel_min[a] for a in alphabet))
+            best = max(best, *(abel_max[a] - abel_min[a] for a in alphabet))
         return best
 
     def is_balanced(self, q=1):
