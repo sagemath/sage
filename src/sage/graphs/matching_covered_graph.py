@@ -3829,6 +3829,13 @@ class MatchingCoveredGraph(Graph):
               (18, 19, None), (19, 20, None), (20, 21, None)],
              [(0, 1, 2), (1, 2, None), (2, 3, None)])
 
+        Setting ``k`` to `0` does not change the graph::
+
+            sage: H = G.copy()
+            sage: G.subdivide_edges([(0, 10), (1, 13), (2, 17)], 0)
+            sage: H == G and H.edges(sort=True) == G.edges(sort=True)
+            True
+
         Subdividing edges with at least one of which is nonexistent::
 
             sage: G.subdivide_edges([(4, 5), (1, 5)], 4)
