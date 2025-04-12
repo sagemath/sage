@@ -217,22 +217,22 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             Ring of truncated 5-typical Witt vectors of length 1 over Rational Field
         """
         if coefficient_ring not in CommutativeRings():
-            raise TypeError(f'{coefficient_ring} is not a commutative ring')
+            raise TypeError(f"{coefficient_ring} is not a commutative ring")
         elif not (isinstance(prec, int) or isinstance(prec, Integer)):
-            raise TypeError(f'{prec} is not an integer')
+            raise TypeError(f"{prec} is not an integer")
         elif prec <= 0:
-            raise ValueError(f'{prec} must be positive')
+            raise ValueError(f"{prec} must be positive")
 
         prec = Integer(prec)
         char = coefficient_ring.characteristic()
 
         if p is None:
             if char not in Primes():
-                raise ValueError(f'{coefficient_ring} has non-prime '
-                                 'characteristic and no prime was supplied')
+                raise ValueError(f"{coefficient_ring} has non-prime "
+                                 "characteristic and no prime was supplied")
             p = char
         elif p not in Primes():
-            raise ValueError('p must be a prime number')
+            raise ValueError(f"p must be a prime number, here {p} was given")
 
         match algorithm:
             case None:
@@ -537,7 +537,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             (3, 0)
         """
         if x not in self._coefficient_ring:
-            raise TypeError(f'{x} not in {self._coefficient_ring}')
+            raise TypeError(f"{x} not in {self._coefficient_ring}")
         return self((x,) + tuple(0 for _ in range(self._prec-1)))
 
 
@@ -573,8 +573,8 @@ class WittVectorRing_finotti(WittVectorRing):
             sage: TestSuite(W).run()
         """
         if coefficient_ring.characteristic() != prime:
-            raise ValueError("The 'finotti' algorithm only works for "
-                             "coefficients rings of characteristic p.")
+            raise ValueError("the 'finotti' algorithm only works for "
+                             "coefficients rings of characteristic p")
 
         self._coefficient_ring = coefficient_ring
         self._prec = prec
@@ -753,9 +753,9 @@ class WittVectorRing_phantom(WittVectorRing):
                           or isinstance(coefficient_ring,
                                         MPolynomialRing_base))
                          and coefficient_ring.base() in Fields().Finite()))):
-            raise ValueError("The 'phantom' algorithm only works when the "
+            raise ValueError("the 'phantom' algorithm only works when the "
                              "coefficient ring is a finite field of "
-                             "p, or a polynomial ring on that field.")
+                             "p, or a polynomial ring on that field")
 
         self._coefficient_ring = coefficient_ring
         self._prec = prec
@@ -838,8 +838,8 @@ class WittVectorRing_pinvertible(WittVectorRing):
             sage: TestSuite(W).run()
         """
         if not coefficient_ring(prime).is_unit():
-            raise ValueError("The 'p_invertible' algorithm only works when p "
-                             "is a unit in the ring of coefficients.")
+            raise ValueError("the 'p_invertible' algorithm only works when p "
+                             "is a unit in the ring of coefficients")
 
         self._coefficient_ring = coefficient_ring
         self._prec = prec

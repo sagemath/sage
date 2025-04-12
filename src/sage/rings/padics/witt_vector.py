@@ -140,13 +140,13 @@ class WittVector(CommutativeRingElement):
             elif (isinstance(vec, tuple) or isinstance(vec, list)
                     or isinstance(vec, WittVector)):
                 if len(vec) < self._prec:
-                    raise ValueError(f'{vec} has not the correct length. '
-                                     'Expected length has to be at least '
-                                     f'{self._prec}.')
+                    raise ValueError(f"{vec} has not the correct length, "
+                                     "expected length has to be at least "
+                                     f"{self._prec}")
                 self._vec = tuple(B(vec[i]) for i in range(self._prec))
             else:
-                raise ValueError(f'{vec} cannot be interpreted as a Witt '
-                                 'vector.')
+                raise ValueError(f"{vec} cannot be interpreted as a Witt "
+                                 "vector")
         else:
             self._vec = (B(0) for i in range(self._prec))
         CommutativeRingElement.__init__(self, parent)
@@ -163,7 +163,7 @@ class WittVector(CommutativeRingElement):
             -4
         """
         if i < 0 or i >= self._prec:
-            raise IndexError('Index out of the truncated Witt vector range.')
+            raise IndexError("index out of the truncated Witt vector range")
         return self._vec[i]
 
     def __hash__(self) -> int:
@@ -267,7 +267,7 @@ class WittVector(CommutativeRingElement):
             (1, 1, 1, 0)
         """
         if not self[0].is_unit():
-            raise ZeroDivisionError(f"Inverse of {self} does not exist.")
+            raise ZeroDivisionError(f"inverse of {self} does not exist")
         P = self.parent()
 
         if self == P.one():
@@ -293,11 +293,11 @@ class WittVector(CommutativeRingElement):
                 inv_vec[i] = (-poly.constant_coefficient()
                               / poly.monomial_coefficient(x))
             except ZeroDivisionError:
-                raise ZeroDivisionError(f"Inverse of {self} does not exist.")
+                raise ZeroDivisionError(f"inverse of {self} does not exist")
             try:
                 inv_vec[i] = P.coefficient_ring()(inv_vec[i])
             except ValueError:
-                raise ZeroDivisionError(f"Inverse of {self} does not exist.")
+                raise ZeroDivisionError(f"inverse of {self} does not exist")
 
         return P(inv_vec)
 
@@ -477,9 +477,9 @@ class WittVector_phantom(WittVector):
         elif (isinstance(vec, tuple) or isinstance(vec, list)
                 or isinstance(vec, WittVector)):
             if len(vec) < self._prec:
-                raise ValueError(f'{vec} has not the correct length. '
-                                 'Expected length has to be at least '
-                                 f'{self._prec}.')
+                raise ValueError(f"{vec} has not the correct length, "
+                                 "expected length has to be at least "
+                                 f"{self._prec}")
             # We compute the phantom components
             self._vec = tuple(R(vec[i]) for i in range(self._prec))
             x = [lift(v) for v in self._vec]
@@ -490,7 +490,7 @@ class WittVector_phantom(WittVector):
                 self._phantom.append(sum(x[i] * p**i for i in range(n+1)))
             self._powers = None
         else:
-            raise ValueError(f'{vec} cannot be interpreted as a Witt vector.')
+            raise ValueError(f"{vec} cannot be interpreted as a Witt vector")
         CommutativeRingElement.__init__(self, parent)
 
     def __getitem__(self, i):
@@ -505,7 +505,7 @@ class WittVector_phantom(WittVector):
             5
         """
         if i < 0 or i >= self._prec:
-            raise IndexError('Index out of the truncated Witt vector range.')
+            raise IndexError("index out of the truncated Witt vector range")
         self._compute_vector(i+1)
         return self._vec[i]
 
