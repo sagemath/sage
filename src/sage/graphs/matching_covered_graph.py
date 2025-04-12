@@ -3545,7 +3545,7 @@ class MatchingCoveredGraph(Graph):
             ....:     assert sorted(N - M), sorted(M - N) == \
             ....:         ([(10, 11, None), (12, 13, None)], [])
 
-        Subdividing a multiple edge::
+        Subdividing a multiple edge/ some multiple edges::
 
             sage: K = graphs.CycleGraph(4)
             sage: K.allow_multiple_edges(1)
@@ -3555,13 +3555,23 @@ class MatchingCoveredGraph(Graph):
             sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: G.edge_label(0, 1)
             [2, 3, 0.500000000000000]
-            sage: G.subdivide_edge(0, 1, 6)  # the edge: (0, 1, 2)
+            sage: G.subdivide_edge((0, 1), 6)  # the edge: (0, 1, 2)
+            sage: G.subdivide_edge((0, 1, 3), 2)  # the edge: (0, 1, 3)
+            sage: G.subdivide_edge(1, 2, None, 2)  # the edge: (1, 2, None)
             sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: sorted(W - V)
-            [4, 5, 6, 7, 8, 9]
+            [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
             sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
-            ([(0, 4, 2), (1, 9, 2), (4, 5, 2), (5, 6, 2), (6, 7, 2),
-              (7, 8, 2), (8, 9, 2)], [(0, 1, 2)])
+            ([(0, 4, 2), (0, 10, 3), (1, 9, 2), (1, 11, 3), (1, 12, None), (2, 13, None),
+              (4, 5, 2), (5, 6, 2), (6, 7, 2), (7, 8, 2), (8, 9, 2), (10, 11, 3),
+              (12, 13, None)], [(0, 1, 2), (0, 1, 3), (1, 2, None)])
+
+        Setting ``k`` to `0` does not change the graph::
+
+            sage: H = G.copy()
+            sage: G.subdivide_edge(0, 4, 0)  # the edge: (0, 4, None)
+            sage: H == G and H.edges(sort=True) == G.edges(sort=True)
+            True
 
         If too many or too less arguments are given, an exception is raised::
 
@@ -3577,26 +3587,30 @@ class MatchingCoveredGraph(Graph):
         A :exc:`ValueError` is returned for `k` being in an invalid format or
         being not an even nonnegative, or for nonexistent or invalid edges::
 
-            sage: G.subdivide_edge(0, 1, 'label')  # No. of subdivision: 'label'
+            sage: G.subdivide_edge(0, 4, 'label')  # No. of subdivision: 'label'
             Traceback (most recent call last):
             ...
             TypeError: '<' not supported between instances of 'str' and 'int'
-            sage: G.subdivide_edge(0, 1, 3)  # No. of subdivisions: 3
+            sage: G.subdivide_edge(0, 4, 3)  # No. of subdivisions: 3
             Traceback (most recent call last):
             ...
             ValueError: the number of subdivisions must be a nonnegative even integer,
             but found 3
-            sage: G.subdivide_edge(0, 1, -1)  # No. of subdivisions: -1
+            sage: G.subdivide_edge(0, 4, -1)  # No. of subdivisions: -1
             Traceback (most recent call last):
             ...
             ValueError: the number of subdivisions must be a nonnegative even integer,
             but found -1
-            sage: G.subdivide_edge(0, 1, 0.5)  # No. of subdivisions: 0.5
+            sage: G.subdivide_edge(0, 4, 0.5)  # No. of subdivisions: 0.5
             Traceback (most recent call last):
             ...
             ValueError: the number of subdivisions must be a nonnegative even integer,
             but found 0.500000000000000
             sage: G.subdivide_edge(0, 5, 4)
+            Traceback (most recent call last):
+            ...
+            ValueError: the given edge (0, 5, None) does not exist
+            sage: G.subdivide_edge((0, 5), 4)
             Traceback (most recent call last):
             ...
             ValueError: the given edge (0, 5, None) does not exist
