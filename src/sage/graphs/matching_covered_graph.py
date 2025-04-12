@@ -1395,9 +1395,8 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('expected an iterable of edges, '
                              'but got a non-iterable object')
 
-        edges = list(edges)
         links = []  # to extract the nonloop input edges
-        for i, edge in enumerate(edges):
+        for edge in edges:
             if hasattr(edge, '__len__'):
                 if len(edge) <= 1:
                     raise ValueError('need more than 1 value to unpack '
@@ -1458,8 +1457,8 @@ class MatchingCoveredGraph(Graph):
                     if edge[0] in new_vertices and edge[1] in new_vertices:
                         links_with_two_new_vertices.append(edge)
 
-                H = Graph(data=links_with_two_new_vertices, format='list_of_edges')
-                M = Graph(self.get_matching()).union(Graph(H.matching()))
+                M = Graph(data=links_with_two_new_vertices, format='list_of_edges')
+                M.add_edges(self.get_matching())
 
                 # Check if M is a perfect matching of the resulting graph
                 if (G.order() != 2*M.size()):
