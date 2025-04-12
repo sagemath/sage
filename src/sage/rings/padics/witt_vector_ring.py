@@ -621,7 +621,7 @@ class WittVectorRing_finotti(WittVectorRing):
             sage: Wf = WittVectorRing(PolynomialRing(K, 't'), prec=3, algorithm='finotti')
             sage: WW = WittVectorRing(PolynomialRing(K, 't,u'), prec=3)
             sage: Wf.has_coerce_map_from(WK)  # indirect doctest
-            True
+            False
             sage: Wf.has_coerce_map_from(W)  # indirect doctest
             False
             sage: WW.has_coerce_map_from(W)  # indirect doctest
@@ -646,8 +646,7 @@ class WittVectorRing_finotti(WittVectorRing):
                 and self._coefficient_ring.has_coerce_map_from(
                     S.coefficient_ring())
                 and (isinstance(self._coefficient_ring, MPolynomialRing_base)
-                     or S.precision() != self._prec
-                     or S.coefficient_ring() is not self._coefficient_ring))
+                     or S.precision() != self._prec))
         if S is ZZ:
             return True
 
@@ -800,8 +799,7 @@ class WittVectorRing_phantom(WittVectorRing):
                     S.coefficient_ring())
                 and (not isinstance(self._coefficient_ring,
                                     MPolynomialRing_base)
-                     or S.precision() != self._prec
-                     or S.coefficient_ring() is not self._coefficient_ring))
+                     or S.precision() != self._prec))
         if S is ZZ:
             return True
 
@@ -861,7 +859,9 @@ class WittVectorRing_pinvertible(WittVectorRing):
             sage: W.has_coerce_map_from(WittVectorRing(QQ, p=3, prec=2))  # indirect doctest
             False
         """
-        if isinstance(S, WittVectorRing):
+        if (isinstance(S, WittVectorRing_pinvertible)
+            or isinstance(S,
+                          WittVectorRing_standard)):
             return (
                 S.precision() >= self._prec
                 and self._prime == S.prime()
