@@ -2307,6 +2307,96 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         return row_ordering, col_ordering
 
+    def is_Gamma_free(self, certificate=False):
+        r"""
+        Return True if the matrix is `\Gamma`-free.
+
+        A matrix is `\Gamma`-free if it does not contain a 2x2 submatrix
+        of the form:
+
+        .. MATH::
+
+            \begin{pmatrix}
+                1 & 1 \\
+                1 & 0
+            \end{pmatrix}
+
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``); whether to return a
+          certificate for no-answers (see OUTPUT section)
+
+        OUTPUT:
+
+        When ``certificate`` is set to ``False`` (default) this method only
+        returns ``True`` or ``False`` answers. When ``certificate`` is set to
+        ``True``, the method either returns ``(True, None)`` or ``(False,
+        (r1, c1, r2, c2))`` where ``r1``, ``r2``-th rows and ``c1``,
+        ``c2``-th columns of the matrix constitute the `\Gamma`-submatrix.
+
+        ALGORITHM:
+
+        For each 1 entry, the algorithm finds the next 1 in the same row and
+        the next 1 in the same column, and check the 2x2 submatrix that contains
+        these entries forms `\Gamma` submatrix. The time complexity of
+        this algorithm is `O(n \cdot m)` for a `n \times m` matrix.
+
+        EXAMPLES::
+
+            sage: A = Matrix(GF(2), [[1, 1],
+            ....:                    [0, 0]])
+            sage: A.is_Gamma_free()
+            True
+            sage: B = Matrix(GF(2), [[1, 1],
+            ....:                    [1, 0]])
+            sage: B.is_Gamma_free(certificate=True)
+            (False, (0, 0, 1, 1))
+
+        TESTS:
+
+        The algorithm works collectly for larger matrices::
+
+            sage: A = Matrix(GF(2), [[1, 0, 1],
+            ....:                    [0, 0, 0],
+            ....:                    [1, 0, 0]])
+            sage: A.is_Gamma_free(certificate=True)
+            (False, (0, 0, 2, 2))
+            sage: B = Matrix(GF(2), [[1, 0, 1],
+            ....:                    [0, 0, 0],
+            ....:                    [1, 0, 1]])
+            sage: B.is_Gamma_free(certificate=True)
+            (True, None)
+        """
+        cdef int i, j, i_bottom, j_right
+
+        for i in range(self._nrows):
+            j = 0
+            while j < self._ncols:
+                if mzd_read_bit(self._entries, i, j):  # if A[i][j] == 1
+                    # find the next 1 in the row
+                    j_right = j + 1
+                    while j_right < self._ncols and not mzd_read_bit(self._entries, i, j_right):
+                        j_right += 1
+                    if j_right < self._ncols:
+                        # find the next 1 in the column
+                        i_bottom = i + 1
+                        while i_bottom < self._nrows and not mzd_read_bit(self._entries, i_bottom, j):
+                            i_bottom += 1
+                        if i_bottom < self._nrows and not mzd_read_bit(self._entries, i_bottom, j_right):
+                            # A[i_bottom][j_right] == 0
+                            if certificate:
+                                return False, (i, j, i_bottom, j_right)
+                            else:
+                                return False
+                    j = j_right
+                else:
+                    j += 1
+
+        if certificate:
+            return True, None
+        else:
+            return True
+
 # Used for hashing
 cdef int i, k
 cdef unsigned long parity_table[256]
