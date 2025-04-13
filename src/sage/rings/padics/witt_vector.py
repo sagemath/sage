@@ -21,6 +21,7 @@ AUTHORS:
 # ****************************************************************************
 
 
+from sage.misc.functional import log
 from sage.misc.latex import tuple_function
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
@@ -179,6 +180,70 @@ class WittVector(CommutativeRingElement):
         """
         return hash(self._vec)
 
+    def __invert__(self):
+        """
+        Return the inverse of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(3), prec=3)
+            sage: w = W([1,1,1])
+            sage: ~w
+            (1, 2, 0)
+            sage: W = WittVectorRing(GF(3), prec=4)
+            sage: w = W([1,2,0,1])
+            sage: ~w
+            (1, 1, 1, 0)
+            sage: W = WittVectorRing(QQ, p=3, prec=4)
+            sage: w = W([1,1,1,1])
+            sage: ~w
+            (1, -1/4, -81/832, -12887559/359956480)
+        """
+        if not self[0].is_unit():
+            raise ZeroDivisionError(f"inverse of {self} does not exist")
+        P = self.parent()
+
+        if self == P.one():
+            return self
+        if self._prec == 1:
+            return P((self[0]**-1, ))
+
+        if P.coefficient_ring().characteristic() == P.prime():
+            res = P(list([self[0]**-1])
+                    + list(P.coefficient_ring().zero()
+                           for _ in range(self._prec-1)))
+
+            for _ in range(log(self._prec, 2).n().ceil()):
+                res = 2*res - self*res*res
+
+            return res
+
+        # Strategy: Multiply ``self`` by an unknown Witt vector, set equal
+        # to (1, 0, 0, ...), and solve.
+        poly_ring = PolynomialRing(P.coefficient_ring(), 'x')
+        x = poly_ring.gen()
+        inv_vec = (list([self[0]**-1])
+                   + list(poly_ring.zero() for _ in range(self._prec-1)))
+        # We'll fill this in one-by-one
+
+        from sage.rings.padics.witt_vector_ring import WittVectorRing
+        W = WittVectorRing(poly_ring, p=P.prime(), prec=self._prec)
+        for i in range(1, self._prec):
+            inv_vec[i] = x
+            prod_vec = (W(self._vec) * W(inv_vec)).vec()
+            poly = prod_vec[i]
+            try:
+                inv_vec[i] = (-poly.constant_coefficient()
+                              / poly.monomial_coefficient(x))
+            except ZeroDivisionError:
+                raise ZeroDivisionError(f"inverse of {self} does not exist")
+            try:
+                inv_vec[i] = P.coefficient_ring()(inv_vec[i])
+            except ValueError:
+                raise ZeroDivisionError(f"inverse of {self} does not exist")
+
+        return P(inv_vec)
+
     def __len__(self):
         """
         Return the length of ``self``.
@@ -209,9 +274,9 @@ class WittVector(CommutativeRingElement):
         if other == P.one():
             return self
         elif self == P.one():
-            return other._invert_()
+            return ~other
 
-        return self * other._invert_()
+        return self * ~other
 
     def _int_to_vector(self, k, parent):
         """
@@ -254,52 +319,6 @@ class WittVector(CommutativeRingElement):
                 vec_k = (-x for x in vec_k)
 
         self._vec = tuple([R(x) for x in vec_k])
-
-    def _invert_(self):
-        """
-        Return the inverse of ``self``.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(3), prec=4)
-            sage: t = W([1,2,0,1])
-            sage: ~t
-            (1, 1, 1, 0)
-        """
-        if not self[0].is_unit():
-            raise ZeroDivisionError(f"inverse of {self} does not exist")
-        P = self.parent()
-
-        if self == P.one():
-            return self
-        if self._prec == 1:
-            return P((self[0]**-1, ))
-
-        # Strategy: Multiply ``self`` by an unknown Witt vector, set equal
-        # to (1, 0, 0, ...), and solve.
-        poly_ring = PolynomialRing(P.coefficient_ring(), 'x')
-        x = poly_ring.gen()
-        inv_vec = (list([self[0]**-1])
-                   + list(poly_ring.zero() for i in range(self._prec-1)))
-        # We'll fill this in one-by-one
-
-        from sage.rings.padics.witt_vector_ring import WittVectorRing
-        W = WittVectorRing(poly_ring, p=P.prime(), prec=self._prec)
-        for i in range(1, self._prec):
-            inv_vec[i] = x
-            prod_vec = (W(self._vec) * W(inv_vec)).vec()
-            poly = prod_vec[i]
-            try:
-                inv_vec[i] = (-poly.constant_coefficient()
-                              / poly.monomial_coefficient(x))
-            except ZeroDivisionError:
-                raise ZeroDivisionError(f"inverse of {self} does not exist")
-            try:
-                inv_vec[i] = P.coefficient_ring()(inv_vec[i])
-            except ValueError:
-                raise ZeroDivisionError(f"inverse of {self} does not exist")
-
-        return P(inv_vec)
 
     def _latex_(self):
         r"""
