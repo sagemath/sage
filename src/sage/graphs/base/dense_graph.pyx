@@ -484,7 +484,7 @@ cdef class DenseGraph(CGraph):
 
         EXAMPLES::
 
-            sage: from sage.graphs.base.sparse_graph import DenseGraph
+            sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
             sage: G.add_arc(0,1)
             sage: G.add_arc(1,2)
