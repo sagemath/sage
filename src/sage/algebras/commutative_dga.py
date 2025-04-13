@@ -87,7 +87,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 from sage.matrix.constructor import matrix
-from sage.misc.cachefunc import cached_function, cached_method
+from sage.misc.cachefunc import cached_method
 from sage.misc.functional import is_odd
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.misc_c import prod
@@ -101,9 +101,10 @@ from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.quotient_ring import QuotientRing_nc
 from sage.rings.quotient_ring_element import QuotientRingElement
 from sage.structure.sage_object import SageObject
-from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
-
-
+from sage.structure.unique_representation import (
+    CachedRepresentation,
+    UniqueRepresentation,
+)
 
 
 def sorting_keys(element):
@@ -1084,10 +1085,39 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
     
     @lru_cache(maxsize=None)
     def _basis_for_free_alg(self, n):
-        """
-        Highly optimized basis generator for the free graded commutative DGA.
-        This approach uses the list-returning iterator for WeightedIntegerVectors.
-        It also reduces redundant checks, making the algorithm more efficient.
+        r"""
+        Return the graded basis of the free graded commutative DGA in degree ``n``.
+
+        This method computes all monomials of total degree ``n`` with respect to
+        the grading defined by the degrees of the generators. It distinguishes
+        between generators with even and odd degrees, where odd generators are
+        treated as anticommutative (i.e., square to zero unless the characteristic
+        is 2).
+
+        INPUT:
+
+        - ``n`` -- non-negative integer, the total degree
+
+        OUTPUT:
+
+        - a list of tuples representing exponent vectors of monomials of degree ``n``
+
+        .. NOTE::
+
+            - If the characteristic of the base ring is 2, odd generators are treated
+            as commutative.
+            - The method is optimized using `WeightedIntegerVectors` and caching via
+            `functools.lru_cache`.
+
+        EXAMPLES::
+
+            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 3))
+            sage: A._basis_for_free_alg(3)
+            [(0, 0, 1), (1, 1, 0)]
+
+            sage: B = A.quotient(A.ideal(x*y, y^2 - x*z, z^3))
+            sage: B._basis_for_free_alg(5)
+            [(0, 1, 1), (1, 2, 0)]
         """
 
         # Retrieve the degrees and number of variables
@@ -1458,6 +1488,39 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         def degree(self, total=False):
             r"""
             The degree of this element.
+
+            If the element is not homogeneous, this returns the
+            maximum of the degrees of its monomials.
+
+            INPUT:
+
+            - ``total`` -- ignored, present for compatibility with the
+            multi-graded case
+
+            OUTPUT:
+
+            - Integer: the highest total degree among the monomials.
+
+            .. NOTE::
+
+                The degree is computed with respect to the weighted grading
+                given by the degrees of the generators of the algebra.
+
+            EXAMPLES::
+
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 3, 3))
+                sage: el = z*t + 2*x*y - y^2*z
+                sage: el.degree()
+                7
+                sage: el.monomials()
+                [y^2*z, z*t, x*y]
+                sage: [i.degree() for i in el.monomials()]
+                [7, 6, 3]
+
+                sage: A(0).degree()
+                Traceback (most recent call last):
+                ...
+                ValueError: the zero element does not have a well-defined degree
             """
             if self.is_zero():
                 raise ValueError("the zero element does not have a well-defined degree")
@@ -4216,11 +4279,40 @@ class CohomologyClass(SageObject, CachedRepresentation):
 
 
 def exterior_algebra_basis(n, degrees):
-    """
-    Optimized basis computation for the exterior algebra in degree `n`
-    with generators in `degrees`.
-    Uses iterative dynamic programming with efficient memory usage.
-    Returns list of lists (instead of tuples) of 0s and 1s.
+    r"""
+    Return a basis for the exterior algebra in degree ``n`` given generator degrees.
+
+    This function uses dynamic programming to efficiently compute the basis of
+    the exterior algebra (with anticommutative generators, i.e., each variable
+    can appear at most once) in a given total degree ``n``.
+
+    The output is a list of binary lists representing exponent vectors for monomials
+    in the exterior algebra. A 1 in position ``i`` means the ``i``-th generator is included.
+
+    INPUT:
+
+    - ``n`` -- non-negative integer, the total degree
+    - ``degrees`` -- list of integers, the degrees of each generator
+
+    OUTPUT:
+
+    - list of lists of 0s and 1s, each representing a basis element (exponent vector)
+
+    EXAMPLES::
+
+        sage: degrees = [1, 2, 3]
+        sage: exterior_algebra_basis(3, degrees)
+        [[1, 0, 1], [0, 1, 0]]
+
+    NOTES:
+
+    - Each generator may appear at most once due to anticommutativity.
+    - If the sum of all degrees is less than ``n``, the result is an empty list.
+
+    ALGORITHM:
+
+    Dynamic programming is used where ``dp[i][j]`` stores all subsets using the first
+    ``i`` generators that sum to degree ``j``.
     """
     # Precompute the maximum degree possible by summing up the degrees
     max_degree = sum(degrees)
