@@ -395,7 +395,7 @@ cdef class StaticSparseCGraph(CGraph):
         if u < 0 or u >= self.g.n:
             raise LookupError("the vertex does not belong to the graph")
 
-        return self.g.neighbors[u+1] - self.g.neighbors[u]
+        return out_degree(self.g, u)
 
     cpdef int in_degree(self, int u) except -1:
         r"""
@@ -420,9 +420,8 @@ cdef class StaticSparseCGraph(CGraph):
             raise LookupError("the vertex does not belong to the graph")
 
         if not self._directed:
-            return self.g.neighbors[u+1] - self.g.neighbors[u]
-        else:
-            return self.g_rev.neighbors[u+1] - self.g_rev.neighbors[u]
+            return out_degree(self.g, u)
+        return out_degree(self.g_rev, u)
 
 
 cdef class StaticSparseBackend(CGraphBackend):

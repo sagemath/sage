@@ -452,6 +452,50 @@ cdef class DenseGraph(CGraph):
             i = bitset_next(self.active_vertices, i + 1)
         return -1
 
+    cpdef int out_degree(self, int u) noexcept:
+        """
+        Return the out-degree of ``v``
+
+        INPUT:
+
+        - ``u`` -- integer
+
+        EXAMPLES::
+
+            sage: from sage.graphs.base.dense_graph import DenseGraph
+            sage: G = DenseGraph(5)
+            sage: G.add_arc(0,1)
+            sage: G.add_arc(1,2)
+            sage: G.add_arc(1,3)
+            sage: G.out_degree(0)
+            1
+            sage: G.out_degree(1)
+            2
+        """
+        return self.out_degrees[u]
+
+    cpdef int in_degree(self, int v) noexcept:
+        """
+        Return the in-degree of ``v``
+
+        INPUT:
+
+        - ``v`` -- integer
+
+        EXAMPLES::
+
+            sage: from sage.graphs.base.sparse_graph import DenseGraph
+            sage: G = DenseGraph(5)
+            sage: G.add_arc(0,1)
+            sage: G.add_arc(1,2)
+            sage: G.add_arc(1,3)
+            sage: G.in_degree(0)
+            0
+            sage: G.in_degree(1)
+            1
+        """
+        return self.in_degrees[v]
+
 
 cdef int copy_dense_graph(DenseGraph dest, DenseGraph src) except -1:
     r"""
