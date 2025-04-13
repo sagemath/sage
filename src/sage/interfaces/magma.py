@@ -361,7 +361,7 @@ class Magma(ExtraTabCompletion, Expect):
         self.__ref = 0
         self.__available_var = []
         self.__cache = {}
-        self._preparse_colon_equals = False  # if set to try, all "=" become ":=" (some users really appreciate this)
+        self._preparse_colon_equals = False  # if set to True, all "=" become ":=" (some users really appreciate this)
         self._seed = seed
 
     def set_seed(self, seed=None):
