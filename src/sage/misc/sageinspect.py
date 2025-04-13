@@ -1695,6 +1695,7 @@ def sage_getargspec(obj):
 def _fullargspec_to_signature(fullargspec):
     """
     Converts a :class:`FullArgSpec` instance to a :class:`Signature` instance by best effort.
+    The opposite conversion is implemented in the source code of :func:`inspect.getfullargspec`.
 
     EXAMPLES::
 
@@ -1800,8 +1801,8 @@ def sage_signature(obj):
         sage: sage_signature(factor)
         <Signature (n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds)>
 
-    In the case of a class or a class instance, the `Signature` of the
-    `__new__`, `__init__` or `__call__` method is returned::
+    In the case of a class or a class instance, the :class:`Signature` of the
+    ``__new__``, ``__init__`` or ``__call__`` method is returned::
 
         sage: P.<x,y> = QQ[]
         sage: sage_signature(P)                                                        # needs sage.libs.singular
@@ -1825,7 +1826,7 @@ def sage_signature(obj):
         sage: sage_signature(foo)                                                      # needs sage.misc.cython
         <Signature (x, y)>
 
-    If a `functools.partial` instance is involved, we see no other meaningful solution
+    If a :func:`functools.partial` instance is involved, we see no other meaningful solution
     than to return the signature of the underlying function::
 
         sage: def f(a, b, c, d=1):

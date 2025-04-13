@@ -3,7 +3,7 @@
 Tests for the IPython integration
 
 First, test the pinfo magic for Python code. This is what IPython
-calls when you ask for the single-questionmark help, like `foo?` ::
+calls when you ask for the single-questionmark help, like ``foo?`` ::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
@@ -79,7 +79,7 @@ Next, test the ``pinfo`` magic for ``R`` interface code, see :issue:`26906`::
     ...
 
 Next, test the pinfo2 magic for Python code. This is what IPython
-calls when you ask for the double-questionmark help, like `foo??` ::
+calls when you ask for the double-questionmark help, like ``foo??`` ::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
