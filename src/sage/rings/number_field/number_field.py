@@ -2659,13 +2659,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         EXAMPLES::
 
             sage: f = ZZ['x']('x^3 - 12*x^2 + 2*x - 3')
-            sage: NumberField(f, 'a').polred(polredabs=True, isomorphism_map=True)
+            sage: NumberField(f, 'a')._polred(polredabs=True, isomorphism_map=True)
             (Number Field in a with defining polynomial x^3 - x^2 + 35*x - 26,
              Ring morphism:
                From: Number Field in a with defining polynomial x^3 - 12*x^2 + 2*x - 3
                To:   Number Field in a with defining polynomial x^3 - x^2 + 35*x - 26
                Defn: a |--> 1/3*a^2 + 35/3)
-            sage: NumberField(f, 'a').polred(polredabs=False, isomorphism_map=True)
+            sage: NumberField(f, 'a')._polred(polredabs=False, isomorphism_map=True)
             (Number Field in a with defining polynomial x^3 - 46*x - 123,
              Ring morphism:
                From: Number Field in a with defining polynomial x^3 - 12*x^2 + 2*x - 3
