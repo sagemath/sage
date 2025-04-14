@@ -3001,7 +3001,7 @@ class Graph(GenericGraph):
             sage: len(cycle) == 6
             True
 
-        A 2 x `n` grid graph is chordal bipartite::
+        A `2 \times n` grid graph is chordal bipartite::
 
             sage: g = graphs.Grid2dGraph(2, 6)
             sage: result, pewveo = g.is_chordal_bipartite(certificate=True)
@@ -3073,12 +3073,10 @@ class Graph(GenericGraph):
                     b, certif = gg.is_chordal_bipartite(certificate=True)
                     if not b:
                         return False, certif
-                    else:
-                        pewveo.extend(certif)
+                    pewveo.extend(certif)
                 return True, pewveo
-            else:
-                return all(gg.is_chordal_bipartite() for gg in
-                           self.connected_components_subgraphs())
+            return all(gg.is_chordal_bipartite() for gg in
+                        self.connected_components_subgraphs())
 
         left = [v for v, c in bipartite_certificate.items() if c == 0]
         right = [v for v, c in bipartite_certificate.items() if c == 1]
@@ -3113,27 +3111,25 @@ class Graph(GenericGraph):
         if is_Gamma_free:
             pewveo = dict()
             order = 0
-            for i in range(B.nrows()):
-                for j in range(B.ncols()):
-                    if B[i][j] == 1:
-                        v_i = row_vertices[i]
-                        v_j = col_vertices[j]
-                        pewveo[(v_i, v_j)] = order
-                        pewveo[(v_j, v_i)] = order
+            for i, vi in enumerate(row_vertices):
+                for j, vj in enumerate(col_vertices):
+                    if B[i, j] == 1:
+                        pewveo[vi, vj] = order
+                        pewveo[vj, vi] = order
                         order += 1
-            edges = self.edges(sort=True, key=lambda x: pewveo[(x[0], x[1])])
+            edges = self.edges(sort=True, key=lambda x: pewveo[x[0], x[1]])
             return True, edges
 
         # Find a chordless cycle of length at least 6
         r1, c1, r2, c2 = Gamma_submatrix_indices
         row_indices = [r1, r2]
         col_indices = [c1, c2]
-        while B[row_indices[-1]][col_indices[-1]] == 0:
+        while not B[row_indices[-1], col_indices[-1]]:
             # find the rightmost column with different value
             # in row_indices[-2] and row_indices[-1]
             col = order_right - 1
             while col > col_indices[-1]:
-                if B[row_indices[-2]][col] == 0 and B[row_indices[-1]][col] == 1:
+                if not B[row_indices[-2], col] and B[row_indices[-1], col]:
                     break
                 col -= 1
             assert col > col_indices[-1]
@@ -3142,7 +3138,7 @@ class Graph(GenericGraph):
             # in col_indices[-2] and col_indices[-1]
             row = order_left - 1
             while row > row_indices[-1]:
-                if B[row][col_indices[-2]] == 0 and B[row][col_indices[-1]] == 1:
+                if not B[row, col_indices[-2]] and B[row, col_indices[-1]]:
                     break
                 row -= 1
             assert row > row_indices[-1]
