@@ -4215,18 +4215,26 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             False
             sage: cancel_alarm()
         """
-        f = self.absolute_polynomial()._pari_with_name('y')
-        f *= f.content().denominator()
-        if f.pollead() == 1:
-            g = f
-            alpha = beta = g.variable().Mod(g)
-        else:
-            y = f.variable()
-            alpha = y/f.pollead()
-            g = f.pollead()**(f.poldegree(y) - 1)*f.subst(y, alpha)
-            alpha = alpha.Mod(g)
-            beta = alpha.modreverse()
-        return g, alpha, beta
+        g = self.absolute_polynomial()
+        # make it integral
+        g *= g.denominator()
+        scalar = g.leading_coefficient()
+        if scalar != 1:
+            # doing g = g(x/scalar) in linear time
+            from operator import mul
+            from itertools import accumulate
+            # scalar^i
+            powers = accumulate([1/scalar] + [scalar] * g.degree(), mul)
+            # need to double reverse
+            g = g.parent()([c*p for c, p in zip(g.reverse(), powers)]).reverse()
+        g /= gcd(g.coefficients())
+        assert g.leading_coefficient() == 1
+        f = g._pari_with_name('y')
+        y = f.variable()
+        alpha = (y/scalar).Mod(f)
+        beta = alpha.modreverse()
+        return f, alpha, beta
+
 
     def pari_polynomial(self, name='x'):
         """
