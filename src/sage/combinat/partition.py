@@ -5839,7 +5839,7 @@ class Partitions(UniqueRepresentation, Parent):
     - ``min_length=k`` specifies that the partitions have
       at least `k` parts.
 
-    - ``min_part=k`` specifies that all parts of the
+    - ``min_part=k`` specifies that all nonzero parts of the
       partitions are at least `k`.
 
     - ``inner=p`` specifies that the partitions must contain the
@@ -6048,7 +6048,7 @@ class Partitions(UniqueRepresentation, Parent):
         [[2, 2, 1]]
         sage: Partitions(7, inner=(2, 2), min_length=3).list()
         [[4, 2, 1], [3, 3, 1], [3, 2, 2], [3, 2, 1, 1], [2, 2, 2, 1], [2, 2, 1, 1, 1]]
-        sage: Partitions(5, inner=[2,0,0,0,0,0]).list()
+        sage: Partitions(5, inner=[2]).list()
         [[5], [4, 1], [3, 2], [3, 1, 1], [2, 2, 1], [2, 1, 1, 1]]
         sage: Partitions(6, length=2, max_slope=-1).list()
         [[5, 1], [4, 2]]
@@ -6164,6 +6164,13 @@ class Partitions(UniqueRepresentation, Parent):
         """
         if n is infinity:
             raise ValueError("n cannot be infinite")
+        if 'length' in kwargs and ('min_length' in kwargs or 'max_length' in kwargs):
+            raise ValueError("do not specify the length together with the minimal or maximal length")
+        # remove kwargs that specify the default value
+        if 'min_part' in kwargs and kwargs['min_part'] == 1:
+            del kwargs['min_part']
+        if 'max_slope' in kwargs and not kwargs['max_slope']:
+            del kwargs['max_slope']
         if isinstance(n, (int, Integer)):
             if not kwargs:
                 return Partitions_n(n)
@@ -6208,9 +6215,6 @@ class Partitions(UniqueRepresentation, Parent):
                                      + "'ending', 'regular' and 'restricted' "
                                      + "cannot be combined with anything else")
 
-                if 'length' in kwargs and ('min_length' in kwargs or 'max_length' in kwargs):
-                    raise ValueError("do not specify the length together with the minimal or maximal length")
-
             if set(kwargs).issubset(['length', 'min_part', 'max_part',
                                      'min_length', 'max_length']):
                 if 'length' in kwargs:
@@ -6239,7 +6243,8 @@ class Partitions(UniqueRepresentation, Parent):
 
                 return Partitions_length_and_parts_constrained(n, min_length, max_length, min_part, max_part)
 
-            # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
+            # translate keywords to IntegerListsLex
+            # FIXME: should inherit from IntegerListsLex, and implement repr, or _name as a lazy attribute
             kwargs['name'] = "Partitions of the integer {} satisfying constraints {}".format(n, ", ".join(["{}={}".format(key, kwargs[key]) for key in sorted(kwargs)]))
 
             # min_part is at least 1, and it is 1 by default
@@ -6254,16 +6259,18 @@ class Partitions(UniqueRepresentation, Parent):
             if 'outer' in kwargs:
                 kwargs['max_length'] = min(len(kwargs['outer']),
                                            kwargs.get('max_length', infinity))
-
                 kwargs['ceiling'] = tuple(kwargs['outer'])
                 del kwargs['outer']
 
             if 'inner' in kwargs:
-                inner = [x for x in kwargs['inner'] if x > 0]
+                inner = tuple([ZZ(x) for x in kwargs['inner']])
+                if min(inner) < 1:
+                    raise ValueError("the inner shape must contain only positive integers")
                 kwargs['floor'] = inner
                 kwargs['min_length'] = max(len(inner),
                                            kwargs.get('min_length', 0))
                 del kwargs['inner']
+
             return Partitions_with_constraints(n, **kwargs)
 
         if n is None or n is NN or n is NonNegativeIntegers():
@@ -6287,6 +6294,17 @@ class Partitions(UniqueRepresentation, Parent):
                         return RegularPartitions_truncated(kwargs['regular'], kwargs['max_length'])
                 elif 'max_part' in kwargs and 'max_length' in kwargs:
                     return PartitionsInBox(kwargs['max_length'], kwargs['max_part'])
+
+            # IntegerListsLex does not deal well with infinite sets,
+            # so we use a class inheriting from Partitions, and
+            # normalize arguments here
+            if 'outer' in kwargs:
+                kwargs['outer'] = tuple([infinity if x is infinity else ZZ(x)
+                                         for x in kwargs['outer']])
+            if 'inner' in kwargs:
+                kwargs['inner'] = tuple([ZZ(x) for x in kwargs['inner']])
+                if min(kwargs['inner']) < 1:
+                    raise ValueError("the inner shape must contain only positive integers")
 
             return Partitions_all_constrained(**kwargs)
 
@@ -6811,17 +6829,39 @@ class Partitions_all_constrained(Partitions):
         """
         TESTS::
 
-            sage: TestSuite(sage.combinat.partition.Partitions_all_constrained(max_length=3)).run() # long time
+            sage: TestSuite(sage.combinat.partition.Partitions_all_constrained(max_length=3, max_slope=0)).run() # long time
+
+            sage: list(Partitions(max_part=4, max_slope=-3))
+            [[], [1], [2], [3], [4], [4, 1]]
+
+            sage: [pi for n in range(10) for pi in Partitions(n, max_part=4, max_slope=-3)]
+            [[], [1], [2], [3], [4], [4, 1]]
         """
         self._constraints = kwargs
-        Partitions.__init__(self, is_infinite=True)
+        self._max_sum = infinity
+        if 'outer' in kwargs and kwargs['outer'] and kwargs['outer'][0] is not infinity:
+            self._max_sum = kwargs['outer'][0] * len(kwargs['outer'])
+        else:
+            if 'length' in kwargs:
+                max_length = kwargs['length']
+            elif 'max_length' in kwargs:
+                max_length = kwargs['max_length']
+            elif 'max_part' in kwargs and kwargs.get('max_slope', 0) < 0:
+                max_length = 1 + (kwargs['max_part'] - 1) // (-kwargs['max_slope'])
+            else:
+                max_length = infinity
+
+            if max_length is not infinity and 'max_part' in kwargs:
+                self._max_sum = kwargs['max_part'] * max_length
+
+        Partitions.__init__(self, is_infinite=self._max_sum is infinity)
 
     def __contains__(self, x):
         """
         TESTS::
 
             sage: from sage.combinat.partition import Partitions_all_constrained
-            sage: P = Partitions_all_constrained(max_part=3, max_length=2)
+            sage: P = Partitions_all_constrained(max_part=3, max_length=2, max_slope=0)
             sage: 1 in P
             False
             sage: Partition([2,1]) in P
@@ -6866,9 +6906,13 @@ class Partitions_all_constrained(Partitions):
             sage: it = iter(P)
             sage: [next(it) for i in range(10)]
             [[], [1], [2], [1, 1], [3], [2, 1], [4], [3, 1], [2, 2], [5]]
+
+            sage: P = Partitions(inner=[2,2], outer=[3,2,1])
+            sage: list(P)
+            [[2, 2], [3, 2], [2, 2, 1], [3, 2, 1]]
         """
         n = 0
-        while True:
+        while n <= self._max_sum:
             for p in Partitions(n, **self._constraints):
                 yield self.element_class(self, p)
             n += 1
@@ -7608,7 +7652,7 @@ class Partitions_parts_in(Partitions):
             sage: list(Partitions(4,parts_in=vector(ZZ,[2,4])))
             [[4], [2, 2]]
         """
-        parts = tuple(sorted(set(map(ZZ,parts))))
+        parts = tuple(sorted(set(map(ZZ, parts))))
         return super().__classcall__(cls, Integer(n), parts)
 
     def __init__(self, n, parts):
@@ -8356,6 +8400,22 @@ class Partitions_with_constraints(IntegerListsLex):
     Element = Partition
     options = Partitions.options
 
+    def __contains__(self, x):
+        """
+        TESTS::
+
+            sage: P = Partitions(4, max_slope=2)
+            sage: [3,1] in P
+            True
+            sage: [3,1,0] in P
+            True
+        """
+        if x in _Partitions:
+            for i in range(len(x)-1, -1, -1):
+                if x[i]:
+                    x = x[:i+1]
+                    break
+            return super().__contains__(x)
 
 ######################
 # Regular Partitions #
