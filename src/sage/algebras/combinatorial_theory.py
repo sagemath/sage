@@ -380,6 +380,7 @@ def _remove_kernel(mat, factor=1024, threshold=1e-4):
     norm_test = LLL_coeffs * mat
     #print("norms are: ", " ".join([str(int(log(rr.norm(1)/d, 10))) for rr in norm_test]))
     kernel_base = [LLL_coeffs[ii] for ii,rr in enumerate(norm_test) if rr.norm(1)/d < threshold]
+    #print("resulting kernel base is:\n", kernel_base)
     if len(kernel_base)==0:
         return mat, matrix.identity(d, sparse=True)
     K = matrix(ZZ, kernel_base).stack(matrix.identity(d))
@@ -766,6 +767,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                         Z.augment(Zjj)
                 Zk = Z.kernel()
                 Zkern = Zk.basis_matrix()
+                #print("removing kernel:\n", Z.image().basis_matrix())
                 if Zkern.nrows()>0:
                     new_bases.append(
                         matrix(Zkern * table_constructor[param][ii], 
@@ -1559,11 +1561,12 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                                 ))
                         invalid = True
                 except:
-                    if not custom_psd_test(X_ii_small):
+                    RFF = RealField(prec=100)
+                    if not matrix(RFF, X_ii_small).is_positive_semidefinite():
                         self.fprint("Rounded X matrix "+ 
                             "{} is not semidefinite: {}".format(
                                 block_index+plus_index, 
-                                min(X_ii_small.eigenvalues())
+                                min(matrix(RFF, X_ii_small).eigenvalues())
                                 ))
                         invalid = True
                 if invalid:
@@ -1657,8 +1660,11 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             if data==None:
                 return None
             if dim==0:
-                num, denom = data.as_integer_ratio()
-                return Fraction(int(num), int(denom))
+                try:
+                    num, denom = data.as_integer_ratio()
+                    return Fraction(int(num), int(denom))
+                except:
+                    return data
             return [pythonize(dim-1, xx) for xx in data]
 
         result = None
