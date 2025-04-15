@@ -858,6 +858,8 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             1[2[], 3[4[], 5[6[], 7[]], 8[9[], 10[]]], 11[12[], 13[]]]
             sage: OrderedTree([]).canonical_labelling(shift=5)
             5[]
+            sage: OrderedTree([[[], []], [], [[]]]).canonical_labelling(shift=3)
+            3[4[5[], 6[]], 7[], 8[9[]]]
         """
         def aux(tree, LTR, curlabel):
             mylabel = curlabel[0]
