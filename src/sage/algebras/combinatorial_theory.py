@@ -635,6 +635,9 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             "sources": sourceser,
             "excluded": tuple([xx._serialize() for xx in excluded])
         }
+    
+    def printlevel(self, val):
+        self._printlevel = val
 
     # Optimizing and rounding
 
@@ -645,8 +648,9 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         if symbolic:
             symbolic_parts = True
-            import warnings
-            warnings.warn("The parameter symbolic will be replaced with symbolic_parts.", DeprecationWarning)
+            if self._printlevel>0:
+                import warnings
+                warnings.warn("The parameter symbolic will be replaced with symbolic_parts.", DeprecationWarning)
         RX = PolynomialRing(QQ, pattern_size, "X")
         Xs = RX.gens()
 
@@ -1661,7 +1665,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 return None
             if dim==0:
                 try:
-                    num, denom = data.as_integer_ratio()
+                    num, denom = (QQ(data)).as_integer_ratio()
                     return Fraction(int(num), int(denom))
                 except:
                     return data
@@ -2218,13 +2222,12 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             constraints_data, prev_data=sdp_data
             )
         self.fprint("Constraints finished")
-
         #
-        # Writing the data to a file
+        # Make sdp data integer and write it to a file
         #
-
-        precision = ceil(params.get("precision", 20) * log(10, 2).n())
-        R = RealField(prec=precision, sci_not=True)
+        precision = params.get("precision", 20)
+        R = RealField(prec=round(precision*log(10, 2)), sci_not=True)
+        
         with open(file, "w") as file:
             block_sizes, target, mat_inds, mat_vals = sdp_data
             file.write("{}\n{}\n".format(len(target), len(block_sizes)))
@@ -2241,6 +2244,40 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     mat_inds[ii*4 + 3],
                     str(R(mat_vals[ii]))
                 ))
+
+    def construction_from_certificate(self, file_or_cert):
+        if isinstance(file_or_cert, str):
+            file = file_or_cert
+            if not file.endswith(".pickle"):
+                file += ".pickle"
+            with open(file, 'rb') as file:
+                certificate = pickle.load(file)
+        else:
+            certificate = file_or_cert
+        conss = certificate["phi vectors"]
+        if "target size" not in certificate:
+            raise ValueError("The certificate contains no target size")
+        tsize = certificate["target size"]
+        if len(conss)==0:
+            raise ValueError("The certificate contains no constructions")
+        cons = conss[0]
+        if len(cons)==0:
+            return 0
+        if isinstance(cons[0], float):
+            R = RR
+            vals = cons
+        else:
+            R = QQ
+            vals = []
+            for ii, xx in enumerate(cons):
+                try:
+                    vals.append(R(xx))
+                except:
+                    R = xx.parent()
+                    for jj in range(ii):
+                        vals[jj] = R(vals[jj])
+        FA = FlagAlgebra(self, R)
+        return FA(tsize, vals)
 
     def verify_certificate(self, file_or_cert, target_element=None, target_size=None, 
                            maximize=True, positives=None, **params):
@@ -2267,25 +2304,20 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             certificate = file_or_cert
         
         from fractions import Fraction
-        def to_sage(data):
-            if isinstance(data, Fraction):
-                return QQ(data)
-            if isinstance(data, float):
-                return RR(data)
-            try:
-                return [to_sage(xx) for xx in data]
-            except:
-                pass
-            return data
-
-        print("result data is {} after sagify it is {}".format(certificate["result"], 
-                                                               to_sage(certificate["result"])))
+        def to_sage(dim, data):
+            if dim==0:
+                if isinstance(data, Fraction):
+                    return QQ(data)
+                if isinstance(data, float):
+                    return RR(data)
+                return data
+            return [to_sage(dim-1, xx) for xx in data]
 
         #
         # Checking eigenvalues and positivity constraints
         #
         
-        e_values = to_sage(certificate["e vector"])
+        e_values = to_sage(1, certificate["e vector"])
 
         if len(e_values)>0 and min(e_values)<0:
             print("Solution is not valid!")
@@ -2293,7 +2325,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                   min(e_values))
             return -1
         
-        X_flats = to_sage(certificate["X matrices"])
+        X_flats = to_sage(2, certificate["X matrices"])
         self.fprint("Checking X matrices")
         if self._printlevel > 0:
             iterator = tqdm(enumerate(X_flats))
@@ -2321,7 +2353,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
 
         if target_size==None:
             if "target size" in certificate:
-                target_size = to_sage(certificate["target size"])
+                target_size = to_sage(0, certificate["target size"])
             else:
                 raise ValueError("Target size must be specified "+
                                  "if it is not part of the certificate!")
@@ -2331,7 +2363,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         one_vector = vector([1]*len(base_flags))
         if target_element==None:
             if "target" in certificate:
-                target_vector_exact = vector(to_sage(certificate["target"]))
+                target_vector_exact = vector(to_sage(1, certificate["target"]))
             else:
                 raise ValueError("Target must be specified "+
                                  "if it is not part of the certificate!")
@@ -2392,7 +2424,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             e_values = vector(e_values[:len(positives_list_exact)])
         else:
             if "positives" in certificate:
-                posls = to_sage(certificate["positives"])
+                posls = to_sage(2, certificate["positives"])[:-2]
                 positives_matrix_exact = matrix(len(posls), len(base_flags), posls)
                 e_values = vector(e_values[:len(posls)])
             else:
