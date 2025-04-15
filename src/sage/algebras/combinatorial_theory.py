@@ -2339,7 +2339,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     self.fprint("Matrix {} is not semidefinite".format(ii))
                     return -1
             except:
-                if not (custom_psd_test(X)):
+                RFF = RealField(prec=100)
+                if not matrix(RFF, X).is_positive_semidefinite():
                     print("Solution is not valid!")
                     self.fprint("Matrix {} is not semidefinite".format(ii))
                     return -1
