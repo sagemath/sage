@@ -35,7 +35,7 @@ Methods
 # ****************************************************************************
 
 from memory_allocator cimport MemoryAllocator
-from sage.sets.disjoint_set cimport DisjointSet_of_hashables
+from sage.sets.disjoint_set cimport DisjointSet
 
 
 def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=False):
@@ -342,7 +342,7 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
             yield from G.edge_iterator()
             return
 
-    cdef DisjointSet_of_hashables union_find = DisjointSet_of_hashables(G)
+    union_find = DisjointSet(G)
     by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
                                                         weight_function=weight_function,
                                                         check_weight=check_weight)
@@ -362,7 +362,7 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
     - ``edges`` -- list of edges
 
     - ``union_find`` -- a
-      :class:`~sage.sets.disjoint_set.DisjointSet_of_hashables` encoding a
+      :class:`~sage.sets.disjoint_set.DisjointSet` encoding a
       forest
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
@@ -617,7 +617,7 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
     cdef int m = g.size()
     if m <= threshold:
         yield from kruskal_iterator_from_edges(g.edge_iterator(),
-                                               DisjointSet_of_hashables(g),
+                                               DisjointSet(g),
                                                by_weight=by_weight,
                                                weight_function=weight_function,
                                                check_weight=check_weight)
@@ -650,7 +650,7 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
     # Parameter to  equally divide edges with weight equal the to pivot
     cdef bint ch = True
     # Data structure to record the vertices in each tree of the forest
-    cdef DisjointSet_of_hashables union_find = DisjointSet_of_hashables(g)
+    union_find = DisjointSet(g)
 
     #
     # Iteratively partition the list of edges
@@ -845,7 +845,7 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
         edge_list = [(e, 1) for e in G.edge_iterator()]
 
     # initially, each vertex is a connected component
-    cdef DisjointSet_of_hashables partitions = DisjointSet_of_hashables(G)
+    partitions = DisjointSet(G)
     # a dictionary to store the least weight outgoing edge for each component
     cdef dict cheapest = {}
     cdef list T = []  # stores the edges in minimum spanning tree
@@ -1342,7 +1342,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
     # - partition[0] is used to maintain known clumps.
     # - partition[i], 1 <= i <= k, is used to check if a given edge has both its
     #   endpoints in the same tree of forest Fi.
-    partition = [DisjointSet_of_hashables(G) for _ in range(k + 1)]
+    partition = [DisjointSet(G) for _ in range(k + 1)]
 
     # Mapping from edge to forests:
     # - edge_index[e] == i if edge e is in Fi, and 0 if not in any Fi

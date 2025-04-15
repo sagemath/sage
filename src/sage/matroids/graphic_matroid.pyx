@@ -91,7 +91,7 @@ from copy import copy
 from sage.matroids.utilities import newlabel, split_vertex, sanitize_contractions_deletions
 from itertools import combinations
 from sage.rings.integer import Integer
-from sage.sets.disjoint_set cimport DisjointSet_of_hashables
+from sage.sets.disjoint_set cimport DisjointSet
 
 cdef class GraphicMatroid(Matroid):
     r"""
@@ -271,11 +271,11 @@ cdef class GraphicMatroid(Matroid):
             sage: M.rank([0,3])
             1
         """
-        cdef DisjointSet_of_hashables DS_vertices
+        cdef object DS_vertices
         cdef list edges = self.groundset_to_edges(X)
         cdef set vertices = set([u for (u, v, l) in edges]).union([v for (u, v, l) in edges])
         # This counts components:
-        DS_vertices = DisjointSet_of_hashables(vertices)
+        DS_vertices = DisjointSet(vertices)
         for (u, v, l) in edges:
             DS_vertices.union(u, v)
         return (len(vertices) - DS_vertices.number_of_subsets())
@@ -644,10 +644,10 @@ cdef class GraphicMatroid(Matroid):
             sage: M._corank(frozenset([1,2,3]))
             3
         """
-        cdef DisjointSet_of_hashables DS_vertices
+        cdef object DS_vertices
         cdef list all_vertices = self._G.vertices(sort=False)
         cdef list not_our_edges = self.groundset_to_edges(self._groundset.difference(X))
-        DS_vertices = DisjointSet_of_hashables(all_vertices)
+        DS_vertices = DisjointSet(all_vertices)
         for u, v, l in not_our_edges:
             DS_vertices.union(u, v)
         return len(X) - (DS_vertices.number_of_subsets() - Integer(1))
@@ -751,13 +751,13 @@ cdef class GraphicMatroid(Matroid):
             sage: sorted(N._max_independent(frozenset(['a'])))
             []
         """
-        cdef DisjointSet_of_hashables DS_vertices
+        cdef object DS_vertices
         cdef list edges = self.groundset_to_edges(X)
         cdef set vertices = set([u for (u, v, l) in edges])
         vertices.update([v for (u, v, l) in edges])
 
         cdef set our_set = set()
-        DS_vertices = DisjointSet_of_hashables(vertices)
+        DS_vertices = DisjointSet(vertices)
         for (u, v, l) in edges:
             if DS_vertices.find(u) != DS_vertices.find(v):
                 DS_vertices.union(u, v)
@@ -785,13 +785,13 @@ cdef class GraphicMatroid(Matroid):
             sage: sorted(N.max_coindependent(frozenset([0,1,2,5])))
             [1, 2, 5]
         """
-        cdef DisjointSet_of_hashables DS_vertices
+        cdef object DS_vertices
         cdef list edges = self.groundset_to_edges(X)
         cdef list all_vertices = self._G.vertices(sort=False)
         cdef list not_our_edges = self.groundset_to_edges(self._groundset.difference(X))
 
         cdef set our_set = set()
-        DS_vertices = DisjointSet_of_hashables(all_vertices)
+        DS_vertices = DisjointSet(all_vertices)
         for (u, v, l) in not_our_edges:
             DS_vertices.union(u, v)
 
@@ -852,12 +852,12 @@ cdef class GraphicMatroid(Matroid):
         cdef list leaves
         cdef tuple leaf
         cdef set edge_set = set()
-        cdef DisjointSet_of_hashables DS_vertices
+        cdef object DS_vertices
 
         for (u, v, l) in edges:
             vertices.add(u)
             vertices.add(v)
-        DS_vertices = DisjointSet_of_hashables(vertices)
+        DS_vertices = DisjointSet(vertices)
         for (u, v, l) in edges:
             edge_set.add((u, v, l))
             if DS_vertices.find(u) != DS_vertices.find(v):
