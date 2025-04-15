@@ -2573,7 +2573,7 @@ class FiniteWord_class(Word_class):
           for each non-empty prefix of ``self``
         - list of all lacunas, i.e. positions where there is no
           unioccurrent lps
-        - set of palindromic factors (substrings) of ``self``
+        - set of palindromic factors of ``self``
 
         EXAMPLES::
 
@@ -2875,11 +2875,11 @@ class FiniteWord_class(Word_class):
 
     def palindromic_complexity(self, n, f=None):
         r"""
-        Return the number of distinct palindromic factors (substrings) of length ``n`` of ``self``.
+        Return the number of distinct palindromic factors of length ``n`` of ``self``.
 
         INPUT:
 
-        - ``n`` -- length of the factors (substrings)
+        - ``n`` -- length of the factors
         - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
           it must be callable on letters as well as words (e.g.
           :class:`~sage.combinat.words.morphism.WordMorphism`)
@@ -3118,8 +3118,7 @@ class FiniteWord_class(Word_class):
 
     def _g_defect_build_g_palindromes_tree(self, morphisms_G, inverse_morphisms_G, palindromes_trees):
         r"""
-        This is private method. It is used in g_defect method to build
-        tree graph, which contains data about `G`-palindromic
+        Return tree graph that contains data about `G`-palindromic
         classes of equivalence of factors of ``self``.
 
         INPUT:
@@ -3133,7 +3132,7 @@ class FiniteWord_class(Word_class):
         OUTPUT:
 
         a tree graph that contains data about `G`-palindromic
-        classes of equivalence of factors (substrings) of ``self``
+        classes of equivalence of factors of ``self``
 
         EXAMPLES:
 
@@ -3273,8 +3272,7 @@ class FiniteWord_class(Word_class):
 
     def _g_defect_secondary_subtrahend(self, morphisms_G, antimorphisms_G):
         r"""
-        This is private method. It is used in g_defect method to calculate
-        secondary subtrahend `g_G(self)` in *G-defect* formula using already
+        Return secondary subtrahend `g_G(self)` in *G-defect* formula using already
         generated group of morphisms and antimorphisms `G`.
 
         INPUT:
@@ -3321,8 +3319,7 @@ class FiniteWord_class(Word_class):
 
     def _g_defect_generate_morphisms_and_antimorpisms_group(self, morphisms, antimorphisms):
         r"""
-        This is private method. It is used in g_defect method to generate
-        group of morphisms and antimorphisms `G`, which is generate from
+        Generate group of morphisms and antimorphisms `G` that contains
         ``morphisms`` and ``antimorphisms``.
 
         INPUT:
@@ -3444,11 +3441,10 @@ class FiniteWord_class(Word_class):
 
     def _g_defect_update_morphisms_and_antimorpisms(self, morphisms, antimorphisms):
         r"""
-        This is private method. It is used in g_defect method to generate
-        2 letters `s_1` and `s_2`, which are not present in
-        domain of ``morphisms`` and ``antimorphisms``, and then return
-        updated ``morphisms`` and ``antimorphisms`` with updated domain,
-        which includes `s_1` and `s_2`.
+        Return 2 letters `s_1` and `s_2` that are not present in
+        domain of ``morphisms`` and ``antimorphisms`` and return
+        updated ``morphisms`` and ``antimorphisms`` with updated domain
+        that includes `s_1` and `s_2`.
 
         INPUT:
 
@@ -3706,7 +3702,7 @@ class FiniteWord_class(Word_class):
 
     def _not_used_letter(self, prohibited_letters=set()):
         r"""
-        This is private method. It returns a letter not contained in ``self``
+        Return a letter not contained in ``self``
         and ``prohibited_letters``.
 
         INPUT:
@@ -3743,7 +3739,7 @@ class FiniteWord_class(Word_class):
 
     def _not_used_letters(self, n, prohibited_letters=set()):
         r"""
-        This is private method. It returns ``n`` letters not contained
+        Return ``n`` letters not contained
         in ``self`` and ``prohibited_letters``.
 
         INPUT:
@@ -3786,8 +3782,8 @@ class FiniteWord_class(Word_class):
 
     def _insert_not_used_letter_between_consecutive_letters(self, f=None):
         r"""
-        This is private method. It returns copy of ``self`` with not used letter inserted
-        between each pair of consecutive letters of ``self`` and updated morphism.
+        Return copy of ``self`` with not used letter inserted between
+        each pair of consecutive letters of ``self`` and updated morphism.
 
         INPUT:
 
@@ -4019,9 +4015,9 @@ class FiniteWord_class(Word_class):
 
     def _build_palindromes_tree(self, diff_forest, word_with_special_letter, special_letter):
         r"""
-        This uses data extracted from applying Manacher's algorithm
-        on ``word_with_special_letter`` to build
-        tree graph which contains data about palindromic factors
+        Using data extracted from applying Manacher's algorithm
+        on ``word_with_special_letter``, build
+        tree graph that contains data about palindromic factors
         of ``word_with_special_letter``.
 
         INPUT:
@@ -4143,8 +4139,8 @@ class FiniteWord_class(Word_class):
     def _get_accumulated_data_about_manachers_algorithm_in_forest_format(
             self, maximal_palindrome_radiuses, initial_palindrome_radiuses, previous_positions):
         r"""
-        This takes data about already applied Manacher's algorithm
-        and accumulates it in format of forest graph.
+        Return accumulated data about applied Manacher's algorithm
+        in format of forest graph.
 
         INPUT:
 
@@ -4228,8 +4224,8 @@ class FiniteWord_class(Word_class):
 
     def _get_data_from_manachers_algorithm(self, word, morphism):
         r"""
-        This is private method. It returns some data about ``word``,
-        which is gather during apply of Manacher's algorithm on ``word``.
+        Return some data about ``word`` that is collected
+        during apply of Manacher's algorithm on ``word``.
 
         INPUT:
 
@@ -4237,7 +4233,7 @@ class FiniteWord_class(Word_class):
           is the same letter and all other letters are different from
           this letter
         - ``morphism`` -- morphism that will be used for defining
-          which factors (substrings) of ``word`` are palindromes
+          which factors of ``word`` are palindromes
 
         OUTPUT:
 
