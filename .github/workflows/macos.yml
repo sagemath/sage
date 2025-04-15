@@ -65,7 +65,7 @@ jobs:
         osversion_xcodeversion_toxenv: ${{ fromJson(inputs.osversion_xcodeversion_toxenv_tuples) }}
     env:
       TOX_ENV: local-${{ matrix.osversion_xcodeversion_toxenv[2] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}
-      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-tox-local-${{ matrix.osversion_xcodeversion_toxenv[2] }}-macos-${{ matrix.osversion_xcodeversion_toxenv[0] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-tox-local-${{ matrix.osversion_xcodeversion_toxenv[2] }}-macos-${{ matrix.osversion_xcodeversion_toxenv[0] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}${{ inputs.stage }}
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.osversion_xcodeversion_toxenv[2] }}-macos-${{ matrix.osversion_xcodeversion_toxenv[0] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}
     steps:
       - name: Check out SageMath

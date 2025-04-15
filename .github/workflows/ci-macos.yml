@@ -18,6 +18,10 @@ name: CI macOS
 #on: [push, pull_request]
 
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/ci-macos.yml'
+      - '.github/workflows/macos.yml'
   push:
     tags:
       - '*'
