@@ -4006,10 +4006,10 @@ class FiniteWord_class(Word_class):
         """
         word_with_special_letter, updated_morphism, special_letter = \
             self._insert_not_used_letter_between_consecutive_letters(f=f)
-        maximal_palindrome_radiuses, maximal_palindrome_lengths, initial_palindrome_radiuses, previous_positions = \
+        maximal_palindrome_radii, maximal_palindrome_lengths, initial_palindrome_radii, previous_positions = \
             self._get_data_from_manachers_algorithm(word_with_special_letter, updated_morphism)
         diff_forest = self._get_accumulated_data_about_manachers_algorithm_in_forest_format(
-            maximal_palindrome_radiuses, initial_palindrome_radiuses, previous_positions)
+            maximal_palindrome_radii, initial_palindrome_radii, previous_positions)
         palindromes_tree = self._build_palindromes_tree(diff_forest, word_with_special_letter, special_letter)
         return maximal_palindrome_lengths, palindromes_tree
 
@@ -4137,17 +4137,17 @@ class FiniteWord_class(Word_class):
         return palindromes_tree
 
     def _get_accumulated_data_about_manachers_algorithm_in_forest_format(
-            self, maximal_palindrome_radiuses, initial_palindrome_radiuses, previous_positions):
+            self, maximal_palindrome_radii, initial_palindrome_radii, previous_positions):
         r"""
         Return accumulated data about applied Manacher's algorithm
         in format of forest graph.
 
         INPUT:
 
-        - ``maximal_palindrome_radiuses`` -- list of radii of maximal
+        - ``maximal_palindrome_radii`` -- list of radii of maximal
           palindromes for each symmetry axis (letter or space between
           two letters)
-        - ``initial_palindrome_radiuses`` -- for each symmetry axis (letter
+        - ``initial_palindrome_radii`` -- for each symmetry axis (letter
           or space between two letters) a radius of the palindrome that
           was initial palindrome from which Manacher's algorithm
           started to increment radius in this symmetry axis
@@ -4207,10 +4207,10 @@ class FiniteWord_class(Word_class):
         diff_forest = []
         tree_and_node_indexes = [None] * len(previous_positions)
         for i, prev_pos in enumerate(previous_positions):
-            if initial_palindrome_radiuses[i] != maximal_palindrome_radiuses[i]:
+            if initial_palindrome_radii[i] != maximal_palindrome_radii[i]:
                 if prev_pos is None:
                     tree_index, node_index = len(diff_forest), 0
-                    diff_forest.append([[i, initial_palindrome_radiuses[i], maximal_palindrome_radiuses[i], []]])
+                    diff_forest.append([[i, initial_palindrome_radii[i], maximal_palindrome_radii[i], []]])
                     tree_and_node_indexes[i] = (tree_index, node_index)
                 else:
                     previous_position_index = prev_pos
@@ -4218,7 +4218,7 @@ class FiniteWord_class(Word_class):
                     tree = diff_forest[tree_index]
                     new_node_index = len(tree)
                     tree[node_index][3].append(new_node_index)
-                    tree.append([i, initial_palindrome_radiuses[i], maximal_palindrome_radiuses[i], []])
+                    tree.append([i, initial_palindrome_radii[i], maximal_palindrome_radii[i], []])
                     tree_and_node_indexes[i] = (tree_index, new_node_index)
         return diff_forest
 
@@ -4293,34 +4293,34 @@ class FiniteWord_class(Word_class):
              [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
              [None, None, None, None, None, 3, None, 1, None, None, None])
         """
-        maximal_palindrome_radiuses = [0] * word.length()
+        maximal_palindrome_radii = [0] * word.length()
         maximal_palindrome_lengths = [0] * word.length()
-        initial_palindrome_radiuses = [0] * word.length()
+        initial_palindrome_radii = [0] * word.length()
         previous_positions = [None] * word.length()
         center, right = 0, 0
         for i in range(word.length()):
             if i < right:
-                maximal_palindrome_radiuses[i] = min(right - i, maximal_palindrome_radiuses[2 * center - i])
-                initial_palindrome_radiuses[i] = maximal_palindrome_radiuses[i]
+                maximal_palindrome_radii[i] = min(right - i, maximal_palindrome_radii[2 * center - i])
+                initial_palindrome_radii[i] = maximal_palindrome_radii[i]
                 previous_positions[i] = 2 * center - i
-                if initial_palindrome_radiuses[2 * center - i] == maximal_palindrome_radiuses[2 * center - i]:
+                if initial_palindrome_radii[2 * center - i] == maximal_palindrome_radii[2 * center - i]:
                     previous_positions[i] = previous_positions[2 * center - i]
-            l, r = i - maximal_palindrome_radiuses[i], i + maximal_palindrome_radiuses[i]
+            l, r = i - maximal_palindrome_radii[i], i + maximal_palindrome_radii[i]
             while (l >= 0 and r < word.length()
                    and morphism(word[l])[0] == word[r]
                    and word[l] == morphism(word[r])[0]):
-                maximal_palindrome_radiuses[i] += 1
+                maximal_palindrome_radii[i] += 1
                 l -= 1
                 r += 1
-            if i + maximal_palindrome_radiuses[i] > right:
+            if i + maximal_palindrome_radii[i] > right:
                 center = i
-                right = i + maximal_palindrome_radiuses[i]
-        even_pos_results = [max(x + x % 2 - 1, 0) for x in maximal_palindrome_radiuses[::2]]
-        odd_pos_results = [x - x % 2 for x in maximal_palindrome_radiuses[1::2]]
+                right = i + maximal_palindrome_radii[i]
+        even_pos_results = [max(x + x % 2 - 1, 0) for x in maximal_palindrome_radii[::2]]
+        odd_pos_results = [x - x % 2 for x in maximal_palindrome_radii[1::2]]
         maximal_palindrome_lengths[::2] = even_pos_results
         maximal_palindrome_lengths[1::2] = odd_pos_results
-        return (maximal_palindrome_radiuses, maximal_palindrome_lengths,
-                initial_palindrome_radiuses, previous_positions)
+        return (maximal_palindrome_radii, maximal_palindrome_lengths,
+                initial_palindrome_radii, previous_positions)
 
     def length_border(self):
         r"""
