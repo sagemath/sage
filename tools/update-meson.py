@@ -5,6 +5,7 @@
 #     "meson",
 # ]
 # ///
+# See README.md for more details
 
 import argparse
 import os
