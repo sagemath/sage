@@ -356,9 +356,9 @@ class OEIS:
 
         sage: oeis((1,2,5,16,61))    # optional -- internet
         0: A000111: ...
-        sage: oeis('A000040')
+        sage: oeis('A000040')  # optional -- internet
         A000040: The prime numbers.
-        sage: oeis('A000045')
+        sage: oeis('A000045')  # optional -- internet
         A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
     """
 
