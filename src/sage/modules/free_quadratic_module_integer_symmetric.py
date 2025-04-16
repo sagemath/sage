@@ -1526,7 +1526,8 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         from sage.quadratic_forms.quadratic_form import QuadraticForm
         q = QuadraticForm(e * self.gram_matrix())
         short = q.short_vector_list_up_to_length(n, *kwargs)
-        return [[self(v * self.basis_matrix()) for v in L] for L in short]
+        # (matrix(L)).rows() * B is faster than [v * B for v in L]
+        return [[self(r, check=False) for r in matrix(L) * self.basis_matrix()] if L else [] for L in short]
 
     def _fplll_enumerate(self, target=None):
         r"""
