@@ -64,7 +64,7 @@ jobs:
   stage-2-experimental-0-o:
     uses: ./.github/workflows/macos.yml
     with:
-      stage: "2-optional-0-o"
+      stage: "2-experimental-0-o"
     needs: [stage-2-optional-p-z]
     if: ${{ success() || failure() }}
 
