@@ -1289,7 +1289,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         cdef m4ri_word *row
         if not nonzero:
             if density == 1:
-                assert(sizeof(m4ri_word) == 8)
+                assert sizeof(m4ri_word) == 8
                 mask = __M4RI_LEFT_BITMASK(self._entries.ncols % m4ri_radix)
                 for i from 0 <= i < self._nrows:
                     row = mzd_row(self._entries, i)
