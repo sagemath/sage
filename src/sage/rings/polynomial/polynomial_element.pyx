@@ -2122,7 +2122,7 @@ cdef class Polynomial(CommutativePolynomial):
             (x^3 + z8^7 + z8^4 + z8^3 + z8^2 + z8, 3)]
         """
         q = self.base_ring().order() # p^k
-        R, x = self.parent().objgen()
+        _, x = self.parent().objgen()
 
         # Initialise values
         v = self
@@ -2971,7 +2971,6 @@ cdef class Polynomial(CommutativePolynomial):
                 # see github issue 24308
                 p = -1
             if 0 < p <= right and (self.base_ring() in sage.categories.integral_domains.IntegralDomains() or p.is_prime()):
-                x = self.parent().gen()
                 ret = self.parent().one()
                 e = 1
                 q = right
@@ -3759,7 +3758,6 @@ cdef class Polynomial(CommutativePolynomial):
         with a single term.
         """
         cdef Py_ssize_t d = term.degree()
-        cdef Py_ssize_t i
         cdef list coeffs, output
         c = term.get_unsafe(d)
         if term_on_right:
@@ -6448,7 +6446,7 @@ cdef class Polynomial(CommutativePolynomial):
             from sage.rings.qqbar import number_field_elements_from_algebraics
             from sage.schemes.projective.projective_space import ProjectiveSpace
 
-            K_pre, P, phi = number_field_elements_from_algebraics(self.coefficients())
+            K_pre, P, _ = number_field_elements_from_algebraics(self.coefficients())
             Pr = ProjectiveSpace(K_pre, len(P) - 1)
             return Pr.point(P).global_height(prec=prec)
         raise TypeError("Must be over a Numberfield or a Numberfield Order.")
@@ -12274,7 +12272,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             2*y*x^3 + (y + 3)*x^2 + (-2*y + 1)*x + 1
         """
         cdef Polynomial_generic_dense res
-        cdef Py_ssize_t check=0, i, min
+        cdef Py_ssize_t i, min
         x = (<Polynomial_generic_dense>self)._coeffs
         y = (<Polynomial_generic_dense>right)._coeffs
         if len(x) > len(y):
@@ -12295,7 +12293,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 
     cpdef _sub_(self, right):
         cdef Polynomial_generic_dense res
-        cdef Py_ssize_t check=0, i, min
+        cdef Py_ssize_t i, min
         x = (<Polynomial_generic_dense>self)._coeffs
         y = (<Polynomial_generic_dense>right)._coeffs
         if len(x) > len(y):
