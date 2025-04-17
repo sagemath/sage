@@ -2464,12 +2464,8 @@ class BipartiteGraph(Graph):
 
         B.add_edges(edges_to_keep)
 
-        attributes_to_update = ('_pos', '_assoc')
-        for attr in attributes_to_update:
-            if hasattr(self, attr) and getattr(self, attr) is not None:
-                d = getattr(self, attr)
-                value = {v: d.get(v, None) for v in B}
-                setattr(B, attr, value)
+        B._copy_attribute_from(self, '_pos')
+        B._copy_attribute_from(self, '_assoc')
 
         return B
 
@@ -2528,12 +2524,8 @@ class BipartiteGraph(Graph):
         else:
             # We make a copy of the graph
             B = BipartiteGraph(data=self.edges(sort=True), partition=[self.left, self.right])
-            attributes_to_update = ('_pos', '_assoc')
-            for attr in attributes_to_update:
-                if hasattr(self, attr) and getattr(self, attr) is not None:
-                    d = getattr(self, attr)
-                    value = {v: d.get(v, None) for v in B}
-                    setattr(B, attr, value)
+            B._copy_attribute_from(self, '_pos')
+            B._copy_attribute_from(self, '_assoc')
         B.name("Subgraph of ({})".format(self.name()))
 
         vertices = set(vertices)
