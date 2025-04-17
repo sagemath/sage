@@ -3974,6 +3974,10 @@ REFERENCES:
             Diffie-Hellman groups for Internet Key Exchange (IKE)*, in RFC 3526.
             Available at https://www.rfc-editor.org/rfc/rfc3526
 
+.. [KKD1995] Ton Kloks, and Dieter Kratsch. "Computing a perfect edge without vertex
+            elimination ordering of a chordal bipartite graph."
+            Information Processing Letters 55.1 (1995): 11-16.
+
 .. [KKMMNN1992] S-J. Kang, M. Kashiwara, K. C. Misra, T. Miwa, T. Nakashima,
                 and A. Nakayashiki. *Affine crystals and vertex models*.
                 Int. J. Mod. Phys. A, **7** (suppl. 1A), (1992) pp. 449-484.
