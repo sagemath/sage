@@ -85,11 +85,9 @@ To configure the project, we need to run the following command:
 
 .. CODE-BLOCK:: shell-session
 
-    $ meson setup builddir --prefix=$PWD/build-install
+    $ meson setup builddir
 
 This will create a build directory ``builddir`` that will hold the build artifacts.
-The ``--prefix`` option specifies the directory where the Sage will be installed,
-and can be omitted when ``pip`` is used to install as explained below.
 
 If pip is used as above with ``--editable``, ``builddir`` is set to be
 ``build/cp[Python major version][Python minor version]``, such as ``build/cp311``.
@@ -106,18 +104,27 @@ Installing is done with the following command:
 
     $ meson install -C builddir
 
-This will then install in the directory specified by ``--prefix``, e.g.
-``build-install/lib/python3.11/site-packages/sage``.
-Usually, this directory is not on your Python path, so you have to use:
-
-.. CODE-BLOCK:: shell-session
-
-    $ PYTHONPATH=build-install/lib/python3.11/site-packages ./sage
-
+This will install the project to currently active Python environment, 
+or to the system Python environment if no environment is active.
 When editable install is used, it is not necessary to reinstall after each compilation.
 
-Alternatively, we can still use pip to install (which does not require specifying
-``--prefix`` in advance and automatically works with conda environment):
+.. NOTE::
+
+    If you want to install the project to a different directory, you can specify
+    the ``--prefix`` option when running the ``meson setup`` command:
+
+    .. CODE-BLOCK:: shell-session
+
+        $ meson setup builddir --prefix=/desired/install/path -Dpython.install_env=prefix
+
+    This will then install in the directory specified by ``--prefix``.
+    Usually, this directory is not on your Python path, so you have to use:
+
+    .. CODE-BLOCK:: shell-session
+
+        $ PYTHONPATH=/desired/install/path ./sage
+
+Alternatively, we can still use pip to install:
 
 .. CODE-BLOCK:: shell-session
 
