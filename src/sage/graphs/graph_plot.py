@@ -160,6 +160,13 @@ layout_options = {
     'tree_orientation':
         'The direction of tree branches -- \'up\', \'down\', '
         '\'left\' or \'right\'.',
+    'external_face':
+        'A list of the vertices of the external face of the graph, '
+        'used for Tutte embedding layout.',
+    'external_face_pos':
+        'A dictionary specifying the positions of the external face of the '
+        'graph, used for Tutte embedding layout. If none specified, the'
+        'external face is a regular polygon.',
     'save_pos':
         'Whether or not to save the computed position for the graph.',
     'dim':

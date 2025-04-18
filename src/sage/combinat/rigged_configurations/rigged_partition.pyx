@@ -134,7 +134,7 @@ cdef class RiggedPartition(SageObject):
         """
         # If it is empty, return saying so
         if not self._list:
-            return("(/)\n")
+            return "(/)\n"
 
         from sage.combinat.partition import Partitions
         if Partitions.options.convention == "French":
@@ -148,7 +148,7 @@ cdef class RiggedPartition(SageObject):
             ret_str += "[ ]"*val
             ret_str += str(self.rigging[i])
             ret_str += "\n"
-        return(ret_str)
+        return ret_str
 
     def _latex_(self):
         r"""
@@ -578,7 +578,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
         """
         # If it is empty, return saying so
         if not self._list:
-            return("(/)\n")
+            return "(/)\n"
 
         from sage.combinat.partition import Partitions
         if Partitions.options.convention == "french":
@@ -599,7 +599,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
             ret_str += box_str*val
             ret_str += str(self.rigging[i])
             ret_str += "\n"
-        return(ret_str)
+        return ret_str
 
     def _latex_(self):
         r"""

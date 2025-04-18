@@ -629,19 +629,19 @@ cdef class Converter(SageObject):
             3
         """
         cdef leftv * v
-        v=self.args
+        v = self.args
         cdef int l
-        l=0
+        l = 0
         while v != NULL:
-            l=l+1
-            v=v.next
+            l += 1
+            v = v.next
         return l
 
     cdef leftv* pop_front(self) except NULL:
         """
         Pop a Singular element from the front of the list.
         """
-        assert(self.args != NULL)
+        assert self.args != NULL
         cdef leftv *res = self.args
         self.args = self.args.next
         res.next = NULL

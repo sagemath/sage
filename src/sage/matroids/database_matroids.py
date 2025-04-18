@@ -2133,7 +2133,7 @@ def Z(r, t=True, groundset=None):
     Id = Matrix(GF(2), identity_matrix(r))
     J = Matrix(GF(2), ones_matrix(r))
     tip = Matrix(GF(2), ones_matrix(r, 1))
-    A = Id.augment(J-Id).augment(tip)
+    A = Id.augment(J - Id).augment(tip)
 
     M = Matroid(A)
     X = [f'x{i}' for i in range(1, r + 1)]
@@ -2250,7 +2250,7 @@ def Spike(r, t=True, C3=[], groundset=None):
     else:
         for S in C3:
             for xy in S:
-                if xy not in X+Y:
+                if xy not in X + Y:
                     raise ValueError(
                         "The sets in C3 must contain elements xi and yi only."
                     )
@@ -2422,13 +2422,13 @@ def Psi(r, groundset=None):
     for i in range(0, r):
         for k in range(1, r - 2):
             I0 = [f'a{i}', f'b{i}']
-            IK = [f'a{(i+k) % r}', f'b{(i+k) % r}']
+            IK = [f'a{(i + k) % r}', f'b{(i + k) % r}']
             for AB in generate_binary_strings(k - 1):
                 C = []
                 C += I0 + IK
                 j = 1
                 for z in AB:
-                    C += [f'{z}{(i+j) % r}']
+                    C += [f'{z}{(i + j) % r}']
                     j += 1
                 NSC += [C]
 
@@ -5029,6 +5029,17 @@ def BetsyRoss(groundset=None):
            'cjk', 'dfk', 'dgh', 'dij', 'efj', 'egk', 'ehi']
     M = Matroid(rank=3, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "BetsyRoss", groundset)
+    pos = {'a': (0, 1.61000000000000),
+           'c': (0.946334256190882, -1.30251736094367),
+           'b': (1.53120099123520, 0.497517360943665),
+           'e': (-1.53120099123520, 0.497517360943665),
+           'd': (-0.946334256190882, -1.30251736094367),
+           'g': (0.590718333102580, -0.191936021350899),
+           'f': (0.365084007635076, 0.502495027562079),
+           'i': (-0.590718333102580, -0.191936021350899),
+           'h': (0, -0.621118012422360),
+           'k': (0, 0), 'j': (-0.365084007635076, 0.502495027562079)}
+    M._fix_positions(pos_dict=pos)
     return M
 
 
@@ -5246,6 +5257,6 @@ def _rename_and_relabel(M, name=None, groundset=None):
         M = M.relabel(dict(zip(M.groundset(), groundset)))
 
     if name is not None:
-        M.rename(name+": " + repr(M))
+        M.rename(name + ": " + repr(M))
 
     return M

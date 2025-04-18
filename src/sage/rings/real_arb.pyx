@@ -3106,6 +3106,17 @@ cdef class RealBall(RingElement):
             raise TypeError("unsupported operand type(s) for >>: '{}' and '{}'"
                             .format(type(val).__name__, type(shift).__name__))
 
+    def conjugate(self):
+        r"""
+        Return the conjugate of this ball.
+
+        EXAMPLES::
+
+            sage: RBF(1).conjugate()
+            1.000000000000000
+        """
+        return self
+
     # Elementary functions
 
     def log(self, base=None):

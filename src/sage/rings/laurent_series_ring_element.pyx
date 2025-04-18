@@ -161,18 +161,18 @@ cdef class LaurentSeries(AlgebraElement):
                 self.__u = parent._power_series_ring.zero()
             else:
                 self.__n = n
-                self.__u = f
+                self.__u = parent._power_series_ring(f)
         else:
             val = f.valuation()
             if val is infinity:
                 self.__n = 0
-                self.__u = f
+                self.__u = parent._power_series_ring(f)
             elif val == 0:
                 self.__n = n    # power of the variable
-                self.__u = f    # unit part
+                self.__u = parent._power_series_ring(f)    # unit part
             else:
                 self.__n = n + val
-                self.__u = f >> val
+                self.__u = parent._power_series_ring(f >> val)
 
     def __reduce__(self):
         return self._parent, (self.__u, self.__n)
@@ -1090,6 +1090,14 @@ cdef class LaurentSeries(AlgebraElement):
             t + t^2
             sage: (t+t^2).truncate_neg(-2)
             t + t^2
+
+        Check that :issue:`39842` is fixed::
+
+            sage: f = LaurentSeriesRing(QQ, "t")(LaurentPolynomialRing(QQ, "t")([1, 2, 3]))
+            sage: f
+            1 + 2*t + 3*t^2
+            sage: f.truncate_neg(1)
+            2*t + 3*t^2
         """
         return type(self)(self._parent, self.__u >> (n - self.__n), n)
 

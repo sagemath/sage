@@ -27,3 +27,13 @@ Within an active virtual environment where Meson is installed, run the following
 ```bash
 tools/update-meson.py
 ```
+
+## Update Version Number
+
+Increments the version number in the project. This command is useful when releasing a new version of the project.
+
+Set `SAGE_ROOT` to the root directory of the Sage project and run the following command:
+
+```bash
+tools/update_version
+```

@@ -16,7 +16,7 @@ AUTHORS:
 - Kwankyu Lee (2016-03-09) -- initial version, based on code by Robert Bradshaw and Nathann Cohen
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016      Kwankyu Lee <ekwankyu@gmail.com>
 #                     2018      Thierry Monteil
 #                     2018-2021 Sébastien Labbé
@@ -28,8 +28,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import multiprocessing
 import platform

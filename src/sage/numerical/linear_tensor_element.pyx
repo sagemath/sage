@@ -421,7 +421,7 @@ cdef class LinearTensor(ModuleElement):
         elif op == Py_GE:
             return LC(right, left, False)
         else:
-            assert(False)   # unreachable
+            assert False   # unreachable
 
     def __hash__(self):
         r"""

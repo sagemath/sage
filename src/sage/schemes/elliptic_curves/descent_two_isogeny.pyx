@@ -978,6 +978,8 @@ cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e)
 
     # Odd finite primes
     Delta = f.discriminant()
+    if not Delta:
+        raise ValueError("the curve is singular, Delta is zero")
     for p in prime_divisors(Delta):
         if p == 2:
             continue
@@ -1002,6 +1004,15 @@ def test_els(a, b, c, d, e):
         ....:                 print("This never happened", a, b, c, d, e)
         ....:         except ValueError:
         ....:             continue
+
+    TESTS:
+
+    Check that :issue:`39864` is fixed::
+
+        sage: test_els(194, 617, 846, 617, 194)
+        Traceback (most recent call last):
+        ...
+        ValueError: the curve is singular, Delta is zero
     """
     cdef Integer A, B, C, D, E
     A = Integer(a)

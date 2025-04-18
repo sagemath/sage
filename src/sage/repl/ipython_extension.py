@@ -661,12 +661,13 @@ class SageCustomizations:
 
         Check that :issue:`31951` is fixed::
 
+             sage: # indirect doctest
              sage: from IPython import get_ipython
              sage: ip = get_ipython()
-             sage: ip.input_transformer_manager.check_complete('''  # indirect doctest
+             sage: ip.input_transformer_manager.check_complete('''
              ....: for i in [1 .. 2]:
              ....:     a = 2''')
-             ('incomplete', ...)
+             ('incomplete', 4)
              sage: ip.input_transformer_manager.check_complete('''
              ....: def foo(L)
              ....:     K.<a> = L''')

@@ -391,6 +391,16 @@ class BipartiteGraph(Graph):
             Traceback (most recent call last):
             ...
             LookupError: vertex (7) is not a vertex of the graph
+
+        Check that :issue:`39295` is fixed::
+
+            sage: B = BipartiteGraph(matrix([[1, 1], [1, 1]]), immutable=True)
+            sage: print(B.vertices(), B.edges())
+            [0, 1, 2, 3] [(0, 2, None), (0, 3, None), (1, 2, None), (1, 3, None)]
+            sage: B.add_vertices([4], left=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
         """
         if kwds is None:
             kwds = {'loops': False}
@@ -467,32 +477,31 @@ class BipartiteGraph(Graph):
             if kwds.get("multiedges", False) and kwds.get("weighted", False):
                 raise TypeError("weighted multi-edge bipartite graphs from "
                                 "reduced adjacency matrix not supported")
-            Graph.__init__(self, *args, **kwds)
             ncols = data.ncols()
             nrows = data.nrows()
             self.left = set(range(ncols))
             self.right = set(range(ncols, nrows + ncols))
 
-            # ensure that the vertices exist even if there
-            # are no associated edges (trac #10356)
-            self.add_vertices(self.left)
-            self.add_vertices(self.right)
+            def edges():
+                if kwds.get("multiedges", False):
+                    for ii in range(ncols):
+                        for jj in range(nrows):
+                            for _ in range(data[jj, ii]):
+                                yield (ii, jj + ncols)
+                elif kwds.get("weighted", False):
+                    for ii in range(ncols):
+                        for jj in range(nrows):
+                            if data[jj, ii]:
+                                yield (ii, jj + ncols, data[jj, ii])
+                else:
+                    for ii in range(ncols):
+                        for jj in range(nrows):
+                            if data[jj, ii]:
+                                yield (ii, jj + ncols)
 
-            if kwds.get("multiedges", False):
-                for ii in range(ncols):
-                    for jj in range(nrows):
-                        if data[jj, ii]:
-                            self.add_edges([(ii, jj + ncols)] * data[jj, ii])
-            elif kwds.get("weighted", False):
-                for ii in range(ncols):
-                    for jj in range(nrows):
-                        if data[jj, ii]:
-                            self.add_edge((ii, jj + ncols, data[jj, ii]))
-            else:
-                for ii in range(ncols):
-                    for jj in range(nrows):
-                        if data[jj, ii]:
-                            self.add_edge((ii, jj + ncols))
+            # ensure that construction works
+            # when immutable=True (issue #39295)
+            Graph.__init__(self, data=[range(nrows + ncols), edges()], format='vertices_and_edges', *args, **kwds)
         else:
             if partition is not None:
                 left, right = set(partition[0]), set(partition[1])
@@ -2455,12 +2464,8 @@ class BipartiteGraph(Graph):
 
         B.add_edges(edges_to_keep)
 
-        attributes_to_update = ('_pos', '_assoc')
-        for attr in attributes_to_update:
-            if hasattr(self, attr) and getattr(self, attr) is not None:
-                d = getattr(self, attr)
-                value = {v: d.get(v, None) for v in B}
-                setattr(B, attr, value)
+        B._copy_attribute_from(self, '_pos')
+        B._copy_attribute_from(self, '_assoc')
 
         return B
 
@@ -2519,12 +2524,8 @@ class BipartiteGraph(Graph):
         else:
             # We make a copy of the graph
             B = BipartiteGraph(data=self.edges(sort=True), partition=[self.left, self.right])
-            attributes_to_update = ('_pos', '_assoc')
-            for attr in attributes_to_update:
-                if hasattr(self, attr) and getattr(self, attr) is not None:
-                    d = getattr(self, attr)
-                    value = {v: d.get(v, None) for v in B}
-                    setattr(B, attr, value)
+            B._copy_attribute_from(self, '_pos')
+            B._copy_attribute_from(self, '_assoc')
         B.name("Subgraph of ({})".format(self.name()))
 
         vertices = set(vertices)

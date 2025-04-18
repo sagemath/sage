@@ -1,1 +1,1 @@
-libflint
+libflint<3.3.0a0

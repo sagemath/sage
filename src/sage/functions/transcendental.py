@@ -390,7 +390,7 @@ class Function_zetaderiv(GinacFunction):
         """
         return _mpmath_utils_call(_mpmath_zeta, x, 1, n, parent=parent)
 
-    def _method_arguments(self, k, x, **args):
+    def _method_arguments(self, k, x):
         r"""
         TESTS::
 

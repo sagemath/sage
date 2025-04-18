@@ -131,6 +131,10 @@ AUTHORS:
   laziness :issue:`28627`)
 """
 
+import re
+from collections import defaultdict
+from ssl import create_default_context as default_context
+from urllib.parse import urlencode
 # ****************************************************************************
 #       Copyright (C) 2012 Thierry Monteil <sage!lma.metelu.net>
 #
@@ -139,24 +143,20 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from urllib.request import urlopen
-from urllib.parse import urlencode
-from ssl import create_default_context as default_context
-from collections import defaultdict
-import re
+from urllib.request import urlopen, Request
 
-from sage.structure.sage_object import SageObject
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.version import version
 from sage.cpython.string import bytes_to_str
-from sage.rings.integer import Integer
-from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
+from sage.misc.html import HtmlFragment
 from sage.misc.temporary_file import tmp_filename
 from sage.misc.unknown import Unknown
-from sage.misc.html import HtmlFragment
+from sage.misc.verbose import verbose
 from sage.repl.preparse import preparse
-
+from sage.rings.integer import Integer
+from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import UniqueRepresentation
 
 oeis_url = 'https://oeis.org/'
 
@@ -179,10 +179,8 @@ def _fetch(url):
     """
     try:
         verbose("Fetching URL %s ..." % url, caller_name='OEIS')
-        f = urlopen(url, context=default_context())
-        result = f.read()
-        f.close()
-        return bytes_to_str(result)
+        with urlopen(Request(url, headers={'User-Agent': f'SageMath/{version}'})) as f:
+            return bytes_to_str(f.read())
     except OSError as msg:
         raise OSError("%s\nerror fetching %s" % (msg, url))
 
@@ -358,6 +356,10 @@ class OEIS:
 
         sage: oeis((1,2,5,16,61))    # optional -- internet
         0: A000111: ...
+        sage: oeis('A000040')  # optional -- internet
+        A000040: The prime numbers.
+        sage: oeis('A000045')  # optional -- internet
+        A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
     """
 
     def __call__(self, query, max_results=3, first_result=0):
@@ -1070,12 +1072,12 @@ class OEISSequence(SageObject, UniqueRepresentation):
             from sage.rings.real_lazy import RealLazyField
             return RealLazyField()('0' + ''.join(map(str, terms[:offset])) + '.' + ''.join(map(str, terms[offset:])))
         elif 'nonn' in self.keywords():
-            from sage.structure.sequence import Sequence
             from sage.rings.semirings.non_negative_integer_semiring import NN
+            from sage.structure.sequence import Sequence
             return Sequence(self.first_terms(), NN)
         else:
-            from sage.structure.sequence import Sequence
             from sage.rings.integer_ring import ZZ
+            from sage.structure.sequence import Sequence
             return Sequence(self.first_terms(), ZZ)
 
     def is_dead(self, warn_only=False) -> bool:

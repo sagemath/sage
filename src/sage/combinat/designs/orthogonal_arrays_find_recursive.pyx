@@ -292,9 +292,9 @@ cpdef find_construction_3_3(int k, int n):
         (11, 11, 16, 1)
         sage: find_construction_3_3(12,11)
     """
-    cdef int mm,nn,i
+    cdef int mm, nn, i
     for mm in range(k-1, n//2+1):
-        if not(is_available(k, mm) and is_available(k, mm + 1)):
+        if not (is_available(k, mm) and is_available(k, mm + 1)):
             continue
 
         for nn in range(2, n//mm+1):

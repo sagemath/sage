@@ -79,8 +79,10 @@ Libraries of algorithms
    sage/graphs/centrality
    sage/graphs/asteroidal_triples
    sage/graphs/independent_sets
+   sage/graphs/chrompoly
    sage/graphs/cographs
    sage/graphs/comparability
+   sage/graphs/isoperimetric_inequalities
    sage/graphs/line_graph
    sage/graphs/spanning_tree
    sage/graphs/pq_trees
@@ -99,6 +101,7 @@ Libraries of algorithms
    sage/graphs/graph_decompositions/rankwidth
    sage/graphs/graph_decompositions/bandwidth
    sage/graphs/graph_decompositions/cutwidth
+   sage/graphs/graph_decompositions/fast_digraph
    sage/graphs/graph_decompositions/graph_products
    sage/graphs/graph_decompositions/slice_decomposition
    sage/graphs/graph_decompositions/modular_decomposition

@@ -141,6 +141,7 @@ from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element, parent, Expression
 from sage.misc.lazy_attribute import lazy_attribute
 
+from sage.structure.parent cimport Parent
 from sage.structure.coerce cimport (coercion_model,
         py_scalar_to_element, is_numpy_type, is_mpmath_type)
 from sage.structure.richcmp cimport richcmp
@@ -157,6 +158,7 @@ try:
 except ImportError:
     register_or_update_function = None
 
+cdef object SR = None, PolynomialRing_commutative = None, MPolynomialRing_polydict_domain = None
 
 # List of functions which ginac allows us to define custom behavior for.
 # Changing the order of this list could cause problems unpickling old pickles.
@@ -886,7 +888,7 @@ cdef class BuiltinFunction(Function):
             sage: c(pi/2)                                                               # needs sage.symbolic
             0
         """
-        self._preserved_arg = preserved_arg
+        self._preserved_arg = 0 if preserved_arg is None else preserved_arg
         if preserved_arg and (preserved_arg < 1 or preserved_arg > nargs):
             raise ValueError("preserved_arg must be between 1 and nargs")
 
@@ -912,6 +914,13 @@ cdef class BuiltinFunction(Function):
         The default implementation of this method handles the case of
         univariate functions. Multivariate symbolic functions should override
         it as appropriate.
+
+        Note that it is mandatory for multivariate symbolic functions to
+        override this function in order to allow delegating to the method
+        implemented on the element.
+        For example, ``binomial(n, k)`` tries to call ``n.binomial(k)``
+        because :meth:`sage.functions.other.Function_binomial._method_arguments`
+        is implemented.
 
         EXAMPLES::
 
@@ -983,7 +992,7 @@ cdef class BuiltinFunction(Function):
             'foo'
         """
         res = None
-        if args and not hold:
+        if args and not hold and not all(isinstance(arg, Element) for arg in args):
             # try calling the relevant math, cmath, mpmath or numpy function.
             # And as a fallback try the custom self._eval_numpy_ or
             # self._eval_mpmath_
@@ -1046,17 +1055,20 @@ cdef class BuiltinFunction(Function):
                 res = super().__call__(
                         *args, coerce=coerce, hold=hold)
 
-        # Convert the output back to the corresponding
-        # Python type if possible.
+        cdef Parent arg_parent
         if any(isinstance(x, Element) for x in args):
             if (self._preserved_arg
                     and isinstance(args[self._preserved_arg-1], Element)):
                 arg_parent = parent(args[self._preserved_arg-1])
-                from sage.symbolic.ring import SR
+                global SR
+                if SR is None:
+                    from sage.symbolic.ring import SR
                 if arg_parent is SR:
                     return res
-                from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
-                from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict_domain
+                global PolynomialRing_commutative, MPolynomialRing_polydict_domain
+                if PolynomialRing_commutative is None:
+                    from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
+                    from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict_domain
                 if isinstance(arg_parent, (PolynomialRing_commutative,
                                            MPolynomialRing_polydict_domain)):
                     try:
@@ -1072,6 +1084,8 @@ cdef class BuiltinFunction(Function):
         if not isinstance(res, Element):
             return res
 
+        # Convert the output back to the corresponding
+        # Python type if possible.
         p = res.parent()
         from sage.rings.complex_double import CDF
         from sage.rings.integer_ring import ZZ
