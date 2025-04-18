@@ -117,7 +117,9 @@ When editable install is used, it is not necessary to reinstall after each compi
 
         $ meson setup builddir --prefix=/desired/install/path -Dpython.install_env=prefix
 
-    This will then install in the directory specified by ``--prefix``.
+    This will then install in the directory specified by ``--prefix``,
+    in particular the root folder will be be installed to
+    ``/desired/install/path/lib/python3.11/site-packages/sage``.
     Usually, this directory is not on your Python path, so you have to use:
 
     .. CODE-BLOCK:: shell-session
