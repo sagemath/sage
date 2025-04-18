@@ -3533,7 +3533,7 @@ cdef class Matrix(Matrix1):
             sage: C.diagonal()
             [0, 3]
             sage: C.diagonal(-1)
-            [2]
+            [2, 5]
             sage: C.diagonal(1)
             [1]
 
