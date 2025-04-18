@@ -831,7 +831,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         Under any future changes, we guarantee that the labels by default is
         from `1` to `n`, with `n` the number of nodes of the tree. The smallest
-        labeling is adjustable using the parameter `shift`. Moreover, we
+        labeling is adjustable using the parameter ``shift``. Moreover, we
         guarantee that two (unlabelled) trees compare as equal if and only if
         their canonical labelled trees compare as equal.
 
