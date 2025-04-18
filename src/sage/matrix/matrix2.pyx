@@ -3487,9 +3487,15 @@ cdef class Matrix(Matrix1):
             raise TypeError("lcm function not defined for elements of the base ring")
         return d
 
-    def diagonal(self):
+    def diagonal(self, offset = 0):
         r"""
         Return the diagonal entries of ``self``.
+
+        INPUT:
+
+        - ``offset`` -- integer parameter pointing diagonal parallel to the main diagonal.
+            The main diagonal is the one with offset 0.  The diagonals above with positive 
+            offsets and the diagonals below with negative offsets.
 
         OUTPUT:
 
@@ -3513,13 +3519,23 @@ cdef class Matrix(Matrix1):
             [14 15 16 17 18 19 20]
             sage: B.diagonal()
             [0, 8, 16]
-
+            sage: B.diagonal(1)
+            [1, 9, 17]
+            sage: B.diagonal(-1)
+            [7, 15]
+            sage: B.diagonal(-2)
+            [14] 
+        
             sage: C = matrix(3, 2, range(6)); C
             [0 1]
             [2 3]
             [4 5]
             sage: C.diagonal()
             [0, 3]
+            sage: C.diagonal(-1)
+            [2]
+            sage: C.diagonal(1)
+            [1]
 
         Empty matrices behave properly. ::
 
@@ -3528,8 +3544,12 @@ cdef class Matrix(Matrix1):
             sage: E.diagonal()
             []
         """
-        n = min(self.nrows(), self.ncols())
-        return [self[i, i] for i in range(n)]
+        if offset >= 0:
+            n = min(self.nrows(), self.ncols() - offset)
+            return [self[i, i + offset] for i in range(n)]
+        else:
+            n = min(self.nrows() + offset, self.ncols())
+            return [self[i - offset, i] for i in range(n)]
 
     def trace(self):
         """
