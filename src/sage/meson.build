@@ -4,7 +4,6 @@ sage_install_dir = py.get_install_dir() / 'sage'
 # Generate the configuration file
 conf_data = configuration_data()
 conf_data.set('PACKAGE_VERSION', '1.2.3')
-conf_data.set('SAGE_ROOT', meson.current_source_dir() / '..' / '..')
 # We use Python's prefix here to make it work with conda
 prefix = fs.as_posix(py.get_variable('prefix', ''))
 conf_data.set('prefix', prefix)
@@ -58,13 +57,14 @@ conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
 config_file = configure_file(
   input: '../../pkgs/sage-conf/_sage_conf/_conf.py.in',
   output: 'config.py',
-  install_dir: py.get_install_dir() / 'sage',
+  install_dir: sage_install_dir,
   install: true,
   configuration: conf_data,
 )
 
 # Packages that need no processing and can be installed directly
 no_processing = [
+  'cli',
   'databases',
   'doctest',
   'ext_data',
@@ -142,4 +142,19 @@ subdir('symbolic')
 subdir('tests')
 subdir('dynamics')
 subdir('sat')
-install_subdir('cli', install_dir: sage_install_dir)
+
+# Jupyter kernel spec
+# meson-python maps 'datadir' currently the python prefix, see
+# https://github.com/mesonbuild/meson-python/issues/517
+kernel_dir = get_option('datadir') / 'share/jupyter/kernels/sagemath'
+install_data('ext_data/notebook-ipython/logo.svg', install_dir: kernel_dir)
+install_data('ext_data/notebook-ipython/logo-64x64.png', install_dir: kernel_dir)
+kernel_data = configuration_data()
+kernel_data.set('SAGE_VERSION', meson.project_version())
+configure_file(
+  input: 'ext_data/notebook-ipython/kernel.json.in',
+  output: 'kernel.json',
+  install_dir: kernel_dir,
+  install: true,
+  configuration: kernel_data,
+)
