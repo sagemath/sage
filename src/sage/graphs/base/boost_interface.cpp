@@ -22,8 +22,8 @@
 #include <iostream>
 #include <utility>
 
-typedef int v_index;
-typedef long e_index;
+typedef unsigned long v_index;
+typedef unsigned long e_index;
 
 // This struct is the output of the edge connectivity Boost algorithm.
 typedef struct {
@@ -84,11 +84,11 @@ private:
     // This map is a parameter/output for biconnected_components function
     typedef typename std::map<edge_descriptor, int, order_edges> edge_map;
 
-public:
     adjacency_list graph;
     std::vector<vertex_descriptor> vertices;
     vertex_to_int_map index;
 
+public:
     BoostGraph() {
     }
 

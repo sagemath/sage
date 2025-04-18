@@ -1,3 +1,6 @@
+"""
+Gross-Zagier L-series
+"""
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 from sage.lfunctions.dokchitser import Dokchitser
