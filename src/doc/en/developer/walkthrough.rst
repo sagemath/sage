@@ -11,6 +11,7 @@ how to make changes to the Sage source code and record them in the Git revision
 control system.
 
 .. _section-quick-start:
+
 Quick start
 ===========
 
