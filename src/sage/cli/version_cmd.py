@@ -18,6 +18,7 @@ class VersionCmd:
         - the extended parser.
         """
         parser.add_argument(
+            "-V",
             "--version",
             action="version",
             version=version,
