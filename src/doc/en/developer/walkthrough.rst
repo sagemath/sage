@@ -115,7 +115,7 @@ Now you can build and install Sage:::
     $ pip install --no-build-isolation --editable .
 
 This will install Sage in the current Conda environment.
-You can then start Sage from the command line with ``./sage``.
+You can then start Sage from the command line with ``sage``.
 
 For more information on building Sage we refer to the section `building
 from source <../installation/meson.html>`_ in the Sage installation guide. 
@@ -212,7 +212,7 @@ Additionally, you can write or modify doctests in the relevant files to
 confirm the correctness of your changes.
 To run the doctests for a specific file, use the following command::
 
-    $ sage -t path/to/your/file.py
+    $ ./sage -t path/to/your/file.py
 
 This will execute all the doctests in the specified file and report any 
 failures. Make sure all tests pass before proceeding
