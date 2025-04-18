@@ -512,10 +512,10 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
             (=Ring of integers modulo 10) of Q
         """
         if not isinstance(Q, Polynomial):
-            raise TypeError("Q (=%s) must be a polynomial" % Q)
+            raise TypeError(f"Q (={Q}) must be a polynomial")
 
         if Q.degree() != 3 or not Q[2].is_zero():
-            raise ValueError("Q (=%s) must be of the form x^3 + ax + b" % Q)
+            raise ValueError(f"Q (={Q}) must be of the form x^3 + ax + b")
 
         base_ring = Q.parent().base_ring()
 
@@ -1616,7 +1616,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
     """
     M = int(M)
     if M < 2:
-        raise ValueError("M (=%s) must be at least 2" % M)
+        raise ValueError(f"M (={M}) must be at least 2")
 
     base_ring = Q.base_ring()
 
@@ -2444,7 +2444,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Rational Field
         """
         y_inverse = ",y^-1" if isinstance(self._series_ring, (LaurentSeriesRing, LazyLaurentSeriesRing)) else ""
-        return "SpecialHyperellipticQuotientRing K[x,y%s] / (y^2 = %s) over %s" % (y_inverse, self._Q, self.base_ring())
+        return f"SpecialHyperellipticQuotientRing K[x,y{y_inverse}] / (y^2 = {self._Q}) over {self.base_ring()}"
 
     def base_extend(self, R):
         r"""
@@ -2992,7 +2992,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         """
         s = self._coeff._repr_()
         if s.find("+") != -1 or s.find("-") > 0:
-            s = "(%s)" % s
+            s = f"({s})"
         return s + " dx/2y"
 
     def _latex_(self):
@@ -3012,7 +3012,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         """
         s = self._coeff._latex_()
         if s.find("+") != -1 or s.find("-") > 0:
-            s = "\\left(%s\\right)" % s
+            s = f"\\left({s}\\right)"
         return s + " \\frac{dx}{2y}"
 
     def _richcmp_(self, other, op):

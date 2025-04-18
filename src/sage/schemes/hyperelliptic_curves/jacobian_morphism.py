@@ -454,7 +454,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         if self.is_zero():
             return "(1)"
         a, b = self._printing_polys()
-        return "(%s, %s)" % (a, b)
+        return f"({a}, {b})"
 
     def _latex_(self):
         r"""
@@ -484,7 +484,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         if self.is_zero():
             return "\\left(1\\right)"
         a, b = self._printing_polys()
-        return "\\left(%s, %s\\right)" % (latex(a), latex(b))
+        return f"\\left({latex(a)}, {latex(b)}\\right)"
 
     def scheme(self):
         r"""

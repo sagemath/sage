@@ -156,7 +156,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         f, h = self._hyperelliptic_polynomials
         y = self._printing_ring.variable_name()
         x = self._printing_ring.base_ring().variable_name()
-        return HyperellipticCurve(f.change_ring(R), h.change_ring(R), "%s,%s" % (x,y))
+        return HyperellipticCurve(f.change_ring(R), h.change_ring(R), f"{x},{y}")
 
     base_extend = change_ring
 
@@ -181,8 +181,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         y = self._printing_ring.gen()
         x = self._printing_ring.base_ring().gen()
         if h.is_zero():
-            return "Hyperelliptic Curve over %s defined by %s = %s" % (R, y**2, f(x))
-        return "Hyperelliptic Curve over %s defined by %s + %s = %s" % (R, y**2, h(x)*y, f(x))
+            return f"Hyperelliptic Curve over {R} defined by {y ** 2} = {f(x)}"
+        return f"Hyperelliptic Curve over {R} defined by {y ** 2} + {h(x) * y} = {f(x)}"
 
     def _latex_(self):
         r"""
@@ -675,7 +675,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             defined by y^2 + x^10*y = x^3 + x + 2
         """
         f, h = self._hyperelliptic_polynomials
-        return 'HyperellipticCurve(%s, %s)' % (f._magma_init_(magma), h._magma_init_(magma))
+        return f'HyperellipticCurve({f._magma_init_(magma)}, {h._magma_init_(magma)})'
 
     def monsky_washnitzer_gens(self):
         import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
@@ -739,7 +739,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         """
         d = P[1]
         if d == 0:
-            raise TypeError("P = %s is a Weierstrass point. Use local_coordinates_at_weierstrass instead!" % P)
+            raise TypeError(f"P = {P} is a Weierstrass point. Use local_coordinates_at_weierstrass instead!")
         pol = self.hyperelliptic_polynomials()[0]
         L = PowerSeriesRing(self.base_ring(), name, default_prec=prec)
         t = L.gen()
@@ -791,7 +791,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             - Francis Clarke (2012-08-26)
         """
         if P[1] != 0:
-            raise TypeError("P = %s is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!" % P)
+            raise TypeError(f"P = {P} is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!")
         L = PowerSeriesRing(self.base_ring(), name)
         t = L.gen()
         pol = self.hyperelliptic_polynomials()[0]

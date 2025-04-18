@@ -124,7 +124,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         """
         prec = self.base_ring().precision_cap()
         if not self.is_same_disc(P,Q):
-            raise ValueError("%s and %s are not in the same residue disc" % (P,Q))
+            raise ValueError(f"{P} and {Q} are not in the same residue disc")
         disc = self.residue_disc(P)
         t = PowerSeriesRing(self.base_ring(), 't', prec).gen(0)
         if disc == self.change_ring(self.base_ring().residue_field())(0,1,0): # Infinite disc
@@ -256,7 +256,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - Jennifer Balakrishnan
         """
         if not self.is_in_weierstrass_disc(Q):
-            raise ValueError("%s is not in a Weierstrass disc" % Q)
+            raise ValueError(f"{Q} is not in a Weierstrass disc")
         points = self.weierstrass_points()
         for P in points:
             if self.is_same_disc(P,Q):
@@ -630,7 +630,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         prof("eval f")
         R = forms[0].base_ring()
         try:
-            prof("eval f %s" % R)
+            prof(f"eval f {R}")
             if PP is None:
                 L = [-ff(R(QQ[0]), R(QQ[1])) for ff in forms]  ##changed
             elif QQ is None:
@@ -641,7 +641,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         except ValueError:
             prof("changing rings")
             forms = [ff.change_ring(self.base_ring()) for ff in forms]
-            prof("eval f %s" % self.base_ring())
+            prof(f"eval f {self.base_ring()}")
             if PP is None:
                 L = [-ff(QQ[0], QQ[1]) for ff in forms]  ##changed
             elif QQ is None:

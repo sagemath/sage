@@ -152,7 +152,7 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
                     return JacobianMorphism_divisor_class_field(self, tuple(P))
                 if isinstance(P1, SchemeMorphism) and isinstance(P2, SchemeMorphism):
                     return self(P1) - self(P2)
-            raise TypeError("argument P (= %s) must have length 2" % P)
+            raise TypeError(f"argument P (= {P}) must have length 2")
         elif isinstance(P, JacobianMorphism_divisor_class_field) and self == P.parent():
             return P
         elif isinstance(P, SchemeMorphism):
@@ -160,7 +160,7 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             y0 = P[1]
             R, x = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring()).objgen()
             return self((x - x0, R(y0)))
-        raise TypeError("argument P (= %s) does not determine a divisor class" % P)
+        raise TypeError(f"argument P (= {P}) does not determine a divisor class")
 
     def _morphism(self, *args, **kwds):
         return JacobianMorphism_divisor_class_field(*args, **kwds)

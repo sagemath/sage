@@ -79,5 +79,5 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
         """
         from sage.lfunctions.pari import LFunction, lfun_genus2
         L = LFunction(lfun_genus2(self), prec=prec)
-        L.rename('PARI L-function associated to %s' % self)
+        L.rename(f'PARI L-function associated to {self}')
         return L
