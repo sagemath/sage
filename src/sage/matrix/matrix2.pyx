@@ -3487,15 +3487,15 @@ cdef class Matrix(Matrix1):
             raise TypeError("lcm function not defined for elements of the base ring")
         return d
 
-    def diagonal(self, offset = 0):
+    def diagonal(self, offset=0):
         r"""
         Return the diagonal entries of ``self``.
 
         INPUT:
 
         - ``offset`` -- integer parameter pointing diagonal parallel to the main diagonal.
-            The main diagonal is the one with offset 0.  The diagonals above with positive 
-            offsets and the diagonals below with negative offsets.
+            The main diagonal is the one with offset 0.  The diagonals above have positive 
+            offsets and the diagonals below have negative offsets.
 
         OUTPUT:
 
