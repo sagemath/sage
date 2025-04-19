@@ -25,11 +25,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
     cpdef dict element_to_root_dict(self)
     cpdef to_digraph(self)
 
-<<<<<<< HEAD
-cdef class _StaticDisjointSet_hashable(DisjointSet_class):    
-=======
 cdef class DisjointSet_of_hashables(DisjointSet_class):    
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
     cdef list _int_to_el
     cdef dict _el_to_int
     cpdef find(self, e)
@@ -38,9 +34,5 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
     cpdef dict element_to_root_dict(self)
     cpdef to_digraph(self)
 
-<<<<<<< HEAD
-cdef class _DynamicDisjointSet_hashable(_StaticDisjointSet_hashable):
-=======
 cdef class DynamicDisjointSet_of_hashables(DisjointSet_of_hashables):
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
     cpdef void union(self, e, f) except *

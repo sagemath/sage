@@ -53,8 +53,6 @@ AUTHORS:
 - Sébastien Labbé (2009-11-24) - Pickling support
 - Sébastien Labbé (2010-01) - Inclusion into sage (:issue:`6775`).
 - Giorgos Mousa (2024-04-22): Optimize
-<<<<<<< HEAD
-=======
 
 EXAMPLES:
 
@@ -88,7 +86,6 @@ Disjoint set of hashables objects::
     sage: d.find('c')
     'a'
 
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
 """
 
 # ****************************************************************************
@@ -107,11 +104,7 @@ from cpython.object cimport PyObject_RichCompare
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
 from sage.misc.lazy_import import LazyImport
 from sage.sets.set import Set
-<<<<<<< HEAD
-from libc.stdlib cimport malloc, free
-=======
 from cysignals.memory cimport sig_calloc, sig_free
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
 
 SetPartition = LazyImport('sage.combinat.set_partition', 'SetPartition')
 
@@ -122,47 +115,6 @@ cpdef DisjointSet(arg=None, dynamic=False):
 
     This function acts as a factory, returning the appropriate specialized
     DisjointSet object based on the input arguments and the ``dynamic`` flag.
-<<<<<<< HEAD
-
-    Behavior based on input `arg`:
-
-    *   `arg=None` (or omitted): Returns an empty dynamic disjoint set.
-        Elements can be added later using the ``union`` method.
-        ``dynamic=True`` is implied.
-    *   `arg` is a non-negative integer `n`: Returns a static disjoint
-        set containing integers `0` to `n-1`. Elements cannot be added
-        later via ``union`` or ``make_set``. The ``dynamic`` flag is ignored.
-    *   `arg` is an iterable (e.g., list, string, set):
-        *   If ``dynamic=False`` (default): Returns a static disjoint set
-          containing the elements from the iterable. ``union`` will raise a
-          ``KeyError`` if called with elements not initially present.
-          ``make_set`` will raise a ``TypeError``.
-        *   If ``dynamic=True``: Returns a dynamic disjoint set containing
-          the elements from the iterable. ``union`` will automatically add
-          new elements if they are not present. ``make_set`` can also be used.
-    *   `arg` is a `SetPartition`: Creates a disjoint set from its base
-        set, respecting the ``dynamic`` flag.
-
-    Static vs. Dynamic:
-
-    *   Static sets (default for iterables, always for integers) are
-        optimized for cases where the ground set of elements is fixed. They
-        provide a slightly better performance and enforce the fixed-set
-        constraint by raising errors if you attempt to add elements after
-        creation (via ``union`` or ``make_set``).
-    *   Dynamic sets (``dynamic=True`` or created empty) are designed for
-        building the set structure incrementally. The ``union`` operation
-        conveniently adds any missing elements it encounters.
-
-    Use ``dynamic=True`` when the set of elements is not known in advance or
-    when you prefer the convenience of implicit element addition during unions.
-    Otherwise, use the default static behavior for performance and stricter
-    set definition.
-
-    You can also check if an element is part of the ground set using the ``in``
-    operator (e.g., ``if element in my_disjoint_set: ...``).
-=======
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
 
     REFERENCES:
 
@@ -190,17 +142,10 @@ cpdef DisjointSet(arg=None, dynamic=False):
         {{1, 2}}
         sage: 1 in D
         True
-<<<<<<< HEAD
-        sage: D.make_set(3) # Explicitly add 3
-        sage: D
-        {{1, 2}, {3}}
-        sage: isinstance(D, sage.sets.disjoint_set._DynamicDisjointSet_hashable)
-=======
         sage: D.make_set(3)  # Explicitly add 3
         sage: D
         {{1, 2}, {3}}
         sage: isinstance(D, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
         True
 
     Static set from integer::
@@ -240,11 +185,7 @@ cpdef DisjointSet(arg=None, dynamic=False):
         Traceback (most recent call last):
         ...
         TypeError: Cannot add elements to a static DisjointSet (created with dynamic=False). Use dynamic=True if elements need to be added after creation.
-<<<<<<< HEAD
-        sage: isinstance(S_static, sage.sets.disjoint_set._StaticDisjointSet_hashable)
-=======
         sage: isinstance(S_static, sage.sets.disjoint_set.DisjointSet_of_hashables)
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
         True
 
     Dynamic set from iterable::
@@ -254,61 +195,33 @@ cpdef DisjointSet(arg=None, dynamic=False):
         {{'a'}, {'b'}, {'c'}}
         sage: 'd' in S_dyn
         False
-<<<<<<< HEAD
-        sage: S_dyn.union('a', 'd') # 'd' is added automatically
-=======
         sage: S_dyn.union('a', 'd')  # 'd' is added automatically
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
         sage: S_dyn
         {{'a', 'd'}, {'b'}, {'c'}}
         sage: 'd' in S_dyn
         True
-<<<<<<< HEAD
-        sage: S_dyn.union('e', 'f') # 'e' and 'f' are added
-        sage: S_dyn
-        {{'a', 'd'}, {'b'}, {'c'}, {'e', 'f'}}
-        sage: isinstance(S_dyn, sage.sets.disjoint_set._DynamicDisjointSet_hashable)
-=======
         sage: S_dyn.union('e', 'f')  # 'e' and 'f' are added
         sage: S_dyn
         {{'a', 'd'}, {'b'}, {'c'}, {'e', 'f'}}
         sage: isinstance(S_dyn, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
         True
 
     From SetPartition::
 
         sage: SP = SetPartition([[1,3], [2]])
-<<<<<<< HEAD
-        sage: D_static = DisjointSet(SP) # Static by default
-=======
         sage: D_static = DisjointSet(SP)  # Static by default
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
         sage: D_static
         {{1, 3}, {2}}
         sage: D_static.make_set(4)
         Traceback (most recent call last):
         ...
         TypeError: Cannot add elements to a static DisjointSet (created with dynamic=False). Use dynamic=True if elements need to be added after creation.
-<<<<<<< HEAD
-        sage: D_dyn = DisjointSet(SP, dynamic=True) # Dynamic
-=======
         sage: D_dyn = DisjointSet(SP, dynamic=True)  # Dynamic
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
         sage: D_dyn
         {{1, 3}, {2}}
         sage: D_dyn.make_set(4)
         sage: D_dyn
         {{1, 3}, {2}, {4}}
-<<<<<<< HEAD
-
-    TESTS::
-        sage: DisjointSet(0) # Integer case
-        {}
-        sage: DisjointSet('') # Static hashable
-        {}
-        sage: DisjointSet([], dynamic=True) # Dynamic hashable
-=======
 
 
     TESTS::
@@ -317,17 +230,12 @@ cpdef DisjointSet(arg=None, dynamic=False):
         sage: DisjointSet('')  # Static hashable
         {}
         sage: DisjointSet([], dynamic=True)  # Dynamic hashable
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
         {}
         sage: DisjointSet(-1)
         Traceback (most recent call last):
         ...
         ValueError: arg must be a nonnegative integer (-1 given)
-<<<<<<< HEAD
-        sage: DisjointSet(4.3) # needs sage.rings.real_mpfr
-=======
         sage: DisjointSet(4.3)  # needs sage.rings.real_mpfr
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
         Traceback (most recent call last):
         ...
         TypeError: Cannot create DisjointSet from 'RealLiteral'; input must be None, int, iterable, or SetPartition
@@ -337,22 +245,6 @@ cpdef DisjointSet(arg=None, dynamic=False):
         TypeError: Input elements must be hashable: unhashable type: 'dict'
 
         # Test unpickling argument format
-<<<<<<< HEAD
-        sage: D_sp = DisjointSet( (['a','b'], False) ) # Static from pickle args
-        sage: D_sp
-        {{'a'}, {'b'}}
-        sage: isinstance(D_sp, sage.sets.disjoint_set._StaticDisjointSet_hashable)
-        True
-        sage: D_dp = DisjointSet( (['a','b'], True) ) # Dynamic from pickle args
-        sage: D_dp
-        {{'a'}, {'b'}}
-        sage: isinstance(D_dp, sage.sets.disjoint_set._DynamicDisjointSet_hashable)
-        True
-    """
-    # Handle None -> Empty Dynamic Set
-    if arg is None:
-        return _DynamicDisjointSet_hashable([])
-=======
         sage: D_sp = DisjointSet( (['a','b'], False) )  # Static from pickle args
         sage: D_sp
         {{'a'}, {'b'}}
@@ -368,7 +260,6 @@ cpdef DisjointSet(arg=None, dynamic=False):
     # Handle None -> Empty Dynamic Set
     if arg is None:
         return DynamicDisjointSet_of_hashables([])
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
 
     # Handle Integer -> Static Integer Set
     if isinstance(arg, (Integer, int)):
@@ -381,15 +272,9 @@ cpdef DisjointSet(arg=None, dynamic=False):
         base = arg.base_set()
         elements = [] if base is None else list(base) 
         if dynamic:
-<<<<<<< HEAD
-            ds = _DynamicDisjointSet_hashable(elements)
-        else:
-            ds = _StaticDisjointSet_hashable(elements)
-=======
             ds = DynamicDisjointSet_of_hashables(elements)
         else:
             ds = DisjointSet_of_hashables(elements)
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
 
         for block in arg:
             if len(block) > 1:
@@ -410,14 +295,8 @@ cpdef DisjointSet(arg=None, dynamic=False):
         except TypeError:
              raise TypeError("Invalid arguments for DisjointSet unpickling: elements part is not iterable") from None
         if dynamic_flag:
-<<<<<<< HEAD
-            return _DynamicDisjointSet_hashable(elements)
-        else:
-            return _StaticDisjointSet_hashable(elements)
-=======
             return DynamicDisjointSet_of_hashables(elements)
         return DisjointSet_of_hashables(elements)
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
 
     # Handle general iterable -> Static or Dynamic Hashable Set
     try:
@@ -426,14 +305,8 @@ cpdef DisjointSet(arg=None, dynamic=False):
          raise TypeError(f"Cannot create DisjointSet from '{type(arg).__name__}'; input must be None, int, iterable, or SetPartition") from None
 
     if dynamic:
-<<<<<<< HEAD
-        return _DynamicDisjointSet_hashable(arg)
-    else:
-        return _StaticDisjointSet_hashable(arg)
-=======
         return DynamicDisjointSet_of_hashables(arg)
     return DisjointSet_of_hashables(arg)
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
 
 cdef class DisjointSet_class(SageObject):
     r"""
@@ -569,33 +442,19 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         EXAMPLES::
 
             sage: d = DisjointSet(5)
-<<<<<<< HEAD
-            sage: state = [1, 1, 1, 3, 4] # Represents unions (0,1), (2,1)
-            sage: d.__setstate__(state)
-            sage: d # Represents {{0, 1, 2}, {3}, {4}} - check roots
-=======
             sage: state = [1, 1, 1, 3, 4]  # Represents unions (0,1), (2,1)
             sage: d.__setstate__(state)
             sage: d  # Represents {{0, 1, 2}, {3}, {4}} - check roots
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             {{0, 1, 2}, {3}, {4}}
             sage: d.find(0), d.find(1), d.find(2), d.find(3), d.find(4)
             (1, 1, 1, 3, 4)
 
             sage: d = DisjointSet(5)
-<<<<<<< HEAD
-            sage: state = [1, 2, 3, 4, 4] # Chain 0->1->2->3->4 (root)
-            sage: d.__setstate__(state)
-            sage: d # Represents {{0, 1, 2, 3, 4}}
-            {{0, 1, 2, 3, 4}}
-            sage: len(list(d)) # Check number of subsets
-=======
             sage: state = [1, 2, 3, 4, 4]  # Chain 0->1->2->3->4 (root)
             sage: d.__setstate__(state)
             sage: d  # Represents {{0, 1, 2, 3, 4}}
             {{0, 1, 2, 3, 4}}
             sage: len(list(d))  # Check number of subsets
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             1
 
             sage: d = DisjointSet(5)
@@ -611,22 +470,14 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             ValueError: Invalid parent index 5 for element 3
 
             sage: d = DisjointSet(5)
-<<<<<<< HEAD
-            sage: state = [1, 2, 3, 4, 0] # Cycle 0->1->2->3->4->0
-=======
             sage: state = [1, 2, 3, 4, 0]  # Cycle 0->1->2->3->4->0
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             sage: d.__setstate__(state)
             Traceback (most recent call last):
             ...
             ValueError: Cycle detected in parent list starting at element 0
 
             sage: d = DisjointSet(4)
-<<<<<<< HEAD
-            sage: state = [1, 0, 3, 2] # Cycles 0<->1 and 2<->3
-=======
             sage: state = [1, 0, 3, 2]  # Cycles 0<->1 and 2<->3
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             sage: d.__setstate__(state)
             Traceback (most recent call last):
             ...
@@ -658,27 +509,6 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
                 raise ValueError(f"Invalid parent index {parent_idx} for element {i}")
 
         # Cycle detection with C array
-<<<<<<< HEAD
-        cdef char *visited = <char *> malloc(n * sizeof(char))
-        if not visited:
-            raise MemoryError("Failed to allocate memory for cycle detection")
-        try:
-            for i in range(n):
-                for j in range(n):
-                    visited[j] = 0
-
-                j = i
-                while j != l[j]:
-                    # Check if we've visited this node during this specific traversal
-                    if visited[j]:
-                        # Cycle detected!
-                        raise ValueError(f"Cycle detected in parent list starting at element {i}")
-                    visited[j] = 1
-                    j = l[j] 
-                # End of path traversal for element i 
-
-            # If no cycles detected, apply the state 
-=======
         cdef int *visited_int = <int *> sig_calloc(n, sizeof(int)) # Use int array
         if not visited_int:
             raise MemoryError("Failed to allocate memory for cycle detection")
@@ -705,17 +535,12 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
                 visited_flag += 1 # Increment flag for next starting node
 
             # If no cycles detected, apply the state
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             for i in range(n):
                 self._nodes.parent[i] = l[i]
         finally:
             # Ensuring allocated memory is always freed in the end
-<<<<<<< HEAD
-            free(visited)
-=======
             sig_free(visited_int)
 
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
 
     def __reduce__(self):
         return DisjointSet, (self.cardinality(),), self.__getstate__()
@@ -950,11 +775,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
         """
         if self._nodes is NULL:
-<<<<<<< HEAD
-            from sage.graphs.digraph import DiGraph 
-=======
             from sage.graphs.digraph import DiGraph
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             return DiGraph()
 
         cdef dict d = {i: [self._nodes.parent[i]] for i in range(self._nodes.degree)}
@@ -1007,11 +828,7 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
         self._el_to_int = {}
         try:
             for e in iterable:
-<<<<<<< HEAD
-                hash(e) # Checking hashability
-=======
                 hash(e)  # Checking hashability
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
                 if e in self._el_to_int:
                      raise ValueError(f"Duplicate element found in input iterable: {e!r}")
                 self._int_to_el.append(e)
@@ -1120,11 +937,7 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
             sage: d = DisjointSet('abcde')
             sage: state = [('a', 'b'), ('b', 'b'), ('c', 'd'), ('d', 'd'), ('e', 'e')]
             sage: d.__setstate__(state)
-<<<<<<< HEAD
-            sage: d # Represents {{'a', 'b'}, {'c', 'd'}, {'e'}}
-=======
             sage: d  # Represents {{'a', 'b'}, {'c', 'd'}, {'e'}}
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             {{'a', 'b'}, {'c', 'd'}, {'e'}}
             sage: d.find('a')
             'b'
@@ -1134,11 +947,7 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
             sage: d = DisjointSet('abcde')
             sage: state = [('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e'), ('e', 'e')]
             sage: d.__setstate__(state)
-<<<<<<< HEAD
-            sage: d # Represents {{'a', 'b', 'c', 'd', 'e'}}
-=======
             sage: d  # Represents {{'a', 'b', 'c', 'd', 'e'}}
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             {{'a', 'b', 'c', 'd', 'e'}}
             sage: len(list(d))
             1
@@ -1169,10 +978,6 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
             ValueError: Cycle detected in parent list at element 'a'
 
         TESTS::
-<<<<<<< HEAD
-            # Test with empty set
-=======
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             sage: d = DisjointSet([])
             sage: d.__setstate__([])
             sage: d
@@ -1207,29 +1012,6 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
             temp_parent[i] = p_i
 
         # Second Pass: Check for cycles using the temporary parent index array
-<<<<<<< HEAD
-        cdef char *visited = <char *> malloc(n * sizeof(char))
-        if not visited:
-            raise MemoryError("Failed to allocate memory for cycle detection")
-        try:
-            for i in range(n):
-                for j in range(n):
-                    visited[j] = 0
-
-                j = i 
-                while j != temp_parent[j]:
-                    if visited[j]:
-                        raise ValueError(f"Cycle detected in parent list at element {self._int_to_el[i]!r}")
-                    visited[j] = 1
-                    j = temp_parent[j] 
-
-            # If no cycles detected, apply the state 
-            # Directly set the parent array using the validated temporary array
-            for i in range(n):
-                self._nodes.parent[i] = temp_parent[i]
-        finally:
-            free(visited)
-=======
         cdef int *visited_int = <int *> sig_calloc(n, sizeof(int)) # Use int array
         if not visited_int:
             raise MemoryError("Failed to allocate memory for cycle detection")
@@ -1260,7 +1042,6 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
             # Ensuring allocated memory is always freed in the end
             sig_free(visited_int)
 
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
 
 
     def __contains__(self, item):
@@ -1403,11 +1184,7 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
     def __richcmp__(self, other, int op):
         s = Set(map(frozenset, self.root_to_elements_dict().values()))
         try:
-<<<<<<< HEAD
-            if isinstance(other, (_StaticDisjointSet_hashable, _DynamicDisjointSet_hashable, DisjointSet_of_integers)):
-=======
             if isinstance(other, (DisjointSet_of_hashables, DynamicDisjointSet_of_hashables, DisjointSet_of_integers)):
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
                  t = Set(map(frozenset, other.root_to_elements_dict().values()))
                  return PyObject_RichCompare(s, t, op)
             else:
@@ -1515,11 +1292,7 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
                  raise IndexError(f"Internal state error: Invalid element index {i}")
         return DiGraph(d)
 
-<<<<<<< HEAD
-cdef class _DynamicDisjointSet_hashable(_StaticDisjointSet_hashable): # Inherits static
-=======
 cdef class DynamicDisjointSet_of_hashables(DisjointSet_of_hashables):  
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
     r"""
     Dynamic disjoint set of hashable objects.
 
@@ -1541,21 +1314,13 @@ cdef class DynamicDisjointSet_of_hashables(DisjointSet_of_hashables):
             sage: D_empty = DisjointSet(dynamic=True)
             sage: D_empty
             {}
-<<<<<<< HEAD
-            sage: isinstance(D_empty, sage.sets.disjoint_set._DynamicDisjointSet_hashable)
-=======
             sage: isinstance(D_empty, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             True
 
             sage: D_abc = DisjointSet(['a', 'b', 'c'], dynamic=True)
             sage: D_abc
             {{'a'}, {'b'}, {'c'}}
-<<<<<<< HEAD
-            sage: isinstance(D_abc, sage.sets.disjoint_set._DynamicDisjointSet_hashable)
-=======
             sage: isinstance(D_abc, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             True
 
             sage: D = DisjointSet(['a', 'b'], dynamic=True)
@@ -1563,11 +1328,7 @@ cdef class DynamicDisjointSet_of_hashables(DisjointSet_of_hashables):
             sage: factory, args, state = D.__reduce__()
             sage: factory is DisjointSet
             True
-<<<<<<< HEAD
-            sage: args # Note the True flag
-=======
             sage: args  # Note the True flag
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             (['a', 'b'], True)
             sage: isinstance(state, list) and len(state) == 2
             True
@@ -1653,17 +1414,10 @@ cdef class DynamicDisjointSet_of_hashables(DisjointSet_of_hashables):
             sage: D.make_set('b')
             sage: D
             {{'a'}, {'b'}}
-<<<<<<< HEAD
-            sage: D.make_set('a') # Already present, no change
-            sage: D
-            {{'a'}, {'b'}}
-            sage: D.make_set() # Add generated integer
-=======
             sage: D.make_set('a')  # Already present, no change
             sage: D
             {{'a'}, {'b'}}
             sage: D.make_set()  # Add generated integer
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             sage: D
             {{'a'}, {'b'}, {2}}
             sage: D.make_set()
@@ -1687,11 +1441,7 @@ cdef class DynamicDisjointSet_of_hashables(DisjointSet_of_hashables):
 
         if new_elt not in self._el_to_int:
             self._int_to_el.append(new_elt)
-<<<<<<< HEAD
-            new_index = len(self._int_to_el) - 1 # NEW
-=======
             new_index = len(self._int_to_el) - 1   # NEW
->>>>>>> d45f8806e0a (Refactored the approach suggested by @dcoudert)
             self._el_to_int[new_elt] = new_index
 
             current_degree = 0 if self._nodes is NULL else self._nodes.degree
