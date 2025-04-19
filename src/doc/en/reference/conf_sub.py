@@ -11,10 +11,10 @@
 # serve to show the default.
 
 import os
-from sage.env import SAGE_DOC_SRC, SAGE_DOC
-from sage_docbuild.conf import release, exclude_patterns
-from sage_docbuild.conf import *
 
+from sage.env import SAGE_DOC, SAGE_DOC_SRC
+from sage_docbuild.conf import *
+from sage_docbuild.conf import exclude_patterns
 
 for tag in feature_tags():
     tags.add(tag)
@@ -31,7 +31,7 @@ ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
 
 # We use the main document's title, if we can find it.
-rst_file = open('index.rst', 'r')
+rst_file = open('index.rst', 'r', encoding='utf-8')
 rst_lines = rst_file.read().splitlines()
 rst_file.close()
 

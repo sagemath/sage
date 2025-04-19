@@ -169,7 +169,8 @@ test = [
 ]
 docs = [
   "sphinx", 
-  "sphinx-inline-tabs", 
+  "sphinx-copybutton",
+  "sphinx-inline-tabs",
   "furo",
 ]
 lint = [

@@ -72,15 +72,22 @@ Advanced options::
                         en/reference. If ARG is 'all', list all main documents
 """
 
-import logging
 import argparse
+import logging
 import os
-import shlex
 import sys
+from pathlib import Path
+
 import sphinx.ext.intersphinx
-from sage.env import SAGE_DOC_SRC
-from .builders import DocBuilder, ReferenceBuilder, get_builder, get_documents
+
 from . import build_options
+from .build_options import BuildOptions
+from .builders import (
+    DocBuilder,
+    get_all_documents,
+    get_all_reference_documents,
+    get_builder,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -161,7 +168,7 @@ def help_documents():
     s += "\n"
     if 'reference' in docs:
         s += "Other valid document names take the form 'reference/DIR', where\n"
-        s += "DIR is a subdirectory of SAGE_DOC_SRC/en/reference/.\n"
+        s += "DIR is a subdirectory of src/doc/en/reference/.\n"
         s += "This builds just the specified part of the reference manual.\n"
     s += "DOCUMENT may also have the form 'file=/path/to/FILE', which builds\n"
     s += "the documentation for the specified file.\n"
@@ -251,21 +258,6 @@ class help_wrapper(argparse.Action):
             print(help_formats(), end="")
         if self.dest == 'commands':
             print(help_commands(values), end="")
-        if self.dest == 'all_documents':
-            if values == 'reference':
-                b = ReferenceBuilder('reference')
-                refdir = os.path.join(os.environ['SAGE_DOC_SRC'], 'en', b.name)
-                s = b.get_all_documents(refdir)
-                # Put the bibliography first, because it needs to be built first:
-                s.remove('reference/references')
-                s.insert(0, 'reference/references')
-            elif values == 'all':
-                s = get_documents()
-                # Put the reference manual first, because it needs to be built first:
-                s.remove('reference')
-                s.insert(0, 'reference')
-            for d in s:
-                print(d)
         setattr(namespace, 'printed_list', 1)
         sys.exit(0)
 
@@ -339,7 +331,11 @@ def setup_parser():
                           type=int, default=1, metavar="LEVEL",
                           action="store",
                           help="report progress at LEVEL=0 (quiet), 1 (normal), 2 (info), or 3 (debug); does not affect children")
+    standard.add_argument("-s", "--source", dest="source_dir", type=Path,
+                          default=None, metavar="DIR", action="store",
+                          help="directory containing the documentation source files")
     standard.add_argument("-o", "--output", dest="output_dir", default=None,
+                            type=Path,
                           metavar="DIR", action="store",
                           help="if DOCUMENT is a single file ('file=...'), write output to this directory")
 
@@ -359,7 +355,6 @@ def setup_parser():
     advanced.add_argument("--all-documents", dest="all_documents",
                           type=str, metavar="ARG",
                           choices=['all', 'reference'],
-                          action=help_wrapper,
                           help="if ARG is 'reference', list all subdocuments"
                           " of en/reference. If ARG is 'all', list all main"
                           " documents")
@@ -456,8 +451,33 @@ class IntersphinxCache:
 def main():
     # Parse the command-line.
     parser = setup_parser()
-    args = parser.parse_args()
-    DocBuilder._options = args
+    args: BuildOptions = parser.parse_args() # type: ignore
+
+    # Check that the docs source directory exists
+    if args.source_dir is None:
+        args.source_dir = Path(os.environ.get('SAGE_DOC_SRC', 'src/doc'))
+    if not args.source_dir.is_dir():
+        parser.error(f"Source directory {args.source_dir} does not exist.")
+    
+    if args.all_documents:
+        if args.all_documents == 'reference':
+            docs = get_all_reference_documents(args.source_dir / 'en')
+        elif args.all_documents == 'all':
+            docs = get_all_documents(args.source_dir)
+        else:
+            parser.error(f"Unknown argument {args.all_documents} for --all-documents.")
+        for d in docs:
+            print(d.as_posix())
+        sys.exit(0)
+
+    # Check that the docs output directory exists
+    if args.output_dir is None:
+        args.output_dir = Path(os.environ.get('SAGE_DOC', 'src/doc'))
+    if not args.output_dir.exists():
+        try:
+            args.output_dir.mkdir(parents=True)
+        except Exception as e:
+            parser.error(f"Failed to create output directory {args.output_dir}: {e}")
 
     # Get the name and type (target format) of the document we are
     # trying to build.
@@ -465,20 +485,16 @@ def main():
     if not name or not typ:
         parser.print_help()
         sys.exit(1)
-    elif name == 'all':
-        sys.exit(os.system(f'cd {shlex.quote(SAGE_DOC_SRC)} '
-                           f'&& ${{MAKE:-make}} -j${{SAGE_NUM_THREADS_PARALLEL:-1}} doc-{typ}'))
 
     # Set up module-wide logging.
     setup_logger(args.verbose, args.color)
 
     def excepthook(*exc_info):
         logger.error('Error building the documentation.', exc_info=exc_info)
-        if build_options.INCREMENTAL_BUILD:
-            logger.error('''
-    Note: incremental documentation builds sometimes cause spurious
-    error messages. To be certain that these are real errors, run
-    "make doc-clean doc-uninstall" first and try again.''')
+        logger.info('''
+Note: incremental documentation builds sometimes cause spurious
+error messages. To be certain that these are real errors, run
+"make doc-clean doc-uninstall" first and try again.''')
 
     sys.excepthook = excepthook
 
@@ -511,7 +527,7 @@ def main():
     # Set up Intersphinx cache
     _ = IntersphinxCache()
 
-    builder = get_builder(name)
+    builder = get_builder(name, args)
 
     if not args.no_prune_empty_dirs:
         # Delete empty directories. This is needed in particular for empty
