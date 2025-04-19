@@ -66,6 +66,7 @@ import itertools
 from sage.structure.list_clone import ClonableArray
 from sage.rings.integer import Integer
 from sage.misc.misc_c import prod
+from sage.misc.cachefunc import cached_method
 
 # Unfortunately Cython forbids multiple inheritance. Therefore, we do not
 # inherit from SageObject to be able to inherit from Element or a subclass
@@ -1156,6 +1157,7 @@ class AbstractTree:
                 for p in t.paths():
                     yield (i,) + p
 
+    @cached_method
     def node_number(self):
         """
         Return the number of nodes of ``self``.
@@ -1198,14 +1200,9 @@ class AbstractTree:
             sage: T.node_number()
             10000
         """
-        count = 0
-
-        def incr(node):
-            nonlocal count
-            count += 1
-
-        self.iterative_pre_order_traversal(incr)
-        return Integer(count)
+        if self.is_empty():
+            return 0
+        return sum(t.node_number() for t in self)
 
     def depth(self):
         """
