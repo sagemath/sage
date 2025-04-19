@@ -250,15 +250,15 @@ class PythonInterpreter(StackInterpreter):
 
         instrs = [
             InstrSpec('load_arg', pg('A[D]', 'S'),
-                       code='o0 = i0; Py_INCREF(o0);'),
+                      code='o0 = i0; Py_INCREF(o0);'),
             InstrSpec('load_const', pg('C[D]', 'S'),
-                       code='o0 = i0; Py_INCREF(o0);'),
+                      code='o0 = i0; Py_INCREF(o0);'),
             InstrSpec('return', pg('S', ''),
-                       code='return i0;',
-                       handles_own_decref=True),
+                      code='return i0;',
+                      handles_own_decref=True),
             InstrSpec('py_call', pg('C[D]S@D', 'S'),
-                       handles_own_decref=True,
-                       code=ri(0, """
+                      handles_own_decref=True,
+                      code=ri(0, """
                            PyObject *py_args = PyTuple_New(n_i1);
                            if (py_args == NULL) goto error;
                            int i;
