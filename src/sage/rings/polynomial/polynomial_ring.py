@@ -2348,7 +2348,8 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
         else:
             return [F[i][i] for i in range(n)]
 
-    def lagrange_polynomial(self, points, algorithm='divided_difference', previous_row=None):
+    def lagrange_polynomial(self, points, algorithm='divided_difference',
+                            previous_row=None):
         r"""
         Return the Lagrange interpolation polynomial through the
         given points.
@@ -2375,6 +2376,8 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
             this method is to only generate the last row of this
             table, instead of the full table itself.  Generating the
             full table can be memory inefficient.
+
+          - ``'pari'``: use Pari's function :pari:`polinterpolate`
 
         - ``previous_row`` -- (default: ``None``) this option is only
           relevant if used with ``algorithm='neville'``.  If provided,
@@ -2454,24 +2457,23 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
             ....:                       algorithm='neville', previous_row=p)[-1]
             a^2*x^2 + a^2*x + a^2
 
+        One can also use ``Pari``'s implementation::
+
+            sage: R = PolynomialRing(QQ, 'x')
+            sage: data = [(0,1), (2,5), (3,10)]
+            sage: p = R.lagrange_polynomial(data, algorithm='pari'); p
+            x^2 + 1
+
         TESTS:
 
         The value for ``algorithm`` must be either
-        ``'divided_difference'`` (default), or ``'neville'``::
+        ``'divided_difference'`` (default), ``'neville'`` or ``'pari'``::
 
             sage: R = PolynomialRing(QQ, 'x')
             sage: R.lagrange_polynomial([(0,1),(2,2),(3,-2),(-4,9)], algorithm='abc')
             Traceback (most recent call last):
             ...
-            ValueError: algorithm must be one of 'divided_difference' or 'neville'
-            sage: R.lagrange_polynomial([(0,1),(2,2),(3,-2),(-4,9)], algorithm='divided difference')
-            Traceback (most recent call last):
-            ...
-            ValueError: algorithm must be one of 'divided_difference' or 'neville'
-            sage: R.lagrange_polynomial([(0,1),(2,2),(3,-2),(-4,9)], algorithm='')
-            Traceback (most recent call last):
-            ...
-            ValueError: algorithm must be one of 'divided_difference' or 'neville'
+            ValueError: algorithm can be 'divided_difference', 'neville' or 'pari'
 
         Make sure that :issue:`10304` is fixed.  The return value
         should always be an element of ``self`` in the case of
@@ -2556,24 +2558,13 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
                 P, Q = Q, P # the current row is complete, reuse the old P to hold the next row
             return P # return the last row in the Neville table
 
-#        # use the definition of Lagrange interpolation polynomial
-#        elif algorithm == "definition":
-#            def Pj(j):
-#                denom = 1
-#                divis = 1
-#                for i in range(len(points)):
-#                    if i!=j:
-#                        denom *= (var          - points[i][0])
-#                        divis *= (points[j][0] - points[i][0])
-#            return denom/divis
-#
-#            P = 0
-#            for j in range(len(points)):
-#                P += Pj(j)*points[j][1]
-#            return P
+        elif algorithm == "pari":
+            from sage.libs.pari import pari
+            positions = pari([a for a, b in points])
+            values = pari([b for a, b in points])
+            return self(pari.polinterpolate(positions, values))
 
-        else:
-            raise ValueError("algorithm must be one of 'divided_difference' or 'neville'")
+        raise ValueError("algorithm can be 'divided_difference', 'neville' or 'pari'")
 
     @cached_method
     def fraction_field(self):
