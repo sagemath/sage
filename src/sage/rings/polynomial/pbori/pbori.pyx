@@ -5642,7 +5642,7 @@ cdef class BooleSet:
             ...
             AssertionError
         """
-        assert(m._ring is self._ring)
+        assert m._ring is self._ring
         return self._pbset.owns(m._pbmonom)
 
     def stable_hash(self):

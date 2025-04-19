@@ -1387,7 +1387,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
                     ev_group[location][2] = ev_group[location][0]/ev_group[location][1]
             return [(return_class(avg), m) for _, m, avg in ev_group]
 
-    def left_eigenvectors(self, other=None, *, homogeneous=False):
+    def eigenvectors_left(self, other=None, *, algorithm=None, homogeneous=False):
         r"""
         Compute the ordinary or generalized left eigenvectors of a matrix of
         double precision real or complex numbers (i.e. ``RDF`` or ``CDF``).
@@ -1397,6 +1397,10 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         - ``other`` -- a square matrix `B` (default: ``None``) in a generalized
           eigenvalue problem; if ``None``, an ordinary eigenvalue problem is
           solved
+
+        - ``algorithm`` (default: ``None``); for compatibility with
+          :meth:`sage.matrix.matrix2.Matrix.eigenvectors_left`, supported options
+          are ``None`` (select automatically) or ``'scipy'``
 
         - ``homogeneous`` -- boolean (default: ``False``); if ``True``, use
           homogeneous coordinates for the eigenvalues in the output
@@ -1514,6 +1518,8 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: spectrum
             [(1.0*I, [(1.0, 0.0)], 1), (1.0, [(0.0, 1.0)], 1)]
         """
+        if algorithm not in (None, "scipy"):
+            raise NotImplementedError(f"algorithm {algorithm} not implemented for matrix over {self.base_ring()}")
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
         if other is not None and not other.is_square():
@@ -1542,9 +1548,9 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             v = [CDF(e) for e in v]
         return [(v[i], [eig[i].conjugate()], 1) for i in range(len(v))]
 
-    eigenvectors_left = left_eigenvectors
+    left_eigenvectors = eigenvectors_left
 
-    def right_eigenvectors(self, other=None, *, homogeneous=False):
+    def eigenvectors_right(self, other=None, *, homogeneous=False):
         r"""
         Compute the ordinary or generalized right eigenvectors of a matrix of
         double precision real or complex numbers (i.e. ``RDF`` or ``CDF``).
@@ -1694,7 +1700,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             v = [CDF(e) for e in v]
         return [(v[i], [eig[i]], 1) for i in range(len(v))]
 
-    eigenvectors_right = right_eigenvectors
+    right_eigenvectors = eigenvectors_right
 
     def _solve_right_nonsingular_square(self, B, check_rank=False):
         """
