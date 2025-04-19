@@ -270,9 +270,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         from sage.rings.real_double import RDF
         tranposedRDFMatrix = (basis.transpose()).change_ring(RDF)
         R = tranposedRDFMatrix.QR()[1]
-        radius = 0
-        for i in range(dim[0]):
-            radius += R[i][i] * R[i][i]
+        radius = sum(R[i,i]**2 for i in range(dim[0]))
     artificial_length = None
     if dim[0] < dim[1]:
         # introduce "artificial" basis points (representing infinity)
