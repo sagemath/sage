@@ -1532,8 +1532,10 @@ class AbstractTree:
         liste = []
         deca = 1
         for subtree in self:
+            # first compute node number to populate its cache in subtrees
+            stsize = subtree.node_number()
             liste += [subtree.canonical_labelling(shift + deca)]
-            deca += subtree.node_number()
+            deca += stsize
         return LTR._element_constructor_(liste, label=shift)
 
     def to_hexacode(self):
