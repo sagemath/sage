@@ -3586,6 +3586,38 @@ cdef class Matrix(Matrix1):
                 s += self.get_unsafe(i, j) * other.get_unsafe(j, i)
         return s
 
+    def bandwidth(self):
+        """
+        Return the bandwidth of ``self``.
+
+        EXAMPLES::
+            sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]]); A
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            sage: A.bandwidth()
+            0
+
+            sage: B = matrix([[1,2,3],[0,4,5],[0,0,6]]); B
+            [1 2 3]
+            [0 4 5]
+            [0 0 6]
+            sage: B.bandwidth()
+            2
+        """
+        cdef Py_ssize_t i, j, rows, cols, max_bandwidth
+        max_bandwidth = 0
+        rows, cols = self.nrows(), self.ncols()
+        zero = self._base_ring(0)
+
+        for i in range(rows):
+            for j in range(cols):
+                if self.get_unsafe(i, j) != zero:
+                    dist = abs(j - i)
+                    max_bandwidth = max(max_bandwidth, dist)
+  
+        return max_bandwidth
+
     #####################################################################################
     # Generic Hessenberg Form and charpoly algorithm
     #####################################################################################
