@@ -59,15 +59,15 @@ def jacobi(M):
         q_{i,j} =
         \begin{cases}
             \frac{1}{q_{i,i}} \left( m_{i,j} - \sum_{r<i} q_{r,r} q_{r,i} q_{r,j} \right) & i < j, \\
-            a_{i,j} - \sum_{r<i} q_{r,r} q_{r,i}^2 & i = j, \\
+            m_{i,j} - \sum_{r<i} q_{r,r} q_{r,i}^2 & i = j, \\
             0 & i > j,
         \end{cases}
 
     for all `1 \leq i \leq n` and `1 \leq j \leq n`. (These
     equalities determine the entries of `Q` uniquely by
-    recursion.) This matrix `Q` is defined for all `M` in a
-    certain Zariski-dense open subset of the set of all
-    `n \times n`-matrices.
+    recursion.) This matrix `Q` is defined for every invertible
+    `n \times n`-matrix `M`. Its definition is taken from (2.3)
+    of [FP1985]_.
 
     .. NOTE::
 
@@ -135,11 +135,20 @@ def diamond_cut(V, GM, C, verbose=False):
 
     - ``GM`` -- half of the basis matrix of the lattice
 
-    - ``C`` -- radius to use in cutting algorithm
+    - ``C`` -- square of the radius to use in cutting algorithm
 
     - ``verbose`` -- boolean (default: ``False``); whether to print debug information
 
     OUTPUT: a :class:`Polyhedron` instance
+
+    ALGORITHM:
+
+    Use the algorithm in (2.8) of [FP1985]_ to iterate through the nonzero
+    vectors ``hv`` of length at most `\sqrt{C}` in the lattice spanned by
+    ``GM``. (Actually, the algorithm only constructs one vector from each pair
+    ``{hv, -hv}``.) For each such vector ``hv``, intersect ``V`` with the
+    half-spaces defined by ``plane_inequality(hv)`` and
+    ``plane_inequality(-hv)``.
 
     EXAMPLES::
 
@@ -151,7 +160,7 @@ def diamond_cut(V, GM, C, verbose=False):
         (A vertex at (2), A vertex at (0))
     """
     if verbose:
-        print("Cut\n{}\nwith radius {}".format(GM, C))
+        print("Cut\n{}\nwith squared radius {}".format(GM, C))
 
     dim = GM.dimensions()
     if dim[0] != dim[1]:
