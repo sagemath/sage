@@ -121,7 +121,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
       number field or `\QQ`, ``primes`` is a list of prime ideals of `K`
       and ``inv_archimedean`` is a list of local invariants (`0` or
       `\frac{1}{2}`) specifying the ramification at the (infinite) real
-      places of `K`. This constructs a quaternion algebra ramified exacly
+      places of `K`. This constructs a quaternion algebra ramified exactly
       at the places given by ``primes`` and those (algebraic) real
       embeddings of `K` indexed in ``K.embeddings(AA)`` by ``l`` with
       ``inv_archimedean[l] = 1/2``.
