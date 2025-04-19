@@ -438,6 +438,8 @@ cdef class GroebnerStrategy:
         """
         Convert the computed Gröbner basis to a reduced Gröbner basis.
 
+        EXAMPLES::
+
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
             sage: I = E.ideal([x+y*z])
             sage: I.groebner_basis(reduced=False)

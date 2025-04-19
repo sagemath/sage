@@ -21,7 +21,7 @@ for string theory in physics, as they serve as ambient spaces for mirror pairs
 of Calabi-Yau manifolds via constructions due to Victor V. Batyrev
 [Bat1994]_ and Lev A. Borisov [Bor1993]_.
 
-From the combinatorial point of view "crepant" requirement is much more simple
+From the combinatorial point of view, the "crepant" requirement is much more simple
 and natural to work with than "coherent." For this reason, the code in this
 module will allow work with arbitrary crepant subdivisions without checking
 whether they are coherent or not. We refer to corresponding toric varieties as
@@ -59,7 +59,7 @@ manifold::
       a0*z0^3 + a9*z0^2*z1 + a7*z0*z1^2 + a1*z1^3 + a8*z0^2*z2 + a6*z0*z1*z2
       + a4*z1^2*z2 + a5*z0*z2^2 + a3*z1*z2^2 + a2*z2^3
 
-In many cases it is sufficient to work with the "simplified polynomial
+In many cases, it is sufficient to work with the "simplified polynomial
 moduli space" of anticanonical hypersurfaces::
 
     sage: P2.anticanonical_hypersurface(monomial_points='simplified')
@@ -710,7 +710,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
         INPUT:
 
-        - ``monomial points`` -- list of integers or a string. A list will be
+        - ``monomial_points`` -- list of integers or a string. A list will be
           interpreted as indices of points of `\Delta` which should be used
           for monomials of this hypersurface. A string must be one of the
           following descriptions of points of `\Delta`:

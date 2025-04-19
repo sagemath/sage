@@ -61,7 +61,7 @@ cdef extern from "boost_interface.cpp":
         v_index num_verts()
         void add_edge(v_index u, v_index v)
         void add_edge(v_index u, v_index v, double w)
-        vector[pair[int, pair[int, double]]] edge_list()
+        vector[pair[v_index, pair[v_index, double]]] edge_list()
         e_index num_edges()
         result_ec edge_connectivity()
         double clustering_coeff(v_index v)

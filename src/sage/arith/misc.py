@@ -3959,7 +3959,7 @@ def binomial(x, m, **kwds):
     P = parent(x)
     x = py_scalar_to_element(x)
 
-    # case 1: native binomial implemented on x
+    # case 1: native binomial implemented on x (see also dont_call_method_on_arg)
     try:
         return P(x.binomial(m, **kwds))
     except (AttributeError, TypeError):

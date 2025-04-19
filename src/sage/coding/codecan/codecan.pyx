@@ -756,7 +756,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         This graph will be later used in the refinement procedures.
         """
         cdef FFSS_projPoint iter = FFSS_projPoint(self._matrix)
-        cdef mp_bitcnt_t i,j
+        cdef mp_bitcnt_t i, j
 
         ambient_space = (self._matrix.base_ring()) ** (self._n)
         weights2size = [0] * (self.len() + 1)

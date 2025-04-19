@@ -1140,6 +1140,10 @@ def _sage_getargspec_cython(source):
                     defaults=('a string', {(1, 2, 3): True}),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
     """
+    assert isinstance(source, str)
+    # the caller ought to ensure this, but if it forgets (e.g. passing None),
+    # we avoid raising AttributeError to avoid confusing error message
+    # and possible further hard-to-debug errors, see :issue:`39735`
     defpos = source.find('def ')
     assert defpos > -1, "The given source does not contain 'def'"
     s = source[defpos:].strip()
@@ -1677,12 +1681,15 @@ def sage_getargspec(obj):
         except TypeError:  # arg is not a code object
             # The above "hopefully" was wishful thinking:
             try:
-                return inspect.FullArgSpec(*_sage_getargspec_cython(sage_getsource(obj)))
+                source = sage_getsource(obj)
             except TypeError:  # This happens for Python builtins
-                # The best we can do is to return a generic argspec
-                args = []
-                varargs = 'args'
-                varkw = 'kwds'
+                source = None
+            if source is not None:
+                return inspect.FullArgSpec(*_sage_getargspec_cython(source))
+            # The best we can do is to return a generic argspec
+            args = []
+            varargs = 'args'
+            varkw = 'kwds'
     try:
         defaults = func_obj.__defaults__
     except AttributeError:

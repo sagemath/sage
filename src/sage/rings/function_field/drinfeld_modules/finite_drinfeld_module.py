@@ -571,7 +571,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Instead, use :meth:`frobenius_charpoly` with the option
         `algorithm='gekeler'`.
 
-        .. WARNING:
+        .. WARNING::
 
             This algorithm only works in the generic case when the
             corresponding linear system is invertible. Notable cases

@@ -1,3 +1,6 @@
+"""
+Addition formula for elliptic curves over rings
+"""
 
 def _add(E, P, Q):
     r"""

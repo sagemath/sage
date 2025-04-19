@@ -66,11 +66,11 @@ cdef Py_ssize_t mpz_binary_search0(mpz_t* v, Py_ssize_t n, mpz_t x) noexcept:
     j = n-1
     while i<=j:
         if i == j:
-            if mpz_cmp(v[i],x) == 0:
+            if mpz_cmp(v[i], x) == 0:
                 return i
             return -1
         k = (i+j)/2
-        c = mpz_cmp(v[k],x)
+        c = mpz_cmp(v[k], x)
         if c > 0:       # v[k] > x
             j = k-1
         elif c < 0:     # v[k] < x
@@ -103,9 +103,9 @@ cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* i
         return -1
     i = 0
     j = n-1
-    while i<=j:
+    while i <= j:
         if i == j:
-            c = mpz_cmp(v[i],x)
+            c = mpz_cmp(v[i], x)
             if c == 0:          # v[i] == x
                 ins[0] = i
                 return i

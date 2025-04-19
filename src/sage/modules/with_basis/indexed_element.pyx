@@ -858,7 +858,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         zero = free_module.base_ring().zero()
         if sparse:
             if order is None:
-                order = {k: i for i,k in enumerate(self._parent.get_order())}
+                order = {k: i for i, k in enumerate(self._parent.get_order())}
             return free_module.element_class(free_module,
                                              {order[k]: c for k, c in d.items()},
                                              coerce=True, copy=False)

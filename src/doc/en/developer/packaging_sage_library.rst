@@ -186,7 +186,7 @@ The source directory of a distribution package, such as
   in :sage_root:`src`
 
 - ``VERSION.txt`` -- package version. This file is updated by the release manager by
-  running the ``sage-update-version`` script.
+  running the ``update-version`` script.
 
   Sometimes it may be necessary to upload a hotfix for a distribution
   package to PyPI. These should be marked by adding a suffix

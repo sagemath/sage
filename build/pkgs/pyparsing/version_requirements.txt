@@ -1,1 +1,1 @@
-pyparsing >=2.3.0
+pyparsing >=3.2.3

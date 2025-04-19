@@ -565,7 +565,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             ('b','c')
         """
         cdef int i, j, vn = len(v)
-        assert(vn <= self.n)
+        assert vn <= self.n
         if convert:
             convert_dict = self._parent._domain_to_gap
             for i in range(len(v)):
