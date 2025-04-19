@@ -2617,8 +2617,8 @@ def SRG_630_85_20_10():
     hs = HoffmanSingletonGraph()
     P = list(range(5)) + list(range(30, 35))  # a Petersen in hs
     mc = [0, 1, 5, 6, 12, 13, 16, 17, 22, 23, 29, 33, 39, 42, 47]
-    assert(hs.subgraph(mc).is_regular(k=0))  # a maximum coclique
-    assert(hs.subgraph(P).is_regular(k=3))
+    assert hs.subgraph(mc).is_regular(k=0)  # a maximum coclique
+    assert hs.subgraph(P).is_regular(k=3)
     h = hs.automorphism_group().stabilizer(mc, action='OnSets')
     l = h.orbit(tuple((x[0], x[1]) for x in hs.subgraph(P).matching()),
                 "OnSetsSets")

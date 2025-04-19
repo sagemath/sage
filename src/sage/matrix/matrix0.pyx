@@ -531,7 +531,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A.is_mutable()
             False
         """
-        return not(self._is_immutable)
+        return not self._is_immutable
 
     ###########################################################
     # Entry access
@@ -5140,9 +5140,9 @@ cdef class Matrix(sage.structure.element.Matrix):
             fac = o1.factor()
             S = sum((pi - 1) * pi**(ei - 1) for pi, ei in fac)
             if fac[0] == (2, 1):
-                impossible_order = not(S <= n + 1)
+                impossible_order = S > n + 1
             else:
-                impossible_order = not(S <= n)
+                impossible_order = S > n
             if impossible_order:
                 return Infinity
 
