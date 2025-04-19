@@ -1200,13 +1200,21 @@ class AbstractTree:
         """
         if self.is_empty():
             return 0
+
+        # An attribute _node_number for storing the number of nodes
+        # This is OK as AbstractTree is immutable
+        # If the attribute is not present, we compute it
+        if hasattr(self, '_node_number'):
+            return self._node_number
         
-        def incr(node):
+        def count(node):
             if not node.is_empty():
+                # Using post-order
+                # Thus _node_number is computed for all non-empty subtrees
                 node._node_number = 1 + sum([e._node_number for e in node
                                              if not e.is_empty()])
 
-        self.iterative_post_order_traversal(incr)
+        self.iterative_post_order_traversal(count)
         return self._node_number
 
     def depth(self):
