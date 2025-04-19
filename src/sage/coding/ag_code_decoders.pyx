@@ -1800,7 +1800,7 @@ cdef class Decoder_K():
             h = [W.zero() for k in range(gamma)]
             for j in range(code_length):
                 t = delta[j]
-                h[<Py_ssize_t> t[1]] += matinv[i,j] * x**(<int> t[0])
+                h[<Py_ssize_t> t[1]] += matinv[i, j] * x**(<int> t[0])
             vecs[i] = vector(h)
 
 
@@ -2032,7 +2032,7 @@ cdef class EvaluationAGCodeDecoder_K(Decoder_K):
                 f = yR[i] * yRbar[j]
                 v = vec_form(f)
                 self._exponents((<int> dR[i]) + (<int> dRbar[j]), &sk, &si)
-                coeff_mat[i,j] = v[si][sk]
+                coeff_mat[i, j] = v[si][sk]
                 (<list> mul_mat[i])[j] = v
 
         if verbose:
@@ -2287,7 +2287,7 @@ cdef class DifferentialAGCodeDecoder_K(Decoder_K):
                 f = yR[i] * wWbar[j]
                 v = vec_form(f)
                 self._exponents((<int> dR[i]) + (<int> dWbar[j]), &sk, &si)
-                coeff_mat[i,j] = v[si][sk]
+                coeff_mat[i, j] = v[si][sk]
                 (<list> mul_mat[i])[j] = v
 
         if verbose:
