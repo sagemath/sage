@@ -334,6 +334,26 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         from sage.misc.latex import latex
         return latex(self.matrix())
 
+    def __hash__(self):
+        """
+        Return the hash value for ``self``.
+
+        The result is cached.
+        (TODO: Not sure why, but caching does not work.)
+
+        EXAMPLES::
+
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
+            ....:                                      Matrix([[0,1], [0,0]])])
+            sage: a = A([1,2])
+            sage: b = A([2,3])
+            sage: hash(a) == hash(A([1,2]))
+            True
+            sage: hash(a) == hash(b)
+            False
+        """
+        return hash(tuple(self._vector.list()))
+
     def __getitem__(self, m):
         """
         Return the `m`-th coefficient of ``self``.
@@ -350,12 +370,17 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
     def __len__(self):
         """
+        Return the number of coefficients of ``self``,
+        including the zero coefficients.
+
         EXAMPLES::
 
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: len(A([2,1/4,3]))
+            3
+            sage: len(A([2,0,3/4]))
             3
         """
         return self._vector.ncols()
