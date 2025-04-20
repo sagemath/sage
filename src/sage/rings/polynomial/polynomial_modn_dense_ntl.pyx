@@ -469,7 +469,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
     modular_composition = compose_mod
 
 
-def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
+def small_roots(self, X=None, beta=1.0, epsilon=None, small_roots_algorithm="pari", **kwds):
     r"""
     Let `N` be the characteristic of the base ring this polynomial
     is defined over: ``N = self.base_ring().characteristic()``.
@@ -487,10 +487,11 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
 
     INPUT:
 
-    - ``X`` -- an absolute bound for the root (default: see above)
+    - ``X`` -- an absolute bound for the root (default: see above.)
     - ``beta`` -- compute a root mod `b` where `b` is a factor of `N` and `b
       \ge N^\beta` (default: 1.0, so `b = N`.)
     - ``epsilon`` -- the parameter `\epsilon` described above. (default: `\beta/8`)
+    - ``small_roots_algorithm`` -- ``"sage"`` or ``"pari"`` (default.)
     - ``**kwds`` -- passed through to method :meth:`Matrix_integer_dense.LLL() <sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL>`
 
     EXAMPLES:
@@ -574,18 +575,16 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
 
     First, we set up `p`, `q` and `N`::
 
+        sage: set_random_seed(1337)
         sage: length = 512
         sage: hidden = 110
         sage: p = next_prime(2^int(round(length/2)))
         sage: q = next_prime(round(pi.n()*p))                                           # needs sage.symbolic
         sage: N = p*q                                                                   # needs sage.symbolic
 
-    Now we disturb the low 110 bits of `q`::
+    Now we disturb the low 110 bits of `q` and try to recover `q` from it::
 
         sage: qbar = q + ZZ.random_element(0, 2^hidden - 1)                             # needs sage.symbolic
-
-    And try to recover `q` from it::
-
         sage: F.<x> = PolynomialRing(Zmod(N), implementation='NTL')                     # needs sage.symbolic
         sage: f = x - qbar                                                              # needs sage.symbolic
 
@@ -594,14 +593,32 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
 
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(2)
-        sage: d = f.small_roots(X=2^hidden-1, beta=0.5)[0]  # time random               # needs sage.symbolic
+        sage: d = f.small_roots(X=2^hidden-1, beta=0.5)[0]                              # needs sage.symbolic
+        verbose 2 (<module>) epsilon = 0.062500
         verbose 2 (<module>) m = 4
         verbose 2 (<module>) t = 4
         verbose 2 (<module>) X = 1298074214633706907132624082305023
-        verbose 1 (<module>) LLL of 8x8 matrix (algorithm fpLLL:wrapper)
-        verbose 1 (<module>) LLL finished (time = 0.006998)
         sage: q == qbar - d                                                             # needs sage.symbolic
         True
+
+    In general, using ``small_roots_algorithm="pari"`` will return better results and be quicker.
+    For instance, it is able to recover `q` even if ``hidden`` is set to `120`::
+
+        sage: # needs sage.symbolic
+        sage: hidden = 120
+        sage: qbar = q + ZZ.random_element(0, 2^hidden - 1)
+        sage: f = x - qbar
+        sage: set_verbose(0)
+        sage: f.small_roots(X=2^hidden-1, beta=0.5, small_roots_algorithm="sage")
+        []
+        sage: f.small_roots(X=2^hidden-1, beta=0.5, small_roots_algorithm="pari")
+        [895263106762898748967421612807738115]
+        sage: qbar - q == _[0]
+        True
+
+    .. TODO::
+
+        Implement improved lattice constructions for small_roots.
 
     REFERENCES:
 
@@ -647,24 +664,39 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
         X = (0.5 * N**(beta**2/delta - epsilon)).ceil()
     verbose("X = %s"%X, level=2)
 
-    # we could do this much faster, but this is a cheap step
-    # compared to LLL
-    g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta) ]
-    g.extend([x**i * f**m for i in range(t)]) # h
-
-    B = Matrix(ZZ, len(g), delta*m + max(delta,t) )
-    for i in range(B.nrows()):
-        for j in range( g[i].degree()+1 ):
-            B[i,j] = g[i][j]*X**j
-
-    B = B.LLL(**kwds)
-
-    f = sum([ZZ(B[0,i]//X**i)*x**i for i in range(B.ncols())])
-    R = f.roots()
-
-    ZmodN = self.base_ring()
-    roots = set([ZmodN(r) for r,m in R if abs(r) <= X])
     Nbeta = N**beta
+    ZmodN = self.base_ring()
+
+    if small_roots_algorithm == "pari":
+        from sage.libs.pari.all import PariError
+        try:
+            roots = set(map(ZmodN, pari.zncoppersmith(f, N, X=X, B=Nbeta.floor())))
+        except PariError:
+            # according to my testing, Sage is never able to return a root when Pari fails (usually
+            # due to OOM.) See discussion in #39243.
+            roots = set([])
+
+    elif small_roots_algorithm == "sage":
+        # we could do this much faster, but this is a cheap step
+        # compared to LLL
+        g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta) ]
+        g.extend([x**i * f**m for i in range(t)]) # h
+
+        B = Matrix(ZZ, len(g), delta*m + max(delta,t) )
+        for i in range(B.nrows()):
+            for j in range( g[i].degree()+1 ):
+                B[i,j] = g[i][j]*X**j
+
+        B = B.LLL(**kwds)
+
+        f = sum([ZZ(B[0,i]//X**i)*x**i for i in range(B.ncols())])
+        R = f.roots()
+
+        roots = set([ZmodN(r) for r,m in R if abs(r) <= X])
+
+    else:
+        raise ValueError('algorithm must be "pari" or "sage"')
+
     return [root for root in roots if N.gcd(ZZ(self(root))) >= Nbeta]
 
 
