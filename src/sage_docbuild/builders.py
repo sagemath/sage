@@ -179,18 +179,15 @@ def builder_helper(type):
 
 
 class DocBuilder():
-    def __init__(self, name: str, options: BuildOptions, lang: str='en'):
+    def __init__(self, name: str, options: BuildOptions):
         """
         INPUT:
 
         - ``name`` -- the name of a subdirectory in ``doc/<lang>``, such as
           'tutorial' or 'installation'
-
-        - ``lang`` -- (default "en") the language of the document.
         """
         self.name = name
-        self.lang = lang
-        self.dir = options.source_dir / self.lang / self.name
+        self.dir = options.source_dir / self.name
         self._options = options
 
     def _output_dir(self, type):
@@ -203,11 +200,11 @@ class DocBuilder():
         EXAMPLES::
 
             sage: from sage_docbuild.builders import DocBuilder
-            sage: b = DocBuilder('tutorial')
+            sage: b = DocBuilder('en/tutorial')
             sage: b._output_dir('html')         # optional - sagemath_doc_html
             '.../html/en/tutorial'
         """
-        dir = self._options.output_dir / type / self.lang / self.name
+        dir = self._options.output_dir / type / self.name
         dir.mkdir(parents=True, exist_ok=True)
         return dir
 
@@ -225,7 +222,7 @@ class DocBuilder():
             sage: b._doctrees_dir()             # optional - sagemath_doc_html
             '.../doctrees/en/tutorial'
         """
-        dir = self._options.output_dir / 'doctrees' / self.lang / self.name
+        dir = self._options.output_dir / 'doctrees' / self.name
         dir.mkdir(parents=True, exist_ok=True)
         return dir
 
@@ -324,16 +321,6 @@ def build_many(target, args, processes=None):
 ##########################################
 #      Parallel Building Ref Manual      #
 ##########################################
-
-def build_other_doc(args):
-    document = args[0]
-    name = args[1]
-    kwds = args[2]
-    args = args[3:]
-    logger.warning("\nBuilding %s.\n" % document)
-    getattr(get_builder(document), name)(*args, **kwds)
-
-
 class WebsiteBuilder(DocBuilder):
     def html(self):
         """
@@ -416,13 +403,12 @@ class ReferenceBuilder():
     build the top-level page and ReferenceSubBuilder for each
     sub-component.
     """
-    def __init__(self, name:str, options: BuildOptions, lang:str='en'):
+    def __init__(self, name:str, options: BuildOptions):
         """
         Record the reference manual's name, in case it's not
         identical to 'reference'.
         """
         self.name = name
-        self.lang = lang
         self.options = options
 
     def _output_dir(self, type: Literal['html', 'latex', 'pdf']) -> Path:
@@ -439,12 +425,12 @@ class ReferenceBuilder():
             sage: b._output_dir('html')         # optional - sagemath_doc_html
             '.../html/en/reference'
         """
-        dir = self.options.output_dir / type / self.lang / self.name
+        dir = self.options.output_dir / type / self.name
         dir.mkdir(exist_ok=True)
         return dir
 
     def _source_dir(self) -> Path:
-        return self.options.source_dir / self.lang / self.name
+        return self.options.source_dir / self.name
 
     def _build_bibliography(self, format, *args, **kwds):
         """
@@ -454,7 +440,7 @@ class ReferenceBuilder():
         manuals and needs to be built first.
         """
         references = [
-            (doc, self.lang, format, kwds) + args for doc in get_all_documents(self._source_dir())
+            (doc, 'en', format, kwds) + args for doc in get_all_documents(self._source_dir())
             if doc == 'reference/references'
         ]
         build_many(build_ref_doc, references)
@@ -464,7 +450,7 @@ class ReferenceBuilder():
         Build the entire reference manual except the bibliography
         """
         non_references = [
-            (doc, self.lang, format, kwds) + args for doc in get_all_documents(self._source_dir())
+            (doc, 'en', format, kwds) + args for doc in get_all_documents(self._source_dir())
             if doc != Path('reference/references')
         ]
         build_many(build_ref_doc, non_references)
@@ -495,32 +481,8 @@ class ReferenceTopBuilder(DocBuilder):
     """
     This class builds the top-level page of the reference manual.
     """
-    def __init__(self, name: str, options: BuildOptions, lang: str='en'):
-        DocBuilder.__init__(self, name, options, lang)
-        self.name = 'reference'
-        self.lang = 'en'
-        self.options = options
-
-    def _output_dir(self, type, lang=None):
-        """
-        Return the directory where the output of type ``type`` is stored.
-
-        If the directory does not exist, then it will automatically be
-        created.
-
-        EXAMPLES::
-
-            sage: from sage_docbuild.builders import ReferenceTopBuilder
-            sage: b = ReferenceTopBuilder('reference')
-            sage: b._output_dir('html')         # optional - sagemath_doc_html
-            '.../html/en/reference'
-        """
-        from sage.env import SAGE_DOC
-        if lang is None:
-            lang = self.lang
-        d = os.path.join(SAGE_DOC, type, lang, self.name)
-        os.makedirs(d, exist_ok=True)
-        return d
+    def __init__(self, name: str, options: BuildOptions):
+        DocBuilder.__init__(self, 'en/reference', options)
 
     def html(self):
         """
@@ -531,13 +493,8 @@ class ReferenceTopBuilder(DocBuilder):
         # We want to build master index file which lists all of the PDF file.
         # We modify the file index.html from the "reference_top" target, if it
         # exists. Otherwise, we are done.
-
-        from sage.env import SAGE_DOC
-        reference_dir = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
+        reference_dir = self.dir
         output_dir = self._output_dir('html')
-
-        with open(os.path.join(reference_dir, 'index.html')) as f:
-            html = f.read()
 
         # Install in output_dir a symlink to the directory containing static files.
         # Prefer relative path for symlinks.
@@ -548,8 +505,8 @@ class ReferenceTopBuilder(DocBuilder):
             pass
 
         # Now modify top reference index.html page and write it to output_dir.
-        html_output_dir = os.path.dirname(reference_dir)
-
+        with open(reference_dir / 'index.html') as f:
+            html = f.read()
         # Fix links in navigation bar
         html = re.sub(r'<a href="(.*)">Sage(.*)Documentation</a>',
                       r'<a href="../../../html/en/index.html">Sage\2Documentation</a>',
@@ -565,7 +522,7 @@ class ReferenceTopBuilder(DocBuilder):
 
         # For the content, we modify doc/en/reference/index.rst, which
         # has two parts: the body and the table of contents.
-        with open(self.options.source_dir / self.lang / 'reference' / 'index.rst') as f:
+        with open(reference_dir / 'index.rst') as f:
             rst = f.read()
         # Get rid of todolist and miscellaneous rst markup.
         rst = rst.replace('.. _reference-manual:\n\n', '')
@@ -634,8 +591,8 @@ class ReferenceSubBuilder(DocBuilder):
     """
     _cache = None
 
-    def __init__(self, name: str, options: BuildOptions, lang: str='en'):
-        DocBuilder.__init__(self, name, options, lang)
+    def __init__(self, name: str, options: BuildOptions):
+        DocBuilder.__init__(self, "en/" + name, options)
         self._wrap_builder_helpers()
 
     def _wrap_builder_helpers(self):
@@ -687,6 +644,13 @@ class ReferenceSubBuilder(DocBuilder):
         if _sage.exists():
             logger.info(f"Copying over custom reST files from {_sage} ...")
             shutil.copytree(_sage, self.dir / 'sage')
+
+        # Copy over some generated reST file in the build directory
+        # (Background: Meson puts them in the build directory, but Sphinx can also read
+        # files from the source directory, see https://github.com/sphinx-doc/sphinx/issues/3132)
+        generated_dir = self._options.output_dir / self.name
+        for file in generated_dir.rglob('*'):
+            shutil.copy2(file, self.dir / file.relative_to(generated_dir))
 
         getattr(DocBuilder, build_type)(self, *args, **kwds)
 
@@ -1192,7 +1156,7 @@ def get_builder(name: str, options: BuildOptions) -> DocBuilder | ReferenceBuild
     if name == 'reference_top':
         return ReferenceTopBuilder('reference', options)
     elif name.endswith('reference'):
-        return ReferenceBuilder(name)
+        return ReferenceBuilder(name, options)
     elif 'reference' in name and (options.source_dir / 'en' / name).exists():
         return ReferenceSubBuilder(name, options)
     elif name.endswith('website'):
@@ -1202,7 +1166,7 @@ def get_builder(name: str, options: BuildOptions) -> DocBuilder | ReferenceBuild
         if path.endswith('.sage') or path.endswith('.pyx'):
             raise NotImplementedError('Building documentation for a single file only works for Python files.')
         return SingleFileBuilder(path)
-    elif name in get_documents() or name in get_all_documents(options):
+    elif Path(name) in get_all_documents(options.source_dir):
         return DocBuilder(name, options)
     else:
         print("'%s' is not a recognized document. Type 'sage --docbuild -D' for a list" % name)
@@ -1229,16 +1193,17 @@ def get_all_documents(source: Path) -> list[Path]:
     """
     documents = []
     for lang in [path for path in source.iterdir() if path.is_dir()]:
+        if not re.match('^[a-z][a-z]$', lang.name):
+            # Skip non-language directories
+            continue
         for document in lang.iterdir():
             if (document.name not in build_options.OMIT
                     and document.is_dir()):
                 documents.append(document.relative_to(source))
 
-    # Ensure that the reference guide is compiled first so that links from
-    # the other documents to it are correctly resolved.
+    # Top-level reference document is build seperately
     if Path('en/reference') in documents:
         documents.remove(Path('en/reference'))
-    documents.insert(0, Path('en/reference'))
 
     return documents
 
@@ -1274,4 +1239,8 @@ def get_all_reference_documents(source: Path) -> list[Path]:
     # Put the bibliography first, because it needs to be built first:
     docs.remove(Path('reference/references'))
     docs.insert(0, Path('reference/references'))
+
+    # Add the top-level reference document
+    docs.append(Path('reference_top'))
+
     return docs

@@ -498,13 +498,11 @@ error messages. To be certain that these are real errors, run
 
     sys.excepthook = excepthook
 
-    # Process selected options.
+    # Set up the environment based on the command-line options
     if args.check_nested:
         os.environ['SAGE_CHECK_NESTED'] = 'True'
-
     if args.underscore:
         os.environ['SAGE_DOC_UNDERSCORE'] = "True"
-
     if args.sphinx_opts:
         build_options.ALLSPHINXOPTS += args.sphinx_opts.replace(',', ' ') + " "
     if args.no_pdf_links:
@@ -521,6 +519,8 @@ error messages. To be certain that these are real errors, run
         os.environ['SAGE_SKIP_TESTS_BLOCKS'] = 'True'
     if args.use_cdns:
         os.environ['SAGE_USE_CDNS'] = 'yes'
+    os.environ['SAGE_DOC_SRC'] = str(args.source_dir.absolute())
+    os.environ['SAGE_DOC'] = str(args.output_dir.absolute())
 
     build_options.ABORT_ON_ERROR = not args.keep_going
 
@@ -535,10 +535,12 @@ error messages. To be certain that these are real errors, run
         # directories it leaves behind. See Issue #20010.
         # Issue #31948: This is not parallelization-safe; use the option
         # --no-prune-empty-dirs to turn it off
-        for dirpath, dirnames, filenames in os.walk(builder.dir, topdown=False):
+        for dirpath, dirnames, filenames in os.walk(args.source_dir, topdown=False):
             if not dirnames + filenames:
                 logger.warning('Deleting empty directory {0}'.format(dirpath))
                 os.rmdir(dirpath)
+
+    import sage.all  # TODO: Remove once all modules can be imported independently  # noqa: F401
 
     build = getattr(builder, typ)
     build()

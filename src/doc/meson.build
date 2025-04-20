@@ -1,32 +1,16 @@
-# Clean target
-# clean = custom_target(
-#     'clean',
-#     output: [],
-#     command: [
-#         'sh', '-c',
-#         '''
-#         rm -rf en/reference/*/sage
-#         rm -rf en/reference/documentation/sage_docbuild
-#         rm -rf en/reference/sage
-#         rm -f common/*.pyc
-#         '''
-#     ]
-# )
-
-# Generate sources at build time
-# doc_src = custom_target(
-#     'doc-src',
-#     output: ['en/reference/repl/options.txt'],
-#     command: [
-#         'sh', '-c',
-#         '''
-#         mkdir -p en/reference/repl
-#         sage -advanced > en/reference/repl/options.txt
-#         '''
-#     ]
-# )
-
-
+doc_src = []
+subdir('en/reference/repl')
+# TODO: Migrate this completely to meson
+doc_src += custom_target(
+    'doc-src',
+    output: ['autogen'],
+    command: [
+        files('bootstrap'),
+    ], 
+    env: {
+        'SAGE_ROOT': root,
+    },
+)
 
 references = run_command(
   py,
@@ -45,8 +29,12 @@ reference_pdf = []
 bibliography = []
 foreach type : ['inventory', 'html', 'pdf']
     foreach ref : references.splitlines()
-        short_ref = ref.split('/')[1]
-        deps = []
+        if '/' in ref
+            short_ref = ref.split('/')[1]
+        else
+            short_ref = ref
+        endif
+        deps = [doc_src]
         if type == 'html' or type == 'pdf'
             deps += reference_inventory
         endif
@@ -99,17 +87,17 @@ foreach type : ['html', 'pdf']
             'doc-' + type + '-other-' + short_doc,
             output: [type + short_doc],
             command: [
-                py, 
+                py,
                 src / 'build-docs.py',
                 '--no-pdf-links',
                 doc,
-                type,
+                type, 
                 '-o', '@OUTDIR@',
                 '--source', meson.current_source_dir()
             ],
             depends: reference_inventory,
         )
-        if type == 'html'
+        if type == 'html' 
             other_documents_html += target
         elif type == 'pdf'
             other_documents_pdf += target
