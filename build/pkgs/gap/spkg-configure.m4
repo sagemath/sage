@@ -54,10 +54,8 @@ SAGE_SPKG_CONFIGURE([gap], [
                   AC_LANG_PROGRAM(
                     [[#include <gap/libgap-api.h>]],
                     [[
-                      int main(int argc, char** argv) {
-                        GAP_Initialize(0, 0, 0, 0, 0);
-                        return 0;
-                      }
+                      GAP_Initialize(0, 0, 0, 0, 0);
+                      return 0;
                     ]])
                 ],[
                   AC_MSG_RESULT([yes])
