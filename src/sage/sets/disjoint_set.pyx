@@ -56,7 +56,9 @@ AUTHORS:
 
 EXAMPLES:
 
-Disjoint set of integers from ``0`` to ``n - 1``::
+Disjoint set of integers from ``0`` to ``n - 1``:
+
+::
 
     sage: s = DisjointSet(6)
     sage: s
@@ -73,7 +75,9 @@ Disjoint set of integers from ``0`` to ``n - 1``::
     sage: list(map(s.find, range(6)))
     [0, 1, 2, 1, 2, 1]
 
-Disjoint set of hashables objects::
+Disjoint set of hashables objects:
+
+::
 
     sage: d = DisjointSet('abcde')  # Static by default now
     sage: d
@@ -130,7 +134,9 @@ cpdef DisjointSet(arg=None, dynamic=False):
 
     EXAMPLES::
 
-    Empty (dynamic) set::
+    Empty (dynamic) set:
+
+    ::
 
         sage: D = DisjointSet()
         sage: D
@@ -148,7 +154,9 @@ cpdef DisjointSet(arg=None, dynamic=False):
         sage: isinstance(D, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
         True
 
-    Static set from integer::
+    Static set from integer:
+
+    ::
 
         sage: S_int = DisjointSet(5)
         sage: S_int
@@ -168,7 +176,9 @@ cpdef DisjointSet(arg=None, dynamic=False):
         sage: isinstance(S_int, sage.sets.disjoint_set.DisjointSet_of_integers)
         True
 
-    Static set from iterable (default)::
+    Static set from iterable (default):
+
+    ::
 
         sage: S_static = DisjointSet('abc')
         sage: S_static
@@ -188,7 +198,9 @@ cpdef DisjointSet(arg=None, dynamic=False):
         sage: isinstance(S_static, sage.sets.disjoint_set.DisjointSet_of_hashables)
         True
 
-    Dynamic set from iterable::
+    Dynamic set from iterable:
+
+    ::
 
         sage: S_dyn = DisjointSet('abc', dynamic=True)
         sage: S_dyn
@@ -206,7 +218,9 @@ cpdef DisjointSet(arg=None, dynamic=False):
         sage: isinstance(S_dyn, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
         True
 
-    From SetPartition::
+    From SetPartition:
+
+    ::
 
         sage: SP = SetPartition([[1,3], [2]])
         sage: D_static = DisjointSet(SP)  # Static by default
@@ -224,7 +238,10 @@ cpdef DisjointSet(arg=None, dynamic=False):
         {{1, 3}, {2}, {4}}
 
 
-    TESTS::
+    TESTS:
+
+    ::
+
         sage: DisjointSet(0)  # Integer case
         {}
         sage: DisjointSet('')  # Static hashable
