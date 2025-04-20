@@ -25,7 +25,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
     cpdef dict element_to_root_dict(self)
     cpdef to_digraph(self)
 
-cdef class DisjointSet_of_hashables(DisjointSet_class):    
+cdef class DisjointSet_of_hashables(DisjointSet_class):
     cdef list _int_to_el
     cdef dict _el_to_int
     cpdef find(self, e)

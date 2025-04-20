@@ -509,10 +509,10 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
                 raise ValueError(f"Invalid parent index {parent_idx} for element {i}")
 
         # Cycle detection with C array
-        cdef int *visited_int = <int *> sig_calloc(n, sizeof(int)) # Use int array
+        cdef int *visited_int = <int *> sig_calloc(n, sizeof(int))  # Use int array
         if not visited_int:
             raise MemoryError("Failed to allocate memory for cycle detection")
-        cdef int visited_flag = 1 # Use incrementing flag instead of resetting
+        cdef int visited_flag = 1  # Use incrementing flag instead of resetting
         try:
             for i in range(n):
                 j = i
@@ -525,14 +525,14 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
                         break
                     visited_int[j] = visited_flag
                     j = l[j]
-                if visited_int[j] == 0: # Mark root if not visited before
+                if visited_int[j] == 0:  # Mark root if not visited before
                      visited_int[j] = visited_flag
                 elif visited_int[j] != visited_flag:
                      # Root was visited by another traversal's flag, valid tree
                      pass
                 # Else: visited_int[j] == visited_flag means we started at a root, which is fine.
 
-                visited_flag += 1 # Increment flag for next starting node
+                visited_flag += 1  # Increment flag for next starting node
 
             # If no cycles detected, apply the state
             for i in range(n):
@@ -782,7 +782,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         from sage.graphs.digraph import DiGraph 
         return DiGraph(d)
 
-cdef class _StaticDisjointSet_hashable(DisjointSet_class):
+cdef class DisjointSet_of_hashables(DisjointSet_class):
     r"""
     Static disjoint set of hashable objects.
 
@@ -971,7 +971,7 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
             ValueError: Invalid parent element 'x' not found in set
 
             sage: d = DisjointSet('abc')
-            sage: state = [('a', 'b'), ('b', 'c'), ('c', 'a')] # Cycle a->b->c->a
+            sage: state = [('a', 'b'), ('b', 'c'), ('c', 'a')]  # Cycle a->b->c->a
             sage: d.__setstate__(state)
             Traceback (most recent call last):
             ...
@@ -1012,10 +1012,10 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
             temp_parent[i] = p_i
 
         # Second Pass: Check for cycles using the temporary parent index array
-        cdef int *visited_int = <int *> sig_calloc(n, sizeof(int)) # Use int array
+        cdef int *visited_int = <int *> sig_calloc(n, sizeof(int))  # Use int array
         if not visited_int:
             raise MemoryError("Failed to allocate memory for cycle detection")
-        cdef int visited_flag = 1 # Use incrementing flag
+        cdef int visited_flag = 1  # Use incrementing flag
         try:
             for i in range(n):
                 j = i
@@ -1028,12 +1028,12 @@ cdef class _StaticDisjointSet_hashable(DisjointSet_class):
                     visited_int[j] = visited_flag
                     j = temp_parent[j]
                 # Check root if loop terminated normally (and mark if first time seen)
-                if visited_int[j] == 0: # Mark root if not visited before
+                if visited_int[j] == 0:  # Mark root if not visited before
                      visited_int[j] = visited_flag
                 elif visited_int[j] != visited_flag:
                      pass
 
-                visited_flag += 1 # Increment flag for next starting node
+                visited_flag += 1  # Increment flag for next starting node
 
             # If no cycles detected, apply the state
             for i in range(n):
@@ -1441,7 +1441,7 @@ cdef class DynamicDisjointSet_of_hashables(DisjointSet_of_hashables):
 
         if new_elt not in self._el_to_int:
             self._int_to_el.append(new_elt)
-            new_index = len(self._int_to_el) - 1   # NEW
+            new_index = len(self._int_to_el) - 1  # NEW
             self._el_to_int[new_elt] = new_index
 
             current_degree = 0 if self._nodes is NULL else self._nodes.degree
