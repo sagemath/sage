@@ -158,6 +158,15 @@ def diamond_cut(V, GM, C, verbose=False):
         sage: V = diamond_cut(V, GM, 4)
         sage: V.vertices()
         (A vertex at (2), A vertex at (0))
+
+    TESTS:
+
+    Verify that code works when no cuts are performed::
+
+        sage: from sage.modules.free_module_integer import IntegerLattice
+        sage: v = vector(ZZ, [1,1,-1])
+        sage: L = IntegerLattice([v])
+        sage: C = L.voronoi_cell(radius=0.1)
     """
     if verbose:
         print("Cut\n{}\nwith squared radius {}".format(GM, C))
@@ -230,8 +239,9 @@ def diamond_cut(V, GM, C, verbose=False):
 
     if verbose:
         print("Final cut")
-    cut = Polyhedron(ieqs=inequalities)
-    V = V.intersection(cut)
+    if inequalities:
+        cut = Polyhedron(ieqs=inequalities)
+        V = V.intersection(cut)
 
     if verbose:
         print("End")
@@ -271,6 +281,33 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         True
         sage: print(L.closest_vector(v))
         (1, 1, 1, -1)
+        sage: v = vector(ZZ, [1,1,1,-1])
+        sage: L = IntegerLattice([v])
+        sage: C = L.voronoi_cell()
+        sage: C.Hrepresentation()
+        (An inequality (-1, -1, -1, 1) x + 2 >= 0,
+         An inequality (1, 1, 1, -1) x + 2 >= 0)
+        sage: v = vector(ZZ, [1,1,-1])
+        sage: L = IntegerLattice([v])
+        sage: C = L.voronoi_cell()
+        sage: C.Hrepresentation()
+        (An inequality (-2, -2, 2) x + 3 >= 0, An inequality (2, 2, -2) x + 3 >= 0)
+        sage: C.Vrepresentation()
+        (A line in the direction (0, 1, 1),
+         A line in the direction (1, 0, 1),
+         A vertex at (0, 0, -3/2),
+         A vertex at (0, 0, 3/2))
+
+    Verify that :issue:`37086` is fixed::
+
+        sage: from sage.modules.free_module_integer import IntegerLattice
+        sage: l  = [7, 0, -1, -2, -1, -2, 7, -2, 0, 0, -2, 0, 7, -2, 0, -1, -2, -1, 7, 0 , -1, -1, 0, -2, 7]
+        sage: M = matrix(5, 5, l)
+        sage: c = IntegerLattice(M).voronoi_cell(radius=35)
+        sage: M.det()
+        12858
+        sage: c.volume()
+        12858
     """
     dim = basis.dimensions()
     # LLL-reduce for efficiency.
@@ -300,6 +337,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         # LLL-reduce for efficiency.
         additional_vectors = additional_vectors.LLL()
 
+        from sage.rings.real_double import RDF
         # Convert the basis matrix to use RDF numbers for efficiency when we
         # perform the QR decomposition.
         tranposed_RDF_matrix = (additional_vectors.transpose()).change_ring(RDF)
