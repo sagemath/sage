@@ -277,24 +277,40 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
     basis = basis.LLL()
     if radius is None:
         from sage.rings.real_double import RDF
-        tranposedRDFMatrix = (basis.transpose()).change_ring(RDF)
-        R = tranposedRDFMatrix.QR()[1]
+        # Convert the basis matrix to use RDF numbers for efficiency when we
+        # perform the QR decomposition.
+        tranposed_RDF_matrix = (basis.transpose()).change_ring(RDF)
+        # We then perform the QR decomposition.
+        R = tranposed_RDF_matrix.QR()[1]
+        # The radius is then an upper bound for the covering radius.
         radius = sum(R[i,i]**2 for i in range(dim[0]))
+        # We then divide by 4 as we will divide the basis by 2 later on.
+        radius = radius / 4
     artificial_length = None
     if dim[0] < dim[1]:
-        # introduce "artificial" basis points (representing infinity)
-        def approx_norm(v):
-            r, r1 = (v.inner_product(v)).sqrtrem()
-            return r + (r1 > 0)
         from sage.rings.rational_field import QQ
+        # Introduce "artificial" basis points (representing infinity).
         additional_vectors = (QQ**dim[1]).subspace(basis).complement().basis()
+        # We then make the artificial points integers.
         for v in additional_vectors:
             v *= v.denominator()
         additional_vectors = matrix(additional_vectors)
         from sage.rings.rational_field import ZZ
         additional_vectors = additional_vectors.change_ring(ZZ)
+        # LLL-reduce for efficiency.
         additional_vectors = additional_vectors.LLL()
-        artificial_length = ceil((radius / min(approx_norm(v) for v in additional_vectors)) * 1.1)
+
+        # Convert the basis matrix to use RDF numbers for efficiency when we
+        # perform the QR decomposition.
+        tranposed_RDF_matrix = (additional_vectors.transpose()).change_ring(RDF)
+        # We then perform the QR decomposition.
+        R = tranposed_RDF_matrix.QR()[1]
+        # We then get a lower bound for the shortest vector by finding the
+        # minimum all the diagonal entries of our artificial points.
+        shortest_vector_lower_bound = min(abs(R[i,i]) for i in range(dim[1] - dim[0]))
+        # The length we need to multiply our artificial points by in order to make
+        # sure they are greater than our radius is then calculated.
+        artificial_length = ceil((radius * 4 / shortest_vector_lower_bound) * 1.001)
         additional_vectors *= artificial_length
         basis = basis.stack(additional_vectors)
         basis = matrix([v for v in basis if v])
@@ -302,7 +318,6 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
     if dim[0] != dim[1]:
         raise ValueError("invalid matrix")
     basis = basis / 2
-    radius = radius / 4
 
     ieqs = []
     for v in basis:
@@ -313,7 +328,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
     V = diamond_cut(Q, basis, radius, verbose=verbose)
 
     if artificial_length is not None:
-        # remove inequalities introduced by artificial basis points
+        # Remove inequalities introduced by artificial basis points.
         H = V.Hrepresentation()
         H = [v for v in H if all(not V._is_zero(v.A() * w / 2 - v.b()) and
                                  not V._is_zero(v.A() * (-w) / 2 - v.b())
