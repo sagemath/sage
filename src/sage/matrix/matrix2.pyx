@@ -3524,8 +3524,12 @@ cdef class Matrix(Matrix1):
             sage: B.diagonal(-1)
             [7, 15]
             sage: B.diagonal(-2)
-            [14] 
-        
+            [14]
+            sage: B.diagonal(100)           # when idx out of range
+            []
+            sage: B.diagonal(-100)
+            []
+
             sage: C = matrix(3, 2, range(6)); C
             [0 1]
             [2 3]
@@ -3547,9 +3551,8 @@ cdef class Matrix(Matrix1):
         if offset >= 0:
             n = min(self.nrows(), self.ncols() - offset)
             return [self[i, i + offset] for i in range(n)]
-        else:
-            n = min(self.nrows() + offset, self.ncols())
-            return [self[i - offset, i] for i in range(n)]
+        n = min(self.nrows() + offset, self.ncols())
+        return [self[i - offset, i] for i in range(n)]
 
     def trace(self):
         """
