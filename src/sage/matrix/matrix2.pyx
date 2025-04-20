@@ -3551,8 +3551,9 @@ cdef class Matrix(Matrix1):
         if offset >= 0:
             n = min(self.nrows(), self.ncols() - offset)
             return [self[i, i + offset] for i in range(n)]
-        n = min(self.nrows() + offset, self.ncols())
-        return [self[i - offset, i] for i in range(n)]
+        else:
+            n = min(self.nrows() + offset, self.ncols())
+            return [self[i - offset, i] for i in range(n)]
 
     def trace(self):
         """
