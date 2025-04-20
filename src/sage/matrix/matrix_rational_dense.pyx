@@ -1586,7 +1586,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         self.cache('rank', len(pivots))
 
     def echelon_form(self, algorithm=None,
-                     height_guess=None, proof=None, **kwds):
+                     height_guess=None, proof=None, transformation=False, **kwds):
         r"""
         Return the echelon form of this matrix.
 
@@ -1642,6 +1642,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
             ....:     ech_class = m.echelon_form('classical')
             ....:     assert ech_flint == ech_padic == ech_multi == ech_class
         """
+        if transformation:
+            raise NotImplementedError("transformation not supported in this class")            
         x = self.fetch('echelon_form')
         if x is not None:
             return x
