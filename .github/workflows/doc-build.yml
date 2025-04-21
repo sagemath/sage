@@ -113,7 +113,7 @@ jobs:
             # mathjax path in old doc (regex)
             mathjax_path_from="[-./A-Za-z_]*/tex-chtml[.]js?v=[0-9a-f]*"
             # mathjax path in new doc
-            mathjax_path_to=$(SAGE_USE_CDNS=yes python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
+            mathjax_path_to=$(SAGE_USE_CDNS=yes python -c "from src.sage_docbuild.conf import mathjax_path; print(mathjax_path)")
             new_version=$(cat src/VERSION.txt)
             # Wipe out chronic diffs between old doc and new doc
             (cd doc && \
