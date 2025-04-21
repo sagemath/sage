@@ -71,12 +71,11 @@ jobs:
           pip install --no-build-isolation --config-settings=builddir=builddir . -v
   
       #
-      # On pull request and push to develop events
+      # For pull requests
       #
-
       - name: Get workflow run-id
         id: get_run_id
-        if: !startsWith(github.ref, 'refs/tags/') && github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request'
         run: |
           RESPONSE=$(curl -s -L \
             -H "Accept: application/vnd.github+json" \
