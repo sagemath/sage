@@ -256,10 +256,7 @@ of the matrix)::
 Or we can get the basis vectors explicitly as a list of vectors::
 
     sage: V.basis()
-    [
-    (1, 0, -1/3),
-    (0, 1, -2/3)
-    ]
+    [(1, 0, -1/3), (0, 1, -2/3)]
 
 .. note::
    Kernels are **vector spaces** and bases are "\ **echelonized**\ "
@@ -316,12 +313,8 @@ eigenvectors.
 ::
 
     sage: D,P=H.eigenmatrix_right()
-    sage: P*D-H*P
-    [0 0 0 0 0]
-    [0 0 0 0 0]
-    [0 0 0 0 0]
-    [0 0 0 0 0]
-    [0 0 0 0 0]
+    sage: P*D-H*P == matrix.zero(5)
+    True
 
 Matrix Solving
 ---------------

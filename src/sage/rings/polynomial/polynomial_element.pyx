@@ -81,7 +81,9 @@ from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
 
 try:
-    from sage.libs.pari.all import pari, pari_gen, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
     pari = None
@@ -1175,8 +1177,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef Py_ssize_t d = self.degree()
         if 0 <= i <= d:
             return self.get_unsafe(i)
-        else:
-            return self._parent._base.zero()
+        return self._parent._base.zero()
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
@@ -1605,10 +1606,57 @@ cdef class Polynomial(CommutativePolynomial):
         system for the coefficients of `s` and `t` for inexact rings (as the
         Euclidean algorithm may not converge in that case).
 
+        May also use Singular in certain cases.
+
         AUTHORS:
 
         - Robert Bradshaw (2007-05-31)
+
+        TESTS:
+
+        At the time of writing :meth:`inverse_mod` is not implemented in general for the following ring,
+        but it should fallback to :meth:`inverse_of_unit` when possible::
+
+            sage: R.<u,v> = ZZ[]
+            sage: S = R.localization(u)
+            sage: T.<x> = S[]
+            sage: T
+            Univariate Polynomial Ring in x over Multivariate Polynomial Ring in u, v over Integer Ring localized at (u,)
+            sage: T(u).is_unit()
+            True
+            sage: T(u).inverse_of_unit()
+            1/u
+            sage: T(u).inverse_mod(T(v))
+            1/u
+            sage: T(v).inverse_mod(T(v^2-1))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Multivariate Polynomial Ring in u, v over Integer Ring localized at (u,) does not provide...
+
+        The behavior of ``xgcd`` over rings like ``ZZ`` are nonstandard, we check the behavior::
+
+            sage: R.<x> = ZZ[]
+            sage: a = 2*x^2+1
+            sage: b = -2*x^2+1
+            sage: a.xgcd(b)
+            (16, 8, 8)
+            sage: c = a.inverse_mod(b); c  # uses Singular
+            -x^2 + 1
+            sage: c.parent() is R
+            True
         """
+        from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
+        P = a.parent()
+        if can_convert_to_singular(P):
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            try:
+                R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
+            except NotImplementedError:
+                # PolynomialRing over RDF/CDF etc. are still not implemented in libsingular
+                # (in particular singular_ring_new) even though they are implemented in _do_singular_init_
+                pass
+            else:
+                return P(R(a).inverse_mod(R.ideal(m)))
         from sage.rings.ideal import Ideal_generic
         if isinstance(m, Ideal_generic):
             v = m.gens_reduced()
@@ -1622,16 +1670,28 @@ cdef class Polynomial(CommutativePolynomial):
                 r *= m.base_ring()(~m[1])
             u = a(r)
             if u.is_unit():
-                return a.parent()(~u)
-        if a.parent().is_exact():
+                return P(~u)
+        if P.is_exact():
             # use xgcd
-            g, s, _ = a.xgcd(m)
-            if g == 1:
-                return s
-            elif g.is_unit():
-                return g.inverse_of_unit() * s
-            else:
-                raise ValueError("Impossible inverse modulo")
+            try:
+                g, s, _ = a.xgcd(m)
+                if g == 1:
+                    return s
+                elif g.is_unit():
+                    return g.inverse_of_unit() * s
+                else:
+                    R = m.base_ring()
+                    if R.is_field():
+                        raise ValueError("Impossible inverse modulo")
+                    else:
+                        raise NotImplementedError(f"The base ring (={R}) is not a field")
+            except NotImplementedError:
+                # attempt fallback, return inverse_of_unit() if this is already an unit
+                try:
+                    return a.inverse_of_unit()
+                except (ArithmeticError, ValueError, NotImplementedError):
+                    pass
+                raise
         else:
             # xgcd may not converge for inexact rings.
             # Instead solve for the coefficients of
@@ -1822,13 +1882,14 @@ cdef class Polynomial(CommutativePolynomial):
         cdef Polynomial _right = right
         if self.is_term():
             return _right._mul_term(self, term_on_right=False)
-        elif _right.is_term():
+
+        if _right.is_term():
             return self._mul_term(_right, term_on_right=True)
 
-        elif self._parent.is_exact():
+        if self._parent.is_exact():
             return self._mul_karatsuba(right)
-        else:
-            return self._mul_generic(right)
+
+        return self._mul_generic(right)
 
     cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         r"""
@@ -2280,7 +2341,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         - ``degree`` -- ``None`` or positive integer (default: ``None``).
           Used for polynomials over finite fields. If ``None``, returns
-          the the first factor found (usually the smallest). Otherwise,
+          the first factor found (usually the smallest). Otherwise,
           attempts to return an irreducible factor of ``self`` of chosen
           degree ``degree``.
 
@@ -2533,10 +2594,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: K.<a> = GF(2^8)
             sage: x = polygen(K)
             sage: pol = x^1000000 + x + a
-            sage: alarm(0.5); pol.any_root()
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): pol.any_root()
 
         Check root computation over large finite fields::
 
@@ -6809,13 +6868,17 @@ cdef class Polynomial(CommutativePolynomial):
 
         e = self.exponents()
         c = self.coefficients()
-        if len(e) == 0: return []
+        if len(e) == 0:
+            return []
         if len(e) == 1:
-            if e[0] == 0: return []
-            else:         return [(infinity.infinity, e[0])]
+            if e[0] == 0:
+                return []
+            return [(infinity.infinity, e[0])]
 
-        if e[0] == 0: slopes = []
-        else:         slopes = [(infinity.infinity, e[0])]
+        if e[0] == 0:
+            slopes = []
+        else:
+            slopes = [(infinity.infinity, e[0])]
 
         points = [(e[0], c[0].valuation(p)), (e[1], c[1].valuation(p))]
         slopes.append((-(c[1].valuation(p)-c[0].valuation(p))/(e[1] - e[0]), e[1]-e[0]))
@@ -6826,8 +6889,8 @@ cdef class Polynomial(CommutativePolynomial):
                 slopes = slopes[:-1]
                 points = points[:-1]
                 s = -(v-points[-1][1])/(e[i]-points[-1][0])
-            slopes.append((s,e[i]-points[-1][0]))
-            points.append((e[i],v))
+            slopes.append((s, e[i]-points[-1][0]))
+            points.append((e[i], v))
 
         return slopes
 
@@ -7177,9 +7240,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = R('e*i') * x + x^2
             sage: f._giac_init_()
             '((1)*1)*sageVARx^2+((1)*sageVARe*sageVARi)*sageVARx'
-            sage: giac(f)  # needs giac
+            sage: giac(f)                                                               # needs giac
             sageVARx^2+sageVARe*sageVARi*sageVARx
-            sage: giac(R.zero())  # needs giac
+            sage: giac(R.zero())                                                        # needs giac
             0
         """
         g = 'sageVAR' + self.variable_name()
@@ -7646,7 +7709,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: x = polygen(R)
             sage: f = (x - a) * (x - b) * (x - c)
             sage: f.compose_power(2).factor()                                           # needs sage.libs.singular sage.modules
-            (x - c^2) * (x - b^2) * (x - a^2) * (x - b*c)^2 * (x - a*c)^2 * (x - a*b)^2
+            (x - a^2) * (x - b^2) * (x - c^2) * (x - a*b)^2 * (x - a*c)^2 * (x - b*c)^2
 
             sage: # needs sage.libs.singular sage.modules
             sage: x = polygen(QQ)
@@ -7715,7 +7778,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(QQ)
             sage: f = x^2 - 2*x + 2
-            sage: f.adams_operator_on_roots(10)                                                  # needs sage.libs.singular
+            sage: f.adams_operator_on_roots(10)                                         # needs sage.libs.singular
             x^2 + 1024
 
         When ``self`` is monic, the output will have leading coefficient
@@ -7725,10 +7788,10 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x - a) * (x - b) * (x - c)
-            sage: f.adams_operator_on_roots(3).factor()                                          # needs sage.libs.singular
-            (-1) * (x - c^3) * (x - b^3) * (x - a^3)
-            sage: f.adams_operator_on_roots(3, monic=True).factor()                              # needs sage.libs.singular
-            (x - c^3) * (x - b^3) * (x - a^3)
+            sage: f.adams_operator_on_roots(3).factor()                                 # needs sage.libs.singular
+            (-1) * (x - a^3) * (x - b^3) * (x - c^3)
+            sage: f.adams_operator_on_roots(3, monic=True).factor()                     # needs sage.libs.singular
+            (x - a^3) * (x - b^3) * (x - c^3)
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -7768,8 +7831,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: [f.symmetric_power(k).factor() for k in range(5)]                     # needs sage.libs.singular
             [x - 1,
              (-x + d) * (-x + c) * (-x + b) * (-x + a),
-             (x - c*d) * (x - b*d) * (x - a*d) * (x - b*c) * (x - a*c) * (x - a*b),
-             (x - b*c*d) * (x - a*c*d) * (x - a*b*d) * (x - a*b*c),
+             (x - a*b) * (x - a*c) * (x - b*c) * (x - a*d) * (x - b*d) * (x - c*d),
+             (x - a*b*c) * (x - a*b*d) * (x - a*c*d) * (x - b*c*d),
              x - a*b*c*d]
         """
         try:
@@ -8398,19 +8461,19 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: # needs sage.libs.flint
             sage: Pol.<x> = CBF[]
-            sage: (x^2 + 2).roots(multiplicities=False)
-            [[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
-            [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I]
+            sage: set((x^2 + 2).roots(multiplicities=False))
+            {[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
+             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I}
             sage: (x^3 - 1/2).roots(RBF, multiplicities=False)
             [[0.7937005259840997 +/- ...e-17]]
             sage: ((x - 1)^2).roots(multiplicities=False, proof=False)
             doctest:...
             UserWarning: roots may have been lost...
-            [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
-             [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
+            [[1.000000000... +/- ...] + [+/- ...]*I,
+             [1.000000000... +/- ...] + [+/- ...]*I]
             sage: ((x - 1)^2).roots(multiplicities=False, proof=False, warn=False)
-            [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
-             [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
+            [[1.000000000... +/- ...] + [+/- ...]*I,
+             [1.000000000... +/- ...] + [+/- ...]*I]
 
         Note that coefficients in a number field with defining polynomial
         `x^2 + 1` are considered to be Gaussian rationals (with the
@@ -10312,7 +10375,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def _is_squarefree_generic(self):
         r"""
-        Return False if this polynomial is not square-free, i.e., if there is a
+        Return ``False`` if this polynomial is not square-free, i.e., if there is a
         non-unit `g` in the polynomial ring such that `g^2` divides ``self``.
 
         EXAMPLES::
@@ -11022,11 +11085,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         x, = self.variables()
 
-        if isinstance(var, int) or isinstance(var, Integer):
+        if isinstance(var, (int, Integer)):
             if var:
                 raise TypeError("Variable index %d must be < 1." % var)
-            else:
-                return sum(self.coefficients())*x**self.degree()
+            return sum(self.coefficients()) * x**self.degree()
 
         x_name = self.variable_name()
         var = str(var)

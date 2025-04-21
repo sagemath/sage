@@ -397,12 +397,10 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.basis()
-            [
-            (1, 0, 0, 0, 0, 1, 1),
-            (0, 1, 0, 0, 1, 0, 1),
-            (0, 0, 1, 0, 1, 1, 0),
-            (0, 0, 0, 1, 1, 1, 1)
-            ]
+            [(1, 0, 0, 0, 0, 1, 1),
+             (0, 1, 0, 0, 1, 0, 1),
+             (0, 0, 1, 0, 1, 1, 0),
+             (0, 0, 0, 1, 1, 1, 1)]
             sage: C.basis().universe()
             Vector space of dimension 7 over Finite Field of size 2
         """
@@ -527,7 +525,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         EXAMPLES::
 
             sage: G = matrix(GF(3), [[ 1, 2, 1, 0],\
-                                     [ 2, 1, 1, 1]])
+            ....:                    [ 2, 1, 1, 1]])
             sage: C = LinearCode(G)
             sage: C.generator_matrix()
             [1 2 1 0]
@@ -579,8 +577,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: Cs is C
             True
             sage: C = LinearCode(matrix(GF(2), [[1,0,0,0,1,1,0],\
-                                                [0,1,0,1,0,1,0],\
-                                                [0,0,0,0,0,0,1]]))
+            ....:                               [0,1,0,1,0,1,0],\
+            ....:                               [0,0,0,0,0,0,1]]))
             sage: Cs, p = C.standard_form()
             sage: p
             [1, 2, 7, 3, 4, 5, 6]
@@ -629,7 +627,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
              [1 1 0]
              [1 1 1]
             sage: C = LinearCode(matrix(GF(3),2,[1,2,0,\
-                                                 2,1,1]))
+            ....:                                2,1,1]))
             sage: C.systematic_generator_matrix()
             [1 2 0]
             [0 0 1]
@@ -1055,9 +1053,9 @@ class LinearCodeSystematicEncoder(Encoder):
 
         sage: LCSE = codes.encoders.LinearCodeSystematicEncoder
         sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0,0],\
-                                 [1,0,0,1,1,0,0,0],\
-                                 [0,1,0,1,0,1,0,0],\
-                                 [1,1,0,1,0,0,1,1]])
+        ....:                    [1,0,0,1,1,0,0,0],\
+        ....:                    [0,1,0,1,0,1,0,0],\
+        ....:                    [1,1,0,1,0,0,1,1]])
         sage: C = LinearCode(G)
         sage: E = LCSE(C)
         sage: E.generator_matrix()
@@ -1209,9 +1207,9 @@ class LinearCodeSystematicEncoder(Encoder):
 
             sage: LCSE = codes.encoders.LinearCodeSystematicEncoder
             sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],\
-                                     [1,0,0,1,1,0,0],\
-                                     [0,1,0,1,0,1,0],\
-                                     [1,1,0,1,0,0,1]])
+            ....:                    [1,0,0,1,1,0,0],\
+            ....:                    [0,1,0,1,0,1,0],\
+            ....:                    [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: E = LCSE(C)
             sage: E.generator_matrix()
@@ -1232,9 +1230,9 @@ class LinearCodeSystematicEncoder(Encoder):
         Another example where there is no generator matrix of the form `[I \vert H]`::
 
             sage: G = Matrix(GF(2), [[1,1,0,0,1,0,1],\
-                                     [1,1,0,0,1,0,0],\
-                                     [0,0,1,0,0,1,0],\
-                                     [0,0,1,0,1,0,1]])
+            ....:                    [1,1,0,0,1,0,0],\
+            ....:                    [0,0,1,0,0,1,0],\
+            ....:                    [0,0,1,0,1,0,1]])
             sage: C = LinearCode(G)
             sage: E = LCSE(C)
             sage: E.generator_matrix()
@@ -1279,8 +1277,8 @@ class LinearCodeSystematicEncoder(Encoder):
         EXAMPLES::
 
             sage: C = LinearCode(matrix(GF(2), [[1,0,0,0,1,1,0],\
-                                                [0,1,0,1,0,1,0],\
-                                                [0,0,0,0,0,0,1]]))
+            ....:                               [0,1,0,1,0,1,0],\
+            ....:                               [0,0,0,0,0,0,1]]))
             sage: E = codes.encoders.LinearCodeSystematicEncoder(C)
             sage: E.systematic_positions()
             (0, 1, 6)
@@ -1311,9 +1309,9 @@ class LinearCodeSystematicEncoder(Encoder):
 
             sage: LCSE = codes.encoders.LinearCodeSystematicEncoder
             sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],\
-                                     [1,0,0,1,1,0,0],\
-                                     [0,1,0,1,0,1,0],\
-                                     [1,1,0,1,0,0,1]])
+            ....:                    [1,0,0,1,1,0,0],\
+            ....:                    [0,1,0,1,0,1,0],\
+            ....:                    [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: E = LCSE(C)
             sage: E.systematic_positions()
@@ -1322,9 +1320,9 @@ class LinearCodeSystematicEncoder(Encoder):
         We take another matrix with a less nice shape::
 
             sage: G = Matrix(GF(2), [[1,1,0,0,1,0,1],\
-                                     [1,1,0,0,1,0,0],\
-                                     [0,0,1,0,0,1,0],\
-                                     [0,0,1,0,1,0,1]])
+            ....:                    [1,1,0,0,1,0,0],\
+            ....:                    [0,0,1,0,0,1,0],\
+            ....:                    [0,0,1,0,1,0,1]])
             sage: C = LinearCode(G)
             sage: E = LCSE(C)
             sage: E.systematic_positions()
@@ -1345,8 +1343,8 @@ class LinearCodeSystematicEncoder(Encoder):
         positions (even if another choice might also be systematic)::
 
             sage: G = Matrix(GF(2), [[1,0,0,0],\
-                                     [0,1,0,0],\
-                                     [0,0,1,1]])
+            ....:                    [0,1,0,0],\
+            ....:                    [0,0,1,1]])
             sage: C = LinearCode(G)
             sage: E = LCSE(C, systematic_positions=[0,1,3])
             sage: E.systematic_positions()

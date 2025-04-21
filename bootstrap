@@ -146,7 +146,9 @@ EOF
 
     st=$?
     case $st in
-        0) true;; # Success
+        0)  # Success
+            mv configure real_configure
+            cp configure_wrapper configure;;
 
         179|16|63|127)  # no m4 for pkg-config|autotools not installed|or version too old
             if [ $DOWNLOAD = yes ]; then
@@ -220,12 +222,12 @@ save () {
     fi
     mkdir -p upstream
     tar zcf "$NEWCONFBALL" \
-	configure \
+	configure real_configure configure_wrapper \
 	config/install-sh config/compile config/config.guess config/config.sub config/missing \
 	build/make/Makefile-auto.in \
 	src/doc/en/installation/*.txt \
-	$(find src/doc/en/reference/spkg -name index.rst -prune -o -maxdepth 1 -name "*.rst" -print) \
-	environment-3.[89]-*.yml environment-3.1[0-9]-*.yml \
+	$(find src/doc/en/reference/spkg -maxdepth 1 -name index.rst -prune -o -name "*.rst" -print) \
+	environment-3.1[0-9]-*.yml \
 	src/pyproject.toml \
 	src/requirements.txt \
 	src/setup.cfg \

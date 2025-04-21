@@ -96,16 +96,18 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
 
     mpq_init(_z)
 
-    ##  Immediate integers handles carry the tag 'SR_INT', i.e. the last bit is 1.
-    ##  This distinguishes immediate integers from other handles which point to
-    ##  structures aligned on 4 byte boundaries and therefore have last bit zero.
-    ##  (The second bit is reserved as tag to allow extensions of this scheme.)
-    ##  Using immediates as pointers and dereferencing them gives address errors.
+    # Immediate integers handles carry the tag 'SR_INT', i.e. the last bit is 1.
+    # This distinguishes immediate integers from other handles which point to
+    # structures aligned on 4 byte boundaries and therefore have last bit zero.
+    # (The second bit is reserved as tag to allow extensions of this scheme.)
+    # Using immediates as pointers and dereferencing them gives address errors.
     nom = nlGetNumerator(n, _ring.cf)
     mpz_init(nom_z)
 
-    if (SR_HDL(nom) & SR_INT): mpz_set_si(nom_z, SR_TO_INT(nom))
-    else: mpz_set(nom_z,nom.z)
+    if SR_HDL(nom) & SR_INT:
+        mpz_set_si(nom_z, SR_TO_INT(nom))
+    else:
+        mpz_set(nom_z,nom.z)
 
     mpq_set_num(_z,nom_z)
     nlDelete(&nom,_ring.cf)
@@ -114,8 +116,10 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
     denom = nlGetDenom(n, _ring.cf)
     mpz_init(denom_z)
 
-    if (SR_HDL(denom) & SR_INT): mpz_set_si(denom_z, SR_TO_INT(denom))
-    else: mpz_set(denom_z,denom.z)
+    if SR_HDL(denom) & SR_INT:
+        mpz_set_si(denom_z, SR_TO_INT(denom))
+    else:
+        mpz_set(denom_z,denom.z)
 
     mpq_set_den(_z, denom_z)
     nlDelete(&denom,_ring.cf)
@@ -1190,7 +1194,7 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring) noexcept:
 
     ngens = elem.parent().ngens()
 
-    nMapFuncPtr =  naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
+    nMapFuncPtr = naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
 
     if nMapFuncPtr is NULL:
         raise RuntimeError("Failed to determine nMapFuncPtr")
@@ -1305,7 +1309,7 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
 
     ngens = elem.parent().ngens()
 
-    nMapFuncPtr =  naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
+    nMapFuncPtr = naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
 
     if nMapFuncPtr is NULL:
         raise RuntimeError("Failed to determine nMapFuncPtr")
@@ -1393,6 +1397,13 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
         (a + 1)
         sage: R(F.gen()^5) + 1
         (-a^2 + a + 2)
+
+    Ensures :issue:`36101` is fixed::
+
+        sage: RR.<x, y, r, s0, c0, s1, c1> = AA[]
+        sage: f = -4*r^2+(((1+2*AA(cos(pi/6)))*c0*r+2*c1*r+(1+2*AA(cos(pi/6)))*s0*r+2*s1*r)/2-1/2)^2+((1-(1+2*AA(cos(pi/6)))*c0*r-2*c1*r+(1+2*AA(cos(pi/6)))*s0*r+2*s1*r)/2-1/2)^2
+        sage: f.change_ring( QuadraticField(3) )
+        ...
     """
     cdef int i
     cdef number *n1
@@ -1402,13 +1413,6 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     cdef number *naCoeff
     cdef number *apow1
     cdef number *apow2
-
-    cdef nMapFunc nMapFuncPtr = NULL
-
-    nMapFuncPtr =  naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
-
-    if nMapFuncPtr is NULL:
-        raise RuntimeError("Failed to determine nMapFuncPtr")
 
     elem = list(elem)
 
@@ -1432,7 +1436,10 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     rComplete(qqr,1)
     qqr.ShortOut = 0
 
-    nMapFuncPtr =  naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
+    assert _ring.cf.type == n_algExt  # if false naSetMap will segmentation fault (should never happen)
+    cdef nMapFunc nMapFuncPtr = naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
+    if nMapFuncPtr is NULL:
+        raise RuntimeError("Failed to determine nMapFuncPtr")
     cdef poly *_p
     for i from 0 <= i < len(elem):
         nlCoeff = nlInit2gmp( mpq_numref((<Rational>elem[i]).value), mpq_denref((<Rational>elem[i]).value),  qqr.cf )

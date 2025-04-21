@@ -43,14 +43,14 @@ function.
 
 .. NOTE::
 
-   IMPORTANT: PALP requires some parameters to be determined during
-   compilation time, i.e., the maximum dimension of polytopes, the
-   maximum number of points, etc. These limitations may lead to errors
-   during calls to different functions of these module.  Currently, a
-   :exc:`ValueError` exception will be raised if the output of ``poly.x``
-   or ``nef.x`` is empty or contains the exclamation mark. The error
-   message will contain the exact command that caused an error, the
-   description and vertices of the polytope, and the obtained output.
+    IMPORTANT: PALP requires some parameters to be determined during
+    compilation time, i.e., the maximum dimension of polytopes, the
+    maximum number of points, etc. These limitations may lead to errors
+    during calls to different functions of these module.  Currently, a
+    :exc:`ValueError` exception will be raised if the output of ``poly.x``
+    or ``nef.x`` is empty or contains the exclamation mark. The error
+    message will contain the exact command that caused an error, the
+    description and vertices of the polytope, and the obtained output.
 
 Data obtained from PALP and some other data is cached and most
 returned values are immutable. In particular, you cannot change the
@@ -120,6 +120,14 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from collections.abc import Hashable
+from copyreg import constructor as copyreg_constructor
+import os
+import shlex
+from subprocess import Popen, PIPE
+from warnings import warn
+from functools import reduce
+from io import IOBase, StringIO
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.combinat.posets.posets', 'FinitePoset')
@@ -158,16 +166,6 @@ from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.geometry.convex_set import ConvexSet_compact
 import sage.geometry.abc
-
-from copy import copy
-from collections.abc import Hashable
-from copyreg import constructor as copyreg_constructor
-import os
-import shlex
-from subprocess import Popen, PIPE
-from warnings import warn
-from functools import reduce
-from io import IOBase, StringIO
 
 
 class SetOfAllLatticePolytopesClass(Set_generic):
@@ -362,16 +360,16 @@ def ReflexivePolytope(dim, n):
 
     .. NOTE::
 
-       #. Numeration starts with zero: `0 \leq n \leq 15` for `{\rm dim} = 2`
-          and `0 \leq n \leq 4318` for `{\rm dim} = 3`.
+        #. Numeration starts with zero: `0 \leq n \leq 15` for `{\rm dim} = 2`
+           and `0 \leq n \leq 4318` for `{\rm dim} = 3`.
 
-       #. During the first call, all reflexive polytopes of requested
-          dimension are loaded and cached for future use, so the first
-          call for 3-dimensional polytopes can take several seconds,
-          but all consecutive calls are fast.
+        #. During the first call, all reflexive polytopes of requested
+           dimension are loaded and cached for future use, so the first
+           call for 3-dimensional polytopes can take several seconds,
+           but all consecutive calls are fast.
 
-       #. Equivalent to ``ReflexivePolytopes(dim)[n]`` but checks bounds
-          first.
+        #. Equivalent to ``ReflexivePolytopes(dim)[n]`` but checks bounds
+           first.
 
     EXAMPLES:
 
@@ -422,9 +420,9 @@ def ReflexivePolytopes(dim):
 
     .. NOTE::
 
-       During the first call the database is loaded and cached for
-       future use, so repetitive calls will return the same object in
-       memory.
+        During the first call the database is loaded and cached for
+        future use, so repetitive calls will return the same object in
+        memory.
 
     INPUT:
 
@@ -972,14 +970,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Run ``command`` on vertices of this polytope.
 
-        Returns the output of ``command`` as a string.
+        This returns the output of ``command`` as a string.
 
         .. NOTE::
 
-          PALP cannot be called for polytopes that do not span the ambient space.
-          If you specify ``reduce_dimension=True`` argument, PALP will be
-          called for vertices of this polytope in some basis of the affine space
-          it spans.
+            PALP cannot be called for polytopes that do not span the
+            ambient space.  If you specify ``reduce_dimension=True``
+            argument, PALP will be called for vertices of this
+            polytope in some basis of the affine space it spans.
 
         TESTS::
 
@@ -1250,11 +1248,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             False
             sage: o_copy._read_nef_partitions(s)                                        # needs palp
             sage: o_copy._nef_partitions                                                # needs palp
-            [
-            Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
-            Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
-            Nef-partition {0, 1, 2, 3} ⊔ {4, 5}
-            ]
+            [Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
+             Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
+             Nef-partition {0, 1, 2, 3} ⊔ {4, 5}]
         """
         if isinstance(data, str):
             f = StringIO(data)
@@ -1413,13 +1409,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         .. NOTE::
 
-          #. While ``a`` and ``b`` may be rational, the final result must be a
-             lattice polytope, i.e. all vertices must be integral.
+            #. While ``a`` and ``b`` may be rational, the final result
+               must be a lattice polytope, i.e. all vertices must be integral.
 
-          #. If the transform (restricted to this polytope) is bijective, facial
-             structure will be preserved, e.g. the first facet of the image will
-             be spanned by the images of vertices which span the first facet of
-             the original polytope.
+            #. If the transform (restricted to this polytope) is
+               bijective, facial structure will be preserved, e.g. the
+               first facet of the image will be spanned by the images
+               of vertices which span the first facet of the original
+               polytope.
 
         INPUT:
 
@@ -1499,6 +1496,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             else:
                 r._original = self
         return r
+
+    linear_transformation = affine_transform
 
     def ambient(self):
         r"""
@@ -2400,10 +2399,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         .. NOTE::
 
-           The columns correspond to facets/facet normals
-           in the order of :meth:`facet_normals`, the rows
-           correspond to the vertices in the order of
-           :meth:`vertices`.
+            The columns correspond to facets/facet normals
+            in the order of :meth:`facet_normals`, the rows
+            correspond to the vertices in the order of
+            :meth:`vertices`.
 
         EXAMPLES::
 
@@ -2454,9 +2453,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         .. NOTE::
 
-           The first call to this function for each dimension can take
-           a few seconds while the dictionary of all polytopes is
-           constructed, but after that it is cached and fast.
+            The first call to this function for each dimension can take
+            a few seconds while the dictionary of all polytopes is
+            constructed, but after that it is cached and fast.
 
         :rtype: integer
 
@@ -2710,29 +2709,25 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: p = lattice_polytope.cross_polytope(4)
             sage: p.nef_partitions()                                                    # needs palp
-            [
-            Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
-            Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
-            Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5, 6} ⊔ {7} (projection)
-            ]
+            [Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
+             Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
+             Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7},
+             Nef-partition {0, 1, 2, 3, 4, 5, 6} ⊔ {7} (projection)]
 
         Now we omit projections::
 
             sage: p.nef_partitions(keep_projections=False)                              # needs palp
-            [
-            Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
-            Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
-            Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7}
-            ]
+            [Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
+             Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
+             Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7}]
 
         Currently Hodge numbers cannot be computed for a given nef-partition::
 
@@ -2745,16 +2740,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         Partitions will be exactly the same::
 
             sage: p.nef_partitions(hodge_numbers=True)  # long time (2s on sage.math, 2011), needs palp
-            [
-            Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
-            Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
-            Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5, 6} ⊔ {7} (projection)
-            ]
+            [Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
+             Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
+             Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7},
+             Nef-partition {0, 1, 2, 3, 4, 5, 6} ⊔ {7} (projection)]
 
         Now it is possible to get Hodge numbers::
 
@@ -2772,21 +2765,17 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: p = lattice_polytope.cross_polytope(2)
             sage: p.nef_partitions()                                                    # needs palp
-            [
-            Nef-partition {0, 2} ⊔ {1, 3} (direct product),
-            Nef-partition {0, 1} ⊔ {2, 3},
-            Nef-partition {0, 1, 2} ⊔ {3} (projection)
-            ]
+            [Nef-partition {0, 2} ⊔ {1, 3} (direct product),
+             Nef-partition {0, 1} ⊔ {2, 3},
+             Nef-partition {0, 1, 2} ⊔ {3} (projection)]
             sage: p.nef_partitions(keep_symmetric=True)                                 # needs palp
-            [
-            Nef-partition {0, 1, 3} ⊔ {2} (projection),
-            Nef-partition {0, 2, 3} ⊔ {1} (projection),
-            Nef-partition {0, 3} ⊔ {1, 2},
-            Nef-partition {1, 2, 3} ⊔ {0} (projection),
-            Nef-partition {1, 3} ⊔ {0, 2} (direct product),
-            Nef-partition {2, 3} ⊔ {0, 1},
-            Nef-partition {0, 1, 2} ⊔ {3} (projection)
-            ]
+            [Nef-partition {0, 1, 3} ⊔ {2} (projection),
+             Nef-partition {0, 2, 3} ⊔ {1} (projection),
+             Nef-partition {0, 3} ⊔ {1, 2},
+             Nef-partition {1, 2, 3} ⊔ {0} (projection),
+             Nef-partition {1, 3} ⊔ {0, 2} (direct product),
+             Nef-partition {2, 3} ⊔ {0, 1},
+             Nef-partition {0, 1, 2} ⊔ {3} (projection)]
 
         Nef-partitions can be computed only for reflexive polytopes::
 
@@ -3308,7 +3297,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
              [(1,2), (1,2)],
              [(), ()],
              [(2,3), (2,3)]]
-            sage: PM_max.automorphisms_of_rows_and_columns()                            # needs sage.graphs
+            sage: PM_max.automorphisms_of_rows_and_columns()                            # needs sage.graphs sage.groups
             [((), ()),
              ((1,2,3), (1,2,3)),
              ((1,3,2), (1,3,2)),
@@ -3959,11 +3948,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         """
         if k >= self.dim():
             return list(range(self.npoints()))
-        skeleton = set([])
+        skeleton = set()
         for face in self.faces(dim=k):
             skeleton.update(face.ambient_point_indices())
-        skeleton = sorted(skeleton)
-        return skeleton
+        return sorted(skeleton)
 
     def skeleton_show(self, normal=None):
         r"""Show the graph of one-skeleton of this polytope.
@@ -4135,7 +4123,7 @@ def is_NefPartition(x):
         sage: o = lattice_polytope.cross_polytope(3)
         sage: np = o.nef_partitions()[0]; np                                            # needs palp
         Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
-        sage: isinstance(np, NefPartition)                                                       # needs palp
+        sage: isinstance(np, NefPartition)                                              # needs palp
         True
     """
     from sage.misc.superseded import deprecation
@@ -4276,13 +4264,11 @@ class NefPartition(SageObject, Hashable):
     ``nef.x`` program from PALP)::
 
         sage: o.nef_partitions()                                                        # needs palp
-        [
-        Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
-        Nef-partition {0, 1, 3, 4} ⊔ {2, 5} (direct product),
-        Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
-        Nef-partition {0, 1, 2, 3} ⊔ {4, 5},
-        Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)
-        ]
+        [Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
+         Nef-partition {0, 1, 3, 4} ⊔ {2, 5} (direct product),
+         Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
+         Nef-partition {0, 1, 2, 3} ⊔ {4, 5},
+         Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)]
     """
 
     def __init__(self, data, Delta_polar, check=True):
@@ -4989,15 +4975,15 @@ def _palp(command, polytopes, reduce_dimension=False):
     Run ``command`` on vertices of given
     ``polytopes``.
 
-    Returns the name of the file containing the output of
+    This returns the name of the file containing the output of
     ``command``. You should delete it after using.
 
     .. NOTE::
 
-      PALP cannot be called for polytopes that do not span the ambient space.
-      If you specify ``reduce_dimension=True`` argument, PALP will be
-      called for vertices of this polytope in some basis of the affine space
-      it spans.
+        PALP cannot be called for polytopes that do not span the
+        ambient space.  If you specify ``reduce_dimension=True``
+        argument, PALP will be called for vertices of this polytope in
+        some basis of the affine space it spans.
 
     TESTS::
 
@@ -5329,13 +5315,11 @@ def all_nef_partitions(polytopes, keep_symmetric=False):
         sage: o = lattice_polytope.cross_polytope(3)
         sage: lattice_polytope.all_nef_partitions([o])                                  # needs palp
         sage: o.nef_partitions()                                                        # needs palp
-        [
-        Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
-        Nef-partition {0, 1, 3, 4} ⊔ {2, 5} (direct product),
-        Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
-        Nef-partition {0, 1, 2, 3} ⊔ {4, 5},
-        Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)
-        ]
+        [Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
+         Nef-partition {0, 1, 3, 4} ⊔ {2, 5} (direct product),
+         Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
+         Nef-partition {0, 1, 2, 3} ⊔ {4, 5},
+         Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)]
 
     You cannot use this function for non-reflexive polytopes::
 
@@ -5455,8 +5439,8 @@ def convex_hull(points):
 
     .. NOTE::
 
-       ``points`` might not span the space. Also, it fails for large
-       numbers of vertices in dimensions 4 or greater
+        ``points`` might not span the space. Also, it fails for large
+        numbers of vertices in dimensions 4 or greater
 
     INPUT:
 
@@ -5530,7 +5514,7 @@ def minkowski_sum(points1, points2):
 
     .. NOTE::
 
-       Polytopes might not be of maximal dimension.
+        Polytopes might not be of maximal dimension.
 
     INPUT:
 

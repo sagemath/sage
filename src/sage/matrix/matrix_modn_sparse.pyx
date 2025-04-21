@@ -178,7 +178,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef IntegerMod_int n
-        n =  IntegerMod_int.__new__(IntegerMod_int)
+        n = IntegerMod_int.__new__(IntegerMod_int)
         IntegerMod_abstract.__init__(n, self._base_ring)
         n.ivalue = get_entry(&self.rows[i], j)
         return n
@@ -361,7 +361,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         cdef c_vector_modint* v
 
         # Build a table that gives the nonzero positions in each column of right
-        nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
+        nonzero_positions_in_columns = [set() for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
         for i from 0 <= i < right._nrows:
             v = &(right.rows[i])

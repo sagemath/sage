@@ -634,10 +634,8 @@ class RationalField(Singleton, number_field_base.NumberField):
         EXAMPLES::
 
             sage: QQ.automorphisms()
-            [
-            Ring endomorphism of Rational Field
-              Defn: 1 |--> 1
-            ]
+            [Ring endomorphism of Rational Field
+               Defn: 1 |--> 1]
         """
         return Sequence([self.hom(1, self)], cr=True, immutable=False,
                         check=False)
@@ -918,7 +916,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             assert phi(a) == v, "oops"
         return a
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of generators of `\QQ`, which is only ``(1,)``.
 

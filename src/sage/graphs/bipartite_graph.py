@@ -391,6 +391,16 @@ class BipartiteGraph(Graph):
             Traceback (most recent call last):
             ...
             LookupError: vertex (7) is not a vertex of the graph
+
+        Check that :issue:`39295` is fixed::
+
+            sage: B = BipartiteGraph(matrix([[1, 1], [1, 1]]), immutable=True)
+            sage: print(B.vertices(), B.edges())
+            [0, 1, 2, 3] [(0, 2, None), (0, 3, None), (1, 2, None), (1, 3, None)]
+            sage: B.add_vertices([4], left=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
         """
         if kwds is None:
             kwds = {'loops': False}
@@ -467,32 +477,31 @@ class BipartiteGraph(Graph):
             if kwds.get("multiedges", False) and kwds.get("weighted", False):
                 raise TypeError("weighted multi-edge bipartite graphs from "
                                 "reduced adjacency matrix not supported")
-            Graph.__init__(self, *args, **kwds)
             ncols = data.ncols()
             nrows = data.nrows()
             self.left = set(range(ncols))
             self.right = set(range(ncols, nrows + ncols))
 
-            # ensure that the vertices exist even if there
-            # are no associated edges (trac #10356)
-            self.add_vertices(self.left)
-            self.add_vertices(self.right)
+            def edges():
+                if kwds.get("multiedges", False):
+                    for ii in range(ncols):
+                        for jj in range(nrows):
+                            for _ in range(data[jj, ii]):
+                                yield (ii, jj + ncols)
+                elif kwds.get("weighted", False):
+                    for ii in range(ncols):
+                        for jj in range(nrows):
+                            if data[jj, ii]:
+                                yield (ii, jj + ncols, data[jj, ii])
+                else:
+                    for ii in range(ncols):
+                        for jj in range(nrows):
+                            if data[jj, ii]:
+                                yield (ii, jj + ncols)
 
-            if kwds.get("multiedges", False):
-                for ii in range(ncols):
-                    for jj in range(nrows):
-                        if data[jj, ii]:
-                            self.add_edges([(ii, jj + ncols)] * data[jj, ii])
-            elif kwds.get("weighted", False):
-                for ii in range(ncols):
-                    for jj in range(nrows):
-                        if data[jj, ii]:
-                            self.add_edge((ii, jj + ncols, data[jj, ii]))
-            else:
-                for ii in range(ncols):
-                    for jj in range(nrows):
-                        if data[jj, ii]:
-                            self.add_edge((ii, jj + ncols))
+            # ensure that construction works
+            # when immutable=True (issue #39295)
+            Graph.__init__(self, data=[range(nrows + ncols), edges()], format='vertices_and_edges', *args, **kwds)
         else:
             if partition is not None:
                 left, right = set(partition[0]), set(partition[1])
@@ -1070,7 +1079,6 @@ class BipartiteGraph(Graph):
 
         # add the edge
         Graph.add_edge(self, u, v, label)
-        return
 
     def add_edges(self, edges, loops=True):
         """
@@ -2456,12 +2464,8 @@ class BipartiteGraph(Graph):
 
         B.add_edges(edges_to_keep)
 
-        attributes_to_update = ('_pos', '_assoc')
-        for attr in attributes_to_update:
-            if hasattr(self, attr) and getattr(self, attr) is not None:
-                d = getattr(self, attr)
-                value = {v: d.get(v, None) for v in B}
-                setattr(B, attr, value)
+        B._copy_attribute_from(self, '_pos')
+        B._copy_attribute_from(self, '_assoc')
 
         return B
 
@@ -2520,12 +2524,8 @@ class BipartiteGraph(Graph):
         else:
             # We make a copy of the graph
             B = BipartiteGraph(data=self.edges(sort=True), partition=[self.left, self.right])
-            attributes_to_update = ('_pos', '_assoc')
-            for attr in attributes_to_update:
-                if hasattr(self, attr) and getattr(self, attr) is not None:
-                    d = getattr(self, attr)
-                    value = {v: d.get(v, None) for v in B}
-                    setattr(B, attr, value)
+            B._copy_attribute_from(self, '_pos')
+            B._copy_attribute_from(self, '_assoc')
         B.name("Subgraph of ({})".format(self.name()))
 
         vertices = set(vertices)
@@ -2550,7 +2550,8 @@ class BipartiteGraph(Graph):
         return B
 
     def canonical_label(self, partition=None, certificate=False,
-                        edge_labels=False, algorithm=None, return_graph=True):
+                        edge_labels=False, algorithm=None, return_graph=True,
+                        immutable=None):
         r"""
         Return the canonical graph.
 
@@ -2590,6 +2591,10 @@ class BipartiteGraph(Graph):
           ``False``, returns the list of edges of the canonical graph
           instead of the canonical graph. Only available when ``'bliss'``
           is explicitly set as algorithm.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable (di)graph. ``immutable=None`` (default) means that
+          the (di)graph and its canonical (di)graph will behave the same way.
 
         EXAMPLES::
 
@@ -2649,6 +2654,19 @@ class BipartiteGraph(Graph):
             sage: B.canonical_label()
             Bipartite multi-graph on 4 vertices
 
+        Check the behavior for immutable graphs::
+
+            sage: G = BipartiteGraph(graphs.CycleGraph(4))
+            sage: G.canonical_label().is_immutable()
+            False
+            sage: G.canonical_label(immutable=True).is_immutable()
+            True
+            sage: G = BipartiteGraph(graphs.CycleGraph(4), immutable=True)
+            sage: G.canonical_label().is_immutable()
+            True
+            sage: G.canonical_label(immutable=False).is_immutable()
+            False
+
         .. SEEALSO::
 
             :meth:`~sage.graphs.generic_graph.GenericGraph.canonical_label()`
@@ -2658,7 +2676,8 @@ class BipartiteGraph(Graph):
                                                    certificate=certificate,
                                                    edge_labels=edge_labels,
                                                    algorithm=algorithm,
-                                                   return_graph=return_graph)
+                                                   return_graph=return_graph,
+                                                   immutable=immutable)
 
         else:
             from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree
@@ -2697,7 +2716,9 @@ class BipartiteGraph(Graph):
                 a, b, c = search_tree(GC, partition, certificate=True, dig=False)
                 cert = {v: c[G_to[v]] for v in G_to}
 
-            C = self.relabel(perm=cert, inplace=False)
+            if immutable is None:
+                immutable = self.is_immutable()
+            C = self.relabel(perm=cert, inplace=False, immutable=immutable)
 
         C.left = {cert[v] for v in self.left}
         C.right = {cert[v] for v in self.right}

@@ -20,27 +20,23 @@ quadratic.
 Compute a basis::
 
     sage: n.basis()
-    [
-    1 + O(q^6),
-    q + O(q^6),
-    q^2 + O(q^6),
-    q^3 + O(q^6),
-    q^4 + O(q^6),
-    q^5 + O(q^6)
-    ]
+    [1 + O(q^6),
+     q + O(q^6),
+     q^2 + O(q^6),
+     q^3 + O(q^6),
+     q^4 + O(q^6),
+     q^5 + O(q^6)]
 
 Compute the same basis but to higher precision::
 
     sage: n.set_precision(20)
     sage: n.basis()
-    [
-    1 + 10*q^10 + 20*q^15 + O(q^20),
-    q + 5*q^6 + q^9 + 12*q^11 - 3*q^14 + 17*q^16 + 8*q^19 + O(q^20),
-    q^2 + 4*q^7 - q^8 + 8*q^12 + 2*q^13 + 10*q^17 - 5*q^18 + O(q^20),
-    q^3 + q^7 + 3*q^8 - q^12 + 5*q^13 + 3*q^17 + 6*q^18 + O(q^20),
-    q^4 - q^6 + 2*q^9 + 3*q^14 - 2*q^16 + 4*q^19 + O(q^20),
-    q^5 + q^10 + 2*q^15 + O(q^20)
-    ]
+    [1 + 10*q^10 + 20*q^15 + O(q^20),
+     q + 5*q^6 + q^9 + 12*q^11 - 3*q^14 + 17*q^16 + 8*q^19 + O(q^20),
+     q^2 + 4*q^7 - q^8 + 8*q^12 + 2*q^13 + 10*q^17 - 5*q^18 + O(q^20),
+     q^3 + q^7 + 3*q^8 - q^12 + 5*q^13 + 3*q^17 + 6*q^18 + O(q^20),
+     q^4 - q^6 + 2*q^9 + 3*q^14 - 2*q^16 + 4*q^19 + O(q^20),
+     q^5 + q^10 + 2*q^15 + O(q^20)]
 
 TESTS::
 
@@ -165,11 +161,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
             sage: M = ModularForms(Gamma0(37),2)
             sage: M.basis()
-            [
-            q + q^3 - 2*q^4 + O(q^6),
-            q^2 + 2*q^3 - 2*q^4 + q^5 + O(q^6),
-            1 + 2/3*q + 2*q^2 + 8/3*q^3 + 14/3*q^4 + 4*q^5 + O(q^6)
-            ]
+            [q + q^3 - 2*q^4 + O(q^6),
+             q^2 + 2*q^3 - 2*q^4 + q^5 + O(q^6),
+             1 + 2/3*q + 2*q^2 + 8/3*q^3 + 14/3*q^4 + 4*q^5 + O(q^6)]
 
         The basis after changing the base ring is the reduction modulo
         `3` of an integral basis.
@@ -178,11 +172,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
             sage: M3 = M.change_ring(GF(3))
             sage: M3.basis()
-            [
-            q + q^3 + q^4 + O(q^6),
-            q^2 + 2*q^3 + q^4 + q^5 + O(q^6),
-            1 + q^3 + q^4 + 2*q^5 + O(q^6)
-            ]
+            [q + q^3 + q^4 + O(q^6),
+             q^2 + 2*q^3 + q^4 + q^5 + O(q^6),
+             1 + q^3 + q^4 + 2*q^5 + O(q^6)]
         """
         from . import constructor
         M = constructor.ModularForms(self.group(), self.weight(), base_ring, prec=self.prec(), eis_only=self._eis_only)
@@ -376,20 +368,15 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         ::
 
             sage: M.basis()
-            [
-            q - 24*q^2 + O(q^3),
-            1 + 65520/691*q + 134250480/691*q^2 + O(q^3)
-            ]
+            [q - 24*q^2 + O(q^3), 1 + 65520/691*q + 134250480/691*q^2 + O(q^3)]
 
         ::
 
             sage: M.prec(5)
             5
             sage: M.basis()
-            [
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5),
-            1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + O(q^5)
-            ]
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5),
+             1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + O(q^5)]
         """
         if new_prec:
             self.__prec = new_prec
@@ -408,18 +395,14 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m = ModularForms(Gamma1(5),2)
             sage: m.set_precision(10)
             sage: m.basis()
-            [
-            1 + 60*q^3 - 120*q^4 + 240*q^5 - 300*q^6 + 300*q^7 - 180*q^9 + O(q^10),
-            q + 6*q^3 - 9*q^4 + 27*q^5 - 28*q^6 + 30*q^7 - 11*q^9 + O(q^10),
-            q^2 - 4*q^3 + 12*q^4 - 22*q^5 + 30*q^6 - 24*q^7 + 5*q^8 + 18*q^9 + O(q^10)
-            ]
+            [1 + 60*q^3 - 120*q^4 + 240*q^5 - 300*q^6 + 300*q^7 - 180*q^9 + O(q^10),
+             q + 6*q^3 - 9*q^4 + 27*q^5 - 28*q^6 + 30*q^7 - 11*q^9 + O(q^10),
+             q^2 - 4*q^3 + 12*q^4 - 22*q^5 + 30*q^6 - 24*q^7 + 5*q^8 + 18*q^9 + O(q^10)]
             sage: m.set_precision(5)
             sage: m.basis()
-            [
-            1 + 60*q^3 - 120*q^4 + O(q^5),
-            q + 6*q^3 - 9*q^4 + O(q^5),
-            q^2 - 4*q^3 + 12*q^4 + O(q^5)
-            ]
+            [1 + 60*q^3 - 120*q^4 + O(q^5),
+             q + 6*q^3 - 9*q^4 + O(q^5),
+             q^2 - 4*q^3 + 12*q^4 + O(q^5)]
         """
         if n < 0:
             raise ValueError("n (=%s) must be >= 0" % n)
@@ -480,12 +463,10 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: N = M.new_subspace(); N
             Modular Forms subspace of dimension 4 of Modular Forms space of dimension 6 for Congruence Subgroup Gamma0(17) of weight 4 over Rational Field
             sage: N.basis()
-            [
-            q + 2*q^5 + O(q^6),
-            q^2 - 3/2*q^5 + O(q^6),
-            q^3 + O(q^6),
-            q^4 - 1/2*q^5 + O(q^6)
-            ]
+            [q + 2*q^5 + O(q^6),
+             q^2 - 3/2*q^5 + O(q^6),
+             q^3 + O(q^6),
+             q^4 - 1/2*q^5 + O(q^6)]
 
         ::
 
@@ -529,11 +510,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m = ModularForms(Gamma0(23),2); m
             Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23) of weight 2 over Rational Field
             sage: m.basis()
-            [
-            q - q^3 - q^4 + O(q^6),
-            q^2 - 2*q^3 - q^4 + 2*q^5 + O(q^6),
-            1 + 12/11*q + 36/11*q^2 + 48/11*q^3 + 84/11*q^4 + 72/11*q^5 + O(q^6)
-            ]
+            [q - q^3 - q^4 + O(q^6),
+             q^2 - 2*q^3 - q^4 + 2*q^5 + O(q^6),
+             1 + 12/11*q + 36/11*q^2 + 48/11*q^3 + 84/11*q^4 + 72/11*q^5 + O(q^6)]
             sage: m._q_expansion([1,2,0], 5)
             q + 2*q^2 - 5*q^3 - 3*q^4 + O(q^5)
         """
@@ -699,32 +678,26 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         ::
 
             sage: ModularForms(27,2).eisenstein_series()
-            [
-            q^3 + O(q^6),
-            q - 3*q^2 + 7*q^4 - 6*q^5 + O(q^6),
-            1/12 + q + 3*q^2 + q^3 + 7*q^4 + 6*q^5 + O(q^6),
-            1/3 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6),
-            13/12 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6)
-            ]
+            [q^3 + O(q^6),
+             q - 3*q^2 + 7*q^4 - 6*q^5 + O(q^6),
+             1/12 + q + 3*q^2 + q^3 + 7*q^4 + 6*q^5 + O(q^6),
+             1/3 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6),
+             13/12 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6)]
 
         ::
 
             sage: ModularForms(Gamma1(5),3).eisenstein_series()
-            [
-            -1/5*zeta4 - 2/5 + q + (4*zeta4 + 1)*q^2 + (-9*zeta4 + 1)*q^3 + (4*zeta4 - 15)*q^4 + q^5 + O(q^6),
-            q + (zeta4 + 4)*q^2 + (-zeta4 + 9)*q^3 + (4*zeta4 + 15)*q^4 + 25*q^5 + O(q^6),
-            1/5*zeta4 - 2/5 + q + (-4*zeta4 + 1)*q^2 + (9*zeta4 + 1)*q^3 + (-4*zeta4 - 15)*q^4 + q^5 + O(q^6),
-            q + (-zeta4 + 4)*q^2 + (zeta4 + 9)*q^3 + (-4*zeta4 + 15)*q^4 + 25*q^5 + O(q^6)
-            ]
+            [-1/5*zeta4 - 2/5 + q + (4*zeta4 + 1)*q^2 + (-9*zeta4 + 1)*q^3 + (4*zeta4 - 15)*q^4 + q^5 + O(q^6),
+             q + (zeta4 + 4)*q^2 + (-zeta4 + 9)*q^3 + (4*zeta4 + 15)*q^4 + 25*q^5 + O(q^6),
+             1/5*zeta4 - 2/5 + q + (-4*zeta4 + 1)*q^2 + (9*zeta4 + 1)*q^3 + (-4*zeta4 - 15)*q^4 + q^5 + O(q^6),
+             q + (-zeta4 + 4)*q^2 + (zeta4 + 9)*q^3 + (-4*zeta4 + 15)*q^4 + 25*q^5 + O(q^6)]
 
         ::
 
             sage: eps = DirichletGroup(13).0^2
             sage: ModularForms(eps,2).eisenstein_series()
-            [
-            -7/13*zeta6 - 11/13 + q + (2*zeta6 + 1)*q^2 + (-3*zeta6 + 1)*q^3 + (6*zeta6 - 3)*q^4 - 4*q^5 + O(q^6),
-            q + (zeta6 + 2)*q^2 + (-zeta6 + 3)*q^3 + (3*zeta6 + 3)*q^4 + 4*q^5 + O(q^6)
-            ]
+            [-7/13*zeta6 - 11/13 + q + (2*zeta6 + 1)*q^2 + (-3*zeta6 + 1)*q^3 + (6*zeta6 - 3)*q^4 - 4*q^5 + O(q^6),
+             q + (zeta6 + 2)*q^2 + (-zeta6 + 3)*q^3 + (3*zeta6 + 3)*q^4 + 4*q^5 + O(q^6)]
         """
         return self.eisenstein_submodule().eisenstein_series()
 
