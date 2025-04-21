@@ -497,17 +497,6 @@ requiring all of Sage to be present.
 mechanism mentioned above can also be used for this.
 
 
-Dependencies of the Sage documentation
---------------------------------------
-
-The documentation will not be modularized.
-
-However, some parts of the Sage reference manual may depend on functionality
-provided by optional packages. These portions of the reference manual
-should be conditionalized using the Sphinx directive ``.. ONLY::``,
-as explained in :ref:`section-documentation-conditional`.
-
-
 Version constraints of dependencies
 -----------------------------------
 
