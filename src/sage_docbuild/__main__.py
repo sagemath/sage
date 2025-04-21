@@ -456,6 +456,7 @@ def main():
     # Check that the docs source directory exists
     if args.source_dir is None:
         args.source_dir = Path(os.environ.get('SAGE_DOC_SRC', 'src/doc'))
+    args.source_dir = args.source_dir.absolute()
     if not args.source_dir.is_dir():
         parser.error(f"Source directory {args.source_dir} does not exist.")
     
@@ -472,7 +473,8 @@ def main():
 
     # Check that the docs output directory exists
     if args.output_dir is None:
-        args.output_dir = Path(os.environ.get('SAGE_DOC', 'src/doc'))
+        args.output_dir = Path(os.environ.get('SAGE_DOC', 'src/doc'))    
+    args.output_dir = args.output_dir.absolute()
     if not args.output_dir.exists():
         try:
             args.output_dir.mkdir(parents=True)
@@ -519,8 +521,8 @@ error messages. To be certain that these are real errors, run
         os.environ['SAGE_SKIP_TESTS_BLOCKS'] = 'True'
     if args.use_cdns:
         os.environ['SAGE_USE_CDNS'] = 'yes'
-    os.environ['SAGE_DOC_SRC'] = str(args.source_dir.absolute())
-    os.environ['SAGE_DOC'] = str(args.output_dir.absolute())
+    os.environ['SAGE_DOC_SRC'] = str(args.source_dir)
+    os.environ['SAGE_DOC'] = str(args.output_dir)
 
     build_options.ABORT_ON_ERROR = not args.keep_going
 
