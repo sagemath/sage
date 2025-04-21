@@ -225,7 +225,7 @@ class MagmaticAlgebras(Category_over_base_ring):
 
         class FiniteDimensional(CategoryWithAxiom_over_base_ring):
             class ParentMethods:
-                def to_finite_dimensional_algebra((self, names='e', assume_associative=True, assume_unital=True):
+                def to_finite_dimensional_algebra(self, names='e', assume_associative=True, assume_unital=True):
                     r"""
                     Return ``self`` as a :class:`sage.algebras.finite_dimensional_algebra.FiniteDimensionalAlgebra`.
 
