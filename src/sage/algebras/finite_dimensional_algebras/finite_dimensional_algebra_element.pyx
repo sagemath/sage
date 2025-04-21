@@ -90,6 +90,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         AlgebraElement.__init__(self, A)
         k = A.base_ring()
         n = A.degree()
+        self._hash = None
         if elt is None:
             self._vector = MatrixSpace(k, 1, n)()
             self.__matrix = MatrixSpace(k, n)()
@@ -131,6 +132,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             else:
                 raise TypeError("elt should be a vector, a matrix, " +
                                 "or an element of the base field")
+        self._vector.set_immutable()
 
     def __reduce__(self):
         """
@@ -204,6 +206,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             table = <tuple> A.table()
             ret = sum(self._vector[0, i] * table[i] for i in range(A.degree()))
             self.__matrix = MatrixSpace(A.base_ring(), A.degree())(ret)
+        self.__matrix.set_immutable()            
         return self.__matrix
 
     def vector(self):
@@ -239,7 +242,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._matrix
 
-    def monomial_coefficients(self, copy=True):
+    cpdef dict monomial_coefficients(self, copy=True):
         """
         Return a dictionary whose keys are indices of basis elements in
         the support of ``self`` and whose values are the corresponding
@@ -256,9 +259,10 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: elt = B(Matrix([[1,1], [-1,1]]))
             sage: elt.monomial_coefficients()
             {0: 1, 1: 1}
+            sage: B.one().monomial_coefficients()
+            {0: 1}
         """
-        cdef Py_ssize_t i
-        return {i: self._vector[0, i] for i in range(self._vector.ncols())}
+        return {k[1]: c for k, c in self._vector._dict().items()}
 
     def left_matrix(self):
         """
@@ -338,9 +342,6 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         Return the hash value for ``self``.
 
-        The result is cached.
-        (TODO: Not sure why, but caching does not work.)
-
         EXAMPLES::
 
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
@@ -352,7 +353,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: hash(a) == hash(b)
             False
         """
-        return hash(tuple(self._vector.list()))
+        return hash(self._vector)
 
     def __getitem__(self, m):
         """
