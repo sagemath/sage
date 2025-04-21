@@ -31,6 +31,7 @@ import sage.version
 from sage.env import MATHJAX_DIR, PPLPY_DOCS, SAGE_DOC, SAGE_DOC_SRC
 from sage.features.sphinx import JupyterSphinx
 from sage.misc.latex_macros import sage_mathjax_macros
+from sage.misc.sagedoc import extlinks as extlinks  # noqa: PLC0414
 from sage.misc.sagedoc_conf import *  # Load configuration shared with sage.misc.sphinxify
 
 # ---------------------
