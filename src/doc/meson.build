@@ -38,6 +38,9 @@ foreach type : ['inventory', 'html', 'pdf']
     if short_ref != 'references'
       deps += bibliography
     endif
+    if short_ref == 'reference_top'
+      deps += reference_inventory
+    endif
     target = custom_target(
       'doc-' + type + '-reference-' + short_ref,
       output: [type + short_ref],
