@@ -90,7 +90,6 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         AlgebraElement.__init__(self, A)
         k = A.base_ring()
         n = A.degree()
-        self._hash = None
         if elt is None:
             self._vector = MatrixSpace(k, 1, n)()
             self.__matrix = MatrixSpace(k, n)()
