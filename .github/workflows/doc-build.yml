@@ -98,6 +98,7 @@ jobs:
       - name: Store old doc
         id: worktree
         if: steps.download-doc.outcome == 'success'
+        shell: bash -l {0}
         run: |
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
