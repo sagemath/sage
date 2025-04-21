@@ -151,7 +151,8 @@ such that the second and third part are `1` when they exist::
 
 Finally, here are the partitions of `4` with ``[1,1,1]`` as an inner
 bound (i. e., the partitions of `4` containing the partition ``[1,1,1]``).
-Note that ``inner`` sets ``min_length`` to the length of its argument::
+Note that ``inner`` sets ``min_length`` to the length of its argument,
+interpreted as a partition::
 
     sage: Partitions(4, inner=[1,1,1]).list()
     [[2, 1, 1], [1, 1, 1, 1]]
@@ -6048,7 +6049,7 @@ class Partitions(UniqueRepresentation, Parent):
         [[2, 2, 1]]
         sage: Partitions(7, inner=(2, 2), min_length=3).list()
         [[4, 2, 1], [3, 3, 1], [3, 2, 2], [3, 2, 1, 1], [2, 2, 2, 1], [2, 2, 1, 1, 1]]
-        sage: Partitions(5, inner=[2]).list()
+        sage: Partitions(5, inner=[2,0,0,0,0,0]).list()
         [[5], [4, 1], [3, 2], [3, 1, 1], [2, 2, 1], [2, 1, 1, 1]]
         sage: Partitions(6, length=2, max_slope=-1).list()
         [[5, 1], [4, 2]]
@@ -6171,6 +6172,20 @@ class Partitions(UniqueRepresentation, Parent):
             del kwargs['min_part']
         if 'max_slope' in kwargs and not kwargs['max_slope']:
             del kwargs['max_slope']
+        # preprocess for UniqueRepresentation
+        if 'outer' in kwargs and not isinstance(kwargs['outer'], Partition):
+            m = infinity
+            kwargs['outer'] = [m for e in kwargs['outer']
+                               if (m := min(m, e if e is infinity else ZZ(e))) > 0]
+            if kwargs['outer'] and kwargs['outer'][0] is infinity:
+                kwargs['outer'] = tuple(kwargs['outer'])
+            else:
+                kwargs['outer'] = Partition(kwargs['outer'])
+        if 'inner' in kwargs and not isinstance(kwargs['inner'], Partition):
+            m = ZZ.zero()
+            kwargs['inner'] = Partition(reversed([(m := max(m, e))
+                                                  for e in reversed(kwargs['inner'])]))
+
         if isinstance(n, (int, Integer)):
             if not kwargs:
                 return Partitions_n(n)
@@ -6257,17 +6272,14 @@ class Partitions(UniqueRepresentation, Parent):
                 raise ValueError("the minimum slope must be nonnegative")
 
             if 'outer' in kwargs:
+                kwargs['ceiling'] = tuple(kwargs['outer'])
                 kwargs['max_length'] = min(len(kwargs['outer']),
                                            kwargs.get('max_length', infinity))
-                kwargs['ceiling'] = tuple(kwargs['outer'])
                 del kwargs['outer']
 
             if 'inner' in kwargs:
-                inner = tuple([ZZ(x) for x in kwargs['inner']])
-                if min(inner) < 1:
-                    raise ValueError("the inner shape must contain only positive integers")
-                kwargs['floor'] = inner
-                kwargs['min_length'] = max(len(inner),
+                kwargs['floor'] = tuple(kwargs['inner'])
+                kwargs['min_length'] = max(len(kwargs['inner']),
                                            kwargs.get('min_length', 0))
                 del kwargs['inner']
 
@@ -6296,16 +6308,7 @@ class Partitions(UniqueRepresentation, Parent):
                     return PartitionsInBox(kwargs['max_length'], kwargs['max_part'])
 
             # IntegerListsLex does not deal well with infinite sets,
-            # so we use a class inheriting from Partitions, and
-            # normalize arguments here
-            if 'outer' in kwargs:
-                kwargs['outer'] = tuple([infinity if x is infinity else ZZ(x)
-                                         for x in kwargs['outer']])
-            if 'inner' in kwargs:
-                kwargs['inner'] = tuple([ZZ(x) for x in kwargs['inner']])
-                if min(kwargs['inner']) < 1:
-                    raise ValueError("the inner shape must contain only positive integers")
-
+            # so we use a class inheriting from Partitions
             return Partitions_all_constrained(**kwargs)
 
         raise ValueError("n must be an integer or be equal to one of "
