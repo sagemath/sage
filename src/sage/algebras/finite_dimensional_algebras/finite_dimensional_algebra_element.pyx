@@ -242,7 +242,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._matrix
 
-    cpdef dict monomial_coefficients(self, copy=True):
+    cpdef dict monomial_coefficients(self, bint copy=True):
         """
         Return a dictionary whose keys are indices of basis elements in
         the support of ``self`` and whose values are the corresponding
