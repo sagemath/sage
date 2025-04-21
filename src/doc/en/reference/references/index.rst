@@ -265,6 +265,18 @@ REFERENCES:
               Symposium, Volume 51, page 20.
               Australian Computer Society, Inc. 2006.
 
+.. [AN2021] Alex Abreu and Antonio Nigro. *Chromatic symmetric functions from
+            the modular law*. J. Combin. Theory Ser. A, **180** (2021), paper
+            no. 105407. :arxiv:`2006.00657`.
+
+.. [AN2021II] Alex Abreu and Antonio Nigro. *A symmetric function of increasing
+              forests*. Forum Math. Sigma, **9** No. 21 (2021), Id/No e35.
+              :arxiv:`2006.08418`.
+
+.. [AN2023] Alex Abreu and Antonio Nigro. *Splitting the cohomology of Hessenberg
+            varieties and e-positivity of chromatic symmetric functions*. 
+            Preprint (2023). :arxiv:`2304.10644`.
+
 .. [Ang1997] B. Anglès. 1997. *On some characteristic polynomials attached to
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
              369–379. https://doi.org/10.1007/BF02677478

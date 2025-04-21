@@ -501,6 +501,40 @@ class Posets(metaclass=ClasscallMetaclass):
                                   category=FiniteLatticePosets())
 
     @staticmethod
+    def HessenbergPoset(H):
+        r"""
+        Return the poset associated to a Hessenberg function ``H``.
+
+        A *Hessenberg function* (of length `n`) is a function `H: \{1,\ldots,n\}
+        \to \{1,\ldots,n\}` such that `\max(i, H(i-1)) \leq H(i) \leq n` for all
+        `i` (where `H(0) = 0` by convention). The corresponding poset is given
+        by `i < j` if and only if `H(i) < j`. These correspond to the natural
+        unit interval order posets.
+
+        INPUT:
+
+        - ``H`` -- list; the Hessenberg function values
+
+        EXAMPLES::
+
+            sage: P = posets.HessenbergPoset([2, 3, 5, 5, 5]); P
+            Finite poset containing 5 elements
+            sage: P.cover_relations()
+            [[2, 4], [2, 5], [1, 3], [1, 4], [1, 5]]
+
+        TESTS::
+
+            sage: P = posets.HessenbergPoset([2, 2, 6, 4, 5, 6])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 2, 6, 4, 5, 6] is not a Hessenberg function
+        """
+        n = len(H)
+        if not all(max(i+1, H[i-1]) <= H[i] for i in range(1, n)) or H[-1] > n:
+            raise ValueError(f"{H} is not a Hessenberg function")
+        return Poset((tuple(range(1, n+1)), lambda i, j: H[i-1] < j))
+
+    @staticmethod
     def IntegerCompositions(n):
         """
         Return the poset of integer compositions of the integer ``n``.
