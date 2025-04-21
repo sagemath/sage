@@ -3586,7 +3586,7 @@ cdef class Matrix(Matrix1):
                 s += self.get_unsafe(i, j) * other.get_unsafe(j, i)
         return s
 
-    def bandwidth(self):
+    def get_bandwidth(self):
         """
         Return the bandwidth of ``self``.
 
@@ -3595,14 +3595,14 @@ cdef class Matrix(Matrix1):
             [1 0 0]
             [0 1 0]
             [0 0 1]
-            sage: A.bandwidth()
+            sage: A.get_bandwidth()
             0
 
             sage: B = matrix([[1,2,3],[0,4,5],[0,0,6]]); B
             [1 2 3]
             [0 4 5]
             [0 0 6]
-            sage: B.bandwidth()
+            sage: B.get_bandwidth()
             2
         """
         cdef Py_ssize_t i, j, rows, cols, max_bandwidth
