@@ -493,19 +493,18 @@ class ReferenceTopBuilder(DocBuilder):
         # We want to build master index file which lists all of the PDF file.
         # We modify the file index.html from the "reference_top" target, if it
         # exists. Otherwise, we are done.
-        reference_dir = self.dir
         output_dir = self._output_dir('html')
 
         # Install in output_dir a symlink to the directory containing static files.
         # Prefer relative path for symlinks.
-        relpath = os.path.relpath(reference_dir, output_dir)
+        relpath = output_dir.relative_to(self._options.output_dir)
         try:
-            os.symlink(os.path.join(relpath, '_static'), os.path.join(output_dir, '_static'))
+            (output_dir / '_static').symlink_to(relpath / '_static')
         except FileExistsError:
             pass
 
         # Now modify top reference index.html page and write it to output_dir.
-        with open(reference_dir / 'index.html') as f:
+        with open(output_dir / 'index.html') as f:
             html = f.read()
         # Fix links in navigation bar
         html = re.sub(r'<a href="(.*)">Sage(.*)Documentation</a>',
@@ -522,7 +521,7 @@ class ReferenceTopBuilder(DocBuilder):
 
         # For the content, we modify doc/en/reference/index.rst, which
         # has two parts: the body and the table of contents.
-        with open(reference_dir / 'index.rst') as f:
+        with open(self.dir / 'index.rst') as f:
             rst = f.read()
         # Get rid of todolist and miscellaneous rst markup.
         rst = rst.replace('.. _reference-manual:\n\n', '')
@@ -566,7 +565,7 @@ class ReferenceTopBuilder(DocBuilder):
         rst_toc = re.sub(r'\n([A-Z][a-zA-Z, ]*)\n[-]*\n',
                          r'</ul>\n\n\n<h3>\1</h3>\n\n<ul>\n', rst_toc)
         # now write the file.
-        with open(os.path.join(output_dir, 'index-pdf.html'), 'w') as new_index:
+        with open(output_dir / 'index-pdf.html', 'w') as new_index:
             new_index.write(html[:html_end_preamble])
             new_index.write('<h1>Sage Reference Manual</h1>')
             new_index.write(rst_body)

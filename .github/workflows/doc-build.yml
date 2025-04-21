@@ -76,7 +76,7 @@ jobs:
 
       - name: Get workflow run-id
         id: get_run_id
-        if: steps.container.outcome == 'success' && !startsWith(github.ref, 'refs/tags/') && github.event_name == 'pull_request'
+        if: !startsWith(github.ref, 'refs/tags/') && github.event_name == 'pull_request'
         run: |
           RESPONSE=$(curl -s -L \
             -H "Accept: application/vnd.github+json" \
