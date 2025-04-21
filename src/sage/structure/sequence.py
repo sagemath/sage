@@ -71,8 +71,7 @@ specifying the universe of the sequence::
 # ****************************************************************************
 
 from sage.misc.persist import register_unpickle_override
-import sage.structure.sage_object
-import sage.structure.coerce
+from sage.structure.sage_object import SageObject
 
 
 def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=None, use_sage_types=False):
@@ -216,7 +215,9 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
             x = list(x)
         else:
             try:
-                from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+                from sage.rings.polynomial.multi_polynomial_ideal import (
+                    MPolynomialIdeal,
+                )
             except ImportError:
                 pass
             else:
@@ -250,9 +251,9 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
                 universe = sage.structure.element.parent(x[len(x)-1])
 
     try:
+        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
-        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
         from sage.rings.quotient_ring import QuotientRing_nc
     except ImportError:
         pass
@@ -263,7 +264,7 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
     return Sequence_generic(x, universe, check, immutable, cr, cr_str, use_sage_types)
 
 
-class Sequence_generic(sage.structure.sage_object.SageObject, list):
+class Sequence_generic(SageObject, list):
     """
     A mutable list of elements with a common guaranteed universe,
     which can be set immutable.
