@@ -1567,7 +1567,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ([1, -1, 0], [3, -1, 0])
 
         The leading positions and pivot degrees of an empty matrix (`0\times n`
-        or `m\times 0`) is not defined::
+        or `m\times 0`) are taken by convention as follows::
 
             sage: M = matrix(pR, 0, 3)
             sage: M.leading_positions(return_degree=True)
