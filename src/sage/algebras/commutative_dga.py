@@ -4259,20 +4259,5 @@
             return deg
         return sum(deg)
 
-A.<u, v, w> = GradedCommutativeAlgebra(QQ, degrees=(1, 1, 1))
-print("Basis of A:", A._basis_for_free_alg(3))
 
-B = A.quotient(A.ideal(u*v + v*w, u*w))
-print("Basis of B:", B._basis_for_free_alg(3))
-# Define the Graded Commutative Algebra
-A.<x, y, z, t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
-
-# Define an element in A
-elt = x*y - 5*y*z + 7*x*y^2*z^3*t
-
-# Get the monomial coefficients and sort them
-sorted_monomials = sorted(elt.monomial_coefficients().items())
-
-# Print the result
-print(sorted_monomials)
 
