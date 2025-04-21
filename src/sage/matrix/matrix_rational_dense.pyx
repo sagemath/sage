@@ -1643,7 +1643,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
             ....:     assert ech_flint == ech_padic == ech_multi == ech_class
         """
         if transformation:
-            raise NotImplementedError("transformation not supported in this class")            
+            import warnings
+            warnings.warn("transformation not supported in this class", UserWarning)            
         x = self.fetch('echelon_form')
         if x is not None:
             return x

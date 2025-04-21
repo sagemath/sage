@@ -1613,7 +1613,8 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             True
         """
         if transformation:
-            raise NotImplementedError("transformation not supported in this class")
+            import warnings
+            warnings.warn("transformation not supported in this class", UserWarning) 
         key = 'echelon_form-%s'%algorithm
         E = self.fetch(key)
         if E is not None:

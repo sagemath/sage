@@ -101,7 +101,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             [     0 -x + y]
         """
         if transformation:
-            raise NotImplementedError("transformation not supported in this class")            
+            import warnings
+            warnings.warn("transformation not supported in this class", UserWarning)             
         x = self.fetch('echelon_form_'+algorithm)
         if x is not None: return x
 

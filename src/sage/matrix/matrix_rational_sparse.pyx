@@ -539,7 +539,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       0       0]
         """
         if transformation:
-            raise NotImplementedError("transformation not supported in this class")
+            import warnings
+            warnings.warn("transformation not supported in this class", UserWarning) 
         label = 'echelon_form_%s'%algorithm
         x = self.fetch(label)
         if x is not None:
