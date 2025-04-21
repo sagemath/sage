@@ -1483,7 +1483,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         """
         self._check_shift_dimension(shifts,row_wise)
         if self.ncols() == 0 or self.nrows() == 0:
-            return self._is_empty_popov(row_wise,include_zero_vectors)
+            return self._is_empty_popov(row_wise, include_zero_vectors)
         if include_zero_vectors:
             number_generators =                                           \
                 [self[i,:] != 0 for i in range(self.nrows())].count(True) \
@@ -1722,7 +1722,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         """
         self._check_shift_dimension(shifts,row_wise)
         if self.ncols() == 0 or self.nrows() == 0:
-            return self._is_empty_popov(row_wise)
+            return self._is_empty_popov(row_wise, include_zero_vectors)
         leading_positions = self.leading_positions(shifts, row_wise)
         # here, because of the below sorting and of the convention that zero
         # rows (resp. columns) are at the bottom (resp. right) of the matrix in
@@ -1859,7 +1859,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # the matrix should be in weak Popov form (ordered except if
         # up_to_permutation==True)
         if self.ncols() == 0 or self.nrows() == 0:
-            return self._is_empty_popov(row_wise)
+            return self._is_empty_popov(row_wise, include_zero_vectors)
         if not self.is_weak_popov(shifts,
                                   row_wise,
                                   not up_to_permutation,
