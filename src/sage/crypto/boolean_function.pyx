@@ -100,7 +100,7 @@ cdef long yellow_code(unsigned long a) noexcept:
     cdef unsigned long s = (8*sizeof(unsigned long)) >> 1
     cdef unsigned long m = (~0UL) >> s
     cdef unsigned long r = a
-    while(s):
+    while s:
         sig_check()
         r ^= (r&m) << s
         s >>= 1
