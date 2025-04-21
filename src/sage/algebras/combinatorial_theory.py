@@ -963,7 +963,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     nf, df, fv.ftype(), ftype_inj=[], target_size=target_size
                     )
                 fvvals = fv.values()
-                m = matrix(QQ, [vector(fvvals*mat) for mat in mult_table])
+                m = matrix([vector(fvvals*mat) for mat in mult_table])
                 positives_list_exact += list(m.T)
                 if not (pbar is None):
                     pbar.set_description(
@@ -1091,7 +1091,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     block_dim = block_sizes[block_index + plus_index]
                     X_flat = X_matrices_flat[block_index + plus_index]
                     M = base * morig * base.T
-                    M_flat_vector_exact = vector(QQ, 
+                    M_flat_vector_exact = vector( 
                         _flatten_matrix(M.rows(), doubled=True)
                         )
                     slacks[gg] -= M_flat_vector_exact*X_flat
