@@ -4259,5 +4259,3 @@
             return deg
         return sum(deg)
 
-
-
