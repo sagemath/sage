@@ -597,7 +597,7 @@ class NFCusp(Element):
         """
         return self.parent().number_field()
 
-    def is_infinity(self):
+    def is_infinity(self) -> bool:
         """
         Return ``True`` if this is the cusp infinity.
 
@@ -901,7 +901,7 @@ class NFCusp(Element):
 
         return ABM
 
-    def is_Gamma0_equivalent(self, other, N, Transformation=False):
+    def is_Gamma0_equivalent(self, other, N, Transformation=False) -> bool:
         r"""
         Check if cusps ``self`` and ``other`` are `\Gamma_0(N)`- equivalent.
 

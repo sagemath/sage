@@ -263,10 +263,10 @@ class FiniteSubgroup(Module):
         # order gets reversed in passing to lattices.
         return lx._echelon_matrix_richcmp(rx, op)
 
-    def is_subgroup(self, other):
+    def is_subgroup(self, other) -> bool:
         """
-        Return ``True`` exactly if ``self`` is a subgroup of ``other``, and both are
-        defined as subgroups of the same ambient abelian variety.
+        Return ``True`` exactly if ``self`` is a subgroup of ``other``,
+        and both are defined as subgroups of the same ambient abelian variety.
 
         EXAMPLES::
 

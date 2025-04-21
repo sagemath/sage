@@ -337,7 +337,7 @@ class RationalCuspidalSubgroup(CuspidalSubgroup_generic):
             return lattice
 
 
-def is_rational_cusp_gamma0(c, N, data):
+def is_rational_cusp_gamma0(c, N, data) -> bool:
     """
     Return ``True`` if the rational number c is a rational cusp of level N.
 
