@@ -40,7 +40,7 @@ doc-inventory-reference: doc-src
 	$(eval DOCS = $(shell sage --docbuild --all-documents reference))
 	@if [ -z "$(DOCS)" ]; then echo "Error: 'sage --docbuild --all-documents' failed"; exit 1; fi
 	$(eval BIBLIO = $(firstword $(DOCS)))
-	$(eval OTHER_DOCS = $(wordlist 2, 100, $(DOCS)))
+	$(eval OTHER_DOCS = $(filter-out reference_top, $(wordlist 2, 100, $(DOCS))))
 	$(MAKE) doc-inventory--$(subst /,-,$(BIBLIO))
 	$(MAKE) $(foreach doc, $(OTHER_DOCS), doc-inventory--$(subst /,-,$(doc)))
 	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" doc-inventory--reference_top
