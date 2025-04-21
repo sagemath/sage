@@ -134,7 +134,13 @@ def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
     all_requirements.append("c-compiler")
     all_requirements.remove("{{ compiler('cxx') }}")
     all_requirements.append("cxx-compiler")
-    # all_requirements.remove("{{ compiler('fortran') }}")
+    # For some reason, grayskull mishandles the fortran compiler sometimes
+    # so handle both cases
+    for item in ["{{ compiler('fortran') }}", "{{ compiler'fortran' }}"]:
+        try:
+            all_requirements.remove(item)
+        except ValueError:
+            pass
     all_requirements.append("fortran-compiler")
 
     # Correct pypi name for some packages
