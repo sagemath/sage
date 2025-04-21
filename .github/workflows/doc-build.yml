@@ -68,7 +68,7 @@ jobs:
         run: |
           export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
           export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
-          pip install --no-build-isolation --config-settings=builddir=builddir . -v
+          pip install --no-build-isolation --config-settings=builddir=builddir --editable . -v
   
       #
       # For pull requests
