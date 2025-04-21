@@ -3493,9 +3493,11 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``offset`` -- integer parameter pointing diagonal parallel to the main diagonal.
-            The main diagonal is the one with offset 0.  The diagonals above have positive 
-            offsets and the diagonals below have negative offsets.
+        
+        - ``offset`` -- integer (default: ``0``); parameter pointing diagonal
+          parallel to the main diagonal. The main diagonal is the one with
+          offset 0. The diagonals above have positive offsets and the diagonals
+          below have negative offsets.
 
         OUTPUT:
 
@@ -3551,9 +3553,8 @@ cdef class Matrix(Matrix1):
         if offset >= 0:
             n = min(self.nrows(), self.ncols() - offset)
             return [self[i, i + offset] for i in range(n)]
-        else:
-            n = min(self.nrows() + offset, self.ncols())
-            return [self[i - offset, i] for i in range(n)]
+        n = min(self.nrows() + offset, self.ncols())
+        return [self[i - offset, i] for i in range(n)]
 
     def trace(self):
         """
