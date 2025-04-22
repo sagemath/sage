@@ -1606,6 +1606,8 @@ cdef class Polynomial(CommutativePolynomial):
         system for the coefficients of `s` and `t` for inexact rings (as the
         Euclidean algorithm may not converge in that case).
 
+        May also use Singular in certain cases.
+
         AUTHORS:
 
         - Robert Bradshaw (2007-05-31)
@@ -1636,17 +1638,25 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = ZZ[]
             sage: a = 2*x^2+1
             sage: b = -2*x^2+1
-            sage: a.inverse_mod(b)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: The base ring (=Integer Ring) is not a field
             sage: a.xgcd(b)
             (16, 8, 8)
-            sage: a*x^2+b*(x^2+1)
-            1
-            sage: a*x^2%b  # shows the result exists, thus we cannot raise ValueError, only NotImplementedError
-            1
+            sage: c = a.inverse_mod(b); c  # uses Singular
+            -x^2 + 1
+            sage: c.parent() is R
+            True
         """
+        from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
+        P = a.parent()
+        if can_convert_to_singular(P):
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            try:
+                R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
+            except NotImplementedError:
+                # PolynomialRing over RDF/CDF etc. are still not implemented in libsingular
+                # (in particular singular_ring_new) even though they are implemented in _do_singular_init_
+                pass
+            else:
+                return P(R(a).inverse_mod(R.ideal(m)))
         from sage.rings.ideal import Ideal_generic
         if isinstance(m, Ideal_generic):
             v = m.gens_reduced()
@@ -1660,8 +1670,8 @@ cdef class Polynomial(CommutativePolynomial):
                 r *= m.base_ring()(~m[1])
             u = a(r)
             if u.is_unit():
-                return a.parent()(~u)
-        if a.parent().is_exact():
+                return P(~u)
+        if P.is_exact():
             # use xgcd
             try:
                 g, s, _ = a.xgcd(m)
@@ -8451,19 +8461,19 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: # needs sage.libs.flint
             sage: Pol.<x> = CBF[]
-            sage: (x^2 + 2).roots(multiplicities=False)
-            [[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
-            [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I]
+            sage: set((x^2 + 2).roots(multiplicities=False))
+            {[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
+             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I}
             sage: (x^3 - 1/2).roots(RBF, multiplicities=False)
             [[0.7937005259840997 +/- ...e-17]]
             sage: ((x - 1)^2).roots(multiplicities=False, proof=False)
             doctest:...
             UserWarning: roots may have been lost...
-            [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
-             [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
+            [[1.000000000... +/- ...] + [+/- ...]*I,
+             [1.000000000... +/- ...] + [+/- ...]*I]
             sage: ((x - 1)^2).roots(multiplicities=False, proof=False, warn=False)
-            [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
-             [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
+            [[1.000000000... +/- ...] + [+/- ...]*I,
+             [1.000000000... +/- ...] + [+/- ...]*I]
 
         Note that coefficients in a number field with defining polynomial
         `x^2 + 1` are considered to be Gaussian rationals (with the
@@ -10365,7 +10375,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def _is_squarefree_generic(self):
         r"""
-        Return False if this polynomial is not square-free, i.e., if there is a
+        Return ``False`` if this polynomial is not square-free, i.e., if there is a
         non-unit `g` in the polynomial ring such that `g^2` divides ``self``.
 
         EXAMPLES::
