@@ -8411,18 +8411,28 @@ class Partitions_with_constraints(IntegerListsLex):
 
         TESTS::
 
-            sage: P = Partitions(4, max_slope=2)
+            sage: P = Partitions(4, max_slope=-2)
             sage: [3,1] in P
             True
             sage: [3,1,0] in P
             True
+            sage: [2,2] in P
+            False
+            sage: [3,1,None] in P
+            False
+
+            sage: [1,3] in Partitions(4, min_slope=-1)
+            False
         """
-        if x in _Partitions:
-            for i in range(len(x)-1, -1, -1):
-                if x[i]:
-                    x = x[:i+1]
-                    break
-            return super().__contains__(x)
+        # strip off trailing 0s
+        for i in range(len(x)-1, -1, -1):
+            if x[i] != 0:
+                x = x[:i+1]
+                break
+        else:
+            x = []
+        return super().__contains__(x)
+
 
 ######################
 # Regular Partitions #
