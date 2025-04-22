@@ -417,22 +417,14 @@ cdef class FractionFieldElement(FieldElement):
             0
 
         """
-        if self._denominator.is_one():
-            # Handle this case even over rings that don't support reduction, to
-            # avoid breaking existing code that carelessly mixes p and p/1
-            return hash(self._numerator)
-        if self._parent.is_exact():
-            # May fail; let the exception propagate then.
-            # (In contrast, over inexact rings, we hash unreduced fractions
-            # without complaining. This is not ideal, but there is code in Sage
-            # that uses dictionaries indexed by rational functions with
-            # floating-point coefficients, and since the equality test involves
-            # potentially inexact operations, there would be compatibility
-            # issues even if we didn't...)
-            self.reduce()
         try:
             x = self.parent().base()(self)
         except (TypeError, ValueError, NotImplementedError):
+            # In general there does not seem to be a good hash function here so
+            # we can only return a constant value.
+            # In special cases, we could try to bring this fraction into some
+            # sort of normal form, however, note that self.reduce() does not
+            # produce such a normal form.
             return 0
         else:
             return hash(x)
