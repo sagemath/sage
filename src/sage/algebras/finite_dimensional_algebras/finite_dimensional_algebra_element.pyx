@@ -205,7 +205,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             table = <tuple> A.table()
             ret = sum(self._vector[0, i] * table[i] for i in range(A.degree()))
             self.__matrix = MatrixSpace(A.base_ring(), A.degree())(ret)
-        self.__matrix.set_immutable()            
+        self.__matrix.set_immutable()
         return self.__matrix
 
     def vector(self):

@@ -80,7 +80,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         sage: B.is_associative()
         True
 
-    A more complicated example (the 3-rd descent algebra in
+    A more complicated example (the descent algebra of `S_3` in
     a slightly rescaled I-basis, see :class:`DescentAlgebra`)::
 
         sage: Ma = Matrix([[6,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]])
