@@ -24,7 +24,7 @@ Behavior based on input ``arg``:
     * If ``dynamic=True``: Returns a dynamic disjoint set containing
       the elements from the iterable. ``union`` will automatically add
       new elements if they are not present. ``make_set`` can also be used.
-* ``arg`` is a `SetPartition`: Creates a disjoint set from its base
+* ``arg`` is a :class:`SetPartition`: Creates a disjoint set from its base
   set, respecting the ``dynamic`` flag.
 
 Static vs. Dynamic:
@@ -128,100 +128,108 @@ cpdef DisjointSet(arg=None, dynamic=False):
       or ``None``, determines whether to create a dynamic or static disjoint
       set. Ignored if ``arg`` is an integer.
 
-    EXAMPLES::
+    EXAMPLES:
 
-        - Empty (dynamic) set:
+    Empty (dynamic) set::
 
-            sage: D = DisjointSet()
-            sage: D
-            {}
-            sage: 1 in D
-            False
-            sage: D.union(1, 2)
-            sage: D
-            {{1, 2}}
-            sage: 1 in D
-            True
-            sage: D.make_set(3)  # Explicitly add 3
-            sage: D
-            {{1, 2}, {3}}
-            sage: isinstance(D, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
-            True
+        sage: D = DisjointSet()
+        sage: D
+        {}
+        sage: 1 in D
+        False
+        sage: D.union(1, 2)
+        sage: D
+        {{1, 2}}
+        sage: 1 in D
+        True
+        sage: D.make_set(3)  # Explicitly add 3
+        sage: D
+        {{1, 2}, {3}}
+        sage: isinstance(D, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
+        True
 
-        - Static set from integer:
+    Static set from integer.
 
-            sage: S_int = DisjointSet(5)
-            sage: S_int
-            {{0}, {1}, {2}, {3}, {4}}
-            sage: 3 in S_int
-            True
-            sage: 6 in S_int
-            False
-            sage: S_int.union(1, 6)
-            Traceback (most recent call last):
-            ...
-            ValueError: j must be between 0 and 4 (6 given)
-            sage: S_int.make_set()
-            Traceback (most recent call last):
-            ...
-            TypeError: Cannot add elements to a static DisjointSet_of_integers.
-            sage: isinstance(S_int, sage.sets.disjoint_set.DisjointSet_of_integers)
-            True
+    ::
 
-        - Static set from iterable (default):
+        sage: S_int = DisjointSet(5)
+        sage: S_int
+        {{0}, {1}, {2}, {3}, {4}}
+        sage: 3 in S_int
+        True
+        sage: 6 in S_int
+        False
+        sage: S_int.union(1, 6)
+        Traceback (most recent call last):
+        ...
+        ValueError: j must be between 0 and 4 (6 given)
+        sage: S_int.make_set()
+        Traceback (most recent call last):
+        ...
+        TypeError: Cannot add elements to a static DisjointSet_of_integers.
+        sage: isinstance(S_int, sage.sets.disjoint_set.DisjointSet_of_integers)
+        True
 
-            sage: S_static = DisjointSet('abc')
-            sage: S_static
-            {{'a'}, {'b'}, {'c'}}
-            sage: 'a' in S_static
-            True
-            sage: 'd' in S_static
-            False
-            sage: S_static.union('a', 'd')
-            Traceback (most recent call last):
-            ...
-            KeyError: "Element 'd' not found in static DisjointSet. Use DisjointSet(..., dynamic=True) to allow adding elements via union."
-            sage: S_static.make_set('d')
-            Traceback (most recent call last):
-            ...
-            TypeError: Cannot add elements to a static DisjointSet (created with dynamic=False). Use dynamic=True if elements need to be added after creation.
-            sage: isinstance(S_static, sage.sets.disjoint_set.DisjointSet_of_hashables)
-            True
+    Static set from iterable (default).
 
-        - Dynamic set from iterable:
+    ::
 
-            sage: S_dyn = DisjointSet('abc', dynamic=True)
-            sage: S_dyn
-            {{'a'}, {'b'}, {'c'}}
-            sage: 'd' in S_dyn
-            False
-            sage: S_dyn.union('a', 'd')  # 'd' is added automatically
-            sage: S_dyn
-            {{'a', 'd'}, {'b'}, {'c'}}
-            sage: 'd' in S_dyn
-            True
-            sage: S_dyn.union('e', 'f')  # 'e' and 'f' are added
-            sage: S_dyn
-            {{'a', 'd'}, {'b'}, {'c'}, {'e', 'f'}}
-            sage: isinstance(S_dyn, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
-            True
+        sage: S_static = DisjointSet('abc')
+        sage: S_static
+        {{'a'}, {'b'}, {'c'}}
+        sage: 'a' in S_static
+        True
+        sage: 'd' in S_static
+        False
+        sage: S_static.union('a', 'd')
+        Traceback (most recent call last):
+        ...
+        KeyError: "Element 'd' not found in static DisjointSet. Use DisjointSet(..., dynamic=True) to allow adding elements via union."
+        sage: S_static.make_set('d')
+        Traceback (most recent call last):
+        ...
+        TypeError: Cannot add elements to a static DisjointSet (created with dynamic=False). Use dynamic=True if elements need to be added after creation.
+        sage: isinstance(S_static, sage.sets.disjoint_set.DisjointSet_of_hashables)
+        True
 
-        - From SetPartition:
+    Dynamic set from iterable.
 
-            sage: SP = SetPartition([[1,3], [2]])
-            sage: D_static = DisjointSet(SP)  # Static by default
-            sage: D_static
-            {{1, 3}, {2}}
-            sage: D_static.make_set(4)
-            Traceback (most recent call last):
-            ...
-            TypeError: Cannot add elements to a static DisjointSet (created with dynamic=False). Use dynamic=True if elements need to be added after creation.
-            sage: D_dyn = DisjointSet(SP, dynamic=True)  # Dynamic
-            sage: D_dyn
-            {{1, 3}, {2}}
-            sage: D_dyn.make_set(4)
-            sage: D_dyn
-            {{1, 3}, {2}, {4}}
+    ::
+
+        sage: S_dyn = DisjointSet('abc', dynamic=True)
+        sage: S_dyn
+        {{'a'}, {'b'}, {'c'}}
+        sage: 'd' in S_dyn
+        False
+        sage: S_dyn.union('a', 'd')  # 'd' is added automatically
+        sage: S_dyn
+        {{'a', 'd'}, {'b'}, {'c'}}
+        sage: 'd' in S_dyn
+        True
+        sage: S_dyn.union('e', 'f')  # 'e' and 'f' are added
+        sage: S_dyn
+        {{'a', 'd'}, {'b'}, {'c'}, {'e', 'f'}}
+        sage: isinstance(S_dyn, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
+        True
+
+    From SetPartition.
+
+    ::
+
+        sage: SP = SetPartition([[1,3], [2]])
+        sage: D_static = DisjointSet(SP)  # Static by default
+        sage: D_static
+        {{1, 3}, {2}}
+        sage: D_static.make_set(4)
+        Traceback (most recent call last):
+        ...
+        TypeError: Cannot add elements to a static DisjointSet (created with dynamic=False). Use dynamic=True if elements need to be added after creation.
+        sage: D_dyn = DisjointSet(SP, dynamic=True)  # Dynamic
+        sage: D_dyn
+        {{1, 3}, {2}}
+        sage: D_dyn.make_set(4)
+        sage: D_dyn
+        {{1, 3}, {2}, {4}}
 
     TESTS::
 
@@ -244,7 +252,6 @@ cpdef DisjointSet(arg=None, dynamic=False):
         ...
         TypeError: Input elements must be hashable: unhashable type: 'dict'
 
-        # Test unpickling argument format
         sage: D_sp = DisjointSet( (['a','b'], False) )  # Static from pickle args
         sage: D_sp
         {{'a'}, {'b'}}
@@ -259,7 +266,7 @@ cpdef DisjointSet(arg=None, dynamic=False):
 
     # Handle None -> Empty Dynamic Set
     if arg is None:
-        return DynamicDisjointSet_of_hashables([])
+        return DynamicDisjointSet_of_hashables()
 
     # Handle Integer -> Static Integer Set
     if isinstance(arg, (Integer, int)):
@@ -302,7 +309,7 @@ cpdef DisjointSet(arg=None, dynamic=False):
     try:
         it = iter(arg)
     except TypeError:
-         raise TypeError(f"Cannot create DisjointSet from '{type(arg).__name__}'; input must be None, int, iterable, or SetPartition") from None
+         raise TypeError(f"Cannot create DisjointSet from '{type(arg).__name__}'; input must be None, int, iterable, or SetPartition") 
 
     if dynamic:
         return DynamicDisjointSet_of_hashables(arg)
@@ -317,6 +324,16 @@ cdef class DisjointSet_class(SageObject):
         self._nodes = NULL
 
     def __dealloc__(self):
+        r"""
+        Deallocate ``self`` (i.e. the ``self._nodes``).
+
+        EXAMPLES::
+
+            sage: d_int = DisjointSet(5)
+            sage: del d_int
+            sage: d_hash = DisjointSet('abc')
+            sage: del d_hash
+        """
         if self._nodes is not NULL:
             OP_dealloc(self._nodes)
 
@@ -676,6 +693,36 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         return iter((<dict?>self.root_to_elements_dict()).itervalues())
 
     def __richcmp__(self, other, int op):
+        r"""
+        Compare the disjoint sets ``self`` and ``other``.
+
+        Comparison is based on the set partitions they represent. Two
+        disjoint sets are considered equal if they partition the same
+        ground set into the same subsets.
+
+        INPUT:
+
+        - ``other`` -- The object to compare with.
+        - ``op`` -- The comparison operator (e.g., 0 for <, 2 for ==, 4 for >).
+
+        EXAMPLES::
+
+            sage: d = DisjointSet(5)
+            sage: e = DisjointSet(5)
+            sage: d == e, d != e
+            (True, False)
+            sage: d.union(0, 1)
+            sage: e.union(1, 0)
+            sage: d == e # Same partition
+            True
+            sage: e.union(2, 3)
+            sage: d == e # Different partitions
+            False
+            sage: DisjointSet(3) == DisjointSet('abc') # Different ground sets
+            False
+            sage: DisjointSet(3) == 3
+            False
+        """
         s = Set(map(frozenset, self.root_to_elements_dict().values()))
         try:
             if isinstance(other, DisjointSet_of_integers):
@@ -1185,6 +1232,36 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         return iter((<dict?>self.root_to_elements_dict()).itervalues())
 
     def __richcmp__(self, other, int op):
+        r"""
+        Compare the disjoint sets ``self`` and ``other``.
+
+        Comparison is based on the set partitions they represent. Two
+        disjoint sets are considered equal if they partition the same
+        ground set into the same subsets.
+
+        INPUT:
+
+        - ``other`` -- The object to compare with.
+        - ``op`` -- The comparison operator (e.g., 0 for <, 2 for ==, 4 for >).
+
+        EXAMPLES::
+
+            sage: d = DisjointSet('abc')
+            sage: e = DisjointSet(['c', 'a', 'b']) # Order doesn't matter for ground set
+            sage: d == e, d != e
+            (True, False)
+            sage: d.union('a', 'b')
+            sage: e.union('b', 'a')
+            sage: d == e # Same partition
+            True
+            sage: e.union('b', 'c')
+            sage: d == e # Different partitions
+            False
+            sage: DisjointSet('ab') == DisjointSet('abc') # Different ground sets
+            False
+            sage: DisjointSet('a') == 'a'
+            False
+        """    
         s = Set(map(frozenset, self.root_to_elements_dict().values()))
         try:
             if isinstance(other, (DisjointSet_of_hashables, DynamicDisjointSet_of_hashables, DisjointSet_of_integers)):
@@ -1417,10 +1494,10 @@ cdef class DynamicDisjointSet_of_hashables(DisjointSet_of_hashables):
             sage: D.make_set('b')
             sage: D
             {{'a'}, {'b'}}
-            sage: D.make_set('a')  # Already present, no change
+            sage: D.make_set('a')
             sage: D
             {{'a'}, {'b'}}
-            sage: D.make_set()  # Add generated integer
+            sage: D.make_set()
             sage: D
             {{'a'}, {'b'}, {2}}
             sage: D.make_set()
