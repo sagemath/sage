@@ -212,7 +212,7 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sequence import Sequence
-
+from sage.misc.superseded import deprecation
 
 ###############################################################################
 #
@@ -2958,9 +2958,19 @@ class FreeModule_generic(Module_free_ambient):
         was given over the fraction field.
 
         EXAMPLES::
-
+        
+        The following feature has been deprecated::
+        
             sage: M = ZZ^2
             sage: M.coordinate_ring()
+            DeprecationWarning: the method 'coordinate_ring' is deprecated for free modules; use the method 'ambient_base_ring' instead
+            See https://github.com/sagemath/sage/issues/35348 for details.
+            M.coordinate_ring()
+            Integer Ring
+            
+        Instead, use::
+        
+            sage: M.ambient_base_ring()
             Integer Ring
 
         ::
@@ -2984,6 +2994,12 @@ class FreeModule_generic(Module_free_ambient):
             sage: L.span([]).coordinate_ring()
             Univariate Polynomial Ring in x over Rational Field
         """
+        deprecation(35348,f"the method 'coordinate_ring' is deprecated for free modules; "
+                        "use the method 'ambient_base_ring' instead")
+        return self.ambient_base_ring()
+    
+    def ambient_base_ring(self):
+        
         return self.__coordinate_ring
 
     def free_module(self):
