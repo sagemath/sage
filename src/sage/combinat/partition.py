@@ -5840,7 +5840,7 @@ class Partitions(UniqueRepresentation, Parent):
     - ``min_length=k`` specifies that the partitions have
       at least `k` parts.
 
-    - ``min_part=k`` specifies that all nonzero parts of the
+    - ``min_part=k`` specifies that all parts of the
       partitions are at least `k`.
 
     - ``inner=p`` specifies that the partitions must contain the
