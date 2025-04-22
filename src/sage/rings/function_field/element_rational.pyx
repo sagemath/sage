@@ -134,12 +134,14 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         TESTS:
 
-        It would be nice if the following would produce a list of
-        15 distinct hashes::
+        Ideally, we would see 15 different hashes here. However, the hash of an
+        underlying fraction field element is usually a constant 0 when there is
+        a denominator so we only see different hash values for positive
+        exponents::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: len({hash(t^i+t^j) for i in [-2..2] for j in [i..2]})
-            1
+            sage: len({hash(t^i+t^j) for i in [-2..2] for j in [i..2]}) >= 7
+            True
 
         """
         return hash(self._x)

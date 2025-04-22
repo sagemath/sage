@@ -101,14 +101,19 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
     def __hash__(self):
         """
-        Return the hash of the element.
+        Return a hash value for this element.
 
-        TESTS::
+        TESTS:
+
+        Ideally, we would see 25 different hashes here. However, the hash of an
+        underlying fraction field element is usually a constant 0 when there is
+        a denominator so we only see different hash values for positive
+        exponents::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
-            sage: len({hash(y^i+x^j) for i in [-2..2] for j in [-2..2]})
-            1
+            sage: len({hash(y^i+x^j) for i in [-2..2] for j in [-2..2]}) >= 9
+            True
 
         """
         return hash(self._x)
