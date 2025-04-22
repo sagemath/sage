@@ -130,99 +130,98 @@ cpdef DisjointSet(arg=None, dynamic=False):
 
     EXAMPLES::
 
-    Empty (dynamic) set::
+        - Empty (dynamic) set:
 
-        sage: D = DisjointSet()
-        sage: D
-        {}
-        sage: 1 in D
-        False
-        sage: D.union(1, 2)
-        sage: D
-        {{1, 2}}
-        sage: 1 in D
-        True
-        sage: D.make_set(3)  # Explicitly add 3
-        sage: D
-        {{1, 2}, {3}}
-        sage: isinstance(D, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
-        True
+            sage: D = DisjointSet()
+            sage: D
+            {}
+            sage: 1 in D
+            False
+            sage: D.union(1, 2)
+            sage: D
+            {{1, 2}}
+            sage: 1 in D
+            True
+            sage: D.make_set(3)  # Explicitly add 3
+            sage: D
+            {{1, 2}, {3}}
+            sage: isinstance(D, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
+            True
 
-    Static set from integer::
+        - Static set from integer:
 
-        sage: S_int = DisjointSet(5)
-        sage: S_int
-        {{0}, {1}, {2}, {3}, {4}}
-        sage: 3 in S_int
-        True
-        sage: 6 in S_int
-        False
-        sage: S_int.union(1, 6)
-        Traceback (most recent call last):
-        ...
-        ValueError: j must be between 0 and 4 (6 given)
-        sage: S_int.make_set()
-        Traceback (most recent call last):
-        ...
-        TypeError: Cannot add elements to a static DisjointSet_of_integers.
-        sage: isinstance(S_int, sage.sets.disjoint_set.DisjointSet_of_integers)
-        True
+            sage: S_int = DisjointSet(5)
+            sage: S_int
+            {{0}, {1}, {2}, {3}, {4}}
+            sage: 3 in S_int
+            True
+            sage: 6 in S_int
+            False
+            sage: S_int.union(1, 6)
+            Traceback (most recent call last):
+            ...
+            ValueError: j must be between 0 and 4 (6 given)
+            sage: S_int.make_set()
+            Traceback (most recent call last):
+            ...
+            TypeError: Cannot add elements to a static DisjointSet_of_integers.
+            sage: isinstance(S_int, sage.sets.disjoint_set.DisjointSet_of_integers)
+            True
 
-    Static set from iterable (default)::
+        - Static set from iterable (default):
 
-        sage: S_static = DisjointSet('abc')
-        sage: S_static
-        {{'a'}, {'b'}, {'c'}}
-        sage: 'a' in S_static
-        True
-        sage: 'd' in S_static
-        False
-        sage: S_static.union('a', 'd')
-        Traceback (most recent call last):
-        ...
-        KeyError: "Element 'd' not found in static DisjointSet. Use DisjointSet(..., dynamic=True) to allow adding elements via union."
-        sage: S_static.make_set('d')
-        Traceback (most recent call last):
-        ...
-        TypeError: Cannot add elements to a static DisjointSet (created with dynamic=False). Use dynamic=True if elements need to be added after creation.
-        sage: isinstance(S_static, sage.sets.disjoint_set.DisjointSet_of_hashables)
-        True
+            sage: S_static = DisjointSet('abc')
+            sage: S_static
+            {{'a'}, {'b'}, {'c'}}
+            sage: 'a' in S_static
+            True
+            sage: 'd' in S_static
+            False
+            sage: S_static.union('a', 'd')
+            Traceback (most recent call last):
+            ...
+            KeyError: "Element 'd' not found in static DisjointSet. Use DisjointSet(..., dynamic=True) to allow adding elements via union."
+            sage: S_static.make_set('d')
+            Traceback (most recent call last):
+            ...
+            TypeError: Cannot add elements to a static DisjointSet (created with dynamic=False). Use dynamic=True if elements need to be added after creation.
+            sage: isinstance(S_static, sage.sets.disjoint_set.DisjointSet_of_hashables)
+            True
 
-    Dynamic set from iterable::
+        - Dynamic set from iterable:
 
-        sage: S_dyn = DisjointSet('abc', dynamic=True)
-        sage: S_dyn
-        {{'a'}, {'b'}, {'c'}}
-        sage: 'd' in S_dyn
-        False
-        sage: S_dyn.union('a', 'd')  # 'd' is added automatically
-        sage: S_dyn
-        {{'a', 'd'}, {'b'}, {'c'}}
-        sage: 'd' in S_dyn
-        True
-        sage: S_dyn.union('e', 'f')  # 'e' and 'f' are added
-        sage: S_dyn
-        {{'a', 'd'}, {'b'}, {'c'}, {'e', 'f'}}
-        sage: isinstance(S_dyn, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
-        True
+            sage: S_dyn = DisjointSet('abc', dynamic=True)
+            sage: S_dyn
+            {{'a'}, {'b'}, {'c'}}
+            sage: 'd' in S_dyn
+            False
+            sage: S_dyn.union('a', 'd')  # 'd' is added automatically
+            sage: S_dyn
+            {{'a', 'd'}, {'b'}, {'c'}}
+            sage: 'd' in S_dyn
+            True
+            sage: S_dyn.union('e', 'f')  # 'e' and 'f' are added
+            sage: S_dyn
+            {{'a', 'd'}, {'b'}, {'c'}, {'e', 'f'}}
+            sage: isinstance(S_dyn, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
+            True
 
-    From SetPartition::
+        - From SetPartition:
 
-        sage: SP = SetPartition([[1,3], [2]])
-        sage: D_static = DisjointSet(SP)  # Static by default
-        sage: D_static
-        {{1, 3}, {2}}
-        sage: D_static.make_set(4)
-        Traceback (most recent call last):
-        ...
-        TypeError: Cannot add elements to a static DisjointSet (created with dynamic=False). Use dynamic=True if elements need to be added after creation.
-        sage: D_dyn = DisjointSet(SP, dynamic=True)  # Dynamic
-        sage: D_dyn
-        {{1, 3}, {2}}
-        sage: D_dyn.make_set(4)
-        sage: D_dyn
-        {{1, 3}, {2}, {4}}
-
+            sage: SP = SetPartition([[1,3], [2]])
+            sage: D_static = DisjointSet(SP)  # Static by default
+            sage: D_static
+            {{1, 3}, {2}}
+            sage: D_static.make_set(4)
+            Traceback (most recent call last):
+            ...
+            TypeError: Cannot add elements to a static DisjointSet (created with dynamic=False). Use dynamic=True if elements need to be added after creation.
+            sage: D_dyn = DisjointSet(SP, dynamic=True)  # Dynamic
+            sage: D_dyn
+            {{1, 3}, {2}}
+            sage: D_dyn.make_set(4)
+            sage: D_dyn
+            {{1, 3}, {2}, {4}}
 
     TESTS::
 
@@ -256,8 +255,8 @@ cpdef DisjointSet(arg=None, dynamic=False):
         {{'a'}, {'b'}}
         sage: isinstance(D_dp, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
         True
-
     """
+
     # Handle None -> Empty Dynamic Set
     if arg is None:
         return DynamicDisjointSet_of_hashables([])
