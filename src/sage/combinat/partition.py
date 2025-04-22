@@ -6861,6 +6861,8 @@ class Partitions_all_constrained(Partitions):
 
     def __contains__(self, x):
         """
+        Check if ``x`` is contained in ``self``.
+
         TESTS::
 
             sage: from sage.combinat.partition import Partitions_all_constrained
@@ -8405,6 +8407,8 @@ class Partitions_with_constraints(IntegerListsLex):
 
     def __contains__(self, x):
         """
+        Check if ``x`` is contained in ``self``.
+
         TESTS::
 
             sage: P = Partitions(4, max_slope=2)
