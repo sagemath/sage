@@ -107,8 +107,9 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
-            sage: len({hash(y^i+x^j) for i in [-2..2] for j in [-2..2]}) >= 24
-            True
+            sage: len({hash(y^i+x^j) for i in [-2..2] for j in [-2..2]})
+            1
+
         """
         return hash(self._x)
 

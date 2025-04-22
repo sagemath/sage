@@ -70,10 +70,8 @@ Test that :issue:`15971` is fixed::
 """
 # ****************************************************************************
 #
-#   Sage: Open Source Mathematical Software
-#
-#       Copyright (C) 2005 William Stein <wstein@gmail.com>
-#                     2017 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C)      2005 William Stein <wstein@gmail.com>
+#                     2017-2025 Julian Rüth <julian.rueth@fsfe.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -921,6 +919,33 @@ class FractionField_generic(ring.Field):
         # to avoid having exactly the same hash as the base ring,
         # we change this hash using a random number
         return hash(self._R) ^ 147068341996611
+
+    def _test_element_hash(self, **options):
+        r"""
+        Verify that ``__hash__`` for elements is implemented correctly.
+
+        EXAMPLES::
+
+
+            sage: A.<x, y> = QQ[]
+            sage: K = A.fraction_field()
+            sage: K._test_element_hash()
+
+        """
+        tester = self._tester(**options)
+
+        # Verify that num/1 and num have the same hash.
+        # According to the docstring of __hash__ this is necessary to make
+        # some legacy code work that mixes generators of the base ring
+        # with fraction field elements in dictionaries.
+        for num in tester.some_elements(self.base().some_elements()):
+            try:
+                h = hash(num)
+            except TypeError:
+                # num is unhashable
+                continue
+
+            tester.assertEqual(h, hash(self(num)))
 
     def ngens(self):
         """

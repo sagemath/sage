@@ -11,6 +11,7 @@ AUTHORS:
 
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#                     2025 Julian Rüth <julian.rueth@fsfe.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -406,6 +407,15 @@ cdef class FractionFieldElement(FieldElement):
             True
             sage: ((x+1)/(x^2+1)).subs({x: 1})
             1
+
+        Check that :issue:`35238` is fixed::
+
+            sage: A.<x,y> = QQ[]
+            sage: K = A.fraction_field()
+            sage: d = { x/y: 0 }
+            sage: d[K(2*x, 2*y)]
+            0
+
         """
         if self._denominator.is_one():
             # Handle this case even over rings that don't support reduction, to
@@ -420,13 +430,12 @@ cdef class FractionFieldElement(FieldElement):
             # potentially inexact operations, there would be compatibility
             # issues even if we didn't...)
             self.reduce()
-        # Same algorithm as for elements of QQ
-        n = hash(self._numerator)
-        d = hash(self._denominator)
-        if d == 1:
-            return n
+        try:
+            x = self.parent().base()(self)
+        except (TypeError, ValueError, NotImplementedError):
+            return 0
         else:
-            return n ^ d
+            return hash(x)
 
     def __call__(self, *x, **kwds):
         """
