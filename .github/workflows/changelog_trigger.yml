@@ -1,4 +1,4 @@
-name: Trigger Changelog Generation
+name: Trigger changelog generation
 
 on:
   release:
