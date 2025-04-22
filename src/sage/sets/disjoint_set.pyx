@@ -8,35 +8,35 @@ This module defines a class for mutable partitioning of a set, which
 cannot be used as a key of a dictionary, a vertex of a graph, etc. For
 immutable partitioning see :class:`SetPartition`.
 
-Behavior based on input `arg`: 
+Behavior based on input ``arg``:
 
-*   `arg=None` (or omitted): Returns an empty dynamic disjoint set.
-    Elements can be added later using the ``union`` method.
-    ``dynamic=True`` is implied.
-*   `arg` is a non-negative integer `n`: Returns a static disjoint
-    set containing integers `0` to `n-1`. Elements *cannot* be added
-    later via ``union`` or ``make_set``. The ``dynamic`` flag is ignored.
-*   `arg` is an iterable (e.g., list, string, set):
-    *   If ``dynamic=False`` (default): Returns a static disjoint set
+* ``arg=None`` (or omitted): Returns an empty dynamic disjoint set.
+  Elements can be added later using the ``union`` method.
+  ``dynamic=True`` is implied.
+* ``arg`` is a non-negative integer `n`: Returns a static disjoint
+  set containing integers `0` to `n-1`. Elements *cannot* be added
+  later via ``union`` or ``make_set``. The ``dynamic`` flag is ignored.
+* ``arg`` is an iterable (e.g., list, string, set):
+    * If ``dynamic=False`` (default): Returns a static disjoint set
       containing the elements from the iterable. ``union`` will raise a
       ``KeyError`` if called with elements not initially present.
       ``make_set`` will raise a ``TypeError``.
-    *   If ``dynamic=True``: Returns a dynamic disjoint set containing
+    * If ``dynamic=True``: Returns a dynamic disjoint set containing
       the elements from the iterable. ``union`` will automatically add
       new elements if they are not present. ``make_set`` can also be used.
-*   `arg` is a `SetPartition`: Creates a disjoint set from its base
-    set, respecting the ``dynamic`` flag.
+* ``arg`` is a `SetPartition`: Creates a disjoint set from its base
+  set, respecting the ``dynamic`` flag.
 
 Static vs. Dynamic:
 
-*   Static sets (default for iterables, always for integers) are
-    optimized for cases where the ground set of elements is fixed. They
-    provide slightly better performance and enforce the fixed-set
-    constraint by raising errors if you attempt to add elements after
-    creation (via ``union`` or ``make_set``).
-*   Dynamic sets (``dynamic=True`` or created empty) are designed for
-    building the set structure incrementally. The ``union`` operation
-    conveniently adds any missing elements it encounters.
+* Static sets (default for iterables, always for integers) are
+  optimized for cases where the ground set of elements is fixed. They
+  provide slightly better performance and enforce the fixed-set
+  constraint by raising errors if you attempt to add elements after
+  creation (via ``union`` or ``make_set``).
+* Dynamic sets (``dynamic=True`` or created empty) are designed for
+  building the set structure incrementally. The ``union`` operation
+  conveniently adds any missing elements it encounters.
 
 Use ``dynamic=True`` when the set of elements is not known in advance or
 when you prefer the convenience of implicit element addition during unions.
@@ -44,7 +44,7 @@ Otherwise, use the default static behavior for performance and stricter
 set definition.
 
 You can check if an element is part of the ground set using the ``in``
-operator (e.g., ``if element in my_disjoint_set: ...``). 
+operator (e.g., ``if element in my_disjoint_set: ...``).
 
 
 AUTHORS:
@@ -56,9 +56,7 @@ AUTHORS:
 
 EXAMPLES:
 
-Disjoint set of integers from ``0`` to ``n - 1``:
-
-::
+Disjoint set of integers from ``0`` to ``n - 1``::
 
     sage: s = DisjointSet(6)
     sage: s
@@ -75,9 +73,7 @@ Disjoint set of integers from ``0`` to ``n - 1``:
     sage: list(map(s.find, range(6)))
     [0, 1, 2, 1, 2, 1]
 
-Disjoint set of hashables objects:
-
-::
+Disjoint set of hashables objects::
 
     sage: d = DisjointSet('abcde')  # Static by default now
     sage: d
@@ -134,9 +130,7 @@ cpdef DisjointSet(arg=None, dynamic=False):
 
     EXAMPLES::
 
-    Empty (dynamic) set:
-
-    ::
+    Empty (dynamic) set::
 
         sage: D = DisjointSet()
         sage: D
@@ -154,9 +148,7 @@ cpdef DisjointSet(arg=None, dynamic=False):
         sage: isinstance(D, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
         True
 
-    Static set from integer:
-
-    ::
+    Static set from integer::
 
         sage: S_int = DisjointSet(5)
         sage: S_int
@@ -176,9 +168,7 @@ cpdef DisjointSet(arg=None, dynamic=False):
         sage: isinstance(S_int, sage.sets.disjoint_set.DisjointSet_of_integers)
         True
 
-    Static set from iterable (default):
-
-    ::
+    Static set from iterable (default)::
 
         sage: S_static = DisjointSet('abc')
         sage: S_static
@@ -198,9 +188,7 @@ cpdef DisjointSet(arg=None, dynamic=False):
         sage: isinstance(S_static, sage.sets.disjoint_set.DisjointSet_of_hashables)
         True
 
-    Dynamic set from iterable:
-
-    ::
+    Dynamic set from iterable::
 
         sage: S_dyn = DisjointSet('abc', dynamic=True)
         sage: S_dyn
@@ -218,9 +206,7 @@ cpdef DisjointSet(arg=None, dynamic=False):
         sage: isinstance(S_dyn, sage.sets.disjoint_set.DynamicDisjointSet_of_hashables)
         True
 
-    From SetPartition:
-
-    ::
+    From SetPartition::
 
         sage: SP = SetPartition([[1,3], [2]])
         sage: D_static = DisjointSet(SP)  # Static by default
@@ -238,9 +224,7 @@ cpdef DisjointSet(arg=None, dynamic=False):
         {{1, 3}, {2}, {4}}
 
 
-    TESTS:
-
-    ::
+    TESTS::
 
         sage: DisjointSet(0)  # Integer case
         {}
@@ -377,7 +361,9 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         sage: a.union(3, 4)
         sage: a == loads(dumps(a))
         True
+
     """
+
     def __init__(self, Py_ssize_t n):
         r"""
         Construct the ``DisjointSet`` where each element (integers from ``0``
@@ -501,6 +487,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             ValueError: Cycle detected in parent list starting at element 0
 
         TESTS::
+
             sage: d = DisjointSet(0)
             sage: d.__setstate__([])
             sage: d
