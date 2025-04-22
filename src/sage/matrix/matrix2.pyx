@@ -3493,7 +3493,6 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        
         - ``offset`` -- integer (default: ``0``); parameter pointing diagonal
           parallel to the main diagonal. The main diagonal is the one with
           offset 0. The diagonals above have positive offsets and the diagonals
