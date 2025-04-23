@@ -670,6 +670,15 @@ class Gap_generic(ExtraTabCompletion, Expect):
             Restarting Gap and trying again
             sage: a
             3
+
+        Checks for :issue:`39906`::
+
+            sage: gap("a"*200)
+            Traceback (most recent call last):
+            ...
+            TypeError: Gap terminated unexpectedly while reading in a large line:
+            Gap produced error output
+            Error, Variable: 'aaaa...aaaa' must have a value executing Read("...");
         """
         expect_eof = self._quit_string() in line
 
@@ -728,7 +737,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
                 else:
                     return ''
             else:
-                raise RuntimeError(exc)
+                raise exc
 
         except KeyboardInterrupt:
             self._keyboard_interrupt()

@@ -1087,8 +1087,8 @@ class DiGraph(GenericGraph):
         G.add_vertices(self.vertex_iterator())
         G.set_vertices(self.get_vertices())
         G.add_edges(self.edge_iterator())
-        if hasattr(self, '_embedding'):
-            G._embedding = copy(self._embedding)
+        G._copy_attribute_from(self, '_assoc')
+        G._copy_attribute_from(self, '_embedding')
         G._weighted = self._weighted
 
         if data_structure == "static_sparse":
@@ -1850,20 +1850,9 @@ class DiGraph(GenericGraph):
             name = ''
         H.name("Reverse of (%s)" % name)
 
-        attributes_to_copy = ('_assoc', '_embedding')
-        for attr in attributes_to_copy:
-            if hasattr(self, attr):
-                copy_attr = {}
-                old_attr = getattr(self, attr)
-                if isinstance(old_attr, dict):
-                    for v, value in old_attr.items():
-                        try:
-                            copy_attr[v] = value.copy()
-                        except AttributeError:
-                            copy_attr[v] = copy(value)
-                    setattr(H, attr, copy_attr)
-                else:
-                    setattr(H, attr, copy(old_attr))
+        # Copy attributes '_assoc' and '_embedding' if set
+        H._copy_attribute_from(self, '_assoc')
+        H._copy_attribute_from(self, '_embedding')
 
         if immutable or (immutable is None and self.is_immutable()):
             return H.copy(immutable=True)
