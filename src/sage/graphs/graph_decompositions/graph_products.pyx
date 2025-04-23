@@ -149,7 +149,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
       instead.
 
     - ``immutable`` -- boolean (default: ``None``); whether to create a
-      mutable/immutable graphs. ``immutable=None`` (default) means that the
+      mutable/immutable graph. ``immutable=None`` (default) means that the
       graph and its factors will behave the same way.
 
     .. SEEALSO::
@@ -221,7 +221,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         sage: Graph({0:[]}).is_cartesian_product()
         False
 
-    Check the behavior of parameter ``immutable``::
+    Check the behaviour of parameter ``immutable``::
 
         sage: G = graphs.Grid2dGraph(3, 3)
         sage: any(f.is_immutable() for f in G.is_cartesian_product(certificate=True))
