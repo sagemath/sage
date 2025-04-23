@@ -274,7 +274,7 @@ REFERENCES:
               :arxiv:`2006.08418`.
 
 .. [AN2023] Alex Abreu and Antonio Nigro. *Splitting the cohomology of Hessenberg
-            varieties and e-positivity of chromatic symmetric functions*. 
+            varieties and e-positivity of chromatic symmetric functions*.
             Preprint (2023). :arxiv:`2304.10644`.
 
 .. [Ang1997] B. Anglès. 1997. *On some characteristic polynomials attached to

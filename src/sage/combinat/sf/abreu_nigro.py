@@ -35,9 +35,10 @@ class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebr
         \rho_{\lambda}(x; q) = \rho_{\lambda_1}(x; q) \rho_{\lambda_2}(x; q)
         \cdots \rho_{\lambda_{\ell}}(x; q).
 
-    Here `[n]_q = 1 + \cdots + q^{n-1}`. An alternative definition is given
-    by `\rho_n = q^{n-1} P_n(x; q^{-1})`, where `P_n(x; q)` is the
-    Hall-Littlewood `P` functions.
+    Here `[n]_q = 1 + q + \cdots + q^{n-1}` is a `q`-integer.
+    An alternative definition is given by
+    `\rho_n = q^{n-1} P_n(x; q^{-1})`, where `P_n(x; q)` is the
+    Hall-Littlewood `P` function for the one-row partition `n`.
 
     INPUT:
 
@@ -158,11 +159,20 @@ class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebr
         (q-1)*an[1, 1] - an[2]
         sage: an([3]).antipode()
         (-q^2+2*q-1)*an[1, 1, 1] + (2*q-2)*an[2, 1] - an[3]
+
+    For length-1 partitions, the antipode is in fact given
+    by the formula `S(\rho_n(x; q)) = -P_n(x; q)`, where `P_n`
+    is the Hall-Littlewood P-function::
+
+        sage: P = Sym.hall_littlewood(q).P()
+        sage: all(P(an[n].antipode()) == -P[n] for n in range(1, 6))
+        True
+
     """
     @staticmethod
     def __classcall_private__(cls, Sym, q='q'):
         """
-        Normalize input to enxure a unique representation.
+        Normalize input to ensure a unique representation.
 
         EXAMPLES::
 
@@ -185,6 +195,8 @@ class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebr
             sage: an = Sym.abreu_nigro(q)
             sage: TestSuite(an).run(skip=['_test_associativity', '_test_distributivity', '_test_prod'])
             sage: TestSuite(an).run(elements=[an[1,1]+an[2], an[1]+2*an[1,1]])
+            sage: latex(an[2,1])
+            \rho_{2,1}
         """
         self._q = q
         multiplicative.SymmetricFunctionAlgebra_multiplicative.__init__(self, Sym, "Abreu-Nigro", 'an')
@@ -290,7 +302,7 @@ class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebr
         r"""
         Return the coproduct on the ``n``-th generator of ``self``.
 
-        We have
+        For any `n \geq 1`, we have
 
         .. MATH::
 
@@ -304,7 +316,7 @@ class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebr
 
         OUTPUT:
 
-        The coproduct acting on ``elt``; the result is an element of the
+        The coproduct applied to ``elt``; the result is an element of the
         tensor squared of the basis ``self``.
 
         EXAMPLES::
