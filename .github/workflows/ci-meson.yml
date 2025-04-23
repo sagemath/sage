@@ -14,16 +14,31 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   test:
-    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }})
+    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }}, ${{ matrix.tests }}${{ matrix.editable && ', editable' || '' }})
     runs-on: ${{ matrix.os }}-latest
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu]
+        os: ['ubuntu', 'macos']
         python: ['3.11', '3.12']
+        tests: ['all']
+        editable:
+          ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
+        include:
+          - os: 'ubuntu'
+            python: '3.12'
+            tests: 'new'
+          # one additional editable run in pull_request, this has no effect if not pull_request
+          - os: 'ubuntu'
+            python: 3.12
+            editable: true
+            tests: 'all'
 
     steps:
       - uses: actions/checkout@v4
@@ -33,6 +48,17 @@ jobs:
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: Mark new files as uncommited
+        if: matrix.tests == 'new' 
+        run: |
+          # List remotes (for debugging)
+          git remote -v
+          # Reset the branch to develop
+          git fetch origin develop
+          git reset --soft origin/develop
+          # Show uncommitted changes
+          git status
 
       - name: Cache conda packages
         uses: actions/cache@v4
@@ -70,12 +96,13 @@ jobs:
           export CC="ccache $CC"
           export CXX="ccache $CXX"
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
-          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir . -v
+          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable && '--editable' || '' }} . -v
 
       - name: Check update-meson
         # this step must be after build, because meson.build creates a number of __init__.py files
         # that is needed to make tools/update-meson.py run correctly
         shell: bash -l {0}
+        if: matrix.tests == 'all'
         run: |
           python3 tools/update-meson.py
           if ! ./tools/test-git-no-uncommitted-changes; then
@@ -93,12 +120,24 @@ jobs:
         shell: bash -l {0}
         run: |
           # We don't install sage_setup, so don't try to test it
-          rm -R ./src/sage_setup/
-          ./sage -t --all -p4 --format github
+          # If editable then deleting the directory will cause sage to detect rebuild, which will cause ninja to fail
+          # so we don't delete the directory in this case
+          ${{ matrix.editable && 'true' || 'rm -R ./src/sage_setup/' }}
+          ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
+
+      - name: Check that all modules can be imported
+        shell: bash -l {0}
+        run: |
+          # Increase the length of the lines in the "short summary"
+          export COLUMNS=120
+          # The following command checks that all modules can be imported.
+          # The output also includes a long list of modules together with the number of tests in each module.
+          # This can be ignored.
+          pytest -qq --doctest --collect-only || true
 
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
         if: failure()
         with:
-          name: ${{ runner.os }}-meson-${{ matrix.python }}-log
+          name: ${{ runner.os }}-meson-${{ matrix.python }}${{ matrix.editable && '-editable' || '' }}-log
           path: builddir/meson-logs/
