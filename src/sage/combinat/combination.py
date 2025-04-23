@@ -473,8 +473,8 @@ class Combinations_msetk(Parent):
          is issued only once per instance.
 
         RETURNS:
-            bool: ``True`` if processing should continue (k >= 0),
-                  ``False`` if k < 0 and execution should stop (empty set).
+            bool: ``True`` if ``k >= 0``,
+                  ``False`` if ``k < 0``
 
         RAISES:
             ValueError: if k < 0 and allow_negative is False.
