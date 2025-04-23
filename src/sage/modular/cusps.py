@@ -467,7 +467,7 @@ class Cusp(Element):
         return Cusp(-self.__a, self.__b)
 
     def is_gamma0_equiv(self, other, N,
-                        transformation=None) -> tuple[bool, Any]:
+                        transformation=None) -> bool | tuple[bool, Any]:
         r"""
         Return whether ``self`` and ``other`` are equivalent modulo the action of
         `\Gamma_0(N)` via linear fractional transformations.
