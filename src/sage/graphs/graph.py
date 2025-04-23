@@ -9286,6 +9286,27 @@ class Graph(GenericGraph):
         """
         from sage.graphs.projective_planarity import P2_FORBIDDEN_MINORS
 
+        num_verts_G = self.num_verts()
+        num_edges_G = self.num_edges()
+        minor_map = None
+
+        for forbidden_minor in P2_FORBIDDEN_MINORS:
+        # Can't be a minor if it has more vertices or edges than G
+        if (
+            forbidden_minor.num_verts() > num_verts_G
+            or forbidden_minor.num_edges() > num_edges_G
+        ):
+            continue
+
+        try:
+            minor_map = self.minor(forbidden_minor, **minor_kwargs)
+            if minor_map is not None:
+                #return minor_map
+                break
+        # If G has no H minor, then G.minor(H) throws a ValueError
+        except ValueError:
+            continue
+
         p2_forbidden_minor = get_p2_forbidden_minor(self, **minor_kwargs)
         
         if minor_map:
