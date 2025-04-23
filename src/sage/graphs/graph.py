@@ -426,10 +426,9 @@ from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
-
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features.mcqd import Mcqd
-from sage.graphs.projective_planarity import is_projective_planar
+from sage.graphs.projective_planarity import P2_FORBIDDEN_MINORS
 
 
 lazy_import('sage.graphs.mcqd', ['mcqd'],
@@ -9238,6 +9237,8 @@ class Graph(GenericGraph):
         G.name("%sBipartite Double of %s" % (prefix, self.name()))
         return G
 
+    
+
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free
@@ -9293,6 +9294,7 @@ class Graph(GenericGraph):
     from sage.graphs.matching import is_matching_covered
     from sage.graphs.matching import matching
     from sage.graphs.matching import perfect_matchings
+
 
 
 _additional_categories = {
