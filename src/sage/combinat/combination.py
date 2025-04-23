@@ -62,7 +62,7 @@ def Combinations(mset, k=None, allow_negative=None):
     - ``k`` -- (optional) an integer, the size of the combinations
     - ``allow_negative`` -- (default: ``None``) boolean or ``None``. Controls
       behavior when ``k`` is negative.
-      - ``None``: Return an empty list and issue a deprecation warning (Issue #39411).
+      - ``None``: Return an empty list and issue a deprecation warning (:issue:`39411`).
         This will change in the future to raise a ``ValueError``.
       - ``True``: Return an empty list without a warning.
       - ``False``: Raise a ``ValueError``.
@@ -467,22 +467,20 @@ class Combinations_msetk(Parent):
 
     def _handle_negative_k(self):
         """
-        Check if k is negative and handle based on allow_negative flag.
+        Check if ``k`` is negative and raise a ``ValueError`` if that is not allowed.
 
-        Issues warnings or errors as appropriate, ensuring the warning
-         is issued only once per instance.
+        Issues a deprecation warning or error if appropriate.
 
         RETURNS:
-            bool: ``True`` if processing should continue (k >= 0),
-                  ``False`` if k < 0 and execution should stop (empty set).
+            bool: ``True`` if ``k >= 0``,
+                  ``False`` if ``k < 0``
 
         RAISES:
-            ValueError: if k < 0 and allow_negative is False.
+            ``ValueError``: if ``k < 0`` and ``allow_negative`` is ``False``
         """
         if self.k >= 0:
-            return True # Continue processing
+            return True
 
-        # Handle k < 0
         if self.allow_negative is False:
             raise ValueError("k must be non-negative")
         elif self.allow_negative is None:
@@ -534,7 +532,7 @@ class Combinations_msetk(Parent):
             12
         """
         if not self._handle_negative_k():
-            return ZZ(0) # Stop processing, return 0
+            return ZZ(0)
 
         # logic for k >= 0
         from sage.libs.gap.libgap import libgap
