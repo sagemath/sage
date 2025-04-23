@@ -1519,8 +1519,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
         def abreu_nigro_g(self, H, k, q='q'):
             r"""
-            Return the Abreu-Nigro `g_H(x; q)` symmetric function
-            for the Hessenberg function ``H`` in the basis ``self``.
+            Return the Abreu-Nigro `g_{H,k}(x; q)` symmetric function
+            for the Hessenberg function ``H`` in the basis ``self``,
+            as defined in (2.2) of [HHKKO25]_.
 
             INPUT:
 
@@ -1539,18 +1540,28 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 (-1)^{|\tau_1|-n+k} q^{w_H(\sigma)} h_{|\tau_1|-n+k}(x)
                 \omega( \rho_{|\tau_2|,\ldots,|\tau_j|}(x; q) ),
 
-            where the sum is over all permutations `\sigma` such that
+            where the sum is over all permutations `\sigma \in S_n` such that
             `|\tau_1| \geq n - k` and `\sigma(i) \leq H(i)` for all `i`;
-            `\tau_1, \ldots, \tau_j` is the cycle decomposition of `\sigma`;
-            `\rho_{\lambda}` is the Abreu-Nigro basis [AN2021II]_; and
+            `\tau_1, \ldots, \tau_j` is the cycle decomposition of `\sigma`
+            (with cycles sorted by smallest elements, and with these
+            smallest elements placed at the beginning of each cycle);
+            `\rho_{\lambda}` is the Abreu-Nigro basis [AN2021II]_
+            (see :class:`SymmetricFunctions.abreu_nigro`); and
 
             .. MATH::
 
                 w_H(\sigma) = |\{(i, j) \mid i < j \leq H(i) \text{ and } j
-                                 \text{ preceeds } i \text{ in } \sigma^c \}|,
+                                 \text{ precedes } i \text{ in } \sigma^c \}|,
 
-            with `\sigma^c` being the permutations formed by removing the
-            parentheses in the cycle decomposition.
+            with `\sigma^c` being the permutation formed by removing the
+            parentheses in the cycle decomposition `\tau_1 \cdots \tau_j`.
+
+            REFERENCES:
+
+            .. [HHKKO25] \JiSun Huh, Byung-Hak Hwang, Donghyun Kim
+               Jang Soo Kim, Jaeseong Oh,
+               *Refinement of Hikita's e-positivity theorem via Abreu--Nigro's g-functions and restricted modular law*.
+               :arxiv:`2504.09123v1`.
 
             EXAMPLES:
 
