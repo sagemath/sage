@@ -627,12 +627,12 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         for x in range(n):
             # Use the existing Jup table to compute all covering
             # relations in J(P) for things that are above loc(x).
-            K = [[loc[x]]]
+            K0 = [[loc[x]]]
             j = 0
-            while K[j]:
-                K.append([b for a in K[j] for b in Jup[a]])
+            while K0[j]:
+                K0.append([b for a in K0[j] for b in Jup[a]])
                 j += 1
-            K = sorted({item for sublist in K for item in sublist})
+            K = sorted({item for sublist in K0 for item in sublist})
             for j in range(len(K)):
                 i = m + j + 1
                 Jup[i] = [m + K.index(a) + 1 for a in Jup[K[j]]]

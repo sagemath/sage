@@ -1405,10 +1405,10 @@ class SageInputExpression:
             sage: sie(4)
             {call: {atomic:3}({atomic:4})}
         """
-        args = [self._sie_builder(_) for _ in args]
-        for k in kwargs:
-            kwargs[k] = self._sie_builder(kwargs[k])
-        return SIE_call(self._sie_builder, self, args, kwargs)
+        new_args = [self._sie_builder(arg) for arg in args]
+        new_kwargs = {key: self._sie_builder(val)
+                      for key, val in kwargs.items()}
+        return SIE_call(self._sie_builder, self, new_args, new_kwargs)
 
     def __getitem__(self, key):
         r"""

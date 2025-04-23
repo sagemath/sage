@@ -395,7 +395,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         - ``require_final_EF`` -- boolean (default: ``True``); whether to
           require the returned key polynomials to be in one-to-one
-          correspondance to the extensions of this valuation to ``L`` and
+          correspondence to the extensions of this valuation to ``L`` and
           require them to have the ramification index and residue degree of the
           valuations they correspond to.
 

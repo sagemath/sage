@@ -89,20 +89,16 @@ REFERENCES:
 # ****************************************************************************
 
 
-from sage.misc.repr import repr_lincomb
-from sage.structure.richcmp import richcmp_method, richcmp
-
-import sage.modules.free_module as free_module
-from sage.modules.free_module_element import FreeModuleElement
-
 import sage.modular.arithgroup.all as arithgroup
-import sage.modular.cusps as cusps
-import sage.modular.dirichlet as dirichlet
 import sage.modular.hecke.all as hecke
-from sage.modular.modsym.manin_symbol import ManinSymbol
-
-from sage.rings.rational_field import Q as QQ
 from sage.categories.rings import Rings
+from sage.misc.repr import repr_lincomb
+from sage.modular import cusps, dirichlet
+from sage.modular.modsym.manin_symbol import ManinSymbol
+from sage.modules import free_module
+from sage.modules.free_module_element import FreeModuleElement
+from sage.rings.rational_field import Q as QQ
+from sage.structure.richcmp import richcmp, richcmp_method
 
 from . import element
 
@@ -299,7 +295,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
 
         - ``sign`` -- integer; either -1, 0, or 1
 
-        - ``base_ring`` -- rings.Ring (defaults to the rational numbers)
+        - ``base_ring`` -- commutative ring (defaults to the rational numbers)
 
         EXAMPLES::
 
@@ -431,7 +427,9 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B.gen(0)
             Traceback (most recent call last):
             ...
-            ValueError: only 0 generators known for Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(24) of weight 4 over Rational Field
+            ValueError: only 0 generators known for
+            Space of Boundary Modular Symbols for
+            Congruence Subgroup Gamma0(24) of weight 4 over Rational Field
             sage: B(Cusp(1/3))
             [1/3]
             sage: B.gen(0)

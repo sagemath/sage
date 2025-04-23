@@ -24,6 +24,7 @@ AUTHOR:
 
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
+from libc.limits cimport LONG_MIN
 from cpython.long cimport PyLong_AsLong
 from sage.arith.long cimport pyobject_to_long
 
@@ -38,7 +39,7 @@ from sage.libs.flint.fmpq_poly_sage cimport *
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
 
-from cypari2.gen import Gen as pari_gen
+from cypari2.gen cimport Gen as pari_gen
 
 from sage.rings.complex_arb cimport ComplexBall
 from sage.rings.integer cimport Integer, smallInteger
@@ -236,7 +237,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         elif isinstance(x, Rational):
             fmpq_poly_set_mpq(self._poly, (<Rational> x).value)
 
-        elif isinstance(x, list) or isinstance(x, tuple):
+        elif isinstance(x, (list, tuple)):
 
             if len(x) == 0:
                 return
@@ -779,7 +780,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     # Shifting                                                                #
     ###########################################################################
 
-    def __lshift__(self, n):
+    def __lshift__(self, long n):
         """
         Notationally multiply ``self`` by `t^n`.
 
@@ -792,27 +793,34 @@ cdef class Polynomial_rational_flint(Polynomial):
         TESTS::
 
             sage: R.<t> = QQ[]
+            sage: t << (-1)
+            1
+            sage: t << (-10)
+            0
             sage: f = R.random_element(1000)
             sage: (f << 23) >> 23 == f        # indirect doctest
             True
         """
-        cdef unsigned long k = <unsigned long> n
+        if n < 0:
+            assert n != LONG_MIN
+            return self >> (-n)
+
         cdef Polynomial_rational_flint f = <Polynomial_rational_flint> self
         cdef Polynomial_rational_flint res
         cdef bint do_sig
 
-        if k == 0 or fmpq_poly_is_zero(f._poly):
+        if n == 0 or fmpq_poly_is_zero(f._poly):
             return self
         else:
             res = f._new()
             do_sig = fmpq_poly_length(f._poly) > 5000 or n > 5000
 
             if do_sig: sig_str("FLINT exception")
-            fmpq_poly_shift_left(res._poly, f._poly, k)
+            fmpq_poly_shift_left(res._poly, f._poly, n)
             if do_sig: sig_off()
             return res
 
-    def __rshift__(self, n):
+    def __rshift__(self, long n):
         """
         Notationally return the quotient of Euclidean division of ``self``
         by `t^n`.
@@ -823,20 +831,25 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f = 1 + t + t^2/2 + t^3/3 + t^4/4
             sage: f >> 2
             1/4*t^2 + 1/3*t + 1/2
+            sage: f >> (-2)
+            1/4*t^6 + 1/3*t^5 + 1/2*t^4 + t^3 + t^2
         """
-        cdef unsigned long k = <unsigned long> n
+        if n < 0:
+            assert n != LONG_MIN
+            return self << (-n)
+
         cdef Polynomial_rational_flint f = <Polynomial_rational_flint> self
         cdef Polynomial_rational_flint res
         cdef bint do_sig
 
-        if k == 0 or fmpq_poly_is_zero(f._poly):
+        if n == 0 or fmpq_poly_is_zero(f._poly):
             return self
         else:
             res = f._new()
             do_sig = _do_sig(f._poly)
 
             if do_sig: sig_str("FLINT exception")
-            fmpq_poly_shift_right(res._poly, f._poly, k)
+            fmpq_poly_shift_right(res._poly, f._poly, n)
             if do_sig: sig_off()
             return res
 
@@ -2162,7 +2175,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             Transitive group number 183 of degree 12
 
             sage: f.galois_group(algorithm='magma')  # optional - magma
-            Transitive group number 5 of degree 4
+            Transitive group number 183 of degree 12
 
         TESTS:
 

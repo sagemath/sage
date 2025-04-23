@@ -186,7 +186,7 @@ class CoercionUHPtoPD(HyperbolicModelCoercion):
             [0 1]
         """
         if x.det() < 0:
-#            x = I * x
+            # x = I * x
             return matrix([[1,-I],[-I,1]]) * x * matrix([[1,I],[I,1]]).conjugate()/Integer(2)
         return matrix([[1,-I],[-I,1]]) * x * matrix([[1,I],[I,1]])/Integer(2)
 

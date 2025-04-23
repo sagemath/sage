@@ -828,7 +828,7 @@ cdef class P1List():
         """
         return len(self.__list)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the string representation of this P1List.
 
@@ -838,7 +838,7 @@ cdef class P1List():
             sage: str(L)            # indirect doctest
             'The projective line over the integers modulo 8'
         """
-        return "The projective line over the integers modulo %s" % self.__N
+        return f"The projective line over the integers modulo {self.__N}"
 
     def lift_to_sl2z(self, int i):
         r"""
@@ -1369,22 +1369,3 @@ def lift_to_sl2z(c, d, N):
     if N <= 2147483647:
         return lift_to_sl2z_llong(c, d, N)
     raise NotImplementedError("N too large")
-
-
-def _make_p1list(n):
-    """
-    Helper function used in pickling.
-
-    Not intended for end-users.
-
-    EXAMPLES::
-
-        sage: from sage.modular.modsym.p1list import _make_p1list
-        sage: _make_p1list(3)
-        doctest:...: DeprecationWarning: _make_p1list() is deprecated
-        See https://github.com/sagemath/sage/issues/25848 for details.
-        The projective line over the integers modulo 3
-    """
-    from sage.misc.superseded import deprecation_cython as deprecation
-    deprecation(25848, '_make_p1list() is deprecated')
-    return P1List(n)

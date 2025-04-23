@@ -693,7 +693,7 @@ cdef class PartitionRefinement_generic:
             self._fixed_not_minimized.append(pos)
             self._backtrack()  # backtracking
 
-            #restore the old state and continue backtracking
+            # restore the old state and continue backtracking
             self._part.depth = old_partition_depth
             self._fixed_minimized = self._fixed_minimized[:old_fixed_minimized_len]
             self._fixed_not_minimized = copy(old_fixed_not_minimized)

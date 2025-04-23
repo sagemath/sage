@@ -944,7 +944,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         if not hasattr(x, 'variables'):
             try:
                 return sage_eval(repr(x), self.gens_dict())
-            except (TypeError, ValueError, SyntaxError):
+            except (TypeError, ValueError, SyntaxError, NameError):
                 raise ValueError(f"cannot convert {x} into an element of {self}")
 
         # direct conversion will only be used if the underlying polynomials are libsingular.
@@ -1265,7 +1265,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         return self.gens()[-n:]
 
     @cached_method
-    def gens_dict(self):
+    def gens_dict(self) -> GenDictWithBasering:
         """
         Return a dictionary-like object containing the infinitely many
         ``{var_name:variable}`` pairs.

@@ -114,7 +114,7 @@ cdef class Matrix_dense(matrix.Matrix):
             [1 2]
             [3 4]
 
-        ``.T`` is a convenient shortcut for the transpose::
+        :attr:`~sage.matrix.matrix2.Matrix.T` is a convenient shortcut for the transpose::
 
            sage: A.T
            [1 3]
@@ -210,7 +210,7 @@ cdef class Matrix_dense(matrix.Matrix):
                 e2 = self.get_unsafe(nrows - i - 1, ncols - j - 1)
                 self.set_unsafe(i, j, e2)
                 self.set_unsafe(nrows - i - 1, ncols - j - 1, e1)
-        if nrows % 2 == 1:
+        if nrows % 2:
             i = nrows // 2
             for j in range(ncols // 2):
                 e1 = self.get_unsafe(i, j)
@@ -275,11 +275,19 @@ cdef class Matrix_dense(matrix.Matrix):
             sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
+
+        TESTS:
+
+        Verify that :issue:`15067` is fixed::
+
+            sage: u = matrix(1, 2, [-1, 1])
+            sage: derivative(u, x)
+            [0 0]
         """
         # We could just use apply_map
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
-        v = [z.derivative(var) for z in self.list()]
+        v = [sage.calculus.functional.derivative(z, var) for z in self.list()]
         if R is None:
             v = sage.structure.sequence.Sequence(v)
             R = v.universe()

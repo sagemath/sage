@@ -54,7 +54,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.rational_field import frac
 
-from . import dirichlet
+from sage.modular import dirichlet
 
 ##########################################################################
 # Helper functions for calculating dimensions of spaces of modular forms

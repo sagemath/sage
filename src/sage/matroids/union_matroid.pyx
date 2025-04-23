@@ -1,3 +1,6 @@
+"""
+Union of matroids
+"""
 from sage.matroids.matroid cimport Matroid
 
 cdef class MatroidUnion(Matroid):
@@ -31,7 +34,7 @@ cdef class MatroidUnion(Matroid):
     """
     def __init__(self, matroids):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -140,7 +143,7 @@ cdef class MatroidSum(Matroid):
     """
     def __init__(self, summands):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -246,7 +249,7 @@ cdef class PartitionMatroid(Matroid):
     """
     def __init__(self, partition):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
