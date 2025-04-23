@@ -403,7 +403,7 @@ def line_graph(g, labels=True, return_labels=False):
     multiple = g.has_multiple_edges()
 
     if multiple:
-        # As the edges of g are the vertices of its line graph, we need to distinguish between the mutliple edges of g.
+        # As the edges of g are the vertices of its line graph, we need to distinguish between the multiple edges of g.
         # To this aim, we assign to each edge of g an integer label (between 0 and g.size() - 1) and set labels to True
         # in order to keep these labels during the construction of the line graph.
         labels = True
