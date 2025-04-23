@@ -144,3 +144,14 @@ In the cloud
 - `Docker image sagemathinc/cocalc
   <https://hub.docker.com/r/sagemathinc/cocalc>`_ can be used on any system with Docker to run CoCalc locally.
 
+
+More information:
+
+.. toctree::
+   :maxdepth: 2
+
+   conda
+   source
+   meson
+   launching
+   troubles
