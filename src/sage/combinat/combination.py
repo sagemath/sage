@@ -480,7 +480,7 @@ class Combinations_msetk(Parent):
             ValueError: if k < 0 and allow_negative is False.
         """
         if self.k >= 0:
-            return True # Continue processing
+            return True
 
         # Handle k < 0
         if self.allow_negative is False:
