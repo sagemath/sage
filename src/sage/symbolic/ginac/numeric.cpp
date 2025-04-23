@@ -3377,7 +3377,12 @@ ex numeric::evalf(int /*level*/, PyObject* parent) const {
         if (ans == nullptr)
                 throw (std::runtime_error("numeric::evalf(): error calling py_float()"));
 
-        return ans;
+        // We do not return ans because ex's constructor calls Py_INCREF.
+        // This would lead to a memory leak, see bug #27536.
+        basic *bp = new numeric(ans);
+        bp->setflag(status_flags::dynallocated);
+        GINAC_ASSERT(bp->get_refcount() == 0);
+        return *bp;
 }
 
 const numeric numeric::try_py_method(const std::string& s) const
@@ -5015,13 +5020,23 @@ const numeric isqrt(const numeric &x) {
 
 /** Floating point evaluation of Sage's constants. */
 ex ConstantEvalf(unsigned serial, PyObject* dict) {
+        PyObject* x;
         if (dict == nullptr) {
                 dict = PyDict_New();
                 PyDict_SetItemString(dict, "parent", CC_get());
+                x = py_funcs.py_eval_constant(serial, dict);
+                Py_DECREF(dict); // To avoid a memory leak, see bug #27536.
         }
-        PyObject* x = py_funcs.py_eval_constant(serial, dict);
+        else x = py_funcs.py_eval_constant(serial, dict);
+
         if (x == nullptr) py_error("error getting digits of constant");
-        return x;
+
+        // We do not return x because ex's constructor calls Py_INCREF.
+        // This would lead to a memory leak, see bug #27536.
+        basic *bp = new numeric(x);
+        bp->setflag(status_flags::dynallocated);
+        GINAC_ASSERT(bp->get_refcount() == 0);
+        return *bp;
 }
 
 ex UnsignedInfinityEvalf(unsigned serial, PyObject* parent) {
