@@ -7,12 +7,14 @@ AUTHORS:
 
 - Juan M. Lazaro Ruiz (2025-01-27): initial version
 - Steve Schluchter (2025-04-06): edited
+- Kristina Obrenovic Gilmour: checked graphs
 
 """
 
 # ****************************************************************************
-#       Copyright (C) 2024 Juan M. Lazaro Ruiz <juan.m.lazaro.ruiz@gmail.com>
-#       and Steve Schluchter (steven.schluchter@gmail.com)
+#       Copyright (C) 2024 Juan M. Lazaro Ruiz <juan.m.lazaro.ruiz@gmail.com>,
+#       Steve Schluchter (steven.schluchter@gmail.com), and 
+#       Kristina Obrenovic Gilmour (kogilmour@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
