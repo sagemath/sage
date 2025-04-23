@@ -9307,12 +9307,10 @@ class Graph(GenericGraph):
         except ValueError:
             continue
 
-        p2_forbidden_minor = get_p2_forbidden_minor(self, **minor_kwargs)
-        
         if minor_map:
-            return p2_forbidden_minor
+            return minor_map
         else:
-            return p2_forbidden_minor is None
+            return minor_map is None
     
 
     # Aliases to functions defined in other modules
