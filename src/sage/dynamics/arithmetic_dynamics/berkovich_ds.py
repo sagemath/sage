@@ -613,7 +613,8 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
             sage: f.normalize_coordinates(); f
             Dynamical system of Projective Berkovich line over Cp(3) of precision 20
              induced by the map
-              Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
+              Defn: Defined on coordinates by sending (x : y)
+               to ((2 + O(3^20))*x^2 : (2 + O(3^20))*y^2)
 
 
         Normalize_coordinates may sometimes fail over `p`-adic fields::
@@ -690,10 +691,10 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
             sage: # needs sage.rings.number_field
             sage: ideal = A.ideal(5).factor()[1][0]; ideal
-            Fractional ideal (2*a + 1)
+            Fractional ideal (-2*a - 1)
             sage: g = f.conjugate(conj, new_ideal=ideal)
             sage: g.domain().ideal()
-            Fractional ideal (2*a + 1)
+            Fractional ideal (-2*a - 1)
         """
         if self.domain().is_padic_base():
             return DynamicalSystem_Berkovich(self._system.conjugate(M, adjugate=adjugate))

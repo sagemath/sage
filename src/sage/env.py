@@ -47,7 +47,6 @@ import socket
 import sys
 import sysconfig
 from . import version
-from pathlib import Path
 import subprocess
 
 
@@ -193,7 +192,7 @@ SAGE_LOCAL_SPKG_INST = var("SAGE_LOCAL_SPKG_INST", join(SAGE_LOCAL, "var", "lib"
 SAGE_SPKG_INST = var("SAGE_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))  # deprecated
 
 # source tree of the Sage distribution
-SAGE_ROOT = var("SAGE_ROOT")  # no fallback for SAGE_ROOT
+SAGE_ROOT = var("SAGE_ROOT") or None
 SAGE_SRC = var("SAGE_SRC", join(SAGE_ROOT, "src"), SAGE_LIB)
 SAGE_DOC_SRC = var("SAGE_DOC_SRC", join(SAGE_ROOT, "src", "doc"), SAGE_DOC)
 SAGE_PKGS = var("SAGE_PKGS", join(SAGE_ROOT, "build", "pkgs"))
@@ -319,6 +318,10 @@ def sage_include_directories(use_sources=False):
         sage: dirs = sage.env.sage_include_directories(use_sources=True)
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
+
+    ::
+
+        sage: # optional - !meson_editable (no need, see :issue:`39275`)
         sage: dirs = sage.env.sage_include_directories(use_sources=False)
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True

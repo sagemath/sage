@@ -16,7 +16,7 @@ AUTHORS:
 - Kwankyu Lee (2016-03-09) -- initial version, based on code by Robert Bradshaw and Nathann Cohen
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016      Kwankyu Lee <ekwankyu@gmail.com>
 #                     2018      Thierry Monteil
 #                     2018-2021 Sébastien Labbé
@@ -28,8 +28,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import multiprocessing
 import platform
@@ -366,6 +366,10 @@ def external_features():
     r"""
     Generate the features that are only to be tested if ``--optional=external`` is used.
 
+    .. SEEALSO::
+
+        :func:`sage.features.all.all_features`
+
     EXAMPLES::
 
         sage: from sage.doctest.external import external_features
@@ -387,7 +391,7 @@ def external_features():
     yield Gurobi()
 
 
-def external_software() -> list[str]:
+def _external_software() -> list[str]:
     """
     Return the alphabetical list of external software supported by this module.
 
@@ -400,7 +404,7 @@ def external_software() -> list[str]:
     return sorted(f.name for f in external_features())
 
 
-external_software = external_software()
+external_software: list[str] = _external_software()
 
 
 class AvailableSoftware:

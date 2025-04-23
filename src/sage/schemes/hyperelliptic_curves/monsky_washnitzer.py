@@ -570,15 +570,10 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         """
         return self._poly_ring
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return a list [x, T] where x and T are the generators of the ring
-        (as element *of this ring*).
-
-        .. NOTE::
-
-             I have no idea if this is compatible with the usual Sage
-             'gens' interface.
+        Return (x, T) where x and T are the generators of the ring
+        (as elements *of this ring*).
 
         EXAMPLES::
 
@@ -2539,7 +2534,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         """
         return self.element_class(self, self._poly_ring.zero(), check=False)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -2596,7 +2591,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         i = int(i)
         j = int(j)
 
-        if 0 < i and i < self._n:
+        if 0 < i < self._n:
             if b is None:
                 by_to_j = self._series_ring_y << (j - 1)
             else:
@@ -2680,7 +2675,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             mat_2[i] = self._precomputed_diff_coeffs[i][2]
         return mat_1.transpose(), mat_2.transpose()
 
-    def _precompute_monomial_diffs(self):
+    def _precompute_monomial_diffs(self) -> list:
         r"""
         Precompute coefficients of the basis representation of `d(x^iy^j)`
         for small `i`, `j`.
@@ -3804,6 +3799,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             F.append(F_i)
         return F
 
+    @cached_method
     def helper_matrix(self):
         r"""
         We use this to solve for the linear combination of
@@ -3821,22 +3817,16 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             [-100/2101 -125/2101 -625/8404  -64/2101  -80/2101]
             [ -80/2101 -100/2101 -125/2101 -625/8404  -64/2101]
         """
-        try:
-            return self._helper_matrix
-        except AttributeError:
-            pass
-
         # The smallest y term of (1/j) d(x^i y^j) is constant for all j.
         x, y = self.base_ring().gens()
         n = self.degree()
         L = [(y * x**i).diff().extract_pow_y(0) for i in range(n)]
         A = matrix(L).transpose()
         if A.base_ring() not in IntegralDomains():
-            # must be using integer_mod or something to approximate
-            self._helper_matrix = (~A.change_ring(QQ)).change_ring(A.base_ring())
-        else:
-            self._helper_matrix = ~A
-        return self._helper_matrix
+            # must be using integer_mod or something to approximate ?
+            return (~A.change_ring(QQ)).change_ring(A.base_ring())
+
+        return ~A
 
     def _element_constructor_(self, val=0, offset=0):
         r"""

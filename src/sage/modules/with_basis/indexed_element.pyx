@@ -858,7 +858,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         zero = free_module.base_ring().zero()
         if sparse:
             if order is None:
-                order = {k: i for i,k in enumerate(self._parent.get_order())}
+                order = {k: i for i, k in enumerate(self._parent.get_order())}
             return free_module.element_class(free_module,
                                              {order[k]: c for k, c in d.items()},
                                              coerce=True, copy=False)
@@ -1019,6 +1019,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         x_inv = B(x) ** -1
         return type(self)(F, scal(x_inv, D))
+
+    def _magma_init_(self, magma):
+        r"""
+        Convert ``self`` to Magma.
+        """
+        # Get a reference to Magma version of parent.
+        R = magma(self.parent()).name()
+        # use dict {key: coefficient}.
+        return '+'.join(f"({c._magma_init_(magma)})*{R}.{m._magma_init_(magma)}"
+                        for m, c in self.monomial_coefficients().items())
 
 
 def _unpickle_element(C, d):

@@ -280,7 +280,7 @@ class Ideal_generic(MonoidElement):
             gens = [ring(x) for x in gens]
 
         gens = tuple(gens)
-        if len(gens) == 0:
+        if not gens:
             gens = (ring.zero(),)
         self.__gens = gens
         MonoidElement.__init__(self, ring.ideal_monoid())
@@ -622,7 +622,7 @@ class Ideal_generic(MonoidElement):
         """
         return f       # default
 
-    def gens(self):
+    def gens(self):  # -> tuple | PolynomialSequence
         """
         Return a set of generators / a basis of ``self``.
 
@@ -1694,6 +1694,17 @@ class Ideal_pid(Ideal_principal):
         if self.ring() is ZZ:
             return ZZ.residue_field(self, check=False)
         raise NotImplementedError("residue_field() is only implemented for ZZ and rings of integers of number fields.")
+
+    def radical(self):
+        r"""
+        Return the radical of this ideal.
+
+        EXAMPLES::
+
+            sage: ZZ.ideal(12).radical()
+            Principal ideal (6) of Integer Ring
+        """
+        return self.ring().ideal(self.gen().radical())
 
 
 class Ideal_fractional(Ideal_generic):

@@ -43,10 +43,11 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
-
 from itertools import combinations
+from typing import Any
+
 from sage.categories.sets_cat import Sets
 from sage.groups.free_group import FreeGroup
 from sage.misc.abstract_method import abstract_method
@@ -71,7 +72,7 @@ class PlaneCurveArrangementElement(Element):
     """
     An ordered plane curve arrangement.
     """
-    def __init__(self, parent, curves, check=True):
+    def __init__(self, parent, curves, check=True) -> None:
         """
         Construct a plane curve arrangement.
 
@@ -120,7 +121,7 @@ class PlaneCurveArrangementElement(Element):
         """
         return self._curves[i]
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -130,7 +131,7 @@ class PlaneCurveArrangementElement(Element):
         """
         return hash(self.curves())
 
-    def ncurves(self):
+    def ncurves(self) -> int:
         r"""
         Return the number of curves in the arrangement.
 
@@ -149,7 +150,7 @@ class PlaneCurveArrangementElement(Element):
 
     __len__ = ncurves
 
-    def curves(self):
+    def curves(self) -> tuple:
         r"""
         Return the curves in the arrangement as a tuple.
 
@@ -170,7 +171,7 @@ class PlaneCurveArrangementElement(Element):
         """
         return self._curves
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation for a curve arrangement.
 
@@ -195,11 +196,11 @@ class PlaneCurveArrangementElement(Element):
             curves = ', '.join(h.defining_polynomial()._repr_()
                                for h in self._curves)
             return 'Arrangement ({}) in {}'.format(curves,
-                                                     self.parent().ambient_space())
+                                                   self.parent().ambient_space())
         return 'Arrangement of {} curves in {}'.format(len(self),
-                                                         self.parent().ambient_space())
+                                                       self.parent().ambient_space())
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare two curve arrangements.
 
@@ -337,7 +338,7 @@ class PlaneCurveArrangementElement(Element):
         """
         return self._curves[0].defining_polynomial().parent()
 
-    def defining_polynomials(self):
+    def defining_polynomials(self) -> tuple:
         r"""
         Return the defining polynomials of the elements of ``self``.
 
@@ -428,7 +429,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
     """
     An ordered affine plane curve arrangement.
     """
-    def __init__(self, parent, curves, check=True):
+    def __init__(self, parent, curves, check=True) -> None:
         """
         Construct an ordered affine plane curve arrangement.
 
@@ -513,7 +514,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             {0: [x1, x2], 1: [x0], 2: [x3], 3: [x3^-1*x2^-1*x1^-1*x0^-1]}
             sage: A.fundamental_group(vertical=False)
             Finitely presented group
-            < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x1*x0*x1^-1*x0^-1, (x0*x2)^2*(x0^-1*x2^-1)^2 >
+            < x0, x1, x2 | x2*x1^-1*x2^-1*x1, x1*x0*x1^-1*x0^-1, (x0*x2)^2*(x0^-1*x2^-1)^2 >
             sage: A.meridians(vertical=False)
             {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0], 3: [x0*x2^-1*x0^-1*x2^-1*x1^-1*x0^-1]}
             sage: G = A.fundamental_group(simplified=False, vertical=False)
@@ -584,7 +585,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             self._meridians_nonsimpl_nonvertical = dic
         return G
 
-    def meridians(self, simplified=True, vertical=True):
+    def meridians(self, simplified=True, vertical=True) -> dict:
         r"""
         Return the meridians of each irreducible component.
 
@@ -834,7 +835,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: A.fundamental_group().sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >
             sage: A.meridians()
-            {0: [x1], 1: [x0], 2: [x1^-1*x0^-1*x1^-1]}
+            {0: [x1], 1: [x0], 2: [x0^-1*x1^-2]}
             sage: G = A.fundamental_group(simplified=False)
             sage: G.sorted_presentation()
             Finitely presented group
@@ -921,7 +922,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             self._meridians_nonsimpl = dic1
         return G
 
-    def meridians(self, simplified=True):
+    def meridians(self, simplified=True) -> dict:
         r"""
         Return the meridians of each irreducible component.
 
@@ -945,7 +946,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: A.fundamental_group().sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >
             sage: A.meridians()
-            {0: [x1], 1: [x0], 2: [x1^-1*x0^-1*x1^-1]}
+            {0: [x1], 1: [x0], 2: [x0^-1*x1^-2]}
             sage: A = H(y^2 + x*z, z, x)
             sage: A.fundamental_group()
             Finitely presented group < x0, x1 | (x1*x0)^2*(x1^-1*x0^-1)^2 >
@@ -991,7 +992,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
     Element = PlaneCurveArrangementElement
 
     @staticmethod
-    def __classcall__(cls, base, names=()):
+    def __classcall__(cls, base, names: tuple[str, ...] = ()):
         """
         Normalize the inputs to ensure a unique representation.
 
@@ -1005,7 +1006,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         names = normalize_names(len(names), names)
         return super().__classcall__(cls, base, names)
 
-    def __init__(self, base_ring, names=()):
+    def __init__(self, base_ring, names: tuple[str, ...] = ()):
         """
         Initialize ``self``.
 
@@ -1061,6 +1062,8 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: L.change_ring(QQ) is L
             True
         """
+        # return self.__class__(base_ring, names=self.variable_names())
+        # line below is ugly but line above does not work
         return self.__reduce__()[1][0](base_ring, names=self.variable_names())
 
     @abstract_method
@@ -1124,7 +1127,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
             arg = tuple(args)
         ambient_space = self.ambient_space()
         R = ambient_space.coordinate_ring()
-        curves = ()
+        curves: tuple[Any, ...] = ()
         for h in arg:
             try:
                 ambient = h.ambient_space()
@@ -1173,7 +1176,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         return len(self.variable_names())
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the coordinates.
 

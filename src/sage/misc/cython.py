@@ -24,14 +24,15 @@ import os
 import re
 import sys
 import shutil
+import webbrowser
+from pathlib import Path
 
 from sage.env import (SAGE_LOCAL, cython_aliases,
                       sage_include_directories)
+from sage.misc.cachefunc import cached_function
+from sage.misc.sage_ostools import restore_cwd, redirection
 from sage.misc.temporary_file import spyx_tmp, tmp_filename
 from sage.repl.user_globals import get_globals
-from sage.misc.sage_ostools import restore_cwd, redirection
-from sage.cpython.string import str_to_bytes
-from sage.misc.cachefunc import cached_function
 
 
 @cached_function
@@ -58,7 +59,7 @@ def _standard_libs_libdirs_incdirs_aliases():
     if SAGE_LOCAL:
         standard_libdirs.append(os.path.join(SAGE_LOCAL, "lib"))
     standard_libdirs.extend(aliases["CBLAS_LIBDIR"] + aliases["NTL_LIBDIR"])
-    standard_incdirs = sage_include_directories() + aliases["CBLAS_INCDIR"] + aliases["NTL_INCDIR"]
+    standard_incdirs = sage_include_directories(use_sources=True) + aliases["CBLAS_INCDIR"] + aliases["NTL_INCDIR"]
     return standard_libs, standard_libdirs, standard_incdirs, aliases
 
 ################################################################
@@ -78,9 +79,16 @@ def _standard_libs_libdirs_incdirs_aliases():
 sequence_number = {}
 
 
+def _webbrowser_open_file(path):
+    """
+    Open a html file in a web browser.
+    """
+    webbrowser.open(Path(path).as_uri())
+
+
 def cython(filename, verbose=0, compile_message=False,
-           use_cache=False, create_local_c_file=False, annotate=True, sage_namespace=True,
-           create_local_so_file=False):
+           use_cache=False, create_local_c_file=False, annotate=True, view_annotate=False,
+           view_annotate_callback=None, sage_namespace=True, create_local_so_file=False):
     r"""
     Compile a Cython file. This converts a Cython file to a C (or C++ file),
     and then compiles that. The .c file and the .so file are
@@ -109,6 +117,15 @@ def cython(filename, verbose=0, compile_message=False,
       annotates the conversion from .pyx to .c. By default this is only created
       in the temporary directory, but if ``create_local_c_file`` is also True,
       then save a copy of the .html file in the current directory.
+
+    - ``view_annotate`` -- boolean (default: ``False``); if ``True``, open the
+      annotated html file in a web browser
+
+    - ``view_annotate_callback`` -- function; a function that takes a string
+      being the path to the html file. This can be overridden to change
+      what to do with the annotated html file. Have no effect unless
+      ``view_annotate`` is ``True``. By default, the html file is opened in a
+      web browser.
 
     - ``sage_namespace`` -- boolean (default: ``True``); if ``True``, import
       ``sage.all``
@@ -226,7 +243,38 @@ def cython(filename, verbose=0, compile_message=False,
         ....: from sage.misc.cachefunc cimport cache_key
         ....: ''')
 
+    Test ``view_annotate``::
+
+        sage: cython('''
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True)  # optional -- webbrowser
+
+    ::
+
+        sage: cython('''
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True, annotate=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: cannot view annotated file without creating it
+
+    ::
+
+        sage: collected_paths = []
+        sage: cython('''
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True, view_annotate_callback=collected_paths.append)
+        sage: collected_paths
+        ['...']
+        sage: len(collected_paths)
+        1
     """
+    if view_annotate_callback is None:
+        # needed because of https://github.com/sagemath/sage/pull/38946#issuecomment-2656329774
+        view_annotate_callback = _webbrowser_open_file
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
 
@@ -380,6 +428,11 @@ def cython(filename, verbose=0, compile_message=False,
         if annotate:
             shutil.copy(os.path.join(target_dir, name + ".html"),
                         os.curdir)
+
+    if view_annotate:
+        if not annotate:
+            raise ValueError("cannot view annotated file without creating it")
+        view_annotate_callback(os.path.join(target_dir, name + ".html"))
 
     # This emulates running "setup.py build" with the correct options
     #
