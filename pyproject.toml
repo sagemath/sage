@@ -75,6 +75,9 @@ requires-python = ">=3.11, <3.14"
 R = [
     'rpy2 >=3.3',
 ]
+giac = [
+    'sagemath_giac',
+]
 
 [project.readme]
 file = "README.md"
@@ -120,7 +123,6 @@ host-requires = [
   "pkg:generic/libgd",
   "pkg:generic/gap",
   "pkg:generic/gfan",
-  "pkg:generic/giac",
   "pkg:generic/givaro",
   "pkg:generic/glpk",
   "pkg:generic/gmp",
