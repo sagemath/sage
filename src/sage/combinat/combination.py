@@ -482,7 +482,6 @@ class Combinations_msetk(Parent):
         if self.k >= 0:
             return True
 
-        # Handle k < 0
         if self.allow_negative is False:
             raise ValueError("k must be non-negative")
         elif self.allow_negative is None:
