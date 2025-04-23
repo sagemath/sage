@@ -469,8 +469,7 @@ class Combinations_msetk(Parent):
         """
         Check if ``k`` is negative and raise a ``ValueError`` if that is not allowed.
 
-        Issues warnings or errors as appropriate, ensuring the warning
-         is issued only once per instance.
+        Issues a deprecation warning or error if appropriate.
 
         RETURNS:
             bool: ``True`` if ``k >= 0``,
