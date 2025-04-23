@@ -1040,7 +1040,7 @@ ex expairseq::to_rational(exmap & repl) const
 		return thisexpairseq(s, overall_coeff);
 
 	s.emplace_back(oc, _ex1);
-	return thisexpairseq(s, default_overall_coeff());
+	return thisexpairseq(s, *default_overall_coeff());
 }
 
 /** Implementation of ex::to_polynomial() for expairseqs. */
@@ -1058,7 +1058,7 @@ ex expairseq::to_polynomial(exmap & repl) const
 		return thisexpairseq(s, overall_coeff);
 	
 		s.emplace_back(oc, _ex1);
-	return thisexpairseq(s, default_overall_coeff());
+	return thisexpairseq(s, *default_overall_coeff());
 }
 
 
