@@ -467,7 +467,7 @@ class Combinations_msetk(Parent):
 
     def _handle_negative_k(self):
         """
-        Check if k is negative and handle based on allow_negative flag.
+        Check if ``k`` is negative and raise a ``ValueError`` if that is not allowed.
 
         Issues warnings or errors as appropriate, ensuring the warning
          is issued only once per instance.
