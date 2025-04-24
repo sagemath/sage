@@ -174,8 +174,7 @@ def is_NumberFieldHomsetCodomain(codomain, category=None):
     if not category.is_subcategory(Rings()):
         return False
 
-    if codomain not in category:
-        return False
+    assert codomain in category
 
     return True
 
