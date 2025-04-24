@@ -1520,8 +1520,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
         def abreu_nigro_g(self, H, k, q='q'):
             r"""
             Return the Abreu-Nigro `g_{H,k}(x; q)` symmetric function
-            for the Hessenberg function ``H`` in the basis ``self``,
-            as defined in (2.2) of [HHKKO25]_.
+            for the Hessenberg function ``H`` in the basis ``self``.
 
             INPUT:
 
@@ -1532,7 +1531,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             A *Hessenberg function* (of length `n`) is a function `H \colon
             \{1, \ldots, n\} \to \{1, \ldots, n\}` such that `\max(i, H(i-1))
             \leq H(i) \leq n` for all `i` (by convention `H(0) = 0`). The
-            *Abreu-Nigro* `g` *symmetric function* [AN2024]_ is defined by
+            *Abreu-Nigro* `g` *symmetric function* [AN2023]_ (Definition 1.3)
+            is defined by
 
             .. MATH::
 
@@ -1555,13 +1555,6 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
             with `\sigma^c` being the permutation formed by removing the
             parentheses in the cycle decomposition `\tau_1 \cdots \tau_j`.
-
-            REFERENCES:
-
-            .. [HHKKO25] \JiSun Huh, Byung-Hak Hwang, Donghyun Kim
-               Jang Soo Kim, Jaeseong Oh,
-               *Refinement of Hikita's e-positivity theorem via Abreu--Nigro's g-functions and restricted modular law*.
-               :arxiv:`2504.09123v1`.
 
             EXAMPLES:
 

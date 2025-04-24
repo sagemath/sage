@@ -160,14 +160,13 @@ class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebr
         sage: an([3]).antipode()
         (-q^2+2*q-1)*an[1, 1, 1] + (2*q-2)*an[2, 1] - an[3]
 
-    For length-1 partitions, the antipode is in fact given
-    by the formula `S(\rho_n(x; q)) = -P_n(x; q)`, where `P_n`
+    For single row partitions, the antipode is given by the formula
+    `S(\rho_n(x; q)) = -P_n(x; q)`, where `P_n`
     is the Hall-Littlewood P-function::
 
         sage: P = Sym.hall_littlewood(q).P()
         sage: all(P(an[n].antipode()) == -P[n] for n in range(1, 6))
         True
-
     """
     @staticmethod
     def __classcall_private__(cls, Sym, q='q'):
@@ -216,8 +215,6 @@ class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebr
 
         - ``lam`` -- a partition
 
-        OUTPUT: the expansion of ``h[lam]`` in the Abreu-Nigro basis ``self``
-
         EXAMPLES::
 
             sage: q = ZZ['q'].fraction_field().gen()
@@ -260,11 +257,6 @@ class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebr
         INPUT:
 
         - ``lam`` -- a partition
-
-        OUTPUT:
-
-        the expansion of ``an[lam]`` in the complete homogeneous basis
-        of ``self.realization_of()``
 
         EXAMPLES::
 
@@ -316,8 +308,7 @@ class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebr
 
         OUTPUT:
 
-        The coproduct applied to ``elt``; the result is an element of the
-        tensor squared of the basis ``self``.
+        an element of the tensor squared of the basis ``self``
 
         EXAMPLES::
 
