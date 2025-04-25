@@ -53,10 +53,11 @@ def Combinations(mset, k=None, allow_negative=None):
     - ``k`` -- (optional) an integer, the size of the combinations
     - ``allow_negative`` -- (default: ``None``) boolean or ``None``. Controls
       behavior when ``k`` is negative.
-      - ``None``: Return an empty list and issue a deprecation warning (:issue:`39411`).
+
+      * ``None``: Return an empty list and issue a deprecation warning (:issue:`39411`).
         This will change in the future to raise a ``ValueError``.
-      - ``True``: Return an empty list without a warning.
-      - ``False``: Raise a ``ValueError``.
+      * ``True``: Return an empty list without a warning.
+      * ``False``: Raise a ``ValueError``.
 
     EXAMPLES::
 
