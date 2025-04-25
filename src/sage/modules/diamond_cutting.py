@@ -313,11 +313,10 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
     # LLL-reduce for efficiency.
     basis = basis.LLL()
     if radius is None:
-        from sage.rings.real_double import RDF
         # Convert the basis matrix to use RDF numbers for efficiency when we
-        # perform the QR decomposition.
+        # calculate the triangular matrix of the QR decomposition.
+        from sage.rings.real_double import RDF
         tranposed_RDF_matrix = (basis.transpose()).change_ring(RDF)
-        # We then perform the QR decomposition.
         R = tranposed_RDF_matrix.QR()[1]
         # The radius is then an upper bound for the covering radius.
         radius = sum(R[i,i]**2 for i in range(dim[0]))
