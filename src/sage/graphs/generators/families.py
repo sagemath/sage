@@ -1832,7 +1832,7 @@ def DoubleGeneralizedPetersenGraph(n, k):
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the double generalized Petersen
-    graphs are displayed as 4 cocentric cycles, with the first n nodes drawn on
+    graphs are displayed as 4 concentric cycles, with the first n nodes drawn on
     the outer circle.  The first (0) node is drawn at the top of the
     outer-circle, moving counterclockwise after that. The second circle is drawn
     with the (n)th node at the top, then counterclockwise as well. The tird
@@ -1889,7 +1889,7 @@ def RoseWindowGraph(n, a, r):
     r"""
     Return a rose window graph with `2n` nodes.
 
-    The rose window graphs is a family of tetravalant graphs introduced in
+    The rose window graphs is a family of tetravalent graphs introduced in
     [Wilson2008]_. The parameters `n`, `a` and `r` are integers such that
     `n > 2`, `1 \leq a, r < n`, and `r \neq n / 2`.
 
