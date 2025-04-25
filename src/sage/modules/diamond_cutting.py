@@ -328,13 +328,15 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         radius = radius / 4
     artificial_length = None
     if dim[0] < dim[1]:
-        from sage.rings.rational_field import QQ
+        F = basis.base_ring().fraction_field()
         # Introduce "artificial" basis points (representing infinity).
-        additional_vectors = (QQ**dim[1]).subspace(basis).complement().basis()
+        additional_vectors = (F**dim[1]).subspace(basis).complement().basis()
         # We then make the artificial points integers.
         for v in additional_vectors:
             v *= v.denominator()
         additional_vectors = matrix(additional_vectors)
+        from sage.rings.rational_field import ZZ
+        additional_vectors = additional_vectors.change_ring(ZZ)
         # LLL-reduce for efficiency.
         additional_vectors = additional_vectors.LLL()
 
