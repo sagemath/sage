@@ -2162,8 +2162,51 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         return self.lift().gcd(self.modulus()) == 1
 
     def _crt(IntegerMod_gmp self, IntegerMod_gmp other):
-        cdef IntegerMod_gmp lift, x
-        cdef sage.rings.integer.Integer modulus, other_modulus
+        """
+        Use the Chinese Remainder Theorem to find an element of the
+        integers modulo the product of the moduli that reduces to ``self`` and
+        to ``other``.
+
+        EXAMPLES::
+
+            sage: a = mod(3,5^30)
+            sage: b = mod(2,7)
+            sage: a.crt(b)
+            5587935447692871093753
+            sage: type(a.crt(b)) == type(b.crt(a)) and type(a.crt(b)) == type(mod(1, 7 * 5^30))
+            True
+
+        ::
+
+            sage: a = mod(3,10^30)
+            sage: b = mod(2,9)
+            sage: a.crt(b)
+            8000000000000000000000000000003
+            sage: type(a.crt(b)) == type(b.crt(a)) and type(a.crt(b)) == type(mod(1, 9 * 10^30))
+            True
+
+        ``crt`` also works for some non-coprime moduli::
+
+            sage: r = mod(6,5^30*2).crt(mod(0,4))
+            sage: r
+            1862645149230957031256
+            sage: r.modulus()
+            3725290298461914062500
+            sage: type(r)
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            sage: mod(6,10^30).crt(mod(0,10^30))
+            Traceback (most recent call last):
+            ...
+            ValueError: no solution to crt problem since
+            gcd(1000000000000000000000000000000,1000000000000000000000000000000)
+            does not divide 6 - 0
+
+        AUTHORS:
+
+        - Robert Bradshaw
+        """
+        cdef IntegerMod_gmp lift, x, zero, y_minus_x, second_crt
+        cdef sage.rings.integer.Integer modulus, other_modulus, g
 
         modulus = self._modulus.sageInteger
         other_modulus = other._modulus.sageInteger
@@ -2180,7 +2223,21 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
                 mpz_add(lift.value, lift.value, other.value)
             return lift
         except ZeroDivisionError:
-            raise ZeroDivisionError("moduli must be coprime")
+            g = Integer(0)
+            mpz_gcd(g.value, modulus.value, other_modulus.value)
+            if mpz_congruent_p(self.value, other.value, g.value) == 0:
+                raise ValueError(f"no solution to crt problem since gcd({modulus},{other_modulus}) does not divide {self} - {other}")
+            zero = IntegerMod_gmp(IntegerModRing(modulus / g))
+            mpz_set_ui(zero.value, 0)
+            y_minus_x = IntegerMod_gmp(IntegerModRing(other_modulus / g))
+            mpz_sub(y_minus_x.value, other.value, self.value)
+            mpz_divexact(y_minus_x.value, y_minus_x.value, g.value)
+            second_crt = zero._crt(y_minus_x)
+            lift = IntegerMod_gmp(IntegerModRing(lcm(modulus, other_modulus)))
+            mpz_set(lift.value, second_crt.value)
+            mpz_mul(lift.value, g.value, lift.value)
+            mpz_add(lift.value, self.value, lift.value)
+            return lift
 
     def __copy__(IntegerMod_gmp self):
         """
@@ -2599,7 +2656,8 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             y_minus_x.set_from_int((other.ivalue - self.ivalue) / g)
             second_crt = IntegerMod_int(IntegerModRing(lcm(self._modulus.int32, other._modulus.int32)))
             second_crt.set_from_int(zero._crt(y_minus_x))
-            return self.ivalue + g * second_crt
+            lift = self.ivalue + g * second_crt
+            return lift
 
     def __copy__(IntegerMod_int self):
         """
@@ -3455,7 +3513,8 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             y_minus_x.set_from_int((other.ivalue - self.ivalue) / g)
             second_crt = IntegerMod_int64(IntegerModRing(lcm(self._modulus.int64, other._modulus.int64)))
             second_crt.set_from_int(zero._crt(y_minus_x))
-            return self.ivalue + g * second_crt
+            lift = self.ivalue + g * second_crt
+            return lift
 
     def __copy__(IntegerMod_int64 self):
         """
