@@ -303,11 +303,10 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         sage: from sage.modules.free_module_integer import IntegerLattice
         sage: l  = [7, 0, -1, -2, -1, -2, 7, -2, 0, 0, -2, 0, 7, -2, 0, -1, -2, -1, 7, 0 , -1, -1, 0, -2, 7]
         sage: M = matrix(5, 5, l)
-        sage: c = IntegerLattice(M).voronoi_cell(radius=35)
-        sage: M.det()
-        12858
-        sage: c.volume()
-        12858
+        sage: C = IntegerLattice(M).voronoi_cell(radius=35)
+        sage: C
+        A 5-dimensional polyhedron in QQ^5 defined as the
+        convex hull of 720 vertices
     """
     dim = basis.dimensions()
     # LLL-reduce for efficiency.
@@ -318,7 +317,12 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         from sage.rings.real_double import RDF
         tranposed_RDF_matrix = (basis.transpose()).change_ring(RDF)
         R = tranposed_RDF_matrix.QR()[1]
-        # The radius is then an upper bound for the covering radius.
+        # The length of the vector formed by the diagonal entries of R is an
+        # upper bound for twice the covering radius, so it is an upper bound
+        # on the length of the lattice vectors that need to be considered for
+        # diamond cutting. However, the value of the `radius` keyword is
+        # actually a squared length, so there is no square root in the
+        # following formula.
         radius = sum(R[i,i]**2 for i in range(dim[0]))
         # We then divide by 4 as we will divide the basis by 2 later on.
         radius = radius / 4
@@ -331,8 +335,6 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         for v in additional_vectors:
             v *= v.denominator()
         additional_vectors = matrix(additional_vectors)
-        from sage.rings.rational_field import ZZ
-        additional_vectors = additional_vectors.change_ring(ZZ)
         # LLL-reduce for efficiency.
         additional_vectors = additional_vectors.LLL()
 
@@ -340,13 +342,16 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         # Convert the basis matrix to use RDF numbers for efficiency when we
         # perform the QR decomposition.
         tranposed_RDF_matrix = (additional_vectors.transpose()).change_ring(RDF)
-        # We then perform the QR decomposition.
         R = tranposed_RDF_matrix.QR()[1]
-        # We then get a lower bound for the shortest vector by finding the
-        # minimum all the diagonal entries of our artificial points.
-        shortest_vector_lower_bound = min(abs(R[i,i]) for i in range(dim[1] - dim[0]))
-        # The length we need to multiply our artificial points by in order to make
-        # sure they are greater than our radius is then calculated.
+        # Since R is triangular, its smallest diagonal entry provides a
+        # lower bound on the length of the shortest nonzero vector in the
+        # lattice spanned by the artificial points. We square it because
+        # value of `radius` is a squared length.
+        shortest_vector_lower_bound = min(R[i,i]**2 for i in range(dim[1] - dim[0]))
+        # We will multiply our artificial points by the following scalar in
+        # order to make sure the squared length of the shortest
+        # nonzero vector is greater than radius, even after the vectors
+        # are divided by 2.
         artificial_length = ceil((radius * 4 / shortest_vector_lower_bound) * 1.001)
         additional_vectors *= artificial_length
         basis = basis.stack(additional_vectors)
