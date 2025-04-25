@@ -3638,20 +3638,27 @@ def CRT_list(values, moduli=None):
         return values[0] % moduli[0]
 
 
-def CRT_basis(moduli):
+def CRT_basis(moduli, *, require_coprime_moduli=True):
     r"""
-    Return a CRT basis for the given moduli.
+    Return a CRT basis for the given moduli. If the moduli are not coprime
+    an approximate CRT basis is returned.
 
     INPUT:
 
     - ``moduli`` -- list of pairwise coprime moduli `m` which admit an
       extended Euclidean algorithm
 
+    - ``require_coprime_moduli`` -- boolean value that specifies if the moduli
+      must be coprime.
+
     OUTPUT:
 
     - a list of elements `a_i` of the same length as `m` such that
       `a_i` is congruent to 1 modulo `m_i` and to 0 modulo `m_j` for
       `j\not=i`.
+
+    - a boolean value that is `True` if the list returned is a formal CRT basis
+      and returns false if it is an approximate CRT basis.
 
     EXAMPLES::
 
@@ -3674,21 +3681,49 @@ def CRT_basis(moduli):
     n = len(moduli)
     if n == 0:
         return []
-    M = prod(moduli)
     cs = []
-    for m in moduli:
-        Mm = M // m
-        d, _, v = xgcd(m, Mm)
-        if not d.is_one():
-            raise ValueError('moduli must be coprime')
-        cs.append((v * Mm) % M)
-    return cs
+    if require_coprime_moduli:
+        M = prod(moduli)
+        for m in moduli:
+            Mm = M // m
+            d, _, v = xgcd(m, Mm)
+            if not d.is_one():
+                raise ValueError('moduli must be coprime')
+            cs.append((v * Mm) % M)
+        return cs
+    try:
+        M = prod(moduli)
+        for m in moduli:
+            Mm = M // m
+            d, _, v = xgcd(m, Mm)
+            if not d.is_one():
+                raise ValueError('moduli must be coprime')
+            cs.append((v * Mm) % M)
+        # Return the CRT basis and a flag denoting that it is a formal CRT basis.
+        return [cs, True]
+    except:
+        e = [1]
+        M_i = moduli[0]
+        for i in range(1, n):
+            m_i = moduli[i]
+            d_i = gcd(M_i, m_i)
+            e_i = CRT(0, 1, M_i / d_i, m_i / d_i)
+            e.append(e_i)
+            M_i = M_i.lcm(m_i)
+        partial_prod_table = [1]
+        for i in range(1, n):
+            partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
+        for i in range(n):
+            cs.append(e[i] * partial_prod_table[-i-1])
+        # Return the approximate CRT basis and a flag denoting that it is an
+        # approximate CRT basis.
+        return [cs, False]
 
 
 def CRT_vectors(X, moduli):
     r"""
     Vector form of the Chinese Remainder Theorem: given a list of integer
-    vectors `v_i` and a list of coprime moduli `m_i`, find a vector `w` such
+    vectors `v_i` and a list of moduli `m_i`, find a vector `w` such
     that `w = v_i \pmod m_i` for all `i`.
 
     This is more efficient than applying :func:`CRT` to each entry.
@@ -3708,6 +3743,15 @@ def CRT_vectors(X, moduli):
 
         sage: CRT_vectors([vector(ZZ, [2,3,1]), Sequence([1,7,8], ZZ)], [8,9])          # needs sage.modules
         [10, 43, 17]
+
+    ``CRT_vectors`` also works for some non-coprime moduli::
+
+        sage: CRT_vectors([[6],[0]],[10, 4])
+        [16]
+        sage: CRT_vectors([[6],[0]],[10, 10])
+        Traceback (most recent call last):
+        ...
+        ValueError: solution does not exist
     """
     # First find the CRT basis:
     if not X or len(X[0]) == 0:
@@ -3715,11 +3759,15 @@ def CRT_vectors(X, moduli):
     n = len(X)
     if n != len(moduli):
         raise ValueError("number of moduli must equal length of X")
-    a = CRT_basis(moduli)
+    res = CRT_basis(moduli, require_coprime_moduli=False)
+    a = res[0]
     modulus = prod(moduli)
-    return [sum(a[i] * X[i][j] for i in range(n)) % modulus
-            for j in range(len(X[0]))]
-
+    candidate = [sum(a[i] * X[i][j] for i in range(n)) % modulus
+                 for j in range(len(X[0]))]
+    if not res[1] and any(X[i][j] != candidate[j] % moduli[i] for i in range(n)
+       for j in range(len(X[i]))):
+        raise ValueError("solution does not exist")
+    return candidate
 
 def binomial(x, m, **kwds):
     r"""
