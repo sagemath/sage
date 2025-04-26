@@ -1,12 +1,14 @@
 r"""
+Steinhaus-Johnson-Trotter algorithm
+
 The Steinhaus-Johnson-Trotter algorithm generates all permutations of a list in
 an order such that each permutation is obtained by transposing two adjacent
 elements from the previous permutation.
 
-Each element of the list has a direction (initialized at -1) that changes at
-each permutation and that is used to determine which elements to transpose. Thus
-in addition to the permutation itself, the direction of each element is also
-stored.
+Each element of the list has a direction (initialized at -1) that
+changes at each permutation and that is used to determine which
+elements to transpose. Thus in addition to the permutation itself, the
+direction of each element is also stored.
 
 Note that the permutations are not generated in lexicographic order.
 
