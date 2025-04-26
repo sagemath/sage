@@ -2636,10 +2636,9 @@ REFERENCES:
             257-267. http://page.math.tu-berlin.de/~felsner/Paper/numarr.pdf
 
 .. [FT00] Stefan Felsner, William T. Trotter,
-          Dimension, Graph and Hypergraph Coloring,
-          Order,
-          2000, Volume 17, Issue 2, pp 167-177,
-          http://link.springer.com/article/10.1023%2FA%3A1006429830221
+          *Dimension, Graph and Hypergraph Coloring*,
+          Order, 2000, Volume 17, Issue 2, pp 167-177,
+          :doi:`10.1023/A:1006429830221`
 
 .. [Feng2014] Gang Feng, *Finding k shortest simple paths in directed
             graphs: A node classification algorithm*. Networks, 64(1),
