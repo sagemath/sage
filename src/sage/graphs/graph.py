@@ -428,7 +428,7 @@ from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features.mcqd import Mcqd
-from sage.graphs.projective_planarity import P2_FORBIDDEN_MINORS
+from sage.graphs.p2_forbidden_minors import P2_FORBIDDEN_MINORS
 
 
 lazy_import('sage.graphs.mcqd', ['mcqd'],
@@ -9238,12 +9238,9 @@ class Graph(GenericGraph):
         return G
 
     @doc_index("Graph properties")
-    def is_projective_planar(self, minor_map=False, **minor_kwargs):
+    def is_projective_planar(self, minor_map=False):
         r"""
         Check whether this graph is projective planar.
-
-        Wraps :func:`get_p2_forbidden_minor
-        <sage.graphs.projective_planarity.get_p2_forbidden_minor>`
 
         INPUT:
 
@@ -9256,8 +9253,8 @@ class Graph(GenericGraph):
         OUTPUT:
 
         If ``minor_map=False``, a boolean, whether this graph is projective
-        planar. If ``minor_map=True`` and it is not projective planar, the
-        output of :meth:`~Graph.minor`, ``None`` otherwise.
+        planar. If ``minor_map=True`` the output of 
+        :meth:`~Graph.minor`,  ``None`` otherwise.
 
         EXAMPLES:
 
@@ -9279,33 +9276,28 @@ class Graph(GenericGraph):
         .. SEEALSO::
 
             - :meth:`~Graph.minor`
-
-            - :func:`get_p2_forbidden_minor
-              <sage.graphs.projective_planarity.get_p2_forbidden_minor>`
-              -- if you always want ``minor_map``
         """
-        from sage.graphs.projective_planarity import P2_FORBIDDEN_MINORS
-
         num_verts_G = self.num_verts()
         num_edges_G = self.num_edges()
         minor_map = None
 
-        for forbidden_minor in P2_FORBIDDEN_MINORS:
+        for forbidden_minor_string in P2_FORBIDDEN_MINORS:
         # Can't be a minor if it has more vertices or edges than G
-        if (
-            forbidden_minor.num_verts() > num_verts_G
-            or forbidden_minor.num_edges() > num_edges_G
-        ):
-            continue
+            forbidden_minor = Graph(forbidden_minor_string)
+            if (
+                forbidden_minor.num_verts() > num_verts_G
+                or forbidden_minor.num_edges() > num_edges_G
+            ):
+                continue
 
-        try:
-            minor_map = self.minor(forbidden_minor, **minor_kwargs)
-            if minor_map is not None:
-                #return minor_map
-                break
-        # If G has no H minor, then G.minor(H) throws a ValueError
-        except ValueError:
-            continue
+            try:
+                minor_map = self.minor(forbidden_minor)
+                if minor_map is not None:
+                    #return minor_map
+                    break
+            # If G has no H minor, then G.minor(H) throws a ValueError
+            except ValueError:
+                continue
 
         if minor_map:
             return minor_map
