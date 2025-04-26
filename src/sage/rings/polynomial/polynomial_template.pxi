@@ -2,7 +2,7 @@
 Polynomial Template for C/C++ Library Interfaces
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
 #       Copyright (C) 2008 Robert Bradshaw
 #
@@ -10,8 +10,8 @@ Polynomial Template for C/C++ Library Interfaces
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
