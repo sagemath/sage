@@ -577,7 +577,7 @@ pkg_deps = \
 #
 # For example, for python3 this will expand to:
 #
-# $(INST)/python3-3.7.3: $(inst_zlib) $(inst_readline) $(inst_sqlite) $(inst_libpng) $(inst_bzip2) $(inst_xz) $(inst_libffi)
+# $(INST)/python3-3.7.3: $(inst_zlib) $(inst_readline) $(inst_sqlite) $(inst_libpng) $(inst_xz) $(inst_libffi)
 #     +$(AM_V_at)sage-logger -p '$(SAGE_SPKG) python3-3.7.3' '$(SAGE_LOGS)/python3-3.7.3.log'
 #
 # python3: $(INST)/python3-3.7.3
