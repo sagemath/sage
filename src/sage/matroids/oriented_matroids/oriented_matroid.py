@@ -835,25 +835,8 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: A = hyperplane_arrangements.braid(3)
             sage: M = OrientedMatroid(A)
-            sage: M.topes()
-            [+: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
-            -:
-            0: ,
-            +: Hyperplane 0*t0 + t1 - t2 + 0
-            -: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
-            0: ,
-            +: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
-            -: Hyperplane t0 - t1 + 0*t2 + 0
-            0: ,
-            +:
-            -: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
-            0: ,
-            +: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
-            -: Hyperplane 0*t0 + t1 - t2 + 0
-            0: ,
-            +: Hyperplane t0 - t1 + 0*t2 + 0
-            -: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
-            0: ]
+            sage: len(M.topes())
+            6
         """
         return self.face_poset(facade=True).maximal_elements()
 
