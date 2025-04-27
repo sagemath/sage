@@ -3684,15 +3684,6 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
     if n == 0:
         return []
     cs = []
-    if require_coprime_moduli:
-        M = prod(moduli)
-        for m in moduli:
-            Mm = M // m
-            d, _, v = xgcd(m, Mm)
-            if not d.is_one():
-                raise ValueError('moduli must be coprime')
-            cs.append((v * Mm) % M)
-        return cs
     try:
         M = prod(moduli)
         for m in moduli:
@@ -3701,9 +3692,13 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
             if not d.is_one():
                 raise ValueError('moduli must be coprime')
             cs.append((v * Mm) % M)
-        # Return the CRT basis and a flag denoting that it is a formal CRT basis.
+        if require_coprime_moduli:
+            return cs
+        # also return a boolean flag to report that the moduli are coprime
         return [cs, True]
-    except:
+    except ValueError:
+        if require_coprime_moduli:
+            raise ValueError('moduli must be coprime')
         e = [1]
         M_i = moduli[0]
         for i in range(1, n):
@@ -3717,8 +3712,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
             partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
         for i in range(n):
             cs.append(e[i] * partial_prod_table[-i-1])
-        # Return the approximate CRT basis and a flag denoting that it is an
-        # approximate CRT basis.
+        # also return a boolean flag to report that the moduli are not coprime
         return [cs, False]
 
 
