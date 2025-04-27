@@ -59,6 +59,8 @@ cdef ZZ, QQ, RR, CC, RDF, CDF
 cimport cython
 from cpython.number cimport PyNumber_Check
 
+from cysignals.signals cimport sig_check
+
 import operator
 import copy
 import re
@@ -3504,6 +3506,16 @@ cdef class Polynomial(CommutativePolynomial):
         return self._new_generic(do_schoolbook_product(x, y, -1))
 
     cdef _square_generic(self):
+        """
+        TESTS:
+
+        Ensure the method is interruptible::
+
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: R.<x> = CDF[]
+            sage: f = R.random_element(degree=5000)
+            sage: with ensure_interruptible_after(0.5): h = f*f
+        """
         cdef list x = self.list(copy=False)
         cdef Py_ssize_t i, j
         cdef Py_ssize_t d = len(x)-1
@@ -3513,6 +3525,7 @@ cdef class Polynomial(CommutativePolynomial):
         for i from 0 <= i <= d:
             coeffs[2*i] = x[i] * x[i]
             for j from 0 <= j < i:
+                sig_check()
                 coeffs[i+j] += two * x[i] * x[j]
         return self._new_generic(coeffs)
 
@@ -11755,6 +11768,14 @@ cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg):
         sage: g = K.random_element(8)
         sage: f*g - f._mul_generic(g)
         0
+
+    Ensure the method is interruptible::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: R.<x> = CDF[]
+        sage: f = R.random_element(degree=5000)
+        sage: g = R.random_element(degree=5000)
+        sage: with ensure_interruptible_after(0.5): h = f*g
     """
     cdef Py_ssize_t i, k, start, end
     cdef Py_ssize_t d1 = len(x)-1, d2 = len(y)-1
@@ -11776,6 +11797,7 @@ cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg):
         end = k if k <= d1 else d1    # min(k, d1)
         sum = x[start] * y[k-start]
         for i from start < i <= end:
+            sig_check()
             sum = sum + x[i] * y[k-i]
         coeffs[k] = sum
     return coeffs
