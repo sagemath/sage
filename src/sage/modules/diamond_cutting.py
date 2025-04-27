@@ -127,7 +127,7 @@ def jacobi(M):
 def diamond_cut(V, GM, C, verbose=False):
     r"""
     Perform diamond cutting on polyhedron ``V`` with basis matrix ``GM``
-    and radius ``C``.
+    and squared radius ``C``.
 
     INPUT:
 
@@ -257,7 +257,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
 
     - ``basis`` -- embedded basis matrix of the lattice
 
-    - ``radius`` -- radius of basis vectors to consider
+    - ``radius`` -- square of radius of basis vectors to consider
 
     - ``verbose`` -- whether to print debug information
 
@@ -281,8 +281,6 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         True
         sage: print(L.closest_vector(v))
         (1, 1, 1, -1)
-        sage: v = vector(ZZ, [1,1,1,-1])
-        sage: L = IntegerLattice([v])
         sage: C = L.voronoi_cell()
         sage: C.Hrepresentation()
         (An inequality (-1, -1, -1, 1) x + 2 >= 0,
@@ -303,7 +301,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         sage: from sage.modules.free_module_integer import IntegerLattice
         sage: l  = [7, 0, -1, -2, -1, -2, 7, -2, 0, 0, -2, 0, 7, -2, 0, -1, -2, -1, 7, 0 , -1, -1, 0, -2, 7]
         sage: M = matrix(5, 5, l)
-        sage: C = IntegerLattice(M).voronoi_cell(radius=35)
+        sage: C = IntegerLattice(M).voronoi_cell()
         sage: C
         A 5-dimensional polyhedron in QQ^5 defined as the
         convex hull of 720 vertices
@@ -331,12 +329,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         F = basis.base_ring().fraction_field()
         # Introduce "artificial" basis points (representing infinity).
         additional_vectors = (F**dim[1]).subspace(basis).complement().basis()
-        # We then make the artificial points integers.
-        for v in additional_vectors:
-            v *= v.denominator()
         additional_vectors = matrix(additional_vectors)
-        from sage.rings.rational_field import ZZ
-        additional_vectors = additional_vectors.change_ring(ZZ)
         # LLL-reduce for efficiency.
         additional_vectors = additional_vectors.LLL()
 
@@ -354,7 +347,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         # order to make sure the squared length of the shortest
         # nonzero vector is greater than radius, even after the vectors
         # are divided by 2.
-        artificial_length = ceil((radius * 4 / shortest_vector_lower_bound) * 1.001)
+        artificial_length = ceil(2.001 * sqrt(radius / shortest_vector_lower_bound))
         additional_vectors *= artificial_length
         basis = basis.stack(additional_vectors)
         basis = matrix([v for v in basis if v])
