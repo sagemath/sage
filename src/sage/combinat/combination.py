@@ -53,10 +53,10 @@ def Combinations(mset, k=None, *, allow_negative=None):
     - ``k`` -- (optional) an integer, the size of the combinations
     - ``allow_negative`` -- keyword-only (default: ``None``) boolean or ``None``.
       Controls behavior when ``k`` is negative.
-      - ``None``: Creates the object but issues a deprecation warning (:issue:`39411`).
+      * ``None``: Creates the object but issues a deprecation warning (:issue:`39411`).
         Future versions will raise a ``ValueError`` by default.
-      - ``True``: Creates the object without a warning.
-      - ``False``: Raises a ``ValueError`` during object creation.
+      * ``True``: Creates the object without a warning.
+      * ``False``: Raises a ``ValueError`` during object creation.
 
     EXAMPLES::
 
