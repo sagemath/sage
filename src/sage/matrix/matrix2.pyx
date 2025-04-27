@@ -10608,7 +10608,7 @@ cdef class Matrix(Matrix1):
             sage: a.density()
             0
         """
-        cdef int x, y, k
+        cdef Py_ssize_t x, y, k
         k = 0
         nr = self.nrows()
         nc = self.ncols()
