@@ -3640,25 +3640,27 @@ def CRT_list(values, moduli=None):
 
 def CRT_basis(moduli, *, require_coprime_moduli=True):
     r"""
-    Return a CRT basis for the given moduli. If the moduli are not coprime
-    an approximate CRT basis is returned.
+    Return a CRT basis for the given moduli.
 
     INPUT:
 
-    - ``moduli`` -- list of pairwise coprime moduli `m` which admit an
+    - ``moduli`` -- list of moduli `m` which admit an
       extended Euclidean algorithm
 
-    - ``require_coprime_moduli`` -- boolean value that specifies if the moduli
+    - ``require_coprime_moduli`` -- boolean (default: ``True``); whether the moduli
       must be coprime.
 
     OUTPUT:
 
-    - a list of elements `a_i` of the same length as `m` such that
-      `a_i` is congruent to 1 modulo `m_i` and to 0 modulo `m_j` for
-      `j\not=i`.
+    - a list of integers `a_i` of the same length as `m` such that
+      if `r` is any list of integers of the same length as `m`, and we
+      let `x = \sum r_j a_j`, then `x \equiv r_i \pmod{m_i}` for all `i`
+      (if a solution of the system of congruences exists). When the
+      moduli are pairwise coprime, this implies that `a_i` is
+      congruent to 1 modulo `m_i` and to 0 modulo `m_j` for `j \neq i`.
 
-    - a boolean value that is `True` if the list returned is a formal CRT basis
-      and returns false if it is an approximate CRT basis.
+    - if ``require_coprime_moduli`` is ``False``, also returns a boolean value
+      that is ``True`` if the given moduli are pairwise coprime
 
     EXAMPLES::
 
