@@ -891,10 +891,10 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: p._libgap_()
             ()
 
-        Test that we handle large permutations :issue:`39998`::
+        A minimal test that we handle permutations of degree larger than 2^16 :issue:`39998`::
 
-            sage: SymmetricGroup(2**17)((2**16,2**17-1))._libgap_()
-            (65536,131071)
+            sage: SymmetricGroup(2**16+1)((2**16,2**16+1))._libgap_() # long time (100 mb)
+            (65536,65537)
         """
         if self._libgap is not None:
             return self._libgap
