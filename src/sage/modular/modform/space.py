@@ -355,7 +355,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return self.character() is not None
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if this an ambient space of modular forms.
 
@@ -1510,7 +1510,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return self.cuspidal_submodule()
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
         Return ``True`` if this space is cuspidal.
 

@@ -1609,7 +1609,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         return H(Morphism(H, mat))
 
-    def is_subvariety_of_ambient_jacobian(self):
+    def is_subvariety_of_ambient_jacobian(self) -> bool:
         """
         Return ``True`` if ``self`` is (presented as) a subvariety of the ambient
         product Jacobian.
@@ -3230,10 +3230,11 @@ class ModularAbelianVariety_abstract(Parent):
             else:
                 raise ValueError("self must be simple")
 
-    def is_simple(self, none_if_not_known=False):
+    def is_simple(self, none_if_not_known=False) -> bool:
         """
-        Return whether or not this modular abelian variety is simple, i.e.,
-        has no proper nonzero abelian subvarieties.
+        Return whether or not this modular abelian variety is simple.
+
+        This means that it has no proper nonzero abelian subvarieties.
 
         INPUT:
 
@@ -4241,7 +4242,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         """
         return self.modular_symbols().group()
 
-    def is_subvariety(self, other):
+    def is_subvariety(self, other) -> bool:
         """
         Return ``True`` if ``self`` is a subvariety of ``other``.
 
@@ -4294,7 +4295,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
             return ModularAbelianVariety_abstract.is_subvariety(self, other)
         return self.modular_symbols().is_submodule(other.modular_symbols())
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if this abelian variety attached to a modular symbols
         space is attached to the cuspidal subspace of the ambient
