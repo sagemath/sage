@@ -165,6 +165,17 @@ cdef class FiniteRingElement(CommutativeRingElement):
         length = (self.parent().order().nbits() + 7) // 8
         return int(self).to_bytes(length=length, byteorder=byteorder)
 
+    def canonical_associate(self):
+        R = self.parent()
+        if R.is_field():
+            if self.is_zero():
+                return (R.zero(),R.one())
+            else:
+                return (R.one(),self)
+        else:
+            return NotImplemented
+
+
 cdef class FinitePolyExtElement(FiniteRingElement):
     """
     Elements represented as polynomials modulo a given ideal.
@@ -252,7 +263,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         Return the minimal polynomial of this element
         (over the corresponding prime subfield).
 
-        EXAMPLES::
+        EXAMPLES::sage: isinstance(GF(2).0, sage.structure.element.FieldElement)
+False
 
             sage: k.<a> = FiniteField(3^4)
             sage: parent(a)

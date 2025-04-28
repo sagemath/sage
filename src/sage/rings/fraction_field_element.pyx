@@ -26,7 +26,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 
 import sage.misc.latex as latex
-
+import sage.misc.superseded
 
 def is_FractionFieldElement(x):
     """
@@ -420,9 +420,21 @@ cdef class FractionFieldElement(FieldElement):
             # potentially inexact operations, there would be compatibility
             # issues even if we didn't...)
             self.reduce()
-        # Same algorithm as for elements of QQ
-        n = hash(self._numerator)
-        d = hash(self._denominator)
+            try:
+                can_associate = self._denominator.canonical_associate()
+            except AttributeError:
+                can_associate = NotImplemented
+            if can_associate is NotImplemented:
+                sage.misc.superseded.warning(40000,"Hashing for {} not implemented. Using constant value".format(self.parent()))
+                return 0
+            den = can_associate[0]
+            num = self._numerator * can_associate[1].inverse_of_unit()
+            n = hash(num)
+            d = hash(den)
+        else:
+            n = hash(self._numerator)
+            d = hash(self._denominator)
+
         if d == 1:
             return n
         else:

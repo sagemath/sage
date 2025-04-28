@@ -4491,6 +4491,11 @@ cdef class FieldElement(CommutativeRingElement):
             other = self.parent()(other)
         return bool(self) or other.is_zero()
 
+    def canonical_associate(self):
+        P = self.parent()
+        if self.is_zero():
+            return (P.zero(), P.one())
+        return (P.one(), self)
 
 def is_AlgebraElement(x):
     """

@@ -7203,6 +7203,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return int(self).to_bytes(length=length, byteorder=byteorder, signed=is_signed)
 
+    def canonical_associate(self):
+        if self >= 0:
+            return (self, one)
+        else:
+            return (-self, -one)
+
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
     """
     Wrapper around ``mpz_set_str()`` which supports :pep:`3127`

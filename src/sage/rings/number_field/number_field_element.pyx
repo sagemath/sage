@@ -5343,6 +5343,9 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         """
         return self._parent.number_field()(NumberFieldElement_absolute.__invert__(self))
 
+    def canonical_associate(self):
+        return NotImplemented
+
 
 cdef class OrderElement_relative(NumberFieldElement_relative):
     """
@@ -5556,6 +5559,8 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         R = ZZ[var]
         return R(K(self).absolute_minpoly(var))
 
+    def canonical_associate(self):
+        return NotImplemented
 
 class CoordinateFunction():
     r"""

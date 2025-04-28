@@ -6261,6 +6261,11 @@ cdef class Polynomial(CommutativePolynomial):
         """
         return self[self.degree()]
 
+    def canonical_associate(self):
+        lc = self.leading_coefficient()
+        n, u = lc.canonical_associate()
+        return (u.inverse_of_unit()*self,u)
+
     def lm(self):
         """
         Return the leading monomial of this polynomial.
@@ -12593,7 +12598,6 @@ cdef class Polynomial_generic_dense(Polynomial):
                 n -= 1
         self._coeffs = self._coeffs[:n]
         return self
-
 
 def make_generic_polynomial(parent, coeffs):
     return parent(coeffs)

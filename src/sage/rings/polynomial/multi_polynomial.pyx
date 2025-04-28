@@ -2891,6 +2891,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
         return result(True)
 
+    def canonical_associate(self):
+        lc = self.leading_coefficient()
+        n, u = lc.canonical_associate()
+        return (u.inverse_of_unit()*self,u)
 
 def _is_M_convex_(points):
     r"""
