@@ -5524,6 +5524,18 @@ cdef class Polynomial(CommutativePolynomial):
             g = flatten(self).gcd(flatten(other))
             return flatten.section()(g)
         try:
+            P = self.parent()
+            g = self._pari_with_name().gcd(other._pari_with_name())
+            g = P(g)
+            c = g.leading_coefficient()
+            if c != P(0):
+                g /= c
+            return g
+        except (PariError, ZeroDivisionError):
+            raise ValueError("Failed to calculate GCD on polynomials over composite ring.")
+        except AttributeError:
+            pass
+        try:
             doit = self._parent._base._gcd_univariate_polynomial
         except AttributeError:
             raise NotImplementedError("%s does not provide a gcd implementation for univariate polynomials"%self._parent._base)
@@ -9715,6 +9727,22 @@ cdef class Polynomial(CommutativePolynomial):
             (x*y, 1, 0)
             sage: del R._xgcd_univariate_polynomial
         """
+        try:
+            P = self.parent()
+            s, t, r = self._pari_with_name().gcdext(other._pari_with_name())
+            s = P(s)
+            t = P(t)
+            r = P(r)
+            c = r.leading_coefficient()
+            if c != P(0):
+                s /= c
+                t /= c
+                r /= c
+            return r, s, t
+        except (PariError, ZeroDivisionError):
+            raise ValueError("Failed to calculate GCD on polynomials over composite ring.")
+        except AttributeError:
+            pass
         if hasattr(self.base_ring(), '_xgcd_univariate_polynomial'):
             return self.base_ring()._xgcd_univariate_polynomial(self, other)
         else:

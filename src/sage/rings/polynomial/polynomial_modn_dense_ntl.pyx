@@ -1999,8 +1999,17 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
             sage: ((x - 1)*(x + 1)).xgcd(x*(x - 1))
             (x + 2, 1, 2)
         """
-        r, s, t = self.ntl_ZZ_pX().xgcd(other.ntl_ZZ_pX())
-        return self.parent()(r, construct=True), self.parent()(s, construct=True), self.parent()(t, construct=True)
+        P = self.parent()
+        s, t, r = self._pari_with_name().gcdext(other._pari_with_name())
+        s = P(s)
+        t = P(t)
+        r = P(r)
+        c = r.leading_coefficient()
+        if c != P(0):
+            s /= c
+            t /= c
+            r /= c
+        return r, s, t
 
     @coerce_binop
     def resultant(self, other):
