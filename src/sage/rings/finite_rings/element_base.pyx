@@ -263,8 +263,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         Return the minimal polynomial of this element
         (over the corresponding prime subfield).
 
-        EXAMPLES::sage: isinstance(GF(2).0, sage.structure.element.FieldElement)
-False
+        EXAMPLES::
 
             sage: k.<a> = FiniteField(3^4)
             sage: parent(a)
