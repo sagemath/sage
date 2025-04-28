@@ -1180,10 +1180,11 @@ numeric numeric::conj() const {
                 "conjugate");
                 if (obj == nullptr)
                         return *this;
-                obj = PyObject_CallObject(obj, NULL);
-                if (obj == nullptr)
+                PyObject *res = PyObject_CallObject(obj, NULL);
+                Py_DECREF(obj);
+                if (res == nullptr)
                         py_error("Error calling Python conjugate");
-                return obj;
+                return res;
         }
         default:
                 stub("invalid type: ::conjugate() type not handled");
@@ -3377,12 +3378,7 @@ ex numeric::evalf(int /*level*/, PyObject* parent) const {
         if (ans == nullptr)
                 throw (std::runtime_error("numeric::evalf(): error calling py_float()"));
 
-        // We do not return ans because ex's constructor calls Py_INCREF.
-        // This would lead to a memory leak, see bug #27536.
-        basic *bp = new numeric(ans);
-        bp->setflag(status_flags::dynallocated);
-        GINAC_ASSERT(bp->get_refcount() == 0);
-        return *bp;
+        return numeric(ans);
 }
 
 const numeric numeric::try_py_method(const std::string& s) const
@@ -3395,7 +3391,6 @@ const numeric numeric::try_py_method(const std::string& s) const
                 PyErr_Clear();
                 throw std::logic_error("");
         }
-        
         return numeric(ret);
 }
 
@@ -5031,12 +5026,7 @@ ex ConstantEvalf(unsigned serial, PyObject* dict) {
 
         if (x == nullptr) py_error("error getting digits of constant");
 
-        // We do not return x because ex's constructor calls Py_INCREF.
-        // This would lead to a memory leak, see bug #27536.
-        basic *bp = new numeric(x);
-        bp->setflag(status_flags::dynallocated);
-        GINAC_ASSERT(bp->get_refcount() == 0);
-        return *bp;
+        return numeric(x);
 }
 
 ex UnsignedInfinityEvalf(unsigned serial, PyObject* parent) {

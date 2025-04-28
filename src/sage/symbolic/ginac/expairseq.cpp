@@ -309,14 +309,14 @@ ex expairseq::map(map_function &f) const
 		v->push_back(split_ex_to_pair(f(recombine_pair_to_ex(elem))));
 
 	if (overall_coeff_equals_default())
-		return thisexpairseq(std::move(v), *default_overall_coeff(), true);
+		return thisexpairseq(std::move(v), default_overall_coeff(), true);
         ex newcoeff = f(overall_coeff);
         if(is_exactly_a<numeric>(newcoeff))
                 return thisexpairseq(std::move(v),
                                 ex_to<numeric>(newcoeff), true);
 
         v->push_back(split_ex_to_pair(newcoeff));
-        return thisexpairseq(std::move(v), *default_overall_coeff(), true);
+        return thisexpairseq(std::move(v), default_overall_coeff(), true);
 }
 
 /** Perform coefficient-wise automatic term rewriting rules in this class. */
@@ -661,15 +661,15 @@ bool expairseq::expair_needs_further_processing(epp /*unused*/)
 	return false;
 }
 
-const numeric * expairseq::default_overall_coeff() const
+const numeric& expairseq::default_overall_coeff() const
 {
-	return _num0_p;
+	return *_num0_p;
 }
 
 bool expairseq::overall_coeff_equals_default() const
 {
     return (overall_coeff.is_exact()
-         and overall_coeff.is_equal(*default_overall_coeff()));
+         and overall_coeff.is_equal(default_overall_coeff()));
 }
 
 void expairseq::combine_overall_coeff(const numeric &c)
@@ -1034,7 +1034,7 @@ void expairseq::make_flat(const epvector &v, bool do_index_renaming)
 		    this->can_make_flat(elem)) {
 		        ex newrest;
 		        if (is_exactly_a<numeric>(elem.coeff) and elem.coeff.is_zero()) {
-		            newrest = *default_overall_coeff();
+		            newrest = default_overall_coeff();
 		        } else {
 		            newrest = elem.rest;
 		        }
@@ -1050,8 +1050,8 @@ void expairseq::make_flat(const epvector &v, bool do_index_renaming)
 			else {
 			        if ((is_exactly_a<numeric>(elem.coeff) and elem.coeff.is_zero())
 			                or (is_exactly_a<numeric>(elem.rest)
-			                    and (ex_to<numeric>(elem.rest).is_equal(*default_overall_coeff())))) {
-			            combine_overall_coeff(*default_overall_coeff());
+			                    and (ex_to<numeric>(elem.rest).is_equal(default_overall_coeff())))) {
+			            combine_overall_coeff(default_overall_coeff());
 			        }
 			        else {
 			                seq.push_back(elem);
