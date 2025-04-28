@@ -2488,6 +2488,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         uniques = []
         sym_base = []
         asym_base = []
+
+        #Correct method
         sym_base_lasts = []
         for xx in flags:
             xxid = xx.unique(weak=True)[0]
@@ -2500,6 +2502,19 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 asym_base.append(sym_base_lasts[sym_ind] - xx)
                 sym_base[sym_ind] += xx
                 sym_base_lasts[sym_ind] = xx
+
+        #Old worse method (but sometimes helps rounding)
+        # for xx in flags:
+        #     xxid = xx.unique(weak=True)[0]
+        #     if xxid not in uniques:
+        #         uniques.append(xxid)
+        #         sym_base.append(xx.afae())
+        #     else:
+        #         sym_ind = uniques.index(xxid)
+        #         asym_base.append(sym_base[sym_ind] - xx.afae())
+        #         sym_base[sym_ind] += xx
+        
+        
         m_sym = matrix(
             len(sym_base), len(flags), 
             [xx.values() for xx in sym_base], sparse=True
