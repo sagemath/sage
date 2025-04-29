@@ -2399,7 +2399,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             Q_0 Q_2
         """
         if not all(x in (0, 1) for x in nums):
-            raise ValueError("The tuple %s should consist " % (nums,) +
+            raise ValueError("the tuple %s should consist " % (nums,) +
                              "only of 0s and 1s")
         else:
             if self.basis_name() != 'milnor':
@@ -2739,7 +2739,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(profile=[1,2,1]).gen(5)
             Traceback (most recent call last):
             ...
-            ValueError: This algebra only has 4 generators, so call gen(i) with 0 <= i < 4
+            ValueError: this algebra only has 4 generators, so call gen(i) with 0 <= i < 4
 
             sage: D = SteenrodAlgebra(profile=lambda n: n)
             sage: [D.gen(n) for n in range(5)]
@@ -2761,7 +2761,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         num = self.ngens()
         if num < Infinity:
             if i >= num:
-                raise ValueError("This algebra only has %s generators, so call gen(i) with 0 <= i < %s" % (num, num))
+                raise ValueError("this algebra only has %s generators, so call gen(i) with 0 <= i < %s" % (num, num))
             # check to see if equal to A(n) for some n.
             n = self.profile(1)
             if not self._generic and self._profile == AA(n-1, p=p)._profile:
