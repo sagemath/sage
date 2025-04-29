@@ -3792,7 +3792,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [1]
         """
         cdef list L = []
-        cdef int i
+        cdef Py_ssize_t i
 
         for i from 0 <= i < self._ncols:
             if i not in d:
@@ -3854,7 +3854,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         cdef dict d = {}
         cdef list queue = list(range(self._ncols))
-        cdef int l, sign, i
+        cdef int l
+        cdef Py_ssize_t sign, i
 
         if skew:
             # testing the diagonal entries to be zero
