@@ -461,7 +461,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if self._nrows == 0 or self._ncols == 0:
             return "[]"
 
-        cdef int i,j, last_i
+        cdef Py_ssize_t i,j, last_i
         cdef list s = []
         empty_row = b' '*(self._ncols*2-1)
         cdef char *row_s
@@ -1068,7 +1068,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A.list()
             []
         """
-        cdef int i,j
+        cdef Py_ssize_t i,j
         l = []
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:
@@ -1308,7 +1308,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         cdef randstate rstate = current_randstate()
 
-        cdef int i, j, k
+        cdef Py_ssize_t i, j
+        cdef int k
         cdef int nc
         cdef unsigned int low, high
         cdef m4ri_word mask = 0
@@ -1835,7 +1836,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             610207
             sage: assert l < 650000
         """
-        cdef int i,j, r,c, size
+        cdef Py_ssize_t i,j, r,c
+        cdef int size
 
         r, c = self.nrows(), self.ncols()
         if r == 0 or c == 0:
@@ -2525,7 +2527,7 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
     from sage.matrix.constructor import Matrix
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
-    cdef int i, j
+    cdef Py_ssize_t i, j
     cdef Matrix_mod2_dense A
 
     A = <Matrix_mod2_dense>Matrix(GF(2),r,c)
@@ -2591,7 +2593,7 @@ def from_png(filename):
     from sage.matrix.constructor import Matrix
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
-    cdef int i,j,r,c
+    cdef Py_ssize_t i,j,r,c
     cdef Matrix_mod2_dense A
 
     fn = open(filename,"r") # check filename
@@ -2636,7 +2638,7 @@ def to_png(Matrix_mod2_dense A, filename):
         sage: A == B
         True
     """
-    cdef int i,j, r,c
+    cdef Py_ssize_t i,j, r,c
     r, c = A.nrows(), A.ncols()
     if r == 0 or c == 0:
         raise TypeError("Cannot write image with dimensions %d x %d"%(c,r))
