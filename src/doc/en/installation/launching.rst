@@ -299,6 +299,8 @@ You can check the presence of some of these packages using the command
 
      plot3d(lambda u,v:(u^2+v^2)/4-2,(-2,2),(-2,2)).show(viewer="jmol")
 
+.. _sec-launching-vscode-wsl:
+
 Using Jupyter notebook through Visual Studio Code (VS Code) in WSL
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
