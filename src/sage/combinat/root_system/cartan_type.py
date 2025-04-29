@@ -1739,10 +1739,10 @@ class CartanType_crystallographic(CartanType_abstract):
         from sage.matrix.constructor import matrix, diagonal_matrix
         m = self.cartan_matrix()
         n = m.nrows()
-        M = matrix(ZZ, n, n*n, sparse=True)
-        for (i,j) in m.nonzero_positions():
-            M[i, n * i + j] = m[i,j]
-            M[j, n * i + j] -= m[j,i]
+        M = matrix(ZZ, n, n * n, sparse=True)
+        for i, j in m.nonzero_positions():
+            M[i, n * i + j] = m[i, j]
+            M[j, n * i + j] -= m[j, i]
         kern = M.integer_kernel()
         c = len(self.dynkin_diagram().connected_components(sort=False))
         if kern.dimension() < c:
@@ -1757,7 +1757,7 @@ class CartanType_crystallographic(CartanType_abstract):
         D = sum(kern.basis())
         assert diagonal_matrix(D) * m == m.transpose() * diagonal_matrix(D)
         I = self.index_set()
-        return Family( dict( (I[i], D[i]) for i in range(n) ) )
+        return Family({I[i]: D[i] for i in range(n)})
 
     def index_set_bipartition(self):
         r"""
@@ -2131,7 +2131,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
             raise ValueError("the kernel is not 1 dimensional")
         assert (all(coef > 0 for coef in annihilator_basis[0]))
 
-        return Family(dict((i,annihilator_basis[0][i])for i in self.index_set()))
+        return Family({i: annihilator_basis[0][i] for i in self.index_set()})
 
     acheck = row_annihilator
 
@@ -2205,8 +2205,8 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         """
         a = self.a()
         acheck = self.acheck()
-        return Family(dict((i, max(ZZ(1), a[i] // acheck[i]))
-                           for i in self.index_set()))
+        return Family({i: max(ZZ.one(), a[i] // acheck[i])
+                       for i in self.index_set()})
 
     def translation_factors(self):
         r"""
@@ -2372,21 +2372,21 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         REFERENCES:
 
-        .. [HST09] \F. Hivert, A. Schilling, and N. M. Thiery,
+        .. [HST09] \F. Hivert, A. Schilling, and N. M. Thiéry,
            *Hecke group algebras as quotients of affine Hecke
            algebras at level 0*, JCT A, Vol. 116, (2009) p. 844-863
            :arxiv:`0804.3781`
         """
         a = self.a()
         acheck = self.acheck()
-        if set([1/ZZ(2), 2]).issubset( set(a[i]/acheck[i] for i in self.index_set()) ):
+        s = set(a[i] / acheck[i] for i in self.index_set())
+        if ~ZZ(2) in s and 2 in s:
             # The test above and the formula below are rather meaningless
             # But they detect properly type BC or dual and return the correct value
-            return Family(dict((i, min(ZZ(1), a[i] / acheck[i]))
-                               for i in self.index_set()))
+            return Family({i: min(ZZ.one(), a[i] / acheck[i])
+                           for i in self.index_set()})
 
-        else:
-            return self.c()
+        return self.c()
 
     def _test_dual_classical(self, **options):
         r"""

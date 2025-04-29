@@ -878,8 +878,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         try:
             if GF2_not_defined:
                 GF2 = GF(2)
-                GF2_zero = GF2(0)
-                GF2_one = GF2(1)
+                GF2_zero = GF2.zero()
+                GF2_one = GF2.one()
                 GF2_not_defined = False
         except ImportError:
             pass
@@ -3099,8 +3099,8 @@ cdef class BinaryMatroid(LinearMatroid):
         global GF2, GF2_zero, GF2_one, GF2_not_defined
         if GF2_not_defined:
             GF2 = GF(2)
-            GF2_zero = GF2(0)
-            GF2_one = GF2(1)
+            GF2_zero = GF2.zero()
+            GF2_one = GF2.one()
             GF2_not_defined = False
 
         # Setup representation; construct displayed basis
