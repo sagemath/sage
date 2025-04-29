@@ -445,7 +445,7 @@ def walk_packages(path=None, prefix='', onerror=None):
         r"""
         Yield :class:`ModuleInfo` for all modules of ``importer``.
         """
-        for name, ispkg in sorted(list(_iter_importer_modules_helper(importer, prefix))):
+        for name, ispkg in sorted(_iter_importer_modules_helper(importer, prefix)):
             # we sort again for consistency of output ordering if importer is not
             # a FileFinder (needed in doctest of :func:`sage.misc.dev_tools/load_submodules`)
             modname = name.rsplit('.', 1)[-1]
