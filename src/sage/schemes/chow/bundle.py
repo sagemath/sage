@@ -29,8 +29,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.chow.sheaf import Sheaf
 from sage.schemes.chow.scheme import PointChowScheme
+from sage.schemes.chow.sheaf import Sheaf
 
 
 class Bundle(Sheaf):
@@ -43,6 +43,7 @@ class Bundle(Sheaf):
         sage: E = Bundle(P2, 2, [1, 0, 4*h^2])
         sage: TestSuite(E).run()
     """
+
     def __init__(self, X, r=None, cc=None, ch=None, name=None, latex_name=None):
         """
         Construct a :class:`Bundle`
@@ -72,7 +73,7 @@ class Bundle(Sheaf):
         if (r is not None) and (cc is not None):
             if len(cc) > r + 1:
                 A = X.chowring()
-                if any(A(x) != A(0) for x in cc[r + 1:]):
+                if any(A(x) != A(0) for x in cc[r + 1 :]):
                     raise TypeError("Nontrivial Chern classes > rank.")
         Sheaf.__init__(self, X, r, cc, ch, name, latex_name)
 
@@ -155,11 +156,11 @@ def BundleDiffRelations(B, A):
     """
     if not (isinstance(B, Bundle) and isinstance(A, Bundle)):
         raise TypeError("Expected two bundles %s and %s, got" % (B, A))
-    if not (B.chowscheme() is A.chowscheme()):
+    if B.chowscheme() is not A.chowscheme():
         raise TypeError("Bundles are not over the same base.")
 
     D = B - A
-    C = Bundle(D.chowscheme(), D.rank(), D.chern_classes()[0: D.rank() + 1])
+    C = Bundle(D.chowscheme(), D.rank(), D.chern_classes()[0 : D.rank() + 1])
 
     b = B.total_chern_class()
     a = A.total_chern_class()

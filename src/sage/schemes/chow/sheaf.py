@@ -62,10 +62,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.structure.sage_object import SageObject
-from sage.misc.cachefunc import cached_method
 
 
 class Sheaf(SageObject):
@@ -134,7 +134,7 @@ class Sheaf(SageObject):
                 pass
             if cc in AX:
                 cc = cc.by_degrees()
-            if not type(cc) is list:
+            if type(cc) is not list:
                 raise TypeError("Expect a list of Chern classes", cc)
             if len(cc) > d + 1:
                 raise ValueError("Expect at most %s chern classes:"
@@ -563,7 +563,7 @@ class Sheaf(SageObject):
         """
         E, F = self, other
         # Checks
-        if not E.chowscheme() is F.chowscheme():
+        if E.chowscheme() is not F.chowscheme():
             raise ValueError("Base varieties of sheaves differ.")
         # Computation
         ch = E.chern_character() + F.chern_character()
@@ -611,7 +611,7 @@ class Sheaf(SageObject):
             \mathcal{S} - \mathcal{T}
         """
         E, F = self, other
-        if not E.chowscheme() is F.chowscheme():
+        if E.chowscheme() is not F.chowscheme():
             raise ValueError("Base varieties of sheaves differ.")
         ch = E.chern_character() - F.chern_character()
         # Result
@@ -657,7 +657,7 @@ class Sheaf(SageObject):
             \mathcal{S} \otimes \mathcal{T}
         """
         E, F = self, other
-        if not E.chowscheme() is F.chowscheme():
+        if E.chowscheme() is not F.chowscheme():
             raise ValueError("Base varieties of sheaves differ.")
         ch = E.chern_character() * F.chern_character()
         # Result
@@ -949,7 +949,7 @@ class Sheaf(SageObject):
         """
         if not isinstance(E, Sheaf):
             raise ValueError("Sheaf expected,", E)
-        if not self.chowscheme() is E.chowscheme():
+        if self.chowscheme() is not E.chowscheme():
             raise ValueError("Base varieties differs :", E)
 
         n, A = self.chowscheme().dimension(), self.chowscheme().chowring()
@@ -1056,7 +1056,7 @@ def SHom(E, F):
     """
     if not (is_sheaf(E) and is_sheaf(F)):
         raise ValueError("SHom is defined between sheaves.")
-    if not E.chowscheme() is F.chowscheme():
+    if E.chowscheme() is not F.chowscheme():
         raise ValueError("Base varieties of sheaves differ.")
     return E.dual() * F
 

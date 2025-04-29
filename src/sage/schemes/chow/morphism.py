@@ -84,10 +84,11 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.all import Rings
-_Rings = Rings() # type: ignore
+
+_Rings = Rings()  # type: ignore
+from sage.arith.power import generic_power
 from sage.categories.map import Map
 from sage.structure.element import Element
-from sage.arith.power import generic_power
 
 
 def is_chowSchemeMorphism(f):
@@ -120,6 +121,7 @@ class ChowSchemeMorphism(Element):
     r"""
     Base class for morphisms between ChowSchemes.
     """
+
     def __init__(self, parent, phi):
         """
         Construct a :class:`ChowSchemeMorphism`
@@ -143,6 +145,7 @@ class ChowSchemeMorphism(Element):
             sage: f = ChowSchemeMorphism(Hom, ['h'])
         """
         from sage.categories.homset import Homset
+
         if not isinstance(parent, Homset):
             raise TypeError("parent (=%s) must be a hom-space" % parent)
         Element.__init__(self, parent)
@@ -205,8 +208,7 @@ class ChowSchemeMorphism(Element):
         """
         if other is None:
             return False
-        if self.domain() == other.domain() and \
-                self.codomain() == other.codomain():
+        if self.domain() == other.domain() and self.codomain() == other.codomain():
             if self.chowring_morphism() != other.chowring_morphism():
                 return False
             return True
@@ -261,7 +263,7 @@ class ChowSchemeMorphism(Element):
         g, f = self, other
         X, Z = f.domain(), g.codomain()
         AZ = Z.chowring()
-        if not f.codomain() is g.domain():
+        if g.domain() is not f.codomain():
             msg = "The codomain of first map and the domain of second differ."
             raise TypeError(msg)
         return X.hom([other(self(x)) for x in AZ.gens()], Z)
@@ -326,7 +328,7 @@ class ChowSchemeMorphism(Element):
         """
         D = self._chowring_morphism.domain().gens()
         Im = self._chowring_morphism.morphism_from_cover().im_gens()
-        return '\n'.join(['%s |--> %s' % (D[i], Im[i]) for i in range(len(D))])
+        return "\n".join(["%s |--> %s" % (D[i], Im[i]) for i in range(len(D))])
 
     def _repr_type(self):
         r"""
@@ -344,7 +346,7 @@ class ChowSchemeMorphism(Element):
             sage: f._repr_type()
             'ChowScheme'
         """
-        return 'ChowScheme'
+        return "ChowScheme"
 
     def _repr_(self):
         r"""
@@ -369,8 +371,8 @@ class ChowSchemeMorphism(Element):
             s += "\n  From: %s" % self.domain()
             s += "\n  To:   %s" % self.codomain()
         d = self._repr_defn()
-        if d != '':
-            s += "\n  Defn: %s" % ('\n        '.join(d.split('\n')))
+        if d != "":
+            s += "\n  Defn: %s" % ("\n        ".join(d.split("\n")))
         return s
 
     def chowring_morphism(self):
@@ -494,14 +496,15 @@ class ChowSchemeMorphism(Element):
             Bundle(X, 3, [1, 12*w])
         """
         from .sheaf import Sheaf, is_sheaf
+
         if is_sheaf(v):
             # Return a sheaf if the argument is a sheaf
-            if not v.chowscheme() is self.codomain():
+            if v.chowscheme() is not self.codomain():
                 raise ValueError("Expect a sheaf on codomain.")
             cc = v.chern_classes()
             upperstar_cc = self.upperstar(cc)
             if len(upperstar_cc) > self.domain().dimension():
-                upperstar_cc = upperstar_cc[0:self.domain().dimension() + 1]
+                upperstar_cc = upperstar_cc[0 : self.domain().dimension() + 1]
             result = Sheaf(self.domain(), v.rank(), upperstar_cc)
             # If called from a derived class like bundle return a bundle
             result.__class__ = v.__class__
@@ -568,25 +571,28 @@ class ChowSchemeMorphism(Element):
         """
         X, Y = self.domain(), self.codomain()
         from .sheaf import Sheaf, is_sheaf
+
         if is_sheaf(v):
             # Return a sheaf if the argument is a sheaf
-            if not v.chowscheme() is self.domain():
+            if v.chowscheme() is not self.domain():
                 raise ValueError("Expect a sheaf on domain.")
             if normal_bundle is None:
                 # Use Grothendieck-Hirzebruch-Riemann-Roch
                 TX, TY = X.tangent_bundle(), Y.tangent_bundle()
                 Tf = TX - self.upperstar(TY)
-                ch = self.lowerstar(v.chern_character() * Tf.todd_class(),
-                                    verbose=verbose)
+                ch = self.lowerstar(
+                    v.chern_character() * Tf.todd_class(), verbose=verbose
+                )
                 return Sheaf(Y, ch=ch)
             else:
                 # Normal bundle given, use Riemann-Roch without denominators
                 cd = Y.dimension() - X.dimension()
-                ls = self.lowerstar(normal_bundle.sans_denominateurs(v),
-                                    verbose=verbose)
+                ls = self.lowerstar(
+                    normal_bundle.sans_denominateurs(v), verbose=verbose
+                )
                 lowerstar_cc = [1] + [0] * (cd - 1) + ls
                 if len(lowerstar_cc) > Y.dimension():
-                    lowerstar_cc = lowerstar_cc[0:Y.dimension() + 1]
+                    lowerstar_cc = lowerstar_cc[0 : Y.dimension() + 1]
                 result = Sheaf(Y, 0, lowerstar_cc)
                 return result
         if type(v) is list:
@@ -615,6 +621,7 @@ class ChowSchemeMorphism_id(ChowSchemeMorphism):
 
 
     """
+
     def __init__(self, X):
         r"""
         Construct a :class:`ChowSchemeMorphism_id`.
@@ -644,7 +651,7 @@ class ChowSchemeMorphism_id(ChowSchemeMorphism):
             sage: ChowSchemeMorphism_id(X)._repr_defn()
             'Identity map'
         """
-        return 'Identity map'
+        return "Identity map"
 
 
 class ChowSchemeMorphism_structure_map(ChowSchemeMorphism):
@@ -656,6 +663,7 @@ class ChowSchemeMorphism_structure_map(ChowSchemeMorphism):
     - ``parent`` -- SHom-set with codomain equal to the base ChowScheme of
       the domain.
     """
+
     def __init__(self, parent, f):
         """
         Construct a :class:`ChowSchemeMorphism_structure_map`.
@@ -688,4 +696,4 @@ class ChowSchemeMorphism_structure_map(ChowSchemeMorphism):
             sage: X.base_morphism()._repr_defn()
             'Structure map'
         """
-        return 'Structure map'
+        return "Structure map"
