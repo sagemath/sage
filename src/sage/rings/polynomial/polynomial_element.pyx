@@ -6264,7 +6264,7 @@ cdef class Polynomial(CommutativePolynomial):
     def canonical_associate(self):
         lc = self.leading_coefficient()
         n, u = lc.canonical_associate()
-        return (u.inverse_of_unit()*self,u)
+        return (u.inverse_of_unit() * self, u)
 
     def lm(self):
         """

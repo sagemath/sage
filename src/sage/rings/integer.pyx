@@ -7206,8 +7206,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
     def canonical_associate(self):
         if self >= 0:
             return (self, one)
-        else:
-            return (-self, -one)
+        return (-self, -one)
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
     """

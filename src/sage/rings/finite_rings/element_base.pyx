@@ -169,11 +169,9 @@ cdef class FiniteRingElement(CommutativeRingElement):
         R = self.parent()
         if R.is_field():
             if self.is_zero():
-                return (R.zero(),R.one())
-            else:
-                return (R.one(),self)
-        else:
-            return NotImplemented
+                return (R.zero(), R.one())
+            return (R.one(), self)
+        return NotImplemented
 
 
 cdef class FinitePolyExtElement(FiniteRingElement):
