@@ -348,7 +348,7 @@ class ChowSchemeMorphism(Element):
         """
         return "ChowScheme"
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this ChowSchemeMorphism.
 
@@ -447,7 +447,7 @@ class ChowSchemeMorphism(Element):
         """
         return self._category
 
-    def is_endomorphism(self):
+    def is_endomorphism(self) -> bool:
         """
         Return whether the morphism is an endomorphism.
 
@@ -626,7 +626,8 @@ class ChowSchemeMorphism_id(ChowSchemeMorphism):
         r"""
         Construct a :class:`ChowSchemeMorphism_id`.
 
-        TESTS:
+        TESTS::
+
             sage: X = ChowScheme(1, 'h', 1, 'h^2', name='P1')
             sage: X.identity_morphism()
             ChowScheme endomorphism of P1
