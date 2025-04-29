@@ -952,7 +952,7 @@ cdef class CGraph:
         self.check_vertex(u)
         self.check_vertex(v)
         if unlikely(self.in_degrees is NULL or self.out_degrees is NULL):
-            raise ValueError("`self.in_degree` or `self.out_degree` not allocated")
+            raise ValueError("`self.in_degrees` or `self.out_degrees` not allocated")
         if self.in_degrees[v] < self.out_degrees[u]:
             size = self.in_degrees[v]
         else:

@@ -628,7 +628,7 @@ class HeckeAlgebra_full(HeckeAlgebra_base):
             return NotImplemented
         return richcmp(self.module(), other.module(), op)
 
-    def is_anemic(self):
+    def is_anemic(self) -> bool:
         """
         Return ``False``, since this the full Hecke algebra.
 
