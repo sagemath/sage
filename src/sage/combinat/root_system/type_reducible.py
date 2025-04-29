@@ -116,11 +116,12 @@ class CartanType(SageObject, CartanType_abstract):
         """
         self._types = types
         self.affine = False
-        indices = (None,) + tuple( (i, j)
-                                   for i in range(len(types))
-                                   for j in types[i].index_set() )
+        indices = (None,) + tuple((i, j)
+                                  for i in range(len(types))
+                                  for j in types[i].index_set())
         self._indices = indices
-        self._index_relabelling = dict((indices[i], i) for i in range(1, len(indices)))
+        self._index_relabelling = {indices[i]: i
+                                   for i in range(1, len(indices))}
 
         self._spaces = [t.root_system().ambient_space() for t in types]
         if all(l is not None for l in self._spaces):
@@ -130,9 +131,9 @@ class CartanType(SageObject, CartanType_abstract):
         self.tools = root_system.type_reducible
         # a direct product of finite Cartan types is again finite;
         # idem for simply laced and crystallographic.
-        super_classes = tuple( cls
-                               for cls in (CartanType_finite, CartanType_simply_laced, CartanType_crystallographic)
-                               if all(isinstance(t, cls) for t in types) )
+        super_classes = tuple(cls
+                              for cls in (CartanType_finite, CartanType_simply_laced, CartanType_crystallographic)
+                              if all(isinstance(t, cls) for t in types))
         self._add_abstract_superclass(super_classes)
 
     def _repr_(self, compact=True):  # We should make a consistent choice here
