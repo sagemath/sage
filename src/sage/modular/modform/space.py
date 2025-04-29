@@ -355,7 +355,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return self.character() is not None
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if this an ambient space of modular forms.
 
@@ -1358,7 +1358,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         except IndexError:
             raise ValueError("Generator %s not defined" % n)
 
-    def gens(self) -> list:
+    def gens(self) -> tuple:
         """
         Return a complete set of generators for ``self``.
 
@@ -1366,13 +1366,13 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: N = ModularForms(6,4)
             sage: N.gens()
-            [q - 2*q^2 - 3*q^3 + 4*q^4 + 6*q^5 + O(q^6),
+            (q - 2*q^2 - 3*q^3 + 4*q^4 + 6*q^5 + O(q^6),
              1 + O(q^6),
              q - 8*q^4 + 126*q^5 + O(q^6),
              q^2 + 9*q^4 + O(q^6),
-             q^3 + O(q^6)]
+             q^3 + O(q^6))
         """
-        return self.basis()
+        return tuple(self.basis())
 
     def sturm_bound(self, M=None):
         r"""
@@ -1510,7 +1510,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return self.cuspidal_submodule()
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
         Return ``True`` if this space is cuspidal.
 
