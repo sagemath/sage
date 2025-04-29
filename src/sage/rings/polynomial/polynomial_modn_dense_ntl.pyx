@@ -629,7 +629,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
 
     f = self.change_ring(ZZ)
 
-    P,(x,) = f.parent().objgens()
+    _, (x,) = f.parent().objgens()
 
     delta = f.degree()
 
@@ -649,21 +649,21 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
 
     # we could do this much faster, but this is a cheap step
     # compared to LLL
-    g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta) ]
-    g.extend([x**i * f**m for i in range(t)]) # h
+    g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta)]
+    g.extend([x**i * f**m for i in range(t)])  # h
 
     B = Matrix(ZZ, len(g), delta*m + max(delta,t) )
     for i in range(B.nrows()):
         for j in range( g[i].degree()+1 ):
-            B[i,j] = g[i][j]*X**j
+            B[i, j] = g[i][j]*X**j
 
     B = B.LLL(**kwds)
 
-    f = sum([ZZ(B[0,i]//X**i)*x**i for i in range(B.ncols())])
+    f = sum([ZZ(B[0, i]//X**i)*x**i for i in range(B.ncols())])
     R = f.roots()
 
     ZmodN = self.base_ring()
-    roots = set([ZmodN(r) for r,m in R if abs(r) <= X])
+    roots = set(ZmodN(r) for r, m in R if abs(r) <= X)
     Nbeta = N**beta
     return [root for root in roots if N.gcd(ZZ(self(root))) >= Nbeta]
 

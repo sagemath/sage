@@ -143,6 +143,7 @@ def kfpoly(mu, nu, t=None):
 
     return sum(f(rg) for rg in riggings(mu))
 
+
 def kfpoly_skew(lamu, nu, t=None):
     r"""
     Return the Kostka-Foulkes polynomial `K_{\lambda / \mu, \nu}(t)`
@@ -182,8 +183,9 @@ def kfpoly_skew(lamu, nu, t=None):
     if t is None:
         t = polygen(ZZ, 't')
 
-    return t.parent().sum(t ** (T.to_word().charge())
+    return t.parent().sum(t ** T.to_word().charge()
                           for T in SemistandardSkewTableaux(lamu, nu))
+
 
 def schur_to_hl(mu, t=None):
     r"""
