@@ -26,7 +26,7 @@ works out nicely::
     sage: T.divisor_of_order()
     15
     sage: T.gens()
-    [[(1/15, 3/5, 2/5, 14/15)]]
+    ([(1/15, 3/5, 2/5, 14/15)],)
     sage: T.invariants()
     [15]
     sage: d = J.decomposition(); d
