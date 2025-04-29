@@ -8,7 +8,7 @@ Finite monoids
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-
+from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 
 
@@ -29,6 +29,12 @@ class FiniteMonoids(CategoryWithAxiom):
     TESTS::
 
         sage: TestSuite(FiniteMonoids()).run()
+
+        sage: R = IntegerModRing(15)
+        sage: M = R.subsemigroup([R(5)], one=R(10),
+        ....:     category=Semigroups().Finite().Subobjects() & Groups())
+        sage: M.one()
+        10
     """
     class ParentMethods:
 
@@ -270,3 +276,36 @@ class FiniteMonoids(CategoryWithAxiom):
                 k += 1
                 self_power_k = self_power_k * self
             return [k, self_powers[self_power_k]]
+
+        @cached_method
+        def __invert__(self):
+            """
+            Return the inverse of ``self`` if it exists.
+
+            This is the generic implementation, very naive and slow.
+
+            EXAMPLES::
+
+                sage: R = IntegerModRing(15)
+                sage: M = R.subsemigroup([R(5)], one=R(10),
+                ....:     category=Semigroups().Finite().Subobjects() & Groups())
+                sage: [~x for x in M]
+                [10, 5]
+
+            TESTS::
+
+                sage: R = IntegerModRing(15)
+                sage: M = R.subsemigroup([R(3)], one=R(1),
+                ....:     category=Semigroups().Finite().Subobjects())
+                sage: ~M(3)
+                Traceback (most recent call last):
+                ...
+                ValueError: the element 3 is not invertible
+            """
+            parent = self.parent()
+            one = parent.one()
+            it = (v for v in parent if v * self == one)
+            try:
+                return next(it)
+            except StopIteration:
+                raise ValueError(f"the element {self} is not invertible")
