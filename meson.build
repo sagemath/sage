@@ -63,6 +63,7 @@ file_paths = [
   'src/sage/coding/codecan/__init__.py',
   'src/sage/games/__init__.py',
   'src/sage/quivers/__init__.py',
+  'src/sage/schemes/chow/__init__.py',
   'src/sage/schemes/cyclic_covers/__init__.py',
   'src/sage/schemes/plane_conics/__init__.py',
   'src/sage/schemes/curves/__init__.py',
