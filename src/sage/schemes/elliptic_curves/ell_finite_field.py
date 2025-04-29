@@ -1675,7 +1675,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
                 # is that Frobenius must be of the form phi o [p^k] where phi is
                 # a purely inseparable isogeny of degree 1 or p, hence this [p^k]
                 # can always be divided out while retaining an endomorphism.
-                assert (ell**(2*e)).divides(self.base_field().cardinality())
+                assert self.base_field().cardinality().valuation(ell) >= 2*e
                 return e
 
             # In the supersingular case, the j-invariant alone does not determine
@@ -1703,7 +1703,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
                     E0[i], E1[i] = step.domain(), step.codomain()
                 h += 1
                 assert h <= e
-            raise NotImplementedError
+            raise AssertionError('unreachable code -- this is a bug')
 
         j = self.j_invariant()
         if j in [0, 1728]:
