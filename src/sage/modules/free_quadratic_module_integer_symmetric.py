@@ -733,7 +733,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         return s
 
     @cached_method
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Return whether the diagonal entries of the Gram matrix are even.
 
