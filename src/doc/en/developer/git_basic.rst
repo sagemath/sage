@@ -206,8 +206,7 @@ Sometimes, a new version of Sage is released while you work on a Git branch.
 
 Let us assume you started ``my_branch`` at commit ``B``. After a while, your
 branch has advanced to commit ``Z``, but you updated ``develop`` (see
-:ref:`section-git-pull-develop`) and now your Git history looks like this (see
-:ref:`section_walkthrough_logs`):
+:ref:`section-git-pull-develop`) and now your Git history looks like this:
 
 .. CODE-BLOCK:: text
 
