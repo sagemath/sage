@@ -153,7 +153,7 @@ class Sage(ExtraTabCompletion, Expect):
                     'init_code should be a string or an iterable of lines '
                     'of code')
 
-        command = 'python -u'
+        command = 'python3 -u'
         prompt = re.compile(b'>>> ')
         environment = 'sage.all'
         init_code.append(f'from {environment} import *')
