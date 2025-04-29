@@ -18,6 +18,7 @@ name: CI Linux incremental
 on:
   pull_request:
     paths:
+      - '.github/workflows/ci-linux-incremental.yml'
       - 'build/pkgs/**'
       - '!build/pkgs/sage_conf/**'
       - '!build/pkgs/sage_docbuild/**'
@@ -95,13 +96,11 @@ jobs:
       targets: "${{needs.changed_files.outputs.build_targets}} ci-build-with-fallback doc-html ptest-nodoc"
       tox_system_factors: >-
         ["ubuntu-focal",
-         "ubuntu-noble",
+         "ubuntu-jammy",
          "debian-bullseye",
          "debian-bookworm",
-         "fedora-30",
-         "fedora-40",]
+         "fedora-41",]
       tox_packages_factors: >-
-          ["standard",
-           "minimal"]
+          ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
       max_parallel: 8
