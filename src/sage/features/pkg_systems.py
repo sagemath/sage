@@ -4,13 +4,19 @@ Features for testing the presence of package systems ``sage_spkg``, ``conda``, `
 """
 
 # *****************************************************************************
-#       Copyright (C) 2021-2022 Matthias Koeppe
+#       Copyright (C) 2021-2024 Matthias Koeppe
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
+
+import os
+import re
+import shlex
+import sys
+import sysconfig
 
 from . import Feature
 
@@ -56,6 +62,29 @@ class PackageSystem(Feature):
             feature = spkgs
         return self._spkg_installation_hint(spkgs, prompt, feature)
 
+    def _system_packages(self, spkgs):
+        r"""
+        Return system packages corresponding to SPKG names or PURLs.
+
+        INPUT:
+
+        - ``spkgs`` -- string, whitespace-separated list of SPKG names or PURLs
+
+        OUTPUT: list of strings.
+
+        EXAMPLES::
+
+            sage: from sage.features.pkg_systems import PackageSystem
+            sage: debian = PackageSystem('debian')
+            sage: debian._system_packages('fflas_ffpack pypi/cvxopt pkg:generic/gmp')  # optional - SAGE_ROOT
+            ['fflas-ffpack', 'libgmp-dev']
+        """
+        from subprocess import run, CalledProcessError
+        system = self.name
+        proc = run(f'sage-get-system-packages {system} {spkgs}',
+                   shell=True, capture_output=True, text=True, check=True)
+        return proc.stdout.strip().split('\n')
+
     def _spkg_installation_hint(self, spkgs, prompt, feature):
         r"""
         Return a string that explains how to install ``feature``.
@@ -73,14 +102,13 @@ class PackageSystem(Feature):
         lines = []
         system = self.name
         try:
-            proc = run(f'sage-get-system-packages {system} {spkgs}',
-                       shell=True, capture_output=True, text=True, check=True)
-            system_packages = proc.stdout.strip()
+            system_packages = ' '.join(shlex.quote(pkg)
+                                       for pkg in self._system_packages(spkgs))
             print_sys = f'sage-print-system-package-command {system} --verbose --sudo --prompt="{prompt}"'
             command = f'{print_sys} update && {print_sys} install {system_packages}'
             proc = run(command, shell=True, capture_output=True, text=True, check=True)
-            command = proc.stdout.strip()
-            if command:
+            command = proc.stdout
+            if command.strip():
                 lines.append(f'To install {feature} using the {system} package manager, you can try to run:')
                 lines.append(command)
                 return '\n'.join(lines)
@@ -148,10 +176,36 @@ class SagePackageSystem(PackageSystem):
             To install foobarability using the Sage package manager, you can try to run:
             ### sage -i foo bar
         """
+        spkgs = ' '.join(shlex.quote(pkg) for pkg in self._system_packages(spkgs))
         lines = []
         lines.append(f'To install {feature} using the Sage package manager, you can try to run:')
         lines.append(f'{prompt}sage -i {spkgs}')
         return '\n'.join(lines)
+
+    def _system_packages(self, spkgs):
+        r"""
+        Return system packages corresponding to SPKG names or PURLs.
+
+        INPUT:
+
+        - ``spkgs`` -- string, whitespace-separated list of SPKG names or PURLs
+
+        OUTPUT: list of strings.
+
+        EXAMPLES::
+
+            sage: from sage.features.pkg_systems import SagePackageSystem
+            sage: SagePackageSystem()._system_packages('gfortran')
+            ['gfortran']
+            sage: SagePackageSystem()._system_packages('pkg:pypi/cvxopt')               # needs sage_spkg
+            ['cvxopt']
+        """
+        if 'pkg:' not in spkgs and 'pypi/' not in spkgs and 'generic/' not in spkgs:
+            return spkgs.split()
+        from subprocess import run, CalledProcessError
+        proc = run(f'sage-package list {spkgs}',
+                    shell=True, capture_output=True, text=True, check=True)
+        return proc.stdout.strip().split('\n')
 
 
 class PipPackageSystem(PackageSystem):
@@ -193,3 +247,67 @@ class PipPackageSystem(PackageSystem):
             return True
         except CalledProcessError:
             return False
+
+    def _spkg_installation_hint(self, spkgs, prompt, feature):
+        r"""
+        Return a string that explains how to install ``feature``.
+
+        EXAMPLES::
+
+            sage: from sage.features.pkg_systems import PipPackageSystem
+            sage: print(PipPackageSystem().spkg_installation_hint(['admcycles'], feature='admcycles'))  # indirect doctest
+            To install admcycles...pip install admcycles...
+        """
+        lines = []
+        # https://github.com/pypa/pip/blob/51de88ca6459fdd5213f86a54b021a80884572f9/src/pip/_internal/utils/virtualenv.py#L14
+        is_virtualenv = sys.prefix != getattr(sys, "base_prefix", sys.prefix)
+        # https://github.com/pypa/pip/blob/51de88ca6459fdd5213f86a54b021a80884572f9/src/pip/_internal/utils/misc.py#L648
+        marker = os.path.join(sysconfig.get_path("stdlib"), "EXTERNALLY-MANAGED")
+        is_externally_managed = os.path.isfile(marker)
+        pip_packages = ' '.join(shlex.quote(pkg) for pkg in self._system_packages(spkgs))
+        if not is_virtualenv and is_externally_managed:
+            lines.append(f'To install {feature} using the pip package manager:')
+            lines.append(f'Note that this Sage is installed in an externally managed Python environment.')
+            lines.append(f'It is recommended to first create a virtual environment:')
+            lines.append(f'{prompt}sage -python -m venv --system-site-packages ~/.sage/venv')
+            lines.append(f'Then quit the current Sage:')
+            lines.append(f'  exit')
+            lines.append(f'Next, in the shell, activate the new virtual environment:')
+            lines.append(f' $ . ~/.sage/venv/bin/activate')
+            lines.append(f' $ pip install {pip_packages}')
+            lines.append(f'Finally, start Sage from the new virtual environment:')
+            lines.append(f' $ sage')
+            lines.append(f'To exit the virtual environment after use:')
+            lines.append(f' $ deactivate')
+            return '\n'.join(lines)
+        return super()._spkg_installation_hint(spkgs, prompt, feature)
+
+    def _system_packages(self, spkgs):
+        r"""
+        Return system packages corresponding to SPKG names or PURLs.
+
+        INPUT:
+
+        - ``spkgs`` -- string, whitespace-separated list of SPKG names or PURLs
+
+        OUTPUT: list of strings.
+
+        EXAMPLES::
+
+            sage: from sage.features.pkg_systems import PipPackageSystem
+            sage: PipPackageSystem()._system_packages('pypi/cvxopt pkg:pypi/pynormaliz')
+            ['cvxopt...', 'pynormaliz...']
+            sage: PipPackageSystem()._system_packages('pypi/cvxopt pkg:pypi/pynormaliz dateutil')  # optional - sage_spkg
+            ['cvxopt...', 'python-dateutil...', 'pynormaliz...']
+        """
+        result = super()._system_packages(spkgs)
+        if result:
+            return result
+        all_packages = spkgs.split()
+        pypi_packages = [m.group(2) for package in all_packages
+                         if (m := re.fullmatch('(pkg:)?pypi/(.*)', package))]
+        other_packages = [package for package in all_packages
+                          if not re.fullmatch('(pkg:)?pypi/(.*)', package)]
+        if other_packages:
+            return []
+        return sorted(pypi_packages)
