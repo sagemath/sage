@@ -453,7 +453,7 @@ class OreModuleMorphism(Morphism):
         """
         return self.codomain()(x * self._matrix)
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` if this morphism is zero.
 
@@ -474,7 +474,7 @@ class OreModuleMorphism(Morphism):
         """
         return self._matrix.is_zero()
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Return ``True`` if this morphism is the identity.
 
@@ -588,7 +588,7 @@ class OreModuleMorphism(Morphism):
                 return False
         return self._matrix == other._matrix
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         Return ``True`` if this morphism is injective.
 
@@ -614,7 +614,7 @@ class OreModuleMorphism(Morphism):
         """
         return self._matrix.rank() == self.domain().rank()
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Return ``True`` if this morphism is surjective.
 
@@ -640,7 +640,7 @@ class OreModuleMorphism(Morphism):
         """
         return self._matrix.rank() == self.codomain().rank()
 
-    def is_bijective(self):
+    def is_bijective(self) -> bool:
         r"""
         Return ``True`` if this morphism is bijective.
 
@@ -660,7 +660,7 @@ class OreModuleMorphism(Morphism):
         """
         return self.is_injective() and self.is_surjective()
 
-    def is_isomorphism(self):
+    def is_isomorphism(self) -> bool:
         r"""
         Return ``True`` if this morphism is an isomorphism.
 
