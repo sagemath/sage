@@ -254,6 +254,10 @@ REFERENCES:
             *The number of simple modules of the Hecke algebras of type G(r,1,n)*.
             Math. Z. 233 (2000), no. 3, 601–623.
             :mathscinet:`MR1750939`
+			
+.. [AM2017] \M. Aguiar and S. Mahajan,
+            *Topics in Hyperplane Arrangements*,
+			Mathematical Surveys and Monographs, Vol. 226 (American Mathematical Society, 2017).
 
 .. [AM2020] \A. L. Agore and G. Militaru.
             *A new invariant for finite dimensional Leibniz/Lie algebras*.
@@ -1330,6 +1334,10 @@ REFERENCES:
 .. [Broder2000] Broder, A.Z., Kumar, R., Maghoul, F., Raghavan, P., Rajagopalan,
                 S., Stata, R., Tomkins, A., Wiener, J.L.: Graph structure in
                 the web. Computer Networks 33(1-6), 309–320 (2000)
+				
+.. [BCK2018] \H.-J. Bandelt, V. Chepoi and K. Knauer,
+             *COMs: Complexes of oriented matroids*,
+			 J. Combin. Theory Ser. A **156** (2018) 195–237.
 
 .. [BRS2015] \A. Boussicault, S. Rinaldi et S. Socci.
              *The number of directed k-convex polyominoes*
@@ -5663,6 +5671,19 @@ REFERENCES:
              and Iwahori-Hecke algebras*. Proc. London Math. Soc. (3)
              **75** (1997). 99-133. :arxiv:`math/9511223v1`.
              http://www.ms.unimelb.edu.au/~ram/Publications/1997PLMSv75p99.pdf
+			 
+.. [Ran2022] \H. Randriamaro,
+             *The Varchenko Matrix for Topoplane Arrangements*,
+			 Commun. Contemp. Math. **24** (2022) 2150086.
+			 
+.. [Ran2023] \H. Randriamaro,
+             *A Generalization of a Theorem of Mandel*,
+			 Eng. Math. Lett. (2023), Article ID 1.
+
+.. [Ran2024] \H. Randriamaro,
+            *Computer Algebra of Conditional Oriented Matroids*,
+            Habilitation Thesis, Universität Kassel, 2024,
+			https://www.mathematik.uni-kassel.de/~randriamaro/Daten/Habilitation-Randriamaro.pdf
 
 .. [RCES1994] Ruskey, R. Cohen, P. Eades, A. Scott.
               *Alley CATs in search of good homes.*
@@ -6694,6 +6715,10 @@ REFERENCES:
 .. [Var1984] \V. S. Varadarajan. *Lie groups, Lie algebras, and their
              representations*. Reprint of the 1974 edition. Graduate Texts in
              Mathematics, 102. Springer-Verlag, New York, 1984.
+
+.. [Var1993] \A. Varchenko,
+             *Bilinear form of real configuration of hyperplanes*,
+			 Adv. Math. **97** (1993) 110–144.
 
 .. [Vat2008] \D. Vatne, *The mutation class of* `D_n` *quivers*, :arxiv:`0810.4789v1`.
 
