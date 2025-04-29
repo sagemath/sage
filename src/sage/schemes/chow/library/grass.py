@@ -19,11 +19,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.chow.bundle import Bundle, BundleDiffRelations
-from sage.schemes.chow.scheme import PointChowScheme
-from sage.schemes.chow.sheaf import SHom, Sheaf
-from sage.schemes.chow.scheme import ChowScheme
 from sage.rings.integer import Integer
+from sage.schemes.chow.bundle import Bundle, BundleDiffRelations
+from sage.schemes.chow.scheme import ChowScheme, PointChowScheme
+from sage.schemes.chow.sheaf import Sheaf, SHom
 
 
 def GrassBundle(A, B, chern_class='c', names=None, name=None, latex_name=None):
