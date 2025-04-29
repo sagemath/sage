@@ -695,7 +695,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A.list() == l  # indirect doctest
             True
         """
-        cdef int i,j
+        cdef Py_ssize_t i,j
         l = []
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:

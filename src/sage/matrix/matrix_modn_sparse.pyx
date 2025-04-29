@@ -560,7 +560,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [1 0 0]
             [0 0 0]
         """
-        cdef int i, j
+        cdef Py_ssize_t i, j
         cdef c_vector_modint row
         cdef Matrix_modn_sparse B
 
@@ -594,7 +594,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [6 7 8]
             [3 4 5]
         """
-        cdef int i,k
+        cdef Py_ssize_t i,k
         cdef Matrix_modn_sparse A
         cdef c_vector_modint row
 
@@ -632,7 +632,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [5 4]
             [8 7]
         """
-        cdef int i,j
+        cdef Py_ssize_t i,j
         cdef Matrix_modn_sparse A
         cdef c_vector_modint row
 

@@ -1266,7 +1266,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
     cdef int fmpz_height(self, fmpz_t h) except -1:
         cdef fmpz_t x
-        cdef int i, j
+        cdef Py_ssize_t i, j
         sig_on()
         fmpz_init(x)
         fmpz_zero(h)

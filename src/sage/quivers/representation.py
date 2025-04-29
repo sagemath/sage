@@ -1198,7 +1198,7 @@ class QuiverRepElement(ModuleElement):
     #                                                                         #
     ###########################################################################
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Test whether ``self`` is zero.
 
@@ -1776,7 +1776,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         return tuple(self._spaces[x].dimension() for x in self._quiver)
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Test whether the representation is zero.
 
@@ -1798,7 +1798,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         return self.dimension() == 0
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         """
         Test whether the representation is simple.
 
@@ -1816,7 +1816,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         # dimension 1.
         return self.dimension() == 1
 
-    def is_semisimple(self):
+    def is_semisimple(self) -> bool:
         """
         Test whether the representation is semisimple.
 
@@ -2859,7 +2859,7 @@ class QuiverRep_with_path_basis(QuiverRep_generic):
                  for v in self._quiver}
         return self(elems)
 
-    def is_left_module(self):
+    def is_left_module(self) -> bool:
         """
         Test whether the basis is closed under left multiplication.
 

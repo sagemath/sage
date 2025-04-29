@@ -2130,7 +2130,6 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
             x*z
         """
         cdef BooleanMonomial m
-        cdef PBMonom t
 
         # this is needed for the PolyBoRi python code
         if other is None:

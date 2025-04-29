@@ -1777,7 +1777,7 @@ class Link(SageObject):
             G.add_edge(c[3], c[1])
         return G.connected_components_number()
 
-    def is_knot(self):
+    def is_knot(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a knot.
 
@@ -2147,7 +2147,7 @@ class Link(SageObject):
         m = V + V.transpose()
         return Integer(abs(m.det()))
 
-    def is_alternating(self):
+    def is_alternating(self) -> bool:
         r"""
         Return whether the given knot diagram is alternating.
 
@@ -3200,7 +3200,7 @@ class Link(SageObject):
                     M[i, j] -= 1
         return M
 
-    def is_colorable(self, n=None):
+    def is_colorable(self, n=None) -> bool:
         r"""
         Return whether the link is ``n``-colorable.
 
@@ -4517,7 +4517,7 @@ class Link(SageObject):
 
         return answer_list(l)
 
-    def is_isotopic(self, other):
+    def is_isotopic(self, other) -> bool:
         r"""
         Check whether ``self`` is isotopic to ``other``.
 

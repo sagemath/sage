@@ -211,7 +211,7 @@ cdef class Dist(ModuleElement):
             scalar = new_base(left)
             return V([scalar * new_base(self.moment(i)) for i in range(self.precision_absolute())])
 
-    def is_zero(self, p=None, M=None):
+    def is_zero(self, p=None, M=None) -> bool:
         r"""
         Return ``True`` if the `i`-th moment is zero for all `i` (case ``M`` is
         ``None``) or zero modulo `p^{M-i}` for all `i` (when ``M`` is not

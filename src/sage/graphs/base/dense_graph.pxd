@@ -16,6 +16,8 @@ cdef class DenseGraph(CGraph):
     cdef binary_matrix_t edges
     cdef inline int _add_arc_unsafe(self, int, int) except -1
     cdef inline int _del_arc_unsafe(self, int u, int v) except -1
+    cpdef int out_degree(self, int u) noexcept
+    cpdef int in_degree(self, int u) noexcept
 
 cdef int copy_dense_graph(DenseGraph dest, DenseGraph src) except -1
 

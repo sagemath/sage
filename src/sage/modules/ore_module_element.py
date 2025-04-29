@@ -72,7 +72,7 @@ class OreModuleElement(FreeModuleElement_generic_dense):
             names = parent._latex_names
             return repr_lincomb([(names[i], self[i]) for i in range(len(names))], is_latex=True)
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         r"""
         Always return ``False`` since elements in Ore modules
         are all immutable.

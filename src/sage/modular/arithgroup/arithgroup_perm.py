@@ -1116,7 +1116,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
     # Group stuff
     #
 
-    def is_normal(self):
+    def is_normal(self) -> bool:
         r"""
         Test whether the group is normal.
 
@@ -1134,9 +1134,9 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         G = self.relabel(inplace=False)
         s2 = G._S2
         s3 = G._S3
-        ss2 = [None]*N
-        ss3 = [None]*N
-        for j in [s2[0],s3[0]]:
+        ss2 = [None] * N
+        ss3 = [None] * N
+        for j in [s2[0], s3[0]]:
             m = G._canonical_rooted_labels(j)
             for i in range(N):
                 ss2[m[i]] = m[s2[i]]
@@ -1332,7 +1332,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         from .congroup_generic import CongruenceSubgroup_constructor as CS
         return CS(N, [x.matrix() for x in self.gens()])
 
-    def is_congruence(self):
+    def is_congruence(self) -> bool:
         r"""
         Return ``True`` if this is a congruence subgroup, and ``False``
         otherwise.
@@ -1433,14 +1433,14 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             True
         """
         from sage.misc.verbose import verbose
-        if self.index() == 1: # the group is SL2Z (trivial case)
+        if self.index() == 1:  # the group is SL2Z (trivial case)
             return True
 
-        L = self.L() # action of L
-        R = self.R() # action of R
+        L = self.L()  # action of L
+        R = self.R()  # action of R
 
         if self.is_even():
-            N = L.order() # generalised level of the group
+            N = L.order()  # generalised level of the group
         else:
             N = 2 * L.order()
 
@@ -1451,13 +1451,13 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         if e == 1:
             # N is odd
             # this only gets called if self is even
-            onehalf = ZZ(2).inverse_mod(N) # i.e. 2^(-1) mod N
+            onehalf = ZZ(2).inverse_mod(N)  # i.e. 2^(-1) mod N
             rel = (R*R*L**(-onehalf))**3
             return rel.is_one()
 
         elif m == 1:
             # N is a power of 2
-            onefifth = ZZ(5).inverse_mod(N) # i.e. 5^(-1) mod N
+            onefifth = ZZ(5).inverse_mod(N)  # i.e. 5^(-1) mod N
             S = L**20*R**onefifth*L**(-4)*~R
 
             # congruence if the three below permutations are trivial
@@ -1630,7 +1630,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         return (OddArithmeticSubgroup_Permutation,
                 (self._S2,self._S3,self._L,self._R,canonical_labels))
 
-    def is_odd(self):
+    def is_odd(self) -> bool:
         r"""
         Test whether the group is odd.
 
@@ -1642,7 +1642,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         return True
 
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Test whether the group is even.
 
@@ -1947,7 +1947,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         return (EvenArithmeticSubgroup_Permutation,
                 (self._S2, self._S3, self._L, self._R, canonical_labels))
 
-    def is_odd(self):
+    def is_odd(self) -> bool:
         r"""
         Return ``True`` if this subgroup does not contain the matrix `-Id`.
 
@@ -1959,7 +1959,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         return False
 
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Return ``True`` if this subgroup contains the matrix `-Id`.
 

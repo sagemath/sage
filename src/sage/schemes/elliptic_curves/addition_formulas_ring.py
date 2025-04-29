@@ -2,6 +2,7 @@
 Addition formula for elliptic curves over rings
 """
 
+
 def _add(E, P, Q):
     r"""
     Addition formulas for elliptic curves over general rings

@@ -339,7 +339,7 @@ class QuasiModularFormsElement(ModuleElement):
                              "homogeneous element")
         return self._polynomial.degree()
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return whether the given quasimodular form is zero.
 
@@ -360,7 +360,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return not self
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Return whether the given quasimodular form is 1, i.e. the
         multiplicative identity.
@@ -380,7 +380,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return self._polynomial.is_one()
 
-    def is_graded_modular_form(self):
+    def is_graded_modular_form(self) -> bool:
         r"""
         Return whether the given quasimodular form is a
         graded modular form element
@@ -420,7 +420,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return self._polynomial.degree() <= 0
 
-    def is_modular_form(self):
+    def is_modular_form(self) -> bool:
         r"""
         Return whether the given quasimodular form is a modular form.
 
@@ -511,7 +511,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return sorted(self.homogeneous_components().keys())
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return whether the graded quasimodular form is a homogeneous element,
         that is, it lives in a unique graded components of the parent of

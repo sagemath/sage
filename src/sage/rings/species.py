@@ -519,9 +519,9 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
         elif not isinstance(pi, dict):
-            pi = {i: v for i, v in enumerate(pi)}
+            pi = dict(enumerate(pi))
         if check:
-            if not set(pi.keys()).issubset(range(self._arity)):
+            if not set(pi).issubset(range(self._arity)):
                 raise ValueError(f"keys of pi (={pi.keys()}) must be in range({self._arity})")
             if (sum(len(p) for p in pi.values()) != len(G.domain())
                 or set(chain.from_iterable(pi.values())) != set(G.domain())):
@@ -642,7 +642,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             G, pi = x
         if not isinstance(G, PermutationGroup_generic):
             return False
-        if not set(pi.keys()).issubset(range(self._arity)):
+        if not set(pi).issubset(range(self._arity)):
             return False
         if (sum(len(p) for p in pi.values()) != len(G.domain())
             or set(chain.from_iterable(pi.values())) != set(G.domain())):
@@ -1033,7 +1033,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 else:
                     raise ValueError("the assignment of sorts to the domain elements must be provided")
             elif not isinstance(pi, dict):
-                pi = {i: v for i, v in enumerate(pi)}
+                pi = dict(enumerate(pi))
             domain = [e for p in pi.values() for e in p]
             if check and len(domain) != len(set(domain)) or set(G.domain()) != set(domain):
                 raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
@@ -2282,7 +2282,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                     return self._from_dict({self._indices(G, check=check): ZZ.one()})
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
             elif not isinstance(pi, dict):
-                pi = {i: v for i, v in enumerate(pi)}
+                pi = dict(enumerate(pi))
             return self._from_dict({self._indices(G, pi, check=check): ZZ.one()})
 
         raise ValueError(f"{G} must be an element of the base ring, a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
