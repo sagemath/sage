@@ -218,7 +218,7 @@ class LinearExtensionOfPoset(ClonableArray,
         """
         P = self.parent().poset()
         old = (P.unwrap(x) for x in self)
-        new = (P.unwrap(x) for x in P)
+        new = [P.unwrap(x) for x in P]
         relabelling = dict(zip(old, new))
         return P.relabel(relabelling).with_linear_extension(new)
 
