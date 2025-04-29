@@ -7204,6 +7204,20 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         return int(self).to_bytes(length=length, byteorder=byteorder, signed=is_signed)
 
     def canonical_associate(self):
+        """
+        Return a canonical associate
+
+        EXAMPLES::
+
+            sage: (-2).canonical_associate()
+            (2, -1)
+            sage: (0).canonical_associate()
+            (0, 1)
+            sage: a = -17
+            sage: b,u = a.canonical_associate()
+            sage: b*u == a
+            True
+        """
         if self >= 0:
             return (self, one)
         return (-self, -one)

@@ -6262,6 +6262,18 @@ cdef class Polynomial(CommutativePolynomial):
         return self[self.degree()]
 
     def canonical_associate(self):
+        """
+        Return a canonical associate
+
+        EXAMPLES::
+
+            sage: R.<x>=QQ[]
+            sage: (-2*x^2+3*x+5).canonical_associate()
+            (x^2 - 3/2*x - 5/2, -2)
+            sage: R.<x>=ZZ[]
+            sage: (-2*x^2+3*x+5).canonical_associate()
+            (2*x^2 - 3*x - 5, -1)
+        """
         lc = self.leading_coefficient()
         n, u = lc.canonical_associate()
         return (u.inverse_of_unit() * self, u)

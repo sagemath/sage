@@ -406,6 +406,13 @@ cdef class FractionFieldElement(FieldElement):
             True
             sage: ((x+1)/(x^2+1)).subs({x: 1})
             1
+
+        Check that :issue:`35238` is fixed::
+
+            sage: K.<x,y>=ZZ[]
+            sage: hash(x/y) == hash((-x)/(-y))
+            True
+
         """
         if self._denominator.is_one():
             # Handle this case even over rings that don't support reduction, to
@@ -425,7 +432,7 @@ cdef class FractionFieldElement(FieldElement):
             except AttributeError:
                 can_associate = NotImplemented
             if can_associate is NotImplemented:
-                sage.misc.superseded.warning(40000,"Hashing for {} not implemented. Using constant value".format(self.parent()))
+                sage.misc.superseded.warning(40019, "Hashing for {} not implemented. Using constant value".format(self.parent()))
                 return 0
             den = can_associate[0]
             num = self._numerator * can_associate[1].inverse_of_unit()
