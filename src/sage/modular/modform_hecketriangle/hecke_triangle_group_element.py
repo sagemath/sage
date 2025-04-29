@@ -2188,12 +2188,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: AA(G.V(3).discriminant())
             16.19566935808922?
         """
-
         return self.trace()**2 - 4
 
-    def is_translation(self, exclude_one=False):
+    def is_translation(self, exclude_one=False) -> bool:
         r"""
-        Return whether ``self`` is a translation. If ``exclude_one = True``,
+        Return whether ``self`` is a translation.
+
+        If ``exclude_one = True``,
         then the identity map is not considered as a translation.
 
         EXAMPLES::
@@ -2210,12 +2211,9 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         if not (c.is_zero() and a == d and (a.is_one() or (-a).is_one())):
             return False
-        elif exclude_one and b.is_zero():
-            return False
-        else:
-            return True
+        return not (exclude_one and b.is_zero())
 
-    def is_reflection(self):
+    def is_reflection(self) -> bool:
         r"""
         Return whether ``self`` is the usual reflection on the unit circle.
 
@@ -2229,7 +2227,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         """
         return self == self.parent().S() or self == -self.parent().S()
 
-    def is_hyperbolic(self):
+    def is_hyperbolic(self) -> bool:
         r"""
         Return whether ``self`` is a hyperbolic matrix.
 
@@ -2244,7 +2242,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         """
         return coerce_AA(self.discriminant()) > 0
 
-    def is_parabolic(self, exclude_one=False):
+    def is_parabolic(self, exclude_one=False) -> bool:
         r"""
         Return whether ``self`` is a parabolic matrix.
 
@@ -2269,7 +2267,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         return self.discriminant() == 0
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Return whether ``self`` is the identity or minus the identity.
 
@@ -2287,7 +2285,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         else:
             return False
 
-    def is_elliptic(self):
+    def is_elliptic(self) -> bool:
         r"""
         Return whether ``self`` is an elliptic matrix.
 
@@ -2302,7 +2300,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         """
         return coerce_AA(self.discriminant()) < 0
 
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         r"""
         Return whether ``self`` is primitive. We call an element
         primitive if (up to a sign and taking inverses) it generates
@@ -2361,9 +2359,12 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         else:
             return abs(pow) <= 1
 
-    def is_reduced(self, require_primitive=True, require_hyperbolic=True):
+    def is_reduced(self, require_primitive=True,
+                   require_hyperbolic=True) -> bool:
         r"""
-        Return whether ``self`` is reduced. We call an element
+        Return whether ``self`` is reduced.
+
+        We call an element
         reduced if the associated lambda-CF is purely periodic.
 
         I.e. (in the hyperbolic case) if the associated hyperbolic
@@ -2427,9 +2428,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         else:
             return self.continued_fraction()[0] == ()
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
-        Return whether ``self`` is simple. We call an element
+        Return whether ``self`` is simple.
+
+        We call an element
         simple if it is hyperbolic, primitive, has positive sign
         and if the associated hyperbolic fixed points satisfy:
         ``alpha' < 0 < alpha`` where ``alpha`` is the attracting
@@ -2491,7 +2494,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         a, b, c, d = self._matrix.list()
         return (coerce_AA(a) > 0 and coerce_AA(b) > 0 and coerce_AA(c) > 0 and coerce_AA(d) > 0)
 
-    def is_hecke_symmetric(self):
+    def is_hecke_symmetric(self) -> bool:
         r"""
         Return whether the conjugacy class of the primitive part of
         ``self``, denoted by ``[gamma]`` is `Hecke-symmetric`:
@@ -2580,12 +2583,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: S = G.S()
             sage: U = G.U()
 
-            sage: def is_rpf(f, k=None):
+            sage: def is_rpf(f, k=None) -> bool:
             ....:     if not f + S.slash(f, k=k) == 0:
             ....:         return False
-            ....:     if not sum([(U^m).slash(f, k=k) for m in range(G.n())]) == 0:
-            ....:         return False
-            ....:     return True
+            ....:     return sum((U^m).slash(f, k=k) for m in range(G.n())) == 0
 
             sage: z = PolynomialRing(G.base_ring(), 'z').gen()
             sage: [is_rpf(1 - z^(-k), k=k) for k in range(-6, 6, 2)]  # long time
