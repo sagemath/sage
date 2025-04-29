@@ -162,7 +162,7 @@ class Sheaf(SageObject):
             try:
                 ch = AX(ch)
                 ch = ch.truncate(0, X.dimension())
-            except:
+            except TypeError:
                 raise TypeError("Expect ch in the Chow ring")
 
         self._chern_character = ch
