@@ -59,6 +59,8 @@ cdef ZZ, QQ, RR, CC, RDF, CDF
 cimport cython
 from cpython.number cimport PyNumber_Check
 
+from cysignals.signals cimport sig_check
+
 import operator
 import copy
 import re
@@ -1606,6 +1608,8 @@ cdef class Polynomial(CommutativePolynomial):
         system for the coefficients of `s` and `t` for inexact rings (as the
         Euclidean algorithm may not converge in that case).
 
+        May also use Singular in certain cases.
+
         AUTHORS:
 
         - Robert Bradshaw (2007-05-31)
@@ -1636,17 +1640,25 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = ZZ[]
             sage: a = 2*x^2+1
             sage: b = -2*x^2+1
-            sage: a.inverse_mod(b)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: The base ring (=Integer Ring) is not a field
             sage: a.xgcd(b)
             (16, 8, 8)
-            sage: a*x^2+b*(x^2+1)
-            1
-            sage: a*x^2%b  # shows the result exists, thus we cannot raise ValueError, only NotImplementedError
-            1
+            sage: c = a.inverse_mod(b); c  # uses Singular
+            -x^2 + 1
+            sage: c.parent() is R
+            True
         """
+        from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
+        P = a.parent()
+        if can_convert_to_singular(P):
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            try:
+                R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
+            except NotImplementedError:
+                # PolynomialRing over RDF/CDF etc. are still not implemented in libsingular
+                # (in particular singular_ring_new) even though they are implemented in _do_singular_init_
+                pass
+            else:
+                return P(R(a).inverse_mod(R.ideal(m)))
         from sage.rings.ideal import Ideal_generic
         if isinstance(m, Ideal_generic):
             v = m.gens_reduced()
@@ -1660,8 +1672,8 @@ cdef class Polynomial(CommutativePolynomial):
                 r *= m.base_ring()(~m[1])
             u = a(r)
             if u.is_unit():
-                return a.parent()(~u)
-        if a.parent().is_exact():
+                return P(~u)
+        if P.is_exact():
             # use xgcd
             try:
                 g, s, _ = a.xgcd(m)
@@ -2122,7 +2134,7 @@ cdef class Polynomial(CommutativePolynomial):
             (x^3 + z8^7 + z8^4 + z8^3 + z8^2 + z8, 3)]
         """
         q = self.base_ring().order() # p^k
-        R, x = self.parent().objgen()
+        _, x = self.parent().objgen()
 
         # Initialise values
         v = self
@@ -2971,7 +2983,6 @@ cdef class Polynomial(CommutativePolynomial):
                 # see github issue 24308
                 p = -1
             if 0 < p <= right and (self.base_ring() in sage.categories.integral_domains.IntegralDomains() or p.is_prime()):
-                x = self.parent().gen()
                 ret = self.parent().one()
                 e = 1
                 q = right
@@ -3494,6 +3505,16 @@ cdef class Polynomial(CommutativePolynomial):
         return self._new_generic(do_schoolbook_product(x, y, -1))
 
     cdef _square_generic(self):
+        """
+        TESTS:
+
+        Ensure the method is interruptible::
+
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: R.<x> = CDF[]
+            sage: f = R.random_element(degree=5000)
+            sage: with ensure_interruptible_after(0.5): h = f*f
+        """
         cdef list x = self.list(copy=False)
         cdef Py_ssize_t i, j
         cdef Py_ssize_t d = len(x)-1
@@ -3503,6 +3524,7 @@ cdef class Polynomial(CommutativePolynomial):
         for i from 0 <= i <= d:
             coeffs[2*i] = x[i] * x[i]
             for j from 0 <= j < i:
+                sig_check()
                 coeffs[i+j] += two * x[i] * x[j]
         return self._new_generic(coeffs)
 
@@ -3759,7 +3781,6 @@ cdef class Polynomial(CommutativePolynomial):
         with a single term.
         """
         cdef Py_ssize_t d = term.degree()
-        cdef Py_ssize_t i
         cdef list coeffs, output
         c = term.get_unsafe(d)
         if term_on_right:
@@ -6448,7 +6469,7 @@ cdef class Polynomial(CommutativePolynomial):
             from sage.rings.qqbar import number_field_elements_from_algebraics
             from sage.schemes.projective.projective_space import ProjectiveSpace
 
-            K_pre, P, phi = number_field_elements_from_algebraics(self.coefficients())
+            K_pre, P, _ = number_field_elements_from_algebraics(self.coefficients())
             Pr = ProjectiveSpace(K_pre, len(P) - 1)
             return Pr.point(P).global_height(prec=prec)
         raise TypeError("Must be over a Numberfield or a Numberfield Order.")
@@ -11745,6 +11766,14 @@ cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg):
         sage: g = K.random_element(8)
         sage: f*g - f._mul_generic(g)
         0
+
+    Ensure the method is interruptible::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: R.<x> = CDF[]
+        sage: f = R.random_element(degree=5000)
+        sage: g = R.random_element(degree=5000)
+        sage: with ensure_interruptible_after(0.5): h = f*g
     """
     cdef Py_ssize_t i, k, start, end
     cdef Py_ssize_t d1 = len(x)-1, d2 = len(y)-1
@@ -11766,6 +11795,7 @@ cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg):
         end = k if k <= d1 else d1    # min(k, d1)
         sum = x[start] * y[k-start]
         for i from start < i <= end:
+            sig_check()
             sum = sum + x[i] * y[k-i]
         coeffs[k] = sum
     return coeffs
@@ -12274,7 +12304,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             2*y*x^3 + (y + 3)*x^2 + (-2*y + 1)*x + 1
         """
         cdef Polynomial_generic_dense res
-        cdef Py_ssize_t check=0, i, min
+        cdef Py_ssize_t i, min
         x = (<Polynomial_generic_dense>self)._coeffs
         y = (<Polynomial_generic_dense>right)._coeffs
         if len(x) > len(y):
@@ -12295,7 +12325,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 
     cpdef _sub_(self, right):
         cdef Polynomial_generic_dense res
-        cdef Py_ssize_t check=0, i, min
+        cdef Py_ssize_t i, min
         x = (<Polynomial_generic_dense>self)._coeffs
         y = (<Polynomial_generic_dense>right)._coeffs
         if len(x) > len(y):

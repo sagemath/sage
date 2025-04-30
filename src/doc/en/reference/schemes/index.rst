@@ -45,6 +45,7 @@ Projective Schemes
    sage/schemes/projective/projective_subscheme
    sage/schemes/projective/projective_rational_point
    sage/schemes/projective/projective_homset
+   sage/schemes/projective/proj_bdd_height
 
 Products of Projective Spaces
 -----------------------------

@@ -313,12 +313,8 @@ eigenvectors.
 ::
 
     sage: D,P=H.eigenmatrix_right()
-    sage: P*D-H*P
-    [0 0 0 0 0]
-    [0 0 0 0 0]
-    [0 0 0 0 0]
-    [0 0 0 0 0]
-    [0 0 0 0 0]
+    sage: P*D-H*P == matrix.zero(5)
+    True
 
 Matrix Solving
 ---------------
