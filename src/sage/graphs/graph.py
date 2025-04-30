@@ -90,6 +90,10 @@ AUTHORS:
 
 - Cyril Bouvier (2024-11): is_module
 
+- Juan M. Lazaro Ruiz, Steve Schluchter, and 
+  Kristina Obrenovic Gilmour (2025-05): is_projective_planar and associated
+  method p2_forbidden_minors in sage.graphs.generators.families module.
+
 Graph Format
 ------------
 
@@ -428,7 +432,7 @@ from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features.mcqd import Mcqd
-from sage.graphs.p2_forbidden_minors import P2_FORBIDDEN_MINORS
+#from sage.graphs.generators.families import p2_forbidden_minors
 
 
 lazy_import('sage.graphs.mcqd', ['mcqd'],
@@ -9238,13 +9242,15 @@ class Graph(GenericGraph):
         return G
 
     @doc_index("Graph properties")
-    def is_projective_planar(self, minor_map=False):
+    def is_projective_planar(self):
         r"""
-        Check whether this graph is projective planar.
+        Check whether this graph is projective planar: that the graph can be
+        embedded in the projective plane.  The approach is to check that the
+        graph does not contain any existing forbidden minors in a manner.
 
         INPUT:
 
-        - ``minor_map`` -- boolean (default: ``False``); if ``True``, returns
+        - ``return_map  `` -- boolean (default: ``False``); if ``True``, returns
           output as described in :meth:`~Graph.minor`
 
         - ``minor_kwargs`` -- Optional keyword arguments to be passed to
@@ -9277,13 +9283,14 @@ class Graph(GenericGraph):
 
             - :meth:`~Graph.minor`
         """
+        from sage.graphs.generators.families import p2_forbidden_minors
+
         num_verts_G = self.num_verts()
         num_edges_G = self.num_edges()
-        minor_map = None
+        return_map = None
 
-        for forbidden_minor_string in P2_FORBIDDEN_MINORS:
+        for forbidden_minor in p2_forbidden_minors():
         # Can't be a minor if it has more vertices or edges than G
-            forbidden_minor = Graph(forbidden_minor_string)
             if (
                 forbidden_minor.num_verts() > num_verts_G
                 or forbidden_minor.num_edges() > num_edges_G
@@ -9291,18 +9298,18 @@ class Graph(GenericGraph):
                 continue
 
             try:
-                minor_map = self.minor(forbidden_minor)
-                if minor_map is not None:
+                return_map = self.minor(forbidden_minor)
+                if return_map is not None:
                     #return minor_map
                     break
             # If G has no H minor, then G.minor(H) throws a ValueError
             except ValueError:
                 continue
 
-        if minor_map:
-            return minor_map
+        if return_map:
+            return return_map
         else:
-            return minor_map is None
+            return return_map is None
     
 
     # Aliases to functions defined in other modules
