@@ -51,17 +51,16 @@ preparsed when calling ``%runfile`` ::
     sage: tmp = os.path.join(TMP, 'run_cell.py')
     sage: with open(tmp, 'w') as f:
     ....:     _ = f.write('a = 2\n')
-    sage: shell.run_cell('%runfile '+tmp)
-    sage: shell.run_cell('a')
+    sage: %runfile {tmp}
+    sage: a
     2
 
 In contrast, input to the ``%time`` magic command is preparsed::
 
-    sage: shell.run_cell('%time 594.factor()')
+    sage: %time 594.factor()
     CPU times: user ...
     Wall time: ...
     2 * 3^3 * 11
-    sage: shell.run_cell("exit")
 """
 
 from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
@@ -96,13 +95,10 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
-            sage: from sage.repl.interpreter import get_test_shell
-            sage: shell = get_test_shell()
-            sage: shell.run_cell('%crun sum(1/(1+n^2) for n in range(100))')   # optional - gperftools
+            sage: %crun sum(1/(1+n^2) for n in range(100))   # optional - gperftools
             PROFILE: interrupts/evictions/bytes = ...
             Using local file ...
             Using local file ...
-            sage: shell.run_cell("exit")
         """
         import sage.misc.gperftools
         sage.misc.gperftools.crun(s, evaluator=self.shell.ex)
@@ -124,16 +120,13 @@ class SageMagics(Magics):
         EXAMPLES::
 
             sage: import os
-            sage: from sage.repl.interpreter import get_test_shell
             sage: from sage.misc.temporary_file import tmp_dir
-            sage: shell = get_test_shell()
             sage: tmp = os.path.join(tmp_dir(), 'run_cell.py')
             sage: with open(tmp, 'w') as f:
             ....:     _ = f.write('a = 2\n')
-            sage: shell.run_cell('%runfile '+tmp)
-            sage: shell.run_cell('a')
+            sage: %runfile {tmp}
+            sage: a
             2
-            sage: shell.run_cell("exit")
         """
         return self.shell.ex(load_wrap(s, attach=False))
 
@@ -153,13 +146,11 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
-            sage: from sage.repl.interpreter import get_test_shell
-            sage: shell = get_test_shell()
             sage: from tempfile import NamedTemporaryFile as NTF
             sage: with NTF(mode='w+t', suffix='.py', delete=False) as f:
             ....:     _ = f.write('a = 2\n')
-            sage: shell.run_cell('%attach ' + f.name)
-            sage: shell.run_cell('a')
+            sage: %attach {f.name}
+            sage: a
             2
             sage: sleep(1)  # filesystem timestamp granularity
             sage: with open(f.name, 'w') as f: _ = f.write('a = 3\n')
@@ -167,17 +158,16 @@ class SageMagics(Magics):
         Note that the doctests are never really at the command prompt, so
         we call the input hook manually::
 
-            sage: shell.run_cell('from sage.repl.attach import reload_attached_files_if_modified')
-            sage: shell.run_cell('reload_attached_files_if_modified()')
+            sage: from sage.repl.attach import reload_attached_files_if_modified
+            sage: reload_attached_files_if_modified()
             ### reloading attached file ... modified at ... ###
 
-            sage: shell.run_cell('a')
+            sage: a
             3
-            sage: shell.run_cell('detach(%r)' % f.name)
-            sage: shell.run_cell('attached_files()')
+            sage: detach(f.name)
+            sage: attached_files()
             []
             sage: os.remove(f.name)
-            sage: shell.run_cell("exit")
         """
         return self.shell.ex(load_wrap(s, attach=True))
 
@@ -234,30 +224,28 @@ class SageMagics(Magics):
 
         How to use: if you want to activate the ASCII art mode::
 
-            sage: from sage.repl.interpreter import get_test_shell
-            sage: shell = get_test_shell()
-            sage: shell.run_cell('%display ascii_art')
+            sage: %display ascii_art
 
         That means you do not have to use :func:`ascii_art` to get an ASCII art
         output::
 
-            sage: shell.run_cell("i = var('i')")                                        # needs sage.symbolic
-            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # needs sage.symbolic
+            sage: i = var('i')                                        # needs sage.symbolic
+            sage: sum(i^2*x^i, i, 0, 10)                              # needs sage.symbolic
                  10       9       8       7       6       5       4      3      2
             100*x   + 81*x  + 64*x  + 49*x  + 36*x  + 25*x  + 16*x  + 9*x  + 4*x  + x
 
         Then when you want to return to 'textual mode'::
 
-            sage: shell.run_cell('%display text plain')
-            sage: shell.run_cell('%display plain')        # shortcut for "text plain"
-            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # needs sage.symbolic
+            sage: %display text plain
+            sage: %display plain        # shortcut for "text plain"
+            sage: sum(i^2*x^i, i, 0, 10)                              # needs sage.symbolic
             100*x^10 + 81*x^9 + 64*x^8 + 49*x^7 + 36*x^6 + 25*x^5 + 16*x^4 + 9*x^3 + 4*x^2 + x
 
         Sometime you could have to use a special output width and you
         could specify it::
 
-            sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('StandardTableaux(4).list()')                          # needs sage.combinat
+            sage: %display ascii_art
+            sage: StandardTableaux(4).list()                          # needs sage.combinat
             [
             [                                                                  1  4    1  3
             [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
@@ -282,24 +270,23 @@ class SageMagics(Magics):
         As yet another option, typeset mode. This is used in the emacs
         interface::
 
-            sage: shell.run_cell('%display text latex')
-            sage: shell.run_cell('1/2')
+            sage: %display text latex
+            sage: 1/2
             1/2
 
         Switch back::
 
-            sage: shell.run_cell('%display default')
+            sage: %display default
 
         Switch graphics to default to vector or raster graphics file
         formats::
 
-            sage: shell.run_cell('%display graphics vector')
+            sage: %display graphics vector
 
         TESTS::
 
-            sage: shell.run_cell('%display invalid_mode')
+            sage: %display invalid_mode
             value must be unset (None) or one of ('plain', 'ascii_art', 'unicode_art', 'latex'), got invalid_mode
-            sage: shell.run_cell("exit")
         """
         from sage.repl.rich_output import get_display_manager
         dm = get_display_manager()
@@ -394,14 +381,9 @@ class SageMagics(Magics):
         EXAMPLES::
 
             sage: # needs sage.misc.cython
-            sage: from sage.repl.interpreter import get_test_shell
-            sage: shell = get_test_shell()
-            sage: shell.run_cell(
-            ....: '''
-            ....: %%cython -v1 --annotate --no-sage-namespace
+            sage: %%cython -v1 --annotate --no-sage-namespace
             ....: def f():
             ....:     print('test')
-            ....: ''')
             Compiling ....pyx because it changed.
             [1/1] Cythonizing ....pyx
             sage: f()
@@ -412,53 +394,41 @@ class SageMagics(Magics):
         Test unrecognized arguments::
 
             sage: # needs sage.misc.cython
-            sage: shell.run_cell('''
-            ....: %%cython --some-unrecognized-argument
+            sage: %%cython --some-unrecognized-argument
             ....: print(1)
-            ....: ''')
             UsageError: unrecognized arguments: --some-unrecognized-argument
 
         Test ``--help`` is disabled::
 
             sage: # needs sage.misc.cython
-            sage: shell.run_cell('''
-            ....: %%cython --help
+            sage: %%cython --help
             ....: print(1)
-            ....: ''')
             UsageError: unrecognized arguments: --help
 
         Test ``--view-annotate`` invalid arguments::
 
             sage: # needs sage.misc.cython
-            sage: shell.run_cell('''
-            ....: %%cython --view-annotate=xx
+            sage: %%cython --view-annotate=xx
             ....: print(1)
-            ....: ''')  # exact error message differ between Python 3.11/3.13
             UsageError: argument --view-annotate: invalid choice: 'xx' (choose from ...)
 
         Test ``--view-annotate=displayhtml`` (note that in a notebook environment
         an inline HTML frame will be displayed)::
 
             sage: # needs sage.misc.cython
-            sage: shell.run_cell('''
-            ....: %%cython --view-annotate=displayhtml
+            sage: %%cython --view-annotate=displayhtml
             ....: print(1)
-            ....: ''')
             1
             <IPython.core.display.HTML object>
 
         Test ``--view-annotate=webbrowser``::
 
             sage: # needs sage.misc.cython webbrowser
-            sage: shell.run_cell('''
-            ....: %%cython --view-annotate
+            sage: %%cython --view-annotate
             ....: print(1)
-            ....: ''')
             1
-            sage: shell.run_cell('''
-            ....: %%cython --view-annotate=auto
+            sage: %%cython --view-annotate=auto  # --view-annotate=auto is undocumented feature, equivalent to --view-annotate
             ....: print(1)
-            ....: ''')  # --view-annotate=auto is undocumented feature, equivalent to --view-annotate
             1
             sage: shell.run_cell('''
             ....: %%cython --view-annotate=webbrowser
@@ -469,10 +439,8 @@ class SageMagics(Magics):
         Test invalid quotes::
 
             sage: # needs sage.misc.cython
-            sage: shell.run_cell('''
-            ....: %%cython --a='
+            sage: %%cython --a='
             ....: print(1)
-            ....: ''')
             ...
             ValueError...Traceback (most recent call last)
             ...
@@ -538,9 +506,7 @@ class SageMagics(Magics):
 
             sage: # needs numpy
             sage: from sage.repl.interpreter import get_test_shell
-            sage: shell = get_test_shell()
-            sage: shell.run_cell('''
-            ....: %%fortran
+            sage: %%fortran
             ....: C FILE: FIB1.F
             ....:       SUBROUTINE FIB(A,N)
             ....: C
