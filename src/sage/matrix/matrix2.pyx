@@ -3615,6 +3615,7 @@ cdef class Matrix(Matrix1):
         Return the bandwidth of ``self``.
 
         EXAMPLES::
+
             sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]]); A
             [1 0 0]
             [0 1 0]
@@ -3628,25 +3629,34 @@ cdef class Matrix(Matrix1):
             [0 0 6]
             sage: B.get_bandwidth()
             2
+
+            sage: C = matrix(3, 2, range(6)); C
+            [0 1]
+            [2 3]
+            [4 5]
+            sage: C.get_bandwidth()
+            3
         """
         cdef Py_ssize_t i, rows, cols, max_up, max_down
         rows, cols = self.nrows(), self.ncols()
         max_up, max_down = 0, 0
-        diag_range = max(rows, cols)
+        diag_range = max(rows, cols) - 1
         zero = self._base_ring(0)
 
-        for i in range(diag_range, 1, -1):
+        for i in range(diag_range, 0, -1):
             if max_up == 0:
                 diag_up = self.diagonal(i)
                 for x in diag_up:
                     if x != zero:
                         max_up = i
+                        break
 
             if max_down == 0:
                 diag_down = self.diagonal(-i)
                 for x in diag_down:
                     if x != zero:
                         max_down = i
+                        break
 
             if max_up != 0 and max_down != 0:
                 break
