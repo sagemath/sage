@@ -2920,6 +2920,247 @@ class Graph(GenericGraph):
                 return False
         return deg_one_counter == 2 and seen_counter == order
 
+    @doc_index("Graph properties")
+    def is_chordal_bipartite(self, certificate=False):
+        r"""
+        Check whether the given graph is chordal bipartite.
+
+        A graph `G` is chordal bipartite if it is bipartite and has no induced
+        cycle of length at least 6.
+
+        An edge `(x, y) \in E` is bisimplical if `N(x) \cup N(y)` induces a
+        complete bipartite subgraph of `G`.
+
+        A Perfect Edge Without Vertex Elimination Ordering of a bipartite graph
+        `G = (X, Y, E)` is an ordering `e_1,...,e_m` of its edge set such that
+        for all `1 \leq i \leq m`, `e_i` is a bisimplical edge of
+        `G_i = (X, Y, E_i)` where `E_i` consists of the edges `e_i,e_{i+1}...,e_m`.
+
+        A graph `G` is chordal bipartite if and only if it has a Perfect Edge
+        Without Vertex Elimination Ordering. See Lemma 4 in [KKD1995]_.
+
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``); whether to return a
+          certificate
+
+        OUTPUT:
+
+        When ``certificate`` is set to ``False`` (default) this method only
+        returns ``True`` or ``False`` answers. When ``certificate`` is set to
+        ``True``, the method either returns:
+
+        * ``(True, pewveo)`` when the graph is chordal bipartite, where ``pewveo``
+          is a Perfect Edge Without Vertex Elimination Ordering of edges.
+
+        * ``(False, cycle)`` when the graph is not chordal bipartite, where
+          ``cycle`` is an odd cycle or a chordless cycle of length at least 6.
+
+        ALGORITHM:
+
+        This algorithm is based on these facts. The first one is trivial.
+
+        * A reduced adjacnecy matrix
+          (:meth:`~sage.graphs.bipartite_graph.BipartiteGraph.reduced_adjacency_matrix`)
+          of a bipartite graph has no cycle submatrix if and only if the graph is
+          chordal bipartite, where cycle submatrix is 0-1 `n \times n` matrix `n \geq 3`
+          with exactly two 1's in each row and column and no proper submatrix satsify
+          this property.
+
+        * A doubly lexical ordering
+          (:meth:`~sage.matrix.matrix_mod2_dense.Matrix_mod2_dense.doubly_lexical_ordering`)
+          of a 0-1 matrix is `\Gamma`-free
+          (:meth:`~sage.matrix.matrix_mod2_dense.Matrix_mod2_dense.is_Gamma_free`) if and
+          only if the matrix has no cycle submatrix. See Theorem 5.4 in [Lub1987]_.
+
+        Hence, checking a doubly lexical ordering of a reduced adjacency matrix
+        of a bipartite graph is `\Gamma`-free leads to detecting the graph
+        is chordal bipartite. Also, this matrix contains a certificate. Hence,
+        if `G` is chordal bipartite, we find a Perfect Edge Without Vertex
+        Elimination Ordering of edges by Lemma 10 in [KKD1995]_.
+        Otherwise, we can find a cycle submatrix by Theorem 5.2 in [Lub1987]_.
+        The time complexity of this algorithm is `O(n^3)`.
+
+        EXAMPLES:
+
+        A non-bipartite graph is not chordal bipartite::
+
+            sage: g = graphs.CycleGraph(5)
+            sage: g.is_chordal_bipartite()
+            False
+            sage: _, cycle = g.is_chordal_bipartite(certificate=True)
+            sage: len(cycle) % 2 == 1
+            True
+
+        A 6-cycle graph is not chordal bipartite::
+
+            sage: g = graphs.CycleGraph(6)
+            sage: g.is_chordal_bipartite()
+            False
+            sage: _, cycle = g.is_chordal_bipartite(certificate=True)
+            sage: len(cycle) == 6
+            True
+
+        A `2 \times n` grid graph is chordal bipartite::
+
+            sage: g = graphs.Grid2dGraph(2, 6)
+            sage: result, pewveo = g.is_chordal_bipartite(certificate=True)
+            sage: result
+            True
+
+        Let us check the certificate given by Sage is indeed a perfect
+        edge without vertex elimination ordering::
+
+            sage: for e in pewveo:
+            ....:     a = g.subgraph(vertices=g.neighbors(e[0]) + g.neighbors(e[1]))
+            ....:     b = BipartiteGraph(a).complement_bipartite()
+            ....:     if b.edges():
+            ....:          raise ValueError("this should never happen")
+            ....:     g.delete_edge(e)
+
+        Let us check the certificate given by Sage is indeed a
+        chordless cycle of length at least 6::
+
+            sage: g = graphs.Grid2dGraph(3, 6)
+            sage: result, cycle = g.is_chordal_bipartite(certificate=True)
+            sage: result
+            False
+            sage: l = len(cycle); l >= 6
+            True
+            sage: for i in range(len(cycle)):
+            ....:     if not g.has_edge(cycle[i], cycle[(i+1)%l]):
+            ....:         raise ValueError("this should never happen")
+            sage: h = g.subgraph(vertices=cycle)
+            sage: h.is_cycle()
+            True
+
+        TESTS:
+
+        The algorithm works correctly for disconnected graphs::
+
+            sage: c4 = graphs.CycleGraph(4)
+            sage: g = c4.disjoint_union(graphs.CycleGraph(6))
+            sage: g.is_chordal_bipartite()
+            False
+            sage: _, cycle = g.is_chordal_bipartite(certificate=True)
+            sage: len(cycle) == 6
+            True
+            sage: g = c4.disjoint_union(graphs.Grid2dGraph(2, 6))
+            sage: g.is_chordal_bipartite()
+            True
+            sage: _, pewveo = g.is_chordal_bipartite(certificate=True)
+            sage: for e in pewveo:
+            ....:     a = g.subgraph(vertices=g.neighbors(e[0]) + g.neighbors(e[1]))
+            ....:     b = BipartiteGraph(a).complement_bipartite()
+            ....:     if b.edges():
+            ....:          raise ValueError("this should never happen")
+            ....:     g.delete_edge(e)
+        """
+        self._scream_if_not_simple()
+        is_bipartite, bipartite_certificate = self.is_bipartite(certificate=True)
+        if not is_bipartite:
+            return False if not certificate else (False, bipartite_certificate)
+
+        # If the graph is not connected, we are computing the result on each
+        # component
+        if not self.is_connected():
+            # If the user wants a certificate, we had no choice but to collect
+            # the Perfect Edge Without Vertex Elimination Ordering. But we
+            # return a cycle certificate immediately if we find any.
+            if certificate:
+                pewveo = []
+                for gg in self.connected_components_subgraphs():
+                    b, certif = gg.is_chordal_bipartite(certificate=True)
+                    if not b:
+                        return False, certif
+                    pewveo.extend(certif)
+                return True, pewveo
+            return all(gg.is_chordal_bipartite() for gg in
+                        self.connected_components_subgraphs())
+
+        left = [v for v, c in bipartite_certificate.items() if c == 0]
+        right = [v for v, c in bipartite_certificate.items() if c == 1]
+        order_left = len(left)
+        order_right = len(right)
+
+        # We set |left| > |right| for optimization, i.e. time complexity of
+        # doubly lexical ordering algorithm is O(nm^2) for a n x m matrix.
+        if order_left < order_right:
+            left, right = right, left
+            order_left, order_right = order_right, order_left
+
+        # create a reduced_adjacency_matrix
+        from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
+        A = self.adjacency_matrix(vertices=left+right, base_ring=FiniteField_prime_modn(2))
+        B = A[range(order_left), range(order_left, order_left + order_right)]
+
+        # get doubly lexical ordering of reduced_adjacency_matrix
+        row_ordering, col_ordering = B.doubly_lexical_ordering(inplace=True)
+
+        # determine if B is Gamma-free or not
+        is_Gamma_free, Gamma_submatrix_indices = B.is_Gamma_free(certificate=True)
+
+        if not certificate:
+            return is_Gamma_free
+
+        row_ordering_dict = {k-1: v-1 for k, v in row_ordering.dict().items()}
+        col_ordering_dict = {k-1: v-1 for k, v in col_ordering.dict().items()}
+        row_vertices = [left[row_ordering_dict[i]] for i in range(order_left)]
+        col_vertices = [right[col_ordering_dict[i]] for i in range(order_right)]
+
+        if is_Gamma_free:
+            pewveo = dict()
+            order = 0
+            for i, vi in enumerate(row_vertices):
+                for j, vj in enumerate(col_vertices):
+                    if B[i, j] == 1:
+                        pewveo[vi, vj] = order
+                        pewveo[vj, vi] = order
+                        order += 1
+            edges = self.edges(sort=True, key=lambda x: pewveo[x[0], x[1]])
+            return True, edges
+
+        # Find a chordless cycle of length at least 6
+        r1, c1, r2, c2 = Gamma_submatrix_indices
+        row_indices = [r1, r2]
+        col_indices = [c1, c2]
+        while not B[row_indices[-1], col_indices[-1]]:
+            # find the rightmost column with different value
+            # in row_indices[-2] and row_indices[-1]
+            col = order_right - 1
+            while col > col_indices[-1]:
+                if not B[row_indices[-2], col] and B[row_indices[-1], col]:
+                    break
+                col -= 1
+            assert col > col_indices[-1]
+
+            # find the bottommost row with different value
+            # in col_indices[-2] and col_indices[-1]
+            row = order_left - 1
+            while row > row_indices[-1]:
+                if not B[row, col_indices[-2]] and B[row, col_indices[-1]]:
+                    break
+                row -= 1
+            assert row > row_indices[-1]
+
+            col_indices.append(col)
+            row_indices.append(row)
+
+        l = len(row_indices)
+        cycle = []
+        for i in range(l):
+            if i % 2 == 0:
+                cycle.append(row_vertices[row_indices[i]])
+            else:
+                cycle.append(col_vertices[col_indices[i]])
+        for i in reversed(range(l)):
+            if i % 2 == 0:
+                cycle.append(col_vertices[col_indices[i]])
+            else:
+                cycle.append(row_vertices[row_indices[i]])
+
+        return False, cycle
+
     @doc_index("Connectivity, orientations, trees")
     def degree_constrained_subgraph(self, bounds, solver=None, verbose=0,
                                     *, integrality_tolerance=1e-3):
