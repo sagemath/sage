@@ -1358,7 +1358,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         d = self.codimension()
         minors = self.Jacobian_matrix().minors(d)
         I = self.defining_ideal()
-        minors = tuple([ I.reduce(m) for m in minors ])
+        minors = tuple([I.reduce(m) for m in minors])
         return I.ring().ideal(I.gens() + minors)
 
     def reduce(self):
