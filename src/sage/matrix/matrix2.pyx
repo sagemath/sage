@@ -3629,18 +3629,29 @@ cdef class Matrix(Matrix1):
             sage: B.get_bandwidth()
             2
         """
-        cdef Py_ssize_t i, j, rows, cols, max_bandwidth
-        max_bandwidth = 0
+        cdef Py_ssize_t i, rows, cols, max_up, max_down
         rows, cols = self.nrows(), self.ncols()
+        max_up, max_down = 0, 0
+        diag_range = max(rows, cols)
         zero = self._base_ring(0)
 
-        for i in range(rows):
-            for j in range(cols):
-                if self.get_unsafe(i, j) != zero:
-                    dist = abs(j - i)
-                    max_bandwidth = max(max_bandwidth, dist)
-  
-        return max_bandwidth
+        for i in range(diag_range, 1, -1):
+            if max_up == 0:
+                diag_up = self.diagonal(i)
+                for x in diag_up:
+                    if x != zero:
+                        max_up = i
+
+            if max_down == 0:
+                diag_down = self.diagonal(-i)
+                for x in diag_down:
+                    if x != zero:
+                        max_down = i
+
+            if max_up != 0 and max_down != 0:
+                break
+
+        return max_up + max_down
 
     #####################################################################################
     # Generic Hessenberg Form and charpoly algorithm
