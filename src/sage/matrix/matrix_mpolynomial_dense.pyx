@@ -31,7 +31,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
     """
     Dense matrix over a multivariate polynomial ring over a field.
     """
-    def echelon_form(self, algorithm='row_reduction', **kwds):
+    def echelon_form(self, algorithm='row_reduction',
+                     transformation=False, **kwds):
         """
         Return an echelon form of ``self`` using chosen algorithm.
 
@@ -99,6 +100,9 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             [     1      x]
             [     0 -x + y]
         """
+        if transformation:
+            import warnings
+            warnings.warn("transformation not supported in this class", UserWarning)             
         x = self.fetch('echelon_form_'+algorithm)
         if x is not None: return x
 

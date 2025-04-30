@@ -516,7 +516,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         self.cache('rank', len(pivots))
 
     def echelon_form(self, algorithm='default',
-                     height_guess=None, proof=True, **kwds):
+                     height_guess=None, proof=True, transformation=False, **kwds):
         """
         INPUT:
 
@@ -538,6 +538,9 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
         """
+        if transformation:
+            import warnings
+            warnings.warn("transformation not supported in this class", UserWarning) 
         label = 'echelon_form_%s'%algorithm
         x = self.fetch(label)
         if x is not None:

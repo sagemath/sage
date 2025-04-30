@@ -1551,7 +1551,8 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         cache[p] = ans
         return ans
 
-    def echelon_form(self, algorithm='multimodular', height_guess=None):
+    def echelon_form(self, algorithm='multimodular', height_guess=None,
+                    transformation=False, **kwds):
         """
         Find the echelon form of self, using the specified algorithm.
 
@@ -1611,6 +1612,9 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: a == b  # long time (depends on previous)
             True
         """
+        if transformation:
+            import warnings
+            warnings.warn("transformation not supported in this class", UserWarning) 
         key = 'echelon_form-%s'%algorithm
         E = self.fetch(key)
         if E is not None:
