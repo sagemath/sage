@@ -32,9 +32,9 @@ def make_element(parent, args):
 cdef inline Polynomial_template element_shift(self, int n):
      if not isinstance(self, Polynomial_template):
          if n > 0:
-             error_msg = "Cannot shift %s << %n."%(self, n)
+             error_msg = "Cannot shift %s << %n." % (self, n)
          else:
-             error_msg = "Cannot shift %s >> %n."%(self, n)
+             error_msg = "Cannot shift %s >> %n." % (self, n)
          raise TypeError(error_msg)
 
      if n == 0:
@@ -117,14 +117,14 @@ cdef class Polynomial_template(Polynomial):
                 celement_construct(&self.x, (<Polynomial_template>self)._cparent)
                 celement_set(&self.x, &(<Polynomial_template>x).x, (<Polynomial_template>self)._cparent)
             except NotImplementedError:
-                raise TypeError("%s not understood." % x)
+                raise TypeError("%s not understood" % x)
 
         elif isinstance(x, (int, Integer)):
             try:
                 celement_construct(&self.x, (<Polynomial_template>self)._cparent)
                 celement_set_si(&self.x, int(x), (<Polynomial_template>self)._cparent)
             except NotImplementedError:
-                raise TypeError("%s not understood."%x)
+                raise TypeError("%s not understood" % x)
 
         elif isinstance(x, (list, tuple)):
             celement_construct(&self.x, (<Polynomial_template>self)._cparent)
