@@ -11,7 +11,6 @@ TESTS::
 cimport sage.matrix.matrix as matrix
 
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
-from sage.calculus.functional import derivative
 import sage.matrix.matrix_space
 import sage.structure.sequence
 
@@ -115,7 +114,7 @@ cdef class Matrix_dense(matrix.Matrix):
             [1 2]
             [3 4]
 
-        ``.T`` is a convenient shortcut for the transpose::
+        :attr:`~sage.matrix.matrix2.Matrix.T` is a convenient shortcut for the transpose::
 
            sage: A.T
            [1 3]
@@ -211,7 +210,7 @@ cdef class Matrix_dense(matrix.Matrix):
                 e2 = self.get_unsafe(nrows - i - 1, ncols - j - 1)
                 self.set_unsafe(i, j, e2)
                 self.set_unsafe(nrows - i - 1, ncols - j - 1, e1)
-        if nrows % 2 == 1:
+        if nrows % 2:
             i = nrows // 2
             for j in range(ncols // 2):
                 e1 = self.get_unsafe(i, j)
