@@ -432,8 +432,6 @@ from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features.mcqd import Mcqd
-#from sage.graphs.generators.families import p2_forbidden_minors
-
 
 lazy_import('sage.graphs.mcqd', ['mcqd'],
             feature=Mcqd())
@@ -9487,7 +9485,7 @@ class Graph(GenericGraph):
         r"""
         Check whether this graph is projective planar: that the graph can be
         embedded in the projective plane.  The approach is to check that the
-        graph does not contain any existing forbidden minors in a manner.
+        graph does not contain any of the known forbidden minors.
 
         INPUT:
 

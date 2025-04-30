@@ -3118,7 +3118,7 @@ def p2_forbidden_minors():
     We constructed the graphs given in Theorem 6.5.1 of [MT2001]_,
     which is a result of Archdeacon and encoded them in graph6 format.
 
-    We return the graphs using the Graph constructor.
+    We return the graphs using the Sage Graph constructor.
     
     """
 
@@ -3160,10 +3160,7 @@ def p2_forbidden_minors():
     'JhEIDSD?ga_'
     ]
     
-    return_arr_forbidden_minors = [Graph(graph_str) for graph_str\
-                                    in p2_forbidden_minors_graph6]
-
-    return return_arr_forbidden_minors
+    return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
 
     def DeltaYTrans(G, triangle):
         """
