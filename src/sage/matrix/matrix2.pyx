@@ -3612,7 +3612,8 @@ cdef class Matrix(Matrix1):
 
     def get_bandwidth(self):
         """
-        Return the bandwidth of ``self``.
+        Return the bandwidth of ``self``, which is the spread of nonzero
+        elements around its main diagonal.
 
         EXAMPLES::
 
