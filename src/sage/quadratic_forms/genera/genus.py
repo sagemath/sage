@@ -942,9 +942,9 @@ def p_adic_symbol(A, p, val):
     return [[s[0]+m0] + s[1:] for s in sym + p_adic_symbol(A, p, val)]
 
 
-def is_even_matrix(A):
+def is_even_matrix(A) -> tuple[bool, int]:
     r"""
-    Determines if the integral symmetric matrix `A` is even
+    Determine if the integral symmetric matrix `A` is even
     (i.e. represents only even numbers).  If not, then it returns the
     index of an odd diagonal entry.  If it is even, then we return the
     index `-1`.
@@ -1914,7 +1914,7 @@ class Genus_Symbol_p_adic_ring:
         """
         return self._prime
 
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Return if the underlying `p`-adic lattice is even.
 

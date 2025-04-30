@@ -862,7 +862,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         # return BruhatTitsHarmonicCocyclesSubmodule(self, v)
         raise NotImplementedError
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Whether ``self`` is irreducible.
 

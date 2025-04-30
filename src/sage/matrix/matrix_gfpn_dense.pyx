@@ -724,7 +724,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         x = self.Data.Data
         cdef int nr = self.Data.Nor
         cdef int nc = self.Data.Noc
-        cdef int i, j
+        cdef Py_ssize_t i, j
 
         FfSetField(fl)
         FfSetNoc(nc)

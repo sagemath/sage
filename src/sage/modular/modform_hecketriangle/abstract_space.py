@@ -362,7 +362,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
         return self.extend_type("holo", ring=True)(1).reduce()
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         r"""
         Return whether ``self`` is an ambient space.
 

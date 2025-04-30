@@ -190,7 +190,6 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         cdef list l_in = x
         cdef unsigned long length = len(l_in)
-        cdef unsigned long modulus = nmod_poly_modulus(&self.x)
         cdef int i
         if length == 0:
             nmod_poly_zero(&self.x)

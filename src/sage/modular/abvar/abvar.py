@@ -1609,7 +1609,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         return H(Morphism(H, mat))
 
-    def is_subvariety_of_ambient_jacobian(self):
+    def is_subvariety_of_ambient_jacobian(self) -> bool:
         """
         Return ``True`` if ``self`` is (presented as) a subvariety of the ambient
         product Jacobian.
@@ -2767,7 +2767,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: t.order()
             4
             sage: t.gens()
-            [[(1/2, 0, 0, -1/2, 0, 0)], [(0, 0, 1/2, 0, 1/2, -1/2)]]
+            ([(1/2, 0, 0, -1/2, 0, 0)], [(0, 0, 1/2, 0, 1/2, -1/2)])
         """
         try:
             return self.__rational_torsion_subgroup
@@ -2786,7 +2786,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: J = J0(54)
             sage: C = J.cuspidal_subgroup()
             sage: C.gens()
-            [[(1/3, 0, 0, 0, 0, 1/3, 0, 2/3)], [(0, 1/3, 0, 0, 0, 2/3, 0, 1/3)], [(0, 0, 1/9, 1/9, 1/9, 1/9, 1/9, 2/9)], [(0, 0, 0, 1/3, 0, 1/3, 0, 0)], [(0, 0, 0, 0, 1/3, 1/3, 0, 1/3)], [(0, 0, 0, 0, 0, 0, 1/3, 2/3)]]
+            ([(1/3, 0, 0, 0, 0, 1/3, 0, 2/3)], [(0, 1/3, 0, 0, 0, 2/3, 0, 1/3)], [(0, 0, 1/9, 1/9, 1/9, 1/9, 1/9, 2/9)], [(0, 0, 0, 1/3, 0, 1/3, 0, 0)], [(0, 0, 0, 0, 1/3, 1/3, 0, 1/3)], [(0, 0, 0, 0, 0, 0, 1/3, 2/3)])
             sage: C.invariants()
             [3, 3, 3, 3, 3, 9]
             sage: J1(13).cuspidal_subgroup()
@@ -2898,7 +2898,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: CQ = J.rational_cusp_subgroup(); CQ
             Finite subgroup with invariants [3, 3, 9] over QQ of Abelian variety J0(54) of dimension 4
             sage: CQ.gens()
-            [[(1/3, 0, 0, 1/3, 2/3, 1/3, 0, 1/3)], [(0, 0, 1/9, 1/9, 7/9, 7/9, 1/9, 8/9)], [(0, 0, 0, 0, 0, 0, 1/3, 2/3)]]
+            ([(1/3, 0, 0, 1/3, 2/3, 1/3, 0, 1/3)], [(0, 0, 1/9, 1/9, 7/9, 7/9, 1/9, 8/9)], [(0, 0, 0, 0, 0, 0, 1/3, 2/3)])
             sage: factor(CQ.order())
             3^4
             sage: CQ.invariants()
@@ -2959,7 +2959,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: CQ = J.rational_cuspidal_subgroup(); CQ
             Finite subgroup with invariants [3, 3, 9] over QQ of Abelian variety J0(54) of dimension 4
             sage: CQ.gens()
-            [[(1/3, 0, 0, 1/3, 2/3, 1/3, 0, 1/3)], [(0, 0, 1/9, 1/9, 7/9, 7/9, 1/9, 8/9)], [(0, 0, 0, 0, 0, 0, 1/3, 2/3)]]
+            ([(1/3, 0, 0, 1/3, 2/3, 1/3, 0, 1/3)], [(0, 0, 1/9, 1/9, 7/9, 7/9, 1/9, 8/9)], [(0, 0, 0, 0, 0, 0, 1/3, 2/3)])
             sage: factor(CQ.order())
             3^4
             sage: CQ.invariants()
@@ -3107,7 +3107,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: G.order()
             625
             sage: G.gens()
-            [[(1/5, 0, 0, 0)], [(0, 1/5, 0, 0)], [(0, 0, 1/5, 0)], [(0, 0, 0, 1/5)]]
+            ([(1/5, 0, 0, 0)], [(0, 1/5, 0, 0)], [(0, 0, 1/5, 0)], [(0, 0, 0, 1/5)])
             sage: A = J0(23)
             sage: A.torsion_subgroup(2).order()
             16
@@ -3230,10 +3230,11 @@ class ModularAbelianVariety_abstract(Parent):
             else:
                 raise ValueError("self must be simple")
 
-    def is_simple(self, none_if_not_known=False):
+    def is_simple(self, none_if_not_known=False) -> bool:
         """
-        Return whether or not this modular abelian variety is simple, i.e.,
-        has no proper nonzero abelian subvarieties.
+        Return whether or not this modular abelian variety is simple.
+
+        This means that it has no proper nonzero abelian subvarieties.
 
         INPUT:
 
@@ -4241,7 +4242,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         """
         return self.modular_symbols().group()
 
-    def is_subvariety(self, other):
+    def is_subvariety(self, other) -> bool:
         """
         Return ``True`` if ``self`` is a subvariety of ``other``.
 
@@ -4294,7 +4295,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
             return ModularAbelianVariety_abstract.is_subvariety(self, other)
         return self.modular_symbols().is_submodule(other.modular_symbols())
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if this abelian variety attached to a modular symbols
         space is attached to the cuspidal subspace of the ambient

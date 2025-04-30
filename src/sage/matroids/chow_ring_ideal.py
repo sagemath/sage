@@ -272,7 +272,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             algorithm = 'constructed'
         if algorithm != 'constructed':
             return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
-        flats = sorted(list(self._flats_generator), key=len)
+        flats = sorted(self._flats_generator, key=len)
         ranks = {F: self._matroid.rank(F) for F in flats}
         gb = []
         R = self.ring()

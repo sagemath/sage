@@ -2887,7 +2887,7 @@ def a(tableau, star=0, base_ring=QQ):
     if n <= 1:
         return sgalg.one()
 
-    rd = dict((P(h), one) for h in rs)
+    rd = {P(h): one for h in rs}
     return sgalg._from_dict(rd)
 
 
@@ -2971,7 +2971,7 @@ def b(tableau, star=0, base_ring=QQ):
     if n <= 1:
         return sgalg.one()
 
-    cd = dict((P(v), v.sign() * one) for v in cs)
+    cd = {P(v): v.sign() * one for v in cs}
     return sgalg._from_dict(cd)
 
 

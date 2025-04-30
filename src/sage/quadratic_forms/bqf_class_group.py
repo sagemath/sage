@@ -569,7 +569,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
         """
         return self._form < other._form
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if this form class is *not* the principal class
         and ``False`` otherwise.
@@ -584,7 +584,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
         """
         return self != self.parent().zero()
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` if this form class is the principal class and
         ``False`` otherwise.
@@ -599,7 +599,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
         """
         return not self
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of this form class.
 

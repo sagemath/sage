@@ -679,15 +679,15 @@ class PSModularSymbolElement(ModuleElement):
         #     aq.add_bigoh(M)
         return aq
 
-    def is_ordinary(self, p=None, P=None):
+    def is_ordinary(self, p=None, P=None) -> bool:
         r"""
-        Return true if the `p`-th eigenvalue is a `p`-adic unit.
+        Return ``True`` if the `p`-th eigenvalue is a `p`-adic unit.
 
         INPUT:
 
-        - ``p`` -- a positive integral prime, or None (default: ``None``)
-        - ``P`` -- a prime of the base ring above `p`, or None. This is ignored
-          unless the base ring is a number field
+        - ``p`` -- a positive integral prime, or ``None`` (default: ``None``)
+        - ``P`` -- a prime of the base ring above `p`, or ``None``.
+          This is ignored unless the base ring is a number field
 
         OUTPUT: boolean
 

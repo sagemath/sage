@@ -1214,7 +1214,7 @@ class BinaryQF(SageObject):
             self._cycle_list = C
         return self._cycle_list
 
-    def is_positive_definite(self):
+    def is_positive_definite(self) -> bool:
         """
         Return ``True`` if ``self`` is positive definite, i.e., has
         negative discriminant with `a > 0`.
@@ -1232,7 +1232,7 @@ class BinaryQF(SageObject):
 
     is_posdef = is_positive_definite
 
-    def is_negative_definite(self):
+    def is_negative_definite(self) -> bool:
         """
         Return ``True`` if ``self`` is negative definite, i.e., has
         negative discriminant with `a < 0`.
@@ -1249,7 +1249,7 @@ class BinaryQF(SageObject):
 
     is_negdef = is_negative_definite
 
-    def is_indefinite(self):
+    def is_indefinite(self) -> bool:
         """
         Return whether ``self`` is indefinite, i.e., has positive discriminant.
 
@@ -1263,7 +1263,7 @@ class BinaryQF(SageObject):
 
     is_indef = is_indefinite
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         """
         Return whether ``self`` is singular, i.e., has zero discriminant.
 
@@ -1278,7 +1278,7 @@ class BinaryQF(SageObject):
         """
         return self.discriminant().is_zero()
 
-    def is_nonsingular(self):
+    def is_nonsingular(self) -> bool:
         """
         Return whether this form is nonsingular, i.e., has nonzero discriminant.
 
@@ -1293,7 +1293,7 @@ class BinaryQF(SageObject):
         """
         return not self.discriminant().is_zero()
 
-    def is_equivalent(self, other, proper=True):
+    def is_equivalent(self, other, proper=True) -> bool:
         """
         Return whether ``self`` is equivalent to ``other``.
 
@@ -1423,7 +1423,7 @@ class BinaryQF(SageObject):
         return False
 
     @cached_method
-    def is_reduced(self):
+    def is_reduced(self) -> bool:
         r"""
         Return whether ``self`` is reduced.
 

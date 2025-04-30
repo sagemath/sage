@@ -5,6 +5,8 @@ AUTHORS:
 
 - Anna Haensch (2014-12-01): added test for rational isometry
 """
+from typing import Any
+
 from sage.arith.misc import (hilbert_symbol,
                              GCD,
                              is_prime,
@@ -20,7 +22,7 @@ from sage.rings.rational_field import QQ
 # (For now, we require both forms to be positive definite.)                  #
 ##############################################################################
 
-def is_globally_equivalent_to(self, other, return_matrix=False):
+def is_globally_equivalent_to(self, other, return_matrix=False) -> bool | Any:
     r"""
     Determine if the current quadratic form is equivalent to the
     given form over `\ZZ`.
@@ -114,7 +116,8 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
         return True
 
 
-def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_equivalence_test=False):
+def is_locally_equivalent_to(self, other, check_primes_only=False,
+                             force_jordan_equivalence_test=False) -> bool:
     r"""
     Determine if the current quadratic form (defined over `\ZZ`) is
     locally equivalent to the given form over the real numbers and the
@@ -298,7 +301,7 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
         raise TypeError("this should not have happened")
 
 
-def is_rationally_isometric(self, other, return_matrix=False):
+def is_rationally_isometric(self, other, return_matrix=False) -> bool | Any:
     """
     Determine if two regular quadratic forms over a number field are isometric.
 

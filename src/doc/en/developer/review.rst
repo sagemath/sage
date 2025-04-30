@@ -17,8 +17,6 @@ Anybody (e.g. you) can do this job for somebody else's PR. This document
 lists things that the reviewer must check before deciding that a PR is
 ready for inclusion into Sage.
 
-You can now begin the review by reading the diff code.
-
 **Check the GitHub checks:** We require all checks have passed.
 
 **Read the diff:** Click "Files changed" tab of the PR. Read through the
@@ -26,10 +24,9 @@ changes of all modified files. We use `pull request reviews
 <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews>`_.
 You can add comments directly to changed lines.
 
-**Build the code:** (This is optional if the **build and test** check has passed.)
-While you read the code, you can :ref:`rebuild Sage with the new code
-<section-walkthrough-make>`. If you do not know how to **download the code**,
-:ref:`see here <section-workflows-pr-checkout>`.
+**Test the code:** (This is optional if the **build and test** check has passed.)
+Checkout the **code of the PR** following :ref:`see here <section-workflows-pr-checkout>`
+and run the relevant tests.
 
 The following should generally be checked while reading and testing the code:
 

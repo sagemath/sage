@@ -12,10 +12,10 @@ Poor Man's map
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-import sage.structure.sage_object
+from sage.structure.sage_object import SageObject
 
 
-class PoorManMap(sage.structure.sage_object.SageObject):
+class PoorManMap(SageObject):
     """
     A class for maps between sets which are not (yet) modeled by parents.
 
@@ -264,7 +264,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: h._sympy_()                                                           # needs sympy sage.symbolic
             sin
         """
-        from sympy import Lambda, sympify
+        from sympy import sympify
         if len(self._functions) == 1:
             return sympify(self._functions[0])
         raise NotImplementedError

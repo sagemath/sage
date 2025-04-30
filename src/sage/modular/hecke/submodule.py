@@ -672,7 +672,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
         return M
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an ambient space of modular symbols.
 
@@ -688,7 +688,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         """
         return self.free_module() == self.ambient_hecke_module().free_module()
 
-    def is_new(self, p=None):
+    def is_new(self, p=None) -> bool:
         """
         Return ``True`` if this Hecke module is `p`-new. If `p` is None,
         returns ``True`` if it is new.
@@ -710,7 +710,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         self.__is_new[p] = self.is_submodule(N)
         return self.__is_new[p]
 
-    def is_old(self, p=None):
+    def is_old(self, p=None) -> bool:
         """
         Return ``True`` if this Hecke module is `p`-old. If `p` is ``None``,
         returns ``True`` if it is old.
@@ -735,7 +735,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         self.__is_old[p] = self.is_submodule(O)
         return self.__is_old[p]
 
-    def is_submodule(self, V):
+    def is_submodule(self, V) -> bool:
         """
         Return ``True`` if and only if ``self`` is a submodule of V.
 

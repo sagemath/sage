@@ -1174,6 +1174,19 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
             25
 
+        Error message as requested in :issue:`38802`::
+
+            sage: sqrt(Mod(2, 101010), all=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Finding all square roots in extensions is not implemented; try extend=False to find only roots in the base ring Zmod(n).
+
+        Using the suggested ``extend=False`` works and returns an empty list
+        as expected::
+
+            sage: sqrt(Mod(2, 101010), all=True, extend=False)
+            []
+
         ::
 
             sage: a = Mod(3, 5); a
@@ -1260,7 +1273,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 z = Q.gen()
                 if all:
                     # TODO
-                    raise NotImplementedError
+                    raise NotImplementedError("Finding all square roots in extensions is not implemented; try extend=False to find only roots in the base ring Zmod(n).")
                 return z
             if all:
                 return []

@@ -1775,7 +1775,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
     factor = factorization
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
         Return ``True`` if this space is cuspidal, else ``False``.
 

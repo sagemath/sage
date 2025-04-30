@@ -50,8 +50,8 @@ compute some basic invariants.
     sage: G.order()
     28
     sage: G.gens()
-    [[(1/14, 2/7, 0, 1/14, -3/14, 1/7)], [(0, 1, 0, 0, -1/2, 0)],
-     [(0, 0, 1, 0, -1/2, 0)]]
+    ([(1/14, 2/7, 0, 1/14, -3/14, 1/7)], [(0, 1, 0, 0, -1/2, 0)],
+     [(0, 0, 1, 0, -1/2, 0)])
     sage: B, phi = D[1]/G
     sage: B
     Abelian variety factor of dimension 2 of J0(39)

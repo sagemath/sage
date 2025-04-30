@@ -883,6 +883,8 @@ class Log2(Constant):
         0.69314718055994530941723212145817656807
         sage: RealField(150)(2).log()
         0.69314718055994530941723212145817656807550013
+        sage: giac(log2)  # optional - giac
+        ln(2)
     """
     def __init__(self, name='log2'):
         """
@@ -893,7 +895,7 @@ class Log2(Constant):
         """
         conversions = dict(mathematica='Log[2]', kash='Log(2)',
                            maple='log(2)', maxima='log(2)', gp='log(2)',
-                           pari='log(2)', octave='log(2)')
+                           pari='log(2)', octave='log(2)', giac='log(2)')
         Constant.__init__(self, name, conversions=conversions,
                           latex=r'\log(2)', domain='positive')
 

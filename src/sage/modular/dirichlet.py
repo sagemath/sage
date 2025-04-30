@@ -1701,7 +1701,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         return g
 
     @cached_method
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Return ``True`` if and only if `\varepsilon(-1) = 1`.
 
@@ -1745,7 +1745,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         return self(-1) == R.one()
 
     @cached_method
-    def is_odd(self):
+    def is_odd(self) -> bool:
         r"""
         Return ``True`` if and only if `\varepsilon(-1) = -1`.
 
@@ -1785,7 +1785,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         return self(-1) == R(-1)
 
     @cached_method
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         """
         Return ``True`` if and only if this character is
         primitive, i.e., its conductor equals its modulus.
@@ -1810,7 +1810,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         return (self.conductor() == self.modulus())
 
     @cached_method
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return ``True`` if this is the trivial character,
         i.e., has order 1.

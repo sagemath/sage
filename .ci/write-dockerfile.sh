@@ -284,6 +284,7 @@ $ADD m4 /new/m4
 $ADD pkgs /new/pkgs
 $ADD build /new/build
 $ADD .upstream.d /new/.upstream.d
+$ADD tools /new/tools
 ADD .ci /.ci
 RUN if [ -d /sage ]; then \\
         echo "### Incremental build from \$(cat /sage/VERSION.txt)" && \\

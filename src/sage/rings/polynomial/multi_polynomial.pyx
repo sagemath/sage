@@ -884,7 +884,7 @@ cdef class MPolynomial(CommutativePolynomial):
         except AttributeError:
             raise NotImplementedError
         else:
-            q, r = quo_rem(other)
+            _, r = quo_rem(other)
             return r
 
     def change_ring(self, R):
@@ -2566,7 +2566,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         prec = kwds.get('prec', 300)
         return_conjugation = kwds.get('return_conjugation', True)
-        error_limit = kwds.get('error_limit', 0.000001)
         emb = kwds.get('emb', None)
 
         # getting a numerical approximation of the roots of our polynomial
@@ -2606,7 +2605,8 @@ cdef class MPolynomial(CommutativePolynomial):
             # since we are searching anyway, don't need the 'true' reduced covariant
             from sage.rings.polynomial.binary_form_reduce import smallest_poly
             norm_type = kwds.get('norm_type', 'norm')
-            sm_F, sm_m = smallest_poly(self(tuple(M * vector([x,y]))), prec=prec, norm_type=norm_type, emb=emb)
+            _, sm_m = smallest_poly(self(tuple(M * vector([x, y]))), prec=prec,
+                                    norm_type=norm_type, emb=emb)
             M = M*sm_m
         else:
             # solve the minimization problem for 'true' covariant
@@ -2631,7 +2631,7 @@ cdef class MPolynomial(CommutativePolynomial):
             return (self(tuple(M * vector([x,y]))), M)
         return self(tuple(M * vector([x,y])))
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a unit, that is, has a
         multiplicative inverse.
@@ -2892,7 +2892,7 @@ cdef class MPolynomial(CommutativePolynomial):
         return result(True)
 
 
-def _is_M_convex_(points):
+def _is_M_convex_(points) -> bool:
     r"""
     Return whether ``points`` represents a set of integer lattice points
     which are M-convex.
@@ -2961,7 +2961,6 @@ def _is_M_convex_(points):
         for p2 in points_set:
             if p2 == p1:
                 continue
-            delta = list(x2 - x1 for x1, x2 in zip(p1, p2))
             for i in range(dim):
                 if p2[i] > p1[i]:
                     # modify list_p1 to represent point p1 + e_i - e_j for various i, j

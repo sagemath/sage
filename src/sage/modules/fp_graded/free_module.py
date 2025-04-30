@@ -501,7 +501,7 @@ class FreeGradedModule(CombinatorialFreeModule):
         """
         return self._generator_degrees
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return ``True`` if this module is trivial and ``False`` otherwise.
 

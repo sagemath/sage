@@ -518,7 +518,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         # TODO: *maybe* redo this to use mpz_import and mpz_export
         # from sec 5.14 of the GMP manual. ??
-        cdef int i, j, len_so_far, m, n
+        cdef Py_ssize_t i, j, len_so_far
+        cdef int m, n
         cdef char *s
         cdef char *t
         cdef char *tmp
@@ -1530,7 +1531,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         cdef Integer h
         cdef Matrix_integer_dense left = <Matrix_integer_dense>self
-        cdef int i, k
+        cdef Py_ssize_t i, k
 
         nr = left._nrows
         nc = right._ncols

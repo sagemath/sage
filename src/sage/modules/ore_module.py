@@ -524,7 +524,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         pass
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` if this Ore module is reduced to zero.
 

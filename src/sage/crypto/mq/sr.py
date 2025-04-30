@@ -462,7 +462,7 @@ class SR_generic(MPolynomialSystemGenerator):
         self._reverse_variables = bool(kwargs.get("reverse_variables", True))
 
         with AllowZeroInversionsContext(self):
-            sub_byte_lookup = dict([(v, self.sub_byte(v)) for v in self._base])
+            sub_byte_lookup = {v: self.sub_byte(v) for v in self._base}
         self._sub_byte_lookup = sub_byte_lookup
 
         if self._gf2:
