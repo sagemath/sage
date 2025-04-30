@@ -496,6 +496,7 @@ def rooted_product(G, H, root=None, immutable=None):
         raise ValueError("the specified root is not a vertex of H")
 
     vertices = ((u, x) for u in G for x in H)
+
     def edges():
         for u, v in G.edge_iterator(labels=False):
             yield ((u, root), (v, root))
