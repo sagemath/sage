@@ -100,11 +100,11 @@ class LetterplaceIdeal(Ideal_nc):
         sage: JR.groebner_basis(2)
         Traceback (most recent call last):
         ...
-        TypeError: This ideal is not two-sided. We can only compute two-sided Groebner bases
+        TypeError: Groebner bases exist only for two-sided ideals
         sage: JL.groebner_basis(2)
         Traceback (most recent call last):
         ...
-        TypeError: This ideal is not two-sided. We can only compute two-sided Groebner bases
+        TypeError: Groebner bases exist only for two-sided ideals
 
     Also, it is currently not possible to compute a Groebner basis when the base
     ring is not a field::
@@ -114,7 +114,7 @@ class LetterplaceIdeal(Ideal_nc):
         sage: J.groebner_basis(2)
         Traceback (most recent call last):
         ...
-        TypeError: currently, we can only compute Groebner bases if the ring of coefficients is a field
+        NotImplementedError: currently, we can only compute Groebner bases if the ring of coefficients is a field
 
     The letterplace implementation of free algebras also provides integral degree weights
     for the generators, and we can compute Groebner bases for twosided graded homogeneous
@@ -280,9 +280,9 @@ class LetterplaceIdeal(Ideal_nc):
         if self.__uptodeg >= degbound:
             return self.__GB
         if not A.base().is_field():
-            raise TypeError("currently, we can only compute Groebner bases if the ring of coefficients is a field")
+            raise NotImplementedError("currently, we can only compute Groebner bases if the ring of coefficients is a field")
         if self.side() != 'twosided':
-            raise TypeError("This ideal is not two-sided. We can only compute two-sided Groebner bases")
+            raise TypeError("Groebner bases exist only for two-sided ideals")
         if degbound == Infinity:
             while self.__uptodeg < Infinity:
                 test_bound = 2 * max([x._poly.degree()
