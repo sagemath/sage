@@ -144,7 +144,7 @@ class ChowRingElement(QuotientRingElement):
     @cached_method
     def by_degrees(self):
         r"""
-        Returns this Chow ring element as a list `[e_0,\dots,e_{d}]` where `e_k`
+        Return this Chow ring element as a list `[e_0,\dots,e_{d}]` where `e_k`
         has degree `k`.
 
         EXAMPLES::
@@ -347,7 +347,7 @@ class ChowRingElement(QuotientRingElement):
 
         - An element of the parent Chow ring.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A.<c1, c2, c3> = ChowRing(['c1', 'c2', 'c3'], [1, 2, 3])
             sage: A.set_dimension(3)
@@ -394,7 +394,7 @@ class ChowRingElement(QuotientRingElement):
 
         - ``k``-- an integer
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A.<c1, c2, c3> = ChowRing(['c1', 'c2', 'c3'], [1, 2, 3])
             sage: (1 + c1 + c2).adams(2)

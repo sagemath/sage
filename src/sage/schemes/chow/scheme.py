@@ -94,7 +94,7 @@ def ChowScheme(dimension,
                point_class=None,
                names=None, name=None, latex_name=None):
     r"""
-    Returns a ChowScheme, given its dimension and (optional) generators,
+    Return a ChowScheme, given its dimension and (optional) generators,
     degrees, relations, point_class, names, name, latex_name.
 
     INPUT:
@@ -391,7 +391,7 @@ class ChowScheme_generic(Parent):
             and we do not know what A^2 is, except that it can't be
             finite-dimensional. There is however, a Künneth formula for
             varieties with affine stratification as projective spaces
-            or more generally Grassmannians. This what this method returns.
+            or more generally Grassmannians. This is what this method returns.
 
         EXAMPLES:
 

@@ -6,8 +6,9 @@ Suppose given two projective non singular varieties `X` and `Y` and a morphism
 of ChowSchemes `f:X\rightarrow Y`. Then the :class:`Blowup` computes the Blowup
 of `Y` along `X`.
 
-EXAMPLE (the Veronese embedding)::
+EXAMPLES::
 
+    sage: # The Veronese embedding
     sage: P2.<h> = Proj(2, 'h')
     sage: P5.<k> = Proj(5, 'k')
     sage: f = P2.hom([2*h], P5)
@@ -112,7 +113,7 @@ class Blowup(ChowSchemeMorphism):
     Construct the blowup of a ChowSchemeMorphism representing an embedding
     of smooth projective varieties:
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: X.<w> = Proj(1, 'w', name='X')
         sage: Y.<h> = Proj(3, 'h', name='Y')

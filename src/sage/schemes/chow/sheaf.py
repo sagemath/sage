@@ -175,7 +175,7 @@ class Sheaf(SageObject):
 
         - a ChowScheme
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X = ChowScheme(4, 'h', 1, 'h^5')
             sage: S = Sheaf(X, 1, [1])
@@ -192,7 +192,7 @@ class Sheaf(SageObject):
 
         - an element of the underlying Chow ring of this Sheaf.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X.<c1, c2, c3> = ChowScheme(3, ['c1', 'c2', 'c3'], [1, 2, 3])
             sage: S = Sheaf(X, 3, [1, c1, c2, c3])
@@ -210,7 +210,7 @@ class Sheaf(SageObject):
 
         - an integer.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X.<c1, c2, c3> = ChowScheme(3, ['c1', 'c2', 'c3'], [1, 2, 3])
             sage: S = Sheaf(X, 3, [1, c1, c2, c3])
@@ -228,7 +228,7 @@ class Sheaf(SageObject):
 
         - an element of the underlying Chow ring of this Sheaf.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X.<c1, c2, c3> = ChowScheme(3, ['c1', 'c2', 'c3'], [1, 2, 3])
             sage: S = Sheaf(X, 3, [1, c1, c2, c3])
@@ -246,7 +246,7 @@ class Sheaf(SageObject):
 
         - a list of elements of the underlying Chow ring of this Sheaf.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X.<c1, c2, c3> = ChowScheme(3, ['c1', 'c2', 'c3'], [1, 2, 3])
             sage: ch = 3 + c1 + (1/2*c1^2 - c2) + (1/6*c1^3 - 1/2*c1*c2 + 1/2*c3)
@@ -264,7 +264,7 @@ class Sheaf(SageObject):
 
         - a string.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X.<c1, c2> = ChowScheme(3, ['c1', 'c2'], [1, 2], name='X')
             sage: S = Sheaf(X, 2, [1, c1, c2]); S._repr_()
@@ -360,7 +360,7 @@ class Sheaf(SageObject):
 
         - a symbolic polynomial in ``var_name``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X.<c1, c2> = ChowScheme(3, ['c1', 'c2'], [1, 2], name='X')
             sage: S = Sheaf(X, 2, [1, -c1, c2])
@@ -376,7 +376,7 @@ class Sheaf(SageObject):
     @cached_method
     def segre_classes(self):
         r"""
-        Returns `[s_0, ..., s_r]` where the `s_i` are the Segre classes.
+        Return `[s_0, ..., s_r]` where the `s_i` are the Segre classes.
 
         Nota Bene: We use the convention that `s_t(E)*c_t(E^*) = 1`
         (in Fulton's book, `s_t(E)*c_t(E) = 1` is used).
@@ -385,7 +385,7 @@ class Sheaf(SageObject):
 
         - a list of elements of the underlying Chow ring of this Sheaf.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: X.<c1, c2, c3> = ChowScheme(3, ['c1', 'c2', 'c3'], [1, 2, 3])
             sage: S = Sheaf(X, 3, [1, c1, c2, c3])
@@ -902,7 +902,7 @@ class Sheaf(SageObject):
     @cached_method
     def todd_class(self):
         r"""
-        Returns the todd class of this sheaf.
+        Return the Todd class of this sheaf.
 
         EXAMPLES::
 
@@ -935,7 +935,7 @@ class Sheaf(SageObject):
     @cached_method
     def sans_denominateurs(self, E):
         r"""
-        Returns the expression P(self,E) (see Fulton 296-297, Lemma 15.3).
+        Return the expression P(self,E) (see Fulton 296-297, Lemma 15.3).
 
         EXAMPLES::
 

@@ -197,7 +197,7 @@ def is_chowRing(R):
 
 def ChowRingFromRing(S, names=None, name=None, latex_name=None):
     """
-    Returns a ChowRing, given a ring S.
+    Return a ChowRing, given a ring S.
 
     INPUT:
 
@@ -524,7 +524,7 @@ class ChowRing_generic(QuotientRing_generic):
 
             -- a ChowRingElement instance whose parent is self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A = ChowRing('h', 1, 'h^3')
             sage: A('3+2*h+2*h^2')
@@ -815,7 +815,7 @@ class ChowRing_generic(QuotientRing_generic):
 
     def is_point(self):
         """
-        Returns True if this ChowRing corresponds to a point, e.g. is of
+        Return True if this ChowRing corresponds to a point, e.g. is of
         dimension 0 and has no generators.
 
         OUTPUT:
@@ -836,7 +836,7 @@ class ChowRing_generic(QuotientRing_generic):
 
     def is_point_chowring(self):
         """
-        Returns True if this ChowRing is the instance PointChowRing.
+        Return True if this ChowRing is the instance PointChowRing.
 
         OUTPUT:
 
@@ -862,7 +862,7 @@ class ChowRing_generic(QuotientRing_generic):
 
     def identity_morphism(self):
         """
-        Returns the identity morphism of this ChowRing.
+        Return the identity morphism of this ChowRing.
 
         OUTPUT:
 
@@ -889,7 +889,7 @@ class ChowRing_generic(QuotientRing_generic):
     @cached_method
     def krull_dimension(self):
         """
-        Returns the Krull dimension of the underlying ring of this ChowRing.
+        Return the Krull dimension of the underlying ring of this ChowRing.
         Remark: this is *not* the dimension of this ChowRing specified while
         defining this ChowRing.
 
@@ -913,7 +913,7 @@ class ChowRing_generic(QuotientRing_generic):
     @cached_method
     def basis(self):
         """
-        Returns a basis of the underlying ring of this ChowRing if the
+        Return a basis of the underlying ring of this ChowRing if the
         underlying ring is Artin.
 
         OUTPUT:
@@ -1020,7 +1020,7 @@ class ChowRing_generic(QuotientRing_generic):
     @cached_method
     def intersection_matrix(self):
         """
-        Returns the intersection matrix of this ChowRing.
+        Return the intersection matrix of this ChowRing.
 
         OUTPUT:
 
@@ -1061,7 +1061,7 @@ class ChowRing_generic(QuotientRing_generic):
 
     def dual_basis_slow(self):
         """
-        Returns the basis dual to self.basis() with respect to the intersection
+        Return the basis dual to self.basis() with respect to the intersection
         matrix. It is computed by simply inverting the intersection matrix.
         For a large ring basis, this method is somehow slow and has been
         optimized in self.dual_basis().
@@ -1091,7 +1091,7 @@ class ChowRing_generic(QuotientRing_generic):
     @cached_method
     def dual_basis(self, verbose=False):
         r"""
-        Returns the basis dual to :meth:`basis` with respect to the intersection
+        Return the basis dual to :meth:`basis` with respect to the intersection
         matrix. We carefully compute only the relevant part of the intersection
         matrix in order to invert several smaller matrices instead of one large
         matrix as in :meth:`dual_basis_slow`. This method is mainly needed to
@@ -1162,7 +1162,7 @@ class ChowRing_generic(QuotientRing_generic):
 
     def dual_basis_dict(self, verbose=False):
         r"""
-        Returns the dictionary `e_i\rightarrow e_i^*` where `e_i` is the basis
+        Return the dictionary `e_i\rightarrow e_i^*` where `e_i` is the basis
         given by :meth:`basis` and `e_i^*` is the dual element.
         If verbose is set to True, intermediate steps are printing during the
         calculation of the dual basis.

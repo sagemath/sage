@@ -135,7 +135,7 @@ from sage.schemes.chow.library.proj import ProjBundle
 ###############################################################################
 def variety_of_nets_of_quadrics(W, name=None, latex_name=None):
     r"""
-    Returns the variety of nets of quadrics defining twisted cubics relative
+    Return the variety of nets of quadrics defining twisted cubics relative
     to `S` and a rank `4` vector bundle `W` of `S`.
 
     If S is given as parameter the variety will be relative to this instance
@@ -325,7 +325,7 @@ def map_incidence_to_nets_of_quadrics(W, domain_name=None, codomain_name=None,
                                       latex_domain_name=None,
                                       latex_codomain_name=None):
     r"""
-    Returns the map `f:I_S\rightarrow X_S` from the incidence
+    Return the map `f:I_S\rightarrow X_S` from the incidence
     variety to the variety of nets of quadrics.
 
     EXAMPLES::
