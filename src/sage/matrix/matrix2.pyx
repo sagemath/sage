@@ -3638,22 +3638,16 @@ cdef class Matrix(Matrix1):
             sage: C.get_bandwidth()
             2
         """
-        cdef Py_ssize_t i, rows, cols, max_up
+        cdef Py_ssize_t i, rows, cols
         rows, cols = self.nrows(), self.ncols()
-        max_up = 0
         diag_range = max(rows, cols) - 1
         zero = self._base_ring(0)
 
         for i in range(diag_range, 0, -1):
-            if any(x != zero for x in self.diagonal(i)):
-                max_up = i
-                break
-
-        for i in range(diag_range, max_up, -1):
-            if any(x != zero for x in self.diagonal(-i)):
+            if (any(x != zero for x in self.diagonal(i))
+                    or any(x != zero for x in self.diagonal(-i))):
                 return i
-
-        return max_up
+        return 0
 
     #####################################################################################
     # Generic Hessenberg Form and charpoly algorithm
