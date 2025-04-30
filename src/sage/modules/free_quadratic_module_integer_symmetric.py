@@ -304,7 +304,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
         [ 0  0  0  0  0  0  0 -1  2 -1  0]
         [ 0  0  0  0  0  0  0  0 -1  2 -1]
         [ 0  0  0  0  0  0  0  0  0 -1  2]
-        sage: [L, phi] = IntegralLatticeDirectSum([L1, L2, L3], True)
+        sage: L, phi = IntegralLatticeDirectSum([L1, L2, L3], True)
         sage: LL3 = L.sublattice(phi[2].image().basis_matrix())
         sage: L3.discriminant() == LL3.discriminant()
         True
@@ -325,7 +325,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
 
         sage: L1 = IntegralLattice(2 * matrix.identity(2), [[1/2, 1/2]])
         sage: L2 = IntegralLattice("A3", [[1, 1, 2]])                                   # needs sage.graphs
-        sage: [L, phi] = IntegralLatticeDirectSum([L1, L2], True)                       # needs sage.graphs
+        sage: L, phi = IntegralLatticeDirectSum([L1, L2], True)                       # needs sage.graphs
         sage: L                                                                         # needs sage.graphs
         Lattice of degree 5 and rank 2 over Integer Ring
         Basis matrix:
@@ -448,7 +448,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         sage: g1 = L1.discriminant_group().gens()[0]
         sage: g2 = L2.discriminant_group().gens()[0]
         sage: glue = [[g1, 2 * g2]]
-        sage: [V, phi] = IntegralLatticeGluing([L1, L2], glue, True)
+        sage: V, phi = IntegralLatticeGluing([L1, L2], glue, True)
         sage: V
         Lattice of degree 8 and rank 8 over Integer Ring
         Basis matrix:
@@ -541,7 +541,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         sage: D5 = IntegralLattice("D5")
         sage: gA7 = A7.discriminant_group().gens()[0]
         sage: gD5 = D5.discriminant_group().gens()[0]
-        sage: [L, phi] = IntegralLatticeGluing([A7, A7, D5, D5],
+        sage: L, phi = IntegralLatticeGluing([A7, A7, D5, D5],
         ....:                          [[gA7, gA7, gD5, 2 * gD5],
         ....:                          [gA7, 7 * gA7, 2 * gD5, gD5]], True)
         sage: L.determinant()
@@ -555,9 +555,9 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         sage: # needs sage.graphs
         sage: L1 = IntegralLattice("D4", [[1, 1, 0, 0], [0, 1, 1, 0]])
         sage: L2 = IntegralLattice("E6", [[0, 2, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1]])
-        sage: [f1, f2] = L1.discriminant_group().gens()
-        sage: [g1, g2] = L2.discriminant_group().gens()
-        sage: [L, phi] = IntegralLatticeGluing([L1, L2],
+        sage: f1, f2 = L1.discriminant_group().gens()
+        sage: g1, g2 = L2.discriminant_group().gens()
+        sage: L, phi = IntegralLatticeGluing([L1, L2],
         ....:                                  [[f1, g1], [f2, 2 * g2]], True)
         sage: phi[0]
         Free module morphism defined by the matrix
@@ -593,7 +593,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         sage: B * L.gram_matrix() * B.transpose() == L1.gram_matrix()
         True
     """
-    [direct_sum, phi] = IntegralLatticeDirectSum(Lattices, return_embeddings=True)
+    direct_sum, phi = IntegralLatticeDirectSum(Lattices, return_embeddings=True)
     N = len(Lattices)
     for g in glue:
         if not len(g) == N:

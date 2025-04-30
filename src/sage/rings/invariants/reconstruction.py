@@ -186,7 +186,7 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
     If the invariant `M` vanishes, then the coefficients are computed in a
     different way::
 
-        sage: [A,B,C] = [3,1,2]
+        sage: A, B, C = [3, 1, 2]
         sage: M = 2*A*B - 3*C
         sage: M
         0
@@ -274,8 +274,8 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
         else:
             # if R2 is not a square, we scale the invariants in a suitable way
             # so that the 'new' R2 is a square
-            [A, B, C] = [R2*A, R2**2*B, R2**3*C]
-            [M, N] = [R2**3*M, R2**4*N]
+            A, B, C = [R2*A, R2**2*B, R2**3*C]
+            M, N = [R2**3*M, R2**4*N]
             R = R2**5
     elif len(invariants) == 4:
         if invariants[3]**2 != R2:
@@ -292,17 +292,17 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
                                  'quintics with a treefold linear factor')
             else:
                 if B == 0:
-                    return (1,0,0,0,0,1)
+                    return (1, 0, 0, 0, 0, 1)
                 else:
-                    return (0,1,0,0,1,0)
+                    return (0, 1, 0, 0, 1, 0)
         else:
             # case corresponding to using alpha and gamma as coordinates
             if A == 0:
-                return (1,0,0,0,1,0)
+                return (1, 0, 0, 0, 1, 0)
             else:
                 if scaling == 'normalized':
                     # scaling z by (R/A**3)
-                    scale = [ (-N)**-5*A**6*(R/A**3)**i for i in range(6) ]
+                    scale = [(-N)**-5*A**6*(R/A**3)**i for i in range(6)]
                 D = -N
                 Delta = C
                 a = [0]
