@@ -154,7 +154,7 @@ class Sage(ExtraTabCompletion, Expect):
                     'of code')
 
         command = 'python3 -u'
-        prompt = re.compile(b'>>> ')
+        prompt = re.compile(b'>>> |sage: |In : ')
         environment = 'sage.all'
         init_code.append(f'from {environment} import *')
         init_code.append('import pickle')
