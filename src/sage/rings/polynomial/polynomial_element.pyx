@@ -6263,7 +6263,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def canonical_associate(self):
         """
-        Return a canonical associate
+        Return a canonical associate.
 
         EXAMPLES::
 

@@ -7205,7 +7205,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def canonical_associate(self):
         """
-        Return a canonical associate
+        Return a canonical associate.
 
         EXAMPLES::
 
@@ -7214,7 +7214,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: (0).canonical_associate()
             (0, 1)
             sage: a = -17
-            sage: b,u = a.canonical_associate()
+            sage: b, u = a.canonical_associate()
             sage: b*u == a
             True
         """

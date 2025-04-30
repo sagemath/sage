@@ -5345,7 +5345,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
 
     def canonical_associate(self):
         """
-        Return a canonical associate
+        Return a canonical associate.
 
         Only implemented here because order elements inherit from field elements,
         but the canonical associate implemented there does not apply here.
@@ -5575,7 +5575,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
     def canonical_associate(self):
         """
-        Return a canonical associate
+        Return a canonical associate.
 
         Only implemented here because order elements inherit from field elements,
         but the canonical associate implemented there does not apply here.
@@ -5588,7 +5588,6 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
             sage: (OK.1).canonical_associate()
             NotImplemented
         """
-
         return NotImplemented
 
 class CoordinateFunction():

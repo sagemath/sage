@@ -412,7 +412,6 @@ cdef class FractionFieldElement(FieldElement):
             sage: K.<x,y>=ZZ[]
             sage: hash(x/y) == hash((-x)/(-y))
             True
-
         """
         if self._denominator.is_one():
             # Handle this case even over rings that don't support reduction, to

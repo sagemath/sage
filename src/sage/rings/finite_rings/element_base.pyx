@@ -167,7 +167,7 @@ cdef class FiniteRingElement(CommutativeRingElement):
 
     def canonical_associate(self):
         """
-        Return a canonical associate
+        Return a canonical associate.
 
         Implemented here because not all finite field elements inherit from FieldElement.
         

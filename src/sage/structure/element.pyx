@@ -4493,7 +4493,7 @@ cdef class FieldElement(CommutativeRingElement):
 
     def canonical_associate(self):
         """
-        Return a canonical associate
+        Return a canonical associate.
 
         EXAMPLES::
 
@@ -4502,7 +4502,6 @@ cdef class FieldElement(CommutativeRingElement):
             (1, x/y)
             sage: (0).canonical_associate()
             (0, 1)
-
         """
         P = self.parent()
         if self.is_zero():

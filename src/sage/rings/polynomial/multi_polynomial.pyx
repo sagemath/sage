@@ -2893,7 +2893,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def canonical_associate(self):
         """
-        Return a canonical associate
+        Return a canonical associate.
 
         EXAMPLES::
 
@@ -2904,7 +2904,6 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: (-2*x^2+3*x+5*y).canonical_associate()
             (2*x^2 - 3*x - 5*y, -1)
         """
-
         lc = self.leading_coefficient()
         n, u = lc.canonical_associate()
         return (u.inverse_of_unit() * self, u)
