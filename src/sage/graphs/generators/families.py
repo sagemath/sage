@@ -3110,6 +3110,61 @@ def petersen_family(generate=False):
         l.append(g)
         return l
 
+def p2_forbidden_minors():
+    r"""
+    Returns an array containing the 35 minimal forbidden excluded minors
+    of the projective plane, each. 
+
+    We constructed the graphs given in Theorem 6.5.1 of [MT2001]_,
+    which is a result of Archdeacon and encoded them in graph6 format.
+
+    We return the graphs using the Graph constructor.
+    
+    """
+
+    p2_forbidden_minors_graph6 = [
+    'KFz_????wF?[',
+    'J~{???F@oM?',
+    'I~{?GKF@w',
+    'JFz_?AB_sE?',
+    'I~{?CME`_',
+    'H~}CKMF',
+    'G^~EMK',
+    'H^|ACME',
+    'Himp`cr',
+    'Iimp_CpKO',
+    'IFz@GCdHO',
+    'IBz__aB_o',
+    'FQ~~w',
+    'GlvJ`k',
+    'HilKH`J',
+    'GjlKJs',
+    'HhI]ECZ',
+    'HiMIKSp',
+    'HFwO]Kf',
+    'I]q?a?n@o',
+    'IHIWuFGo_',
+    'IXJWMC`Eg',
+    'GFzfF?',
+    'I]o__OF@o',
+    'G?^vf_',
+    'H?]ufBo',
+    'GlrHhs',
+    'HhIWuRB',
+    'IXCO]FGb?',
+    'Fvz~o',
+    'GlfH]{',
+    'Hl`HGvV',
+    'HhcIHmv',
+    'IhEGICRiw',
+    'JhEIDSD?ga_'
+    ]
+    
+    return_arr_forbidden_minors = [Graph(graph_str) for graph_str\
+                                    in p2_forbidden_minors_graph6]
+
+    return return_arr_forbidden_minors
+
     def DeltaYTrans(G, triangle):
         """
         Apply a Delta-Y transformation to a given triangle of G.
