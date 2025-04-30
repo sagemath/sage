@@ -1,7 +1,7 @@
 r"""
 Trigonometric functions
 
-TESTS::
+TESTS:
 
 Check that :issue:`35696` is fixed::
 
