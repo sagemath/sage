@@ -1545,13 +1545,11 @@ cdef class Matrix(Matrix1):
         m = self._nrows
         n = self._ncols
         if not m <= n:
-            raise ValueError("must have m <= n, but m (=%s) and n (=%s)"%(m, n))
+            raise ValueError(f"must have m <= n, but m (={m}) and n (={n})")
 
         for r from 1 <= r < m+1:
             lst = _choose(n, r)
-            tmp = []
-            for cols in lst:
-                tmp.append(self.prod_of_row_sums(cols))
+            tmp = [self.prod_of_row_sums(cols) for cols in lst]
             s = sum(tmp)
             # sn = (-1)^(m-r)
             if (m - r) % 2 == 0:
@@ -3646,7 +3644,7 @@ cdef class Matrix(Matrix1):
                 H = self.change_ring(K)
                 H.hessenbergize()
             except TypeError as msg:
-                raise TypeError("%s\nHessenberg form only possible for matrices over a field"%msg)
+                raise TypeError("%s\nHessenberg form only possible for matrices over a field" % msg)
         else:
             H = self.__copy__()
             H.hessenbergize()
@@ -5717,7 +5715,7 @@ cdef class Matrix(Matrix1):
                 return X, Y
             return X
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
     def _decomposition_spin_generic(self, is_diagonalizable=False):
         r"""
@@ -5780,14 +5778,16 @@ cdef class Matrix(Matrix1):
                 v = h.list()
 
                 while len(S) < tries:
-                    t = verbose('%s-spinning %s-th random vector'%(num_iterates, len(S)), level=2, caller_name='generic spin decomp')
+                    t = verbose('%s-spinning %s-th random vector' % (num_iterates, len(S)),
+                                level=2, caller_name='generic spin decomp')
                     S.append(self.iterates(V.random_element(), num_iterates))
-                    verbose('done spinning', level=2, t=t, caller_name='generic spin decomp')
+                    verbose('done spinning',
+                            level=2, t=t, caller_name='generic spin decomp')
 
                 for j in range(0 if W is None else W.nrows() // g.degree(), len(S)):
                     # Compute one element of the kernel of g(A)**m.
-                    t = verbose('compute element of kernel of g(A), for g of degree %s'%g.degree(), level=2,
-                                caller_name='generic spin decomp')
+                    t = verbose('compute element of kernel of g(A), for g of degree %s' % g.degree(),
+                                level=2, caller_name='generic spin decomp')
                     w = S[j].linear_combination_of_rows(h.list())
                     t = verbose('done computing element of kernel of g(A)', t=t, level=2, caller_name='generic spin decomp')
 
@@ -5806,7 +5806,7 @@ cdef class Matrix(Matrix1):
                     verbose('computed row space', level=2, t=t, caller_name='generic spin decomp')
                     break
                 else:
-                    verbose('we have not yet generated all the kernel (rank so far=%s, target rank=%s)'%(
+                    verbose('we have not yet generated all the kernel (rank so far=%s, target rank=%s)' % (
                         W.rank(), m*g.degree()), level=2, caller_name='generic spin decomp')
                     tries += 1
                     if tries > 1000*m:  # avoid an insanely long infinite loop
@@ -5842,12 +5842,13 @@ cdef class Matrix(Matrix1):
                 return decomp_seq([(V, m==1)])
         F.sort()
         for g, m in f.factor():
-            t = verbose('decomposition -- Computing g(self) for an irreducible factor g of degree %s'%g.degree(), level=2)
+            t = verbose('decomposition -- Computing g(self) for an irreducible factor g of degree %s' % g.degree(), level=2)
             if is_diagonalizable:
                 B = g(self)
             else:
                 B = g(self)
-                t2 = verbose('decomposition -- raising g(self) to the power %s'%m, level=2)
+                t2 = verbose('decomposition -- raising g(self) to the power %s' % m,
+                             level=2)
                 B = B ** m
                 verbose('done powering', level=2, t=t2)
             t = verbose('decomposition -- done computing g(self)', level=2, t=t)
@@ -5938,7 +5939,7 @@ cdef class Matrix(Matrix1):
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
         if M.base_ring() != self.base_ring():
-            raise ArithmeticError("base rings must be the same, but self is over %s and module is over %s"%(
+            raise ArithmeticError("base rings must be the same, but self is over %s and module is over %s" % (
                 self.base_ring(), M.base_ring()))
         if M.degree() != self.ncols():
             raise ArithmeticError("M must be a subspace of an %s-dimensional space" % self.ncols())
@@ -5955,7 +5956,7 @@ cdef class Matrix(Matrix1):
         sum_dim = sum([A.dimension() for A, _ in D])
         assert sum_dim == M.dimension(), \
                "bug in decomposition; " + \
-               "the sum of the dimensions (=%s) of the factors must equal the dimension (%s) of the acted on space:\nFactors found: %s\nSpace: %s"%(sum_dim, M.dimension(), D, M)
+               "the sum of the dimensions (=%s) of the factors must equal the dimension (%s) of the acted on space:\nFactors found: %s\nSpace: %s" % (sum_dim, M.dimension(), D, M)
 
         # 3. Lift decomposition to subspaces of ambient vector space.
         # Each basis vector for an element of D defines a linear
@@ -8143,7 +8144,7 @@ cdef class Matrix(Matrix1):
             try:
                 a, d, p = self._echelon_form_PID()
             except TypeError as msg:
-                raise NotImplementedError("%s\nechelon form over %s not yet implemented"%(msg, self.base_ring()))
+                raise NotImplementedError("%s\nechelon form over %s not yet implemented" % (msg, self.base_ring()))
 
             for c from 0 <= c < self.ncols():
                 for r from 0 <= r < self.nrows():
@@ -8347,7 +8348,7 @@ cdef class Matrix(Matrix1):
                     kwds['algorithm'] = algorithm
                 return self._echelonize_ring(**kwds)
         except ArithmeticError as msg:
-            raise NotImplementedError("%s\nEchelon form not implemented over '%s'."%(msg, basring))
+            raise NotImplementedError("%s\nEchelon form not implemented over '%s'." % (msg, basring))
 
     def echelon_form(self, algorithm='default', cutoff=0, **kwds):
         r"""
@@ -9332,7 +9333,8 @@ cdef class Matrix(Matrix1):
             [ 0  0  0  0]
             [ 0  0  0  0]
         """
-        tm = verbose('strassen echelon of %s x %s matrix'%(self._nrows, self._ncols), level=2)
+        tm = verbose('strassen echelon of %s x %s matrix' % (self._nrows, self._ncols),
+                     level=2)
 
         self.check_mutability()
 
@@ -9610,7 +9612,7 @@ cdef class Matrix(Matrix1):
         """
         if self._subdivisions is None:
             self._subdivisions = ([0, self._nrows], [0, self._ncols])
-        key = "subdivision %s %s"%(i, j)
+        key = "subdivision %s %s" % (i, j)
         sd = self.fetch(key)
         if sd is None:
             sd = self[self._subdivisions[0][i]:self._subdivisions[0][i+1],
@@ -9658,10 +9660,10 @@ cdef class Matrix(Matrix1):
             if not i and not j:
                 return self[x, y]
             else:
-                raise IndexError("No such submatrix %s, %s"%(i, j))
+                raise IndexError("No such submatrix %s, %s" % (i, j))
         if x >= self._subdivisions[0][i+1]-self._subdivisions[0][i] or \
            y >= self._subdivisions[1][j+1]-self._subdivisions[1][j]:
-            raise IndexError("Submatrix %s,%s has no entry %s,%s"%(i, j, x, y))
+            raise IndexError("Submatrix %s,%s has no entry %s,%s" % (i, j, x, y))
         return self[self._subdivisions[0][i] + x, self._subdivisions[1][j] + y]
 
     def _subdivide_on_augment(self, left, right):
@@ -10839,7 +10841,7 @@ cdef class Matrix(Matrix1):
             raise ValueError("self must be a square matrix")
 
         A = self.charpoly().shift(-1)(self)
-        return A if n%2 else -A
+        return A if n % 2 else -A
 
     def QR(self, full=True):
         r"""
