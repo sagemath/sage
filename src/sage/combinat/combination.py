@@ -34,7 +34,7 @@ from sage.structure.parent import Parent
 from sage.misc.persist import register_unpickle_override
 
 
-def Combinations(mset, k=None):
+def Combinations(mset, k=None, *, allow_negative=None):
     """
     Return the combinatorial class of combinations of the multiset
     ``mset``. If ``k`` is specified, then it returns the combinatorial
@@ -46,6 +46,17 @@ def Combinations(mset, k=None):
 
     The combinatorial classes correctly handle the cases where ``mset`` has
     duplicate elements.
+
+    INPUT:
+
+    - ``mset`` -- a list, tuple, set, or integer `n` (interpreted as ``range(n)``)
+    - ``k`` -- (optional) an integer, the size of the combinations
+    - ``allow_negative`` -- keyword-only (default: ``None``) boolean or ``None``.
+      Controls behavior when ``k`` is negative.
+      * ``None``: Creates the object but issues a deprecation warning (:issue:`39411`).
+        Future versions will raise a ``ValueError`` by default.
+      * ``True``: Creates the object without a warning.
+      * ``False``: Raises a ``ValueError`` during object creation.
 
     EXAMPLES::
 
@@ -150,6 +161,42 @@ def Combinations(mset, k=None):
         sage: Combinations([vector([1,1]), vector([2,2]), vector([3,3])], 2).list()     # needs sage.modules
         [[(1, 1), (2, 2)], [(1, 1), (3, 3)], [(2, 2), (3, 3)]]
 
+    ::
+
+        sage: Combinations(3, -1) # default is allow_negative=None
+        doctest:warning...:
+        DeprecationWarning: Calling Combinations with k < 0 currently does not raise an error, but this behavior is deprecated. In future versions, it will raise a ValueError by default. To retain the current behavior (no error), explicitly pass allow_negative=True. To get the future error behavior now, pass allow_negative=False.
+        See https://github.com/sagemath/sage/issues/39411 for details.
+        Combinations of [0, 1, 2] of length -1
+
+        sage: C_warn = Combinations(3,-1)
+        sage: list(C_warn)
+        []
+
+        sage: Combinations(3, -1, allow_negative=True)
+        Combinations of [0, 1, 2] of length -1
+        sage: C_true = Combinations(3, -1, allow_negative=True)
+        sage: list(C_true)
+        []
+
+        sage: Combinations(3, -1, allow_negative=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: k must be non-negative
+
+        sage: C_warn = Combinations(3,-1) 
+        sage: C_warn.cardinality()
+        0
+
+        sage: C_true = Combinations(3, -1, allow_negative=True)
+        sage: C_true.cardinality()
+        0
+
+        sage: Combinations(3, -1, allow_negative=False).cardinality()
+        Traceback (most recent call last):
+        ...
+        ValueError: k must be non-negative
+
     TESTS:
 
     Run the test suites::
@@ -185,13 +232,12 @@ def Combinations(mset, k=None):
         if k is None:
             return Combinations_set(mset)
         else:
-            return Combinations_setk(mset, k)
+            return Combinations_setk(mset, k, allow_negative=allow_negative)
     else:
         if k is None:
             return Combinations_mset(mset)
         else:
-            return Combinations_msetk(mset, k)
-
+            return Combinations_msetk(mset, k, allow_negative=allow_negative)
 
 class Combinations_mset(Parent):
     def __init__(self, mset):
@@ -340,16 +386,43 @@ class Combinations_set(Combinations_mset):
 
 
 class Combinations_msetk(Parent):
-    def __init__(self, mset, k):
+    def __init__(self, mset, k, allow_negative=None):
         """
         TESTS::
 
             sage: C = Combinations([1,2,3],2)
             sage: C == loads(dumps(C))
             True
+
+            sage: Combinations([1,2,3], -1, allow_negative=False)
+            Traceback (most recent call last):
+             ...
+            ValueError: k must be non-negative
+            sage: Combinations([1,2,3], -1, allow_negative=None)
+            doctest:...: DeprecationWarning: Calling Combinations with k < 0 currently does not raise an error, but this behavior is deprecated. In future versions, it will raise a ValueError by default. To retain the current behavior (no error), explicitly pass allow_negative=True. To get the future error behavior now, pass allow_negative=False.
+            See https://github.com/sagemath/sage/issues/39411 for details.
+            Combinations of [1, 2, 3] of length -1
+            sage: Combinations([1,2,3], -1, allow_negative=True) # No warning
+            Combinations of [1, 2, 3] of length -1
+
         """
         self.mset = mset
         self.k = k
+        if self.k < 0:
+            if allow_negative is False:
+                raise ValueError("k must be non-negative")
+            elif allow_negative is None:
+                negative_k_deprecation_msg = (
+                    "Calling Combinations with k < 0 currently does not raise an "
+                    "error, but this behavior is deprecated. In future versions, "
+                    "it will raise a ValueError by default. To retain the current "
+                    "behavior (no error), explicitly pass allow_negative=True. "
+                    "To get the future error behavior now, pass "
+                    "allow_negative=False."
+                )
+                from sage.misc.superseded import deprecation
+                deprecation(39411, negative_k_deprecation_msg)
+
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __contains__(self, x) -> bool:
@@ -416,7 +489,17 @@ class Combinations_msetk(Parent):
 
             sage: Combinations(['a','a','b'],2).list() # indirect doctest
             [['a', 'a'], ['a', 'b']]
+
+            sage: list(Combinations(['a','a','b'], -1, allow_negative=True)) # indirect doctest
+            []
+            sage: list(Combinations(['a','a','b'], -1, allow_negative=False)) # indirect doctest
+            Traceback (most recent call last):
+            ...
+            ValueError: k must be non-negative
         """
+        if self.k < 0:
+            return iter([])
+
         items = [self.mset.index(x) for x in self.mset]
         indices = sorted(set(items))
         counts = [0] * len(indices)
@@ -435,9 +518,19 @@ class Combinations_msetk(Parent):
         EXAMPLES::
 
             sage: mset = [1,1,2,3,4,4,5]
-            sage: Combinations(mset,2).cardinality()                                    # needs sage.libs.gap
+            sage: Combinations([1,1,2,3,4,4,5],2).cardinality() # needs sage.libs.gap
             12
+
+            sage: Combinations([1,1,2,3,4,4,5], -1, allow_negative=True).cardinality() # needs sage.libs.gap
+            0
+            sage: Combinations([1,1,2,3,4,4,5], -1, allow_negative=False).cardinality() # needs sage.libs.gap
+            Traceback (most recent call last):
+            ...
+            ValueError: k must be non-negative
         """
+        if self.k < 0:
+            return ZZ(0)
+
         from sage.libs.gap.libgap import libgap
         items = [self.mset.index(i) for i in self.mset]
         nc = libgap.function_factory('NrCombinations')
@@ -445,6 +538,16 @@ class Combinations_msetk(Parent):
 
 
 class Combinations_setk(Combinations_msetk):
+
+    def __init__(self, mset, k, allow_negative=None):
+        """
+        TESTS::
+            sage: C = Combinations([1,2,3], 2, allow_negative=True)
+            sage: C == loads(dumps(C))
+            True
+        """
+        super(Combinations_setk, self).__init__(mset, k, allow_negative=allow_negative)
+
     def _iterator(self, items, n):
         """
         An iterator for all the n-combinations of items.
@@ -488,7 +591,17 @@ class Combinations_setk(Combinations_msetk):
              [2, 3, 5],
              [2, 4, 5],
              [3, 4, 5]]
+
+            sage: list(Combinations([1,2,3], -1, allow_negative=True)) # indirect doctest
+            []
+            sage: list(Combinations([1,2,3], -1, allow_negative=False))
+            Traceback (most recent call last):
+            ...
+            ValueError: k must be non-negative
         """
+        if self.k < 0:
+            return iter([]) 
+
         if self.k == 0:
             return self._iterator_zero()
         else:
@@ -541,7 +654,18 @@ class Combinations_setk(Combinations_msetk):
 
             sage: Combinations(range(16000), 5).cardinality()
             8732673194560003200
+
+            sage: Combinations(range(5), -2, allow_negative=True).cardinality()
+            0
+            sage: Combinations(range(5), -2, allow_negative=False).cardinality()
+            Traceback (most recent call last):
+            ...
+            ValueError: k must be non-negative
+
         """
+        if self.k < 0:
+            return ZZ(0)
+
         return ZZ(binomial(len(self.mset), self.k))
 
 
@@ -641,7 +765,6 @@ def from_rank(r, n, k):
 
     TESTS::
 
-        sage: from sage.combinat.combination import from_rank
         sage: def _comb_largest(a, b, x):
         ....:     w = a - 1
         ....:     while binomial(w,b) > x:
@@ -660,6 +783,7 @@ def from_rank(r, n, k):
         ....:     for i in range(k):
         ....:         comb[i] = (n - 1) - comb[i]
         ....:     return tuple(comb)
+        sage: from sage.combinat.combination import from_rank
         sage: all(from_rank(r, n, k) == from_rank_comb_largest(r, n, k)                 # needs sage.symbolic
         ....:     for n in range(10) for k in range(n+1) for r in range(binomial(n,k)))
         True
