@@ -44,8 +44,8 @@ def Combinations(mset, k=None, *, as_tuples=False):
     objects of `M`, where every object can appear at most as many
     times as it appears in `M`.
 
-    The boolean keyword ``as_tuples`` determines whether each combination
-    is represented as a tuple or as a list.
+    The boolean keyword ``as_tuples`` (default: ``False``) determines whether
+    each combination is represented as a tuple or as a list.
 
     The combinatorial classes correctly handle the cases where ``mset`` has
     duplicate elements.
@@ -480,8 +480,7 @@ class Combinations_setk(Combinations_msetk):
             [(1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4)]
         """
         if self.as_tuples:
-            for combination in itertools.combinations(items, n):
-                yield combination
+            yield from itertools.combinations(items, n)
         else:
             for combination in itertools.combinations(items, n):
                 yield list(combination)
