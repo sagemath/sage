@@ -6957,12 +6957,8 @@ class Partitions_all_constrained(Partitions):
     def cardinality(self):
         if self._max_sum == infinity:
             return infinity
-        n = 0
-        total = 0
-        while n <= self._max_sum:
-            total += Partitions(n, **self._constraints).cardinality()
-            n += 1
-        return total
+        return sum(Partitions(n, **self._constraints).cardinality()
+                   for n in range(self._max_sum+1))
 
 
 class Partitions_all_bounded(Partitions):
