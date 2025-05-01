@@ -106,18 +106,16 @@ AUTHOR:
 #****************************************************************************
 
 from sage.rings.integer cimport Integer
+from sage.structure.element cimport Element
+from sage.misc.cachefunc import cached_method
 
 from sage.categories.homset import Hom
-from sage.structure.element cimport Element
-
-from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_base
-from sage.rings.morphism cimport RingHomomorphism, RingHomomorphism_im_gens, FrobeniusEndomorphism_generic
-from sage.rings.finite_rings.finite_field_constructor import FiniteField
-
+from sage.categories.finite_fields import FiniteFields
 from sage.categories.map cimport Section
 from sage.categories.morphism cimport Morphism
 
-from sage.misc.cachefunc import cached_method
+from sage.rings.morphism cimport RingHomomorphism, RingHomomorphism_im_gens, FrobeniusEndomorphism_generic
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
 
 cdef class SectionFiniteFieldHomomorphism_generic(Section):
@@ -232,11 +230,13 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         """
         domain = parent.domain()
         codomain = parent.codomain()
-        if not isinstance(domain, FiniteField_base):
+        if domain not in FiniteFields():
             raise TypeError("The domain is not a finite field or does not provide the required interface for finite fields")
-        if not isinstance(codomain, FiniteField_base):
+        if codomain not in FiniteFields():
             raise TypeError("The codomain is not a finite field or does not provide the required interface for finite fields")
-        if domain.characteristic() != codomain.characteristic() or codomain.degree() % domain.degree() != 0:
+        ddeg = domain.absolute_degree()
+        cdeg = codomain.absolute_degree()
+        if domain.characteristic() != codomain.characteristic() or cdeg % ddeg != 0:
             raise ValueError("No embedding of %s into %s" % (domain, codomain))
         if im_gens is None:
             im_gens = domain.modulus().any_root(codomain)
@@ -514,27 +514,10 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^3
             sage: FrobeniusEndomorphism_finite_field(k, 2)
             Frobenius endomorphism t |--> t^(5^2) on Finite Field in t of size 5^3
-
-            sage: FrobeniusEndomorphism_finite_field(k, t)
-            Traceback (most recent call last):
-            ...
-            TypeError: n (=t) is not an integer
-
-            sage: FrobeniusEndomorphism_finite_field(k['x'])
-            Traceback (most recent call last):
-            ...
-            TypeError: The domain is not a finite field or does not provide the required interface for finite fields
         """
-        if not isinstance(domain, FiniteField_base):
-            raise TypeError("The domain is not a finite field or does not provide the required interface for finite fields")
-        try:
-            n = Integer(n)
-        except TypeError:
-            raise TypeError("n (=%s) is not an integer" % n)
-
-        self._degree = domain.degree()
+        self._degree = degree = domain.absolute_degree()
         self._power = n % self._degree
-        self._degree_fixed = domain.degree().gcd(self._power)
+        self._degree_fixed = degree.gcd(self._power)
         self._order = self._degree / self._degree_fixed
         self._q = domain.characteristic() ** self._power
         RingHomomorphism.__init__(self, Hom(domain, domain))

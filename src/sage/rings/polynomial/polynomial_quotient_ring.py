@@ -982,6 +982,20 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         """
         return self.modulus().degree()
 
+    def absolute_degree(self):
+        """
+        Return the degree of this quotient ring over its prime subring.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(3^3)
+            sage: R.<x> = PolynomialRing(K)
+            sage: S = R.quotient(x^2 + 1)
+            sage: S.absolute_degree()
+            6
+        """
+        return self.degree() * self.base_ring().absolute_degree()
+
     def discriminant(self, v=None):
         """
         Return the discriminant of this ring over the base ring. This is by

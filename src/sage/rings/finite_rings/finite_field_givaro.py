@@ -605,5 +605,10 @@ class FiniteField_givaro(FiniteField):
 
         - Xavier Caruso (2012-06-29)
         """
+        try:
+            n = Integer(n)
+        except TypeError:
+            raise TypeError("n (=%s) is not an integer" % n)
+
         from sage.rings.finite_rings.hom_finite_field_givaro import FrobeniusEndomorphism_givaro
         return FrobeniusEndomorphism_givaro(self, n)

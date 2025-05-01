@@ -385,8 +385,7 @@ compare equal::
      over Finite Field of size 2 with modulus x^2 + x + 1
       Defn: Natural quotient map
     sage: phi5 = F4.frobenius_endomorphism() ^ 2; phi5
-    Frobenius endomorphism x |--> x^(2^2) of
-     Univariate Quotient Polynomial Ring in a
+    Identity endomorphism of Univariate Quotient Polynomial Ring in a
      over Finite Field of size 2 with modulus x^2 + x + 1
     sage: maps = [phi1, phi2, phi3, phi4, phi5]                                         # needs sage.libs.ntl
     sage: for f in maps:                                                                # needs sage.libs.ntl
@@ -2864,7 +2863,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         - ``domain`` -- a ring
 
-        - ``n`` -- nonnegative integer (default: 1)
+        - ``n`` -- a nonnegative integer
 
         OUTPUT:
 

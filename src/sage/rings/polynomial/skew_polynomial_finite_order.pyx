@@ -317,7 +317,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             else:
                 parent = self._parent
                 section = parent._embed_constants.section()
-                exp = (parent.base_ring().cardinality() - 1) / (parent._constants.cardinality() - 1)
+                exp = (parent.base_ring().cardinality() - 1) // (parent._constants.cardinality() - 1)
                 order = self.parent()._order
                 lc = section(self.leading_coefficient()**exp)
                 if self.degree() == 0:
