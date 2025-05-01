@@ -3640,12 +3640,10 @@ cdef class Matrix(Matrix1):
         """
         cdef Py_ssize_t i
         diag_range = max(self.nrows(), self.ncols()) - 1
-        zero = self._base_ring(0)
 
         for i in range(diag_range, 0, -1):
-            if (any(x != zero for x in self.diagonal(i))
-                    or any(x != zero for x in self.diagonal(-i))):
-                return i
+            if any(self.diagonal(i)) or any(self.diagonal(-i)):
+                return ZZ(i)
         return ZZ.zero()
 
     #####################################################################################
