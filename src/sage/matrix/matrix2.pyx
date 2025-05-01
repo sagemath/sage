@@ -3638,9 +3638,8 @@ cdef class Matrix(Matrix1):
             sage: C.get_bandwidth()
             2
         """
-        cdef Py_ssize_t i, rows, cols
-        rows, cols = self.nrows(), self.ncols()
-        diag_range = max(rows, cols) - 1
+        cdef Py_ssize_t i
+        diag_range = max(self.nrows(), self.ncols()) - 1
         zero = self._base_ring(0)
 
         for i in range(diag_range, 0, -1):
