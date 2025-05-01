@@ -423,7 +423,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         """
         return 1 + self.base_field().order() - self.cardinality()
 
-    def cardinality(self, algorithm=None, extension_degree=1):
+    def cardinality(self, algorithm=None, extension_degree=1) -> Integer:
         r"""
         Return the number of points on this elliptic curve.
 
@@ -1097,10 +1097,25 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         self.gens.set_cache(gens)
         return AdditiveAbelianGroupWrapper(self.point_homset(), gens, orders)
 
-    def torsion_basis(self, n):
+    def torsion_basis(self, n, algorithm="random_sampling"):
         r"""
         Return a basis of the `n`-torsion subgroup of this elliptic curve,
         assuming it is fully rational.
+
+        INPUT:
+
+        - ``n`` -- integer; the characteristic of the torsion subgroup
+
+        - ``algorithm`` -- (optional) string:
+
+          - ``"random_sampling"`` -- samples random points and check they
+            generate `E[n]`.
+
+          - ``"abelian_group"`` -- use :meth:`abelian_group` and
+            :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
+
+        OUTPUT: a pair of points generating `E[n]` when it is isomorphic to `(\Z
+        / n\Z)^2`, else error.
 
         EXAMPLES::
 
@@ -1141,6 +1156,15 @@ class EllipticCurve_finite_field(EllipticCurve_field):
              + 55*z11^5 + 23*z11^4 + 17*z11^3 + 90*z11^2 + 91*z11 + 68
              : 1)
 
+        ::
+
+            sage: p = 79794218649971844095231353624405746567248175305735074351
+            sage: a4 = 784844523063469787196091236863859831638615956106827292
+            sage: a6 = 77070959293993095506146239739645642858141950904466331041
+            sage: E = EllipticCurve(GF(p), [a4, a6])
+            sage: P, Q = E.torsion_basis(210)
+            sage: P.weil_pairing(Q, 210).multiplicative_order()
+
         .. SEEALSO::
 
             Use :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`
@@ -1148,18 +1172,60 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         ALGORITHM:
 
-        This method currently uses :meth:`abelian_group` and
+        When ``algorithm`` is set to "random_sampling" (default), a random point
+        `P` of order `n` (when possible) is sampled by multiplying a random
+        point by `|E| / n`. Other random points `Q` of order `n` are generated,
+        and `e_n(P, Q)` is checked to generate `\mu_n`.
+
+        When ``algorithm'' is set to "abelian_group", this method currently uses
+        :meth:`abelian_group` and
         :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
         """
-        # TODO: In many cases this is not the fastest algorithm.
-        # Alternatives include factoring division polynomials and
-        # random sampling (like PARI's ellgroup, but with a milder
-        # termination condition). We should implement these too
-        # and figure out when to use which.
+        if algorithm == "random_sampling":
+            return self._torsion_basis_from_random_sampling(n)
+
+        if algorithm == "abelian_group":
+            return self._torsion_basis_from_abelian_group(n)
+
+        raise ValueError("only algorithms 'random_sampling' and 'abelian_group' supported")
+
+    def _torsion_basis_from_abelian_group(self, n):
         T = self.abelian_group().torsion_subgroup(n)
         if T.invariants() != (n, n):
             raise ValueError(f'curve does not have full rational {n}-torsion')
         return tuple(P.element() for P in T.gens())
+
+    def _torsion_basis_from_random_sampling(self, n):
+        ordE = self.order()
+        ordE_n_part = ordE.prime_to_m_part(n)
+        n_pf = n.prime_factors()
+
+        # Notice that P is uniformly random in E[n]
+        # If E[n] ≅ (Z/nZ)^2 then Prob[ord(P) < n] >= Prob[ord(P1) < n & ord(P2) < n]
+        # = (phi(n) / n)^2 >= 1 / 4
+        for _ in range(100):
+            P = ordE_n_part * self.random_point()
+            P_ord = generic.order_from_multiple(P, ordE, plist=n_pf)
+            if P_ord % n != 0:
+                continue
+            P *= P_ord // n
+            break
+        else:
+            raise ValueError(f'curve does not have full rational {n}-torsion')
+
+        for _ in range(100):
+            Q = ordE_n_part * self.random_point()
+            Q_ord = generic.order_from_multiple(Q, ordE, plist=n_pf)
+            if Q_ord % n != 0:
+                continue
+            Q *= Q_ord // n
+            w = P.weil_pairing(Q, n)
+            if generic.has_order(w, n, operation="*"):
+                break
+        else:
+            raise ValueError(f'curve does not have full rational {n}-torsion')
+
+        return P, Q
 
     def is_isogenous(self, other, field=None, proof=True):
         """
