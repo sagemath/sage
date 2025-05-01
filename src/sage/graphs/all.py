@@ -10,6 +10,7 @@ from sage.graphs.graph import Graph
 from sage.graphs.digraph import DiGraph
 from sage.graphs.bipartite_graph import BipartiteGraph
 from sage.graphs.matching_covered_graph import MatchingCoveredGraph
+from sage.graphs.planar_maps.all import *
 import sage.graphs.weakly_chordal
 import sage.graphs.lovasz_theta
 import sage.graphs.partial_cube
