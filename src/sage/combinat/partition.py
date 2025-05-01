@@ -282,6 +282,7 @@ We use the lexicographic ordering::
 
 from copy import copy
 from itertools import accumulate
+from random import randint
 
 from sage.arith.misc import binomial, factorial, gcd, multinomial
 from sage.structure.global_options import GlobalOptions
@@ -6289,6 +6290,11 @@ class Partitions(UniqueRepresentation, Parent):
             if not kwargs:
                 return Partitions_all()
 
+            if 'outer' in kwargs: 
+                kwargs['outer'] = tuple(kwargs['outer'])
+                if 'upto' not in kwargs:
+                    kwargs['upto'] = sum(kwargs['couter'])
+
             if len(kwargs) == 1:
                 if 'max_part' in kwargs:
                     return Partitions_all_bounded(kwargs['max_part'])
@@ -6296,6 +6302,10 @@ class Partitions(UniqueRepresentation, Parent):
                     return RegularPartitions_all(kwargs['regular'])
                 if 'restricted' in kwargs:
                     return RestrictedPartitions_all(kwargs['restricted'])
+                if 'outer' in kwargs:
+                    return Partitions_upto_n_constrained(kwargs['upto'], outer=kwargs['outer'])
+                if 'upto' in kwargs:
+                    return Partitions_upto_n(kwargs['upto'])
             elif len(kwargs) == 2:
                 if 'regular' in kwargs:
                     if kwargs['regular'] < 1 or kwargs['regular'] not in ZZ:
@@ -6306,9 +6316,15 @@ class Partitions(UniqueRepresentation, Parent):
                         return RegularPartitions_truncated(kwargs['regular'], kwargs['max_length'])
                 elif 'max_part' in kwargs and 'max_length' in kwargs:
                     return PartitionsInBox(kwargs['max_length'], kwargs['max_part'])
+                elif 'outer' in kwargs and 'max_part' in kwargs:
+                    return Partitions_upto_n_bounded(kwargs['upto'], kwargs['max_part'], outer=kwargs['outer'])
 
             # IntegerListsLex does not deal well with infinite sets,
             # so we use a class inheriting from Partitions
+            if 'upto' in kwargs:
+                upto = kwargs['upto']
+                del kwargs['upto']
+                return Partitions_upto_n_constrained(upto, **kwargs)
             return Partitions_all_constrained(**kwargs)
 
         raise ValueError("n must be an integer or be equal to one of "
@@ -6989,6 +7005,352 @@ class Partitions_all_bounded(Partitions):
                 yield self.element_class(self, p)
             n += 1
 
+
+
+class Partitions_upto_n(Partitions):
+    """
+    Class of all partitions of all integers up to `n`.
+
+    TESTS::
+
+        sage: TestSuite( sage.combinat.partition.Partitions_upto_n(3) ).run()
+    """
+
+    def __init__(self, n):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: P = Partitions(upto=3)
+            sage: P.category()
+            Category of finite enumerated sets
+            sage: P.cardinality()
+            7
+            sage: P.list()
+            [[], [1], [2], [1, 1], [3], [2, 1], [1, 1, 1]]
+            sage: TestSuite(P).run()
+        """
+        Partitions.__init__(self)
+        self.n = n
+
+    def __contains__(self, x):
+        """
+        Check if ``x`` is contained in ``self``.
+
+        TESTS::
+
+            sage: P = Partitions(upto=3)
+            sage: 3 in P
+            False
+            sage: [3] in P
+            True
+            sage: [4] in P
+            False
+            sage: [2, 1] in P
+            True
+            sage: [1,1] in P
+            True
+            sage: [1,1,1,1] in P
+            False
+            sage: [2,2] in P
+            False
+        """
+        return x in _Partitions and sum(x) <= self.n
+    
+    def subset(self, size=None, **kwargs):
+        """
+        Return the subset of partitions of a given size and additional
+        keyword arguments.
+
+        EXAMPLES::
+
+            sage: P = Partitions(upto=3)
+            sage: P.subset(3)
+            Partitions of the integer 3
+            sage: P.subset(3) == Partitions(3)
+            True
+        """
+        if size is None:
+            return self
+        if size > self.n:
+            raise ValueError("size must be less than or equal to %s" % self.n)
+        return Partitions(size, **kwargs)
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        TESTS::
+
+            sage: Partitions(upto=3)
+            Partitions of integers less than or equal to 3
+        """
+        return "Partitions of integers less than or equal to %s" % self.n
+
+    def __iter__(self):
+        """
+        An iterator for all partitions up to the integer `n`.
+
+        EXAMPLES::
+
+            sage: P = Partitions(upto=3)
+            sage: [i for i in P]
+            [[], [1], [2], [1, 1], [3], [2, 1], [1, 1, 1]]
+        """
+        for n in range(self.n + 1):
+            for p in ZS1_iterator(n):
+                yield self.element_class(self, p)
+
+    def __reversed__(self):
+        """
+        A reversed iterator for all partitions up to the integer `n`.
+
+        This reverse iterates through partitions of fixed `n` and incrementing
+        `n` after reaching the end.
+
+        EXAMPLES::
+
+            sage: P = Partitions(upto=3)
+            sage: it = P.__reversed__()
+            sage: [next(it) for i in range(P.cardinality())]
+            [[], [1], [1, 1], [2], [1, 1, 1], [2, 1], [3]]
+        """
+        n = 0
+        while n <= self.n:
+            for p in reversed(list(ZS1_iterator(n))):
+                yield self.element_class(self, p)
+            n += 1
+
+    def cardinality(self, algorithm='flint'):
+        r"""
+        Return the number of partitions of all integers up to `n`.
+
+        INPUT:
+        
+        - ``algorithm`` -- (default: ``'flint'``)
+
+          - ``'flint'`` -- use FLINT (currently the fastest)
+          - ``'gap'`` -- use GAP (VERY *slow*)
+          - ``'pari'`` -- use PARI. Speed seems the same as GAP until
+            `n` is in the thousands, in which case PARI is faster
+
+        .. SEEALSO::
+
+            - :meth:`Partitions_n.cardinality`
+
+        EXAMPLES::
+
+            sage: Partitions(upto=3).cardinality()
+            7
+            sage: Partitions(upto=5).cardinality()
+            19
+            sage: Partitions(upto=40).cardinality()
+            215308
+            sage: Partitions(upto=-2).cardinality()
+            0
+        """
+        total = 0
+        for n in range(self.n + 1):
+            total += Partitions_n(n).cardinality(algorithm=algorithm)
+        return total
+    
+    def random_element(self, measure='uniform'):
+        """
+        Return a random partitions of `n` for the specified measure.
+
+        INPUT:
+
+        - ``measure`` -- ``'uniform'`` or ``'Plancherel'``
+          (default: ``'uniform'``)
+
+        .. SEEALSO::
+
+            - :meth:`Partitions_n.random_element`
+
+        EXAMPLES::
+
+            sage: Partitions(upto=3).random_element()  # random
+            [2, 1]
+        """
+        n = randint(0, self.n)
+        return Partitions_n(n).random_element(measure=measure)
+
+
+class Partitions_upto_n_constrained(Partitions):
+    def __init__(self, n, **kwargs):
+        """
+        TESTS::
+
+            sage: TestSuite(sage.combinat.partition.Partitions_upto_n_constrained(3, max_length=2)).run() # long time
+        """
+        self._constraints = kwargs
+        self.n = n
+        Partitions.__init__(self)
+
+    def __contains__(self, x):
+        """
+        TESTS::
+
+            sage: from sage.combinat.partition import Partitions_upto_n_constrained
+            sage: P = Partitions_upto_n_constrained(5, max_part=3, max_length=2)
+            sage: 1 in P
+            False
+            sage: Partition([2,1]) in P
+            True
+            sage: [2,1] in P
+            True
+            sage: [3,2,1] in P
+            False
+            sage: [1,2] in P
+            False
+            sage: [5,1] in P
+            False
+            sage: [0] in P
+            True
+            sage: [] in P
+            True
+            sage: [3,1,0] in P
+            True
+        """
+        try:
+            if sum(x) > self.n:
+                return False
+            return x in Partitions(sum(x), **self._constraints)
+        except TypeError:
+            return False
+
+    def _repr_(self):
+        """
+        EXAMPLES::
+
+            sage: Partitions(upto=5, max_part=3, max_length=4, min_length=2)
+            Partitions of integers less than or equal to 5 satisfying constraints max_length=4, max_part=3, min_length=2
+        """
+        return "Partitions of integers less than or equal to " + str(self.n) + " satisfying constraints " + ", ".join(["{}={}".format(key, value)
+                                                                                                                  for key, value in sorted(self._constraints.items())])
+
+    def __iter__(self):
+        """
+        An iterator for partitions up to a certain integer with various constraints.
+
+        EXAMPLES::
+
+            sage: P = Partitions(upto=5, max_length=2)
+            sage: P.list()
+            [[], [1], [2], [1, 1], [3], [2, 1], [4], [3, 1], [2, 2], [5], [4, 1], [3, 2]]
+        """
+        for n in range(self.n + 1):
+            for p in Partitions(n, **self._constraints):
+                yield self.element_class(self, p)
+
+    def cardinality(self):
+        r"""
+        Return the number of partitions of all integers up to `n` with certain constraints.
+
+        EXAMPLES::
+
+            sage: Partitions(upto=5, max_length=5).cardinality()
+            19
+            sage: Partitions(upto=5, max_length=3).cardinality()
+            16
+            sage: Partitions(upto=5, max_length=2).cardinality()
+            12
+            sage: Partitions(upto=5, max_length=1).cardinality()
+            6
+        """
+        total = 0
+        for n in range(self.n + 1):
+            total += Partitions(n, **self._constraints).cardinality()
+        return total
+
+
+class Partitions_upto_n_bounded(Partitions):
+    """
+    Partitions of integers up to `n` whose parts do not exceed a given bound.
+    """
+    def __init__(self, n, k):
+        """
+        TESTS::
+
+            sage: TestSuite(sage.combinat.partition.Partitions_upto_n_bounded(4, 3)).run() # long time
+        """
+        self.k = k
+        self.n = n
+        Partitions.__init__(self)
+
+    def __contains__(self, x):
+        """
+        TESTS::
+
+            sage: P = Partitions(upto=5, max_part=3)
+            sage: 1 in P
+            False
+            sage: 0 in P
+            False
+            sage: Partition([2,1]) in P
+            True
+            sage: [2,1] in P
+            True
+            sage: [3,2,1] in P
+            False
+            sage: [2,2,1] in P
+            True
+            sage: [1,2] in P
+            False
+            sage: [4,1] in P
+            False
+            sage: [0] in P
+            True
+            sage: [] in P
+            True
+        """
+        return x in _Partitions and (not x or x[0] <= self.k) and sum(x) <= self.n
+
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: from sage.combinat.partition import Partitions_upto_n_bounded
+            sage: Partitions_upto_n_bounded(4, 3)
+            3-Bounded Partitions of integers less than or equal to 4
+        """
+        return "%d-Bounded Partitions of integers less than or equal to %s" % (self.k, self.n)
+
+    def __iter__(self):
+        """
+        An iterator for all `k`-bounded partitions up to the integer `n`.
+
+        EXAMPLES::
+
+            sage: P = Partitions(upto=4, max_part=2)
+            sage: P.list()
+            [[], [1], [2], [1, 1], [2, 1], [1, 1, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]
+        """
+        for n in range(self.n + 1):
+            for p in Partitions(n, max_part=self.k):
+                yield self.element_class(self, p)
+
+    def cardinality(self):
+        """
+        Return the number of `k`-bounded partitions of all integers up to `n`.
+
+        EXAMPLES::
+
+            sage: Partitions(upto=4, max_part=2).cardinality()
+            9
+            sage: Partitions(upto=5, max_part=2).cardinality()
+            12
+            sage: Partitions(upto=5, max_part=3).cardinality()
+            16
+            sage: Partitions(upto=5, max_part=5).cardinality()
+            19
+        """
+        total = 0
+        for n in range(self.n + 1):
+            total += Partitions_n(n, max_part=self.k).cardinality()
+        return total
+    
 
 class Partitions_n(Partitions):
     """
