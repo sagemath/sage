@@ -5957,10 +5957,10 @@ class Partitions(UniqueRepresentation, Parent):
 
         sage: Partitions(10, min_part=2, length=3).list()
         [[6, 2, 2], [5, 3, 2], [4, 4, 2], [4, 3, 3]]
-
-
+        
     If ``max_sum=k`` is passed then all partitions of `0` up to `k`
     are returned::
+    
         sage: P = Partitions(max_sum=3)
         sage: P.category()
         Category of finite enumerated sets
@@ -6869,7 +6869,7 @@ class Partitions_all_constrained(Partitions):
             sage: [pi for n in range(10) for pi in Partitions(n, max_part=4, max_slope=-3)]
             [[], [1], [2], [3], [4], [4, 1]]
         """
-        
+
         self._constraints = kwargs
         self._max_sum = infinity
         if 'max_sum' in kwargs:
