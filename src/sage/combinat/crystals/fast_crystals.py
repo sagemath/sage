@@ -220,9 +220,9 @@ class FastCrystal(UniqueRepresentation, Parent):
             4
         """
         if self._cartan_type[0] == 'B':
-            m1, m2 = [l1+l2, l1-l2]
+            m1, m2 = l1 + l2, l1 - l2
         else:
-            m1, m2 = [l1, l2]
+            m1, m2 = l1, l2
         for b in range(m2,-1,-1):
             for a in range(m1,m2-1,-1):
                 for c in range(b,a+1):

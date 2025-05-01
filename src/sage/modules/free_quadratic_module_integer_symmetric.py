@@ -325,7 +325,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
 
         sage: L1 = IntegralLattice(2 * matrix.identity(2), [[1/2, 1/2]])
         sage: L2 = IntegralLattice("A3", [[1, 1, 2]])                                   # needs sage.graphs
-        sage: L, phi = IntegralLatticeDirectSum([L1, L2], True)                       # needs sage.graphs
+        sage: L, phi = IntegralLatticeDirectSum([L1, L2], True)                         # needs sage.graphs
         sage: L                                                                         # needs sage.graphs
         Lattice of degree 5 and rank 2 over Integer Ring
         Basis matrix:
@@ -345,7 +345,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
     dims = [L_i.dimension() for L_i in Lattices]
     degrees = [L_i.degree() for L_i in Lattices]
     degree_tot = sum(degrees)
-    sum_degree = [sum(degrees[:i]) for i in range(N+1)]
+    sum_degree = [sum(degrees[:i]) for i in range(N + 1)]
     inner_product_list = [copy(L_i.inner_product_matrix()) for L_i in Lattices]
     IM = matrix.block_diagonal(inner_product_list)
     ambient = FreeQuadraticModule(ZZ,

@@ -1215,8 +1215,8 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         """
         start = self._start.coordinates()
         end = self._end.coordinates()
-        x1, x2 = [real(k) for k in [start, end]]
-        y1, y2 = [imag(k) for k in [start, end]]
+        x1, x2 = real(start), real(end)
+        y1, y2 = imag(start), imag(end)
         M = self._model
         # infinity is the first endpoint, so the other ideal endpoint
         # is just the real part of the second coordinate
