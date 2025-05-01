@@ -10,7 +10,7 @@ class InvalidSwapPermutationArgument(Exception):
         super().__init__("Invalid argument for swap permutation")
 
 
-class NotImplementedErrorError(Exception):
+class NotImplementedError(Exception):
     def __init__(self, x):
         super().__init__(
             f"This  method isn't implemented for the class {x.__class__} ")

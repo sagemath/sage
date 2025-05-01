@@ -1,5 +1,5 @@
 from numpy import delete
-from LabelledMap import *
+from sage.graphs.planar_maps.LabelledMap import *
 from sage.all import Permutation  # Import sage library
 from sage.graphs.planar_maps.MutableTopologicalDemiEdge import *
 from sage.graphs.planar_maps.RotatingPermutationUtilsAbstractor import RotatingPermutationUtilsAbstractor

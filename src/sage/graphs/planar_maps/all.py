@@ -1,6 +1,5 @@
 from sage.misc.lazy_import import lazy_import
 
-
 lazy_import("sage.graphs.planar_maps.Banner", ["mapBanner", "bannerExampleStart", "bannerExampleEnd"])
 lazy_import("sage.graphs.planar_maps.LabelledMap", "LabelledMap")
 lazy_import("sage.graphs.planar_maps.MutableLabelledMap", "MutableLabelledMap")
