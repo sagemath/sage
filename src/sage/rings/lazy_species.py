@@ -68,6 +68,7 @@ EXAMPLES::
 
 from sage.misc.lazy_list import lazy_list
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.lazy_series import LazyCompletionGradedAlgebraElement, LazyModuleElement
 from sage.rings.lazy_series_ring import (LazyCompletionGradedAlgebra,
                                          LazyPowerSeriesRing,
@@ -617,8 +618,12 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         # f is a constant polynomial
         if (isinstance(self._coeff_stream, Stream_exact)
             and not self._coeff_stream._constant
-            and self.polynomial().is_constant()):
-            return P(self.polynomial())
+            and self._coeff_stream._degree == 1):
+            c = self._coeff_stream[0]
+            B = c.parent()
+            if B is ZZ or B is QQ or B == self.base_ring():
+                return P(c)
+            return P(c.coefficients()[0])
 
         return CompositionSpeciesElement(self, *args)
 
