@@ -5960,7 +5960,7 @@ class Partitions(UniqueRepresentation, Parent):
         
     If ``max_sum=k`` is passed then all partitions of `0` up to `k`
     are returned::
-    
+
         sage: P = Partitions(max_sum=3)
         sage: P.category()
         Category of finite enumerated sets
@@ -6953,6 +6953,16 @@ class Partitions_all_constrained(Partitions):
             for p in Partitions(n, **self._constraints):
                 yield self.element_class(self, p)
             n += 1
+    
+    def cardinality(self):
+        if self._max_sum == infinity:
+            return infinity
+        n = 0
+        total = 0
+        while n <= self._max_sum:
+            total += Partitions(n, **self._constraints).cardinality()
+            n += 1
+        return total
 
 
 class Partitions_all_bounded(Partitions):
