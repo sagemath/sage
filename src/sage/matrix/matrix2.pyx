@@ -3612,8 +3612,8 @@ cdef class Matrix(Matrix1):
 
     def get_bandwidth(self):
         """
-        Return the bandwidth of ``self``, which is the spread of nonzero
-        elements around its main diagonal.
+        Return the bandwidth of ``self``, which is the maximum `i` such that
+        the `i` superdiagonal or subdiagonal contains a nonzero entry.
 
         EXAMPLES::
 
@@ -3646,7 +3646,7 @@ cdef class Matrix(Matrix1):
             if (any(x != zero for x in self.diagonal(i))
                     or any(x != zero for x in self.diagonal(-i))):
                 return i
-        return 0
+        return ZZ.zero()
 
     #####################################################################################
     # Generic Hessenberg Form and charpoly algorithm
