@@ -51,6 +51,9 @@ do
         --yes)
             YES=yes
             ;;
+        --ignore-missing)
+            IGNORE_MISSING=yes
+            ;;
         -*)
             echo >&2 "$0: unknown option $1"
             exit 1
@@ -142,10 +145,15 @@ case $system:$command in
     @(debian*|ubuntu*):*)
         [ "$NO_INSTALL_RECOMMENDS" = yes ] && options="$options --no-install-recommends"
         [ "$YES" = yes ] && options="$options --yes" env="DEBIAN_FRONTEND=noninteractive "
-        [ -n "$system_packages" ] && print_shell_command ${SUDO}${env}apt-get $command $options $system_packages
+        if [ "$IGNORE_MISSING" = yes ]; then
+            [ -n "$system_packages" ] && echo "for pkg in $system_packages; do ${SUDO}${env}apt-get $command $options \$pkg || true; done"
+        else
+            [ -n "$system_packages" ] && print_shell_command ${SUDO}${env}apt-get $command $options $system_packages
+        fi
         ;;
     @(fedora*|redhat*|centos*):install)
         [ "$YES" = yes ] && options="$options -y"
+        [ "$IGNORE_MISSING" = yes ] && options="$options --skip-broken"
         [ -n "$system_packages" ] && print_shell_command ${SUDO}yum install $options $system_packages
         ;;
     gentoo*:install)
@@ -156,7 +164,11 @@ case $system:$command in
         ;;
     arch*:install)
         [ "$YES" = yes ] && options="$options --noconfirm"
-        [ -n "$system_packages" ] && print_shell_command ${SUDO}pacman -S $options $system_packages
+        if [ "$IGNORE_MISSING" = yes ]; then
+            [ -n "$system_packages" ] && echo "for pkg in $system_packages; do ${SUDO}pacman -S $options \$pkg || true; done"
+        else
+            [ -n "$system_packages" ] && print_shell_command ${SUDO}pacman -S $options $system_packages
+        fi
         ;;
     void*:update)
         print_shell_command "${SUDO}xbps-install -Su"
@@ -166,7 +178,9 @@ case $system:$command in
         [ -n "$system_packages" ] && print_shell_command ${SUDO}xbps-install $options $system_packages
         ;;
     opensuse*:install)
-        [ -n "$system_packages" ] && print_shell_command ${SUDO}zypper install $system_packages
+        [ "$YES" = yes ] && options_pre="--non-interactive"
+        [ "$IGNORE_MISSING" = yes ] && options_pre="$options_pre --ignore-unknown"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}zypper $options_pre install $options $system_packages
         ;;
     *conda*:install)
         [ "$YES" = yes ] && options="$options --yes"
@@ -192,7 +206,11 @@ case $system:$command in
         print_shell_command "apk update"
         ;;
     alpine:install)
-        [ -n "$system_packages" ] && print_shell_command apk add $system_packages
+        if [ "$IGNORE_MISSING" = yes ]; then
+            [ -n "$system_packages" ] && echo "for pkg in $system_packages; do apk add \$pkg || true; done"
+        else
+            [ -n "$system_packages" ] && print_shell_command apk add $system_packages
+        fi
         ;;
     pip:install)
         [ -n "$system_packages" ] && print_shell_command sage -pip install $system_packages
