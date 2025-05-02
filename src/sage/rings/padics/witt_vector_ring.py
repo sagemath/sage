@@ -277,7 +277,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         for t in product(self._coefficient_ring, repeat=self._prec):
             yield self(t)
 
-    def _generate_sum_and_product_polynomials(self, base):
+    def _generate_sum_and_product_polynomials(self):
         """
         Generates the sum and product polynomials defining the ring laws of
         truncated Witt vectors for the ``standard`` algorithm.
@@ -344,7 +344,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         # ``PolynomialRing(GF(5)['x'], ['X', 'Y'],
         #                  implementation='singular')``
         # will fail.
-        S = PolynomialRing(base, x_y_vars, implementation='generic')
+        S = PolynomialRing(self._coefficient_ring, x_y_vars,
+                           implementation='generic')
         for n in range(prec):
             self._sum_polynomials[n] = S(self._sum_polynomials[n])
             self._prod_polynomials[n] = S(self._prod_polynomials[n])
@@ -467,9 +468,16 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         """
         return self._prime
 
-    def prod_polynomials(self):
+    def prod_polynomials(self, variables=None):
         """
         Return the Witt product polynomials.
+
+        INPUT:
+
+        - ``variables`` -- names of the indeterminates (default: ``None``),
+          given as a string, or as a list of strings, whose length must be the
+          double of the precision of the ring. When nothing is given,
+          variables indexed by `X` and `Y` are used.
 
         EXAMPLES::
 
@@ -480,12 +488,16 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             -X0^5*X1^4*Y0^20*Y1 + 3*X0^10*X1^3*Y0^15*Y1^2 + 3*X0^15*X1^2*Y0^10*Y1^3 - X0^20*X1*Y0^5*Y1^4 + X2*Y0^25 + X0^25*Y2 + X1^5*Y1^5]
 
             sage: W = WittVectorRing(ZZ, p=2, prec=2)
-            sage: W.prod_polynomials()
-            [X0*Y0, X1*Y0^2 + X0^2*Y1 + 2*X1*Y1]
+            sage: W.prod_polynomials('T0, T1, U0, U1')
+            [T0*U0, T1*U0^2 + T0^2*U1 + 2*T1*U1]
         """
         if self._prod_polynomials is None:
-            self._generate_sum_and_product_polynomials(self._coefficient_ring)
-        return self._prod_polynomials.copy()
+            self._generate_sum_and_product_polynomials()
+        if variables is None:
+            return self._prod_polynomials.copy()
+        R = PolynomialRing(self._coefficient_ring, variables,
+                           implementation='generic')
+        return [R(self._prod_polynomials[i]) for i in range(self._prec)]
 
     def random_element(self, *args, **kwds):
         """
@@ -505,15 +517,22 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         return self(tuple(self._coefficient_ring.random_element(*args, **kwds)
                           for _ in range(self._prec)))
 
-    def sum_polynomials(self):
+    def sum_polynomials(self, variables=None):
         """
         Return the Witt sum polynomials.
+
+        INPUT:
+
+        - ``variables`` -- names of the indeterminates (default: ``None``),
+          given as a string, or as a list of strings, whose length must be the
+          double of the precision of the ring. When nothing is given,
+          variables indexed by `X` and `Y` are used.
 
         EXAMPLES::
 
             sage: W = WittVectorRing(GF(5), prec=2)
-            sage: W.sum_polynomials()
-            [X0 + Y0, -X0^4*Y0 + 3*X0^3*Y0^2 + 3*X0^2*Y0^3 - X0*Y0^4 + X1 + Y1]
+            sage: W.sum_polynomials(['T0', 'T1', 'U0', 'U1'])
+            [T0 + U0, -T0^4*U0 + 3*T0^3*U0^2 + 3*T0^2*U0^3 - T0*U0^4 + T1 + U1]
 
             sage: W = WittVectorRing(ZZ, p=2, prec=3)
             sage: W.sum_polynomials()
@@ -522,8 +541,12 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             -X0^3*Y0 - 2*X0^2*Y0^2 - X0*Y0^3 + X0*X1*Y0 + X0*Y0*Y1 - X1*Y1 + X2 + Y2]
         """
         if self._sum_polynomials is None:
-            self._generate_sum_and_product_polynomials(self._coefficient_ring)
-        return self._sum_polynomials.copy()
+            self._generate_sum_and_product_polynomials()
+        if variables is None:
+            return self._sum_polynomials.copy()
+        R = PolynomialRing(self._coefficient_ring, variables,
+                           implementation='generic')
+        return [R(self._sum_polynomials[i]) for i in range(self._prec)]
 
     def teichmuller_lift(self, x):
         """
@@ -906,7 +929,7 @@ class WittVectorRing_standard(WittVectorRing):
         self._prec = prec
         self._prime = prime
 
-        self._generate_sum_and_product_polynomials(coefficient_ring)
+        self._generate_sum_and_product_polynomials()
 
         CommutativeRing.__init__(self, self)
 
