@@ -44,7 +44,7 @@ jobs:
         run: |
           # Install dnf5
           if [ "${{ matrix.container }}" = "fedora:40" ] && ! rpm -q dnf5 >/dev/null; then
-              rpm-ostree install dnf5 dnf5-plugins
+              dnf install dnf5 -y
           fi
 
           SYSTEM=$(build/bin/sage-guess-package-system)
