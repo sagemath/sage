@@ -153,7 +153,7 @@ case $system:$command in
         ;;
     @(fedora*|redhat*|centos*):install)
         [ "$YES" = yes ] && options="$options -y"
-        [ "$IGNORE_MISSING" = yes ] && options="$options --skip-broken"
+        [ "$IGNORE_MISSING" = yes ] && options="$options --skip-unavailable"
         [ -n "$system_packages" ] && print_shell_command ${SUDO}yum install $options $system_packages
         ;;
     gentoo*:install)

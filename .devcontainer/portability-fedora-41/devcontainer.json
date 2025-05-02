@@ -6,7 +6,7 @@
     "features": {
         "ghcr.io/devcontainers/features/git": {},
         "ghcr.io/devcontainers/features/python:1": {},
-        ".devcontainer/uv": {
+        "../uv": {
 			"version": "latest"
 		}
     },

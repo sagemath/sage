@@ -1,13 +1,13 @@
 sirocco = cc.find_library('sirocco', required: false, disabler: true)
 # cannot be found via pkg-config
-ecl = cc.find_library('ecl')
+ecl = cc.find_library('ecl', required: false, disabler: true)
 braiding = dependency('libbraiding', required: false)
 if not braiding.found()
   # Fallback since pkg-config support was only added in v1.3.1
   braiding = cc.find_library('braiding')
 endif
 gc = dependency(['bdw-gc-threaded', 'bdw-gc'], version: '>=7.6.4')
-homfly = cc.find_library('homfly', has_headers: ['homfly.h'])
+homfly = cc.find_library('homfly', has_headers: ['homfly.h'], required: false, disabler: true)
 
 py.install_sources(
   '__init__.py',

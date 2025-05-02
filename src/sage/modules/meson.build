@@ -76,11 +76,10 @@ foreach name, pyx : extension_data
     include_directories: [
       inc_cpython,
       inc_ext,
-      inc_numpy,
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png],
+    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
   )
 endforeach
 
@@ -99,11 +98,10 @@ foreach name, pyx : extension_data_cpp
     include_directories: [
       inc_cpython,
       inc_ext,
-      inc_numpy,
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png],
+    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
   )
 endforeach
 
