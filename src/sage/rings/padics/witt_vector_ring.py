@@ -277,6 +277,65 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         for t in product(self._coefficient_ring, repeat=self._prec):
             yield self(t)
 
+    def _coerce_map_from_(self, S):
+        """"
+        Check whether there is a coerce map from ``S``.
+
+        EXAMPLES::
+
+            sage: K = GF(7)
+            sage: WK = WittVectorRing(K, prec=3)
+            sage: W = WittVectorRing(PolynomialRing(K, 't'), prec=3)
+            sage: Wf = WittVectorRing(PolynomialRing(K, 't'), prec=3, algorithm='finotti')
+            sage: WW = WittVectorRing(PolynomialRing(K, 't,u'), prec=3)
+            sage: Wf.has_coerce_map_from(WK)  # indirect doctest
+            True
+            sage: Wf.has_coerce_map_from(W)  # indirect doctest
+            False
+            sage: WW.has_coerce_map_from(W)  # indirect doctest
+            True
+            sage: WW.has_coerce_map_from(Wf)  # indirect doctest
+            True
+            sage: WW.has_coerce_map_from(WK)  # indirect doctest
+            True
+
+            sage: W = WittVectorRing(GF(25), prec=2)
+            sage: W.has_coerce_map_from(WittVectorRing(GF(5), prec=3))  # indirect doctest
+            True
+            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=5, prec=3))  # indirect doctest
+            True
+            sage: W.has_coerce_map_from(WittVectorRing(PolynomialRing(GF(5), 't,u'), prec=3))  # indirect doctest
+            False
+            sage: WW = WittVectorRing(PolynomialRing(GF(5), 't'), prec=3)
+            sage: WW.has_coerce_map_from(W)  # indirect doctest
+            False
+            sage: W.has_coerce_map_from(WW)  # indirect doctest
+            False
+
+            sage: W = WittVectorRing(QQ, p=3, prec=3)
+            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=3, prec=3))  # indirect doctest
+            True
+            sage: W.has_coerce_map_from(WittVectorRing(QQ, p=3, prec=2))  # indirect doctest
+            False
+
+            sage: W = WittVectorRing(PolynomialRing(ZZ, 'x'), p=5, prec=2)
+            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=5, prec=3))  # indirect doctest
+            True
+            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=3, prec=3))  # indirect doctest
+            False
+        """
+        if (isinstance(S, WittVectorRing)
+            and S.precision() >= self._prec and S.prime() == self._prime
+            and self._coefficient_ring.has_coerce_map_from(
+                     S.coefficient_ring())):
+            return (any(isinstance(S, rng) for rng in self._always_coerce)
+                    or (S.precision() != self._prec
+                        or S.coefficient_ring() is not self._coefficient_ring)
+                    and any(isinstance(S, rng)
+                            for rng in self._coerce_when_different))
+        if S is ZZ:
+            return True
+
     def _generate_sum_and_product_polynomials(self):
         """
         Generates the sum and product polynomials defining the ring laws of
@@ -605,6 +664,16 @@ class WittVectorRing_finotti(WittVectorRing):
         self._prod_polynomials = None
         self._sum_polynomials = None
 
+        if isinstance(self._coefficient_ring, MPolynomialRing_base):
+            self._always_coerce = [WittVectorRing_finotti,
+                                   WittVectorRing_phantom,
+                                   WittVectorRing_standard]
+            self._coerce_when_different = []
+        else:
+            self._always_coerce = [WittVectorRing_finotti,
+                                   WittVectorRing_standard]
+            self._coerce_when_different = [WittVectorRing_phantom]
+
         import numpy as np
         p = self._prime
         R = Zp(p, prec=self._prec+1, type='fixed-mod')
@@ -631,47 +700,6 @@ class WittVectorRing_finotti(WittVectorRing):
         self._binomial_table = table
 
         CommutativeRing.__init__(self, self)
-
-    def _coerce_map_from_(self, S):
-        """"
-        Check whether there is a coerce map from ``S``.
-
-        EXAMPLES::
-
-            sage: K = GF(7)
-            sage: WK = WittVectorRing(K, prec=3)
-            sage: W = WittVectorRing(PolynomialRing(K, 't'), prec=3)
-            sage: Wf = WittVectorRing(PolynomialRing(K, 't'), prec=3, algorithm='finotti')
-            sage: WW = WittVectorRing(PolynomialRing(K, 't,u'), prec=3)
-            sage: Wf.has_coerce_map_from(WK)  # indirect doctest
-            False
-            sage: Wf.has_coerce_map_from(W)  # indirect doctest
-            False
-            sage: WW.has_coerce_map_from(W)  # indirect doctest
-            True
-            sage: WW.has_coerce_map_from(Wf)  # indirect doctest
-            True
-            sage: WW.has_coerce_map_from(WK)  # indirect doctest
-            True
-        """
-        if (isinstance(S, WittVectorRing_finotti)
-            or isinstance(S,
-                          WittVectorRing_standard)):
-            return (
-                S.precision() >= self._prec
-                and self._prime == S.prime()
-                and self._coefficient_ring.has_coerce_map_from(
-                    S.coefficient_ring()))
-        if isinstance(S, WittVectorRing_phantom):
-            return (
-                S.precision() >= self._prec
-                and self._prime == S.prime()
-                and self._coefficient_ring.has_coerce_map_from(
-                    S.coefficient_ring())
-                and (isinstance(self._coefficient_ring, MPolynomialRing_base)
-                     or S.precision() != self._prec))
-        if S is ZZ:
-            return True
 
     def _eta_bar(self, vec, eta_index):
         r"""
@@ -785,46 +813,19 @@ class WittVectorRing_phantom(WittVectorRing):
         self._prod_polynomials = None
         self._sum_polynomials = None
 
+        if (self._coefficient_ring in Fields().Finite()
+            or isinstance(self._coefficient_ring,
+                          PolynomialRing_generic)):
+            self._always_coerce = [WittVectorRing_finotti,
+                                   WittVectorRing_phantom,
+                                   WittVectorRing_standard]
+            self._coerce_when_different = []
+        else:
+            self._always_coerce = [WittVectorRing_phantom,
+                                   WittVectorRing_standard]
+            self._coerce_when_different = [WittVectorRing_finotti]
+
         CommutativeRing.__init__(self, self)
-
-    def _coerce_map_from_(self, S):
-        """"
-        Check whether there is a coerce map from ``S``.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(25), prec=2)
-            sage: W.has_coerce_map_from(WittVectorRing(GF(5), prec=3))  # indirect doctest
-            True
-            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=5, prec=3))  # indirect doctest
-            True
-            sage: W.has_coerce_map_from(WittVectorRing(PolynomialRing(GF(5), 't,u'), prec=3))  # indirect doctest
-            False
-            sage: WW = WittVectorRing(PolynomialRing(GF(5), 't'), prec=3)
-            sage: WW.has_coerce_map_from(W)  # indirect doctest
-            False
-            sage: W.has_coerce_map_from(WW)  # indirect doctest
-            False
-        """
-        if (isinstance(S, WittVectorRing_phantom)
-            or isinstance(S,
-                          WittVectorRing_standard)):
-            return (
-                S.precision() >= self._prec
-                and self._prime == S.prime()
-                and self._coefficient_ring.has_coerce_map_from(
-                    S.coefficient_ring()))
-        if isinstance(S, WittVectorRing_finotti):
-            return (
-                S.precision() >= self._prec
-                and self._prime == S.prime()
-                and self._coefficient_ring.has_coerce_map_from(
-                    S.coefficient_ring())
-                and (not isinstance(self._coefficient_ring,
-                                    MPolynomialRing_base)
-                     or S.precision() != self._prec))
-        if S is ZZ:
-            return True
 
 
 class WittVectorRing_pinvertible(WittVectorRing):
@@ -862,36 +863,16 @@ class WittVectorRing_pinvertible(WittVectorRing):
             raise ValueError("the 'p_invertible' algorithm only works when p "
                              "is a unit in the ring of coefficients")
 
+        self._always_coerce = [WittVectorRing_pinvertible,
+                               WittVectorRing_standard]
         self._coefficient_ring = coefficient_ring
+        self._coerce_when_different = []
         self._prec = prec
         self._prime = prime
         self._prod_polynomials = None
         self._sum_polynomials = None
 
         CommutativeRing.__init__(self, self)
-
-    def _coerce_map_from_(self, S):
-        """"
-        Check whether there is a coerce map from ``S``.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(QQ, p=3, prec=3)
-            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=3, prec=3))  # indirect doctest
-            True
-            sage: W.has_coerce_map_from(WittVectorRing(QQ, p=3, prec=2))  # indirect doctest
-            False
-        """
-        if (isinstance(S, WittVectorRing_pinvertible)
-            or isinstance(S,
-                          WittVectorRing_standard)):
-            return (
-                S.precision() >= self._prec
-                and self._prime == S.prime()
-                and self._coefficient_ring.has_coerce_map_from(
-                    S.coefficient_ring()))
-        if S is ZZ:
-            return True
 
 
 class WittVectorRing_standard(WittVectorRing):
@@ -925,38 +906,12 @@ class WittVectorRing_standard(WittVectorRing):
 
             sage: TestSuite(W).run()
         """
+        self._always_coerce = []
         self._coefficient_ring = coefficient_ring
+        self._coerce_when_different = [WittVectorRing]
         self._prec = prec
         self._prime = prime
 
         self._generate_sum_and_product_polynomials()
 
         CommutativeRing.__init__(self, self)
-
-    def _coerce_map_from_(self, S):
-        """"
-        Check whether there is a coerce map from ``S``.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(PolynomialRing(ZZ, 'x'), p=5, prec=2)
-            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=5, prec=3))  # indirect doctest
-            True
-            sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=3, prec=3))  # indirect doctest
-            False
-        """
-        if isinstance(S, WittVectorRing_standard):
-            return (
-                S.precision() >= self._prec
-                and self._prime == S.prime()
-                and self._coefficient_ring.has_coerce_map_from(
-                    S.coefficient_ring()))
-        if isinstance(S, WittVectorRing):
-            return (
-                (S.precision() > self._prec
-                 or S.coefficient_ring is not self._coefficient_ring)
-                and self._prime == S.prime()
-                and self._coefficient_ring.has_coerce_map_from(
-                    S.coefficient_ring()))
-        if S is ZZ:
-            return True
