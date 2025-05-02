@@ -7,7 +7,6 @@ Derives from the space of quotient ring homomorphisms implement in
 `sage.ring.homset.RingHomset_quo_ring` in order to explicitly allow
 "no generators", e.g. im_gens = [].
 
-
 EXAMPLES::
 
     sage: A.<h> = ChowRing('h', 1, 'h^3')
@@ -66,12 +65,14 @@ from sage.rings import morphism
 
 class ChowRingHomSet(RingHomset_generic):
     """
-    sage: CR.<h> = ChowRing('h', 1, 'h^2')
-    sage: CS.<k> = ChowRing('k', 1, 'k^4')
-    sage: cf = CS.hom([3*h], CR)
-    sage: cg = loads(cf.dumps())
-    sage: cf == cg
-    True
+    EXAMPLES::
+    
+        sage: CR.<h> = ChowRing('h', 1, 'h^2')
+        sage: CS.<k> = ChowRing('k', 1, 'k^4')
+        sage: cf = CS.hom([3*h], CR)
+        sage: cg = loads(cf.dumps())
+        sage: cf == cg
+        True
     """
     Element = morphism.RingHomomorphism_from_quotient
 
