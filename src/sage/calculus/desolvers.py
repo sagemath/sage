@@ -605,8 +605,8 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
                 maxima_method = P("method")
             raise NotImplementedError("Unable to use initial condition for this equation (%s)." % (str(maxima_method).strip()))
         if len(ics) == 2:
-            tempic = (ivar == ics[0])._maxima_().str()
-            tempic = tempic + "," + (dvar == ics[1])._maxima_().str()
+            tempic = (ivar == ics[0])._maxima_init_solve_()
+            tempic = tempic + "," + (dvar == ics[1])._maxima_init_solve_()
             cmd = "(TEMP:ic1(%s(%s,%s,%s),%s),substitute(%s=%s(%s),TEMP))" % (ode_solver, de00, dvar_str, ivar_str, tempic, dvar_str, dvar_str, ivar_str)
             cmd = sanitize_var(cmd)
             # we produce string like this
@@ -621,8 +621,8 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
                 if not freeof(lhs(ya),TEMP_k) or not freeof(lhs(xa),TEMP_k) then return (false), \
                 temp: maplist(lambda([zz], subst(zz,soln)), TEMP_k), \
                 if length(temp)=1 then return(first(temp)) else return(temp))")
-            tempic = P(ivar == ics[0]).str()
-            tempic += "," + P(dvar == ics[1]).str()
+            tempic = P((ivar == ics[0])._maxima_init_solve_()).str()
+            tempic += "," + P((dvar == ics[1])._maxima_init_solve_()).str()
             tempic += ",'diff(" + dvar_str + "," + ivar_str + ")=" + P(ics[2]).str()
             cmd = "(TEMP:ic2_sage(%s(%s,%s,%s),%s),substitute(%s=%s(%s),TEMP))" % (ode_solver, de00, dvar_str, ivar_str, tempic, dvar_str, dvar_str, ivar_str)
             cmd = sanitize_var(cmd)
@@ -639,7 +639,11 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
                 if not freeof(lhs(ya),TEMP_k) or not freeof(lhs(xa),TEMP_k) then return (false), \
                 temp: maplist(lambda([zz], subst(zz,soln)),TEMP_k), \
                 if length(temp)=1 then return(first(temp)) else return(temp))")
-            cmd = "bc2_sage(%s(%s,%s,%s),%s,%s=%s,%s,%s=%s)" % (ode_solver, de00, dvar_str, ivar_str, P(ivar == ics[0]).str(), dvar_str, P(ics[1]).str(), P(ivar == ics[2]).str(), dvar_str, P(ics[3]).str())
+            cmd = "bc2_sage(%s(%s,%s,%s),%s,%s=%s,%s,%s=%s)" % (ode_solver, de00, dvar_str, ivar_str,
+                                                                P((ivar == ics[0])._maxima_init_solve_()).str(),
+                                                                dvar_str, P(ics[1]).str(),
+                                                                P((ivar == ics[2])._maxima_init_solve_()).str(),
+                                                                dvar_str, P(ics[3]).str())
             cmd = "(TEMP:%s,substitute(%s=%s(%s),TEMP))" % (cmd, dvar_str, dvar_str, ivar_str)
             cmd = sanitize_var(cmd)
             # we produce string like this
@@ -933,8 +937,9 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm='maxima'):
     if ics is not None:
         ivar_ic = ics[0]
         for dvar, ic in zip(dvars, ics[1:]):
-            dvar.atvalue(ivar == ivar_ic, ic)
-    soln = dvars[0].parent().desolve(des, dvars)
+            dvar.atvalue((ivar == ivar_ic)._maxima_init_solve_(), ic)
+    des_maxima_solve = [de._maxima_init_solve_() for de in des]
+    soln = dvars[0].parent().desolve(des_maxima_solve, dvars)
     if str(soln).strip() == 'false':
         raise NotImplementedError("Maxima was unable to solve this system.")
     soln = list(soln)
@@ -943,7 +948,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm='maxima'):
     if ics is not None:
         ivar_ic = ics[0]
         for dvar, ic in zip(dvars, ics[:1]):
-            dvar.atvalue(ivar == ivar_ic, dvar)
+            dvar.atvalue((ivar == ivar_ic)._maxima_init_solve_(), dvar)
     return soln
 
 
