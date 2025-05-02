@@ -177,6 +177,9 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         """
         if not isinstance(other, NumberFieldOrderIdeal_generic):
             return NotImplemented
+        # fun fact, this never triggers anyways because the coercion model
+        # doesn't find a common parent between ideals of orders and hence just
+        # says they're never equal
         if self.ring() != other.ring():
             return NotImplemented
         return richcmp(self._module, other._module, op)
@@ -289,7 +292,7 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
             sage: O.ideal(2 * a).is_invertible()
             False
         """
-        return self.is_coprime(self.order().conductor())
+        return self.is_coprime(self.ring().conductor(as_ideal=True))
 
 
 def _positive_sqrt(R, D):

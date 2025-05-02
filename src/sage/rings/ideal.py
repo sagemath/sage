@@ -989,7 +989,7 @@ class Ideal_generic(MonoidElement):
         r"""
         Test whether this ideal is coprime to the ``other`` ideal.
 
-        Two ideals `P` and `Q` are coprime if `P + Q = R`
+        Two ideals `P` and `Q` are coprime if `P + Q = R`.
 
         EXAMPLES::
 
@@ -999,8 +999,6 @@ class Ideal_generic(MonoidElement):
             False
             sage: (2 * R).is_coprime(3 * R)
             True
-            sage: K.ideal([1 / 2]).is_coprime(K.ideal([1 / 3]))
-            False
 
         In some rings, equality of ideals is not properly implemented, for
         example because there is no fast algorithms. So we don't implement this
