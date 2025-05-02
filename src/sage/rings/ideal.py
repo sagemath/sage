@@ -985,6 +985,54 @@ class Ideal_generic(MonoidElement):
         """
         return self.is_zero() or self == self.ring().unit_ideal()
 
+    def is_coprime(self, other):
+        r"""
+        Test whether this ideal is coprime to the ``other`` ideal.
+
+        Two ideals `P` and `Q` are coprime if `P + Q = R`
+
+        EXAMPLES::
+
+            sage: K.<a> = QuadraticField(13)
+            sage: R = K.maximal_order()
+            sage: (2 * R).is_coprime(4 * R)
+            False
+            sage: (2 * R).is_coprime(3 * R)
+            True
+            sage: K.ideal([1 / 2]).is_coprime(K.ideal([1 / 3]))
+            False
+
+        In some rings, equality of ideals is not properly implemented, for
+        example because there is no fast algorithms. So we don't implement this
+        method for those rings::
+
+            sage: R.<x> = ZZ[]
+            sage: (1 * R).is_coprime(1 * R)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        # This is buggy because some equality of ideals are incorrect, say ZZ[x]
+        # So we only implement this for rings we (I) know is correct.
+        if self.ring() is not other.ring():
+            raise ValueError("ideals are not from the same ring")
+
+        # I don't know if this is a good idea, but in the future more ideal
+        # types can be added here
+        implemented = False
+
+        from sage.rings.number_field.order_ideal import NumberFieldOrderIdeal_generic
+        if isinstance(self, NumberFieldOrderIdeal_generic) and isinstance(other, NumberFieldOrderIdeal_generic):
+            implemented = True
+
+        from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
+        if isinstance(self, NumberFieldIdeal) and isinstance(other, NumberFieldIdeal):
+            implemented = True
+
+        if implemented:
+            return self + other == 1 * self.ring()
+        raise NotImplementedError
+
     def category(self):
         """
         Return the category of this ideal.
