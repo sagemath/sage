@@ -342,7 +342,9 @@ class ode_solver():
         sage: with NamedTemporaryFile(suffix='.png') as f:
         ....:     T.plot_solution(i=0, filename=f.name)
     """
-    def __init__(self, function=None, jacobian=None, h=1e-2, error_abs=1e-10, error_rel=1e-10, a=False, a_dydt=False, scale_abs=False, algorithm='rkf45', y_0=None, t_span=None, params=[]):
+    def __init__(self, function=None, jacobian=None, h=1e-2, error_abs=1e-10,
+                 error_rel=1e-10, a=False, a_dydt=False, scale_abs=False,
+                 algorithm='rkf45', y_0=None, t_span=None, params=None):
         self.function = function
         self.jacobian = jacobian
         self.h = h
@@ -354,7 +356,7 @@ class ode_solver():
         self.algorithm = algorithm
         self.y_0 = y_0
         self.t_span = t_span
-        self.params = params
+        self.params = [] if params is None else params
         self.solution = []
 
     def __setattr__(self, name, value):
@@ -407,7 +409,7 @@ class ode_solver():
         else:
             G.save(filename=filename)
 
-    def ode_solve(self, t_span=False, y_0=False, num_points=False, params=[]):
+    def ode_solve(self, t_span=False, y_0=False, num_points=False, params=None):
         cdef double h  # step size
         h = self.h
         cdef int i
@@ -415,7 +417,7 @@ class ode_solver():
         cdef int type
         cdef int dim
         cdef PyFunctionWrapper wrapper  # struct to pass information into GSL C function
-        self.params = params
+        self.params = [] if params is None else params
 
         if t_span:
             self.t_span = t_span
