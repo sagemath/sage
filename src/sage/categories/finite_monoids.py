@@ -304,6 +304,8 @@ class FiniteMonoids(CategoryWithAxiom):
             """
             parent = self.parent()
             one = parent.one()
+            if self == one:
+                return one
             it = (v for v in parent if v * self == one)
             try:
                 return next(it)
