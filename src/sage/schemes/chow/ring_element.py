@@ -89,9 +89,9 @@ class ChowRingElement(QuotientRingElement):
 
         INPUT:
 
-        - ``parent`` -- a ChowRing;
+        - ``parent`` -- a ChowRing
 
-        - ``rep'' -- a representing of an element of the ChowRing.
+        - ``rep`` -- a representing of an element of the ChowRing
 
         OUTPUT:
 
@@ -317,7 +317,7 @@ class ChowRingElement(QuotientRingElement):
             sage: t._logg()
             3/2*h^2 + 3*h
 
-        TESTS:
+        TESTS::
 
             sage: t = A(1)
             sage: t._logg()
@@ -358,7 +358,7 @@ class ChowRingElement(QuotientRingElement):
             sage: x.todd()
             1/12*c1^2 + 1/2*c1 + 1
 
-        TEST::
+        TESTS::
 
             sage: A = ChowRing()
             sage: A.set_dimension(0)
