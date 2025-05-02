@@ -3648,7 +3648,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
       extended Euclidean algorithm
 
     - ``require_coprime_moduli`` -- boolean (default: ``True``); whether the moduli
-      must be coprime.
+      must be pairwise coprime.
 
     OUTPUT:
 
@@ -3698,13 +3698,13 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
         return [cs, True]
     except ValueError:
         if require_coprime_moduli:
-            raise ValueError('moduli must be coprime')
+            raise
         e = [1]
         M_i = moduli[0]
         for i in range(1, n):
             m_i = moduli[i]
             d_i = gcd(M_i, m_i)
-            e_i = CRT(0, 1, M_i / d_i, m_i / d_i)
+            e_i = CRT(0, 1, M_i // d_i, m_i // d_i)
             e.append(e_i)
             M_i = M_i.lcm(m_i)
         partial_prod_table = [1]
@@ -3757,12 +3757,12 @@ def CRT_vectors(X, moduli):
         raise ValueError("number of moduli must equal length of X")
     res = CRT_basis(moduli, require_coprime_moduli=False)
     a = res[0]
-    modulus = prod(moduli)
+    modulus = lcm(moduli)
     candidate = [sum(a[i] * X[i][j] for i in range(n)) % modulus
                  for j in range(len(X[0]))]
     if not res[1] and any(X[i][j] != candidate[j] % moduli[i] for i in range(n)
-       for j in range(len(X[i]))):
-        raise ValueError("solution does not exist")
+        for j in range(len(X[i]))):
+            raise ValueError("solution does not exist")
     return candidate
 
 def binomial(x, m, **kwds):
