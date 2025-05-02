@@ -256,6 +256,17 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
             191
             sage: (O.free_module() / I.free_module()).cardinality()
             191
+
+        We observe that norm is not always multiplicative::
+
+            sage: K.<t> = QuadraticField(-7)
+            sage: g, = K.ring_of_integers().ring_generators()
+            sage: O = K.order(3 * g)
+            sage: I = O.ideal([3, 3 * g])
+            sage: I.norm()
+            3
+            sage: (I^2).norm()
+            27
         """
         return self.free_module().index_in(self.ring().free_module())
 
