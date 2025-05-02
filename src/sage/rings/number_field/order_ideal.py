@@ -270,6 +270,27 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         """
         return self.free_module().index_in(self.ring().free_module())
 
+    def is_invertible(self):
+        r"""
+        Test whether this ideal is invertible.
+
+        An ideal `\mathfrac{a} \subseteq \mathcal{O}` is invertible if there is
+        a fractional ideal `\mathfrac{b}` such that `\mathfrac{a}\mathfrac{b} =
+        \mathcal{O}`.
+
+        EXAMPLES::
+
+            sage: K.<a> = QuadraticField(-3)
+            sage: O = K.order(a)
+            sage: O.ideal(-5 * a - 2).is_invertible()
+            True
+            sage: O.ideal(3 * a + 1).is_invertible()
+            False
+            sage: O.ideal(2 * a).is_invertible()
+            False
+        """
+        return self.is_coprime(self.order().conductor())
+
 
 def _positive_sqrt(R, D):
     r"""
