@@ -522,7 +522,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         return VectorSpace(self.base_ring(), self.dimension())
 
     @cached_method
-    def is_constant(self):
+    def is_constant(self) -> bool:
         """
         Return whether the filtration is constant.
 
@@ -549,7 +549,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         f = self._filt
         return (len(f) == 1) or (len(f) == 2 and f[1][0] == infinity)
 
-    def is_exhaustive(self):
+    def is_exhaustive(self) -> bool:
         r"""
         Return whether the filtration is exhaustive.
 
@@ -572,7 +572,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         return self.get_degree(minus_infinity).dimension() == \
             self.ambient_vector_space().dimension()
 
-    def is_separating(self):
+    def is_separating(self) -> bool:
         r"""
         Return whether the filtration is separating.
 

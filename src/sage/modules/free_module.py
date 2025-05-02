@@ -984,7 +984,7 @@ class Module_free_ambient(Module):
         """
         return self.__degree
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
         Return ``True`` if the underlying representation of this module uses
         sparse vectors, and ``False`` otherwise.
@@ -998,7 +998,7 @@ class Module_free_ambient(Module):
         """
         return self.__is_sparse
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         """
         Test whether elements of this module are represented exactly.
 
@@ -1517,7 +1517,7 @@ class Module_free_ambient(Module):
         # in the same ambient space
         return self.is_submodule(other) and other.is_submodule(self)
 
-    def is_submodule(self, other):
+    def is_submodule(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a submodule of ``other``.
 
@@ -2303,7 +2303,7 @@ class FreeModule_generic(Module_free_ambient):
             return self.echelonized_basis_matrix() == other.echelonized_basis_matrix()
         return self.is_submodule(other) and other.is_submodule(self)
 
-    def is_submodule(self, other):
+    def is_submodule(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a submodule of ``other``.
 
@@ -3285,7 +3285,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         return True
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``False`` since this is not an ambient free module.
 
@@ -3310,7 +3310,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         return False
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Return ``True`` if the underlying representation of
         this module uses dense vectors, and ``False`` otherwise.
@@ -3324,7 +3324,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         return not self.is_sparse()
 
-    def is_full(self):
+    def is_full(self) -> bool:
         """
         Return ``True`` if the rank of this module equals its
         degree.
@@ -3339,7 +3339,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         return self.rank() == self.degree()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``True`` if the underlying set of this free module is finite.
 
@@ -4754,7 +4754,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         B = [A1.linear_combination_of_rows(v.list()[:n]) for v in K.basis()]
         return self.ambient_vector_space().submodule(B, check=False)
 
-    def is_subspace(self, other):
+    def is_subspace(self, other) -> bool:
         """
         ``True`` if this vector space is a subspace of ``other``.
 
@@ -5851,7 +5851,7 @@ class FreeModule_ambient(FreeModule_generic):
             t = "(%s)" % t
         return "%s^{%s}" % (t, self.rank())
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` since this module is an ambient
         module.
@@ -8062,7 +8062,7 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
         # Return the first rank rows (i.e., the nonzero rows).
         return E.rows()[:E.rank()]
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``False`` since this is not an ambient module.
 

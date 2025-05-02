@@ -4555,14 +4555,14 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             (x - y) * (x + y) * (x^2 + y^2) * (x^4 + y^4) * (x^8 + y^8) * (x^16 + y^16) * (x^32 + y^32) * (x^64 + y^64) * (x^128 + y^128) * (x^256 + y^256) * (x^512 + y^512) * (x^1024 + y^1024)
         """
         cdef ring *_ring = self._parent_ring
-        cdef poly *ptemp
         cdef intvec *iv
         cdef int *ivv
         cdef ideal *I = NULL
         cdef MPolynomialRing_libsingular parent = self._parent
         cdef int i
 
-        if _ring!=currRing: rChangeCurrRing(_ring)
+        if _ring != currRing:
+            rChangeCurrRing(_ring)
 
         if p_IsConstant(self._poly, _ring):
             return self.constant_coefficient().factor()
@@ -4687,14 +4687,13 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef ideal *_I
         cdef MPolynomialRing_libsingular parent = self._parent
         cdef int i = 0
-        cdef int j
         cdef ring *r = self._parent_ring
         cdef ideal *res = NULL
 
         if isinstance(I, MPolynomialIdeal):
             I = I.gens()
 
-        _I = idInit(len(I),1)
+        _I = idInit(len(I), 1)
 
         for f in I:
             if not (isinstance(f,MPolynomial_libsingular)
