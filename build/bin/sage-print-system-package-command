@@ -154,7 +154,7 @@ case $system:$command in
     @(fedora*|redhat*|centos*):install)
         [ "$YES" = yes ] && options="$options -y"
         [ "$IGNORE_MISSING" = yes ] && options="$options --skip-unavailable"
-        [ -n "$system_packages" ] && print_shell_command ${SUDO}yum install $options $system_packages
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}dnf5 install $options $system_packages
         ;;
     gentoo*:install)
         [ -n "$system_packages" ] && print_shell_command ${SUDO}emerge $system_packages

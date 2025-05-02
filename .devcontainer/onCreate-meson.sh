@@ -4,7 +4,11 @@ SYSTEM=$(build/bin/sage-guess-package-system)
 
 if [ "$SYSTEM" = "fedora" ]; then
     # Need to use --setopt=tsflags="" to avoid errors with gphelp
-    yum install -y pari-gp --setopt=tsflags=""
+    dnf5 install -y pari-gp --setopt=tsflags=""
+
+    # Mitigate upstream packaging bug: https://bugzilla.redhat.com/show_bug.cgi?id=2332429
+    # by swapping the incorrectly installed OpenCL-ICD-Loader for the expected ocl-icd
+    dnf5 -y swap --repo='fedora' OpenCL-ICD-Loader ocl-icd
 fi
 
 eval $(build/bin/sage-print-system-package-command $SYSTEM "$@" update)
