@@ -323,7 +323,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         # following formula.
         radius = sum(R[i,i]**2 for i in range(dim[0]))
         # We then divide by 4 as we will divide the basis by 2 later on.
-        radius = radius / 4
+        radius = ceil(radius / 4)
     artificial_length = None
     if dim[0] < dim[1]:
         F = basis.base_ring().fraction_field()
