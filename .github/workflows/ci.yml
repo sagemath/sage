@@ -11,6 +11,7 @@ on:
 
 jobs:
   build:
+    name: Build and Test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -41,6 +42,11 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # Install dnf5
+          if [ "${{ matrix.container }}" = "fedora:40" ] && ! rpm -q dnf5 >/dev/null; then
+              rpm-ostree install dnf5 dnf5-plugins
+          fi
+
           SYSTEM=$(build/bin/sage-guess-package-system)
           if [ "$SYSTEM" = "fedora" ]; then
               # Need to use --setopt=tsflags="" to avoid errors with gphelp
