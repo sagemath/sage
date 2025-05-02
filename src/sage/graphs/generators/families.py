@@ -1711,6 +1711,13 @@ def GeneralizedPetersenGraph(n, k):
         sage: g.is_bipartite()
         True
 
+    TESTS:
+
+    Check that the name of the graph is correct::
+
+        sage: graphs.GeneralizedPetersenGraph(7, 2).name()
+        'Generalized Petersen graph (n=7,k=2)'
+
     AUTHORS:
 
     - Anders Jonsson (2009-10-15)
