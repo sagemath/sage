@@ -17,11 +17,12 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 import sage.rings.abc
 
+from sage.categories.sets_cat import Sets
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_generic
@@ -443,10 +444,12 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             ....:                [2,2,3,1,2,2], [2,2,l,2,1,3], [2,2,2,2,3,1]]).is_finite()]
             [2, 3]
         """
-        # Finite Coxeter groups are marked as finite in
-        # their ``__init__`` method, so we can just check
-        # the category of ``self``.
-        return "Finite" in self.category().axioms()
+        # Finite Coxeter groups are marked as finite in their
+        # ``__init__`` method. You would hope to inherit the default
+        # implementation of is_finite from the Sets.Finite category,
+        # but it's overriden by Groups.is_finite. Instead we manually
+        # check membership to Sets.Finite.
+        return self in Sets.Finite
 
     def is_commutative(self):
         """

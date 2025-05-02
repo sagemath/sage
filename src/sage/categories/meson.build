@@ -1,5 +1,6 @@
 py.install_sources(
   '__init__.py',
+  'axiom.py',
   'action.pxd',
   'additive_groups.py',
   'additive_magmas.py',

@@ -349,7 +349,7 @@ doctest::
      Category of finite Weyl groups,
      Category of finite dimensional Hopf algebras with basis over Rational Field,
      Category of finite dimensional algebras with basis over Rational Field,
-     Category of finite enumerated permutation groups,
+     Category of finite permutation groups,
      Category of number fields]
 
 AUTHOR:

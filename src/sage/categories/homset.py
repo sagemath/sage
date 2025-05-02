@@ -116,7 +116,7 @@ def Hom(X, Y, category=None, check=True):
         Set of Morphisms
          from Alternating group of order 3!/2 as a permutation group
            to Alternating group of order 3!/2 as a permutation group
-           in Category of finite enumerated permutation groups
+           in Category of finite permutation groups
         sage: Hom(ZZ, QQ, Sets())
         Set of Morphisms from Integer Ring to Rational Field in Category of sets
 
@@ -523,7 +523,7 @@ def End(X, category=None):
         Set of Morphisms
          from Alternating group of order 3!/2 as a permutation group
          to Alternating group of order 3!/2 as a permutation group
-         in Category of finite enumerated permutation groups
+         in Category of finite permutation groups
         sage: S.domain()
         Alternating group of order 3!/2 as a permutation group
 
@@ -554,7 +554,7 @@ def End(X, category=None):
 
         sage: H = Hom(ZZ,ZZ,Rings())
         sage: H.category()
-        Category of endsets of unital magmas and additive unital additive magmas
+        Category of endsets of unital magmas and additive-unital additive magmas
     """
     return Hom(X,X, category)
 
@@ -781,7 +781,7 @@ class Homset(Set_generic):
 
             sage: H = Hom(AlternatingGroup(4), AlternatingGroup(7))                     # needs sage.groups
             sage: H.homset_category()                                                   # needs sage.groups
-            Category of finite enumerated permutation groups
+            Category of finite permutation groups
         """
         return self.__category
 

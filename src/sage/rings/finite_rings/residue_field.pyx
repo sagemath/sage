@@ -531,9 +531,15 @@ class ResidueField_generic(Field):
             sage: P = K.ideal(29).factor()[0][0]
             sage: k = K.residue_field(P)     # indirect doctest
 
+            sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + t^2 + 7)
+            sage: k.<a> = P.residue_field() # indirect doctest
+
+            sage: k.category()
+            Category of finite fields
+
             sage: F = ZZ.residue_field(17)   # indirect doctest
             sage: F.category()
-            Join of Category of finite enumerated fields
+            Join of Category of finite fields
              and Category of subquotients of monoids
              and Category of quotients of semigroups
 

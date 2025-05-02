@@ -266,14 +266,12 @@ class PolynomialRing_generic(Ring):
              and Category of infinite sets
 
             sage: category(GF(7)['x'])
-            Join of Category of euclidean domains
-             and Category of algebras with basis over
-              (finite enumerated fields and subquotients of monoids
-               and quotients of semigroups)
-            and Category of commutative algebras over
-              (finite enumerated fields and subquotients of monoids
-               and quotients of semigroups)
-            and Category of infinite sets
+            Join of Category of euclidean domains and
+             Category of algebras with basis over (finite fields and
+             subquotients of monoids and quotients of semigroups) and
+             Category of commutative algebras over (finite fields and
+             subquotients of monoids and quotients of semigroups) and
+             Category of infinite sets
 
         TESTS:
 

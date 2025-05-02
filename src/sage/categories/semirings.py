@@ -9,6 +9,7 @@ Semirings
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.magmas_and_additive_magmas import MagmasAndAdditiveMagmas
 
@@ -32,13 +33,12 @@ class Semirings(CategoryWithAxiom):
         sage: Semirings()
         Category of semirings
         sage: Semirings().super_categories()
-        [Category of associative additive commutative additive
-         associative additive unital distributive magmas and additive magmas,
+        [Category of associative additive-commutative additive-associative
+         additive-unital distributive magmas and additive magmas,
          Category of monoids]
 
-        sage: sorted(Semirings().axioms())
-        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveUnital',
-         'Associative', 'Distributive', 'Unital']
+        sage: sorted(Semirings().axioms(), key=str)
+        [AdditiveAssociative, AdditiveCommutative, AdditiveUnital, Associative, Distributive, Unital]
 
         sage: Semirings() is (CommutativeAdditiveMonoids() & Monoids()).Distributive()
         True
@@ -46,11 +46,10 @@ class Semirings(CategoryWithAxiom):
         sage: Semirings().AdditiveInverse()
         Category of rings
 
-
     TESTS::
 
         sage: TestSuite(Semirings()).run()
         sage: Semirings().example()
         An example of a semiring: the ternary-logic semiring
     """
-    _base_category_class_and_axiom = (MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative.AdditiveUnital.Associative, "Unital")
+    _base_category_class_and_axiom = (MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative.AdditiveUnital.Associative, all_axioms.Unital)

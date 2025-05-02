@@ -11,6 +11,7 @@ Finite-Dimensional Algebras
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
+from functools import reduce
 
 from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
 from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
@@ -26,7 +27,6 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.misc.cachefunc import cached_method
-from functools import reduce
 
 
 class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):

@@ -25,6 +25,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.morphism import SetMorphism
 from sage.categories.category import Category
 from sage.categories.sets_cat import Sets
+from sage.categories.modules import Modules
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.tensor import tensor
@@ -1364,11 +1365,12 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         """
         assert (len(modules) > 0)
         R = modules[0].base_ring()
-        assert (all(module in ModulesWithBasis(R)) for module in modules)
+        C = Modules(R).WithBasis()
+        assert all(module in C for module in modules)
         # should check the base ring
         # flatten the list of modules so that tensor(A, tensor(B,C)) gets rewritten into tensor(A, B, C)
         modules = sum([module._sets if isinstance(module, CombinatorialFreeModule_Tensor) else (module,) for module in modules], ())
-        if all('FiniteDimensional' in M.category().axioms() for M in modules):
+        if all(M in Modules.FiniteDimensional for M in modules):
             options['category'] = options['category'].FiniteDimensional()
         return super(CombinatorialFreeModule.Tensor, cls).__classcall__(cls, modules, **options)
 

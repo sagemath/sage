@@ -370,7 +370,7 @@ class MetricSpaces(MetricSpacesCategory):
                     [Category of Cartesian products of metric spaces,
                      Category of complete metric spaces]
                     sage: C.axioms()
-                    frozenset({'Complete'})
+                    frozenset({Complete})
 
                     sage: R2 = RR.cartesian_product(RR)
                     sage: R2 in MetricSpaces()

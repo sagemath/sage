@@ -151,6 +151,9 @@ from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.finite_crystals import FiniteCrystals
 from sage.categories.classical_crystals import ClassicalCrystals
 
+# axioms
+from sage.categories.axiom import all_axioms as axioms
+
 # polyhedra
 lazy_import('sage.categories.polyhedra', 'PolyhedralSets')
 

@@ -33,6 +33,7 @@ Note that this raises a :exc:`NotImplementedError` if the answer is not known.
 
 from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_attribute import lazy_class_attribute
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.category_singleton import Category_contains_method_by_parent_class
 from sage.categories.domains import Domains
@@ -61,7 +62,7 @@ class IntegralDomains(CategoryWithAxiom):
 
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (Domains, "Commutative")
+    _base_category_class_and_axiom = (Domains, all_axioms.Commutative)
 
     def __contains__(self, x):
         """

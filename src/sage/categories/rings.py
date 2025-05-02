@@ -18,6 +18,7 @@ from types import GeneratorType
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import randint
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
 from sage.structure.element import Element
@@ -37,9 +38,9 @@ class Rings(CategoryWithAxiom):
         sage: sorted(Rings().super_categories(), key=str)
         [Category of rngs, Category of semirings]
 
-        sage: sorted(Rings().axioms())
-        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
-         'AdditiveUnital', 'Associative', 'Distributive', 'Unital']
+        sage: sorted(Rings().axioms(), key=str)
+        [AdditiveAssociative, AdditiveCommutative, AdditiveInverse,
+         AdditiveUnital, Associative, Distributive, Unital]
 
         sage: Rings() is (CommutativeAdditiveGroups() & Monoids()).Distributive()
         True
@@ -61,7 +62,7 @@ class Rings(CategoryWithAxiom):
         - A parent P in the category ``Rings()`` should automatically be
           in the category ``Algebras(P)``.
     """
-    _base_category_class_and_axiom = (Rngs, "Unital")
+    _base_category_class_and_axiom = (Rngs, all_axioms.Unital)
 
     class MorphismMethods:
         @cached_method

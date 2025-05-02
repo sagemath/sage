@@ -41,7 +41,7 @@ class GradedLieAlgebras(GradedModulesCategory):
             EXAMPLES::
 
                 sage: LieAlgebras(QQ).Graded().Stratified()
-                Category of stratified Lie algebras over Rational Field
+                Category of stratified graded Lie algebras over Rational Field
             """
             return self._with_axiom("Stratified")
 
@@ -65,7 +65,7 @@ class GradedLieAlgebras(GradedModulesCategory):
             EXAMPLES::
 
                 sage: LieAlgebras(QQ).Graded().Stratified().FiniteDimensional()
-                Category of finite dimensional stratified Lie algebras over Rational Field
+                Category of finite dimensional stratified graded Lie algebras over Rational Field
 
             TESTS::
 

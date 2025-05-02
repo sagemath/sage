@@ -42,7 +42,7 @@ Let's request the category of some objects::
     sage: G = SymmetricGroup(9)                                                         # needs sage.groups
     sage: G.category()                                                                  # needs sage.groups
     Join of
-     Category of finite enumerated permutation groups and
+     Category of finite permutation groups and
      Category of finite Weyl groups and
      Category of well generated finite irreducible complex reflection groups
 
@@ -115,6 +115,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
 
+from sage.categories.axiom import all_axioms
 from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _flatten_categories, join_as_tuple
 
 _join_cache = WeakValueDictionary()
@@ -1114,7 +1115,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Magmas().Unital().additional_structure()
             Category of unital magmas
             sage: AdditiveMagmas().AdditiveUnital().additional_structure()
-            Category of additive unital additive magmas
+            Category of additive-unital additive magmas
 
         Similarly, :ref:`functorial construction categories
         <category-primer-functorial-constructions>` don't define
@@ -1239,7 +1240,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: structure(Magmas())
             (Category of magmas,)
             sage: structure(Rings())
-            (Category of unital magmas, Category of additive unital additive magmas)
+            (Category of unital magmas, Category of additive-unital additive magmas)
             sage: structure(Fields())
             (Category of euclidean domains, Category of noetherian rings)
             sage: structure(Algebras(QQ))
@@ -2016,9 +2017,9 @@ class Category(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: Monoids().axioms()
-            frozenset({'Associative', 'Unital'})
+            frozenset({Associative, Unital})
             sage: (EnumeratedSets().Infinite() & Sets().Facade()).axioms()
-            frozenset({'Enumerated', 'Facade', 'Infinite'})
+            frozenset({Enumerated, Facade, Infinite})
         """
         return frozenset(axiom
                          for category in self._super_categories
@@ -2055,13 +2056,13 @@ class Category(UniqueRepresentation, SageObject):
         """
         if axiom in self.axioms():
             return (self, )
-        axiom_attribute = getattr(self.__class__, axiom, None)
+        axiom_attribute = getattr(self.__class__, str(axiom), None)
         if axiom_attribute is None:
             # If the axiom is not defined for this category, ignore it
             # This uses the following invariant: the categories for
             # which a given axiom is defined form a lower set
             return (self,)
-        if axiom in self.__class__.__base__.__dict__:
+        if str(axiom) in self.__class__.__base__.__dict__:
             # self implements this axiom
             from .category_with_axiom import CategoryWithAxiom
             if inspect.isclass(axiom_attribute) and issubclass(axiom_attribute, CategoryWithAxiom):
@@ -2074,7 +2075,7 @@ class Category(UniqueRepresentation, SageObject):
         result = (self, ) + tuple(cat
                                   for category in self._super_categories
                                   for cat in category._with_axiom_as_tuple(axiom))
-        hook = getattr(self, axiom + "_extra_super_categories", None)
+        hook = getattr(self, str(axiom) + "_extra_super_categories", None)
         if hook is not None:
             assert inspect.ismethod(hook)
             result += tuple(hook())
@@ -2091,7 +2092,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``axiom`` -- string, the name of an axiom
+        - ``axiom`` -- an axiom or a string, the name of an axiom
 
         EXAMPLES::
 
@@ -2115,6 +2116,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. WARNING:: This may be changed in the future to raise an error.
         """
+        axiom = all_axioms(axiom)
         return Category.join(self._with_axiom_as_tuple(axiom))
 
     def _with_axioms(self, axioms):
@@ -2124,7 +2126,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``axioms`` -- list of strings; the names of the axioms
+        - ``axioms`` -- a list of axioms or names thereof
 
         EXAMPLES::
 
@@ -2135,12 +2137,19 @@ class Category(UniqueRepresentation, SageObject):
             sage: FiniteSets()._with_axioms(["Finite"])
             Category of finite sets
 
-        Axioms that are not defined for the ``self`` are ignored::
+        Axioms that are not defined for ``self`` are ignored::
+
+            sage: Sets()._with_axioms(["Flying"])
+            Category of sets
+            sage: Magmas()._with_axioms(["Flying", "Unital"])
+            Category of unital magmas
+
+        Unknown axioms trigger an error::
 
             sage: Sets()._with_axioms(["FooBar"])
-            Category of sets
-            sage: Magmas()._with_axioms(["FooBar", "Unital"])
-            Category of unital magmas
+            Traceback (most recent call last):
+            ...
+            ValueError: No known axiom named FooBar
 
         Note that adding several axioms at once can do more than
         adding them one by one. This is because the availability of an
@@ -2209,6 +2218,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Groups()._without_axiom("Unital") # todo: not implemented
             Category of semigroups
         """
+        axiom = all_axioms(axiom)
         if axiom not in self.axioms():
             return self
         else:
@@ -2400,7 +2410,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Category.join((Sets(), Rings(), Monoids()), as_list=True)
             [Category of rings]
             sage: Category.join((Modules(ZZ), FiniteFields()), as_list=True)
-            [Category of finite enumerated fields, Category of modules over Integer Ring]
+            [Category of finite fields, Category of modules over Integer Ring]
             sage: Category.join([], as_list=True)
             []
             sage: Category.join([Groups()], as_list=True)
@@ -2444,7 +2454,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: TCF is (T.Facade() & T.Commutative())
             True
             sage: TCF.axioms()
-            frozenset({'Commutative', 'Facade'})
+            frozenset({Commutative, Facade})
             sage: type(TCF)
             <class 'sage.categories.category_with_axiom.TestObjects.Commutative.Facade_with_category'>
 
@@ -2810,11 +2820,11 @@ class CategoryWithParameters(Category):
         This is because those two fields do not have the exact same category::
 
             sage: GF(3).category()
-            Join of Category of finite enumerated fields
+            Join of Category of finite fields
              and Category of subquotients of monoids
              and Category of quotients of semigroups
             sage: GF(2^3,'x').category()                                                # needs sage.rings.finite_rings
-            Category of finite enumerated fields
+            Category of finite fields
 
         Similarly for ``QQ`` and ``RR``::
 
@@ -3316,7 +3326,7 @@ class JoinCategory(CategoryWithParameters):
             ValueError: This join category isn't built by adding axioms to a single category
         """
         from sage.categories.category_with_axiom import CategoryWithAxiom
-        return CategoryWithAxiom._repr_object_names_static(self._without_axioms(named=True), self.axioms())
+        return CategoryWithAxiom._repr_object_names(self)
 
     def _repr_(self, as_join=False):
         """

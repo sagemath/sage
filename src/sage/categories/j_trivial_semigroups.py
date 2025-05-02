@@ -24,6 +24,6 @@ class JTrivialSemigroups(CategoryWithAxiom):
         EXAMPLES::
 
             sage: Semigroups().JTrivial().extra_super_categories()
-            [Category of l trivial semigroups, Category of r trivial semigroups]
+            [Category of L-trivial semigroups, Category of R-trivial semigroups]
         """
         return [Semigroups().LTrivial(), Semigroups().RTrivial()]

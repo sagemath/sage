@@ -10,6 +10,7 @@ Additive monoids
 #******************************************************************************
 
 from sage.misc.lazy_import import LazyImport
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
 from sage.categories.additive_semigroups import AdditiveSemigroups
 from sage.categories.homsets import HomsetsCategory
@@ -30,9 +31,9 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
         sage: C = AdditiveMonoids(); C
         Category of additive monoids
         sage: C.super_categories()
-        [Category of additive unital additive magmas, Category of additive semigroups]
-        sage: sorted(C.axioms())
-        ['AdditiveAssociative', 'AdditiveUnital']
+        [Category of additive-unital additive magmas, Category of additive semigroups]
+        sage: sorted(C.axioms(), key=str)
+        [AdditiveAssociative, AdditiveUnital]
         sage: from sage.categories.additive_semigroups import AdditiveSemigroups
         sage: C is AdditiveSemigroups().AdditiveUnital()
         True
@@ -43,7 +44,7 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
         True
         sage: TestSuite(C).run()
     """
-    _base_category_class_and_axiom = (AdditiveSemigroups, "AdditiveUnital")
+    _base_category_class_and_axiom = (AdditiveSemigroups, all_axioms.AdditiveUnital)
 
     AdditiveCommutative = LazyImport('sage.categories.commutative_additive_monoids', 'CommutativeAdditiveMonoids', at_startup=True)
     AdditiveInverse = LazyImport('sage.categories.additive_groups', 'AdditiveGroups', at_startup=True)
@@ -84,7 +85,7 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
                 sage: AdditiveMonoids().Homsets().extra_super_categories()
                 [Category of additive semigroups]
                 sage: AdditiveMonoids().Homsets().super_categories()
-                [Category of homsets of additive unital additive magmas, Category of additive monoids]
+                [Category of homsets of additive-unital additive magmas, Category of additive monoids]
 
             .. TODO::
 

@@ -119,7 +119,7 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
             sage: H = groups.matrix.Heisenberg(n=2, R=5)
             sage: TestSuite(H).run()  # long time
             sage: H.category()
-            Category of finitely generated finite enumerated groups
+            Category of finite finitely generated groups
             sage: H = groups.matrix.Heisenberg(n=2, R=4)
             sage: TestSuite(H).run()  # long time
             sage: H = groups.matrix.Heisenberg(n=3)
@@ -130,7 +130,7 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
         TESTS::
 
             sage: groups.matrix.Heisenberg(n=2, R=ZZ).category()
-            Category of finitely generated infinite enumerated groups
+            Category of infinite finitely generated enumerated groups
         """
         def elementary_matrix(i, j, val, MS):
             elm = copy(MS.one())

@@ -10,6 +10,7 @@ Finitely generated magmas
 #******************************************************************************
 
 from sage.misc.abstract_method import abstract_method
+from sage.categories.axiom import all_axioms
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.magmas import Magmas
 
@@ -28,14 +29,14 @@ class FinitelyGeneratedMagmas(CategoryWithAxiom):
         sage: C.super_categories()
         [Category of magmas]
         sage: sorted(C.axioms())
-        ['FinitelyGeneratedAsMagma']
+        [FinitelyGeneratedAsMagma]
 
     TESTS::
 
         sage: TestSuite(C).run()
     """
 
-    _base_category_class_and_axiom = (Magmas, "FinitelyGeneratedAsMagma")
+    _base_category_class_and_axiom = (Magmas, all_axioms.FinitelyGeneratedAsMagma)
 
     class ParentMethods:
 

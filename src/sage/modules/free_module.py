@@ -2002,6 +2002,48 @@ class FreeModule_generic(Module_free_ambient):
         Create the free module of given rank ``rank`` over the given base
         ring ``base_ring``.
 
+        INPUT:
+
+        - ``base_ring`` -- a commutative ring
+
+        - ``rank`` -- a non-negative integer
+
+        - ``degree`` -- a non-negative integer
+
+        - ``sparse`` -- bool (default: False)
+
+        - ``coordinate_ring`` -- a ring containing ``base_ring``
+          (default: equal to ``base_ring``)
+
+        - ``category`` -- category (default: ``None``)
+
+        If ``base_ring`` is a field, then the default category is the
+        category of finite-dimensional vector spaces over that field;
+        otherwise it is the category of finite-dimensional free modules
+        over that ring.  In addition, the category is intersected with the
+        category of finite enumerated sets if the ring is finite or the
+        rank is 0.
+
+        EXAMPLES::
+
+            sage: PolynomialRing(QQ,3,'x')^3
+            Ambient free module of rank 3 over the integral domain Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
+
+            sage: FreeModule(GF(7),3).category()
+            Category of finite enumerated finite dimensional vector spaces with basis over
+             (finite fields and subquotients of monoids and quotients of semigroups)
+            sage: V = QQ^4; V.category()
+            Category of finite dimensional vector spaces with basis over
+             (quotient fields and metric spaces)
+            sage: V = GF(5)**20; V.category()
+            Category of finite enumerated finite dimensional vector spaces with basis over (finite fields and subquotients of monoids and quotients of semigroups)
+            sage: FreeModule(ZZ,3).category()
+            Category of finite dimensional modules with basis over
+             (euclidean domains and infinite enumerated sets
+              and metric spaces)
+            sage: (QQ^0).category()
+            Category of finite enumerated finite dimensional vector spaces with basis over (quotient fields and metric spaces)
+
         TESTS::
 
             sage: M = FreeModule(ZZ, 20, sparse=False)

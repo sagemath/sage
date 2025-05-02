@@ -90,7 +90,7 @@ class Objects(Category_singleton):
                 Category of homsets of sets
 
                 sage: Rings().Homsets()
-                Category of homsets of unital magmas and additive unital additive magmas
+                Category of homsets of unital magmas and additive-unital additive magmas
 
             .. NOTE:: Background
 
@@ -153,7 +153,7 @@ class Objects(Category_singleton):
                 Category of endsets of sets
 
                 sage: Rings().Endsets()
-                Category of endsets of unital magmas and additive unital additive magmas
+                Category of endsets of unital magmas and additive-unital additive magmas
 
             .. SEEALSO::
 
