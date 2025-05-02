@@ -89,9 +89,9 @@ class ChowRingElement(QuotientRingElement):
 
         INPUT:
 
-        - ``parent`` -- a ChowRing;
+        - ``parent`` -- a ChowRing
 
-        - ``rep'' -- a representing of an element of the ChowRing.
+        - ``rep`` -- a representing of an element of the ChowRing
 
         OUTPUT:
 
@@ -317,7 +317,7 @@ class ChowRingElement(QuotientRingElement):
             sage: t._logg()
             3/2*h^2 + 3*h
 
-        TESTS:
+        TESTS::
 
             sage: t = A(1)
             sage: t._logg()
@@ -347,7 +347,7 @@ class ChowRingElement(QuotientRingElement):
 
         - An element of the parent Chow ring.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A.<c1, c2, c3> = ChowRing(['c1', 'c2', 'c3'], [1, 2, 3])
             sage: A.set_dimension(3)
@@ -358,7 +358,7 @@ class ChowRingElement(QuotientRingElement):
             sage: x.todd()
             1/12*c1^2 + 1/2*c1 + 1
 
-        TEST::
+        TESTS::
 
             sage: A = ChowRing()
             sage: A.set_dimension(0)
@@ -394,7 +394,7 @@ class ChowRingElement(QuotientRingElement):
 
         - ``k``-- an integer
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A.<c1, c2, c3> = ChowRing(['c1', 'c2', 'c3'], [1, 2, 3])
             sage: (1 + c1 + c2).adams(2)
