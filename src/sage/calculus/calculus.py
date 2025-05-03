@@ -1653,7 +1653,7 @@ lim = limit
 
 def mma_free_limit(expression, v, a, dir=None):
     """
-    Limit using Mathematica's online interface (WolframAlpha).
+    Limit using Mathematica's online interface.
 
     INPUT:
 
@@ -1661,86 +1661,40 @@ def mma_free_limit(expression, v, a, dir=None):
     - ``v`` -- variable
     - ``a`` -- value where the variable goes to
     - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (default: ``None``)
-      Can also use 'plus', 'right', 'above' for '+' and
-      'minus', 'left', 'below' for '-'.
-
-    OUTPUT:
-
-    A symbolic expression representing the limit, constructed in the
-    same parent ring as the input ``expression`` if possible.
 
     EXAMPLES::
 
-        sage: from sage.calculus.calculus import mma_free_limit # Needs to be imported for direct test
-        sage: x = var('x')
-        sage: mma_free_limit(sin(x)/x, x, 0) # optional - internet
+        sage: from sage.calculus.calculus import mma_free_limit
+        sage: mma_free_limit(sin(x)/x, x, a=0) # optional - internet
         1
 
     Another simple limit::
 
-        sage: mma_free_limit(exp(-x), x, oo) # optional - internet
+        sage: mma_free_limit(e^(-x), x, a=oo) # optional - internet
         0
-
-    Test directional limit::
-        sage: mma_free_limit(1/x, x, 0, dir='+') # optional - internet
-        +Infinity
-
-    Test with callable function (should return callable if result is not constant):
-        sage: t = var('t')
-        sage: f(x) = x*t
-        sage: mma_free_limit(f, x, 5) # optional - internet
-        x |--> 5*t
-
-    Test with callable function resulting in constant (should return constant callable):
-        sage: g(x) = x^2 + 1
-        sage: mma_free_limit(g, x, 2) # optional - internet
-        x |--> 5
     """
-    original_parent = expression.parent()
-
+    from sage.interfaces.mathematica import request_wolfram_alpha, parse_moutput_from_json, symbolic_expression_from_mathematica_string
     dir_plus = ['plus', '+', 'above', 'right']
     dir_minus = ['minus', '-', 'below', 'left']
-
-    try:
-        math_expr = expression._mathematica_().name()
-    except AttributeError:
-        math_expr = str(expression._mathematica_())
-
-    try:
-        variable = v._mathematica_().name()
-    except AttributeError:
-        variable = str(v._mathematica_())
-
-    try:
-        limit_point = a._mathematica_().name()
-    except AttributeError:
-        limit_point = str(a._mathematica_())
-
-    input_str = None
+    math_expr = expression._mathematica_init_()
+    variable = v._mathematica_init_()
+    a = a._mathematica_init_()
     if dir is None:
-        input_str = "Limit[{},{} -> {}]".format(math_expr, variable, limit_point)
+        input = "Limit[{},{} -> {}]".format(math_expr, variable, a)
     elif dir in dir_plus:
-        direction_opt = 'Direction -> "FromAbove"'
-        input_str = "Limit[{}, {} -> {}, {}]".format(math_expr, variable, limit_point, direction_opt)
+        dir = 'Direction -> "FromAbove"'
+        input = "Limit[{}, {} -> {}, {}]".format(math_expr, variable, a, dir)
     elif dir in dir_minus:
-        direction_opt = 'Direction -> "FromBelow"'
-        input_str = "Limit[{}, {} -> {}, {}]".format(math_expr, variable, limit_point, direction_opt)
+        dir = 'Direction -> "FromBelow"'
+        input = "Limit[{}, {} -> {}, {}]".format(math_expr, variable, a, dir)
     else:
-        dir_both = [None] + dir_plus + dir_minus
-        raise ValueError("dir must be one of " + ", ".join(map(repr, dir_both)))
-
-    json_page_data = request_wolfram_alpha(input_str)
-
+        raise ValueError('wrong input for limit')
+    json_page_data = request_wolfram_alpha(input)
     all_outputs = parse_moutput_from_json(json_page_data)
     if not all_outputs:
-        raise ValueError("no outputs found in the answer from Wolfram Alpha for input: " + input_str)
-
-    first_output_mathematica_string = all_outputs[0]
-
-    sage_result_object = symbolic_expression_from_mathematica_string(first_output_mathematica_string)
-
-    
-    return original_parent(sage_result_object)
+        raise ValueError("no outputs found in the answer from Wolfram Alpha")
+    first_output = all_outputs[0]
+    return symbolic_expression_from_mathematica_string(first_output)
 
 
 ###################################################################
