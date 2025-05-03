@@ -31,13 +31,17 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name == 'rankwidth'
+    deps += [rw]
+  endif
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/graphs/graph_decompositions',
     install: true,
     include_directories: [inc_cpython, inc_data_structures],
-    dependencies: [py_dep, cysignals, gmp, rw],
+    dependencies: [py_dep, cysignals, gmp],
   )
 endforeach
 
@@ -55,7 +59,7 @@ foreach name, pyx : extension_data_cpp
     install: true,
     override_options: ['cython_language=cpp'],
     include_directories: [inc_cpython, inc_data_structures],
-    dependencies: [py_dep, cysignals, gmp, rw],
+    dependencies: [py_dep, cysignals, gmp],
   )
 endforeach
 
