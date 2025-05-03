@@ -3113,13 +3113,13 @@ def petersen_family(generate=False):
 def p2_forbidden_minors():
     r"""
     Returns an array containing the 35 minimal forbidden excluded minors
-    of the projective plane, each. 
+    of the projective plane, each.
 
     We constructed the graphs given in Theorem 6.5.1 of [MT2001]_,
     which is a result of Archdeacon and encoded them in graph6 format.
 
     We return the graphs using the Sage Graph constructor.
-    
+
     """
 
     p2_forbidden_minors_graph6 = [
@@ -3159,7 +3159,7 @@ def p2_forbidden_minors():
         'IhEGICRiw',
         'JhEIDSD?ga_'
     ]
-    
+
     return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
 
     def DeltaYTrans(G, triangle):
