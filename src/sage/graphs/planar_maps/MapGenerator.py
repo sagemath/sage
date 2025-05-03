@@ -63,10 +63,9 @@ class MapGenerator:
             -1 for down steps in the Dyck path.
 
         EXAMPLE::
-            sage: dyckPath = MapGenerator().getRandomDyckPath(10)
+            sage: dyckPath = MapGenerator().getRandomDyckPath(10, seed=42)
             sage: dyckPath
-            [1, 1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1,
-            1, 1, -1, -1, 1, -1, 1, -1]
+            [1, -1, 1, -1, 1, 1, 1, 1, -1, -1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1]
 
         TESTS::
             sage: dyckPath = MapGenerator().getRandomDyckPath(50)
