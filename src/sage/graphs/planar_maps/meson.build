@@ -13,7 +13,7 @@ py.install_sources(
   'MapGenerator.py',
   'MapPermutation.py',
   'MutableLabelledMap.py',
-  'MutableMapExample.py'
+  'MutableMapExample.py',
   'MutableTopologicalDemiEdge.py',
   'PermutationUtilsAbstractor.py',
   'PrimitiveMutableTopologicalDemiEdge.py',
