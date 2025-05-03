@@ -1243,7 +1243,7 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
 
         sage: limit(sin(x)/x, x, 0, algorithm='sympy')
         1
-        sage: limit(abs(x)/x, x, 0, algorithm='giac') # optional - giac # Two-sided limit -> undefined
+        sage: limit(abs(x)/x, x, 0, algorithm='giac') # needs sage.libs.giac # Two-sided limit -> undefined
         und
         sage: limit(x^x, x, 0, dir='+', algorithm='fricas') # optional - fricas
         1
