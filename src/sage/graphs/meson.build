@@ -45,7 +45,6 @@ py.install_sources(
   'matching_covered_graph.py',
   'mcqd.pxd',
   'orientations.py',
-  'p2_forbidden_minors.py',
   'partial_cube.py',
   'pq_trees.py',
   'print_graphs.py',

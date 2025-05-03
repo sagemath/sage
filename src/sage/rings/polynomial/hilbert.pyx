@@ -131,7 +131,6 @@ cdef list quotient_by_var(list L, size_t index):
     Return the quotient of the ideal represented by ``L`` and the
     variable number ``index``.
     """
-    cdef ETuple m_j
     cdef list result = L[:len(L)] # creates a copy
     cdef size_t i
     for i in range(len(L)):
@@ -166,7 +165,6 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
     Otherwiese, ``False`` is returned.
     """
     cdef size_t i, j, exp
-    cdef int e
     # First, the easiest cases:
     if not D.Id: # The zero ideal
         fmpz_poly_set_coeff_si(fhs._poly, 0, 1) # = PR(1)
@@ -227,7 +225,6 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
 
     easy = True
     cdef ETuple m2
-    cdef list v
     for j in range(i+1, len(D.Id)):
         if (<ETuple>PyList_GET_ITEM(D.Id,j))._nonzero > 1:
             # i.e., another generator contains more than a single var
@@ -296,7 +293,7 @@ cdef make_children(Node D, tuple w):
     if ``D.Right`` is not ``None``.
     """
     cdef size_t j, m
-    cdef int i, ii
+    cdef int i
     # Determine the variable that appears most often in the monomials.
     # If "most often" means "only once", then instead we choose a variable that is
     # guaranteed to appear in a composed monomial.

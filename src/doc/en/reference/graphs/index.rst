@@ -93,7 +93,6 @@ Libraries of algorithms
    sage/graphs/lovasz_theta
    sage/graphs/schnyder
    sage/graphs/planarity
-   sage/graphs/p2_forbidden_minors
    sage/graphs/traversals
    sage/graphs/graph_plot
    sage/graphs/graph_plot_js
