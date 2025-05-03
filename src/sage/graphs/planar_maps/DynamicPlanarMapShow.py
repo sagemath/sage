@@ -150,7 +150,7 @@ class DynamicPlanarMapShow:
     # angles are divided by this quantity in the torsion force
     torsionScale = math.pi / 6
 
-    springCoef = 3.0				# controls the strength of the spring force for each edge
+    springCoef = 3.0 # controls the strength of the spring force for each edge
     springLength = 1.0                 # controls the default length of an edge
     # if true, spring force is proportional to log(r / springLength); if
     # false, proportional to r - springLength
