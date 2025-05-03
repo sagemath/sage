@@ -1317,7 +1317,7 @@ def _mutation_type_from_data(n: int, dig6, compute_if_necessary=True):
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
         sage: dg = ClusterQuiver(['F', 4]).canonical_label().digraph()
         sage: dig6 = _digraph_to_dig6(dg, hashable=True); dig6
-        ('CCo?', (((1, 3), (2, -1)), ))
+        ('CCo?', (((1, 3), (2, -1)),))
         sage: _mutation_type_from_data(4, dig6)
         ['F', 4]
     """
