@@ -1788,6 +1788,16 @@ class GraphGenerators:
 
         yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
 
+    def p2_forbidden_minors_gen(self):
+        r"""
+        
+        Returns an iterator over the 35 excluded minors given in 
+        p2_forbidden minors function in sage.graphs.generators.families.
+
+        """
+
+        yield from graphs.generators.families.p2_forbidden_minors()
+
     def plantri_gen(self, options="", immutable=False):
         r"""
         Iterator over planar graphs created using the ``plantri`` generator.
