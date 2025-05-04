@@ -41,7 +41,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/graphs/graph_decompositions',
     install: true,
     include_directories: [inc_cpython, inc_data_structures],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: deps,
   )
 endforeach
 
