@@ -3932,6 +3932,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
              Fractional ideal (3)]
             sage: K.primes_of_bounded_norm(1)
             []
+            sage: K.primes_of_bounded_norm(1.1)
+            []
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P = K.primes_of_bounded_norm(30)
@@ -3951,7 +3953,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             B = ZZ(B)
         except (TypeError, AttributeError):
             try:
-                B = ZZ(B.ceil())
+                B = ZZ(B.floor())
             except (TypeError, AttributeError):
                 raise TypeError("%s is not valid bound on prime ideals" % B)
         if B < 2:
