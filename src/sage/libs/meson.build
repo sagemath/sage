@@ -1,6 +1,10 @@
 sirocco = cc.find_library('sirocco', required: false, disabler: true)
 # cannot be found via pkg-config
 ecl = cc.find_library('ecl', required: false, disabler: true)
+if not ecl.found()
+  ecl_proj = subproject('ecl')
+  ecl = ecl_proj.get_variable('ecl_dep')
+endif
 braiding = dependency('libbraiding', required: false)
 if not braiding.found()
   # Fallback since pkg-config support was only added in v1.3.1
@@ -39,7 +43,7 @@ extension_data = {
   'meataxe': files('meataxe.pyx'),
 }
 
-dependencies = [py_dep, braiding, cysignals, ecl, ecm, gc, gmp, homfly]
+dependencies = [py_dep, cysignals, ecl, gc, gmp]
 
 foreach name, pyx : extension_data
   deps = dependencies
@@ -47,6 +51,10 @@ foreach name, pyx : extension_data
     deps += [sirocco]
   elif name == 'meataxe'
     deps += [mtx]
+  elif name == 'homfly'
+    deps += [homfly]
+  elif name == 'libecm'
+    deps += [ecm]
   endif
 
   py.extension_module(
@@ -62,6 +70,10 @@ endforeach
 extension_data_cpp = {'braiding': files('braiding.pyx')}
 
 foreach name, pyx : extension_data_cpp
+  deps = dependencies
+  if name == 'braiding'
+    deps += [braiding]
+  endif
   py.extension_module(
     name,
     sources: pyx,
@@ -69,7 +81,7 @@ foreach name, pyx : extension_data_cpp
     install: true,
     override_options: ['cython_language=cpp'],
     include_directories: [inc_cpython, inc_rings],
-    dependencies: dependencies,
+    dependencies: deps,
   )
 endforeach
 
