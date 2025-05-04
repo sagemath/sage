@@ -1115,6 +1115,13 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: A.<x,y> = TateAlgebra(R)
             sage: A(78612, prec=3)  # indirect doctest
             ...100 + O(2^3 * <x, y>)
+
+        TESTS::
+
+            sage: S.<x,y> = TateAlgebra(Qp(5), log_radii=(1,0))
+            sage: f = 5*x
+            sage: f.add_bigoh(1)
+            (5 + O(5^2))*x + O(5 * <x/5, y>)
         """
         self._is_normalized = True
         if self._prec is Infinity:
@@ -1124,9 +1131,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         for (e, c) in list(self._poly.__repn.items()):
             v = (<ETuple>self._parent._log_radii).dotprod(<ETuple>e)
             coeff = self._poly.__repn[e]
-            if coeff.precision_absolute() > self._prec - v:
-                coeff = coeff.add_bigoh(self._prec - v)
-            if coeff.valuation() >= self._prec - v:
+            if coeff.precision_absolute() > self._prec + v:
+                coeff = coeff.add_bigoh(self._prec + v)
+            if coeff.valuation() >= self._prec + v:
                 del self._poly.__repn[e]
             else:
                 self._poly.__repn[e] = coeff
