@@ -1643,7 +1643,9 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
     else:
         raise ValueError("Unknown algorithm: %s" % effective_algorithm)
 
-    return ex.parent()(l)
+    original_parent = ex.parent()
+
+    return original_parent(l)
 
 # lim is alias for limit
 lim = limit
