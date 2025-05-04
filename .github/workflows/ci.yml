@@ -43,6 +43,8 @@ jobs:
         run: |
           SYSTEM=$(build/bin/sage-guess-package-system)
           if [ "$SYSTEM" = "fedora" ]; then
+              dnf install git
+
               # Need to use --setopt=tsflags="" to avoid errors with gphelp
               dnf install -y pari-gp --setopt=tsflags=""
 
