@@ -69,7 +69,7 @@ jobs:
             "numpy >=1.25" \
             jinja2
 
-          uv sync --frozen --no-build-isolation-package=sagemath
+          uv sync --frozen --inexact --no-build-isolation-package=sagemath
 
       - name: Test
         run: |

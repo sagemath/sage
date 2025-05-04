@@ -16,6 +16,7 @@ eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missin
 
 # Disable build isolation following the advice of https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#build-dependencies
 # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
+uv venv
 uv pip install \
     meson-python \
     "cypari2 >=2.2.1" \
@@ -25,4 +26,4 @@ uv pip install \
     memory_allocator \
     "numpy >=1.25" \
     jinja2
-uv sync --frozen --no-build-isolation-package=sagemath
+uv sync --frozen --inexact --no-build-isolation-package=sagemath

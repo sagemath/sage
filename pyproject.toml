@@ -49,7 +49,8 @@ dependencies = [
     'fpylll >=0.5.9',
     'ptyprocess > 0.5',
     # TODO: Remove this once the migration to meson is complete
-    'pkgconfig'
+    'pkgconfig',
+    'traitlets',
 ]
 dynamic = ["version"]
 license = {text = "GNU General Public License (GPL) v2 or later"}
@@ -205,3 +206,7 @@ ignore = [
 "all.py" = [
   "F401", # Unused import - these files are by definition collections of imports.
 ]
+
+[tool.uv]
+# Don't use build isolation for sage (it's incompatible with meson-python's editable install)
+no-build-isolation-package = ["sagemath"]

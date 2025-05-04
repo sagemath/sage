@@ -2166,6 +2166,7 @@ dependencies = [
     { name = "six" },
     { name = "sphinx" },
     { name = "sympy" },
+    { name = "traitlets" },
 ]
 
 [package.optional-dependencies]
@@ -2226,6 +2227,7 @@ requires-dist = [
     { name = "six", specifier = ">=1.15.0" },
     { name = "sphinx", specifier = ">=5.2,<9" },
     { name = "sympy", specifier = ">=1.6,<2.0" },
+    { name = "traitlets" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=4.4.0" },
 ]
 provides-extras = ["r"]
