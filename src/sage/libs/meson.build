@@ -7,7 +7,12 @@ if not braiding.found()
   braiding = cc.find_library('braiding')
 endif
 gc = dependency(['bdw-gc-threaded', 'bdw-gc'], version: '>=7.6.4')
-homfly = cc.find_library('homfly', has_headers: ['homfly.h'], required: false, disabler: true)
+homfly = cc.find_library(
+  'homfly',
+  has_headers: ['homfly.h'],
+  required: false,
+  disabler: true,
+)
 
 py.install_sources(
   '__init__.py',

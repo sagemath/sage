@@ -73,12 +73,7 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/modules',
     install: true,
-    include_directories: [
-      inc_cpython,
-      inc_ext,
-      inc_rings,
-      inc_rings_finite,
-    ],
+    include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
     dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
   )
 endforeach
@@ -95,12 +90,7 @@ foreach name, pyx : extension_data_cpp
     subdir: 'sage/modules',
     install: true,
     override_options: ['cython_language=cpp'],
-    include_directories: [
-      inc_cpython,
-      inc_ext,
-      inc_rings,
-      inc_rings_finite,
-    ],
+    include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
     dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
   )
 endforeach
