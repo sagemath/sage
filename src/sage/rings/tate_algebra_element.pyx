@@ -1116,7 +1116,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: A(78612, prec=3)  # indirect doctest
             ...100 + O(2^3 * <x, y>)
 
-        TESTS::
+        TESTS:
+
+        We check that :issue:`40046` is fixed::
 
             sage: S.<x,y> = TateAlgebra(Qp(5), log_radii=(1,0))
             sage: f = 5*x
