@@ -284,6 +284,7 @@ __append_to_doc(
      "PaleyGraph",
      "PasechnikGraph",
      "petersen_family",
+     "p2_forbidden_minors",
      "planar_graphs",
      "plantri_gen",
      "quadrangulations",

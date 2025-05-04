@@ -5175,7 +5175,6 @@ REFERENCES:
 .. [MT2001] B. Mojar and C. Thomassen. *Graphs on Surfaces*.
              Johns Hopkins University Press, (2001).  ISBN 9780801866890. 
 
-
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
             247 (1997), 313-320, Cambridge Univ. Press.
@@ -6761,6 +6760,8 @@ REFERENCES:
 .. _ref-W:
 
 **W**
+
+.. [WA2025]  https://mathworld.wolfram.com/ProjectivePlanarGraph.html.
 
 .. [Wac2003] Wachs, "Topology of Matching, Chessboard and General
              Bounded Degree Graph Complexes" (Algebra Universalis

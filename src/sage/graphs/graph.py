@@ -90,10 +90,6 @@ AUTHORS:
 
 - Cyril Bouvier (2024-11): is_module
 
-- Juan M. Lazaro Ruiz, Steve Schluchter, and 
-  Kristina Obrenovic Gilmour (2025-05): is_projective_planar and associated
-  method p2_forbidden_minors in sage.graphs.generators.families module.
-
 Graph Format
 ------------
 
@@ -9489,9 +9485,6 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``return_map  `` -- boolean (default: ``False``); if ``True``, returns
-          output as described in :meth:`~Graph.minor`
-
         - ``minor_kwargs`` -- Optional keyword arguments to be passed to
           :meth:`~Graph.minor`
 
@@ -9506,7 +9499,7 @@ class Graph(GenericGraph):
         #. The Peterson graph is a known projective planar graph::
 
             sage: P = graphs.PetersenGraph()
-            sage: P.is_projective_planar()        # long
+            sage: P.is_projective_planar()
             True
 
         #. `K_{4,4}` has a projective plane crossing number of 2. One of the
@@ -9514,7 +9507,7 @@ class Graph(GenericGraph):
            dictionary from :meth:`~Graph.minor`::
 
             sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
-            sage: minor_map = K44.is_projective_planar(minor_map=True)
+            sage: minor_map = K44.is_projective_planar()
             sage: minor_map
             {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5], 6: [6], 7: [7]}
 
@@ -9529,17 +9522,16 @@ class Graph(GenericGraph):
         return_map = None
 
         for forbidden_minor in p2_forbidden_minors():
-        # Can't be a minor if it has more vertices or edges than G
-            if (
-                forbidden_minor.num_verts() > num_verts_G
-                or forbidden_minor.num_edges() > num_edges_G
-            ):
+            # Can't be a minor if it has more vertices or edges than G
+            
+            if (forbidden_minor.num_verts() > num_verts_G
+                or forbidden_minor.num_edges() > num_edges_G):
                 continue
 
             try:
                 return_map = self.minor(forbidden_minor)
                 if return_map is not None:
-                    #return minor_map
+                    # return return_map
                     break
             # If G has no H minor, then G.minor(H) throws a ValueError
             except ValueError:
@@ -9606,7 +9598,6 @@ class Graph(GenericGraph):
     from sage.graphs.matching import is_matching_covered
     from sage.graphs.matching import matching
     from sage.graphs.matching import perfect_matchings
-
 
 
 _additional_categories = {
