@@ -416,10 +416,10 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
             sage: W = WittVectorRing(PolynomialRing(GF(3),'t'))
             sage: latex(W)
-            W_{1}(\Bold{F}_{3}[t])
+            W_{1}\left(\Bold{F}_{3}[t]\right)
         """
-        return "W_{%s}(%s)" % (latex(self._prec),
-                               latex(self._coefficient_ring))
+        return "W_{%s}\\left(%s\\right)" % (latex(self._prec),
+                                            latex(self._coefficient_ring))
 
     def _repr_(self):
         """
