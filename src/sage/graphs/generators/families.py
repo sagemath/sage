@@ -3128,10 +3128,10 @@ def p2_forbidden_minors():
     """
 
     p2_forbidden_minors_graph6 = [
-        'KFz_????wF?[', 
-        'J~{???F@oM?',  
-        'I~{?GKF@w',    
-        'JFz_?AB_sE?',  
+        'KFz_????wF?[',
+        'J~{???F@oM?',
+        'I~{?GKF@w',
+        'JFz_?AB_sE?',
         'I~{?CME`_',
         'H~}CKMF',
         'G^~EMK',

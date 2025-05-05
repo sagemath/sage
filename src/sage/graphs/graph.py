@@ -9479,9 +9479,11 @@ class Graph(GenericGraph):
     @doc_index("Graph properties")
     def is_projective_planar(self):
         r"""
-        Check whether this graph is projective planar: that the graph can be
-        embedded in the projective plane.  The approach is to check that the
-        graph does not contain any of the known forbidden minors.
+        Check whether ``self`` is projective planar.
+
+        A graph is projective planar if it can be embedded in the projective
+        plane.  The approach is to check that the graph does not contain any
+        of the known forbidden minors.
 
         INPUT:
 
