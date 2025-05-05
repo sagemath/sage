@@ -1,4 +1,4 @@
-from sage.graphs.planar_maps.SplayTree import SplayTree, Node
+from sage.graphs.maps.splay_tree import SplayTree, SplayNode
 
 
 class CycleUtilsProvider:
@@ -8,6 +8,15 @@ class CycleUtilsProvider:
     """
 
     def __init__(self, cycles):
+        """
+        Init the CycleUtilsProvider
+
+        EXAMPLES:
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+
+        .. NOTE::
+            O(nlog(n)) where n is the sum of size of the cycles
+        """
         # It should contain only non fixed point index as key
         self.nodeMap = {}
 
@@ -30,12 +39,20 @@ class CycleUtilsProvider:
 
     def numberInCycle(self, index):
         """
-        Args:
+        INPUT:
             index
-        Returns:
+
+        OUTPUT:
             The number of element in the same cycle as index
-        -----
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.numberInCycle(5)
+            2
+
+        .. NOTE::
+            O(log(n))
         """
         if self.isFixedPoint(index):
             return 1
@@ -46,12 +63,23 @@ class CycleUtilsProvider:
 
     def sameCycle(self, i, j):
         """
-        Args:
-            i,j
-        Returns:
+        INPUT:
+            i,j indexes
+
+        OUTPUT:
             A boolean indicating if i and j are on the same cycle
-        ----
-        O(log(n))
+
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.sameCycle(5,6)
+            False
+            sage: provider.sameCycle(7,9)
+            True
+
+        .. NOTE::
+            O(log(n))
         """
         if self.isFixedPoint(i) or self.isFixedPoint(j):
             return False
@@ -66,11 +94,19 @@ class CycleUtilsProvider:
     def addAfter(self, index, otherIndex):
         """
         Add otherIndex in the cycle of index after index
-        ----
-        Args:
+
+        INPUT:
             index,otherIndex , otherIndex != index and otherIndex is a fixed point
-        ---- 
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.addAfter(1,33)
+            sage: provider.getCycleList(1)
+            [1, 33, 5]
+
+        .. NOTE::
+            O(log(n))
         """
         assert index != otherIndex
         if not self.isFixedPoint(otherIndex):
@@ -101,17 +137,29 @@ class CycleUtilsProvider:
     # are in the sameCycle efficiently (here O( len(listIndexes)log(n)))
     def checkTwoInTheSameCycle(self, listIndexes):
         """
-        Args:
+        INPUT:
             listIndexes a list of indexes
-        Returns:
+
+        OUTPUT:
             A boolean indicating if there are two indexes in listIndexes in the same cycle
-        ---
-        O(len(listIndexes)log(n))
+
+        EXAMPLES::
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.checkTwoInTheSameCycle([33,1,7])
+            False
+            sage: provider.checkTwoInTheSameCycle([8,1,7])
+            True 
+
+        .. NOTE::
+            O(len(listIndexes)log(n))
         """
         mapIndexes = set(listIndexes)
-        for e in mapIndexes:
+        for e in list(mapIndexes):
             if self.isFixedPoint(e):
-                mapIndexes.remove(e)
+                try:
+                    mapIndexes.remove(e)
+                except:
+                    pass
 
         splayTreeMap = set()
         for e in mapIndexes:
@@ -124,17 +172,24 @@ class CycleUtilsProvider:
             splayTreeMap.add(splayTree)
 
         return False
+
     # If otherIndex is a fixed node it will add  it before index
     # O(log(n))
 
     def addBefore(self, index, otherIndex):
         """
         Add otherIndex in the cycle of index before index
-        ----
-        Args:
+        INPUT:
             index,otherIndex , otherIndex != index and otherIndex is a fixed point
-        ---- 
-        O(log(n))
+
+        EXAMPLES::
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.addBefore(1,33)
+            sage: provider.getCycleList(1)
+            [33, 1, 5]
+
+        .. NOTE::
+            O(log(n))
         """
 
         assert index != otherIndex
@@ -161,6 +216,13 @@ class CycleUtilsProvider:
         Used internaly,because we don't have node for fixed point index , it may create a different logic for them
         this will temporarly create a node during this operations , the use must be careful that after having used 
         this temporary node , that it is deleted from node map or isn't anymore a fixed point
+
+        EXAMPLES::
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider._safeIndex(12) 
+
+        .. NOTE::
+            O(log(m))
         """
         if not self.isFixedPoint(index):
             return
@@ -176,12 +238,18 @@ class CycleUtilsProvider:
         """
         This will only swap the label of the node associated to index and otherIndex while keeping
         a relabelling of some sort
-        ----
-        Args:
+        INPUt:
             index,otherIndex
-        -----
-        O(log(n))
-        ----
+
+        EXAMPLES::
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.getCycleList(7)
+            [7, 8, 9, 11]
+            sage: provider.swapIndex(9,8)
+            sage: provider.getCycleList(7)
+            [7, 9, 8, 11]
+        .. NOTE::
+            O(log(n))
         """
         if index not in self.nodeMap and otherIndex not in self.nodeMap:
             return
@@ -206,12 +274,19 @@ class CycleUtilsProvider:
     # O(sizeOfCycle)
     def getCycleList(self, index):
         """
-        Args:
+        INPUT:
             index
-        Returns:
+        OUTPUT:
             A list of all index in the cycle of index
-        ----
-        O(t+log(n)) where t is the size of the cycle of index
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.getCycleList(7)
+            [7, 8, 9, 11] 
+
+        .. NOTE::
+            O(t+log(n)) where t is the size of the cycle of index
         """
         if self.isFixedPoint(index):
             return [index]
@@ -224,10 +299,23 @@ class CycleUtilsProvider:
     def detach(self, index):
         """
         This will make index a fixed point
-        ---
-        Args : index
-        ---
-        O(log(n))
+
+        INPUT: 
+            index
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.getCycleList(7)
+            [7, 8, 9, 11]
+            sage: provider.detach(9)
+            sage: provider.getCycleList(7)
+            [7, 8, 11]
+            sage: provider.isFixedPoint(9)
+            True
+
+        .. NOTE::
+            O(log(n))
         """
         if self.isFixedPoint(index):
             return
@@ -250,12 +338,25 @@ class CycleUtilsProvider:
     # OK
     def isFixedPoint(self, index):
         """
-        Args:
+        INPUT:
             index
-        Returns: 
+        OUTPUT: 
             A boolean indicating if index is a fixed point or not 
-        ----
-        O(1)
+
+        EXAMPLES::
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.getCycleList(7)
+            [7, 8, 9, 11]
+            sage: provider.detach(9)
+            sage: provider.getCycleList(7)
+            [7, 8, 11]
+            sage: provider.isFixedPoint(9)
+            True
+            sage: provider.isFixedPoint(11)
+            False
+
+        .. NOTE::
+            O(1)
         """
         return index not in self.nodeMap
 
@@ -265,14 +366,20 @@ class CycleUtilsProvider:
         """
         This will return the key associated to index in the splay tree corresponding to his cycle,
         while making sure that the node asscociated to index is the root of the tree
-        -----
-        Args:
+        INPUT:
             index not a fixed point
 
-        Returns:
+        OUTPUT:
             The value associated to index in the splay tree corresponding to his cycle 
-        ----
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.getValue(11)
+            3
+
+        .. NOTE::
+            O(log(n))
         """
         if self.isFixedPoint(index):
             raise ValueError(
@@ -286,13 +393,23 @@ class CycleUtilsProvider:
         """
         Returns the splay tree associated to index while making sure that the node associated to index become the root
         index must not be a fixed point otherwise an error will be raised
-        ----
-        Args:
+
+        INPUT:
             index not a fixed point
-        Returns:
+
+        OUTPUT:
             The splay associated to index 
-        -----
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.getSplayTree(1) == provider.getSplayTree(5)
+            True 
+
+        .. NOTE::
+
+            O(log(n))
+
         """
         if self.isFixedPoint(index):
             raise ValueError(
@@ -304,11 +421,20 @@ class CycleUtilsProvider:
     def makeMin(self, index):
         """
         This will make index the max and the root of the splay tree, while keeping the same cycle topology
-        -----
-        Args:
+        INPUT:
             index
-        -----
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.getSplayTree(1).min() == provider.getValue(5)
+            False
+            sage: provider.makeMin(5)
+            sage: provider.getSplayTree(1).min() == provider.getValue(5)
+            True 
+
+        .. NOTE::
+            O(log(n))
 
         """
         if self.isFixedPoint(index):
@@ -329,11 +455,21 @@ class CycleUtilsProvider:
     def makeMax(self, index):
         """
         This will make index the max and the root of the splay tree, while keeping the same cycle topology
-        -----
-        Args:
+
+        INPUT:
             index
-        -----
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
+            sage: provider.getSplayTree(7).max() == provider.getValue(7)
+            False
+            sage: provider.makeMax(7)
+            sage: provider.getSplayTree(7).max() == provider.getValue(7)
+            True
+
+        .. NOTE::
+            O(log(n))
         """
         if self.isFixedPoint(index):
             return
@@ -353,11 +489,18 @@ class CycleUtilsProvider:
         """
         beforeIndex and afterIndex must be on different cycle , it will merge both cycle in the following manner C = ...->beforeIndex and D = afterIndex-> ... 
         it will create the following ...->beforeIndex->afterIndex-> ...
-        -----
-        Args:
+        INPUT:
             beforeIndex,afterIndex two indexes not on the same cycle, an error will be raised otherwise
-        -----
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(4242,1,5,42),(7,8,9,11)])
+            sage: provider.merge(1,8)
+            sage: provider.getCycleList(1)
+            [5, 42, 4242, 1, 8, 9, 11, 7]
+
+        .. NOTE::
+            O(log(n))
         """
         if self.sameCycle(beforeIndex, afterIndex):
             raise ValueError(
@@ -381,11 +524,20 @@ class CycleUtilsProvider:
         """
         startIndex and endIndex must be on the same cycle , it will cut their cycle into two part one startIndex...endIndex ,
         and the rest
-        -----
-        Args:
+        INPUT:
             startIndex and endIndex they must be on the same cycle, an error will be raise otherwise
-        ----- 
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: provider = CycleUtilsProvider([(4242,1,5,424242,42),(7,8,9,11)])
+            sage: provider.cut(5,424242)
+            sage: provider.getCycleList(1)
+            [4242, 1, 42]
+            sage: provider.getCycleList(5)
+            [5, 424242]
+
+        .. NOTE::
+            O(log(n))
         """
         if not self.sameCycle(startIndex, endIndex):
             raise ValueError(
@@ -397,12 +549,17 @@ class CycleUtilsProvider:
         endValue = self.getValue(endIndex)
         splayTree = self.getSplayTree(startIndex)
 
+        rest = None
         if startValue < endValue:
             left, otherRight = splayTree.split(endValue + 1 / 2)
             otherLeft, _ = left.split(startValue - 1 / 2)
-            otherRight.merge(otherLeft)
+            rest = otherRight.merge(otherLeft)
         else:
             otherLeft, right = splayTree.split(startValue - 1 / 2)
             left, otherRight = otherLeft.split(endValue + 1 / 2)
             left.shift(right.max() + 1 - left.min())
             left.merge(right)
+            rest = otherRight
+
+        if rest.size() == 1:
+            self.nodeMap.pop(rest.indexList()[0])

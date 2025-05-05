@@ -1,10 +1,33 @@
-
 # This file contain an implementation of a custom
 # Variant of SplayTree used in CycleUtilsProviderMain
 # Be careful when modifying this file to make sure that it is coherent with what is done in CycleUtilsProvider
 
 # OK
 def swapRight(node, otherNode):
+    """
+    Exchange the right child of node and otherNode
+
+    INPUT:
+        node,otherNode two SplayNode
+
+    EXAMPLES::
+
+        sage: node = SplayNode()
+        sage: otherNode = SplayNode()
+        sage: otherNode.right = SplayNode(4,otherNode)
+        sage: node.right = SplayNode(3,node)
+        sage: swapRight(node,otherNode)
+        sage: node.right.value
+        4
+        sage: otherNode.right.value
+        3
+        sage: node.right.parent == node and otherNode.right.parent == otherNode
+        True
+
+    .. NOTE::
+        O(1)
+
+    """
     tmp = node.right
     node.right = otherNode.right
     otherNode.right = tmp
@@ -18,6 +41,29 @@ def swapRight(node, otherNode):
 
 # OK
 def swapLeft(node, otherNode):
+    """
+    Swap the left child of node and otherNode
+    INPUT:
+        node,otherNode two SplayNode
+
+    EXAMPLES::
+
+        sage: node = SplayNode()
+        sage: otherNode = SplayNode()
+        sage: node.left = SplayNode(3,node)
+        sage: otherNode.left = SplayNode(4,otherNode)
+        sage: swapLeft(node,otherNode)
+        sage: node.left.value
+        4
+        sage: otherNode.left.value
+        3
+        sage: node.left.parent == node and otherNode.left.parent == otherNode
+        True
+
+    .. NOTE:: 
+        O(1)
+
+    """
     tmp = node.left
     node.left = otherNode.left
     otherNode.left = tmp
@@ -32,9 +78,25 @@ def swapLeft(node, otherNode):
 # OK
 def SwapNonTopologicalExceptIndex(node, otherNode):
     """
-    Swap every attribute of node and otherNode except splayTree,right,left
-    ---- 
-    O(1)
+    Swap the following attribut cnt,value,offset,splayTree of node and otherNode
+
+    INPUT:
+
+        node,otherNode two SplayNode
+
+    EXAMPLES::
+        sage: node = SplayNode()
+        sage: otherNode = SplayNode()
+        sage: node.offset = 7
+        sage: otherNode.offset = 8
+        sage: SwapNonTopologicalExceptIndex(node,otherNode)
+        sage: node.offset
+        8
+        sage: otherNode.offset
+        7
+
+    .. NOTE::
+        O(1)
     """
     # Value
     tmp = node.value
@@ -61,6 +123,22 @@ def SwapNonTopologicalExceptIndex(node, otherNode):
 def makeParentKnow(node):
     """
     Make the parent know(by changing is left or right attribute) that node is his new children
+
+    INPUT:
+        node a SplayNode
+
+    EXAMPLES::
+
+        sage: node = SplayNode(4)
+        sage: child = SplayNode(3,node)
+        sage: node.left,node.right
+        (None, None)
+        sage: makeParentKnow(child)
+        sage: node.left == child
+        True 
+
+    .. NOTE::
+        O(1)
     """
     if node.parent is None:
         return
@@ -75,8 +153,27 @@ def makeParentKnow(node):
 def swapNodeButNotIndex(node, otherNode):
     """
     Swap every attribute except index
-    ---
-    O(1)
+
+    INPUT:
+        node,otherNode two SplayNode
+
+    EXAMPLES::
+        sage: node = SplayNode(4)
+        sage: node.index =54
+        sage: otherNode = SplayNode(12)
+        sage: otherNode.index = 42
+        sage: swapNodeButNotIndex(node,otherNode)
+        sage: node.value
+        12 
+        sage: otherNode.value
+        4
+        sage: otherNode.index
+        42
+        sage: node.index
+        54
+
+    .. NOTE::
+        O(1)
     """
     # OK
     if node == otherNode:
@@ -127,60 +224,130 @@ def swapNodeButNotIndex(node, otherNode):
 
 def numberOfElement(node):
     """
-    Returns the number of element in the subtree of node or 0 if node is None
-    ----
-    O(1)
+    Returns node.cnt or 0 if node is None
+
+    EXAMPLES::
+
+        sage: numberOfElement(None)
+        0 
+
+    .. NOTE::
+        O(1)
     """
     return 0 if node is None else node.cnt
 
 
 def valueToTheLeft(parentValue, value):
     """
-    Returns a boolean indciating if parentValue>value
-    ---- 
-    O(1)
+    INPUT:
+        parentValue ,value
+
+    OUTPUT:
+        Returns a boolean indciating if parentValue>value
+
+    EXAMPLES::
+        sage: from SplayTree import valueToTheLeft
+        sage: valueToTheLeft(7,8)
+        False
+
+    .. NOTE::
+        O(1)
     """
     return parentValue > value
 
 
 def valueToTheRight(parentValue, value):
     """
-    Returns a boolean indciating if parentValue<value
-    ----
-    O(1)
+    INPUT:
+        parentValue,value
+
+    OUTPUT::
+        Returns a boolean indciating if parentValue<value
+
+    EXAMPLES::
+
+        sage: valueToTheRight(7,8)
+        True
+
+    .. NOTE::
+        O(1)
     """
     return parentValue < value
 
 
 def isLeftChild(parentNode, node):
     """
-    Returns a boolean indicating if node is th left Child of parentNode 
-    assuming node is a child
-    ----
-    O(1)
+
+    INPUT:
+        parentNode,node
+
+    OUTPUT:
+        Returns a boolean indicating if node.value<parentNode.value
+
+
+    EXAMPLES::
+
+        sage: node = SplayNode(4)
+        sage: child = SplayNode(3,node)
+        sage: makeParentKnow(child)
+        sage: isRightChild(node,child)
+        False
+        sage: isLeftChild(node,child)
+        True
+
+    .. NOTE::
+        O(1)
     """
     return valueToTheLeft(parentNode.value, node.value + node.offset)
 
 
 def isRightChild(parentNode, node):
     """
-    Returns a boolean indicating if node is the right Child of parentNode 
-    assuming node is a child
-    ----
-    O(1)
+    INPUT:
+        parentNode,node 
+
+    OUTPUT:
+
+        Returns a boolean indicating if node.value>parentNode.value
+
+    EXAMPLES::
+
+        sage: node = SplayNode(4)
+        sage: child = SplayNode(3,node)
+        sage: makeParentKnow(child)
+        sage: isRightChild(node,child)
+        False
+        sage: isLeftChild(node,child)
+        True
+
+
+    .. NOTE::
+        O(1)
     """
     return valueToTheRight(parentNode.value, node.value + node.offset)
 
 
-class Node:
+class SplayNode:
     """
     This class is an internal class used in SplayTree and CycleUtilsProvider,
-    most operation are O(log(n)) amortized where n is the size of the tree if there is
-    a splay after them which is done most of the time outiside of this class by the splay tree
+    most operation are O(log(n)) amortized where n is the size of the tree iff there is
+    a splay after each of them , which is done most of the time outside of this class by the splay tree
     on which it is attached.
     """
 
     def __init__(self, value=None, parent=None) -> None:
+        """
+        Init the splaynode 
+
+        INPUT:
+            value,parent both default to None
+
+        EXAMPLES::
+            sage: node = SplayNode(4)
+
+        .. NOTE::
+            O(1)
+        """
         # The value contained in the node note that
         # It doesn't represent the key associated to node
         # Which is the sum of the value and offset
@@ -210,7 +377,15 @@ class Node:
     def SafeSplay(self):
         """
         This will splay self while being sure that after self.splayTree point to the correct value
-        and oldRoot.splayTree is None
+        and oldRoot.splayTree is None.
+
+        EXAMPLES::
+
+            sage: node = SplayNode(4)
+            sage: node.SafeSplay()
+
+        .. NOTE::
+            O(log(n))
         """
         oldRoot = self.getRoot()
         if oldRoot != self:
@@ -220,10 +395,19 @@ class Node:
 
     def getSplayTree(self):
         """
-        This return a reference to the splay tree of self , and make self the root of the splay tree or None
-        if it doesn't exist
-        ------
-        O(log(m))
+        OUTPUT::
+
+            This return a reference to the splay tree of self , and make self the root of the splay tree or None
+            if it doesn't exist.
+
+        EXAMPLES::
+
+            sage: node = SplayNode(4)
+            sage: node.getSplayTree() is None
+            True 
+
+        .. NOTE::
+            O(log(n))
         """
         # It is guaranteed after colling this function that self is the root
         root = self.getRoot()
@@ -235,9 +419,21 @@ class Node:
 
     def getRoot(self):
         """
-        The root of the tree on which self is attached
-        ----
-        O(n)
+        OUTPUT::
+            The root of the tree on which self is attached
+
+        EXAMPLES::
+
+            sage: child = SplayNode(3,node)
+            sage: node = SplayNode(4)
+            sage: child = SplayNode(3,node)
+            sage: makeParentKnow(child)
+            sage: child.getRoot() == node
+            True
+
+        .. NOTE::
+            O(log(n)), don't forget to splay on self
+            to guarantee the amortized complexity
         """
         node = self
         while not node.isRoot():
@@ -247,9 +443,24 @@ class Node:
 
     def height(self):
         """
-        The height of the subtree 
-        -----
-        O(n)
+
+        OUTPUT:
+            The height of the subtree of self
+
+        EXAMPLES::
+
+            sage: node = SplayNode(4)
+            sage: child = SplayNode(3,node)
+            sage: makeParentKnow(child)
+            sage: child.height()
+            0
+            sage: node.height()
+            1
+
+        .. NOTE:
+            O(n),written recursively hence if you have
+            too small recursion limit it can crash
+
         """
         if self.isEmpty():
             return -1
@@ -262,9 +473,25 @@ class Node:
 
     def sortedList(self, offset=0):
         """
-        Returns the sorted list of key in the subtree 
-        ---
-        O(n)
+
+        INPUT:
+            offset (default to 0) the offset to add
+            to each value of the subtree
+
+        OUTPUT:
+
+            Returns the sorted list of key in the subtree 
+
+        EXAMPLES::
+
+            sage: node = SplayNode(4)
+            sage: child = SplayNode(3,node)
+            sage: makeParentKnow(child)
+            sage: node.sortedList()
+            [3, 4]
+
+        .. NOTE::
+            O(n)
         """
         if self.isEmpty():
             return []
@@ -277,9 +504,25 @@ class Node:
 
     def indexList(self):
         """
+
+        OUTPUT:
+
         Returns the list of index in the subtree associated to self in the order of their key
-        ------
-        O(n)
+
+
+        EXAMPLES::
+
+            sage: node = SplayNode(4)
+            sage: child = SplayNode(3,node)
+            sage: makeParentKnow(child)
+            sage: node.index = 4
+            sage: child.index = 75
+            sage: node.indexList()
+            [75, 4] 
+
+        ..NOTE::
+            O(n)
+
         """
         if self.isEmpty():
             return []
@@ -292,18 +535,42 @@ class Node:
 
     def isEmpty(self):
         """
+
+        OUTPUT:
         A boolean indcating if self is empty
-        ----
-        O(1)
+
+        EXAMPLES::
+
+            sage: node = SplayNode()
+            sage: node.isEmpty()
+            True
+
+
+        .. NOTE::
+            O(1)
         """
         return self.value is None
 
     def findSmallestGreater(self, value):
         """
-        This will return offset,node such that if it exist node.value+offset is the smallest value in
-        self subtree such that >= value, otherwise the biggest smaller value.
-        ----
-        O(log(n))
+        INPUT:
+
+            value
+
+        OUTPUT:
+        A couple node,offset such that if there is smallest greater key in self that value node.offset+offset is this
+        value.
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: child = SplayNode(3,node)
+            sage: makeParentKnow(child)
+            sage: node.findSmallestGreater(1)[0] == child
+            True
+
+        .. NOTE::
+            O(log(n)),to keep the O(log(m)) amortized value you must splay node.
         """
 
         if self.isEmpty():
@@ -330,10 +597,23 @@ class Node:
 
     def findBiggestSmaller(self, value):
         """
-        This will return offset,node such that if it exist node.value+offset is the biggest value in
+        INPUT:
+            value
+
+        OUTPUT:
+        A couple offset,node such that if it exist node.value+offset is the biggest value in
         self subtree such that <= value, otherwise the smallest bigger
-        -----
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: child = SplayNode(3,node)
+            sage: makeParentKnow(child)
+            sage: node.findBiggestSmaller(33)[0] == node
+            True 
+
+        .. NOTE::
+        O(log(n)),you must splay on node to guarantee the amortized O(log(n)) complexity
         """
         if self.isEmpty():
             return self, 0
@@ -359,9 +639,27 @@ class Node:
 
     def insert(self, newValue):
         """
-        Insert newValue inside the tree return b,node,offset such that b=True if it was a real new value otherwise False
-        and node.value+offset = value
-        -----
+
+
+        Insert newValue inside the tree 
+
+        INPUT:
+            newValue
+
+        OUTPUT:
+            return b,node,offset such that b=True if it was a real new value otherwise False
+            and node.value+offset = value
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22) 
+            sage: isNew,newNode,offset = node.insert(34)
+            sage: isNew
+            True
+            sage: newNode.value + offset == 34
+            True
+
+        .. NOTE::
         O(log(n))
         """
         if self.isEmpty():
@@ -375,14 +673,14 @@ class Node:
                 return False, node, offset
             if valueToTheLeft(node.value + offset, newValue):
                 if node.left is None:
-                    node.left = Node(newValue - offset, node)
+                    node.left = SplayNode(newValue - offset, node)
                     node.left.addCountUpward(1)
                     return True, node.left, offset
                 else:
                     node = node.left
             else:
                 if node.right is None:
-                    node.right = Node(newValue - offset, node)
+                    node.right = SplayNode(newValue - offset, node)
                     node.right.addCountUpward(1)
                     return True, node.right, offset
                 else:
@@ -391,9 +689,32 @@ class Node:
 
     def addCountUpward(self, toAdd):
         """
+
         Add toAdd to the cnt attribute of all the node in the path toward the root from self
-        ----
-        O(log(n))
+
+        INPUT:
+
+            toAdd
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: child = SplayNode(3,node)
+            sage: cchild = SplayNode(1,child)
+            sage: makeParentKnow(child)
+            sage: makeParentKnow(cchild)
+            sage: child.cnt = 1
+            sage: node.cnt = 2
+            sage: cchild.cnt
+            0
+            sage: child.addCountUpward(4)
+            sage: child.cnt,node.cnt
+            (5, 6)
+            sage: cchild.cnt
+            0
+
+        .. NOTE::
+        O(log(n)),not intended to be used by the user, you should splay on node after calling it.
         """
         node = self
         node.cnt += toAdd
@@ -405,8 +726,21 @@ class Node:
         """
         Find a node such that node.value+node.offset() == value, return the offset and the node,
         if it doesn't exist it will return the node,offset the smallest real value i.e node.value+offset < value
-        -----
-        O(log(n))
+
+        INPUT:
+            value
+
+        OUTPUT:
+            node,offset corresponding to the above description
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: node.find(22)[0] == node
+            True 
+
+        .. NOTE:
+        O(log(n)),should splay on node to guarantee amortized log complexity
         """
         if self.isEmpty():
             return self, 0
@@ -427,9 +761,19 @@ class Node:
 
     def min(self):
         """
-        Returns the min of self
-        ----
-        O(log(n))
+        OUTPUT:
+            node,offset such that node.value+offset is the minimal key
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: child = SplayNode(3,node)
+            sage: makeParentKnow(child)
+            sage: node.min()[0] == child
+            True
+
+        .. NOTE::
+        O(log(n)), splay on node to guarantee amortized log time
         """
         minimum = self
         offset = self.offset
@@ -441,8 +785,24 @@ class Node:
     def delete(self, value):
         """
         Delete value from self subtree and return the nearest node to the deleted one
-        ---
-        O(log(n)) 
+
+        OUTPUT:
+            node corresponding to the above description
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: child = SplayNode(3,node)
+            sage: makeParentKnow(child)
+            sage: node.sortedList()
+            [3, 22]
+            sage: node.delete(3) == node
+            True
+            sage: node.sortedList()
+            [22]
+
+        ..NOTE::
+        O(log(n)) , splay on the node returned
         """
         if self.isEmpty():
             return self
@@ -516,10 +876,20 @@ class Node:
 
     def max(self):
         """
-        Returns the node and offset corresponding to the maxmimum of the subtree of self , it doesn't splay,
-        splaying is done in SplayTree
-        ----
-        O(log(n))
+        OUTPUT:
+        Returns node,offset such that node.value+offset is the 
+        maximum key in the subtree of self
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: child = SplayNode(3,node)
+            sage: makeParentKnow(child)
+            sage: node.max()[0] == node
+            True
+
+        ..NOTE:
+        O(log(n)),splay on the returned node to guarantee log amortized time
         """
         maximum = self
         offset = self.offset
@@ -529,10 +899,20 @@ class Node:
         return maximum, offset
 
     def _isBst(self, offset=0):
-        """
-        Verify that self is a bst  it also returns the min and max of the subtree of self
-        ----
-        O(n)
+        """ 
+        Verify that self is a binary search tree and raise an error otherwise
+
+        OUTPUT:
+        returns the min and max of the subtree of self
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: node._isBst()
+            (22, 22)
+
+        .. NOTE::
+        O(n),written recursively hence if a too small recursion limit may crash
         """
         if self.isEmpty():
             return None, None
@@ -551,15 +931,41 @@ class Node:
     def isBst(self):
         """
         Raise an error if self isn't a bst
-        ----
-        O(n)
+
+        EXAMPLES::
+
+            sage: try:
+            ....:     node.isBst()
+            ....: except:
+            ....:     print("No")
+            ....:
+
+        ..NOTE:
+        O(n), written recursively if too small recursion limit it may crash
         """
         self._isBst()
 
     def rightRotation(self):
         """
         Do a right rotation while updating the attribute accordingly
-        ----
+
+        OUTPUT::
+            The node which is after the call the father of self 
+            if self has a left child otherwise self
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: child = SplayNode(3,node)
+            sage: cchild = SplayNode(1,child)
+            sage: makeParentKnow(child)
+            sage: makeParentKnow(cchild)
+            sage: node.rightRotation() == child
+            True
+            sage: child.isRoot()
+            True 
+
+        .. NOTE::
         O(1)
         """
         if self.isEmpty():
@@ -610,7 +1016,25 @@ class Node:
     def leftRotation(self):
         """
         Do a left rotation while updating attribute accordingly
-        ------
+
+        OUTPUT:
+            The node which is after the call the father of self
+            if self has a left child otherwise self
+
+        EXAMPLES::
+
+            False
+            sage: node = SplayNode(22)
+            sage: child = SplayNode(33,node)
+            sage: cchild = SplayNode(44,child)
+            sage: makeParentKnow(cchild)
+            sage: makeParentKnow(child)
+            sage: node.leftRotation() == child
+            True
+            sage: child.isRoot()
+            True
+
+        .. NOTE::
         O(1)
         """
         if self.isEmpty():
@@ -657,16 +1081,45 @@ class Node:
 
     def isRoot(self):
         """
+
+        OUTPUT:
         Returns a boolean indcating if self is the root of the tree or not
-        ----
-        O(log(m))
+
+        EXAMPLES::
+            sage: node = SplayNode(22)
+            sage: child = SplayNode(33,node)
+            sage: cchild = SplayNode(44,child)
+            sage: makeParentKnow(cchild)
+            sage: makeParentKnow(child)
+            sage: node.leftRotation() == child
+            True
+            sage: child.isRoot()
+            True
+
+        .. NOTE::
+        O(1)
         """
         return self.parent is None
 
     def getOffset(self):
         """
+        OUTPUT:
         Returns the sum of offset from the root to self 
-        ----
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: child = SplayNode(33,node)
+            sage: cchild = SplayNode(44,child)
+            sage: makeParentKnow(child)
+            sage: makeParentKnow(cchild)
+            sage: node.offset = 5
+            sage: child.offset = 2
+            sage: cchild.offset = 1
+            sage: cchild.getOffset()
+            8
+
+        .. NOTE::
         O(log(m))
         """
         offset = self.offset
@@ -681,7 +1134,22 @@ class Node:
         This applied splay the node toward the root of the tree,
         note that it isn't safe mainly cause it doesn't update the splayTree attribute of the root
         You should use SafeSplay instead
-        ----
+
+        OUTPUT:
+            self
+
+
+        EXAMPLES::
+
+            sage: node = SplayNode(22)
+            sage: child.offset = 2
+            sage: cchild = SplayNode(44,child)
+            sage: makeParentKnow(cchild)
+            sage: makeParentKnow(child)
+            sage: cchild.isRoot()
+            True
+
+        .. NOTE::
         O(log(m))
         """
         while not self.isRoot():
@@ -719,21 +1187,26 @@ class SplayTree():
         """
         This class implement a special version of splay tree where it is possible to schift all the
         value contained in the splay tree by a constant.
-        -------
+
         Initialises the splay tree
-        -------
-        Args:
+
+        INPUT:
             -lst: A list of element to add too self
             -root: A possible Node on which to root the splayTree if set to None it will be set to
                 Node()
-        -------
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,1,2])
+
+        .. NOTE::
         O(n * log(max(n,m)) ) where n is the length of lst and m is the number of element in the subtree
             of root
         """
 
         self.root = root
         if self.root is None:
-            self.root = Node()
+            self.root = SplayNode()
         self.root.splayTree = self
         self.valid = True
         self.insertList(lst)
@@ -741,10 +1214,20 @@ class SplayTree():
     def changeRoot(self, root):
         """
         Change the root of the splay tree to root
-        -----
-        Args: root
-        -----
-        O(log(m)) where m is the size of the tree of root
+
+        INPUT: 
+            root
+
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,1,2])
+            sage: oldRoot = sp.root
+            sage: sp.changeRoot(SplayNode())
+            sage: sp.root != oldRoot
+            True
+
+        O(log(m)) where m is the size of the tree of root,not intended to be used directly
         """
         if not root.isRoot():
             raise ValueError("The argument must be the root of his tree")
@@ -755,11 +1238,20 @@ class SplayTree():
     def shift(self, toAdd):
         """
         This will shift all the value contained in the tree by toAdd
-        -------
-        Args:
+        INPUT:
             toAdd
-        -------
-        O(1)
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,1,2])
+            sage: sp.toList()
+            [0, 1, 2]
+            sage: sp.shift(42)
+            sage: sp.toList()
+            [42, 43, 44]
+
+        .. NOTE::
+            O(1)
         """
         self.checkValid()
         self.root.offset += toAdd
@@ -767,6 +1259,14 @@ class SplayTree():
     def checkValid(self):
         """
         Check whether self is a valid SplayTree if not raise an Error
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,1,2])
+            sage: sp.checkValid()
+
+        .. NOTE::
+            O(1)
         """
         if self.valid:
             return
@@ -776,19 +1276,31 @@ class SplayTree():
         """
         This will split self into two splayTree a,b such that a contains all the element <= value
         and b all the element >value.You should note that a == self after the operation.
-        -------
-        Args:
+        INPUT:
             value : The value on which to split
-        Returns:
+        OUTPUT:
             (a,b) such that a contains all the element <= value and b all the element > value
-        -------
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33]
+            sage: a,b = sp.split(7)
+            sage: a.toList()
+            [0, 1, 2, 7]
+            sage: b.toList()
+            [22, 33]
+
+        ..NOTE::
         O(log(n)) where n is the size of self
         """
         self.checkValid()
         if self.isEmpty():
             return self, SplayTree()
 
-        self.findBiggestSmaller(value)
+        if self.findBiggestSmaller(value) is None:
+            return SplayTree(), self
         right = self.root.right
         self.root.right = None
         self.root.cnt -= numberOfElement(right)
@@ -799,15 +1311,35 @@ class SplayTree():
         return self, SplayTree(root=right)
 
     def indexList(self):
+        """
+
+        OUTPUT::
+            index list in the order of the key 
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.indexList()
+            [None, None, None, None, None, None]
+
+        """
         self.checkValid()
         return self.root.indexList()
 
     def toList(self):
         """
-        This will return a sorted list of all the element contains in self
-        -------
-        Returns:  A sorted list of all the element of self
-        -------
+        This will return a sorted list of all the key contains in self
+
+        OUTPUT:  
+            A sorted list of all the element of self
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33]
+
+        .. NOTE::
         O(n)
         """
         self.checkValid()
@@ -816,17 +1348,37 @@ class SplayTree():
     def merge(self, otherSplayTree):
         """
         This function return a splay tree containing all the element of self and otherSplayTree ,
-        you need to have otherSplayTree.min()<self.max() or it will raise an Error, moreover after
+        you need to have otherSplayTree.max()<self.min() or it will raise an Error, moreover after
         applied self isn't anymore a valid SplayTree and otherSplayTree point to the merged tree.
-        -------
-        Args:
+
+        INPUT:
             otherSplayTree : The otherSplayTree such that for otherSplayTree.max()<self.min()
-        Returns:
+        OUTPUT:
             The merge splay tree containing all the element of self and otherSplayTree
-        -------
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: qp = SplayTree([35,44,42])
+            sage: qp.toList()
+            [35, 42, 44]
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33]
+            sage: qp.merge(sp) == sp
+            True
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33, 35, 42, 44]
+
+        .. NOTE::
         O(log(n)+log(m)) where n is the size of self and m is the size of otherSplayTree
         """
         self.checkValid()
+
+        if otherSplayTree.isEmpty():
+            otherSplayTree.root = self.root
+            self.root.splayTree = otherSplayTree
+            self.valid = False
+            return otherSplayTree
 
         if self.isEmpty():
             self.valid = False
@@ -848,21 +1400,35 @@ class SplayTree():
     def _height(self):
         """
         This function returns the height of self
-        -------
-        Returns: the height of self
-        -------
-        O(n) where n = self.size()
-        WARNING: This function isn't recursion safe mainly cause because splay tree can have linear height
-        they have amortized log operation and it was written recursively, hence if you a too much small recursion limit it can crash,
-        it was mainly used during debug
+
+        OUTPUT: 
+            the height of self
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp._height()
+            3 
+
+        .. NOTE::
+        O(n) where n = self.size(),written recursively hence with too small rrecusion
+        limit may crash.
         """
         self.checkValid()
         return self.root.height()
 
     def isEmpty(self):
         """
-        Returns: A boolean indicating if self is Empty
-        -------
+        OUTPUT: 
+            A boolean indicating if self is Empty
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.isEmpty()
+            False 
+
+        .. NOTE::
         O(1)
         """
         self.checkValid()
@@ -870,12 +1436,20 @@ class SplayTree():
 
     def _isBst(self):
         """
-        Returns: A boolean indicating if self is a valid binary search tree
-        WARNING: This function isn't recursion safe mainly cause because splay tree can have linear height
-        even though they have amortized log operation, and the function was coded recursively ,hence if you a too much small recursion limit it may crash,
-        it was mainly used during debug
-        -------
-        O(n) where n =  self.size()
+
+        OUTPUT: 
+        A boolean indicating if self is a valid binary search tree
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp._isBst()
+            True 
+
+
+        .. NOTE::
+        O(n) where n =  self.size(), written recursively hence with too much small
+        recursion limit it may crash
         """
 
         self.checkValid()
@@ -887,8 +1461,16 @@ class SplayTree():
 
     def _isRoot(self):
         """
-        Returns : A boolean indicating if self.root is really the root
-        -------
+        OUTPUT: 
+            A boolean indicating if self.root is really the root
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp._isRoot()
+            True
+
+        .. NOTE::
         O(1)
         """
         self.checkValid()
@@ -899,11 +1481,21 @@ class SplayTree():
         The node corresponding to value in the tree if value is in the tree otherwise it return None,
         note that node.value+node.getOffSet() == value and not node.value == value, moreover it will make if it
         exists the node the root
-        ------
-        Args: value
-        Returns:  The node corresponding to value in the tree if value is in the tree otherwise
-                it return None
-        ------
+
+        INPUT: 
+            value
+
+        Returns:  
+            The node corresponding to value in the tree if value is in the tree otherwise
+            it return None
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.getNode(3) !=  sp.getNode(2)
+            True
+
+        ..NOTE::
         O(log(n))
         """
         self.checkValid()
@@ -919,9 +1511,24 @@ class SplayTree():
         """
         Insert newValue inside a tree, return a boolean True if newValue was inserted
         and False if newValue was already present in self
-        -------
-        Returns: True if newValue was inserted and False if newValue was already present in the tree
-        -------
+
+        INPUT:
+            value
+
+        OUTPUT: 
+            True if newValue was inserted and False if newValue was already present in the tree
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33]
+            sage: sp.insert(55)
+            True
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33, 55]
+
+        .. NOTE::
         O(log(n)) where n = self.size()
         """
 
@@ -933,9 +1540,20 @@ class SplayTree():
     def delete(self, value):
         """
         Delete value inside self
-        -------
-        Args : value
-        -------
+
+        INPUT: value
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33]
+            sage: sp.delete(7)
+            sage: sp.toList()
+            [0, 1, 2, 22, 33 
+
+
+        .. NOTE::
         O(log(n)) where n = self.size()
         """
         self.checkValid()
@@ -944,9 +1562,16 @@ class SplayTree():
     def min(self):
         """
         This method return the minimum of self, and make the corresponding node the root
-        -------
-        Returns: the minimum of self if self isn't empty and None otherwise
-        -------
+        OUTPUT: 
+            the minimum of self if self isn't empty and None otherwise
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.min()
+            0
+
+        .. NOTE::
         O(log(n)) where n = self.size()
         """
         self.checkValid()
@@ -961,9 +1586,18 @@ class SplayTree():
         """
         This method return the maximum of self, and make the corresponding node 
         the root
-        -------
-        Returns: the maximum of self if self isn't empty and None otherwise
-        -------
+
+
+        OUTPUT: 
+            the maximum of self if self isn't empty and None otherwise
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.max()
+            33 
+
+        .. NOTE::
         O(log(n)) where n = self.size()
         """
 
@@ -978,10 +1612,22 @@ class SplayTree():
         """
         This return a boolean indicating if value is in self, and if it exists
         make the corresponding node the root
-        -------
-        Args: value
-        Returns: A boolean indicating if value is in self
-        -------
+
+        INPUT: 
+            value
+        OUTPUT: 
+            A boolean indicating if value is in self
+
+        EXAMPLES:: 
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.find(7)
+            True
+            sage: sp.find(8)
+            False
+
+
+        .. NOTE::
         O(log(n)) where n = self.size()
         """
 
@@ -995,9 +1641,20 @@ class SplayTree():
     def insertList(self, list):
         """
         This will insert the element of list inside self
-        -------
-        Args: list element to add
-        -------
+
+        INPUT: 
+            list, a list of element to add
+
+        EXAMPLES:: 
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33]
+            sage: sp.insertList([42,4242,424242])
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33, 42, 4242, 424242]
+
+        .. NOTE::
         O(m*log(n+m)) where n = self.size() and m = len(list)
         """
 
@@ -1009,10 +1666,20 @@ class SplayTree():
         """
         This will return the smallest element of self >= value or None if it doesn't exist,
         if the value exist it will be made the root otherwise the greatest smaller will be made the root
-        -------
-        Args: value
-        Returns: the smallest element of self >= value or None if it  doesn't exist
-        -------
+        INPUT: 
+            value
+        OUTPUT: 
+            the smallest element of self >= value or None if it  doesn't exist
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33]
+            sage: sp.findSmallestGreater(12)
+            22
+
+        .. NOTE::
         O(log(n)) where n = self.size()
         """
 
@@ -1027,8 +1694,18 @@ class SplayTree():
 
     def size(self):
         """
-        Returns: Size of self
-        -------
+        OUTPUT: 
+            Size of self
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33]
+            sage: sp.size()
+            6
+
+        .. NOTE::
         O(1)
         """
         self.checkValid()
@@ -1038,10 +1715,22 @@ class SplayTree():
         """
         This will return the smallest element of self <= value or None if it doesn't exist, 
         if the value exist it will be made the root otherwise the smallest bigger will be made the root
-        -------
-        Args: value
-        Returns: the biggest element of self <= value or None if doesn't exist
-        -------
+
+
+        INPUT: 
+            value
+        OUTPUT: 
+            the biggest element of self <= value or None if doesn't exist
+
+        EXAMPLES::
+
+            sage: sp = SplayTree([0,7,1,33,2,22])
+            sage: sp.toList()
+            [0, 1, 2, 7, 22, 33]
+            sage: sp.findBiggestSmaller(8)
+            7
+
+        .. NOTE::
         O(log(n)) where n = self.size()
         """
 

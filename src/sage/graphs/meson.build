@@ -143,4 +143,4 @@ py.extension_module(
 subdir('base')
 subdir('generators')
 subdir('graph_decompositions')
-subdir('planar_maps')
+subdir('maps')

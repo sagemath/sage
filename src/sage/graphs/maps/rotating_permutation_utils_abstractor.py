@@ -1,0 +1,107 @@
+
+from sage.graphs.maps.permutation_utils_abstractor import *
+
+
+class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
+    def __init__(self, rpermutation) -> None:
+        """
+        Init the RotatingPermutationUtilsAbstractor
+
+        EXAMPLES::
+            sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
+
+        .. NOTE::
+            O(1)
+        """
+        self.rpermutation = rpermutation
+
+    def numberInCycle(self, index):
+        """
+        INPUT:
+            index
+
+        OUTPUT:
+            The size of the cycle containing index
+
+        EXAMPLES::
+
+            sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
+            sage: rAbstractor.numberInCycle(5)
+            4 
+
+        .. NOTE::
+            O(log(m)) where m is the size of the permutation 
+        """
+        return self.rpermutation.numberInCycle(index)
+
+    def sameCycle(self, i, j):
+        """
+
+        INPUT:
+            i,j two valid indexes
+
+        OUTPUT:
+            A boolean indicating if i and j are on the same cycle
+
+        .. NOTE::
+            O(log(m)) where m is the size of the permutation
+        """
+        return self.rpermutation.sameCycle(i, j)
+
+    def numberOfCycles(self):
+        """
+        OUTPUT:
+            The number of cycles of the permutation
+
+        EXAMPLES::
+            sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
+            sage: rAbstractor.numberOfCycles()
+            3
+
+        ..NOTE::
+            O(1)
+        """
+
+        return self.rpermutation.numberOfCycles()
+
+    def numberOfFixedPoint(self):
+        """
+        OUTPUT:
+            The number of fixed point of the permutation
+
+        EXAMPLES::
+            sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
+            sage: rAbstractor.numberOfFixedPoint()
+            1
+
+        .. NOTE::
+            O(1)
+        """
+
+        return self.rpermutation.number_of_fixed_points()
+
+    def checkTwoInTheSameCycle(self, listIndexes):
+        """
+        INPUT:
+            listIndexes a list of indexes
+
+        OUTPUT:
+            A boolean indicating if there are two indices in listIndexes on the sameCycle
+
+        EXAMPLES::
+            sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
+            sage: rAbstractor.checkTwoInTheSameCycle([1,6,3])
+            True
+            sage: rAbstractor.checkTwoInTheSameCycle([1,6,7])
+            False
+
+        .. NOTE::
+            O(len(listIndexes)log(m)) where m is the permutation size
+        """
+
+        return self.rpermutation.checkTwoInTheSameCycle(listIndexes)

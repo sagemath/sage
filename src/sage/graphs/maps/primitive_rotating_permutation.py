@@ -1,27 +1,15 @@
-from time import time
-from sage.graphs.planar_maps.CycleUtilsProvider import CycleUtilsProvider
-from sage.graphs.planar_maps.CyclicChainedList import CyclicChainedList
-from sage.all import Permutation, end
-from sage.graphs.planar_maps.MapPermutation import MapPermutation
+
+from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
+from sage.all import Permutation
+from sage.graphs.maps.map_permutation import MapPermutation
+from sage.graphs.maps.map_error import NotImplemented
 
 
-class RotatingPermutation(MapPermutation):
+class PrimitiveRotatingPermutation(MapPermutation):
 
     """
-    A class representing permutation where it is fast to:
-    - delete (O(log(n))) element,
-    - check if two indices are in the same cycle (O(log(n))),
-    - add (O(log(n))) element in its cycles representation,
-    - and more things useful in MutableLabelledMap.
 
-    Note that compared to simple MapPermutation,
-    RotatingPermutation are more heavy objects; hence they are more demanding when initializing.
-    If you don't need all the power of RotatingPermutation, consider using the simple MapPermutation.
-
-    Another thing: for compatibility reasons between MutableLabelledMap and LabelledMap,
-    every method that returns a permutation must return MapPermutation.
-    Hence, don't assume that the permutation you get is a RotatingPermutation;
-    you should do it yourself.
+    This class represent a more primitive version of rotating permutation useful in PrimitiveMutableLabelledMap
 
     WARNING: We take as a convention for this class that if i is bigger than the size of self,
     then self(i) = i.
@@ -29,8 +17,25 @@ class RotatingPermutation(MapPermutation):
 
     def __init__(self, lst):
         """
-        This function initiate the rotating permutation, lst can be  a Permutation or a list of int or list of tuple representing the cycle of
+        This function initiate the primitive rotating permutation, lst can be  a Permutation or a list of int or list of tuple representing the cycle of
         the permutation or a MapPermutation or an integer representing the size of the permutation(in this case self will represent the identity permutation of size lst).
+
+        INPUT:
+
+            - lst a list representing the permutation 
+            or a list of tuples representing the cycle of the permutation
+            or an integer representing the size of the permutation(In This
+            case it will return the identify of size lst) or a Permutation or a MapPermutation.
+
+
+        EXAMPLES::
+
+            sage: PrimitiveRotatingPermutation([(1,3,4),(7,8,10),(9,6)])
+            [3, 2, 4, 1, 5, 9, 8, 10, 6, 7]
+
+        .. NOTE::
+            O(n) where n is the size of the permutation
+
         """
         if isinstance(lst, Permutation) or isinstance(lst, MapPermutation):
             self.__init__(list(lst))
@@ -53,7 +58,6 @@ class RotatingPermutation(MapPermutation):
                 # identity
                 self._n = lst
                 self._numCycles = self._n
-                self.provider = CycleUtilsProvider([])
                 return
         except BaseException:
             pass
@@ -133,33 +137,54 @@ class RotatingPermutation(MapPermutation):
                     self._numCycles += 1
                     self._numberOfFixedPoint += cnt == 1
         except ValueError as e:
-            raise
+            raise e
         except BaseException:
             raise ValueError("Invalid argument: The argument given must be Permutation or MapPermutation or a non empty list of integers representing the permutation or a non empty list of tuples representing the cycles of the permutations or a positive integer.")
         self._n = mx
-        self.provider = CycleUtilsProvider(self.to_cycles())
 
     # OK
 
     def size(self):
         """
-        Returns: the size of the permutation
-        -------
-        O(1)
+        OUTPUT:
+            The size of the permutation
+
+        EXAMPLES::
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.size()
+            8
+
+        .. NOTE::
+            O(1)
         """
+
         return self._n
 
     # OK
     def deleteLastKIndex(self, k):
         """
         This function will delete the last k index from self
-        ------
-        Args:
+
+        INPUT:
+
             - k the number of node to delete
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4),(7,8,10),(9,6)])
+            sage: rperm
+            [3, 2, 4, 1, 5, 9, 8, 10, 6, 7]
+            sage: rperm.deleteLastKIndex(3)
+            sage: rperm
+            [3, 2, 4, 1, 5, 6, 7]
+
+        .. NOTE::
+            O(k) 
         """
+
         if k > self.size():
             raise ValueError(
-                f"Cannot delete {k} last element in a RotatingPermutation of size {self.size()}")
+                f"Cannot delete {k} last element in a PrimitiveRotatingPermutation of size {self.size()}")
         for _ in range(k):
             self.delete(self._n)
 
@@ -172,14 +197,23 @@ class RotatingPermutation(MapPermutation):
         self will be of size n-1 and if n != index the element numbered n will relabeled as index.
         For instance if self is the permutation(1, 2, 3)(4, 5) and we delete 2 it will become(1, 3)(4, 2),
         If n = 1 an error or index is not a strictly positive integer <= n an error will be raised.
-        -------
-        Args:
+
+        INPUT:
             -index: an integer representing the index to delete
 
-        Note that if index must be an strictly positive integer and self.size() >= 2 otherwise an error will be raised
-        -------
-        O(log(n))
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4),(7,8,10),(9,6)])
+            sage: rperm
+            [3, 2, 4, 1, 5, 9, 8, 10, 6, 7]
+            sage: rperm.delete(10)
+            sage: rperm
+            [3, 2, 4, 1, 5, 9, 8, 7, 6]
+
+        .. NOTE:: 
+            O(1),index must be an strictly positive integer and self.size() >= 2 otherwise an error will be raised
         """
+
         if self.size() == 1:
             raise ValueError(
                 "Cannot delete an element from a Permutation of size 1")
@@ -187,24 +221,24 @@ class RotatingPermutation(MapPermutation):
             raise ValueError(
                 "{index} isn't a strictly positive integer <= self.size()")
 
+        u = self(index)
+        v = self(u)
+
         nPrev = self.size()
         node = self.getNode(index)
 
         node.remove()
 
-        if self.provider.numberInCycle(index) == 2:
+        if v == index and u != index:
             self._numberOfFixedPoint += 1
 
-        if self.provider.numberInCycle(index) == 1:
+        if u == index:
             self._numberOfFixedPoint -= 1
             self._numCycles -= 1
 
         self._n -= 1
 
         self._permCycle.pop(index)
-
-        self.provider.swapIndex(nPrev, index)
-        self.provider.detach(nPrev)
 
         if nPrev != index:
             try:
@@ -220,44 +254,53 @@ class RotatingPermutation(MapPermutation):
     def inverseApply(self, i):
         """
         This function apply  the inverse self on i, we take as a convention i if i is an integer > self.size(), self.inverseApply(i) = i
-        ------
-        Args:
+
+        INPUT:
             i an index
-        ------
-        O(1)
+
+        OUTPUT:
+            j such that self(j) = i
+
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4),(7,8,10),(9,6)])
+            sage: rperm.inverseApply(10)
+            8
+
+        .. NOTE::
+            O(1)
         """
+
         if i != int(i) or i <= 0:
             raise ValueError("{i} isn't a positive integer")
         try:
             return self._permCycle[i].prev.val
         except BaseException:
             return i
-    # OK
 
-    def checkTwoInTheSameCycle(self, listIndexes):
-        """
-        This function will return a boolean indicating if there is two index in listIndexes in the sameCycle
-        ------
-        Args:
-            listIndexes: A list of indexes
-        Returns:
-            A boolean indicating if two indexes are in the same cycle
-        ------
-        O(plog(n)) where p = len(listIndexes)
-        """
-        return self.provider.checkTwoInTheSameCycle(listIndexes)
     # OK
 
     def swapIndex(self, index, otherIndex):
         """
         This function swap the index role in the permutation
-        ------
-        Args:
+
+        INPUT:
             index, otherIndex the two indexes <= self.size()
-        ------
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4),(7,8,10),(9,6)])
+            sage: rperm
+            [3, 2, 4, 1, 5, 9, 8, 10, 6, 7]
+            sage: rperm.swapIndex(1,10)
+            sage: rperm
+            [7, 2, 4, 10, 5, 9, 8, 1, 6, 3]
+
+        .. NOTE:
+            O(1)
         """
-        self.provider.swapIndex(index, otherIndex)
+
         nodeIndex = self.getNode(index)
         nodeOther = self.getNode(otherIndex)
         self._permCycle[otherIndex] = nodeIndex
@@ -268,15 +311,23 @@ class RotatingPermutation(MapPermutation):
     def cutDelete(self, startIndex, endIndex):
         """
         This will cut the cycle in two part startIndex...endIndex and the rest , and than will delete startIndex and endIndex
-        ------
-        Args: 
+        INPUT: 
             startIndex, endIndex, on the sameCycle such that {startIndex,endIndex}={self.size(),self.size()-1}
-        ------ 
-        O(log(m))
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4),(2,7,11,8,10),(9,6)])
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2, 7, 11, 8, 10), (5,), (6, 9)]
+            sage: rperm.cutDelete(10,11)
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2, 7), (5,), (6, 9), (8,)]
+
+        .. NOTE::
+            O(1)
         """
 
         assert startIndex != endIndex
-        assert self.sameCycle(startIndex, endIndex)
 
         tempNewIndex = self._n+1
         tempNewIndexOther = self._n+2
@@ -292,12 +343,23 @@ class RotatingPermutation(MapPermutation):
         let denote A = startIndex, B = endIndex, C = newIndexStart, D = newIndexEnd and say the cycle is of the form F -> A -> S -> .. -> T -> B -> R -> ... -> F
         than the situation will be the following after a call to this function, A -> S -> ... -> T -> D -> A and F -> C -> B -> R -> ... -> F
         ------
-        Args:
+        INPUT:
             startIndex, endIndex, newIndexStart, newIndexEnd: 4 indexes, startIndex and endIndex must be on the same cycle
             and {newIndexEnd, newIndexStart} = {n+1, n+2} and should be fixed point
-        ------
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4),(2,7,11,8,10),(9,6)])
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2, 7, 11, 8, 10), (5,), (6, 9)]
+            sage: rperm.cutAdd(1,4,12,13)
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 13), (2, 7, 11, 8, 10), (4, 12), (5,), (6, 9)]  
+
+        .. NOTE::
+            O(1)
         """
+
         if newIndexEnd == newIndexStart:
             raise ValueError(
                 f"{newIndexEnd} and {newIndexStart} must be different")
@@ -307,12 +369,9 @@ class RotatingPermutation(MapPermutation):
         if newIndexEnd <= self.size() or newIndexEnd > self.size() + 2:
             raise ValueError(
                 f"{newIndexEnd} must be  >{self.size()} and <= {self.size() + 2}")
-        if not self.sameCycle(startIndex, endIndex):
-            raise ValueError(
-                f"{newIndexEnd} and {newIndexStart} must be in the same cycle to use cutAdd")
         if startIndex == endIndex:
             self.addBefore(startIndex)
-            self.addBefore(startIndex)
+            self.stretch(1)
             return
 
         nodeStartIndex = self.getNode(startIndex)
@@ -326,7 +385,6 @@ class RotatingPermutation(MapPermutation):
         nodeNewIndexEnd = self.getNode(newIndexEnd)
 
         # NodeNewIndexStart processing
-        comeBeforeEnd = self.inverseApply(endIndex)
         tmpNode = self.getNode(self.inverseApply(startIndex))
         nodeNewIndexStart.prev = tmpNode
         tmpNode.nxt = nodeNewIndexStart
@@ -343,23 +401,35 @@ class RotatingPermutation(MapPermutation):
         nodeEndIndex.prev = nodeNewIndexStart
         nodeStartIndex.prev = nodeNewIndexEnd
 
-        # Updating the provider
-        self.provider.cut(startIndex,
-                          comeBeforeEnd)
-
-        self.provider.addBefore(startIndex, newIndexEnd)
-        self.provider.addBefore(endIndex, newIndexStart)
-
     # OK
+
     def labelToTheEnd(self, listIndexes):
         """
         This is a helper function  it just move all of the element in listIndexes to the last indices
-        -----
-        Args:
+
+        INPUT:
             listIndexes
-        -----
-        O(len(listIndexes)*log(n))
+
+        OUTPUT:
+
+            A map giving a correspondance between the old index and the new
+            if it was changed.
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4),(2,7,11,8,10),(9,6)])
+            sage: rperm
+            [3, 7, 4, 1, 5, 9, 11, 10, 6, 2, 8]
+            sage: rperm.labelToTheEnd([3,2,11])
+            {2: 9, 3: 10}
+            sage: rperm
+            [10, 6, 9, 1, 5, 2, 11, 3, 7, 4, 8]
+
+        .. NOTE::
+            O(len(listIndexes))
+
         """
+
         for index in listIndexes:
             if index != int(index) or index <= 0 or index > self.size():
                 raise ValueError(
@@ -392,14 +462,25 @@ class RotatingPermutation(MapPermutation):
     def bruteAddCycles(self, cycles):
         """
         Another helper function that add cyclein cycles, this one assumed is more dangerous than addCycles
-        cause it assumed that the cycles are well formed and not > self.size()
-        thus the term brute
-        ----
-        Args:
-            cycles: list of cycles
-        ----
-        O(len(cycles)*log(n))
+        cause it assumed that the cycles are well formed thus the term brute
+
+        INPUT:
+            cycles,list of cycles as tuple
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4)])
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2,)]
+            sage: rperm.stretch(3)
+            sage: rperm.bruteAddCycles([(5,6,2)] )
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2, 5, 6), (7,)]
+
+        .. NOTE::
+            O(len(cycles))
         """
+
         for c in cycles:
             for i in range(len(c) - 1):
                 self.addAfterGeneral(c[i], c[i + 1])
@@ -409,11 +490,18 @@ class RotatingPermutation(MapPermutation):
         """
         Another helper function it will raise an error if element of the cycles
         are not > self.size() and <= self.size()+len(cycles), the cycle must be well formed
-        ----
-        Args:
+        INPUT:
             cycles: list of cycles
-        ----
-        O(len(cycles)*log(n))
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4)])
+            sage: rperm.addCycles([(5,6)])
+            sage: rperm
+            [3, 2, 4, 1, 6, 5]
+
+        .. NOTE::
+            O(len(cycles))
         """
 
         testSet = set()
@@ -438,12 +526,22 @@ class RotatingPermutation(MapPermutation):
         """
         Check if index is a integer > 0 and <=self.size()
         otherwise raise an Error
-        ----
-        Args:
+        INPUT:
             index
-        ----
-        O(1)
+
+        EXAMPLES:: 
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4)])
+            sage: try :
+            ....:     rperm.isValidIndex(100)
+            ....: except:
+            ....:     pass
+            ....:
+
+        .. NOTE::
+            O(1)
         """
+
         if index <= 0 or index != int(index) or index > self.size():
             raise ValueError(f"{index} isn't valid")
     # OK
@@ -452,22 +550,31 @@ class RotatingPermutation(MapPermutation):
         """
         This is a more general version of addAfter it only assumed that otherIndex is a fixed point
         and will add it after index in its cycle
-        -----
-        Args:
+        INPUT:
             index, otherIndex
-        -----
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4)])
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2,)]
+            sage: rperm.addAfterGeneral(4,2)
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4, 2)]
+
+        .. NOTE::
+            O(1)
         """
+
         self.isValidIndex(index)
         self.isValidIndex(otherIndex)
         if index == otherIndex:
             return
-        if not self.provider.isFixedPoint(otherIndex):
+        if not self(otherIndex) == otherIndex:
             raise ValueError(
                 f"Can only add after fixed point {otherIndex} isn't one")
 
-        self._numberOfFixedPoint -= self.provider.isFixedPoint(index)
-        self.provider.addAfter(index, otherIndex)
+        self._numberOfFixedPoint -= self(index) == index
 
         node = self.getNode(index)
 
@@ -483,12 +590,22 @@ class RotatingPermutation(MapPermutation):
         """
         More general version of addBeforeit only assumed that otherIndex is a fixed point
         and will add it before index in its cycle
-        ----
-        Args:
+        INPUT:
             index, otherIndex
-        ----
-        O(log(n))
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4)])
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2,)]
+            sage: rperm.addBeforeGeneral(3,2)
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 2, 3, 4)]
+
+        .. NOTE::
+            O(1)
         """
+
         self.isValidIndex(index)
         indexPrev = self.inverseApply(index)
         self.addAfterGeneral(indexPrev, otherIndex)
@@ -500,20 +617,30 @@ class RotatingPermutation(MapPermutation):
         following first index and otherIndex will be sent to self.size() self.size()-1 they will be deleted and given
         that before we add: U -> ... -> V -> index -> R -> U and F -> ... -> T -> otherIndex -> Q -> F, we will have after
         U -> ... -> V -> Q -> F -> ... -> T -> R -> U
-        ----
-        index, otherIndex two node not on the same cycle
-        ----
-        O(log(n))
+
+        INPUT:
+
+            index, otherIndex two node not on the same cycle, WARNING: if it isn't the case there is no guarantee and no error will be raised
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
+            sage: rperm.mergeDelete(3,7)
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 2, 5, 4), (6,)]
+
+        .. NOTE::
+            O(1)
         """
-        if self.sameCycle(index, otherIndex):
-            raise ValueError("Cannot merge delete two index on the sameCycle")
 
         backUpNumberOfFixedPoint = self.number_of_fixed_points()
 
         self.labelToTheEnd([index, otherIndex])
 
-        if self.provider.isFixedPoint(
-                self._n) or self.provider.isFixedPoint(self._n - 1):
+        if self(
+                self._n) == self._n or self(self._n - 1) == self._n-1:
             self.deleteLastKIndex(2)
             return
 
@@ -556,7 +683,6 @@ class RotatingPermutation(MapPermutation):
 
         self._numCycles -= 1
         self._numberOfFixedPoint = backUpNumberOfFixedPoint
-        self.provider.merge(beforeIndex, afterIndex)
 
     # OK
     def getNode(self, index):
@@ -564,10 +690,22 @@ class RotatingPermutation(MapPermutation):
         This function will return the node associated to index
         and if it doesn't exit it will create one note that if index > self.size()
         it will raise an error.
-        -----
-        O(1)
-        -----
+
+        INPUT:
+            index
+
+        OUTPUT:
+            The node associated to index
+
+        EXAMPLES::
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.getNode(3) != rperm.getNode(4)
+            True
+
+        .. NOTE::
+            O(1)
         """
+
         if index != int(index) or index <= 0 or index > self.size():
             raise ValueError(
                 "{index} isn't a strictly positive integer <= self.size()")
@@ -585,10 +723,22 @@ class RotatingPermutation(MapPermutation):
         """
         This function will increase the size of the permutation by m,all the new index will
         be fixed point
-        -----
-        O(1)
-        -----
+
+        INPUT:
+            m >= 0 integer
+
+        EXAMPLES:: 
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm
+            [3, 5, 4, 1, 7, 6, 8, 2]
+            sage: rperm.stretch(5)
+            sage: rperm
+            [3, 5, 4, 1, 7, 6, 8, 2, 9, 10, 11, 12, 13] 
+
+        .. NOTE::
+            O(1)
         """
+
         self._n += m
         self._numberOfFixedPoint += m
         self._numCycles += m
@@ -598,19 +748,31 @@ class RotatingPermutation(MapPermutation):
         """
         Let denote n=self.size() given that  n>=index>=1, this will increase the size of self by one and add
         the new element n+1 on the cycle of index after index.You should note that if index>self.size() this will raise an error.
-        -----
-        O(log(n))
+
+        INPUT:
+            index
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
+            sage: rperm.addAfter(6)
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6, 9)]
+
+        .. NOTE::
+            O(1)
         """
+
         if index != int(index) or index <= 0 or index > self.size():
             raise ValueError(
                 f"{index} isn't a strictly positive integer <= {self.size()}")
 
-        self._numberOfFixedPoint -= self.provider.isFixedPoint(index)
+        self._numberOfFixedPoint -= self(index) == index
         nPrev = self.size()
 
         self.stretch(1)
-
-        self.provider.addAfter(index, nPrev + 1)
 
         node = self.getNode(index)
 
@@ -626,9 +788,23 @@ class RotatingPermutation(MapPermutation):
         """
         Let denote n=self.size() given that  n>=index>=1, this will increase the size of self by one and add
         the new element n+1 on the cycle of index before index.You should note that if index>self.size() this will raise an error.
-        -----
-        O(log(n))
+
+        INPUT:
+            index
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
+            sage: rperm.addBefore(3)
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 9, 3, 4), (2, 5, 7, 8), (6,)]
+
+        .. NOTE:
+            O(1)
         """
+
         if index != int(index) or index <= 0 or index > self.size():
             raise ValueError(
                 "{index} isn't a strictly positive integer <= self.size()")
@@ -638,76 +814,127 @@ class RotatingPermutation(MapPermutation):
 
         self.addAfter(prevIndex)
 
-    # OK
-
     def numberInCycle(self, index):
         """
-        Args:
-            -index : A strictly positive integer
-        Returns:
-            -A integer representing the number of element in the same cycle as index note that
-            if index > self.size() it will return 1(which is coherent with the convention that self(i) = i)
-        -------------
-        O(log(n))
+        Not implemented for PrimitiveRotatingPermutation
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: try:
+            ....:     rperm.numberInCycle(1)
+            ....: except:
+            ....:     print("OK")
+            ....:
+            OK
+
+
         """
-        return self.provider.numberInCycle(index)
+        raise NotImplemented(self)
 
     # OK
     def numberOfCycles(self):
         """
-        Returns: the number of cycle of self
-        -------
-        O(1)
+        OUTPUT: 
+            the number of cycle of self
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
+            sage: rperm.numberOfCycles()
+            3
+
+        .. NOTE::
+            O(1)
         """
+
         return self._numCycles
 
     # OK
     def sameCycle(self, i, j):
         """
-        Args:
-            -i an strictly positive integer
-            -j an strictly positive integer
+        Not implemented for PrimitiveRotatingPermutation
 
-        Returns:
-            A boolean indicating whether of not i and j are on the same cycle of self
-        -------
-        O(log(n))
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: try:
+            ....:     rperm.sameCycle(1,2)
+            ....: except:
+            ....:     print("OK")
+            ....:
+            OK
+
         """
-        if i <= 0 or j <= 0 or i != int(i) or j != int(j):
-            raise ValueError("{i} or {j} isn't a strictly positive integer")
 
-        return self.provider.sameCycle(i, j)
+        raise NotImplemented(self)
 
     # OK
+
     def __repr__(self):
+        """
+
+        OUTPUT:
+        A string representation of self
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm
+            [3, 5, 4, 1, 7, 6, 8, 2]
+
+        """
+
         return str(list(self))
 
     # OK
 
     def pretty_repr(self):
         """
-        Return a string of self in the form of his cycle decomposition
+        OUTPUT:
+            Return a string representation of self in a more pretty form
+
+        EXAMPLES::
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.pretty_repr()
+            'Primitive Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]'
         """
-        return f"Rotating permutation: {self.to_cycles()}"
+
+        return f"Primitive Rotating permutation: {self.to_cycles()}"
 
     # OK
     def pretty_print(self):
         """
         Print self in a more pretty form
+
+        EXAMPLES::
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.pretty_print()
+            Primitive Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)] 
+
         """
+
         print(self.pretty_repr())
 
     # OK
     def to_cycles(self):
         """
         This method calculate a list of tuple representing the cycle of self
-        -------
-        Returns:
+        OUTPUT:
             - lst a list of tuples representing the cycles of self given in increasing order of their minimum elements
-        -------
-        O(n)
-        where n is the number of element of self
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.to_cycles()
+            [(1, 3, 4), (2, 5, 7, 8), (6,)]
+
+        .. NOTE::
+            O(n),where n is the number of element of self
         """
+
         seen = [False for i in range(self.size() + 1)]
         cycles = []
         for i in range(1, self.size() + 1):
@@ -728,14 +955,19 @@ class RotatingPermutation(MapPermutation):
     def inverse(self):
         """
         This function calculate  the inverse of self
-        -------
-        Returns:
+        OUTPUT:
             - The inverse of self
-        -------
-        O(n)
-        where n is the number of element of the permutation
-        -------
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.inverse()*rperm
+            [1, 2, 3, 4, 5, 6, 7, 8]
+
+        .. NOTE::
+            O(n),where n is the number of element of the permutation
         """
+
         cycles = self.to_cycles()
         return MapPermutation([tuple(reversed(e)) for e in cycles])
 
@@ -743,9 +975,22 @@ class RotatingPermutation(MapPermutation):
     def apply(self, i):
         """
         This function apply self on i , we take as a convention i if i is an integer > self.size() , self.apply(i) = i
-        ----
-        O(1)
+        INPUT:
+            i
+
+        OUTPUT:
+            self(i)
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.apply(7)
+            8 
+
+        .. NOTE::
+            O(1)
         """
+
         if i != int(i) or i <= 0:
             raise ValueError("{i} isn't a positive integer")
         try:
@@ -757,13 +1002,36 @@ class RotatingPermutation(MapPermutation):
 
     def number_of_fixed_points(self):
         """
-        Returns: the number of fixed point ( we only consider i such that i<=self.size())
-        ----
-        O(1)
+        OUTPUT: 
+            the number of fixed point ( we only consider i such that i<=self.size())
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm.number_of_fixed_points()
+            1
+
+        .. NOTE::
+            O(1)
         """
         return self._numberOfFixedPoint
 
     def __eq__(self, other):
+        """
+        INPUT:
+            other,another object
+
+        OUTPUT:
+            A boolean indicating if self and other are equal
+
+        EXAMPLES::
+
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: rperm == rperm
+            True 
+
+        """
+
         if isinstance(other, MapPermutation):
             return list(other) == list(self)
         return False
