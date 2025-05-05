@@ -649,6 +649,11 @@ class WittVectorRing_finotti(WittVectorRing):
         sage: W = WittVectorRing(GF(49), prec=3, algorithm='finotti')
         sage: W
         Ring of truncated 7-typical Witt vectors of length 3 over Finite Field in z2 of size 7^2
+
+        sage: W = WittVectorRing(ZZ, p=11, prec=3, algorithm='finotti')
+        Traceback (most recent call last):
+        ...
+        ValueError: the 'finotti' algorithm only works for coefficients rings of characteristic p
     """
     Element = WittVector_finotti
 
@@ -786,6 +791,11 @@ class WittVectorRing_phantom(WittVectorRing):
         sage: W = WittVectorRing(GF(19), prec=20)
         sage: W
         Ring of truncated 19-typical Witt vectors of length 20 over Finite Field of size 19
+
+        sage: W = WittVectorRing(QQ, p=23, prec=3, algorithm='phantom')
+        Traceback (most recent call last):
+        ...
+        ValueError: the 'phantom' algorithm only works when the coefficient ring is a finite field of p, or a polynomial ring on that field
     """
     Element = WittVector_phantom
 
@@ -842,6 +852,11 @@ class WittVectorRing_pinvertible(WittVectorRing):
         sage: W = WittVectorRing(QQ, p=31, prec=20)
         sage: W
         Ring of truncated 31-typical Witt vectors of length 20 over Rational Field
+
+        sage: W = WittVectorRing(GF(3), prec=3, algorithm='p_invertible')
+        Traceback (most recent call last):
+        ...
+        ValueError: the 'p_invertible' algorithm only works when p is a unit in the ring of coefficients
     """
     Element = WittVector_pinvertible
 
