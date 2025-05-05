@@ -553,8 +553,8 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
     def random_element(self, *args, **kwds):
         """
-        Return the length of the truncated Witt vectors in ``length``. Extra
-        arguments are passed to the random generator of the coefficient ring.
+        Return a random truncated Witt vector. Extra arguments are passed to
+        the random generator of the coefficient ring.
 
         EXAMPLES::
 
