@@ -266,8 +266,9 @@ class WittVector(CommutativeRingElement):
         R = parent.coefficient_ring()
 
         if p == R.characteristic():
-            Z = Zp(p, prec=self._prec + 1, type='fixed-mod')
+            Z = Zp(p, prec=self._prec, type='fixed-mod')
             self._vec = padic_to_vector(Z(k), R)
+            return
 
         should_negate = False
         if k < 0:
