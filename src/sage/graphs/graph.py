@@ -9515,13 +9515,13 @@ class Graph(GenericGraph):
 
             - :meth:`~Graph.minor`
         """
-        from sage.graphs.generators.basic import p2_forbidden_minors_gen 
-
+        
+        from sage.graphs.graph_generators import GraphGenerators
         num_verts_G = self.num_verts()
         num_edges_G = self.num_edges()
         return_map = None
 
-        for forbidden_minor in p2_forbidden_minors_gen():
+        for forbidden_minor in GraphGenerators.P2ForbiddenMinors():
             # Can't be a minor if it has more vertices or edges than G
             
             if (forbidden_minor.num_verts() > num_verts_G

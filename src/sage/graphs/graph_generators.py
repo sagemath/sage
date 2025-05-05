@@ -221,7 +221,7 @@ __append_to_doc(
 __doc__ += """
 **Families of graphs**
 
-A family of graph is an infinite set of graphs which can be indexed by fixed
+A family of graphs is a set of graphs, which can be indexed by fixed
 number of parameters, e.g. two integer parameters. (A method whose name starts
 with a small letter does not return a single graph object but a graph iterator
 or a list of graphs or ...)
@@ -1788,16 +1788,6 @@ class GraphGenerators:
 
         yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
 
-    def p2_forbidden_minors_gen(self):
-        r"""
-        
-        Returns an iterator over the 35 excluded minors given in 
-        p2_forbidden minors function in sage.graphs.generators.families.
-
-        """
-
-        yield from graphs.generators.families.p2_forbidden_minors()
-
     def plantri_gen(self, options="", immutable=False):
         r"""
         Iterator over planar graphs created using the ``plantri`` generator.
@@ -2773,6 +2763,7 @@ class GraphGenerators:
     NKStarGraph = staticmethod(families.NKStarGraph)
     NStarGraph = staticmethod(families.NStarGraph)
     OddGraph = staticmethod(families.OddGraph)
+    P2ForbiddenMinors = staticmethod(families.p2_forbidden_minors)
     PaleyGraph = staticmethod(families.PaleyGraph)
     PasechnikGraph = staticmethod(families.PasechnikGraph)
     petersen_family = staticmethod(families.petersen_family)
