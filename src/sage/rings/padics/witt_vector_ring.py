@@ -398,13 +398,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             p_n = (x_poly*y_poly - p_poly) // p**n
             self._prod_polynomials[n] = p_n
 
-        # We have to use generic here, because Singular doesn't support
-        # Polynomial Rings over Polynomial Rings. For example,
-        # ``PolynomialRing(GF(5)['x'], ['X', 'Y'],
-        #                  implementation='singular')``
-        # will fail.
-        S = PolynomialRing(self._coefficient_ring, x_y_vars,
-                           implementation='generic')
+        S = PolynomialRing(self._coefficient_ring, x_y_vars)
         for n in range(prec):
             self._sum_polynomials[n] = S(self._sum_polynomials[n])
             self._prod_polynomials[n] = S(self._prod_polynomials[n])
@@ -544,7 +538,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: W.prod_polynomials()
             [X0*Y0,
             X1*Y0^5 + X0^5*Y1,
-            -X0^5*X1^4*Y0^20*Y1 + 3*X0^10*X1^3*Y0^15*Y1^2 + 3*X0^15*X1^2*Y0^10*Y1^3 - X0^20*X1*Y0^5*Y1^4 + X2*Y0^25 + X0^25*Y2 + X1^5*Y1^5]
+            -X0^5*X1^4*Y0^20*Y1 - 2*X0^10*X1^3*Y0^15*Y1^2 - 2*X0^15*X1^2*Y0^10*Y1^3 - X0^20*X1*Y0^5*Y1^4 + X2*Y0^25 + X0^25*Y2 + X1^5*Y1^5]
 
             sage: W = WittVectorRing(ZZ, p=2, prec=2)
             sage: W.prod_polynomials('T0, T1, U0, U1')
@@ -554,8 +548,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             self._generate_sum_and_product_polynomials()
         if variables is None:
             return self._prod_polynomials.copy()
-        R = PolynomialRing(self._coefficient_ring, variables,
-                           implementation='generic')
+        R = PolynomialRing(self._coefficient_ring, variables)
         return [R(self._prod_polynomials[i]) for i in range(self._prec)]
 
     def random_element(self, *args, **kwds):
@@ -591,7 +584,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
             sage: W = WittVectorRing(GF(5), prec=2)
             sage: W.sum_polynomials(['T0', 'T1', 'U0', 'U1'])
-            [T0 + U0, -T0^4*U0 + 3*T0^3*U0^2 + 3*T0^2*U0^3 - T0*U0^4 + T1 + U1]
+            [T0 + U0, -T0^4*U0 - 2*T0^3*U0^2 - 2*T0^2*U0^3 - T0*U0^4 + T1 + U1]
 
             sage: W = WittVectorRing(ZZ, p=2, prec=3)
             sage: W.sum_polynomials()
@@ -603,8 +596,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             self._generate_sum_and_product_polynomials()
         if variables is None:
             return self._sum_polynomials.copy()
-        R = PolynomialRing(self._coefficient_ring, variables,
-                           implementation='generic')
+        R = PolynomialRing(self._coefficient_ring, variables)
         return [R(self._sum_polynomials[i]) for i in range(self._prec)]
 
     def teichmuller_lift(self, x):
