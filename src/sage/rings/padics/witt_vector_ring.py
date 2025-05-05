@@ -725,7 +725,8 @@ class WittVectorRing_finotti(WittVectorRing):
         if eta_index == 0:
             return sum(vec)
 
-        # renaming to match notation in paper
+        # renaming to match notation in Finotti's "Computations with Witt
+        # vectors and the Greenberg transform", doi:10.1142/S1793042114500377
         k = eta_index
         p = self._prime
         # if vec = (x,y), we know what to do: Theorem 8.6
