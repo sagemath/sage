@@ -1,0 +1,15 @@
+py.install_sources(
+    '__init__.py',
+    'blowup.py',
+    'bundle.py',
+    'finite_ring_extension.py',
+    'morphism.py',
+    'ring_element.py',
+    'ring_homset.py',
+    'ring.py',
+    'scheme_homset.py',
+    'scheme.py',
+    'schemes.py',
+    'sheaf.py',
+    subdir: 'sage/schemes/chow',
+)
