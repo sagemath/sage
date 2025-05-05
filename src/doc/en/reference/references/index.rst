@@ -2924,6 +2924,9 @@ REFERENCES:
               *On the category* `\mathcal{O}` *for rational Cherednik algebras*.
               Invent. Math. **154** (2003). :arxiv:`math/0212036`.
 
+.. [GH1983] \I. Gutman, F. Harary. *Generalizations of the matching polynomial*.
+            Utilitas Math. 24, 1983 pp. 97-106.
+
 .. [GHJ2016] Ewgenij Gawrilow, Simon Hampe, and Michael Joswig, The polymake XML
              file format, Mathematical software – ICMS 2016. 5th international
              congress, Berlin, Germany, July 11–14, 2016. Proceedings, Berlin:
