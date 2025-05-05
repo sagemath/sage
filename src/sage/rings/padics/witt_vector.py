@@ -525,6 +525,12 @@ class WittVector_phantom(WittVector):
         Computes the Witt vector ``self`` from the ghost components of its
         lift.
 
+        INPUT:
+
+        - ``prec`` -- the precision (default: ``None``) up to which the vector
+          is computed. When no integer is given, the whole truncated Witt
+          vector is computed.
+
         EXAMPLES::
 
             sage: W = WittVectorRing(GF(17), prec=3)
