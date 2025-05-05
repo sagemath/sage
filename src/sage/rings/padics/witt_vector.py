@@ -60,32 +60,6 @@ def padic_to_vector(x, F):
                  for i in range(prec))
 
 
-def vector_to_padic(v, R):
-    r"""
-    Return the element `x \in R` corresponding to the element
-    of `W(\mathbb F_q)` whose coordinates are `v`.
-
-    INPUT:
-
-    - ``v`` -- a tuple of elements in a finite field
-
-    - ``R`` -- (a ring isomorphic to) the corresponding `p`-adic ring
-
-    EXAMPLES::
-
-        sage: from sage.rings.padics.witt_vector import vector_to_padic
-        sage: R.<a> = ZqFM(5^2, prec=5)
-        sage: F.<b> = GF(5^2)
-        sage: v = [F(0), 2*b + 2, 2*b + 3, 4*b, 2*b + 2]
-        sage: vector_to_padic(v, R)
-        (3*a + 4)*5 + (2*a + 1)*5^2 + 5^4
-    """
-    p = R.prime()
-    F = R.residue_field()
-    v = [F(c.polynomial()) for c in v]
-    return sum(R.teichmuller(v[i].nth_root(p**i)) << i for i in range(len(v)))
-
-
 class WittVector(CommutativeRingElement):
     """
     Base class for truncated Witt vectors.
