@@ -263,6 +263,26 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         return child.__classcall__(child, coefficient_ring, prec, p)
 
+    def __init__(self, coefficient_ring, prec, prime):
+        r"""
+        Initialises ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(PolynomialRing(GF(5), 't'), prec=4)
+            sage: W
+            Ring of truncated 5-typical Witt vectors of length 4 over Univariate Polynomial Ring in t over Finite Field of size 5
+            sage: type(W)
+            <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_phantom_with_category'>
+
+            sage: TestSuite(W).run()
+        """
+        self._coefficient_ring = coefficient_ring
+        self._prec = prec
+        self._prime = prime
+
+        CommutativeRing.__init__(self, self)
+
     def __iter__(self):
         """
         Iterator for truncated Witt vector rings.
@@ -336,7 +356,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         if S is ZZ:
             return True
 
-    def _generate_sum_and_product_polynomials(self):
+    def _generate_sum_and_product_polynomials(self, coefficient_ring, prec, p):
         """
         Generates the sum and product polynomials defining the ring laws of
         truncated Witt vectors for the ``standard`` algorithm.
@@ -350,8 +370,6 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: W([X1,X2]) * W([Y1,Y2])  # indirect doctest
             (X1*Y1, X2*Y1^3 + X1^3*Y2)
         """
-        p = self._prime
-        prec = self._prec
         x_var_names = [f'X{i}' for i in range(prec)]
         y_var_names = [f'Y{i}' for i in range(prec)]
         var_names = x_var_names + y_var_names
@@ -381,7 +399,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         x_vars = x_y_vars[:prec]
         y_vars = x_y_vars[prec:]
 
-        self._sum_polynomials = [0]*(self._prec)
+        self._sum_polynomials = [0]*(prec)
         for n in range(prec):
             s_n = x_vars[n] + y_vars[n]
             for i in range(n):
@@ -389,7 +407,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
                         - self._sum_polynomials[i]**(p**(n-i))) / p**(n-i))
             self._sum_polynomials[n] = R(s_n)
 
-        self._prod_polynomials = [x_vars[0] * y_vars[0]] + [0]*(self._prec-1)
+        self._prod_polynomials = [x_vars[0] * y_vars[0]] + [0]*(prec-1)
         for n in range(1, prec):
             x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
             y_poly = sum([p**i * y_vars[i]**(p**(n-i)) for i in range(n+1)])
@@ -398,7 +416,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             p_n = (x_poly*y_poly - p_poly) // p**n
             self._prod_polynomials[n] = p_n
 
-        S = PolynomialRing(self._coefficient_ring, x_y_vars)
+        S = PolynomialRing(coefficient_ring, x_y_vars)
         for n in range(prec):
             self._sum_polynomials[n] = S(self._sum_polynomials[n])
             self._prod_polynomials[n] = S(self._prod_polynomials[n])
@@ -544,8 +562,9 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             sage: W.prod_polynomials('T0, T1, U0, U1')
             [T0*U0, T1*U0^2 + T0^2*U1 + 2*T1*U1]
         """
-        if self._prod_polynomials is None:
-            self._generate_sum_and_product_polynomials()
+        if not hasattr(self, '_prod_polynomials'):
+            self._generate_sum_and_product_polynomials(self._coefficient_ring,
+                                                       self._prec, self._prime)
         if variables is None:
             return self._prod_polynomials.copy()
         R = PolynomialRing(self._coefficient_ring, variables)
@@ -592,8 +611,9 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             -X0*Y0 + X1 + Y1,
             -X0^3*Y0 - 2*X0^2*Y0^2 - X0*Y0^3 + X0*X1*Y0 + X0*Y0*Y1 - X1*Y1 + X2 + Y2]
         """
-        if self._sum_polynomials is None:
-            self._generate_sum_and_product_polynomials()
+        if not hasattr(self, '_sum_polynomials'):
+            self._generate_sum_and_product_polynomials(self._coefficient_ring,
+                                                       self._prec, self._prime)
         if variables is None:
             return self._sum_polynomials.copy()
         R = PolynomialRing(self._coefficient_ring, variables)
@@ -650,13 +670,7 @@ class WittVectorRing_finotti(WittVectorRing):
             raise ValueError("the 'finotti' algorithm only works for "
                              "coefficients rings of characteristic p")
 
-        self._coefficient_ring = coefficient_ring
-        self._prec = prec
-        self._prime = prime
-        self._prod_polynomials = None
-        self._sum_polynomials = None
-
-        if isinstance(self._coefficient_ring, MPolynomialRing_base):
+        if isinstance(coefficient_ring, MPolynomialRing_base):
             self._always_coerce = [WittVectorRing_finotti,
                                    WittVectorRing_phantom,
                                    WittVectorRing_standard]
@@ -667,12 +681,11 @@ class WittVectorRing_finotti(WittVectorRing):
             self._coerce_when_different = [WittVectorRing_phantom]
 
         import numpy as np
-        p = self._prime
-        R = Zp(p, prec=self._prec+1, type='fixed-mod')
-        v_p = ZZ.valuation(p)
+        R = Zp(prime, prec=prec+1, type='fixed-mod')
+        v_p = ZZ.valuation(prime)
         table = [[0]]
-        for k in range(1, self._prec+1):
-            pk = p**k
+        for k in range(1, prec+1):
+            pk = prime**k
             row = np.empty(pk, dtype=int)
             row[0] = 0
             prev_bin = 1
@@ -682,16 +695,16 @@ class WittVectorRing_finotti(WittVectorRing):
                 # coefficients recursively. This is MUCH faster.
                 next_bin = prev_bin * (pk - (i-1)) // i
                 prev_bin = next_bin
-                series = R(-next_bin // p**(k-val))
+                series = R(-next_bin // prime**(k-val))
                 for _ in range(val):
-                    temp = series % p
-                    series = (series - R.teichmuller(temp)) // p
-                row[i] = ZZ(series % p)
+                    temp = series % prime
+                    series = (series - R.teichmuller(temp)) // prime
+                row[i] = ZZ(series % prime)
                 row[pk - i] = row[i]  # binomial coefficients are symmetric
             table.append(row)
         self._binomial_table = table
 
-        CommutativeRing.__init__(self, self)
+        super().__init__(coefficient_ring, prec, prime)
 
     def _eta_bar(self, vec, eta_index):
         r"""
@@ -799,14 +812,8 @@ class WittVectorRing_phantom(WittVectorRing):
                              "coefficient ring is a finite field of "
                              "p, or a polynomial ring on that field")
 
-        self._coefficient_ring = coefficient_ring
-        self._prec = prec
-        self._prime = prime
-        self._prod_polynomials = None
-        self._sum_polynomials = None
-
-        if (self._coefficient_ring in Fields().Finite()
-            or isinstance(self._coefficient_ring,
+        if (coefficient_ring in Fields().Finite()
+            or isinstance(coefficient_ring,
                           PolynomialRing_generic)):
             self._always_coerce = [WittVectorRing_finotti,
                                    WittVectorRing_phantom,
@@ -817,7 +824,7 @@ class WittVectorRing_phantom(WittVectorRing):
                                    WittVectorRing_standard]
             self._coerce_when_different = [WittVectorRing_finotti]
 
-        CommutativeRing.__init__(self, self)
+        super().__init__(coefficient_ring, prec, prime)
 
 
 class WittVectorRing_pinvertible(WittVectorRing):
@@ -857,14 +864,9 @@ class WittVectorRing_pinvertible(WittVectorRing):
 
         self._always_coerce = [WittVectorRing_pinvertible,
                                WittVectorRing_standard]
-        self._coefficient_ring = coefficient_ring
         self._coerce_when_different = []
-        self._prec = prec
-        self._prime = prime
-        self._prod_polynomials = None
-        self._sum_polynomials = None
 
-        CommutativeRing.__init__(self, self)
+        super().__init__(coefficient_ring, prec, prime)
 
 
 class WittVectorRing_standard(WittVectorRing):
@@ -899,11 +901,9 @@ class WittVectorRing_standard(WittVectorRing):
             sage: TestSuite(W).run()
         """
         self._always_coerce = []
-        self._coefficient_ring = coefficient_ring
         self._coerce_when_different = [WittVectorRing]
-        self._prec = prec
-        self._prime = prime
 
-        self._generate_sum_and_product_polynomials()
+        self._generate_sum_and_product_polynomials(coefficient_ring, prec,
+                                                   prime)
 
-        CommutativeRing.__init__(self, self)
+        super().__init__(coefficient_ring, prec, prime)
