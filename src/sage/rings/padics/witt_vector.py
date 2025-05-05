@@ -118,17 +118,17 @@ class WittVector(CommutativeRingElement):
                     raise ValueError(f"{vec} has not the correct length, "
                                      "expected length has to be at least "
                                      f"{self._prec}")
-                self._vec = tuple(B(vec[i]) for i in range(self._prec))
+                self._coordinates = tuple(B(vec[i]) for i in range(self._prec))
             else:
                 raise ValueError(f"{vec} cannot be interpreted as a Witt "
                                  "vector")
         else:
-            self._vec = (B(0) for i in range(self._prec))
+            self._coordinates = (B(0) for i in range(self._prec))
         CommutativeRingElement.__init__(self, parent)
 
     def __getitem__(self, i):
         """
-        Return the ``i``-th component of ``self``.
+        Return the ``i``-th coordinate of ``self``.
 
         EXAMPLES::
 
@@ -139,7 +139,7 @@ class WittVector(CommutativeRingElement):
         """
         if i < 0 or i >= self._prec:
             raise IndexError("index out of the truncated Witt vector range")
-        return self._vec[i]
+        return self._coordinates[i]
 
     def __hash__(self) -> int:
         """
@@ -152,7 +152,7 @@ class WittVector(CommutativeRingElement):
             sage: hash(t)  # random
             -2438844084280889141
         """
-        return hash(self._vec)
+        return hash(self._coordinates)
 
     def __invert__(self):
         """
@@ -204,7 +204,7 @@ class WittVector(CommutativeRingElement):
         W = WittVectorRing(poly_ring, p=P.prime(), prec=self._prec)
         for i in range(1, self._prec):
             inv_vec[i] = x
-            prod_vec = (W(self._vec) * W(inv_vec)).vec()
+            prod_vec = (W(self._coordinates) * W(inv_vec)).coordinates()
             poly = prod_vec[i]
             try:
                 inv_vec[i] = (-poly.constant_coefficient()
@@ -267,7 +267,7 @@ class WittVector(CommutativeRingElement):
 
         if p == R.characteristic():
             Z = Zp(p, prec=self._prec, type='fixed-mod')
-            self._vec = padic_to_vector(Z(k), R)
+            self._coordinates = padic_to_vector(Z(k), R)
             return
 
         should_negate = False
@@ -289,11 +289,11 @@ class WittVector(CommutativeRingElement):
                 vec_k = (
                     parent(vec_k)
                     * parent((tuple(-1 for _ in range(self._prec))))
-                ).vec()
+                ).coordinates()
             else:
                 vec_k = (-x for x in vec_k)
 
-        self._vec = tuple([R(x) for x in vec_k])
+        self._coordinates = tuple([R(x) for x in vec_k])
 
     def _latex_(self):
         r"""
@@ -306,7 +306,7 @@ class WittVector(CommutativeRingElement):
             sage: latex(t)
             \left(6, 1, 6\right)
         """
-        return tuple_function(self._vec)
+        return tuple_function(self._coordinates)
 
     def _neg_(self):
         """
@@ -338,7 +338,7 @@ class WittVector(CommutativeRingElement):
             sage: t = W([1,2,0,1]); t
             (1, 2, 0, 1)
         """
-        return '(' + ', '.join(map(str, self._vec)) + ')'
+        return '(' + ', '.join(map(str, self._coordinates)) + ')'
 
     def _richcmp_(self, other, op) -> bool:
         """
@@ -357,9 +357,9 @@ class WittVector(CommutativeRingElement):
         if not isinstance(other, WittVector):
             return NotImplemented
         if op == op_EQ:
-            return self._vec == other.vec()
+            return self._coordinates == other.coordinates()
         if op == op_NE:
-            return self._vec != other.vec()
+            return self._coordinates != other.coordinates()
         return NotImplemented
 
     def _vector_(self, R=None):
@@ -381,10 +381,10 @@ class WittVector(CommutativeRingElement):
              (2, 2, 1)
         """
         if R is None:
-            return vector(self._vec)
-        return vector(R, self._vec)
+            return vector(self._coordinates)
+        return vector(R, self._coordinates)
 
-    def vec(self):
+    def coordinates(self):
         """
         Return the underlying tuple of the truncated Witt vector.
 
@@ -392,10 +392,10 @@ class WittVector(CommutativeRingElement):
 
             sage: W = WittVectorRing(GF(7), p=7, prec=3)
             sage: v = W([1,2,3])
-            sage: v.vec()
+            sage: v.coordinates()
             (1, 2, 3)
         """
-        return self._vec
+        return self._coordinates
 
 
 class WittVector_phantom(WittVector):
@@ -453,14 +453,14 @@ class WittVector_phantom(WittVector):
             lift = R.change_ring(base_lift)
         if phantom is not None:
             self._phantom = phantom
-            self._vec = (R(phantom[0]),)
+            self._coordinates = (R(phantom[0]),)
             self._powers = [phantom[0]]
         elif vec is None:
             zero = R.zero()
-            self._vec = (zero for i in range(self._prec))
+            self._coordinates = (zero for i in range(self._prec))
             self._phantom = self._prec * [zero]
         elif isinstance(vec, WittVector_phantom):
-            self._vec = vec._vec
+            self._coordinates = vec.coordinates()
             self._phantom = vec._phantom
             self._powers = vec._powers
         elif isinstance(vec, int) or isinstance(vec, Integer):
@@ -475,8 +475,8 @@ class WittVector_phantom(WittVector):
                                  "expected length has to be at least "
                                  f"{self._prec}")
             # We compute the phantom components
-            self._vec = tuple(R(vec[i]) for i in range(self._prec))
-            x = [lift(v) for v in self._vec]
+            self._coordinates = tuple(R(vec[i]) for i in range(self._prec))
+            x = [lift(v) for v in self._coordinates]
             self._phantom = [x[0]]
             for n in range(1, self._prec):
                 for i in range(n):
@@ -489,7 +489,7 @@ class WittVector_phantom(WittVector):
 
     def __getitem__(self, i):
         """
-        Return the ``i``-th component of ``self``.
+        Return the ``i``-th coordinate of ``self``.
 
         EXAMPLES::
 
@@ -501,7 +501,7 @@ class WittVector_phantom(WittVector):
         if i < 0 or i >= self._prec:
             raise IndexError("index out of the truncated Witt vector range")
         self._compute_vector(i+1)
-        return self._vec[i]
+        return self._coordinates[i]
 
     def _add_(self, other):
         """
@@ -540,11 +540,11 @@ class WittVector_phantom(WittVector):
         powers = self._powers
         p = self.parent()._prime
         mod = self.parent().coefficient_ring()
-        for n in range(len(self._vec), prec):
+        for n in range(len(self._coordinates), prec):
             for i in range(n):
                 powers[i] = powers[i] ** p
             c = (phantom[n] - sum(powers[i] * p**i for i in range(n))) // p**n
-            self._vec += (mod(c),)
+            self._coordinates += (mod(c),)
             self._powers.append(c)
 
     def _latex_(self):
@@ -662,6 +662,21 @@ class WittVector_phantom(WittVector):
         self._compute_vector()
         return super()._vector_(R)
 
+    def coordinates(self):
+        """
+        Return the underlying tuple of the truncated Witt vector.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(7), p=7, prec=3)
+            sage: v = W([1,2,3])
+            sage: v.coordinates()
+            (1, 2, 3)
+        """
+        self._compute_vector()
+
+        return self._coordinates
+
     def phantom(self):
         """
         Return the phantom components of the lift of ``self``.
@@ -674,21 +689,6 @@ class WittVector_phantom(WittVector):
             [1, 1 + 5, 1 + 5 + 3*5^2]
         """
         return self._phantom
-
-    def vec(self):
-        """
-        Return the underlying tuple of the truncated Witt vector.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(7), p=7, prec=3)
-            sage: v = W([1,2,3])
-            sage: v.vec()
-            (1, 2, 3)
-        """
-        self._compute_vector()
-
-        return self._vec
 
 
 class WittVector_finotti(WittVector):
@@ -881,7 +881,7 @@ class WittVector_standard(WittVector):
 
         s = P.sum_polynomials()
         # note here this is tuple addition, i.e. concatenation
-        sum_vec = tuple(s[i](*(self._vec + other.vec()))
+        sum_vec = tuple(s[i](*(self._coordinates + other.coordinates()))
                         for i in range(self._prec))
 
         return P(sum_vec)
@@ -910,7 +910,7 @@ class WittVector_standard(WittVector):
 
         p = P.prod_polynomials()
         # note here this is tuple addition, i.e. concatenation
-        prod_vec = tuple(p[i](*(self._vec + other.vec()))
+        prod_vec = tuple(p[i](*(self._coordinates + other.coordinates()))
                          for i in range(self._prec))
 
         return P(prod_vec)
