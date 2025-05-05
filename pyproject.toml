@@ -13,6 +13,13 @@ requires = [
     'numpy >=1.25',
     'jinja2'
 ]
+[tool.meson-python.args]
+# Prevent meson from trying to install the autoconf subprojects
+# otherwise we hit https://github.com/mesonbuild/meson-python/issues/598
+# The subprojects have to set the rpath to the build directory, which should work as long as
+# we don't use build isolation.
+install = ['--skip-subprojects', 'ecl']
+
 [project]
 name = "sagemath"
 description = "Sage: Open Source Mathematics Software: Standard Python Library"
