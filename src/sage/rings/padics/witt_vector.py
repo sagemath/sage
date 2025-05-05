@@ -33,33 +33,6 @@ from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import op_EQ, op_NE
 
 
-def padic_to_vector(x, F):
-    r"""
-    Return the coordinates in `W(F)` of `x \in \mathbb Q_q`.
-
-    INPUT:
-
-    - ``x`` -- an element in an unramified `p`-adic ring
-
-    - ``F`` -- (a field isomorphic to) the residue field
-
-    EXAMPLES::
-
-        sage: from sage.rings.padics.witt_vector import padic_to_vector
-        sage: R.<a> = ZqFM(5^2, prec=5)
-        sage: F.<b> = GF(5^2)
-        sage: x = (3*a + 4)*5 + (2*a + 1)*5^2 + 5^4
-        sage: padic_to_vector(x, F)
-        (0, 2*b + 2, 2*b + 3, 4*b, 2*b + 2)
-    """
-    prec = x.parent().precision_cap()
-    if x == 0:
-        return tuple(F.zero() for i in range(prec))
-    p = x.parent().prime()
-    return tuple(F(x.teichmuller_expansion(i).residue().polynomial()) ** (p**i)
-                 for i in range(prec))
-
-
 class WittVector(CommutativeRingElement):
     """
     Base class for truncated Witt vectors.
@@ -266,8 +239,14 @@ class WittVector(CommutativeRingElement):
         R = parent.coefficient_ring()
 
         if p == R.characteristic():
-            Z = Zp(p, prec=self._prec, type='fixed-mod')
-            self._coordinates = padic_to_vector(Z(k), R)
+            if k == 0:
+                self._coordinates = tuple(R.zero() for i in range(self._prec))
+            else:
+                Z = Zp(p, prec=self._prec, type='fixed-mod')
+                self._coordinates = tuple(R(
+                     Z(k).teichmuller_expansion(i).residue().polynomial())
+                     ** (p**i)
+                     for i in range(self._prec))
             return
 
         should_negate = False
