@@ -622,8 +622,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
     def teichmuller_lift(self, x):
         """
         Return the Teichmüller lift of ``x`` in ``self``. This lift is
-        sometimes known as the multiplicative lift of ``x``, in order to avoid
-        referring to a nazi mathematician.
+        sometimes known as the multiplicative lift of ``x``.
 
         EXAMPLES::
 
