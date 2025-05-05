@@ -9,6 +9,19 @@ class PermutationUtilsAbstractor:
     """
 
     def __init__(self, permutation) -> None:
+        """
+        Init the PermutationUtilsAbstractor
+        INPUT:
+            permutation a MapPermutation
+
+        EXAMPLES:
+
+            sage: t = MapPermutation([(1,2,4)])
+            sage: tAbstr = PermutationUtilsAbstractor(t)
+
+        .. NOTE:
+            O(n) where n is the size of permutation
+        """
         cycles = permutation.to_cycles()
 
         self._numberOfCycles = len(cycles)
@@ -25,48 +38,99 @@ class PermutationUtilsAbstractor:
 
     def numberInCycle(self, index):
         """
-        Returns:
+        INPUT:
+            index
+
+        OUTPUT:
             The size of the cycle containing index
-        ---
-        O(1)
+
+        EXAMPLES::
+
+            sage: t = MapPermutation([(1,2,4)])
+            sage: tAbstr = PermutationUtilsAbstractor(t)
+            sage: tAbstr.numberInCycle(2)
+            3
+
+        .. NOTE::
+            O(1)
         """
         return self._cyclesLength[self._cycleIndexes[index]]
 
     def sameCycle(self, i, j):
         """
-        Returns:
+        INPUT:
+            i,j valid indexes 
+        OUTPUT:
             A boolean indicating if i and j are on the same cycle
-        ---
-        O(1)
+
+        EXAMPLES::
+            sage: t = MapPermutation([(1,2,4)])
+            sage: tAbstr = PermutationUtilsAbstractor(t)
+            sage: tAbstr.sameCycle(2,3)
+            False
+            sage: tAbstr.sameCycle(2,1)
+            True
+
+        .. NOTE::
+            O(1)
         """
         return self._cycleIndexes[i] == self._cycleIndexes[j]
 
     def numberOfCycles(self):
         """
-        Returns:
+        OUTPUT:
+
             The number of cycles of the permutation
-        ---
-        O(1)
+
+
+        EXAMPLES::
+
+            sage: t = MapPermutation([(1,2,4)])
+            sage: tAbstr = PermutationUtilsAbstractor(t)
+            sage: tAbstr.numberOfCycles()
+            2
+
+        .. NOTE::
+            O(1)
         """
         return self._numberOfCycles
 
     def numberOfFixedPoint(self):
         """
-        Returns:
+        OUTPUT:
+
             The number of fixed point of the permutation
-        ---
-        O(1)
+
+        EXAMPLES::
+
+            sage: t = MapPermutation([(1,2,4)])
+            sage: tAbstr = PermutationUtilsAbstractor(t)
+            sage: tAbstr.numberOfFixedPoint()
+            1
+
+        .. NOTE::
+            O(1)
         """
-        self._numberOfFixedPoint
+        return self._numberOfFixedPoint
 
     def checkTwoInTheSameCycle(self, listIndexes):
         """
-        Args:
+        INPUT:
             listIndexes a list of indexes
-        Returns:
+
+        OUTPUT:
             A boolean indicating if there are two indices in listIndexes on the sameCycle
-        ---
-        O(len(listIndexes))
+
+        EXAMPLES::
+            sage: t = MapPermutation([(1,2,4)])
+            sage: tAbstr = PermutationUtilsAbstractor(t)
+            sage: tAbstr.checkTwoInTheSameCycle([1,2,3])
+            True
+            sage: tAbstr.checkTwoInTheSameCycle([1,3])
+            False
+
+        .. NOTE::
+            O(len(listIndexes))
         """
         checkSet = set()
         for i in listIndexes:

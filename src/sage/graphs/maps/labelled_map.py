@@ -1,10 +1,10 @@
 import warnings
 from collections import deque
-from sage.graphs.planar_maps.CustomSwap import CustomSwap
-from sage.graphs.planar_maps.TopologicalDemiEdge import TopologicalDemiEdge
-from sage.graphs.planar_maps.PermutationUtilsAbstractor import PermutationUtilsAbstractor
+from sage.graphs.maps.custom_swap import CustomSwap
+from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
+from sage.graphs.maps.permutation_utils_abstractor import PermutationUtilsAbstractor
 from sage.all import Permutation, Graph  # Import sage library
-from sage.graphs.planar_maps.MapPermutation import *
+from sage.graphs.maps.map_permutation import *
 
 try:
     import networkx as nx
@@ -18,8 +18,25 @@ except ImportError:
 
 
 def transitiveCouplePermutation(sigma, alpha):
-    """
+    r"""
     Check that sigma and alpha act transitively
+    INPUT:
+    - ``sigma`` -- Permutation or MapPermutation;
+    - ``alpha`` -- Permutation or MapPermutation;
+    OUTPUT:
+
+    Returns, a boolean indicating if sigma and alpha
+    act transitively.
+    EXAMPLES::
+        sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+        sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+        sage: transitiveCouplePermutation(sigma,alpha)
+        True
+
+    .. NOTE::
+
+        Complexity is O(m), where m is the size of sigma and alpha.
+
     """
     assert alpha.size() == sigma.size()
     size = sigma.size()
@@ -41,18 +58,28 @@ def transitiveCouplePermutation(sigma, alpha):
 
 class LabelledMap:
     """
-    A class to represent a labelled map.
+    A class to represent labelled map.
 
     Attributes
     ----------
-    sigma : Permutation or MapPermutation
-        Fixed-point free involution whose cycles are given by the edges.
-    alpha : Permutation or MapPermutation
+    sigma :  Permutation or MapPermutation
         Permutation that maps a half-edge to the half-edge incident to
-        it in a clockwise direction around the vertex it belongs to.
+        it in a anti-clockwise direction around the vertex it belongs to.
 
-    Methods
-    -------
+    alpha : Permutation or MapPermutation
+        Fixed-point free involution whose cycles are given by the edges.
+
+    phi: Permutation or MapPermutation
+        Permutation that maps a half-edges to the half-edge next to it 
+        in his face in the clockwise orde.
+
+    m: The number of edge of the map
+
+    g: The genus of the map
+
+    f: The number of face of the map
+
+    q: The number of demi edges of the map
     """
 
     def __init__(
@@ -68,11 +95,11 @@ class LabelledMap:
         its neighbors in order; vertices must be numbered from 1 to n).
 
         INPUT:
-        - ``sigma`` -- Permutation ; Fixed-point free involution whose
-          cycles are given by the edges.
-        - ``alpha`` -- Permutation ; Permutation that maps a half-edge
-          to the half-edge incident to it in clockwise direction around
+        - ``sigma`` -- Permutation ; Permutation ; Permutation that maps a half-edge
+          to the half-edge incident to it in anti-clockwise direction around
           the vertex it belongs to.
+        - ``alpha`` -- Permutation ; Permutation that maps a half-edge
+            Fixed-point free involution whose cycles are given by the edges.
         - ``ajd``-- and adjacency list be careful the order of the
             node in your adjaceny will be used to choose the embedding
         - ``trust`` -- A parameter that indicates whether the validity check (i.e., whether the map is connex, etc.)
@@ -159,9 +186,25 @@ class LabelledMap:
             self._build_from_permutations(sigma, alpha, trust)
         else:
             self._build_from_adj(adj, trust)
-        self.extend()
+        self._extend()
 
-    def extend(self):
+    def _extend(self):
+        r"""
+        Extend the map by adding sigmaUtilsAbstractor and phiUtilsAbstractor attributes,
+        and adding the topological demi edge.
+        EXAMPLES::
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m._extend()    
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the size of the map.
+            Used internaly not intended to be used by the user.
+
+         """
+
         self.sigmaUtilsAbstractor = PermutationUtilsAbstractor(self.sigma)
         self.phiUtilsAbstractor = PermutationUtilsAbstractor(self.phi)
         # Initialising the topologicalMap
@@ -171,6 +214,25 @@ class LabelledMap:
     def _build_from_permutations(self, sigma, alpha, trust):
         r"""
         Initializes the labelled map from the underlying permutations.
+        INPUT:
+        - ``sigma`` -- Permutation ; Permutation ; Permutation that maps a half-edge
+          to the half-edge incident to it in anti-clockwise direction around
+          the vertex it belongs to.
+        - ``alpha`` -- Permutation ; Permutation that maps a half-edge
+            Fixed-point free involution whose cycles are given by the edges.
+        - ``trust`` -- A parameter that indicates to trust the user on whether alpha 
+          and sigma are valid.
+
+        EXAMPLES::
+
+            sage: sigma = Permutation([1, 3, 2, 5, 4, 6])
+            sage: alpha = Permutation([(1, 2), (3, 4), (5, 6)])
+            sage: LabelledMap(sigma, alpha)._build_from_permutations(sigma,alpha)
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the size of the map.
+            Used internaly not intended to be used by the user.
         """
         self.alpha = alpha
         self.sigma = sigma
@@ -205,11 +267,34 @@ class LabelledMap:
             raise ValueError("The graph is not connected")
 
     def _build_from_adj(self, adj, trust):
-        """
+        r"""
         Initializes the labelled map from an adjacency list.
+        INPUT:
 
-        Raises:
-            ValueError if the adjacency list is invalid.
+        - ``adj`` -- adjacency list be careful the order of the
+            node in your adjaceny will be used to choose the embedding
+        - ``trust`` -- A parameter that indicates to trust the user on whether the alpha 
+          and sigma obteined are valid.
+
+        EXAMPLES::
+
+            sage: adj = adj=[
+            ....:                   (5, 4, 2),
+            ....:                   (1, 3, 6),
+            ....:                   (4, 7, 2),
+            ....:                   (8, 3, 1),
+            ....:                   (8, 1, 6),
+            ....:                   (5, 2, 7),
+            ....:                   (3, 8, 6),
+            ....:                   (7, 4, 5),
+            ....:               ]
+            sage: LabelledMap(adj=adj)._build_from_adj(adj = adj,trust = False)
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the size of the map.
+            Used internaly not intended to be used by the user.
+            Raises: ValueError if the adjacency list is invalid.
         """
         n = len(adj)
 
@@ -248,12 +333,24 @@ class LabelledMap:
             MapPermutation(cycles), MapPermutation(pairs), trust)
 
     def buildGraph(self):
-        """
-        Builds the multigraph corresponding to this labelled map.
+        r"""
+        Check that sigma and alpha act transitively
+        OUTPUT:
+
+        Returns, the multigraph corresponding to this labelled map.
         Vertices are numbered from 1 to n.
 
-        Returns:
-            A multigraph corresponding to the labelled map.
+        EXAMPLES::
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.buildGraph()
+            Looped multi-graph on 11 vertices 
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the size of the map.
+
         """
         vertices = self.sigma.to_cycles()
         # Associates a vertex to each half-edge
@@ -276,15 +373,12 @@ class LabelledMap:
         ax=None,
         use_sage_viewer=False
     ):
-        """
+        r"""
         Show the planar map using networkx (unless unavailable or
         use_sage_viewer is set to True, in which case the default
         sage viewer is used). Half-edges numbers are displayed
         closest to the node they depart from.
 
-        Note: The order of the edges may not be displayed correctly
-        if the genus is not 0. For half-edges to be shown, the
-        networkx viewer must be used.
 
         INPUT:
 
@@ -296,6 +390,23 @@ class LabelledMap:
         the graph into the given matplotlib axes (default: None).
         - ``use_sage_viewer`` -- bool; use the default sage viewer
         if True (default: False).
+
+        EXAMPLES::
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.show()
+
+        .. NOTE::
+            The order of the edges may not be displayed correctly
+            if the genus is not 0. For half-edges to be shown, the
+            networkx viewer must be used.For prettier image use 
+            DynamicPlanarMapShow.
+            WARNING: if show_halfedges = True and you have a too old
+            version of networkx it is possible that label between demi 
+            edges are reversed on the same edge are reversed, please
+            use the latest version.
+
         """
         vertices = self.sigma.to_cycles()
 
@@ -401,7 +512,7 @@ class LabelledMap:
             )
             use_sage_viewer = True
 
-        vertex_size = min(300, 1000 / len(vertices) **.5)
+        vertex_size = min(300, 1000 / len(vertices) ** .5)
 
         if use_sage_viewer:
             layout = "planar" if self.genus() == 0 else "spring"
@@ -454,7 +565,7 @@ class LabelledMap:
                     ax=ax,
                     rotate=False,
                     edge_labels=edge_labels_head,
-                    label_pos=0.7,
+                    label_pos=0.3,
                 )
                 nx.draw_networkx_edge_labels(
                     G,
@@ -462,7 +573,7 @@ class LabelledMap:
                     ax=ax,
                     rotate=False,
                     edge_labels=edge_labels_tail,
-                    label_pos=0.3,
+                    label_pos=0.7,
                 )
                 nx.draw_networkx_edge_labels(
                     G,
@@ -494,18 +605,29 @@ class LabelledMap:
             str(self.sigma) + ", Alpha : " + str(self.alpha)
 
     def _numberOfFaces(self):
+        r"""
+        OUTPUT:
+
+        Returns, the numbers of faces of the map
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m._numberOfFaces()
+            1 
+
+        .. NOTE::
+
+            Complexity is O(1),used internaly.
+
         """
-        A method that return the number of faces of the  map
-        -------
-        Returns:
-             The number of faces of self
-        -------
-        O(1)
-        """
+
         return self.phiUtilsAbstractor.numberOfCycles()
 
     def numberOfFaces(self):
-        """
+        r"""
         A method that return the number of faces of the labelled map
 
         OUTPUT: The number of faces of this labelled map
@@ -551,25 +673,34 @@ class LabelledMap:
 
         .. NOTE::
 
-            Complexity is O(1) where m is the number of edges
+            Complexity is O(1) 
         """
         return self._numberOfFaces()
 
     def _numberOfNodes(self):
-        """
-        A method that returns the number of vertices of the map
-        -------
-        Returns:
-             The number of nodes of self
-        -------
-        O(1)
-        where m is the number of edges
+        r"""
+        OUTPUT:
+
+        Returns, the numbers of Nodes of the map
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m._numberOfNodes()
+            11
+
+        .. NOTE::
+
+            Complexity is O(1),used internaly.
+
         """
 
         return self.sigmaUtilsAbstractor.numberOfCycles()
 
     def numberOfNodes(self):
-        """
+        r"""
         A method that returns the number of nodes
         or vertices of this labelled map
 
@@ -616,12 +747,12 @@ class LabelledMap:
 
         .. NOTE::
 
-            Complexity is O(m) where m is the number of edges
+            Complexity is O(1)
         """
         return self._numberOfNodes()
 
     def numberOfEdges(self):
-        """
+        r"""
         A method that returns the number of edges of this labelled map
 
         OUTPUT: The number of edges of this labelled map
@@ -672,7 +803,7 @@ class LabelledMap:
         return self.sigma.size() // 2
 
     def genus(self):
-        """
+        r"""
         Returns the genus of this labelled map.
 
         The genus is the minimum number of handles that must be added
@@ -680,7 +811,7 @@ class LabelledMap:
 
         OUTPUT:
 
-        int: The genus of this labelled map.
+        int: The genus of the map.
 
         EXAMPLES::
 
@@ -710,24 +841,22 @@ class LabelledMap:
         ) // 2
 
     def force_planar(self):
-        """
-        Returns a map of genus 0 with the same underlying graph
+        r"""
+        OUTPUT:
+
+        Returns a map of genus 0 with the same underlying graph as self
         if it is planar.
 
-        For example, the adjacency list [(2, 3, 4), (3, 4, 1),
-        (4, 1, 2), (1, 2, 3)] is a valid adjacency list for the
-        complete graph with 4 nodes, but its genus is 1.
-        This method could, for instance, build a map from the list
-        [(2, 4, 3), (3, 4, 1), (4, 2, 1), (1, 2, 3)],
-        which is the same graph  but with genus 0.
+        EXAMPLES::
 
-        Raises an error if the underlying graph is not planar.
+            sage: m = LabelledMap(adj = [(2,3,4),(3,4,1),(4,1,2),(1,2,3)] )
+            sage: m.genus()
+            1
+            sage: m.force_planar().genus()
+            0
 
-        Returns
-        -------
-        LabelledMap
-            Another map corresponding to the above description.
         """
+
         g = self.buildGraph()
 
         if not g.is_planar(set_embedding=True):
@@ -742,13 +871,24 @@ class LabelledMap:
         return LabelledMap(adj=adj, trust=self._production)
 
     def getSpanningTree(self):
-        """
-        A method that returns any spanning tree of the  map
-        -------
-        Returns:
-             A spanning tree of self
-        -------
-        O(m)
+        r"""
+        OUTPUT:
+
+        Returns a spanning tree of self, in the form of a graph
+        object.
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.getSpanningTree()
+            Graph on 11 vertices            
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the size of the map.
+
         """
 
         g = self.buildGraph()
@@ -965,34 +1105,68 @@ class LabelledMap:
         return LabelledMap(derivedSigma, derivedAlpha, trust=self._production).canonicalRepresentant()
 
     def quadrangulation(self):
-        """
+        r"""
         There is a bijection between rooted maps with m edges of genus
         g and bipartite quadrangulations with m faces and genus g.
         This function returns the canonical representant of the rooted
         bipartite quadrangulation associated to self.
 
-        Returns:
-            The canonical representant of the bipartite rooted
-            quadrangulation associated to rooted(self).
+        OUTPUT:
 
-        Complexity: O(m), where m is the number of edges.
+        Returns,The canonical representant of the bipartite rooted
+        quadrangulation associated to rooted(self).
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.quadrangulation().faces()
+            [(1, 6, 16, 20),
+             (2, 9, 15, 3),
+             (4, 8, 7, 5),
+             (10, 19, 24, 11),
+             (12, 23, 14, 13),
+             (17, 27, 30, 18),
+             (21, 26, 25, 22),
+             (28, 34, 40, 29),
+             (31, 33, 35, 32),
+             (36, 39, 38, 37)]  
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the size of sigma and alpha.
+
         """
+
         return self.incidenceMap()
 
     def inverseQuadrangulation(self):
-        """
-        This function is the inverse of quadrangulation, assuming self
+        r"""
+        This function is the inverse of quadrangulation method, assuming self
         is a bipartite quadrangulation. It returns a map M such that
         M.quadrangulation() = self.canonicalRepresentant() and
         M = M.canonicalRepresentant(). If self isn't a bipartite
         quadrangulation, it raises an error.
 
-        Returns:
-            The canonical representant of the inverse of rooted(self)
-            by quadrangulation, if self is a bipartite quadrangulation.
-            Otherwise, it raises an error.
 
-        Complexity: O(m), where m is the number of edges.
+        OUTPUT:
+
+        Returns the canonical representant of the inverse of rooted(self)
+        by quadrangulation, if self is a bipartite quadrangulation.
+        Otherwise, it raises an error.
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m.quadrangulation().inverseQuadrangulation() == m
+            True  
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the size of sigma and alpha.
+
         """
         bipartition = self.getBipartition()
 
@@ -1235,6 +1409,24 @@ class LabelledMap:
         The canonical representative of a tetravalent
         bicolorable rooted map.
 
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.tetravalance().nodes()
+            [(1, 2, 4, 7),
+             (3, 6, 9, 11),
+             (5, 8, 10, 12),
+             (13, 15, 17, 20),
+             (14, 16, 19, 23),
+             (18, 22, 25, 29),
+             (21, 24, 27, 32),
+             (26, 31, 35, 30),
+             (28, 34, 38, 40),
+            (33, 37, 39, 36)] 
+
         .. NOTE::
 
             Complexity is O(m), where m is the number of edges.
@@ -1373,11 +1565,26 @@ class LabelledMap:
 
     def isQuandrangulation(self):
         """
-        A function to test whether or not self is a quandrangulation
-        ---
-        Returns:
-            A boolean indicating if self is a quandrangulation or not
+        OUTPUT:
+
+        A boolean indicating if self is a quadrangulation or not
+
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.isQuandrangulation()
+            False
+            sage: m.quadrangulation().isQuandrangulation()
+            True
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edges.
         """
+
         phi_cycles = self.phi.to_cycles()
 
         for i in range(len(phi_cycles)):
@@ -1388,30 +1595,50 @@ class LabelledMap:
 
     def isBipartite(self):
         """
-        Returns : A boolean indicating whether or not self is bipartite
-        -------
-        O(m)
-        where m is the number of edges
+        OUTPUT:
+
+        A boolean indicating if self is bipartite or not
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.isBipartite()
+            True
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edges.
         """
-        return self.getBipartition() is not None
+
+        return not (self.getBipartition() is None)
 
     def getBipartition(self):
         """
+        OUTPUT:
+
         If self isn't bipartite this method will return None.
         Otherwise, it will return a tab clr such that clr[i](=0,1)
         for a demi-edge i gives the color of the node on which it is
         attached. A node (i.e., a cycle of sigma) will be white
         (resp. black) if all its elements are of color 0 (resp. 1).
         clr[0] = -1 because 0 isn't a valid demi-edge.
-        -------
-        Returns:
-            clr: None if self isn't bipartite; otherwise, it gives
-            the color description mentioned above.
-        -------
 
-        O(m)
-        where m is the number of edges
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.getBipartition()
+            [-1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0]  
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edges.
         """
+
         clr = [-1 for i in range(2 * self.m + 1)]
         clr[1] = 0
         alpha = self.alpha
@@ -1449,16 +1676,28 @@ class LabelledMap:
 
     def canonicalRepresentant(self):
         """
-        This function returns the canonical representant of rooted(self),
+        OUTPUT:
+        returns the canonical representant of rooted(self),
         i.e a labelled  map such that M and self are representant of
         the same rooted map and M is the canonical representant.
-        -------
-        Returns:
-             The canonical representant of rooted(self)
-        -------
-        O(m)
-        where m is the number of edges
+
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.canonicalRepresentant().pretty_print()
+
+                        Alpha: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 10), (11, 13), (12, 15), (14, 17), (16, 18), (19, 20)]
+                        Sigma (Node): [(1, 2, 4), (3,), (5,), (6, 7, 8), (9, 11, 12, 14), (10,), (13, 16), (15,), (17, 19), (18,), (20,)]
+                        Phi (Face): [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]            
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edges.
         """
+
         relabelList = [-1 for i in range(2 * self.m)]
         alphaCycles = self.alpha.to_cycles()
 
@@ -1495,36 +1734,60 @@ class LabelledMap:
 
     def isPlaneTree(self):
         """
-        A method that returns a boolean indicating
-        if self is a plane Tree or not
-        -------
-        Returns:
-             A boolean indicating if self is plane tree or not
-        -------
-        O(m)
-        where m is the number of edges
+        OUTPUT:
+        returns a boolean indicating if self is a plane tree
+
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.isPlaneTree()
+            True
+
+        .. NOTE::
+
+            Complexity is O(1).
         """
+
         return self.numberOfFaces() == 1 \
             and self.numberOfEdges() == self.numberOfNodes() - 1
 
     def schaefferTree(self, markedDemiEdge):
-        """
+        r"""
         The Schaeffer surjection from rooted bipartite quadrangulation of genus g with k face and a marked node to
         rooted one face map (tree in the case g=0) of genus g with k edges and a labelling of its nodes (i.e a function on the nodes of the tree considered up to translation
         such that if u and v are adjacent f(u) and f(v) differs by at most one) such that for every rooted one face map T only two rooted marked bipartite quadrangulation give T.
         Given a markDemiEdge which is the corresponding marked node(a node is just a cycle of self.sigma) , this method will return the canonical representant of the
         rooted one face map associated to rooted(self) and a labelling on its demi edge such that f(node) is the common value of all its demi edge(note that labelling[0] is present but it deosn't have any meaning).
         If self isn't a bipartite quandrangulation this function will raise an error.
-        -------
-        Args:
-            -markedDemiEdge a demi edge on the node which is marked
+
+        INPUT:
+
+        - ``markedDemiEdge`` -- Int; a demi edge on the node which is marked
+
+        OUTPUT:
+
         Returns:
             - tree: The canonical representant of the rooted one face map corresponding to the above description
             - labelling: A list of labelling on the demi edge of tree corresponding to the above description
-        -------
-        O(m)
-        where m is the number of edges
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.quadrangulation().schaefferTree(1)
+            (Labelled map | Sigma : [1, 3, 4, 2, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20], Alpha : [2, 1, 5, 6, 3, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19],
+             [-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edge of self.
+
         """
+
         if not self.isBipartite() or not self.isQuandrangulation():
             raise ValueError("Self isn't a bipartite quadrangulation")
 
@@ -1684,18 +1947,29 @@ class LabelledMap:
         (rooted(quadA),nodeA) are (rooted(quadB),nodeB) are the only marked rooted quandrangulation such that calling schaefferTree with quadA (resp quadB) with
         any demi edge attached to nodeA (resp nodeB) give rooted(self) in particular quadA.schaefferTree(markedDemiEdgeA) = self.canonicalForm() same for B.
         Note that if returnMarkedDemiEdge = False it will only return (quadA,quadB)
-        -------
-        Args:
+
+        INPUT:
             -labelled a list of size 2*m+1 such that for the demiEdge i labelled[i] is the labelled of its attached node,
              0 isn't a valid demiEdge so labelled[0] can take any value it will be ignored.
             -returnMarkedDemiEdge : a parameter indicating whether or not to return the markedDemiEdge default to true
-        Returns:
+
+        OUTPUT:
             -(quadA,quadB,markedDemiEdgeA,markedDemiEdgeB) as in the above description if returnMarkedDemiEdge = True otherwise (quadA,quadB) corresponding to the above description
             ,if self isn't a one face map it will raise an error
-        -------
-        O(m)
-        where m is the number of edges
-        -------
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: quad = m.quadrangulation()
+            sage: tree,labelled = quad.schaefferTree(1)
+            sage: quadA,quadB,markedDemiEdgeA,markedDemiEdgeB = tree.inverseShaefferTree(labelled)
+            sage: quadA == quad.canonicalRepresentant()
+            False
+            sage: quadB == quad.canonicalRepresentant()
+            True
+
         TESTS::
 
             sage: sigma = Permutation( [(1,6),(2,3),(4,5)])
@@ -1711,6 +1985,11 @@ class LabelledMap:
             sage: quadA.schaefferTree(markedDemiEdge = markedDemiEdgeA)[0] == sct.canonicalRepresentant(
             ) and quadB.schaefferTree(markedDemiEdge = markedDemiEdgeB)[0] == sct.canonicalRepresentant()
             True
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edge of self.
+
         """
         alpha = self.alpha
         sigma = self.sigma
@@ -1920,24 +2199,53 @@ class LabelledMap:
 
     def nodes(self):
         """
-        This function return the nodes of self as cycle of self.sigma
-        ----
-        Returns :
-            A list of cycle of sigma representing nodes of self
-        ----
-        O(m)
+        OUTPUT:
+            Returns the nodes of self as cycle of self.sigma
+
+        EXAMPLES::
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.nodes()
+            [(1, 2, 4),
+             (3,),
+             (5,),
+             (6, 7, 8),
+             (9, 11, 12, 14),
+             (10,),
+             (13, 16),
+             (15,),
+             (17, 19),
+             (18,),
+             (20,)]  
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edge of self.
+
         """
+
         return self.sigma.to_cycles()
 
     def faces(self):
         """
-        This function return the faces of self as cycle of self.phi
-        ----
-        Returns :
-            A list of cycle of phi representing faces of self
-        ----
-        O(m)
+        OUTPUT:
+            Returns the faces of self as cycle of self.phi
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.faces()
+            [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edge of self.
+
         """
+
         return self.phi.to_cycles()
 
     def getDyckPath(self, isCanonical=False):
@@ -1946,17 +2254,32 @@ class LabelledMap:
         with m edges and dyck path of size m, this method return the
         associated dyck path to rooted(self) if self is a tree
         if self isn't a tree it will raise an error.
-        -----
-        Args:
-            isCanonical: A boolean indicating if self
+
+        INPUT:
+            -isCanonical: A boolean indicating if self
             is already in canonical form
-        Returns :
+
+        OUTPUT:
+
             A list of size 2*m representing the dyck path associated to
             rooted(self) +1 for step up and -1 for step down if self is
             a plane tree otherwise it will raise an error
-        -----
-        O(m)
+
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.getDyckPath()
+            [1, -1, 1, -1, 1, 1, 1, 1, -1, -1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1] 
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edge of self.
+
         """
+
         if not self.isPlaneTree():
             raise ValueError("Self isn't a plane tree.")
 
@@ -1979,31 +2302,68 @@ class LabelledMap:
     @property
     def q(self):
         """
-        Returns: The number of demi edge of self
-        ----
-        O(1)
+        This is an attribute representing the number of demi edges of self
+        OUTPUT:
+        The number of demi edge of self
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.q,m.g,m.f,m.m
+            (20, 0, 1, 10) 
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
         return 2 * self.m
 
     def getTopologicalDemiEdge(self, demiEdge):
         """
-        Args:
-            demiEdge an index
-        Returns:
+        INPUT:
+            -demiEdge an index associated to a demiEdge
+
+        OUTPUT:
+
             The TopologicalDemiEdge associated to demiEdge
-        ----
-        O(1)
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.getTopologicalDemiEdge(1)
+            X(1)
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
+
         return self.topologicalMap[demiEdge]
 
     def getListTopologicalDemiEdge(self):
         """
-        Returns:
+        OUTPUT:
             The list of TopologicalDemiEdge in self such that the ith element
             is the TopologicalDemiEdge associated to the i+1 index
-        ----
-        O(m)
+
+        EXAMPLES::
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: len(m.getListTopologicalDemiEdge())
+            20
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edge of self
+
         """
+
         lst = []
         for i in range(1, self.q + 1):
             lst.append(self.getTopologicalDemiEdge(i))
@@ -2011,55 +2371,134 @@ class LabelledMap:
 
     def X(self, demiEdge):
         """
-        Args:
-            demiEdge an index
-        Returns:
+        INPUT:
+            -demiEdge an index associated to a demiEdge
+
+        OUTPUT:
+
             The TopologicalDemiEdge associated to demiEdge
-        ----
-        O(1)
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.X(1)
+            X(1)
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
+
         return self.getTopologicalDemiEdge(demiEdge)
 
     def XList(self):
         """
-        Returns:
+        OUTPUT:
             The list of TopologicalDemiEdge in self such that the ith element
             is the TopologicalDemiEdge associated to the i+1 index
-        ----
-        O(m)
+
+        EXAMPLES::
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: len(m.XList())
+            20
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edge of self
+
         """
+
         return self.getListTopologicalDemiEdge()
 
     @property
     def m(self):
         """
-        Returns: The number of edge of self
-        ----
-        O(1)
+        This is an attribute representing the number of edge of self
+
+        OUTPUT:
+        The number of edges of self
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.q,m.g,m.f,m.m
+            (20, 0, 1, 10) 
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
         return self.numberOfEdges()
 
     @property
     def f(self):
         """
-        Returns: The number of face of self
-        ----
-        O(1)
+        This is an attribute representing the number of faces of self
+
+        OUTPUT:
+        The number of faces  of self
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.q,m.g,m.f,m.m
+            (20, 0, 1, 10) 
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
+
         return self.numberOfFaces()
 
     @property
     def n(self):
         """
-        Returns: The number of node of self
-        ----
-        O(1)
+        This is an attribute representing the number of nodes of self
+
+        OUTPUT:
+        The number of nodes of self
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.q,m.g,m.f,m.m
+            (20, 0, 1, 10) 
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
+
         return self.numberOfNodes()
 
     def pretty_print(self):
         """
-        A prettier print
+        Print self in a prettier form
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.pretty_print()
+
+                        Alpha: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 10), (11, 13), (12, 15), (14, 17), (16, 18), (19, 20)]
+                        Sigma (Node): [(1, 2, 4), (3,), (5,), (6, 7, 8), (9, 11, 12, 14), (10,), (13, 16), (15,), (17, 19), (18,), (20,)]
+                        Phi (Face): [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
         """
         print(f"""
             Alpha: {self.alpha.to_cycles()}
@@ -2069,43 +2508,99 @@ class LabelledMap:
 
     def copy(self):
         """
-        Returns : A copy of self
-        -------
-        O(1)
+        OUTPUT:
+        A copy of self
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.copy() == m
+            True
+
+        .. NOTE::
+
+            Complexity is O(m) where m is the number of edges of self
+
         """
         return LabelledMap(self.sigma, self.alpha, trust=self._production, )
 
     def areOnTheSameNode(self, demiEdgeA, demiEdgeB):
         """
-        Args:
-            demiEdgeA,demiEdgeB: Index representing demi edges of self
-        Returns:
+        INPUT:
+            -demiEdgeA an index associated to a demiEdge 
+            -demiEdgeB an index associated to a demiEdge
+
+        OUTPUT:
+
             A boolean indicating whether or note demiEdgeA and demiEdgeB are on the node
-        -------
-        O(1)
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.areOnTheSameNode(1,2)
+            True
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
+
         return self.sigmaUtilsAbstractor.sameCycle(demiEdgeA, demiEdgeB)
 
     def areOnTheSameFace(self, demiEdgeA, demiEdgeB):
         """
-        Args:
-            demiEdgeA,demiEdgeB: Index representing demi edges of self
-        Returns:
-            A boolean indicating whether or note demiEdgeA and demiEdgeB are on the same face
-        -------
-        O(1)
+        INPUT:
+            -demiEdgeA an index associated to a demiEdge 
+            -demiEdgeB an index associated to a demiEdge
+
+        OUTPUT:
+
+            A boolean indicating whether or note demiEdgeA and demiEdgeB are on the face
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.areOnTheSameFace(1,2)
+            True 
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
+
         return self.phiUtilsAbstractor.sameCycle(demiEdgeA, demiEdgeB)
 
     def demiEdgesOnTheSameNode(self, demiEdge):
         """
-        Args:
-            demiEdge: An index representing a demi edge of self
-        Returns:
+        INPUT:
+            -demiEdge an index associated to a demiEdge 
+
+        OUTPUT:
+
             A list of demiEdge on the same node as demiEdge
-        -------
-        O(d) where d is the number of demi edge on  the node
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.demiEdgesOnTheSameNode(1)
+            [1, 2, 4]
+
+        .. NOTE::
+
+            Complexity is O(d) where d is the number of demi edge on  the node
+
         """
+
         lst = []
         lst.append(demiEdge)
         curDemiEdge = self.sigma(demiEdge)
@@ -2116,13 +2611,27 @@ class LabelledMap:
 
     def demiEdgesOnTheSameFace(self, demiEdge):
         """
-        Args:
-            demiEdge: An index representing a demi edge of self
-        Returns:
+        INPUT:
+            -demiEdge an index associated to a demiEdge 
+
+        OUTPUT:
+
             A list of demiEdge on the same face as demiEdge
-        -------
-        O(f) where f is the number of demi edge on the face
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.demiEdgesOnTheSameFace(1)
+            [1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6] 
+
+        .. NOTE::
+
+            Complexity is O(f) where f is the number of demi edge on the face
+
         """
+
         lst = []
         lst.append(demiEdge)
         curDemiEdge = self.phi(demiEdge)
@@ -2133,54 +2642,107 @@ class LabelledMap:
 
     def numberInTheSameFace(self, demiEdge):
         """
-        Args:
-            demiEdge
-        Returns:
+        INPUT:
+            -demiEdge an index associated to a demiEdge 
+
+        OUTPUT:
+
             The number of  demi edge on the same face as demi edge
-        ----
-        O(1)
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.numberInTheSameFace(1)
+            20
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
+
         return self.phiUtilsAbstractor.numberInCycle(demiEdge)
 
     def numberInTheSameNode(self, demiEdge):
         """
-        Args:
-            demiEdge
-        Returns:
+        INPUT:
+            -demiEdge an index associated to a demiEdge 
+
+        OUTPUT:
+
+
             The number of  demi edge on the same node as demi edge
-        ----
-        O(1)
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.numberInTheSameNode(1)
+            3 
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
 
         return self.sigmaUtilsAbstractor.numberInCycle(demiEdge)
 
     def checkTwoInTheSameFace(self, listDemiEdges):
         """
-        A method that will return a boolean indicating whether or not
-        two demiEdge are on the same face
-        -----
-        Args:
-            listDemiEdges: A list of demi edges
+        INPUT:
+            -listDemiEdges: A list of demi edges index
+
         OUTPUT:
+
             a boolean indicating whether or not there is two demi edge on the
-            same face
-        -----
-        O(len(listDemiEdges))
+            same face in the list
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: lst = [1,3,5]
+            sage: m.checkTwoInTheSameFace(lst)
+            True
+            sage: m.checkTwoInTheSameNode(lst)
+
+        .. NOTE::
+
+            Complexity is O(len(listDemiEdges))
+
         """
+
         return self.phiUtilsAbstractor.checkTwoInTheSameCycle(listDemiEdges)
 
     def checkTwoInTheSameNode(self, listDemiEdges):
         """
-        A method that will return a boolean indicating whether or not
-        two demiEdge are on the same node
-        -----
-        Args:
-            listDemiEdges: A list of demi edges
+        INPUT:
+            -listDemiEdges: A list of demi edges index
+
         OUTPUT:
+
             a boolean indicating whether or not there is two demi edge on the
-            same node
-        -----
-        O(len(listDemiEdges))
+            same node in the list
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: lst = [1,3,5]
+            sage: m.checkTwoInTheSameFace(lst)
+            True
+            sage: m.checkTwoInTheSameNode(lst)
+
+        .. NOTE::
+
+            Complexity is O(len(listDemiEdges))
+
         """
 
         return self.sigmaUtilsAbstractor.checkTwoInTheSameCycle(listDemiEdges)
@@ -2188,17 +2750,44 @@ class LabelledMap:
     @property
     def g(self):
         """
+        This is an attribute representing the genus of self
+
+        OUTPUT:
         The genus of self
-        ----
-        O(1)
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.q,m.g,m.f,m.m
+            (20, 0, 1, 10) 
+
+        .. NOTE::
+
+            Complexity is O(1)
+
         """
+
         return self.genus()
 
     def isTriangulation(self):
         """
-        Returns: A boolean indicating if self is a triangulation or not
-        ----
-        O(m)
+        OUTPUT:
+
+        A boolean indicating if self is a triangulation or not
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.isTriangulation()
+            False
+
+        .. NOTE::
+
+            Complexity is O(m), where m is the number of edges.
         """
 
         faces = self.faces()

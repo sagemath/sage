@@ -1,6 +1,21 @@
 
 
 def CheckValid(cls):
+    """
+    INPUT:
+        cls a class
+
+    OUTPUT:
+        the same class but with a check before each method 
+
+    EXAMPLES::
+
+        sage: CheckValid(TopologicalDemiEdge)
+        <class 'TopologicalDemiEdge.TopologicalDemiEdge'>
+
+    .. NOTE::
+        Used internaly
+    """
     originalMethods = {name: method for name,
                        method in cls.__dict__.items() if callable(method)}
 

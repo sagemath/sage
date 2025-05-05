@@ -7,16 +7,42 @@ class CyclicChainedList:
 
     def __init__(self, val):
         """
-        val: the value contained in the node
+        INPUT:
+            val: the value contained in the node
+
+        EXAMPLES::
+            sage: CyclicChainedList(3)
+            NodeOfCyclicChainedList(val=3)
         """
         self.nxt = self
         self.prev = self
         self.val = val
 
+    def __repr__(self) -> str:
+        """
+        OUTPUT:
+            A string representation of self
+
+        EXAMPLES::
+            sage: CyclicChainedList(3)
+            NodeOfCyclicChainedList(val=3)
+        """
+        return f"NodeOfCyclicChainedList(val={self.val})"
+
     def getValList(self):
         """
-        Return: a list containing the value of each node in the same cycle as self
-        O(1)
+        OUTPUT: 
+            a list containing the value of each node in the same cycle as self
+
+        EXAMPLES::
+
+            sage: node = CyclicChainedList(3)
+            sage: node.insertAfter(CyclicChainedList(4))
+            sage: node.getValList()
+            [3, 4]
+
+        .. NOTE::
+            O(1)
         """
         cycleNode = []
         cycleNode.append(self)
@@ -32,7 +58,21 @@ class CyclicChainedList:
         This function will insert otherNode after self i.e if self is in a cycle  A->self->A where  A is the rest of the cycle and that otherNode is
         in a cycle of the form otherNode ->R ->otherNode where R represent the rest of the cycle this function will fuse them into a cycle
         of the form A->self->otherNode->R->A
-        O(1)
+
+        INPUT:
+            otherNode,another node of a CyclicChainedList
+            he must be alone in his cycle
+
+        EXAMPLES::
+
+            sage: node = CyclicChainedList(3)
+            sage: node.insertAfter(CyclicChainedList(4))
+            sage: node.getValList()
+            [3, 4]
+
+
+        .. NOTE::
+            O(1)
         """
         oldNxt = self.nxt
         oldPrevOther = otherNode.prev
@@ -46,7 +86,23 @@ class CyclicChainedList:
         This function will insert otherNode before self i.e if self is in a cycle  A->self->A where  A is the rest of the cycle and that otherNode is
         in a cycle of the form otherNode ->R ->otherNode where R represent the rest of the cycle this function will fuse them into a cycle
         of the form A->otherNode->R->self->A
-        O(1)
+
+
+        INPUT:
+            otherNode,another node of a CyclicChainedList
+            he must be alone in his cycle
+
+        EXAMPLES::
+
+            sage: node = CyclicChainedList(3)
+            sage: node.insertAfter(CyclicChainedList(4))
+            sage: node.insertBefore(CyclicChainedList(5))
+            sage: node.getValList()
+            [3, 4, 5]
+
+        .. NOTE::
+            O(1)
+
         """
         self.prev.insertAfter(otherNode)
 
@@ -54,7 +110,21 @@ class CyclicChainedList:
         """
         If self isn't an isolated node(i.e such that self.prev = self.nxt = self) it will remove self from the where it is present
         otherwise it won't do anything
-        O(1)
+
+        EXAMPLES:: 
+
+            sage: node = CyclicChainedList(3)
+            sage: node.insertAfter(CyclicChainedList(4))
+            sage: node.insertBefore(CyclicChainedList(5))
+            sage: node.getValList()
+            [3, 4, 5]
+            sage: otherNode = node.nxt
+            sage: otherNode.remove()
+            sage: node.getValList()
+            [3, 5]
+
+        .. NOTE:
+            O(1)
         """
         if self.prev == self:
             return
