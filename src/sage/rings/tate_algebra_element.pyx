@@ -2543,7 +2543,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         However `\log(1+x)` converges on a smaller disk::
 
             sage: f.restriction(-1).log()
-            ...0000000001*x + ...000000000.1*x^3 + ...111111111*x^2 + ...
+            ...000000001*x + ...0000000.1*x^3 + ...111111*x^2 + ...
              + O(3^10 * <3*x, 3*y>)
 
         TESTS::
@@ -2701,7 +2701,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         However `\exp(x)` converges on a smaller disk::
 
             sage: f.restriction(-1).exp()
-            ...0000000001 + ...0000000001*x + ...111111111.2*x^3 + ...111111112*x^2
+            ...0000000001 + ...000000001*x + ...1111111.2*x^3 + ...111112*x^2
              + ... + O(3^10 * <3*x, 3*y>)
 
         TESTS::
