@@ -3720,7 +3720,7 @@ def CRT_vectors(X, moduli):
     r"""
     Vector form of the Chinese Remainder Theorem: given a list of integer
     vectors `v_i` and a list of moduli `m_i`, find a vector `w` such
-    that `w = v_i \pmod m_i` for all `i`.
+    that `w = v_i \pmod{m_i}` for all `i`.
 
     This is more efficient than applying :func:`CRT` to each entry.
 
