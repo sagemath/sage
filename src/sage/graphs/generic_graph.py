@@ -14486,7 +14486,7 @@ class GenericGraph(GenericGraph_pyx):
             G._pos3d = {v: pos3d[v] for v in G if v in pos3d}
         embedding = self.get_embedding()
         if embedding is not None:
-            G._embedding = {u: [v for v in embedding[u] if u in G] for u in G}
+            G._embedding = embedding
 
         if immutable is None:
             immutable = self.is_immutable()
