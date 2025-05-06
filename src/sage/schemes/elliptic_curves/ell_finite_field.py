@@ -314,9 +314,9 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         Choose the point at infinity with probability `1/(2q + 1)`.
         Otherwise, take a random element from the field as x-coordinate
-        and compute the possible y-coordinates. Return the i'th
+        and compute the possible y-coordinates. Return the i-th
         possible y-coordinate, where i is randomly chosen to be 0 or 1.
-        If the i'th y-coordinate does not exist (either there is no
+        If the i-th y-coordinate does not exist (either there is no
         point with the given x-coordinate or we hit a 2-torsion point
         with i == 1), try again.
 
@@ -356,7 +356,9 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         AUTHORS:
 
         - Jeroen Demeyer (2014-09-09): choose points uniformly random,
-          see :trac:`16951`.
+          see :issue:`16951`.
+
+        - Jonas Meers, Andrea Basso (2024-01-21): choose points of given order
 
         EXAMPLES::
 
@@ -430,7 +432,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         TESTS:
 
-        See :trac:`8311`::
+        See :issue:`8311`::
 
             sage: E = EllipticCurve(GF(3), [0,0,0,2,2])
             sage: E.random_element()
