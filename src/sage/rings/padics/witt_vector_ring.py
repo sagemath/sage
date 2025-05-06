@@ -142,15 +142,15 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
     - ``standard`` -- the schoolbook algorithm;
 
-    - ``p_invertible`` -- uses some optimisations when `p` is invertible
-      in the coefficient ring;
-
     - ``finotti`` -- Finotti's algorithm; it can be used when the coefficient
       ring has characteristic `p`;
 
     - ``phantom`` -- computes the ring laws using the phantom components
       using a lift of ``coefficient_ring``, assuming that it is either
-      `\mathbb F_q` for a power `q` of `p`, or a polynomial ring on that ring.
+      `\mathbb F_q` for a power `q` of `p`, or a polynomial ring on that field;
+
+    - ``p_invertible`` -- uses some optimisations when `p` is invertible
+      in the coefficient ring.
 
     EXAMPLES::
 
@@ -643,7 +643,7 @@ class WittVectorRing_finotti(WittVectorRing):
         This class should never be called directly, use ``WittVectorRing``
         instead.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: W = WittVectorRing(GF(49), prec=3, algorithm='finotti')
         sage: W
@@ -785,7 +785,7 @@ class WittVectorRing_phantom(WittVectorRing):
         This class should never be called directly, use ``WittVectorRing``
         instead.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: W = WittVectorRing(GF(19), prec=20)
         sage: W
@@ -846,7 +846,7 @@ class WittVectorRing_pinvertible(WittVectorRing):
         This class should never be called directly, use ``WittVectorRing``
         instead.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: W = WittVectorRing(QQ, p=31, prec=20)
         sage: W
@@ -893,7 +893,7 @@ class WittVectorRing_standard(WittVectorRing):
         This class should never be called directly, use ``WittVectorRing``
         instead.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: W = WittVectorRing(GF(3), prec=3, algorithm='standard')
         sage: W

@@ -383,14 +383,14 @@ class WittVector_phantom(WittVector):
     algorithm.
 
     Here, a Witt vector with coefficients in `\mathbb F_q` (respectively in a
-    polynomial ring over that field, is lifted to another Witt vector with
+    polynomial ring over that field), is lifted to another Witt vector with
     coefficients in `\mathbb Q_q` (respectively in the corresponding
     polynomial ring with coefficients in that field), whose phantom components
     are stored. Computations are done with these phantom components, and the
     corresponding Witt vectors in `\mathbb F_q` (respectively in the
     polynomial ring) are computed from them only when needed.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: W = WittVectorRing(GF(7), prec=5)
         sage: t = W.one()
@@ -690,7 +690,7 @@ class WittVector_finotti(WittVector):
     """
     Child class for truncated Witt vectors using Finotti's algorithm.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: W = WittVectorRing(GF(7), prec=4, algorithm='finotti')
         sage: 49*W.one()
@@ -770,7 +770,7 @@ class WittVector_pinvertible(WittVector):
     Child class for truncated Witt vectors using the ``p_invertible``
     algorithm.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: W = WittVectorRing(QQ, p=3, prec=3)
         sage: t = W.random_element()
@@ -848,7 +848,7 @@ class WittVector_standard(WittVector):
     """
     Child class for truncated Witt vectors using the ``standard`` algorithm.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: W = WittVectorRing(GF(5), prec=3, algorithm='standard')
         sage: 5*W.one()
