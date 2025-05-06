@@ -276,8 +276,8 @@ cdef class RingWrap:
             sage: l = ringlist(P)
             sage: ring = singular_function("ring")
             sage: ring(l, ring=P)._output()
-            //   coefficients: QQ
-            //   number of vars : 3
+            // coefficients: QQ...
+            // number of vars : 3
             //        block   1 : ordering dp
             //                  : names    x y z
             //        block   2 : ordering C
@@ -629,19 +629,19 @@ cdef class Converter(SageObject):
             3
         """
         cdef leftv * v
-        v=self.args
+        v = self.args
         cdef int l
-        l=0
+        l = 0
         while v != NULL:
-            l=l+1
-            v=v.next
+            l += 1
+            v = v.next
         return l
 
     cdef leftv* pop_front(self) except NULL:
         """
         Pop a Singular element from the front of the list.
         """
-        assert(self.args != NULL)
+        assert self.args != NULL
         cdef leftv *res = self.args
         self.args = self.args.next
         res.next = NULL

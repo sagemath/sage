@@ -1383,14 +1383,14 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         p = previous_prime(MAX_MODULUS)
         prod = 1
         v = []
-        #A, denom = self._matrix._clear_denom()
+        # A, denom = self._matrix._clear_denom()
         # TODO: this might be stupidly slow
         denom = self._matrix.denominator()
         A._matrix = <Matrix_rational_dense>(denom*self._matrix)
         bound = A._charpoly_bound()
         L_last = 0
         while prod <= bound:
-            while (n >= 2  and p % n != 1) or denom % p == 0:
+            while (n >= 2 and p % n != 1) or denom % p == 0:
                 if p == 2:
                     raise RuntimeError("we ran out of primes in multimodular charpoly algorithm.")
                 p = previous_prime(p)
@@ -1823,7 +1823,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             ...
             ValueError: echelon form mod 7 not defined
         """
-        cdef int i
+        cdef Py_ssize_t i
 
         # Initialize variables
         ls, _ = self._reductions(p)

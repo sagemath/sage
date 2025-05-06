@@ -521,7 +521,7 @@ cdef class CoercionModel:
 
         sage: import numpy                                                              # needs numpy
         sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
-        ....:     numpy.set_printoptions(legacy="1.25")                                 # needs numpy
+        ....:     __ = numpy.set_printoptions(legacy="1.25")                            # needs numpy
 
         sage: # needs sage.rings.real_mpfr
         sage: x = polygen(RR)
@@ -1600,7 +1600,7 @@ cdef class CoercionModel:
         """
         if homs is None:
             return None
-        cdef Map x_map, y_map
+        cdef Map R_map, S_map
         R_map, S_map = homs
         if isinstance(R, type):
             R = Set_PythonType(R)

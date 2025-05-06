@@ -64,14 +64,14 @@ In contrast, input to the ``%time`` magic command is preparsed::
     sage: shell.quit()
 """
 
-from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
 from IPython.core.display import HTML
 from IPython.core.getipython import get_ipython
+from IPython.core.magic import Magics, cell_magic, line_magic, magics_class
 
-from sage.repl.load import load_wrap
 from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
 from sage.misc.lazy_import import LazyImport
 from sage.misc.misc import run_once
+from sage.repl.load import load_wrap
 
 
 def _running_in_notebook():
@@ -321,7 +321,7 @@ class SageMagics(Magics):
             if max_width <= 0:
                 raise ValueError(
                     "max width must be a positive integer")
-            import sage.typeset.character_art as character_art
+            from sage.typeset import character_art
             character_art.MAX_WIDTH = max_width
             dm.preferences.text = arg0
         # Unset all
@@ -433,8 +433,8 @@ class SageMagics(Magics):
             sage: shell.run_cell('''
             ....: %%cython --view-annotate=xx
             ....: print(1)
-            ....: ''')
-            UsageError: argument --view-annotate: invalid choice: 'xx' (choose from 'none', 'auto', 'webbrowser', 'displayhtml')
+            ....: ''')  # exact error message differ between Python 3.11/3.13
+            UsageError: argument --view-annotate: invalid choice: 'xx' (choose from ...)
 
         Test ``--view-annotate=displayhtml`` (note that in a notebook environment
         an inline HTML frame will be displayed)::
@@ -478,9 +478,10 @@ class SageMagics(Magics):
             ...
             ValueError: No closing quotation
         """
-        from sage.misc.cython import cython_compile
-        import shlex
         import argparse
+        import shlex
+
+        from sage.misc.cython import cython_compile
 
         class ExitCatchingArgumentParser(argparse.ArgumentParser):
             def error(self, message):
@@ -651,6 +652,7 @@ class SageCustomizations:
         IPython.core.oinspect.getsource = LazyImport("sage.misc.sagedoc", "my_getsource")
         IPython.core.oinspect.find_file = LazyImport("sage.misc.sageinspect", "sage_getfile")
         IPython.core.oinspect.getargspec = LazyImport("sage.misc.sageinspect", "sage_getargspec")
+        IPython.core.oinspect.signature = LazyImport("sage.misc.sageinspect", "sage_signature")  # pyright: ignore [reportPrivateImportUsage]
 
     def init_line_transforms(self):
         """
@@ -660,12 +662,13 @@ class SageCustomizations:
 
         Check that :issue:`31951` is fixed::
 
+             sage: # indirect doctest
              sage: from IPython import get_ipython
              sage: ip = get_ipython()
-             sage: ip.input_transformer_manager.check_complete('''  # indirect doctest
+             sage: ip.input_transformer_manager.check_complete('''
              ....: for i in [1 .. 2]:
              ....:     a = 2''')
-             ('incomplete', 2)
+             ('incomplete', 4)
              sage: ip.input_transformer_manager.check_complete('''
              ....: def foo(L)
              ....:     K.<a> = L''')
@@ -701,7 +704,8 @@ class SageCustomizations:
              ('incomplete', 4)
         """
         from IPython.core.inputtransformer2 import TransformerManager
-        from .interpreter import SagePromptTransformer, SagePreparseTransformer
+
+        from sage.repl.interpreter import SagePreparseTransformer, SagePromptTransformer
 
         self.shell.input_transformer_manager.cleanup_transforms.insert(1, SagePromptTransformer)
         self.shell.input_transformers_post.append(SagePreparseTransformer)

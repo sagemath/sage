@@ -180,16 +180,15 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
         N = self.level()
         return self([1-N, -N, N, 1+N])
 
-    def is_congruence(self):
+    def is_congruence(self) -> bool:
         r"""
-        Return True, since this is a congruence subgroup.
+        Return ``True``, since this is a congruence subgroup.
 
         EXAMPLES::
 
             sage: Gamma0(7).is_congruence()
             True
         """
-
         return True
 
     def level(self):

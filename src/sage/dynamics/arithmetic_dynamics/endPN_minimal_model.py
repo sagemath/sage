@@ -66,12 +66,13 @@ def bCheck(c, v, p, b):
         sage: bCheck(11664*b^2 + 70227*b + 76059, 15/2, 3, b)
         -1
     """
-    val = (v+1).floor()
+    val = (v + 1).floor()
     deg = c.degree()
     coeffs = c.coefficients(sparse=False)
     lcoeff = coeffs[deg]
     coeffs.remove(lcoeff)
-    check1 = [(coeffs[i].valuation(p) - lcoeff.valuation(p))/(deg - i) for i in range(0,len(coeffs)) if coeffs[i] != 0]
+    check1 = [(coeffs[i].valuation(p) - lcoeff.valuation(p))/(deg - i)
+              for i in range(len(coeffs)) if coeffs[i] != 0]
     check2 = (val - lcoeff.valuation(p))/deg
     check1.append(check2)
     bval = min(check1)

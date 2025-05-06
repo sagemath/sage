@@ -104,6 +104,10 @@ REFERENCES:
              graphs and isoperimetric inequalities*, The Annals of Probability
              32 (2004), no.  3A, 1727-1745.
 
+.. [ACEP2020] Federico Ardila, Federico Castillo, Christopher Eur, Alexander Postnikov,
+         *Coxeter submodular functions and deformations of Coxeter permutahedra*,
+         Advances in Mathematics, Volume 365, 13 May 2020.
+
 .. [ALL2002] P. Auger, G. Labelle and P. Leroux, *Combinatorial
              addition formulas and applications*, Advances in Applied
              Mathematics 28 (2002) 302-342.
@@ -490,6 +494,11 @@ REFERENCES:
                         "Spook:  Sponge-Based Leakage-Resilient AuthenticatedEncryption with a Masked Tweakable Block Cipher"
                         https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/Spook-spec.pdf
 
+.. [BBC2000] Anne Berry, Jean-Paul Bordat, Olivier Cogis. *Generating all the
+             minimal separators of a graph*. International Journal of
+             Foundations of Computer Science, 11(3):397-403, 2000.
+             :doi:`10.1142/S0129054100000211`
+
 .. [BCDM2019] \T. Beyne, Y. L. Chen, C. Dobraunig, B. Mennink. *Elephant v1* (2019)
               https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/elephant-spec.pdf
 
@@ -562,6 +571,10 @@ REFERENCES:
              Cryptology -- CT RSA'06; LNCS 3860; pp. 313--331;
              Springer Verlag 2006; pre-print available at
              http://eprint.iacr.org/2005/200
+
+.. [BQ2024] Asilata Bapat and Hoel Queffelec.
+            *Some remarks about the faithfulness of the Burau representation
+            of Artin-Tits groups*. Preprint, 2024. :arxiv:`2409.00144`.
 
 .. [BBS1982] \L. Blum, M. Blum, and M. Shub. Comparison of Two
              Pseudo-Random Number Generators. *Advances in Cryptology:
@@ -872,7 +885,7 @@ REFERENCES:
 .. [BrHu2019] Petter Brändén, June Huh. *Lorentzian polynomials*.
               Ann. Math. (2) 192, No. 3, 821-891 (2020).
               :arxiv:`1902.03719`, :doi:`10.4007/annals.2020.192.3.4`.
-        
+
 .. [Bru2014] Erwan Brugalle and Kristin Shaw. *A bit of tropical geometry*.
              Amer. Math. Monthly, 121(7):563-589, 2014.
 
@@ -1152,6 +1165,10 @@ REFERENCES:
              :doi:`10.1016/S0304-3975(97)00228-4`.
 
 .. [Bo2009] Bosch, S., Algebra, Springer 2009
+
+.. [Bon2017] Joseph E. Bonin, *Lattices Related to Extensions of
+             Presentations of Transversal Matroids*.
+             Electronic Journal of Combinatorics (2017), #P1.49.
 
 .. [Bor1993] Lev A. Borisov,
              "Towards the mirror symmetry for Calabi-Yau complete
@@ -2090,6 +2107,10 @@ REFERENCES:
              Adv. Math. ***177** no. 1 (2002) pp. 115-179.
              :arxiv:`math/0203127`.
 
+.. [Day1979] Alan Day, *Characterizations of Finite Lattices that are
+             Bounded-Homomorphic Images or Sublattices of Free Lattices*,
+             Canadian Journal of Mathematics 31 (1979), 69-78
+
 .. [DB1996] K. Duggal, A. Bejancu,
             *Lightlike Submanifolds of Semi-Riemannian Manifolds and Applications*,
             Mathematics and Its Applications, 1996.
@@ -2736,6 +2757,12 @@ REFERENCES:
              Kirillov-Reshetikhin crystals for nonexceptional types*.
              Contemp. Math. 506 (2010) 127-143 ( :arxiv:`0811.1604` )
 
+.. [FP1985] U. Fincke and M. Pohst.
+            *Improved Methods for Calculating Vectors of Short Length in a
+            Lattice, Including a Complexity Analysis*.
+            Mathematics of Computation, 44 (1985), no. 1, 463-471.
+            :doi:`10.1090/S0025-5718-1985-0777278-8`
+
 .. [FP1996] Komei Fukuda, Alain Prodon: Double Description Method
             Revisited, Combinatorics and Computer Science, volume 1120
             of Lecture Notes in Computer Science, page
@@ -2791,7 +2818,10 @@ REFERENCES:
 .. [Ful1989] \W. Fulton. Algebraic curves: an introduction to algebraic geometry. Addison-Wesley,
              Redwood City CA (1989).
 
-.. [Ful1993] Wiliam Fulton, *Introduction to Toric Varieties*,
+.. [Ful1992] William Fulton. *Flags, Schubert polynomials, degeneracy loci, and
+             determinantal formulas*. Duke Math. J. **65** (1992), no. 3, 381-420.
+
+.. [Ful1993] William Fulton, *Introduction to Toric Varieties*,
             Princeton University Press, 1993.
 
 .. [Ful1997] William Fulton,
@@ -3248,6 +3278,13 @@ REFERENCES:
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              http://www-math.mit.edu/~hajiagha/pp11.ps
 
+.. [HAM1985] Hoffman, Alan J., Anthonius Wilhelmus Johannes Kolen, and Michel Sakarovitch.
+             Totally-balanced and greedy matrices.
+             SIAM Journal on Algebraic Discrete Methods 6.4 (1985): 721-730.
+
+.. [Han2016] \G.-N. Han, *Hankel continued fraction and its applications*,
+             Adv. in Math., 303, 2016, pp. 295-321.
+
 .. [Han1960] Haim Hanani,
              *On quadruple systems*,
              pages 145--157, vol. 12,
@@ -3680,6 +3717,9 @@ REFERENCES:
 .. [Ja1971] \N. Jacobson. *Exceptional Lie Algebras*. Marcel Dekker,
             Inc. New York. 1971. IBSN No. 0-8247-1326-5.
 
+.. [Jer2006] Mark Jerrum. *Two remarks concerning balanced matroids*.
+             Combinatorica 26, no. 6 (2006): 733-742.
+
 .. [Jet2008] \D. Jetchev. Global divisibility of Heegner points and
              Tamagawa numbers. Compos. Math. 144 (2008), no. 4, 811--826.
 
@@ -3894,6 +3934,11 @@ REFERENCES:
             Algebra i Analiz, 1995, Volume 7, Issue 1, pp. 92--152.
             http://math.uoregon.edu/~arkadiy/bk1.pdf
 
+.. [KD2015] Donald Keedwell and József Dénes, Latin Squares and their
+            Applications (2nd ed.), Elsevier B.V., Amsterdam-Netherlands,
+            2015. ISBN 978-0-444-63555-6, :mathscinet:`MR3495977`,
+            :doi:`10.1016/C2014-0-03412-0`
+
 .. [Ke1991] \A. Kerber. Algebraic combinatorics via finite group
             actions, 2.2 p. 70. BI-Wissenschaftsverlag,
             Mannheim, 1991.
@@ -3928,6 +3973,10 @@ REFERENCES:
 .. [KK2003] T. Kivinen and M. Kojo. *More Modular Exponential (MODP)
             Diffie-Hellman groups for Internet Key Exchange (IKE)*, in RFC 3526.
             Available at https://www.rfc-editor.org/rfc/rfc3526
+
+.. [KKD1995] Ton Kloks, and Dieter Kratsch. "Computing a perfect edge without vertex
+            elimination ordering of a chordal bipartite graph."
+            Information Processing Letters 55.1 (1995): 11-16.
 
 .. [KKMMNN1992] S-J. Kang, M. Kashiwara, K. C. Misra, T. Miwa, T. Nakashima,
                 and A. Nakayashiki. *Affine crystals and vertex models*.
@@ -4660,6 +4709,9 @@ REFERENCES:
             *Verma modules for rank two Heisenberg-Virasoro algebra*.
             Preprint, (2018). :arxiv:`1807.07735`.
 
+.. [Lub1987] Lubiw, Anna. Doubly Lexical Orderings of Matrices.
+             SIAM Journal on Computing 16.5 (1987): 854-879.
+
 .. [Lut2002] Frank H. Lutz, Császár's Torus, Electronic Geometry Model
              No. 2001.02.069
              (2002). http://www.eg-models.de/models/Classical_Models/2001.02.069/_direct_link.html
@@ -4720,7 +4772,10 @@ REFERENCES:
 
 **M**
 
-.. [Mac1916] \F.S. Macaulay. The algebraic theory of modular systems
+.. [Mac1902] \F.S. Macaulay. *On some formula in elimination.*
+             London Mathematical Society, 33, 1902, 3--27
+
+.. [Mac1916] \F.S. Macaulay. *The algebraic theory of modular systems*
              Cambridge university press, 1916.
 
 .. [Mac1995] \I. G. Macdonald, Symmetric functions and Hall
@@ -4982,6 +5037,10 @@ REFERENCES:
              *Yangians and classical Lie algebras*. (1994)
              :arxiv:`hep-th/9409025`
 
+.. [MNWW2011] Dillon Mayhew, Mike Newman, Dominic Welsh, and Geoff Whittle.
+              *On the asymptotic proportion of connected matroids*.
+              European Journal of Combinatorics. 2011 Aug 1;32(6):882-90.
+
 .. [Mol2007] Alexander Ivanovich Molev.
              *Yangians and Classical Lie Algebras*.
              Mathematical Surveys and Monographs.
@@ -5060,6 +5119,11 @@ REFERENCES:
 
 .. [MS1977] \F. J. MacWilliams, N. J. A. Sloane, *The Theory of Error-Correcting
             Codes*, North-Holland, Amsterdam, 1977
+
+.. [MS1977a] Arnaldo Mandel, Imre Simon,
+             *On Finite Semigroups of Matrices*,
+             Theoretical Computer Science 5 (101-111),
+             North-Holland Publishing Company
 
 .. [MS1994] \P. Martin and H. Saleur.
             *The blob algebra and the periodic Temperley-Lieb algebra*.
@@ -5243,7 +5307,7 @@ REFERENCES:
 .. [NT2007] Serguei Norine and Robin Thomas. *Minimally Non-Pfaffian Graphs*.
             Combinatorica, vol. 27, no. 5, pages: 587 -- 600, Springer. 2007.
             :doi:`10.1016/j.jctb.2007.12.005`.
-            
+
 .. [Nur2004] K. Nurmela. *Upper bounds for covering arrays by tabu search*.
              Discrete Applied Math., 138 (2004), 143-152.
 
@@ -5604,6 +5668,10 @@ REFERENCES:
               *Alley CATs in search of good homes.*
               Congressus numerantium, 1994.
               Pages 97--110
+
+.. [Rea1968] Ronald C. Read,
+             An improved method for computing the chromatic polynomials of sparse graphs,
+             Research Report CORR 87-20, C & O Dept. Univ. of Waterloo, 1987.
 
 .. [Rea2004] Nathan Reading.
              *Cambrian Lattices*.
@@ -6193,7 +6261,7 @@ REFERENCES:
              of the chromatic polynomial of a graph*, Adv. Math., ***111***
              no.1 (1995), 166-194. :doi:`10.1006/aima.1995.1020`.
 
-.. [Sta1998] \R. P. Stanley, *Graph colorings and related symmetric functions: 
+.. [Sta1998] \R. P. Stanley, *Graph colorings and related symmetric functions:
              ideas and applications A description of results, interesting applications,
              & notable open problems*, Discrete Mathematics, 193, no.1-3, (1998),
              267-286. :doi:`10.1016/S0012-365X(98)00146-0`.
@@ -6472,6 +6540,9 @@ REFERENCES:
 .. _ref-T:
 
 **T**
+
+.. [Tae2012] Lenny Taelman, *Special L-values of Drinfeld modules*,
+             Ann. Math. 175 (1), 2012, 369–391
 
 .. [Tak1999] Kisao Takeuchi, Totally real algebraic number fields of
              degree 9 with small discriminant, Saitama Math. J.  17

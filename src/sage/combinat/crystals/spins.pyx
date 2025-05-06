@@ -11,9 +11,9 @@ We follow Kashiwara and Nakashima (Journal of Algebra 165, 1994) in
 representing the elements of the spin crystal by sequences of signs
 `\pm`.
 """
-#TODO: Do we want the following two representations?
+# TODO: Do we want the following two representations?
 #
-#Two other representations are available as attributes
+# Two other representations are available as attributes
 #:meth:`Spin.internal_repn` and :meth:`Spin.signature` of the crystal element.
 #
 #- A numerical internal representation, an integer `n` such that if `n-1`
@@ -24,7 +24,7 @@ representing the elements of the spin crystal by sequences of signs
 #  ``-`` by `-1`.
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
 #                          Nicolas Thiery <nthiery at users.sf.net>
 #                          Daniel Bump    <bump at match.stanford.edu>
@@ -39,8 +39,8 @@ representing the elements of the spin crystal by sequences of signs
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from cysignals.memory cimport sig_malloc, sig_free

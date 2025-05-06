@@ -5,7 +5,7 @@ Let `E_2` be the weight 2 Eisenstein series defined by
 
 .. MATH::
 
-    E_2(z) = 1 - \frac{2k}{B_k} \sum_{n=1}^{\infty} \sigma(n) q^n
+    E_2(z) = 1 - 24 \sum_{n=1}^{\infty} \sigma(n) q^n
 
 where `\sigma` is the sum of divisors function and `q = \mathrm{exp}(2\pi i z)`
 is the classical parameter at infinity, with `\mathrm{im}(z)>0`. This weight 2
@@ -14,7 +14,7 @@ modularity condition:
 
 .. MATH::
 
-    z^2 E_2(-1/z) = E_2(z) + \frac{2k}{4\pi i B_k z}.
+    z^2 E_2(-1/z) = E_2(z) + \frac{6}{\pi i z}.
 
 `E_2` is a quasimodular form of weight 2. General quasimodular forms of given
 weight can also be defined. We denote by `QM` the graded ring of quasimodular
@@ -45,9 +45,9 @@ EXAMPLES::
     sage: QM.category()
     Category of commutative graded algebras over Rational Field
     sage: QM.gens()
-    [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+    (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
      1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-     1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+     1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6))
     sage: E2 = QM.0; E4 = QM.1; E6 = QM.2
     sage: E2 * E4 + E6
     2 - 288*q - 20304*q^2 - 185472*q^3 - 855216*q^4 - 2697408*q^5 + O(q^6)
@@ -92,10 +92,10 @@ The other generators correspond to the generators given by the method
 :meth:`sage.modular.modform.ring.ModularFormsRing.gens`::
 
     sage: QM.gens()
-    [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+    (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
      1 + 6*q + 18*q^2 + 24*q^3 + 42*q^4 + 6*q^5 + O(q^6),
      1 + 240*q^5 + O(q^6),
-     q + 10*q^3 + 28*q^4 + 35*q^5 + O(q^6)]
+     q + 10*q^3 + 28*q^4 + 35*q^5 + O(q^6))
     sage: QM.modular_forms_subring().gens()
     [1 + 6*q + 18*q^2 + 24*q^3 + 42*q^4 + 6*q^5 + O(q^6),
      1 + 240*q^5 + O(q^6),
@@ -200,9 +200,9 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         sage: QM = QuasiModularForms(1); QM
         Ring of Quasimodular Forms for Modular Group SL(2,Z) over Rational Field
         sage: QM.gens()
-        [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+        (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
          1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-         1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+         1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6))
 
     It is possible to access the weight 2 Eisenstein series::
 
@@ -454,9 +454,9 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return self(self.__polynomial_subring.gen())
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return a list of generators of the quasimodular forms ring.
+        Return a tuple of generators of the quasimodular forms ring.
 
         Note that the generators of the modular forms subring are the one given
         by the method :meth:`sage.modular.modform.ring.ModularFormsRing.gen_forms`
@@ -465,30 +465,30 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
             sage: QM = QuasiModularForms(1)
             sage: QM.gens()
-            [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+            (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
             1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6))
             sage: QM.modular_forms_subring().gen_forms()
             [1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
             1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
             sage: QM = QuasiModularForms(5)
             sage: QM.gens()
-            [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+            (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
             1 + 6*q + 18*q^2 + 24*q^3 + 42*q^4 + 6*q^5 + O(q^6),
             1 + 240*q^5 + O(q^6),
-            q + 10*q^3 + 28*q^4 + 35*q^5 + O(q^6)]
+            q + 10*q^3 + 28*q^4 + 35*q^5 + O(q^6))
 
         An alias of this method is ``generators``::
 
             sage: QuasiModularForms(1).generators()
-            [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+            (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
             1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6))
         """
         gen_list = [self.weight_2_eisenstein_series()]
-        for f in self.__modular_forms_subring.gen_forms():
-            gen_list.append(self(f))
-        return gen_list
+        gen_list.extend(self(f)
+                        for f in self.__modular_forms_subring.gen_forms())
+        return tuple(gen_list)
 
     generators = gens  # alias
 
@@ -529,7 +529,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             sage: QM.4
             Traceback (most recent call last):
             ...
-            IndexError: list index out of range
+            IndexError: tuple index out of range
         """
         return self.gens()[n]
 
@@ -568,9 +568,9 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: QuasiModularForms(1).some_elements()
-            [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+            (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
             1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6))
         """
         return self.gens()
 

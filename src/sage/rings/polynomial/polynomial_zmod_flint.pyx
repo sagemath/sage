@@ -190,7 +190,6 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         cdef list l_in = x
         cdef unsigned long length = len(l_in)
-        cdef unsigned long modulus = nmod_poly_modulus(&self.x)
         cdef int i
         if length == 0:
             nmod_poly_zero(&self.x)
@@ -811,10 +810,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
             sage: R.<x> = PolynomialRing(GF(65537), implementation="FLINT")
             sage: f = R.random_element(9973) * R.random_element(10007)
-            sage: alarm(0.5); f.factor()
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): f.factor()
 
         Test zero polynomial::
 

@@ -134,11 +134,15 @@ cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
         elif rnd == 'd':
             mpz_fdiv_q_2exp(res.value, man.value, shift)
         elif rnd == 'f':
-            if sign: mpz_cdiv_q_2exp(res.value, man.value, shift)
-            else:    mpz_fdiv_q_2exp(res.value, man.value, shift)
+            if sign:
+                mpz_cdiv_q_2exp(res.value, man.value, shift)
+            else:
+                mpz_fdiv_q_2exp(res.value, man.value, shift)
         elif rnd == 'c':
-            if sign: mpz_fdiv_q_2exp(res.value, man.value, shift)
-            else:    mpz_cdiv_q_2exp(res.value, man.value, shift)
+            if sign:
+                mpz_fdiv_q_2exp(res.value, man.value, shift)
+            else:
+                mpz_cdiv_q_2exp(res.value, man.value, shift)
         elif rnd == 'u':
             mpz_cdiv_q_2exp(res.value, man.value, shift)
         exp += shift

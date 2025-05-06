@@ -518,7 +518,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         # TODO: *maybe* redo this to use mpz_import and mpz_export
         # from sec 5.14 of the GMP manual. ??
-        cdef int i, j, len_so_far, m, n
+        cdef Py_ssize_t i, j, len_so_far
+        cdef int m, n
         cdef char *s
         cdef char *t
         cdef char *tmp
@@ -1530,7 +1531,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         cdef Integer h
         cdef Matrix_integer_dense left = <Matrix_integer_dense>self
-        cdef int i, k
+        cdef Py_ssize_t i, k
 
         nr = left._nrows
         nc = right._ncols
@@ -4385,14 +4386,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = random_matrix(ZZ, 2000, 2000)
             sage: B = random_matrix(ZZ, 2000, 2000)
-            sage: t0 = walltime()
-            sage: alarm(2); A._solve_iml(B)  # long time
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
-            sage: t = walltime(t0)
-            sage: t < 10 or t
-            True
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_iml(B)
 
         ALGORITHM: Uses IML.
 
@@ -4549,14 +4544,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = random_matrix(ZZ, 2000, 2000)
             sage: B = random_matrix(ZZ, 2000, 2000)
-            sage: t0 = walltime()
-            sage: alarm(2); A._solve_flint(B)  # long time
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
-            sage: t = walltime(t0)
-            sage: t < 10 or t
-            True
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(2, max_wait_after_interrupt=8): A._solve_flint(B)
 
         AUTHORS:
 
@@ -5435,6 +5424,16 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [  3   4   5]
             [  6   7   8]
             [  1   5 -10]
+
+        TESTS:
+
+        Ensure that :issue:`11328` is fixed::
+
+            sage: m = matrix([[int(1),int(1)],[int(1),int(1)]])
+            sage: m.insert_row(1,[int(2),int(3)])
+            [1 1]
+            [2 3]
+            [1 1]
         """
         cdef Matrix_integer_dense res = self._new(self._nrows + 1, self._ncols)
         cdef Py_ssize_t j
@@ -5450,7 +5449,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             for i from 0 <= i < index:
                 fmpz_init_set(fmpz_mat_entry(res._matrix,i,j), fmpz_mat_entry(self._matrix,i,j))
 
-            z = row[j]
+            z = ZZ(row[j])
+
             fmpz_set_mpz(zflint,z.value)
             fmpz_init_set(fmpz_mat_entry(res._matrix,index,j), zflint)
 

@@ -448,7 +448,7 @@ class SymmetryMutant(Enum):
             res.append(self.rev().mir())
         return res
 
-    def is_minimal(self, link):
+    def is_minimal(self, link) -> bool:
         r"""
         Return whether ``self`` is minimal among its matching mutants.
 
@@ -992,7 +992,7 @@ class KnotInfoBase(Enum):
         return knotinfo_int(self[self.items.signature])
 
     @cached_method
-    def is_knot(self):
+    def is_knot(self) -> bool:
         r"""
         Return whether ``self`` is a knot or a proper link.
 
@@ -1063,7 +1063,7 @@ class KnotInfoBase(Enum):
         return symmetry_type
 
     @cached_method
-    def is_reversible(self):
+    def is_reversible(self) -> bool:
         r"""
         Return whether ``self`` is reversible.
 
@@ -1096,7 +1096,7 @@ class KnotInfoBase(Enum):
         return None
 
     @cached_method
-    def is_amphicheiral(self, positive=False):
+    def is_amphicheiral(self, positive=False) -> bool:
         r"""
         Return whether ``self`` is amphicheiral.
 
@@ -1184,7 +1184,7 @@ class KnotInfoBase(Enum):
         return None
 
     @cached_method
-    def is_hyperbolic(self):
+    def is_hyperbolic(self) -> bool:
         r"""
         Return whether ``self`` is hyperbolic.
 
@@ -1201,7 +1201,7 @@ class KnotInfoBase(Enum):
         return False
 
     @cached_method
-    def is_alternating(self):
+    def is_alternating(self) -> bool:
         r"""
         Return whether ``self`` is alternating.
 
@@ -1213,7 +1213,7 @@ class KnotInfoBase(Enum):
         return knotinfo_bool(self[self.items.alternating])
 
     @cached_method
-    def is_almost_alternating(self):
+    def is_almost_alternating(self) -> bool:
         r"""
         Return whether ``self`` is almost alternating.
 
@@ -1226,7 +1226,7 @@ class KnotInfoBase(Enum):
         return knotinfo_bool(self[self.items.almost_alternating])
 
     @cached_method
-    def is_quasi_alternating(self):
+    def is_quasi_alternating(self) -> bool:
         r"""
         Return whether ``self`` is quasi alternating.
 
@@ -1239,7 +1239,7 @@ class KnotInfoBase(Enum):
         return knotinfo_bool(self[self.items.quasi_alternating])
 
     @cached_method
-    def is_adequate(self):
+    def is_adequate(self) -> bool:
         r"""
         Return whether ``self`` is adequate.
 
@@ -1252,7 +1252,7 @@ class KnotInfoBase(Enum):
         return knotinfo_bool(self[self.items.adequate])
 
     @cached_method
-    def is_positive(self):
+    def is_positive(self) -> bool:
         r"""
         Return whether ``self`` is positive.
 
@@ -1264,7 +1264,7 @@ class KnotInfoBase(Enum):
         return knotinfo_bool(self[self.items.positive])
 
     @cached_method
-    def is_quasipositive(self):
+    def is_quasipositive(self) -> bool:
         r"""
         Return whether ``self`` is quasi-positive.
 
@@ -1277,7 +1277,7 @@ class KnotInfoBase(Enum):
         return knotinfo_bool(self[self.items.quasipositive])
 
     @cached_method
-    def is_strongly_quasipositive(self):
+    def is_strongly_quasipositive(self) -> bool:
         r"""
         Return whether ``self`` is strongly quasi-positive.
 
@@ -1290,7 +1290,7 @@ class KnotInfoBase(Enum):
         return knotinfo_bool(self[self.items.strongly_quasipositive])
 
     @cached_method
-    def is_positive_braid(self):
+    def is_positive_braid(self) -> bool:
         r"""
         Return whether ``self`` is a positive braid.
 
@@ -1303,7 +1303,7 @@ class KnotInfoBase(Enum):
         return knotinfo_bool(self[self.items.positive_braid])
 
     @cached_method
-    def is_fibered(self):
+    def is_fibered(self) -> bool:
         r"""
         Return whether ``self`` is fibered.
 
@@ -1315,7 +1315,7 @@ class KnotInfoBase(Enum):
         return knotinfo_bool(self[self.items.fibered])
 
     @cached_method
-    def is_oriented(self):
+    def is_oriented(self) -> bool:
         r"""
         Return whether ``self`` is oriented.
 
@@ -1427,7 +1427,7 @@ class KnotInfoBase(Enum):
 
             sage: H = KnotInfo.L11n459_1_1_1.homfly_polynomial()   # optional - database_knotinfo
             sage: all(L.homfly_polynomial() == L.link().homfly_polynomial(normalization='vz')\
-                      for L in KnotInfo if L.crossing_number() < 7)
+            ....:     for L in KnotInfo if L.crossing_number() < 7)
             True
 
         REFERENCES:
@@ -2229,7 +2229,7 @@ class KnotInfoBase(Enum):
         raise ValueError('link construction using %s not possible' % use_item)
 
     @cached_method
-    def is_unique(self):
+    def is_unique(self) -> bool:
         r"""
         Return whether there is no other isotopic link in the database or not.
 
@@ -2275,7 +2275,7 @@ class KnotInfoBase(Enum):
         return None
 
     @cached_method
-    def is_recoverable(self, unique=True):
+    def is_recoverable(self, unique=True) -> bool:
         r"""
         Return if ``self`` can be recovered from its conversion to Sage links
         using the ``pd_notation`` and the ``braid_notation`` and their
@@ -2788,7 +2788,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             res = 'L%s%s' % (cross_nr, alt)
         return res
 
-    def is_recoverable(self, unique=True, max_samples=8):
+    def is_recoverable(self, unique=True, max_samples=8) -> bool:
         r"""
         Return if all items of ``self`` can be recovered from its conversion to
         Sage links using the ``pd_notation`` and the ``braid_notation`` and their

@@ -11,11 +11,11 @@ Walkthrough
 
 Assume we're starting from a clean repo and a fully set up conda environment
 (modify ``-linux`` according to your operating system):
-        
+
 .. CODE-BLOCK:: shell-session
 
     $ mamba env create --file environment-3.11-linux.yml --name sage-dev
-    $ conda activate sage-dev
+    $ mamba activate sage-dev
 
 Alternatively, install all build requirements as described in section
 :ref:`section-prereqs`. In the likely case that you have to install some
@@ -31,29 +31,29 @@ to the installed libraries:
 .. NOTE::
 
     If you have previously build Sage in-place, you first have to delete the
-    already compiled files, e.g. with ``shopt -s globstar`` followed by 
+    already compiled files, e.g. with ``shopt -s globstar`` followed by
     ``rm src/**/*.so`` or ``for f in src/**/*.so ; do mv "$f" "$f.old"; done``.
     Moreover, remove the old generated files with
-    ``find src/sage/ext/interpreters -type f ! -name 'meson.build' -delete``. 
+    ``find src/sage/ext/interpreters -type f ! -name 'meson.build' -delete``.
     Also uninstall the 'old' sage packages with ``pip uninstall sage-conf sage-setup sagemath-standard``.
 
 To compile and install the project in editable install, just use:
-    
+
 .. CODE-BLOCK:: shell-session
 
     $ pip install --no-build-isolation --editable .
 
-This will install Sage in the current Python environment. 
-In a Conda environment, the ``--no-build-isolation`` flag is necessary to 
+This will install Sage in the current Python environment.
+In a Conda environment, the ``--no-build-isolation`` flag is necessary to
 allow the build system to reuse the already installed build dependencies.
 If you don't use Conda, you can omit this flag.
 
-You can then start Sage from the command line with ``./sage`` 
+You can then start Sage from the command line with ``./sage``
 or run the tests with ``./sage -t``.
 
 .. NOTE::
-    
-    By using ``pip install --editable`` in the above steps, the Sage library 
+
+    By using ``pip install --editable`` in the above steps, the Sage library
     is installed in editable mode. This means that when you only edit source
     files, there is no need to rebuild the library; it suffices to restart Sage.
     Note that this even works when you edit Cython files (they will be recompiled
@@ -63,7 +63,7 @@ or run the tests with ``./sage -t``.
 .. NOTE::
 
     Note that ``make`` is not used at all, nor is ``configure``.
-    This means that any Sage-the-distribution commands such as ``sage -i`` 
+    This means that any Sage-the-distribution commands such as ``sage -i``
     will not work.
 
 .. NOTE::
@@ -85,15 +85,12 @@ To configure the project, we need to run the following command:
 
 .. CODE-BLOCK:: shell-session
 
-    $ meson setup builddir --prefix=$PWD/build-install
+    $ meson setup builddir
 
 This will create a build directory ``builddir`` that will hold the build artifacts.
-The ``--prefix`` option specifies the directory where the Sage will be installed.
 
-If pip is used as above, ``builddir`` is set to be
+If pip is used as above with ``--editable``, ``builddir`` is set to be
 ``build/cp[Python major version][Python minor version]``, such as ``build/cp311``.
-``--prefix=`` can be left unspecified, when conda is used then meson will
-install to the conda environment e.g. ``$HOME/miniforge3/envs/sage-dev/``.
 
 To compile the project, run the following command:
 
@@ -107,15 +104,27 @@ Installing is done with the following command:
 
     $ meson install -C builddir
 
-This will then install in the directory specified by ``--prefix``, e.g.
-``build-install/lib/python3.11/site-packages/sage``.
-Usually, this directory is not on your Python path, so you have to use:
-
-.. CODE-BLOCK:: shell-session
-
-    $ PYTHONPATH=build-install/lib/python3.11/site-packages ./sage
-
+This will install the project to currently active Python environment, 
+or to the system Python environment if no environment is active.
 When editable install is used, it is not necessary to reinstall after each compilation.
+
+.. NOTE::
+
+    If you want to install the project to a different directory, you can specify
+    the ``--prefix`` option when running the ``meson setup`` command:
+
+    .. CODE-BLOCK:: shell-session
+
+        $ meson setup builddir --prefix=/desired/install/path -Dpython.install_env=prefix
+
+    This will then install in the directory specified by ``--prefix``,
+    in particular the root folder will be be installed to
+    ``/desired/install/path/lib/python3.11/site-packages/sage``.
+    Usually, this directory is not on your Python path, so you have to use:
+
+    .. CODE-BLOCK:: shell-session
+
+        $ PYTHONPATH=/desired/install/path ./sage
 
 Alternatively, we can still use pip to install:
 
@@ -128,13 +137,17 @@ Alternatively, we can still use pip to install:
     Package maintainers may want to specify further build options or need
     to install to a different directory than the install prefix.
     Both are supported naturally by Meson:
-    
+
     .. CODE-BLOCK:: shell-session
 
         $ meson setup builddir --prefix=/usr --libdir=... -Dcpp_args=...
         $ meson compile -C builddir
         $ DESTDIR=/path/to/staging/root meson install -C builddir
-    
+
+    With the `default <https://mesonbuild.com/Running-Meson.html#installing>`_ prefix
+    being ``/usr/local``, it may then install to
+    ``$DESTDIR/usr/local/lib/python3.12/site-packages/sage``.
+
     See `Meson's quick guide <https://mesonbuild.com/Quick-guide.html#using-meson-as-a-distro-packager>`_
     and `Meson's install guide <https://mesonbuild.com/Installing.html#destdir-support>`_
     for more information.
@@ -144,6 +157,7 @@ Miscellaneous tips
 
 The environment variable ``MESONPY_EDITABLE_VERBOSE=1`` can be set while running ``./sage``,
 so that when Cython files are recompiled a message is printed out.
+See `<https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#verbose-mode>`_.
 
 If a new ``.pyx`` file is added, it need to be added to ``meson.build`` file in the
 containing directory.
