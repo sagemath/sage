@@ -513,7 +513,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
                 # Choose the point at infinity with probability 1/(2q + 1)
                 i = ZZ.random_element(n)
                 if not i:
-                    return self.point(0)
+                    return self.zero()
 
                 v = self.lift_x(k.random_element(), all=True)
                 try:
@@ -559,7 +559,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         elif alg == "divPol":
             if order == 1:
-                return self.point(0)
+                return self.zero()
 
             points = []
 
@@ -611,16 +611,16 @@ class EllipticCurve_finite_field(EllipticCurve_field):
                 (P,Q) = generators
             elif len(generators) == 1:
                 P = generators[0]
-                Q = self(0)
+                Q = self.zero()
             else:
                 raise ValueError(f'the curve does not have any generators defined over the base field')
 
             # Multiply P, Q by an appropriate cofactor s.t. both have the correct order
-            P = (P.order()//(order.gcd(P.order()))) * P
-            Q = (Q.order()//(order.gcd(Q.order()))) * Q
-
-            if P.order() != order and Q.order() != order:
+            if P.order() % order != 0 or Q.order() % order != 0:
                 raise ValueError(f'the curve does not have any {order} torsion points defined over the base field')
+
+            P = (P.order() // order) * P
+            Q = (Q.order() // order) * Q
 
             s = order
             t = order
