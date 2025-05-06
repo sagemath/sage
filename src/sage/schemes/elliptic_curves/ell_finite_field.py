@@ -414,7 +414,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: P = E.random_element(order=31)
             Traceback (most recent call last):
             ...
-            ValueError: The curve does not have a point of order 31
+            ValueError: the curve does not have a point of order 31
 
         ::
 
@@ -468,7 +468,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.random_point(order=430)
             Traceback (most recent call last):
             ...
-            ValueError: The curve does not have a point of order 430
+            ValueError: the curve does not have a point of order 430
 
             ::
 
@@ -500,7 +500,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: P = E.random_point(order=35, algorithm='cofactor')
             Traceback (most recent call last):
             ...
-            NotImplementedError: Not implemented for ordinary curves or supersingular curves with cyclic group of points
+            NotImplementedError: not implemented for ordinary curves or supersingular curves with cyclic group of points
             sage: P = E.random_point(order=35)
             sage: P.order() == 35
             True
