@@ -397,10 +397,10 @@ class WittVector_phantom(WittVector):
         sage: t
         (1, 0, 0, 0, 0)
         sage: t.phantom()
-        [1, 1, 1, 1, 1]
+        (1, 1, 1, 1, 1)
         sage: u = 7*t
         sage: u.phantom()
-        [7, 7, 7, 7, 7]
+        (0, 0, 0, 0, 0)
         sage: u[1]
         1
     """
@@ -494,9 +494,9 @@ class WittVector_phantom(WittVector):
             sage: u = W([0,5,0])
             sage: r = t + u
             sage: r.phantom()
-            [6, 6 + 3*11 + 9*11^2, 6 + 3*11 + 3*11^2]
+            (6, 6, 6)
         """
-        phantom = [self._phantom[i] + other.phantom()[i] for i in range(self._prec)]
+        phantom = [self._phantom[i] + other._phantom[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
 
     def _compute_vector(self, prec=None):
@@ -558,9 +558,9 @@ class WittVector_phantom(WittVector):
             sage: u = W([0,1,3])
             sage: r = t * u
             sage: r.phantom()
-            [0, 7, 7 + 3*7^2 + 5*7^3]
+            (0, 0, 0)
         """
-        phantom = [self._phantom[i] * other.phantom()[i] for i in range(self._prec)]
+        phantom = [self._phantom[i] * other._phantom[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
 
     def _neg_(self):
@@ -573,8 +573,7 @@ class WittVector_phantom(WittVector):
             sage: t = W([1,0,1,17])
             sage: r = -t
             sage: r.phantom()
-            [22 + 22*23 + 22*23^2 + 22*23^3, 22 + 22*23 + 22*23^2 + 22*23^3,
-            22 + 22*23 + 21*23^2 + 22*23^3, 22 + 22*23 + 21*23^2 + 5*23^3]
+            (22, 22, 22, 22)
         """
         phantom = [-v for v in self._phantom]
         return self.__class__(self.parent(), phantom=phantom)
@@ -628,9 +627,9 @@ class WittVector_phantom(WittVector):
             sage: u = W([1,0,2])
             sage: r = t - u
             sage: r.phantom()
-            [0, 2*3, 2*3 + 2*3^2]
+            (0, 0, 0)
         """
-        phantom = [self._phantom[i] - other.phantom()[i] for i in range(self._prec)]
+        phantom = [self._phantom[i] - other._phantom[i] for i in range(self._prec)]
         return self.__class__(self.parent(), phantom=phantom)
 
     def _vector_(self, R):
@@ -671,9 +670,10 @@ class WittVector_phantom(WittVector):
             sage: W = WittVectorRing(GF(5,'t'), prec=3)
             sage: t = W([1,1,3])
             sage: t.phantom()
-            [1, 1 + 5, 1 + 5 + 3*5^2]
+            (1, 1, 1)
         """
-        return self._phantom
+        return tuple(self.parent().coefficient_ring()(x)
+                     for x in self._phantom)
 
 
 class WittVector_finotti(WittVector):
