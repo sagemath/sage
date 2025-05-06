@@ -1,5 +1,4 @@
 py.install_sources(
-    '__init__.py',
     'blowup.py',
     'bundle.py',
     'finite_ring_extension.py',
