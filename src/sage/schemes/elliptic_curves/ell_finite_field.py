@@ -556,6 +556,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
                 P_order = generic.order_from_multiple(P, order)
                 if P_order == order:
                     P.set_order(P_order)
+                    return P
 
         elif alg == "divPol":
             if order == 1:
