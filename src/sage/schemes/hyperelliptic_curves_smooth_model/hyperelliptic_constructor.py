@@ -54,7 +54,7 @@ TODO:
 def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     r"""
     Constructor function for creating a hyperelliptic curve with
-    smooth model with polynomials f, h.
+    smooth model with polynomials `f`, `h`.
 
     In Sage, a hyperelliptic curve of genus `g` is always
     specified by an (affine) equation in Weierstrass form
@@ -121,6 +121,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         <class 'sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_padic_field.HyperellipticCurveSmoothModel_padic_field_with_category'>
 
     The input polynomials need not be monic::
+
         sage: R.<x> = QQ[]
         sage: HyperellipticCurveSmoothModel(3*x^5+1)
         Hyperelliptic Curve over Rational Field defined by y^2 = 3*x^5 + 1

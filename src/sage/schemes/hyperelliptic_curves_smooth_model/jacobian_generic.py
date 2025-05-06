@@ -98,6 +98,13 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             raise ValueError("Arguments must determine a valid Mumford divisor.")
 
     def _point_homset(self, *args, **kwds):
+        """
+            Create the Hom-Set of the Jacobian according to the type of `self`.
+
+            TESTS::
+
+
+        """
         # TODO: make a constructor for this??
         H = self.curve()
         if H.is_ramified():
@@ -168,7 +175,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     def list(self):
         """
-        Return all points on the Jacobian.
+        Return all rational elements of the Jacobian.
 
         .. SEEALSO::
 
@@ -178,6 +185,9 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         return self.point_homset().points()
 
     def __iter__(self):
+        """
+        Return an iterator over the elements of the Jacobian.
+        """
         yield from self.list()
 
     rational_points = points

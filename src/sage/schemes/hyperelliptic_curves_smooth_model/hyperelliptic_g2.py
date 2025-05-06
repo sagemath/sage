@@ -80,7 +80,7 @@ class HyperellipticCurveSmoothModel_g2(
 
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(2*x^5 + 4*x^4 + x^3 - x, x^3 + x + 1)
-            sage: J = Jacobian(H); J
+            sage: J = H.jacobian(); J
             Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x + 1)*y = 2*x^5 + 4*x^4 + x^3 - x
 
         The points `P = (0, 0)` and `Q = (-1, -1)` are on `H`. We construct the

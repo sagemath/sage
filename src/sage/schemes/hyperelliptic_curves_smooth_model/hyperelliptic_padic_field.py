@@ -1,5 +1,13 @@
 """
 Hyperelliptic curves (smooth model) over a p-adic field
+
+The functions in this module were prototyped at the 2007 Arizona Winter School by
+Robert Bradshaw and Ralf Gerkmann, working with Miljan Brakovevic and
+Kiran Kedlaya.
+They were adapted by Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024)
+to work for hyperelliptic curves in weighted projective space.
+
+All of the below is with respect to the Monsky Washnitzer cohomology.
 """
 
 from sage.functions.log import log
@@ -20,25 +28,60 @@ from sage.schemes.hyperelliptic_curves_smooth_model import hyperelliptic_generic
 class HyperellipticCurveSmoothModel_padic_field(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
+
+    r"""
+    Class of hyperelliptic curves (smooth model) over a `p`-adic field.
+    In particular this class implements the necessary functionality to
+    compute Coleman integrals.
+
+    EXAMPLES:
+
+    This is the curve with LMFDB label  1091.a.1091.1 ::
+
+        sage: K = pAdicField(7,10)
+        sage: R.<x> = K[]
+        sage: H = HyperellipticCurveSmoothModel(x^5 + 1/4*x^4 -3/2* x^3 -1/4*x^2 + 1/2*x +  1/4)
+        sage: P0 = H(1,0,0)
+        sage: Q = H(-1,-1/2)
+        sage: P = H(0,1/2)
+
+    We note that `[P-P_0]` has order `7` on the Jacobian, hence the
+    Coleman integral `\int_P^{P_0} dx/2y` vanishes.
+    On the other hand `[Q-Q_0]` has infinite order, and the corresponding
+    integral is nonzero::
+
+        sage: w = H.invariant_differential()
+        sage: H.coleman_integral(w,P,P0)
+        O(7^9)
+        sage: H.coleman_integral(w,Q,P0)
+        3*7 + 4*7^2 + 5*7^4 + 2*7^5 + 2*7^6 + 6*7^7 + 4*7^8 + O(7^9)
+    """
+
     def __init__(self, projective_model, f, h, genus):
+        """
+        Create a hyperelliptic curve over a p-adic field.
+
+        TESTS::
+
+            sage: R.<x> = Qp(5,10)[]
+            sage: H = HyperellipticCurveSmoothModel(-x^2, x^3 + 1)
+            sage: H # indirect doctest
+            Hyperelliptic Curve over 5-adic Field with capped relative precision 10 defined by y^2 + (x^3 + 1 + O(5^10))*y = (4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + 4*5^6 + 4*5^7 + 4*5^8 + 4*5^9 + O(5^10))*x^2
+        """
         super().__init__(projective_model, f, h, genus)
 
-    # The functions below were prototyped at the 2007 Arizona Winter School by
-    # Robert Bradshaw and Ralf Gerkmann, working with Miljan Brakovevic and
-    # Kiran Kedlaya
-    # All of the below is with respect to the Monsky Washnitzer cohomology.
 
     def local_analytic_interpolation(self, P, Q):
         """
-        For points `P`, `Q` in the same residue disc,
-        this constructs an interpolation from `P` to `Q`
+        For points ``P``, ``Q`` in the same residue disc,
+        construct an interpolation from ``P`` to ``Q``
         (in weighted homogeneous coordinates) in a power series in
         the local parameter `t`, with precision equal to
         the `p`-adic precision of the underlying ring.
 
         INPUT:
 
-        - P and Q points on self in the same residue disc
+        - ``P`` and ``Q`` points on ``self`` in the same residue disc
 
         OUTPUT:
 
@@ -738,9 +781,9 @@ class HyperellipticCurveSmoothModel_padic_field(
 
         INPUT:
 
-        - w differential (if one of P,Q is Weierstrass, w must be odd)
-        - P point on self
-        - Q point on self
+        - ``w`` differential (if one of P,Q is Weierstrass, w must be odd)
+        - ``P`` point on self
+        - ``Q`` point on self
         - algorithm (optional) = None (uses Frobenius) or teichmuller (uses Teichmuller points)
 
         OUTPUT:
@@ -1153,13 +1196,13 @@ class HyperellipticCurveSmoothModel_padic_field(
 
     def P_to_S(self, P, S):
         r"""
-        Given a finite Weierstrass point `P` and a point `S`
-        in the same disc, computes the Coleman integrals `\{\int_P^S x^i dx/2y \}_{i=0}^{2g-1}`
+        Given a finite Weierstrass point ``P`` and a point ``S``
+        in the same disc, compute the Coleman integrals `\{\int_P^S x^i dx/2y \}_{i=0}^{2g-1}`
 
         INPUT:
 
-        - P: finite Weierstrass point
-        - S: point in disc of P
+        - ``P``: finite Weierstrass point
+        - ``S``: point in disc of ``P``
 
         OUTPUT:
 
@@ -1195,15 +1238,15 @@ class HyperellipticCurveSmoothModel_padic_field(
 
     def coleman_integral_P_to_S(self, w, P, S):
         r"""
-        Given a finite Weierstrass point `P` and a point `S`
-        in the same disc, computes the Coleman integral `\int_P^S w`
+        Given a finite Weierstrass point ``P`` and a point ``S``
+        in the same disc, compute the Coleman integral `\int_P^S w`
 
         INPUT:
 
-        - w: differential
-        - P: Weierstrass point
-        - S: point in the same disc of P (S is defined over an extension of `\QQ_p`; coordinates
-          of S are given in terms of uniformizer `a`)
+        - ``w``: differential
+        - ``P``: Weierstrass point
+        - ``S``: point in the same disc of ``P`` (``S`` is defined over an extension of `\QQ_p`; coordinates
+          of ``S`` are given in terms of uniformizer `a`)
 
         OUTPUT:
 
@@ -1240,16 +1283,16 @@ class HyperellipticCurveSmoothModel_padic_field(
 
     def S_to_Q(self, S, Q):
         r"""
-        Given `S` a point on self over an extension field, computes the
+        Given ``S`` a point on ``self`` over an extension field, compute the
         Coleman integrals `\{\int_S^Q x^i dx/2y \}_{i=0}^{2g-1}`
 
-        **one should be able to feed `S,Q` into coleman_integral,
+        **one should be able to feed ``S,Q`` into coleman_integral,
         but currently that segfaults**
 
         INPUT:
 
-        - S: a point with coordinates in an extension of `\QQ_p` (with unif. a)
-        - Q: a non-Weierstrass point defined over `\QQ_p`
+        - ``S``: a point with coordinates in an extension of `\QQ_p` (with unif. `a`)
+        - ``Q``: a non-Weierstrass point defined over `\QQ_p`
 
         OUTPUT:
 
@@ -1334,14 +1377,14 @@ class HyperellipticCurveSmoothModel_padic_field(
         r"""
         Compute the Coleman integral `\int_S^Q w`
 
-        **one should be able to feed `S,Q` into coleman_integral,
+        **one should be able to feed ``S,Q`` into coleman_integral,
         but currently that segfaults**
 
         INPUT:
 
-        - w: a differential
-        - S: a point with coordinates in an extension of `\QQ_p`
-        - Q: a non-Weierstrass point defined over `\QQ_p`
+        - ``w``: a differential
+        - ``S``: a point with coordinates in an extension of `\QQ_p`
+        - ``Q``: a non-Weierstrass point defined over `\QQ_p`
 
         OUTPUT:
 
@@ -1390,14 +1433,14 @@ class HyperellipticCurveSmoothModel_padic_field(
     def coleman_integral_from_weierstrass_via_boundary(self, w, P, Q, d):
         r"""
         Computes the Coleman integral `\int_P^Q w` via a boundary point
-        in the disc of `P`, defined over a degree `d` extension
+        in the disc of ``P``, defined over a degree ``d`` extension
 
         INPUT:
 
-        - w: a differential
-        - P: a Weierstrass point
-        - Q: a non-Weierstrass point
-        - d: degree of extension where coordinates of boundary point lie
+        - ``w``: a differential
+        - ``P``: a Weierstrass point
+        - ``Q``: a non-Weierstrass point
+        - ``d``: degree of extension where coordinates of boundary point lie
 
         OUTPUT:
 
