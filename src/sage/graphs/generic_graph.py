@@ -3317,6 +3317,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.add_edge(0, 7)
             sage: G.get_embedding() is None
             True
+
+        TESTS::
+
+            sage: G = Graph('A_', immutable=True)
+            sage: G.set_embedding({0: [1], 1: [0]})
+            sage: H = G.subgraph([0])
+            sage: H.get_embedding()
+            {0: []}
         """
         try:
             embedding = self._embedding
@@ -3324,12 +3332,11 @@ class GenericGraph(GenericGraph_pyx):
             embedding = None
         if embedding is not None:
             # remove vertices not anymore in the graph
-            to_remove = set(v for v in embedding if v not in self)
-            if to_remove:
-                for v in to_remove:
+            for v in list(embedding):
+                if v not in self:
                     del embedding[v]
-                for v in embedding:
-                    embedding[v] = [w for w in embedding[v] if w not in to_remove]
+            for v in embedding:
+                embedding[v] = [w for w in embedding[v] if w in self]
 
             # remove edges not anymore in the graph
             for u in embedding:
