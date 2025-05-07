@@ -3,8 +3,4 @@ export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
 
 cd src/
 
-# mesonpy enforces the build-system requirements, including the strict version pins of numpy
-# even when --no-isolation (--no-build-isolation) is in used. We patch it out.
-sed -i.bak '/build-system/,/project/s/^ *"numpy.*/    "numpy",/' pyproject.toml
-
-sdh_pip_install --no-build-isolation .
+sdh_pip_install --no-build-isolation . -Csetup-args=-Dblas=accelerate
