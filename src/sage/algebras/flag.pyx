@@ -453,7 +453,6 @@ cpdef tuple overlap_generator(int n, theoryR, tuple small0, tuple small1, tuple 
     # ))
     return tuple(ret)
 
-
 cdef class _Flag(Element):
     cdef int _n
     cdef int _ftype_size
@@ -492,6 +491,19 @@ cdef class _Flag(Element):
         for kk in blocks:
             ret.append(blocks[kk])
         return tuple(ret)
+
+    def _pythonize(self):
+        blret = {}
+        blocks = self._blocks
+        for kk in blocks:
+            blret[kk] = tuple([
+                tuple([int(pp) for pp in edge]) for edge in blocks[kk]
+            ])
+        return tuple([
+            int(self.size()), 
+            tuple([int(ii) for ii in self.ftype_points()]), 
+            tuple(blret.items())
+            ])
 
     # Basic properties
 
@@ -676,9 +688,8 @@ cdef class _Flag(Element):
 
         Edge shifted to size `3` ::
 
-            
             sage: edge = GraphTheory(2, edges=[[0, 1]])
-            sage: (edge<<1).values()
+            sage: (edge>>1).values()
             (0, 1/3, 2/3, 1)
 
         .. SEEALSO::
@@ -687,6 +698,24 @@ cdef class _Flag(Element):
         """
         return self.afae().__lshift__(amount)
     
+    def __rshift__(self, amount):
+        r"""
+        `FlagAlgebraElement`, averaged to an `amount` smaller size
+
+        EXAMPLES::
+
+        Cherry averaged to size `2` ::
+            
+            sage: cherry = GraphTheory(3, edges=[[0, 1], [0, 2]])
+            sage: (cherry<<1).values()
+            (0, 1/3, 2/3, 1)
+
+        .. SEEALSO::
+
+            :func:`FlagAlgebraElement.__rshift__`
+        """
+        return self.afae().__rshift__(amount)
+
     def __truediv__(self, other):
         r"""
         Divide by a scalar

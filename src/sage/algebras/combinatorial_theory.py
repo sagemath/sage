@@ -148,7 +148,7 @@ import itertools
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.all import QQ, NN, Integer, ZZ, infinity, RR
+from sage.all import QQ, NN, Integer, ZZ, infinity, RR, RDF, RealField
 from sage.algebras.flag import BuiltFlag, ExoticFlag, Pattern, inductive_generator, overlap_generator
 from sage.algebras.flag_algebras import FlagAlgebra, FlagAlgebraElement
 
@@ -158,6 +158,7 @@ from sage.all import vector, matrix, diagonal_matrix
 from sage.misc.prandom import randint
 from sage.arith.misc import falling_factorial, binomial, factorial
 from sage.misc.functional import round
+from sage.functions.other import ceil
 from functools import lru_cache
 
 import hashlib
@@ -379,6 +380,7 @@ def _remove_kernel(mat, factor=1024, threshold=1e-4):
     norm_test = LLL_coeffs * mat
     #print("norms are: ", " ".join([str(int(log(rr.norm(1)/d, 10))) for rr in norm_test]))
     kernel_base = [LLL_coeffs[ii] for ii,rr in enumerate(norm_test) if rr.norm(1)/d < threshold]
+    #print("resulting kernel base is:\n", kernel_base)
     if len(kernel_base)==0:
         return mat, matrix.identity(d, sparse=True)
     K = matrix(ZZ, kernel_base).stack(matrix.identity(d))
@@ -633,69 +635,193 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             "sources": sourceser,
             "excluded": tuple([xx._serialize() for xx in excluded])
         }
+    
+    def printlevel(self, val):
+        self._printlevel = val
 
     # Optimizing and rounding
 
-    def blowup_construction(self, target_size, pattern_size, 
-                            symbolic_parts=False, symbolic=False, printlevel=None,
-                            **kwargs):
+    def blowup_construction(self, target_size, parts, **kwargs):
+        #
+        # Initial setup, parsing parameters, setting up args
+        #
+        from sage.all import get_coercion_model, PolynomialRing
+        from sage.all import multinomial_coefficients
         
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        if symbolic:
-            symbolic_parts = True
-            import warnings
-            warnings.warn("The parameter symbolic will be replaced with symbolic_parts.", DeprecationWarning)
-        RX = PolynomialRing(QQ, pattern_size, "X")
-        Xs = RX.gens()
-
-        flat_edges = []
-        for kk in kwargs:
-            if kk not in self.signature():
-                continue
-            for ee in kwargs[kk]:
-                flat_edges.append((kk, ee))
-
-        res = 0
-        terms = ((sum(Xs))**target_size).dict()
-        if printlevel!=None:
-            self._printlevel = printlevel
-        if self._printlevel>0:
-            iterator = tqdm(terms)
+        coercion = get_coercion_model()
+        base_field = QQ
+        if target_size < 0:
+            raise ValueError("Target size must be non-negative.")
+        
+        # Parsing the parts
+        part_vars_names = []
+        part_weights_raw = []
+        num_parts = 0
+        if isinstance(parts, Integer):
+            num_parts = parts
+            if parts <= 0:
+                raise ValueError("Number of parts must be positive")
+            part_weights_raw = [1 / parts] * parts
+        elif isinstance(parts, (list, tuple)):
+            num_parts = len(parts)
+            for p_spec in parts:
+                part_weights_raw.append(p_spec)
+                if isinstance(p_spec, str):
+                    part_vars_names.append(p_spec)
+                else:
+                    base_field = coercion.common_parent(
+                        base_field, p_spec.parent()
+                        )
         else:
-            iterator = terms
-        for exps in iterator:
-            verts = []
-            for ind, exp in enumerate(exps):
-                verts += [ind]*exp
-            coeff = terms[exps]/(pattern_size**target_size)
-            if symbolic_parts:
-                coeff = terms[exps]
-                for ind, exp in enumerate(exps):
-                    coeff *= Xs[ind]**exp
-            blocks = {}
-            for rel in kwargs:
-                if rel not in self.signature():
+            raise TypeError(
+                "The provided parts must be an integer or a list/tuple"
+                )
+
+        # Parsing the relations
+        _temp_prob_vars = set()
+        current_signature_map_for_scan = self.signature()
+        for rel_name, definition in kwargs.items():
+            if rel_name not in current_signature_map_for_scan:
+                continue
+            if isinstance(definition, dict):
+                for _, prob_spec_scan in definition.items():
+                    if isinstance(prob_spec_scan, str):
+                        _temp_prob_vars.add(prob_spec_scan)
+                    else:
+                        base_field = coercion.common_parent(
+                            base_field, prob_spec_scan
+                            )
+
+        # Create base ring
+        prob_vars_names_list = sorted(list(_temp_prob_vars))
+        # For now, just merge the params, maybe throw error if there's overlap
+        all_var_names = sorted(list(set(part_vars_names + prob_vars_names_list)))
+        if all_var_names:
+            R = PolynomialRing(base_field, names=all_var_names)
+            var_map = {
+                name: R.gen(i) for i, name in enumerate(all_var_names)
+                }
+        else:
+            R = base_field
+            var_map = {}
+        part_weights_R = [
+            var_map[p_raw] if isinstance(p_raw, str) else R(p_raw) 
+            for p_raw in part_weights_raw
+            ]
+        
+        # Separate relations to deterministic and probabilistic
+        deterministic_blowup_relations_R = set()
+        probabilistic_blowup_relations_R = {}
+        current_signature_map = self.signature()
+        for rel_name, definition in kwargs.items():
+            if rel_name not in current_signature_map:
+                continue
+            sig_details = current_signature_map[rel_name]
+            arity = sig_details["arity"]
+            if isinstance(definition, (list, tuple)):
+                for part_tuple_raw in definition:
+                    part_tuple = tuple(part_tuple_raw)
+                    # Basic sanity check, maybe also test if all in range
+                    if len(part_tuple) != arity:
+                        continue
+                    key = (rel_name, tuple(int(i) for i in part_tuple))
+                    deterministic_blowup_relations_R.add(key)
+            elif isinstance(definition, dict):
+                for part_tuple_raw, prob_spec in definition.items():
+                    part_tuple = tuple(part_tuple_raw)
+                    if len(part_tuple) != arity:
+                        continue
+                    key = (rel_name, tuple(int(i) for i in part_tuple))
+                    try:
+                        prob_R_val = R(prob_spec)
+                    except:
+                        prob_R_val = var_map[prob_spec]
+                    if prob_R_val == 1:
+                        deterministic_blowup_relations_R.add(key)
+                    elif prob_R_val != 0:
+                        probabilistic_blowup_relations_R[key] = prob_R_val
+            else:
+                raise TypeError("Relations must be lists or dictionaries")
+
+        #
+        # Main calculation
+        #
+        
+        # Helper to get probabilistic part
+        def calculate_contribution(verts_assignment):
+            vertex_indices = list(range(target_size))
+            base_relations_for_this_outcome = {}
+            potential_probabilistic_specs = []
+
+            # Organize probabilistic relations
+            for rel_name_sig, sig_details in current_signature_map.items():
+                arity_sig = sig_details["arity"]
+                is_ordered_sig = sig_details["ordered"]
+                if arity_sig > target_size:
                     continue
-                reledges = kwargs[rel]
-                bladd = []
-                for edge in reledges:
-                    clusters = [
-                        [ii for ii in range(target_size) if verts[ii]==ee] \
-                            for ee in edge
-                        ]
-                    bladd += list( \
-                        set([tuple(sorted(xx)) \
-                        for xx in itertools.product(*clusters) \
-                        if len(set(xx))==len(edge)]) \
-                                )
-                blocks[rel] = bladd
-            try:
-                res += self(target_size, **blocks).afae()*coeff
-            except:
-                raise ValueError(
-                    "The construction contains excluded structures: ", 
-                    self(target_size, **blocks)
-                    )
+                if is_ordered_sig:
+                    vert_iterator = itertools.permutations(vertex_indices, arity_sig)
+                else:
+                    vert_iterator = itertools.combinations(vertex_indices, arity_sig)
+                
+                for v_tuple in vert_iterator:
+                    parts_v_tuple = tuple(verts_assignment[v_idx] for v_idx in v_tuple)
+                    key_in_blowup_def = (rel_name_sig, parts_v_tuple)
+                    if key_in_blowup_def in deterministic_blowup_relations_R:
+                        if rel_name_sig not in base_relations_for_this_outcome:
+                            base_relations_for_this_outcome[rel_name_sig] = []
+                        base_relations_for_this_outcome[rel_name_sig].append(list(v_tuple))
+                    elif key_in_blowup_def in probabilistic_blowup_relations_R:
+                        prob_for_rel = probabilistic_blowup_relations_R[key_in_blowup_def]
+                        potential_probabilistic_specs.append({
+                            "name": rel_name_sig, "verts": v_tuple, "prob": prob_for_rel
+                        })
+            
+            num_potential_probabilistic = len(potential_probabilistic_specs)
+            if num_potential_probabilistic == 0:
+                structure = self(target_size, **base_relations_for_this_outcome)
+                return structure.afae()
+            
+            ret_prob = 0
+            for i in range(1 << num_potential_probabilistic):
+                current_outcome_prob_R = 1
+                relations_for_this_specific_outcome = {
+                    k: list(v) for k, v in base_relations_for_this_outcome.items()
+                }
+                for j in range(num_potential_probabilistic):
+                    spec = potential_probabilistic_specs[j]
+                    is_present_in_outcome = (i >> j) & 1
+                    if is_present_in_outcome:
+                        current_outcome_prob_R *= spec["prob"]
+                        rel_name, vert_list = spec["name"], list(spec["verts"])
+                        if rel_name not in relations_for_this_specific_outcome:
+                            relations_for_this_specific_outcome[rel_name] = []
+                        relations_for_this_specific_outcome[rel_name].append(vert_list)
+                    else:
+                        current_outcome_prob_R *= (1 - spec["prob"])
+                if current_outcome_prob_R == 0:
+                    continue
+                structure = self(target_size, **relations_for_this_specific_outcome)
+                ret_prob += structure.afae() * current_outcome_prob_R
+            return ret_prob
+
+        # Get blowup components
+        res = 0
+        for exps_counts, mult_factor in multinomial_coefficients(
+            num_parts, target_size
+            ).items():
+            verts_assignment_pattern = [
+                part_idx for part_idx, count_in_part in enumerate(exps_counts) 
+                for _ in range(count_in_part)
+            ]
+            weight_product_part_R = 1
+            for i_part, count_in_part_val in enumerate(exps_counts):
+                if count_in_part_val > 0:
+                    weight_product_part_R *= \
+                    (part_weights_R[i_part] ** count_in_part_val)
+            current_coeff_R = mult_factor * weight_product_part_R
+            term_contribution = calculate_contribution(verts_assignment_pattern)
+            res += term_contribution * current_coeff_R
         return res
 
     def get_Z_matrices(self, phi_vector, table_constructor, test=True):
@@ -765,6 +891,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                         Z.augment(Zjj)
                 Zk = Z.kernel()
                 Zkern = Zk.basis_matrix()
+                #print("removing kernel:\n", Z.image().basis_matrix())
                 if Zkern.nrows()>0:
                     new_bases.append(
                         matrix(Zkern * table_constructor[param][ii], 
@@ -956,7 +1083,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     nf, df, fv.ftype(), ftype_inj=[], target_size=target_size
                     )
                 fvvals = fv.values()
-                m = matrix(QQ, [vector(fvvals*mat) for mat in mult_table])
+                m = matrix([vector(fvvals*mat) for mat in mult_table])
                 positives_list_exact += list(m.T)
                 if not (pbar is None):
                     pbar.set_description(
@@ -1084,7 +1211,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     block_dim = block_sizes[block_index + plus_index]
                     X_flat = X_matrices_flat[block_index + plus_index]
                     M = base * morig * base.T
-                    M_flat_vector_exact = vector(QQ, 
+                    M_flat_vector_exact = vector( 
                         _flatten_matrix(M.rows(), doubled=True)
                         )
                     slacks[gg] -= M_flat_vector_exact*X_flat
@@ -1558,11 +1685,12 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                                 ))
                         invalid = True
                 except:
-                    if not custom_psd_test(X_ii_small):
+                    RFF = RealField(prec=100)
+                    if not matrix(RFF, X_ii_small).is_positive_semidefinite():
                         self.fprint("Rounded X matrix "+ 
                             "{} is not semidefinite: {}".format(
                                 block_index+plus_index, 
-                                min(X_ii_small.eigenvalues())
+                                min(matrix(RFF, X_ii_small).eigenvalues())
                                 ))
                         invalid = True
                 if invalid:
@@ -1600,26 +1728,35 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         Basically undoes the sym/asym changes and the reductions by the 
         constructions' kernels.
         """
+        from fractions import Fraction
         if X_original==None:
             return None
         X_flats = []
         block_index = 0
         for params in table_constructor.keys():
-            ns, ftype, target_size = params
             X_ii = None
             for plus_index, base in enumerate(table_constructor[params]):
-                base_scale = base * base.T
                 if X_ii == None:
                     X_ii = base.T * X_original[block_index + plus_index] * base
                 else:
                     X_ii += base.T * X_original[block_index + plus_index] * base
             block_index += len(table_constructor[params])
-            X_flats.append(vector(_flatten_matrix(X_ii.rows())))
+            X_flat = _flatten_matrix(X_ii.rows())
+            if QQ.has_coerce_map_from(X_ii.base_ring()):
+                X_flat = [
+                    Fraction(int(num.numerator()), int(num.denominator())) for 
+                    num in X_flat
+                    ]
+            elif X_ii.base_ring()==RDF or X_ii.base_ring()==RR:
+                X_flat = [float(num) for num in X_flat]
+            else:
+                X_flat = vector(X_flat)
+            X_flats.append(X_flat)
         return X_flats
     
     def _format_optimizer_output(self, table_constructor, mult=1, 
                                  sdp_output=None, rounding_output=None, 
-                                 file=None):
+                                 file=None, target_size=0, **misc):
         r"""
         Formats the outputs to a nice certificate
         
@@ -1628,31 +1765,60 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         list of base flags, the list of used (typed) flags
         """
         
-        target_size = 0
+        from fractions import Fraction
+
         typed_flags = {}
         for params in table_constructor.keys():
-            ns, ftype, target_size = params
-            typed_flags[(ns, ftype)] = self.generate_flags(ns, ftype)
-        
-        base_flags = self.generate_flags(target_size)
-        
+            ns, ftype, _target_size = params
+            typed_flags[(ns, ftype._pythonize())] = [
+                flg._pythonize() for flg in self.generate_flags(ns, ftype)
+            ]
+        if target_size==0:
+            raise ValueError("Empty type constraints!")
+
+        base_flags = [
+            flg._pythonize() for flg in self.generate_flags(target_size)
+        ]
+
+        def pythonize(dim, data):
+            if data==None:
+                return None
+            if dim==0:
+                try:
+                    num, denom = (QQ(data)).as_integer_ratio()
+                    return Fraction(int(num), int(denom))
+                except:
+                    return data
+            return [pythonize(dim-1, xx) for xx in data]
+
         result = None
         X_original = None
         e_vector = None
         slacks = None
         phi_vecs = None
-        
+        target = pythonize(1, misc.get("target", None))
+        positives = pythonize(2, misc.get("positives", None))
+        if positives!=None:
+            positives = positives[:-2]
+        maximize = mult==-1
+
         if sdp_output!=None:
+            #these should be regular float (and stay like that)
             result = sdp_output['primal']
-            X_original = [matrix(dat) for dat in sdp_output['X'][:-2]]
-            e_vector = vector(sdp_output['X'][-1])
-            slacks = vector(sdp_output['X'][-2])
-            phi_vecs = [vector(sdp_output['y'])]
+            oresult = result
+            e_vector = sdp_output['X'][-1][:-2]
+            slacks = sdp_output['X'][-2]
+            phi_vecs = [sdp_output['y']]
+            #except this, but this is transformed back
+            X_original = [matrix(xx) for xx in sdp_output['X'][:-2]]
         elif rounding_output!=None:
-            result, X_original, e_vector, slacks, phi_vecs = rounding_output
-        
-        result *= mult
-        #Ps, Ls, Ds = self._fix_X_bases_pld(table_constructor, X_original)
+            oresult, X_original, e_vector, slacks, phi_vecs = rounding_output
+            result = pythonize(0, oresult)
+            e_vector = pythonize(1, e_vector)
+            slacks = pythonize(1, slacks)
+            phi_vecs = pythonize(2, phi_vecs)
+        result *= int(mult)
+        oresult *= mult
         Xs = self._fix_X_bases(table_constructor, X_original)
         
         cert_dict = {"result": result, 
@@ -1661,7 +1827,11 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                      "slack vector": slacks,
                      "phi vectors": phi_vecs,
                      "base flags": base_flags,
-                     "typed flags": typed_flags
+                     "typed flags": typed_flags,
+                     "target": target,
+                     "positives": positives,
+                     "maximize": maximize,
+                     "target size": int(target_size) 
                     }
         
         if file!=None and file!="" and file!="notebook":
@@ -1671,7 +1841,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 pickle.dump(cert_dict, file_handle)
         if file=="notebook":
             return cert_dict
-        return result
+        return oresult
     
     def _handle_sdp_params(self, **params):
         sdp_params=["axtol", "atytol", "objtol", "pinftol", "dinftol", "maxiter", 
@@ -1803,7 +1973,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     table_constructor, 
                     (constraints_data[0], None, constraints_data[2], None), 
                     phi_vectors_exact, 
-                    mult)
+                    mult, target_size)
                 pickle.dump(save_data, file_handle)
 
         return final_sol["primal"]*mult
@@ -1822,7 +1992,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         
         sdp_result, sdp_data, table_constructor, \
             constraints_data, phi_vectors_exact, \
-            mult = save_data
+            mult, target_size = save_data
         
 
         #
@@ -1848,9 +2018,12 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             return value
         return self._format_optimizer_output(
             table_constructor, 
-            mult=mult,  
+            mult=mult,
             rounding_output=rounding_output,
-            file=certificate_file
+            file=certificate_file,
+            target=vector(sdp_data[1])*mult,
+            positives=constraints_data[2],
+            target_size=target_size
             )
 
     def optimize_problem(self, target_element, target_size, maximize=True, 
@@ -1970,7 +2143,10 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 mult=mult, 
                 sdp_output=sdpo, 
                 rounding_output=roundo,
-                file=file
+                file=file,
+                target=target_vector_exact*mult,
+                positives=constraints_data[2],
+                target_size=target_size
                 )
 
         #
@@ -2098,7 +2274,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
 
     def external_optimize(self, target_element, target_size, maximize=True, 
                           positives=None, construction=None, file=None, 
-                          specific_ftype=None):
+                          specific_ftype=None, **params):
         if (not isinstance(file, str)) or file=="":
             raise ValueError("File name is invalid.")
         if not file.endswith(".dat-s"):
@@ -2166,20 +2342,18 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             constraints_data, prev_data=sdp_data
             )
         self.fprint("Constraints finished")
-
-
         #
         # Make sdp data integer and write it to a file
         #
-        #sdp_data = self._make_sdp_data_integer(sdp_data)
+        precision = params.get("precision", 20)
+        R = RealField(prec=round(precision*log(10, 2)), sci_not=True)
         
         with open(file, "w") as file:
             block_sizes, target, mat_inds, mat_vals = sdp_data
-
             file.write("{}\n{}\n".format(len(target), len(block_sizes)))
             file.write(" ".join(map(str, block_sizes)) + "\n")
             for xx in target:
-                file.write("%.10e " % xx)
+                file.write(str(R(xx)) + " ")
             file.write("\n")
 
             for ii in range(len(mat_vals)):
@@ -2188,11 +2362,46 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     mat_inds[ii*4 + 1],
                     mat_inds[ii*4 + 2],
                     mat_inds[ii*4 + 3],
-                    "%.10e" % mat_vals[ii]
+                    str(R(mat_vals[ii]))
                 ))
 
-    def verify_certificate(self, file_or_cert, target_element, target_size, 
-                           maximize=True, positives=None, **params):
+    def construction_from_certificate(self, file_or_cert):
+        if isinstance(file_or_cert, str):
+            file = file_or_cert
+            if not file.endswith(".pickle"):
+                file += ".pickle"
+            with open(file, 'rb') as file:
+                certificate = pickle.load(file)
+        else:
+            certificate = file_or_cert
+        conss = certificate["phi vectors"]
+        if "target size" not in certificate:
+            raise ValueError("The certificate contains no target size")
+        tsize = certificate["target size"]
+        if len(conss)==0:
+            raise ValueError("The certificate contains no constructions")
+        cons = conss[0]
+        if len(cons)==0:
+            return 0
+        if isinstance(cons[0], float):
+            R = RR
+            vals = cons
+        else:
+            R = QQ
+            vals = []
+            for ii, xx in enumerate(cons):
+                try:
+                    vals.append(R(xx))
+                except:
+                    R = xx.parent()
+                    for jj in range(ii):
+                        vals[jj] = R(vals[jj])
+        FA = FlagAlgebra(self, R)
+        return FA(tsize, vals)
+
+    def verify_certificate(self, file_or_cert, target_element=None, 
+                           target_size=None, maximize=True, positives=None, 
+                           **params):
         r"""
         Verifies the certificate provided by the optimizer 
         written to `file`
@@ -2205,7 +2414,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         #
         # Load the certificate file (only pickle is supported)
         #
-        
+
         if isinstance(file_or_cert, str):
             file = file_or_cert
             if not file.endswith(".pickle"):
@@ -2215,13 +2424,21 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         else:
             certificate = file_or_cert
         
-        
+        from fractions import Fraction
+        def to_sage(dim, data):
+            if dim==0:
+                if isinstance(data, Fraction):
+                    return QQ(data)
+                if isinstance(data, float):
+                    return RR(data)
+                return data
+            return [to_sage(dim-1, xx) for xx in data]
+
         #
         # Checking eigenvalues and positivity constraints
         #
         
-        res = certificate["result"]
-        e_values = vector(certificate["e vector"])
+        e_values = to_sage(1, certificate["e vector"])
 
         if len(e_values)>0 and min(e_values)<0:
             print("Solution is not valid!")
@@ -2229,31 +2446,25 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                   min(e_values))
             return -1
         
-        X_flats = certificate["X matrices"]
-        # Ps = certificate["P dictionaries"]
-        # Ds = certificate["D vectors"]
-        # Ls = certificate["L matrices"]
+        X_flats = to_sage(2, certificate["X matrices"])
         self.fprint("Checking X matrices")
         if self._printlevel > 0:
             iterator = tqdm(enumerate(X_flats))
         else:
             iterator = enumerate(X_flats)
         for ii, Xf in iterator:
-            X = matrix(QQ, _unflatten_matrix(Xf)[0])
-            if not (X.is_positive_semidefinite()):
-                print("Solution is not valid!")
-                self.fprint("Matrix {} is not semidefinite".format(ii))
-                return -1
-            # P = matrix(QQ, len(Ddiag), len(Ddiag), Ps[ii], sparse=True)
-            # D = diagonal_matrix(QQ, Ddiag, sparse=True)
-            # Larr, _ = _unflatten_matrix(
-            #     Ls[ii], dim=len(Ddiag), 
-            #     doubled=False, upper=True
-            #     )
-            # L = matrix(QQ, Larr).T
-            # PL = P*L
-            # X = PL * D * PL.T
-            # X_flats.append(vector(QQ, _flatten_matrix(X.rows())))
+            X = matrix(_unflatten_matrix(Xf)[0])
+            try:
+                if not (X.is_positive_semidefinite()):
+                    print("Solution is not valid!")
+                    self.fprint("Matrix {} is not semidefinite".format(ii))
+                    return -1
+            except:
+                RFF = RealField(prec=100)
+                if not matrix(RFF, X).is_positive_semidefinite():
+                    print("Solution is not valid!")
+                    self.fprint("Matrix {} is not semidefinite".format(ii))
+                    return -1
 
         self.fprint("Solution matrices are all positive semidefinite, " + 
               "linear coefficients are all non-negative")
@@ -2262,22 +2473,34 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         # Initial setup
         #
 
+        if target_size==None:
+            if "target size" in certificate:
+                target_size = to_sage(0, certificate["target size"])
+            else:
+                raise ValueError("Target size must be specified "+
+                                 "if it is not part of the certificate!")
+
         mult = -1 if maximize else 1
         base_flags = certificate["base flags"]
-        target_vector_exact = (
-            target_element.project()*(mult)<<\
-                (target_size - target_element.size())
-                ).values()
-        if target_element.ftype().size()==0:
-            one_vector = vector([1]*len(base_flags))
+        one_vector = vector([1]*len(base_flags))
+        if target_element==None:
+            if "target" in certificate:
+                target_vector_exact = vector(to_sage(1, certificate["target"]))
+            else:
+                raise ValueError("Target must be specified "+
+                                 "if it is not part of the certificate!")
         else:
-            one_vector = (
-                target_element.ftype().project()<<\
-                    (target_size - target_element.ftype().size())
+            target_vector_exact = (
+                target_element.project()*(mult)<<\
+                    (target_size - target_element.size())
                     ).values()
-        
+            if not (target_element.ftype().afae()==1):
+                one_vector = (
+                    target_element.ftype().project()<<\
+                        (target_size - target_element.ftype().size())
+                        ).values()
         ftype_data = list(certificate["typed flags"].keys())
-
+        
         #
         # Create the semidefinite matrix data
         #
@@ -2290,6 +2513,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             iterator = enumerate(ftype_data)
         for ii, dat in iterator:
             ns, ftype = dat
+            ftype = self._element_constructor_(ftype[0], ftype=ftype[1], **dict(ftype[2]))
             #calculate the table
             table = self.mul_project_table(
                 ns, ns, ftype, ftype_inj=[], target_size=target_size
@@ -2301,8 +2525,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         # Create the data from linear constraints
         #
 
-        positives_list_exact = []
         if positives != None:
+            positives_list_exact = []
             for ii, fv in enumerate(positives):
                 if isinstance(fv, BuiltFlag) or isinstance(fv, ExoticFlag):
                     continue
@@ -2312,16 +2536,22 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     nf, df, fv.ftype(), ftype_inj=[], target_size=target_size
                     )
                 fvvals = fv.values()
-                m = matrix(QQ, [vector(fvvals*mat) for mat in mult_table])
+                m = matrix([vector(fvvals*mat) for mat in mult_table])
                 positives_list_exact += list(m.T)
                 self.fprint("Done with positivity constraint {}".format(ii))
+            positives_matrix_exact = matrix(
+                len(positives_list_exact), len(base_flags), 
+                positives_list_exact
+                )
+            e_values = vector(e_values[:len(positives_list_exact)])
         else:
-            e_values = vector(QQ, 0)
-        positives_matrix_exact = matrix(
-            QQ, 
-            len(positives_list_exact), len(base_flags), 
-            positives_list_exact
-            )
+            if "positives" in certificate:
+                posls = to_sage(2, certificate["positives"])[:-2]
+                positives_matrix_exact = matrix(len(posls), len(base_flags), posls)
+                e_values = vector(e_values[:len(posls)])
+            else:
+                positives_matrix_exact = matrix(0, len(base_flags), [])
+                e_values = vector(QQ, [])
 
         self.fprint("Done calculating linear constraints")
 
@@ -2337,11 +2567,14 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         else:
             iterator = enumerate(table_list)
         for ii, table in iterator:
-            for gg, mat_gg in enumerate(table):
+            slvecdel = []
+            for mat_gg in table:
                 mat_flat = vector(
                     _flatten_matrix(mat_gg.rows(), doubled=True)
                     )
-                slacks[gg] -= mat_flat * X_flats[ii]
+                slvecdel.append(mat_flat * vector(X_flats[ii]))
+            slacks -= vector(slvecdel)
+        
         result = min(
             [slacks[ii]/oveii for ii, oveii in enumerate(one_vector) \
              if oveii!=0]
@@ -2376,6 +2609,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         uniques = []
         sym_base = []
         asym_base = []
+
+        #Correct method
         sym_base_lasts = []
         for xx in flags:
             xxid = xx.unique(weak=True)[0]
@@ -2388,6 +2623,19 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 asym_base.append(sym_base_lasts[sym_ind] - xx)
                 sym_base[sym_ind] += xx
                 sym_base_lasts[sym_ind] = xx
+
+        #Old worse method (but sometimes helps rounding)
+        # for xx in flags:
+        #     xxid = xx.unique(weak=True)[0]
+        #     if xxid not in uniques:
+        #         uniques.append(xxid)
+        #         sym_base.append(xx.afae())
+        #     else:
+        #         sym_ind = uniques.index(xxid)
+        #         asym_base.append(sym_base[sym_ind] - xx.afae())
+        #         sym_base[sym_ind] += xx
+        
+        
         m_sym = matrix(
             len(sym_base), len(flags), 
             [xx.values() for xx in sym_base], sparse=True

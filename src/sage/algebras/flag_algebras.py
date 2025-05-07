@@ -551,6 +551,43 @@ class FlagAlgebraElement(Element):
         vals = [sum(self.values() * mat) for mat in table]
         return self.__class__(self.parent(), ressize, vals)
     
+    def __rshift__(self, amount):
+        r"""
+        `FlagAlgebraElement`, averaged to an `amount` smaller size
+        
+        The result will have size equal to 
+        `self.size() - amount`
+        
+        EXAMPLES::
+
+        Cherry averaged to size `2` ::
+            
+            sage: cherry = GraphTheory(3, edges=[[0, 1], [0, 2]])
+            sage: (cherry<<1).values()
+            (0, 1/3, 2/3, 1)
+
+        .. NOTE::
+            
+            This is the linear extension of :func:`Flag.__rshift__`
+
+        .. SEEALSO::
+
+            :func:`Flag.__rshift__`
+            :func:`Flag.afae()`
+        """
+        if amount<0:
+            raise ValueError("Can not have negative shifts")
+        if amount==0:
+            return self
+        ressize = self.size() - amount
+        if ressize<0:
+            raise ValueError("Can not shift to size smaller than zero")
+        if ressize < self.ftype().size():
+            raise ValueError("Can not shift to a size smaller than the type")
+        table = self.parent().mpt(ressize, self.ftype().size(), target_size=self.size())
+        vals = list(sum([table[ii] * vv for ii,vv in enumerate(self.values())]).T)[0]
+        return self.__class__(self.parent(), ressize, vals)
+
     def __getitem__(self, flag):
         if isinstance(flag, _Flag) and not isinstance(flag, Pattern):
             ind = self.parent().get_index(flag)
