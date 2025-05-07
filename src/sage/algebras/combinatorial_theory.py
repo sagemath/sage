@@ -641,67 +641,187 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
 
     # Optimizing and rounding
 
-    def blowup_construction(self, target_size, pattern_size, 
-                            symbolic_parts=False, symbolic=False, printlevel=None,
-                            **kwargs):
+    def blowup_construction(self, target_size, parts, **kwargs):
+        #
+        # Initial setup, parsing parameters, setting up args
+        #
+        from sage.all import get_coercion_model, PolynomialRing
+        from sage.all import multinomial_coefficients
         
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        if symbolic:
-            symbolic_parts = True
-            if self._printlevel>0:
-                import warnings
-                warnings.warn("The parameter symbolic will be replaced with symbolic_parts.", DeprecationWarning)
-        RX = PolynomialRing(QQ, pattern_size, "X")
-        Xs = RX.gens()
-
-        flat_edges = []
-        for kk in kwargs:
-            if kk not in self.signature():
-                continue
-            for ee in kwargs[kk]:
-                flat_edges.append((kk, ee))
-
-        res = 0
-        terms = ((sum(Xs))**target_size).dict()
-        if printlevel!=None:
-            self._printlevel = printlevel
-        if self._printlevel>0:
-            iterator = tqdm(terms)
+        coercion = get_coercion_model()
+        base_field = QQ
+        if target_size < 0:
+            raise ValueError("Target size must be non-negative.")
+        
+        # Parsing the parts
+        part_vars_names = []
+        part_weights_raw = []
+        num_parts = 0
+        if isinstance(parts, Integer):
+            num_parts = parts
+            if parts <= 0:
+                raise ValueError("Number of parts must be positive")
+            part_weights_raw = [1 / parts] * parts
+        elif isinstance(parts, (list, tuple)):
+            num_parts = len(parts)
+            for p_spec in parts:
+                part_weights_raw.append(p_spec)
+                if isinstance(p_spec, str):
+                    part_vars_names.append(p_spec)
+                else:
+                    base_field = coercion.common_parent(
+                        base_field, p_spec.parent()
+                        )
         else:
-            iterator = terms
-        for exps in iterator:
-            verts = []
-            for ind, exp in enumerate(exps):
-                verts += [ind]*exp
-            coeff = terms[exps]/(pattern_size**target_size)
-            if symbolic_parts:
-                coeff = terms[exps]
-                for ind, exp in enumerate(exps):
-                    coeff *= Xs[ind]**exp
-            blocks = {}
-            for rel in kwargs:
-                if rel not in self.signature():
+            raise TypeError(
+                "The provided parts must be an integer or a list/tuple"
+                )
+
+        # Parsing the relations
+        _temp_prob_vars = set()
+        current_signature_map_for_scan = self.signature()
+        for rel_name, definition in kwargs.items():
+            if rel_name not in current_signature_map_for_scan:
+                continue
+            if isinstance(definition, dict):
+                for _, prob_spec_scan in definition.items():
+                    if isinstance(prob_spec_scan, str):
+                        _temp_prob_vars.add(prob_spec_scan)
+                    else:
+                        base_field = coercion.common_parent(
+                            base_field, prob_spec_scan
+                            )
+
+        # Create base ring
+        prob_vars_names_list = sorted(list(_temp_prob_vars))
+        # For now, just merge the params, maybe throw error if there's overlap
+        all_var_names = sorted(list(set(part_vars_names + prob_vars_names_list)))
+        if all_var_names:
+            R = PolynomialRing(base_field, names=all_var_names)
+            var_map = {
+                name: R.gen(i) for i, name in enumerate(all_var_names)
+                }
+        else:
+            R = base_field
+            var_map = {}
+        part_weights_R = [
+            var_map[p_raw] if isinstance(p_raw, str) else R(p_raw) 
+            for p_raw in part_weights_raw
+            ]
+        
+        # Separate relations to deterministic and probabilistic
+        deterministic_blowup_relations_R = set()
+        probabilistic_blowup_relations_R = {}
+        current_signature_map = self.signature()
+        for rel_name, definition in kwargs.items():
+            if rel_name not in current_signature_map:
+                continue
+            sig_details = current_signature_map[rel_name]
+            arity = sig_details["arity"]
+            if isinstance(definition, (list, tuple)):
+                for part_tuple_raw in definition:
+                    part_tuple = tuple(part_tuple_raw)
+                    # Basic sanity check, maybe also test if all in range
+                    if len(part_tuple) != arity:
+                        continue
+                    key = (rel_name, tuple(int(i) for i in part_tuple))
+                    deterministic_blowup_relations_R.add(key)
+            elif isinstance(definition, dict):
+                for part_tuple_raw, prob_spec in definition.items():
+                    part_tuple = tuple(part_tuple_raw)
+                    if len(part_tuple) != arity:
+                        continue
+                    key = (rel_name, tuple(int(i) for i in part_tuple))
+                    try:
+                        prob_R_val = R(prob_spec)
+                    except:
+                        prob_R_val = var_map[prob_spec]
+                    if prob_R_val == 1:
+                        deterministic_blowup_relations_R.add(key)
+                    elif prob_R_val != 0:
+                        probabilistic_blowup_relations_R[key] = prob_R_val
+            else:
+                raise TypeError("Relations must be lists or dictionaries")
+
+        #
+        # Main calculation
+        #
+        
+        # Helper to get probabilistic part
+        def calculate_contribution(verts_assignment):
+            vertex_indices = list(range(target_size))
+            base_relations_for_this_outcome = {}
+            potential_probabilistic_specs = []
+
+            # Organize probabilistic relations
+            for rel_name_sig, sig_details in current_signature_map.items():
+                arity_sig = sig_details["arity"]
+                is_ordered_sig = sig_details["ordered"]
+                if arity_sig > target_size:
                     continue
-                reledges = kwargs[rel]
-                bladd = []
-                for edge in reledges:
-                    clusters = [
-                        [ii for ii in range(target_size) if verts[ii]==ee] \
-                            for ee in edge
-                        ]
-                    bladd += list( \
-                        set([tuple(sorted(xx)) \
-                        for xx in itertools.product(*clusters) \
-                        if len(set(xx))==len(edge)]) \
-                                )
-                blocks[rel] = bladd
-            try:
-                res += self(target_size, **blocks).afae()*coeff
-            except:
-                raise ValueError(
-                    "The construction contains excluded structures: ", 
-                    self(target_size, **blocks)
-                    )
+                if is_ordered_sig:
+                    vert_iterator = itertools.permutations(vertex_indices, arity_sig)
+                else:
+                    vert_iterator = itertools.combinations(vertex_indices, arity_sig)
+                
+                for v_tuple in vert_iterator:
+                    parts_v_tuple = tuple(verts_assignment[v_idx] for v_idx in v_tuple)
+                    key_in_blowup_def = (rel_name_sig, parts_v_tuple)
+                    if key_in_blowup_def in deterministic_blowup_relations_R:
+                        if rel_name_sig not in base_relations_for_this_outcome:
+                            base_relations_for_this_outcome[rel_name_sig] = []
+                        base_relations_for_this_outcome[rel_name_sig].append(list(v_tuple))
+                    elif key_in_blowup_def in probabilistic_blowup_relations_R:
+                        prob_for_rel = probabilistic_blowup_relations_R[key_in_blowup_def]
+                        potential_probabilistic_specs.append({
+                            "name": rel_name_sig, "verts": v_tuple, "prob": prob_for_rel
+                        })
+            
+            num_potential_probabilistic = len(potential_probabilistic_specs)
+            if num_potential_probabilistic == 0:
+                structure = self(target_size, **base_relations_for_this_outcome)
+                return structure.afae()
+            
+            ret_prob = 0
+            for i in range(1 << num_potential_probabilistic):
+                current_outcome_prob_R = 1
+                relations_for_this_specific_outcome = {
+                    k: list(v) for k, v in base_relations_for_this_outcome.items()
+                }
+                for j in range(num_potential_probabilistic):
+                    spec = potential_probabilistic_specs[j]
+                    is_present_in_outcome = (i >> j) & 1
+                    if is_present_in_outcome:
+                        current_outcome_prob_R *= spec["prob"]
+                        rel_name, vert_list = spec["name"], list(spec["verts"])
+                        if rel_name not in relations_for_this_specific_outcome:
+                            relations_for_this_specific_outcome[rel_name] = []
+                        relations_for_this_specific_outcome[rel_name].append(vert_list)
+                    else:
+                        current_outcome_prob_R *= (1 - spec["prob"])
+                if current_outcome_prob_R == 0:
+                    continue
+                structure = self(target_size, **relations_for_this_specific_outcome)
+                ret_prob += structure.afae() * current_outcome_prob_R
+            return ret_prob
+
+        # Get blowup components
+        res = 0
+        for exps_counts, mult_factor in multinomial_coefficients(
+            num_parts, target_size
+            ).items():
+            verts_assignment_pattern = [
+                part_idx for part_idx, count_in_part in enumerate(exps_counts) 
+                for _ in range(count_in_part)
+            ]
+            weight_product_part_R = 1
+            for i_part, count_in_part_val in enumerate(exps_counts):
+                if count_in_part_val > 0:
+                    weight_product_part_R *= \
+                    (part_weights_R[i_part] ** count_in_part_val)
+            current_coeff_R = mult_factor * weight_product_part_R
+            term_contribution = calculate_contribution(verts_assignment_pattern)
+            res += term_contribution * current_coeff_R
         return res
 
     def get_Z_matrices(self, phi_vector, table_constructor, test=True):
@@ -2279,8 +2399,9 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         FA = FlagAlgebra(self, R)
         return FA(tsize, vals)
 
-    def verify_certificate(self, file_or_cert, target_element=None, target_size=None, 
-                           maximize=True, positives=None, **params):
+    def verify_certificate(self, file_or_cert, target_element=None, 
+                           target_size=None, maximize=True, positives=None, 
+                           **params):
         r"""
         Verifies the certificate provided by the optimizer 
         written to `file`
