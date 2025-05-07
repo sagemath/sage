@@ -332,6 +332,7 @@ src/sage/quivers/__init__.py
 src/sage/schemes/cyclic_covers/__init__.py
 src/sage/schemes/plane_conics/__init__.py
 src/sage/schemes/curves/__init__.py
+src/sage/schemes/chow/__init__.py
 src/sage/schemes/plane_quartics/__init__.py
 src/sage/schemes/jacobians/__init__.py
 src/sage/schemes/toric/sheaf/__init__.py
