@@ -5,6 +5,27 @@ if not ecl.found()
   ecl_proj = subproject('ecl')
   ecl = ecl_proj.get_variable('ecl_dep')
 endif
+ecl_bin = find_program('ecl', required : false)
+if ecl_bin.found()
+  maxima_check = run_command(ecl_bin, '--eval', '(require \'maxima)', '--eval', '(quit)', check: false)
+  maxima_present = maxima_check.returncode() == 0
+else
+  maxima_present = false
+endif
+if not maxima_present
+  # ECL does not have Maxima support
+  maxima_proj = subproject('maxima')
+  maxima = maxima_proj.get_variable('maxima_dep')
+  # Use the freshly built maxima
+  #conf_data.set('SAGE_MAXIMA_FAS', maxima.get_variable(internal: 'MAXIMA_FAS'))
+else
+  maxima = declare_dependency(
+    'maxima',
+  )
+  # ecl does not have any problems with Maxima, so nothing needs to be set here:
+  conf_data.set('SAGE_MAXIMA_FAS', '')
+endif
+
 braiding = dependency('libbraiding', required: false)
 if not braiding.found()
   # Fallback since pkg-config support was only added in v1.3.1
@@ -43,11 +64,13 @@ extension_data = {
   'meataxe': files('meataxe.pyx'),
 }
 
-dependencies = [py_dep, cysignals, ecl, gc, gmp]
+dependencies = [py_dep, cysignals, gc, gmp]
 
 foreach name, pyx : extension_data
   deps = dependencies
-  if name == 'sirocco'
+  if name == 'ecl'
+    deps += [ecl, maxima]
+  elif name == 'sirocco'
     deps += [sirocco]
   elif name == 'meataxe'
     deps += [mtx]

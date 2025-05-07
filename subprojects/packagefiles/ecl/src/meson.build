@@ -4,6 +4,9 @@ proj = mod.add_project('configure',
                         '--enable-unicode=yes',
                         '--with-defsystem',
                       ],
+  env: {
+    'LDFLAGS': '-Wl,-rpath,' + meson.current_build_dir() + '/dist/usr/local/lib64',
+  }
 )
 
 ecl_dep = proj.dependency('ecl')
@@ -12,5 +15,8 @@ ecl_dep = proj.dependency('ecl')
 ecl_rpath_dep = declare_dependency(link_args: '-Wl,-rpath,' + meson.current_build_dir() + '/dist/usr/local/lib64')
 ecl_dep = declare_dependency(
   dependencies : [ecl_dep, ecl_rpath_dep],
+  variables: {
+    'ecl_bin' : meson.current_build_dir() + '/dist/usr/local/bin/ecl',
+  },
 )
 meson.override_dependency('ecl', ecl_dep)

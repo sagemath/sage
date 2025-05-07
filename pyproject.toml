@@ -18,7 +18,7 @@ requires = [
 # otherwise we hit https://github.com/mesonbuild/meson-python/issues/598
 # The subprojects have to set the rpath to the build directory, which should work as long as
 # we don't use build isolation.
-install = ['--skip-subprojects', 'ecl']
+install = ['--skip-subprojects', 'ecl,maxima']
 
 [project]
 name = "sagemath"
