@@ -13,14 +13,14 @@ class MapPermutation:
         Init the MapPermutation
 
         INPUT:
-            - lst a list representing the permutation 
-            or a list of tuples representing the cycle of the permutation
-            or an integer representing the size of the permutation(In This
-            case it will return the identify of size lst) or a Permutation.
+        - lst a list representing the permutation or a list of tuples representing 
+        the cycle of the permutationor an integer representing the size 
+        of the permutation(In This case it will return the identify of size lst) 
+        or a Permutation.
 
-            -trust a parameter telling whether or not
-            to pass some test to verify if lst represent 
-            a valid permutation.
+        -trust a parameter telling whether or not
+        to pass some test to verify if lst represent 
+        a valid permutation.
 
         EXAMPLES::
 
@@ -57,8 +57,10 @@ class MapPermutation:
         Init the permutation from a list of cycles
 
         INPUT:
+
             -lst a list of tuples representing the cycle of self
             -trust a boolean indicating if check should be passed
+
         EXAMPLES::
 
             sage: lst = [(4,3),(2,1)]
@@ -381,7 +383,9 @@ class MapPermutation:
     def left_action_product(self, rperm):
         """
         This function calculate self*perm where * is the composition operation between permutation
+
         INPUT:
+
             -rperm: Another MapPermutation
 
         OUTPUT:
@@ -421,6 +425,7 @@ class MapPermutation:
     def right_action_product(self, lperm):
         """
         This function calculate lperm*self where * is the composition operation between permutation
+
         INPUT:
             -lperm: Another map permutation
 
@@ -442,6 +447,7 @@ class MapPermutation:
     def __mul__(self, b):
         """
         This function calculate lperm*self where * is the composition operation between permutation
+
         INPUT:
             -b: Another map permutation
 

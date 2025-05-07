@@ -65,7 +65,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             sage: mm = PrimitiveMutableLabelledMap(alpha=alpha,sigma=sigma)
 
         .. NOTE::
-        O(m) where m is the size of the map
+            O(m) where m is the size of the map
         """
 
         if isinstance(lmap, LabelledMap):
@@ -165,7 +165,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             (X(2), X(1))
 
         .. NOTE:
-        O(1)
+            O(1)
         """
 
         topoDemiEdge = self.X(demiEdge)
@@ -195,7 +195,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             (X(2), X(1))
 
         .. NOTE::
-        O(1))
+            O(1))
         """
 
         self._swapTopologicalDemiEdgeValue(demiEdge, otherDemiEdge)
@@ -211,8 +211,8 @@ class PrimitiveMutableLabelledMap(LabelledMap):
         will relabel them into value in m,...,m-k+1
 
         INPUT:
-        listIndexes:
-            A list of valid demi edge in self( otherwise it will raise an error)
+
+        listIndexes,A list of valid demi edge in self( otherwise it will raise an error)
 
         EXAMPLES:: 
 
@@ -226,7 +226,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             [(1, 18, 2, 19, 4, 20, 11, 16, 3, 13, 12, 15, 14, 5, 7, 17, 9, 8, 10, 6)] 
 
         .. NOTE::
-        O(k) where k = len(listIndexes)
+            O(k) where k = len(listIndexes)
         """
 
         for i in listIndexes:
@@ -263,7 +263,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
 
         .. NOTE:: 
-        O(1)
+            O(1)
         """
 
         otherDemiEdge = self.alpha(demiEdge)
@@ -316,7 +316,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
 
         .. NOTE::
-        O(1)
+            O(1)
         """
 
         self._BruteDeleteEdge(demiEdge, sameFace=sameFace)
@@ -337,7 +337,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             Primitive Rotating permutation: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 10), (11, 13), (12, 15), (14, 17), (16, 18), (19, 20), (21, 22)]
 
         .. NOTE::
-        O(1)
+            O(1)
         """
         self.alpha.stretch(2)
         self.alpha.addAfterGeneral(self.alpha.size(), self.alpha.size() - 1)
@@ -366,7 +366,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             X(42)
 
         ..NOTE:
-        O(1)
+            O(1)
         """
         self.topologicalMap[demiEdge] = PrimitiveMutableTopologicalDemiEdge(
             self, demiEdge)
@@ -394,7 +394,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             NOT TOPO
 
         .. NOTE::
-        O(1)
+            O(1)
         """
 
         self.topologicalMap.pop(topoDemiEdge.raw)
@@ -425,7 +425,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             (X(21), X(23)) 
 
         .. NOTE::
-        O(1)
+            O(1)
         """
 
         newDemiEdge = self.q + 1
@@ -472,7 +472,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             (X(21), X(23)) 
 
         .. NOTE::
-        O(1)
+            O(1)
         """
 
         return self.addEdgeAfter(self.sigma.inverseApply(demiEdge))
@@ -491,7 +491,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             True
 
         .. NOTE::
-        O(m)
+            O(m)
         """
         return PrimitiveMutableLabelledMap(sigma=self.sigma, alpha=self.alpha)
 
@@ -514,7 +514,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             [(1, 3, 17, 9, 8, 10, 6, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14)]
 
         .. NOTE::
-        O(1)
+            O(1)
         """
 
         if self.m == 1:

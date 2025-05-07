@@ -36,7 +36,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             True
 
         .. NOTE::
-        O(log(m)) if self is planar or trust = True otherwise O(m)
+            O(log(m)) if self is planar or trust = True otherwise O(m)
         """
 
         self.map.deleteEdge(self.raw, trust=trust)
@@ -73,7 +73,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             False
 
         .. NOTE:
-        O(log(m))
+            O(log(m))
         """
 
         return self.map.addEdge(self.raw, otherTopoDemiEdge.raw)
@@ -99,7 +99,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             X(24)
 
         .. NOTE::
-        O(log(m))
+            O(log(m))
         """
         return self.map.addEdgeAfter(self.raw)
 
@@ -124,7 +124,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             X(24)   
 
         .. NOTE:
-        O(log(m))
+            O(log(m))
         """
 
         return self.map.addEdgeBefore(self.raw)
@@ -143,6 +143,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
                 deleting self default is False
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm  = MutableLabelledMap(sigma = sigma,alpha=alpha)
@@ -173,7 +174,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
              (18,)]
 
         .. NOTE::
-        O(deg(node)*log(m)) if self.map is planar and O(m+deg(node)*log(m)) otherwise
+            O(deg(node)*log(m)) if self.map is planar and O(m+deg(node)*log(m)) otherwise
         """
 
         self.map.deleteNode(self.raw, trust=trust)
@@ -195,7 +196,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             [(1, 3, 4, 7, 11, 16, 5, 13, 12, 15, 14, 2, 9, 8, 10, 6)]
 
         .. NOTE::
-        O(log(m))
+            O(log(m))
         """
         self.map.contractEdge(self.raw)
 
@@ -230,7 +231,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             [(1, 3, 2, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6), (4, 7, 11, 16, 18, 5)]
 
         .. NOTE::
-        O(tlog(m)) where t is the number of edge on the face containing self
+            O(tlog(m)) where t is the number of edge on the face containing self
         """
         self.map.contractFace(self.raw)
 
@@ -257,6 +258,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
                 A list of MutableTopologicalDemiEdge corresponding to the description above
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm  = MutableLabelledMap(sigma = sigma,alpha=alpha)
@@ -287,9 +289,10 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
               X(42)])
             sage: mm.m
             21
+
         .. NOTE::
-        O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
-        note that it is much more efficient than O(p+m) mainly when m>>p
+            O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
+            note that it is much more efficient than O(p+m) mainly when m>>p
         """
 
         return self.map.merge(
@@ -333,8 +336,8 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             (20, 10)
 
         .. NOTE::
-        O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
-        note that it is much more efficient than O(p+m) mainly when m>>p
+            O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
+            note that it is much more efficient than O(p+m) mainly when m>>p
         """
         if self.map.numberInTheSameNode(self.raw) > 1:
             raise ValueError(
@@ -346,10 +349,12 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
     def mergeNode(self, otherTopoDemiEdge):
         """
         Merge the node attached to self and otherTopoDemiEdge, they need to be on the same face
+
         INPUT:
             otherTopoDemiEdge: the other TopologicalDemiEdge on the same face as sel
 
         EXAMPLES::
+
             sage: mm  = MutableLabelledMap(sigma = sigma,alpha=alpha)
             sage: A = mm.X(1)
             sage: B = mm.X(17)
@@ -381,7 +386,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
              (20,)]
 
         .. NOTE::
-        O(log(m)) where m is the number of edge of self.map
+            O(log(m)) where m is the number of edge of self.map
         """
 
         if self.map != otherTopoDemiEdge.map:
@@ -411,7 +416,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             False
 
         .. NOTE::
-        O(log(m)) where m is the number of edge of self.map
+            O(log(m)) where m is the number of edge of self.map
         """
         return self.map.areOnTheSameFace(
             self.raw, otherTopologicalDemiEdge.raw)
@@ -438,7 +443,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             False
 
         .. NOTE::
-        O(log(m)) where m is the number of edge of self.map
+            O(log(m)) where m is the number of edge of self.map
         """
 
         return self.map.areOnTheSameNode(
