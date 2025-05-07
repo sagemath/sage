@@ -126,7 +126,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         sage: HyperellipticCurveSmoothModel(3*x^5+1)
         Hyperelliptic Curve over Rational Field defined by y^2 = 3*x^5 + 1
 
-    The polynomials f and h need to define a smooth curve of genus at
+    The polynomials `f` and `h` need to define a smooth curve of genus at
     least one. In particular polynomials defining elliptic curves are
     allowed as input::
 

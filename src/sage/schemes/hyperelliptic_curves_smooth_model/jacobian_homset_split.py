@@ -51,12 +51,13 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         return self._morphism_element(self, R.one(), R.zero(), n)
 
     def point_to_mumford_coordinates(self, P):
-        """
-        On input a point P, return the Mumford coordinates
-        of (the affine part of) the divisor [P] and an integer n,
+        r"""
+        On input a point ``P``, return the Mumford coordinates
+        of (the affine part of) the divisor `[P]` and an integer `n`,
         where
-        * n = 1 if P is the point oo+
-        * n = 0 otherwise .
+
+        - `n = 1` if ``P`` is the point `\infty_+`
+        - `n = 0` otherwise .
 
         EXAMPLES::
 
@@ -263,10 +264,10 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         return u3, v3, n3
 
     def cantor_reduction(self, u0, v0, n0):
-        """
+        r"""
         Compute the Cantor reduction of ``(u0,v0,n0)``,
         where ``(u0,v0)`` represent an affine semi-reduced divisor and
-        n0 is the multiplicity of the point infty+.
+        ``n0`` is the multiplicity of the point `\infty_+`.
 
         Follows algorithm 3.5 of
 
@@ -329,7 +330,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             sage: D1 = [x^2 + 4*x + 3, 2*x + 2, 1]
 
         Composing at `\infty_+` decreases the value of `n_0` ,
-        while composing at `\infty_-` increases that value.
+        while composing at `\infty_-` increases that value::
 
             sage: JF.cantor_compose_at_infinity(x^2 + 4*x + 3, 2*x + 2, 1)
             (x^2 + 3*x + 6, 5*x + 5, -1)

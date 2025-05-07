@@ -417,7 +417,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         OUTPUT:
 
-        A bool stating whether or not `x` is a x-coordinate of a point on the curve
+        A bool stating whether or not ``x`` is the `x`-coordinate of a point on the curve
 
         EXAMPLES:
 
@@ -834,6 +834,10 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Return the distinguished point of the hyperelliptic curve.
         By default, this is one of the points at infinity if possible.
+
+        .. SEEALSO::
+
+            :func:`~sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_generic.set_distinguished_point`
 
         EXAMPLE::
 

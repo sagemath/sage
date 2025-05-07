@@ -2904,6 +2904,10 @@ REFERENCES:
 .. [GHJV1994] \E. Gamma, R. Helm, R. Johnson, J. Vlissides, *Design
               Patterns: Elements of Reusable Object-Oriented
               Software*. Addison-Wesley (1994). ISBN 0-201-63361-2.
+              
+.. [GHM2008] \S. Galbraith, M. Harrison, D. Mireles Morales, 
+             *Efficient hyperelliptic arithmetic using balanced representation for divisors*,
+             Algorithmic Number Theory: 8th International Symposium, ANTS-VIII Banff, Canada, May 17-22, 2008 Proceedings 8.
 
 .. [Gil1959] Edgar Nelson Gilbert. "Random Graphs", Annals of Mathematical
              Statistics. 30 (4): 1141–1144, 1959.

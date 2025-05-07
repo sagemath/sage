@@ -30,8 +30,10 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     We represent elements of the Jacobian by tuples of the form
     `(u, v : n)`, where
-    - (u,v) is the Mumford representative of a divisor `P_1 + ... + P_r`,
-    - n is a non-negative integer
+
+    - `(u,v)` is the Mumford representative of a divisor `P_1 + ... + P_r`,
+
+    - `n` is a non-negative integer
 
     This tuple represents the equivalence class
 
@@ -39,7 +41,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         [P_1 + ... + P_r + n \cdot \infty_+ + m\cdot \infty_- - D_\infty],
 
-    where  `m = g - \deg(u) - n`, and `\infty_+`, \infty_-` are the
+    where  `m = g - \deg(u) - n`, and `\infty_+`, `\infty_-` are the
     points at infinity of the hyperelliptic curve,
 
     .. MATH::

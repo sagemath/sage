@@ -66,11 +66,11 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def curve(self):
         """
-        On input the set of L-rational points of a Jacobian Jac(H) defined over K,
-        return the curve H.
+        On input the set of `L`-rational points of a Jacobian `Jac(H)` defined over `K`,
+        return the curve `H`.
 
         NOTE:
-        The base field of H is not extended to L.
+        The base field of `H` is not extended to `L`.
 
         EXAMPLES::
 
@@ -86,8 +86,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def extended_curve(self):
         """
-        On input the set of L-rational points of a Jacobian Jac(H) defined over K,
-        return the curve H with base extended to L.
+        On input the set of `L`-rational points of a Jacobian `Jac(H)` defined over `K`,
+        return the curve `H` with base extended to `L`.
 
         EXAMPLES::
 
