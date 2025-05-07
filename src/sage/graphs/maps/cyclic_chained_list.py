@@ -1,16 +1,18 @@
 class CyclicChainedList:
     """
-    This is an internal class represent cyclic chained list node used in the class RotatingPermutation
-    Note that you must be careful when directly manipulating the object to not create more than one cycle , all
-    the basic implemented method are guaranteed to not alter this invariant.
-    """
+    This is an internal class representing cyclic chained list node used in the class RotatingPermutation.
 
-    def __init__(self, val):
+    Note that you must be careful when directly manipulating the object to not create more than one cycle. All
+    the basic implemented methods are guaranteed to not alter this invariant.
+    """
+    def __init__(self, val) -> None:
         """
         INPUT:
-            val: the value contained in the node
+        
+        - val -- the value contained in the node
 
         EXAMPLES::
+
             sage: CyclicChainedList(3)
             NodeOfCyclicChainedList(val=3)
         """
@@ -20,19 +22,20 @@ class CyclicChainedList:
 
     def __repr__(self) -> str:
         """
-        OUTPUT:
-            A string representation of self
+        Return a string representation of ``self``.
 
         EXAMPLES::
+
             sage: CyclicChainedList(3)
             NodeOfCyclicChainedList(val=3)
         """
         return f"NodeOfCyclicChainedList(val={self.val})"
 
-    def getValList(self):
+    def getValList(self) -> list:
         """
         OUTPUT: 
-            a list containing the value of each node in the same cycle as self
+        
+        a list containing the value of each node in the same cycle as self
 
         EXAMPLES::
 
@@ -42,6 +45,7 @@ class CyclicChainedList:
             [3, 4]
 
         .. NOTE::
+
             O(1)
         """
         cycleNode = []
@@ -60,8 +64,9 @@ class CyclicChainedList:
         of the form A->self->otherNode->R->A
 
         INPUT:
-            otherNode,another node of a CyclicChainedList
-            he must be alone in his cycle
+
+        otherNode, another node of a CyclicChainedList
+        he must be alone in his cycle
 
         EXAMPLES::
 
@@ -70,8 +75,8 @@ class CyclicChainedList:
             sage: node.getValList()
             [3, 4]
 
-
         .. NOTE::
+
             O(1)
         """
         oldNxt = self.nxt
@@ -87,10 +92,10 @@ class CyclicChainedList:
         in a cycle of the form otherNode ->R ->otherNode where R represent the rest of the cycle this function will fuse them into a cycle
         of the form A->otherNode->R->self->A
 
-
         INPUT:
-            otherNode,another node of a CyclicChainedList
-            he must be alone in his cycle
+
+        otherNode,another node of a CyclicChainedList
+        he must be alone in his cycle
 
         EXAMPLES::
 
@@ -101,15 +106,15 @@ class CyclicChainedList:
             [3, 4, 5]
 
         .. NOTE::
-            O(1)
 
+            O(1)
         """
         self.prev.insertAfter(otherNode)
 
     def remove(self):
         """
-        If self isn't an isolated node(i.e such that self.prev = self.nxt = self) it will remove self from the where it is present
-        otherwise it won't do anything
+        If ``self`` is not an isolated node (i.e such that self.prev = self.nxt = self) it will remove self from the where it is present
+        otherwise it will not do anything
 
         EXAMPLES:: 
 
@@ -123,7 +128,8 @@ class CyclicChainedList:
             sage: node.getValList()
             [3, 5]
 
-        .. NOTE:
+        .. NOTE::
+
             O(1)
         """
         if self.prev == self:
