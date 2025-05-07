@@ -9493,7 +9493,7 @@ class Graph(GenericGraph):
         OUTPUT:
 
         If ``minor_map=False``, a boolean, whether this graph is projective
-        planar. If ``minor_map=True`` the output of 
+        planar. If ``minor_map=True`` the output of
         :meth:`~Graph.minor`,  ``None`` otherwise.
 
         EXAMPLES:
@@ -9517,7 +9517,7 @@ class Graph(GenericGraph):
 
             - :meth:`~Graph.minor`
         """
-        
+
         from sage.graphs.graph_generators import GraphGenerators
         num_verts_G = self.num_verts()
         num_edges_G = self.num_edges()
@@ -9525,7 +9525,7 @@ class Graph(GenericGraph):
 
         for forbidden_minor in GraphGenerators.P2ForbiddenMinors():
             # Can't be a minor if it has more vertices or edges than G
-            
+
             if (forbidden_minor.num_verts() > num_verts_G
                     or forbidden_minor.num_edges() > num_edges_G):
                 continue
@@ -9543,7 +9543,7 @@ class Graph(GenericGraph):
             return return_map
         else:
             return return_map is None
-    
+
 
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal

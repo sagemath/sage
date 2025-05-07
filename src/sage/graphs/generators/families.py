@@ -9,10 +9,10 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                          Emily A. Kirkman
 #                     2009 Michael C. Yurko <myurko@gmail.com>
 #                     2016 Rowan Schrecker <rowan.schrecker@hertford.ox.ac.uk>
-#                     2025 Juan M. Lazaro Ruiz, Steve Schluchter, and 
+#                     2025 Juan M. Lazaro Ruiz, Steve Schluchter, and
 #                          Kristina Obrenovic Gilmour: is_projective_planar
 #                          in graph.py and associated method p2_forbidden_minors
-#                          in sage.graphs.generators.families module.                                                                                                                                                                             
+#                          in sage.graphs.generators.families module.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
