@@ -61,9 +61,9 @@ cvxopt_output() {
 # configure cvxopt by variables
 # Note that *_INC_DIR variables have to be non-empty.
 # Compilers don't like "-I ".
-export CVXOPT_BLAS_LIB="$(cvxopt_output l blas)"
-export CVXOPT_BLAS_LIB_DIR="$(pkg-config --variable=libdir blas)"
-export CVXOPT_LAPACK_LIB="$(cvxopt_output l lapack)"
+# export CVXOPT_BLAS_LIB="$(cvxopt_output l blas)"
+# export CVXOPT_BLAS_LIB_DIR="$(pkg-config --variable=libdir blas)"
+# export CVXOPT_LAPACK_LIB="$(cvxopt_output l lapack)"
 
 if test "x$SAGE_SUITESPARSE_PREFIX" != "x"; then
    export CVXOPT_SUITESPARSE_LIB_DIR="${SAGE_SUITESPARSE_PREFIX}"
