@@ -306,7 +306,7 @@ class FiniteMonoids(CategoryWithAxiom):
             one = parent.one()
             if self == one:
                 return one
-            it = (v for v in parent if v * self == one)
+            it = (v for v in parent if v * self == one == self * v)
             try:
                 return next(it)
             except StopIteration:
