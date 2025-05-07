@@ -45,7 +45,7 @@ if not ecl_bin.found()
 #  # System ECL is not found, so we use a subproject to build it
 #  ecldir = meson.current_build_dir() + '/../ecl/src/dist/usr/local/lib64/ecl-24.5.10'
 endif
-ecldir = run_command([ecl_bin, '-eval', '(princ (SI:GET-LIBRARY-PATHNAME))', '-eval', '(quit)'], check: true).stdout().strip()
+#ecldir = run_command([ecl_bin, '-eval', '(princ (SI:GET-LIBRARY-PATHNAME))', '-eval', '(quit)'], check: true).stdout().strip()
 
 # Copy the Maxima fas file to the ECL directory
 # TODO: Find a cleaner way to notify ecl about the maxima fas file
