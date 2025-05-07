@@ -1823,7 +1823,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             ...
             ValueError: echelon form mod 7 not defined
         """
-        cdef int i
+        cdef Py_ssize_t i
 
         # Initialize variables
         ls, _ = self._reductions(p)
