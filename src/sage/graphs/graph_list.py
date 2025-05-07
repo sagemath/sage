@@ -52,7 +52,7 @@ def from_whatever(data, immutable=False):
         ....:     graphs_list.from_whatever(fobj)
         [Graph on 15 vertices, Looped multi-graph on 17 vertices]
 
-    Check the bahavior of parameter ``immutable``::
+    Check the behaviour of parameter ``immutable``::
 
         sage: with open(filename) as fobj:
         ....:     any(g.is_immutable() for g in graphs_list.from_whatever(fobj))
@@ -87,7 +87,7 @@ def _from_whatever(data, fmt=None, immutable=False):
         sage: graphs_list.from_whatever(l)
         [Graph on 15 vertices, Looped multi-graph on 17 vertices]
 
-    Check the bahavior of parameter ``immutable``::
+    Check the behaviour of parameter ``immutable``::
 
         sage: any(g.is_immutable() for g in graphs_list.from_whatever(l))
         False
@@ -157,7 +157,7 @@ def from_graph6(data, immutable=False):
         sage: graphs_list.from_graph6(l)
         [Graph on 15 vertices, Graph on 25 vertices]
 
-    Check the bahavior of parameter ``immutable``::
+    Check the behaviour of parameter ``immutable``::
 
         sage: any(g.is_immutable() for g in graphs_list.from_graph6(l))
         False
@@ -189,7 +189,7 @@ def from_sparse6(data, immutable=False):
         sage: graphs_list.from_sparse6([g1, g2])
         [Looped multi-graph on 17 vertices, Looped multi-graph on 39 vertices]
 
-    Check the bahavior of parameter ``immutable``::
+    Check the behaviour of parameter ``immutable``::
 
         sage: any(g.is_immutable() for g in graphs_list.from_sparse6([g1, g2]))
         False
