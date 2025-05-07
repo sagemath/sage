@@ -4,8 +4,10 @@ on:
   push:
     tags:
       - '*'
-  # TODO: Remove this before merging
   pull_request:
+    paths:
+      - '**.build'
+      - 'subprojects/**'
   workflow_dispatch:
     # Allow to run manually
 
