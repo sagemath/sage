@@ -14,9 +14,6 @@ class WeightedProjectiveCurve(Curve_generic):
         sage: C = P.curve(y^2 - x^5 * z - 3 * x^2 * z^4 - 2 * z^6); C
     """
     def __init__(self, A, X, *kwargs):
-        # TODO ensure that A is the right type?
-        # Something like a `is_WeightProjectiveSpace` which means making a
-        # WeightProjectiveSpace class?
         if not isinstance(A, WeightedProjectiveSpace_ring):
             raise TypeError(f"A(={A}) is not a weighted projective space")
         super().__init__(A, X, *kwargs)
