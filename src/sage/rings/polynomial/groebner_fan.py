@@ -1300,22 +1300,22 @@ class GroebnerFan(SageObject):
                     for i in (0, 1, 2):
                         if vmaxs[i] == vmins[i]:
                             vmaxs[i] = vmins[i] + .01
-                    for index in range(len(sp3)):
+                    for index, sp in enumerate(sp3):
                         col = [1 - (vals[index][i] - vmins[i]) / (vmaxs[i] - vmins[i]) for i in (0, 1, 2)]
-                        r_lines += polygon(sp3[index], rgbcolor=col)
+                        r_lines += polygon(sp, rgbcolor=col)
                 else:
-                    for index in range(len(sp3)):
-                        r_lines += polygon(sp3[index], rgbcolor=vals[i])
+                    for index, sp in enumerate(sp3):
+                        r_lines += polygon(sp, rgbcolor=vals[index])
             elif scale_colors:
                 vmin = min(vals)
                 vmax = max(vals)
                 if vmin == vmax:
                     vmax = vmin + .01
-                for index in range(len(sp3)):
-                    r_lines += polygon(sp3[index], hue=.1 + .6 * (vals[index] - vmin) / (vmax - vmin))
+                for index, sp in enumerate(sp3):
+                    r_lines += polygon(sp, hue=.1 + .6 * (vals[index] - vmin) / (vmax - vmin))
             else:
-                for index in range(len(sp3)):
-                    r_lines += polygon(sp3[index], hue=vals[i])
+                for index, sp in enumerate(sp3):
+                    r_lines += polygon(sp, hue=vals[index])
         return r_lines
 
     def _cone_to_ieq(self, facet_list):
