@@ -22,8 +22,8 @@ jobs:
         container:
           - fedora:41
           - fedora:42
-          - ubuntu:22.04
-          - ubuntu:24.04
+          #- ubuntu:22.04 - fails due to issue with cypari2
+          #- ubuntu:24.04 - fails due to issue with cypari2
           - ubuntu:25.04
     container:
       image: ${{ matrix.container }}
