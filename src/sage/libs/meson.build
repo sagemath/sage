@@ -5,9 +5,16 @@ if not ecl.found()
   ecl_proj = subproject('ecl')
   ecl = ecl_proj.get_variable('ecl_dep')
 endif
-ecl_bin = find_program('ecl', required : false)
+ecl_bin = find_program('ecl', required: false)
 if ecl_bin.found()
-  maxima_check = run_command(ecl_bin, '--eval', '(require \'maxima)', '--eval', '(quit)', check: false)
+  maxima_check = run_command(
+    ecl_bin,
+    '--eval',
+    '(require \'maxima)',
+    '--eval',
+    '(quit)',
+    check: false,
+  )
   maxima_present = maxima_check.returncode() == 0
 else
   maxima_present = false
@@ -24,7 +31,12 @@ else
   conf_data.set('SAGE_MAXIMA_FAS', '')
 endif
 
-braiding = dependency('libbraiding', version: '>= 1.3.1', required: false, disabler: true)
+braiding = dependency(
+  'libbraiding',
+  version: '>= 1.3.1',
+  required: false,
+  disabler: true,
+)
 gc = dependency(['bdw-gc-threaded', 'bdw-gc'], version: '>=7.6.4')
 homfly = cc.find_library(
   'homfly',

@@ -115,7 +115,7 @@ if not m4ri.found()
     includes: true,
     link_args: true,
     links: true,
-    sources: true
+    sources: true,
   )
 endif
 m4rie = dependency('m4rie', required: false)
