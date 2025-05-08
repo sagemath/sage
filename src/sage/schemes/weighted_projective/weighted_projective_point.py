@@ -45,7 +45,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
     - ``v`` -- a list or tuple of coordinates in `R`.
 
-    - ``check`` -- boolean (default:``True``). Whether to check the input for consistency.
+    - ``check`` -- boolean (default: ``True``). Whether to check the input for consistency.
 
     EXAMPLES::
 
@@ -83,7 +83,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         if check:
             # check parent
-            from weighted_projective_homset import SchemeHomset_points_weighted_projective_ring
+            from sage.schemes.weighted_projective.weighted_projective_homset import SchemeHomset_points_weighted_projective_ring
             if not isinstance(X, SchemeHomset_points_weighted_projective_ring):
                 raise TypeError(f"ambient space {X} must be a weighted projective space")
 

@@ -26,7 +26,7 @@ class SchemeHomset_points_weighted_projective_ring(SchemeHomset_points):
 
     INPUT:
 
-    See :class:`SchemeHomset_generic`.
+    See :class:`SchemeHomset_points`.
 
     EXAMPLES::
 

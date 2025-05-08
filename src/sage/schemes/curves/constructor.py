@@ -18,6 +18,12 @@ EXAMPLES::
     Projective Plane Curve over Finite Field of size 5
      defined by -x^9 + y^2*z^7 - x*z^8
 
+Here, we construct a hyperelliptic curve manually::
+
+    sage: WP.<x,y,z> = WeightedProjectiveSpace([1, 3, 1], GF(103))
+    sage: Curve(y^2 - (x^5*z + 17*x^2*z^4 + 92*z^6), WP)
+    Weighted Projective Curve over Finite Field of size 103 defined by y^2 - x^5*z - 17*x^2*z^4 + 11*z^6
+
 AUTHORS:
 
 - William Stein (2005-11-13)
@@ -49,6 +55,7 @@ from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
 from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
 from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
+from sage.schemes.weighted_projective.weighted_projective_space import WeightedProjectiveSpace_ring
 from sage.schemes.plane_conics.constructor import Conic
 
 from .projective_curve import (ProjectiveCurve,
@@ -70,6 +77,8 @@ from .affine_curve import (AffineCurve,
                            IntegralAffineCurve_finite_field,
                            IntegralAffinePlaneCurve,
                            IntegralAffinePlaneCurve_finite_field)
+
+from .weighted_projective_curve import WeightedProjectiveCurve
 
 
 def _is_irreducible_and_reduced(F) -> bool:
@@ -375,6 +384,13 @@ def Curve(F, A=None):
                 return IntegralProjectivePlaneCurve(A, F)
             return ProjectivePlaneCurve_field(A, F)
         return ProjectivePlaneCurve(A, F)
+
+    elif isinstance(A, WeightedProjectiveSpace_ring):
+        # currently, we only support curves in a weighted projective plane
+        if n != 2:
+            raise NotImplementedError("ambient space has to be a weighted projective plane")
+        # currently, we do not perform checks on weighted projective curves
+        return WeightedProjectiveCurve(A, F)
 
     else:
         raise TypeError('ambient space neither affine nor projective')

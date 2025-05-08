@@ -242,7 +242,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def _latex_(self):
         r"""
-        Return a LaTeX representation of this projective space.
+        Return a LaTeX representation of this weighted projective space.
 
         EXAMPLES::
 
@@ -323,12 +323,12 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         For internal use only. See :mod:`morphism` for details.
         """
-        from weighted_projective_point import SchemeMorphism_point_weighted_projective_ring
+        from sage.schemes.weighted_projective.weighted_projective_point import SchemeMorphism_point_weighted_projective_ring
         return SchemeMorphism_point_weighted_projective_ring(*args, **kwds)
 
     def _repr_(self) -> str:
         """
-        Return a string representation of this projective space.
+        Return a string representation of this weighted projective space.
 
         EXAMPLES::
 
@@ -379,7 +379,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         This is used both for illustration and testing purposes.
 
-        OUTPUT: a point in this projective space.
+        OUTPUT: a point in this weighted projective space.
 
         EXAMPLES::
 
@@ -408,9 +408,9 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: WP.<x, y, z> = WeightedProjectiveSpace(QQ, 2)
-            sage: P.curve(y^2 - x^5 * z - 3 * x^2 * z^4 - 2 * z^6)                                                  # needs sage.schemes
-            Projective Plane Curve over Rational Field defined by y^2 - x^5*z - 3*x^2*z^4 - 2*z^6
+            sage: WP.<x, y, z> = WeightedProjectiveSpace([1, 3, 1], QQ)
+            sage: WP.curve(y^2 - x^5 * z - 3 * x^2 * z^4 - 2 * z^6)                     # needs sage.schemes
+            Weighted Projective Curve over Rational Field defined by y^2 - x^5*z - 3*x^2*z^4 - 2*z^6
         """
         if self.base_ring() not in Fields():
             raise NotImplementedError("curves in weighted projective space over"
