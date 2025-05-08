@@ -24,6 +24,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation(3)
             [1, 2, 3]
             sage: MapPermutation([2,3,1])
@@ -63,6 +64,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: lst = [(4,3),(2,1)]
             sage: MapPermutation(lst)._init_from_cycle_list(lst)
 
@@ -99,6 +101,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation(3)._init_from_number(3)
 
         .. NOTE::
@@ -116,6 +119,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation(3)._init_from_number(3)
 
         .. NOTE::
@@ -135,6 +139,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: lst = [(4,3),(2,1)]
             sage: MapPermutation(lst)._init_from_cycle_list(lst)
 
@@ -217,7 +222,8 @@ class MapPermutation:
             [2, 1, 9, 4, 5, 6, 14, 7, 3, 10, 11, 12, 13, 8] 
 
         """
-        return str(list(self))
+        return "[" + ", ".join(map(str, self)) + "]"  # Permet d'afficher de la même manière les int et les np.int64
+        #return str(list(self))
 
     def pretty_repr(self):
         """

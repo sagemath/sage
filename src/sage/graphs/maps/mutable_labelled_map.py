@@ -1,5 +1,5 @@
-from labelled_map import *
 from sage.all import Permutation  # Import sage library
+from sage.graphs.maps.labelled_map import *
 from sage.graphs.maps.mutable_topological_demi_edge import *
 from sage.graphs.maps.rotating_permutation_utils_abstractor import RotatingPermutationUtilsAbstractor
 from sage.graphs.maps.rotating_permutation import RotatingPermutation

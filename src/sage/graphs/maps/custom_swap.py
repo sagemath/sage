@@ -16,6 +16,7 @@ class CustomSwap (MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: CustomSwap([(12,8)])
             [1, 2, 3, 4, 5, 6, 7, 12, 9, 10, 11, 8]
 
@@ -42,6 +43,7 @@ class CustomSwap (MapPermutation):
 
         EXAMPLES:: 
 
+            sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: c = CustomSwap([(12,8)])
             sage: c == c
             True
@@ -62,6 +64,7 @@ class CustomSwap (MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: CustomSwap([(12,8)]).size()
             12
 
@@ -80,6 +83,7 @@ class CustomSwap (MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: CustomSwap([(12,8)]).apply(8)
             12
 
@@ -100,6 +104,7 @@ class CustomSwap (MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: CustomSwap([(12,8)]).inverseApply(8)
             12 
 
@@ -116,6 +121,7 @@ class CustomSwap (MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: CustomSwap([(12,8)]).number_of_fixed_points()
             10 
 
@@ -132,6 +138,7 @@ class CustomSwap (MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: CustomSwap([(12,8)]).to_cycles()
             [(1,), (2,), (3,), (4,), (5,), (6,), (7,), (8, 12), (8,), (9,), (10,), (11,)]
 
@@ -151,6 +158,7 @@ class CustomSwap (MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: CustomSwap([(12,8)]).inverse()
             [1, 2, 3, 4, 5, 6, 7, 12, 9, 10, 11, 8]
 

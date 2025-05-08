@@ -935,7 +935,8 @@ class RotatingPermutation(MapPermutation):
             [3, 5, 4, 1, 7, 6, 8, 2]
 
         """
-        return str(list(self))
+        return "[" + ", ".join(map(str, self)) + "]"  # Permet d'afficher de la même manière les int et les np.int64
+        #return str(list(self))
 
     # OK
 

@@ -13,6 +13,7 @@ class CyclicChainedList:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: CyclicChainedList(3)
             NodeOfCyclicChainedList(val=3)
         """
@@ -26,6 +27,7 @@ class CyclicChainedList:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: CyclicChainedList(3)
             NodeOfCyclicChainedList(val=3)
         """
@@ -39,6 +41,7 @@ class CyclicChainedList:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: node = CyclicChainedList(3)
             sage: node.insertAfter(CyclicChainedList(4))
             sage: node.getValList()
@@ -70,6 +73,7 @@ class CyclicChainedList:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: node = CyclicChainedList(3)
             sage: node.insertAfter(CyclicChainedList(4))
             sage: node.getValList()
@@ -99,6 +103,7 @@ class CyclicChainedList:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: node = CyclicChainedList(3)
             sage: node.insertAfter(CyclicChainedList(4))
             sage: node.insertBefore(CyclicChainedList(5))
@@ -118,6 +123,7 @@ class CyclicChainedList:
 
         EXAMPLES:: 
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: node = CyclicChainedList(3)
             sage: node.insertAfter(CyclicChainedList(4))
             sage: node.insertBefore(CyclicChainedList(5))
