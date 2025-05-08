@@ -1,11 +1,12 @@
 libpath = meson.current_build_dir() + '/dist/usr/local/lib64'
 ecldir = meson.current_build_dir() + '/dist/usr/local/lib64/ecl-24.5.10'
+include_path = meson.current_build_dir() + '/build'
 
 proj = mod.add_project('configure',
   configure_options : [
                         # ecl embeds the include path, so we have to set it to the *installed* path
                         # workaround for https://gitlab.com/embeddable-common-lisp/ecl/-/issues/780
-                        '--includedir=' + meson.current_build_dir() + '/build',
+                        '--includedir=' + include_path,
                         '--enable-manual=no',
                         '--enable-unicode=yes',
                         '--with-defsystem',
@@ -21,7 +22,10 @@ proj = mod.add_project('configure',
 ecl_dep = proj.dependency('ecl')
 # Ugly workaround to include the rpath in the dependency
 # https://github.com/mesonbuild/meson/issues/12970
-ecl_rpath_dep = declare_dependency(link_args: '-Wl,-rpath,' + libpath)
+ecl_rpath_dep = declare_dependency(
+  link_args: '-Wl,-rpath,' + libpath + ' -L' + libpath,
+  include_directories: [include_path],
+)
 ecl_dep = declare_dependency(
   dependencies : [ecl_dep, ecl_rpath_dep],
   variables: {
