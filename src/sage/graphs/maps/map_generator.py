@@ -40,7 +40,6 @@ class MapGenerator:
 
             sage: mg = MapGenerator()
             sage: mg.cube().pretty_print()
-
                         Alpha: [(1, 3), (2, 5), (4, 7), (6, 10), (8, 13), (9, 14), (11, 17), (12, 18), (15, 16), (19, 22), (20, 23), (21, 24)]
                         Sigma (Node): [(1, 2, 4), (3, 6, 9), (5, 8, 12), (7, 11, 16), (10, 15, 20), (13, 14, 19), (17, 18, 21), (22, 23, 24)]
                         Phi (Face): [(1, 6, 15, 7), (2, 8, 14, 3), (4, 11, 18, 5), (9, 19, 23, 10), (12, 21, 22, 13), (16, 20, 24, 17)]
@@ -225,7 +224,6 @@ class MapGenerator:
             sage: mg = MapGenerator()
             sage: dyckPath = mg.getRandomDyckPath(10,seed =42)
             sage: tree = mg.getTreeFromDyckPath(dyckPath).pretty_print()
-
                         Alpha: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 10), (11, 13), (12, 15), (14, 17), (16, 18), (19, 20)]
                         Sigma (Node): [(1, 2, 4), (3,), (5,), (6, 7, 8), (9, 11, 12, 14), (10,), (13, 16), (15,), (17, 19), (18,), (20,)]
                         Phi (Face): [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
@@ -480,6 +478,8 @@ class MapGenerator:
 
             sage: len(MapGenerator().generateRandomBaseTwoLeafBitString(10,seed=42))
             38
+            sage: MapGenerator().generateRandomBaseTwoLeafBitString(5, seed=42)
+            [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 
         .. NOTE::
             O(n)
@@ -608,7 +608,11 @@ class MapGenerator:
 
         assert len(valid_shifts) == 2
 
-        return self.cyclicShift(b, random.choice(valid_shifts))
+        rng = random.Random()
+        if seed is not None:
+            rng.seed(int(seed))
+
+        return self.cyclicShift(b, rng.choice(valid_shifts))
 
     def getRandomRootedTwoLeafTree(self, n, seed=None):
         """
@@ -620,7 +624,7 @@ class MapGenerator:
 
         EXAMPLES::
             sage: MapGenerator().getRandomRootedTwoLeafTree(4,seed=42)
-            Rooted map | Sigma : [1, 3, 4, 6, 5, 2, 9, 10, 11, 13, 7, 12, 16, 18, 15, 8, 17, 20, 19, 14, 21, 22] Alpha : [2, 1, 5, 7, 3, 8, 4, 6, 12, 14, 15, 9, 17, 10, 11, 19, 13, 21, 16, 22, 18, 20] 
+            Rooted map | Sigma : [1, 3, 4, 6, 5, 2, 9, 10, 11, 13, 7, 12, 16, 18, 15, 8, 17, 20, 19, 14, 21, 22] Alpha : [2, 1, 5, 7, 3, 8, 4, 6, 12, 14, 15, 9, 17, 10, 11, 19, 13, 21, 16, 22, 18, 20]
 
         .. NOTE::
             O(n)
@@ -642,7 +646,7 @@ class MapGenerator:
             sage: mg = MapGenerator()
             sage: bits = mg.getRandomTwoLeafBitString(4,seed = 42)
             sage: mg.rootedTwoLeafTreeFromBit(bits)
-            Rooted map | Sigma : [1, 3, 4, 6, 8, 2, 10, 11, 9, 13, 5, 12, 16, 18, 15, 7, 17, 20, 19, 14, 21, 22] Alpha : [2, 1, 5, 7, 3, 9, 4, 12, 6, 14, 15, 8, 17, 10, 11, 19, 13, 21, 16, 22, 18, 20]
+            Rooted map | Sigma : [1, 3, 4, 6, 5, 2, 9, 10, 11, 13, 7, 12, 16, 18, 15, 8, 17, 20, 19, 14, 21, 22] Alpha : [2, 1, 5, 7, 3, 8, 4, 6, 12, 14, 15, 9, 17, 10, 11, 19, 13, 21, 16, 22, 18, 20]
 
         .. NOTE::
             O(len(b))

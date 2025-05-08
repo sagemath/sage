@@ -1,7 +1,7 @@
 
 from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
 from sage.graphs.maps.map_decorator import CheckValid
-from sage.graphs.maps.map_error import NotImplemented
+from sage.graphs.maps.map_error import NotImplementedError
 
 
 class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
@@ -184,7 +184,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             OK
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     @CheckValid
     def isOnSameNode(self, otherTopologicalDemiEdge):
@@ -201,4 +201,4 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             OK
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)

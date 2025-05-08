@@ -1,5 +1,5 @@
 from sage.all import Permutation
-from sage.graphs.maps.map_error import InvalidMapPermutationArgument
+from sage.graphs.maps.map_error import InvalidMapPermutationArgumentError
 import numpy as np
 
 
@@ -51,7 +51,7 @@ class MapPermutation:
                 return
             self._init_from_list(lst)
         except Exception as _:
-            raise InvalidMapPermutationArgument()
+            raise InvalidMapPermutationArgumentError()
 
     def _init_from_cycle_list(self, lst, trust=False):
         """
@@ -78,7 +78,7 @@ class MapPermutation:
             prev = 0
             for i in e:
                 if i <= 0:
-                    raise InvalidMapPermutationArgument()
+                    raise InvalidMapPermutationArgumentError()
 
                 if prev != 0:
                     self._rtab[i-1] = prev
@@ -92,7 +92,7 @@ class MapPermutation:
             return
 
         if (self._tab == 0).sum() != 0:
-            raise InvalidMapPermutationArgument()
+            raise InvalidMapPermutationArgumentError()
 
     def _init_from_number(self, n):
         """
@@ -153,7 +153,7 @@ class MapPermutation:
         if trust:
             return
         if not np.issubdtype(self._tab.dtype, np.integer) or ((self._tab > len(self._tab)) + (self._tab <= 0)).sum() != 0 or len(np.unique(self._tab)) != len(self._tab):
-            raise InvalidMapPermutationArgument()
+            raise InvalidMapPermutationArgumentError()
 
     def size(self):
         """

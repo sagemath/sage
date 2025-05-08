@@ -1,6 +1,6 @@
 # This file contain some custom error used in our project
 
-class InvalidMapPermutationArgument(Exception):
+class InvalidMapPermutationArgumentError(Exception):
     """
     This class represent an invalid argument error in MapPermutation.
     """
@@ -11,32 +11,34 @@ class InvalidMapPermutationArgument(Exception):
 
         EXAMPLES::
 
-            sage: InvalidMapPermutationArgument()
-            InvalidMapPermutationArgument('Invalid argument: The argument given must be Permutation or a non empty list of integers representing the permutation or a non empty list of tuples representing the cycles of the permutations or a positive integer.')
+            sage: from sage.graphs.maps.map_error import InvalidMapPermutationArgumentError
+            sage: InvalidMapPermutationArgumentError()
+            InvalidMapPermutationArgumentError('Invalid argument: The argument given must be Permutation or a non empty list of integers representing the permutation or a non empty list of tuples representing the cycles of the permutations or a positive integer.')
 
         """
         super().__init__("Invalid argument: The argument given must be Permutation or a non empty list of integers representing the permutation or a non empty list of tuples representing the cycles of the permutations or a positive integer.")
 
 
-class InvalidSwapPermutationArgument(Exception):
+class InvalidSwapPermutationArgumentError(Exception):
     """
     This class represent an invalid argument error in SwapPermutation.
     """
 
     def __init__(self):
         """
-        Initialise the InvalidSwapPermutationArgument
+        Initialise the InvalidSwapPermutationArgumentError
 
         EXAMPLES::
 
-            sage: InvalidSwapPermutationArgument()
-            InvalidSwapPermutationArgument('Invalid argument for swap permutation')
+            sage: from sage.graphs.maps.map_error import InvalidSwapPermutationArgumentError
+            sage: InvalidSwapPermutationArgumentError()
+            InvalidSwapPermutationArgumentError('Invalid argument for swap permutation')
 
         """
         super().__init__("Invalid argument for swap permutation")
 
 
-class NotImplemented(Exception):
+class NotImplementedError(Exception):
     """
 
     This class represent a not implemented error.
@@ -46,15 +48,16 @@ class NotImplemented(Exception):
     def __init__(self, x):
         """
 
-        Initialise the NotImplemented 
+        Initialise the NotImplementedError.
 
         INPUT:
         x the object on which the method isn't defined
 
         EXAMPLES::
 
-            sage: NotImplemented(2)
-            NotImplemented("This  method isn't implemented for the class <class 'sage.rings.integer.Integer'> ")
+            sage: from sage.graphs.maps.map_error import NotImplementedError
+            sage: NotImplementedError(2)
+            NotImplementedError("This  method isn't implemented for the class <class 'sage.rings.integer.Integer'> ")
 
 
         """
@@ -62,7 +65,7 @@ class NotImplemented(Exception):
             f"This  method isn't implemented for the class {x.__class__} ")
 
 
-class TODO(Exception):
+class TODOError(Exception):
     """
 
     This class represent a TODO error
@@ -76,8 +79,9 @@ class TODO(Exception):
 
         EXAMPLES::
 
-            sage: TODO()
-            TODO('Todo')
+            sage: from sage.graphs.maps.map_error import TODOError
+            sage: TODOError()
+            TODOError('Todo')
 
         """
         super().__init__(

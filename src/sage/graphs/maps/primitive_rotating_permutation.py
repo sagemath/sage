@@ -1,7 +1,7 @@
 from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
 from sage.all import Permutation
 from sage.graphs.maps.map_permutation import MapPermutation
-from sage.graphs.maps.map_error import NotImplemented
+from sage.graphs.maps.map_error import NotImplementedError
 
 
 class PrimitiveRotatingPermutation(MapPermutation):
@@ -851,7 +851,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     # OK
     def numberOfCycles(self):
@@ -892,7 +892,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         """
 
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     # OK
 

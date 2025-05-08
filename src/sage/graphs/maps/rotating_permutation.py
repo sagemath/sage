@@ -1021,11 +1021,11 @@ class RotatingPermutation(MapPermutation):
             try:
                 node = self._permCycle[i]
                 cycle = node.getValList()
-                cycles.append(tuple(cycle))
+                cycles.append(tuple(map(int,cycle)))
                 for j in cycle:
                     seen[j] = True
             except BaseException:
-                cycles.append((i,))
+                cycles.append((int(i),))
 
         return cycles
 

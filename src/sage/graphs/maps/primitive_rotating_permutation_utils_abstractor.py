@@ -1,5 +1,5 @@
 from sage.graphs.maps.permutation_utils_abstractor import *
-from sage.graphs.maps.map_error import NotImplemented
+from sage.graphs.maps.map_error import NotImplementedError
 
 
 class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
@@ -34,7 +34,7 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             OK
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     def sameCycle(self, i, j):
         """
@@ -52,7 +52,7 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             OK
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     def numberOfCycles(self):
         """
@@ -103,4 +103,4 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             OK
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
