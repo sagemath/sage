@@ -1538,6 +1538,7 @@ class GraphGenerators:
             sage: from io import StringIO
             sage: code_input = StringIO()
             sage: n = code_input.write('>>planar_code<<')
+            sage: n = code_input.seek(0)
             sage: list(graphs._read_planar_code(code_input))
             Traceback (most recent call last):
             ...
@@ -1546,6 +1547,7 @@ class GraphGenerators:
             sage: from io import BytesIO
             sage: code_input = BytesIO()
             sage: n = code_input.write(b'>>wrong header<<')
+            sage: n = code_input.seek(0)
             sage: list(graphs._read_planar_code(code_input))
             Traceback (most recent call last):
             ...
@@ -1709,10 +1711,7 @@ class GraphGenerators:
 
         sp = subprocess.Popen(command, shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True,
-                              encoding='latin-1')
-
-        sp.stdout.reconfigure(newline='')
+                              stderr=subprocess.PIPE, close_fds=True)
 
         yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
 
@@ -1800,10 +1799,7 @@ class GraphGenerators:
 
         sp = subprocess.Popen(command, shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True,
-                              encoding='latin-1')
-
-        sp.stdout.reconfigure(newline='')
+                              stderr=subprocess.PIPE, close_fds=True)
 
         yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
 
@@ -1988,10 +1984,7 @@ class GraphGenerators:
                                  options)
         sp = subprocess.Popen(command, shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True,
-                              encoding='latin-1')
-
-        sp.stdout.reconfigure(newline='')
+                              stderr=subprocess.PIPE, close_fds=True)
 
         try:
             yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
