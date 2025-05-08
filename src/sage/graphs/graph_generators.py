@@ -1479,7 +1479,7 @@ class GraphGenerators:
     def _read_planar_code(self, code_input, immutable=False):
         r"""
         Return a generator for the plane graphs in planar code format in
-        the file code_input (see [BM2016]_).
+        the binary file ``code_input`` (see [BM2016]_).
 
         A file with planar code starts with a header ``>>planar_code<<``.
         After the header each graph is stored in the following way :
@@ -1493,7 +1493,7 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``code_input`` -- a file containing valid planar code data
+        - ``code_input`` -- a binary file containing valid planar code data
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
           immutable or mutable graphs
@@ -1513,18 +1513,17 @@ class GraphGenerators:
 
         EXAMPLES:
 
-        The following example creates a small planar code file in memory and
-        reads it using the ``_read_planar_code`` method::
+        The following example creates a small planar code binary
+        file in memory and reads it using the ``_read_planar_code`` method::
 
-            sage: from io import StringIO
-            sage: code_input = StringIO('>>planar_code<<')
-            sage: _ = code_input.write('>>planar_code<<')
+            sage: from io import BytesIO
+            sage: code_input = BytesIO()
+            sage: n = code_input.write(b'>>planar_code<<')
             sage: for c in [4,2,3,4,0,1,4,3,0,1,2,4,0,1,3,2,0]:
-            ....:     _ = code_input.write('{:c}'.format(c))
-            sage: _ = code_input.seek(0)
+            ....:     n = code_input.write(bytes('{:c}'.format(c),'ascii'))
+            sage: n = code_input.seek(0)
             sage: gen = graphs._read_planar_code(code_input)
-            sage: l = list(gen)
-            sage: l
+            sage: l = list(gen); l
             [Graph on 4 vertices]
             sage: l[0].is_isomorphic(graphs.CompleteGraph(4))
             True
@@ -1533,10 +1532,31 @@ class GraphGenerators:
              2: [1, 4, 3],
              3: [1, 2, 4],
              4: [1, 3, 2]}
+
+        TESTS::
+
+            sage: from io import StringIO
+            sage: code_input = StringIO()
+            sage: n = code_input.write('>>planar_code<<')
+            sage: list(graphs._read_planar_code(code_input))
+            Traceback (most recent call last):
+            ...
+            TypeError: not a binary file
+
+            sage: from io import BytesIO
+            sage: code_input = BytesIO()
+            sage: n = code_input.write(b'>>wrong header<<')
+            sage: list(graphs._read_planar_code(code_input))
+            Traceback (most recent call last):
+            ...
+            TypeError: file has no valid planar code header
         """
         # start of code to read planar code
         header = code_input.read(15)
-        assert header == '>>planar_code<<', 'Not a valid planar code header'
+        if not isinstance(header, bytes):
+            raise TypeError('not a binary file')
+        if header != b'>>planar_code<<':
+            raise TypeError('file has no valid planar code header')
 
         # read graph per graph
         while True:
