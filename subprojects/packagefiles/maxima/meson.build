@@ -23,7 +23,7 @@ proj = mod.add_project('configure',
   configure_options : [
                         '--enable-ecl',
                         '--with-ecl=' + ecl,
-                        #'--disable-build-docs',
+                        '--disable-build-docs',
                         # Maxima configure checks for git and, if it finds it, uses
                         # versions information from the repo. See #15529. We disable this.
                         'git_found=false',
