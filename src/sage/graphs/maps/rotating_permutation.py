@@ -42,6 +42,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: RotatingPermutation([(1,3,4),(7,8,10),(9,6)])
             [3, 2, 4, 1, 5, 9, 8, 10, 6, 7]
 
@@ -163,6 +164,7 @@ class RotatingPermutation(MapPermutation):
             The size of the permutation
 
         EXAMPLES::
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.size()
             8
@@ -183,6 +185,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4),(7,8,10),(9,6)])
             sage: rperm
             [3, 2, 4, 1, 5, 9, 8, 10, 6, 7]
@@ -214,6 +217,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4),(7,8,10),(9,6)])
             sage: rperm
             [3, 2, 4, 1, 5, 9, 8, 10, 6, 7]
@@ -274,6 +278,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4),(7,8,10),(9,6)])
             sage: rperm.inverseApply(10)
             8
@@ -301,6 +306,8 @@ class RotatingPermutation(MapPermutation):
             A boolean indicating if two indexes in listIndexes are in the same cycle
 
         EXAMPLES::
+
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4),(7,8,10),(9,6)])
             sage: rperm.checkTwoInTheSameCycle([1,7,9])
             False
@@ -320,6 +327,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4),(7,8,10),(9,6)])
             sage: rperm
             [3, 2, 4, 1, 5, 9, 8, 10, 6, 7]
@@ -346,6 +354,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4),(2,7,11,8,10),(9,6)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2, 7, 11, 8, 10), (5,), (6, 9)]
@@ -380,6 +389,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4),(2,7,11,8,10),(9,6)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2, 7, 11, 8, 10), (5,), (6, 9)]
@@ -457,6 +467,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4),(2,7,11,8,10),(9,6)])
             sage: rperm
             [3, 7, 4, 1, 5, 9, 11, 10, 6, 2, 8]
@@ -508,6 +519,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2,)]
@@ -533,6 +545,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4)])
             sage: rperm.addCycles([(5,6)])
             sage: rperm
@@ -569,6 +582,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES:: 
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4)])
             sage: try :
             ....:     rperm.isValidIndex(100)
@@ -592,6 +606,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2,)]
@@ -632,6 +647,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2,)]
@@ -659,6 +675,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
@@ -736,6 +753,8 @@ class RotatingPermutation(MapPermutation):
             The node associated to index
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.getNode(3) != rperm.getNode(4)
             True
@@ -765,6 +784,8 @@ class RotatingPermutation(MapPermutation):
             m >= 0 integer
 
         EXAMPLES:: 
+            
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm
             [3, 5, 4, 1, 7, 6, 8, 2]
@@ -790,6 +811,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
@@ -831,6 +853,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
@@ -863,6 +886,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
@@ -882,6 +906,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
@@ -905,6 +930,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
@@ -930,6 +956,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm
             [3, 5, 4, 1, 7, 6, 8, 2]
@@ -946,6 +973,8 @@ class RotatingPermutation(MapPermutation):
             Return a string representation of self in a more pretty form
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_repr()
             'Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]'
@@ -958,6 +987,8 @@ class RotatingPermutation(MapPermutation):
         Print self in a more pretty form
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()
             Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)] 
@@ -974,6 +1005,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.to_cycles()
             [(1, 3, 4), (2, 5, 7, 8), (6,)]
@@ -1006,6 +1038,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.inverse()*rperm
             [1, 2, 3, 4, 5, 6, 7, 8]
@@ -1028,6 +1061,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.apply(7)
             8 
@@ -1051,6 +1085,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.number_of_fixed_points()
             1
@@ -1070,6 +1105,7 @@ class RotatingPermutation(MapPermutation):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm == rperm
             True 
