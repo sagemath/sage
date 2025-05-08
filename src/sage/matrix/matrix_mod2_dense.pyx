@@ -118,7 +118,7 @@ from sage.misc.verbose import verbose, get_verbose
 VectorSpace = None
 from sage.modules.vector_mod2_dense cimport Vector_mod2_dense
 from sage.structure.richcmp cimport rich_to_bool
-from sage.cpython.string cimport bytes_to_str, char_to_str, str_to_bytes
+from sage.cpython.string cimport char_to_str
 from sage.cpython.string import FS_ENCODING
 
 cdef extern from "gd.h":
@@ -480,17 +480,17 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
                 div_s[2*i] = c'+'
                 last_i = i
 
-        for i from 0 <= i < self._nrows:
+        for i in range(self._nrows):
             row_s = row = b'[' + empty_row + b']'
-            for j from 0 <= j < self._ncols:
-                row_s[1+2*j] = c'0' + mzd_read_bit(self._entries,i,j)
+            for j in range(self._ncols):
+                row_s[1+2*j] = c'0' + mzd_read_bit(self._entries, i, j)
             s.append(row)
 
         if self._subdivisions is not None:
             for i in reversed(row_div):
                 s.insert(i, row_divider)
 
-        return bytes_to_str(b"\n".join(s))
+        return (b"\n".join(s)).decode()
 
     def row(self, Py_ssize_t i, from_list=False):
         """
@@ -2572,7 +2572,7 @@ def from_png(filename):
     fn.close()
 
     if type(filename) is not bytes:
-        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
+        filename = filename.encode(FS_ENCODING, 'surrogateescape')
 
     cdef FILE *f = fopen(filename, "rb")
     sig_on()
@@ -2619,7 +2619,7 @@ def to_png(Matrix_mod2_dense A, filename):
     fn.close()
 
     if type(filename) is not bytes:
-        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
+        filename = filename.encode(FS_ENCODING, 'surrogateescape')
 
     cdef gdImagePtr im = gdImageCreate(c, r)
     cdef FILE * out = fopen(filename, "wb")
