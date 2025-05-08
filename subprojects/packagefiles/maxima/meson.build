@@ -7,7 +7,9 @@ mod = import('unstable-external_project')
 cc = meson.get_compiler('c')
 ecl = find_program('ecl', required: false)
 dependencies = []
-if not ecl.found()
+if ecl.found()
+  ecl = ecl.full_path()
+else
   ecl_proj = subproject('ecl')
   ecl = ecl_proj.get_variable('ecl_dep').get_variable('ecl_bin')
   # It is not possible to have an external project directly depend on another external project (actually on an InternalDependency)
@@ -20,7 +22,7 @@ endif
 proj = mod.add_project('configure',
   configure_options : [
                         '--enable-ecl',
-                        '--with-ecl=' + ecl.full_path(),
+                        '--with-ecl=' + ecl,
                         #'--disable-build-docs',
                         # Maxima configure checks for git and, if it finds it, uses
                         # versions information from the repo. See #15529. We disable this.
