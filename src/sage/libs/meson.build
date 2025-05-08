@@ -19,9 +19,7 @@ if not maxima_present
   # Use the freshly built maxima
   conf_data.set('SAGE_MAXIMA_FAS', maxima.get_variable(internal: 'MAXIMA_FAS'))
 else
-  maxima = declare_dependency(
-    'maxima',
-  )
+  maxima = declare_dependency()
   # ecl does not have any problems with Maxima, so nothing needs to be set here:
   conf_data.set('SAGE_MAXIMA_FAS', '')
 endif
