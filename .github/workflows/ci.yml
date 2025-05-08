@@ -81,11 +81,19 @@ jobs:
         run: |
           uv run ./sage -t --all -p4 || true
 
+      - name: Clear container name
+        id: clear-container-name
+        run: |
+          # Output the container name, but with ":" replaced by "-"
+          # This is needed to avoid issues with the upload-artifact action
+          CONTAINER_NAME=$(echo "${{ matrix.container }}" | tr ':' '-')
+          echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_OUTPUT
+
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
         if: failure() || success()
         with:
-          name: ${{ matrix.container }}-log
+          name: ${{ steps.clear-container-name.outputs.CONTAINER_NAME }}-log
           path: |
             build/cp313/meson-logs/
             build/cp313/meson-info/
