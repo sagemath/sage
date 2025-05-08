@@ -3621,7 +3621,7 @@ def CRT_list(values, moduli=None):
         if not values:
             return ZZ.zero()
         if len(values) == 1:
-            return moduli[0].parent()(values[0])
+            return parent(moduli[0])(values[0])
 
     # The result is computed using a binary tree. In typical cases,
     # this scales much better than folding the list from one side.
