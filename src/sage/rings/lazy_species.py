@@ -82,7 +82,7 @@ from sage.categories.tensor import tensor
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.subset import subsets
 from sage.combinat.sf.sf import SymmetricFunctions
-from sage.combinat.partition import Partitions
+from sage.combinat.partition import Partitions, Partition
 from sage.combinat.permutation import CyclicPermutations
 from sage.combinat.set_partition import SetPartitions
 from sage.graphs.graph_generators import graphs
@@ -693,6 +693,58 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
     compositional_inverse = revert
 
 
+class LazySpeciesElement_generating_series_mixin:
+    r"""
+    A lazy species element whose generating series are obtained
+    by specializing the cycle index series rather than the molecular
+    expansion.
+    """
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of ``self``.
+
+        The series is obtained by summing the coefficients of the
+        cycle index series.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L.<X> = LazySpecies(QQ)
+            sage: L.Graphs().isotype_generating_series().truncate(8)
+            1 + X + 2*X^2 + 4*X^3 + 11*X^4 + 34*X^5 + 156*X^6 + 1044*X^7
+
+        TESTS::
+
+            sage: L.Graphs().isotype_generating_series()[20]
+            645490122795799841856164638490742749440
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        cis = self.cycle_index_series()
+        return L(lambda n: sum(cis[n].coefficients()))
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        The series is obtained from the coefficient of `p_{1^n}` of the
+        cycle index series.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L.<X> = LazySpecies(QQ)
+            sage: L.Graphs().generating_series().truncate(7)
+            1 + X + X^2 + 4/3*X^3 + 8/3*X^4 + 128/15*X^5 + 2048/45*X^6
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        cis = self.cycle_index_series()
+        return L(lambda n: cis[n].coefficient(Partition([1]*n)))
+
+
 class SumSpeciesElement(LazySpeciesElement):
     def __init__(self, left, right):
         r"""
@@ -816,7 +868,8 @@ class CompositionSpeciesElement(LazySpeciesElement):
                     lF[M.grade()] += L._from_dict({M: c})
                 for mc, F in lF.items():
                     for degrees in weighted_vector_compositions(mc, n, weight_exp):
-                        args_flat = [list(a[0:len(degrees[j])]) for j, a in enumerate(args_flat1)]
+                        args_flat = [list(a[0:len(degrees[j])])
+                                     for j, a in enumerate(args_flat1)]
                         multiplicities = [c for alpha, g_flat in zip(degrees, args_flat)
                                           for d, (_, c) in zip(alpha, g_flat) if d]
                         molecules = [M for alpha, g_flat in zip(degrees, args_flat)
@@ -1023,8 +1076,7 @@ class CycleSpecies(LazySpeciesElement):
         yield from CyclicPermutations(labels[0])
 
 
-class GraphSpecies(LazySpeciesElement):
-
+class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElement):
     def __init__(self, parent):
         r"""
         Initialize the species of simple graphs.
@@ -1053,24 +1105,6 @@ class GraphSpecies(LazySpeciesElement):
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
         return L(lambda n: 2 ** binomial(n, 2) / factorial(n))
-
-    def isotype_generating_series(self):
-        r"""
-        Return the isotype generating series of the species of
-        simple graphs.
-
-        EXAMPLES::
-
-            sage: from sage.rings.lazy_species import LazySpecies
-            sage: L.<X> = LazySpecies(QQ)
-            sage: L.Graphs().isotype_generating_series().truncate(8)
-            1 + X + 2*X^2 + 4*X^3 + 11*X^4 + 34*X^5 + 156*X^6 + 1044*X^7
-        """
-        P = self.parent()
-        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
-                                P._laurent_poly_ring._indices._indices.variable_names())
-        cis = self.cycle_index_series()
-        return L(lambda n: sum(cis[n].coefficients()))
 
     def cycle_index_series(self):
         r"""
