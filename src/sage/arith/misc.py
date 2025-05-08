@@ -3600,6 +3600,13 @@ def CRT_list(values, moduli=None):
         [1, 2, 3]
         sage: ms
         [5, 7, 9]
+    
+    Tests for call with length 1 lists::
+
+        sage: x = CRT_list([1], [2]); x
+        1
+        sage: x = CRT_list([int(1)], [int(2)]); x
+        1
     """
     if not isinstance(values, list) or (moduli is not None and not isinstance(moduli, list)):
         raise ValueError("arguments to CRT_list should be lists")
