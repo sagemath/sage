@@ -30,6 +30,7 @@ def transitiveCouplePermutation(sigma, alpha):
     EXAMPLES::
         sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
         sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+        sage: from sage.graphs.maps.labelled_map import transitiveCouplePermutation
         sage: transitiveCouplePermutation(sigma,alpha)
         True
 
@@ -227,7 +228,7 @@ class LabelledMap:
 
             sage: sigma = Permutation([1, 3, 2, 5, 4, 6])
             sage: alpha = Permutation([(1, 2), (3, 4), (5, 6)])
-            sage: LabelledMap(sigma, alpha)._build_from_permutations(sigma,alpha)
+            sage: LabelledMap(sigma, alpha)._build_from_permutations(sigma, alpha, False)
 
         .. NOTE::
 
@@ -819,13 +820,11 @@ class LabelledMap:
             sage: alpha = Permutation([(1, 2), (3, 4), (5, 6)])
             sage: LabelledMap(sigma, alpha).genus()
             0
-            sage: adj = [(5, 4, 2), (1, 3, 6), (4, 7, 2), (8, 3, 1),\
-            (8, 1, 6), (5, 2, 7), (3, 8, 6), (7, 4, 5)]
+            sage: adj = [(5, 4, 2), (1, 3, 6), (4, 7, 2), (8, 3, 1), (8, 1, 6), (5, 2, 7), (3, 8, 6), (7, 4, 5)]
             sage: LabelledMap(adj=adj).genus()
             0
 
-            sage: adj = [(4, 5, 6), (4, 5, 6), (4, 5, 6), (1, 2, 3),\
-            (1, 2, 3), (1, 2, 3)]
+            sage: adj = [(4, 5, 6), (4, 5, 6), (4, 5, 6), (1, 2, 3), (1, 2, 3), (1, 2, 3)]
             sage: LabelledMap(adj=adj).genus()
             1
 
@@ -1160,6 +1159,7 @@ class LabelledMap:
 
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.quadrangulation().inverseQuadrangulation() == m
             True  
 
@@ -1304,7 +1304,7 @@ class LabelledMap:
             sage: tau = Permutation([(1, 3)])
             sage: Map = LabelledMap(sigma, alpha)
             sage: relabelMap = Map.relabel(tau)
-            sage: Map.getRootedMapcorrespondence(relabelMap, 2)
+            sage: Map.getRootedMapCorrespondance(relabelMap, 2)
             [3, 2, 1, 4, 5, 6]
 
         .. NOTE::
@@ -1323,7 +1323,7 @@ class LabelledMap:
         sigmaOther = otherMap.sigma
         alphaOther = otherMap.alpha
 
-        tList[rootDemiEdge - 1] = rootDemiEdge
+        tList[rootDemiEdge - 1] = int(rootDemiEdge)
         p = [rootDemiEdge]
         seen[rootDemiEdge - 1] = True
 
@@ -1331,11 +1331,11 @@ class LabelledMap:
             u = p.pop()
             if not seen[alpha(u) - 1]:
                 seen[alpha(u) - 1] = True
-                tList[alpha(u) - 1] = alphaOther(tList[u - 1])
+                tList[alpha(u) - 1] = int(alphaOther(tList[u - 1]))
                 p.append(alpha(u))
             if not seen[sigma(u) - 1]:
                 seen[sigma(u) - 1] = True
-                tList[sigma(u) - 1] = sigmaOther(tList[u - 1])
+                tList[sigma(u) - 1] = int(sigmaOther(tList[u - 1]))
                 p.append(sigma(u))
 
         try:
@@ -1688,7 +1688,6 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.canonicalRepresentant().pretty_print()
-
                         Alpha: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 10), (11, 13), (12, 15), (14, 17), (16, 18), (19, 20)]
                         Sigma (Node): [(1, 2, 4), (3,), (5,), (6, 7, 8), (9, 11, 12, 14), (10,), (13, 16), (15,), (17, 19), (18,), (20,)]
                         Phi (Face): [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]            
@@ -1975,15 +1974,13 @@ class LabelledMap:
             sage: sigma = Permutation( [(1,6),(2,3),(4,5)])
             sage: alpha = Permutation( [(1,2),(3,4),(5,6)])
             sage: tri = LabelledMap(sigma,alpha)
-            sage: bigQuad = tri.derivedMap().derivedMap(
-            ).derivedMap().derivedMap().quadrangulation()
+            sage: bigQuad = tri.derivedMap().derivedMap().derivedMap().derivedMap().quadrangulation()
             sage: bigQuad.numberOfEdges()
             1536
             sage: markedDemiEdge = 750
             sage: sct,labelled = bigQuad.schaefferTree(markedDemiEdge = markedDemiEdge)
             sage: quadA,quadB,markedDemiEdgeA,markedDemiEdgeB = sct.inverseShaefferTree(labelled)
-            sage: quadA.schaefferTree(markedDemiEdge = markedDemiEdgeA)[0] == sct.canonicalRepresentant(
-            ) and quadB.schaefferTree(markedDemiEdge = markedDemiEdgeB)[0] == sct.canonicalRepresentant()
+            sage: quadA.schaefferTree(markedDemiEdge = markedDemiEdgeA)[0] == sct.canonicalRepresentant() and quadB.schaefferTree(markedDemiEdge = markedDemiEdgeB)[0] == sct.canonicalRepresentant()
             True
 
         .. NOTE::
@@ -2355,6 +2352,7 @@ class LabelledMap:
         EXAMPLES::
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: len(m.getListTopologicalDemiEdge())
             20
 
@@ -2403,6 +2401,7 @@ class LabelledMap:
         EXAMPLES::
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: len(m.XList())
             20
 
@@ -2495,7 +2494,6 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.pretty_print()
-
                         Alpha: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 10), (11, 13), (12, 15), (14, 17), (16, 18), (19, 20)]
                         Sigma (Node): [(1, 2, 4), (3,), (5,), (6, 7, 8), (9, 11, 12, 14), (10,), (13, 16), (15,), (17, 19), (18,), (20,)]
                         Phi (Face): [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
@@ -2602,10 +2600,10 @@ class LabelledMap:
         """
 
         lst = []
-        lst.append(demiEdge)
+        lst.append(int(demiEdge))
         curDemiEdge = self.sigma(demiEdge)
         while curDemiEdge != demiEdge:
-            lst.append(curDemiEdge)
+            lst.append(int(curDemiEdge))
             curDemiEdge = self.sigma(curDemiEdge)
         return lst
 
@@ -2633,10 +2631,10 @@ class LabelledMap:
         """
 
         lst = []
-        lst.append(demiEdge)
+        lst.append(int(demiEdge))
         curDemiEdge = self.phi(demiEdge)
         while curDemiEdge != demiEdge:
-            lst.append(curDemiEdge)
+            lst.append(int(curDemiEdge))
             curDemiEdge = self.phi(curDemiEdge)
         return lst
 
@@ -2710,6 +2708,7 @@ class LabelledMap:
             sage: m.checkTwoInTheSameFace(lst)
             True
             sage: m.checkTwoInTheSameNode(lst)
+            False
 
         .. NOTE::
 
@@ -2738,6 +2737,7 @@ class LabelledMap:
             sage: m.checkTwoInTheSameFace(lst)
             True
             sage: m.checkTwoInTheSameNode(lst)
+            False
 
         .. NOTE::
 

@@ -74,7 +74,7 @@ class PermutationUtilsAbstractor:
         .. NOTE::
             O(1)
         """
-        return self._cycleIndexes[i] == self._cycleIndexes[j]
+        return bool(self._cycleIndexes[i] == self._cycleIndexes[j])
 
     def numberOfCycles(self):
         """
