@@ -311,7 +311,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             sage: mm.faces()
             [(1, 22, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6),
              (2, 5, 4, 7, 21, 3)]
-            sage: mm.deleteEdge(22)
+            sage: mm.deleteEdge(22, False)
             sage: mm.faces()
             [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
 

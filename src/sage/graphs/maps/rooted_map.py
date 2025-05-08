@@ -202,6 +202,7 @@ class RootedMap(LabelledMap):
 
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = RootedMap(alpha = alpha,sigma=sigma)
             sage: m.quadrangulation().faces()
             [(1, 6, 16, 20),
              (2, 9, 15, 3),
@@ -259,7 +260,6 @@ class RootedMap(LabelledMap):
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = RootedMap(alpha = alpha,sigma=sigma)
             sage: m.dual().pretty_print()
-
                         Alpha: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 11), (10, 13), (12, 14), (15, 16), (17, 19), (18, 20)]
                         Sigma (Node): [(1, 2, 4, 6, 8, 10, 12, 14, 13, 15, 16, 17, 18, 20, 19, 11, 5, 7, 9, 3)]
                         Phi (Face): [(1,), (2, 7, 3), (4, 8, 5), (6,), (9,), (10, 15, 17, 11), (12, 13), (14,), (16,), (18, 19), (20,)]
@@ -282,6 +282,7 @@ class RootedMap(LabelledMap):
 
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = RootedMap(alpha = alpha,sigma=sigma)
             sage: m
             Rooted map | Sigma : [2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20] Alpha : [3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19]
 
