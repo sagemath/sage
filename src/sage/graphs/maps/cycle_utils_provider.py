@@ -8,10 +8,16 @@ class CycleUtilsProvider:
     """
 
     def __init__(self, cycles):
-        """
+        r"""
+
         Init the CycleUtilsProvider
 
-        EXAMPLES:
+        INPUT:
+            cycles a list of cycles, each cycle is a list of index
+
+        EXAMPLES::
+
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
 
         .. NOTE::
@@ -47,6 +53,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.numberInCycle(5)
             2
@@ -72,6 +79,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.sameCycle(5,6)
             False
@@ -100,6 +108,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.addAfter(1,33)
             sage: provider.getCycleList(1)
@@ -144,6 +153,8 @@ class CycleUtilsProvider:
             A boolean indicating if there are two indexes in listIndexes in the same cycle
 
         EXAMPLES::
+
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.checkTwoInTheSameCycle([33,1,7])
             False
@@ -183,6 +194,8 @@ class CycleUtilsProvider:
             index,otherIndex , otherIndex != index and otherIndex is a fixed point
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.addBefore(1,33)
             sage: provider.getCycleList(1)
@@ -218,6 +231,8 @@ class CycleUtilsProvider:
         this temporary node , that it is deleted from node map or isn't anymore a fixed point
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider._safeIndex(12) 
 
@@ -238,16 +253,20 @@ class CycleUtilsProvider:
         """
         This will only swap the label of the node associated to index and otherIndex while keeping
         a relabelling of some sort
-        INPUt:
+
+        INPUT:
             index,otherIndex
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getCycleList(7)
             [7, 8, 9, 11]
             sage: provider.swapIndex(9,8)
             sage: provider.getCycleList(7)
             [7, 9, 8, 11]
+
         .. NOTE::
             O(log(n))
         """
@@ -281,6 +300,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getCycleList(7)
             [7, 8, 9, 11] 
@@ -305,6 +325,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getCycleList(7)
             [7, 8, 9, 11]
@@ -344,6 +365,8 @@ class CycleUtilsProvider:
             A boolean indicating if index is a fixed point or not 
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getCycleList(7)
             [7, 8, 9, 11]
@@ -374,6 +397,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getValue(11)
             3
@@ -402,6 +426,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getSplayTree(1) == provider.getSplayTree(5)
             True 
@@ -426,6 +451,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getSplayTree(1).min() == provider.getValue(5)
             False
@@ -461,6 +487,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getSplayTree(7).max() == provider.getValue(7)
             False
@@ -494,6 +521,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(4242,1,5,42),(7,8,9,11)])
             sage: provider.merge(1,8)
             sage: provider.getCycleList(1)
@@ -529,6 +557,7 @@ class CycleUtilsProvider:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(4242,1,5,424242,42),(7,8,9,11)])
             sage: provider.cut(5,424242)
             sage: provider.getCycleList(1)
