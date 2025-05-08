@@ -106,7 +106,18 @@ if not gd.found()
 endif
 # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
 m = cc.find_library('m', required: false)
-m4ri = dependency('m4ri', version: '>=20140914')
+m4ri = dependency('m4ri', version: '>=20250128', required: false)
+if not m4ri.found()
+  # Older versions of m4ri are declaring "@SIMD_CFLAGS@" as compile_args
+  # which breaks the build. So we exclude these compile args.
+  # https://github.com/malb/m4ri/commit/3197be5f7d3c67e8f13e32516557f35cbf4ff6ce
+  m4ri = dependency('m4ri', version: '>=20140914').partial_dependency(
+    includes: true,
+    link_args: true,
+    links: true,
+    sources: true
+  )
+endif
 m4rie = dependency('m4rie', required: false)
 if not m4rie.found()
   # For some reason, m4rie is not found via pkg-config on some systems (eg Conda)
