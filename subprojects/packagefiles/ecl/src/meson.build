@@ -1,4 +1,4 @@
-rpath = meson.current_build_dir() + '/dist/usr/local/lib64'
+libpath = meson.current_build_dir() + '/dist/usr/local/lib64'
 ecldir = meson.current_build_dir() + '/dist/usr/local/lib64/ecl-24.5.10'
 
 proj = mod.add_project('configure',
@@ -11,7 +11,7 @@ proj = mod.add_project('configure',
                         '--with-defsystem',
                       ],
   env: {
-    'LDFLAGS': '-Wl,-rpath,' + rpath,
+    'LDFLAGS': '-Wl,-rpath,' + libpath + ' -L' + libpath,
     # Workaround for https://gitlab.com/embeddable-common-lisp/ecl/-/issues/779
     # Need to tell ECL where to find the fas files after installation
     'CFLAGS': '-DECLDIR=\"' + ecldir + '\"',
@@ -21,7 +21,7 @@ proj = mod.add_project('configure',
 ecl_dep = proj.dependency('ecl')
 # Ugly workaround to include the rpath in the dependency
 # https://github.com/mesonbuild/meson/issues/12970
-ecl_rpath_dep = declare_dependency(link_args: '-Wl,-rpath,' + rpath)
+ecl_rpath_dep = declare_dependency(link_args: '-Wl,-rpath,' + libpath)
 ecl_dep = declare_dependency(
   dependencies : [ecl_dep, ecl_rpath_dep],
   variables: {
