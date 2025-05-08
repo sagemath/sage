@@ -397,6 +397,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.show()
+            ...
 
         .. NOTE::
             The order of the edges may not be displayed correctly
@@ -407,6 +408,10 @@ class LabelledMap:
             version of networkx it is possible that label between demi 
             edges are reversed on the same edge are reversed, please
             use the latest version.
+
+            In the example, we use "..." to indicate that the output
+            is a plot and not a string. It might return some warnings
+            depending on the environment, but the plot should be displayed
 
         """
         vertices = self.sigma.to_cycles()
