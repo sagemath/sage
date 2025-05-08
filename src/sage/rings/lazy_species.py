@@ -259,7 +259,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                                 P._laurent_poly_ring._indices._indices.variable_names())
         if P._arity == 1:
             def coefficient(n):
-                return sum(c for M, c in self[n].monomial_coefficients().items())
+                return sum(self[n].coefficients())
         else:
             def coefficient(n):
                 return sum(c * P.base_ring().prod(v ** d for v, d in zip(L.gens(), M.grade()))
