@@ -5,11 +5,7 @@ if not ecl.found()
   ecl_proj = subproject('ecl')
   ecl = ecl_proj.get_variable('ecl_dep')
 endif
-braiding = dependency('libbraiding', required: false)
-if not braiding.found()
-  # Fallback since pkg-config support was only added in v1.3.1
-  braiding = cc.find_library('braiding')
-endif
+braiding = dependency('libbraiding', version: '>= 1.3.1', required: false, disabler: true)
 gc = dependency(['bdw-gc-threaded', 'bdw-gc'], version: '>=7.6.4')
 homfly = cc.find_library(
   'homfly',
