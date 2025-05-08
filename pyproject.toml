@@ -31,7 +31,6 @@ dependencies = [
     'cysignals >=1.11.2, != 1.12.0',
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
-    'lrcalc ~=2.1',
     'memory_allocator',
     'numpy >=1.25',
     # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
@@ -82,6 +81,9 @@ requires-python = ">=3.11, <3.14"
 [project.optional-dependencies]
 R = [
     'rpy2 >=3.3',
+]
+extra = [
+  'lrcalc ~=2.1',
 ]
 
 [project.readme]
