@@ -1,0 +1,56 @@
+A subset of https://github.com/linbox-team/linbox/pull/323
+
+
+diff --git a/linbox/matrix/sparsematrix/sparse-tpl-matrix-omp.h b/linbox/matrix/sparsematrix/sparse-tpl-matrix-omp.h
+index feca4cf35d..e179a75aa1 100644
+--- a/linbox/matrix/sparsematrix/sparse-tpl-matrix-omp.h
++++ b/linbox/matrix/sparsematrix/sparse-tpl-matrix-omp.h
+@@ -318,9 +318,9 @@ class SparseMatrix<Field_, SparseMatrixFormat::TPL_omp> : public BlackboxInterfa
+ 			typedef typename selfvec::const_iterator selfiter;
+ 			otheriter vp_p; selfiter v_p;
+ 
+-			Ap.data_.resize(A.data.size());
++			Ap.data_.resize(A.data_.size());
+ 			for (v_p = A.data_.begin(), vp_p = Ap.data_.begin();
+-			     v_p != A.data.end(); ++ v_p, ++ vp_p)
++			     v_p != A.data_.end(); ++ v_p, ++ vp_p)
+ 				hom.image (vp_p->elt, v_p->elt);
+ 		}
+ 	};
+
+
+diff --git a/linbox/blackbox/block-hankel.h b/linbox/blackbox/block-hankel.h
+index a4bc7bfc9a..c8e27562c5 100644
+--- a/linbox/blackbox/block-hankel.h
++++ b/linbox/blackbox/block-hankel.h
+@@ -345,8 +345,8 @@ namespace LinBox
+ 		template<class Vector1, class Vector2>
+ 		Vector1& apply(Vector1 &x, const Vector2 &y) const
+ 		{
+-			linbox_check(this->_coldim == y.size());
+-			linbox_check(this->_rowdim == x.size());
++			linbox_check(this->coldim() == y.size());
++			linbox_check(this->rowdim() == x.size());
+ 			BlasMatrixDomain<Field> BMD(field());
+ #ifdef BHANKEL_TIMER
+ 			_chrono.clear();
+
+diff --git a/linbox/ring/polynomial-local-x.h b/linbox/ring/polynomial-local-x.h
+index b444ca198f..968714fc77 100644
+--- a/linbox/ring/polynomial-local-x.h
++++ b/linbox/ring/polynomial-local-x.h
+@@ -61,14 +61,14 @@ namespace LinBox
+ 			zero({0, _F.zero}), one({0, _F.one}), mOne({0, _F.mOne}),
+ 			X({1, _F.one}), exp(exponent)
+ 			{}
+			
+ 		PolynomialLocalX(const PolynomialLocalX &P) : _F(P._F), zero(P.zero),
+ 			one(P.one), mOne(P.mOne), X(P.X), exp(P.exp) {}
+			
+-		PolynomialLocalX(const PolynomialLocalX &P, size_t exponent) : _F(P.F),
++		PolynomialLocalX(const PolynomialLocalX &P, size_t exponent) : _F(P._F),
+ 			zero(P.zero), one(P.one), mOne(P.mOne), X(P.X), exp(exponent) {}
+			
+ 		void setExponent(size_t exponent) {
+ 			exp = exponent;
+ 		}
