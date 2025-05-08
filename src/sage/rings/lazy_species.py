@@ -65,7 +65,7 @@ EXAMPLES::
         1 + X + E_2(X^2) + (P_5+5*X*E_2(X^2))
 
 """
-
+from sage.functions.other import binomial, factorial
 from sage.misc.lazy_list import lazy_list
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1036,6 +1036,74 @@ class GraphSpecies(LazySpeciesElement):
     def isotypes(self, labels):
         if labels in ZZ:
             yield from graphs(labels)
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of the
+        species of simple graphs.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L.<X> = LazySpecies(QQ)
+            sage: L.Graphs().generating_series().truncate(7)
+            1 + X + X^2 + 4/3*X^3 + 8/3*X^4 + 128/15*X^5 + 2048/45*X^6
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        return L(lambda n: 2 ** binomial(n, 2) / factorial(n))
+
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of the species of
+        simple graphs.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L.<X> = LazySpecies(QQ)
+            sage: L.Graphs().isotype_generating_series().truncate(8)
+            1 + X + 2*X^2 + 4*X^3 + 11*X^4 + 34*X^5 + 156*X^6 + 1044*X^7
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        cis = self.cycle_index_series()
+        return L(lambda n: sum(cis[n].coefficients()))
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series of the species of simple graphs.
+
+        The cycle index series is computed using Proposition 2.2.7 in
+        [BLL1998]_.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L.<X> = LazySpecies(QQ)
+            sage: L.Graphs().cycle_index_series().truncate(4)
+            p[] + p[1] + (p[1,1]+p[2]) + (4/3*p[1,1,1]+2*p[2,1]+2/3*p[3])
+        """
+        P = self.parent()
+        p = SymmetricFunctions(P.base_ring().fraction_field()).p()
+        L = LazySymmetricFunctions(p)
+
+        def a(sigma):
+            rho = sigma.to_exp()
+            res1 = ZZ.sum(ZZ(i+1)._gcd(ZZ(j+1)) * rho[i] * rho[j]
+                          for i in range(len(rho))
+                          for j in range(i+1, len(rho)))
+            res2 = ZZ.sum(ZZ(i+1) * rho[i]**2
+                          for i in range(len(rho)))
+            res3 = ZZ.sum(rho[::2])
+            return ZZ(2) ** (res1 + (res2 - res3) / 2) / sigma.centralizer_size()
+
+        def coefficient(n):
+            return p._from_dict({sigma: a(sigma) for sigma in Partitions(n)})
+
+        return L(coefficient)
 
 
 class SetPartitionSpecies(LazySpeciesElement):
