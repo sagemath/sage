@@ -34,5 +34,6 @@ maxima_dep = declare_dependency(
   variables: {
     'MAXIMA_FAS': meson.current_build_dir() + '/build/src/binary-ecl/maxima.fas',
   },
+  dependencies: maxima_fas_dep
 )
-meson.override_dependency('maxima', maxima_fas_dep)
+meson.override_dependency('maxima', maxima_dep)
