@@ -31,7 +31,7 @@ proj = mod.add_project('configure',
   depends: dependencies,
 )
 
-maxima_fas_dep = proj.dependency('maxima')
+maxima_fas_dep = proj.dependency('maxima').partial_dependency(sources : true)
 maxima_dep = declare_dependency(
   variables: {
     'MAXIMA_FAS': meson.current_build_dir() + '/build/src/binary-ecl/maxima.fas',
