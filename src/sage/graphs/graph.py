@@ -9485,20 +9485,14 @@ class Graph(GenericGraph):
         plane.  The approach is to check that the graph does not contain any
         of the known forbidden minors.
 
-        INPUT:
-
-        - ``minor_kwargs`` -- Optional keyword arguments to be passed to
-          :meth:`~Graph.minor`
-
         OUTPUT:
 
-        If ``minor_map=False``, a boolean, whether this graph is projective
-        planar. If ``minor_map=True`` the output of
-        :meth:`~Graph.minor`,  ``None`` otherwise.
+        Returns True if the graph is projective planar, and a dictionary from
+        :meth:`~Graph.minor`:: indicating one of the forbidden graph minors.
 
         EXAMPLES:
 
-        #. The Peterson graph is a known projective planar graph::
+        The Peterson graph is a known projective planar graph::
 
             sage: P = graphs.PetersenGraph()
             sage: P.is_projective_planar()
