@@ -5022,6 +5022,9 @@ class Graph(GenericGraph):
         The diameter is defined to be the maximum distance between two vertices.
         It is infinite if the graph is not connected.
 
+        The default algorithm is ``'iFUB'`` [CGILM2010]_ for unweighted graphs
+        and ``'DHV'`` [Dragan2018]_ for weighted graphs.
+
         For more information and examples on how to use input variables, see
         :meth:`~GenericGraph.shortest_paths` and
         :meth:`~Graph.eccentricity`
@@ -5112,6 +5115,12 @@ class Graph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'iFUB' does not work on weighted graphs
+
+        Check that :issue:`40013` is fixed::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.diameter(by_weight=True)
+            2.0
         """
         if not self.order():
             raise ValueError("diameter is not defined for the empty graph")
@@ -5124,10 +5133,7 @@ class Graph(GenericGraph):
             weight_function = None
 
         if algorithm is None:
-            if by_weight:
-                algorithm = 'iFUB'
-            else:
-                algorithm = 'DHV'
+            algorithm = 'DHV' if by_weight else 'iFUB'
         elif algorithm == 'BFS':
             algorithm = 'standard'
 
