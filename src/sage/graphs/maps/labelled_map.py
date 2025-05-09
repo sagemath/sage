@@ -442,9 +442,9 @@ class LabelledMap:
             nonlocal alpha, sigma, corres, vertices, m
             if write_labels:
                 # Avoid writing half-edge numbers during the first step
-                edge_labels_middle[(corres[i], len(vertices) + 1)] = i
+                edge_labels_middle[(corres[i], len(vertices) + 1)] = alpha(i)
                 edge_labels_middle[(
-                    corres[alpha(i)], len(vertices) + 1)] = alpha(i)
+                    corres[alpha(i)], len(vertices) + 1)] = i
 
             # Add a new vertex v, and break down the edge whose half-edges
             # are i & alpha(i) into 2 edges (i, 2*m+1) and (2*m+2, alpha(i)).
