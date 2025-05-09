@@ -24,7 +24,7 @@ ecl_dep = proj.dependency('ecl')
 # https://github.com/mesonbuild/meson/issues/12970
 ecl_rpath_dep = declare_dependency(
   link_args: '-Wl,-rpath,' + libpath + ' -L' + libpath,
-  include_directories: [include_path],
+  include_directories: [include_directories('build')],
 )
 ecl_dep = declare_dependency(
   dependencies : [ecl_dep, ecl_rpath_dep],
