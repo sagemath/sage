@@ -761,7 +761,7 @@ class KnotInfoBase(Enum):
 
             There has been a major change to braid representatives for
             proper links since version 2021.10.1. The former braid
-            reresentatives can be obtained by the column
+            representatives can be obtained by the column
             ``braid_notation_old`` (see the final example below).
 
         EXAMPLES::
@@ -925,7 +925,7 @@ class KnotInfoBase(Enum):
         .. NOTE::
 
            KnotInfo's value for the unknot ``0_1`` is zero. This is not
-           compatible whith Sage's result (the value of the Alexander
+           compatible with Sage's result (the value of the Alexander
            polynomial at -1). Since this method is needed to identify
            Sage links we take the according value in that case.
 
