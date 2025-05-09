@@ -2341,6 +2341,15 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: h = f/g
             sage: h*g == f
             True
+
+        Ensure that :issue:`39801` is fixed::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: S.<u,v> = PolynomialRing(R)
+            sage: d = u - 1
+            sage: f = 1 / x * d
+            sage: f / d
+            1/x
         """
         cdef poly *p
         cdef MPolynomial_libsingular right = <MPolynomial_libsingular>right_ringelement
@@ -4197,6 +4206,15 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: Division of multivariate polynomials over non fields by non-monomials not implemented.
+
+        Ensure that :issue:`39801` is fixed::
+
+            sage: R.<a> = PolynomialRing(QQ)
+            sage: S.<x,y> = PolynomialRing(R)
+            sage: f = 1/a * (x^2 + y^2)
+            sage: g = x^2 + y^2
+            sage: f // g
+            1/a
         """
         cdef MPolynomialRing_libsingular parent = self._parent
         cdef MPolynomial_libsingular _right = <MPolynomial_libsingular>right
