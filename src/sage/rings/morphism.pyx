@@ -1145,6 +1145,8 @@ cdef class RingHomomorphism(RingMap):
         in the common prime subfield. This yields the unique
         element in the domain that maps to ``b`` in the codomain.
 
+        An error is raised when the domain and codomain are not isomorphic.
+
         INPUT:
 
         - ``b`` -- an element in the codomain of this morphism
