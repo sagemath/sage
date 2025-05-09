@@ -260,7 +260,7 @@ def is_cartesian_product(object g, bint certificate=False, bint relabeling=False
     cdef object g_int = g.relabel(perm=vertex_to_int, inplace=False)
 
     # Reorder the vertices of an edge
-    cdef tuple[int, int] r(int x, int y):
+    cdef tuple r(int x, int y):
         return (x, y) if x < y else (y, x)
 
     cdef int x, y, u, v
@@ -312,8 +312,8 @@ def is_cartesian_product(object g, bint certificate=False, bint relabeling=False
 
     # Edges uv and u'v' such that d(u,u')+d(v,v') != d(u,v')+d(v,u') are also
     # equivalent
-    cdef list[tuple[int, int]] g_int_edges = list(g_int.edges(labels=False, sort=False))
-    cdef dict[dict[int, int]] d = g_int.distance_all_pairs()
+    cdef list[tuple] g_int_edges = list(g_int.edges(labels=False, sort=False))
+    cdef dict[int, dict] d = g_int.distance_all_pairs()
     cdef int uu, vv, du, dv
 
     for i, (u, v) in enumerate(g_int_edges):
@@ -327,8 +327,8 @@ def is_cartesian_product(object g, bint certificate=False, bint relabeling=False
                 h.add_edge(r(u, v), r(uu, vv))
 
     # Gathering the connected components, relabeling the vertices on-the-fly
-    cdef list[list[tuple]] h_edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc]
-                                      for cc in h.connected_components(sort=False)]
+    cdef list[list] h_edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc]
+                               for cc in h.connected_components(sort=False)]
 
     # Only one connected component ?
     if len(h_edges) == 1:
