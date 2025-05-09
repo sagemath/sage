@@ -415,6 +415,7 @@ class LabelledMap:
 
         """
         vertices = self.sigma.to_cycles()
+        break_down_num = 3
 
         real_n_vertices = len(vertices)  # Remove multiedges and loops
         real_n_halfedges = self.m        # These half-edges should not be drawn
@@ -423,49 +424,70 @@ class LabelledMap:
         sigma = self.sigma
         m = self.m
 
+        should_show = ax is None
+        if ax is None:
+            ax = plt.figure().gca()
+
         def minmax(i, j):
             """Ensure edges always go from lowest to highest vertex id."""
             return min(i, j), max(i, j)
-
-        # Three dictionaries to store half-edge IDs
-        edge_labels_head = {}  # (i, j): half-edge from i to j
-        edge_labels_tail = {}  # (i, j): half-edge from j to i
-        edge_labels_middle = {}  # Used for loops
-
+        
         # Map half-edge i to its corresponding vertex
-        corres = [0] * (2 * self.m + 1)
+        corres = [0] * (2 * m + 1)
         for i in range(1, len(vertices) + 1):
             for k in vertices[i - 1]:
                 corres[k] = i
 
-        def break_down(i, write_labels):
+        # Three dictionaries to store half-edge IDs
+        edge_labels_head = {}  # (i, j): half-edge from i to j
+        edge_labels_tail = {}  # (i, j): half-edge from j to i
+        edge_labels_middle = {}  # Used for loops & multiedges
+
+        def rem(i):
+            "Remove every occurrence of the value i in edge_labels_head and edge_labels_tail."
+            for d in (edge_labels_head, edge_labels_tail):
+                for (key, val) in list(d.items()):
+                    if val == i:
+                        del d[key]
+
+        def break_down(i, break_down_num):
+            """Add a new vertex v, and break down the edge whose half-edges are i & alpha(i) into ``break_down_num``
+                edges (i, 2*m+1), (2*m+2, 2*m+3), .., (2*m+2*(break_down_num-1), alpha(i))."""
             nonlocal alpha, sigma, corres, vertices, m
-            if write_labels:
-                # Avoid writing half-edge numbers during the first step
-                edge_labels_middle[(corres[i], len(vertices) + 1)] = alpha(i)
-                edge_labels_middle[(
-                    corres[alpha(i)], len(vertices) + 1)] = i
 
-            # Add a new vertex v, and break down the edge whose half-edges
-            # are i & alpha(i) into 2 edges (i, 2*m+1) and (2*m+2, alpha(i)).
-            alpha *= MapPermutation([(alpha(i), 2 *
-                                    m + 1, i, 2 * m + 2)], trust=self._production)
-            sigma *= CustomSwap([(2 * m + 1, 2 * m + 2)])
+            # print ("breaking down", i)
 
-            corres.append(len(vertices) + 1)
-            corres.append(len(vertices) + 1)
-            vertices.append((2 * m + 1, 2 * m + 2))
-            m += 1
+            # edge_labels_middle[(corres[i] - 1, len(vertices))] = i# alpha(i)
+            # edge_labels_middle[(
+            #     corres[alpha(i)] - 1, len(vertices) + break_down_num - 2)] = alpha(i)#i
+            
+            edge_labels_middle[(corres[i] - 1, len(vertices) + break_down_num - 2)] = i# alpha(i)
+            edge_labels_middle[(
+                corres[alpha(i)] - 1, len(vertices))] = alpha(i)#i
+
+            rem(i)
+            rem(alpha(i))
+
+            alpha_cycles = [(alpha(i), 2 * m + 1, i, 2 * m + 2 * (break_down_num - 1))] + \
+                [(2 * k, 2 * k + 1)
+                 for k in range(m + 1, m + break_down_num - 1)]
+            # for some unknown reason, the typechecker assumes that Permutation needs two arguments
+            alpha *= Permutation(alpha_cycles) # type: ignore
+
+            sigma_cycles = [(2 * k - 1, 2 * k)
+                            for k in range(m + 1, m + break_down_num)]
+            sigma *= Permutation(sigma_cycles) # type: ignore
+
+            for k in range(break_down_num - 1):
+                corres.append(len(vertices) + 1)
+                corres.append(len(vertices) + 1)
+
+                vertices.append((2 * m + 1, 2 * m + 2))
+                m += 1
 
         def break_loop(i):
-            j = alpha(i)
-            vertex = len(vertices)
-
-            break_down(i, False)
-            break_down(2 * m, False)
-
-            edge_labels_middle[(corres[i], vertex + 1)] = i
-            edge_labels_middle[(corres[j], vertex + 2)] = j
+            "Breaks the loop starting from i."
+            break_down(i, max(break_down_num, 3))
 
         # For each loop a-a, add a new vertex v and replace the edge a-a
         # with two edges a-v, v-a.
@@ -475,22 +497,25 @@ class LabelledMap:
 
         # Handle each vertex and break down edges if needed.
         for v in range(1, len(vertices) + 1):
-            seen_vertices = set()
+            seen_vertices = {}
             for i in vertices[v - 1]:
                 if corres[alpha(i)] in seen_vertices:
-                    break_down(i, True)
+                    if seen_vertices[corres[alpha(i)]] != -1:
+                        duplicate_he = seen_vertices[corres[alpha(i)]]
+                        seen_vertices[corres[alpha(i)]] = -1
+                        break_down(duplicate_he, break_down_num)
+                    break_down(i, break_down_num)
                 else:
-                    seen_vertices.add(corres[alpha(i)])
-                    if (
-                        corres[i] <= real_n_vertices
-                        and corres[alpha(i)] <= real_n_vertices
-                    ):
-                        if corres[i] < corres[alpha(i)]:
+                    seen_vertices[corres[alpha(i)]] = i
+                    if corres[i] <= real_n_vertices and corres[alpha(
+                            i)] <= real_n_vertices:
+                        if corres[i] < corres[alpha(
+                                i)] and i not in edge_labels_middle.values():
                             edge_labels_head[minmax(
-                                corres[i], corres[alpha(i)])] = i
-                        else:
+                                corres[i] - 1, corres[alpha(i)] - 1)] = i
+                        elif corres[i] > corres[alpha(i)] and i not in edge_labels_middle.values():
                             edge_labels_tail[minmax(
-                                corres[i], corres[alpha(i)])] = i
+                                corres[i] - 1, corres[alpha(i)] - 1)] = i
 
         # Build the graph embedding
         embedding = {
@@ -565,32 +590,17 @@ class LabelledMap:
             )
 
             if show_halfedges:
-                nx.draw_networkx_edge_labels(
-                    G,
-                    layout,
-                    ax=ax,
-                    rotate=False,
-                    edge_labels=edge_labels_head,
-                    label_pos=0.3,
-                )
-                nx.draw_networkx_edge_labels(
-                    G,
-                    layout,
-                    ax=ax,
-                    rotate=False,
-                    edge_labels=edge_labels_tail,
-                    label_pos=0.7,
-                )
-                nx.draw_networkx_edge_labels(
-                    G,
-                    layout,
-                    ax=ax,
-                    rotate=False,
-                    edge_labels=edge_labels_middle,
-                    label_pos=0.5,
-                )
+                for (d, prop) in ((edge_labels_head, 0.7),
+                                (edge_labels_tail, 0.3), (edge_labels_middle, 0.5)):
+                    for (pair, txt) in d.items():
+                        x = layout[pair[0]+1][0] * prop + \
+                            layout[pair[1]+1][0] * (1 - prop)
+                        y = layout[pair[0]+1][1] * prop + \
+                            layout[pair[1]+1][1] * (1 - prop)
+                        ax.text(x, y, txt, ha="center", va="center", bbox={"facecolor": "white", "edgecolor": "white"})
 
-            if ax is None:
+
+            if should_show:
                 plt.show()
 
     def __repr__(self):

@@ -398,9 +398,13 @@ class DynamicPlanarMapShow:
 
             # print ("breaking down", i)
 
-            self.edge_labels_middle[(corres[i] - 1, len(vertices))] = alpha(i)
+            # self.edge_labels_middle[(corres[i] - 1, len(vertices))] = i# alpha(i)
+            # self.edge_labels_middle[(
+            #     corres[alpha(i)] - 1, len(vertices) + break_down_num - 2)] = alpha(i)#i
+            
+            self.edge_labels_middle[(corres[i] - 1, len(vertices) + break_down_num - 2)] = i# alpha(i)
             self.edge_labels_middle[(
-                corres[alpha(i)] - 1, len(vertices) + break_down_num - 2)] = i
+                corres[alpha(i)] - 1, len(vertices))] = alpha(i)#i
 
             rem(i)
             rem(alpha(i))
