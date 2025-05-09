@@ -76,7 +76,7 @@ jobs:
             jinja2
           uv pip install --no-build-isolation "cypari2 >=2.2.1"
 
-          uv sync --frozen --inexact --no-build-isolation-package=sagemath -v
+          uv sync --frozen --no-build-isolation -v
 
       - name: Test
         run: |
