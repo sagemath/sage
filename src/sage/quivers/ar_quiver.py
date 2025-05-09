@@ -12,18 +12,18 @@ Auslander-Reiten Quivers
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.element import Element
-from sage.structure.richcmp import richcmp
-from sage.structure.global_options import GlobalOptions
 from sage.categories.sets_cat import Sets
-from sage.sets.family import Family
-from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.rings.integer_ring import ZZ
-from sage.misc.cachefunc import cached_method
+from sage.combinat.root_system.cartan_type import CartanType
 from sage.graphs.digraph import DiGraph
+from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.sets.family import Family
+from sage.structure.element import Element
+from sage.structure.global_options import GlobalOptions
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class AuslanderReitenQuiver(UniqueRepresentation, Parent):
@@ -600,7 +600,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
         elif k > 1:
             if k > self._max_level:
                 return {}
-            prev = self._dim_vecs_level(k-1)
+            prev = self._dim_vecs_level(k - 1)
             if k > self._max_level:  # this might get set on the recursive call
                 return {}
             ret = {}
@@ -624,7 +624,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
                    for v in Q.vertex_iterator()}
 
         elif k < -1:
-            prev = self._dim_vecs_level(k+1)
+            prev = self._dim_vecs_level(k + 1)
             ret = {}
             for v in self._top_sort:
                 if v not in prev:  # assumption: this vertex will never reappear
