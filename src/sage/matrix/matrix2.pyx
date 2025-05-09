@@ -3610,6 +3610,42 @@ cdef class Matrix(Matrix1):
                 s += self.get_unsafe(i, j) * other.get_unsafe(j, i)
         return s
 
+    def get_bandwidth(self):
+        """
+        Return the bandwidth of ``self``, which is the maximum `i` such that
+        the `i` superdiagonal or subdiagonal contains a nonzero entry.
+
+        EXAMPLES::
+
+            sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]]); A
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            sage: A.get_bandwidth()
+            0
+
+            sage: B = matrix([[1,2,3],[0,4,5],[0,0,6]]); B
+            [1 2 3]
+            [0 4 5]
+            [0 0 6]
+            sage: B.get_bandwidth()
+            2
+
+            sage: C = matrix(3, 2, range(6)); C
+            [0 1]
+            [2 3]
+            [4 5]
+            sage: C.get_bandwidth()
+            2
+        """
+        cdef Py_ssize_t i
+        diag_range = max(self.nrows(), self.ncols()) - 1
+
+        for i in range(diag_range, 0, -1):
+            if any(self.diagonal(i)) or any(self.diagonal(-i)):
+                return ZZ(i)
+        return ZZ.zero()
+
     #####################################################################################
     # Generic Hessenberg Form and charpoly algorithm
     #####################################################################################
