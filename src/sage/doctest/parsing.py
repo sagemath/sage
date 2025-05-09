@@ -1509,6 +1509,13 @@ class SageOutputChecker(doctest.OutputChecker):
             got = dup_lib_regex.sub('', got)
             did_fixup = True
 
+        if "duplicate" in got:
+            # Warnings about duplicate rpaths in the linker command line
+            # occurs sometimes when compiling cython code via sage.misc.cython
+            dup_rpath_regex = re.compile("ld: warning: duplicate -rpath .* ignored")
+            got = dup_rpath_regex.sub('', got)
+            did_fixup = True
+
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):
