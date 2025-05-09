@@ -57,7 +57,7 @@ def JohnsonGraph(n, k):
         True
     """
 
-    g = Graph(name="Johnson graph with parameters "+str(n)+","+str(k))
+    g = Graph(name=f"Johnson graph with parameters {n},{k}")
     from sage.combinat.subset import Set, Subsets
 
     S = Set(range(n))
@@ -113,7 +113,7 @@ def KneserGraph(n, k):
     if k <= 0 or k > n:
         raise ValueError("Parameter k should be a strictly positive integer inferior to n")
 
-    g = Graph(name="Kneser graph with parameters {},{}".format(n, k))
+    g = Graph(name=f"Kneser graph with parameters {n},{k}")
 
     from sage.combinat.subset import Subsets
     S = Subsets(n, k)
@@ -389,7 +389,7 @@ def EgawaGraph(p, s):
     """
     from sage.graphs.generators.basic import CompleteGraph
     from itertools import product, chain, repeat
-    g = Graph(name="Egawa Graph with parameters " + str(p) + "," + str(s), multiedges=False)
+    g = Graph(name=f"Egawa Graph with parameters {p},{s}", multiedges=False)
     X = CompleteGraph(4)
     Y = Graph('O?Wse@UgqqT_LUebWkbT_')
     g.add_vertices(product(*chain(repeat(Y, p), repeat(X, s))))
@@ -477,7 +477,7 @@ def HammingGraph(n, q, X=None):
         X = list(range(q))
     if q != len(X):
         raise ValueError("q must be the cardinality of X")
-    g = Graph(name="Hamming Graph with parameters " + str(n) + "," + str(q), multiedges=False)
+    g = Graph(name=f"Hamming Graph with parameters {n},{q}", multiedges=False)
     g.add_vertices(product(*repeat(X, n)))
     for v in g:
         for i in range(n):
@@ -1161,7 +1161,7 @@ def CirculantGraph(n, adjacency):
     if not isinstance(adjacency, list):
         adjacency = [adjacency]
 
-    G = Graph(n, name="Circulant graph (" + str(adjacency) + ")")
+    G = Graph(n, name=f"Circulant graph ({adjacency})")
     G._circle_embedding(list(range(n)))
 
     for v in G:
@@ -1275,7 +1275,7 @@ def CubeGraph(n, embedding=1):
             p, pn = pn, {}
 
         # construct the graph
-        G = Graph(d, format='dict_of_lists', pos=p, name="%d-Cube" % n)
+        G = Graph(d, format='dict_of_lists', pos=p, name=f"{n}-Cube")
 
     else:
         # construct recursively the adjacency dict
@@ -1296,7 +1296,7 @@ def CubeGraph(n, embedding=1):
             d, dn = dn, {}
 
         # construct the graph
-        G = Graph(d, name="%d-Cube" % n, format='dict_of_lists')
+        G = Graph(d, name=f"{n}-Cube", format='dict_of_lists')
 
         if embedding == 2:
             # Orthogonal projection
@@ -1398,7 +1398,7 @@ def DorogovtsevGoltsevMendesGraph(n):
     """
     import networkx
     return Graph(networkx.dorogovtsev_goltsev_mendes_graph(n),
-                 name="Dorogovtsev-Goltsev-Mendes Graph, %d-th generation" % n)
+                 name=f"Dorogovtsev-Goltsev-Mendes Graph, {n}-th generation")
 
 
 def FoldedCubeGraph(n):
@@ -1637,7 +1637,7 @@ def FibonacciTree(n):
 
     - Harald Schilly and Yann Laigle-Chapuy (2010-03-25)
     """
-    T = Graph(name="Fibonacci-Tree-%d" % n)
+    T = Graph(name=f"Fibonacci-Tree-{n}")
     if n == 1:
         T.add_vertex(0)
     if n < 2:
@@ -1711,6 +1711,13 @@ def GeneralizedPetersenGraph(n, k):
         sage: g.is_bipartite()
         True
 
+    TESTS:
+
+    Check that the name of the graph is correct::
+
+        sage: graphs.GeneralizedPetersenGraph(7, 2).name()
+        'Generalized Petersen graph (n=7,k=2)'
+
     AUTHORS:
 
     - Anders Jonsson (2009-10-15)
@@ -1719,7 +1726,7 @@ def GeneralizedPetersenGraph(n, k):
         raise ValueError("n must be larger than 2")
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1<= k <=floor((n-1)/2)")
-    G = Graph(2 * n, name="Generalized Petersen graph (n='+str(n)+',k="+str(k)+")")
+    G = Graph(2 * n, name=f"Generalized Petersen graph (n={n},k={k})")
     for i in range(n):
         G.add_edge(i, (i+1) % n)
         G.add_edge(i, i+n)
@@ -1804,7 +1811,7 @@ def IGraph(n, j, k):
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1 <= k <= floor((n - 1) / 2)")
 
-    G = Graph(2 * n, name="I-graph (n={}, j={}, k={})".format(n, j, k))
+    G = Graph(2 * n, name=f"I-graph (n={n}, j={j}, k={k})")
     for i in range(n):
         G.add_edge(i, (i + j) % n)
         G.add_edge(i, i + n)
@@ -1870,7 +1877,7 @@ def DoubleGeneralizedPetersenGraph(n, k):
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1 <= k <= floor((n - 1) / 2)")
 
-    G = Graph(4 * n, name="Double generalized Petersen graph (n={}, k={})".format(n, k))
+    G = Graph(4 * n, name=f"Double generalized Petersen graph (n={n}, k={k})")
     for i in range(n):
         G.add_edge(i, (i + 1) % n)
         G.add_edge(i + 3 * n, (i + 1) % n + 3 * n)
@@ -1963,7 +1970,7 @@ def RoseWindowGraph(n, a, r):
     if r == n / 2:
         raise ValueError("r must be different than n / 2")
 
-    G = Graph(2 * n, name="rose window graph (n={}, a={}, r={})".format(n, a, r))
+    G = Graph(2 * n, name=f"Rose window graph (n={n}, a={a}, r={r})")
     for i in range(n):
         G.add_edge(i, (i + 1) % n)
         G.add_edge(i, i + n)
@@ -2071,7 +2078,7 @@ def TabacjnGraph(n, a, b, r):
     if r == n/2:
         raise ValueError("r must be different than n / 2")
 
-    G = Graph(2 * n, name="Tabačjn graph (n={}, a={}, b={}, r={})".format(n, a, b, r))
+    G = Graph(2 * n, name=f"Tabačjn graph (n={n}, a={a}, b={b}, r={r})")
     for i in range(n):
         G.add_edge(i, (i + 1) % n)
         G.add_edge(i, i + n)
@@ -2210,7 +2217,7 @@ def HyperStarGraph(n, k):
                 c[i] = one
             adj[u] = L
 
-    return Graph(adj, format='dict_of_lists', name="HS(%d,%d)" % (n, k))
+    return Graph(adj, format='dict_of_lists', name=f"HS({n},{k})")
 
 
 def LCFGraph(n, shift_list, repeats):
@@ -2450,7 +2457,7 @@ def NKStarGraph(n, k):
                 tmp_dict[vert] = None
             v[0] = tmp_bit
         d["".join(v)] = tmp_dict
-    return Graph(d, name="(%d,%d)-star" % (n, k))
+    return Graph(d, name=f"({n},{k})-star")
 
 
 def NStarGraph(n):
@@ -2498,7 +2505,7 @@ def NStarGraph(n):
                 # swap back
                 v[0], v[i] = v[i], v[0]
         d["".join(v)] = tmp_dict
-    return Graph(d, name="%d-star" % n)
+    return Graph(d, name=f"{n}-star")
 
 
 def OddGraph(n):
@@ -2579,7 +2586,7 @@ def PaleyGraph(q):
     if not mod(q, 4) == 1:
         raise ValueError("parameter q must be congruent to 1 mod 4")
     g = Graph([FiniteField(q, 'a'), lambda i, j: (i - j).is_square()],
-              loops=False, name="Paley graph with parameter {}".format(q))
+              loops=False, name=f"Paley graph with parameter {q}")
     return g
 
 
@@ -4400,7 +4407,7 @@ def CubeConnectedCycle(d):
     if d < 1:
         raise ValueError('the dimension d must be greater than 0')
 
-    G = Graph(name="Cube-Connected Cycle of dimension {}".format(d))
+    G = Graph(name=f"Cube-Connected Cycle of dimension {d}")
 
     if d == 1:
         G.allow_loops(True)
