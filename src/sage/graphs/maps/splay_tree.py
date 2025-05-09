@@ -560,28 +560,21 @@ class SplayNode:
 
         return self.value is None
 
-    def findSmallestGreater(self, value: int):
+    def findSmallestGreater(self, value: int) -> "tuple[SplayNode, int]":
         """
-        INPUT:
-
-            value
-
-        OUTPUT:
-        A couple node,offset such that if there is smallest greater key in self that value node.offset+offset is this
-        value.
+        Return a couple (node,offset) such that if there is a greater key in self than ``value``, it returns such a node with smallest key and its value; otherwise, it returns the biggest node (hence, smaller than value) and its value.
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
-
+            sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
             sage: makeParentKnow(child)
             sage: node.findSmallestGreater(1)[0] == child
             True
 
-        .. NOTE::
-            O(log(n)),to keep the O(log(m)) amortized value you must splay node.
+        NOTE::
+            O(log n); (don't forget to splay self to guarantee the amortized complexity)
         """
 
         if self.isEmpty():
@@ -606,27 +599,21 @@ class SplayNode:
                 node = node.right
             offset += node.offset
 
-    def findBiggestSmaller(self, value):
+    def findBiggestSmaller(self, value: int) -> "tuple[SplayNode, int]":
         """
-        INPUT:
-            value
-
-        OUTPUT:
-        A couple offset,node such that if it exist node.value+offset is the biggest value in
-        self subtree such that <= value, otherwise the smallest bigger
+        Return a couple (node,offset) such that if there is a smaller key in self than ``value``, it returns such a node with biggest key and its value; otherwise, it returns the smallest node (hence, bigger than value) and its value.
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
-
+            sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
             sage: makeParentKnow(child)
             sage: node.findBiggestSmaller(33)[0] == node
-            True 
+            True
 
-        .. NOTE::
-        O(log(n)),you must splay on node to guarantee the amortized O(log(n)) complexity
+        NOTE::
+            O(log n); (don't forget to splay self to guarantee the amortized complexity)
         """
         if self.isEmpty():
             return self, 0
@@ -650,32 +637,25 @@ class SplayNode:
                 node = node.right
             offset += node.offset
 
-    def insert(self, newValue):
+    def insert(self, newValue: int) -> "tuple[bool, SplayNode, int]":
         """
-
-
-        Insert newValue inside the tree 
+        Insert newValue inside the tree; return (b,node,offset) such that b is True if it was a real new value, and node.value+offset = value
+            sage: newNode.value + offset == 34
+            True
 
         INPUT:
-            newValue
-
-        OUTPUT:
-            return b,node,offset such that b=True if it was a real new value otherwise False
-            and node.value+offset = value
+        - ``newValue`` -- int
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
-
+            sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22) 
             sage: isNew,newNode,offset = node.insert(34)
             sage: isNew
             True
-            sage: newNode.value + offset == 34
-            True
-
-        .. NOTE::
-        O(log(n))
+        
+        NOTE:
+            O(log n)
         """
         if self.isEmpty():
             self.value = newValue
@@ -693,28 +673,24 @@ class SplayNode:
                     return True, node.left, offset
                 else:
                     node = node.left
+            elif node.right is None:
+                node.right = SplayNode(newValue - offset, node)
+                node.right.addCountUpward(1)
+                return True, node.right, offset
             else:
-                if node.right is None:
-                    node.right = SplayNode(newValue - offset, node)
-                    node.right.addCountUpward(1)
-                    return True, node.right, offset
-                else:
-                    node = node.right
+                node = node.right
             offset += node.offset
 
-    def addCountUpward(self, toAdd):
+    def addCountUpward(self, toAdd: int) -> None:
         """
-
-        Add toAdd to the cnt attribute of all the node in the path toward the root from self
+        Add ``toAdd`` to the cnt attribute of all the nodes in the path from self to root
 
         INPUT:
-
-            toAdd
+        - ``toAdd`` -- int
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
-
+            sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
             sage: cchild = SplayNode(1,child)
@@ -730,36 +706,32 @@ class SplayNode:
             sage: cchild.cnt
             0
 
-        .. NOTE::
-        O(log(n)),not intended to be used by the user, you should splay on node after calling it.
+        NOTE:
+            O(log n); not intended to be called by user; you should splay on node after calling it.
         """
+
         node = self
         node.cnt += toAdd
         while not node.isRoot():
             node = node.parent
             node.cnt += toAdd
 
-    def find(self, value):
+    def find(self, value: int) -> "tuple[SlayNode, int]":
         """
-        Find a node such that node.value+node.offset() == value, return the offset and the node,
-        if it doesn't exist it will return the node,offset the smallest real value i.e node.value+offset < value
+        Find a node such that node.value+node.offset() == value, return it and its offset; if it doesn't exist, return (node,offset) such that the real value (i.e node.value+offset) < value
 
         INPUT:
-            value
-
-        OUTPUT:
-            node,offset corresponding to the above description
+        - ``value`` -- int
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
-
+            sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22)
             sage: node.find(22)[0] == node
             True 
 
-        .. NOTE:
-        O(log(n)),should splay on node to guarantee amortized log complexity
+        NOTE:
+            O(log n); should splay on node to guarantee amortized log complexity
         """
         if self.isEmpty():
             return self, 0
@@ -778,23 +750,21 @@ class SplayNode:
                 node = node.right
             offset += node.offset
 
-    def min(self):
+    def min(self) -> "tuple[SlayNode, int]":
         """
-        OUTPUT:
-            node,offset such that node.value+offset is the minimal key
+        Return (node,offset) such that node.value+offset is the minimal key
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
-
+            sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
             sage: makeParentKnow(child)
             sage: node.min()[0] == child
             True
 
-        .. NOTE::
-        O(log(n)), splay on node to guarantee amortized log time
+        NOTE::
+            O(log n); splay on node to guarantee amortized log time
         """
         minimum = self
         offset = self.offset
@@ -803,17 +773,16 @@ class SplayNode:
             offset += minimum.offset
         return minimum, offset
 
-    def delete(self, value):
+    def delete(self, value: int) -> "SplayNode":
         """
         Delete value from self subtree and return the nearest node to the deleted one
 
-        OUTPUT:
-            node corresponding to the above description
+        INPUT:
+        - ``value`` -- int
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
-
+            sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
             sage: makeParentKnow(child)
@@ -824,8 +793,8 @@ class SplayNode:
             sage: node.sortedList()
             [22]
 
-        ..NOTE::
-        O(log(n)) , splay on the node returned
+        NOTE::
+            O(log n); splay on the node returned to keep the amortized complexity
         """
         if self.isEmpty():
             return self
@@ -897,24 +866,21 @@ class SplayNode:
 
         return node.parent
 
-    def max(self):
+    def max(self) -> "tuple[SplayNode, int]":
         """
-        OUTPUT:
-        Returns node,offset such that node.value+offset is the 
-        maximum key in the subtree of self
+        Return (node,offset) such that node.value+offset is the maximum key in the subtree of self.
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
-
+            sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
             sage: makeParentKnow(child)
             sage: node.max()[0] == node
             True
 
-        ..NOTE:
-        O(log(n)),splay on the returned node to guarantee log amortized time
+        NOTE:
+            O(log n),splay on the returned node to guarantee log amortized time
         """
         maximum = self
         offset = self.offset
@@ -923,23 +889,19 @@ class SplayNode:
             offset += maximum.offset
         return maximum, offset
 
-    def _isBst(self, offset=0):
+    def _isBst(self, offset=0) -> tuple[int,int]:
         """ 
-        Verify that self is a binary search tree and raise an error otherwise
-
-        OUTPUT:
-        returns the min and max of the subtree of self
+        Check whether self is a binary search tree (raise an error otherwise) and return the min and the max of the subtree of self.
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
-
+            sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22)
             sage: node._isBst()
             (22, 22)
 
-        .. NOTE::
-        O(n),written recursively hence if a too small recursion limit may crash
+        NOTE:
+            O(n); written recursively, hence if the recursion limit is too low this method may crash
         """
         if self.isEmpty():
             return None, None
@@ -955,22 +917,18 @@ class SplayNode:
             max = maxRight
         return min, max
 
-    def isBst(self):
+    def isBst(self) -> None:
         """
-        Raise an error if self isn't a bst
+        Raise an error if self isn't a bst.
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
+            sage: from sage.graphs.maps.splay_tree import *
+            sage: node = SplayNode(22)
+            sage: node.isBst()
 
-            sage: try:
-            ....:     node.isBst()
-            ....: except:
-            ....:     print("No")
-            ....:
-
-        ..NOTE:
-        O(n), written recursively if too small recursion limit it may crash
+        NOTE:
+            O(n); written recursively, hence if the recursion limit is too low this method it may crash
         """
         self._isBst()
 
