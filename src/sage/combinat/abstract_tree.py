@@ -1198,20 +1198,24 @@ class AbstractTree:
             sage: T.node_number()
             10000
         """
-        if self.is_empty():
-            return 0
-
         # An attribute _node_number for storing the number of nodes
         # This is OK as AbstractTree is immutable
         # If the attribute is not present, we compute it
-        if hasattr(self, '_node_number'):
+        try:
+            return self._node_number
+        except AttributeError:
+            pass
+        
+        if self.is_empty():
+            self._node_number = Integer(0)
             return self._node_number
         
         def count(node):
             if not node.is_empty():
                 # Using post-order
                 # Thus _node_number is computed for all non-empty subtrees
-                node._node_number = 1 + sum([e._node_number for e in node
+                node._node_number = Integer(1)
+                node._node_number += sum([e._node_number for e in node
                                              if not e.is_empty()])
 
         self.iterative_post_order_traversal(count)
@@ -1528,15 +1532,14 @@ class AbstractTree:
             sage: BinaryTree().canonical_labelling()
             .
         """
-        LTR = self.parent().labelled_trees()
-        liste = []
-        deca = 1
-        for subtree in self:
-            # first compute node number to populate its cache in subtrees
-            stsize = subtree.node_number()
-            liste += [subtree.canonical_labelling(shift + deca)]
-            deca += stsize
-        return LTR._element_constructor_(liste, label=shift)
+        def aux(tree, LTR, curlabel):
+            mylabel = curlabel[0]
+            curlabel[0] += 1
+            newtree = LTR([aux(st, LTR, curlabel) for st in tree],
+                          label=mylabel)
+            return newtree
+
+        return aux(self, self.parent().labelled_trees(), [shift])
 
     def to_hexacode(self):
         r"""

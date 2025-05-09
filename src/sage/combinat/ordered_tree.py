@@ -830,46 +830,6 @@ class OrderedTree(AbstractClonableTree, ClonableList,
                 resl[i] = resl[i].normalize()
             resl.sort(key=lambda t: t.sort_key())
 
-    def canonical_labelling(self, shift=1):
-        r"""
-        Return a labelled version of ``self``.
-
-        The actual canonical labelling is currently unspecified. However,
-        currently we use the labelling of the nodes given by the pre-order,
-        i.e., order of the first visit of each node in a depth-first search
-        from left to right.
-
-        Under any future changes, we guarantee that the labels by default is
-        from `1` to `n`, with `n` the number of nodes of the tree. The smallest
-        labeling is adjustable using the parameter ``shift``. Moreover, we
-        guarantee that two (unlabelled) trees compare as equal if and only if
-        their canonical labelled trees compare as equal.
-
-        The runtime of this method is linear in the number of nodes.
-
-        INPUT:
-
-        - ``shift`` -- (int, optional) the smallest label in the tree labelling
-
-        EXAMPLES::
-
-            sage: t = OrderedTree([[], [[], [[], []], [[], []]], [[], []]])
-            sage: t.canonical_labelling()
-            1[2[], 3[4[], 5[6[], 7[]], 8[9[], 10[]]], 11[12[], 13[]]]
-            sage: OrderedTree([]).canonical_labelling(shift=5)
-            5[]
-            sage: OrderedTree([[[], []], [], [[]]]).canonical_labelling(shift=3)
-            3[4[5[], 6[]], 7[], 8[9[]]]
-        """
-        def aux(tree, LTR, curlabel):
-            mylabel = curlabel[0]
-            curlabel[0] += 1
-            newtree = LTR([aux(st, LTR, curlabel) for st in tree],
-                          label=mylabel)
-            return newtree
-
-        return aux(self, self.parent().labelled_trees(), [shift])
-
 
 # Abstract class to serve as a Factory no instance are created.
 class OrderedTrees(UniqueRepresentation, Parent):
