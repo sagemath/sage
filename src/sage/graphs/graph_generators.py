@@ -35,11 +35,11 @@ def __append_to_doc(methods):
                 "    :widths: 33, 33, 33\n"
                 "    :delim: |\n\n")
 
-    h = (len(methods)+2)//3
+    h = (len(methods) + 2) // 3
     # Reorders the list of methods for horizontal reading, the only one Sphinx understands
-    reordered_methods = [0]*3*h
+    reordered_methods = [0] * (3 * h)
     for i, m in enumerate(methods):
-        reordered_methods[3*(i % h) + (i//h)] = m
+        reordered_methods[3 * (i % h) + (i // h)] = m
     methods = reordered_methods
 
     # Adding the list to the __doc__ string
@@ -827,7 +827,7 @@ class GraphGenerators:
             if vertices is None:
                 raise NotImplementedError
             if (len(degree_sequence) != vertices or sum(degree_sequence) % 2
-                    or sum(degree_sequence) > vertices*(vertices - 1)):
+                    or sum(degree_sequence) > vertices * (vertices - 1)):
                 raise ValueError("Invalid degree sequence.")
             degree_sequence = sorted(degree_sequence)
             if augment == 'edges':
@@ -1988,7 +1988,7 @@ class GraphGenerators:
 
         try:
             yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
-        except AssertionError:
+        except (TypeError, AssertionError):
             raise AttributeError("invalid options '{}'".format(options))
 
     def planar_graphs(self, order, minimum_degree=None,
@@ -2191,7 +2191,7 @@ class GraphGenerators:
                     raise ValueError("the number of edges cannot be less than order - 1")
                 edges = '-e:{}'.format(maximum_edges)
         else:
-            if minimum_edges > 3*order - 6:
+            if minimum_edges > 3 * order - 6:
                 raise ValueError("the number of edges cannot be more than 3*order - 6")
             if maximum_edges is None:
                 edges = '-e{}:'.format(minimum_edges)
@@ -2952,7 +2952,7 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
         # in the case of graphs, there are n possibilities,
         # and in the case of digraphs, there are 2*n.
         if dig:
-            possibilities = 2*n
+            possibilities = 2 * n
         else:
             possibilities = n
         num_roots = 2**possibilities
