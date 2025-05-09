@@ -9536,7 +9536,7 @@ class Graph(GenericGraph):
         if return_map:
             return return_map
         else:
-            return return_map is None
+            return True
 
 
     # Aliases to functions defined in other modules
