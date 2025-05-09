@@ -460,7 +460,7 @@ def rooted_product(G, H, root=None, immutable=None):
         ...
         TypeError: the graphs should be both directed or both undirected
 
-    Check the bahavior of parameter ``immutable``::
+    Check the behaviour of parameter ``immutable``::
 
         sage: G = graphs.CycleGraph(4)
         sage: H = graphs.PathGraph(3)
