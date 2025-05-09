@@ -3949,7 +3949,7 @@ class Link(SageObject):
             return sb.is_conjugated(ob)
 
         if sb_ind > ob_ind:
-            # if the braid of self has more strands we have to perfom
+            # if the braid of self has more strands we have to perform
             # Markov II moves
             B = sb.parent()
             g = B.gen(ob_ind-1)

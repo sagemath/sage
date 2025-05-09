@@ -1591,7 +1591,7 @@ cdef class FaceIterator(FaceIterator_base):
         """
         if self.structure.output_dimension != -2:
             if self.dual:
-                # ouput_dimension is stored with respect to the dual
+                # output_dimension is stored with respect to the dual
                 intended_dimension = self.structure.dimension - 1 - self.structure.output_dimension
             else:
                 intended_dimension = self.structure.output_dimension

@@ -10443,7 +10443,7 @@ class NumberField_absolute(NumberField_generic):
         # symbol is negative for all primes in S and positive
         # at all primes in S'
         # For technical reasons, a Hilbert symbol of -1 is
-        # respresented as 1 and a Hilbert symbol of 1
+        # represented as 1 and a Hilbert symbol of 1
         # is represented as 0
         V = VectorSpace(GF(2), len(SL))
         v = V([1]*len(S) + [0]*len(L))
