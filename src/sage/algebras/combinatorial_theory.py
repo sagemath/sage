@@ -956,7 +956,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             mat_vals = []
         else:
             block_sizes, target, mat_inds, mat_vals = prev_data
-        flag_num, constraints_vals, constraints_flags_vec, one_vector = \
+        flag_num, constraints_vals, constraints_flags_vec, _, __ = \
             constraints_data
         block_index = len(block_sizes) + 1
         constr_num = len(constraints_vals)
@@ -1060,6 +1060,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         """
         
         base_flags = self.generate_flags(target_size)
+        factor_flags = []
         
         if positives == None:
             positives_list_exact = []
@@ -1082,6 +1083,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 mult_table = self.mul_project_table(
                     nf, df, fv.ftype(), ftype_inj=[], target_size=target_size
                     )
+                factor_flags.append(self.generate(df, fv.ftype()))
                 fvvals = fv.values()
                 m = matrix([vector(fvvals*mat) for mat in mult_table])
                 positives_list_exact += list(m.T)
@@ -1102,7 +1104,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         constraints_vals.extend([1, -1])
         
         return len(base_flags), constraints_vals, \
-            positives_list_exact, one_vector
+            positives_list_exact, one_vector, factor_flags
     
     def _round_sdp_solution_no_phi(self, sdp_result, sdp_data, 
                                    table_constructor, constraints_data, 
@@ -1141,6 +1143,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         import numpy as np
         from numpy import linalg as LA
         from sage.functions.other import ceil
+        from sage.all import coercion_model
 
         # set up parameters
         denom = params.get("denom", 1024)
@@ -1149,7 +1152,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
 
         block_sizes, target_list_exact, mat_inds, mat_vals = sdp_data
         target_vector_exact = vector(target_list_exact)
-        flags_num, constraints_vals, positives_list_exact, one_vector = \
+        flags_num, ___, positives_list_exact, _, __ = \
             constraints_data
         positives_matrix_exact = matrix(
             QQ, len(positives_list_exact), flags_num, positives_list_exact
@@ -1214,7 +1217,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     M_flat_vector_exact = vector( 
                         _flatten_matrix(M.rows(), doubled=True)
                         )
-                    slacks[gg] -= M_flat_vector_exact*X_flat
+                    prod = M_flat_vector_exact*X_flat
+                    slacks = slacks - vector(prod.parent(), len(slacks), {gg:prod})
             block_index += len(table_constructor[params])
         # scale back slacks with the one vector, the minimum is the final result
         result = min(
@@ -1240,7 +1244,6 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
 
         # set up parameters
         denom = params.get("denom", 1024)
-        ring = params.get("ring", QQ)
         slack_threshold = params.get("slack_threshold", 1e-9)
         linear_threshold = params.get("linear_threshold", 1e-6)
         kernel_threshold = params.get("kernel_threshold", 1e-4)
@@ -1248,11 +1251,11 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         
         # unpack variables
         block_sizes, target_list_exact, _, __ = sdp_data
-        target_vector_exact = vector(ring, target_list_exact)
-        flags_num, _, positives_list_exact, __ = constraints_data
-        _ = None; __ = None; gc.collect()
+        target_vector_exact = vector(target_list_exact)
+        flags_num, _, positives_list_exact, __, ___ = constraints_data
+        _ = None; __ = None; ___ = None; gc.collect()
         positives_matrix_exact = matrix(
-            ring, len(positives_list_exact), flags_num, positives_list_exact
+            len(positives_list_exact), flags_num, positives_list_exact
             )
         
         # find the one_vector from the equality constraint
@@ -1291,13 +1294,12 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         bound_exact = _round(sdp_result['primal'], method=1)
         # the constraints for the flags that are exact
         corrected_target_relevant_exact = vector(
-            ring, 
             [target_vector_exact[FF] - bound_exact for FF in c_zero_inds]
             )
         # the d^f_F matrix, but only the relevant parts for the rounding
         # so F where c_F = 0 and f where e_f != 0
         positives_matrix_relevant_exact = matrix(
-            ring, len(e_nonzero_inds), len(c_zero_inds), 
+            len(e_nonzero_inds), len(c_zero_inds), 
             [[positives_matrix_exact[ff][FF] for FF in c_zero_inds] \
              for ff in e_nonzero_inds]
              )
@@ -1322,7 +1324,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         self.fprint("Flattening X matrices")
         start_time = time.time()
         M_flat_relevant_matrix_exact = matrix(
-            ring, len(c_zero_inds), 0, 0, sparse=True
+            len(c_zero_inds), 0, 0, sparse=True
             )
         X_flat_list = []
         block_index = 0
@@ -1358,9 +1360,9 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                         )
 
                 M_flat_relevant_matrix_exact = \
-                    M_flat_relevant_matrix_exact.augment(
-                        matrix(ring, M_extra)
-                        )
+                    M_flat_relevant_matrix_exact.T.stack(
+                        matrix(M_extra).T
+                        ).T
                 
                 gc.collect()
 
@@ -1371,11 +1373,10 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         # the positivity constraints. Then correct the x vector values
         # 
 
-        M_matrix_final = M_flat_relevant_matrix_exact.augment(
-            positives_matrix_relevant_exact.T
-            )
+        M_matrix_final = M_flat_relevant_matrix_exact.T.stack(
+            positives_matrix_relevant_exact
+            ).T
         x_vector_final = vector(
-            ring, 
             X_flat_list + e_nonzero_list_rounded
             )
         self.fprint("This took {}s".format(time.time() - start_time))
@@ -1404,7 +1405,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 ))
             e_nonzero_vector_corr = [max(xx, 0) for xx in e_nonzero_vector_corr]
         e_vector_dict = dict(zip(e_nonzero_inds, e_nonzero_vector_corr))
-        e_vector_corr = vector(ring, positives_num, e_vector_dict)
+        e_vector_base = vector(e_vector_dict.values()).base_ring()
+        e_vector_corr = vector(e_vector_base, positives_num, e_vector_dict)
         self.fprint("This took {}s".format(time.time() - start_time))
         start_time = time.time()
 
@@ -1426,7 +1428,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 X_ii_raw, x_vector_corr = _unflatten_matrix(
                     x_vector_corr, block_dim
                     )
-                X_ii_raw = matrix(ring, X_ii_raw)
+                X_ii_raw = matrix(X_ii_raw)
                 recover_base = X_recover_bases[block_index + plus_index]
                 X_ii_small = recover_base * X_ii_raw * recover_base.T
                 
@@ -1445,9 +1447,10 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     M_flat_vector_exact = vector(
                         _flatten_matrix(M.rows(), doubled=True)
                         )
-                    slacks[gg] -= M_flat_vector_exact*vector(
+                    prod = M_flat_vector_exact*vector(
                         _flatten_matrix(X_ii_small.rows(), doubled=False)
                         )
+                    slacks = slacks - vector(prod.parent(), len(slacks), {gg:prod})
                 
                 X_final.append(X_ii_small)
             block_index += len(table_constructor[params])
@@ -1474,7 +1477,6 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
 
         # set up parameters
         denom = params.get("denom", 1024)
-        ring = params.get("ring", QQ)
         slack_threshold = params.get("slack_threshold", 1e-9)
         linear_threshold = params.get("linear_threshold", 1e-6)
         kernel_threshold = params.get("kernel_threshold", 1e-4)
@@ -1482,16 +1484,15 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         
         # unpack variables
         block_sizes, target_list_exact, _, __ = sdp_data
-        target_vector_exact = vector(ring, target_list_exact)
-        flags_num, _, positives_list_exact, __ = constraints_data
-        _ = None; __ = None; gc.collect()
+        target_vector_exact = vector(target_list_exact)
+        flags_num, _, positives_list_exact, __, ___ = constraints_data
+        _ = None; __ = None; ___ = None; gc.collect()
         positives_matrix_exact = matrix(
-            ring, len(positives_list_exact), flags_num, positives_list_exact
+            len(positives_list_exact), flags_num, positives_list_exact
             )
         
         no_constr = len(phi_vectors_exact)==0
         phi_vector_exact = vector(
-            ring, 
             [0]*positives_matrix_exact.ncols()
             ) if no_constr else phi_vectors_exact[0]
         
@@ -1534,14 +1535,13 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
 
         bound_exact = target_vector_exact*phi_vector_exact 
         # the constraints for the flags that are exact
-        corrected_target_relevant_exact = vector(
-            ring, 
+        corrected_target_relevant_exact = vector( 
             [target_vector_exact[FF] - bound_exact for FF in c_zero_inds]
             )
         # the d^f_F matrix, but only the relevant parts for the rounding
         # so F where c_F = 0 and f where e_f != 0
         positives_matrix_relevant_exact = matrix(
-            ring, len(e_nonzero_inds), len(c_zero_inds), 
+            len(e_nonzero_inds), len(c_zero_inds), 
             [[positives_matrix_exact[ff][FF] for FF in c_zero_inds] \
              for ff in e_nonzero_inds]
              )
@@ -1566,7 +1566,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         self.fprint("Flattening X matrices")
         start_time = time.time()
         M_flat_relevant_matrix_exact = matrix(
-            ring, len(c_zero_inds), 0, 0, sparse=True
+            len(c_zero_inds), 0, 0, sparse=True
             )
         X_flat_list = []
         block_index = 0
@@ -1602,9 +1602,9 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                         )
 
                 M_flat_relevant_matrix_exact = \
-                    M_flat_relevant_matrix_exact.augment(
-                        matrix(ring, M_extra)
-                        )
+                    M_flat_relevant_matrix_exact.T.stack(
+                        matrix(M_extra).T
+                        ).T
                 
                 gc.collect()
 
@@ -1615,11 +1615,10 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         # the positivity constraints. Then correct the x vector values
         # 
 
-        M_matrix_final = M_flat_relevant_matrix_exact.augment(
-            positives_matrix_relevant_exact.T
-            )
+        M_matrix_final = M_flat_relevant_matrix_exact.T.stack(
+            positives_matrix_relevant_exact
+            ).T
         x_vector_final = vector(
-            ring, 
             X_flat_list + e_nonzero_list_rounded
             )
         self.fprint("This took {}s".format(time.time() - start_time))
@@ -1648,7 +1647,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 ))
             e_nonzero_vector_corr = [max(xx, 0) for xx in e_nonzero_vector_corr]
         e_vector_dict = dict(zip(e_nonzero_inds, e_nonzero_vector_corr))
-        e_vector_corr = vector(ring, positives_num, e_vector_dict)
+        e_vector_base = vector(e_vector_dict.values()).base_ring()
+        e_vector_corr = vector(e_vector_base, positives_num, e_vector_dict)
         self.fprint("This took {}s".format(time.time() - start_time))
         start_time = time.time()
 
@@ -1670,7 +1670,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 X_ii_raw, x_vector_corr = _unflatten_matrix(
                     x_vector_corr, block_dim
                     )
-                X_ii_raw = matrix(ring, X_ii_raw)
+                X_ii_raw = matrix(X_ii_raw)
                 recover_base = X_recover_bases[block_index + plus_index]
                 X_ii_small = recover_base * X_ii_raw * recover_base.T
                 
@@ -1702,9 +1702,10 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     M_flat_vector_exact = vector(
                         _flatten_matrix(M.rows(), doubled=True)
                         )
-                    slacks[gg] -= M_flat_vector_exact*vector(
+                    prod = M_flat_vector_exact*vector(
                         _flatten_matrix(X_ii_small.rows(), doubled=False)
                         )
+                    slacks = slacks - vector(prod.parent(), len(slacks), {gg:prod})
                 
                 X_final.append(X_ii_small)
             block_index += len(table_constructor[params])
@@ -1780,6 +1781,15 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             flg._pythonize() for flg in self.generate_flags(target_size)
         ]
 
+        factor_flags = misc.get("factor_flags", None)
+        if factor_flags != None:
+            python_factor_flags = [
+                [xx._pythonize() for xx in factors] for 
+                factors in factor_flags 
+            ]
+        else:
+            python_factor_flags = []
+
         def pythonize(dim, data):
             if data==None:
                 return None
@@ -1830,6 +1840,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                      "typed flags": typed_flags,
                      "target": target,
                      "positives": positives,
+                     "factor flags": python_factor_flags,
                      "maximize": maximize,
                      "target size": int(target_size) 
                     }
@@ -1971,7 +1982,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     final_sol, 
                     (sdp_data[0], sdp_data[1], None, None), 
                     table_constructor, 
-                    (constraints_data[0], None, constraints_data[2], None), 
+                    (constraints_data[0], None, constraints_data[2], None, constraints_data[4]), 
                     phi_vectors_exact, 
                     mult, target_size)
                 pickle.dump(save_data, file_handle)
@@ -2023,6 +2034,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             file=certificate_file,
             target=vector(sdp_data[1])*mult,
             positives=constraints_data[2],
+            factor_flags=constraints_data[4],
             target_size=target_size
             )
 
@@ -2135,7 +2147,6 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 os.remove("param.csdp")
             except OSError:
                 pass
-
             if file==None:
                 return value
             return self._format_optimizer_output(
@@ -2146,6 +2157,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 file=file,
                 target=target_vector_exact*mult,
                 positives=constraints_data[2],
+                factor_flags=constraints_data[4],
                 target_size=target_size
                 )
 
@@ -2169,7 +2181,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 
             # Guess the construction in this case
             if construction==None:
-                one_vector = constraints_data[-1]
+                one_vector = constraints_data[3]
                 phi_vector_rounded, error_coeff = _round_adaptive(
                     initial_sol['y'], one_vector
                     )
