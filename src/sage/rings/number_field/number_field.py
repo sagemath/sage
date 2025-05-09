@@ -136,18 +136,14 @@ lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldEl
 _NumberFields = NumberFields()
 
 
-def is_NumberFieldHomsetCodomain(codomain):
+def is_NumberFieldHomsetCodomain(codomain, category=None):
     """
-    Return whether ``codomain`` is a valid codomain for a number
-    field homset.
-
-    This is used by NumberField._Hom_ to determine
-    whether the created homsets should be a
-    :class:`sage.rings.number_field.homset.NumberFieldHomset`.
+    Return whether ``codomain`` is a valid codomain for a
+    :class:`NumberFieldHomset` in ``category``.
 
     EXAMPLES:
 
-    This currently accepts any parent (CC, RR, ...) in :class:`Fields`::
+    This currently accepts any ring (CC, RR, ...)::
 
         sage: from sage.rings.number_field.number_field import is_NumberFieldHomsetCodomain
         sage: is_NumberFieldHomsetCodomain(QQ)
@@ -156,24 +152,31 @@ def is_NumberFieldHomsetCodomain(codomain):
         sage: is_NumberFieldHomsetCodomain(NumberField(x^2 + 1, 'x'))
         True
         sage: is_NumberFieldHomsetCodomain(ZZ)
-        False
+        True
         sage: is_NumberFieldHomsetCodomain(3)
         False
         sage: is_NumberFieldHomsetCodomain(MatrixSpace(QQ, 2))
-        False
+        True
         sage: is_NumberFieldHomsetCodomain(InfinityRing)
-        False
+        True
 
-    Question: should, for example, QQ-algebras be accepted as well?
-
-    Caveat: Gap objects are not (yet) in :class:`Fields`, and therefore
-    not accepted as number field homset codomains::
+    Gap objects are not (yet) in :class:`Fields`, and therefore not accepted as
+    number field homset codomains::
 
         sage: is_NumberFieldHomsetCodomain(gap.Rationals)                               # needs sage.libs.gap
         False
     """
-    from sage.categories.fields import Fields
-    return codomain in Fields()
+    from sage.categories.rings import Rings
+
+    if category is None:
+        category = codomain.category()
+
+    if not category.is_subcategory(Rings()):
+        return False
+
+    assert codomain in category
+
+    return True
 
 
 def proof_flag(t):
@@ -1988,10 +1991,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: loads(dumps(H)) is H
             True
         """
-        if not is_NumberFieldHomsetCodomain(codomain):
-            # Using LazyFormat fixes #28036 - infinite loop
-            from sage.misc.lazy_format import LazyFormat
-            raise TypeError(LazyFormat("%s is not suitable as codomain for homomorphisms from %s") % (codomain, self))
+        if not is_NumberFieldHomsetCodomain(codomain, category):
+            raise TypeError
+
         from sage.rings.number_field.homset import NumberFieldHomset
         return NumberFieldHomset(self, codomain, category)
 
@@ -11460,12 +11462,10 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         zeta = self.gen()
         return sum(QQ(c) * zeta**i for i, c in enumerate(coeffs))
 
-    def _Hom_(self, codomain, cat=None):
+    def _Hom_(self, codomain, category=None):
         """
         Return homset of homomorphisms from the cyclotomic field ``self`` to
         the number field codomain.
-
-        The ``cat`` option is currently ignored.
 
         EXAMPLES:
 
@@ -11483,12 +11483,19 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                to Number Field in a with defining polynomial x^2 + 3
             sage: End(CyclotomicField(21))
             Automorphism group of Cyclotomic Field of order 21 and degree 12
+
+        ::
+
+            sage: K = CyclotomicField(3)
+            sage: Hom(K, ZZ).category()
+            Category of homsets of euclidean domains and noetherian rings
+
         """
-        if is_NumberFieldHomsetCodomain(codomain):
-            from sage.rings.number_field.homset import CyclotomicFieldHomset
-            return CyclotomicFieldHomset(self, codomain)
-        else:
+        if not is_NumberFieldHomsetCodomain(codomain, category):
             raise TypeError
+
+        from sage.rings.number_field.homset import CyclotomicFieldHomset
+        return CyclotomicFieldHomset(self, codomain, category)
 
     def is_galois(self):
         """

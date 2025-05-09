@@ -327,6 +327,18 @@ class CellularBasis(CombinatorialFreeModule):
             sage: t = StandardTableau([[1,3],[2]])
             sage: C.product_on_basis((la, s, t), (la, s, t))
             0
+
+        TESTS::
+
+            sage: C5.<z5> = CyclotomicField(5)
+            sage: TL = TemperleyLiebAlgebra(2, z5 + ~z5, C5)
+            sage: m = TL.cell_module(0)
+            sage: c = m.basis().keys()[0]
+            sage: B = TL.cellular_basis()
+            sage: B.product_on_basis((0, c, c), (0, c, c))
+            (-z5^3-z5^2-1)*C(0, {{1, 2}}, {{1, 2}})
+
+            sage: p = TL(B.monomial((0,c,c))) * TL(B.monomial((0,c,c)))
         """
         A = self._algebra
         return self(A(self.monomial(x)) * A(self.monomial(y)))
