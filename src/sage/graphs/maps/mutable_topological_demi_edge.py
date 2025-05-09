@@ -188,12 +188,13 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: mm  = MutableLabelledMap(sigma = sigma,alpha=alpha)
             sage: A = mm.X(5)
             sage: mm.faces()
-            [(1, 3, 4, 7, 11, 16, 18, 13, 12, 15, 14, 2, 5, 17, 9, 8, 10, 6)]
+            [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
             sage: A.contract()
             sage: mm.faces()
-            [(1, 3, 4, 7, 11, 16, 5, 13, 12, 15, 14, 2, 9, 8, 10, 6)]
+            [(1, 3, 4, 7, 11, 16, 18, 13, 12, 15, 14, 2, 5, 17, 9, 8, 10, 6)]
 
         .. NOTE::
             O(log(m))
@@ -355,6 +356,8 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         EXAMPLES::
 
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm  = MutableLabelledMap(sigma = sigma,alpha=alpha)
             sage: A = mm.X(1)
             sage: B = mm.X(17)

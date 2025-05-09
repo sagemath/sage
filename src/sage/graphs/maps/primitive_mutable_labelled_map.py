@@ -2,7 +2,7 @@
 from sage.graphs.maps.labelled_map import *
 from sage.all import Permutation  # Import sage library
 from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
-from sage.graphs.maps.map_error import NotImplemented
+from sage.graphs.maps.map_error import NotImplementedError
 from sage.graphs.maps.primitive_rotating_permutation_utils_abstractor import PrimitiveRotatingPermutationUtilsAbstractor
 from sage.graphs.maps.primitive_mutable_topological_demi_edge import *
 
@@ -311,7 +311,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             sage: mm.faces()
             [(1, 22, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6),
              (2, 5, 4, 7, 21, 3)]
-            sage: mm.deleteEdge(22)
+            sage: mm.deleteEdge(22, False)
             sage: mm.faces()
             [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
 
@@ -547,7 +547,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....:
             OK
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     def areOnTheSameFace(self, demiEdgeA, demiEdgeB):
         """
@@ -565,7 +565,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             OK
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     def numberInTheSameFace(self, demiEdge):
         """
@@ -583,7 +583,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             OK
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     def numberInTheSameNode(self, demiEdge):
         """
@@ -602,7 +602,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     def checkTwoInTheSameFace(self, listDemiEdges):
         """
@@ -619,7 +619,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....:
             OK
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     def checkTwoInTheSameNode(self, listDemiEdges):
         """
@@ -636,4 +636,4 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....:
             OK 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)

@@ -10,8 +10,10 @@ def CheckValid(cls):
 
     EXAMPLES::
 
+        sage: from sage.graphs.maps.map_decorator import CheckValid
+        sage: from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
         sage: CheckValid(TopologicalDemiEdge)
-        <class 'TopologicalDemiEdge.TopologicalDemiEdge'>
+        <class 'sage.graphs.maps.topological_demi_edge.TopologicalDemiEdge'>
 
     .. NOTE::
         Used internaly

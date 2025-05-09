@@ -1,5 +1,5 @@
 from sage.graphs.maps.permutation_utils_abstractor import *
-from sage.graphs.maps.map_error import NotImplemented
+from sage.graphs.maps.map_error import NotImplementedError
 
 
 class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
@@ -9,6 +9,8 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
+            sage: from sage.graphs.maps.primitive_rotating_permutation_utils_abstractor import PrimitiveRotatingPermutationUtilsAbstractor
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: tAbstr = PrimitiveRotatingPermutationUtilsAbstractor(rperm)
 
@@ -24,6 +26,9 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
 
         EXAMPLES::
+
+            sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
+            sage: from sage.graphs.maps.primitive_rotating_permutation_utils_abstractor import PrimitiveRotatingPermutationUtilsAbstractor
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: tAbstr = PrimitiveRotatingPermutationUtilsAbstractor(rperm)
             sage: try:
@@ -34,7 +39,7 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             OK
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     def sameCycle(self, i, j):
         """
@@ -42,6 +47,8 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
+            sage: from sage.graphs.maps.primitive_rotating_permutation_utils_abstractor import PrimitiveRotatingPermutationUtilsAbstractor
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: tAbstr = PrimitiveRotatingPermutationUtilsAbstractor(rperm)
             sage: try:
@@ -52,7 +59,7 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             OK
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)
 
     def numberOfCycles(self):
         """
@@ -63,6 +70,8 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
+            sage: from sage.graphs.maps.primitive_rotating_permutation_utils_abstractor import PrimitiveRotatingPermutationUtilsAbstractor
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: tAbstr = PrimitiveRotatingPermutationUtilsAbstractor(rperm)
             sage: tAbstr.numberOfCycles()
@@ -80,6 +89,8 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
+            sage: from sage.graphs.maps.primitive_rotating_permutation_utils_abstractor import PrimitiveRotatingPermutationUtilsAbstractor
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: tAbstr = PrimitiveRotatingPermutationUtilsAbstractor(rperm)
             sage: tAbstr.numberOfFixedPoint()
@@ -95,6 +106,11 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
         Not implemented for PrimitiveRotatingPermutationUtilsAbstractor
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
+            sage: from sage.graphs.maps.primitive_rotating_permutation_utils_abstractor import PrimitiveRotatingPermutationUtilsAbstractor
+            sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
+            sage: tAbstr = PrimitiveRotatingPermutationUtilsAbstractor(rperm)
             sage: try:
             ....:     tAbstr.checkTwoInTheSameCycle(1)
             ....: except:
@@ -103,4 +119,4 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             OK
 
         """
-        raise NotImplemented(self)
+        raise NotImplementedError(self)

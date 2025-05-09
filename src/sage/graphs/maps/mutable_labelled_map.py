@@ -185,7 +185,7 @@ class MutableLabelledMap(LabelledMap):
             sage: mmH = MutableLabelledMap(sigma=sigmaH,alpha=alphaH)
             sage: mmH.g
             1
-            sage: mm._willStillBeConnectedAfterEdgeDeletionHighGenus(1)
+            sage: mmH._willStillBeConnectedAfterEdgeDeletionHighGenus(1)
             True
 
         .. NOTE::
@@ -983,6 +983,8 @@ class MutableLabelledMap(LabelledMap):
 
         EXAMPLES::
 
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm = MutableLabelledMap(alpha=alpha,sigma=sigma)
             sage: mm.n
             11

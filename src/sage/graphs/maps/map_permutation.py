@@ -1,5 +1,5 @@
 from sage.all import Permutation
-from sage.graphs.maps.map_error import InvalidMapPermutationArgument
+from sage.graphs.maps.map_error import InvalidMapPermutationArgumentError
 import numpy as np
 
 
@@ -51,7 +51,7 @@ class MapPermutation:
                 return
             self._init_from_list(lst)
         except Exception as _:
-            raise InvalidMapPermutationArgument()
+            raise InvalidMapPermutationArgumentError()
 
     def _init_from_cycle_list(self, lst, trust=False):
         """
@@ -78,7 +78,7 @@ class MapPermutation:
             prev = 0
             for i in e:
                 if i <= 0:
-                    raise InvalidMapPermutationArgument()
+                    raise InvalidMapPermutationArgumentError()
 
                 if prev != 0:
                     self._rtab[i-1] = prev
@@ -92,7 +92,7 @@ class MapPermutation:
             return
 
         if (self._tab == 0).sum() != 0:
-            raise InvalidMapPermutationArgument()
+            raise InvalidMapPermutationArgumentError()
 
     def _init_from_number(self, n):
         """
@@ -153,7 +153,7 @@ class MapPermutation:
         if trust:
             return
         if not np.issubdtype(self._tab.dtype, np.integer) or ((self._tab > len(self._tab)) + (self._tab <= 0)).sum() != 0 or len(np.unique(self._tab)) != len(self._tab):
-            raise InvalidMapPermutationArgument()
+            raise InvalidMapPermutationArgumentError()
 
     def size(self):
         """
@@ -162,6 +162,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation([(3,32),(6,7)]).size()
             32
 
@@ -180,7 +181,8 @@ class MapPermutation:
 
         EXAMPLES::
 
-            sage: MapPermutation([(3,22),(22,33),(7,14)]).apply(3)
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
+            sage: int(MapPermutation([(3,22),(22,33),(7,14)]).apply(3))
             22
 
         .. NOTE::
@@ -200,7 +202,8 @@ class MapPermutation:
 
         EXAMPLES::
 
-            sage: MapPermutation([(3,22),(22,33),(7,14,8)]).inverseApply(7)
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
+            sage: int(MapPermutation([(3,22),(22,33),(7,14,8)]).inverseApply(7))
             8
 
         .. NOTE::
@@ -218,6 +221,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation([(3,9),(2,1),(7,14,8)])
             [2, 1, 9, 4, 5, 6, 14, 7, 3, 10, 11, 12, 13, 8] 
 
@@ -233,6 +237,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation([(3,9),(2,1),(7,14,8)]).pretty_repr()
             'MapPermutation: [(1, 2), (3, 9), (4,), (5,), (6,), (7, 14, 8), (10,), (11,), (12,), (13,)]'
 
@@ -245,6 +250,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation([(3,9),(2,1),(7,14,8)]).pretty_print()
             MapPermutation: [(1, 2), (3, 9), (4,), (5,), (6,), (7, 14, 8), (10,), (11,), (12,), (13,)]
 
@@ -269,7 +275,7 @@ class MapPermutation:
             curIndex = self(i)
             while curIndex != i:
                 check[curIndex] = 1
-                cycle.append(curIndex)
+                cycle.append(int(curIndex))
                 curIndex = self(curIndex)
             cycles.append(tuple(cycle))
         return cycles
@@ -283,6 +289,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation([(3,9),(2,1),(7,14,8)]).inverse()
             [2, 1, 9, 4, 5, 6, 8, 14, 3, 10, 11, 12, 13, 7]
 
@@ -299,7 +306,8 @@ class MapPermutation:
 
         EXAMPLES::
 
-            sage: MapPermutation([(3,9),(2,1),(7,14,8)])(3)
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
+            sage: int(MapPermutation([(3,9),(2,1),(7,14,8)])(3))
             9 
 
         """
@@ -315,7 +323,8 @@ class MapPermutation:
             id th item
 
         EXAMPLES::
-            sage: MapPermutation([(3,9),(2,1),(7,14,8)]).__getitem__(3)
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
+            sage: int(MapPermutation([(3,9),(2,1),(7,14,8)]).__getitem__(3))
             9 
         """
         return self(id)
@@ -328,6 +337,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation([(3,9),(2,1),(7,14,8)]).__iter__()
             [2, 1, 9, 4, 5, 6, 14, 7, 3, 10, 11, 12, 13, 8]
 
@@ -343,7 +353,8 @@ class MapPermutation:
 
         EXAMPLES::
 
-            sage: MapPermutation([(3,9),(2,1),(7,14,8)]).__iter__().__next__()
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
+            sage: int(MapPermutation([(3,9),(2,1),(7,14,8)]).__iter__().__next__())
             2
 
         """
@@ -363,6 +374,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: len(MapPermutation([(3,9),(2,1),(7,14,8)]))
             14 
 
@@ -378,6 +390,7 @@ class MapPermutation:
             A boolean indicating other and self are equal
 
         EXAMPLES::
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: m = MapPermutation([(3,9),(2,1),(7,14,8)])
             sage: m == m
             True
@@ -399,6 +412,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: m = MapPermutation([(3,9),(2,1),(7,14,8)])
             sage: t = MapPermutation([(1,2)])
             sage: m.left_action_product(t)
@@ -420,7 +434,8 @@ class MapPermutation:
 
         EXAMPLES::
 
-            sage: MapPermutation([(3,9),(2,1),(7,14,8)]).number_of_fixed_points()
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
+            sage: int(MapPermutation([(3,9),(2,1),(7,14,8)]).number_of_fixed_points())
             7
 
         .. NOTE::
@@ -440,6 +455,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: m = MapPermutation([(3,9),(2,1),(7,14,8)])
             sage: t = MapPermutation([(1,2)])
             sage: m.right_action_product(t)
@@ -462,6 +478,7 @@ class MapPermutation:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: m = MapPermutation([(3,9),(2,1),(7,14,8)])
             sage: t = MapPermutation([(1,2,4)])
             sage: m*t

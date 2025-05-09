@@ -8,6 +8,9 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
         Init the RotatingPermutationUtilsAbstractor
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
+            sage: from sage.graphs.maps.rotating_permutation_utils_abstractor import RotatingPermutationUtilsAbstractor
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
 
@@ -26,6 +29,8 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
+            sage: from sage.graphs.maps.rotating_permutation_utils_abstractor import RotatingPermutationUtilsAbstractor
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
             sage: rAbstractor.numberInCycle(5)
@@ -56,6 +61,9 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             The number of cycles of the permutation
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
+            sage: from sage.graphs.maps.rotating_permutation_utils_abstractor import RotatingPermutationUtilsAbstractor
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
             sage: rAbstractor.numberOfCycles()
@@ -73,6 +81,9 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             The number of fixed point of the permutation
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
+            sage: from sage.graphs.maps.rotating_permutation_utils_abstractor import RotatingPermutationUtilsAbstractor
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
             sage: rAbstractor.numberOfFixedPoint()
@@ -93,6 +104,9 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             A boolean indicating if there are two indices in listIndexes on the sameCycle
 
         EXAMPLES::
+            
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
+            sage: from sage.graphs.maps.rotating_permutation_utils_abstractor import RotatingPermutationUtilsAbstractor
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
             sage: rAbstractor.checkTwoInTheSameCycle([1,6,3])
