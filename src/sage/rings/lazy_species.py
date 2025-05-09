@@ -18,14 +18,12 @@ EXAMPLES::
     [GL2011]_ with little effort.  The molecular expansion of the
     species of point determining graphs can be computed as the
     species of graphs composed with the compositional inverse of the
-    species of non-empty sets.  To make the result more readable, we
-    provide a name for `E_2(X^2)`::
+    species of non-empty sets.::
 
         sage: from sage.rings.lazy_species import LazySpecies
         sage: L.<X> = LazySpecies(QQ)
         sage: E = L.Sets()
-        sage: E_2 = L(SymmetricGroup(2))
-        sage: Ep = L.Sets().restrict(1)
+        sage: Ep = E.restrict(1)
         sage: G = L.Graphs()
 
     The molecular decomposition begins with::
@@ -45,6 +43,7 @@ EXAMPLES::
     connected graphs::
 
         sage: Gc = Ep.revert()(G-1)
+        sage: E_2 = L(SymmetricGroup(2))
         sage: Mc = Gc(X*E(-X)) + E_2(-X)
         sage: E(Mc).truncate(5)
         1 + X + E_2 + 2*E_3 + (2*E_4+E_2(E_2)+E_2^2+X*E_3)
