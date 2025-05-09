@@ -5787,7 +5787,7 @@ class Graph(GenericGraph):
         """
         from sage.graphs.print_graphs import print_graph_eps
         pos = self.layout(**options)
-        [xmin, xmax, ymin, ymax] = self._layout_bounding_box(pos)
+        xmin, xmax, ymin, ymax = self._layout_bounding_box(pos)
         for v in pos:
             pos[v] = (1.8*(pos[v][0] - xmin)/(xmax - xmin) - 0.9, 1.8*(pos[v][1] - ymin)/(ymax - ymin) - 0.9)
         if filename[-4:] != '.eps':
