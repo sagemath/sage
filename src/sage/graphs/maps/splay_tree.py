@@ -3,15 +3,17 @@
 # Be careful when modifying this file to make sure that it is coherent with what is done in CycleUtilsProvider
 
 # OK
-def swapRight(node, otherNode):
+def swapRight(node: "SplayNode", otherNode: "SplayNode") -> None:
     """
-    Exchange the right child of node and otherNode
+    Swap the right childs of node and otherNode.
 
     INPUT:
-        node,otherNode two SplayNode
+    - node -- SplayNode
+    - otherNode -- SplayNode
 
     EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
         sage: node = SplayNode()
         sage: otherNode = SplayNode()
         sage: otherNode.right = SplayNode(4,otherNode)
@@ -24,7 +26,7 @@ def swapRight(node, otherNode):
         sage: node.right.parent == node and otherNode.right.parent == otherNode
         True
 
-    .. NOTE::
+    NOTE::
         O(1)
 
     """
@@ -39,15 +41,17 @@ def swapRight(node, otherNode):
         otherNode.right.parent = otherNode
 
 
-# OK
-def swapLeft(node, otherNode):
+def swapLeft(node: "SplayNode", otherNode: "SplayNode") -> None:
     """
-    Swap the left child of node and otherNode
+    Swap the right childs of node and otherNode.
+
     INPUT:
-        node,otherNode two SplayNode
+    - node -- SplayNode
+    - otherNode -- SplayNode
 
     EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
         sage: node = SplayNode()
         sage: otherNode = SplayNode()
         sage: node.left = SplayNode(3,node)
@@ -76,15 +80,17 @@ def swapLeft(node, otherNode):
 
 
 # OK
-def SwapNonTopologicalExceptIndex(node, otherNode):
+def SwapNonTopologicalExceptIndex(node: "SplayNode", otherNode: "SplayNode") -> None:
     """
-    Swap the following attribut cnt,value,offset,splayTree of node and otherNode
+    Swap the following attributes of node and otherNode: ``cnt``; ``value``; ``offset``; ``splayTree``.
 
     INPUT:
-
-        node,otherNode two SplayNode
+    - node -- SplayNode
+    - otherNode -- SplayNode
 
     EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
         sage: node = SplayNode()
         sage: otherNode = SplayNode()
         sage: node.offset = 7
@@ -95,7 +101,7 @@ def SwapNonTopologicalExceptIndex(node, otherNode):
         sage: otherNode.offset
         7
 
-    .. NOTE::
+    NOTE::
         O(1)
     """
     # Value
@@ -120,14 +126,16 @@ def SwapNonTopologicalExceptIndex(node, otherNode):
 
 
 # OK
-def makeParentKnow(node):
+def makeParentKnow(node: "SplayNode") -> None:
     """
-    Make the parent know(by changing is left or right attribute) that node is his new children
+    Make the parent know that node is its new child (by changing is left or right attribute) 
 
     INPUT:
         node a SplayNode
 
     EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
         sage: node = SplayNode(4)
         sage: child = SplayNode(3,node)
@@ -158,6 +166,8 @@ def swapNodeButNotIndex(node, otherNode):
         node,otherNode two SplayNode
 
     EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
         sage: node = SplayNode(4)
         sage: node.index =54
         sage: otherNode = SplayNode(12)
@@ -228,6 +238,8 @@ def numberOfElement(node):
 
     EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
         sage: numberOfElement(None)
         0 
 
@@ -246,6 +258,8 @@ def valueToTheLeft(parentValue, value):
         Returns a boolean indciating if parentValue>value
 
     EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
         sage: from SplayTree import valueToTheLeft
         sage: valueToTheLeft(7,8)
         False
@@ -265,6 +279,8 @@ def valueToTheRight(parentValue, value):
         Returns a boolean indciating if parentValue<value
 
     EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
         sage: valueToTheRight(7,8)
         True
@@ -286,6 +302,8 @@ def isLeftChild(parentNode, node):
 
 
     EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
         sage: node = SplayNode(4)
         sage: child = SplayNode(3,node)
@@ -311,6 +329,8 @@ def isRightChild(parentNode, node):
         Returns a boolean indicating if node.value>parentNode.value
 
     EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
         sage: node = SplayNode(4)
         sage: child = SplayNode(3,node)
@@ -343,6 +363,8 @@ class SplayNode:
             value,parent both default to None
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(4)
 
         .. NOTE::
@@ -381,6 +403,8 @@ class SplayNode:
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: node = SplayNode(4)
             sage: node.SafeSplay()
 
@@ -401,6 +425,8 @@ class SplayNode:
             if it doesn't exist.
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: node = SplayNode(4)
             sage: node.getSplayTree() is None
@@ -423,6 +449,8 @@ class SplayNode:
             The root of the tree on which self is attached
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: child = SplayNode(3,node)
             sage: node = SplayNode(4)
@@ -448,6 +476,8 @@ class SplayNode:
             The height of the subtree of self
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: node = SplayNode(4)
             sage: child = SplayNode(3,node)
@@ -484,6 +514,8 @@ class SplayNode:
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: node = SplayNode(4)
             sage: child = SplayNode(3,node)
             sage: makeParentKnow(child)
@@ -511,6 +543,8 @@ class SplayNode:
 
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: node = SplayNode(4)
             sage: child = SplayNode(3,node)
@@ -541,6 +575,8 @@ class SplayNode:
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: node = SplayNode()
             sage: node.isEmpty()
             True
@@ -562,6 +598,8 @@ class SplayNode:
         value.
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
@@ -605,6 +643,8 @@ class SplayNode:
         self subtree such that <= value, otherwise the smallest bigger
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
@@ -652,6 +692,8 @@ class SplayNode:
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: node = SplayNode(22) 
             sage: isNew,newNode,offset = node.insert(34)
             sage: isNew
@@ -698,6 +740,8 @@ class SplayNode:
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
             sage: cchild = SplayNode(1,child)
@@ -735,6 +779,8 @@ class SplayNode:
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: node = SplayNode(22)
             sage: node.find(22)[0] == node
             True 
@@ -766,6 +812,8 @@ class SplayNode:
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
             sage: makeParentKnow(child)
@@ -790,6 +838,8 @@ class SplayNode:
             node corresponding to the above description
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
@@ -882,6 +932,8 @@ class SplayNode:
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
             sage: makeParentKnow(child)
@@ -906,6 +958,8 @@ class SplayNode:
         returns the min and max of the subtree of self
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: node = SplayNode(22)
             sage: node._isBst()
@@ -934,6 +988,8 @@ class SplayNode:
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: try:
             ....:     node.isBst()
             ....: except:
@@ -954,6 +1010,8 @@ class SplayNode:
             if self has a left child otherwise self
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: node = SplayNode(22)
             sage: child = SplayNode(3,node)
@@ -1023,6 +1081,8 @@ class SplayNode:
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             False
             sage: node = SplayNode(22)
             sage: child = SplayNode(33,node)
@@ -1086,6 +1146,8 @@ class SplayNode:
         Returns a boolean indcating if self is the root of the tree or not
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22)
             sage: child = SplayNode(33,node)
             sage: cchild = SplayNode(44,child)
@@ -1107,6 +1169,8 @@ class SplayNode:
         Returns the sum of offset from the root to self 
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: node = SplayNode(22)
             sage: child = SplayNode(33,node)
@@ -1140,6 +1204,8 @@ class SplayNode:
 
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: node = SplayNode(22)
             sage: child.offset = 2
@@ -1197,6 +1263,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,1,2])
 
         .. NOTE::
@@ -1221,6 +1289,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,1,2])
             sage: oldRoot = sp.root
             sage: sp.changeRoot(SplayNode())
@@ -1243,6 +1313,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,1,2])
             sage: sp.toList()
             [0, 1, 2]
@@ -1261,6 +1333,8 @@ class SplayTree():
         Check whether self is a valid SplayTree if not raise an Error
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: sp = SplayTree([0,1,2])
             sage: sp.checkValid()
@@ -1282,6 +1356,8 @@ class SplayTree():
             (a,b) such that a contains all the element <= value and b all the element > value
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.toList()
@@ -1318,6 +1394,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.indexList()
             [None, None, None, None, None, None]
@@ -1334,6 +1412,8 @@ class SplayTree():
             A sorted list of all the element of self
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.toList()
@@ -1357,6 +1437,8 @@ class SplayTree():
             The merge splay tree containing all the element of self and otherSplayTree
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: qp = SplayTree([35,44,42])
@@ -1406,6 +1488,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp._height()
             3 
@@ -1424,6 +1508,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.isEmpty()
             False 
@@ -1441,6 +1527,8 @@ class SplayTree():
         A boolean indicating if self is a valid binary search tree
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp._isBst()
@@ -1466,6 +1554,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp._isRoot()
             True
@@ -1490,6 +1580,8 @@ class SplayTree():
             it return None
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.getNode(3) !=  sp.getNode(2)
@@ -1520,6 +1612,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.toList()
             [0, 1, 2, 7, 22, 33]
@@ -1545,6 +1639,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.toList()
             [0, 1, 2, 7, 22, 33]
@@ -1566,6 +1662,8 @@ class SplayTree():
             the minimum of self if self isn't empty and None otherwise
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.min()
@@ -1593,6 +1691,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.max()
             33 
@@ -1618,7 +1718,9 @@ class SplayTree():
         OUTPUT: 
             A boolean indicating if value is in self
 
-        EXAMPLES:: 
+        EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import * 
 
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.find(7)
@@ -1645,7 +1747,9 @@ class SplayTree():
         INPUT: 
             list, a list of element to add
 
-        EXAMPLES:: 
+        EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import * 
 
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.toList()
@@ -1673,6 +1777,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.toList()
             [0, 1, 2, 7, 22, 33]
@@ -1699,6 +1805,8 @@ class SplayTree():
 
         EXAMPLES::
 
+        sage: from sage.graphs.maps.splay_tree import *
+
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.toList()
             [0, 1, 2, 7, 22, 33]
@@ -1723,6 +1831,8 @@ class SplayTree():
             the biggest element of self <= value or None if doesn't exist
 
         EXAMPLES::
+
+        sage: from sage.graphs.maps.splay_tree import *
 
             sage: sp = SplayTree([0,7,1,33,2,22])
             sage: sp.toList()
