@@ -72,6 +72,7 @@ jobs:
             "gmpy2 ~=2.1.b999" \
             memory_allocator \
             "numpy >=1.25" \
+            setuptools \
             jinja2
           uv pip install --no-build-isolation "cypari2 >=2.2.1"
 
