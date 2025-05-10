@@ -37,11 +37,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.libs.pari.protect_stack import PariStackProtector
 from sage.misc.cachefunc import cached_function
 from enum import Enum
-
-pari_stack_protector = PariStackProtector()
 
 
 class KnownKeywords(Enum):
