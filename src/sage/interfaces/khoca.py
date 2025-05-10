@@ -43,6 +43,7 @@ from enum import Enum
 
 pari_stack_protector = PariStackProtector()
 
+
 class KnownKeywords(Enum):
     r"""
     Enum class to specify if a keyword belongs to the interface.
@@ -62,6 +63,7 @@ class KnownKeywords(Enum):
     equivariant = 'equivariant'
     reduced = 'reduced'
     code = 'code'
+
 
 @cached_function
 def check_kwds(**kwds):
@@ -85,6 +87,7 @@ def check_kwds(**kwds):
     for k in kwds:
         keylist.append(KnownKeywords(k))
     return keylist
+
 
 @cached_function
 def khoca_interface(ring, **kwds):
@@ -114,6 +117,7 @@ def khoca_interface(ring, **kwds):
                                  frobenius_algebra=frobenius_algebra,
                                  root=root,
                                  equivariant=equivariant)
+
 
 @cached_function
 def khoca_raw_data(link, ring, red_typ=True, **kwds):
@@ -194,5 +198,5 @@ def khoca_raw_data(link, ring, red_typ=True, **kwds):
             if red:
                 return raw_data['red']
             else:
-                 raise TypeError('reduced must be a boolean')
+                raise TypeError('reduced must be a boolean')
     return raw_data['unred']

@@ -1150,7 +1150,9 @@ class Link(SageObject):
         - ``height`` -- the height of the homology to compute
         - ``implementation=`` -- can be one of the
           following:
+
           * ``'native'`` -- uses the original Sage implementation
+
           * ``'Khoca'`` -- uses the implementation of the optional package
             ``khoca`` package is present.
         - ``ring`` -- (default: ``ZZ``) the coefficient ring
@@ -1194,7 +1196,7 @@ class Link(SageObject):
             for d in [k[0] for k in data]:
                 invfac[d] = []
                 for t in torsion:
-                    if (d, t)  in data:
+                    if (d, t) in data:
                         invfac[d] += [t]*data[(d, t)]
             res = []
             for d in invfac:
@@ -1251,18 +1253,25 @@ class Link(SageObject):
 
         - ``implementation=`` -- string (default 'native') can be one of the
           following:
+
           * ``'native'`` -- uses the original Sage implementation
+
           * ``'Khoca'`` -- uses the implementation of the optional package
             ``khoca``
+
         - ``kwds`` -- dictionary of options to be passes to ``Khoca``
+
           * ``reduced`` -- boolean (default ``False``). Set this to
             ``True`` to obtain reduced homology
+
           * ``equivariant`` -- positive integer (default ``2``). Set this
             to ``n`` to obtain Khovanov-Rozansky sl(n)-homology with n > 2 of
             bipartite knots
+
           * ``frobenius_algebra`` -- tuple of integers (default ``(0, 0)``. The
             elements of the tuple are interpreted as modulus coefficients of
             the underlying frobenius algebra
+
           * ``root`` -- integer specifying a root of the modulus of the
             frobenius algeba.
 
@@ -2135,9 +2144,12 @@ class Link(SageObject):
           coefficients
         - ``implementation=`` -- string (default 'native') can be one of the
           following:
+
           * ``'native'`` -- uses the original Sage implementation
+
           * ``'Khoca'`` -- uses the implementation of the optional package
             ``khoca``
+
         - ``kwds`` -- dictionary of options to be passes to ``Khoca``
           for details see :meth:`khovanov_homology`
 
