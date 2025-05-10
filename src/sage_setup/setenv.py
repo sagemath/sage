@@ -14,7 +14,7 @@ def _environ_prepend(var, value, separator=':'):
 
 
 def setenv():
-    from sage.env import SAGE_ARCHFLAGS, SAGE_LOCAL, SAGE_PKG_CONFIG_PATH, SAGE_VENV
+    from sage.env import SAGE_LOCAL, SAGE_VENV, SAGE_ARCHFLAGS, SAGE_PKG_CONFIG_PATH
 
     ##
     ## from sage-env:
@@ -32,7 +32,7 @@ def setenv():
         _environ_prepend('PATH',         f'{SAGE_LOCAL}/bin')
         _environ_prepend('LIBRARY_PATH', f'{SAGE_LOCAL}/lib')
         _environ_prepend('CPATH',        f'{SAGE_LOCAL}/include')
-        _environ_prepend('LDFLAGS',      f'-L{SAGE_LOCAL}/lib -Wl',
+        _environ_prepend('LDFLAGS',      f'-L{SAGE_LOCAL}/lib -Wl,-rpath,{SAGE_LOCAL}/lib',
                          separator=' ')
         if platform.system() == 'Linux':
             _environ_prepend('LDFLAGS',      f'-Wl,-rpath-link,{SAGE_LOCAL}/lib',
