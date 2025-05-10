@@ -715,7 +715,7 @@ class SplayNode:
             node = node.parent
             node.cnt += toAdd
 
-    def find(self, value: int) -> "tuple[SlayNode, int]":
+    def find(self, value: int) -> "tuple[SplayNode, int]":
         """
         Find a node such that node.value+node.offset() == value, return it and its offset; if it doesn't exist, return (node,offset) such that the real value (i.e node.value+offset) < value
 
