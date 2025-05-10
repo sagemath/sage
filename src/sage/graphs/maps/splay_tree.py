@@ -283,10 +283,10 @@ def valueToTheRight(parentValue: int, value: int) -> bool:
 
     EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import valueToTheLeft
-        sage: valueToTheLeft(7,8)
+        sage: from sage.graphs.maps.splay_tree import valueToTheRight
+        sage: valueToTheRight(7,8)
         True
-        sage: valueToTheLeft(8,7)
+        sage: valueToTheRight(8,7)
         False
 
     NOTE:
@@ -445,7 +445,6 @@ class SplayNode:
         EXAMPLES::
 
             sage: from sage.graphs.maps.splay_tree import *
-            sage: child = SplayNode(3,node)
             sage: node = SplayNode(4)
             sage: child = SplayNode(3,node)
             sage: makeParentKnow(child)
@@ -640,8 +639,6 @@ class SplayNode:
     def insert(self, newValue: int) -> "tuple[bool, SplayNode, int]":
         """
         Insert newValue inside the tree; return (b,node,offset) such that b is True if it was a real new value, and node.value+offset = value
-            sage: newNode.value + offset == 34
-            True
 
         INPUT:
         - ``newValue`` -- int
@@ -652,6 +649,8 @@ class SplayNode:
             sage: node = SplayNode(22) 
             sage: isNew,newNode,offset = node.insert(34)
             sage: isNew
+            True
+            sage: newNode.value + offset == 34
             True
         
         NOTE:
@@ -1136,15 +1135,15 @@ class SplayNode:
 
         EXAMPLES::
 
-        sage: from sage.graphs.maps.splay_tree import *
-
+            sage: from sage.graphs.maps.splay_tree import *
             sage: node = SplayNode(22)
+            sage: child = SplayNode(33,node)
             sage: child.offset = 2
             sage: cchild = SplayNode(44,child)
             sage: makeParentKnow(cchild)
             sage: makeParentKnow(child)
             sage: cchild.isRoot()
-            True
+            False
 
         .. NOTE::
         O(log(m))
@@ -1577,7 +1576,7 @@ class SplayTree():
             [0, 1, 2, 7, 22, 33]
             sage: sp.delete(7)
             sage: sp.toList()
-            [0, 1, 2, 22, 33 
+            [0, 1, 2, 22, 33]
 
 
         .. NOTE::
