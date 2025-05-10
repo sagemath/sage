@@ -1,5 +1,4 @@
 py.install_sources(
-  '__init__.py',
   'all.py',
   'banner.py',
   'custom_swap.py',
