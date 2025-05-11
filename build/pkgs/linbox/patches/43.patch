@@ -1,0 +1,160 @@
+diff --git a/linbox/blackbox/block-hankel.h b/linbox/blackbox/block-hankel.h
+index a4bc7bf..c8e2756 100644
+--- a/linbox/blackbox/block-hankel.h
++++ b/linbox/blackbox/block-hankel.h
+@@ -345,8 +345,8 @@ namespace LinBox
+ 		template<class Vector1, class Vector2>
+ 		Vector1& apply(Vector1 &x, const Vector2 &y) const
+ 		{
+-			linbox_check(this->_coldim == y.size());
+-			linbox_check(this->_rowdim == x.size());
++			linbox_check(this->coldim() == y.size());
++			linbox_check(this->rowdim() == x.size());
+ 			BlasMatrixDomain<Field> BMD(field());
+ #ifdef BHANKEL_TIMER
+ 			_chrono.clear();
+diff --git a/linbox/matrix/sparsematrix/sparse-ell-matrix.h b/linbox/matrix/sparsematrix/sparse-ell-matrix.h
+index 1fc1bca..60378b9 100644
+--- a/linbox/matrix/sparsematrix/sparse-ell-matrix.h
++++ b/linbox/matrix/sparsematrix/sparse-ell-matrix.h
+@@ -1083,16 +1083,6 @@ namespace LinBox
+ 
+ 			{}
+ 
+-			_Iterator &operator = (const _Iterator &iter)
+-			{
+-				_data_it  = iter._data_it  ;
+-				_data_beg  = iter._data_beg  ;
+-				_data_end  = iter._data_end  ;
+-				_field  = iter._field  ;
+-
+-				return *this;
+-			}
+-
+ 			bool operator == (const _Iterator &i) const
+ 			{
+ 				return  (_data_it == i._data_it) ;
+@@ -1205,20 +1195,6 @@ namespace LinBox
+ 				, _row(iter._row)
+ 			{}
+ 
+-			_IndexedIterator &operator = (const _IndexedIterator &iter)
+-			{
+-				_colid_beg = iter._colid_beg ;
+-				_colid_it  = iter._colid_it ;
+-				_data_it   = iter._data_it  ;
+-				const_cast<data_it>(_data_beg)  = iter._data_beg ;
+-				const_cast<data_it>(_data_end)  = iter._data_end  ;
+-				const_cast<Field &>(_field)     = iter._field ;
+-				const_cast<size_t&>(_ld)         = iter._ld ;
+-				_row       = iter._row ;
+-
+-				return *this;
+-			}
+-
+ 			bool operator == (const _IndexedIterator &i) const
+ 			{
+ 				// we assume consistency
+diff --git a/linbox/matrix/sparsematrix/sparse-ellr-matrix.h b/linbox/matrix/sparsematrix/sparse-ellr-matrix.h
+index 11e59d5..359cb15 100644
+--- a/linbox/matrix/sparsematrix/sparse-ellr-matrix.h
++++ b/linbox/matrix/sparsematrix/sparse-ellr-matrix.h
+@@ -1099,19 +1099,6 @@ namespace LinBox
+ 
+ 			{}
+ 
+-			_Iterator &operator = (const _Iterator &iter)
+-			{
+-				_data_it  = iter._data_it  ;
+-				const_cast<element_iterator>(_data_beg) = iter._data_beg  ;
+-				const_cast<element_iterator>(_data_end)= iter._data_end  ;
+-				const_cast<Field &>(_field) = iter._field  ;
+-				const_cast<std::vector<size_t>&>(_rowid) = iter._rowid;
+-				const_cast<size_t&>(_ld) = iter._ld ;
+-				_row = iter._row ;
+-
+-				return *this;
+-			}
+-
+ 			bool operator == (const _Iterator &i) const
+ 			{
+ 				return  (_data_it == i._data_it) ;
+@@ -1246,21 +1233,6 @@ namespace LinBox
+ 				, _row(iter._row)
+ 			{}
+ 
+-			_IndexedIterator &operator = (const _IndexedIterator &iter)
+-			{
+-				_rowid_it  = iter._rowid_it ;
+-				_colid_beg = iter._colid_beg ;
+-				_colid_it  = iter._colid_it ;
+-				_data_it   = iter._data_it  ;
+-				const_cast<data_it>(_data_beg) = iter._data_beg ;
+-				const_cast<data_it>(_data_end) = iter._data_end  ;
+-				const_cast<Field &>(_field)    = iter._field ;
+-				const_cast<size_t&>(_ld)= iter._ld ;
+-				_row       = iter._row ;
+-
+-				return *this;
+-			}
+-
+ 			bool operator == (const _IndexedIterator &i) const
+ 			{
+ 				// we assume consistency
+diff --git a/linbox/ring/ntl/ntl-lzz_p.h b/linbox/ring/ntl/ntl-lzz_p.h
+index 201baaa..1bf8fc8 100644
+--- a/linbox/ring/ntl/ntl-lzz_p.h
++++ b/linbox/ring/ntl/ntl-lzz_p.h
+@@ -145,6 +145,11 @@ namespace LinBox
+ 			,zero( NTL::to_zz_p(0)),one( NTL::to_zz_p(1)),mOne(-one)
+             {}
+ 
++		Element &init (Element &x) const
++            {
++                return x = NTL::to_zz_p(0);
++            }
++
+ 		Element& init(Element& x, const double& y) const
+             {
+                 double z = fmod(y,(double)Element::modulus());
+@@ -153,7 +158,7 @@ namespace LinBox
+                 return x = NTL::to_zz_p(static_cast<long>(z)); //rounds towards 0
+             }
+ 
+-		Element &init (Element &x, const integer &y=0) const
++		Element &init (Element &x, const integer &y) const
+             {
+                 NTL::ZZ tmp= NTL::to_ZZ(std::string(y).data());
+                 return x = NTL::to_zz_p(tmp);
+diff --git a/linbox/ring/ntl/ntl-lzz_pe.h b/linbox/ring/ntl/ntl-lzz_pe.h
+index 60b132a..045b2f7 100644
+--- a/linbox/ring/ntl/ntl-lzz_pe.h
++++ b/linbox/ring/ntl/ntl-lzz_pe.h
+@@ -207,7 +207,9 @@ namespace LinBox
+ 			return f;
+             }
+ 
+-		Element & init(Element & x, integer n = 0) const
++		Element & init(Element & x) const { return x; }
++
++		Element & init(Element & x, integer n) const
+             {   // assumes n >= 0.
+                 int e = exponent();
+                 n %= cardinality();
+diff --git a/linbox/ring/ntl/ntl-zz_px.h b/linbox/ring/ntl/ntl-zz_px.h
+index 6e7d5b2..340df9f 100644
+--- a/linbox/ring/ntl/ntl-zz_px.h
++++ b/linbox/ring/ntl/ntl-zz_px.h
+@@ -104,6 +104,12 @@ namespace LinBox
+ 			,_CField(cf)
+ 		{}
+ 
++		/** Initialize p to 0 */
++		Element& init( Element& p ) const
++		{
++			return p = 0;
++		}
++
+ 		/** Initialize p to the constant y (p = y*x^0) */
+ 		template <class ANY>
+ 		Element& init( Element& p, const ANY& y ) const

@@ -9,7 +9,7 @@ AUTHORS:
 - Bill Cauchois (2009): improvements for inclusion into Sage.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #      Copyright (C) 2009 Carl Witty <Carl.Witty@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -21,8 +21,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 # Pieces of this file are strongly based on the marching cubes
 # implementation in Jmol located at src/org/jmol/jvxl/calc/MarchingCubes.java.

@@ -31,3 +31,4 @@ diffutils
 perl-IPC-Cmd
 # Needed to build gcc
 flex
+patch

@@ -1,11 +1,11 @@
 # sage_setup: distribution = sagemath-coxeter3
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009-2013 Mike Hansen <mhansen@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object cimport SageObject
 from sage.libs.coxeter3.decl cimport *

@@ -740,28 +740,28 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
                     MPB += 1
                     tmp *= fl
                 O = (fl**MPB)
-                if nc%MPB:
+                if nc % MPB:
                     for i in range(nr):
                         y = <unsigned char*>x
                         for j in range(FfCurrentRowSizeIo-1):
-                            y[j] = RandState.c_random()%O
+                            y[j] = RandState.c_random() % O
                             sig_check()
-                        for j in range(nc-(nc%MPB), nc):
-                            FfInsert(x, j, FfFromInt( (RandState.c_random()%fl) ))
+                        for j in range(nc-(nc % MPB), nc):
+                            FfInsert(x, j, FfFromInt( (RandState.c_random() % fl) ))
                             sig_check()
                         FfStepPtr(&(x))
                 else:
                     for i in range(nr):
                         y = <unsigned char*>x
                         for j in range(FfCurrentRowSizeIo):
-                            y[j] = RandState.c_random()%O
+                            y[j] = RandState.c_random() % O
                             sig_check()
                         FfStepPtr(&(x))
             else:
                 for i in range(nr):
                     for j in range(nc):
                         if RandState.c_rand_double() < density:
-                            FfInsert(x, j, FfFromInt( (RandState.c_random()%fl) ))
+                            FfInsert(x, j, FfFromInt( (RandState.c_random() % fl) ))
                             sig_check()
                     FfStepPtr(&(x))
         else:
@@ -769,7 +769,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
                 fl -= 1
                 for i in range(nr):
                     for j in range(nc):
-                        FfInsert(x, j, FfFromInt( (RandState.c_random()%fl)+1 ))
+                        FfInsert(x, j, FfFromInt( (RandState.c_random() % fl)+1 ))
                         sig_check()
                     FfStepPtr(&(x))
             else:
@@ -777,7 +777,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
                 for i in range(nr):
                     for j in range(nc):
                         if RandState.c_rand_double() < density:
-                            FfInsert(x, j, FfFromInt( (RandState.c_random()%fl)+1 ))
+                            FfInsert(x, j, FfFromInt( (RandState.c_random() % fl)+1 ))
                             sig_check()
                     FfStepPtr(&(x))
 

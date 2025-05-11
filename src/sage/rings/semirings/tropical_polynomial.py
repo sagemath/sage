@@ -930,9 +930,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             ...
             ValueError: the slope is not an integer
 
-        For max-plus algebra, the slope of the componenets has to be
+        For max-plus algebra, the slope of the components has to be
         increasing as we move from left to right. Conversely for min-plus
-        algebra, the slope of the componenets has to be decreasing from
+        algebra, the slope of the components has to be decreasing from
         left to right::
 
             sage: T = TropicalSemiring(QQ, use_min=False)

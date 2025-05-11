@@ -4755,7 +4755,7 @@ Please contact davidp@reed.edu with questions, bug reports, and suggestions for
 additional features and other improvements.
 
 .. [BN] Matthew Baker, Serguei Norine, `Riemann-Roch and Abel-Jacobi Theory on a
-   Finite Graph <http://people.math.gatech.edu/~mbaker/papers.html>`_,
+   Finite Graph <https://web.archive.org/web/20170705081240fw_/http://people.math.gatech.edu/%7Embaker/pdf/graphs_long2.pdf>`_,
    Advances in Mathematics 215 (2007), 766--788.
 
 .. [BTW] Per Bak, Chao Tang and Kurt Wiesenfeld (1987).

@@ -2363,7 +2363,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
                 inner_sum = R.zero()
                 for u in range(upper_u,0,-1):
                     # We want u to be a p-adic unit
-                    if u%p==0:
+                    if u % p == 0:
                         new_term = R.zero()
                     else:
                         new_term = ~R(u)
@@ -2970,8 +2970,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
         # we compute the value of N! as we go through the loop
         nfactorial_unit,nfactorial_val = R.one(),0
 
-        nmodp = N%p
-        for n in range(N,0,-1):
+        nmodp = N % p
+        for n in range(N, 0, -1):
             # multiply everything by x
             series_val += x_val
             series_unit *= x_unit
@@ -4224,7 +4224,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         n = Integer(n)
 
         if z.valuation() < 0:
-            verbose("residue oo, using functional equation for reciprocal. %d %s"%(n,str(self)), level=2)
+            verbose("residue oo, using functional equation for reciprocal. %d %s" % (n, str(self)), level=2)
             return (-1)**(n+1)*(1/z).polylog(n)-(z.log(p_branch)**n)/K(n.factorial())
 
         zeta = K.teichmuller(z)
@@ -4233,7 +4233,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if zeta == 0:
             if z.precision_absolute() == PlusInfinity():
                 return K(0)
-            verbose("residue 0, using series. %d %s"%(n,str(self)), level=2)
+            verbose("residue 0, using series. %d %s" % (n, str(self)), level=2)
             M = ceil((prec/z.valuation()).log(p).n())
             N = prec - n*M
             ret = K(0)
@@ -4247,7 +4247,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if zeta == 1:
             if z == 1:
                 return Integer(2)**(n-1)*K(-1).polylog(n, p_branch=p_branch)/(1-Integer(2)**(n-1))
-            verbose("residue 1, using _polylog_res_1. %d %s"%(n,str(self)), level=2)
+            verbose("residue 1, using _polylog_res_1. %d %s" % (n, str(self)), level=2)
             return self._polylog_res_1(n, p_branch)
 
         # Set up precision bounds
@@ -4261,7 +4261,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         K = Qp(p, prec)
 
         # Residue disk around zeta
-        verbose("general case. %d %s"%(n, str(self)), level=2)
+        verbose("general case. %d %s" % (n, str(self)), level=2)
         Li_i_zeta = [0] + [p**i/(p**i-1)*gtr[i](1/(1-zeta)) for i in range(1,n+1)]
 
         T = PowerSeriesRing(K, default_prec=ceil(tsl), names='t')
@@ -4616,7 +4616,8 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
             k = r1 % p
             r1 = (r1 + k * q1) // p
             if use_longs: # Use Dwork expansion to compute p-adic Gamma
-                s1 *= -evaluate_dwork_mahler_long(vv, r1*r2%q3, p, bd, k, q3)
+                s1 *= -evaluate_dwork_mahler_long(vv, r1*r2 % q3,
+                                                  p, bd, k, q3)
                 s1 %= q3
             else:
                 s *= -evaluate_dwork_mahler(v, R1(r1)*d, p, bd, k)

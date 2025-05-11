@@ -18,17 +18,18 @@ Classes and Methods
 -------------------
 """
 
-##############################################################################
+# ###########################################################################
 #  Copyright (C) 2008-2009 Martin Albrecht <martinralbrecht@googlemail.com>
 #  Copyright (C) 2009 Michael Brickenstein <brickenstein@mfo.de>
 #  Copyright (C) 2010 Mate Soos
 #  Copyright (C) 2012 Martin Albrecht <martinralbrecht@googlemail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-##############################################################################
+#                  https://www.gnu.org/licenses/
+# ###########################################################################
 
 from random import Random
+
 from sage.rings.polynomial.pbori.pbori import if_then_else as ite
 from sage.rings.integer_ring import ZZ
 from sage.functions.other import ceil

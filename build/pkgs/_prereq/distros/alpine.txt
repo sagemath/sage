@@ -18,3 +18,4 @@ gcc
 g++
 ca-certificates
 coreutils
+patch

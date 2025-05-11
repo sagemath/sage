@@ -1268,7 +1268,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: Matrix(CyclotomicField(10),0).charpoly()
             1
         """
-        key = 'charpoly-%s-%s'%(algorithm,proof)
+        key = 'charpoly-%s-%s' % (algorithm, proof)
         f = self.fetch(key)
         if f is not None:
             return f.change_variable_name(var)
@@ -1611,7 +1611,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: a == b  # long time (depends on previous)
             True
         """
-        key = 'echelon_form-%s'%algorithm
+        key = 'echelon_form-%s' % algorithm
         E = self.fetch(key)
         if E is not None:
             return E
@@ -1767,10 +1767,12 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
                 # on a few more primes, and try again.
 
                 num_primes += echelon_primes_increment
-                verbose("rational reconstruction failed, trying with %s primes"%num_primes, level=echelon_verbose_level)
+                verbose("rational reconstruction failed, trying with %s primes" % num_primes,
+                        level=echelon_verbose_level)
                 continue
 
-            verbose("rational reconstruction succeeded with %s primes!"%num_primes, level=echelon_verbose_level)
+            verbose("rational reconstruction succeeded with %s primes!" % num_primes,
+                    level=echelon_verbose_level)
 
             if ((res * res.denominator()).coefficient_bound() *
                 self.coefficient_bound() * self.ncols()) > prod:
@@ -1783,7 +1785,8 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
                         level=echelon_verbose_level)
                 continue
 
-            verbose("found echelon form with %s primes, whose product is %s"%(num_primes, prod), level=echelon_verbose_level)
+            verbose("found echelon form with %s primes, whose product is %s" % (num_primes, prod),
+                    level=echelon_verbose_level)
             self.cache('pivots', max_pivots)
             return res
 

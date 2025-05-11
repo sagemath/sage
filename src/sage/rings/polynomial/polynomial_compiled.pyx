@@ -243,9 +243,9 @@ cdef class CompiledPolynomialFunction:
                 M = <dummy_pd>T
             m = M.label
             n = N.label
-            k = m/n
-            r = m%n
-            half = m/2
+            k = m / n
+            r = m % n
+            half = m / 2
 
             found = False
             if m % 2 == 0 and n >= half:

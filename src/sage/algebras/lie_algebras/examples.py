@@ -167,7 +167,7 @@ def three_dimensional_by_rank(R, n, a=None, names=['X', 'Y', 'Z']):
 
     if n == 2:
         if a is None:
-            raise ValueError("The parameter 'a' must be specified")
+            raise ValueError("the parameter 'a' must be specified")
         X = names[0]
         Y = names[1]
         Z = names[2]
@@ -195,7 +195,7 @@ def three_dimensional_by_rank(R, n, a=None, names=['X', 'Y', 'Z']):
         L.rename("sl2 over {}".format(R))
         return L
 
-    raise ValueError("Invalid rank")
+    raise ValueError("invalid rank")
 
 
 def affine_transformations_line(R, names=['X', 'Y'], representation='bracket'):

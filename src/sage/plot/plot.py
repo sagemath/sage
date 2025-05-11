@@ -504,7 +504,7 @@ the state of Sage, so that the examples below work!
 
     sage: reset()
 
-See http://matplotlib.sourceforge.net for complete documentation
+See https://matplotlib.org/stable/ for complete documentation
 about how to use Matplotlib.
 
 TESTS:

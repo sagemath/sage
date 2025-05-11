@@ -215,6 +215,9 @@ class Fields(CategoryWithAxiom):
                 True
                 sage: Parent(QQ,category=Fields()).is_field()
                 True
+
+                sage: Frac(ZZ['x,y']).is_field()
+                True
             """
             return True
 

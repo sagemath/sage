@@ -553,7 +553,7 @@ class PRESENT(SageObject):
             :mod:`sage.crypto.sbox` uses big endian by default whereas most of
             Sage uses little endian. So to use the big endian PRESENT Sbox from
             :mod:`sage.crypto.sboxes` :func:`sbox_layer` has to do some endian
-            conversion (i.e. reverse input and ouput of the Sbox). Keep this in
+            conversion (i.e. reverse input and output of the Sbox). Keep this in
             mind if you change the Sbox or :func:`sbox_layer`.
         """
         sbox = self.sbox if not inverse else self.sbox.inverse()
@@ -703,7 +703,7 @@ class PRESENT_KS(SageObject):
         :mod:`sage.crypto.sbox` uses big endian by default whereas most of Sage
         uses little endian. So to use the big endian PRESENT Sbox from
         :mod:`sage.crypto.sboxes` :class:`PRESENT_KS` has to do some endian
-        conversion (i.e. reverse input and ouput of the Sbox). Keep this in
+        conversion (i.e. reverse input and output of the Sbox). Keep this in
         mind if you change the Sbox or :func:`__call__`.
 
     .. automethod:: __init__
@@ -885,7 +885,7 @@ def convert_to_vector(I, L):
 
     - ``I`` -- integer or bit list-like
 
-    - ``L`` -- integer; the desired bit length of the ouput
+    - ``L`` -- integer; the desired bit length of the output
 
     OUTPUT: the ``L``-bit vector representation of ``I``
 

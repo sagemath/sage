@@ -435,8 +435,8 @@ Dictionaries
 Ein Dictionary (manchmal auch assoziativer Array genannt) ist eine
 Abbildung von 'hashbaren' Objekten (z.B. Strings, Zahlen und Tupel;
 Lesen Sie die Python documentation
-http://docs.python.org/tut/node7.html und
-http://docs.python.org/lib/typesmapping.html für weitere Details) zu
+http://docs.python.org/3/tutorial/datastructures.html und
+https://docs.python.org/3/library/stdtypes.html#typesmapping für weitere Details) zu
 beliebigen Objekten.
 
 ::

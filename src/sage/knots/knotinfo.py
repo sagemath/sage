@@ -15,7 +15,7 @@ package using
 - ``sage -f database_knotinfo`` (installs even if the current version is present)
 
 This will install a `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__
-for the original databases in Sage. This wrapper perfoms an automatic progress
+for the original databases in Sage. This wrapper performs an automatic progress
 of version numbers. For more details and further install instructions please see
 the corresponding web-page.
 
@@ -761,7 +761,7 @@ class KnotInfoBase(Enum):
 
             There has been a major change to braid representatives for
             proper links since version 2021.10.1. The former braid
-            reresentatives can be obtained by the column
+            representatives can be obtained by the column
             ``braid_notation_old`` (see the final example below).
 
         EXAMPLES::
@@ -925,7 +925,7 @@ class KnotInfoBase(Enum):
         .. NOTE::
 
            KnotInfo's value for the unknot ``0_1`` is zero. This is not
-           compatible whith Sage's result (the value of the Alexander
+           compatible with Sage's result (the value of the Alexander
            polynomial at -1). Since this method is needed to identify
            Sage links we take the according value in that case.
 
@@ -2554,17 +2554,17 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
           keyword has to be set to ``True``.
 
         - ``comp`` -- (default: ``None``) if given an integer for this
-          keyword the list is restriced to links having the according number
+          keyword the list is restricted to links having the according number
           of components. This keyword implies ``oriented=True``.
 
         - ``det`` -- (default: ``None``) if given an integer for this
-          keyword the list is restriced to links having the according value
+          keyword the list is restricted to links having the according value
           for its determinant. This keyword implies ``oriented=True``.
 
         - ``homfly`` -- (default: ``None``) if given a HOMFLY-PT polynomial
-          having ``normalization='vz'`` for this keyword the list is restriced to
-          links having the according value for its HOMFLY-PT polynomial. This
-          keyword implies ``oriented=True``.
+          having ``normalization='vz'`` for this keyword the list is restricted
+          to links having the according value for its HOMFLY-PT
+          polynomial. This keyword implies ``oriented=True``.
 
         EXAMPLES::
 

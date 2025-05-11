@@ -417,8 +417,8 @@ Dictionaries
 A dictionary (also sometimes called an associative array) is a
 mapping from 'hashable' objects (e.g., strings, numbers, and tuples
 of such; see the Python documentation
-http://docs.python.org/tut/node7.html and
-http://docs.python.org/lib/typesmapping.html for details) to
+http://docs.python.org/3/tutorial/datastructures.html and
+https://docs.python.org/3/library/stdtypes.html#typesmapping for details) to
 arbitrary objects.
 
 ::

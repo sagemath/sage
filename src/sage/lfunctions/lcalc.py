@@ -19,13 +19,13 @@ AUTHORS:
 - William Stein (2006-03-05): wrote Sage interface to lcalc
 """
 
-########################################################################
+# ######################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-########################################################################
+#                  https://www.gnu.org/licenses/
+# ######################################################################
 
 import os
 

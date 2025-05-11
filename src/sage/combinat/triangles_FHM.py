@@ -62,7 +62,7 @@ def _matrix_display(self, variables=None):
 
     - ``variables`` -- (optional) choice of 2 variables
 
-    OUPUT:
+    OUTPUT:
 
     matrix
 

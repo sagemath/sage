@@ -12,12 +12,12 @@ AUTHOR:
 - William Stein, 2010-03
 """
 
-#############################################################################
+# ##########################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-#############################################################################
+#                  https://www.gnu.org/licenses/
+# ##########################################################################
 
 from cpython.object cimport PyObject_RichCompare
 

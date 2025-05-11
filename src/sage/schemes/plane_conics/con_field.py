@@ -70,8 +70,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             Projective Conic Curve over Rational Field defined by x^2 + y^2 + z^2
         """
         super().__init__(A, f)
-        self._coefficients = [f[(2,0,0)], f[(1,1,0)], f[(1,0,1)],
-                                f[(0,2,0)], f[(0,1,1)], f[(0,0,2)]]
+        self._coefficients = [f[(2, 0, 0)], f[(1, 1, 0)], f[(1, 0, 1)],
+                              f[(0, 2, 0)], f[(0, 1, 1)], f[(0, 0, 2)]]
         self._parametrization = None
         self._diagonal_matrix = None
 
@@ -116,13 +116,13 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
                 return self
             if not S.has_coerce_map_from(B):
                 raise ValueError("No natural map from the base ring of self "
-                                  "(= %s) to S (= %s)" % (self, S))
+                                 "(= %s) to S (= %s)" % (self, S))
             from .constructor import Conic
             con = Conic([S(c) for c in self.coefficients()],
                         self.variable_names())
             if self._rational_point is not None:
                 pt = [S(c) for c in Sequence(self._rational_point)]
-                if not pt == [0,0,0]:
+                if not pt == [0, 0, 0]:
                     # The following line stores the point in the cache
                     # if (and only if) there is no point in the cache.
                     pt = con.point(pt)
@@ -284,26 +284,26 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         """
         A = self.symmetric_matrix()
         B = self.base_ring()
-        basis = [vector(B,{2:0,i:1}) for i in range(3)]
+        basis = [vector(B, {2: 0, i: 1}) for i in range(3)]
         for i in range(3):
             zerovalue = (basis[i]*A*basis[i].column() == 0)
             if zerovalue:
-                for j in range(i+1,3):
+                for j in range(i+1, 3):
                     if basis[j]*A*basis[j].column() != 0:
                         b = basis[i]
                         basis[i] = basis[j]
                         basis[j] = b
                         zerovalue = False
             if zerovalue:
-                for j in range(i+1,3):
+                for j in range(i+1, 3):
                     if basis[i]*A*basis[j].column() != 0:
                         basis[i] = basis[i]+basis[j]
                         zerovalue = False
             if not zerovalue:
                 l = (basis[i]*A*basis[i].column())
-                for j in range(i+1,3):
+                for j in range(i+1, 3):
                     basis[j] = basis[j] - \
-                               (basis[i]*A*basis[j].column())/l * basis[i]
+                        (basis[i]*A*basis[j].column())/l * basis[i]
         T = matrix(basis).transpose()
         return T.transpose()*A*T, T
 
@@ -537,24 +537,24 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         if isinstance(B, sage.rings.abc.ComplexField):
             if point:
-                [_,_,_,d,e,f] = self._coefficients
+                _, _, _, d, e, f = self._coefficients
                 if d == 0:
-                    return True, self.point([0,1,0])
+                    return True, self.point([0, 1, 0])
                 return True, self.point([0, ((e**2-4*d*f).sqrt()-e)/(2*d), 1],
                                         check=False)
             return True
         if isinstance(B, sage.rings.abc.RealField):
             D, T = self.diagonal_matrix()
-            [a, b, c] = [D[0,0], D[1,1], D[2,2]]
+            a, b, c = [D[0, 0], D[1, 1], D[2, 2]]
             if a == 0:
-                ret = True, self.point(T*vector([1,0,0]), check=False)
+                ret = True, self.point(T*vector([1, 0, 0]), check=False)
             elif a*c <= 0:
-                ret = True, self.point(T*vector([(-c/a).sqrt(),0,1]),
+                ret = True, self.point(T*vector([(-c/a).sqrt(), 0, 1]),
                                        check=False)
             elif b == 0:
-                ret = True, self.point(T*vector([0,1,0]), check=False)
+                ret = True, self.point(T*vector([0, 1, 0]), check=False)
             elif b*c <= 0:
-                ret = True, self.point(T*vector([0,(-c/b).sqrt(),0,1]),
+                ret = True, self.point(T*vector([0, (-c/b).sqrt(), 0, 1]),
                                        check=False)
             else:
                 ret = False, None
@@ -617,16 +617,16 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             return ret[0]
         B = self.base_ring()
         if B.characteristic() == 2:
-            [a,b,c,d,e,f] = self.coefficients()
+            a, b, c, d, e, f = self.coefficients()
             if b == 0 and c == 0 and e == 0:
                 for i in range(3):
                     if [a, d, f][i] == 0:
-                        return True, self.point(vector(B, {2:0, i:1}))
+                        return True, self.point(vector(B, {2: 0, i: 1}))
                 if hasattr(a/f, 'is_square') and hasattr(a/f, 'sqrt'):
                     if (a/f).is_square():
-                        return True, self.point([1,0,(a/f).sqrt()])
+                        return True, self.point([1, 0, (a/f).sqrt()])
                     if (d/f).is_square():
-                        return True, self.point([0,1,(d/f).sqrt()])
+                        return True, self.point([0, 1, (d/f).sqrt()])
                 raise NotImplementedError("Sorry, find singular point on conics not implemented over all fields of characteristic 2.")
             pt = [e, c, b]
             if self.defining_polynomial()(pt) == 0:
@@ -760,7 +760,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             True
         """
         if self.base_ring().characteristic() == 2:
-            [a,b,c,d,e,f] = self.coefficients()
+            a, b, c, d, e, f = self.coefficients()
             if b == 0 and c == 0 and e == 0:
                 return False
             return self.defining_polynomial()([e, c, b]) != 0
@@ -803,7 +803,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         kmn = magma(self.base_ring())._ref()
         coeffs = self.coefficients()
         magma_coeffs = [coeffs[i]._magma_init_(magma) for i in [0, 3, 5, 1, 4, 2]]
-        return 'Conic([%s|%s])' % (kmn,','.join(magma_coeffs))
+        return 'Conic([%s|%s])' % (kmn, ','.join(magma_coeffs))
 
     def matrix(self):
         r"""
@@ -1265,10 +1265,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             x^2 + 2*x*y + y^2 + 3*x*z + z^2
         """
         from sage.matrix.constructor import matrix
-        [a,b,c,d,e,f] = self.coefficients()
-        return matrix([[ a, b, c ],
-                       [ 0, d, e ],
-                       [ 0, 0, f ]])
+        a, b, c, d, e, f = self.coefficients()
+        return matrix([[a, b, c],
+                       [0, d, e],
+                       [0, 0, f]])
 
     def variable_names(self):
         r"""
