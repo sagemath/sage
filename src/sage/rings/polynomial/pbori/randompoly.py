@@ -47,7 +47,7 @@ def sparse_random_system(ring, number_of_polynomials, variables_per_polynomial,
     Generate a sparse random system.
 
     Generate a system, which is sparse in the sense, that each polynomial
-    contains only a small subset of variables. In each variable that occurrs
+    contains only a small subset of variables. In each variable that occurs
     in a polynomial it is dense in the terms up to the given degree
     (every term occurs with probability 1/2).
 

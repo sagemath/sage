@@ -1115,6 +1115,15 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: A.<x,y> = TateAlgebra(R)
             sage: A(78612, prec=3)  # indirect doctest
             ...100 + O(2^3 * <x, y>)
+
+        TESTS:
+
+        We check that :issue:`40046` is fixed::
+
+            sage: S.<x,y> = TateAlgebra(Qp(5), log_radii=(1,0))
+            sage: f = 5*x
+            sage: f.add_bigoh(1)
+            (5 + O(5^2))*x + O(5 * <x/5, y>)
         """
         self._is_normalized = True
         if self._prec is Infinity:
@@ -1124,9 +1133,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         for (e, c) in list(self._poly.__repn.items()):
             v = (<ETuple>self._parent._log_radii).dotprod(<ETuple>e)
             coeff = self._poly.__repn[e]
-            if coeff.precision_absolute() > self._prec - v:
-                coeff = coeff.add_bigoh(self._prec - v)
-            if coeff.valuation() >= self._prec - v:
+            if coeff.precision_absolute() > self._prec + v:
+                coeff = coeff.add_bigoh(self._prec + v)
+            if coeff.valuation() >= self._prec + v:
                 del self._poly.__repn[e]
             else:
                 self._poly.__repn[e] = coeff
@@ -2534,7 +2543,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         However `\log(1+x)` converges on a smaller disk::
 
             sage: f.restriction(-1).log()
-            ...0000000001*x + ...000000000.1*x^3 + ...111111111*x^2 + ...
+            ...000000001*x + ...0000000.1*x^3 + ...111111*x^2 + ...
              + O(3^10 * <3*x, 3*y>)
 
         TESTS::
@@ -2692,7 +2701,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         However `\exp(x)` converges on a smaller disk::
 
             sage: f.restriction(-1).exp()
-            ...0000000001 + ...0000000001*x + ...111111111.2*x^3 + ...111111112*x^2
+            ...0000000001 + ...000000001*x + ...1111111.2*x^3 + ...111112*x^2
              + ... + O(3^10 * <3*x, 3*y>)
 
         TESTS::

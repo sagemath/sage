@@ -41,7 +41,7 @@ Sage 中的每个“对象”都必须有 LaTeX 表示。你可以通过执行 `
 在 Jupyter Notebook 中，你可以自动看到输入命令输出的渲染 LaTeX 表示。
 你可以通过执行 ``%display latex`` 来启动自动渲染（并通过执行 ``%display plain`` 停止）。
 
-.. ONLY:: html and feature_jupyter_sphinx
+.. ONLY:: html
 
     因此，在 Jupyter notebook 中，你得到
 

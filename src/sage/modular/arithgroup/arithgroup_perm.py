@@ -2488,7 +2488,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             sage: Go == G
             True
 
-        Strating from `\Gamma(6)` we get a different group::
+        Starting from `\Gamma(6)` we get a different group::
 
             sage: G = Gamma(6).as_permutation_group()
             sage: G.is_odd(), G.index()

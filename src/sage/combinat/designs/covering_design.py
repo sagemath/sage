@@ -54,7 +54,6 @@ from sage.rings.rational import Rational
 from sage.arith.misc import binomial
 from sage.combinat.combination import Combinations
 from sage.combinat.designs.incidence_structures import IncidenceStructure
-from sage.cpython.string import bytes_to_str
 
 
 def schonheim(v, k, t):
@@ -520,11 +519,8 @@ def best_known_covering_design_www(v, k, t, verbose=False):
     if verbose:
         print("Looking up the bounds at %s" % url)
 
-    f = urlopen(url, context=default_context())
-    try:
-        s = bytes_to_str(f.read())
-    finally:
-        f.close()
+    with urlopen(url, context=default_context()) as f:
+        s = f.read().decode()
 
     if 'covering not in database' in s:  # not found
         str = "no (%d, %d, %d) covering design in database\n" % (v, k, t)

@@ -233,7 +233,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             self._entries = data
             self._zero = self._base_ring(0)
         else:
-            raise RuntimeError("unknown matrix version (=%s)"%version)
+            raise RuntimeError(f"unknown matrix version (={version})")
 
     ########################################################################
     # LEVEL 2 functionality

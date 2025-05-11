@@ -192,7 +192,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
         cat = Sets().Enumerated().Finite() if self._is_finite else Sets().Infinite()
         super().__init__(self, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -361,7 +361,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
 
     def digraph_preprojectives(self, max_depth, with_translations=False):
         r"""
-        Return the diagraph of preprojectives of ``self`` up to ``max_depth``.
+        Return the digraph of preprojectives of ``self`` up to ``max_depth``.
 
         EXAMPLES::
 
@@ -400,7 +400,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
 
     def digraph_postinjectives(self, max_depth, with_translations=False):
         """
-        Return the diagraph of postinjectives of ``self`` up to ``max_depth``.
+        Return the digraph of postinjectives of ``self`` up to ``max_depth``.
 
         EXAMPLES::
 
@@ -440,12 +440,12 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
     @cached_method
     def digraph(self, with_translations=False):
         r"""
-        Return the diagraph of ``self``.
+        Return the digraph of ``self``.
 
         INPUT:
 
-        - ``with_translations`` -- boolean (default: ``False``); if ``True``, then
-          include the arrows corresponding to the translations
+        - ``with_translations`` -- boolean (default: ``False``); if ``True``,
+          then include the arrows corresponding to the translations
 
         EXAMPLES::
 
@@ -697,7 +697,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             self._level = ZZ(level)
             Element.__init__(self, parent)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Return a string representation of ``self``.
 
@@ -710,7 +710,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             """
             return f"<{self._vertex}, {self._level}>"
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a latex representation of ``self``.
 
@@ -739,7 +739,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
                 return dim_vec
             return r"\begin{{gathered}} {} \\ {} \end{{gathered}}".format(node, dim_vec)
 
-        def _richcmp_(self, other, op):
+        def _richcmp_(self, other, op) -> bool:
             r"""
             Rich comparison of ``self`` to ``other`` by ``op``.
 
@@ -752,7 +752,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             """
             return richcmp((self._level, self._vertex), (other._level, other._vertex), op)
 
-        def __hash__(self):
+        def __hash__(self) -> int:
             r"""
             Return the hash of ``self``.
 

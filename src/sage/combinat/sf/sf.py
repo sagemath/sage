@@ -1321,6 +1321,19 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return jack.Jack( self, t=t )
 
+    def abreu_nigro(self, q='q'):
+        """
+        The Abreu-Nigro basis of the Symmetric Functions.
+
+        EXAMPLES::
+
+            sage: q = ZZ['q'].fraction_field().gen()
+            sage: SymmetricFunctions(q.parent()).abreu_nigro()
+            Symmetric Functions over Fraction Field of Univariate Polynomial Ring in q over Integer Ring in the Abreu-Nigro basis
+        """
+        from sage.combinat.sf.abreu_nigro import SymmetricFunctionAlgebra_AbreuNigro
+        return SymmetricFunctionAlgebra_AbreuNigro(self, q)
+
     def zonal(self):
         """
         The zonal basis of the Symmetric Functions.

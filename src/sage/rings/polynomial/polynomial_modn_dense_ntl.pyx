@@ -635,17 +635,17 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
 
     if epsilon is None:
         epsilon = beta/8
-    verbose("epsilon = %f"%epsilon, level=2)
+    verbose("epsilon = %f" % epsilon, level=2)
 
     m = max(beta**2/(delta * epsilon), 7*beta/delta).ceil()
-    verbose("m = %d"%m, level=2)
+    verbose("m = %d" % m, level=2)
 
     t = int( ( delta*m*(1/beta -1) ).floor() )
-    verbose("t = %d"%t, level=2)
+    verbose("t = %d" % t, level=2)
 
     if X is None:
         X = (0.5 * N**(beta**2/delta - epsilon)).ceil()
-    verbose("X = %s"%X, level=2)
+    verbose("X = %s" % X, level=2)
 
     # we could do this much faster, but this is a cheap step
     # compared to LLL

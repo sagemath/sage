@@ -3670,7 +3670,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             # If ``not do_f_vector`` the iterator is set up
             # for ``output_dimension`` and
             # ``d < dim`` implies
-            # ``d == ouput_dimension``.
+            # ``d == output_dimension``.
             if not do_f_vector or d == output_dimension:
                 if do_atom_rep:
                     # Set up face_iter.atom_rep

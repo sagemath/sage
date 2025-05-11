@@ -396,14 +396,10 @@ by A. M. Kuchling. Steven F. Lott's book
 `Building Skills in Python <http://homepage.mac.com/s_lott/books/python.html#book-python>`_
 has a chapter on
 `Functional Programming using Collections <http://homepage.mac.com/s_lott/books/python/html/p02/p02c10_adv_seq.html>`_.
-See also the chapter
-`Functional Programming <http://www.diveintopython.net/functional_programming/index.html>`_
-from Mark Pilgrim's book
-`Dive Into Python <http://www.diveintopython.net/>`_.
 
 You might also want to consider experimenting with
 `Haskell <http://www.haskell.org>`_
 for expressing mathematical concepts. For an example of Haskell in
 expressing mathematical algorithms, see J. Gibbons' article
-`Unbounded Spigot Algorithms for the Digits of Pi <http://www.maa.org/pubs/monthly_apr06_toc.html>`_
+`Unbounded Spigot Algorithms for the Digits of Pi <https://www.cs.ox.ac.uk/people/jeremy.gibbons/publications/spigot.pdf>`_
 in the American Mathematical Monthly.

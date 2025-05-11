@@ -15,13 +15,13 @@ AUTHORS:
  - Alexander Galarraga (August 14th, 2020): initial implementation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.number_fields import NumberFields
 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine

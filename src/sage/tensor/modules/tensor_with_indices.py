@@ -7,19 +7,19 @@ AUTHORS:
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Léo Brunswic (2019): add multiple symmetries and multiple contractions
 """
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from itertools import combinations
+import re
 
 from sage.structure.sage_object import SageObject
-import re
-from itertools import combinations
 
 # Regular expression for the allowed characters in index notation.
 # This includes Unicode word constituents but excludes digits and underscores.

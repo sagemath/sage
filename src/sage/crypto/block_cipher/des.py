@@ -1041,7 +1041,7 @@ def convert_to_vector(I, L):
 
     - ``I`` -- integer or bit list-like
 
-    - ``L`` -- integer; the desired bit length of the ouput
+    - ``L`` -- integer; the desired bit length of the output
 
     OUTPUT: the ``L``-bit vector representation of ``I``
 

@@ -1,16 +1,14 @@
 """
 Find isomorphisms between fans
 """
-
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import column_matrix, matrix
 from sage.geometry.cone import Cone
