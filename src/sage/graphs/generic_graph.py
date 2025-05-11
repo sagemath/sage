@@ -7097,7 +7097,7 @@ class GenericGraph(GenericGraph_pyx):
         verts = [tuple(f) for f in self.faces(embedding=embedding)]
         edges = []
         for v1, v2 in combinations(verts, 2):
-            e = set([tuple(reversed(e)) for e in v1]).intersection(v2)
+            e = {tuple(reversed(e)) for e in v1}.intersection(v2)
             if e:
                 e = e.pop()  # just one edge since self and its dual are simple
                 edges.append([v1, v2, self.edge_label(e[0], e[1])])
@@ -24219,8 +24219,8 @@ class GenericGraph(GenericGraph_pyx):
             (0, 2)
         """
         if self._directed:
-            in_neighbors_in_cell = set([a for a, _, _ in self.incoming_edges(vertex)]) & set(cell)
-            out_neighbors_in_cell = set([a for _, a, _ in self.outgoing_edges(vertex)]) & set(cell)
+            in_neighbors_in_cell = {a for a, _, _ in self.incoming_edges(vertex)} & set(cell)
+            out_neighbors_in_cell = {a for _, a, _ in self.outgoing_edges(vertex)} & set(cell)
             return (len(in_neighbors_in_cell), len(out_neighbors_in_cell))
 
         neighbors_in_cell = set(self.neighbors(vertex)) & set(cell)

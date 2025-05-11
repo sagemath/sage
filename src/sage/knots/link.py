@@ -2463,7 +2463,7 @@ class Link(SageObject):
             return type(self)([])
         new_edges = flatten(new_pd)
         for cr in loop_crossings:
-            rem = set([e for e in cr if e in new_edges])
+            rem = {e for e in cr if e in new_edges}
             if len(rem) == 2:
                 # put remaining edges together
                 a, b = sorted(rem)
@@ -4637,7 +4637,7 @@ class Link(SageObject):
                         verbose('identified by KnotInfo uniquely (%s, %s)' % (sl[0], k))
                         return True
                     elif not self.is_knot():
-                        if len(set([l.series(oriented=True) for l in sl])) == 1:
+                        if len({l.series(oriented=True) for l in sl}) == 1:
                             # all matches are orientation mutants of each other
                             verbose('identified by KnotInfoSeries (%s, %s)' % (sl, k))
                             return True

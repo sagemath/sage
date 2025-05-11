@@ -4267,14 +4267,17 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
                 rand = randrange(0, len(temp))
                 Phi[(x, line)] = temp.pop(rand)
     elif Phi == 'fixed':
-        Phi = {(x, line): val for x in range(m) for val, line in enumerate(L_i[x])}
+        Phi = {(x, line): val for x in range(m)
+               for val, line in enumerate(L_i[x])}
     else:
         assert isinstance(Phi, dict), \
                "Phi must be a dictionary or 'random' or 'fixed'"
-        assert set(Phi.keys()) == set([(x, line) for x in range(m) for line in L_i[x]]), \
+        assert set(Phi.keys()) == {(x, line) for x in range(m)
+                                   for line in L_i[x]}, \
                'each Phi_i must have domain L_i'
         for x in range(m):
-            assert m - 2 == len(set([val for (key, val) in Phi.items() if key[0] == x])), \
+            assert m - 2 == len({val for (key, val) in Phi.items()
+                                 if key[0] == x}), \
                    'each phi_i must be injective'
         for val in Phi.values():
             assert val in range(m - 1), \

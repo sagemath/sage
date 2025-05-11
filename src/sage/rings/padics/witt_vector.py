@@ -156,7 +156,7 @@ class WittVector(CommutativeRingElement):
             return P((self[0]**-1, ))
 
         if P.coefficient_ring().characteristic() == P.prime():
-            res = P(list([self[0]**-1])
+            res = P([self[0]**-1]
                     + list(P.coefficient_ring().zero()
                            for _ in range(self._prec-1)))
 
@@ -169,7 +169,7 @@ class WittVector(CommutativeRingElement):
         # to (1, 0, 0, ...), and solve.
         poly_ring = PolynomialRing(P.coefficient_ring(), 'x')
         x = poly_ring.gen()
-        inv_vec = (list([self[0]**-1])
+        inv_vec = ([self[0]**-1]
                    + list(poly_ring.zero() for _ in range(self._prec-1)))
         # We'll fill this in one-by-one
 

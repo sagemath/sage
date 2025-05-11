@@ -1395,7 +1395,7 @@ class MatchingCoveredGraph(Graph):
                 edges.remove(edge)
 
         # Check if all the incident vertices of the input edges are existent
-        new_vertices = list(set([x for u, v, *_ in edges for x in [u, v]]))
+        new_vertices = list({x for u, v, *_ in edges for x in [u, v]})
 
         for vertex in new_vertices[:]:
             if vertex in self:
