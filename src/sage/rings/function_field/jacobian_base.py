@@ -740,7 +740,7 @@ class Jacobian_base(Parent):
         """
         if not self._system:
             return [self.group()]
-        return list(self.group(k) for k in self._system)
+        return [self.group(k) for k in self._system]
 
     def base_divisor(self):
         """
