@@ -49,7 +49,7 @@ default.
 - :envvar:`JUPYTER_CONFIG_DIR` --
   directory where the configuration of Jupyter is stored. By default,
   this is some directory inside :envvar:`DOT_SAGE`.
-  See http://jupyter.readthedocs.io/en/latest/projects/jupyter-directories.html
+  See https://docs.jupyter.org/en/latest/use/jupyter-directories.html
   for more information.
 
 - :envvar:`MPLCONFIGDIR` --
