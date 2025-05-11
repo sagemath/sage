@@ -6888,7 +6888,9 @@ class GenericGraph(GenericGraph_pyx):
             return []
 
         # Which embedding should we use ?
-        if embedding is None:
+        if embedding is not None:
+            self._check_embedding_validity(embedding, boolean=False)
+        else:
             embedding = self.get_embedding()
             if embedding is None:
                 if self.is_planar(set_embedding=True):
