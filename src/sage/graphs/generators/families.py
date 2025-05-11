@@ -1507,7 +1507,7 @@ def FuzzyBallGraph(partition, q):
     return g
 
 
-  def GeneralizedPetersenGraph(n, k):
+def GeneralizedPetersenGraph(n, k):
     r"""
     Return a generalized Petersen graph with `2n` nodes. The variables
     `n`, `k` are integers such that `n>2` and `0<k\leq\lfloor(n-1)`/`2\rfloor`
