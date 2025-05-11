@@ -6889,10 +6889,8 @@ class GenericGraph(GenericGraph_pyx):
 
         # Which embedding should we use ?
         if embedding is None:
-            # Is self._embedding available ?
-            if self._check_embedding_validity():
-                embedding = self._embedding
-            else:
+            embedding = self.get_embedding()
+            if embedding is None:
                 if self.is_planar(set_embedding=True):
                     embedding = self._embedding
                     self._embedding = None
@@ -6997,10 +6995,8 @@ class GenericGraph(GenericGraph_pyx):
             return len(self.faces(embedding))
 
         if embedding is None:
-            # Is self._embedding available ?
-            if self._check_embedding_validity():
-                embedding = self._embedding
-            else:
+            embedding = self.get_embedding()
+            if embedding is None:
                 if self.is_planar():
                     # We use Euler's formula: V-E+F-C=1
                     C = self.connected_components_number()
