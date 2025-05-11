@@ -205,12 +205,13 @@ example, the file ``build/pkgs/_prereq/distros/debian.txt`` contains the followi
   g++
   # Needed if we download some packages from a https upstream URL
   ca-certificates
+  patch
 
 From this information, we know that we can use the following command
 on our container to install the necessary build prerequisites::
 
   root@39d693b2a75d:/sage# apt-get install binutils make m4 perl python3 \
-                                           tar bc gcc g++ ca-certificates
+                                           tar bc gcc g++ ca-certificates patch
   Reading package lists... Done
   Building dependency tree
   Reading state information... Done

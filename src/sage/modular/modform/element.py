@@ -1798,9 +1798,11 @@ class Newform(ModularForm_abstract):
         S = self.parent()
         return S(self.q_expansion(S.sturm_bound()))
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         """
-        Return ``True``. For compatibility with elements of modular forms spaces.
+        Return ``True``.
+
+        For compatibility with elements of modular forms spaces.
 
         EXAMPLES::
 
@@ -3502,7 +3504,7 @@ class GradedModularFormElement(ModuleElement):
         self._forms_dictionary = {k: f for k, f in forms_dictionary.items() if not f.is_zero()}  # remove the zero values
         Element.__init__(self, parent)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return "True" if ``self`` is nonzero and "False" otherwise.
 
@@ -3518,7 +3520,7 @@ class GradedModularFormElement(ModuleElement):
         """
         return bool(self._forms_dictionary)
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return "True" if the graded form is 0 and "False" otherwise.
 
@@ -3535,7 +3537,7 @@ class GradedModularFormElement(ModuleElement):
         """
         return not self
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Return "True" if the graded form is 1 and "False" otherwise.
 
@@ -3921,7 +3923,7 @@ class GradedModularFormElement(ModuleElement):
             return [ZZ.zero()]
         return sorted(self._forms_dictionary)
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return ``True`` if the graded modular form is homogeneous, i.e. if it
         is a modular forms of a certain weight.
