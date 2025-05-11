@@ -284,7 +284,7 @@ the Euler number of the holomorphically symplectic manifolds constructed in
 The library :mod:`chow.library.twisted_cubics` provides all the necessary
 methods to compute `H`, `I` and the morphism `f:I\rightarrow H`::
 
-    sage: P = Point()
+    sage: P = PointChowScheme
     sage: W = Bundle(P, 4, [1])  # Vector space of dimension 4
     sage: f = map_incidence_to_nets_of_quadrics(W)
     sage: I = f.domain()
