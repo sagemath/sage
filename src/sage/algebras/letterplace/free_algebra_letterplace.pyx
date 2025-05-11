@@ -348,7 +348,7 @@ cdef class FreeAlgebra_letterplace(Parent):
             p *= self._current_ring.gen(j)
         return FreeAlgebraElement_letterplace(self, p)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of generators.
 

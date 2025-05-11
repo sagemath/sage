@@ -104,6 +104,10 @@ REFERENCES:
              graphs and isoperimetric inequalities*, The Annals of Probability
              32 (2004), no.  3A, 1727-1745.
 
+.. [ACEP2020] Federico Ardila, Federico Castillo, Christopher Eur, Alexander Postnikov,
+         *Coxeter submodular functions and deformations of Coxeter permutahedra*,
+         Advances in Mathematics, Volume 365, 13 May 2020.
+
 .. [ALL2002] P. Auger, G. Labelle and P. Leroux, *Combinatorial
              addition formulas and applications*, Advances in Applied
              Mathematics 28 (2002) 302-342.
@@ -2753,6 +2757,12 @@ REFERENCES:
              Kirillov-Reshetikhin crystals for nonexceptional types*.
              Contemp. Math. 506 (2010) 127-143 ( :arxiv:`0811.1604` )
 
+.. [FP1985] U. Fincke and M. Pohst.
+            *Improved Methods for Calculating Vectors of Short Length in a
+            Lattice, Including a Complexity Analysis*.
+            Mathematics of Computation, 44 (1985), no. 1, 463-471.
+            :doi:`10.1090/S0025-5718-1985-0777278-8`
+
 .. [FP1996] Komei Fukuda, Alain Prodon: Double Description Method
             Revisited, Combinatorics and Computer Science, volume 1120
             of Lecture Notes in Computer Science, page
@@ -2808,7 +2818,10 @@ REFERENCES:
 .. [Ful1989] \W. Fulton. Algebraic curves: an introduction to algebraic geometry. Addison-Wesley,
              Redwood City CA (1989).
 
-.. [Ful1993] Wiliam Fulton, *Introduction to Toric Varieties*,
+.. [Ful1992] William Fulton. *Flags, Schubert polynomials, degeneracy loci, and
+             determinantal formulas*. Duke Math. J. **65** (1992), no. 3, 381-420.
+
+.. [Ful1993] William Fulton, *Introduction to Toric Varieties*,
             Princeton University Press, 1993.
 
 .. [Ful1997] William Fulton,
@@ -3264,6 +3277,13 @@ REFERENCES:
 
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              http://www-math.mit.edu/~hajiagha/pp11.ps
+
+.. [HAM1985] Hoffman, Alan J., Anthonius Wilhelmus Johannes Kolen, and Michel Sakarovitch.
+             Totally-balanced and greedy matrices.
+             SIAM Journal on Algebraic Discrete Methods 6.4 (1985): 721-730.
+
+.. [Han2016] \G.-N. Han, *Hankel continued fraction and its applications*,
+             Adv. in Math., 303, 2016, pp. 295-321.
 
 .. [Han1960] Haim Hanani,
              *On quadruple systems*,
@@ -3914,6 +3934,11 @@ REFERENCES:
             Algebra i Analiz, 1995, Volume 7, Issue 1, pp. 92--152.
             http://math.uoregon.edu/~arkadiy/bk1.pdf
 
+.. [KD2015] Donald Keedwell and József Dénes, Latin Squares and their
+            Applications (2nd ed.), Elsevier B.V., Amsterdam-Netherlands,
+            2015. ISBN 978-0-444-63555-6, :mathscinet:`MR3495977`,
+            :doi:`10.1016/C2014-0-03412-0`
+
 .. [Ke1991] \A. Kerber. Algebraic combinatorics via finite group
             actions, 2.2 p. 70. BI-Wissenschaftsverlag,
             Mannheim, 1991.
@@ -3948,6 +3973,10 @@ REFERENCES:
 .. [KK2003] T. Kivinen and M. Kojo. *More Modular Exponential (MODP)
             Diffie-Hellman groups for Internet Key Exchange (IKE)*, in RFC 3526.
             Available at https://www.rfc-editor.org/rfc/rfc3526
+
+.. [KKD1995] Ton Kloks, and Dieter Kratsch. "Computing a perfect edge without vertex
+            elimination ordering of a chordal bipartite graph."
+            Information Processing Letters 55.1 (1995): 11-16.
 
 .. [KKMMNN1992] S-J. Kang, M. Kashiwara, K. C. Misra, T. Miwa, T. Nakashima,
                 and A. Nakayashiki. *Affine crystals and vertex models*.
@@ -4680,6 +4709,9 @@ REFERENCES:
             *Verma modules for rank two Heisenberg-Virasoro algebra*.
             Preprint, (2018). :arxiv:`1807.07735`.
 
+.. [Lub1987] Lubiw, Anna. Doubly Lexical Orderings of Matrices.
+             SIAM Journal on Computing 16.5 (1987): 854-879.
+
 .. [Lut2002] Frank H. Lutz, Császár's Torus, Electronic Geometry Model
              No. 2001.02.069
              (2002). http://www.eg-models.de/models/Classical_Models/2001.02.069/_direct_link.html
@@ -4740,7 +4772,10 @@ REFERENCES:
 
 **M**
 
-.. [Mac1916] \F.S. Macaulay. The algebraic theory of modular systems
+.. [Mac1902] \F.S. Macaulay. *On some formula in elimination.*
+             London Mathematical Society, 33, 1902, 3--27
+
+.. [Mac1916] \F.S. Macaulay. *The algebraic theory of modular systems*
              Cambridge university press, 1916.
 
 .. [Mac1995] \I. G. Macdonald, Symmetric functions and Hall
@@ -5084,6 +5119,11 @@ REFERENCES:
 
 .. [MS1977] \F. J. MacWilliams, N. J. A. Sloane, *The Theory of Error-Correcting
             Codes*, North-Holland, Amsterdam, 1977
+
+.. [MS1977a] Arnaldo Mandel, Imre Simon,
+             *On Finite Semigroups of Matrices*,
+             Theoretical Computer Science 5 (101-111),
+             North-Holland Publishing Company
 
 .. [MS1994] \P. Martin and H. Saleur.
             *The blob algebra and the periodic Temperley-Lieb algebra*.
@@ -5628,6 +5668,10 @@ REFERENCES:
               *Alley CATs in search of good homes.*
               Congressus numerantium, 1994.
               Pages 97--110
+
+.. [Rea1968] Ronald C. Read,
+             An improved method for computing the chromatic polynomials of sparse graphs,
+             Research Report CORR 87-20, C & O Dept. Univ. of Waterloo, 1987.
 
 .. [Rea2004] Nathan Reading.
              *Cambrian Lattices*.
@@ -6496,6 +6540,9 @@ REFERENCES:
 .. _ref-T:
 
 **T**
+
+.. [Tae2012] Lenny Taelman, *Special L-values of Drinfeld modules*,
+             Ann. Math. 175 (1), 2012, 369–391
 
 .. [Tak1999] Kisao Takeuchi, Totally real algebraic number fields of
              degree 9 with small discriminant, Saitama Math. J.  17

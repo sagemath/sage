@@ -1095,13 +1095,13 @@ cdef class Rational(sage.structure.element.FieldElement):
             '<mo>-</mo><mfrac><mrow><mn>17</mn></mrow><mrow><mn>37</mn></mrow></mfrac>'
         """
         if self.denom() == 1:
-            return '<mn>%s</mn>'%(self.numer())
+            return '<mn>%s</mn>' % (self.numer())
         else:
             from sage.misc.mathml import mathml
             t = ''
             if self < 0:
                 t = t + '<mo>-</mo>'
-            t = t + '<mfrac><mrow>%s</mrow><mrow>%s</mrow></mfrac>'%(
+            t = t + '<mfrac><mrow>%s</mrow><mrow>%s</mrow></mfrac>' % (
                 mathml(abs(self.numer())), mathml(self.denom()))
             return t
 
@@ -1558,7 +1558,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: QQ(2)._bnfisnorm(QuadraticField(-1, 'i'))                             # needs sage.rings.number_field
-            (i + 1, 1)
+            (i - 1, 1)
             sage: x = polygen(QQ, 'x')
             sage: 7._bnfisnorm(NumberField(x^3 - 2, 'b'))                               # needs sage.rings.number_field
             (1, 7)
@@ -3375,11 +3375,9 @@ cdef class Rational(sage.structure.element.FieldElement):
         mpz_tdiv_q(n.value, mpq_numref(self.value), mpq_denref(self.value))
         return n
 
-    def round(Rational self, mode=None):
+    def round(Rational self, mode="even"):
         """
-        Return the nearest integer to ``self``, rounding away by default.
-        Deprecation: in the future the default will be changed to rounding to
-        even, for consistency with the builtin Python :func:`round`.
+        Return the nearest integer to ``self``, rounding to even by default.
 
         INPUT:
 
@@ -3399,15 +3397,13 @@ cdef class Rational(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: (9/2).round()
-            doctest:...: DeprecationWarning: the default rounding for rationals, currently `away`, will be changed to `even`.
-            See https://github.com/sagemath/sage/issues/35473 for details.
-            5
+            4
             sage: n = 4/3; n.round()
             1
             sage: n = -17/4; n.round()
             -4
             sage: n = -5/2; n.round()
-            -3
+            -2
             sage: n.round("away")
             -3
             sage: n.round("up")
@@ -3419,12 +3415,6 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: n.round("odd")
             -3
         """
-        if mode is None:
-            if self.denominator() == 2:
-                from sage.misc.superseded import deprecation
-                deprecation(35473,
-                    "the default rounding for rationals, currently `away`, will be changed to `even`.")
-            mode = "away"
         if not (mode in ['toward', 'away', 'up', 'down', 'even', 'odd']):
             raise ValueError("rounding mode must be one of 'toward', 'away', 'up', 'down', 'even', or 'odd'")
         if self.denominator() == 1:
@@ -3836,7 +3826,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: magma(3/1).Type()             # optional - magma
             FldRatElt
         """
-        return '%s/%s'%(self.numerator(), self.denominator())
+        return '%s/%s' % (self.numerator(), self.denominator())
 
     def _sage_input_(self, sib, coerced):
         r"""

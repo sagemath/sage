@@ -636,7 +636,8 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         else:
             P = remaining_inner_group.column_blocks(self._best_candidate)
             for p in P:
-                x = S(v=[ F.primitive_element() if i in p else F.one()  for i in range(self._n) ])
+                x = S(v=[F.primitive_element() if i in p else F.one()
+                         for i in range(self._n)])
                 self._autom_group_generators.append(transp_inv * x * self._transporter)
             self._inner_group_stabilizer_order = (len(F) - 1) ** len(P)
 
@@ -755,7 +756,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         This graph will be later used in the refinement procedures.
         """
         cdef FFSS_projPoint iter = FFSS_projPoint(self._matrix)
-        cdef mp_bitcnt_t i,j
+        cdef mp_bitcnt_t i, j
 
         ambient_space = (self._matrix.base_ring()) ** (self._n)
         weights2size = [0] * (self.len() + 1)
