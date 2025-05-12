@@ -9484,11 +9484,13 @@ class Graph(GenericGraph):
         A graph is projective planar if it can be embedded in the projective
         plane.  The approach is to check that the graph does not contain any
         of the known forbidden minors.
+        WARNING: This functions always returns a truthy value.
 
         OUTPUT:
 
-        Returns True if the graph is projective planar, and a dictionary from
-        :meth:`~Graph.minor`:: indicating one of the forbidden graph minors.
+        Returns True if the graph is projective planar, or if the graph is not
+        projective planar, a dictionary from :meth:`~Graph.minor`:: indicating
+        one of the forbidden graph minors.
 
         EXAMPLES:
 
@@ -9527,16 +9529,13 @@ class Graph(GenericGraph):
             try:
                 return_map = self.minor(forbidden_minor)
                 if return_map is not None:
-                    # return return_map
-                    break
+                    return return_map
+
             # If G has no H minor, then G.minor(H) throws a ValueError
             except ValueError:
                 continue
 
-        if return_map:
-            return return_map
-        else:
-            return True
+        return True
 
 
     # Aliases to functions defined in other modules
