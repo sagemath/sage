@@ -1471,10 +1471,10 @@ def ShiftedComplex(generators):
     """
     from sage.combinat.partition import Partitions
     Facets = []
-    for G in generators:
-        G = sorted(G, reverse=True)
+    for _G in generators:
+        G = sorted(_G, reverse=True)
         L = len(G)
-        for k in range(L * (L+1) // 2, sum(G) + 1):
+        for k in range(L * (L + 1) // 2, sum(G) + 1):
             for P in Partitions(k, length=L, max_slope=-1, outer=G):
                 Facets.append(list(reversed(P)))
     return SimplicialComplex(Facets)

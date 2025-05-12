@@ -136,8 +136,8 @@ import sage.interfaces.abc
 
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.gap_includes cimport (UInt, UInt2, UInt4, T_PERM2, T_PERM4,
-        NEW_PERM2, TNUM_OBJ, DEG_PERM2, DEG_PERM4, CONST_ADDR_PERM2,
-        CONST_ADDR_PERM4, ADDR_PERM2)
+        NEW_PERM2, NEW_PERM4, TNUM_OBJ, DEG_PERM2, DEG_PERM4, CONST_ADDR_PERM2,
+        CONST_ADDR_PERM4, ADDR_PERM2, ADDR_PERM4)
 from sage.libs.gap.util cimport initialize
 from sage.libs.gap.element cimport (GapElement, GapElement_List,
         GapElement_String, GapElement_Permutation, make_GapElement_Permutation)
@@ -891,16 +891,32 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: p = SymmetricGroup(0).an_element()
             sage: p._libgap_()
             ()
+
+        A minimal test that we handle permutations of degree larger than 2^16 :issue:`39998`::
+
+            sage: SymmetricGroup(2**16+1)((2**16,2**16+1))._libgap_() # long time (100 mb)
+            (65536,65537)
         """
         if self._libgap is not None:
             return self._libgap
         initialize()
 
-        cdef Obj res = NEW_PERM2(self.n)
-        cdef UInt2* p = ADDR_PERM2(res)
         cdef UInt i
-        for i in range(self.n):
-            p[i] = self.perm[i]
+        cdef Obj res
+        cdef UInt2* p2
+        cdef UInt4* p4
+        if self.n < 1<<16:
+            # make a new (small) permutation
+            res = NEW_PERM2(self.n)
+            p2 = ADDR_PERM2(res)
+            for i in range(self.n):
+                p2[i] = self.perm[i]
+        else:
+            # make a new (large) permutation
+            res = NEW_PERM4(self.n)
+            p4 = ADDR_PERM4(res)
+            for i in range(self.n):
+                p4[i] = self.perm[i]
         self._libgap = make_GapElement_Permutation(libgap, res)
         return self._libgap
 
