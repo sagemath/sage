@@ -73,8 +73,6 @@ AUTHORS:
         ``random_subgraph()`` | Return a random matching covered subgraph containing each vertex with probability ``p``.
         ``save_afile()`` | Save the graph to file in alist format.
         ``strong_product()`` | Return the strong product of ``self`` and ``other``.
-        ``subdivide_edge()`` | Subdivide an edge `k` times.
-        ``subdivide_edges()`` | Subdivide `k` times edges from an iterable container.
         ``subgraph()`` | Return the matching covered subgraph containing the given vertices and edges.
         ``subgraph_search()`` | Return a copy of (matching covered) ``G`` in ``self``.
         ``subgraph_search_count()`` | Return the number of labelled occurrences of (matching covered) ``G`` in ``self``.
@@ -107,8 +105,6 @@ AUTHORS:
         :delim: |
 
         ``add_ear()`` | Add an ear to the graph with the provided end vertices number of internal vertices.
-        ``bisubdivide_edge()`` | Bisubdivide an edge `k` times.
-        ``bisubdivide_edges()`` | Bisubdivide `k` times edges from an iterable container.
         ``efficient_ear_decomposition()`` | Return a matching covered ear decomposition computed at the fastest possible time.
         ``is_removable_double_ear()`` | Check whether the pair of ears form a removable double ear.
         ``is_removable_doubleton()`` | Check whether the pair of edges constitute a removable doubleton.
@@ -3469,6 +3465,238 @@ class MatchingCoveredGraph(Graph):
         if vertices is not None and not isinstance(vertices, Iterable):
             raise TypeError(f'\'{vertices.__class__.__name__}\' '
                             'object is not iterable')
+
+    @doc_index('Overwritten methods')
+    def subdivide_edge(self, *args):
+        r"""
+        Subdivide an edge `k` times.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.subdivide_edge`
+            method to ensure that resultant graph is also matching covered.
+
+        INPUT:
+
+        The following forms are all accepted to subdivide `8` times the edge
+        between vertices `1` and `2` labeled with ``'label'``.
+
+        - ``G.subdivide_edge(1, 2, 8 )``
+        - ``G.subdivide_edge((1, 2), 8 )``
+        - ``G.subdivide_edge(1, 2, 'label', 8 )``
+        - ``G.subdivide_edge((1, 2, 'label'), 8 )``
+
+        .. NOTE::
+
+            * If the given edge is labelled with `l`, all the edges created by
+              the subdivision will have the same label.
+
+            * If no label given, the label obtained from
+              :meth:`~sage.graphs.generic_graph.GenericGraph.edge_label` will
+              be used. If multiple such labels are present, the first one in
+              the returned list will be used.
+
+            * The number of subdivisions must be a nonnegative even integer in
+              order to ensure the resultant graph is matching covered.
+
+            * In the context of matching covered graphs, *bisubdividing* an edge
+              *t* times is defined as subdividing the edge *2t* times, for some
+              nonnegative integer *t*.
+
+            * For two input arguments, the first one must be of the form
+              `(u, v)` or `(u, v, label)`
+
+        OUTPUT:
+
+        - If an existent edge is provided with a valid format and the parameter
+          ``k`` in the argument is a nonnegative even integer then the graph is
+          updated and nothing is returned, otherwise a :exc:`ValueError` is
+          returned if ``k`` is not a nonnegative even integer,
+
+        - If the graph does not contain the edge provided, a :exc:`ValueError`
+          is returned. Also, a :exc:`ValueError` is thrown in case the provided
+          arguments are not valid.
+
+        EXAMPLES:
+
+        Subdividing `4` times an edge of the Petersen graph. Please note that
+        the perfect matching captured at ``self.get_matching()`` also gets
+        updated::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
+            sage: M = set(G.get_matching())
+            sage: G.subdivide_edge(0, 1, 4)
+            sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
+            sage: N = set(G.get_matching())
+            sage: sorted(W - V)
+            [10, 11, 12, 13]
+            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
+            ([(0, 10, None), (1, 13, None), (10, 11, None), (11, 12, None),
+             (12, 13, None)], [(0, 1, None)])
+            sage: if (0, 1, None) in M:
+            ....:     assert sorted(N - M), sorted(M - N) == \
+            ....:         ([(0, 10, None), (1, 13, None), (11, 12, None)], [(0, 1, None)])
+            ....: else:
+            ....:     assert sorted(N - M), sorted(M - N) == \
+            ....:         ([(10, 11, None), (12, 13, None)], [])
+
+        Subdividing a multiple edge/ some multiple edges::
+
+            sage: K = graphs.CycleGraph(4)
+            sage: K.allow_multiple_edges(1)
+            sage: K.add_edges([(0, 1, 2), (0, 1, 3), (0, 1, 0.5)])
+            sage: K.delete_edge(0, 1, None)
+            sage: G = MatchingCoveredGraph(K)
+            sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
+            sage: G.edge_label(0, 1)
+            [2, 3, 0.500000000000000]
+            sage: G.subdivide_edge((0, 1), 6)  # the edge: (0, 1, 2)
+            sage: G.subdivide_edge((0, 1, 3), 2)  # the edge: (0, 1, 3)
+            sage: G.subdivide_edge(1, 2, None, 2)  # the edge: (1, 2, None)
+            sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
+            sage: sorted(W - V)
+            [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
+            ([(0, 4, 2), (0, 10, 3), (1, 9, 2), (1, 11, 3), (1, 12, None), (2, 13, None),
+              (4, 5, 2), (5, 6, 2), (6, 7, 2), (7, 8, 2), (8, 9, 2), (10, 11, 3),
+              (12, 13, None)], [(0, 1, 2), (0, 1, 3), (1, 2, None)])
+
+        Setting ``k`` to `0` does not change the graph::
+
+            sage: H = G.copy()
+            sage: G.subdivide_edge(0, 4, 0)  # the edge: (0, 4, None)
+            sage: H == G and H.edges(sort=True) == G.edges(sort=True)
+            True
+
+        If too many or too less arguments are given, an exception is raised::
+
+            sage: G.subdivide_edge(0, 1, 'label', 4, 6)
+            Traceback (most recent call last):
+            ...
+            ValueError: this method takes at least 2 and at most 4 arguments
+            sage: G.subdivide_edge((0, 1, 'label', 4))
+            Traceback (most recent call last):
+            ...
+            ValueError: this method takes at least 2 and at most 4 arguments
+
+        A :exc:`ValueError` is returned for `k` being in an invalid format or
+        being not an even nonnegative, or for nonexistent or invalid edges::
+
+            sage: G.subdivide_edge(0, 4, 'label')  # No. of subdivision: 'label'
+            Traceback (most recent call last):
+            ...
+            TypeError: '<' not supported between instances of 'str' and 'int'
+            sage: G.subdivide_edge(0, 4, 3)  # No. of subdivisions: 3
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of subdivisions must be a nonnegative even integer,
+            but found 3
+            sage: G.subdivide_edge(0, 4, -1)  # No. of subdivisions: -1
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of subdivisions must be a nonnegative even integer,
+            but found -1
+            sage: G.subdivide_edge(0, 4, 0.5)  # No. of subdivisions: 0.5
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of subdivisions must be a nonnegative even integer,
+            but found 0.500000000000000
+            sage: G.subdivide_edge(0, 5, 4)
+            Traceback (most recent call last):
+            ...
+            ValueError: the given edge (0, 5, None) does not exist
+            sage: G.subdivide_edge((0, 5), 4)
+            Traceback (most recent call last):
+            ...
+            ValueError: the given edge (0, 5, None) does not exist
+            sage: G.subdivide_edge((0, 1, 'label', None), 4)
+            Traceback (most recent call last):
+            ...
+            ValueError: for two input arguments, the first one must be of the form
+            (u, v) or (u, v, l), but found: (0, 1, 'label', None)
+            sage: G.subdivide_edge((0), 4)
+            Traceback (most recent call last):
+            ...
+            TypeError: object of type 'sage.rings.integer.Integer' has no len()
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.subdivide_edges`
+        """
+        u, v, l, k = None, None, None, None
+
+        if len(args) == 2:
+            edge, k = args
+
+            if len(edge) == 2:
+                u, v = edge
+                if not self.has_edge(u, v):
+                    raise ValueError(f'the given edge {(u, v, None)} does not exist')
+
+                l = self.edge_label(u, v)
+                if self.allows_multiple_edges() and isinstance(l, list):
+                    l = l[0]
+
+            elif len(edge) == 3:
+                u, v, l = edge
+
+            else:
+                raise ValueError('for two input arguments, the first one must be '
+                                 f'of the form (u, v) or (u, v, l), but found: {edge}')
+
+        elif len(args) == 3:
+            u, v, k = args
+
+            if not self.has_edge(u, v):
+                raise ValueError(f'the given edge {(u, v, None)} does not exist')
+
+            l = self.edge_label(u, v)
+            if isinstance(l, list):
+                l = next(iter(l))
+
+        elif len(args) == 4:
+            u, v, l, k = args
+
+        else:
+            raise ValueError('this method takes at least 2 and at most 4 arguments')
+
+        if not self.has_edge(u, v, l):
+            raise ValueError(f'the given edge {(u, v, l)} does not exist')
+
+        if k < 0 or k % 2:
+            raise ValueError('the number of subdivisions must be a '
+                             f'nonnegative even integer, but found {k}')
+
+        if k == 0:
+            return
+
+        new_vertices = [self._backend.add_vertex(None) for _ in range(k)]
+
+        M = Graph(self.get_matching())
+        if M.has_edge(u, v, l):
+            M.delete_edge(u, v, l)
+
+        self._backend.del_edge(u, v, l, self._directed)
+        self._backend.add_edges(
+            [(u, new_vertices[0], l), (new_vertices[-1], v, l)] +
+            [(new_vertices[i], new_vertices[i + 1], l) for i in range(k - 1)],
+            self._directed, remove_loops=True
+        )
+
+        if M.degree(u):
+            M.add_edges(
+                [(new_vertices[i], new_vertices[i + 1], l) for i in range(0, k - 1, 2)]
+            )
+        else:
+            M.add_edges(
+                [(u, new_vertices[0], l), (new_vertices[-1], v, l)] +
+                [(new_vertices[i], new_vertices[i + 1], l) for i in range(1, k - 1, 2)]
+            )
+
+        self.update_matching(M)
 
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
