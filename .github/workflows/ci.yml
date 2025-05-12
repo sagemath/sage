@@ -27,6 +27,15 @@ jobs:
       image: ${{ matrix.container }}
 
     steps:
+      - name: Prepare container
+        run: |
+          if [[ "${{ matrix.container }}" == *"void-linux"* ]]; then
+            xbps-install -Syu xbps
+            xbps-install -yu
+            # node-based actions require libstdc++.so.6
+            xbps-install -Sy libstdc++ bash git
+          fi
+
       - name: Checkout code
         # cannot use v4 yet because of https://github.com/actions/checkout/issues/1487
         uses: actions/checkout@v3
