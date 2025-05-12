@@ -86,5 +86,5 @@ jobs:
 
       - name: Test
         run: |
-          uv run ./sage -t --all -p4 || true
+          uv run --frozen ./sage -t --all -p4 || true
         
