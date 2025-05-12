@@ -19,11 +19,12 @@ eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missin
 uv venv
 uv pip install \
     meson-python \
-    "cypari2 >=2.2.1" \
     "cysignals >=1.11.2, != 1.12.0" \
-    "cython >=3.0, != 3.0.3" \
+    "cython >=3.0, != 3.0.3, != 3.1.0" \
     "gmpy2 ~=2.1.b999" \
     memory_allocator \
     "numpy >=1.25" \
-    jinja2
-uv sync --frozen --inexact --no-build-isolation-package=sagemath
+    jinja2 \
+    setuptools
+uv pip install "cypari2 >=2.2.1" --no-build-isolation
+uv sync --frozen --inexact --no-build-isolation --config-settings=builddir=build/build-$SYSTEM
