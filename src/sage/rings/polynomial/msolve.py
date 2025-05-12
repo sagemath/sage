@@ -267,7 +267,7 @@ def variety(ideal, ring, *, proof=True):
             return upol(p[1])/d
 
         try:
-            [char, nvars, deg, vars, _, [one, [elim, den, param]]] = data[1]
+            char, nvars, deg, vars, _, [one, [elim, den, param]] = data[1]
         except (IndexError, ValueError):
             raise NotImplementedError(
                 f"unsupported msolve output format: {data}")

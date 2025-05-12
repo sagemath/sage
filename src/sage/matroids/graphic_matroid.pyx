@@ -650,7 +650,7 @@ cdef class GraphicMatroid(Matroid):
         DS_vertices = DisjointSet(all_vertices)
         for u, v, l in not_our_edges:
             DS_vertices.union(u, v)
-        return len(X) - (DS_vertices.number_of_subsets() - Integer(1))
+        return len(X) - (DS_vertices.number_of_subsets() - 1)
 
     cpdef bint _is_circuit(self, frozenset X) noexcept:
         """
@@ -1699,9 +1699,9 @@ cdef class GraphicMatroid(Matroid):
         # If a vertex has degree 1, or 2, or 3, we already handled it.
         for u in vertices:
             if G.degree(u) > 3:
-                elts_incident = [l for (_, _, l) in G.edges_incident(u)]
+                elts_incident = [l for _, _, l in G.edges_incident(u)]
                 x = elts_incident.pop()
-                for i in range(1, (len(elts_incident) - Integer(1))):
+                for i in range(1, len(elts_incident) - 1):
                     groups = combinations(elts_incident, i)
                     for g in groups:
                         g = list(g)
