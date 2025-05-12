@@ -1173,14 +1173,26 @@ class SkewTableau(ClonableList,
             [[None, 1, 1]]
             sage: S.add_entry([1,0],1)
             [[None, None, 1], [1]]
+            sage: S.add_entry([1,1],1)
+            [[None, None, 1], [None, 1]]
+            sage: S.add_entry([1,2],1)
+            [[None, None, 1], [None, None, 1]]
+            sage: S.add_entry([2,0],1)
+            [[None, None, 1], [None], [1]]
+            sage: S.add_entry([2,1],1)
+            [[None, None, 1], [None, None], [None, 1]]
+            sage: S.add_entry([2,2],1)
+            Traceback (most recent call last):
+            ...
+            IndexError: (2, 2) is not an addable cell of the tableau
+            sage: S.add_entry([2,3],1)
+            Traceback (most recent call last):
+            ...
+            IndexError: (2, 3) is not an addable cell of the tableau
             sage: S.add_entry([1000,1000], 3)
             Traceback (most recent call last):
             ...
             IndexError: (1000, 1000) is not an addable cell of the tableau
-            sage: S.add_entry([1000,0],3)
-            Traceback (most recent call last):
-            ...
-            IndexError: (1000, 0) is not an addable cell of the tableau
             sage: S.add_entry([0,1000],3)
             Traceback (most recent call last):
             ...
@@ -1193,9 +1205,19 @@ class SkewTableau(ClonableList,
         try:
             tab[r][c] = m
         except IndexError: 
-            if r >= len(tab):
-                if r == len(tab) and c == 0:
+            if r > len(tab):
+                if c < len(tab[-1]) and tab[-1][c] == None:
+                    tab += [[None]*(c+1) for i in range(r - len(tab))]
+                    tab.append([None]*(c) + [m])  
+                else:
+                    raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
+            elif r == len(tab):
+                # a cell in the row directly below tab is addable if and only if  
+                # c = 0 or the cell directly northwest is empty
+                if c == 0:
                     tab.append([m])
+                elif c < len(tab[-1]) and tab[-1][c-1] == None: 
+                    tab.append([None]*(c) + [m])
                 else:
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
             else:
