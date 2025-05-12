@@ -8,6 +8,7 @@ on:
     paths:
       - '**.build'
       - 'subprojects/**'
+      - '.github/workflows/ci.yml'
   workflow_dispatch:
     # Allow to run manually
 
