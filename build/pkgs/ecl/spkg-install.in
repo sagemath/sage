@@ -1,6 +1,6 @@
 cd src
 
-export CFLAGS
+export CFLAGS="-std=gnu17 $CFLAGS"
 export CXXFLAGS
 export LDFLAGS
 

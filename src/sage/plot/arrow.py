@@ -1,7 +1,7 @@
 """
 Arrows
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
@@ -16,8 +16,8 @@ Arrows
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
