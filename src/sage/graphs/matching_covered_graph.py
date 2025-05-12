@@ -1414,7 +1414,7 @@ class MatchingCoveredGraph(Graph):
             if len(edge) == 2:
                 u, v = edge
 
-            elif len(edge) == 3:
+            else:
                 u, v, l = edge
 
             if u != v:
@@ -1426,8 +1426,8 @@ class MatchingCoveredGraph(Graph):
             return
 
         # Check if all the incident vertices of the input edges are existent
-        new_vertices = list(set([x for u, v, *_ in links
-                                 for x in [u, v] if (x not in self)]))
+        new_vertices = {x for u, v, _ in links for x in (u, v)
+                        if x not in self}
 
         # Throw error if the no. of new vertices is odd
         if len(new_vertices) % 2:
