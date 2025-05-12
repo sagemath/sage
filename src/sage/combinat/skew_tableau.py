@@ -1123,8 +1123,8 @@ class SkewTableau(ClonableList,
     
     def add_entry(self, cell, m):
         """
-        Return the result of setting the entry in cell ``cell'' equal to ``m'' in the skew tableau ``self''.
-        If the cell is already part of ``self'', it replaces the current entry. 
+        Return the result of setting the entry in cell ``cell`` equal to ``m`` in the skew tableau ``self``.
+        If the cell is already part of ``self``, it replaces the current entry. 
         Otherwise, it attempts to add the cell to the skew tableau.
 
         INPUT:
@@ -1153,6 +1153,14 @@ class SkewTableau(ClonableList,
             .  1  1
             1  2  5
             3
+            sage: U.add_entry([1,3],4)
+            Traceback (most recent call last):
+            ...
+            IndexError: (1, 3) is not an addable cell of the tableau
+            sage: U.add_entry([0,3],4).pp()
+            .  1  1  4
+            1  2  5
+            3            
 
         TESTS::
 
@@ -1169,6 +1177,14 @@ class SkewTableau(ClonableList,
             Traceback (most recent call last):
             ...
             IndexError: (1000, 1000) is not an addable cell of the tableau
+            sage: S.add_entry([1000,0],3)
+            Traceback (most recent call last):
+            ...
+            IndexError: (1000, 0) is not an addable cell of the tableau
+            sage: S.add_entry([0,1000],3)
+            Traceback (most recent call last):
+            ...
+            IndexError: (0, 1000) is not an addable cell of the tableau
 
         """
 
@@ -1189,13 +1205,13 @@ class SkewTableau(ClonableList,
                 else:
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
 
-        # attempt to return a tableau of the same type as self
+        # attempt to return a skew tableau of the same type as self
         if tab in self.parent():
             return self.parent()(tab)
         else:
             try:
                 return self.parent().Element(tab)
-            except Exception:
+            except ValueError:
                 return SkewTableau(tab)
             
     def anti_restrict(self, n):

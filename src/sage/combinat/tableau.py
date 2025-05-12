@@ -3201,7 +3201,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         else:
             try:
                 return self.parent().Element(tab)
-            except Exception:
+            except ValueError:
                 return Tableau(tab)
 
     ##############
