@@ -1103,6 +1103,8 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem
 
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm
+
     - ``use_edge_labels`` -- boolean (default: ``False``)
 
       - when set to ``True``, computes a weighted matching where each edge
@@ -1193,14 +1195,15 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
     TESTS:
 
-    If ``algorithm`` is set to anything different from ``'Edmonds'`` or
-    ``'LP'``, an exception is raised::
+    If ``algorithm`` is set to anything different from ``'Edmonds'``, ``'LP'``,
+    or ``Micali-Vazirani`` an exception is raised::
 
         sage: g = graphs.PappusGraph()
         sage: g.matching(algorithm='somethingdifferent')
         Traceback (most recent call last):
         ...
-        ValueError: algorithm must be set to either "Edmonds" or "LP"
+        ValueError: algorithm must be set to one of the following: 'Edmonds,'
+        'LP,' or 'Micali-Vazirani'
     """
     from sage.rings.real_mpfr import RR
 
@@ -1269,7 +1272,11 @@ def matching(G, value_only=False, algorithm='Edmonds',
                                 for u, v in L if b[frozenset((u, v))]],
                                 format='list_of_edges'))
 
-    raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
+    elif algorithm == "Micali-Vazirani":
+        raise NotImplementedError()
+
+    raise ValueError('algorithm must be set to one of the following: '
+                     '\'Edmonds,\' \'LP,\' or \'Micali-Vazirani\'')
 
 
 def perfect_matchings(G, labels=False):
