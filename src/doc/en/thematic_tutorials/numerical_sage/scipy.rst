@@ -1,7 +1,7 @@
 SciPy
 =====
 Again I recommend this
-http://www.scipy.org/Wiki/Documentation?action=AttachFile&do=get&target=scipy_tutorial.pdf.
+https://docs.scipy.org/doc/scipy-1.8.1/scipy-ref-1.8.1.pdf.
 There are many useful SciPy modules, in particular scipy.optimize,
 scipy.stats, scipy.linalg, scipy.linsolve, scipy.sparse,
 scipy.integrate, scipy.fftpack, scipy.signal, scipy.special. Most

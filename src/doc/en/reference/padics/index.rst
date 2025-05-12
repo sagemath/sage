@@ -42,4 +42,7 @@
    sage/rings/padics/common_conversion
    sage/rings/padics/morphism
 
+   sage/rings/padics/witt_vector_ring
+   sage/rings/padics/witt_vector
+
 .. include:: ../footer.txt
