@@ -13,11 +13,6 @@
 from sage_docbuild.conf import release
 from sage_docbuild.conf import *  # NOQA
 
-
-for tag in feature_tags():
-    tags.add(tag)
-
-
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite the
@@ -27,8 +22,8 @@ html_static_path = [] + html_common_static_path
 
 # Add small view/edit buttons.
 html_theme_options.update({
-  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/zh/tutorial', '{filename}'),
-  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/zh/tutorial', '{filename}'),
+    'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/zh/tutorial', '{filename}'),
+    'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/zh/tutorial', '{filename}'),
 })
 
 # General information about the project.
@@ -50,6 +45,6 @@ htmlhelp_basename = name
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', name + '.tex', project,
-   'The Sage Development Team', 'manual'),
+    ('index', name + '.tex', project,
+     'Sage 开发团队', 'manual'),
 ]
