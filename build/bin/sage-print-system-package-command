@@ -171,7 +171,7 @@ case $system:$command in
         fi
         ;;
     void*:update)
-        print_shell_command "${SUDO}xbps-install -Su"
+        print_shell_command "${SUDO}xbps-install -Suy"
         ;;
     void*:install)
         [ "$YES" = yes ] && options="$options --yes"
