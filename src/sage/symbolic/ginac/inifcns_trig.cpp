@@ -217,7 +217,7 @@ static ex sin_eval(const ex & x)
 	// simplify sin(I*x) --> I*sinh(x)
 	if (is_multiple_of_I(x_red_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x_red_expanded))
+                if (x_red_expanded.is_zero())
                         return _ex0;
 		return I*sinh(x_red/I);
         }
@@ -431,7 +431,7 @@ static ex cos_eval(const ex & x)
 	// simplify cos(I*x) --> cosh(x)
 	if (is_multiple_of_I(x_red_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x_red_expanded))
+                if (x_red_expanded.is_zero())
                         return _ex1;
                 return cosh(x_red/I);
         }
@@ -648,7 +648,7 @@ static ex tan_eval(const ex & x)
         ex x_red_expanded = x_red.expand();
 	if (is_multiple_of_I(x_red_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x_red_expanded))
+                if (x_red_expanded.is_zero())
                         return _ex0;
 		return I*tanh(x_red/I);
         }
@@ -762,7 +762,7 @@ static ex cot_eval(const ex & x)
         ex x_expanded = x.expand();
 	if (is_multiple_of_I(x_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x_expanded))
+                if (x_expanded.is_zero())
                         return UnsignedInfinity;
 		return -I*coth(x/I);
         }
@@ -902,7 +902,7 @@ static ex sec_eval(const ex & x)
         ex x_expanded = x.expand();
 	if (is_multiple_of_I(x_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x_expanded))
+                if (x_expanded.is_zero())
                         return _ex1;
 		return sech(x/I);
         }
@@ -1021,7 +1021,7 @@ static ex csc_eval(const ex & x)
         ex x_expanded = x.expand();
 	if (is_multiple_of_I(x_expanded)) {
                 // to avoid infinite recursion, check if the input expands to 0
-                if (is_zero(x_expanded))
+                if (x_expanded.is_zero())
                         return UnsignedInfinity;
 		return -I*csch(x/I);
         }
