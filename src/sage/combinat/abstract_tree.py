@@ -1215,8 +1215,8 @@ class AbstractTree:
                 # Using post-order
                 # Thus _node_number is computed for all non-empty subtrees
                 node._node_number = Integer(1)
-                node._node_number += sum([e._node_number for e in node
-                                             if not e.is_empty()])
+                node._node_number += sum(e._node_number for e in node
+                                         if not e.is_empty())
 
         self.iterative_post_order_traversal(count)
         return self._node_number
