@@ -24195,8 +24195,9 @@ class GenericGraph(GenericGraph_pyx):
 
     def degree_to_cell(self, vertex, cell):
         """
-        Return the number of edges from vertex to an edge in cell. In the
-        case of a digraph, returns a tuple (in_degree, out_degree).
+        Return the number of edges from vertex to an edge in cell.
+
+        In the case of a digraph, this returns a tuple (in_degree, out_degree).
 
         EXAMPLES::
 
@@ -24219,8 +24220,9 @@ class GenericGraph(GenericGraph_pyx):
             (0, 2)
         """
         if self._directed:
-            in_neighbors_in_cell = {a for a, _, _ in self.incoming_edges(vertex)} & set(cell)
-            out_neighbors_in_cell = {a for _, a, _ in self.outgoing_edges(vertex)} & set(cell)
+            s_cell = set(cell)
+            in_neighbors_in_cell = s_cell.intersection(self.neighbor_in_iterator(vertex))
+            out_neighbors_in_cell = s_cell.intersection(self.neighbor_out_iterator(vertex))
             return (len(in_neighbors_in_cell), len(out_neighbors_in_cell))
 
         neighbors_in_cell = set(self.neighbors(vertex)) & set(cell)

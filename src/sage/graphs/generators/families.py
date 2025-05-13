@@ -3242,7 +3242,7 @@ def SierpinskiGasketGraph(n):
     dg.add_edges([(tuple(b), tuple(c)) for a, b, c in tri_list])
     dg.add_edges([(tuple(c), tuple(a)) for a, b, c in tri_list])
     dg.set_pos({(x, y): (x + y / 2, y * 3 / 4)
-                for (x, y) in dg})
+                for x, y in dg})
     dg.relabel()
     return dg
 
@@ -4276,7 +4276,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
                                    for line in L_i[x]}, \
                'each Phi_i must have domain L_i'
         for x in range(m):
-            assert m - 2 == len({val for (key, val) in Phi.items()
+            assert m - 2 == len({val for key, val in Phi.items()
                                  if key[0] == x}), \
                    'each phi_i must be injective'
         for val in Phi.values():
@@ -4316,7 +4316,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     # build V
     edges = []  # how many? *m^2*n^2
-    for (i, j) in L.edges(sort=True, labels=False):
+    for i, j in L.edges(sort=True, labels=False):
         for hyp in phi[(i, (i, j))]:
             for x in hyp:
                 newEdges = [((i, x), (j, y))
