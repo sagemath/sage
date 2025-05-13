@@ -534,7 +534,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
     def weight_vectors(self):
         r"""
-        Return the weight vectors for each unique intesection of
+        Return the weight vectors for each unique intersection of
         components of ``self``.
 
         Weight vectors are a list of vectors associated with each
@@ -590,7 +590,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: R.<a,b,c,d> = PolynomialRing(T)
             sage: f = R.random_element()
             sage: vec = f.tropical_variety().weight_vectors()[2].values()
-            sage: all(a == vector([0,0,0,0]) for a in [sum(lst) for lst in vec])
+            sage: all(a == vector([0,0,0,0]) for a in [sum(lst) for lst in vec])  # not tested (:issue:`39663`)
             True
         """
         from itertools import combinations

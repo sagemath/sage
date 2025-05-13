@@ -51,10 +51,10 @@ AUTHORS:
 
 - Jeroen Demeyer (2010-11-20): initial version (:issue:`10300`)
 """
-from subprocess import Popen, PIPE
 import os
-import sys
 import select
+import sys
+from subprocess import PIPE, Popen
 
 
 def check_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False, **kwds):
@@ -109,9 +109,10 @@ def check_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=Fals
     Run Sage itself with various options::
 
         sage: # long time
+        sage: from sage.version import banner
         sage: (out, err, ret) = check_executable([
         ....:     "sage"], pydebug_ignore_warnings=True)
-        sage: out.find(version()) >= 0
+        sage: out.find(banner) >= 0
         True
         sage: err
         ''
@@ -121,7 +122,7 @@ def check_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=Fals
         sage: # long time
         sage: (out, err, ret) = check_executable([
         ....:     "sage"], "3^33\n", pydebug_ignore_warnings=True)
-        sage: out.find(version()) >= 0
+        sage: out.find(banner) >= 0
         True
         sage: out.find("5559060566555523") >= 0
         True
@@ -133,7 +134,7 @@ def check_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=Fals
         sage: # long time
         sage: (out, err, ret) = check_executable([
         ....:     "sage", "-q"], "3^33\n", pydebug_ignore_warnings=True)
-        sage: out.find(version()) >= 0
+        sage: out.find(banner) >= 0
         False
         sage: out.find("5559060566555523") >= 0
         True
@@ -205,7 +206,8 @@ def check_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=Fals
     Basic information about the Sage installation::
 
         sage: (out, err, ret) = check_executable(["sage", "-v"])
-        sage: out.find(version()) >= 0
+        sage: from sage.version import banner
+        sage: out.find(banner) >= 0
         True
         sage: err
         ''

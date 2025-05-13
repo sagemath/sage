@@ -11,7 +11,7 @@ AUTHORS:
 - Minh Van Nguyen (2009-05): initial version
 """
 
-###########################################################################
+# #########################################################################
 # Copyright (c) 2009 Minh Van Nguyen <nguyenminh2@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,8 @@ AUTHORS:
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# http://www.gnu.org/licenses/
-###########################################################################
+# https://www.gnu.org/licenses/
+# #########################################################################
 
 from sage.matrix.matrix_dense import Matrix_dense
 from sage.matrix.matrix_space import MatrixSpace

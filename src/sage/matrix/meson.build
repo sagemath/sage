@@ -97,7 +97,7 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
-  dependencies = [py_dep, cysignals, gmp]
+  dependencies = [py_dep, cysignals, gmp, numpy]
   if name == 'matrix_gfpn_dense'
     dependencies += [mtx]
   elif name == 'matrix_gap'
@@ -120,7 +120,6 @@ foreach name, pyx : extension_data
       inc_ext,
       inc_flint,
       inc_ntl,
-      inc_numpy,
       inc_rings,
       inc_rings_finite,
     ],
@@ -142,18 +141,29 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  override_options = ['cython_language=cpp']
+  if name in [
+    'matrix_integer_dense',
+    'matrix_integer_sparse',
+    'matrix_modn_dense_float',
+    'matrix_modn_dense_double',
+    'matrix_modn_sparse',
+  ]
+    # Temporary workaround for https://github.com/linbox-team/linbox/issues/306
+    override_options += ['cpp_std=c++11']
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/matrix',
     install: true,
-    override_options: ['cython_language=cpp'],
+    override_options: override_options,
     include_directories: [
       inc_cpython,
       inc_ext,
       inc_flint,
       inc_ntl,
-      inc_numpy,
       inc_rings,
       inc_rings_finite,
     ],
@@ -176,6 +186,7 @@ foreach name, pyx : extension_data_cpp
       mpfi,
       mpfr,
       ntl,
+      numpy,
       pari,
       png,
       singular,

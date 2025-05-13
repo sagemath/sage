@@ -8,7 +8,7 @@ not work. Instead, we test this by starting a new Python process::
     sage: from sage.tests.cmdline import check_executable
     sage: environment = "sage.all"
     sage: cmd = f"from {environment} import *\nprint('IPython' in sys.modules)\n"
-    sage: print(check_executable(["sage", "--python"], cmd)[0])  # long time
+    sage: print(check_executable(["python3"], cmd)[0])  # long time
     False
 
 Check that numpy (:issue:`11714`) and pyparsing are not imported on startup

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# See README.md for more details
 
 import argparse
 import os
@@ -288,7 +289,7 @@ meson_format(
         inplace=True,
         recursive=True,
         output=None,
-        configuration=None,
+        configuration=options.sourcedir / "meson.format",
         editor_config=None,
     )
 )

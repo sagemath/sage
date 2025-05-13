@@ -10,27 +10,37 @@ Symmetric Group Algebra
 # ****************************************************************************
 import itertools
 
+from sage.algebras.cellular_basis import CellularBasis
+from sage.algebras.group_algebra import GroupAlgebra_class
+from sage.arith.misc import factorial
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.weyl_groups import WeylGroups
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.partition import Partitions, Partitions_n, _Partitions
+from sage.combinat.permutation import (
+    Permutation,
+    Permutations,
+    from_permutation_group_element,
+)
+from sage.combinat.permutation_cython import left_action_same_n, right_action_same_n
+from sage.combinat.skew_tableau import SkewTableau
+from sage.combinat.tableau import (
+    StandardTableaux,
+    StandardTableaux_shape,
+    StandardTableaux_size,
+    Tableau,
+)
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.algebras_with_basis import AlgebrasWithBasis
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.permutation import Permutation, Permutations, from_permutation_group_element
-from sage.combinat.permutation_cython import (left_action_same_n, right_action_same_n)
-from sage.combinat.partition import _Partitions, Partitions, Partitions_n
-from sage.combinat.tableau import Tableau, StandardTableaux_size, StandardTableaux_shape, StandardTableaux
-from sage.combinat.skew_tableau import SkewTableau
-from sage.algebras.group_algebra import GroupAlgebra_class
-from sage.algebras.cellular_basis import CellularBasis
-from sage.categories.weyl_groups import WeylGroups
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import QQ
-from sage.arith.misc import factorial
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import vector
 from sage.misc.lazy_import import lazy_import
 from sage.misc.persist import register_unpickle_override
+from sage.modules.free_module_element import vector
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 
-lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
+lazy_import('sage.groups.perm_gps.permgroup_element',
+            'PermutationGroupElement')
 
 
 # TODO: Remove this function and replace it with the class
@@ -74,7 +84,8 @@ def SymmetricGroupAlgebra(R, W, category=None):
         sage: a = sum(basis); a
         [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
         sage: a^2
-        6*[1, 2, 3] + 6*[1, 3, 2] + 6*[2, 1, 3] + 6*[2, 3, 1] + 6*[3, 1, 2] + 6*[3, 2, 1]
+        6*[1, 2, 3] + 6*[1, 3, 2] + 6*[2, 1, 3] + 6*[2, 3, 1]
+        + 6*[3, 1, 2] + 6*[3, 2, 1]
         sage: a^2 == 6*a
         True
         sage: b = QS3([3, 1, 2])
@@ -105,7 +116,8 @@ def SymmetricGroupAlgebra(R, W, category=None):
         sage: SGA = SymmetricGroupAlgebra(QQ, WeylGroup(["A",3], prefix='s')); SGA
         Symmetric group algebra of order 4 over Rational Field
         sage: SGA.group()
-        Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space)
+        Weyl Group of type ['A', 3] (as a matrix group acting
+        on the ambient space)
         sage: SGA.an_element()
         s1*s2*s3 + 3*s2*s3*s1*s2 + 2*s3*s1 + 1
 
@@ -184,7 +196,8 @@ def SymmetricGroupAlgebra(R, W, category=None):
 
         sage: QS3 = SymmetricGroupAlgebra(QQ, 3, category=Monoids())
         sage: QS3.category()
-        Category of finite dimensional cellular monoid algebras over Rational Field
+        Category of finite dimensional cellular monoid algebras
+        over Rational Field
         sage: TestSuite(QS3).run(skip=['_test_construction'])
 
 
@@ -1155,8 +1168,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             if mu not in self._blocks_dictionary:
                 raise ValueError("the {1}-core of {0} is not a {1}-core of a partition of {2}".format(la, p, self.n))
 
-        from sage.libs.gap.libgap import libgap
         from sage.data_structures.blas_dict import iaxpy
+        from sage.libs.gap.libgap import libgap
         G = self._indices
         character_table = [c.sage() for c in libgap.Irr(libgap.SymmetricGroup(self.n))]
         Pn = Partitions_n(self.n)
@@ -1247,9 +1260,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 blocks[c] = [la]
         return blocks
 
-    def ladder_idemponent(self, la):
+    def ladder_idempotent(self, la):
         r"""
-        Return the ladder idempontent of ``self``.
+        Return the ladder idempotent of ``self``.
 
         Let `F` be a field of characteristic `p`. The *ladder idempotent*
         of shape `\lambda` is the idempotent of `F[S_n]` defined as follows.
@@ -1257,7 +1270,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         <sage.combinat.partition.Partition.ladder_tableau>` of shape `\lambda`.
         Let `[T]` be the set of standard tableaux whose residue sequence
         is the same as for `T`. Let `\alpha` be the sizes of the ladders
-        of `\lambda`. Then the ladder idempontent is constructed as
+        of `\lambda`. Then the ladder idempotent is constructed as
 
         .. MATH::
 
@@ -1273,7 +1286,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
             sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
             sage: for la in Partitions(SGA.n):
-            ....:     idem = SGA.ladder_idemponent(la)
+            ....:     idem = SGA.ladder_idempotent(la)
             ....:     print(la)
             ....:     print(idem)
             ....:     assert idem^2 == idem
@@ -1302,7 +1315,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: for la in Partitions(SGA.n):
-            ....:     idem = SGA.ladder_idemponent(la)
+            ....:     idem = SGA.ladder_idempotent(la)
             ....:     assert idem^2 == idem
             ....:     print(la, SGA.principal_ideal(idem).dimension())
             [5] 1
@@ -1324,15 +1337,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         n = self.n
         if not p:
             p = n + 1
-        la = _Partitions(la)
-        if sum(la) != n:
-            raise ValueError(f"{la} is not a partition of {n}")
+        la = Partitions_n(n)(la)
         Tlad, alpha = la.ladder_tableau(p, ladder_lengths=True)
-        if not all(val < p for val in alpha):
+        if any(val >= p for val in alpha):
             raise ValueError(f"{la} is not {p}-ladder restricted")
         Tclass = Tlad.residue_sequence(p).standard_tableaux()
         Elad = sum(epsilon_ik(T, T) for T in Tclass)
-        Elad = self.element_class(self, {sigma: R(c) for sigma, c in Elad._monomial_coefficients.items()})
+        Elad = self.element_class(self, {sigma: R(c)
+                                         for sigma, c in Elad._monomial_coefficients.items()})
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         YG = SymmetricGroup(n).young_subgroup(alpha)
         coeff = ~R.prod(factorial(val) for val in alpha)
@@ -1715,7 +1727,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: SGA.specht_module_dimension([(1,1),(1,3),(2,2),(3,1),(3,2)])
             16
         """
-        from sage.combinat.specht_module import specht_module_spanning_set, _to_diagram
+        from sage.combinat.specht_module import _to_diagram, specht_module_spanning_set
         D = _to_diagram(D)
         span_set = specht_module_spanning_set(D, self)
         return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
@@ -2106,7 +2118,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             return self._dft_modular()
         if form == "unitary":
             return self._dft_unitary()
-        raise ValueError("invalid form (= %s)" % form)
+        raise ValueError(f"invalid form (= {form})")
 
     def _dft_unitary(self):
         """
@@ -2521,7 +2533,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [1, 1, 1] [1, 2, 3] - [1, 3, 2] - [2, 1, 3] + [2, 3, 1] + [3, 1, 2] - [3, 2, 1]
         """
         T = []
-        total = 1 # make it 1-based
+        total = 1  # make it 1-based
         for r in la:
             T.append(list(range(total, total+r)))
             total += r
@@ -2875,7 +2887,7 @@ def a(tableau, star=0, base_ring=QQ):
     if n <= 1:
         return sgalg.one()
 
-    rd = dict((P(h), one) for h in rs)
+    rd = {P(h): one for h in rs}
     return sgalg._from_dict(rd)
 
 
@@ -2959,7 +2971,7 @@ def b(tableau, star=0, base_ring=QQ):
     if n <= 1:
         return sgalg.one()
 
-    cd = dict((P(v), v.sign() * one) for v in cs)
+    cd = {P(v): v.sign() * one for v in cs}
     return sgalg._from_dict(cd)
 
 
@@ -3593,7 +3605,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
             T[1, 2, 3]
         """
         if i not in range(1, self.n):
-            raise ValueError("i (= %(i)d) must be between 1 and n (= %(n)d)" % {'i': i, 'n': self.n})
+            raise ValueError(f"i (= {i}) must be between 1 and n (={self.n})")
 
         t_i = Permutation((i, i + 1))
         perm_i = t_i.right_action_product(perm)
@@ -3635,7 +3647,8 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
             sage: H3 = HeckeAlgebraSymmetricGroupT(QQ, 3, 1)
             sage: a = H3([2,1,3])+2*H3([1,2,3])-H3([3,2,1])
             sage: a^2 #indirect doctest
-            6*T[1, 2, 3] + 4*T[2, 1, 3] - T[2, 3, 1] - T[3, 1, 2] - 4*T[3, 2, 1]
+            6*T[1, 2, 3] + 4*T[2, 1, 3] - T[2, 3, 1]
+            - T[3, 1, 2] - 4*T[3, 2, 1]
 
         ::
 
@@ -3666,7 +3679,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
             ValueError: i (= 0) must be between 1 and n-1 (= 2)
         """
         if i not in range(1, self.n):
-            raise ValueError("i (= %(i)d) must be between 1 and n-1 (= %(nm)d)" % {'i': i, 'nm': self.n - 1})
+            raise ValueError(f"i (= {i}) must be between 1 and n-1 (= {self.n - 1})")
 
         P = self.basis().keys()
         return self.monomial(P(list(range(1, i)) + [i + 1, i] +
@@ -3730,7 +3743,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
         if k not in range(2, self.n + 1):
             if k == 1:
                 return self.one()
-            raise ValueError("k (= %(k)d) must be between 1 and n (= %(n)d)" % {'k': k, 'n': self.n})
+            raise ValueError(f"k (= {k}) must be between 1 and n (= {self.n})")
 
         q = self.q()
         P = self._indices
