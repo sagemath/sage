@@ -106,7 +106,7 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
         True
     """
     cdef Matrix m0,m,mm
-    cdef int i
+    cdef Py_ssize_t i
     n = int(n)
     k = int(k)
 

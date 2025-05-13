@@ -2,7 +2,7 @@ brial = cc.find_library('brial', required: false, disabler: true)
 # Cannot be found via pkg-config
 brial_groebner = cc.find_library(
   'brial_groebner',
-  required: not is_windows,
+  required: false,
   disabler: true,
 )
 

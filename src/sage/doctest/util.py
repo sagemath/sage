@@ -802,7 +802,7 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         ....:     check_interrupt_only_occasionally()
         Traceback (most recent call last):
         ...
-        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 1.60... seconds
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 1.6... seconds
         sage: with ensure_interruptible_after(1, max_wait_after_interrupt=0.9):
         ....:     check_interrupt_only_occasionally()
 
