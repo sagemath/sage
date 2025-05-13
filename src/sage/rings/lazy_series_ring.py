@@ -2392,7 +2392,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         element of ``self``.
 
         The *Jacobi theta functions* with nome `q = \exp(\pi i \tau)`
-        for `z \in \CC` and `\tau \in \RR + \RR_{>0} i`, is defined as
+        for `z \in \CC` and `\tau \in \RR + \RR_{>0} i`, are defined as
 
         .. MATH::
 
@@ -2409,12 +2409,12 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             \vartheta_{11}(z; \tau) & = \sum_{n=0}^{\infty}
             (-1)^n (w^{2n+1} + w^{-2n+1}) q^{n^2+n},
 
-        where `w = \exp(\pi i z)`. We consider this as a formal
-        power series in `q` with the coefficients in the Laurent
-        polynomial ring `R[w]` (for a commutative ring `R`).
-        Here, we have changed the standard definition of
-        `\theta_{10}` and `\theta_{11}` by removing the overall
-        factor of `q^{1/4}` and `i q^{1/4}`.
+        where `w = \exp(\pi i z)`. We consider them as formal power
+        series in `q` with the coefficients in the Laurent polynomial
+        ring `R[w, w^{-1}]` (for a commutative ring `R`). Here, we
+        deviate from the standard definition of `\theta_{10}` and
+        `\theta_{11}` by removing the overall factor of `q^{1/4}`
+        and `i q^{1/4}`, respectively.
 
         EXAMPLES::
 
