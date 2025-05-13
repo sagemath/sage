@@ -9,8 +9,13 @@ inc_numpy = run_command(
   [
     '-c',
     '''
+from os.path import relpath
 import numpy
-print(numpy.get_include())
+path = numpy.get_include()
+try:
+  print(relpath(path))
+except Exception:
+  print(path)
     '''.strip(),
   ],
   check: true,
@@ -22,8 +27,13 @@ inc_cysignals = run_command(
   [
     '-c',
     '''
+from os.path import relpath
 import cysignals
-print(cysignals.__file__.replace('__init__.py', ''))
+path = cysignals.__file__.replace('__init__.py', '')
+try:
+  print(relpath(path))
+except Exception:
+  print(path)
     '''.strip(),
   ],
   check: true,
@@ -35,8 +45,13 @@ inc_gmpy2 = run_command(
   [
     '-c',
     '''
+from os.path import relpath
 import gmpy2
-print(gmpy2.__file__.replace('__init__.py', ''))
+path = gmpy2.__file__.replace('__init__.py', '')
+try:
+  print(relpath(path))
+except Exception:
+  print(path)
     '''.strip(),
   ],
   check: true,
@@ -49,8 +64,13 @@ inc_cypari2 = run_command(
   [
     '-c',
     '''
+from os.path import relpath
 import cypari2
-print(cypari2.__file__.replace('__init__.py', ''))
+path = cypari2.__file__.replace('__init__.py', '')
+try:
+  print(relpath(path))
+except Exception:
+  print(path)
     '''.strip(),
   ],
   check: true,
@@ -98,14 +118,11 @@ png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
 # We actually want >= 20231212, but the version number is not updated in the pkgconfig
 # https://github.com/conda-forge/eclib-feedstock/issues/48
-ec = dependency('eclib', version: '>=20231211')
+ec = dependency('eclib', version: '>=20231211', required: false, disabler: true)
 # Cannot be found via pkg-config
 ecm = cc.find_library('ecm')
-# Cannot be found via pkg-config
-ppl = cc.find_library('ppl')
 gmpxx = dependency('gmpxx')
 fflas = dependency('fflas-ffpack', version: '>=2.5.0')
-fplll = dependency('fplll')
 givaro = dependency('givaro', version: '>=4.2.0')
 linbox = dependency('linbox', required: false, version: '>=1.7.0')
 if not linbox.found()

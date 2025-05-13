@@ -1777,7 +1777,7 @@ class Link(SageObject):
             G.add_edge(c[3], c[1])
         return G.connected_components_number()
 
-    def is_knot(self):
+    def is_knot(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a knot.
 
@@ -2147,7 +2147,7 @@ class Link(SageObject):
         m = V + V.transpose()
         return Integer(abs(m.det()))
 
-    def is_alternating(self):
+    def is_alternating(self) -> bool:
         r"""
         Return whether the given knot diagram is alternating.
 
@@ -2868,8 +2868,8 @@ class Link(SageObject):
 
         cross = pd_code[0]
         rest = [list(vertex) for vertex in pd_code[1:]]
-        [a, b, c, d] = cross
-        if a == d and c == b and len(rest) > 0:
+        a, b, c, d = cross
+        if a == d and c == b and rest:
             return (~t + t**(-5)) * Link(rest)._bracket()
         elif a == b and c == d and len(rest) > 0:
             return (t + t**5) * Link(rest)._bracket()
@@ -3043,7 +3043,7 @@ class Link(SageObject):
             sage: # needs sage.libs.homfly
             sage: L = Link([[[1, -1], [2, -2]], [1, 1]])
             sage: L2 = Link([[1, 4, 2, 3], [2, 4, 1, 3]])
-            sage: L2.homfly_polynomial()
+            sage: L2.homfly_polynomial()  # not tested (:issue:`39544`)
             -L*M^-1 - L^-1*M^-1
             sage: L.homfly_polynomial()
             -L*M^-1 - L^-1*M^-1
@@ -3200,7 +3200,7 @@ class Link(SageObject):
                     M[i, j] -= 1
         return M
 
-    def is_colorable(self, n=None):
+    def is_colorable(self, n=None) -> bool:
         r"""
         Return whether the link is ``n``-colorable.
 
@@ -3949,7 +3949,7 @@ class Link(SageObject):
             return sb.is_conjugated(ob)
 
         if sb_ind > ob_ind:
-            # if the braid of self has more strands we have to perfom
+            # if the braid of self has more strands we have to perform
             # Markov II moves
             B = sb.parent()
             g = B.gen(ob_ind-1)
@@ -4517,7 +4517,7 @@ class Link(SageObject):
 
         return answer_list(l)
 
-    def is_isotopic(self, other):
+    def is_isotopic(self, other) -> bool:
         r"""
         Check whether ``self`` is isotopic to ``other``.
 

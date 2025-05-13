@@ -295,10 +295,6 @@ jobs:
         run: |
           "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*objects*
 
-      - name: sagemath-categories
-        run: |
-          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*categories*
-
       - name: sagemath-bliss
         run: |
           "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*bliss*

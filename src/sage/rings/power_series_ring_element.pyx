@@ -669,7 +669,7 @@ cdef class PowerSeries(AlgebraElement):
             if self.prec() is infinity:
                 return "0"
             else:
-                return "O(%s^%s)"%(self._parent.variable_name(),self.prec())
+                return "O(%s^%s)" % (self._parent.variable_name(), self.prec())
 
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         X = self._parent.variable_name()
@@ -686,14 +686,14 @@ cdef class PowerSeries(AlgebraElement):
                     if s != ' ':
                         s += " + "
                     if not atomic_repr and n > 0 and (x.find("+") != -1 or x.find("-") != -1):
-                        x = "(%s)"%x
+                        x = "(%s)" % x
                     if n > 1:
-                        var = "*%s^%s"%(X,n)
+                        var = "*%s^%s" % (X, n)
                     elif n==1:
-                        var = "*%s"%X
+                        var = "*%s" % X
                     else:
                         var = ""
-                    s += "%s%s"%(x,var)
+                    s += "%s%s" % (x, var)
         else:
             v = self.list()
             m = len(v)
@@ -705,14 +705,14 @@ cdef class PowerSeries(AlgebraElement):
                     if not first:
                         s += " + "
                     if not atomic_repr and n > 0 and (x[1:].find("+") != -1 or x[1:].find("-") != -1):
-                        x = "(%s)"%x
+                        x = "(%s)" % x
                     if n > 1:
-                        var = "*%s^%s"%(X,n)
+                        var = "*%s^%s" % (X, n)
                     elif n==1:
-                        var = "*%s"%X
+                        var = "*%s" % X
                     else:
                         var = ""
-                    s += "%s%s"%(x,var)
+                    s += "%s%s" % (x, var)
                     first = False
         # end
 
@@ -723,12 +723,12 @@ cdef class PowerSeries(AlgebraElement):
             if self._prec == 0:
                 bigoh = "O(1)"
             elif self._prec == 1:
-                bigoh = "O(%s)"%self._parent.variable_name()
+                bigoh = "O(%s)" % self._parent.variable_name()
             else:
-                bigoh = "O(%s^%s)"%(self._parent.variable_name(),self._prec)
+                bigoh = "O(%s^%s)" % (self._parent.variable_name(),self._prec)
             if s==" ":
                 return bigoh
-            s += " + %s"%bigoh
+            s += " + %s" % bigoh
         return s[1:]
 
     def _latex_(self):
@@ -768,15 +768,15 @@ cdef class PowerSeries(AlgebraElement):
                 if not first:
                     s += " + "
                 if not atomic_repr and n > 0 and (x[1:].find("+") != -1 or x[1:].find("-") != -1):
-                    x = "\\left(%s\\right)"%x
+                    x = "\\left(%s\\right)" % x
                 if n > 1:
-                    var = "%s^{%s}"%(X,n)
+                    var = "%s^{%s}" % (X, n)
                 elif n==1:
-                    var = "%s"%X
+                    var = "%s" % X
                 else:
                     var = ""
                 if n > 0:
-                    s += "%s| %s"%(x,var)
+                    s += "%s| %s" % (x, var)
                 else:
                     s += repr(x)
                 first = False
@@ -789,12 +789,12 @@ cdef class PowerSeries(AlgebraElement):
             if self._prec == 0:
                 bigoh = "O(1)"
             elif self._prec == 1:
-                bigoh = "O(%s)"%(X,)
+                bigoh = "O(%s)" % (X,)
             else:
-                bigoh = "O(%s^{%s})"%(X,self._prec)
+                bigoh = "O(%s^{%s})" % (X, self._prec)
             if s == " ":
                 return bigoh
-            s += " + %s"%bigoh
+            s += " + %s" % bigoh
         return s.lstrip(" ")
 
     def truncate(self, prec=infinity):
@@ -1973,7 +1973,7 @@ cdef class PowerSeries(AlgebraElement):
                              'series with zero constant term')
         x = self
         val = x.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         prec = min(prec, self.prec())
         if isinstance(prec, InfinityElement):
@@ -2055,7 +2055,7 @@ cdef class PowerSeries(AlgebraElement):
             raise ValueError('can only apply sin to formal power '
                              'series with zero constant term')
         val = self.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         x = self
 
@@ -2135,7 +2135,7 @@ cdef class PowerSeries(AlgebraElement):
         if not self[0].is_zero():
             raise ValueError('can only apply tan to formal power '
                              'series with zero constant term')
-        assert(self.valuation() >= 1)
+        assert self.valuation() >= 1
         return self.sin(prec) / self.cos(prec)
 
     def sinh(self, prec=infinity):
@@ -2203,7 +2203,7 @@ cdef class PowerSeries(AlgebraElement):
             raise ValueError('can only apply sinh to formal power '
                              'series with zero constant term')
         val = self.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         x = self
 
@@ -2290,7 +2290,7 @@ cdef class PowerSeries(AlgebraElement):
                              'series with zero constant term')
         x = self
         val = x.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         prec = min(prec, self.prec())
         if isinstance(prec, InfinityElement):
@@ -2370,7 +2370,7 @@ cdef class PowerSeries(AlgebraElement):
         if not self[0].is_zero():
             raise ValueError('can only apply tanh to formal power '
                              'series with zero constant term')
-        assert(self.valuation() >= 1)
+        assert self.valuation() >= 1
         return self.sinh(prec) / self.cosh(prec)
 
     def O(self, prec):
@@ -2686,14 +2686,14 @@ cdef class PowerSeries(AlgebraElement):
         v = self.list()
         m = 0
         w = []
-        zero = self.base_ring()(0)
-        for i in range(len(v)*n):
-            if i%n != 0:
+        zero = self.base_ring().zero()
+        for i in range(len(v) * n):
+            if i % n != 0:
                 w.append(zero)
             else:
                 w.append(v[m])
                 m += 1
-        return self._parent(w, self.prec()*n)
+        return self._parent(w, self.prec() * n)
 
     def valuation(self):
         """

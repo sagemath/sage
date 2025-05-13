@@ -3,7 +3,7 @@ build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
     'meson-python',
-    'cypari2 >=2.1.1',
+    'cypari2 >=2.2.1',
     # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
     'cysignals >=1.11.2, != 1.12.0',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
@@ -13,13 +13,20 @@ requires = [
     'numpy >=1.25',
     'jinja2'
 ]
+[tool.meson-python.args]
+# Prevent meson from trying to install the autoconf subprojects
+# otherwise we hit https://github.com/mesonbuild/meson-python/issues/598
+# The subprojects have to set the rpath to the build directory, which should work as long as
+# we don't use build isolation.
+install = ['--skip-subprojects', 'ecl']
+
 [project]
 name = "sagemath"
 description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dependencies = [
     'six >=1.15.0',
     'conway-polynomials >=0.8',
-    'cypari2 >=2.1.1',
+    'cypari2 >=2.2.1',
     # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
     'cysignals >=1.11.2, != 1.12.0',
     'cython >=3.0, != 3.0.3',
@@ -49,7 +56,8 @@ dependencies = [
     'fpylll >=0.5.9',
     'ptyprocess > 0.5',
     # TODO: Remove this once the migration to meson is complete
-    'pkgconfig'
+    'pkgconfig',
+    'traitlets',
 ]
 dynamic = ["version"]
 license = {text = "GNU General Public License (GPL) v2 or later"}
@@ -75,10 +83,16 @@ requires-python = ">=3.11, <3.14"
 R = [
     'rpy2 >=3.3',
 ]
+giac = [
+    'sagemath_giac',
+]
 
 [project.readme]
 file = "README.md"
 content-type = "text/markdown"
+
+[project.scripts]
+sage = "sage.cli:main"
 
 [tool.conda-lock]
 platforms = [
@@ -113,12 +127,10 @@ host-requires = [
   "pkg:generic/eclib",
   "pkg:generic/ecm",
   "pkg:generic/fflas-ffpack",
-  "pkg:generic/fplll",
   "pkg:generic/flint",
   "pkg:generic/libgd",
   "pkg:generic/gap",
   "pkg:generic/gfan",
-  "pkg:generic/giac",
   "pkg:generic/givaro",
   "pkg:generic/glpk",
   "pkg:generic/gmp",
@@ -143,7 +155,6 @@ host-requires = [
   "pkg:generic/pari-galdata",
   "pkg:generic/pari-seadata",
   "pkg:generic/planarity",
-  "pkg:generic/ppl",
   "pkg:generic/primesieve",
   "pkg:generic/primecount",
   "pkg:generic/qhull",
@@ -154,10 +165,10 @@ host-requires = [
 ]
 
 dependencies = [
-  "pkg:generic/tachyon",
   "pkg:generic/sagemath-polytopes-db",
   "pkg:generic/sagemath-elliptic-curves",
   "pkg:generic/sagemath-graphs",
+  "pkg:generic/tachyon",
 ]
 
 [dependency-groups]
@@ -177,3 +188,34 @@ lint = [
   "pycodestyle",
   "flake8-rst-docstrings",
 ]
+dev = [
+  "conda-lock",
+  "grayskull",
+  "toml",
+]
+
+[tool.ruff]
+# https://docs.astral.sh/ruff/configuration
+
+# Python 3.11 is the minimum supported version
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+  "E", # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
+  "F", # pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
+  "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
+  "PL", # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
+]
+ignore = [
+  "E501", # Line too long - hard to avoid in doctests, and better handled by black.
+]
+
+[tool.ruff.lint.per-file-ignores]
+"all.py" = [
+  "F401", # Unused import - these files are by definition collections of imports.
+]
+
+[tool.uv]
+# Don't use build isolation for sage (it's incompatible with meson-python's editable install)
+no-build-isolation-package = ["sagemath"]

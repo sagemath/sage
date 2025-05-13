@@ -63,15 +63,6 @@ EXAMPLES::
     {0: 0, 1: C4, 2: 0}
     sage: simplicial_complexes.MatchingComplex(6).homology()                            # needs sage.modules
     {0: 0, 1: Z^16, 2: 0}
-
-TESTS::
-
-    sage: from sage.topology.simplicial_complex_examples import PseudoQuaternionicProjectivePlane
-    sage: H = PseudoQuaternionicProjectivePlane()                                       # needs sage.groups
-    doctest:warning...:
-    DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated.
-    Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
-    See https://github.com/sagemath/sage/issues/34568 for details.
 """
 
 from .simplicial_complex import SimplicialComplex
@@ -617,9 +608,6 @@ def QuaternionicProjectivePlane():
     return UniqueSimplicialComplex([[g(index) for index in tup]
                                     for tup in start_list
                                     for g in PermutationGroup([P, S])])
-
-
-PseudoQuaternionicProjectivePlane = deprecated_function_alias(34568, QuaternionicProjectivePlane)
 
 
 def PoincareHomologyThreeSphere():
@@ -1483,10 +1471,10 @@ def ShiftedComplex(generators):
     """
     from sage.combinat.partition import Partitions
     Facets = []
-    for G in generators:
-        G = sorted(G, reverse=True)
+    for _G in generators:
+        G = sorted(_G, reverse=True)
         L = len(G)
-        for k in range(L * (L+1) // 2, sum(G) + 1):
+        for k in range(L * (L + 1) // 2, sum(G) + 1):
             for P in Partitions(k, length=L, max_slope=-1, outer=G):
                 Facets.append(list(reversed(P)))
     return SimplicialComplex(Facets)

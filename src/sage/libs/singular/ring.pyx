@@ -33,7 +33,6 @@ from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgEx
 
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring cimport IntegerRing_class
-from sage.rings.integer_ring import ZZ
 import sage.rings.abc
 from sage.rings.number_field.number_field_base cimport NumberField
 from sage.rings.rational_field import RationalField
@@ -580,9 +579,9 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     _ring.ShortOut = 0
 
     if order.is_local():
-        assert(_ring.OrdSgn == -1)
+        assert _ring.OrdSgn == -1
     if order.is_global():
-        assert(_ring.OrdSgn == 1)
+        assert _ring.OrdSgn == 1
 
     return _ring
 
