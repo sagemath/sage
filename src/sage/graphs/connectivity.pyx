@@ -72,7 +72,6 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.superseded import deprecation
 from sage.sets.disjoint_set cimport DisjointSet
 
 
@@ -158,7 +157,7 @@ def is_connected(G, forbidden_vertices=None):
         return n == G.num_verts()
 
 
-def connected_components(G, sort=None, key=None, forbidden_vertices=None):
+def connected_components(G, sort=False, key=None, forbidden_vertices=None):
     """
     Return the list of connected components.
 
@@ -169,12 +168,8 @@ def connected_components(G, sort=None, key=None, forbidden_vertices=None):
 
     - ``G`` -- the input graph
 
-    - ``sort`` -- boolean (default: ``None``); if ``True``, vertices inside each
+    - ``sort`` -- boolean (default: ``False``); if ``True``, vertices inside each
       component are sorted according to the default ordering
-
-      As of :issue:`35889`, this argument must be explicitly specified (unless a
-      ``key`` is given); otherwise a warning is printed and ``sort=True`` is
-      used. The default will eventually be changed to ``False``.
 
     - ``key`` -- a function (default: ``None``); a function that takes a
       vertex as its one argument and returns a value that can be used for
@@ -223,23 +218,10 @@ def connected_components(G, sort=None, key=None, forbidden_vertices=None):
         Traceback (most recent call last):
         ...
         ValueError: sort keyword is False, yet a key function is given
-
-    Deprecation warning for ``sort=None`` (:issue:`35889`)::
-
-        sage: G = graphs.HouseGraph()
-        sage: G.connected_components()
-        doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-        See https://github.com/sagemath/sage/issues/35889 for details.
-        [[0, 1, 2, 3, 4]]
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
-
-    if sort is None:
-        if key is None:
-            deprecation(35889, "parameter 'sort' will be set to False by default in the future")
-        sort = True
 
     if (not sort) and key:
         raise ValueError('sort keyword is False, yet a key function is given')
@@ -339,7 +321,7 @@ def connected_components_subgraphs(G, forbidden_vertices=None):
                                           forbidden_vertices=forbidden_vertices)]
 
 
-def connected_component_containing_vertex(G, vertex, sort=None, key=None,
+def connected_component_containing_vertex(G, vertex, sort=False, key=None,
                                           forbidden_vertices=None):
     """
     Return a list of the vertices connected to vertex.
@@ -350,12 +332,8 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None,
 
     - ``vertex`` -- the vertex to search for
 
-    - ``sort`` -- boolean (default: ``None``); if ``True``, vertices inside the
+    - ``sort`` -- boolean (default: ``False``); if ``True``, vertices inside the
       component are sorted according to the default ordering
-
-      As of :issue:`35889`, this argument must be explicitly specified (unless a
-      ``key`` is given); otherwise a warning is printed and ``sort=True`` is
-      used. The default will eventually be changed to ``False``.
 
     - ``key`` -- a function (default: ``None``); a function that takes a
       vertex as its one argument and returns a value that can be used for
@@ -407,23 +385,10 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None,
         Traceback (most recent call last):
         ...
         ValueError: sort keyword is False, yet a key function is given
-
-    Deprecation warning for ``sort=None`` (:issue:`35889`)::
-
-        sage: G = graphs.HouseGraph()
-        sage: G.connected_component_containing_vertex(1)
-        doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-        See https://github.com/sagemath/sage/issues/35889 for details.
-        [0, 1, 2, 3, 4]
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
-
-    if sort is None:
-        if key is None:
-            deprecation(35889, "parameter 'sort' will be set to False by default in the future")
-        sort = True
 
     if (not sort) and key:
         raise ValueError('sort keyword is False, yet a key function is given')
@@ -1083,7 +1048,7 @@ def is_vertex_cut(G, cut, weak=False):
 
         sage: from sage.graphs.connectivity import is_vertex_cut
         sage: G = graphs.CycleGraph(4) * 2
-        sage: G.connected_components()
+        sage: G.connected_components(sort=True)
         [[0, 1, 2, 3], [4, 5, 6, 7]]
         sage: is_vertex_cut(G, [0, 2])
         True
