@@ -165,7 +165,6 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
 
         return super()._coerce_map_from_(R)
 
-    @cached_method
     def _an_element_(self):
         """
         Return an element of ``self``.

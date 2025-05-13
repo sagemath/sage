@@ -37,7 +37,6 @@ We check that the coercion `C \to M` goes through the `X` basis::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -238,7 +237,6 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             return self._coerce_map_via([target], R)
         return super()._coerce_map_from_(R)
 
-    @cached_method
     def _an_element_(self):
         """
         Return an element of ``self``.
