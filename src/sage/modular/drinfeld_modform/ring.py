@@ -102,7 +102,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
       If this parameter is a single character, for example ``f``, and a
       rank is specified, then the names will be of the form
-      ``f1, f2, ..., fr``. Finally, if this parameter is a list, a tupe
+      ``f1, f2, ..., fr``. Finally, if this parameter is a list, a tuple
       or a string of comma separated characters, then each character
       will corresponds to a generator. Note that in this case, it not
       necessary to specify the rank.
