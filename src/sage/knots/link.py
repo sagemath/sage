@@ -2461,7 +2461,7 @@ class Link(SageObject):
         if not new_pd:
             # trivial knot
             return type(self)([])
-        new_edges = set(elt for cr in new_pd for elt in cr)
+        new_edges = {elt for cr in new_pd for elt in cr}
         for cr in loop_crossings:
             rem = {e for e in cr if e in new_edges}
             if len(rem) == 2:
