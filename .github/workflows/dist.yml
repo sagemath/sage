@@ -10,7 +10,9 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
       - '[0-9]+.[0-9]+.rc[0-9]+'
       - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
-
+  pull_request:
+    paths:
+      - '.github/workflows/dist.yml'
   workflow_dispatch:
     # Allow to run manually
 
@@ -80,7 +82,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
     
@@ -179,7 +181,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
       - name: Install bootstrap prerequisites
@@ -326,7 +328,7 @@ jobs:
     needs: build_wheels
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
     steps:
 
       - uses: actions/download-artifact@v4
