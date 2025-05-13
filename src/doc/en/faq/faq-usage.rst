@@ -219,8 +219,8 @@ by a web search.
 
 * `Building Skills in Python <http://homepage.mac.com/s_lott/books/python.html>`_
   by Steven F. Lott
-* `Dive into Python <http://www.diveintopython.net>`_ by Mark Pilgrim
-* `How to Think Like a Computer Scientist <http://www.openbookproject.net/thinkCSpy>`_
+* `Dive into Python <https://diveintopython3.net>`_ by Mark Pilgrim
+* `How to Think Like a Computer Scientist <https://www.openbookproject.net/thinkcs/python/english3e/>`_
   by Jeffrey Elkner, Allen B. Downey, and Chris Meyers
 * `Official Python Tutorial <https://docs.python.org/tutorial>`_
 * `Python <https://www.python.org>`_ home page and the
@@ -562,7 +562,7 @@ include the following:
     limit maxproc 512 2048
 
 then reboot. See
-`this page <http://www.macosxhints.com/article.php?story=20050709233920660>`_
+`this page <https://web.archive.org/web/20051106134912/http://www.macosxhints.com/article.php?story=20050709233920660>`_
 for more details.
 
 How do I plot the cube root (or other odd roots) for negative input?
