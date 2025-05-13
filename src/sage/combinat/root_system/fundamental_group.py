@@ -532,7 +532,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
         return iter(self.group_generators())
 
     @cached_method
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of ``self``.
 
@@ -708,7 +708,7 @@ class FundamentalGroupGL(FundamentalGroupOfExtendedAffineWeylGroup_Class):
         return LazyFamily(ZZ, lambda i: i)
 
     @cached_method
-    def an_element(self):
+    def _an_element_(self):
         r"""
         An element of ``self``.
 

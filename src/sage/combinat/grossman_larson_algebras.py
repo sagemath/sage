@@ -363,7 +363,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
         return t.node_number() - 1
 
     @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 

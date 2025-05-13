@@ -239,7 +239,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         return super()._coerce_map_from_(R)
 
     @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
