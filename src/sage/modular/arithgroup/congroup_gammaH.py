@@ -434,7 +434,7 @@ class GammaH_class(CongruenceSubgroup):
         """
         return self.__Hlist
 
-    def is_even(self):
+    def is_even(self) -> bool:
         """
         Return ``True`` precisely if this subgroup contains the matrix -1.
 
@@ -1002,7 +1002,7 @@ class GammaH_class(CongruenceSubgroup):
             for t in reps2:
                 yield SL2Z(t) * r
 
-    def is_subgroup(self, other):
+    def is_subgroup(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a subgroup of ``right``, and ``False``
         otherwise.

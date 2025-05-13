@@ -319,19 +319,20 @@ class TypeSpace(SageObject):
         # time-critical, and getting it wrong can lead to subtle bugs.
         p = self.prime()
         r = self.conductor()
-        d = max(self.character_conductor(), r//2)
+        d = max(self.character_conductor(), r // 2)
         n = self.tame_level()
         chi = self.form().character()
         tame_H = [i for i in chi.kernel() if (i % p**r) == 1]
         wild_H = [crt(x, 1, p**r, n) for x in range(p**r) if x % (p**d) == 1]
         return GammaH(n * p**r, tame_H + wild_H)
 
-    ###############################################################################
-    # Testing minimality: is this form a twist of a form of strictly smaller level?
-    ###############################################################################
+    ##########################################################################
+    # Testing minimality:
+    # is this form a twist of a form of strictly smaller level?
+    ##########################################################################
 
     @cached_method
-    def is_minimal(self):
+    def is_minimal(self) -> bool:
         r"""
         Return ``True`` if there exists a newform `g` of level strictly smaller
         than `N`, and a Dirichlet character `\chi` of `p`-power conductor, such

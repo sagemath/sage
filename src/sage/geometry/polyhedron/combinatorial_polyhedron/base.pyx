@@ -1467,14 +1467,14 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         if add_equations and names:
             return tuple(
-                    ((f(self._ridges.get(i).first),) + self.equations(),
-                     (f(self._ridges.get(i).second),) + self.equations())
-                    for i in range (n_ridges))
-        else:
-            return tuple(
-                    (f(self._ridges.get(i).first),
-                     f(self._ridges.get(i).second))
-                    for i in range (n_ridges))
+                ((f(self._ridges.get(i).first),) + self.equations(),
+                 (f(self._ridges.get(i).second),) + self.equations())
+                for i in range(n_ridges))
+
+        return tuple(
+            (f(self._ridges.get(i).first),
+             f(self._ridges.get(i).second))
+            for i in range(n_ridges))
 
     @cached_method
     def facet_adjacency_matrix(self, algorithm=None):
@@ -3670,7 +3670,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             # If ``not do_f_vector`` the iterator is set up
             # for ``output_dimension`` and
             # ``d < dim`` implies
-            # ``d == ouput_dimension``.
+            # ``d == output_dimension``.
             if not do_f_vector or d == output_dimension:
                 if do_atom_rep:
                     # Set up face_iter.atom_rep
