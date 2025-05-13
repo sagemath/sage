@@ -2120,7 +2120,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         my_args.update(kwargs)
         return S.plot(*args, **my_args)
 
-    def is_admissible(self, D):
+    def is_admissible(self, D) -> bool:
         r"""
         Test whether the imaginary quadratic field of
         discriminant `D` embeds in the quaternion algebra. It

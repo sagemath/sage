@@ -15,7 +15,7 @@ Attribution\-ShareAlike 3.0 license (`CC BY\-SA
 <http://creativecommons.org/licenses/by-sa/3.0/>`_).
 
 Thanks to Sage's integration of projects like `matplotlib
-<http://matplotlib.sourceforge.net/>`_, Sage has comprehensive
+<https://matplotlib.org/>`_, Sage has comprehensive
 two-dimensional plotting capabilities.  This worksheet consists of the
 following sections:
 

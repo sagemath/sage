@@ -564,7 +564,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         return infinity
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return ``True`` if ``self`` is isomorphic to the trivial module
         and ``False`` otherwise.
@@ -599,7 +599,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         """
         return self.connectivity() == infinity
 
-    def has_relations(self):
+    def has_relations(self) -> bool:
         r"""
         Return ``True`` if no relations are defined, and ``False``
         otherwise.

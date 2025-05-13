@@ -243,7 +243,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.blocks_and_cut_vertices` | Compute the blocks and cut vertices of the graph.
     :meth:`~GenericGraph.blocks_and_cuts_tree` | Compute the blocks-and-cuts tree of the graph.
     :meth:`~GenericGraph.is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
-    :meth:`~GenericGraph.`is_edge_cut` | Check whether the input edges form an edge cut.
+    :meth:`~GenericGraph.is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`~GenericGraph.is_cut_vertex` | Check whether the input vertex is a cut-vertex.
     :meth:`~GenericGraph.is_vertex_cut` | Check whether the input vertices form a vertex cut.
     :meth:`~GenericGraph.edge_cut` | Return a minimum edge cut between vertices `s` and `t`
@@ -1220,6 +1220,63 @@ class GenericGraph(GenericGraph_pyx):
 
     # Formats
 
+    def _copy_attribute_from(self, other, attribute):
+        r"""
+        Helper method to copy in ``self`` an attribute from ``other``.
+
+        INPUT:
+
+        - ``other`` -- the (di)graph from which to copy attributes
+
+        - ``attribute`` -- string; the attribute to copy, for example
+          ``_assoc``, ``_embedding``, ``_pos``, etc.
+
+        EXAMPLES::
+
+            sage: G = graphs.CycleGraph(4)
+            sage: G.get_pos()
+            {0: (0.0, 1.0), 1: (-1.0, 0.0), 2: (0.0, -1.0), 3: (1.0, 0.0)}
+            sage: D = DiGraph(4)
+            sage: D._copy_attribute_from(G, '_pos')
+            sage: D.get_pos()
+            {0: (0.0, 1.0), 1: (-1.0, 0.0), 2: (0.0, -1.0), 3: (1.0, 0.0)}
+
+        TESTS::
+
+            sage: G = Graph([(0, 1)])
+            sage: D = DiGraph([(0, 1)])
+            sage: G.set_vertices({0: graphs.CycleGraph(3), 1: 'abc'})
+            sage: G.get_vertices()
+            {0: Cycle graph: Graph on 3 vertices, 1: 'abc'}
+            sage: D.get_vertices()
+            {0: None, 1: None}
+            sage: D._copy_attribute_from(G, '_assoc')
+            sage: D.get_vertices()
+            {0: Cycle graph: Graph on 3 vertices, 1: 'abc'}
+            sage: G.get_vertices()
+            {0: Cycle graph: Graph on 3 vertices, 1: 'abc'}
+            sage: G.get_embedding()
+            sage: G.genus()
+            0
+            sage: G.get_embedding()
+            {0: [1], 1: [0]}
+            sage: D._copy_attribute_from(G, '_embedding')
+            sage: D.get_embedding()
+            {0: [1], 1: [0]}
+        """
+        if hasattr(other, attribute):
+            copy_attr = {}
+            old_attr = getattr(other, attribute)
+            if isinstance(old_attr, dict):
+                for v, value in old_attr.items():
+                    try:
+                        copy_attr[v] = value.copy()
+                    except AttributeError:
+                        copy_attr[v] = copy(value)
+                setattr(self, attribute, copy_attr)
+            else:
+                setattr(self, attribute, copy(old_attr))
+
     def copy(self, weighted=None, data_structure=None, sparse=None, immutable=None, hash_labels=None):
         """
         Change the graph implementation.
@@ -1493,20 +1550,9 @@ class GenericGraph(GenericGraph_pyx):
                            weighted=weighted, hash_labels=hash_labels,
                            data_structure=data_structure)
 
-        attributes_to_copy = ('_assoc', '_embedding')
-        for attr in attributes_to_copy:
-            if hasattr(self, attr):
-                copy_attr = {}
-                old_attr = getattr(self, attr)
-                if isinstance(old_attr, dict):
-                    for v, value in old_attr.items():
-                        try:
-                            copy_attr[v] = value.copy()
-                        except AttributeError:
-                            copy_attr[v] = copy(value)
-                    setattr(G, attr, copy_attr)
-                else:
-                    setattr(G, attr, copy(old_attr))
+        # Copy attributes '_assoc' and '_embedding' if set
+        G._copy_attribute_from(self, '_assoc')
+        G._copy_attribute_from(self, '_embedding')
 
         return G
 
@@ -12041,7 +12087,7 @@ class GenericGraph(GenericGraph_pyx):
              2: Moebius-Kantor Graph: Graph on 16 vertices}
         """
         if verts is None:
-            verts = list(self)
+            verts = self
 
         if not hasattr(self, '_assoc'):
             return dict.fromkeys(verts, None)

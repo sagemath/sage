@@ -20,7 +20,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.structure.parent import Parent
@@ -314,7 +314,7 @@ class Derangements(UniqueRepresentation, Parent):
         """
         if n == 0:
             yield []
-            return 
+            return
         elif n == 1:
             return
         elif n == 2:

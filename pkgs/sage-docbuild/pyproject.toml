@@ -23,7 +23,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 urls = {Homepage = "https://www.sagemath.org"}
-dependencies = ["sphinx"]
+dependencies = ["sphinx", "sphinx-copybutton"]
 dynamic = ["version"]
 
 [project.readme]

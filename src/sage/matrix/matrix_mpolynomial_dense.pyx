@@ -151,7 +151,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         x = self.fetch('pivots')
 
         if x is None:
-            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'"%self.parent())
+            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'" % self.parent())
         return x
 
     def echelonize(self, algorithm='row_reduction', **kwds):
@@ -378,7 +378,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         """
         from sage.matrix.constructor import matrix
 
-        cdef int c, r, i, j, rc, start_row, nr, nc
+        cdef Py_ssize_t c, r, i, j, rc, start_row, nr, nc
 
         x = self.fetch('in_echelon_form_row_reduction')
         if x is not None:

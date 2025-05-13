@@ -406,7 +406,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         """
         return self.__group
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if ``self`` is an ambient space of modular symbols.
 
@@ -420,7 +420,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         from sage.modular.modsym.ambient import ModularSymbolsAmbient
         return isinstance(self, ModularSymbolsAmbient)
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         """
         Return ``True`` if ``self`` is a cuspidal space of modular symbols.
 
@@ -439,7 +439,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         """
         raise NotImplementedError("computation of cuspidal subspace not yet implemented for this class")
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return whether this modular symbols space is simple as a module
         over the anemic Hecke algebra adjoin \*.

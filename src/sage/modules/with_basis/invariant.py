@@ -997,7 +997,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         but you still may pass elements of ``M``, which is an instance of
         :class:`~sage.combinat.free_module.CombinatorialFreeModule`,
         because the underlying ``Representation`` is built off of ``M``
-        and we can cannonically construct elements of the ``Representation``
+        and we can canonically construct elements of the ``Representation``
         from elements of ``M``.
 
         ::

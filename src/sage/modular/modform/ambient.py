@@ -276,7 +276,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         return self
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if this an ambient space of modular forms.
 

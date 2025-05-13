@@ -2972,7 +2972,7 @@ class RiemannSurface:
         mp_list = [reparameterize_differential_minpoly(mp, z_start) for mp in mp_list]
 
         # Depending on whether we have reparameterized about infinity or not,
-        # we initialise some values we will need in the calculation, inclduing
+        # we initialise some values we will need in the calculation, including
         # the function `initalize', which at a given value of zbar, calculates
         # the starting value for the i-th differential so it can be iterated
         # from via homotopy continuation.

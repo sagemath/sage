@@ -331,7 +331,7 @@ Singular itself to help an understanding of how the wrapper works.
 
 -  Using Singular's ``BrillNoether`` command (for details see the section
    Brill-Noether in the Singular online documentation
-   (http://www.singular.uni-kl.de/Manual/html/sing_960.htm and the
+   (https://www.singular.uni-kl.de/Manual/4-3-0/sing_2254.htm and the
    paper {CF}):
 
    ::

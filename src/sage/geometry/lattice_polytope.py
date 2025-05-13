@@ -43,14 +43,14 @@ function.
 
 .. NOTE::
 
-   IMPORTANT: PALP requires some parameters to be determined during
-   compilation time, i.e., the maximum dimension of polytopes, the
-   maximum number of points, etc. These limitations may lead to errors
-   during calls to different functions of these module.  Currently, a
-   :exc:`ValueError` exception will be raised if the output of ``poly.x``
-   or ``nef.x`` is empty or contains the exclamation mark. The error
-   message will contain the exact command that caused an error, the
-   description and vertices of the polytope, and the obtained output.
+    IMPORTANT: PALP requires some parameters to be determined during
+    compilation time, i.e., the maximum dimension of polytopes, the
+    maximum number of points, etc. These limitations may lead to errors
+    during calls to different functions of these module.  Currently, a
+    :exc:`ValueError` exception will be raised if the output of ``poly.x``
+    or ``nef.x`` is empty or contains the exclamation mark. The error
+    message will contain the exact command that caused an error, the
+    description and vertices of the polytope, and the obtained output.
 
 Data obtained from PALP and some other data is cached and most
 returned values are immutable. In particular, you cannot change the
@@ -365,16 +365,16 @@ def ReflexivePolytope(dim, n):
 
     .. NOTE::
 
-       #. Numeration starts with zero: `0 \leq n \leq 15` for `{\rm dim} = 2`
-          and `0 \leq n \leq 4318` for `{\rm dim} = 3`.
+        #. Numeration starts with zero: `0 \leq n \leq 15` for `{\rm dim} = 2`
+           and `0 \leq n \leq 4318` for `{\rm dim} = 3`.
 
-       #. During the first call, all reflexive polytopes of requested
-          dimension are loaded and cached for future use, so the first
-          call for 3-dimensional polytopes can take several seconds,
-          but all consecutive calls are fast.
+        #. During the first call, all reflexive polytopes of requested
+           dimension are loaded and cached for future use, so the first
+           call for 3-dimensional polytopes can take several seconds,
+           but all consecutive calls are fast.
 
-       #. Equivalent to ``ReflexivePolytopes(dim)[n]`` but checks bounds
-          first.
+        #. Equivalent to ``ReflexivePolytopes(dim)[n]`` but checks bounds
+           first.
 
     EXAMPLES:
 
@@ -425,9 +425,9 @@ def ReflexivePolytopes(dim):
 
     .. NOTE::
 
-       During the first call the database is loaded and cached for
-       future use, so repetitive calls will return the same object in
-       memory.
+        During the first call the database is loaded and cached for
+        future use, so repetitive calls will return the same object in
+        memory.
 
     INPUT:
 
@@ -975,14 +975,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Run ``command`` on vertices of this polytope.
 
-        Returns the output of ``command`` as a string.
+        This returns the output of ``command`` as a string.
 
         .. NOTE::
 
-          PALP cannot be called for polytopes that do not span the ambient space.
-          If you specify ``reduce_dimension=True`` argument, PALP will be
-          called for vertices of this polytope in some basis of the affine space
-          it spans.
+            PALP cannot be called for polytopes that do not span the
+            ambient space.  If you specify ``reduce_dimension=True``
+            argument, PALP will be called for vertices of this
+            polytope in some basis of the affine space it spans.
 
         TESTS::
 
@@ -1414,13 +1414,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         .. NOTE::
 
-          #. While ``a`` and ``b`` may be rational, the final result must be a
-             lattice polytope, i.e. all vertices must be integral.
+            #. While ``a`` and ``b`` may be rational, the final result
+               must be a lattice polytope, i.e. all vertices must be integral.
 
-          #. If the transform (restricted to this polytope) is bijective, facial
-             structure will be preserved, e.g. the first facet of the image will
-             be spanned by the images of vertices which span the first facet of
-             the original polytope.
+            #. If the transform (restricted to this polytope) is
+               bijective, facial structure will be preserved, e.g. the
+               first facet of the image will be spanned by the images
+               of vertices which span the first facet of the original
+               polytope.
 
         INPUT:
 
@@ -1500,6 +1501,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             else:
                 r._original = self
         return r
+
+    linear_transformation = affine_transform
 
     def ambient(self):
         r"""
@@ -2401,10 +2404,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         .. NOTE::
 
-           The columns correspond to facets/facet normals
-           in the order of :meth:`facet_normals`, the rows
-           correspond to the vertices in the order of
-           :meth:`vertices`.
+            The columns correspond to facets/facet normals
+            in the order of :meth:`facet_normals`, the rows
+            correspond to the vertices in the order of
+            :meth:`vertices`.
 
         EXAMPLES::
 
@@ -2455,9 +2458,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         .. NOTE::
 
-           The first call to this function for each dimension can take
-           a few seconds while the dictionary of all polytopes is
-           constructed, but after that it is cached and fast.
+            The first call to this function for each dimension can take
+            a few seconds while the dictionary of all polytopes is
+            constructed, but after that it is cached and fast.
 
         :rtype: integer
 
@@ -4977,15 +4980,15 @@ def _palp(command, polytopes, reduce_dimension=False):
     Run ``command`` on vertices of given
     ``polytopes``.
 
-    Returns the name of the file containing the output of
+    This returns the name of the file containing the output of
     ``command``. You should delete it after using.
 
     .. NOTE::
 
-      PALP cannot be called for polytopes that do not span the ambient space.
-      If you specify ``reduce_dimension=True`` argument, PALP will be
-      called for vertices of this polytope in some basis of the affine space
-      it spans.
+        PALP cannot be called for polytopes that do not span the
+        ambient space.  If you specify ``reduce_dimension=True``
+        argument, PALP will be called for vertices of this polytope in
+        some basis of the affine space it spans.
 
     TESTS::
 
@@ -5441,8 +5444,8 @@ def convex_hull(points):
 
     .. NOTE::
 
-       ``points`` might not span the space. Also, it fails for large
-       numbers of vertices in dimensions 4 or greater
+        ``points`` might not span the space. Also, it fails for large
+        numbers of vertices in dimensions 4 or greater
 
     INPUT:
 
@@ -5516,7 +5519,7 @@ def minkowski_sum(points1, points2):
 
     .. NOTE::
 
-       Polytopes might not be of maximal dimension.
+        Polytopes might not be of maximal dimension.
 
     INPUT:
 

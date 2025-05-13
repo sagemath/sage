@@ -32,3 +32,4 @@ libffi-devel
 zlib-devel
 # to build python3 with the crypto module; there may be other packages that need it
 libxcrypt-devel
+patch

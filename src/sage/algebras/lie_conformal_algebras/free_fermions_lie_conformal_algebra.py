@@ -100,10 +100,10 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
             try:
                 assert (gram_matrix in MatrixSpace(R, ngens, ngens))
             except AssertionError:
-                raise ValueError("The gram_matrix should be a symmetric " +
+                raise ValueError("the Gram_matrix should be a symmetric " +
                     "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
             if not gram_matrix.is_symmetric():
-                raise ValueError("The gram_matrix should be a symmetric " +
+                raise ValueError("the Gram_matrix should be a symmetric " +
                     "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
         else:
             if ngens is None:

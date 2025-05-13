@@ -2227,9 +2227,9 @@ cdef class Polynomial_rational_flint(Polynomial):
                 from sage.interfaces.kash import kash
                 kash.eval('X := PolynomialRing(RationalField()).1')
                 s = self._repr(name='X')
-                G = kash('Galois(%s)'%s)
-                d = int(kash.eval('%s.ext1'%G.name()))
-                n = int(kash.eval('%s.ext2'%G.name()))
+                G = kash('Galois(%s)' % s)
+                d = int(kash.eval('%s.ext1' % G.name()))
+                n = int(kash.eval('%s.ext2' % G.name()))
                 return TransitiveGroup(d, n)
             except RuntimeError as msg:
                 raise NotImplementedError(str(msg) + "\nSorry, " +

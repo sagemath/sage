@@ -396,7 +396,7 @@ Sageで使われる第三のリスト類似データ型が，シーケンスで�
 ===============
 
 ディクショナリ(「連想配列」と呼ばれる場合もある)とは，文字列、数値、タプルなどのハッシュ可能なオブジェクトから任意のオブジェクトへの写像のことである．
-(ハッシュ可能オブジェクトについての詳細は http://docs.python.org/tut/node7.html と http://docs.python.org/lib/typesmapping.html を参照．)
+(ハッシュ可能オブジェクトについての詳細は http://docs.python.org/3/tutorial/datastructures.html と https://docs.python.org/3/library/stdtypes.html#typesmapping を参照．)
 
 ::
 

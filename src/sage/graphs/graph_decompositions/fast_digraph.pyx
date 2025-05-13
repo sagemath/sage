@@ -90,7 +90,7 @@ cdef class FastDigraph:
 
     def print_adjacency_matrix(self):
         r"""
-        Displays the adjacency matrix of ``self``.
+        Display the adjacency matrix of ``self``.
 
         EXAMPLES::
 

@@ -88,7 +88,7 @@ def content(self):
 
 
 # in quadratic_form.py
-# def is_primitive(self):
+# def is_primitive(self) -> bool:
 #     """
 #     Checks if the form is a multiple of another form... only over ZZ for now.
 #     """
@@ -109,7 +109,7 @@ def content(self):
 
 def adjoint(self):
     """
-    This gives the adjoint (integral) quadratic form associated to the
+    Return the adjoint (integral) quadratic form associated to the
     given form, essentially defined by taking the adjoint of the matrix.
 
     EXAMPLES::

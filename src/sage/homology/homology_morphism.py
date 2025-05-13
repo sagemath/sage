@@ -12,15 +12,15 @@ AUTHORS:
 - John H. Palmieri (2015.09)
 """
 
-########################################################################
+# ######################################################################
 #       Copyright (C) 2015 John H. Palmieri <palmieri@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-########################################################################
+#                  https://www.gnu.org/licenses/
+# ######################################################################
 
 # To do: implement morphisms of cubical complexes, with methods
 #   - domain
@@ -130,7 +130,7 @@ class InducedHomologyMorphism(Morphism):
         sage: diag_c(c)
         h^{1,0}
     """
-    def __init__(self, map, base_ring=None, cohomology=False):
+    def __init__(self, map, base_ring=None, cohomology=False) -> None:
         """
         INPUT:
 
@@ -386,7 +386,7 @@ class InducedHomologyMorphism(Morphism):
         """
         return self.to_matrix().right_nullity() == 0
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 
@@ -400,7 +400,7 @@ class InducedHomologyMorphism(Morphism):
         """
         return "Graded vector space" if not self._cohomology else "Graded algebra"
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         EXAMPLES::
 

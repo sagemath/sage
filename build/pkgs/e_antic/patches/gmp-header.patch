@@ -1,0 +1,11 @@
+--- a/libeantic/srcxx/renf_elem_class.cpp	2025-03-27 16:35:20.026216756 -0500
++++ b/libeantic/srcxx/renf_elem_class.cpp	2025-03-27 16:35:07.743757663 -0500
+@@ -12,6 +12,7 @@
+ 
+ #include <iostream>
+ #include <cassert>
++#include <gmp.h>
+ #include <flint/fmpq.h>
+ #include <cstdlib>
+ #include <functional>
+

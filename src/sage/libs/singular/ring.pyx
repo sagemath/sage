@@ -579,9 +579,9 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     _ring.ShortOut = 0
 
     if order.is_local():
-        assert(_ring.OrdSgn == -1)
+        assert _ring.OrdSgn == -1
     if order.is_global():
-        assert(_ring.OrdSgn == 1)
+        assert _ring.OrdSgn == 1
 
     return _ring
 

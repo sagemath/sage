@@ -430,8 +430,8 @@ Dictionnaires
 Un dictionnaire (parfois appelé un tableau associatif) est une
 correspondance entre des objets « hachables » (par exemple des chaînes, des
 nombres, ou des n-uplets de tels objets, voir
-http://docs.python.org/tut/node7.html et
-http://docs.python.org/lib/typesmapping.html dans la documentation de
+http://docs.python.org/3/tutorial/datastructures.html et
+https://docs.python.org/3/library/stdtypes.html#typesmapping dans la documentation de
 Python pour plus de détails) vers des objets arbitraires.
 
 ::

@@ -658,7 +658,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         AmbientHeckeModule.new_submodule(self, p)
         return self.__is_new[p]
 
-    def is_old(self, p=None):
+    def is_old(self, p=None) -> bool:
         r"""
         Return ``True`` if this module is entirely old.
 
@@ -677,7 +677,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         self.old_submodule(p)
         return self.__is_old[p]
 
-    def is_submodule(self, V):
+    def is_submodule(self, V) -> bool:
         """
         Return ``True`` if and only if ``self`` is a submodule of ``V``.
 

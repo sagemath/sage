@@ -927,7 +927,13 @@ cdef class Element(SageObject):
             sage: (1 + pi)._mpmath_(mp.prec)                                            # needs sage.symbolic
             mpf('4.14159265358979323846264338327933')
         """
-        return self.n(prec)._mpmath_(prec=prec)
+        t = self.n(prec)
+        from sage.rings.real_mpfr import RealNumber
+        from sage.rings.complex_mpfr import ComplexNumber
+        if not isinstance(t, (RealNumber, ComplexNumber)):
+            # avoid infinite recursion
+            raise NotImplementedError("mpmath conversion not implemented for %s" % type(self))
+        return t._mpmath_(prec=prec)
 
     cpdef _act_on_(self, x, bint self_on_left):
         """

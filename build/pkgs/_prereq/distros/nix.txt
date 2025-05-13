@@ -16,3 +16,4 @@ gnutar
 bc
 gcc
 bash
+gnupatch

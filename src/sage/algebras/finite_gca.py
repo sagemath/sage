@@ -159,7 +159,7 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
             raise TypeError("max_degree must be specified")
         if names is None:
             if degrees is None:
-                raise ValueError("You must specify names or degrees")
+                raise ValueError("you must specify names or degrees")
             else:
                 n = len(degrees)
             names = tuple(f'x{i}' for i in range(n))

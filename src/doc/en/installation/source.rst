@@ -264,7 +264,7 @@ WSL prerequisites
 Ubuntu on Windows Subsystem for Linux (WSL) prerequisite installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Refer to :ref:`installation-guide-windows` for installing Ubuntu on
+Refer to :ref:`installation-guide` for installing Ubuntu on
 Windows Subsystem for Linux (WSL). These instructions describe a fresh
 install of Ubuntu, the default distribution in WSL, but other
 distributions or installation methods should work too.

@@ -27,6 +27,7 @@ Symmetric Functions
 - :ref:`sage.combinat.sf.macdonald`
 - :ref:`sage.combinat.sf.ns_macdonald`
 - :ref:`sage.combinat.sf.witt`
+- :ref:`sage.combinat.sf.abreu_nigro`
 """
 # install the docstring of this module to the containing package
 from sage.misc.namespace_package import install_doc

@@ -2132,6 +2132,24 @@ cdef class mpf(mpf_base):
         """
         return binop(OP_RICHCMP+op, self, other, global_opts)
 
+    def _mpfr_(self, RR):
+        """
+        Return a Sage ``RealNumber``.
+
+        EXAMPLES::
+
+            sage: from mpmath import mpf
+            sage: mpf(3)._mpfr_(RealField(53))
+            3.00000000000000
+            sage: RR(mpf(3))  # indirect doctest
+            3.00000000000000
+        """
+        signbit, man, exp, bc = self._mpf_
+        result = RR(man) << exp
+        if signbit:
+            result = -result
+        return result
+
 
 cdef class constant(mpf_base):
     """
@@ -2570,6 +2588,21 @@ cdef class mpc(mpnumber):
             True
         """
         return binop(OP_RICHCMP+op, self, other, global_opts)
+
+    def _complex_mpfr_field_(self, CC):
+        """
+        Return a Sage complex number.
+
+        EXAMPLES::
+
+            sage: from mpmath import mpc
+            sage: CC(mpc(1,2))  # indirect doctest
+            1.00000000000000 + 2.00000000000000*I
+            sage: mpc(1,2)._complex_mpfr_field_(CC)
+            1.00000000000000 + 2.00000000000000*I
+        """
+        RR = CC._real_field()
+        return CC((self.real._mpfr_(RR), self.imag._mpfr_(RR)))
 
 
 def hypsum_internal(int p, int q, param_types, str ztype, coeffs, z,

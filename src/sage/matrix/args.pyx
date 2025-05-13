@@ -398,7 +398,7 @@ cdef class MatrixArgs:
         # but do not check for positional row_keys, column_keys arguments
         # -- we do not allow those, as they would be too easy to
         # confuse with entries
-        cdef int k
+        cdef Py_ssize_t k
         cdef long v
         if self.nrows == -1 and self.ncols == -1:
             for k in range(2):

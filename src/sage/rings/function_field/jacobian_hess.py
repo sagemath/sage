@@ -288,7 +288,7 @@ class JacobianPoint(JacobianPoint_base):
         for i in range(len(bits)):
             b = bits.pop()
             if b > 0:
-                dS, ds = G._normalize(dS * dS * idSbdS2 , ds * ds * idsbds2)
+                dS, ds = G._normalize(dS * dS * idSbdS2, ds * ds * idsbds2)
             else:
                 dS, ds = G._normalize(dS * dS * bdS, ds * ds * bds)
         if n < 0:
@@ -380,7 +380,7 @@ class JacobianPoint(JacobianPoint_base):
             g = g + self
 
         # giant steps
-        g0 = (-q)*(self)
+        g0 = (-q) * self
         g = g0
         for i in range(q - 1):
             for r in range(q):
@@ -528,7 +528,7 @@ class JacobianGroupEmbedding(Map):
         O_ext = self._O_ext
         Oinf_ext = self._Oinf_ext
 
-        idS,ids = x._data
+        idS, ids = x._data
         dS = O_ext.ideal([embedF(g) for g in idS.gens()])
         ds = Oinf_ext.ideal([embedF(g) for g in ids.gens()])
         return self.codomain().element_class(self.codomain(), dS, ds)
@@ -714,16 +714,16 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         # Step 1: construct matrix M of rational functions in x such that
         # M * B == C where B = [b1,b1,...,bn], C =[v1,v2,...,vn]
-        V,fr,to = F.free_module(map=True)
+        V, fr, to = F.free_module(map=True)
         B = matrix([to(b) for b in J.gens_over_base()])
         C = matrix([to(v) for v in I.gens_over_base()])
         M = C * B.inverse()
 
         # Step 2: get the denominator d of M and set mat = d * M
         den = lcm([e.denominator() for e in M.list()])
-        R = den.parent() # polynomial ring
+        R = den.parent()  # polynomial ring
         one = R.one()
-        mat = matrix(R, n, [e.numerator() for e in (den*M).list()])
+        mat = matrix(R, n, [e.numerator() for e in (den * M).list()])
         gens = list(I.gens_over_base())
 
         # Step 3: transform mat to a weak Popov form, together with gens
@@ -736,7 +736,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             bestp = -1
             best = -1
             for c in range(n):
-                d = mat[i,c].degree()
+                d = mat[i, c].degree()
                 if d >= best:
                     bestp = c
                     best = d
@@ -746,7 +746,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
                 break
 
             if best >= 0:
-                pivot_row[bestp].append((i,best))
+                pivot_row[bestp].append((i, best))
                 if len(pivot_row[bestp]) > 1:
                     conflicts.append(bestp)
 
@@ -755,25 +755,25 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             while conflicts:
                 c = conflicts.pop()
                 row = pivot_row[c]
-                i,ideg = row.pop()
-                j,jdeg = row.pop()
+                i, ideg = row.pop()
+                j, jdeg = row.pop()
 
                 if jdeg > ideg:
-                    i,j = j,i
-                    ideg,jdeg = jdeg,ideg
+                    i, j = j, i
+                    ideg, jdeg = jdeg, ideg
 
-                coeff = - mat[i,c].lc() / mat[j,c].lc()
+                coeff = - mat[i, c].lc() / mat[j, c].lc()
                 s = coeff * one.shift(ideg - jdeg)
 
                 mat.add_multiple_of_row(i, j, s)
                 gens[i] += s * gens[j]
 
-                row.append((j,jdeg))
+                row.append((j, jdeg))
 
                 bestp = -1
                 best = -1
                 for c in range(n):
-                    d = mat[i,c].degree()
+                    d = mat[i, c].degree()
                     if d >= best:
                         bestp = c
                         best = d
@@ -783,7 +783,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
                     break
 
                 if best >= 0:
-                    pivot_row[bestp].append((i,best))
+                    pivot_row[bestp].append((i, best))
                     if len(pivot_row[bestp]) > 1:
                         conflicts.append(bestp)
             else:
@@ -830,7 +830,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             sage: G.zero()
             [Place (1/y, 1/y*z)]
         """
-        bdS,bds = self._base_point
+        bdS, bds = self._base_point
         return self.element_class(self, ~bdS, ~bds)
 
 
@@ -932,7 +932,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
                         return
                     generators.append(F._places_finite(deg))
                     deg += 1
-            multiples.append((g + 1)*[None])
+            multiples.append((g + 1) * [None])
             P = ~new_pl.prime_ideal()
             dn = new_pl.degree()
             I0 = O.ideal(1)
@@ -992,7 +992,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
         O = F.maximal_order()
         Oinf = F.maximal_order_infinite()
 
-        idS,ids = pt._data
+        idS, ids = pt._data
         dS = O.ideal([frob_F(g) for g in idS.gens()])
         ds = Oinf.ideal([frob_F(g) for g in ids.gens()])
         return self.element_class(self, dS, ds)

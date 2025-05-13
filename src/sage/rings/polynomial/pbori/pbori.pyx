@@ -2130,7 +2130,6 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
             x*z
         """
         cdef BooleanMonomial m
-        cdef PBMonom t
 
         # this is needed for the PolyBoRi python code
         if other is None:
@@ -5642,7 +5641,7 @@ cdef class BooleSet:
             ...
             AssertionError
         """
-        assert(m._ring is self._ring)
+        assert m._ring is self._ring
         return self._pbset.owns(m._pbmonom)
 
     def stable_hash(self):

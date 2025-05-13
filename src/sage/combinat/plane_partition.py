@@ -2180,7 +2180,7 @@ class PlanePartitions_CSPP(PlanePartitions):
 
     def from_order_ideal(self, I) -> PP:
         r"""
-        Return the cylically symmetric plane partition corresponding
+        Return the cyclically symmetric plane partition corresponding
         to an order ideal in the poset given in :meth:`to_poset`.
 
         EXAMPLES::

@@ -682,7 +682,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: S.has_local_colors()
             False
         """
-        return not(self.global_texture)
+        return not self.global_texture
 
     def index_faces_with_colors(self):
         """

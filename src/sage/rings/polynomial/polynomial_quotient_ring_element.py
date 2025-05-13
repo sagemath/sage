@@ -398,23 +398,22 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: (y+1)^(-1)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: element y + 1 of quotient polynomial ring not invertible
+            ArithmeticError: element is non-invertible
 
         TESTS:
 
         An element is not invertible if the base ring is not a field
-        (see :issue:`13303`)::
+        (see :issue:`13303`) (the test no longer makes sense when inversion is
+        implemented for this particular base ring, need better test)::
 
             sage: Z16x.<x> = Integers(16)[]
             sage: S.<y> =  Z16x.quotient(x^2 + x + 1)
             sage: (2*y)^(-1)
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            ArithmeticError: element is non-invertible
             sage: (2*y+1)^(-1)  # this cannot raise ValueError because...
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
+            10*y + 5
             sage: (2*y+1) * (10*y+5)  # the element is in fact invertible
             1
 

@@ -98,7 +98,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         """
         raise NotImplementedError('q-expansion basis not implemented for "%s"' % self)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -109,7 +109,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         """
         return "Cuspidal subspace of dimension %s of %s" % (self.dimension(), self.ambient_module())
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         """
         Return ``True`` since spaces of cusp forms are cuspidal.
 

@@ -77,7 +77,7 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
             sage: ~(e3 + 5)
             Traceback (most recent call last):
             ...
-            NotImplementedError: The base ring (=Integer Ring) is not a field
+            ArithmeticError: element is non-invertible
         """
         inv_elements = self.parent()._invertible_elements
         if self in inv_elements:

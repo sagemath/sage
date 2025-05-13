@@ -337,7 +337,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     - [Kat2004]_
     - [Kol1991]_
     - [LW2015]_
-    - [LS]
+    - [LS]_
     - [Maz1978]_
     - [Rub1991]_
     - [SW2013]_

@@ -273,7 +273,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         sage: C=H.C()
         Traceback (most recent call last):
         ...
-        ValueError: The Kazhdan_Lusztig bases are defined only when -q_1*q_2 is a square
+        ValueError: the Kazhdan-Lusztig bases are defined only when -q_1*q_2 is a square
 
     We give an example in affine type::
 
@@ -1790,7 +1790,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 sage: C = H.C()
             """
             if IHAlgebra._root is None:
-                raise ValueError('The Kazhdan_Lusztig bases are defined '
+                raise ValueError('the Kazhdan-Lusztig bases are defined '
                                  'only when -q_1*q_2 is a square')
 
             if IHAlgebra._is_generic:
