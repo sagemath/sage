@@ -1421,8 +1421,8 @@ class MatchingCoveredGraph(Graph):
                 links.append((u, v, l))
 
         # If each of the input edges is existent
-        if self.allows_multiple_edges() and \
-            all(self.has_edge(*edge) for edge in links):
+        if (self.allows_multiple_edges()
+            and all(self.has_edge(*edge) for edge in links)):
             self._backend.add_edges(links, self._directed)
             return
 
