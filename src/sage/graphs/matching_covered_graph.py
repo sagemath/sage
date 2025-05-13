@@ -3670,7 +3670,7 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('the number of subdivisions must be a '
                              f'nonnegative even integer, but found {k}')
 
-        if k == 0:
+        if not k:
             return
 
         new_vertices = [self._backend.add_vertex(None) for _ in range(k)]
@@ -3680,11 +3680,12 @@ class MatchingCoveredGraph(Graph):
             M.delete_edge(u, v, l)
 
         self._backend.del_edge(u, v, l, self._directed)
-        self._backend.add_edges(
-            [(u, new_vertices[0], l), (new_vertices[-1], v, l)] +
-            [(new_vertices[i], new_vertices[i + 1], l) for i in range(k - 1)],
-            self._directed, remove_loops=True
-        )
+        self._backend.add_edge(u, new_vertices[0], l, self._directed)
+        self._backend.add_edge(new_vertices[-1], v, l, self._directed)
+
+        from itertools import pairwise
+        self._backend.add_edges([(x, y, l) for x, y in pairwise(new_vertices)],
+                                self._directed, remove_loops=True)
 
         if M.degree(u):
             M.add_edges(
