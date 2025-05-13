@@ -258,7 +258,9 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
             x = list(x)
         else:
             try:
-                from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+                from sage.rings.polynomial.multi_polynomial_ideal import (
+                    MPolynomialIdeal,
+                )
             except ImportError:
                 pass
             else:
@@ -292,9 +294,9 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
                 universe = sage.structure.element.parent(x[len(x)-1])
 
     try:
+        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
-        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
         from sage.rings.quotient_ring import QuotientRing_nc
     except ImportError:
         pass
