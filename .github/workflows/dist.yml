@@ -101,6 +101,10 @@ jobs:
           conda install --yes python-build
           python -m build --sdist --no-isolation --outdir dist .
 
+      - name: Old sagemath-standard
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
           ./bootstrap
           ./configure
           make pypi-sdists V=0
