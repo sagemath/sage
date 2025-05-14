@@ -101,7 +101,6 @@ too::
     sage: # optional - snappy
     sage: L6 = KnotInfo.L6a1_0
     sage: l6s = L6.link(snappy=True); l6s
-    ...
     <Link: 2 comp; 6 cross>
     sage: type(l6s)
     <class 'spherogram.links.invariants.Link'>
@@ -150,9 +149,7 @@ Further methods::
     sage: K.determinant()
     5
     sage: K.symmetry_type()
-    'fully amphicheiral'
-    sage: _ == K[K.items.symmetry_type]
-    True
+    <SymmetryType.ful_amphicheiral: 'fully amphicheiral'>
     sage: K.is_reversible()
     True
     sage: K.is_amphicheiral()
@@ -1050,17 +1047,18 @@ class KnotInfoBase(Enum):
             sage: KnotInfo.K6_1.series().inject()
             Defining K6
             sage: [(K.name, K.symmetry_type()) for K in K6]
-            [('K6_1', 'reversible'),
-             ('K6_2', 'reversible'),
-             ('K6_3', 'fully amphicheiral')]
+            [('K6_1', <SymmetryType.reversible: 'reversible'>),
+             ('K6_2', <SymmetryType.reversible: 'reversible'>),
+             ('K6_3', <SymmetryType.ful_amphicheiral: 'fully amphicheiral'>)]
         """
         if not self.is_knot():
             raise NotImplementedError('this is only available for knots')
 
         symmetry_type = self[self.items.symmetry_type].strip()  # for example K10_88 is a case with trailing whitespaces
+        from sage.knots.knot import SymmetryType
         if not symmetry_type and self.crossing_number() == 0:
-            return 'fully amphicheiral'
-        return symmetry_type
+            return SymmetryType.ful_amphicheiral
+        return SymmetryType(symmetry_type)
 
     @cached_method
     def is_reversible(self) -> bool:
@@ -1079,10 +1077,11 @@ class KnotInfoBase(Enum):
             sage: KnotInfo.L7a4_0.is_reversible() # optional - database_knotinfo
         """
         if self.is_knot():
+            from sage.knots.knot import SymmetryType
             symmetry_type = self.symmetry_type()
-            if symmetry_type == 'reversible':
+            if symmetry_type == SymmetryType.reversible:
                 return True
-            if symmetry_type == 'fully amphicheiral':
+            if symmetry_type == SymmetryType.ful_amphicheiral:
                 return True
             return False
 
@@ -1143,14 +1142,15 @@ class KnotInfoBase(Enum):
         """
         if self.is_knot():
             symmetry_type = self.symmetry_type()
+            from sage.knots.knot import SymmetryType
             if positive:
-                if symmetry_type == 'positive amphicheiral':
+                if symmetry_type == SymmetryType.pos_amphicheiral:
                     return True
             else:
-                if symmetry_type == 'negative amphicheiral':
+                if symmetry_type == SymmetryType.neg_amphicheiral:
                     return True
 
-            if symmetry_type == 'fully amphicheiral':
+            if symmetry_type == SymmetryType.ful_amphicheiral:
                 return True
             return False
 
