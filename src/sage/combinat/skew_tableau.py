@@ -1055,7 +1055,7 @@ class SkewTableau(ClonableList,
         return SkewTableaux()(new_st)
 
     reverse_slide = backward_slide
-    
+
     def rectify(self, algorithm=None):
         """
         Return a :class:`StandardTableau`, :class:`SemistandardTableau`,
@@ -1120,11 +1120,11 @@ class SkewTableau(ClonableList,
         if self in SemistandardSkewTableaux():
             return SemistandardTableau(rect[:])
         return Tableau(rect)
-    
+
     def add_entry(self, cell, m):
         """
         Return the result of setting the entry in cell ``cell`` equal to ``m`` in the skew tableau ``self``.
-        If the cell is already part of ``self``, it replaces the current entry. 
+        If the cell is already part of ``self``, it replaces the current entry.
         Otherwise, it attempts to add the cell to the skew tableau.
 
         INPUT:
@@ -1134,7 +1134,9 @@ class SkewTableau(ClonableList,
 
         OUTPUT:
 
-        The skew tableau ``self`` with entry in cell ``cell`` set to ``m``. This overwrites an existing entry if ``cell`` already belongs to ``self``, otherwise it adds the cell to the shape.
+        The skew tableau ``self`` with entry in cell ``cell`` set to ``m``.
+        This overwrites an existing entry if ``cell`` already belongs to ``self``,
+        otherwise it adds the cell to the shape.
 
         .. NOTE::
 
@@ -1160,7 +1162,7 @@ class SkewTableau(ClonableList,
             sage: U.add_entry([0,3],4).pp()
             .  1  1  4
             1  2  5
-            3            
+            3
 
         TESTS::
 
@@ -1204,19 +1206,19 @@ class SkewTableau(ClonableList,
         r, c = cell
         try:
             tab[r][c] = m
-        except IndexError: 
+        except IndexError:
             if r > len(tab):
-                if c < len(tab[-1]) and tab[-1][c] == None:
+                if c < len(tab[-1]) and tab[-1][c] is None:
                     tab += [[None]*(c+1) for i in range(r - len(tab))]
-                    tab.append([None]*(c) + [m])  
+                    tab.append([None]*(c) + [m])
                 else:
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
             elif r == len(tab):
-                # a cell in the row directly below tab is addable if and only if  
+                # a cell in the row directly below tab is addable if and only if
                 # c = 0 or the cell directly northwest is empty
                 if c == 0:
                     tab.append([m])
-                elif c < len(tab[-1]) and tab[-1][c-1] == None: 
+                elif c < len(tab[-1]) and tab[-1][c-1] is None:
                     tab.append([None]*(c) + [m])
                 else:
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
@@ -1235,7 +1237,7 @@ class SkewTableau(ClonableList,
                 return self.parent().Element(tab)
             except ValueError:
                 return SkewTableau(tab)
-            
+
     def anti_restrict(self, n):
         """
         Return the skew tableau formed by removing all of the cells from
@@ -1243,7 +1245,7 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer 
+        - ``n`` -- a nonnegative integer
 
         OUTPUT:
 
@@ -1259,7 +1261,7 @@ class SkewTableau(ClonableList,
         """
         t_new = [[None if g <= n else g for g in row] for row in self]
         return SkewTableau(t_new)
-    
+
     def to_list(self):
         r"""
         Return a (mutable) list representation of ``self``.
