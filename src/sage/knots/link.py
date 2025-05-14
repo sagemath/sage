@@ -2963,8 +2963,8 @@ class Link(SageObject):
 
         cross = pd_code[0]
         rest = [list(vertex) for vertex in pd_code[1:]]
-        [a, b, c, d] = cross
-        if a == d and c == b and len(rest) > 0:
+        a, b, c, d = cross
+        if a == d and c == b and rest:
             return (~t + t**(-5)) * Link(rest)._bracket()
         elif a == b and c == d and len(rest) > 0:
             return (t + t**5) * Link(rest)._bracket()
@@ -4051,7 +4051,7 @@ class Link(SageObject):
             return sb.is_conjugated(ob)
 
         if sb_ind > ob_ind:
-            # if the braid of self has more strands we have to perfom
+            # if the braid of self has more strands we have to perform
             # Markov II moves
             B = sb.parent()
             g = B.gen(ob_ind-1)

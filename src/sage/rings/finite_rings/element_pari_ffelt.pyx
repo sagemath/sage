@@ -1412,11 +1412,11 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             raise TypeError("order must be at most 65536")
 
         if self == 0:
-            return '0*Z(%s)'%F.order()
+            return '0*Z(%s)' % F.order()
         assert F.degree() > 1
         g = F.multiplicative_generator()
         n = self.log(g)
-        return 'Z(%s)^%s'%(F.order(), n)
+        return 'Z(%s)^%s' % (F.order(), n)
 
 
 def unpickle_FiniteFieldElement_pari_ffelt(parent, elem):
