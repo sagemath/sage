@@ -1,12 +1,24 @@
-"""
+r"""
 Bubble and Shuffle lattices
 
 Shuffle lattices were defined by Greene in [Gre1988]_.
 
 Bubble lattices were introduced by McConville and Mühle in [MacCM2022]_.
 
-The Bubble lattice `B_{m,n}` and the Shuffle lattice `S_{m,n}` share the same
-underlying set.
+The Bubble lattice `B_{m,n}` and the Shuffle lattice `S_{m,n}` share
+the same underlying set, namely all shuffles of two subwords of the
+two words $X=(x_1,x_2,\ldots,x_{m})$ and $Y=(y_1,y_2,\ldots,y_n)$.
+
+The partial order in the Shuffle poset is defined by either inserting a
+letter from $Y$ or deleting a letter from $X$.
+
+The Bubble poset is an extension of the Shuffle poset, by adding the
+exchange of adjacent letters from $X$ and $Y$, from $xy$ to $yx$.
+
+.. NOTE::
+
+    In the implementation here, the underlying set is the set of all shuffles
+    of subsets of `\{-m,\ldots,-1\}` with subsets of `\{1,\ldots,n\}`.
 """
 from typing import Iterator
 
@@ -88,7 +100,9 @@ def bubble_set(m, n) -> Iterator[tuple[int, ...]]:
 
 def bubble_coverings(m, n, mot, transpose=True) -> Iterator[tuple[int, ...]]:
     """
-    Return the covers of an element in the Bubble lattice `B_{m,n}`.
+    Return generating relations of the Bubble lattice `B_{m,n}`.
+
+    Note that these relations include the cover relations, but not only them.
 
     This can also produce covers in the Shuffle lattice `S_{m,n}`.
 
@@ -124,7 +138,7 @@ def bubble_coverings(m, n, mot, transpose=True) -> Iterator[tuple[int, ...]]:
     if not transpose:
         return
 
-    # eexchange from xy to yx
+    # exchange from xy to yx
     for j in range(len(mot) - 1):
         if mot[j] < 0 and mot[j + 1] > 0:
             mot2 = list(mot)
@@ -149,6 +163,7 @@ def BubblePoset(m, n) -> LatticePoset:
     bubbles = list(bubble_set(m, n))
 
     dg = DiGraph([(x, y) for x in bubbles for y in bubble_coverings(m, n, x)])
+    # here we have more than just the cover relations
     return LatticePoset(dg)
 
 
@@ -169,6 +184,7 @@ def ShufflePoset(m, n) -> LatticePoset:
 
     dg = DiGraph([(x, y) for x in bubbles
                   for y in bubble_coverings(m, n, x, transpose=False)])
+    # here we just have the cover relations
     return LatticePoset(dg, cover_relations=True)
 
 
