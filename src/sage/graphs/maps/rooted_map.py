@@ -41,18 +41,18 @@ class RootedMap(LabelledMap):
         and sigma, or an adjacency list or a Label
 
         INPUT:
-        - ``sigma`` -- Permutation ; Permutation ; Permutation that maps a half-edge
+        - ``sigma`` -- Permutation | MapPermutation | None; Permutation ; Permutation that maps a half-edge
           to the half-edge incident to it in anti-clockwise direction around
           the vertex it belongs to.
-        - ``alpha`` -- Permutation ; Permutation that maps a half-edge
+        - ``alpha`` -- Permutation | MapPermutation | None; Permutation that maps a half-edge
             Fixed-point free involution whose cycles are given by the edges.
-        - ``ajd``-- and adjacency list be careful the order of the
+        - ``ajd``-- List[Tuple] | None ; and adjacency list be careful the order of the
             node in your adjaceny will be used to choose the embedding
 
-        - ``isAlreadyCanonical`` -- A parameter that indicates sigma,alpha given are already in canonical form
+        - ``isAlreadyCanonical`` -- bool ; A parameter that indicates sigma,alpha given are already in canonical form
           i.e represent a the canonical representant of the rooted map
 
-        - ``trust`` -- A parameter that indicates whether the validity check (i.e., whether the map is connex, etc.)
+        - ``trust`` -- bool ; A parameter that indicates whether the validity check (i.e., whether the map is connex, etc.)
           should be skipped when initializing the map. It makes initialization faster but can be dangerous because
           if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your
           map's validity if you set this to true.
@@ -106,7 +106,7 @@ class RootedMap(LabelledMap):
              (28, 34, 38, 40),
              (33, 37, 39, 36)]
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
         """
@@ -140,7 +140,7 @@ class RootedMap(LabelledMap):
              (28, 34, 38, 40),
              (33, 37, 39, 36)]
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
 
@@ -177,7 +177,7 @@ class RootedMap(LabelledMap):
              (36, 39, 38, 37)]
 
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
 
@@ -202,6 +202,7 @@ class RootedMap(LabelledMap):
 
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = RootedMap(alpha = alpha,sigma=sigma)
             sage: m.quadrangulation().faces()
             [(1, 6, 16, 20),
              (2, 9, 15, 3),
@@ -214,7 +215,7 @@ class RootedMap(LabelledMap):
              (31, 33, 35, 32),
              (36, 39, 38, 37)] 
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
 
@@ -238,7 +239,7 @@ class RootedMap(LabelledMap):
             sage: dm.m,dm.g,dm.f
             (40, 0, 20)
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
 
@@ -259,12 +260,11 @@ class RootedMap(LabelledMap):
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = RootedMap(alpha = alpha,sigma=sigma)
             sage: m.dual().pretty_print()
-
                         Alpha: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 11), (10, 13), (12, 14), (15, 16), (17, 19), (18, 20)]
                         Sigma (Node): [(1, 2, 4, 6, 8, 10, 12, 14, 13, 15, 16, 17, 18, 20, 19, 11, 5, 7, 9, 3)]
                         Phi (Face): [(1,), (2, 7, 3), (4, 8, 5), (6,), (9,), (10, 15, 17, 11), (12, 13), (14,), (16,), (18, 19), (20,)]
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
 
@@ -282,6 +282,7 @@ class RootedMap(LabelledMap):
 
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = RootedMap(alpha = alpha,sigma=sigma)
             sage: m
             Rooted map | Sigma : [2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20] Alpha : [3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19]
 
@@ -313,7 +314,7 @@ class RootedMap(LabelledMap):
             sage: m.quadrangulation().inverseQuadrangulation() == m
             True
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
 
@@ -339,7 +340,7 @@ class RootedMap(LabelledMap):
             sage: m.relabel(tau = Permutation([(1,2)])) == m
             True
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
 
@@ -357,12 +358,13 @@ class RootedMap(LabelledMap):
         value of all its demi-edges. If self isn't a bipartite
         quadrangulation, this function will raise an error.
 
-        OUTPUT:
-            markedDemiEdge : A demi-edge on the node which is marked.
-
         INPUT:
-            - tree: A rooted tree corresponding to the above description.
-            - labelling: A list of labellings on the demi-edges of tree.
+        - ``markedDemiEdge`` -- int ; A demi-edge on the node which is marked.
+
+        OUTPUT:
+            A couple (tree,labelling),
+            tree: A rooted tree corresponding to the above description.
+            labelling:A list of labellings on the demi-edges of tree.
 
         EXAMPLES::
 
@@ -374,7 +376,7 @@ class RootedMap(LabelledMap):
             (Rooted map | Sigma : [1, 3, 4, 2, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20] Alpha : [2, 1, 5, 6, 3, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19],
              [-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
 
@@ -392,10 +394,11 @@ class RootedMap(LabelledMap):
         If self isn't a one-face map, it will raise an error.
 
         INPUT:
-            labelled : A list of size 2*m+1 such that for the demi-edge i,
-                       labelled[i] is the label of its attached node.
-            returnMarkedDemiEdge : Whether or not to return marked demi-edges
-                                   (default is True).
+        - ``labelled`` -- List[int] ; A list of size 2*m+1 such that for the demi-edge i,
+        labelled[i] is the label of its attached node.
+        - ``returnMarkedDemiEdge`` -- bool ;  Whether or not to return marked demi-edges
+        (default is True).
+
         OUTPUT:
             (quadA, quadB, markedDemiEdgeA, markedDemiEdgeB) if
             returnMarkedDemiEdge=True; otherwise, (quadA, quadB).
@@ -413,7 +416,7 @@ class RootedMap(LabelledMap):
             sage: quadB == quad
             True
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
 
@@ -458,7 +461,7 @@ class RootedMap(LabelledMap):
             sage: m.copy() == m
             True
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(m), where m is the number of edges.
 
@@ -479,7 +482,7 @@ class RootedMap(LabelledMap):
             sage: m.root
             X(1) 
 
-        .. NOTE::
+        NOTE:
 
             Complexity is O(1)
 

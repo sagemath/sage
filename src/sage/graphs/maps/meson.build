@@ -1,5 +1,4 @@
 py.install_sources(
-  '__init__.py',
   'all.py',
   'banner.py',
   'custom_swap.py',
@@ -15,6 +14,7 @@ py.install_sources(
   'mutable_labelled_map.py',
   'mutable_topological_demi_edge.py',
   'permutation_utils_abstractor.py',
+  'primitive_mutable_labelled_map.py',
   'primitive_mutable_topological_demi_edge.py',
   'primitive_rotating_permutation.py',
   'primitive_rotating_permutation_utils_abstractor.py',

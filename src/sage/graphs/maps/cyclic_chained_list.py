@@ -5,14 +5,16 @@ class CyclicChainedList:
     Note that you must be careful when directly manipulating the object to not create more than one cycle. All
     the basic implemented methods are guaranteed to not alter this invariant.
     """
+
     def __init__(self, val) -> None:
         """
         INPUT:
-        
+
         - val -- the value contained in the node
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: CyclicChainedList(3)
             NodeOfCyclicChainedList(val=3)
         """
@@ -26,6 +28,7 @@ class CyclicChainedList:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: CyclicChainedList(3)
             NodeOfCyclicChainedList(val=3)
         """
@@ -34,11 +37,12 @@ class CyclicChainedList:
     def getValList(self) -> list:
         """
         OUTPUT: 
-        
+
         a list containing the value of each node in the same cycle as self
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: node = CyclicChainedList(3)
             sage: node.insertAfter(CyclicChainedList(4))
             sage: node.getValList()
@@ -70,6 +74,7 @@ class CyclicChainedList:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: node = CyclicChainedList(3)
             sage: node.insertAfter(CyclicChainedList(4))
             sage: node.getValList()
@@ -99,6 +104,7 @@ class CyclicChainedList:
 
         EXAMPLES::
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: node = CyclicChainedList(3)
             sage: node.insertAfter(CyclicChainedList(4))
             sage: node.insertBefore(CyclicChainedList(5))
@@ -118,6 +124,7 @@ class CyclicChainedList:
 
         EXAMPLES:: 
 
+            sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: node = CyclicChainedList(3)
             sage: node.insertAfter(CyclicChainedList(4))
             sage: node.insertBefore(CyclicChainedList(5))
