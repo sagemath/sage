@@ -200,7 +200,7 @@ class LabelledMap:
         NOTE:
 
             Complexity is O(m), where m is the size of the map.
-            Used internaly not intended to be used by the user.
+            Used internally not intended to be used by the user.
 
          """
 
@@ -232,7 +232,7 @@ class LabelledMap:
         NOTE:
 
             Complexity is O(m), where m is the size of the map.
-            Used internaly not intended to be used by the user.
+            Used internally not intended to be used by the user.
         """
         self.alpha = alpha
         self.sigma = sigma
@@ -293,7 +293,7 @@ class LabelledMap:
         NOTE:
 
             Complexity is O(m), where m is the size of the map.
-            Used internaly not intended to be used by the user.
+            Used internally not intended to be used by the user.
             Raises: ValueError if the adjacency list is invalid.
         """
         n = len(adj)
@@ -627,7 +627,7 @@ class LabelledMap:
 
         NOTE:
 
-            Complexity is O(1),used internaly.
+            Complexity is O(1),used internally.
 
         """
 
@@ -696,7 +696,7 @@ class LabelledMap:
 
         NOTE:
 
-            Complexity is O(1),used internaly.
+            Complexity is O(1),used internally.
 
         """
 

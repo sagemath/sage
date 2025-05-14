@@ -464,7 +464,7 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            A map giving a correspondance between the old index and the new
+            A map giving a correspondence between the old index and the new
             if it was changed.
 
         EXAMPLES::

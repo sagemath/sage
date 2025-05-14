@@ -1,17 +1,21 @@
 
-from sage.graphs.maps.labelled_map import *
 from sage.all import Permutation  # Import sage library
-from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
+from sage.graphs.maps.labelled_map import LabelledMap
 from sage.graphs.maps.map_error import NotImplementedError
-from sage.graphs.maps.primitive_rotating_permutation_utils_abstractor import PrimitiveRotatingPermutationUtilsAbstractor
-from sage.graphs.maps.primitive_mutable_topological_demi_edge import *
+from sage.graphs.maps.primitive_mutable_topological_demi_edge import (
+    PrimitiveMutableTopologicalDemiEdge,
+)
+from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
+from sage.graphs.maps.primitive_rotating_permutation_utils_abstractor import (
+    PrimitiveRotatingPermutationUtilsAbstractor,
+)
 
 
 class PrimitiveMutableLabelledMap(LabelledMap):
     """
     This class represent a more primitive version of MutableLabelledMap.
     It implements only the following operations for now ( addAfter, addBefore,deleteEdge,contractEdge)
-    and place more responsability on the user and remove some of the other methods( such as checking if two demi edge are on the same node or face), 
+    and place more responsibility on the user and remove some of the other methods( such as checking if two demi edge are on the same node or face), 
     the only advantage is the fact that the operations listed are in O(1) instead of O(log(m)).
 
     Attributes

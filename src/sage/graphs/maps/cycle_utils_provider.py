@@ -1,4 +1,4 @@
-from sage.graphs.maps.splay_tree import SplayTree, SplayNode
+from sage.graphs.maps.splay_tree import SplayTree
 
 
 class CycleUtilsProvider:
@@ -394,7 +394,7 @@ class CycleUtilsProvider:
     def getValue(self, index):
         """
         This will return the key associated to index in the splay tree corresponding to his cycle,
-        while making sure that the node asscociated to index is the root of the tree
+        while making sure that the node associated to index is the root of the tree
 
         INPUT:
             - ``index`` -- int ;  not a fixed point
