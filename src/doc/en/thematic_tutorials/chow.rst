@@ -439,11 +439,12 @@ automated doctesting (without the --long flag) does the computations.
 We start by defining `f:I_G\rightarrow X_G` for `G=Grass(6,4)` using
 the library :mod:`chow.library.twisted_cubics`::
 
-    sage: G = Grass(6, 4, 'w')  # long time
-    sage: W = G.sheaves["universal_quotient"]  # long time
-    sage: f = map_incidence_to_nets_of_quadrics(W)  # long time
-    sage: I = f.domain()  # long time
-    sage: X = f.codomain()  # long time
+    sage: # long time
+    sage: G = Grass(6, 4, 'w')
+    sage: W = G.sheaves["universal_quotient"]
+    sage: f = map_incidence_to_nets_of_quadrics(W)
+    sage: I = f.domain()
+    sage: X = f.codomain()
 
 Then we compute the blowup.
 
@@ -461,15 +462,16 @@ one may check against Euler and Betti numbers of the Blowup.
 
 ::
 
-    sage: Exc, H = g.domain(), g.codomain()  # long time
-    sage: I, X = Exc.base_chowscheme(), H.base_chowscheme()  # long time
-    sage: Exc.euler_number()  # long time
+    sage: # long time
+    sage: Exc, H = g.domain(), g.codomain()
+    sage: I, X = Exc.base_chowscheme(), H.base_chowscheme()
+    sage: Exc.euler_number()
     1260
-    sage: Exc.betti_numbers()  # long time
+    sage: Exc.betti_numbers()
     [1, 4, 11, 23, 41, 64, 90, 115, 135, 146, 146, 135, 115, 90, 64, 41, 23, 11, 4, 1]
-    sage: H.euler_number()  # long time
+    sage: H.euler_number()
     1950
-    sage: H.betti_numbers()  # long time
+    sage: H.betti_numbers()
     [1, 3, 10, 22, 45, 75, 117, 158, 200, 225, 238, 225, 200, 158, 117, 75, 45, 22, 10, 3, 1]
 
 Now we can compute the Euler number.
@@ -478,11 +480,12 @@ Now we can compute the Euler number.
 
 ::
 
-    sage: IW = I.base_morphism().upperstar(W)  # long time
-    sage: L1 = I.sheaves["L1"]  # long time
-    sage: VB = Exc.base_morphism().upperstar(IW - L1)  # long time
-    sage: LL = VB.wedge(3) * Exc.o(-1)  # long time
-    sage: CC = g.lowerstar(LL, normal_bundle=Exc.o(-1))  # long time
+    sage: # long time
+    sage: IW = I.base_morphism().upperstar(W)
+    sage: L1 = I.sheaves["L1"]
+    sage: VB = Exc.base_morphism().upperstar(IW - L1)
+    sage: LL = VB.wedge(3) * Exc.o(-1)
+    sage: CC = g.lowerstar(LL, normal_bundle=Exc.o(-1))
 
 Pull back `E`, `F` from `X` and `W` from `Grass(6,4)` to `H`:
 
@@ -490,10 +493,11 @@ Pull back `E`, `F` from `X` and `W` from `Grass(6,4)` to `H`:
 
 ::
 
-    sage: HE = H.base_morphism().upperstar(X.sheaves["E"])  # long time
-    sage: HF = H.base_morphism().upperstar(X.sheaves["F"])  # long time
-    sage: h = X.base_morphism() * H.base_morphism()  # long time
-    sage: HW = h.upperstar(W)  # long time
+    sage: # long time
+    sage: HE = H.base_morphism().upperstar(X.sheaves["E"])
+    sage: HF = H.base_morphism().upperstar(X.sheaves["F"])
+    sage: h = X.base_morphism() * H.base_morphism()
+    sage: HW = h.upperstar(W) 
 
 Compute the fundamental class, then the virtual tangent bundle of `M_3`
 (see [LLSvS]_):
@@ -502,11 +506,12 @@ Compute the fundamental class, then the virtual tangent bundle of `M_3`
 
 ::
 
-    sage: EW = HE * HW  # long time
-    sage: U1 = EW - HF  # long time
-    sage: U = CC + U1  # long time
-    sage: S3HW = HW.symm(3)  # long time
-    sage: V = S3HW - U  # long time
+    sage: # long time
+    sage: EW = HE * HW
+    sage: U1 = EW - HF
+    sage: U = CC + U1
+    sage: S3HW = HW.symm(3)
+    sage: V = S3HW - U
 
     sage: fundamental_class = V.chern_classes()[10]  # long time
 
@@ -539,11 +544,11 @@ step:
 
 ::
 
-    sage: g.save('/tmp/blowup_h_g64')  # long time
+    sage: g.save('/tmp/blowup_h_g64')  # not tested
 
 Then it can be resumed later by::
 
-    sage: g = load('/tmp/blowup_h_g64')  # long time
+    sage: g = load('/tmp/blowup_h_g64')  # not tested
 
 
 Notes
@@ -561,19 +566,18 @@ Stein A. Strømme, David Eisenbud and Charley Crissman, equally based on the
 above Maple package.
 
 
-
 ..  [EPS]
 
     Ellingsrud, Geir and Piene, Ragni and Strømme, Stein Arild:
-    `On the variety of nets of quadrics defining twisted cubics
-    <http://link.springer.com/chapter/10.1007%2FBFb0078179>`_,
+    *On the variety of nets of quadrics defining twisted cubics*,
     Space curves (Rocca di Papa, 1985), Springer (1987),
     Lecture Notes in Math. 1266, pp. 84--96
+    :doi:`10.1007/BFb0078179`
 
 ..  [ES]
 
     Ellingsrud, Geir and Strømme, Stein Arild:
-    The number of twisted cubics on the general quintic threefold,
+    *The number of twisted cubics on the general quintic threefold*,
     Math. Scand. 76 (1995) 5-34
 
 ..  [F]
@@ -585,20 +589,20 @@ above Maple package.
 ..  [GSE]
 
     `Macaulay2 --- a software system for research in algebraic geometry.
-    <http://www.math.uiuc.edu/Macaulay2/>`_
+    <https://macaulay2.com/>`_
     by Daniel R. Grayson, Michael E. Stillman, David Eisenbud
 
 ..  [GSSEC]
 
     `Schubert2 --- computation in intersection theory.
-    <http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.4/share/doc/Macaulay2/Schubert2/html/index.html>`_
+    <https://macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/Schubert2/html/index.html>`_
     by Daniel R. Grayson, Michael E. Stillman, Stein A. Strømme, David Eisenbud
     and Charley Crissman
 
 ..  [K]
 
-    Kass, Jesse Leo: `The Chow ring of the blow-up of P3 along the twisted cubic.
-    <http://www2.iag.uni-hannover.de/~kass/files/ChowRing.pdf>`_
+    Kass, Jesse Leo: *The Chow ring of the blow-up of P3 along the twisted cubic*.
+    `PDF <https://people.ucsc.edu/~jelkass/files/ChowRing.pdf>`_
 
 ..  [KS]
 
@@ -607,8 +611,9 @@ above Maple package.
 
 ..  [LLSvS]
 
-    Twisted cubics on cubic fourfolds,
+    *Twisted cubics on cubic fourfolds*,
     by Christian Lehn, Manfred Lehn, Christoph Sorger and Duco van Straten
+    :doi:`https://doi.org/10.1515/crelle-2014-0144`
 
 ..  [S]
 
