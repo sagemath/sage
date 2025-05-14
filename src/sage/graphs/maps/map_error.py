@@ -51,7 +51,7 @@ class NotImplementedError(Exception):
         Initialise the NotImplementedError.
 
         INPUT:
-        x the object on which the method isn't defined
+        -``x`` ; the object on which the method isn't defined
 
         EXAMPLES::
 

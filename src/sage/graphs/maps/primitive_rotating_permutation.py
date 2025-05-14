@@ -21,10 +21,10 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         INPUT:
 
-            - lst a list representing the permutation 
-            or a list of tuples representing the cycle of the permutation
-            or an integer representing the size of the permutation(In This
-            case it will return the identify of size lst) or a Permutation or a MapPermutation.
+        - ``lst`` -- List[int] | List[Tuples] | int | Permutation | MapPermutation ; a list representing the permutation or a list of tuples representing 
+        the cycle of the permutationor an integer representing the size 
+        of the permutation(In This case it will return the identify of size lst) 
+        or a Permutation or a MapPermutation.
 
 
         EXAMPLES::
@@ -33,7 +33,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: PrimitiveRotatingPermutation([(1,3,4),(7,8,10),(9,6)])
             [3, 2, 4, 1, 5, 9, 8, 10, 6, 7]
 
-        .. NOTE::
+        NOTE:
             O(n) where n is the size of the permutation
 
         """
@@ -150,13 +150,13 @@ class PrimitiveRotatingPermutation(MapPermutation):
             The size of the permutation
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.size()
             8
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -168,8 +168,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         This function will delete the last k index from self
 
         INPUT:
-
-            - k the number of node to delete
+        -``k`` -- int ; the number of node to delete
 
         EXAMPLES::
 
@@ -181,7 +180,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm
             [3, 2, 4, 1, 5, 6, 7]
 
-        .. NOTE::
+        NOTE:
             O(k) 
         """
 
@@ -202,7 +201,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         If n = 1 an error or index is not a strictly positive integer <= n an error will be raised.
 
         INPUT:
-            -index: an integer representing the index to delete
+        - ``index`` -- int ;
 
         EXAMPLES::
 
@@ -214,7 +213,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm
             [3, 2, 4, 1, 5, 9, 8, 7, 6]
 
-        .. NOTE:: 
+        NOTE: 
             O(1),index must be an strictly positive integer and self.size() >= 2 otherwise an error will be raised
         """
 
@@ -260,7 +259,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         This function apply  the inverse self on i, we take as a convention i if i is an integer > self.size(), self.inverseApply(i) = i
 
         INPUT:
-            i an index
+        - ``i`` -- int
 
         OUTPUT:
             j such that self(j) = i
@@ -273,7 +272,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.inverseApply(10)
             8
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -291,7 +290,8 @@ class PrimitiveRotatingPermutation(MapPermutation):
         This function swap the index role in the permutation
 
         INPUT:
-            index, otherIndex the two indexes <= self.size()
+        - ``index`` -- int ;<= self.size()
+        - ``otherIndex`` -- int ; <= self.size()
 
         EXAMPLES::
 
@@ -303,7 +303,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm
             [7, 2, 4, 10, 5, 9, 8, 1, 6, 3]
 
-        .. NOTE:
+        NOTE:
             O(1)
         """
 
@@ -316,9 +316,11 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
     def cutDelete(self, startIndex, endIndex):
         """
-        This will cut the cycle in two part startIndex...endIndex and the rest , and than will delete startIndex and endIndex
+        This will cut the cycle in two part startIndex...endIndex and the rest , and than will delete startIndex and endIndex.
+
         INPUT: 
-            startIndex, endIndex, on the sameCycle such that {startIndex,endIndex}={self.size(),self.size()-1}
+        - ``startIndex`` -- int ; on the same cycle as endIndex such that (startIndex,endIndex)=(self.size(),self.size()-1)  
+        - ``endIndex`` -- int ;  on the same cycle as startIndex such that (startIndex,endIndex)=(self.size(),self.size()-1)
 
         EXAMPLES::
 
@@ -330,7 +332,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.pretty_print()
             Primitive Rotating permutation: [(1, 3, 4), (2, 7), (5,), (6, 9), (8,)]
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -349,10 +351,12 @@ class PrimitiveRotatingPermutation(MapPermutation):
         This implement a special operation.In a nutshell it cut a cycle and add two index in each cycle,
         let denote A = startIndex, B = endIndex, C = newIndexStart, D = newIndexEnd and say the cycle is of the form F -> A -> S -> .. -> T -> B -> R -> ... -> F
         than the situation will be the following after a call to this function, A -> S -> ... -> T -> D -> A and F -> C -> B -> R -> ... -> F
-        ------
+
         INPUT:
-            startIndex, endIndex, newIndexStart, newIndexEnd: 4 indexes, startIndex and endIndex must be on the same cycle
-            and {newIndexEnd, newIndexStart} = {n+1, n+2} and should be fixed point
+        - ``startIndex`` -- int ; on same cycle as ``endIndex``
+        - ``endIndex ``  -- int ; on same cycle as ``startIndex``
+        - ``newIndexStart`` -- int; such that {newIndexEnd, newIndexStart} = {n+1, n+2} 
+        - ``newIndexEnd`` -- int : such that {newIndexEnd, newIndexStart} = {n+1, n+2} 
 
         EXAMPLES::
 
@@ -364,7 +368,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.pretty_print()
             Primitive Rotating permutation: [(1, 3, 13), (2, 7, 11, 8, 10), (4, 12), (5,), (6, 9)]  
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -416,7 +420,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         This is a helper function  it just move all of the element in listIndexes to the last indices
 
         INPUT:
-            listIndexes
+        - ``listIndexes`` -- List[int]
 
         OUTPUT:
 
@@ -434,7 +438,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm
             [10, 6, 9, 1, 5, 2, 11, 3, 7, 4, 8]
 
-        .. NOTE::
+        NOTE:
             O(len(listIndexes))
 
         """
@@ -474,7 +478,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         cause it assumed that the cycles are well formed thus the term brute
 
         INPUT:
-            cycles,list of cycles as tuple
+        - ``cycles`` -- List[Tuple] ; list of cycles as tuple
 
         EXAMPLES::
 
@@ -487,7 +491,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.pretty_print()
             Primitive Rotating permutation: [(1, 3, 4), (2, 5, 6), (7,)]
 
-        .. NOTE::
+        NOTE:
             O(len(cycles))
         """
 
@@ -500,8 +504,9 @@ class PrimitiveRotatingPermutation(MapPermutation):
         """
         Another helper function it will raise an error if element of the cycles
         are not > self.size() and <= self.size()+len(cycles), the cycle must be well formed
+
         INPUT:
-            cycles: list of cycles
+        - ``cycles`` -- List[Tuple] ; list of cycles
 
         EXAMPLES::
 
@@ -511,7 +516,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm
             [3, 2, 4, 1, 6, 5]
 
-        .. NOTE::
+        NOTE:
             O(len(cycles))
         """
 
@@ -537,8 +542,9 @@ class PrimitiveRotatingPermutation(MapPermutation):
         """
         Check if index is a integer > 0 and <=self.size()
         otherwise raise an Error
+
         INPUT:
-            index
+        - ``index`` -- int
 
         EXAMPLES:: 
 
@@ -550,7 +556,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             ....:     pass
             ....:
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -563,7 +569,8 @@ class PrimitiveRotatingPermutation(MapPermutation):
         This is a more general version of addAfter it only assumed that otherIndex is a fixed point
         and will add it after index in its cycle
         INPUT:
-            index, otherIndex
+        - ``index`` -- int
+        -- ``otherIndex`` -- int
 
         EXAMPLES::
 
@@ -575,7 +582,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.pretty_print()
             Primitive Rotating permutation: [(1, 3, 4, 2)]
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -604,7 +611,8 @@ class PrimitiveRotatingPermutation(MapPermutation):
         More general version of addBeforeit only assumed that otherIndex is a fixed point
         and will add it before index in its cycle
         INPUT:
-            index, otherIndex
+        - ``index``  -- int
+        - ``otherIndex`` -- int
 
         EXAMPLES::
 
@@ -616,7 +624,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.pretty_print()
             Primitive Rotating permutation: [(1, 2, 3, 4)]
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -630,11 +638,13 @@ class PrimitiveRotatingPermutation(MapPermutation):
         Assuming that index and otherIndex are not in the same cycle it will do the
         following first index and otherIndex will be sent to self.size() self.size()-1 they will be deleted and given
         that before we add: U -> ... -> V -> index -> R -> U and F -> ... -> T -> otherIndex -> Q -> F, we will have after
-        U -> ... -> V -> Q -> F -> ... -> T -> R -> U
+        U -> ... -> V -> Q -> F -> ... -> T -> R -> U.
+
+        index, otherIndex are two node not on the same cycle, WARNING: if it isn't the case there is no guarantee and no error will be raised
 
         INPUT:
-
-            index, otherIndex two node not on the same cycle, WARNING: if it isn't the case there is no guarantee and no error will be raised
+        - ``index`` -- int
+        - ``otherIndex`` -- int
 
         EXAMPLES::
 
@@ -646,7 +656,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.pretty_print()
             Primitive Rotating permutation: [(1, 3, 2, 5, 4), (6,)]
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -707,7 +717,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         it will raise an error.
 
         INPUT:
-            index
+        - ``index`` -- int
 
         OUTPUT:
             The node associated to index
@@ -718,7 +728,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.getNode(3) != rperm.getNode(4)
             True
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -741,10 +751,10 @@ class PrimitiveRotatingPermutation(MapPermutation):
         be fixed point
 
         INPUT:
-            m >= 0 integer
+        - ``m`` -- int; ``m``  >= 0 
 
         EXAMPLES:: 
-            
+
             sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm
@@ -753,7 +763,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm
             [3, 5, 4, 1, 7, 6, 8, 2, 9, 10, 11, 12, 13] 
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -768,7 +778,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         the new element n+1 on the cycle of index after index.You should note that if index>self.size() this will raise an error.
 
         INPUT:
-            index
+        - ``index`` -- int
 
         EXAMPLES::
 
@@ -780,7 +790,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.pretty_print()
             Primitive Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6, 9)]
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -809,7 +819,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         the new element n+1 on the cycle of index before index.You should note that if index>self.size() this will raise an error.
 
         INPUT:
-            index
+        - ``index`` -- int
 
         EXAMPLES::
 
@@ -821,7 +831,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.pretty_print()
             Primitive Rotating permutation: [(1, 9, 3, 4), (2, 5, 7, 8), (6,)]
 
-        .. NOTE:
+        NOTE:
             O(1)
         """
 
@@ -868,7 +878,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.numberOfCycles()
             3
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -921,7 +931,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             Return a string representation of self in a more pretty form
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_repr()
@@ -936,7 +946,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         Print self in a more pretty form
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()
@@ -960,7 +970,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.to_cycles()
             [(1, 3, 4), (2, 5, 7, 8), (6,)]
 
-        .. NOTE::
+        NOTE:
             O(n),where n is the number of element of self
         """
 
@@ -994,7 +1004,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.inverse()*rperm
             [1, 2, 3, 4, 5, 6, 7, 8]
 
-        .. NOTE::
+        NOTE:
             O(n),where n is the number of element of the permutation
         """
 
@@ -1006,7 +1016,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         """
         This function apply self on i , we take as a convention i if i is an integer > self.size() , self.apply(i) = i
         INPUT:
-            i
+        - ``i`` -- int
 
         OUTPUT:
             self(i)
@@ -1018,7 +1028,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.apply(7)
             8 
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -1043,7 +1053,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             sage: rperm.number_of_fixed_points()
             1
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return self._numberOfFixedPoint
@@ -1051,7 +1061,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
     def __eq__(self, other):
         """
         INPUT:
-            other,another object
+        - ``other`` -- MapPermutation 
 
         OUTPUT:
             A boolean indicating if self and other are equal

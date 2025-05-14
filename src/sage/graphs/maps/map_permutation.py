@@ -13,12 +13,12 @@ class MapPermutation:
         Init the MapPermutation
 
         INPUT:
-        - lst a list representing the permutation or a list of tuples representing 
+        - ``lst`` -- List[int] | List[Tuples] | int | Permutation ; a list representing the permutation or a list of tuples representing 
         the cycle of the permutationor an integer representing the size 
         of the permutation(In This case it will return the identify of size lst) 
         or a Permutation.
 
-        -trust a parameter telling whether or not
+        - ``trust`` -- bool ;  a parameter telling whether or not
         to pass some test to verify if lst represent 
         a valid permutation.
 
@@ -32,7 +32,7 @@ class MapPermutation:
             sage: MapPermutation([(2,3) , (1,4)])
             [4, 3, 2, 1]
 
-        NOTE::
+        NOTE:
             O(n) where n is the size of the permutation
         """
         if isinstance(lst, Permutation):
@@ -59,8 +59,8 @@ class MapPermutation:
 
         INPUT:
 
-            -lst a list of tuples representing the cycle of self
-            -trust a boolean indicating if check should be passed
+            -``lst`` -- List[Tuples] ;  a list of tuples representing the cycle of self
+            - ``trust`` -- bool ; a boolean indicating if check should be passed
 
         EXAMPLES::
 
@@ -68,7 +68,7 @@ class MapPermutation:
             sage: lst = [(4,3),(2,1)]
             sage: MapPermutation(lst)._init_from_cycle_list(lst)
 
-        .. NOTE::
+        NOTE:
             O(m),Used internally not intended to be used by the user
         """
         cnt = np.max(np.array(list(map(lambda x: np.max(np.array(x)), lst))))
@@ -97,14 +97,14 @@ class MapPermutation:
     def _init_from_number(self, n):
         """
         INPUT:
-            n the size of the identify permutation
+            - ``n`` -- int ; the size of the identify permutation
 
         EXAMPLES::
 
             sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation(3)._init_from_number(3)
 
-        .. NOTE::
+        NOTE:
             O(n),Used internally not intended to be used by the user
         """
         self._tab = np.arange(1, n+1)
@@ -113,8 +113,8 @@ class MapPermutation:
     def _init_from_permutation(self, perm, trust=False):
         """
         INPUT:
-            -perm a Permutation object
-            -trust a boolean indicating if check should be
+            - ``perm`` -- Permutation; a Permutation object
+            - ``trust`` -- bool; a boolean indicating if check should be
             passed
 
         EXAMPLES::
@@ -122,7 +122,7 @@ class MapPermutation:
             sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation(3)._init_from_number(3)
 
-        .. NOTE::
+        NOTE:
             O(n),Used internally not intended to be used by the user
         """
 
@@ -133,8 +133,8 @@ class MapPermutation:
         Init the permutation from a list of index
 
         INPUT:
-            -lst a list of index
-            -trust a boolean indicating if check should 
+            -``lst`` -- List[int] ; a list of index
+            - ``trust`` -- bool ; a boolean indicating if check should 
             be passed
 
         EXAMPLES::
@@ -143,7 +143,7 @@ class MapPermutation:
             sage: lst = [(4,3),(2,1)]
             sage: MapPermutation(lst)._init_from_cycle_list(lst)
 
-        .. NOTE::
+        NOTE:
             O(m),Used internally not intended to be used by the user
 
         """
@@ -166,7 +166,7 @@ class MapPermutation:
             sage: MapPermutation([(3,32),(6,7)]).size()
             32
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return len(self._tab)
@@ -174,7 +174,7 @@ class MapPermutation:
     def apply(self, i):
         """
         INPUT:
-            i an index
+            - ``i`` -- int ; An index
 
         OUTPUT:
             self(i)
@@ -185,7 +185,7 @@ class MapPermutation:
             sage: int(MapPermutation([(3,22),(22,33),(7,14)]).apply(3))
             22
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         if i > self.size():
@@ -195,7 +195,7 @@ class MapPermutation:
     def inverseApply(self, i):
         """
         INPUT:
-            i an index
+            - ``i`` -- int ; An index
 
         OUTPUT:
             j such that self(j) = i
@@ -206,7 +206,7 @@ class MapPermutation:
             sage: int(MapPermutation([(3,22),(22,33),(7,14,8)]).inverseApply(7))
             8
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -227,7 +227,7 @@ class MapPermutation:
 
         """
         return "[" + ", ".join(map(str, self)) + "]"  # Permet d'afficher de la même manière les int et les np.int64
-        #return str(list(self))
+        # return str(list(self))
 
     def pretty_repr(self):
         """
@@ -262,7 +262,7 @@ class MapPermutation:
         OUTPUT:
             A list of tuple representing the cycle decomposition of self
 
-        .. NOTE::
+        NOTE:
             O(n)
         """
         check = np.zeros(self.size()+1)
@@ -293,7 +293,7 @@ class MapPermutation:
             sage: MapPermutation([(3,9),(2,1),(7,14,8)]).inverse()
             [2, 1, 9, 4, 5, 6, 8, 14, 3, 10, 11, 12, 13, 7]
 
-        .. NOTE::
+        NOTE:
             O(n),where n is the number of element of the permutation
         """
         return MapPermutation(list(self._rtab))
@@ -317,7 +317,7 @@ class MapPermutation:
         """
         INPUT:
 
-            id
+            -``id`` -- int
 
         OUTPUT:
             id th item
@@ -384,7 +384,7 @@ class MapPermutation:
     def __eq__(self, other):
         """
         INPUT:
-            other, an object
+            - ``other`` -- MapPermutation 
 
         OUTPUT:
             A boolean indicating other and self are equal
@@ -405,7 +405,7 @@ class MapPermutation:
 
         INPUT:
 
-            -rperm: Another MapPermutation
+            - ``rperm`` -- MapPermutation
 
         OUTPUT:
             -A MapPermutation of size max(rperm.size(),self.size()) representing the composition self*rperm
@@ -418,7 +418,7 @@ class MapPermutation:
             sage: m.left_action_product(t)
             [1, 2, 9, 4, 5, 6, 14, 7, 3, 10, 11, 12, 13, 8]
 
-        ..NOTE::
+        NOTE:
             O(max(n,t)) ,where n is the size of self and t the size of rperm
         """
         outSize = max(self.size(), rperm.size())
@@ -438,7 +438,7 @@ class MapPermutation:
             sage: int(MapPermutation([(3,9),(2,1),(7,14,8)]).number_of_fixed_points())
             7
 
-        .. NOTE::
+        NOTE:
             O(n) where n is the size of self
         """
         return np.sum(self._tab == np.arange(1, self.size()+1))
@@ -448,7 +448,7 @@ class MapPermutation:
         This function calculate lperm*self where * is the composition operation between permutation
 
         INPUT:
-            -lperm: Another map permutation
+            -``lperm`` -- MapPermutation
 
         OUTPUT:
             -A MapPermutation of size max(lperm.size(),self.size()) representing the composition lperm*self
@@ -461,7 +461,7 @@ class MapPermutation:
             sage: m.right_action_product(t)
             [1, 2, 9, 4, 5, 6, 14, 7, 3, 10, 11, 12, 13, 8]
 
-        .. NOTE::
+        NOTE:
             O(max(n,t)),where n is the size of self and t the size of lperm
         """
         return lperm.left_action_product(self)
@@ -471,7 +471,7 @@ class MapPermutation:
         This function calculate lperm*self where * is the composition operation between permutation
 
         INPUT:
-            -b: Another map permutation
+            - ``b`` -- MapPermutation
 
         OUTPUT:
             -A MapPermutation of size max(b.size(),self.size()) representing the composition self*b
@@ -484,7 +484,7 @@ class MapPermutation:
             sage: m*t
             [1, 4, 9, 2, 5, 6, 14, 7, 3, 10, 11, 12, 13, 8]
 
-        .. NOTE::
+        NOTE:
             O(max(n,t)),where n is the size of self and t the size of  b
         """
 

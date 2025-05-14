@@ -48,14 +48,13 @@ class MutableLabelledMap(LabelledMap):
 
         INPUT:
 
-        - ``sigma`` -- Permutation ; Permutation ; Permutation that maps a half-edge
+        - ``sigma`` -- Permutation | MapPermutation | None ; Permutation that maps a half-edge
           to the half-edge incident to it in anti-clockwise direction around
           the vertex it belongs to.
-        - ``alpha`` -- Permutation ; Permutation that maps a half-edge
-            Fixed-point free involution whose cycles are given by the edges.
-        - ``ajd``-- and adjacency list be careful the order of the
+        - ``alpha`` -- Permutation | MapPermutation | None ;Fixed-point free involution whose cycles are given by the edges.
+        - ``ajd``-- List[Tuples] | None ; and adjacency list be careful the order of the
             node in your adjaceny will be used to choose the embedding
-        - ``lmap`` a LabelledMap
+        - ``lmap`` -- LabelledMap | None
 
         EXAMPLES::
 
@@ -63,8 +62,8 @@ class MutableLabelledMap(LabelledMap):
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm = MutableLabelledMap(alpha=alpha,sigma=sigma)
 
-        .. NOTE:
-        O(mlog(m)) where m is the size of the map
+        NOTE:
+            O(mlog(m)) where m is the size of the map
         """
         if isinstance(lmap, LabelledMap):
             self.__init__(lmap.sigma, lmap.alpha)
@@ -87,7 +86,7 @@ class MutableLabelledMap(LabelledMap):
         If self of is a planar map it is efficient O(log(m)) otherwise it is O(m)
 
         INPUT:
-            demiEdge: An index representing the demi edge corresponding to the edge we want to delete
+        - ``demiEdge`` -- int; An index representing the demi edge corresponding to the edge we want to delete
 
         OUTPUT:
             A boolean indicating whether or not self will still be connected if the edge is deleted
@@ -100,8 +99,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.willStillBeConnectedAfterEdgeDeletion(2)
             False
 
-        .. NOTE::
-        O(log(m)) if self is a Planar map otherwise O(m)
+        NOTE:
+            O(log(m)) if self is a Planar map otherwise O(m)
         """
         # In case of higher genus than 0
         if self.genus() > 0:
@@ -123,7 +122,7 @@ class MutableLabelledMap(LabelledMap):
         If self of is a planar map it is efficient O(deg(node)*log(m)) otherwise it is O(m)
 
         INPUT:
-            demiEdge: An index representing the demi edge corresponding to the node we want to delete
+        - ``demiEdge`` -- int ;  An index representing the demi edge corresponding to the node we want to delete
 
         OUTPUT:
             A boolean indicating whether or not self will still be connected if the node is deleted
@@ -136,8 +135,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.willStillBeConnectedAfterNodeDeletion(2)
             False
 
-        .. NOTE::
-        O(deg(node)log(m)) where node is the node attached to demiEdge if self is planar map otherwise O(m+deg(node)log(m))
+        NOTE:
+            O(deg(node)log(m)) where node is the node attached to demiEdge if self is planar map otherwise O(m+deg(node)log(m))
         """
         # In case of higher genus than 0
         if self.genus() > 0:
@@ -173,7 +172,7 @@ class MutableLabelledMap(LabelledMap):
         will still be connected.
 
         INPUT:
-            demiEdge
+        - ``demiEdge`` -- int 
 
         OUTPUT:
             A boolean indicating if self will still be connected after demiEdge deletion
@@ -188,9 +187,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mmH._willStillBeConnectedAfterEdgeDeletionHighGenus(1)
             True
 
-        .. NOTE::
-
-        O(m)
+        NOTE:
+            O(m)
         """
         try:
             myCopy = self.copy()
@@ -205,7 +203,7 @@ class MutableLabelledMap(LabelledMap):
         will still be connected.
 
         INPUT:
-            demiEdge
+        - ``demiEdge`` -- int
 
         OUTPUT:
             A boolean indicating if self will still be connected after the deletion of the node on which demiEdge
@@ -221,8 +219,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mmH._willStillBeConnectedAfterNodeDeletionHighGenus(1)
             False
 
-        .. NOTE::
-        O(m+deg(node)log(m))
+        NOTE:
+            O(m+deg(node)log(m))
         """
         try:
             myCopy = self.copy()
@@ -240,9 +238,10 @@ class MutableLabelledMap(LabelledMap):
         It will return two MutableLabelledMap topoDemiEdgeA,topoDemiEdgeB corresponding to the new demi edge A and B
 
         INPUT:
-            startDemiEdge: A demi edge of self
-            endDemiEdge: A demi edge of self
-            startDemiEdge,endDemiEdge must be on the same face or it will raise an error
+        - ``startDemiEdge`` -- int ;  A demi edge of self
+        - ``endDemiEdge`` -- int ; A demi edge of self
+        - ``startDemiEdge`` -- int 
+        - ``endDemiEdge  `` -- int ;must be on the same face as startDemiEdge or it will raise an error
 
         OUTPUT:
             topoDemiEdgeA,topoDemiEdgeB as described above
@@ -260,8 +259,7 @@ class MutableLabelledMap(LabelledMap):
             [(1, 22, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6),
              (2, 5, 4, 21, 3)]
 
-        .. NOTE::
-
+        NOTE:
             O(log(m))
         """
         if not self.areOnTheSameFace(startDemiEdge, endDemiEdge):
@@ -299,7 +297,8 @@ class MutableLabelledMap(LabelledMap):
         and same thing but swapping the role or demiEdge and otherDemiEdge
 
         INPUT:
-            demiEdge,otherDemiEdge
+        - ``demiEdge`` -- int
+        - ``,otherDemiEdge`` -- int
 
         EXAMPLES::
 
@@ -314,8 +313,8 @@ class MutableLabelledMap(LabelledMap):
             sage: A,B
             (X(2), X(1))
 
-        .. NOTE:
-        O(1)
+        NOTE:
+            O(1)
         """
         topoDemiEdge = self.X(demiEdge)
         otherTopoDemiEdge = self.X(otherDemiEdge)
@@ -328,7 +327,8 @@ class MutableLabelledMap(LabelledMap):
         This function relabel demiEdge into otherDemiEdge and otherDemiEdge into demiEdge
 
         INPUT:
-            demiEdge,otherDemiEdge : two valid index
+        - ``demiEdge`` -- int
+        - ``otherDemiEdge`` -- int
 
         EXAMPLES::
 
@@ -343,8 +343,8 @@ class MutableLabelledMap(LabelledMap):
             sage: A,B
             (X(2), X(1))
 
-        .. NOTE::
-        O(log(m))
+        NOTE:
+            O(log(m))
         """
         self._swapTopologicalDemiEdgeValue(demiEdge, otherDemiEdge)
 
@@ -359,8 +359,7 @@ class MutableLabelledMap(LabelledMap):
         will relabel them into value in m,...,m-k+1
 
         INPUT:
-        listIndexes:
-            A list of valid demi edge in self( otherwise it will raise an error)
+        - ``listIndexes`` -- List[int]; A list of valid demi edge in self( otherwise it will raise an error)
 
         EXAMPLES:: 
 
@@ -373,8 +372,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.faces()
             [(1, 18, 2, 19, 4, 20, 11, 16, 3, 13, 12, 15, 14, 5, 7, 17, 9, 8, 10, 6)] 
 
-        .. NOTE::
-        O(klog(m)) where k = len(listIndexes)
+        NOTE:
+            O(klog(m)) where k = len(listIndexes)
         """
         for i in listIndexes:
             if i != int(i) or i > self.q or i <= 0:
@@ -392,8 +391,9 @@ class MutableLabelledMap(LabelledMap):
         This is an helper method it delete the demiEdge but don't check for
         connectivity before , if use in the wrong way it can break the connectivity invariant
         and thus many other method
+
         INPUT:
-            demiEdge index corresponding to the edge to delete
+        - ``demiEdge`` -- int ; demi-edge on the edge to delete
 
 
         EXAMPLES::
@@ -412,12 +412,12 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.faces()
             [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
 
-        .. NOTE:: 
-        O(log(m))
+        NOTE: 
+            O(log(m))
         """
         otherDemiEdge = self.alpha(demiEdge)
 
-        if demiEdge != self.q:
+        if demiEdge != self.q or otherDemiEdge != self.q-1:
             self.labelToTheEnd([demiEdge, otherDemiEdge])
             self._BruteDeleteEdge(self.q)
             return
@@ -452,9 +452,9 @@ class MutableLabelledMap(LabelledMap):
         saying that the map is connected thus make all the other method unsafe by default trust = False.
 
         INPUT:
-            demiEdge: a demi edge corresponding to the edge to delete
-            trust: a parameter telling the function if it should trust the fact that the map will stay connected after
-                deleting demiEdge default is False
+        - ``demiEdge`` -- int ; a demi edge corresponding on the edge to delete
+        - ``trust`` -- boolean ; a parameter telling the function if it should trust the fact that the map will stay connected after
+        deleting demiEdge default is False
 
         EXAMPLES::
 
@@ -470,8 +470,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.faces()
             [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
 
-        .. NOTE::
-        O(log(m)) if self is planar or trust = True otherwise O(m)
+        NOTE:
+            O(log(m)) if self is planar or trust = True otherwise O(m)
         """
         if not trust and not self.willStillBeConnectedAfterEdgeDeletion(
                 demiEdge):
@@ -495,8 +495,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.alpha.pretty_print()
             Rotating permutation: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 10), (11, 13), (12, 15), (14, 17), (16, 18), (19, 20), (21, 22)]
 
-        .. NOTE::
-        O(log(m))
+        NOTE:
+            O(log(m))
         """
         self.alpha.stretch(2)
         self.alpha.addAfterGeneral(self.alpha.size(), self.alpha.size() - 1)
@@ -506,7 +506,7 @@ class MutableLabelledMap(LabelledMap):
         Add a new MutableTopologicalDemiEdge to self with index associated to demiEdge
 
         INPUT:
-            demiEdge
+        - ``demiEdge`` -- int
 
 
         EXAMPLES::
@@ -525,7 +525,7 @@ class MutableLabelledMap(LabelledMap):
             X(42)
 
         ..NOTE:
-        O(1)
+            O(1)
         """
         self.topologicalMap[demiEdge] = MutableTopologicalDemiEdge(
             self, demiEdge)
@@ -535,7 +535,7 @@ class MutableLabelledMap(LabelledMap):
         Remove and make invalid topoDemiEdge
 
         INPUT:
-            topoDemiEdge
+        - ``topoDemiEdge`` -- TopologicalDemiEdge
 
 
         EXAMPLES::
@@ -552,8 +552,8 @@ class MutableLabelledMap(LabelledMap):
             ....:
             NOT TOPO
 
-        .. NOTE::
-        O(1)
+        NOTE:
+            O(1)
         """
         self.topologicalMap.pop(topoDemiEdge.raw)
         topoDemiEdge._invalidate()
@@ -564,8 +564,7 @@ class MutableLabelledMap(LabelledMap):
         demiEdge in the trigonometric order.
 
         INPUT:
-
-            demiEdge
+        - ``demiEdge`` -- int
 
         EXAMPLES::
 
@@ -582,8 +581,8 @@ class MutableLabelledMap(LabelledMap):
             sage: A.n,A.pn
             (X(21), X(23)) 
 
-        .. NOTE::
-        O(log(m))
+        NOTE:
+            O(log(m))
         """
         newDemiEdge = self.q + 1
         otherNewDemiEdge = self.q + 2
@@ -611,7 +610,7 @@ class MutableLabelledMap(LabelledMap):
         demiEdge in the trigonometric order.
 
         INPUT:
-            demiEdge
+        - ``demiEdge`` -- int
 
         EXAMPLES::
 
@@ -628,8 +627,8 @@ class MutableLabelledMap(LabelledMap):
             sage: A.n,A.pn
             (X(21), X(23)) 
 
-        .. NOTE::
-        O(log(m))
+        NOTE:
+            O(log(m))
         """
 
         return self.addEdgeAfter(self.sigma.inverseApply(demiEdge))
@@ -643,9 +642,9 @@ class MutableLabelledMap(LabelledMap):
         It will raise an error if the graph isn't connected after the operation and trust is set to False.
 
         INPUT:
-            demiEdge : The demi edge on the node to delete
-            trust: a parameter telling the method if it should trust the fact that the map will stay connected after
-                deleting demiEdge default is False
+        - ``demiEdge`` -- int ;  The demi edge on the node to delete
+        - ``trust `` -- bool ; a parameter telling the method if it should trust the fact that the map will stay connected after
+        deleting demiEdge default is False
 
         EXAMPLES::
 
@@ -678,8 +677,8 @@ class MutableLabelledMap(LabelledMap):
              (15,),
              (18,)]
 
-        .. NOTE::
-        O(deg(node)*log(m)) if self is planar and O(m+deg(node)*log(m)) otherwise
+        NOTE:
+            O(deg(node)*log(m)) if self is planar and O(m+deg(node)*log(m)) otherwise
         """
         if not trust and not self.willStillBeConnectedAfterNodeDeletion(
                 demiEdge):
@@ -694,7 +693,7 @@ class MutableLabelledMap(LabelledMap):
         the connectivity invariant thus it i dangerous if not used correctly
 
         INPUT:
-            demiEdge : The demi edge on the node to delete
+        - ``demiEdge`` -- int ; The demi edge on the node to delete
 
         EXAMPLES::
 
@@ -727,8 +726,8 @@ class MutableLabelledMap(LabelledMap):
              (18,)]
 
 
-        .. NOTE::
-        O(deg(node)*log(m))
+        NOTE:
+            O(deg(node)*log(m))
         """
 
         curDemiEdge = demiEdge
@@ -756,7 +755,7 @@ class MutableLabelledMap(LabelledMap):
         """
         Contract the face on which demiEdge is in
         INPUT:
-            demiEdge
+        - ``demiEdge`` -- int
 
         EXAMPLES::
 
@@ -778,8 +777,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.faces()
             [(1, 3, 17, 9, 8, 10, 6, 5, 7, 11, 16, 18, 13, 12, 15, 14), (2, 4)]
 
-        .. NOTE::
-        O(tlog(m)) where t is the number of edge on the face containing demiEdge
+        NOTE:
+            O(tlog(m)) where t is the number of edge on the face containing demiEdge
         """
         if self.numberOfFaces() <= 2:
             raise ValueError("Cannot contract a face when there is <= 2 faces")
@@ -810,7 +809,7 @@ class MutableLabelledMap(LabelledMap):
     def copy(self):
         """
         OUTPUT:
-        Returns: A copy of self
+        Returns A copy of self
 
         EXAMPLES::
 
@@ -820,8 +819,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.copy() == mm
             True
 
-        .. NOTE::
-        O(m)
+        NOTE:
+            O(m)
         """
         return MutableLabelledMap(sigma=self.sigma, alpha=self.alpha)
 
@@ -840,8 +839,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.faces()
             [(1, 3, 17, 9, 8, 10, 6, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14)]
 
-        .. NOTE::
-        O(log(m))
+        NOTE:
+            O(log(m))
         """
         if self.m == 1:
             raise ValueError(
@@ -875,10 +874,11 @@ class MutableLabelledMap(LabelledMap):
         corresponding to the new MutableTopologicalDemiEdge of all the demi edge added from otherMap, such if a demi edge is of index i
         in otherMap than topoDemiEdgeList[i] is the MutableTopologicalDemiEdge corresponding to the copy of the demi edge inself.Note that this function
         won't modify otherMap(if otherMap isn't strictly the same object in memory as self).
+
         INPUT:
-            demiEdge: A demi edge on a node of degree one in self
-            otherMap: Another map it can be LabelledMap,RootedMap or MutableLabelledMap
-            otherDemiEdge: A demi edge of otherMap
+        - ``demiEdge`` -- int ; A demi edge on a node of degree one in self
+        - ``otherMap `` -- LabelledMap; Another map it can be LabelledMap,RootedMap or MutableLabelledMap
+        otherDemiEdge: A demi edge of otherMap
 
         EXAMPLES::
 
@@ -891,9 +891,9 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.n
             21
 
-        .. NOTE:: 
-        O(p(log(m)+log(p))) where p = otherMap.m and m is the number of edge of self,
-        note that it is much more efficient than O(p+m) mainly when m>>p
+        NOTE: 
+            O(p(log(m)+log(p))) where p = otherMap.m and m is the number of edge of self,
+            note that it is much more efficient than O(p+m) mainly when m>>p
         """
         if not self.sigma(demiEdge) == demiEdge:
             raise ValueError(
@@ -968,18 +968,16 @@ class MutableLabelledMap(LabelledMap):
         to the copy of i.
 
         INPUT:
-            demiEdge: The demiEdge attached to the node on self on which to draw the edge
-            otherMap: The other map (it can be a LabelledMap or RootedMap or MutableLabelledMap)
-            otherDemiEdge: The otherDemiEdge attached to the node on otherMap on which to draw the new edge
+        - ``demiEdge`` -- int ; The demiEdge attached to the node on self on which to draw the edge
+        - ``otherMap`` -- LabelledMap: The other map (it can be a LabelledMap or RootedMap or MutableLabelledMap)
+        - ``otherDemiEdge`` -- int ; The otherDemiEdge attached to the node on otherMap on which to draw the new edge
 
         OUTPUT:
 
-            newTopoDemiEdge:
-                A MutableTopologicalDemiEdge such that it corresponds to a new demi edge attached
-                after demiEdge.
+            newTopoDemiEdge:A MutableTopologicalDemiEdge such that it corresponds to a new demi edge attached
+            after demiEdge.
 
-            topoDemiEdgeList:
-                A list of MutableTopologicalDemiEdge corresponding to the description above
+            topoDemiEdgeList: A list of MutableTopologicalDemiEdge corresponding to the description above
 
         EXAMPLES::
 
@@ -992,9 +990,9 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.n
             21
 
-        .. NOTE::
-        O(p(log(m)+log(p))) where p = otherMap.m and m is the number of edge of self,
-        note that it is much more efficient than O(p+m) mainly when m>>p
+        NOTE:
+            O(p(log(m)+log(p))) where p = otherMap.m and m is the number of edge of self,
+            note that it is much more efficient than O(p+m) mainly when m>>p
         """
         copyOtherMap = otherMap.copy()
         topoNewEdge = self.addEdgeBefore(demiEdge)
@@ -1006,7 +1004,8 @@ class MutableLabelledMap(LabelledMap):
         Merge the node attached to demiEdge and otherDemiEdge, they need to be on the same face
 
         INPUT:
-            demiEdge,otherDemiEdge two demiEdge
+        - ``demiEdge`` -- int
+        - ``otherDemiEdge`` -- int
 
 
         EXAMPLES::
@@ -1020,8 +1019,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.faces()
             [(1, 3, 2, 5, 4, 7), (6, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10)] 
 
-        .. NOTE::
-        O(log(m)) where m is the number of edge of self
+        NOTE:
+            O(log(m)) where m is the number of edge of self
         """
         topoDemiEdge, _ = self.addEdge(demiEdge, otherDemiEdge)
         topoDemiEdge.contract()
@@ -1029,7 +1028,8 @@ class MutableLabelledMap(LabelledMap):
     def areOnTheSameNode(self, demiEdgeA, demiEdgeB):
         """
         INPUT:
-            demiEdgeA,demiEdgeB: Index representing demi edges of self
+        - ``demiEdgeA`` -- int
+        - ``demiEdgeB``-- int
 
         OUTPUT:
             A boolean indicating whether or note demiEdgeA and demiEdgeB are on the node
@@ -1052,15 +1052,17 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.checkTwoInTheSameFace([1,7,8,9])
             True
 
-        .. NOTE::
-        O(log(m))
+        NOTE:
+            O(log(m))
         """
         return self.sigmaUtilsAbstractor.sameCycle(demiEdgeA, demiEdgeB)
 
     def areOnTheSameFace(self, demiEdgeA, demiEdgeB):
         """
         INPUT:
-            demiEdgeA,demiEdgeB: Index representing demi edges of self
+        - ``demiEdgeA`` -- int
+        - ``demiEdgeB``-- int
+
         OUTPUT:
             A boolean indicating whether or note demiEdgeA and demiEdgeB are on the same face
 
@@ -1082,15 +1084,15 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.checkTwoInTheSameFace([1,7,8,9])
             True
 
-        .. NOTE::
-        O(log(m))
+        NOTE:
+            O(log(m))
         """
         return self.phiUtilsAbstractor.sameCycle(demiEdgeA, demiEdgeB)
 
     def numberInTheSameFace(self, demiEdge):
         """
         INPUT:
-            demiEdge
+        - ``demiEdge`` -- int
 
         OUTPUT:
             The number of  demi edge on the same face as demi edge
@@ -1113,15 +1115,15 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.checkTwoInTheSameFace([1,7,8,9])
             True
 
-        .. NOTE::
-        O(log(m))
+        NOTE:
+            O(log(m))
         """
         return self.phiUtilsAbstractor.numberInCycle(demiEdge)
 
     def numberInTheSameNode(self, demiEdge):
         """
         INPUT:
-            demiEdge
+        - ``demiEdge`` -- int
 
         OUTPUT:
             The number of  demi edge on the same node as demi edge
@@ -1144,8 +1146,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.checkTwoInTheSameFace([1,7,8,9])
             True
 
-        .. NOTE::
-        O(log(m))
+        NOTE:
+            O(log(m))
         """
 
         return self.sigmaUtilsAbstractor.numberInCycle(demiEdge)
@@ -1155,7 +1157,7 @@ class MutableLabelledMap(LabelledMap):
         A method that will return a boolean indicating whether or not
         two demiEdge are on the same face
         INPUT:
-            listDemiEdges: A list of demi edges
+        - ``listDemiEdges`` -- List[int]; A list of demi edges
 
         OUTPUT:
             a boolean indicating whether or not there is two demi edge on the
@@ -1179,8 +1181,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.checkTwoInTheSameFace([1,7,8,9])
             True
 
-        .. NOTE::
-        O(len(listDemiEdges)*log(m))
+        NOTE:
+            O(len(listDemiEdges)*log(m))
         """
         return self.phiUtilsAbstractor.checkTwoInTheSameCycle(listDemiEdges)
 
@@ -1190,7 +1192,7 @@ class MutableLabelledMap(LabelledMap):
         two demiEdge are on the same node
 
         INPUT:
-            listDemiEdges: A list of demi edges
+        - ``listDemiEdges`` -- List[int]; A list of demi edges
 
         OUTPUT:
             a boolean indicating whether or not there is two demi edge on the
@@ -1214,8 +1216,8 @@ class MutableLabelledMap(LabelledMap):
             sage: mm.checkTwoInTheSameFace([1,7,8,9])
             True    
 
-        .. NOTE::
-        O(len(listDemiEdges)*log(m))
+        NOTE:
+            O(len(listDemiEdges)*log(m))
         """
 
         return self.sigmaUtilsAbstractor.checkTwoInTheSameCycle(listDemiEdges)

@@ -17,7 +17,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         This function delete self from self.map         
 
         INPUT:
-            sameFace: a indicating if self and self.c are on the same face or not
+        - ``sameFace`` -- bool ; a boolean indicating if self and self.c are on the same face or not
 
 
         EXAMPLES::
@@ -35,7 +35,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: cp == mm
             True
 
-        .. NOTE::
+        NOTE:
             O(1),If this break the connectivity, no error will be raised and the map won't be stable anymore
         """
 
@@ -45,13 +45,13 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
     def link(self, otherTopoDemiEdge):
         """
         This will add an edge between the node of self to otherTopoDemiEdge(note that they
-        need to be on the same node otherwise this will raise an error), the edge will be added as follow ,
+        need to be on the same node otherwise nothing is guaranted), the edge will be added as follow ,
         let denote (A,B) the demi edges composing this new edge A will be on the same node as self but before it
         and B on the same node as otherTopoDemiEdge but before it.
         It will return two MutableLabelledMap topoDemiEdgeA,topoDemiEdgeB corresponding to the new demi edge A and B
 
         INPUT:
-            otherTopoDemiEdge: Another TopologicalDemiEdge on the same facee as self
+        - ``otherTopoDemiEdge`` -- PrimitiveMutableTopologicalDemiEdge ; Another PrimitiveMutableTopologicalDemiEdge on the same face as self
 
         OUTPUT:
             topoDemiEdgeA,topoDemiEdgeB as described above
@@ -71,7 +71,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             [(1, 3, 2, 22, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6),
              (4, 7, 11, 16, 18, 21, 5)]
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -97,7 +97,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: A.addEdgeBefore()
             X(24)
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return self.map.addEdgeAfter(self.raw)
@@ -121,7 +121,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: A.addEdgeBefore()
             X(24)
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -164,7 +164,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
              (15,),
              (18,)]
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         self.map.contractEdge(self.raw)

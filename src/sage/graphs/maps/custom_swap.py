@@ -3,16 +3,16 @@ from sage.graphs.maps.map_permutation import *
 
 class CustomSwap (MapPermutation):
     """
-    A custom class that permit to Initializes faster simple transposition permutation
+    A custom class that permit to Initializes faster simple transposition permutation.
     """
 
     def __init__(self, lst) -> None:
         """
 
-        Initialize the CustomSwap 
+        Initialize the CustomSwap.
 
         INPUT:
-            lst a list of the form [(a,b)] where a,b are integer a,b>=1
+        - ``lst`` -- List[Tuples] ; a list of the form [(a,b)] where a,b are integer a,b>=1.
 
         EXAMPLES::
 
@@ -20,7 +20,7 @@ class CustomSwap (MapPermutation):
             sage: CustomSwap([(12,8)])
             [1, 2, 3, 4, 5, 6, 7, 12, 9, 10, 11, 8]
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         try:
@@ -35,11 +35,10 @@ class CustomSwap (MapPermutation):
 
     def __eq__(self, other):
         """
-        INPUT:
-            other,another object
+        A boolean indicating if self equal other structurally.
 
-        OUTPUT:
-            A boolean indicating if self equal other structurally
+        INPUT:
+        - ``other`` -- MapPermutation 
 
         EXAMPLES:: 
 
@@ -48,7 +47,7 @@ class CustomSwap (MapPermutation):
             sage: c == c
             True
 
-        .. NOTE::
+        NOTE:
 
             O(n) where n is the size of the permutation.
 
@@ -59,8 +58,7 @@ class CustomSwap (MapPermutation):
 
     def size(self):
         """
-        OUTPUT:
-            The size of self
+        The size of self.
 
         EXAMPLES::
 
@@ -68,18 +66,17 @@ class CustomSwap (MapPermutation):
             sage: CustomSwap([(12,8)]).size()
             12
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return self.b
 
     def apply(self, i):
         """
-        INPUT:
-            i an index
+        Apply self on i.
 
-        OUTPUT:
-            self(i)
+        INPUT:
+        - ``i`` -- int
 
         EXAMPLES::
 
@@ -87,7 +84,7 @@ class CustomSwap (MapPermutation):
             sage: CustomSwap([(12,8)]).apply(8)
             12
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         if i != self.a and i != self.b:
@@ -96,11 +93,10 @@ class CustomSwap (MapPermutation):
 
     def inverseApply(self, i):
         """
-        INPUT:
-            i an index
+        Returns j such that self(j) = i
 
-        OUTPUT:
-            j such that self(j) = i
+        INPUT:
+        - ``i`` -- int
 
         EXAMPLES::
 
@@ -108,16 +104,14 @@ class CustomSwap (MapPermutation):
             sage: CustomSwap([(12,8)]).inverseApply(8)
             12 
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return self(i)
 
     def number_of_fixed_points(self):
         """
-        OUTPUT: 
-            the number of fixed point ( we only consider i such that i<=self.size())
-
+        The number of fixed point ( we only consider i such that i<=self.size())
 
         EXAMPLES::
 
@@ -125,7 +119,7 @@ class CustomSwap (MapPermutation):
             sage: CustomSwap([(12,8)]).number_of_fixed_points()
             10 
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -133,8 +127,7 @@ class CustomSwap (MapPermutation):
 
     def to_cycles(self):
         """
-        OUTPUT:
-            A list of tuple representing the cycle decomposition of self
+        A list of tuple representing the cycle decomposition of self.
 
         EXAMPLES::
 
@@ -142,7 +135,7 @@ class CustomSwap (MapPermutation):
             sage: CustomSwap([(12,8)]).to_cycles()
             [(1,), (2,), (3,), (4,), (5,), (6,), (7,), (8, 12), (8,), (9,), (10,), (11,)]
 
-        .. NOTE::
+        NOTE:
             O(n) where n is the size of the permutation
         """
         if self.a == self.b:
@@ -162,7 +155,7 @@ class CustomSwap (MapPermutation):
             sage: CustomSwap([(12,8)]).inverse()
             [1, 2, 3, 4, 5, 6, 7, 12, 9, 10, 11, 8]
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return self
