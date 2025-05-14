@@ -13,13 +13,12 @@ class MapPermutation:
         Init the MapPermutation
 
         INPUT:
-        - ``lst`` -- List[int] | List[Tuples] | int | Permutation ; a list representing the permutation or a list of tuples representing 
-        the cycle of the permutationor an integer representing the size 
-        of the permutation(In This case it will return the identify of size lst) 
+        - ``lst`` -- List[int] | List[Tuples] | int | Permutation ; a list representing the permutation or a list of tuples representing
+        the cycle of the permutationor an integer representing the size
+        of the permutation(In This case it will return the identify of size lst)
         or a Permutation.
-
         - ``trust`` -- bool ;  a parameter telling whether or not
-        to pass some test to verify if lst represent 
+        to pass some test to verify if lst represent
         a valid permutation.
 
         EXAMPLES::
@@ -46,7 +45,7 @@ class MapPermutation:
             pass
 
         try:
-            if type(lst[0]) == type((42,)):
+            if isinstance(lst[0], tuple):
                 self._init_from_cycle_list(lst, trust=trust)
                 return
             self._init_from_list(lst)
@@ -113,9 +112,9 @@ class MapPermutation:
     def _init_from_permutation(self, perm, trust=False):
         """
         INPUT:
-            - ``perm`` -- Permutation; a Permutation object
-            - ``trust`` -- bool; a boolean indicating if check should be
-            passed
+        - ``perm`` -- Permutation; a Permutation object
+        - ``trust`` -- bool; a boolean indicating if check should be
+        passed
 
         EXAMPLES::
 
@@ -134,7 +133,7 @@ class MapPermutation:
 
         INPUT:
             -``lst`` -- List[int] ; a list of index
-            - ``trust`` -- bool ; a boolean indicating if check should 
+            - ``trust`` -- bool ; a boolean indicating if check should
             be passed
 
         EXAMPLES::
@@ -157,7 +156,7 @@ class MapPermutation:
 
     def size(self):
         """
-        OUTPUT: 
+        OUTPUT:
             The size of self
 
         EXAMPLES::
@@ -223,7 +222,7 @@ class MapPermutation:
 
             sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: MapPermutation([(3,9),(2,1),(7,14,8)])
-            [2, 1, 9, 4, 5, 6, 14, 7, 3, 10, 11, 12, 13, 8] 
+            [2, 1, 9, 4, 5, 6, 14, 7, 3, 10, 11, 12, 13, 8]
 
         """
         return "[" + ", ".join(map(str, self)) + "]"  # Permet d'afficher de la même manière les int et les np.int64
@@ -308,7 +307,7 @@ class MapPermutation:
 
             sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: int(MapPermutation([(3,9),(2,1),(7,14,8)])(3))
-            9 
+            9
 
         """
         return self.apply(i)
@@ -325,7 +324,7 @@ class MapPermutation:
         EXAMPLES::
             sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: int(MapPermutation([(3,9),(2,1),(7,14,8)]).__getitem__(3))
-            9 
+            9
         """
         return self(id)
 
@@ -376,7 +375,7 @@ class MapPermutation:
 
             sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: len(MapPermutation([(3,9),(2,1),(7,14,8)]))
-            14 
+            14
 
         """
         return self.size()
@@ -384,7 +383,7 @@ class MapPermutation:
     def __eq__(self, other):
         """
         INPUT:
-            - ``other`` -- MapPermutation 
+            - ``other`` -- MapPermutation
 
         OUTPUT:
             A boolean indicating other and self are equal

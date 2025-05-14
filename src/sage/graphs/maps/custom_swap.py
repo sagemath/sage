@@ -38,9 +38,9 @@ class CustomSwap (MapPermutation):
         A boolean indicating if self equal other structurally.
 
         INPUT:
-        - ``other`` -- MapPermutation 
+        - ``other`` -- MapPermutation
 
-        EXAMPLES:: 
+        EXAMPLES::
 
             sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: c = CustomSwap([(12,8)])
@@ -102,7 +102,7 @@ class CustomSwap (MapPermutation):
 
             sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: CustomSwap([(12,8)]).inverseApply(8)
-            12 
+            12
 
         NOTE:
             O(1)
@@ -117,7 +117,7 @@ class CustomSwap (MapPermutation):
 
             sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: CustomSwap([(12,8)]).number_of_fixed_points()
-            10 
+            10
 
         NOTE:
             O(1)
@@ -145,8 +145,8 @@ class CustomSwap (MapPermutation):
                                                                         for j in range(self.a, self.b)]
 
     def inverse(self):
-        """ 
-        OUTPUT: 
+        """
+        OUTPUT:
             The inverse of self
 
         EXAMPLES::

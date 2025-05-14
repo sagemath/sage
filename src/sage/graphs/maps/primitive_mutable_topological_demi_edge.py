@@ -13,7 +13,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
     @CheckValid
     def delete(self, sameFace):
         """
-        This function delete self from self.map         
+        This function delete self from self.map
 
         INPUT:
         - ``sameFace`` -- bool ; a boolean indicating if self and self.c are on the same face or not
@@ -44,7 +44,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
     def link(self, otherTopoDemiEdge):
         """
         This will add an edge between the node of self to otherTopoDemiEdge(note that they
-        need to be on the same node otherwise nothing is guaranted), the edge will be added as follow ,
+        need to be on the same node otherwise nothing is guaranteed), the edge will be added as follow ,
         let denote (A,B) the demi edges composing this new edge A will be on the same node as self but before it
         and B on the same node as otherTopoDemiEdge but before it.
         It will return two MutableLabelledMap topoDemiEdgeA,topoDemiEdgeB corresponding to the new demi edge A and B
@@ -82,7 +82,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         This method will create a new edge, such that it is added on the same node as self but after it in the
         trigonometric order
 
-        OUTPUT: 
+        OUTPUT:
             The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
@@ -107,7 +107,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         This method will create a new edge, such that it is added on the same node as self but before it
         in the trigonometric order
 
-        OUTPUT: 
+        OUTPUT:
             The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
@@ -129,7 +129,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
     @CheckValid
     def contract(self):
         """
-        Contract the edge bind to self , note that self cannot be on a loop 
+        Contract the edge bind to self , note that self cannot be on a loop
         i.e self and self.c cannot be on the same node otherwise nothing is guaranteed
 
         EXAMPLES::
