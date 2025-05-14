@@ -365,8 +365,8 @@ Sage 整数（或有理数，或任何具有 ``__index__`` 方法的对象）都
 ============
 
 字典（有时也被称为关联数组）是从“可哈希”对象（例如字符串、数字和元组等；详情请参见 Python 文档
-http://docs.python.org/tut/node7.html 和
-http://docs.python.org/lib/typesmapping.html ）
+http://docs.python.org/3/tutorial/datastructures.html 和
+https://docs.python.org/3/library/stdtypes.html#typesmapping ）
 到任意对象的映射。
 
 ::
