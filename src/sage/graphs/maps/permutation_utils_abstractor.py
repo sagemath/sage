@@ -68,7 +68,7 @@ class PermutationUtilsAbstractor:
             A boolean indicating if i and j are on the same cycle
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.map_permutation import MapPermutation
             sage: from sage.graphs.maps.permutation_utils_abstractor import PermutationUtilsAbstractor
             sage: t = MapPermutation([(1,2,4)])

@@ -1,4 +1,4 @@
-from sage.graphs.maps.splay_tree import SplayTree, SplayNode
+from sage.graphs.maps.splay_tree import SplayTree
 
 
 class CycleUtilsProvider:
@@ -190,11 +190,12 @@ class CycleUtilsProvider:
     def addBefore(self, index, otherIndex):
         """
         Add otherIndex in the cycle of index before index
+
         INPUT:
             index,otherIndex , otherIndex != index and otherIndex is a fixed point
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.addBefore(1,33)
@@ -226,12 +227,12 @@ class CycleUtilsProvider:
     # Useful during operations to not have to have a different logic for fixed point that won't be anymore after the operations
     def _safeIndex(self, index):
         """
-        Used internaly,because we don't have node for fixed point index , it may create a different logic for them
-        this will temporarly create a node during this operations , the use must be careful that after having used 
+        Used internally,because we don't have node for fixed point index , it may create a different logic for them
+        this will temporarily create a node during this operations , the use must be careful that after having used 
         this temporary node , that it is deleted from node map or isn't anymore a fixed point
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider._safeIndex(12) 
@@ -258,7 +259,7 @@ class CycleUtilsProvider:
             index,otherIndex
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getCycleList(7)
@@ -365,7 +366,7 @@ class CycleUtilsProvider:
             A boolean indicating if index is a fixed point or not 
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getCycleList(7)
@@ -388,7 +389,7 @@ class CycleUtilsProvider:
     def getValue(self, index):
         """
         This will return the key associated to index in the splay tree corresponding to his cycle,
-        while making sure that the node asscociated to index is the root of the tree
+        while making sure that the node associated to index is the root of the tree
         INPUT:
             index not a fixed point
 

@@ -227,7 +227,7 @@ class MapPermutation:
 
         """
         return "[" + ", ".join(map(str, self)) + "]"  # Permet d'afficher de la même manière les int et les np.int64
-        #return str(list(self))
+        # return str(list(self))
 
     def pretty_repr(self):
         """

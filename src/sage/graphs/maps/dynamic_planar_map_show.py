@@ -34,7 +34,7 @@ def check_segments_intersecting(p1, q1, p2, q2) -> bool:
         sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(2,3), Vector2D(0,0))
         True
     """
-        
+
     def onSegment(p, q, r):
         "Check if q lies on [p, r] assuming p,q,r are colinear"
         return q.x <= max(p.x, r.x) and q.x >= min(
@@ -80,7 +80,7 @@ def check_polygon_intersecting(segments):
         sage: check_polygon_intersecting([(p1,p2),(p2,p4),(p4,p3),(p3,p1)])
         True
 
-        
+
     NOTE:
         Complexity is O(n^2), where n is the number of segments; this could be improved to O(n log n) in a future implementation.
         Note that this function is only supposed to be used by DynamicPlanarMapShow.
@@ -99,15 +99,16 @@ def check_polygon_intersecting(segments):
 
     return False
 
+
 class Vector2D:
     def __init__(self, x=0.0, y=0.0):
         r"""
         Initialize a 2D Vector with the given coordinates.
-        
+
         INPUT:
         - ``x`` -- float (default: ``0.0``)
         - ``y`` -- float (default: ``0.0``)
-        
+
         EXAMPLES::
 
             sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D
@@ -118,13 +119,12 @@ class Vector2D:
         self.x = float(x)
         self.y = float(y)
 
-
     def normSq(self) -> float:
         r"""
         Return the squared norm of self.
-        
+
         EXAMPLES::
-        
+
             sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D
             sage: Vector2D(-3, 4).normSq()
             25.0
@@ -134,9 +134,9 @@ class Vector2D:
     def norm(self) -> float:
         r"""
         Return the norm of self.
-        
+
         EXAMPLES::
-        
+
             sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D
             sage: Vector2D(-3, 4).norm()
             5.0
@@ -146,9 +146,9 @@ class Vector2D:
     def normalized(self) -> "Vector2D":
         r"""
         Return a new Vector2D corresponding to the normalized vector of self (i.e. same direction, unit length).
-        
+
         EXAMPLES::
-        
+
             sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D
             sage: Vector2D(-3, 4).normalized()
             Vector2D(-0.6; 0.8)
@@ -163,9 +163,9 @@ class Vector2D:
     def force_float(self) -> None:
         r"""
         Convert the attributes x and y to float.
-        
+
         EXAMPLES::
-        
+
             sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D
             sage: v = Vector2D()
             sage: v.x += pi + sin(1)
@@ -184,9 +184,9 @@ class Vector2D:
     def rotate90(self) -> "Vector2D":
         r"""
         Return a Vector2D corresponding to a rotation of 90 degrees (pi/2 rad) counterclockwise of self.
-        
+
         EXAMPLES::
-        
+
             sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D
             sage: Vector2D(1, 0).rotate90()
             Vector2D(-0.0; 1.0)
@@ -201,9 +201,9 @@ class Vector2D:
 
         INPUT:
         - ``other`` -- Vector2D
-        
+
         EXAMPLES::
-        
+
             sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D
             sage: Vector2D(3, 1).dot(Vector2D(-2, 2))
             -4.0
@@ -218,9 +218,9 @@ class Vector2D:
 
         INPUT:
         - ``other`` -- Vector2D
-        
+
         EXAMPLES::
-        
+
             sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D
             sage: Vector2D(1, 0).angle_towards(Vector2D(0, 1))
             1.5707963267948966
@@ -287,7 +287,7 @@ class DynamicPlanarMapShow:
     # angles are divided by this quantity in the torsion force
     torsionScale = math.pi / 6
 
-    springCoef = 3.0 # controls the strength of the spring force for each edge
+    springCoef = 3.0  # controls the strength of the spring force for each edge
     springLength = 1.0                 # controls the default length of an edge
     # if true, spring force is proportional to log(r / springLength); if
     # false, proportional to r - springLength
@@ -401,10 +401,10 @@ class DynamicPlanarMapShow:
             # self.edge_labels_middle[(corres[i] - 1, len(vertices))] = i# alpha(i)
             # self.edge_labels_middle[(
             #     corres[alpha(i)] - 1, len(vertices) + break_down_num - 2)] = alpha(i)#i
-            
-            self.edge_labels_middle[(corres[i] - 1, len(vertices) + break_down_num - 2)] = i# alpha(i)
+
+            self.edge_labels_middle[(corres[i] - 1, len(vertices) + break_down_num - 2)] = i  # alpha(i)
             self.edge_labels_middle[(
-                corres[alpha(i)] - 1, len(vertices))] = alpha(i)#i
+                corres[alpha(i)] - 1, len(vertices))] = alpha(i)  # i
 
             rem(i)
             rem(alpha(i))
@@ -413,11 +413,11 @@ class DynamicPlanarMapShow:
                 [(2 * k, 2 * k + 1)
                  for k in range(m + 1, m + break_down_num - 1)]
             # for some unknown reason, the typechecker assumes that Permutation needs two arguments
-            alpha *= Permutation(alpha_cycles) # type: ignore
+            alpha *= Permutation(alpha_cycles)  # type: ignore
 
             sigma_cycles = [(2 * k - 1, 2 * k)
                             for k in range(m + 1, m + break_down_num)]
-            sigma *= Permutation(sigma_cycles) # type: ignore
+            sigma *= Permutation(sigma_cycles)  # type: ignore
 
             for k in range(break_down_num - 1):
                 corres.append(len(vertices) + 1)
@@ -508,7 +508,7 @@ class DynamicPlanarMapShow:
             - ``show_halfedges`` -- bool or "auto"; whether to show halfedges (if "auto", it will be set to True if nEdges <= 10)
             - ``plt_show`` -- bool; whether to call plt.show(). if False, user needs to call plt.ion() before start() to show the map in a non-blocking way.
             - ``frame_by_frame`` -- bool; if False, automatically advance until convergence is found (see the Note).
-        
+
         EXAMPLES::
 
             sage: lm = LabelledMap(Permutation([(1,3), (2,), (4,)]), Permutation([(1,2), (3,4)]))
@@ -524,7 +524,7 @@ class DynamicPlanarMapShow:
         # initialize the matplotlib figure
         if show_halfedges == "auto":
             show_halfedges = self.nEdges <= 10
-            
+
         if not isinstance(show_halfedges, bool):
             raise ValueError("Invalid value for show_halfedges")
         size = 7
@@ -535,16 +535,16 @@ class DynamicPlanarMapShow:
 
         self.ax = self.fig.add_subplot(gs[1, :])
         txt_ax = self.fig.add_subplot(gs[0, :])
-        #slider_ax = self.fig.add_subplot(gs[0, 1])
+        # slider_ax = self.fig.add_subplot(gs[0, 1])
 
         pos_centered = self.center_pos()
         pos_centered_dict = {i: pos_centered[i] for i in range(self.nVertices)}
 
-
         # we need # type: ignore because the node_size argument is typed as int only, even though both
         # the documentation and the implementation make it clear that you can also use a list of int
         self.nodes_plt = nx.draw_networkx_nodes(self.G, pos_centered_dict, ax=self.ax, nodelist=list(range(self.nVertices)),
-                                                node_color="red", node_size=[min(300, 1000 / self.nVertices**.5)] * self.real_n_vertices + [0] * (self.nVertices - self.real_n_vertices)) # type: ignore
+                                                # type: ignore
+                                                node_color="red", node_size=[min(300, 1000 / self.nVertices**.5)] * self.real_n_vertices + [0] * (self.nVertices - self.real_n_vertices))
         self.edges_plt = nx.draw_networkx_edges(
             self.G, pos_centered_dict, ax=self.ax, arrows=False)
 
@@ -578,7 +578,7 @@ class DynamicPlanarMapShow:
         txt_ax.set_xlim(left=0, right=1)
         txt_ax.set_ylim(bottom=0, top=1)
 
-        #slider_ax.axis("off")
+        # slider_ax.axis("off")
 
         self.text = txt_ax.text(0, 0.5, "Frame: 0")
 
@@ -627,7 +627,7 @@ class DynamicPlanarMapShow:
             'xlim_changed', lambda event: setattr(self.anim, "_blit_cache", {}))
         self.ax.callbacks.connect(
             'ylim_changed', lambda event: setattr(self.anim, "_blit_cache", {}))
-        
+
         if plt_show:
             plt.show()
 
@@ -648,7 +648,7 @@ class DynamicPlanarMapShow:
         if self.useEEForce:
             self.forces_to_compute.append(self.computeRepulsionEEForces)
 
-    def center_pos(self) -> list[tuple[float,float]]:
+    def center_pos(self) -> list[tuple[float, float]]:
         r"""
         Center ``self.pos`` to new positions in [0,1]*[0,1] (with a .05 margin on each side), return the result as a list of pairs (x,y).
 
@@ -684,7 +684,7 @@ class DynamicPlanarMapShow:
     def print_timers(self) -> None:
         r"""
         Print the average time, in milliseconds, needed to compute each force and the correctness check.
-        
+
         NOTE:
             Debug function, only used to estimate which methods should be optimized first. Called when the P key is hit.
         """
@@ -896,7 +896,7 @@ class DynamicPlanarMapShow:
             force()
             if self.time_profile:
                 end = time.perf_counter()
-                self.forces_times[force.__name__] += end - begin # type: ignore
+                self.forces_times[force.__name__] += end - begin  # type: ignore
                 # error was '"begin" is possibly unbound', which cannot be the case here
         """
         self.computeRepulsionVVForces()
@@ -954,7 +954,7 @@ class DynamicPlanarMapShow:
             self.update_forces()  # LONG ? Et si oui, quelle force ?
             if self.time_profile:
                 end = time.perf_counter()
-                self.update_forces_time += float(end - begin) # type: ignore
+                self.update_forces_time += float(end - begin)  # type: ignore
                 # error was '"begin" is possibly unbound', which cannot be the case here
 
             # maxForce = max(map(Vector2D.normSq, self.forces))
@@ -1003,12 +1003,12 @@ class DynamicPlanarMapShow:
 
             if self.time_profile:
                 end = time.perf_counter()
-                self.check_pos_correct_time += float(end - begin) # type: ignore
+                self.check_pos_correct_time += float(end - begin)  # type: ignore
                 # error was '"begin" is possibly unbound', which cannot be the case here
 
     def update_fig(self, frame) -> tuple[matplotlib.artist.Artist]:
         r"""
-        Update the matplotlib figure with the new positions, and call ``self.tick()`` if the animation is currently runing.
+        Update the matplotlib figure with the new positions, and call ``self.tick()`` if the animation is currently running.
         """
         if frame > 5 and (self.anim_running or self.doFrame):
             self.tick()

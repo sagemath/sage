@@ -5,10 +5,11 @@ class CyclicChainedList:
     Note that you must be careful when directly manipulating the object to not create more than one cycle. All
     the basic implemented methods are guaranteed to not alter this invariant.
     """
+
     def __init__(self, val) -> None:
         """
         INPUT:
-        
+
         - val -- the value contained in the node
 
         EXAMPLES::
@@ -36,7 +37,7 @@ class CyclicChainedList:
     def getValList(self) -> list:
         """
         OUTPUT: 
-        
+
         a list containing the value of each node in the same cycle as self
 
         EXAMPLES::

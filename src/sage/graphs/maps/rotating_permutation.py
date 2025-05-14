@@ -462,7 +462,7 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            A map giving a correspondance between the old index and the new
+            A map giving a correspondence between the old index and the new
             if it was changed.
 
         EXAMPLES::
@@ -753,7 +753,7 @@ class RotatingPermutation(MapPermutation):
             The node associated to index
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.getNode(3) != rperm.getNode(4)
@@ -784,7 +784,7 @@ class RotatingPermutation(MapPermutation):
             m >= 0 integer
 
         EXAMPLES:: 
-            
+
             sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm
@@ -963,7 +963,7 @@ class RotatingPermutation(MapPermutation):
 
         """
         return "[" + ", ".join(map(str, self)) + "]"  # Permet d'afficher de la même manière les int et les np.int64
-        #return str(list(self))
+        # return str(list(self))
 
     # OK
 
@@ -973,7 +973,7 @@ class RotatingPermutation(MapPermutation):
             Return a string representation of self in a more pretty form
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_repr()
@@ -987,7 +987,7 @@ class RotatingPermutation(MapPermutation):
         Print self in a more pretty form
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()
@@ -1021,7 +1021,7 @@ class RotatingPermutation(MapPermutation):
             try:
                 node = self._permCycle[i]
                 cycle = node.getValList()
-                cycles.append(tuple(map(int,cycle)))
+                cycles.append(tuple(map(int, cycle)))
                 for j in cycle:
                     seen[j] = True
             except BaseException:

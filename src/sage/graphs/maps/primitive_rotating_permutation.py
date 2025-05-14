@@ -150,7 +150,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             The size of the permutation
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.size()
@@ -420,7 +420,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            A map giving a correspondance between the old index and the new
+            A map giving a correspondence between the old index and the new
             if it was changed.
 
         EXAMPLES::
@@ -744,7 +744,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             m >= 0 integer
 
         EXAMPLES:: 
-            
+
             sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm
@@ -921,7 +921,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             Return a string representation of self in a more pretty form
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_repr()
@@ -936,7 +936,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         Print self in a more pretty form
 
         EXAMPLES::
-            
+
             sage: from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
             sage: rperm = PrimitiveRotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()

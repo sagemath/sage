@@ -202,7 +202,7 @@ class LabelledMap:
         .. NOTE::
 
             Complexity is O(m), where m is the size of the map.
-            Used internaly not intended to be used by the user.
+            Used internally not intended to be used by the user.
 
          """
 
@@ -233,7 +233,7 @@ class LabelledMap:
         .. NOTE::
 
             Complexity is O(m), where m is the size of the map.
-            Used internaly not intended to be used by the user.
+            Used internally not intended to be used by the user.
         """
         self.alpha = alpha
         self.sigma = sigma
@@ -294,7 +294,7 @@ class LabelledMap:
         .. NOTE::
 
             Complexity is O(m), where m is the size of the map.
-            Used internaly not intended to be used by the user.
+            Used internally not intended to be used by the user.
             Raises: ValueError if the adjacency list is invalid.
         """
         n = len(adj)
@@ -431,7 +431,7 @@ class LabelledMap:
         def minmax(i, j):
             """Ensure edges always go from lowest to highest vertex id."""
             return min(i, j), max(i, j)
-        
+
         # Map half-edge i to its corresponding vertex
         corres = [0] * (2 * m + 1)
         for i in range(1, len(vertices) + 1):
@@ -460,10 +460,10 @@ class LabelledMap:
             # edge_labels_middle[(corres[i] - 1, len(vertices))] = i# alpha(i)
             # edge_labels_middle[(
             #     corres[alpha(i)] - 1, len(vertices) + break_down_num - 2)] = alpha(i)#i
-            
-            edge_labels_middle[(corres[i] - 1, len(vertices) + break_down_num - 2)] = i# alpha(i)
+
+            edge_labels_middle[(corres[i] - 1, len(vertices) + break_down_num - 2)] = i  # alpha(i)
             edge_labels_middle[(
-                corres[alpha(i)] - 1, len(vertices))] = alpha(i)#i
+                corres[alpha(i)] - 1, len(vertices))] = alpha(i)  # i
 
             rem(i)
             rem(alpha(i))
@@ -472,11 +472,11 @@ class LabelledMap:
                 [(2 * k, 2 * k + 1)
                  for k in range(m + 1, m + break_down_num - 1)]
             # for some unknown reason, the typechecker assumes that Permutation needs two arguments
-            alpha *= Permutation(alpha_cycles) # type: ignore
+            alpha *= Permutation(alpha_cycles)  # type: ignore
 
             sigma_cycles = [(2 * k - 1, 2 * k)
                             for k in range(m + 1, m + break_down_num)]
-            sigma *= Permutation(sigma_cycles) # type: ignore
+            sigma *= Permutation(sigma_cycles)  # type: ignore
 
             for k in range(break_down_num - 1):
                 corres.append(len(vertices) + 1)
@@ -591,14 +591,13 @@ class LabelledMap:
 
             if show_halfedges:
                 for (d, prop) in ((edge_labels_head, 0.7),
-                                (edge_labels_tail, 0.3), (edge_labels_middle, 0.5)):
+                                  (edge_labels_tail, 0.3), (edge_labels_middle, 0.5)):
                     for (pair, txt) in d.items():
                         x = layout[pair[0]+1][0] * prop + \
                             layout[pair[1]+1][0] * (1 - prop)
                         y = layout[pair[0]+1][1] * prop + \
                             layout[pair[1]+1][1] * (1 - prop)
                         ax.text(x, y, txt, ha="center", va="center", bbox={"facecolor": "white", "edgecolor": "white"})
-
 
             if should_show:
                 plt.show()
@@ -636,7 +635,7 @@ class LabelledMap:
 
         .. NOTE::
 
-            Complexity is O(1),used internaly.
+            Complexity is O(1),used internally.
 
         """
 
@@ -709,7 +708,7 @@ class LabelledMap:
 
         .. NOTE::
 
-            Complexity is O(1),used internaly.
+            Complexity is O(1),used internally.
 
         """
 

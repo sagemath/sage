@@ -1,7 +1,6 @@
-
-from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
 from sage.graphs.maps.map_decorator import CheckValid
 from sage.graphs.maps.map_error import NotImplementedError
+from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
 
 
 class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
@@ -131,7 +130,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
     def contract(self):
         """
         Contract the edge bind to self , note that self cannot be on a loop 
-        i.e self and self.c cannot be on the same node otherwise nothing is guaranted
+        i.e self and self.c cannot be on the same node otherwise nothing is guaranteed
 
         EXAMPLES::
 
