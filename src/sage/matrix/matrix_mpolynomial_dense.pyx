@@ -151,7 +151,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         x = self.fetch('pivots')
 
         if x is None:
-            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'"%self.parent())
+            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'" % self.parent())
         return x
 
     def echelonize(self, algorithm='row_reduction', **kwds):
