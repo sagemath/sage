@@ -3,7 +3,6 @@ import random
 import numpy as np
 from sage.graphs.maps.custom_swap import CustomSwap
 from sage.graphs.maps.map_permutation import MapPermutation
-from queue import deque
 from sage.graphs.maps.rooted_map import RootedMap
 from sage.graphs.maps.primitive_mutable_labelled_map import PrimitiveMutableLabelledMap
 
@@ -74,11 +73,11 @@ class MapGenerator:
         graph with n nodes. The genus is guaranteed to be zero if the
         graph is planar (i.e., n <= 4).
 
-        EXAMPLES:: 
+        EXAMPLES::
 
             sage: mg = MapGenerator()
             sage: mg.complete_map(3)
-            Labelled map | Sigma : [2, 1, 4, 3, 6, 5], Alpha : [6, 3, 2, 5, 4, 1] 
+            Labelled map | Sigma : [2, 1, 4, 3, 6, 5], Alpha : [6, 3, 2, 5, 4, 1]
 
         NOTE:
 
@@ -263,7 +262,7 @@ class MapGenerator:
         """
         Generates a uniformly random correct labelling of a tree.
         A function on the nodes of the tree considered up to translation
-        such that if u and v are adjacent f(u) and f(v) differs by at most one 
+        such that if u and v are adjacent f(u) and f(v) differs by at most one
 
         INPUT:
             - ``tree`` - int ; The input rooted tree.
@@ -279,7 +278,7 @@ class MapGenerator:
             sage: mg = MapGenerator()
             sage: tree = mg.getRandomTree(10,seed=42)
             sage: mg.getRandomLabellingTree(tree,seed = 42)
-            [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, 0, -1, -1, -2, -1, -2, -2, -2, -2, -2, -3] 
+            [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, 0, -1, -1, -2, -1, -2, -2, -2, -2, -2, -3]
 
 
         NOTE:
@@ -366,6 +365,7 @@ class MapGenerator:
             - labelling : A list of labels for the tree’s demi-edges.
 
         EXAMPLES::
+
             sage: MapGenerator().getRandomLabelledTree(10,seed=42)
             (Rooted map | Sigma : [2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20] Alpha : [3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19],
              [-1,
@@ -388,7 +388,7 @@ class MapGenerator:
               -2,
               -2,
               -2,
-              -3]) 
+              -3])
 
         NOTE:
             O(numberOfEdge)
@@ -455,7 +455,7 @@ class MapGenerator:
         EXAMPLES::
 
             sage: MapGenerator().getRandomPlanarMap(10,seed=42)
-            Rooted map | Sigma : [2, 3, 4, 1, 6, 7, 8, 10, 11, 5, 12, 14, 16, 9, 13, 18, 19, 17, 20, 15] Alpha : [2, 1, 5, 6, 3, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19] 
+            Rooted map | Sigma : [2, 3, 4, 1, 6, 7, 8, 10, 11, 5, 12, 14, 16, 9, 13, 18, 19, 17, 20, 15] Alpha : [2, 1, 5, 6, 3, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19]
 
         NOTE:
             O(numberOfEdge)
@@ -528,7 +528,7 @@ class MapGenerator:
     def cyclicShift(self, bits, shift):
         """
         INPUT:
-            -``bits`` -- List[int] ; 
+            -``bits`` -- List[int]
             - ``shift`` -- int ; a positive integer < len(shift)
 
         OUTPUT:
@@ -559,7 +559,7 @@ class MapGenerator:
 
         EXAMPLES::
             sage: MapGenerator().getRandomTwoLeafBitString(4,seed=42)
-            [0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0] 
+            [0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0]
 
         NOTE:
             O(n)
@@ -638,7 +638,7 @@ class MapGenerator:
     def rootedTwoLeafTreeFromBit(self, b):
         """
         INPUT:
-            - ``b`` -- LabelledMap; a two leaf bit string 
+            - ``b`` -- LabelledMap; a two leaf bit string
         OUTPUT:
             The two leaf tree (a tree where each internal node has 2 leaf) associated to b rooted at a leaf
 
@@ -839,13 +839,13 @@ class MapGenerator:
         INPUT:
             - ``n`` --  int ; ``n`` >=1
 
-        OUTPUT: 
+        OUTPUT:
             A random rooted triangulation of size n (i.e with 2n faces, 3n edge and  n+2 node)
             uniformly
 
         EXAMPLES::
             sage: MapGenerator().getRandomTriangulation(22,seed=42).isTriangulation()
-            True 
+            True
 
         NOTE:
             O(n)

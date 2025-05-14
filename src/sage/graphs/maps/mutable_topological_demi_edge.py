@@ -84,7 +84,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         This method will create a new edge, such that it is added on the same node as self but after it in the
         trigonometric order
 
-        OUTPUT: 
+        OUTPUT:
             The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
 
@@ -110,7 +110,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         This method will create a new edge, such that it is added on the same node as self but before it
         in the trigonometric order
 
-        OUTPUT: 
+        OUTPUT:
             The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
@@ -122,7 +122,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: A.addEdgeBefore()
             X(22)
             sage: A.addEdgeAfter()
-            X(24)   
+            X(24)
 
         NOTE:
             O(log(m))
@@ -429,7 +429,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
     def isOnSameNode(self, otherTopologicalDemiEdge):
         """
         INPUT:
-        - ``otherTopologicalDemiEdge -- MutableTopologicalDemiEdge ; A MutableTopologicalDemiEdge on the same map as self
+        - ``otherTopologicalDemiEdge`` -- MutableTopologicalDemiEdge ; A MutableTopologicalDemiEdge on the same map as self
 
         OUTPUT:
             A boolean indicating if they are on the same node

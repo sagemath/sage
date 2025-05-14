@@ -49,7 +49,7 @@ class CycleUtilsProvider:
         The number of element in the same cycle as index.
 
         INPUT:
-            - ``index`` -- int 
+            - ``index`` -- int
 
         EXAMPLES::
 
@@ -160,7 +160,7 @@ class CycleUtilsProvider:
             sage: provider.checkTwoInTheSameCycle([33,1,7])
             False
             sage: provider.checkTwoInTheSameCycle([8,1,7])
-            True 
+            True
 
         NOTE:
             O(len(listIndexes)log(n))
@@ -170,7 +170,7 @@ class CycleUtilsProvider:
             if self.isFixedPoint(e):
                 try:
                     mapIndexes.remove(e)
-                except:
+                except Exception as _:
                     pass
 
         splayTreeMap = set()
@@ -229,15 +229,15 @@ class CycleUtilsProvider:
     # Useful during operations to not have to have a different logic for fixed point that won't be anymore after the operations
     def _safeIndex(self, index):
         """
-        Used internaly,because we don't have node for fixed point index , it may create a different logic for them
-        this will temporarly create a node during this operations , the use must be careful that after having used 
+        Used internally,because we don't have node for fixed point index , it may create a different logic for them
+        this will temporarily create a node during this operations , the use must be careful that after having used
         this temporary node , that it is deleted from node map or isn't anymore a fixed point.
 
         EXAMPLES::
 
             sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
-            sage: provider._safeIndex(12) 
+            sage: provider._safeIndex(12)
 
         NOTE:
             O(log(m))
@@ -301,14 +301,14 @@ class CycleUtilsProvider:
         A list of all index in the cycle of index.
 
         INPUT:
-            - ``index`` -- int 
+            - ``index`` -- int
 
         EXAMPLES::
 
             sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getCycleList(7)
-            [7, 8, 9, 11] 
+            [7, 8, 9, 11]
 
         NOTE:
             O(t+log(n)) where t is the size of the cycle of index
@@ -325,8 +325,8 @@ class CycleUtilsProvider:
         """
         This will make index a fixed point.
 
-        INPUT: 
-            - ``index`` -- int 
+        INPUT:
+            - ``index`` -- int
 
         EXAMPLES::
 
@@ -430,7 +430,7 @@ class CycleUtilsProvider:
             sage: from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
             sage: provider.getSplayTree(1) == provider.getSplayTree(5)
-            True 
+            True
 
         NOTE:
             O(log(n))
@@ -448,7 +448,7 @@ class CycleUtilsProvider:
         This will make index the max and the root of the splay tree, while keeping the same cycle topology
 
         INPUT:
-            - ``index`` -- int 
+            - ``index`` -- int
 
         EXAMPLES::
 
@@ -458,7 +458,7 @@ class CycleUtilsProvider:
             False
             sage: provider.makeMin(5)
             sage: provider.getSplayTree(1).min() == provider.getValue(5)
-            True 
+            True
 
         NOTE:
             O(log(n))
@@ -515,12 +515,12 @@ class CycleUtilsProvider:
     # O(log(n))
     def merge(self, beforeIndex, afterIndex):
         """
-        beforeIndex and afterIndex must be on different cycle , it will merge both cycle in the following manner C = ...->beforeIndex and D = afterIndex-> ... 
+        beforeIndex and afterIndex must be on different cycle , it will merge both cycle in the following manner C = ...->beforeIndex and D = afterIndex-> ...
         it will create the following ...->beforeIndex->afterIndex-> ....
 
         INPUT:
             - ``beforeIndex`` -- int ; not on the same cycle as afterIndex , otherwise an error will be raised
-            - ``afterIndex`` -- int 
+            - ``afterIndex`` -- int
 
         EXAMPLES::
 
@@ -557,8 +557,8 @@ class CycleUtilsProvider:
         and the rest.
 
         INPUT:
-            - ``beforeIndex`` -- int 
-            - ``afterIndex`` -- int 
+            - ``beforeIndex`` -- int
+            - ``afterIndex`` -- int
 
         EXAMPLES::
 

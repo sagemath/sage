@@ -26,11 +26,11 @@ def check_segments_intersecting(p1, q1, p2, q2) -> bool:
     - ``q2`` -- Vector2D;
 
     EXAMPLES::
-        sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D, check_segments_intersecting 
+        sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D, check_segments_intersecting
         sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(1, 3), Vector2D(3, -2))
         True
         sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(1, 3), Vector2D(3, 10))
-        False 
+        False
         sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(2,3), Vector2D(0,0))
         True
     """
@@ -71,7 +71,7 @@ def check_polygon_intersecting(segments):
 
     EXAMPLES::
 
-        sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D, check_polygon_intersecting 
+        sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D, check_polygon_intersecting
         sage: p1, p2, p3, p4 = Vector2D(0,0), Vector2D(5,0), Vector2D(5,5), Vector2D(0,5)
         sage: check_polygon_intersecting([(p1,p2),(p2,p3),(p3,p1)])
         False
@@ -519,7 +519,7 @@ class DynamicPlanarMapShow:
         NOTE:
             Press Enter to pause or resume the computation, Space to compute a single frame if the animation is currently paused, and Q/Esc to quit.
             If you encounter the warning, ``UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown``, install PyQt6 using
-                ``sage -pip install PyQt6`` (this warning can be displayed when calling ``dyn_show.start()``, hence the ``...`` in the example).
+            ``sage -pip install PyQt6`` (this warning can be displayed when calling ``dyn_show.start()``, hence the ``...`` in the example).
         """
         # initialize the matplotlib figure
         if show_halfedges == "auto":

@@ -85,4 +85,4 @@ class TODOError(Exception):
 
         """
         super().__init__(
-            f"Todo")
+            "Todo")
