@@ -3688,14 +3688,13 @@ class MatchingCoveredGraph(Graph):
                                 self._directed, remove_loops=True)
 
         if M.degree(u):
-            M.add_edges(
-                [(new_vertices[i], new_vertices[i + 1], l) for i in range(0, k - 1, 2)]
-            )
+            M.add_edges([(x, y, l)
+                for x, y in zip(new_vertices[::2], new_vertices[1::2])])
         else:
-            M.add_edges(
-                [(u, new_vertices[0], l), (new_vertices[-1], v, l)] +
-                [(new_vertices[i], new_vertices[i + 1], l) for i in range(1, k - 1, 2)]
-            )
+            M.add_edge(u, new_vertices[0], l)
+            M.add_edge(new_vertices[-1], v, l)
+            M.add_edges([(x, y, l)
+                for x, y in zip(new_vertices[1::2], new_vertices[2::2])])
 
         self.update_matching(M)
 
