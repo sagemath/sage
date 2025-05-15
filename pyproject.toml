@@ -18,7 +18,9 @@ requires = [
 # otherwise we hit https://github.com/mesonbuild/meson-python/issues/598
 # The subprojects have to set the rpath to the build directory, which should work as long as
 # we don't use build isolation.
-install = ['--skip-subprojects', 'ecl']
+# Also don't install subprojects providing static libraries as per https://mesonbuild.com/meson-python/how-to-guides/shared-libraries.html#static-library-from-subproject
+# This actually covers all current subprojects; so just don't install any of them. 
+install = ['--skip-subprojects']
 # Ensure that ``library`` targets are built as static, and nothing gets installed
 setup = ['--default-library=static']
 
