@@ -16,24 +16,62 @@ from sage.structure.element import parent
 
 
 class HyperellipticJacobianHomset(SchemeHomset_points):
+    r"""
+    Set of rational points of the Jacobian.
+    """
     def __init__(self, Y, X, **kwds):
+        r"""
+            Create the Hom-set of a Jacobian.
+
+            The `K`-rational points of the Jacobian `J` over `k`
+            are identified with the set of morphisms
+            `\mathrm{Spec}(K) \to J`.
+
+            INPUT:
+
+            - ``Y`` -- domain (Spec(K) where K is the field of definition)
+            - ``X`` -- codomain (the Jacobian)
+
+            EXAMPLE::
+
+                sage: from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic import HyperellipticJacobianHomset
+                sage: R.<x> = QQ[]
+                sage: H = HyperellipticCurve(2*x^4 - x^3 + 4*x^2 - x, x^3 + x)
+                sage: J = H.jacobian()
+                sage: JQ = HyperellipticJacobianHomset(Spec(QQ), J); JQ
+                Abelian group of points on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x)*y = 2*x^4 - x^3 + 4*x^2 - x
+       """
         SchemeHomset_points.__init__(self, Y, X, **kwds)
         self._morphism_element = None
 
     def _repr_(self) -> str:
+        """
+        Return the string representation of the Jacobian Hom-set.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 + 2*x + 1)
+            sage: J = H.jacobian()
+            sage: J(GF(13)) # indirect doctest
+            Abelian group of points on Jacobian of Hyperelliptic Curve over Finite Field of size 13 defined by y^2 = x^5 + 2*x + 1
+        """
         return f"Abelian group of points on {self.codomain()}"
 
     def _morphism(self, *args, **kwds):
+        """
+        TODO
+        """
         return self._morphism_element(*args, **kwds)
 
     def curve(self):
         """
-        On input the set of L-rational points of a Jacobian Jac(H) defined over K,
-        return the curve H.
+        On input the set of `L`-rational points of a Jacobian `Jac(H)` defined over `K`,
+        return the curve `H`.
 
         NOTE:
-        The base field of H is not extended to L.
-        
+        The base field of `H` is not extended to `L`.
+
         EXAMPLES::
 
             sage: R.<x> = QQ[]
@@ -48,8 +86,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def extended_curve(self):
         """
-        On input the set of L-rational points of a Jacobian Jac(H) defined over K,
-        return the curve H with base extended to L.
+        On input the set of `L`-rational points of a Jacobian `Jac(H)` defined over `K`,
+        return the curve `H` with base extended to `L`.
 
         EXAMPLES::
 
@@ -75,13 +113,21 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
     @cached_method
     def order(self):
         """
-        Compute the order of the Jacobian
+        Compute the order of the Jacobian.
 
         TODO: currently using lazy methods by calling sage
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: # TODO
+        We compute the order of a superspecial hyperelliptic curve of genus 3::
+
+            sage: R.<x> = GF(7)[]
+            sage: H = HyperellipticCurveSmoothModel(x^8 - 1)
+            sage: J = H.jacobian()
+            sage: J(GF(7)).order() == (7+1)^3
+            True
+            sage: J(GF(7^2)).order() == (7+1)^6
+            True
         """
         return sum(self.extended_curve().frobenius_polynomial())
 
@@ -90,9 +136,20 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         r"""
         Return the roots of the charpoly of frobenius on the extended curve.
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: # TODO
+        The following genus-2 curve is supersingular. The roots of Frobenius
+        over `\mathbb{F}_5` are given by `\pm \sqrt{5}`, whereas over
+        `\FF_{5^2}` Frobenius acts as multiplication by `-5`::
+
+            sage: R.<x> = GF(5)[]
+            sage: H = HyperellipticCurveSmoothModel(x^6-1)
+            sage: J = Jacobian(H)
+            sage: rts = J(GF(5))._curve_frobenius_roots()
+            sage: rts[0]^2 == -5
+            True
+            sage: J(GF(5^2))._curve_frobenius_roots()
+            [-5, -5, -5, -5]
         """
         from sage.rings.qqbar import QQbar
 
@@ -108,11 +165,10 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: R.<x> = GF(5)[]
             sage: H = HyperellipticCurveSmoothModel(x^6 + x + 1)
             sage: J = H.jacobian()
-            sage: J.count_points(10) == [J.change_ring(GF((5, k))).order() for k in range(1, 11)]
-            True
-            sage: J2 = J(GF((5, 2)))
-            sage: J2.count_points(5) == J.count_points(10)[1::2]
-            True
+            sage: J(GF(5)).cardinality()
+            31
+            sage: J(GF(5^2)).cardinality()
+            961
         """
         K = self.extended_curve().base_ring()
         if not isinstance(K, FiniteField_generic):
@@ -126,11 +182,23 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def count_points(self, n=1):
         """
-        TODO
+        Count the number of points of the Jacobian over all finite extensions
+        of the base fields of degree less than or equal to n.
+
+        INPUT:
+
+        - ``n`` -- a positive integer
 
         EXAMPLES::
 
-            sage: # TODO
+            sage: R.<x> = GF(5)[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + x + 1)
+            sage: J = H.jacobian()
+            sage: J.count_points(10) == [J.change_ring(GF((5, k))).order() for k in range(1, 11)]
+            True
+            sage: J2 = J(GF((5, 2)))
+            sage: J2.count_points(5) == J.count_points(10)[1::2]
+            True
         """
         try:
             n = Integer(n)
@@ -151,7 +219,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         of (the affine part of) the divisor [P].
 
         EXAMPLES::
-            
+
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^5 - 2*x^4 + 2*x^3 - x^2, 1)
             sage: P = H([2,3]); P
@@ -336,7 +404,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         Returns the Cantor composition of (u1, v1) with (u1, v1)
         together with the degree of the polynomial ``s`` which is
-        needed for computing weights for the split and inert models
+        needed for computing weights for the split and inert models.
+
         """
         f, h = self.extended_curve().hyperelliptic_polynomials()
 
@@ -362,6 +431,17 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         The Cantor composition of ``(u1, v1)`` with ``(u2, v2)``,
         together with the degree of the polynomial ``s`` which is
         needed for computing the weights for the split and inert models.
+
+        TESTS::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 + 2*x + 1)
+            sage: JK = H.jacobian()(GF(13))
+            sage: (u1,v1) = (x^2 + 1, 10*x + 6)
+            sage: (u2,v2) = (x + 5, R(8))
+            sage: JK._cantor_composition_generic(u1,v1,u2,v2)
+            (x^3 + 5*x^2 + x + 5, 9*x^2 + 10*x + 2, 0)
+
         """
         # Collect data from HyperellipticCurve
         H = self.extended_curve()
@@ -422,6 +502,17 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         The `u`-coordinate of the output is not necessarily monic. That step is
         delayed to :meth:`cantor_reduction` to save time.
+
+        TESTS::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 + 2*x + 1)
+            sage: JK = H.jacobian()(GF(13))
+            sage: (u1,v1) = (x^2 + 1, 10*x + 6)
+            sage: (u2,v2) = (x + 5, R(8))
+            sage: (u3,v3,s) = JK._cantor_composition_generic(u1,v1,u2,v2)
+            sage: JK._cantor_reduction_generic(u3,v3)
+            (12*x^2 + 8*x + 11, 9*x + 3)
         """
         # Collect data from HyperellipticCurve
         H = self.extended_curve()
@@ -453,27 +544,27 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
     def cantor_reduction(self, u0, v0):
         """
         Apply one reduction step of Cantor's algorithm to  ``(u0, v0)``.
-        
+
         Note that, in general, several steps are necessary the
         representation of a reduced divisor.
 
         EXAMPLES::
-        
+
             sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurveSmoothModel(x^7 + x^5 + x + 1)
             sage: g = H.genus()
             sage: JF = Jacobian(H).point_homset()
             sage: (u0, v0) = (x^6 + 12*x^5 + 4*x^4 + 7*x^3 + 8*x^2, 5*x^5 + 2*x^4 + 12*x^2 + 7*x + 1)
             sage: (u1, v1) = JF.cantor_reduction(u0, v0)
-            sage: u1.degree() <= g 
+            sage: u1.degree() <= g
             False
             sage: (u2, v2) = JF.cantor_reduction(u1, v1)
             sage: u2.degree() <= g
             True
 
-        Applying the reduction step to a reduced divisor might have unintended output, 
-        as is illustrated below.            
-        
+        Applying the reduction step to a reduced divisor might have unintended output,
+        as is illustrated below.
+
             sage: (u3, v3) = JF.cantor_reduction(u2, v2)
             sage: u3.degree() >= g
             True
@@ -610,6 +701,22 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         Return a random element from the Jacobian.
 
         Distribution is not uniformly random, but returns the entire group.
+
+        TESTS::
+
+            sage: K = FiniteField(101)
+            sage: R.<x> = K[]
+            sage: H = HyperellipticCurveSmoothModel(x^7 + x)
+            sage: JK = H.jacobian()(K)
+            sage: JK._random_element_cover() # random
+            (x^3 + 29*x^2 + 81*x + 66, 96*x^2 + 22*x + 32)
+
+            sage: K = FiniteField(2)
+            sage: R.<x> = K[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 + 1, x)
+            sage: JK = H.jacobian()(K)
+            sage: JK._random_element_cover() # random
+            (x + 1, 1)
         """
         H = self.extended_curve()
         R = H.polynomial_ring()
@@ -715,6 +822,39 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         .. WARNING::
 
             This code is not efficient at all.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(3)[]
+            sage: H = HyperellipticCurveSmoothModel(x^7 + 2*x + 1)
+            sage: J3 = H.jacobian()(GF(3))
+            sage: Pts = J3.points()
+            sage: len(Pts)
+            94
+            sage: Pts[10]
+            (x^2 + 2, x)
+            sage: Pts[-1]
+            (x^3 + 2*x^2 + 2*x + 1, 1)
+
+        TESTS:
+
+        The function also works in the split and inert cases.
+
+            sage: R.<x> = GF(3)[]
+            sage: H = HyperellipticCurveSmoothModel(x^8 + x + 2)
+            sage: H.is_split()
+            True
+            sage: J3 = H.jacobian()(GF(3))
+            sage: Pts = J3.points()
+            sage: len(Pts)
+            35
+
+            sage: H = HyperellipticCurveSmoothModel(2*x^8 + 2*x + 1)
+            sage: H.is_inert()
+            True
+            sage: J3 = H.jacobian()(GF(3))
+            sage: Pts = J3.points(); len(Pts)
+            29
         """
         H = self.extended_curve()
         R = H.polynomial_ring()

@@ -17,6 +17,19 @@ from sage.structure.element import parent
 
 class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
     def __init__(self, Y, X, **kwds):
+        """
+        Create the Jacobian Hom-set of a hyperelliptic curve with
+        two rational points at infinity.
+
+        TESTS::
+
+            sage: R.<x> = GF(7)[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + 2*x^2 + 1)
+            sage: assert H.is_split()
+            sage: JK = Jacobian(H)(GF(7))
+            sage: type(JK)
+            <class 'sage.schemes.hyperelliptic_curves_smooth_model.jacobian_g2_homset_split.HyperellipticJacobianHomsetSplit_g2_with_category'>
+        """
         super().__init__(Y, X, **kwds)
         self._morphism_element = MumfordDivisorClassFieldSplit
 
@@ -38,15 +51,16 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         return self._morphism_element(self, R.one(), R.zero(), n)
 
     def point_to_mumford_coordinates(self, P):
-        """
-        On input a point P, return the Mumford coordinates
-        of (the affine part of) the divisor [P] and an integer n,
+        r"""
+        On input a point ``P``, return the Mumford coordinates
+        of (the affine part of) the divisor `[P]` and an integer `n`,
         where
-        * n = 1 if P is the point oo+
-        * n = 0 otherwise .
+
+        - `n = 1` if ``P`` is the point `\infty_+`
+        - `n = 0` otherwise .
 
         EXAMPLES::
-            
+
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^6 - 8*x^4 + 6*x^3 + 8*x^2 - 4*x + 1)
             sage: P = H([-1, 46, 3]); P
@@ -213,8 +227,8 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
     def cantor_composition(self, u1, v1, n1, u2, v2, n2):
         r"""
         Return the Cantor composition of the divisors represented by
-        ``(u1, v1, n1)`` and ``(u2, v2, n2)``. 
-        Here ``n1`` and ``n2`` denote the multiplicity of the point 
+        ``(u1, v1, n1)`` and ``(u2, v2, n2)``.
+        Here ``n1`` and ``n2`` denote the multiplicity of the point
         `\infty_+`.
 
         Follows algorithm 3.4 of
@@ -250,17 +264,17 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         return u3, v3, n3
 
     def cantor_reduction(self, u0, v0, n0):
-        """
+        r"""
         Compute the Cantor reduction of ``(u0,v0,n0)``,
-        where ``(u0,v0)`` represent an affine semi-reduced divisor and 
-        n0 is the multiplicity of the point infty+.
+        where ``(u0,v0)`` represent an affine semi-reduced divisor and
+        ``n0`` is the multiplicity of the point `\infty_+`.
 
         Follows algorithm 3.5 of
 
         Efficient Arithmetic on Hyperelliptic Curves With Real Representation
         David J. Mireles Morales (2008)
         https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
-        
+
         EXAMPLES::
 
             sage: R.<x> = GF(7)[]
@@ -299,7 +313,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
 
     def cantor_compose_at_infinity(self, u0, v0, n0, plus=True):
         r"""
-        Compute the composition of `(u_0,v_0,n_0)` with a divisor supported 
+        Compute the composition of `(u_0,v_0,n_0)` with a divisor supported
         at `\infty_+` (default) or `\infty_-` , and apply a reduction step.
 
         Follows algorithm 3.6 of
@@ -315,8 +329,8 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             sage: JF = Jacobian(H).point_homset()
             sage: D1 = [x^2 + 4*x + 3, 2*x + 2, 1]
 
-        Composing at `\infty_+` decreases the value of `n_0` , 
-        while composing at `\infty_-` increases that value.
+        Composing at `\infty_+` decreases the value of `n_0` ,
+        while composing at `\infty_-` increases that value::
 
             sage: JF.cantor_compose_at_infinity(x^2 + 4*x + 3, 2*x + 2, 1)
             (x^2 + 3*x + 6, 5*x + 5, -1)

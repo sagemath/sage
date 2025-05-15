@@ -16,6 +16,20 @@ from sage.schemes.weighted_projective.weighted_projective_space import WeightedP
 
 class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     def __init__(self, defining_polynomial, f, h, genus):
+        """
+        Create a hyperelliptic curve as a weighted projective curve.
+
+        TESTS::
+
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_generic import HyperellipticCurveSmoothModel_generic
+            sage: R.<x> = QQ[]
+            sage: f = x^4 + x^3 + 3*x^2 + x + 2
+            sage: h = x^3 + x^2 + x
+            sage: S.<X,Y,Z> = QQ[]
+            sage: F = Y^2 + Y*(X^3 + X^2*Z + X*Z^2) + X^4*Z^2 + X^3*Z^3 + 3*X^2*Z^4 + X*Z^5 + 2*Z^6
+            sage: H = HyperellipticCurveSmoothModel_generic(F, f, h, 2); H
+            Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x^2 + x)*y = x^4 + x^3 + 3*x^2 + x + 2
+        """
         self._genus = genus
         self._hyperelliptic_polynomials = (f, h)
 
@@ -34,10 +48,32 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Return the weights of the weighted projective space this hyperelliptic curve lives in, i.e.
         `[1, g + 1, 1]`, where `g` is the genus of the curve.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 - 1)
+            sage: H.weights()
+            [1, 3, 1]
+
+            sage: H = HyperellipticCurveSmoothModel(x^9 - 1)
+            sage: H.weights()
+            [1, 5, 1]
+
         """
         return [1, self._genus + 1, 1]
 
     def _repr_(self):
+        """
+        Return a representation of the hyperelliptic curve.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 + x, 3*x^2)
+            sage: H
+            Hyperelliptic Curve over Rational Field defined by y^2 + (3*x^2)*y = x^5 + x
+        """
         old_gen = str(self._polynomial_ring.gen())
         f, h = self._hyperelliptic_polynomials
 
@@ -94,7 +130,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def change_ring(self, R):
         """
-        Return this hyperelliptic curve over a new ring "R".
+        Return this hyperelliptic curve over a new ring ``R``.
 
         EXAMPLES::
 
@@ -121,7 +157,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: H.change_ring(FiniteField(3))
             Hyperelliptic Curve over Finite Field of size 3 defined by y^2 + (x^3 + x)*y = x^4 + 2*x^2 + 2*x
 
-        Note that this only works when the curve has good reduction at p::
+        Note that this only works when the curve has good reduction at `p`::
 
             sage: H.change_ring(FiniteField(7))
             Traceback (most recent call last):
@@ -141,8 +177,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def polynomial_ring(self):
         """
-        Returns the parent of f,h, where self is the hyperelliptic curve
-        defined by y^2 + h*y = f.
+        Return the parent of `f,h`, where ``self`` is the hyperelliptic curve
+        defined by `y^2 + h*y = f`.
 
         EXAMPLES::
 
@@ -161,8 +197,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def hyperelliptic_polynomials(self):
         """
-        Return the polynomials (f, h) such that
-        C : y^2 + h*y = f
+        Return the polynomials `(f, h)` such that
+        `C : y^2 + h*y = f`.
 
         EXAMPLES::
 
@@ -179,9 +215,25 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def roots_at_infinity(self):
         """
-        Compute the roots of: Y^2 + h[d]Y - f[2d] = 0.
+        Compute the roots of: `Y^2 + h_{g+1} Y - f_{2g+2} = 0`.
+
         When the curve is ramified, we expect one root, when
         the curve is inert or split we expect zero or two roots.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: H = HyperellipticCurveSmoothModel(x^7 + 1)
+            sage: H.roots_at_infinity()
+            [0]
+
+            sage: H = HyperellipticCurveSmoothModel(x^8 + 1)
+            sage: H.roots_at_infinity()
+            [1, -1]
+
+            sage: H = HyperellipticCurveSmoothModel(-x^8 + 1)
+            sage: H.roots_at_infinity()
+            []
         """
         if hasattr(self, "_alphas"):
             return self._alphas
@@ -195,14 +247,16 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             # Handle the ramified case
             if coeff.is_zero():
                 return [coeff]
-            return f[2 * d].sqrt(all=True)
+            if not coeff.is_square():
+                return []
+            return coeff.sqrt(all=True)
 
         self._alphas = (x**2 + x * h[d] - f[2 * d]).roots(multiplicities=False)
         return self._alphas
 
     def is_split(self):
         """
-        Return True if the curve is split, i.e. there are two rational
+        Return ``True`` if the curve is split, i.e. there are two rational
         points at infinity.
 
         EXAMPLES::
@@ -220,7 +274,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def is_ramified(self):
         """
-        Return True if the curve is ramified, i.e. there is one rational
+        Return ``True`` if the curve is ramified, i.e. there is one rational
         point at infinity.
 
         EXAMPLES::
@@ -238,7 +292,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def is_inert(self):
         """
-        Return True if the curve is inert, i.e. there are no rational
+        Return ``True`` if the curve is inert, i.e. there are no rational
         points at infinity.
 
         EXAMPLES::
@@ -261,15 +315,39 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def infinite_polynomials(self):
         """
-        TODO: the name of this function could be better?
+        Return `G^\\pm(x)` for curves in the split degree model.
 
-        Computes G^±(x) for curves in the split degree model used for
-        Cantor composition with points at infinity when performing
-        arithmetic with the Jac(H).
+        This is used for Cantor composition with points at infinity
+        when performing arithmetic on the Jacobian. See Definition 4
+        in [GHM2008]_.
+
+        TODO: the name of this function could be better?
 
         .. SEEALSO::
 
             :func:`~sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_split.cantor_compose_at_infinity`
+
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + x^4 + 1)
+            sage: H.infinite_polynomials()
+            (x^3 + 1/2*x, -x^3 - 1/2*x)
+            sage: H = HyperellipticCurveSmoothModel(4*x^6 + x^4 + 1)
+            sage: H.infinite_polynomials()
+            (2*x^3 + 1/4*x, -2*x^3 - 1/4*x)
+
+        The function is only defined for hyperelliptic curves with
+        two rational points at infinity::
+
+            sage: H = HyperellipticCurveSmoothModel(2*x^6 + x^4 + 1)
+            sage: H.is_split()
+            False
+            sage: H.infinite_polynomials()
+            Traceback (most recent call last):
+            ...
+            ValueError: hyperelliptic curve does not have the split model
         """
         if hasattr(self, "_infinite_polynomials"):
             return self._infinite_polynomials
@@ -308,14 +386,23 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def points_at_infinity(self):
         """
-        Compute the points at infinity on the curve. Assumes we are using
-        a weighted projective model for the curve
+        Compute the points at infinity on the curve.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: H = HyperellipticCurveSmoothModel(x^6 + 1, x^3 + 1)
+            sage: H.points_at_infinity()
+            []
+            sage: K.<omega> = QQ.extension(x^2 + x -1)
+            sage: H.change_ring(K).points_at_infinity()
+            [(1 : omega : 0), (1 : -omega - 1 : 0)]
         """
         return [self.point([1, y, 0], check=True) for y in self.roots_at_infinity()]
 
     def is_x_coord(self, x):
         """
-        Return True if ``x`` is the `x`-coordinate of a point on this curve.
+        Return ``True`` if ``x`` is the `x`-coordinate of a point on this curve.
 
         .. SEEALSO::
 
@@ -330,7 +417,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         OUTPUT:
 
-        A bool stating whether or not `x` is a x-coordinate of a point on the curve
+        A bool stating whether or not ``x`` is the `x`-coordinate of a point on the curve
 
         EXAMPLES:
 
@@ -588,8 +675,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def affine_coordinates(self, P):
         """
-        Returns the affine coordinates of a point P of self.
-        That is for P = [X,Y,Z], the output is X/Z¸ Y/Z^(g+1).
+        Return the affine coordinates of a point ``P`` of ``self``.
+        That is for `P = [X,Y,Z]`, the output is `X/Z, Y/Z^{(g+1)}`.
 
         EXAMPLES::
 
@@ -612,7 +699,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def is_weierstrass_point(self, P):
         """
-        Return True if P is a Weierstrass point of self.
+        Return ``True`` if ``P`` is a Weierstrass point of ``self``.
+
         TODO: It would be better to define this function for points directly.
 
         EXAMPLES::
@@ -708,7 +796,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def hyperelliptic_involution(self, P):
         """
-        Returns the image of P under the hyperelliptic involution.
+        Return the image of ``P`` under the hyperelliptic involution.
 
         EXAMPLES::
 
@@ -747,6 +835,10 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         Return the distinguished point of the hyperelliptic curve.
         By default, this is one of the points at infinity if possible.
 
+        .. SEEALSO::
+
+            :func:`~sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_generic.set_distinguished_point`
+
         EXAMPLE::
 
             sage: R.<x> = GF(11)[]
@@ -783,7 +875,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def set_distinguished_point(self, P0):
         """
-        Change the distinguished point of the hyperelliptic curve to P0.
+        Change the distinguished point of the hyperelliptic curve to ``P0``.
 
         EXAMPLES::
 
@@ -806,11 +898,13 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     @cached_method
     def jacobian(self):
         r"""
-        Returns the Jacobian of the hyperelliptic curve.
+        Return the Jacobian of the hyperelliptic curve.
 
-        Elements of the Jacobian are represented by tuples 
+        Elements of the Jacobian are represented by tuples
         of the form `(u, v : n)`, where
+
         - `(u,v)` is the Mumford representative of a divisor `P_1 + ... + P_r`,
+
         - `n` is a non-negative integer
 
         This tuple represents the equivalence class
@@ -818,19 +912,19 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         .. MATH::
 
             [P_1 + ... + P_r + n \cdot \infty_+ + m\cdot \infty_- - D_\infty],
-        
-        where  `m = g - \deg(u) - n`, and `\infty_+`, `\infty_-` are the 
+
+        where  `m = g - \deg(u) - n`, and `\infty_+`, `\infty_-` are the
         points at infinity of the hyperelliptic curve,
 
         .. MATH::
 
             D_\infty = \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
-        
+
         Here, `\infty_- = \infty_+`, if the hyperelliptic curve is ramified.
-        
-        Such a representation exists and is unique, unless the genus `g` is odd 
-        and the curve is inert. 
-        
+
+        Such a representation exists and is unique, unless the genus `g` is odd
+        and the curve is inert.
+
         If the hyperelliptic curve is ramified or inert,
         then `n` can be deduced from `\deg(u)` and `g`. In these cases,
         `n` is omitted in the description.
@@ -840,7 +934,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(2*x^5 + 4*x^4 + x^3 - x, x^3 + x + 1)
-            sage: J = Jacobian(H); J
+            sage: J = H.jacobian(); J
             Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x + 1)*y = 2*x^5 + 4*x^4 + x^3 - x
 
         The points `P = (0, 0)` and `Q = (-1, -1)` are on `H`. We construct the
@@ -878,7 +972,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             (x, -1 : 1)
 
         Note that the neutral element is given by `[D_\infty - D_\infty]`,
-        in particular `n = 1`::
+        in particular `n = \lceil g/2 \rceil`::
 
             sage: J.zero()
             (1, 0 : 1)
@@ -900,7 +994,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: K = FiniteField(7)
             sage: R.<x> = K[]
             sage: H = HyperellipticCurveSmoothModel(x^7 + 3*x + 2)
-            sage: J = Jacobian(H); J
+            sage: J = H.jacobian(); J
             Jacobian of Hyperelliptic Curve over Finite Field of size 7 defined by y^2 = x^7 + 3*x + 2
 
         Elements on the Jacobian can be constructed as before. But the value
@@ -928,7 +1022,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
             sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurveSmoothModel(x^8+1,x^4+1)
-            sage: J = Jacobian(H)
+            sage: J = H.jacobian()
             sage: J.zero()
             Traceback (most recent call last):
             ...
@@ -944,7 +1038,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     @cached_method
     def projective_curve(self):
         """
-        Returns a singular plane model of the hyperelliptic curve self.
+        Return a (singular) plane model of the hyperelliptic curve ``self``.
 
         TODO: renaming to plane_model ?
 
@@ -958,7 +1052,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             Projective Plane Curve over Finite Field of size 11 defined by -x^6 + y^2*z^4 - 2*z^6
 
 
-        Note that the projective coordinates of points on H and their images in C
+        Note that the projective coordinates of points on `H` and their images in `C`
         are in general not the same::
 
             sage: P = H.point([9,4,2])
@@ -974,7 +1068,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             (10, 6)
             sage: Q = C.point([10,6,1])
 
-        The model C has one singular point at infinity, while H is non-singular
+        The model `C` has one singular point at infinity, while `H` is non-singular
         and has two points at infinity.
 
             sage: H.points_at_infinity()
@@ -996,7 +1090,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         ALGORITHM:
 
         We use :meth:`points_at_infinity` to compute the points at infinity, and
-        `sage.schemes.generic.algebraic_scheme.rational_points` on this curve's
+        :meth:`sage.schemes.generic.algebraic_scheme.rational_points` on this curve's
         :meth:`projective_curve` for the affine points.
 
         EXAMPLES:
@@ -1037,7 +1131,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def is_singular(self, *args, **kwargs):
         r"""
-        Returns False, because hyperelliptic curves are smooth projective
+        Return ``False``, because hyperelliptic curves are smooth projective
         curves, as checked on construction.
 
         EXAMPLES::
@@ -1051,7 +1145,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def is_smooth(self):
         r"""
-        Returns True, because hyperelliptic curves are smooth projective
+        Return ``True``, because hyperelliptic curves are smooth projective
         curves, as checked on construction.
 
         EXAMPLES::
@@ -1069,9 +1163,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def odd_degree_model(self):
         r"""
-        Return an odd degree model of self, or raise ValueError if one does not
+        Return an odd degree model of ``self``, or raise ``ValueError`` if one does not
         exist over the field of definition. The term odd degree model refers to
-        a model of the form y^2 = f(x) with deg(f) = 2*g + 1.
+        a model of the form `y^2 = f(x)` with `\deg(f) = 2 g + 1`.
 
         EXAMPLES::
 
@@ -1095,11 +1189,11 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
              with defining polynomial x^2 + 3 with b = 1.732050807568878?*I
              defined by y^2 = -4*b*x^5 - 14*x^4 - 20*b*x^3 - 35*x^2 + 6*b*x + 1
 
-            Of course, ``Hp2`` and ``Hp3`` are isomorphic over the composite
-            extension.  One consequence of this is that odd degree models
-            reduced over "different" fields should have the same number of
-            points on their reductions.  43 and 67 split completely in the
-            compositum, so when we reduce we find:
+        Of course, ``Hp2`` and ``Hp3`` are isomorphic over the composite
+        extension.  One consequence of this is that odd degree models
+        reduced over "different" fields should have the same number of
+        points on their reductions.  43 and 67 split completely in the
+        compositum, so when we reduce we find::
 
             sage: # needs sage.rings.number_field
             sage: P2 = K2.factor(43)[0][0]
@@ -1123,7 +1217,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: H.change_ring(GF(67)).odd_degree_model().frobenius_polynomial()       # needs sage.rings.finite_rings
             x^4 - 8*x^3 + 150*x^2 - 536*x + 4489
 
-            The case where `h(x)` is nonzero is also supported::
+        The case where `h(x)` is nonzero is also supported::
 
             sage: HyperellipticCurveSmoothModel(x^5 + 1, 1).odd_degree_model()
             Hyperelliptic Curve over Rational Field defined by y^2 = 4*x^5 + 5
@@ -1154,7 +1248,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def has_odd_degree_model(self):
         r"""
-        Return True if an odd degree model of self exists over the field of definition; False otherwise.
+        Return ``True`` if an odd degree model of ``self`` exists over the field of definition; ``False`` otherwise.
 
         Use ``odd_degree_model`` to calculate an odd degree model.
 
@@ -1179,7 +1273,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def _magma_init_(self, magma):
         """
-        Internal function. Returns a string to initialize this hyperelliptic
+        Internal function. Return a string to initialize this hyperelliptic
         curve in the Magma subsystem.
 
         EXAMPLES::
@@ -1212,7 +1306,12 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         EXAMPLES::
 
-            TODO
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurve(x^5+1)
+            sage: [x0, y0] = H.monsky_washnitzer_gens(); x0, y0
+            (x, y*1)
+            sage: x0^10
+            (1-2*y^2+y^4)*1
         """
         from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
 
@@ -1221,7 +1320,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def invariant_differential(self):
         """
-        Returns `dx/2y`, as an element of the Monsky-Washnitzer cohomology
+        Return `dx/2y`, as an element of the Monsky-Washnitzer cohomology
         of ``self``.
 
         EXAMPLES::
@@ -1243,13 +1342,13 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def local_coordinates_at_nonweierstrass(self, P, prec=20, name="t"):
         """
-        For a non-Weierstrass point `P = (a,b)` on the hyperelliptic
-        curve `y^2 + y*h(x) = f(x)`, return `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`,
+        For a non-Weierstrass point ``P = (a,b)`` on the hyperelliptic
+        curve `y^2 + h(x) * y = f(x)`, return `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`,
         where `t = x - a` is the local parameter.
 
         INPUT:
 
-        - ``P = (a, b)`` -- a non-Weierstrass point on self
+        - ``P = (a, b)`` -- a non-Weierstrass point on ``self``
         - ``prec`` --  desired precision of the local coordinates
         - ``name`` -- gen of the power series ring (default: ``t``)
 
@@ -1318,13 +1417,13 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def local_coordinates_at_weierstrass(self, P, prec=20, name="t"):
         """
-        For a finite Weierstrass point P = (a,b) on the hyperelliptic
-        curve `y^2 + h(x)*y = f(x)`, returns `(x(t), y(t))` such that
+        For a finite Weierstrass point ``P = (a,b)`` on the hyperelliptic
+        curve `y^2 + h(x)*y = f(x)`, return `(x(t), y(t))` such that
         `y(t)^2 + h(x(t))*y(t) = f(x(t))`, where `t = y - b` is the local parameter.
 
         INPUT:
 
-        - ``P`` -- a finite Weierstrass point on self
+        - ``P`` -- a finite Weierstrass point on ``self``
         - ``prec`` -- desired precision of the local coordinates
         - ``name`` -- gen of the power series ring (default: `t`)
 
@@ -1336,7 +1435,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         EXAMPLES:
 
         We compute the local coordinates of the Weierstrass point `P = (4,0)`
-        on the hyperelliptic curve `y^2 = x^5 - 23*x^3 + 18*x^2 + 40*x`::
+        on the hyperelliptic curve `y^2 = x^5 - 23 x^3 + 18 x^2 + 40 x`::
 
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurveSmoothModel(x^5 - 23*x^3 + 18*x^2 + 40*x)
@@ -1354,7 +1453,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             True
 
         We compute the local coordinates at the Weierstrass point `(1,-1)`
-        of the hyperelliptic curve `y^2 + (x^3 + 1)*y = -x^2`::
+        of the hyperelliptic curve `y^2 + (x^3 + 1) y = -x^2`::
 
             sage: H = HyperellipticCurveSmoothModel(-x^2, x^3+1)
             sage: P = H(1,-1)
@@ -1414,7 +1513,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         EXAMPLES:
 
         We compute the local coordinates at the point at infinity of the
-        hyperelliptic curve `y^2 = x^5 - 5*x^2 + 1`::
+        hyperelliptic curve `y^2 = x^5 - 5 x^2 + 1`::
 
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurveSmoothModel(x^5 - 5*x^2 + 1)
@@ -1433,7 +1532,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         The method also works when `h` is nonzero. We compute the local
         coordinates of the point at infinity of the hyperelliptic curve
-        `y^2 + y = x^5 - 9*x^4 + 14*x^3 - 19*x^2 + 11*x - 6`::
+        `y^2 + y = x^5 - 9 x^4 + 14 x^3 - 19 x^2 + 11 x - 6`::
 
             sage: H = HyperellipticCurveSmoothModel(x^5-9*x^4+14*x^3-19*x^2+11*x-6,1)
             sage: f,h = H.hyperelliptic_polynomials()
@@ -1476,10 +1575,10 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def local_coordinates_at_infinity_split(self, P, prec=20, name="t"):
         """
-        For a point at infinity P = (a:b:0) on a hyperelliptic curve with
+        For a point at infinity ``P = (a:b:0)`` on a hyperelliptic curve with
         split model `y^2 + h(x)*y = f(x)`,
         return `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`.
-        Here  `t = a/x` is the local parameter at P.
+        Here  `t = a/x` is the local parameter at ``P``.
 
         INPUT:
 
@@ -1551,14 +1650,14 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def local_coord(self, P, prec=20, name="t"):
         """
-        For point `P = (a,b)` on the hyperelliptic curve
-        `y^2 + y*h(x) = f(x)`, return `(x(t), y(t))` such that
+        For point ``P = (a,b)`` on the hyperelliptic curve
+        `y^2 + h(x)*y = f(x)`, return `(x(t), y(t))` such that
         `(y(t))^2 + h(x(t))*y(t) = f(x(t))`, where `t` is the local parameter at
         that point.
 
         INPUT:
 
-        - ``P`` -- a point on self
+        - ``P`` -- a point on ``self``
         - ``prec`` -- desired precision of the local coordinates
         - ``name`` -- generator of the power series ring (default: ``t``)
 
@@ -1570,7 +1669,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         EXAMPLES:
 
         We compute the local coordinates of several points of the curve with
-        defining equation `y^2 = x^5 - 23*x^3 + 18*x^2 + 40*x`::
+        defining equation `y^2 = x^5 - 23 x^3 + 18 x^2 + 40 x`::
 
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurveSmoothModel(x^5 - 23*x^3 + 18*x^2 + 40*x)
@@ -1583,7 +1682,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             t^-5 - 69*t^-1 + 54*t - 1467*t^3 + 3726*t^5 + O(t^6))
 
         We compute the local coordinates of several points of the curve with
-        defining equation `y^2 + (x^3 + 1)*y = x^4 + 2*x^3 + x^2 - x`. ::
+        defining equation `y^2 + (x^3 + 1) y = x^4 + 2 x^3 + x^2 - x`. ::
 
             sage: H = HyperellipticCurveSmoothModel(x^4+2*x^3+x^2-x,x^3+1)
             sage: H.local_coord(H(1,-3,1), prec=5)

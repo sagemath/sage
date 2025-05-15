@@ -1,6 +1,5 @@
 """
 Hyperelliptic curves (smooth model) over a finite field
-
 """
 
 from sage.arith.misc import binomial
@@ -22,10 +21,58 @@ class HyperellipticCurveSmoothModel_finite_field(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
     """
-    TODO: write some examples of this class
+    Class of hyperelliptic curves (smooth model) over a finite field.
+
+    EXAMPLES::
+
+        sage: R.<x> = GF(5)[]
+        sage: H = HyperellipticCurveSmoothModel(x^8 + x^2 + 1); H
+        Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^8 + x^2 + 1
+        sage: type(H)
+        <class 'sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_finite_field.HyperellipticCurveSmoothModel_finite_field_with_category'>
+
+    Over finite fields, there are methods to construct random points on a
+    hyperelliptic curve, find all rational points of the curve, or compute
+    the cardinality over different field extensions::
+
+        sage: R.<x> = GF(7)[]
+        sage: H = HyperellipticCurveSmoothModel(x^6 + x + 1)
+        sage: H.random_point() # random
+        (6 : 1 : 1)
+        sage: H.rational_points()
+        [(1 : 1 : 0),
+         (1 : 6 : 0),
+         (0 : 1 : 1),
+         (0 : 6 : 1),
+         (2 : 2 : 1),
+         (2 : 5 : 1),
+         (5 : 0 : 1),
+         (6 : 1 : 1),
+         (6 : 6 : 1)]
+        sage: H.count_points(4)
+        [9, 67, 339, 2443]
+
+    These methods also work in characteristic 2 and 3::
+
+        sage: R.<x> = GF(4)[]
+        sage: H = HyperellipticCurveSmoothModel(x^5+1, x^2+1)
+        sage: H.rational_points()
+        [(1 : 0 : 0), (0 : z2 : 1), (0 : z2 + 1 : 1), (1 : 0 : 1)]
+        sage: H.count_points(4)
+        [4, 24, 64, 288]
     """
 
     def __init__(self, projective_model, f, h, genus):
+        """
+        Create a hyperelliptic curve over a finite field.
+
+        TESTS::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurveSmoothModel(x^8+1) # indirect doctest
+            sage: type(H)
+            <class 'sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_finite_field.HyperellipticCurveSmoothModel_finite_field_with_category'>
+        """
         super().__init__(projective_model, f, h, genus)
 
     def random_point(self):
@@ -605,7 +652,16 @@ class HyperellipticCurveSmoothModel_finite_field(
     @cached_method
     def cardinality(self, extension_degree=1):
         r"""
-        Count points on a single extension of the base field.
+        Return the cardinality of the curve over an extension of degree ``extension_degree``.
+
+        INPUT:
+
+        - ``self`` - Hyperelliptic Curve over a finite field, `\GF{q}`
+        - ``extensions_degree`` - positive integer (default: ``1```)
+
+        OUTPUT:
+
+        - The cardinality of ``self`` over an extension of degree ``extension_degree``.
 
         EXAMPLES::
 
@@ -1062,7 +1118,7 @@ class HyperellipticCurveSmoothModel_finite_field(
         M = self.frobenius_matrix(N=N, algorithm=algorithm).change_ring(ZZ)
 
         # get a_g, ..., a_0 in ZZ (i.e. with correct signs)
-        f = M.charpoly().list()[g : 2 * g + 1]
+        f = M.charpoly().list()[g: 2 * g + 1]
         ppow = p**N
         f = [x % ppow for x in f]
         f = [x if 2 * x < ppow else x - ppow for x in f]
@@ -1370,9 +1426,11 @@ class HyperellipticCurveSmoothModel_finite_field(
     # This is what is called from command line
     def Cartier_matrix(self):
         r"""
+        Return the Cartier matrix of the hyperelliptic curve.
+
         INPUT:
 
-        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``H`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
 
         OUTPUT:
 
@@ -1568,9 +1626,11 @@ class HyperellipticCurveSmoothModel_finite_field(
     # This is the function which is actually called by command line
     def Hasse_Witt(self):
         r"""
+        Return the Hasse--Witt matrix of the hyperelliptic curve.
+
         INPUT:
 
-        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``H`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
 
         OUTPUT:
 
@@ -1626,6 +1686,8 @@ class HyperellipticCurveSmoothModel_finite_field(
 
     def a_number(self):
         r"""
+        Return the `a`-number of the hyperelliptic curve.
+
         INPUT:
 
         - ``E``: Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
@@ -1669,9 +1731,11 @@ class HyperellipticCurveSmoothModel_finite_field(
 
     def p_rank(self):
         r"""
+        Return the `p`-rank of the hyperelliptic curve.
+
         INPUT:
 
-        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
+        - ``H`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
 
         OUTPUT:
 

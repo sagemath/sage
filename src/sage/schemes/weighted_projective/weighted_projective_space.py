@@ -418,4 +418,3 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         from sage.schemes.curves.constructor import Curve
         return Curve(F, self)
 
->>>>>>> weighted-projective

@@ -57,7 +57,7 @@ class HyperellipticCurveSmoothModel_g2(
         r"""
         Return the Jacobian of the hyperelliptic curve.
 
-        Elements of the Jacobian are represented by tuples 
+        Elements of the Jacobian are represented by tuples
         of the form `(u, v : n)`, where
 
         - `(u,v)` is the Mumford representative of a divisor `P_1 + ... + P_r`,
@@ -65,22 +65,22 @@ class HyperellipticCurveSmoothModel_g2(
 
         This tuple represents the equivalence class
         `[P_1 + ... + P_r + n \cdot \infty_+ + m \cdot \infty_- - D_\infty]`,
-        where  `m = g - \deg(u) - n`, and `\infty_+`, `\infty_-` are the 
+        where  `m = g - \deg(u) - n`, and `\infty_+`, `\infty_-` are the
         points at infinity of the hyperelliptic curve,
 
         .. MATH::
 
             D_\infty =
             \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
-        
+
         Here, `\infty_- = \infty_+`, if the hyperelliptic curve is ramified.
-        
+
 
         EXAMPLES::
 
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(2*x^5 + 4*x^4 + x^3 - x, x^3 + x + 1)
-            sage: J = Jacobian(H); J
+            sage: J = H.jacobian(); J
             Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x + 1)*y = 2*x^5 + 4*x^4 + x^3 - x
 
         The points `P = (0, 0)` and `Q = (-1, -1)` are on `H`. We construct the
@@ -134,7 +134,6 @@ class HyperellipticCurveSmoothModel_g2(
             sage: J(P_minus, P_plus)
             (1, 0 : 0)
         """
-
 
         from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_g2_generic import (
             HyperellipticJacobian_g2_generic,

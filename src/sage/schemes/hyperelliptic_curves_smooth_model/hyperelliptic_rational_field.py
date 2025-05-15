@@ -10,6 +10,16 @@ class HyperellipticCurveSmoothModel_rational_field(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
     def __init__(self, projective_model, f, h, genus):
+        """
+        Create a hyperelliptic curve over the rationals.
+
+        TESTS::
+
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(-x^2, x^3 + 1)
+            sage: H
+            Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + 1)*y = -x^2
+        """
         super().__init__(projective_model, f, h, genus)
 
     def matrix_of_frobenius(self, p, prec=20):
