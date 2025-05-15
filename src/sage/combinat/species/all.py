@@ -45,7 +45,10 @@ from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.combinat.species.recursive_species", "CombinatorialSpecies")
-lazy_import("sage.combinat.species", "library", as_='species')
+lazy_import("sage.combinat.species.recursive_species", "CombinatorialSpecies",
+            deprecation=(38544, "the functionality of combinat.species is now superseded by LazySpecies"))
+
+lazy_import("sage.combinat.species", "library", as_='species',
+            deprecation=(38544, "the functionality of combinat.species is now superseded by LazySpecies"))
 del lazy_import
 del install_doc

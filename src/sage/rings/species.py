@@ -394,8 +394,11 @@ class AtomicSpeciesElement(WithEqualityById,
         r"""
         Iterate over the structures on the given set of labels.
 
-        Generically, this yields a list of relabelled representatives
-        of the cosets of corresponding groups.
+        This yields a list of relabelled representatives of the
+        cosets of corresponding groups.
+
+        The relabelling is such that the first few labels correspond
+        to the first factor in the atomic decomposition, etc.
 
         EXAMPLES::
 
@@ -1607,6 +1610,13 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             r"""
             Iterate over the structures on the given set of labels.
 
+            This yields a list of relabelled representatives of the
+            cosets of corresponding groups.
+
+            The relabelling is such that the first few labels
+            correspond to the first factor in the atomic
+            decomposition, etc.
+
             EXAMPLES::
 
                 sage: from sage.rings.species import MolecularSpecies
@@ -1633,6 +1643,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                  ((2,), (1, 3, 'b', 'a')),
                  ((3,), (1, 2, 'a', 'b')),
                  ((3,), (1, 2, 'b', 'a'))]
+
             """
             k = self.parent()._arity
             labels = _label_sets(k, labels)
@@ -2217,6 +2228,13 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         r"""
         Iterate over the structures on the given set of labels.
 
+        This yields a list of pairs consisting of a molecular species
+        and a relabelled representative of the cosets of
+        corresponding groups.
+
+        The relabelling is such that the first few labels correspond
+        to the first factor in the atomic decomposition, etc.
+
         EXAMPLES::
 
             sage: from sage.rings.species import PolynomialSpecies
@@ -2412,7 +2430,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
             ValueError: 1/2 must be an element of the base ring, a permutation
              group or a pair (X, a) specifying a group action of the symmetric
              group on pi=None
-
         """
         if parent(G) is self:
             # pi cannot be None because of framework

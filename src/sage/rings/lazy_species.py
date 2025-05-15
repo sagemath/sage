@@ -382,9 +382,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         r"""
         Return the sum of ``self`` and ``other``.
 
-        In particular, the method to obtain the structures is
-        adapted.
-
         EXAMPLES::
 
             sage: from sage.rings.lazy_species import LazySpecies
@@ -402,9 +399,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
     def _mul_(self, other):
         """
         Return the product of this series with ``other``.
-
-        In particular, the method to obtain the structures is
-        adapted.
 
         EXAMPLES::
 
@@ -427,8 +421,9 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         r"""
         Iterate over the structures on the given set of labels.
 
-        Generically, this yields a list of relabelled representatives
-        of the cosets of corresponding groups.
+        Generically, this yields a list of pairs consisting of a
+        molecular species and a relabelled representative of the
+        cosets of corresponding groups.
 
         The relabelling is such that the first few labels correspond
         to the first factor in the atomic decomposition, etc.
@@ -479,8 +474,113 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         yield from self[sum(map(len, labels))].structures(*labels)
 
-    def isotypes(self, labels):
-        pass
+    def _test_structures(self, tester=None):
+        r"""
+        Check that structures and generating series are consistent.
+
+        We check all structures on 3 labels.
+
+        TESTS::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(QQ, "X, Y")
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: XY = L(P(PermutationGroup([], domain=[1, 2, 3]), {0: [1], 1: [2, 3]}))
+            sage: XY._test_structures()
+        """
+        n = 3
+        P = self.parent()
+        if P._arity == 1:
+            labels = list(range(n))
+            s = list(self.structures(labels))
+            assert len(s) == len(set(s)), f"structures for {labels} are {s}, which is not a set"
+            coeff = self.generating_series()[n]
+            assert len(s) / factorial(n) == coeff, f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}"
+        else:
+            label_shapes = IntegerVectors(n, length=P._arity)
+            for shape in label_shapes:
+                labels = [list(range(k)) for k in shape]
+                s = list(self.structures(*labels))
+                assert len(s) == len(set(s)), f"structures for {labels} are {s}, which is not a set"
+                coeff = self.generating_series()[n].coefficient(list(shape))
+                assert len(s) / ZZ.prod(factorial(k) for k in shape) == coeff, f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}"
+
+    def isotypes(self, *shape):
+        r"""
+        Iterate over the isotypes on the given list of sizes.
+
+        Generically, this yields a list of tuples consisting of a
+        molecular species and, if necessary, an index.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: list(E.isotypes(3))
+            [(E_3,)]
+
+            sage: P = L(lambda n: CyclicPermutationGroup(n))
+            sage: list(P.isotypes(3))
+            [(C_3,)]
+
+            sage: F = 1/(2-E)
+            sage: sorted(F.isotypes(3))
+            [(E_3,), (X*E_2, 0), (X*E_2, 1), (X^3,)]
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: L = LazySpecies(QQ, "X, Y")
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: XY = L(P(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
+            sage: list((XY).isotypes(1, 1))
+            [(X*Y,)]
+
+            sage: list(E(XY).isotypes(2, 2))
+            [(E_2(X*Y),)]
+        """
+        multivariate = self.parent()._arity > 1
+        shape = tuple(shape)
+        for M, c in self[sum(shape)]:
+            if c not in ZZ or c < 0:
+                raise NotImplementedError("only implemented for proper non-virtual species")
+
+            if multivariate and tuple(M.grade()) != shape:
+                continue
+
+            if c == 1:
+                yield tuple([M])
+            else:
+                for e in range(c):
+                    yield (M, e)
+
+    def _test_isotypes(self, tester=None):
+        r"""
+        Check that isotypes and generating series are consistent.
+
+        TESTS::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(QQ, "X, Y")
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: XY = L(P(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
+            sage: XY._test_isotypes()
+        """
+        n = 3
+        P = self.parent()
+        if P._arity == 1:
+            s = list(self.isotypes(n))
+            assert len(s) == len(set(s)), f"isotypes for {n} are {s}, which is not a set"
+            coeff = self.isotype_generating_series()[n]
+            assert len(s) == coeff, f"the number of isotypes for {n} is {len(s)}, but the generating series gives {coeff}"
+        else:
+            shapes = IntegerVectors(n, length=P._arity)
+            for shape in shapes:
+                s = list(self.isotypes(*shape))
+                assert len(s) == len(set(s)), f"isotypes for {shape} are {s}, which is not a set"
+                coeff = self.isotype_generating_series()[n].coefficient(list(shape))
+                assert len(s) == coeff, f"the number of isotypes for {shape} is {len(s)}, but the generating series gives {coeff}"
 
     def polynomial(self, degree=None, names=None):
         r"""
@@ -748,6 +848,13 @@ class SumSpeciesElement(LazySpeciesElement):
     def __init__(self, left, right):
         r"""
         Initialize the sum of two species.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(QQ, "X")
+            sage: F = L.Sets() + L.SetPartitions()
+            sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
         """
         F = super(LazySpeciesElement, type(left))._add_(left, right)
         super().__init__(F.parent(), F._coeff_stream)
@@ -755,6 +862,22 @@ class SumSpeciesElement(LazySpeciesElement):
         self._right = right
 
     def structures(self, *labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(QQ, "X")
+            sage: F = L.Sets() + L.SetPartitions()
+            sage: list(F.structures([1,2,3]))
+            [(1, 2, 3),
+             {{1, 2, 3}},
+             {{1, 2}, {3}},
+             {{1, 3}, {2}},
+             {{1}, {2, 3}},
+             {{1}, {2}, {3}}]
+        """
         labels = _label_sets(self.parent()._arity, labels)
         yield from self._left.structures(*labels)
         yield from self._right.structures(*labels)
@@ -764,6 +887,13 @@ class ProductSpeciesElement(LazySpeciesElement):
     def __init__(self, left, right):
         r"""
         Initialize the product of two species.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(QQ, "X")
+            sage: F = L.Sets() * L.SetPartitions()
+            sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
         """
         F = super(LazySpeciesElement, type(left))._mul_(left, right)
         super().__init__(F.parent(), F._coeff_stream)
@@ -771,7 +901,9 @@ class ProductSpeciesElement(LazySpeciesElement):
         self._right = right
 
     def structures(self, *labels):
-        """
+        r"""
+        Iterate over the structures on the given set of labels.
+
         EXAMPLES::
 
             sage: from sage.rings.lazy_species import LazySpecies
@@ -780,7 +912,7 @@ class ProductSpeciesElement(LazySpeciesElement):
             sage: C = L.Cycles()
             sage: P = E * C
             sage: list(P.structures([1,2]))
-            [((), [1, 2]), ((1,), [2]), ((2,), [1])]
+            [((), (1, 2)), ((1,), (2,)), ((2,), (1,))]
 
             sage: P = E * E
             sage: list(P.structures([1,2]))
@@ -816,6 +948,10 @@ class CompositionSpeciesElement(LazySpeciesElement):
             0
             sage: (1+X)(P.zero())
             1
+
+            sage: L.<X,Y> = LazySpecies(QQ)
+            sage: F = P.Sets()(X + 2*Y)
+            sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
         """
         fP = left.parent()
         # Find a good parent for the result
@@ -889,6 +1025,7 @@ class CompositionSpeciesElement(LazySpeciesElement):
 
     def structures(self, *labels):
         r"""
+        Iterate over the structures on the given set of labels.
 
         EXAMPLES::
 
@@ -1027,12 +1164,20 @@ class SetSpecies(LazySpeciesElement):
     def __init__(self, parent):
         r"""
         Initialize the species of sets.
+
+        TESTS::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: P.<X> = LazySpecies(QQ)
+            sage: E = P.Sets()
+            sage: TestSuite(E).run(skip=['_test_category', '_test_pickling'])
         """
         S = parent(lambda n: SymmetricGroup(n))
         super().__init__(parent, S._coeff_stream)
 
-    def structures(self, *labels):
-        """
+    def structures(self, labels):
+        r"""
+        Iterate over the structures on the given set of labels.
 
         EXAMPLES::
 
@@ -1042,7 +1187,7 @@ class SetSpecies(LazySpeciesElement):
             sage: list(E.structures([1,2,3]))
             [(1, 2, 3)]
         """
-        labels = _label_sets(self.parent()._arity, labels)
+        labels = _label_sets(self.parent()._arity, [labels])
         yield labels[0]
 
 
@@ -1050,12 +1195,20 @@ class CycleSpecies(LazySpeciesElement):
     def __init__(self, parent):
         r"""
         Initialize the species of cycles.
+
+        TESTS::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: P.<X> = LazySpecies(QQ)
+            sage: C = P.Cycles()
+            sage: TestSuite(C).run(skip=['_test_category', '_test_pickling'])
         """
         S = parent(lambda n: CyclicPermutationGroup(n) if n else 0)
         super().__init__(parent, S._coeff_stream)
 
-    def structures(self, *labels):
-        """
+    def structures(self, labels):
+        r"""
+        Iterate over the structures on the given set of labels.
 
         EXAMPLES::
 
@@ -1065,28 +1218,47 @@ class CycleSpecies(LazySpeciesElement):
             sage: list(C.structures([]))
             []
             sage: list(C.structures([1]))
-            [[1]]
+            [(1,)]
             sage: list(C.structures([1,2]))
-            [[1, 2]]
+            [(1, 2)]
             sage: list(C.structures([1,2,3]))
-            [[1, 2, 3], [1, 3, 2]]
+            [(1, 2, 3), (1, 3, 2)]
         """
-        labels = _label_sets(self.parent()._arity, labels)
-        yield from CyclicPermutations(labels[0])
+        labels = _label_sets(self.parent()._arity, [labels])
+        # TODO: CyclicPermutations should yield hashable objects, not lists
+        yield from map(tuple, CyclicPermutations(labels[0]))
 
 
 class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElement):
     def __init__(self, parent):
         r"""
         Initialize the species of simple graphs.
+
+        TESTS::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: P.<X> = LazySpecies(QQ)
+            sage: G = P.Graphs()
+            sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
         """
         P = parent._laurent_poly_ring
         S = parent(lambda n: sum(P(G.automorphism_group()) for G in graphs(n)))
         super().__init__(parent, S._coeff_stream)
 
     def isotypes(self, labels):
+        r"""
+        Iterate over the isotypes on the given list of sizes.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: P.<X> = LazySpecies(QQ)
+            sage: G = P.Graphs()
+            sage: list(G.isotypes(2))
+            [Graph on 2 vertices, Graph on 2 vertices]
+        """
         if labels in ZZ:
-            yield from graphs(labels)
+            yield from (G.canonical_label().copy(immutable=True) for G in graphs(labels))
 
     def generating_series(self):
         r"""
@@ -1143,24 +1315,66 @@ class SetPartitionSpecies(LazySpeciesElement):
     def __init__(self, parent):
         r"""
         Initialize the species of set partitions.
+
+        TESTS::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: P.<X> = LazySpecies(QQ)
+            sage: p = P.SetPartitions()
+            sage: TestSuite(p).run(skip=['_test_category', '_test_pickling'])
         """
         E = parent.Sets()
         E1 = parent.Sets().restrict(1)
         super().__init__(parent, E(E1)._coeff_stream)
 
     def isotypes(self, labels):
+        r"""
+        Iterate over the isotypes on the given list of sizes.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: P.<X> = LazySpecies(QQ)
+            sage: p = P.SetPartitions()
+            sage: list(p.isotypes(3))
+            [[3], [2, 1], [1, 1, 1]]
+        """
         if labels in ZZ:
             yield from Partitions(labels)
 
     def structures(self, labels):
-        labels = _label_sets(self.parent()._arity, labels)
-        yield from SetPartitions(labels)
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(ZZ, "X")
+            sage: P = L.SetPartitions()
+            sage: list(P.structures([]))
+            [{}]
+            sage: list(P.structures([1]))
+            [{{1}}]
+            sage: list(P.structures([1,2]))
+            [{{1, 2}}, {{1}, {2}}]
+            sage: list(P.structures([1,2,3]))
+            [{{1, 2, 3}}, {{1, 2}, {3}}, {{1, 3}, {2}}, {{1}, {2, 3}}, {{1}, {2}, {3}}]
+        """
+        labels = _label_sets(self.parent()._arity, [labels])
+        yield from SetPartitions(labels[0])
 
 
 class RestrictedSpeciesElement(LazySpeciesElement):
     def __init__(self, F, min_degree, max_degree):
         r"""
         Initialize the restriction of a species to the given degrees.
+
+        TESTS::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: P.<X> = LazySpecies(QQ)
+            sage: G3 = P.Graphs().restrict(3, 3)
+            sage: TestSuite(G3).run(skip=['_test_category', '_test_pickling'])
         """
         self._F = F
         self._min = min_degree
@@ -1184,13 +1398,37 @@ class RestrictedSpeciesElement(LazySpeciesElement):
 
         super().__init__(F.parent(), coeff_stream)
 
-    def isotypes(self, labels):
-        if (labels in ZZ
-            and (self._min is None or self._min <= labels)
-            and (self._max is None or labels <= self._max)):
-            yield from self._F.isotypes(labels)
+    def isotypes(self, *shape):
+        r"""
+        Iterate over the isotypes on the given list of sizes.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: P.<X> = LazySpecies(QQ)
+            sage: p = P.SetPartitions().restrict(2, 2)
+            sage: list(p.isotypes(3))
+            []
+        """
+        n = sum(shape)
+        if ((self._min is None or self._min <= n)
+            and (self._max is None or n <= self._max)):
+            yield from self._F.isotypes(*shape)
 
     def structures(self, *labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(ZZ, "X")
+            sage: F = L.SetPartitions().restrict(3)
+            sage: list(F.structures([1]))
+            []
+            sage: list(F.structures([1,2,3]))
+            [{{1, 2, 3}}, {{1, 2}, {3}}, {{1, 3}, {2}}, {{1}, {2, 3}}, {{1}, {2}, {3}}]
+        """
         n = sum(map(len, labels))
         if ((self._min is None or self._min <= n)
             and (self._max is None or n <= self._max)):
