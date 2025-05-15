@@ -519,7 +519,7 @@ class DynamicPlanarMapShow:
         NOTE:
             Press Enter to pause or resume the computation, Space to compute a single frame if the animation is currently paused, and Q/Esc to quit.
             If you encounter the warning, ``UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown``, install PyQt6 using
-                ``sage -pip install PyQt6`` (this warning can be displayed when calling ``dyn_show.start()``, hence the ``...`` in the example).
+            ``sage -pip install PyQt6`` (this warning can be displayed when calling ``dyn_show.start()``, hence the ``...`` in the example).
         """
         # initialize the matplotlib figure
         if show_halfedges == "auto":
