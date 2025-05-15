@@ -1,6 +1,9 @@
+"""Define the internal CheckValid function."""
+
+from typing import Type
 
 
-def CheckValid(cls):
+def CheckValid(cls: Type) -> Type:
     """
     INPUT:
         -``cls`` ; a class

@@ -4,6 +4,8 @@ from sage.graphs.maps.map_decorator import CheckValid
 
 @CheckValid
 class TopologicalDemiEdge():
+    """This class is a an abstraction meant to represent the demi edge of a map in a more user-friendly way than simple indexes. It is more related to the "topological structure" of the map than the raw index."""
+
     def __init__(self, lmap: "LabelledMap", index: int):
         r"""
         This class is a an abstraction meant to represent the demi edge of a map in a more user-friendly way

@@ -1,4 +1,5 @@
-# This file contain some custom error used in our project
+"""Define some custom errors used in our library."""
+
 
 class InvalidMapPermutationArgumentError(Exception):
     """

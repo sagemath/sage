@@ -5,7 +5,7 @@ from sage.graphs.maps.custom_swap import CustomSwap
 from sage.graphs.maps.map_permutation import MapPermutation
 from sage.graphs.maps.rooted_map import RootedMap
 from sage.graphs.maps.primitive_mutable_labelled_map import PrimitiveMutableLabelledMap
-
+from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
 
 class MapGenerator:
     """
@@ -30,7 +30,7 @@ class MapGenerator:
         # during debugging to False
         self._production = True
 
-    def cube(self):
+    def cube(self) -> RootedMap:
         """
         OUTPUT:
         Returns the standard cube map.
@@ -62,7 +62,7 @@ class MapGenerator:
             trust=self._production,
         )
 
-    def complete_map(self, n):
+    def complete_map(self, n: int) -> RootedMap:
         """
 
         INPUT:
@@ -94,7 +94,7 @@ class MapGenerator:
             m = m.force_planar()
         return m
 
-    def getRandomDyckPath(self, n, seed=None):
+    def getRandomDyckPath(self, n: int, seed: int | None = None) -> list[int]:
         """
         Returns a random Dyck path of size n (uniform random generation).
 
@@ -141,7 +141,7 @@ class MapGenerator:
         Dyckfinal = dyck[posmin:] + dyck[:posmin]
         return Dyckfinal[:-1]
 
-    def getRandomPermutation(self, n, seed=None):
+    def getRandomPermutation(self, n: int, seed: int | None = None) -> MapPermutation:
         """
         INPUT:
             - ``n`` -- int ; The size of the permutation.
@@ -167,7 +167,7 @@ class MapGenerator:
         rng.shuffle(lst)
         return MapPermutation(lst)
 
-    def isValidDyckPath(self, dyckPathCandidate):
+    def isValidDyckPath(self, dyckPathCandidate: list[int]) -> bool:
         """
         Checks whether the given Dyck path candidate is valid.
 
@@ -204,7 +204,7 @@ class MapGenerator:
                 return False
         return S == 0
 
-    def getTreeFromDyckPath(self, dyckPath, trust=False):
+    def getTreeFromDyckPath(self, dyckPath: list[int], trust=False) -> RootedMap:
         """
         Given a Dyck path, this function returns the associated rooted tree.
 
@@ -258,14 +258,14 @@ class MapGenerator:
             trust=self._production,
         )
 
-    def getRandomLabellingTree(self, tree, seed=None):
+    def getRandomLabellingTree(self, tree: RootedMap, seed: int | None = None) -> list[int]:
         """
         Generates a uniformly random correct labelling of a tree.
         A function on the nodes of the tree considered up to translation
         such that if u and v are adjacent f(u) and f(v) differs by at most one
 
         INPUT:
-            - ``tree`` - int ; The input rooted tree.
+            - ``tree`` - RootedMap ; The input rooted tree.
             - ``seed`` - int | None ;  A random seed; if None is used, no random seed will be set.
 
         OUTPUT:
@@ -328,7 +328,7 @@ class MapGenerator:
 
         return labelling
 
-    def getRandomTree(self, numberOfEdge, seed=None):
+    def getRandomTree(self, numberOfEdge: int, seed: int | None = None) -> RootedMap:
         """
         Generates a uniformly random rooted tree.
 
@@ -351,7 +351,7 @@ class MapGenerator:
             self.getRandomDyckPath(numberOfEdge, seed=seed), trust=self._production
         )
 
-    def getRandomLabelledTree(self, numberOfEdge, seed=None):
+    def getRandomLabelledTree(self, numberOfEdge: int, seed: int | None = None) -> tuple[RootedMap, list[int]]:
         """
         Generates a uniformly random rooted tree along with a labelling.
 
@@ -396,7 +396,7 @@ class MapGenerator:
         tree = self.getRandomTree(numberOfEdge, seed=seed)
         return tree, self.getRandomLabellingTree(tree, seed=seed)
 
-    def getRandomPlanarQuadrangulation(self, numberOfFace, seed=None):
+    def getRandomPlanarQuadrangulation(self, numberOfFace: int, seed: int | None = None) -> RootedMap:
         """
         Generates a uniformly random rooted planar quadrangulation with a
         specified number of faces.
@@ -439,7 +439,7 @@ class MapGenerator:
             return quadB
         return quadA
 
-    def getRandomPlanarMap(self, numberOfEdge, seed=None):
+    def getRandomPlanarMap(self, numberOfEdge: int, seed: int | None = None) -> RootedMap:
         """
         Generates a uniformly random rooted planar map with a specified
         number of edges.
@@ -464,7 +464,7 @@ class MapGenerator:
 
         return quad.inverseQuadrangulation()
 
-    def generateRandomBaseTwoLeafBitString(self, n, seed=None):
+    def generateRandomBaseTwoLeafBitString(self, n: int, seed: int | None = None) -> list[int]:
         """
         INPUT:
 
@@ -496,7 +496,7 @@ class MapGenerator:
             bits[pos] = 1
         return bits
 
-    def checkPrefixCondition(self, bits):
+    def checkPrefixCondition(self, bits: list[int]) -> bool:
         """
         INPUT:
             - ``bits`` -- List[int] ; a list containing 0 and 1
@@ -525,7 +525,7 @@ class MapGenerator:
                 return False
         return True
 
-    def cyclicShift(self, bits, shift):
+    def cyclicShift(self, bits: list[int], shift: int) -> list[int]:
         """
         INPUT:
             -``bits`` -- List[int]
@@ -547,7 +547,7 @@ class MapGenerator:
         """
         return bits[shift:] + bits[:shift]
 
-    def getRandomTwoLeafBitString(self, n, seed=None):
+    def getRandomTwoLeafBitString(self, n: int, seed: int | None = None) -> list[int]:
         """
         INPUT:
             - ``n`` -- int; ``n``>=1
@@ -584,7 +584,7 @@ class MapGenerator:
         # at each iteration i, we just have to check that the value of the minimum, ie. the first element of the deque - s, is equal to -2
         # and that this minimum is reached at the end of the deque
 
-        def add(j, v):
+        def add(j: int, v: int) -> None:
             while q and q[-1][1] > v:
                 q.pop()
             q.append((j, v))
@@ -616,7 +616,7 @@ class MapGenerator:
 
         return self.cyclicShift(b, rng.choice(valid_shifts))
 
-    def getRandomRootedTwoLeafTree(self, n, seed=None):
+    def getRandomRootedTwoLeafTree(self, n: int, seed: int | None = None) -> RootedMap:
         """
         INPUT:
             - ``n`` -- int; ``n``>=1
@@ -635,7 +635,7 @@ class MapGenerator:
 
         return self.rootedTwoLeafTreeFromBit(b)
 
-    def rootedTwoLeafTreeFromBit(self, b):
+    def rootedTwoLeafTreeFromBit(self, b: list[int]) -> RootedMap:
         """
         INPUT:
             - ``b`` -- LabelledMap; a two leaf bit string
@@ -728,7 +728,7 @@ class MapGenerator:
 
         return tree
 
-    def randomTreeToTriangulation(self, tree, seed=None):
+    def randomTreeToTriangulation(self, tree: RootedMap, seed: int | None = None) -> RootedMap:
         """
         INPUT:
             - ``tree`` -- LabelledMap ; A two leaf tree rooted tree rooted at a leaf
@@ -747,16 +747,16 @@ class MapGenerator:
         NOTE:
             O(n) where n is the size of the tree
         """
-        def isOnInnerEdge(Z):
+        def isOnInnerEdge(Z: TopologicalDemiEdge) -> bool:
             return Z.n != Z and (Z.c).n != Z.c
 
-        def isOnLeafEdge(Z):
+        def isOnLeafEdge(Z: TopologicalDemiEdge) -> bool:
             return not isOnInnerEdge(Z)
 
-        def extremeOnEdgeAfter(Z):
+        def extremeOnEdgeAfter(Z: TopologicalDemiEdge) -> bool:
             return ((Z.c).n).c
 
-        def isSpecial(Z):
+        def isSpecial(Z: TopologicalDemiEdge) -> bool:
             return isOnLeafEdge(extremeOnEdgeAfter(Z)) and isOnLeafEdge(Z)
 
         triangulation = PrimitiveMutableLabelledMap(lmap=tree)
@@ -800,13 +800,13 @@ class MapGenerator:
         A, B = specialList[0]
         C, D = specialList[1]
 
-        def closeOp(U, V):
+        def closeOp(U: TopologicalDemiEdge, V: TopologicalDemiEdge) -> TopologicalDemiEdge:
             W = U.addEdgeAfter()
             W.link(V)[0].contract()
             W.contract()
             return V
 
-        def enclose(A, D):
+        def enclose(A: TopologicalDemiEdge, D: TopologicalDemiEdge) -> None:
             V = A.c.pf
             U = A
             while True:
@@ -834,7 +834,7 @@ class MapGenerator:
         triangulation = triangulation.relabel(tau)
         return RootedMap(triangulation)
 
-    def getRandomTriangulation(self, n, seed=None):
+    def getRandomTriangulation(self, n: int, seed: int | None = None) -> RootedMap:
         """
         INPUT:
             - ``n`` --  int ; ``n`` >=1

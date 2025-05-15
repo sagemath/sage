@@ -1,3 +1,5 @@
+"""Define the DynamicPlanarMapShow class, which allows pretty visualization of planar maps."""
+
 import math
 
 # we use python's float type and math functions to avoid using the more accurate but much slower sage types
@@ -9,98 +11,17 @@ from typing import Any
 
 import matplotlib.artist
 import matplotlib.gridspec
+import matplotlib.backend_bases
 from matplotlib.animation import FuncAnimation
+import matplotlib.pyplot
 
 from sage.all import Graph, Permutation
 from sage.graphs.maps.labelled_map import LabelledMap, nx, plt
 
 
-def check_segments_intersecting(p1, q1, p2, q2) -> bool:
-    r"""
-    Return True if the segment between the points [p1, q1] intersects the segment between points [p2, q2], False otherwise.
-
-    INPUT:
-    - ``p1`` -- Vector2D;
-    - ``q1`` -- Vector2D;
-    - ``p2`` -- Vector2D;
-    - ``q2`` -- Vector2D;
-
-    EXAMPLES::
-        sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D, check_segments_intersecting
-        sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(1, 3), Vector2D(3, -2))
-        True
-        sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(1, 3), Vector2D(3, 10))
-        False
-        sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(2,3), Vector2D(0,0))
-        True
-    """
-
-    def onSegment(p, q, r):
-        "Check if q lies on [p, r] assuming p,q,r are colinear"
-        return q.x <= max(p.x, r.x) and q.x >= min(
-            p.x, r.x) and q.y <= max(p.y, r.y) and q.y >= min(p.y, r.y)
-
-    def orient(p, q, r):
-        "Returns the orientation of (p, q, r): 0 if colinear, 1 if clockwise, 2 if counterclockwise"
-
-        val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y)
-
-        if val == 0:
-            return 0
-        elif val > 0:
-            return 1
-        return 2
-
-    o1, o2, o3, o4 = orient(p1, q1, p2), orient(
-        p1, q1, q2), orient(p2, q2, p1), orient(p2, q2, q1)
-
-    return (
-        (o1 != o2 and o3 != o4) or
-        (o1 == 0 and onSegment(p1, p2, q1)) or
-        (o2 == 0 and onSegment(p1, q2, q1)) or
-        (o3 == 0 and onSegment(p2, p1, q2)) or
-        (o4 == 0 and onSegment(p2, q1, q2)))
-
-
-def check_polygon_intersecting(segments):
-    r"""
-    Return True if the polygon defined by the given segments (list of pairs Vector2D) intersects itself (except in its vertices).
-
-    INPUT:
-    - ``segments`` -- list[(Vector2D, Vector2D)];
-
-    EXAMPLES::
-
-        sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D, check_polygon_intersecting
-        sage: p1, p2, p3, p4 = Vector2D(0,0), Vector2D(5,0), Vector2D(5,5), Vector2D(0,5)
-        sage: check_polygon_intersecting([(p1,p2),(p2,p3),(p3,p1)])
-        False
-        sage: check_polygon_intersecting([(p1,p2),(p2,p3),(p3,p4),(p4,p1)])
-        False
-        sage: check_polygon_intersecting([(p1,p2),(p2,p4),(p4,p3),(p3,p1)])
-        True
-
-
-    NOTE:
-        Complexity is O(n^2), where n is the number of segments; this could be improved to O(n log n) in a future implementation.
-        Note that this function is only supposed to be used by DynamicPlanarMapShow.
-    """
-
-    # TODO: do this on O(n log n) instead of O(N^2)!
-
-    for (p1, q1) in segments:
-        for (p2, q2) in segments:
-            # this case is already handled by the embedding check
-            if p1 in (p2, q2) or q1 in (p2, q2):
-                continue
-
-            if check_segments_intersecting(p1, q1, p2, q2):
-                return True
-
-    return False
-
-
 class Vector2D:
+    """Simple internal Vector2D class."""
+
     def __init__(self, x=0.0, y=0.0):
         r"""
         Initialize a 2D Vector with the given coordinates.
@@ -234,42 +155,140 @@ class Vector2D:
         return a
 
     def __add__(self, other: "Vector2D") -> "Vector2D":
+        """Return self + other."""
         return Vector2D(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other: "Vector2D") -> "Vector2D":
+        """Return self - other."""
         return Vector2D(self.x - other.x, self.y - other.y)
 
     def __neg__(self) -> "Vector2D":
+        """Return -self."""
         return Vector2D(-self.x, -self.y)
 
     def __mul__(self, sc: float) -> "Vector2D":
+        """Return self * sc."""
         return Vector2D(self.x * sc, self.y * sc)
 
     def __rmul__(self, sc: float) -> "Vector2D":
+        """Return self * sc."""
         return Vector2D(self.x * sc, self.y * sc)
 
     def __truediv__(self, sc: float) -> "Vector2D":
+        """Return self / sc."""
         return Vector2D(self.x / sc, self.y / sc)
 
     def __str__(self) -> str:
+        """Return a string representation of self."""
         return "(" + str(self.x) + "; " + str(self.y) + ")"
 
     def __repr__(self) -> str:
+        """Return a string representation of self."""
         return "Vector2D" + str(self)
 
     def __eq__(self, other: Any) -> bool:
+        """Return self == other."""
         if isinstance(other, Vector2D):
             return self.x == other.x and self.y == other.y
         return False
 
     def __lt__(self, other: "Vector2D") -> bool:        # lexicographical order
+        """Return self <= other (in lexicographical order)."""
         return self.x < other.x or (self.x == other.x and self.y < other.y)
 
     def __hash__(self) -> int:
+        """Return hash(self)."""
         return hash((self.x, self.y))
 
 
+def check_segments_intersecting(p1: Vector2D, q1: Vector2D, p2: Vector2D, q2: Vector2D) -> bool:
+    r"""
+    Return True if the segment between the points [p1, q1] intersects the segment between points [p2, q2], False otherwise.
+
+    INPUT:
+    - ``p1`` -- Vector2D;
+    - ``q1`` -- Vector2D;
+    - ``p2`` -- Vector2D;
+    - ``q2`` -- Vector2D;
+
+    EXAMPLES::
+        sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D, check_segments_intersecting
+        sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(1, 3), Vector2D(3, -2))
+        True
+        sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(1, 3), Vector2D(3, 10))
+        False
+        sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(2,3), Vector2D(0,0))
+        True
+    """
+
+    def onSegment(p: Vector2D, q: Vector2D, r: Vector2D) -> bool:
+        "Check if q lies on [p, r] assuming p,q,r are colinear"
+        return q.x <= max(p.x, r.x) and q.x >= min(
+            p.x, r.x) and q.y <= max(p.y, r.y) and q.y >= min(p.y, r.y)
+
+    def orient(p: Vector2D, q: Vector2D, r: Vector2D) -> int:
+        "Returns the orientation of (p, q, r): 0 if colinear, 1 if clockwise, 2 if counterclockwise"
+
+        val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y)
+
+        if val == 0:
+            return 0
+        elif val > 0:
+            return 1
+        return 2
+
+    o1, o2, o3, o4 = orient(p1, q1, p2), orient(
+        p1, q1, q2), orient(p2, q2, p1), orient(p2, q2, q1)
+
+    return (
+        (o1 != o2 and o3 != o4) or
+        (o1 == 0 and onSegment(p1, p2, q1)) or
+        (o2 == 0 and onSegment(p1, q2, q1)) or
+        (o3 == 0 and onSegment(p2, p1, q2)) or
+        (o4 == 0 and onSegment(p2, q1, q2)))
+
+
+def check_polygon_intersecting(segments: list[tuple[Vector2D, Vector2D]]) -> bool:
+    r"""
+    Return True if the polygon defined by the given segments (list of pairs Vector2D) intersects itself (except in its vertices).
+
+    INPUT:
+    - ``segments`` -- list[(Vector2D, Vector2D)];
+
+    EXAMPLES::
+
+        sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D, check_polygon_intersecting
+        sage: p1, p2, p3, p4 = Vector2D(0,0), Vector2D(5,0), Vector2D(5,5), Vector2D(0,5)
+        sage: check_polygon_intersecting([(p1,p2),(p2,p3),(p3,p1)])
+        False
+        sage: check_polygon_intersecting([(p1,p2),(p2,p3),(p3,p4),(p4,p1)])
+        False
+        sage: check_polygon_intersecting([(p1,p2),(p2,p4),(p4,p3),(p3,p1)])
+        True
+
+
+    NOTE:
+        Complexity is O(n^2), where n is the number of segments; this could be improved to O(n log n) in a future implementation.
+        Note that this function is only supposed to be used by DynamicPlanarMapShow.
+    """
+
+    # TODO: do this on O(n log n) instead of O(N^2)!
+
+    for (p1, q1) in segments:
+        for (p2, q2) in segments:
+            # this case is already handled by the embedding check
+            if p1 in (p2, q2) or q1 in (p2, q2):
+                continue
+
+            if check_segments_intersecting(p1, q1, p2, q2):
+                return True
+
+    return False
+
+
 class DynamicPlanarMapShow:
+    """Allows pretty visualization of planar maps."""
+
     # force expressions are heavily inspired by planarmap.js
     # (https://github.com/tgbudd/planarmap.js)
 
@@ -369,7 +388,7 @@ class DynamicPlanarMapShow:
         sigma = map.sigma
         m = map.m
 
-        def minmax(i, j):
+        def minmax(i: int, j: int) -> tuple[int, int]:
             "Returns (min(i,j), max(i,j)). Used to ensure edges always go from lowest to highest vertex id."""
             return min(i, j), max(i, j)
 
@@ -384,17 +403,17 @@ class DynamicPlanarMapShow:
         self.edge_labels_tail = {}  # (i, j): half-edge from j to i
         self.edge_labels_middle = {}  # Used for loops & multiedges
 
-        def rem(i):
+        def rem(i: int) -> None:
             "Remove every occurrence of the value i in edge_labels_head and edge_labels_tail."
             for d in (self.edge_labels_head, self.edge_labels_tail):
                 for (key, val) in list(d.items()):
                     if val == i:
                         del d[key]
 
-        def break_down(i, break_down_num):
+        def break_down(i: int, break_down_num: int) -> None:
             """Add a new vertex v, and break down the edge whose half-edges are i & alpha(i) into ``break_down_num``
                 edges (i, 2*m+1), (2*m+2, 2*m+3), .., (2*m+2*(break_down_num-1), alpha(i))."""
-            nonlocal alpha, sigma, corres, vertices, m
+            nonlocal alpha, sigma, m
 
             # print ("breaking down", i)
 
@@ -426,7 +445,7 @@ class DynamicPlanarMapShow:
                 vertices.append((2 * m + 1, 2 * m + 2))
                 m += 1
 
-        def break_loop(i):
+        def break_loop(i: int):
             "Breaks the loop starting from i."
             break_down(i, max(self.break_down_num, 3))
 
@@ -500,7 +519,7 @@ class DynamicPlanarMapShow:
 
         self.is_planar = map.genus() == 0
 
-    def start(self, show_halfedges: bool | str = "auto", plt_show=True, frame_by_frame=False):
+    def start(self, show_halfedges: bool | str = "auto", plt_show=True, frame_by_frame=False) -> None:
         """
         Dynamically show the map in a new matplotlib figure.
 
@@ -699,7 +718,7 @@ class DynamicPlanarMapShow:
                     self.forces_times[force.__name__] * 1000 / self.frame))
             print()
 
-    def onKey(self, event):
+    def onKey(self, event: matplotlib.backend_bases.KeyEvent) -> None:
         r"""
         Callback function called by matplotlib on key presses.
         """
@@ -1006,7 +1025,7 @@ class DynamicPlanarMapShow:
                 self.check_pos_correct_time += float(end - begin)  # type: ignore
                 # error was '"begin" is possibly unbound', which cannot be the case here
 
-    def update_fig(self, frame) -> tuple[matplotlib.artist.Artist]:
+    def update_fig(self, frame) -> tuple[matplotlib.artist.Artist, ...]:
         r"""
         Update the matplotlib figure with the new positions, and call ``self.tick()`` if the animation is currently running.
         """

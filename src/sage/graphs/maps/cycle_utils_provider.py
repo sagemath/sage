@@ -1,19 +1,22 @@
-from sage.graphs.maps.splay_tree import SplayTree
+"""Define the internal CycleUtilsProvider class."""
+
+from sage.graphs.maps.splay_tree import SplayTree, SplayNode
 
 
 class CycleUtilsProvider:
     """
     This class is an abstraction of some utils used by RotatingPermutation.
-    It is mainly use for abstracting some operations.
+
+    It is mainly used to abstract some operations.
     """
 
-    def __init__(self, cycles):
+    def __init__(self, cycles: list[tuple[int, ...]]):
         r"""
 
         Init the CycleUtilsProvider.
 
         INPUT:
-        - ``cycles`` -- List[Tuples[int]] ; a list of cycles, each cycle is a list of index.
+        - ``cycles`` -- list[tuple[int, ...]] ; a list of cycles, each cycle is a list of index.
 
         EXAMPLES::
 
@@ -24,7 +27,7 @@ class CycleUtilsProvider:
             O(nlog(n)) where n is the sum of size of the cycles
         """
         # It should contain only non fixed point index as key
-        self.nodeMap = {}
+        self.nodeMap: dict[int, SplayNode] = {}
 
         # For every cycle we will create a splay tree for it
         # Note that the value contained in the tree must be integer
@@ -34,7 +37,7 @@ class CycleUtilsProvider:
             if len(c) == 1:
                 continue
             # Else create a splay for it
-            splayTree = SplayTree(range(len(c)))
+            splayTree = SplayTree(list(range(len(c))))
             for i in range(len(c)):
                 e = c[i]
                 self.nodeMap[e] = splayTree.getNode(i)
@@ -43,13 +46,12 @@ class CycleUtilsProvider:
     # Return the number of element in the same cycle as index
     # O(log(n))
 
-    def numberInCycle(self, index):
+    def numberInCycle(self, index: int) -> int:
         """
-
-        The number of element in the same cycle as index.
+        Return the number of elements in the same cycle as index.
 
         INPUT:
-            - ``index`` -- int
+        - ``index`` -- int
 
         EXAMPLES::
 
@@ -68,10 +70,9 @@ class CycleUtilsProvider:
     # Return whether i and j are in the same cycle
     # O(log(n))
 
-    def sameCycle(self, i, j):
+    def sameCycle(self, i: int, j: int) -> bool:
         """
-
-        A boolean indicating if i and j are on the same cycle.
+        Return a boolean indicating  whether if i and j are on the same cycle.
 
         INPUT:
             - ``i`` -- int
@@ -99,13 +100,13 @@ class CycleUtilsProvider:
     # If otherIndex is a fixed node it will add it after index
     # Otherwise it will raise an Error
     # O(log(n))
-    def addAfter(self, index, otherIndex):
+    def addAfter(self, index: int, otherIndex: int) -> None:
         """
         Add otherIndex in the cycle of index after index.
 
         INPUT:
-            - ``index`` -- int ;  ``otherIndex`` !=  ``index``
-            - ``otherIndex`` -- int ;  ``otherIndex`` is a fixed point
+        - ``index`` -- int ;  ``otherIndex`` !=  ``index``
+        - ``otherIndex`` -- int ;  ``otherIndex`` is a fixed point
 
         EXAMPLES::
 
@@ -145,13 +146,12 @@ class CycleUtilsProvider:
 
     # Return a boolean indicating if two index in  listIndexes
     # are in the sameCycle efficiently (here O( len(listIndexes)log(n)))
-    def checkTwoInTheSameCycle(self, listIndexes):
+    def checkTwoInTheSameCycle(self, listIndexes: list[int]) -> bool:
         """
-
-        A boolean indicating if there are two indexes in listIndexes in the same cycle.
+        Return a boolean indicating whether there are two indexes in the given list in the same cycle.
 
         INPUT:
-            - listIndexes -- List[int]
+        - listIndexes -- list[int]
 
         EXAMPLES::
 
@@ -170,7 +170,7 @@ class CycleUtilsProvider:
             if self.isFixedPoint(e):
                 try:
                     mapIndexes.remove(e)
-                except Exception as _:
+                except Exception:
                     pass
 
         splayTreeMap = set()
@@ -188,13 +188,13 @@ class CycleUtilsProvider:
     # If otherIndex is a fixed node it will add  it before index
     # O(log(n))
 
-    def addBefore(self, index, otherIndex):
+    def addBefore(self, index: int, otherIndex: int) -> None:
         """
-        Add otherIndex in the cycle of index before index
+        Add otherIndex in the cycle of index before index.
 
         INPUT:
-            - ``index`` -- int ; ``otherIndex`` != ``index``
-            - ``otherIndex`` -- int ;  ``otherIndex`` is a fixed point
+        - ``index`` -- int ; ``otherIndex`` != ``index``
+        - ``otherIndex`` -- int ;  ``otherIndex`` is a fixed point
 
         EXAMPLES::
 
@@ -207,7 +207,6 @@ class CycleUtilsProvider:
         NOTE:
             O(log(n))
         """
-
         assert index != otherIndex
         if not self.isFixedPoint(otherIndex):
             raise ValueError(f"{otherIndex} isn't a fixed point ")
@@ -227,11 +226,9 @@ class CycleUtilsProvider:
     # Hence it can be dangerous to access the node map of an index when it is a fixed point
     # This will create a node if it doesn't exist for index and the corresponding splaytree
     # Useful during operations to not have to have a different logic for fixed point that won't be anymore after the operations
-    def _safeIndex(self, index):
+    def _safeIndex(self, index: int) -> None:
         """
-        Used internally,because we don't have node for fixed point index , it may create a different logic for them
-        this will temporarily create a node during this operations , the use must be careful that after having used
-        this temporary node , that it is deleted from node map or isn't anymore a fixed point.
+        Create the node if it doesn't exist. Internal method, not intended to be called by the user.
 
         EXAMPLES::
 
@@ -241,6 +238,9 @@ class CycleUtilsProvider:
 
         NOTE:
             O(log(m))
+            Used internally,because we don't have node for fixed point index , it may create a different logic for them
+            this will temporarily create a node during this operations , the user must be careful that after having used
+            this temporary node , that it is deleted from node map or isn't anymore a fixed point.
         """
         if not self.isFixedPoint(index):
             return
@@ -252,14 +252,13 @@ class CycleUtilsProvider:
     # Def swapLabel of index and otherIndex but keep their topology
     # OK
     # O(log(n))
-    def swapIndex(self, index, otherIndex):
+    def swapIndex(self, index: int, otherIndex: int) -> None:
         """
-        This will only swap the label of the node associated to index and otherIndex while keeping
-        a relabelling of some sort.
+        Swap the label of the node associated to index and otherIndex while keeping a relabelling of some sort.
 
         INPUT:
-            - ``index`` -- int
-            - ``otherIndex`` -- int
+        - ``index`` -- int
+        - ``otherIndex`` -- int
 
         EXAMPLES::
 
@@ -295,10 +294,9 @@ class CycleUtilsProvider:
 
     # OK
     # O(sizeOfCycle)
-    def getCycleList(self, index):
+    def getCycleList(self, index: int) -> list[int]:
         """
-
-        A list of all index in the cycle of index.
+        Return a list of all the indexes in the cycle of index.
 
         INPUT:
             - ``index`` -- int
@@ -321,9 +319,9 @@ class CycleUtilsProvider:
     # Detach the node if it isn't a fixed point and make it a fixed point
     # O(log(n))
     # OK
-    def detach(self, index):
+    def detach(self, index: int) -> None:
         """
-        This will make index a fixed point.
+        Make index a fixed point.
 
         INPUT:
             - ``index`` -- int
@@ -362,13 +360,12 @@ class CycleUtilsProvider:
 
     # O(1)
     # OK
-    def isFixedPoint(self, index):
+    def isFixedPoint(self, index: int) -> bool:
         """
-
-        A boolean indicating if index is a fixed point or not.
+        Return a boolean indicating if index is a fixed point or not.
 
         INPUT:
-            - ``index`` -- int
+        - ``index`` -- int
 
         EXAMPLES::
 
@@ -391,10 +388,9 @@ class CycleUtilsProvider:
 
     # OK
     # O(log(n))
-    def getValue(self, index):
+    def getValue(self, index: int) -> int:
         """
-        This will return the key associated to index in the splay tree corresponding to his cycle,
-        while making sure that the node associated to index is the root of the tree
+        Return the key associated to index in the splay tree corresponding to his cycle, while making sure that the node associated to index is the root of the tree.
 
         INPUT:
             - ``index`` -- int ;  not a fixed point
@@ -417,7 +413,7 @@ class CycleUtilsProvider:
 
     # OK
     # O(log(n))
-    def getSplayTree(self, index):
+    def getSplayTree(self, index: int) -> SplayTree | None:
         """
         Returns the splay tree associated to index while making sure that the node associated to index become the root
         index must not be a fixed point otherwise an error will be raised.
@@ -443,9 +439,9 @@ class CycleUtilsProvider:
     # OK
     # O(log(n))
 
-    def makeMin(self, index):
+    def makeMin(self, index: int) -> None:
         """
-        This will make index the max and the root of the splay tree, while keeping the same cycle topology
+        Make index the min and the root of the splay tree, while keeping the same cycle topology.
 
         INPUT:
             - ``index`` -- int
@@ -479,9 +475,9 @@ class CycleUtilsProvider:
     # OK
     # O(log(n))
 
-    def makeMax(self, index):
+    def makeMax(self, index: int) -> None:
         """
-        This will make index the max and the root of the splay tree, while keeping the same cycle topology
+        Make index the max and the root of the splay tree, while keeping the same cycle topology.
 
         INPUT:
             - ``index`` -- int
@@ -513,14 +509,13 @@ class CycleUtilsProvider:
 
     # OK
     # O(log(n))
-    def merge(self, beforeIndex, afterIndex):
+    def merge(self, beforeIndex: int, afterIndex: int) -> None:
         """
-        beforeIndex and afterIndex must be on different cycle , it will merge both cycle in the following manner C = ...->beforeIndex and D = afterIndex-> ...
-        it will create the following ...->beforeIndex->afterIndex-> ....
+        Merge the cycles of beforeIndex and afterIndex in the following manner: from C = ...->beforeIndex and D = afterIndex-> ..., it will change the cycles to ...->beforeIndex->afterIndex-> ....
 
         INPUT:
-            - ``beforeIndex`` -- int ; not on the same cycle as afterIndex , otherwise an error will be raised
-            - ``afterIndex`` -- int
+        - ``beforeIndex`` -- int ; not on the same cycle as afterIndex , otherwise an error will be raised
+        - ``afterIndex`` -- int
 
         EXAMPLES::
 
@@ -551,7 +546,7 @@ class CycleUtilsProvider:
 
     # OK
     # O(log(n))
-    def cut(self, startIndex, endIndex):
+    def cut(self, startIndex: int, endIndex: int) -> None:
         """
         startIndex and endIndex must be on the same cycle , it will cut their cycle into two part one startIndex...endIndex ,
         and the rest.

@@ -297,7 +297,7 @@ class MapPermutation:
         """
         return MapPermutation(list(self._rtab))
 
-    def __call__(self, i):
+    def __call__(self, i) -> int:
         """
         OUTPUT:
 

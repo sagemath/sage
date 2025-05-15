@@ -129,9 +129,9 @@ class CustomSwap (MapPermutation):
         """
         return self.b - (self.a != self.b)*2
 
-    def to_cycles(self):
+    def to_cycles(self) -> list[tuple[int, ...]]:
         """
-        A list of tuple representing the cycle decomposition of self.
+        Return a list of tuple representing the cycle decomposition of self.
 
         EXAMPLES::
 
@@ -150,8 +150,7 @@ class CustomSwap (MapPermutation):
 
     def inverse(self):
         """
-        OUTPUT:
-            The inverse of self
+        Return the inverse of self.
 
         EXAMPLES::
 

@@ -1,14 +1,16 @@
+"""Define the MapExample class, meant to show how to use the maps library."""
+
 from sage.all import Permutation
+from sage.graphs.maps.labelled_map import LabelledMap
 from sage.graphs.maps.mutable_labelled_map import MutableLabelledMap
+from sage.graphs.maps.rooted_map import RootedMap
 from sage.graphs.maps.map_generator import MapGenerator
 from sage.graphs.maps.banner import bannerExampleStart, bannerExampleEnd, mapBanner
 from sage.graphs.maps.dynamic_planar_map_show import DynamicPlanarMapShow
 
 
 class MapExample:
-    """
-    Class to represents example of use of the library.
-    """
+    """Class to represents example of use of the library."""
 
     def __init__(self) -> None:
         """
@@ -39,7 +41,7 @@ class MapExample:
 
         return "MapExample"
 
-    def run(self, false_run=False):
+    def run(self, false_run=False) -> None:
         """
         Run the example.
 
@@ -74,7 +76,7 @@ class MapExample:
         print(bannerExampleEnd)
 
     @staticmethod
-    def showExample(name, myMap, false_run=False):
+    def showExample(name: str, myMap: LabelledMap, false_run=False) -> None:
         """
         show the example.
 
@@ -123,7 +125,7 @@ class MapExample:
 
         print("="*100)
 
-    def exampleRandomRootedTree(self, m, seed=None):
+    def exampleRandomRootedTree(self, m: int, seed: int | None = None) -> RootedMap:
         """
         Random rooted tree of size m.
 
@@ -144,7 +146,7 @@ class MapExample:
 
         return mapGenerator.getRandomTree(m, seed=seed)
 
-    def exampleRandomRootedMap(self, m, seed=None):
+    def exampleRandomRootedMap(self, m: int, seed=None) -> RootedMap:
         """
         Random rooted planar map of size m.
 
@@ -167,7 +169,7 @@ class MapExample:
 
         return mapGenerator.getRandomPlanarMap(m, seed=seed)
 
-    def exampleSimpleGone(self, n):
+    def exampleSimpleGone(self, n: int) -> MutableLabelledMap:
         """
 
         A n gone.
@@ -199,7 +201,7 @@ class MapExample:
         return myMap
 
     @staticmethod
-    def exampleX(n):
+    def exampleX(n: int) -> LabelledMap:
         """
         A x with each segment of the x containing n edges
 
@@ -230,7 +232,7 @@ class MapExample:
 
         return myMap
 
-    def exampleRepeatingPolygon(self, n, p):
+    def exampleRepeatingPolygon(self, n: int, p: int) -> LabelledMap:
         """
 
         A repeated  n-gone p times link by edge.

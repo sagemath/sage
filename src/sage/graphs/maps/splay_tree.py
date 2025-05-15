@@ -1257,7 +1257,7 @@ class SplayTree():
             return
         raise ValueError("This isn't a valid instance of a splayTree anymore")
 
-    def split(self, value: int) -> "tuple[SplayTree, SplayTree]":
+    def split(self, value: float) -> "tuple[SplayTree, SplayTree]":
         """
         Split self into two splayTrees (a,b) such that a contains all the element <= value and b all the element > value.
         You should note that a == self after the operation.
@@ -1629,7 +1629,7 @@ class SplayTree():
         for e in lst:
             self.insert(e)
 
-    def findSmallestGreater(self, value: int) -> int | None:
+    def findSmallestGreater(self, value: float) -> int | None:
         """
         Return the smallest element greater or equal than value, or None if it doesn't exist.
         If the value exists, the corresponding node will become the new root; otherwise, the greatest node will be made the root.
@@ -1659,7 +1659,7 @@ class SplayTree():
             return None
         return self.root.value + self.root.offset
 
-    def findBiggestSmaller(self, value: int) -> int | None:
+    def findBiggestSmaller(self, value: float) -> int | None:
         """
         Return the smallest element smaller or equal than value, or None if it doesn't exist.
         If the value exists, the corresponding node will become the new root; otherwise, the greatest node will be made the root.
