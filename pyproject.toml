@@ -19,6 +19,8 @@ requires = [
 # The subprojects have to set the rpath to the build directory, which should work as long as
 # we don't use build isolation.
 install = ['--skip-subprojects', 'ecl']
+# Ensure that ``library`` targets are built as static, and nothing gets installed
+setup = ['--default-library=static']
 
 [project]
 name = "sagemath"
@@ -98,11 +100,6 @@ sage = "sage.cli:main"
 platforms = [
     'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
 ]
-
-[tool.meson-python.args]
-# Ensure that ``library`` targets are built as static, and nothing gets installed
-setup = ['--default-library=static']
-install = ['--skip-subprojects']
 
 [tool.pytest.ini_options]
 python_files = "*_test.py"
