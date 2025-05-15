@@ -3950,14 +3950,15 @@ class MatchingCoveredGraph(Graph):
             if M.has_edge(u, v, l):
                 M.delete_edge(u, v, l)
 
+            vertex_subset = new_vertices[i * k : (i + 1) * k]
             if M.degree(u):
-                M.add_edges((new_vertices[i * k + j], new_vertices[i * k + j + 1], l)
-                    for j in range(0, k - 1, 2))
+                M.add_edges([(x, y, l)
+                    for x, y in zip(vertex_subset[::2], vertex_subset[1::2])])
             else:
-                M.add_edges(
-                    [(u, new_vertices[i * k], l), (new_vertices[(i + 1) * k - 1], v, l)] +
-                    [(new_vertices[i * k + j], new_vertices[i * k + j + 1], l) for j in range(1, k - 1, 2)]
-                )
+                M.add_edge(u, new_vertices[i * k], l)
+                M.add_edge(new_vertices[(i + 1) * k - 1], v, l)
+                M.add_edges([(x, y, l)
+                    for x, y in zip(vertex_subset[1::2], vertex_subset[2::2])])
 
         self.update_matching(M)
 
