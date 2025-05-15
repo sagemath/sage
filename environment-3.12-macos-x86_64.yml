@@ -91,7 +91,7 @@ dependencies:
   - fonttools=4.56.0=py312h3520af0_0
   - fortran-compiler=1.9.0=h02557f8_0
   - fplll=5.5.0=h6ede486_0
-  - fpylll=0.6.2=py312hfffdf69_0
+  - fpylll=0.6.3=py312hfffdf69_0
   - freetype=2.13.3=h40dfd5c_0
   - furo=2024.8.6=pyhd8ed1ab_2
   - gap-core=4.14.0=hb9686a1_2

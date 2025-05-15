@@ -2731,7 +2731,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
     #######################################################################
 
     def BKZ(self, delta=None, algorithm='fpLLL', fp=None, block_size=10, prune=0,
-            use_givens=False, precision=0, proof=None, **kwds):
+            use_givens=False, precision=0, proof=None, transformation=False, **kwds):
         """
         Return the result of running Block Korkin-Zolotarev reduction on
         ``self`` interpreted as a lattice.
@@ -2797,6 +2797,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
         - ``precision`` -- (default: ``0`` for automatic choice) bit
           precision to use if ``fp='rr'`` is set
 
+        - ``transformation`` -- boolean (default: ``False``); also return transformation
+
         - ``**kwds`` -- keywords to be passed to :mod:`fpylll`; see
           :class:`fpylll.BKZ.Param` for details
 
@@ -2822,6 +2824,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [ 0  0  0]
             [ 2  1  0]
             [-1  1  3]
+
+        We return the transformation matrix::
+
+            sage: A = random_matrix(ZZ, 10, 20)
+            sage: R, U = A.BKZ(transformation=True)
+            sage: U * A == R
+            True
 
         ALGORITHM:
 
@@ -2861,48 +2870,59 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 raise TypeError("fp parameter not understood.")
 
             A = self._ntl_()
+            UNTL = None
+            if transformation:
+                import sage.libs.ntl.ntl_mat_ZZ
+                _I = matrix_space.MatrixSpace(ZZ, self.nrows()).identity_matrix()
+                UNTL = sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self.nrows(),
+                        self.nrows(), _I.list())
 
             if algorithm == "BKZ_FP":
                 if not use_givens:
-                    r = A.BKZ_FP(U=None, delta=delta, BlockSize=block_size,
+                    r = A.BKZ_FP(U=UNTL, delta=delta, BlockSize=block_size,
                                  prune=prune, verbose=verbose)
                 else:
-                    r = A.G_BKZ_FP(U=None, delta=delta, BlockSize=block_size,
+                    r = A.G_BKZ_FP(U=UNTL, delta=delta, BlockSize=block_size,
                                    prune=prune, verbose=verbose)
 
             elif algorithm == "BKZ_QP":
                 if not use_givens:
-                    r = A.BKZ_QP(U=None, delta=delta, BlockSize=block_size,
+                    r = A.BKZ_QP(U=UNTL, delta=delta, BlockSize=block_size,
                                  prune=prune, verbose=verbose)
                 else:
-                    r = A.G_BKZ_QP(U=None, delta=delta, BlockSize=block_size,
+                    r = A.G_BKZ_QP(U=UNTL, delta=delta, BlockSize=block_size,
                                    prune=prune, verbose=verbose)
 
             elif algorithm == "BKZ_QP1":
                 if not use_givens:
-                    r = A.BKZ_QP1(U=None, delta=delta, BlockSize=block_size,
+                    r = A.BKZ_QP1(U=UNTL, delta=delta, BlockSize=block_size,
                                   prune=prune, verbose=verbose)
                 else:
-                    r = A.G_BKZ_QP1(U=None, delta=delta, BlockSize=block_size,
+                    r = A.G_BKZ_QP1(U=UNTL, delta=delta, BlockSize=block_size,
                                     prune=prune, verbose=verbose)
 
             elif algorithm == "BKZ_XD":
                 if not use_givens:
-                    r = A.BKZ_XD(U=None, delta=delta, BlockSize=block_size,
+                    r = A.BKZ_XD(U=UNTL, delta=delta, BlockSize=block_size,
                                  prune=prune, verbose=verbose)
                 else:
-                    r = A.G_BKZ_XD(U=None, delta=delta, BlockSize=block_size,
+                    r = A.G_BKZ_XD(U=UNTL, delta=delta, BlockSize=block_size,
                                    prune=prune, verbose=verbose)
 
             elif algorithm == "BKZ_RR":
                 if not use_givens:
-                    r = A.BKZ_RR(U=None, delta=delta, BlockSize=block_size,
+                    r = A.BKZ_RR(U=UNTL, delta=delta, BlockSize=block_size,
                                  prune=prune, verbose=verbose)
                 else:
-                    r = A.G_BKZ_RR(U=None, delta=delta, BlockSize=block_size,
+                    r = A.G_BKZ_RR(U=UNTL, delta=delta, BlockSize=block_size,
                                    prune=prune, verbose=verbose)
 
             self.cache("rank",ZZ(r))
+
+            if transformation:
+                U = self.new_matrix(self.nrows(), self.nrows(),
+                                    entries=[ZZ(z) for z in UNTL.list()])
+
             R = <Matrix_integer_dense>self.new_matrix(
                     entries=[ZZ(z) for z in A.list()])
 
@@ -2931,12 +2951,23 @@ cdef class Matrix_integer_dense(Matrix_dense):
                     kwds["auto_abort"] = True
 
             A = IntegerMatrix.from_matrix(self)
-            BKZ.reduction(A, BKZ.Param(block_size=block_size, delta=delta, **kwds),
+            Ufplll = None
+            if transformation:
+                _I = matrix_space.MatrixSpace(ZZ, self.nrows()).identity_matrix()
+                Ufplll = IntegerMatrix.from_matrix(_I)
+            BKZ.reduction(A,
+                          BKZ.Param(block_size=block_size, delta=delta, **kwds),
+                          U=Ufplll,
                           float_type=fp_,
                           precision=precision)
 
             R = A.to_matrix(self.new_matrix())
-        return R
+            if transformation:
+                U = Ufplll.to_matrix(self.new_matrix(Ufplll.nrows, Ufplll.ncols))
+        if transformation:
+            return R, U
+        else:
+            return R
 
     def LLL(self, delta=None, eta=None, algorithm='fpLLL:wrapper', fp=None, prec=0, early_red=False, use_givens=False, use_siegel=False, transformation=False, **kwds):
         r"""
@@ -3264,7 +3295,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             A = IntegerMatrix.from_matrix(self)
             Ufplll = None
             if transformation:
-                Ufplll = IntegerMatrix(A.nrows, A.nrows)
+                _I = matrix_space.MatrixSpace(ZZ, self.nrows()).identity_matrix()
+                Ufplll = IntegerMatrix.from_matrix(_I)
 
             method = algorithm.replace("fpLLL:","")
             if verb:
