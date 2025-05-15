@@ -9,12 +9,6 @@ The Bubble lattice `B_{m,n}` and the Shuffle lattice `S_{m,n}` share
 the same underlying set, namely all shuffles of two subwords of the
 two words `X = (x_1,x_2,\ldots,x_{m})` and `Y = (y_1,y_2,\ldots,y_n)`.
 
-The partial order in the Shuffle poset is defined by either inserting a
-letter from `Y` or deleting a letter from `X`.
-
-The Bubble poset is an extension of the Shuffle poset, by adding the
-exchange of adjacent letters from `X` and `Y`, from `xy` to `yx`.
-
 .. NOTE::
 
     In the implementation here, the underlying set is the set of all shuffles
@@ -148,10 +142,19 @@ def bubble_coverings(m, n, mot, transpose=True) -> Iterator[tuple[int, ...]]:
 
 
 def BubblePoset(m, n) -> LatticePoset:
-    """
+    r"""
     Return the Bubble lattice `B_{m,n}`.
 
     Bubble lattices were introduced by McConville and Mühle in [MacCM2022]_.
+
+    The Bubble lattice `B_{m,n}` and the Shuffle lattice `S_{m,n}` share
+    the same underlying set, namely all shuffles of two subwords of the
+    two words `X = (x_1,x_2,\ldots,x_{m})` and `Y = (y_1,y_2,\ldots,y_n)`.
+
+    The Bubble poset is an extension of the Shuffle poset, by adding the
+    exchange of adjacent letters from `X` and `Y`, from `xy` to `yx`.
+
+    .. SEEALSO:: :func:`ShufflePoset`
 
     EXAMPLES::
 
@@ -168,10 +171,19 @@ def BubblePoset(m, n) -> LatticePoset:
 
 
 def ShufflePoset(m, n) -> LatticePoset:
-    """
+    r"""
     Return the Shuffle lattice `S_{m,n}`.
 
     Shuffle lattices were defined by Greene in [Gre1988]_.
+
+    The Bubble lattice `B_{m,n}` and the Shuffle lattice `S_{m,n}` share
+    the same underlying set, namely all shuffles of two subwords of the
+    two words `X = (x_1,x_2,\ldots,x_{m})` and `Y = (y_1,y_2,\ldots,y_n)`.
+
+    The partial order in the Shuffle poset is defined by either inserting a
+    letter from `Y` or deleting a letter from `X`.
+
+    .. SEEALSO:: :func:`BubblePoset`
 
     EXAMPLES::
 
