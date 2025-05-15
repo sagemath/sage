@@ -4846,6 +4846,7 @@ class Link(SageObject):
 
           - ``mode`` -- string (default ``basic``) to choose between different
             strategies. These are
+
             - ``basic`` -- do Reidemeister I and II moves until none are possible
             - ``level`` -- do random Reidemeister III moves in addition to
               ``basic`` but at most ``type_III_limit`` consecutive times.
@@ -4854,6 +4855,7 @@ class Link(SageObject):
               path crossing over the diagram with the least number of
               overcrossings (or undercrossings)
             - ``global`` -- combines ``level`` and ``pickup``
+
           - type_III_limit -- integer (default 100) see ``mode level``
 
         .. NOTE::
