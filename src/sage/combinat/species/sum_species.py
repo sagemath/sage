@@ -32,6 +32,9 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = species.PermutationSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazySpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: A = S+S
             sage: A.generating_series()[:5]
             [2, 2, 2, 2, 2]

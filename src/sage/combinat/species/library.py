@@ -41,6 +41,9 @@ def SimpleGraphSpecies():
     EXAMPLES::
 
         sage: S = species.SimpleGraphSpecies()
+        doctest:warning...
+        DeprecationWarning: combinat.species is superseded by LazySpecies
+        See https://github.com/sagemath/sage/issues/38544 for details.
         sage: S.generating_series().counts(10)
         [1, 1, 2, 8, 64, 1024, 32768, 2097152, 268435456, 68719476736]
         sage: S.cycle_index_series()[:5]                                                # needs sage.modules

@@ -20,6 +20,9 @@ leaves and of `q` to internal nodes::
 
     sage: q = QQ['q'].gen()
     sage: leaf = species.SingletonSpecies()
+    doctest:warning...
+    DeprecationWarning: combinat.species is superseded by LazySpecies
+    See https://github.com/sagemath/sage/issues/38544 for details.
     sage: internal_node = species.SingletonSpecies(weight=q)
     sage: L = species.LinearOrderSpecies(min=1)
     sage: T = species.CombinatorialSpecies(min=1)
@@ -139,6 +142,9 @@ class GenericCombinatorialSpecies(SageObject):
             sage: X = species.SingletonSpecies()
             sage: E = species.EmptySetSpecies()
             sage: L = CombinatorialSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazySpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: L.define(E+X*L)
             sage: K = CombinatorialSpecies()
             sage: K.define(E+X*L)

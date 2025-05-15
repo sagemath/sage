@@ -25,6 +25,10 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: S = species.CycleSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazySpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
+
             sage: S.structures(["a","b","c"])[0]
             ('a', 'b', 'c')
         """
