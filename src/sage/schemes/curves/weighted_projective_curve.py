@@ -37,6 +37,7 @@ class WeightedProjectiveCurve(Curve_generic):
     def __init__(self, A, X, *kwargs):
         if not isinstance(A, WeightedProjectiveSpace_ring):
             raise TypeError(f"A(={A}) is not a weighted projective space")
+        self._weights = A._weights
         super().__init__(A, X, *kwargs)
 
     def _repr_type(self):

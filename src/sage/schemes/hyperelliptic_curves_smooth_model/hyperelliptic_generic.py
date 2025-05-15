@@ -397,6 +397,19 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: K.<omega> = QQ.extension(x^2 + x -1)
             sage: H.change_ring(K).points_at_infinity()
             [(1 : omega : 0), (1 : -omega - 1 : 0)]
+
+        ::
+
+            sage: _.<x> = GF(103)[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 + 1)
+            sage: H.points_at_infinity()
+            [(1 : 0 : 0)]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + 1)
+            sage: H.points_at_infinity()
+            [(1 : 1 : 0), (1 : 102 : 0)]
+            sage: H = HyperellipticCurveSmoothModel(3*x^6 + 1)
+            sage: H.points_at_infinity()
+            []
         """
         return [self.point([1, y, 0], check=True) for y in self.roots_at_infinity()]
 
