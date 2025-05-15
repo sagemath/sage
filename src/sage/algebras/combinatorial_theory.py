@@ -717,25 +717,24 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             if rel_name not in current_signature_map:
                 continue
             sig_details = current_signature_map[rel_name]
-            arity = sig_details["arity"]
+            isordered = sig_details["ordered"]
             if isinstance(definition, (list, tuple)):
-                for part_tuple_raw in definition:
-                    part_tuple = tuple(part_tuple_raw)
-                    # Basic sanity check, maybe also test if all in range
-                    if len(part_tuple) != arity:
-                        continue
-                    key = (rel_name, tuple(int(i) for i in part_tuple))
+                for edge in definition:
+                    if isordered:
+                        key = (rel_name, tuple(edge))
+                    else:
+                        key = (rel_name, tuple(sorted(edge)))
                     deterministic_blowup_relations_R.add(key)
             elif isinstance(definition, dict):
-                for part_tuple_raw, prob_spec in definition.items():
-                    part_tuple = tuple(part_tuple_raw)
-                    if len(part_tuple) != arity:
-                        continue
-                    key = (rel_name, tuple(int(i) for i in part_tuple))
+                for edge, prob in definition.items():
+                    if isordered:
+                        key = (rel_name, tuple(edge))
+                    else:
+                        key = (rel_name, tuple(sorted(edge)))
                     try:
-                        prob_R_val = R(prob_spec)
+                        prob_R_val = R(prob)
                     except:
-                        prob_R_val = var_map[prob_spec]
+                        prob_R_val = var_map[prob]
                     if prob_R_val == 1:
                         deterministic_blowup_relations_R.add(key)
                     elif prob_R_val != 0:
