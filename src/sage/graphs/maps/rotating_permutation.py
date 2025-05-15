@@ -153,9 +153,23 @@ class RotatingPermutation(MapPermutation):
         self._n = mx
         self.provider = CycleUtilsProvider(self.to_cycles())
 
-    # OK
+    def to_list(self) -> list[int]:
+        """
+        Return the permutation self, as a list of integers.
+        
+        EXAMPLES::
 
-    def size(self):
+            sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
+            sage: RotatingPermutation([(2,3,4),(6,7)]).to_list()
+            [1, 3, 4, 2, 5, 7, 6]
+            
+        NOTE:
+            O(n)
+        """
+        return [self(i) for i in range(1, self.size() + 1)]
+
+    # OK
+    def size(self) -> int:
         """
         OUTPUT:
             The size of the permutation
