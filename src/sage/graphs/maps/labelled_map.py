@@ -71,7 +71,7 @@ class LabelledMap:
         Fixed-point free involution whose cycles are given by the edges.
 
     phi: Permutation or MapPermutation
-        Permutation that maps a half-edges to the half-edge next to it 
+        Permutation that maps a half-edges to the half-edge next to it
         in his face in the clockwise orde.
 
     m: The number of edge of the map
@@ -101,9 +101,9 @@ class LabelledMap:
           
           It makes initialization faster but can be dangerous because
           if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your
-          map's validity if you set this to true.The advantage of setting `trust` to true is that it makes the initialization faster, 
-          which is useful when you are initializing a lot of big maps (like in long bijections).Therefore, the best workflow is 
-          to leave it at the default during testing, and when you are 100% sure that your code works, set `trust = true` to gain 
+          map's validity if you set this to true.The advantage of setting `trust` to true is that it makes the initialization faster,
+          which is useful when you are initializing a lot of big maps (like in long bijections).Therefore, the best workflow is
+          to leave it at the default during testing, and when you are 100% sure that your code works, set `trust = true` to gain
           a constant factor boost. By default, it is set to false.
 
         EXAMPLES::
@@ -193,7 +193,7 @@ class LabelledMap:
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
-            sage: m._extend()    
+            sage: m._extend()
 
         NOTE:
             Complexity is O(m), where m is the size of the map.
@@ -330,7 +330,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.buildGraph()
-            Looped multi-graph on 11 vertices 
+            Looped multi-graph on 11 vertices
 
         NOTE:
 
@@ -364,9 +364,7 @@ class LabelledMap:
         sage viewer is used). Half-edges numbers are displayed
         closest to the node they depart from.
 
-
         INPUT:
-
         - ``show_halfedges`` -- bool; whether to show half-edges
         numbers on the plot (default: True).
         - ``show_vertices`` -- bool; whether to show vertex labels
@@ -386,10 +384,10 @@ class LabelledMap:
         NOTE:
             The order of the edges may not be displayed correctly
             if the genus is not 0. For half-edges to be shown, the
-            networkx viewer must be used.For prettier image use 
+            networkx viewer must be used.For prettier image use
             DynamicPlanarMapShow.
             WARNING: if show_halfedges = True and you have a too old
-            version of networkx it is possible that label between demi 
+            version of networkx it is possible that label between demi
             edges are reversed on the same edge are reversed, please
             use the latest version.
 
@@ -611,7 +609,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m._numberOfFaces()
-            1 
+            1
 
         NOTE:
 
@@ -666,7 +664,7 @@ class LabelledMap:
 
         NOTE:
 
-            Complexity is O(1) 
+            Complexity is O(1)
         """
         return self._numberOfFaces()
 
@@ -860,7 +858,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.getSpanningTree()
-            Graph on 11 vertices            
+            Graph on 11 vertices
 
         NOTE:
 
@@ -1092,7 +1090,7 @@ class LabelledMap:
              (21, 26, 25, 22),
              (28, 34, 40, 29),
              (31, 33, 35, 32),
-             (36, 39, 38, 37)]  
+             (36, 39, 38, 37)]
 
         NOTE:
 
@@ -1117,7 +1115,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.quadrangulation().inverseQuadrangulation() == m
-            True  
+            True
 
         NOTE:
 
@@ -1244,6 +1242,7 @@ class LabelledMap:
         - ``return_map_perm`` -- bool ; whether or not to return a MapPermutation default to False
         - ``trust`` -- bool ; whether or not to trust that there is a correspondence default to
             False
+
         OUTPUT:
 
         Returns `t`, a permutation mapping the demi-edges of `self`
@@ -1368,7 +1367,7 @@ class LabelledMap:
              (21, 24, 27, 32),
              (26, 31, 35, 30),
              (28, 34, 38, 40),
-            (33, 37, 39, 36)] 
+            (33, 37, 39, 36)]
 
         NOTE:
 
@@ -1547,7 +1546,7 @@ class LabelledMap:
             Complexity is O(m), where m is the number of edges.
         """
 
-        return not (self.getBipartition() is None)
+        return self.getBipartition() is not None
 
     def getBipartition(self):
         """
@@ -1565,7 +1564,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.getBipartition()
-            [-1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0]  
+            [-1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0]
 
         NOTE:
 
@@ -1622,7 +1621,8 @@ class LabelledMap:
             sage: m.canonicalRepresentant().pretty_print()
                         Alpha: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 10), (11, 13), (12, 15), (14, 17), (16, 18), (19, 20)]
                         Sigma (Node): [(1, 2, 4), (3,), (5,), (6, 7, 8), (9, 11, 12, 14), (10,), (13, 16), (15,), (17, 19), (18,), (20,)]
-                        Phi (Face): [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]            
+                        Phi (Face): [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
+
 
         NOTE:
 
@@ -1877,9 +1877,10 @@ class LabelledMap:
         Note that if returnMarkedDemiEdge = False it will only return (quadA,quadB)
 
         INPUT:
-            -``labelled``-- List[int] ; a list of size 2*m+1 such that for the demiEdge i labelled[i] is the labelled of its attached node,
-             0 isn't a valid demiEdge so labelled[0] can take any value it will be ignored.
-            -``returnMarkedDemiEdge`` -- bool ; a parameter indicating whether or not to return the markedDemiEdge default to true
+
+        -``labelled``-- List[int] ; a list of size 2*m+1 such that for the demiEdge i labelled[i] is the labelled of its attached node,
+        0 isn't a valid demiEdge so labelled[0] can take any value it will be ignored.
+        -``returnMarkedDemiEdge`` -- bool ; a parameter indicating whether or not to return the markedDemiEdge default to true
 
         OUTPUT:
             -(quadA,quadB,markedDemiEdgeA,markedDemiEdgeB) as in the above description if ``returnMarkedDemiEdge`` = True otherwise (quadA,quadB) corresponding to the above description
@@ -2128,6 +2129,7 @@ class LabelledMap:
         Returns the nodes of self as cycle of self.sigma
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
@@ -2142,7 +2144,7 @@ class LabelledMap:
              (15,),
              (17, 19),
              (18,),
-             (20,)]  
+             (20,)]
 
         NOTE:
 
@@ -2196,7 +2198,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.getDyckPath()
-            [1, -1, 1, -1, 1, 1, 1, 1, -1, -1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1] 
+            [1, -1, 1, -1, 1, 1, 1, 1, -1, -1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1]
 
         NOTE:
 
@@ -2234,7 +2236,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.q,m.g,m.f,m.m
-            (20, 0, 1, 10) 
+            (20, 0, 1, 10)
 
         NOTE:
 
@@ -2343,7 +2345,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.q,m.g,m.f,m.m
-            (20, 0, 1, 10) 
+            (20, 0, 1, 10)
 
         NOTE:
 
@@ -2363,7 +2365,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.q,m.g,m.f,m.m
-            (20, 0, 1, 10) 
+            (20, 0, 1, 10)
 
         NOTE:
 
@@ -2384,7 +2386,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.q,m.g,m.f,m.m
-            (20, 0, 1, 10) 
+            (20, 0, 1, 10)
 
         NOTE:
 
@@ -2438,7 +2440,7 @@ class LabelledMap:
         A boolean indicating whether or note demiEdgeA and demiEdgeB are on the node
 
         INPUT:
-            -``demiEdgeA`` -- int ; an index associated to a demiEdge 
+            -``demiEdgeA`` -- int ; an index associated to a demiEdge
             -``demiEdgeB`` -- int ;  an index associated to a demiEdge
 
 
@@ -2463,7 +2465,7 @@ class LabelledMap:
         A boolean indicating whether or note demiEdgeA and demiEdgeB are on the face.
 
         INPUT:
-            -``demiEdgeA`` -- int ;an index associated to a demiEdge 
+            -``demiEdgeA`` -- int ;an index associated to a demiEdge
             -``demiEdgeB`` -- int ;an index associated to a demiEdge
 
 
@@ -2473,7 +2475,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.areOnTheSameFace(1,2)
-            True 
+            True
 
         NOTE:
 
@@ -2488,7 +2490,7 @@ class LabelledMap:
         A list of demiEdge on the same node as demiEdge
 
         INPUT:
-            - ``demiEdge`` -- int ; an index associated to a demiEdge 
+            - ``demiEdge`` -- int ; an index associated to a demiEdge
 
         EXAMPLES::
 
@@ -2517,7 +2519,7 @@ class LabelledMap:
         A list of demiEdge on the same face as demiEdge
 
         INPUT:
-            -``demiEdge`` -- int ; an index associated to a demiEdge 
+            -``demiEdge`` -- int ; an index associated to a demiEdge
 
         EXAMPLES::
 
@@ -2525,7 +2527,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.demiEdgesOnTheSameFace(1)
-            [1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6] 
+            [1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6]
 
         NOTE:
 
@@ -2544,7 +2546,7 @@ class LabelledMap:
     def numberInTheSameFace(self, demiEdge):
         """
         INPUT:
-            -``demiEdge`` -- int ;an index associated to a demiEdge 
+            -``demiEdge`` -- int ;an index associated to a demiEdge
 
         OUTPUT:
 
@@ -2569,7 +2571,7 @@ class LabelledMap:
     def numberInTheSameNode(self, demiEdge):
         """
         INPUT:
-            -``demiEdge`` -- int ; an index associated to a demiEdge 
+            -``demiEdge`` -- int ; an index associated to a demiEdge
 
         OUTPUT:
 
@@ -2581,7 +2583,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.numberInTheSameNode(1)
-            3 
+            3
 
         NOTE:
 
@@ -2655,7 +2657,7 @@ class LabelledMap:
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m.q,m.g,m.f,m.m
-            (20, 0, 1, 10) 
+            (20, 0, 1, 10)
 
         NOTE:
 

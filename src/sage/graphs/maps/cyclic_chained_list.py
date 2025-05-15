@@ -36,7 +36,7 @@ class CyclicChainedList:
 
     def getValList(self) -> list:
         """
-        OUTPUT: 
+        OUTPUT:
 
         a list containing the value of each node in the same cycle as self
 
@@ -122,7 +122,7 @@ class CyclicChainedList:
         If ``self`` is not an isolated node (i.e such that self.prev = self.nxt = self) it will remove self from the where it is present
         otherwise it will not do anything
 
-        EXAMPLES:: 
+        EXAMPLES::
 
             sage: from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
             sage: node = CyclicChainedList(3)

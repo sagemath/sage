@@ -6,7 +6,7 @@ def CheckValid(cls):
         -``cls`` ; a class
 
     OUTPUT:
-        The same class but with a check before each method 
+        The same class but with a check before each method
 
     EXAMPLES::
 

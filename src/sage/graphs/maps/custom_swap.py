@@ -42,11 +42,11 @@ class CustomSwap (MapPermutation):
     def __eq__(self, other: Any) -> bool:
         """
         Return whether self is structurally equal to the given Permutation.
-        
+
         INPUT:
         - ``other`` -- Any
 
-        EXAMPLES:: 
+        EXAMPLES::
 
             sage: from sage.graphs.maps.custom_swap import CustomSwap
             sage: c = CustomSwap([(12,8)])
@@ -149,8 +149,8 @@ class CustomSwap (MapPermutation):
                                                                         for j in range(self.a, self.b)]
 
     def inverse(self):
-        """ 
-        OUTPUT: 
+        """
+        OUTPUT:
             The inverse of self
 
         EXAMPLES::

@@ -102,7 +102,7 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
         return self.rpermutation.number_of_fixed_points()
 
     def checkTwoInTheSameCycle(self, listIndexes):
-        """ 
+        """
         Not implemented for PrimitiveRotatingPermutationUtilsAbstractor
 
         EXAMPLES::

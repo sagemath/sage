@@ -13,9 +13,9 @@ from sage.graphs.maps.primitive_rotating_permutation_utils_abstractor import (
 
 class PrimitiveMutableLabelledMap(LabelledMap):
     """
-    This class represent a more primitive version of MutableLabelledMap.
+    This class represent a more primitive version of MutableLabelledMap
     It implements only the following operations for now ( addAfter, addBefore,deleteEdge,contractEdge)
-    and place more responsibility on the user and remove some of the other methods( such as checking if two demi edge are on the same node or face), 
+    and place more responsibility on the user and remove some of the other methods( such as checking if two demi edge are on the same node or face),
     the only advantage is the fact that the operations listed are in O(1) instead of O(log(m)).
 
     Attributes
@@ -28,7 +28,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
         Fixed-point free involution whose cycles are given by the edges.
 
     phi: Permutation or MapPermutation
-        Permutation that maps a half-edges to the half-edge next to it 
+        Permutation that maps a half-edges to the half-edge next to it
         in his face in the clockwise orde.
 
     m: The number of edge of the map
@@ -220,7 +220,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         - ``listIndexes`` -- List[int] ;A list of valid demi edge in self( otherwise it will raise an error)
 
-        EXAMPLES:: 
+        EXAMPLES::
 
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
@@ -229,7 +229,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
             sage: mm.labelToTheEnd([7,5,3])
             sage: mm.faces()
-            [(1, 18, 2, 19, 4, 20, 11, 16, 3, 13, 12, 15, 14, 5, 7, 17, 9, 8, 10, 6)] 
+            [(1, 18, 2, 19, 4, 20, 11, 16, 3, 13, 12, 15, 14, 5, 7, 17, 9, 8, 10, 6)]
 
         NOTE:
             O(k) where k = len(listIndexes)
@@ -268,7 +268,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             sage: mm.faces()
             [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
 
-        NOTE: 
+        NOTE:
             O(1)
         """
 
@@ -427,7 +427,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             sage: mm.addEdgeBefore(10)
             X(24)
             sage: A.n,A.pn
-            (X(21), X(23)) 
+            (X(21), X(23))
 
         NOTE:
             O(1)
@@ -474,7 +474,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             sage: mm.addEdgeBefore(10)
             X(24)
             sage: A.n,A.pn
-            (X(21), X(23)) 
+            (X(21), X(23))
 
         NOTE:
             O(1)
@@ -503,7 +503,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
     def contractEdge(self, demiEdge):
         """
         Contract in self the edge corresponding to demiEdge.
-        WARNING: For this version you demiEdge cannot be on a loop anyway because 
+        WARNING: For this version you demiEdge cannot be on a loop anyway because
         contracting an loop is defined(in this library) as deleting an edge just
         call deleteEdge.
 
@@ -639,6 +639,6 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....: except:
             ....:    print("OK")
             ....:
-            OK 
+            OK
         """
         raise NotImplementedError(self)

@@ -33,10 +33,8 @@ class RotatingPermutation(MapPermutation):
         the permutation or a MapPermutation or an integer representing the size of the permutation(in this case self will represent the identity permutation of size lst).
 
         INPUT:
-
-        - ``lst`` -- List[int] | List[Tuples] | int | Permutation | MapPermutation ; a list representing the permutation or a list of tuples representing 
-        the cycle of the permutationor an integer representing the size 
-        of the permutation(In This case it will return the identify of size lst) 
+        - ``lst`` -- List[int] | List[Tuples] | int | Permutation | MapPermutation ; a list representing the permutation or a list of tuples representing
+        the cycle of the permutationor an integer representing the size of the permutation(In This case it will return the identify of size lst)
         or a Permutation or a MapPermutation.
 
         EXAMPLES::
@@ -223,7 +221,7 @@ class RotatingPermutation(MapPermutation):
             sage: rperm
             [3, 2, 4, 1, 5, 9, 8, 7, 6]
 
-        NOTE: 
+        NOTE:
             O(log(n)),index must be an strictly positive integer and self.size() >= 2 otherwise an error will be raised
         """
         if self.size() == 1:
@@ -348,8 +346,8 @@ class RotatingPermutation(MapPermutation):
         """
         This will cut the cycle in two part startIndex...endIndex and the rest , and than will delete startIndex and endIndex
 
-        INPUT: 
-        - ``startIndex`` -- int ; on the same cycle as endIndex such that (startIndex,endIndex)=(self.size(),self.size()-1)  
+        INPUT:
+        - ``startIndex`` -- int ; on the same cycle as endIndex such that (startIndex,endIndex)=(self.size(),self.size()-1)
         - ``endIndex`` -- int ;  on the same cycle as startIndex such that (startIndex,endIndex)=(self.size(),self.size()-1)
 
         EXAMPLES::
@@ -386,8 +384,8 @@ class RotatingPermutation(MapPermutation):
         INPUT:
         - ``startIndex`` -- int ; on same cycle as ``endIndex``
         - ``endIndex ``  -- int ; on same cycle as ``startIndex``
-        - ``newIndexStart`` -- int; such that {newIndexEnd, newIndexStart} = {n+1, n+2} 
-        - ``newIndexEnd`` -- int : such that {newIndexEnd, newIndexStart} = {n+1, n+2} 
+        - ``newIndexStart`` -- int; such that {newIndexEnd, newIndexStart} = {n+1, n+2}
+        - ``newIndexEnd`` -- int : such that {newIndexEnd, newIndexStart} = {n+1, n+2}
 
         EXAMPLES::
 
@@ -397,7 +395,7 @@ class RotatingPermutation(MapPermutation):
             Rotating permutation: [(1, 3, 4), (2, 7, 11, 8, 10), (5,), (6, 9)]
             sage: rperm.cutAdd(1,4,12,13)
             sage: rperm.pretty_print()
-            Rotating permutation: [(1, 3, 13), (2, 7, 11, 8, 10), (4, 12), (5,), (6, 9)]  
+            Rotating permutation: [(1, 3, 13), (2, 7, 11, 8, 10), (4, 12), (5,), (6, 9)]
 
         NOTE:
             O(log(n))
@@ -583,7 +581,7 @@ class RotatingPermutation(MapPermutation):
         INPUT:
         - ``index`` -- int
 
-        EXAMPLES:: 
+        EXAMPLES::
 
             sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4)])
@@ -788,9 +786,9 @@ class RotatingPermutation(MapPermutation):
         be fixed point
 
         INPUT:
-        - ``m`` -- int; ``m``  >= 0 
+        - ``m`` -- int; ``m``  >= 0
 
-        EXAMPLES:: 
+        EXAMPLES::
 
             sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
@@ -798,7 +796,7 @@ class RotatingPermutation(MapPermutation):
             [3, 5, 4, 1, 7, 6, 8, 2]
             sage: rperm.stretch(5)
             sage: rperm
-            [3, 5, 4, 1, 7, 6, 8, 2, 9, 10, 11, 12, 13] 
+            [3, 5, 4, 1, 7, 6, 8, 2, 9, 10, 11, 12, 13]
 
         NOTE:
             O(1)
@@ -908,7 +906,7 @@ class RotatingPermutation(MapPermutation):
     # OK
     def numberOfCycles(self):
         """
-        OUTPUT: 
+        OUTPUT:
             the number of cycle of self
 
         EXAMPLES::
@@ -998,7 +996,7 @@ class RotatingPermutation(MapPermutation):
             sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.pretty_print()
-            Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)] 
+            Rotating permutation: [(1, 3, 4), (2, 5, 7, 8), (6,)]
 
         """
         print(self.pretty_repr())
@@ -1007,6 +1005,7 @@ class RotatingPermutation(MapPermutation):
     def to_cycles(self):
         """
         This method calculate a list of tuple representing the cycle of self
+
         OUTPUT:
             - lst a list of tuples representing the cycles of self given in increasing order of their minimum elements
 
@@ -1040,6 +1039,7 @@ class RotatingPermutation(MapPermutation):
     def inverse(self):
         """
         This function calculate  the inverse of self
+
         OUTPUT:
             - The inverse of self
 
@@ -1071,7 +1071,7 @@ class RotatingPermutation(MapPermutation):
             sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm.apply(7)
-            8 
+            8
 
         NOTE:
             O(1)
@@ -1087,7 +1087,7 @@ class RotatingPermutation(MapPermutation):
 
     def number_of_fixed_points(self):
         """
-        OUTPUT: 
+        OUTPUT:
             the number of fixed point ( we only consider i such that i<=self.size())
 
         EXAMPLES::
@@ -1105,7 +1105,7 @@ class RotatingPermutation(MapPermutation):
     def __eq__(self, other):
         """
         INPUT:
-        - ``other`` -- MapPermutation 
+        - ``other`` -- MapPermutation
 
         OUTPUT:
             A boolean indicating if self and other are equal
@@ -1115,7 +1115,7 @@ class RotatingPermutation(MapPermutation):
             sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rperm == rperm
-            True 
+            True
 
         """
         if isinstance(other, MapPermutation):

@@ -127,7 +127,7 @@ class MapExample:
         """
         Random rooted tree of size m.
 
-        INPUT:  
+        INPUT:
         - ``m`` -- int ; the size of the tree
         - ``seed`` int | None ;  the seed to use for the random number generator default None
 
@@ -148,7 +148,7 @@ class MapExample:
         """
         Random rooted planar map of size m.
 
-        INPUT:  
+        INPUT:
 
         - ``m`` -- int ; the size of the planar map
         - ``seed`` -- int | None ; the seed to use for the random number generator default None
@@ -172,7 +172,7 @@ class MapExample:
 
         A n gone.
 
-        INPUT:  
+        INPUT:
         - ``n`` -- int ; the size of the n-gone
 
         EXAMPLES::
@@ -211,7 +211,7 @@ class MapExample:
 
             sage: from sage.graphs.maps.example import MapExample
             sage: MapExample().exampleX(3)
-            Labelled map | Sigma : [3, 2, 9, 5, 4, 7, 6, 8, 15, 11, 10, 13, 12, 14, 1, 17, 16, 19, 18, 20], Alpha : [2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17, 20, 19] 
+            Labelled map | Sigma : [3, 2, 9, 5, 4, 7, 6, 8, 15, 11, 10, 13, 12, 14, 1, 17, 16, 19, 18, 20], Alpha : [2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17, 20, 19]
 
         NOTE:
             O(nlog(n))
@@ -237,13 +237,13 @@ class MapExample:
 
         INPUT:
         - ``n`` -- int ; the number of side of the n-gone
-        - ``p``-- int ; the number of time to repeat the n-gone 
+        - ``p``-- int ; the number of time to repeat the n-gone
 
         EXAMPLES::
 
             sage: from sage.graphs.maps.example import MapExample
             sage: MapExample().exampleX(3)
-            Labelled map | Sigma : [3, 2, 9, 5, 4, 7, 6, 8, 15, 11, 10, 13, 12, 14, 1, 17, 16, 19, 18, 20], Alpha : [2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17, 20, 19] 
+            Labelled map | Sigma : [3, 2, 9, 5, 4, 7, 6, 8, 15, 11, 10, 13, 12, 14, 1, 17, 16, 19, 18, 20], Alpha : [2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17, 20, 19]
 
         NOTE:
             O(pn(log(n)+log(p)))

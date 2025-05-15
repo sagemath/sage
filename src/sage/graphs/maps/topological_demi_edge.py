@@ -15,7 +15,7 @@ class TopologicalDemiEdge():
 
         EXAMPLES::
 
-            sage: from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge 
+            sage: from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
             sage: lm = LabelledMap(Permutation([(1,3), (2,), (4,)]), Permutation([(1,2), (3,4)]))
             sage: TopologicalDemiEdge(lm, 3)
             X(3)
@@ -394,7 +394,7 @@ class TopologicalDemiEdge():
 
             sage: from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
             sage: TopologicalDemiEdge(None,5)
-            X(5) 
+            X(5)
         """
         return f"X({self.raw})"
 
@@ -402,7 +402,7 @@ class TopologicalDemiEdge():
         """
         Change the index of self
 
-        INPUT: 
+        INPUT:
         - ``newIndex`` -- int
 
         EXAMPLES::
@@ -413,7 +413,7 @@ class TopologicalDemiEdge():
             X(5)
             sage: U._setIndex(22)
             sage: U
-            X(22) 
+            X(22)
 
         NOTE:
             O(1)
@@ -424,7 +424,7 @@ class TopologicalDemiEdge():
         """
         Swap indexes with otherTopologicalDemiEdge.
 
-        INPUT: 
+        INPUT:
         - ``otherTopologicalDemiEdge`` -- TopologicalDemiEdge
 
         EXAMPLES::

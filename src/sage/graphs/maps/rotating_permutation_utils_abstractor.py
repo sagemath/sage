@@ -38,10 +38,10 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
             sage: rAbstractor.numberInCycle(5)
-            4 
+            4
 
         NOTE:
-            O(log(m)) where m is the size of the permutation 
+            O(log(m)) where m is the size of the permutation
         """
         return self.rpermutation.numberInCycle(index)
 

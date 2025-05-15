@@ -7,15 +7,15 @@ class RootedMap(LabelledMap):
     Attributes
     ----------
     sigma :  Permutation or MapPermutation
-        Permutation that maps a half-edge to the half-edge incident to
-        it in a anti-clockwise direction around the vertex it belongs to.
+    Permutation that maps a half-edge to the half-edge incident to
+    it in a anti-clockwise direction around the vertex it belongs to.
 
     alpha : Permutation or MapPermutation
-        Fixed-point free involution whose cycles are given by the edges.
+    Fixed-point free involution whose cycles are given by the edges.
 
     phi: Permutation or MapPermutation
-        Permutation that maps a half-edges to the half-edge next to it 
-        in his face in the clockwise orde.
+    Permutation that maps a half-edges to the half-edge next to it
+    in his face in the clockwise orde.
 
     m: The number of edge of the map
 
@@ -42,20 +42,18 @@ class RootedMap(LabelledMap):
 
         INPUT:
         - ``sigma`` -- Permutation | MapPermutation | None; Permutation ; Permutation that maps a half-edge
-          to the half-edge incident to it in anti-clockwise direction around
-          the vertex it belongs to.
+        to the half-edge incident to it in anti-clockwise direction around
+        the vertex it belongs to.
         - ``alpha`` -- Permutation | MapPermutation | None; Permutation that maps a half-edge
-            Fixed-point free involution whose cycles are given by the edges.
+        Fixed-point free involution whose cycles are given by the edges.
         - ``ajd``-- List[Tuple] | None ; and adjacency list be careful the order of the
-            node in your adjaceny will be used to choose the embedding
-
+        node in your adjaceny will be used to choose the embedding
         - ``isAlreadyCanonical`` -- bool ; A parameter that indicates sigma,alpha given are already in canonical form
-          i.e represent a the canonical representant of the rooted map
-
+        i.e represent a the canonical representant of the rooted map
         - ``trust`` -- bool ; A parameter that indicates whether the validity check (i.e., whether the map is connex, etc.)
-          should be skipped when initializing the map. It makes initialization faster but can be dangerous because
-          if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your
-          map's validity if you set this to true.
+        should be skipped when initializing the map. It makes initialization faster but can be dangerous because
+        if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your
+        map's validity if you set this to true.
 
         EXAMPLES::
 
@@ -91,8 +89,8 @@ class RootedMap(LabelledMap):
 
         EXAMPLES::
 
-            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19]) 
-            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])  
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = RootedMap(alpha = alpha,sigma=sigma)
             sage: m.tetravalance().nodes()
             [(1, 2, 4, 7),
@@ -213,7 +211,7 @@ class RootedMap(LabelledMap):
              (21, 26, 25, 22),
              (28, 34, 40, 29),
              (31, 33, 35, 32),
-             (36, 39, 38, 37)] 
+             (36, 39, 38, 37)]
 
         NOTE:
 
@@ -480,7 +478,7 @@ class RootedMap(LabelledMap):
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = RootedMap(alpha = alpha,sigma=sigma)
             sage: m.root
-            X(1) 
+            X(1)
 
         NOTE:
 
