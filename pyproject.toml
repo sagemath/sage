@@ -3,15 +3,14 @@ build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
     'meson-python',
-    'cypari2 >=2.1.1',
-    # cysignals 1.11.2 is the newest version that is available on conda:
-    # https://github.com/conda-forge/cysignals-feedstock/pull/49
-    'cysignals >=1.11.2',
+    'cypari2 >=2.2.1',
+    # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
+    'cysignals >=1.11.2, != 1.12.0',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
     'memory_allocator',
-    'numpy >=1.19',
+    'numpy >=1.25',
     'jinja2'
 ]
 [project]
@@ -20,13 +19,14 @@ description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dependencies = [
     'six >=1.15.0',
     'conway-polynomials >=0.8',
-    'cypari2 >=2.1.1',
-    'cysignals >=1.10.2',
+    'cypari2 >=2.2.1',
+    # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
+    'cysignals >=1.11.2, != 1.12.0',
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
     'lrcalc ~=2.1',
     'memory_allocator',
-    'numpy >=1.19',
+    'numpy >=1.25',
     # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
     'pplpy >=0.8.6',
     'primecountpy',
@@ -34,21 +34,13 @@ dependencies = [
     # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
     # version 4.4.0 adds another Python 3.11 typing backport
     'typing_extensions >= 4.4.0; python_version<"3.11"',
-    'ipython >=7.13.0',
+    'ipython >=8.9.0',
     'pexpect >=4.8.0',
     'sphinx >=5.2, <9',
-    'networkx >=2.4',
-    # 1.8 is known good version.
-    # Per https://docs.scipy.org/doc/scipy/dev/core-dev/index.html#version-numbering
-    # and https://docs.scipy.org/doc/scipy/dev/core-dev/index.html#deprecations,
-    # deprecations cannot be introduced in micro releases.
-    # SciPy devs wait "at least 6 months", "in practice two (minor) releases"
-    # from deprecation to removal of a feature.
-    'scipy >=1.5',
+    'networkx >=3.1',
+    'scipy >=1.11',
     'sympy >=1.6, <2.0',
-    # Issue #33642: Set lower bound for use of matplotlib color maps introduced in #33491,
-    # and to suppress deprecation warnings (https://github.com/matplotlib/matplotlib/pull/21073)
-    'matplotlib >=3.5.1',
+    'matplotlib >=3.7.0',
     'pillow >=7.2.0',
     'mpmath >=1.1.0',
     'ipykernel >=5.2.1',
@@ -70,15 +62,14 @@ classifiers = [
     "Operating System :: POSIX",
     "Operating System :: MacOS :: MacOS X",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 urls = {Homepage = "https://www.sagemath.org"}
-requires-python = ">=3.9, <3.13"
+requires-python = ">=3.11, <3.14"
 
 [project.optional-dependencies]
 R = [
@@ -88,6 +79,9 @@ R = [
 [project.readme]
 file = "README.md"
 content-type = "text/markdown"
+
+[project.scripts]
+sage = "sage.cli:main"
 
 [tool.conda-lock]
 platforms = [
@@ -122,7 +116,6 @@ host-requires = [
   "pkg:generic/eclib",
   "pkg:generic/ecm",
   "pkg:generic/fflas-ffpack",
-  "pkg:generic/fplll",
   "pkg:generic/flint",
   "pkg:generic/libgd",
   "pkg:generic/gap",
@@ -152,7 +145,6 @@ host-requires = [
   "pkg:generic/pari-galdata",
   "pkg:generic/pari-seadata",
   "pkg:generic/planarity",
-  "pkg:generic/ppl",
   "pkg:generic/primesieve",
   "pkg:generic/primecount",
   "pkg:generic/qhull",
@@ -163,10 +155,10 @@ host-requires = [
 ]
 
 dependencies = [
-  "pkg:generic/tachyon",
   "pkg:generic/sagemath-polytopes-db",
   "pkg:generic/sagemath-elliptic-curves",
   "pkg:generic/sagemath-graphs",
+  "pkg:generic/tachyon",
 ]
 
 [dependency-groups]
@@ -185,4 +177,31 @@ lint = [
   "ruff",
   "pycodestyle",
   "flake8-rst-docstrings",
+]
+dev = [
+  "conda-lock",
+  "grayskull",
+  "toml",
+]
+
+[tool.ruff]
+# https://docs.astral.sh/ruff/configuration
+
+# Python 3.11 is the minimum supported version
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+  "E", # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
+  "F", # pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
+  "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
+  "PL", # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
+]
+ignore = [
+  "E501", # Line too long - hard to avoid in doctests, and better handled by black.
+]
+
+[tool.ruff.lint.per-file-ignores]
+"all.py" = [
+  "F401", # Unused import - these files are by definition collections of imports.
 ]

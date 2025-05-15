@@ -137,6 +137,7 @@ Individual Categories
    sage/categories/integral_domains
    sage/categories/j_trivial_semigroups
    sage/categories/kac_moody_algebras
+   sage/categories/kahler_algebras
    sage/categories/lambda_bracket_algebras
    sage/categories/lambda_bracket_algebras_with_basis
    sage/categories/lattice_posets
@@ -161,6 +162,7 @@ Individual Categories
    sage/categories/monoids
    sage/categories/number_fields
    sage/categories/objects
+   sage/categories/ore_modules
    sage/categories/partially_ordered_monoids
    sage/categories/permutation_groups
    sage/categories/pointed_sets
@@ -268,6 +270,7 @@ Examples of parents using categories
    sage/categories/examples/posets
    sage/categories/examples/semigroups
    sage/categories/examples/semigroups_cython
+   sage/categories/examples/semirings
    sage/categories/examples/sets_cat
    sage/categories/examples/sets_with_grading
    sage/categories/examples/with_realizations

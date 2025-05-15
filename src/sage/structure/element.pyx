@@ -712,7 +712,6 @@ cdef class Element(SageObject):
         """
         tester = self._tester(**options)
         SageObject._test_category(self, tester=tester)
-        category = self.category()
         # Tests that self inherits methods from the categories
         if can_assign_class(self):
             # For usual Python classes, that should be done with
@@ -817,9 +816,9 @@ cdef class Element(SageObject):
             ngens = parent.ngens()
         except (AttributeError, NotImplementedError, TypeError):
             return self
-        variables=[]
-        # use "gen" instead of "gens" as a ParentWithGens is not
-        # required to have the latter
+        variables = []
+
+        # using gen instead of gens
         for i in range(ngens):
             gen = parent.gen(i)
             if str(gen) in kwds:

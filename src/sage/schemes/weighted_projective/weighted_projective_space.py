@@ -1,27 +1,20 @@
-from typing import Union
-
 from sage.categories.fields import Fields
-from sage.categories.rings import Rings
+from sage.categories.map import Map
 from sage.misc.latex import latex
 from sage.misc.prandom import shuffle
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.schemes.generic.ambient_space import AmbientSpace
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.schemes.weighted_projective.weighted_projective_homset import (
-    SchemeHomset_points_weighted_projective_field,
-    SchemeHomset_points_weighted_projective_ring,
-)
+from sage.schemes.projective.projective_space import ProjectiveSpace, _CommRings
 from sage.structure.all import UniqueRepresentation
 from sage.structure.category_object import normalize_names
 
-_Fields = Fields()
-_Rings = Rings()
-_CommRings = _Rings.Commutative()
+from sage.schemes.weighted_projective.weighted_projective_homset import SchemeHomset_points_weighted_projective_ring
+
 
 
 def WeightedProjectiveSpace(weights, R=None, names=None):
@@ -30,12 +23,11 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
 
     EXAMPLES::
 
-        sage: # TODO: add example of point on this space (it doesn't work right now)
         sage: WP = WeightedProjectiveSpace([1, 3, 1]); WP
         Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
     """
     if (
-        isinstance(weights, (MPolynomialRing_base, PolynomialRing_general))
+        isinstance(weights, (MPolynomialRing_base, PolynomialRing_generic))
         and R is None
     ):
         if names is not None:
@@ -74,11 +66,7 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
     if names is None:
         names = "x"
 
-    # TODO: Specialise implementation to projective spaces over non-rings. But
-    # since we don't really implement extra functionalities, I don't think we
-    # care.
-    if R in _Fields:
-        return WeightedProjectiveSpace_field(weights, R=R, names=names)
+    # TODO: Specialise implementation to projective spaces over non-rings.
     if R in _CommRings:
         return WeightedProjectiveSpace_ring(weights, R=R, names=names)
 
@@ -86,9 +74,6 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
 
 
 class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
-    """
-    TODO: Documentation
-    """
     @staticmethod
     def __classcall__(cls, weights: tuple[Integer], R=ZZ, names=None):
         # __classcall_ is the "preprocessing" step for UniqueRepresentation
@@ -96,11 +81,10 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         # weights should be a tuple, also because it should be hashable
         if not isinstance(weights, tuple):
             raise TypeError(
-                f"weights(={weights}) is not a tuple. Please use the `WeightedProjectiveSpace`"
-                " constructor"
+                f"weights(={weights}) is not a tuple. Please use the"
+                "`WeightedProjectiveSpace` constructor"
             )
 
-        # TODO: Do we normalise the weights to make it coprime?
         normalized_names = normalize_names(len(weights), names)
         return super().__classcall__(cls, weights, R, normalized_names)
 
@@ -148,7 +132,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         return self.dimension_relative() + 1
 
-    def _check_satisfies_equations(self, v: Union[list[Integer], tuple[Integer]]) -> bool:
+    def _check_satisfies_equations(self, v: list[Integer] | tuple[Integer]) -> bool:
         """
         Return ``True`` if ``v`` defines a point on the weighted projective
         plane; raise a :class:`TypeError` otherwise.
@@ -182,7 +166,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         return True
 
-    def coordinate_ring(self) -> PolynomialRing_general:
+    def coordinate_ring(self) -> PolynomialRing_generic:
         """
         Return the coordinate ring of this weighted projective space.
 
@@ -258,7 +242,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def _latex_(self):
         r"""
-        Return a LaTeX representation of this projective space.
+        Return a LaTeX representation of this weighted projective space.
 
         EXAMPLES::
 
@@ -298,6 +282,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         For internal use only. See :mod:`morphism` for details.
         """
+        # raise NotImplementedError("_point_homset not implemented for weighted projective space")
         return SchemeHomset_points_weighted_projective_ring(*args, **kwds)
 
     def point(self, v, check=True):
@@ -338,14 +323,12 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         For internal use only. See :mod:`morphism` for details.
         """
-        from sage.schemes.weighted_projective.weighted_projective_point import (
-            SchemeMorphism_point_weighted_projective_ring,
-        )
+        from sage.schemes.weighted_projective.weighted_projective_point import SchemeMorphism_point_weighted_projective_ring
         return SchemeMorphism_point_weighted_projective_ring(*args, **kwds)
 
     def _repr_(self) -> str:
         """
-        Return a string representation of this projective space.
+        Return a string representation of this weighted projective space.
 
         EXAMPLES::
 
@@ -358,51 +341,81 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             f" {self.weights()} over {self.base_ring()}"
         )
 
+    def change_ring(self, R):
+        r"""
+        Return a weighted projective space over ring ``R``.
+
+        INPUT:
+
+        - ``R`` -- commutative ring or morphism
+
+        OUTPUT: weighted projective space over ``R``
+
+        .. NOTE::
+
+            There is no need to have any relation between ``R`` and the base ring
+            of this space, if you want to have such a relation, use
+            ``self.base_extend(R)`` instead.
+
+        EXAMPLES::
+
+            sage: WP = WeightedProjectiveSpace([1, 3, 1], ZZ); WP
+            Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
+            sage: WP.change_ring(QQ)
+            Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Rational Field
+            sage: WP.change_ring(GF(5))
+            Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Finite Field of size 5
+        """
+        if isinstance(R, Map):
+            return WeightedProjectiveSpace(self.weights(), R.codomain(),
+                                           self.variable_names())
+        else:
+            return WeightedProjectiveSpace(self.weights(), R,
+                                           self.variable_names())
+
     def _an_element_(self):
         r"""
         Return a (preferably typical) element of this space.
 
         This is used both for illustration and testing purposes.
 
-        OUTPUT: a point in this projective space.
+        OUTPUT: a point in this weighted projective space.
 
         EXAMPLES::
 
-            sage: # TODO: Enable this
             sage: WeightedProjectiveSpace(ZZ, [1, 3, 1], 'x').an_element()  # random
-            (7 : 6 : 5 : 1)
+            (1 : 2 : 3)
             sage: WeightedProjectiveSpace(ZZ["y"], [2, 3, 1], 'x').an_element()  # random
-            (7*y : 6*y : 5*y : 1)
+            (3*y : 2*y : y)
         """
         n = self.dimension_relative()
         R = self.base_ring()
-        coords = [(n + 1 - i) * R.an_element() for i in range(n)] + [R.one()]
+        coords = [(n + 1 - i) * R.an_element() for i in range(n + 1)]
         shuffle(coords)
         return self(coords)
 
     def subscheme(self, *_, **__):
         raise NotImplementedError("subscheme of weighted projective space has not been implemented")
 
+    def curve(self, F):
+        r"""
+        Return a curve defined by ``F`` in this weighted projective space.
 
-class WeightedProjectiveSpace_field(WeightedProjectiveSpace_ring):
-    """
-    TODO: Documentation
-    """
-    def _point_homset(self, *args, **kwds):
-        """
-        Construct a point Hom-set.
+        INPUT:
 
-        For internal use only. See :mod:`morphism` for details.
-        """
-        return SchemeHomset_points_weighted_projective_field(*args, **kwds)
+        - ``F`` -- a polynomial, or a list or tuple of polynomials in
+          the coordinate ring of this weighted projective space
 
-    def _point(self, *args, **kwds):
-        """
-        Construct a point.
+        EXAMPLES::
 
-        For internal use only. See :mod:`morphism` for details.
+            sage: WP.<x, y, z> = WeightedProjectiveSpace([1, 3, 1], QQ)
+            sage: WP.curve(y^2 - x^5 * z - 3 * x^2 * z^4 - 2 * z^6)                     # needs sage.schemes
+            Weighted Projective Curve over Rational Field defined by y^2 - x^5*z - 3*x^2*z^4 - 2*z^6
         """
-        from sage.schemes.weighted_projective.weighted_projective_point import (
-            SchemeMorphism_point_weighted_projective_field,
-        )
-        return SchemeMorphism_point_weighted_projective_field(*args, **kwds)
+        if self.base_ring() not in Fields():
+            raise NotImplementedError("curves in weighted projective space over"
+                                      "rings not implemented")
+        from sage.schemes.curves.constructor import Curve
+        return Curve(F, self)
+
+>>>>>>> weighted-projective

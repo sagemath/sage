@@ -748,8 +748,8 @@ class IntegerRangeFromMiddle(IntegerRange):
             except (TypeError, ValueError):
                 return False
         if abs(self._step).divides(Integer(elt)-self._middle_point):
-            return (self._begin <= elt and elt < self._end) or \
-                   (self._begin >= elt and elt > self._end)
+            return (self._begin <= elt < self._end) or \
+                   (self._begin >= elt > self._end)
         return False
 
     def next(self, elt):

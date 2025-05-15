@@ -159,14 +159,13 @@ from sage.rings.integer import Integer
 from sage.rings.number_field.number_field_base import NumberField
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
 from sage.rings.polynomial.polynomial_ring_constructor import polynomial_default_category
 
 import sage.misc.latex as latex
-from sage.misc.prandom import randint
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 
@@ -230,7 +229,6 @@ def is_PolynomialRing(x):
         sage: type(R)
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
     """
-    from sage.misc.superseded import deprecation
     deprecation(38266,
                 "The function is_PolynomialRing is deprecated; "
                 "use 'isinstance(..., PolynomialRing_generic)' instead.")
@@ -624,6 +622,24 @@ class PolynomialRing_generic(Ring):
             self([one,0,one]), # an irreducible element
             self([2*one,0,2*one]), # an element with non-trivial content
         ]
+
+    def monomials_of_degree(self, degree):
+        r"""
+        Return the list of all monomials of the given total
+        degree in this univariate polynomial ring, which is simply the list with one element ``[self.gen()**degree]``.
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.polynomial.multi_polynomial_ring_base.MPolynomialRing_base.monomials_of_degree`
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: mons = R.monomials_of_degree(2)
+            sage: mons
+            [x^2]
+        """
+        return [self.gen()**degree]
 
     @cached_method
     def flattening_morphism(self):
@@ -1263,7 +1279,7 @@ class PolynomialRing_generic(Ring):
             raise IndexError("generator n not defined")
         return self.element_class(self, [0,1], is_gen=True)
 
-    def gens_dict(self):
+    def gens_dict(self) -> dict:
         """
         Return a dictionary whose entries are ``{name:variable,...}``,
         where ``name`` stands for the variable names of this
@@ -3608,7 +3624,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
         - Jeroen Demeyer (September 2014): add "ffprimroot" algorithm,
           see :issue:`8373`.
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         from sage.rings.finite_rings.conway_polynomials import (conway_polynomial,
                                                                 exists_conway_polynomial)
 

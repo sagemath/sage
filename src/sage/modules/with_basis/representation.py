@@ -21,7 +21,6 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModule_Tensor
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.categories.modules import Modules
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
@@ -2879,7 +2878,6 @@ class SchurFunctorRepresentation(Subrepresentation):
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         from sage.categories.tensor import tensor
-        from sage.matrix.matrix_space import MatrixSpace
 
         R = V.base_ring()
         self._shape = shape

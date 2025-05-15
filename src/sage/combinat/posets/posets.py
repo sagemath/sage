@@ -184,6 +184,7 @@ List of Poset methods
     :meth:`~FinitePoset.flag_h_polynomial` | Return the flag h-polynomial of the poset.
     :meth:`~FinitePoset.order_polynomial` | Return the order polynomial of the poset.
     :meth:`~FinitePoset.zeta_polynomial` | Return the zeta polynomial of the poset.
+    :meth:`~FinitePoset.apozeta_polynomial` | Return the apozeta polynomial of the poset.
     :meth:`~FinitePoset.M_triangle` | Return the M-triangle of the poset.
     :meth:`~FinitePoset.kazhdan_lusztig_polynomial` | Return the Kazhdan-Lusztig polynomial of the poset.
     :meth:`~FinitePoset.coxeter_polynomial` | Return the characteristic polynomial of the Coxeter transformation.
@@ -292,7 +293,6 @@ from itertools import product
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
-from sage.arith.misc import binomial
 from sage.categories.category import Category
 from sage.categories.sets_cat import Sets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -699,15 +699,12 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
             if element_labels is not None:
                 P = P.relabel(element_labels)
             return P
-        else:
-            if element_labels is None:
-                return FinitePoset(data, elements=data._elements, category=category, facade=facade)
-            else:
-                return FinitePoset(data, elements=element_labels, category=category, facade=facade)
+        if element_labels is None:
+            return FinitePoset(data, elements=data._elements, category=category, facade=facade)
+        return FinitePoset(data, elements=element_labels, category=category, facade=facade)
 
     # Convert data to a DiGraph
     elements = None
-    D = {}
     if data is None:  # type 0
         D = DiGraph()
     elif isinstance(data, DiGraph):  # type 4
@@ -1529,10 +1526,11 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.sorted([], allow_incomparable=False, remove_duplicates=False)
             []
         """
-        v = [self._element_to_vertex(x) for x in l]
+        v = (self._element_to_vertex(x) for x in l)
         if remove_duplicates:
-            v = set(v)
-        o = sorted(v)
+            o = sorted(set(v))
+        else:
+            o = sorted(v)
 
         if not allow_incomparable:
             H = self._hasse_diagram
@@ -1817,7 +1815,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for r in range(1, n + 1):
             new_a_spec.append(0)
             for i in range(max(1, r - n + k), min(r, k) + 1):
-                k_val = binomial(r - 1, i - 1) * binomial(n - r, k - i)
+                k_val = Integer(r - 1).binomial(i - 1) * Integer(n - r).binomial(k - i)
                 new_a_spec[-1] += k_val * a_spec[i - 1] * n_lin_exts
         return new_a_spec
 
@@ -2058,10 +2056,10 @@ class FinitePoset(UniqueRepresentation, Parent):
                   'cover_colors': 'edge_colors',
                   'cover_style': 'edge_style',
                   'border': 'graph_border'}
-        for param in rename:
+        for param, value in rename.items():
             tmp = kwds.pop(param, None)
             if tmp is not None:
-                kwds[rename[param]] = tmp
+                kwds[value] = tmp
 
         heights = kwds.pop('heights', None)
         if heights is None:
@@ -2586,10 +2584,10 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         covers = []
         for a, b in ints:
-            covers.extend([[(a, b), (a, bb)] for bb in self.upper_covers(b)])
+            covers.extend([(a, b), (a, bb)] for bb in self.upper_covers(b))
             if a != b:
-                covers.extend([[(a, b), (aa, b)] for aa in self.upper_covers(a)
-                               if self.le(aa, b)])
+                covers.extend([(a, b), (aa, b)] for aa in self.upper_covers(a)
+                              if self.le(aa, b))
 
         dg = DiGraph([ints, covers], format='vertices_and_edges')
         return constructor(dg, cover_relations=True)
@@ -2716,10 +2714,9 @@ class FinitePoset(UniqueRepresentation, Parent):
                 for y in H.neighbor_out_iterator(xmax):
                     if exposant == 1:
                         next_stock.append((xmin, y, y))
-                    else:
-                        if (cov_xmin, y) in short_stock:
-                            if H.is_linear_interval(xmin, y):
-                                next_stock.append((xmin, cov_xmin, y))
+                    elif (cov_xmin, y) in short_stock:
+                        if H.is_linear_interval(xmin, y):
+                            next_stock.append((xmin, cov_xmin, y))
             if next_stock:
                 poly.append(len(next_stock))
                 stock = next_stock
@@ -2856,12 +2853,12 @@ class FinitePoset(UniqueRepresentation, Parent):
             closure = self._hasse_diagram.transitive_closure()
         for m, n in chain_pairs:
             try:
-                m, n = Integer(m), Integer(n)
+                ZZm, ZZn = Integer(m), Integer(n)
             except TypeError:
                 raise TypeError(f"{m} and {n} must be integers")
             if m < 1 or n < 1:
                 raise ValueError(f"{m} and {n} must be positive integers")
-            twochains = digraphs.TransitiveTournament(m) + digraphs.TransitiveTournament(n)
+            twochains = digraphs.TransitiveTournament(ZZm) + digraphs.TransitiveTournament(ZZn)
             if closure.subgraph_search(twochains, induced=True) is not None:
                 return False
         return True
@@ -3465,7 +3462,7 @@ class FinitePoset(UniqueRepresentation, Parent):
           ``self`` such that ``b`` covers ``a`` and returning elements
           in a totally ordered set.
 
-        - ``return_raising_chains`` (optional; default:``False``) if
+        - ``return_raising_chains`` (optional; default: ``False``) if
           ``True``, returns the set of all raising chains in ``self``,
           if possible.
 
@@ -4332,9 +4329,14 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         return self._hasse_diagram.coxeter_transformation()
 
-    def coxeter_polynomial(self):
+    def coxeter_polynomial(self, algorithm="sage"):
         """
         Return the Coxeter polynomial of the poset.
+
+        INPUT:
+
+        - ``algorithm`` -- optional (default: ``"sage"``) ;
+          the unique other option is ``"magma"``
 
         OUTPUT: a polynomial in one variable
 
@@ -4352,11 +4354,22 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: p.coxeter_polynomial()                                                # needs sage.groups sage.libs.flint
             x^6 + x^5 - x^3 + x + 1
 
+        TESTS::
+
+            sage: P = posets.PentagonPoset()
+            sage: P.coxeter_polynomial("magma")  # optional - magma
+            x^5 + x^4 + x + 1
+
         .. SEEALSO::
 
             :meth:`coxeter_transformation`, :meth:`coxeter_smith_form`
         """
-        return self._hasse_diagram.coxeter_transformation().charpoly()
+        cox_matrix = self._hasse_diagram.coxeter_transformation()
+        if algorithm == "magma":
+            from sage.interfaces.magma import magma
+            dense_matrix = magma(cox_matrix).Matrix()
+            return dense_matrix.CharacteristicPolynomial().sage()
+        return cox_matrix.charpoly()
 
     def coxeter_smith_form(self, algorithm='singular'):
         """
@@ -5235,7 +5248,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         Factor the poset as a Cartesian product of smaller posets.
 
-        This only works for connected posets for the moment.
+        This only works for connected posets.
 
         The decomposition of a connected poset as a Cartesian product
         of posets (prime in the sense that they cannot be written as
@@ -5273,18 +5286,23 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.factor()
             Traceback (most recent call last):
             ...
-            NotImplementedError: the poset is not connected
+            NotImplementedError: the poset is empty or not connected
 
             sage: P = posets.Crown(2)
             sage: P.factor()
             [Finite poset containing 4 elements]
 
             sage: Poset().factor()
-            [Finite poset containing 0 elements]
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: the poset is empty or not connected
 
             sage: factor(posets.BooleanLattice(2))
             [Finite poset containing 2 elements,
             Finite poset containing 2 elements]
+
+            sage: factor(Poset(DiGraph([[0,1],[1,2],[0,3]])))
+            [Finite poset containing 4 elements]
 
         REFERENCES:
 
@@ -5296,49 +5314,57 @@ class FinitePoset(UniqueRepresentation, Parent):
         from sage.graphs.graph import Graph
         from sage.misc.flatten import flatten
         dg = self._hasse_diagram
-        if not dg.is_connected():
-            raise NotImplementedError('the poset is not connected')
-        if ZZ(dg.num_verts()).is_prime():
+        if not dg.is_connected() or not dg.order():
+            raise NotImplementedError('the poset is empty or not connected')
+        if Integer(dg.num_verts()).is_prime():
             return [self]
+        if sum(e for _, e in self.degree_polynomial().factor()) == 1:
+            return [self]
+
         G = dg.to_undirected()
         is_product, dic = G.is_cartesian_product(relabeling=True)
         if not is_product:
             return [self]
-        dic = {key: tuple(flatten(dic[key])) for key in dic}
+        dic = {key: tuple(flatten(val)) for key, val in dic.items()}
 
         prod_dg = dg.relabel(dic, inplace=False)
         v0 = next(iter(dic.values()))
         n = len(v0)
-        factors_range = list(range(n))
-        fusion = Graph(n)
+        factors_range = range(n)
 
         def edge_color(va, vb):
-            for i in range(n):
-                if va[i] != vb[i]:
-                    return i
+            return next(i for i, (vai, vbi) in enumerate(zip(va, vb))
+                        if vai != vbi)
 
+        neighbors_table = {}
+        for x in prod_dg:
+            z = [[] for _ in range(n)]
+            for y in prod_dg.neighbor_iterator(x):
+                z[edge_color(x, y)].append(y)
+            neighbors_table[x] = z
+
+        fusion_edges = []
         for i0, i1 in Subsets(factors_range, 2):
             for x in prod_dg:
-                neigh0 = [y for y in prod_dg.neighbor_iterator(x)
-                          if edge_color(x, y) == i0]
-                neigh1 = [z for z in prod_dg.neighbor_iterator(x)
-                          if edge_color(x, z) == i1]
+                neigh0 = neighbors_table[x][i0]
+                neigh1 = neighbors_table[x][i1]
                 for x0, x1 in product(neigh0, neigh1):
-                    x2 = list(x0)
-                    x2[i1] = x1[i1]
-                    x2 = tuple(x2)
+                    _x2 = list(x0)
+                    _x2[i1] = x1[i1]
+                    x2 = tuple(_x2)
                     A0 = prod_dg.has_edge(x, x0)
                     B0 = prod_dg.has_edge(x1, x2)
                     if A0 != B0:
-                        fusion.add_edge([i0, i1])
+                        fusion_edges.append([i0, i1])
                         break
                     A1 = prod_dg.has_edge(x, x1)
                     B1 = prod_dg.has_edge(x0, x2)
                     if A1 != B1:
-                        fusion.add_edge([i0, i1])
+                        fusion_edges.append([i0, i1])
                         break
 
-        fusion = fusion.transitive_closure()
+        fusion = Graph([list(range(n)), fusion_edges],
+                       format="vertices_and_edges")
         resu = []
         for s in fusion.connected_components(sort=False):
             subg = [x for x in prod_dg if all(x[i] == v0[i] for i in factors_range
@@ -6495,7 +6521,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                 with seed(currseed):
                     for _ in range(count):
                         for element in range(n):
-                            if random() % 2 == 1:
+                            if random() % 2:  # should use one random bit
                                 s = [state[i] for i in lower_covers[element]]
                                 if 1 not in s:
                                     if 2 not in s:
@@ -7171,12 +7197,12 @@ class FinitePoset(UniqueRepresentation, Parent):
             True
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
-        ineqs = [[0] + [ZZ(j == v) - ZZ(j == u) for j in self]
+        ineqs = [[0] + [Integer(j == v) - Integer(j == u) for j in self]
                  for u, v in self.hasse_diagram().edges(sort=False, labels=False)]
         for i in self.maximal_elements():
-            ineqs += [[1] + [-ZZ(j == i) for j in self]]
+            ineqs += [[1] + [-Integer(j == i) for j in self]]
         for i in self.minimal_elements():
-            ineqs += [[0] + [ZZ(j == i) for j in self]]
+            ineqs += [[0] + [Integer(j == i) for j in self]]
         return Polyhedron(ieqs=ineqs, base_ring=ZZ)
 
     def chain_polytope(self):
@@ -7210,10 +7236,10 @@ class FinitePoset(UniqueRepresentation, Parent):
             A 5-dimensional polyhedron in ZZ^5 defined as the convex hull of 8 vertices
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
-        ineqs = [[1] + [-ZZ(j in chain) for j in self]
+        ineqs = [[1] + [-Integer(j in chain) for j in self]
                  for chain in self.maximal_chains_iterator()]
         for i in self:
-            ineqs += [[0] + [ZZ(j == i) for j in self]]
+            ineqs += [[0] + [Integer(j == i) for j in self]]
         return Polyhedron(ieqs=ineqs, base_ring=ZZ)
 
     def zeta_polynomial(self):
@@ -7239,6 +7265,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         In particular, `Z(2)` is the number of vertices and `Z(3)` is
         the number of intervals.
+
+        .. SEEALSO:: :meth:`apozeta_polynomial`
 
         EXAMPLES::
 
@@ -7279,6 +7307,54 @@ class FinitePoset(UniqueRepresentation, Parent):
             n -= 1
             f = g[n] + f / n
         return f
+
+    def apozeta_polynomial(self):
+        r"""
+        Return the apozeta polynomial of the poset ``self``.
+
+        The poset is assumed to be graded.
+
+        The apozeta polynomial of a poset is the unique polynomial
+        `Z^{a}(q)` such that for every integer `m > 1`, `Z^{a}(m)` is
+        the number of weakly increasing sequences `x_1 \leq x_2 \leq
+        \dots \leq x_{m-1}` of elements of the poset whose largest
+        element belongs to the top level of the poset.
+
+        When the poset `P` has a unique maximal element, this is
+        equal to `Z(q-1)` where `Z` is the zeta polynomial of `P`.
+
+        The name comes from the greek radical ``apo``.
+
+        .. SEEALSO:: :meth:`zeta_polynomial`
+
+        EXAMPLES::
+
+            sage: P = posets.NoncrossingPartitions(SymmetricGroup(4))
+            sage: P.apozeta_polynomial()
+            8/3*q^3 - 10*q^2 + 37/3*q - 5
+
+            sage: P = Poset({"a": "bc", "b": "d", "c": "de"})
+            sage: P.apozeta_polynomial()
+            3/2*q^2 - 5/2*q + 1
+            sage: P.zeta_polynomial()
+            3/2*q^2 - 1/2*q
+
+        TESTS:
+
+        Checking the simplest case::
+
+            sage: Poset({1: []}).apozeta_polynomial()
+            1
+            sage: parent(_)
+            Univariate Polynomial Ring in q over Rational Field
+        """
+        from sage.functions.other import binomial
+        R = PolynomialRing(QQ, 'q')
+        q = R.gen()
+
+        top_level = self.level_sets()[-1]
+        return sum(binomial(q - 2, len(c) - 1)
+                   for c in self.chains() if c and c[-1] in top_level)
 
     def M_triangle(self):
         r"""
@@ -8144,7 +8220,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         n = self.cardinality()
         if n == 1:
             return True
-        if k is None and not certificate and n % 2 == 1:
+        if k is None and not certificate and n % 2:
             return False
 
         H = self._hasse_diagram
@@ -8545,35 +8621,69 @@ class FinitePoset(UniqueRepresentation, Parent):
         A cut is a subset `A` of ``self`` such that the set of lower
         bounds of the set of upper bounds of `A` is exactly `A`.
 
-        The cuts are computed here using the maximal independent sets in the
-        auxiliary graph defined as `P \times [0,1]` with an edge
-        from `(x, 0)` to `(y, 1)` if
-        and only if `x \not\geq_P y`. See the end of section 4 in [JRJ94]_.
+        The cuts are computed as the smallest family of subsets of P containing its
+        principal order filters, the whole set P and which is closed by intersection.
 
         EXAMPLES::
 
             sage: P = posets.AntichainPoset(3)
             sage: Pc = P.cuts()
             sage: Pc # random
-            [frozenset({0}),
+            [frozenset({2}),
+             frozenset({1}),
+             frozenset({0}),
              frozenset(),
-             frozenset({0, 1, 2}),
-             frozenset({2}),
-             frozenset({1})]
+             frozenset({0, 1, 2})]
             sage: sorted(list(c) for c in Pc)
             [[], [0], [0, 1, 2], [1], [2]]
+
+        TESTS::
+
+            sage: P = Poset()
+            sage: P.cuts()
+            [frozenset()]
+            sage: P = Poset({3: [4, 5, 7], 1: [2, 4, 6], 4: [], 0: [2, 5], 2: [7], 7: [], 5: [6], 6: []})
+            sage: P.cuts()
+            [frozenset({3, 4, 5, 6, 7}),
+             frozenset({1, 2, 4, 6, 7}),
+             frozenset({4}),
+             frozenset({0, 2, 5, 6, 7}),
+             frozenset({2, 7}),
+             frozenset({7}),
+             frozenset({5, 6}),
+             frozenset({6}),
+             frozenset({4, 6, 7}),
+             frozenset({5, 6, 7}),
+             frozenset({2, 6, 7}),
+             frozenset(),
+             frozenset({6, 7}),
+             frozenset({0, 1, 2, 3, 4, 5, 6, 7})]
 
         .. SEEALSO::
 
             :meth:`completion_by_cuts`
         """
-        from sage.graphs.graph import Graph
-        from sage.graphs.independent_sets import IndependentSets
-        auxg = Graph({(u, 0): [(v, 1) for v in self if not self.ge(u, v)]
-                      for u in self}, format='dict_of_lists')
-        auxg.add_vertices([(v, 1) for v in self])
-        return [frozenset([xa for xa, xb in c if xb == 0])
-                for c in IndependentSets(auxg, maximal=True)]
+        C, C2 = [], []
+        for x in self:
+            C.append(set(self.order_filter([x])))
+        for i, c in enumerate(C):
+            for j in range(i + 1, len(C)):
+                I = c.intersection(C[j])
+                if I not in C + C2:
+                    C2.append(I)
+        while C2:
+            D = []
+            for x in C:
+                for y in C2:
+                    I = x.intersection(y)
+                    if all(I not in X for X in [C, C2, D]):
+                        D.append(I)
+            C.extend(C2)
+            C2 = D
+        S = set(self)
+        if S not in C:
+            C.append(S)
+        return [frozenset(x) for x in C]
 
     def completion_by_cuts(self):
         """

@@ -26,19 +26,20 @@ class SchemeHomset_points_weighted_projective_ring(SchemeHomset_points):
 
     INPUT:
 
-    See :class:`SchemeHomset_generic`.
-
     EXAMPLES::
 
-        sage: WP = WeightedProjectiveSpace(ZZ, [1, 3, 1]); WP
-        Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
-        sage: WP.point_homset()
+        sage: W = WeightedProjectiveSpace([3, 4, 5], QQ)
+        sage: W.point_homset()
+        Set of rational points of Weighted Projective Space of dimension 2 with weights (3, 4, 5) over Rational Field
+        sage: W.an_element().parent() is W.point_homset()
+        True
+        sage: W.point_homset()
         Set of rational points of Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
-        sage: type(WP.point_homset())
+        sage: type(W.point_homset())
         <class 'sage.schemes.weighted_projective.weighted_projective_homset.SchemeHomset_points_weighted_projective_ring_with_category'>
-        sage: WP(2, 24, 2)
+        sage: W(2, 24, 2)
         (2 : 24 : 2)
-        sage: WP(2, 24, 2) == WP(1, 3, 1)
+        sage: W(2, 24, 2) == W(1, 3, 1)
         True
     """
 
@@ -50,7 +51,9 @@ class SchemeHomset_points_weighted_projective_ring(SchemeHomset_points):
         basis calculation. For schemes or subschemes with dimension greater than 1
         points are determined through enumeration up to the specified bound.
 
-        TODO: modify implementation from projective space
+        .. TODO::
+
+            Modify implementation from projective space.
         """
         raise NotImplementedError("enumerating points on weighted projective scheme is not implemented")
 
@@ -74,4 +77,3 @@ class SchemeHomset_points_weighted_projective_field(SchemeHomset_points):
         sage: WP(2, 24, 2) == WP(1, 3, 1)
         True
     """
-    pass

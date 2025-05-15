@@ -86,22 +86,22 @@ import numbers
 from memory_allocator cimport MemoryAllocator
 from cysignals.memory cimport check_calloc, sig_free
 
-from sage.graphs.graph              import Graph
-from sage.geometry.polyhedron.base  import Polyhedron_base
+from sage.graphs.graph import Graph
+from sage.geometry.polyhedron.base import Polyhedron_base
 from sage.geometry.lattice_polytope import LatticePolytopeClass
-from sage.geometry.cone             import ConvexRationalPolyhedralCone
-from sage.structure.element         import Matrix
-from sage.matrix.matrix_dense      cimport Matrix_dense
-from sage.misc.misc                 import is_iterator
+from sage.geometry.cone import ConvexRationalPolyhedralCone
+from sage.structure.element import Matrix
+from sage.matrix.matrix_dense cimport Matrix_dense
+from sage.misc.misc import is_iterator
 from .conversions import (incidence_matrix_to_bit_rep_of_facets,
                           incidence_matrix_to_bit_rep_of_Vrep,
                           facets_tuple_to_bit_rep_of_facets,
                           facets_tuple_to_bit_rep_of_Vrep)
 from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport Vrep_list_to_bit_rep
-from sage.misc.cachefunc            import cached_method
+from sage.misc.cachefunc import cached_method
 
-from sage.rings.integer                cimport smallInteger
-from cysignals.signals                 cimport sig_check
+from sage.rings.integer cimport smallInteger
+from cysignals.signals cimport sig_check
 
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure cimport face_len_atoms, face_init, face_free
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator cimport iter_t, parallel_f_vector
@@ -1467,14 +1467,14 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         if add_equations and names:
             return tuple(
-                    ((f(self._ridges.get(i).first),) + self.equations(),
-                     (f(self._ridges.get(i).second),) + self.equations())
-                    for i in range (n_ridges))
-        else:
-            return tuple(
-                    (f(self._ridges.get(i).first),
-                     f(self._ridges.get(i).second))
-                    for i in range (n_ridges))
+                ((f(self._ridges.get(i).first),) + self.equations(),
+                 (f(self._ridges.get(i).second),) + self.equations())
+                for i in range(n_ridges))
+
+        return tuple(
+            (f(self._ridges.get(i).first),
+             f(self._ridges.get(i).second))
+            for i in range(n_ridges))
 
     @cached_method
     def facet_adjacency_matrix(self, algorithm=None):
@@ -1943,15 +1943,14 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         if self.is_simplex():
             return self.dim() + 1
-        else:
-            from sage.arith.misc import binomial
-            k = 1
-            while self.f_vector()[k+1] == binomial(self.n_vertices(), k + 1):
-                k += 1
-            return k
+        cdef int k = 2
+        f = self.f_vector()
+        while f[k] == self.n_vertices().binomial(k):
+            k += 1
+        return k - 1
 
     @cached_method
-    def is_neighborly(self, k=None):
+    def is_neighborly(self, k=None) -> bool:
         r"""
         Return whether the polyhedron is neighborly.
 
@@ -2000,7 +1999,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         return all(self.f_vector()[i+1] == binomial(self.n_vertices(), i + 1)
                    for i in range(1, k))
 
-    def is_simplex(self):
+    def is_simplex(self) -> bool:
         r"""
         Return whether the polyhedron is a simplex.
 
@@ -2014,10 +2013,10 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: CombinatorialPolyhedron([[0,1],[0,2],[1,2]]).is_simplex()
             True
         """
-        return self.is_bounded() and (self.dim()+1 == self.n_vertices())
+        return self.is_bounded() and (self.dim() + 1 == self.n_vertices())
 
     @cached_method
-    def is_simplicial(self):
+    def is_simplicial(self) -> bool:
         r"""
         Test whether the polytope is simplicial.
 
