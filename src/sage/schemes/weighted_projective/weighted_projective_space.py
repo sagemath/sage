@@ -282,7 +282,6 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         For internal use only. See :mod:`morphism` for details.
         """
-        # raise NotImplementedError("_point_homset not implemented for weighted projective space")
         return SchemeHomset_points_weighted_projective_ring(*args, **kwds)
 
     def point(self, v, check=True):

@@ -28,52 +28,25 @@ class SchemeHomset_points_weighted_projective_ring(SchemeHomset_points):
 
     EXAMPLES::
 
-        sage: W = WeightedProjectiveSpace([3, 4, 5], QQ)
-        sage: W.point_homset()
-        Set of rational points of Weighted Projective Space of dimension 2 with weights (3, 4, 5) over Rational Field
+        sage: W = WeightedProjectiveSpace([1, 3, 1], QQ)
         sage: W.an_element().parent() is W.point_homset()
         True
         sage: W.point_homset()
-        Set of rational points of Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
+        Set of rational points of Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Rational Field
         sage: type(W.point_homset())
         <class 'sage.schemes.weighted_projective.weighted_projective_homset.SchemeHomset_points_weighted_projective_ring_with_category'>
         sage: W(2, 24, 2)
-        (2 : 24 : 2)
+        (1 : 3 : 1)
         sage: W(2, 24, 2) == W(1, 3, 1)
         True
-    """
 
-    def points(self, **__):
-        """
-        Return some or all rational points of this weighted projective scheme.
+    ::
 
-        For dimension 0 subschemes points are determined through a groebner
-        basis calculation. For schemes or subschemes with dimension greater than 1
-        points are determined through enumeration up to the specified bound.
-
-        .. TODO::
-
-            Modify implementation from projective space.
-        """
-        raise NotImplementedError("enumerating points on weighted projective scheme is not implemented")
-
-
-class SchemeHomset_points_weighted_projective_field(SchemeHomset_points):
-    """
-    Set of rational points of a weighted projective variety over a field.
-
-    Placeholder class.
-
-    EXAMPLES::
-
-        sage: WP = WeightedProjectiveSpace(QQ, [1, 3, 1]); WP
-        Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Rational Field
-        sage: WP.point_homset()
-        Set of rational points of Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Rational Field
-        sage: type(WP.point_homset())
-        <class 'sage.schemes.weighted_projective.weighted_projective_homset.SchemeHomset_points_weighted_projective_field_with_category'>
-        sage: WP(2, 24, 2)
-        (1 : 3 : 1)
-        sage: WP(2, 24, 2) == WP(1, 3, 1)
-        True
+        sage: R.<x> = QQ[]
+        sage: H = HyperellipticCurveSmoothModel(x^6 + x - 17); H
+        Hyperelliptic Curve over Rational Field defined by y^2 = x^6 + x - 17
+        Page: P = H(2, -7); P
+        (2 : -7 : 1)
+        sage: type(P)
+        <class 'sage.schemes.weighted_projective.weighted_projective_point.SchemeMorphism_point_weighted_projective_ring'>
     """
