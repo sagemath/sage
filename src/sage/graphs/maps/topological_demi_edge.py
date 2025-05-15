@@ -311,7 +311,7 @@ class TopologicalDemiEdge():
             sage: print (A.node())
             [X(1), X(2), X(4)]
 
-        NOTE::
+        NOTE:
             O(k), where k is the number of demi-edges on the node
         """
 
@@ -340,7 +340,7 @@ class TopologicalDemiEdge():
             sage: A.isOnSameFace(B)
             True
 
-        NOTE::
+        NOTE:
             O(1)
         """
         return bool(self.map.areOnTheSameFace(
@@ -365,7 +365,7 @@ class TopologicalDemiEdge():
             sage: B.isOnSameNode(A)
             False
 
-    .. NOTE::
+    .. NOTE:
             O(1)
         """
 
@@ -381,7 +381,7 @@ class TopologicalDemiEdge():
             sage: from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
             sage: TopologicalDemiEdge(None,5)._invalidate()
 
-    .. NOTE::
+    .. NOTE:
             O(1)
         """
         self._isValid = False
@@ -415,7 +415,7 @@ class TopologicalDemiEdge():
             sage: U
             X(22) 
 
-        NOTE::
+        NOTE:
             O(1)
         """
         self._index = newIndex
@@ -438,7 +438,7 @@ class TopologicalDemiEdge():
             sage: U,V
             (X(10), X(5))
 
-        NOTE::
+        NOTE:
             O(1)
         """
         tmp = self.raw

@@ -12,7 +12,7 @@ class PermutationUtilsAbstractor:
         """
         Init the PermutationUtilsAbstractor
         INPUT:
-            permutation a MapPermutation
+        - ``permutation`` -- MapPermutation
 
         EXAMPLES:
 
@@ -21,7 +21,7 @@ class PermutationUtilsAbstractor:
             sage: t = MapPermutation([(1,2,4)])
             sage: tAbstr = PermutationUtilsAbstractor(t)
 
-        .. NOTE:
+        NOTE:
             O(n) where n is the size of permutation
         """
         cycles = permutation.to_cycles()
@@ -41,7 +41,7 @@ class PermutationUtilsAbstractor:
     def numberInCycle(self, index):
         """
         INPUT:
-            index
+        - ``index`` -- int
 
         OUTPUT:
             The size of the cycle containing index
@@ -55,7 +55,7 @@ class PermutationUtilsAbstractor:
             sage: tAbstr.numberInCycle(2)
             3
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return self._cyclesLength[self._cycleIndexes[index]]
@@ -63,7 +63,9 @@ class PermutationUtilsAbstractor:
     def sameCycle(self, i, j):
         """
         INPUT:
-            i,j valid indexes 
+        - ``i`` -- int
+        - ``j`` -- int
+
         OUTPUT:
             A boolean indicating if i and j are on the same cycle
 
@@ -78,7 +80,7 @@ class PermutationUtilsAbstractor:
             sage: tAbstr.sameCycle(2,1)
             True
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return bool(self._cycleIndexes[i] == self._cycleIndexes[j])
@@ -99,7 +101,7 @@ class PermutationUtilsAbstractor:
             sage: tAbstr.numberOfCycles()
             2
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return self._numberOfCycles
@@ -119,7 +121,7 @@ class PermutationUtilsAbstractor:
             sage: tAbstr.numberOfFixedPoint()
             1
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return self._numberOfFixedPoint
@@ -127,7 +129,7 @@ class PermutationUtilsAbstractor:
     def checkTwoInTheSameCycle(self, listIndexes):
         """
         INPUT:
-            listIndexes a list of indexes
+        - ``listIndexes`` -- List[int]
 
         OUTPUT:
             A boolean indicating if there are two indices in listIndexes on the sameCycle
@@ -142,7 +144,7 @@ class PermutationUtilsAbstractor:
             sage: tAbstr.checkTwoInTheSameCycle([1,3])
             False
 
-        .. NOTE::
+        NOTE:
             O(len(listIndexes))
         """
         checkSet = set()

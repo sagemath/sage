@@ -3,10 +3,10 @@
 def CheckValid(cls):
     """
     INPUT:
-        cls a class
+        -``cls`` ; a class
 
     OUTPUT:
-        the same class but with a check before each method 
+        The same class but with a check before each method 
 
     EXAMPLES::
 
@@ -15,8 +15,8 @@ def CheckValid(cls):
         sage: CheckValid(TopologicalDemiEdge)
         <class 'sage.graphs.maps.topological_demi_edge.TopologicalDemiEdge'>
 
-    .. NOTE::
-        Used internally
+    NOTE:
+        Used internaly
     """
     originalMethods = {name: method for name,
                        method in cls.__dict__.items() if callable(method)}

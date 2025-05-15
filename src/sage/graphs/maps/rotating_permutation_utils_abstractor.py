@@ -7,6 +7,10 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
         """
         Init the RotatingPermutationUtilsAbstractor
 
+        INPUT:
+        - ``permutation`` -- RotatingPermutation
+
+
         EXAMPLES::
 
             sage: from sage.graphs.maps.rotating_permutation import RotatingPermutation
@@ -14,7 +18,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             sage: rperm = RotatingPermutation([(1,3,4), (7,8,2,5)])
             sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         self.rpermutation = rpermutation
@@ -22,7 +26,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
     def numberInCycle(self, index):
         """
         INPUT:
-            index
+        - ``index`` -- int
 
         OUTPUT:
             The size of the cycle containing index
@@ -36,21 +40,21 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             sage: rAbstractor.numberInCycle(5)
             4 
 
-        .. NOTE::
+        NOTE:
             O(log(m)) where m is the size of the permutation 
         """
         return self.rpermutation.numberInCycle(index)
 
     def sameCycle(self, i, j):
         """
-
         INPUT:
-            i,j two valid indexes
+        - ``i`` -- int
+        - ``j`` -- int
 
         OUTPUT:
             A boolean indicating if i and j are on the same cycle
 
-        .. NOTE::
+        NOTE:
             O(log(m)) where m is the size of the permutation
         """
         return self.rpermutation.sameCycle(i, j)
@@ -89,7 +93,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             sage: rAbstractor.numberOfFixedPoint()
             1
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
 
@@ -98,7 +102,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
     def checkTwoInTheSameCycle(self, listIndexes):
         """
         INPUT:
-            listIndexes a list of indexes
+        - ``listIndexes`` -- List[int]
 
         OUTPUT:
             A boolean indicating if there are two indices in listIndexes on the sameCycle
@@ -114,7 +118,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             sage: rAbstractor.checkTwoInTheSameCycle([1,6,7])
             False
 
-        .. NOTE::
+        NOTE:
             O(len(listIndexes)log(m)) where m is the permutation size
         """
 

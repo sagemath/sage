@@ -17,7 +17,7 @@ class CustomSwap (MapPermutation):
         Initialize the CustomSwap structure.
 
         INPUT:
-        - ``lst`` -- int: a list of transpositions of the form [(a,b)], where a,b are integers >=1
+        - ``lst`` -- list[tuple[int,int]]: a list of transpositions of the form [(a,b)], where a,b are integers >=1
 
         EXAMPLES::
 
@@ -131,8 +131,7 @@ class CustomSwap (MapPermutation):
 
     def to_cycles(self):
         """
-        OUTPUT:
-            A list of tuple representing the cycle decomposition of self
+        A list of tuple representing the cycle decomposition of self.
 
         EXAMPLES::
 
@@ -140,7 +139,7 @@ class CustomSwap (MapPermutation):
             sage: CustomSwap([(12,8)]).to_cycles()
             [(1,), (2,), (3,), (4,), (5,), (6,), (7,), (8, 12), (8,), (9,), (10,), (11,)]
 
-        .. NOTE::
+        NOTE:
             O(n) where n is the size of the permutation
         """
         if self.a == self.b:
@@ -160,7 +159,7 @@ class CustomSwap (MapPermutation):
             sage: CustomSwap([(12,8)]).inverse()
             [1, 2, 3, 4, 5, 6, 7, 12, 9, 10, 11, 8]
 
-        .. NOTE::
+        NOTE:
             O(1)
         """
         return self

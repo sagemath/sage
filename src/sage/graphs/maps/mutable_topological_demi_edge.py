@@ -17,8 +17,8 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         saying that the self.map is connected thus make all the other method unsafe by default trust = False.
 
         INPUT:
-            trust: a parameter telling the function if it should trust the fact that the map will stay connected after
-                deleting demiEdge default is False
+        -``trust`` -- bool ; a parameter telling the function if it should trust the fact that the map will stay connected after
+        deleting demiEdge default is False
 
         EXAMPLES::
 
@@ -35,7 +35,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: mm == cp
             True
 
-        .. NOTE::
+        NOTE:
             O(log(m)) if self is planar or trust = True otherwise O(m)
         """
 
@@ -51,7 +51,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         It will return two MutableLabelledMap topoDemiEdgeA,topoDemiEdgeB corresponding to the new demi edge A and B
 
         INPUT:
-            otherTopoDemiEdge: Another TopologicalDemiEdge on the same facee as self
+        - ``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge ; Another MutableTopologicalDemiEdge on the same facee as self
 
 
         OUTPUT:
@@ -72,7 +72,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: A.isOnSameFace(B)
             False
 
-        .. NOTE:
+        NOTE:
             O(log(m))
         """
 
@@ -84,7 +84,8 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         This method will create a new edge, such that it is added on the same node as self but after it in the
         trigonometric order
 
-        INPUT: The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
+        OUTPUT: 
+            The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
 
         EXAMPLES::
@@ -98,7 +99,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: A.addEdgeAfter()
             X(24)
 
-        .. NOTE::
+        NOTE:
             O(log(m))
         """
         return self.map.addEdgeAfter(self.raw)
@@ -123,7 +124,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: A.addEdgeAfter()
             X(24)   
 
-        .. NOTE:
+        NOTE:
             O(log(m))
         """
 
@@ -139,8 +140,8 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         It will raise an error if the self.map isn't connected after the operation and trust is set to False.
 
         INPUT:
-            trust: a parameter telling the method if it should trust the fact that the self.map will stay connected after
-                deleting self default is False
+        -- ``trust`` -- bool ; a parameter telling the method if it should trust the fact that the self.map will stay connected after
+        deleting self default is False
 
         EXAMPLES::
 
@@ -173,7 +174,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
              (15,),
              (18,)]
 
-        .. NOTE::
+        NOTE:
             O(deg(node)*log(m)) if self.map is planar and O(m+deg(node)*log(m)) otherwise
         """
 
@@ -196,7 +197,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: mm.faces()
             [(1, 3, 4, 7, 11, 16, 18, 13, 12, 15, 14, 2, 5, 17, 9, 8, 10, 6)]
 
-        .. NOTE::
+        NOTE:
             O(log(m))
         """
         self.map.contractEdge(self.raw)
@@ -231,7 +232,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: mm.faces()
             [(1, 3, 2, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6), (4, 7, 11, 16, 18, 5)]
 
-        .. NOTE::
+        NOTE:
             O(tlog(m)) where t is the number of edge on the face containing self
         """
         self.map.contractFace(self.raw)
@@ -247,7 +248,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         to the copy of i.
 
         INPUT:
-            otherTopoDemiEdge: The otherTopoDemiEdge attached to the node on otherTopoDemiEdge.map which to draw the new edge
+        -``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge: The otherTopoDemiEdge attached to the node on otherTopoDemiEdge.map which to draw the new edge
 
         OUTPUT:
 
@@ -291,7 +292,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: mm.m
             21
 
-        .. NOTE::
+        NOTE:
             O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
             note that it is much more efficient than O(p+m) mainly when m>>p
         """
@@ -310,7 +311,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         won't modify otherTopoDemiEdge.map(if otherTopoDemiEdge.map isn't strictly the same object in memory as self.map).
 
         INPUT:
-            otherTopoDemiEdge: Another TopologicalDemiEdge
+        - ``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge: Another TopologicalDemiEdge
 
         EXAMPLES::
 
@@ -336,7 +337,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: mm.m,cp.m
             (20, 10)
 
-        .. NOTE::
+        NOTE:
             O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
             note that it is much more efficient than O(p+m) mainly when m>>p
         """
@@ -352,7 +353,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         Merge the node attached to self and otherTopoDemiEdge, they need to be on the same face
 
         INPUT:
-            otherTopoDemiEdge: the other TopologicalDemiEdge on the same face as sel
+        - ``otherTopoDemiEdge`` -- MutableLabelledMap;the other TopologicalDemiEdge on the same face as self
 
         EXAMPLES::
 
@@ -388,7 +389,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
              (18,),
              (20,)]
 
-        .. NOTE::
+        NOTE:
             O(log(m)) where m is the number of edge of self.map
         """
 
@@ -401,7 +402,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
     def isOnSameFace(self, otherTopologicalDemiEdge):
         """
         INPUT:
-            otherTopologicalDemiEdge a TopologicalDemiEdge on the same map as self
+        -- `` otherTopologicalDemiEdge``  -- MutableTopologicalDemiEdge ;a MutableTopologicalDemiEdge on the same map as self
 
         OUTPUT:
             A boolean indicating if they are on the same face
@@ -418,7 +419,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: A.isOnSameNode(B)
             False
 
-        .. NOTE::
+        NOTE:
             O(log(m)) where m is the number of edge of self.map
         """
         return self.map.areOnTheSameFace(
@@ -428,7 +429,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
     def isOnSameNode(self, otherTopologicalDemiEdge):
         """
         INPUT:
-            otherTopologicalDemiEdge a TopologicalDemiEdge on the same map as self
+        - ``otherTopologicalDemiEdge -- MutableTopologicalDemiEdge ; A MutableTopologicalDemiEdge on the same map as self
 
         OUTPUT:
             A boolean indicating if they are on the same node
@@ -445,7 +446,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             sage: A.isOnSameNode(B)
             False
 
-        .. NOTE::
+        NOTE:
             O(log(m)) where m is the number of edge of self.map
         """
 
