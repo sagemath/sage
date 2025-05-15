@@ -229,8 +229,8 @@ class CycleUtilsProvider:
     # Useful during operations to not have to have a different logic for fixed point that won't be anymore after the operations
     def _safeIndex(self, index):
         """
-        Used internaly,because we don't have node for fixed point index , it may create a different logic for them
-        this will temporarly create a node during this operations , the use must be careful that after having used 
+        Used internally,because we don't have node for fixed point index , it may create a different logic for them
+        this will temporarily create a node during this operations , the use must be careful that after having used 
         this temporary node , that it is deleted from node map or isn't anymore a fixed point.
 
         EXAMPLES::

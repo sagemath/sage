@@ -16,7 +16,7 @@ def CheckValid(cls):
         <class 'sage.graphs.maps.topological_demi_edge.TopologicalDemiEdge'>
 
     NOTE:
-        Used internaly
+        Used internally
     """
     originalMethods = {name: method for name,
                        method in cls.__dict__.items() if callable(method)}

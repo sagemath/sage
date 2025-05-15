@@ -1,10 +1,12 @@
+"""Define the LabelledMap class and several internal functions."""
+
 import warnings
 from collections import deque
 from sage.graphs.maps.custom_swap import CustomSwap
 from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
 from sage.graphs.maps.permutation_utils_abstractor import PermutationUtilsAbstractor
 from sage.all import Permutation, Graph  # Import sage library
-from sage.graphs.maps.map_permutation import *
+from sage.graphs.maps.map_permutation import MapPermutation
 
 try:
     import networkx as nx
@@ -17,17 +19,16 @@ except ImportError:
     plt = None
 
 
-def transitiveCouplePermutation(sigma, alpha):
-    r"""
-    Check that sigma and alpha act transitively
+def transitiveCouplePermutation(sigma: Permutation | MapPermutation, alpha: Permutation | MapPermutation) -> bool:
+    """
+    Return whether sigma and alpha act transitively.
+
     INPUT:
     - ``sigma`` -- Permutation or MapPermutation;
     - ``alpha`` -- Permutation or MapPermutation;
-    OUTPUT:
-
-    Returns, a boolean indicating if sigma and alpha
-    act transitively.
+    
     EXAMPLES::
+
         sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
         sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
         sage: from sage.graphs.maps.labelled_map import transitiveCouplePermutation
@@ -35,7 +36,6 @@ def transitiveCouplePermutation(sigma, alpha):
         True
 
     NOTE:
-
         Complexity is O(m), where m is the size of sigma and alpha.
 
     """
@@ -91,20 +91,15 @@ class LabelledMap:
         trust=False,
     ):
         r"""
-        Initializes the labelled map from either the permutations alpha
-        and sigma, or an adjacency list (giving each vertex a list of
-        its neighbors in order; vertices must be numbered from 1 to n).
+        Initialize the labelled map from either the permutations alpha and sigma, or an adjacency list (giving each vertex a list of its neighbors in order; vertices must be numbered from 1 to n).
 
         INPUT:
-        - ``sigma`` -- Permutation | MapPermutation | None; Permutation that maps a half-edge
-          to the half-edge incident to it in anti-clockwise direction around
-          the vertex it belongs to.
-        - ``alpha`` -- Permutation | MapPermutation | None ; Permutation that maps a half-edge
-            Fixed-point free involution whose cycles are given by the edges.
-        - ``ajd``-- List[Tuples] | None ; an adjacency list be careful the order of the
-            node in your adjaceny will be used to choose the embedding
-        - ``trust`` --  bool  ; A parameter that indicates whether the validity check (i.e., whether the map is connex, etc.)
-          should be skipped when initializing the map. It makes initialization faster but can be dangerous because
+        - ``sigma`` -- Permutation | MapPermutation | None; Permutation that maps a half-edge to the half-edge incident to it in anti-clockwise direction around the vertex it belongs to.
+        - ``alpha`` -- Permutation | MapPermutation | None ; Fixed-point free involution whose cycles are given by the edges.
+        - ``ajd``-- List[Tuples] | None ; an adjacency list (the order of the neighbors will be used to choose the embedding)
+        - ``trust`` --  bool  ; A parameter that indicates whether the validity check (i.e., whether the map is connex, etc.) should be skipped when initializing the map.
+          
+          It makes initialization faster but can be dangerous because
           if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your
           map's validity if you set this to true.The advantage of setting `trust` to true is that it makes the initialization faster, 
           which is useful when you are initializing a lot of big maps (like in long bijections).Therefore, the best workflow is 
@@ -118,6 +113,10 @@ class LabelledMap:
             sage: LabelledMap(sigma, alpha)
             Labelled map | Sigma : [1, 3, 2, 5, 4, 6],
                            Alpha : [2, 1, 4, 3, 6, 5]
+
+        NOTE:
+            Setting ``trust`` to ``True`` makes initialization faster but can be dangerous because if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your map's validity if you set this to True.
+            However, if you are aboslutely sure that your code works, you can gain a lot of computing time when initializing a lot of big maps (like in long bijections). Therefore, the best workflow is to leave it at the default (False) during testing, set it to True when everything works.
 
         TESTS::
 
@@ -163,7 +162,6 @@ class LabelledMap:
             ValueError: Cannot build the map from both an adjacency list
             and permutations
         """
-
         # Set it to false during
         # Debugging
         self._production = True
@@ -188,22 +186,19 @@ class LabelledMap:
 
     def _extend(self):
         r"""
-        Extend the map by adding sigmaUtilsAbstractor and phiUtilsAbstractor attributes,
-        and adding the topological demi edge.
+        Extend the map by adding sigmaUtilsAbstractor and phiUtilsAbstractor attributes, and adding the topological demi edge.
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = LabelledMap(alpha = alpha,sigma=sigma)
             sage: m._extend()    
 
         NOTE:
-
             Complexity is O(m), where m is the size of the map.
             Used internally not intended to be used by the user.
-
-         """
-
+        """
         self.sigmaUtilsAbstractor = PermutationUtilsAbstractor(self.sigma)
         self.phiUtilsAbstractor = PermutationUtilsAbstractor(self.phi)
         # Initialising the topologicalMap
@@ -212,16 +207,12 @@ class LabelledMap:
 
     def _build_from_permutations(self, sigma, alpha, trust):
         r"""
-        Initializes the labelled map from the underlying permutations.
+        Initialize the labelled map from the underlying permutations.
 
         INPUT:
-        - ``sigma`` -- Permutation | MapPermutation ; Permutation that maps a half-edge
-          to the half-edge incident to it in anti-clockwise direction around
-          the vertex it belongs to.
-        - ``alpha`` -- Permutation | MapPermutation ; Fixed-point free involution whose 
-        cycles are given by the edges.
-        - ``trust`` -- A parameter that indicates to trust the user on whether alpha 
-          and sigma are valid.
+        - ``sigma`` -- Permutation | MapPermutation ; Permutation that maps a half-edge to the half-edge incident to it in anti-clockwise direction around the vertex it belongs to.
+        - ``alpha`` -- Permutation | MapPermutation ; Fixed-point free involution whose cycles are given by the edges.
+        - ``trust`` -- bool ; A parameter that indicates to trust the user on whether alpha and sigma are valid.
 
         EXAMPLES::
 
@@ -230,7 +221,6 @@ class LabelledMap:
             sage: LabelledMap(sigma, alpha)._build_from_permutations(sigma, alpha, False)
 
         NOTE:
-
             Complexity is O(m), where m is the size of the map.
             Used internally not intended to be used by the user.
         """
@@ -268,13 +258,11 @@ class LabelledMap:
 
     def _build_from_adj(self, adj, trust):
         r"""
-        Initializes the labelled map from an adjacency list.
-        INPUT:
+        Initialize the labelled map from an adjacency list.
 
-        - ``adj`` -- List[Tuples] ;adjacency list be careful the order of the
-            node in your adjaceny will be used to choose the embedding
-        - ``trust`` -- bool ;A parameter that indicates to trust the user on whether the alpha 
-          and sigma obteined are valid.
+        INPUT:
+        - ``adj`` -- List[Tuples] ;adjacency list be careful the order of the node in your adjaceny will be used to choose the embedding
+        - ``trust`` -- bool ;A parameter that indicates to trust the user on whether the alpha and sigma obteined are valid.
 
         EXAMPLES::
 

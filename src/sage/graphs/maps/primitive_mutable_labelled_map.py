@@ -96,7 +96,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
         and B on the same node as endDemiEdge but before it.
         It will return two MutableLabelledMap topoDemiEdgeA,topoDemiEdgeB corresponding to the new demi edge A and B
 
-        WARNING: Nothing is guaranted if startDemiEdge and endDemiEdge are not on the same face
+        WARNING: Nothing is guaranteed if startDemiEdge and endDemiEdge are not on the same face
 
         INPUT:
         - ``startDemiEdge`` -- int ; A demi edge of self
