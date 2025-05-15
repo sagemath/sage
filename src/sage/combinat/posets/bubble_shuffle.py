@@ -7,13 +7,13 @@ Bubble lattices were introduced by McConville and Mühle in [MacCM2022]_.
 
 The Bubble lattice `B_{m,n}` and the Shuffle lattice `S_{m,n}` share
 the same underlying set, namely all shuffles of two subwords of the
-two words $X=(x_1,x_2,\ldots,x_{m})$ and $Y=(y_1,y_2,\ldots,y_n)$.
+two words `X = (x_1,x_2,\ldots,x_{m})` and `Y = (y_1,y_2,\ldots,y_n)`.
 
 The partial order in the Shuffle poset is defined by either inserting a
-letter from $Y$ or deleting a letter from $X$.
+letter from `Y` or deleting a letter from `X`.
 
 The Bubble poset is an extension of the Shuffle poset, by adding the
-exchange of adjacent letters from $X$ and $Y$, from $xy$ to $yx$.
+exchange of adjacent letters from `X` and `Y`, from `xy` to `yx`.
 
 .. NOTE::
 
