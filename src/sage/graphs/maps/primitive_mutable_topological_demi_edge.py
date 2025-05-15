@@ -1,6 +1,8 @@
-from sage.graphs.maps.map_decorator import CheckValid
+"""Define the PrimitiveMutableTopologicalDemiEdge class, an abstraction meant to represent a demi-edge of a map in a more user-friendly way than raw indices used in MutableLabelledMap."""
+
 from sage.graphs.maps.map_error import NotImplementedError
 from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
+# from sage.graphs.maps.primitive_mutable_labelled_map import PrimitiveMutableLabelledMap
 
 
 class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
@@ -10,7 +12,65 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
     ,add between them etc.
     """
 
-    @CheckValid
+    _lmap: "PrimitiveMutableLabelledMap"
+    
+    def __init__(self, lmap: "PrimitiveMutableLabelledMap", index: int):
+        """This class is an abstraction meant to represent the demi edge of a mutable map in a more user-friendly way
+        than simple indexes. It is more related to the "topological structure" of the map than the raw index.
+
+        INPUT:
+        - ``lmap`` -- PrimitiveMutableLabelledMap: The map to which the demi-edge is bind
+        - ``index`` -- int: The index associated to the demi-edge
+
+        EXAMPLES::
+
+            sage: from sage.graphs.maps.primitive_mutable_topological_demi_edge import PrimitiveMutableTopologicalDemiEdge
+            sage: lm = PrimitiveMutableLabelledMap(Permutation([(1,3), (2,), (4,)]), Permutation([(1,2), (3,4)]))
+            sage: PrimitiveMutableTopologicalDemiEdge(lm, 3)
+            X(3)
+
+        NOTE:
+            O(1)"""
+        
+        super().__init__(lmap, index)
+        
+    @property
+    def map(self) -> "PrimitiveMutableLabelledMap":
+        """
+        The map to which self is bind.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.maps.primitive_mutable_topological_demi_edge import PrimitiveMutableTopologicalDemiEdge
+
+            sage: lm = PrimitiveMutableLabelledMap(Permutation([(1,3), (2,), (4,)]), Permutation([(1,2), (3,4)]))
+            sage: PrimitiveMutableTopologicalDemiEdge(lm, 3).map
+            Labelled map | Sigma : [3, 2, 1, 4], Alpha : [2, 1, 4, 3]
+
+        NOTE:
+            O(1)
+        """
+
+        return self.getMap()
+    
+    def getMap(self) -> "PrimitiveMutableLabelledMap":
+        """
+        Returns the map to which self is bind.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.maps.primitive_mutable_topological_demi_edge import PrimitiveMutableTopologicalDemiEdge
+
+            sage: lm = PrimitiveMutableLabelledMap(Permutation([(1,3), (2,), (4,)]), Permutation([(1,2), (3,4)]))
+            sage: PrimitiveMutableTopologicalDemiEdge(lm, 3).getMap()
+            Labelled map | Sigma : [3, 2, 1, 4], Alpha : [2, 1, 4, 3]
+
+        NOTE:
+            O(1)
+        """
+        self._checkValid()
+        return self._lmap
+
     def delete(self, sameFace):
         """
         This function delete self from self.map
@@ -37,10 +97,10 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         NOTE:
             O(1),If this break the connectivity, no error will be raised and the map won't be stable anymore
         """
+        self._checkValid()
 
         self.map.deleteEdge(self.raw, sameFace)
 
-    @CheckValid
     def link(self, otherTopoDemiEdge):
         """
         This will add an edge between the node of self to otherTopoDemiEdge(note that they
@@ -73,10 +133,10 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         NOTE:
             O(1)
         """
+        self._checkValid()
 
         return self.map.addEdge(self.raw, otherTopoDemiEdge.raw)
 
-    @CheckValid
     def addEdgeAfter(self):
         """
         This method will create a new edge, such that it is added on the same node as self but after it in the
@@ -99,9 +159,9 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         NOTE:
             O(1)
         """
+        self._checkValid()
         return self.map.addEdgeAfter(self.raw)
 
-    @CheckValid
     def addEdgeBefore(self):
         """
         This method will create a new edge, such that it is added on the same node as self but before it
@@ -123,10 +183,10 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         NOTE:
             O(1)
         """
+        self._checkValid()
 
         return self.map.addEdgeBefore(self.raw)
 
-    @CheckValid
     def contract(self):
         """
         Contract the edge bind to self , note that self cannot be on a loop
@@ -166,9 +226,9 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         NOTE:
             O(1)
         """
+        self._checkValid()
         self.map.contractEdge(self.raw)
 
-    @CheckValid
     def isOnSameFace(self, otherTopologicalDemiEdge):
         """
         Not implemented for PrimitiveMutableTopologicalDemiEdge
@@ -183,9 +243,9 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             OK
 
         """
+        self._checkValid()
         raise NotImplementedError(self)
 
-    @CheckValid
     def isOnSameNode(self, otherTopologicalDemiEdge):
         """
         Not implemented for PrimitiveMutableTopologicalDemiEdge
@@ -200,4 +260,5 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             OK
 
         """
+        self._checkValid()
         raise NotImplementedError(self)

@@ -84,6 +84,8 @@ class LabelledMap:
 
     q: The number of demi edges of the map
     """
+    
+    topologicalMap: dict[int, TopologicalDemiEdge]
 
     def __init__(
         self,
@@ -180,7 +182,7 @@ class LabelledMap:
             )
 
         self.topologicalMap: dict[int, TopologicalDemiEdge] = {}
-        a = self.topologicalMap[1]
+        
         if adj is None:
             self._build_from_permutations(sigma, alpha, trust)
         else:
@@ -2417,7 +2419,7 @@ class LabelledMap:
             Phi (Face): {self.phi.to_cycles()}
         """)
 
-    def copy(self) -> LabelledMap:
+    def copy(self) -> "LabelledMap":
         """
         A copy of self.
 

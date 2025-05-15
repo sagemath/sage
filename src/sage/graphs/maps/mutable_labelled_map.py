@@ -1,6 +1,6 @@
 from sage.all import Permutation  # Import sage library
-from sage.graphs.maps.labelled_map import *
-from sage.graphs.maps.mutable_topological_demi_edge import *
+from sage.graphs.maps.labelled_map import LabelledMap, transitiveCouplePermutation
+from sage.graphs.maps.mutable_topological_demi_edge import MutableTopologicalDemiEdge
 from sage.graphs.maps.rotating_permutation_utils_abstractor import RotatingPermutationUtilsAbstractor
 from sage.graphs.maps.rotating_permutation import RotatingPermutation
 
@@ -35,6 +35,8 @@ class MutableLabelledMap(LabelledMap):
     q: The number of demi edges of the map
 
     """
+    
+    topologicalMap: dict[int, MutableTopologicalDemiEdge]
 
     def __init__(
         self,
@@ -79,6 +81,50 @@ class MutableLabelledMap(LabelledMap):
 
         for e in range(1, self.q + 1):
             self.topologicalMap[e] = MutableTopologicalDemiEdge(self, e)
+
+    def X(self, demiEdge: int) -> MutableTopologicalDemiEdge:
+        """
+        Return the MutableTopologicalDemiEdge associated to demiEdge.
+
+        INPUT:
+            - ``demiEdge`` -- int ; an index associated to a demiEdge
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = MutableLabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.X(1)
+            X(1)
+
+        NOTE:
+            Complexity is O(1)
+
+        """
+        return self.getTopologicalDemiEdge(demiEdge)
+    
+    def getTopologicalDemiEdge(self, demiEdge: int) -> MutableTopologicalDemiEdge:
+        """
+        The MutableTopologicalDemiEdge associated to demiEdge
+
+        INPUT:
+            - ``demiEdge`` -- int ; An index associated to a demiEdge
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = MutableLabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.getTopologicalDemiEdge(1)
+            X(1)
+
+        NOTE:
+
+            Complexity is O(1)
+
+        """
+
+        return self.topologicalMap[demiEdge]
 
     def willStillBeConnectedAfterEdgeDeletion(self, demiEdge):
         """
