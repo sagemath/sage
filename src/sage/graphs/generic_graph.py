@@ -8405,6 +8405,9 @@ class GenericGraph(GenericGraph_pyx):
             True
             sage: D.longest_cycle(induced=False, use_edge_labels=True, immutable=False)[1].is_immutable()
             False
+            sage: # check that https://houseofgraphs.org/graphs/752 has circumference 6:
+            sage: Graph('EJ~w', immutable=True).longest_cycle().order()
+            6
         """
         self._scream_if_not_simple()
         G = self
@@ -8560,7 +8563,7 @@ class GenericGraph(GenericGraph_pyx):
                     hh = h.subgraph(vertices=c)
                     if total_weight(hh) > best_w:
                         best = hh
-                        best.name(name)
+                        best._name = name
                         best_w = total_weight(best)
 
                 # Add subtour elimination constraints
@@ -9299,7 +9302,7 @@ class GenericGraph(GenericGraph_pyx):
             return (0, None) if use_edge_labels else None
 
         tsp.delete_vertices(extra_vertices)
-        tsp.name("Hamiltonian path from {}".format(self.name()))
+        tsp._name = "Hamiltonian path from {}".format(self.name())
         if immutable:
             tsp = tsp.copy(immutable=True)
 
@@ -9574,7 +9577,7 @@ class GenericGraph(GenericGraph_pyx):
                                  (vv, uu, self.edge_label(vv, uu))]
                     answer = self.subgraph(edges=edges, immutable=self.is_immutable())
                     answer.set_pos(self.get_pos())
-                    answer.name("TSP from "+self.name())
+                    answer._name = "TSP from "+self.name()
                     return answer
             else:
                 if self.allows_multiple_edges() and len(self.edge_label(uu, vv)) > 1:
@@ -9584,7 +9587,7 @@ class GenericGraph(GenericGraph_pyx):
                         edges = self.edges(sort=True, key=weight)[:2]
                     answer = self.subgraph(edges=edges, immutable=self.is_immutable())
                     answer.set_pos(self.get_pos())
-                    answer.name("TSP from " + self.name())
+                    answer._name = "TSP from " + self.name()
                     return answer
 
             raise EmptySetError("the given graph is not Hamiltonian")
@@ -9733,7 +9736,7 @@ class GenericGraph(GenericGraph_pyx):
             # We can now return the TSP !
             answer = self.subgraph(edges=h.edges(sort=False), immutable=self.is_immutable())
             answer.set_pos(self.get_pos())
-            answer.name("TSP from "+g.name())
+            answer._name = "TSP from "+g.name()
             return answer
 
         #################################################
@@ -9805,7 +9808,7 @@ class GenericGraph(GenericGraph_pyx):
             f_val = p.get_values(f, convert=bool, tolerance=integrality_tolerance)
             tsp.add_vertices(g.vertex_iterator())
             tsp.set_pos(g.get_pos())
-            tsp.name("TSP from " + g.name())
+            tsp._name= "TSP from " + g.name()
             if g.is_directed():
                 tsp.add_edges((u, v, l) for u, v, l in g.edge_iterator() if f_val[u, v] == 1)
             else:
@@ -24891,7 +24894,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: g = graphs.ChvatalGraph()
+            sage: g = graphs.ChvatalGraph().copy(immutable=True)
             sage: g.is_hamiltonian()                                                    # needs sage.numerical.mip
             True
 
