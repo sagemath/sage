@@ -26,7 +26,7 @@ def transitiveCouplePermutation(sigma: Permutation | MapPermutation, alpha: Perm
     INPUT:
     - ``sigma`` -- Permutation or MapPermutation;
     - ``alpha`` -- Permutation or MapPermutation;
-    
+
     EXAMPLES::
 
         sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
@@ -98,7 +98,7 @@ class LabelledMap:
         - ``alpha`` -- Permutation | MapPermutation | None ; Fixed-point free involution whose cycles are given by the edges.
         - ``ajd``-- List[Tuples] | None ; an adjacency list (the order of the neighbors will be used to choose the embedding)
         - ``trust`` --  bool  ; A parameter that indicates whether the validity check (i.e., whether the map is connex, etc.) should be skipped when initializing the map.
-          
+
           It makes initialization faster but can be dangerous because
           if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your
           map's validity if you set this to true.The advantage of setting `trust` to true is that it makes the initialization faster,
