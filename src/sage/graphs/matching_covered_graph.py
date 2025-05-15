@@ -3933,32 +3933,31 @@ class MatchingCoveredGraph(Graph):
                 raise ValueError(f'input contains {n} copies of the edge '
                                  f'{edge}, but the graph contains {c}')
 
-        new_vertices = [self._backend.add_vertex(None) for _ in range(k * len(edges))]
         M = Graph(self.get_matching())
 
         from itertools import pairwise
         for i, edge in enumerate(edges):
             u, v, l = edge
-
             self._backend.del_edge(u, v, l, self._directed)
-            self._backend.add_edge(u, new_vertices[i * k], l, self._directed)
-            self._backend.add_edge(new_vertices[(i + 1) * k - 1], v, l, self._directed)
-            self._backend.add_edges([(x, y, l) for x, y in pairwise(new_vertices[i * k : (i + 1) * k])],
-                self._directed, remove_loops=True
-            )
+
+            new_vertices = [self._backend.add_vertex(None) for _ in range(k)]
+
+            self._backend.add_edge(u, new_vertices[0], l, self._directed)
+            self._backend.add_edge(new_vertices[-1], v, l, self._directed)
+            self._backend.add_edges([(x, y, l) for x, y in pairwise(new_vertices)],
+                                    self._directed, remove_loops=True)
 
             if M.has_edge(u, v, l):
                 M.delete_edge(u, v, l)
 
-            vertex_subset = new_vertices[i * k : (i + 1) * k]
             if M.degree(u):
                 M.add_edges([(x, y, l)
-                    for x, y in zip(vertex_subset[::2], vertex_subset[1::2])])
+                    for x, y in zip(new_vertices[::2], new_vertices[1::2])])
             else:
-                M.add_edge(u, new_vertices[i * k], l)
-                M.add_edge(new_vertices[(i + 1) * k - 1], v, l)
+                M.add_edge(u, new_vertices[0], l)
+                M.add_edge(new_vertices[-1], v, l)
                 M.add_edges([(x, y, l)
-                    for x, y in zip(vertex_subset[1::2], vertex_subset[2::2])])
+                    for x, y in zip(new_vertices[1::2], new_vertices[2::2])])
 
         self.update_matching(M)
 
