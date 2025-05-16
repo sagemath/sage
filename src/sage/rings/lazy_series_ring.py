@@ -2408,6 +2408,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             \\
             \vartheta_{11}(z; \tau) & = \sum_{n=0}^{\infty}
             (-1)^n (w^{2n+1} + w^{-2n+1}) q^{n^2+n},
+            \end{aligned}
 
         where `w = \exp(\pi i z)`. We consider them as formal power
         series in `q` with the coefficients in the Laurent polynomial
