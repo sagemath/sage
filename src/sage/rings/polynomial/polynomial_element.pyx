@@ -365,7 +365,7 @@ cdef class Polynomial(CommutativePolynomial):
                 w = dict([(v[i],i) for i in range(len(v))])
                 z = [(i, w[self(v[i])]) for i in range(len(v))]
                 return point(z, *args, **kwds)
-        raise NotImplementedError("plotting of polynomials over %s not implemented"%R)
+        raise NotImplementedError("plotting of polynomials over %s not implemented" % R)
 
     cpdef _lmul_(self, Element left):
         """
@@ -3166,11 +3166,11 @@ cdef class Polynomial(CommutativePolynomial):
                 if y.find("-") == 0:
                     y = y[1:]
                 if not atomic_repr and n > 0 and (y.find("+") != -1 or y.find("-") != -1):
-                    x = "(%s)"%x
+                    x = "(%s)" % x
                 if n > 1:
-                    var = "*%s^%s"%(name,n)
+                    var = "*%s^%s" % (name, n)
                 elif n==1:
-                    var = "*%s"%name
+                    var = "*%s" % name
                 else:
                     var = ""
                 sbuf.write(x)
@@ -5537,7 +5537,7 @@ cdef class Polynomial(CommutativePolynomial):
         try:
             doit = self._parent._base._gcd_univariate_polynomial
         except AttributeError:
-            raise NotImplementedError("%s does not provide a gcd implementation for univariate polynomials"%self._parent._base)
+            raise NotImplementedError("%s does not provide a gcd implementation for univariate polynomials" % self._parent._base)
         else:
             return doit(self, other)
 
@@ -9745,8 +9745,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         if hasattr(self.base_ring(), '_xgcd_univariate_polynomial'):
             return self.base_ring()._xgcd_univariate_polynomial(self, other)
-        else:
-            raise NotImplementedError("%s does not provide an xgcd implementation for univariate polynomials"%self.base_ring())
+        raise NotImplementedError("%s does not provide an xgcd implementation for univariate polynomials" % self.base_ring())
 
     def rational_reconstruction(self, m, n_deg=None, d_deg=None):
         r"""
@@ -11294,13 +11293,14 @@ cdef class Polynomial(CommutativePolynomial):
         elif n == 1 or self.is_zero() or self.is_one():
             return self
         elif self.degree() % n:
-            raise ValueError("not a %s power"%Integer(n).ordinal_str())
-        elif self.get_unsafe(0).is_zero(): # We know that self is not 0, so it must have degree >= 0
+            raise ValueError("not a %s power" % Integer(n).ordinal_str())
+        elif self.get_unsafe(0).is_zero():
+            # We know that self is not 0, so it must have degree >= 0
             # p = x^k q
             # p^(1/n) = x^(k/n) q^(1/n)
             i = self.valuation()
-            if i%n:
-                raise ValueError("not a %s power"%Integer(n).ordinal_str())
+            if i % n:
+                raise ValueError("not a %s power" % Integer(n).ordinal_str())
             return (self >> i).nth_root(n) << (i // n)
 
         if self.get_unsafe(0).is_one():
@@ -11319,7 +11319,7 @@ cdef class Polynomial(CommutativePolynomial):
         if q**n == p:
             return S(q)
         else:
-            raise ValueError("not a %s power"%Integer(n).ordinal_str())
+            raise ValueError("not a %s power" % Integer(n).ordinal_str())
 
     def _nth_root_series(self, long n, long prec, start=None):
         r"""
@@ -11417,7 +11417,7 @@ cdef class Polynomial(CommutativePolynomial):
             # p^(1/m) = x^(i/m) q^(1/m)
             i = self.valuation()
             if i % m:
-                raise ValueError("not a %s power"%m.ordinal_str())
+                raise ValueError("not a %s power" % m.ordinal_str())
             return (self >> i)._nth_root_series(m, prec - i // m) << (i // m)
         else:
             c = R.characteristic()
@@ -11429,7 +11429,7 @@ cdef class Polynomial(CommutativePolynomial):
                 for i in range(self.degree()+1):
                     if self.get_unsafe(i):
                         if i % cc:
-                            raise ValueError("not a %s power"%m.ordinal_str())
+                            raise ValueError("not a %s power" % m.ordinal_str())
                         ans[i//cc] = self.get_unsafe(i).nth_root(cc)
                 p = self._parent(ans)
                 m = m // cc
