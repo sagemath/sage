@@ -175,6 +175,41 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     base_extend = change_ring
 
+    def discriminant(self):
+        r"""
+        Return the discriminant of this curve.
+
+        The discriminant of the hyperelliptic curve `y^2 + hy = f` is `\Delta =
+        2^{-4(g + 1)} \Delta(h^2 + 4f)`. See
+        `<https://www.math.u-bordeaux.fr/~qliu/Notes/disc.pdf>`_ for the
+        derivation.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = 2*x^6 + x^2 - 3*x + 1
+            sage: h = x^2 + x + 1
+            sage: H = HyperellipticCurveSmoothModel(f, h)
+            sage: H.discriminant()
+            -1622970410
+            sage: F = 4*f + h^2
+            sage: F.discriminant() / 16^3
+            -1622970410
+            sage: G = f.derivative()^2 - f*h.derivative()^2 + f.derivative()*h.derivative()*h
+            sage: F.resultant(G) == Delta^2*F.lc()^2
+            True
+
+        ::
+
+            sage: # H.affine_patch() is not implemented
+            sage: H_patch = H.projective_curve().affine_patch(2)
+            sage: for p in prime_range(3, 300):
+            ....:     Hp = H_patch.change_ring(GF(p))
+            ....:     assert Hp.is_smooth() == (H.discriminant() % p != 0)
+        """
+        f, h = self._hyperelliptic_polynomials
+        return (4 * f + h**2).discriminant() / 16**(self.genus() + 1)
+
     def polynomial_ring(self):
         """
         Return the parent of `f,h`, where ``self`` is the hyperelliptic curve
@@ -197,8 +232,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def hyperelliptic_polynomials(self):
         """
-        Return the polynomials `(f, h)` such that
-        `C : y^2 + h*y = f`.
+        Return the polynomials `(f, h)` such that `C : y^2 + hy = f`.
 
         EXAMPLES::
 
@@ -798,9 +832,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         f, h = self.hyperelliptic_polynomials()
 
         F = h**2 + 4 * f
-        affine_weierstrass_points = [
-            self(r, -h(r) / 2) for r in F.roots(multiplicities=False)
-        ]
+        affine_weierstrass_points = [self(r, -h(r) / 2) for r in F.roots(multiplicities=False)]
 
         if self.is_ramified():  # the point at infinity is Weierstrass
             return self.points_at_infinity() + affine_weierstrass_points
@@ -1241,9 +1273,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         f, h = self._hyperelliptic_polynomials
         if f.base_ring().characteristic() == 2:
-            raise ValueError(
-                "There are no odd degree models over a field with characteristic 2."
-            )
+            raise ValueError("There are no odd degree models over a field with characteristic 2.")
         if h:
             f = 4 * f + h**2  # move h to the right side of the equation
         if f.degree() % 2:
