@@ -20,7 +20,6 @@ EXAMPLES::
     species of graphs composed with the compositional inverse of the
     species of non-empty sets.::
 
-        sage: from sage.rings.lazy_species import LazySpecies
         sage: L.<X> = LazySpecies(QQ)
         sage: E = L.Sets()
         sage: Ep = E.restrict(1)
@@ -203,7 +202,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
     Compute the molecular expansion of `E(-X)`::
 
-        sage: from sage.rings.lazy_species import LazySpecies
         sage: L = LazySpecies(ZZ, "X")
         sage: E = L(lambda n: SymmetricGroup(n))
         sage: E_inv = 1 / E
@@ -228,7 +226,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: E.isotype_generating_series()
@@ -271,7 +268,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: E = L.Sets()
             sage: E.generating_series()
@@ -317,7 +313,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: E = L.Sets()
             sage: h = SymmetricFunctions(QQ).h()
@@ -367,7 +362,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: G = L.Graphs()
             sage: list(G.isotypes(2))
@@ -384,7 +378,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: F = L(lambda n: SymmetricGroup(n))
@@ -402,7 +395,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: sorted((E^2).structures([1,2,3]))
@@ -430,7 +422,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: list(E.structures([1,2,3]))
@@ -483,7 +474,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         TESTS::
 
             sage: from sage.rings.species import PolynomialSpecies
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
             sage: XY = L(P(PermutationGroup([], domain=[1, 2, 3]), {0: [1], 1: [2, 3]}))
@@ -515,7 +505,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: list(E.isotypes(3))
@@ -561,7 +550,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         TESTS::
 
             sage: from sage.rings.species import PolynomialSpecies
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
             sage: XY = L(P(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
@@ -601,7 +589,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: E.polynomial(3)
@@ -629,7 +616,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: E2 = L(SymmetricGroup(2))
             sage: E2(E2)
@@ -732,7 +718,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L.<X> = LazySpecies(QQ)
             sage: E1 = L.Sets().restrict(1)
             sage: g = E1.revert()
@@ -807,7 +792,6 @@ class LazySpeciesElement_generating_series_mixin:
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L.<X> = LazySpecies(QQ)
             sage: L.Graphs().isotype_generating_series().truncate(8)
             1 + X + 2*X^2 + 4*X^3 + 11*X^4 + 34*X^5 + 156*X^6 + 1044*X^7
@@ -832,7 +816,6 @@ class LazySpeciesElement_generating_series_mixin:
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L.<X> = LazySpecies(QQ)
             sage: L.Graphs().generating_series().truncate(7)
             1 + X + X^2 + 4/3*X^3 + 8/3*X^4 + 128/15*X^5 + 2048/45*X^6
@@ -851,7 +834,6 @@ class SumSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: F = L.Sets() + L.SetPartitions()
             sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
@@ -867,7 +849,6 @@ class SumSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: F = L.Sets() + L.SetPartitions()
             sage: list(F.structures([1,2,3]))
@@ -890,7 +871,6 @@ class ProductSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: F = L.Sets() * L.SetPartitions()
             sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
@@ -906,7 +886,6 @@ class ProductSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: E = L.Sets()
             sage: C = L.Cycles()
@@ -940,7 +919,6 @@ class CompositionSpeciesElement(LazySpeciesElement):
 
         TESTS::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
             sage: P.zero()(X)
             0
@@ -1029,7 +1007,6 @@ class CompositionSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: E = L.Sets()
             sage: E1 = L.Sets().restrict(1)
@@ -1102,7 +1079,6 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: LazySpecies(QQ, "X")
             Lazy completion of Polynomial species in X over Rational Field
         """
@@ -1120,7 +1096,6 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X, Y> = LazySpecies(QQ)  # indirect doctest
             sage: 1/(1-X-Y)
             1 + (X+Y) + (X^2+2*X*Y+Y^2) + (X^3+3*X^2*Y+3*X*Y^2+Y^3)
@@ -1136,7 +1111,6 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: LazySpecies(QQ, "X, Y")
             Lazy completion of Polynomial species in X, Y over Rational Field
 
@@ -1167,7 +1141,6 @@ class SetSpecies(LazySpeciesElement):
 
         TESTS::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
             sage: E = P.Sets()
             sage: TestSuite(E).run(skip=['_test_category', '_test_pickling'])
@@ -1181,7 +1154,6 @@ class SetSpecies(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: E = L.Sets()
             sage: list(E.structures([1,2,3]))
@@ -1198,7 +1170,6 @@ class CycleSpecies(LazySpeciesElement):
 
         TESTS::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
             sage: C = P.Cycles()
             sage: TestSuite(C).run(skip=['_test_category', '_test_pickling'])
@@ -1212,7 +1183,6 @@ class CycleSpecies(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: C = L.Cycles()
             sage: list(C.structures([]))
@@ -1236,7 +1206,6 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElemen
 
         TESTS::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
             sage: G = P.Graphs()
             sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
@@ -1251,7 +1220,6 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElemen
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
             sage: G = P.Graphs()
             sage: list(G.isotypes(2))
@@ -1267,7 +1235,6 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElemen
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L.<X> = LazySpecies(QQ)
             sage: L.Graphs().generating_series().truncate(7)
             1 + X + X^2 + 4/3*X^3 + 8/3*X^4 + 128/15*X^5 + 2048/45*X^6
@@ -1286,7 +1253,6 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElemen
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L.<X> = LazySpecies(QQ)
             sage: L.Graphs().cycle_index_series().truncate(4)
             p[] + p[1] + (p[1,1]+p[2]) + (4/3*p[1,1,1]+2*p[2,1]+2/3*p[3])
@@ -1318,7 +1284,6 @@ class SetPartitionSpecies(LazySpeciesElement):
 
         TESTS::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
             sage: p = P.SetPartitions()
             sage: TestSuite(p).run(skip=['_test_category', '_test_pickling'])
@@ -1333,7 +1298,6 @@ class SetPartitionSpecies(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
             sage: p = P.SetPartitions()
             sage: list(p.isotypes(3))
@@ -1348,7 +1312,6 @@ class SetPartitionSpecies(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: P = L.SetPartitions()
             sage: list(P.structures([]))
@@ -1371,7 +1334,6 @@ class RestrictedSpeciesElement(LazySpeciesElement):
 
         TESTS::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
             sage: G3 = P.Graphs().restrict(3, 3)
             sage: TestSuite(G3).run(skip=['_test_category', '_test_pickling'])
@@ -1404,7 +1366,6 @@ class RestrictedSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
             sage: p = P.SetPartitions().restrict(2, 2)
             sage: list(p.isotypes(3))
@@ -1421,7 +1382,6 @@ class RestrictedSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: F = L.SetPartitions().restrict(3)
             sage: list(F.structures([1]))

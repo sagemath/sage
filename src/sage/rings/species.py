@@ -2651,7 +2651,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: P = PolynomialSpecies(QQ, ["X"])
