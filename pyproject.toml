@@ -13,6 +13,13 @@ requires = [
     'numpy >=1.25',
     'jinja2'
 ]
+[tool.meson-python.args]
+# Prevent meson from trying to install the autoconf subprojects
+# otherwise we hit https://github.com/mesonbuild/meson-python/issues/598
+# The subprojects have to set the rpath to the build directory, which should work as long as
+# we don't use build isolation.
+install = ['--skip-subprojects', 'ecl']
+
 [project]
 name = "sagemath"
 description = "Sage: Open Source Mathematics Software: Standard Python Library"
@@ -49,7 +56,8 @@ dependencies = [
     'fpylll >=0.5.9',
     'ptyprocess > 0.5',
     # TODO: Remove this once the migration to meson is complete
-    'pkgconfig'
+    'pkgconfig',
+    'traitlets',
 ]
 dynamic = ["version"]
 license = {text = "GNU General Public License (GPL) v2 or later"}
@@ -74,6 +82,9 @@ requires-python = ">=3.11, <3.14"
 [project.optional-dependencies]
 R = [
     'rpy2 >=3.3',
+]
+giac = [
+    'sagemath_giac',
 ]
 
 [project.readme]
@@ -120,7 +131,6 @@ host-requires = [
   "pkg:generic/libgd",
   "pkg:generic/gap",
   "pkg:generic/gfan",
-  "pkg:generic/giac",
   "pkg:generic/givaro",
   "pkg:generic/glpk",
   "pkg:generic/gmp",
@@ -206,3 +216,7 @@ ignore = [
 "all.py" = [
   "F401", # Unused import - these files are by definition collections of imports.
 ]
+
+[tool.uv]
+# Don't use build isolation for sage (it's incompatible with meson-python's editable install)
+no-build-isolation-package = ["sagemath"]
