@@ -52,6 +52,3 @@ class WeightedProjectiveCurve(Curve_generic):
             'Weighted Projective'
         """
         return "Weighted Projective"
-
-    def curve(self):
-        return self
