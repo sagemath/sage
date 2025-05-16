@@ -52,3 +52,39 @@ class WeightedProjectiveCurve(Curve_generic):
             'Weighted Projective'
         """
         return "Weighted Projective"
+
+    def projective_curve(self):
+        r"""
+        Return this weighted projective curve as a projective curve.
+
+        A weighted homogeneous polynomial `f(x_1, \ldots, x_n)`, where `x_i` has
+        weight `w_i`, can be viewed as an unweighted homogeneous polynomial
+        `f(y_1^{w_1}, \ldots, y_n^{w_n})`. This correspondence extends to
+        varieties.
+
+        .. TODO:
+
+            Implement homsets for weighted projective spaces and implement this
+            as a ``projective_embedding`` method instead.
+
+        EXAMPLES::
+
+            sage: WP = WeightedProjectiveSpace([1, 3, 1], QQ, "x, y, z")
+            sage: x, y, z = WP.gens()
+            sage: C = WP.curve(y^2 - (x^5*z + 3*x^2*z^4 - 2*x*z^5 + 4*z^6)); C
+            Weighted Projective Curve over Rational Field defined by y^2 - x^5*z - 3*x^2*z^4 + 2*x*z^5 - 4*z^6
+            sage: C.projective_curve()
+            Projective Plane Curve over Rational Field defined by y^6 - x^5*z - 3*x^2*z^4 + 2*x*z^5 - 4*z^6
+        """
+        from sage.schemes.projective.projective_space import ProjectiveSpace
+
+        WP = self.ambient_space()
+        PP = ProjectiveSpace(WP.dimension_relative(), WP.base_ring(), WP.variable_names())
+        PP_ring = PP.coordinate_ring()
+        subs_dict = {name: var**weight for (name, var), weight in
+                     zip(WP.gens_dict().items(), WP.weights())}
+
+        wp_polys = self.defining_polynomials()
+        pp_polys = [PP_ring(poly.subs(**subs_dict)) for poly in wp_polys]
+
+        return PP.curve(pp_polys)
