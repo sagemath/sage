@@ -66,10 +66,11 @@ jobs:
       - name: Build Sage
         shell: bash -l {0}
         run: |
-          export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
-          export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+          export CC="ccache $CC"
+          export CXX="ccache $CXX"
           pip install --no-build-isolation --config-settings=builddir=builddir --editable . -v
-  
+
       #
       # For pull requests
       #
