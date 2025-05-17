@@ -155,7 +155,7 @@ jobs:
           if [ -d "doc/html" ]; then
               rm -rf doc/html
           fi
-          cp -r builddir/src/doc doc/
+          cp -r builddir/src/doc/* doc/
           # Check if we are on pull request event
           PR_NUMBER=""
           if [[ -n "$GITHUB_REF" ]]; then
