@@ -31,7 +31,8 @@ foreach type : ['inventory', 'html', 'pdf']
     else
       short_ref = ref
     endif
-    deps = [doc_src]
+    deps = []
+    deps += doc_src
     if type == 'html' or type == 'pdf'
       deps += reference_inventory
     endif
