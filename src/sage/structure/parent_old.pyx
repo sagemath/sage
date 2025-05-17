@@ -259,7 +259,7 @@ cdef class Parent(parent.Parent):
         check_old_coerce(self)
         try:
             return self.gen()
-        except (ValueError, AttributeError):
+        except (ValueError, AttributeError, TypeError):
             pass
 
         from sage.rings.infinity import infinity
