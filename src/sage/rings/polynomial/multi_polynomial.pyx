@@ -1980,6 +1980,10 @@ cdef class MPolynomial(CommutativePolynomial):
         Given an ideal `I = (f_1,\dots,f_r)` that contains ``self``,
         find `s_1,\dots,s_r` such that ``self`` `= s_1 f_1 + ... + s_r f_r`.
 
+        INPUT:
+
+        - ``I`` -- an ideal in ``self.parent()``, or tuple of generators of that ideal
+
         EXAMPLES::
 
             sage: # needs sage.rings.real_mpfr
@@ -2890,6 +2894,45 @@ cdef class MPolynomial(CommutativePolynomial):
                 return result(False, "multiple positive eigenvalues")
 
         return result(True)
+
+    def crt(self, y, m, n):
+        """
+        Return a polynomial congruent to ``self`` modulo ``m`` and
+        to ``y`` modulo ``n``.
+
+        INPUT:
+
+        - ``y`` -- a polynomial in the same ring as ``self``
+        - ``m``, ``n`` -- polynomials or ideals in the same ring as ``self``. Ideals
+          may also be specified as a list/tuple of generators.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ, implementation="singular")
+            sage: f = R(3)
+            sage: g = f.crt(5, x-1, x-2); g  # random (up to addition by multiples of (x-1)*(x-2))
+            2*x + 1
+            sage: g(1)
+            3
+            sage: g(2)
+            5
+            sage: g = f.crt(5, R.ideal(x-1), [x-2])
+            sage: g(1)
+            3
+            sage: g(2)
+            5
+        """
+        # could be moved up to ModuleElement as long as lift() is defined
+        # the current definition of lift() requires ideal(), so maybe only RingElement
+        R = self._parent
+        y = R(y)
+        m = R.ideal(m).gens()
+        n = R.ideal(n).gens()
+        # result == self - sum a_i * m_i == y + sum b_i * n_i
+        # self - y == sum b_i * n_i + sum a_i * m_i
+        ab_values = (self - y).lift(m + n)
+        return R.sum([y] + [bi * ni for bi, ni in zip(ab_values[len(m):], n)])
+
 
 
 def _is_M_convex_(points) -> bool:
