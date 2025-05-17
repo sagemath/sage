@@ -1102,7 +1102,7 @@ class GraphGenerators:
 
         EXAMPLES:
 
-        The generator can be used to construct biparrtite graphs for testing,
+        The generator can be used to construct bipartite graphs for testing,
         one at a time (usually inside a loop).  Or it can be used to
         create an entire list all at once if there is sufficient memory
         to contain it::

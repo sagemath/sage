@@ -127,7 +127,6 @@ This base class provides a lot more methods than a general parent::
      'fraction_field',
      'gen',
      'gens',
-     'is_field',
      'ngens',
      'one',
      'order',
