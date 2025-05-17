@@ -2923,21 +2923,13 @@ class DiGraph(GenericGraph):
         else:
             h = self
 
-        # set by_weight, weight_function
-        if weight_function is not None:
-            by_weight = True
-
-        if weight_function is None and by_weight:
-            def weight_function(e):
-                return e[2]
-
         by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                                weight_function=weight_function,
                                                                check_weight=check_weight)
-
-        for e in h.edge_iterator():
-            if weight_function(e) < 0:
-                raise ValueError("negative weight is not allowed")
+        if by_weight:
+            for e in h.edge_iterator():
+                if weight_function(e) < 0:
+                    raise ValueError("negative weight is not allowed")
 
         from heapq import heapify, heappop, heappush
         heap_queue = [(0, [vertex])]
@@ -3126,21 +3118,14 @@ class DiGraph(GenericGraph):
         h = copy(self)
         h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
 
-        # set by_weight, weight_function
-        if weight_function is not None:
-            by_weight = True
-
-        if weight_function is None and by_weight:
-            def weight_function(e):
-                return e[2]
-
         by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                                weight_function=weight_function,
                                                                check_weight=check_weight)
 
-        for e in h.edge_iterator():
-            if weight_function(e) < 0:
-                raise ValueError("negative weight is not allowed")
+        if by_weight:
+            for e in h.edge_iterator():
+                if weight_function(e) < 0:
+                    raise ValueError("negative weight is not allowed")
 
         # We create one cycles iterator per vertex. This is necessary if we
         # want to iterate over cycles with increasing length.
