@@ -85,6 +85,9 @@ R = [
 extra = [
   'lrcalc ~=2.1',
 ]
+giac = [
+    'sagemath_giac',
+]
 
 [project.readme]
 file = "README.md"
@@ -130,7 +133,6 @@ host-requires = [
   "pkg:generic/libgd",
   "pkg:generic/gap",
   "pkg:generic/gfan",
-  "pkg:generic/giac",
   "pkg:generic/givaro",
   "pkg:generic/glpk",
   "pkg:generic/gmp",
