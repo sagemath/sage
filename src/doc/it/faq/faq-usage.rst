@@ -196,9 +196,9 @@ Altre risorse possono essere trovate cercando sul web.
 
 * `Building Skills in Python <http://homepage.mac.com/s_lott/books/python.html>`_
   di Steven F. Lott
-* `Dive into Python <http://www.diveintopython.net>`_
+* `Dive into Python <https://diveintopython3.net>`_
   di Mark Pilgrim
-* `How to Think Like a Computer Scientist <http://www.openbookproject.net/thinkCSpy>`_
+* `How to Think Like a Computer Scientist <https://www.openbookproject.net/thinkcs/python/english3e/>`_
   di Jeffrey Elkner, Allen B. Downey, and Chris Meyers
 * `Official Python Tutorial <http://docs.python.org/tutorial>`_
 * `Python <http://www.python.org>`_ home page e
@@ -540,7 +540,7 @@ Se è così, prova a fare questo: crea (o modifica se c'è già) il file
     limit maxproc 512 2048
 
 Poi riavvia. Vedi
-`il seguente link <http://www.macosxhints.com/article.php?story=20050709233920660>`_
+`il seguente link <https://web.archive.org/web/20051106134912/http://www.macosxhints.com/article.php?story=20050709233920660>`_
 per maggiori dettagli.
 
 Come disegno la radice cubica (o altre radici dispari) di numeri negativi?
