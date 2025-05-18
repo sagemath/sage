@@ -810,7 +810,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 return [I[i] for i in index_set if not _matrix_test_right_descent(M, i, n, zero)]
             return [I[i] for i in index_set if _matrix_test_right_descent(M, i, n, zero)]
 
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             r"""
             Return whether ``i`` is a right descent of ``self``.
 

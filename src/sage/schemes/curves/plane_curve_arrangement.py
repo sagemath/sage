@@ -364,7 +364,7 @@ class PlaneCurveArrangementElement(Element):
         """
         return prod(self.defining_polynomials())
 
-    def have_common_factors(self):
+    def have_common_factors(self) -> bool:
         r"""
         Check if the curves have common factors.
 
