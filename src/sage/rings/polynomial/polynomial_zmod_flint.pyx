@@ -405,9 +405,9 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         n = int(n)
         value = self.base_ring()(value)
         if n >= 0:
-            nmod_poly_set_coeff_ui(&self.x, n, int(value)%nmod_poly_modulus(&self.x))
+            nmod_poly_set_coeff_ui(&self.x, n, int(value) % nmod_poly_modulus(&self.x))
         else:
-            raise IndexError("Polynomial coefficient index must be nonnegative.")
+            raise IndexError("polynomial coefficient index must be nonnegative")
 
     cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         """
@@ -640,7 +640,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         cdef Polynomial_zmod_flint s0 = self._new()
         cdef Polynomial_zmod_flint t0 = P.one()
         cdef Polynomial_zmod_flint s1 = m
-        cdef Polynomial_zmod_flint t1 = self%m
+        cdef Polynomial_zmod_flint t1 = self % m
 
         cdef Polynomial_zmod_flint q
         cdef Polynomial_zmod_flint r0

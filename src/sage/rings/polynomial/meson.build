@@ -94,7 +94,7 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
-  deps = [py_dep, cysignals, gmp]
+  deps = [py_dep, cysignals, gmp, numpy]
   if name == 'evaluation_flint'
     deps += [flint, mpfi]
   elif name == 'polynomial_complex_arb'
@@ -117,7 +117,6 @@ foreach name, pyx : extension_data
       inc_ext,
       inc_flint,
       inc_ntl,
-      inc_numpy,
       inc_rings,
       inc_rings_finite,
     ],
@@ -153,7 +152,6 @@ foreach name, pyx : extension_data_cpp
       inc_ext,
       inc_flint,
       inc_ntl,
-      inc_numpy,
       inc_rings,
       inc_rings_finite,
     ],
@@ -167,6 +165,7 @@ foreach name, pyx : extension_data_cpp
       mpfi,
       mpfr,
       ntl,
+      numpy,
       pari,
       singular,
     ],

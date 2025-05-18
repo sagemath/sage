@@ -1223,20 +1223,17 @@ Weiterführende Links und Literatur
 Das folgende Tutorial erklärt (auf englisch) wie Sage als einfacher Rechner benutzt werden kann. Hier
 finden sich auch viele Funktionen und Beispiele, welche für unsere Zwecke interessant sind.
 
-* http://www-rohan.sdsu.edu/~mosulliv/sagetutorial/sagecalc.html
+* https://mosullivan.sdsu.edu/sagetutorial/sagecalc.html
 
 Die offizielle deutsche Dokumentation von Sage ist noch im Aufbau und weit entfernt von einer
-vollständigen Dokumentation. Das Einführungstutorial ist jedoch auch auf deutsch verfügbar. Die offizielle
-Seite der deutschen Version von Sage findet sich hier:
-
-* http://www.sagemath.org/de/
+vollständigen Dokumentation. Das Einführungstutorial ist jedoch auch auf deutsch verfügbar.
 
 
 .. rubric:: Footnotes
 
-.. [#keywords] http://docs.python.org/2/reference/lexical_analysis.html#keywords
+.. [#keywords] https://docs.python.org/3/reference/lexical_analysis.html#keywords
 .. [#tutorial] http://doc.sagemath.org/html/de/tutorial/
 .. [#units] http://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/units.html
 .. [#2dgraphics] http://doc.sagemath.org/html/en/reference/plotting/index.html
 .. [#scatterplot] http://doc.sagemath.org/html/en/reference/plotting/sage/plot/scatter_plot.html
-.. [#listcomp] http://docs.python.org/2/tutorial/datastructures.html#list-comprehensions
+.. [#listcomp] https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions

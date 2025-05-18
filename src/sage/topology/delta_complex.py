@@ -1009,10 +1009,10 @@ class DeltaComplex(GenericCellComplex):
                             # Simplex, as well as the function
                             # 'lattice_paths', in
                             # simplicial_complex.py.)
-                            for path in lattice_paths(list(range(k + 1)),
-                                                      list(range(n + 1)),
-                                                      length=d+1):
-                                path = tuple(path)
+                            for _path in lattice_paths(list(range(k + 1)),
+                                                       list(range(n + 1)),
+                                                       length=d+1):
+                                path = tuple(_path)
                                 new[(k, k_idx, n, n_idx, path)] = len(simplices)
                                 bdry_list = []
                                 for i in range(d+1):

@@ -8,7 +8,7 @@
 
 .. _section-univariate:
 
-单变量多项式
+一元多项式
 ----------------------
 
 创建多项式环有三种方法。
@@ -141,7 +141,7 @@
     sage: 1/(1-x) + O(x^10)
     1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + O(x^10)
 
-如果我们给变量不同的命名，我们会得到不同的单变量多项式环。
+如果我们给变量不同的命名，我们会得到不同的一元多项式环。
 
 ::
 
@@ -192,7 +192,7 @@ Sage 还支持任意基环上的幂级数和 Laurent 级数环。
     sage: GF(7)[['T']]
     Power Series Ring in T over Finite Field of size 7
 
-多变量多项式
+多元多项式
 ------------------------
 
 要处理多个变量的多项式，我们首先声明多项式环和变量。
@@ -203,7 +203,7 @@ Sage 还支持任意基环上的幂级数和 Laurent 级数环。
     sage: R
     Multivariate Polynomial Ring in z0, z1, z2 over Finite Field of size 5
 
-与定义单变量多项式环一样，有多种方法：
+与定义一元多项式环一样，有多种方法：
 
 ::
 
@@ -242,7 +242,7 @@ Sage 还支持任意基环上的幂级数和 Laurent 级数环。
     sage: QQ['x'].objgens()
     (Univariate Polynomial Ring in x over Rational Field, (x,))
 
-多变量多项式在 Sage 中使用 Python 字典和多项式的“分配表示”实现。
+多元多项式在 Sage 中使用 Python 字典和多项式的“分配表示”实现。
 Sage 使用了一些 Singular [Si]_ ，例如，用于计算理想的最大公约数和 Gröbner 基。
 
 ::

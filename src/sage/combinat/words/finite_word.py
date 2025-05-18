@@ -1684,9 +1684,9 @@ class FiniteWord_class(Word_class):
             g.allow_loops(True)
             g.allow_multiple_edges(True)
             for v in l:
-                [i] = g.neighbors_in(v)
-                [o] = g.neighbors_out(v)
-                g.add_edge(i, o, g.edge_label(i, v)[0]*g.edge_label(v, o)[0])
+                i = next(g.neighbor_in_iterator(v))
+                o = next(g.neighbor_out_iterator(v))
+                g.add_edge(i, o, g.edge_label(i, v)[0] * g.edge_label(v, o)[0])
                 g.delete_vertex(v)
         return g
 

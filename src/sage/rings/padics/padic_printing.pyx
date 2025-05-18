@@ -599,7 +599,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         return rich_to_bool(op, 0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Representation of this printer.
 
@@ -608,7 +608,7 @@ cdef class pAdicPrinter_class(SageObject):
             sage: Zp(5)._printer  # indirect doctest
             series printer for 5-adic Ring with capped relative precision 20
         """
-        return "%s printer for %s"%(self._print_mode(), self.ring)
+        return "%s printer for %s" % (self._print_mode(), self.ring)
 
     def __enter__(self):
         """
@@ -948,16 +948,16 @@ cdef class pAdicPrinter_class(SageObject):
                 if elt.valuation() == 0:
                     s = self._repr_spec(elt, do_latex, pos, terse, 0, ram_name)
                 elif elt.valuation() == 1:
-                    s = "%s \\cdot %s"%(ram_name, self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
+                    s = "%s \\cdot %s" % (ram_name, self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
                 else:
-                    s = "%s^{%s} \\cdot %s"%(ram_name, elt.valuation(), self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
+                    s = "%s^{%s} \\cdot %s" % (ram_name, elt.valuation(), self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
             else:
                 if elt.valuation() == 0:
                     s = self._repr_spec(elt, do_latex, pos, terse, 0, ram_name)
                 elif elt.valuation() == 1:
-                    s = "%s * %s"%(ram_name, self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
+                    s = "%s * %s" % (ram_name, self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
                 else:
-                    s = "%s^%s * %s"%(ram_name, elt.valuation(), self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
+                    s = "%s^%s * %s" % (ram_name, elt.valuation(), self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
         elif mode == digits:
             n = elt.valuation()
             if self.base:
@@ -1008,7 +1008,7 @@ cdef class pAdicPrinter_class(SageObject):
                 if self.max_unram_terms == 0:
                     L = ['[...]' if len(a) > 0 else '[]' for a in L]
                 elif self.max_unram_terms == 1:
-                    L = ["[..., %s]"%(a[-1]) if len(a) > 1 else str(a) for a in L]
+                    L = ["[..., %s]" % (a[-1]) if len(a) > 1 else str(a) for a in L]
                 else:
                     L = ["[%s,..., " % (a[0]) + ", ".join(str(b) for b in a[1-self.max_unram_terms:]) + "]" if len(a) > 2 else str(a) for a in L]
             if n > 0:
@@ -1038,9 +1038,9 @@ cdef class pAdicPrinter_class(SageObject):
                 s += ")"
             else:
                 if do_latex:
-                    s += "^{%s})"%(elt.precision_absolute())
+                    s += "^{%s})" % (elt.precision_absolute())
                 else:
-                    s += "^%s)"%(elt.precision_absolute())
+                    s += "^%s)" % (elt.precision_absolute())
         if s == "": s = "0"
         return s
 
@@ -1077,7 +1077,7 @@ cdef class pAdicPrinter_class(SageObject):
                 # if v<0, _terse_frac doesn't use the first input at all, and expects the unit part in the third input.
                 s = self._terse_frac(lift_z, v, lift_z, ram_name, do_latex)
                 if paren and not do_latex:
-                    return "(%s)"%(s)
+                    return "(%s)" % (s)
                 else:
                     return s
             else: # mode == series
@@ -1181,7 +1181,7 @@ cdef class pAdicPrinter_class(SageObject):
                                     v, u = a.val_unit(self.prime_pow.prime)
                                     arep = self._terse_frac(a, v, u, ram_name, do_latex)
                                 if s == "":
-                                    s = "-%s"%(arep)
+                                    s = "-%s" % (arep)
                                     s += self._dot_var(var_name, i, do_latex)
                                 elif a == 1:
                                     s += " - "
@@ -1270,9 +1270,9 @@ cdef class pAdicPrinter_class(SageObject):
         if exp == 1:
             return str(x)
         if do_latex:
-            return "%s^{%s}"%(x, exp)
+            return "%s^{%s}" % (x, exp)
         else:
-            return "%s^%s"%(x, exp)
+            return "%s^%s" % (x, exp)
 
     cdef _dot_var(self, x, exp, do_latex):
         """
@@ -1282,13 +1282,13 @@ cdef class pAdicPrinter_class(SageObject):
             return ""
         if exp == 1:
             if do_latex:
-                return " \\cdot %s"%(x)
+                return " \\cdot %s" % (x)
             else:
-                return "*%s"%(x)
+                return "*%s" % (x)
         if do_latex:
-            return " \\cdot %s^{%s}"%(x, exp)
+            return " \\cdot %s^{%s}" % (x, exp)
         else:
-            return "*%s^%s"%(x, exp)
+            return "*%s^%s" % (x, exp)
 
     cdef _co_dot_var(self, co, x, exp, do_latex):
         """
@@ -1297,23 +1297,23 @@ cdef class pAdicPrinter_class(SageObject):
         co should be greater than 0
         """
         if exp == 0:
-            return "%s"%co
+            return "%s" % co
         if exp == 1:
             if co == 1:
-                return "%s"%x
+                return "%s" % x
             if do_latex:
-                return "%s \\cdot %s"%(co, x)
+                return "%s \\cdot %s" % (co, x)
             else:
-                return "%s*%s"%(co, x)
+                return "%s*%s" % (co, x)
         if co == 1:
             if do_latex:
-                return "%s^{%s}"%(x, exp)
+                return "%s^{%s}" % (x, exp)
             else:
-                return "%s^%s"%(x, exp)
+                return "%s^%s" % (x, exp)
         if do_latex:
-            return "%s \\cdot %s^{%s}"%(co, x, exp)
+            return "%s \\cdot %s^{%s}" % (co, x, exp)
         else:
-            return "%s*%s^%s"%(co, x, exp)
+            return "%s*%s^%s" % (co, x, exp)
 
     cdef _plus_ellipsis(self, bint do_latex):
         """
@@ -1445,16 +1445,16 @@ cdef class pAdicPrinter_class(SageObject):
             if v >= 0:
                 arep = a._latex_()
             elif v == -1:
-                arep = "\\frac{%s}{%s}"%(u, ram_name)
+                arep = "\\frac{%s}{%s}" % (u, ram_name)
             else:
-                arep = "\\frac{%s}{%s^{%s}}"%(u, ram_name, -v)
+                arep = "\\frac{%s}{%s^{%s}}" % (u, ram_name, -v)
         else:
             if v >= 0:
                 arep = str(a)
             elif v == -1:
-                arep = "%s/%s"%(u, ram_name)
+                arep = "%s/%s" % (u, ram_name)
             else:
-                arep = "%s/%s^%s"%(u, ram_name, -v)
+                arep = "%s/%s^%s" % (u, ram_name, -v)
         return arep
 
     cdef _print_list_as_poly(self, L, bint do_latex, polyname, long expshift, bint increasing):

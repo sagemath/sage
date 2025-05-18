@@ -212,7 +212,7 @@ class Converter:
             return self.relation(ex, operator)
         elif isinstance(operator, FDerivativeOperator):
             return self.derivative(ex, operator)
-        elif operator == tuple:
+        elif operator is tuple:
             return self.tuple(ex)
         else:
             return self.composition(ex, operator)

@@ -309,6 +309,7 @@ Comprehensive Module List
     sage/combinat/set_partition
     sage/combinat/set_partition_iterator
     sage/combinat/set_partition_ordered
+    sage/combinat/sf/abreu_nigro
     sage/combinat/sf/all
     sage/combinat/sf/character
     sage/combinat/sf/classical

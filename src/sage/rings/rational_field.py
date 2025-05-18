@@ -889,7 +889,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         # Compute the map phi of Hilbert symbols at all the primes
         # in S and S'
         # For technical reasons, a Hilbert symbol of -1 is
-        # respresented as 1 and a Hilbert symbol of 1
+        # represented as 1 and a Hilbert symbol of 1
         # is represented as 0
         def phi(x):
             v = [(1-hilbert_symbol(x, b, p))//2 for p in P]

@@ -1213,11 +1213,10 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             [Boundary point in UHP -sqrt(65) + 9,
              Boundary point in UHP sqrt(65) + 9]
         """
-
         start = self._start.coordinates()
         end = self._end.coordinates()
-        [x1, x2] = [real(k) for k in [start, end]]
-        [y1, y2] = [imag(k) for k in [start, end]]
+        x1, x2 = real(start), real(end)
+        y1, y2 = imag(start), imag(end)
         M = self._model
         # infinity is the first endpoint, so the other ideal endpoint
         # is just the real part of the second coordinate
@@ -2046,8 +2045,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             Full MatrixSpace of 2 by 2 dense matrices over Complex Field
             with 53 bits of precision
         """
-
-        [s, e] = [k.coordinates() for k in self.complete().endpoints()]
+        s, e = [k.coordinates() for k in self.complete().endpoints()]
         B = HyperbolicGeodesicUHP._get_B(p)
         # outmat below will be returned after we normalize the determinant.
         outmat = B * HyperbolicGeodesicUHP._crossratio_matrix(s, p, e)

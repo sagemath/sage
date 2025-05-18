@@ -289,7 +289,7 @@ meson_format(
         inplace=True,
         recursive=True,
         output=None,
-        configuration=None,
+        configuration=options.sourcedir / "meson.format",
         editor_config=None,
     )
 )

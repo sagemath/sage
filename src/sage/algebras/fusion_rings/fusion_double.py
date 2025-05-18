@@ -257,8 +257,8 @@ class FusionDouble(CombinatorialFreeModule):
         """
         sum_val = ZZ.zero()
         G = self._G
-        [i] = list(i._monomial_coefficients)
-        [j] = list(j._monomial_coefficients)
+        i, = list(i._monomial_coefficients)
+        j, = list(j._monomial_coefficients)
         a = self._elt[i]
         b = self._elt[j]
         for g in G:

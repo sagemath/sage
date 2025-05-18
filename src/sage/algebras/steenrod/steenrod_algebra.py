@@ -2109,7 +2109,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A1._element_constructor_(Sq(4)) # Sq(4) not in A1
             Traceback (most recent call last):
             ...
-            ValueError: Element does not lie in this Steenrod algebra
+            ValueError: element does not lie in this Steenrod algebra
             sage: A1({(2,): 1, (1,): 13})
             Sq(1) + Sq(2)
         """
@@ -2131,7 +2131,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 if self.basis_name() == 'milnor':
                     return a
                 return a.change_basis(self.basis_name())
-        raise ValueError("Element does not lie in this Steenrod algebra")
+        raise ValueError("element does not lie in this Steenrod algebra")
 
     def __contains__(self, x):
         r"""
@@ -2362,7 +2362,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             A = SteenrodAlgebra_generic(p=self.prime(),generic=self._generic)
             a = A.monomial(t)
             return self(a)
-        raise ValueError("Element not in this algebra")
+        raise ValueError("element not in this algebra")
 
     def Q_exp(self, *nums):
         r"""
@@ -2399,7 +2399,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             Q_0 Q_2
         """
         if not all(x in (0, 1) for x in nums):
-            raise ValueError("The tuple %s should consist " % (nums,) +
+            raise ValueError("the tuple %s should consist " % (nums,) +
                              "only of 0s and 1s")
         else:
             if self.basis_name() != 'milnor':
@@ -2452,13 +2452,14 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: H.Q(4)
             Traceback (most recent call last):
             ...
-            ValueError: Element not in this algebra
+            ValueError: element not in this algebra
         """
         if len(nums) != len(set(nums)):
             return self(0)
         else:
             if self.basis_name() != 'milnor':
-                return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).Q(*nums))
+                return self(SteenrodAlgebra(p=self.prime(),
+                                            generic=self._generic).Q(*nums))
             if not self._generic:
                 if len(nums) == 0:
                     return self.one()
@@ -2474,7 +2475,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 t = answer.leading_support()
                 if self._check_profile_on_basis(t):
                     return answer
-                raise ValueError("Element not in this algebra")
+                raise ValueError("element not in this algebra")
 
     def an_element(self):
         """
@@ -2738,7 +2739,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(profile=[1,2,1]).gen(5)
             Traceback (most recent call last):
             ...
-            ValueError: This algebra only has 4 generators, so call gen(i) with 0 <= i < 4
+            ValueError: this algebra only has 4 generators, so call gen(i) with 0 <= i < 4
 
             sage: D = SteenrodAlgebra(profile=lambda n: n)
             sage: [D.gen(n) for n in range(5)]
@@ -2760,7 +2761,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         num = self.ngens()
         if num < Infinity:
             if i >= num:
-                raise ValueError("This algebra only has %s generators, so call gen(i) with 0 <= i < %s" % (num, num))
+                raise ValueError("this algebra only has %s generators, so call gen(i) with 0 <= i < %s" % (num, num))
             # check to see if equal to A(n) for some n.
             n = self.profile(1)
             if not self._generic and self._profile == AA(n-1, p=p)._profile:

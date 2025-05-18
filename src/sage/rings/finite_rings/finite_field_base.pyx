@@ -139,7 +139,7 @@ cdef class FiniteField(Field):
             else:
                 return NotImplemented
 
-    def is_perfect(self):
+    def is_perfect(self) -> bool:
         r"""
         Return whether this field is perfect, i.e., every element has a `p`-th
         root. Always returns ``True`` since finite fields are perfect.
@@ -151,7 +151,7 @@ cdef class FiniteField(Field):
         """
         return True
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         String representation of this finite field.
 
@@ -174,11 +174,13 @@ cdef class FiniteField(Field):
             Finite Field in d of size 7^20
         """
         if self.degree()>1:
-            return "Finite Field in %s of size %s^%s"%(self.variable_name(),self.characteristic(),self.degree())
+            return "Finite Field in %s of size %s^%s" % (self.variable_name(),
+                                                         self.characteristic(),
+                                                         self.degree())
         else:
-            return "Finite Field of size %s"%(self.characteristic())
+            return "Finite Field of size %s" % (self.characteristic())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a string denoting the name of the field in LaTeX.
 
@@ -199,12 +201,12 @@ cdef class FiniteField(Field):
             \Bold{F}_{3}
         """
         if self.degree() > 1:
-            e = "^{%s}"%self.degree()
+            e = "^{%s}" % self.degree()
         else:
             e = ""
-        return "\\Bold{F}_{%s%s}"%(self.characteristic(), e)
+        return "\\Bold{F}_{%s%s}" % (self.characteristic(), e)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return string that initializes the GAP version of
         this finite field.
@@ -214,7 +216,7 @@ cdef class FiniteField(Field):
             sage: GF(9,'a')._gap_init_()
             'GF(9)'
         """
-        return 'GF(%s)'%self.order()
+        return 'GF(%s)' % self.order()
 
     def _magma_init_(self, magma):
         """
@@ -234,10 +236,10 @@ cdef class FiniteField(Field):
             a
         """
         if self.degree() == 1:
-            return 'GF(%s)'%self.order()
+            return 'GF(%s)' % self.order()
         B = self.base_ring()
         p = self.polynomial()
-        s = "ext<%s|%s>"%(B._magma_init_(magma),p._magma_init_(magma))
+        s = "ext<%s|%s>" % (B._magma_init_(magma),p._magma_init_(magma))
         return magma._with_names(s, self.variable_names())
 
     def _macaulay2_init_(self, macaulay2=None):

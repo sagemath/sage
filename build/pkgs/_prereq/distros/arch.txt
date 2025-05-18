@@ -17,3 +17,4 @@ bc
 gcc
 # Needed for 4ti2:
 which
+patch

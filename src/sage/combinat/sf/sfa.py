@@ -1517,6 +1517,145 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                                distinct=True)
             return self(r)
 
+        def abreu_nigro_g(self, H, k, q='q'):
+            r"""
+            Return the Abreu-Nigro `g_{H,k}(x; q)` symmetric function
+            for the Hessenberg function ``H`` in the basis ``self``.
+
+            INPUT:
+
+            - ``H`` -- list; the Hessenberg function
+            - ``k`` -- integer; must satisfy ``0 <= k < len(H)``
+            - ``q`` -- (default: ``'q'``) base ring element for `q`
+
+            A *Hessenberg function* (of length `n`) is a function `H \colon
+            \{1, \ldots, n\} \to \{1, \ldots, n\}` such that `\max(i, H(i-1))
+            \leq H(i) \leq n` for all `i` (by convention `H(0) = 0`). The
+            *Abreu-Nigro* `g` *symmetric function* [AN2023]_ (Definition 1.3)
+            is defined by
+
+            .. MATH::
+
+                g_{H,k}(x; q) := \sum_{\sigma = \tau_1 \cdots \tau_j}
+                (-1)^{|\tau_1|-n+k} q^{w_H(\sigma)} h_{|\tau_1|-n+k}(x)
+                \omega( \rho_{|\tau_2|,\ldots,|\tau_j|}(x; q) ),
+
+            where the sum is over all permutations `\sigma \in S_n` such that
+            `|\tau_1| \geq n - k` and `\sigma(i) \leq H(i)` for all `i`;
+            `\tau_1, \ldots, \tau_j` is the cycle decomposition of `\sigma`
+            (with cycles sorted by smallest elements, and with these
+            smallest elements placed at the beginning of each cycle);
+            `\rho_{\lambda}` is the Abreu-Nigro basis [AN2021II]_
+            (see :class:`SymmetricFunctions.abreu_nigro`); and
+
+            .. MATH::
+
+                w_H(\sigma) = |\{(i, j) \mid i < j \leq H(i) \text{ and } j
+                                 \text{ precedes } i \text{ in } \sigma^c \}|,
+
+            with `\sigma^c` being the permutation formed by removing the
+            parentheses in the cycle decomposition `\tau_1 \cdots \tau_j`.
+
+            EXAMPLES:
+
+            We verify the `e`-positivity of some examples::
+
+                sage: q = ZZ['q'].fraction_field().gen()
+                sage: Sym = SymmetricFunctions(q.parent())
+                sage: e = Sym.e()
+                sage: e.abreu_nigro_g([1,2], 0, q)
+                0
+                sage: e.abreu_nigro_g([1,2], 1, q)
+                e[1]
+                sage: e.abreu_nigro_g([2,2], 0, q)
+                e[]
+                sage: e.abreu_nigro_g([2,2], 1, q)
+                0
+                sage: H = [3, 3, 4, 5, 6, 7, 7]
+                sage: [e.abreu_nigro_g(H, k, q) for k in range(7)]
+                [(q+1)*e[],
+                 q*e[1],
+                 (q^2+q)*e[2],
+                 q^2*e[2, 1] + (q^3+2*q^2+q)*e[3],
+                 (q^3+q^2)*e[2, 2] + (q^3+q^2)*e[3, 1] + (q^4+2*q^3+2*q^2+q)*e[4],
+                 q^3*e[3, 2] + (q^4+q^3+q^2)*e[5],
+                 (q^4+q^3)*e[3, 3] + (q^4+q^3)*e[4, 2] + (q^5+q^4+q^3+q^2)*e[6]]
+
+            We reproduce Example 1.5 in [AN2023]_::
+
+                sage: H = [2, 4, 4, 5, 6, 6]
+                sage: [e.abreu_nigro_g(H, k, q) for k in range(6)]
+                [(q+1)*e[],
+                 q*e[1],
+                 (q^2+q)*e[2],
+                 q^2*e[3],
+                 (q^3+q^2)*e[4],
+                 (q^4+3*q^3+q^2)*e[3, 2] + (q^4+q^3+q^2)*e[4, 1]
+                  + (q^5+2*q^4+2*q^3+2*q^2+q)*e[5]]
+
+            We verify Theorem 1.7 in [AN2023]_ for an example::
+
+                sage: from sage.combinat.q_analogues import q_int
+                sage: H = [2, 4, 4, 4]
+                sage: G = posets.HessenbergPoset(H).incomparability_graph()
+                sage: cqf = G.chromatic_quasisymmetric_function(q, q.parent()); cqf
+                (q^4+6*q^3+10*q^2+6*q+1)*M[1, 1, 1, 1] + (q^3+2*q^2+q)*M[1, 1, 2]
+                 + (q^3+2*q^2+q)*M[1, 2, 1] + (q^3+2*q^2+q)*M[2, 1, 1]
+                sage: e(cqf.to_symmetric_function())
+                (q^3+2*q^2+q)*e[3, 1] + (q^4+2*q^3+2*q^2+2*q+1)*e[4]
+                sage: sum(q_int(k, q) * e[k] * e.abreu_nigro_g(H, len(H)-k, q)
+                ....:     for k in range(1, len(H)+1))
+                (q^3+2*q^2+q)*e[3, 1] + (q^4+2*q^3+2*q^2+2*q+1)*e[4]
+
+            TESTS::
+
+                sage: e = SymmetricFunctions(ZZ['q'].fraction_field()).e()
+                sage: e.abreu_nigro_g([3, 2, 3], 2, q)
+                Traceback (most recent call last):
+                ...
+                ValueError: [3, 2, 3] is not a Hessenberg function
+                sage: e.abreu_nigro_g([1, 4, 5], 2, q)
+                Traceback (most recent call last):
+                ...
+                ValueError: [1, 4, 5] is not a Hessenberg function
+                sage: e.abreu_nigro_g([1, 1, 3], 2, q)
+                Traceback (most recent call last):
+                ...
+                ValueError: [1, 1, 3] is not a Hessenberg function
+                sage: e.abreu_nigro_g([1, 3, 3], 5, q)
+                Traceback (most recent call last):
+                ...
+                ValueError: k must be between 0 and 3
+            """
+            if not H:
+                return self.one()
+            n = len(H)
+            if not all(max(i+1, H[i-1]) <= H[i] for i in range(1, n)) or H[-1] > n:
+                raise ValueError(f"{H} is not a Hessenberg function")
+            if k < 0 or k >= n:
+                raise ValueError(f"k must be between 0 and {n}")
+            ret = self.zero()
+            h = self.realization_of().h()
+            rho = self.realization_of().abreu_nigro(q)
+            from sage.combinat.permutation import Permutations
+            for sigma in Permutations(n):
+                # Filter out the permutations not used in the sum
+                if any(sigma[i] > H[i] for i in range(n)):
+                    continue
+                tau = sigma.to_cycles()
+                if len(tau[0]) < n - k:
+                    continue
+                sc = sum(tau, ())
+                # We use 0-based i and j
+                sc_pos = {i-1: pos for pos, i in enumerate(sc)}
+                inv = sum(1 for j in range(1, n) for i in range(j) if j < H[i]
+                          and sc_pos[j] < sc_pos[i])
+                K = len(tau[0]) - n + k
+                lam = [len(tau[i]) for i in range(1, len(tau))]
+                lam.sort(reverse=True)
+                ret += (-1)**K * q**inv * self(h[K] * h(rho[lam]).omega())
+            return ret
+
         def formal_series_ring(self):
             r"""
             Return the completion of all formal linear combinations of

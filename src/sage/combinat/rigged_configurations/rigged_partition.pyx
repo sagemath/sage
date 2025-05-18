@@ -24,7 +24,7 @@ AUTHORS:
     Convert this to using multiplicities `m_i` (perhaps with a dictionary?)?
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010-2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -36,8 +36,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.latex import latex
 from sage.structure.richcmp cimport richcmp

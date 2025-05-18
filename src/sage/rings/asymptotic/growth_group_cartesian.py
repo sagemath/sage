@@ -80,7 +80,7 @@ Classes and Methods
 ===================
 """
 
-#*****************************************************************************
+# ***************************************************************************
 # Copyright (C) 2014--2015 Benjamin Hackl <benjamin.hackl@aau.at>
 #               2014--2015 Daniel Krenn <dev@danielkrenn.at>
 #
@@ -88,8 +88,8 @@ Classes and Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.factory import UniqueFactory
 

@@ -487,9 +487,9 @@ def first_hilbert_series(I, grading=None, return_grading=False):
         br = S('basering')
         if S.eval('isQuotientRing(basering)')=='1':
             L = S('ringlist(basering)')
-            R = S('ring(list(%s[1..3],ideal(0)))'%L.name())
+            R = S('ring(list(%s[1..3],ideal(0)))' % L.name())
             R.set_ring()
-            I = S('fetch(%s,%s)+ideal(%s)'%(br.name(),I.name(),br.name()))
+            I = S('fetch(%s,%s)+ideal(%s)' % (br.name(), I.name(), br.name()))
 
         I = [ETuple([int(x) for x in S.eval('string(leadexp({}[{}]))'.format(I.name(), i)).split(',')])
               for i in range(1,int(S.eval('size({})'.format(I.name())))+1)]

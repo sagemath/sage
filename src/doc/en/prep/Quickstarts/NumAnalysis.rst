@@ -130,7 +130,7 @@ involved).
     425/32
 
 Now let's convert ``x`` to the IEEE 754 binary format that is commonly
-used in computers.  For `IEEE 754 <http://grouper.ieee.org/groups/754/>`_,
+used in computers.  For `IEEE 754 <https://en.wikipedia.org/wiki/IEEE_754>`_,
 the first step in getting the binary format is to normalize the number,
 or express the number as a number between 1 and 2 multiplied by a power of 2.
 For our ``x`` above, we multiply by `2^{-3}` to get a number between 1 and 2.
