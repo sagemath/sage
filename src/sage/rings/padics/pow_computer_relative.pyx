@@ -322,7 +322,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
             return self.poly_ring.one()
         elif r == 1:
             return self._inv_shift_seed
-        elif r%2:
+        elif r % 2:
             return (self.pxe_pow(r-1) * self.pxe_pow(1)) % self.modulus
         else:
             return (self.pxe_pow(r//2)*self.pxe_pow(r//2)) % self.modulus
