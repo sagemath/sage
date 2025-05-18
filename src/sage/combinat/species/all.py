@@ -32,8 +32,8 @@ There are currently two implementations of combinatorial species, one
 of which is deprecated and will be removed once all of the
 functionality has been ported to the new framework.
 
-The recommended implementation is used as the following example
-illustrates.
+The recommended implementation is :ref:`sage.rings.lazy_species` and
+used as the following examples illustrate.
 
 EXAMPLES:
 
@@ -96,6 +96,7 @@ Miscellaneous
 
 - :ref:`sage.combinat.species.structure`
 - :ref:`sage.combinat.species.misc`
+
 """
 # install the docstring of this module to the containing package
 from sage.misc.namespace_package import install_doc

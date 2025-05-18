@@ -12,7 +12,7 @@ AUTHORS:
 
 - Mainak Roy, Martin Rubey, Travis Scrimshaw (2024-2025)
 
-EXAMPLES::
+EXAMPLES:
 
     We can reproduce the molecular expansions from Appendix B in
     [GL2011]_ with little effort.  The molecular expansion of the

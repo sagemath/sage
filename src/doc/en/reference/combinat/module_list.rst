@@ -407,3 +407,4 @@ Comprehensive Module List
     sage/combinat/words/words
     sage/combinat/yang_baxter_graph
     sage/rings/cfinite_sequence
+    sage/rings/lazy_species
