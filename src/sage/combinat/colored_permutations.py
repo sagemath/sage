@@ -1471,7 +1471,7 @@ class SignedPermutation(ColoredPermutation,
 
         .. WARNING::
 
-            The arugment ``negative_cycles`` does not refer to the usual
+            The argument ``negative_cycles`` does not refer to the usual
             definition of a negative cycle; see :meth:`cycle_type`.
 
         EXAMPLES::
