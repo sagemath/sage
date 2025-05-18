@@ -37,7 +37,7 @@ The infinite set of all posets can be used to find minimal examples::
     :meth:`~Posets.DoubleTailedDiamond` | Return the double tailed diamond poset on `2n + 2` elements.
     :meth:`~Posets.IntegerCompositions` | Return the poset of integer compositions of `n`.
     :meth:`~Posets.IntegerPartitions` | Return the poset of integer partitions of ``n``.
-    :meth:`~Posets.IntegerPartitionsDominanceOrder` | Return the lattice of integer partitions on the integer `n` ordered by dominance.
+    :meth:`~Posets.IntegerPartitionsDominanceOrder` | Return the lattice of integer partitions of the integer `n` ordered by dominance.
     :meth:`~Posets.MobilePoset` | Return the mobile poset formed by the `ribbon` with `hangers` below and an `anchor` above.
     :meth:`~Posets.NoncrossingPartitions` | Return the poset of noncrossing partitions of a finite Coxeter group ``W``.
     :meth:`~Posets.PentagonPoset` | Return the Pentagon poset.
@@ -467,8 +467,8 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         Return the divisor lattice of an integer.
 
-        Elements of the lattice are divisors of `n` and `x < y` in the
-        lattice if `x` divides `y`.
+        Elements of the lattice are divisors of `n`, and we have
+        `x \leq y` in the lattice if `x` divides `y`.
 
         INPUT:
 
@@ -501,15 +501,52 @@ class Posets(metaclass=ClasscallMetaclass):
                                   category=FiniteLatticePosets())
 
     @staticmethod
+    def HessenbergPoset(H):
+        r"""
+        Return the poset associated to a Hessenberg function ``H``.
+
+        A *Hessenberg function* (of length `n`) is a function `H: \{1,\ldots,n\}
+        \to \{1,\ldots,n\}` such that `\max(i, H(i-1)) \leq H(i) \leq n` for all
+        `i` (where `H(0) = 0` by convention). The corresponding poset is given
+        by `i < j` (in the poset) if and only if `H(i) < j` (as integers).
+        These posets correspond to the natural unit interval order posets.
+
+        INPUT:
+
+        - ``H`` -- list of the Hessenberg function values
+          (without `H(0)`)
+
+        EXAMPLES::
+
+            sage: P = posets.HessenbergPoset([2, 3, 5, 5, 5]); P
+            Finite poset containing 5 elements
+            sage: P.cover_relations()
+            [[2, 4], [2, 5], [1, 3], [1, 4], [1, 5]]
+
+        TESTS::
+
+            sage: P = posets.HessenbergPoset([2, 2, 6, 4, 5, 6])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 2, 6, 4, 5, 6] is not a Hessenberg function
+            sage: P = posets.HessenbergPoset([]); P
+            Finite poset containing 0 elements
+        """
+        n = len(H)
+        if not all(max(i+1, H[i-1]) <= H[i] for i in range(1, n)) or 0 < n < H[-1]:
+            raise ValueError(f"{H} is not a Hessenberg function")
+        return Poset((tuple(range(1, n+1)), lambda i, j: H[i-1] < j))
+
+    @staticmethod
     def IntegerCompositions(n):
         """
         Return the poset of integer compositions of the integer ``n``.
 
         A composition of a positive integer `n` is a list of positive
         integers that sum to `n`. The order is reverse refinement:
-        `[p_1,p_2,...,p_l] < [q_1,q_2,...,q_m]` if `q` consists
-        of an integer composition of `p_1`, followed by an integer
-        composition of `p_2`, and so on.
+        `p = [p_1,p_2,...,p_l] \leq q = [q_1,q_2,...,q_m]` if `q`
+        consists of an integer composition of `p_1`, followed by an
+        integer composition of `p_2`, and so on.
 
         EXAMPLES::
 
@@ -526,7 +563,7 @@ class Posets(metaclass=ClasscallMetaclass):
     @staticmethod
     def IntegerPartitions(n):
         """
-        Return the poset of integer partitions on the integer ``n``.
+        Return the poset of integer partitions of the integer ``n``.
 
         A partition of a positive integer `n` is a non-increasing list
         of positive integers that sum to `n`. If `p` and `q` are
@@ -565,7 +602,7 @@ class Posets(metaclass=ClasscallMetaclass):
     @staticmethod
     def RestrictedIntegerPartitions(n):
         """
-        Return the poset of integer partitions on the integer `n`
+        Return the poset of integer partitions of the integer `n`
         ordered by restricted refinement.
 
         That is, if `p` and `q` are integer partitions of `n`, then
@@ -604,12 +641,12 @@ class Posets(metaclass=ClasscallMetaclass):
     @staticmethod
     def IntegerPartitionsDominanceOrder(n):
         r"""
-        Return the lattice of integer partitions on the integer `n`
+        Return the lattice of integer partitions of the integer `n`
         ordered by dominance.
 
         That is, if `p=(p_1,\ldots,p_i)` and `q=(q_1,\ldots,q_j)` are
-        integer partitions of `n`, then `p` is greater than `q` if and
-        only if `p_1+\cdots+p_k > q_1+\cdots+q_k` for all `k`.
+        integer partitions of `n`, then `p \geq q` if and
+        only if `p_1+\cdots+p_k \geq q_1+\cdots+q_k` for all `k`.
 
         INPUT:
 
